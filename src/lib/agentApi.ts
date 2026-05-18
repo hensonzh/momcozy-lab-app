@@ -353,6 +353,10 @@ export interface AgUiPayload {
 }
 
 const AG_UI_WS_PATH = "/api/ag-ui-ws" as const;
+const ENV_API_BASE_URL =
+  (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim()) || "";
+const ENV_AG_UI_WS_URL =
+  (typeof import.meta !== "undefined" && (import.meta.env.VITE_AG_UI_WS_URL as string | undefined)?.trim()) || "";
 
 function normalizeAgUiWsUrl(raw: string): string {
   const value = raw.trim();
@@ -378,15 +382,13 @@ function normalizeAgUiWsUrl(raw: string): string {
   }
 }
 
-const AG_UI_WS_URL = normalizeAgUiWsUrl(
-  (typeof import.meta !== "undefined" && (import.meta.env.VITE_AG_UI_WS_URL as string | undefined)?.trim()) ||
-    AG_UI_WS_PATH,
-);
+const AG_UI_WS_URL = normalizeAgUiWsUrl(ENV_AG_UI_WS_URL || ENV_API_BASE_URL || AG_UI_WS_PATH);
 let agUiRunCount = 0;
 
 export function resolveAgUiWebSocketRequestUrl(raw?: string): string {
   const normalized = normalizeAgUiWsUrl(raw?.trim() || AG_UI_WS_URL);
-  const resolved = isWebSocketUrl(normalized) ? normalized : resolveHttpRequestUrl(normalized);
+  const baseResolved = normalized.startsWith("/") && ENV_API_BASE_URL ? normalizeAgUiWsUrl(ENV_API_BASE_URL) : normalized;
+  const resolved = isWebSocketUrl(baseResolved) ? baseResolved : resolveHttpRequestUrl(baseResolved);
   return enforceSecureWebSocketInSecureContext(httpLikeUrlToWebSocketUrl(resolved));
 }
 
