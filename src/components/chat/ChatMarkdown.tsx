@@ -1,0 +1,183 @@
+import type { FC, ReactNode } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { ChatMarkdownImg } from "@/components/chat/ChatMarkdownImage";
+import { resolveChatAssetUrl } from "@/lib/chatAssetUrl";
+import { cn } from "@/lib/utils";
+
+export type ChatMarkdownVariant = "user" | "assistant" | "muted";
+
+/**
+ * 将 `![alt](url)` 中的图片地址转为可在浏览器加载的绝对 URL。
+ * 已是 http(s)/data/blob/协议相对 URL 时不修改；否则拼到聊天资源服务前缀后。
+ * @param src Markdown 解析出的 img src，可能为相对路径
+ * @returns 可直接用于 `<img src>` 的地址；入参为空时原样返回
+ */
+function resolveChatMarkdownImageSrc(src: string | undefined): string | undefined {
+  if (!src?.trim()) return src;
+  return resolveChatAssetUrl(src);
+}
+
+function resolveChatMarkdownHref(href: string | undefined): string | undefined {
+  if (!href?.trim()) return href;
+  return resolveChatAssetUrl(href, { preservePageRelative: true });
+}
+
+/**
+ * 将 React 子节点递归为纯文本，用于从 `[文案](图链)` 取有意义的 alt。
+ * @param node Markdown 渲染出的子节点
+ * @returns 拼接后的纯文本
+ */
+function reactChildrenToPlainText(node: ReactNode): string {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(reactChildrenToPlainText).join("");
+  if (typeof node === "object" && node !== null && "props" in node) {
+    const p = (node as { props?: { children?: ReactNode } }).props;
+    if (p?.children !== undefined) return reactChildrenToPlainText(p.children);
+  }
+  return "";
+}
+
+/**
+ * 链接指向图片时：若可见文案与 URL 重复或是裸链，则 alt 置空，避免气泡里再出现一长串地址。
+ * @param children 链接子节点
+ * @param href 链接地址
+ * @returns 适合作为 img alt 的字符串，可能为空
+ */
+function linkLabelForImageAlt(children: ReactNode, href: string): string {
+  const text = reactChildrenToPlainText(children).trim();
+  if (!text) return "";
+  const h = href.trim();
+  if (text === h) return "";
+  try {
+    const u = new URL(h, "http://dummy.local");
+    if (text === u.pathname || text === `${u.pathname}${u.search}`) return "";
+  } catch {
+    /* 相对路径等 */
+  }
+  if (/^https?:\/\//i.test(text) && (text === h || h.endsWith(text) || text.endsWith(h))) return "";
+  return text;
+}
+
+/**
+ * 判断 Markdown 超链接是否应以内联图片展示（裸链、扩展名、data:image）。
+ * @param href 解析前的 href
+ * @returns 为 true 时不渲染 `<a>` 文案而渲染 `ChatMarkdownImg`
+ */
+function isProbablyImageHref(href: string | undefined): boolean {
+  if (!href?.trim()) return false;
+  const raw = href.trim();
+  if (/^data:image\//i.test(raw)) return true;
+  const resolved = resolveChatMarkdownImageSrc(raw) ?? raw;
+  try {
+    const base = typeof window !== "undefined" ? window.location.href : "http://localhost/";
+    const u = new URL(resolved, base);
+    const path = u.pathname.toLowerCase();
+    const search = u.search.toLowerCase();
+    return (
+      /\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)$/.test(path) ||
+      /\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)(\?|#|$)/i.test(path + search)
+    );
+  } catch {
+    return /\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)(\?|#|$)/i.test(raw);
+  }
+}
+
+/**
+ * 根据气泡场景生成 Tailwind Typography（prose）与配色类名，使 Markdown 在对话气泡内紧凑、可读。
+ * @param variant user=主色气泡；assistant=默认卡片；muted=次要说明（如富文本卡片内文）
+ * @returns 合并后的 className 字符串
+ */
+function markdownBubbleProseClass(variant: ChatMarkdownVariant): string {
+  const compact =
+    "prose prose-sm max-w-none [&_p]:my-1 [&_li]:my-0.5 [&_ul]:my-1 [&_ol]:my-1 [&_blockquote]:my-2 [&_*:first-child]:mt-0 [&_*:last-child]:mb-0";
+  if (variant === "user") {
+    return cn(
+      compact,
+      "text-primary-foreground",
+      "[&_a]:text-primary-foreground/90 [&_strong]:text-primary-foreground",
+      "[&_code]:bg-primary-foreground/15 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-[0.9em]",
+      "[&_pre]:bg-primary-foreground/10 [&_pre]:p-2 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:text-[12px]",
+      "[&_blockquote]:border-primary-foreground/40",
+      "[&_th]:border-primary-foreground/30 [&_td]:border-primary-foreground/20",
+    );
+  }
+  if (variant === "muted") {
+    return cn(
+      compact,
+      "text-muted-foreground",
+      "[&_a]:text-primary [&_strong]:text-foreground",
+      "[&_code]:bg-muted/80 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded",
+      "[&_pre]:bg-muted/50 [&_pre]:p-2 [&_pre]:rounded-lg [&_pre]:overflow-x-auto",
+    );
+  }
+  return cn(
+    compact,
+    "text-foreground",
+    "[&_a]:text-primary [&_strong]:text-foreground",
+    "[&_code]:bg-muted/70 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded",
+    "[&_pre]:bg-muted/50 [&_pre]:p-2 [&_pre]:rounded-lg [&_pre]:overflow-x-auto",
+    "[&_blockquote]:border-border",
+  );
+}
+
+export interface ChatMarkdownProps {
+  /** Markdown 源字符串（含 GFM：表格、删除线、任务列表等） */
+  markdown: string;
+  /** 视觉变体，对应用户/助手/次要说明 */
+  variant?: ChatMarkdownVariant;
+  /** 外层容器额外类名（如字号覆盖） */
+  className?: string;
+}
+
+/**
+ * 将对话正文解析为 Markdown 并安全渲染（默认不执行 HTML）。
+ * @param props.markdown Markdown 文本
+ * @param props.variant 气泡配色场景
+ * @param props.className 可选样式扩展
+ * @returns React 元素；markdown 为空字符串时返回 null
+ */
+export const ChatMarkdown: FC<ChatMarkdownProps> = ({
+  markdown,
+  variant = "assistant",
+  className,
+}) => {
+  if (!markdown.trim()) return null;
+
+  return (
+    <div className={cn("overflow-x-auto text-[13px] leading-relaxed", markdownBubbleProseClass(variant), className)}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          a: ({ children, href, ...props }) => {
+            if (isProbablyImageHref(href)) {
+              return (
+                <ChatMarkdownImg
+                  resolvedSrc={resolveChatMarkdownImageSrc(href)}
+                  alt={linkLabelForImageAlt(children, href ?? "")}
+                  className="block my-1"
+                />
+              );
+            }
+            return (
+              <a href={resolveChatMarkdownHref(href)} {...props} target="_blank" rel="noopener noreferrer">
+                {children}
+              </a>
+            );
+          },
+          img: ({ alt, className: imgClass, src }) => (
+            <ChatMarkdownImg resolvedSrc={resolveChatMarkdownImageSrc(src)} alt={alt} className={imgClass} />
+          ),
+          table: ({ children, ...props }) => (
+            <div className="overflow-x-auto my-2 -mx-0.5">
+              <table {...props}>{children}</table>
+            </div>
+          ),
+        }}
+      >
+        {markdown}
+      </ReactMarkdown>
+    </div>
+  );
+};

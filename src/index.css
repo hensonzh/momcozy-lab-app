@@ -1,0 +1,538 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Burgundy-based warm palette */
+    --background: 30 25% 97%;
+    --foreground: 343 35% 18%;
+
+    --card: 30 30% 99%;
+    --card-foreground: 343 35% 18%;
+
+    --popover: 30 30% 99%;
+    --popover-foreground: 343 35% 18%;
+
+    --primary: 343 40% 27%;
+    --primary-foreground: 30 30% 97%;
+
+    --secondary: 340 25% 92%;
+    --secondary-foreground: 343 40% 27%;
+
+    --muted: 340 15% 94%;
+    --muted-foreground: 343 15% 50%;
+
+    --accent: 340 35% 85%;
+    --accent-foreground: 343 40% 20%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 340 20% 90%;
+    --input: 340 20% 88%;
+    --ring: 343 40% 27%;
+
+    --radius: 1rem;
+
+    /* Safe-area top banner: max of env inset and a visible minimum */
+    --top-safe: max(env(safe-area-inset-top, 0px), 20px);
+
+    /* Mai specific tokens */
+    --mai-felt: 343 40% 27%;
+    --mai-blush: 350 60% 80%;
+    --mai-warm: 25 80% 70%;
+    --mai-glow: 340 45% 65%;
+
+    /* Sidebar */
+    --sidebar-background: 30 25% 96%;
+    --sidebar-foreground: 343 35% 18%;
+    --sidebar-primary: 343 40% 27%;
+    --sidebar-primary-foreground: 30 30% 97%;
+    --sidebar-accent: 340 25% 92%;
+    --sidebar-accent-foreground: 343 40% 20%;
+    --sidebar-border: 340 20% 90%;
+    --sidebar-ring: 343 40% 27%;
+
+    /* Gradients */
+    --gradient-mai: linear-gradient(135deg, hsl(343 40% 27%), hsl(340 45% 40%));
+    --gradient-warm: linear-gradient(180deg, hsl(30 25% 97%), hsl(340 25% 95%));
+    --gradient-berry: linear-gradient(135deg, hsl(340 35% 85%), hsl(350 60% 80%));
+  }
+
+  .dark {
+    --background: 343 35% 8%;
+    --foreground: 30 25% 95%;
+
+    --card: 343 30% 12%;
+    --card-foreground: 30 25% 95%;
+
+    --popover: 343 30% 12%;
+    --popover-foreground: 30 25% 95%;
+
+    --primary: 340 45% 65%;
+    --primary-foreground: 343 35% 8%;
+
+    --secondary: 343 25% 18%;
+    --secondary-foreground: 30 25% 95%;
+
+    --muted: 343 20% 16%;
+    --muted-foreground: 340 15% 60%;
+
+    --accent: 343 25% 22%;
+    --accent-foreground: 30 25% 95%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 343 20% 18%;
+    --input: 343 20% 18%;
+    --ring: 340 45% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Quicksand', 'Noto Sans SC', sans-serif;
+  }
+}
+
+/* Mai wool-felt texture */
+@layer utilities {
+  .felt-texture {
+    background-image: 
+      radial-gradient(ellipse at 20% 30%, hsl(350 60% 80% / 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsl(25 80% 70% / 0.2) 0%, transparent 50%);
+    filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='felt'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3C/svg%3E#felt");
+  }
+
+  .glass-panel {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50;
+  }
+
+  .mai-shadow {
+    box-shadow: 
+      0 4px 20px -4px hsl(343 40% 27% / 0.15),
+      0 2px 8px -2px hsl(343 40% 27% / 0.1);
+  }
+
+  .mai-glow {
+    box-shadow: 0 0 20px 4px hsl(340 45% 65% / 0.2);
+  }
+}
+
+/* Agent rich card styles (web parity: hospital bag card) */
+.agent-card {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d6dde5;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.agent-card-hospital_bag_card {
+  gap: 14px;
+  border-color: #e8cfd5;
+  background: linear-gradient(180deg, #fffafb 0%, #ffffff 46%);
+  color: #2a1f27;
+}
+
+.agent-card-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e3e8ee;
+}
+
+.agent-card-hospital_bag_card .agent-card-header {
+  position: relative;
+  min-height: 72px;
+  padding: 4px 0 14px;
+  border-bottom-color: #eedde1;
+}
+
+.agent-card-hospital_bag_card .agent-card-header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 54px;
+  height: 3px;
+  border-radius: 999px;
+  background: #a74768;
+}
+
+.agent-card-header-text {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.agent-card-header h2 {
+  margin: 0;
+  color: #241923;
+  font-size: 22px;
+  line-height: 1.12;
+}
+
+.agent-card-header p {
+  margin: 0;
+  color: #6d5864;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.agent-card-logo {
+  width: 96px;
+  height: 56px;
+  object-fit: contain;
+  object-position: center;
+  justify-self: end;
+  padding: 3px;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.agent-card-section {
+  display: grid;
+  gap: 9px;
+}
+
+.agent-card-section h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #5f2f45;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.agent-card-section h3::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #d98aa3;
+}
+
+.agent-card-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  font-size: 13px;
+}
+
+.agent-card-list li {
+  position: relative;
+  padding-left: 16px;
+  line-height: 1.45;
+}
+
+.agent-card-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #d98aa3;
+}
+
+.packing-group {
+  display: grid;
+  gap: 8px;
+  padding: 0 0 11px 12px;
+  border: 0;
+  border-left: 3px solid #e4a4b8;
+  border-radius: 0;
+  background: transparent;
+}
+
+.packing-group:not(:last-child) {
+  border-bottom: 1px solid #f0e3e7;
+}
+
+.packing-group h4 {
+  margin: 0;
+  color: #35212c;
+  font-size: 14px;
+}
+
+.packing-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 8px;
+  align-items: center;
+  padding: 7px 0;
+  border-top: 1px solid #f4ecef;
+}
+
+.packing-item:first-child {
+  border-top: 0;
+}
+
+.packing-item small {
+  grid-column: 1 / -1;
+  color: #76636e;
+  line-height: 1.4;
+}
+
+.priority {
+  border: 1px solid #e7c9d1;
+  border-radius: 999px;
+  padding: 2px 7px;
+  background: #fff7f8;
+  color: #7a4259;
+  font-size: 10px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.priority-must {
+  border-color: #176b87;
+  background: #eef8fa;
+  color: #176b87;
+}
+
+.priority-confirm-first {
+  border-color: #d6b36a;
+  background: #fff9e8;
+  color: #76571c;
+}
+
+.to-confirm {
+  color: #8a6d3b;
+  font-style: italic;
+}
+
+.agent-card-disclaimer {
+  margin: 0;
+  padding: 9px 10px 0;
+  border-top: 1px solid #eedde1;
+  color: #7b6871;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.card-export-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
+  min-width: 30px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #e3d5da;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #7a4259;
+  box-shadow: 0 1px 6px rgba(52, 31, 43, 0.12);
+}
+
+.card-export-button svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.card-export-button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.card-export-spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid #e1c3cf;
+  border-top-color: #a74768;
+  border-radius: 999px;
+  animation: card-export-spin 0.9s linear infinite;
+}
+
+@keyframes card-export-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === Mai emotion animations === */
+
+/* Calm: gentle breathing scale */
+@keyframes mai-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+.mai-anim-breathe { animation: mai-breathe 3s ease-in-out infinite; }
+
+/* Happy: playful bounce */
+@keyframes mai-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-3px) rotate(1.5deg); }
+  50% { transform: translateY(0) rotate(0deg); }
+  75% { transform: translateY(-2px) rotate(-1deg); }
+}
+.mai-anim-bounce { animation: mai-bounce 1.8s ease-in-out infinite; }
+
+/* Encourage: confident nod */
+@keyframes mai-nod {
+  0%, 100% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(2px) scale(1.02); }
+  50% { transform: translateY(-1px) scale(1); }
+  70% { transform: translateY(1px) scale(1.01); }
+}
+.mai-anim-nod { animation: mai-nod 2.2s ease-in-out infinite; }
+
+/* Thinking: gentle side sway */
+@keyframes mai-sway {
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  25% { transform: rotate(-2deg) translateX(-1px); }
+  75% { transform: rotate(2deg) translateX(1px); }
+}
+.mai-anim-sway { animation: mai-sway 2.5s ease-in-out infinite; }
+
+@keyframes work-title-sweep {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+@keyframes messageIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Worry: subtle tremble */
+@keyframes mai-tremble {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  10% { transform: translateX(-0.5px) translateY(0.5px); }
+  20% { transform: translateX(0.8px) translateY(-0.3px); }
+  30% { transform: translateX(-0.3px) translateY(0.5px); }
+  40% { transform: translateX(0.5px) translateY(-0.5px); }
+  50% { transform: translateX(-0.5px) translateY(0); }
+  60% { transform: translateX(0.3px) translateY(0.3px); }
+  70% { transform: translateX(-0.8px) translateY(-0.3px); }
+  80% { transform: translateX(0.5px) translateY(0.5px); }
+  90% { transform: translateX(-0.3px) translateY(-0.5px); }
+}
+.mai-anim-tremble { animation: mai-tremble 1.5s ease-in-out infinite; }
+
+/* Alert: attention pulse */
+@keyframes mai-pulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.06); filter: brightness(1.05); }
+}
+.mai-anim-pulse { animation: mai-pulse 1s ease-in-out infinite; }
+
+/* General utility animations */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px 2px hsl(340 45% 65% / 0.2); }
+  50% { box-shadow: 0 0 24px 6px hsl(340 45% 65% / 0.35); }
+}
+
+@keyframes flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Mandala rotation */
+@keyframes mandala-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mandala pulse (breathing) */
+@keyframes mandala-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.12); opacity: 0.8; }
+}
+
+/* Spiral pump rotation (legacy compat) */
+@keyframes pump-spiral {
+  0% { transform: scale(var(--pump-scale-min, 1)) rotate(0deg); }
+  50% { transform: scale(var(--pump-scale-max, 1.1)) rotate(180deg); }
+  100% { transform: scale(var(--pump-scale-min, 1)) rotate(360deg); }
+}
+
+/* Galaxy pipe flow - moving gradient */
+@keyframes galaxy-flow {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -40; }
+}
+
+/* Bottle liquid wave */
+@keyframes bottle-wave {
+  0%, 100% { d: path("M0,4 Q5,0 10,4 Q15,8 20,4 Q25,0 30,4 V20 H0 Z"); }
+  50% { d: path("M0,4 Q5,8 10,4 Q15,0 20,4 Q25,8 30,4 V20 H0 Z"); }
+}
+
+/* Breast wave */
+.breast-wave {
+  animation: breast-wave-drift 2.5s ease-in-out infinite;
+}
+@keyframes breast-wave-drift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
+
+/* Sprout jitter for letdown */
+@keyframes sprout-jitter {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-1px, 1px) rotate(-3deg); }
+  30% { transform: translate(1px, -1px) rotate(3deg); }
+  50% { transform: translate(-1px, 0) rotate(-2deg); }
+  70% { transform: translate(1px, 1px) rotate(2deg); }
+  90% { transform: translate(0, -1px) rotate(-1deg); }
+}
+.sprout-jitter { animation: sprout-jitter 0.4s ease-in-out infinite; }
+
+/* Droplet fall */
+@keyframes droplet-fall {
+  0% { transform: translateY(0) scale(1); opacity: 0.8; }
+  80% { opacity: 0.6; }
+  100% { transform: translateY(20px) scale(0.6); opacity: 0; }
+}
+
+/* Mobile-first scrollbar */
+::-webkit-scrollbar {
+  width: 0px;
+}
