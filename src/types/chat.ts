@@ -35,6 +35,15 @@ export interface ChatStreamRenderItemRich {
 
 export type ChatStreamRenderItem = ChatStreamRenderItemText | ChatStreamRenderItemRich;
 
+export interface ChatMessageImageAttachment {
+  type: "image";
+  previewUrl: string;
+  fileName?: string;
+  fileType?: string;
+  fileSize?: number;
+  uploadedFileId?: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "mai" | "user";
@@ -53,6 +62,7 @@ export interface ChatMessage {
     | "maternity-flow"
     | "work-flow";
   cardData?: Record<string, unknown>;
+  attachments?: ChatMessageImageAttachment[];
   links?: ChatMessageLink[];
   /** chat-messages SSE 推送的富文本（event: rich_text） */
   richText?: ChatRichTextPayload;

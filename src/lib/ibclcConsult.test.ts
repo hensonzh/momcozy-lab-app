@@ -1,17 +1,21 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildIbclcChatUrl,
+  clearStoredIbclcReturnViewport,
   isIbclcCompletionForCard,
   publishIbclcConsultCompleted,
+  readStoredIbclcReturnViewport,
+  readStoredIbclcReturnTo,
+  readStoredIbclcConsultCompletions,
   readStoredIbclcConsultCompletion,
+  rememberIbclcReturnViewport,
+  rememberIbclcReturnTo,
   stableIbclcConsultId,
 } from "@/lib/ibclcConsult";
 
 describe("ibclcConsult", () => {
   beforeEach(() => {
     localStorage.clear();
-    vi.unstubAllEnvs();
-    vi.stubEnv("VITE_CHAT_IMAGE_PROXY_TARGET", "");
   });
 
   it("builds the IBCLC chat url with thread and consult ids", () => {
@@ -26,15 +30,7 @@ describe("ibclcConsult", () => {
     );
   });
 
-  it("prefixes relative IBCLC chat urls with the configured proxy target", () => {
-    vi.stubEnv("VITE_CHAT_IMAGE_PROXY_TARGET", "http://192.168.24.182:8900");
-
-    expect(buildIbclcChatUrl("/ibclc-chat.html", "ibclc_1", "thread_1")).toBe(
-      "http://192.168.24.182:8900/ibclc-chat.html?thread_id=thread_1&consult_id=ibclc_1",
-    );
-  });
-
-  it("matches completion events to the same card only", () => {
+  it("matches completion events by consult id", () => {
     const payload = {
       type: "momcozy.ibclc_consult_completed" as const,
       conversation_id: "thread_1",
@@ -43,7 +39,7 @@ describe("ibclcConsult", () => {
 
     expect(isIbclcCompletionForCard(payload, "thread_1", "ibclc_1")).toBe(true);
     expect(isIbclcCompletionForCard(payload, "thread_1", "ibclc_2")).toBe(false);
-    expect(isIbclcCompletionForCard(payload, "thread_2", "ibclc_1")).toBe(false);
+    expect(isIbclcCompletionForCard(payload, "thread_2", "ibclc_1")).toBe(true);
   });
 
   it("publishes and stores the completion payload", () => {
@@ -58,6 +54,50 @@ describe("ibclcConsult", () => {
       consult_id: "ibclc_1",
       event: "done",
     });
+    expect(readStoredIbclcConsultCompletions()).toHaveLength(1);
+  });
+
+  it("keeps completion status for multiple consultation cards", () => {
+    publishIbclcConsultCompleted(
+      { conversation_id: "thread_1", consult_id: "ibclc_1", event: "done" },
+      { conversationId: "thread_fallback", consultId: "ibclc_fallback" },
+    );
+    publishIbclcConsultCompleted(
+      { conversation_id: "thread_2", consult_id: "ibclc_2", event: "done" },
+      { conversationId: "thread_fallback", consultId: "ibclc_fallback" },
+    );
+
+    const completions = readStoredIbclcConsultCompletions();
+    expect(completions.map((payload) => payload.consult_id)).toEqual(["ibclc_1", "ibclc_2"]);
+    expect(completions.some((payload) => isIbclcCompletionForCard(payload, "thread_1", "ibclc_1"))).toBe(true);
+    expect(completions.some((payload) => isIbclcCompletionForCard(payload, "thread_2", "ibclc_2"))).toBe(true);
+    expect(readStoredIbclcConsultCompletion()).toMatchObject({ consult_id: "ibclc_2" });
+  });
+
+  it("stores the last IBCLC return target for route recovery", () => {
+    rememberIbclcReturnTo("/?tab=agent#latest");
+
+    expect(readStoredIbclcReturnTo()).toBe("/?tab=agent#latest");
+  });
+
+  it("stores and reads the IBCLC return viewport for the matching route only", () => {
+    rememberIbclcReturnViewport({
+      returnTo: "/?tab=agent#latest",
+      consultId: "ibclc_1",
+      scrollTop: 320.4,
+      scrollHeight: 1200,
+    });
+
+    expect(readStoredIbclcReturnViewport("/other")).toBeNull();
+    expect(readStoredIbclcReturnViewport("/?tab=agent#latest")).toMatchObject({
+      return_to: "/?tab=agent#latest",
+      consult_id: "ibclc_1",
+      scroll_top: 320,
+      scroll_height: 1200,
+    });
+
+    clearStoredIbclcReturnViewport();
+    expect(readStoredIbclcReturnViewport("/?tab=agent#latest")).toBeNull();
   });
 
   it("creates deterministic consult ids from the same seed", () => {

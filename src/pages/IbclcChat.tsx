@@ -5,6 +5,7 @@ import { getAgUiThreadIdForRequest } from "@/lib/agentConversationSession";
 import {
   publishIbclcConsultCompleted,
   readOrCreateIbclcClientUserId,
+  readStoredIbclcReturnTo,
   recordIbclcConsultCompleted,
 } from "@/lib/ibclcConsult";
 
@@ -56,15 +57,15 @@ function MicIcon() {
   );
 }
 
-export default function IbclcChat() {
+export type IbclcChatPanelProps = {
+  conversationId: string;
+  consultId: string;
+  returnTo?: string;
+  onClose?: () => void;
+};
+
+export function IbclcChatPanel({ conversationId, consultId, returnTo = "/", onClose }: IbclcChatPanelProps) {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const conversationId = useMemo(
-    () => searchParams.get("thread_id")?.trim() || getAgUiThreadIdForRequest(),
-    [searchParams],
-  );
-  const consultId = useMemo(() => searchParams.get("consult_id")?.trim() || "", [searchParams]);
-  const returnTo = useMemo(() => safeSameOriginPath(searchParams.get("return_to")), [searchParams]);
   const clientUserId = useMemo(() => readOrCreateIbclcClientUserId(DEFAULT_CHAT_USER_ID), []);
   const [connectionText, setConnectionText] = useState(CONNECTION_STEPS[0].text);
   const [isChatting, setIsChatting] = useState(false);
@@ -82,20 +83,40 @@ export default function IbclcChat() {
   }, []);
 
   const returnToAgent = () => {
+    if (onClose) {
+      onClose();
+      return;
+    }
     navigate(returnTo, { replace: true });
+    window.setTimeout(() => {
+      if (window.location.pathname === "/ibclc-chat.html") {
+        window.location.replace(returnTo);
+      }
+    }, 120);
   };
 
   const handleEndConsult = async () => {
     if (ending) return;
     setEnding(true);
-    const result = await recordIbclcConsultCompleted({
+    const fallback = { conversationId, consultId };
+    publishIbclcConsultCompleted(
+      {
+        status: conversationId ? "local_completed" : "missing_conversation_id",
+        conversation_id: conversationId,
+        consult_id: consultId,
+        event_type: "ibclc_consult_completed",
+      },
+      fallback,
+    );
+    void recordIbclcConsultCompleted({
       conversationId,
       clientUserId,
       consultId,
       locale: navigator.language || "zh-CN",
       timezone: fallbackTimezone(),
+    }).then((result) => {
+      publishIbclcConsultCompleted(result, fallback);
     });
-    publishIbclcConsultCompleted(result, { conversationId, consultId });
     returnToAgent();
   };
 
@@ -163,4 +184,16 @@ export default function IbclcChat() {
       </div>
     </div>
   );
+}
+
+export default function IbclcChat() {
+  const [searchParams] = useSearchParams();
+  const conversationId = useMemo(
+    () => searchParams.get("thread_id")?.trim() || getAgUiThreadIdForRequest(),
+    [searchParams],
+  );
+  const consultId = useMemo(() => searchParams.get("consult_id")?.trim() || "", [searchParams]);
+  const returnTo = useMemo(() => safeSameOriginPath(searchParams.get("return_to") || readStoredIbclcReturnTo()), [searchParams]);
+
+  return <IbclcChatPanel conversationId={conversationId} consultId={consultId} returnTo={returnTo} />;
 }

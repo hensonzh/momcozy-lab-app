@@ -419,22 +419,28 @@ function artifactActionFromEvent(rec: Record<string, unknown>): Record<string, u
   if (!artifact) return null;
   const artifactType = normalizeArtifactType(rec.artifact_type);
   const toolName = normalizeToolName(rec.tool_call_name);
+  const artifactId =
+    coalesceString(rec.artifact_id) ||
+    coalesceString(rec.artifactId) ||
+    coalesceString(artifact.id);
+  const identity = artifactId ? { artifact_id: artifactId } : {};
 
   if (artifactType === "form") {
-    return { kind: "ag_ui_artifact", artifact_type: "form", form: artifact };
+    return { kind: "ag_ui_artifact", artifact_type: "form", ...identity, form: artifact };
   }
   if (artifactType === "support_ticket" || artifactType === "support_ticket_draft") {
     return {
       kind: "ag_ui_artifact",
       artifact_type: "support_ticket_draft",
+      ...identity,
       ticket: artifact,
       submit_label: coalesceString(rec.submit_label) || "确认并提交",
     };
   }
   if (artifactType === "ibclc_consult" || toolName === "ibclc_consult_card_create") {
-    return { kind: "ag_ui_artifact", artifact_type: "ibclc_consult", card: artifact };
+    return { kind: "ag_ui_artifact", artifact_type: "ibclc_consult", ...identity, card: artifact };
   }
-  return { kind: "ag_ui_artifact", artifact_type: "card", card: artifact };
+  return { kind: "ag_ui_artifact", artifact_type: "card", ...identity, card: artifact };
 }
 
 function richTextPayloadForArtifactAction(action: Record<string, unknown>): ChatRichTextPayload {
@@ -460,16 +466,18 @@ function richTextPayloadFromRecord(payload: Record<string, unknown>): ChatRichTe
 function artifactActionFromToolResultPayload(parsed: Record<string, unknown>): Record<string, unknown> | null {
   const toolName = normalizeToolName(coalesceString(parsed.tool_name) || coalesceString(parsed.toolName));
   const form = asRecord(parsed.form);
+  const artifactId = coalesceString(parsed.artifact_id) || coalesceString(parsed.artifactId);
+  const identity = artifactId ? { artifact_id: artifactId } : {};
   if (toolName === "ui_form_create" && form) {
-    return { kind: "ag_ui_artifact", artifact_type: "form", form };
+    return { kind: "ag_ui_artifact", artifact_type: "form", ...identity, form };
   }
 
   const card = asRecord(parsed.card);
   if (toolName === "ui_card_create" && card) {
-    return { kind: "ag_ui_artifact", artifact_type: "card", card };
+    return { kind: "ag_ui_artifact", artifact_type: "card", ...identity, card };
   }
   if (toolName === "ibclc_consult_card_create") {
-    return { kind: "ag_ui_artifact", artifact_type: "ibclc_consult", card: card ?? parsed };
+    return { kind: "ag_ui_artifact", artifact_type: "ibclc_consult", ...identity, card: card ?? parsed };
   }
 
   const ticket = asRecord(parsed.ticket);
@@ -477,6 +485,7 @@ function artifactActionFromToolResultPayload(parsed: Record<string, unknown>): R
     return {
       kind: "ag_ui_artifact",
       artifact_type: "support_ticket_draft",
+      ...identity,
       ticket: ticket ?? parsed,
       submit_label: coalesceString(parsed.submit_label) || "确认并提交",
     };
@@ -501,6 +510,41 @@ export function richTextFromToolResultPayload(parsed: Record<string, unknown>): 
 
   const action = artifactActionFromToolResultPayload(parsed);
   return action ? richTextPayloadForArtifactAction(action) : null;
+}
+
+function richArtifactActionKey(action: unknown): string {
+  const obj = asRecord(action);
+  if (!obj || coalesceString(obj.kind) !== "ag_ui_artifact") return "";
+  const artifactType = normalizeArtifactType(obj.artifact_type);
+  const artifactId = coalesceString(obj.artifact_id) || coalesceString(obj.artifactId);
+  if (artifactId) return `artifact:${artifactId}`;
+
+  const form = asRecord(obj.form);
+  const card = asRecord(obj.card);
+  const ticket = asRecord(obj.ticket);
+  const embeddedId =
+    coalesceString(form?.id) ||
+    coalesceString(card?.id) ||
+    coalesceString(ticket?.id);
+  if (artifactType && embeddedId) return `${artifactType}:${embeddedId}`;
+
+  return artifactType === "support_ticket_draft" ? "support_ticket_draft:current" : "";
+}
+
+function mergeRichActions(prev: unknown[], next: unknown[]): unknown[] {
+  const merged = [...prev];
+  for (const action of next) {
+    const key = richArtifactActionKey(action);
+    if (key) {
+      const existingIndex = merged.findIndex((item) => richArtifactActionKey(item) === key);
+      if (existingIndex >= 0) {
+        merged[existingIndex] = action;
+        continue;
+      }
+    }
+    merged.push(action);
+  }
+  return merged;
 }
 
 function extractLoadedSkillIds(rec: Record<string, unknown>): string[] {
@@ -547,7 +591,7 @@ export function mergePendingRichTextPayload(
     content: parts.join("\n\n"),
     button: [...prev.button, ...next.button],
     card: [...prev.card, ...next.card],
-    action: [...prev.action, ...next.action],
+    action: mergeRichActions(prev.action, next.action),
   };
 }
 
