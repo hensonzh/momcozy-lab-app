@@ -1,0 +1,46 @@
+/** AgentHub 版面与页面拆离的常量（避免 AgentHub.tsx 顶部过长） */
+
+/** Hub 药丸 flowType → 传给设备指引的固定 query。 */
+export const DEVICE_INSTRUCT_QUERY_BY_FLOW: Record<string, string> = {
+  unbox: "开箱指引",
+  "wearing-guide": "上身指引",
+  measurement: "法兰或硅胶塞调整",
+  maintenance: "设备保养",
+};
+
+export const DEFAULT_CHAT_USER_ID = (import.meta.env.VITE_DEFAULT_USER_ID as string | undefined) || "app-user";
+
+export const CALIBRATION_HUB_NOTICE_KEY = "calibrationHubNotice";
+
+/** 分段 TTS 首段最大字符数（Hub 自动播报与气泡手动播报共用） */
+export const HUB_AUTO_VOICE_FIRST_TTS_MAX_CHARS = 120;
+
+export const HUB_BOTTOM_NAV_HEIGHT = "4rem";
+export const HUB_BOTTOM_INPUT_GAP = "6px";
+
+export const HUB_CHAT_HISTORY_PAGE = 10;
+export const HUB_CHAT_TOP_EPS = 2;
+export const HUB_CHAT_WHEEL_OVERSCROLL_TO_LOAD = 56;
+export const HUB_CHAT_TOUCH_PULL_TO_LOAD = 64;
+export const HUB_CHAT_LOAD_OLDER_COOLDOWN_MS = 450;
+
+export const SHORTCUT_QUERY = {
+  prenatalCare: "产前咨询",
+  deviceGuidance: "设备指导",
+  healthConsult: "健康咨询",
+  milkManagement: "奶量管理"
+} as const;
+
+export const cardBg: Record<string, string> = {
+  report: "border-mai-warm/30 bg-mai-warm/5",
+  encourage: "border-mai-blush/30 bg-mai-blush/5",
+  plan: "border-primary/20 bg-primary/5",
+  tutorial: "border-accent/40 bg-accent/10",
+  data: "border-muted-foreground/20 bg-muted/50",
+  calibration: "border-accent/40 bg-accent/10",
+  "device-flow": "border-accent/40 bg-accent/10",
+  "schedule-flow": "border-accent/40 bg-accent/10",
+  "lactation-flow": "border-primary/20 bg-primary/5",
+  "maternity-flow": "border-pink-200 bg-pink-50/50 dark:border-pink-800 dark:bg-pink-900/10",
+  "work-flow": "border-violet-200 bg-violet-50/50 dark:border-violet-800 dark:bg-violet-900/10",
+};

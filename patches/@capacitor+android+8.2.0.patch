@@ -1,0 +1,37 @@
+diff --git a/node_modules/@capacitor/android/capacitor/build.gradle b/node_modules/@capacitor/android/capacitor/build.gradle
+index cdb8c2d..3580b50 100644
+--- a/node_modules/@capacitor/android/capacitor/build.gradle
++++ b/node_modules/@capacitor/android/capacitor/build.gradle
+@@ -41,7 +41,7 @@ if (System.getenv("CAP_PUBLISH") == "true") {
+ 
+ android {
+     namespace = "com.getcapacitor.android"
+-    compileSdk = project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 36
++    compileSdk rootProject.ext.compileSdkVersion
+     defaultConfig {
+         minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 24
+         targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 36
+diff --git a/node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Logger.java b/node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Logger.java
+index 9d24fed..8a41847 100644
+--- a/node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Logger.java
++++ b/node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Logger.java
+@@ -33,17 +33,9 @@ public class Logger {
+         return LOG_TAG_CORE;
+     }
+ 
+-    public static void verbose(String message) {
+-        verbose(LOG_TAG_CORE, message);
+-    }
+-
+-    public static void verbose(String tag, String message) {
+-        if (!shouldLog()) {
+-            return;
+-        }
++    public static void verbose(String message) {}
+ 
+-        Log.v(tag, message);
+-    }
++    public static void verbose(String tag, String message) {}
+ 
+     public static void debug(String message) {
+         debug(LOG_TAG_CORE, message);
