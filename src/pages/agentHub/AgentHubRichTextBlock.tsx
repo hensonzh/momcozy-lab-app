@@ -1,5 +1,27 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Baby,
+  Banknote,
+  BatteryCharging,
+  Cable,
+  CircleHelp,
+  CreditCard,
+  CupSoda,
+  Droplets,
+  FileText,
+  Footprints,
+  Headphones,
+  Heart,
+  IdCard,
+  Milk,
+  Package,
+  Shirt,
+  Smartphone,
+  Stethoscope,
+  Utensils,
+  type LucideIcon,
+} from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import { cn } from "@/lib/utils";
@@ -12,9 +34,13 @@ import { toPng } from "html-to-image";
 import momcozyLogo from "@/assets/momcozy_logo.png";
 import { getAgUiThreadIdForRequest } from "@/lib/agentConversationSession";
 import {
+  IBCLC_CONSULT_COMPLETED_KEY,
+  IBCLC_CONSULT_COMPLETIONS_KEY,
   buildIbclcChatUrl,
   isIbclcCompletionForCard,
-  readStoredIbclcConsultCompletion,
+  rememberIbclcReturnTo,
+  rememberIbclcReturnViewport,
+  readStoredIbclcConsultCompletions,
   stableIbclcConsultId,
   type IbclcConsultCompletedPayload,
 } from "@/lib/ibclcConsult";
@@ -24,6 +50,13 @@ import {
  * open / switch / 默认续聊交由回调或路由处理。
  */
 type ButtonSelectOptions = { displayText?: string };
+
+export type IbclcConsultOpenRequest = {
+  consultId: string;
+  threadId: string;
+  returnTo: string;
+  chatUrl: string;
+};
 
 type FormFieldSpec = {
   id: string;
@@ -44,6 +77,29 @@ function asObject(v: unknown): Record<string, unknown> | null {
 
 function asString(v: unknown): string {
   return typeof v === "string" ? v : "";
+}
+
+function nearestScrollableParent(node: HTMLElement | null): HTMLElement | null {
+  let current = node?.parentElement ?? null;
+  while (current && current !== document.body) {
+    const style = window.getComputedStyle(current);
+    if (/(auto|scroll)/.test(style.overflowY) && current.scrollHeight > current.clientHeight) {
+      return current;
+    }
+    current = current.parentElement;
+  }
+  return null;
+}
+
+function rememberIbclcViewportForNode(node: HTMLElement | null, returnTo: string, consultId: string): void {
+  const scroller = nearestScrollableParent(node);
+  if (!scroller) return;
+  rememberIbclcReturnViewport({
+    returnTo,
+    consultId,
+    scrollTop: scroller.scrollTop,
+    scrollHeight: scroller.scrollHeight,
+  });
 }
 
 function hasDisplayValue(value: unknown): boolean {
@@ -180,7 +236,8 @@ function buildSupportTicketSubmittedMessage(ticket: Record<string, unknown>): st
 }
 
 function isConfirmPlaceholder(value: unknown): boolean {
-  return String(value ?? "").trim().toLowerCase() === "to confirm";
+  const text = String(value ?? "").trim().toLowerCase();
+  return text === "to confirm" || text === "待确认";
 }
 
 function limitList(values: unknown, maxItems: number): unknown[] {
@@ -194,28 +251,40 @@ function compactBirthPlanList(values: unknown, maxItems: number): string[] {
     if (!hasDisplayValue(value)) return [];
     return [formatPlainValue(value)];
   };
-  return flatten(values).filter((value) => !isConfirmPlaceholder(value)).slice(0, maxItems);
+  return flatten(values)
+    .map(normalizeBirthPlanValue)
+    .filter((value) => value && !isConfirmPlaceholder(value))
+    .filter((value, index, arr) => arr.indexOf(value) === index)
+    .slice(0, maxItems);
+}
+
+function normalizeBirthPlanValue(value: unknown): string {
+  const text = formatPlainValue(value).trim().replace(/^\s*\d+[.)、．]\s*/, "").replace(/\s+/g, " ");
+  const labels: Record<string, string> = {
+    "birth plan card": "分娩沟通卡",
+    "labor room communication priority card": "产房沟通优先级卡片",
+    vaginal: "顺产",
+    planned_c_section: "刨腹产",
+    c_section: "刨腹产",
+    "c-section": "刨腹产",
+    cesarean: "刨腹产",
+    "计划剖宫产": "刨腹产",
+    "剖腹产": "刨腹产",
+    "skin-to-skin": "出生后尽早肌肤接触",
+    "skin to skin": "出生后尽早肌肤接触",
+  };
+  return labels[text.toLowerCase()] || labels[text] || text.replace(/skin-to-skin|skin to skin/gi, "出生后尽早肌肤接触");
 }
 
 function compactPackingItems(items: unknown): Array<Record<string, unknown>> {
   if (!Array.isArray(items)) return [];
-  const rows = items.filter((it) => it && typeof it === "object") as Array<Record<string, unknown>>;
-  if (rows.length <= 4) return rows;
-  const pumpIndex = rows.findIndex((item) => {
-    const text = JSON.stringify(item ?? {}).toLowerCase();
-    return text.includes("吸奶") || text.includes("breast pump") || text.includes("pump");
-  });
-  if (pumpIndex < 0 || pumpIndex < 4) return rows.slice(0, 4);
-  const visible = rows.slice(0, 4);
-  visible[3] = rows[pumpIndex];
-  return visible;
+  return items.filter((it) => it && typeof it === "object") as Array<Record<string, unknown>>;
 }
 
 function compactPackingGroups(groups: unknown): Array<Record<string, unknown> & { items: Array<Record<string, unknown>> }> {
   if (!Array.isArray(groups)) return [];
   return groups
     .filter((g) => g && typeof g === "object")
-    .slice(0, 3)
     .map((group) => {
       const g = group as Record<string, unknown>;
       return {
@@ -228,10 +297,10 @@ function compactPackingGroups(groups: unknown): Array<Record<string, unknown> & 
 
 function priorityLabel(priority: unknown): string {
   const labels: Record<string, string> = {
-    must: "Essential",
-    recommended: "Helpful",
-    nice_to_have: "Optional",
-    confirm_first: "Confirm",
+    must: "必带",
+    recommended: "建议",
+    nice_to_have: "可选",
+    confirm_first: "先确认",
   };
   const key = String(priority ?? "");
   return labels[key] || formatLabel(key);
@@ -240,8 +309,162 @@ function priorityLabel(priority: unknown): string {
 function priorityClassName(priority: unknown): string {
   const key = String(priority ?? "");
   if (key === "must") return "priority priority-must";
-  if (key === "confirm_first") return "priority priority-confirm-first";
+  if (key === "confirm_first" || key === "先确认") return "priority priority-confirm-first";
   return "priority";
+}
+
+function isConfirmFirstPackingItem(item: Record<string, unknown>): boolean {
+  const priority = asString(item.priority);
+  return priority === "confirm_first" || priority === "先确认";
+}
+
+function itemBelongsToGroup(item: Record<string, unknown>, group: Record<string, unknown>, tokens: string[]): boolean {
+  const text = `${asString(group.group_id)} ${asString(group.title)} ${asString(item.label)}`.toLowerCase();
+  return tokens.some((token) => text.includes(token));
+}
+
+function isDocumentPackingItem(item: Record<string, unknown>, group: Record<string, unknown>): boolean {
+  return itemBelongsToGroup(item, group, ["documents", "certificate", "证件", "资料", "身份证", "医保", "产检", "准生证", "户口本"]);
+}
+
+function isCommunicationPackingItem(item: Record<string, unknown>, group: Record<string, unknown>): boolean {
+  const label = asString(item.label);
+  if (/(吸管杯|水杯|餐具|纸杯)/.test(label)) return false;
+  return itemBelongsToGroup(item, group, ["communication", "通讯", "随身", "手机", "充电", "耳机", "power bank"]);
+}
+
+function normalizedPackingItemLabel(item: Record<string, unknown>, group: Record<string, unknown>): string {
+  const label = asString(item.label) || formatPlainValue(item);
+  if (isDocumentPackingItem(item, group)) {
+    return label.replace(/及复印件/g, "").replace(/和复印件/g, "").replace(/\/复印件/g, "").trim();
+  }
+  return label;
+}
+
+function inferredCopyRequirement(item: Record<string, unknown>, group: Record<string, unknown>): string {
+  if (!isDocumentPackingItem(item, group)) return "";
+  const explicit = asString(item.copy_requirement);
+  if (explicit) return explicit;
+  const label = asString(item.label);
+  const quantity = asString(item.quantity);
+  if (/复印件/.test(label)) return asString(item.priority) === "confirm_first" || /按医院/.test(quantity) ? "按医院要求确认" : "原件+复印件";
+  if (/(身份证|医保|产检)/.test(label)) return "原件";
+  return "";
+}
+
+function packingItemMeta(item: Record<string, unknown>, group: Record<string, unknown>): string {
+  if (isConfirmFirstPackingItem(item)) return "";
+  if (isCommunicationPackingItem(item, group)) return "";
+  return inferredCopyRequirement(item, group) || asString(item.quantity);
+}
+
+function packingItemNote(item: Record<string, unknown>): string {
+  if (isConfirmFirstPackingItem(item)) return "";
+  return asString(item.note);
+}
+
+function packingItemText(item: Record<string, unknown>, group: Record<string, unknown>): string {
+  const label = normalizedPackingItemLabel(item, group);
+  const meta = packingItemMeta(item, group);
+  return meta ? `${label} ${meta}` : label;
+}
+
+function packingItemIcon(item: Record<string, unknown>, group: Record<string, unknown>): LucideIcon {
+  const label = normalizedPackingItemLabel(item, group);
+  const text = `${asString(group.group_id)} ${asString(group.title)} ${label}`.toLowerCase();
+  if (/(身份证|准生证|户口本|证件|陪产人.*身份)/.test(text)) return IdCard;
+  if (/(产检|资料|医保|医保卡|医保本|本|文件|复印)/.test(text)) return FileText;
+  if (/(银行卡|现金|支付|移动支付)/.test(text)) return CreditCard;
+  if (/(手机$|手机\b|smartphone)/.test(text)) return Smartphone;
+  if (/(充电线|充电器|长充电线|cable)/.test(text)) return Cable;
+  if (/(充电宝|电池|power bank)/.test(text)) return BatteryCharging;
+  if (/(耳机|headphone)/.test(text)) return Headphones;
+  if (/(吸管杯|水杯|杯)/.test(text)) return CupSoda;
+  if (/(餐具|零食|水和零食|食物|能量|助产食品)/.test(text)) return Utensils;
+  if (/(纸尿裤|湿巾|棉柔巾|包被|宝宝|帽子|袜子|安全座椅|安全提篮|出院衣物)/.test(text)) return Baby;
+  if (/(出院外套|衣物|衣服|内裤|哺乳衣|睡衣|文胸|背心|拖鞋)/.test(text)) return Shirt;
+  if (/(产褥垫|卫生巾|马桶垫|毛巾|纸巾|脸盆|洗发水|沐浴露|洗面奶|护肤|牙刷|牙膏)/.test(text)) return Droplets;
+  if (/(吸奶器|储奶|初乳|乳盾|乳头霜|防溢乳垫|奶瓶|配方奶|milk|哺乳)/.test(text)) return Milk;
+  if (/(胎监带|收腹带|医生|医院|产后)/.test(text)) return Stethoscope;
+  if (/(常用药|药)/.test(text)) return Heart;
+  if (/(停车|交通)/.test(text)) return Banknote;
+  if (isConfirmFirstPackingItem(item)) return CircleHelp;
+  return Package;
+}
+
+function flattenPackingGroupItems(groups: Array<Record<string, unknown> & { items: Array<Record<string, unknown>> }>): Array<Record<string, unknown>> {
+  return groups.flatMap((group) => group.items.map((item) => ({ ...item, __group: group })));
+}
+
+function uniqueDisplayStrings(values: unknown[], maxItems: number): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const value of values) {
+    const text = formatPlainValue(value).trim();
+    if (!text || isConfirmPlaceholder(text) || seen.has(text)) continue;
+    seen.add(text);
+    result.push(text);
+    if (result.length >= maxItems) break;
+  }
+  return result;
+}
+
+function hospitalBagSummaryStrings(values: unknown, maxItems: number): string[] {
+  if (!Array.isArray(values)) return [];
+  return uniqueDisplayStrings(
+    values
+      .map((value) => {
+        if (value && typeof value === "object" && !Array.isArray(value)) {
+          const item = value as Record<string, unknown>;
+          const question = asString(item.question);
+          const topic = asString(item.topic) || asString(item.label) || asString(item.title);
+          if (question) return topic ? `${topic}：${question}` : question;
+          const text = asString(item.text) || asString(item.name) || asString(item.label) || asString(item.title);
+          const meta = asString(item.copy_requirement) || asString(item.quantity);
+          return meta && text ? `${text} ${meta}` : text;
+        }
+        return value;
+      })
+      .filter(hasDisplayValue),
+    maxItems,
+  );
+}
+
+function normalizeHospitalQuestionText(value: string): string {
+  const text = value.trim();
+  if (!text || text.includes("：")) return text;
+  if (/准生证|户口本|入院证件/.test(text)) {
+    return "准生证/户口本：确认医院是否要求携带原件和复印件，以及复印件份数。";
+  }
+  if (/医院是否提供.*(产褥垫|纸尿裤|宝宝衣物|毛巾|脸盆)|基础物品/.test(text)) {
+    return "产褥垫/纸尿裤/宝宝衣物：确认医院是否提供，避免重复携带。";
+  }
+  if (/陪产|探视/.test(text)) {
+    return "陪产/探视：确认陪产人入院材料、是否允许陪产或过夜。";
+  }
+  if (/(水|零食|吸管杯|充电宝).*(产房|允许|规则)/.test(text)) {
+    return "水/零食/充电宝：确认是否允许带入产房。";
+  }
+  if (/(乳盾|初乳收集器|吸奶器|奶瓶|配方奶)/.test(text)) {
+    return "喂养用品：确认是否允许携带或需要在哺乳指导下使用。";
+  }
+  const spaceSeparated = text.match(/^([^，。,.]{2,18})\s+(.+)$/);
+  if (spaceSeparated) return `${spaceSeparated[1]}：${spaceSeparated[2]}`;
+  return text;
+}
+
+function hospitalBagQuestionStrings(values: unknown, maxItems: number): string[] {
+  return uniqueDisplayStrings(hospitalBagSummaryStrings(values, maxItems * 2).map(normalizeHospitalQuestionText), maxItems);
+}
+
+function confirmTextFromPackingItem(item: Record<string, unknown>): string {
+  const group = asObject(item.__group) ?? {};
+  const question = asString(item.confirm_question);
+  const label = normalizedPackingItemLabel(item, group) || "待确认物品";
+  if (question) return `${label}：${question}`;
+  const note = asString(item.note);
+  if (note) return `${label}：${note}`;
+  return packingItemText(item, group);
 }
 
 function renderHospitalCardValue(value: unknown): React.ReactNode {
@@ -252,17 +475,40 @@ function renderHospitalCardValue(value: unknown): React.ReactNode {
   return text;
 }
 
+function hospitalBagMetaValue(value: unknown): unknown {
+  const text = String(value ?? "").trim();
+  const labels: Record<string, string> = {
+    minimal: "极简",
+    standard: "标准",
+    complete: "完整",
+    full: "完整",
+    budget: "预算优先",
+    budget_first: "预算优先",
+    vaginal: "顺产",
+    planned_c_section: "刨腹产",
+    c_section: "刨腹产",
+    "计划剖宫产": "刨腹产",
+    "剖腹产": "刨腹产",
+    breastfeeding: "母乳",
+    formula: "配方",
+    formula_feeding: "配方",
+    mixed: "混合",
+  };
+  return labels[text.toLowerCase()] || value;
+}
+
 function normalizeBirthPlanCard(cardJsonRaw: Record<string, unknown>) {
   const owner = asObject(cardJsonRaw.owner) ?? {};
   const overview = asObject(cardJsonRaw.overview) ?? {};
   const birthPreferences = asObject(cardJsonRaw.birth_preferences) ?? {};
   return {
-    title: asString(cardJsonRaw.title) || "Birth Plan Card",
-    subtitle: asString(cardJsonRaw.subtitle) || "Labor room communication priority card",
+    title: normalizeBirthPlanValue(asString(cardJsonRaw.title)) || "分娩沟通卡",
+    subtitle: normalizeBirthPlanValue(asString(cardJsonRaw.subtitle)) || "产房沟通优先级卡片",
     overview: {
-      due_date_or_week: overview.due_date_or_week ?? owner.due_date_or_week,
-      birth_path: overview.birth_path ?? birthPreferences.birth_path,
-      support_people: overview.support_people ?? owner.support_people,
+      due_date_or_week: normalizeBirthPlanValue(overview.due_date_or_week ?? owner.due_date_or_week),
+      birth_path: normalizeBirthPlanValue(overview.birth_path ?? birthPreferences.birth_path),
+      birth_setting: normalizeBirthPlanValue(overview.birth_setting ?? owner.birth_setting),
+      support_people: normalizeBirthPlanValue(overview.support_people ?? owner.support_people),
     },
     top_priorities: compactBirthPlanList(cardJsonRaw.top_priorities ?? asObject(cardJsonRaw.if_plans_change)?.what_matters_most, 3),
     communication: compactBirthPlanList(cardJsonRaw.communication ?? cardJsonRaw.communication_preferences, 3),
@@ -271,9 +517,10 @@ function normalizeBirthPlanCard(cardJsonRaw: Record<string, unknown>) {
     if_plans_change: compactBirthPlanList(cardJsonRaw.if_plans_change, 3),
     questions_for_hospital: compactBirthPlanList(cardJsonRaw.questions_for_hospital, 3),
     medical_notes: compactBirthPlanList(cardJsonRaw.medical_notes, 3),
+    personalized_notes: compactBirthPlanList(cardJsonRaw.personalized_notes, 3),
     disclaimer:
-      asString(cardJsonRaw.disclaimer) ||
-      "This card is for communication only. Please follow your clinician and hospital guidance, especially if plans change for safety reasons.",
+      normalizeBirthPlanValue(asString(cardJsonRaw.disclaimer)) ||
+      "这张卡只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。",
   };
 }
 
@@ -355,33 +602,34 @@ const AgentHubRichTextBlock: React.FC<{
   payload: ChatRichTextPayload;
   blockId?: string;
   onButtonSelect: (value: string, options?: ButtonSelectOptions) => void;
-}> = ({ payload, blockId = "rich", onButtonSelect }) => {
+  onOpenIbclcConsult?: (request: IbclcConsultOpenRequest) => void;
+}> = ({ payload, blockId = "rich", onButtonSelect, onOpenIbclcConsult }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [artifactError, setArtifactError] = useState<Record<number, string>>({});
   const [submittedArtifactMap, setSubmittedArtifactMap] = useState<Record<number, boolean>>({});
   const [downloadingCardIndex, setDownloadingCardIndex] = useState<number | null>(null);
-  const [ibclcCompletion, setIbclcCompletion] = useState<IbclcConsultCompletedPayload | null>(() =>
-    readStoredIbclcConsultCompletion(),
+  const [ibclcCompletions, setIbclcCompletions] = useState<IbclcConsultCompletedPayload[]>(() =>
+    readStoredIbclcConsultCompletions(),
   );
   const cardArtifactRefs = useRef<Record<number, HTMLElement | null>>({});
 
   useEffect(() => {
-    const syncCompletion = (payload?: IbclcConsultCompletedPayload | null) => {
-      setIbclcCompletion(payload ?? readStoredIbclcConsultCompletion());
+    const syncCompletion = () => {
+      setIbclcCompletions(readStoredIbclcConsultCompletions());
     };
     const onStorage = (event: StorageEvent) => {
-      if (event.key !== "momcozy_ibclc_consult_completed") return;
-      syncCompletion(readStoredIbclcConsultCompletion());
+      if (event.key !== IBCLC_CONSULT_COMPLETED_KEY && event.key !== IBCLC_CONSULT_COMPLETIONS_KEY) return;
+      syncCompletion();
     };
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== window.location.origin) return;
       const payload = event.data as IbclcConsultCompletedPayload | undefined;
-      if (payload?.type === "momcozy.ibclc_consult_completed") syncCompletion(payload);
+      if (payload?.type === "momcozy.ibclc_consult_completed") syncCompletion();
     };
     const onCustom = (event: Event) => {
       const payload = (event as CustomEvent<IbclcConsultCompletedPayload>).detail;
-      if (payload?.type === "momcozy.ibclc_consult_completed") syncCompletion(payload);
+      if (payload?.type === "momcozy.ibclc_consult_completed") syncCompletion();
     };
     const onFocus = () => syncCompletion();
     window.addEventListener("storage", onStorage);
@@ -402,26 +650,45 @@ const AgentHubRichTextBlock: React.FC<{
     const result: Array<
       | { kind: "form"; form: Record<string, unknown> }
       | { kind: "card"; card: Record<string, unknown> }
-      | { kind: "ibclc_consult"; card: Record<string, unknown> }
+      | { kind: "ibclc_consult"; card: Record<string, unknown>; artifactId?: string }
       | { kind: "support_ticket_draft"; ticket: Record<string, unknown>; submitLabel?: string }
     > = [];
+    const resultKeys: string[] = [];
+    const upsertArtifact = (artifact: (typeof result)[number], key: string) => {
+      if (!key) {
+        result.push(artifact);
+        resultKeys.push("");
+        return;
+      }
+      const index = resultKeys.indexOf(key);
+      if (index >= 0) result[index] = artifact;
+      else {
+        result.push(artifact);
+        resultKeys.push(key);
+      }
+    };
     for (const action of payload.action) {
       const obj = asObject(action);
       if (!obj) continue;
       if (asString(obj.kind) !== "ag_ui_artifact") continue;
       const artifactType = asString(obj.artifact_type);
+      const artifactId = asString(obj.artifact_id) || asString(obj.artifactId);
       if (artifactType === "form" && asObject(obj.form)) {
-        result.push({ kind: "form", form: asObject(obj.form)! });
+        const form = asObject(obj.form)!;
+        upsertArtifact({ kind: "form", form }, artifactId ? `form:${artifactId}` : asString(form.id) ? `form:${asString(form.id)}` : "");
       } else if (artifactType === "card" && asObject(obj.card)) {
-        result.push({ kind: "card", card: asObject(obj.card)! });
+        const card = asObject(obj.card)!;
+        upsertArtifact({ kind: "card", card }, artifactId ? `card:${artifactId}` : asString(card.id) ? `card:${asString(card.id)}` : "");
       } else if (artifactType === "ibclc_consult" && asObject(obj.card)) {
-        result.push({ kind: "ibclc_consult", card: asObject(obj.card)! });
+        const card = asObject(obj.card)!;
+        upsertArtifact({ kind: "ibclc_consult", card, artifactId: artifactId || undefined }, artifactId ? `ibclc_consult:${artifactId}` : asString(card.id) ? `ibclc_consult:${asString(card.id)}` : "");
       } else if (artifactType === "support_ticket_draft" && asObject(obj.ticket)) {
-        result.push({
+        const ticket = asObject(obj.ticket)!;
+        upsertArtifact({
           kind: "support_ticket_draft",
-          ticket: asObject(obj.ticket)!,
+          ticket,
           submitLabel: asString(obj.submit_label),
-        });
+        }, artifactId ? `support_ticket_draft:${artifactId}` : `support_ticket_draft:${asString(ticket.id) || "current"}`);
       }
     }
     return result;
@@ -476,15 +743,16 @@ const AgentHubRichTextBlock: React.FC<{
     }
   };
 
-  const renderFormField = (field: FormFieldSpec, variant: "default" | "support_ticket" = "default") => {
-    const isSupportTicket = variant === "support_ticket";
+  const renderFormField = (field: FormFieldSpec, variant: "default" | "monochrome" = "default") => {
+    const isMonochrome = variant === "monochrome";
     const requiredMark = field.required ? (
-      <span className={cn("mr-1", isSupportTicket ? "text-foreground" : "text-destructive")}>*</span>
+      <span className={cn("mr-1", isMonochrome ? "text-foreground" : "text-destructive")}>*</span>
     ) : null;
-    const fieldTextClass = isSupportTicket ? "text-neutral-950 dark:text-neutral-50" : "text-foreground";
+    const fieldTextClass = isMonochrome ? "text-neutral-950 dark:text-neutral-50" : "text-foreground";
     const inputClassName = cn(
-      "rounded-lg border px-2 py-1.5 text-[12px] outline-none transition-colors",
-      isSupportTicket
+      "rounded-lg border px-2 py-1.5 outline-none transition-colors",
+      isMonochrome ? "text-[14px]" : "text-[12px]",
+      isMonochrome
         ? "border-neutral-300 bg-white text-neutral-950 placeholder:text-neutral-400 focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950 dark:border-neutral-700 dark:bg-background dark:text-neutral-50 dark:placeholder:text-neutral-500 dark:focus:border-neutral-100 dark:focus:ring-neutral-100"
         : "border-border bg-background",
     );
@@ -495,16 +763,16 @@ const AgentHubRichTextBlock: React.FC<{
           key={field.id}
           className={cn(
             "rounded-lg border p-2.5",
-            isSupportTicket ? "border-neutral-300 bg-white dark:border-neutral-700 dark:bg-background" : "border-border/60",
+            isMonochrome ? "border-neutral-300 bg-white dark:border-neutral-700 dark:bg-background" : "border-border/60",
           )}
         >
-          <legend className={cn("text-[12px] font-medium px-1", fieldTextClass)}>
+          <legend className={cn(isMonochrome ? "text-[14px]" : "text-[12px]", "font-medium px-1", fieldTextClass)}>
             {requiredMark}
             {field.label}
           </legend>
           <div className="grid gap-1.5">
             {(field.options ?? []).map((option) => (
-              <label key={option} className={cn("inline-flex items-center gap-2 text-[12px]", fieldTextClass)}>
+              <label key={option} className={cn("inline-flex items-center gap-2", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
                 <input type="checkbox" name={field.id} value={option} defaultChecked={defaults.includes(option)} />
                 <span>{option}</span>
               </label>
@@ -514,7 +782,7 @@ const AgentHubRichTextBlock: React.FC<{
       );
     }
     return (
-      <label key={field.id} className={cn("grid gap-1 text-[12px]", fieldTextClass)}>
+      <label key={field.id} className={cn("grid gap-1", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
         <span className="font-medium">
           {requiredMark}
           {field.label}
@@ -551,7 +819,11 @@ const AgentHubRichTextBlock: React.FC<{
             className={inputClassName}
           />
         )}
-        {field.help_text ? <small className="text-[11px] text-muted-foreground">{field.help_text}</small> : null}
+        {field.help_text ? (
+          <small className={cn(isMonochrome ? "text-[12px]" : "text-[11px]", isMonochrome ? "text-neutral-600 dark:text-neutral-400" : "text-muted-foreground")}>
+            {field.help_text}
+          </small>
+        ) : null}
       </label>
     );
   };
@@ -570,12 +842,24 @@ const AgentHubRichTextBlock: React.FC<{
             const consultantBio = asString(consultant.bio);
             const url = asString(chat.url) || "/ibclc-chat.html";
             const threadId = getAgUiThreadIdForRequest();
-            const consultId = stableIbclcConsultId(`${blockId}:${index}:${JSON.stringify(artifact.card)}`);
+            const consultId =
+              asString(artifact.card.consult_id) ||
+              asString(artifact.card.consultId) ||
+              artifact.artifactId ||
+              stableIbclcConsultId(JSON.stringify(artifact.card));
             const returnTo = `${location.pathname}${location.search}${location.hash}`;
             const chatUrl = buildIbclcChatUrl(url, consultId, threadId, returnTo);
-            const consultCompleted = isIbclcCompletionForCard(ibclcCompletion, threadId, consultId);
+            const consultCompleted = ibclcCompletions.some((completion) =>
+              isIbclcCompletionForCard(completion, threadId, consultId),
+            );
             const openConsult = () => {
               if (consultCompleted) return;
+              if (onOpenIbclcConsult) {
+                onOpenIbclcConsult({ consultId, threadId, returnTo, chatUrl });
+                return;
+              }
+              rememberIbclcReturnTo(returnTo);
+              rememberIbclcViewportForNode(cardArtifactRefs.current[index], returnTo, consultId);
               if (chatUrl.startsWith("/")) {
                 navigate(chatUrl);
                 return;
@@ -585,6 +869,9 @@ const AgentHubRichTextBlock: React.FC<{
             return (
               <article
                 key={`artifact-${index}`}
+                ref={(el) => {
+                  cardArtifactRefs.current[index] = el;
+                }}
                 data-consult-id={consultId}
                 className="grid w-full gap-[14px] rounded-[14px] border border-[#d8e5e1] p-[18px] text-[#273b3a] shadow-[0_12px_30px_rgba(48,83,78,0.08)]"
                 style={{
@@ -647,49 +934,63 @@ const AgentHubRichTextBlock: React.FC<{
             );
             if (cardType === "birth_plan_card" && schemaVersion === "1.0") {
               const bp = normalizeBirthPlanCard(cardJson);
-              const subtitle = cardSubtitle([bp.overview.due_date_or_week, bp.overview.birth_path, bp.overview.support_people]);
+              const subtitle = cardSubtitle([bp.overview.due_date_or_week, bp.overview.birth_path, bp.overview.birth_setting, bp.overview.support_people]);
               const groups: Array<[string, string[]]> = [
-                ["Communication", bp.communication],
-                ["Pain Relief", bp.pain_relief],
-                ["Baby After Birth", bp.baby_after_birth],
-                ["If Plans Change", bp.if_plans_change],
-              ].filter(([, vals]) => vals.length > 0) as Array<[string, string[]]>;
+	                ["检查、干预或计划调整时", bp.communication],
+	                ["疼痛/麻醉沟通", bp.pain_relief],
+	                ["宝宝出生后", bp.baby_after_birth],
+	                ["计划变化时", bp.if_plans_change],
+	                ["其它可沟通的问题", bp.questions_for_hospital],
+	              ].filter(([, vals]) => vals.length > 0) as Array<[string, string[]]>;
               return (
                 <article
                   key={`artifact-${index}`}
                   ref={(el) => {
                     cardArtifactRefs.current[index] = el;
                   }}
-                  className="relative rounded-xl border border-border bg-card p-3 space-y-2"
+                  className="agent-card agent-card-birth_plan_card"
                 >
                   {downloadButton}
-                  <header className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="text-sm font-semibold text-foreground">{bp.title}</h3>
-                      {subtitle ? <p className="text-[11px] text-muted-foreground mt-0.5">{subtitle}</p> : null}
+                  <header className="agent-card-header">
+                    <div className="agent-card-header-text">
+                      <h2>{bp.title}</h2>
+                      {subtitle ? <p>{subtitle}</p> : null}
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="h-5 w-auto opacity-85" />
+                      <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
                     </div>
                   </header>
-                  {bp.top_priorities.length > 0 ? (
-                    <section className="rounded-lg border border-border/70 bg-background/60 p-2">
-                      <h4 className="text-[12px] font-semibold text-foreground mb-1">What matters most</h4>
-                      <ul className="list-disc list-inside text-[12px] text-foreground space-y-0.5">
-                        {bp.top_priorities.map((item, i) => (
+                  {bp.personalized_notes.length > 0 ? (
+                    <section className="agent-card-section agent-card-summary-section">
+                      <h3>个性化依据</h3>
+                      <ul className="agent-card-note-list">
+                        {bp.personalized_notes.map((item, i) => (
                           <li key={i}>{item}</li>
                         ))}
                       </ul>
                     </section>
                   ) : null}
+                  {bp.top_priorities.length > 0 ? (
+                    <section className="agent-card-section agent-card-summary-section">
+                      <h3>最重要的沟通重点</h3>
+	                      <ul className="hospital-card-focus-list">
+	                        {bp.top_priorities.map((item, i) => (
+	                          <li key={i}>
+	                            <span aria-hidden="true" />
+	                            <span className="birth-plan-focus-text">{item}</span>
+	                          </li>
+	                        ))}
+	                      </ul>
+                    </section>
+                  ) : null}
                   {groups.length > 0 ? (
-                    <section className="grid gap-1.5">
-                      <h4 className="text-[12px] font-semibold text-foreground">Care team preferences</h4>
-                      <div className="grid gap-1.5">
+                    <section className="agent-card-section">
+                      <h3>沟通偏好</h3>
+                      <div className="birth-plan-group-list">
                         {groups.map(([title, vals]) => (
-                          <div key={title} className="rounded-lg border border-border/60 p-2">
-                            <p className="text-[11px] font-semibold text-foreground mb-1">{title}</p>
-                            <ul className="list-disc list-inside text-[12px] text-foreground space-y-0.5">
+                          <div key={title} className="birth-plan-group">
+                            <h4>{title}</h4>
+                            <ul className="agent-card-list">
                               {vals.map((value, i) => (
                                 <li key={i}>{value}</li>
                               ))}
@@ -699,37 +1000,49 @@ const AgentHubRichTextBlock: React.FC<{
                       </div>
                     </section>
                   ) : null}
-                  {bp.medical_notes.length > 0 ? (
-                    <section>
-                      <h4 className="text-[12px] font-semibold text-foreground mb-1">Medical notes</h4>
-                      <ul className="list-disc list-inside text-[12px] text-foreground space-y-0.5">
+	                  {bp.medical_notes.length > 0 ? (
+                    <section className="agent-card-section">
+                      <h3>医疗或安全信息</h3>
+                      <ul className="agent-card-list">
                         {bp.medical_notes.map((value, i) => (
                           <li key={i}>{value}</li>
                         ))}
                       </ul>
                     </section>
                   ) : null}
-                  {bp.questions_for_hospital.length > 0 ? (
-                    <section>
-                      <h4 className="text-[12px] font-semibold text-foreground mb-1">Questions before admission</h4>
-                      <ul className="list-disc list-inside text-[12px] text-foreground space-y-0.5">
-                        {limitList(bp.questions_for_hospital, 3).map((value, i) => (
-                          <li key={i}>{formatPlainValue(value)}</li>
-                        ))}
-                      </ul>
-                    </section>
-                  ) : null}
-                  {bp.disclaimer ? <p className="text-[11px] text-muted-foreground">{bp.disclaimer}</p> : null}
+                  {bp.disclaimer ? <p className="agent-card-disclaimer">{bp.disclaimer}</p> : null}
                 </article>
               );
             }
             if (cardType === "hospital_bag_card" && schemaVersion === "1.0") {
               const owner = asObject(cardJson.owner) ?? {};
               const hospital = asObject(cardJson.hospital_context) ?? {};
-              const subtitle = cardSubtitle([owner.due_date_or_week, owner.birth_path, owner.packing_style, hospital.expected_stay]);
+              const subtitle = cardSubtitle([
+                hospitalBagMetaValue(owner.due_date_or_week),
+                hospitalBagMetaValue(owner.birth_path),
+                hospitalBagMetaValue(owner.packing_style),
+                hospitalBagMetaValue(owner.feeding_intention),
+                hospitalBagMetaValue(hospital.expected_stay),
+              ]);
               const packingGroups = compactPackingGroups(cardJson.packing_groups);
-              const confirmItems = limitList(hospital.items_to_confirm_with_hospital, 3);
-              const timelineItems = limitList(cardJson.timeline, 2);
+              const packingItems = flattenPackingGroupItems(packingGroups);
+              const explicitFocusItems = hospitalBagSummaryStrings(cardJson.focus_items, 7);
+              const fallbackFocusItems = packingItems
+                .filter((item) => asString(item.priority) === "must")
+                .map((item) => packingItemText(item, asObject(item.__group) ?? {}))
+                .slice(0, 6);
+              const focusItems = explicitFocusItems.length > 0 ? explicitFocusItems : fallbackFocusItems;
+              const explicitHospitalQuestions = hospitalBagQuestionStrings(cardJson.hospital_questions, 8);
+              const fallbackConfirmItems = hospitalBagQuestionStrings(
+                [
+                  ...packingItems.filter(isConfirmFirstPackingItem).map(confirmTextFromPackingItem),
+                  ...limitList(hospital.items_to_confirm_with_hospital, 8),
+                ],
+                8,
+              );
+              const confirmItems = explicitHospitalQuestions.length > 0 ? explicitHospitalQuestions : fallbackConfirmItems;
+              const personalizedNotes = uniqueDisplayStrings(limitList(cardJson.personalized_notes, 3), 3);
+              const timelineItems = limitList(cardJson.timeline, 3);
               return (
                 <article
                   key={`artifact-${index}`}
@@ -748,44 +1061,75 @@ const AgentHubRichTextBlock: React.FC<{
                       <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
                     </div>
                   </header>
-                  {packingGroups.length > 0 ? (
-                    <section className="agent-card-section">
-                      <h3>Packing List</h3>
-                      {packingGroups.map((group, gIdx) => (
-                        <div key={gIdx} className="packing-group">
-                          <h4>
-                            {asString(group.title) || formatLabel(asString(group.group_id) || "Group")}
-                          </h4>
-                          <div>
-                            {group.items.map((item, i) => (
-                              <div key={i} className="packing-item">
-                                <span>{renderHospitalCardValue(asString(item.label) || formatPlainValue(item))}</span>
-                                {item.priority ? (
-                                  <span className={priorityClassName(item.priority)}>
-                                    {priorityLabel(item.priority)}
-                                  </span>
-                                ) : null}
-                                {asString(item.note) ? <small>{asString(item.note)}</small> : null}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </section>
-                  ) : null}
-                  {confirmItems.length > 0 ? (
-                    <section className="agent-card-section">
-                      <h3>Confirm With Hospital</h3>
-                      <ul className="agent-card-list">
-                        {confirmItems.map((value, i) => (
-                          <li key={i}>{renderHospitalCardValue(value)}</li>
+                  {personalizedNotes.length > 0 ? (
+                    <section className="agent-card-section agent-card-summary-section">
+                      <h3>个性化依据</h3>
+                      <ul className="agent-card-note-list">
+                        {personalizedNotes.map((value, i) => (
+                          <li key={i}>{value}</li>
                         ))}
                       </ul>
                     </section>
                   ) : null}
+                  {focusItems.length > 0 ? (
+                    <section className="agent-card-section agent-card-summary-section">
+                      <h3>必带物品</h3>
+                      <ul className="hospital-card-focus-list">
+                        {focusItems.map((value, i) => (
+                          <li key={i}>
+                            <span aria-hidden="true" />
+                            <strong>{value}</strong>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                  {confirmItems.length > 0 ? (
+                    <section className="agent-card-section agent-card-confirm-section">
+                      <h3>先和医院确认</h3>
+                      <ul className="agent-card-list">
+                        {confirmItems.map((value, i) => (
+                          <li key={i}>{value}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                  {packingGroups.length > 0 ? (
+                    <section className="agent-card-section">
+                      <h3>待产清单</h3>
+                      {packingGroups.map((group, gIdx) => (
+                        <details key={gIdx} className="packing-group" open={gIdx === 0}>
+                          <summary>
+                            <span>{asString(group.title) || formatLabel(asString(group.group_id) || "Group")}</span>
+                            <small>{group.items.length}项</small>
+                          </summary>
+                          <div>
+                            {group.items.map((item, i) => {
+                              const ItemIcon = packingItemIcon(item, group);
+                              return (
+                                <div key={i} className="packing-item">
+                                  <span className="packing-item-icon" aria-hidden="true">
+                                    <ItemIcon />
+                                  </span>
+                                  <span className="packing-item-name">{renderHospitalCardValue(normalizedPackingItemLabel(item, group))}</span>
+                                  {packingItemMeta(item, group) ? <strong className="packing-item-quantity">{renderHospitalCardValue(packingItemMeta(item, group))}</strong> : null}
+                                  {item.priority ? (
+                                    <span className={priorityClassName(item.priority)}>
+                                      {priorityLabel(item.priority)}
+                                    </span>
+                                  ) : null}
+                                  {packingItemNote(item) ? <small>{packingItemNote(item)}</small> : null}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </details>
+                      ))}
+                    </section>
+                  ) : null}
                   {timelineItems.length > 0 ? (
                     <section className="agent-card-section">
-                      <h3>Timeline</h3>
+                      <h3>准备时间线</h3>
                       <ul className="agent-card-list">
                         {timelineItems.map((value, i) => (
                           <li key={i}>{renderHospitalCardValue(value)}</li>
@@ -831,7 +1175,12 @@ const AgentHubRichTextBlock: React.FC<{
               ? { id: "support_ticket", title: "售后工单", fields: supportTicketFields(artifact.ticket) }
               : artifact.form;
           const isSupportTicket = artifact.kind === "support_ticket_draft";
-          const title = asString(formSpec.title) || "Confirm details";
+          const formId = asString(formSpec.id);
+          const isHospitalBagIntake = formId === "hospital_bag_intake";
+          const isBirthPlanIntake = formId === "birth_plan_card_intake";
+          const isMonochromeForm = isSupportTicket || isHospitalBagIntake || isBirthPlanIntake;
+          const title = isHospitalBagIntake || isBirthPlanIntake ? "信息采集" : asString(formSpec.title) || "Confirm details";
+          const normalizedFormSpec = isHospitalBagIntake || isBirthPlanIntake ? { ...formSpec, title } : formSpec;
           const fieldsRaw = Array.isArray(formSpec.fields) ? formSpec.fields : [];
           const fields: FormFieldSpec[] = fieldsRaw
             .map((f) => asObject(f))
@@ -846,6 +1195,19 @@ const AgentHubRichTextBlock: React.FC<{
               placeholder: asString(f.placeholder),
               help_text: asString(f.help_text),
             }))
+            .map((field) =>
+              (isHospitalBagIntake || isBirthPlanIntake) && field.id === "birth_path"
+                ? {
+                    ...field,
+                    label: "计划分娩方式",
+                    options: ["顺产", "刨腹产", "未确定"],
+                    default_value: ["计划剖宫产", "剖腹产", "planned_c_section", "c_section", "c-section", "cesarean"].includes(asString(field.default_value))
+                      ? "刨腹产"
+                      : field.default_value,
+                    help_text: "如果还没确定，可以选择“未确定”。",
+                  }
+                : field,
+            )
             .filter((f) => f.id);
 
           return (
@@ -853,7 +1215,7 @@ const AgentHubRichTextBlock: React.FC<{
               key={`artifact-${index}`}
               className={cn(
                 "rounded-xl border p-3 space-y-2.5",
-                isSupportTicket
+                isMonochromeForm
                   ? "border-neutral-200 bg-white text-neutral-950 shadow-none dark:border-neutral-800 dark:bg-background dark:text-neutral-50"
                   : "border-border bg-card",
               )}
@@ -874,19 +1236,26 @@ const AgentHubRichTextBlock: React.FC<{
                   onButtonSelect(buildSupportTicketSubmittedMessage(values), { displayText: "已提交售后工单" });
                   return;
                 }
-                onButtonSelect(buildFormConfirmationMessage(formSpec, values), { displayText: `已提交：${title}` });
+                onButtonSelect(buildFormConfirmationMessage(normalizedFormSpec, values), { displayText: `已提交：${title}` });
               }}
             >
               <fieldset disabled={isSubmitted} className="grid gap-2.5">
-                <h3 className={cn("text-sm font-semibold", isSupportTicket ? "text-neutral-950 dark:text-neutral-50" : "text-foreground")}>{title}</h3>
-                {asString(formSpec.description) ? <p className="text-[12px] text-muted-foreground">{asString(formSpec.description)}</p> : null}
-                {fields.map((field) => renderFormField(field, isSupportTicket ? "support_ticket" : "default"))}
+                <h3 className={cn(isMonochromeForm ? "text-base" : "text-sm", "font-semibold", isMonochromeForm ? "text-neutral-950 dark:text-neutral-50" : "text-foreground")}>
+                  {title}
+                </h3>
+                {asString(formSpec.description) ? (
+                  <p className={cn(isMonochromeForm ? "text-[13px]" : "text-[12px]", isMonochromeForm ? "text-neutral-600 dark:text-neutral-400" : "text-muted-foreground")}>
+                    {asString(formSpec.description)}
+                  </p>
+                ) : null}
+                {fields.map((field) => renderFormField(field, isMonochromeForm ? "monochrome" : "default"))}
                 {errorText ? <p className="text-[12px] text-destructive">{errorText}</p> : null}
                 <button
                   type="submit"
                   className={cn(
-                    "rounded-lg px-3 py-2 text-[12px] font-medium border",
-                    isSupportTicket
+                    "rounded-lg px-3 py-2 font-medium border",
+                    isMonochromeForm ? "text-[14px]" : "text-[12px]",
+                    isMonochromeForm
                       ? isSubmitted
                         ? "border-neutral-400 bg-white text-neutral-600 dark:bg-background dark:text-neutral-300"
                         : "border-neutral-950 bg-neutral-950 text-white hover:bg-neutral-800 dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-950 dark:hover:bg-neutral-200"

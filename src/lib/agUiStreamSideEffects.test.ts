@@ -131,6 +131,61 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(withArtifact.streamRenderItems?.[0]).toMatchObject({ kind: "rich" });
   });
 
+  it("replaces repeated artifact updates instead of appending duplicate cards", () => {
+    const msg = applyEvents([
+      {
+        type: "ARTIFACT_CREATED",
+        artifact_id: "ticket_1",
+        artifact_type: "support_ticket_draft",
+        tool_call_id: "call_ticket",
+        tool_call_name: "support_ticket_draft_create",
+        artifact: {
+          issue_type: "usage_help",
+          issue_summary: "用户需要首次使用指导。",
+          product_model: "Air1",
+          urgency: "normal",
+        },
+      },
+      {
+        type: "ARTIFACT_CREATED",
+        artifact_id: "ticket_1",
+        artifact_type: "support_ticket_draft",
+        tool_call_id: "call_ticket",
+        tool_call_name: "support_ticket_draft_create",
+        artifact: {
+          issue_type: "usage_help",
+          issue_summary: "用户需要首次使用吸奶器指导。",
+          product_model: "Momcozy Air1",
+          urgency: "normal",
+        },
+      },
+    ]);
+
+    expect(msg.richText?.action).toHaveLength(1);
+    expect(msg.richText?.action[0]).toMatchObject({
+      kind: "ag_ui_artifact",
+      artifact_type: "support_ticket_draft",
+      artifact_id: "ticket_1",
+      ticket: {
+        issue_summary: "用户需要首次使用吸奶器指导。",
+        product_model: "Momcozy Air1",
+      },
+    });
+    expect(msg.streamRenderItems?.[0]).toMatchObject({
+      kind: "rich",
+      payload: {
+        action: [
+          {
+            artifact_id: "ticket_1",
+            ticket: {
+              issue_summary: "用户需要首次使用吸奶器指导。",
+            },
+          },
+        ],
+      },
+    });
+  });
+
   it("adds a generic confirmation step without exposing the tool name", () => {
     const msg = applyEvents([
       {

@@ -141,11 +141,12 @@
   background: #ffffff;
 }
 
-.agent-card-hospital_bag_card {
+.agent-card-hospital_bag_card,
+.agent-card-birth_plan_card {
   gap: 14px;
-  border-color: #e8cfd5;
-  background: linear-gradient(180deg, #fffafb 0%, #ffffff 46%);
-  color: #2a1f27;
+  border-color: #d9d9d9;
+  background: #ffffff;
+  color: #171717;
 }
 
 .agent-card-header {
@@ -157,11 +158,12 @@
   border-bottom: 1px solid #e3e8ee;
 }
 
-.agent-card-hospital_bag_card .agent-card-header {
+.agent-card-hospital_bag_card .agent-card-header,
+.agent-card-birth_plan_card .agent-card-header {
   position: relative;
   min-height: 72px;
   padding: 4px 0 14px;
-  border-bottom-color: #eedde1;
+  border-bottom-color: #dedede;
 }
 
 .agent-card-hospital_bag_card .agent-card-header::before {
@@ -170,9 +172,9 @@
   left: 0;
   bottom: -1px;
   width: 54px;
-  height: 3px;
-  border-radius: 999px;
-  background: #a74768;
+  height: 2px;
+  border-radius: 0;
+  background: #111111;
 }
 
 .agent-card-header-text {
@@ -183,14 +185,14 @@
 
 .agent-card-header h2 {
   margin: 0;
-  color: #241923;
+  color: #111111;
   font-size: 22px;
   line-height: 1.12;
 }
 
 .agent-card-header p {
   margin: 0;
-  color: #6d5864;
+  color: #5f5f5f;
   font-size: 14px;
   line-height: 1.35;
 }
@@ -216,10 +218,10 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #5f2f45;
+  color: #1f1f1f;
   font-size: 12px;
   font-weight: 750;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .agent-card-section h3::before {
@@ -227,7 +229,7 @@
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: #d98aa3;
+  background: #111111;
 }
 
 .agent-card-list {
@@ -253,7 +255,135 @@
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: #d98aa3;
+  background: #111111;
+}
+
+.agent-card-summary-section,
+.agent-card-confirm-section {
+  padding: 10px 11px;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.agent-card-confirm-section {
+  border-color: #111111;
+  border-left-width: 3px;
+  background: #f7f7f7;
+}
+
+.agent-card-confirm-section h3 {
+  color: #111111;
+}
+
+.agent-card-confirm-section h3::before {
+  background: #111111;
+}
+
+.agent-card-birth_plan_card .agent-card-section h3::before {
+  display: none;
+}
+
+.hospital-card-focus-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.hospital-card-focus-list li {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  color: #111111;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.hospital-card-focus-list li > span:first-child {
+  width: 12px;
+  height: 12px;
+  margin-top: 2px;
+  border: 1.5px solid #111111;
+  border-radius: 2px;
+}
+
+.hospital-card-focus-list li > strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 750;
+}
+
+.birth-plan-focus-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 400;
+}
+
+.agent-card-note-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  color: #4a4a4a;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.agent-card-note-list li {
+  position: relative;
+  padding-left: 15px;
+}
+
+.agent-card-note-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #111111;
+}
+
+.agent-card-birth_plan_card .agent-card-list li,
+.agent-card-birth_plan_card .agent-card-note-list li {
+  padding-left: 20px;
+}
+
+.agent-card-birth_plan_card .agent-card-list li::before,
+.agent-card-birth_plan_card .agent-card-note-list li::before {
+  top: 0.25em;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid #111111;
+  border-radius: 2px;
+  background: transparent;
+}
+
+.birth-plan-group-list {
+  display: grid;
+  gap: 8px;
+}
+
+.birth-plan-group {
+  display: grid;
+  gap: 7px;
+  padding: 9px 10px;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.birth-plan-group h4 {
+  margin: 0;
+  color: #1f1f1f;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.3;
 }
 
 .packing-group {
@@ -261,73 +391,155 @@
   gap: 8px;
   padding: 0 0 11px 12px;
   border: 0;
-  border-left: 3px solid #e4a4b8;
+  border-left: 2px solid #dedede;
   border-radius: 0;
   background: transparent;
 }
 
 .packing-group:not(:last-child) {
-  border-bottom: 1px solid #f0e3e7;
+  border-bottom: 1px solid #e8e8e8;
 }
 
-.packing-group h4 {
+.packing-group summary {
   margin: 0;
-  color: #35212c;
+  display: flex;
+  min-height: 30px;
+  cursor: pointer;
+  list-style: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #171717;
   font-size: 14px;
+  font-weight: 750;
+}
+
+.packing-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.packing-group summary::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-right: 2px solid #555555;
+  border-bottom: 2px solid #555555;
+  transform: rotate(-45deg);
+  transition: transform 160ms ease;
+}
+
+.packing-group[open] summary::before {
+  transform: rotate(45deg);
+}
+
+.packing-group summary span {
+  min-width: 0;
+  flex: 1;
+}
+
+.packing-group summary small {
+  color: #6a6a6a;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
 }
 
 .packing-item {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 22px minmax(0, 1fr) minmax(42px, auto) 54px;
   gap: 4px 8px;
   align-items: center;
+  min-height: 34px;
   padding: 7px 0;
-  border-top: 1px solid #f4ecef;
+  border-top: 1px solid #eeeeee;
 }
 
 .packing-item:first-child {
   border-top: 0;
 }
 
+.packing-item-icon {
+  grid-column: 1;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e2e2;
+  border-radius: 6px;
+  background: #f7f7f7;
+  color: #111111;
+}
+
+.packing-item-icon svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.1;
+}
+
+.packing-item-name {
+  grid-column: 2;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #1f1f1f;
+}
+
+.packing-item-quantity {
+  grid-column: 3;
+  justify-self: end;
+  min-width: 42px;
+  flex: 0 0 auto;
+  color: #4f4f4f;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
+  white-space: nowrap;
+}
+
 .packing-item small {
-  grid-column: 1 / -1;
-  color: #76636e;
+  grid-column: 2 / -1;
+  color: #666666;
   line-height: 1.4;
 }
 
 .priority {
-  border: 1px solid #e7c9d1;
+  grid-column: 4;
+  justify-self: end;
+  min-width: 48px;
+  border: 1px solid #d4d4d4;
   border-radius: 999px;
   padding: 2px 7px;
-  background: #fff7f8;
-  color: #7a4259;
+  background: #f5f5f5;
+  color: #333333;
   font-size: 10px;
   font-weight: 650;
+  text-align: center;
   white-space: nowrap;
 }
 
 .priority-must {
-  border-color: #176b87;
-  background: #eef8fa;
-  color: #176b87;
+  border-color: #111111;
+  background: #111111;
+  color: #ffffff;
 }
 
 .priority-confirm-first {
-  border-color: #d6b36a;
-  background: #fff9e8;
-  color: #76571c;
+  border-color: #111111;
+  background: #ffffff;
+  color: #111111;
 }
 
 .to-confirm {
-  color: #8a6d3b;
+  color: #666666;
   font-style: italic;
 }
 
 .agent-card-disclaimer {
   margin: 0;
   padding: 9px 10px 0;
-  border-top: 1px solid #eedde1;
-  color: #7b6871;
+  border-top: 1px solid #e1e1e1;
+  color: #666666;
   font-size: 11px;
   line-height: 1.45;
 }
@@ -344,11 +556,11 @@
   display: inline-grid;
   place-items: center;
   padding: 0;
-  border: 1px solid #e3d5da;
+  border: 1px solid #d7d7d7;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.94);
-  color: #7a4259;
-  box-shadow: 0 1px 6px rgba(52, 31, 43, 0.12);
+  color: #222222;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
 }
 
 .card-export-button svg {
@@ -369,8 +581,8 @@
 .card-export-spinner {
   width: 13px;
   height: 13px;
-  border: 2px solid #e1c3cf;
-  border-top-color: #a74768;
+  border: 2px solid #d7d7d7;
+  border-top-color: #111111;
   border-radius: 999px;
   animation: card-export-spin 0.9s linear infinite;
 }

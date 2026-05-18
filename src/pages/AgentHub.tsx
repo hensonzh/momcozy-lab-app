@@ -15,7 +15,7 @@ import PillGroups from "@/components/pills/PillGroups";
 import MaiInputBar from "@/components/Mai/MaiInputBar";
 import { useAgentHubSpeechInput } from "@/hooks/useAgentHubSpeechInput";
 import { cn } from "@/lib/utils";
-import type { AgUiToolCallRow, ChatMessage, ChatMessageLink, ChatStreamRenderItem } from "@/types/chat";
+import type { AgUiToolCallRow, ChatMessage, ChatMessageImageAttachment, ChatMessageLink, ChatStreamRenderItem } from "@/types/chat";
 import { chatBus } from "@/lib/chatBus";
 import { chatStore } from "@/lib/chatStore";
 import {
@@ -61,12 +61,17 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deviceStore } from "@/lib/deviceStore";
 import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
-import AgentHubRichTextBlock from "@/pages/agentHub/AgentHubRichTextBlock";
+import AgentHubRichTextBlock, { type IbclcConsultOpenRequest } from "@/pages/agentHub/AgentHubRichTextBlock";
+import { IbclcChatPanel } from "@/pages/IbclcChat";
 import { resolveCalibrationComfortForPumpStart } from "@/pages/agentHub/resolveCalibrationComfortForPumpStart";
 import {
   applyAgUiStreamSideEffects,
   mergePendingRichTextPayload,
 } from "@/lib/agUiStreamSideEffects";
+import {
+  clearStoredIbclcReturnViewport,
+  readStoredIbclcReturnViewport,
+} from "@/lib/ibclcConsult";
 import {
   CALIBRATION_HUB_NOTICE_KEY,
   cardBg,
@@ -436,12 +441,20 @@ function isNavigationReload(): boolean {
 
 /** 刷新后进页：移除无效本地预览 blob，以及未完成/失败的上传占位 */
 function stripPersistedBlobUploadStagingMessages(msgs: ChatMessage[]): ChatMessage[] {
-  return msgs.filter((m) => {
+  const withoutInvalidStaging = msgs.filter((m) => {
     if (m.role !== "user" || String(m.cardData?.kind ?? "") !== "uploaded-image") return true;
     const st = String(m.cardData?.uploadStatus ?? "ready");
     if (st === "uploading" || st === "failed") return false;
     const preview = String(m.cardData?.previewUrl ?? "");
     return !preview.startsWith("blob:");
+  });
+  return withoutInvalidStaging.map((m) => {
+    const attachments = (m.attachments ?? []).filter(
+      (item) => item.type !== "image" || !item.previewUrl.startsWith("blob:"),
+    );
+    return attachments.length === (m.attachments ?? []).length
+      ? m
+      : { ...m, attachments: attachments.length > 0 ? attachments : undefined };
   });
 }
 
@@ -526,6 +539,10 @@ const AgentHub: React.FC = () => {
   const [maternityFlowActive, setMaternityFlowActive] = useState(() =>
     hubInitialMessages.some(m => m.cardType === "maternity-flow" && !m.cardData?.completed)
   );
+  const [activeIbclcConsult, setActiveIbclcConsult] = useState<{
+    conversationId: string;
+    consultId: string;
+  } | null>(null);
   const [workFlowActive, setWorkFlowActive] = useState(() =>
     hubInitialMessages.some(m => m.cardType === "work-flow" && !m.cardData?.completed)
   );
@@ -677,6 +694,21 @@ const AgentHub: React.FC = () => {
   useLayoutEffect(() => {
     const el = scrollRef.current;
     if (!el || messages.length === 0) return;
+    const returnTo = `${location.pathname}${location.search}${location.hash}`;
+    const ibclcReturnViewport = readStoredIbclcReturnViewport(returnTo);
+    if (ibclcReturnViewport) {
+      const restoreScrollTop = () => {
+        const maxTop = Math.max(0, el.scrollHeight - el.clientHeight);
+        el.scrollTop = Math.min(ibclcReturnViewport.scroll_top, maxTop);
+        const isNearBottom = el.scrollHeight - (el.scrollTop + el.clientHeight) < 80;
+        userPinnedToTailRef.current = isNearBottom;
+        setShowScrollToBottom(!isNearBottom);
+      };
+      restoreScrollTop();
+      window.requestAnimationFrame(() => window.requestAnimationFrame(restoreScrollTop));
+      const clearTimer = window.setTimeout(clearStoredIbclcReturnViewport, 800);
+      return () => window.clearTimeout(clearTimer);
+    }
     el.scrollTop = el.scrollHeight;
     userPinnedToTailRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 仅在进入 Hub 首帧把尾部窗口锚到最新消息
@@ -1299,6 +1331,14 @@ const AgentHub: React.FC = () => {
       cardData: { initialAction },
     };
   };
+  
+  /** IBCLC 咨询在 Hub 内打开全屏覆盖层，避免跳出后丢失原对话位置。 */
+  const handleOpenIbclcConsult = useCallback((request: IbclcConsultOpenRequest) => {
+    setActiveIbclcConsult({
+      conversationId: request.threadId || getAgUiThreadIdForRequest(),
+      consultId: request.consultId,
+    });
+  }, []);
 
   /** 吸乳报告与普通气泡底部的业务链接（日程 / 泌乳 / 设备 / 路由） */
   const handleBubbleLinkPress = (link: ChatMessageLink) => {
@@ -2023,6 +2063,7 @@ const AgentHub: React.FC = () => {
                                 onButtonSelect={(value, options?) => {
                                   void startMainChatStream(value, { userDisplayText: options?.displayText });
                                 }}
+                                onOpenIbclcConsult={handleOpenIbclcConsult}
                               />
                             )}
                           </div>
@@ -2035,6 +2076,7 @@ const AgentHub: React.FC = () => {
                               onButtonSelect={(value, options?) => {
                                 void startMainChatStream(value, { userDisplayText: options?.displayText });
                               }}
+                              onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
                         ) : null}
@@ -2049,6 +2091,7 @@ const AgentHub: React.FC = () => {
                               onButtonSelect={(value, options?) => {
                                 void startMainChatStream(value, { userDisplayText: options?.displayText });
                               }}
+                              onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
                         ) : null}
@@ -2070,6 +2113,7 @@ const AgentHub: React.FC = () => {
                               onButtonSelect={(value, options?) => {
                                 void startMainChatStream(value, { userDisplayText: options?.displayText });
                               }}
+                              onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
                         ) : null}
@@ -2145,6 +2189,7 @@ const AgentHub: React.FC = () => {
                                 onButtonSelect={(value, options?) => {
                                   void startMainChatStream(value, { userDisplayText: options?.displayText });
                                 }}
+                                onOpenIbclcConsult={handleOpenIbclcConsult}
                               />
                             )}
                           </div>
@@ -2157,6 +2202,7 @@ const AgentHub: React.FC = () => {
                               onButtonSelect={(value, options?) => {
                                 void startMainChatStream(value, { userDisplayText: options?.displayText });
                               }}
+                              onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
                         ) : null}
@@ -2172,6 +2218,7 @@ const AgentHub: React.FC = () => {
                               onButtonSelect={(value, options?) => {
                                 void startMainChatStream(value, { userDisplayText: options?.displayText });
                               }}
+                              onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
                         ) : null}
@@ -2191,6 +2238,7 @@ const AgentHub: React.FC = () => {
                               onButtonSelect={(value, options?) => {
                                 void startMainChatStream(value, { userDisplayText: options?.displayText });
                               }}
+                              onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
                         ) : null}
@@ -2242,6 +2290,16 @@ const AgentHub: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {activeIbclcConsult ? (
+        <div className="fixed inset-0 z-[90] bg-background">
+          <IbclcChatPanel
+            conversationId={activeIbclcConsult.conversationId}
+            consultId={activeIbclcConsult.consultId}
+            onClose={() => setActiveIbclcConsult(null)}
+          />
+        </div>
+      ) : null}
 
       {/* Bottom input/action page: fixed layer independent from chat scroll */}
       <div
