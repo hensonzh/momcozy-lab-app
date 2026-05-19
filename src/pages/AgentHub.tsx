@@ -88,7 +88,6 @@ import {
   HUB_CHAT_TOP_EPS,
   HUB_CHAT_TOUCH_PULL_TO_LOAD,
   HUB_CHAT_WHEEL_OVERSCROLL_TO_LOAD,
-  SHORTCUT_QUERY,
 } from "@/pages/agentHub/agentHubConstants";
 
 const SCHEDULE_LINK_ACTION_MAP: Record<string, string> = {
@@ -2401,20 +2400,8 @@ const AgentHub: React.FC = () => {
           <PillGroups
             startPumpBusy={hubStartPumpBusy}
             pumpSessionActive={pumpSessionActive}
+            onFillInput={setInput}
             onStartPump={() => void handlePumpPillClick()}
-            onPrenatalConsult={() => {
-              setInput(SHORTCUT_QUERY.prenatalCare);
-            }}
-            onDeviceGuidance={() => {
-              if (deviceFlowActive) return;
-              setInput(SHORTCUT_QUERY.deviceGuidance);
-            }}
-            onMilkManagement={() => {
-              setInput(SHORTCUT_QUERY.milkManagement);
-            }}
-            onHealthConsult={() => {
-              setInput(SHORTCUT_QUERY.healthConsult);
-            }}
           />
 
           {hubUploadedImages.length > 0 && (

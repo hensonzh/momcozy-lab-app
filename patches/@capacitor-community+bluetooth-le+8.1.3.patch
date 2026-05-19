@@ -1,0 +1,17 @@
+diff --git a/node_modules/@capacitor-community/bluetooth-le/android/build.gradle b/node_modules/@capacitor-community/bluetooth-le/android/build.gradle
+index ac31915..fd070f3 100644
+--- a/node_modules/@capacitor-community/bluetooth-le/android/build.gradle
++++ b/node_modules/@capacitor-community/bluetooth-le/android/build.gradle
+@@ -22,7 +22,11 @@ buildscript {
+ }
+ 
+ apply plugin: 'com.android.library'
+-apply plugin: 'kotlin-android'
++// AGP 9 can register the Kotlin extension before this plugin script applies
++// kotlin-android. Reapplying it then fails with a duplicate "kotlin" extension.
++if (extensions.findByName('kotlin') == null) {
++    apply plugin: 'kotlin-android'
++}
+ 
+ android {
+     namespace = "com.capacitorjs.community.plugins.bluetoothle"
