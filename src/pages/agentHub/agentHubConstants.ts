@@ -24,13 +24,6 @@ export const HUB_CHAT_WHEEL_OVERSCROLL_TO_LOAD = 56;
 export const HUB_CHAT_TOUCH_PULL_TO_LOAD = 64;
 export const HUB_CHAT_LOAD_OLDER_COOLDOWN_MS = 450;
 
-export const SHORTCUT_QUERY = {
-  prenatalCare: "产前咨询",
-  deviceGuidance: "设备指导",
-  healthConsult: "健康咨询",
-  milkManagement: "奶量管理"
-} as const;
-
 export const cardBg: Record<string, string> = {
   report: "border-mai-warm/30 bg-mai-warm/5",
   encourage: "border-mai-blush/30 bg-mai-blush/5",
