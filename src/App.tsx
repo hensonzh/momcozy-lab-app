@@ -22,6 +22,7 @@ import NotFound from "@/pages/NotFound";
 import W1Promo from "@/pages/W1Promo";
 import MediaViewer from "@/pages/MediaViewer";
 import IbclcChat from "@/pages/IbclcChat";
+import HospitalBagCart from "@/pages/HospitalBagCart";
 import BackgroundNotifyOnboardingGate from "@/components/system/BackgroundNotifyOnboardingGate";
 import { markStatusGrowthHighlightPending } from "@/lib/statusGrowthHighlight";
 import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
@@ -109,6 +110,7 @@ const App = () => (
             <Route path="/device" element={<DeviceManagement />} />
             <Route path="/device/manage" element={<DeviceManageActions />} />
             <Route path="/w1" element={<W1Promo />} />
+            <Route path="/hospital-bag-cart" element={<HospitalBagCart />} />
             <Route path="/media-viewer" element={<MediaViewer />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

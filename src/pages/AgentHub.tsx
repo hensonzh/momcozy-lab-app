@@ -10,7 +10,7 @@ import InlineMaternityFlow from "@/components/maternity/InlineMaternityFlow";
 import type { InlineMaternityFlowHandle } from "@/components/maternity/InlineMaternityFlow";
 import InlineWorkFlow from "@/components/work/InlineWorkFlow";
 import type { InlineWorkFlowHandle } from "@/components/work/InlineWorkFlow";
-import { Volume2, ChevronDown, ChevronRight, X, Loader2 } from "lucide-react";
+import { Volume2, ChevronDown, ChevronRight, X, Loader2, Plus } from "lucide-react";
 import PillGroups from "@/components/pills/PillGroups";
 import MaiInputBar from "@/components/Mai/MaiInputBar";
 import { useAgentHubSpeechInput } from "@/hooks/useAgentHubSpeechInput";
@@ -29,6 +29,8 @@ import {
   type AgUiPayloadImageItem,
 } from "@/lib/agentApi";
 import {
+  clearPersistedAgentConversationId,
+  clearPersistedAgUiThreadId,
   getAgUiThreadIdForRequest,
   persistAgentConversationIdFromSse,
   persistAgUiThreadId,
@@ -63,6 +65,7 @@ import { deviceStore } from "@/lib/deviceStore";
 import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
 import AgentHubRichTextBlock, { type IbclcConsultOpenRequest } from "@/pages/agentHub/AgentHubRichTextBlock";
 import { IbclcChatPanel } from "@/pages/IbclcChat";
+import HospitalBagCart from "@/pages/HospitalBagCart";
 import { resolveCalibrationComfortForPumpStart } from "@/pages/agentHub/resolveCalibrationComfortForPumpStart";
 import {
   applyAgUiStreamSideEffects,
@@ -101,6 +104,8 @@ const LACTATION_LINK_ACTION_MAP: Record<string, string> = {
   "lactation-goal": "goal-adjust",
   "lactation-trend": "view-trend",
 };
+
+const HUB_TOP_ACTION_HEIGHT_PX = 48;
 
 interface SentChatImagePreview {
   id: string;
@@ -543,6 +548,7 @@ const AgentHub: React.FC = () => {
     conversationId: string;
     consultId: string;
   } | null>(null);
+  const [activeHospitalBagCart, setActiveHospitalBagCart] = useState(false);
   const [workFlowActive, setWorkFlowActive] = useState(() =>
     hubInitialMessages.some(m => m.cardType === "work-flow" && !m.cardData?.completed)
   );
@@ -616,6 +622,53 @@ const AgentHub: React.FC = () => {
       setPlayingId(null);
     }
   }, []);
+
+  const handleCreateNewConversation = useCallback(() => {
+    mainChatCancelRef.current?.();
+    mainChatCancelRef.current = null;
+    mainStreamingReplyIdRef.current = null;
+    mainStreamMergedAnswerRef.current = "";
+    mainStreamMergedThinkingRef.current = "";
+    mainPendingRichTextRef.current = null;
+    awaitingHubBottomReplyRef.current = false;
+    pendingHistoryScrollRestoreRef.current = null;
+    loadOlderCooldownRef.current = 0;
+    userPinnedToTailRef.current = true;
+    scrollTailAfterHubSendRef.current = false;
+    lastMessageMetaRef.current = { len: 0, lastId: null };
+
+    void stopSpeech({ discardSttResult: true });
+    void stopCurrentBubblePlayback();
+    uploadedImagePreviewUrlsRef.current.forEach((url) => {
+      try {
+        URL.revokeObjectURL(url);
+      } catch {
+        /* ignore invalid blob urls */
+      }
+    });
+    uploadedImagePreviewUrlsRef.current.clear();
+
+    clearPersistedAgentConversationId();
+    clearPersistedAgUiThreadId();
+    getAgUiThreadIdForRequest();
+    chatStore.setMessages([]);
+    savePersistedChatMessages([]);
+    setMessages([]);
+    setInput("");
+    setHubBottomSendBusy(false);
+    setShowPhotoMenu(false);
+    setShowScrollToBottom(false);
+    setVisibleStartIndex(0);
+    visibleStartIndexRef.current = 0;
+    setDeviceFlowActive(false);
+    setScheduleFlowActive(false);
+    setLactationFlowActive(false);
+    setMaternityFlowActive(false);
+    setWorkFlowActive(false);
+    setActiveIbclcConsult(null);
+    setHubPumpGateDialog(null);
+    toast.success("已新建会话");
+  }, [stopCurrentBubblePlayback, stopSpeech]);
 
   /**
    * 自动播报（流式回复等）：HTMLAudio TTS，不修改气泡正文；通过 playingId 驱动扬声器动态态。
@@ -1340,6 +1393,15 @@ const AgentHub: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const openHospitalBagCart = (event: Event) => {
+      event.preventDefault();
+      setActiveHospitalBagCart(true);
+    };
+    window.addEventListener("momcozy-open-hospital-bag-cart", openHospitalBagCart);
+    return () => window.removeEventListener("momcozy-open-hospital-bag-cart", openHospitalBagCart);
+  }, []);
+
   /** 吸乳报告与普通气泡底部的业务链接（日程 / 泌乳 / 设备 / 路由） */
   const handleBubbleLinkPress = (link: ChatMessageLink) => {
     const userMsg: ChatMessage = {
@@ -1673,6 +1735,7 @@ const AgentHub: React.FC = () => {
   /** 上传图仍保留在 messages 中（用于 files payload 与删除），仅在列表外以底部悬浮条展示 */
   const hubUploadedImages = messages.filter(isUploadedImageBubble);
 
+  const chatViewportTop = `calc(var(--top-safe) + ${HUB_TOP_ACTION_HEIGHT_PX}px)`;
   const chatViewportBottom = `calc(${HUB_BOTTOM_NAV_HEIGHT} + env(safe-area-inset-bottom) + ${bottomActionHeightPx}px)`;
   const handleScrollToLatest = () => {
     const container = scrollRef.current;
@@ -1798,11 +1861,32 @@ const AgentHub: React.FC = () => {
 
   return (
     <div className="relative">
+      <div
+        className="fixed left-0 right-0 z-40"
+        style={{
+          top: "var(--top-safe)",
+          height: HUB_TOP_ACTION_HEIGHT_PX,
+        }}
+      >
+        <div className="mx-auto flex h-full max-w-lg items-center justify-end bg-background/90 px-3 backdrop-blur-md">
+          <button
+            type="button"
+            onClick={handleCreateNewConversation}
+            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border/70 bg-background px-3 text-[13px] font-medium text-foreground shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label="新建会话"
+            title="新建会话"
+          >
+            <Plus className="h-4 w-4" />
+            <span>新建会话</span>
+          </button>
+        </div>
+      </div>
+
       {/* Chat page: dedicated viewport, only this area scrolls */}
       <div
         className="fixed left-0 right-0 z-20"
         style={{
-          top: "var(--top-safe)",
+          top: chatViewportTop,
           bottom: chatViewportBottom,
         }}
       >
@@ -2298,6 +2382,12 @@ const AgentHub: React.FC = () => {
             consultId={activeIbclcConsult.consultId}
             onClose={() => setActiveIbclcConsult(null)}
           />
+        </div>
+      ) : null}
+
+      {activeHospitalBagCart ? (
+        <div className="fixed inset-0 z-[92] bg-[#fff9fb] sm:bg-black/20">
+          <HospitalBagCart onClose={() => setActiveHospitalBagCart(false)} />
         </div>
       ) : null}
 

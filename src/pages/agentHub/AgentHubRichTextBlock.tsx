@@ -69,6 +69,13 @@ type FormFieldSpec = {
   help_text?: string;
 };
 
+type FormFieldGroup = {
+  title: string;
+  fields: FormFieldSpec[];
+};
+
+const REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS = new Set(["hospital_rules_or_notes", "existing_checklist_or_photo_note"]);
+
 const MOMCOZY_LOGO_SRC = momcozyLogo;
 
 function asObject(v: unknown): Record<string, unknown> | null {
@@ -136,6 +143,36 @@ function defaultMultiSelectValues(value: unknown): string[] {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function splitFormFieldLabel(label: string): { groupTitle: string; fieldLabel: string } {
+  const text = String(label || "");
+  const separatorIndex = text.indexOf("｜");
+  if (separatorIndex <= 0) return { groupTitle: "", fieldLabel: text };
+
+  const groupTitle = text.slice(0, separatorIndex).trim();
+  const fieldLabel = text.slice(separatorIndex + 1).trim();
+  if (!groupTitle || !fieldLabel) return { groupTitle: "", fieldLabel: text };
+  return { groupTitle, fieldLabel };
+}
+
+function groupFormFields(fields: FormFieldSpec[]): FormFieldGroup[] {
+  const groups: FormFieldGroup[] = [];
+  const groupByTitle = new Map<string, FormFieldGroup>();
+
+  for (const field of fields) {
+    const { groupTitle, fieldLabel } = splitFormFieldLabel(field.label);
+    const key = groupTitle || "__ungrouped";
+    let group = groupByTitle.get(key);
+    if (!group) {
+      group = { title: groupTitle, fields: [] };
+      groupByTitle.set(key, group);
+      groups.push(group);
+    }
+    group.fields.push({ ...field, label: fieldLabel });
+  }
+
+  return groups;
 }
 
 function collectFormValues(form: HTMLFormElement, fields: FormFieldSpec[]): Record<string, unknown> {
@@ -300,7 +337,8 @@ function priorityLabel(priority: unknown): string {
     must: "必带",
     recommended: "建议",
     nice_to_have: "可选",
-    confirm_first: "先确认",
+    confirm_first: "和医院确认",
+    先确认: "和医院确认",
   };
   const key = String(priority ?? "");
   return labels[key] || formatLabel(key);
@@ -363,12 +401,6 @@ function packingItemNote(item: Record<string, unknown>): string {
   return asString(item.note);
 }
 
-function packingItemText(item: Record<string, unknown>, group: Record<string, unknown>): string {
-  const label = normalizedPackingItemLabel(item, group);
-  const meta = packingItemMeta(item, group);
-  return meta ? `${label} ${meta}` : label;
-}
-
 function packingItemIcon(item: Record<string, unknown>, group: Record<string, unknown>): LucideIcon {
   const label = normalizedPackingItemLabel(item, group);
   const text = `${asString(group.group_id)} ${asString(group.title)} ${label}`.toLowerCase();
@@ -392,8 +424,20 @@ function packingItemIcon(item: Record<string, unknown>, group: Record<string, un
   return Package;
 }
 
-function flattenPackingGroupItems(groups: Array<Record<string, unknown> & { items: Array<Record<string, unknown>> }>): Array<Record<string, unknown>> {
-  return groups.flatMap((group) => group.items.map((item) => ({ ...item, __group: group })));
+function packingItemIconTone(item: Record<string, unknown>, group: Record<string, unknown>): string {
+  const label = normalizedPackingItemLabel(item, group);
+  const text = `${asString(group.group_id)} ${asString(group.title)} ${label}`.toLowerCase();
+  if (isConfirmFirstPackingItem(item)) return "tone-confirm";
+  if (/(身份证|准生证|户口本|证件|产检|资料|医保|文件|复印|银行卡|现金|支付)/.test(text)) return "tone-documents";
+  if (/(手机|充电|耳机|power bank|cable|通讯|随身)/.test(text)) return "tone-tech";
+  if (/(纸尿裤|湿巾|棉柔巾|包被|宝宝|帽子|袜子|安全座椅|安全提篮|出院衣物)/.test(text)) return "tone-baby";
+  if (/(出院外套|衣物|衣服|内裤|哺乳衣|睡衣|文胸|背心|拖鞋)/.test(text)) return "tone-clothes";
+  if (/(产褥垫|卫生巾|马桶垫|毛巾|纸巾|脸盆|洗发水|沐浴露|洗面奶|护肤|牙刷|牙膏)/.test(text)) return "tone-care";
+  if (/(吸奶器|储奶|初乳|乳盾|乳头霜|防溢乳垫|奶瓶|配方奶|milk|哺乳)/.test(text)) return "tone-feeding";
+  if (/(吸管杯|水杯|杯|餐具|零食|食物|能量|助产食品)/.test(text)) return "tone-food";
+  if (/(胎监带|收腹带|医生|医院|产后|常用药|药)/.test(text)) return "tone-health";
+  if (/(停车|交通)/.test(text)) return "tone-travel";
+  return "tone-default";
 }
 
 function uniqueDisplayStrings(values: unknown[], maxItems: number): string[] {
@@ -407,64 +451,6 @@ function uniqueDisplayStrings(values: unknown[], maxItems: number): string[] {
     if (result.length >= maxItems) break;
   }
   return result;
-}
-
-function hospitalBagSummaryStrings(values: unknown, maxItems: number): string[] {
-  if (!Array.isArray(values)) return [];
-  return uniqueDisplayStrings(
-    values
-      .map((value) => {
-        if (value && typeof value === "object" && !Array.isArray(value)) {
-          const item = value as Record<string, unknown>;
-          const question = asString(item.question);
-          const topic = asString(item.topic) || asString(item.label) || asString(item.title);
-          if (question) return topic ? `${topic}：${question}` : question;
-          const text = asString(item.text) || asString(item.name) || asString(item.label) || asString(item.title);
-          const meta = asString(item.copy_requirement) || asString(item.quantity);
-          return meta && text ? `${text} ${meta}` : text;
-        }
-        return value;
-      })
-      .filter(hasDisplayValue),
-    maxItems,
-  );
-}
-
-function normalizeHospitalQuestionText(value: string): string {
-  const text = value.trim();
-  if (!text || text.includes("：")) return text;
-  if (/准生证|户口本|入院证件/.test(text)) {
-    return "准生证/户口本：确认医院是否要求携带原件和复印件，以及复印件份数。";
-  }
-  if (/医院是否提供.*(产褥垫|纸尿裤|宝宝衣物|毛巾|脸盆)|基础物品/.test(text)) {
-    return "产褥垫/纸尿裤/宝宝衣物：确认医院是否提供，避免重复携带。";
-  }
-  if (/陪产|探视/.test(text)) {
-    return "陪产/探视：确认陪产人入院材料、是否允许陪产或过夜。";
-  }
-  if (/(水|零食|吸管杯|充电宝).*(产房|允许|规则)/.test(text)) {
-    return "水/零食/充电宝：确认是否允许带入产房。";
-  }
-  if (/(乳盾|初乳收集器|吸奶器|奶瓶|配方奶)/.test(text)) {
-    return "喂养用品：确认是否允许携带或需要在哺乳指导下使用。";
-  }
-  const spaceSeparated = text.match(/^([^，。,.]{2,18})\s+(.+)$/);
-  if (spaceSeparated) return `${spaceSeparated[1]}：${spaceSeparated[2]}`;
-  return text;
-}
-
-function hospitalBagQuestionStrings(values: unknown, maxItems: number): string[] {
-  return uniqueDisplayStrings(hospitalBagSummaryStrings(values, maxItems * 2).map(normalizeHospitalQuestionText), maxItems);
-}
-
-function confirmTextFromPackingItem(item: Record<string, unknown>): string {
-  const group = asObject(item.__group) ?? {};
-  const question = asString(item.confirm_question);
-  const label = normalizedPackingItemLabel(item, group) || "待确认物品";
-  if (question) return `${label}：${question}`;
-  const note = asString(item.note);
-  if (note) return `${label}：${note}`;
-  return packingItemText(item, group);
 }
 
 function renderHospitalCardValue(value: unknown): React.ReactNode {
@@ -489,12 +475,22 @@ function hospitalBagMetaValue(value: unknown): unknown {
     c_section: "刨腹产",
     "计划剖宫产": "刨腹产",
     "剖腹产": "刨腹产",
-    breastfeeding: "母乳",
-    formula: "配方",
-    formula_feeding: "配方",
-    mixed: "混合",
+    breastfeeding: "母乳喂养",
+    "母乳": "母乳喂养",
+    formula: "配方喂养",
+    "配方": "配方喂养",
+    formula_feeding: "配方喂养",
+    mixed: "混合喂养",
+    "混合": "混合喂养",
   };
   return labels[text.toLowerCase()] || value;
+}
+
+function hospitalBagTitle(value: unknown): string {
+  const title = asString(value).trim();
+  if (!title || title === "待产包卡片" || title === "Hospital Bag Card") return "待产包";
+  if (title.includes("待产包卡片")) return title.replaceAll("待产包卡片", "待产包");
+  return title;
 }
 
 function normalizeBirthPlanCard(cardJsonRaw: Record<string, unknown>) {
@@ -746,15 +742,14 @@ const AgentHubRichTextBlock: React.FC<{
   const renderFormField = (field: FormFieldSpec, variant: "default" | "monochrome" = "default") => {
     const isMonochrome = variant === "monochrome";
     const requiredMark = field.required ? (
-      <span className={cn("mr-1", isMonochrome ? "text-foreground" : "text-destructive")}>*</span>
+      <span className={cn("mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full", isMonochrome ? "bg-[#b8667b]" : "bg-destructive")} aria-hidden="true" />
     ) : null;
     const fieldTextClass = isMonochrome ? "text-neutral-950 dark:text-neutral-50" : "text-foreground";
     const inputClassName = cn(
-      "rounded-lg border px-2 py-1.5 outline-none transition-colors",
-      isMonochrome ? "text-[14px]" : "text-[12px]",
+      "w-full border outline-none transition-colors",
       isMonochrome
-        ? "border-neutral-300 bg-white text-neutral-950 placeholder:text-neutral-400 focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950 dark:border-neutral-700 dark:bg-background dark:text-neutral-50 dark:placeholder:text-neutral-500 dark:focus:border-neutral-100 dark:focus:ring-neutral-100"
-        : "border-border bg-background",
+        ? "min-h-[44px] rounded-[14px] border-neutral-200 bg-white/95 px-3 py-2.5 text-[15px] text-neutral-950 placeholder:text-neutral-400 focus:border-[#207d93] focus:ring-[3px] focus:ring-[#207d93]/10 dark:border-neutral-700 dark:bg-background dark:text-neutral-50 dark:placeholder:text-neutral-500 dark:focus:border-neutral-100 dark:focus:ring-neutral-100"
+        : "rounded-lg border-border bg-background px-2 py-1.5 text-[12px]",
     );
     if (isMultiSelectField(field)) {
       const defaults = defaultMultiSelectValues(field.default_value);
@@ -762,30 +757,44 @@ const AgentHubRichTextBlock: React.FC<{
         <fieldset
           key={field.id}
           className={cn(
-            "rounded-lg border p-2.5",
-            isMonochrome ? "border-neutral-300 bg-white dark:border-neutral-700 dark:bg-background" : "border-border/60",
+            isMonochrome ? "rounded-[14px] border p-3" : "rounded-lg border p-2.5",
+            isMonochrome ? "border-neutral-200 bg-white/95 dark:border-neutral-700 dark:bg-background" : "border-border/60",
           )}
         >
-          <legend className={cn(isMonochrome ? "text-[14px]" : "text-[12px]", "font-medium px-1", fieldTextClass)}>
-            {requiredMark}
-            {field.label}
+          <legend className={cn("px-1 font-semibold", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
+            <span className="inline-flex items-start gap-2">
+              {requiredMark}
+              <span>{field.label}</span>
+            </span>
           </legend>
-          <div className="grid gap-1.5">
+          <div className="grid gap-2 pt-1">
             {(field.options ?? []).map((option) => (
-              <label key={option} className={cn("inline-flex items-center gap-2", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
+              <label
+                key={option}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-xl border px-3 py-2",
+                  isMonochrome ? "border-neutral-200 bg-[#fbfaf9] text-[14px]" : "border-border/70 bg-background/70 text-[12px]",
+                  fieldTextClass,
+                )}
+              >
                 <input type="checkbox" name={field.id} value={option} defaultChecked={defaults.includes(option)} />
                 <span>{option}</span>
               </label>
             ))}
           </div>
+          {field.help_text ? (
+            <small className={cn(isMonochrome ? "text-[12px]" : "text-[11px]", isMonochrome ? "text-neutral-600 dark:text-neutral-400" : "text-muted-foreground")}>
+              {field.help_text}
+            </small>
+          ) : null}
         </fieldset>
       );
     }
     return (
-      <label key={field.id} className={cn("grid gap-1", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
-        <span className="font-medium">
+      <label key={field.id} className={cn("grid gap-1.5", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
+        <span className="inline-flex items-start gap-2 font-semibold leading-snug">
           {requiredMark}
-          {field.label}
+          <span>{field.label}</span>
         </span>
         {field.type === "select" ? (
           <select
@@ -1016,31 +1025,12 @@ const AgentHubRichTextBlock: React.FC<{
             }
             if (cardType === "hospital_bag_card" && schemaVersion === "1.0") {
               const owner = asObject(cardJson.owner) ?? {};
-              const hospital = asObject(cardJson.hospital_context) ?? {};
               const subtitle = cardSubtitle([
                 hospitalBagMetaValue(owner.due_date_or_week),
                 hospitalBagMetaValue(owner.birth_path),
-                hospitalBagMetaValue(owner.packing_style),
                 hospitalBagMetaValue(owner.feeding_intention),
-                hospitalBagMetaValue(hospital.expected_stay),
               ]);
               const packingGroups = compactPackingGroups(cardJson.packing_groups);
-              const packingItems = flattenPackingGroupItems(packingGroups);
-              const explicitFocusItems = hospitalBagSummaryStrings(cardJson.focus_items, 7);
-              const fallbackFocusItems = packingItems
-                .filter((item) => asString(item.priority) === "must")
-                .map((item) => packingItemText(item, asObject(item.__group) ?? {}))
-                .slice(0, 6);
-              const focusItems = explicitFocusItems.length > 0 ? explicitFocusItems : fallbackFocusItems;
-              const explicitHospitalQuestions = hospitalBagQuestionStrings(cardJson.hospital_questions, 8);
-              const fallbackConfirmItems = hospitalBagQuestionStrings(
-                [
-                  ...packingItems.filter(isConfirmFirstPackingItem).map(confirmTextFromPackingItem),
-                  ...limitList(hospital.items_to_confirm_with_hospital, 8),
-                ],
-                8,
-              );
-              const confirmItems = explicitHospitalQuestions.length > 0 ? explicitHospitalQuestions : fallbackConfirmItems;
               const personalizedNotes = uniqueDisplayStrings(limitList(cardJson.personalized_notes, 3), 3);
               const timelineItems = limitList(cardJson.timeline, 3);
               return (
@@ -1054,7 +1044,7 @@ const AgentHubRichTextBlock: React.FC<{
                   {downloadButton}
                   <header className="agent-card-header">
                     <div className="agent-card-header-text">
-                      <h2>{asString(cardJson.title) || "Hospital Bag Card"}</h2>
+                      <h2>{hospitalBagTitle(cardJson.title)}</h2>
                       {subtitle ? <p>{subtitle}</p> : null}
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -1063,7 +1053,6 @@ const AgentHubRichTextBlock: React.FC<{
                   </header>
                   {personalizedNotes.length > 0 ? (
                     <section className="agent-card-section agent-card-summary-section">
-                      <h3>个性化依据</h3>
                       <ul className="agent-card-note-list">
                         {personalizedNotes.map((value, i) => (
                           <li key={i}>{value}</li>
@@ -1071,32 +1060,9 @@ const AgentHubRichTextBlock: React.FC<{
                       </ul>
                     </section>
                   ) : null}
-                  {focusItems.length > 0 ? (
-                    <section className="agent-card-section agent-card-summary-section">
-                      <h3>必带物品</h3>
-                      <ul className="hospital-card-focus-list">
-                        {focusItems.map((value, i) => (
-                          <li key={i}>
-                            <span aria-hidden="true" />
-                            <strong>{value}</strong>
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-                  ) : null}
-                  {confirmItems.length > 0 ? (
-                    <section className="agent-card-section agent-card-confirm-section">
-                      <h3>先和医院确认</h3>
-                      <ul className="agent-card-list">
-                        {confirmItems.map((value, i) => (
-                          <li key={i}>{value}</li>
-                        ))}
-                      </ul>
-                    </section>
-                  ) : null}
                   {packingGroups.length > 0 ? (
                     <section className="agent-card-section">
-                      <h3>待产清单</h3>
+                      <h3>物品清单</h3>
                       {packingGroups.map((group, gIdx) => (
                         <details key={gIdx} className="packing-group" open={gIdx === 0}>
                           <summary>
@@ -1108,7 +1074,7 @@ const AgentHubRichTextBlock: React.FC<{
                               const ItemIcon = packingItemIcon(item, group);
                               return (
                                 <div key={i} className="packing-item">
-                                  <span className="packing-item-icon" aria-hidden="true">
+                                  <span className={cn("packing-item-icon", packingItemIconTone(item, group))} aria-hidden="true">
                                     <ItemIcon />
                                   </span>
                                   <span className="packing-item-name">{renderHospitalCardValue(normalizedPackingItemLabel(item, group))}</span>
@@ -1178,9 +1144,14 @@ const AgentHubRichTextBlock: React.FC<{
           const formId = asString(formSpec.id);
           const isHospitalBagIntake = formId === "hospital_bag_intake";
           const isBirthPlanIntake = formId === "birth_plan_card_intake";
+          const isGroupedIntake = isHospitalBagIntake || isBirthPlanIntake;
           const isMonochromeForm = isSupportTicket || isHospitalBagIntake || isBirthPlanIntake;
           const title = isHospitalBagIntake || isBirthPlanIntake ? "信息采集" : asString(formSpec.title) || "Confirm details";
-          const normalizedFormSpec = isHospitalBagIntake || isBirthPlanIntake ? { ...formSpec, title } : formSpec;
+          const normalizedFormSpec = isHospitalBagIntake
+            ? { ...formSpec, title, description: "" }
+            : isBirthPlanIntake
+              ? { ...formSpec, title }
+              : formSpec;
           const fieldsRaw = Array.isArray(formSpec.fields) ? formSpec.fields : [];
           const fields: FormFieldSpec[] = fieldsRaw
             .map((f) => asObject(f))
@@ -1195,11 +1166,12 @@ const AgentHubRichTextBlock: React.FC<{
               placeholder: asString(f.placeholder),
               help_text: asString(f.help_text),
             }))
+            .filter((field) => !(isHospitalBagIntake && REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS.has(field.id)))
             .map((field) =>
               (isHospitalBagIntake || isBirthPlanIntake) && field.id === "birth_path"
                 ? {
                     ...field,
-                    label: "计划分娩方式",
+                    label: splitFormFieldLabel(field.label).groupTitle ? `${splitFormFieldLabel(field.label).groupTitle}｜计划分娩方式` : "计划分娩方式",
                     options: ["顺产", "刨腹产", "未确定"],
                     default_value: ["计划剖宫产", "剖腹产", "planned_c_section", "c_section", "c-section", "cesarean"].includes(asString(field.default_value))
                       ? "刨腹产"
@@ -1209,15 +1181,18 @@ const AgentHubRichTextBlock: React.FC<{
                 : field,
             )
             .filter((f) => f.id);
+          const fieldGroups = isGroupedIntake ? groupFormFields(fields) : [{ title: "", fields }];
 
           return (
             <form
               key={`artifact-${index}`}
               className={cn(
-                "rounded-xl border p-3 space-y-2.5",
-                isMonochromeForm
-                  ? "border-neutral-200 bg-white text-neutral-950 shadow-none dark:border-neutral-800 dark:bg-background dark:text-neutral-50"
-                  : "border-border bg-card",
+                isGroupedIntake ? "rounded-[24px] border p-4 space-y-4" : "rounded-xl border p-3 space-y-2.5",
+                isGroupedIntake
+                  ? "border-[#eadfe5] bg-[#fffdfc] text-neutral-950 shadow-[0_10px_30px_rgba(65,42,52,0.06)] dark:border-neutral-800 dark:bg-background dark:text-neutral-50"
+                  : isMonochromeForm
+                    ? "border-neutral-200 bg-white text-neutral-950 shadow-none dark:border-neutral-800 dark:bg-background dark:text-neutral-50"
+                    : "border-border bg-card",
               )}
               onSubmit={(event) => {
                 event.preventDefault();
@@ -1226,7 +1201,7 @@ const AgentHubRichTextBlock: React.FC<{
                 for (const field of fields) {
                   if (!field.required || !isMultiSelectField(field)) continue;
                   if (new FormData(form).getAll(field.id).length > 0) continue;
-                  setArtifactError((prev) => ({ ...prev, [index]: `请选择：${field.label}` }));
+                  setArtifactError((prev) => ({ ...prev, [index]: `请选择：${splitFormFieldLabel(field.label).fieldLabel}` }));
                   return;
                 }
                 setArtifactError((prev) => ({ ...prev, [index]: "" }));
@@ -1239,26 +1214,43 @@ const AgentHubRichTextBlock: React.FC<{
                 onButtonSelect(buildFormConfirmationMessage(normalizedFormSpec, values), { displayText: `已提交：${title}` });
               }}
             >
-              <fieldset disabled={isSubmitted} className="grid gap-2.5">
-                <h3 className={cn(isMonochromeForm ? "text-base" : "text-sm", "font-semibold", isMonochromeForm ? "text-neutral-950 dark:text-neutral-50" : "text-foreground")}>
+              <fieldset disabled={isSubmitted} className={cn("grid", isGroupedIntake ? "gap-4" : "gap-2.5")}>
+                <h3 className={cn(isGroupedIntake ? "text-xl" : isMonochromeForm ? "text-base" : "text-sm", "font-semibold", isMonochromeForm ? "text-neutral-950 dark:text-neutral-50" : "text-foreground")}>
                   {title}
                 </h3>
-                {asString(formSpec.description) ? (
-                  <p className={cn(isMonochromeForm ? "text-[13px]" : "text-[12px]", isMonochromeForm ? "text-neutral-600 dark:text-neutral-400" : "text-muted-foreground")}>
-                    {asString(formSpec.description)}
+                {asString(normalizedFormSpec.description) ? (
+                  <p className={cn(isGroupedIntake ? "text-[14px] leading-relaxed" : isMonochromeForm ? "text-[13px]" : "text-[12px]", isMonochromeForm ? "text-neutral-600 dark:text-neutral-400" : "text-muted-foreground")}>
+                    {asString(normalizedFormSpec.description)}
                   </p>
                 ) : null}
-                {fields.map((field) => renderFormField(field, isMonochromeForm ? "monochrome" : "default"))}
+                {fieldGroups.map((group, groupIndex) =>
+                  group.title ? (
+                    <section key={`${group.title}-${groupIndex}`} className="grid gap-3 rounded-[18px] border border-[#efe5ea] bg-white/85 p-3.5">
+                      <div className="border-b border-[#f1e8ec] pb-2">
+                        <h4 className="text-[15px] font-semibold text-[#4b2638] dark:text-neutral-50">{group.title}</h4>
+                      </div>
+                      <div className="grid gap-3">{group.fields.map((field) => renderFormField(field, isMonochromeForm ? "monochrome" : "default"))}</div>
+                    </section>
+                  ) : (
+                    <React.Fragment key={`ungrouped-${groupIndex}`}>
+                      {group.fields.map((field) => renderFormField(field, isMonochromeForm ? "monochrome" : "default"))}
+                    </React.Fragment>
+                  ),
+                )}
                 {errorText ? <p className="text-[12px] text-destructive">{errorText}</p> : null}
                 <button
                   type="submit"
                   className={cn(
-                    "rounded-lg px-3 py-2 font-medium border",
+                    isGroupedIntake ? "rounded-[14px] px-4 py-3 font-semibold" : "rounded-lg px-3 py-2 font-medium border",
                     isMonochromeForm ? "text-[14px]" : "text-[12px]",
-                    isMonochromeForm
+                    isGroupedIntake
                       ? isSubmitted
-                        ? "border-neutral-400 bg-white text-neutral-600 dark:bg-background dark:text-neutral-300"
-                        : "border-neutral-950 bg-neutral-950 text-white hover:bg-neutral-800 dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-950 dark:hover:bg-neutral-200"
+                        ? "border border-[#9db7bd] bg-white text-[#55727a] dark:bg-background dark:text-neutral-300"
+                        : "border border-[#207d93] bg-[#207d93] text-white hover:bg-[#176b87]"
+                      : isMonochromeForm
+                        ? isSubmitted
+                          ? "border-neutral-400 bg-white text-neutral-600 dark:bg-background dark:text-neutral-300"
+                          : "border-neutral-950 bg-neutral-950 text-white hover:bg-neutral-800 dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-950 dark:hover:bg-neutral-200"
                       : isSubmitted
                         ? "border-emerald-600/40 bg-emerald-600/10 text-emerald-700"
                         : "border-primary/50 bg-primary/10 text-foreground",
