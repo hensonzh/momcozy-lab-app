@@ -44,6 +44,13 @@ export interface SmartForceLineConfig {
   maxPressureKpa: number;
   frequencyPcm: number;
   holdTimeMs: number;
+  // 新增字段用于前端联动计算
+  buildTimeA?: number;      // 建压时间a(ms)
+  releaseTimeC?: number;    // 泄压时间c(ms)
+  restTimeD?: number;       // 休息时间d(ms)
+  cycleT?: number;          // 周期T(ms)
+  dutyCycle?: number;       // 占空比(%)
+  ratio?: string;           // 比值(a+b):(c+d)
 }
 
 function checksum8(bytes: Uint8Array): number {
@@ -85,8 +92,23 @@ function assertAck(frame: Uint8Array, cid: number): void {
   if (frame[2] !== CT_ACK) {
     throw new Error("设备未返回 ACK");
   }
-  if (frame[4] !== 0x00) {
-    throw new Error("ACK 参数长度异常");
+  
+  // B4黄金韵律：参数长度为0x00，无错误码
+  if (cid === CID_B4) {
+    if (frame[4] !== 0x00) {
+      throw new Error("ACK 参数长度异常");
+    }
+  } 
+  // B5柔性过渡和B6智能力线：参数长度为0x02，包含2字节错误码
+  else if (cid === CID_B5 || cid === CID_B6) {
+    if (frame[4] !== 0x02) {
+      throw new Error("ACK 参数长度异常");
+    }
+    // 检查错误码（小端模式）
+    const errorCode = new DataView(frame.buffer, frame.byteOffset).getUint16(5, true);
+    if (errorCode !== 0) {
+      throw new Error(`设备返回错误码: ${errorCode}`);
+    }
   }
 }
 
@@ -127,7 +149,7 @@ function normalizeGoldenStep(step: Partial<GoldenRhythmStep>, index: number): Go
   return {
     index: step.index ?? index,
     mode: step.mode ?? 1,
-    gearDisplay: clamp(step.gearDisplay ?? 6, 0, 14),
+    gearDisplay: clamp(step.gearDisplay ?? 6, 1, 15),
     frequency: clamp(step.frequency ?? 0, 0, 2),
     durationSec: clamp(step.durationSec ?? 12, 0, 1800),
     milkBurstEnabled: (step.milkBurstEnabled ?? 0) as 0 | 1,
@@ -238,7 +260,7 @@ export function parseE6SmartForceLineResponse(frame: Uint8Array, workMode: 0 | 1
     gearDisplay,
     maxPressureKpa: view.getUint8(9),
     frequencyPcm: view.getUint8(10),
-    holdTimeMs: view.getUint16(11, true),
+    holdTimeMs: view.getUint16(11, true),  // 小端模式
   };
 }
 
