@@ -306,7 +306,7 @@ const DeviceManagement: React.FC = () => {
             <Plus className="w-5 h-5" />
           </button>
           {quickMenuOpen ? (
-            <div className="absolute right-0 mt-2 w-28 rounded-xl bg-foreground/80 text-background backdrop-blur-sm shadow-xl overflow-hidden z-30">
+            <div className="absolute right-0 mt-2 w-32 rounded-xl bg-foreground/80 text-background backdrop-blur-sm shadow-xl overflow-hidden z-30">
               <span className="absolute right-4 -top-1.5 w-2.5 h-2.5 rotate-45 bg-foreground/80" aria-hidden="true" />
               <button
                 type="button"
@@ -316,6 +316,17 @@ const DeviceManagement: React.FC = () => {
                 className="w-full text-center px-2 py-3 text-[15px] font-semibold hover:bg-background/10 transition-colors"
               >
                 添加设备
+              </button>
+              <div className="mx-3 h-px bg-background/25" />
+              <button
+                type="button"
+                onClick={() => {
+                  setQuickMenuOpen(false);
+                  navigate("/device/user");
+                }}
+                className="w-full text-center px-2 py-3 text-[15px] font-semibold hover:bg-background/10 transition-colors"
+              >
+                用户管理
               </button>
               <div className="mx-3 h-px bg-background/25" />
               <button

@@ -16,6 +16,7 @@ import Records from "@/pages/Records";
 import Schedule from "@/pages/Schedule";
 import DeviceManagement from "@/pages/DeviceManagement";
 import DeviceManageActions from "@/pages/DeviceManageActions";
+import UserParameterConfig from "@/pages/UserParameterConfig";
 import StatusPage from "@/pages/Status";
 import Community from "@/pages/Community";
 import NotFound from "@/pages/NotFound";
@@ -108,6 +109,7 @@ const App = () => (
             <Route path="/community" element={<Community />} />
             <Route path="/device" element={<DeviceManagement />} />
             <Route path="/device/manage" element={<DeviceManageActions />} />
+            <Route path="/device/user" element={<UserParameterConfig />} />
             <Route path="/w1" element={<W1Promo />} />
             <Route path="/media-viewer" element={<MediaViewer />} />
             <Route path="*" element={<NotFound />} />

@@ -15,11 +15,12 @@ import type {
   UploadPumpWorkstateResponseData,
 } from "@/lib/agentApiTypes";
 import { deviceStore, type DeviceSide, type StoredDeviceInfo } from "@/lib/deviceStore";
+import { getRuntimeUserId } from "@/lib/debugUserConfig";
 import { createScopedConsole } from "@/lib/logger";
 import { setProcessAll } from "@/lib/pumpSessionProgress";
 
 const console = createScopedConsole("pumpAgentUpload");
-const DEFAULT_CHAT_USER_ID = (import.meta.env.VITE_DEFAULT_USER_ID as string | undefined) || "app-user";
+const DEFAULT_CHAT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);
 const PROCESS_UPLOAD_INTERVAL_MS = 10000;
 const PROCESS_DATA_INTERVAL_MS = 1000;
 const PROCESS_CAP_FRAME_SIZE = 20;

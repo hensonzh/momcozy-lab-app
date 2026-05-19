@@ -7,7 +7,7 @@ import { log } from "@/lib/logger";
  */
 export const CHAT_MESSAGES_LOCAL_MAX_COUNT = 50;
 
-const STORAGE_KEY = "mai_agent_hub_chat_messages_v1";
+export const CHAT_MESSAGES_STORAGE_KEY = "mai_agent_hub_chat_messages_v1";
 
 function takeLatestMessages(messages: ChatMessage[], max: number): ChatMessage[] {
   if (messages.length <= max) return messages;
@@ -51,14 +51,14 @@ export function stripTransientAgentHubFailureMessages(messages: ChatMessage[]): 
  */
 export function loadPersistedChatMessages(): ChatMessage[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(CHAT_MESSAGES_STORAGE_KEY);
     if (!raw?.trim()) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
     const messages = parsed as ChatMessage[];
     const sanitized = stripTransientAgentHubFailureMessages(messages);
     if (sanitized.length !== messages.length) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(takeLatestMessages(sanitized, CHAT_MESSAGES_LOCAL_MAX_COUNT)));
+      localStorage.setItem(CHAT_MESSAGES_STORAGE_KEY, JSON.stringify(takeLatestMessages(sanitized, CHAT_MESSAGES_LOCAL_MAX_COUNT)));
     }
     return sanitized;
   } catch (e) {
@@ -73,8 +73,16 @@ export function loadPersistedChatMessages(): ChatMessage[] {
 export function savePersistedChatMessages(messages: ChatMessage[]): void {
   try {
     const slice = takeLatestMessages(stripTransientAgentHubFailureMessages(messages), CHAT_MESSAGES_LOCAL_MAX_COUNT);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(slice));
+    localStorage.setItem(CHAT_MESSAGES_STORAGE_KEY, JSON.stringify(slice));
   } catch (e) {
     log("[chat-persist] 写入本地对话失败", e);
+  }
+}
+
+export function clearPersistedChatMessages(): void {
+  try {
+    localStorage.removeItem(CHAT_MESSAGES_STORAGE_KEY);
+  } catch (e) {
+    log("[chat-persist] 清空本地对话失败", e);
   }
 }
