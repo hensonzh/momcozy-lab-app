@@ -8,6 +8,7 @@ import { sendB1SetPumpParams, sendF1SetUserParams } from "@/lib/ble";
 import { deviceStore } from "@/lib/deviceStore";
 import { uploadPumpThreshold } from "@/lib/agentApi";
 import { ApiError } from "@/lib/http";
+import { getRuntimeUserId } from "@/lib/debugUserConfig";
 
 /* ── types ── */
 type Side = "L" | "R";
@@ -37,7 +38,7 @@ interface CalibrationData {
 }
 
 const MAX_GEAR = 15;
-const DEFAULT_PUMP_USER_ID = (import.meta.env.VITE_DEFAULT_USER_ID as string | undefined) || "app-user";
+const DEFAULT_PUMP_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);
 
 interface Props {
   onComplete?: () => void;

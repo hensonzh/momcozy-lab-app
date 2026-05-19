@@ -43,9 +43,10 @@ import { showPumpAutoEndLocalNotice } from "@/lib/pumpSessionNotification";
 import { toast } from "@/components/ui/use-toast";
 import type { ChatMessage } from "@/types/chat";
 import type { ChatRichTextPayload, PumpSessionSummaryBody, PumpSessionSummarySide } from "@/lib/agentApiTypes";
+import { getRuntimeUserId } from "@/lib/debugUserConfig";
 
 // ─── 吸乳小结写入对话 ─────────────────────────────────────────────
-const CHAT_USER_ID = (import.meta.env.VITE_DEFAULT_USER_ID as string | undefined) || "app-user";
+const CHAT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);
 const MAI_CHAT_QUERY_STOP_PUMP = "停止吸乳-开始吸乳APP";
 const STOP_SUMMARY_TIMEOUT_MS = 12000;
 const PUMP_SESSION_SUMMARY_WS_TIMEOUT_MS = 15000;

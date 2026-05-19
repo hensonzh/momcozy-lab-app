@@ -6,10 +6,10 @@ import type { DeviceConnectionSide, DeviceInfoBody } from "./agentApiTypes";
 import type { StoredDeviceInfo } from "./deviceStore";
 import { deviceStore } from "./deviceStore";
 import { createScopedConsole } from "./logger";
+import { getRuntimeUserId } from "@/lib/debugUserConfig";
 
 const console = createScopedConsole("deviceInfoReport");
-const DEFAULT_USER_ID =
-  (import.meta.env.VITE_DEFAULT_USER_ID as string | undefined) || "app-user";
+const DEFAULT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);
 
 function storedToConnectionSide(
   stored: StoredDeviceInfo | null

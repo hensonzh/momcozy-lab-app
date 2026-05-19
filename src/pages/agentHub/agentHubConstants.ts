@@ -1,6 +1,8 @@
 /** AgentHub 版面与页面拆离的常量（避免 AgentHub.tsx 顶部过长） */
 
 /** Hub 药丸 flowType → 传给设备指引的固定 query。 */
+import { getRuntimeUserId } from "@/lib/debugUserConfig";
+
 export const DEVICE_INSTRUCT_QUERY_BY_FLOW: Record<string, string> = {
   unbox: "开箱指引",
   "wearing-guide": "上身指引",
@@ -8,7 +10,7 @@ export const DEVICE_INSTRUCT_QUERY_BY_FLOW: Record<string, string> = {
   maintenance: "设备保养",
 };
 
-export const DEFAULT_CHAT_USER_ID = (import.meta.env.VITE_DEFAULT_USER_ID as string | undefined) || "app-user";
+export const DEFAULT_CHAT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);
 
 export const CALIBRATION_HUB_NOTICE_KEY = "calibrationHubNotice";
 

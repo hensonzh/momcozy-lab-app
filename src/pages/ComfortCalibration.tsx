@@ -9,6 +9,7 @@ import { deviceStore } from "@/lib/deviceStore";
 import { uploadPumpThreshold } from "@/lib/agentApi";
 import { ApiError } from "@/lib/http";
 import { createScopedConsole } from "@/lib/logger";
+import { getRuntimeUserId } from "@/lib/debugUserConfig";
 
 /* ── types ── */
 type Side = "L" | "R";
@@ -28,7 +29,7 @@ interface SideResult {
 }
 
 const MAX_GEAR = 15;
-const DEFAULT_PUMP_USER_ID = (import.meta.env.VITE_DEFAULT_USER_ID as string | undefined) || "app-user";
+const DEFAULT_PUMP_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);
 const CALIBRATION_HUB_NOTICE_KEY = "calibrationHubNotice";
 const console = createScopedConsole("ComfortCalibration");
 

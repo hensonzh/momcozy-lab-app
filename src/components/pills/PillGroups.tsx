@@ -7,6 +7,7 @@ import {
   type HubPillAction,
   type MomStage,
 } from "./pillGroupsModel";
+import { getRuntimeMomStage } from "@/lib/debugUserConfig";
 
 interface PillGroupsProps {
   momStage?: MomStage;
@@ -19,7 +20,7 @@ interface PillGroupsProps {
 }
 
 const PillGroups: React.FC<PillGroupsProps> = ({
-  momStage = normalizeMomStage(import.meta.env.VITE_MOM_STAGE as string | undefined),
+  momStage = normalizeMomStage(getRuntimeMomStage(import.meta.env.VITE_MOM_STAGE as string | undefined)),
   startPumpBusy = false,
   pumpSessionActive = false,
   onFillInput,
