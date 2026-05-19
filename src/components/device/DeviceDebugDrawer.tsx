@@ -1,8 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { GripVertical, Plus, X } from "lucide-react";
+import { Check, AlertCircle, AlertTriangle, GripVertical, Plus, X } from "lucide-react";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { toast } from "@/hooks/use-toast";
 import {
+  buildB4SetGoldenRhythmPacket,
+  buildB5SetSoftTransitionPacket,
+  buildB6SetSmartForceLinePacket,
+  buildE4QueryGoldenRhythmPacket,
+  bytesToHex,
   queryGoldenRhythmConfig,
   querySmartForceLineConfig,
   querySoftTransitionConfig,
@@ -15,6 +20,7 @@ import {
 } from "@/lib/deviceDebugProtocol";
 import type { DeviceInfo } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+import defaultProgramParamsConfig from "@/../default_program_params_config.json";
 
 type DebugTab = 0 | 1 | 2;
 
@@ -72,15 +78,32 @@ function Stepper({
     setDraft(String(next));
   };
 
+  // 获取当前显示的数值
+  const getCurrentValue = () => {
+    const parsed = Number(draft);
+    return Number.isFinite(parsed) ? parsed : value;
+  };
+
   return (
     <div className={cn("flex items-center overflow-hidden rounded-lg border border-[#ddd] bg-white", compact && "rounded-[8px]")}>
       <button
         type="button"
         className={cn("text-foreground", compact ? "h-8 w-7 text-sm" : "h-11 w-11 text-lg")}
         onClick={() => {
-          const next = clamp(value - 1, min, max);
-          onChange(next);
-          setDraft(String(next));
+          const currentValue = getCurrentValue();
+          console.log('Stepper - button click:', { currentValue, min, max });
+          
+          // 修复边界值bug：当currentValue已经是min时，再次减应该保持min不变
+          if (currentValue <= min) {
+            console.log('Stepper - already at min, keeping:', min);
+            onChange(min);
+            setDraft(String(min));
+          } else {
+            const next = clamp(currentValue - 1, min, max);
+            console.log('Stepper - calculated next:', next);
+            onChange(next);
+            setDraft(String(next));
+          }
         }}
       >
         -
@@ -110,7 +133,8 @@ function Stepper({
         type="button"
         className={cn("text-foreground", compact ? "h-8 w-7 text-sm" : "h-11 w-11 text-lg")}
         onClick={() => {
-          const next = clamp(value + 1, min, max);
+          const currentValue = getCurrentValue();
+          const next = clamp(currentValue + 1, min, max);
           onChange(next);
           setDraft(String(next));
         }}
@@ -132,12 +156,39 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
     stepCount: 1,
     transitionGear: 1,
   });
+  
+  // 居中弹窗提示状态
+  const [centerToast, setCenterToast] = useState<{
+    visible: boolean;
+    title: string;
+    description?: string;
+    type: 'success' | 'error' | 'warning';
+  }>({
+    visible: false,
+    title: '',
+    type: 'success',
+  });
+  
+  // 自定义居中提示函数
+  const showCenterToast = (title: string, description?: string, type: 'success' | 'error' | 'warning' = 'success') => {
+    setCenterToast({ visible: true, title, description, type });
+    setTimeout(() => {
+      setCenterToast(prev => ({ ...prev, visible: false }));
+    }, 1500); // 1.5秒后消失
+  };
+  
   const [lineConfig, setLineConfig] = useState<SmartForceLineConfig>({
     workMode: 0,
     gearDisplay: 1,
     maxPressureKpa: 25,
     frequencyPcm: 50,
     holdTimeMs: 300,
+    buildTimeA: 180,
+    releaseTimeC: 400,
+    restTimeD: 40,
+    cycleT: 667,
+    dutyCycle: 33,
+    ratio: "2.2:4.4",
   });
   const [loading, setLoading] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
@@ -157,9 +208,9 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
       const result = await queryGoldenRhythmConfig(device.id, goldCustomModeId);
       setGoldCustomModeId(result.customModeId);
       setGoldSteps(result.steps);
-      toast({ title: "查询成功" });
+      showCenterToast("查询成功");
     } catch {
-      toast({ title: "查询失败", variant: "destructive" });
+      showCenterToast("查询失败", undefined, 'error');
     } finally {
       setLoading(false);
     }
@@ -170,9 +221,9 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
     try {
       const result = await querySoftTransitionConfig(device.id);
       setSoftConfig(result);
-      toast({ title: "查询成功" });
+      showCenterToast("查询成功");
     } catch {
-      toast({ title: "查询失败", variant: "destructive" });
+      showCenterToast("查询失败", undefined, 'error');
     } finally {
       setLoading(false);
     }
@@ -182,10 +233,27 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
     setLoading(true);
     try {
       const result = await querySmartForceLineConfig(device.id, lineConfig.workMode, lineConfig.gearDisplay);
-      setLineConfig(result);
-      toast({ title: "查询成功" });
-    } catch {
-      toast({ title: "查询失败", variant: "destructive" });
+      
+      // 根据读取到的模式+档位自动查表，只填充a、c默认值（不覆盖查询到的负压、频率、保持时间）
+      const defaultParams = getDefaultParams(result.workMode, result.gearDisplay);
+      
+      // 自动计算周期T、d、占空比、比值
+      const calculated = calculateLineParams({
+        ...result,
+        buildTimeA: defaultParams.buildTimeA,  // 只使用查表的a值
+        releaseTimeC: defaultParams.releaseTimeC  // 只使用查表的c值
+      });
+      
+      setLineConfig({
+        ...result,
+        buildTimeA: defaultParams.buildTimeA,  // 只使用查表的a值
+        releaseTimeC: defaultParams.releaseTimeC,  // 只使用查表的c值
+        ...calculated
+      });
+      
+      showCenterToast("参数读取成功", `已从设备读取模式${result.workMode === 0 ? '刺激' : '吸乳'} 档位${result.gearDisplay}的参数`);
+    } catch (error) {
+      showCenterToast("读取失败", "无法从设备读取参数，请检查连接", 'error');
     } finally {
       setLoading(false);
     }
@@ -205,7 +273,7 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
 
   const addGoldStep = () => {
     if (goldSteps.length >= 10) {
-      toast({ title: "最多 10 个步骤", variant: "destructive" });
+      showCenterToast("最多 10 个步骤", undefined, 'error');
       return;
     }
     setGoldSteps((prev) => [
@@ -226,7 +294,7 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
 
   const deleteGoldStep = (index: number) => {
     setGoldSteps((prev) => prev.filter((_, idx) => idx !== index));
-    toast({ title: "步骤已删除" });
+    showCenterToast("步骤已删除");
   };
 
   const updateGoldStep = (index: number, patch: Partial<GoldenRhythmStep>) => {
@@ -237,9 +305,9 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
     setLoading(true);
     try {
       await saveGoldenRhythmConfig(device.id, goldCustomModeId, goldSteps);
-      toast({ title: "保存成功" });
+      showCenterToast("保存成功");
     } catch {
-      toast({ title: "保存失败", variant: "destructive" });
+      showCenterToast("保存失败", undefined, 'error');
     } finally {
       setLoading(false);
     }
@@ -254,9 +322,9 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
       } satisfies SoftTransitionConfig;
       setSoftConfig(normalized);
       await saveSoftTransitionConfig(device.id, normalized);
-      toast({ title: "保存成功" });
+      showCenterToast("保存成功");
     } catch {
-      toast({ title: "保存失败", variant: "destructive" });
+      showCenterToast("保存失败", undefined, 'error');
     } finally {
       setLoading(false);
     }
@@ -266,9 +334,9 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
     setLoading(true);
     try {
       await saveSmartForceLineConfig(device.id, lineConfig);
-      toast({ title: "保存成功" });
+      showCenterToast("保存成功");
     } catch {
-      toast({ title: "保存失败", variant: "destructive" });
+      showCenterToast("保存失败", undefined, 'error');
     } finally {
       setLoading(false);
     }
@@ -276,12 +344,218 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
 
   const emptyGold = goldSteps.length === 0;
 
+  // 智能力线联动计算逻辑
+  const calculateLineParams = (config: SmartForceLineConfig) => {
+    const { workMode, gearDisplay, frequencyPcm, holdTimeMs, buildTimeA = 180, releaseTimeC = 400 } = config;
+    
+    // 1. 周期计算公式
+    const cycleT = Math.round((60 * 1000) / frequencyPcm);
+    
+    // 2. b+d总和计算公式
+    const bdSum = cycleT - buildTimeA - releaseTimeC;
+    
+    // 3. 占空比 - 从查表获取电机占空比
+    const dutyCycle = config.dutyCycle || 67;
+    
+    // 4. 比值计算公式 - 保留一位小数且和为10
+    const ratioA = ((buildTimeA + holdTimeMs) / cycleT) * 10;
+    const ratioB = 10 - ratioA;
+    const ratio = `${ratioA.toFixed(1)}:${ratioB.toFixed(1)}`;
+    
+    return {
+      cycleT,
+      dutyCycle,
+      ratio,
+      restTimeD: bdSum - holdTimeMs
+    };
+  };
+
+  // 从JSON配置中获取默认参数
+  const getDefaultParams = (workMode: 0 | 1, gearDisplay: number) => {
+    const key = `${workMode}_${gearDisplay}` as keyof typeof defaultProgramParamsConfig.cycle;
+    const config = defaultProgramParamsConfig.cycle[key];
+    
+    if (!config) {
+      return {
+        maxPressureKpa: 25,
+        frequencyPcm: 50,
+        buildTimeA: 180,
+        holdTimeMs: 300,
+        releaseTimeC: 400,
+        restTimeD: 40,
+        dutyCycle: 67
+      };
+    }
+    
+    return {
+      maxPressureKpa: config.pressure,
+      frequencyPcm: config.freq,
+      buildTimeA: config.a,
+      holdTimeMs: config.b,
+      releaseTimeC: config.c,
+      restTimeD: config.d,
+      dutyCycle: config.duty || 67
+    };
+  };
+
+  // 计算频率的最大范围（基于当前模式+档位的JSON查表参数，b=0, d=0）
+  const getFrequencyMax = (workMode: 0 | 1, gearDisplay: number) => {
+    const defaultParams = getDefaultParams(workMode, gearDisplay);
+    return Math.floor((60 * 1000) / (defaultParams.buildTimeA + defaultParams.releaseTimeC));
+  };
+
+  // 恢复默认参数
+  const resetToDefault = () => {
+    const defaultParams = getDefaultParams(lineConfig.workMode, lineConfig.gearDisplay);
+    
+    // 计算b+d的总和
+    const cycleT = Math.round((60 * 1000) / defaultParams.frequencyPcm);
+    const bdSum = cycleT - defaultParams.buildTimeA - defaultParams.releaseTimeC;
+    
+    // 保持时间使用JSON默认值，休息时间根据联动关系计算
+    const calculated = calculateLineParams({
+      ...lineConfig,
+      ...defaultParams,
+      holdTimeMs: defaultParams.holdTimeMs,
+      restTimeD: bdSum - defaultParams.holdTimeMs
+    });
+    
+    setLineConfig(prev => ({
+      ...prev,
+      ...defaultParams,
+      holdTimeMs: defaultParams.holdTimeMs,
+      restTimeD: bdSum - defaultParams.holdTimeMs,
+      ...calculated
+    }));
+    
+    showCenterToast("已恢复默认参数", `模式${lineConfig.workMode === 0 ? '刺激' : '吸乳'} 档位${lineConfig.gearDisplay}`);
+  };
+
+  // 参数校验
+  const validateLineConfig = (config: SmartForceLineConfig): string | null => {
+    const { maxPressureKpa, frequencyPcm, holdTimeMs, restTimeD } = config;
+    
+    if (maxPressureKpa < 10 || maxPressureKpa > 40) {
+      return "负压压力超出范围(10-40kPa)";
+    }
+    if (frequencyPcm < 1 || frequencyPcm > getFrequencyMax(lineConfig.workMode, lineConfig.gearDisplay)) {
+      return "频率超出范围";
+    }
+    if (holdTimeMs < 0 || holdTimeMs > 1000) {
+      return "保持时间超出范围(0-1000ms)";
+    }
+    if (restTimeD < 0 || restTimeD > 1000) {
+      return "休息时间超出范围(0-1000ms)";
+    }
+    
+    return null;
+  };
+
+  // 更新配置并重新计算
+  const updateLineConfig = (updates: Partial<SmartForceLineConfig>) => {
+    setLineConfig(prev => {
+      const newConfig = { ...prev, ...updates };
+      const calculated = calculateLineParams(newConfig);
+      return { ...newConfig, ...calculated };
+    });
+  };
+
+  // b与d强制联动规则
+  const updateHoldTime = (value: number) => {
+    const { buildTimeA = 180, releaseTimeC = 400, frequencyPcm } = lineConfig;
+    const cycleT = Math.round((60 * 1000) / frequencyPcm);
+    const bdSum = cycleT - buildTimeA - releaseTimeC;
+    
+    // 修复边界错误：确保b+d的和等于bdSum
+    const newHoldTime = Math.max(0, Math.min(value, bdSum));
+    const newRestTime = bdSum - newHoldTime;
+    
+    // 调试信息：打印计算过程
+    console.log('updateHoldTime:', { value, bdSum, newHoldTime, newRestTime });
+    
+    // 调试：检查更新后的实际值
+    setTimeout(() => {
+      console.log('After updateHoldTime - lineConfig:', {
+        holdTimeMs: lineConfig.holdTimeMs,
+        restTimeD: lineConfig.restTimeD
+      });
+    }, 100);
+    
+    updateLineConfig({
+      holdTimeMs: newHoldTime,
+      restTimeD: newRestTime
+    });
+  };
+
+  const updateRestTime = (value: number) => {
+    const { buildTimeA = 180, releaseTimeC = 400, frequencyPcm } = lineConfig;
+    const cycleT = Math.round((60 * 1000) / frequencyPcm);
+    const bdSum = cycleT - buildTimeA - releaseTimeC;
+    
+    // 修复边界错误：确保b+d的和等于bdSum
+    const newRestTime = Math.max(0, Math.min(value, bdSum));
+    const newHoldTime = bdSum - newRestTime;
+    
+    // 调试信息：打印计算过程
+    console.log('updateRestTime:', { value, bdSum, newRestTime, newHoldTime });
+    
+    updateLineConfig({
+      holdTimeMs: newHoldTime,
+      restTimeD: newRestTime
+    });
+  };
+
   return (
     <Drawer open={open} onOpenChange={(next) => !next && onClose()}>
       <DrawerContent
         className="w-full max-w-md rounded-t-[20px] border-0 bg-white px-0 mx-auto"
         style={drawerHeight != null ? { height: `${drawerHeight}px`, maxHeight: `${drawerHeight}px` } : undefined}
       >
+        {/* 居中弹窗提示 */}
+        {centerToast.visible && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            zIndex: 9999,
+          }}>
+            <div style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '12px',
+              padding: '20px',
+              minWidth: '280px',
+              maxWidth: '320px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+              textAlign: 'center',
+            }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 12px',
+                backgroundColor: centerToast.type === 'success' ? '#dcfce7' : centerToast.type === 'error' ? '#fee2e2' : '#fef3c7',
+              }}>
+                {centerToast.type === 'success' && <Check style={{ width: '24px', height: '24px', color: '#16a34a' }} />}
+                {centerToast.type === 'error' && <AlertCircle style={{ width: '24px', height: '24px', color: '#dc2626' }} />}
+                {centerToast.type === 'warning' && <AlertTriangle style={{ width: '24px', height: '24px', color: '#ca8a04' }} />}
+              </div>
+              <div style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937' }}>{centerToast.title}</div>
+              {centerToast.description && (
+                <div style={{ fontSize: '14px', color: '#6b7280', marginTop: '8px' }}>{centerToast.description}</div>
+              )}
+            </div>
+          </div>
+        )}
+        
         <div className="border-b border-[#eee] px-4 pb-4 pt-3">
           <div className="mb-3 flex items-start justify-between">
             <div>
@@ -347,7 +621,7 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
                       });
                       setDragIdx(null);
                       setDragOverIdx(null);
-                      toast({ title: "步骤顺序已更新" });
+                      showCenterToast("步骤顺序已更新");
                     }}
                     onDragEnd={() => {
                       setDragIdx(null);
@@ -483,10 +757,11 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
           )}
 
           {currentTab === 2 && (
-            <div className="space-y-4">
+            <div className="space-y-2">
+              {/* 第一行：模式选择 */}
               <div>
-                <label className="mb-2 block text-[15px] text-foreground">工作模式</label>
-                <div className="flex gap-2.5">
+                <label className="mb-1 block text-[14px] text-foreground">模式选择</label>
+                <div className="flex gap-2">
                   {[
                     { label: "刺激", value: 0 },
                     { label: "吸乳", value: 1 },
@@ -494,9 +769,9 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() => setLineConfig((prev) => ({ ...prev, workMode: option.value as 0 | 1 }))}
+                      onClick={() => updateLineConfig({ workMode: option.value as 0 | 1 })}
                       className={cn(
-                        "flex-1 rounded-[10px] border px-4 py-3 text-[15px]",
+                        "flex-1 rounded-[8px] border px-3 py-2 text-[14px]",
                         lineConfig.workMode === option.value
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-border bg-card text-foreground hover:border-primary/25 hover:bg-primary/5"
@@ -508,37 +783,152 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
                 </div>
               </div>
 
-              <div>
-                <label className="mb-1.5 block text-[15px] text-foreground">档位 1~15</label>
-                <Stepper value={lineConfig.gearDisplay} min={1} max={15} onChange={(next) => setLineConfig((prev) => ({ ...prev, gearDisplay: next }))} />
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-[15px] text-foreground">最大负压(kPa) 10~40</label>
-                <Stepper value={lineConfig.maxPressureKpa} min={10} max={40} onChange={(next) => setLineConfig((prev) => ({ ...prev, maxPressureKpa: next }))} />
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-[15px] text-foreground">吸放频率(pcm) 20~90</label>
-                <Stepper value={lineConfig.frequencyPcm} min={20} max={90} onChange={(next) => setLineConfig((prev) => ({ ...prev, frequencyPcm: next }))} />
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-[15px] text-foreground">吸力保持时间(ms) 0~1000</label>
-                <Stepper value={lineConfig.holdTimeMs} min={0} max={1000} onChange={(next) => setLineConfig((prev) => ({ ...prev, holdTimeMs: next }))} />
-              </div>
-
+              {/* 第二行：左侧参数和右侧参数 */}
               <div className="grid grid-cols-2 gap-3">
-                <button type="button" onClick={() => void loadLine()} disabled={loading} className="h-12 rounded-xl border border-primary/20 bg-primary/10 text-[15px] font-semibold text-primary transition hover:bg-primary/15">
-                  查询参数
+                {/* 左侧：档位、压力、频率、占空比 */}
+                <div className="space-y-2">
+                  <div>
+                     <label className="mb-1 block text-[14px] text-foreground">档位 (档)</label>
+                     <div className="text-xs text-muted-foreground mb-1">1-15档</div>
+                     <Stepper value={lineConfig.gearDisplay} min={1} max={15} onChange={(next) => {
+                       // 修改档位时，相当于进行一次依据最新模式+档位的查表的恢复默认
+                       const defaultParams = getDefaultParams(lineConfig.workMode, next);
+                       const cycleT = Math.round((60 * 1000) / defaultParams.frequencyPcm);
+                       const bdSum = cycleT - defaultParams.buildTimeA - defaultParams.releaseTimeC;
+                       
+                       // 相当于执行一次恢复默认操作，保持时间使用JSON默认值
+                       updateLineConfig({ 
+                         gearDisplay: next,
+                         maxPressureKpa: defaultParams.maxPressureKpa,
+                         frequencyPcm: defaultParams.frequencyPcm,
+                         buildTimeA: defaultParams.buildTimeA,
+                         releaseTimeC: defaultParams.releaseTimeC,
+                         dutyCycle: defaultParams.dutyCycle,
+                         holdTimeMs: defaultParams.holdTimeMs, // 保持时间使用JSON默认值
+                         restTimeD: bdSum - defaultParams.holdTimeMs // 休息时间根据联动关系计算
+                       });
+                     }} />
+                   </div>
+                   
+                   <div>
+                     <label className="mb-1 block text-[14px] text-foreground">压力 (kPa)</label>
+                     <div className="text-xs text-muted-foreground mb-1">{lineConfig.workMode === 0 ? '刺激模式:10-25' : '吸乳模式:18-36'}</div>
+                     <input
+                       type="number"
+                       value={lineConfig.maxPressureKpa}
+                       readOnly
+                       className="h-11 w-full rounded-[8px] border border-border bg-muted px-3 text-[14px] text-muted-foreground"
+                     />
+                   </div>
+                   
+                   <div>
+                     <label className="mb-1 block text-[14px] text-foreground">频率 (cpm)</label>
+                     <div className="text-xs text-muted-foreground mb-1">1-{getFrequencyMax(lineConfig.workMode, lineConfig.gearDisplay)}</div>
+                     <Stepper value={lineConfig.frequencyPcm} min={1} max={getFrequencyMax(lineConfig.workMode, lineConfig.gearDisplay)} onChange={(next) => {
+                       // 当频率变化时，重新计算b+d总和，并将b设为0，d设为最大值
+                       const cycleT = Math.round((60 * 1000) / next);
+                       const bdSum = cycleT - (lineConfig.buildTimeA || 180) - (lineConfig.releaseTimeC || 400);
+                       
+                       updateLineConfig({ 
+                         frequencyPcm: next,
+                         holdTimeMs: 0, // b设为0
+                         restTimeD: Math.max(0, bdSum) // d设为最大值
+                       });
+                     }} />
+                   </div>
+                   
+                   <div>
+                     <label className="mb-1 block text-[14px] text-foreground">占空比 (%)</label>
+                     <div className="text-xs text-muted-foreground mb-1">0-100</div>
+                     <input
+                       type="text"
+                       value={`${lineConfig.dutyCycle || 33}%`}
+                       readOnly
+                       className="h-11 w-full rounded-[8px] border border-border bg-muted px-3 text-[14px] text-muted-foreground"
+                     />
+                   </div>
+                </div>
+
+                {/* 右侧：a、b、c、d */}
+                 <div className="space-y-2">
+                   <div>
+                     <label className="mb-1 block text-[14px] text-foreground">建压时间 a(ms)</label>
+                     <div className="text-xs text-muted-foreground mb-1">{lineConfig.workMode === 0 ? '刺激模式:180-570' : '吸乳模式:400-1600'}</div>
+                     <input
+                       type="number"
+                       value={lineConfig.buildTimeA || 180}
+                       readOnly
+                       className="h-11 w-full rounded-[8px] border border-border bg-muted px-3 text-[14px] text-muted-foreground"
+                     />
+                   </div>
+                   
+                   <div>
+                     <label className="mb-1 block text-[14px] text-foreground">保持时间 b(ms)</label>
+                     <div className="text-xs text-muted-foreground mb-1">0-{((lineConfig.cycleT || 667) - (lineConfig.buildTimeA || 180) - (lineConfig.releaseTimeC || 400))}</div>
+                     <Stepper value={lineConfig.holdTimeMs} min={0} max={((lineConfig.cycleT || 667) - (lineConfig.buildTimeA || 180) - (lineConfig.releaseTimeC || 400))} onChange={updateHoldTime} />
+                   </div>
+                   
+                   <div>
+                     <label className="mb-1 block text-[14px] text-foreground">泄压时间 c(ms)</label>
+                     <div className="text-xs text-muted-foreground mb-1">{lineConfig.workMode === 0 ? '刺激模式:400-500' : '吸乳模式:600-1000'}</div>
+                     <input
+                       type="number"
+                       value={lineConfig.releaseTimeC || 400}
+                       readOnly
+                       className="h-11 w-full rounded-[8px] border border-border bg-muted px-3 text-[14px] text-muted-foreground"
+                     />
+                   </div>
+                   
+                   <div>
+                     <label className="mb-1 block text-[14px] text-foreground">休息时间 d(ms)</label>
+                     <div className="text-xs text-muted-foreground mb-1">0-{((lineConfig.cycleT || 667) - (lineConfig.buildTimeA || 180) - (lineConfig.releaseTimeC || 400))}</div>
+                     <input
+                       type="text"
+                       value={lineConfig.restTimeD ?? 0}
+                       readOnly
+                       className="h-11 w-full rounded-[8px] border border-border bg-muted px-3 text-[14px] text-muted-foreground"
+                     />
+                   </div>
+                 </div>
+              </div>
+
+              {/* 比值显示 */}
+              <div className="text-center">
+                <label className="block text-[14px] text-foreground">比值 (a+b):(c+d) {lineConfig.ratio || "2.2:4.4"}</label>
+              </div>
+
+              {/* 底部功能按钮 */}
+              <div className="grid grid-cols-3 gap-2 pt-1">
+                <button 
+                  type="button" 
+                  onClick={() => void loadLine()} 
+                  disabled={loading} 
+                  className="h-10 rounded-xl border border-primary/20 bg-primary/10 text-[13px] font-semibold text-primary transition hover:bg-primary/15"
+                >
+                  读取
                 </button>
                 <button
                   type="button"
-                  onClick={() => void saveLine()}
+                  onClick={() => {
+                    const error = validateLineConfig(lineConfig);
+                    if (error) {
+                      showCenterToast("参数校验失败", error, 'error');
+                      return;
+                    }
+                    void saveLine();
+                  }}
                   disabled={loading}
-                  className="h-12 rounded-xl bg-primary text-[15px] font-semibold text-primary-foreground shadow-[0_10px_24px_hsl(var(--mai-glow)/0.18)] transition hover:bg-primary/90"
+                  className="h-10 rounded-xl bg-primary text-[13px] font-semibold text-primary-foreground shadow-[0_6px_16px_hsl(var(--mai-glow)/0.15)] transition hover:bg-primary/90"
                 >
-                  保存设置
+                  配置
+                </button>
+                <button
+                  type="button"
+                  onClick={resetToDefault}
+                  disabled={loading}
+                  className="h-10 rounded-xl border border-border/50 bg-card/50 text-[13px] font-semibold text-foreground transition hover:bg-card"
+                >
+                  恢复默认
                 </button>
               </div>
             </div>
