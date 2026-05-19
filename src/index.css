@@ -149,6 +149,18 @@
   color: #171717;
 }
 
+.agent-card-hospital_bag_card {
+  overflow: hidden;
+  border-color: #eadbe2;
+  background:
+    linear-gradient(145deg, #fff8fa 0%, #f7fcfb 48%, #fff7ec 100%);
+  box-shadow: 0 16px 38px rgba(83, 47, 64, 0.11);
+}
+
+.agent-card-birth_plan_card {
+  background: #ffffff;
+}
+
 .agent-card-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -166,6 +178,14 @@
   border-bottom-color: #dedede;
 }
 
+.agent-card-hospital_bag_card .agent-card-header {
+  margin: -16px -16px 0;
+  padding: 18px 16px 16px;
+  border-bottom-color: rgba(184, 102, 123, 0.18);
+  background:
+    linear-gradient(135deg, rgba(255, 235, 241, 0.86) 0%, rgba(232, 249, 246, 0.72) 56%, rgba(255, 241, 218, 0.78) 100%);
+}
+
 .agent-card-hospital_bag_card .agent-card-header::before {
   content: "";
   position: absolute;
@@ -175,6 +195,14 @@
   height: 2px;
   border-radius: 0;
   background: #111111;
+}
+
+.agent-card-hospital_bag_card .agent-card-header::before {
+  left: 16px;
+  width: 72px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d86b91, #2c9ba5, #f0b85b);
 }
 
 .agent-card-header-text {
@@ -190,11 +218,19 @@
   line-height: 1.12;
 }
 
+.agent-card-hospital_bag_card .agent-card-header h2 {
+  color: #4b2638;
+}
+
 .agent-card-header p {
   margin: 0;
   color: #5f5f5f;
   font-size: 14px;
   line-height: 1.35;
+}
+
+.agent-card-hospital_bag_card .agent-card-header p {
+  color: #75636c;
 }
 
 .agent-card-logo {
@@ -211,6 +247,14 @@
 .agent-card-section {
   display: grid;
   gap: 9px;
+}
+
+.agent-card-hospital_bag_card .agent-card-section {
+  padding: 12px;
+  border: 1px solid rgba(234, 219, 226, 0.9);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 8px 20px rgba(83, 47, 64, 0.06);
 }
 
 .agent-card-section h3 {
@@ -230,6 +274,16 @@
   height: 7px;
   border-radius: 999px;
   background: #111111;
+}
+
+.agent-card-hospital_bag_card .agent-card-section h3 {
+  color: #4b2638;
+}
+
+.agent-card-hospital_bag_card .agent-card-section h3::before {
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #d86b91, #2c9ba5);
 }
 
 .agent-card-list {
@@ -302,12 +356,24 @@
   line-height: 1.35;
 }
 
+.agent-card-hospital_bag_card .hospital-card-focus-list li {
+  padding: 9px 10px;
+  border: 1px solid rgba(231, 219, 224, 0.82);
+  border-radius: 12px;
+  background: rgba(255, 251, 252, 0.76);
+}
+
 .hospital-card-focus-list li > span:first-child {
   width: 12px;
   height: 12px;
   margin-top: 2px;
   border: 1.5px solid #111111;
   border-radius: 2px;
+}
+
+.agent-card-hospital_bag_card .hospital-card-focus-list li > span:first-child {
+  border-color: #2c9ba5;
+  background: linear-gradient(135deg, #2c9ba5 0%, #8edbd6 100%);
 }
 
 .hospital-card-focus-list li > strong {
@@ -396,8 +462,20 @@
   background: transparent;
 }
 
+.agent-card-hospital_bag_card .packing-group {
+  padding: 10px 11px;
+  border: 1px solid rgba(228, 217, 223, 0.88);
+  border-left: 4px solid rgba(44, 155, 165, 0.45);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.74);
+}
+
 .packing-group:not(:last-child) {
   border-bottom: 1px solid #e8e8e8;
+}
+
+.agent-card-hospital_bag_card .packing-group:not(:last-child) {
+  border-bottom-color: rgba(228, 217, 223, 0.88);
 }
 
 .packing-group summary {
@@ -445,6 +523,14 @@
   white-space: nowrap;
 }
 
+.agent-card-hospital_bag_card .packing-group summary span {
+  color: #4b2638;
+}
+
+.agent-card-hospital_bag_card .packing-group summary::before {
+  border-color: #2c9ba5;
+}
+
 .packing-item {
   display: grid;
   grid-template-columns: 22px minmax(0, 1fr) minmax(42px, auto) 54px;
@@ -453,6 +539,10 @@
   min-height: 34px;
   padding: 7px 0;
   border-top: 1px solid #eeeeee;
+}
+
+.agent-card-hospital_bag_card .packing-item {
+  border-top-color: rgba(235, 226, 231, 0.9);
 }
 
 .packing-item:first-child {
@@ -470,6 +560,66 @@
   border-radius: 6px;
   background: #f7f7f7;
   color: #111111;
+}
+
+.agent-card-hospital_bag_card .packing-item-icon {
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  box-shadow: 0 3px 8px rgba(65, 42, 52, 0.12);
+}
+
+.packing-item-icon.tone-documents {
+  background: #fff0c7;
+  color: #9b6818;
+}
+
+.packing-item-icon.tone-tech {
+  background: #dff5ff;
+  color: #16779a;
+}
+
+.packing-item-icon.tone-baby {
+  background: #ffe4ed;
+  color: #c64f7a;
+}
+
+.packing-item-icon.tone-clothes {
+  background: #efe7ff;
+  color: #7553c6;
+}
+
+.packing-item-icon.tone-care {
+  background: #ddf7f0;
+  color: #21886e;
+}
+
+.packing-item-icon.tone-feeding {
+  background: #e5f0ff;
+  color: #376fbd;
+}
+
+.packing-item-icon.tone-food {
+  background: #fff0d8;
+  color: #b56a20;
+}
+
+.packing-item-icon.tone-health {
+  background: #ffe2de;
+  color: #c4493d;
+}
+
+.packing-item-icon.tone-travel {
+  background: #e9f6dd;
+  color: #5c8f22;
+}
+
+.packing-item-icon.tone-confirm {
+  background: #f4e9ff;
+  color: #8a4bc1;
+}
+
+.packing-item-icon.tone-default {
+  background: #e7f3f1;
+  color: #287a78;
 }
 
 .packing-item-icon svg {
@@ -524,10 +674,21 @@
   color: #ffffff;
 }
 
+.agent-card-hospital_bag_card .priority-must {
+  border-color: #d86b91;
+  background: #d86b91;
+}
+
 .priority-confirm-first {
   border-color: #111111;
   background: #ffffff;
   color: #111111;
+}
+
+.agent-card-hospital_bag_card .priority-confirm-first {
+  border-color: rgba(44, 155, 165, 0.45);
+  background: #e9f8f6;
+  color: #176b76;
 }
 
 .to-confirm {
