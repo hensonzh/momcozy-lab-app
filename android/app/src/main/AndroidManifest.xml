@@ -73,6 +73,11 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />
+
+        <service
+            android:name=".PumpSessionOverlayService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
     <!-- Permissions -->
@@ -81,6 +86,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!-- 麦克风：语音输入、录音等 Web/Capacitor API 所需（运行时仍须向用户申请授权） -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- WebView getUserMedia(AUDIO) 时 BridgeWebChromeClient 会一并申请；缺少此项会导致即使用户点了允许仍整体拒绝 -->

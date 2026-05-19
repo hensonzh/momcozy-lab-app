@@ -421,11 +421,26 @@ function copyFor(reason: PumpSessionEndReason): { title: string; body: string } 
   }
   return { title: "吸乳会话已结束", body: "本次吸乳已结束。" };
 }
+
+export function shouldShowPumpAutoEndReminder(input: {
+  routePath: string;
+  appVisible: boolean;
+}): boolean {
+  return !(input.routePath === "/pump" && input.appVisible);
+}
+
+function isAppVisible(): boolean {
+  return document.visibilityState !== "hidden";
+}
+
 export function startPumpAutoEndOffPumpReminder(): void {
   if (typeof window === "undefined") return;
   pumpSessionLifecycle.subscribeEnded((evt: PumpSessionEndedEvent) => {
     if (!isAutoEndReason(evt.reason)) return;
-    if (window.location.pathname === "/pump") return;
+    if (!shouldShowPumpAutoEndReminder({
+      routePath: window.location.pathname,
+      appVisible: isAppVisible(),
+    })) return;
     registerPumpAutoEndOffPumpPending();
     if (window.location.pathname === "/") {
       void tryRunPumpAutoEndOffPumpTeardownOnce();
