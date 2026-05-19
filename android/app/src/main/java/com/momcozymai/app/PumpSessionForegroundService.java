@@ -87,8 +87,6 @@ public class PumpSessionForegroundService extends Service {
             Log.w(TAG, "stopForeground failed (may not have been FG)", e);
         }
         NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID);
-        PumpCompletionNotice.cancel(this);
-        PumpAutoEndNotice.cancel(this);
         foregroundStarted = false;
         stopSelf();
     }
@@ -122,7 +120,7 @@ public class PumpSessionForegroundService extends Service {
         );
 
         final String stateText = stateText(state);
-        final String title = "当前吸乳进程：" + processAll + "%";
+        final String title = "吸乳会话进行中";
         final String body = "会话状态：" + stateText;
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -135,7 +133,6 @@ public class PumpSessionForegroundService extends Service {
                 .setOnlyAlertOnce(true)
                 .setSilent(true)
                 .setContentIntent(contentIntent)
-                .setProgress(100, processAll, false)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)

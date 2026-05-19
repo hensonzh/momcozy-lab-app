@@ -28,6 +28,7 @@ import {
 import { usePumpSessionController } from "@/pages/pumpSession/usePumpSessionController";
 import { usePumpCalibrationRuntime } from "@/pages/pumpSession/usePumpCalibrationRuntime";
 import { usePumpRealDisplayRuntime } from "@/pages/pumpSession/usePumpRealDisplayRuntime";
+import { shouldShowPumpDeviceNotConnectedPrompt } from "@/pages/pumpSession/pumpDeviceConnectionPrompt";
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -608,8 +609,7 @@ const PumpSession: React.FC = () => {
   // 与 last L1490-1500 对齐：3 秒内若仍无设备连接则提醒。
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const { L, R } = deviceStore.get();
-      if (!L?.connected && !R?.connected) {
+      if (shouldShowPumpDeviceNotConnectedPrompt(deviceStore.get())) {
         setDeviceNotConnectedOpen(true);
       }
     }, 3000);

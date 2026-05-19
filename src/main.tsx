@@ -10,11 +10,15 @@ import App from "./App.tsx";
 import "./index.css";
 import { startPumpAgentUploadService } from "@/lib/pumpAgentUpload";
 import { startPumpSessionNotificationBridge } from "@/lib/pumpSessionNotification";
+import { startPumpSessionOverlayBridge } from "@/lib/pumpSessionOverlay";
+import { startPumpBackgroundBleNotifyWatchdog } from "@/lib/pumpBackgroundBleNotifyWatchdog";
 import { startPumpCompletionReminder } from "@/lib/pumpCompletionReminder";
 import { startPumpAutoEndOffPumpReminder } from "@/lib/pumpAutoEndSession";
 
 startPumpAgentUploadService();
 startPumpSessionNotificationBridge();
+startPumpSessionOverlayBridge();
+startPumpBackgroundBleNotifyWatchdog();
 startPumpCompletionReminder();
 startPumpAutoEndOffPumpReminder();
 

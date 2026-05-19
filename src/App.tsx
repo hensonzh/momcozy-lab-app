@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
-import PumpSessionIsland from "@/components/pumpSession/PumpSessionIsland";
 import { consumePumpNotificationPending } from "@/lib/pumpSessionNotification";
 import { tryRunPumpAutoEndOffPumpTeardownOnce } from "@/lib/pumpAutoEndSession";
 import ReconnectPairedDevices from "@/components/device/ReconnectPairedDevices";
@@ -97,7 +96,7 @@ const App = () => (
       <BrowserRouter>
         <PumpNotificationNavigateSync />
         <BackgroundNotifyOnboardingGate />
-        <PumpSessionIsland />
+        <ReconnectPairedDevices />
         <AppLayout>
           <Routes>
             <Route path="/" element={<AgentHub />} />
