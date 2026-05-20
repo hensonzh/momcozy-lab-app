@@ -1,25 +1,48 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  Armchair,
   Baby,
+  BabyIcon,
   Banknote,
+  Bath,
   BatteryCharging,
+  BedSingle,
+  BookOpenCheck,
+  Boxes,
+  Briefcase,
+  Brush,
   Cable,
+  CarFront,
+  CircleDot,
   CircleHelp,
+  CircleParking,
+  ClipboardList,
+  Copy,
   CreditCard,
   CupSoda,
   Droplets,
+  FileCheck,
   FileText,
   Footprints,
   Headphones,
   Heart,
+  HeartPulse,
+  Hospital,
   IdCard,
+  Luggage,
   Milk,
   Package,
+  Pill,
+  Route,
+  ShieldCheck,
   Shirt,
   Smartphone,
+  SprayCan,
   Stethoscope,
+  Thermometer,
   Utensils,
+  WalletCards,
   type LucideIcon,
 } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
@@ -75,6 +98,56 @@ type FormFieldGroup = {
 };
 
 const REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS = new Set(["hospital_rules_or_notes", "existing_checklist_or_photo_note"]);
+const HOSPITAL_BAG_FORM_GROUP_STYLES = [
+  {
+    section: "border-[#efd6de] bg-[#fff6f8] dark:border-[#5d3543] dark:bg-[#241a20]",
+    header: "border-[#ecced8]",
+    title: "text-[#743149] dark:text-[#ffd7e3]",
+  },
+  {
+    section: "border-[#d8e8de] bg-[#f4fbf6] dark:border-[#315746] dark:bg-[#17231d]",
+    header: "border-[#cfe5d7]",
+    title: "text-[#27634d] dark:text-[#cceedd]",
+  },
+  {
+    section: "border-[#d7e2f3] bg-[#f3f8ff] dark:border-[#324d70] dark:bg-[#171f2c]",
+    header: "border-[#cbdcf2]",
+    title: "text-[#2c5c92] dark:text-[#d4e6ff]",
+  },
+  {
+    section: "border-[#eadcc8] bg-[#fff8ee] dark:border-[#654d2f] dark:bg-[#251d14]",
+    header: "border-[#ead7bb]",
+    title: "text-[#7a5425] dark:text-[#ffe4bd]",
+  },
+] as const;
+
+const BIRTH_PLAN_FORM_GROUP_STYLES = [
+  {
+    section: "border-[#d7e8e4] bg-[#f3fbf8] dark:border-[#315e57] dark:bg-[#16231f]",
+    header: "border-[#c8e2dc]",
+    title: "text-[#236357] dark:text-[#cdf0e8]",
+  },
+  {
+    section: "border-[#ead6e0] bg-[#fff5f8] dark:border-[#63384a] dark:bg-[#24181f]",
+    header: "border-[#eccbd8]",
+    title: "text-[#7a3150] dark:text-[#ffd5e2]",
+  },
+  {
+    section: "border-[#d9e0f4] bg-[#f5f7ff] dark:border-[#35466f] dark:bg-[#181d2d]",
+    header: "border-[#cbd6f2]",
+    title: "text-[#354f95] dark:text-[#dbe4ff]",
+  },
+  {
+    section: "border-[#eadcc8] bg-[#fff8ee] dark:border-[#654d2f] dark:bg-[#251d14]",
+    header: "border-[#ead7bb]",
+    title: "text-[#7a5425] dark:text-[#ffe4bd]",
+  },
+  {
+    section: "border-[#d8e6ee] bg-[#f3faff] dark:border-[#315567] dark:bg-[#142129]",
+    header: "border-[#cbe0ea]",
+    title: "text-[#2b6077] dark:text-[#d3efff]",
+  },
+] as const;
 
 const MOMCOZY_LOGO_SRC = momcozyLogo;
 
@@ -173,6 +246,33 @@ function groupFormFields(fields: FormFieldSpec[]): FormFieldGroup[] {
   }
 
   return groups;
+}
+
+function hospitalBagGroupStyle(groupTitle: string, groupIndex: number) {
+  const titleIndexMap: Record<string, number> = {
+    基本信息: 0,
+    生产信息: 1,
+    医院信息: 2,
+    偏好信息: 3,
+  };
+  const styleIndex = titleIndexMap[groupTitle] ?? groupIndex;
+  return HOSPITAL_BAG_FORM_GROUP_STYLES[styleIndex % HOSPITAL_BAG_FORM_GROUP_STYLES.length];
+}
+
+function birthPlanGroupStyle(groupTitle: string, groupIndex: number) {
+  const titleIndexMap: Record<string, number> = {
+    基本信息: 0,
+    支持与沟通: 1,
+    生产过程: 2,
+    疼痛和舒适: 3,
+    宝宝出生后: 4,
+    临时变化: 5,
+    提前问医院: 6,
+    舒适与计划变化: 3,
+    医院确认与安全: 6,
+  };
+  const styleIndex = titleIndexMap[groupTitle] ?? groupIndex;
+  return BIRTH_PLAN_FORM_GROUP_STYLES[styleIndex % BIRTH_PLAN_FORM_GROUP_STYLES.length];
 }
 
 function collectFormValues(form: HTMLFormElement, fields: FormFieldSpec[]): Record<string, unknown> {
@@ -274,7 +374,7 @@ function buildSupportTicketSubmittedMessage(ticket: Record<string, unknown>): st
 
 function isConfirmPlaceholder(value: unknown): boolean {
   const text = String(value ?? "").trim().toLowerCase();
-  return text === "to confirm" || text === "待确认";
+  return ["to confirm", "待确认", "未确定", "不确定", "还没确定", "还没想好"].includes(text);
 }
 
 function limitList(values: unknown, maxItems: number): unknown[] {
@@ -301,14 +401,16 @@ function normalizeBirthPlanValue(value: unknown): string {
     "birth plan card": "分娩沟通卡",
     "labor room communication priority card": "产房沟通优先级卡片",
     vaginal: "顺产",
-    planned_c_section: "刨腹产",
-    c_section: "刨腹产",
-    "c-section": "刨腹产",
-    cesarean: "刨腹产",
-    "计划剖宫产": "刨腹产",
-    "剖腹产": "刨腹产",
+    planned_c_section: "剖宫产",
+    c_section: "剖宫产",
+    "c-section": "剖宫产",
+    cesarean: "剖宫产",
+    "计划剖宫产": "剖宫产",
+    "剖腹产": "剖宫产",
+    "刨腹产": "剖宫产",
     "skin-to-skin": "出生后尽早肌肤接触",
     "skin to skin": "出生后尽早肌肤接触",
+    "我还没想好，请帮我整理成温和版本": "希望医护团队在关键步骤前先解释，并给我一点时间确认。",
   };
   return labels[text.toLowerCase()] || labels[text] || text.replace(/skin-to-skin|skin to skin/gi, "出生后尽早肌肤接触");
 }
@@ -318,18 +420,50 @@ function compactPackingItems(items: unknown): Array<Record<string, unknown>> {
   return items.filter((it) => it && typeof it === "object") as Array<Record<string, unknown>>;
 }
 
+type HospitalBagSceneGroup = { id: string; title: string; order: number };
+
+function hospitalBagSceneGroup(group: Record<string, unknown>, fallbackOrder: number): HospitalBagSceneGroup {
+  const text = `${asString(group.group_id)} ${asString(group.title)}`.toLowerCase();
+  if (/(documents|certificate|证件|资料|文件)/.test(text)) return { id: "documents", title: "证件文件包", order: 0 };
+  if (/(baby|宝宝|新生儿)/.test(text)) return { id: "baby_discharge_bag", title: "宝宝出院包", order: 2 };
+  if (/(support|partner|companion|陪产|支持人)/.test(text)) return { id: "support_person_bag", title: "陪产人包", order: 3 };
+  if (/(car|travel|traffic|transport|车上|交通|停车|路线)/.test(text)) return { id: "car_backup_bag", title: "车上备用包", order: 4 };
+  if (/(lactation|breastfeeding|feeding|postpartum|哺乳|喂养|产后回家|产后护理)/.test(text)) {
+    return { id: "postpartum_home_first_week", title: "产后回家第一周用品", order: 5 };
+  }
+  if (/(mom|mother|communication|food|妈妈|衣物|清洁|护理|通讯|饮食|住院)/.test(text)) {
+    return { id: "mom_hospital_bag", title: "妈妈住院包", order: 1 };
+  }
+  return { id: asString(group.group_id) || `custom_${fallbackOrder}`, title: asString(group.title) || formatLabel(asString(group.group_id) || "Group"), order: 20 + fallbackOrder };
+}
+
 function compactPackingGroups(groups: unknown): Array<Record<string, unknown> & { items: Array<Record<string, unknown>> }> {
   if (!Array.isArray(groups)) return [];
-  return groups
+  const merged = new Map<string, Record<string, unknown> & { items: Array<Record<string, unknown>>; _order: number }>();
+  groups
     .filter((g) => g && typeof g === "object")
-    .map((group) => {
+    .forEach((group, index) => {
       const g = group as Record<string, unknown>;
-      return {
+      const items = compactPackingItems(g.items);
+      if (!items.length) return;
+      const scene = hospitalBagSceneGroup(g, index);
+      const existing = merged.get(scene.id);
+      if (existing) {
+        existing.items.push(...items);
+        existing._order = Math.min(existing._order, scene.order);
+        return;
+      }
+      merged.set(scene.id, {
         ...g,
-        items: compactPackingItems(g.items),
-      };
-    })
-    .filter((group) => group.items.length > 0);
+        group_id: scene.id,
+        title: scene.title,
+        items,
+        _order: scene.order,
+      });
+    });
+  return Array.from(merged.values())
+    .sort((a, b) => a._order - b._order)
+    .map(({ _order, ...group }) => group);
 }
 
 function priorityLabel(priority: unknown): string {
@@ -403,16 +537,68 @@ function packingItemNote(item: Record<string, unknown>): string {
 
 function packingItemIcon(item: Record<string, unknown>, group: Record<string, unknown>): LucideIcon {
   const label = normalizedPackingItemLabel(item, group);
+  if (isConfirmFirstPackingItem(item)) return CircleHelp;
+  const labelText = label.toLowerCase();
   const text = `${asString(group.group_id)} ${asString(group.title)} ${label}`.toLowerCase();
+
+  if (/(身份证|护照|photo id|id card|陪产人.*身份|支持人.*身份)/.test(labelText)) return IdCard;
+  if (/(医保|保险|insurance)/.test(labelText)) return WalletCards;
+  if (/(产检|检查|报告|b超|超声|化验|病历|手册|资料)/.test(labelText)) return ClipboardList;
+  if (/(准生证|出生证明|birth certificate|证明|证书)/.test(labelText)) return FileCheck;
+  if (/(户口本|户口)/.test(labelText)) return BookOpenCheck;
+  if (/(复印|copy)/.test(labelText)) return Copy;
+  if (/(银行卡|信用卡|bank card|credit card)/.test(labelText)) return CreditCard;
+  if (/(现金|零钱|支付|移动支付|钱包)/.test(labelText)) return Banknote;
+  if (/(文件|证件)/.test(labelText)) return FileText;
+
+  if (/(手机|smartphone)/.test(labelText)) return Smartphone;
+  if (/(充电线|数据线|长充电线|cable)/.test(labelText)) return Cable;
+  if (/(充电器|插头|充电宝|电池|power bank)/.test(labelText)) return BatteryCharging;
+  if (/(耳机|headphone)/.test(labelText)) return Headphones;
+
+  if (/(吸管杯|水杯|保温杯|杯)/.test(labelText)) return CupSoda;
+  if (/(餐具|餐盒|筷|勺|叉)/.test(labelText)) return Utensils;
+  if (/(零食|食物|能量|助产食品)/.test(labelText)) return Utensils;
+
+  if (/(安全座椅|安全提篮|car seat)/.test(labelText)) return CarFront;
+  if (/(纸尿裤|尿布|尿片|diaper)/.test(labelText)) return BabyIcon;
+  if (/(湿巾|棉柔巾|纸巾|wipe)/.test(labelText)) return Droplets;
+  if (/(包被|襁褓|包巾|盖毯|blanket|swaddle)/.test(labelText)) return BedSingle;
+  if (/(帽子|帽)/.test(labelText)) return CircleDot;
+  if (/(袜子|袜|鞋)/.test(labelText)) return Footprints;
+  if (/(连体衣|和尚服|新生儿衣|宝宝.*衣|出院衣物)/.test(labelText) && /(宝宝|新生儿|baby)/.test(text)) return Baby;
+
+  if (/(拖鞋|鞋)/.test(labelText)) return Footprints;
+  if (/(哺乳文胸|文胸|内衣|内裤|一次性内裤)/.test(labelText)) return Shirt;
+  if (/(睡衣|哺乳衣|衣物|衣服|出院外套|外套|背心)/.test(labelText)) return Shirt;
+
+  if (/(产褥垫|护理垫|卫生巾)/.test(labelText)) return Droplets;
+  if (/(马桶垫|坐便)/.test(labelText)) return SprayCan;
+  if (/(毛巾|浴巾)/.test(labelText)) return Bath;
+  if (/(牙刷|牙膏|梳子)/.test(labelText)) return Brush;
+  if (/(洗发|沐浴|洗面奶|护肤|冲洗瓶|脸盆|盆)/.test(labelText)) return Bath;
+
+  if (/(吸奶器|奶瓶|奶嘴|配方奶|奶粉|初乳|milk)/.test(labelText)) return Milk;
+  if (/(储奶袋|储奶瓶|储奶)/.test(labelText)) return Boxes;
+  if (/(乳头霜|乳头膏|防溢乳垫|乳盾)/.test(labelText)) return Heart;
+  if (/(哺乳枕)/.test(labelText)) return Armchair;
+
+  if (/(胎监带|胎心|胎动)/.test(labelText)) return HeartPulse;
+  if (/(收腹带|束腹带)/.test(labelText)) return ShieldCheck;
+  if (/(体温计|温度计)/.test(labelText)) return Thermometer;
+  if (/(常用药|止痛|处方|药)/.test(labelText)) return Pill;
+  if (/(医生|医院|住院|产后)/.test(labelText)) return Hospital;
+
+  if (/(停车)/.test(labelText)) return CircleParking;
+  if (/(路线|交通|打车|出租|车)/.test(labelText)) return Route;
+  if (/(陪产人|支持人)/.test(labelText)) return Briefcase;
+  if (/(行李|包|收纳)/.test(labelText)) return Luggage;
+
   if (/(身份证|准生证|户口本|证件|陪产人.*身份)/.test(text)) return IdCard;
-  if (/(产检|资料|医保|医保卡|医保本|本|文件|复印)/.test(text)) return FileText;
+  if (/(产检|资料|医保|医保卡|医保本|本|文件|复印)/.test(text)) return ClipboardList;
   if (/(银行卡|现金|支付|移动支付)/.test(text)) return CreditCard;
-  if (/(手机$|手机\b|smartphone)/.test(text)) return Smartphone;
-  if (/(充电线|充电器|长充电线|cable)/.test(text)) return Cable;
-  if (/(充电宝|电池|power bank)/.test(text)) return BatteryCharging;
-  if (/(耳机|headphone)/.test(text)) return Headphones;
-  if (/(吸管杯|水杯|杯)/.test(text)) return CupSoda;
-  if (/(餐具|零食|水和零食|食物|能量|助产食品)/.test(text)) return Utensils;
+  if (/(手机|充电|耳机|power bank|cable)/.test(text)) return Smartphone;
+  if (/(吸管杯|水杯|杯|餐具|零食|食物|能量|助产食品)/.test(text)) return Utensils;
   if (/(纸尿裤|湿巾|棉柔巾|包被|宝宝|帽子|袜子|安全座椅|安全提篮|出院衣物)/.test(text)) return Baby;
   if (/(出院外套|衣物|衣服|内裤|哺乳衣|睡衣|文胸|背心|拖鞋)/.test(text)) return Shirt;
   if (/(产褥垫|卫生巾|马桶垫|毛巾|纸巾|脸盆|洗发水|沐浴露|洗面奶|护肤|牙刷|牙膏)/.test(text)) return Droplets;
@@ -420,7 +606,6 @@ function packingItemIcon(item: Record<string, unknown>, group: Record<string, un
   if (/(胎监带|收腹带|医生|医院|产后)/.test(text)) return Stethoscope;
   if (/(常用药|药)/.test(text)) return Heart;
   if (/(停车|交通)/.test(text)) return Banknote;
-  if (isConfirmFirstPackingItem(item)) return CircleHelp;
   return Package;
 }
 
@@ -471,10 +656,11 @@ function hospitalBagMetaValue(value: unknown): unknown {
     budget: "预算优先",
     budget_first: "预算优先",
     vaginal: "顺产",
-    planned_c_section: "刨腹产",
-    c_section: "刨腹产",
-    "计划剖宫产": "刨腹产",
-    "剖腹产": "刨腹产",
+    planned_c_section: "剖宫产",
+    c_section: "剖宫产",
+    "计划剖宫产": "剖宫产",
+    "剖腹产": "剖宫产",
+    "刨腹产": "剖宫产",
     breastfeeding: "母乳喂养",
     "母乳": "母乳喂养",
     formula: "配方喂养",
@@ -943,64 +1129,44 @@ const AgentHubRichTextBlock: React.FC<{
             );
             if (cardType === "birth_plan_card" && schemaVersion === "1.0") {
               const bp = normalizeBirthPlanCard(cardJson);
-              const subtitle = cardSubtitle([bp.overview.due_date_or_week, bp.overview.birth_path, bp.overview.birth_setting, bp.overview.support_people]);
-              const groups: Array<[string, string[]]> = [
-	                ["检查、干预或计划调整时", bp.communication],
-	                ["疼痛/麻醉沟通", bp.pain_relief],
-	                ["宝宝出生后", bp.baby_after_birth],
-	                ["计划变化时", bp.if_plans_change],
-	                ["其它可沟通的问题", bp.questions_for_hospital],
-	              ].filter(([, vals]) => vals.length > 0) as Array<[string, string[]]>;
+              const groups: Array<{ title: string; values: string[]; Icon: LucideIcon; tone: string }> = [
+                { title: "沟通方式", values: bp.communication, Icon: Headphones, tone: "teal" },
+                { title: "疼痛缓解", values: bp.pain_relief, Icon: Heart, tone: "rose" },
+                { title: "宝宝出生后", values: bp.baby_after_birth, Icon: Baby, tone: "gold" },
+                { title: "计划变化时", values: bp.if_plans_change, Icon: Stethoscope, tone: "blue" },
+                { title: "提前问医院", values: bp.questions_for_hospital, Icon: CircleHelp, tone: "mint" },
+              ].filter((group) => group.values.length > 0);
               return (
                 <article
                   key={`artifact-${index}`}
-                  ref={(el) => {
-                    cardArtifactRefs.current[index] = el;
-                  }}
-                  className="agent-card agent-card-birth_plan_card"
+	                  ref={(el) => {
+	                    cardArtifactRefs.current[index] = el;
+	                  }}
+	                  className="agent-card agent-card-birth_plan_card"
                 >
-                  {downloadButton}
-                  <header className="agent-card-header">
-                    <div className="agent-card-header-text">
-                      <h2>{bp.title}</h2>
-                      {subtitle ? <p>{subtitle}</p> : null}
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
+	                  {downloadButton}
+	                  <header className="agent-card-header">
+	                    <div className="agent-card-header-text">
+	                      <h2>{bp.title}</h2>
+	                    </div>
+	                    <div className="flex items-center gap-1.5">
+	                      <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
                     </div>
                   </header>
-                  {bp.personalized_notes.length > 0 ? (
-                    <section className="agent-card-section agent-card-summary-section">
-                      <h3>个性化依据</h3>
-                      <ul className="agent-card-note-list">
-                        {bp.personalized_notes.map((item, i) => (
-                          <li key={i}>{item}</li>
-                        ))}
-                      </ul>
-                    </section>
-                  ) : null}
-                  {bp.top_priorities.length > 0 ? (
-                    <section className="agent-card-section agent-card-summary-section">
-                      <h3>最重要的沟通重点</h3>
-	                      <ul className="hospital-card-focus-list">
-	                        {bp.top_priorities.map((item, i) => (
-	                          <li key={i}>
-	                            <span aria-hidden="true" />
-	                            <span className="birth-plan-focus-text">{item}</span>
-	                          </li>
-	                        ))}
-	                      </ul>
-                    </section>
-                  ) : null}
                   {groups.length > 0 ? (
-                    <section className="agent-card-section">
-                      <h3>沟通偏好</h3>
+                    <section className="birth-plan-preference-section">
+                      <h3>沟通卡片内容</h3>
                       <div className="birth-plan-group-list">
-                        {groups.map(([title, vals]) => (
-                          <div key={title} className="birth-plan-group">
-                            <h4>{title}</h4>
+                        {groups.map(({ title, values, Icon, tone }) => (
+                          <div key={title} className={cn("birth-plan-group", `birth-plan-group-${tone}`)}>
+                            <div className="birth-plan-group-title">
+                              <span aria-hidden="true">
+                                <Icon />
+                              </span>
+                              <h4>{title}</h4>
+                            </div>
                             <ul className="agent-card-list">
-                              {vals.map((value, i) => (
+                              {values.map((value, i) => (
                                 <li key={i}>{value}</li>
                               ))}
                             </ul>
@@ -1010,7 +1176,7 @@ const AgentHubRichTextBlock: React.FC<{
                     </section>
                   ) : null}
 	                  {bp.medical_notes.length > 0 ? (
-                    <section className="agent-card-section">
+                    <section className="birth-plan-medical-panel">
                       <h3>医疗或安全信息</h3>
                       <ul className="agent-card-list">
                         {bp.medical_notes.map((value, i) => (
@@ -1150,7 +1316,7 @@ const AgentHubRichTextBlock: React.FC<{
           const normalizedFormSpec = isHospitalBagIntake
             ? { ...formSpec, title, description: "" }
             : isBirthPlanIntake
-              ? { ...formSpec, title }
+              ? { ...formSpec, title, description: "" }
               : formSpec;
           const fieldsRaw = Array.isArray(formSpec.fields) ? formSpec.fields : [];
           const fields: FormFieldSpec[] = fieldsRaw
@@ -1167,19 +1333,21 @@ const AgentHubRichTextBlock: React.FC<{
               help_text: asString(f.help_text),
             }))
             .filter((field) => !(isHospitalBagIntake && REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS.has(field.id)))
-            .map((field) =>
-              (isHospitalBagIntake || isBirthPlanIntake) && field.id === "birth_path"
-                ? {
-                    ...field,
-                    label: splitFormFieldLabel(field.label).groupTitle ? `${splitFormFieldLabel(field.label).groupTitle}｜计划分娩方式` : "计划分娩方式",
-                    options: ["顺产", "刨腹产", "未确定"],
-                    default_value: ["计划剖宫产", "剖腹产", "planned_c_section", "c_section", "c-section", "cesarean"].includes(asString(field.default_value))
-                      ? "刨腹产"
-                      : field.default_value,
-                    help_text: "如果还没确定，可以选择“未确定”。",
-                  }
-                : field,
-            )
+            .map((field) => {
+              if (!((isHospitalBagIntake || isBirthPlanIntake) && field.id === "birth_path")) {
+                return field;
+              }
+              const normalizedField = {
+                ...field,
+                label: splitFormFieldLabel(field.label).groupTitle ? `${splitFormFieldLabel(field.label).groupTitle}｜医生目前建议的生产方式` : "医生目前建议的生产方式",
+                options: ["顺产", "剖宫产", "还没确定"],
+                default_value: ["计划剖宫产", "剖腹产", "planned_c_section", "c_section", "c-section", "cesarean"].includes(asString(field.default_value))
+                  ? "剖宫产"
+                  : field.default_value,
+	              };
+	              return normalizedField;
+	            })
+	            .map((field) => (isHospitalBagIntake || isBirthPlanIntake ? { ...field, help_text: "" } : field))
             .filter((f) => f.id);
           const fieldGroups = isGroupedIntake ? groupFormFields(fields) : [{ title: "", fields }];
 
@@ -1223,11 +1391,22 @@ const AgentHubRichTextBlock: React.FC<{
                     {asString(normalizedFormSpec.description)}
                   </p>
                 ) : null}
-                {fieldGroups.map((group, groupIndex) =>
-                  group.title ? (
-                    <section key={`${group.title}-${groupIndex}`} className="grid gap-3 rounded-[18px] border border-[#efe5ea] bg-white/85 p-3.5">
-                      <div className="border-b border-[#f1e8ec] pb-2">
-                        <h4 className="text-[15px] font-semibold text-[#4b2638] dark:text-neutral-50">{group.title}</h4>
+	                {fieldGroups.map((group, groupIndex) => {
+	                  const groupStyle = isHospitalBagIntake
+	                    ? hospitalBagGroupStyle(group.title, groupIndex)
+	                    : isBirthPlanIntake
+	                      ? birthPlanGroupStyle(group.title, groupIndex)
+	                      : null;
+                  return group.title ? (
+                    <section
+                      key={`${group.title}-${groupIndex}`}
+                      className={cn(
+                        "grid gap-3 rounded-[18px] border p-3.5",
+                        groupStyle?.section ?? "border-[#efe5ea] bg-white/85",
+                      )}
+                    >
+                      <div className={cn("border-b pb-2", groupStyle?.header ?? "border-[#f1e8ec]")}>
+                        <h4 className={cn("text-[15px] font-semibold", groupStyle?.title ?? "text-[#4b2638] dark:text-neutral-50")}>{group.title}</h4>
                       </div>
                       <div className="grid gap-3">{group.fields.map((field) => renderFormField(field, isMonochromeForm ? "monochrome" : "default"))}</div>
                     </section>
@@ -1235,8 +1414,8 @@ const AgentHubRichTextBlock: React.FC<{
                     <React.Fragment key={`ungrouped-${groupIndex}`}>
                       {group.fields.map((field) => renderFormField(field, isMonochromeForm ? "monochrome" : "default"))}
                     </React.Fragment>
-                  ),
-                )}
+                  );
+                })}
                 {errorText ? <p className="text-[12px] text-destructive">{errorText}</p> : null}
                 <button
                   type="submit"
