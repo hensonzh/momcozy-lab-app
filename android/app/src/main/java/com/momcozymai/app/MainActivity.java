@@ -41,6 +41,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(PumpSessionNotificationPlugin.class);
         registerPlugin(PumpSessionOverlayPlugin.class);
+        registerPlugin(PumpSessionKeepAlivePlugin.class);
         registerPlugin(BackgroundNotifyPlugin.class);
         super.onCreate(savedInstanceState);
         // PumpNotificationChannels.registerAll(this);
