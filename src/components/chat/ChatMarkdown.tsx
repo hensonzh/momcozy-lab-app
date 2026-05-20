@@ -1,6 +1,8 @@
-import type { FC, ReactNode } from "react";
+import type { FC, MouseEvent, ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+import { ChevronRight, ShoppingBag } from "lucide-react";
 import { ChatMarkdownImg } from "@/components/chat/ChatMarkdownImage";
 import { resolveChatAssetUrl } from "@/lib/chatAssetUrl";
 import { cn } from "@/lib/utils";
@@ -115,10 +117,21 @@ function markdownBubbleProseClass(variant: ChatMarkdownVariant): string {
   return cn(
     compact,
     "text-foreground",
+    "[&_p+p]:mt-3",
     "[&_a]:text-primary [&_strong]:text-foreground",
     "[&_code]:bg-muted/70 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded",
     "[&_pre]:bg-muted/50 [&_pre]:p-2 [&_pre]:rounded-lg [&_pre]:overflow-x-auto",
     "[&_blockquote]:border-border",
+  );
+}
+
+function ChatMarkdownLineBreak({ variant }: { variant: ChatMarkdownVariant }) {
+  if (variant === "user") return <br />;
+  return (
+    <>
+      <br />
+      <span aria-hidden="true" className="block h-1.5" />
+    </>
   );
 }
 
@@ -129,6 +142,75 @@ export interface ChatMarkdownProps {
   variant?: ChatMarkdownVariant;
   /** 外层容器额外类名（如字号覆盖） */
   className?: string;
+}
+
+const HOSPITAL_BAG_CART_PATHS = new Set(["/hospital-bag-cart"]);
+const OPEN_HOSPITAL_BAG_CART_EVENT = "momcozy-open-hospital-bag-cart";
+
+function isHospitalBagCartHref(href: string): boolean {
+  const raw = href.trim();
+  if (!raw) return false;
+  try {
+    const base = typeof window !== "undefined" ? window.location.origin : "https://momcozy.local";
+    const url = new URL(raw, base);
+    return HOSPITAL_BAG_CART_PATHS.has(url.pathname);
+  } catch {
+    return HOSPITAL_BAG_CART_PATHS.has(raw.split(/[?#]/, 1)[0] ?? raw);
+  }
+}
+
+function extractHospitalBagCartPreviewHrefs(markdown: string): string[] {
+  const hrefs = new Set<string>();
+  const markdownLinkPattern = /\[[^\]]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+  for (const match of markdown.matchAll(markdownLinkPattern)) {
+    const href = match[1]?.trim();
+    if (href && isHospitalBagCartHref(href)) hrefs.add(href);
+  }
+
+  const bareLinkPattern = /(?:https?:\/\/[^\s)]+|\/hospital-bag-cart(?:[?#][^\s)]*)?)/g;
+  for (const match of markdown.matchAll(bareLinkPattern)) {
+    const href = match[0]?.trim();
+    if (href && isHospitalBagCartHref(href)) hrefs.add(href);
+  }
+  return Array.from(hrefs).slice(0, 1);
+}
+
+function requestOpenHospitalBagCart(event: MouseEvent<HTMLAnchorElement>, href: string): void {
+  if (!isHospitalBagCartHref(href) || typeof window === "undefined") return;
+  const openEvent = new CustomEvent(OPEN_HOSPITAL_BAG_CART_EVENT, {
+    cancelable: true,
+    detail: { href },
+  });
+  window.dispatchEvent(openEvent);
+  if (openEvent.defaultPrevented) event.preventDefault();
+}
+
+function HospitalBagCartLinkPreview({ href }: { href: string }) {
+  return (
+    <a
+      href={resolveChatMarkdownHref(href)}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(event) => requestOpenHospitalBagCart(event, href)}
+      className="not-prose mt-2 block overflow-hidden rounded-2xl border border-[#e8d7df] bg-[#fff9fb] shadow-[0_8px_22px_rgba(83,47,64,0.08)] no-underline transition-colors hover:bg-[#fff4f8]"
+    >
+      <div className="flex items-stretch">
+        <div className="flex w-20 shrink-0 items-center justify-center bg-gradient-to-br from-[#24889a] to-[#d86b91] text-white">
+          <ShoppingBag className="h-8 w-8" />
+        </div>
+        <div className="min-w-0 flex-1 px-3 py-3">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8a6d7a]">Momcozy Cart</p>
+          <p className="mt-0.5 text-[13px] font-bold leading-snug text-[#372330]">待产包母婴用品一键打包</p>
+          <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-[#725b67]">
+            已把妈妈护理、宝宝出院和母乳喂养用品整理成购物车，方便一起核对下单。
+          </p>
+        </div>
+        <div className="flex items-center pr-3 text-[#24889a]">
+          <ChevronRight className="h-4 w-4" />
+        </div>
+      </div>
+    </a>
+  );
 }
 
 /**
@@ -144,11 +226,12 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
   className,
 }) => {
   if (!markdown.trim()) return null;
+  const hospitalBagCartPreviewHrefs = extractHospitalBagCartPreviewHrefs(markdown);
 
   return (
     <div className={cn("overflow-x-auto text-[13px] leading-relaxed", markdownBubbleProseClass(variant), className)}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
         components={{
           a: ({ children, href, ...props }) => {
             if (isProbablyImageHref(href)) {
@@ -161,7 +244,13 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
               );
             }
             return (
-              <a href={resolveChatMarkdownHref(href)} {...props} target="_blank" rel="noopener noreferrer">
+              <a
+                href={resolveChatMarkdownHref(href)}
+                {...props}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(event) => requestOpenHospitalBagCart(event, href ?? "")}
+              >
                 {children}
               </a>
             );
@@ -169,15 +258,40 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
           img: ({ alt, className: imgClass, src }) => (
             <ChatMarkdownImg resolvedSrc={resolveChatMarkdownImageSrc(src)} alt={alt} className={imgClass} />
           ),
+          br: () => <ChatMarkdownLineBreak variant={variant} />,
           table: ({ children, ...props }) => (
-            <div className="overflow-x-auto my-2 -mx-0.5">
-              <table {...props}>{children}</table>
+            <div className="not-prose my-3 -mx-0.5 max-w-full overflow-x-auto rounded-xl border border-[#ead6dc] bg-[#fff8fa] shadow-[0_8px_20px_rgba(137,72,98,0.06)]">
+              <table
+                {...props}
+                className="min-w-[720px] w-full table-fixed border-collapse text-left text-[13px] leading-relaxed text-[#3f2732]"
+              >
+                {children}
+              </table>
             </div>
+          ),
+          th: ({ children, ...props }) => (
+            <th
+              {...props}
+              className="border-b border-[#e5cfd6] bg-[#fff0f4] px-3 py-2.5 align-bottom font-bold leading-snug text-[#4a2635]"
+            >
+              {children}
+            </th>
+          ),
+          td: ({ children, ...props }) => (
+            <td
+              {...props}
+              className="border-t border-[#efdde3] bg-[#fff8fa] px-3 py-3 align-top leading-relaxed text-[#3f2732] first:bg-[#fff0f4]"
+            >
+              {children}
+            </td>
           ),
         }}
       >
         {markdown}
       </ReactMarkdown>
+      {hospitalBagCartPreviewHrefs.map((href) => (
+        <HospitalBagCartLinkPreview key={href} href={href} />
+      ))}
     </div>
   );
 };

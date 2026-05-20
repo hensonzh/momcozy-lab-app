@@ -22,11 +22,13 @@ describe("chatAssetUrl", () => {
     expect(resolveChatAssetUrl("data:image/png;base64,abc")).toBe("data:image/png;base64,abc");
   });
 
-  it("can preserve page-relative anchors and queries", () => {
+  it("can preserve page-relative hrefs", () => {
     vi.stubEnv("VITE_CHAT_IMAGE_PROXY_TARGET", "http://192.168.24.182:8900");
 
     expect(resolveChatAssetUrl("#section", { preservePageRelative: true })).toBe("#section");
     expect(resolveChatAssetUrl("?tab=agent", { preservePageRelative: true })).toBe("?tab=agent");
+    expect(resolveChatAssetUrl("/hospital-bag-cart", { preservePageRelative: true })).toBe("/hospital-bag-cart");
+    expect(resolveChatAssetUrl("relative-page", { preservePageRelative: true })).toBe("relative-page");
   });
 
   it("can avoid fallback when callers require an explicit proxy target", () => {
