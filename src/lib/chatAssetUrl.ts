@@ -24,7 +24,7 @@ export function resolveChatAssetUrl(value: string, options: ResolveChatAssetUrlO
   const raw = value.trim();
   if (!raw) return raw;
   if (isAbsoluteOrInlineUrl(raw)) return raw;
-  if (options.preservePageRelative && /^[?#]/.test(raw)) return raw;
+  if (options.preservePageRelative) return raw;
 
   const base = chatAssetBaseUrl(options.allowBaseFallback ?? true).replace(/\/+$/, "");
   if (!base) return raw;
