@@ -12,6 +12,7 @@ import { startPumpAgentUploadService } from "@/lib/pumpAgentUpload";
 import { startPumpSessionNotificationBridge } from "@/lib/pumpSessionNotification";
 import { startPumpSessionOverlayBridge } from "@/lib/pumpSessionOverlay";
 import { startPumpBackgroundBleNotifyWatchdog } from "@/lib/pumpBackgroundBleNotifyWatchdog";
+import { startPumpBackgroundKeepAliveBridge } from "@/lib/pumpBackgroundKeepAlive";
 import { startPumpCompletionReminder } from "@/lib/pumpCompletionReminder";
 import { startPumpAutoEndOffPumpReminder } from "@/lib/pumpAutoEndSession";
 
@@ -19,6 +20,7 @@ startPumpAgentUploadService();
 startPumpSessionNotificationBridge();
 startPumpSessionOverlayBridge();
 startPumpBackgroundBleNotifyWatchdog();
+startPumpBackgroundKeepAliveBridge();
 startPumpCompletionReminder();
 startPumpAutoEndOffPumpReminder();
 
