@@ -105,6 +105,18 @@ const LACTATION_LINK_ACTION_MAP: Record<string, string> = {
 };
 
 const HUB_TOP_ACTION_HEIGHT_PX = 48;
+const NEW_CONVERSATION_GREETING =
+  "你好呀，我在。\n\n这次想先聊哪件事？你可以直接说现在最困扰你的情况，不管是孕期准备、产后恢复、喂养奶量，还是设备使用，我都会陪你一步步理清楚。";
+
+function createNewConversationGreetingMessage(): ChatMessage {
+  return {
+    id: `mai-greeting-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    role: "mai",
+    content: NEW_CONVERSATION_GREETING,
+    timestamp: new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }),
+    chatStreamContext: "main",
+  };
+}
 
 interface SentChatImagePreview {
   id: string;
@@ -190,11 +202,8 @@ function bubbleSpeakerButtonClassName(isPlaying: boolean, isUserBubble: boolean)
 
 function AgentHubThinkingNote({ title }: { title: string }) {
   return (
-    <div className="w-[88%] grid grid-cols-[auto_max-content] items-center gap-2 text-[#687384] text-[12px] font-[650] whitespace-nowrap">
-      <span className="w-[7px] h-[7px] rounded-full bg-[#9aa8b5] animate-pulse" aria-hidden="true" />
-      <span className="w-fit min-w-max whitespace-nowrap bg-[linear-gradient(90deg,#98a3af_0%,#98a3af_35%,#2d3745_50%,#98a3af_65%,#98a3af_100%)] bg-[length:240%_100%] bg-clip-text text-transparent animate-[work-title-sweep_1.35s_linear_infinite]">
-        {title || "正在思考"}
-      </span>
+    <div className="w-fit max-w-full px-0.5 text-[12px] font-[650] whitespace-nowrap bg-[linear-gradient(90deg,#98a3af_0%,#98a3af_35%,#2d3745_50%,#98a3af_65%,#98a3af_100%)] bg-[length:240%_100%] bg-clip-text text-transparent animate-[work-title-sweep_1.35s_linear_infinite]">
+      {title || "正在思考"}
     </div>
   );
 }
@@ -650,9 +659,10 @@ const AgentHub: React.FC = () => {
     clearPersistedAgentConversationId();
     clearPersistedAgUiThreadId();
     getAgUiThreadIdForRequest();
-    chatStore.setMessages([]);
-    savePersistedChatMessages([]);
-    setMessages([]);
+    const greeting = createNewConversationGreetingMessage();
+    chatStore.setMessages([greeting]);
+    savePersistedChatMessages([greeting]);
+    setMessages([greeting]);
     setInput("");
     setHubBottomSendBusy(false);
     setShowPhotoMenu(false);

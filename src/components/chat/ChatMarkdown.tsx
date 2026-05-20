@@ -1,5 +1,6 @@
 import type { FC, MouseEvent, ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import { ChevronRight, ShoppingBag } from "lucide-react";
 import { ChatMarkdownImg } from "@/components/chat/ChatMarkdownImage";
@@ -116,10 +117,21 @@ function markdownBubbleProseClass(variant: ChatMarkdownVariant): string {
   return cn(
     compact,
     "text-foreground",
+    "[&_p+p]:mt-3",
     "[&_a]:text-primary [&_strong]:text-foreground",
     "[&_code]:bg-muted/70 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded",
     "[&_pre]:bg-muted/50 [&_pre]:p-2 [&_pre]:rounded-lg [&_pre]:overflow-x-auto",
     "[&_blockquote]:border-border",
+  );
+}
+
+function ChatMarkdownLineBreak({ variant }: { variant: ChatMarkdownVariant }) {
+  if (variant === "user") return <br />;
+  return (
+    <>
+      <br />
+      <span aria-hidden="true" className="block h-1.5" />
+    </>
   );
 }
 
@@ -219,7 +231,7 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
   return (
     <div className={cn("overflow-x-auto text-[13px] leading-relaxed", markdownBubbleProseClass(variant), className)}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
         components={{
           a: ({ children, href, ...props }) => {
             if (isProbablyImageHref(href)) {
@@ -246,10 +258,32 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
           img: ({ alt, className: imgClass, src }) => (
             <ChatMarkdownImg resolvedSrc={resolveChatMarkdownImageSrc(src)} alt={alt} className={imgClass} />
           ),
+          br: () => <ChatMarkdownLineBreak variant={variant} />,
           table: ({ children, ...props }) => (
-            <div className="overflow-x-auto my-2 -mx-0.5">
-              <table {...props}>{children}</table>
+            <div className="not-prose my-3 -mx-0.5 max-w-full overflow-x-auto rounded-xl border border-[#ead6dc] bg-[#fff8fa] shadow-[0_8px_20px_rgba(137,72,98,0.06)]">
+              <table
+                {...props}
+                className="min-w-[720px] w-full table-fixed border-collapse text-left text-[13px] leading-relaxed text-[#3f2732]"
+              >
+                {children}
+              </table>
             </div>
+          ),
+          th: ({ children, ...props }) => (
+            <th
+              {...props}
+              className="border-b border-[#e5cfd6] bg-[#fff0f4] px-3 py-2.5 align-bottom font-bold leading-snug text-[#4a2635]"
+            >
+              {children}
+            </th>
+          ),
+          td: ({ children, ...props }) => (
+            <td
+              {...props}
+              className="border-t border-[#efdde3] bg-[#fff8fa] px-3 py-3 align-top leading-relaxed text-[#3f2732] first:bg-[#fff0f4]"
+            >
+              {children}
+            </td>
           ),
         }}
       >

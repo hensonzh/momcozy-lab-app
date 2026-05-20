@@ -158,7 +158,14 @@
 }
 
 .agent-card-birth_plan_card {
-  background: #ffffff;
+  overflow: hidden;
+  border-color: #d7e5e1;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(251, 221, 232, 0.92) 0%, rgba(251, 221, 232, 0) 30%),
+    radial-gradient(circle at 0% 12%, rgba(208, 241, 233, 0.92) 0%, rgba(208, 241, 233, 0) 34%),
+    linear-gradient(145deg, #fffafa 0%, #f6fbf8 48%, #fff7ef 100%);
+  color: #261c24;
+  box-shadow: 0 18px 42px rgba(56, 72, 71, 0.13);
 }
 
 .agent-card-header {
@@ -186,6 +193,15 @@
     linear-gradient(135deg, rgba(255, 235, 241, 0.86) 0%, rgba(232, 249, 246, 0.72) 56%, rgba(255, 241, 218, 0.78) 100%);
 }
 
+.agent-card-birth_plan_card .agent-card-header {
+  margin: -16px -16px 0;
+  min-height: 64px;
+  padding: 18px 16px 14px;
+  border-bottom-color: rgba(83, 126, 119, 0.18);
+  background:
+    linear-gradient(135deg, rgba(238, 252, 247, 0.9) 0%, rgba(255, 243, 247, 0.78) 54%, rgba(255, 247, 231, 0.8) 100%);
+}
+
 .agent-card-hospital_bag_card .agent-card-header::before {
   content: "";
   position: absolute;
@@ -195,6 +211,17 @@
   height: 2px;
   border-radius: 0;
   background: #111111;
+}
+
+.agent-card-birth_plan_card .agent-card-header::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  bottom: -1px;
+  width: 86px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2c9b92, #d86b91, #f0b85b);
 }
 
 .agent-card-hospital_bag_card .agent-card-header::before {
@@ -211,6 +238,10 @@
   gap: 3px;
 }
 
+.agent-card-birth_plan_card .agent-card-header-text {
+  padding-top: 10px;
+}
+
 .agent-card-header h2 {
   margin: 0;
   color: #111111;
@@ -222,6 +253,10 @@
   color: #4b2638;
 }
 
+.agent-card-birth_plan_card .agent-card-header h2 {
+  color: #3c2433;
+}
+
 .agent-card-header p {
   margin: 0;
   color: #5f5f5f;
@@ -231,6 +266,40 @@
 
 .agent-card-hospital_bag_card .agent-card-header p {
   color: #75636c;
+}
+
+.agent-card-birth_plan_card .agent-card-header p {
+  color: #657470;
+}
+
+.birth-plan-meta-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.birth-plan-meta-strip span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid rgba(220, 232, 229, 0.9);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.birth-plan-meta-strip small {
+  color: #7b8682;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.birth-plan-meta-strip strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #2f3a38;
+  font-size: 12px;
+  font-weight: 820;
 }
 
 .agent-card-logo {
@@ -255,6 +324,49 @@
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.68);
   box-shadow: 0 8px 20px rgba(83, 47, 64, 0.06);
+}
+
+.birth-plan-note-panel,
+.birth-plan-priority-panel,
+.birth-plan-preference-section,
+.birth-plan-medical-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(221, 232, 229, 0.9);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 8px 20px rgba(56, 72, 71, 0.07);
+}
+
+.birth-plan-priority-panel {
+  border-color: rgba(216, 107, 145, 0.3);
+  background:
+    linear-gradient(135deg, rgba(255, 246, 249, 0.86) 0%, rgba(255, 255, 255, 0.72) 100%);
+}
+
+.birth-plan-note-panel h3,
+.birth-plan-priority-panel h3,
+.birth-plan-preference-section h3,
+.birth-plan-medical-panel h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #4b2638;
+  font-size: 12px;
+  font-weight: 780;
+}
+
+.birth-plan-note-panel h3::before,
+.birth-plan-priority-panel h3::before,
+.birth-plan-preference-section h3::before,
+.birth-plan-medical-panel h3::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2c9b92, #d86b91);
 }
 
 .agent-card-section h3 {
@@ -363,6 +475,14 @@
   background: rgba(255, 251, 252, 0.76);
 }
 
+.agent-card-birth_plan_card .hospital-card-focus-list li {
+  padding: 10px 11px;
+  border: 1px solid rgba(232, 206, 217, 0.85);
+  border-radius: 14px;
+  background: rgba(255, 251, 253, 0.82);
+  box-shadow: inset 3px 0 0 rgba(216, 107, 145, 0.42);
+}
+
 .hospital-card-focus-list li > span:first-child {
   width: 12px;
   height: 12px;
@@ -374,6 +494,12 @@
 .agent-card-hospital_bag_card .hospital-card-focus-list li > span:first-child {
   border-color: #2c9ba5;
   background: linear-gradient(135deg, #2c9ba5 0%, #8edbd6 100%);
+}
+
+.agent-card-birth_plan_card .hospital-card-focus-list li > span:first-child {
+  border-color: #d86b91;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, #fff 0 18%, #d86b91 22% 100%);
 }
 
 .hospital-card-focus-list li > strong {
@@ -432,16 +558,38 @@
 
 .birth-plan-group-list {
   display: grid;
-  gap: 8px;
+  gap: 9px;
 }
 
 .birth-plan-group {
   display: grid;
-  gap: 7px;
-  padding: 9px 10px;
-  border: 1px solid #e1e1e1;
-  border-radius: 8px;
-  background: #ffffff;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(221, 232, 229, 0.92);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.birth-plan-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.birth-plan-group-title span {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 9px;
+  background: #e7f6f3;
+  color: #227a73;
+}
+
+.birth-plan-group-title svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.2;
 }
 
 .birth-plan-group h4 {
@@ -450,6 +598,63 @@
   font-size: 12px;
   font-weight: 750;
   line-height: 1.3;
+}
+
+.birth-plan-group-teal {
+  border-color: rgba(44, 155, 146, 0.26);
+  background: rgba(242, 251, 248, 0.86);
+}
+
+.birth-plan-group-teal .birth-plan-group-title span {
+  background: #dff6f2;
+  color: #207b75;
+}
+
+.birth-plan-group-rose {
+  border-color: rgba(216, 107, 145, 0.26);
+  background: rgba(255, 246, 249, 0.84);
+}
+
+.birth-plan-group-rose .birth-plan-group-title span {
+  background: #ffe4ed;
+  color: #bf4d78;
+}
+
+.birth-plan-group-gold {
+  border-color: rgba(224, 169, 74, 0.28);
+  background: rgba(255, 249, 237, 0.9);
+}
+
+.birth-plan-group-gold .birth-plan-group-title span {
+  background: #fff0cc;
+  color: #a96d14;
+}
+
+.birth-plan-group-blue {
+  border-color: rgba(75, 118, 184, 0.24);
+  background: rgba(246, 248, 255, 0.88);
+}
+
+.birth-plan-group-blue .birth-plan-group-title span {
+  background: #e5edff;
+  color: #416bb2;
+}
+
+.birth-plan-group-mint {
+  border-color: rgba(74, 156, 124, 0.25);
+  background: rgba(245, 252, 247, 0.88);
+}
+
+.birth-plan-group-mint .birth-plan-group-title span {
+  background: #e3f5e9;
+  color: #397d58;
+}
+
+.agent-card-birth_plan_card .agent-card-list li::before,
+.agent-card-birth_plan_card .agent-card-note-list li::before {
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2c9b92, #d86b91);
 }
 
 .packing-group {
