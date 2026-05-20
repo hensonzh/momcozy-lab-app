@@ -11,7 +11,7 @@ import {
  * 宏开关：是否执行「离线设备定时扫描重连」（setInterval 周期调用 tryReconnectOfflineDevices）。
  * 设为 false 时关闭定时扫描，仅保留应用启动后约 500ms 的单次重连尝试。
  */
-const ENABLE_SCHEDULED_BLE_RECONNECT_SCAN = false;
+const ENABLE_SCHEDULED_BLE_RECONNECT_SCAN = true;
 
 /**
  * 应用启动后：若本地已有绑定设备（持久化 store），则对离线侧尝试一次直连重连；
