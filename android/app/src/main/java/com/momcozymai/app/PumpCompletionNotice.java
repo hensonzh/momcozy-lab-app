@@ -17,6 +17,12 @@ public final class PumpCompletionNotice {
 
     private static final String CHANNEL_ID = "pump_session_completion_channel_v1";
     private static final String CHANNEL_NAME = "吸乳提醒";
+    public static final String ACTION_CONTINUE = "com.momcozymai.app.PUMP_COMPLETION_CONTINUE";
+    public static final String ACTION_STOP = "com.momcozymai.app.PUMP_COMPLETION_STOP";
+    public static final int REQUEST_CONTINUE = 10021;
+    public static final int REQUEST_STOP = 10022;
+    public static final String LABEL_CONTINUE = "继续吸奶";
+    public static final String LABEL_STOP = "去停止";
     /** 与 {@link #cancel(Context)} 一致，供划多任务 / 停会话时一并移除。 */
     public static final int NOTIFICATION_ID = 21003;
 
@@ -26,13 +32,21 @@ public final class PumpCompletionNotice {
     public static void show(Context context) {
         if (context == null) return;
         ensureChannel(context);
-        final Intent launchIntent = new Intent(context, MainActivity.class);
-        launchIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        launchIntent.putExtra(MainActivity.EXTRA_NAV_PATH, "/pump");
-        final PendingIntent contentIntent = PendingIntent.getActivity(
+        final Intent continueIntent = new Intent(context, NotifyAlarmReceiver.class);
+        continueIntent.setAction(ACTION_CONTINUE);
+        final PendingIntent continuePendingIntent = PendingIntent.getBroadcast(
                 context,
-                1002,
-                launchIntent,
+                REQUEST_CONTINUE,
+                continueIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        final Intent stopIntent = new Intent(context, NotifyAlarmReceiver.class);
+        stopIntent.setAction(ACTION_STOP);
+        final PendingIntent stopPendingIntent = PendingIntent.getBroadcast(
+                context,
+                REQUEST_STOP,
+                stopIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
@@ -44,11 +58,20 @@ public final class PumpCompletionNotice {
                 .setContentTitle(title)
                 .setContentText(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setContentIntent(contentIntent)
-                .setAutoCancel(true)
+                .setAutoCancel(false)
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE);
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .addAction(
+                        R.drawable.ic_stat_pump,
+                        LABEL_CONTINUE,
+                        continuePendingIntent
+                )
+                .addAction(
+                        R.drawable.ic_stat_pump,
+                        LABEL_STOP,
+                        stopPendingIntent
+                );
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build());
     }

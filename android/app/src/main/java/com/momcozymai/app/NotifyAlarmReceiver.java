@@ -28,6 +28,19 @@ public class NotifyAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent == null) return;
+        String action = intent.getAction();
+        if (PumpCompletionNotice.ACTION_CONTINUE.equals(action)) {
+            PumpCompletionNotice.cancel(context);
+            return;
+        }
+        if (PumpCompletionNotice.ACTION_STOP.equals(action)) {
+            PumpCompletionNotice.cancel(context);
+            Intent launchIntent = new Intent(context, MainActivity.class);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            launchIntent.putExtra(MainActivity.EXTRA_NAV_PATH, "/pump");
+            context.startActivity(launchIntent);
+            return;
+        }
         if (!BackgroundNotifyPrefs.isEnabled(context)) return;
         int alarmId = intent.getIntExtra(EXTRA_ALARM_ID, -1);
         if (alarmId < 0) return;
