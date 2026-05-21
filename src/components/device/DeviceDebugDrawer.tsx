@@ -174,7 +174,7 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
     setCenterToast({ visible: true, title, description, type });
     setTimeout(() => {
       setCenterToast(prev => ({ ...prev, visible: false }));
-    }, 1500); // 1.5秒后消失
+    }, 500); // 0.5秒后消失
   };
   
   const [lineConfig, setLineConfig] = useState<SmartForceLineConfig>({
@@ -433,7 +433,7 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
 
   // 参数校验
   const validateLineConfig = (config: SmartForceLineConfig): string | null => {
-    const { maxPressureKpa, frequencyPcm, holdTimeMs, restTimeD } = config;
+    const { maxPressureKpa, frequencyPcm, holdTimeMs, restTimeD, buildTimeA = 180, releaseTimeC = 400 } = config;
     
     if (maxPressureKpa < 10 || maxPressureKpa > 40) {
       return "负压压力超出范围(10-40kPa)";
@@ -441,11 +441,16 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
     if (frequencyPcm < 1 || frequencyPcm > getFrequencyMax(lineConfig.workMode, lineConfig.gearDisplay)) {
       return "频率超出范围";
     }
-    if (holdTimeMs < 0 || holdTimeMs > 1000) {
-      return "保持时间超出范围(0-1000ms)";
+    
+    // 计算b+d的最大和（动态范围）
+    const cycleT = Math.round((60 * 1000) / frequencyPcm);
+    const bdSum = cycleT - buildTimeA - releaseTimeC;
+    
+    if (holdTimeMs < 0 || holdTimeMs > bdSum) {
+      return `保持时间超出范围(0-${bdSum}ms)`;
     }
-    if (restTimeD < 0 || restTimeD > 1000) {
-      return "休息时间超出范围(0-1000ms)";
+    if (restTimeD < 0 || restTimeD > bdSum) {
+      return `休息时间超出范围(0-${bdSum}ms)`;
     }
     
     return null;
@@ -769,7 +774,25 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() => updateLineConfig({ workMode: option.value as 0 | 1 })}
+                      onClick={() => {
+                        // 修改模式时，相当于进行一次依据最新模式+档位的查表的恢复默认
+                        const newMode = option.value as 0 | 1;
+                        const defaultParams = getDefaultParams(newMode, lineConfig.gearDisplay);
+                        const cycleT = Math.round((60 * 1000) / defaultParams.frequencyPcm);
+                        const bdSum = cycleT - defaultParams.buildTimeA - defaultParams.releaseTimeC;
+                        
+                        // 相当于执行一次恢复默认操作，保持时间使用JSON默认值
+                        updateLineConfig({ 
+                          workMode: newMode,
+                          maxPressureKpa: defaultParams.maxPressureKpa,
+                          frequencyPcm: defaultParams.frequencyPcm,
+                          buildTimeA: defaultParams.buildTimeA,
+                          releaseTimeC: defaultParams.releaseTimeC,
+                          dutyCycle: defaultParams.dutyCycle,
+                          holdTimeMs: defaultParams.holdTimeMs, // 保持时间使用JSON默认值
+                          restTimeD: bdSum - defaultParams.holdTimeMs // 休息时间根据联动关系计算
+                        });
+                      }}
                       className={cn(
                         "flex-1 rounded-[8px] border px-3 py-2 text-[14px]",
                         lineConfig.workMode === option.value
