@@ -72,6 +72,7 @@ public final class NotifyPeriodicSyncNotifier {
                 .setAutoCancel(true)
                 .setContentIntent(tapPi)
                 .setOnlyAlertOnce(true);
+        NotificationIconHelper.applyMaiIcons(context, b);
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, b.build());
     }

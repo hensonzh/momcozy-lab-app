@@ -49,6 +49,7 @@ public final class PumpAutoEndNotice {
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE);
+        NotificationIconHelper.applyMaiIcons(context, builder);
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build());
     }

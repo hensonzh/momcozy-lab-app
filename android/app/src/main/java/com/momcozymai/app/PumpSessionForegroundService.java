@@ -123,11 +123,11 @@ public class PumpSessionForegroundService extends Service {
         final String title = "吸乳会话进行中";
         final String body = "会话状态：" + stateText;
 
-        return new NotificationCompat.Builder(this, CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_pump)
                 .setContentTitle(title)
                 .setContentText(body)
-                .setSubText("MaiMomCozy")
+                .setSubText("Momcozy")
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
@@ -136,8 +136,9 @@ public class PumpSessionForegroundService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-                .setCategory(NotificationCompat.CATEGORY_TRANSPORT)
-                .build();
+                .setCategory(NotificationCompat.CATEGORY_TRANSPORT);
+        NotificationIconHelper.applyMaiIcons(this, builder);
+        return builder.build();
     }
 
     private static int clampProgress(int progress) {
