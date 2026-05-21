@@ -51,7 +51,6 @@ export function getHubPillDefinitions({
       active: !startPumpBusy && pumpSessionActive,
     },
     { action: "increaseMilkPlan", label: "生成追奶计划" },
-    { action: "returnWorkPlan", label: "生成返工计划" },
     { action: "recentPumpAnalysis", label: "分析最近吸奶情况" },
   ];
 }
