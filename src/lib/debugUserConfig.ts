@@ -4,6 +4,7 @@ import {
   clearPersistedAgUiThreadId,
 } from "@/lib/agentConversationSession";
 import { clearPersistedChatMessages } from "@/lib/chatMessagesLocalPersistence";
+import { deviceStore, type DeviceSide } from "@/lib/deviceStore";
 
 export type RuntimeMomStage = "prenatal" | "postpartum";
 
@@ -36,6 +37,7 @@ const USER_CONFIG_LOCAL_STORAGE_KEYS = [
   "chaseMilkTasks",
   "activePlanIds",
   "currentLactationGoal",
+  "device_store",
   "momcozy_user_id",
   "momcozy_ibclc_consult_completed",
   "momcozy_ibclc_consult_completions",
@@ -143,8 +145,33 @@ function removeRuntimeUserId(userId: string): void {
 }
 
 function clearActiveUserLocalData(): void {
+  deviceStore.setDevice("L", null);
+  deviceStore.setDevice("R", null);
   ACTIVE_USER_LOCAL_STORAGE_KEYS.forEach(removeLocalStorageValue);
   clearLegacyAgentConversationIdStorage();
+}
+
+async function disconnectActiveBleDevicesForUserSwitch(): Promise<void> {
+  const snapshot = deviceStore.get();
+  const ble = await import("./ble");
+  const sides: DeviceSide[] = ["L", "R"];
+  for (const side of sides) {
+    const device = snapshot[side];
+    if (!device?.connected || !device.deviceId) continue;
+    try {
+      await ble.disconnect(device.deviceId);
+    } catch {
+      /* keep switching users even if the physical link already dropped */
+    } finally {
+      ble.resetBleProtocolStateForDevice(device.deviceId);
+      deviceStore.setConnected(side, false);
+    }
+  }
+}
+
+function hasActiveConnectedBleDevice(): boolean {
+  const snapshot = deviceStore.get();
+  return Boolean(snapshot.L?.connected && snapshot.L.deviceId) || Boolean(snapshot.R?.connected && snapshot.R.deviceId);
 }
 
 function readCurrentActiveSnapshot(momStage: RuntimeMomStage): RuntimeUserSnapshot {
@@ -232,13 +259,48 @@ export function saveRuntimeUserConfig(input: { userId: string; momStage: Runtime
   return { userId, momStage: restoredMomStage, source: "runtime" };
 }
 
-export function switchRuntimeUserConfig(input: { userId: string; momStage: RuntimeMomStage }): RuntimeUserConfig {
+export function switchRuntimeUserConfig(
+  input: { userId: string; momStage: RuntimeMomStage },
+): RuntimeUserConfig | Promise<RuntimeUserConfig> {
+  const nextUserId = input.userId.trim();
+  const currentUserId = readLocalStorageValue(RUNTIME_USER_ID_STORAGE_KEY);
+  if (currentUserId && currentUserId !== nextUserId && hasActiveConnectedBleDevice()) {
+    return switchRuntimeUserConfigAsync(input);
+  }
   return saveRuntimeUserConfig(input);
 }
 
-export function clearRuntimeUserInfo(): void {
+export async function switchRuntimeUserConfigAsync(input: {
+  userId: string;
+  momStage: RuntimeMomStage;
+}): Promise<RuntimeUserConfig> {
+  const nextUserId = input.userId.trim();
+  const currentUserId = readLocalStorageValue(RUNTIME_USER_ID_STORAGE_KEY);
+  if (currentUserId && currentUserId !== nextUserId) {
+    await disconnectActiveBleDevicesForUserSwitch();
+  }
+  return saveRuntimeUserConfig(input);
+}
+
+export function clearRuntimeUserInfo(): void | Promise<void> {
+  const currentUserId = readLocalStorageValue(RUNTIME_USER_ID_STORAGE_KEY);
+  if (currentUserId && hasActiveConnectedBleDevice()) {
+    return clearRuntimeUserInfoAsync();
+  }
+  if (currentUserId) {
+    removeRuntimeUserId(currentUserId);
+    removeLocalStorageValue(userDataStorageKey(currentUserId));
+  }
+  clearActiveUserLocalData();
+  clearPersistedChatMessages();
+  clearPersistedAgentConversationId();
+  clearPersistedAgUiThreadId();
+}
+
+export async function clearRuntimeUserInfoAsync(): Promise<void> {
   const currentUserId = readLocalStorageValue(RUNTIME_USER_ID_STORAGE_KEY);
   if (currentUserId) {
+    await disconnectActiveBleDevicesForUserSwitch();
     removeRuntimeUserId(currentUserId);
     removeLocalStorageValue(userDataStorageKey(currentUserId));
   }

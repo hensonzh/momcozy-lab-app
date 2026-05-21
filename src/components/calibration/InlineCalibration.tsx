@@ -9,6 +9,7 @@ import { deviceStore } from "@/lib/deviceStore";
 import { uploadPumpThreshold } from "@/lib/agentApi";
 import { ApiError } from "@/lib/http";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
+import { buildCalibrationAutoStartRoute, startPumpAfterCalibration } from "@/pages/pumpSession/calibrationAutoStart";
 
 /* ── types ── */
 type Side = "L" | "R";
@@ -111,19 +112,6 @@ const InlineCalibration: React.FC<Props> = ({ onComplete }) => {
       }
     });
   }, [step, results, currentSide, skippedOtherSide]);
-
-  // 页面加载时检查设备连接状态
-  useEffect(() => {
-    const { L, R } = deviceStore.get();
-    console.log(`[InlineCalibration] 页面加载时设备状态: L=${JSON.stringify(L)}, R=${JSON.stringify(R)}`);
-    const hasConnectedDevice = (L?.connected || false) || (R?.connected || false);
-    console.log(`[InlineCalibration] 页面加载时是否有连接设备: ${hasConnectedDevice}`);
-    
-    if (!hasConnectedDevice) {
-      console.log(`[InlineCalibration] 设备未连接，显示弹窗提醒`);
-      alert("请先连接吸奶器设备后再进行舒适负压滴定。");
-    }
-  }, []);
 
   // 跟踪滴定状态
   useEffect(() => {
@@ -385,6 +373,7 @@ const InlineCalibration: React.FC<Props> = ({ onComplete }) => {
   }> = ({ results, applied, doApply, sideLabel, onComplete, navigate }) => {
     const [countdown, setCountdown] = useState(3);
     const appliedRef = useRef(false);
+    const autoStartRef = useRef(false);
 
     // Auto-apply on mount
     useEffect(() => {
@@ -400,8 +389,14 @@ const InlineCalibration: React.FC<Props> = ({ onComplete }) => {
         setCountdown(prev => {
           if (prev <= 1) {
             clearInterval(t);
-            onComplete?.();
-            navigate("/pump?from=calibration");
+            if (!autoStartRef.current) {
+              autoStartRef.current = true;
+              void (async () => {
+                await startPumpAfterCalibration(results);
+                onComplete?.();
+                navigate(buildCalibrationAutoStartRoute());
+              })();
+            }
             return 0;
           }
           return prev - 1;
