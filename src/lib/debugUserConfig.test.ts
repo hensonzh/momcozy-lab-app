@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   clearRuntimeUserInfo,
   getRuntimeMomStage,
@@ -12,11 +12,35 @@ import {
 } from "./debugUserConfig";
 import { AGENT_CONVERSATION_ID_STORAGE_KEY, AG_UI_THREAD_ID_STORAGE_KEY } from "./agentConversationSession";
 import { CHAT_MESSAGES_STORAGE_KEY } from "./chatMessagesLocalPersistence";
+import { deviceStore } from "./deviceStore";
+import { disconnect as bleDisconnect, resetBleProtocolStateForDevice } from "./ble";
+
+vi.mock("./ble", () => ({
+  disconnect: vi.fn(() => Promise.resolve()),
+  resetBleProtocolStateForDevice: vi.fn(),
+}));
+
+const connectedLeftDevice = {
+  deviceId: "left-device",
+  deviceName: "Left Pump",
+  connected: true,
+  battery: 88,
+  flangeSize: 24,
+  sealSize: "M",
+  model: "Air One",
+  firmware: "1.0.0",
+  serialNumber: "SN-L",
+  pumpWorkState: 1,
+  pumpScene: 1 as const,
+};
 
 describe("debugUserConfig", () => {
   beforeEach(() => {
     localStorage.clear();
     sessionStorage.clear();
+    deviceStore.setDevice("L", null);
+    deviceStore.setDevice("R", null);
+    vi.clearAllMocks();
   });
 
   it("uses local runtime user config before env defaults", () => {
@@ -140,5 +164,40 @@ describe("debugUserConfig", () => {
     switchRuntimeUserConfig({ userId: "display-user", momStage: "postpartum" });
     expect(localStorage.getItem(CHAT_MESSAGES_STORAGE_KEY)).toBe(JSON.stringify([{ id: "display-chat" }]));
     expect(localStorage.getItem("calibration")).toBe('{"display":true}');
+  });
+
+  it("disconnects active BLE devices before saving the previous user's device snapshot", async () => {
+    saveRuntimeUserConfig({ userId: "old-user", momStage: "postpartum" });
+    deviceStore.setDevice("L", connectedLeftDevice);
+
+    await switchRuntimeUserConfig({ userId: "new-user", momStage: "prenatal" });
+
+    expect(bleDisconnect).toHaveBeenCalledWith("left-device");
+    expect(resetBleProtocolStateForDevice).toHaveBeenCalledWith("left-device");
+    expect(localStorage.getItem("device_store")).toBeNull();
+
+    await switchRuntimeUserConfig({ userId: "old-user", momStage: "postpartum" });
+
+    const restored = JSON.parse(localStorage.getItem("device_store") ?? "{}");
+    expect(restored.L).toMatchObject({
+      deviceId: "left-device",
+      connected: false,
+      pumpWorkState: 0,
+    });
+  });
+
+  it("keeps device snapshots isolated so a new user does not inherit the previous user's devices", async () => {
+    saveRuntimeUserConfig({ userId: "old-user", momStage: "postpartum" });
+    deviceStore.setDevice("L", connectedLeftDevice);
+
+    await switchRuntimeUserConfig({ userId: "brand-new-user", momStage: "prenatal" });
+
+    expect(localStorage.getItem("device_store")).toBeNull();
+
+    await switchRuntimeUserConfig({ userId: "old-user", momStage: "postpartum" });
+
+    const restored = JSON.parse(localStorage.getItem("device_store") ?? "{}");
+    expect(restored.L.deviceId).toBe("left-device");
+    expect(restored.L.connected).toBe(false);
   });
 });

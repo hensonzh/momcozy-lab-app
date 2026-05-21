@@ -68,6 +68,10 @@ import { IbclcChatPanel } from "@/pages/IbclcChat";
 import HospitalBagCart from "@/pages/HospitalBagCart";
 import { resolveCalibrationComfortForPumpStart } from "@/pages/agentHub/resolveCalibrationComfortForPumpStart";
 import {
+  resolveCalibrationPromptConfirmAction,
+  resolvePumpStartGate,
+} from "@/pages/pumpSession/pumpDeviceConnectionPrompt";
+import {
   applyAgUiStreamSideEffects,
   mergePendingRichTextPayload,
 } from "@/lib/agUiStreamSideEffects";
@@ -1303,19 +1307,19 @@ const AgentHub: React.FC = () => {
       const snap = deviceStore.get();
       const leftOk = Boolean(snap.L?.connected && snap.L.deviceId);
       const rightOk = Boolean(snap.R?.connected && snap.R.deviceId);
-      const anyConnected = leftOk || rightOk;
+      const gate = resolvePumpStartGate(cal.ok, snap);
       log("[AgentHub][开始吸奶] 设备连接", {
         left: { connected: leftOk, deviceId: snap.L?.deviceId ?? null, deviceName: snap.L?.deviceName ?? null },
         right: { connected: rightOk, deviceId: snap.R?.deviceId ?? null, deviceName: snap.R?.deviceName ?? null },
-        anySideReady: anyConnected,
+        gate,
       });
 
-      if (!cal.ok) {
-        setHubPumpGateDialog("calibration");
+      if (gate === "device") {
+        setHubPumpGateDialog("device");
         return;
       }
-      if (!anyConnected) {
-        setHubPumpGateDialog("device");
+      if (gate === "calibration") {
+        setHubPumpGateDialog("calibration");
         return;
       }
       navigate("/pump");
@@ -2516,10 +2520,16 @@ const AgentHub: React.FC = () => {
             <AlertDialogAction
               type="button"
               className="m-0 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring"
-              onClick={() => {
-                const route = hubPumpGateDialog === "calibration" ? "/calibration" : "/device";
+              onClick={(event) => {
+                if (!hubPumpGateDialog) return;
+                const action = resolveCalibrationPromptConfirmAction(hubPumpGateDialog, deviceStore.get());
+                if (action.type === "showDevicePrompt") {
+                  event.preventDefault();
+                  setHubPumpGateDialog("device");
+                  return;
+                }
                 setHubPumpGateDialog(null);
-                navigate(route);
+                navigate(action.route);
               }}
             >
               {hubPumpGateDialog === "calibration" ? "去力度调节" : "去连接设备"}

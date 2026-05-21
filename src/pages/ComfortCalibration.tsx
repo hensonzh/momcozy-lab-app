@@ -10,6 +10,7 @@ import { uploadPumpThreshold } from "@/lib/agentApi";
 import { ApiError } from "@/lib/http";
 import { createScopedConsole } from "@/lib/logger";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
+import { buildCalibrationAutoStartRoute, startPumpAfterCalibration } from "@/pages/pumpSession/calibrationAutoStart";
 
 /* ── types ── */
 type Side = "L" | "R";
@@ -98,14 +99,6 @@ const ComfortCalibration: React.FC = () => {
       }
     });
   }, [phase, results, currentSide, skippedOtherSide]);
-
-  useEffect(() => {
-    const { L, R } = deviceStore.get();
-    const hasConnectedDevice = (L?.connected || false) || (R?.connected || false);
-    if (!hasConnectedDevice) {
-      alert("请先连接吸奶器设备后再进行舒适负压滴定。");
-    }
-  }, []);
 
   useEffect(() => {
     if (phase !== "finalResult") {
@@ -524,6 +517,7 @@ const FinalResultBlock: React.FC<{
   setCountdown: React.Dispatch<React.SetStateAction<number>>;
 }> = ({ results, applied, doApply, sideLabel, navigate, countdown, setCountdown }) => {
   const appliedRef = useRef(false);
+  const autoStartRef = useRef(false);
 
   useEffect(() => {
     if (!appliedRef.current) {
@@ -537,7 +531,13 @@ const FinalResultBlock: React.FC<{
       setCountdown((prev: number) => {
         if (prev <= 1) {
           clearInterval(t);
-          navigate("/pump?from=calibration");
+          if (!autoStartRef.current) {
+            autoStartRef.current = true;
+            void (async () => {
+              await startPumpAfterCalibration(results);
+              navigate(buildCalibrationAutoStartRoute());
+            })();
+          }
           return 0;
         }
         return prev - 1;

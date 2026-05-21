@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useDeviceStore, DeviceSide } from "@/store/deviceStore";
 import { deviceStore } from "@/lib/deviceStore";
 import { resolveCalibrationComfortForPumpStart } from "@/pages/agentHub/resolveCalibrationComfortForPumpStart";
+import { resolvePumpStartGate } from "@/pages/pumpSession/pumpDeviceConnectionPrompt";
 import { parseComfortSidesFromCalibrationLocalStorage } from "@/lib/calibrationLocalStorage";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 import {
@@ -105,16 +106,14 @@ const DeviceControlPanel: React.FC<Props> = ({ side, open, onClose, onDisconnect
     try {
       const cal = await resolveCalibrationComfortForPumpStart(DEFAULT_CHAT_USER_ID);
       const snap = deviceStore.get();
-      const leftOk = Boolean(snap.L?.connected && snap.L.deviceId);
-      const rightOk = Boolean(snap.R?.connected && snap.R.deviceId);
-      const anyConnected = leftOk || rightOk;
+      const gate = resolvePumpStartGate(cal.ok, snap);
 
-      if (!cal.ok) {
-        setHubPumpGateDialog("calibration");
+      if (gate === "device") {
+        setHubPumpGateDialog("device");
         return;
       }
-      if (!anyConnected) {
-        setHubPumpGateDialog("device");
+      if (gate === "calibration") {
+        setHubPumpGateDialog("calibration");
         return;
       }
       onClose();

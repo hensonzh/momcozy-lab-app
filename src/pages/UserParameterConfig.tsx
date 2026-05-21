@@ -77,7 +77,7 @@ const UserParameterConfig: React.FC = () => {
     setUserListOpen(false);
   };
 
-  const handleSwitchUser = () => {
+  const handleSwitchUser = async () => {
     const trimmedUserId = userId.trim();
     if (!trimmedUserId) {
       toast({ title: "请输入用户名" });
@@ -85,15 +85,15 @@ const UserParameterConfig: React.FC = () => {
     }
     setSaving(true);
     const existed = knownUserIds.includes(trimmedUserId);
-    switchRuntimeUserConfig({ userId: trimmedUserId, momStage });
+    await switchRuntimeUserConfig({ userId: trimmedUserId, momStage });
     setKnownUserIds(getRuntimeUserIds());
     toast({ title: existed ? "用户已切换" : "用户已新建并切换" });
     reloadTo("/");
   };
 
-  const handleDeleteUser = () => {
+  const handleDeleteUser = async () => {
     setSaving(true);
-    clearRuntimeUserInfo();
+    await clearRuntimeUserInfo();
     setKnownUserIds(getRuntimeUserIds());
     setUserId("");
     setMomStage("postpartum");

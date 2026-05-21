@@ -37,44 +37,8 @@ function comfortGearDiag(n: unknown): string {
   return `type_${typeof n}`;
 }
 
-type LooseSide = { stim?: number; deep?: number };
-
 /** 宽松读取（供 E1 合并）：允许 0xFF 等任意整数档，不校验舒适 UI 范围 */
-function readCalibrationSidesLooseFromLocalStorage(): { L: LooseSide; R: LooseSide } | null {
-  try {
-    const raw = localStorage.getItem(CALIBRATION_LOCAL_STORAGE_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw) as Record<string, unknown>;
-    const asInt = (u: unknown): number | undefined => {
-      if (typeof u === "number" && Number.isFinite(u) && Number.isInteger(u)) return u;
-      return undefined;
-    };
-    const hasLR = Boolean(data?.L || data?.R);
-    if (hasLR) {
-      const rawL = data.L as { stimCozy?: unknown; deepCozy?: unknown } | undefined;
-      const rawR = data.R as { stimCozy?: unknown; deepCozy?: unknown } | undefined;
-      const left = rawL ?? rawR;
-      const right = rawR ?? rawL;
-      if (!left || !right) return null;
-      return {
-        L: {
-          stim: asInt(rawL?.stimCozy ?? left.stimCozy),
-          deep: asInt(rawL?.deepCozy ?? left.deepCozy),
-        },
-        R: {
-          stim: asInt(rawR?.stimCozy ?? right.stimCozy),
-          deep: asInt(rawR?.deepCozy ?? right.deepCozy),
-        },
-      };
-    }
-    const stim = asInt(data.stimCozy);
-    const deep = asInt(data.deepCozy);
-    if (stim === undefined && deep === undefined) return null;
-    return { L: { stim, deep }, R: { stim, deep } };
-  } catch {
-    return null;
-  }
-}
+// E1 pumpGearCalib is device history and must not be imported as user calibration.
 
 /**
  * 从 localStorage 读取 `calibration` 并解析为左右舒适档。
@@ -229,46 +193,12 @@ export function mergeE1PumpGearCalibWireIntoCalibrationLocalStorage(
   stimulateWire: number,
   deepWire: number,
 ): void {
-  const loose = readCalibrationSidesLooseFromLocalStorage();
-  const prevLooseSide = loose?.[side] ?? {};
-
   log.log("mergeE1PumpGearCalib", {
-    phase: "start",
+    phase: "ignored",
     side,
     e1Wire: { stimulate: stimulateWire, deep: deepWire },
-    hadLooseRead: loose !== null,
-    prevLooseSide,
+    reason: "device_e1_history_is_not_user_calibration",
   });
-
-  const resolveUi = (wire: number, prevAxis: number | undefined): number => {
-    if (isE1CalibWireByte(wire)) return wire + 1;
-    if (wire === E1_CALIB_WIRE_UNSAVED) return CALIBRATION_UI_UNSAVED_SENTINEL;
-    if (isLooseStoredAxis(prevAxis)) return prevAxis;
-    return CALIBRATION_UI_UNSAVED_SENTINEL;
-  };
-
-  const stimUi = resolveUi(stimulateWire, prevLooseSide.stim);
-  const deepUi = resolveUi(deepWire, prevLooseSide.deep);
-
-  const other: DeviceSide = side === "L" ? "R" : "L";
-  const otherLoose = loose?.[other] ?? {};
-  const otherStim = isLooseStoredAxis(otherLoose.stim) ? otherLoose.stim : stimUi;
-  const otherDeep = isLooseStoredAxis(otherLoose.deep) ? otherLoose.deep : deepUi;
-
-  const updated: CalibrationComfortSides =
-    side === "L"
-      ? {
-          L: { stim: stimUi, deep: deepUi },
-          R: { stim: otherStim, deep: otherDeep },
-        }
-      : {
-          L: { stim: otherStim, deep: otherDeep },
-          R: { stim: stimUi, deep: deepUi },
-        };
-
-  log.log("mergeE1PumpGearCalib", { phase: "before_persist", side, merged: updated });
-
-  persistPumpThresholdToCalibrationLocalStorage(updated);
 }
 
 /**

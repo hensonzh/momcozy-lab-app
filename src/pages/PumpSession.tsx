@@ -26,7 +26,12 @@ import {
   syncModeButtonHighlight,
 } from "@/pages/pumpSession/pumpSessionModel";
 import { usePumpSessionController } from "@/pages/pumpSession/usePumpSessionController";
-import { usePumpCalibrationRuntime } from "@/pages/pumpSession/usePumpCalibrationRuntime";
+import {
+  canStartPumpCalibration,
+  readPumpCalibrationSessionConfig,
+  shouldSkipCalibrationInitialGearSetup,
+  usePumpCalibrationRuntime,
+} from "@/pages/pumpSession/usePumpCalibrationRuntime";
 import { usePumpRealDisplayRuntime } from "@/pages/pumpSession/usePumpRealDisplayRuntime";
 import { shouldShowPumpDeviceNotConnectedPrompt } from "@/pages/pumpSession/pumpDeviceConnectionPrompt";
 
@@ -573,15 +578,13 @@ const PumpSession: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const fromCalibration = searchParams.get("from") === "calibration";
+  const skipCalibrationInitialGearSetup = shouldSkipCalibrationInitialGearSetup(
+    fromCalibration,
+    searchParams.get("autoStarted"),
+  );
 
-  // Read calibration for ramp-up: start at cozy-2, ramp to cozy
-  const calRaw = localStorage.getItem("calibration");
-  const calData = calRaw ? JSON.parse(calRaw) : null;
-  // From calibration: start at actual cozy gear; otherwise: cozy-2 with ramp-up
-  const initGearL = calData?.L?.stimCozy ? (fromCalibration ? calData.L.stimCozy : Math.max(1, calData.L.stimCozy - 2)) : 5;
-  const initGearR = calData?.R?.stimCozy ? (fromCalibration ? calData.R.stimCozy : Math.max(1, calData.R.stimCozy - 2)) : 5;
-  const targetGearL = calData?.L?.stimCozy || 5;
-  const targetGearR = calData?.R?.stimCozy || 5;
+  const { hasCalibration, initGearL, initGearR, targetGearL, targetGearR } =
+    readPumpCalibrationSessionConfig(fromCalibration, skipCalibrationInitialGearSetup);
 
   const [left, setLeft] = useState<SideState>({ gear: initGearL, mode: "stimulate", flow: 0 });
   const [right, setRight] = useState<SideState>({ gear: initGearR, mode: "stimulate", flow: 0 });
@@ -601,6 +604,7 @@ const PumpSession: React.FC = () => {
   const [devicePowerOffOpen, setDevicePowerOffOpen] = useState(false);
   const [autoEndedDialogReason, setAutoEndedDialogReason] = useState<AutoEndedUiKind | null>(null);
   const [deviceNotConnectedOpen, setDeviceNotConnectedOpen] = useState(false);
+  const [calibrationDeviceNotConnectedOpen, setCalibrationDeviceNotConnectedOpen] = useState(false);
   const [aiMode, setAiMode] = useState(true);
   const prevDeviceLetdownLRef = useRef<boolean | null>(null);
   const prevDeviceLetdownRRef = useRef<boolean | null>(null);
@@ -653,7 +657,6 @@ const PumpSession: React.FC = () => {
       if (k) setAutoEndedDialogReason(k);
     });
   }, []);
-  const hasCalibration = !!(calData?.L?.stimCozy || calData?.R?.stimCozy);
   const {
     calPromptStep,
     setCalPromptStep,
@@ -664,6 +667,11 @@ const PumpSession: React.FC = () => {
     handleCalDisableNo,
   } = usePumpCalibrationRuntime(hasCalibration);
   const handleCalPromptYes = () => {
+    if (!canStartPumpCalibration(deviceStore.get())) {
+      setCalPromptStep(null);
+      setCalibrationDeviceNotConnectedOpen(true);
+      return;
+    }
     setCalPromptStep(null);
     navigate("/calibration");
   };
@@ -692,7 +700,7 @@ const PumpSession: React.FC = () => {
     handleFinish,
     confirmFinish,
   } = usePumpSessionController({
-    calData,
+    calData: hasCalibration,
     fromCalibration,
     targetGearL,
     targetGearR,
@@ -1200,6 +1208,20 @@ const PumpSession: React.FC = () => {
     />
 
     {/* ─── Calibration Prompt Dialog ─── */}
+    <ConfirmDialog
+      open={calibrationDeviceNotConnectedOpen}
+      title="吸奶器设备未连接"
+      description="力度滴定需要左右两侧吸奶器均已连接。请先完成设备连接后再进行力度滴定。"
+      confirmLabel="去连接设备"
+      cancelLabel="取消"
+      onConfirm={() => {
+        setCalibrationDeviceNotConnectedOpen(false);
+        setCalPromptStep(null);
+        navigate("/device");
+      }}
+      onCancel={() => setCalibrationDeviceNotConnectedOpen(false)}
+    />
+
     <AnimatePresence>
       {calPromptStep !== null && (
         <>
