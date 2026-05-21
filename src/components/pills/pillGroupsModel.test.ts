@@ -17,13 +17,12 @@ describe("pillGroupsModel", () => {
     ]);
   });
 
-  it("shows postpartum pills for postpartum users", () => {
-    expect(getHubPillDefinitions({ momStage: "postpartum" }).map((pill) => pill.label)).toEqual([
-      "开箱指导",
-      "开始吸奶",
-      "生成追奶计划",
-      "生成返工计划",
-      "分析最近吸奶情况",
+  it("hides the return work plan pill for postpartum users", () => {
+    expect(getHubPillDefinitions({ momStage: "postpartum" }).map((pill) => pill.action)).toEqual([
+      "unboxGuide",
+      "startPump",
+      "increaseMilkPlan",
+      "recentPumpAnalysis",
     ]);
   });
 
