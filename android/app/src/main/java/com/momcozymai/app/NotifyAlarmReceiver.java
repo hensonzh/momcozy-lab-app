@@ -95,6 +95,7 @@ public class NotifyAlarmReceiver extends BroadcastReceiver {
                     .setCategory(NotificationCompat.CATEGORY_ALARM)
                     .setAutoCancel(true)
                     .setContentIntent(tapPi);
+            NotificationIconHelper.applyMaiIcons(context, b);
 
             if (fullPi != null) {
                 b.setFullScreenIntent(fullPi, true);

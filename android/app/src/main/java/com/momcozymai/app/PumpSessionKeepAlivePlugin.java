@@ -12,7 +12,7 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "PumpSessionKeepAlive")
 public class PumpSessionKeepAlivePlugin extends Plugin {
     private static final String TAG = "PumpSessionKeepAlive";
-    private static final String WAKE_LOCK_TAG = "MaiMomcozy:PumpSession";
+    private static final String WAKE_LOCK_TAG = "Momcozy:PumpSession";
     private static final long MAX_WAKE_LOCK_MS = 60_000L;
     private static PowerManager.WakeLock wakeLock;
 

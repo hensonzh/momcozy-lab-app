@@ -8,7 +8,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
  */
 const config: CapacitorConfig = {
   appId: 'com.momcozymai.app',
-  appName: 'MaiMomCozy',
+  appName: 'Momcozy',
   webDir: 'dist',
   server: {
     // 方案 A：Android WebView 使用 http 上下文，允许发起 ws://（生产环境请优先使用 https + wss）

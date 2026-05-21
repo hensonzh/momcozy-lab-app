@@ -72,6 +72,7 @@ public final class PumpCompletionNotice {
                         LABEL_STOP,
                         stopPendingIntent
                 );
+        NotificationIconHelper.applyMaiIcons(context, builder);
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build());
     }

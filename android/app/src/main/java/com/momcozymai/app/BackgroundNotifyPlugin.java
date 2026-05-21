@@ -122,6 +122,7 @@ public class BackgroundNotifyPlugin extends Plugin {
                     .setCategory(NotificationCompat.CATEGORY_ALARM)
                     .setAutoCancel(true)
                     .setContentIntent(tapPi);
+            NotificationIconHelper.applyMaiIcons(context, b);
             if (fullPi != null) {
                 b.setFullScreenIntent(fullPi, true);
             }

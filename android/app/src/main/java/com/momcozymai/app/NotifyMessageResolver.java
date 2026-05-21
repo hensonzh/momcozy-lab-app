@@ -130,7 +130,7 @@ public final class NotifyMessageResolver {
             case "summary":
                 return "每日奶量小结";
             default:
-                return "MaiMomCozy 提醒";
+                return "Momcozy 提醒";
         }
     }
 
