@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, type Dispatch, type SetStateAction } fr
 import { deviceStore, type DeviceSide } from "@/lib/deviceStore";
 import {
   ensureProtocolNotify,
-  endRunAndUpdateStore,
   isBleSupported,
+  powerOffDeviceAndUpdateStore,
   queryDeviceStatusAndUpdateStore,
   sendB1SetPumpParams,
   subscribeProtocolNotifications,
@@ -623,7 +623,7 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     return false;
   }, [aiMode, copyAiMemoryFromCalib, copyManualMemoryFromAi, deviceRuntimeLogger, left.gear, persistPumpSnapshot, right.gear, sendB1WithRetry, setAiMode, setLeft, setRight, sideB1Params]);
 
-  /** 结束吸乳：与 PumpSession_last handleStopPump 一致，对在线设备下发 BF（非 B1 暂停） */
+  /** 结束吸乳：对在线设备下发 FE 关机指令（非 B1 暂停） */
   const stopPumpWithBle = useCallback(async () => {
     if (!isBleSupported()) return;
     const items = (["L", "R"] as const)
@@ -637,14 +637,13 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     markPumpAgentUploadProcessStepStop("both");
     for (const it of items) {
       try {
-        await endRunAndUpdateStore(it.deviceId, it.side);
+        await powerOffDeviceAndUpdateStore(it.deviceId, it.side);
         const cur = deviceStore.get()[it.side];
         if (cur) {
-          deviceStore.setDevice(it.side, { ...cur, pumpWorkState: 0x00, duration: 0 });
+          deviceStore.setDevice(it.side, { ...cur, pumpWorkState: 0x00 });
         }
-        setElapsed(0);
       } catch (error) {
-        console.error(`[PumpSession] stopPumpWithBle BF failed side=${it.side}:`, error);
+        console.error(`[PumpSession] stopPumpWithBle FE failed side=${it.side}:`, error);
       }
     }
   }, [setElapsed, sideB1Params]);
