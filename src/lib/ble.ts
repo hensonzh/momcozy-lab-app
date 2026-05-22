@@ -4,6 +4,7 @@ import {
   buildAck,
   buildB1SetPumpParams,
   buildBFEndRun,
+  buildFEPowerOff,
   buildE1QueryDeviceStatus,
   buildF0GetDeviceInfo,
   buildF1SetUserParams,
@@ -798,6 +799,17 @@ export async function sendBFEndRun(
 }
 
 /**
+ * 发送控制设备关机 FE 指令，默认不重启；带 3s 超时重发。
+ */
+export async function sendFEPowerOff(
+  deviceId: string,
+  reboot: 0 | 1 = 0
+): Promise<SendProtocolReqResult | undefined> {
+  const packet = buildFEPowerOff(reboot);
+  return sendProtocolReq(deviceId, packet).catch(() => undefined);
+}
+
+/**
  * 处理D0数据包，更新设备状态到deviceStore
  */
 function handleD0Data(data: ReturnType<typeof parseD0OperationRecord>, deviceId: string): void {
@@ -934,6 +946,25 @@ export async function endRunAndUpdateStore(deviceId: string, side: DeviceSide): 
   });
   
   console.log(`[BF指令处理] 更新${side}侧设备状态: 最终奶量=${parsed.milkMlX10 / 10}ml`);
+}
+
+/**
+ * 发送控制设备关机 FE 指令并更新设备工作状态到 deviceStore。
+ */
+export async function powerOffDeviceAndUpdateStore(deviceId: string, side: DeviceSide): Promise<void> {
+  const res = await sendFEPowerOff(deviceId, 0);
+  if (res === undefined || res === null) return;
+  if (res.ct !== CT_ACK || res.cid !== 0xfe) return;
+
+  const current = deviceStore.get()[side];
+  if (current?.deviceId !== deviceId) return;
+
+  deviceStore.setDevice(side, {
+    ...current,
+    pumpWorkState: 0x00,
+  });
+
+  console.log(`[FE指令处理] 更新${side}侧设备状态: 已下发关机指令`);
 }
 
 /**

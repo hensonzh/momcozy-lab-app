@@ -717,6 +717,7 @@ const PumpSession: React.FC = () => {
     setProgressR,
     setProgressAll,
     processAll: progressAll,
+    elapsed,
     setElapsed,
     setAiMode,
     setSessionState,

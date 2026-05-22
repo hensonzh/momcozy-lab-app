@@ -42,6 +42,7 @@ const CID_F0 = 0xf0;
 const CID_F1 = 0xf1;
 const CID_F2 = 0xf2;
 const CID_F3 = 0xf3;
+const CID_FE = 0xfe;
 const CID_FF = 0xff;
 const CID_B0 = 0xb0;
 const CID_B1 = 0xb1;
@@ -111,6 +112,11 @@ export function buildF3SetFlags(flagsByte: number, persist: 0 | 1): Uint8Array {
 /** 3.1.6 恢复出厂设置 FF，reboot 0-不重启 1-重启 */
 export function buildFFRestoreFactory(reboot: 0 | 1): Uint8Array {
   return buildReq(CID_FF, new Uint8Array([reboot]));
+}
+
+/** 控制设备关机 FE，reboot 0-不重启 1-重启 */
+export function buildFEPowerOff(reboot: 0 | 1 = 0): Uint8Array {
+  return buildReq(CID_FE, new Uint8Array([reboot]));
 }
 
 /** 3.1.7 设置工作模式 B0：1-设备 2-引导 3-Agent */
