@@ -37,7 +37,7 @@ import {
 } from "@/lib/agentConversationSession";
 import { tryRunPumpAutoEndOffPumpTeardownOnce } from "@/lib/pumpAutoEndSession";
 import { AGENT_HUB_SYNC_CHAT_EVENT, appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
-import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
+import type { AgentAnalysisCard, ChatRichTextPayload } from "@/lib/agentApiTypes";
 import { log, warn } from "@/lib/logger";
 import { ChatMarkdown } from "@/components/chat/ChatMarkdown";
 import { ChatMarkdownImg } from "@/components/chat/ChatMarkdownImage";
@@ -234,59 +234,135 @@ type AgentHubReportCardData = {
   totalMl?: number;
   pct?: number;
   hadLetdown?: boolean;
+  analysisCard?: AgentAnalysisCard;
 };
 
 function reportKindLabel(kind?: string): string {
-  if (kind === "pump-session-summary") return "吸乳会话小结";
-  if (kind === "daily_summary") return "每日小结";
-  if (kind === "mom_baby") return "泌乳及喂养分析";
+  if (kind === "pump-session-summary") return "吸奶小结";
+  if (kind === "daily_summary") return "每日奶量总结";
+  if (kind === "mom_baby") return "每日泌乳/喂养建议";
   return "M.ai 报告";
 }
 
-function hasReportMetrics(data: AgentHubReportCardData): boolean {
-  return Boolean(
-    data.durationStr ||
-      typeof data.leftMl === "number" ||
-      typeof data.rightMl === "number" ||
-      typeof data.totalMl === "number" ||
-      typeof data.pct === "number" ||
-      data.hadLetdown,
-  );
+function analysisStatusLabel(card?: AgentAnalysisCard): string {
+  const explicit = card?.status_label?.trim();
+  if (explicit) return explicit;
+  if (card?.status === "normal") return "暂无明显异常";
+  if (card?.status === "attention") return "需要留意";
+  return card?.status?.trim() || "";
+}
+
+function analysisStatusTone(card?: AgentAnalysisCard): string {
+  const explicit = card?.status_tone?.trim();
+  if (explicit) return explicit;
+  if (card?.status === "normal") return "normal";
+  if (card?.status === "attention") return "attention";
+  return "default";
+}
+
+function analysisToneClass(tone?: string): string {
+  const normalized = tone?.trim().toLowerCase();
+  if (normalized && /^[a-z0-9_-]+$/.test(normalized)) return normalized;
+  return "default";
 }
 
 function AgentHubReportCard({
   msg,
-  playingId,
-  onPlay,
   onLinkPress,
 }: {
   msg: ChatMessage;
-  playingId: string | null;
-  onPlay: (msg: ChatMessage) => void;
   onLinkPress: (link: ChatMessageLink) => void;
 }) {
   const data = (msg.cardData ?? {}) as AgentHubReportCardData;
-  const hasMetrics = hasReportMetrics(data);
+  const analysisCard = data.analysisCard;
+  const analysisSections = Array.isArray(analysisCard?.sections)
+    ? analysisCard.sections.filter((section) => section && (
+      section.title?.trim()
+      || section.body?.trim()
+      || section.items?.length
+      || section.metrics?.length
+    ))
+    : [];
+  const hasAnalysisCard = Boolean(analysisCard && (analysisCard.title?.trim() || analysisSections.length));
   const hasContent = msg.content.trim().length > 0;
   const hasLinks = Boolean(msg.links?.length);
+  const statusLabel = analysisStatusLabel(analysisCard);
+  const statusTone = analysisStatusTone(analysisCard);
 
   return (
-    <article className="agent-card agent-card-hospital_bag_card">
-      <header className="agent-card-header">
-        <div className="agent-card-header-text">
-          <h2>{reportKindLabel(data.kind)}</h2>
-          <p>{msg.timestamp}</p>
-        </div>
-      </header>
+    <article className={cn("agent-card", hasAnalysisCard ? "agent-card-analysis_report" : "agent-card-hospital_bag_card")}>
+      {hasAnalysisCard ? (
+        <>
+          <header className="analysis-card-header">
+            <div>
+              <h2>{analysisCard?.title?.trim() || reportKindLabel(data.kind)}</h2>
+            </div>
+            {statusLabel ? (
+              <span className={cn("analysis-status-pill", `is-${analysisToneClass(statusTone)}`)}>
+                {statusLabel}
+              </span>
+            ) : null}
+          </header>
 
-      {hasContent ? (
-        <section className="agent-card-section">
-          <ChatMarkdown markdown={msg.content} variant="assistant" className="text-[13px] leading-relaxed text-[#35212c]" />
-        </section>
-      ) : null}
+          {analysisSections.length > 0 ? (
+            <section className="analysis-section-list">
+              {analysisSections.map((section, index) => {
+                const items = Array.isArray(section.items) ? section.items.map((item) => item.trim()).filter(Boolean) : [];
+                const metrics = Array.isArray(section.metrics)
+                  ? section.metrics.filter((metric) => metric && (metric.label?.trim() || metric.value?.trim()))
+                  : [];
+                return (
+                  <div
+                    key={section.id?.trim() || `${section.title}-${index}`}
+                    className={cn("analysis-section", `analysis-section-${analysisToneClass(section.tone)}`)}
+                  >
+                    {section.title?.trim() ? <h3>{section.title.trim()}</h3> : null}
+                    {metrics.length > 0 ? (
+                      <div className="analysis-metric-grid">
+                        {metrics.map((metric, metricIndex) => (
+                          <span key={`${metric.label}-${metricIndex}`}>
+                            <small>{metric.label.trim()}</small>
+                            <strong>{metric.value.trim() || "—"}</strong>
+                            {metric.detail?.trim() ? <em>{metric.detail.trim()}</em> : null}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+                    {items.map((item, itemIndex) => (
+                      <p key={`${item}-${itemIndex}`}>{item}</p>
+                    ))}
+                    {section.body?.trim() ? <p>{section.body.trim()}</p> : null}
+                  </div>
+                );
+              })}
+            </section>
+          ) : hasContent ? (
+            <section className="analysis-section-list">
+              <div className="analysis-section analysis-section-default">
+                <ChatMarkdown markdown={msg.content} variant="assistant" className="text-[13px] leading-relaxed text-[#35212c]" />
+              </div>
+            </section>
+          ) : null}
+        </>
+      ) : (
+        <>
+          <header className="agent-card-header">
+            <div className="agent-card-header-text">
+              <h2>{reportKindLabel(data.kind)}</h2>
+              <p>{msg.timestamp}</p>
+            </div>
+          </header>
+
+          {hasContent ? (
+            <section className="agent-card-section">
+              <ChatMarkdown markdown={msg.content} variant="assistant" className="text-[13px] leading-relaxed text-[#35212c]" />
+            </section>
+          ) : null}
+        </>
+      )}
 
       {hasLinks ? (
-        <section className="agent-card-section">
+        <section className={hasAnalysisCard ? "analysis-action-section" : "agent-card-section"}>
           <h3>Actions</h3>
           <div className="flex flex-wrap gap-2">
             {msg.links?.map((link, i) => (
@@ -1521,7 +1597,7 @@ const AgentHub: React.FC = () => {
     };
     window.addEventListener("mmc-native-daily-summary", onEvt);
     return () => window.removeEventListener("mmc-native-daily-summary", onEvt);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 兼容旧版原生每日小结桥接：仍统一写入 Hub 持久化消息
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 兼容旧版原生每日奶量总结桥接：仍统一写入 Hub 持久化消息
   }, []);
 
   useEffect(() => {
@@ -1893,9 +1969,9 @@ const AgentHub: React.FC = () => {
               </div>
             )}
 
-            <div ref={scrollRef} className="h-full overflow-y-auto px-3 pt-4 pb-6 space-y-2.5">
+            <div ref={scrollRef} className="h-full overflow-y-auto px-3 pt-4 pb-6">
 
-          {visibleMessages.map((msg) => {
+          {visibleMessages.map((msg, index) => {
             const isMainAssistantBubble = msg.role === "mai" && msg.chatStreamContext === "main";
             const bubbleShell = cn(
               "relative group w-full break-words",
@@ -1917,9 +1993,13 @@ const AgentHub: React.FC = () => {
             const orderedMainHasRich = hasOrderedMainItems && orderedMainItems.some((item) => item.kind === "rich");
             const sentImagePreviews = msg.role === "user" ? extractSentChatImagePreviews(msg) : [];
             const hasSentImagePreviews = sentImagePreviews.length > 0;
+            const previousMsg = index > 0 ? visibleMessages[index - 1] : undefined;
+            const isConsecutiveAssistantMessage = msg.role === "mai" && previousMsg?.role === "mai";
+            const messageSpacingClass = index === 0 ? "mt-0" : isConsecutiveAssistantMessage ? "mt-8" : "mt-2.5";
 
             return (
-            msg.cardType === "schedule-flow" ? (
+              <div key={msg.id} className={messageSpacingClass}>
+            {msg.cardType === "schedule-flow" ? (
               <div key={msg.id} className="animate-slide-up w-full">
                 {msg.cardData?.completed ? (
               <div className="flex gap-2 items-start">
@@ -2092,10 +2172,6 @@ const AgentHub: React.FC = () => {
                 {msg.cardType === "report" && msg.cardData ? (
                   <AgentHubReportCard
                     msg={msg}
-                    playingId={playingId}
-                    onPlay={(bubbleMsg) => {
-                      void handlePlayBubble(bubbleMsg);
-                    }}
                     onLinkPress={handleBubbleLinkPress}
                   />
                 ) : multiBubble ? (
@@ -2353,7 +2429,8 @@ const AgentHub: React.FC = () => {
                 )}
               </div>
             </div>
-            )
+            )}
+              </div>
           );
           })}
             </div>

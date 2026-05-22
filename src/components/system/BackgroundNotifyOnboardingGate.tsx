@@ -74,7 +74,7 @@ const BackgroundNotifyOnboardingGate: React.FC = () => {
           <AlertDialogTitle>开启系统后台提醒</AlertDialogTitle>
           <AlertDialogDescription className="text-left space-y-2 leading-relaxed">
             <span className="block">
-              为在后台准时提醒你吸奶/喂养、风险预警、生长数据与每日小结，请允许本应用的通知权限，并按需完成：
+              为在后台准时提醒你吸奶/喂养、风险预警、生长数据与每日奶量总结，请允许本应用的通知权限，并按需完成：
             </span>
             <span className="block text-muted-foreground text-sm">
               通知 → 精确闹钟与提醒（若系统提示）→ 悬浮窗（便于全屏外提醒）→ 关闭电池优化（提高后台可靠性）。

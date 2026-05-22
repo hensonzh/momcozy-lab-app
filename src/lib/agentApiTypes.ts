@@ -725,6 +725,32 @@ export interface AnalysisCreateData {
   error: ApiErrorCode;
   result?: boolean;
   message: string;
+  analysis_card?: AgentAnalysisCard;
+}
+
+export interface AgentAnalysisCardSection {
+  id?: string;
+  title: string;
+  tone?: string;
+  metrics?: Array<{
+    label: string;
+    value: string;
+    detail?: string;
+  }>;
+  items?: string[];
+  body?: string;
+}
+
+export interface AgentAnalysisCard {
+  kind: "daily_summary" | "mom_baby" | string;
+  title: string;
+  subtitle?: string;
+  status?: "normal" | "attention" | string;
+  status_label?: string;
+  status_tone?: "normal" | "attention" | "insufficient" | string;
+  chips?: string[];
+  reason?: string;
+  sections?: AgentAnalysisCardSection[];
 }
 
 // ─── V1.2 兼容类型别名（相关端点已不在 V1.3 文档中）───────────────

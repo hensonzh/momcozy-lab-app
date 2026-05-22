@@ -94,7 +94,7 @@ export async function showPumpCompletionLocalNotice(): Promise<void> {
 export type PumpNotificationPending = {
   path: string | null;
   autoEndTeardown: boolean;
-  /** 原生后台提醒带给 Web 的 JSON（如每日小结）。 */
+  /** 原生后台提醒带给 Web 的 JSON（如每日奶量总结）。 */
   notifyJson: string | null;
 };
 

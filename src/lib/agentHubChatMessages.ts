@@ -1,4 +1,5 @@
 import type { ChatMessage } from "@/types/chat";
+import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 import { chatStore } from "@/lib/chatStore";
 import { loadPersistedChatMessages, savePersistedChatMessages } from "@/lib/chatMessagesLocalPersistence";
 
@@ -52,10 +53,11 @@ export function appendAgentHubAnalysisMessage(
   opts: {
     kind: AnalysisMessageKind;
     id?: string;
+    analysisCard?: AgentAnalysisCard;
   },
 ): string | null {
   const trimmed = content.trim();
-  if (!trimmed) return null;
+  if (!trimmed && !opts.analysisCard) return null;
 
   const id = opts.id?.trim() || createMessageId(opts.kind);
   appendMessageToAgentHubStore({
@@ -64,7 +66,7 @@ export function appendAgentHubAnalysisMessage(
     content: trimmed,
     timestamp: nowTimestamp(),
     cardType: "report",
-    cardData: { kind: opts.kind },
+    cardData: { kind: opts.kind, analysisCard: opts.analysisCard },
   });
   return id;
 }

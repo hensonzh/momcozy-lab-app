@@ -272,6 +272,178 @@
   color: #657470;
 }
 
+.agent-card-analysis_report {
+  gap: 10px;
+  overflow: hidden;
+  border-color: rgba(232, 201, 206, 0.92);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 223, 210, 0.56) 0%, rgba(255, 223, 210, 0) 32%),
+    linear-gradient(145deg, #fff9f2 0%, #fff7f8 48%, #f8fbf4 100%);
+  color: #35212c;
+  box-shadow: 0 12px 28px rgba(83, 47, 64, 0.09);
+}
+
+.analysis-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 0 8px;
+  border-bottom: 1px solid rgba(225, 197, 202, 0.72);
+}
+
+.analysis-card-header h2 {
+  margin: 0;
+  color: #3d2130;
+  font-size: 18px;
+  font-weight: 850;
+  line-height: 1.18;
+}
+
+.analysis-status-pill {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #7a4259;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  border: 1px solid rgba(232, 201, 206, 0.95);
+}
+
+.analysis-status-pill.is-normal {
+  color: #247a70;
+  border-color: rgba(105, 187, 172, 0.38);
+  background: rgba(235, 250, 246, 0.84);
+}
+
+.analysis-status-pill.is-attention {
+  color: #9a5b20;
+  border-color: rgba(237, 179, 102, 0.42);
+  background: rgba(255, 244, 228, 0.9);
+}
+
+.analysis-status-pill.is-insufficient {
+  color: #667084;
+  border-color: rgba(150, 162, 181, 0.35);
+  background: rgba(245, 247, 250, 0.92);
+}
+
+.analysis-section-list {
+  display: grid;
+  gap: 8px;
+}
+
+.analysis-section {
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+  border: 1px solid rgba(232, 201, 206, 0.72);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.analysis-section h3 {
+  margin: 0;
+  color: #442638;
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.analysis-section p {
+  margin: 0;
+  color: #5d4853;
+  font-size: 13px;
+  font-weight: 580;
+  line-height: 1.55;
+}
+
+.analysis-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.analysis-metric-grid span {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  padding: 8px 9px;
+  border: 1px solid rgba(232, 201, 206, 0.68);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.analysis-metric-grid small {
+  color: #806575;
+  font-size: 10px;
+  font-weight: 780;
+  line-height: 1.2;
+}
+
+.analysis-metric-grid strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #3d2130;
+  font-size: 13px;
+  font-weight: 860;
+  line-height: 1.25;
+}
+
+.analysis-metric-grid em {
+  color: #7a6772;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.analysis-section-overview {
+  background: rgba(255, 248, 238, 0.78);
+}
+
+.analysis-section-milk {
+  background: rgba(255, 243, 247, 0.8);
+}
+
+.analysis-section-feeding {
+  background: rgba(248, 246, 255, 0.78);
+}
+
+.analysis-section-rhythm {
+  background: rgba(247, 251, 245, 0.82);
+}
+
+.analysis-section-attention {
+  background: rgba(255, 246, 232, 0.86);
+}
+
+.analysis-section-next {
+  background: rgba(238, 250, 247, 0.8);
+}
+
+.analysis-action-section {
+  display: grid;
+  gap: 8px;
+  padding: 10px 11px;
+  border: 1px solid rgba(232, 201, 206, 0.72);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.analysis-action-section h3 {
+  margin: 0;
+  color: #442638;
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
 .birth-plan-meta-strip {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

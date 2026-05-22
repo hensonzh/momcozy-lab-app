@@ -98,6 +98,7 @@ type FormFieldGroup = {
 };
 
 const REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS = new Set(["hospital_rules_or_notes", "existing_checklist_or_photo_note"]);
+const BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT = 20;
 const HOSPITAL_BAG_FORM_GROUP_STYLES = [
   {
     section: "border-[#efd6de] bg-[#fff6f8] dark:border-[#5d3543] dark:bg-[#241a20]",
@@ -279,9 +280,19 @@ function collectFormValues(form: HTMLFormElement, fields: FormFieldSpec[]): Reco
   const data = new FormData(form);
   const values: Record<string, unknown> = {};
   for (const field of fields) {
-    values[field.id] = isMultiSelectField(field) ? data.getAll(field.id).map(String) : String(data.get(field.id) ?? "");
+    const value = isMultiSelectField(field)
+      ? data.getAll(field.id).map(String).filter((item) => item.trim())
+      : String(data.get(field.id) ?? "").trim();
+    if (hasCompactFormValue(value)) {
+      values[field.id] = value;
+    }
   }
   return values;
+}
+
+function hasCompactFormValue(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(hasCompactFormValue);
+  return String(value ?? "").trim().length > 0;
 }
 
 function buildFormConfirmationMessage(form: Record<string, unknown>, values: Record<string, unknown>): string {
@@ -289,7 +300,7 @@ function buildFormConfirmationMessage(form: Record<string, unknown>, values: Rec
     `我已确认 ${asString(form.title) || "表单"} 信息，请基于这些信息生成对应卡片。`,
     `form_id: ${asString(form.id) || "form"}`,
     "confirmed_form_data:",
-    JSON.stringify(values, null, 2),
+    JSON.stringify(values),
   ].join("\n");
 }
 
@@ -692,12 +703,36 @@ function normalizeBirthPlanCard(cardJsonRaw: Record<string, unknown>) {
       birth_setting: normalizeBirthPlanValue(overview.birth_setting ?? owner.birth_setting),
       support_people: normalizeBirthPlanValue(overview.support_people ?? owner.support_people),
     },
-    top_priorities: compactBirthPlanList(cardJsonRaw.top_priorities ?? asObject(cardJsonRaw.if_plans_change)?.what_matters_most, 3),
-    communication: compactBirthPlanList(cardJsonRaw.communication ?? cardJsonRaw.communication_preferences, 3),
-    pain_relief: compactBirthPlanList(cardJsonRaw.pain_relief ?? cardJsonRaw.pain_relief_preferences, 3),
-    baby_after_birth: compactBirthPlanList(cardJsonRaw.baby_after_birth ?? cardJsonRaw.baby_after_birth_preferences, 3),
-    if_plans_change: compactBirthPlanList(cardJsonRaw.if_plans_change, 3),
-    questions_for_hospital: compactBirthPlanList(cardJsonRaw.questions_for_hospital, 3),
+    top_priorities: compactBirthPlanList(
+      cardJsonRaw.top_priorities ?? asObject(cardJsonRaw.if_plans_change)?.what_matters_most,
+      BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT,
+    ),
+    communication: compactBirthPlanList(
+      cardJsonRaw.communication ?? cardJsonRaw.communication_preferences,
+      BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT,
+    ),
+    labor_preferences: compactBirthPlanList(cardJsonRaw.labor_preferences, BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT),
+    intervention_preferences: compactBirthPlanList(
+      cardJsonRaw.intervention_preferences,
+      BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT,
+    ),
+    pain_relief: compactBirthPlanList(
+      cardJsonRaw.pain_relief ?? cardJsonRaw.pain_relief_preferences,
+      BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT,
+    ),
+    baby_after_birth: compactBirthPlanList(
+      cardJsonRaw.baby_after_birth ?? cardJsonRaw.baby_after_birth_preferences,
+      BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT,
+    ),
+    if_plans_change: compactBirthPlanList(cardJsonRaw.if_plans_change, BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT),
+    emergency_authorization: compactBirthPlanList(
+      cardJsonRaw.emergency_authorization,
+      BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT,
+    ),
+    questions_for_hospital: compactBirthPlanList(
+      cardJsonRaw.questions_for_hospital,
+      BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT,
+    ),
     medical_notes: compactBirthPlanList(cardJsonRaw.medical_notes, 3),
     personalized_notes: compactBirthPlanList(cardJsonRaw.personalized_notes, 3),
     disclaimer:
@@ -1131,9 +1166,12 @@ const AgentHubRichTextBlock: React.FC<{
               const bp = normalizeBirthPlanCard(cardJson);
               const groups: Array<{ title: string; values: string[]; Icon: LucideIcon; tone: string }> = [
                 { title: "沟通方式", values: bp.communication, Icon: Headphones, tone: "teal" },
+                { title: "生产时偏好", values: bp.labor_preferences, Icon: Footprints, tone: "blue" },
+                { title: "需要先沟通的操作", values: bp.intervention_preferences, Icon: ShieldCheck, tone: "mint" },
                 { title: "疼痛缓解", values: bp.pain_relief, Icon: Heart, tone: "rose" },
                 { title: "宝宝出生后", values: bp.baby_after_birth, Icon: Baby, tone: "gold" },
                 { title: "计划变化时", values: bp.if_plans_change, Icon: Stethoscope, tone: "blue" },
+                { title: "紧急情况", values: bp.emergency_authorization, Icon: HeartPulse, tone: "rose" },
                 { title: "提前问医院", values: bp.questions_for_hospital, Icon: CircleHelp, tone: "mint" },
               ].filter((group) => group.values.length > 0);
               return (

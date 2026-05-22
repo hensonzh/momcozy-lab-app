@@ -1047,7 +1047,7 @@ export async function createStatusAnalysis(
 }
 
 /**
- * 执行每日小结或泌乳喂养分析（POST `/v1/analysis/create`）。
+ * 执行每日奶量总结或每日泌乳/喂养建议（POST `/v1/analysis/create`）。
  */
 export async function createDailyAndMomBabyAnalysis(
   body: AnalysisCreateBody,
@@ -1060,6 +1060,7 @@ export async function createDailyAndMomBabyAnalysis(
       error?: number;
       result?: boolean;
       message?: string;
+      analysis_card?: AnalysisCreateData["analysis_card"];
     };
     error?: number;
     result?: boolean;
@@ -1095,5 +1096,9 @@ export async function createDailyAndMomBabyAnalysis(
         ? raw.result
         : undefined;
 
-  return { error: error as AnalysisCreateData["error"], result, message };
+  if (error !== 0) {
+    throw new Error(message || "分析请求失败");
+  }
+
+  return { error: error as AnalysisCreateData["error"], result, message, analysis_card: data?.analysis_card };
 }
