@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, type Dispatch, type SetStateAction } from "react";
+import { resetPumpAgentUploadProcessProgress } from "@/lib/pumpAgentUpload";
+import { pushPumpMilkUploadForPumpSessionEnd } from "@/lib/pumpAutoEndSession";
 import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
 import { usePumpMaiRuntime } from "./usePumpMaiRuntime";
 import { usePumpMockRuntime } from "./usePumpMockRuntime";
@@ -25,6 +27,7 @@ interface ControllerParams {
   setProgressR: Dispatch<SetStateAction<number>>;
   setProgressAll: Dispatch<SetStateAction<number>>;
   processAll: number;
+  elapsed: number;
   setElapsed: Dispatch<SetStateAction<number>>;
   setAiMode: Dispatch<SetStateAction<boolean>>;
   setSessionState: Dispatch<SetStateAction<SessionState>>;
@@ -55,6 +58,7 @@ export function usePumpSessionController(params: ControllerParams) {
     setProgressR,
     setProgressAll,
     processAll,
+    elapsed,
     setElapsed,
     setAiMode,
     setSessionState,
@@ -139,34 +143,54 @@ export function usePumpSessionController(params: ControllerParams) {
   }, [mockRuntime, setModeBoth]);
 
   const summaryPushedRef = useRef(false);
+  const summaryPushingRef = useRef(false);
+  const pumpMilkUploadedRef = useRef(false);
   const pushStopPumpAgentSummary = agentRuntime.pushStopPumpAgentSummary;
   const stopPumpWithBleFn = deviceControlRuntime.stopPumpWithBle;
 
-  const handleStopPump = useCallback(async () => {
+  const finalizePumpSession = useCallback(async (options?: { navigateAfter?: boolean }) => {
     if (summaryPushedRef.current) {
       setSessionState("ended");
+      if (options?.navigateAfter) navigateHome();
       return;
     }
-    // 已是 ended（自动结束场景）时仍需执行一次收尾摘要；只避免重复 push。
+    if (summaryPushingRef.current) return;
+    summaryPushingRef.current = true;
     if (pumpSessionLifecycle.getSessionState() !== "ended") {
       pumpSessionLifecycle.markSessionEnded("user-confirm");
     }
     const endedEvent = pumpSessionLifecycle.getLastEndedEvent();
-    summaryPushedRef.current = true;
     setSessionState("ended");
     setLeft((p) => ({ ...p, flow: 0 }));
     setRight((p) => ({ ...p, flow: 0 }));
-    try {
-      await pushStopPumpAgentSummary(endedEvent);
-    } catch (error) {
-      console.error("[PumpSession] pushStopPumpAgentSummary failed:", error);
-    }
     try {
       await stopPumpWithBleFn();
     } catch (error) {
       console.error("[PumpSession] stopPumpWithBle failed:", error);
     }
-  }, [pushStopPumpAgentSummary, stopPumpWithBleFn, setLeft, setRight, setSessionState]);
+    if (!pumpMilkUploadedRef.current) {
+      try {
+        await pushPumpMilkUploadForPumpSessionEnd(endedEvent);
+        pumpMilkUploadedRef.current = true;
+      } catch (error) {
+        console.error("[PumpSession] pushPumpMilkUploadForPumpSessionEnd failed:", error);
+      }
+    }
+    try {
+      await pushStopPumpAgentSummary(endedEvent, { displayedDurationSeconds: elapsed });
+      summaryPushedRef.current = true;
+      resetPumpAgentUploadProcessProgress();
+      if (options?.navigateAfter) navigateHome();
+    } catch (error) {
+      console.error("[PumpSession] pushStopPumpAgentSummary failed:", error);
+    } finally {
+      summaryPushingRef.current = false;
+    }
+  }, [elapsed, navigateHome, pushStopPumpAgentSummary, stopPumpWithBleFn, setLeft, setRight, setSessionState]);
+
+  const handleStopPump = useCallback(async () => {
+    await finalizePumpSession();
+  }, [finalizePumpSession]);
 
   useEffect(() => {
     const handleDevicePowerOff = () => {
@@ -186,44 +210,10 @@ export function usePumpSessionController(params: ControllerParams) {
     if (sessionState !== "ended") setFinishConfirmOpen(true);
   }, [sessionState, setFinishConfirmOpen]);
 
-  const confirmFinish = useCallback(() => {
+  const confirmFinish = useCallback(async () => {
     setFinishConfirmOpen(false);
-    if (summaryPushedRef.current) {
-      navigateHome();
-      return;
-    }
-    if (pumpSessionLifecycle.getSessionState() !== "ended") {
-      pumpSessionLifecycle.markSessionEnded("user-confirm");
-    }
-    const endedEvent = pumpSessionLifecycle.getLastEndedEvent();
-    summaryPushedRef.current = true;
-    setSessionState("ended");
-    setLeft((p) => ({ ...p, flow: 0 }));
-    setRight((p) => ({ ...p, flow: 0 }));
-    void (async () => {
-      try {
-        await stopPumpWithBleFn();
-      } catch (error) {
-        console.error("[PumpSession] stopPumpWithBle failed:", error);
-      }
-    })();
-    navigateHome();
-    void (async () => {
-      try {
-        await pushStopPumpAgentSummary(endedEvent);
-      } catch (error) {
-        console.error("[PumpSession] pushStopPumpAgentSummary failed:", error);
-      }
-    })();
-  }, [
-    navigateHome,
-    pushStopPumpAgentSummary,
-    setFinishConfirmOpen,
-    setLeft,
-    setRight,
-    setSessionState,
-    stopPumpWithBleFn,
-  ]);
+    await finalizePumpSession({ navigateAfter: true });
+  }, [finalizePumpSession, setFinishConfirmOpen]);
 
   const handleSwitchToManual = useCallback(() => {
     if (aiMode) setManualConfirmOpen(true);

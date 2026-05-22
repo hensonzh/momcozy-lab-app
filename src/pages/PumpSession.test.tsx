@@ -7,9 +7,9 @@ import { deviceStore } from "@/lib/deviceStore";
 import PumpSession from "./PumpSession";
 
 vi.mock("@/lib/ble", () => ({
-  endRunAndUpdateStore: vi.fn(),
   ensureProtocolNotify: vi.fn(() => Promise.resolve()),
   isBleSupported: vi.fn(() => false),
+  powerOffDeviceAndUpdateStore: vi.fn(),
   queryDeviceStatusAndUpdateStore: vi.fn(),
   sendB1SetPumpParams: vi.fn(),
   subscribeProtocolNotifications: vi.fn(() => vi.fn()),
