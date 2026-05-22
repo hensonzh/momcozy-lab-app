@@ -315,32 +315,16 @@ function workItemTitle(tool: AgUiToolCallRow): string {
   return "步骤已完成";
 }
 
-function formatWorkDuration(ms: number): string {
-  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  if (!minutes) return `${seconds}s`;
-  return `${minutes}m ${String(seconds).padStart(2, "0")}s`;
-}
-
 function AgentHubWorkPanel({
   tools,
-  startedAtMs,
   finishedAtMs,
 }: {
   tools: AgUiToolCallRow[];
-  startedAtMs?: number;
   finishedAtMs?: number;
 }) {
   const [collapsed, setCollapsed] = useState(false);
-  const [now, setNow] = useState(() => Date.now());
   const hasRunning = tools.some((tool) => tool.state === "running");
   const isWorkFinished = typeof finishedAtMs === "number";
-  useEffect(() => {
-    if (!startedAtMs || isWorkFinished) return;
-    const timer = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(timer);
-  }, [startedAtMs, isWorkFinished]);
   useEffect(() => {
     // Align with web flow: auto-fold work steps after run is finished.
     if (tools.length > 0 && !hasRunning && typeof finishedAtMs === "number") {
@@ -348,17 +332,7 @@ function AgentHubWorkPanel({
     }
   }, [tools.length, hasRunning, finishedAtMs]);
   if (tools.length === 0) return null;
-  const elapsed =
-    typeof startedAtMs === "number"
-      ? Math.max(0, (isWorkFinished ? (finishedAtMs ?? now) : now) - startedAtMs)
-      : null;
-  const title = isWorkFinished
-    ? elapsed != null
-      ? `已处理 ${formatWorkDuration(elapsed)}`
-      : "处理完成"
-    : elapsed != null
-      ? `处理中 ${formatWorkDuration(elapsed)}`
-      : "处理中";
+  const title = isWorkFinished ? "已处理" : "处理中";
   return (
     <div className="w-[88%] text-[#4f5b68] text-[12px]">
       <button
@@ -434,7 +408,6 @@ function AgentHubAgUiDecor({ msg }: { msg: ChatMessage }) {
     <>
       <AgentHubWorkPanel
         tools={msg.agentToolCalls ?? []}
-        startedAtMs={msg.agentWorkStartedAtMs}
         finishedAtMs={msg.agentWorkFinishedAtMs}
       />
       {msg.agentThinkingTitle ? <AgentHubThinkingNote title={msg.agentThinkingTitle} /> : null}
