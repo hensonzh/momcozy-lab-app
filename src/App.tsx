@@ -26,6 +26,7 @@ import HospitalBagCart from "@/pages/HospitalBagCart";
 import BackgroundNotifyOnboardingGate from "@/components/system/BackgroundNotifyOnboardingGate";
 import { markStatusGrowthHighlightPending } from "@/lib/statusGrowthHighlight";
 import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
+import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 
 const queryClient = new QueryClient();
 
@@ -41,7 +42,12 @@ function PumpNotificationNavigateSync() {
         if (!alive) return;
         if (notifyJson) {
           try {
-            const o = JSON.parse(notifyJson) as { event?: string; body?: string; chatMessageId?: string };
+            const o = JSON.parse(notifyJson) as {
+              event?: string;
+              body?: string;
+              chatMessageId?: string;
+              analysis_card?: AgentAnalysisCard;
+            };
             if (
               (o?.event === "summary" || o?.event === "mom_baby") &&
               typeof o.body === "string" &&
@@ -50,6 +56,7 @@ function PumpNotificationNavigateSync() {
               appendAgentHubAnalysisMessage(o.body, {
                 kind: o.event === "summary" ? "daily_summary" : "mom_baby",
                 id: o.chatMessageId,
+                analysisCard: o.analysis_card,
               });
             } else if (o?.event === "grown") {
               markStatusGrowthHighlightPending();
