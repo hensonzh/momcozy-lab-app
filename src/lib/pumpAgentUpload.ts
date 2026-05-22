@@ -122,6 +122,26 @@ function emitPumpAgentUploadProcessProgress(): void {
   }
 }
 
+export function resetPumpAgentUploadProcessProgress(): void {
+  processProgressMap.L = 0;
+  processProgressMap.R = 0;
+  processProgressAll = 0;
+  processSnapshotMap.L = { ...processSnapshotMap.L, process: 0 };
+  processSnapshotMap.R = { ...processSnapshotMap.R, process: 0 };
+  processFrameMap.L = [];
+  processFrameMap.R = [];
+  processFrameLastTsMap.L = "";
+  processFrameLastTsMap.R = "";
+  processStepMap.L = "stop";
+  processStepMap.R = "stop";
+  processStopMarkedMap.L = false;
+  processStopMarkedMap.R = false;
+  processPauseMarkedMap.L = false;
+  processPauseMarkedMap.R = false;
+  setProcessAll(0);
+  emitPumpAgentUploadProcessProgress();
+}
+
 export function markPumpAgentUploadProcessStepStop(side: "L" | "R" | "both"): void {
   if (side === "both") {
     processStopMarkedMap.L = true;
