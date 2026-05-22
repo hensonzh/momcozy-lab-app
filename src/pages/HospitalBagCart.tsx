@@ -13,30 +13,36 @@ const cartGroups = [
     title: "妈妈护理",
     tone: "rose",
     items: [
-      { name: "产褥垫组合装", desc: "入院与产后前几天使用", qty: 1, price: 19.9 },
-      { name: "产妇卫生巾", desc: "夜用加长款，按住院天数准备", qty: 1, price: 16.9 },
-      { name: "一次性内裤", desc: "高腰柔软，产后更方便更换", qty: 1, price: 15.9 },
-      { name: "产后护理湿巾", desc: "温和清洁，适合住院随身包", qty: 1, price: 12.9 },
+      { name: "产褥垫组合装", desc: "入院与产后前几天使用", qty: 1, price: 59.9 },
+      { name: "产妇卫生巾", desc: "夜用加长款，按住院天数准备", qty: 1, price: 39.9 },
+      { name: "一次性内裤", desc: "高腰柔软，产后更方便更换", qty: 1, price: 49.9 },
+      { name: "产后护理湿巾", desc: "温和清洁，适合住院随身包", qty: 1, price: 29.9 },
+      { name: "产后冲洗瓶", desc: "产后清洁更方便，是否带去医院按医院建议", qty: 1, price: 39.9 },
+      { name: "高腰收腹内裤", desc: "不压腹，更适合产后恢复期穿着", qty: 1, price: 69.9 },
     ],
   },
   {
     title: "宝宝出院",
     tone: "mint",
     items: [
-      { name: "新生儿纸尿裤", desc: "NB 码小包装，避免带太多", qty: 1, price: 23.9 },
-      { name: "婴儿柔湿巾", desc: "无香精，适合换尿裤场景", qty: 1, price: 13.9 },
-      { name: "棉柔巾", desc: "洗脸、擦手、护理都可用", qty: 1, price: 10.9 },
-      { name: "宝宝出院包被", desc: "柔软包裹，按季节搭配外层", qty: 1, price: 36.9 },
+      { name: "新生儿纸尿裤", desc: "NB 码小包装，避免带太多", qty: 1, price: 59.9 },
+      { name: "婴儿柔湿巾", desc: "无香精，适合换尿裤场景", qty: 1, price: 29.9 },
+      { name: "棉柔巾", desc: "洗脸、擦手、护理都可用", qty: 1, price: 29.9 },
+      { name: "宝宝出院包被", desc: "柔软包裹，按季节搭配外层", qty: 1, price: 129.0 },
+      { name: "新生儿连体衣礼盒", desc: "出院和回家第一周可替换穿", qty: 1, price: 159.0 },
+      { name: "婴儿浴巾", desc: "洗澡、包裹和保暖都可用", qty: 1, price: 59.9 },
     ],
   },
   {
     title: "母乳喂养",
     tone: "sky",
     items: [
-      { name: "防溢乳垫", desc: "母乳或混合喂养可先备小包装", qty: 1, price: 12.9 },
-      { name: "乳头护理霜", desc: "哺乳初期不适时可咨询后使用", qty: 1, price: 18.9 },
-      { name: "储奶袋", desc: "返家后储奶备用，住院可少量准备", qty: 1, price: 15.9 },
-      { name: "便携式吸奶器", desc: "可选备用项，是否带去医院先问医院", qty: 1, price: 129.0 },
+      { name: "防溢乳垫", desc: "母乳或混合喂养可先备小包装", qty: 1, price: 39.9 },
+      { name: "乳头护理霜", desc: "哺乳初期不适时可咨询后使用", qty: 1, price: 49.9 },
+      { name: "储奶袋", desc: "返家后储奶备用，住院可少量准备", qty: 1, price: 49.9 },
+      { name: "便携式吸奶器", desc: "可选备用项，是否带去医院先问医院", qty: 1, price: 699.0 },
+      { name: "哺乳文胸", desc: "产后和哺乳初期更舒适", qty: 1, price: 159.0 },
+      { name: "宽口径奶瓶", desc: "混合喂养或返家后备用", qty: 1, price: 89.9 },
     ],
   },
 ];
@@ -57,7 +63,9 @@ const subtotal = cartGroups.reduce(
   (sum, group) => sum + group.items.reduce((groupSum, item) => groupSum + item.price * item.qty, 0),
   0,
 );
-const discount = 28;
+const itemCount = cartGroups.reduce((sum, group) => sum + group.items.reduce((groupSum, item) => groupSum + item.qty, 0), 0);
+const targetTotal = 1499.9;
+const discount = Math.max(0, Number((subtotal - targetTotal).toFixed(2)));
 const shipping = 0;
 const total = subtotal - discount + shipping;
 
@@ -92,7 +100,7 @@ const HospitalBagCart: React.FC<HospitalBagCartProps> = ({ onClose }) => {
             <p className="text-[11px] text-[#8a6d7a]">已按待产包物品清单整理</p>
           </div>
           <span className="rounded-full border border-[#d7ece6] bg-[#eef9f5] px-2.5 py-1 text-[11px] font-semibold text-[#267c68]">
-            12 件
+            {itemCount} 件
           </span>
         </div>
       </header>
