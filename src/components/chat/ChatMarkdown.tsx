@@ -1,4 +1,4 @@
-import type { FC, MouseEvent, ReactNode } from "react";
+import { cloneElement, isValidElement, type FC, type MouseEvent, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
@@ -39,6 +39,42 @@ function reactChildrenToPlainText(node: ReactNode): string {
     if (p?.children !== undefined) return reactChildrenToPlainText(p.children);
   }
   return "";
+}
+
+const MARKDOWN_LINE_BREAK_TOKEN = "\uE000CHAT_BR\uE000";
+
+function normalizeMarkdownLineBreaks(markdown: string): string {
+  return markdown.replace(/<br\s*\/?>/gi, MARKDOWN_LINE_BREAK_TOKEN);
+}
+
+function renderMarkdownLineBreakTokens(node: ReactNode, variant: ChatMarkdownVariant, keyPrefix = "br"): ReactNode {
+  if (typeof node === "string") {
+    const parts = node.split(MARKDOWN_LINE_BREAK_TOKEN);
+    if (parts.length === 1) return node;
+    return parts.flatMap((part, index) => {
+      if (index === 0) return part ? [part] : [];
+      return [
+        <ChatMarkdownLineBreak key={`${keyPrefix}-${index}`} variant={variant} />,
+        ...(part ? [part] : []),
+      ];
+    });
+  }
+  if (Array.isArray(node)) {
+    return node.map((child, index) => renderMarkdownLineBreakTokens(child, variant, `${keyPrefix}-${index}`));
+  }
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    return cloneElement(node, {
+      children: renderMarkdownLineBreakTokens(node.props.children, variant, `${keyPrefix}-child`),
+    });
+  }
+  return node;
+}
+
+function hasBlankTableHeader(children: ReactNode): boolean {
+  const nodes = Array.isArray(children) ? children : [children];
+  const header = nodes.find((node) => isValidElement(node) && node.type === "thead");
+  if (!header) return false;
+  return !reactChildrenToPlainText(header).trim();
 }
 
 /**
@@ -226,6 +262,7 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
   className,
 }) => {
   if (!markdown.trim()) return null;
+  const markdownForRender = normalizeMarkdownLineBreaks(markdown);
   const hospitalBagCartPreviewHrefs = extractHospitalBagCartPreviewHrefs(markdown);
 
   return (
@@ -259,22 +296,44 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
             <ChatMarkdownImg resolvedSrc={resolveChatMarkdownImageSrc(src)} alt={alt} className={imgClass} />
           ),
           br: () => <ChatMarkdownLineBreak variant={variant} />,
-          table: ({ children, ...props }) => (
-            <div className="not-prose my-3 -mx-0.5 max-w-full overflow-x-auto rounded-xl border border-[#ead6dc] bg-[#fff8fa] shadow-[0_8px_20px_rgba(137,72,98,0.06)]">
+          table: ({ children, ...props }) => {
+            const phaseCardTable = hasBlankTableHeader(children);
+            return (
+            <div
+              className={cn(
+                "not-prose my-3 -mx-0.5 max-w-full overflow-x-auto rounded-xl border border-[#ead6dc] bg-[#fff8fa] shadow-[0_8px_20px_rgba(137,72,98,0.06)]",
+                phaseCardTable && "birth-journey-card-table-wrap border-0 bg-transparent shadow-none",
+              )}
+            >
               <table
                 {...props}
-                className="min-w-[720px] w-full table-fixed border-collapse text-left text-[13px] leading-relaxed text-[#3f2732]"
+                className={cn(
+                  "min-w-full w-full table-fixed border-collapse text-left text-[13px] leading-relaxed text-[#3f2732]",
+                  phaseCardTable && "birth-journey-card-table",
+                )}
               >
                 {children}
               </table>
             </div>
-          ),
+            );
+          },
+          thead: ({ children, ...props }) => {
+            const headerText = reactChildrenToPlainText(children).trim();
+            if (!headerText) {
+              return (
+                <thead {...props} className="birth-journey-empty-head">
+                  {children}
+                </thead>
+              );
+            }
+            return <thead {...props}>{children}</thead>;
+          },
           th: ({ children, ...props }) => (
             <th
               {...props}
               className="border-b border-[#e5cfd6] bg-[#fff0f4] px-3 py-2.5 align-bottom font-bold leading-snug text-[#4a2635]"
             >
-              {children}
+              {renderMarkdownLineBreakTokens(children, variant)}
             </th>
           ),
           td: ({ children, ...props }) => (
@@ -282,12 +341,12 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
               {...props}
               className="border-t border-[#efdde3] bg-[#fff8fa] px-3 py-3 align-top leading-relaxed text-[#3f2732] first:bg-[#fff0f4]"
             >
-              {children}
+              {renderMarkdownLineBreakTokens(children, variant)}
             </td>
           ),
         }}
       >
-        {markdown}
+        {markdownForRender}
       </ReactMarkdown>
       {hospitalBagCartPreviewHrefs.map((href) => (
         <HospitalBagCartLinkPreview key={href} href={href} />

@@ -12,7 +12,7 @@ describe("pillGroupsModel", () => {
 
   it("shows prenatal pills for prenatal users", () => {
     expect(getHubPillDefinitions({ momStage: "prenatal" }).map((pill) => pill.label)).toEqual([
-      "生成分娩计划",
+      "生成分娩沟通",
       "生成待产包",
     ]);
   });
@@ -45,7 +45,7 @@ describe("pillGroupsModel", () => {
 
     expect(getHubPillClickIntent("unboxGuide")).toEqual({ type: "fillInput", text: "开箱指导" });
     expect(getHubPillClickIntent("maternityBag")).toEqual({ type: "fillInput", text: "帮我生成待产包清单" });
-    expect(getHubPillClickIntent("birthPlan")).toEqual({ type: "fillInput", text: "帮我生成分娩计划" });
+    expect(getHubPillClickIntent("birthPlan")).toEqual({ type: "fillInput", text: "帮我生成分娩沟通" });
     expect(getHubPillClickIntent("increaseMilkPlan")).toEqual({ type: "fillInput", text: "帮我生成追奶计划" });
     expect(getHubPillClickIntent("returnWorkPlan")).toEqual({ type: "fillInput", text: "帮我生成返工计划" });
     expect(getHubPillClickIntent("recentPumpAnalysis")).toEqual({ type: "fillInput", text: "分析最近吸奶情况" });

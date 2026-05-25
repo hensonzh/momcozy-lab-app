@@ -247,9 +247,7 @@ function reportKindLabel(kind?: string): string {
 function analysisStatusLabel(card?: AgentAnalysisCard): string {
   const explicit = card?.status_label?.trim();
   if (explicit) return explicit;
-  if (card?.status === "normal") return "暂无明显异常";
-  if (card?.status === "attention") return "需要留意";
-  return card?.status?.trim() || "";
+  return "";
 }
 
 function analysisStatusTone(card?: AgentAnalysisCard): string {
