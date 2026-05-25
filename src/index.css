@@ -322,9 +322,9 @@
 }
 
 .analysis-status-pill.is-attention {
-  color: #9a5b20;
-  border-color: rgba(237, 179, 102, 0.42);
-  background: rgba(255, 244, 228, 0.9);
+  color: #9f1d2f;
+  border-color: rgba(231, 96, 116, 0.46);
+  background: rgba(255, 224, 228, 0.95);
 }
 
 .analysis-status-pill.is-insufficient {
@@ -1274,6 +1274,95 @@
   90% { transform: translate(0, -1px) rotate(-1deg); }
 }
 .sprout-jitter { animation: sprout-jitter 0.4s ease-in-out infinite; }
+
+/* Birth journey markdown tables are authored as empty-header two-column tables, then rendered as mobile phase cards. */
+.birth-journey-card-table-wrap {
+  overflow: visible;
+}
+
+.not-prose:has(.birth-journey-empty-head) {
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.birth-journey-empty-head {
+  display: none !important;
+}
+
+.not-prose:has(.birth-journey-empty-head) table,
+.birth-journey-card-table {
+  display: block;
+  width: 100%;
+  border-collapse: separate;
+}
+
+.not-prose:has(.birth-journey-empty-head) tbody,
+.birth-journey-card-table tbody {
+  display: grid;
+  gap: 14px;
+}
+
+.not-prose:has(.birth-journey-empty-head) tr,
+.birth-journey-card-table tr {
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(232, 196, 207, 0.92);
+  border-radius: 22px;
+  background: linear-gradient(145deg, #fff8fa 0%, #fffdf8 58%, #f7fffb 100%);
+  box-shadow: 0 12px 28px rgba(99, 55, 72, 0.08);
+}
+
+.not-prose:has(.birth-journey-empty-head) td,
+.birth-journey-card-table td {
+  display: block;
+  width: 100%;
+  border: 0 !important;
+  background: transparent !important;
+  color: #3f2732;
+}
+
+.not-prose:has(.birth-journey-empty-head) td:first-child,
+.birth-journey-card-table td:first-child {
+  padding: 11px 16px 9px !important;
+  border-bottom: 1px solid rgba(232, 196, 207, 0.7) !important;
+  background: linear-gradient(135deg, rgba(255, 238, 244, 0.96) 0%, rgba(255, 247, 237, 0.96) 100%) !important;
+  color: #4a2635;
+  line-height: 1.22;
+}
+
+.not-prose:has(.birth-journey-empty-head) td:first-child strong,
+.birth-journey-card-table td:first-child strong {
+  display: block;
+  margin-bottom: -1px;
+  font-size: 15px;
+  line-height: 1.22;
+}
+
+.not-prose:has(.birth-journey-empty-head) td:first-child br + span,
+.birth-journey-card-table td:first-child br + span {
+  display: none !important;
+  height: 0 !important;
+}
+
+.not-prose:has(.birth-journey-empty-head) td:not(:first-child),
+.birth-journey-card-table td:not(:first-child) {
+  padding: 14px 16px 16px !important;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.not-prose:has(.birth-journey-empty-head) td:not(:first-child) strong,
+.birth-journey-card-table td:not(:first-child) strong {
+  color: #502438;
+}
+
+.not-prose:has(.birth-journey-empty-head) td:not(:first-child) br + strong,
+.birth-journey-card-table td:not(:first-child) br + strong {
+  display: inline-block;
+  margin-top: 8px;
+}
 
 /* Droplet fall */
 @keyframes droplet-fall {

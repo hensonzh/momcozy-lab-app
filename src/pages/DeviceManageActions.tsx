@@ -6,9 +6,12 @@ import TabPageScrollRegion from "@/components/layout/TabPageScrollRegion";
 import TabPageEmbeddedNav from "@/components/layout/TabPageEmbeddedNav";
 import { toast } from "@/components/ui/sonner";
 import { createDailyAndMomBabyAnalysis } from "@/lib/agentApi";
+import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
+import { getAgUiThreadIdForRequest } from "@/lib/agentConversationSession";
 import { showNativeReminder } from "@/lib/mmcBackgroundNotify";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
+import { apiRequestRaw } from "@/lib/http";
 
 type ActionKey = "daily_summary" | "mom_baby" | "growth_update";
 
@@ -17,6 +20,68 @@ const actionItems: Array<{ key: ActionKey; label: string }> = [
   { key: "mom_baby", label: "每日泌乳/喂养建议" },
   { key: "growth_update", label: "宝宝生长发育指标更新" },
 ];
+
+const MOM_BABY_CONTEXT_MAX_CHARS = 320;
+
+function compactText(value: unknown): string {
+  return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function truncateContextText(value: string): string {
+  const text = compactText(value);
+  if (text.length <= MOM_BABY_CONTEXT_MAX_CHARS) return text;
+  return `${text.slice(0, MOM_BABY_CONTEXT_MAX_CHARS - 1)}…`;
+}
+
+function buildMomBabyAdviceContextText(message: string, analysisCard?: AgentAnalysisCard): string {
+  const sections = Array.isArray(analysisCard?.sections) ? analysisCard.sections : [];
+  const sectionText = sections
+    .map((section) => {
+      const title = compactText(section.title);
+      const items = Array.isArray(section.items) ? section.items.map(compactText).filter(Boolean).join("；") : "";
+      const body = compactText(section.body);
+      const content = items || body;
+      return title && content ? `${title}：${content}` : content || "";
+    })
+    .filter(Boolean)
+    .join("；");
+  const statusText = analysisCard?.status_label ? `状态：${compactText(analysisCard.status_label)}；` : "";
+  const content = sectionText || compactText(message);
+  return truncateContextText(`已生成每日泌乳/喂养建议：${statusText}${content}`);
+}
+
+async function recordMomBabyAdviceContextEvent(params: {
+  message: string;
+  analysisCard?: AgentAnalysisCard;
+  chatMessageId: string;
+}): Promise<void> {
+  const threadId = getAgUiThreadIdForRequest().trim();
+  if (!threadId) return;
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Shanghai";
+  try {
+    await apiRequestRaw("/api/client-event", {
+      method: "POST",
+      body: {
+        thread_id: threadId,
+        user_id: DEFAULT_CHAT_USER_ID,
+        event_type: "mom_baby_advice_generated",
+        label: "已生成每日泌乳/喂养建议",
+        occurred_at: new Date().toISOString(),
+        locale: "zh-CN",
+        timezone: timeZone,
+        metadata: {
+          user_id: DEFAULT_CHAT_USER_ID,
+          source: "device-manage-actions",
+          chat_message_id: params.chatMessageId,
+          status_label: params.analysisCard?.status_label || "",
+          context_text: buildMomBabyAdviceContextText(params.message, params.analysisCard),
+        },
+      },
+    });
+  } catch {
+    // Context injection is best-effort; the card itself has already been generated.
+  }
+}
 
 const DeviceManageActions: React.FC = () => {
   const navigate = useNavigate();
@@ -85,6 +150,11 @@ const DeviceManageActions: React.FC = () => {
         notifyJson: JSON.stringify({ event: "mom_baby", body: message, chatMessageId, analysis_card: data.analysis_card }),
       });
       appendAgentHubAnalysisMessage(message, { kind: "mom_baby", id: chatMessageId, analysisCard: data.analysis_card });
+      void recordMomBabyAdviceContextEvent({
+        message,
+        analysisCard: data.analysis_card,
+        chatMessageId,
+      });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "请求失败，请稍后重试";
       toast("每日泌乳/喂养建议", { description: message });

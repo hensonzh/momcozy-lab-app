@@ -37,7 +37,7 @@ export function getHubPillDefinitions({
 }: GetHubPillDefinitionsInput): HubPillDefinition[] {
   if (momStage === "prenatal") {
     return [
-      { action: "birthPlan", label: "生成分娩计划" },
+      { action: "birthPlan", label: "生成分娩沟通" },
       { action: "maternityBag", label: "生成待产包" },
     ];
   }
@@ -62,7 +62,7 @@ export function getHubPillClickIntent(action: HubPillAction): HubPillClickIntent
     case "maternityBag":
       return { type: "fillInput", text: "帮我生成待产包清单" };
     case "birthPlan":
-      return { type: "fillInput", text: "帮我生成分娩计划" };
+      return { type: "fillInput", text: "帮我生成分娩沟通" };
     case "unboxGuide":
       return { type: "fillInput", text: "开箱指导" };
     case "increaseMilkPlan":
