@@ -1005,7 +1005,7 @@ const AgentHubRichTextBlock: React.FC<{
     ) : null;
     const fieldTextClass = isMonochrome ? "text-neutral-950 dark:text-neutral-50" : "text-foreground";
     const inputClassName = cn(
-      "w-full border outline-none transition-colors",
+      "w-full min-w-0 border outline-none transition-colors",
       isMonochrome
         ? "min-h-[44px] rounded-[14px] border-neutral-200 bg-white/95 px-3 py-2.5 text-[15px] text-neutral-950 placeholder:text-neutral-400 focus:border-[#207d93] focus:ring-[3px] focus:ring-[#207d93]/10 dark:border-neutral-700 dark:bg-background dark:text-neutral-50 dark:placeholder:text-neutral-500 dark:focus:border-neutral-100 dark:focus:ring-neutral-100"
         : "rounded-lg border-border bg-background px-2 py-1.5 text-[12px]",
@@ -1017,6 +1017,7 @@ const AgentHubRichTextBlock: React.FC<{
           key={field.id}
           className={cn(
             isMonochrome ? "rounded-[14px] border p-3" : "rounded-lg border p-2.5",
+            "min-w-0",
             isMonochrome ? "border-neutral-200 bg-white/95 dark:border-neutral-700 dark:bg-background" : "border-border/60",
           )}
         >
@@ -1037,7 +1038,7 @@ const AgentHubRichTextBlock: React.FC<{
                 )}
               >
                 <input type="checkbox" name={field.id} value={option} defaultChecked={defaults.includes(option)} />
-                <span>{option}</span>
+                <span className="min-w-0 break-words">{option}</span>
               </label>
             ))}
           </div>
@@ -1050,7 +1051,7 @@ const AgentHubRichTextBlock: React.FC<{
       );
     }
     return (
-      <label key={field.id} className={cn("grid gap-1.5", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
+      <label key={field.id} className={cn("grid min-w-0 gap-1.5", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
         <span className="inline-flex items-start gap-2 font-semibold leading-snug">
           {requiredMark}
           <span>{field.label}</span>
@@ -1099,7 +1100,7 @@ const AgentHubRichTextBlock: React.FC<{
   const renderArtifact = () => {
     if (mergedArtifacts.length === 0) return null;
     return (
-      <div className="space-y-2">
+      <div className="w-full min-w-0 space-y-2">
         {mergedArtifacts.map((artifact, index) => {
           const isSubmitted = Boolean(submittedArtifactMap[index]);
           const errorText = artifactError[index] || "";
@@ -1141,7 +1142,7 @@ const AgentHubRichTextBlock: React.FC<{
                   cardArtifactRefs.current[index] = el;
                 }}
                 data-consult-id={consultId}
-                className="grid w-full gap-[14px] rounded-[14px] border border-[#d8e5e1] p-[18px] text-[#273b3a] shadow-[0_12px_30px_rgba(48,83,78,0.08)]"
+                className="grid w-full min-w-0 gap-[14px] rounded-[14px] border border-[#d8e5e1] p-[18px] text-[#273b3a] shadow-[0_12px_30px_rgba(48,83,78,0.08)]"
                 style={{
                   background:
                     "radial-gradient(circle at top right, rgba(221, 241, 234, 0.95), transparent 42%), linear-gradient(180deg, #ffffff 0%, #f8fcfb 100%)",
@@ -1353,7 +1354,7 @@ const AgentHubRichTextBlock: React.FC<{
                 ref={(el) => {
                   cardArtifactRefs.current[index] = el;
                 }}
-                className="relative rounded-xl border border-border bg-card p-3 space-y-2"
+                className="relative w-full min-w-0 rounded-xl border border-border bg-card p-3 space-y-2"
               >
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-sm font-semibold text-foreground">
@@ -1417,10 +1418,10 @@ const AgentHubRichTextBlock: React.FC<{
                 default_value: ["计划剖宫产", "剖腹产", "planned_c_section", "c_section", "c-section", "cesarean"].includes(asString(field.default_value))
                   ? "剖宫产"
                   : field.default_value,
-	              };
-	              return normalizedField;
-	            })
-	            .map((field) => (isHospitalBagIntake || isBirthPlanIntake ? { ...field, help_text: "" } : field))
+              };
+              return normalizedField;
+            })
+            .map((field) => (isHospitalBagIntake || isBirthPlanIntake ? { ...field, help_text: "" } : field))
             .filter((f) => f.id);
           const fieldGroups = isGroupedIntake ? groupFormFields(fields) : [{ title: "", fields }];
 
@@ -1428,6 +1429,7 @@ const AgentHubRichTextBlock: React.FC<{
             <form
               key={`artifact-${index}`}
               className={cn(
+                "w-full min-w-0",
                 isGroupedIntake ? "rounded-[24px] border p-4 space-y-4" : "rounded-xl border p-3 space-y-2.5",
                 isGroupedIntake
                   ? "border-[#eadfe5] bg-[#fffdfc] text-neutral-950 shadow-[0_10px_30px_rgba(65,42,52,0.06)] dark:border-neutral-800 dark:bg-background dark:text-neutral-50"
@@ -1455,7 +1457,7 @@ const AgentHubRichTextBlock: React.FC<{
                 onButtonSelect(buildFormConfirmationMessage(normalizedFormSpec, values), { displayText: `已提交：${title}` });
               }}
             >
-              <fieldset disabled={isSubmitted} className={cn("grid", isGroupedIntake ? "gap-4" : "gap-2.5")}>
+              <fieldset disabled={isSubmitted} className={cn("grid min-w-0", isGroupedIntake ? "gap-4" : "gap-2.5")}>
                 <h3 className={cn(isGroupedIntake ? "text-xl" : isMonochromeForm ? "text-base" : "text-sm", "font-semibold", isMonochromeForm ? "text-neutral-950 dark:text-neutral-50" : "text-foreground")}>
                   {title}
                 </h3>
@@ -1464,24 +1466,24 @@ const AgentHubRichTextBlock: React.FC<{
                     {asString(normalizedFormSpec.description)}
                   </p>
                 ) : null}
-	                {fieldGroups.map((group, groupIndex) => {
-	                  const groupStyle = isHospitalBagIntake
-	                    ? hospitalBagGroupStyle(group.title, groupIndex)
-	                    : isBirthPlanIntake
-	                      ? birthPlanGroupStyle(group.title, groupIndex)
-	                      : null;
+                {fieldGroups.map((group, groupIndex) => {
+                  const groupStyle = isHospitalBagIntake
+                    ? hospitalBagGroupStyle(group.title, groupIndex)
+                    : isBirthPlanIntake
+                      ? birthPlanGroupStyle(group.title, groupIndex)
+                      : null;
                   return group.title ? (
                     <section
                       key={`${group.title}-${groupIndex}`}
                       className={cn(
-                        "grid gap-3 rounded-[18px] border p-3.5",
+                        "grid min-w-0 gap-3 rounded-[18px] border p-3.5",
                         groupStyle?.section ?? "border-[#efe5ea] bg-white/85",
                       )}
                     >
                       <div className={cn("border-b pb-2", groupStyle?.header ?? "border-[#f1e8ec]")}>
                         <h4 className={cn("text-[15px] font-semibold", groupStyle?.title ?? "text-[#4b2638] dark:text-neutral-50")}>{group.title}</h4>
                       </div>
-                      <div className="grid gap-3">{group.fields.map((field) => renderFormField(field, isMonochromeForm ? "monochrome" : "default"))}</div>
+                      <div className="grid min-w-0 gap-3">{group.fields.map((field) => renderFormField(field, isMonochromeForm ? "monochrome" : "default"))}</div>
                     </section>
                   ) : (
                     <React.Fragment key={`ungrouped-${groupIndex}`}>
@@ -1523,7 +1525,7 @@ const AgentHubRichTextBlock: React.FC<{
   };
 
   return (
-    <div className="space-y-2">
+    <div className="w-full min-w-0 space-y-2">
       {renderArtifact()}
       {payload.title ? <p className="font-semibold text-sm text-foreground">{payload.title}</p> : null}
       {payload.content ? (
