@@ -21,6 +21,7 @@ import {
   Copy,
   CreditCard,
   CupSoda,
+  Download,
   Droplets,
   FileCheck,
   FileText,
@@ -481,7 +482,7 @@ function priorityLabel(priority: unknown): string {
   const labels: Record<string, string> = {
     must: "必带",
     recommended: "建议",
-    nice_to_have: "可选",
+    nice_to_have: "建议",
     confirm_first: "和医院确认",
     先确认: "和医院确认",
   };
@@ -681,6 +682,13 @@ function hospitalBagMetaValue(value: unknown): unknown {
     "混合": "混合喂养",
   };
   return labels[text.toLowerCase()] || value;
+}
+
+function hospitalBagProfileValue(label: string, value: unknown): unknown {
+  const normalized = hospitalBagMetaValue(value);
+  const text = formatPlainValue(normalized).trim();
+  if (label === "孕期" && /^\d{1,2}$/.test(text)) return `${text}周`;
+  return normalized;
 }
 
 function hospitalBagTitle(value: unknown): string {
@@ -1149,16 +1157,18 @@ const AgentHubRichTextBlock: React.FC<{
                 data-export-control="true"
                 className="card-export-button"
                 title="下载卡片 PNG"
-                aria-label={downloadingCardIndex === index ? "正在导出图片" : "下载卡片图片"}
+                aria-label={downloadingCardIndex === index ? "正在保存图片" : "保存卡片图片"}
               >
                 {downloadingCardIndex === index ? (
-                  <span className="card-export-spinner" aria-hidden="true" />
+                  <>
+                    <span className="card-export-spinner" aria-hidden="true" />
+                    <span>保存中</span>
+                  </>
                 ) : (
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 4v10" />
-                    <path d="m7 11 5 5 5-5" />
-                    <path d="M5 20h14" />
-                  </svg>
+                  <>
+                    <Download aria-hidden="true" />
+                    <span>保存图片</span>
+                  </>
                 )}
               </button>
             );
@@ -1182,7 +1192,6 @@ const AgentHubRichTextBlock: React.FC<{
 	                  }}
 	                  className="agent-card agent-card-birth_plan_card"
                 >
-	                  {downloadButton}
 	                  <header className="agent-card-header">
 	                    <div className="agent-card-header-text">
 	                      <h2>{bp.title}</h2>
@@ -1222,21 +1231,22 @@ const AgentHubRichTextBlock: React.FC<{
                         ))}
                       </ul>
                     </section>
-                  ) : null}
-                  {bp.disclaimer ? <p className="agent-card-disclaimer">{bp.disclaimer}</p> : null}
+	                  ) : null}
+	                  {bp.disclaimer ? <p className="agent-card-disclaimer">{bp.disclaimer}</p> : null}
+	                  {downloadButton}
                 </article>
               );
             }
             if (cardType === "hospital_bag_card" && schemaVersion === "1.0") {
               const owner = asObject(cardJson.owner) ?? {};
-              const subtitle = cardSubtitle([
-                hospitalBagMetaValue(owner.due_date_or_week),
-                hospitalBagMetaValue(owner.birth_path),
-                hospitalBagMetaValue(owner.feeding_intention),
-              ]);
+              const subtitle = "住院母婴必备用品 · 32～34周准备 · 36周完成";
+              const profileRows = [
+                { label: "孕期", value: hospitalBagProfileValue("孕期", owner.due_date_or_week) },
+                { label: "生产方式", value: hospitalBagProfileValue("生产方式", owner.birth_path) },
+                { label: "喂养意向", value: hospitalBagProfileValue("喂养意向", owner.feeding_intention) },
+              ].filter(({ value }) => hasDisplayValue(value) && !isConfirmPlaceholder(value));
               const packingGroups = compactPackingGroups(cardJson.packing_groups);
-              const personalizedNotes = uniqueDisplayStrings(limitList(cardJson.personalized_notes, 3), 3);
-              const timelineItems = limitList(cardJson.timeline, 3);
+              const disclaimer = asString(cardJson.disclaimer);
               return (
                 <article
                   key={`artifact-${index}`}
@@ -1245,24 +1255,25 @@ const AgentHubRichTextBlock: React.FC<{
                   }}
                   className="agent-card agent-card-hospital_bag_card"
                 >
-                  {downloadButton}
                   <header className="agent-card-header">
                     <div className="agent-card-header-text">
                       <h2>{hospitalBagTitle(cardJson.title)}</h2>
-                      {subtitle ? <p>{subtitle}</p> : null}
+                      {subtitle ? <p className="hospital-card-subtitle">{subtitle}</p> : null}
                     </div>
                     <div className="flex items-center gap-1.5">
                       <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
                     </div>
                   </header>
-                  {personalizedNotes.length > 0 ? (
-                    <section className="agent-card-section agent-card-summary-section">
-                      <ul className="agent-card-note-list">
-                        {personalizedNotes.map((value, i) => (
-                          <li key={i}>{value}</li>
+                  {profileRows.length > 0 ? (
+                    <div className="hospital-card-profile-strip">
+                      <ul className="hospital-card-profile-tags">
+                        {profileRows.map((item) => (
+                          <li key={item.label}>
+                            <strong>{renderHospitalCardValue(item.value)}</strong>
+                          </li>
                         ))}
                       </ul>
-                    </section>
+                    </div>
                   ) : null}
                   {packingGroups.length > 0 ? (
                     <section className="agent-card-section">
@@ -1297,17 +1308,10 @@ const AgentHubRichTextBlock: React.FC<{
                       ))}
                     </section>
                   ) : null}
-                  {timelineItems.length > 0 ? (
-                    <section className="agent-card-section">
-                      <h3>准备时间线</h3>
-                      <ul className="agent-card-list">
-                        {timelineItems.map((value, i) => (
-                          <li key={i}>{renderHospitalCardValue(value)}</li>
-                        ))}
-                      </ul>
-                    </section>
-                  ) : null}
-                  {asString(cardJson.disclaimer) ? <p className="agent-card-disclaimer">{asString(cardJson.disclaimer)}</p> : null}
+                  <div className="agent-card-footer">
+                    {disclaimer ? <p className="agent-card-disclaimer">{disclaimer}</p> : null}
+                    {downloadButton}
+                  </div>
                 </article>
               );
             }
@@ -1320,7 +1324,6 @@ const AgentHubRichTextBlock: React.FC<{
                 }}
                 className="relative rounded-xl border border-border bg-card p-3 space-y-2"
               >
-                {downloadButton}
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-sm font-semibold text-foreground">
                     {asString(card.title) || cardType || "Card"}
@@ -1337,6 +1340,7 @@ const AgentHubRichTextBlock: React.FC<{
                     ))}
                   </dl>
                 ) : null}
+                {downloadButton}
               </article>
             );
           }

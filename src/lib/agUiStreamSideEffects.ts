@@ -6,6 +6,7 @@
 import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import type { AgUiToolCallRow, ChatMessage } from "@/types/chat";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
+import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
 
 const STATUS_LABELS: Record<string, string> = {
   "Agent loop started.": "",
@@ -300,6 +301,7 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
       "milk_calendar_mutate",
       "milk_task_complete",
       "infant_growth_mutate",
+      "hospital_bag_cart_update",
       "reminder_create",
       "reminder_update",
       "reminder_delete",
@@ -382,6 +384,11 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
   if (normalizedToolName === "milk_calendar_mutate") return { title: milkMutationResultTitle(result, "日程修改已保存") };
   if (normalizedToolName === "milk_task_complete") return { title: milkTaskResultTitle(result) };
   if (normalizedToolName === "infant_growth_mutate") return { title: milkMutationResultTitle(result, "记录已保存") };
+  if (normalizedToolName === "hospital_bag_cart_update") {
+    const status = coalesceString(result?.status);
+    if (status === "needs_clarification" || status === "cart_unchanged") return { title: "购物车暂未修改" };
+    return { title: "购物车已更新" };
+  }
 
   switch (toolWorkPhase(toolName)) {
     case "select":
@@ -574,6 +581,17 @@ function extractStatusLineFromMetadata(metadata: unknown): string {
   );
 }
 
+function readHospitalBagCartUpdate(parsed: Record<string, unknown> | null): { groups: HospitalBagCartGroup[]; message?: string } | null {
+  const update = asRecord(parsed?.cart_update);
+  if (!update) return null;
+  const groups = update.groups;
+  if (!Array.isArray(groups)) return null;
+  return {
+    groups: groups as HospitalBagCartGroup[],
+    message: coalesceString(update.message),
+  };
+}
+
 export type ApplyAgUiSideEffectResult = {
   /** 若非正文事件，至少更新了一项元信息 / 工具轨迹时为 true，用于避免「仅工具帧」被 `!chunk && !rich` 丢弃 */
   didUpdate: boolean;
@@ -616,7 +634,10 @@ export function applyAgUiStreamSideEffects(
   replyId: string,
   data: string | object,
   setMessages: Dispatch<SetStateAction<ChatMessage[]>>,
-  opts?: { pendingRichTextRef?: MutableRefObject<ChatRichTextPayload | null> },
+  opts?: {
+    pendingRichTextRef?: MutableRefObject<ChatRichTextPayload | null>;
+    onHospitalBagCartUpdate?: (groups: HospitalBagCartGroup[], message?: string) => void;
+  },
 ): ApplyAgUiSideEffectResult {
   if (typeof data !== "object" || data == null) return { didUpdate: false };
   const rec = data as Record<string, unknown>;
@@ -784,6 +805,10 @@ export function applyAgUiStreamSideEffects(
     });
   } else if (toolKeys.length > 0 && eventType === "TOOL_CALL_RESULT") {
     const parsed = parseToolResultPayload(rec.content);
+    const hospitalBagCartUpdate = readHospitalBagCartUpdate(parsed);
+    if (hospitalBagCartUpdate) {
+      opts?.onHospitalBagCartUpdate?.(hospitalBagCartUpdate.groups, hospitalBagCartUpdate.message);
+    }
     const normalizedToolName = parsed
       ? normalizeToolName(parsed.tool_name) || readToolName(rec)
       : readToolName(rec);
