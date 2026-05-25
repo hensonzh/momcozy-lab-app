@@ -544,7 +544,37 @@ function packingItemMeta(item: Record<string, unknown>, group: Record<string, un
 
 function packingItemNote(item: Record<string, unknown>): string {
   if (isConfirmFirstPackingItem(item)) return "";
+  if (/身份证件/.test(asString(item.label))) return "";
   return asString(item.note);
+}
+
+function packingItemDescription(item: Record<string, unknown>): string {
+  return asString(item.explain) || inferredHospitalBagItemExplanation(item) || packingItemNote(item);
+}
+
+const hospitalBagItemExplanationRules: Array<[RegExp, string]> = [
+  [/产褥垫|产妇卫生巾/, "产后恶露量较多，用来垫床或替代普通卫生巾。"],
+  [/胎监带/, "做胎心监护时固定探头用，有些医院要求自带。"],
+  [/吸管杯/, "产后或宫缩时不方便起身，躺着喝水更省力。"],
+  [/哺乳文胸|哺乳背心/, "方便产后喂奶，也比普通内衣更不勒。"],
+  [/防溢乳垫/, "放在内衣里吸收漏奶，避免衣服被打湿。"],
+  [/便携式吸奶器|吸奶器/, "涨奶、排奶或回家后储奶时备用。"],
+  [/储奶袋|储奶瓶/, "用来保存挤出的母乳，住院期少量准备即可。"],
+  [/乳头霜/, "哺乳初期乳头干痛时可用，先少量准备。"],
+  [/乳盾/, "套在乳头上的辅助亲喂用品，是否需要先听专业建议。"],
+  [/哺乳枕/, "喂奶时托住宝宝和手臂，不是必须。"],
+  [/收腹带/, "产后腹部支撑用品，剖宫产尤其要先问医生。"],
+  [/安全提篮|安全座椅/, "宝宝出院坐车时使用，提前确认交通方式。"],
+  [/奶瓶清洁用品/, "用来清洗奶瓶、奶嘴或吸奶配件，住院只需少量。"],
+  [/消毒设备/, "回家后消毒奶瓶或吸奶配件用，住院不一定带大件。"],
+  [/喂养记录工具/, "记录吃奶、排尿排便和睡眠，方便家人同步。"],
+  [/分娩沟通卡/, "记录生产偏好和需要提前沟通的事，入院时方便给医护看。"],
+];
+
+function inferredHospitalBagItemExplanation(item: Record<string, unknown>): string {
+  const label = asString(item.label);
+  if (!label) return "";
+  return hospitalBagItemExplanationRules.find(([pattern]) => pattern.test(label))?.[1] || "";
 }
 
 function packingItemIcon(item: Record<string, unknown>, group: Record<string, unknown>): LucideIcon {
@@ -1287,6 +1317,7 @@ const AgentHubRichTextBlock: React.FC<{
                           <div>
                             {group.items.map((item, i) => {
                               const ItemIcon = packingItemIcon(item, group);
+                              const description = packingItemDescription(item);
                               return (
                                 <div key={i} className="packing-item">
                                   <span className={cn("packing-item-icon", packingItemIconTone(item, group))} aria-hidden="true">
@@ -1299,7 +1330,7 @@ const AgentHubRichTextBlock: React.FC<{
                                       {priorityLabel(item.priority)}
                                     </span>
                                   ) : null}
-                                  {packingItemNote(item) ? <small>{packingItemNote(item)}</small> : null}
+                                  {description ? <small className="packing-item-explain">{description}</small> : null}
                                 </div>
                               );
                             })}

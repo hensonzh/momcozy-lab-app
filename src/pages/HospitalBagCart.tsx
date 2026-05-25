@@ -12,8 +12,14 @@ import {
 import {
   calculateHospitalBagCartTotals,
   cloneHospitalBagCartGroups,
+  formatHospitalBagCartItemPrice,
+  formatHospitalBagCartMoney,
+  formatHospitalBagCartTotals,
   initialHospitalBagCartGroups,
   removeHospitalBagCartItem,
+  resolveHospitalBagCartItemImage,
+  resolveHospitalBagCartItemImageAlt,
+  type HospitalBagCartItem,
   type HospitalBagCartGroup,
   type HospitalBagCartTone,
 } from "@/pages/hospitalBagCartModel";
@@ -30,6 +36,32 @@ const itemIconClasses: Record<HospitalBagCartTone, string> = {
   sky: "bg-[#d8ebfb] text-[#2f6fa8]",
 };
 
+function HospitalBagCartItemFallbackIcon({ tone }: { tone: HospitalBagCartTone }) {
+  const Icon = tone === "mint" ? Baby : tone === "sky" ? Heart : PackageCheck;
+  return (
+    <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${itemIconClasses[tone]}`}>
+      <Icon className="h-6 w-6" />
+    </div>
+  );
+}
+
+function HospitalBagCartItemImage({ item, tone }: { item: HospitalBagCartItem; tone: HospitalBagCartTone }) {
+  const [hasError, setHasError] = useState(false);
+  const src = resolveHospitalBagCartItemImage(item);
+  if (hasError || !src) return <HospitalBagCartItemFallbackIcon tone={tone} />;
+  return (
+    <div className="h-14 w-14 overflow-hidden rounded-2xl border border-[#f0e1e7] bg-white shadow-sm">
+      <img
+        src={src}
+        alt={resolveHospitalBagCartItemImageAlt(item)}
+        className="h-full w-full object-cover"
+        loading="lazy"
+        onError={() => setHasError(true)}
+      />
+    </div>
+  );
+}
+
 type HospitalBagCartProps = {
   cartGroups?: HospitalBagCartGroup[];
   onClose?: () => void;
@@ -44,7 +76,8 @@ const HospitalBagCart: React.FC<HospitalBagCartProps> = ({ cartGroups, onClose, 
   );
   const effectiveCartGroups = cartGroups ?? localCartGroups;
   const visibleCartGroups = useMemo(() => effectiveCartGroups.filter((group) => group.items.length > 0), [effectiveCartGroups]);
-  const { subtotal, itemCount, discount, shipping, total } = useMemo(() => calculateHospitalBagCartTotals(effectiveCartGroups), [effectiveCartGroups]);
+  const totals = useMemo(() => calculateHospitalBagCartTotals(effectiveCartGroups), [effectiveCartGroups]);
+  const { subtotal, itemCount, discount, shipping } = totals;
 
   const handleBack = () => {
     if (onClose) {
@@ -103,17 +136,15 @@ const HospitalBagCart: React.FC<HospitalBagCartProps> = ({ cartGroups, onClose, 
             </div>
             <div className="space-y-2">
               {group.items.map((item) => (
-                <article key={item.name} className="grid grid-cols-[40px_minmax(0,1fr)_auto] gap-2.5 rounded-2xl border border-[#f0e1e7] bg-white p-3 shadow-sm">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${itemIconClasses[group.tone]}`}>
-                    {group.tone === "mint" ? <Baby className="h-5 w-5" /> : group.tone === "sky" ? <Heart className="h-5 w-5" /> : <PackageCheck className="h-5 w-5" />}
-                  </div>
+                <article key={item.name} className="grid grid-cols-[56px_minmax(0,1fr)_auto] gap-2.5 rounded-2xl border border-[#f0e1e7] bg-white p-3 shadow-sm">
+                  <HospitalBagCartItemImage item={item} tone={group.tone} />
                   <div className="min-w-0">
                     <h3 className="truncate text-[13px] font-bold">{item.name}</h3>
                     <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-[#7e6672]">{item.desc}</p>
                     <p className="mt-1 text-[10px] font-semibold text-[#9a7b89]">x{item.qty}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[13px] font-bold">¥{item.price.toFixed(2)}</p>
+                    <p className="text-[13px] font-bold">{formatHospitalBagCartItemPrice(item)}</p>
                     <button
                       type="button"
                       onClick={() => handleRemoveItem(item.id, item.name)}
@@ -149,20 +180,20 @@ const HospitalBagCart: React.FC<HospitalBagCartProps> = ({ cartGroups, onClose, 
           <div className="mt-3 space-y-2 text-[12px]">
             <div className="flex justify-between text-[#6f5663]">
               <span>商品小计</span>
-              <span>¥{subtotal.toFixed(2)}</span>
+              <span>{formatHospitalBagCartMoney(subtotal, "CNY")}</span>
             </div>
             <div className="flex justify-between text-[#267c68]">
               <span>组合优惠</span>
-              <span>-¥{discount.toFixed(2)}</span>
+              <span>-{formatHospitalBagCartMoney(discount, "CNY")}</span>
             </div>
             <div className="flex justify-between text-[#6f5663]">
               <span>配送</span>
-              <span>{shipping === 0 ? "免运费" : `¥${shipping.toFixed(2)}`}</span>
+              <span>{shipping === 0 ? "免运费" : formatHospitalBagCartMoney(shipping, "CNY")}</span>
             </div>
             <div className="border-t border-[#f0e1e7] pt-3">
               <div className="flex items-end justify-between">
                 <span className="text-[13px] font-bold">预计合计</span>
-                <span className="text-[22px] font-black text-[#24889a]">¥{total.toFixed(2)}</span>
+                <span className="text-[22px] font-black text-[#24889a]">{formatHospitalBagCartTotals(totals)}</span>
               </div>
             </div>
           </div>
@@ -173,10 +204,10 @@ const HospitalBagCart: React.FC<HospitalBagCartProps> = ({ cartGroups, onClose, 
         <div className="mb-2 flex items-end justify-between gap-3">
           <div>
             <p className="text-[10px] font-semibold text-[#8a6d7a]">预计合计</p>
-            <p className="text-[24px] font-black leading-none text-[#24889a]">¥{total.toFixed(2)}</p>
+            <p className="text-[24px] font-black leading-none text-[#24889a]">{formatHospitalBagCartTotals(totals)}</p>
           </div>
           <p className="text-right text-[10px] leading-snug text-[#8a6d7a]">
-            已含组合优惠 ¥{discount.toFixed(2)}
+            已含组合优惠 {formatHospitalBagCartMoney(discount, "CNY")}
           </p>
         </div>
         <button

@@ -1069,6 +1069,11 @@
   line-height: 1.4;
 }
 
+.packing-item-explain {
+  font-size: 10.5px;
+  color: #7a6b72;
+}
+
 .priority {
   grid-column: 4;
   justify-self: end;
