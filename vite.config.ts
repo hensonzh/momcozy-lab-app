@@ -27,6 +27,7 @@ export default defineConfig(({ mode }) => {
     proxy: {
       "/api": { target: proxyTarget, changeOrigin: true, ws: true },
       "/v1": { target: proxyTarget, changeOrigin: true, ws: true },
+      "/skill-assets": { target: proxyTarget, changeOrigin: true },
       "/__device_usage_api_proxy": {
         target: deviceUsageProxyTarget,
         changeOrigin: true,

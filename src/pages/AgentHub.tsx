@@ -45,6 +45,11 @@ import type { ChatMarkdownVariant } from "@/components/chat/ChatMarkdown";
 import { splitChatContentByDataDelimiter } from "@/lib/chatContentSegments";
 import { extractChatAnswerChunk, mergeStreamingAnswer, mergeStreamingAnswerDelta } from "@/lib/chatStreaming";
 import {
+  DEFAULT_CHAT_TAIL_THRESHOLD_PX,
+  isChatScrollNearTail,
+  shouldAutoScrollChatTail,
+} from "@/lib/chatAutoScroll";
+import {
   buildSpeakableTextForTts,
   CHAT_BUBBLE_TTS_MAX_CHARS,
   stopChatBubblePlayback,
@@ -148,6 +153,27 @@ function extractSentChatImagePreviews(msg: ChatMessage): SentChatImagePreview[] 
     const id = typeof rec.id === "string" && rec.id.trim() ? rec.id.trim() : `${msg.id}-sent-image-${index}`;
     return [{ id, src, alt }];
   });
+}
+
+function richTextPayloadHasAgUiArtifact(payload?: ChatRichTextPayload | null): boolean {
+  if (!payload || !Array.isArray(payload.action)) return false;
+  return payload.action.some((action) => {
+    if (!action || typeof action !== "object" || Array.isArray(action)) return false;
+    const rec = action as Record<string, unknown>;
+    if (rec.kind !== "ag_ui_artifact") return false;
+    return Boolean(rec.form || rec.card || rec.ticket);
+  });
+}
+
+function streamItemHasAgUiArtifact(item: ChatStreamRenderItem): boolean {
+  return item.kind === "rich" && richTextPayloadHasAgUiArtifact(item.payload);
+}
+
+function messageHasAgUiArtifact(msg: ChatMessage): boolean {
+  return Boolean(
+    richTextPayloadHasAgUiArtifact(msg.richText) ||
+      msg.streamRenderItems?.some(streamItemHasAgUiArtifact),
+  );
 }
 
 function AgentHubSentImages({ images }: { images: SentChatImagePreview[] }) {
@@ -677,6 +703,14 @@ const AgentHub: React.FC = () => {
   /** 上传图片本地预览 blob URL 索引：便于删除气泡时 revoke；离开路由不要整表 revoke（同文档内 blob 仍有效） */
   const uploadedImagePreviewUrlsRef = useRef<Map<string, string>>(new Map());
 
+  const scrollToChatTail = useCallback((behavior: ScrollBehavior = "auto") => {
+    const container = scrollRef.current;
+    if (!container) return;
+    container.scrollTo({ top: container.scrollHeight, behavior });
+    userPinnedToTailRef.current = true;
+    setShowScrollToBottom(false);
+  }, []);
+
   /**
    * 停止当前对话气泡语音播放并清理播放状态。
    * @param opts.clearPlayingId 是否重置 UI 播放高亮；默认 true
@@ -825,7 +859,7 @@ const AgentHub: React.FC = () => {
       const restoreScrollTop = () => {
         const maxTop = Math.max(0, el.scrollHeight - el.clientHeight);
         el.scrollTop = Math.min(ibclcReturnViewport.scroll_top, maxTop);
-        const isNearBottom = el.scrollHeight - (el.scrollTop + el.clientHeight) < 80;
+        const isNearBottom = isChatScrollNearTail(el, DEFAULT_CHAT_TAIL_THRESHOLD_PX);
         userPinnedToTailRef.current = isNearBottom;
         setShowScrollToBottom(!isNearBottom);
       };
@@ -1564,30 +1598,32 @@ const AgentHub: React.FC = () => {
     const prevMeta = lastMessageMetaRef.current;
     const nextLastId = messages.at(-1)?.id ?? null;
     const isNewBubble = messages.length !== prevMeta.len || nextLastId !== prevMeta.lastId;
+    const forceTailAfterSend = isNewBubble && scrollTailAfterHubSendRef.current;
+    const wasPinnedToTail = userPinnedToTailRef.current || forceTailAfterSend;
+    const isNearTailAfterUpdate = isChatScrollNearTail(container, DEFAULT_CHAT_TAIL_THRESHOLD_PX);
 
-    if (isNewBubble) {
-      if (scrollTailAfterHubSendRef.current) {
-        scrollTailAfterHubSendRef.current = false;
-        userPinnedToTailRef.current = true;
-        setShowScrollToBottom(false);
-      }
-      if (userPinnedToTailRef.current) {
-        const el = container;
-        const scrollToEnd = () => el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-        window.requestAnimationFrame(() => window.requestAnimationFrame(scrollToEnd));
+    if (forceTailAfterSend) {
+      scrollTailAfterHubSendRef.current = false;
+    }
+
+    if (shouldAutoScrollChatTail({ isNewBubble, forceTailAfterSend, wasPinnedToTail, isNearTailAfterUpdate })) {
+      if (isNewBubble) {
+        window.requestAnimationFrame(() => window.requestAnimationFrame(() => scrollToChatTail("smooth")));
+      } else {
+        const now = Date.now();
+        const cardHeightLikelyChanged = wasPinnedToTail && !isNearTailAfterUpdate;
+        if (cardHeightLikelyChanged || now - lastStreamingScrollAtRef.current > 120) {
+          scrollToChatTail("auto");
+          window.requestAnimationFrame(() => scrollToChatTail("auto"));
+          lastStreamingScrollAtRef.current = now;
+        }
       }
     } else {
-      const now = Date.now();
-      const isNearBottom =
-        container.scrollHeight - (container.scrollTop + container.clientHeight) < 80;
-      if (isNearBottom && now - lastStreamingScrollAtRef.current > 120) {
-        container.scrollTo({ top: container.scrollHeight, behavior: "auto" });
-        lastStreamingScrollAtRef.current = now;
-      }
+      setShowScrollToBottom(!isNearTailAfterUpdate);
     }
 
     lastMessageMetaRef.current = { len: messages.length, lastId: nextLastId };
-  }, [messages]);
+  }, [messages, scrollToChatTail]);
 
   // 回到 Hub 时尚有未结束的设备向导：扫一遍持久化消息，收敛滴定卡与设备卡状态并解锁
   useEffect(() => {
@@ -1870,15 +1906,14 @@ const AgentHub: React.FC = () => {
     if (!container) return;
     userPinnedToTailRef.current = true;
     setShowScrollToBottom(false);
-    container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    scrollToChatTail("smooth");
   };
 
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
     const compute = () => {
-      const isNearBottom =
-        container.scrollHeight - (container.scrollTop + container.clientHeight) < 80;
+      const isNearBottom = isChatScrollNearTail(container, DEFAULT_CHAT_TAIL_THRESHOLD_PX);
       userPinnedToTailRef.current = isNearBottom;
       setShowScrollToBottom(!isNearBottom);
     };
@@ -1890,6 +1925,28 @@ const AgentHub: React.FC = () => {
       window.removeEventListener("resize", compute);
     };
   }, [messages.length, visibleStartIndex]);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container || typeof ResizeObserver === "undefined") return;
+
+    let frame = 0;
+    const followTailAfterResize = () => {
+      if (!userPinnedToTailRef.current) return;
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        if (userPinnedToTailRef.current) scrollToChatTail("auto");
+      });
+    };
+
+    const observer = new ResizeObserver(followTailAfterResize);
+    Array.from(container.children).forEach((child) => observer.observe(child));
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [messages, visibleStartIndex, scrollToChatTail]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -2039,12 +2096,26 @@ const AgentHub: React.FC = () => {
 
           {visibleMessages.map((msg, index) => {
             const isMainAssistantBubble = msg.role === "mai" && msg.chatStreamContext === "main";
+            const containsAgUiArtifact = msg.role === "mai" && messageHasAgUiArtifact(msg);
+            const mainAssistantBubbleBase =
+              "min-h-0 rounded-none border-0 bg-transparent px-0.5 py-[3px] text-[15px] leading-[1.45] text-[#33404d] shadow-none";
             const bubbleShell = cn(
               "relative group w-full break-words",
               msg.role === "user"
                 ? "rounded-2xl rounded-br-[5px] bg-[#176b87] text-white px-3 py-2.5 text-[15px] leading-[1.45] shadow-sm"
                 : isMainAssistantBubble
-                  ? "w-fit max-w-full min-h-0 rounded-none border-0 bg-transparent px-0.5 py-[3px] text-[15px] leading-[1.45] text-[#33404d] shadow-none"
+                  ? cn("w-fit max-w-full", mainAssistantBubbleBase)
+                  : cn(
+                      "rounded-2xl rounded-bl-md border bg-card px-3.5 py-2.5 text-[13px] leading-relaxed shadow-sm",
+                      msg.cardType ? cardBg[msg.cardType] : "border-border",
+                    ),
+            );
+            const artifactBubbleShell = cn(
+              "relative group w-full min-w-0 max-w-full break-words",
+              msg.role === "user"
+                ? "rounded-2xl rounded-br-[5px] bg-[#176b87] text-white px-3 py-2.5 text-[15px] leading-[1.45] shadow-sm"
+                : isMainAssistantBubble
+                  ? mainAssistantBubbleBase
                   : cn(
                       "rounded-2xl rounded-bl-md border bg-card px-3.5 py-2.5 text-[13px] leading-relaxed shadow-sm",
                       msg.cardType ? cardBg[msg.cardType] : "border-border",
@@ -2234,7 +2305,7 @@ const AgentHub: React.FC = () => {
                 msg.role === "user" ? "justify-end" : "justify-start"
               )}
             >
-              <div className={cn("flex flex-col gap-1.5", msg.role === "user" ? "max-w-[82%]" : "max-w-[92%]")}>
+              <div className={cn("flex flex-col gap-1.5 min-w-0", msg.role === "user" ? "max-w-[82%]" : containsAgUiArtifact ? "w-full max-w-[92%]" : "max-w-[92%]")}>
                 {msg.cardType === "report" && msg.cardData ? (
                   <AgentHubReportCard
                     msg={msg}
@@ -2265,7 +2336,7 @@ const AgentHub: React.FC = () => {
                     {hasOrderedMainItems ? (
                       <>
                         {orderedMainItems.map((item, i) => (
-                          <div key={`${msg.id}-stream-${i}`} className={bubbleShell}>
+                          <div key={`${msg.id}-stream-${i}`} className={streamItemHasAgUiArtifact(item) ? artifactBubbleShell : bubbleShell}>
                             {item.kind === "text" ? (
                               <ChatMarkdown markdown={item.text} variant={mdVariant} className={mdClassName} />
                             ) : (
@@ -2281,7 +2352,7 @@ const AgentHub: React.FC = () => {
                           </div>
                         ))}
                         {msg.richText && !orderedMainHasRich ? (
-                          <div className={bubbleShell}>
+                          <div className={richTextPayloadHasAgUiArtifact(msg.richText) ? artifactBubbleShell : bubbleShell}>
                             <AgentHubRichTextBlock
                               payload={msg.richText}
                               blockId={`${msg.id}-rich`}
@@ -2296,7 +2367,7 @@ const AgentHub: React.FC = () => {
                     ) : (
                       <>
                         {msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
-                          <div className={bubbleShell}>
+                          <div className={richTextPayloadHasAgUiArtifact(msg.richText) ? artifactBubbleShell : bubbleShell}>
                             <AgentHubRichTextBlock
                               payload={msg.richText}
                               blockId={`${msg.id}-rich-pump-summary`}
@@ -2318,7 +2389,7 @@ const AgentHub: React.FC = () => {
                           </div>
                         ))}
                         {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
-                          <div className={bubbleShell}>
+                          <div className={richTextPayloadHasAgUiArtifact(msg.richText) ? artifactBubbleShell : bubbleShell}>
                             <AgentHubRichTextBlock
                               payload={msg.richText}
                               blockId={`${msg.id}-rich`}
@@ -2332,7 +2403,7 @@ const AgentHub: React.FC = () => {
                       </>
                     )}
                     {((msg.links?.length ?? 0) > 0 || (msg.role === "mai" && !isMainAssistantBubble)) ? (
-                    <div className={bubbleShell}>
+                      <div className={containsAgUiArtifact ? artifactBubbleShell : bubbleShell}>
                       {msg.links && msg.links.length > 0 && (
                         <div className="flex flex-wrap justify-end gap-x-3 gap-y-1">
                           {msg.links.map((link, i) => (
@@ -2370,11 +2441,11 @@ const AgentHub: React.FC = () => {
                 ) : (
                   <>
                     <AgentHubAgUiDecor msg={msg} />
-                    <div className={bubbleShell}>
-                    {msg.role === "mai" && (msg.thinkingContent?.trim() ?? "") ? (
-                      <div className={cn("mb-2 rounded-xl border border-border/50 bg-muted/30 px-2.5 py-2")}>
-                        <button
-                          type="button"
+                    <div className={containsAgUiArtifact ? artifactBubbleShell : bubbleShell}>
+                      {msg.role === "mai" && (msg.thinkingContent?.trim() ?? "") ? (
+                        <div className={cn("mb-2 rounded-xl border border-border/50 bg-muted/30 px-2.5 py-2")}>
+                          <button
+                            type="button"
                             className="inline-flex items-center gap-1 text-[11px] text-muted-foreground/80 hover:text-muted-foreground transition-colors"
                           onClick={() => toggleThinkingCollapsed(msg.id)}
                         >
