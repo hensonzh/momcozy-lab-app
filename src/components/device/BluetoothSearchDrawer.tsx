@@ -19,6 +19,8 @@ import {
   openAppSettings,
 } from "@/lib/ble";
 import { log as loggerLog, warn as loggerWarn } from "@/lib/logger";
+import { deviceStore } from "@/lib/deviceStore";
+import { setBleAutoReconnectPaused } from "@/lib/reconnectOfflineDevices";
 
 interface ScannedDevice {
   id: string;
@@ -42,6 +44,17 @@ interface Props {
 function matchDeviceNameForSide(name: string, side: "L" | "R"): boolean {
   const pattern = side === "L" ? /^LT_[a-zA-Z0-9_]+_L$/ : /^LT_[a-zA-Z0-9_]+_R$/;
   return pattern.test(name.trim());
+}
+
+function getConnectedDeviceForSide(side: "L" | "R"): ScannedDevice | null {
+  const stored = deviceStore.get()[side];
+  if (!stored?.connected || !stored.deviceId) return null;
+  return {
+    id: stored.deviceId,
+    name: stored.deviceName || stored.model || stored.deviceId,
+    rssi: stored.rssi ?? -50,
+    paired: true,
+  };
 }
 
 const BluetoothSearchDrawer: React.FC<Props> = ({
@@ -79,6 +92,12 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
 
   const showRadarSweep = uiPhase === "checking" || uiPhase === "scanning";
   const showFoundPulse = uiPhase === "found" || uiPhase === "connecting";
+
+  useEffect(() => {
+    if (!open) return;
+    setBleAutoReconnectPaused(true);
+    return () => setBleAutoReconnectPaused(false);
+  }, [open]);
 
   // When drawer opens: init BLE and start scan (if supported); scan 10s then stop
   useEffect(() => {
@@ -140,15 +159,20 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
               if (!cancelled) {
                 setScanning(false);
                 setDevices((current) => {
+                  const connectedDevice = getConnectedDeviceForSide(side);
+                  const next =
+                    connectedDevice && !current.some((device) => device.id === connectedDevice.id)
+                      ? [...current, connectedDevice]
+                      : current;
                   loggerLog(
                     "[BLE扫描]",
                     "扫描结束，共发现设备数:",
-                    current.length,
-                    current.length === 0
+                    next.length,
+                    next.length === 0
                       ? "（若为 0：请确认蓝牙/定位已开启、已授权，且附近有 BLE 设备）"
                       : "",
                   );
-                  return current;
+                  return next;
                 });
               }
             })
@@ -389,8 +413,7 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
               {devices.map((d, i) => {
                 const sig = signalLabel(d.rssi);
                 const isPairedDevice =
-                  (currentDeviceId != null && d.id === currentDeviceId) ||
-                  (d.paired && d.name.includes(side === "L" ? "- L" : "- R"));
+                  d.paired || (currentDeviceId != null && d.id === currentDeviceId);
                 const rowConnecting = connecting === d.id;
 
                 return (
