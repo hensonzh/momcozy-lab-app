@@ -42,6 +42,7 @@ export interface TryReconnectOptions {
  */
 // 标志：是否正在进行用户操作
 let isUserOperationInProgress = false;
+let isBleAutoReconnectPaused = false;
 // 上次重连时间
 let lastReconnectTime = 0;
 // 重连间隔（毫秒）
@@ -56,9 +57,19 @@ export function setUserOperationInProgress(inProgress: boolean): void {
   console.log(`[重连] 用户操作状态更新为: ${inProgress ? '进行中' : '空闲'}`);
 }
 
+export function setBleAutoReconnectPaused(paused: boolean): void {
+  isBleAutoReconnectPaused = paused;
+  console.log(`[Reconnect] BLE auto reconnect ${paused ? "paused" : "resumed"}`);
+}
+
 export function tryReconnectOfflineDevices(
   options: TryReconnectOptions = {}
 ): void {
+  if (isBleAutoReconnectPaused) {
+    console.log("[Reconnect] BLE auto reconnect is paused; skip reconnect");
+    return;
+  }
+
   // 如果正在进行用户操作，跳过重连
   if (isUserOperationInProgress) {
     console.log(`[重连] 正在进行用户操作，跳过重连`);
@@ -90,6 +101,11 @@ export function tryReconnectOfflineDevices(
   // 与扫描抽屉一致：直连前须先初始化 BLE（权限/适配器就绪）
   setTimeout(() => {
     (async () => {
+      if (isBleAutoReconnectPaused) {
+        console.log("[Reconnect] BLE auto reconnect is paused; skip reconnect");
+        return;
+      }
+
       // 再次检查用户操作状态
       if (isUserOperationInProgress) {
         console.log(`[重连] 正在进行用户操作，跳过重连`);
@@ -110,6 +126,12 @@ export function tryReconnectOfflineDevices(
       // 开始扫描
       console.log(`[重连] 开始扫描 BLE 设备`);
       await startLEScan((result) => {
+        if (isBleAutoReconnectPaused) {
+          console.log("[Reconnect] BLE auto reconnect is paused; stop scan");
+          stopLEScan();
+          return;
+        }
+
         // 检查是否正在进行用户操作
         if (isUserOperationInProgress) {
           console.log(`[重连] 正在进行用户操作，停止扫描`);
@@ -158,7 +180,7 @@ export function tryReconnectOfflineDevices(
 
       // 扫描超时设置
       setTimeout(() => {
-        if (!isUserOperationInProgress) {
+        if (!isUserOperationInProgress && !isBleAutoReconnectPaused) {
           stopLEScan();
           console.log(`[重连] 扫描超时，停止扫描`);
         }
