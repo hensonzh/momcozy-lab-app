@@ -225,6 +225,7 @@
 }
 
 .agent-card-hospital_bag_card .agent-card-header::before {
+  display: none;
   left: 16px;
   width: 72px;
   height: 3px;
@@ -266,6 +267,13 @@
 
 .agent-card-hospital_bag_card .agent-card-header p {
   color: #75636c;
+}
+
+.hospital-card-subtitle {
+  margin: 4px 0 0;
+  font-size: 10px;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .agent-card-birth_plan_card .agent-card-header p {
@@ -680,6 +688,37 @@
   font-weight: 750;
 }
 
+.hospital-card-profile-strip {
+  margin-top: -4px;
+}
+
+.hospital-card-profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.hospital-card-profile-tags li {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 3px 7px;
+  border: 1px solid rgba(231, 219, 224, 0.72);
+  border-radius: 999px;
+  background: rgba(255, 251, 252, 0.62);
+}
+
+.hospital-card-profile-tags li > strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #372330;
+  font-size: 11px;
+  font-weight: 760;
+}
+
 .birth-plan-focus-text {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -1082,28 +1121,50 @@
   line-height: 1.45;
 }
 
-.card-export-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
-  width: 30px;
-  height: 30px;
-  min-height: 30px;
-  min-width: 30px;
-  display: inline-grid;
-  place-items: center;
+.agent-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  padding-top: 8px;
+  border-top: 1px solid rgba(225, 225, 225, 0.88);
+}
+
+.agent-card-footer .agent-card-disclaimer {
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 0;
-  border: 1px solid #d7d7d7;
+  border-top: 0;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.agent-card-footer .card-export-button {
+  flex: 0 0 auto;
+}
+
+.card-export-button {
+  width: fit-content;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 4px;
+  margin-left: auto;
+  padding: 3px 7px;
+  border: 1px solid rgba(215, 215, 215, 0.72);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
-  color: #222222;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.58);
+  color: #6b5662;
+  font-size: 10px;
+  font-weight: 720;
+  line-height: 1;
 }
 
 .card-export-button svg {
-  width: 14px;
-  height: 14px;
+  width: 11px;
+  height: 11px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
@@ -1117,10 +1178,10 @@
 }
 
 .card-export-spinner {
-  width: 13px;
-  height: 13px;
-  border: 2px solid #d7d7d7;
-  border-top-color: #111111;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid #d7d7d7;
+  border-top-color: #6b5662;
   border-radius: 999px;
   animation: card-export-spin 0.9s linear infinite;
 }

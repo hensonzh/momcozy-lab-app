@@ -66,6 +66,13 @@ import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
 import AgentHubRichTextBlock, { type IbclcConsultOpenRequest } from "@/pages/agentHub/AgentHubRichTextBlock";
 import { IbclcChatPanel } from "@/pages/IbclcChat";
 import HospitalBagCart from "@/pages/HospitalBagCart";
+import {
+  calculateHospitalBagCartTotals,
+  cloneHospitalBagCartGroups,
+  initialHospitalBagCartGroups,
+  removeHospitalBagCartItem,
+  type HospitalBagCartGroup,
+} from "@/pages/hospitalBagCartModel";
 import { resolveCalibrationComfortForPumpStart } from "@/pages/agentHub/resolveCalibrationComfortForPumpStart";
 import {
   resolveCalibrationPromptConfirmAction,
@@ -109,6 +116,7 @@ const LACTATION_LINK_ACTION_MAP: Record<string, string> = {
 };
 
 const HUB_TOP_ACTION_HEIGHT_PX = 48;
+const HOSPITAL_BAG_CART_FOLLOWUP_MARKER = "你的待产包已经设计好了哦～";
 const NEW_CONVERSATION_GREETING =
   "你好呀，我在。\n\n这次想先聊哪件事？你可以直接说现在最困扰你的情况，不管是孕期准备、产后恢复、喂养奶量，还是设备使用，我都会陪你一步步理清楚。";
 
@@ -608,6 +616,9 @@ const AgentHub: React.FC = () => {
     consultId: string;
   } | null>(null);
   const [activeHospitalBagCart, setActiveHospitalBagCart] = useState(false);
+  const [hospitalBagCartGroups, setHospitalBagCartGroups] = useState<HospitalBagCartGroup[]>(() =>
+    cloneHospitalBagCartGroups(initialHospitalBagCartGroups),
+  );
   const [workFlowActive, setWorkFlowActive] = useState(() =>
     hubInitialMessages.some(m => m.cardType === "work-flow" && !m.cardData?.completed)
   );
@@ -726,6 +737,7 @@ const AgentHub: React.FC = () => {
     setMaternityFlowActive(false);
     setWorkFlowActive(false);
     setActiveIbclcConsult(null);
+    setHospitalBagCartGroups(cloneHospitalBagCartGroups(initialHospitalBagCartGroups));
     setHubPumpGateDialog(null);
     toast.success("已新建会话");
   }, [stopCurrentBubblePlayback, stopSpeech]);
@@ -846,9 +858,11 @@ const AgentHub: React.FC = () => {
       const next = prev.map((m) => {
         if (m.id !== replyId) return m;
         const mergedFull = mainStreamMergedAnswerRef.current;
+        const compactedFull = compactHospitalBagCartFollowupText(mergedFull);
+        const compactedStreamItems = compactHospitalBagCartStreamItems(m.streamRenderItems);
         const synced =
-          typeof mergedFull === "string" && mergedFull.length > m.content.length
-            ? { ...m, content: mergedFull }
+          typeof compactedFull === "string" && compactedFull.length > 0
+            ? { ...m, content: compactedFull, streamRenderItems: compactedStreamItems }
             : m;
         const hasRenderableStream = (synced.streamRenderItems?.length ?? 0) > 0;
         if (!synced.content.trim() && !synced.richText && !hasRenderableStream) {
@@ -953,6 +967,32 @@ const AgentHub: React.FC = () => {
     return list;
   };
 
+  const compactHospitalBagCartFollowupText = (text: string): string => {
+    const markerIndex = text.lastIndexOf(HOSPITAL_BAG_CART_FOLLOWUP_MARKER);
+    if (markerIndex < 0) return text;
+    return text.slice(markerIndex).trimStart();
+  };
+
+  const compactHospitalBagCartStreamItems = (items: ChatStreamRenderItem[] | undefined): ChatStreamRenderItem[] | undefined => {
+    if (!items?.length) return items;
+    if (!items.some((item) => item.kind === "text" && item.text.includes(HOSPITAL_BAG_CART_FOLLOWUP_MARKER))) return items;
+    let foundFollowup = false;
+    const compacted: ChatStreamRenderItem[] = [];
+    for (const item of items) {
+      if (item.kind === "rich") {
+        compacted.push(item);
+        continue;
+      }
+      if (item.text.includes(HOSPITAL_BAG_CART_FOLLOWUP_MARKER)) {
+        foundFollowup = true;
+        compacted.push({ kind: "text", text: compactHospitalBagCartFollowupText(item.text) });
+        continue;
+      }
+      if (foundFollowup) compacted.push(item);
+    }
+    return compacted;
+  };
+
   const appendRichRenderItem = (
     items: ChatStreamRenderItem[] | undefined,
     payload: ChatRichTextPayload,
@@ -1054,11 +1094,19 @@ const AgentHub: React.FC = () => {
     ].join("");
   };
 
+  const shouldForwardHospitalBagCart = (): boolean => {
+    if (activeHospitalBagCart) return true;
+    return messages.some((message) => {
+      if (message.content.includes("/hospital-bag-cart")) return true;
+      return message.streamRenderItems?.some((item) => item.kind === "text" && item.text.includes("/hospital-bag-cart")) ?? false;
+    });
+  };
+
   const buildAgUiForwardedProps = (locale: string): Record<string, unknown> => {
     const timezone =
       (typeof Intl !== "undefined" && Intl.DateTimeFormat().resolvedOptions().timeZone) ||
       "America/Los_Angeles";
-    return {
+    const forwardedProps: Record<string, unknown> = {
       user_id: DEFAULT_CHAT_USER_ID,
       locale,
       timezone,
@@ -1068,6 +1116,13 @@ const AgentHub: React.FC = () => {
         language: locale,
       },
     };
+    if (shouldForwardHospitalBagCart()) {
+      forwardedProps.hospital_bag_cart = {
+        groups: hospitalBagCartGroups,
+        totals: calculateHospitalBagCartTotals(hospitalBagCartGroups),
+      };
+    }
+    return forwardedProps;
   };
 
   const resolveAgUiImagePayload = async (msgs: ChatMessage[]): Promise<AgUiPayloadImageItem[]> => {
@@ -1136,6 +1191,9 @@ const AgentHub: React.FC = () => {
       }
       const side = applyAgUiStreamSideEffects(replyId, data, setMessages, {
         pendingRichTextRef,
+        onHospitalBagCartUpdate: (groups) => {
+          setHospitalBagCartGroups(cloneHospitalBagCartGroups(groups));
+        },
       });
       const eventType = resolveEventTag(data);
       const rich = parseChatRichTextFromSseData(data);
@@ -1451,6 +1509,16 @@ const AgentHub: React.FC = () => {
       conversationId: request.threadId || getAgUiThreadIdForRequest(),
       consultId: request.consultId,
     });
+  }, []);
+
+  const handleHospitalBagCartRemoveItem = useCallback((itemId: string, itemName: string) => {
+    setHospitalBagCartGroups((groups) => removeHospitalBagCartItem(groups, itemId));
+    toast.success(`已删除「${itemName}」`);
+  }, []);
+
+  const handleHospitalBagCartReset = useCallback(() => {
+    setHospitalBagCartGroups(cloneHospitalBagCartGroups(initialHospitalBagCartGroups));
+    toast.success("已恢复默认待产包购物车");
   }, []);
 
   useEffect(() => {
@@ -2448,7 +2516,12 @@ const AgentHub: React.FC = () => {
 
       {activeHospitalBagCart ? (
         <div className="fixed inset-0 z-[92] bg-[#fff9fb] sm:bg-black/20">
-          <HospitalBagCart onClose={() => setActiveHospitalBagCart(false)} />
+          <HospitalBagCart
+            cartGroups={hospitalBagCartGroups}
+            onClose={() => setActiveHospitalBagCart(false)}
+            onRemoveItem={handleHospitalBagCartRemoveItem}
+            onResetCart={handleHospitalBagCartReset}
+          />
         </div>
       ) : null}
 
