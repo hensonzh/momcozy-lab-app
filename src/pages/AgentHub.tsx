@@ -121,6 +121,7 @@ const LACTATION_LINK_ACTION_MAP: Record<string, string> = {
 };
 
 const HUB_TOP_ACTION_HEIGHT_PX = 48;
+const HUB_MAIN_STREAM_NO_VISIBLE_RESPONSE_TIMEOUT_MS = 25_000;
 const HOSPITAL_BAG_CART_FOLLOWUP_MARKER = "你的待产包已经设计好了哦～";
 const NEW_CONVERSATION_GREETING =
   "你好呀，我在。\n\n这次想先聊哪件事？你可以直接说现在最困扰你的情况，不管是孕期准备、产后恢复、喂养奶量，还是设备使用，我都会陪你一步步理清楚。";
@@ -695,6 +696,7 @@ const AgentHub: React.FC = () => {
   const mainStreamMergedThinkingRef = useRef("");
   /** rich_text 暂存，用于 onDone 自动播报快照 */
   const mainPendingRichTextRef = useRef<ChatRichTextPayload | null>(null);
+  const mainNoVisibleResponseTimerRef = useRef<number | null>(null);
   /** 对话泡 TTS：AbortController 与当前播放目标 id，避免快速切换气泡时误清状态 */
   const bubblePlayAbortRef = useRef<AbortController | null>(null);
   const bubblePlayingTargetIdRef = useRef<string | null>(null);
@@ -727,7 +729,14 @@ const AgentHub: React.FC = () => {
     }
   }, []);
 
+  const clearMainNoVisibleResponseTimer = useCallback(() => {
+    if (mainNoVisibleResponseTimerRef.current == null) return;
+    window.clearTimeout(mainNoVisibleResponseTimerRef.current);
+    mainNoVisibleResponseTimerRef.current = null;
+  }, []);
+
   const handleCreateNewConversation = useCallback(() => {
+    clearMainNoVisibleResponseTimer();
     mainChatCancelRef.current?.();
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
@@ -774,7 +783,7 @@ const AgentHub: React.FC = () => {
     setHospitalBagCartGroups(cloneHospitalBagCartGroups(initialHospitalBagCartGroups));
     setHubPumpGateDialog(null);
     toast.success("已新建会话");
-  }, [stopCurrentBubblePlayback, stopSpeech]);
+  }, [clearMainNoVisibleResponseTimer, stopCurrentBubblePlayback, stopSpeech]);
 
   /**
    * 自动播报（流式回复等）：HTMLAudio TTS，不修改气泡正文；通过 playingId 驱动扬声器动态态。
@@ -885,6 +894,7 @@ const AgentHub: React.FC = () => {
    * @param replyId 当前 Mai 回复 id
    */
   const tryFinalizeMainReply = (replyId: string) => {
+    clearMainNoVisibleResponseTimer();
     mainPendingRichTextRef.current = null;
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
@@ -911,11 +921,12 @@ const AgentHub: React.FC = () => {
 
   useEffect(
     () => () => {
+      clearMainNoVisibleResponseTimer();
       mainChatCancelRef.current?.();
       void stopCurrentBubblePlayback();
       // 暂存图 blob URL 保留到用户删除图、发送并成功附带、或整页卸载，避免路由切换后主界面预览丢失
     },
-    [stopCurrentBubblePlayback],
+    [clearMainNoVisibleResponseTimer, stopCurrentBubblePlayback],
   );
 
   useEffect(() => {
@@ -1231,6 +1242,7 @@ const AgentHub: React.FC = () => {
       });
       const eventType = resolveEventTag(data);
       const rich = parseChatRichTextFromSseData(data);
+      if (rich || side.didUpdate) clearMainNoVisibleResponseTimer();
       if (rich) {
         setMessages((prev) =>
           prev.map((m) =>
@@ -1245,11 +1257,15 @@ const AgentHub: React.FC = () => {
         );
       }
       if (eventType === "CUSTOM" && typeof data === "object" && data != null) {
-        if (applyThinkingStatusFromCustomEvent(replyId, data as Record<string, unknown>, mergedThinkingRef)) return;
+        if (applyThinkingStatusFromCustomEvent(replyId, data as Record<string, unknown>, mergedThinkingRef)) {
+          clearMainNoVisibleResponseTimer();
+          return;
+        }
       }
       const chunk = extractMainAnswerChunk(data);
       if (eventType === "reasoning") {
         if (!chunk) return;
+        clearMainNoVisibleResponseTimer();
         const mergedThinking = mergeStreamingAnswer(mergedThinkingRef.current, chunk);
         mergedThinkingRef.current = mergedThinking;
         setMessages((prev) =>
@@ -1267,6 +1283,7 @@ const AgentHub: React.FC = () => {
         return;
       }
       if (!chunk && !rich && !side.didUpdate) return;
+      clearMainNoVisibleResponseTimer();
 
       let merged = mergedAnswerRef.current;
       let delta = "";
@@ -1347,6 +1364,7 @@ const AgentHub: React.FC = () => {
     setMessages((prev) => [...prev, ...(showUserMessage ? [userMsg] : []), replyPlaceholder]);
     if (opts?.purgeStagedImagesAfterAttach) purgeHubStagedUploadedImages();
     mainPendingRichTextRef.current = null;
+    clearMainNoVisibleResponseTimer();
     mainChatCancelRef.current?.();
     mainStreamingReplyIdRef.current = null;
     void stopCurrentBubblePlayback();
@@ -1359,6 +1377,31 @@ const AgentHub: React.FC = () => {
       mainStreamMergedThinkingRef,
       mainPendingRichTextRef,
     );
+    mainNoVisibleResponseTimerRef.current = window.setTimeout(() => {
+      if (mainStreamingReplyIdRef.current !== replyId) return;
+      mainNoVisibleResponseTimerRef.current = null;
+      mainChatCancelRef.current?.();
+      mainChatCancelRef.current = null;
+      mainStreamingReplyIdRef.current = null;
+      mainPendingRichTextRef.current = null;
+      mainStreamMergedAnswerRef.current = "";
+      mainStreamMergedThinkingRef.current = "";
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === replyId
+            ? {
+                ...m,
+                content: "这次没有拿到回复，可能是连接中断了。你再发一次就好。",
+                cardType: "data" as const,
+                agentThinkingTitle: undefined,
+                agentStatusDone: true,
+                agentWorkFinishedAtMs: Date.now(),
+              }
+            : m,
+        ),
+      );
+      clearAwaitingBottomSendBarLoading();
+    }, HUB_MAIN_STREAM_NO_VISIBLE_RESPONSE_TIMEOUT_MS);
     const onDoneHandler = () => {
         setMessages((prev) =>
           prev.map((m) =>
@@ -1387,6 +1430,7 @@ const AgentHub: React.FC = () => {
         }, 0);
       };
     const onErrorHandler = (err: Error) => {
+        clearMainNoVisibleResponseTimer();
         void stopCurrentBubblePlayback();
         mainPendingRichTextRef.current = null;
         mainStreamMergedAnswerRef.current = "";
@@ -1757,6 +1801,7 @@ const AgentHub: React.FC = () => {
 
     if (hubBottomSendBusy) {
       awaitingHubBottomReplyRef.current = false;
+      clearMainNoVisibleResponseTimer();
       mainChatCancelRef.current?.();
       setHubBottomSendBusy(false);
       if (!pendingText && !hasReadyStagedImages) return;

@@ -318,12 +318,13 @@ function supportTicketIssueLabel(value: unknown): string {
     other: "其他",
   };
   const key = asString(value);
-  return labels[key] || "其他";
+  return labels[key] || (Object.values(labels).includes(key) ? key : "其他");
 }
 
 function supportTicketUrgencyLabel(value: unknown): string {
   const labels: Record<string, string> = { normal: "普通", high: "较急", safety: "安全相关" };
-  return labels[asString(value)] || "普通";
+  const key = asString(value);
+  return labels[key] || (Object.values(labels).includes(key) ? key : "普通");
 }
 
 function initialsForName(name: string): string {
@@ -370,6 +371,13 @@ function supportTicketFields(ticket: Record<string, unknown>): FormFieldSpec[] {
       options: ["普通", "较急", "安全相关"],
     },
   ];
+}
+
+function supportTicketDisplayValues(ticket: Record<string, unknown>): Record<string, unknown> {
+  return supportTicketFields(ticket).reduce<Record<string, unknown>>((values, field) => {
+    values[field.id] = field.default_value;
+    return values;
+  }, {});
 }
 
 function buildSupportTicketSubmittedMessage(ticket: Record<string, unknown>): string {
@@ -1142,35 +1150,58 @@ const AgentHubRichTextBlock: React.FC<{
                   cardArtifactRefs.current[index] = el;
                 }}
                 data-consult-id={consultId}
-                className="grid w-full min-w-0 gap-[14px] rounded-[14px] border border-[#d8e5e1] p-[18px] text-[#273b3a] shadow-[0_12px_30px_rgba(48,83,78,0.08)]"
-                style={{
-                  background:
-                    "radial-gradient(circle at top right, rgba(221, 241, 234, 0.95), transparent 42%), linear-gradient(180deg, #ffffff 0%, #f8fcfb 100%)",
-                }}
+                className="grid w-full min-w-0 gap-3 overflow-hidden rounded-[18px] border border-[#d9e6e2] bg-[#fbfefd] p-4 text-[#253b39] shadow-[0_14px_34px_rgba(40,83,78,0.10)]"
               >
-                <div className="flex items-start justify-between gap-[10px]">
-                  <h3 className="m-0 text-[22px] font-[800] leading-[1.15] text-[#142726]">IBCLC咨询</h3>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-[#e8f6f2] text-[#177a74]">
+                      <Headphones className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="m-0 text-[11px] font-[800] text-[#6b827d]">IBCLC</p>
+                      <h3 className="m-0 mt-1 text-[18px] font-[800] leading-[1.2] text-[#172c2a]">哺乳顾问在线咨询</h3>
+                    </div>
+                  </div>
+                  <span
+                    className={cn(
+                      "shrink-0 rounded-full px-2.5 py-1 text-[12px] font-[800] leading-none",
+                      consultCompleted ? "bg-[#edf1f0] text-[#778683]" : "bg-[#e7f7f3] text-[#177a74]",
+                    )}
+                  >
+                    {consultCompleted ? "已结束" : "可咨询"}
+                  </span>
                 </div>
-                <section className="grid grid-cols-[52px_minmax(0,1fr)] items-center gap-3 rounded-xl border border-[#deebe8] bg-white/80 p-3">
-                  <div className="grid h-[52px] w-[52px] place-items-center rounded-full bg-[#1b7874] text-[17px] font-black text-white">
+                <section className="grid grid-cols-[44px_minmax(0,1fr)] items-center gap-3 rounded-[14px] border border-[#e3eeea] bg-white/90 p-3">
+                  <div className="grid h-11 w-11 place-items-center rounded-full bg-[#1b7874] text-[15px] font-black text-white">
                     {initialsForName(consultantName)}
                   </div>
-                  <div>
-                    <strong className="block text-[16px] font-[800] leading-[1.2] text-[#182b2a]">{consultantName}</strong>
-                    {consultantBio ? <p className="mt-[7px] text-[13px] leading-[1.45] text-[#60706e]">{consultantBio}</p> : null}
+                  <div className="min-w-0">
+                    <strong className="block text-[15px] font-[800] leading-[1.2] text-[#182b2a]">{consultantName}</strong>
+                    <p className="mt-1 text-[12px] leading-[1.45] text-[#60706e]">
+                      {consultantBio || "支持乳房护理、吸奶器使用和喂养节奏问题。"}
+                    </p>
                   </div>
                 </section>
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#dceae6] bg-white px-2.5 py-1 text-[12px] font-[700] text-[#4f6f6b]">
+                    <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                    持证哺乳顾问
+                  </span>
+                  <span className="inline-flex items-center rounded-full border border-[#eadfe5] bg-white px-2.5 py-1 text-[12px] font-[700] text-[#6b5662]">
+                    带着当前问题继续聊
+                  </span>
+                </div>
                 <button
                   type="button"
                   disabled={consultCompleted}
                   aria-disabled={consultCompleted}
                   className={cn(
-                    "inline-flex min-h-[46px] items-center justify-center rounded-xl px-3 text-[14px] font-black no-underline",
-                    consultCompleted ? "cursor-default bg-[#d7dfdd] text-[#778683]" : "bg-[#177a89] text-white",
+                    "inline-flex min-h-11 items-center justify-center rounded-[14px] px-4 text-[14px] font-black no-underline transition-colors",
+                    consultCompleted ? "cursor-default bg-[#d7dfdd] text-[#778683]" : "bg-[#177a89] text-white hover:bg-[#126a78]",
                   )}
                   onClick={openConsult}
                 >
-                  {consultCompleted ? "咨询结束" : "在线咨询"}
+                  {consultCompleted ? "咨询已结束" : "去咨询"}
                 </button>
               </article>
             );
@@ -1376,16 +1407,98 @@ const AgentHubRichTextBlock: React.FC<{
               </article>
             );
           }
-          const formSpec =
-            artifact.kind === "support_ticket_draft"
-              ? { id: "support_ticket", title: "售后工单", fields: supportTicketFields(artifact.ticket) }
-              : artifact.form;
-          const isSupportTicket = artifact.kind === "support_ticket_draft";
+          if (artifact.kind === "support_ticket_draft") {
+            const ticketValues = supportTicketDisplayValues(artifact.ticket);
+            const issueType = asString(ticketValues.issue_type) || "其他";
+            const issueSummary = asString(ticketValues.issue_summary) || "待补充，可以先提交给客服继续跟进。";
+            const productModel = asString(ticketValues.product_model) || "暂不确定";
+            const urgency = asString(ticketValues.urgency) || "普通";
+            const isSafetyTicket = urgency === "安全相关";
+            const ticketRows = [
+              { label: "问题类型", value: issueType },
+              { label: "产品型号", value: productModel },
+              { label: "紧急程度", value: urgency },
+            ];
+
+            return (
+              <form
+                key={`artifact-${index}`}
+                className="w-full min-w-0 rounded-[18px] border border-[#eadfe5] bg-[#fffdfc] p-4 text-[#2d1b25] shadow-[0_14px_34px_rgba(73,43,58,0.08)]"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (isSubmitted) return;
+                  setArtifactError((prev) => ({ ...prev, [index]: "" }));
+                  setSubmittedArtifactMap((prev) => ({ ...prev, [index]: true }));
+                  onButtonSelect(buildSupportTicketSubmittedMessage(ticketValues), { displayText: "已提交售后工单" });
+                }}
+              >
+                <fieldset disabled={isSubmitted} className="grid min-w-0 gap-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-[#f7eef2] text-[#7c3755]">
+                        <ClipboardList className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="m-0 text-[11px] font-[800] text-[#8a6d7b]">售后工单</p>
+                        <h3 className="m-0 mt-1 text-[18px] font-[800] leading-[1.2] text-[#321a27]">先把问题交给人工客服</h3>
+                        <p className="m-0 mt-1 text-[12px] leading-[1.45] text-[#7b6871]">确认后会把问题类型、型号和描述一起提交。</p>
+                      </div>
+                    </div>
+                    <span
+                      className={cn(
+                        "shrink-0 rounded-full px-2.5 py-1 text-[12px] font-[800] leading-none",
+                        isSubmitted ? "bg-[#edf1f0] text-[#6d7d79]" : "bg-[#f6e7ee] text-[#7c3755]",
+                      )}
+                    >
+                      {isSubmitted ? "已提交" : "草稿"}
+                    </span>
+                  </div>
+
+                  <div className="grid min-w-0 gap-2 sm:grid-cols-3">
+                    {ticketRows.map((row) => (
+                      <div key={row.label} className="min-w-0 rounded-[13px] border border-[#eadfe5] bg-white/90 px-3 py-2">
+                        <p className="m-0 text-[11px] font-[700] text-[#8c7882]">{row.label}</p>
+                        <strong
+                          className={cn(
+                            "mt-1 block min-w-0 break-words text-[14px] font-[800] leading-[1.25] text-[#33222a]",
+                            row.label === "紧急程度" && isSafetyTicket ? "text-[#a13f45]" : "",
+                          )}
+                        >
+                          {row.value}
+                        </strong>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="rounded-[14px] border border-[#eadfe5] bg-white/90 p-3">
+                    <p className="m-0 text-[11px] font-[700] text-[#8c7882]">问题描述</p>
+                    <p className="m-0 mt-1 text-[14px] font-[650] leading-[1.55] text-[#3a2a31]">{issueSummary}</p>
+                  </div>
+
+                  {errorText ? <p className="text-[12px] text-destructive">{errorText}</p> : null}
+                  <button
+                    type="submit"
+                    className={cn(
+                      "inline-flex min-h-11 items-center justify-center gap-2 rounded-[14px] border px-4 text-[14px] font-black transition-colors",
+                      isSubmitted
+                        ? "border-[#d5ddd9] bg-white text-[#6d7d79]"
+                        : "border-[#7c3755] bg-[#7c3755] text-white hover:bg-[#6d2e49]",
+                    )}
+                  >
+                    <FileCheck className="h-4 w-4" aria-hidden="true" />
+                    {isSubmitted ? "已提交" : artifact.submitLabel || "确认并提交"}
+                  </button>
+                </fieldset>
+              </form>
+            );
+          }
+
+          const formSpec = artifact.form;
           const formId = asString(formSpec.id);
           const isHospitalBagIntake = formId === "hospital_bag_intake";
           const isBirthPlanIntake = formId === "birth_plan_card_intake";
           const isGroupedIntake = isHospitalBagIntake || isBirthPlanIntake;
-          const isMonochromeForm = isSupportTicket || isHospitalBagIntake || isBirthPlanIntake;
+          const isMonochromeForm = isHospitalBagIntake || isBirthPlanIntake;
           const title = isHospitalBagIntake || isBirthPlanIntake ? "信息采集" : asString(formSpec.title) || "Confirm details";
           const normalizedFormSpec = isHospitalBagIntake
             ? { ...formSpec, title, description: "" }
@@ -1450,10 +1563,6 @@ const AgentHubRichTextBlock: React.FC<{
                 setArtifactError((prev) => ({ ...prev, [index]: "" }));
                 const values = collectFormValues(form, fields);
                 setSubmittedArtifactMap((prev) => ({ ...prev, [index]: true }));
-                if (artifact.kind === "support_ticket_draft") {
-                  onButtonSelect(buildSupportTicketSubmittedMessage(values), { displayText: "已提交售后工单" });
-                  return;
-                }
                 onButtonSelect(buildFormConfirmationMessage(normalizedFormSpec, values), { displayText: `已提交：${title}` });
               }}
             >
@@ -1512,9 +1621,7 @@ const AgentHubRichTextBlock: React.FC<{
                 >
                   {isSubmitted
                     ? "已提交"
-                    : artifact.kind === "support_ticket_draft"
-                      ? artifact.submitLabel || "确认并提交"
-                      : asString(formSpec.submit_label) || "Confirm"}
+                    : asString(formSpec.submit_label) || "Confirm"}
                 </button>
               </fieldset>
             </form>
