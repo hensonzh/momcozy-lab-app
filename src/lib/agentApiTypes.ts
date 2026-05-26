@@ -748,6 +748,7 @@ export interface AgentAnalysisCard {
   status?: "normal" | "attention" | string;
   status_label?: string;
   status_tone?: "normal" | "attention" | "insufficient" | string;
+  followup?: string;
   chips?: string[];
   reason?: string;
   sections?: AgentAnalysisCardSection[];

@@ -17,7 +17,7 @@ type ActionKey = "daily_summary" | "mom_baby" | "growth_update";
 
 const actionItems: Array<{ key: ActionKey; label: string }> = [
   { key: "daily_summary", label: "每日奶量总结" },
-  { key: "mom_baby", label: "每日泌乳/喂养建议" },
+  { key: "mom_baby", label: "每日泌乳建议" },
   { key: "growth_update", label: "宝宝生长发育指标更新" },
 ];
 
@@ -47,7 +47,7 @@ function buildMomBabyAdviceContextText(message: string, analysisCard?: AgentAnal
     .join("；");
   const statusText = analysisCard?.status_label ? `状态：${compactText(analysisCard.status_label)}；` : "";
   const content = sectionText || compactText(message);
-  return truncateContextText(`已生成每日泌乳/喂养建议：${statusText}${content}`);
+  return truncateContextText(`已生成每日泌乳建议：${statusText}${content}`);
 }
 
 async function recordMomBabyAdviceContextEvent(params: {
@@ -65,7 +65,7 @@ async function recordMomBabyAdviceContextEvent(params: {
         thread_id: threadId,
         user_id: DEFAULT_CHAT_USER_ID,
         event_type: "mom_baby_advice_generated",
-        label: "已生成每日泌乳/喂养建议",
+        label: "已生成每日泌乳建议",
         occurred_at: new Date().toISOString(),
         locale: "zh-CN",
         timezone: timeZone,
@@ -141,10 +141,10 @@ const DeviceManageActions: React.FC = () => {
         user_id: DEFAULT_CHAT_USER_ID,
         type: "mom_baby",
       });
-      const message = data.message?.trim() || "已生成每日泌乳/喂养建议。";
+      const message = data.message?.trim() || "已生成每日泌乳建议。";
       const chatMessageId = `analysis-mom_baby-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       await notifyByNativeOrToast({
-        title: "每日泌乳/喂养建议",
+        title: "每日泌乳建议",
         message,
         path: "/",
         notifyJson: JSON.stringify({ event: "mom_baby", body: message, chatMessageId, analysis_card: data.analysis_card }),
@@ -157,7 +157,7 @@ const DeviceManageActions: React.FC = () => {
       });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "请求失败，请稍后重试";
-      toast("每日泌乳/喂养建议", { description: message });
+      toast("每日泌乳建议", { description: message });
     } finally {
       setLoadingKey(null);
     }
