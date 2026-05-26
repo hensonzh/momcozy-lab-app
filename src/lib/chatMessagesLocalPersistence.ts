@@ -24,10 +24,57 @@ export function isTransientAgentHubFailureMessage(message: ChatMessage): boolean
   );
 }
 
+function hasRenderableAssistantContent(message: ChatMessage): boolean {
+  if (message.content.trim()) return true;
+  if (message.richText) return true;
+  if ((message.streamRenderItems ?? []).length > 0) return true;
+  if ((message.agentToolCalls ?? []).length > 0) return true;
+  if (message.cardType && message.cardType !== "encourage") return true;
+  return false;
+}
+
+function isStaleMainStreamPlaceholder(message: ChatMessage): boolean {
+  if (message.role !== "mai") return false;
+  if (message.chatStreamContext && message.chatStreamContext !== "main") return false;
+  if (message.agentStatusDone || message.agentWorkFinishedAtMs) return false;
+  return !hasRenderableAssistantContent(message);
+}
+
+function isUploadedImageStagingMessage(message: ChatMessage): boolean {
+  return message.role === "user" && String(message.cardData?.kind ?? "") === "uploaded-image";
+}
+
+function removeUnansweredUserRuns(messages: ChatMessage[]): ChatMessage[] {
+  const remove = new Set<number>();
+  let index = 0;
+  while (index < messages.length) {
+    if (messages[index]?.role !== "user") {
+      index += 1;
+      continue;
+    }
+
+    const plainUserIndexes: number[] = [];
+    while (index < messages.length && messages[index]?.role === "user") {
+      if (!isUploadedImageStagingMessage(messages[index])) plainUserIndexes.push(index);
+      index += 1;
+    }
+
+    const followedByAssistant = messages[index]?.role === "mai";
+    if (!followedByAssistant) {
+      plainUserIndexes.forEach((i) => remove.add(i));
+      continue;
+    }
+    plainUserIndexes.slice(0, -1).forEach((i) => remove.add(i));
+  }
+
+  if (remove.size === 0) return messages;
+  return messages.filter((_, index) => !remove.has(index));
+}
+
 export function stripTransientAgentHubFailureMessages(messages: ChatMessage[]): ChatMessage[] {
   const remove = new Set<number>();
   messages.forEach((message, index) => {
-    if (!isTransientAgentHubFailureMessage(message)) return;
+    if (!isTransientAgentHubFailureMessage(message) && !isStaleMainStreamPlaceholder(message)) return;
     remove.add(index);
     for (let prev = index - 1; prev >= 0; prev -= 1) {
       if (remove.has(prev)) continue;
@@ -36,11 +83,11 @@ export function stripTransientAgentHubFailureMessages(messages: ChatMessage[]): 
     }
   });
 
-  const cleaned = messages.filter((_, index) => !remove.has(index));
+  const cleaned = removeUnansweredUserRuns(messages.filter((_, index) => !remove.has(index)));
   while (cleaned.length > 0) {
     const last = cleaned.at(-1);
     if (last?.role !== "user") break;
-    if (String(last.cardData?.kind ?? "") === "uploaded-image") break;
+    if (isUploadedImageStagingMessage(last)) break;
     cleaned.pop();
   }
   return cleaned;
