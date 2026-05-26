@@ -1750,7 +1750,6 @@ const AgentHub: React.FC = () => {
     };
     window.addEventListener("mmc-native-daily-summary", onEvt);
     return () => window.removeEventListener("mmc-native-daily-summary", onEvt);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 兼容旧版原生每日奶量总结桥接：仍统一写入 Hub 持久化消息
   }, []);
 
   useEffect(() => {
