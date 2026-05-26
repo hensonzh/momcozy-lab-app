@@ -675,13 +675,15 @@ export function postPumpSessionSummaryWebSocket(
 
   return new Promise<PumpSessionSummaryResponse>((resolve, reject) => {
     let settled = false;
-    let ws: WebSocket;
-    let timer: number | undefined;
+    let ws: WebSocket | undefined;
+    const timer = window.setTimeout(() => {
+      settle(() => reject(new Error(`pump session summary websocket timeout url=${wsLogUrl}`)));
+    }, timeoutMs);
 
     const settle = (fn: () => void) => {
       if (settled) return;
       settled = true;
-      if (timer != null) window.clearTimeout(timer);
+      window.clearTimeout(timer);
       try {
         ws?.close();
       } catch {
@@ -697,10 +699,6 @@ export function postPumpSessionSummaryWebSocket(
       reject(e instanceof Error ? e : new Error(String(e)));
       return;
     }
-
-    timer = window.setTimeout(() => {
-      settle(() => reject(new Error(`pump session summary websocket timeout url=${wsLogUrl}`)));
-    }, timeoutMs);
 
     ws.onopen = () => {
       try {

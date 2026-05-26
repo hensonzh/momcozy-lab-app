@@ -167,7 +167,7 @@ export interface UploadPumpWorkstateResponseData {
 }
 
 /** uploadPumpWorkstate 响应（经 apiRequest 解包后为 data 顶层字段） */
-export interface UploadPumpWorkstateResponse extends UploadPumpWorkstateResponseData {}
+export type UploadPumpWorkstateResponse = UploadPumpWorkstateResponseData;
 
 export interface PumpProcessSide {
   /** 进程数据采样时间（UTC 时间字符串） */
