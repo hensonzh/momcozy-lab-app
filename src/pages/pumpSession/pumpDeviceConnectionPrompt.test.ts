@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   canStartPumpSession,
+  resolveCalibrationPromptCancelAction,
   resolveCalibrationPromptConfirmAction,
   resolveCalibrationPromptConfirmGate,
   resolvePumpStartGate,
@@ -106,6 +107,29 @@ describe("resolveCalibrationPromptConfirmAction", () => {
     expect(resolveCalibrationPromptConfirmAction("device", { L: null, R: null })).toEqual({
       type: "navigate",
       route: "/device",
+    });
+  });
+});
+
+describe("resolveCalibrationPromptCancelAction", () => {
+  test("skips calibration and enters pump when any side is connected", () => {
+    expect(
+      resolveCalibrationPromptCancelAction("calibration", {
+        L: { connected: true, deviceId: "left-id" },
+        R: null,
+      }),
+    ).toEqual({ type: "navigate", route: "/pump" });
+  });
+
+  test("skips calibration but shows the device prompt when no side is connected", () => {
+    expect(resolveCalibrationPromptCancelAction("calibration", { L: null, R: null })).toEqual({
+      type: "showDevicePrompt",
+    });
+  });
+
+  test("closes the dialog from the device prompt cancel action", () => {
+    expect(resolveCalibrationPromptCancelAction("device", { L: null, R: null })).toEqual({
+      type: "close",
     });
   });
 });

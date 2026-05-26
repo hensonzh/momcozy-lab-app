@@ -27,6 +27,11 @@ export type CalibrationPromptConfirmAction =
   | { type: "navigate"; route: "/calibration" | "/device" }
   | { type: "showDevicePrompt" };
 
+export type CalibrationPromptCancelAction =
+  | { type: "close" }
+  | { type: "navigate"; route: "/pump" }
+  | { type: "showDevicePrompt" };
+
 export function resolveCalibrationPromptConfirmGate(
   snapshot: PumpDeviceConnectionSnapshot,
 ): CalibrationPromptConfirmGate {
@@ -43,6 +48,19 @@ export function resolveCalibrationPromptConfirmAction(
 
   return resolveCalibrationPromptConfirmGate(snapshot) === "calibration"
     ? { type: "navigate", route: "/calibration" }
+    : { type: "showDevicePrompt" };
+}
+
+export function resolveCalibrationPromptCancelAction(
+  dialog: PumpGateDialogKind,
+  snapshot: PumpDeviceConnectionSnapshot,
+): CalibrationPromptCancelAction {
+  if (dialog === "device") {
+    return { type: "close" };
+  }
+
+  return canStartPumpSession(snapshot)
+    ? { type: "navigate", route: "/pump" }
     : { type: "showDevicePrompt" };
 }
 
