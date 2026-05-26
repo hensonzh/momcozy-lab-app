@@ -4,7 +4,7 @@ import {
   parseChatRichTextFromSseData,
 } from "@/lib/agentApi";
 import { extractChatAnswerChunk, mergeStreamingAnswerDelta } from "@/lib/chatStreaming";
-import { pushPumpStopAgentSummaryToChat } from "@/lib/pumpAutoEndSession";
+import { pushPumpStopAgentSummaryToChat, type PumpStopSummaryOptions } from "@/lib/pumpAutoEndSession";
 import { getAgUiThreadIdForRequest, persistAgUiThreadId } from "@/lib/agentConversationSession";
 import type { PumpSessionEndedEvent } from "@/lib/pumpSessionLifecycle";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
@@ -66,8 +66,11 @@ export function usePumpAgentRuntime() {
     });
   }, []);
 
-  const pushStopPumpAgentSummary = useCallback(async (event?: PumpSessionEndedEvent | null) => {
-    await pushPumpStopAgentSummaryToChat(event);
+  const pushStopPumpAgentSummary = useCallback(async (
+    event?: PumpSessionEndedEvent | null,
+    options?: PumpStopSummaryOptions | null,
+  ) => {
+    return pushPumpStopAgentSummaryToChat(event, options);
   }, []);
 
   return {

@@ -27,13 +27,14 @@ import { extractChatAnswerChunk, mergeStreamingAnswerDelta } from "@/lib/chatStr
 import { chatStore } from "@/lib/chatStore";
 import { savePersistedChatMessages } from "@/lib/chatMessagesLocalPersistence";
 import { deviceStore, type DeviceSide } from "@/lib/deviceStore";
-import { endRunAndUpdateStore, isBleSupported } from "@/lib/ble";
+import { isBleSupported, powerOffDeviceAndUpdateStore } from "@/lib/ble";
 import {
   getPumpAgentUploadProcessProgress,
   markPumpAgentUploadProcessStepStop,
+  resetPumpAgentUploadProcessProgress,
   setPumpAgentUploadOperationSource,
 } from "@/lib/pumpAgentUpload";
-import { createScopedConsole } from "@/lib/logger";
+import { createScopedConsole, stringifyLogArg } from "@/lib/logger";
 import {
   pumpSessionLifecycle,
   type PumpSessionEndedEvent,
@@ -42,14 +43,19 @@ import {
 import { showPumpAutoEndLocalNotice } from "@/lib/pumpSessionNotification";
 import { toast } from "@/components/ui/use-toast";
 import type { ChatMessage } from "@/types/chat";
-import type { ChatRichTextPayload, PumpSessionSummaryBody, PumpSessionSummarySide } from "@/lib/agentApiTypes";
+import type { ChatRichTextPayload, PumpMilkUploadBody, PumpSessionSummaryBody, PumpSessionSummarySide } from "@/lib/agentApiTypes";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
+import { uploadPumpMilkRecord } from "@/lib/momPumpTwinAgentApi";
 
 // ─── 吸乳小结写入对话 ─────────────────────────────────────────────
 const CHAT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);
 const MAI_CHAT_QUERY_STOP_PUMP = "停止吸乳-开始吸乳APP";
 const STOP_SUMMARY_TIMEOUT_MS = 12000;
 const PUMP_SESSION_SUMMARY_WS_TIMEOUT_MS = 15000;
+
+export interface PumpStopSummaryOptions {
+  displayedDurationSeconds?: number;
+}
 
 /** AgentHub 监听：外部写入 chatStore 后合并进 Hub 的 messages（与通知收尾一致） */
 export const AGENT_HUB_SYNC_CHAT_EVENT = "mmc-agent-hub-sync-chat";
@@ -143,7 +149,7 @@ function handlePumpStopStreamMessage(
   const next = mergeStreamingAnswerDelta(merged.current, chunk);
   merged.current = next.merged;
 }
-function commitPumpStopSummaryToChat(mergedText: string, rich: ChatRichTextPayload | undefined): void {
+function commitPumpStopSummaryToChat(mergedText: string, rich: ChatRichTextPayload | undefined): ChatMessage {
   const ts = new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
   const fallbackText = mergedText.trim() || rich?.content || "已停止吸乳";
   const msg: ChatMessage = {
@@ -163,6 +169,7 @@ function commitPumpStopSummaryToChat(mergedText: string, rich: ChatRichTextPaylo
       window.dispatchEvent(new CustomEvent(AGENT_HUB_SYNC_CHAT_EVENT));
     }, 0);
   }
+  return msg;
 }
 
 function nowChatTimestamp(): string {
@@ -182,30 +189,47 @@ function modeName(mode: unknown): string | undefined {
   return String(mode);
 }
 
-function buildPumpSessionSummarySide(device: ReturnType<typeof deviceStore.get>["L"], process: number): PumpSessionSummarySide {
-  const milk = numberOrUndefined(device?.finalMilkMl) ?? numberOrUndefined(device?.milkMl);
+function displayedMilkMl(device: ReturnType<typeof deviceStore.get>["L"]): number {
+  if (!device?.connected || typeof device.milkMl !== "number" || !Number.isFinite(device.milkMl)) return 0;
+  return Math.max(0, Math.round(device.milkMl));
+}
+
+function displayedDurationSeconds(options?: PumpStopSummaryOptions | null): number | undefined {
+  const n = options?.displayedDurationSeconds;
+  if (typeof n !== "number" || !Number.isFinite(n)) return undefined;
+  return Math.max(0, Math.round(n));
+}
+
+function buildPumpSessionSummarySide(
+  device: ReturnType<typeof deviceStore.get>["L"],
+  process: number,
+  options?: PumpStopSummaryOptions | null,
+): PumpSessionSummarySide {
+  const milk = displayedMilkMl(device);
+  const duration = displayedDurationSeconds(options) ?? numberOrUndefined(device?.duration);
   return {
     connected: Boolean(device?.connected),
     milk_ml: milk,
     process: Number.isFinite(process) ? Math.max(0, Math.min(100, Math.round(process))) : undefined,
     mode: modeName(device?.pumpMode),
     level: numberOrUndefined(device?.gear),
-    duration_seconds: numberOrUndefined(device?.duration),
+    duration_seconds: duration,
     has_milk: typeof device?.milkFlag === "number" ? Boolean(device.milkFlag & 0x01) : undefined,
     has_letdown: typeof device?.moFlag === "number" ? Boolean(device.moFlag & 0x01) : undefined,
   };
 }
 
-function buildPumpSessionSummaryBody(event?: PumpSessionEndedEvent | null): PumpSessionSummaryBody {
+function buildPumpSessionSummaryBody(event?: PumpSessionEndedEvent | null, options?: PumpStopSummaryOptions | null): PumpSessionSummaryBody {
   const snap = deviceStore.get();
   const progress = getPumpAgentUploadProcessProgress();
   const endedAtMs = event?.at ?? Date.now();
-  const left = buildPumpSessionSummarySide(snap.L, progress.processL);
-  const right = buildPumpSessionSummarySide(snap.R, progress.processR);
+  const left = buildPumpSessionSummarySide(snap.L, progress.processL, options);
+  const right = buildPumpSessionSummarySide(snap.R, progress.processR, options);
   const leftMilk = left.milk_ml ?? 0;
   const rightMilk = right.milk_ml ?? 0;
   const leftDuration = left.duration_seconds ?? 0;
   const rightDuration = right.duration_seconds ?? 0;
+  const displayedDuration = displayedDurationSeconds(options);
   const conversationId = getAgentConversationIdForRequest() || getAgUiThreadIdForRequest();
 
   return {
@@ -215,20 +239,58 @@ function buildPumpSessionSummaryBody(event?: PumpSessionEndedEvent | null): Pump
     end_reason: event?.reason ?? "unknown",
     process_all: Math.max(0, Math.min(100, Math.round(progress.processAll))),
     total_milk_ml: Math.max(0, Math.round((leftMilk + rightMilk) * 10) / 10),
-    duration_seconds: Math.max(leftDuration, rightDuration) || undefined,
+    duration_seconds: displayedDuration ?? (Math.max(leftDuration, rightDuration) || undefined),
     event_id: `pump-summary-${endedAtMs}`,
     left,
     right,
   };
 }
 
+function formatPumpMilkTime(ms: number): string {
+  const d = new Date(ms);
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
+function buildPumpMilkUploadBody(event?: PumpSessionEndedEvent | null): PumpMilkUploadBody {
+  const snap = deviceStore.get();
+  const endedAtMs = event?.at ?? Date.now();
+  const leftMilk = displayedMilkMl(snap.L);
+  const rightMilk = displayedMilkMl(snap.R);
+  return {
+    user_id: CHAT_USER_ID,
+    pump_type: 0,
+    pump_source: 0,
+    pump_time: formatPumpMilkTime(endedAtMs),
+    pump_milk_volum: Math.max(0, Math.round((leftMilk + rightMilk) * 10) / 10),
+  };
+}
+
+export async function pushPumpMilkUploadForPumpSessionEnd(event?: PumpSessionEndedEvent | null): Promise<void> {
+  const body = buildPumpMilkUploadBody(event ?? pumpSessionLifecycle.getLastEndedEvent());
+  log.log("[PUMP_MILK_UPLOAD] upload body", body);
+  const response = await uploadPumpMilkRecord(body);
+  if (typeof response?.error === "number" && response.error !== 0) {
+    throw new Error(`pump milk upload error=${response.error}`);
+  }
+}
+
+function logPumpSessionSummaryUploadBody(body: PumpSessionSummaryBody): void {
+  if (Capacitor.isNativePlatform()) {
+    globalThis.console?.warn?.("[PUMP_SESSION_SUMMARY] upload body", stringifyLogArg(body));
+    return;
+  }
+  log.log("[PUMP_SESSION_SUMMARY] upload body", body);
+}
+
 function commitPumpSessionSummaryResponseToChat(
   response: Awaited<ReturnType<typeof postPumpSessionSummaryWebSocket>>,
   fallbackEventId: string | undefined,
-): boolean {
+): ChatMessage | null {
   const chatMessage = response.data?.chat_message;
   const content = typeof chatMessage?.content === "string" ? chatMessage.content.trim() : "";
-  if (!content) return false;
+  if (!content) return null;
   const id = chatMessage?.id?.trim() || fallbackEventId || `pump-summary-${Date.now()}`;
   const msg: ChatMessage = {
     id,
@@ -239,7 +301,8 @@ function commitPumpSessionSummaryResponseToChat(
     cardData: chatMessage?.cardData ?? { kind: "pump-session-summary", event_id: id },
   };
   const currentMsgs = chatStore.get().messages;
-  if (currentMsgs.some((m) => m.id === msg.id)) return true;
+  const existing = currentMsgs.find((m) => m.id === msg.id);
+  if (existing) return existing;
   const nextMsgs = [...currentMsgs, msg];
   chatStore.setMessages(nextMsgs);
   void savePersistedChatMessages(nextMsgs);
@@ -248,11 +311,15 @@ function commitPumpSessionSummaryResponseToChat(
       window.dispatchEvent(new CustomEvent(AGENT_HUB_SYNC_CHAT_EVENT));
     }, 0);
   }
-  return true;
+  return msg;
 }
 
-async function pushPumpSessionSummaryWebSocketToChat(event?: PumpSessionEndedEvent | null): Promise<boolean> {
-  const body = buildPumpSessionSummaryBody(event ?? pumpSessionLifecycle.getLastEndedEvent());
+async function pushPumpSessionSummaryWebSocketToChat(
+  event?: PumpSessionEndedEvent | null,
+  options?: PumpStopSummaryOptions | null,
+): Promise<ChatMessage | null> {
+  const body = buildPumpSessionSummaryBody(event ?? pumpSessionLifecycle.getLastEndedEvent(), options);
+  logPumpSessionSummaryUploadBody(body);
   const response = await postPumpSessionSummaryWebSocket(body, { timeoutMs: PUMP_SESSION_SUMMARY_WS_TIMEOUT_MS });
   if (typeof response.status === "number" && response.status !== 200) {
     throw new Error(response.message || `pump session summary status=${response.status}`);
@@ -269,21 +336,20 @@ function runPumpStopSummaryStream(
     onDone: () => void;
     onError: (err: Error) => void;
   }) => () => void,
-): Promise<void> {
+): Promise<ChatMessage | null> {
   const merged = { current: "" };
   const richHolder: { current: ChatRichTextPayload | null } = { current: null };
-  return new Promise<void>((resolve) => {
+  return new Promise<ChatMessage | null>((resolve) => {
     let resolved = false;
-    const finish = () => {
+    const finish = (msg: ChatMessage | null = null) => {
       if (resolved) return;
       resolved = true;
-      resolve();
+      resolve(msg);
     };
     const cancel = startStream({
       onMessage: (data) => handlePumpStopStreamMessage(data, merged, richHolder),
       onDone: () => {
-        commitPumpStopSummaryToChat(merged.current, richHolder.current ?? undefined);
-        finish();
+        finish(commitPumpStopSummaryToChat(merged.current, richHolder.current ?? undefined));
       },
       onError: (err: Error) => {
         console.error("[pushPumpStopAgentSummaryToChat] failed:", err);
@@ -292,20 +358,23 @@ function runPumpStopSummaryStream(
     });
     window.setTimeout(() => {
       cancel();
-      finish();
+      finish(null);
     }, STOP_SUMMARY_TIMEOUT_MS);
   });
 }
-export async function pushPumpStopAgentSummaryToChat(event?: PumpSessionEndedEvent | null): Promise<void> {
+export async function pushPumpStopAgentSummaryToChat(
+  event?: PumpSessionEndedEvent | null,
+  options?: PumpStopSummaryOptions | null,
+): Promise<ChatMessage | null> {
   try {
-    const committed = await pushPumpSessionSummaryWebSocketToChat(event);
-    if (committed) return;
+    const summaryMessage = await pushPumpSessionSummaryWebSocketToChat(event, options);
+    if (summaryMessage) return summaryMessage;
     console.warn("[pushPumpStopAgentSummaryToChat] summary ws returned empty content, fallback to agent stream");
   } catch (err) {
     console.error("[pushPumpStopAgentSummaryToChat] summary ws failed, fallback to agent stream:", err);
   }
 
-  await runPumpStopSummaryStream(({ onMessage, onDone, onError }) =>
+  return runPumpStopSummaryStream(({ onMessage, onDone, onError }) =>
     postAgUiWebSocketStream({
       text: MAI_CHAT_QUERY_STOP_PUMP,
       threadId: getAgUiThreadIdForRequest(),
@@ -331,15 +400,16 @@ export async function endPumpBleForBothConnectedSides(): Promise<void> {
   markPumpAgentUploadProcessStepStop("both");
   for (const it of items) {
     try {
-      await endRunAndUpdateStore(it.deviceId, it.side);
+      await powerOffDeviceAndUpdateStore(it.deviceId, it.side);
       const cur = deviceStore.get()[it.side];
       if (cur) {
-        deviceStore.setDevice(it.side, { ...cur, pumpWorkState: 0x00, duration: 0 });
+        deviceStore.setDevice(it.side, { ...cur, pumpWorkState: 0x00 });
       }
     } catch (error) {
-      console.error(`[endPumpBleForBothConnectedSides] BF failed side=${it.side}:`, error);
+      console.error(`[endPumpBleForBothConnectedSides] FE failed side=${it.side}:`, error);
     }
   }
+  resetPumpAgentUploadProcessProgress();
 }
 // ─── 通知点击后进首页的收尾 ───────────────────────────────────────
 export async function runPumpAutoEndTeardownFromNotification(): Promise<void> {
