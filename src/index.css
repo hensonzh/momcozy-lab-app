@@ -437,6 +437,19 @@
   background: rgba(238, 250, 247, 0.8);
 }
 
+.analysis-followup {
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+  border: 1px solid rgba(103, 150, 153, 0.22);
+  border-radius: 13px;
+  background: rgba(238, 250, 247, 0.82);
+}
+
+.analysis-followup p {
+  margin: 0;
+}
+
 .analysis-action-section {
   display: grid;
   gap: 8px;

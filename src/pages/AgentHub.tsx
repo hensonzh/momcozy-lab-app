@@ -274,7 +274,7 @@ type AgentHubReportCardData = {
 function reportKindLabel(kind?: string): string {
   if (kind === "pump-session-summary") return "吸奶小结";
   if (kind === "daily_summary") return "每日奶量总结";
-  if (kind === "mom_baby") return "每日泌乳/喂养建议";
+  if (kind === "mom_baby") return "每日泌乳建议";
   return "M.ai 报告";
 }
 
@@ -320,6 +320,7 @@ function AgentHubReportCard({
   const hasLinks = Boolean(msg.links?.length);
   const statusLabel = analysisStatusLabel(analysisCard);
   const statusTone = analysisStatusTone(analysisCard);
+  const analysisFollowup = analysisCard?.followup?.trim() || "";
 
   return (
     <article className={cn("agent-card", hasAnalysisCard ? "agent-card-analysis_report" : "agent-card-hospital_bag_card")}>
@@ -373,6 +374,12 @@ function AgentHubReportCard({
               <div className="analysis-section analysis-section-default">
                 <ChatMarkdown markdown={msg.content} variant="assistant" className="text-[13px] leading-relaxed text-[#35212c]" />
               </div>
+            </section>
+          ) : null}
+
+          {analysisFollowup ? (
+            <section className="analysis-followup">
+              <ChatMarkdown markdown={analysisFollowup} variant="assistant" className="text-[13px] leading-relaxed text-[#3c2631]" />
             </section>
           ) : null}
         </>

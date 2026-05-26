@@ -1047,7 +1047,7 @@ export async function createStatusAnalysis(
 }
 
 /**
- * 执行每日奶量总结或每日泌乳/喂养建议（POST `/v1/analysis/create`）。
+ * 执行每日奶量总结或每日泌乳建议（POST `/v1/analysis/create`）。
  */
 export async function createDailyAndMomBabyAnalysis(
   body: AnalysisCreateBody,
