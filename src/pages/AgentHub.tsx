@@ -80,6 +80,7 @@ import {
 } from "@/pages/hospitalBagCartModel";
 import { resolveCalibrationComfortForPumpStart } from "@/pages/agentHub/resolveCalibrationComfortForPumpStart";
 import {
+  resolveCalibrationPromptCancelAction,
   resolveCalibrationPromptConfirmAction,
   resolvePumpStartGate,
 } from "@/pages/pumpSession/pumpDeviceConnectionPrompt";
@@ -2706,7 +2707,23 @@ const AgentHub: React.FC = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-row justify-end gap-2 sm:flex-row sm:justify-end sm:space-x-0">
-            <AlertDialogCancel type="button" className="m-0 rounded-full border-border/80 bg-background">
+            <AlertDialogCancel
+              type="button"
+              className="m-0 rounded-full border-border/80 bg-background"
+              onClick={(event) => {
+                if (!hubPumpGateDialog) return;
+                const action = resolveCalibrationPromptCancelAction(hubPumpGateDialog, deviceStore.get());
+                if (action.type === "showDevicePrompt") {
+                  event.preventDefault();
+                  setHubPumpGateDialog("device");
+                  return;
+                }
+                if (action.type === "navigate") {
+                  setHubPumpGateDialog(null);
+                  navigate(action.route);
+                }
+              }}
+            >
               稍后再说
             </AlertDialogCancel>
             <AlertDialogAction
