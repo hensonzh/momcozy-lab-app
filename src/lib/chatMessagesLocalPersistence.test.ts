@@ -106,6 +106,32 @@ describe("chatMessagesLocalPersistence", () => {
     expect(loadPersistedChatMessages().map((m) => m.id)).toEqual(["m0", "u3", "m1"]);
   });
 
+  it("removes the new-conversation greeting when restoring an active conversation", () => {
+    const greeting = message({
+      id: "greeting",
+      role: "mai",
+      content: "你好呀，我在。\n\n这次想先聊哪件事？你可以直接说现在最困扰你的情况。",
+      chatStreamContext: "main",
+    });
+    const user = message({ id: "u1", role: "user", content: "我消毒好了" });
+    const answer = message({ id: "m1", role: "mai", content: "做得很好。", chatStreamContext: "main" });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([user, answer, greeting]));
+
+    expect(loadPersistedChatMessages().map((m) => m.id)).toEqual(["u1", "m1"]);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]").map((m: ChatMessage) => m.id)).toEqual(["u1", "m1"]);
+  });
+
+  it("keeps the new-conversation greeting when it is the only chat content", () => {
+    const greeting = message({
+      id: "greeting",
+      role: "mai",
+      content: "你好呀，我在。\n\n这次想先聊哪件事？你可以直接说现在最困扰你的情况。",
+      chatStreamContext: "main",
+    });
+
+    expect(stripTransientAgentHubFailureMessages([greeting]).map((m) => m.id)).toEqual(["greeting"]);
+  });
+
   it("keeps uploaded image staging when cleaning consecutive user runs", () => {
     const image = message({
       id: "img",

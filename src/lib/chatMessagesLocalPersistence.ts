@@ -52,6 +52,21 @@ function isUploadedImageStagingMessage(message: ChatMessage): boolean {
   return message.role === "user" && String(message.cardData?.kind ?? "") === "uploaded-image";
 }
 
+function isAgentHubGreetingMessage(message: ChatMessage): boolean {
+  if (message.role !== "mai") return false;
+  if (message.chatStreamContext && message.chatStreamContext !== "main") return false;
+  const content = message.content.trim();
+  return content.startsWith("你好呀，我在。") && content.includes("这次想先聊哪件事");
+}
+
+function stripMixedGreetingMessages(messages: ChatMessage[]): ChatMessage[] {
+  const hasConversationMessage = messages.some(
+    (message) => !isAgentHubGreetingMessage(message) && !isUploadedImageStagingMessage(message),
+  );
+  if (!hasConversationMessage) return messages;
+  return messages.filter((message) => !isAgentHubGreetingMessage(message));
+}
+
 function removeUnansweredUserRuns(messages: ChatMessage[]): ChatMessage[] {
   const remove = new Set<number>();
   let index = 0;
@@ -98,7 +113,7 @@ export function stripTransientAgentHubFailureMessages(messages: ChatMessage[]): 
     if (isUploadedImageStagingMessage(last)) break;
     cleaned.pop();
   }
-  return cleaned;
+  return stripMixedGreetingMessages(cleaned);
 }
 
 /**

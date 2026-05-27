@@ -257,8 +257,8 @@ function AgentHubQuickReplies({
           disabled={disabled}
           onClick={() => onSelect(reply.sendText)}
           className={cn(
-            "rounded-full border border-[#176b87]/20 bg-[#176b87]/[0.07] px-3 py-1.5 text-[13px] font-medium text-[#176b87] shadow-sm transition-colors",
-            disabled ? "cursor-not-allowed opacity-50" : "hover:bg-[#176b87]/[0.12] active:bg-[#176b87]/[0.18]",
+            "rounded-full border border-[#ded7db] bg-white px-3 py-1.5 text-[13px] font-normal text-[#1f1f1f] shadow-sm transition-colors",
+            disabled ? "cursor-not-allowed opacity-50" : "hover:bg-[#f7f4f5] active:bg-[#eee9ec]",
           )}
         >
           {reply.text}
@@ -2239,6 +2239,9 @@ const AgentHub: React.FC = () => {
 
   /** 上传图仍保留在 messages 中（用于 files payload 与删除），仅在列表外以底部悬浮条展示 */
   const hubUploadedImages = messages.filter(isUploadedImageBubble);
+  const hasReadyHubUploadedImages = hubUploadedImages.some(
+    (m) => String(m.cardData?.uploadStatus ?? "") === "ready",
+  );
 
   const chatViewportTop = `calc(var(--top-safe) + ${HUB_TOP_ACTION_HEIGHT_PX}px)`;
   const chatViewportBottom = `calc(${HUB_BOTTOM_NAV_HEIGHT} + env(safe-area-inset-bottom) + ${bottomActionHeightPx}px)`;
@@ -3006,6 +3009,7 @@ const AgentHub: React.FC = () => {
             onChange={setInput}
             onSend={() => void handleSend()}
             sendLoading={hubBottomSendBusy}
+            canSendWithoutText={hasReadyHubUploadedImages}
             onVoice={() => void onMicClick()}
             speechListening={speechListening}
             showPhotoMenu={showPhotoMenu}

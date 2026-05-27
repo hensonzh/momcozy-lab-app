@@ -57,4 +57,55 @@ describe("MaiInputBar", () => {
 
     expect(onSend).toHaveBeenCalledTimes(1);
   });
+
+  it("allows Enter to send when an attachment is ready and text is empty", () => {
+    const onSend = vi.fn();
+    render(<MaiInputBar value="" onChange={vi.fn()} onSend={onSend} canSendWithoutText />);
+
+    fireEvent.keyDown(screen.getByPlaceholderText("和 M.ai 聊聊..."), { key: "Enter", code: "Enter" });
+
+    expect(onSend).toHaveBeenCalledTimes(1);
+  });
+
+  it("stages pasted clipboard images through the existing photo upload flow", () => {
+    const onPhotoFile = vi.fn();
+    const image = new File(["image"], "schedule.png", { type: "image/png" });
+    render(<MaiInputBar value="" onChange={vi.fn()} onSend={vi.fn()} onPhotoFile={onPhotoFile} />);
+
+    fireEvent.paste(screen.getByPlaceholderText("和 M.ai 聊聊..."), {
+      clipboardData: {
+        items: [
+          {
+            kind: "file",
+            type: "image/png",
+            getAsFile: () => image,
+          },
+        ],
+        files: [],
+      },
+    });
+
+    expect(onPhotoFile).toHaveBeenCalledWith(image);
+  });
+
+  it("does not intercept normal text paste", () => {
+    const onPhotoFile = vi.fn();
+    render(<MaiInputBar value="" onChange={vi.fn()} onSend={vi.fn()} onPhotoFile={onPhotoFile} />);
+
+    const allowed = fireEvent.paste(screen.getByPlaceholderText("和 M.ai 聊聊..."), {
+      clipboardData: {
+        items: [
+          {
+            kind: "string",
+            type: "text/plain",
+            getAsFile: () => null,
+          },
+        ],
+        files: [],
+      },
+    });
+
+    expect(allowed).toBe(true);
+    expect(onPhotoFile).not.toHaveBeenCalled();
+  });
 });

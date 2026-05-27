@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { SetStateAction } from "react";
-import { applyAgUiStreamSideEffects } from "@/lib/agUiStreamSideEffects";
+import { applyAgUiStreamSideEffects, semanticForAgUiEvent } from "@/lib/agUiStreamSideEffects";
 import type { ChatMessage } from "@/types/chat";
 
 function applyEvents(events: Array<Record<string, unknown>>): ChatMessage {
@@ -113,7 +113,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentStatusLine).toBe("");
   });
 
-  it("maps tool work to generic user-facing work panel text", () => {
+  it("maps tool work to specific user-facing work panel text", () => {
     const msg = applyEvents([
       {
         type: "TOOL_CALL_START",
@@ -136,11 +136,59 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls).toHaveLength(1);
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "milk_records_query",
-      title: "相关信息已读取",
+      title: "吸奶和喂养记录已读取",
       state: "completed",
     });
     expect(msg.agentToolCalls?.[0].title).not.toContain("milk_records_query");
     expect(msg.agentToolCalls?.[0].title).not.toMatch(/Milk|Tool|records/i);
+  });
+
+  it("prefers backend semantic labels over frontend fallback labels", () => {
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_START",
+        tool_call_id: "call_1",
+        tool_call_name: "milk_records_query",
+        semantic: {
+          phase: "reading",
+          label: "正在读取最近 7 天奶量记录",
+          visibility: "work_item",
+          merge_key: "tool:call_1",
+          priority: 50,
+        },
+      },
+    ]);
+
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      name: "milk_records_query",
+      title: "正在读取最近 7 天奶量记录",
+      state: "running",
+    });
+  });
+
+  it("keeps every AG-UI event mappable to a semantic object", () => {
+    expect(
+      semanticForAgUiEvent({
+        type: "ARTIFACT_CREATED",
+        artifact_id: "milk-plan-1",
+        artifact_type: "milk_plan_card",
+      }),
+    ).toMatchObject({
+      phase: "done",
+      label: "奶量卡片已生成",
+      visibility: "artifact",
+      mergeKey: "artifact:milk-plan-1",
+    });
+    expect(
+      semanticForAgUiEvent({
+        type: "RUN_ERROR",
+        code: "RuntimeError",
+      }),
+    ).toMatchObject({
+      phase: "error",
+      label: "这轮处理遇到问题",
+      visibility: "status",
+    });
   });
 
   it("uses explicit user-facing labels for pump recommendation work", () => {

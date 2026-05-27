@@ -27,6 +27,8 @@ interface MaiInputBarProps {
   speechListening?: boolean;
   /** Hub 等设备：发送后对话流进行中时为 true（显示加载图标；再次点击 onSend 由父级处理打断） */
   sendLoading?: boolean;
+  /** 已有图片等附件可随本轮消息发送，即使输入框为空也允许发送 */
+  canSendWithoutText?: boolean;
   disabled?: boolean;
   placeholder?: string;
   showPhotoMenu?: boolean;
@@ -46,6 +48,7 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   onDemoIdentify,
   speechListening = false,
   sendLoading = false,
+  canSendWithoutText = false,
   disabled = false,
   placeholder = "和 M.ai 聊聊...",
   showPhotoMenu = false,
@@ -57,13 +60,30 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const composingRef = useRef(false);
   const compositionEndAtRef = useRef(0);
-  /** 有文字或生成中（打断）时用主色发送键；仅空且非加载时置灰样式 */
-  const sendLooksActive = value.trim().length > 0 || sendLoading;
+  /** 有文字、附件或生成中（打断）时用主色发送键；仅完全空且非加载时置灰样式 */
+  const sendLooksActive = value.trim().length > 0 || canSendWithoutText || sendLoading;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && onPhotoFile) onPhotoFile(file);
     e.target.value = "";
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    if (!onPhotoFile || speechListening || disabled) return;
+
+    const itemFiles = Array.from(e.clipboardData.items ?? [])
+      .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+      .map((item) => item.getAsFile())
+      .filter((file): file is File => Boolean(file));
+    const files = itemFiles.length > 0
+      ? itemFiles
+      : Array.from(e.clipboardData.files ?? []).filter((file) => file.type.startsWith("image/"));
+
+    if (files.length === 0) return;
+    e.preventDefault();
+    onTogglePhotoMenu?.(false);
+    files.forEach((file) => onPhotoFile(file));
   };
 
   return (
@@ -136,6 +156,7 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
           <Input
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            onPaste={handlePaste}
             onKeyDown={(e) => {
               if (e.key !== "Enter" || speechListening) return;
               const nativeEvent = e.nativeEvent as KeyboardEvent & { isComposing?: boolean };
@@ -146,7 +167,7 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
                 return;
               }
               compositionEndAtRef.current = 0;
-              if (!value.trim() && !sendLoading) return;
+              if (!value.trim() && !canSendWithoutText && !sendLoading) return;
               e.preventDefault();
               onSend();
             }}
