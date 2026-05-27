@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import { ChevronRight, ShoppingBag } from "lucide-react";
 import { ChatMarkdownImg } from "@/components/chat/ChatMarkdownImage";
 import { resolveChatAssetUrl } from "@/lib/chatAssetUrl";
+import { resolveHttpRequestUrl } from "@/lib/http";
 import { cn } from "@/lib/utils";
 
 export type ChatMarkdownVariant = "user" | "assistant" | "muted";
@@ -22,7 +23,37 @@ function resolveChatMarkdownImageSrc(src: string | undefined): string | undefine
 
 function resolveChatMarkdownHref(href: string | undefined): string | undefined {
   if (!href?.trim()) return href;
-  return resolveChatAssetUrl(href, { preservePageRelative: true });
+  const raw = href.trim();
+  if (raw.startsWith("/skill-assets/")) return resolveHttpRequestUrl(raw);
+  return resolveChatAssetUrl(raw, { preservePageRelative: true });
+}
+
+function skillAssetLinkLabel(url: string): string {
+  const path = url.split(/[?#]/)[0]?.toLowerCase() ?? "";
+  if (path.endsWith(".pdf")) return "打开 PDF";
+  if (/\.(mp4|mov|m4v|webm)$/.test(path)) return "打开视频";
+  if (/\.(png|jpe?g|gif|webp|svg)$/.test(path)) return "查看图片";
+  return "打开资源";
+}
+
+const BARE_SKILL_ASSET_URL_PATTERN =
+  /(^|[\s:：])((?:\/skill-assets\/)[^\s<>)\]}，。；;、]+(?:\.(?:pdf|mp4|mov|m4v|webm|png|jpe?g|gif|webp|svg))(?:[?#][^\s<>)\]}，。；;、]*)?)/gi;
+
+export function linkifyBareSkillAssetUrlsForMarkdown(markdown: string): string {
+  let inFence = false;
+  return markdown
+    .split("\n")
+    .map((line) => {
+      if (/^\s*```/.test(line)) {
+        inFence = !inFence;
+        return line;
+      }
+      if (inFence) return line;
+      return line.replace(BARE_SKILL_ASSET_URL_PATTERN, (_match, prefix: string, url: string) => {
+        return `${prefix}[${skillAssetLinkLabel(url)}](${url})`;
+      });
+    })
+    .join("\n");
 }
 
 /**
@@ -262,7 +293,7 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
   className,
 }) => {
   if (!markdown.trim()) return null;
-  const markdownForRender = normalizeMarkdownLineBreaks(markdown);
+  const markdownForRender = normalizeMarkdownLineBreaks(linkifyBareSkillAssetUrlsForMarkdown(markdown));
   const hospitalBagCartPreviewHrefs = extractHospitalBagCartPreviewHrefs(markdown);
 
   return (

@@ -386,6 +386,7 @@ export interface FeedingDeleteData {
 
 export interface FeedingQueryParams {
   user_id: string;
+  timestamp?: string;
 }
 
 export interface FeedingListItem {
@@ -650,6 +651,7 @@ export interface PumpMilkDeleteData {
 
 export interface PumpMilkQueryParams {
   user_id: string;
+  timestamp?: string;
 }
 
 /** GET /v1/pump-milk/query 列表项（文档中 pump_type 为 integer） */

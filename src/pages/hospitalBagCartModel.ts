@@ -58,6 +58,16 @@ const momcozyPumpImageUrls: Record<string, string> = {
   "pump-air-1": "https://momcozy.com/cdn/shop/files/MomcozyAir1Ultra-slimBreastPump_1.png?v=1740971384",
 };
 
+const defaultHospitalBagPumpItem: HospitalBagCartItem = {
+  id: "pump-m9",
+  name: "Momcozy M9 吸奶器",
+  desc: "便携穿戴式双边吸乳，返家后排奶/储奶备用；是否带去医院先问医院",
+  qty: 1,
+  price: 699.0,
+  model: "M9",
+  keywords: ["吸奶器", "便携式吸奶器", "M9", "Mobile Flow"],
+};
+
 const cartProductImageUrls: Record<string, string> = {
   "mom-pad": "https://momcozy.com/cdn/shop/files/01_e3747022-14ff-4a12-a503-044276f89265.webp?v=1779352318",
   "mom-sanitary": "https://momcozy.com/cdn/shop/files/01_e3747022-14ff-4a12-a503-044276f89265.webp?v=1779352318",
@@ -132,15 +142,28 @@ export const initialHospitalBagCartGroups: HospitalBagCartGroup[] = [
       { id: "milk-pad", name: "防溢乳垫", desc: "母乳或混合喂养可先备小包装", qty: 1, price: 39.9, keywords: ["防溢乳垫", "乳垫"] },
       { id: "milk-cream", name: "乳头护理霜", desc: "哺乳初期不适时可咨询后使用", qty: 1, price: 49.9, keywords: ["乳头霜", "护理霜"] },
       { id: "milk-storage", name: "储奶袋", desc: "返家后储奶备用，住院可少量准备", qty: 1, price: 49.9, keywords: ["储奶袋"] },
-      { id: "milk-pump", name: "便携式吸奶器", desc: "可选备用项，是否带去医院先问医院", qty: 1, price: 699.0, keywords: ["吸奶器"] },
+      defaultHospitalBagPumpItem,
       { id: "milk-bra", name: "哺乳文胸", desc: "产后和哺乳初期更舒适", qty: 1, price: 159.0, keywords: ["哺乳文胸", "文胸"] },
       { id: "milk-bottle", name: "宽口径奶瓶", desc: "混合喂养或返家后备用", qty: 1, price: 89.9, keywords: ["奶瓶"] },
     ],
   },
 ];
 
-export function cloneHospitalBagCartGroups(groups: HospitalBagCartGroup[]): HospitalBagCartGroup[] {
+export function normalizeHospitalBagCartGroups(groups: HospitalBagCartGroup[]): HospitalBagCartGroup[] {
   return groups.map((group) => ({
+    ...group,
+    items: group.items.map(normalizeHospitalBagCartItem),
+  }));
+}
+
+function normalizeHospitalBagCartItem(item: HospitalBagCartItem): HospitalBagCartItem {
+  if (item.id !== "milk-pump" && item.name.trim() !== "便携式吸奶器") return item;
+  const qty = Number.isFinite(item.qty) && item.qty > 0 ? item.qty : defaultHospitalBagPumpItem.qty;
+  return { ...defaultHospitalBagPumpItem, qty };
+}
+
+export function cloneHospitalBagCartGroups(groups: HospitalBagCartGroup[]): HospitalBagCartGroup[] {
+  return normalizeHospitalBagCartGroups(groups).map((group) => ({
     ...group,
     items: group.items.map((item) => ({ ...item, keywords: item.keywords ? [...item.keywords] : undefined })),
   }));

@@ -22,7 +22,11 @@ import { addFeedingRecord, deleteFeedingRecord, queryFeedingRecords } from "@/li
 import { addPlanTasks, deletePlanTask, queryCarePlan, revisePlanTask } from "@/lib/agentApi";
 import type { FeedingAddBody, FeedingListItem, PlanTaskItem, PumpMilkListItem } from "@/lib/agentApiTypes";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
-import { pickMomBabyDeliveryDateYmd } from "@/lib/momBabyDelivery";
+import {
+  calendarDaysSinceDeliveryOnLocal,
+  formatPostpartumWeekFromDay,
+  pickMomBabyDeliveryDateYmd,
+} from "@/lib/momBabyDelivery";
 import { Capacitor } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
 import {
@@ -74,16 +78,8 @@ const isFeedingRecord = (record: PumpRecord) => record.category === "feeding" ||
 const generatedRecordId = (taskId: string) => `task-record-${taskId}`;
 const taskCompletionRecordKey = (date: string, taskId: string) => `${date}::${taskId}`;
 
-const getPostpartumDay = (deliveryDate: string, targetDateStr: string) => {
-  const delivery = new Date(`${deliveryDate}T00:00:00`);
-  const target = new Date(`${targetDateStr}T00:00:00`);
-  return Math.max(0, Math.floor((target.getTime() - delivery.getTime()) / (24 * 60 * 60 * 1000)));
-};
-
 const getLactationPhase = (postpartumDay: number) =>
   lactationPhases.find((phase) => postpartumDay <= phase.endDay) || lactationPhases[lactationPhases.length - 1];
-
-const formatPostpartumWeek = (days: number) => `产后第 ${Math.floor(days / 7) + 1} 周`;
 
 const formatTimestampDate = (d: Date) => format(d, "yyyy-MM-dd");
 
@@ -133,13 +129,6 @@ const mapTaskSourceToUiSource = (taskSource: string): ScheduleTask["source"] => 
   const s = (taskSource || "").trim().toLowerCase();
   if (s.includes("mai") || s.includes("系统")) return "mai";
   return "manual";
-};
-
-const taskSourceLabel = (task: ScheduleTask) => {
-  if (task.taskSourceRaw) return task.taskSourceRaw;
-  if (task.source === "mai") return "Mai";
-  if (task.source === "manual") return "手动";
-  return "设备";
 };
 
 const mapApiTaskToScheduleTask = (task: PlanTaskItem): ScheduleTask => {
@@ -348,7 +337,6 @@ const Schedule: React.FC = () => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   }, []);
-  const todayStr = useMemo(() => format(todayDate, "yyyy-MM-dd"), [todayDate]);
   const [selectedDate, setSelectedDate] = useState<Date>(todayDate);
   const [weekOffset, setWeekOffset] = useState(0);
   const displayMonthDate = useMemo(
@@ -508,17 +496,17 @@ const Schedule: React.FC = () => {
     void (async () => {
       try {
         const [pumpData, feedingData] = await Promise.all([
-          queryPumpMilkRecords({ user_id: DEFAULT_CHAT_USER_ID }, { signal: ac.signal }),
-          queryFeedingRecords({ user_id: DEFAULT_CHAT_USER_ID }, { signal: ac.signal }),
+          queryPumpMilkRecords({ user_id: DEFAULT_CHAT_USER_ID, timestamp: dateStr }, { signal: ac.signal }),
+          queryFeedingRecords({ user_id: DEFAULT_CHAT_USER_ID, timestamp: dateStr }, { signal: ac.signal }),
         ]);
         if (cancelled) return;
         const pumpList = pumpData.error === 0 ? pumpData.pump_milk_list : [];
         const feedingList = feedingData.error === 0 ? feedingData.feed_list : [];
         const mapped = [
-          ...pumpList.map((item) => mapPumpMilkListItemToRecord(item, todayStr)),
-          ...feedingList.map((item) => mapFeedingListItemToRecord(item, todayStr)),
+          ...pumpList.map((item) => mapPumpMilkListItemToRecord(item, dateStr)),
+          ...feedingList.map((item) => mapFeedingListItemToRecord(item, dateStr)),
         ].sort((a, b) => a.time.localeCompare(b.time));
-        setAllRecords((prev) => ({ ...prev, [todayStr]: mapped }));
+        setAllRecords((prev) => ({ ...prev, [dateStr]: mapped }));
       } finally {
         if (!cancelled) setRecordsLoading(false);
       }
@@ -527,10 +515,10 @@ const Schedule: React.FC = () => {
       cancelled = true;
       ac.abort();
     };
-  }, [todayStr]);
+  }, [dateStr]);
 
   const effectiveDeliveryYmd = deliveryYmd || babyData.birthDate;
-  const postpartumDay = getPostpartumDay(effectiveDeliveryYmd, dateStr);
+  const postpartumDay = Math.max(0, calendarDaysSinceDeliveryOnLocal(effectiveDeliveryYmd, selectedDate) ?? 0);
   const currentPhase = getLactationPhase(postpartumDay);
 
   useEffect(() => {
@@ -541,6 +529,7 @@ const Schedule: React.FC = () => {
 
   const sortedTasks = useMemo(() => [...tasks].sort((a, b) => a.time.localeCompare(b.time)), [tasks]);
   const actionTasks = useMemo(() => sortedTasks.filter(isActionTask), [sortedTasks]);
+  const hasActionTasks = actionTasks.length > 0;
   const completedTasks = useMemo(() => actionTasks.filter((task) => task.done && !isSkipped(task)), [actionTasks]);
   const remainingTasks = useMemo(() => actionTasks.filter((task) => !task.done), [actionTasks]);
   const nextTask = remainingTasks[0] || null;
@@ -572,15 +561,15 @@ const Schedule: React.FC = () => {
 
   const refreshTodayRecords = useCallback(async () => {
     const [pumpData, feedingData] = await Promise.all([
-      queryPumpMilkRecords({ user_id: DEFAULT_CHAT_USER_ID }),
-      queryFeedingRecords({ user_id: DEFAULT_CHAT_USER_ID }),
+      queryPumpMilkRecords({ user_id: DEFAULT_CHAT_USER_ID, timestamp: dateStr }),
+      queryFeedingRecords({ user_id: DEFAULT_CHAT_USER_ID, timestamp: dateStr }),
     ]);
     if (pumpData.error !== 0 || feedingData.error !== 0) {
       throw new Error("刷新记录失败，请稍后重试");
     }
     const mergedToday = [
-      ...pumpData.pump_milk_list.map((item) => mapPumpMilkListItemToRecord(item, todayStr)),
-      ...feedingData.feed_list.map((item) => mapFeedingListItemToRecord(item, todayStr)),
+      ...pumpData.pump_milk_list.map((item) => mapPumpMilkListItemToRecord(item, dateStr)),
+      ...feedingData.feed_list.map((item) => mapFeedingListItemToRecord(item, dateStr)),
     ]
       .map((record) => {
         const matchedRef = Object.values(taskCompletionRecordRefs).find(
@@ -589,8 +578,8 @@ const Schedule: React.FC = () => {
         return matchedRef?.taskTitle && !record.recordTitle ? { ...record, recordTitle: matchedRef.taskTitle } : record;
       })
       .sort((a, b) => a.time.localeCompare(b.time));
-    setAllRecords((prev) => ({ ...prev, [todayStr]: mergedToday }));
-  }, [taskCompletionRecordRefs, todayStr]);
+    setAllRecords((prev) => ({ ...prev, [dateStr]: mergedToday }));
+  }, [dateStr, taskCompletionRecordRefs]);
 
   const reviseTaskByApi = useCallback(
     async (task: ScheduleTask, next: { taskTime?: string; taskContent?: string; taskDone?: "true" | "false" | "jump" }) => {
@@ -676,7 +665,7 @@ const Schedule: React.FC = () => {
       if (task.type === "pump") {
         let targetPumpId = knownRef?.pumpId;
         if (targetPumpId == null) {
-          const pumpData = await queryPumpMilkRecords({ user_id: DEFAULT_CHAT_USER_ID });
+          const pumpData = await queryPumpMilkRecords({ user_id: DEFAULT_CHAT_USER_ID, timestamp: dateStr });
           if (pumpData.error !== 0) throw new Error("查询吸奶记录失败，请稍后重试");
           const matched = pumpData.pump_milk_list
             .filter(
@@ -697,7 +686,7 @@ const Schedule: React.FC = () => {
       } else if (task.type === "feed") {
         let targetFeedingId = knownRef?.feedingId;
         if (targetFeedingId == null) {
-          const feedingData = await queryFeedingRecords({ user_id: DEFAULT_CHAT_USER_ID });
+          const feedingData = await queryFeedingRecords({ user_id: DEFAULT_CHAT_USER_ID, timestamp: dateStr });
           if (feedingData.error !== 0) throw new Error("查询喂养记录失败，请稍后重试");
           const matched = feedingData.feed_list
             .filter((item) => normalizePumpTimeForDisplay(item.feed_time) === task.time)
@@ -1041,7 +1030,7 @@ const Schedule: React.FC = () => {
                   : `${format(selectedDate, "M月d日")} ${mapPlanTypeToLabel(planType)}`}
               </h2>
               <p className="text-[12px] font-medium text-muted-foreground mt-0.5">
-                {currentPhase.label} · {formatPostpartumWeek(postpartumDay)}
+                {currentPhase.label} · {formatPostpartumWeekFromDay(postpartumDay)}
               </p>
             </div>
             
@@ -1118,6 +1107,14 @@ const Schedule: React.FC = () => {
                 </>
               </div>
             </section>
+          ) : !hasActionTasks ? (
+            <section className="mx-4 mb-8 bg-secondary/30 rounded-[28px] p-6 border border-border/40 text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Clock className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">今天还没有计划任务</h3>
+              <p className="text-[13px] text-muted-foreground mt-1">可以先从对话里生成计划并同步到日历，或手动添加临时任务。</p>
+            </section>
           ) : (
             <section className="mx-4 mb-8 bg-secondary/30 rounded-[28px] p-6 border border-border/40 text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -1132,16 +1129,22 @@ const Schedule: React.FC = () => {
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
               <CheckCircle2 className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-lg font-bold text-foreground">这天的计划已结束</h3>
-            <p className="text-[13px] text-muted-foreground mt-1">共完成 {completedTasks.length} 项任务，母乳产出 {formatVol(inventoryTotal, volUnit)}{unitLabel(volUnit)}</p>
+            <h3 className="text-lg font-bold text-foreground">{hasActionTasks ? "这天的计划已结束" : "这天没有计划任务"}</h3>
+            <p className="text-[13px] text-muted-foreground mt-1">
+              {hasActionTasks
+                ? `共完成 ${completedTasks.length} 项任务，母乳产出 ${formatVol(inventoryTotal, volUnit)}${unitLabel(volUnit)}`
+                : "没有看到当天的计划任务。"}
+            </p>
           </section>
         ) : (
           <section className="mx-4 mb-8 bg-secondary/30 rounded-[28px] p-6 border border-border/40 text-center">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
               <Clock className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-lg font-bold text-foreground">未来的计划</h3>
-            <p className="text-[13px] text-muted-foreground mt-1">系统已为你提前规划了当天的吸乳和喂养日程</p>
+            <h3 className="text-lg font-bold text-foreground">{hasActionTasks ? "未来的计划" : "这天还没有计划"}</h3>
+            {hasActionTasks && (
+              <p className="text-[13px] text-muted-foreground mt-1">系统已为你提前规划了当天的吸乳和喂养日程</p>
+            )}
           </section>
         )}
 
@@ -1297,10 +1300,7 @@ const Schedule: React.FC = () => {
                                   onClick={(e) => e.stopPropagation()}
                                   onPointerDown={(e) => e.stopPropagation()}
                                 >
-                                  <Badge variant="outline" className="bg-background text-[10px] font-medium border-border/50 text-muted-foreground px-1.5 py-0 h-5 max-w-[5rem] truncate">
-                                    {taskSourceLabel(task)}
-                                  </Badge>
-                                  {task.adjusted && !skipped && <Badge variant="outline" className="bg-background text-[10px] font-medium border-border/50 text-muted-foreground px-1.5 py-0 h-5 max-w-[7rem] truncate">{task.adjusted}</Badge>}
+	                                  {task.adjusted && !skipped && <Badge variant="outline" className="bg-background text-[10px] font-medium border-border/50 text-muted-foreground px-1.5 py-0 h-5 max-w-[7rem] truncate">{task.adjusted}</Badge>}
                                   {skipped && <Badge variant="outline" className="bg-background text-muted-foreground text-[10px] font-medium border-border/50 px-1.5 py-0 h-5">已跳过</Badge>}
                                   {isCompleted && !skipped && <span className="text-[10px] font-bold text-primary/70 bg-primary/10 border border-primary/10 px-1.5 py-0 rounded-md whitespace-nowrap h-5 inline-flex items-center">已生成记录</span>}
                                 </div>
