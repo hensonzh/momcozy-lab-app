@@ -38,6 +38,24 @@ describe("chatMessagesLocalPersistence", () => {
     expect(loadPersistedChatMessages().map((m) => m.id)).toEqual(["ok"]);
   });
 
+  it("does not persist quick replies because they are only for the latest live turn", () => {
+    const answer = message({
+      id: "m_quick",
+      content: "可以，我们继续。",
+      chatStreamContext: "main",
+      quickReplies: [
+        { text: "继续下一步", sendText: "继续下一步" },
+        { text: "换个方案", sendText: "我想换个方案" },
+        { text: "先帮我总结", sendText: "先帮我总结" },
+      ],
+    });
+
+    savePersistedChatMessages([answer]);
+
+    expect(loadPersistedChatMessages()[0].quickReplies).toBeUndefined();
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]")[0].quickReplies).toBeUndefined();
+  });
+
   it("cleans legacy persisted transient failures on load", () => {
     const good = message({ id: "ok", content: "正常历史消息。", chatStreamContext: "main" });
     const failedUser = message({ id: "u_err", role: "user", content: "产前咨询" });
@@ -51,6 +69,21 @@ describe("chatMessagesLocalPersistence", () => {
 
     expect(loadPersistedChatMessages().map((m) => m.id)).toEqual(["ok"]);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]").map((m: ChatMessage) => m.id)).toEqual(["ok"]);
+  });
+
+  it("does not persist transient upstream timeout failures", () => {
+    const good = message({ id: "ok", content: "正常历史消息。", chatStreamContext: "main" });
+    const failedUser = message({ id: "u_timeout", role: "user", content: "好，换成 Air 1 吧" });
+    const failure = message({
+      id: "timeout",
+      content: "请求失败：Request timed out.",
+      cardType: "data",
+      chatStreamContext: "main",
+    });
+
+    savePersistedChatMessages([good, failedUser, failure]);
+
+    expect(loadPersistedChatMessages().map((m) => m.id)).toEqual(["ok"]);
   });
 
   it("cleans legacy orphaned user messages left by older failure filtering", () => {

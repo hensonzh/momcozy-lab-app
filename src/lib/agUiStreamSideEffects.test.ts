@@ -46,6 +46,52 @@ function applyEventSequence(
 }
 
 describe("applyAgUiStreamSideEffects", () => {
+  it("applies quick replies only to the current assistant message", () => {
+    let messages: ChatMessage[] = [
+      {
+        id: "old",
+        role: "mai",
+        content: "上一轮",
+        timestamp: "",
+        quickReplies: [
+          { text: "旧提示1", sendText: "旧提示1" },
+          { text: "旧提示2", sendText: "旧提示2" },
+          { text: "旧提示3", sendText: "旧提示3" },
+        ],
+      },
+      {
+        id: "reply",
+        role: "mai",
+        content: "当前轮",
+        timestamp: "",
+      },
+    ];
+    const setMessages = (updater: SetStateAction<ChatMessage[]>) => {
+      messages = typeof updater === "function" ? updater(messages) : updater;
+    };
+
+    applyAgUiStreamSideEffects(
+      "reply",
+      {
+        type: "QUICK_REPLIES",
+        message_id: "reply",
+        replies: [
+          { text: "继续下一步", send_text: "继续下一步" },
+          { text: "换个方案", send_text: "我想换个方案" },
+          { text: "先帮我总结", send_text: "先帮我总结" },
+        ],
+      },
+      setMessages,
+    );
+
+    expect(messages[0].quickReplies).toBeUndefined();
+    expect(messages[1].quickReplies).toEqual([
+      { text: "继续下一步", sendText: "继续下一步" },
+      { text: "换个方案", sendText: "我想换个方案" },
+      { text: "先帮我总结", sendText: "先帮我总结" },
+    ]);
+  });
+
   it("keeps generic run and processing statuses hidden from the user-facing status line", () => {
     const msg = applyEvents([
       {
@@ -95,6 +141,65 @@ describe("applyAgUiStreamSideEffects", () => {
     });
     expect(msg.agentToolCalls?.[0].title).not.toContain("milk_records_query");
     expect(msg.agentToolCalls?.[0].title).not.toMatch(/Milk|Tool|records/i);
+  });
+
+  it("uses explicit user-facing labels for pump recommendation work", () => {
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_START",
+        tool_call_id: "call_pump",
+        tool_call_name: "hospital_bag_pump_recommend",
+      },
+      {
+        type: "TOOL_CALL_END",
+        tool_call_id: "call_pump",
+        tool_call_name: "hospital_bag_pump_recommend",
+      },
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_pump",
+        tool_call_name: "hospital_bag_pump_recommend",
+        content: JSON.stringify({
+          status: "pump_recommended",
+          tool_name: "hospital_bag_pump_recommend",
+          recommended_product: { model: "S12 Pro Quick" },
+        }),
+      },
+    ]);
+
+    expect(msg.agentToolCalls).toHaveLength(1);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      name: "hospital_bag_pump_recommend",
+      title: "已完成吸奶器推荐",
+      state: "completed",
+    });
+  });
+
+  it("uses explicit user-facing labels for hospital bag cart updates", () => {
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_START",
+        tool_call_id: "call_cart",
+        tool_call_name: "hospital_bag_cart_update",
+      },
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_cart",
+        tool_call_name: "hospital_bag_cart_update",
+        content: JSON.stringify({
+          status: "cart_updated",
+          tool_name: "hospital_bag_cart_update",
+          cart_update: { action: "replace_pump_model", groups: [] },
+        }),
+      },
+    ]);
+
+    expect(msg.agentToolCalls).toHaveLength(1);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      name: "hospital_bag_cart_update",
+      title: "购物车已更新",
+      state: "completed",
+    });
   });
 
   it("renders structured UI only from ARTIFACT_CREATED in the main loop", () => {

@@ -4,7 +4,7 @@
  */
 
 import type { Dispatch, MutableRefObject, SetStateAction } from "react";
-import type { AgUiToolCallRow, ChatMessage } from "@/types/chat";
+import type { AgUiToolCallRow, ChatMessage, ChatQuickReply } from "@/types/chat";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
 import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
 
@@ -40,6 +40,23 @@ export function resolveAgUiEventType(data: string | object): string {
 function coalesceString(v: unknown): string {
   if (typeof v === "string" && v.trim()) return v.trim();
   return "";
+}
+
+function readQuickReplies(value: unknown): ChatQuickReply[] {
+  if (!Array.isArray(value) || value.length !== 3) return [];
+  const replies: ChatQuickReply[] = [];
+  const seen = new Set<string>();
+  for (const item of value) {
+    const rec = asRecord(item);
+    const text = coalesceString(rec?.text);
+    const sendText = coalesceString(rec?.send_text) || coalesceString(rec?.sendText) || text;
+    if (!text || !sendText) return [];
+    const key = sendText.toLocaleLowerCase();
+    if (seen.has(key)) return [];
+    seen.add(key);
+    replies.push({ text, sendText });
+  }
+  return replies.length === 3 ? replies : [];
 }
 
 function normalizeToolName(toolName: unknown): string {
@@ -314,6 +331,12 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
 }
 
 function toolStartCopy(toolName: string): { title: string } {
+  const normalizedToolName = normalizeToolName(toolName);
+  if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "正在读取吸奶器型号目录" };
+  if (normalizedToolName === "hospital_bag_cart_update") return { title: "正在更新待产包购物车" };
+  if (normalizedToolName === "device_manual_search") return { title: "正在读取设备说明资料" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "正在准备售后工单" };
+
   switch (toolWorkPhase(toolName)) {
     case "select":
       return { title: "正在选择合适能力" };
@@ -339,6 +362,12 @@ function toolArgsCopy(toolName: string): { title: string; detail?: string } {
 }
 
 function toolEndCopy(toolName: string): { title: string; detail?: string } {
+  const normalizedToolName = normalizeToolName(toolName);
+  if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "正在整理吸奶器推荐" };
+  if (normalizedToolName === "hospital_bag_cart_update") return { title: "正在保存购物车修改" };
+  if (normalizedToolName === "device_manual_search") return { title: "正在整理设备资料" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "正在生成售后工单草稿" };
+
   switch (toolWorkPhase(toolName)) {
     case "select":
       return { title: "正在确认可用能力" };
@@ -384,11 +413,14 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
   if (normalizedToolName === "milk_calendar_mutate") return { title: milkMutationResultTitle(result, "日程修改已保存") };
   if (normalizedToolName === "milk_task_complete") return { title: milkTaskResultTitle(result) };
   if (normalizedToolName === "infant_growth_mutate") return { title: milkMutationResultTitle(result, "记录已保存") };
+  if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "已完成吸奶器推荐" };
   if (normalizedToolName === "hospital_bag_cart_update") {
     const status = coalesceString(result?.status);
     if (status === "needs_clarification" || status === "cart_unchanged") return { title: "购物车暂未修改" };
     return { title: "购物车已更新" };
   }
+  if (normalizedToolName === "device_manual_search") return { title: "设备资料已读取" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "售后工单草稿已准备好" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
@@ -716,6 +748,19 @@ export function applyAgUiStreamSideEffects(
     didUpdate = true;
     setMessages((prev) => prev.map((m) => (m.id === replyId ? fn(m) : m)));
   };
+
+  if (eventType === "QUICK_REPLIES") {
+    const replies = readQuickReplies(rec.replies);
+    if (replies.length === 3) {
+      didUpdate = true;
+      setMessages((prev) =>
+        prev.map((m) => ({
+          ...m,
+          quickReplies: m.id === replyId ? replies : undefined,
+        })),
+      );
+    }
+  }
 
   if (eventType === "RUN_STARTED") {
     const skills = extractLoadedSkillIds(rec);
