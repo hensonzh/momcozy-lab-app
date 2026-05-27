@@ -13,15 +13,17 @@ import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
 import { apiRequestRaw } from "@/lib/http";
 
-type ActionKey = "daily_summary" | "mom_baby" | "growth_update";
+type ActionKey = "task_reminder" | "daily_summary" | "mom_baby" | "growth_update";
 
 const actionItems: Array<{ key: ActionKey; label: string }> = [
+  { key: "task_reminder", label: "任务提醒" },
   { key: "daily_summary", label: "每日奶量总结" },
   { key: "mom_baby", label: "每日泌乳建议" },
   { key: "growth_update", label: "宝宝生长发育指标更新" },
 ];
 
 const MOM_BABY_CONTEXT_MAX_CHARS = 320;
+const TASK_REMINDER_MESSAGE = "妈妈，吸奶/喂养时间还有15分钟就到咯，可以提前准备一下哦～";
 
 function compactText(value: unknown): string {
   return String(value ?? "").replace(/\s+/g, " ").trim();
@@ -173,13 +175,22 @@ const DeviceManageActions: React.FC = () => {
     });
   }, [notifyByNativeOrToast]);
 
+  const handleTaskReminderNotify = useCallback(() => {
+    void notifyByNativeOrToast({
+      title: "任务提醒",
+      message: TASK_REMINDER_MESSAGE,
+      path: "/schedule?mmcNotify=1",
+    });
+  }, [notifyByNativeOrToast]);
+
   const actionHandlers = useMemo<Record<ActionKey, () => void | Promise<void>>>(
     () => ({
+      task_reminder: handleTaskReminderNotify,
       daily_summary: handleDailySummary,
       mom_baby: handleMomBabyAnalysis,
       growth_update: handleGrowthUpdateNotify,
     }),
-    [handleDailySummary, handleMomBabyAnalysis, handleGrowthUpdateNotify],
+    [handleTaskReminderNotify, handleDailySummary, handleMomBabyAnalysis, handleGrowthUpdateNotify],
   );
 
   return (
