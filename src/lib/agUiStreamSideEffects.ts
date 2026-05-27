@@ -554,6 +554,74 @@ function mergeRichActions(prev: unknown[], next: unknown[]): unknown[] {
   return merged;
 }
 
+function milkPlanCardUpdateFromToolResult(parsed: Record<string, unknown> | null): { artifactId: string; card: Record<string, unknown> } | null {
+  if (!parsed || normalizeToolName(parsed.tool_name) !== "milk_plan_mutate" || parsed.ok !== true) return null;
+  const card = asRecord(parsed.card);
+  if (!card || coalesceString(card.card_type) !== "milk_plan_card") return null;
+  const artifactId = coalesceString(parsed.artifact_id) || coalesceString(parsed.artifactId) || coalesceString(card.id);
+  if (!artifactId) return null;
+  return { artifactId, card };
+}
+
+function replaceMilkPlanCardAction(action: unknown, artifactId: string, card: Record<string, unknown>): { action: unknown; changed: boolean } {
+  const obj = asRecord(action);
+  if (!obj) return { action, changed: false };
+  const existingCard = asRecord(obj.card);
+  const actionArtifactId = coalesceString(obj.artifact_id) || coalesceString(obj.artifactId) || coalesceString(existingCard?.id);
+  const artifactType = normalizeArtifactType(obj.artifact_type);
+  const isCardArtifact = artifactType === "card" || artifactType === "milk_plan_card";
+  if (!isCardArtifact || actionArtifactId !== artifactId || coalesceString(existingCard?.card_type) !== "milk_plan_card") {
+    return { action, changed: false };
+  }
+  return {
+    action: {
+      ...obj,
+      artifact_id: artifactId,
+      artifact_type: "card",
+      card,
+    },
+    changed: true,
+  };
+}
+
+function replaceMilkPlanCardInRichText(
+  payload: ChatRichTextPayload | undefined,
+  artifactId: string,
+  card: Record<string, unknown>,
+): { payload?: ChatRichTextPayload; changed: boolean } {
+  if (!payload) return { payload, changed: false };
+  let changed = false;
+  const action = payload.action.map((item) => {
+    const replaced = replaceMilkPlanCardAction(item, artifactId, card);
+    if (replaced.changed) changed = true;
+    return replaced.action;
+  });
+  return changed ? { payload: { ...payload, action }, changed: true } : { payload, changed: false };
+}
+
+function replaceMilkPlanCardInMessage(message: ChatMessage, artifactId: string, card: Record<string, unknown>): { message: ChatMessage; changed: boolean } {
+  const richText = replaceMilkPlanCardInRichText(message.richText, artifactId, card);
+  let streamChanged = false;
+  const streamRenderItems = message.streamRenderItems?.map((item) => {
+    if (item.kind !== "rich") return item;
+    const replaced = replaceMilkPlanCardInRichText(item.payload, artifactId, card);
+    if (replaced.changed && replaced.payload) {
+      streamChanged = true;
+      return { ...item, payload: replaced.payload };
+    }
+    return item;
+  });
+  if (!richText.changed && !streamChanged) return { message, changed: false };
+  return {
+    message: {
+      ...message,
+      ...(richText.changed ? { richText: richText.payload } : {}),
+      ...(streamChanged ? { streamRenderItems } : {}),
+    },
+    changed: true,
+  };
+}
+
 function extractLoadedSkillIds(rec: Record<string, unknown>): string[] {
   const direct = rec.loaded_skill_ids;
   if (Array.isArray(direct)) {
@@ -808,6 +876,19 @@ export function applyAgUiStreamSideEffects(
     const hospitalBagCartUpdate = readHospitalBagCartUpdate(parsed);
     if (hospitalBagCartUpdate) {
       opts?.onHospitalBagCartUpdate?.(hospitalBagCartUpdate.groups, hospitalBagCartUpdate.message);
+    }
+    const milkPlanCardUpdate = milkPlanCardUpdateFromToolResult(parsed);
+    if (milkPlanCardUpdate) {
+      didUpdate = true;
+      setMessages((prev) => {
+        let changed = false;
+        const next = prev.map((message) => {
+          const replaced = replaceMilkPlanCardInMessage(message, milkPlanCardUpdate.artifactId, milkPlanCardUpdate.card);
+          if (replaced.changed) changed = true;
+          return replaced.message;
+        });
+        return changed ? next : prev;
+      });
     }
     const normalizedToolName = parsed
       ? normalizeToolName(parsed.tool_name) || readToolName(rec)

@@ -186,6 +186,109 @@ describe("applyAgUiStreamSideEffects", () => {
     });
   });
 
+  it("updates the existing milk plan card when the plan is confirmed", () => {
+    let messages: ChatMessage[] = [
+      {
+        id: "previous",
+        role: "mai",
+        content: "",
+        timestamp: "",
+        richText: {
+          title: "",
+          content: "",
+          button: [],
+          card: [],
+          action: [
+            {
+              kind: "ag_ui_artifact",
+              artifact_type: "card",
+              artifact_id: "milk-plan-increase_milk-7",
+              card: {
+                id: "milk-plan-increase_milk-7",
+                card_type: "milk_plan_card",
+                schema_version: "1.0",
+                card_json: {
+                  title: "追奶计划",
+                  status_label: "待确认",
+                },
+              },
+            },
+          ],
+        },
+        streamRenderItems: [
+          {
+            kind: "rich",
+            payload: {
+              title: "",
+              content: "",
+              button: [],
+              card: [],
+              action: [
+                {
+                  kind: "ag_ui_artifact",
+                  artifact_type: "card",
+                  artifact_id: "milk-plan-increase_milk-7",
+                  card: {
+                    id: "milk-plan-increase_milk-7",
+                    card_type: "milk_plan_card",
+                    schema_version: "1.0",
+                    card_json: {
+                      title: "追奶计划",
+                      status_label: "待确认",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: "reply",
+        role: "mai",
+        content: "",
+        timestamp: "",
+      },
+    ];
+    const setMessages = (updater: SetStateAction<ChatMessage[]>) => {
+      messages = typeof updater === "function" ? updater(messages) : updater;
+    };
+
+    applyAgUiStreamSideEffects(
+      "reply",
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_save",
+        tool_call_name: "milk_plan_mutate",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "milk_plan_mutate",
+          status: "plan_created",
+          card: {
+            id: "milk-plan-increase_milk-7",
+            card_type: "milk_plan_card",
+            schema_version: "1.0",
+            card_json: {
+              title: "追奶计划",
+              status_label: "已确认",
+              status: "confirmed",
+            },
+          },
+        }),
+      },
+      setMessages,
+    );
+
+    const action = messages[0].richText?.action[0] as Record<string, unknown>;
+    const card = action.card as Record<string, unknown>;
+    expect((card.card_json as Record<string, unknown>).status_label).toBe("已确认");
+    const streamAction = messages[0].streamRenderItems?.[0].kind === "rich"
+      ? (messages[0].streamRenderItems[0].payload.action[0] as Record<string, unknown>)
+      : null;
+    expect(((streamAction?.card as Record<string, unknown>).card_json as Record<string, unknown>).status_label).toBe("已确认");
+    expect(messages[1].richText).toBeUndefined();
+  });
+
   it("adds a generic confirmation step without exposing the tool name", () => {
     const msg = applyEvents([
       {

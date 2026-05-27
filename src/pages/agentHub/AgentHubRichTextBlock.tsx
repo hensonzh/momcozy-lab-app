@@ -891,9 +891,9 @@ function MilkManagementStructuredCard({
               </span>
             ) : null}
           </div>
-          {headline ? <p className="mt-3 text-[14px] font-semibold leading-relaxed text-[#3b2731]">{headline}</p> : null}
         </div>
       </header>
+      {headline ? <p className="text-[14px] font-normal leading-relaxed text-[#3b2731]">{headline}</p> : null}
 
       {sections.length > 0 ? (
         <div className="grid gap-2.5">
@@ -1296,6 +1296,7 @@ const AgentHubRichTextBlock: React.FC<{
               </button>
             );
             if ((cardType === "milk_analysis_card" || cardType === "milk_plan_card") && schemaVersion === "1.0") {
+              const showDownloadButton = false;
               return (
                 <article
                   key={`artifact-${index}`}
@@ -1305,7 +1306,7 @@ const AgentHubRichTextBlock: React.FC<{
                   className="relative w-full min-w-0 rounded-[22px] border border-[#eadfe5] bg-[#fffdfc] p-4 text-[#33212b] shadow-[0_12px_30px_rgba(65,42,52,0.07)]"
                 >
                   <MilkManagementStructuredCard cardJson={cardJson} cardType={cardType} />
-                  <div className="mt-3 flex justify-end">{downloadButton}</div>
+                  {showDownloadButton ? <div className="mt-3 flex justify-end">{downloadButton}</div> : null}
                 </article>
               );
             }
