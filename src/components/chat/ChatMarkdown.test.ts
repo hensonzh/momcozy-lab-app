@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { linkifyBareSkillAssetUrlsForMarkdown } from "@/components/chat/ChatMarkdown";
+import { linkifyBareSkillAssetUrlsForMarkdown, resolveChatMarkdownImageSrc } from "@/components/chat/ChatMarkdown";
 
 describe("linkifyBareSkillAssetUrlsForMarkdown", () => {
   it("turns bare skill asset paths into readable markdown links", () => {
@@ -19,5 +19,11 @@ describe("linkifyBareSkillAssetUrlsForMarkdown", () => {
       "```\n/skill-assets/device-guidance/air1/videos/air1-operation-zh.mp4\n```";
 
     expect(linkifyBareSkillAssetUrlsForMarkdown(input)).toBe(input);
+  });
+
+  it("resolves skill asset markdown images through the API asset route", () => {
+    expect(resolveChatMarkdownImageSrc("/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png")).toBe(
+      "/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png",
+    );
   });
 });

@@ -37,6 +37,7 @@ import {
 } from "@/lib/agentConversationSession";
 import { tryRunPumpAutoEndOffPumpTeardownOnce } from "@/lib/pumpAutoEndSession";
 import { AGENT_HUB_SYNC_CHAT_EVENT, appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
+import { apiRequestRaw } from "@/lib/http";
 import type { AgentAnalysisCard, ChatRichTextPayload } from "@/lib/agentApiTypes";
 import { log, warn } from "@/lib/logger";
 import { ChatMarkdown } from "@/components/chat/ChatMarkdown";
@@ -128,6 +129,35 @@ const HOSPITAL_BAG_CART_FOLLOWUP_MARKER = "你的待产包已经设计好了哦�
 const NEW_CONVERSATION_GREETING =
   "你好呀，我在。\n\n这次想先聊哪件事？你可以直接说现在最困扰你的情况，不管是孕期准备、产后恢复、喂养奶量，还是设备使用，我都会陪你一步步理清楚。";
 
+const DIRECT_PUMP_CART_UPDATE_MODELS: Array<{ skuId: string; model: string; tokens: string[] }> = [
+  { skuId: "pump-s12-pro-quick", model: "S12 Pro Quick", tokens: ["s12proquick", "s12pro", "s12"] },
+  { skuId: "pump-s9-pro", model: "S9 Pro", tokens: ["s9pro", "s9"] },
+  { skuId: "pump-m5-smart", model: "M5 Smart", tokens: ["m5smart", "m5"] },
+  { skuId: "pump-m6", model: "M6", tokens: ["m6"] },
+  { skuId: "pump-v1-pro", model: "V1 Pro", tokens: ["v1pro", "v1"] },
+  { skuId: "pump-v2-pro", model: "V2 Pro", tokens: ["v2pro", "v2"] },
+  { skuId: "pump-m9", model: "M9", tokens: ["m9"] },
+  { skuId: "pump-w1", model: "W1", tokens: ["w1"] },
+  { skuId: "pump-air-1", model: "Air 1", tokens: ["air1"] },
+];
+
+interface DirectPumpCartUpdateIntent {
+  skuId: string;
+  model: string;
+}
+
+interface DirectHospitalBagCartUpdateResponse {
+  status?: string;
+  summary?: string;
+  cart_update?: {
+    groups?: HospitalBagCartGroup[];
+    message?: string;
+  };
+  error?: {
+    message?: string;
+  };
+}
+
 function createNewConversationGreetingMessage(): ChatMessage {
   return {
     id: `mai-greeting-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -136,6 +166,26 @@ function createNewConversationGreetingMessage(): ChatMessage {
     timestamp: new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }),
     chatStreamContext: "main",
   };
+}
+
+function normalizePumpCartActionText(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/quicko/g, "quick")
+    .replace(/[^a-z0-9\u4e00-\u9fa5]/g, "");
+}
+
+function resolveDirectPumpCartUpdateIntent(text: string): DirectPumpCartUpdateIntent | null {
+  const normalized = normalizePumpCartActionText(text);
+  const isConfirmedReplacement = /(换成|更换|替换|改成|同步)/.test(normalized);
+  const isExplicitCartAdd = /购物车/.test(normalized) && /(加入|加到|加进|添加)/.test(normalized);
+  if (!isConfirmedReplacement && !isExplicitCartAdd) return null;
+  for (const model of DIRECT_PUMP_CART_UPDATE_MODELS) {
+    if (model.tokens.some((token) => normalized.includes(token))) {
+      return { skuId: model.skuId, model: model.model };
+    }
+  }
+  return null;
 }
 
 interface SentChatImagePreview {
@@ -176,6 +226,45 @@ function messageHasAgUiArtifact(msg: ChatMessage): boolean {
   return Boolean(
     richTextPayloadHasAgUiArtifact(msg.richText) ||
       msg.streamRenderItems?.some(streamItemHasAgUiArtifact),
+  );
+}
+
+function clearQuickRepliesFromMessages(messages: ChatMessage[]): ChatMessage[] {
+  return messages.map((message) => {
+    if (!message.quickReplies) return message;
+    const { quickReplies: _quickReplies, ...rest } = message;
+    return rest;
+  });
+}
+
+function AgentHubQuickReplies({
+  msg,
+  disabled,
+  onSelect,
+}: {
+  msg: ChatMessage;
+  disabled: boolean;
+  onSelect: (sendText: string) => void;
+}) {
+  const replies = msg.quickReplies ?? [];
+  if (msg.role !== "mai" || replies.length !== 3) return null;
+  return (
+    <div className="mt-2 flex flex-wrap gap-2">
+      {replies.map((reply, index) => (
+        <button
+          key={`${msg.id}-quick-${index}-${reply.sendText}`}
+          type="button"
+          disabled={disabled}
+          onClick={() => onSelect(reply.sendText)}
+          className={cn(
+            "rounded-full border border-[#176b87]/20 bg-[#176b87]/[0.07] px-3 py-1.5 text-[13px] font-medium text-[#176b87] shadow-sm transition-colors",
+            disabled ? "cursor-not-allowed opacity-50" : "hover:bg-[#176b87]/[0.12] active:bg-[#176b87]/[0.18]",
+          )}
+        >
+          {reply.text}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -597,7 +686,8 @@ const AgentHub: React.FC = () => {
         loaded = sanitized;
       }
     }
-    const merged = mergeHubMessagesPreserveOrder(loaded, inMemory);
+    const restored = mergeHubMessagesPreserveOrder(loaded, inMemory);
+    const merged = restored.length > 0 ? restored : [createNewConversationGreetingMessage()];
     chatStore.setMessages(merged);
     savePersistedChatMessages(merged);
     initialHubMessagesRef.current = merged;
@@ -1381,7 +1471,7 @@ const AgentHub: React.FC = () => {
       // Timer starts when user sends the message; panel still stays hidden until work steps appear.
       agentWorkStartedAtMs: workTimerStartMs,
     };
-    setMessages((prev) => [...prev, ...(showUserMessage ? [userMsg] : []), replyPlaceholder]);
+    setMessages((prev) => [...clearQuickRepliesFromMessages(prev), ...(showUserMessage ? [userMsg] : []), replyPlaceholder]);
     if (opts?.purgeStagedImagesAfterAttach) purgeHubStagedUploadedImages();
     mainPendingRichTextRef.current = null;
     clearMainNoVisibleResponseTimer();
@@ -1498,6 +1588,138 @@ const AgentHub: React.FC = () => {
       onDone: onDoneHandler,
       onError: onErrorHandler,
     });
+  };
+
+  const startDirectHospitalBagPumpCartUpdate = async (
+    query: string,
+    opts?: { userDisplayText?: string },
+  ): Promise<boolean> => {
+    const intent = resolveDirectPumpCartUpdateIntent(query);
+    if (!intent) return false;
+
+    scrollTailAfterHubSendRef.current = true;
+    userPinnedToTailRef.current = true;
+    setShowScrollToBottom(false);
+    setHubBottomSendBusy(true);
+
+    const replyTs = new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+    const userVisibleText = opts?.userDisplayText !== undefined ? opts.userDisplayText.trim() : query.trim();
+    const replyId = `m-direct-cart-${Date.now()}`;
+    const userMsg: ChatMessage = {
+      id: `u-direct-cart-${Date.now()}`,
+      role: "user",
+      content: userVisibleText || query,
+      timestamp: replyTs,
+    };
+    const workStartedAtMs = Date.now();
+    const replyPlaceholder: ChatMessage = {
+      id: replyId,
+      role: "mai",
+      content: "",
+      timestamp: replyTs,
+      cardType: "encourage",
+      chatStreamContext: "main",
+      agentWorkStartedAtMs: workStartedAtMs,
+      agentToolCalls: [
+        {
+          id: `direct-cart-${workStartedAtMs}`,
+          name: "hospital_bag_cart_update",
+          title: "正在保存购物车修改",
+          argsDigest: intent.model,
+          state: "running",
+        },
+      ],
+    };
+    setMessages((prev) => [...clearQuickRepliesFromMessages(prev), userMsg, replyPlaceholder]);
+
+    try {
+      const locale = (typeof navigator !== "undefined" && navigator.language) || "zh-CN";
+      const response = await apiRequestRaw<DirectHospitalBagCartUpdateResponse>("/api/hospital-bag/cart-update", {
+        method: "POST",
+        body: {
+          user_message: query,
+          locale,
+          hospital_bag_cart: { groups: hospitalBagCartGroups },
+          args: {
+            action: "replace_pump_model",
+            product_sku_id: intent.skuId,
+          },
+        },
+      });
+      const nextGroups = response.cart_update?.groups;
+      if (Array.isArray(nextGroups)) {
+        setHospitalBagCartGroups(cloneHospitalBagCartGroups(normalizeHospitalBagCartGroups(nextGroups)));
+      }
+      const message =
+        response.cart_update?.message ||
+        response.summary ||
+        `好，已经帮你把购物车里的吸奶器换成 ${intent.model} 了。`;
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === replyId
+            ? {
+                ...m,
+                content: message,
+                cardType: "data" as const,
+                agentStatusDone: true,
+                agentWorkFinishedAtMs: Date.now(),
+                agentToolCalls: (m.agentToolCalls ?? []).map((row) => ({
+                  ...row,
+                  title: "购物车已更新",
+                  state: "completed" as const,
+                })),
+              }
+            : m,
+        ),
+      );
+    } catch (e: unknown) {
+      warn("[AgentHub] 直接更新待产包购物车失败", e instanceof Error ? e.message : String(e));
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === replyId
+            ? {
+                ...m,
+                content: "这次本地购物车更新没有完成，可能是服务暂时不可用。请再点一次。",
+                cardType: "data" as const,
+                agentStatusDone: true,
+                agentWorkFinishedAtMs: Date.now(),
+                agentToolCalls: (m.agentToolCalls ?? []).map((row) => ({
+                  ...row,
+                  title: "购物车没有更新",
+                  state: "error" as const,
+                })),
+              }
+            : m,
+        ),
+      );
+    } finally {
+      clearAwaitingBottomSendBarLoading();
+      setHubBottomSendBusy(false);
+    }
+    return true;
+  };
+
+  const handleAgentRichTextButtonSelect = (value: string, options?: { displayText?: string }) => {
+    void (async () => {
+      if (await startDirectHospitalBagPumpCartUpdate(value, { userDisplayText: options?.displayText })) return;
+      void startMainChatStream(value, { userDisplayText: options?.displayText });
+    })();
+  };
+
+  const handleQuickReplySelect = (sendText: string) => {
+    const text = sendText.trim();
+    if (!text) return;
+    if (hubBottomSendBusy || mainChatCancelRef.current) return;
+    scrollTailAfterHubSendRef.current = true;
+    userPinnedToTailRef.current = true;
+    setShowScrollToBottom(false);
+    setMessages((prev) => clearQuickRepliesFromMessages(prev));
+    void (async () => {
+      if (await startDirectHospitalBagPumpCartUpdate(text, { userDisplayText: text })) return;
+      awaitingHubBottomReplyRef.current = true;
+      setHubBottomSendBusy(true);
+      void startMainChatStream(text, { userDisplayText: text });
+    })();
   };
 
   const handleStartPumpShortcut = useCallback(async () => {
@@ -1874,6 +2096,7 @@ const AgentHub: React.FC = () => {
 
     if (!pendingText && !hasReadyStagedImages) return;
     const text = pendingText || "请看这张图片";
+    setMessages((prev) => clearQuickRepliesFromMessages(prev));
 
     // If a device flow is active, forward input to it first
     if (pendingText && deviceFlowActive && deviceFlowRef.current) {
@@ -1923,6 +2146,14 @@ const AgentHub: React.FC = () => {
     scrollTailAfterHubSendRef.current = true;
     userPinnedToTailRef.current = true;
     setShowScrollToBottom(false);
+
+    if (pendingText && !hasReadyStagedImages) {
+      const handledDirectly = await startDirectHospitalBagPumpCartUpdate(text, { userDisplayText: pendingText });
+      if (handledDirectly) {
+        setInput("");
+        return;
+      }
+    }
 
     awaitingHubBottomReplyRef.current = true;
     setHubBottomSendBusy(true);
@@ -2456,9 +2687,7 @@ const AgentHub: React.FC = () => {
                               <AgentHubRichTextBlock
                                 payload={item.payload}
                                 blockId={`${msg.id}-stream-${i}`}
-                                onButtonSelect={(value, options?) => {
-                                  void startMainChatStream(value, { userDisplayText: options?.displayText });
-                                }}
+                                onButtonSelect={handleAgentRichTextButtonSelect}
                                 onOpenIbclcConsult={handleOpenIbclcConsult}
                               />
                             )}
@@ -2469,9 +2698,7 @@ const AgentHub: React.FC = () => {
                             <AgentHubRichTextBlock
                               payload={msg.richText}
                               blockId={`${msg.id}-rich`}
-                              onButtonSelect={(value, options?) => {
-                                void startMainChatStream(value, { userDisplayText: options?.displayText });
-                              }}
+                              onButtonSelect={handleAgentRichTextButtonSelect}
                               onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
@@ -2484,9 +2711,7 @@ const AgentHub: React.FC = () => {
                             <AgentHubRichTextBlock
                               payload={msg.richText}
                               blockId={`${msg.id}-rich-pump-summary`}
-                              onButtonSelect={(value, options?) => {
-                                void startMainChatStream(value, { userDisplayText: options?.displayText });
-                              }}
+                              onButtonSelect={handleAgentRichTextButtonSelect}
                               onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
@@ -2506,9 +2731,7 @@ const AgentHub: React.FC = () => {
                             <AgentHubRichTextBlock
                               payload={msg.richText}
                               blockId={`${msg.id}-rich`}
-                              onButtonSelect={(value, options?) => {
-                                void startMainChatStream(value, { userDisplayText: options?.displayText });
-                              }}
+                              onButtonSelect={handleAgentRichTextButtonSelect}
                               onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
@@ -2582,9 +2805,7 @@ const AgentHub: React.FC = () => {
                               <AgentHubRichTextBlock
                                 payload={item.payload}
                                 blockId={`${msg.id}-ordered-${i}`}
-                                onButtonSelect={(value, options?) => {
-                                  void startMainChatStream(value, { userDisplayText: options?.displayText });
-                                }}
+                                onButtonSelect={handleAgentRichTextButtonSelect}
                                 onOpenIbclcConsult={handleOpenIbclcConsult}
                               />
                             )}
@@ -2595,9 +2816,7 @@ const AgentHub: React.FC = () => {
                             <AgentHubRichTextBlock
                               payload={msg.richText}
                               blockId={`${msg.id}-rich`}
-                              onButtonSelect={(value, options?) => {
-                                void startMainChatStream(value, { userDisplayText: options?.displayText });
-                              }}
+                              onButtonSelect={handleAgentRichTextButtonSelect}
                               onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
@@ -2611,9 +2830,7 @@ const AgentHub: React.FC = () => {
                             <AgentHubRichTextBlock
                               payload={msg.richText}
                               blockId={`${msg.id}-rich-pump-summary`}
-                              onButtonSelect={(value, options?) => {
-                                void startMainChatStream(value, { userDisplayText: options?.displayText });
-                              }}
+                              onButtonSelect={handleAgentRichTextButtonSelect}
                               onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
@@ -2631,9 +2848,7 @@ const AgentHub: React.FC = () => {
                             <AgentHubRichTextBlock
                               payload={msg.richText}
                               blockId={`${msg.id}-rich`}
-                              onButtonSelect={(value, options?) => {
-                                void startMainChatStream(value, { userDisplayText: options?.displayText });
-                              }}
+                              onButtonSelect={handleAgentRichTextButtonSelect}
                               onOpenIbclcConsult={handleOpenIbclcConsult}
                             />
                           </div>
@@ -2677,6 +2892,11 @@ const AgentHub: React.FC = () => {
                     </div>
                   </>
                 )}
+                <AgentHubQuickReplies
+                  msg={msg}
+                  disabled={hubBottomSendBusy || Boolean(mainChatCancelRef.current)}
+                  onSelect={handleQuickReplySelect}
+                />
               </div>
             </div>
             )}
