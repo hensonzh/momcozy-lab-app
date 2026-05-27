@@ -23,6 +23,11 @@ export interface ChatMessageLink {
   action?: string; // e.g. "open-unbox", "open-measure", "open-identify"
 }
 
+export interface ChatQuickReply {
+  text: string;
+  sendText: string;
+}
+
 export interface ChatStreamRenderItemText {
   kind: "text";
   text: string;
@@ -90,4 +95,6 @@ export interface ChatMessage {
   agentWorkStartedAtMs?: number;
   /** ag-ui work 面板结束时间（ms） */
   agentWorkFinishedAtMs?: number;
+  /** ag-ui QUICK_REPLIES：仅最新一轮助手回复展示，点击后作为普通用户消息发送 */
+  quickReplies?: ChatQuickReply[];
 }

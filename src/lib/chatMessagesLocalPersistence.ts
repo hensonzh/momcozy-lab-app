@@ -14,12 +14,20 @@ function takeLatestMessages(messages: ChatMessage[], max: number): ChatMessage[]
   return messages.slice(-max);
 }
 
+export function stripEphemeralChatMessageUi(messages: ChatMessage[]): ChatMessage[] {
+  return messages.map((message) => {
+    if (!message.quickReplies) return message;
+    const { quickReplies: _quickReplies, ...rest } = message;
+    return rest;
+  });
+}
+
 export function isTransientAgentHubFailureMessage(message: ChatMessage): boolean {
   if (message.role !== "mai") return false;
   if (message.chatStreamContext && message.chatStreamContext !== "main") return false;
   const content = message.content.trim();
   if (!content.startsWith("请求失败：")) return false;
-  return /ag-ui websocket|websocket|upstream returned status|无法连接后端|failed to fetch|networkerror|load failed|VITE_API_BASE_URL|VITE_API_TOKEN/i.test(
+  return /ag-ui websocket|websocket|upstream returned status|request timed out|timed out|timeout|无法连接后端|failed to fetch|networkerror|load failed|VITE_API_BASE_URL|VITE_API_TOKEN/i.test(
     content,
   );
 }
@@ -83,7 +91,7 @@ export function stripTransientAgentHubFailureMessages(messages: ChatMessage[]): 
     }
   });
 
-  const cleaned = removeUnansweredUserRuns(messages.filter((_, index) => !remove.has(index)));
+  const cleaned = removeUnansweredUserRuns(stripEphemeralChatMessageUi(messages.filter((_, index) => !remove.has(index))));
   while (cleaned.length > 0) {
     const last = cleaned.at(-1);
     if (last?.role !== "user") break;
@@ -102,9 +110,10 @@ export function loadPersistedChatMessages(): ChatMessage[] {
     if (!raw?.trim()) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    const messages = parsed as ChatMessage[];
+    const original = parsed as ChatMessage[];
+    const messages = stripEphemeralChatMessageUi(original);
     const sanitized = stripTransientAgentHubFailureMessages(messages);
-    if (sanitized.length !== messages.length) {
+    if (sanitized.length !== original.length || JSON.stringify(messages) !== JSON.stringify(original)) {
       localStorage.setItem(CHAT_MESSAGES_STORAGE_KEY, JSON.stringify(takeLatestMessages(sanitized, CHAT_MESSAGES_LOCAL_MAX_COUNT)));
     }
     return sanitized;
@@ -119,7 +128,7 @@ export function loadPersistedChatMessages(): ChatMessage[] {
  */
 export function savePersistedChatMessages(messages: ChatMessage[]): void {
   try {
-    const slice = takeLatestMessages(stripTransientAgentHubFailureMessages(messages), CHAT_MESSAGES_LOCAL_MAX_COUNT);
+    const slice = takeLatestMessages(stripTransientAgentHubFailureMessages(stripEphemeralChatMessageUi(messages)), CHAT_MESSAGES_LOCAL_MAX_COUNT);
     localStorage.setItem(CHAT_MESSAGES_STORAGE_KEY, JSON.stringify(slice));
   } catch (e) {
     log("[chat-persist] 写入本地对话失败", e);

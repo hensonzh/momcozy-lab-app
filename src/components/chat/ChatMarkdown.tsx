@@ -16,9 +16,11 @@ export type ChatMarkdownVariant = "user" | "assistant" | "muted";
  * @param src Markdown 解析出的 img src，可能为相对路径
  * @returns 可直接用于 `<img src>` 的地址；入参为空时原样返回
  */
-function resolveChatMarkdownImageSrc(src: string | undefined): string | undefined {
+export function resolveChatMarkdownImageSrc(src: string | undefined): string | undefined {
   if (!src?.trim()) return src;
-  return resolveChatAssetUrl(src);
+  const raw = src.trim();
+  if (raw.startsWith("/skill-assets/")) return resolveHttpRequestUrl(raw);
+  return resolveChatAssetUrl(raw);
 }
 
 function resolveChatMarkdownHref(href: string | undefined): string | undefined {
