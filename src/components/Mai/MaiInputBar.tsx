@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Send, Mic, Camera, Upload, ImagePlus, X, Loader2 } from "lucide-react";
+import { Send, Mic, Camera, Upload, ImagePlus, X, Square } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,6 +55,8 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const composingRef = useRef(false);
+  const compositionEndAtRef = useRef(0);
   /** 有文字或生成中（打断）时用主色发送键；仅空且非加载时置灰样式 */
   const sendLooksActive = value.trim().length > 0 || sendLoading;
 
@@ -136,8 +138,25 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={(e) => {
               if (e.key !== "Enter" || speechListening) return;
+              const nativeEvent = e.nativeEvent as KeyboardEvent & { isComposing?: boolean };
+              const compositionJustEnded =
+                compositionEndAtRef.current > 0 && Date.now() - compositionEndAtRef.current < 120;
+              if (composingRef.current || nativeEvent.isComposing || e.keyCode === 229 || compositionJustEnded) {
+                compositionEndAtRef.current = 0;
+                return;
+              }
+              compositionEndAtRef.current = 0;
               if (!value.trim() && !sendLoading) return;
+              e.preventDefault();
               onSend();
+            }}
+            onCompositionStart={() => {
+              composingRef.current = true;
+              compositionEndAtRef.current = 0;
+            }}
+            onCompositionEnd={() => {
+              composingRef.current = false;
+              compositionEndAtRef.current = Date.now();
             }}
             placeholder={placeholder}
             readOnly={speechListening}
@@ -174,10 +193,10 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
             )}
             disabled={disabled}
             aria-busy={sendLoading}
-            title={sendLoading ? "生成中，点击停止" : "发送"}
+            title={sendLoading ? "停止回复" : "发送"}
           >
             {sendLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin text-primary-foreground" aria-hidden />
+              <Square className="w-3.5 h-3.5 fill-current text-primary-foreground" aria-hidden />
             ) : (
               <Send className={cn("w-4 h-4", !sendLooksActive && "text-muted-foreground")} />
             )}

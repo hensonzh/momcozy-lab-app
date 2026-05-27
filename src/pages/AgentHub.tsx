@@ -75,6 +75,7 @@ import {
   calculateHospitalBagCartTotals,
   cloneHospitalBagCartGroups,
   initialHospitalBagCartGroups,
+  normalizeHospitalBagCartGroups,
   removeHospitalBagCartItem,
   type HospitalBagCartGroup,
 } from "@/pages/hospitalBagCartModel";
@@ -653,6 +654,9 @@ const AgentHub: React.FC = () => {
   const [hospitalBagCartGroups, setHospitalBagCartGroups] = useState<HospitalBagCartGroup[]>(() =>
     cloneHospitalBagCartGroups(initialHospitalBagCartGroups),
   );
+  useEffect(() => {
+    setHospitalBagCartGroups((groups) => normalizeHospitalBagCartGroups(groups));
+  }, []);
   const [workFlowActive, setWorkFlowActive] = useState(() =>
     hubInitialMessages.some(m => m.cardType === "work-flow" && !m.cardData?.completed)
   );
@@ -704,6 +708,8 @@ const AgentHub: React.FC = () => {
   /** rich_text 暂存，用于 onDone 自动播报快照 */
   const mainPendingRichTextRef = useRef<ChatRichTextPayload | null>(null);
   const mainNoVisibleResponseTimerRef = useRef<number | null>(null);
+  const mainStreamFollowTailRef = useRef(false);
+  const suppressFollowTailReleaseUntilRef = useRef(0);
   /** 对话泡 TTS：AbortController 与当前播放目标 id，避免快速切换气泡时误清状态 */
   const bubblePlayAbortRef = useRef<AbortController | null>(null);
   const bubblePlayingTargetIdRef = useRef<string | null>(null);
@@ -715,6 +721,7 @@ const AgentHub: React.FC = () => {
   const scrollToChatTail = useCallback((behavior: ScrollBehavior = "auto") => {
     const container = scrollRef.current;
     if (!container) return;
+    suppressFollowTailReleaseUntilRef.current = Date.now() + (behavior === "smooth" ? 900 : 120);
     container.scrollTo({ top: container.scrollHeight, behavior });
     userPinnedToTailRef.current = true;
     setShowScrollToBottom(false);
@@ -747,6 +754,7 @@ const AgentHub: React.FC = () => {
     mainChatCancelRef.current?.();
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
+    mainStreamFollowTailRef.current = false;
     mainStreamMergedAnswerRef.current = "";
     mainStreamMergedThinkingRef.current = "";
     mainPendingRichTextRef.current = null;
@@ -905,6 +913,9 @@ const AgentHub: React.FC = () => {
     mainPendingRichTextRef.current = null;
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
+    window.setTimeout(() => {
+      mainStreamFollowTailRef.current = false;
+    }, 300);
     setMessages((prev) => {
       const next = prev.map((m) => {
         if (m.id !== replyId) return m;
@@ -929,6 +940,7 @@ const AgentHub: React.FC = () => {
   useEffect(
     () => () => {
       clearMainNoVisibleResponseTimer();
+      mainStreamFollowTailRef.current = false;
       mainChatCancelRef.current?.();
       void stopCurrentBubblePlayback();
       // 暂存图 blob URL 保留到用户删除图、发送并成功附带、或整页卸载，避免路由切换后主界面预览丢失
@@ -1378,6 +1390,7 @@ const AgentHub: React.FC = () => {
     mainStreamMergedAnswerRef.current = "";
     mainStreamMergedThinkingRef.current = "";
     mainStreamingReplyIdRef.current = replyId;
+    mainStreamFollowTailRef.current = true;
     const onMessageHandler = handleLiveMainStreamMessage(
       replyId,
       mainStreamMergedAnswerRef,
@@ -1390,6 +1403,9 @@ const AgentHub: React.FC = () => {
       mainChatCancelRef.current?.();
       mainChatCancelRef.current = null;
       mainStreamingReplyIdRef.current = null;
+      window.setTimeout(() => {
+        mainStreamFollowTailRef.current = false;
+      }, 300);
       mainPendingRichTextRef.current = null;
       mainStreamMergedAnswerRef.current = "";
       mainStreamMergedThinkingRef.current = "";
@@ -1444,6 +1460,9 @@ const AgentHub: React.FC = () => {
         mainStreamMergedThinkingRef.current = "";
         mainChatCancelRef.current = null;
         mainStreamingReplyIdRef.current = null;
+        window.setTimeout(() => {
+          mainStreamFollowTailRef.current = false;
+        }, 300);
         log("[CHAT_MESSAGE] 主对话错误", err?.message ?? err);
         const msg = err?.message ?? String(err);
         const isNetworkError = /failed to fetch|networkerror|load failed/i.test(msg) || msg === "Failed to fetch";
@@ -1650,14 +1669,16 @@ const AgentHub: React.FC = () => {
     const nextLastId = messages.at(-1)?.id ?? null;
     const isNewBubble = messages.length !== prevMeta.len || nextLastId !== prevMeta.lastId;
     const forceTailAfterSend = isNewBubble && scrollTailAfterHubSendRef.current;
-    const wasPinnedToTail = userPinnedToTailRef.current || forceTailAfterSend;
+    const forceTailDuringMainStream = mainStreamFollowTailRef.current && mainStreamingReplyIdRef.current != null;
+    const shouldForceTail = forceTailAfterSend || forceTailDuringMainStream;
+    const wasPinnedToTail = userPinnedToTailRef.current || shouldForceTail;
     const isNearTailAfterUpdate = isChatScrollNearTail(container, DEFAULT_CHAT_TAIL_THRESHOLD_PX);
 
     if (forceTailAfterSend) {
       scrollTailAfterHubSendRef.current = false;
     }
 
-    if (shouldAutoScrollChatTail({ isNewBubble, forceTailAfterSend, wasPinnedToTail, isNearTailAfterUpdate })) {
+    if (shouldAutoScrollChatTail({ isNewBubble, forceTailAfterSend: shouldForceTail, wasPinnedToTail, isNearTailAfterUpdate })) {
       if (isNewBubble) {
         window.requestAnimationFrame(() => window.requestAnimationFrame(() => scrollToChatTail("smooth")));
       } else {
@@ -1797,6 +1818,46 @@ const AgentHub: React.FC = () => {
     };
   }, [navigate]);
 
+  const interruptMainChatStream = () => {
+    const replyId = mainStreamingReplyIdRef.current;
+    const cancelCurrentStream = mainChatCancelRef.current;
+    if (!cancelCurrentStream && !replyId && !hubBottomSendBusy) return false;
+
+    awaitingHubBottomReplyRef.current = false;
+    clearMainNoVisibleResponseTimer();
+    cancelCurrentStream?.();
+    mainChatCancelRef.current = null;
+    mainStreamingReplyIdRef.current = null;
+    mainStreamFollowTailRef.current = false;
+    mainPendingRichTextRef.current = null;
+    mainStreamMergedAnswerRef.current = "";
+    mainStreamMergedThinkingRef.current = "";
+    void stopCurrentBubblePlayback();
+    setHubBottomSendBusy(false);
+
+    if (replyId) {
+      const finishedAt = Date.now();
+      setMessages((prev) =>
+        prev.map((m) => {
+          if (m.id !== replyId) return m;
+          const hasVisibleAnswer = Boolean(m.content.trim() || m.richText || (m.streamRenderItems?.length ?? 0) > 0);
+          return {
+            ...m,
+            content: hasVisibleAnswer ? m.content : "已停止本轮回复。",
+            cardType: hasVisibleAnswer ? m.cardType : "data",
+            agentThinkingTitle: undefined,
+            agentStatusDone: true,
+            agentWorkFinishedAtMs: finishedAt,
+            thinkingCollapsed: m.thinkingContent?.trim() ? true : m.thinkingCollapsed,
+            thinkingStatus: m.thinkingContent?.trim() ? "done" : m.thinkingStatus,
+          };
+        }),
+      );
+    }
+
+    return true;
+  };
+
   /**
    * 发送主输入框内容：先结束听写并丢弃转写异步收尾对输入框的写入，再清空并送出。
    */
@@ -1805,12 +1866,9 @@ const AgentHub: React.FC = () => {
     const pendingText = input.trim();
     const hasReadyStagedImages = collectAgUiReadyImages(messages).length > 0;
 
-    if (hubBottomSendBusy) {
-      awaitingHubBottomReplyRef.current = false;
-      clearMainNoVisibleResponseTimer();
-      mainChatCancelRef.current?.();
-      setHubBottomSendBusy(false);
-      if (!pendingText && !hasReadyStagedImages) return;
+    if (hubBottomSendBusy || mainChatCancelRef.current) {
+      interruptMainChatStream();
+      return;
     }
 
     if (!pendingText && !hasReadyStagedImages) return;
@@ -1965,6 +2023,9 @@ const AgentHub: React.FC = () => {
     if (!container) return;
     const compute = () => {
       const isNearBottom = isChatScrollNearTail(container, DEFAULT_CHAT_TAIL_THRESHOLD_PX);
+      if (!isNearBottom && Date.now() > suppressFollowTailReleaseUntilRef.current) {
+        mainStreamFollowTailRef.current = false;
+      }
       userPinnedToTailRef.current = isNearBottom;
       setShowScrollToBottom(!isNearBottom);
     };

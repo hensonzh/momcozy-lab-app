@@ -14,7 +14,11 @@ import type {
   PumpInfoLactationDayItem,
   GrowthRecord,
 } from "@/lib/agentApiTypes";
-import { pickMomBabyDeliveryDateYmd, calendarDaysSinceDeliveryLocal } from "@/lib/momBabyDelivery";
+import {
+  calendarDaysSinceDeliveryLocal,
+  pickMomBabyDeliveryDateYmd,
+  postpartumWeekFromDay,
+} from "@/lib/momBabyDelivery";
 import { queryMomBabyInfo, queryMomBabyToday, getPumpInfo } from "@/lib/momPumpTwinAgentApi";
 import { queryLatestGrowth, addGrowthRecord, reviseGrowthRecord, getGrowthHistory } from "@/lib/babyTwinAgentApi";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
@@ -585,7 +589,7 @@ const StatusOverviewBody: React.FC = () => {
   const babyAgeDays =
     typeof babyDaysSinceBirth === "number" ? Math.max(0, babyDaysSinceBirth) : null;
   const postpartumWeeks =
-    typeof babyAgeDays === "number" ? Math.floor(babyAgeDays / 7) : null;
+    typeof babyAgeDays === "number" ? postpartumWeekFromDay(babyAgeDays) : null;
 
   /** WHO 适龄带需分娩日为周锚点；仅在无档案时用首条测量日兜底周序 */
   const growthChartBirthAnchor = deliveryYmd ?? growthHistoryRows[0]?.date ?? null;
