@@ -20,7 +20,8 @@ interface MaiInputBarProps {
   value: string;
   onChange: (val: string) => void;
   onSend: () => void;
-  onVoice?: () => void;
+  onVoiceStart?: () => void;
+  onVoiceEnd?: () => void;
   onPhotoFile?: (file: File) => void;
   onDemoIdentify?: (result: PhotoIdentifyResult) => void;
   /** 正在语音听写：高亮麦克风并让输入框只读，避免与流式转写互相覆盖 */
@@ -43,14 +44,15 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   value,
   onChange,
   onSend,
-  onVoice,
+  onVoiceStart,
+  onVoiceEnd,
   onPhotoFile,
   onDemoIdentify,
   speechListening = false,
   sendLoading = false,
   canSendWithoutText = false,
   disabled = false,
-  placeholder = "和 M.ai 聊聊...",
+  placeholder = "和 Comate 聊聊...",
   showPhotoMenu = false,
   onTogglePhotoMenu,
   className,
@@ -60,8 +62,10 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const composingRef = useRef(false);
   const compositionEndAtRef = useRef(0);
+  const voicePressActiveRef = useRef(false);
   /** 有文字、附件或生成中（打断）时用主色发送键；仅完全空且非加载时置灰样式 */
   const sendLooksActive = value.trim().length > 0 || canSendWithoutText || sendLoading;
+  const voiceDisabled = disabled || !onVoiceStart || !onVoiceEnd;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,6 +88,18 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
     e.preventDefault();
     onTogglePhotoMenu?.(false);
     files.forEach((file) => onPhotoFile(file));
+  };
+
+  const startVoiceHold = () => {
+    if (voiceDisabled || voicePressActiveRef.current) return;
+    voicePressActiveRef.current = true;
+    onVoiceStart?.();
+  };
+
+  const finishVoiceHold = () => {
+    if (!voicePressActiveRef.current) return;
+    voicePressActiveRef.current = false;
+    onVoiceEnd?.();
   };
 
   return (
@@ -187,16 +203,46 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
           {/* Voice button：听写中为饱和绿色+白图标，结束恢复默认灰/悬停主题色 */}
           <button
             type="button"
-            onClick={() => onVoice?.()}
-            disabled={!onVoice}
+            onPointerDown={(e) => {
+              if (voiceDisabled) return;
+              e.preventDefault();
+              e.currentTarget.setPointerCapture?.(e.pointerId);
+              startVoiceHold();
+            }}
+            onPointerUp={(e) => {
+              e.preventDefault();
+              if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+              }
+              finishVoiceHold();
+            }}
+            onPointerCancel={(e) => {
+              e.preventDefault();
+              finishVoiceHold();
+            }}
+            onLostPointerCapture={finishVoiceHold}
+            onKeyDown={(e) => {
+              if (voiceDisabled || e.repeat || (e.key !== " " && e.key !== "Enter")) return;
+              e.preventDefault();
+              startVoiceHold();
+            }}
+            onKeyUp={(e) => {
+              if (e.key !== " " && e.key !== "Enter") return;
+              e.preventDefault();
+              finishVoiceHold();
+            }}
+            onBlur={finishVoiceHold}
+            onContextMenu={(e) => e.preventDefault()}
+            disabled={voiceDisabled}
             aria-pressed={speechListening}
-            title={speechListening ? "正在录制语音，点击结束" : "点击开始语音输入"}
+            aria-label={speechListening ? "松开结束语音输入" : "按住说话"}
+            title={speechListening ? "松开结束语音输入" : "按住说话"}
             className={cn(
-              "p-1.5 rounded-full flex-shrink-0 transition-colors duration-200",
+              "p-1.5 rounded-full flex-shrink-0 transition-colors duration-200 touch-none select-none",
               speechListening
                 ? "bg-emerald-600 text-white shadow-sm dark:bg-emerald-500 dark:text-white"
                 : "text-muted-foreground hover:text-primary bg-transparent",
-              !onVoice && "opacity-40",
+              voiceDisabled && "opacity-40",
             )}
           >
             <Mic className="w-5 h-5" />

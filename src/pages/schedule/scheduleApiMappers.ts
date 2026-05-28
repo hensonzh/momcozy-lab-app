@@ -27,7 +27,7 @@ export function apiPlanTypeToShortLabel(plan_type: string): string {
   const t = (plan_type ?? "").trim().toLowerCase();
   const map: Record<string, string> = {
     maintain: "维持奶量",
-    chase: "逐步增量",
+    chase: "追奶",
     wean: "温和离乳",
     fertility: "待产计划",
     work: "返工计划",

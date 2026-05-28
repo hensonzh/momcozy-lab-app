@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useImperativeHandle } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, ImageIcon, Loader2, Sparkles, Trash2 } from "lucide-react";
+import { X, Plus, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -37,15 +37,22 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onSubmit: (tasks: Array<{ type: TaskType; title: string; time: string }>) => void | Promise<void>;
+  onRequestOpen?: () => void;
+  onAnalyzingChange?: (isAnalyzing: boolean) => void;
 }
 
-const AddTaskDialog: React.FC<Props> = ({ open, onClose, onSubmit }) => {
+export interface AddTaskDialogHandle {
+  openUploadPicker: () => void;
+}
+
+const AddTaskDialog = React.forwardRef<AddTaskDialogHandle, Props>(({ open, onClose, onSubmit, onRequestOpen, onAnalyzingChange }, ref) => {
   const [tasks, setTasks] = useState<TaskData[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [timePickerTaskId, setTimePickerTaskId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const visionWsRef = useRef<WebSocket | null>(null);
+  const skipDefaultTaskInitRef = useRef(false);
 
   const getNextTime = (baseTime?: string) => {
     const d = new Date();
@@ -59,10 +66,25 @@ const AddTaskDialog: React.FC<Props> = ({ open, onClose, onSubmit }) => {
 
   useEffect(() => {
     if (open) {
-      setTasks([{ id: Date.now().toString(), type: "pump", title: "吸奶", time: getNextTime() }]);
+      if (skipDefaultTaskInitRef.current) {
+        skipDefaultTaskInitRef.current = false;
+      } else {
+        setTasks([{ id: Date.now().toString(), type: "pump", title: "吸奶", time: getNextTime() }]);
+      }
       setIsAnalyzing(false);
     }
   }, [open]);
+
+  useEffect(() => {
+    onAnalyzingChange?.(isAnalyzing);
+  }, [isAnalyzing, onAnalyzingChange]);
+
+  useImperativeHandle(ref, () => ({
+    openUploadPicker: () => {
+      if (isAnalyzing) return;
+      fileInputRef.current?.click();
+    },
+  }), [isAnalyzing]);
 
   useEffect(() => {
     return () => {
@@ -211,12 +233,16 @@ const AddTaskDialog: React.FC<Props> = ({ open, onClose, onSubmit }) => {
           throw new Error("未识别到可添加的任务，请尝试更清晰的截图。");
         }
         setTasks((prev) => {
-          // If there's only one default unchanged task, replace it. Otherwise append.
-          if (prev.length === 1 && prev[0].type === "pump" && prev[0].title === "吸奶") {
+          // If the dialog was closed or there's only one default unchanged task, replace it. Otherwise append.
+          if (!open || (prev.length === 1 && prev[0].type === "pump" && prev[0].title === "吸奶")) {
             return recognizedTasks;
           }
           return [...prev, ...recognizedTasks];
         });
+        if (!open) {
+          skipDefaultTaskInitRef.current = true;
+          onRequestOpen?.();
+        }
       } catch (error) {
         alert(error instanceof Error ? error.message : "截图识别失败，请稍后重试");
       } finally {
@@ -239,9 +265,17 @@ const AddTaskDialog: React.FC<Props> = ({ open, onClose, onSubmit }) => {
   const pickerTask = tasks.find((t) => t.id === timePickerTaskId) || null;
 
   return (
-    <AnimatePresence>
-      {open && (
-        <>
+    <>
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        ref={fileInputRef}
+        onChange={handleFileUpload}
+      />
+      <AnimatePresence>
+        {open && (
+          <>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -259,52 +293,21 @@ const AddTaskDialog: React.FC<Props> = ({ open, onClose, onSubmit }) => {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-border/40 shrink-0">
-              <h3 className="text-base font-bold text-foreground">添加临时任务</h3>
+              <h3 className="text-base font-bold text-foreground">添加任务</h3>
               <button onClick={onClose} className="p-1 rounded-full hover:bg-secondary transition-colors">
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
 
-            {/* Smart Add Area */}
-            <div className="px-5 py-4 shrink-0 bg-primary/5 border-b border-border/40">
-              <div className="flex items-center gap-3">
-                <div className="flex-1">
-                  <h4 className="text-sm font-bold flex items-center gap-1.5 text-foreground">
-                    <Sparkles className="w-4 h-4 text-primary" /> AI 智能识别
-                  </h4>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">上传计划表、截图，一键提取任务</p>
-                </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  ref={fileInputRef}
-                  onChange={handleFileUpload}
-                />
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isAnalyzing}
-                  variant="outline"
-                  className="h-9 rounded-xl bg-background text-[12px] font-bold border-primary/20 text-primary hover:bg-primary/10 shadow-sm"
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                      识别中...
-                    </>
-                  ) : (
-                    <>
-                      <ImageIcon className="w-3.5 h-3.5 mr-1.5" />
-                      上传截图
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-
             {/* Task List */}
             <div className="flex-1 px-5 overflow-y-auto overscroll-contain min-h-0">
               <div className="py-4 space-y-4">
+                {isAnalyzing && (
+                  <div className="flex items-center gap-2 rounded-2xl border border-primary/15 bg-primary/5 px-3 py-2 text-[12px] font-bold text-primary">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    正在识别日程截图...
+                  </div>
+                )}
                 <AnimatePresence initial={false}>
                   {tasks.map((task, index) => (
                     <motion.div
@@ -403,7 +406,7 @@ const AddTaskDialog: React.FC<Props> = ({ open, onClose, onSubmit }) => {
               <Button
                 onClick={() => {
                   void handleSubmit().catch((err: unknown) => {
-                    alert(err instanceof Error ? err.message : "添加临时任务失败，请稍后重试");
+                    alert(err instanceof Error ? err.message : "添加任务失败，请稍后重试");
                   });
                 }}
                 disabled={!isValid || isAnalyzing}
@@ -424,10 +427,13 @@ const AddTaskDialog: React.FC<Props> = ({ open, onClose, onSubmit }) => {
               }
             }}
           />
-        </>
-      )}
-    </AnimatePresence>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
-};
+});
+
+AddTaskDialog.displayName = "AddTaskDialog";
 
 export default AddTaskDialog;

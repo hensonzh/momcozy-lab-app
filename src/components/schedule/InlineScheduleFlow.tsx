@@ -264,7 +264,7 @@ const InlineScheduleFlow = forwardRef<InlineScheduleFlowHandle, Props>(({ onComp
         setLocalTasks(updatedInc);
         syncTasksToSchedule(updatedInc);
         pushMai(
-          "已确认调整！ ✅\n\n泌乳目标更新为「逐步增量」：\n• 每日增加1次排空（约每3小时一次）\n• 夜间保留至少1次\n• 已在日程中添加「16:00 下午加排」\n\n预计1-2周后看到变化，有不适随时找 Mai 💕",
+          "已确认调整！ ✅\n\n泌乳目标更新为「追奶」：\n• 每日增加1次排空（约每3小时一次）\n• 夜间保留至少1次\n• 已在日程中添加「16:00 下午加排」\n\n预计1-2周后看到变化，有不适随时找 Mai 💕",
           {
             type: "choice",
             choiceOptions: [

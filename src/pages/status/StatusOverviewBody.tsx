@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useMemo, useCallback, Suspense, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Info, Target, Droplets, Baby, Pencil, X } from "lucide-react";
+import { ChevronDown, Info, Target, Droplets, Baby, Pencil, X, Moon } from "lucide-react";
 import {
   Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Line, ComposedChart,
 } from "recharts";
 import { useVolumeUnit, formatVol, unitLabel } from "@/lib/volumeUnit";
-import MaiAvatar from "@/components/Mai/MaiAvatar";
 import type {
-  MomBabyInfoData,
   MomBabyTodayData,
   GrowthQueryData,
   PumpInfoLactationDayItem,
@@ -30,7 +28,7 @@ import {
 import momAvatar from "@/assets/mom-avatar-felt.png";
 import babyAvatar from "@/assets/baby-avatar-felt.png";
 
-/** `/v1/mom-baby/*`、`/v1/growth/*`、`/v1/pump/info/get` 已接入部分；乳房健康仍为演示占位。 */
+/** `/v1/mom-baby/*`、`/v1/growth/*`、`/v1/pump/info/get` 已接入部分；乳房健康和睡眠仍为占位模块。 */
 
 /** 母乳趋势 / 成长曲线：压缩左右与底部留白，同时保证刻度文本不被裁切 */
 const STATUS_OVERVIEW_CHART_MARGIN = { top: 8, right: 14, left: 0, bottom: 8 } as const;
@@ -127,8 +125,8 @@ const LactationTrendTooltip = ({
   return (
     <div className="rounded-lg bg-card border border-border/50 px-3 py-2 text-xs shadow-lg max-w-[220px]">
       <p className="font-semibold text-foreground mb-1">{label}</p>
-      {line(row.actualMl, "吸乳总量", "hsl(343 40% 27%)")}
-      {line(row.estimatedMl, "含亲喂估算", "hsl(343 40% 35%)")}
+      {line(row.actualMl, "吸乳总量", "hsl(var(--primary))")}
+      {line(row.estimatedMl, "含亲喂估算", "hsl(var(--primary) / 0.82)")}
       <p className="text-muted-foreground mt-0.5 border-t border-border/40 pt-1">
         参考区间：{formatVol(row.refLowMl, unit)}
         {uLabel} – {formatVol(row.refHighMl, unit)}
@@ -433,7 +431,6 @@ const StatusOverviewBody: React.FC = () => {
   const conv = useCallback((ml: number) => (isOz ? +(ml * 0.033814).toFixed(1) : ml), [isOz]);
 
   const [deliveryYmd, setDeliveryYmd] = useState<string | null>(null);
-  const [momBabyInfo, setMomBabyInfo] = useState<MomBabyInfoData | null>(null);
   const [momBabyToday, setMomBabyToday] = useState<MomBabyTodayData | null>(null);
   const [momBabyLoading, setMomBabyLoading] = useState(true);
   const [todayQueryLoading, setTodayQueryLoading] = useState(true);
@@ -475,17 +472,14 @@ const StatusOverviewBody: React.FC = () => {
         const data = await queryMomBabyInfo(DEFAULT_CHAT_USER_ID, { signal: ac.signal });
         if (cancelled) return;
         if (data.error !== 0) {
-          setMomBabyInfo(null);
           setDeliveryYmd(null);
           setMomBabyErr("未取得有效的妈妈宝宝档案信息");
           return;
         }
-        setMomBabyInfo(data);
         setDeliveryYmd(pickMomBabyDeliveryDateYmd(data));
       } catch (e: unknown) {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
-        setMomBabyInfo(null);
         setDeliveryYmd(null);
         setMomBabyErr(e instanceof Error ? e.message : "加载妈妈和宝宝信息失败");
       } finally {
@@ -740,50 +734,10 @@ const StatusOverviewBody: React.FC = () => {
         </div>
       </div>
 
-      <div className="mx-4 mb-4">
-        <div className="rounded-[24px] bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 p-4 shadow-sm relative overflow-hidden">
-          <div className="flex items-start gap-3 relative z-10">
-            <div className="w-10 h-10 rounded-full border-2 border-background shadow-sm shrink-0 bg-background overflow-hidden flex items-center justify-center">
-              <MaiAvatar emotion="happy" size="sm" animate={false} className="!w-8 !h-8" />
-            </div>
-            <div className="flex-1 space-y-3.5 pt-0.5">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-extrabold text-foreground">泌乳建议</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed font-medium whitespace-pre-wrap">
-                  {momBabyLoading
-                    ? "加载中…"
-                    : (momBabyInfo?.lactation_advice ?? "").trim() ||
-                      "暂无泌乳建议，记录吸乳数据后将由服务端生成摘要。"}
-                </p>
-              </div>
-              <div className="h-px bg-border/50" />
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-extrabold text-foreground">喂养建议</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed font-medium whitespace-pre-wrap">
-                  {momBabyLoading ? (
-                    "加载中…"
-                  ) : (momBabyInfo?.feeding_advice ?? "").trim() ? (
-                    (momBabyInfo?.feeding_advice ?? "").trim()
-                  ) : typeof babyMetrics.weightKg === "number" ? (
-                    <>同龄参考：日摄入量约 {formatVol(120 * babyMetrics.weightKg, unit)}–{formatVol(180 * babyMetrics.weightKg, unit)}{unitLabel(unit)}。按需喂养即可。</>
-                  ) : (
-                    "暂无喂养建议。录入宝宝体重后可查看结合体重的摄入参考。"
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="mx-4 mb-4 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-primary/5 border border-primary/10 p-3 flex flex-col items-center justify-center">
-          <p className="text-[11px] font-bold text-primary/80 mb-1 flex items-center gap-1"><Droplets className="w-3 h-3"/> 今日母乳产出</p>
-          <p className="text-xl font-black text-primary">
+        <div className="rounded-2xl bg-card/80 border border-border/50 p-3 flex flex-col items-center justify-center">
+          <p className="text-[11px] font-bold text-muted-foreground mb-1 flex items-center gap-1"><Droplets className="w-3 h-3"/> 今日母乳产出</p>
+          <p className="text-xl font-black text-foreground">
             {todayQueryLoading ? (
               <span className="text-muted-foreground">…</span>
             ) : todayPumpMl !== null ? (
@@ -795,7 +749,7 @@ const StatusOverviewBody: React.FC = () => {
             )}
           </p>
         </div>
-        <div className="rounded-2xl bg-secondary/30 border border-border/50 p-3 flex flex-col items-center justify-center">
+        <div className="rounded-2xl bg-card/80 border border-border/50 p-3 flex flex-col items-center justify-center">
           <p className="text-[11px] font-bold text-muted-foreground mb-1 flex items-center gap-1"><Baby className="w-3 h-3"/> 今日宝宝摄入/预估</p>
           <div className="flex items-baseline gap-1">
             <p className="text-xl font-black text-foreground">
@@ -906,17 +860,114 @@ const StatusOverviewBody: React.FC = () => {
       </div>
 
       <Expandable
+        title="宝宝成长曲线"
+        icon={<div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center"><Baby className="w-3.5 h-3.5 text-foreground" /></div>}
+      >
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center gap-2 text-[9px]">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-[2px] bg-[hsl(var(--primary))]"></div>
+              <span className="text-muted-foreground">实际测量</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-2 bg-[hsl(var(--primary))] opacity-30"></div>
+              <span className="text-muted-foreground">同龄参考区间</span>
+            </div>
+          </div>
+          <div className="flex rounded-full bg-muted/60 p-0.5 text-[9px] font-medium">
+            <button type="button" onClick={() => setGrowthCurveType("weight")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "weight" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>体重</button>
+            <button type="button" onClick={() => setGrowthCurveType("height")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "height" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>身高</button>
+          </div>
+        </div>
+        {growthHistoryLoading ? (
+          <EmptyChartHint>正在加载生长发育历史…</EmptyChartHint>
+        ) : growthChartData.length === 0 ? (
+          <EmptyChartHint>暂无成长曲线数据，录入多项测量后与同龄参考一同展示。</EmptyChartHint>
+        ) : growthCurveType === "weight" ? (
+          <div className="h-[188px] w-full min-w-0 max-w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
+                <defs>
+                  <linearGradient id="growthBandPrimary" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.15} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.35} vertical={false} />
+                <XAxis
+                  dataKey="week"
+                  ticks={growthChartWeekTicks}
+                  tick={{ fontSize: 9 }}
+                  stroke="hsl(var(--muted-foreground))"
+                  interval={0}
+                  tickMargin={6}
+                  padding={{ left: 0, right: 8 }}
+                />
+                <YAxis
+                  tick={{ fontSize: 9 }}
+                  stroke="hsl(var(--muted-foreground))"
+                  width={42}
+                  domain={growthYAxisDomains?.weight ?? [2.5, 7]}
+                  allowDecimals
+                  tickFormatter={(v) => formatGrowthChartYTick(v, "kg")}
+                />
+                <Tooltip contentStyle={{ fontSize: 11 }} />
+                <Area type="monotone" dataKey="wP75" stroke="none" fill="url(#growthBandPrimary)" name="P75参考" fillOpacity={1} />
+                <Area type="monotone" dataKey="wP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
+                <Line type="monotone" dataKey="weight" name="体重" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "hsl(var(--background))", stroke: "hsl(var(--primary))" }} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <div className="h-[188px] w-full min-w-0 max-w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
+                <defs>
+                  <linearGradient id="growthBandSecondary" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(158 55% 52%)" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="hsl(158 55% 52%)" stopOpacity={0.15} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.35} vertical={false} />
+                <XAxis
+                  dataKey="week"
+                  ticks={growthChartWeekTicks}
+                  tick={{ fontSize: 9 }}
+                  stroke="hsl(var(--muted-foreground))"
+                  interval={0}
+                  tickMargin={6}
+                  padding={{ left: 0, right: 8 }}
+                />
+                <YAxis
+                  tick={{ fontSize: 9 }}
+                  stroke="hsl(var(--muted-foreground))"
+                  width={42}
+                  domain={growthYAxisDomains?.height ?? [46, 64]}
+                  allowDecimals
+                  tickFormatter={(v) => formatGrowthChartYTick(v, "cm")}
+                />
+                <Tooltip contentStyle={{ fontSize: 11 }} />
+                <Area type="monotone" dataKey="hP75" stroke="none" fill="url(#growthBandSecondary)" name="P75参考" fillOpacity={1} />
+                <Area type="monotone" dataKey="hP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
+                <Line type="monotone" dataKey="height" name="身高" stroke="hsl(158 55% 52%)" strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "hsl(var(--background))", stroke: "hsl(158 55% 52%)" }} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </Expandable>
+
+      <Expandable
         title="母乳趋势"
         icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Target className="w-3.5 h-3.5 text-primary" /></div>}
       >
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center gap-2 text-[9px]">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-[2px] bg-[hsl(343_40%_27%)]"></div>
+              <div className="w-3 h-[2px] bg-[hsl(var(--primary))]"></div>
               <span className="text-muted-foreground">吸乳总量</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-[2px] border-b border-dashed border-[hsl(343_40%_27%)] opacity-40"></div>
+              <div className="w-3 h-[2px] border-b border-dashed border-[hsl(var(--primary))] opacity-40"></div>
               <span className="text-muted-foreground">含亲喂估算</span>
             </div>
             <div className="flex items-center gap-1">
@@ -937,13 +988,13 @@ const StatusOverviewBody: React.FC = () => {
           <div className="h-[188px] w-full min-w-0 max-w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={trendData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(340 20% 90%)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="dateKey"
                   ticks={lactationTrendDateTicks}
                   tickFormatter={formatLactationTrendDateTick}
                   tick={{ fontSize: 9 }}
-                  stroke="hsl(343 15% 50%)"
+                  stroke="hsl(var(--muted-foreground))"
                   interval={0}
                   minTickGap={8}
                   tickMargin={6}
@@ -951,7 +1002,7 @@ const StatusOverviewBody: React.FC = () => {
                 />
                 <YAxis
                   tick={{ fontSize: 9 }}
-                  stroke="hsl(343 15% 50%)"
+                  stroke="hsl(var(--muted-foreground))"
                   width={unit === "oz" ? 48 : 42}
                   domain={[0, "auto"]}
                   tickFormatter={(v) =>
@@ -994,7 +1045,7 @@ const StatusOverviewBody: React.FC = () => {
                 <Line
                   type="monotone"
                   dataKey="estimated"
-                  stroke="hsl(343 40% 27%)"
+                  stroke="hsl(var(--primary))"
                   strokeDasharray="5 5"
                   strokeWidth={1.5}
                   strokeOpacity={0.55}
@@ -1003,11 +1054,11 @@ const StatusOverviewBody: React.FC = () => {
                 <Line
                   type="monotone"
                   dataKey="actual"
-                  stroke="hsl(343 40% 27%)"
+                  stroke="hsl(var(--primary))"
                   strokeWidth={2.5}
                   dot={
                     windowSize === 7
-                      ? { r: 3, strokeWidth: 2, fill: "hsl(var(--background))", stroke: "hsl(343 40% 27%)" }
+                      ? { r: 3, strokeWidth: 2, fill: "hsl(var(--background))", stroke: "hsl(var(--primary))" }
                       : false
                   }
                   activeDot={{ r: 5 }}
@@ -1019,105 +1070,13 @@ const StatusOverviewBody: React.FC = () => {
       </Expandable>
 
       <Expandable
-        title="宝宝成长曲线"
-        icon={<div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center"><Baby className="w-3.5 h-3.5 text-foreground" /></div>}
-      >
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2 text-[9px]">
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-[2px] bg-[hsl(var(--primary))]"></div>
-              <span className="text-muted-foreground">实际测量</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-2 bg-[hsl(var(--primary))] opacity-30"></div>
-              <span className="text-muted-foreground">同龄参考区间</span>
-            </div>
-          </div>
-          <div className="flex rounded-full bg-muted/60 p-0.5 text-[9px] font-medium">
-            <button type="button" onClick={() => setGrowthCurveType("weight")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "weight" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>体重</button>
-            <button type="button" onClick={() => setGrowthCurveType("height")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "height" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>身高</button>
-          </div>
-        </div>
-        {growthHistoryLoading ? (
-          <EmptyChartHint>正在加载生长发育历史…</EmptyChartHint>
-        ) : growthChartData.length === 0 ? (
-          <EmptyChartHint>暂无成长曲线数据，录入多项测量后与同龄参考一同展示。</EmptyChartHint>
-        ) : growthCurveType === "weight" ? (
-          <div className="h-[188px] w-full min-w-0 max-w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-                <defs>
-                  <linearGradient id="growthBandPrimary" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.15} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.35} vertical={false} />
-                <XAxis
-                  dataKey="week"
-                  ticks={growthChartWeekTicks}
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(343 15% 50%)"
-                  interval={0}
-                  tickMargin={6}
-                  padding={{ left: 0, right: 8 }}
-                />
-                <YAxis
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(343 15% 50%)"
-                  width={42}
-                  domain={growthYAxisDomains?.weight ?? [2.5, 7]}
-                  allowDecimals
-                  tickFormatter={(v) => formatGrowthChartYTick(v, "kg")}
-                />
-                <Tooltip contentStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="wP75" stroke="none" fill="url(#growthBandPrimary)" name="P75参考" fillOpacity={1} />
-                <Area type="monotone" dataKey="wP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
-                <Line type="monotone" dataKey="weight" name="体重" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "hsl(var(--background))", stroke: "hsl(var(--primary))" }} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="h-[188px] w-full min-w-0 max-w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-                <defs>
-                  <linearGradient id="growthBandSecondary" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(158 55% 52%)" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="hsl(158 55% 52%)" stopOpacity={0.15} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.35} vertical={false} />
-                <XAxis
-                  dataKey="week"
-                  ticks={growthChartWeekTicks}
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(343 15% 50%)"
-                  interval={0}
-                  tickMargin={6}
-                  padding={{ left: 0, right: 8 }}
-                />
-                <YAxis
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(343 15% 50%)"
-                  width={42}
-                  domain={growthYAxisDomains?.height ?? [46, 64]}
-                  allowDecimals
-                  tickFormatter={(v) => formatGrowthChartYTick(v, "cm")}
-                />
-                <Tooltip contentStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="hP75" stroke="none" fill="url(#growthBandSecondary)" name="P75参考" fillOpacity={1} />
-                <Area type="monotone" dataKey="hP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
-                <Line type="monotone" dataKey="height" name="身高" stroke="hsl(158 55% 52%)" strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "hsl(var(--background))", stroke: "hsl(158 55% 52%)" }} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </Expandable>
-
-      <Expandable
         title="乳房健康"
         icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Info className="w-3.5 h-3.5 text-primary" /></div>}
+        summary={
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            占位模块，后续承接乳房舒适度、吸奶体验和护理节奏。
+          </p>
+        }
       >
         <Suspense fallback={<div className="h-[160px] flex items-center justify-center text-xs text-muted-foreground">加载 3D 模型…</div>}>
           <div className="flex justify-center gap-6 mb-3">
@@ -1128,6 +1087,23 @@ const StatusOverviewBody: React.FC = () => {
         <div className="flex gap-4 justify-center text-[10px] mt-2">
           <span className="text-emerald-600 font-medium">左侧：未见异常</span>
           <span className="text-red-500 font-medium">右侧：需要关注</span>
+        </div>
+      </Expandable>
+
+      <Expandable
+        title="睡眠"
+        icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Moon className="w-3.5 h-3.5 text-primary" /></div>}
+        summary={
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            占位模块，后续承接宝宝睡眠、妈妈休息和夜间照护节奏。
+          </p>
+        }
+      >
+        <div className="rounded-2xl bg-secondary/25 border border-border/40 p-3">
+          <p className="text-xs font-extrabold text-foreground">睡眠模块占位</p>
+          <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
+            后续可接入睡眠相关信息；当前不展示具体数据指标。
+          </p>
         </div>
       </Expandable>
 

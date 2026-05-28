@@ -14,8 +14,9 @@ export const DEFAULT_CHAT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAUL
 
 export const CALIBRATION_HUB_NOTICE_KEY = "calibrationHubNotice";
 
-/** 分段 TTS 首段最大字符数（Hub 自动播报与气泡手动播报共用） */
-export const HUB_AUTO_VOICE_FIRST_TTS_MAX_CHARS = 120;
+/** Hub 语音模式 Realtime 播报：每段文本的目标长度，越小首响越快但请求数越多。 */
+export const HUB_AUTO_VOICE_STREAM_SEGMENT_MAX_CHARS = 64;
+export const HUB_AUTO_VOICE_STREAM_SEGMENT_MIN_CHARS = 12;
 
 export const HUB_BOTTOM_NAV_HEIGHT = "4rem";
 export const HUB_BOTTOM_INPUT_GAP = "6px";
