@@ -125,6 +125,12 @@ const smartNextCardClass = "bg-white border-primary/35 shadow-md shadow-primary/
 const manualSourceCardClass = "bg-[hsl(42_100%_91%)] border-[hsl(35_74%_66%)]";
 const manualNextCardClass = "bg-[hsl(42_100%_88%)] border-[hsl(35_80%_58%)] shadow-md";
 const completedSourceCardClass = "bg-[hsl(344_36%_96%)] border-[hsl(344_22%_86%)]";
+const recordValueBadgeClass = "inline-flex h-5 max-w-[5.5rem] items-center rounded-md border border-border/40 bg-background px-1.5 py-0 text-[10px] font-semibold leading-none text-foreground/80 whitespace-nowrap tabular-nums";
+const completedStatusBadgeClass = "text-[10px] font-semibold leading-none text-[hsl(145_38%_34%)] bg-[hsl(145_52%_92%)] border border-[hsl(145_34%_78%)] px-1.5 py-0 rounded-md whitespace-nowrap h-5 inline-flex items-center";
+const pendingStatusBadgeClass = "text-[10px] font-semibold leading-none text-[hsl(34_64%_34%)] bg-[hsl(40_92%_91%)] border border-[hsl(38_58%_74%)] px-2 py-0.5 rounded-full whitespace-nowrap h-5 inline-flex items-center";
+const skippedStatusBadgeClass = "bg-[hsl(28_12%_92%)] text-[hsl(26_10%_42%)] text-[10px] font-semibold leading-none border-[hsl(28_10%_82%)] px-1.5 py-0 h-5";
+const smartSourceBadgeClass = "text-[10px] font-semibold leading-none bg-[hsl(344_36%_91%)] text-[hsl(344_26%_40%)] border border-[hsl(344_24%_82%)] px-2 py-0.5 rounded-md whitespace-nowrap h-5 inline-flex items-center shrink-0";
+const manualSourceBadgeClass = "text-[10px] font-semibold leading-none bg-[hsl(40_82%_89%)] text-[hsl(32_45%_34%)] border border-[hsl(36_52%_74%)] px-2 py-0.5 rounded-md whitespace-nowrap h-5 inline-flex items-center shrink-0";
 
 const normalizeTaskTimeFromApi = (raw: string) => {
   const t = (raw || "").trim();
@@ -526,6 +532,7 @@ const Schedule: React.FC = () => {
   const hasActionTasks = actionTasks.length > 0;
   const isFutureWithoutPlan = !isSelectedToday && !isSelectedPast && !hasActionTasks;
   const completedTasks = useMemo(() => actionTasks.filter((task) => task.done && !isSkipped(task)), [actionTasks]);
+  const skippedTasks = useMemo(() => actionTasks.filter(isSkipped), [actionTasks]);
   const remainingTasks = useMemo(() => actionTasks.filter((task) => !task.done), [actionTasks]);
   const nextTask = remainingTasks[0] || null;
   const [scheduleNow, setScheduleNow] = useState(() => new Date());
@@ -1198,8 +1205,10 @@ const Schedule: React.FC = () => {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <CheckCircle2 className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">今天的计划已全部完成</h3>
-              <p className="text-[13px] text-muted-foreground mt-1">任务很棒地完成了，继续保持节奏就好。</p>
+              <h3 className="text-lg font-bold text-foreground">{skippedTasks.length > 0 ? "今天的计划尚未全部完成哦" : "今天的计划已全部完成"}</h3>
+              <p className="text-[13px] text-muted-foreground mt-1">
+                {skippedTasks.length > 0 ? `顺利完成${completedTasks.length}个任务，有${skippedTasks.length}个任务被跳过` : "任务很棒地完成了，继续保持节奏就好。"}
+              </p>
             </section>
           )
         ) : isSelectedPast ? (
@@ -1270,17 +1279,17 @@ const Schedule: React.FC = () => {
                       <div className={cn("rounded-[16px] px-3 py-2.5 border shadow-sm min-w-0", completedSourceCardClass)}>
                         <div className="flex items-center justify-between gap-2 min-w-0">
                           <div className="flex items-center gap-2 min-w-0 flex-1">
-                            <span className="text-[13px] font-mono font-bold text-muted-foreground/80 shrink-0">{record.time}</span>
-                            <span className="text-[15px] tracking-wide min-w-0 truncate text-foreground/90 font-extrabold" title={resolveRecordDisplayTitle(record)}>
+                            <span className="text-[13px] font-mono font-bold text-primary/70 shrink-0">{record.time}</span>
+                            <span className="text-[15px] tracking-wide min-w-0 truncate text-foreground/80 font-bold" title={resolveRecordDisplayTitle(record)}>
                               {truncateTaskDisplay(resolveRecordDisplayTitle(record))}
                             </span>
                           </div>
                           <div className="flex items-center justify-end gap-1.5 shrink-0">
-                            <span className="inline-flex h-5 max-w-[5.5rem] items-center rounded-md border border-border/40 bg-background px-1.5 py-0 text-[10px] font-bold text-foreground/70 whitespace-nowrap tabular-nums">
+                            <span className={recordValueBadgeClass}>
                               {formatRecordVolumeDisplay(record, volUnit)}
                             </span>
-	                            <span className="text-[10px] font-bold text-primary/70 bg-primary/10 border border-primary/10 px-1.5 py-0 rounded-md whitespace-nowrap h-5 inline-flex items-center">已完成</span>
-                            <span className="text-[10px] font-bold bg-secondary/80 text-muted-foreground px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+	                            <span className={completedStatusBadgeClass}>已完成</span>
+                            <span className={manualSourceBadgeClass}>
                               手动
                             </span>
 	                            <button
@@ -1324,7 +1333,7 @@ const Schedule: React.FC = () => {
                       editingTaskId === task.id ? "overflow-x-clip overflow-y-visible" : "overflow-hidden",
                       isNext ? (isSmartTask ? smartNextCardClass : manualNextCardClass) : 
                       skipped ? "bg-secondary/20 border-transparent opacity-40 grayscale" : 
-                      isCompleted ? cn(completedSourceCardClass, "opacity-80") : 
+                      isCompleted ? completedSourceCardClass : 
                       cn(isSmartTask ? smartSourceCardClass : manualSourceCardClass, "shadow-sm"),
                       editingTaskId === task.id && "ring-2 ring-primary/30 border-primary/50 bg-card opacity-100 shadow-lg !grayscale-0"
                     )}>
@@ -1410,17 +1419,17 @@ const Schedule: React.FC = () => {
                                   onPointerDown={(e) => e.stopPropagation()}
                                 >
 	                                  {matchedRecordSummary && !skipped && (
-                                    <span className="inline-flex h-5 max-w-[5.5rem] items-center rounded-md border border-border/40 bg-background px-1.5 py-0 text-[10px] font-bold text-muted-foreground whitespace-nowrap">
-                                      <span className="min-w-0 truncate text-foreground/70">{matchedRecordSummary}</span>
+                                    <span className={recordValueBadgeClass}>
+                                      <span className="min-w-0 truncate">{matchedRecordSummary}</span>
                                     </span>
                                   )}
 	                                  {task.adjusted && !skipped && <Badge variant="outline" className="bg-background text-[10px] font-medium border-border/50 text-muted-foreground px-1.5 py-0 h-5 max-w-[7rem] truncate">{task.adjusted}</Badge>}
-                                  {skipped && <Badge variant="outline" className="bg-background text-muted-foreground text-[10px] font-medium border-border/50 px-1.5 py-0 h-5">已跳过</Badge>}
-	                                  {isCompleted && !skipped && <span className="text-[10px] font-bold text-primary/70 bg-primary/10 border border-primary/10 px-1.5 py-0 rounded-md whitespace-nowrap h-5 inline-flex items-center">已完成</span>}
+                                  {skipped && <Badge variant="outline" className={skippedStatusBadgeClass}>已跳过</Badge>}
+	                                  {isCompleted && !skipped && <span className={completedStatusBadgeClass}>已完成</span>}
 	                                </div>
 	                              )}
-	                              {isNext && <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full whitespace-nowrap">待执行</span>}
-                                <span className="text-[10px] font-bold bg-secondary/80 text-muted-foreground px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+	                              {isNext && <span className={pendingStatusBadgeClass}>待执行</span>}
+                                <span className={isSmartTask ? smartSourceBadgeClass : manualSourceBadgeClass}>
                                   {taskSourceLabel}
                                 </span>
                                 <button
