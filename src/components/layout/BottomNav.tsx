@@ -45,7 +45,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
   return (
     <nav
       className={cn(
-        "z-40 glass-panel border-t border-border/60 pb-safe",
+        "z-40 bg-card/80 backdrop-blur-xl pb-safe",
         embedded ? "relative w-full shrink-0" : "fixed bottom-0 left-0 right-0",
       )}
     >

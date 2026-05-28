@@ -596,11 +596,6 @@ const StatusOverviewBody: React.FC = () => {
     () => (momBabyToday ? mlFromApi(momBabyToday.feeding_volum) : null),
     [momBabyToday],
   );
-  const todayForecastMl = useMemo(
-    () => (momBabyToday ? mlFromApi(momBabyToday.feeding_forecast_volum) : null),
-    [momBabyToday],
-  );
-
   const [windowSize, setWindowSize] = useState<7 | 30>(7);
   const [growthCurveType, setGrowthCurveType] = useState<"weight" | "height">("weight");
 
@@ -711,71 +706,76 @@ const StatusOverviewBody: React.FC = () => {
 
   return (
     <>
-      <div className="relative mx-4 mb-4 flex items-center justify-between mt-2">
-        <div className="flex items-center gap-3">
-          <div className="relative">
+      <div className="flex flex-col pb-3">
+        <div className="order-1 relative mx-4 mt-2 mb-4 flex items-center justify-between gap-3">
+          <div className="min-w-0 flex items-center gap-3">
             <img src={momAvatar} alt="Mom" className="w-14 h-14 rounded-full border-2 border-primary/20 object-cover" />
-            <img src={babyAvatar} alt="Baby" className="w-8 h-8 rounded-full border-2 border-background object-cover absolute -bottom-2 -right-2" />
+            <div className="min-w-0">
+              <h1 className="text-base font-bold text-foreground">妈妈数字分身</h1>
+              <p className="text-[11px] text-muted-foreground">
+                {momBabyLoading ? (
+                  "正在加载妈妈信息…"
+                ) : momBabyErr ? (
+                  "妈妈档案待绑定"
+                ) : typeof postpartumWeeks === "number" ? (
+                  <>产后第 {postpartumWeeks} 周</>
+                ) : (
+                  "暂无有效分娩日期，请完善档案后重试"
+                )}
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-base font-bold text-foreground">妈妈和宝宝状态概览</h1>
-            <p className="text-[11px] text-muted-foreground">
-              {momBabyLoading ? (
-                "正在加载妈妈和宝宝信息…"
-              ) : momBabyErr ? (
-                "产后和宝宝档案待绑定"
-              ) : typeof postpartumWeeks === "number" && typeof babyAgeDays === "number" ? (
-                <>产后第 {postpartumWeeks} 周 · 宝宝已出生 {babyAgeDays} 天</>
+          <div className="shrink-0 text-right">
+            <p className="text-[10px] font-bold text-muted-foreground mb-0.5">今日母乳产出</p>
+            <p className="text-base font-black text-foreground">
+              {todayQueryLoading ? (
+                <span className="text-muted-foreground">…</span>
+              ) : todayPumpMl !== null ? (
+                <>
+                  {formatVol(todayPumpMl, unit)}<span className="text-[10px] font-bold ml-0.5">{unitLabel(unit)}</span>
+                </>
               ) : (
-                "暂无有效分娩日期，请完善档案后重试"
+                dash
               )}
             </p>
           </div>
         </div>
-      </div>
 
-      <div className="mx-4 mb-4 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-card/80 border border-border/50 p-3 flex flex-col items-center justify-center">
-          <p className="text-[11px] font-bold text-muted-foreground mb-1 flex items-center gap-1"><Droplets className="w-3 h-3"/> 今日母乳产出</p>
-          <p className="text-xl font-black text-foreground">
-            {todayQueryLoading ? (
-              <span className="text-muted-foreground">…</span>
-            ) : todayPumpMl !== null ? (
-              <>
-                {formatVol(todayPumpMl, unit)}<span className="text-[11px] font-bold ml-0.5">{unitLabel(unit)}</span>
-              </>
-            ) : (
-              dash
-            )}
-          </p>
-        </div>
-        <div className="rounded-2xl bg-card/80 border border-border/50 p-3 flex flex-col items-center justify-center">
-          <p className="text-[11px] font-bold text-muted-foreground mb-1 flex items-center gap-1"><Baby className="w-3 h-3"/> 今日宝宝摄入/预估</p>
-          <div className="flex items-baseline gap-1">
-            <p className="text-xl font-black text-foreground">
+        <div className="order-5 mx-4 mt-2 mb-4 pt-4 border-t border-border/50 flex items-center justify-between gap-3">
+          <div className="min-w-0 flex items-center gap-3">
+            <img src={babyAvatar} alt="Baby" className="w-14 h-14 rounded-full border-2 border-primary/20 object-cover" />
+            <div className="min-w-0">
+              <h2 className="text-base font-bold text-foreground">宝宝数字分身</h2>
+              <p className="text-[11px] text-muted-foreground">
+                {momBabyLoading ? (
+                  "正在加载宝宝信息…"
+                ) : momBabyErr ? (
+                  "宝宝档案待绑定"
+                ) : typeof babyAgeDays === "number" ? (
+                  <>宝宝已出生 {babyAgeDays} 天</>
+                ) : (
+                  "暂无有效分娩日期，请完善档案后重试"
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="shrink-0 text-right">
+            <p className="text-[10px] font-bold text-muted-foreground mb-0.5">今日宝宝摄入（预估）</p>
+            <p className="text-base font-black text-foreground">
               {todayQueryLoading ? (
                 <span className="text-muted-foreground">…</span>
               ) : todayFeedMl !== null ? (
-                formatVol(todayFeedMl, unit)
-              ) : (
-                dash
-              )}
-            </p>
-            <p className="text-[10px] font-medium text-muted-foreground">
-              /{" "}
-              {todayQueryLoading ? (
-                "…"
-              ) : todayForecastMl !== null ? (
-                `${formatVol(todayForecastMl, unit)}${unitLabel(unit)}`
+                <>
+                  {formatVol(todayFeedMl, unit)}<span className="text-[10px] font-bold ml-0.5">{unitLabel(unit)}</span>
+                </>
               ) : (
                 dash
               )}
             </p>
           </div>
         </div>
-      </div>
 
-      <div className="mx-4 mb-4">
+      <div className="order-7 mx-4 mb-4">
         <div className="flex items-center justify-between mb-2 px-1">
           <h2 className="text-sm font-bold text-foreground">宝宝成长记录</h2>
           <button
@@ -861,6 +861,8 @@ const StatusOverviewBody: React.FC = () => {
 
       <Expandable
         title="宝宝成长曲线"
+        className="order-8"
+        defaultOpen
         icon={<div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center"><Baby className="w-3.5 h-3.5 text-foreground" /></div>}
       >
         <div className="flex justify-between items-center mb-2">
@@ -958,6 +960,8 @@ const StatusOverviewBody: React.FC = () => {
 
       <Expandable
         title="母乳趋势"
+        className="order-3"
+        defaultOpen
         icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Target className="w-3.5 h-3.5 text-primary" /></div>}
       >
         <div className="flex justify-between items-center mb-2">
@@ -1071,6 +1075,8 @@ const StatusOverviewBody: React.FC = () => {
 
       <Expandable
         title="乳房健康"
+        className="order-4"
+        defaultOpen={false}
         icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Info className="w-3.5 h-3.5 text-primary" /></div>}
         summary={
           <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -1091,21 +1097,24 @@ const StatusOverviewBody: React.FC = () => {
       </Expandable>
 
       <Expandable
-        title="睡眠"
+        title="宝宝睡眠"
+        className="order-9"
+        defaultOpen={false}
         icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Moon className="w-3.5 h-3.5 text-primary" /></div>}
         summary={
           <p className="text-[11px] text-muted-foreground leading-relaxed">
-            占位模块，后续承接宝宝睡眠、妈妈休息和夜间照护节奏。
+            占位模块，后续承接宝宝睡眠和夜间照护节奏。
           </p>
         }
       >
         <div className="rounded-2xl bg-secondary/25 border border-border/40 p-3">
-          <p className="text-xs font-extrabold text-foreground">睡眠模块占位</p>
+          <p className="text-xs font-extrabold text-foreground">宝宝睡眠占位</p>
           <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
-            后续可接入睡眠相关信息；当前不展示具体数据指标。
+            后续可接入宝宝睡眠相关信息；当前不展示具体数据指标。
           </p>
         </div>
       </Expandable>
+      </div>
 
       <AnimatePresence>
         {isGrowthDrawerOpen && (

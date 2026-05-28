@@ -1,4 +1,5 @@
 import { cloneElement, isValidElement, type FC, type MouseEvent, type ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
@@ -6,6 +7,7 @@ import { ChevronRight, ShoppingBag } from "lucide-react";
 import { ChatMarkdownImg } from "@/components/chat/ChatMarkdownImage";
 import { resolveChatAssetUrl } from "@/lib/chatAssetUrl";
 import { resolveHttpRequestUrl } from "@/lib/http";
+import { navigateToMediaViewer, resolveViewerKindFromDocLink } from "@/lib/openMediaViewer";
 import { cn } from "@/lib/utils";
 
 export type ChatMarkdownVariant = "user" | "assistant" | "muted";
@@ -228,6 +230,10 @@ function isHospitalBagCartHref(href: string): boolean {
   }
 }
 
+export function resolveChatMarkdownMediaViewerKind(href: string | undefined) {
+  return resolveViewerKindFromDocLink(href, undefined);
+}
+
 function extractHospitalBagCartPreviewHrefs(markdown: string): string[] {
   const hrefs = new Set<string>();
   const markdownLinkPattern = /\[[^\]]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
@@ -242,6 +248,35 @@ function extractHospitalBagCartPreviewHrefs(markdown: string): string[] {
     if (href && isHospitalBagCartHref(href)) hrefs.add(href);
   }
   return Array.from(hrefs).slice(0, 1);
+}
+
+function isStandaloneHospitalBagCartLinkLine(line: string): boolean {
+  const trimmed = line.trim();
+  if (!trimmed) return false;
+  const markdownLink = trimmed.match(/^(?:[*_]{1,3})?\s*\[[^\]]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)\s*(?:[*_]{1,3})?$/);
+  if (markdownLink?.[1] && isHospitalBagCartHref(markdownLink[1])) return true;
+  const bareLink = trimmed.match(/^(?:[*_]{1,3})?\s*(https?:\/\/[^\s)]+|\/hospital-bag-cart(?:[?#][^\s)]*)?)\s*(?:[*_]{1,3})?$/);
+  return Boolean(bareLink?.[1] && isHospitalBagCartHref(bareLink[1]));
+}
+
+export function stripHospitalBagCartPreviewLinks(markdown: string): string {
+  const withoutStandaloneLines = markdown
+    .split(/\r?\n/)
+    .filter((line) => !isStandaloneHospitalBagCartLinkLine(line))
+    .join("\n");
+
+  const withoutMarkdownLinks = withoutStandaloneLines.replace(
+    /(?:[*_]{1,3})?\s*\[[^\]]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)\s*(?:[*_]{1,3})?/g,
+    (full, href: string) => (isHospitalBagCartHref(href) ? "" : full),
+  );
+
+  return withoutMarkdownLinks
+    .replace(/(?:https?:\/\/[^\s)]+|\/hospital-bag-cart(?:[?#][^\s)]*)?)/g, (full) =>
+      isHospitalBagCartHref(full) ? "" : full,
+    )
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function requestOpenHospitalBagCart(event: MouseEvent<HTMLAnchorElement>, href: string): void {
@@ -294,93 +329,108 @@ export const ChatMarkdown: FC<ChatMarkdownProps> = ({
   variant = "assistant",
   className,
 }) => {
-  if (!markdown.trim()) return null;
-  const markdownForRender = normalizeMarkdownLineBreaks(linkifyBareSkillAssetUrlsForMarkdown(markdown));
-  const hospitalBagCartPreviewHrefs = extractHospitalBagCartPreviewHrefs(markdown);
+  const navigate = useNavigate();
+  const markdownForPreview = normalizeMarkdownLineBreaks(linkifyBareSkillAssetUrlsForMarkdown(markdown));
+  const hospitalBagCartPreviewHrefs = extractHospitalBagCartPreviewHrefs(markdownForPreview);
+  const markdownForRender = stripHospitalBagCartPreviewLinks(markdownForPreview);
+  if (!markdownForRender.trim() && hospitalBagCartPreviewHrefs.length === 0) return null;
 
   return (
     <div className={cn("overflow-x-auto text-[13px] leading-relaxed", markdownBubbleProseClass(variant), className)}>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkBreaks]}
-        components={{
-          a: ({ children, href, ...props }) => {
-            if (isProbablyImageHref(href)) {
+      {markdownForRender.trim() ? (
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm, remarkBreaks]}
+          components={{
+            a: ({ children, href, ...props }) => {
+              if (isProbablyImageHref(href)) {
+                return (
+                  <ChatMarkdownImg
+                    resolvedSrc={resolveChatMarkdownImageSrc(href)}
+                    alt={linkLabelForImageAlt(children, href ?? "")}
+                    className="block my-1"
+                  />
+                );
+              }
+              const viewerKind = resolveChatMarkdownMediaViewerKind(href);
+              const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+                requestOpenHospitalBagCart(event, href ?? "");
+                if (event.defaultPrevented || !viewerKind || !href?.trim()) return;
+                event.preventDefault();
+                navigateToMediaViewer(navigate, {
+                  url: href,
+                  kind: viewerKind,
+                  title: reactChildrenToPlainText(children).trim() || undefined,
+                });
+              };
               return (
-                <ChatMarkdownImg
-                  resolvedSrc={resolveChatMarkdownImageSrc(href)}
-                  alt={linkLabelForImageAlt(children, href ?? "")}
-                  className="block my-1"
-                />
-              );
-            }
-            return (
-              <a
-                href={resolveChatMarkdownHref(href)}
-                {...props}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(event) => requestOpenHospitalBagCart(event, href ?? "")}
-              >
-                {children}
-              </a>
-            );
-          },
-          img: ({ alt, className: imgClass, src }) => (
-            <ChatMarkdownImg resolvedSrc={resolveChatMarkdownImageSrc(src)} alt={alt} className={imgClass} />
-          ),
-          br: () => <ChatMarkdownLineBreak variant={variant} />,
-          table: ({ children, ...props }) => {
-            const phaseCardTable = hasBlankTableHeader(children);
-            return (
-            <div
-              className={cn(
-                "not-prose my-3 -mx-0.5 max-w-full overflow-x-auto rounded-xl border border-[#ead6dc] bg-[#fff8fa] shadow-[0_8px_20px_rgba(137,72,98,0.06)]",
-                phaseCardTable && "birth-journey-card-table-wrap border-0 bg-transparent shadow-none",
-              )}
-            >
-              <table
-                {...props}
-                className={cn(
-                  "min-w-full w-full table-fixed border-collapse text-left text-[13px] leading-relaxed text-[#3f2732]",
-                  phaseCardTable && "birth-journey-card-table",
-                )}
-              >
-                {children}
-              </table>
-            </div>
-            );
-          },
-          thead: ({ children, ...props }) => {
-            const headerText = reactChildrenToPlainText(children).trim();
-            if (!headerText) {
-              return (
-                <thead {...props} className="birth-journey-empty-head">
+                <a
+                  href={resolveChatMarkdownHref(href)}
+                  {...props}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleClick}
+                >
                   {children}
-                </thead>
+                </a>
               );
-            }
-            return <thead {...props}>{children}</thead>;
-          },
-          th: ({ children, ...props }) => (
-            <th
-              {...props}
-              className="border-b border-[#e5cfd6] bg-[#fff0f4] px-3 py-2.5 align-bottom font-bold leading-snug text-[#4a2635]"
-            >
-              {renderMarkdownLineBreakTokens(children, variant)}
-            </th>
-          ),
-          td: ({ children, ...props }) => (
-            <td
-              {...props}
-              className="border-t border-[#efdde3] bg-[#fff8fa] px-3 py-3 align-top leading-relaxed text-[#3f2732] first:bg-[#fff0f4]"
-            >
-              {renderMarkdownLineBreakTokens(children, variant)}
-            </td>
-          ),
-        }}
-      >
-        {markdownForRender}
-      </ReactMarkdown>
+            },
+            img: ({ alt, className: imgClass, src }) => (
+              <ChatMarkdownImg resolvedSrc={resolveChatMarkdownImageSrc(src)} alt={alt} className={imgClass} />
+            ),
+            br: () => <ChatMarkdownLineBreak variant={variant} />,
+            table: ({ children, ...props }) => {
+              const phaseCardTable = hasBlankTableHeader(children);
+              return (
+                <div
+                  className={cn(
+                    "not-prose my-3 -mx-0.5 max-w-full overflow-x-auto rounded-xl border border-[#ead6dc] bg-[#fff8fa] shadow-[0_8px_20px_rgba(137,72,98,0.06)]",
+                    phaseCardTable && "birth-journey-card-table-wrap border-0 bg-transparent shadow-none",
+                  )}
+                >
+                  <table
+                    {...props}
+                    className={cn(
+                      "min-w-full w-full table-fixed border-collapse text-left text-[13px] leading-relaxed text-[#3f2732]",
+                      phaseCardTable && "birth-journey-card-table",
+                    )}
+                  >
+                    {children}
+                  </table>
+                </div>
+              );
+            },
+            thead: ({ children, ...props }) => {
+              const headerText = reactChildrenToPlainText(children).trim();
+              if (!headerText) {
+                return (
+                  <thead {...props} className="birth-journey-empty-head">
+                    {children}
+                  </thead>
+                );
+              }
+              return <thead {...props}>{children}</thead>;
+            },
+            th: ({ children, ...props }) => (
+              <th
+                {...props}
+                className="border-b border-[#e5cfd6] bg-[#fff0f4] px-3 py-2.5 align-bottom font-bold leading-snug text-[#4a2635]"
+              >
+                {renderMarkdownLineBreakTokens(children, variant)}
+              </th>
+            ),
+            td: ({ children, ...props }) => (
+              <td
+                {...props}
+                className="border-t border-[#efdde3] bg-[#fff8fa] px-3 py-3 align-top leading-relaxed text-[#3f2732] first:bg-[#fff0f4]"
+              >
+                {renderMarkdownLineBreakTokens(children, variant)}
+              </td>
+            ),
+          }}
+        >
+          {markdownForRender}
+        </ReactMarkdown>
+      ) : null}
       {hospitalBagCartPreviewHrefs.map((href) => (
         <HospitalBagCartLinkPreview key={href} href={href} />
       ))}

@@ -2,6 +2,7 @@ import type { NavigateFunction } from "react-router-dom";
 import { toast } from "sonner";
 import type { DocLinkItem, DocLinkKind } from "@/types/docLink";
 import { resolveChatAssetUrl } from "@/lib/chatAssetUrl";
+import { resolveHttpRequestUrl } from "@/lib/http";
 
 /** 媒体查看页路由 state（pdf / video / image） */
 export type MediaViewerKind = "pdf" | "video" | "image";
@@ -13,13 +14,20 @@ export interface MediaViewerNavigateState {
   title?: string;
 }
 
+export function resolveMediaViewerUrl(url: string): string {
+  const raw = url.trim();
+  if (!raw) return raw;
+  if (raw.startsWith("/skill-assets/")) return resolveHttpRequestUrl(raw);
+  return resolveChatAssetUrl(raw);
+}
+
 /**
  * 跳转到应用内全屏媒体查看页。
  * @param navigate React Router 的 navigate
  * @param state 资源 URL、类型与可选标题
  */
 export function navigateToMediaViewer(navigate: NavigateFunction, state: MediaViewerNavigateState): void {
-  navigate("/media-viewer", { state: { ...state, url: resolveChatAssetUrl(state.url) } });
+  navigate("/media-viewer", { state: { ...state, url: resolveMediaViewerUrl(state.url) } });
 }
 
 /**
@@ -32,9 +40,9 @@ export function resolveViewerKindFromDocLink(url: string | undefined, kind?: Doc
   if (!url?.trim()) return null;
   if (kind === "pdf" || kind === "video") return kind;
   if (kind === "other") return null;
-  const path = url.split("?")[0].toLowerCase();
+  const path = url.split(/[?#]/)[0].toLowerCase();
   if (path.endsWith(".pdf")) return "pdf";
-  if (/\.(mp4|webm|ogv|m4v)$/.test(path)) return "video";
+  if (/\.(mp4|webm|ogv|m4v|mov)$/.test(path)) return "video";
   if (/\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)$/.test(path)) return "image";
   return null;
 }
