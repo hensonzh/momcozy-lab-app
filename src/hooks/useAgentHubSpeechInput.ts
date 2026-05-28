@@ -9,22 +9,26 @@ const SPEECH_CHAR_REVEAL_MS = 52;
 const SPEECH_CATCH_UP_THRESHOLD = 18;
 
 /**
- * Agent Hub 主输入麦克风：与专注模式共用 {@link runFocusVoiceSttSession}（`VITE_FOCUS_STT_PROVIDER` 选讯飞或分片）。
+ * Agent Hub 主输入麦克风：与专注模式共用 {@link runFocusVoiceSttSession}。
  *
  * @param setInput 更新输入框
  * @param options.userId 与 chat `user` 一致，供在线 STT 鉴权
- * @returns speechListening、onMicClick、stopSpeech（发送前可传 discardSttResult 丢弃转写收尾写入）
+ * @returns speechListening、startSpeech、stopSpeech（发送前可传 discardSttResult 丢弃转写收尾写入）
  */
 export function useAgentHubSpeechInput(
   setInput: (value: string) => void,
   options: { userId: string },
 ): {
   speechListening: boolean;
-  onMicClick: () => Promise<void>;
+  startSpeech: () => Promise<void>;
   stopSpeech: (opts?: { discardSttResult?: boolean }) => Promise<void>;
 } {
   const [speechListening, setSpeechListening] = useState(false);
-  const pipelineAbortRef = useRef<AbortController | null>(null);
+  const pipelineControlRef = useRef<{
+    cancel: AbortController;
+    finish: AbortController;
+  } | null>(null);
+  const recordingActiveRef = useRef(false);
   /** 每次新开一轮听写递增；发送时递增以丢弃尚未完成的 setInput，避免抢在清空之后又写回输入框 */
   const sttResultEpochRef = useRef(0);
 
@@ -87,15 +91,21 @@ export function useAgentHubSpeechInput(
     [setInput],
   );
 
-  const stopPipelineStt = useCallback(() => {
-    if (pipelineAbortRef.current) {
-      pipelineAbortRef.current.abort();
-      pipelineAbortRef.current = null;
+  const stopPipelineStt = useCallback((mode: "finish" | "discard" = "finish") => {
+    recordingActiveRef.current = false;
+    const control = pipelineControlRef.current;
+    if (control) {
+      if (mode === "discard") {
+        control.cancel.abort();
+      } else {
+        control.finish.abort();
+      }
     }
     setSpeechListening(false);
   }, []);
 
   const stopSpeech = useCallback(async (opts?: { discardSttResult?: boolean }) => {
+    const mode = opts?.discardSttResult ? "discard" : "finish";
     if (opts?.discardSttResult) {
       sttResultEpochRef.current += 1;
       if (speechTypewriterRafRef.current != null) {
@@ -103,7 +113,7 @@ export function useAgentHubSpeechInput(
         speechTypewriterRafRef.current = null;
       }
     }
-    stopPipelineStt();
+    stopPipelineStt(mode);
   }, [stopPipelineStt]);
 
   const startPipelineStt = useCallback(
@@ -113,10 +123,14 @@ export function useAgentHubSpeechInput(
         return;
       }
 
-      pipelineAbortRef.current?.abort();
+      pipelineControlRef.current?.cancel.abort();
       const sessionEpoch = ++sttResultEpochRef.current;
-      const ac = new AbortController();
-      pipelineAbortRef.current = ac;
+      const control = {
+        cancel: new AbortController(),
+        finish: new AbortController(),
+      };
+      pipelineControlRef.current = control;
+      recordingActiveRef.current = true;
 
       resetSpeechDisplaySession("");
 
@@ -124,7 +138,8 @@ export function useAgentHubSpeechInput(
       try {
         const text = await runFocusVoiceSttSession({
           userId,
-          signal: ac.signal,
+          signal: control.cancel.signal,
+          finishSignal: control.finish.signal,
           setInterimText: (interim) => {
             if (sessionEpoch !== sttResultEpochRef.current) return;
             pushSpeechTarget(interim);
@@ -142,18 +157,18 @@ export function useAgentHubSpeechInput(
         log("[AgentHub STT] 转写异常", e instanceof Error ? e.message : e);
         toast.error(e instanceof Error ? e.message : "语音转写失败");
       } finally {
-        pipelineAbortRef.current = null;
-        setSpeechListening(false);
+        if (pipelineControlRef.current === control) {
+          pipelineControlRef.current = null;
+          recordingActiveRef.current = false;
+          setSpeechListening(false);
+        }
       }
     },
     [pushSpeechTarget, resetSpeechDisplaySession, setInput],
   );
 
-  const onMicClick = useCallback(async () => {
-    if (speechListening) {
-      await stopSpeech();
-      return;
-    }
+  const startSpeech = useCallback(async () => {
+    if (recordingActiveRef.current) return;
     setInput("");
     const uid = options.userId.trim();
     if (!uid) {
@@ -161,12 +176,13 @@ export function useAgentHubSpeechInput(
       return;
     }
     void startPipelineStt(uid);
-  }, [options.userId, speechListening, startPipelineStt, stopSpeech, setInput]);
+  }, [options.userId, startPipelineStt, setInput]);
 
   useEffect(() => {
     return () => {
-      pipelineAbortRef.current?.abort();
-      pipelineAbortRef.current = null;
+      pipelineControlRef.current?.cancel.abort();
+      pipelineControlRef.current = null;
+      recordingActiveRef.current = false;
       if (speechTypewriterRafRef.current != null) {
         cancelAnimationFrame(speechTypewriterRafRef.current);
         speechTypewriterRafRef.current = null;
@@ -174,5 +190,5 @@ export function useAgentHubSpeechInput(
     };
   }, []);
 
-  return { speechListening, onMicClick, stopSpeech };
+  return { speechListening, startSpeech, stopSpeech };
 }

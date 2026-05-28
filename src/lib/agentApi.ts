@@ -6,11 +6,10 @@ import {
   apiRequest,
   apiRequestRaw,
   appendQueryParams,
-  getTtsStream,
+  getBinaryStreamResponse,
   resolveHttpRequestUrl,
   uploadMultipart,
-  type GetTtsStreamOptions,
-  type GetTtsStreamResult,
+  type GetBinaryStreamOptions,
 } from "./http";
 import { log } from "./logger";
 import { resolveChatAssetUrl } from "@/lib/chatAssetUrl";
@@ -69,8 +68,10 @@ export function workflowsTasksStopPath(conversationId: string): string {
 
 /** 集中维护的路径，便于联调替换 */
 export const API_PATHS = {
+  AG_UI_PREWARM: `/api/ag-ui-prewarm`,
   FILES_UPLOAD: `${API_V1_PREFIX}/files/upload`,
-  TTS_STREAM: `${API_V1_PREFIX}/tts-stream`,
+  REALTIME_VOICE_STREAM: `${API_V1_PREFIX}/realtime-voice-stream`,
+  REALTIME_VOICE_SESSION_WS: `${API_V1_PREFIX}/realtime-voice-session`,
   CHAT_MESSAGE_HISTORY: `${API_V1_PREFIX}/chat-message/history`,
   PUMP_THRESHOLD_UPLOAD: `${API_V1_PREFIX}/pump/threshold/upload`,
   PUMP_THRESHOLD_GET: `${API_V1_PREFIX}/pump/threshold/get`,
@@ -169,19 +170,38 @@ export async function transcribeSpeechAudioChunk(
 }
 
 /**
- * TTS：GET 流式音频，query：`user_id`、`text`。
+ * Realtime 语音：GET PCM16 音频流，query：`user_id`、`text`。
  * @param userId 用户 id
- * @param text 待合成文本
- * @param opts 鉴权与其它选项
- * @returns Blob 与可选文件名
+ * @param text 待实时朗读文本
+ * @param opts 鉴权与中断信号
+ * @returns 原始 Response；调用方用 `body.getReader()` 边收边播
  */
-export async function fetchTtsAudio(
+export async function fetchRealtimeVoicePcmStream(
   userId: string,
   text: string,
-  opts?: Omit<GetTtsStreamOptions, "params">,
-): Promise<GetTtsStreamResult> {
-  const params: GetTtsStreamOptions["params"] = { user_id: userId, text };
-  return getTtsStream(API_PATHS.TTS_STREAM, { ...opts, params });
+  opts?: Omit<GetBinaryStreamOptions, "params">,
+): Promise<Response> {
+  const params: GetBinaryStreamOptions["params"] = { user_id: userId, text };
+  return getBinaryStreamResponse(API_PATHS.REALTIME_VOICE_STREAM, {
+    ...opts,
+    params,
+    headers: {
+      Accept: "audio/pcm",
+      ...opts?.headers,
+    },
+  });
+}
+
+export function resolveRealtimeVoiceSessionWebSocketUrl(userId: string, raw?: string): string {
+  const authToken =
+    (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_TOKEN as string | undefined)?.trim()) || "";
+  const base = raw?.trim() || API_PATHS.REALTIME_VOICE_SESSION_WS;
+  const resolved = isWebSocketUrl(base) ? base : resolveHttpRequestUrl(base);
+  const wsUrl = enforceSecureWebSocketInSecureContext(httpLikeUrlToWebSocketUrl(resolved));
+  return appendQueryParams(wsUrl, {
+    token: authToken || undefined,
+    user_id: userId || undefined,
+  });
 }
 
 // ─── 对话 ────────────────────────────────────────────────────────────
@@ -384,6 +404,8 @@ function normalizeAgUiWsUrl(raw: string): string {
 
 const AG_UI_WS_URL = normalizeAgUiWsUrl(ENV_AG_UI_WS_URL || ENV_API_BASE_URL || AG_UI_WS_PATH);
 let agUiRunCount = 0;
+const AG_UI_PREWARM_MESSAGE =
+  "这是一次隐藏的新会话预热。请只回复“我在。”，不要调用工具，不要生成建议、表单、卡片或面向用户的内容。下一条用户消息才是真实对话。";
 
 export function resolveAgUiWebSocketRequestUrl(raw?: string): string {
   const normalized = normalizeAgUiWsUrl(raw?.trim() || AG_UI_WS_URL);
@@ -454,6 +476,38 @@ export interface PostAgUiWebSocketStreamParams {
   onDone?: () => void;
   onError?: (err: Error) => void;
   parseJSON?: boolean;
+}
+
+export interface AgUiPrewarmResponse {
+  status: "warmed" | "already_warm" | "stale" | "no_response_id" | "disabled" | string;
+  conversation_id?: string;
+  thread_id?: string;
+  run_id?: string;
+  response_id?: string | null;
+  session_state?: unknown;
+}
+
+export async function prewarmAgUiThread(
+  threadId: string,
+  opts?: {
+    locale?: string;
+    forwardedProps?: Record<string, unknown>;
+    signal?: AbortSignal;
+  },
+): Promise<AgUiPrewarmResponse> {
+  const payload = buildAgUiPayload(AG_UI_PREWARM_MESSAGE, [], {
+    threadId,
+    locale: opts?.locale,
+    forwardedProps: {
+      ...(opts?.forwardedProps ?? {}),
+      prewarm: true,
+    },
+  });
+  return apiRequestRaw<AgUiPrewarmResponse>(API_PATHS.AG_UI_PREWARM, {
+    method: "POST",
+    body: payload,
+    signal: opts?.signal,
+  });
 }
 
 /**

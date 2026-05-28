@@ -6,34 +6,34 @@
 
 @layer base {
   :root {
-    /* Burgundy-based warm palette */
-    --background: 30 25% 97%;
-    --foreground: 343 35% 18%;
+    /* Rose-cocoa warm palette */
+    --background: 23 50% 97%;
+    --foreground: 325 18% 19%;
 
-    --card: 30 30% 99%;
-    --card-foreground: 343 35% 18%;
+    --card: 24 55% 98%;
+    --card-foreground: 325 18% 19%;
 
-    --popover: 30 30% 99%;
-    --popover-foreground: 343 35% 18%;
+    --popover: 24 55% 98%;
+    --popover-foreground: 325 18% 19%;
 
-    --primary: 343 40% 27%;
-    --primary-foreground: 30 30% 97%;
+    --primary: 346 29% 52%;
+    --primary-foreground: 23 50% 97%;
 
-    --secondary: 340 25% 92%;
-    --secondary-foreground: 343 40% 27%;
+    --secondary: 348 31% 90%;
+    --secondary-foreground: 325 18% 23%;
 
-    --muted: 340 15% 94%;
-    --muted-foreground: 343 15% 50%;
+    --muted: 24 28% 94%;
+    --muted-foreground: 330 12% 46%;
 
-    --accent: 340 35% 85%;
-    --accent-foreground: 343 40% 20%;
+    --accent: 26 58% 67%;
+    --accent-foreground: 325 18% 19%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 340 20% 90%;
-    --input: 340 20% 88%;
-    --ring: 343 40% 27%;
+    --border: 348 22% 86%;
+    --input: 348 22% 86%;
+    --ring: 346 29% 52%;
 
     --radius: 1rem;
 
@@ -41,55 +41,55 @@
     --top-safe: max(env(safe-area-inset-top, 0px), 20px);
 
     /* Mai specific tokens */
-    --mai-felt: 343 40% 27%;
-    --mai-blush: 350 60% 80%;
-    --mai-warm: 25 80% 70%;
-    --mai-glow: 340 45% 65%;
+    --mai-felt: 346 29% 52%;
+    --mai-blush: 348 31% 90%;
+    --mai-warm: 26 58% 67%;
+    --mai-glow: 346 38% 68%;
 
     /* Sidebar */
-    --sidebar-background: 30 25% 96%;
-    --sidebar-foreground: 343 35% 18%;
-    --sidebar-primary: 343 40% 27%;
-    --sidebar-primary-foreground: 30 30% 97%;
-    --sidebar-accent: 340 25% 92%;
-    --sidebar-accent-foreground: 343 40% 20%;
-    --sidebar-border: 340 20% 90%;
-    --sidebar-ring: 343 40% 27%;
+    --sidebar-background: 23 45% 96%;
+    --sidebar-foreground: 325 18% 19%;
+    --sidebar-primary: 346 29% 52%;
+    --sidebar-primary-foreground: 23 50% 97%;
+    --sidebar-accent: 348 31% 90%;
+    --sidebar-accent-foreground: 325 18% 19%;
+    --sidebar-border: 348 22% 86%;
+    --sidebar-ring: 346 29% 52%;
 
     /* Gradients */
-    --gradient-mai: linear-gradient(135deg, hsl(343 40% 27%), hsl(340 45% 40%));
-    --gradient-warm: linear-gradient(180deg, hsl(30 25% 97%), hsl(340 25% 95%));
-    --gradient-berry: linear-gradient(135deg, hsl(340 35% 85%), hsl(350 60% 80%));
+    --gradient-mai: linear-gradient(135deg, hsl(346 29% 52%), hsl(346 32% 42%));
+    --gradient-warm: linear-gradient(180deg, hsl(23 50% 97%), hsl(348 31% 94%));
+    --gradient-berry: linear-gradient(135deg, hsl(348 31% 90%), hsl(346 38% 68%));
   }
 
   .dark {
-    --background: 343 35% 8%;
-    --foreground: 30 25% 95%;
+    --background: 325 18% 9%;
+    --foreground: 23 45% 94%;
 
-    --card: 343 30% 12%;
-    --card-foreground: 30 25% 95%;
+    --card: 325 16% 12%;
+    --card-foreground: 23 45% 94%;
 
-    --popover: 343 30% 12%;
-    --popover-foreground: 30 25% 95%;
+    --popover: 325 16% 12%;
+    --popover-foreground: 23 45% 94%;
 
-    --primary: 340 45% 65%;
-    --primary-foreground: 343 35% 8%;
+    --primary: 346 38% 68%;
+    --primary-foreground: 325 18% 9%;
 
-    --secondary: 343 25% 18%;
-    --secondary-foreground: 30 25% 95%;
+    --secondary: 325 14% 18%;
+    --secondary-foreground: 23 45% 94%;
 
-    --muted: 343 20% 16%;
-    --muted-foreground: 340 15% 60%;
+    --muted: 325 12% 16%;
+    --muted-foreground: 330 10% 62%;
 
-    --accent: 343 25% 22%;
-    --accent-foreground: 30 25% 95%;
+    --accent: 26 42% 44%;
+    --accent-foreground: 23 45% 94%;
 
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 343 20% 18%;
-    --input: 343 20% 18%;
-    --ring: 340 45% 65%;
+    --border: 325 12% 20%;
+    --input: 325 12% 20%;
+    --ring: 346 38% 68%;
   }
 }
 
@@ -108,8 +108,8 @@
 @layer utilities {
   .felt-texture {
     background-image: 
-      radial-gradient(ellipse at 20% 30%, hsl(350 60% 80% / 0.3) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, hsl(25 80% 70% / 0.2) 0%, transparent 50%);
+      radial-gradient(ellipse at 20% 30%, hsl(var(--mai-blush) / 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsl(var(--mai-warm) / 0.2) 0%, transparent 50%);
     filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='felt'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3C/svg%3E#felt");
   }
 
@@ -119,12 +119,12 @@
 
   .mai-shadow {
     box-shadow: 
-      0 4px 20px -4px hsl(343 40% 27% / 0.15),
-      0 2px 8px -2px hsl(343 40% 27% / 0.1);
+      0 4px 20px -4px hsl(var(--mai-felt) / 0.15),
+      0 2px 8px -2px hsl(var(--mai-felt) / 0.1);
   }
 
   .mai-glow {
-    box-shadow: 0 0 20px 4px hsl(340 45% 65% / 0.2);
+    box-shadow: 0 0 20px 4px hsl(var(--mai-glow) / 0.2);
   }
 }
 
@@ -1296,8 +1296,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 12px 2px hsl(340 45% 65% / 0.2); }
-  50% { box-shadow: 0 0 24px 6px hsl(340 45% 65% / 0.35); }
+  0%, 100% { box-shadow: 0 0 12px 2px hsl(var(--mai-glow) / 0.2); }
+  50% { box-shadow: 0 0 24px 6px hsl(var(--mai-glow) / 0.35); }
 }
 
 @keyframes flow {

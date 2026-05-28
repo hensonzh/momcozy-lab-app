@@ -166,12 +166,12 @@ function markdownBubbleProseClass(variant: ChatMarkdownVariant): string {
   if (variant === "user") {
     return cn(
       compact,
-      "text-primary-foreground",
-      "[&_a]:text-primary-foreground/90 [&_strong]:text-primary-foreground",
-      "[&_code]:bg-primary-foreground/15 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-[0.9em]",
-      "[&_pre]:bg-primary-foreground/10 [&_pre]:p-2 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:text-[12px]",
-      "[&_blockquote]:border-primary-foreground/40",
-      "[&_th]:border-primary-foreground/30 [&_td]:border-primary-foreground/20",
+      "text-inherit",
+      "[&_a]:text-inherit [&_strong]:text-inherit",
+      "[&_code]:bg-black/5 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-[0.9em]",
+      "[&_pre]:bg-black/5 [&_pre]:p-2 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:text-[12px]",
+      "[&_blockquote]:border-black/20",
+      "[&_th]:border-black/15 [&_td]:border-black/10",
     );
   }
   if (variant === "muted") {

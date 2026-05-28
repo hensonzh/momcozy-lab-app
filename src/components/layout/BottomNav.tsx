@@ -22,7 +22,7 @@ const NursingIcon: React.FC<{ className?: string; strokeWidth?: number }> = ({ c
 const tabs = [
   { path: "/status", icon: NursingIcon as React.ComponentType<{ className?: string; strokeWidth?: number }>, label: "状态" },
   { path: "/schedule", icon: Calendar, label: "计划" },
-  { path: "/", icon: Heart, label: "M.ai", isCenter: true },
+  { path: "/", icon: Heart, label: "Comate", isCenter: true },
   { path: "/community", icon: Users, label: "社区" },
   { path: "/device", icon: Bluetooth, label: "设备" },
 ];
@@ -49,7 +49,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
         embedded ? "relative w-full shrink-0" : "fixed bottom-0 left-0 right-0",
       )}
     >
-      <div className="max-w-lg mx-auto flex items-center justify-between px-2 h-16 relative">
+      <div className="max-w-lg mx-auto flex items-center justify-between px-2 h-[4.5rem] relative">
         {tabs.map((tab) => {
           const active =
             tab.path === "/status"
@@ -63,10 +63,10 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
               <div key={tab.path} className="flex-1 flex justify-center h-full items-center">
                 <button
                   onClick={() => navigate(tab.path)}
-                  className="relative -top-4 flex flex-col items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-[0_8px_16px_-6px_rgba(235,76,122,0.4)] transition-transform active:scale-95 border-4 border-background"
+                  className="relative -top-3 flex h-[68px] w-[68px] flex-col items-center justify-center rounded-full border-[5px] border-background bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-[0_10px_22px_-7px_rgba(235,76,122,0.42)] transition-transform active:scale-95"
                 >
-                  <tab.icon className={cn("w-6 h-6", active && "fill-primary-foreground/20")} strokeWidth={active ? 2.5 : 2} />
-                  <span className="text-[9px] font-bold mt-0.5">{tab.label}</span>
+                  <tab.icon className={cn("h-7 w-7 shrink-0", active && "fill-primary-foreground/20")} strokeWidth={active ? 2.5 : 2} />
+                  <span className="mt-0.5 max-w-[56px] whitespace-nowrap text-center text-[8.5px] font-bold leading-none">{tab.label}</span>
                 </button>
               </div>
             );

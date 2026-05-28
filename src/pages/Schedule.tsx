@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Bell, BellOff, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, Loader2, Plus, Trash2 } from "lucide-react";
+import { Bell, BellOff, CheckCircle2, ChevronLeft, ChevronRight, Clock, ImageIcon, Loader2, Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, isSameDay } from "date-fns";
-import MaiAvatar from "@/components/Mai/MaiAvatar";
 import TabPageTopReserve from "@/components/layout/TabPageTopReserve";
 import TabPageScrollRegion from "@/components/layout/TabPageScrollRegion";
 import TabPageEmbeddedNav from "@/components/layout/TabPageEmbeddedNav";
@@ -13,7 +11,7 @@ import { babyData, type PumpRecord, type ScheduleTask } from "@/data/mockData";
 import ReminderAlert from "@/components/schedule/ReminderAlert";
 import ManualEntryDialog from "@/components/records/ManualEntryDialog";
 import FeedingEntryDialog from "@/components/baby/FeedingEntryDialog";
-import AddTaskDialog from "@/components/schedule/AddTaskDialog";
+import AddTaskDialog, { type AddTaskDialogHandle } from "@/components/schedule/AddTaskDialog";
 import TimeWheelPickerSheet from "@/components/schedule/TimeWheelPickerSheet";
 import { useVolumeUnit, formatVol, unitLabel } from "@/lib/volumeUnit";
 import { uploadPumpMilkRecord, queryPumpMilkRecords, deletePumpMilkRecord } from "@/lib/momPumpTwinAgentApi";
@@ -24,7 +22,7 @@ import type { FeedingAddBody, FeedingListItem, PlanTaskItem, PumpMilkListItem } 
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 import {
   calendarDaysSinceDeliveryOnLocal,
-  formatPostpartumWeekFromDay,
+  postpartumWeekFromDay,
   pickMomBabyDeliveryDateYmd,
 } from "@/lib/momBabyDelivery";
 import { Capacitor } from "@capacitor/core";
@@ -67,9 +65,27 @@ const addMinutes = (time: string, mins: number): string => {
   return `${String(Math.floor(total / 60) % 24).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 };
 
-const getNowTime = (): string => {
-  const d = new Date();
+const formatClockTime = (d: Date): string => {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+};
+
+const taskTimeOnDate = (date: Date, time: string): Date | null => {
+  const [h, m] = time.split(":").map(Number);
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
+  const target = new Date(date);
+  target.setHours(h, m, 0, 0);
+  return target;
+};
+
+const formatCountdownDuration = (durationMs: number): string => {
+  const totalSeconds = Math.max(0, Math.floor(durationMs / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 };
 
 const isActionTask = (task: ScheduleTask) => !task.id.startsWith("blocked-");
@@ -90,16 +106,25 @@ const normalizeApiPlanType = (planType: string) => {
 
 const mapPlanTypeToLabel = (planType: string) => {
   const t = normalizeApiPlanType(planType);
-  if (t === "none") return "未制定计划任务";
+  if (t === "none") return "稳奶";
   const map: Record<string, string> = {
     maintain: "维持奶量",
-    chase: "逐步增量",
+    chase: "追奶",
     wean: "温和离乳",
     fertility: "待产计划",
     work: "返工计划",
   };
   return map[t] ?? "呵护计划";
 };
+
+const formatPostpartumPhaseLabel = (postpartumDay: number, phaseLabel: string) =>
+  `产后第${postpartumWeekFromDay(postpartumDay)}周（${phaseLabel}）`;
+
+const smartSourceCardClass = "bg-white border-border/60";
+const smartNextCardClass = "bg-white border-primary/35 shadow-md shadow-primary/10";
+const manualSourceCardClass = "bg-[hsl(42_100%_91%)] border-[hsl(35_74%_66%)]";
+const manualNextCardClass = "bg-[hsl(42_100%_88%)] border-[hsl(35_80%_58%)] shadow-md";
+const completedSourceCardClass = "bg-[hsl(344_36%_96%)] border-[hsl(344_22%_86%)]";
 
 const normalizeTaskTimeFromApi = (raw: string) => {
   const t = (raw || "").trim();
@@ -265,32 +290,6 @@ const mergePumpMilkQueryIntoRecords = (prev: PumpRecord[], list: PumpMilkListIte
   return [...feeding, ...planSynth, ...apiRows].sort((a, b) => a.time.localeCompare(b.time));
 };
 
-const pumpSourceBadgeLabel = (record: PumpRecord): string => {
-  if (isFeedingRecord(record) && record.feedAction === 1) return "计划";
-  if (record.pumpSource !== undefined && record.pumpSource !== null) {
-    switch (record.pumpSource) {
-      case 0:
-        return "设备";
-      case 1:
-        return "手动";
-      case 2:
-        return "计划";
-      default:
-        return `来源${record.pumpSource}`;
-    }
-  }
-  if (record.source === "device") return "设备";
-  if (record.id.startsWith("task-record-")) return "计划";
-  return "手动";
-};
-
-const scheduleRecordCanDelete = (record: PumpRecord): boolean => {
-  if (isFeedingRecord(record) && record.feedAction === 1) return false;
-  if (record.pumpSource === 0 || record.pumpSource === 2) return false;
-  if (record.pumpSource === 1) return true;
-  return record.source !== "device";
-};
-
 const createRecordFromTask = (task: ScheduleTask, dateStr: string): PumpRecord | null => {
   if (task.type === "pump") {
     const totalMl = task.reason === "安心追奶" || task.reason === "追奶" ? 95 : 120;
@@ -330,7 +329,6 @@ const createRecordFromTask = (task: ScheduleTask, dateStr: string): PumpRecord |
 };
 
 const Schedule: React.FC = () => {
-  const location = useLocation();
   const [volUnit] = useVolumeUnit();
   
   const todayDate = useMemo(() => {
@@ -413,11 +411,12 @@ const Schedule: React.FC = () => {
     };
   }, []);
   const [addTaskOpen, setAddTaskOpen] = useState(false);
+  const [scheduleAdjusting, setScheduleAdjusting] = useState(false);
   const [pumpEntryOpen, setPumpEntryOpen] = useState(false);
   const [feedingEntryOpen, setFeedingEntryOpen] = useState(false);
-  const [recordsExpanded, setRecordsExpanded] = useState(() => new URLSearchParams(location.search).get("tab") === "records");
   const [editTimePickerOpen, setEditTimePickerOpen] = useState(false);
   const editTitleInputRef = useRef<HTMLInputElement | null>(null);
+  const addTaskDialogRef = useRef<AddTaskDialogHandle | null>(null);
   
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editTime, setEditTime] = useState("");
@@ -430,6 +429,7 @@ const Schedule: React.FC = () => {
   const [taskCompletionRecordRefs, setTaskCompletionRecordRefs] = useState<
     Record<string, { pumpId?: number; feedingId?: number; taskTitle?: string }>
   >({});
+  const [deletingTaskIds, setDeletingTaskIds] = useState<Record<string, true>>({});
   const [deletingRecordIds, setDeletingRecordIds] = useState<Record<string, true>>({});
 
   const startEdit = useCallback((task: ScheduleTask) => {
@@ -521,25 +521,73 @@ const Schedule: React.FC = () => {
   const postpartumDay = Math.max(0, calendarDaysSinceDeliveryOnLocal(effectiveDeliveryYmd, selectedDate) ?? 0);
   const currentPhase = getLactationPhase(postpartumDay);
 
-  useEffect(() => {
-    if (new URLSearchParams(location.search).get("tab") === "records") {
-      setRecordsExpanded(true);
-    }
-  }, [location.search]);
-
   const sortedTasks = useMemo(() => [...tasks].sort((a, b) => a.time.localeCompare(b.time)), [tasks]);
   const actionTasks = useMemo(() => sortedTasks.filter(isActionTask), [sortedTasks]);
   const hasActionTasks = actionTasks.length > 0;
+  const isFutureWithoutPlan = !isSelectedToday && !isSelectedPast && !hasActionTasks;
   const completedTasks = useMemo(() => actionTasks.filter((task) => task.done && !isSkipped(task)), [actionTasks]);
   const remainingTasks = useMemo(() => actionTasks.filter((task) => !task.done), [actionTasks]);
   const nextTask = remainingTasks[0] || null;
+  const [scheduleNow, setScheduleNow] = useState(() => new Date());
+
+  useEffect(() => {
+    if (!isSelectedToday || !nextTask) return;
+    setScheduleNow(new Date());
+    const timer = window.setInterval(() => setScheduleNow(new Date()), 1000);
+    return () => window.clearInterval(timer);
+  }, [isSelectedToday, nextTask?.id, nextTask?.time]);
 
   const inventoryRecords = useMemo(() => records.filter((record) => !isFeedingRecord(record)), [records]);
   const feedingRecords = useMemo(() => records.filter(isFeedingRecord), [records]);
   const inventoryTotal = useMemo(() => inventoryRecords.reduce((sum, record) => sum + record.totalMl, 0), [inventoryRecords]);
   const feedingTotal = useMemo(() => feedingRecords.reduce((sum, record) => sum + record.totalMl, 0), [feedingRecords]);
+  const recordsByTaskId = useMemo(() => {
+    const map = new Map<string, PumpRecord[]>();
+    for (const task of actionTasks) {
+      const completionKey = taskCompletionRecordKey(dateStr, task.id);
+      const knownRef = taskCompletionRecordRefs[completionKey];
+      const matched = records.filter((record) => {
+        if (record.id === `${generatedRecordId(task.id)}-${dateStr}`) return true;
+        if (knownRef?.pumpId != null && record.pumpId === knownRef.pumpId) return true;
+        if (knownRef?.feedingId != null && record.feedingId === knownRef.feedingId) return true;
+        if (!task.done || record.time !== task.time) return false;
+        if (task.type === "pump") {
+          return !isFeedingRecord(record) && (record.pumpSource === 2 || record.recordTitle === task.title);
+        }
+        if (task.type === "feed") {
+          return isFeedingRecord(record) && (record.feedAction === 1 || record.recordTitle === task.title);
+        }
+        return record.recordTitle === task.title;
+      });
+      if (matched.length > 0) {
+        map.set(task.id, matched.sort((a, b) => a.time.localeCompare(b.time)));
+      }
+    }
+    return map;
+  }, [actionTasks, dateStr, records, taskCompletionRecordRefs]);
+  const attachedRecordIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const taskRecords of recordsByTaskId.values()) {
+      taskRecords.forEach((record) => ids.add(record.id));
+    }
+    return ids;
+  }, [recordsByTaskId]);
+  const standaloneRecords = useMemo(
+    () => records.filter((record) => !attachedRecordIds.has(record.id)),
+    [attachedRecordIds, records],
+  );
+  const executionTimelineEntries = useMemo(() => {
+    const taskEntries = actionTasks.map((task) => ({ kind: "task" as const, time: task.time, task }));
+    const recordEntries = standaloneRecords.map((record) => ({ kind: "record" as const, time: record.time, record }));
+    return [...taskEntries, ...recordEntries].sort((a, b) => {
+      const byTime = a.time.localeCompare(b.time);
+      if (byTime !== 0) return byTime;
+      if (a.kind === b.kind) return 0;
+      return a.kind === "task" ? -1 : 1;
+    });
+  }, [actionTasks, standaloneRecords]);
 
-  const nowTime = getNowTime();
+  const nowTime = formatClockTime(scheduleNow);
   const overdueMins = nextTask ? timeDiffInMinutes(nowTime, nextTask.time) : 0;
   const overdueLevel = useMemo(() => {
     if (!isSelectedToday || overdueMins <= 0) return "none";
@@ -547,6 +595,16 @@ const Schedule: React.FC = () => {
     if (overdueMins <= 90) return "medium";
     return "severe";
   }, [isSelectedToday, overdueMins]);
+  const nextTaskCountdown = useMemo(() => {
+    if (!isSelectedToday || !nextTask) return null;
+    const target = taskTimeOnDate(selectedDate, nextTask.time);
+    if (!target) return null;
+    const diffMs = target.getTime() - scheduleNow.getTime();
+    return {
+      overdue: diffMs < 0,
+      value: formatCountdownDuration(Math.abs(diffMs)),
+    };
+  }, [isSelectedToday, nextTask, scheduleNow, selectedDate]);
   const completionPct = actionTasks.length > 0 ? Math.round((completedTasks.length / actionTasks.length) * 100) : 0;
 
   const applyServerTaskList = useCallback(
@@ -764,23 +822,32 @@ const Schedule: React.FC = () => {
 
   const handleDeleteTask = useCallback(
     async (task: ScheduleTask) => {
-      if (task.source === "mai") return;
-      if (task.done && !isSkipped(task)) {
-        await clearTaskCompletionArtifacts(task);
-      }
-      if (task.taskId != null) {
-        const resp = await deletePlanTask({
-          user_id: DEFAULT_CHAT_USER_ID,
-          timestamp: dateStr,
-          task_id: task.taskId,
+      if (deletingTaskIds[task.id]) return;
+      setDeletingTaskIds((prev) => ({ ...prev, [task.id]: true }));
+      try {
+        if (task.done && !isSkipped(task)) {
+          await clearTaskCompletionArtifacts(task);
+        }
+        if (task.taskId != null) {
+          const resp = await deletePlanTask({
+            user_id: DEFAULT_CHAT_USER_ID,
+            timestamp: dateStr,
+            task_id: task.taskId,
+          });
+          if (resp.error !== 0) throw new Error("删除任务失败，请稍后重试");
+          applyServerTaskList(resp.task_list);
+          return;
+        }
+        setTasks((prev) => prev.filter((item) => item.id !== task.id));
+      } finally {
+        setDeletingTaskIds((prev) => {
+          const next = { ...prev };
+          delete next[task.id];
+          return next;
         });
-        if (resp.error !== 0) throw new Error("删除任务失败，请稍后重试");
-        applyServerTaskList(resp.task_list);
-        return;
       }
-      setTasks((prev) => prev.filter((item) => item.id !== task.id));
     },
-    [applyServerTaskList, clearTaskCompletionArtifacts, dateStr, setTasks],
+    [applyServerTaskList, clearTaskCompletionArtifacts, dateStr, deletingTaskIds, setTasks],
   );
 
   const handleAddTaskSubmit = useCallback(
@@ -796,7 +863,7 @@ const Schedule: React.FC = () => {
         timestamp: dateStr,
         task_list: bodyTaskList,
       });
-      if (resp.error !== 0) throw new Error("添加临时任务失败，请稍后重试");
+      if (resp.error !== 0) throw new Error("添加任务失败，请稍后重试");
       applyServerTaskList(resp.task_list);
     },
     [applyServerTaskList, dateStr],
@@ -834,7 +901,6 @@ const Schedule: React.FC = () => {
         await reviseTaskByApi(pendingCompleteTask, { taskDone: "true" });
         await refreshTodayRecords();
         setPendingCompleteTask(null);
-        setRecordsExpanded(true);
         return;
       }
 
@@ -851,7 +917,6 @@ const Schedule: React.FC = () => {
         await reviseTaskByApi(pendingCompleteTask, { taskDone: "true" });
         await refreshTodayRecords();
         setPendingCompleteTask(null);
-        setRecordsExpanded(true);
         return;
       }
 
@@ -877,7 +942,6 @@ const Schedule: React.FC = () => {
           [...prev.filter((item) => item.id !== merged.id), merged].sort((a, b) => a.time.localeCompare(b.time)),
         );
       }
-      setRecordsExpanded(true);
     },
     [dateStr, isSelectedToday, pendingCompleteTask, refreshTodayRecords, reviseTaskByApi, setRecords],
   );
@@ -903,13 +967,13 @@ const Schedule: React.FC = () => {
           return;
         }
 
-        if (record.pumpId != null && record.pumpSource === 1) {
+        if (record.pumpId != null) {
           const del = await deletePumpMilkRecord({
             user_id: DEFAULT_CHAT_USER_ID,
             pump_id: record.pumpId,
           });
           if (del.error !== 0) {
-            alert("删除吸奶补录失败，请稍后重试");
+            alert("删除吸奶记录失败，请稍后重试");
             return;
           }
           await refreshTodayRecords();
@@ -933,7 +997,7 @@ const Schedule: React.FC = () => {
   );
 
   return (
-    <>
+    <div className="contents">
       <div className="flex flex-col min-h-0 bg-background w-full" style={{ height: "100vh", maxHeight: "100vh" }}>
         <TabPageTopReserve />
       {/* Header */}
@@ -1025,21 +1089,30 @@ const Schedule: React.FC = () => {
           <div className="relative z-10">
             <div>
               <h2 className="text-[16px] font-black text-foreground tracking-tight">
-                {isSelectedToday
-                  ? `目标：${mapPlanTypeToLabel(planType)}`
-                  : `${format(selectedDate, "M月d日")} ${mapPlanTypeToLabel(planType)}`}
+                {isFutureWithoutPlan
+                  ? `${format(selectedDate, "M月d日")} 待规划`
+                  : isSelectedToday || isSelectedPast
+                    ? mapPlanTypeToLabel(planType)
+                    : `${format(selectedDate, "M月d日")} ${mapPlanTypeToLabel(planType)}`}
               </h2>
-              <p className="text-[12px] font-medium text-muted-foreground mt-0.5">
-                {currentPhase.label} · {formatPostpartumWeekFromDay(postpartumDay)}
-              </p>
+              {!isFutureWithoutPlan && (
+                <p className="text-[11px] font-bold text-muted-foreground mt-1">
+                  {formatPostpartumPhaseLabel(postpartumDay, currentPhase.label)}
+                </p>
+              )}
             </div>
             
-            <div className="mt-4 flex items-center gap-2.5 bg-secondary/30 p-2.5 rounded-[16px] border border-border/40 shadow-inner">
-              <div className="flex-1 h-2.5 bg-secondary/80 rounded-full overflow-hidden shadow-inner">
-                <div className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${completionPct}%` }} />
+            {!isFutureWithoutPlan && (
+              <div className="mt-5">
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-[12px] font-extrabold text-foreground/70">今日任务</p>
+                  <span className="text-[13px] font-black text-foreground">{completedTasks.length}<span className="text-muted-foreground font-medium mx-0.5">/</span>{actionTasks.length}</span>
+                </div>
+                <div className="h-2.5 bg-secondary/70 rounded-full overflow-hidden shadow-inner">
+                  <div className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${completionPct}%` }} />
+                </div>
               </div>
-              <span className="text-[12px] font-black text-foreground">{completedTasks.length}<span className="text-muted-foreground font-medium mx-0.5">/</span>{actionTasks.length}</span>
-            </div>
+            )}
           </div>
         </div>
 
@@ -1051,34 +1124,39 @@ const Schedule: React.FC = () => {
               overdueLevel === "severe" ? "bg-gradient-to-br from-secondary/50 to-secondary/30 border-border/60" : "bg-gradient-to-br from-primary/15 via-primary/5 to-background border-primary/30 shadow-primary/10"
             )}>
               <div className="flex items-center gap-2 mb-3.5">
-                <MaiAvatar emotion={overdueLevel === "none" ? "encourage" : "alert"} size="sm" animate={false} className="!w-5 !h-5 shadow-sm" />
                 <span className="text-[11px] font-extrabold text-primary tracking-wide">
-                  当前任务
+                  待执行任务
                 </span>
               </div>
               
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
                   <div className="text-[32px] leading-none font-black tracking-tighter text-foreground">
                     {nextTask.time}
                   </div>
                   <div className="text-[15px] font-extrabold mt-1.5 flex items-center gap-1.5 text-foreground/90">
                     <span className="text-base leading-none">{taskIcon[nextTask.type]}</span> 
-                    <span>{nextTask.title}</span>
+                    <span className="truncate">{nextTask.title}</span>
                   </div>
                 </div>
-                {overdueLevel === "severe" ? (
-                  <span className="bg-destructive/10 text-destructive text-[11px] font-bold px-2 py-1 rounded-md">
-                    超时过久
-                  </span>
-                ) : overdueLevel === "medium" ? (
-                  <span className="bg-destructive/10 text-destructive text-[11px] font-bold px-2 py-1 rounded-md">
-                    超时较久
-                  </span>
-                ) : overdueLevel === "mild" ? (
-                  <span className="bg-destructive/10 text-destructive text-[11px] font-bold px-2 py-1 rounded-md">
-                    已超时
-                  </span>
+                {nextTaskCountdown ? (
+                  <div className="shrink-0">
+                    <div
+                      className={cn(
+                        "min-w-[86px] rounded-2xl border px-3 py-2",
+                        nextTaskCountdown.overdue
+                          ? "border-[hsl(0_72%_72%)] bg-[hsl(0_86%_95%)] text-[hsl(0_72%_48%)]"
+                          : "border-[hsl(34_48%_78%)] bg-[hsl(34_78%_94%)] text-[hsl(31_53%_35%)]",
+                      )}
+                    >
+                      <p className="text-[10px] font-extrabold leading-none">
+                        {nextTaskCountdown.overdue ? "已超时" : "距离开始还剩"}
+                      </p>
+                      <p className="mt-1 text-[18px] font-black leading-none tabular-nums">
+                        {nextTaskCountdown.value}
+                      </p>
+                    </div>
+                  </div>
                 ) : null}
               </div>
 
@@ -1088,7 +1166,7 @@ const Schedule: React.FC = () => {
                     onClick={() => void handleCurrentTaskComplete(nextTask)}
                     className="w-full h-[44px] bg-primary text-primary-foreground rounded-xl text-[14px] font-extrabold shadow-md shadow-primary/25 active:scale-[0.98] transition-all hover:bg-primary/90 hover:shadow-primary/30"
                   >
-                    完成并生成记录
+                    手动完成并记录数据
                   </button>
                   <div className="flex gap-2">
                     <button 
@@ -1113,7 +1191,7 @@ const Schedule: React.FC = () => {
                 <Clock className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground">今天还没有计划任务</h3>
-              <p className="text-[13px] text-muted-foreground mt-1">可以先从对话里生成计划并同步到日历，或手动添加临时任务。</p>
+              <p className="text-[13px] text-muted-foreground mt-1">可以先从对话里生成计划并同步到日历，或手动添加任务。</p>
             </section>
           ) : (
             <section className="mx-4 mb-8 bg-secondary/30 rounded-[28px] p-6 border border-border/40 text-center">
@@ -1151,12 +1229,22 @@ const Schedule: React.FC = () => {
         {/* Timeline: Today's Tasks */}
         <section className="mx-4 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[16px] font-black text-foreground tracking-tight">{isSelectedToday ? "今日任务" : "执行记录"}</h3>
+            <h3 className="text-[16px] font-black text-foreground tracking-tight">{isSelectedToday ? "今日执行" : "执行记录"}</h3>
             <div className="flex items-center gap-2">
               {isSelectedToday && (
-                <button onClick={() => setAddTaskOpen(true)} className="text-[12px] font-bold text-foreground px-3.5 py-1.5 bg-secondary/80 hover:bg-secondary rounded-full flex items-center gap-1 transition-colors shadow-sm active:scale-95">
-                  <Plus className="w-3.5 h-3.5" /> 临时任务
-                </button>
+                <>
+                  <button
+                    onClick={() => addTaskDialogRef.current?.openUploadPicker()}
+                    disabled={scheduleAdjusting}
+                    className="text-[12px] font-bold text-foreground px-3.5 py-1.5 bg-card border border-border hover:bg-secondary/50 rounded-full flex items-center gap-1 transition-colors shadow-sm active:scale-95 disabled:opacity-60 disabled:active:scale-100"
+                  >
+                    {scheduleAdjusting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageIcon className="w-3.5 h-3.5" />}
+                    调整日程
+                  </button>
+                  <button onClick={() => setAddTaskOpen(true)} className="text-[12px] font-bold text-foreground px-3.5 py-1.5 bg-card border border-border hover:bg-secondary/50 rounded-full flex items-center gap-1 transition-colors shadow-sm active:scale-95">
+                    <Plus className="w-3.5 h-3.5" /> 添加任务
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -1165,59 +1253,79 @@ const Schedule: React.FC = () => {
             {tasksLoading && (
               <div className="py-2 text-[12px] text-muted-foreground">任务加载中…</div>
             )}
-            <div className="absolute left-3 top-2 bottom-2 w-[2px] bg-secondary/80 -z-10" />
-            
-            {actionTasks.map((task) => {
+            {recordsLoading && (
+              <div className="py-2 text-[12px] text-muted-foreground">记录加载中…</div>
+            )}
+            {!tasksLoading && !recordsLoading && executionTimelineEntries.length === 0 && (
+              <div className="py-5 text-center text-[12px] font-medium text-muted-foreground">当天暂无执行内容</div>
+            )}
+
+            {executionTimelineEntries.map((entry) => {
+              if (entry.kind === "record") {
+                const record = entry.record;
+                const deleting = Boolean(deletingRecordIds[record.id]);
+                return (
+	                  <div key={`record-${record.id}`} className="min-w-0 py-0.5 bg-background">
+                    <div className="min-w-0 pb-1">
+                      <div className={cn("rounded-[16px] px-3 py-2.5 border shadow-sm min-w-0", completedSourceCardClass)}>
+                        <div className="flex items-center justify-between gap-2 min-w-0">
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <span className="text-[13px] font-mono font-bold text-muted-foreground/80 shrink-0">{record.time}</span>
+                            <span className="text-[15px] tracking-wide min-w-0 truncate text-foreground/90 font-extrabold" title={resolveRecordDisplayTitle(record)}>
+                              {truncateTaskDisplay(resolveRecordDisplayTitle(record))}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-end gap-1.5 shrink-0">
+                            <span className="inline-flex h-5 max-w-[5.5rem] items-center rounded-md border border-border/40 bg-background px-1.5 py-0 text-[10px] font-bold text-foreground/70 whitespace-nowrap tabular-nums">
+                              {formatRecordVolumeDisplay(record, volUnit)}
+                            </span>
+	                            <span className="text-[10px] font-bold text-primary/70 bg-primary/10 border border-primary/10 px-1.5 py-0 rounded-md whitespace-nowrap h-5 inline-flex items-center">已完成</span>
+                            <span className="text-[10px] font-bold bg-secondary/80 text-muted-foreground px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+                              手动
+                            </span>
+	                            <button
+	                              type="button"
+                              onClick={() => void handleDeleteRecord(record)}
+                              disabled={deleting}
+                              className={cn(
+                                "w-7 h-7 flex items-center justify-center rounded-full transition-colors shrink-0",
+                                deleting
+                                  ? "text-muted-foreground/50 bg-secondary/50 cursor-not-allowed"
+                                  : "text-muted-foreground hover:text-destructive hover:bg-destructive/10",
+                              )}
+                            >
+                              {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              const task = entry.task;
               const isNext = isSelectedToday && task.id === nextTask?.id;
               const isCompleted = task.done;
               const skipped = isSkipped(task);
+              const matchedRecords = recordsByTaskId.get(task.id) ?? [];
+              const matchedRecordSummary = matchedRecords.length > 0
+                ? matchedRecords.map((record) => formatRecordVolumeDisplay(record, volUnit)).join(" / ")
+                : null;
+              const deleting = Boolean(deletingTaskIds[task.id]);
+              const isSmartTask = task.source === "mai";
+              const taskSourceLabel = isSmartTask ? "智能" : "手动";
               
               return (
-                <div key={task.id} className="flex min-w-0 gap-2.5 py-0.5 relative bg-background">
-                  <div className="flex flex-col items-center justify-start pt-1.5">
-                    {isCompleted ? (
-                      <button 
-                        onClick={() => isSelectedToday && handleToggleTaskComplete(task)}
-                        disabled={!isSelectedToday}
-                        className={cn("w-6 h-6 rounded-full bg-primary flex items-center justify-center border-[3px] border-background z-10 shadow-sm", isSelectedToday && "cursor-pointer hover:bg-primary/90 transition-colors")}
-                      >
-                        <CheckCircle2 className="w-3 h-3 text-primary-foreground" />
-                      </button>
-                    ) : isNext ? (
-                      <button 
-                        onClick={() => isSelectedToday && handleToggleTaskComplete(task)}
-                        disabled={!isSelectedToday}
-                        className={cn("w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center border-[3px] border-background z-10", isSelectedToday && "cursor-pointer hover:bg-primary/30 transition-colors")}
-                      >
-                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse shadow-sm shadow-primary/50" />
-                      </button>
-                    ) : skipped ? (
-                      <button 
-                        onClick={() => isSelectedToday && handleToggleTaskComplete(task)}
-                        disabled={!isSelectedToday}
-                        className={cn("w-6 h-6 rounded-full bg-muted flex items-center justify-center border-[3px] border-background z-10", isSelectedToday && "cursor-pointer hover:bg-muted/80 transition-colors")}
-                      >
-                        <div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full" />
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={() => isSelectedToday && handleToggleTaskComplete(task)}
-                        disabled={!isSelectedToday}
-                        className={cn("w-6 h-6 rounded-full bg-secondary flex items-center justify-center border-[3px] border-background z-10", isSelectedToday && "cursor-pointer hover:bg-secondary/80 transition-colors")}
-                      >
-                        <div className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full" />
-                      </button>
-                    )}
-                  </div>
-                  
-                  <div className="min-w-0 flex-1 pb-1">
+                <div key={task.id} className="min-w-0 py-0.5 bg-background">
+                  <div className="min-w-0 pb-1">
                     <div className={cn(
                       "rounded-[16px] px-3 py-2.5 border transition-all relative min-w-0",
                       editingTaskId === task.id ? "overflow-x-clip overflow-y-visible" : "overflow-hidden",
-                      isNext ? "bg-primary/5 border-primary/30 shadow-md shadow-primary/5" : 
+                      isNext ? (isSmartTask ? smartNextCardClass : manualNextCardClass) : 
                       skipped ? "bg-secondary/20 border-transparent opacity-40 grayscale" : 
-                      isCompleted ? "bg-primary/5 border-primary/10 opacity-80" : 
-                      "bg-card border-border/60 shadow-sm",
+                      isCompleted ? cn(completedSourceCardClass, "opacity-80") : 
+                      cn(isSmartTask ? smartSourceCardClass : manualSourceCardClass, "shadow-sm"),
                       editingTaskId === task.id && "ring-2 ring-primary/30 border-primary/50 bg-card opacity-100 shadow-lg !grayscale-0"
                     )}>
                       <div className="relative z-10 min-h-[24px] min-w-0 flex items-center justify-between">
@@ -1260,21 +1368,25 @@ const Schedule: React.FC = () => {
                                 }}
                               />
                             </div>
-                            {task.source !== "mai" && (
-                              <button 
-                                type="button"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  void handleDeleteTask(task).catch((err) => {
-                                    alert(err instanceof Error ? err.message : "删除任务失败，请稍后重试");
-                                  });
-                                }}
-                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-destructive/10 text-destructive active:bg-destructive/20"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            )}
+                            <button 
+                              type="button"
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                void handleDeleteTask(task).catch((err) => {
+                                  alert(err instanceof Error ? err.message : "删除任务失败，请稍后重试");
+                                });
+                              }}
+                              disabled={deleting}
+                              className={cn(
+                                "flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors",
+                                deleting
+                                  ? "bg-secondary/50 text-muted-foreground/50 cursor-not-allowed"
+                                  : "bg-destructive/10 text-destructive active:bg-destructive/20",
+                              )}
+                            >
+                              {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            </button>
                           </div>
                         ) : (
                           <div className="flex items-center justify-between gap-2 w-full min-w-0">
@@ -1286,120 +1398,70 @@ const Schedule: React.FC = () => {
                               onClick={() => startEdit(task)}
                             >
                               <span className={cn("text-[13px] font-mono font-bold shrink-0", isCompleted && !skipped ? "text-primary/70" : "text-muted-foreground/80")}>{task.time}</span>
-                              <span className={cn("text-[15px] tracking-wide shrink-0", skipped ? "text-muted-foreground line-through font-bold" : isCompleted ? "text-foreground/80 font-bold" : "text-foreground/90 font-extrabold")}>
-                                {taskIcon[task.type]}
-                              </span>
                               <span className={cn("text-[15px] tracking-wide min-w-0 truncate", skipped ? "text-muted-foreground line-through font-bold" : isCompleted ? "text-foreground/80 font-bold" : "text-foreground/90 font-extrabold")} title={task.title}>
                                 {truncateTaskDisplay(task.title)}
                               </span>
                             </div>
-                            <div className="flex items-center justify-end gap-1.5 shrink-0">
+                            <div className="flex min-w-0 items-center justify-end gap-1.5">
                               {!editingTaskId && (
                                 <div
-                                  className="flex items-center justify-end gap-1"
+                                  className="flex min-w-0 items-center justify-end gap-1"
                                   onClick={(e) => e.stopPropagation()}
                                   onPointerDown={(e) => e.stopPropagation()}
                                 >
+	                                  {matchedRecordSummary && !skipped && (
+                                    <span className="inline-flex h-5 max-w-[5.5rem] items-center rounded-md border border-border/40 bg-background px-1.5 py-0 text-[10px] font-bold text-muted-foreground whitespace-nowrap">
+                                      <span className="min-w-0 truncate text-foreground/70">{matchedRecordSummary}</span>
+                                    </span>
+                                  )}
 	                                  {task.adjusted && !skipped && <Badge variant="outline" className="bg-background text-[10px] font-medium border-border/50 text-muted-foreground px-1.5 py-0 h-5 max-w-[7rem] truncate">{task.adjusted}</Badge>}
                                   {skipped && <Badge variant="outline" className="bg-background text-muted-foreground text-[10px] font-medium border-border/50 px-1.5 py-0 h-5">已跳过</Badge>}
-                                  {isCompleted && !skipped && <span className="text-[10px] font-bold text-primary/70 bg-primary/10 border border-primary/10 px-1.5 py-0 rounded-md whitespace-nowrap h-5 inline-flex items-center">已生成记录</span>}
-                                </div>
-                              )}
-                              {isNext && <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full whitespace-nowrap">进行中</span>}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+	                                  {isCompleted && !skipped && <span className="text-[10px] font-bold text-primary/70 bg-primary/10 border border-primary/10 px-1.5 py-0 rounded-md whitespace-nowrap h-5 inline-flex items-center">已完成</span>}
+	                                </div>
+	                              )}
+	                              {isNext && <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full whitespace-nowrap">待执行</span>}
+                                <span className="text-[10px] font-bold bg-secondary/80 text-muted-foreground px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+                                  {taskSourceLabel}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    void handleDeleteTask(task).catch((err) => {
+                                      alert(err instanceof Error ? err.message : "删除任务失败，请稍后重试");
+                                    });
+                                  }}
+                                  onPointerDown={(e) => e.stopPropagation()}
+                                  disabled={deleting}
+                                  className={cn(
+                                    "w-7 h-7 flex items-center justify-center rounded-full transition-colors shrink-0",
+                                    deleting
+                                      ? "text-muted-foreground/50 bg-secondary/50 cursor-not-allowed"
+                                      : "text-muted-foreground hover:text-destructive hover:bg-destructive/10",
+                                  )}
+                                >
+                                  {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                                </button>
+	                            </div>
+	                          </div>
+	                        )}
+	                      </div>
+	                    </div>
+	                  </div>
                 </div>
               );
             })}
           </div>
-        </section>
-
-        {/* Records */}
-        <section className="mx-4 mb-6">
-          <div className="rounded-[24px] bg-card border border-border/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-            <button
-              onClick={() => setRecordsExpanded(!recordsExpanded)}
-              className="w-full flex items-center justify-between p-3.5 active:bg-secondary/40 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-secondary/80 flex items-center justify-center text-base shadow-sm border border-border/50">📝</div>
-                <div className="text-left">
-                  <h3 className="text-[14px] font-extrabold text-foreground">{isSelectedToday ? "今日" : ""}记录与补录</h3>
-                  <p className="text-[11px] font-medium text-muted-foreground mt-0.5">已沉淀 {records.length} 条数据</p>
-                </div>
-              </div>
-              <ChevronDown className={cn("w-5 h-5 text-muted-foreground transition-transform duration-300", recordsExpanded && "rotate-180")} />
-            </button>
-            
-            <AnimatePresence>
-              {recordsExpanded && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-3.5 pb-4 pt-1">
-                    {isSelectedToday && (
-                      <div className="flex gap-2.5 mb-4">
-                        <button onClick={() => setPumpEntryOpen(true)} className="flex-1 h-[42px] bg-primary/10 text-primary rounded-[16px] text-[13px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform hover:bg-primary/20">
-                          <Plus className="w-3.5 h-3.5" /> 吸奶补录
-                        </button>
-                        <button onClick={() => setFeedingEntryOpen(true)} className="flex-1 h-[42px] bg-secondary/80 text-foreground rounded-[16px] text-[13px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform hover:bg-secondary">
-                          <Plus className="w-3.5 h-3.5" /> 喂养记录
-                        </button>
-                      </div>
-                    )}
-
-                    <div className="space-y-2">
-                      {recordsLoading && <p className="text-[12px] text-muted-foreground">记录加载中…</p>}
-                      {records.length > 0 ? [...records].sort((a, b) => a.time.localeCompare(b.time)).map(record => {
-                        const deleting = Boolean(deletingRecordIds[record.id]);
-                        return (
-                        <div key={record.id} className="flex items-center gap-2 bg-background border border-border/50 rounded-[16px] p-3 shadow-sm">
-                          <span className="text-[13px] font-mono font-bold text-muted-foreground w-[42px] shrink-0">{record.time}</span>
-                          <span
-                            className="text-[13px] font-bold text-foreground flex-1 min-w-0 truncate"
-                            title={resolveRecordDisplayTitle(record)}
-                          >
-                            {truncateTaskDisplay(resolveRecordDisplayTitle(record))}
-                          </span>
-                          <span className="text-[13px] font-extrabold text-foreground tabular-nums shrink-0">{formatRecordVolumeDisplay(record, volUnit)}</span>
-                          <span className="text-[10px] font-bold bg-secondary/80 text-muted-foreground px-2 py-0.5 rounded-md shrink-0 max-w-[3.5rem] truncate">
-                            {pumpSourceBadgeLabel(record)}
-                          </span>
-                          {scheduleRecordCanDelete(record) && (
-                            <button
-                              type="button"
-                              onClick={() => void handleDeleteRecord(record)}
-                              disabled={deleting}
-                              className={cn(
-                                "w-7 h-7 flex items-center justify-center rounded-full transition-colors shrink-0",
-                                deleting
-                                  ? "text-muted-foreground/50 bg-secondary/50 cursor-not-allowed"
-                                  : "text-muted-foreground hover:text-destructive hover:bg-destructive/10",
-                              )}
-                            >
-                              {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-                            </button>
-                          )}
-                        </div>
-                      )}) : (
-                        <div className="flex flex-col items-center justify-center py-5 bg-secondary/20 rounded-[16px] border border-dashed border-border/60">
-                          <p className="text-[12px] font-medium text-muted-foreground">当日暂无记录</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          {isSelectedToday && (
+            <div className="mt-3 grid grid-cols-2 gap-2.5">
+              <button onClick={() => setPumpEntryOpen(true)} className="h-[40px] bg-white text-foreground rounded-[14px] text-[12px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform hover:bg-white/90">
+                <Plus className="w-3.5 h-3.5" /> 吸奶补录
+              </button>
+              <button onClick={() => setFeedingEntryOpen(true)} className="h-[40px] bg-white text-foreground rounded-[14px] text-[12px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform hover:bg-white/90">
+                <Plus className="w-3.5 h-3.5" /> 喂养记录
+              </button>
+            </div>
+          )}
         </section>
 
       </TabPageScrollRegion>
@@ -1444,8 +1506,15 @@ const Schedule: React.FC = () => {
         recordDateIso={dateStr}
         defaultTime={pendingCompleteTask?.type === "feed" ? pendingCompleteTask.time : null}
       />
-      <AddTaskDialog open={addTaskOpen} onClose={() => setAddTaskOpen(false)} onSubmit={handleAddTaskSubmit} />
-    </>
+      <AddTaskDialog
+        ref={addTaskDialogRef}
+        open={addTaskOpen}
+        onClose={() => setAddTaskOpen(false)}
+        onSubmit={handleAddTaskSubmit}
+        onRequestOpen={() => setAddTaskOpen(true)}
+        onAnalyzingChange={setScheduleAdjusting}
+      />
+    </div>
   );
 };
 

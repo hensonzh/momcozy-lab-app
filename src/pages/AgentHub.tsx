@@ -10,7 +10,7 @@ import InlineMaternityFlow from "@/components/maternity/InlineMaternityFlow";
 import type { InlineMaternityFlowHandle } from "@/components/maternity/InlineMaternityFlow";
 import InlineWorkFlow from "@/components/work/InlineWorkFlow";
 import type { InlineWorkFlowHandle } from "@/components/work/InlineWorkFlow";
-import { Volume2, ChevronDown, ChevronRight, X, Loader2, Plus } from "lucide-react";
+import { Volume2, VolumeX, ChevronDown, ChevronRight, X, Loader2, Plus } from "lucide-react";
 import PillGroups from "@/components/pills/PillGroups";
 import MaiInputBar from "@/components/Mai/MaiInputBar";
 import { useAgentHubSpeechInput } from "@/hooks/useAgentHubSpeechInput";
@@ -25,6 +25,7 @@ import {
 } from "@/lib/chatMessagesLocalPersistence";
 import {
   postAgUiWebSocketStream,
+  prewarmAgUiThread,
   parseChatRichTextFromSseData,
   type AgUiPayloadImageItem,
 } from "@/lib/agentApi";
@@ -51,11 +52,17 @@ import {
   shouldAutoScrollChatTail,
 } from "@/lib/chatAutoScroll";
 import {
-  buildSpeakableTextForTts,
-  CHAT_BUBBLE_TTS_MAX_CHARS,
+  buildSpeakableTextForVoice,
+  CHAT_BUBBLE_VOICE_MAX_CHARS,
   stopChatBubblePlayback,
 } from "@/lib/chatBubbleTtsPlayback";
-import { playFocusPlainTextTts, stopFocusVoicePlayback } from "@/lib/focusVoiceTtsPlayback";
+import {
+  playFocusPlainTextVoice,
+  primeFocusVoicePlayback,
+  startFocusRealtimePlainTextVoice,
+  stopFocusVoicePlayback,
+  type FocusRealtimePlainTextVoiceSession,
+} from "@/lib/focusVoiceTtsPlayback";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -99,7 +106,8 @@ import {
   cardBg,
   DEFAULT_CHAT_USER_ID,
   DEVICE_INSTRUCT_QUERY_BY_FLOW,
-  HUB_AUTO_VOICE_FIRST_TTS_MAX_CHARS,
+  HUB_AUTO_VOICE_STREAM_SEGMENT_MAX_CHARS,
+  HUB_AUTO_VOICE_STREAM_SEGMENT_MIN_CHARS,
   HUB_BOTTOM_INPUT_GAP,
   HUB_BOTTOM_NAV_HEIGHT,
   HUB_CHAT_HISTORY_PAGE,
@@ -315,7 +323,7 @@ async function compressChatImageDataUrlForBubble(dataUrl: string): Promise<strin
 
 /**
  * 对话泡底部扬声器按钮样式：播报中含动态高亮；未播报时随气泡角色配色。
- * @param isPlaying 当前消息是否正在 TTS（手动或自动）
+ * @param isPlaying 当前消息是否正在语音播报（手动或自动）
  * @param isUserBubble 是否为用户侧气泡
  * @returns 合并后的 className 字符串
  */
@@ -517,9 +525,43 @@ function AgentHubReportCard({
 function workItemTitle(tool: AgUiToolCallRow): string {
   if (tool.kind === "narration") return "";
   if (tool.title?.trim()) return tool.title.trim();
-  if (tool.state === "running") return "正在执行当前步骤";
-  if (tool.state === "error") return "步骤没有完成";
-  return "步骤已完成";
+  if (tool.state === "running") return "我正在处理这一步";
+  if (tool.state === "error") return "这一步没处理好";
+  return "我处理完这一步了";
+}
+
+type WorkProgressTone = "running" | "waiting" | "done" | "error";
+
+function workItemNeedsConfirmation(tool: AgUiToolCallRow): boolean {
+  if (tool.kind === "narration") return false;
+  const text = `${tool.title ?? ""} ${tool.argsDigest ?? ""}`;
+  return text.includes("确认") || text.includes("等你确认");
+}
+
+function workProgressSummary(tools: AgUiToolCallRow[], isWorkFinished: boolean): { title: string; tone: WorkProgressTone } {
+  const actionRows = tools.filter((tool) => tool.kind !== "narration");
+  const running = [...actionRows].reverse().find((tool) => tool.state === "running");
+  if (running) return { title: workItemTitle(running), tone: "running" };
+  const error = [...actionRows].reverse().find((tool) => tool.state === "error");
+  if (error) return { title: workItemTitle(error), tone: "error" };
+  const needsConfirmation = actionRows.some(workItemNeedsConfirmation);
+  if (needsConfirmation && !isWorkFinished) return { title: "等你确认", tone: "waiting" };
+  if (isWorkFinished) return { title: "我处理好了", tone: "done" };
+  const lastAction = actionRows.at(-1);
+  if (lastAction) {
+    return {
+      title: workItemTitle(lastAction),
+      tone: lastAction.state === "completed" ? "done" : lastAction.state,
+    };
+  }
+  return { title: "我正在处理", tone: "running" };
+}
+
+function workProgressDotClass(tone: WorkProgressTone): string {
+  if (tone === "done") return "bg-[#6aa889]";
+  if (tone === "error") return "bg-[#c75b56]";
+  if (tone === "waiting") return "bg-[#d59aa8]";
+  return "bg-[#c98599]";
 }
 
 function AgentHubWorkPanel({
@@ -529,82 +571,33 @@ function AgentHubWorkPanel({
   tools: AgUiToolCallRow[];
   finishedAtMs?: number;
 }) {
-  const [collapsed, setCollapsed] = useState(false);
-  const hasRunning = tools.some((tool) => tool.state === "running");
   const isWorkFinished = typeof finishedAtMs === "number";
-  useEffect(() => {
-    // Align with web flow: auto-fold work steps after run is finished.
-    if (tools.length > 0 && !hasRunning && typeof finishedAtMs === "number") {
-      setCollapsed(true);
-    }
-  }, [tools.length, hasRunning, finishedAtMs]);
   if (tools.length === 0) return null;
-  const title = isWorkFinished ? "已处理" : "处理中";
+  const summary = workProgressSummary(tools, isWorkFinished);
+  const shouldAnimateTitle = summary.title !== "我处理好了";
+
   return (
-    <div className="w-[88%] text-[#4f5b68] text-[12px]">
-      <button
-        type="button"
-        aria-expanded={!collapsed}
-        onClick={() => setCollapsed((v) => !v)}
-        className="inline-flex items-center gap-[7px] p-0 border-0 rounded-none bg-transparent text-[#687384] hover:text-[#2d3745] text-[12px] font-[650] leading-[1.35] whitespace-nowrap"
-      >
+    <div className="w-full max-w-full text-[12px]">
+      <div className="flex w-full min-w-0 max-w-full items-start gap-2 overflow-hidden px-0.5 py-1">
+        <span className="relative mt-[5px] flex h-2 w-2 shrink-0" aria-hidden="true">
+          {summary.tone === "running" ? (
+            <span className="absolute inline-flex h-full w-full rounded-full bg-[#c98599] opacity-40 animate-ping" />
+          ) : null}
+          <span className={cn("relative inline-flex h-2 w-2 rounded-full", workProgressDotClass(summary.tone))} />
+        </span>
         <span
+          title={summary.title}
           className={cn(
-            "w-0 h-0 border-y-[5px] border-y-transparent border-l-[6px] border-l-current transition-transform [transition-duration:160ms] ease-in-out",
-            collapsed ? "rotate-0" : "rotate-90",
+            "block min-w-0 max-w-full flex-1 overflow-x-auto overscroll-x-contain whitespace-nowrap pr-2 text-[12px] font-[650] leading-[1.45] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            shouldAnimateTitle
+              ? "bg-[linear-gradient(90deg,#9a7a86_0%,#9a7a86_34%,#5d3f4d_50%,#9a7a86_66%,#9a7a86_100%)] bg-[length:240%_100%] bg-clip-text text-transparent animate-[work-title-sweep_1.35s_linear_infinite]"
+              : "text-[#7a5f69]",
+            summary.tone === "error" && !shouldAnimateTitle && "text-[#9e3b38]",
           )}
-          aria-hidden="true"
-        />
-        <span className="whitespace-nowrap">{title}</span>
-      </button>
-      {!collapsed ? (
-        <div className="mt-[6px] border-l-2 border-[#c8d6df] pl-3">
-          <ol className="grid gap-[10px] m-0 p-0 list-none">
-            {tools.map((tool) => (
-              <li key={tool.id} className="grid grid-cols-[auto_1fr] gap-2">
-                {tool.kind === "narration" ? (
-                  <span className="w-[7px] h-[7px] mt-[5px]" aria-hidden="true" />
-                ) : (
-                  <span
-                    className={cn(
-                      "w-[7px] h-[7px] mt-[5px] rounded-full",
-                      tool.state === "completed"
-                        ? "bg-[#2f7d5c]"
-                        : tool.state === "error"
-                          ? "bg-[#b42318]"
-                          : "bg-[#9aa8b5]",
-                    )}
-                    aria-hidden="true"
-                  />
-                )}
-                <div className="grid gap-0.5">
-                  {tool.kind !== "narration" ? (
-                    <div
-                      className={cn(
-                        "text-[11px] font-[650] text-[#687384] whitespace-nowrap",
-                        tool.state === "running" &&
-                          "w-fit min-w-max bg-[linear-gradient(90deg,#98a3af_0%,#98a3af_35%,#2d3745_50%,#98a3af_65%,#98a3af_100%)] bg-[length:240%_100%] bg-clip-text text-transparent animate-[work-title-sweep_1.35s_linear_infinite]",
-                      )}
-                    >
-                      {workItemTitle(tool)}
-                    </div>
-                  ) : null}
-                  {tool.kind === "narration" && (tool.content?.trim() ?? "") ? (
-                    <ChatMarkdown
-                      markdown={tool.content?.trim() ?? ""}
-                      variant="assistant"
-                      className="text-[12px] leading-[1.45] text-[#2d3745] [overflow-wrap:anywhere] [&>:first-child]:mt-0 [&>:last-child]:mb-0 [&_p]:mb-[6px] [&_ul]:mb-[6px] [&_ol]:mb-[6px] [&_ul]:pl-[18px] [&_ol]:pl-[18px]"
-                    />
-                  ) : null}
-                  {tool.argsDigest ? (
-                    <div className="text-[#2d3745] leading-[1.4] break-words whitespace-pre-wrap">{tool.argsDigest}</div>
-                  ) : null}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      ) : null}
+        >
+          {summary.title}
+        </span>
+      </div>
     </div>
   );
 }
@@ -699,10 +692,10 @@ const AgentHub: React.FC = () => {
   const [hubBottomSendBusy, setHubBottomSendBusy] = useState(false);
   /** 最近一次来自底部输入 handleSend 的 SSE 未完成；仅此时 onDone/onError 应清除 hubBottomSendBusy */
   const awaitingHubBottomReplyRef = useRef(false);
-  const { speechListening, onMicClick, stopSpeech } = useAgentHubSpeechInput(setInput, {
+  const { speechListening, startSpeech, stopSpeech } = useAgentHubSpeechInput(setInput, {
     userId: DEFAULT_CHAT_USER_ID,
   });
-  const [autoVoice, setAutoVoice] = useState(false);
+  const [autoVoice, setAutoVoice] = useState(true);
   /** 与打字机收尾回调解耦：收尾时读取最新「自动播报」开关，避免闭包陈旧 */
   const autoVoiceRef = useRef(autoVoice);
   useEffect(() => {
@@ -792,6 +785,8 @@ const AgentHub: React.FC = () => {
   const lastStreamingScrollAtRef = useRef(0);
   /** Hub 对话 ag-ui WebSocket 取消句柄 */
   const mainChatCancelRef = useRef<(() => void) | null>(null);
+  /** 新会话隐藏预热请求：新建会话/离开页面时取消，避免旧 thread 后台请求继续占资源 */
+  const agUiPrewarmAbortRef = useRef<AbortController | null>(null);
   /** 当前正在流式回复的 Mai 消息 id（用于区分“正在思考”与历史“已思考”展示） */
   const mainStreamingReplyIdRef = useRef<string | null>(null);
   const mainStreamMergedAnswerRef = useRef("");
@@ -801,9 +796,28 @@ const AgentHub: React.FC = () => {
   const mainNoVisibleResponseTimerRef = useRef<number | null>(null);
   const mainStreamFollowTailRef = useRef(false);
   const suppressFollowTailReleaseUntilRef = useRef(0);
-  /** 对话泡 TTS：AbortController 与当前播放目标 id，避免快速切换气泡时误清状态 */
+  /** 对话泡语音：AbortController 与当前播放目标 id，避免快速切换气泡时误清状态 */
   const bubblePlayAbortRef = useRef<AbortController | null>(null);
   const bubblePlayingTargetIdRef = useRef<string | null>(null);
+  const autoVoiceRunIdRef = useRef(0);
+  const autoVoiceRealtimeSessionRef = useRef<{
+    runId: number;
+    replyId: string;
+    session: FocusRealtimePlainTextVoiceSession;
+    abortController: AbortController;
+    appendedChars: number;
+    receivedAudioBytes: number;
+    lastMergedAnswer: string;
+    lastRichText: ChatRichTextPayload | null;
+  } | null>(null);
+
+  useEffect(() => {
+    return () => {
+      agUiPrewarmAbortRef.current?.abort();
+      agUiPrewarmAbortRef.current = null;
+    };
+  }, []);
+
   const bottomActionRef = useRef<HTMLDivElement>(null);
   const hubStartPumpShortcutLockRef = useRef(false);
   /** 上传图片本地预览 blob URL 索引：便于删除气泡时 revoke；离开路由不要整表 revoke（同文档内 blob 仍有效） */
@@ -824,6 +838,10 @@ const AgentHub: React.FC = () => {
    * @returns Promise<void> 停止播放与状态清理完成
    */
   const stopCurrentBubblePlayback = useCallback(async (opts?: { clearPlayingId?: boolean }): Promise<void> => {
+    autoVoiceRunIdRef.current += 1;
+    autoVoiceRealtimeSessionRef.current?.abortController.abort();
+    autoVoiceRealtimeSessionRef.current?.session.cancel();
+    autoVoiceRealtimeSessionRef.current = null;
     bubblePlayAbortRef.current?.abort();
     await stopChatBubblePlayback();
     await stopFocusVoicePlayback();
@@ -839,6 +857,29 @@ const AgentHub: React.FC = () => {
     window.clearTimeout(mainNoVisibleResponseTimerRef.current);
     mainNoVisibleResponseTimerRef.current = null;
   }, []);
+
+  const primeAutoVoicePlayback = useCallback((opts?: { disableOnFailure?: boolean }) => {
+    if (!autoVoiceRef.current) return;
+    void primeFocusVoicePlayback().catch((e: unknown) => {
+      const err = e as { message?: string };
+      toast.error(err.message || "语音模式启动失败");
+      if (opts?.disableOnFailure) {
+        autoVoiceRef.current = false;
+        setAutoVoice(false);
+      }
+    });
+  }, []);
+
+  const handleToggleAutoVoice = useCallback(() => {
+    const next = !autoVoiceRef.current;
+    autoVoiceRef.current = next;
+    setAutoVoice(next);
+    if (next) {
+      primeAutoVoicePlayback({ disableOnFailure: true });
+      return;
+    }
+    void stopCurrentBubblePlayback();
+  }, [primeAutoVoicePlayback, stopCurrentBubblePlayback]);
 
   const handleCreateNewConversation = useCallback(() => {
     clearMainNoVisibleResponseTimer();
@@ -869,7 +910,38 @@ const AgentHub: React.FC = () => {
 
     clearPersistedAgentConversationId();
     clearPersistedAgUiThreadId();
-    getAgUiThreadIdForRequest();
+    const nextThreadId = getAgUiThreadIdForRequest();
+    agUiPrewarmAbortRef.current?.abort();
+    const prewarmAbort = new AbortController();
+    agUiPrewarmAbortRef.current = prewarmAbort;
+    const prewarmLocale = (typeof navigator !== "undefined" && navigator.language) || "zh-CN";
+    const prewarmTimezone =
+      (typeof Intl !== "undefined" && Intl.DateTimeFormat().resolvedOptions().timeZone) ||
+      "America/Los_Angeles";
+    void prewarmAgUiThread(nextThreadId, {
+      locale: prewarmLocale,
+      signal: prewarmAbort.signal,
+      forwardedProps: {
+        user_id: DEFAULT_CHAT_USER_ID,
+        locale: prewarmLocale,
+        timezone: prewarmTimezone,
+        message_sent_at: new Date().toISOString(),
+        user_profile: {
+          user_id: DEFAULT_CHAT_USER_ID,
+          language: prewarmLocale,
+        },
+      },
+    })
+      .catch((e: unknown) => {
+        const err = e as { name?: string; message?: string };
+        if (prewarmAbort.signal.aborted || err.name === "AbortError") return;
+        warn("[AgentHub] 新会话预热失败，已忽略", err.message || String(e));
+      })
+      .finally(() => {
+        if (agUiPrewarmAbortRef.current === prewarmAbort) {
+          agUiPrewarmAbortRef.current = null;
+        }
+      });
     const greeting = createNewConversationGreetingMessage();
     chatStore.setMessages([greeting]);
     savePersistedChatMessages([greeting]);
@@ -891,40 +963,59 @@ const AgentHub: React.FC = () => {
     toast.success("已新建会话");
   }, [clearMainNoVisibleResponseTimer, stopCurrentBubblePlayback, stopSpeech]);
 
-  /**
-   * 自动播报（流式回复等）：HTMLAudio TTS，不修改气泡正文；通过 playingId 驱动扬声器动态态。
-   * @param replyId 当前 Mai 回复气泡 id
-   * @param msgForTts 已定稿或 onDone 快照，用于 buildSpeakableTextForTts
-   * @returns void（内部异步播放）
-   */
-  const runHubDecoupledAutoVoice = useCallback((replyId: string, msgForTts: ChatMessage) => {
-    if (msgForTts.role !== "mai") return;
+  /** 自动播报兜底：只在流式会话没有启动时，对完整回复做一次播放。 */
+  const runHubDecoupledAutoVoice = useCallback((
+    replyId: string,
+    msgForVoice: ChatMessage,
+    opts?: { expectedRunId?: number },
+  ) => {
+    const matchesExpectedRun = () =>
+      opts?.expectedRunId == null || autoVoiceRunIdRef.current === opts.expectedRunId;
+    if (msgForVoice.role !== "mai") return;
     if (!autoVoiceRef.current) return;
-    const speakable = buildSpeakableTextForTts(msgForTts).trim();
+    if (!matchesExpectedRun()) return;
+    const speakable = buildSpeakableTextForVoice(msgForVoice).trim().slice(0, CHAT_BUBBLE_VOICE_MAX_CHARS);
     if (!speakable) return;
 
     void (async () => {
-      await stopCurrentBubblePlayback();
+      if (!autoVoiceRef.current || !matchesExpectedRun()) return;
+      if (opts?.expectedRunId == null) {
+        await stopCurrentBubblePlayback();
+      } else {
+        const currentSession = autoVoiceRealtimeSessionRef.current;
+        if (currentSession && currentSession.runId !== opts.expectedRunId) return;
+        if (currentSession) {
+          currentSession.abortController.abort();
+          currentSession.session.cancel();
+          autoVoiceRealtimeSessionRef.current = null;
+        }
+      }
+      if (!autoVoiceRef.current || !matchesExpectedRun()) return;
       const ac = new AbortController();
       bubblePlayAbortRef.current = ac;
       bubblePlayingTargetIdRef.current = replyId;
       setPlayingId(replyId);
       try {
-        await playFocusPlainTextTts({
+        const session = startFocusRealtimePlainTextVoice({
           userId: DEFAULT_CHAT_USER_ID,
-          text: speakable,
           signal: ac.signal,
+          maxSegmentChars: HUB_AUTO_VOICE_STREAM_SEGMENT_MAX_CHARS,
+          minSegmentChars: HUB_AUTO_VOICE_STREAM_SEGMENT_MIN_CHARS,
+          eagerSegmenting: true,
+          resetPlaybackOnStart: false,
           onSubtitle: () => {},
           syncSubtitle: false,
-          firstSegmentMaxChars: HUB_AUTO_VOICE_FIRST_TTS_MAX_CHARS,
         });
+        session.append(speakable);
+        session.finish();
+        await session.done;
       } catch (e: unknown) {
         const err = e as { name?: string; message?: string };
         if (err.name !== "AbortError") {
           toast.error(err.message || "自动语音播报失败");
         }
       } finally {
-        if (bubblePlayingTargetIdRef.current === replyId) {
+        if (bubblePlayAbortRef.current === ac && bubblePlayingTargetIdRef.current === replyId) {
           setPlayingId(null);
           bubblePlayingTargetIdRef.current = null;
         }
@@ -934,6 +1025,84 @@ const AgentHub: React.FC = () => {
       }
     })();
   }, [stopCurrentBubblePlayback]);
+
+  const startHubRealtimeAutoVoice = useCallback((replyId: string) => {
+    if (!autoVoiceRef.current) return null;
+    void primeFocusVoicePlayback().catch((e: unknown) => {
+      const err = e as { message?: string };
+      toast.error(err.message || "语音模式启动失败");
+    });
+    const ac = new AbortController();
+    const runId = autoVoiceRunIdRef.current + 1;
+    autoVoiceRunIdRef.current = runId;
+    bubblePlayAbortRef.current = ac;
+    bubblePlayingTargetIdRef.current = replyId;
+    setPlayingId(replyId);
+
+    const sessionState: NonNullable<typeof autoVoiceRealtimeSessionRef.current> = {
+      runId,
+      replyId,
+      session: null as unknown as FocusRealtimePlainTextVoiceSession,
+      abortController: ac,
+      appendedChars: 0,
+      receivedAudioBytes: 0,
+      lastMergedAnswer: "",
+      lastRichText: null,
+    };
+    const session = startFocusRealtimePlainTextVoice({
+      userId: DEFAULT_CHAT_USER_ID,
+      signal: ac.signal,
+      maxSegmentChars: HUB_AUTO_VOICE_STREAM_SEGMENT_MAX_CHARS,
+      minSegmentChars: HUB_AUTO_VOICE_STREAM_SEGMENT_MIN_CHARS,
+      eagerSegmenting: true,
+      resetPlaybackOnStart: false,
+      onAudioFrame: (byteLength) => {
+        sessionState.receivedAudioBytes += byteLength;
+      },
+      onSubtitle: () => {},
+      syncSubtitle: false,
+    });
+    sessionState.session = session;
+    autoVoiceRealtimeSessionRef.current = sessionState;
+    void session.done
+      .catch((e: unknown) => {
+        const err = e as { name?: string; message?: string };
+        if (err.name !== "AbortError" && autoVoiceRef.current) {
+          toast.error(err.message || "自动语音播报失败");
+        }
+      })
+      .finally(() => {
+        const isCurrentSession = autoVoiceRealtimeSessionRef.current?.session === session;
+        const fallbackMsg: ChatMessage = {
+          id: replyId,
+          role: "mai",
+          content: sessionState.lastMergedAnswer,
+          timestamp: "",
+          richText: sessionState.lastRichText ?? undefined,
+        };
+        const shouldFallback =
+          isCurrentSession &&
+          autoVoiceRef.current &&
+          !ac.signal.aborted &&
+          sessionState.appendedChars > 0 &&
+          sessionState.receivedAudioBytes <= 0 &&
+          Boolean(buildSpeakableTextForVoice(fallbackMsg).trim());
+        if (isCurrentSession) {
+          autoVoiceRealtimeSessionRef.current = null;
+        }
+        if (bubblePlayAbortRef.current === ac && bubblePlayingTargetIdRef.current === replyId) {
+          setPlayingId(null);
+          bubblePlayingTargetIdRef.current = null;
+        }
+        if (bubblePlayAbortRef.current === ac) {
+          bubblePlayAbortRef.current = null;
+        }
+        if (shouldFallback) {
+          void runHubDecoupledAutoVoice(replyId, fallbackMsg, { expectedRunId: sessionState.runId });
+        }
+      });
+    return sessionState;
+  }, [runHubDecoupledAutoVoice]);
 
   /**
    * 自动播报开关关闭时，若正在播报则立即停止，避免继续播放到结束。
@@ -1354,6 +1523,11 @@ const AgentHub: React.FC = () => {
       const rich = parseChatRichTextFromSseData(data);
       if (rich || side.didUpdate) clearMainNoVisibleResponseTimer();
       if (rich) {
+        const mergedRichText = mergePendingRichTextPayload(pendingRichTextRef.current, rich);
+        pendingRichTextRef.current = mergedRichText;
+        if (autoVoiceRealtimeSessionRef.current?.replyId === replyId) {
+          autoVoiceRealtimeSessionRef.current.lastRichText = mergedRichText;
+        }
         setMessages((prev) =>
           prev.map((m) =>
             m.id === replyId
@@ -1402,6 +1576,17 @@ const AgentHub: React.FC = () => {
         merged = nextAnswer.merged;
         delta = nextAnswer.delta;
         mergedAnswerRef.current = merged;
+        if (delta && autoVoiceRef.current) {
+          let realtimeVoice = autoVoiceRealtimeSessionRef.current;
+          if (!realtimeVoice || realtimeVoice.replyId !== replyId) {
+            realtimeVoice = startHubRealtimeAutoVoice(replyId);
+          }
+          if (realtimeVoice?.replyId === replyId) {
+            realtimeVoice.appendedChars += delta.length;
+            realtimeVoice.lastMergedAnswer = merged;
+            realtimeVoice.session.append(delta);
+          }
+        }
       }
 
       setMessages((prev) =>
@@ -1477,11 +1662,12 @@ const AgentHub: React.FC = () => {
     clearMainNoVisibleResponseTimer();
     mainChatCancelRef.current?.();
     mainStreamingReplyIdRef.current = null;
-    void stopCurrentBubblePlayback();
+    await stopCurrentBubblePlayback();
     mainStreamMergedAnswerRef.current = "";
     mainStreamMergedThinkingRef.current = "";
     mainStreamingReplyIdRef.current = replyId;
     mainStreamFollowTailRef.current = true;
+    primeAutoVoicePlayback();
     const onMessageHandler = handleLiveMainStreamMessage(
       replyId,
       mainStreamMergedAnswerRef,
@@ -1492,6 +1678,7 @@ const AgentHub: React.FC = () => {
       if (mainStreamingReplyIdRef.current !== replyId) return;
       mainNoVisibleResponseTimerRef.current = null;
       mainChatCancelRef.current?.();
+      void stopCurrentBubblePlayback();
       mainChatCancelRef.current = null;
       mainStreamingReplyIdRef.current = null;
       window.setTimeout(() => {
@@ -1529,7 +1716,28 @@ const AgentHub: React.FC = () => {
         window.setTimeout(() => {
           tryFinalizeMainReply(replyId);
           mainStreamingReplyIdRef.current = null;
-          if (autoVoiceRef.current) {
+          const realtimeVoice = autoVoiceRealtimeSessionRef.current;
+          if (realtimeVoice?.replyId === replyId) {
+            const expectedRunId = realtimeVoice.runId;
+            if (realtimeVoice.appendedChars > 0) {
+              realtimeVoice.session.finish();
+            } else {
+              realtimeVoice.session.cancel();
+            }
+            if (realtimeVoice.appendedChars <= 0 && autoVoiceRef.current) {
+              const dummy: ChatMessage = {
+                id: replyId,
+                role: "mai",
+                content: mergedSnap,
+                timestamp: "",
+                richText: richSnap ?? undefined,
+              };
+              if (buildSpeakableTextForVoice(dummy).trim()) {
+                void runHubDecoupledAutoVoice(replyId, dummy, { expectedRunId });
+              }
+            }
+          } else if (autoVoiceRef.current) {
+            const expectedRunId = autoVoiceRunIdRef.current;
             const dummy: ChatMessage = {
               id: replyId,
               role: "mai",
@@ -1537,8 +1745,8 @@ const AgentHub: React.FC = () => {
               timestamp: "",
               richText: richSnap ?? undefined,
             };
-            if (buildSpeakableTextForTts(dummy).trim()) {
-              void runHubDecoupledAutoVoice(replyId, dummy);
+            if (buildSpeakableTextForVoice(dummy).trim()) {
+              void runHubDecoupledAutoVoice(replyId, dummy, { expectedRunId });
             }
           }
         }, 0);
@@ -1700,6 +1908,7 @@ const AgentHub: React.FC = () => {
   };
 
   const handleAgentRichTextButtonSelect = (value: string, options?: { displayText?: string }) => {
+    primeAutoVoicePlayback();
     void (async () => {
       if (await startDirectHospitalBagPumpCartUpdate(value, { userDisplayText: options?.displayText })) return;
       void startMainChatStream(value, { userDisplayText: options?.displayText });
@@ -1710,6 +1919,7 @@ const AgentHub: React.FC = () => {
     const text = sendText.trim();
     if (!text) return;
     if (hubBottomSendBusy || mainChatCancelRef.current) return;
+    primeAutoVoicePlayback();
     scrollTailAfterHubSendRef.current = true;
     userPinnedToTailRef.current = true;
     setShowScrollToBottom(false);
@@ -2085,9 +2295,13 @@ const AgentHub: React.FC = () => {
    * 发送主输入框内容：先结束听写并丢弃转写异步收尾对输入框的写入，再清空并送出。
    */
   const handleSend = async () => {
-    await stopSpeech({ discardSttResult: true });
     const pendingText = input.trim();
     const hasReadyStagedImages = collectAgUiReadyImages(messages).length > 0;
+    if (!hubBottomSendBusy && !mainChatCancelRef.current && (pendingText || hasReadyStagedImages)) {
+      primeAutoVoicePlayback();
+    }
+
+    await stopSpeech({ discardSttResult: true });
 
     if (hubBottomSendBusy || mainChatCancelRef.current) {
       interruptMainChatStream();
@@ -2192,7 +2406,7 @@ const AgentHub: React.FC = () => {
   }, []);
 
   /**
-   * 点击气泡喇叭：与全局自动播报一致，分段拉流 TTS（首段先播、尾段并行请求后接播），HTMLAudio 播放；再次点击同一气泡则停止。
+   * 点击气泡喇叭：与全局自动播报一致，使用火山实时语音流播放；再次点击同一气泡则停止。
    * @param msg 当前消息
    */
   const handlePlayBubble = async (msg: ChatMessage) => {
@@ -2206,18 +2420,17 @@ const AgentHub: React.FC = () => {
     bubblePlayingTargetIdRef.current = msg.id;
     setPlayingId(msg.id);
     try {
-      const speakable = buildSpeakableTextForTts(msg).trim().slice(0, CHAT_BUBBLE_TTS_MAX_CHARS);
+      const speakable = buildSpeakableTextForVoice(msg).trim().slice(0, CHAT_BUBBLE_VOICE_MAX_CHARS);
       if (!speakable) {
         toast.error("暂无可播报的文字");
         return;
       }
-      await playFocusPlainTextTts({
+      await playFocusPlainTextVoice({
         userId: DEFAULT_CHAT_USER_ID,
         text: speakable,
         signal: ac.signal,
         onSubtitle: () => {},
         syncSubtitle: false,
-        firstSegmentMaxChars: HUB_AUTO_VOICE_FIRST_TTS_MAX_CHARS,
       });
     } catch (e: unknown) {
       const err = e as { name?: string; message?: string };
@@ -2400,16 +2613,30 @@ const AgentHub: React.FC = () => {
           height: HUB_TOP_ACTION_HEIGHT_PX,
         }}
       >
-        <div className="mx-auto flex h-full max-w-lg items-center justify-end bg-background/90 px-3 backdrop-blur-md">
+        <div className="mx-auto flex h-full max-w-lg items-center justify-end gap-2 bg-background/90 px-3 backdrop-blur-md">
+          <button
+            type="button"
+            onClick={handleToggleAutoVoice}
+            className={cn(
+              "relative inline-flex h-9 w-9 items-center justify-center rounded-full border-0 p-0 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              autoVoice
+                ? "bg-transparent text-black hover:bg-transparent"
+                : "bg-[#7a6670] text-white hover:bg-[#6a5660] shadow-[0_8px_18px_rgba(99,55,72,0.12)]",
+            )}
+            aria-pressed={autoVoice}
+            aria-label={autoVoice ? "关闭语音模式" : "开启语音模式"}
+            title={autoVoice ? "关闭语音模式" : "开启语音模式"}
+          >
+            {autoVoice ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+          </button>
           <button
             type="button"
             onClick={handleCreateNewConversation}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border/70 bg-background px-3 text-[13px] font-medium text-foreground shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border-0 bg-transparent p-0 text-[#3b2f36] transition-colors hover:text-[#8f586d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             aria-label="新建会话"
             title="新建会话"
           >
             <Plus className="h-4 w-4" />
-            <span>新建会话</span>
           </button>
         </div>
       </div>
@@ -2449,7 +2676,7 @@ const AgentHub: React.FC = () => {
             const bubbleShell = cn(
               "relative group w-full break-words",
               msg.role === "user"
-                ? "rounded-2xl rounded-br-[5px] bg-[#176b87] text-white px-3 py-2.5 text-[15px] leading-[1.45] shadow-sm"
+                ? "rounded-2xl rounded-br-[5px] bg-[#f3e7ec] text-[#3f2d36] px-3 py-2.5 text-[15px] leading-[1.45] shadow-none"
                 : isMainAssistantBubble
                   ? cn("w-fit max-w-full", mainAssistantBubbleBase)
                   : cn(
@@ -2460,7 +2687,7 @@ const AgentHub: React.FC = () => {
             const artifactBubbleShell = cn(
               "relative group w-full min-w-0 max-w-full break-words",
               msg.role === "user"
-                ? "rounded-2xl rounded-br-[5px] bg-[#176b87] text-white px-3 py-2.5 text-[15px] leading-[1.45] shadow-sm"
+                ? "rounded-2xl rounded-br-[5px] bg-[#f3e7ec] text-[#3f2d36] px-3 py-2.5 text-[15px] leading-[1.45] shadow-none"
                 : isMainAssistantBubble
                   ? mainAssistantBubbleBase
                   : cn(
@@ -3010,7 +3237,8 @@ const AgentHub: React.FC = () => {
             onSend={() => void handleSend()}
             sendLoading={hubBottomSendBusy}
             canSendWithoutText={hasReadyHubUploadedImages}
-            onVoice={() => void onMicClick()}
+            onVoiceStart={() => void startSpeech()}
+            onVoiceEnd={() => void stopSpeech()}
             speechListening={speechListening}
             showPhotoMenu={showPhotoMenu}
             onTogglePhotoMenu={setShowPhotoMenu}
