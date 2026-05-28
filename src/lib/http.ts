@@ -912,94 +912,29 @@ export async function uploadMultipart<T = unknown>(options: UploadMultipartOptio
   return (unwrapEnvelope ? unwrapApiData<T>(json) : (json as T)) as T;
 }
 
-// ─── TTS 流式（二进制）──────────────────────────────────────────────
+// ─── 二进制流式响应（ReadableStream）─────────────────────────────────
 
-export interface GetTtsStreamOptions {
-  params: HttpQueryParams;
+export interface GetBinaryStreamOptions {
+  params?: HttpQueryParams;
   headers?: Record<string, string>;
   signal?: AbortSignal;
   token?: string;
   skipAuth?: boolean;
 }
 
-export interface GetTtsStreamResult {
-  /** 音频二进制 */
-  blob: Blob;
-  /** 从 Content-Disposition 解析的文件名（若有） */
-  fileName?: string;
-}
-
 /**
- * 从 Content-Disposition 解析 filename。
- * @param header Content-Disposition 头值
+ * GET 二进制流：返回原始 Response，调用方用 body.getReader() 边收边处理。
+ * 原生端也走 fetch，以便在 CapacitorHttp patch 下保留 ReadableStream。
  */
-export function parseContentDispositionFileName(header: string | null): string | undefined {
-  if (!header) return undefined;
-  const m = /filename\*?=(?:UTF-8''|")?([^";\n]+)/i.exec(header);
-  if (!m) return undefined;
-  try {
-    return decodeURIComponent(m[1].replace(/"/g, "").trim());
-  } catch {
-    return m[1].replace(/"/g, "").trim();
-  }
-}
-
-function base64ToBlob(base64: string, mimeType: string): Blob {
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return new Blob([bytes], { type: mimeType || "application/octet-stream" });
-}
-
-/**
- * GET /v1/tts-stream：拉取语音二进制（Web 为 Blob；原生为 arraybuffer Base64 转 Blob）。
- * @param url 完整或相对路径（如 /v1/tts-stream）
- * @param options 查询参数与鉴权
- */
-export async function getTtsStream(url: string, options: GetTtsStreamOptions): Promise<GetTtsStreamResult> {
+export async function getBinaryStreamResponse(url: string, options: GetBinaryStreamOptions = {}): Promise<Response> {
   const { params, signal, token = DEFAULT_API_TOKEN, skipAuth } = options;
   const headers: Record<string, string> = { ...options.headers };
   if (token && !skipAuth) headers["Authorization"] = `Bearer ${token}`;
 
   const resolvedBase = resolveUrl(url);
-
+  const resolved = appendQueryParams(resolvedBase, params);
   logHttpApiRequestPayload({ method: "GET", url: resolvedBase, params });
 
-  if (isNative()) {
-    const res = await CapacitorHttp.request({
-      url: resolvedBase,
-      method: "GET",
-      headers,
-      params: toCapacitorParams(params),
-      responseType: "arraybuffer",
-    });
-    if (res.status < 200 || res.status >= 300) {
-      logHttpApiResponseDebug({
-        method: "GET",
-        url: resolvedBase,
-        params,
-        status: res.status,
-        ok: false,
-        data: res.data,
-      });
-      throw new Error(`HTTP ${res.status}: TTS request failed`);
-    }
-    const mime = (res.headers?.["Content-Type"] || res.headers?.["content-type"] || "audio/mpeg") as string;
-    const cd = (res.headers?.["Content-Disposition"] || res.headers?.["content-disposition"]) as string | undefined;
-    const dataStr = typeof res.data === "string" ? res.data : "";
-    const blob = base64ToBlob(dataStr, mime.split(";")[0]?.trim() || "application/octet-stream");
-    logHttpApiResponseDebug({
-      method: "GET",
-      url: resolvedBase,
-      params,
-      status: res.status,
-      ok: true,
-      data: blob,
-    });
-    return { blob, fileName: parseContentDispositionFileName(cd ?? null) };
-  }
-
-  const resolved = appendQueryParams(resolvedBase, params);
   const res = await fetch(resolved, { method: "GET", headers, signal });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
@@ -1013,17 +948,19 @@ export async function getTtsStream(url: string, options: GetTtsStreamOptions): P
     });
     throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
   }
-  const blob = await res.blob();
-  const cd = res.headers.get("Content-Disposition");
   logHttpApiResponseDebug({
     method: "GET",
     url: resolvedBase,
     params,
     status: res.status,
     ok: true,
-    data: blob,
+    data: {
+      contentType: res.headers.get("Content-Type"),
+      audioFormat: res.headers.get("X-Mai-Audio-Format"),
+      sampleRate: res.headers.get("X-Mai-Audio-Sample-Rate"),
+    },
   });
-  return { blob, fileName: parseContentDispositionFileName(cd) };
+  return res;
 }
 
 // ─── 分块流式 (chunked) ────────────────────────────────────────────
@@ -1375,7 +1312,6 @@ export interface ApiClient {
   request: typeof request;
   apiRequest: typeof apiRequest;
   uploadMultipart: typeof uploadMultipart;
-  getTtsStream: typeof getTtsStream;
   streamChunked: typeof streamChunked;
   streamSSE: typeof streamSSE;
 }
@@ -1397,9 +1333,6 @@ export function createApiClient(baseURL: string): ApiClient {
     },
     uploadMultipart<T = unknown>(options: UploadMultipartOptions): Promise<T> {
       return uploadMultipart({ ...options, url: resolve(options.url) });
-    },
-    getTtsStream(url: string, options: GetTtsStreamOptions): Promise<GetTtsStreamResult> {
-      return getTtsStream(resolve(url), options);
     },
     streamChunked(options: StreamChunkedOptions): () => void {
       return streamChunked({ ...options, url: resolve(options.url) });

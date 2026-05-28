@@ -113,6 +113,80 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentStatusLine).toBe("");
   });
 
+  it("shows an optimistic work panel row as soon as a run starts", () => {
+    const msg = applyEvents([
+      {
+        type: "RUN_STARTED",
+        metadata: { status: "Agent loop started." },
+        semantic: {
+          phase: "thinking",
+          label: "我在～接收消息中",
+          visibility: "status",
+          merge_key: "run:run_1",
+          priority: 10,
+        },
+      },
+    ]);
+
+    expect(msg.agentStatusLine).toBe("");
+    expect(typeof msg.agentWorkStartedAtMs).toBe("number");
+    expect(msg.agentWorkFinishedAtMs).toBeUndefined();
+    expect(msg.agentToolCalls).toHaveLength(1);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      id: "run:started-work",
+      name: "run_started",
+      title: "我在～接收消息中",
+      state: "running",
+    });
+  });
+
+  it("replaces the optimistic run row when real tool work starts", () => {
+    const msg = applyEvents([
+      {
+        type: "RUN_STARTED",
+        metadata: { status: "Agent loop started." },
+      },
+      {
+        type: "TOOL_CALL_START",
+        tool_call_id: "call_1",
+        tool_call_name: "milk_records_query",
+      },
+    ]);
+
+    expect(msg.agentToolCalls).toHaveLength(1);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      id: "tool:call_1",
+      name: "milk_records_query",
+      title: "我正在看吸奶和喂养记录",
+      state: "running",
+    });
+    expect(msg.agentToolCalls?.some((row) => row.name === "run_started")).toBe(false);
+  });
+
+  it("completes the optimistic run row for direct text replies without tool work", () => {
+    const msg = applyEvents([
+      {
+        type: "RUN_STARTED",
+        metadata: { status: "Agent loop started." },
+      },
+      {
+        type: "TEXT_MESSAGE_CONTENT",
+        message_id: "reply",
+        delta: "好的。",
+      },
+      {
+        type: "RUN_FINISHED",
+      },
+    ]);
+
+    expect(msg.agentToolCalls).toHaveLength(1);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      id: "run:started-work",
+      state: "completed",
+    });
+    expect(typeof msg.agentWorkFinishedAtMs).toBe("number");
+  });
+
   it("maps tool work to specific user-facing work panel text", () => {
     const msg = applyEvents([
       {
@@ -136,7 +210,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls).toHaveLength(1);
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "milk_records_query",
-      title: "吸奶和喂养记录已读取",
+      title: "我已经整理好吸奶和喂养记录了",
       state: "completed",
     });
     expect(msg.agentToolCalls?.[0].title).not.toContain("milk_records_query");
@@ -151,7 +225,7 @@ describe("applyAgUiStreamSideEffects", () => {
         tool_call_name: "milk_records_query",
         semantic: {
           phase: "reading",
-          label: "正在读取最近 7 天奶量记录",
+          label: "我正在看最近 7 天奶量记录",
           visibility: "work_item",
           merge_key: "tool:call_1",
           priority: 50,
@@ -161,7 +235,7 @@ describe("applyAgUiStreamSideEffects", () => {
 
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "milk_records_query",
-      title: "正在读取最近 7 天奶量记录",
+      title: "我正在看最近 7 天奶量记录",
       state: "running",
     });
   });
@@ -175,7 +249,7 @@ describe("applyAgUiStreamSideEffects", () => {
       }),
     ).toMatchObject({
       phase: "done",
-      label: "奶量卡片已生成",
+      label: "我已经生成奶量卡片了",
       visibility: "artifact",
       mergeKey: "artifact:milk-plan-1",
     });
@@ -186,7 +260,7 @@ describe("applyAgUiStreamSideEffects", () => {
       }),
     ).toMatchObject({
       phase: "error",
-      label: "这轮处理遇到问题",
+      label: "这轮我没能处理好",
       visibility: "status",
     });
   });
@@ -218,7 +292,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls).toHaveLength(1);
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "hospital_bag_pump_recommend",
-      title: "已完成吸奶器推荐",
+      title: "我已经整理好吸奶器推荐了",
       state: "completed",
     });
   });
@@ -245,7 +319,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls).toHaveLength(1);
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "hospital_bag_cart_update",
-      title: "购物车已更新",
+      title: "我已经更新待产包购物车了",
       state: "completed",
     });
   });
@@ -455,8 +529,8 @@ describe("applyAgUiStreamSideEffects", () => {
 
     expect(msg.agentToolCalls).toHaveLength(1);
     expect(msg.agentToolCalls?.[0]).toMatchObject({
-      title: "请确认后继续",
-      argsDigest: "相关内容已准备好，等待你确认。",
+      title: "我需要你确认一下，再继续处理",
+      argsDigest: "我已经准备好相关内容，等你确认。",
       state: "completed",
     });
     expect(msg.agentToolCalls?.[0].title).not.toContain("milk_plan_preview");

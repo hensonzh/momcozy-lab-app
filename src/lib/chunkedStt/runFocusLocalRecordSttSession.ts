@@ -54,13 +54,15 @@ async function persistPcmToCacheFile(relativePath: string, pcmBuffer: ArrayBuffe
  * 每 2s 将当前累计 PCM 封装为 WAV 上传在线转写；连续两次转写结果一致则结束。
  *
  * @param params.userId 业务 user_id
- * @param params.signal 外部取消
+ * @param params.signal 外部取消，直接丢弃本轮结果
+ * @param params.finishSignal 外部结束，停止录音并补一次最终转写
  * @param params.setInterimText 实时转写预览
  * @returns 最终用户文本
  */
 export async function runFocusLocalRecordSttSession(params: {
   userId: string;
   signal: AbortSignal;
+  finishSignal?: AbortSignal;
   setInterimText: (text: string) => void;
 }): Promise<string> {
   if (typeof navigator !== "undefined" && navigator.onLine === false) {
@@ -117,17 +119,63 @@ export async function runFocusLocalRecordSttSession(params: {
   };
 
   return new Promise<string>((resolve) => {
+    let finishing = false;
+
     const finish = async (out: string) => {
       if (settled) return;
       settled = true;
       params.signal.removeEventListener("abort", onAbort);
+      params.finishSignal?.removeEventListener("abort", onFinishRequest);
       cleanupTimers();
       await teardownMic();
       resolve(out.trim());
     };
 
-    const onAbort = () => void finish(hadNonEmptyResult ? bestText : "");
+    const transcribePcmSnapshot = async (pcm: ArrayBuffer): Promise<string> => {
+      if (pcm.byteLength === 0 || params.signal.aborted || settled) return "";
+
+      if (sessionFilePath) {
+        void persistPcmToCacheFile(sessionFilePath, pcm);
+      }
+
+      try {
+        const wavBlob = pcmS16leMonoToWavBlob(pcm, FOCUS_PCM_SAMPLE_RATE);
+        const text = await transcribeSpeechAudioChunk(params.userId, wavBlob, {
+          signal: params.signal,
+          fileName: `speech-chunk-${Date.now()}.wav`,
+          mimeType: "audio/wav",
+        });
+        return text ?? "";
+      } catch (err: unknown) {
+        if (params.signal.aborted) return "";
+        log("[Focus STT] 分片转写失败（已忽略单次错误）", err instanceof Error ? err.message : err);
+        return "";
+      }
+    };
+
+    const finishWithCurrentAudio = async () => {
+      if (settled || finishing) return;
+      finishing = true;
+      cleanupTimers();
+      await teardownMic();
+      const text = await transcribePcmSnapshot(getPcmSnapshot());
+      if (!params.signal.aborted && text.trim().length > 0) {
+        handleApiResult(text);
+      }
+      await finish(hadNonEmptyResult ? bestText : "");
+    };
+
+    const onAbort = () => void finish("");
+    const onFinishRequest = () => void finishWithCurrentAudio();
     params.signal.addEventListener("abort", onAbort, { once: true });
+    params.finishSignal?.addEventListener("abort", onFinishRequest, { once: true });
+    if (params.signal.aborted) {
+      void finish("");
+      return;
+    }
+    if (params.finishSignal?.aborted) {
+      void finishWithCurrentAudio();
+    }
 
     const handleApiResult = (raw: string | null) => {
       if (settled || params.signal.aborted) return;
@@ -135,7 +183,7 @@ export async function runFocusLocalRecordSttSession(params: {
       const display = norm.length > 0 ? norm : bestText;
       params.setInterimText(display);
 
-      if (lastNorm !== null && norm === lastNorm) {
+      if (!finishing && lastNorm !== null && norm === lastNorm) {
         if (norm.length > 0) {
           void finish(norm);
           return;
@@ -158,23 +206,9 @@ export async function runFocusLocalRecordSttSession(params: {
       const pcm = getPcmSnapshot();
       if (pcm.byteLength === 0) return;
 
-      if (sessionFilePath) {
-        void persistPcmToCacheFile(sessionFilePath, pcm);
-      }
-
-      try {
-        const wavBlob = pcmS16leMonoToWavBlob(pcm, FOCUS_PCM_SAMPLE_RATE);
-        const text = await transcribeSpeechAudioChunk(params.userId, wavBlob, {
-          signal: params.signal,
-          fileName: `speech-chunk-${Date.now()}.wav`,
-          mimeType: "audio/wav",
-        });
-        if (params.signal.aborted || settled) return;
-        handleApiResult(text);
-      } catch (err: unknown) {
-        if (params.signal.aborted) return;
-        log("[Focus STT] 分片转写失败（已忽略单次错误）", err instanceof Error ? err.message : err);
-      }
+      const text = await transcribePcmSnapshot(pcm);
+      if (params.signal.aborted || settled) return;
+      handleApiResult(text);
     };
 
     const scheduleNextPoll = () => {
@@ -199,6 +233,10 @@ export async function runFocusLocalRecordSttSession(params: {
           isActive: () => !settled && !params.signal.aborted,
           onPcmS16le: appendPcmS16le,
         });
+        if (settled) {
+          await close().catch(() => undefined);
+          return;
+        }
         micClose = close;
       } catch {
         void finish("");
