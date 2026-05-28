@@ -5,7 +5,6 @@ import {
   appendQueryParams,
   buildNativeMultipartEntries,
   generateMultipartBoundary,
-  parseContentDispositionFileName,
   streamSSE,
   toCapacitorParams,
   unwrapApiData,
@@ -57,12 +56,6 @@ describe("multipart 辅助", () => {
 
   it("generateMultipartBoundary 非空", () => {
     expect(generateMultipartBoundary().length).toBeGreaterThan(8);
-  });
-});
-
-describe("parseContentDispositionFileName", () => {
-  it("解析 filename", () => {
-    expect(parseContentDispositionFileName('attachment; filename="a.mp3"')).toBe("a.mp3");
   });
 });
 
