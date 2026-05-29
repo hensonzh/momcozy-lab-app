@@ -117,20 +117,51 @@ const mapPlanTypeToLabel = (planType: string) => {
   return map[t] ?? "呵护计划";
 };
 
+const normalizeTaskPlanBadgeLabel = (label: string) => {
+  const t = (label || "").trim();
+  if (!t) return "";
+  if (t.includes("追奶")) return "追奶计划";
+  if (t.includes("减奶") || t.includes("离乳")) return "减奶计划";
+  if (t.includes("稳奶") || t.includes("维持")) return "稳奶计划";
+  if (t.includes("待产")) return "待产计划";
+  if (t.includes("返工")) return "返工计划";
+  return t.endsWith("计划") ? t : `${t}计划`;
+};
+
+const mapPlanTypeToTaskBadgeLabel = (planType: string) => {
+  const t = normalizeApiPlanType(planType);
+  const map: Record<string, string> = {
+    none: "稳奶计划",
+    maintain: "稳奶计划",
+    chase: "追奶计划",
+    wean: "减奶计划",
+    fertility: "待产计划",
+    work: "返工计划",
+  };
+  return map[t] ?? normalizeTaskPlanBadgeLabel(mapPlanTypeToLabel(t));
+};
+
+const resolveSmartTaskPlanBadgeLabel = (task: ScheduleTask, planType: string) => {
+  if (task.source !== "mai") return null;
+  const fromTask = normalizeTaskPlanBadgeLabel(task.reason ?? "");
+  return fromTask || mapPlanTypeToTaskBadgeLabel(planType);
+};
+
 const formatPostpartumPhaseLabel = (postpartumDay: number, phaseLabel: string) =>
   `产后第${postpartumWeekFromDay(postpartumDay)}周（${phaseLabel}）`;
 
 const smartSourceCardClass = "bg-white border-border/60";
 const smartNextCardClass = "bg-white border-primary/35 shadow-md shadow-primary/10";
-const manualSourceCardClass = "bg-[hsl(42_100%_91%)] border-[hsl(35_74%_66%)]";
-const manualNextCardClass = "bg-[hsl(42_100%_88%)] border-[hsl(35_80%_58%)] shadow-md";
-const completedSourceCardClass = "bg-[hsl(344_36%_96%)] border-[hsl(344_22%_86%)]";
+const manualSourceCardClass = "bg-white border-border/60";
+const manualNextCardClass = "bg-white border-primary/35 shadow-md shadow-primary/10";
+const completedSourceCardClass = "bg-[hsl(118_22%_94%)] border-[hsl(118_18%_82%)]";
+const skippedSourceCardClass = "bg-[hsl(30_6%_92%)] border-0";
 const recordValueBadgeClass = "inline-flex h-5 max-w-[5.5rem] items-center rounded-md border border-border/40 bg-background px-1.5 py-0 text-[10px] font-semibold leading-none text-foreground/80 whitespace-nowrap tabular-nums";
-const completedStatusBadgeClass = "text-[10px] font-semibold leading-none text-[hsl(145_38%_34%)] bg-[hsl(145_52%_92%)] border border-[hsl(145_34%_78%)] px-1.5 py-0 rounded-md whitespace-nowrap h-5 inline-flex items-center";
-const pendingStatusBadgeClass = "text-[10px] font-semibold leading-none text-[hsl(34_64%_34%)] bg-[hsl(40_92%_91%)] border border-[hsl(38_58%_74%)] px-2 py-0.5 rounded-full whitespace-nowrap h-5 inline-flex items-center";
-const skippedStatusBadgeClass = "bg-[hsl(28_12%_92%)] text-[hsl(26_10%_42%)] text-[10px] font-semibold leading-none border-[hsl(28_10%_82%)] px-1.5 py-0 h-5";
-const smartSourceBadgeClass = "text-[10px] font-semibold leading-none bg-[hsl(344_36%_91%)] text-[hsl(344_26%_40%)] border border-[hsl(344_24%_82%)] px-2 py-0.5 rounded-md whitespace-nowrap h-5 inline-flex items-center shrink-0";
-const manualSourceBadgeClass = "text-[10px] font-semibold leading-none bg-[hsl(40_82%_89%)] text-[hsl(32_45%_34%)] border border-[hsl(36_52%_74%)] px-2 py-0.5 rounded-md whitespace-nowrap h-5 inline-flex items-center shrink-0";
+const recordCompletionTimeBadgeClass = "inline-flex h-5 max-w-[5.75rem] items-center rounded-md border border-[hsl(118_18%_78%)] bg-[hsl(118_22%_97%)] px-1.5 py-0 text-[10px] font-semibold leading-none text-[hsl(118_24%_34%)] whitespace-nowrap truncate";
+const completedTaskBadgeClass = "inline-flex h-5 items-center rounded-md border border-[hsl(118_18%_78%)] bg-[hsl(118_22%_97%)] px-1.5 py-0 text-[10px] font-normal leading-none text-[hsl(118_24%_34%)] whitespace-nowrap";
+const skippedTaskBadgeClass = "inline-flex h-5 items-center rounded-md border border-[hsl(28_7%_78%)] bg-[hsl(30_8%_92%)] px-1.5 py-0 text-[10px] font-normal leading-none text-[hsl(28_7%_36%)] whitespace-nowrap";
+const taskPlanBadgeClass = "inline-flex h-4 max-w-[4.25rem] items-center rounded-[6px] border border-[hsl(38_58%_74%)] bg-[hsl(40_92%_91%)] px-1.5 py-0 text-[9px] font-bold leading-none text-[hsl(34_64%_34%)] whitespace-nowrap truncate shrink-0";
+const manualTaskBadgeClass = "inline-flex h-4 max-w-[4.25rem] items-center rounded-[6px] border border-[hsl(210_26%_76%)] bg-[hsl(210_38%_94%)] px-1.5 py-0 text-[9px] font-bold leading-none text-[hsl(212_34%_34%)] whitespace-nowrap truncate shrink-0";
 
 const normalizeTaskTimeFromApi = (raw: string) => {
   const t = (raw || "").trim();
@@ -1273,27 +1304,35 @@ const Schedule: React.FC = () => {
               if (entry.kind === "record") {
                 const record = entry.record;
                 const deleting = Boolean(deletingRecordIds[record.id]);
+                const isSupplementRecord = record.subLabel === "补录";
                 return (
 	                  <div key={`record-${record.id}`} className="min-w-0 py-0.5 bg-background">
                     <div className="min-w-0 pb-1">
-                      <div className={cn("rounded-[16px] px-3 py-2.5 border shadow-sm min-w-0", completedSourceCardClass)}>
+                      <div className={cn("rounded-[16px] px-3 py-2.5 border shadow-sm min-w-0 relative", completedSourceCardClass, isSupplementRecord ? "overflow-visible" : "overflow-hidden")}>
+                        {isSupplementRecord && (
+                          <span className={cn(manualTaskBadgeClass, "pointer-events-none absolute left-0 -top-1 z-20")} title="手动添加">
+                            手动添加
+                          </span>
+                        )}
                         <div className="flex items-center justify-between gap-2 min-w-0">
                           <div className="flex items-center gap-2 min-w-0 flex-1">
                             <span className="text-[13px] font-mono font-bold text-primary/70 shrink-0">{record.time}</span>
                             <span className="text-[15px] tracking-wide min-w-0 truncate text-foreground/80 font-bold" title={resolveRecordDisplayTitle(record)}>
                               {truncateTaskDisplay(resolveRecordDisplayTitle(record))}
                             </span>
-                          </div>
-                          <div className="flex items-center justify-end gap-1.5 shrink-0">
-                            <span className={recordValueBadgeClass}>
-                              {formatRecordVolumeDisplay(record, volUnit)}
-                            </span>
-	                            <span className={completedStatusBadgeClass}>已完成</span>
-                            <span className={manualSourceBadgeClass}>
-                              手动
-                            </span>
-	                            <button
-	                              type="button"
+	                          </div>
+		                          <div className="flex items-center justify-end gap-1.5 shrink-0">
+			                            <span className={recordValueBadgeClass}>
+			                              {formatRecordVolumeDisplay(record, volUnit)}
+			                            </span>
+                                <span className={completedTaskBadgeClass}>
+                                  {record.time}
+                                </span>
+                                <span className={completedTaskBadgeClass}>
+                                  已完成
+                                </span>
+		                            <button
+		                              type="button"
                               onClick={() => void handleDeleteRecord(record)}
                               disabled={deleting}
                               className={cn(
@@ -1321,22 +1360,35 @@ const Schedule: React.FC = () => {
               const matchedRecordSummary = matchedRecords.length > 0
                 ? matchedRecords.map((record) => formatRecordVolumeDisplay(record, volUnit)).join(" / ")
                 : null;
+              const matchedRecordCompletionSummary = matchedRecords.length > 0
+                ? matchedRecords.map((record) => record.time).join(" / ")
+                : null;
               const deleting = Boolean(deletingTaskIds[task.id]);
               const isSmartTask = task.source === "mai";
-              const taskSourceLabel = isSmartTask ? "智能" : "手动";
+              const taskPlanBadgeLabel = resolveSmartTaskPlanBadgeLabel(task, planType);
+              const taskCornerBadge = taskPlanBadgeLabel
+                ? { label: taskPlanBadgeLabel, className: taskPlanBadgeClass }
+                : task.source === "manual"
+                  ? { label: "手动添加", className: manualTaskBadgeClass }
+                  : null;
               
               return (
                 <div key={task.id} className="min-w-0 py-0.5 bg-background">
                   <div className="min-w-0 pb-1">
                     <div className={cn(
                       "rounded-[16px] px-3 py-2.5 border transition-all relative min-w-0",
-                      editingTaskId === task.id ? "overflow-x-clip overflow-y-visible" : "overflow-hidden",
+                      editingTaskId === task.id ? "overflow-x-clip overflow-y-visible" : taskCornerBadge ? "overflow-visible" : "overflow-hidden",
                       isNext ? (isSmartTask ? smartNextCardClass : manualNextCardClass) : 
-                      skipped ? "bg-secondary/20 border-transparent opacity-40 grayscale" : 
+                      skipped ? skippedSourceCardClass : 
                       isCompleted ? completedSourceCardClass : 
                       cn(isSmartTask ? smartSourceCardClass : manualSourceCardClass, "shadow-sm"),
                       editingTaskId === task.id && "ring-2 ring-primary/30 border-primary/50 bg-card opacity-100 shadow-lg !grayscale-0"
                     )}>
+                      {taskCornerBadge && editingTaskId !== task.id && (
+                        <span className={cn(taskCornerBadge.className, "pointer-events-none absolute left-0 -top-1 z-20")} title={taskCornerBadge.label}>
+                          {taskCornerBadge.label}
+                        </span>
+                      )}
                       <div className="relative z-10 min-h-[24px] min-w-0 flex items-center justify-between">
                         {editingTaskId === task.id ? (
                           <div 
@@ -1406,7 +1458,7 @@ const Schedule: React.FC = () => {
                               )}
                               onClick={() => startEdit(task)}
                             >
-                              <span className={cn("text-[13px] font-mono font-bold shrink-0", isCompleted && !skipped ? "text-primary/70" : "text-muted-foreground/80")}>{task.time}</span>
+                              <span className={cn("text-[13px] font-mono font-bold shrink-0", skipped ? "text-muted-foreground/80 line-through" : isCompleted ? "text-primary/70" : "text-muted-foreground/80")}>{task.time}</span>
                               <span className={cn("text-[15px] tracking-wide min-w-0 truncate", skipped ? "text-muted-foreground line-through font-bold" : isCompleted ? "text-foreground/80 font-bold" : "text-foreground/90 font-extrabold")} title={task.title}>
                                 {truncateTaskDisplay(task.title)}
                               </span>
@@ -1423,15 +1475,16 @@ const Schedule: React.FC = () => {
                                       <span className="min-w-0 truncate">{matchedRecordSummary}</span>
                                     </span>
                                   )}
-	                                  {task.adjusted && !skipped && <Badge variant="outline" className="bg-background text-[10px] font-medium border-border/50 text-muted-foreground px-1.5 py-0 h-5 max-w-[7rem] truncate">{task.adjusted}</Badge>}
-                                  {skipped && <Badge variant="outline" className={skippedStatusBadgeClass}>已跳过</Badge>}
-	                                  {isCompleted && !skipped && <span className={completedStatusBadgeClass}>已完成</span>}
+                                  {matchedRecordCompletionSummary && !skipped && (
+                                    <span className={recordCompletionTimeBadgeClass}>
+                                      {matchedRecordCompletionSummary}
+                                    </span>
+                                  )}
+                                  {isCompleted && !skipped && <span className={completedTaskBadgeClass}>已完成</span>}
+                                  {skipped && <span className={skippedTaskBadgeClass}>已跳过</span>}
+			                                  {task.adjusted && !skipped && <Badge variant="outline" className="bg-background text-[10px] font-medium border-border/50 text-muted-foreground px-1.5 py-0 h-5 max-w-[7rem] truncate">{task.adjusted}</Badge>}
 	                                </div>
 	                              )}
-	                              {isNext && <span className={pendingStatusBadgeClass}>待执行</span>}
-                                <span className={isSmartTask ? smartSourceBadgeClass : manualSourceBadgeClass}>
-                                  {taskSourceLabel}
-                                </span>
                                 <button
                                   type="button"
                                   onClick={(e) => {

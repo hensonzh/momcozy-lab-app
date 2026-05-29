@@ -1,6 +1,22 @@
 import React, { useEffect, useState, useMemo, useCallback, Suspense, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Info, Target, Droplets, Baby, Pencil, X, Moon } from "lucide-react";
+import {
+  Activity,
+  Bed,
+  ChevronDown,
+  ClipboardList,
+  Coffee,
+  Droplets,
+  HeartPulse,
+  Info,
+  Moon,
+  Pencil,
+  Ruler,
+  Target,
+  Utensils,
+  Baby,
+  X,
+} from "lucide-react";
 import {
   Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Line, ComposedChart,
@@ -46,10 +62,12 @@ const Expandable: React.FC<{
   children: React.ReactNode;
   defaultOpen?: boolean;
   className?: string;
-}> = ({ title, icon, badge, summary, children, defaultOpen = false, className = "" }) => {
+  id?: string;
+}> = ({ title, icon, badge, summary, children, defaultOpen = false, className = "", id }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <motion.div
+      id={id}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       className={`mx-4 mb-3 rounded-2xl bg-card border border-border/40 shadow-sm overflow-hidden ${className}`}
@@ -86,6 +104,123 @@ const Expandable: React.FC<{
     </motion.div>
   );
 };
+
+type StatusModuleTone = "rose" | "amber" | "mint" | "sky" | "violet" | "peach" | "aqua" | "pink";
+
+const STATUS_MODULE_TONE_CLASSES: Record<
+  StatusModuleTone,
+  { card: string; icon: string; cta: string; glow: string }
+> = {
+  rose: {
+    card: "from-[#fff7f9] via-[#fffafb] to-[#fff0f5]",
+    icon: "bg-[#f4dbe4] text-[#a96a80]",
+    cta: "bg-white/80 text-[#a35f76]",
+    glow: "bg-[#f2bfd0]",
+  },
+  amber: {
+    card: "from-[#fffaf0] via-[#fffdf8] to-[#fff1d6]",
+    icon: "bg-[#ffe4b8] text-[#b9792a]",
+    cta: "bg-white/80 text-[#b36d20]",
+    glow: "bg-[#ffd287]",
+  },
+  mint: {
+    card: "from-[#f2fffb] via-[#fbfffd] to-[#dcf7ed]",
+    icon: "bg-[#cceee1] text-[#388b72]",
+    cta: "bg-white/80 text-[#2f8a72]",
+    glow: "bg-[#ace4d1]",
+  },
+  sky: {
+    card: "from-[#f4fbff] via-[#fbfdff] to-[#e1f1ff]",
+    icon: "bg-[#d5eafa] text-[#4f84a6]",
+    cta: "bg-white/80 text-[#477f9f]",
+    glow: "bg-[#b9dff4]",
+  },
+  violet: {
+    card: "from-[#fbf7ff] via-[#fffafd] to-[#eee6ff]",
+    icon: "bg-[#e6d9fb] text-[#7d64aa]",
+    cta: "bg-white/80 text-[#7560a0]",
+    glow: "bg-[#d8c7f4]",
+  },
+  peach: {
+    card: "from-[#fff8f1] via-[#fffdf9] to-[#ffe7dc]",
+    icon: "bg-[#ffd9c8] text-[#b96f55]",
+    cta: "bg-white/80 text-[#b6674b]",
+    glow: "bg-[#ffc6ad]",
+  },
+  aqua: {
+    card: "from-[#f1fffe] via-[#fbffff] to-[#d8f4f5]",
+    icon: "bg-[#c8ecee] text-[#3b8a90]",
+    cta: "bg-white/80 text-[#31828b]",
+    glow: "bg-[#aee0e5]",
+  },
+  pink: {
+    card: "from-[#fff6fb] via-[#fffafd] to-[#ffe5f0]",
+    icon: "bg-[#f6d6e5] text-[#b75d82]",
+    cta: "bg-white/80 text-[#ad5579]",
+    glow: "bg-[#f0b6cf]",
+  },
+};
+
+type StatusModuleCardProps = {
+  title: string;
+  subtitle: string;
+  value: string;
+  action: string;
+  icon: React.ReactNode;
+  tone: StatusModuleTone;
+  onClick?: () => void;
+};
+
+function StatusModuleCard({
+  title,
+  subtitle,
+  value,
+  action,
+  icon,
+  tone,
+  onClick,
+}: StatusModuleCardProps) {
+  const toneClasses = STATUS_MODULE_TONE_CLASSES[tone];
+  const content = (
+    <>
+      <div className="relative z-10 flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <h3 className="truncate text-[14px] font-extrabold leading-tight text-[#35212c]">{title}</h3>
+          <p className="mt-1 line-clamp-2 text-[11px] font-medium leading-snug text-[#7a6870]">{subtitle}</p>
+        </div>
+        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl ${toneClasses.icon}`}>
+          {icon}
+        </span>
+      </div>
+      <div className="relative z-10 mt-auto">
+        <p className="min-h-[22px] text-[16px] font-black leading-tight text-[#35212c]">{value}</p>
+        <span className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
+          {action}
+        </span>
+      </div>
+      <span
+        aria-hidden="true"
+        className={`absolute -bottom-8 -right-6 h-24 w-24 rounded-full opacity-45 blur-xl ${toneClasses.glow}`}
+      />
+    </>
+  );
+
+  const className = `relative flex min-h-[132px] flex-col overflow-hidden rounded-[22px] border border-white/70 bg-gradient-to-br p-3.5 text-left shadow-[0_10px_24px_rgba(83,47,64,0.06)] ${toneClasses.card}`;
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={`${className} active:scale-[0.98] transition-transform`}>
+        {content}
+      </button>
+    );
+  }
+
+  return <article className={className}>{content}</article>;
+}
+
+function scrollStatusSection(id: string): void {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 
 type VolumeUnit = Parameters<typeof formatVol>[1];
@@ -667,6 +802,24 @@ const StatusOverviewBody: React.FC = () => {
 
   const growthMeasCaption =
     showGrowthServerMeta && latestGrowth ? latestGrowthMeasurementCaption(latestGrowth) : null;
+  const todayPumpLabel = todayQueryLoading
+    ? "加载中"
+    : todayPumpMl !== null
+      ? `${formatVol(todayPumpMl, unit)}${unitLabel(unit)}`
+      : "待记录";
+  const todayFeedLabel = todayQueryLoading
+    ? "加载中"
+    : todayFeedMl !== null
+      ? `${formatVol(todayFeedMl, unit)}${unitLabel(unit)}`
+      : "待记录";
+  const postpartumValue =
+    momBabyLoading ? "加载中" : typeof postpartumWeeks === "number" ? `第 ${postpartumWeeks} 周` : "待完善";
+  const babyGrowthValue =
+    growthLoading
+      ? "加载中"
+      : typeof babyMetrics.weightKg === "number"
+        ? `${babyMetrics.weightKg}kg`
+        : "待记录";
 
   const runGrowthMetricsHighlight = useCallback(() => {
     if (growthBlinkTimerRef.current !== null) {
@@ -704,10 +857,24 @@ const StatusOverviewBody: React.FC = () => {
     };
   }, [runGrowthMetricsHighlight]);
 
+  const openGrowthEditor = useCallback(() => {
+    setGrowthSaveErr(null);
+    setEditWeight(
+      typeof babyMetrics.weightKg === "number" ? babyMetrics.weightKg.toString() : "",
+    );
+    setEditHeight(
+      typeof babyMetrics.heightCm === "number" ? babyMetrics.heightCm.toString() : "",
+    );
+    setEditHead(
+      typeof babyMetrics.headCm === "number" ? babyMetrics.headCm.toString() : "",
+    );
+    setIsGrowthDrawerOpen(true);
+  }, [babyMetrics]);
+
   return (
     <>
       <div className="flex flex-col pb-3">
-        <div className="order-1 relative mx-4 mt-2 mb-4 flex items-center justify-between gap-3">
+        <div id="status-mom-digital-twin" className="order-1 relative mx-4 mt-2 mb-4 flex items-center gap-3">
           <div className="min-w-0 flex items-center gap-3">
             <img src={momAvatar} alt="Mom" className="w-14 h-14 rounded-full border-2 border-primary/20 object-cover" />
             <div className="min-w-0">
@@ -725,23 +892,47 @@ const StatusOverviewBody: React.FC = () => {
               </p>
             </div>
           </div>
-          <div className="shrink-0 text-right">
-            <p className="text-[10px] font-bold text-muted-foreground mb-0.5">今日母乳产出</p>
-            <p className="text-base font-black text-foreground">
-              {todayQueryLoading ? (
-                <span className="text-muted-foreground">…</span>
-              ) : todayPumpMl !== null ? (
-                <>
-                  {formatVol(todayPumpMl, unit)}<span className="text-[10px] font-bold ml-0.5">{unitLabel(unit)}</span>
-                </>
-              ) : (
-                dash
-              )}
-            </p>
-          </div>
         </div>
 
-        <div className="order-5 mx-4 mt-2 mb-4 pt-4 border-t border-border/50 flex items-center justify-between gap-3">
+        <div className="order-2 mx-4 mb-4 grid grid-cols-2 gap-3">
+          <StatusModuleCard
+            title="母乳记录"
+            subtitle="今日产出和趋势"
+            value={todayPumpLabel}
+            action="查看趋势"
+            tone="rose"
+            icon={<Droplets className="h-4 w-4" />}
+            onClick={() => scrollStatusSection("status-milk-trend")}
+          />
+          <StatusModuleCard
+            title="乳房舒适"
+            subtitle="胀痛、堵奶和护理"
+            value="待记录"
+            action="查看护理"
+            tone="peach"
+            icon={<HeartPulse className="h-4 w-4" />}
+            onClick={() => scrollStatusSection("status-breast-health")}
+          />
+          <StatusModuleCard
+            title="产后恢复"
+            subtitle="恢复节奏和身体感受"
+            value={postpartumValue}
+            action="看看状态"
+            tone="mint"
+            icon={<Activity className="h-4 w-4" />}
+            onClick={() => scrollStatusSection("status-mom-digital-twin")}
+          />
+          <StatusModuleCard
+            title="补能与休息"
+            subtitle="饮水、餐食和疲劳感"
+            value="待记录"
+            action="记录一下"
+            tone="amber"
+            icon={<Coffee className="h-4 w-4" />}
+          />
+        </div>
+
+        <div id="status-baby-digital-twin" className="order-5 mx-4 mt-2 mb-4 pt-4 border-t border-border/50 flex items-center gap-3">
           <div className="min-w-0 flex items-center gap-3">
             <img src={babyAvatar} alt="Baby" className="w-14 h-14 rounded-full border-2 border-primary/20 object-cover" />
             <div className="min-w-0">
@@ -759,40 +950,52 @@ const StatusOverviewBody: React.FC = () => {
               </p>
             </div>
           </div>
-          <div className="shrink-0 text-right">
-            <p className="text-[10px] font-bold text-muted-foreground mb-0.5">今日宝宝摄入（预估）</p>
-            <p className="text-base font-black text-foreground">
-              {todayQueryLoading ? (
-                <span className="text-muted-foreground">…</span>
-              ) : todayFeedMl !== null ? (
-                <>
-                  {formatVol(todayFeedMl, unit)}<span className="text-[10px] font-bold ml-0.5">{unitLabel(unit)}</span>
-                </>
-              ) : (
-                dash
-              )}
-            </p>
-          </div>
         </div>
 
-      <div className="order-7 mx-4 mb-4">
+        <div className="order-6 mx-4 mb-4 grid grid-cols-2 gap-3">
+          <StatusModuleCard
+            title="喂养记录"
+            subtitle="今日亲喂、瓶喂和摄入"
+            value={todayFeedLabel}
+            action="查看记录"
+            tone="sky"
+            icon={<Utensils className="h-4 w-4" />}
+            onClick={() => scrollStatusSection("status-baby-digital-twin")}
+          />
+          <StatusModuleCard
+            title="成长发育"
+            subtitle="体重、身高和头围"
+            value={babyGrowthValue}
+            action="修改指标"
+            tone="mint"
+            icon={<Ruler className="h-4 w-4" />}
+            onClick={openGrowthEditor}
+          />
+          <StatusModuleCard
+            title="宝宝睡眠"
+            subtitle="夜间照护和睡眠"
+            value="待记录"
+            action="查看夜间"
+            tone="violet"
+            icon={<Bed className="h-4 w-4" />}
+            onClick={() => scrollStatusSection("status-baby-sleep")}
+          />
+          <StatusModuleCard
+            title="尿便与护理"
+            subtitle="尿布、便便和皮肤"
+            value="待记录"
+            action="快速记录"
+            tone="aqua"
+            icon={<ClipboardList className="h-4 w-4" />}
+          />
+        </div>
+
+      <div id="status-baby-growth-record" className="order-7 mx-4 mb-4">
         <div className="flex items-center justify-between mb-2 px-1">
           <h2 className="text-sm font-bold text-foreground">宝宝成长记录</h2>
           <button
             type="button"
-            onClick={() => {
-              setGrowthSaveErr(null);
-              setEditWeight(
-                typeof babyMetrics.weightKg === "number" ? babyMetrics.weightKg.toString() : "",
-              );
-              setEditHeight(
-                typeof babyMetrics.heightCm === "number" ? babyMetrics.heightCm.toString() : "",
-              );
-              setEditHead(
-                typeof babyMetrics.headCm === "number" ? babyMetrics.headCm.toString() : "",
-              );
-              setIsGrowthDrawerOpen(true);
-            }}
+            onClick={openGrowthEditor}
             className="text-[11px] text-primary font-medium flex items-center gap-1 bg-primary/10 px-2.5 py-1 rounded-full active:scale-95 transition-transform"
           >
             <Pencil className="w-3 h-3" /> 修改指标
@@ -860,6 +1063,7 @@ const StatusOverviewBody: React.FC = () => {
       </div>
 
       <Expandable
+        id="status-baby-growth-curve"
         title="宝宝成长曲线"
         className="order-8"
         defaultOpen
@@ -959,6 +1163,7 @@ const StatusOverviewBody: React.FC = () => {
       </Expandable>
 
       <Expandable
+        id="status-milk-trend"
         title="母乳趋势"
         className="order-3"
         defaultOpen
@@ -1074,13 +1279,14 @@ const StatusOverviewBody: React.FC = () => {
       </Expandable>
 
       <Expandable
+        id="status-breast-health"
         title="乳房健康"
         className="order-4"
         defaultOpen={false}
         icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Info className="w-3.5 h-3.5 text-primary" /></div>}
         summary={
           <p className="text-[11px] text-muted-foreground leading-relaxed">
-            占位模块，后续承接乳房舒适度、吸奶体验和护理节奏。
+            记录舒适度、吸奶体验和护理节奏，帮你更早发现需要关注的变化。
           </p>
         }
       >
@@ -1097,20 +1303,21 @@ const StatusOverviewBody: React.FC = () => {
       </Expandable>
 
       <Expandable
+        id="status-baby-sleep"
         title="宝宝睡眠"
         className="order-9"
         defaultOpen={false}
         icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Moon className="w-3.5 h-3.5 text-primary" /></div>}
         summary={
           <p className="text-[11px] text-muted-foreground leading-relaxed">
-            占位模块，后续承接宝宝睡眠和夜间照护节奏。
+            记录夜醒、入睡和小睡节奏，方便和喂养、生长一起看。
           </p>
         }
       >
         <div className="rounded-2xl bg-secondary/25 border border-border/40 p-3">
-          <p className="text-xs font-extrabold text-foreground">宝宝睡眠占位</p>
+          <p className="text-xs font-extrabold text-foreground">宝宝睡眠</p>
           <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
-            后续可接入宝宝睡眠相关信息；当前不展示具体数据指标。
+            这里会承接宝宝睡眠和夜间照护节奏，和喂养、成长记录一起形成宝宝数字分身。
           </p>
         </div>
       </Expandable>
