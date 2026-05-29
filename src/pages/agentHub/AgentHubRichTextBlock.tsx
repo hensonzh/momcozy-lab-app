@@ -89,8 +89,10 @@ type FormFieldSpec = {
   type: string;
   required?: boolean;
   options?: string[];
+  allow_other_input?: boolean;
   default_value?: unknown;
   placeholder?: string;
+  other_placeholder?: string;
   help_text?: string;
 };
 
@@ -221,6 +223,14 @@ function defaultMultiSelectValues(value: unknown): string[] {
     .filter(Boolean);
 }
 
+function isOtherOption(option: string): boolean {
+  return option === "其它" || option === "其他";
+}
+
+function otherInputName(fieldId: string): string {
+  return `${fieldId}__other`;
+}
+
 function splitFormFieldLabel(label: string): { groupTitle: string; fieldLabel: string } {
   const text = String(label || "");
   const separatorIndex = text.indexOf("｜");
@@ -282,9 +292,16 @@ function collectFormValues(form: HTMLFormElement, fields: FormFieldSpec[]): Reco
   const data = new FormData(form);
   const values: Record<string, unknown> = {};
   for (const field of fields) {
-    const value = isMultiSelectField(field)
-      ? data.getAll(field.id).map(String).filter((item) => item.trim())
-      : String(data.get(field.id) ?? "").trim();
+    let value: string | string[];
+    if (isMultiSelectField(field)) {
+      const selected = data.getAll(field.id).map(String).filter((item) => item.trim());
+      const otherText = String(data.get(otherInputName(field.id)) ?? "").trim();
+      value = field.allow_other_input && otherText
+        ? selected.map((item) => (isOtherOption(item) ? `其它：${otherText}` : item))
+        : selected;
+    } else {
+      value = String(data.get(field.id) ?? "").trim();
+    }
     if (hasCompactFormValue(value)) {
       values[field.id] = value;
     }
@@ -1121,19 +1138,37 @@ const AgentHubRichTextBlock: React.FC<{
             </span>
           </legend>
           <div className="grid gap-2 pt-1">
-            {(field.options ?? []).map((option) => (
-              <label
-                key={option}
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-xl border px-3 py-2",
-                  isMonochrome ? "border-neutral-200 bg-[#fbfaf9] text-[14px]" : "border-border/70 bg-background/70 text-[12px]",
-                  fieldTextClass,
-                )}
-              >
-                <input type="checkbox" name={field.id} value={option} defaultChecked={defaults.includes(option)} />
-                <span className="min-w-0 break-words">{option}</span>
-              </label>
-            ))}
+            {(field.options ?? []).map((option) => {
+              const showOtherInput = Boolean(field.allow_other_input && isOtherOption(option));
+              return (
+                <div
+                  key={option}
+                  className={cn(
+                    "grid gap-2",
+                    showOtherInput ? "[&:has(input[type='checkbox']:checked)_.form-other-input]:block" : "",
+                  )}
+                >
+                  <label
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-xl border px-3 py-2",
+                      isMonochrome ? "border-neutral-200 bg-[#fbfaf9] text-[14px]" : "border-border/70 bg-background/70 text-[12px]",
+                      fieldTextClass,
+                    )}
+                  >
+                    <input type="checkbox" name={field.id} value={option} defaultChecked={defaults.includes(option)} />
+                    <span className="min-w-0 break-words">{option}</span>
+                  </label>
+                  {showOtherInput ? (
+                    <input
+                      name={otherInputName(field.id)}
+                      type="text"
+                      placeholder={field.other_placeholder || "请补充说明"}
+                      className={cn(inputClassName, "form-other-input hidden")}
+                    />
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
           {field.help_text ? (
             <small className={cn(isMonochrome ? "text-[12px]" : "text-[11px]", isMonochrome ? "text-neutral-600 dark:text-neutral-400" : "text-muted-foreground")}>
@@ -1509,8 +1544,10 @@ const AgentHubRichTextBlock: React.FC<{
               type: asString(f.type) || "text",
               required: Boolean(f.required),
               options: Array.isArray(f.options) ? f.options.map((opt) => String(opt)) : [],
+              allow_other_input: Boolean(f.allow_other_input),
               default_value: f.default_value,
               placeholder: asString(f.placeholder),
+              other_placeholder: asString(f.other_placeholder),
               help_text: asString(f.help_text),
             }))
             .filter((field) => !(isHospitalBagIntake && REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS.has(field.id)))
@@ -1520,8 +1557,14 @@ const AgentHubRichTextBlock: React.FC<{
               }
               const normalizedField = {
                 ...field,
-                label: splitFormFieldLabel(field.label).groupTitle ? `${splitFormFieldLabel(field.label).groupTitle}｜医生目前建议的生产方式` : "医生目前建议的生产方式",
-                options: ["顺产", "剖宫产", "还没确定"],
+                label: isHospitalBagIntake
+                  ? splitFormFieldLabel(field.label).groupTitle
+                    ? `${splitFormFieldLabel(field.label).groupTitle}｜分娩方式`
+                    : "分娩方式"
+                  : splitFormFieldLabel(field.label).groupTitle
+                    ? `${splitFormFieldLabel(field.label).groupTitle}｜医生目前建议的生产方式`
+                    : "医生目前建议的生产方式",
+                options: isHospitalBagIntake ? field.options : ["顺产", "剖宫产", "还没确定"],
                 default_value: ["计划剖宫产", "剖腹产", "planned_c_section", "c_section", "c-section", "cesarean"].includes(asString(field.default_value))
                   ? "剖宫产"
                   : field.default_value,
@@ -1550,9 +1593,20 @@ const AgentHubRichTextBlock: React.FC<{
                 const form = event.currentTarget;
                 for (const field of fields) {
                   if (!field.required || !isMultiSelectField(field)) continue;
-                  if (new FormData(form).getAll(field.id).length > 0) continue;
-                  setArtifactError((prev) => ({ ...prev, [index]: `请选择：${splitFormFieldLabel(field.label).fieldLabel}` }));
-                  return;
+                  const formData = new FormData(form);
+                  const selectedValues = formData.getAll(field.id).map(String);
+                  if (selectedValues.length === 0) {
+                    setArtifactError((prev) => ({ ...prev, [index]: `请选择：${splitFormFieldLabel(field.label).fieldLabel}` }));
+                    return;
+                  }
+                  if (
+                    field.allow_other_input &&
+                    selectedValues.some(isOtherOption) &&
+                    !String(formData.get(otherInputName(field.id)) ?? "").trim()
+                  ) {
+                    setArtifactError((prev) => ({ ...prev, [index]: `请填写：${splitFormFieldLabel(field.label).fieldLabel}的其它内容` }));
+                    return;
+                  }
                 }
                 setArtifactError((prev) => ({ ...prev, [index]: "" }));
                 const values = collectFormValues(form, fields);
