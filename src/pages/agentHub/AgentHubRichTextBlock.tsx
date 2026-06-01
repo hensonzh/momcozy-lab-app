@@ -14,7 +14,6 @@ import {
   Brush,
   Cable,
   CarFront,
-  ChevronRight,
   CircleDot,
   CircleHelp,
   CircleParking,
@@ -984,15 +983,6 @@ function compactBirthJourneyList(values: unknown, maxItems: number): string[] {
   return uniqueDisplayStrings(rawItems, maxItems);
 }
 
-function birthJourneyPhaseIcon(phaseId: string): LucideIcon {
-  if (phaseId.includes("mid") || phaseId.includes("late")) return ClipboardList;
-  if (phaseId.includes("pre_labor")) return Luggage;
-  if (phaseId.includes("recognition")) return HeartPulse;
-  if (phaseId.includes("hospital")) return Hospital;
-  if (phaseId.includes("postpartum")) return BabyIcon;
-  return Route;
-}
-
 function birthJourneyStatusLabel(status: string): string {
   return status === "current" ? "当前阶段" : "下一阶段";
 }
@@ -1565,12 +1555,11 @@ const AgentHubRichTextBlock: React.FC<{
               const journey = normalizeBirthJourneyPlanCard(cardJson);
               const ownerChips = [
                 ["孕期", journey.owner.current_week || journey.owner.due_date_or_week],
-                ["预产期", journey.owner.estimated_due_date],
+                ["预产期预计", journey.owner.estimated_due_date],
                 ["方式", journey.owner.birth_path],
                 ["支持", journey.owner.support_person],
                 ["喂养", journey.owner.feeding_intention],
               ].filter(([, value]) => hasDisplayValue(value) && !isConfirmPlaceholder(value)).slice(0, 4);
-              const canSendNextAction = Boolean(journey.next_action.label && journey.next_action.send_text);
               return (
                 <article
                   key={`artifact-${index}`}
@@ -1602,12 +1591,11 @@ const AgentHubRichTextBlock: React.FC<{
 
                   {journey.phases.length > 0 ? (
                     <section className="birth-journey-timeline" aria-label="生产全过程阶段">
-                      {journey.phases.map((phase) => {
-                        const JourneyIcon = birthJourneyPhaseIcon(phase.id);
+                      {journey.phases.map((phase, phaseIndex) => {
                         return (
                           <article key={phase.id} className={cn("birth-journey-phase", phase.status === "current" && "is-current")}>
                             <div className="birth-journey-phase-marker" aria-hidden="true">
-                              <JourneyIcon />
+                              {phaseIndex + 1}
                             </div>
                             <div className="birth-journey-phase-body">
                               <div className="birth-journey-phase-heading">
@@ -1658,18 +1646,7 @@ const AgentHubRichTextBlock: React.FC<{
                   ) : null}
 
                   <div className="agent-card-footer birth-journey-footer">
-                    {journey.disclaimer ? <p className="agent-card-disclaimer">{journey.disclaimer}</p> : null}
                     <div className="birth-journey-footer-actions">
-                      {canSendNextAction ? (
-                        <button
-                          type="button"
-                          className="birth-journey-next-action"
-                          onClick={() => onButtonSelect(journey.next_action.send_text, { displayText: journey.next_action.label })}
-                        >
-                          <span>{journey.next_action.label}</span>
-                          <ChevronRight aria-hidden="true" />
-                        </button>
-                      ) : null}
                       {downloadButton}
                     </div>
                   </div>
