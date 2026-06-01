@@ -144,7 +144,8 @@
 }
 
 .agent-card-hospital_bag_card,
-.agent-card-birth_plan_card {
+.agent-card-birth_plan_card,
+.agent-card-birth_journey_plan_card {
   gap: 14px;
   border-color: #d9d9d9;
   background: #ffffff;
@@ -170,6 +171,17 @@
   box-shadow: 0 18px 42px rgba(56, 72, 71, 0.13);
 }
 
+.agent-card-birth_journey_plan_card {
+  overflow: hidden;
+  border-color: rgba(232, 196, 207, 0.92);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 226, 199, 0.72) 0%, rgba(255, 226, 199, 0) 34%),
+    radial-gradient(circle at 0% 10%, rgba(221, 244, 239, 0.82) 0%, rgba(221, 244, 239, 0) 32%),
+    linear-gradient(145deg, #fff8fa 0%, #fffdf8 58%, #f7fffb 100%);
+  color: #3f2732;
+  box-shadow: 0 16px 38px rgba(83, 47, 64, 0.11);
+}
+
 .agent-card-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -180,11 +192,21 @@
 }
 
 .agent-card-hospital_bag_card .agent-card-header,
-.agent-card-birth_plan_card .agent-card-header {
+.agent-card-birth_plan_card .agent-card-header,
+.agent-card-birth_journey_plan_card .agent-card-header {
   position: relative;
   min-height: 72px;
   padding: 4px 0 14px;
   border-bottom-color: #dedede;
+}
+
+.agent-card-birth_journey_plan_card .agent-card-header {
+  margin: -16px -16px 0;
+  min-height: 64px;
+  padding: 18px 16px 14px;
+  border-bottom-color: rgba(232, 196, 207, 0.72);
+  background:
+    linear-gradient(135deg, rgba(255, 238, 244, 0.94) 0%, rgba(255, 247, 237, 0.88) 62%, rgba(238, 250, 247, 0.9) 100%);
 }
 
 .agent-card-hospital_bag_card .agent-card-header {
@@ -226,6 +248,17 @@
   background: linear-gradient(90deg, #2c9b92, #d86b91, #f0b85b);
 }
 
+.agent-card-birth_journey_plan_card .agent-card-header::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  bottom: -1px;
+  width: 86px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d86b91, #f0b85b, #2c9b92);
+}
+
 .agent-card-hospital_bag_card .agent-card-header::before {
   display: none;
   left: 16px;
@@ -260,6 +293,10 @@
   color: #3c2433;
 }
 
+.agent-card-birth_journey_plan_card .agent-card-header h2 {
+  color: #4a2635;
+}
+
 .agent-card-header p {
   margin: 0;
   color: #5f5f5f;
@@ -280,6 +317,10 @@
 
 .agent-card-birth_plan_card .agent-card-header p {
   color: #657470;
+}
+
+.agent-card-birth_journey_plan_card .agent-card-header p {
+  color: #735a66;
 }
 
 .agent-card-analysis_report {
@@ -1089,6 +1130,11 @@
   color: #7a6b72;
 }
 
+.packing-item-reasons {
+  font-size: 10.5px;
+  color: #9c5a70;
+}
+
 .priority {
   grid-column: 4;
   justify-self: end;
@@ -1180,6 +1226,236 @@
   font-size: 10px;
   font-weight: 720;
   line-height: 1;
+}
+
+.birth-journey-owner-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.birth-journey-owner-strip div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  padding: 8px 9px;
+  border: 1px solid rgba(232, 196, 207, 0.68);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.birth-journey-owner-strip dt {
+  color: #8a6d7a;
+  font-size: 10px;
+  font-weight: 760;
+  line-height: 1.2;
+}
+
+.birth-journey-owner-strip dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #3f2732;
+  font-size: 12px;
+  font-weight: 820;
+  line-height: 1.25;
+}
+
+.birth-journey-timeline {
+  display: grid;
+  gap: 12px;
+}
+
+.birth-journey-phase {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.birth-journey-phase:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 38px;
+  bottom: -10px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(216, 107, 145, 0.28), rgba(44, 155, 146, 0.18));
+}
+
+.birth-journey-phase-marker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgba(232, 196, 207, 0.86);
+  border-radius: 12px;
+  background: #fff7fa;
+  color: #a24e69;
+  box-shadow: 0 6px 16px rgba(83, 47, 64, 0.1);
+}
+
+.birth-journey-phase.is-current .birth-journey-phase-marker {
+  border-color: rgba(44, 155, 146, 0.34);
+  background: #eefbf8;
+  color: #227a73;
+}
+
+.birth-journey-phase-marker svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.3;
+}
+
+.birth-journey-phase-body {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(232, 196, 207, 0.78);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 22px rgba(83, 47, 64, 0.07);
+}
+
+.birth-journey-phase.is-current .birth-journey-phase-body {
+  border-color: rgba(44, 155, 146, 0.32);
+  background: linear-gradient(145deg, rgba(246, 255, 252, 0.9) 0%, rgba(255, 251, 253, 0.78) 100%);
+}
+
+.birth-journey-phase-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.birth-journey-phase-heading p {
+  margin: 0 0 2px;
+  color: #8a6d7a;
+  font-size: 11px;
+  font-weight: 720;
+  line-height: 1.25;
+}
+
+.birth-journey-phase-heading h3 {
+  margin: 0;
+  color: #3e2432;
+  font-size: 15px;
+  font-weight: 860;
+  line-height: 1.25;
+}
+
+.birth-journey-phase-heading span {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(255, 244, 248, 0.9);
+  color: #9a4e67;
+  font-size: 10px;
+  font-weight: 780;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.birth-journey-phase.is-current .birth-journey-phase-heading span {
+  background: #e4f8f4;
+  color: #247a70;
+}
+
+.birth-journey-goal {
+  margin: 0;
+  color: #432b36;
+  font-size: 13px;
+  font-weight: 680;
+  line-height: 1.55;
+}
+
+.birth-journey-section-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.birth-journey-section-grid section {
+  display: grid;
+  gap: 5px;
+  padding: 8px 9px;
+  border: 1px solid rgba(232, 196, 207, 0.56);
+  border-radius: 12px;
+  background: rgba(255, 250, 252, 0.72);
+}
+
+.birth-journey-section-grid h4 {
+  margin: 0;
+  color: #805064;
+  font-size: 11px;
+  font-weight: 820;
+  line-height: 1.2;
+}
+
+.birth-journey-section-grid ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.birth-journey-section-grid li {
+  position: relative;
+  padding-left: 13px;
+  color: #59434e;
+  font-size: 12px;
+  font-weight: 520;
+  line-height: 1.45;
+}
+
+.birth-journey-section-grid li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.58em;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #d86b91;
+}
+
+.birth-journey-footer {
+  align-items: flex-start;
+}
+
+.birth-journey-footer-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.birth-journey-next-action {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 8px 4px 10px;
+  border: 1px solid rgba(216, 107, 145, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 248, 250, 0.9);
+  color: #8f4a62;
+  font-size: 11px;
+  font-weight: 820;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.birth-journey-next-action svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.6;
 }
 
 .card-export-button svg {
