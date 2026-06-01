@@ -265,7 +265,7 @@ function AgentHubQuickReplies({
     >
       <div className="mb-1.5 flex items-center gap-1.5 px-0.5 text-[11px] font-[700] text-[#9b7a84]">
         <span className="h-1.5 w-1.5 rounded-full bg-[#c595a5]" aria-hidden="true" />
-        <span>可以继续问</span>
+        <span>猜你想说</span>
       </div>
       <div className="flex flex-wrap gap-1.5">
         {replies.map((reply, index) => (
