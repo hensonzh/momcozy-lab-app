@@ -90,7 +90,7 @@ Agent 侧在 `agents.py` 中定义并推送的典型事件类型包括：
 - **思考提示**：`CUSTOM` + `momcozy.agent.thinking` 在特定 `status` 下显示 `.thinking-note`。
 - **`TOOL_CALL_RESULT` 特例**（根据解析后的 `tool_name` 与载荷）：
   - `ui_form_create` 且含 `result.form` → `addFormCard`：渲染表单 artifact，提交后拼装确认文案再 `sendUserText`。
-  - `ui_card_create` 且含 `result.card` → `addCard`：按 `card_type` / `schema_version` 渲染卡片（如 birth plan、hospital bag），否则 `renderUnsupportedCard`。
+  - `labor_communication_card_create` / `birth_journey_plan_card_create` / `hospital_bag_card_create` 且含 `result.card` → `addCard`：按 `card_type` / `schema_version` 渲染卡片（如 birth plan、hospital bag），否则 `renderUnsupportedCard`。
   - `ibclc_consult_card_create` → `addIbclcConsultCard`：顾问信息 + 「在线咨询」链接。
   - `support_ticket_draft_create` → `addSupportTicketDraft`：售后工单表单，提交再走 `/api/support-ticket-submit`。
 - **结束**：`RUN_FINISHED` 时若无表单/卡片且助手无正文，会显示 `(No text response)`；`RUN_ERROR` 抛错并在界面显示 error 消息。

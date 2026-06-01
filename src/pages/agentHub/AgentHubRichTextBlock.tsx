@@ -188,6 +188,29 @@ function asString(v: unknown): string {
   return typeof v === "string" ? v : "";
 }
 
+function asStringList(v: unknown): string[] {
+  if (!Array.isArray(v)) return [];
+  return v.map((item) => asString(item).trim()).filter(Boolean);
+}
+
+function asTopicItems(v: unknown): Array<{ title: string; detail: string }> {
+  if (!Array.isArray(v)) return [];
+  return v
+    .map((item) => {
+      if (typeof item === "string") {
+        const title = item.trim();
+        return title ? { title, detail: "" } : null;
+      }
+      const obj = asObject(item);
+      if (!obj) return null;
+      const title = asString(obj.title).trim();
+      const detail = asString(obj.detail).trim();
+      if (!title && !detail) return null;
+      return { title: title || detail, detail: title ? detail : "" };
+    })
+    .filter((item): item is { title: string; detail: string } => Boolean(item));
+}
+
 function nearestScrollableParent(node: HTMLElement | null): HTMLElement | null {
   let current = node?.parentElement ?? null;
   while (current && current !== document.body) {
@@ -1441,9 +1464,23 @@ const AgentHubRichTextBlock: React.FC<{
           if (artifact.kind === "ibclc_consult") {
             const consultant = asObject(artifact.card.consultant) ?? {};
             const chat = asObject(artifact.card.chat) ?? {};
+            const title = asString(artifact.card.title) || "IBCLC 在线咨询";
+            const subtitle =
+              asString(artifact.card.subtitle) || "把本轮已经描述的情况带给顾问，继续看喂养和排乳方式。";
             const consultantName = asString(consultant.name) || "IBCLC 顾问";
+            const consultantCredentials = asString(consultant.credentials) || "IBCLC 国际认证哺乳顾问";
+            const consultantExperience = asString(consultant.experience);
             const consultantBio = asString(consultant.bio);
+            const specialties = asStringList(consultant.specialties).slice(0, 4);
+            const helpTopics = asTopicItems(artifact.card.help_topics).slice(0, 4);
+            const prepItems = asStringList(artifact.card.prep_items).slice(0, 4);
+            const boundaryNote =
+              asString(artifact.card.boundary_note) ||
+              asString(artifact.card.disclaimer) ||
+              "IBCLC 咨询不替代医生诊断或紧急医疗处理。";
             const url = asString(chat.url) || "/ibclc-chat.html";
+            const chatLabel = asString(chat.label) || "咨询 IBCLC";
+            const chatHint = asString(chat.hint);
             const threadId = getAgUiThreadIdForRequest();
             const consultId =
               asString(artifact.card.consult_id) ||
@@ -1476,23 +1513,93 @@ const AgentHubRichTextBlock: React.FC<{
                   cardArtifactRefs.current[index] = el;
                 }}
                 data-consult-id={consultId}
-                className="grid w-full min-w-0 gap-[14px] rounded-[14px] border border-[#d6dde5] bg-white p-[18px] text-[#273b3a] shadow-sm"
+                className="grid w-full min-w-0 gap-[14px] rounded-[14px] border border-[#d6dde5] bg-[#fbfdfc] p-[18px] text-[#273b3a] shadow-sm"
               >
-                <div className="flex items-start justify-between gap-[10px]">
-                  <h3 className="m-0 text-[22px] font-[800] leading-[1.15] text-[#142726]">IBCLC咨询</h3>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <HeartPulse aria-hidden="true" className="h-[22px] w-[22px] shrink-0 text-[#177a89]" />
+                    <h3 className="m-0 text-[22px] font-[800] leading-[1.15] text-[#142726]">{title}</h3>
+                  </div>
+                  {subtitle ? <p className="mt-[8px] text-[13px] leading-[1.5] text-[#60706e]">{subtitle}</p> : null}
                 </div>
-                <section className="grid grid-cols-[52px_minmax(0,1fr)] items-center gap-3 rounded-xl border border-[#d6dde5] bg-white p-3">
+                <section className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-3 rounded-[12px] border border-[#d6dde5] bg-white p-3">
                   <img
                     src={ibclcConsultantAvatar}
                     alt={consultantName}
-                    className="h-[52px] w-[52px] rounded-full object-cover"
+                    className="h-[56px] w-[56px] rounded-full object-cover"
                     loading="lazy"
                   />
-                  <div>
+                  <div className="min-w-0">
                     <strong className="block text-[16px] font-[800] leading-[1.2] text-[#182b2a]">{consultantName}</strong>
+                    <div className="mt-[6px] flex flex-wrap gap-1.5">
+                      <span className="rounded-full bg-[#e9f3f1] px-2 py-1 text-[11px] font-[800] leading-none text-[#1a6863]">
+                        {consultantCredentials}
+                      </span>
+                      {consultantExperience ? (
+                        <span className="rounded-full bg-[#f4edf1] px-2 py-1 text-[11px] font-[800] leading-none text-[#7a4260]">
+                          {consultantExperience}
+                        </span>
+                      ) : null}
+                    </div>
                     {consultantBio ? <p className="mt-[7px] text-[13px] leading-[1.45] text-[#60706e]">{consultantBio}</p> : null}
                   </div>
                 </section>
+                {specialties.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {specialties.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full border border-[#cddfdc] bg-white px-2.5 py-1 text-[12px] font-[700] leading-none text-[#315b58]"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+                {helpTopics.length > 0 || prepItems.length > 0 ? (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {helpTopics.length > 0 ? (
+                      <section className="min-w-0 rounded-[12px] border border-[#d8e6e4] bg-white p-3">
+                        <div className="mb-2 flex items-center gap-1.5 text-[13px] font-[900] text-[#163d3a]">
+                          <Stethoscope aria-hidden="true" className="h-4 w-4 shrink-0 text-[#177a89]" />
+                          <span>适合咨询的问题</span>
+                        </div>
+                        <ul className="m-0 grid list-none gap-2 p-0">
+                          {helpTopics.map((item) => (
+                            <li key={`${item.title}-${item.detail}`} className="min-w-0">
+                              <strong className="block text-[12px] font-[850] leading-[1.35] text-[#273b3a]">{item.title}</strong>
+                              {item.detail ? (
+                                <span className="mt-[2px] block text-[12px] leading-[1.45] text-[#667371]">{item.detail}</span>
+                              ) : null}
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    ) : null}
+                    {prepItems.length > 0 ? (
+                      <section className="min-w-0 rounded-[12px] border border-[#eadbe3] bg-white p-3">
+                        <div className="mb-2 flex items-center gap-1.5 text-[13px] font-[900] text-[#4a2a3a]">
+                          <ClipboardList aria-hidden="true" className="h-4 w-4 shrink-0 text-[#935579]" />
+                          <span>咨询前可准备</span>
+                        </div>
+                        <ul className="m-0 grid list-none gap-1.5 p-0">
+                          {prepItems.map((item) => (
+                            <li key={item} className="flex min-w-0 gap-2 text-[12px] leading-[1.45] text-[#667371]">
+                              <span aria-hidden="true" className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#7aac9f]" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    ) : null}
+                  </div>
+                ) : null}
+                {boundaryNote ? (
+                  <p className="m-0 flex gap-2 rounded-[10px] bg-[#eef6f4] px-3 py-2 text-[12px] leading-[1.5] text-[#486662]">
+                    <ShieldCheck aria-hidden="true" className="mt-[1px] h-4 w-4 shrink-0 text-[#177a89]" />
+                    <span>{boundaryNote}</span>
+                  </p>
+                ) : null}
                 <button
                   type="button"
                   disabled={consultCompleted}
@@ -1503,8 +1610,9 @@ const AgentHubRichTextBlock: React.FC<{
                   )}
                   onClick={openConsult}
                 >
-                  {consultCompleted ? "咨询结束" : "在线咨询"}
+                  {consultCompleted ? "咨询结束" : chatLabel}
                 </button>
+                {chatHint && !consultCompleted ? <p className="m-0 text-center text-[12px] leading-[1.4] text-[#6f7d7b]">{chatHint}</p> : null}
               </article>
             );
           }

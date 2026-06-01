@@ -343,7 +343,16 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
     return "read";
   }
   if (["milk_assessment_evaluate", "infant_growth_evaluate", "risk_evaluate"].includes(name)) return "evaluate";
-  if (["ui_form_create", "ui_card_create", "ibclc_consult_card_create", "support_ticket_draft_create"].includes(name)) {
+  if (
+    [
+      "ui_form_create",
+      "labor_communication_card_create",
+      "birth_journey_plan_card_create",
+      "hospital_bag_card_create",
+      "ibclc_consult_card_create",
+      "support_ticket_draft_create",
+    ].includes(name)
+  ) {
     return "prepare_result";
   }
   if (["milk_plan_preview", "milk_calendar_change_preview", "milk_calendar_reschedule_preview"].includes(name)) return "preview";
@@ -390,7 +399,9 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "milk_calendar_mutate") return { title: "我正在帮你保存日程调整" };
   if (normalizedToolName === "infant_growth_mutate") return { title: "我正在帮你保存宝宝成长记录" };
   if (normalizedToolName === "ui_form_create") return { title: "我正在帮你准备确认内容" };
-  if (normalizedToolName === "ui_card_create") return { title: "我正在帮你整理成卡片" };
+  if (normalizedToolName === "labor_communication_card_create") return { title: "我正在帮你整理分娩沟通卡" };
+  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我正在帮你整理生产全过程计划" };
+  if (normalizedToolName === "hospital_bag_card_create") return { title: "我正在帮你整理待产包卡片" };
   if (normalizedToolName === "ibclc_consult_card_create") return { title: "我正在帮你准备 IBCLC 咨询卡" };
   if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我正在看适合你的吸奶器型号" };
   if (normalizedToolName === "hospital_bag_cart_update") return { title: "我正在帮你调整待产包购物车" };
@@ -496,7 +507,9 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
   if (normalizedToolName === "milk_plan_preview") return { title: "我已经拟好奶量计划草稿了" };
   if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我已经整理好日程调整预览了" };
   if (normalizedToolName === "ui_form_create") return { title: "我已经准备好确认内容了" };
-  if (normalizedToolName === "ui_card_create") return { title: "我已经生成结果卡片了" };
+  if (normalizedToolName === "labor_communication_card_create") return { title: "我已经整理好分娩沟通卡了" };
+  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我已经整理好生产全过程计划了" };
+  if (normalizedToolName === "hospital_bag_card_create") return { title: "我已经整理好待产包卡片了" };
   if (normalizedToolName === "ibclc_consult_card_create") return { title: "我已经准备好 IBCLC 咨询卡了" };
   if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我已经整理好吸奶器推荐了" };
   if (normalizedToolName === "hospital_bag_cart_update") {
@@ -817,7 +830,7 @@ function artifactActionFromToolResultPayload(parsed: Record<string, unknown>): R
   }
 
   const card = asRecord(parsed.card);
-  if (toolName === "ui_card_create" && card) {
+  if (["labor_communication_card_create", "birth_journey_plan_card_create", "hospital_bag_card_create"].includes(toolName) && card) {
     return { kind: "ag_ui_artifact", artifact_type: "card", ...identity, card };
   }
   if (toolName === "ibclc_consult_card_create") {

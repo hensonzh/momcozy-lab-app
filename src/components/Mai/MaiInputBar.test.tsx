@@ -58,6 +58,16 @@ describe("MaiInputBar", () => {
     expect(onSend).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps the send affordance when text is present during an active response", () => {
+    const onSend = vi.fn();
+    render(<MaiInputBar value="IBCLC" onChange={vi.fn()} onSend={onSend} sendLoading />);
+
+    fireEvent.click(screen.getByTitle("发送"));
+
+    expect(screen.queryByTitle("停止回复")).not.toBeInTheDocument();
+    expect(onSend).toHaveBeenCalledTimes(1);
+  });
+
   it("allows Enter to send when an attachment is ready and text is empty", () => {
     const onSend = vi.fn();
     render(<MaiInputBar value="" onChange={vi.fn()} onSend={onSend} canSendWithoutText />);
