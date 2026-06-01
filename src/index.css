@@ -1296,6 +1296,9 @@
   border-radius: 12px;
   background: #fff7fa;
   color: #a24e69;
+  font-size: 15px;
+  font-weight: 860;
+  line-height: 1;
   box-shadow: 0 6px 16px rgba(83, 47, 64, 0.1);
 }
 
@@ -1303,12 +1306,6 @@
   border-color: rgba(44, 155, 146, 0.34);
   background: #eefbf8;
   color: #227a73;
-}
-
-.birth-journey-phase-marker svg {
-  width: 17px;
-  height: 17px;
-  stroke-width: 2.3;
 }
 
 .birth-journey-phase-body {
@@ -1426,7 +1423,8 @@
 }
 
 .birth-journey-footer {
-  align-items: flex-start;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .birth-journey-footer-actions {
@@ -1434,28 +1432,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.birth-journey-next-action {
-  min-height: 28px;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 4px 8px 4px 10px;
-  border: 1px solid rgba(216, 107, 145, 0.34);
-  border-radius: 999px;
-  background: rgba(255, 248, 250, 0.9);
-  color: #8f4a62;
-  font-size: 11px;
-  font-weight: 820;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.birth-journey-next-action svg {
-  width: 13px;
-  height: 13px;
-  stroke-width: 2.6;
 }
 
 .card-export-button svg {
