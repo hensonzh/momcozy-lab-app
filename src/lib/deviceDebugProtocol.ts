@@ -196,8 +196,8 @@ export function buildB6SetSmartForceLinePacket(config: SmartForceLineConfig): Ui
   cab[0] = config.workMode;
   cab[1] = clamp(config.gearDisplay - 1, 0, 14);
   cab[2] = clamp(config.maxPressureKpa, 10, 40);
-  cab[3] = clamp(config.frequencyPcm, 20, 90);
-  view.setUint16(4, clamp(config.holdTimeMs, 0, 1000), true);
+  cab[3] = clamp(config.frequencyPcm, 1, 120);
+  view.setUint16(4, clamp(config.holdTimeMs, 0, 65535), true);
   return buildReq(CID_B6, cab);
 }
 
