@@ -14,6 +14,7 @@ import {
   Brush,
   Cable,
   CarFront,
+  ChevronRight,
   CircleDot,
   CircleHelp,
   CircleParking,
@@ -102,6 +103,30 @@ type FormFieldGroup = {
 };
 
 const REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS = new Set(["hospital_rules_or_notes", "existing_checklist_or_photo_note"]);
+const HOSPITAL_BAG_FORM_FIELD_IDS = new Set([
+  "due_date_or_week",
+  "first_birth",
+  "fetus_count",
+  "pregnancy_history_or_notes",
+  "birth_path",
+  "feeding_intention",
+  "return_to_work_timing",
+  "support_person",
+  "budget_preference",
+  "top_worries",
+]);
+const HOSPITAL_BAG_FORM_DETECTOR_FIELD_IDS = new Set(["fetus_count", "return_to_work_timing", "budget_preference", "top_worries"]);
+const HOSPITAL_BAG_DIALOGUE_PREFILL_FIELD_IDS = new Set(["due_date_or_week", "return_to_work_timing", "budget_preference", "top_worries"]);
+const HOSPITAL_BAG_REASON_SUPPRESSED_ITEM_LABELS = new Set([
+  "检查报告/化验单",
+  "医院预登记信息",
+  "紧急联系人信息",
+  "医生/医院联系电话",
+  "手机充电线和充电器",
+  "医院路线和停车信息",
+  "夜间入口信息",
+]);
+const HOSPITAL_BAG_REASON_SUPPRESSED_GROUP_IDS = new Set(["support_person_bag"]);
 const BIRTH_PLAN_CARD_SECTION_ITEM_LIMIT = 20;
 const HOSPITAL_BAG_FORM_GROUP_STYLES = [
   {
@@ -194,6 +219,12 @@ function hasDisplayValue(value: unknown): boolean {
   return true;
 }
 
+function hasFormDefaultValue(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(hasFormDefaultValue);
+  if (value && typeof value === "object") return Object.values(value as Record<string, unknown>).some(hasFormDefaultValue);
+  return hasDisplayValue(value) && !isConfirmPlaceholder(value);
+}
+
 function normalizeList(values: unknown): unknown[] {
   if (!Array.isArray(values)) return [];
   return values.filter(hasDisplayValue);
@@ -216,6 +247,7 @@ function isMultiSelectField(field: FormFieldSpec): boolean {
 }
 
 function defaultMultiSelectValues(value: unknown): string[] {
+  if (!hasFormDefaultValue(value)) return [];
   if (Array.isArray(value)) return value.map(String);
   return String(value ?? "")
     .split(",")
@@ -259,6 +291,25 @@ function groupFormFields(fields: FormFieldSpec[]): FormFieldGroup[] {
   }
 
   return groups;
+}
+
+function looksLikeHospitalBagForm(fields: FormFieldSpec[]): boolean {
+  const fieldIds = new Set(fields.map((field) => field.id).filter(Boolean));
+  let matchedHospitalBagFields = 0;
+  for (const id of fieldIds) {
+    if (HOSPITAL_BAG_FORM_FIELD_IDS.has(id)) matchedHospitalBagFields += 1;
+  }
+  return matchedHospitalBagFields >= 2 && Array.from(HOSPITAL_BAG_FORM_DETECTOR_FIELD_IDS).some((id) => fieldIds.has(id));
+}
+
+function sanitizeHospitalBagIntakeField(field: FormFieldSpec): FormFieldSpec {
+  const nextField = field.id === "pregnancy_history_or_notes"
+    ? { ...field, options: field.options?.filter((option) => option !== "计划剖宫产") ?? [] }
+    : field;
+  if (HOSPITAL_BAG_DIALOGUE_PREFILL_FIELD_IDS.has(field.id) && hasFormDefaultValue(field.default_value)) {
+    return nextField;
+  }
+  return { ...nextField, default_value: undefined };
 }
 
 function hospitalBagGroupStyle(groupTitle: string, groupIndex: number) {
@@ -395,7 +446,7 @@ function buildSupportTicketSubmittedMessage(ticket: Record<string, unknown>): st
 
 function isConfirmPlaceholder(value: unknown): boolean {
   const text = String(value ?? "").trim().toLowerCase();
-  return ["to confirm", "待确认", "未确定", "不确定", "还没确定", "还没想好"].includes(text);
+  return ["", "to confirm", "待确认", "未确定", "不确定", "还不确定", "还没确定", "还没想好", "none", "n/a"].includes(text);
 }
 
 function limitList(values: unknown, maxItems: number): unknown[] {
@@ -559,6 +610,118 @@ function packingItemNote(item: Record<string, unknown>): string {
 
 function packingItemDescription(item: Record<string, unknown>): string {
   return asString(item.explain) || inferredHospitalBagItemExplanation(item) || packingItemNote(item);
+}
+
+function packingItemPersonalizationText(item: Record<string, unknown>, group?: Record<string, unknown>): string {
+  const groupId = asString(group?.group_id);
+  const label = asString(item.label);
+  if (HOSPITAL_BAG_REASON_SUPPRESSED_GROUP_IDS.has(groupId) || HOSPITAL_BAG_REASON_SUPPRESSED_ITEM_LABELS.has(label)) {
+    return "";
+  }
+  const sources = asObjectList(item.personalized_by)
+    .map((source) => ({
+      clause: personalizationClause(source),
+      effect: asString(source.effect),
+    }))
+    .filter((source) => source.clause);
+  const clauses = uniquePersonalizationClauses(
+    sources.map((source) => source.clause).filter((clause): clause is PersonalizationClause => Boolean(clause)),
+    4,
+  );
+  if (clauses.length === 0) return "";
+  const userClauses = clauses.filter((clause) => clause.subject === "user").map((clause) => clause.text);
+  const externalClauses = clauses.filter((clause) => clause.subject === "external").map((clause) => clause.text);
+  const reasonParts = [
+    userClauses.length ? `你${userClauses.join("加上")}` : "",
+    externalClauses.join("，"),
+  ].filter(Boolean);
+  const reasonText = reasonParts.join("，且");
+  if (!reasonText) return "";
+  const effects = sources.map((source) => source.effect);
+  if (asString(item.priority) === "confirm_first") return `${reasonText}，建议准备`;
+  if (effects.some((effect) => effect.includes("数量调整"))) return `${reasonText}，数量已按这个情况调整`;
+  if (effects.some((effect) => effect.includes("降级") || effect.includes("暂缓"))) return `${reasonText}，可以按需准备`;
+  return `${reasonText}，${asString(item.priority) === "must" ? "必须准备" : "建议准备"}`;
+}
+
+type PersonalizationClause = {
+  text: string;
+  subject: "user" | "external";
+};
+
+function uniquePersonalizationClauses(clauses: PersonalizationClause[], maxItems: number): PersonalizationClause[] {
+  const seen = new Set<string>();
+  const unique: PersonalizationClause[] = [];
+  for (const clause of clauses) {
+    const key = `${clause.subject}:${clause.text}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(clause);
+    if (unique.length >= maxItems) break;
+  }
+  return unique;
+}
+
+function personalizationClause(source: Record<string, unknown>): PersonalizationClause | null {
+  const field = asString(source.field);
+  const fieldLabel = asString(source.field_label) || formatLabel(asString(source.field));
+  const condition = asString(source.condition);
+  if (!condition || isConfirmPlaceholder(condition)) return null;
+  if (field === "first_birth" || fieldLabel === "是否第一胎") {
+    if (condition === "是") return { text: "是第一胎", subject: "user" };
+    if (condition === "否") return { text: "不是第一胎", subject: "user" };
+  }
+  if (field === "birth_path" || fieldLabel === "分娩方式") {
+    if (condition.includes("剖")) return { text: "是剖宫产", subject: "user" };
+    if (condition.includes("顺")) return { text: "计划顺产", subject: "user" };
+    return { text: `分娩方式是${condition}`, subject: "user" };
+  }
+  if (field === "feeding_intention" || fieldLabel === "喂养意向") {
+    if (condition.includes("母乳")) return { text: "希望母乳喂养", subject: "user" };
+    if (condition.includes("混合")) return { text: "计划混合喂养", subject: "user" };
+    if (condition.includes("配方")) return { text: "计划配方喂养", subject: "user" };
+    if (condition.includes("泵")) return { text: "计划泵奶喂养", subject: "user" };
+    return { text: "还没确定喂养方式", subject: "user" };
+  }
+  if (field === "fetus_count" || fieldLabel === "胎数") {
+    if (condition.includes("双胎")) return { text: "是双胎", subject: "user" };
+    if (condition.includes("三胎")) return { text: "是三胎及以上", subject: "user" };
+    if (condition.includes("单胎")) return { text: "是单胎", subject: "user" };
+  }
+  if (field === "return_to_work_timing" || fieldLabel === "返工时间") {
+    return { text: returnToWorkClause(condition), subject: "user" };
+  }
+  if (field === "budget_preference" || fieldLabel === "预算偏好") {
+    return { text: `偏好${condition}`, subject: "user" };
+  }
+  if (field === "support_person" || fieldLabel === "支持情况") {
+    if (condition.includes("支持少")) return { text: "产后支持较少", subject: "user" };
+    return { text: `产后支持情况是${condition}`, subject: "user" };
+  }
+  if (field === "top_worries" || fieldLabel === "焦虑点") {
+    return { text: worryClause(condition), subject: "user" };
+  }
+  if (field === "pregnancy_history_or_notes" || fieldLabel === "医生提示") {
+    if (condition === "已填写医生提示") return { text: "医生有特别提示", subject: "external" };
+    return { text: `医生提示${condition}`, subject: "external" };
+  }
+  if (field === "due_date_or_week" || fieldLabel === "孕周/预产期") {
+    return { text: condition.endsWith("版") ? `处于${condition}` : `当前是${condition}`, subject: "user" };
+  }
+  if (!fieldLabel) return null;
+  return { text: `${fieldLabel}是${condition}`, subject: "user" };
+}
+
+function returnToWorkClause(condition: string): string {
+  if (condition.includes("暂不") || condition.includes("不返工")) return "暂不返工";
+  if (condition.startsWith("产后")) return `${condition}返工`;
+  return `产后${condition}返工`;
+}
+
+function worryClause(condition: string): string {
+  if (condition.startsWith("怕")) return `担心${condition.slice(1)}`;
+  if (condition.startsWith("担心")) return condition;
+  return `担心${condition}`;
 }
 
 const hospitalBagItemExplanationRules: Array<[RegExp, string]> = [
@@ -786,6 +949,52 @@ function normalizeBirthPlanCard(cardJsonRaw: Record<string, unknown>) {
       normalizeBirthPlanValue(asString(cardJsonRaw.disclaimer)) ||
       "这张卡只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。",
   };
+}
+
+function normalizeBirthJourneyPlanCard(cardJsonRaw: Record<string, unknown>) {
+  const owner = asObject(cardJsonRaw.owner) ?? {};
+  const nextAction = asObject(cardJsonRaw.next_action) ?? {};
+  const phases = asObjectList(cardJsonRaw.phases)
+    .map((phase, index) => ({
+      id: asString(phase.id) || `phase-${index}`,
+      title: asString(phase.title) || `阶段 ${index + 1}`,
+      date_range: asString(phase.date_range),
+      status: asString(phase.status) === "current" ? "current" : "upcoming",
+      goal: asString(phase.goal),
+      watchouts: compactBirthJourneyList(phase.watchouts, 4),
+      actions: compactBirthJourneyList(phase.actions, 4),
+      comate_help: compactBirthJourneyList(phase.comate_help, 3),
+    }))
+    .filter((phase) => phase.title || phase.goal || phase.actions.length);
+  return {
+    title: asString(cardJsonRaw.title) || "生产全过程计划",
+    subtitle: asString(cardJsonRaw.subtitle),
+    owner,
+    phases,
+    next_action: {
+      label: asString(nextAction.label),
+      send_text: asString(nextAction.send_text),
+    },
+    disclaimer: asString(cardJsonRaw.disclaimer),
+  };
+}
+
+function compactBirthJourneyList(values: unknown, maxItems: number): string[] {
+  const rawItems = Array.isArray(values) ? values : hasDisplayValue(values) ? [values] : [];
+  return uniqueDisplayStrings(rawItems, maxItems);
+}
+
+function birthJourneyPhaseIcon(phaseId: string): LucideIcon {
+  if (phaseId.includes("mid") || phaseId.includes("late")) return ClipboardList;
+  if (phaseId.includes("pre_labor")) return Luggage;
+  if (phaseId.includes("recognition")) return HeartPulse;
+  if (phaseId.includes("hospital")) return Hospital;
+  if (phaseId.includes("postpartum")) return BabyIcon;
+  return Route;
+}
+
+function birthJourneyStatusLabel(status: string): string {
+  return status === "current" ? "当前阶段" : "下一阶段";
 }
 
 function cardSubtitle(values: unknown[]): string {
@@ -1110,6 +1319,8 @@ const AgentHubRichTextBlock: React.FC<{
 
   const renderFormField = (field: FormFieldSpec, variant: "default" | "monochrome" = "default") => {
     const isMonochrome = variant === "monochrome";
+    const hasDefaultValue = hasFormDefaultValue(field.default_value);
+    const defaultValue = hasDefaultValue ? asString(field.default_value) : "";
     const requiredMark = field.required ? (
       <span className={cn("mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full", isMonochrome ? "bg-[#b8667b]" : "bg-destructive")} aria-hidden="true" />
     ) : null;
@@ -1189,8 +1400,13 @@ const AgentHubRichTextBlock: React.FC<{
             name={field.id}
             required={Boolean(field.required)}
             className={inputClassName}
-            defaultValue={asString(field.default_value)}
+            defaultValue={defaultValue}
           >
+            {!hasDefaultValue ? (
+              <option value="" disabled>
+                {field.placeholder || "请选择"}
+              </option>
+            ) : null}
             {(field.options ?? []).map((option) => (
               <option key={option} value={option}>
                 {option}
@@ -1345,6 +1561,121 @@ const AgentHubRichTextBlock: React.FC<{
                 </article>
               );
             }
+            if (cardType === "birth_journey_plan_card" && schemaVersion === "1.0") {
+              const journey = normalizeBirthJourneyPlanCard(cardJson);
+              const ownerChips = [
+                ["孕期", journey.owner.current_week || journey.owner.due_date_or_week],
+                ["预产期", journey.owner.estimated_due_date],
+                ["方式", journey.owner.birth_path],
+                ["支持", journey.owner.support_person],
+                ["喂养", journey.owner.feeding_intention],
+              ].filter(([, value]) => hasDisplayValue(value) && !isConfirmPlaceholder(value)).slice(0, 4);
+              const canSendNextAction = Boolean(journey.next_action.label && journey.next_action.send_text);
+              return (
+                <article
+                  key={`artifact-${index}`}
+                  ref={(el) => {
+                    cardArtifactRefs.current[index] = el;
+                  }}
+                  className="agent-card agent-card-birth_journey_plan_card"
+                >
+                  <header className="agent-card-header">
+                    <div className="agent-card-header-text">
+                      <h2>{journey.title}</h2>
+                      {journey.subtitle ? <p>{journey.subtitle}</p> : null}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
+                    </div>
+                  </header>
+
+                  {ownerChips.length > 0 ? (
+                    <dl className="birth-journey-owner-strip">
+                      {ownerChips.map(([label, value]) => (
+                        <div key={label}>
+                          <dt>{label}</dt>
+                          <dd>{formatPlainValue(value)}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  ) : null}
+
+                  {journey.phases.length > 0 ? (
+                    <section className="birth-journey-timeline" aria-label="生产全过程阶段">
+                      {journey.phases.map((phase) => {
+                        const JourneyIcon = birthJourneyPhaseIcon(phase.id);
+                        return (
+                          <article key={phase.id} className={cn("birth-journey-phase", phase.status === "current" && "is-current")}>
+                            <div className="birth-journey-phase-marker" aria-hidden="true">
+                              <JourneyIcon />
+                            </div>
+                            <div className="birth-journey-phase-body">
+                              <div className="birth-journey-phase-heading">
+                                <div>
+                                  <p>{phase.date_range}</p>
+                                  <h3>{phase.title}</h3>
+                                </div>
+                                <span>{birthJourneyStatusLabel(phase.status)}</span>
+                              </div>
+                              {phase.goal ? <p className="birth-journey-goal">{phase.goal}</p> : null}
+                              <div className="birth-journey-section-grid">
+                                {phase.watchouts.length > 0 ? (
+                                  <section>
+                                    <h4>注意</h4>
+                                    <ul>
+                                      {phase.watchouts.map((item, itemIndex) => (
+                                        <li key={`${phase.id}-watch-${itemIndex}`}>{item}</li>
+                                      ))}
+                                    </ul>
+                                  </section>
+                                ) : null}
+                                {phase.actions.length > 0 ? (
+                                  <section>
+                                    <h4>准备</h4>
+                                    <ul>
+                                      {phase.actions.map((item, itemIndex) => (
+                                        <li key={`${phase.id}-action-${itemIndex}`}>{item}</li>
+                                      ))}
+                                    </ul>
+                                  </section>
+                                ) : null}
+                                {phase.comate_help.length > 0 ? (
+                                  <section>
+                                    <h4>CoMate</h4>
+                                    <ul>
+                                      {phase.comate_help.map((item, itemIndex) => (
+                                        <li key={`${phase.id}-help-${itemIndex}`}>{item}</li>
+                                      ))}
+                                    </ul>
+                                  </section>
+                                ) : null}
+                              </div>
+                            </div>
+                          </article>
+                        );
+                      })}
+                    </section>
+                  ) : null}
+
+                  <div className="agent-card-footer birth-journey-footer">
+                    {journey.disclaimer ? <p className="agent-card-disclaimer">{journey.disclaimer}</p> : null}
+                    <div className="birth-journey-footer-actions">
+                      {canSendNextAction ? (
+                        <button
+                          type="button"
+                          className="birth-journey-next-action"
+                          onClick={() => onButtonSelect(journey.next_action.send_text, { displayText: journey.next_action.label })}
+                        >
+                          <span>{journey.next_action.label}</span>
+                          <ChevronRight aria-hidden="true" />
+                        </button>
+                      ) : null}
+                      {downloadButton}
+                    </div>
+                  </div>
+                </article>
+              );
+            }
             if (cardType === "birth_plan_card" && schemaVersion === "1.0") {
               const bp = normalizeBirthPlanCard(cardJson);
               const groups: Array<{ title: string; values: string[]; Icon: LucideIcon; tone: string }> = [
@@ -1411,13 +1742,7 @@ const AgentHubRichTextBlock: React.FC<{
               );
             }
             if (cardType === "hospital_bag_card" && schemaVersion === "1.0") {
-              const owner = asObject(cardJson.owner) ?? {};
               const subtitle = "住院母婴必备用品 · 32～34周准备 · 36周完成";
-              const profileRows = [
-                { label: "孕期", value: hospitalBagProfileValue("孕期", owner.due_date_or_week) },
-                { label: "生产方式", value: hospitalBagProfileValue("生产方式", owner.birth_path) },
-                { label: "喂养意向", value: hospitalBagProfileValue("喂养意向", owner.feeding_intention) },
-              ].filter(({ value }) => hasDisplayValue(value) && !isConfirmPlaceholder(value));
               const packingGroups = compactPackingGroups(cardJson.packing_groups);
               const disclaimer = asString(cardJson.disclaimer);
               return (
@@ -1437,17 +1762,6 @@ const AgentHubRichTextBlock: React.FC<{
                       <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
                     </div>
                   </header>
-                  {profileRows.length > 0 ? (
-                    <div className="hospital-card-profile-strip">
-                      <ul className="hospital-card-profile-tags">
-                        {profileRows.map((item) => (
-                          <li key={item.label}>
-                            <strong>{renderHospitalCardValue(item.value)}</strong>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
                   {packingGroups.length > 0 ? (
                     <section className="agent-card-section">
                       <h3>物品清单</h3>
@@ -1461,6 +1775,7 @@ const AgentHubRichTextBlock: React.FC<{
                             {group.items.map((item, i) => {
                               const ItemIcon = packingItemIcon(item, group);
                               const description = packingItemDescription(item);
+                              const personalizationText = packingItemPersonalizationText(item, group);
                               return (
                                 <div key={i} className="packing-item">
                                   <span className={cn("packing-item-icon", packingItemIconTone(item, group))} aria-hidden="true">
@@ -1474,6 +1789,9 @@ const AgentHubRichTextBlock: React.FC<{
                                     </span>
                                   ) : null}
                                   {description ? <small className="packing-item-explain">{description}</small> : null}
+                                  {personalizationText ? (
+                                    <small className="packing-item-reasons">{personalizationText}</small>
+                                  ) : null}
                                 </div>
                               );
                             })}
@@ -1524,18 +1842,8 @@ const AgentHubRichTextBlock: React.FC<{
               : artifact.form;
           const isSupportTicket = artifact.kind === "support_ticket_draft";
           const formId = asString(formSpec.id);
-          const isHospitalBagIntake = formId === "hospital_bag_intake";
-          const isBirthPlanIntake = formId === "birth_plan_card_intake";
-          const isGroupedIntake = isHospitalBagIntake || isBirthPlanIntake;
-          const isMonochromeForm = isSupportTicket || isHospitalBagIntake || isBirthPlanIntake;
-          const title = isHospitalBagIntake || isBirthPlanIntake ? "信息采集" : asString(formSpec.title) || "Confirm details";
-          const normalizedFormSpec = isHospitalBagIntake
-            ? { ...formSpec, title, description: "" }
-            : isBirthPlanIntake
-              ? { ...formSpec, title, description: "" }
-              : formSpec;
           const fieldsRaw = Array.isArray(formSpec.fields) ? formSpec.fields : [];
-          const fields: FormFieldSpec[] = fieldsRaw
+          const parsedFields: FormFieldSpec[] = fieldsRaw
             .map((f) => asObject(f))
             .filter((x): x is Record<string, unknown> => Boolean(x))
             .map((f) => ({
@@ -1550,7 +1858,20 @@ const AgentHubRichTextBlock: React.FC<{
               other_placeholder: asString(f.other_placeholder),
               help_text: asString(f.help_text),
             }))
+            .filter((f) => f.id);
+          const isHospitalBagIntake = formId === "hospital_bag_intake" || looksLikeHospitalBagForm(parsedFields);
+          const isBirthPlanIntake = formId === "birth_plan_card_intake";
+          const isGroupedIntake = isHospitalBagIntake || isBirthPlanIntake;
+          const isMonochromeForm = isSupportTicket || isHospitalBagIntake || isBirthPlanIntake;
+          const title = isHospitalBagIntake || isBirthPlanIntake ? "信息采集" : asString(formSpec.title) || "Confirm details";
+          const normalizedFormSpec = isHospitalBagIntake
+            ? { ...formSpec, id: "hospital_bag_intake", title, description: "" }
+            : isBirthPlanIntake
+              ? { ...formSpec, title, description: "" }
+              : formSpec;
+          const fields: FormFieldSpec[] = parsedFields
             .filter((field) => !(isHospitalBagIntake && REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS.has(field.id)))
+            .map((field) => (isHospitalBagIntake ? sanitizeHospitalBagIntakeField(field) : field))
             .map((field) => {
               if (!((isHospitalBagIntake || isBirthPlanIntake) && field.id === "birth_path")) {
                 return field;

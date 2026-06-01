@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback, Suspense, useRef } from "react";
+import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Activity,
@@ -8,9 +8,6 @@ import {
   Coffee,
   Droplets,
   HeartPulse,
-  Info,
-  Moon,
-  Pencil,
   Ruler,
   Target,
   Utensils,
@@ -48,10 +45,23 @@ import babyAvatar from "@/assets/baby-avatar-felt.png";
 
 /** 母乳趋势 / 成长曲线：压缩左右与底部留白，同时保证刻度文本不被裁切 */
 const STATUS_OVERVIEW_CHART_MARGIN = { top: 8, right: 14, left: 0, bottom: 8 } as const;
+const LACTATION_TREND_COLORS = {
+  actual: "#b9792a",
+  estimate: "#d7ad77",
+  band: "#ffe9bf",
+  grid: "#f0dfc4",
+  axis: "#8a6742",
+};
+const GROWTH_CHART_COLORS = {
+  actual: "#3f8f78",
+  height: "#5aa899",
+  band: "#d8f3e9",
+  grid: "#dcebe6",
+  axis: "#5f7772",
+};
 
 type BabyRecordRow = { date: string; weightKg: number; heightCm: number; headCm: number };
-
-const BreastModel = React.lazy(() => import("@/components/mom/BreastModel"));
+type StatusDigitalTwinTab = "mom" | "baby";
 
 /* ── Expandable Section Component ── */
 const Expandable: React.FC<{
@@ -260,8 +270,8 @@ const LactationTrendTooltip = ({
   return (
     <div className="rounded-lg bg-card border border-border/50 px-3 py-2 text-xs shadow-lg max-w-[220px]">
       <p className="font-semibold text-foreground mb-1">{label}</p>
-      {line(row.actualMl, "吸乳总量", "hsl(var(--primary))")}
-      {line(row.estimatedMl, "含亲喂估算", "hsl(var(--primary) / 0.82)")}
+      {line(row.actualMl, "吸乳总量", LACTATION_TREND_COLORS.actual)}
+      {line(row.estimatedMl, "含亲喂估算", LACTATION_TREND_COLORS.estimate)}
       <p className="text-muted-foreground mt-0.5 border-t border-border/40 pt-1">
         参考区间：{formatVol(row.refLowMl, unit)}
         {uLabel} – {formatVol(row.refHighMl, unit)}
@@ -498,8 +508,6 @@ function mapGrowthHistoryToBabyRows(data: GrowthRecord[]): BabyRecordRow[] {
     .map((k) => byDay.get(k)!.row);
 }
 
-const dash = "—";
-
 /** 接口可能返回 number 或数字字符串 */
 function mlFromApi(v: unknown): number | null {
   const n = typeof v === "number" ? v : typeof v === "string" ? Number(v) : NaN;
@@ -537,20 +545,6 @@ function growthLastRecordedSameLocalDayAsNow(g: GrowthQueryData): boolean {
   return lastMs !== null && sameLocalCalendarDayMs(lastMs, Date.now());
 }
 
-/** 取体重/身高/头围三条测量时间中最晚的一条，用于「最近一次」说明 */
-function latestGrowthMeasurementCaption(g: GrowthQueryData): string | null {
-  const bestMs = latestGrowthMesTimestampMs(g);
-  if (bestMs !== null) {
-    const d = new Date(bestMs);
-    return `${d.toLocaleDateString("zh-CN")} ${d.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })}`;
-  }
-  const times = [g.weight_mes_time, g.height_mes_time, g.head_mes_time].filter(
-    (t): t is string => typeof t === "string" && t.trim().length > 0,
-  );
-  if (!times.length) return null;
-  return times[times.length - 1].trim().slice(0, 19);
-}
-
 const EmptyChartHint = ({ children }: { children: React.ReactNode }) => (
   <div className="flex items-center justify-center py-14 text-[11px] text-muted-foreground text-center px-4">
     {children}
@@ -576,7 +570,6 @@ const StatusOverviewBody: React.FC = () => {
 
   const [growthLoading, setGrowthLoading] = useState(true);
   const [latestGrowth, setLatestGrowth] = useState<GrowthQueryData | null>(null);
-  const [showGrowthServerMeta, setShowGrowthServerMeta] = useState(true);
   const [growthHistoryRows, setGrowthHistoryRows] = useState<BabyRecordRow[]>([]);
   const [growthHistoryLoading, setGrowthHistoryLoading] = useState(true);
 
@@ -593,6 +586,7 @@ const StatusOverviewBody: React.FC = () => {
   const [growthSubmitting, setGrowthSubmitting] = useState(false);
   const [growthSaveErr, setGrowthSaveErr] = useState<string | null>(null);
   const [growthMetricsBlinkOn, setGrowthMetricsBlinkOn] = useState(false);
+  const [activeDigitalTwin, setActiveDigitalTwin] = useState<StatusDigitalTwinTab>("mom");
   const growthMetricsRef = useRef<HTMLDivElement | null>(null);
   const growthBlinkTimerRef = useRef<number | null>(null);
 
@@ -653,7 +647,6 @@ const StatusOverviewBody: React.FC = () => {
           return;
         }
         setLatestGrowth(data);
-        setShowGrowthServerMeta(true);
         setBabyMetrics({
           weightKg: mlFromApi(data.weight_kg),
           heightCm: mlFromApi(data.height_cm),
@@ -800,8 +793,6 @@ const StatusOverviewBody: React.FC = () => {
     };
   }, [growthChartData]);
 
-  const growthMeasCaption =
-    showGrowthServerMeta && latestGrowth ? latestGrowthMeasurementCaption(latestGrowth) : null;
   const todayPumpLabel = todayQueryLoading
     ? "加载中"
     : todayPumpMl !== null
@@ -820,6 +811,20 @@ const StatusOverviewBody: React.FC = () => {
       : typeof babyMetrics.weightKg === "number"
         ? `${babyMetrics.weightKg}kg`
         : "待记录";
+  const momStatusSubtitle = momBabyLoading
+    ? "正在加载妈妈信息…"
+    : momBabyErr
+      ? "妈妈档案待绑定"
+      : typeof postpartumWeeks === "number"
+        ? `产后第 ${postpartumWeeks} 周`
+        : "暂无有效分娩日期";
+  const babyStatusSubtitle = momBabyLoading
+    ? "正在加载宝宝信息…"
+    : momBabyErr
+      ? "宝宝档案待绑定"
+      : typeof babyAgeDays === "number"
+        ? `宝宝已出生 ${babyAgeDays} 天`
+        : "暂无有效分娩日期";
 
   const runGrowthMetricsHighlight = useCallback(() => {
     if (growthBlinkTimerRef.current !== null) {
@@ -874,215 +879,284 @@ const StatusOverviewBody: React.FC = () => {
   return (
     <>
       <div className="flex flex-col pb-3">
-        <div id="status-mom-digital-twin" className="order-1 relative mx-4 mt-2 mb-4 flex items-center gap-3">
-          <div className="min-w-0 flex items-center gap-3">
-            <img src={momAvatar} alt="Mom" className="w-14 h-14 rounded-full border-2 border-primary/20 object-cover" />
-            <div className="min-w-0">
-              <h1 className="text-base font-bold text-foreground">妈妈数字分身</h1>
-              <p className="text-[11px] text-muted-foreground">
-                {momBabyLoading ? (
-                  "正在加载妈妈信息…"
-                ) : momBabyErr ? (
-                  "妈妈档案待绑定"
-                ) : typeof postpartumWeeks === "number" ? (
-                  <>产后第 {postpartumWeeks} 周</>
-                ) : (
-                  "暂无有效分娩日期，请完善档案后重试"
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="order-2 mx-4 mb-4 grid grid-cols-2 gap-3">
-          <StatusModuleCard
-            title="母乳记录"
-            subtitle="今日产出和趋势"
-            value={todayPumpLabel}
-            action="查看趋势"
-            tone="rose"
-            icon={<Droplets className="h-4 w-4" />}
-            onClick={() => scrollStatusSection("status-milk-trend")}
-          />
-          <StatusModuleCard
-            title="乳房舒适"
-            subtitle="胀痛、堵奶和护理"
-            value="待记录"
-            action="查看护理"
-            tone="peach"
-            icon={<HeartPulse className="h-4 w-4" />}
-            onClick={() => scrollStatusSection("status-breast-health")}
-          />
-          <StatusModuleCard
-            title="产后恢复"
-            subtitle="恢复节奏和身体感受"
-            value={postpartumValue}
-            action="看看状态"
-            tone="mint"
-            icon={<Activity className="h-4 w-4" />}
-            onClick={() => scrollStatusSection("status-mom-digital-twin")}
-          />
-          <StatusModuleCard
-            title="补能与休息"
-            subtitle="饮水、餐食和疲劳感"
-            value="待记录"
-            action="记录一下"
-            tone="amber"
-            icon={<Coffee className="h-4 w-4" />}
-          />
-        </div>
-
-        <div id="status-baby-digital-twin" className="order-5 mx-4 mt-2 mb-4 pt-4 border-t border-border/50 flex items-center gap-3">
-          <div className="min-w-0 flex items-center gap-3">
-            <img src={babyAvatar} alt="Baby" className="w-14 h-14 rounded-full border-2 border-primary/20 object-cover" />
-            <div className="min-w-0">
-              <h2 className="text-base font-bold text-foreground">宝宝数字分身</h2>
-              <p className="text-[11px] text-muted-foreground">
-                {momBabyLoading ? (
-                  "正在加载宝宝信息…"
-                ) : momBabyErr ? (
-                  "宝宝档案待绑定"
-                ) : typeof babyAgeDays === "number" ? (
-                  <>宝宝已出生 {babyAgeDays} 天</>
-                ) : (
-                  "暂无有效分娩日期，请完善档案后重试"
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="order-6 mx-4 mb-4 grid grid-cols-2 gap-3">
-          <StatusModuleCard
-            title="喂养记录"
-            subtitle="今日亲喂、瓶喂和摄入"
-            value={todayFeedLabel}
-            action="查看记录"
-            tone="sky"
-            icon={<Utensils className="h-4 w-4" />}
-            onClick={() => scrollStatusSection("status-baby-digital-twin")}
-          />
-          <StatusModuleCard
-            title="成长发育"
-            subtitle="体重、身高和头围"
-            value={babyGrowthValue}
-            action="修改指标"
-            tone="mint"
-            icon={<Ruler className="h-4 w-4" />}
-            onClick={openGrowthEditor}
-          />
-          <StatusModuleCard
-            title="宝宝睡眠"
-            subtitle="夜间照护和睡眠"
-            value="待记录"
-            action="查看夜间"
-            tone="violet"
-            icon={<Bed className="h-4 w-4" />}
-            onClick={() => scrollStatusSection("status-baby-sleep")}
-          />
-          <StatusModuleCard
-            title="尿便与护理"
-            subtitle="尿布、便便和皮肤"
-            value="待记录"
-            action="快速记录"
-            tone="aqua"
-            icon={<ClipboardList className="h-4 w-4" />}
-          />
-        </div>
-
-      <div id="status-baby-growth-record" className="order-7 mx-4 mb-4">
-        <div className="flex items-center justify-between mb-2 px-1">
-          <h2 className="text-sm font-bold text-foreground">宝宝成长记录</h2>
-          <button
-            type="button"
-            onClick={openGrowthEditor}
-            className="text-[11px] text-primary font-medium flex items-center gap-1 bg-primary/10 px-2.5 py-1 rounded-full active:scale-95 transition-transform"
-          >
-            <Pencil className="w-3 h-3" /> 修改指标
-          </button>
-        </div>
         <div
-          ref={growthMetricsRef}
-          className={`rounded-[24px] bg-card border border-border/40 p-4 shadow-sm transition-all duration-200 ${
-            growthMetricsBlinkOn ? "ring-2 ring-amber-400/80 shadow-[0_0_0_4px_rgba(251,191,36,0.22)]" : ""
-          }`}
+          id="status-digital-twin-tabs"
+          className="sticky top-0 z-20 mx-0 mt-2 mb-4 grid w-full grid-cols-2 gap-2 bg-background/90 px-4 py-2 backdrop-blur"
+          role="tablist"
+          aria-label="妈妈宝宝切换"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex-1 text-center border-r border-border/40">
-              <p className="text-[11px] text-muted-foreground font-medium mb-1">体重</p>
-              <p className="text-lg font-black text-foreground">
-                {growthLoading ? (
-                  <span className="text-muted-foreground">…</span>
-                ) : typeof babyMetrics.weightKg === "number" ? (
-                  babyMetrics.weightKg
-                ) : (
-                  dash
-                )}
-                <span className="text-[10px] font-medium ml-0.5 text-muted-foreground">kg</span>
-              </p>
-            </div>
-            <div className="flex-1 text-center border-r border-border/40">
-              <p className="text-[11px] text-muted-foreground font-medium mb-1">身高</p>
-              <p className="text-lg font-black text-foreground">
-                {growthLoading ? (
-                  <span className="text-muted-foreground">…</span>
-                ) : typeof babyMetrics.heightCm === "number" ? (
-                  babyMetrics.heightCm
-                ) : (
-                  dash
-                )}
-                <span className="text-[10px] font-medium ml-0.5 text-muted-foreground">cm</span>
-              </p>
-            </div>
-            <div className="flex-1 text-center">
-              <p className="text-[11px] text-muted-foreground font-medium mb-1">头围</p>
-              <p className="text-lg font-black text-foreground">
-                {growthLoading ? (
-                  <span className="text-muted-foreground">…</span>
-                ) : typeof babyMetrics.headCm === "number" ? (
-                  babyMetrics.headCm
-                ) : (
-                  dash
-                )}
-                <span className="text-[10px] font-medium ml-0.5 text-muted-foreground">cm</span>
-              </p>
-            </div>
-          </div>
-          {growthLoading ? (
-            <p className="text-[10px] text-muted-foreground text-center mt-3 px-1">正在加载最近一次生长发育记录…</p>
-          ) : growthMeasCaption ? (
-            <p className="text-[10px] text-muted-foreground text-center mt-3 px-1 leading-relaxed">
-              最近一次测量：{growthMeasCaption}
-            </p>
-          ) : showGrowthServerMeta ? (
-            <p className="text-[10px] text-muted-foreground text-center mt-3 px-1">
-              {latestGrowth ? "最近一次测量时间暂无" : "暂无生长发育记录"}
-            </p>
-          ) : null}
+          {[
+            {
+              tab: "mom" as const,
+              title: "妈妈",
+              subtitle: momStatusSubtitle,
+              avatar: momAvatar,
+              alt: "Mom",
+            },
+            {
+              tab: "baby" as const,
+              title: "宝宝",
+              subtitle: babyStatusSubtitle,
+              avatar: babyAvatar,
+              alt: "Baby",
+            },
+          ].map(({ tab, title, subtitle, avatar, alt }) => {
+            const selected = activeDigitalTwin === tab;
+            return (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setActiveDigitalTwin(tab)}
+                className={`flex min-h-[68px] w-full min-w-0 items-center gap-2 rounded-[22px] px-2.5 py-2 text-left transition-all ${
+                  selected
+                    ? "bg-white text-[#35212c] shadow-[0_8px_20px_rgba(83,47,64,0.12)] ring-1 ring-primary/15"
+                    : "bg-white/45 text-muted-foreground shadow-[0_6px_16px_rgba(83,47,64,0.06)] ring-1 ring-white/70 active:bg-white/70"
+                }`}
+              >
+                <img
+                  src={avatar}
+                  alt={alt}
+                  className={`h-10 w-10 shrink-0 rounded-full border-2 object-cover ${
+                    selected ? "border-primary/20" : "border-border/50 opacity-80"
+                  }`}
+                />
+                <span className="min-w-0">
+                  <span className="block truncate text-[15px] font-black leading-tight">{title}</span>
+                  <span className="mt-1 block truncate text-[10px] font-semibold leading-tight text-muted-foreground">
+                    {subtitle}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
         </div>
-      </div>
 
-      <Expandable
-        id="status-baby-growth-curve"
-        title="宝宝成长曲线"
-        className="order-8"
-        defaultOpen
-        icon={<div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center"><Baby className="w-3.5 h-3.5 text-foreground" /></div>}
-      >
+        {activeDigitalTwin === "mom" ? (
+          <>
+            <div className="order-2 mx-4 mb-4 grid grid-cols-2 gap-3">
+              <StatusModuleCard
+                title="母乳产出"
+                subtitle="今日产出和趋势"
+                value={todayPumpLabel}
+                action="查看趋势"
+                tone="rose"
+                icon={<Droplets className="h-4 w-4" />}
+                onClick={() => scrollStatusSection("status-milk-trend")}
+              />
+              <StatusModuleCard
+                title="乳房健康"
+                subtitle="胀痛、堵奶和护理"
+                value="待记录"
+                action="查看护理"
+                tone="peach"
+                icon={<HeartPulse className="h-4 w-4" />}
+              />
+              <StatusModuleCard
+                title="产后恢复"
+                subtitle="恢复节奏和身体感受"
+                value={postpartumValue}
+                action="看看状态"
+                tone="mint"
+                icon={<Activity className="h-4 w-4" />}
+                onClick={() => scrollStatusSection("status-digital-twin-tabs")}
+              />
+              <StatusModuleCard
+                title="补能与休息"
+                subtitle="饮水、餐食和疲劳感"
+                value="待记录"
+                action="记录一下"
+                tone="amber"
+                icon={<Coffee className="h-4 w-4" />}
+              />
+            </div>
+
+            <Expandable
+              id="status-milk-trend"
+              title="母乳趋势"
+              className="order-3 border-[#f0dfc4] bg-gradient-to-br from-[#fffaf0] via-white to-[#fff1d6]"
+              defaultOpen
+              icon={<div className="w-6 h-6 rounded-full bg-[#ffe4b8] flex items-center justify-center"><Target className="w-3.5 h-3.5 text-[#b9792a]" /></div>}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center gap-2 text-[9px] text-[#8a6742]">
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-[2px]" style={{ backgroundColor: LACTATION_TREND_COLORS.actual }}></div>
+                    <span>吸乳总量</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-[2px] border-b border-dashed opacity-80" style={{ borderColor: LACTATION_TREND_COLORS.estimate }}></div>
+                    <span>含亲喂估算</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-2 opacity-80" style={{ backgroundColor: LACTATION_TREND_COLORS.band }}></div>
+                    <span>目标参考区间</span>
+                  </div>
+                </div>
+                <div className="flex rounded-full bg-[#fff1d6] p-0.5 text-[10px] font-medium">
+                  <button type="button" onClick={() => setWindowSize(7)} className={`px-2 py-0.5 rounded-full ${windowSize === 7 ? "bg-[#b9792a] text-white" : "text-[#8a6742]"}`}>周</button>
+                  <button type="button" onClick={() => setWindowSize(30)} className={`px-2 py-0.5 rounded-full ${windowSize === 30 ? "bg-[#b9792a] text-white" : "text-[#8a6742]"}`}>月</button>
+                </div>
+              </div>
+              {pumpInfoLoading ? (
+                <EmptyChartHint>正在加载最近一个月泌乳数据…</EmptyChartHint>
+              ) : trendData.length === 0 ? (
+                <EmptyChartHint>暂无母乳趋势数据，可多日记录产量后在本页查看。</EmptyChartHint>
+              ) : (
+                <div className="h-[188px] w-full min-w-0 max-w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart data={trendData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={LACTATION_TREND_COLORS.grid} />
+                      <XAxis
+                        dataKey="dateKey"
+                        ticks={lactationTrendDateTicks}
+                        tickFormatter={formatLactationTrendDateTick}
+                        tick={{ fontSize: 9, fill: LACTATION_TREND_COLORS.axis }}
+                        stroke={LACTATION_TREND_COLORS.axis}
+                        interval={0}
+                        minTickGap={8}
+                        tickMargin={6}
+                        padding={{ left: 0, right: 8 }}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 9, fill: LACTATION_TREND_COLORS.axis }}
+                        stroke={LACTATION_TREND_COLORS.axis}
+                        width={unit === "oz" ? 48 : 42}
+                        domain={[0, "auto"]}
+                        tickFormatter={(v) =>
+                          typeof v !== "number" || Number.isNaN(v)
+                            ? ""
+                            : unit === "oz"
+                              ? `${v.toFixed(1)} oz`
+                              : `${Math.round(v)} mL`}
+                      />
+                      <Tooltip
+                        labelFormatter={(value) =>
+                          formatLactationTrendTooltipDate(
+                            typeof value === "string" ? value : String(value ?? ""),
+                          )}
+                        content={<LactationTrendTooltip unit={unit} />}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="refPad"
+                        stackId="refBand"
+                        stroke="none"
+                        fill="transparent"
+                        legendType="none"
+                        fillOpacity={0}
+                        dot={false}
+                        activeDot={false}
+                        isAnimationActive={false}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="refSpan"
+                        stackId="refBand"
+                        stroke="none"
+                        fill={LACTATION_TREND_COLORS.band}
+                        fillOpacity={0.75}
+                        dot={false}
+                        activeDot={false}
+                        isAnimationActive={false}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="estimated"
+                        stroke={LACTATION_TREND_COLORS.estimate}
+                        strokeDasharray="5 5"
+                        strokeWidth={1.5}
+                        strokeOpacity={0.9}
+                        dot={windowSize === 7 ? { r: 2 } : false}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="actual"
+                        stroke={LACTATION_TREND_COLORS.actual}
+                        strokeWidth={2.5}
+                        dot={
+	                          windowSize === 7
+	                            ? { r: 3, strokeWidth: 2, fill: "#fffaf0", stroke: LACTATION_TREND_COLORS.actual }
+	                            : false
+                        }
+                        activeDot={{ r: 5 }}
+                      />
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </Expandable>
+
+          </>
+        ) : (
+          <>
+            <div className="order-6 mx-4 mb-4 grid grid-cols-2 gap-3">
+              <StatusModuleCard
+                title="奶量摄入"
+                subtitle="今日亲喂、瓶喂和摄入"
+                value={todayFeedLabel}
+                action="查看记录"
+                tone="sky"
+                icon={<Utensils className="h-4 w-4" />}
+                onClick={() => scrollStatusSection("status-digital-twin-tabs")}
+              />
+              <StatusModuleCard
+                title="成长发育"
+                subtitle="体重、身高和头围"
+                value={babyGrowthValue}
+                action="修改指标"
+                tone="mint"
+                icon={<Ruler className="h-4 w-4" />}
+                onClick={openGrowthEditor}
+              />
+              <StatusModuleCard
+                title="宝宝睡眠"
+                subtitle="夜间照护和睡眠"
+                value="待记录"
+                action="查看夜间"
+                tone="violet"
+                icon={<Bed className="h-4 w-4" />}
+              />
+              <StatusModuleCard
+                title="尿便与护理"
+                subtitle="尿布、便便和皮肤"
+                value="待记录"
+                action="快速记录"
+                tone="aqua"
+                icon={<ClipboardList className="h-4 w-4" />}
+              />
+            </div>
+
+            <div
+              ref={growthMetricsRef}
+              className={`order-8 transition-all duration-200 ${
+                growthMetricsBlinkOn
+                  ? "rounded-[24px] ring-2 ring-emerald-300/80 shadow-[0_0_0_4px_rgba(110,231,183,0.22)]"
+                  : ""
+              }`}
+            >
+              <Expandable
+                id="status-baby-growth-curve"
+                title="宝宝成长曲线"
+                className="border-[#dcebe6] bg-gradient-to-br from-[#f7fffc] via-white to-[#e8f8f1]"
+                defaultOpen
+                icon={<div className="w-6 h-6 rounded-full bg-[#d8f3e9] flex items-center justify-center"><Baby className="w-3.5 h-3.5 text-[#3f8f78]" /></div>}
+              >
         <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2 text-[9px]">
+          <div className="flex items-center gap-2 text-[9px] text-[#5f7772]">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-[2px] bg-[hsl(var(--primary))]"></div>
-              <span className="text-muted-foreground">实际测量</span>
+              <div className="w-3 h-[2px]" style={{ backgroundColor: GROWTH_CHART_COLORS.actual }}></div>
+              <span>实际测量</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-2 bg-[hsl(var(--primary))] opacity-30"></div>
-              <span className="text-muted-foreground">同龄参考区间</span>
+              <div className="w-3 h-2 opacity-80" style={{ backgroundColor: GROWTH_CHART_COLORS.band }}></div>
+              <span>同龄参考区间</span>
             </div>
           </div>
-          <div className="flex rounded-full bg-muted/60 p-0.5 text-[9px] font-medium">
-            <button type="button" onClick={() => setGrowthCurveType("weight")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "weight" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>体重</button>
-            <button type="button" onClick={() => setGrowthCurveType("height")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "height" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>身高</button>
+          <div className="flex rounded-full bg-[#edf8f4] p-0.5 text-[9px] font-medium">
+            <button type="button" onClick={() => setGrowthCurveType("weight")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "weight" ? "bg-[#3f8f78] text-white" : "text-[#5f7772]"}`}>体重</button>
+            <button type="button" onClick={() => setGrowthCurveType("height")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "height" ? "bg-[#3f8f78] text-white" : "text-[#5f7772]"}`}>身高</button>
           </div>
         </div>
         {growthHistoryLoading ? (
@@ -1093,34 +1167,34 @@ const StatusOverviewBody: React.FC = () => {
           <div className="h-[188px] w-full min-w-0 max-w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-                <defs>
-                  <linearGradient id="growthBandPrimary" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.15} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.35} vertical={false} />
-                <XAxis
-                  dataKey="week"
-                  ticks={growthChartWeekTicks}
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  interval={0}
-                  tickMargin={6}
-                  padding={{ left: 0, right: 8 }}
-                />
-                <YAxis
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  width={42}
-                  domain={growthYAxisDomains?.weight ?? [2.5, 7]}
-                  allowDecimals
-                  tickFormatter={(v) => formatGrowthChartYTick(v, "kg")}
-                />
-                <Tooltip contentStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="wP75" stroke="none" fill="url(#growthBandPrimary)" name="P75参考" fillOpacity={1} />
-                <Area type="monotone" dataKey="wP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
-                <Line type="monotone" dataKey="weight" name="体重" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "hsl(var(--background))", stroke: "hsl(var(--primary))" }} />
+	                <defs>
+	                  <linearGradient id="growthBandPrimary" x1="0" y1="0" x2="0" y2="1">
+	                    <stop offset="0%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.85} />
+	                    <stop offset="100%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.5} />
+	                  </linearGradient>
+	                </defs>
+	                <CartesianGrid strokeDasharray="3 3" stroke={GROWTH_CHART_COLORS.grid} opacity={0.75} vertical={false} />
+	                <XAxis
+	                  dataKey="week"
+	                  ticks={growthChartWeekTicks}
+	                  tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+	                  stroke={GROWTH_CHART_COLORS.axis}
+	                  interval={0}
+	                  tickMargin={6}
+	                  padding={{ left: 0, right: 8 }}
+	                />
+	                <YAxis
+	                  tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+	                  stroke={GROWTH_CHART_COLORS.axis}
+	                  width={42}
+	                  domain={growthYAxisDomains?.weight ?? [2.5, 7]}
+	                  allowDecimals
+	                  tickFormatter={(v) => formatGrowthChartYTick(v, "kg")}
+	                />
+	                <Tooltip contentStyle={{ fontSize: 11 }} />
+	                <Area type="monotone" dataKey="wP75" stroke="none" fill="url(#growthBandPrimary)" name="P75参考" fillOpacity={1} />
+	                <Area type="monotone" dataKey="wP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
+	                <Line type="monotone" dataKey="weight" name="体重" stroke={GROWTH_CHART_COLORS.actual} strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "#f7fffc", stroke: GROWTH_CHART_COLORS.actual }} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -1128,199 +1202,43 @@ const StatusOverviewBody: React.FC = () => {
           <div className="h-[188px] w-full min-w-0 max-w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-                <defs>
-                  <linearGradient id="growthBandSecondary" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(158 55% 52%)" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="hsl(158 55% 52%)" stopOpacity={0.15} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.35} vertical={false} />
-                <XAxis
-                  dataKey="week"
-                  ticks={growthChartWeekTicks}
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  interval={0}
-                  tickMargin={6}
-                  padding={{ left: 0, right: 8 }}
-                />
-                <YAxis
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  width={42}
-                  domain={growthYAxisDomains?.height ?? [46, 64]}
-                  allowDecimals
-                  tickFormatter={(v) => formatGrowthChartYTick(v, "cm")}
-                />
-                <Tooltip contentStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="hP75" stroke="none" fill="url(#growthBandSecondary)" name="P75参考" fillOpacity={1} />
-                <Area type="monotone" dataKey="hP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
-                <Line type="monotone" dataKey="height" name="身高" stroke="hsl(158 55% 52%)" strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "hsl(var(--background))", stroke: "hsl(158 55% 52%)" }} />
+	                <defs>
+	                  <linearGradient id="growthBandSecondary" x1="0" y1="0" x2="0" y2="1">
+	                    <stop offset="0%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.85} />
+	                    <stop offset="100%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.5} />
+	                  </linearGradient>
+	                </defs>
+	                <CartesianGrid strokeDasharray="3 3" stroke={GROWTH_CHART_COLORS.grid} opacity={0.75} vertical={false} />
+	                <XAxis
+	                  dataKey="week"
+	                  ticks={growthChartWeekTicks}
+	                  tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+	                  stroke={GROWTH_CHART_COLORS.axis}
+	                  interval={0}
+	                  tickMargin={6}
+	                  padding={{ left: 0, right: 8 }}
+	                />
+	                <YAxis
+	                  tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+	                  stroke={GROWTH_CHART_COLORS.axis}
+	                  width={42}
+	                  domain={growthYAxisDomains?.height ?? [46, 64]}
+	                  allowDecimals
+	                  tickFormatter={(v) => formatGrowthChartYTick(v, "cm")}
+	                />
+	                <Tooltip contentStyle={{ fontSize: 11 }} />
+	                <Area type="monotone" dataKey="hP75" stroke="none" fill="url(#growthBandSecondary)" name="P75参考" fillOpacity={1} />
+	                <Area type="monotone" dataKey="hP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
+	                <Line type="monotone" dataKey="height" name="身高" stroke={GROWTH_CHART_COLORS.height} strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "#f7fffc", stroke: GROWTH_CHART_COLORS.height }} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
         )}
-      </Expandable>
+              </Expandable>
+            </div>
 
-      <Expandable
-        id="status-milk-trend"
-        title="母乳趋势"
-        className="order-3"
-        defaultOpen
-        icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Target className="w-3.5 h-3.5 text-primary" /></div>}
-      >
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2 text-[9px]">
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-[2px] bg-[hsl(var(--primary))]"></div>
-              <span className="text-muted-foreground">吸乳总量</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-[2px] border-b border-dashed border-[hsl(var(--primary))] opacity-40"></div>
-              <span className="text-muted-foreground">含亲喂估算</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-2 bg-[hsl(158_55%_52%)] opacity-25"></div>
-              <span className="text-muted-foreground">目标参考区间</span>
-            </div>
-          </div>
-          <div className="flex rounded-full bg-muted/60 p-0.5 text-[10px] font-medium">
-            <button type="button" onClick={() => setWindowSize(7)} className={`px-2 py-0.5 rounded-full ${windowSize === 7 ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>周</button>
-            <button type="button" onClick={() => setWindowSize(30)} className={`px-2 py-0.5 rounded-full ${windowSize === 30 ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>月</button>
-          </div>
-        </div>
-        {pumpInfoLoading ? (
-          <EmptyChartHint>正在加载最近一个月泌乳数据…</EmptyChartHint>
-        ) : trendData.length === 0 ? (
-          <EmptyChartHint>暂无母乳趋势数据，可多日记录产量后在本页查看。</EmptyChartHint>
-        ) : (
-          <div className="h-[188px] w-full min-w-0 max-w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={trendData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="dateKey"
-                  ticks={lactationTrendDateTicks}
-                  tickFormatter={formatLactationTrendDateTick}
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  interval={0}
-                  minTickGap={8}
-                  tickMargin={6}
-                  padding={{ left: 0, right: 8 }}
-                />
-                <YAxis
-                  tick={{ fontSize: 9 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  width={unit === "oz" ? 48 : 42}
-                  domain={[0, "auto"]}
-                  tickFormatter={(v) =>
-                    typeof v !== "number" || Number.isNaN(v)
-                      ? ""
-                      : unit === "oz"
-                        ? `${v.toFixed(1)} oz`
-                        : `${Math.round(v)} mL`}
-                />
-                <Tooltip
-                  labelFormatter={(value) =>
-                    formatLactationTrendTooltipDate(
-                      typeof value === "string" ? value : String(value ?? ""),
-                    )}
-                  content={<LactationTrendTooltip unit={unit} />}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="refPad"
-                  stackId="refBand"
-                  stroke="none"
-                  fill="transparent"
-                  legendType="none"
-                  fillOpacity={0}
-                  dot={false}
-                  activeDot={false}
-                  isAnimationActive={false}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="refSpan"
-                  stackId="refBand"
-                  stroke="none"
-                  fill="hsl(158 55% 52%)"
-                  fillOpacity={0.22}
-                  dot={false}
-                  activeDot={false}
-                  isAnimationActive={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="estimated"
-                  stroke="hsl(var(--primary))"
-                  strokeDasharray="5 5"
-                  strokeWidth={1.5}
-                  strokeOpacity={0.55}
-                  dot={windowSize === 7 ? { r: 2 } : false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="actual"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth={2.5}
-                  dot={
-                    windowSize === 7
-                      ? { r: 3, strokeWidth: 2, fill: "hsl(var(--background))", stroke: "hsl(var(--primary))" }
-                      : false
-                  }
-                  activeDot={{ r: 5 }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
+          </>
         )}
-      </Expandable>
-
-      <Expandable
-        id="status-breast-health"
-        title="乳房健康"
-        className="order-4"
-        defaultOpen={false}
-        icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Info className="w-3.5 h-3.5 text-primary" /></div>}
-        summary={
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
-            记录舒适度、吸奶体验和护理节奏，帮你更早发现需要关注的变化。
-          </p>
-        }
-      >
-        <Suspense fallback={<div className="h-[160px] flex items-center justify-center text-xs text-muted-foreground">加载 3D 模型…</div>}>
-          <div className="flex justify-center gap-6 mb-3">
-            <BreastModel side="L" status="normal" />
-            <BreastModel side="R" status="attention" />
-          </div>
-        </Suspense>
-        <div className="flex gap-4 justify-center text-[10px] mt-2">
-          <span className="text-emerald-600 font-medium">左侧：未见异常</span>
-          <span className="text-red-500 font-medium">右侧：需要关注</span>
-        </div>
-      </Expandable>
-
-      <Expandable
-        id="status-baby-sleep"
-        title="宝宝睡眠"
-        className="order-9"
-        defaultOpen={false}
-        icon={<div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center"><Moon className="w-3.5 h-3.5 text-primary" /></div>}
-        summary={
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
-            记录夜醒、入睡和小睡节奏，方便和喂养、生长一起看。
-          </p>
-        }
-      >
-        <div className="rounded-2xl bg-secondary/25 border border-border/40 p-3">
-          <p className="text-xs font-extrabold text-foreground">宝宝睡眠</p>
-          <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
-            这里会承接宝宝睡眠和夜间照护节奏，和喂养、成长记录一起形成宝宝数字分身。
-          </p>
-        </div>
-      </Expandable>
       </div>
 
       <AnimatePresence>
@@ -1456,7 +1374,6 @@ const StatusOverviewBody: React.FC = () => {
                         heightCm: mlFromApi(data.height_cm),
                         headCm: mlFromApi(data.head_cm),
                       });
-                      setShowGrowthServerMeta(true);
                     }
 
                     const histReload = await getGrowthHistory({

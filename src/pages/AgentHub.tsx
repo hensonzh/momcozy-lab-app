@@ -257,21 +257,41 @@ function AgentHubQuickReplies({
   const replies = msg.quickReplies ?? [];
   if (msg.role !== "mai" || replies.length !== 3) return null;
   return (
-    <div className="mt-2 flex flex-wrap gap-2">
-      {replies.map((reply, index) => (
-        <button
-          key={`${msg.id}-quick-${index}-${reply.sendText}`}
-          type="button"
-          disabled={disabled}
-          onClick={() => onSelect(reply.sendText)}
-          className={cn(
-            "rounded-full border border-[#ded7db] bg-white px-3 py-1.5 text-[13px] font-normal text-[#1f1f1f] shadow-sm transition-colors",
-            disabled ? "cursor-not-allowed opacity-50" : "hover:bg-[#f7f4f5] active:bg-[#eee9ec]",
-          )}
-        >
-          {reply.text}
-        </button>
-      ))}
+    <div
+      className={cn(
+        "mt-2.5 max-w-full",
+        disabled && "opacity-60",
+      )}
+    >
+      <div className="mb-1.5 flex items-center gap-1.5 px-0.5 text-[11px] font-[700] text-[#9b7a84]">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#c595a5]" aria-hidden="true" />
+        <span>可以继续问</span>
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {replies.map((reply, index) => (
+          <button
+            key={`${msg.id}-quick-${index}-${reply.sendText}`}
+            type="button"
+            disabled={disabled}
+            onClick={() => onSelect(reply.sendText)}
+            className={cn(
+              "group inline-flex min-h-[34px] max-w-full items-center gap-1.5 rounded-full border border-[#e4d3d9] bg-white/80 px-3 py-1.5 text-left text-[13px] font-[650] leading-snug text-[#4a3a40] shadow-[0_2px_8px_rgba(94,55,67,0.05)] transition-colors",
+              disabled
+                ? "cursor-not-allowed"
+                : "hover:border-[#c892a4] hover:bg-[#fff8fb] active:bg-[#f8edf2]",
+            )}
+          >
+            <span className="min-w-0">{reply.text}</span>
+            <ChevronRight
+              className={cn(
+                "h-3.5 w-3.5 shrink-0 text-[#b78294] transition-transform",
+                !disabled && "group-hover:translate-x-0.5",
+              )}
+              aria-hidden="true"
+            />
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
