@@ -26,7 +26,7 @@ interface MaiInputBarProps {
   onDemoIdentify?: (result: PhotoIdentifyResult) => void;
   /** 正在语音听写：高亮麦克风并让输入框只读，避免与流式转写互相覆盖 */
   speechListening?: boolean;
-  /** Hub 等设备：发送后对话流进行中时为 true（显示加载图标；再次点击 onSend 由父级处理打断） */
+  /** Hub 等设备：发送后对话流进行中时为 true；空输入点击停止，有内容则发送新一轮。 */
   sendLoading?: boolean;
   /** 已有图片等附件可随本轮消息发送，即使输入框为空也允许发送 */
   canSendWithoutText?: boolean;
@@ -63,8 +63,10 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   const composingRef = useRef(false);
   const compositionEndAtRef = useRef(0);
   const voicePressActiveRef = useRef(false);
-  /** 有文字、附件或生成中（打断）时用主色发送键；仅完全空且非加载时置灰样式 */
-  const sendLooksActive = value.trim().length > 0 || canSendWithoutText || sendLoading;
+  const hasSendableContent = value.trim().length > 0 || canSendWithoutText;
+  const sendIsStop = sendLoading && !hasSendableContent;
+  /** 有文字、附件或生成中（打断）时用主色按钮；仅完全空且非加载时置灰样式 */
+  const sendLooksActive = hasSendableContent || sendLoading;
   const voiceDisabled = disabled || !onVoiceStart || !onVoiceEnd;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -248,7 +250,7 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
             <Mic className="w-5 h-5" />
           </button>
 
-          {/* Send：sendLoading 时保留可点以便父组件实现「再次点击打断」；空内容时仅视觉置灰，不禁用以保持父级逻辑一致 */}
+          {/* Send：空输入且 sendLoading 时用于停止；有内容时即使生成中也作为新一轮发送。 */}
           <Button
             type="button"
             onClick={onSend}
@@ -260,9 +262,9 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
             )}
             disabled={disabled}
             aria-busy={sendLoading}
-            title={sendLoading ? "停止回复" : "发送"}
+            title={sendIsStop ? "停止回复" : "发送"}
           >
-            {sendLoading ? (
+            {sendIsStop ? (
               <Square className="w-3.5 h-3.5 fill-current text-primary-foreground" aria-hidden />
             ) : (
               <Send className={cn("w-4 h-4", !sendLooksActive && "text-muted-foreground")} />

@@ -559,7 +559,7 @@ describe("applyAgUiStreamSideEffects", () => {
         artifact_id: "card_1",
         artifact_type: "hospital_bag_card",
         tool_call_id: "call_card",
-        tool_call_name: "ui_card_create",
+        tool_call_name: "hospital_bag_card_create",
         artifact: { id: "card_1", card_type: "hospital_bag_card", card_json: { title: "待产包" } },
       },
     ]);

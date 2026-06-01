@@ -712,6 +712,8 @@ const AgentHub: React.FC = () => {
   const [hubBottomSendBusy, setHubBottomSendBusy] = useState(false);
   /** 最近一次来自底部输入 handleSend 的 SSE 未完成；仅此时 onDone/onError 应清除 hubBottomSendBusy */
   const awaitingHubBottomReplyRef = useRef(false);
+  const hubBottomSendActionLockRef = useRef(false);
+  const lastHubBottomNewTurnAtRef = useRef(0);
   const { speechListening, startSpeech, stopSpeech } = useAgentHubSpeechInput(setInput, {
     userId: DEFAULT_CHAT_USER_ID,
   });
@@ -2315,6 +2317,9 @@ const AgentHub: React.FC = () => {
    * 发送主输入框内容：先结束听写并丢弃转写异步收尾对输入框的写入，再清空并送出。
    */
   const handleSend = async () => {
+    if (hubBottomSendActionLockRef.current) return;
+    hubBottomSendActionLockRef.current = true;
+    try {
     const pendingText = input.trim();
     const hasReadyStagedImages = collectAgUiReadyImages(messages).length > 0;
     if (!hubBottomSendBusy && !mainChatCancelRef.current && (pendingText || hasReadyStagedImages)) {
@@ -2323,12 +2328,16 @@ const AgentHub: React.FC = () => {
 
     await stopSpeech({ discardSttResult: true });
 
+    const hasNewTurnContent = Boolean(pendingText || hasReadyStagedImages);
     if (hubBottomSendBusy || mainChatCancelRef.current) {
+      const isLikelyDuplicateStop = !hasNewTurnContent && Date.now() - lastHubBottomNewTurnAtRef.current < 700;
+      if (isLikelyDuplicateStop) return;
       interruptMainChatStream();
-      return;
+      if (!hasNewTurnContent) return;
     }
 
-    if (!pendingText && !hasReadyStagedImages) return;
+    if (!hasNewTurnContent) return;
+    lastHubBottomNewTurnAtRef.current = Date.now();
     const text = pendingText || "请看这张图片";
     setMessages((prev) => clearQuickRepliesFromMessages(prev));
 
@@ -2394,6 +2403,11 @@ const AgentHub: React.FC = () => {
 
     setInput("");
     void startMainChatStream(text, { purgeStagedImagesAfterAttach: true, userDisplayText: pendingText });
+    } finally {
+      window.setTimeout(() => {
+        hubBottomSendActionLockRef.current = false;
+      }, 120);
+    }
   };
 
   /** 暂存图片文件（拍照或本地选择）：ag-ui 发送时会把预览 blob 转成 data URL。 */
