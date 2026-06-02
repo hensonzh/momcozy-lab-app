@@ -1,5 +1,6 @@
 package com.momcozymai.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -13,6 +14,10 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 
 @CapacitorPlugin(name = "PumpSessionOverlay")
 public class PumpSessionOverlayPlugin extends Plugin {
+    private static final Object SNAPSHOT_LOCK = new Object();
+    private static boolean cachedActive = false;
+    private static String cachedState = "running";
+    private static int cachedProcessAll = 0;
 
     @PluginMethod
     public void canDrawOverlays(PluginCall call) {
@@ -33,6 +38,14 @@ public class PumpSessionOverlayPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void snapshot(PluginCall call) {
+        String state = call.getString("state");
+        int processAll = clampProcess(call.getInt("processAll", 0));
+        updateCachedSnapshot(state, processAll);
+        call.resolve();
+    }
+
+    @PluginMethod
     public void update(PluginCall call) {
         if (!canDrawOverlaysInternal()) {
             call.reject("SYSTEM_ALERT_WINDOW permission is not granted");
@@ -40,11 +53,8 @@ public class PumpSessionOverlayPlugin extends Plugin {
         }
         String state = normalizeState(call.getString("state"));
         int processAll = clampProcess(call.getInt("processAll", 0));
-        Intent intent = new Intent(getContext(), PumpSessionOverlayService.class);
-        intent.setAction(PumpSessionOverlayService.ACTION_UPDATE);
-        intent.putExtra(PumpSessionOverlayService.EXTRA_STATE, state);
-        intent.putExtra(PumpSessionOverlayService.EXTRA_PROCESS_ALL, processAll);
-        getContext().startService(intent);
+        updateCachedSnapshot(state, processAll);
+        startOverlayService(getContext(), state, processAll);
         call.resolve();
     }
 
@@ -56,8 +66,41 @@ public class PumpSessionOverlayPlugin extends Plugin {
         call.resolve();
     }
 
+    public static void showCachedOverlayIfActive(Context context) {
+        if (!canDrawOverlays(context)) return;
+
+        String state;
+        int processAll;
+        synchronized (SNAPSHOT_LOCK) {
+            if (!cachedActive) return;
+            state = cachedState;
+            processAll = cachedProcessAll;
+        }
+        startOverlayService(context, state, processAll);
+    }
+
     private boolean canDrawOverlaysInternal() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(getContext());
+        return canDrawOverlays(getContext());
+    }
+
+    private static boolean canDrawOverlays(Context context) {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context);
+    }
+
+    private static void updateCachedSnapshot(String state, int processAll) {
+        synchronized (SNAPSHOT_LOCK) {
+            cachedActive = "running".equals(state) || "paused".equals(state);
+            cachedState = normalizeState(state);
+            cachedProcessAll = clampProcess(processAll);
+        }
+    }
+
+    private static void startOverlayService(Context context, String state, int processAll) {
+        Intent intent = new Intent(context, PumpSessionOverlayService.class);
+        intent.setAction(PumpSessionOverlayService.ACTION_UPDATE);
+        intent.putExtra(PumpSessionOverlayService.EXTRA_STATE, normalizeState(state));
+        intent.putExtra(PumpSessionOverlayService.EXTRA_PROCESS_ALL, clampProcess(processAll));
+        context.startService(intent);
     }
 
     private static String normalizeState(String state) {

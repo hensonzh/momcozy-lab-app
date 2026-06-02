@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_DEMO_UNBOX_VIDEO_URL?: string;
   readonly VITE_CHAT_IMAGE_BASE_URL?: string;
   readonly VITE_CHAT_IMAGE_PROXY_TARGET?: string;
+  readonly VITE_DEVICE_REMINDER_WS_URL?: string;
 }
 
 interface ImportMeta {

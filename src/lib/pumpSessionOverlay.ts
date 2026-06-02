@@ -12,6 +12,7 @@ const log = createScopedConsole("PumpSessionOverlay");
 interface PumpSessionOverlayPlugin {
   canDrawOverlays(): Promise<{ granted: boolean }>;
   openOverlaySettings(): Promise<void>;
+  snapshot(options: { state: SessionState; processAll: number }): Promise<void>;
   update(options: { state: "running" | "paused"; processAll: number }): Promise<void>;
   hide(): Promise<void>;
 }
@@ -61,6 +62,7 @@ let currentAppVisible = typeof document !== "undefined" ? document.visibilitySta
 let permissionGranted = false;
 let permissionChecked = false;
 let permissionToastShown = false;
+let lastNativeSnapshotKey = "";
 
 function refreshCurrentRoutePath(): void {
   currentRoutePath = window.location.pathname;
@@ -106,8 +108,26 @@ function showPermissionToastOnce(): void {
   });
 }
 
+async function syncNativeOverlaySnapshot(): Promise<void> {
+  if (!isAndroidNative) return;
+  const snapshotKey = `${currentState}|${currentProcessAll}`;
+  if (snapshotKey === lastNativeSnapshotKey) return;
+  lastNativeSnapshotKey = snapshotKey;
+  try {
+    await PumpSessionOverlay.snapshot({
+      state: currentState,
+      processAll: currentProcessAll,
+    });
+  } catch (error) {
+    lastNativeSnapshotKey = "";
+    log.warn("snapshot overlay state failed", error);
+  }
+}
+
 async function syncOverlay(): Promise<void> {
   if (!isAndroidNative) return;
+
+  await syncNativeOverlaySnapshot();
 
   if (!permissionChecked) {
     await refreshOverlayPermission();
