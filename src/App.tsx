@@ -26,6 +26,7 @@ import HospitalBagCart from "@/pages/HospitalBagCart";
 import BackgroundNotifyOnboardingGate from "@/components/system/BackgroundNotifyOnboardingGate";
 import { markStatusGrowthHighlightPending } from "@/lib/statusGrowthHighlight";
 import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
+import { startDeviceReminderWebSocket } from "@/lib/deviceReminderWebSocket";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 
 const queryClient = new QueryClient();
@@ -96,6 +97,12 @@ function PumpNotificationNavigateSync() {
   return null;
 }
 
+function DeviceReminderWebSocketSync() {
+  useEffect(() => startDeviceReminderWebSocket(), []);
+
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -103,6 +110,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <PumpNotificationNavigateSync />
+        <DeviceReminderWebSocketSync />
         <BackgroundNotifyOnboardingGate />
         <ReconnectPairedDevices />
         <AppLayout>

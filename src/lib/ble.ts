@@ -111,6 +111,24 @@ export async function stopLEScan(): Promise<void> {
   await BleClient.stopLEScan();
 }
 
+/**
+ * Query BLE devices that are already connected at the native GATT layer.
+ * This is used when the WebView/JS runtime was recreated while the native BLE
+ * connection survived: scanning may not discover the device again, but notify
+ * and protocol state still need to be rebound to the new JS process.
+ */
+export async function getConnectedPumpDevices(): Promise<BleScanResult[]> {
+  const BleClient = getBleClient();
+  const devices = await BleClient.getConnectedDevices([PUMP_SERVICE_UUID]);
+  return devices.map((device) => ({
+    device: {
+      deviceId: device.deviceId,
+      name: device.name,
+    },
+    localName: device.name,
+  }));
+}
+
 // ─── 协议层：REQ 等待 ACK/NACK、Device 解析与 ACK 回包 ───────────────────────
 const REQ_TIMEOUT_MS = 3000;
 const REQ_MAX_ATTEMPTS = 3;
