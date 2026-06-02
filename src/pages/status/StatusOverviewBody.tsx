@@ -903,31 +903,41 @@ const StatusOverviewBody: React.FC = () => {
           ].map(({ tab, title, subtitle, avatar, alt }) => {
             const selected = activeDigitalTwin === tab;
             return (
-              <button
-                key={tab}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                onClick={() => setActiveDigitalTwin(tab)}
-                className={`flex min-h-[68px] w-full min-w-0 items-center gap-2 rounded-[22px] px-2.5 py-2 text-left transition-all ${
-                  selected
-                    ? "bg-white text-[#35212c] shadow-[0_8px_20px_rgba(83,47,64,0.12)] ring-1 ring-primary/15"
-                    : "bg-white/45 text-muted-foreground shadow-[0_6px_16px_rgba(83,47,64,0.06)] ring-1 ring-white/70 active:bg-white/70"
-                }`}
-              >
-                <img
-                  src={avatar}
-                  alt={alt}
-                  className={`h-10 w-10 shrink-0 rounded-full border-2 object-cover ${
-                    selected ? "border-primary/20" : "border-border/50 opacity-80"
-                  }`}
-                />
-                <span className="min-w-0">
-                  <span className="block truncate text-[15px] font-black leading-tight">{title}</span>
-                  <span className="mt-1 block truncate text-[10px] font-semibold leading-tight text-muted-foreground">
-                    {subtitle}
-                  </span>
-                </span>
+	              <button
+	                key={tab}
+	                type="button"
+	                role="tab"
+	                aria-selected={selected}
+	                onClick={() => setActiveDigitalTwin(tab)}
+	                className={`relative flex min-h-[68px] w-full min-w-0 items-center gap-2 overflow-hidden rounded-[22px] px-2.5 py-2 text-left transition-all ${
+	                  selected
+	                    ? "bg-[#fff7fb] text-[#35212c] shadow-[0_12px_28px_rgba(128,83,105,0.18)] ring-2 ring-[#d8adc2]"
+	                    : "bg-white/45 text-muted-foreground opacity-70 shadow-[0_6px_16px_rgba(83,47,64,0.05)] ring-1 ring-white/70 active:bg-white/70"
+	                }`}
+	              >
+	                <span
+	                  aria-hidden="true"
+	                  className={`absolute inset-y-3 left-0 w-1.5 rounded-r-full bg-[#b46f91] transition-opacity ${
+	                    selected ? "opacity-100" : "opacity-0"
+	                  }`}
+	                />
+	                <img
+	                  src={avatar}
+	                  alt={alt}
+	                  className={`h-10 w-10 shrink-0 rounded-full border-2 object-cover ${
+	                    selected ? "border-[#b46f91]/45" : "border-border/50 opacity-75"
+	                  }`}
+	                />
+	                <span className="min-w-0">
+	                  <span className="block truncate text-[15px] font-black leading-tight">{title}</span>
+	                  <span
+	                    className={`mt-1 block truncate text-[10px] font-semibold leading-tight ${
+	                      selected ? "text-[#806171]" : "text-muted-foreground"
+	                    }`}
+	                  >
+	                    {subtitle}
+	                  </span>
+	                </span>
               </button>
             );
           })}

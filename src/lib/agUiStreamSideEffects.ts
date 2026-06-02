@@ -10,20 +10,20 @@ import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
 
 const STATUS_LABELS: Record<string, string> = {
   "Agent loop started.": "",
-  "Evaluating user intent and safety context.": "我在判断你需要什么。",
-  "Requesting model response.": "我正在想怎么帮你处理。",
+  "Evaluating user intent and safety context.": "我先理解一下你的需求～",
+  "Requesting model response.": "我想一下",
   "Requesting model response with tool outputs.": "",
-  "Selecting an application tool.": "我在判断下一步怎么做。",
+  "Selecting an application tool.": "我来判断下一步怎么做～",
   "Executing an application tool.": "",
-  "Selecting the next step.": "我在判断下一步怎么做。",
-  "Loading relevant context.": "我正在看相关信息。",
-  "Reading relevant information.": "我正在看相关信息。",
+  "Selecting the next step.": "我来判断下一步怎么做～",
+  "Loading relevant context.": "我去看一下相关信息～",
+  "Reading relevant information.": "我去看一下相关信息～",
   "Running a processing step.": "",
-  "Processing relevant information.": "我正在整理刚看到的信息。",
-  "Step completed.": "我处理完这一步了。",
-  "Step failed.": "这一步我没能处理好。",
-  "Answer ready.": "我已经整理好回复了。",
-  "Run finished.": "我处理完了。",
+  "Processing relevant information.": "我把刚看到的信息整理一下～",
+  "Step completed.": "这一步处理好啦",
+  "Step failed.": "这一步暂时没处理好",
+  "Answer ready.": "我整理好回复啦",
+  "Run finished.": "我处理好啦",
 };
 
 const THINKING_STATUS_TEXTS = new Set([
@@ -34,11 +34,14 @@ const THINKING_STATUS_TEXTS = new Set([
   "正在思考",
   "我正在想怎么帮你处理。",
   "我正在想怎么帮你处理",
+  "我想一下",
+  "我想一想怎么帮你～",
+  "我想一想怎么帮你",
 ]);
 
 const RUN_STARTED_WORK_ROW_ID = "run:started-work";
 const RUN_STARTED_WORK_ROW_NAME = "run_started";
-const RUN_STARTED_WORK_ROW_TITLE = "我在～接收消息中";
+const RUN_STARTED_WORK_ROW_TITLE = "我在接收你的消息～";
 
 /** 与 AgentHub.resolveEventTag 一致：优先 `type`（大写），其次 `event`（小写） */
 export function resolveAgUiEventType(data: string | object): string {
@@ -91,9 +94,9 @@ function isThinkingStatusLine(text: string): boolean {
 
 function labelForStep(stepName: string, state: "started" | "finished"): string {
   if (stepName === "routing") {
-    return state === "started" ? "我在判断你需要什么。" : "我判断好你的需求了。";
+    return state === "started" ? "我先理解一下你的需求～" : "我判断好你的需求啦";
   }
-  return state === "started" ? "我正在处理这一步。" : "我处理完这一步了。";
+  return state === "started" ? "我先处理这一步～" : "这一步处理好啦";
 }
 
 /** CUSTOM：momcozy.agent.status → 单行状态文案 */
@@ -227,45 +230,6 @@ function nowMs(): number {
   return Date.now();
 }
 
-function readProvisionalText(msg: ChatMessage): string {
-  const fromContent = msg.content.trim();
-  if (fromContent) return fromContent;
-  const fromStream =
-    msg.streamRenderItems
-      ?.filter((item) => item.kind === "text")
-      .map((item) => item.text)
-      .join("")
-      .trim() ?? "";
-  return fromStream;
-}
-
-function moveProvisionalTextToWork(msg: ChatMessage): ChatMessage {
-  const provisional = readProvisionalText(msg);
-  if (!provisional) return msg;
-  if ((msg.agentToolCalls ?? []).some((row) => row.kind === "narration" && (row.content ?? "").trim() === provisional)) {
-    return {
-      ...msg,
-      content: "",
-      streamRenderItems: (msg.streamRenderItems ?? []).filter((item) => item.kind !== "text"),
-    };
-  }
-  const narration: AgUiToolCallRow = {
-    id: `narration:${Date.now()}:${Math.random().toString(36).slice(2, 7)}`,
-    kind: "narration",
-    name: "narration",
-    title: "",
-    content: provisional,
-    argsDigest: "",
-    state: "completed",
-  };
-  return {
-    ...msg,
-    content: "",
-    streamRenderItems: (msg.streamRenderItems ?? []).filter((item) => item.kind !== "text"),
-    agentToolCalls: [...(msg.agentToolCalls ?? []), narration],
-  };
-}
-
 /** TOOL_CALL_RESULT：content 为 JSON 字符串（文档 2.3） */
 function parseToolResultPayload(content: unknown): Record<string, unknown> | null {
   if (content == null) return null;
@@ -285,7 +249,7 @@ function parseToolResultPayload(content: unknown): Record<string, unknown> | nul
 
 function summarizeToolResult(parsed: Record<string, unknown>): string {
   const ok = parsed.ok;
-  const base = typeof ok === "boolean" ? (ok ? "我已经处理好了" : "我没能处理好") : "";
+  const base = typeof ok === "boolean" ? (ok ? "这一步处理好啦" : "这一步暂时没处理好") : "";
   const extraKeys = ["form", "card", "ticket", "skill_id", "message", "error"];
   for (const k of extraKeys) {
     const v = parsed[k];
@@ -304,19 +268,19 @@ function summarizeToolResult(parsed: Record<string, unknown>): string {
 
 function milkMutationResultTitle(result: Record<string, unknown> | null, fallbackTitle: string): string {
   const status = coalesceString(result?.status);
-  if (status.includes("deleted")) return "我已经删除相关修改了";
-  if (status.includes("updated") || status.includes("patched") || status.includes("shifted")) return "我已经保存好修改了";
+  if (status.includes("deleted")) return "我已经删除相关修改啦";
+  if (status.includes("updated") || status.includes("patched") || status.includes("shifted")) return "我已经保存好修改啦";
   if (status.includes("created") || status.includes("applied")) return fallbackTitle;
-  if (status.includes("idempotent_replay")) return "我已经用上之前保存的修改了";
+  if (status.includes("idempotent_replay")) return "我已经用上之前保存的修改啦";
   return fallbackTitle;
 }
 
 function milkTaskResultTitle(result: Record<string, unknown> | null): string {
   const status = coalesceString(result?.status);
-  if (status === "milk_task_completed") return "我已经记录好任务完成了";
-  if (status === "milk_task_completion_cancelled") return "我已经取消这次修改了";
-  if (status === "milk_task_skipped") return "我已经记录为跳过了";
-  return "我已经记录好任务状态了";
+  if (status === "milk_task_completed") return "我已经记录好任务完成啦";
+  if (status === "milk_task_completion_cancelled") return "我已经取消这次修改啦";
+  if (status === "milk_task_skipped") return "我已经记录为跳过啦";
+  return "我已经记录好任务状态啦";
 }
 
 function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prepare_result" | "preview" | "save" | "process" | "work" {
@@ -346,6 +310,8 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
   if (
     [
       "ui_form_create",
+      "birth_plan_form_create",
+      "hospital_bag_form_create",
       "labor_communication_card_create",
       "birth_journey_plan_card_create",
       "hospital_bag_card_create",
@@ -377,57 +343,57 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
 
 function toolStartCopy(toolName: string): { title: string } {
   const normalizedToolName = normalizeToolName(toolName);
-  if (normalizedToolName === "tool_search" || normalizedToolName === "tool_search_call") return { title: "我正在找合适的处理方式" };
-  if (normalizedToolName === "load_skill") return { title: "我正在准备这个场景" };
-  if (normalizedToolName === "list_skills") return { title: "我正在看看可以怎么帮你" };
-  if (normalizedToolName === "search_skill_assets") return { title: "我正在找相关资料" };
-  if (normalizedToolName === "read_skill_file") return { title: "我正在看相关说明" };
-  if (normalizedToolName === "profile_get") return { title: "我正在看你的基础信息" };
-  if (normalizedToolName === "milk_snapshot_get") return { title: "我正在看你的奶量情况" };
-  if (normalizedToolName === "milk_status_query") return { title: "我正在看今天的奶量状态" };
-  if (normalizedToolName === "milk_records_query") return { title: "我正在看吸奶和喂养记录" };
-  if (normalizedToolName === "milk_plan_query") return { title: "我正在看之前保存的奶量计划" };
-  if (normalizedToolName === "milk_calendar_query") return { title: "我正在看计划和日程任务" };
-  if (normalizedToolName === "milk_assessment_evaluate") return { title: "我正在看奶量趋势和执行情况" };
-  if (normalizedToolName === "infant_growth_evaluate") return { title: "我正在看宝宝的生长信号" };
-  if (normalizedToolName === "risk_evaluate") return { title: "我正在确认有没有需要谨慎处理的地方" };
-  if (normalizedToolName === "milk_plan_preview") return { title: "我正在帮你拟一版奶量计划" };
-  if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我正在帮你排一下日程调整" };
-  if (normalizedToolName === "milk_record_mutate") return { title: "我正在帮你处理这条记录" };
-  if (normalizedToolName === "milk_task_complete") return { title: "我正在帮你记录任务完成情况" };
-  if (normalizedToolName === "milk_plan_mutate") return { title: "我正在帮你保存奶量计划" };
-  if (normalizedToolName === "milk_calendar_mutate") return { title: "我正在帮你保存日程调整" };
-  if (normalizedToolName === "infant_growth_mutate") return { title: "我正在帮你保存宝宝成长记录" };
-  if (normalizedToolName === "ui_form_create") return { title: "我正在帮你准备确认内容" };
-  if (normalizedToolName === "labor_communication_card_create") return { title: "我正在帮你整理分娩沟通卡" };
-  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我正在帮你整理生产全过程计划" };
-  if (normalizedToolName === "hospital_bag_card_create") return { title: "我正在帮你整理待产包卡片" };
-  if (normalizedToolName === "ibclc_consult_card_create") return { title: "我正在帮你准备 IBCLC 咨询卡" };
-  if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我正在看适合你的吸奶器型号" };
-  if (normalizedToolName === "hospital_bag_cart_update") return { title: "我正在帮你调整待产包购物车" };
-  if (normalizedToolName === "device_manual_search") return { title: "我正在看设备说明" };
-  if (normalizedToolName === "knowledge_search") return { title: "我正在找相关资料" };
-  if (normalizedToolName === "memory_search") return { title: "我正在找之前的信息" };
-  if (normalizedToolName === "reminder_list") return { title: "我正在看你的提醒" };
-  if (normalizedToolName === "support_ticket_draft_create") return { title: "我正在帮你准备售后工单" };
+  if (normalizedToolName === "tool_search" || normalizedToolName === "tool_search_call") return { title: "让我看看如何处理～" };
+  if (normalizedToolName === "load_skill") return { title: "我先准备一下这个场景～" };
+  if (normalizedToolName === "list_skills") return { title: "我看看可以怎么帮你～" };
+  if (normalizedToolName === "search_skill_assets") return { title: "我去找找相关资料～" };
+  if (normalizedToolName === "read_skill_file") return { title: "我先看一下相关说明～" };
+  if (normalizedToolName === "profile_get") return { title: "我先看一下你的基础信息～" };
+  if (normalizedToolName === "milk_snapshot_get") return { title: "我先看看你的奶量情况～" };
+  if (normalizedToolName === "milk_status_query") return { title: "我先看看今天的奶量状态～" };
+  if (normalizedToolName === "milk_records_query") return { title: "我先看看吸奶和喂养记录～" };
+  if (normalizedToolName === "milk_plan_query") return { title: "我先看看之前保存的奶量计划～" };
+  if (normalizedToolName === "milk_calendar_query") return { title: "我先看看计划和日程任务～" };
+  if (normalizedToolName === "milk_assessment_evaluate") return { title: "我来看看奶量趋势和执行情况～" };
+  if (normalizedToolName === "infant_growth_evaluate") return { title: "我来看看宝宝的生长信号～" };
+  if (normalizedToolName === "risk_evaluate") return { title: "我先确认一下安全边界～" };
+  if (normalizedToolName === "milk_plan_preview") return { title: "我先帮你拟一版奶量计划～" };
+  if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我先帮你排一下日程调整～" };
+  if (normalizedToolName === "milk_record_mutate") return { title: "我先帮你处理这条记录～" };
+  if (normalizedToolName === "milk_task_complete") return { title: "我先帮你记录任务完成情况～" };
+  if (normalizedToolName === "milk_plan_mutate") return { title: "我先帮你保存奶量计划～" };
+  if (normalizedToolName === "milk_calendar_mutate") return { title: "我先帮你保存日程调整～" };
+  if (normalizedToolName === "infant_growth_mutate") return { title: "我先帮你保存宝宝成长记录～" };
+  if (["ui_form_create", "birth_plan_form_create", "hospital_bag_form_create"].includes(normalizedToolName)) return { title: "我先帮你准备确认内容～" };
+  if (normalizedToolName === "labor_communication_card_create") return { title: "我先帮你整理分娩沟通单～" };
+  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我先帮你整理生产全过程计划～" };
+  if (normalizedToolName === "hospital_bag_card_create") return { title: "我先帮你整理待产包清单～" };
+  if (normalizedToolName === "ibclc_consult_card_create") return { title: "我先帮你准备 IBCLC 咨询入口～" };
+  if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我先看看适合你的吸奶器型号～" };
+  if (normalizedToolName === "hospital_bag_cart_update") return { title: "我先帮你调整待产包购物车～" };
+  if (normalizedToolName === "device_manual_search") return { title: "我先看看设备说明～" };
+  if (normalizedToolName === "knowledge_search") return { title: "我去找找相关资料～" };
+  if (normalizedToolName === "memory_search") return { title: "我去找一下之前的信息～" };
+  if (normalizedToolName === "reminder_list") return { title: "我先看看你的提醒～" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "我先帮你准备售后工单～" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
-      return { title: "我正在找合适的处理方式" };
+      return { title: "让我看看如何处理～" };
     case "read":
-      return { title: "我正在看相关信息" };
+      return { title: "我去看一下相关信息～" };
     case "evaluate":
-      return { title: "我正在评估情况" };
+      return { title: "我来评估一下情况～" };
     case "prepare_result":
-      return { title: "我正在准备结果" };
+      return { title: "我先帮你准备结果～" };
     case "preview":
-      return { title: "我正在生成预览" };
+      return { title: "我先生成一版预览～" };
     case "save":
-      return { title: "我正在准备保存修改" };
+      return { title: "我先准备保存修改～" };
     case "process":
-      return { title: "我正在处理这一步" };
+      return { title: "我先处理这一步～" };
     default:
-      return { title: "我正在处理这一步" };
+      return { title: "我先处理这一步～" };
   }
 }
 
@@ -437,34 +403,34 @@ function toolArgsCopy(toolName: string): { title: string; detail?: string } {
 
 function toolEndCopy(toolName: string): { title: string; detail?: string } {
   const normalizedToolName = normalizeToolName(toolName);
-  if (normalizedToolName === "tool_search" || normalizedToolName === "tool_search_call") return { title: "我在确认能怎么帮你" };
-  if (["milk_records_query", "milk_status_query", "milk_snapshot_get", "milk_plan_query", "milk_calendar_query"].includes(normalizedToolName)) return { title: "我在整理奶量和日程信息" };
-  if (["milk_assessment_evaluate", "infant_growth_evaluate", "risk_evaluate"].includes(normalizedToolName)) return { title: "我在整理评估结果" };
-  if (normalizedToolName === "milk_plan_preview") return { title: "我在完善计划草稿" };
-  if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我在整理调整后的安排" };
-  if (["milk_record_mutate", "milk_task_complete", "milk_plan_mutate", "milk_calendar_mutate", "infant_growth_mutate"].includes(normalizedToolName)) return { title: "我在保存这次修改" };
-  if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我在整理推荐结果" };
-  if (normalizedToolName === "hospital_bag_cart_update") return { title: "我在保存购物车修改" };
-  if (normalizedToolName === "device_manual_search") return { title: "我在整理设备内容" };
-  if (normalizedToolName === "support_ticket_draft_create") return { title: "我在整理工单草稿" };
+  if (normalizedToolName === "tool_search" || normalizedToolName === "tool_search_call") return { title: "我找到合适的方案啦" };
+  if (["milk_records_query", "milk_status_query", "milk_snapshot_get", "milk_plan_query", "milk_calendar_query"].includes(normalizedToolName)) return { title: "我把奶量和日程信息整理一下～" };
+  if (["milk_assessment_evaluate", "infant_growth_evaluate", "risk_evaluate"].includes(normalizedToolName)) return { title: "我把评估结果整理一下～" };
+  if (normalizedToolName === "milk_plan_preview") return { title: "我再完善一下计划草稿～" };
+  if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我把调整后的安排整理一下～" };
+  if (["milk_record_mutate", "milk_task_complete", "milk_plan_mutate", "milk_calendar_mutate", "infant_growth_mutate"].includes(normalizedToolName)) return { title: "我在保存这次修改～" };
+  if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我把推荐结果整理一下～" };
+  if (normalizedToolName === "hospital_bag_cart_update") return { title: "我在保存购物车修改～" };
+  if (normalizedToolName === "device_manual_search") return { title: "我把设备内容整理一下～" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "我在整理工单草稿～" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
-      return { title: "我在确认能怎么帮你" };
+      return { title: "我找到合适的方案啦" };
     case "read":
-      return { title: "我在整理相关信息" };
+      return { title: "我把相关信息整理一下～" };
     case "evaluate":
-      return { title: "我在整理评估结果" };
+      return { title: "我把评估结果整理一下～" };
     case "prepare_result":
-      return { title: "我在生成结果" };
+      return { title: "我在把结果整理出来～" };
     case "preview":
-      return { title: "我在生成预览" };
+      return { title: "我在生成预览～" };
     case "save":
-      return { title: "我在保存这次修改" };
+      return { title: "我在保存这次修改～" };
     case "process":
-      return { title: "我在继续处理" };
+      return { title: "我继续处理一下～" };
     default:
-      return { title: "我在继续处理" };
+      return { title: "我继续处理一下～" };
   }
 }
 
@@ -473,72 +439,75 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
   const errObj = result?.error && typeof result.error === "object" ? (result.error as Record<string, unknown>) : null;
   const errorMessage = coalesceString(errObj?.message) || "这个步骤没有成功完成。";
   if (result?.ok === false) {
-    return { title: "这一步我没能处理好", detail: errorMessage };
+    return { title: "这一步暂时没处理好", detail: errorMessage };
   }
   const status = coalesceString(result?.status);
+  if (status.startsWith("needs_")) {
+    return { title: "我还需要先确认几件事～" };
+  }
   if (status === "plan_preview_needs_revision") {
-    return { title: "这版结果还需要调整", detail: "保存前我还不能确认。" };
+    return { title: "这版结果还需要再调一下", detail: "保存前我还不能确认。" };
   }
   if (status === "plan_preview_not_recommended") {
-    return { title: "这版方案我不建议继续" };
+    return { title: "这版方案我不建议继续用" };
   }
   if (status === "plan_preview_needs_medical_confirmation") {
-    return { title: "我需要先确认健康边界" };
+    return { title: "我需要先确认健康边界～" };
   }
   if (result?.requires_confirmation === true) {
-    return { title: "我已经准备好预览，等你确认", detail: "确认后才会生效。" };
+    return { title: "我已经准备好预览，等你确认～", detail: "确认后才会生效。" };
   }
-  if (normalizedToolName === "milk_record_mutate") return { title: milkMutationResultTitle(result, "我已经保存好这条记录了") };
-  if (normalizedToolName === "milk_plan_mutate") return { title: milkMutationResultTitle(result, "我已经保存好奶量计划了") };
-  if (normalizedToolName === "milk_calendar_mutate") return { title: milkMutationResultTitle(result, "我已经保存好日程调整了") };
+  if (normalizedToolName === "milk_record_mutate") return { title: milkMutationResultTitle(result, "我已经保存好这条记录啦") };
+  if (normalizedToolName === "milk_plan_mutate") return { title: milkMutationResultTitle(result, "我已经保存好奶量计划啦") };
+  if (normalizedToolName === "milk_calendar_mutate") return { title: milkMutationResultTitle(result, "我已经保存好日程调整啦") };
   if (normalizedToolName === "milk_task_complete") return { title: milkTaskResultTitle(result) };
-  if (normalizedToolName === "infant_growth_mutate") return { title: milkMutationResultTitle(result, "我已经保存好宝宝成长记录了") };
-  if (normalizedToolName === "tool_search" || normalizedToolName === "tool_search_call") return { title: "我已经选好处理方式了" };
-  if (normalizedToolName === "load_skill") return { title: "我已经准备好继续处理了" };
-  if (normalizedToolName === "profile_get") return { title: "我已经看过你的基础信息了" };
-  if (normalizedToolName === "milk_records_query") return { title: "我已经整理好吸奶和喂养记录了" };
-  if (normalizedToolName === "milk_status_query") return { title: "我已经看好今天的奶量状态了" };
-  if (normalizedToolName === "milk_snapshot_get") return { title: "我已经整理好奶量情况了" };
-  if (normalizedToolName === "milk_calendar_query") return { title: "我已经整理好计划和日程了" };
-  if (normalizedToolName === "milk_plan_query") return { title: "我已经看好之前的奶量计划了" };
-  if (normalizedToolName === "milk_assessment_evaluate") return { title: "我已经完成奶量评估了" };
-  if (normalizedToolName === "infant_growth_evaluate") return { title: "我已经完成宝宝生长评估了" };
-  if (normalizedToolName === "risk_evaluate") return { title: "我已经确认安全边界了" };
-  if (normalizedToolName === "milk_plan_preview") return { title: "我已经拟好奶量计划草稿了" };
-  if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我已经整理好日程调整预览了" };
-  if (normalizedToolName === "ui_form_create") return { title: "我已经准备好确认内容了" };
-  if (normalizedToolName === "labor_communication_card_create") return { title: "我已经整理好分娩沟通卡了" };
-  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我已经整理好生产全过程计划了" };
-  if (normalizedToolName === "hospital_bag_card_create") return { title: "我已经整理好待产包卡片了" };
-  if (normalizedToolName === "ibclc_consult_card_create") return { title: "我已经准备好 IBCLC 咨询卡了" };
-  if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我已经整理好吸奶器推荐了" };
+  if (normalizedToolName === "infant_growth_mutate") return { title: milkMutationResultTitle(result, "我已经保存好宝宝成长记录啦") };
+  if (normalizedToolName === "tool_search" || normalizedToolName === "tool_search_call") return { title: "我在执行这个方案啦～" };
+  if (normalizedToolName === "load_skill") return { title: "我准备好继续处理啦" };
+  if (normalizedToolName === "profile_get") return { title: "我看过你的基础信息啦" };
+  if (normalizedToolName === "milk_records_query") return { title: "我把吸奶和喂养记录整理好啦" };
+  if (normalizedToolName === "milk_status_query") return { title: "我看好今天的奶量状态啦" };
+  if (normalizedToolName === "milk_snapshot_get") return { title: "我把奶量情况整理好啦" };
+  if (normalizedToolName === "milk_calendar_query") return { title: "我把计划和日程整理好啦" };
+  if (normalizedToolName === "milk_plan_query") return { title: "我看好之前的奶量计划啦" };
+  if (normalizedToolName === "milk_assessment_evaluate") return { title: "我完成奶量评估啦" };
+  if (normalizedToolName === "infant_growth_evaluate") return { title: "我完成宝宝生长评估啦" };
+  if (normalizedToolName === "risk_evaluate") return { title: "我确认好安全边界啦" };
+  if (normalizedToolName === "milk_plan_preview") return { title: "我拟好奶量计划草稿啦" };
+  if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我整理好日程调整预览啦" };
+  if (["ui_form_create", "birth_plan_form_create", "hospital_bag_form_create"].includes(normalizedToolName)) return { title: "我已经准备好确认内容啦" };
+  if (normalizedToolName === "labor_communication_card_create") return { title: "我已经帮你整理好分娩沟通单啦" };
+  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我已经帮你整理好生产全过程计划啦" };
+  if (normalizedToolName === "hospital_bag_card_create") return { title: "我已经帮你生成好待产包清单啦" };
+  if (normalizedToolName === "ibclc_consult_card_create") return { title: "我已经准备好 IBCLC 咨询入口啦" };
+  if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我已经帮你整理好吸奶器推荐啦" };
   if (normalizedToolName === "hospital_bag_cart_update") {
     const status = coalesceString(result?.status);
     if (status === "needs_clarification" || status === "cart_unchanged") return { title: "这次购物车先不改" };
-    return { title: "我已经更新待产包购物车了" };
+    return { title: "我已经帮你更新好待产包购物车啦" };
   }
-  if (normalizedToolName === "device_manual_search") return { title: "我已经整理好设备资料了" };
-  if (normalizedToolName === "support_ticket_draft_create") return { title: "我已经准备好售后工单草稿了" };
-  if (["read_skill_file", "search_skill_assets", "knowledge_search", "memory_search"].includes(normalizedToolName)) return { title: "我已经找到相关资料了" };
-  if (normalizedToolName === "reminder_list") return { title: "我已经看好提醒了" };
-  if (normalizedToolName === "run_approved_skill_script") return { title: "我处理完这一步了" };
+  if (normalizedToolName === "device_manual_search") return { title: "我把设备资料整理好啦" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "我已经准备好售后工单草稿啦" };
+  if (["read_skill_file", "search_skill_assets", "knowledge_search", "memory_search"].includes(normalizedToolName)) return { title: "我找到相关资料啦" };
+  if (normalizedToolName === "reminder_list") return { title: "我看好提醒啦" };
+  if (normalizedToolName === "run_approved_skill_script") return { title: "这一步处理好啦" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
-      return { title: "我已经选好处理方式了" };
+      return { title: "我在执行这个方案啦～" };
     case "read":
-      return { title: "我已经看好相关信息了" };
+      return { title: "我看好相关信息啦" };
     case "evaluate":
-      return { title: "我已经完成评估了" };
+      return { title: "我完成评估啦" };
     case "prepare_result":
     case "preview":
-      return { title: "我已经准备好结果了" };
+      return { title: "我准备好结果啦" };
     case "save":
-      return { title: "我已经保存好修改了" };
+      return { title: "我保存好修改啦" };
     case "process":
-      return { title: "我处理完这一步了" };
+      return { title: "这一步处理好啦" };
     default:
-      return { title: "我处理完这一步了" };
+      return { title: "这一步处理好啦" };
   }
 }
 
@@ -668,15 +637,15 @@ function artifactSemanticFromEvent(rec: Record<string, unknown>): AgUiEventSeman
   const artifactType = normalizeArtifactType(rec.artifact_type);
   const artifactId = coalesceString(rec.artifact_id) || coalesceString(rec.artifactId) || "current";
   if (artifactType === "form") {
-    return semanticPayload("done", "我已经准备好确认内容了", "artifact", `artifact:${artifactId}`, 70);
+    return semanticPayload("done", "我已经准备好确认内容啦", "artifact", `artifact:${artifactId}`, 70);
   }
   if (artifactType === "support_ticket" || artifactType === "support_ticket_draft") {
-    return semanticPayload("done", "我已经准备好售后工单草稿了", "artifact", `artifact:${artifactId}`, 70);
+    return semanticPayload("done", "我已经准备好售后工单草稿啦", "artifact", `artifact:${artifactId}`, 70);
   }
   if (artifactType === "milk_plan_card" || artifactType === "milk_analysis_card") {
-    return semanticPayload("done", "我已经生成奶量卡片了", "artifact", `artifact:${artifactId}`, 70);
+    return semanticPayload("done", "我已经整理好奶量计划啦", "artifact", `artifact:${artifactId}`, 70);
   }
-  return semanticPayload("done", "我已经生成结果卡片了", "artifact", `artifact:${artifactId}`, 70);
+  return semanticPayload("done", "我已经整理好结果啦", "artifact", `artifact:${artifactId}`, 70);
 }
 
 function conversationalConfirmationTitle(title: string): string {
@@ -700,22 +669,22 @@ export function semanticForAgUiEvent(
     return semanticPayload("thinking", RUN_STARTED_WORK_ROW_TITLE, "status", `run:${coalesceString(data.run_id) || "current"}`, 10);
   }
   if (eventType === "RUN_FINISHED") {
-    return semanticPayload("done", "我处理完了", "hidden", `run:${coalesceString(data.run_id) || "current"}`, 100);
+    return semanticPayload("done", "我处理好啦", "hidden", `run:${coalesceString(data.run_id) || "current"}`, 100);
   }
   if (eventType === "RUN_ERROR") {
-    return semanticPayload("error", "这轮我没能处理好", "status", `run_error:${coalesceString(data.code) || "current"}`, 100);
+    return semanticPayload("error", "这轮暂时没处理好", "status", `run_error:${coalesceString(data.code) || "current"}`, 100);
   }
   if (eventType === "QUICK_REPLIES") {
-    return semanticPayload("done", "我已经准备好几个下一步选项", "hidden", `quick_replies:${coalesceString(data.message_id) || "current"}`, 80);
+    return semanticPayload("done", "我准备好几个下一步选项啦", "hidden", `quick_replies:${coalesceString(data.message_id) || "current"}`, 80);
   }
   if (eventType === "TEXT_MESSAGE_START") {
-    return semanticPayload("replying", "我正在组织回复", "hidden", `text:${coalesceString(data.message_id) || "current"}`, 40);
+    return semanticPayload("replying", "我在组织回复～", "hidden", `text:${coalesceString(data.message_id) || "current"}`, 40);
   }
   if (eventType === "TEXT_MESSAGE_CONTENT") {
-    return semanticPayload("replying", "我正在输出回复", "hidden", `text:${coalesceString(data.message_id) || "current"}`, 40);
+    return semanticPayload("replying", "我在回复你～", "hidden", `text:${coalesceString(data.message_id) || "current"}`, 40);
   }
   if (eventType === "TEXT_MESSAGE_END") {
-    return semanticPayload("done", "我已经整理好回复了", "hidden", `text:${coalesceString(data.message_id) || "current"}`, 80);
+    return semanticPayload("done", "我整理好回复啦", "hidden", `text:${coalesceString(data.message_id) || "current"}`, 80);
   }
   if (eventType === "CUSTOM") {
     const name = coalesceString(data.name);
@@ -724,10 +693,10 @@ export function semanticForAgUiEvent(
       const status = coalesceString(value?.status).toLowerCase();
       const metadata = asRecord(value?.metadata);
       if (status === "started" || status === "running") {
-        const label = metadata?.after_output_text === true ? "我正在准备下一步" : "我正在想怎么帮你处理";
+        const label = metadata?.after_output_text === true ? "我在准备下一步～" : "我想一下";
         return semanticPayload("thinking", label, "status", "thinking:current", 40);
       }
-      return semanticPayload(status === "failed" ? "error" : "done", status === "failed" ? "这一步我没能想清楚" : "我已经想好了", "hidden", "thinking:current", 40);
+      return semanticPayload(status === "failed" ? "error" : "done", status === "failed" ? "这一步我还没想清楚" : "我想好啦", "hidden", "thinking:current", 40);
     }
     const statusLine = extractAgentStatusLineFromCustom(data) ?? "";
     return statusSemanticFromText(statusLine);
@@ -742,9 +711,9 @@ export function semanticForAgUiEvent(
     const stepName = coalesceString(data.step_name) || coalesceString(data.stepName) || coalesceString(data.name) || "step";
     const started = eventType === "STEP_STARTED";
     if (stepName === "routing") {
-      return semanticPayload(started ? "thinking" : "done", started ? "我在判断你需要什么" : "我判断好你的需求了", "status", `step:${stepName}`, 30);
+      return semanticPayload(started ? "thinking" : "done", started ? "我先理解一下你的需求～" : "我判断好你的需求啦", "status", `step:${stepName}`, 30);
     }
-    return semanticPayload(started ? "working" : "done", started ? "我正在处理这一步" : "我处理完这一步了", "status", `step:${stepName}`, 30);
+    return semanticPayload(started ? "working" : "done", started ? "我先处理这一步～" : "这一步处理好啦", "status", `step:${stepName}`, 30);
   }
   if (eventType.startsWith("TOOL_CALL")) {
     return toolSemanticForEvent(eventType, readToolName(data), parsedResult);
@@ -825,7 +794,7 @@ function artifactActionFromToolResultPayload(parsed: Record<string, unknown>): R
   const form = asRecord(parsed.form);
   const artifactId = coalesceString(parsed.artifact_id) || coalesceString(parsed.artifactId);
   const identity = artifactId ? { artifact_id: artifactId } : {};
-  if (toolName === "ui_form_create" && form) {
+  if (["ui_form_create", "birth_plan_form_create", "hospital_bag_form_create"].includes(toolName) && form) {
     return { kind: "ag_ui_artifact", artifact_type: "form", ...identity, form };
   }
 
@@ -1172,12 +1141,11 @@ export function applyAgUiStreamSideEffects(
     const copy = toolStartCopy(toolName);
     const title = semantic.visibility === "work_item" && semantic.label ? semantic.label : copy.title;
     patchMsg((m) => {
-      const moved = moveProvisionalTextToWork(m);
-      const baseTools = withoutRunStartedWorkRow(moved.agentToolCalls ?? []);
+      const baseTools = withoutRunStartedWorkRow(m.agentToolCalls ?? []);
       return {
-        ...moved,
+        ...m,
         agentThinkingTitle: undefined,
-        agentWorkStartedAtMs: moved.agentWorkStartedAtMs ?? startedAt,
+        agentWorkStartedAtMs: m.agentWorkStartedAtMs ?? startedAt,
         agentWorkFinishedAtMs: undefined,
         agentToolCalls: upsertToolRow(baseTools, toolKeys, {
           kind: "tool",
@@ -1192,23 +1160,22 @@ export function applyAgUiStreamSideEffects(
     const startedAt = nowMs();
     const toolName = readToolName(rec);
     patchMsg((m) => {
-      const moved = moveProvisionalTextToWork(m);
-      const baseTools = withoutRunStartedWorkRow(moved.agentToolCalls ?? []);
+      const baseTools = withoutRunStartedWorkRow(m.agentToolCalls ?? []);
       const curIdx = findToolRowIndex(baseTools, toolKeys, toolName, true);
       if (curIdx >= 0) {
         return {
-          ...moved,
+          ...m,
           agentThinkingTitle: undefined,
-          agentWorkStartedAtMs: moved.agentWorkStartedAtMs ?? startedAt,
+          agentWorkStartedAtMs: m.agentWorkStartedAtMs ?? startedAt,
           agentWorkFinishedAtMs: undefined,
         };
       }
       const copy = toolArgsCopy(toolName);
       const title = semantic.visibility === "work_item" && semantic.label ? semantic.label : copy.title;
       return {
-        ...moved,
+        ...m,
         agentThinkingTitle: undefined,
-        agentWorkStartedAtMs: moved.agentWorkStartedAtMs ?? startedAt,
+        agentWorkStartedAtMs: m.agentWorkStartedAtMs ?? startedAt,
         agentWorkFinishedAtMs: undefined,
         agentToolCalls: upsertToolRow(
           baseTools,
@@ -1230,12 +1197,11 @@ export function applyAgUiStreamSideEffects(
     const copy = toolEndCopy(toolName);
     const title = semantic.visibility === "work_item" && semantic.label ? semantic.label : copy.title;
     patchMsg((m) => {
-      const moved = moveProvisionalTextToWork(m);
-      const baseTools = withoutRunStartedWorkRow(moved.agentToolCalls ?? []);
+      const baseTools = withoutRunStartedWorkRow(m.agentToolCalls ?? []);
       return {
-        ...moved,
+        ...m,
         agentThinkingTitle: undefined,
-        agentWorkStartedAtMs: moved.agentWorkStartedAtMs ?? startedAt,
+        agentWorkStartedAtMs: m.agentWorkStartedAtMs ?? startedAt,
         agentWorkFinishedAtMs: undefined,
         agentToolCalls: upsertToolRow(
           baseTools,
@@ -1278,12 +1244,11 @@ export function applyAgUiStreamSideEffects(
     const ok = parsed?.ok;
     const startedAt = nowMs();
     patchMsg((m) => {
-      const moved = moveProvisionalTextToWork(m);
-      const baseTools = withoutRunStartedWorkRow(moved.agentToolCalls ?? []);
+      const baseTools = withoutRunStartedWorkRow(m.agentToolCalls ?? []);
       return {
-        ...moved,
+        ...m,
         agentThinkingTitle: undefined,
-        agentWorkStartedAtMs: moved.agentWorkStartedAtMs ?? startedAt,
+        agentWorkStartedAtMs: m.agentWorkStartedAtMs ?? startedAt,
         agentWorkFinishedAtMs: undefined,
         agentToolCalls: upsertToolRow(
           baseTools,
@@ -1307,11 +1272,10 @@ export function applyAgUiStreamSideEffects(
     if (action) {
       const rich = richTextPayloadForArtifactAction(action);
       patchMsg((m) => {
-        const moved = moveProvisionalTextToWork(m);
         return {
-          ...moved,
-          richText: moved.richText ? mergePendingRichTextPayload(moved.richText, rich) : rich,
-          streamRenderItems: appendRichRenderItem(moved.streamRenderItems, rich),
+          ...m,
+          richText: m.richText ? mergePendingRichTextPayload(m.richText, rich) : rich,
+          streamRenderItems: appendRichRenderItem(m.streamRenderItems, rich),
         };
       });
     }
@@ -1325,12 +1289,11 @@ export function applyAgUiStreamSideEffects(
     const toolName = readToolName(rec);
     const title = semantic.visibility === "action" && semantic.label ? semantic.label : "我需要你确认一下，再继续处理";
     patchMsg((m) => {
-      const moved = moveProvisionalTextToWork(m);
-      const baseTools = withoutRunStartedWorkRow(moved.agentToolCalls ?? []);
+      const baseTools = withoutRunStartedWorkRow(m.agentToolCalls ?? []);
       return {
-        ...moved,
+        ...m,
         agentThinkingTitle: undefined,
-        agentWorkStartedAtMs: moved.agentWorkStartedAtMs ?? startedAt,
+        agentWorkStartedAtMs: m.agentWorkStartedAtMs ?? startedAt,
         agentWorkFinishedAtMs: undefined,
         agentToolCalls: upsertToolRow(
           baseTools,

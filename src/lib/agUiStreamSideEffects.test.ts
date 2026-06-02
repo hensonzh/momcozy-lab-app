@@ -113,6 +113,16 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentStatusLine).toBe("");
   });
 
+  it("uses the short thinking status copy for model response requests", () => {
+    const semantic = semanticForAgUiEvent({
+      type: "CUSTOM",
+      name: "momcozy.agent.status",
+      value: "Requesting model response.",
+    });
+
+    expect(semantic.label).toBe("我想一下");
+  });
+
   it("shows an optimistic work panel row as soon as a run starts", () => {
     const msg = applyEvents([
       {
@@ -120,7 +130,7 @@ describe("applyAgUiStreamSideEffects", () => {
         metadata: { status: "Agent loop started." },
         semantic: {
           phase: "thinking",
-          label: "我在～接收消息中",
+          label: "我在接收你的消息～",
           visibility: "status",
           merge_key: "run:run_1",
           priority: 10,
@@ -135,7 +145,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       id: "run:started-work",
       name: "run_started",
-      title: "我在～接收消息中",
+      title: "我在接收你的消息～",
       state: "running",
     });
   });
@@ -157,7 +167,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       id: "tool:call_1",
       name: "milk_records_query",
-      title: "我正在看吸奶和喂养记录",
+      title: "我先看看吸奶和喂养记录～",
       state: "running",
     });
     expect(msg.agentToolCalls?.some((row) => row.name === "run_started")).toBe(false);
@@ -210,7 +220,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls).toHaveLength(1);
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "milk_records_query",
-      title: "我已经整理好吸奶和喂养记录了",
+      title: "我把吸奶和喂养记录整理好啦",
       state: "completed",
     });
     expect(msg.agentToolCalls?.[0].title).not.toContain("milk_records_query");
@@ -249,7 +259,7 @@ describe("applyAgUiStreamSideEffects", () => {
       }),
     ).toMatchObject({
       phase: "done",
-      label: "我已经生成奶量卡片了",
+      label: "我已经整理好奶量计划啦",
       visibility: "artifact",
       mergeKey: "artifact:milk-plan-1",
     });
@@ -260,7 +270,7 @@ describe("applyAgUiStreamSideEffects", () => {
       }),
     ).toMatchObject({
       phase: "error",
-      label: "这轮我没能处理好",
+      label: "这轮暂时没处理好",
       visibility: "status",
     });
   });
@@ -292,7 +302,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls).toHaveLength(1);
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "hospital_bag_pump_recommend",
-      title: "我已经整理好吸奶器推荐了",
+      title: "我已经帮你整理好吸奶器推荐啦",
       state: "completed",
     });
   });
@@ -319,7 +329,35 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls).toHaveLength(1);
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "hospital_bag_cart_update",
-      title: "我已经更新待产包购物车了",
+      title: "我已经帮你更新好待产包购物车啦",
+      state: "completed",
+    });
+  });
+
+  it("uses explicit user-facing labels for generated hospital bag lists", () => {
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_START",
+        tool_call_id: "call_bag",
+        tool_call_name: "hospital_bag_card_create",
+      },
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_bag",
+        tool_call_name: "hospital_bag_card_create",
+        content: JSON.stringify({
+          ok: true,
+          status: "card_created",
+          tool_name: "hospital_bag_card_create",
+          card: { card_type: "hospital_bag_card" },
+        }),
+      },
+    ]);
+
+    expect(msg.agentToolCalls).toHaveLength(1);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      name: "hospital_bag_card_create",
+      title: "我已经帮你生成好待产包清单啦",
       state: "completed",
     });
   });
@@ -536,7 +574,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls?.[0].title).not.toContain("milk_plan_preview");
   });
 
-  it("moves intermediate text into the work panel even after tool work already started", () => {
+  it("keeps intermediate text in the assistant bubble when an artifact arrives", () => {
     const msg = applyEventSequence([
       {
         type: "TOOL_CALL_RESULT",
@@ -546,11 +584,11 @@ describe("applyAgUiStreamSideEffects", () => {
       },
       (message) => ({
         ...message,
-        content: "我先帮你做成一张更贴合你情况的待产包卡片",
+        content: "我先帮你整理成一份更贴合你情况的待产包清单",
         streamRenderItems: [
           {
             kind: "text",
-            text: "我先帮你做成一张更贴合你情况的待产包卡片",
+            text: "我先帮你整理成一份更贴合你情况的待产包清单",
           },
         ],
       }),
@@ -564,9 +602,13 @@ describe("applyAgUiStreamSideEffects", () => {
       },
     ]);
 
-    expect(msg.content).toBe("");
-    expect(msg.streamRenderItems?.some((item) => item.kind === "text")).toBe(false);
-    expect(msg.agentToolCalls?.some((item) => item.kind === "narration" && item.content?.includes("待产包卡片"))).toBe(true);
+    expect(msg.content).toBe("我先帮你整理成一份更贴合你情况的待产包清单");
+    expect(msg.streamRenderItems?.[0]).toMatchObject({
+      kind: "text",
+      text: "我先帮你整理成一份更贴合你情况的待产包清单",
+    });
+    expect(msg.streamRenderItems?.[1]).toMatchObject({ kind: "rich" });
+    expect(msg.agentToolCalls?.some((item) => item.kind === "narration")).toBe(false);
     expect(msg.richText?.action).toHaveLength(1);
   });
 });
