@@ -188,27 +188,11 @@ function asString(v: unknown): string {
   return typeof v === "string" ? v : "";
 }
 
-function asStringList(v: unknown): string[] {
-  if (!Array.isArray(v)) return [];
-  return v.map((item) => asString(item).trim()).filter(Boolean);
-}
-
-function asTopicItems(v: unknown): Array<{ title: string; detail: string }> {
-  if (!Array.isArray(v)) return [];
-  return v
-    .map((item) => {
-      if (typeof item === "string") {
-        const title = item.trim();
-        return title ? { title, detail: "" } : null;
-      }
-      const obj = asObject(item);
-      if (!obj) return null;
-      const title = asString(obj.title).trim();
-      const detail = asString(obj.detail).trim();
-      if (!title && !detail) return null;
-      return { title: title || detail, detail: title ? detail : "" };
-    })
-    .filter((item): item is { title: string; detail: string } => Boolean(item));
+function cleanIbclcConsultantBio(v: unknown): string {
+  return asString(v)
+    .trim()
+    .replace(/^(?:IBCLC\s*)?国际认证[哺泌]乳顾问[，,、。\s]*/, "")
+    .trim();
 }
 
 function nearestScrollableParent(node: HTMLElement | null): HTMLElement | null {
@@ -440,8 +424,23 @@ function supportTicketFields(ticket: Record<string, unknown>): FormFieldSpec[] {
       id: "product_model",
       label: "产品型号",
       type: "text",
+      required: true,
       default_value: asString(ticket.product_model),
       placeholder: "例如：M5、S12 Pro，或暂不确定",
+    },
+    {
+      id: "order_number",
+      label: "订单号",
+      type: "text",
+      default_value: asString(ticket.order_number),
+      placeholder: "没有或暂时找不到可以先留空",
+    },
+    {
+      id: "purchase_channel",
+      label: "购买渠道",
+      type: "text",
+      default_value: asString(ticket.purchase_channel),
+      placeholder: "例如：官网、Amazon、TikTok、线下门店",
     },
     {
       id: "urgency",
@@ -460,7 +459,10 @@ function buildSupportTicketSubmittedMessage(ticket: Record<string, unknown>): st
     ticket.issue_type ? `问题类型：${ticket.issue_type}` : "",
     ticket.issue_summary ? `问题描述：${ticket.issue_summary}` : "",
     ticket.product_model ? `产品型号：${ticket.product_model}` : "",
+    ticket.order_number ? `订单号：${ticket.order_number}` : "",
+    ticket.purchase_channel ? `购买渠道：${ticket.purchase_channel}` : "",
     ticket.urgency ? `紧急程度：${ticket.urgency}` : "",
+    "能力限制：当前系统不支持查看工单进度。如果用户询问工单进度、工单状态或怎么查询工单，只直接说明目前还不支持查看工单进度，不要编造确认页、短信/邮件、账户售后记录或其他查看路径。",
     "回复要求：不要重复工单字段，不要继续排查；根据用户的主要售后情绪做 1-3 句贴合场景的承接，并告诉用户人工客服会在 24 小时内联系你解决问题。",
   ];
   return lines.filter(Boolean).join("\n");
@@ -492,8 +494,8 @@ function compactBirthPlanList(values: unknown, maxItems: number): string[] {
 function normalizeBirthPlanValue(value: unknown): string {
   const text = formatPlainValue(value).trim().replace(/^\s*\d+[.)、．]\s*/, "").replace(/\s+/g, " ");
   const labels: Record<string, string> = {
-    "birth plan card": "分娩沟通卡",
-    "labor room communication priority card": "产房沟通优先级卡片",
+    "birth plan card": "分娩沟通单",
+    "labor room communication priority card": "产房沟通重点",
     vaginal: "顺产",
     planned_c_section: "剖宫产",
     c_section: "剖宫产",
@@ -762,7 +764,7 @@ const hospitalBagItemExplanationRules: Array<[RegExp, string]> = [
   [/奶瓶清洁用品/, "用来清洗奶瓶、奶嘴或吸奶配件，住院只需少量。"],
   [/消毒设备/, "回家后消毒奶瓶或吸奶配件用，住院不一定带大件。"],
   [/喂养记录工具/, "记录吃奶、排尿排便和睡眠，方便家人同步。"],
-  [/分娩沟通卡/, "记录生产偏好和需要提前沟通的事，入院时方便给医护看。"],
+  [/分娩沟通[单卡]/, "记录生产偏好和需要提前沟通的事，入院时方便给医护看。"],
 ];
 
 function inferredHospitalBagItemExplanation(item: Record<string, unknown>): string {
@@ -917,8 +919,7 @@ function hospitalBagProfileValue(label: string, value: unknown): unknown {
 
 function hospitalBagTitle(value: unknown): string {
   const title = asString(value).trim();
-  if (!title || title === "待产包卡片" || title === "Hospital Bag Card") return "待产包";
-  if (title.includes("待产包卡片")) return title.replaceAll("待产包卡片", "待产包");
+  if (!title || title === "Hospital Bag Card" || (title.includes("待产包") && title.includes("卡片"))) return "待产包";
   return title;
 }
 
@@ -927,8 +928,8 @@ function normalizeBirthPlanCard(cardJsonRaw: Record<string, unknown>) {
   const overview = asObject(cardJsonRaw.overview) ?? {};
   const birthPreferences = asObject(cardJsonRaw.birth_preferences) ?? {};
   return {
-    title: normalizeBirthPlanValue(asString(cardJsonRaw.title)) || "分娩沟通卡",
-    subtitle: normalizeBirthPlanValue(asString(cardJsonRaw.subtitle)) || "产房沟通优先级卡片",
+    title: normalizeBirthPlanValue(asString(cardJsonRaw.title)) || "分娩沟通单",
+    subtitle: normalizeBirthPlanValue(asString(cardJsonRaw.subtitle)) || "产房沟通重点",
     overview: {
       due_date_or_week: normalizeBirthPlanValue(overview.due_date_or_week ?? owner.due_date_or_week),
       birth_path: normalizeBirthPlanValue(overview.birth_path ?? birthPreferences.birth_path),
@@ -969,7 +970,7 @@ function normalizeBirthPlanCard(cardJsonRaw: Record<string, unknown>) {
     personalized_notes: compactBirthPlanList(cardJsonRaw.personalized_notes, 3),
     disclaimer:
       normalizeBirthPlanValue(asString(cardJsonRaw.disclaimer)) ||
-      "这张卡只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。",
+      "这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。",
   };
 }
 
@@ -1199,6 +1200,7 @@ const AgentHubRichTextBlock: React.FC<{
   const [ibclcCompletions, setIbclcCompletions] = useState<IbclcConsultCompletedPayload[]>(() =>
     readStoredIbclcConsultCompletions(),
   );
+  const [ibclcAgreementAcceptedById, setIbclcAgreementAcceptedById] = useState<Record<string, boolean>>({});
   const cardArtifactRefs = useRef<Record<number, HTMLElement | null>>({});
 
   useEffect(() => {
@@ -1412,16 +1414,16 @@ const AgentHubRichTextBlock: React.FC<{
           <select
             name={field.id}
             required={Boolean(field.required)}
-            className={inputClassName}
+            className={cn(inputClassName, !hasDefaultValue ? "agent-form-select-placeholder" : "")}
             defaultValue={defaultValue}
           >
             {!hasDefaultValue ? (
-              <option value="" disabled>
+              <option value="" disabled className="text-neutral-400 dark:text-neutral-500">
                 {field.placeholder || "请选择"}
               </option>
             ) : null}
             {(field.options ?? []).map((option) => (
-              <option key={option} value={option}>
+              <option key={option} value={option} className={isMonochrome ? "text-neutral-950 dark:text-neutral-50" : "text-foreground"}>
                 {option}
               </option>
             ))}
@@ -1465,22 +1467,13 @@ const AgentHubRichTextBlock: React.FC<{
             const consultant = asObject(artifact.card.consultant) ?? {};
             const chat = asObject(artifact.card.chat) ?? {};
             const title = asString(artifact.card.title) || "IBCLC 在线咨询";
-            const subtitle =
-              asString(artifact.card.subtitle) || "把本轮已经描述的情况带给顾问，继续看喂养和排乳方式。";
             const consultantName = asString(consultant.name) || "IBCLC 顾问";
             const consultantCredentials = asString(consultant.credentials) || "IBCLC 国际认证哺乳顾问";
             const consultantExperience = asString(consultant.experience);
-            const consultantBio = asString(consultant.bio);
-            const specialties = asStringList(consultant.specialties).slice(0, 4);
-            const helpTopics = asTopicItems(artifact.card.help_topics).slice(0, 4);
-            const prepItems = asStringList(artifact.card.prep_items).slice(0, 4);
-            const boundaryNote =
-              asString(artifact.card.boundary_note) ||
-              asString(artifact.card.disclaimer) ||
-              "IBCLC 咨询不替代医生诊断或紧急医疗处理。";
+            const consultantBio = cleanIbclcConsultantBio(consultant.bio);
             const url = asString(chat.url) || "/ibclc-chat.html";
             const chatLabel = asString(chat.label) || "咨询 IBCLC";
-            const chatHint = asString(chat.hint);
+            const chatNote = asString(chat.note) || "启动咨询后，会自动将你的问题同步给顾问";
             const threadId = getAgUiThreadIdForRequest();
             const consultId =
               asString(artifact.card.consult_id) ||
@@ -1492,8 +1485,10 @@ const AgentHubRichTextBlock: React.FC<{
             const consultCompleted = ibclcCompletions.some((completion) =>
               isIbclcCompletionForCard(completion, threadId, consultId),
             );
+            const agreementAccepted = Boolean(ibclcAgreementAcceptedById[consultId]);
+            const consultButtonDisabled = consultCompleted || !agreementAccepted;
             const openConsult = () => {
-              if (consultCompleted) return;
+              if (consultButtonDisabled) return;
               if (onOpenIbclcConsult) {
                 onOpenIbclcConsult({ consultId, threadId, returnTo, chatUrl });
                 return;
@@ -1520,13 +1515,12 @@ const AgentHubRichTextBlock: React.FC<{
                     <HeartPulse aria-hidden="true" className="h-[22px] w-[22px] shrink-0 text-[#177a89]" />
                     <h3 className="m-0 text-[22px] font-[800] leading-[1.15] text-[#142726]">{title}</h3>
                   </div>
-                  {subtitle ? <p className="mt-[8px] text-[13px] leading-[1.5] text-[#60706e]">{subtitle}</p> : null}
                 </div>
-                <section className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-3 rounded-[12px] border border-[#d6dde5] bg-white p-3">
+                <section className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-3 rounded-[12px] border border-[#d6dde5] bg-white p-3">
                   <img
                     src={ibclcConsultantAvatar}
                     alt={consultantName}
-                    className="h-[56px] w-[56px] rounded-full object-cover"
+                    className="mt-[2px] h-[56px] w-[56px] rounded-full object-cover"
                     loading="lazy"
                   />
                   <div className="min-w-0">
@@ -1544,75 +1538,39 @@ const AgentHubRichTextBlock: React.FC<{
                     {consultantBio ? <p className="mt-[7px] text-[13px] leading-[1.45] text-[#60706e]">{consultantBio}</p> : null}
                   </div>
                 </section>
-                {specialties.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {specialties.map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-[#cddfdc] bg-white px-2.5 py-1 text-[12px] font-[700] leading-none text-[#315b58]"
-                      >
-                        {item}
-                      </span>
-                    ))}
+                {!consultCompleted ? (
+                  <div className="rounded-[10px] border border-[#dbe7e4] bg-[#f6fbfa] px-3 py-2">
+                    <label className="flex items-start gap-2 text-[12px] font-[700] leading-[1.45] text-[#586967]">
+                      <input
+                        type="checkbox"
+                        checked={agreementAccepted}
+                        onChange={(event) => {
+                          const accepted = event.currentTarget.checked;
+                          setIbclcAgreementAcceptedById((prev) => ({ ...prev, [consultId]: accepted }));
+                        }}
+                        className="mt-[1px] h-4 w-4 shrink-0 rounded border-[#b9cbc8] accent-[#177a89]"
+                      />
+                      <span>我已阅读并同意《隐私政策》和《服务协议》</span>
+                    </label>
+                    <p className="m-0 mt-1.5 pl-6 text-[11px] leading-[1.45] text-[#71807d]">{chatNote}</p>
                   </div>
-                ) : null}
-                {helpTopics.length > 0 || prepItems.length > 0 ? (
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {helpTopics.length > 0 ? (
-                      <section className="min-w-0 rounded-[12px] border border-[#d8e6e4] bg-white p-3">
-                        <div className="mb-2 flex items-center gap-1.5 text-[13px] font-[900] text-[#163d3a]">
-                          <Stethoscope aria-hidden="true" className="h-4 w-4 shrink-0 text-[#177a89]" />
-                          <span>适合咨询的问题</span>
-                        </div>
-                        <ul className="m-0 grid list-none gap-2 p-0">
-                          {helpTopics.map((item) => (
-                            <li key={`${item.title}-${item.detail}`} className="min-w-0">
-                              <strong className="block text-[12px] font-[850] leading-[1.35] text-[#273b3a]">{item.title}</strong>
-                              {item.detail ? (
-                                <span className="mt-[2px] block text-[12px] leading-[1.45] text-[#667371]">{item.detail}</span>
-                              ) : null}
-                            </li>
-                          ))}
-                        </ul>
-                      </section>
-                    ) : null}
-                    {prepItems.length > 0 ? (
-                      <section className="min-w-0 rounded-[12px] border border-[#eadbe3] bg-white p-3">
-                        <div className="mb-2 flex items-center gap-1.5 text-[13px] font-[900] text-[#4a2a3a]">
-                          <ClipboardList aria-hidden="true" className="h-4 w-4 shrink-0 text-[#935579]" />
-                          <span>咨询前可准备</span>
-                        </div>
-                        <ul className="m-0 grid list-none gap-1.5 p-0">
-                          {prepItems.map((item) => (
-                            <li key={item} className="flex min-w-0 gap-2 text-[12px] leading-[1.45] text-[#667371]">
-                              <span aria-hidden="true" className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#7aac9f]" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </section>
-                    ) : null}
-                  </div>
-                ) : null}
-                {boundaryNote ? (
-                  <p className="m-0 flex gap-2 rounded-[10px] bg-[#eef6f4] px-3 py-2 text-[12px] leading-[1.5] text-[#486662]">
-                    <ShieldCheck aria-hidden="true" className="mt-[1px] h-4 w-4 shrink-0 text-[#177a89]" />
-                    <span>{boundaryNote}</span>
-                  </p>
                 ) : null}
                 <button
                   type="button"
-                  disabled={consultCompleted}
-                  aria-disabled={consultCompleted}
+                  disabled={consultButtonDisabled}
+                  aria-disabled={consultButtonDisabled}
                   className={cn(
                     "inline-flex min-h-[46px] items-center justify-center rounded-xl px-3 text-[14px] font-black no-underline",
-                    consultCompleted ? "cursor-default bg-[#d7dfdd] text-[#778683]" : "bg-[#177a89] text-white",
+                    consultCompleted
+                      ? "cursor-default bg-[#d7dfdd] text-[#778683]"
+                      : agreementAccepted
+                        ? "bg-[#177a89] text-white"
+                        : "cursor-not-allowed bg-[#d7dfdd] text-[#778683]",
                   )}
                   onClick={openConsult}
                 >
                   {consultCompleted ? "咨询结束" : chatLabel}
                 </button>
-                {chatHint && !consultCompleted ? <p className="m-0 text-center text-[12px] leading-[1.4] text-[#6f7d7b]">{chatHint}</p> : null}
               </article>
             );
           }
@@ -1717,7 +1675,7 @@ const AgentHubRichTextBlock: React.FC<{
                               <div className="birth-journey-section-grid">
                                 {phase.watchouts.length > 0 ? (
                                   <section>
-                                    <h4>注意</h4>
+                                    <h4>注意事项</h4>
                                     <ul>
                                       {phase.watchouts.map((item, itemIndex) => (
                                         <li key={`${phase.id}-watch-${itemIndex}`}>{item}</li>
@@ -1727,7 +1685,7 @@ const AgentHubRichTextBlock: React.FC<{
                                 ) : null}
                                 {phase.actions.length > 0 ? (
                                   <section>
-                                    <h4>准备</h4>
+                                    <h4>准备工作</h4>
                                     <ul>
                                       {phase.actions.map((item, itemIndex) => (
                                         <li key={`${phase.id}-action-${itemIndex}`}>{item}</li>
@@ -1737,7 +1695,7 @@ const AgentHubRichTextBlock: React.FC<{
                                 ) : null}
                                 {phase.comate_help.length > 0 ? (
                                   <section>
-                                    <h4>CoMate</h4>
+                                    <h4>我能帮你做</h4>
                                     <ul>
                                       {phase.comate_help.map((item, itemIndex) => (
                                         <li key={`${phase.id}-help-${itemIndex}`}>{item}</li>

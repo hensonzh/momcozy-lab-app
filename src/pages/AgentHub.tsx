@@ -56,6 +56,7 @@ import {
   CHAT_BUBBLE_VOICE_MAX_CHARS,
   stopChatBubblePlayback,
 } from "@/lib/chatBubbleTtsPlayback";
+import { workProgressSummary, type WorkProgressTone } from "@/lib/agUiWorkProgress";
 import {
   playFocusPlainTextVoice,
   primeFocusVoicePlayback,
@@ -237,6 +238,26 @@ function messageHasAgUiArtifact(msg: ChatMessage): boolean {
   );
 }
 
+function agUiArtifactAnchorKey(messageId: string, slot: string): string {
+  return `${messageId}__agui_artifact__${slot}`;
+}
+
+function latestAgUiArtifactAnchorKey(messages: ChatMessage[]): string | null {
+  for (let messageIndex = messages.length - 1; messageIndex >= 0; messageIndex -= 1) {
+    const message = messages[messageIndex];
+    const streamItems = message.streamRenderItems ?? [];
+    for (let itemIndex = streamItems.length - 1; itemIndex >= 0; itemIndex -= 1) {
+      if (streamItemHasAgUiArtifact(streamItems[itemIndex])) {
+        return agUiArtifactAnchorKey(message.id, `stream-${itemIndex}`);
+      }
+    }
+    if (richTextPayloadHasAgUiArtifact(message.richText)) {
+      return agUiArtifactAnchorKey(message.id, "rich");
+    }
+  }
+  return null;
+}
+
 function clearQuickRepliesFromMessages(messages: ChatMessage[]): ChatMessage[] {
   return messages.map((message) => {
     if (!message.quickReplies) return message;
@@ -361,7 +382,7 @@ function bubbleSpeakerButtonClassName(isPlaying: boolean, isUserBubble: boolean)
 function AgentHubThinkingNote({ title }: { title: string }) {
   return (
     <div className="w-fit max-w-full px-0.5 text-[12px] font-[650] whitespace-nowrap bg-[linear-gradient(90deg,#98a3af_0%,#98a3af_35%,#2d3745_50%,#98a3af_65%,#98a3af_100%)] bg-[length:240%_100%] bg-clip-text text-transparent animate-[work-title-sweep_1.35s_linear_infinite]">
-      {title || "正在思考"}
+      {title || "我想一下"}
     </div>
   );
 }
@@ -542,41 +563,6 @@ function AgentHubReportCard({
   );
 }
 
-function workItemTitle(tool: AgUiToolCallRow): string {
-  if (tool.kind === "narration") return "";
-  if (tool.title?.trim()) return tool.title.trim();
-  if (tool.state === "running") return "我正在处理这一步";
-  if (tool.state === "error") return "这一步没处理好";
-  return "我处理完这一步了";
-}
-
-type WorkProgressTone = "running" | "waiting" | "done" | "error";
-
-function workItemNeedsConfirmation(tool: AgUiToolCallRow): boolean {
-  if (tool.kind === "narration") return false;
-  const text = `${tool.title ?? ""} ${tool.argsDigest ?? ""}`;
-  return text.includes("确认") || text.includes("等你确认");
-}
-
-function workProgressSummary(tools: AgUiToolCallRow[], isWorkFinished: boolean): { title: string; tone: WorkProgressTone } {
-  const actionRows = tools.filter((tool) => tool.kind !== "narration");
-  const running = [...actionRows].reverse().find((tool) => tool.state === "running");
-  if (running) return { title: workItemTitle(running), tone: "running" };
-  const error = [...actionRows].reverse().find((tool) => tool.state === "error");
-  if (error) return { title: workItemTitle(error), tone: "error" };
-  const needsConfirmation = actionRows.some(workItemNeedsConfirmation);
-  if (needsConfirmation && !isWorkFinished) return { title: "等你确认", tone: "waiting" };
-  if (isWorkFinished) return { title: "我处理好了", tone: "done" };
-  const lastAction = actionRows.at(-1);
-  if (lastAction) {
-    return {
-      title: workItemTitle(lastAction),
-      tone: lastAction.state === "completed" ? "done" : lastAction.state,
-    };
-  }
-  return { title: "我正在处理", tone: "running" };
-}
-
 function workProgressDotClass(tone: WorkProgressTone): string {
   if (tone === "done") return "bg-[#6aa889]";
   if (tone === "error") return "bg-[#c75b56]";
@@ -594,7 +580,8 @@ function AgentHubWorkPanel({
   const isWorkFinished = typeof finishedAtMs === "number";
   if (tools.length === 0) return null;
   const summary = workProgressSummary(tools, isWorkFinished);
-  const shouldAnimateTitle = summary.title !== "我处理好了";
+  if (!summary) return null;
+  const shouldAnimateTitle = summary.tone === "running";
 
   return (
     <div className="w-full max-w-full text-[12px]">
@@ -707,6 +694,8 @@ const AgentHub: React.FC = () => {
   }
   const hubInitialMessages = initialHubMessagesRef.current;
   const [messages, setMessages] = useState<ChatMessage[]>(hubInitialMessages);
+  const lastAgUiArtifactAnchorKeyRef = useRef<string | null>(latestAgUiArtifactAnchorKey(hubInitialMessages));
+  const pendingAgUiArtifactPositionRef = useRef(false);
   const [input, setInput] = useState("");
   /** 底部发送已触发 SSE：显示发送键加载直至回复结束或再次点击打断 */
   const [hubBottomSendBusy, setHubBottomSendBusy] = useState(false);
@@ -852,6 +841,27 @@ const AgentHub: React.FC = () => {
     container.scrollTo({ top: container.scrollHeight, behavior });
     userPinnedToTailRef.current = true;
     setShowScrollToBottom(false);
+  }, []);
+
+  const scrollAgUiArtifactTopToViewportMiddle = useCallback((anchorKey: string, behavior: ScrollBehavior = "auto") => {
+    const container = scrollRef.current;
+    if (!container) return false;
+    const anchors = Array.from(container.querySelectorAll<HTMLElement>("[data-ag-ui-artifact-anchor]"));
+    const anchor = anchors.find((node) => node.dataset.agUiArtifactAnchor === anchorKey);
+    if (!anchor) return false;
+
+    const containerRect = container.getBoundingClientRect();
+    const anchorRect = anchor.getBoundingClientRect();
+    const anchorTop = container.scrollTop + (anchorRect.top - containerRect.top);
+    const maxTop = Math.max(0, container.scrollHeight - container.clientHeight);
+    const targetTop = Math.min(Math.max(0, anchorTop - container.clientHeight / 2), maxTop);
+
+    suppressFollowTailReleaseUntilRef.current = Date.now() + (behavior === "smooth" ? 900 : 120);
+    mainStreamFollowTailRef.current = false;
+    userPinnedToTailRef.current = false;
+    container.scrollTo({ top: targetTop, behavior });
+    setShowScrollToBottom(!isChatScrollNearTail(container, DEFAULT_CHAT_TAIL_THRESHOLD_PX));
+    return true;
   }, []);
 
   /**
@@ -1381,7 +1391,7 @@ const AgentHub: React.FC = () => {
         ? (value.metadata as Record<string, unknown>)
         : null;
     const thinkingText =
-      metadata?.after_output_text === true ? "正在准备下一步" : "正在思考";
+      metadata?.after_output_text === true ? "我在准备下一步～" : "我想一下";
     if (status === "started" || status === "running") {
       mergedThinkingRef.current = thinkingText;
       setMessages((prev) =>
@@ -1535,14 +1545,24 @@ const AgentHub: React.FC = () => {
         const thread = (data as { thread_id?: unknown }).thread_id;
         persistAgUiThreadId(thread);
       }
+      const eventType = resolveEventTag(data);
+      const rich = parseChatRichTextFromSseData(data);
+      const incomingAgUiArtifact =
+        eventType === "ARTIFACT_CREATED" ||
+        eventType === "artifact_created" ||
+        richTextPayloadHasAgUiArtifact(rich);
+      if (incomingAgUiArtifact) {
+        pendingAgUiArtifactPositionRef.current = true;
+        mainStreamFollowTailRef.current = false;
+        userPinnedToTailRef.current = false;
+        scrollTailAfterHubSendRef.current = false;
+      }
       const side = applyAgUiStreamSideEffects(replyId, data, setMessages, {
         pendingRichTextRef,
         onHospitalBagCartUpdate: (groups) => {
           setHospitalBagCartGroups(cloneHospitalBagCartGroups(groups));
         },
       });
-      const eventType = resolveEventTag(data);
-      const rich = parseChatRichTextFromSseData(data);
       if (rich || side.didUpdate) clearMainNoVisibleResponseTimer();
       if (rich) {
         const mergedRichText = mergePendingRichTextPayload(pendingRichTextRef.current, rich);
@@ -1642,10 +1662,10 @@ const AgentHub: React.FC = () => {
   };
 
   const resolveThinkingStatusText = (msg: ChatMessage): string => {
-    if (msg.thinkingStatus === "done") return "已思考";
+    if (msg.thinkingStatus === "done") return "我想好啦";
     const isStreamingThisMessage =
       mainStreamingReplyIdRef.current === msg.id && mainChatCancelRef.current != null;
-    return isStreamingThisMessage ? "正在思考" : "已思考";
+    return isStreamingThisMessage ? "我想一下" : "我想好啦";
   };
 
   /** 发起 Hub ag-ui WebSocket 对话流（主接口，含富文本解析）。 */
@@ -1854,7 +1874,7 @@ const AgentHub: React.FC = () => {
         {
           id: `direct-cart-${workStartedAtMs}`,
           name: "hospital_bag_cart_update",
-          title: "正在保存购物车修改",
+          title: "我先帮你调整待产包购物车～",
           argsDigest: intent.model,
           state: "running",
         },
@@ -1895,7 +1915,7 @@ const AgentHub: React.FC = () => {
                 agentWorkFinishedAtMs: Date.now(),
                 agentToolCalls: (m.agentToolCalls ?? []).map((row) => ({
                   ...row,
-                  title: "购物车已更新",
+                  title: "我已经帮你更新好待产包购物车啦",
                   state: "completed" as const,
                 })),
               }
@@ -1915,7 +1935,7 @@ const AgentHub: React.FC = () => {
                 agentWorkFinishedAtMs: Date.now(),
                 agentToolCalls: (m.agentToolCalls ?? []).map((row) => ({
                   ...row,
-                  title: "购物车没有更新",
+                  title: "这次购物车暂时没更新",
                   state: "error" as const,
                 })),
               }
@@ -2089,6 +2109,30 @@ const AgentHub: React.FC = () => {
     return () => window.removeEventListener("momcozy-open-hospital-bag-cart", openHospitalBagCart);
   }, []);
 
+  useLayoutEffect(() => {
+    const latestArtifactAnchor = latestAgUiArtifactAnchorKey(messages);
+    if (!latestArtifactAnchor) {
+      pendingAgUiArtifactPositionRef.current = false;
+      lastAgUiArtifactAnchorKeyRef.current = null;
+      return;
+    }
+    if (!pendingAgUiArtifactPositionRef.current) return;
+
+    const isNewArtifactAnchor = latestArtifactAnchor !== lastAgUiArtifactAnchorKeyRef.current;
+    if (!isNewArtifactAnchor) {
+      pendingAgUiArtifactPositionRef.current = false;
+      return;
+    }
+
+    mainStreamFollowTailRef.current = false;
+    userPinnedToTailRef.current = false;
+    scrollTailAfterHubSendRef.current = false;
+    if (scrollAgUiArtifactTopToViewportMiddle(latestArtifactAnchor, "auto")) {
+      pendingAgUiArtifactPositionRef.current = false;
+      lastAgUiArtifactAnchorKeyRef.current = latestArtifactAnchor;
+    }
+  }, [messages, scrollAgUiArtifactTopToViewportMiddle]);
+
   /** 吸乳报告与普通气泡底部的业务链接（日程 / 泌乳 / 设备 / 路由） */
   const handleBubbleLinkPress = (link: ChatMessageLink) => {
     const userMsg: ChatMessage = {
@@ -2123,14 +2167,23 @@ const AgentHub: React.FC = () => {
     const prevMeta = lastMessageMetaRef.current;
     const nextLastId = messages.at(-1)?.id ?? null;
     const isNewBubble = messages.length !== prevMeta.len || nextLastId !== prevMeta.lastId;
-    const forceTailAfterSend = isNewBubble && scrollTailAfterHubSendRef.current;
-    const forceTailDuringMainStream = mainStreamFollowTailRef.current && mainStreamingReplyIdRef.current != null;
+    const latestArtifactAnchor = latestAgUiArtifactAnchorKey(messages);
+    const awaitingArtifactPosition = pendingAgUiArtifactPositionRef.current;
+    const forceTailAfterSend = !awaitingArtifactPosition && isNewBubble && scrollTailAfterHubSendRef.current;
+    const forceTailDuringMainStream =
+      !awaitingArtifactPosition && mainStreamFollowTailRef.current && mainStreamingReplyIdRef.current != null;
     const shouldForceTail = forceTailAfterSend || forceTailDuringMainStream;
     const wasPinnedToTail = userPinnedToTailRef.current || shouldForceTail;
     const isNearTailAfterUpdate = isChatScrollNearTail(container, DEFAULT_CHAT_TAIL_THRESHOLD_PX);
 
     if (forceTailAfterSend) {
       scrollTailAfterHubSendRef.current = false;
+    }
+
+    if (!latestArtifactAnchor) {
+      lastAgUiArtifactAnchorKeyRef.current = null;
+    } else if (!awaitingArtifactPosition) {
+      lastAgUiArtifactAnchorKeyRef.current = latestArtifactAnchor;
     }
 
     if (shouldAutoScrollChatTail({ isNewBubble, forceTailAfterSend: shouldForceTail, wasPinnedToTail, isNearTailAfterUpdate })) {
@@ -2705,6 +2758,7 @@ const AgentHub: React.FC = () => {
           {visibleMessages.map((msg, index) => {
             const isMainAssistantBubble = msg.role === "mai" && msg.chatStreamContext === "main";
             const containsAgUiArtifact = msg.role === "mai" && messageHasAgUiArtifact(msg);
+            const richTextHasAgUiArtifactForMsg = richTextPayloadHasAgUiArtifact(msg.richText);
             const mainAssistantBubbleBase =
               "min-h-0 rounded-none border-0 bg-transparent px-0.5 py-[3px] text-[15px] leading-[1.45] text-[#33404d] shadow-none";
             const bubbleShell = cn(
@@ -2941,43 +2995,56 @@ const AgentHub: React.FC = () => {
                         </div>
                       </div>
                     ) : null}
-                    {hasOrderedMainItems ? (
-                      <>
-                        {orderedMainItems.map((item, i) => (
-                          <div key={`${msg.id}-stream-${i}`} className={streamItemHasAgUiArtifact(item) ? artifactBubbleShell : bubbleShell}>
-                            {item.kind === "text" ? (
-                              <ChatMarkdown markdown={item.text} variant={mdVariant} className={mdClassName} />
-                            ) : (
+                      {hasOrderedMainItems ? (
+                        <>
+                          {orderedMainItems.map((item, i) => {
+                            const itemHasAgUiArtifact = streamItemHasAgUiArtifact(item);
+                            return (
+                              <div
+                                key={`${msg.id}-stream-${i}`}
+                                className={itemHasAgUiArtifact ? artifactBubbleShell : bubbleShell}
+                                data-ag-ui-artifact-anchor={itemHasAgUiArtifact ? agUiArtifactAnchorKey(msg.id, `stream-${i}`) : undefined}
+                              >
+                                {item.kind === "text" ? (
+                                  <ChatMarkdown markdown={item.text} variant={mdVariant} className={mdClassName} />
+                                ) : (
+                                  <AgentHubRichTextBlock
+                                    payload={item.payload}
+                                    blockId={`${msg.id}-stream-${i}`}
+                                    onButtonSelect={handleAgentRichTextButtonSelect}
+                                    onOpenIbclcConsult={handleOpenIbclcConsult}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
+                          {msg.richText && !orderedMainHasRich ? (
+                            <div
+                              className={richTextHasAgUiArtifactForMsg ? artifactBubbleShell : bubbleShell}
+                              data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
+                            >
                               <AgentHubRichTextBlock
-                                payload={item.payload}
-                                blockId={`${msg.id}-stream-${i}`}
+                                payload={msg.richText}
+                                blockId={`${msg.id}-rich`}
                                 onButtonSelect={handleAgentRichTextButtonSelect}
                                 onOpenIbclcConsult={handleOpenIbclcConsult}
                               />
-                            )}
-                          </div>
-                        ))}
-                        {msg.richText && !orderedMainHasRich ? (
-                          <div className={richTextPayloadHasAgUiArtifact(msg.richText) ? artifactBubbleShell : bubbleShell}>
-                            <AgentHubRichTextBlock
-                              payload={msg.richText}
-                              blockId={`${msg.id}-rich`}
-                              onButtonSelect={handleAgentRichTextButtonSelect}
-                              onOpenIbclcConsult={handleOpenIbclcConsult}
-                            />
                           </div>
                         ) : null}
                       </>
                     ) : (
-                      <>
-                        {msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
-                          <div className={richTextPayloadHasAgUiArtifact(msg.richText) ? artifactBubbleShell : bubbleShell}>
-                            <AgentHubRichTextBlock
-                              payload={msg.richText}
-                              blockId={`${msg.id}-rich-pump-summary`}
-                              onButtonSelect={handleAgentRichTextButtonSelect}
-                              onOpenIbclcConsult={handleOpenIbclcConsult}
-                            />
+                        <>
+                          {msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
+                            <div
+                              className={richTextHasAgUiArtifactForMsg ? artifactBubbleShell : bubbleShell}
+                              data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
+                            >
+                              <AgentHubRichTextBlock
+                                payload={msg.richText}
+                                blockId={`${msg.id}-rich-pump-summary`}
+                                onButtonSelect={handleAgentRichTextButtonSelect}
+                                onOpenIbclcConsult={handleOpenIbclcConsult}
+                              />
                           </div>
                         ) : null}
                         {segments.map((seg, i) => (
@@ -2990,14 +3057,17 @@ const AgentHub: React.FC = () => {
                             <ChatMarkdown markdown={seg} variant={mdVariant} className={mdClassName} />
                           </div>
                         ))}
-                        {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
-                          <div className={richTextPayloadHasAgUiArtifact(msg.richText) ? artifactBubbleShell : bubbleShell}>
-                            <AgentHubRichTextBlock
-                              payload={msg.richText}
-                              blockId={`${msg.id}-rich`}
-                              onButtonSelect={handleAgentRichTextButtonSelect}
-                              onOpenIbclcConsult={handleOpenIbclcConsult}
-                            />
+                          {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
+                            <div
+                              className={richTextHasAgUiArtifactForMsg ? artifactBubbleShell : bubbleShell}
+                              data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
+                            >
+                              <AgentHubRichTextBlock
+                                payload={msg.richText}
+                                blockId={`${msg.id}-rich`}
+                                onButtonSelect={handleAgentRichTextButtonSelect}
+                                onOpenIbclcConsult={handleOpenIbclcConsult}
+                              />
                           </div>
                         ) : null}
                       </>
@@ -3059,44 +3129,57 @@ const AgentHub: React.FC = () => {
                         ) : null}
                       </div>
                     ) : null}
-                    {hasOrderedMainItems ? (
-                      <>
-                        {orderedMainItems.map((item, i) => (
-                          <div key={`${msg.id}-ordered-${i}`} className={cn(i > 0 && "mt-2")}>
-                            {item.kind === "text" ? (
-                              <ChatMarkdown markdown={item.text} variant={mdVariant} className={mdClassName} />
-                            ) : (
+                      {hasOrderedMainItems ? (
+                        <>
+                          {orderedMainItems.map((item, i) => {
+                            const itemHasAgUiArtifact = streamItemHasAgUiArtifact(item);
+                            return (
+                              <div
+                                key={`${msg.id}-ordered-${i}`}
+                                className={cn(i > 0 && "mt-2")}
+                                data-ag-ui-artifact-anchor={itemHasAgUiArtifact ? agUiArtifactAnchorKey(msg.id, `stream-${i}`) : undefined}
+                              >
+                                {item.kind === "text" ? (
+                                  <ChatMarkdown markdown={item.text} variant={mdVariant} className={mdClassName} />
+                                ) : (
+                                  <AgentHubRichTextBlock
+                                    payload={item.payload}
+                                    blockId={`${msg.id}-ordered-${i}`}
+                                    onButtonSelect={handleAgentRichTextButtonSelect}
+                                    onOpenIbclcConsult={handleOpenIbclcConsult}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
+                          {msg.richText && !orderedMainHasRich ? (
+                            <div
+                              className={cn(orderedMainItems.length > 0 && "mt-2")}
+                              data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
+                            >
                               <AgentHubRichTextBlock
-                                payload={item.payload}
-                                blockId={`${msg.id}-ordered-${i}`}
+                                payload={msg.richText}
+                                blockId={`${msg.id}-rich`}
                                 onButtonSelect={handleAgentRichTextButtonSelect}
                                 onOpenIbclcConsult={handleOpenIbclcConsult}
                               />
-                            )}
-                          </div>
-                        ))}
-                        {msg.richText && !orderedMainHasRich ? (
-                          <div className={cn(orderedMainItems.length > 0 && "mt-2")}>
-                            <AgentHubRichTextBlock
-                              payload={msg.richText}
-                              blockId={`${msg.id}-rich`}
-                              onButtonSelect={handleAgentRichTextButtonSelect}
-                              onOpenIbclcConsult={handleOpenIbclcConsult}
-                            />
                           </div>
                         ) : null}
                       </>
                     ) : (
                       <>
-                        {/* 兼容历史消息：无顺序片段时沿用旧渲染 */}
-                        {msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") && msg.richText ? (
-                          <div className={cn(msg.content.trim() && "mb-2")}>
-                            <AgentHubRichTextBlock
-                              payload={msg.richText}
-                              blockId={`${msg.id}-rich-pump-summary`}
-                              onButtonSelect={handleAgentRichTextButtonSelect}
-                              onOpenIbclcConsult={handleOpenIbclcConsult}
-                            />
+                          {/* 兼容历史消息：无顺序片段时沿用旧渲染 */}
+                          {msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") && msg.richText ? (
+                            <div
+                              className={cn(msg.content.trim() && "mb-2")}
+                              data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
+                            >
+                              <AgentHubRichTextBlock
+                                payload={msg.richText}
+                                blockId={`${msg.id}-rich-pump-summary`}
+                                onButtonSelect={handleAgentRichTextButtonSelect}
+                                onOpenIbclcConsult={handleOpenIbclcConsult}
+                              />
                           </div>
                         ) : null}
                         {hasSentImagePreviews ? (
@@ -3107,14 +3190,17 @@ const AgentHub: React.FC = () => {
                         {msg.content.trim() ? (
                           <ChatMarkdown markdown={msg.content} variant={mdVariant} className={mdClassName} />
                         ) : null}
-                        {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
-                          <div className={cn(msg.content.trim() && "mt-2")}>
-                            <AgentHubRichTextBlock
-                              payload={msg.richText}
-                              blockId={`${msg.id}-rich`}
-                              onButtonSelect={handleAgentRichTextButtonSelect}
-                              onOpenIbclcConsult={handleOpenIbclcConsult}
-                            />
+                          {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
+                            <div
+                              className={cn(msg.content.trim() && "mt-2")}
+                              data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
+                            >
+                              <AgentHubRichTextBlock
+                                payload={msg.richText}
+                                blockId={`${msg.id}-rich`}
+                                onButtonSelect={handleAgentRichTextButtonSelect}
+                                onOpenIbclcConsult={handleOpenIbclcConsult}
+                              />
                           </div>
                         ) : null}
                         {!msg.content.trim() && !msg.richText ? (
