@@ -75,6 +75,12 @@
             android:foregroundServiceType="connectedDevice" />
 
         <service
+            android:name=".DeviceReminderWebSocketService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <service
             android:name=".PumpSessionOverlayService"
             android:enabled="true"
             android:exported="false" />
@@ -85,6 +91,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!-- 麦克风：语音输入、录音等 Web/Capacitor API 所需（运行时仍须向用户申请授权） -->

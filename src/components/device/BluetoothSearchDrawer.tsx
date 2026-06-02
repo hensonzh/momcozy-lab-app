@@ -14,6 +14,7 @@ import {
   initializeBle,
   startLEScan,
   stopLEScan,
+  getConnectedPumpDevices,
   connect as bleConnect,
   openBluetoothSettings,
   openAppSettings,
@@ -93,6 +94,103 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
   const showRadarSweep = uiPhase === "checking" || uiPhase === "scanning";
   const showFoundPulse = uiPhase === "found" || uiPhase === "connecting";
 
+  const handleConnect = useCallback(
+    async (deviceId: string, deviceName: string, rssi: number): Promise<boolean> => {
+      setConnectError(null);
+      setConnecting(deviceId);
+      try {
+        await bleConnect(deviceId, () => onDisconnect?.(deviceId));
+        setConnecting(null);
+        onConnect(deviceId, deviceName, rssi);
+        onClose();
+        return true;
+      } catch (e) {
+        setConnecting(null);
+        setConnectError(e instanceof Error ? e.message : "连接失败，请重试");
+        return false;
+      }
+    },
+    [onConnect, onClose, onDisconnect],
+  );
+
+  const recoverNativeConnectedDevice = useCallback(async (): Promise<boolean> => {
+    const stored = deviceStore.get()[side];
+    let connectedDevices: Awaited<ReturnType<typeof getConnectedPumpDevices>> = [];
+    try {
+      connectedDevices = await getConnectedPumpDevices();
+    } catch (error) {
+      loggerWarn("[BLE扫描]", "查询底层已连接设备失败", error);
+      return false;
+    }
+
+    const candidate =
+      connectedDevices.find((device) => device.device.deviceId === stored?.deviceId) ??
+      connectedDevices.find((device) => {
+        const name = device.device.name || device.localName || "";
+        return matchDeviceNameForSide(name, side);
+      });
+
+    if (!candidate) {
+      loggerLog("[BLE扫描]", "未发现可恢复的底层已连接设备", {
+        side,
+        connectedCount: connectedDevices.length,
+      });
+      return false;
+    }
+
+    const deviceId = candidate.device.deviceId;
+    const deviceName =
+      candidate.device.name ||
+      candidate.localName ||
+      stored?.deviceName ||
+      stored?.model ||
+      deviceId;
+    const rssi = candidate.rssi ?? stored?.rssi ?? -50;
+    loggerLog("[BLE扫描]", "扫描无结果，恢复底层已连接设备", {
+      side,
+      deviceId,
+      deviceName,
+    });
+    return handleConnect(deviceId, deviceName, rssi);
+  }, [handleConnect, side]);
+
+  const finishScanAndRecoverIfEmpty = useCallback(
+    async (cancelled: () => boolean): Promise<void> => {
+      try {
+        await stopLEScan();
+      } catch {
+        // ignore stop errors; recovery can still query the native connection table
+      }
+      if (cancelled()) return;
+
+      setScanning(false);
+      const connectedDevice = getConnectedDeviceForSide(side);
+      const hasScanResult = deviceIdsRef.current.size > 0;
+      const hasKnownConnectedDevice = connectedDevice != null;
+
+      setDevices((current) => {
+        const next =
+          connectedDevice && !current.some((device) => device.id === connectedDevice.id)
+            ? [...current, connectedDevice]
+            : current;
+        loggerLog(
+          "[BLE扫描]",
+          "扫描结束，共发现设备数:",
+          next.length,
+          next.length === 0
+            ? "（若为 0：请确认蓝牙/定位已开启、已授权，且附近有 BLE 设备）"
+            : "",
+        );
+        return next;
+      });
+
+      if (!hasScanResult && !hasKnownConnectedDevice) {
+        await recoverNativeConnectedDevice();
+      }
+    },
+    [recoverNativeConnectedDevice, side],
+  );
+
   useEffect(() => {
     if (!open) return;
     setBleAutoReconnectPaused(true);
@@ -154,29 +252,7 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
         scanDurationTimer = setTimeout(() => {
           scanDurationTimer = null;
           loggerLog("[BLE扫描]", "10 秒已到，停止扫描");
-          stopLEScan()
-            .then(() => {
-              if (!cancelled) {
-                setScanning(false);
-                setDevices((current) => {
-                  const connectedDevice = getConnectedDeviceForSide(side);
-                  const next =
-                    connectedDevice && !current.some((device) => device.id === connectedDevice.id)
-                      ? [...current, connectedDevice]
-                      : current;
-                  loggerLog(
-                    "[BLE扫描]",
-                    "扫描结束，共发现设备数:",
-                    next.length,
-                    next.length === 0
-                      ? "（若为 0：请确认蓝牙/定位已开启、已授权，且附近有 BLE 设备）"
-                      : "",
-                  );
-                  return next;
-                });
-              }
-            })
-            .catch(() => {});
+          void finishScanAndRecoverIfEmpty(() => cancelled);
         }, SCAN_DURATION_MS);
       } catch (e) {
         if (cancelled) return;
@@ -197,7 +273,7 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
         stopLEScan().catch(() => {});
       }
     };
-  }, [open, bleSupported, side]);
+  }, [open, bleSupported, side, finishScanAndRecoverIfEmpty]);
 
   const handleRescan = useCallback(async () => {
     if (!bleSupported) return;
@@ -229,9 +305,7 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
       });
       setInitializing(false);
       setTimeout(() => {
-        stopLEScan()
-          .then(() => setScanning(false))
-          .catch(() => {});
+        void finishScanAndRecoverIfEmpty(() => false);
       }, SCAN_DURATION_MS);
     } catch (e) {
       const message = e instanceof Error ? e.message : "扫描失败";
@@ -239,24 +313,7 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
       setScanning(false);
       setInitializing(false);
     }
-  }, [bleSupported, side]);
-
-  const handleConnect = useCallback(
-    async (deviceId: string, deviceName: string, rssi: number) => {
-      setConnectError(null);
-      setConnecting(deviceId);
-      try {
-        await bleConnect(deviceId, () => onDisconnect?.(deviceId));
-        setConnecting(null);
-        onConnect(deviceId, deviceName, rssi);
-        onClose();
-      } catch (e) {
-        setConnecting(null);
-        setConnectError(e instanceof Error ? e.message : "连接失败，请重试");
-      }
-    },
-    [onConnect, onClose, onDisconnect],
-  );
+  }, [bleSupported, finishScanAndRecoverIfEmpty, side]);
 
   const signalLabel = (rssi: number) => {
     if (rssi > -50) return { text: "强", color: "text-primary" };

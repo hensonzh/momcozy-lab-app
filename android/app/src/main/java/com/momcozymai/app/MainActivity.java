@@ -9,6 +9,8 @@ import android.webkit.WebView;
 import com.getcapacitor.Bridge;
 import com.getcapacitor.BridgeActivity;
 
+import androidx.activity.OnBackPressedCallback;
+
 /**
  * 点击携带 EXTRA_NAV_PATH 的通知时，在 onNewIntent 写入待消费路由。
  * 前台时下拉通知再点击不会触发 Web 端 visibility/focus，故用 evaluateJavascript 触发一次导航消费。
@@ -43,6 +45,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(PumpSessionOverlayPlugin.class);
         registerPlugin(PumpSessionKeepAlivePlugin.class);
         registerPlugin(BackgroundNotifyPlugin.class);
+        registerPlugin(DeviceReminderWebSocketPlugin.class);
         super.onCreate(savedInstanceState);
         // PumpNotificationChannels.registerAll(this);
         /** 进程内首次创建：仅输出 WorkManager 周期任务状态日志，不在此刷新/入队周期任务。 */
@@ -63,6 +66,7 @@ public class MainActivity extends BridgeActivity {
             );
         }
         handleLaunchNavigationIntent(getIntent());
+        disableInAppSystemBack();
     }
 
     @Override
@@ -75,6 +79,12 @@ public class MainActivity extends BridgeActivity {
     public void onPause() {
         appInForeground = false;
         super.onPause();
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        PumpSessionOverlayPlugin.showCachedOverlayIfActive(this);
+        super.onUserLeaveHint();
     }
 
     @Override
@@ -109,6 +119,15 @@ public class MainActivity extends BridgeActivity {
     private void scheduleNotifyWebToConsumeNav() {
         notifyAttempts = 0;
         tryNotifyWebToConsumeNavRecursive();
+    }
+
+    private void disableInAppSystemBack() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Consume Android back gestures/buttons inside this app only.
+            }
+        });
     }
 
     private void tryNotifyWebToConsumeNavRecursive() {
