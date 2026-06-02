@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import { consumePumpNotificationPending } from "@/lib/pumpSessionNotification";
 import { tryRunPumpAutoEndOffPumpTeardownOnce } from "@/lib/pumpAutoEndSession";
-import ReconnectPairedDevices from "@/components/device/ReconnectPairedDevices";
 import AgentHub from "@/pages/AgentHub";
 import ComfortCalibration from "@/pages/ComfortCalibration";
 import PumpSession from "@/pages/PumpSession";
@@ -112,7 +111,6 @@ const App = () => (
         <PumpNotificationNavigateSync />
         <DeviceReminderWebSocketSync />
         <BackgroundNotifyOnboardingGate />
-        <ReconnectPairedDevices />
         <AppLayout>
           <Routes>
             <Route path="/" element={<AgentHub />} />

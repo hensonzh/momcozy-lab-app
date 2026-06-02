@@ -1,23 +1,14 @@
 import React from "react";
-import { Capacitor, registerPlugin } from "@capacitor/core";
+import { Capacitor } from "@capacitor/core";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 import { createScopedConsole } from "@/lib/logger";
 import { getProcessAll, subscribeProcessAll } from "@/lib/pumpSessionProgress";
 import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
 import type { SessionState } from "@/pages/pumpSession/pumpSessionModel";
+import { getNativeAndroidPumpSessionBridge } from "@/lib/nativeAndroidPumpSession";
 
 const log = createScopedConsole("PumpSessionOverlay");
-
-interface PumpSessionOverlayPlugin {
-  canDrawOverlays(): Promise<{ granted: boolean }>;
-  openOverlaySettings(): Promise<void>;
-  snapshot(options: { state: SessionState; processAll: number }): Promise<void>;
-  update(options: { state: "running" | "paused"; processAll: number }): Promise<void>;
-  hide(): Promise<void>;
-}
-
-const PumpSessionOverlay = registerPlugin<PumpSessionOverlayPlugin>("PumpSessionOverlay");
 
 type OverlayPlatform = "android" | "ios" | "web" | string;
 
@@ -75,8 +66,7 @@ function refreshCurrentAppVisibility(): void {
 async function refreshOverlayPermission(): Promise<boolean> {
   if (!isAndroidNative) return false;
   try {
-    const result = await PumpSessionOverlay.canDrawOverlays();
-    permissionGranted = !!result.granted;
+    permissionGranted = !!getNativeAndroidPumpSessionBridge()?.canDrawOverlays?.();
     permissionChecked = true;
     return permissionGranted;
   } catch (error) {
@@ -98,9 +88,11 @@ function showPermissionToastOnce(): void {
       {
         altText: "去开启",
         onClick: () => {
-          void PumpSessionOverlay.openOverlaySettings().catch((error) => {
-            log.warn("openOverlaySettings failed", error);
-          });
+            try {
+              getNativeAndroidPumpSessionBridge()?.openOverlaySettings?.();
+            } catch (error) {
+              log.warn("openOverlaySettings failed", error);
+            }
         },
       },
       "去开启",
@@ -114,10 +106,7 @@ async function syncNativeOverlaySnapshot(): Promise<void> {
   if (snapshotKey === lastNativeSnapshotKey) return;
   lastNativeSnapshotKey = snapshotKey;
   try {
-    await PumpSessionOverlay.snapshot({
-      state: currentState,
-      processAll: currentProcessAll,
-    });
+    getNativeAndroidPumpSessionBridge()?.updateSession?.(currentState, currentProcessAll);
   } catch (error) {
     lastNativeSnapshotKey = "";
     log.warn("snapshot overlay state failed", error);
@@ -151,12 +140,13 @@ async function syncOverlay(): Promise<void> {
 
   try {
     if (action.type === "update") {
-      await PumpSessionOverlay.update({
-        state: action.state,
-        processAll: action.processAll,
-      });
+      getNativeAndroidPumpSessionBridge()?.updateSession?.(action.state, action.processAll);
     } else if (action.type === "hide") {
-      await PumpSessionOverlay.hide();
+      if (currentState === "running" || currentState === "paused") {
+        getNativeAndroidPumpSessionBridge()?.updateSession?.(currentState, currentProcessAll);
+      } else {
+        getNativeAndroidPumpSessionBridge()?.stopSession?.();
+      }
     }
   } catch (error) {
     log.warn("sync overlay failed", error);

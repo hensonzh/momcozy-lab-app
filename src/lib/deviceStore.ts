@@ -162,6 +162,20 @@ function notifyListeners(): void {
   listeners.forEach((cb) => cb());
 }
 
+function sanitizeSnapshotDevice(info: StoredDeviceInfo | null | undefined): StoredDeviceInfo | null {
+  if (!info) return null;
+  return {
+    ...info,
+    connected: Boolean(info.connected),
+    battery: Number.isFinite(info.battery) ? info.battery : 0,
+    flangeSize: Number.isFinite(info.flangeSize) ? info.flangeSize : 24,
+    sealSize: info.sealSize || "M",
+    model: info.model || info.deviceName || info.deviceId,
+    firmware: info.firmware || "-",
+    serialNumber: info.serialNumber || info.deviceId,
+  };
+}
+
 export const deviceStore = {
   get(): DeviceStoreState {
     return { ...state };
@@ -175,6 +189,13 @@ export const deviceStore = {
 
   setDevice(side: DeviceSide, info: StoredDeviceInfo | null): void {
     state[side] = info;
+    writePersisted();
+    notifyListeners();
+  },
+
+  replaceSnapshot(snapshot: Partial<DeviceStoreState>): void {
+    state.L = sanitizeSnapshotDevice(snapshot.L);
+    state.R = sanitizeSnapshotDevice(snapshot.R);
     writePersisted();
     notifyListeners();
   },
