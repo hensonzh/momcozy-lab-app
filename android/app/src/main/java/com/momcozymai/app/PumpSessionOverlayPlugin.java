@@ -42,6 +42,7 @@ public class PumpSessionOverlayPlugin extends Plugin {
         String state = call.getString("state");
         int processAll = clampProcess(call.getInt("processAll", 0));
         updateCachedSnapshot(state, processAll);
+        PumpSessionNativeController.updateSession(getContext(), state, processAll);
         call.resolve();
     }
 
@@ -54,15 +55,13 @@ public class PumpSessionOverlayPlugin extends Plugin {
         String state = normalizeState(call.getString("state"));
         int processAll = clampProcess(call.getInt("processAll", 0));
         updateCachedSnapshot(state, processAll);
-        startOverlayService(getContext(), state, processAll);
+        PumpSessionNativeController.updateSession(getContext(), state, processAll);
         call.resolve();
     }
 
     @PluginMethod
     public void hide(PluginCall call) {
-        Intent intent = new Intent(getContext(), PumpSessionOverlayService.class);
-        intent.setAction(PumpSessionOverlayService.ACTION_HIDE);
-        getContext().startService(intent);
+        PumpSessionNativeController.stopAll(getContext());
         call.resolve();
     }
 
@@ -76,7 +75,7 @@ public class PumpSessionOverlayPlugin extends Plugin {
             state = cachedState;
             processAll = cachedProcessAll;
         }
-        startOverlayService(context, state, processAll);
+        PumpSessionNativeController.showOverlayIfActive(context);
     }
 
     private boolean canDrawOverlaysInternal() {

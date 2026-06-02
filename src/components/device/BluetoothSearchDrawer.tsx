@@ -21,7 +21,6 @@ import {
 } from "@/lib/ble";
 import { log as loggerLog, warn as loggerWarn } from "@/lib/logger";
 import { deviceStore } from "@/lib/deviceStore";
-import { setBleAutoReconnectPaused } from "@/lib/reconnectOfflineDevices";
 
 interface ScannedDevice {
   id: string;
@@ -73,6 +72,7 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
   const [initError, setInitError] = useState<string | null>(null);
   const [connectError, setConnectError] = useState<string | null>(null);
   const deviceIdsRef = useRef<Set<string>>(new Set());
+  const finishScanAndRecoverIfEmptyRef = useRef<(cancelled: () => boolean) => Promise<void>>(async () => {});
 
   const bleSupported = isBleSupported();
   const sideLabel = side === "L" ? "左侧" : "右侧";
@@ -192,10 +192,8 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    if (!open) return;
-    setBleAutoReconnectPaused(true);
-    return () => setBleAutoReconnectPaused(false);
-  }, [open]);
+    finishScanAndRecoverIfEmptyRef.current = finishScanAndRecoverIfEmpty;
+  }, [finishScanAndRecoverIfEmpty]);
 
   // When drawer opens: init BLE and start scan (if supported); scan 10s then stop
   useEffect(() => {
@@ -252,7 +250,7 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
         scanDurationTimer = setTimeout(() => {
           scanDurationTimer = null;
           loggerLog("[BLE扫描]", "10 秒已到，停止扫描");
-          void finishScanAndRecoverIfEmpty(() => cancelled);
+          void finishScanAndRecoverIfEmptyRef.current(() => cancelled);
         }, SCAN_DURATION_MS);
       } catch (e) {
         if (cancelled) return;
@@ -273,7 +271,7 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
         stopLEScan().catch(() => {});
       }
     };
-  }, [open, bleSupported, side, finishScanAndRecoverIfEmpty]);
+  }, [open, bleSupported, side]);
 
   const handleRescan = useCallback(async () => {
     if (!bleSupported) return;

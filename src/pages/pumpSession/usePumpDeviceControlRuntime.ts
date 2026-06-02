@@ -17,12 +17,6 @@ import { CT_ACK } from "@/lib/bleProtocol";
 import type { D0OperationRecord } from "@/lib/bleProtocol";
 import { patchGearMemory, readGearB1FromMemory } from "@/lib/pumpGearMemory";
 import {
-  hasOfflineBoundDevices,
-  OFFLINE_RECONNECT_INTERVAL_MS,
-  setUserOperationInProgress,
-  tryReconnectOfflineDevices,
-} from "@/lib/reconnectOfflineDevices";
-import {
   fromProtocolGear,
   fromProtocolPumpMode,
   MAX_GEAR,
@@ -292,15 +286,6 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     if (R?.connected && R.deviceId) void queryDeviceStatusAndUpdateStore(R.deviceId, "R");
   }, []);
 
-  useEffect(() => {
-    if (!isBleSupported()) return;
-    if (!hasOfflineBoundDevices()) return;
-    const timer = window.setInterval(() => {
-      tryReconnectOfflineDevices({ onlyOffline: true });
-    }, OFFLINE_RECONNECT_INTERVAL_MS);
-    return () => window.clearInterval(timer);
-  }, []);
-
   // 旧的 500ms 轮询 updateRunningState 已删除：会话状态由 pumpSessionLifecycle（基于 deviceStore 订阅 + 边缘触发）统一推进。
 
   useEffect(() => {
@@ -385,30 +370,25 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     const scene: 0 | 1 = aiMode ? 1 : 0;
     setPumpAgentUploadOperationSource("both", "app");
     let anyFailed = false;
-    setUserOperationInProgress(true);
-    try {
-      for (const it of items) {
-        const { side, deviceId, modeB1, gearB1, workState } = it;
-        if (nextStart === 1 && workState !== 0x00) continue;
-        if (nextStart === 0 && workState !== 0x01) continue;
-        if (nextStart === 0) markPumpAgentUploadProcessStepPause(side);
-        const ok = await sendB1WithRetry(
-          deviceId,
-          nextStart,
-          modeB1,
-          gearB1,
-          scene,
-        );
-        if (!ok) {
-          anyFailed = true;
-          continue;
-        }
-        persistPumpSnapshot(side, modeB1, gearB1, nextStart === 1 ? 0x01 : 0x00, scene);
-        if (side === "L") setLeft((prev) => ({ ...prev, gear: fromProtocolGear(gearB1) }));
-        else setRight((prev) => ({ ...prev, gear: fromProtocolGear(gearB1) }));
+    for (const it of items) {
+      const { side, deviceId, modeB1, gearB1, workState } = it;
+      if (nextStart === 1 && workState !== 0x00) continue;
+      if (nextStart === 0 && workState !== 0x01) continue;
+      if (nextStart === 0) markPumpAgentUploadProcessStepPause(side);
+      const ok = await sendB1WithRetry(
+        deviceId,
+        nextStart,
+        modeB1,
+        gearB1,
+        scene,
+      );
+      if (!ok) {
+        anyFailed = true;
+        continue;
       }
-    } finally {
-      setUserOperationInProgress(false);
+      persistPumpSnapshot(side, modeB1, gearB1, nextStart === 1 ? 0x01 : 0x00, scene);
+      if (side === "L") setLeft((prev) => ({ ...prev, gear: fromProtocolGear(gearB1) }));
+      else setRight((prev) => ({ ...prev, gear: fromProtocolGear(gearB1) }));
     }
     if (!anyFailed) {
       setSessionState(nextStart === 1 ? "running" : "paused");

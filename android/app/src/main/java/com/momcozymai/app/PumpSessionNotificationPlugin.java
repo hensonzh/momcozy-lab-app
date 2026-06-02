@@ -1,10 +1,7 @@
 package com.momcozymai.app;
 
 import android.Manifest;
-import android.content.Intent;
 import android.os.Build;
-
-import androidx.core.content.ContextCompat;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -32,11 +29,7 @@ public class PumpSessionNotificationPlugin extends Plugin {
     public void start(PluginCall call) {
         String state = normalizeState(call.getString("state"));
         int processAll = clampProcess(call.getInt("processAll", 0));
-        Intent intent = new Intent(getContext(), PumpSessionForegroundService.class);
-        intent.setAction(PumpSessionForegroundService.ACTION_START_OR_UPDATE);
-        intent.putExtra(PumpSessionForegroundService.EXTRA_STATE, state);
-        intent.putExtra(PumpSessionForegroundService.EXTRA_PROCESS_ALL, processAll);
-        ContextCompat.startForegroundService(getContext(), intent);
+        PumpSessionNativeController.updateSession(getContext(), state, processAll);
         call.resolve();
     }
 
@@ -47,9 +40,7 @@ public class PumpSessionNotificationPlugin extends Plugin {
 
     @PluginMethod
     public void stop(PluginCall call) {
-        Intent intent = new Intent(getContext(), PumpSessionForegroundService.class);
-        intent.setAction(PumpSessionForegroundService.ACTION_STOP);
-        getContext().startService(intent);
+        PumpSessionNativeController.stopAll(getContext());
         call.resolve();
     }
 

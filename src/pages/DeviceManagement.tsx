@@ -26,7 +26,6 @@ import {
   disconnect as bleDisconnect,
 } from "@/lib/ble";
 import { reportDeviceInfoAfterProtocolConfigured } from "@/lib/deviceInfoReport";
-import { tryReconnectOfflineDevices } from "@/lib/reconnectOfflineDevices";
 import { cn } from "@/lib/utils";
 import { devices as deviceData } from "@/data/mockData";
 import type { DeviceInfo } from "@/data/mockData";
@@ -205,19 +204,6 @@ const DeviceManagement: React.FC = () => {
     };
     return deviceStore.subscribe(syncFromStore);
   }, []);
-
-  /** 进入「智能设备」页时：有绑定且离线则直连重连（不扫描） */
-  React.useEffect(() => {
-    if (!isBleSupported()) return;
-    tryReconnectOfflineDevices({ onlyOffline: true });
-  }, []);
-
-  /** 打开设备信息 Sheet 时：再次执行与启动时相同的绑定设备直连逻辑 */
-  React.useEffect(() => {
-    if (!deviceInfoOpen) return;
-    if (!isBleSupported()) return;
-    tryReconnectOfflineDevices({ onlyOffline: true });
-  }, [deviceInfoOpen]);
 
   /** 优先使用已绑定设备（含 BLE 离线，卡片显示「离线」+ 置灰）；无绑定时再回退 mock，便于未接真机演示 */
   const leftDevice = connectedDevices.L ?? deviceData.find((d) => d.side === "L") ?? null;
