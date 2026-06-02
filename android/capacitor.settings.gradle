@@ -13,6 +13,3 @@ project(':capacitor-preferences').projectDir = new File('../node_modules/@capaci
 
 include ':capgo-capacitor-speech-recognition'
 project(':capgo-capacitor-speech-recognition').projectDir = new File('../node_modules/@capgo/capacitor-speech-recognition/android')
-
-include ':capgo-native-audio'
-project(':capgo-native-audio').projectDir = new File('../node_modules/@capgo/native-audio/android')
