@@ -61,6 +61,11 @@ import {
   CHAT_BUBBLE_VOICE_MAX_CHARS,
   stopChatBubblePlayback,
 } from "@/lib/chatBubbleTtsPlayback";
+import {
+  appendTextRenderItemBeforeAgUiArtifacts,
+  richTextPayloadHasAgUiArtifact,
+  streamItemHasAgUiArtifact,
+} from "@/lib/chatStreamRenderItems";
 import { workProgressSummary, type WorkProgressTone } from "@/lib/agUiWorkProgress";
 import {
   playFocusPlainTextVoice,
@@ -219,18 +224,23 @@ function extractSentChatImagePreviews(msg: ChatMessage): SentChatImagePreview[] 
   });
 }
 
-function richTextPayloadHasAgUiArtifact(payload?: ChatRichTextPayload | null): boolean {
+function richTextPayloadHasFormLikeAgUiArtifact(payload?: ChatRichTextPayload | null): boolean {
   if (!payload || !Array.isArray(payload.action)) return false;
   return payload.action.some((action) => {
     if (!action || typeof action !== "object" || Array.isArray(action)) return false;
     const rec = action as Record<string, unknown>;
     if (rec.kind !== "ag_ui_artifact") return false;
-    return Boolean(rec.form || rec.card || rec.ticket);
+    const artifactType = String(rec.artifact_type ?? "")
+      .trim()
+      .replace(/-/g, "_");
+    return Boolean(
+      rec.form ||
+        rec.ticket ||
+        artifactType === "form" ||
+        artifactType === "support_ticket" ||
+        artifactType === "support_ticket_draft",
+    );
   });
-}
-
-function streamItemHasAgUiArtifact(item: ChatStreamRenderItem): boolean {
-  return item.kind === "rich" && richTextPayloadHasAgUiArtifact(item.payload);
 }
 
 function messageHasAgUiArtifact(msg: ChatMessage): boolean {
@@ -266,6 +276,24 @@ function clearQuickRepliesFromMessages(messages: ChatMessage[]): ChatMessage[] {
     const { quickReplies: _quickReplies, ...rest } = message;
     return rest;
   });
+}
+
+function clearQuickRepliesFromMessage(message: ChatMessage): ChatMessage {
+  if (!message.quickReplies) return message;
+  const { quickReplies: _quickReplies, ...rest } = message;
+  return rest;
+}
+
+const AG_UI_ARTIFACT_AFTER_TEXT_CLASS = "mt-3.5";
+const AG_UI_ARTIFACT_STACK_OFFSET_CLASS = "mt-2";
+
+function agUiArtifactSpacingClass(
+  hasAgUiArtifact: boolean,
+  hasPreviousContent: boolean,
+  layout: "inner" | "stack" = "inner",
+): string | false {
+  if (!hasAgUiArtifact || !hasPreviousContent) return false;
+  return layout === "stack" ? AG_UI_ARTIFACT_STACK_OFFSET_CLASS : AG_UI_ARTIFACT_AFTER_TEXT_CLASS;
 }
 
 function AgentHubQuickReplies({
@@ -699,6 +727,7 @@ const AgentHub: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>(hubInitialMessages);
   const lastAgUiArtifactAnchorKeyRef = useRef<string | null>(latestAgUiArtifactAnchorKey(hubInitialMessages));
   const pendingAgUiArtifactPositionRef = useRef(false);
+  const pendingAgUiArtifactFormLikeRef = useRef(false);
   const [input, setInput] = useState("");
   const inputRef = useRef(input);
   useEffect(() => {
@@ -808,8 +837,10 @@ const AgentHub: React.FC = () => {
   const mainStreamingReplyIdRef = useRef<string | null>(null);
   const mainStreamMergedAnswerRef = useRef("");
   const mainStreamMergedThinkingRef = useRef("");
-  /** rich_text 暂存，用于 onDone 自动播报快照 */
+  /** 待延迟渲染的 artifact rich_text。 */
   const mainPendingRichTextRef = useRef<ChatRichTextPayload | null>(null);
+  /** rich_text 快照，用于 onDone 自动播报。 */
+  const mainRichTextForVoiceRef = useRef<ChatRichTextPayload | null>(null);
   const mainNoVisibleResponseTimerRef = useRef<number | null>(null);
   const mainStreamFollowTailRef = useRef(false);
   const suppressFollowTailReleaseUntilRef = useRef(0);
@@ -961,6 +992,8 @@ const AgentHub: React.FC = () => {
     mainStreamMergedAnswerRef.current = "";
     mainStreamMergedThinkingRef.current = "";
     mainPendingRichTextRef.current = null;
+    mainRichTextForVoiceRef.current = null;
+    pendingAgUiArtifactFormLikeRef.current = false;
     awaitingHubBottomReplyRef.current = false;
     pendingHistoryScrollRestoreRef.current = null;
     userPinnedToTailRef.current = true;
@@ -1243,6 +1276,8 @@ const AgentHub: React.FC = () => {
   const tryFinalizeMainReply = (replyId: string) => {
     clearMainNoVisibleResponseTimer();
     mainPendingRichTextRef.current = null;
+    mainRichTextForVoiceRef.current = null;
+    pendingAgUiArtifactFormLikeRef.current = false;
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
     window.setTimeout(() => {
@@ -1349,18 +1384,6 @@ const AgentHub: React.FC = () => {
     if (typeof rec.type === "string" && rec.type.trim()) return rec.type.trim().toUpperCase();
     if (typeof rec.event === "string" && rec.event.trim()) return rec.event.trim().toLowerCase();
     return "";
-  };
-
-  const appendTextRenderItem = (items: ChatStreamRenderItem[] | undefined, text: string): ChatStreamRenderItem[] => {
-    if (!text) return items ?? [];
-    const list = [...(items ?? [])];
-    const last = list.at(-1);
-    if (last?.kind === "text") {
-      list[list.length - 1] = { kind: "text", text: last.text + text };
-      return list;
-    }
-    list.push({ kind: "text", text });
-    return list;
   };
 
   const compactHospitalBagCartFollowupText = (text: string): string => {
@@ -1571,7 +1594,7 @@ const AgentHub: React.FC = () => {
   };
 
   /**
-   * ag-ui WebSocket 流：按协议合并正文并立刻写入对话泡。
+   * ag-ui WebSocket 流：正文即时写入，artifact 等最终文本开始后再追加。
    */
   const handleLiveMainStreamMessage = (
     replyId: string,
@@ -1587,40 +1610,86 @@ const AgentHub: React.FC = () => {
       }
       const eventType = resolveEventTag(data);
       const rich = parseChatRichTextFromSseData(data);
+      const richHasAgUiArtifact = richTextPayloadHasAgUiArtifact(rich);
       const incomingAgUiArtifact =
         eventType === "ARTIFACT_CREATED" ||
         eventType === "artifact_created" ||
-        richTextPayloadHasAgUiArtifact(rich);
+        richHasAgUiArtifact;
       if (incomingAgUiArtifact) {
         pendingAgUiArtifactPositionRef.current = true;
         mainStreamFollowTailRef.current = false;
         userPinnedToTailRef.current = false;
         scrollTailAfterHubSendRef.current = false;
       }
+      const rememberRichTextForVoice = (payload: ChatRichTextPayload) => {
+        const merged = mainRichTextForVoiceRef.current
+          ? mergePendingRichTextPayload(mainRichTextForVoiceRef.current, payload)
+          : payload;
+        mainRichTextForVoiceRef.current = merged;
+        if (autoVoiceRealtimeSessionRef.current?.replyId === replyId) {
+          autoVoiceRealtimeSessionRef.current.lastRichText = merged;
+        }
+      };
+      const stagePendingAgUiArtifactRichText = (payload: ChatRichTextPayload, formLike: boolean) => {
+        pendingRichTextRef.current = pendingRichTextRef.current
+          ? mergePendingRichTextPayload(pendingRichTextRef.current, payload)
+          : payload;
+        pendingAgUiArtifactFormLikeRef.current =
+          pendingAgUiArtifactFormLikeRef.current ||
+          formLike ||
+          richTextPayloadHasFormLikeAgUiArtifact(payload);
+        rememberRichTextForVoice(payload);
+      };
+      const flushPendingAgUiArtifactRichText = () => {
+        const pendingRichText = pendingRichTextRef.current;
+        if (!pendingRichText) return false;
+        const formLike =
+          pendingAgUiArtifactFormLikeRef.current ||
+          richTextPayloadHasFormLikeAgUiArtifact(pendingRichText);
+        pendingAgUiArtifactPositionRef.current = true;
+        setMessages((prev) =>
+          prev.map((m) => {
+            if (m.id !== replyId) return m;
+            const next: ChatMessage = {
+              ...m,
+              richText: m.richText ? mergePendingRichTextPayload(m.richText, pendingRichText) : pendingRichText,
+              streamRenderItems: appendRichRenderItem(m.streamRenderItems, pendingRichText),
+            };
+            return formLike ? clearQuickRepliesFromMessage(next) : next;
+          }),
+        );
+        pendingRichTextRef.current = null;
+        pendingAgUiArtifactFormLikeRef.current = false;
+        return true;
+      };
       const side = applyAgUiStreamSideEffects(replyId, data, setMessages, {
         pendingRichTextRef,
+        deferAgUiArtifacts: true,
+        onAgUiArtifactRichText: (payload, meta) => {
+          stagePendingAgUiArtifactRichText(payload, meta.formLike);
+        },
         onHospitalBagCartUpdate: (groups) => {
           setHospitalBagCartGroups(cloneHospitalBagCartGroups(groups));
         },
       });
       if (rich || side.didUpdate) clearMainNoVisibleResponseTimer();
       if (rich) {
-        const mergedRichText = mergePendingRichTextPayload(pendingRichTextRef.current, rich);
-        pendingRichTextRef.current = mergedRichText;
-        if (autoVoiceRealtimeSessionRef.current?.replyId === replyId) {
-          autoVoiceRealtimeSessionRef.current.lastRichText = mergedRichText;
+        if (richHasAgUiArtifact) {
+          stagePendingAgUiArtifactRichText(rich, richTextPayloadHasFormLikeAgUiArtifact(rich));
+        } else {
+          rememberRichTextForVoice(rich);
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === replyId
+                ? {
+                    ...m,
+                    richText: m.richText ? mergePendingRichTextPayload(m.richText, rich) : rich,
+                    streamRenderItems: appendRichRenderItem(m.streamRenderItems, rich),
+                  }
+                : m,
+            ),
+          );
         }
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === replyId
-              ? {
-                  ...m,
-                  richText: m.richText ? mergePendingRichTextPayload(m.richText, rich) : rich,
-                  streamRenderItems: appendRichRenderItem(m.streamRenderItems, rich),
-                }
-              : m,
-          ),
-        );
       }
       if (eventType === "CUSTOM" && typeof data === "object" && data != null) {
         if (applyThinkingStatusFromCustomEvent(replyId, data as Record<string, unknown>, mergedThinkingRef)) {
@@ -1684,12 +1753,15 @@ const AgentHub: React.FC = () => {
           if (delta) {
             next = {
               ...next,
-              streamRenderItems: appendTextRenderItem(next.streamRenderItems, delta),
+              streamRenderItems: appendTextRenderItemBeforeAgUiArtifacts(next.streamRenderItems, delta),
             };
           }
           return next;
         }),
       );
+      if (mergedAnswerRef.current.trim()) {
+        flushPendingAgUiArtifactRichText();
+      }
     };
   };
 
@@ -1741,6 +1813,8 @@ const AgentHub: React.FC = () => {
     setMessages((prev) => [...clearQuickRepliesFromMessages(prev), ...(showUserMessage ? [userMsg] : []), replyPlaceholder]);
     if (opts?.purgeStagedImagesAfterAttach) purgeHubStagedUploadedImages();
     mainPendingRichTextRef.current = null;
+    mainRichTextForVoiceRef.current = null;
+    pendingAgUiArtifactFormLikeRef.current = false;
     clearMainNoVisibleResponseTimer();
     mainChatCancelRef.current?.();
     mainStreamingReplyIdRef.current = null;
@@ -1767,6 +1841,8 @@ const AgentHub: React.FC = () => {
         mainStreamFollowTailRef.current = false;
       }, 300);
       mainPendingRichTextRef.current = null;
+      mainRichTextForVoiceRef.current = null;
+      pendingAgUiArtifactFormLikeRef.current = false;
       mainStreamMergedAnswerRef.current = "";
       mainStreamMergedThinkingRef.current = "";
       setMessages((prev) =>
@@ -1794,7 +1870,7 @@ const AgentHub: React.FC = () => {
           ),
         );
         const mergedSnap = mainStreamMergedAnswerRef.current;
-        const richSnap = mainPendingRichTextRef.current;
+        const richSnap = mainRichTextForVoiceRef.current ?? mainPendingRichTextRef.current;
         window.setTimeout(() => {
           tryFinalizeMainReply(replyId);
           mainStreamingReplyIdRef.current = null;
@@ -1837,6 +1913,8 @@ const AgentHub: React.FC = () => {
         clearMainNoVisibleResponseTimer();
         void stopCurrentBubblePlayback();
         mainPendingRichTextRef.current = null;
+        mainRichTextForVoiceRef.current = null;
+        pendingAgUiArtifactFormLikeRef.current = false;
         mainStreamMergedAnswerRef.current = "";
         mainStreamMergedThinkingRef.current = "";
         mainChatCancelRef.current = null;
@@ -2378,6 +2456,8 @@ const AgentHub: React.FC = () => {
     mainStreamingReplyIdRef.current = null;
     mainStreamFollowTailRef.current = false;
     mainPendingRichTextRef.current = null;
+    mainRichTextForVoiceRef.current = null;
+    pendingAgUiArtifactFormLikeRef.current = false;
     mainStreamMergedAnswerRef.current = "";
     mainStreamMergedThinkingRef.current = "";
     void stopCurrentBubblePlayback();
@@ -2983,7 +3063,10 @@ const AgentHub: React.FC = () => {
                             return (
                               <div
                                 key={`${msg.id}-stream-${i}`}
-                                className={itemHasAgUiArtifact ? artifactBubbleShell : bubbleShell}
+                                className={cn(
+                                  itemHasAgUiArtifact ? artifactBubbleShell : bubbleShell,
+                                  agUiArtifactSpacingClass(itemHasAgUiArtifact, i > 0, "stack"),
+                                )}
                                 data-ag-ui-artifact-anchor={itemHasAgUiArtifact ? agUiArtifactAnchorKey(msg.id, `stream-${i}`) : undefined}
                               >
                                 {item.kind === "text" ? (
@@ -3001,7 +3084,10 @@ const AgentHub: React.FC = () => {
                           })}
                           {msg.richText && !orderedMainHasRich ? (
                             <div
-                              className={richTextHasAgUiArtifactForMsg ? artifactBubbleShell : bubbleShell}
+                              className={cn(
+                                richTextHasAgUiArtifactForMsg ? artifactBubbleShell : bubbleShell,
+                                agUiArtifactSpacingClass(richTextHasAgUiArtifactForMsg, orderedMainItems.length > 0, "stack"),
+                              )}
                               data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
                             >
                               <AgentHubRichTextBlock
@@ -3040,7 +3126,10 @@ const AgentHub: React.FC = () => {
                         ))}
                           {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
                             <div
-                              className={richTextHasAgUiArtifactForMsg ? artifactBubbleShell : bubbleShell}
+                              className={cn(
+                                richTextHasAgUiArtifactForMsg ? artifactBubbleShell : bubbleShell,
+                                agUiArtifactSpacingClass(richTextHasAgUiArtifactForMsg, segments.length > 0, "stack"),
+                              )}
                               data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
                             >
                               <AgentHubRichTextBlock
@@ -3117,7 +3206,11 @@ const AgentHub: React.FC = () => {
                             return (
                               <div
                                 key={`${msg.id}-ordered-${i}`}
-                                className={cn(i > 0 && "mt-2")}
+                                className={cn(
+                                  itemHasAgUiArtifact
+                                    ? agUiArtifactSpacingClass(itemHasAgUiArtifact, i > 0)
+                                    : i > 0 && "mt-2",
+                                )}
                                 data-ag-ui-artifact-anchor={itemHasAgUiArtifact ? agUiArtifactAnchorKey(msg.id, `stream-${i}`) : undefined}
                               >
                                 {item.kind === "text" ? (
@@ -3135,7 +3228,11 @@ const AgentHub: React.FC = () => {
                           })}
                           {msg.richText && !orderedMainHasRich ? (
                             <div
-                              className={cn(orderedMainItems.length > 0 && "mt-2")}
+                              className={cn(
+                                richTextHasAgUiArtifactForMsg
+                                  ? agUiArtifactSpacingClass(richTextHasAgUiArtifactForMsg, orderedMainItems.length > 0)
+                                  : orderedMainItems.length > 0 && "mt-2",
+                              )}
                               data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
                             >
                               <AgentHubRichTextBlock
@@ -3152,7 +3249,10 @@ const AgentHub: React.FC = () => {
                           {/* 兼容历史消息：无顺序片段时沿用旧渲染 */}
                           {msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") && msg.richText ? (
                             <div
-                              className={cn(msg.content.trim() && "mb-2")}
+                              className={cn(
+                                msg.content.trim() &&
+                                  (richTextHasAgUiArtifactForMsg ? "mb-3.5" : "mb-2"),
+                              )}
                               data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
                             >
                               <AgentHubRichTextBlock
@@ -3173,7 +3273,11 @@ const AgentHub: React.FC = () => {
                         ) : null}
                           {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
                             <div
-                              className={cn(msg.content.trim() && "mt-2")}
+                              className={cn(
+                                richTextHasAgUiArtifactForMsg
+                                  ? agUiArtifactSpacingClass(richTextHasAgUiArtifactForMsg, Boolean(msg.content.trim()))
+                                  : msg.content.trim() && "mt-2",
+                              )}
                               data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
                             >
                               <AgentHubRichTextBlock

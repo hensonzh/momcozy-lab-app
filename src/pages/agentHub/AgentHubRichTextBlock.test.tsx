@@ -228,5 +228,6 @@ describe("AgentHubRichTextBlock birth journey plan card", () => {
     expect(screen.getByText("孕28周-36周")).toBeVisible();
     expect(screen.getByText("把入院准备收拢。")).toBeVisible();
     expect(screen.getByText("确认待产包。")).toBeVisible();
+    expect(upcomingSummary!.nextElementSibling).toHaveClass("birth-journey-phase-expanded-content");
   });
 });
