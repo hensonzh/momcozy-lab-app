@@ -1,14 +1,7 @@
-import { Capacitor } from "@capacitor/core";
-import { BleClient } from "@capacitor-community/bluetooth-le";
+import { Capacitor, registerPlugin, type PluginListenerHandle } from "@capacitor/core";
 import {
   buildAck,
-  buildB1SetPumpParams,
-  buildBFEndRun,
-  buildFEPowerOff,
-  buildE1QueryDeviceStatus,
-  buildF0GetDeviceInfo,
   buildF1SetUserParams,
-  buildF2SetRtc,
   getCidFromReqPacket,
   parseFrame,
   parseBFEndRunResponse,
@@ -18,10 +11,6 @@ import {
   parseD5Letdown,
   parseD6Battery,
   parse80RealtimeMilk,
-  parseE1DeviceStatus,
-  parseF0DeviceInfo,
-  e1PumpModeToB1Mode,
-  e1GearToB1Gear,
   CT_ACK,
   CT_NACK,
   CT_NOTIFY,
@@ -29,7 +18,6 @@ import {
 } from "./bleProtocol";
 import { deviceStore, type DeviceSide } from "./deviceStore";
 import { mergeE1PumpGearCalibWireIntoCalibrationLocalStorage, logCalibrationE1MergeSkippedFromConfigurePump } from "./calibrationLocalStorage";
-import { patchGearMemory } from "./pumpGearMemory";
 import { markPumpAgentUploadDeviceSourceByPacket } from "./pumpAgentUpload";
 import {
   reportDeviceInfoAfterPhysicalDisconnect,
@@ -56,10 +44,10 @@ export const PUMP_CMD_CHAR_UUID = "0000af01-0000-1000-8000-00805f9b34fb";
 /** 主机通知通道（notify）UUID */
 export const PUMP_NOTIFY_CHAR_UUID = "0000af02-0000-1000-8000-00805f9b34fb";
 
-/** True only on native (android/ios); BLE APIs are not reliably available on web. */
+/** True only on Android; BLE is implemented by the app's native Android plugin. */
 export function isBleSupported(): boolean {
   const platform = Capacitor.getPlatform();
-  return platform === "android" || platform === "ios";
+  return platform === "android";
 }
 
 /** Minimal scan result shape for the UI; plugin types are used only inside this module. */
@@ -69,8 +57,65 @@ export interface BleScanResult {
   rssi?: number;
 }
 
-function getBleClient(): typeof BleClient {
-  return BleClient;
+interface MmcBlePlugin {
+  initialize(options?: InitializeBleOptions): Promise<void>;
+  requestLEScan(options?: { allowDuplicates?: boolean }): Promise<void>;
+  stopLEScan(): Promise<void>;
+  getConnectedDevices(options?: { services?: string[] }): Promise<{ devices: Array<{ deviceId: string; name?: string }> }>;
+  connect(options: { deviceId: string }): Promise<void>;
+  disconnect(options: { deviceId: string }): Promise<void>;
+  read(options: { deviceId: string; serviceUUID: string; characteristicUUID: string }): Promise<{ value: number[] }>;
+  write(options: { deviceId: string; serviceUUID: string; characteristicUUID: string; value: number[] }): Promise<void>;
+  writeWithoutResponse(options: { deviceId: string; serviceUUID: string; characteristicUUID: string; value: number[] }): Promise<void>;
+  startNotifications(options: { deviceId: string; serviceUUID: string; characteristicUUID: string }): Promise<void>;
+  stopNotifications(options: { deviceId: string; serviceUUID: string; characteristicUUID: string }): Promise<void>;
+  openBluetoothSettings(): Promise<void>;
+  openAppSettings(): Promise<void>;
+  nativeSetPumpParams(options: { deviceId: string; startStop: 0 | 1; mode: 0 | 1 | 2; gear: number; scene: 0 | 1 }): Promise<NativeProtocolReqResult>;
+  nativePowerOff(options: { deviceId: string; reboot?: 0 | 1 }): Promise<NativeProtocolReqResult>;
+  nativeEndRun(options: { deviceId: string }): Promise<NativeProtocolReqResult>;
+  nativeGetDeviceInfo(options: { deviceId: string }): Promise<NativeProtocolReqResult>;
+  nativeSetRtc(options: { deviceId: string; utcSeconds: number }): Promise<NativeProtocolReqResult>;
+  nativeQueryDeviceStatus(options: { deviceId: string }): Promise<NativeProtocolReqResult>;
+  addListener(
+    eventName: "scanResult",
+    listenerFunc: (event: BleScanResult) => void
+  ): Promise<PluginListenerHandle>;
+  addListener(
+    eventName: "notification",
+    listenerFunc: (event: { deviceId: string; serviceUUID: string; characteristicUUID: string; value: number[] }) => void
+  ): Promise<PluginListenerHandle>;
+  addListener(
+    eventName: "disconnected",
+    listenerFunc: (event: { deviceId: string }) => void
+  ): Promise<PluginListenerHandle>;
+}
+
+const MmcBle = registerPlugin<MmcBlePlugin>("MmcBle");
+let nativeScanListener: PluginListenerHandle | null = null;
+let nativeScanActive = false;
+let nativeScanStartPromise: Promise<void> | null = null;
+let nativeScanStopRequested = false;
+const nativeNotifyListeners = new Map<string, PluginListenerHandle>();
+const nativeDisconnectListeners = new Map<string, PluginListenerHandle>();
+
+function characteristicKey(deviceId: string, serviceUUID: string, characteristicUUID: string): string {
+  const normalizeUuid = (uuid: string) =>
+    uuid.length === 4 ? `0000${uuid.toLowerCase()}-0000-1000-8000-00805f9b34fb` : uuid.toLowerCase();
+  return `${deviceId}|${normalizeUuid(serviceUUID)}|${normalizeUuid(characteristicUUID)}`;
+}
+
+function dataViewToByteArray(value: DataView): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < value.byteLength; i++) out.push(value.getUint8(i));
+  return out;
+}
+
+function byteArrayToDataView(value: number[] | Uint8Array): DataView {
+  const bytes = value instanceof Uint8Array ? value : new Uint8Array(value.map((b) => b & 0xff));
+  const copy = new Uint8Array(bytes.byteLength);
+  copy.set(bytes);
+  return new DataView(copy.buffer);
 }
 
 export interface InitializeBleOptions {
@@ -82,8 +127,7 @@ export interface InitializeBleOptions {
  * @throws Error with message if BLE is unavailable or user denies permission.
  */
 export async function initializeBle(options?: InitializeBleOptions): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.initialize(options ?? {});
+  await MmcBle.initialize(options ?? {});
 }
 
 /**
@@ -92,23 +136,56 @@ export async function initializeBle(options?: InitializeBleOptions): Promise<voi
 export async function startLEScan(
   callback: (result: BleScanResult) => void
 ): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.requestLEScan(
-    { allowDuplicates: false },
-    (result) => {
-      callback({
-        device: result.device,
-        localName: result.localName,
-        rssi: result.rssi,
-      });
-    }
-  );
+  nativeScanStopRequested = false;
+  await nativeScanListener?.remove();
+  nativeScanListener = await MmcBle.addListener("scanResult", (result) => {
+    callback({
+      device: result.device,
+      localName: result.localName,
+      rssi: result.rssi,
+    });
+  });
+
+  if (nativeScanActive) return;
+  if (nativeScanStartPromise) {
+    await nativeScanStartPromise;
+    return;
+  }
+
+  nativeScanStartPromise = MmcBle.requestLEScan({ allowDuplicates: false })
+    .then(() => {
+      nativeScanActive = true;
+      if (nativeScanStopRequested) {
+        void stopLEScan();
+      }
+    })
+    .catch(async (error) => {
+      await nativeScanListener?.remove();
+      nativeScanListener = null;
+      throw error;
+    })
+    .finally(() => {
+      nativeScanStartPromise = null;
+    });
+  await nativeScanStartPromise;
 }
 
 /** Stop an ongoing BLE scan. */
 export async function stopLEScan(): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.stopLEScan();
+  nativeScanStopRequested = true;
+  if (nativeScanStartPromise) {
+    try {
+      await nativeScanStartPromise;
+    } catch {
+      // The start path already cleared the listener; keep stop idempotent.
+    }
+  }
+  if (nativeScanActive) {
+    await MmcBle.stopLEScan();
+    nativeScanActive = false;
+  }
+  await nativeScanListener?.remove();
+  nativeScanListener = null;
 }
 
 /**
@@ -118,8 +195,7 @@ export async function stopLEScan(): Promise<void> {
  * and protocol state still need to be rebound to the new JS process.
  */
 export async function getConnectedPumpDevices(): Promise<BleScanResult[]> {
-  const BleClient = getBleClient();
-  const devices = await BleClient.getConnectedDevices([PUMP_SERVICE_UUID]);
+  const { devices } = await MmcBle.getConnectedDevices({ services: [PUMP_SERVICE_UUID] });
   return devices.map((device) => ({
     device: {
       deviceId: device.deviceId,
@@ -394,6 +470,32 @@ export interface SendProtocolReqResult {
   cab: Uint8Array;
 }
 
+interface NativeProtocolReqResult {
+  ct: number;
+  cid: number;
+  value?: number[];
+  snapshotJson?: string;
+}
+
+function nativeProtocolResultToSendResult(result: NativeProtocolReqResult | undefined): SendProtocolReqResult | undefined {
+  if (!result) return undefined;
+  applyNativeSnapshotJson(result.snapshotJson);
+  return {
+    ct: result.ct,
+    cid: result.cid,
+    cab: new Uint8Array(result.value ?? []),
+  };
+}
+
+function applyNativeSnapshotJson(snapshotJson?: string): void {
+  if (!snapshotJson) return;
+  try {
+    deviceStore.replaceSnapshot(JSON.parse(snapshotJson));
+  } catch (error) {
+    console.error("[BLE原生状态] apply snapshot failed:", error);
+  }
+}
+
 export interface SendProtocolFrameOptions {
   acceptCts: number[];
   timeoutMs?: number;
@@ -632,24 +734,42 @@ export function subscribeProtocolNotifications(
  * 获取设备信息（F0），连接后 10 秒内发送；带 3s 超时重发，最多 3 次。
  */
 export async function sendDeviceInfoQuery(deviceId: string): Promise<SendProtocolReqResult | undefined> {
-  const packet = buildF0GetDeviceInfo();
-  return sendProtocolReq(deviceId, packet).catch(() => undefined);
+  try {
+    await ensureProtocolNotify(deviceId);
+    const native = await MmcBle.nativeGetDeviceInfo({ deviceId });
+    return nativeProtocolResultToSendResult(native);
+  } catch (error) {
+    console.error("[BLE原生F0] nativeGetDeviceInfo failed:", error);
+    return undefined;
+  }
 }
 
 /**
  * 设置 RTC 时间（F2），每次连接都应执行；用于在查询 E1 前同步主机时间。
  */
 export async function sendSetRtc(deviceId: string): Promise<SendProtocolReqResult | undefined> {
-  const packet = buildF2SetRtc(Math.floor(Date.now() / 1000));
-  return sendProtocolReq(deviceId, packet).catch(() => undefined);
+  try {
+    await ensureProtocolNotify(deviceId);
+    const native = await MmcBle.nativeSetRtc({ deviceId, utcSeconds: Math.floor(Date.now() / 1000) });
+    return nativeProtocolResultToSendResult(native);
+  } catch (error) {
+    console.error("[BLE原生F2] nativeSetRtc failed:", error);
+    return undefined;
+  }
 }
 
 /**
  * 查询设备状态（E1），返回 ACK 含电量等；带 3s 超时重发。
  */
 export async function sendDeviceStatusQuery(deviceId: string): Promise<SendProtocolReqResult | undefined> {
-  const packet = buildE1QueryDeviceStatus();
-  return sendProtocolReq(deviceId, packet).catch(() => undefined);
+  try {
+    await ensureProtocolNotify(deviceId);
+    const native = await MmcBle.nativeQueryDeviceStatus({ deviceId });
+    return nativeProtocolResultToSendResult(native);
+  } catch (error) {
+    console.error("[BLE原生E1] nativeQueryDeviceStatus failed:", error);
+    return undefined;
+  }
 }
 
 /**
@@ -666,35 +786,11 @@ export async function queryBatteryAndUpdateStore(deviceId: string, side: DeviceS
 export async function queryDeviceStatusAndUpdateStore(deviceId: string, side: DeviceSide): Promise<void> {
   const res = await sendDeviceStatusQuery(deviceId);
   if (res === undefined || res === null) return;
-  if (res.cid !== 0xe1 || !res.cab) return;
-  const parsed = parseE1DeviceStatus(res.cab);
-  if (!parsed) return;
+  if (res.cid !== 0xe1 || res.ct !== CT_ACK) return;
   markPumpAgentUploadDeviceSourceByPacket(0xe1, deviceId);
   const current = deviceStore.get()[side];
   if (current?.deviceId !== deviceId) return;
-  const scene: 0 | 1 = parsed.scene !== 0 ? 1 : 0;
-  const modeB1 = e1PumpModeToB1Mode(parsed.pumpMode) as 0 | 1 | 2;
-  const gearB1 = e1GearToB1Gear(parsed.gear);
-  const memPatch = patchGearMemory(current, scene, modeB1, gearB1);
-  // 必须把 lastDeviceWorkstateTs 与 pumpWorkState 合并到同一次 setDevice 写入，
-  // 否则会出现「脏 pumpWorkState + 新 ts」的中间态，被 pumpSessionLifecycle 误判为 running 然后立刻回退 paused。
-  const workstateTs = toUtcIsoFromDeviceSeconds(parsed.bootTime);
-  deviceStore.setDevice(side, {
-    ...current,
-    ...memPatch,
-    battery: parsed.batteryPct,
-    pumpMode: modeB1,
-    gear: gearB1,
-    pumpWorkState: parsed.workState,
-    pumpScene: scene,
-    duration: parsed.duration,
-    pumpGearCalib: {
-      stimulate: parsed.pumpGearCalibStimulate,
-      deep: parsed.pumpGearCalibDeep
-    },
-    ...(workstateTs ? { lastDeviceWorkstateTs: workstateTs } : null),
-  });
-  console.log(`[E1指令处理] 更新${side}侧设备状态: 运行状态=${parsed.workState === 0x01 ? '运行' : '暂停'}, 原始场景=${parsed.scene}, 归一化场景=${scene === 1 ? 'AI' : '手动'}, 原始pumpMode=${parsed.pumpMode}, 归一化pumpMode=${modeB1}, 时长=${parsed.duration}秒, 滴定挡位=${parsed.pumpGearCalibStimulate}/${parsed.pumpGearCalibDeep}`);
+  console.log(`[E1原生状态] 已由 Android 原生更新${side}侧设备状态: workState=${current.pumpWorkState ?? "null"}, scene=${current.pumpScene ?? "null"}, mode=${current.pumpMode ?? "null"}, gear=${current.gear ?? "null"}, duration=${current.duration ?? "null"}`);
 }
 
 /**
@@ -746,12 +842,7 @@ export async function configurePumpAfterBleConnect(
 ): Promise<void> {
   const res = await sendDeviceInfoQuery(deviceId);
   if (res === undefined || res === null) return;
-  if (res.cid !== 0xf0 || !res.cab || res.cab.length < 4) return;
-  const parsed = parseF0DeviceInfo(res.cab);
-  if (!parsed) return;
-  const current = deviceStore.get()[side];
-  if (current?.deviceId !== deviceId) return;
-  deviceStore.setDevice(side, { ...current, firmware: parsed.softwareVersion });
+  if (res.cid !== 0xf0 || res.ct !== CT_ACK) return;
   await queryBatteryAndUpdateStore(deviceId, side);
 
   /**
@@ -802,8 +893,14 @@ export async function sendB1SetPumpParams(
   gear: number,
   scene: 0 | 1 = 1
 ): Promise<SendProtocolReqResult | undefined> {
-  const packet = buildB1SetPumpParams(startStop, mode, gear, scene);
-  return sendProtocolReq(deviceId, packet).catch(() => undefined);
+  try {
+    await ensureProtocolNotify(deviceId);
+    const native = await MmcBle.nativeSetPumpParams({ deviceId, startStop, mode, gear, scene });
+    return nativeProtocolResultToSendResult(native);
+  } catch (error) {
+    console.error("[BLE原生B1] nativeSetPumpParams failed:", error);
+    return undefined;
+  }
 }
 
 /**
@@ -812,8 +909,14 @@ export async function sendB1SetPumpParams(
 export async function sendBFEndRun(
   deviceId: string
 ): Promise<SendProtocolReqResult | undefined> {
-  const packet = buildBFEndRun();
-  return sendProtocolReq(deviceId, packet).catch(() => undefined);
+  try {
+    await ensureProtocolNotify(deviceId);
+    const native = await MmcBle.nativeEndRun({ deviceId });
+    return nativeProtocolResultToSendResult(native);
+  } catch (error) {
+    console.error("[BLE原生BF] nativeEndRun failed:", error);
+    return undefined;
+  }
 }
 
 /**
@@ -823,8 +926,14 @@ export async function sendFEPowerOff(
   deviceId: string,
   reboot: 0 | 1 = 0
 ): Promise<SendProtocolReqResult | undefined> {
-  const packet = buildFEPowerOff(reboot);
-  return sendProtocolReq(deviceId, packet).catch(() => undefined);
+  try {
+    await ensureProtocolNotify(deviceId);
+    const native = await MmcBle.nativePowerOff({ deviceId, reboot });
+    return nativeProtocolResultToSendResult(native);
+  } catch (error) {
+    console.error("[BLE原生FE] nativePowerOff failed:", error);
+    return undefined;
+  }
 }
 
 /**
@@ -994,29 +1103,39 @@ export async function connect(
   deviceId: string,
   onDisconnect: () => void
 ): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.connect(deviceId, () => {
+  await nativeDisconnectListeners.get(deviceId)?.remove();
+  const handle = await MmcBle.addListener("disconnected", (event) => {
+    if (event.deviceId !== deviceId) return;
+    nativeDisconnectListeners.delete(deviceId);
+    void handle.remove();
     onDisconnect();
     reportDeviceInfoAfterPhysicalDisconnect();
   });
+  nativeDisconnectListeners.set(deviceId, handle);
+  try {
+    await MmcBle.connect({ deviceId });
+  } catch (error) {
+    nativeDisconnectListeners.delete(deviceId);
+    await handle.remove();
+    throw error;
+  }
 }
 
 /** Disconnect a BLE device by ID. */
 export async function disconnect(deviceId: string): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.disconnect(deviceId);
+  await MmcBle.disconnect({ deviceId });
+  await nativeDisconnectListeners.get(deviceId)?.remove();
+  nativeDisconnectListeners.delete(deviceId);
 }
 
 /** Open system Bluetooth settings (Android). No-op on iOS/web. */
 export async function openBluetoothSettings(): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.openBluetoothSettings();
+  await MmcBle.openBluetoothSettings();
 }
 
 /** Open app settings (e.g. to grant Bluetooth permission after user denied). */
 export async function openAppSettings(): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.openAppSettings();
+  await MmcBle.openAppSettings();
 }
 
 /**
@@ -1028,8 +1147,8 @@ export async function readCharacteristic(
   serviceUUID: string,
   characteristicUUID: string
 ): Promise<DataView> {
-  const BleClient = getBleClient();
-  return await BleClient.read(deviceId, serviceUUID, characteristicUUID);
+  const { value } = await MmcBle.read({ deviceId, serviceUUID, characteristicUUID });
+  return byteArrayToDataView(value);
 }
 
 /**
@@ -1041,8 +1160,7 @@ export async function writeCharacteristic(
   characteristicUUID: string,
   value: DataView
 ): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.write(deviceId, serviceUUID, characteristicUUID, value);
+  await MmcBle.write({ deviceId, serviceUUID, characteristicUUID, value: dataViewToByteArray(value) });
 }
 
 /**
@@ -1054,8 +1172,7 @@ export async function writeCharacteristicWithoutResponse(
   characteristicUUID: string,
   value: DataView
 ): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.writeWithoutResponse(deviceId, serviceUUID, characteristicUUID, value);
+  await MmcBle.writeWithoutResponse({ deviceId, serviceUUID, characteristicUUID, value: dataViewToByteArray(value) });
 }
 
 /**
@@ -1068,8 +1185,20 @@ export async function startNotifications(
   characteristicUUID: string,
   callback: (value: DataView) => void
 ): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.startNotifications(deviceId, serviceUUID, characteristicUUID, callback);
+  const key = characteristicKey(deviceId, serviceUUID, characteristicUUID);
+  await nativeNotifyListeners.get(key)?.remove();
+  const handle = await MmcBle.addListener("notification", (event) => {
+    if (characteristicKey(event.deviceId, event.serviceUUID, event.characteristicUUID) !== key) return;
+    callback(byteArrayToDataView(event.value));
+  });
+  nativeNotifyListeners.set(key, handle);
+  try {
+    await MmcBle.startNotifications({ deviceId, serviceUUID, characteristicUUID });
+  } catch (error) {
+    nativeNotifyListeners.delete(key);
+    await handle.remove();
+    throw error;
+  }
 }
 
 /** Stop listening to characteristic notifications. */
@@ -1078,8 +1207,10 @@ export async function stopNotifications(
   serviceUUID: string,
   characteristicUUID: string
 ): Promise<void> {
-  const BleClient = getBleClient();
-  await BleClient.stopNotifications(deviceId, serviceUUID, characteristicUUID);
+  await MmcBle.stopNotifications({ deviceId, serviceUUID, characteristicUUID });
+  const key = characteristicKey(deviceId, serviceUUID, characteristicUUID);
+  await nativeNotifyListeners.get(key)?.remove();
+  nativeNotifyListeners.delete(key);
 }
 
 export interface SubscribeCharacteristicOptions {

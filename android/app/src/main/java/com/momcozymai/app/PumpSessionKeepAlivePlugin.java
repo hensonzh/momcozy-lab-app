@@ -30,7 +30,7 @@ public class PumpSessionKeepAlivePlugin extends Plugin {
         call.resolve();
     }
 
-    private static synchronized void acquireWakeLock(Context context, long timeoutMs) {
+    static synchronized void acquireWakeLock(Context context, long timeoutMs) {
         releaseWakeLock();
         final PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         if (powerManager == null) {
@@ -43,7 +43,7 @@ public class PumpSessionKeepAlivePlugin extends Plugin {
         Log.i(TAG, "acquired partial wake lock for " + timeoutMs + "ms");
     }
 
-    private static synchronized void releaseWakeLock() {
+    static synchronized void releaseWakeLock() {
         if (wakeLock == null) return;
         try {
             if (wakeLock.isHeld()) {

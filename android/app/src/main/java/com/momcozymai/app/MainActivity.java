@@ -1,9 +1,14 @@
 package com.momcozymai.app;
 
+import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.getcapacitor.Bridge;
@@ -41,11 +46,9 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        registerPlugin(PumpSessionNotificationPlugin.class);
-        registerPlugin(PumpSessionOverlayPlugin.class);
-        registerPlugin(PumpSessionKeepAlivePlugin.class);
         registerPlugin(BackgroundNotifyPlugin.class);
         registerPlugin(DeviceReminderWebSocketPlugin.class);
+        registerPlugin(MmcBlePlugin.class);
         super.onCreate(savedInstanceState);
         // PumpNotificationChannels.registerAll(this);
         /** 进程内首次创建：仅输出 WorkManager 周期任务状态日志，不在此刷新/入队周期任务。 */
@@ -67,23 +70,27 @@ public class MainActivity extends BridgeActivity {
         }
         handleLaunchNavigationIntent(getIntent());
         disableInAppSystemBack();
+        installNativePumpSessionBridge();
+        installNativeDeviceStateBridge();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         appInForeground = true;
+        PumpSessionNativeController.onAppForegroundChanged(this, true);
     }
 
     @Override
     public void onPause() {
         appInForeground = false;
+        PumpSessionNativeController.onAppForegroundChanged(this, false);
         super.onPause();
     }
 
     @Override
     protected void onUserLeaveHint() {
-        PumpSessionOverlayPlugin.showCachedOverlayIfActive(this);
+        PumpSessionNativeController.showOverlayIfActive(this);
         super.onUserLeaveHint();
     }
 
@@ -128,6 +135,100 @@ public class MainActivity extends BridgeActivity {
                 // Consume Android back gestures/buttons inside this app only.
             }
         });
+    }
+
+    private void installNativePumpSessionBridge() {
+        final Bridge bridge = getBridge();
+        if (bridge == null) return;
+        final WebView wv = bridge.getWebView();
+        if (wv == null) return;
+        wv.addJavascriptInterface(new NativePumpSessionBridge(), "MmcNativePumpSession");
+    }
+
+    private void installNativeDeviceStateBridge() {
+        final Bridge bridge = getBridge();
+        if (bridge == null) return;
+        final WebView wv = bridge.getWebView();
+        if (wv == null) return;
+        wv.addJavascriptInterface(new NativeDeviceStateBridge(), "MmcNativeDeviceState");
+    }
+
+    private final class NativePumpSessionBridge {
+        @JavascriptInterface
+        public void updateSession(String state, int processAll) {
+            mainHandler.post(() -> PumpSessionNativeController.updateSession(MainActivity.this, state, processAll));
+        }
+
+        @JavascriptInterface
+        public void stopSession() {
+            mainHandler.post(() -> PumpSessionNativeController.stopAll(MainActivity.this));
+        }
+
+        @JavascriptInterface
+        public boolean canDrawOverlays() {
+            return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(MainActivity.this);
+        }
+
+        @JavascriptInterface
+        public void openOverlaySettings() {
+            mainHandler.post(() -> {
+                Intent intent = new Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName())
+                );
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            });
+        }
+
+        @JavascriptInterface
+        public boolean hasPostNotificationsPermission() {
+            return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+                    || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED;
+        }
+
+        @JavascriptInterface
+        public String consumePendingNavigateJson() {
+            final PumpNavigationBridge.PendingNavigate n = PumpNavigationBridge.consumePendingNavigate();
+            return "{\"path\":\"" + escapeJson(n.path) + "\",\"autoEndTeardown\":" + n.autoEndTeardown
+                    + ",\"notifyJson\":\"" + escapeJson(n.notifyJson) + "\"}";
+        }
+
+        @JavascriptInterface
+        public void showCompletionNotice() {
+            mainHandler.post(() -> PumpCompletionNotice.show(MainActivity.this));
+        }
+
+        @JavascriptInterface
+        public void showAutoEndNotice(String title, String body, String path, boolean autoEndTeardown) {
+            mainHandler.post(() -> PumpAutoEndNotice.show(MainActivity.this, title, body, path, autoEndTeardown));
+        }
+    }
+
+    private final class NativeDeviceStateBridge {
+        @JavascriptInterface
+        public void updateSnapshotJson(String snapshotJson) {
+            DeviceNativeStateStore.updateSnapshot(snapshotJson);
+        }
+
+        @JavascriptInterface
+        public String getSnapshotJson() {
+            return DeviceNativeStateStore.getSnapshotJson();
+        }
+
+        @JavascriptInterface
+        public void clearSnapshot() {
+            DeviceNativeStateStore.clear();
+        }
+    }
+
+    private static String escapeJson(String value) {
+        if (value == null) return "";
+        return value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r");
     }
 
     private void tryNotifyWebToConsumeNavRecursive() {

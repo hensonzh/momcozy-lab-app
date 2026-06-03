@@ -1,29 +1,11 @@
-import { Capacitor, registerPlugin } from "@capacitor/core";
+import { Capacitor } from "@capacitor/core";
 import { createScopedConsole } from "@/lib/logger";
 import { getProcessAll, subscribeProcessAll } from "@/lib/pumpSessionProgress";
 import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
 import type { SessionState } from "@/pages/pumpSession/pumpSessionModel";
+import { getNativeAndroidPumpSessionBridge } from "@/lib/nativeAndroidPumpSession";
 
 const log = createScopedConsole("PumpSessionNotification");
-
-interface PumpSessionNotificationPlugin {
-  start(options: { state: "running" | "paused"; processAll: number }): Promise<void>;
-  update(options: { state: "running" | "paused"; processAll: number }): Promise<void>;
-  stop(): Promise<void>;
-  requestPermission(): Promise<{ granted: boolean }>;
-  consumePendingNavigate(): Promise<{ path: string; autoEndTeardown: boolean; notifyJson?: string }>;
-  showCompletionNotice(): Promise<void>;
-  showAutoEndNotice(options: {
-    title: string;
-    body: string;
-    path: string;
-    autoEndTeardown: boolean;
-  }): Promise<void>;
-}
-
-const PumpSessionNotification = registerPlugin<PumpSessionNotificationPlugin>(
-  "PumpSessionNotification",
-);
 
 const isAndroidNative = Capacitor.getPlatform() === "android";
 
@@ -45,8 +27,8 @@ async function ensurePermissionIfNeeded(): Promise<boolean> {
   if (permissionChecked) return true;
   permissionChecked = true;
   try {
-    const result = await PumpSessionNotification.requestPermission();
-    if (!result.granted) {
+    const granted = getNativeAndroidPumpSessionBridge()?.hasPostNotificationsPermission?.() ?? false;
+    if (!granted) {
       log.warn("notification permission denied, skip foreground notification");
       return false;
     }
@@ -61,7 +43,7 @@ async function syncNotification(): Promise<void> {
   if (!isAndroidNative) return;
   if (!canNotifyState(currentState)) {
     try {
-      await PumpSessionNotification.stop();
+      getNativeAndroidPumpSessionBridge()?.stopSession?.();
     } catch (error) {
       log.warn("stop notification failed", error);
     }
@@ -71,10 +53,7 @@ async function syncNotification(): Promise<void> {
   const allowed = await ensurePermissionIfNeeded();
   if (!allowed) return;
   try {
-    await PumpSessionNotification.start({
-      state: currentState,
-      processAll: lastProcessAll,
-    });
+    getNativeAndroidPumpSessionBridge()?.updateSession?.(currentState, lastProcessAll);
   } catch (error) {
     log.warn("start/update notification failed", error);
   }
@@ -84,7 +63,7 @@ async function syncNotification(): Promise<void> {
 export async function showPumpCompletionLocalNotice(): Promise<void> {
   if (!isAndroidNative) return;
   try {
-    await PumpSessionNotification.showCompletionNotice();
+    getNativeAndroidPumpSessionBridge()?.showCompletionNotice?.();
   } catch (error) {
     log.warn("showCompletionNotice failed", error);
     throw error;
@@ -102,7 +81,8 @@ export type PumpNotificationPending = {
 export async function consumePumpNotificationPending(): Promise<PumpNotificationPending> {
   if (!isAndroidNative) return { path: null, autoEndTeardown: false, notifyJson: null };
   try {
-    const r = await PumpSessionNotification.consumePendingNavigate();
+    const raw = getNativeAndroidPumpSessionBridge()?.consumePendingNavigateJson?.() ?? "{}";
+    const r = JSON.parse(raw) as { path?: string; autoEndTeardown?: boolean; notifyJson?: string };
     const p = typeof r.path === "string" ? r.path.trim() : "";
     const nj = typeof r.notifyJson === "string" ? r.notifyJson.trim() : "";
     return {
@@ -126,8 +106,7 @@ export async function consumePumpNotificationNavigatePath(): Promise<string | nu
 export async function requestAndroidPostNotificationsPermission(): Promise<boolean> {
   if (!isAndroidNative) return true;
   try {
-    const result = await PumpSessionNotification.requestPermission();
-    return !!result.granted;
+    return !!getNativeAndroidPumpSessionBridge()?.hasPostNotificationsPermission?.();
   } catch (error) {
     log.warn("requestPermission failed", error);
     return false;
@@ -148,12 +127,12 @@ export async function showPumpAutoEndLocalNotice(options: {
     throw new Error("PumpAutoEndNotice: notification permission denied");
   }
   try {
-    await PumpSessionNotification.showAutoEndNotice({
-      title: options.title,
-      body: options.body,
-      path: options.path ?? "/",
-      autoEndTeardown: options.autoEndTeardown !== false,
-    });
+    getNativeAndroidPumpSessionBridge()?.showAutoEndNotice?.(
+      options.title,
+      options.body,
+      options.path ?? "/",
+      options.autoEndTeardown !== false,
+    );
   } catch (error) {
     log.warn("showAutoEndNotice failed", error);
     throw error;
@@ -173,11 +152,10 @@ export function startPumpSessionNotificationBridge(): void {
   subscribeProcessAll(() => {
     lastProcessAll = clampPct(getProcessAll());
     if (!canNotifyState(currentState)) return;
-    PumpSessionNotification.update({
-      state: currentState,
-      processAll: lastProcessAll,
-    }).catch((error) => {
+    try {
+      getNativeAndroidPumpSessionBridge()?.updateSession?.(currentState, lastProcessAll);
+    } catch (error) {
       log.warn("notification progress update failed", error);
-    });
+    }
   });
 }
