@@ -210,6 +210,17 @@ export function resetPumpAgentUploadProcessProgress(): void {
   }
 }
 
+export async function refreshPumpAgentUploadNativeProgressSnapshot(): Promise<void> {
+  if (!isAndroidNative) return;
+  try {
+    const native = await NativePumpAgentUpload.sampleFromSnapshot();
+    applyNativeProgress(native);
+    emitPumpAgentUploadProcessProgress();
+  } catch (error) {
+    console.warn("native progress snapshot refresh failed", error);
+  }
+}
+
 function isPumpLifecycleActive(state: string): boolean {
   return state === "running" || state === "paused";
 }
@@ -757,7 +768,7 @@ export function startPumpAgentUploadService(): void {
   started = true;
   void syncNativePumpAgentConfig();
   if (isAndroidNative) {
-    void NativePumpAgentUpload.sampleFromSnapshot().catch((error) => console.warn("native sample failed", error));
+    void refreshPumpAgentUploadNativeProgressSnapshot();
     void NativePumpAgentUpload.addListener("nativeProcessProgress", (event) => {
       applyNativeProgress(event);
       emitPumpAgentUploadProcessProgress();
