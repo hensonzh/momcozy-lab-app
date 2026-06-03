@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   Activity,
   Bed,
@@ -7,6 +8,7 @@ import {
   ClipboardList,
   Coffee,
   Droplets,
+  HelpCircle,
   HeartPulse,
   Ruler,
   Target,
@@ -30,8 +32,14 @@ import {
   pickMomBabyDeliveryDateYmd,
   postpartumWeekFromDay,
 } from "@/lib/momBabyDelivery";
-import { queryMomBabyInfo, queryMomBabyToday, getPumpInfo } from "@/lib/momPumpTwinAgentApi";
-import { queryLatestGrowth, addGrowthRecord, reviseGrowthRecord, getGrowthHistory } from "@/lib/babyTwinAgentApi";
+import { queryMomBabyInfo, queryMomBabyToday, getPumpInfo, queryPumpMilkRecords } from "@/lib/momPumpTwinAgentApi";
+import {
+  queryLatestGrowth,
+  addGrowthRecord,
+  reviseGrowthRecord,
+  getGrowthHistory,
+  queryFeedingRecords,
+} from "@/lib/babyTwinAgentApi";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 import {
   consumeStatusGrowthHighlightPending,
@@ -53,15 +61,253 @@ const LACTATION_TREND_COLORS = {
   axis: "#8a6742",
 };
 const GROWTH_CHART_COLORS = {
-  actual: "#3f8f78",
-  height: "#5aa899",
-  band: "#d8f3e9",
-  grid: "#dcebe6",
-  axis: "#5f7772",
+  actual: "#7d64aa",
+  height: "#9479c4",
+  band: "#eee6ff",
+  grid: "#eadff8",
+  axis: "#7560a0",
 };
 
 type BabyRecordRow = { date: string; weightKg: number; heightCm: number; headCm: number };
 type StatusDigitalTwinTab = "mom" | "baby";
+type MomStatusPanelId =
+  | "milk-info"
+  | "baby-feed-info"
+  | "breast-info"
+  | "breast-detail"
+  | "postpartum-detail"
+  | "rest-info"
+  | "rest-detail";
+
+const INITIAL_BREAST_HEALTH_SUMMARY = "最近出现涨奶和硬块，伴随按压疼痛";
+const INITIAL_REST_SUMMARY = "最近夜间睡眠被照护和吸奶打断，白天容易疲惫";
+const POSTPARTUM_RECOVERY_PLAN_TITLE = "盆底肌康复训练";
+const POSTPARTUM_RECOVERY_PLAN_STATUS = `正在执行${POSTPARTUM_RECOVERY_PLAN_TITLE}`;
+
+const BREAST_HEALTH_TIMELINE = [
+  {
+    time: "三天前 晚间",
+    title: "轻微涨奶",
+    detail: "右侧乳房有胀感，吸奶后明显缓解。",
+  },
+  {
+    time: "昨天 上午",
+    title: "发现硬块",
+    detail: "左侧外上区域摸到硬块，按压时有疼痛感。",
+  },
+  {
+    time: "今天",
+    title: "持续关注",
+    detail: INITIAL_BREAST_HEALTH_SUMMARY,
+  },
+] as const;
+
+const REST_RECOVERY_TIMELINE = [
+  {
+    time: "三天前 夜间",
+    title: "睡眠连续性较差",
+    detail: "夜间照护后又进行吸奶，连续睡眠约 2 小时。",
+  },
+  {
+    time: "昨天 午后",
+    title: "短时补休",
+    detail: "午后补睡约 30 分钟，醒后疲惫感有所缓解。",
+  },
+  {
+    time: "今天 上午",
+    title: "白天容易疲惫",
+    detail: INITIAL_REST_SUMMARY,
+  },
+] as const;
+
+const POSTPARTUM_RECOVERY_COURSES = [
+  { time: "第 1-2 天", title: "盆底肌唤醒练习", detail: "呼吸配合轻收缩，建立盆底肌发力感" },
+  { time: "第 3-5 天", title: "骨盆稳定训练", detail: "低强度核心稳定动作，帮助恢复骨盆控制" },
+  { time: "第 6-7 天", title: "腰背与肩颈放松", detail: "照护和吸奶后的短时拉伸，缓解腰背疲劳" },
+] as const;
+
+const MomStatusPanelSheet: React.FC<{
+  panel: MomStatusPanelId;
+  onClose: () => void;
+  onAgentPrefill: (prompt: string) => void;
+}> = ({ panel, onClose, onAgentPrefill }) => {
+  const isInfo = panel.endsWith("-info");
+  const isCenteredInfo =
+    panel === "milk-info" || panel === "baby-feed-info" || panel === "breast-info" || panel === "rest-info";
+  const titleMap: Record<MomStatusPanelId, string> = {
+    "milk-info": "今日产出说明",
+    "baby-feed-info": "今日摄入说明",
+    "breast-info": "乳房健康说明",
+    "breast-detail": "乳房健康状态",
+    "postpartum-detail": POSTPARTUM_RECOVERY_PLAN_TITLE,
+    "rest-info": "补能与休息说明",
+    "rest-detail": "补能与休息",
+  };
+  const infoTextMap: Partial<Record<MomStatusPanelId, string>> = {
+    "milk-info": "使用吸奶器产出的奶量，不含亲喂",
+    "baby-feed-info": "妈妈实际记录的喂养数据，不包含亲喂",
+    "breast-info": "通过您和智能体的日常对话采集的乳房健康记录",
+    "rest-info": "所有信息来自智能体的收集。",
+  };
+  const infoText = infoTextMap[panel] ?? "所有信息来自智能体的收集。";
+
+  if (isCenteredInfo) {
+    return (
+      <>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-black/35 backdrop-blur-sm"
+          onClick={onClose}
+        />
+        <motion.section
+          role="dialog"
+          aria-modal="true"
+          aria-label={titleMap[panel]}
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          className="pointer-events-none fixed inset-0 z-[51] flex items-center justify-center px-6"
+        >
+          <div className="pointer-events-auto w-full max-w-[360px] rounded-3xl border border-white/70 bg-card px-5 py-4 shadow-2xl">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="text-base font-extrabold text-foreground">{titleMap[panel]}</h3>
+              <button type="button" onClick={onClose} className="rounded-full p-2 text-muted-foreground active:bg-muted">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="rounded-2xl bg-muted/45 px-4 py-3 text-sm font-medium leading-relaxed text-foreground">
+              {infoText}
+            </p>
+          </div>
+        </motion.section>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 bg-black/35 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <motion.section
+        initial={{ y: "100%", opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: "100%", opacity: 0 }}
+        transition={{ type: "spring", damping: 28, stiffness: 300 }}
+        className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-lg rounded-t-3xl border-t border-border/40 bg-card px-5 pt-4 shadow-2xl"
+        style={{ paddingBottom: "max(1.75rem, env(safe-area-inset-bottom))" }}
+      >
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h3 className="text-base font-extrabold text-foreground">{titleMap[panel]}</h3>
+          <button type="button" onClick={onClose} className="rounded-full p-2 text-muted-foreground active:bg-muted">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {isInfo ? (
+          <div className="rounded-2xl bg-muted/45 px-4 py-3 text-sm font-medium leading-relaxed text-foreground">
+            {infoText}
+          </div>
+        ) : null}
+
+        {panel === "breast-detail" ? (
+          <div className="space-y-3">
+            <div className="relative flex flex-col-reverse gap-3">
+              <span aria-hidden="true" className="absolute bottom-3 left-[9px] top-3 w-px bg-[#ffd9c8]" />
+              {BREAST_HEALTH_TIMELINE.map((record, index) => {
+                const isCurrent = index === BREAST_HEALTH_TIMELINE.length - 1;
+                return (
+                  <article key={record.time} className="relative flex gap-3">
+                    <span
+                      aria-hidden="true"
+                      className={`mt-1 h-5 w-5 shrink-0 rounded-full border-2 ${
+                        isCurrent
+                          ? "border-[#b96f55] bg-[#ffd9c8] shadow-[0_0_0_4px_rgba(255,217,200,0.45)]"
+                          : "border-[#ffd9c8] bg-card"
+                      }`}
+                    />
+                    <div className="min-w-0 flex-1 rounded-2xl border border-[#ffd9c8] bg-[#fff8f1] px-4 py-3">
+                      <div className="flex min-w-0 items-center justify-between gap-2">
+                        <p className="truncate text-sm font-extrabold text-foreground">{record.title}</p>
+                        <span className="shrink-0 text-[11px] font-bold text-[#b6674b]">{record.time}</span>
+                      </div>
+                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6f5560]">{record.detail}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              onClick={() => onAgentPrefill("我想了解乳房健康情况，最近有涨奶和硬块，按压会疼")}
+              className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
+            >
+              让我了解更多
+            </button>
+          </div>
+        ) : null}
+
+        {panel === "postpartum-detail" ? (
+          <div className="space-y-3">
+            <div className="space-y-2">
+              {POSTPARTUM_RECOVERY_COURSES.map((course) => (
+                <article key={course.title} className="rounded-2xl border border-border/50 bg-background px-4 py-3">
+                  <p className="text-[11px] font-bold text-[#2f8a72]">{course.time}</p>
+                  <p className="mt-1 text-sm font-bold text-foreground">{course.title}</p>
+                  <p className="mt-1 text-xs font-medium leading-snug text-muted-foreground">{course.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {panel === "rest-detail" ? (
+          <div className="space-y-3">
+            <div className="relative flex flex-col-reverse gap-3">
+              <span aria-hidden="true" className="absolute bottom-3 left-[9px] top-3 w-px bg-[#ffe4b8]" />
+              {REST_RECOVERY_TIMELINE.map((record, index) => {
+                const isCurrent = index === REST_RECOVERY_TIMELINE.length - 1;
+                return (
+                  <article key={record.time} className="relative flex gap-3">
+                    <span
+                      aria-hidden="true"
+                      className={`mt-1 h-5 w-5 shrink-0 rounded-full border-2 ${
+                        isCurrent
+                          ? "border-[#b36d20] bg-[#ffe4b8] shadow-[0_0_0_4px_rgba(255,228,184,0.5)]"
+                          : "border-[#ffe4b8] bg-card"
+                      }`}
+                    />
+                    <div className="min-w-0 flex-1 rounded-2xl border border-[#ffe4b8] bg-[#fffaf0] px-4 py-3">
+                      <div className="flex min-w-0 items-center justify-between gap-2">
+                        <p className="truncate text-sm font-extrabold text-foreground">{record.title}</p>
+                        <span className="shrink-0 text-[11px] font-bold text-[#b36d20]">{record.time}</span>
+                      </div>
+                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6d5530]">{record.detail}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              onClick={() => onAgentPrefill("我想了解最近的睡眠和休息情况，夜间照护后白天很疲惫")}
+              className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
+            >
+              让我了解更多
+            </button>
+          </div>
+        ) : null}
+      </motion.section>
+    </>
+  );
+};
 
 /* ── Expandable Section Component ── */
 const Expandable: React.FC<{
@@ -173,40 +419,111 @@ const STATUS_MODULE_TONE_CLASSES: Record<
 
 type StatusModuleCardProps = {
   title: string;
-  subtitle: string;
-  value: string;
-  action: string;
+  subtitle?: string;
+  bodyText?: string;
+  value?: string;
+  supportingText?: string;
+  metrics?: readonly {
+    label: string;
+    value: string;
+    onInfoClick?: () => void;
+    ariaLabel?: string;
+  }[];
+  action?: string;
   icon: React.ReactNode;
   tone: StatusModuleTone;
   onClick?: () => void;
+  onInfoClick?: () => void;
+  infoPlacement?: "title" | "subtitle";
+  alignActionTextWithTitle?: boolean;
 };
 
 function StatusModuleCard({
   title,
   subtitle,
+  bodyText,
   value,
+  supportingText,
+  metrics,
   action,
   icon,
   tone,
   onClick,
+  onInfoClick,
+  infoPlacement = "title",
+  alignActionTextWithTitle = false,
 }: StatusModuleCardProps) {
   const toneClasses = STATUS_MODULE_TONE_CLASSES[tone];
+  const hasMetrics = Boolean(metrics?.length);
+  const hasBodyText = Boolean(bodyText);
+  const infoButton = onInfoClick ? (
+    <button
+      type="button"
+      aria-label={`${title}说明`}
+      onClick={onInfoClick}
+      className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/65 text-[#8d6f7d] shadow-sm active:scale-95"
+    >
+      <HelpCircle className="h-3.5 w-3.5" />
+    </button>
+  ) : null;
   const content = (
     <>
       <div className="relative z-10 flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="truncate text-[14px] font-extrabold leading-tight text-[#35212c]">{title}</h3>
-          <p className="mt-1 line-clamp-2 text-[11px] font-medium leading-snug text-[#7a6870]">{subtitle}</p>
+          <div className="flex min-w-0 items-center gap-1">
+            <h3 className="truncate text-[14px] font-extrabold leading-tight text-[#35212c]">{title}</h3>
+            {infoPlacement === "title" ? infoButton : null}
+          </div>
+          {subtitle ? (
+            <div className="mt-1 flex min-w-0 items-start gap-1">
+              <p className="line-clamp-2 text-[11px] font-medium leading-snug text-[#7a6870]">{subtitle}</p>
+              {infoPlacement === "subtitle" ? infoButton : null}
+            </div>
+          ) : null}
         </div>
         <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl ${toneClasses.icon}`}>
           {icon}
         </span>
       </div>
-      <div className="relative z-10 mt-auto">
-        <p className="min-h-[22px] text-[16px] font-black leading-tight text-[#35212c]">{value}</p>
-        <span className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
-          {action}
-        </span>
+      <div className={`relative z-10 ${hasMetrics ? "mt-5" : hasBodyText ? "mt-2 flex flex-1 flex-col" : "mt-auto"}`}>
+        {bodyText ? (
+          <p className="my-auto line-clamp-2 text-[11px] font-bold leading-snug text-[#7a6870]">{bodyText}</p>
+        ) : null}
+        {metrics?.length ? (
+          <div className={`grid ${metrics.length >= 3 ? "grid-cols-3 gap-1.5" : metrics.length > 1 ? "grid-cols-2 gap-2" : "grid-cols-1 gap-2"}`}>
+            {metrics.map((metric) => (
+              <div key={metric.label} className="min-w-0">
+                <div className="flex min-w-0 items-center gap-1">
+                  <span className="truncate text-[11px] font-extrabold leading-tight text-[#7a5b68]">{metric.label}</span>
+                  {metric.onInfoClick ? (
+                    <button
+                      type="button"
+                      aria-label={metric.ariaLabel ?? `${metric.label}说明`}
+                      onClick={metric.onInfoClick}
+                      className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/65 text-[#8d6f7d] shadow-sm active:scale-95"
+                    >
+                      <HelpCircle className="h-3 w-3" />
+                    </button>
+                  ) : null}
+                </div>
+                <p className={`mt-1 min-h-[22px] truncate font-black leading-tight text-[#35212c] ${metrics.length >= 3 ? "text-[14px]" : "text-[16px]"}`}>{metric.value}</p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        {value ? <p className="min-h-[22px] text-[16px] font-black leading-tight text-[#35212c]">{value}</p> : null}
+        {supportingText ? <p className="mt-1 text-[11px] font-bold leading-snug text-[#7a5b68]">{supportingText}</p> : null}
+        {action ? (
+          onClick ? (
+            <button type="button" onClick={onClick} className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta} ${alignActionTextWithTitle ? "-ml-2.5" : ""}`}>
+              {action}
+            </button>
+          ) : (
+            <span className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta} ${alignActionTextWithTitle ? "-ml-2.5" : ""}`}>
+              {action}
+            </span>
+          )
+        ) : null}
       </div>
       <span
         aria-hidden="true"
@@ -216,14 +533,6 @@ function StatusModuleCard({
   );
 
   const className = `relative flex min-h-[132px] flex-col overflow-hidden rounded-[22px] border border-white/70 bg-gradient-to-br p-3.5 text-left shadow-[0_10px_24px_rgba(83,47,64,0.06)] ${toneClasses.card}`;
-
-  if (onClick) {
-    return (
-      <button type="button" onClick={onClick} className={`${className} active:scale-[0.98] transition-transform`}>
-        {content}
-      </button>
-    );
-  }
 
   return <article className={className}>{content}</article>;
 }
@@ -294,6 +603,11 @@ function parseLactationDateKey(raw: string): string {
   const slash = t.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})/);
   if (slash) {
     return `${slash[1]}-${slash[2].padStart(2, "0")}-${slash[3].padStart(2, "0")}`;
+  }
+  const monthDay = t.match(/^(\d{1,2})[/-](\d{1,2})$/);
+  if (monthDay) {
+    const year = new Date().getFullYear();
+    return `${year}-${monthDay[1].padStart(2, "0")}-${monthDay[2].padStart(2, "0")}`;
   }
   return t;
 }
@@ -555,6 +869,7 @@ const EmptyChartHint = ({ children }: { children: React.ReactNode }) => (
  * 状态页「信息显示区」：所有可滚动内容（不含顶栏安全区与底部导航）。
  */
 const StatusOverviewBody: React.FC = () => {
+  const navigate = useNavigate();
   const [unit] = useVolumeUnit();
   const isOz = unit === "oz";
   const conv = useCallback((ml: number) => (isOz ? +(ml * 0.033814).toFixed(1) : ml), [isOz]);
@@ -587,12 +902,23 @@ const StatusOverviewBody: React.FC = () => {
   const [growthSaveErr, setGrowthSaveErr] = useState<string | null>(null);
   const [growthMetricsBlinkOn, setGrowthMetricsBlinkOn] = useState(false);
   const [activeDigitalTwin, setActiveDigitalTwin] = useState<StatusDigitalTwinTab>("mom");
+  const [activeMomPanel, setActiveMomPanel] = useState<MomStatusPanelId | null>(null);
+  const [todayDevicePumpCount, setTodayDevicePumpCount] = useState<number | null>(null);
+  const [todayPumpRecordsLoading, setTodayPumpRecordsLoading] = useState(true);
+  const [todayFeedingCount, setTodayFeedingCount] = useState<number | null>(null);
+  const [todayFeedingRecordsLoading, setTodayFeedingRecordsLoading] = useState(true);
   const growthMetricsRef = useRef<HTMLDivElement | null>(null);
   const growthBlinkTimerRef = useRef<number | null>(null);
+
+  const prefillAgentHub = useCallback((prompt: string) => {
+    setActiveMomPanel(null);
+    navigate("/", { state: { agentPrefill: prompt } });
+  }, [navigate]);
 
   useEffect(() => {
     let cancelled = false;
     const ac = new AbortController();
+    const todayDateKey = toLocalDateKey(new Date());
 
     setMomBabyLoading(true);
     setMomBabyErr(null);
@@ -701,6 +1027,55 @@ const StatusOverviewBody: React.FC = () => {
       }
     })();
 
+    setTodayPumpRecordsLoading(true);
+    setTodayDevicePumpCount(null);
+    void (async () => {
+      try {
+        const data = await queryPumpMilkRecords(
+          { user_id: DEFAULT_CHAT_USER_ID, timestamp: todayDateKey },
+          { signal: ac.signal },
+        );
+        if (cancelled) return;
+        if (data.error !== 0 || !Array.isArray(data.pump_milk_list)) {
+          setTodayDevicePumpCount(null);
+          return;
+        }
+        setTodayDevicePumpCount(
+          data.pump_milk_list.filter((item) => item.pump_type === 0 && item.pump_source === 0).length,
+        );
+      } catch (e: unknown) {
+        if ((e as { name?: string })?.name === "AbortError") return;
+        if (cancelled) return;
+        setTodayDevicePumpCount(null);
+      } finally {
+        if (!cancelled) setTodayPumpRecordsLoading(false);
+      }
+    })();
+
+    setTodayFeedingRecordsLoading(true);
+    setTodayFeedingCount(null);
+    void (async () => {
+      try {
+        const data = await queryFeedingRecords(
+          { user_id: DEFAULT_CHAT_USER_ID, timestamp: todayDateKey },
+          { signal: ac.signal },
+        );
+        if (cancelled) return;
+        if (data.error !== 0 || !Array.isArray(data.feed_list)) {
+          setTodayFeedingCount(null);
+          return;
+        }
+        const totalFeed = typeof data.total_feed === "number" ? data.total_feed : Number(data.total_feed);
+        setTodayFeedingCount(Number.isFinite(totalFeed) ? Math.max(0, totalFeed) : data.feed_list.length);
+      } catch (e: unknown) {
+        if ((e as { name?: string })?.name === "AbortError") return;
+        if (cancelled) return;
+        setTodayFeedingCount(null);
+      } finally {
+        if (!cancelled) setTodayFeedingRecordsLoading(false);
+      }
+    })();
+
     return () => {
       cancelled = true;
       ac.abort();
@@ -733,11 +1108,16 @@ const StatusOverviewBody: React.FC = () => {
   );
 
   const trendData = useMemo((): LactationTrendPoint[] => {
-    const dateKeys = buildRecentDateKeys(windowSize);
-    const recentRows = lactationRowsMl.slice(Math.max(0, lactationRowsMl.length - windowSize));
-    const rowStart = Math.max(0, dateKeys.length - recentRows.length);
-    return dateKeys.map((dateKey, idx) => {
-      const row = idx >= rowStart ? recentRows[idx - rowStart] : null;
+    const now = new Date();
+    const todayKey = toLocalDateKey(now);
+    const dateKeys = buildRecentDateKeys(windowSize, shiftLocalDate(now, -1));
+    const rowsByDateKey = new Map(
+      lactationRowsMl
+        .filter((row) => row.dateKey.localeCompare(todayKey) < 0)
+        .map((row) => [row.dateKey, row]),
+    );
+    return dateKeys.map((dateKey) => {
+      const row = rowsByDateKey.get(dateKey) ?? null;
       const actualMl = row?.actualMl ?? 0;
       const estimatedMl = row?.estimatedMl ?? 0;
       const refLowMl = row?.refLowMl ?? 0;
@@ -803,13 +1183,33 @@ const StatusOverviewBody: React.FC = () => {
     : todayFeedMl !== null
       ? `${formatVol(todayFeedMl, unit)}${unitLabel(unit)}`
       : "待记录";
-  const postpartumValue =
-    momBabyLoading ? "加载中" : typeof postpartumWeeks === "number" ? `第 ${postpartumWeeks} 周` : "待完善";
-  const babyGrowthValue =
+  const todayPumpCountLabel = todayPumpRecordsLoading
+    ? "加载中"
+    : todayDevicePumpCount !== null
+      ? `${todayDevicePumpCount}次`
+      : "待同步";
+  const todayFeedingCountLabel = todayFeedingRecordsLoading
+    ? "加载中"
+    : todayFeedingCount !== null
+      ? `${todayFeedingCount}次`
+      : "待同步";
+  const babyWeightLabel =
     growthLoading
       ? "加载中"
       : typeof babyMetrics.weightKg === "number"
         ? `${babyMetrics.weightKg}kg`
+        : "待记录";
+  const babyHeightLabel =
+    growthLoading
+      ? "加载中"
+      : typeof babyMetrics.heightCm === "number"
+        ? `${babyMetrics.heightCm}cm`
+        : "待记录";
+  const babyHeadLabel =
+    growthLoading
+      ? "加载中"
+      : typeof babyMetrics.headCm === "number"
+        ? `${babyMetrics.headCm}cm`
         : "待记录";
   const momStatusSubtitle = momBabyLoading
     ? "正在加载妈妈信息…"
@@ -948,37 +1348,46 @@ const StatusOverviewBody: React.FC = () => {
             <div className="order-2 mx-4 mb-4 grid grid-cols-2 gap-3">
               <StatusModuleCard
                 title="母乳产出"
-                subtitle="今日产出和趋势"
-                value={todayPumpLabel}
-                action="查看趋势"
+                metrics={[
+                  {
+                    label: "今日产出",
+                    value: todayPumpLabel,
+                    onInfoClick: () => setActiveMomPanel("milk-info"),
+                    ariaLabel: "今日产出说明",
+                  },
+                  { label: "今日吸奶", value: todayPumpCountLabel },
+                ]}
                 tone="rose"
                 icon={<Droplets className="h-4 w-4" />}
-                onClick={() => scrollStatusSection("status-milk-trend")}
               />
               <StatusModuleCard
                 title="乳房健康"
-                subtitle="胀痛、堵奶和护理"
-                value="待记录"
-                action="查看护理"
+                bodyText={INITIAL_BREAST_HEALTH_SUMMARY}
+                action="查看健康状态"
                 tone="peach"
                 icon={<HeartPulse className="h-4 w-4" />}
+                onInfoClick={() => setActiveMomPanel("breast-info")}
+                onClick={() => setActiveMomPanel("breast-detail")}
+                alignActionTextWithTitle
               />
               <StatusModuleCard
                 title="产后恢复"
-                subtitle="恢复节奏和身体感受"
-                value={postpartumValue}
-                action="看看状态"
+                bodyText={POSTPARTUM_RECOVERY_PLAN_STATUS}
+                action="查看计划"
                 tone="mint"
                 icon={<Activity className="h-4 w-4" />}
-                onClick={() => scrollStatusSection("status-digital-twin-tabs")}
+                onClick={() => setActiveMomPanel("postpartum-detail")}
+                alignActionTextWithTitle
               />
               <StatusModuleCard
                 title="补能与休息"
-                subtitle="饮水、餐食和疲劳感"
-                value="待记录"
-                action="记录一下"
+                bodyText={INITIAL_REST_SUMMARY}
+                action="查看休息状态"
                 tone="amber"
                 icon={<Coffee className="h-4 w-4" />}
+                onInfoClick={() => setActiveMomPanel("rest-info")}
+                onClick={() => setActiveMomPanel("rest-detail")}
+                alignActionTextWithTitle
               />
             </div>
 
@@ -1104,37 +1513,46 @@ const StatusOverviewBody: React.FC = () => {
             <div className="order-6 mx-4 mb-4 grid grid-cols-2 gap-3">
               <StatusModuleCard
                 title="奶量摄入"
-                subtitle="今日亲喂、瓶喂和摄入"
-                value={todayFeedLabel}
-                action="查看记录"
+                metrics={[
+                  {
+                    label: "今日摄入",
+                    value: todayFeedLabel,
+                    onInfoClick: () => setActiveMomPanel("baby-feed-info"),
+                    ariaLabel: "今日摄入说明",
+                  },
+                  { label: "今日喂奶", value: todayFeedingCountLabel },
+                ]}
                 tone="sky"
                 icon={<Utensils className="h-4 w-4" />}
-                onClick={() => scrollStatusSection("status-digital-twin-tabs")}
               />
               <StatusModuleCard
                 title="成长发育"
-                subtitle="体重、身高和头围"
-                value={babyGrowthValue}
+                metrics={[
+                  { label: "体重", value: babyWeightLabel },
+                  { label: "身高", value: babyHeightLabel },
+                  { label: "头围", value: babyHeadLabel },
+                ]}
                 action="修改指标"
                 tone="mint"
                 icon={<Ruler className="h-4 w-4" />}
                 onClick={openGrowthEditor}
-              />
-              <StatusModuleCard
-                title="宝宝睡眠"
-                subtitle="夜间照护和睡眠"
-                value="待记录"
-                action="查看夜间"
-                tone="violet"
-                icon={<Bed className="h-4 w-4" />}
+                alignActionTextWithTitle
               />
               <StatusModuleCard
                 title="尿便与护理"
-                subtitle="尿布、便便和皮肤"
                 value="待记录"
                 action="快速记录"
                 tone="aqua"
                 icon={<ClipboardList className="h-4 w-4" />}
+                alignActionTextWithTitle
+              />
+              <StatusModuleCard
+                title="宝宝睡眠"
+                value="待记录"
+                action="查看夜间"
+                tone="violet"
+                icon={<Bed className="h-4 w-4" />}
+                alignActionTextWithTitle
               />
             </div>
 
@@ -1149,12 +1567,12 @@ const StatusOverviewBody: React.FC = () => {
               <Expandable
                 id="status-baby-growth-curve"
                 title="宝宝成长曲线"
-                className="border-[#dcebe6] bg-gradient-to-br from-[#f7fffc] via-white to-[#e8f8f1]"
+                className="border-[#e6d9fb] bg-gradient-to-br from-[#fbf7ff] via-white to-[#eee6ff]"
                 defaultOpen
-                icon={<div className="w-6 h-6 rounded-full bg-[#d8f3e9] flex items-center justify-center"><Baby className="w-3.5 h-3.5 text-[#3f8f78]" /></div>}
+                icon={<div className="w-6 h-6 rounded-full bg-[#e6d9fb] flex items-center justify-center"><Baby className="w-3.5 h-3.5 text-[#7d64aa]" /></div>}
               >
         <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2 text-[9px] text-[#5f7772]">
+          <div className="flex items-center gap-2 text-[9px] text-[#7560a0]">
             <div className="flex items-center gap-1">
               <div className="w-3 h-[2px]" style={{ backgroundColor: GROWTH_CHART_COLORS.actual }}></div>
               <span>实际测量</span>
@@ -1164,9 +1582,9 @@ const StatusOverviewBody: React.FC = () => {
               <span>同龄参考区间</span>
             </div>
           </div>
-          <div className="flex rounded-full bg-[#edf8f4] p-0.5 text-[9px] font-medium">
-            <button type="button" onClick={() => setGrowthCurveType("weight")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "weight" ? "bg-[#3f8f78] text-white" : "text-[#5f7772]"}`}>体重</button>
-            <button type="button" onClick={() => setGrowthCurveType("height")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "height" ? "bg-[#3f8f78] text-white" : "text-[#5f7772]"}`}>身高</button>
+          <div className="flex rounded-full bg-[#f2ecff] p-0.5 text-[9px] font-medium">
+            <button type="button" onClick={() => setGrowthCurveType("weight")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "weight" ? "bg-[#7d64aa] text-white" : "text-[#7560a0]"}`}>体重</button>
+            <button type="button" onClick={() => setGrowthCurveType("height")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "height" ? "bg-[#7d64aa] text-white" : "text-[#7560a0]"}`}>身高</button>
           </div>
         </div>
         {growthHistoryLoading ? (
@@ -1250,6 +1668,16 @@ const StatusOverviewBody: React.FC = () => {
           </>
         )}
       </div>
+
+      <AnimatePresence>
+        {activeMomPanel ? (
+          <MomStatusPanelSheet
+            panel={activeMomPanel}
+            onClose={() => setActiveMomPanel(null)}
+            onAgentPrefill={prefillAgentHub}
+          />
+        ) : null}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isGrowthDrawerOpen && (

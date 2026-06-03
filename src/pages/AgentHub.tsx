@@ -699,6 +699,16 @@ const AgentHub: React.FC = () => {
   const lastAgUiArtifactAnchorKeyRef = useRef<string | null>(latestAgUiArtifactAnchorKey(hubInitialMessages));
   const pendingAgUiArtifactPositionRef = useRef(false);
   const [input, setInput] = useState("");
+  useEffect(() => {
+    const state = location.state as { agentPrefill?: unknown } | null;
+    const agentPrefill = typeof state?.agentPrefill === "string" ? state.agentPrefill.trim() : "";
+    if (!agentPrefill) return;
+    setInput(agentPrefill);
+    navigate(
+      { pathname: location.pathname, search: location.search, hash: location.hash },
+      { replace: true, state: null },
+    );
+  }, [location.hash, location.pathname, location.search, location.state, navigate]);
   /** 底部发送已触发 SSE：显示发送键加载直至回复结束或再次点击打断 */
   const [hubBottomSendBusy, setHubBottomSendBusy] = useState(false);
   /** 最近一次来自底部输入 handleSend 的 SSE 未完成；仅此时 onDone/onError 应清除 hubBottomSendBusy */

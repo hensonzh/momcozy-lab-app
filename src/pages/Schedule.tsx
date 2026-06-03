@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Bell, BellOff, CheckCircle2, ChevronLeft, ChevronRight, Clock, ImageIcon, Loader2, Plus, Trash2 } from "lucide-react";
+import { Bell, BellOff, Bot, CheckCircle2, ChevronLeft, ChevronRight, Clock, HelpCircle, ImageIcon, Loader2, Plus, Trash2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, isSameDay } from "date-fns";
 import TabPageTopReserve from "@/components/layout/TabPageTopReserve";
@@ -117,6 +117,11 @@ const mapPlanTypeToLabel = (planType: string) => {
   return map[t] ?? "呵护计划";
 };
 
+const mapTodayPlanTypeToHeaderLabel = (planType: string) => {
+  const label = mapPlanTypeToLabel(planType);
+  return label === "稳奶" ? "稳奶计划执行中" : label;
+};
+
 const normalizeTaskPlanBadgeLabel = (label: string) => {
   const t = (label || "").trim();
   if (!t) return "";
@@ -149,6 +154,53 @@ const resolveSmartTaskPlanBadgeLabel = (task: ScheduleTask, planType: string) =>
 
 const formatPostpartumPhaseLabel = (postpartumDay: number, phaseLabel: string) =>
   `产后第${postpartumWeekFromDay(postpartumDay)}周（${phaseLabel}）`;
+
+const buildTodayTaskPlanExplanation = ({
+  postpartumDay,
+  phaseLabel,
+  planType,
+  actionTaskCount,
+  completedTaskCount,
+  skippedTaskCount,
+  pumpRecordCount,
+  feedingRecordCount,
+  inventoryTotal,
+  feedingTotal,
+  volUnit,
+  loading,
+}: {
+  postpartumDay: number;
+  phaseLabel: string;
+  planType: string;
+  actionTaskCount: number;
+  completedTaskCount: number;
+  skippedTaskCount: number;
+  pumpRecordCount: number;
+  feedingRecordCount: number;
+  inventoryTotal: number;
+  feedingTotal: number;
+  volUnit: "mL" | "oz";
+  loading: boolean;
+}) => {
+  const rawPlanLabel = mapTodayPlanTypeToHeaderLabel(planType).replace(/执行中$/, "");
+  const planLabel = rawPlanLabel.endsWith("计划") ? rawPlanLabel : `${rawPlanLabel}计划`;
+  const weekLabel = postpartumWeekFromDay(postpartumDay);
+  const loadingPrefix = loading ? "我正在同步今天最新的计划和记录，先按已经读到的数据看，" : "我先看了今天已经读到的数据，";
+  const taskSentence =
+    actionTaskCount > 0
+      ? `今天的${planLabel}共有${actionTaskCount}项任务，已经完成${completedTaskCount}项${skippedTaskCount > 0 ? `，还有${skippedTaskCount}项被跳过` : ""}。`
+      : `今天还没有生成具体任务，所以我先把这段说明作为${planLabel}的判断依据。`;
+  const recordParts = [
+    pumpRecordCount > 0 ? `吸奶${formatVol(inventoryTotal, volUnit)}${unitLabel(volUnit)}（${pumpRecordCount}次）` : "",
+    feedingRecordCount > 0 ? `喂养${formatVol(feedingTotal, volUnit)}${unitLabel(volUnit)}（${feedingRecordCount}次）` : "",
+  ].filter(Boolean);
+  const recordSentence =
+    recordParts.length > 0
+      ? `记录里目前有${recordParts.join("，")}。`
+      : "今天我还没有读到新的奶量记录，所以会先按产后阶段和已有任务节奏来判断。";
+
+  return `${loadingPrefix}你现在是产后第${postpartumDay}天，也就是第${weekLabel}周，处在${phaseLabel}。${taskSentence}${recordSentence}这个安排主要用的是泌乳“供需平衡”原则，以及循证哺乳管理里“规律、充分移出乳汁”的思路：不是单纯增加任务次数，而是结合你的记录、产后阶段和身体负担，把吸奶与喂养节奏安排得更稳定。`;
+};
 
 const smartSourceCardClass = "bg-white border-border/60";
 const smartNextCardClass = "bg-white border-primary/35 shadow-md shadow-primary/10";
@@ -451,6 +503,7 @@ const Schedule: React.FC = () => {
   const [scheduleAdjusting, setScheduleAdjusting] = useState(false);
   const [pumpEntryOpen, setPumpEntryOpen] = useState(false);
   const [feedingEntryOpen, setFeedingEntryOpen] = useState(false);
+  const [todayTaskInfoOpen, setTodayTaskInfoOpen] = useState(false);
   const [editTimePickerOpen, setEditTimePickerOpen] = useState(false);
   const editTitleInputRef = useRef<HTMLInputElement | null>(null);
   const addTaskDialogRef = useRef<AddTaskDialogHandle | null>(null);
@@ -579,6 +632,38 @@ const Schedule: React.FC = () => {
   const feedingRecords = useMemo(() => records.filter(isFeedingRecord), [records]);
   const inventoryTotal = useMemo(() => inventoryRecords.reduce((sum, record) => sum + record.totalMl, 0), [inventoryRecords]);
   const feedingTotal = useMemo(() => feedingRecords.reduce((sum, record) => sum + record.totalMl, 0), [feedingRecords]);
+  const todayTaskPlanExplanation = useMemo(
+    () =>
+      buildTodayTaskPlanExplanation({
+        postpartumDay,
+        phaseLabel: currentPhase.label,
+        planType,
+        actionTaskCount: actionTasks.length,
+        completedTaskCount: completedTasks.length,
+        skippedTaskCount: skippedTasks.length,
+        pumpRecordCount: inventoryRecords.length,
+        feedingRecordCount: feedingRecords.length,
+        inventoryTotal,
+        feedingTotal,
+        volUnit,
+        loading: tasksLoading || recordsLoading,
+      }),
+    [
+      actionTasks.length,
+      completedTasks.length,
+      currentPhase.label,
+      feedingRecords.length,
+      feedingTotal,
+      inventoryRecords.length,
+      inventoryTotal,
+      planType,
+      postpartumDay,
+      recordsLoading,
+      skippedTasks.length,
+      tasksLoading,
+      volUnit,
+    ],
+  );
   const recordsByTaskId = useMemo(() => {
     const map = new Map<string, PumpRecord[]>();
     for (const task of actionTasks) {
@@ -1129,7 +1214,9 @@ const Schedule: React.FC = () => {
               <h2 className="text-[16px] font-black text-foreground tracking-tight">
                 {isFutureWithoutPlan
                   ? `${format(selectedDate, "M月d日")} 待规划`
-                  : isSelectedToday || isSelectedPast
+                  : isSelectedToday
+                    ? mapTodayPlanTypeToHeaderLabel(planType)
+                    : isSelectedPast
                     ? mapPlanTypeToLabel(planType)
                     : `${format(selectedDate, "M月d日")} ${mapPlanTypeToLabel(planType)}`}
               </h2>
@@ -1268,24 +1355,38 @@ const Schedule: React.FC = () => {
 
         {/* Timeline: Today's Tasks */}
         <section className="mx-4 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[16px] font-black text-foreground tracking-tight">{isSelectedToday ? "今日执行" : "执行记录"}</h3>
-            <div className="flex items-center gap-2">
-              {isSelectedToday && (
-                <>
+          <div className="mb-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-1.5">
+                <h3 className="text-[16px] font-black text-foreground tracking-tight">{isSelectedToday ? "今日任务" : "执行记录"}</h3>
+                {isSelectedToday && (
                   <button
-                    onClick={() => addTaskDialogRef.current?.openUploadPicker()}
-                    disabled={scheduleAdjusting}
-                    className="text-[12px] font-bold text-foreground px-3.5 py-1.5 bg-card border border-border hover:bg-secondary/50 rounded-full flex items-center gap-1 transition-colors shadow-sm active:scale-95 disabled:opacity-60 disabled:active:scale-100"
+                    type="button"
+                    aria-label="今日任务说明"
+                    onClick={() => setTodayTaskInfoOpen(true)}
+                    className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/70 text-muted-foreground shadow-sm active:scale-95"
                   >
-                    {scheduleAdjusting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageIcon className="w-3.5 h-3.5" />}
-                    调整日程
+                    <HelpCircle className="h-3.5 w-3.5" />
                   </button>
-                  <button onClick={() => setAddTaskOpen(true)} className="text-[12px] font-bold text-foreground px-3.5 py-1.5 bg-card border border-border hover:bg-secondary/50 rounded-full flex items-center gap-1 transition-colors shadow-sm active:scale-95">
-                    <Plus className="w-3.5 h-3.5" /> 添加任务
-                  </button>
-                </>
-              )}
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {isSelectedToday && (
+                  <>
+                    <button
+                      onClick={() => addTaskDialogRef.current?.openUploadPicker()}
+                      disabled={scheduleAdjusting}
+                      className="text-[12px] font-bold text-foreground px-3.5 py-1.5 bg-card border border-border hover:bg-secondary/50 rounded-full flex items-center gap-1 transition-colors shadow-sm active:scale-95 disabled:opacity-60 disabled:active:scale-100"
+                    >
+                      {scheduleAdjusting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageIcon className="w-3.5 h-3.5" />}
+                      调整日程
+                    </button>
+                    <button onClick={() => setAddTaskOpen(true)} className="text-[12px] font-bold text-foreground px-3.5 py-1.5 bg-card border border-border hover:bg-secondary/50 rounded-full flex items-center gap-1 transition-colors shadow-sm active:scale-95">
+                      <Plus className="w-3.5 h-3.5" /> 添加任务
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           
@@ -1529,6 +1630,43 @@ const Schedule: React.FC = () => {
       </TabPageScrollRegion>
       <TabPageEmbeddedNav />
       </div>
+      <AnimatePresence>
+        {todayTaskInfoOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/35 backdrop-blur-sm"
+              onClick={() => setTodayTaskInfoOpen(false)}
+            />
+            <motion.section
+              role="dialog"
+              aria-modal="true"
+              aria-label="今日任务说明"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              className="pointer-events-none fixed inset-0 z-[51] flex items-center justify-center px-6"
+            >
+              <div className="pointer-events-auto w-full max-w-[420px] rounded-3xl border border-white/70 bg-card px-5 py-4 shadow-2xl">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary shadow-sm ring-1 ring-primary/15">
+                    <Bot className="h-5 w-5" />
+                  </div>
+                  <button type="button" onClick={() => setTodayTaskInfoOpen(false)} className="rounded-full p-2 text-muted-foreground active:bg-muted">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <p className="rounded-[22px] bg-muted/45 px-4 py-3.5 text-sm font-semibold leading-relaxed text-foreground">
+                  {todayTaskPlanExplanation}
+                </p>
+              </div>
+            </motion.section>
+          </>
+        )}
+      </AnimatePresence>
       <ReminderAlert
         open={reminderAlertOpen}
         onConfirm={() => {
