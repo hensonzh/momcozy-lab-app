@@ -857,6 +857,32 @@ function richArtifactActionKey(action: unknown): string {
   return artifactType === "support_ticket_draft" ? "support_ticket_draft:current" : "";
 }
 
+function isFormLikeArtifactAction(action: unknown): boolean {
+  const obj = asRecord(action);
+  if (!obj || coalesceString(obj.kind) !== "ag_ui_artifact") return false;
+  const artifactType = normalizeArtifactType(obj.artifact_type);
+  return artifactType === "form" || artifactType === "support_ticket" || artifactType === "support_ticket_draft";
+}
+
+function richTextPayloadHasFormLikeArtifact(payload: ChatRichTextPayload | undefined): boolean {
+  return Boolean(payload?.action?.some(isFormLikeArtifactAction));
+}
+
+function messageHasFormLikeArtifact(message: ChatMessage): boolean {
+  if (richTextPayloadHasFormLikeArtifact(message.richText)) return true;
+  return Boolean(
+    message.streamRenderItems?.some((item) =>
+      item.kind === "rich" && richTextPayloadHasFormLikeArtifact(item.payload)
+    ),
+  );
+}
+
+function withoutQuickReplies(message: ChatMessage): ChatMessage {
+  if (!message.quickReplies) return message;
+  const { quickReplies: _quickReplies, ...rest } = message;
+  return rest;
+}
+
 function mergeRichActions(prev: unknown[], next: unknown[]): unknown[] {
   const merged = [...prev];
   for (const action of next) {
@@ -1044,8 +1070,8 @@ export function applyAgUiStreamSideEffects(
       didUpdate = true;
       setMessages((prev) =>
         prev.map((m) => ({
-          ...m,
-          quickReplies: m.id === replyId ? replies : undefined,
+          ...withoutQuickReplies(m),
+          ...(m.id === replyId && !messageHasFormLikeArtifact(m) ? { quickReplies: replies } : {}),
         })),
       );
     }
@@ -1272,11 +1298,12 @@ export function applyAgUiStreamSideEffects(
     if (action) {
       const rich = richTextPayloadForArtifactAction(action);
       patchMsg((m) => {
-        return {
+        const next = {
           ...m,
           richText: m.richText ? mergePendingRichTextPayload(m.richText, rich) : rich,
           streamRenderItems: appendRichRenderItem(m.streamRenderItems, rich),
         };
+        return isFormLikeArtifactAction(action) ? withoutQuickReplies(next) : next;
       });
     }
   }

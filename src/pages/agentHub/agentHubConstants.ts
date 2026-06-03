@@ -22,10 +22,6 @@ export const HUB_BOTTOM_NAV_HEIGHT = "4rem";
 export const HUB_BOTTOM_INPUT_GAP = "6px";
 
 export const HUB_CHAT_HISTORY_PAGE = 10;
-export const HUB_CHAT_TOP_EPS = 2;
-export const HUB_CHAT_WHEEL_OVERSCROLL_TO_LOAD = 56;
-export const HUB_CHAT_TOUCH_PULL_TO_LOAD = 64;
-export const HUB_CHAT_LOAD_OLDER_COOLDOWN_MS = 450;
 
 export const cardBg: Record<string, string> = {
   report: "border-mai-warm/30 bg-mai-warm/5",
