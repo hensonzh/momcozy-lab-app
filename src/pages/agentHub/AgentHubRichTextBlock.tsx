@@ -1658,53 +1658,80 @@ const AgentHubRichTextBlock: React.FC<{
                   {journey.phases.length > 0 ? (
                     <section className="birth-journey-timeline" aria-label="生产全过程阶段">
                       {journey.phases.map((phase, phaseIndex) => {
+                        const isCurrentPhase = phase.status === "current";
+                        const phaseDetails = (
+                          <>
+                            {phase.goal ? <p className="birth-journey-goal">{phase.goal}</p> : null}
+                            <div className="birth-journey-section-grid">
+                              {phase.watchouts.length > 0 ? (
+                                <section>
+                                  <h4>注意事项</h4>
+                                  <ul>
+                                    {phase.watchouts.map((item, itemIndex) => (
+                                      <li key={`${phase.id}-watch-${itemIndex}`}>{item}</li>
+                                    ))}
+                                  </ul>
+                                </section>
+                              ) : null}
+                              {phase.actions.length > 0 ? (
+                                <section>
+                                  <h4>准备工作</h4>
+                                  <ul>
+                                    {phase.actions.map((item, itemIndex) => (
+                                      <li key={`${phase.id}-action-${itemIndex}`}>{item}</li>
+                                    ))}
+                                  </ul>
+                                </section>
+                              ) : null}
+                              {phase.comate_help.length > 0 ? (
+                                <section>
+                                  <h4>我能帮你做</h4>
+                                  <ul>
+                                    {phase.comate_help.map((item, itemIndex) => (
+                                      <li key={`${phase.id}-help-${itemIndex}`}>{item}</li>
+                                    ))}
+                                  </ul>
+                                </section>
+                              ) : null}
+                            </div>
+                          </>
+                        );
                         return (
-                          <article key={phase.id} className={cn("birth-journey-phase", phase.status === "current" && "is-current")}>
+                          <article
+                            key={phase.id}
+                            className={cn(
+                              "birth-journey-phase",
+                              isCurrentPhase ? "is-current" : "is-collapsible",
+                            )}
+                          >
                             <div className="birth-journey-phase-marker" aria-hidden="true">
                               {phaseIndex + 1}
                             </div>
-                            <div className="birth-journey-phase-body">
-                              <div className="birth-journey-phase-heading">
-                                <div>
-                                  <p>{phase.date_range}</p>
-                                  <h3>{phase.title}</h3>
+                            {isCurrentPhase ? (
+                              <div className="birth-journey-phase-body">
+                                <div className="birth-journey-phase-heading">
+                                  <div>
+                                    {phase.date_range ? <p>{phase.date_range}</p> : null}
+                                    <h3>{phase.title}</h3>
+                                  </div>
+                                  <span>{birthJourneyStatusLabel(phase.status)}</span>
                                 </div>
-                                <span>{birthJourneyStatusLabel(phase.status)}</span>
+                                {phaseDetails}
                               </div>
-                              {phase.goal ? <p className="birth-journey-goal">{phase.goal}</p> : null}
-                              <div className="birth-journey-section-grid">
-                                {phase.watchouts.length > 0 ? (
-                                  <section>
-                                    <h4>注意事项</h4>
-                                    <ul>
-                                      {phase.watchouts.map((item, itemIndex) => (
-                                        <li key={`${phase.id}-watch-${itemIndex}`}>{item}</li>
-                                      ))}
-                                    </ul>
-                                  </section>
-                                ) : null}
-                                {phase.actions.length > 0 ? (
-                                  <section>
-                                    <h4>准备工作</h4>
-                                    <ul>
-                                      {phase.actions.map((item, itemIndex) => (
-                                        <li key={`${phase.id}-action-${itemIndex}`}>{item}</li>
-                                      ))}
-                                    </ul>
-                                  </section>
-                                ) : null}
-                                {phase.comate_help.length > 0 ? (
-                                  <section>
-                                    <h4>我能帮你做</h4>
-                                    <ul>
-                                      {phase.comate_help.map((item, itemIndex) => (
-                                        <li key={`${phase.id}-help-${itemIndex}`}>{item}</li>
-                                      ))}
-                                    </ul>
-                                  </section>
-                                ) : null}
-                              </div>
-                            </div>
+                            ) : (
+                              <details className="birth-journey-phase-body birth-journey-phase-details">
+                                <summary className="birth-journey-phase-summary">
+                                  <h3>{phase.title}</h3>
+                                </summary>
+                                <div className="birth-journey-phase-expanded-content">
+                                  <div className="birth-journey-phase-heading">
+                                    <div>{phase.date_range ? <p>{phase.date_range}</p> : null}</div>
+                                    <span>{birthJourneyStatusLabel(phase.status)}</span>
+                                  </div>
+                                  {phaseDetails}
+                                </div>
+                              </details>
+                            )}
                           </article>
                         );
                       })}

@@ -150,6 +150,53 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.quickReplies).toBeUndefined();
   });
 
+  it("can defer artifact rendering to the caller", () => {
+    let messages: ChatMessage[] = [
+      {
+        id: "reply",
+        role: "mai",
+        content: "",
+        timestamp: "",
+        quickReplies: [
+          { text: "继续下一步", sendText: "继续下一步" },
+          { text: "换个方案", sendText: "换个方案" },
+          { text: "先总结", sendText: "先总结" },
+        ],
+      },
+    ];
+    const deferred: unknown[] = [];
+    const setMessages = (updater: SetStateAction<ChatMessage[]>) => {
+      messages = typeof updater === "function" ? updater(messages) : updater;
+    };
+
+    const result = applyAgUiStreamSideEffects(
+      "reply",
+      {
+        type: "ARTIFACT_CREATED",
+        artifact_id: "birth_plan_card_intake",
+        artifact_type: "form",
+        tool_call_id: "call-form",
+        tool_call_name: "birth_plan_form_create",
+        artifact: {
+          id: "birth_plan_card_intake",
+          title: "信息采集",
+          fields: [],
+        },
+      },
+      setMessages,
+      {
+        deferAgUiArtifacts: true,
+        onAgUiArtifactRichText: (payload) => deferred.push(payload),
+      },
+    );
+
+    expect(result.didUpdate).toBe(true);
+    expect(messages[0].richText).toBeUndefined();
+    expect(messages[0].streamRenderItems).toBeUndefined();
+    expect(messages[0].quickReplies).toHaveLength(3);
+    expect(deferred).toHaveLength(1);
+  });
+
   it("keeps generic run and processing statuses hidden from the user-facing status line", () => {
     const msg = applyEvents([
       {
