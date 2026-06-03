@@ -238,6 +238,7 @@ public class DeviceReminderWebSocketService extends Service {
         return "task_reminder".equals(value)
                 || "lactation_feeding_reminder".equals(value)
                 || "daily_summary_reminder".equals(value)
+                || "milk_analysis_reminder".equals(value)
                 || "baby_growth_update_reminder".equals(value);
     }
 
@@ -265,6 +266,9 @@ public class DeviceReminderWebSocketService extends Service {
                 case "lactation_feeding_reminder":
                     executeAnalysisReminder(reminderType, "mom_baby", "每日泌乳建议", "mom_baby");
                     return;
+                case "milk_analysis_reminder":
+                    executeAnalysisReminder(reminderType, "milk_analysis", "奶量分析", "milk_analysis");
+                    return;
                 default:
                     Log.w(TAG, "unsupported reminder_type=" + reminderType);
             }
@@ -275,7 +279,7 @@ public class DeviceReminderWebSocketService extends Service {
 
     private void executeAnalysisReminder(String reminderType, String analysisType, String title, String notifyEvent) throws Exception {
         JSONObject data = createAnalysis(analysisType);
-        String message = data.optString("message", analysisType.equals("daily_summary") ? "已生成每日奶量总结。" : "已生成每日泌乳建议。");
+        String message = data.optString("message", fallbackAnalysisMessage(analysisType));
         String chatMessageId = "analysis-" + analysisType + "-" + System.currentTimeMillis();
         JSONObject notifyJson = new JSONObject()
                 .put("event", notifyEvent)
@@ -286,6 +290,12 @@ public class DeviceReminderWebSocketService extends Service {
         String notifyJsonText = notifyJson.toString();
         showReminder(title, message, "/", notifyJsonText);
         notifyWeb(reminderType, analysisType, notifyJsonText);
+    }
+
+    private String fallbackAnalysisMessage(String analysisType) {
+        if ("daily_summary".equals(analysisType)) return "已生成每日奶量总结。";
+        if ("milk_analysis".equals(analysisType)) return "已生成奶量分析。";
+        return "已生成每日泌乳建议。";
     }
 
     private JSONObject createAnalysis(String type) throws Exception {
@@ -401,7 +411,7 @@ public class DeviceReminderWebSocketService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_pump)
                 .setContentTitle("提醒监听运行中")
-                .setContentText("正在接收任务、泌乳、每日小结与宝宝生长提醒")
+                .setContentText("正在接收任务、泌乳、奶量分析、每日小结与宝宝生长提醒")
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setSilent(true)

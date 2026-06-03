@@ -26,6 +26,7 @@ import BackgroundNotifyOnboardingGate from "@/components/system/BackgroundNotify
 import { markStatusGrowthHighlightPending } from "@/lib/statusGrowthHighlight";
 import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
 import { startDeviceReminderWebSocket } from "@/lib/deviceReminderWebSocket";
+import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 
 const queryClient = new QueryClient();
@@ -48,16 +49,27 @@ function PumpNotificationNavigateSync() {
               chatMessageId?: string;
               analysis_card?: AgentAnalysisCard;
             };
-            if (
-              (o?.event === "summary" || o?.event === "mom_baby") &&
-              typeof o.body === "string" &&
-              o.body.trim()
-            ) {
+            const analysisKind =
+              o?.event === "summary"
+                ? "daily_summary"
+                : o?.event === "mom_baby"
+                  ? "mom_baby"
+                  : o?.event === "milk_analysis"
+                    ? "milk_analysis"
+                    : null;
+            if (analysisKind && typeof o.body === "string" && o.body.trim()) {
               appendAgentHubAnalysisMessage(o.body, {
-                kind: o.event === "summary" ? "daily_summary" : "mom_baby",
+                kind: analysisKind,
                 id: o.chatMessageId,
                 analysisCard: o.analysis_card,
               });
+              if (analysisKind === "milk_analysis") {
+                void recordMilkAnalysisContextEvent({
+                  message: o.body,
+                  analysisCard: o.analysis_card,
+                  chatMessageId: o.chatMessageId,
+                });
+              }
             } else if (o?.event === "grown") {
               markStatusGrowthHighlightPending();
             }

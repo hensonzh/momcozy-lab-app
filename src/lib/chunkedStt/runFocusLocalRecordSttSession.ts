@@ -6,6 +6,7 @@ import { startFocusModePcmCapture } from "@/lib/chunkedStt/focusModeMicPcm";
 import { log } from "@/lib/logger";
 import {
   FOCUS_PCM_SAMPLE_RATE,
+  isPcmS16leLikelySpeech,
   pcmS16leMonoToWavBlob,
 } from "@/lib/chunkedStt/focusVoicePcm";
 
@@ -133,6 +134,7 @@ export async function runFocusLocalRecordSttSession(params: {
 
     const transcribePcmSnapshot = async (pcm: ArrayBuffer): Promise<string> => {
       if (pcm.byteLength === 0 || params.signal.aborted || settled) return "";
+      if (!isPcmS16leLikelySpeech(pcm, FOCUS_PCM_SAMPLE_RATE)) return "";
 
       if (sessionFilePath) {
         void persistPcmToCacheFile(sessionFilePath, pcm);

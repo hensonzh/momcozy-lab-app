@@ -132,6 +132,7 @@ export async function transcribeSpeechAudioChunk(
     signal?: AbortSignal;
     fileName?: string;
     mimeType?: string;
+    language?: string;
   },
 ): Promise<string | null> {
   const pathOverride =
@@ -153,6 +154,7 @@ export async function transcribeSpeechAudioChunk(
       token: opts?.token,
       skipAuth: opts?.skipAuth,
       signal: opts?.signal,
+      extraFields: opts?.language ? { language: opts.language } : undefined,
     });
     const text = data.text ?? data.transcript;
     return typeof text === "string" && text.trim() ? text.trim() : null;
@@ -1099,7 +1101,7 @@ export async function createStatusAnalysis(
 }
 
 /**
- * 执行每日奶量总结或每日泌乳建议（POST `/v1/analysis/create`）。
+ * 执行预生成分析（POST `/v1/analysis/create`）。
  */
 export async function createDailyAndMomBabyAnalysis(
   body: AnalysisCreateBody,
