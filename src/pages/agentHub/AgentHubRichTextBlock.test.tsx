@@ -63,6 +63,55 @@ function supportTicketPayload(): ChatRichTextPayload {
   };
 }
 
+function birthJourneyPayload(): ChatRichTextPayload {
+  return {
+    title: "",
+    content: "",
+    button: [],
+    card: [],
+    action: [
+      {
+        kind: "ag_ui_artifact",
+        artifact_type: "card",
+        artifact_id: "birth_journey_1",
+        card: {
+          card_type: "birth_journey_plan_card",
+          schema_version: "1.0",
+          card_json: {
+            title: "生产全过程计划",
+            owner: {
+              current_week: "孕20周",
+              estimated_due_date: "2026/10/15",
+            },
+            phases: [
+              {
+                id: "middle",
+                title: "孕中期",
+                date_range: "孕14周-27周",
+                status: "current",
+                goal: "先把产检和医院流程确认清楚。",
+                watchouts: ["按时产检。"],
+                actions: ["记录下次产检问题。"],
+                comate_help: ["整理产检问题。"],
+              },
+              {
+                id: "late",
+                title: "孕晚期",
+                date_range: "孕28周-36周",
+                status: "upcoming",
+                goal: "把入院准备收拢。",
+                watchouts: ["留意胎动变化。"],
+                actions: ["确认待产包。"],
+                comate_help: ["整理待产包。"],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  };
+}
+
 function renderBlock({
   payload = ibclcPayload(),
   onButtonSelect = vi.fn(),
@@ -153,5 +202,31 @@ describe("AgentHubRichTextBlock support ticket draft", () => {
       expect.stringContaining("当前系统不支持查看工单进度"),
       expect.objectContaining({ displayText: "已提交售后工单" }),
     );
+  });
+});
+
+describe("AgentHubRichTextBlock birth journey plan card", () => {
+  it("collapses upcoming phases to the phase title and expands them on click", () => {
+    renderBlock({ payload: birthJourneyPayload() });
+
+    expect(screen.getByRole("heading", { name: "孕中期" })).toBeInTheDocument();
+    expect(screen.getByText("先把产检和医院流程确认清楚。")).toBeInTheDocument();
+    expect(screen.getByText("整理产检问题。")).toBeInTheDocument();
+
+    expect(screen.getByRole("heading", { name: "孕晚期" })).toBeInTheDocument();
+    expect(screen.getByText("下一阶段")).not.toBeVisible();
+    expect(screen.getByText("孕28周-36周")).not.toBeVisible();
+    expect(screen.getByText("把入院准备收拢。")).not.toBeVisible();
+    expect(screen.getByText("确认待产包。")).not.toBeVisible();
+
+    const upcomingSummary = screen.getByText("孕晚期").closest("summary");
+    expect(upcomingSummary).toBeTruthy();
+
+    fireEvent.click(upcomingSummary!);
+
+    expect(screen.getByText("下一阶段")).toBeVisible();
+    expect(screen.getByText("孕28周-36周")).toBeVisible();
+    expect(screen.getByText("把入院准备收拢。")).toBeVisible();
+    expect(screen.getByText("确认待产包。")).toBeVisible();
   });
 });

@@ -229,6 +229,17 @@ function richTextPayloadHasAgUiArtifact(payload?: ChatRichTextPayload | null): b
   });
 }
 
+function richTextPayloadHasFormLikeAgUiArtifact(payload?: ChatRichTextPayload | null): boolean {
+  if (!payload || !Array.isArray(payload.action)) return false;
+  return payload.action.some((action) => {
+    if (!action || typeof action !== "object" || Array.isArray(action)) return false;
+    const rec = action as Record<string, unknown>;
+    if (rec.kind !== "ag_ui_artifact") return false;
+    const artifactType = String(rec.artifact_type ?? "").trim().replace(/-/g, "_");
+    return artifactType === "form" || artifactType === "support_ticket" || artifactType === "support_ticket_draft";
+  });
+}
+
 function streamItemHasAgUiArtifact(item: ChatStreamRenderItem): boolean {
   return item.kind === "rich" && richTextPayloadHasAgUiArtifact(item.payload);
 }
@@ -266,6 +277,12 @@ function clearQuickRepliesFromMessages(messages: ChatMessage[]): ChatMessage[] {
     const { quickReplies: _quickReplies, ...rest } = message;
     return rest;
   });
+}
+
+function clearQuickRepliesFromMessage(message: ChatMessage): ChatMessage {
+  if (!message.quickReplies) return message;
+  const { quickReplies: _quickReplies, ...rest } = message;
+  return rest;
 }
 
 function AgentHubQuickReplies({
@@ -805,6 +822,8 @@ const AgentHub: React.FC = () => {
   const mainStreamMergedThinkingRef = useRef("");
   /** rich_text 暂存，用于 onDone 自动播报快照 */
   const mainPendingRichTextRef = useRef<ChatRichTextPayload | null>(null);
+  const mainDeferredAgUiArtifactRichTextRef = useRef<ChatRichTextPayload | null>(null);
+  const mainStreamFinalTextStartedRef = useRef(false);
   const mainNoVisibleResponseTimerRef = useRef<number | null>(null);
   const mainStreamFollowTailRef = useRef(false);
   const suppressFollowTailReleaseUntilRef = useRef(0);
@@ -1240,6 +1259,8 @@ const AgentHub: React.FC = () => {
     mainPendingRichTextRef.current = null;
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
+    mainDeferredAgUiArtifactRichTextRef.current = null;
+    mainStreamFinalTextStartedRef.current = false;
     window.setTimeout(() => {
       mainStreamFollowTailRef.current = false;
     }, 300);
@@ -1355,6 +1376,23 @@ const AgentHub: React.FC = () => {
       return list;
     }
     list.push({ kind: "text", text });
+    return list;
+  };
+
+  const appendTextRenderItemBeforeAgUiArtifacts = (
+    items: ChatStreamRenderItem[] | undefined,
+    text: string,
+  ): ChatStreamRenderItem[] => {
+    if (!text) return items ?? [];
+    const list = [...(items ?? [])];
+    const firstArtifactIndex = list.findIndex(streamItemHasAgUiArtifact);
+    if (firstArtifactIndex < 0) return appendTextRenderItem(list, text);
+    const previous = list[firstArtifactIndex - 1];
+    if (previous?.kind === "text") {
+      list[firstArtifactIndex - 1] = { kind: "text", text: previous.text + text };
+      return list;
+    }
+    list.splice(firstArtifactIndex, 0, { kind: "text", text });
     return list;
   };
 
@@ -1574,6 +1612,42 @@ const AgentHub: React.FC = () => {
     mergedThinkingRef: React.MutableRefObject<string>,
     pendingRichTextRef: React.MutableRefObject<ChatRichTextPayload | null>,
   ) => {
+    const flushDeferredAgUiArtifacts = () => {
+      const deferred = mainDeferredAgUiArtifactRichTextRef.current;
+      if (!deferred) return;
+      mainDeferredAgUiArtifactRichTextRef.current = null;
+      pendingRichTextRef.current = mergePendingRichTextPayload(pendingRichTextRef.current, deferred);
+      if (autoVoiceRealtimeSessionRef.current?.replyId === replyId) {
+        autoVoiceRealtimeSessionRef.current.lastRichText = pendingRichTextRef.current;
+      }
+      pendingAgUiArtifactPositionRef.current = true;
+      mainStreamFollowTailRef.current = false;
+      userPinnedToTailRef.current = false;
+      scrollTailAfterHubSendRef.current = false;
+      setMessages((prev) =>
+        prev.map((m) => {
+          if (m.id !== replyId) return m;
+          const next: ChatMessage = {
+            ...m,
+            richText: m.richText ? mergePendingRichTextPayload(m.richText, deferred) : deferred,
+            streamRenderItems: appendRichRenderItem(m.streamRenderItems, deferred),
+          };
+          return richTextPayloadHasFormLikeAgUiArtifact(deferred) ? clearQuickRepliesFromMessage(next) : next;
+        }),
+      );
+    };
+
+    const queueAgUiArtifactRichText = (payload: ChatRichTextPayload, meta?: { formLike?: boolean }) => {
+      mainDeferredAgUiArtifactRichTextRef.current = mergePendingRichTextPayload(
+        mainDeferredAgUiArtifactRichTextRef.current,
+        payload,
+      );
+      if (meta?.formLike || richTextPayloadHasFormLikeAgUiArtifact(payload)) {
+        setMessages((prev) => prev.map((m) => (m.id === replyId ? clearQuickRepliesFromMessage(m) : m)));
+      }
+      if (mainStreamFinalTextStartedRef.current) flushDeferredAgUiArtifacts();
+    };
+
     return (data: string | object) => {
       persistAgentConversationIdFromSse(data);
       if (typeof data === "object" && data != null) {
@@ -1582,24 +1656,20 @@ const AgentHub: React.FC = () => {
       }
       const eventType = resolveEventTag(data);
       const rich = parseChatRichTextFromSseData(data);
-      const incomingAgUiArtifact =
-        eventType === "ARTIFACT_CREATED" ||
-        eventType === "artifact_created" ||
-        richTextPayloadHasAgUiArtifact(rich);
-      if (incomingAgUiArtifact) {
-        pendingAgUiArtifactPositionRef.current = true;
-        mainStreamFollowTailRef.current = false;
-        userPinnedToTailRef.current = false;
-        scrollTailAfterHubSendRef.current = false;
-      }
+      const richHasAgUiArtifact = richTextPayloadHasAgUiArtifact(rich);
       const side = applyAgUiStreamSideEffects(replyId, data, setMessages, {
         pendingRichTextRef,
         onHospitalBagCartUpdate: (groups) => {
           setHospitalBagCartGroups(cloneHospitalBagCartGroups(groups));
         },
+        deferAgUiArtifacts: true,
+        onAgUiArtifactRichText: queueAgUiArtifactRichText,
       });
       if (rich || side.didUpdate) clearMainNoVisibleResponseTimer();
-      if (rich) {
+      if (rich && richHasAgUiArtifact && eventType !== "ARTIFACT_CREATED" && eventType !== "artifact_created") {
+        queueAgUiArtifactRichText(rich, { formLike: richTextPayloadHasFormLikeAgUiArtifact(rich) });
+      }
+      if (rich && !richHasAgUiArtifact) {
         const mergedRichText = mergePendingRichTextPayload(pendingRichTextRef.current, rich);
         pendingRichTextRef.current = mergedRichText;
         if (autoVoiceRealtimeSessionRef.current?.replyId === replyId) {
@@ -1666,6 +1736,7 @@ const AgentHub: React.FC = () => {
         }
       }
 
+      if (delta) mainStreamFinalTextStartedRef.current = true;
       setMessages((prev) =>
         prev.map((m) => {
           if (m.id !== replyId) return m;
@@ -1679,12 +1750,13 @@ const AgentHub: React.FC = () => {
           if (delta) {
             next = {
               ...next,
-              streamRenderItems: appendTextRenderItem(next.streamRenderItems, delta),
+              streamRenderItems: appendTextRenderItemBeforeAgUiArtifacts(next.streamRenderItems, delta),
             };
           }
           return next;
         }),
       );
+      if (delta) flushDeferredAgUiArtifacts();
     };
   };
 
@@ -1742,6 +1814,9 @@ const AgentHub: React.FC = () => {
     await stopCurrentBubblePlayback();
     mainStreamMergedAnswerRef.current = "";
     mainStreamMergedThinkingRef.current = "";
+    mainPendingRichTextRef.current = null;
+    mainDeferredAgUiArtifactRichTextRef.current = null;
+    mainStreamFinalTextStartedRef.current = false;
     mainStreamingReplyIdRef.current = replyId;
     mainStreamFollowTailRef.current = true;
     primeAutoVoicePlayback();
@@ -1762,6 +1837,8 @@ const AgentHub: React.FC = () => {
         mainStreamFollowTailRef.current = false;
       }, 300);
       mainPendingRichTextRef.current = null;
+      mainDeferredAgUiArtifactRichTextRef.current = null;
+      mainStreamFinalTextStartedRef.current = false;
       mainStreamMergedAnswerRef.current = "";
       mainStreamMergedThinkingRef.current = "";
       setMessages((prev) =>
@@ -1832,6 +1909,8 @@ const AgentHub: React.FC = () => {
         clearMainNoVisibleResponseTimer();
         void stopCurrentBubblePlayback();
         mainPendingRichTextRef.current = null;
+        mainDeferredAgUiArtifactRichTextRef.current = null;
+        mainStreamFinalTextStartedRef.current = false;
         mainStreamMergedAnswerRef.current = "";
         mainStreamMergedThinkingRef.current = "";
         mainChatCancelRef.current = null;

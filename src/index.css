@@ -1308,6 +1308,13 @@
   color: #227a73;
 }
 
+.birth-journey-phase.is-collapsible .birth-journey-phase-marker {
+  border-color: rgba(232, 196, 207, 0.62);
+  background: rgba(255, 250, 252, 0.86);
+  color: #9d6b80;
+  box-shadow: none;
+}
+
 .birth-journey-phase-body {
   min-width: 0;
   display: grid;
@@ -1324,11 +1331,31 @@
   background: linear-gradient(145deg, rgba(246, 255, 252, 0.9) 0%, rgba(255, 251, 253, 0.78) 100%);
 }
 
+.birth-journey-phase.is-collapsible .birth-journey-phase-details[open] {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 22px rgba(83, 47, 64, 0.07);
+}
+
+.birth-journey-phase.is-collapsible .birth-journey-phase-details {
+  gap: 0;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+}
+
 .birth-journey-phase-heading {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
+}
+
+.birth-journey-phase-heading > div {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .birth-journey-phase-heading p {
@@ -1345,6 +1372,62 @@
   font-size: 15px;
   font-weight: 860;
   line-height: 1.25;
+}
+
+.birth-journey-phase-summary {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 26px;
+  cursor: pointer;
+  align-items: center;
+  gap: 9px;
+  list-style: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.birth-journey-phase-summary::-webkit-details-marker {
+  display: none;
+}
+
+.birth-journey-phase-summary::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-right: 2px solid #9d6b80;
+  border-bottom: 2px solid #9d6b80;
+  transform: rotate(-45deg);
+  transition: transform 160ms ease;
+}
+
+.birth-journey-phase-details[open] .birth-journey-phase-summary::before {
+  transform: rotate(45deg);
+}
+
+.birth-journey-phase-summary h3 {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
+  color: #745365;
+  font-size: 14px;
+  font-weight: 780;
+}
+
+.birth-journey-phase-details[open] .birth-journey-phase-summary h3 {
+  color: #3e2432;
+  font-size: 15px;
+  font-weight: 860;
+}
+
+.birth-journey-phase-expanded-content {
+  display: grid;
+  gap: 10px;
 }
 
 .birth-journey-phase-heading span {

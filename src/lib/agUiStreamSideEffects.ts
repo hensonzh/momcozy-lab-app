@@ -718,7 +718,7 @@ export function semanticForAgUiEvent(
   if (eventType.startsWith("TOOL_CALL")) {
     return toolSemanticForEvent(eventType, readToolName(data), parsedResult);
   }
-  if (eventType === "ARTIFACT_CREATED") {
+  if (eventType === "ARTIFACT_CREATED" || eventType === "artifact_created") {
     return artifactSemanticFromEvent(data);
   }
   if (eventType === "CONFIRMATION_REQUIRED") {
@@ -1050,6 +1050,8 @@ export function applyAgUiStreamSideEffects(
   opts?: {
     pendingRichTextRef?: MutableRefObject<ChatRichTextPayload | null>;
     onHospitalBagCartUpdate?: (groups: HospitalBagCartGroup[], message?: string) => void;
+    deferAgUiArtifacts?: boolean;
+    onAgUiArtifactRichText?: (payload: ChatRichTextPayload, meta: { formLike: boolean }) => void;
   },
 ): ApplyAgUiSideEffectResult {
   if (typeof data !== "object" || data == null) return { didUpdate: false };
@@ -1297,6 +1299,11 @@ export function applyAgUiStreamSideEffects(
     const action = artifactActionFromEvent(rec);
     if (action) {
       const rich = richTextPayloadForArtifactAction(action);
+      if (opts?.deferAgUiArtifacts) {
+        didUpdate = true;
+        opts.onAgUiArtifactRichText?.(rich, { formLike: isFormLikeArtifactAction(action) });
+        return { didUpdate };
+      }
       patchMsg((m) => {
         const next = {
           ...m,
