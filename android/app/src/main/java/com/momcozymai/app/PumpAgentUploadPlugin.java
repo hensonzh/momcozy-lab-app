@@ -156,10 +156,12 @@ public class PumpAgentUploadPlugin extends Plugin {
             ret.put("processL", progress.optInt("processL", 0));
             ret.put("processR", progress.optInt("processR", 0));
             ret.put("processAll", progress.optInt("processAll", 0));
+            ret.put("elapsedSeconds", PumpSessionNativeController.currentElapsedSeconds());
         } catch (Exception ignored) {
             ret.put("processL", 0);
             ret.put("processR", 0);
             ret.put("processAll", 0);
+            ret.put("elapsedSeconds", 0);
         }
         return ret;
     }
@@ -171,6 +173,9 @@ public class PumpAgentUploadPlugin extends Plugin {
         ret.put("processL", progress.optInt("processL", 0));
         ret.put("processR", progress.optInt("processR", 0));
         ret.put("processAll", progress.optInt("processAll", 0));
+        if (progress.has("elapsedSeconds")) {
+            ret.put("elapsedSeconds", progress.optInt("elapsedSeconds", 0));
+        }
         plugin.notifyListeners("nativeProcessProgress", ret);
     }
 
