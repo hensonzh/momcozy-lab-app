@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Bell, BellOff, Bot, CheckCircle2, ChevronLeft, ChevronRight, Clock, HelpCircle, ImageIcon, Loader2, Plus, Trash2, X } from "lucide-react";
+import { Bell, BellOff, CheckCircle2, ChevronLeft, ChevronRight, Clock, HelpCircle, ImageIcon, Loader2, Plus, Trash2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, isSameDay } from "date-fns";
 import TabPageTopReserve from "@/components/layout/TabPageTopReserve";
@@ -155,18 +155,33 @@ const resolveSmartTaskPlanBadgeLabel = (task: ScheduleTask, planType: string) =>
 const formatPostpartumPhaseLabel = (postpartumDay: number, phaseLabel: string) =>
   `产后第${postpartumWeekFromDay(postpartumDay)}周（${phaseLabel}）`;
 
+const buildTodayTaskPlanMethodSentence = (planType: string, planLabel: string): string => {
+  const t = normalizeApiPlanType(planType);
+  if (t === "chase") {
+    return "追奶重点是增加有效移出机会，放在更容易坚持的时段。";
+  }
+  if (t === "wean") {
+    return "减奶重点是循序减少频次或时长，避免突然停吸带来胀痛。";
+  }
+  if (t === "none" || t === "maintain") {
+    return "稳奶重点是稳定关键排乳窗口，避免过度加任务或过早减少。";
+  }
+  if (t === "work") {
+    return "返工重点是保留关键排乳窗口，并适配通勤和工作空档。";
+  }
+  if (t === "fertility") {
+    return "待产重点是按阶段排优先级，先处理必须确认的事项。";
+  }
+  return `${planLabel}重点是结合阶段、记录和执行负担，保证任务能执行。`;
+};
+
 const buildTodayTaskPlanExplanation = ({
-  postpartumDay,
-  phaseLabel,
   planType,
   actionTaskCount,
   completedTaskCount,
   skippedTaskCount,
   pumpRecordCount,
   feedingRecordCount,
-  inventoryTotal,
-  feedingTotal,
-  volUnit,
   loading,
 }: {
   postpartumDay: number;
@@ -184,22 +199,15 @@ const buildTodayTaskPlanExplanation = ({
 }) => {
   const rawPlanLabel = mapTodayPlanTypeToHeaderLabel(planType).replace(/执行中$/, "");
   const planLabel = rawPlanLabel.endsWith("计划") ? rawPlanLabel : `${rawPlanLabel}计划`;
-  const weekLabel = postpartumWeekFromDay(postpartumDay);
-  const loadingPrefix = loading ? "我正在同步今天最新的计划和记录，先按已经读到的数据看，" : "我先看了今天已经读到的数据，";
-  const taskSentence =
+  const taskProgress =
     actionTaskCount > 0
-      ? `今天的${planLabel}共有${actionTaskCount}项任务，已经完成${completedTaskCount}项${skippedTaskCount > 0 ? `，还有${skippedTaskCount}项被跳过` : ""}。`
-      : `今天还没有生成具体任务，所以我先把这段说明作为${planLabel}的判断依据。`;
-  const recordParts = [
-    pumpRecordCount > 0 ? `吸奶${formatVol(inventoryTotal, volUnit)}${unitLabel(volUnit)}（${pumpRecordCount}次）` : "",
-    feedingRecordCount > 0 ? `喂养${formatVol(feedingTotal, volUnit)}${unitLabel(volUnit)}（${feedingRecordCount}次）` : "",
-  ].filter(Boolean);
-  const recordSentence =
-    recordParts.length > 0
-      ? `记录里目前有${recordParts.join("，")}。`
-      : "今天我还没有读到新的奶量记录，所以会先按产后阶段和已有任务节奏来判断。";
+      ? `完成${completedTaskCount}/${actionTaskCount}项${skippedTaskCount > 0 ? `，跳过${skippedTaskCount}项` : ""}`
+      : "暂无任务进度";
+  const recordFeedback = pumpRecordCount + feedingRecordCount > 0 ? "新增记录只用于看执行反馈" : "暂无新增记录反馈";
+  const syncPrefix = loading ? "今天记录还在同步。" : "";
+  const methodSentence = buildTodayTaskPlanMethodSentence(planType, planLabel);
 
-  return `${loadingPrefix}你现在是产后第${postpartumDay}天，也就是第${weekLabel}周，处在${phaseLabel}。${taskSentence}${recordSentence}这个安排主要用的是泌乳“供需平衡”原则，以及循证哺乳管理里“规律、充分移出乳汁”的思路：不是单纯增加任务次数，而是结合你的记录、产后阶段和身体负担，把吸奶与喂养节奏安排得更稳定。`;
+  return `${syncPrefix}${planLabel}依据上次制定前读取到的产后阶段、奶量/喂养记录和原有任务节奏。今天${taskProgress}，${recordFeedback}；${methodSentence}`;
 };
 
 const smartSourceCardClass = "bg-white border-border/60";
@@ -1651,15 +1659,12 @@ const Schedule: React.FC = () => {
               className="pointer-events-none fixed inset-0 z-[51] flex items-center justify-center px-6"
             >
               <div className="pointer-events-auto w-full max-w-[420px] rounded-3xl border border-white/70 bg-card px-5 py-4 shadow-2xl">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary shadow-sm ring-1 ring-primary/15">
-                    <Bot className="h-5 w-5" />
-                  </div>
+                <div className="mb-3 flex justify-end">
                   <button type="button" onClick={() => setTodayTaskInfoOpen(false)} className="rounded-full p-2 text-muted-foreground active:bg-muted">
                     <X className="h-4 w-4" />
                   </button>
                 </div>
-                <p className="rounded-[22px] bg-muted/45 px-4 py-3.5 text-sm font-semibold leading-relaxed text-foreground">
+                <p className="whitespace-pre-line rounded-[22px] bg-muted/45 px-4 py-3.5 text-sm font-semibold leading-relaxed text-foreground">
                   {todayTaskPlanExplanation}
                 </p>
               </div>

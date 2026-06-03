@@ -218,6 +218,32 @@ function rememberIbclcViewportForNode(node: HTMLElement | null, returnTo: string
   });
 }
 
+function requestAfterNextLayout(cb: () => void): void {
+  const raf =
+    typeof window.requestAnimationFrame === "function"
+      ? window.requestAnimationFrame.bind(window)
+      : (fn: FrameRequestCallback) => window.setTimeout(() => fn(Date.now()), 0);
+  raf(() => raf(cb));
+}
+
+function preserveSummaryPositionAfterDetailsOpen(summary: HTMLElement): void {
+  const details = summary.parentElement;
+  if (details?.tagName.toLowerCase() === "details" && (details as HTMLDetailsElement).open) return;
+  const scroller = nearestScrollableParent(summary);
+  if (!scroller) return;
+  const beforeTop = summary.getBoundingClientRect().top;
+  requestAfterNextLayout(() => {
+    const deltaTop = summary.getBoundingClientRect().top - beforeTop;
+    if (Math.abs(deltaTop) > 0.5) {
+      scroller.scrollTop += deltaTop;
+    }
+  });
+}
+
+function handleBirthJourneyPhaseSummaryClick(event: React.MouseEvent<HTMLElement>): void {
+  preserveSummaryPositionAfterDetailsOpen(event.currentTarget);
+}
+
 function hasDisplayValue(value: unknown): boolean {
   if (value === null || value === undefined || value === "") return false;
   if (Array.isArray(value)) return value.length > 0;
@@ -1720,7 +1746,10 @@ const AgentHubRichTextBlock: React.FC<{
                               </div>
                             ) : (
                               <details className="birth-journey-phase-body birth-journey-phase-details">
-                                <summary className="birth-journey-phase-summary">
+                                <summary
+                                  className="birth-journey-phase-summary"
+                                  onClick={handleBirthJourneyPhaseSummaryClick}
+                                >
                                   <h3>{phase.title}</h3>
                                 </summary>
                                 <div className="birth-journey-phase-expanded-content">
