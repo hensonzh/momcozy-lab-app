@@ -16,6 +16,7 @@ const actionItems: Array<{ key: ActionKey; label: string }> = [
   { key: "task_reminder", label: "任务提醒" },
   { key: "daily_summary", label: "每日奶量总结" },
   { key: "mom_baby", label: "每日泌乳建议" },
+  { key: "milk_analysis", label: "奶量分析" },
   { key: "growth_update", label: "宝宝生长发育指标更新" },
 ];
 
@@ -28,6 +29,7 @@ const DeviceManageActions: React.FC = () => {
       task_reminder: () => executeDeviceReminderAction("task_reminder"),
       daily_summary: () => executeDeviceReminderAction("daily_summary"),
       mom_baby: () => executeDeviceReminderAction("mom_baby"),
+      milk_analysis: () => executeDeviceReminderAction("milk_analysis"),
       growth_update: () => executeDeviceReminderAction("growth_update"),
     }),
     [],

@@ -1,4 +1,5 @@
 import { toast } from "@/components/ui/sonner";
+import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
 import { createDailyAndMomBabyAnalysis } from "@/lib/agentApi";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 import { getAgUiThreadIdForRequest } from "@/lib/agentConversationSession";
@@ -7,7 +8,7 @@ import { apiRequestRaw } from "@/lib/http";
 import { showNativeReminder } from "@/lib/mmcBackgroundNotify";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 
-export type DeviceReminderActionKey = "task_reminder" | "daily_summary" | "mom_baby" | "growth_update";
+export type DeviceReminderActionKey = "task_reminder" | "daily_summary" | "mom_baby" | "milk_analysis" | "growth_update";
 
 const MOM_BABY_CONTEXT_MAX_CHARS = 320;
 const TASK_REMINDER_MESSAGE = "妈妈，吸奶/喂养时间还有15分钟就到咯，可以提前准备一下哦～";
@@ -129,6 +130,27 @@ async function handleMomBabyAnalysis(): Promise<void> {
   });
 }
 
+async function handleMilkAnalysis(): Promise<void> {
+  const data = await createDailyAndMomBabyAnalysis({
+    user_id: DEFAULT_CHAT_USER_ID,
+    type: "milk_analysis",
+  });
+  const message = data.message?.trim() || "已生成奶量分析。";
+  const chatMessageId = `analysis-milk_analysis-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  await notifyByNativeOrToast({
+    title: "奶量分析",
+    message,
+    path: "/",
+    notifyJson: JSON.stringify({ event: "milk_analysis", body: message, chatMessageId, analysis_card: data.analysis_card }),
+  });
+  appendAgentHubAnalysisMessage(message, { kind: "milk_analysis", id: chatMessageId, analysisCard: data.analysis_card });
+  void recordMilkAnalysisContextEvent({
+    message,
+    analysisCard: data.analysis_card,
+    chatMessageId,
+  });
+}
+
 function handleGrowthUpdateNotify(): void {
   void notifyByNativeOrToast({
     title: "生长发育更新提醒",
@@ -154,6 +176,8 @@ export function getDeviceReminderActionTitle(actionKey: DeviceReminderActionKey)
       return "每日奶量总结";
     case "mom_baby":
       return "每日泌乳建议";
+    case "milk_analysis":
+      return "奶量分析";
     case "growth_update":
       return "宝宝生长发育指标更新";
   }
@@ -169,6 +193,9 @@ export async function executeDeviceReminderAction(actionKey: DeviceReminderActio
       return;
     case "mom_baby":
       await handleMomBabyAnalysis();
+      return;
+    case "milk_analysis":
+      await handleMilkAnalysis();
       return;
     case "growth_update":
       handleGrowthUpdateNotify();

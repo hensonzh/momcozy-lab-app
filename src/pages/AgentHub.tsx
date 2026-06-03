@@ -418,6 +418,7 @@ function reportKindLabel(kind?: string): string {
   if (kind === "pump-session-summary") return "吸奶小结";
   if (kind === "daily_summary") return "每日奶量总结";
   if (kind === "mom_baby") return "每日泌乳建议";
+  if (kind === "milk_analysis") return "奶量分析";
   return "M.ai 报告";
 }
 
@@ -699,6 +700,10 @@ const AgentHub: React.FC = () => {
   const lastAgUiArtifactAnchorKeyRef = useRef<string | null>(latestAgUiArtifactAnchorKey(hubInitialMessages));
   const pendingAgUiArtifactPositionRef = useRef(false);
   const [input, setInput] = useState("");
+  const inputRef = useRef(input);
+  useEffect(() => {
+    inputRef.current = input;
+  }, [input]);
   /** 底部发送已触发 SSE：显示发送键加载直至回复结束或再次点击打断 */
   const [hubBottomSendBusy, setHubBottomSendBusy] = useState(false);
   /** 最近一次来自底部输入 handleSend 的 SSE 未完成；仅此时 onDone/onError 应清除 hubBottomSendBusy */
@@ -2402,13 +2407,13 @@ const AgentHub: React.FC = () => {
   };
 
   /**
-   * 发送主输入框内容：先结束听写并丢弃转写异步收尾对输入框的写入，再清空并送出。
+   * 发送主输入框内容：普通发送会丢弃听写收尾；语音松手提交会传入最终转写文本。
    */
-  const handleSend = async () => {
+  const handleSend = async (textOverride?: string) => {
     if (hubBottomSendActionLockRef.current) return;
     hubBottomSendActionLockRef.current = true;
     try {
-    const pendingText = input.trim();
+    const pendingText = (textOverride ?? input).trim();
     const hasReadyStagedImages = collectAgUiReadyImages(messages).length > 0;
     if (!hubBottomSendBusy && !mainChatCancelRef.current && (pendingText || hasReadyStagedImages)) {
       primeAutoVoicePlayback();
@@ -2496,6 +2501,17 @@ const AgentHub: React.FC = () => {
         hubBottomSendActionLockRef.current = false;
       }, 120);
     }
+  };
+
+  const handleVoiceEnd = async (opts?: { submit?: boolean }) => {
+    if (!opts?.submit) {
+      await stopSpeech({ discardSttResult: true });
+      return;
+    }
+    const finalText = await stopSpeech();
+    const text = finalText.trim() || inputRef.current.trim();
+    if (!text) return;
+    await handleSend(text);
   };
 
   /** 暂存图片文件（拍照或本地选择）：ag-ui 发送时会把预览 blob 转成 data URL。 */
@@ -3323,7 +3339,7 @@ const AgentHub: React.FC = () => {
             sendLoading={hubBottomSendBusy}
             canSendWithoutText={hasReadyHubUploadedImages}
             onVoiceStart={() => void startSpeech()}
-            onVoiceEnd={() => void stopSpeech()}
+            onVoiceEnd={(opts) => void handleVoiceEnd(opts)}
             speechListening={speechListening}
             showPhotoMenu={showPhotoMenu}
             onTogglePhotoMenu={setShowPhotoMenu}

@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import MaiInputBar from "./MaiInputBar";
 
@@ -117,5 +118,103 @@ describe("MaiInputBar", () => {
 
     expect(allowed).toBe(true);
     expect(onPhotoFile).not.toHaveBeenCalled();
+  });
+
+  it("switches to hold-to-talk mode when the voice icon is clicked", () => {
+    const onVoiceStart = vi.fn();
+    const onVoiceEnd = vi.fn();
+    const { container } = render(
+      <MaiInputBar
+        value=""
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+      />,
+    );
+
+    expect(container.querySelector(".lucide-mic")).toBeInTheDocument();
+    expect(container.querySelector(".lucide-keyboard")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTitle("切换到语音输入"));
+
+    expect(screen.queryByPlaceholderText("和 Comate 聊聊...")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "按住说话" })).toBeInTheDocument();
+    expect(container.querySelector(".lucide-keyboard")).toBeInTheDocument();
+    expect(onVoiceStart).not.toHaveBeenCalled();
+  });
+
+  it("restores the typed draft when voice mode is closed before recording", () => {
+    const Harness = () => {
+      const [value, setValue] = useState("先输入的草稿");
+      return (
+        <MaiInputBar
+          value={value}
+          onChange={setValue}
+          onSend={vi.fn()}
+          onVoiceStart={vi.fn()}
+          onVoiceEnd={vi.fn()}
+        />
+      );
+    };
+    render(<Harness />);
+
+    expect(screen.getByDisplayValue("先输入的草稿")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTitle("切换到语音输入"));
+    expect(screen.queryByDisplayValue("先输入的草稿")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTitle("切换到文字输入"));
+    expect(screen.getByDisplayValue("先输入的草稿")).toBeInTheDocument();
+  });
+
+  it("starts voice recognition while the hold-to-talk button is pressed and submits on release", () => {
+    const onVoiceStart = vi.fn();
+    const onVoiceEnd = vi.fn();
+    render(
+      <MaiInputBar
+        value=""
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+      />,
+    );
+
+    fireEvent.click(screen.getByTitle("切换到语音输入"));
+    const holdButton = screen.getByRole("button", { name: "按住说话" });
+    fireEvent.pointerDown(holdButton, { pointerId: 1 });
+    fireEvent.pointerUp(holdButton, { pointerId: 1 });
+
+    expect(onVoiceStart).toHaveBeenCalledTimes(1);
+    expect(onVoiceEnd).toHaveBeenCalledWith({ submit: true });
+  });
+
+  it("shows live transcription text inside the hold-to-talk control", () => {
+    const onVoiceStart = vi.fn();
+    const onVoiceEnd = vi.fn();
+    const { rerender } = render(
+      <MaiInputBar
+        value=""
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+      />,
+    );
+
+    fireEvent.click(screen.getByTitle("切换到语音输入"));
+    rerender(
+      <MaiInputBar
+        value="今天吸奶感觉不错"
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+        speechListening
+      />,
+    );
+
+    expect(screen.getByText("今天吸奶感觉不错")).toBeInTheDocument();
   });
 });
