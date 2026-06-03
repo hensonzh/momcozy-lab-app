@@ -720,7 +720,7 @@ export interface StatusCreateData {
 
 export interface AnalysisCreateBody {
   user_id: string;
-  type: "mom_baby" | "daily_summary";
+  type: "mom_baby" | "daily_summary" | "milk_analysis";
 }
 
 export interface AnalysisCreateData {

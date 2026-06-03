@@ -5,7 +5,7 @@ import { loadPersistedChatMessages, savePersistedChatMessages } from "@/lib/chat
 
 export const AGENT_HUB_SYNC_CHAT_EVENT = "mmc-agent-hub-sync-chat";
 
-type AnalysisMessageKind = "daily_summary" | "mom_baby";
+type AnalysisMessageKind = "daily_summary" | "mom_baby" | "milk_analysis";
 
 function nowTimestamp(): string {
   return new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
