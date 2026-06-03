@@ -37,6 +37,7 @@ import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.annotation.PermissionCallback;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -185,8 +186,16 @@ public class MmcBlePlugin extends Plugin {
             return;
         }
         try {
+            mainHandler.removeCallbacks(pendingStopScan);
+            stopScanNow();
             BluetoothGatt previous = gatts.remove(deviceId);
-            if (previous != null) previous.close();
+            if (previous != null) {
+                try {
+                    previous.disconnect();
+                    previous.close();
+                } catch (SecurityException ignored) {
+                }
+            }
             BluetoothDevice device = adapter.getRemoteDevice(deviceId);
             connectCalls.put(deviceId, call);
             BluetoothGatt gatt = device.connectGatt(getContext(), false, new GattCallback(deviceId), BluetoothDevice.TRANSPORT_LE);
@@ -347,6 +356,100 @@ public class MmcBlePlugin extends Plugin {
         sendProtocolReq(call, deviceId, MmcBleProtocol.buildE1QueryDeviceStatus());
     }
 
+    @PluginMethod
+    public void nativeAdjustGearForSide(PluginCall call) {
+        String side = normalizeSide(call.getString("side"));
+        if (side == null) {
+            call.reject("side must be L or R");
+            return;
+        }
+        int delta = call.getInt("delta", 0);
+        JSONObject device = DeviceNativeStateStore.getDeviceForSideCopy(side);
+        String deviceId = DeviceNativeStateStore.getDeviceIdForSide(side);
+        if (device == null || deviceId.isEmpty() || !device.optBoolean("connected", false)) {
+            call.reject("side device is not connected");
+            return;
+        }
+        int mode = clamp(device.optInt("pumpMode", 0), 0, 2);
+        int gear = clamp(device.optInt("gear", 0) + delta, 0, 14);
+        int scene = clamp(device.optInt("pumpScene", 0), 0, 1);
+        int ss = device.optInt("pumpWorkState", 0) == 1 ? 1 : 0;
+        sendProtocolReq(call, deviceId, MmcBleProtocol.buildB1SetPumpParams(ss, mode, gear, scene),
+                () -> DeviceNativeStateStore.updateAfterPumpParams(deviceId, mode, gear, ss, scene));
+    }
+
+    @PluginMethod
+    public void nativeSetModeForSide(PluginCall call) {
+        String side = normalizeSide(call.getString("side"));
+        if (side == null) {
+            call.reject("side must be L or R");
+            return;
+        }
+        int mode = clamp(call.getInt("mode", 0), 0, 2);
+        JSONObject device = DeviceNativeStateStore.getDeviceForSideCopy(side);
+        String deviceId = DeviceNativeStateStore.getDeviceIdForSide(side);
+        if (device == null || deviceId.isEmpty() || !device.optBoolean("connected", false)) {
+            call.reject("side device is not connected");
+            return;
+        }
+        int scene = clamp(device.optInt("pumpScene", 0), 0, 1);
+        int fallback = clamp(device.optInt("gear", 0), 0, 14);
+        int gear = DeviceNativeStateStore.readGearFromMemory(device, scene, mode, fallback);
+        int ss = device.optInt("pumpWorkState", 0) == 1 ? 1 : 0;
+        sendProtocolReq(call, deviceId, MmcBleProtocol.buildB1SetPumpParams(ss, mode, gear, scene),
+                () -> DeviceNativeStateStore.updateAfterPumpParams(deviceId, mode, gear, ss, scene));
+    }
+
+    @PluginMethod
+    public void nativeSetSceneForSide(PluginCall call) {
+        String side = normalizeSide(call.getString("side"));
+        if (side == null) {
+            call.reject("side must be L or R");
+            return;
+        }
+        int scene = clamp(call.getInt("scene", 0), 0, 1);
+        JSONObject device = DeviceNativeStateStore.getDeviceForSideCopy(side);
+        String deviceId = DeviceNativeStateStore.getDeviceIdForSide(side);
+        if (device == null || deviceId.isEmpty() || !device.optBoolean("connected", false)) {
+            call.reject("side device is not connected");
+            return;
+        }
+        if (scene == 1) DeviceNativeStateStore.copyAiMemoryFromCalib(side);
+        else DeviceNativeStateStore.copyManualMemoryFromAi(side);
+        JSONObject refreshed = DeviceNativeStateStore.getDeviceForSideCopy(side);
+        if (refreshed != null) device = refreshed;
+        int mode = scene == 1 ? 0 : clamp(device.optInt("pumpMode", 0), 0, 2);
+        int fallback = clamp(device.optInt("gear", 0), 0, 14);
+        int gear = scene == 1 && device.optJSONObject("pumpGearCalib") != null
+                ? clamp(device.optJSONObject("pumpGearCalib").optInt("stimulate", fallback), 0, 14)
+                : DeviceNativeStateStore.readGearFromMemory(device, scene, mode, fallback);
+        int ss = 1;
+        sendProtocolReq(call, deviceId, MmcBleProtocol.buildB1SetPumpParams(ss, mode, gear, scene),
+                () -> DeviceNativeStateStore.updateAfterPumpParams(deviceId, mode, gear, ss, scene));
+    }
+
+    @PluginMethod
+    public void nativeSetStartStopForSide(PluginCall call) {
+        String side = normalizeSide(call.getString("side"));
+        if (side == null) {
+            call.reject("side must be L or R");
+            return;
+        }
+        int startStop = clamp(call.getInt("startStop", 0), 0, 1);
+        JSONObject device = DeviceNativeStateStore.getDeviceForSideCopy(side);
+        String deviceId = DeviceNativeStateStore.getDeviceIdForSide(side);
+        if (device == null || deviceId.isEmpty() || !device.optBoolean("connected", false)) {
+            call.reject("side device is not connected");
+            return;
+        }
+        int mode = clamp(device.optInt("pumpMode", 0), 0, 2);
+        int scene = clamp(device.optInt("pumpScene", 0), 0, 1);
+        int fallback = clamp(device.optInt("gear", 0), 0, 14);
+        int gear = DeviceNativeStateStore.readGearFromMemory(device, scene, mode, fallback);
+        sendProtocolReq(call, deviceId, MmcBleProtocol.buildB1SetPumpParams(startStop, mode, gear, scene),
+                () -> DeviceNativeStateStore.updateAfterPumpParams(deviceId, mode, gear, startStop, scene));
+    }
+
     @Override
     protected void handleOnDestroy() {
         mainHandler.removeCallbacks(pendingStopScan);
@@ -373,6 +476,10 @@ public class MmcBlePlugin extends Plugin {
     }
 
     private void sendProtocolReq(PluginCall call, String deviceId, byte[] packet) {
+        sendProtocolReq(call, deviceId, packet, null);
+    }
+
+    private void sendProtocolReq(PluginCall call, String deviceId, byte[] packet, AckSideEffect ackSideEffect) {
         int cid = MmcBleProtocol.getCidFromReqPacket(packet);
         if (cid < 0) {
             call.reject("invalid protocol packet");
@@ -383,7 +490,7 @@ public class MmcBlePlugin extends Plugin {
             call.reject("duplicate pending protocol req cid=0x" + Integer.toHexString(cid));
             return;
         }
-        PendingProtocolReq pending = new PendingProtocolReq(deviceId, cid, packet, call);
+        PendingProtocolReq pending = new PendingProtocolReq(deviceId, cid, packet, call, ackSideEffect);
         protocolReqs.put(key, pending);
         pending.sendNext();
     }
@@ -410,6 +517,11 @@ public class MmcBlePlugin extends Plugin {
         PendingProtocolReq pending = protocolReqs.remove(key);
         if (pending == null) return;
         pending.cancelTimeout();
+        if (frame.ct == 0x01 && pending.ackSideEffect != null && pending.ackSideEffect.run()) {
+            JSObject state = new JSObject();
+            state.put("snapshotJson", DeviceNativeStateStore.getSnapshotJson());
+            notifyListeners("nativeDeviceStateChanged", state);
+        }
         JSObject ret = new JSObject();
         ret.put("ct", frame.ct);
         ret.put("cid", frame.cid);
@@ -424,6 +536,11 @@ public class MmcBlePlugin extends Plugin {
 
     private int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
+    }
+
+    private String normalizeSide(String side) {
+        if ("L".equals(side) || "R".equals(side)) return side;
+        return null;
     }
 
     private void writeInternal(PluginCall call, boolean withoutResponse) {
@@ -600,6 +717,15 @@ public class MmcBlePlugin extends Plugin {
 
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            if (gatts.get(deviceId) != gatt) {
+                if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                    try {
+                        gatt.close();
+                    } catch (Exception ignored) {
+                    }
+                }
+                return;
+            }
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 try {
                     gatt.discoverServices();
@@ -610,7 +736,7 @@ public class MmcBlePlugin extends Plugin {
                 return;
             }
             if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                gatts.remove(deviceId);
+                if (gatts.get(deviceId) == gatt) gatts.remove(deviceId);
                 notifyKeys.remove(deviceId);
                 rejectProtocolReqsForDevice(deviceId, "Bluetooth disconnected");
                 PluginCall call = connectCalls.remove(deviceId);
@@ -628,6 +754,7 @@ public class MmcBlePlugin extends Plugin {
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            if (gatts.get(deviceId) != gatt) return;
             PluginCall call = connectCalls.remove(deviceId);
             if (call == null) return;
             if (status == BluetoothGatt.GATT_SUCCESS) call.resolve();
@@ -681,6 +808,7 @@ public class MmcBlePlugin extends Plugin {
             if (!notifyKeys.getOrDefault(deviceId, new HashSet<>()).contains(characteristicKey(ref))) return;
             MmcBleProtocol.ParsedFrame frame = MmcBleProtocol.parseFrame(value);
             if (frame != null) {
+                PumpAgentNativeStore.markDeviceSourceByPacket(frame.cid, deviceId);
                 if (DeviceNativeStateStore.applyProtocolFrame(deviceId, value)) {
                     JSObject state = new JSObject();
                     state.put("snapshotJson", DeviceNativeStateStore.getSnapshotJson());
@@ -722,14 +850,16 @@ public class MmcBlePlugin extends Plugin {
         final int cid;
         final byte[] packet;
         final PluginCall call;
+        final AckSideEffect ackSideEffect;
         int attempts;
         Runnable timeoutRunnable;
 
-        PendingProtocolReq(String deviceId, int cid, byte[] packet, PluginCall call) {
+        PendingProtocolReq(String deviceId, int cid, byte[] packet, PluginCall call, AckSideEffect ackSideEffect) {
             this.deviceId = deviceId;
             this.cid = cid;
             this.packet = packet;
             this.call = call;
+            this.ackSideEffect = ackSideEffect;
         }
 
         void sendNext() {
@@ -757,6 +887,10 @@ public class MmcBlePlugin extends Plugin {
                 timeoutRunnable = null;
             }
         }
+    }
+
+    private interface AckSideEffect {
+        boolean run();
     }
 
     private CharacteristicRef fromCharacteristic(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {

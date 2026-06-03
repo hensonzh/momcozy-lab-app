@@ -3,6 +3,8 @@ declare global {
     MmcNativePumpSession?: {
       updateSession?: (state: string, processAll: number) => void;
       stopSession?: () => void;
+      showOverlay?: () => void;
+      hideOverlay?: () => void;
       canDrawOverlays?: () => boolean;
       openOverlaySettings?: () => void;
       hasPostNotificationsPermission?: () => boolean;

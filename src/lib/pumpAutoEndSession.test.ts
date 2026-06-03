@@ -4,6 +4,7 @@ import { chatStore } from "@/lib/chatStore";
 import { postPumpSessionSummaryWebSocket } from "@/lib/agentApi";
 import { pushPumpMilkUploadForPumpSessionEnd, pushPumpStopAgentSummaryToChat } from "@/lib/pumpAutoEndSession";
 import { uploadPumpMilkRecord } from "@/lib/momPumpTwinAgentApi";
+import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
 
 vi.mock("@capacitor/core", () => ({
   Capacitor: {
@@ -70,12 +71,14 @@ describe("pushPumpStopAgentSummaryToChat", () => {
     deviceStore.setDevice("L", null);
     deviceStore.setDevice("R", null);
     chatStore.setMessages([]);
+    vi.restoreAllMocks();
     vi.clearAllMocks();
   });
 
   it("uploads the same milk values and elapsed time shown in the pump session UI", async () => {
     deviceStore.setDevice("L", storedDevice("L", { duration: 60 }));
     deviceStore.setDevice("R", storedDevice("R", { duration: 60 }));
+    vi.spyOn(pumpSessionLifecycle, "getLetdownCounts").mockReturnValue({ L: 2, R: 1 });
     vi.mocked(postPumpSessionSummaryWebSocket).mockResolvedValue({
       status: 200,
       data: {
@@ -107,12 +110,14 @@ describe("pushPumpStopAgentSummaryToChat", () => {
           process: 70,
           duration_seconds: 45,
           has_letdown: true,
+          letdown_count: 2,
         }),
         right: expect.objectContaining({
           milk_ml: 8,
           process: 80,
           duration_seconds: 45,
           has_letdown: false,
+          letdown_count: 1,
         }),
       }),
       expect.objectContaining({ timeoutMs: 15000 }),

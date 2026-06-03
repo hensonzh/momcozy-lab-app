@@ -6,7 +6,7 @@
  * tryRunPumpAutoEndOffPumpTeardownOnce 在「已在智能体主页 / 之后进入主页 / 点击通知」三条路径上竞争 claim，先到先得。
  */
 
-import { Capacitor } from "@capacitor/core";
+import { Capacitor, registerPlugin } from "@capacitor/core";
 import {
   postAgUiWebSocketStream,
   postPumpSessionSummaryWebSocket,
@@ -52,6 +52,21 @@ const CHAT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as st
 const MAI_CHAT_QUERY_STOP_PUMP = "停止吸乳-开始吸乳APP";
 const STOP_SUMMARY_TIMEOUT_MS = 12000;
 const PUMP_SESSION_SUMMARY_WS_TIMEOUT_MS = 15000;
+
+interface NativePumpAgentUploadPlugin {
+  setConfig(options: { apiBaseUrl: string; bearerToken: string; userId: string }): Promise<void>;
+  uploadMilkRecord(options: { userId: string; endedAtMs: number }): Promise<{ response?: { error?: number } }>;
+}
+
+const NativePumpAgentUpload = registerPlugin<NativePumpAgentUploadPlugin>("PumpAgentUpload");
+
+function viteApiBaseUrl(): string {
+  return (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim()) || "";
+}
+
+function viteApiToken(): string {
+  return (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_TOKEN as string | undefined)?.trim()) || "";
+}
 
 export interface PumpStopSummaryOptions {
   displayedDurationSeconds?: number;
@@ -201,12 +216,15 @@ function displayedDurationSeconds(options?: PumpStopSummaryOptions | null): numb
 }
 
 function buildPumpSessionSummarySide(
+  side: DeviceSide,
   device: ReturnType<typeof deviceStore.get>["L"],
   process: number,
   options?: PumpStopSummaryOptions | null,
 ): PumpSessionSummarySide {
   const milk = displayedMilkMl(device);
   const duration = displayedDurationSeconds(options) ?? numberOrUndefined(device?.duration);
+  const letdownCounts = pumpSessionLifecycle.getLetdownCounts();
+  const letdownCount = side === "R" ? letdownCounts.R : letdownCounts.L;
   return {
     connected: Boolean(device?.connected),
     milk_ml: milk,
@@ -216,6 +234,7 @@ function buildPumpSessionSummarySide(
     duration_seconds: duration,
     has_milk: typeof device?.milkFlag === "number" ? Boolean(device.milkFlag & 0x01) : undefined,
     has_letdown: typeof device?.moFlag === "number" ? Boolean(device.moFlag & 0x01) : undefined,
+    letdown_count: letdownCount,
   };
 }
 
@@ -223,8 +242,8 @@ function buildPumpSessionSummaryBody(event?: PumpSessionEndedEvent | null, optio
   const snap = deviceStore.get();
   const progress = getPumpAgentUploadProcessProgress();
   const endedAtMs = event?.at ?? Date.now();
-  const left = buildPumpSessionSummarySide(snap.L, progress.processL, options);
-  const right = buildPumpSessionSummarySide(snap.R, progress.processR, options);
+  const left = buildPumpSessionSummarySide("L", snap.L, progress.processL, options);
+  const right = buildPumpSessionSummarySide("R", snap.R, progress.processR, options);
   const leftMilk = left.milk_ml ?? 0;
   const rightMilk = right.milk_ml ?? 0;
   const leftDuration = left.duration_seconds ?? 0;
@@ -268,6 +287,23 @@ function buildPumpMilkUploadBody(event?: PumpSessionEndedEvent | null): PumpMilk
 }
 
 export async function pushPumpMilkUploadForPumpSessionEnd(event?: PumpSessionEndedEvent | null): Promise<void> {
+  if (isAndroidNative) {
+    const evt = event ?? pumpSessionLifecycle.getLastEndedEvent();
+    await NativePumpAgentUpload.setConfig({
+      apiBaseUrl: viteApiBaseUrl(),
+      bearerToken: viteApiToken(),
+      userId: CHAT_USER_ID,
+    });
+    const native = await NativePumpAgentUpload.uploadMilkRecord({
+      userId: CHAT_USER_ID,
+      endedAtMs: evt?.at ?? Date.now(),
+    });
+    const error = native.response?.error;
+    if (typeof error === "number" && error !== 0) {
+      throw new Error(`native pump milk upload error=${error}`);
+    }
+    return;
+  }
   const body = buildPumpMilkUploadBody(event ?? pumpSessionLifecycle.getLastEndedEvent());
   log.log("[PUMP_MILK_UPLOAD] upload body", body);
   const response = await uploadPumpMilkRecord(body);
@@ -401,10 +437,6 @@ export async function endPumpBleForBothConnectedSides(): Promise<void> {
   for (const it of items) {
     try {
       await powerOffDeviceAndUpdateStore(it.deviceId, it.side);
-      const cur = deviceStore.get()[it.side];
-      if (cur) {
-        deviceStore.setDevice(it.side, { ...cur, pumpWorkState: 0x00 });
-      }
     } catch (error) {
       console.error(`[endPumpBleForBothConnectedSides] FE failed side=${it.side}:`, error);
     }

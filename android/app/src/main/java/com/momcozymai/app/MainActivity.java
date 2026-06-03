@@ -49,6 +49,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(BackgroundNotifyPlugin.class);
         registerPlugin(DeviceReminderWebSocketPlugin.class);
         registerPlugin(MmcBlePlugin.class);
+        registerPlugin(PumpAgentUploadPlugin.class);
         super.onCreate(savedInstanceState);
         // PumpNotificationChannels.registerAll(this);
         /** 进程内首次创建：仅输出 WorkManager 周期任务状态日志，不在此刷新/入队周期任务。 */
@@ -162,6 +163,16 @@ public class MainActivity extends BridgeActivity {
         @JavascriptInterface
         public void stopSession() {
             mainHandler.post(() -> PumpSessionNativeController.stopAll(MainActivity.this));
+        }
+
+        @JavascriptInterface
+        public void showOverlay() {
+            mainHandler.post(() -> PumpSessionNativeController.showOverlayIfActive(MainActivity.this));
+        }
+
+        @JavascriptInterface
+        public void hideOverlay() {
+            mainHandler.post(() -> PumpSessionNativeController.hideOverlayOnly(MainActivity.this));
         }
 
         @JavascriptInterface
