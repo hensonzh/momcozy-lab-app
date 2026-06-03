@@ -14,6 +14,8 @@ final class PumpSessionNativeController {
     private static boolean appForeground = true;
     private static String state = "idle";
     private static int processAll;
+    private static int elapsedSeconds;
+    private static long lastElapsedTickMs;
 
     private PumpSessionNativeController() {
     }
@@ -22,10 +24,18 @@ final class PumpSessionNativeController {
         Context app = context.getApplicationContext();
         String normalizedState = normalizeState(nextState);
         int normalizedProcess = clampProcess(nextProcessAll);
+        long now = System.currentTimeMillis();
         synchronized (LOCK) {
+            boolean wasActive = active;
             state = normalizedState;
             processAll = normalizedProcess;
             active = isActiveState(normalizedState);
+            if (active && !wasActive) {
+                elapsedSeconds = Math.max(elapsedSeconds, DeviceNativeStateStore.maxRunningDurationSeconds());
+                lastElapsedTickMs = now;
+            } else if (!"running".equals(normalizedState)) {
+                lastElapsedTickMs = now;
+            }
         }
         if (!isActiveState(normalizedState)) {
             stopAll(app);
@@ -41,10 +51,44 @@ final class PumpSessionNativeController {
             active = false;
             state = "idle";
             processAll = 0;
+            elapsedSeconds = 0;
+            lastElapsedTickMs = 0;
         }
         stopForegroundNotification(app);
         hideOverlay(app);
         PumpSessionKeepAlivePlugin.releaseWakeLock();
+    }
+
+    static int tickElapsedFromNative() {
+        long now = System.currentTimeMillis();
+        boolean anyRunning = DeviceNativeStateStore.hasAnyRunningDevice();
+        int protocolDuration = DeviceNativeStateStore.maxRunningDurationSeconds();
+        synchronized (LOCK) {
+            if (!active) {
+                lastElapsedTickMs = now;
+                return elapsedSeconds;
+            }
+            if (protocolDuration > elapsedSeconds) {
+                elapsedSeconds = protocolDuration;
+            }
+            if ("running".equals(state) && anyRunning) {
+                if (lastElapsedTickMs <= 0) lastElapsedTickMs = now;
+                long deltaSeconds = Math.max(0, (now - lastElapsedTickMs) / 1000L);
+                if (deltaSeconds > 0) {
+                    elapsedSeconds = clampElapsed(elapsedSeconds + deltaSeconds);
+                    lastElapsedTickMs += deltaSeconds * 1000L;
+                }
+            } else {
+                lastElapsedTickMs = now;
+            }
+            return elapsedSeconds;
+        }
+    }
+
+    static int currentElapsedSeconds() {
+        synchronized (LOCK) {
+            return elapsedSeconds;
+        }
     }
 
     static void updateProcessFromNative(Context context, int nextProcessAll) {
@@ -161,5 +205,10 @@ final class PumpSessionNativeController {
     private static int clampProcess(int processAll) {
         if (processAll < 0) return 0;
         return Math.min(processAll, 100);
+    }
+
+    private static int clampElapsed(long seconds) {
+        if (seconds < 0) return 0;
+        return seconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) seconds;
     }
 }

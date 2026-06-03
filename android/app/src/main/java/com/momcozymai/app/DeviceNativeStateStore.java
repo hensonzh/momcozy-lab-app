@@ -215,6 +215,31 @@ final class DeviceNativeStateStore {
         }
     }
 
+    static boolean hasAnyRunningDevice() {
+        synchronized (LOCK) {
+            try {
+                JSONObject root = new JSONObject(snapshotJson);
+                return isRunningDevice(root.optJSONObject("L")) || isRunningDevice(root.optJSONObject("R"));
+            } catch (JSONException ignored) {
+                return false;
+            }
+        }
+    }
+
+    static int maxRunningDurationSeconds() {
+        synchronized (LOCK) {
+            try {
+                JSONObject root = new JSONObject(snapshotJson);
+                return Math.max(
+                        runningDurationSeconds(root.optJSONObject("L")),
+                        runningDurationSeconds(root.optJSONObject("R"))
+                );
+            } catch (JSONException ignored) {
+                return 0;
+            }
+        }
+    }
+
     static boolean updateAfterPumpParams(String deviceId, int mode, int gear, int workState, int scene) {
         try {
             return mutateDevice(deviceId, device -> {
@@ -293,6 +318,15 @@ final class DeviceNativeStateStore {
             memory.put("deep", clampedGear);
         }
         device.put(scene == 1 ? "pumpGearMemoryAi" : "pumpGearMemoryManual", memory);
+    }
+
+    private static boolean isRunningDevice(JSONObject device) {
+        return device != null && device.optBoolean("connected", false) && device.optInt("pumpWorkState", 0) == 1;
+    }
+
+    private static int runningDurationSeconds(JSONObject device) {
+        if (!isRunningDevice(device)) return 0;
+        return Math.max(0, device.optInt("duration", 0));
     }
 
     private interface DeviceMutator {
