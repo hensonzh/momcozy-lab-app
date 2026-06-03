@@ -29,7 +29,7 @@ async function ensurePermissionIfNeeded(): Promise<boolean> {
   try {
     const granted = getNativeAndroidPumpSessionBridge()?.hasPostNotificationsPermission?.() ?? false;
     if (!granted) {
-      log.warn("notification permission denied, skip foreground notification");
+      log.warn("notification permission denied; still start foreground service for native pump background work");
       return false;
     }
   } catch (error) {
@@ -50,8 +50,7 @@ async function syncNotification(): Promise<void> {
     return;
   }
 
-  const allowed = await ensurePermissionIfNeeded();
-  if (!allowed) return;
+  void ensurePermissionIfNeeded();
   try {
     getNativeAndroidPumpSessionBridge()?.updateSession?.(currentState, lastProcessAll);
   } catch (error) {

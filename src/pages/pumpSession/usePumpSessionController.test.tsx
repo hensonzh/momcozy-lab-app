@@ -24,14 +24,6 @@ vi.mock("@/lib/pumpAutoEndSession", () => ({
   pushPumpMilkUploadForPumpSessionEnd: vi.fn(() => Promise.resolve()),
 }));
 
-vi.mock("./usePumpMockRuntime", () => ({
-  usePumpMockRuntime: vi.fn(() => ({
-    enablePumpSessionMockEffects: false,
-    mockFlow: "off",
-    setMockFlow: vi.fn(),
-  })),
-}));
-
 vi.mock("./usePumpMaiRuntime", () => ({
   usePumpMaiRuntime: vi.fn(() => ({})),
 }));
@@ -89,22 +81,10 @@ function renderController(params?: {
     navigateHome,
     ...renderHook(() =>
       usePumpSessionController({
-        calData: null,
-        fromCalibration: false,
-        targetGearL: 6,
-        targetGearR: 6,
         left: { gear: 1, mode: "stimulate", flow: 0 },
         right: { gear: 1, mode: "stimulate", flow: 0 },
         aiMode: true,
-        isSessionRunning: true,
         sessionState: "running",
-        calPromptRunning: false,
-        setBottlePct: vi.fn(),
-        setFlowDataL: vi.fn(),
-        setFlowDataR: vi.fn(),
-        setProgressL: vi.fn(),
-        setProgressR: vi.fn(),
-        setProgressAll: vi.fn(),
         processAll: 80,
         elapsed: params?.elapsed ?? 45,
         setElapsed: vi.fn(),

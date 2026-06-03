@@ -32,7 +32,7 @@ final class PumpSessionNativeController {
             return;
         }
         startForegroundNotification(app, normalizedState, normalizedProcess);
-        syncLifecycleDrivenSideEffects(app);
+        syncOverlayAndBackgroundSideEffects(app);
     }
 
     static void stopAll(Context context) {
@@ -47,11 +47,30 @@ final class PumpSessionNativeController {
         PumpSessionKeepAlivePlugin.releaseWakeLock();
     }
 
+    static void updateProcessFromNative(Context context, int nextProcessAll) {
+        Context app = context.getApplicationContext();
+        String snapshotState;
+        int snapshotProcess;
+        boolean snapshotActive;
+        boolean foreground;
+        synchronized (LOCK) {
+            processAll = clampProcess(nextProcessAll);
+            snapshotActive = active;
+            snapshotState = state;
+            snapshotProcess = processAll;
+            foreground = appForeground;
+        }
+        if (!snapshotActive) return;
+        if (!foreground && canDrawOverlays(app)) {
+            startOverlay(app, snapshotState, snapshotProcess);
+        }
+    }
+
     static void onAppForegroundChanged(Context context, boolean foreground) {
         synchronized (LOCK) {
             appForeground = foreground;
         }
-        syncLifecycleDrivenSideEffects(context.getApplicationContext());
+        syncOverlayAndBackgroundSideEffects(context.getApplicationContext());
     }
 
     static void showOverlayIfActive(Context context) {
@@ -68,7 +87,11 @@ final class PumpSessionNativeController {
         startOverlay(app, snapshotState, snapshotProcess);
     }
 
-    private static void syncLifecycleDrivenSideEffects(Context context) {
+    static void hideOverlayOnly(Context context) {
+        hideOverlay(context.getApplicationContext());
+    }
+
+    private static void syncOverlayAndBackgroundSideEffects(Context context) {
         String snapshotState;
         int snapshotProcess;
         boolean snapshotActive;
@@ -79,8 +102,12 @@ final class PumpSessionNativeController {
             snapshotProcess = processAll;
             foreground = appForeground;
         }
-        if (!snapshotActive || foreground) {
+        if (!snapshotActive) {
             hideOverlay(context);
+            PumpSessionKeepAlivePlugin.releaseWakeLock();
+            return;
+        }
+        if (foreground) {
             PumpSessionKeepAlivePlugin.releaseWakeLock();
             return;
         }

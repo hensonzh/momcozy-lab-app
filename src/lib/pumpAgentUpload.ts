@@ -1,3 +1,4 @@
+import { Capacitor, registerPlugin, type PluginListenerHandle } from "@capacitor/core";
 import {
   getPumpProcessData,
   uploadPumpProcess,
@@ -12,6 +13,7 @@ import type {
   PumpProcessBody,
   PumpProcessSide,
   PumpWorkstateBody,
+  UploadPumpProcessResponseData,
   UploadPumpWorkstateResponseData,
 } from "@/lib/agentApiTypes";
 import { deviceStore, type DeviceSide, type StoredDeviceInfo } from "@/lib/deviceStore";
@@ -25,6 +27,7 @@ const PROCESS_UPLOAD_INTERVAL_MS = 10000;
 const PROCESS_DATA_INTERVAL_MS = 1000;
 const PROCESS_CAP_FRAME_SIZE = 20;
 const SOURCE_TTL_MS = 6000;
+const isAndroidNative = Capacitor.getPlatform() === "android";
 
 type PumpAgentUploadSource = "device" | "app" | "agent";
 type SideSourceState = { source: PumpAgentUploadSource; expiresAt: number };
@@ -38,6 +41,60 @@ type PumpProcessFrame = {
   bandpower: number;
   milk: number;
 };
+
+interface NativePumpAgentUploadPlugin {
+  setConfig(options: { apiBaseUrl: string; bearerToken: string; userId: string }): Promise<void>;
+  sampleFromSnapshot(): Promise<PumpProcessProgressPayload>;
+  resetProgress(): Promise<PumpProcessProgressPayload>;
+  markStepStop(options: { side: "L" | "R" | "both" }): Promise<void>;
+  markStepPause(options: { side: "L" | "R" | "both" }): Promise<void>;
+  setOperationSource(options: { side: "L" | "R" | "both"; source: PumpAgentUploadSource }): Promise<void>;
+  uploadWorkstate(options: { userId: string }): Promise<{ response?: UploadPumpWorkstateResponseData }>;
+  getProcessData(options: { userId: string }): Promise<PumpProcessProgressPayload & { response?: Record<string, unknown>; body?: PumpProcessDataBody }>;
+  uploadProcess(options: { userId: string }): Promise<{ response?: UploadPumpProcessResponseData }>;
+  addListener(
+    eventName: "nativeProcessProgress",
+    listenerFunc: (event: PumpProcessProgressPayload) => void,
+  ): Promise<PluginListenerHandle>;
+  addListener(
+    eventName: "nativeProcessReply",
+    listenerFunc: (event: { response?: UploadPumpProcessResponseData }) => void,
+  ): Promise<PluginListenerHandle>;
+}
+
+type PumpProcessProgressPayload = { processL: number; processR: number; processAll: number };
+
+const NativePumpAgentUpload = registerPlugin<NativePumpAgentUploadPlugin>("PumpAgentUpload");
+
+function viteApiBaseUrl(): string {
+  return (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim()) || "";
+}
+
+function viteApiToken(): string {
+  return (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_TOKEN as string | undefined)?.trim()) || "";
+}
+
+async function syncNativePumpAgentConfig(): Promise<void> {
+  if (!isAndroidNative) return;
+  try {
+    await NativePumpAgentUpload.setConfig({
+      apiBaseUrl: viteApiBaseUrl(),
+      bearerToken: viteApiToken(),
+      userId: DEFAULT_CHAT_USER_ID,
+    });
+  } catch (error) {
+    console.warn("native pump upload setConfig failed", error);
+  }
+}
+
+function applyNativeProgress(payload: Partial<PumpProcessProgressPayload> | null | undefined): void {
+  if (!payload) return;
+  processProgressMap.L = Math.max(0, Math.round(Number(payload.processL ?? processProgressMap.L)));
+  processProgressMap.R = Math.max(0, Math.round(Number(payload.processR ?? processProgressMap.R)));
+  processProgressAll = Math.max(0, Math.round(Number(payload.processAll ?? processProgressAll)));
+  processSnapshotMap.L = { ...processSnapshotMap.L, process: processProgressMap.L };
+  processSnapshotMap.R = { ...processSnapshotMap.R, process: processProgressMap.R };
+}
 
 const sideSourceMap: Record<"L" | "R", SideSourceState> = {
   L: { source: "device", expiresAt: 0 },
@@ -53,6 +110,8 @@ let started = false;
 let unsubscribeDeviceStore: (() => void) | null = null;
 let processTimer: number | null = null;
 let processDataTimer: number | null = null;
+let nativeProgressListener: PluginListenerHandle | null = null;
+let nativeReplyListener: PluginListenerHandle | null = null;
 let workstateSignature = "";
 let workstateUploading = false;
 let processUploading = false;
@@ -140,24 +199,33 @@ export function resetPumpAgentUploadProcessProgress(): void {
   processPauseMarkedMap.R = false;
   setProcessAll(0);
   emitPumpAgentUploadProcessProgress();
+  if (isAndroidNative) {
+    void NativePumpAgentUpload.resetProgress().catch((error) => console.warn("native reset progress failed", error));
+  }
 }
 
 export function markPumpAgentUploadProcessStepStop(side: "L" | "R" | "both"): void {
   if (side === "both") {
     processStopMarkedMap.L = true;
     processStopMarkedMap.R = true;
-    return;
+  } else {
+    processStopMarkedMap[side] = true;
   }
-  processStopMarkedMap[side] = true;
+  if (isAndroidNative) {
+    void NativePumpAgentUpload.markStepStop({ side }).catch((error) => console.warn("native mark stop failed", error));
+  }
 }
 
 export function markPumpAgentUploadProcessStepPause(side: "L" | "R" | "both"): void {
   if (side === "both") {
     processPauseMarkedMap.L = true;
     processPauseMarkedMap.R = true;
-    return;
+  } else {
+    processPauseMarkedMap[side] = true;
   }
-  processPauseMarkedMap[side] = true;
+  if (isAndroidNative) {
+    void NativePumpAgentUpload.markStepPause({ side }).catch((error) => console.warn("native mark pause failed", error));
+  }
 }
 
 export function normalizePumpAgentUploadRichTextButtonList(raw: unknown): ChatRichTextButtonItem[] {
@@ -213,9 +281,12 @@ export function setPumpAgentUploadOperationSource(
   if (side === "both") {
     sideSourceMap.L = { source, expiresAt };
     sideSourceMap.R = { source, expiresAt };
-    return;
+  } else {
+    sideSourceMap[side] = { source, expiresAt };
   }
-  sideSourceMap[side] = { source, expiresAt };
+  if (isAndroidNative) {
+    void NativePumpAgentUpload.setOperationSource({ side, source }).catch((error) => console.warn("native set source failed", error));
+  }
 }
 
 export function markPumpAgentUploadDeviceSourceByPacket(
@@ -461,6 +532,23 @@ async function getProcessDataIfNeeded(): Promise<void> {
   if ((!hasAnyDeviceRunning() && !hasAnyPendingStopStep() && !hasAnyPendingPauseStep()) || processDataFetching) return;
   processDataFetching = true;
   try {
+    if (isAndroidNative) {
+      const native = await NativePumpAgentUpload.getProcessData({ userId: DEFAULT_CHAT_USER_ID });
+      const response = native.response ?? {};
+      const processError = Number(response.error ?? 0);
+      if (processError !== 0) {
+        console.warn("native get pump process data error, keep previous progress", response);
+        return;
+      }
+      applyNativeProgress(native);
+      emitPumpAgentUploadProcessProgress();
+      console.log("native get pump process data response summary", {
+        process_l: processProgressMap.L,
+        process_r: processProgressMap.R,
+        process_all: processProgressAll,
+      });
+      return;
+    }
     console.log("get pump process data tick", {
       queue_l: processFrameMap.L.length,
       queue_r: processFrameMap.R.length,
@@ -599,6 +687,11 @@ async function uploadWorkstateIfChanged(): Promise<void> {
   if (signature === workstateSignature) return;
   workstateUploading = true;
   try {
+    if (isAndroidNative) {
+      await NativePumpAgentUpload.uploadWorkstate({ userId: DEFAULT_CHAT_USER_ID });
+      workstateSignature = signature;
+      return;
+    }
     const body = buildPumpAgentUploadWorkstateBodyFromDeviceStore();
     console.log("upload workstate", body);
     await uploadPumpWorkstate(body);
@@ -612,11 +705,11 @@ async function uploadWorkstateIfChanged(): Promise<void> {
 
 async function uploadProcessIfNeeded(): Promise<void> {
   if (!hasAnyDeviceConnected() || processUploading) return;
-  const body = buildProcessBody();
   processUploading = true;
   try {
-    console.log("upload process", body);
-    const response = await uploadPumpProcess(body);
+    const response = isAndroidNative
+      ? (await NativePumpAgentUpload.uploadProcess({ userId: DEFAULT_CHAT_USER_ID })).response ?? { error: -1, need_reply: false, output: "" }
+      : await uploadPumpProcess(buildProcessBody());
     const text = typeof response.output === "string" ? response.output.trim() : "";
     const richText = normalizePumpAgentUploadDirectRichText(response.direct_rich_text);
     const buttons = (richText?.button ?? []).filter((btn) => Boolean(btn.text || btn.value));
@@ -638,11 +731,38 @@ async function uploadProcessIfNeeded(): Promise<void> {
 export function startPumpAgentUploadService(): void {
   if (started) return;
   started = true;
-  syncProcessSnapshotFromDeviceStore();
-  pushProcessFrameFromDeviceStore();
-  unsubscribeDeviceStore = deviceStore.subscribe(() => {
+  void syncNativePumpAgentConfig();
+  if (isAndroidNative) {
+    void NativePumpAgentUpload.sampleFromSnapshot().catch((error) => console.warn("native sample failed", error));
+    void NativePumpAgentUpload.addListener("nativeProcessProgress", (event) => {
+      applyNativeProgress(event);
+      emitPumpAgentUploadProcessProgress();
+    }).then((handle) => {
+      nativeProgressListener = handle;
+    }).catch((error) => console.warn("native process progress listener failed", error));
+    void NativePumpAgentUpload.addListener("nativeProcessReply", (event) => {
+      const response = event.response ?? { error: -1, need_reply: false, output: "" };
+      const text = typeof response.output === "string" ? response.output.trim() : "";
+      const richText = normalizePumpAgentUploadDirectRichText(response.direct_rich_text);
+      const buttons = (richText?.button ?? []).filter((btn) => Boolean(btn.text || btn.value));
+      if (Boolean(response.need_reply) && (Boolean(text) || buttons.length > 0)) {
+        emitPumpProcessReply(text, buttons);
+      }
+    }).then((handle) => {
+      nativeReplyListener = handle;
+    }).catch((error) => console.warn("native process reply listener failed", error));
+    return;
+  } else {
     syncProcessSnapshotFromDeviceStore();
     pushProcessFrameFromDeviceStore();
+  }
+  unsubscribeDeviceStore = deviceStore.subscribe(() => {
+    if (isAndroidNative) {
+      void NativePumpAgentUpload.sampleFromSnapshot().catch((error) => console.warn("native sample failed", error));
+    } else {
+      syncProcessSnapshotFromDeviceStore();
+      pushProcessFrameFromDeviceStore();
+    }
     void uploadWorkstateIfChanged();
   });
   processTimer = window.setInterval(() => {
@@ -660,6 +780,10 @@ export function stopPumpAgentUploadService(): void {
   started = false;
   unsubscribeDeviceStore?.();
   unsubscribeDeviceStore = null;
+  void nativeProgressListener?.remove();
+  void nativeReplyListener?.remove();
+  nativeProgressListener = null;
+  nativeReplyListener = null;
   if (processTimer != null) {
     window.clearInterval(processTimer);
     processTimer = null;

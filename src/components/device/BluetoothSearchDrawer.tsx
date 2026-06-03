@@ -99,6 +99,8 @@ const BluetoothSearchDrawer: React.FC<Props> = ({
       setConnectError(null);
       setConnecting(deviceId);
       try {
+        setScanning(false);
+        await stopLEScan();
         await bleConnect(deviceId, () => onDisconnect?.(deviceId));
         setConnecting(null);
         onConnect(deviceId, deviceName, rssi);

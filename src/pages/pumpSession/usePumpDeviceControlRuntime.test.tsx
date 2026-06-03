@@ -62,7 +62,6 @@ describe("usePumpDeviceControlRuntime stopPumpWithBle", () => {
         left: sideState,
         right: sideState,
         aiMode: true,
-        enablePumpSessionMockEffects: false,
         sessionState: "running" as SessionState,
         setSessionState: vi.fn(),
         setLeft: vi.fn(),

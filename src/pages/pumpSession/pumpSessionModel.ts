@@ -1,7 +1,6 @@
 import { deviceStore } from "@/lib/deviceStore";
 
 export type PumpMode = "stimulate" | "deep" | "mixed";
-export type MockFlow = "off" | "high" | "low";
 export type SessionState = "idle" | "running" | "paused" | "ended";
 
 export interface SideState {
@@ -45,28 +44,12 @@ export const toProtocolMode = (mode: PumpMode): 0 | 1 | 2 =>
  * 返回 null 时刺激/吸乳均不高亮（例如双侧刺激/深度不一致且无助记规则时）。
  */
 export function syncModeButtonHighlight(params: {
-  enablePumpSessionMockEffects: boolean;
   leftOnline: boolean;
   rightOnline: boolean;
   leftMode: PumpMode;
   rightMode: PumpMode;
 }): PumpMode | null {
-  const { enablePumpSessionMockEffects, leftOnline, rightOnline, leftMode, rightMode } = params;
-  if (enablePumpSessionMockEffects) {
-    if (leftMode === rightMode) return leftMode;
-    const lm = leftMode;
-    const rm = rightMode;
-    if (lm === "mixed" && rm !== "mixed") return rm;
-    if (rm === "mixed" && lm !== "mixed") return lm;
-    if (
-      (lm === "stimulate" || lm === "deep") &&
-      (rm === "stimulate" || rm === "deep") &&
-      lm !== rm
-    ) {
-      return "deep";
-    }
-    return null;
-  }
+  const { leftOnline, rightOnline, leftMode, rightMode } = params;
   if (leftOnline && rightOnline) {
     if (leftMode === rightMode) return leftMode;
     const lm = leftMode;
