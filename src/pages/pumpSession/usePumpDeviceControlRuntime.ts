@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, type Dispatch, type SetStateAction } from "react";
+import { Capacitor } from "@capacitor/core";
 import { deviceStore, type DeviceSide } from "@/lib/deviceStore";
 import {
   ensureProtocolNotify,
@@ -13,6 +14,7 @@ import {
 import {
   markPumpAgentUploadProcessStepPause,
   markPumpAgentUploadProcessStepStop,
+  onPumpAgentUploadProcessProgress,
   setPumpAgentUploadOperationSource,
 } from "@/lib/pumpAgentUpload";
 import {
@@ -42,6 +44,8 @@ const nextRunningDuration = (running: boolean, duration: unknown): number | unde
   if (!running) return undefined;
   return typeof duration === "number" ? duration + 1 : 1;
 };
+
+const isAndroidNativeRuntime = Capacitor.getPlatform() === "android";
 
 export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimeParams) {
   const {
@@ -95,11 +99,13 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     // 会话状态由 pumpSessionLifecycle（订阅 deviceStore 后边缘触发）统一推进，本处不再直接写 sessionState，
     // 避免「设备已连接但未启动」的窗口期被误判为 paused。
 
-    const runningDurations = [
-      leftRunning && typeof L?.duration === "number" ? L.duration : undefined,
-      rightRunning && typeof R?.duration === "number" ? R.duration : undefined,
-    ].filter((duration): duration is number => duration != null);
-    if (runningDurations.length > 0) setElapsed(Math.max(...runningDurations));
+    if (!isAndroidNativeRuntime) {
+      const runningDurations = [
+        leftRunning && typeof L?.duration === "number" ? L.duration : undefined,
+        rightRunning && typeof R?.duration === "number" ? R.duration : undefined,
+      ].filter((duration): duration is number => duration != null);
+      if (runningDurations.length > 0) setElapsed(Math.max(...runningDurations));
+    }
   }, [setAiMode, setElapsed, setLeft, setRight]);
 
   const handleNewDeviceConnection = useCallback(async (deviceId: string, side: DeviceSide) => {
@@ -185,6 +191,16 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
   // 旧的 500ms 轮询 updateRunningState 已删除：会话状态由 pumpSessionLifecycle（基于 deviceStore 订阅 + 边缘触发）统一推进。
 
   useEffect(() => {
+    if (!isAndroidNativeRuntime) return;
+    return onPumpAgentUploadProcessProgress(({ elapsedSeconds }) => {
+      if (typeof elapsedSeconds === "number" && Number.isFinite(elapsedSeconds)) {
+        setElapsed(Math.max(0, Math.round(elapsedSeconds)));
+      }
+    });
+  }, [setElapsed]);
+
+  useEffect(() => {
+    if (isAndroidNativeRuntime) return;
     if (sessionState !== "running") return;
     const timer = window.setInterval(() => {
       const { L, R } = deviceStore.get();
