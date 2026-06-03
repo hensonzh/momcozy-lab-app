@@ -1,6 +1,7 @@
 import { Capacitor, registerPlugin } from "@capacitor/core";
 import type { PluginListenerHandle } from "@capacitor/core";
 import { executeDeviceReminderAction, type DeviceReminderActionKey } from "@/lib/deviceReminderActions";
+import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
 import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
@@ -11,6 +12,7 @@ export type DeviceReminderWebSocketReminderType =
   | "task_reminder"
   | "lactation_feeding_reminder"
   | "daily_summary_reminder"
+  | "milk_analysis_reminder"
   | "baby_growth_update_reminder";
 
 const DEVICE_REMINDER_WS_URL = "ws://192.168.204.127:8767/api/ws?token=websocket-token";
@@ -34,6 +36,7 @@ const reminderTypeToActionKey: Record<DeviceReminderWebSocketReminderType, Devic
   task_reminder: "task_reminder",
   lactation_feeding_reminder: "mom_baby",
   daily_summary_reminder: "daily_summary",
+  milk_analysis_reminder: "milk_analysis",
   baby_growth_update_reminder: "growth_update",
 };
 
@@ -69,16 +72,27 @@ function handleNativeReminderHandled(event: { notifyJson?: string }): void {
       chatMessageId?: string;
       analysis_card?: AgentAnalysisCard;
     };
-    if (
-      (payload.event === "summary" || payload.event === "mom_baby") &&
-      typeof payload.body === "string" &&
-      payload.body.trim()
-    ) {
+    const analysisKind =
+      payload.event === "summary"
+        ? "daily_summary"
+        : payload.event === "mom_baby"
+          ? "mom_baby"
+          : payload.event === "milk_analysis"
+            ? "milk_analysis"
+            : null;
+    if (analysisKind && typeof payload.body === "string" && payload.body.trim()) {
       appendAgentHubAnalysisMessage(payload.body, {
-        kind: payload.event === "summary" ? "daily_summary" : "mom_baby",
+        kind: analysisKind,
         id: payload.chatMessageId,
         analysisCard: payload.analysis_card,
       });
+      if (analysisKind === "milk_analysis") {
+        void recordMilkAnalysisContextEvent({
+          message: payload.body,
+          analysisCard: payload.analysis_card,
+          chatMessageId: payload.chatMessageId,
+        });
+      }
     } else if (payload.event === "grown") {
       markStatusGrowthHighlightPending();
     }

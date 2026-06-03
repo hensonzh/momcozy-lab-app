@@ -1,5 +1,15 @@
 /** 专注模式录音目标：16kHz、16bit、小端 PCM（与 ffmpeg pcm_s16le 一致） */
 export const FOCUS_PCM_SAMPLE_RATE = 16_000;
+const PCM_S16LE_SPEECH_MIN_DURATION_MS = 350;
+const PCM_S16LE_SPEECH_MIN_RMS = 0.003;
+const PCM_S16LE_SPEECH_MIN_PEAK = 0.012;
+
+export interface PcmS16leSignalStats {
+  sampleCount: number;
+  durationMs: number;
+  rms: number;
+  peak: number;
+}
 
 /**
  * 将 float32 样本（约 -1..1）量化为 s16le 整数。
@@ -38,6 +48,40 @@ export function resampleFloat32Linear(input: Float32Array, fromRate: number, toR
     out[i] = s0 * (1 - f) + s1 * f;
   }
   return out;
+}
+
+export function pcmS16leSignalStats(pcmS16le: ArrayBuffer, sampleRate: number = FOCUS_PCM_SAMPLE_RATE): PcmS16leSignalStats {
+  const byteLength = pcmS16le.byteLength - (pcmS16le.byteLength % 2);
+  if (byteLength <= 0 || sampleRate <= 0) {
+    return { sampleCount: 0, durationMs: 0, rms: 0, peak: 0 };
+  }
+
+  const view = new DataView(pcmS16le, 0, byteLength);
+  let sumSquares = 0;
+  let peak = 0;
+  const sampleCount = byteLength / 2;
+  for (let offset = 0; offset < byteLength; offset += 2) {
+    const normalized = view.getInt16(offset, true) / 32768;
+    const abs = Math.abs(normalized);
+    sumSquares += normalized * normalized;
+    if (abs > peak) peak = abs;
+  }
+
+  return {
+    sampleCount,
+    durationMs: (sampleCount / sampleRate) * 1000,
+    rms: Math.sqrt(sumSquares / sampleCount),
+    peak,
+  };
+}
+
+export function isPcmS16leLikelySpeech(pcmS16le: ArrayBuffer, sampleRate: number = FOCUS_PCM_SAMPLE_RATE): boolean {
+  const stats = pcmS16leSignalStats(pcmS16le, sampleRate);
+  return (
+    stats.durationMs >= PCM_S16LE_SPEECH_MIN_DURATION_MS &&
+    stats.rms >= PCM_S16LE_SPEECH_MIN_RMS &&
+    stats.peak >= PCM_S16LE_SPEECH_MIN_PEAK
+  );
 }
 
 /**

@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { Send, Mic, Camera, Upload, ImagePlus, X, Square } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Send, Mic, Keyboard, Camera, Upload, ImagePlus, X, Square } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,8 +20,8 @@ interface MaiInputBarProps {
   value: string;
   onChange: (val: string) => void;
   onSend: () => void;
-  onVoiceStart?: () => void;
-  onVoiceEnd?: () => void;
+  onVoiceStart?: () => void | Promise<void>;
+  onVoiceEnd?: (opts?: { submit?: boolean }) => void | Promise<void>;
   onPhotoFile?: (file: File) => void;
   onDemoIdentify?: (result: PhotoIdentifyResult) => void;
   /** 正在语音听写：高亮麦克风并让输入框只读，避免与流式转写互相覆盖 */
@@ -63,6 +63,8 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   const composingRef = useRef(false);
   const compositionEndAtRef = useRef(0);
   const voicePressActiveRef = useRef(false);
+  const textDraftBeforeVoiceRef = useRef<string | null>(null);
+  const [voiceMode, setVoiceMode] = useState(false);
   const hasSendableContent = value.trim().length > 0 || canSendWithoutText;
   const sendIsStop = sendLoading && !hasSendableContent;
   /** 有文字、附件或生成中（打断）时用主色按钮；仅完全空且非加载时置灰样式 */
@@ -92,16 +94,36 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
     files.forEach((file) => onPhotoFile(file));
   };
 
-  const startVoiceHold = () => {
-    if (voiceDisabled || voicePressActiveRef.current) return;
-    voicePressActiveRef.current = true;
-    onVoiceStart?.();
+  const voiceHoldLabel = speechListening ? value.trim() || "正在识别..." : "按住说话";
+  const VoiceToggleIcon = voiceMode ? Keyboard : Mic;
+
+  const toggleVoiceMode = () => {
+    if (voiceDisabled || speechListening) return;
+    onTogglePhotoMenu?.(false);
+    if (voiceMode) {
+      if (!value.trim() && textDraftBeforeVoiceRef.current) {
+        onChange(textDraftBeforeVoiceRef.current);
+      }
+      textDraftBeforeVoiceRef.current = null;
+      setVoiceMode(false);
+      return;
+    }
+    textDraftBeforeVoiceRef.current = value;
+    if (value) onChange("");
+    setVoiceMode(true);
   };
 
-  const finishVoiceHold = () => {
+  const startVoiceHold = () => {
+    if (voiceDisabled || voicePressActiveRef.current) return;
+    textDraftBeforeVoiceRef.current = null;
+    voicePressActiveRef.current = true;
+    void onVoiceStart?.();
+  };
+
+  const finishVoiceHold = (opts?: { submit?: boolean }) => {
     if (!voicePressActiveRef.current) return;
     voicePressActiveRef.current = false;
-    onVoiceEnd?.();
+    void onVoiceEnd?.(opts);
   };
 
   return (
@@ -171,83 +193,105 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
             <ImagePlus className="w-5 h-5" />
           </button>
 
-          <Input
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            onPaste={handlePaste}
-            onKeyDown={(e) => {
-              if (e.key !== "Enter" || speechListening) return;
-              const nativeEvent = e.nativeEvent as KeyboardEvent & { isComposing?: boolean };
-              const compositionJustEnded =
-                compositionEndAtRef.current > 0 && Date.now() - compositionEndAtRef.current < 120;
-              if (composingRef.current || nativeEvent.isComposing || e.keyCode === 229 || compositionJustEnded) {
+          {voiceMode ? (
+            <button
+              type="button"
+              onPointerDown={(e) => {
+                if (voiceDisabled) return;
+                e.preventDefault();
+                e.currentTarget.setPointerCapture?.(e.pointerId);
+                startVoiceHold();
+              }}
+              onPointerUp={(e) => {
+                e.preventDefault();
+                if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
+                  e.currentTarget.releasePointerCapture(e.pointerId);
+                }
+                finishVoiceHold({ submit: true });
+              }}
+              onPointerCancel={(e) => {
+                e.preventDefault();
+                finishVoiceHold({ submit: false });
+              }}
+              onLostPointerCapture={() => finishVoiceHold({ submit: false })}
+              onKeyDown={(e) => {
+                if (voiceDisabled || e.repeat || (e.key !== " " && e.key !== "Enter")) return;
+                e.preventDefault();
+                startVoiceHold();
+              }}
+              onKeyUp={(e) => {
+                if (e.key !== " " && e.key !== "Enter") return;
+                e.preventDefault();
+                finishVoiceHold({ submit: true });
+              }}
+              onBlur={() => finishVoiceHold({ submit: false })}
+              onContextMenu={(e) => e.preventDefault()}
+              disabled={voiceDisabled}
+              aria-pressed={speechListening}
+              aria-label={speechListening ? "松开发送语音输入" : "按住说话"}
+              title={speechListening ? "松开发送" : "按住说话"}
+              className={cn(
+                "flex-1 min-w-0 h-8 rounded-full px-3 text-sm font-medium transition-colors duration-200 touch-none select-none",
+                "border border-transparent bg-primary/5 text-foreground",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                speechListening && "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-100",
+                voiceDisabled && "opacity-50",
+              )}
+            >
+              <span className="block truncate">{voiceHoldLabel}</span>
+            </button>
+          ) : (
+            <Input
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              onPaste={handlePaste}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter" || speechListening) return;
+                const nativeEvent = e.nativeEvent as KeyboardEvent & { isComposing?: boolean };
+                const compositionJustEnded =
+                  compositionEndAtRef.current > 0 && Date.now() - compositionEndAtRef.current < 120;
+                if (composingRef.current || nativeEvent.isComposing || e.keyCode === 229 || compositionJustEnded) {
+                  compositionEndAtRef.current = 0;
+                  return;
+                }
                 compositionEndAtRef.current = 0;
-                return;
-              }
-              compositionEndAtRef.current = 0;
-              if (!value.trim() && !canSendWithoutText && !sendLoading) return;
-              e.preventDefault();
-              onSend();
-            }}
-            onCompositionStart={() => {
-              composingRef.current = true;
-              compositionEndAtRef.current = 0;
-            }}
-            onCompositionEnd={() => {
-              composingRef.current = false;
-              compositionEndAtRef.current = Date.now();
-            }}
-            placeholder={placeholder}
-            readOnly={speechListening}
-            className="flex-1 border-0 bg-transparent focus-visible:ring-0 text-sm h-8 px-1"
-          />
+                if (!value.trim() && !canSendWithoutText && !sendLoading) return;
+                e.preventDefault();
+                onSend();
+              }}
+              onCompositionStart={() => {
+                composingRef.current = true;
+                compositionEndAtRef.current = 0;
+              }}
+              onCompositionEnd={() => {
+                composingRef.current = false;
+                compositionEndAtRef.current = Date.now();
+              }}
+              placeholder={placeholder}
+              readOnly={speechListening}
+              className="flex-1 border-0 bg-transparent focus-visible:ring-0 text-sm h-8 px-1"
+            />
+          )}
 
-          {/* Voice button：听写中为饱和绿色+白图标，结束恢复默认灰/悬停主题色 */}
+          {/* Voice button：点击切换语音模式；真正录音由中间“按住说话”按钮触发。 */}
           <button
             type="button"
-            onPointerDown={(e) => {
-              if (voiceDisabled) return;
-              e.preventDefault();
-              e.currentTarget.setPointerCapture?.(e.pointerId);
-              startVoiceHold();
-            }}
-            onPointerUp={(e) => {
-              e.preventDefault();
-              if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
-                e.currentTarget.releasePointerCapture(e.pointerId);
-              }
-              finishVoiceHold();
-            }}
-            onPointerCancel={(e) => {
-              e.preventDefault();
-              finishVoiceHold();
-            }}
-            onLostPointerCapture={finishVoiceHold}
-            onKeyDown={(e) => {
-              if (voiceDisabled || e.repeat || (e.key !== " " && e.key !== "Enter")) return;
-              e.preventDefault();
-              startVoiceHold();
-            }}
-            onKeyUp={(e) => {
-              if (e.key !== " " && e.key !== "Enter") return;
-              e.preventDefault();
-              finishVoiceHold();
-            }}
-            onBlur={finishVoiceHold}
-            onContextMenu={(e) => e.preventDefault()}
+            onClick={toggleVoiceMode}
             disabled={voiceDisabled}
-            aria-pressed={speechListening}
-            aria-label={speechListening ? "松开结束语音输入" : "按住说话"}
-            title={speechListening ? "松开结束语音输入" : "按住说话"}
+            aria-pressed={voiceMode}
+            aria-label={voiceMode ? "切换到文字输入" : "切换到语音输入"}
+            title={voiceMode ? "切换到文字输入" : "切换到语音输入"}
             className={cn(
               "p-1.5 rounded-full flex-shrink-0 transition-colors duration-200 touch-none select-none",
               speechListening
                 ? "bg-emerald-600 text-white shadow-sm dark:bg-emerald-500 dark:text-white"
+                : voiceMode
+                  ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:text-primary bg-transparent",
               voiceDisabled && "opacity-40",
             )}
           >
-            <Mic className="w-5 h-5" />
+            <VoiceToggleIcon className="w-5 h-5" />
           </button>
 
           {/* Send：空输入且 sendLoading 时用于停止；有内容时即使生成中也作为新一轮发送。 */}
