@@ -46,6 +46,8 @@ final class DeviceNativeStateStore {
                     break;
                 case 0xd6:
                     return applyD6(deviceId, frame.cab);
+                case 0xd0:
+                    return applyD0(deviceId, frame.cab);
                 case 0x80:
                     return apply80(deviceId, frame.cab);
                 case 0xbf:
@@ -94,6 +96,26 @@ final class DeviceNativeStateStore {
         if (parsed == null) return false;
         return mutateDevice(deviceId, device -> {
             device.put("battery", clamp(parsed.optInt("batteryPct", device.optInt("battery", 0)), 0, 100));
+            putPacketTimestamp(device, "lastDeviceWorkstateTs", parsed.optLong("timestamp", 0));
+        });
+    }
+
+    private static boolean applyD0(String deviceId, byte[] cab) throws JSONException {
+        JSONObject parsed = MmcBleProtocol.parseD0OperationRecord(cab);
+        if (parsed == null) return false;
+        return mutateDevice(deviceId, device -> {
+            int mode = clamp(parsed.optInt("afterMode", device.optInt("pumpMode", 0)), 0, 2);
+            int gear = clamp(parsed.optInt("afterGear", device.optInt("gear", 0)), 0, 14);
+            int scene = parsed.optInt("afterAutoFlag", 0) != 0 ? 1 : 0;
+            int ws = parsed.optInt("afterStartStop", 0) == 1 ? 0x01 : 0x00;
+            device.put("pumpScene", scene);
+            device.put("pumpWorkState", ws);
+            device.put("pumpMode", mode);
+            device.put("gear", gear);
+            if (parsed.optInt("duration", 0) > 0) {
+                device.put("duration", parsed.optInt("duration", 0));
+            }
+            patchGearMemory(device, scene, mode, gear);
             putPacketTimestamp(device, "lastDeviceWorkstateTs", parsed.optLong("timestamp", 0));
         });
     }
@@ -167,6 +189,110 @@ final class DeviceNativeStateStore {
 
     private static int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
+    }
+
+    static String getDeviceIdForSide(String side) {
+        synchronized (LOCK) {
+            try {
+                JSONObject root = new JSONObject(snapshotJson);
+                JSONObject device = root.optJSONObject(side);
+                return device != null ? device.optString("deviceId", "") : "";
+            } catch (JSONException ignored) {
+                return "";
+            }
+        }
+    }
+
+    static JSONObject getDeviceForSideCopy(String side) {
+        synchronized (LOCK) {
+            try {
+                JSONObject root = new JSONObject(snapshotJson);
+                JSONObject device = root.optJSONObject(side);
+                return device != null ? new JSONObject(device.toString()) : null;
+            } catch (JSONException ignored) {
+                return null;
+            }
+        }
+    }
+
+    static boolean updateAfterPumpParams(String deviceId, int mode, int gear, int workState, int scene) {
+        try {
+            return mutateDevice(deviceId, device -> {
+                device.put("pumpMode", clamp(mode, 0, 2));
+                device.put("gear", clamp(gear, 0, 14));
+                device.put("pumpWorkState", workState == 1 ? 1 : 0);
+                device.put("pumpScene", scene == 1 ? 1 : 0);
+                patchGearMemory(device, scene, mode, gear);
+            });
+        } catch (JSONException ignored) {
+            return false;
+        }
+    }
+
+    static boolean copyAiMemoryFromCalib(String side) {
+        synchronized (LOCK) {
+            try {
+                JSONObject root = new JSONObject(snapshotJson);
+                JSONObject device = root.optJSONObject(side);
+                if (device == null) return false;
+                JSONObject calib = device.optJSONObject("pumpGearCalib");
+                if (calib == null) return false;
+                JSONObject ai = new JSONObject();
+                if (calib.has("stimulate")) ai.put("stimulate", calib.optInt("stimulate"));
+                if (calib.has("deep")) ai.put("deep", calib.optInt("deep"));
+                device.put("pumpGearMemoryAi", ai);
+                snapshotJson = root.toString();
+                return true;
+            } catch (JSONException ignored) {
+                return false;
+            }
+        }
+    }
+
+    static boolean copyManualMemoryFromAi(String side) {
+        synchronized (LOCK) {
+            try {
+                JSONObject root = new JSONObject(snapshotJson);
+                JSONObject device = root.optJSONObject(side);
+                if (device == null) return false;
+                JSONObject ai = device.optJSONObject("pumpGearMemoryAi");
+                if (ai == null) return false;
+                JSONObject manual = new JSONObject();
+                if (ai.has("stimulate")) manual.put("stimulate", ai.optInt("stimulate"));
+                if (ai.has("deep")) manual.put("deep", ai.optInt("deep"));
+                device.put("pumpGearMemoryManual", manual);
+                snapshotJson = root.toString();
+                return true;
+            } catch (JSONException ignored) {
+                return false;
+            }
+        }
+    }
+
+    static int readGearFromMemory(JSONObject device, int scene, int mode, int fallback) {
+        int clampedFallback = clamp(fallback, 0, 14);
+        if (device == null) return clampedFallback;
+        JSONObject memory = device.optJSONObject(scene == 1 ? "pumpGearMemoryAi" : "pumpGearMemoryManual");
+        if (memory == null) return clampedFallback;
+        int gear;
+        if (mode == 0) gear = memory.optInt("stimulate", clampedFallback);
+        else if (mode == 1) gear = memory.optInt("deep", clampedFallback);
+        else if (memory.has("stimulate")) gear = memory.optInt("stimulate", clampedFallback);
+        else gear = memory.optInt("deep", clampedFallback);
+        return clamp(gear, 0, 14);
+    }
+
+    private static void patchGearMemory(JSONObject device, int scene, int mode, int gear) throws JSONException {
+        JSONObject memory = device.optJSONObject(scene == 1 ? "pumpGearMemoryAi" : "pumpGearMemoryManual");
+        if (memory == null) memory = new JSONObject();
+        int clampedGear = clamp(gear, 0, 14);
+        if (mode == 0) memory.put("stimulate", clampedGear);
+        else if (mode == 1) memory.put("deep", clampedGear);
+        else {
+            memory.put("stimulate", clampedGear);
+            memory.put("deep", clampedGear);
+        }
+        device.put(scene == 1 ? "pumpGearMemoryAi" : "pumpGearMemoryManual", memory);
     }
 
     private interface DeviceMutator {

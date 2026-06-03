@@ -119,6 +119,24 @@ final class MmcBleProtocol {
         return obj;
     }
 
+    static JSONObject parseD0OperationRecord(byte[] cab) throws JSONException {
+        if (cab == null || cab.length < 0x0d) return null;
+        ByteBuffer view = ByteBuffer.wrap(cab).order(ByteOrder.LITTLE_ENDIAN);
+        JSONObject obj = new JSONObject();
+        obj.put("timestamp", uint32(view, 0));
+        obj.put("beforeStartStop", cab[4] & 0xff);
+        obj.put("beforeMode", cab[5] & 0xff);
+        obj.put("beforeGear", cab[6] & 0xff);
+        obj.put("beforeAutoFlag", cab[7] & 0xff);
+        obj.put("afterStartStop", cab[8] & 0xff);
+        obj.put("afterMode", cab[9] & 0xff);
+        obj.put("afterGear", cab[10] & 0xff);
+        obj.put("afterAutoFlag", cab[11] & 0xff);
+        obj.put("source", cab[12] & 0xff);
+        obj.put("duration", cab.length >= 15 ? (view.getShort(13) & 0xffff) : 0);
+        return obj;
+    }
+
     static JSONObject parse80RealtimeMilk(byte[] cab) throws JSONException {
         if (cab == null || cab.length < 0x17) return null;
         ByteBuffer view = ByteBuffer.wrap(cab).order(ByteOrder.LITTLE_ENDIAN);

@@ -22,7 +22,7 @@ describe("buildPumpOverlaySyncAction", () => {
     })).toEqual({ type: "update", state: "paused", processAll: 100 });
   });
 
-  test("hides the overlay while the pump page is already visible", () => {
+  test("hides the native overlay while the pump page is already visible", () => {
     expect(buildPumpOverlaySyncAction({
       platform: "android",
       permissionGranted: true,

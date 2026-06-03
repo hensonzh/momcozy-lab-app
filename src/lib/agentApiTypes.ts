@@ -247,6 +247,8 @@ export interface PumpSessionSummarySide {
   duration_seconds?: number;
   has_milk?: boolean;
   has_letdown?: boolean;
+  /** 本次吸乳该侧检测到的奶阵触发次数 */
+  letdown_count?: number;
 }
 
 export interface PumpSessionSummaryBody {
