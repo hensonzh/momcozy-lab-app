@@ -27,15 +27,6 @@ import { warn as loggerWarn, createScopedConsole } from "./logger";
 
 const console = createScopedConsole("ble");
 
-/** 宏开关：是否对 80 上报的 bandpower 做按侧历史最大值归一化（0~1） */
-export const BLE_BANDPOWER_NORMALIZATION_ENABLED = true;
-
-/**
- * 归一化前的原始 bandpower 下限（与协议同量纲）。低于此值时写入的归一化结果为 0，避免前期数值较小时 ratio 抖动过大。
- * 峰值累计（sideBandpowerMax）仍使用全部 raw，不受此阈值影响。
- */
-export const BLE_BANDPOWER_NORMALIZATION_RAW_THRESHOLD = 500;
-
 // ─── 主机 BLE UUIDs ───
 /** 主机服务 UUID */
 export const PUMP_SERVICE_UUID = "0000af00-0000-1000-8000-00805f9b34fb";
@@ -77,6 +68,10 @@ interface MmcBlePlugin {
   nativeGetDeviceInfo(options: { deviceId: string }): Promise<NativeProtocolReqResult>;
   nativeSetRtc(options: { deviceId: string; utcSeconds: number }): Promise<NativeProtocolReqResult>;
   nativeQueryDeviceStatus(options: { deviceId: string }): Promise<NativeProtocolReqResult>;
+  nativeAdjustGearForSide(options: { side: DeviceSide; delta: number }): Promise<NativeProtocolReqResult>;
+  nativeSetModeForSide(options: { side: DeviceSide; mode: 0 | 1 | 2 }): Promise<NativeProtocolReqResult>;
+  nativeSetSceneForSide(options: { side: DeviceSide; scene: 0 | 1 }): Promise<NativeProtocolReqResult>;
+  nativeSetStartStopForSide(options: { side: DeviceSide; startStop: 0 | 1 }): Promise<NativeProtocolReqResult>;
   addListener(
     eventName: "scanResult",
     listenerFunc: (event: BleScanResult) => void
@@ -225,12 +220,6 @@ type PendingFrameEntry = {
 
 const pendingReqs = new Map<string, Map<number, PendingEntry>>();
 const pendingFrames = new Map<string, PendingFrameEntry[]>();
-/** 按侧记录 bandpower 历史最大值，用于 80 实时强度归一化。 */
-const sideBandpowerMax: Record<DeviceSide, number> = { L: 0, R: 0 };
-
-/** 同一设备 D6 触发的 /v1/device/info 最小间隔，避免高频上报。 */
-const D6_DEVICE_INFO_REPORT_MIN_MS = 10_000;
-const lastD6DeviceInfoReportAt = new Map<string, number>();
 
 function toUtcIsoFromDeviceSeconds(seconds?: number): string | null {
   if (typeof seconds !== "number" || !Number.isFinite(seconds) || seconds <= 0) return null;
@@ -307,7 +296,6 @@ export function resetBleProtocolStateForDevice(deviceId: string): void {
   protocolChannels.delete(deviceId);
   // 清除通知通道缓存，确保重连后重新建立通知订阅
   notifyChannels.delete(deviceId);
-  lastD6DeviceInfoReportAt.delete(deviceId);
   console.log(`[BLE协议状态重置] 清除设备 ${deviceId} 的通知通道缓存`);
 }
 
@@ -701,21 +689,8 @@ export function subscribeProtocolNotifications(
     // 调用传入的回调函数
     onParsed(cid, data);
     
-    // 更新deviceStore中的设备状态
-    switch (cid) {
-      case 0xd0:
-        handleD0Data(data as ReturnType<typeof parseD0OperationRecord>, deviceId);
-        break;
-      case 0xd6:
-        handleD6Data(data as ReturnType<typeof parseD6Battery>, deviceId);
-        break;
-      case 0x80:
-        console.log(`[80指令分发] 收到0x80数据，设备=${deviceId}`);
-        handle80Data(data as ReturnType<typeof parse80RealtimeMilk>, deviceId);
-        break;
-      default:
-        break;
-    }
+    // D0/D6/80/BF/FE 状态写入由 Android 原生 DeviceNativeStateStore 处理；
+    // JS 这里只保留 onParsed 分发，供调试抽屉等非状态写入场景使用。
   };
   
   ensureProtocolNotify(deviceId).catch(() => {});
@@ -791,31 +766,6 @@ export async function queryDeviceStatusAndUpdateStore(deviceId: string, side: De
   const current = deviceStore.get()[side];
   if (current?.deviceId !== deviceId) return;
   console.log(`[E1原生状态] 已由 Android 原生更新${side}侧设备状态: workState=${current.pumpWorkState ?? "null"}, scene=${current.pumpScene ?? "null"}, mode=${current.pumpMode ?? "null"}, gear=${current.gear ?? "null"}, duration=${current.duration ?? "null"}`);
-}
-
-/**
- * 设备主动上报 D6 电量：更新 deviceStore 后 POST /v1/device/info；同 deviceId 节流，避免 D6 过频时打满接口。
- */
-function handleD6Data(
-  data: ReturnType<typeof parseD6Battery> | null,
-  deviceId: string
-): void {
-  if (!data) return;
-  const { L, R } = deviceStore.get();
-  let side: DeviceSide | null = null;
-  if (L?.deviceId === deviceId) side = "L";
-  else if (R?.deviceId === deviceId) side = "R";
-  if (!side) return;
-  const current = deviceStore.get()[side];
-  if (!current || current.deviceId !== deviceId) return;
-  const battery = Math.max(0, Math.min(100, Math.round(data.batteryPct)));
-  deviceStore.setDevice(side, { ...current, battery });
-
-  const now = Date.now();
-  const last = lastD6DeviceInfoReportAt.get(deviceId) ?? 0;
-  if (now - last < D6_DEVICE_INFO_REPORT_MIN_MS) return;
-  lastD6DeviceInfoReportAt.set(deviceId, now);
-  reportDeviceInfoAfterProtocolConfigured("d6_battery");
 }
 
 /**
@@ -936,162 +886,58 @@ export async function sendFEPowerOff(
   }
 }
 
-/**
- * 处理D0数据包，更新设备状态到deviceStore
- */
-function handleD0Data(data: ReturnType<typeof parseD0OperationRecord>, deviceId: string): void {
-  if (!data) return;
-  
-  // 根据设备ID确定设备侧（L或R）
-  const { L, R } = deviceStore.get();
-  let side: DeviceSide | null = null;
-  if (L?.deviceId === deviceId) {
-    side = 'L';
-  } else if (R?.deviceId === deviceId) {
-    side = 'R';
+export async function nativeAdjustGearForSide(side: DeviceSide, delta: number): Promise<boolean> {
+  try {
+    const native = await MmcBle.nativeAdjustGearForSide({ side, delta });
+    nativeProtocolResultToSendResult(native);
+    return native?.ct === CT_ACK;
+  } catch (error) {
+    console.error(`[BLE原生调档] side=${side} failed:`, error);
+    return false;
   }
-  
-  if (side) {
-    const ws = data.afterStartStop === 1 ? 0x01 : 0x00;
-    const modeB1 = Math.max(0, Math.min(2, data.afterMode)) as 0 | 1 | 2;
-    const gearB1 = Math.max(0, Math.min(14, data.afterGear));
-    const scene: 0 | 1 = data.afterAutoFlag !== 0 ? 1 : 0;
-    
-    const current = deviceStore.get()[side];
-    if (current) {
-      // 更新设备状态
-      const isRunning = ws === 0x01;
-      const hasValidDuration = data.duration !== undefined && data.duration > 0;
-      deviceStore.setDevice(side, { 
-        ...current, 
-        pumpScene: scene,
-        pumpWorkState: ws,
-        pumpMode: modeB1,
-        gear: gearB1,
-        duration: hasValidDuration ? data.duration : current.duration 
-      });
-      
-      console.log(`[D0指令处理] 更新${side}侧设备状态: 运行状态=${isRunning ? '运行' : '暂停'}, 原始场景=${data.afterAutoFlag}, 归一化场景=${scene === 1 ? 'AI' : '手动'}, 原始pumpMode=${data.afterMode}, 归一化pumpMode=${modeB1}, 时长=${hasValidDuration ? data.duration : current.duration}秒`);
-      
-      // 检查另一侧设备状态
-      const otherSide = side === 'L' ? 'R' : 'L';
-      const otherDevice = deviceStore.get()[otherSide];
-      const otherRunning = otherDevice?.pumpWorkState === 0x01;
-      
-      console.log(`[D0指令处理] D0场景/模式归一化: afterAutoFlag=${data.afterAutoFlag}, AI模式=${scene === 1 ? 'AI' : '手动'}, afterMode=${data.afterMode}, pumpMode=${modeB1}`);
-      console.log(`[D0指令处理] 更新全局运行状态: 左侧${side === 'L' ? isRunning : otherRunning ? '运行' : '暂停'}, 右侧${side === 'R' ? isRunning : otherRunning ? '运行' : '暂停'}, 全局状态: ${isRunning || otherRunning ? '运行' : '暂停'}`);
-    }
+}
+
+export async function nativeSetModeForSide(side: DeviceSide, mode: 0 | 1 | 2): Promise<boolean> {
+  try {
+    const native = await MmcBle.nativeSetModeForSide({ side, mode });
+    nativeProtocolResultToSendResult(native);
+    return native?.ct === CT_ACK;
+  } catch (error) {
+    console.error(`[BLE原生模式] side=${side} failed:`, error);
+    return false;
+  }
+}
+
+export async function nativeSetSceneForSide(side: DeviceSide, scene: 0 | 1): Promise<boolean> {
+  try {
+    const native = await MmcBle.nativeSetSceneForSide({ side, scene });
+    nativeProtocolResultToSendResult(native);
+    return native?.ct === CT_ACK;
+  } catch (error) {
+    console.error(`[BLE原生场景] side=${side} failed:`, error);
+    return false;
+  }
+}
+
+export async function nativeSetStartStopForSide(side: DeviceSide, startStop: 0 | 1): Promise<boolean> {
+  try {
+    const native = await MmcBle.nativeSetStartStopForSide({ side, startStop });
+    nativeProtocolResultToSendResult(native);
+    return native?.ct === CT_ACK;
+  } catch (error) {
+    console.error(`[BLE原生启停] side=${side} failed:`, error);
+    return false;
   }
 }
 
 /**
- * 处理80（实时奶流/奶阵/强度）数据包，更新设备状态到 deviceStore
- */
-function handle80Data(
-  data: ReturnType<typeof parse80RealtimeMilk>,
-  deviceId: string
-): void {
-  if (!data) {
-    console.warn(`[80指令处理] 数据为空，设备=${deviceId}`);
-    return;
-  }
-
-  // 根据设备ID确定设备侧（L或R）
-  const { L, R } = deviceStore.get();
-  let side: DeviceSide | null = null;
-  if (L?.deviceId === deviceId) {
-    side = "L";
-  } else if (R?.deviceId === deviceId) {
-    side = "R";
-  }
-
-  if (!side) {
-    console.warn(`[80指令处理] 未匹配到设备侧，设备=${deviceId}，L=${L?.deviceId ?? "null"}，R=${R?.deviceId ?? "null"}`);
-    return;
-  }
-
-  const current = deviceStore.get()[side];
-  if (!current) {
-    console.warn(`[80指令处理] 当前侧无设备信息，side=${side}，设备=${deviceId}`);
-    return;
-  }
-
-  console.log(
-    `[80指令处理] side=${side}, connected=${current.connected}, flowFloat=${data.flowFloat.toFixed(3)}, bandpower=${data.bandpower.toFixed(3)}, milkMl=${(data.milkMlX10 / 10).toFixed(1)}, milkFlag=${data.milkFlag}, moFlag=${data.moFlag}`
-  );
-
-  const rawBandpower = Math.max(0, data.bandpower);
-  const prevBandpowerMax = sideBandpowerMax[side];
-  const nextBandpowerMax = Math.max(prevBandpowerMax, rawBandpower);
-  sideBandpowerMax[side] = nextBandpowerMax;
-  const normalizedBandpower = nextBandpowerMax > 0 ? rawBandpower / nextBandpowerMax : 0;
-  const normalizedBandpowerCapped =
-    rawBandpower < BLE_BANDPOWER_NORMALIZATION_RAW_THRESHOLD ? 0 : normalizedBandpower;
-  const bandpowerToStore = BLE_BANDPOWER_NORMALIZATION_ENABLED ? normalizedBandpowerCapped : rawBandpower;
-
-  deviceStore.setDevice(side, {
-    ...current,
-    // flowFloat 为协议中的实时流量 电容值
-    flowFloat: data.flowFloat,
-    // milkMlX10: 单位为 0.1ml
-    milkMl: data.milkMlX10 / 10,
-    milkFlag: data.milkFlag,
-    moFlag: data.moFlag,
-    // bandpower: 可配置为原始值，或按侧历史最大值归一化；低于 BLE_BANDPOWER_NORMALIZATION_RAW_THRESHOLD 的归一化结果为 0
-    bandpower: bandpowerToStore,
-    // 姿态/压力字段在协议中带 X10，需要换算成真实值
-    pitch: data.pitchX10 / 10,
-    roll: data.rollX10 / 10,
-    // pressureCh1: 通道1负压
-    pressureCh1: data.pressureCh1X10 / 10,
-    // pressureCh2: 通道2负压
-    pressureCh2: data.pressureCh2X10 / 10,
-  });
-
-  const updated = deviceStore.get()[side];
-  console.log(
-    `[80指令处理] 写入完成 side=${side}, bandpower=${updated?.bandpower ?? "null"}, rawBandpower=${rawBandpower.toFixed(3)}, maxBandpower=${nextBandpowerMax.toFixed(3)}, normalized=${normalizedBandpower.toFixed(3)}, normalizedStored=${normalizedBandpowerCapped.toFixed(3)}, rawThreshold=${BLE_BANDPOWER_NORMALIZATION_RAW_THRESHOLD}, normalizeEnabled=${BLE_BANDPOWER_NORMALIZATION_ENABLED}, milkMl=${updated?.milkMl ?? "null"}, moFlag=${updated?.moFlag ?? "null"}, , flowFloat=${updated?.flowFloat.toFixed(3) ?? "null"}, pitch=${updated?.pitch ?? "null"}, roll=${updated?.roll ?? "null"}`
-  );
-}
-
-/**
- * 发送结束运行 BF 指令并更新设备状态到 deviceStore
- */
-export async function endRunAndUpdateStore(deviceId: string, side: DeviceSide): Promise<void> {
-  const res = await sendBFEndRun(deviceId);
-  if (res === undefined || res === null) return;
-  if (res.cid !== 0xbf || !res.cab) return;
-  const parsed = parseBFEndRunResponse(res.cab);
-  if (!parsed) return;
-  
-  const current = deviceStore.get()[side];
-  if (current?.deviceId !== deviceId) return;
-  
-  deviceStore.setDevice(side, {
-    ...current,
-    finalMilkMl: parsed.milkMlX10 / 10,
-  });
-  
-  console.log(`[BF指令处理] 更新${side}侧设备状态: 最终奶量=${parsed.milkMlX10 / 10}ml`);
-}
-
-/**
- * 发送控制设备关机 FE 指令并更新设备工作状态到 deviceStore。
+ * 发送控制设备关机 FE 指令。设备状态更新由 Android 原生快照回推。
  */
 export async function powerOffDeviceAndUpdateStore(deviceId: string, side: DeviceSide): Promise<void> {
   const res = await sendFEPowerOff(deviceId, 0);
   if (res === undefined || res === null) return;
   if (res.ct !== CT_ACK || res.cid !== 0xfe) return;
-
-  const current = deviceStore.get()[side];
-  if (current?.deviceId !== deviceId) return;
-
-  deviceStore.setDevice(side, {
-    ...current,
-    pumpWorkState: 0x00,
-  });
-
-  console.log(`[FE指令处理] 更新${side}侧设备状态: 已下发关机指令`);
+  console.log(`[FE原生指令] 已下发关机指令 side=${side}, device=${deviceId}`);
 }
 
 /**
@@ -1103,6 +949,7 @@ export async function connect(
   deviceId: string,
   onDisconnect: () => void
 ): Promise<void> {
+  await stopLEScan();
   await nativeDisconnectListeners.get(deviceId)?.remove();
   const handle = await MmcBle.addListener("disconnected", (event) => {
     if (event.deviceId !== deviceId) return;

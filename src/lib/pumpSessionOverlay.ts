@@ -54,6 +54,7 @@ let permissionGranted = false;
 let permissionChecked = false;
 let permissionToastShown = false;
 let lastNativeSnapshotKey = "";
+let syncGeneration = 0;
 
 function refreshCurrentRoutePath(): void {
   currentRoutePath = window.location.pathname;
@@ -113,14 +114,21 @@ async function syncNativeOverlaySnapshot(): Promise<void> {
   }
 }
 
-async function syncOverlay(): Promise<void> {
+function requestOverlaySync(): void {
+  syncGeneration += 1;
+  void syncOverlay(syncGeneration);
+}
+
+async function syncOverlay(generation: number): Promise<void> {
   if (!isAndroidNative) return;
 
   await syncNativeOverlaySnapshot();
+  if (generation !== syncGeneration) return;
 
   if (!permissionChecked) {
     await refreshOverlayPermission();
   }
+  if (generation !== syncGeneration) return;
 
   if (!permissionGranted) {
     if (currentState === "running" || currentState === "paused") {
@@ -140,10 +148,14 @@ async function syncOverlay(): Promise<void> {
 
   try {
     if (action.type === "update") {
-      getNativeAndroidPumpSessionBridge()?.updateSession?.(action.state, action.processAll);
+      const nativeBridge = getNativeAndroidPumpSessionBridge();
+      nativeBridge?.updateSession?.(action.state, action.processAll);
+      nativeBridge?.showOverlay?.();
     } else if (action.type === "hide") {
       if (currentState === "running" || currentState === "paused") {
-        getNativeAndroidPumpSessionBridge()?.updateSession?.(currentState, currentProcessAll);
+        const nativeBridge = getNativeAndroidPumpSessionBridge();
+        nativeBridge?.updateSession?.(currentState, currentProcessAll);
+        nativeBridge?.hideOverlay?.();
       } else {
         getNativeAndroidPumpSessionBridge()?.stopSession?.();
       }
@@ -161,19 +173,20 @@ export function startPumpSessionOverlayBridge(): void {
     refreshCurrentRoutePath();
     refreshCurrentAppVisibility();
     permissionChecked = false;
-    void syncOverlay();
+    requestOverlaySync();
   };
 
   const syncAppVisibilityChange = () => {
     refreshCurrentRoutePath();
     refreshCurrentAppVisibility();
-    void syncOverlay();
+    requestOverlaySync();
   };
 
   const syncRouteChange = () => {
     refreshCurrentRoutePath();
     refreshCurrentAppVisibility();
-    void syncOverlay();
+    lastNativeSnapshotKey = "";
+    requestOverlaySync();
   };
 
   window.addEventListener("focus", refreshOnFocus);
@@ -196,14 +209,22 @@ export function startPumpSessionOverlayBridge(): void {
     return result;
   };
 
-  void syncOverlay();
+  requestOverlaySync();
   pumpSessionLifecycle.subscribe((next) => {
     currentState = next;
-    void syncOverlay();
+    requestOverlaySync();
   });
   subscribeProcessAll(() => {
     currentProcessAll = clampPumpOverlayProgress(getProcessAll());
     if (currentState !== "running" && currentState !== "paused") return;
-    void syncOverlay();
+    requestOverlaySync();
   });
+}
+
+export function notifyPumpSessionOverlayRouteChanged(routePath: string): void {
+  if (!isAndroidNative) return;
+  currentRoutePath = routePath || "/";
+  refreshCurrentAppVisibility();
+  lastNativeSnapshotKey = "";
+  requestOverlaySync();
 }

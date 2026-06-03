@@ -5,20 +5,13 @@ import {
   getPumpAgentUploadProcessProgress,
   onPumpAgentUploadProcessProgress,
 } from "@/lib/pumpAgentUpload";
-import type { SessionState, SideState } from "./pumpSessionModel";
+import type { SessionState } from "./pumpSessionModel";
 
-const HIGH_FLOW_MULT = 2.0;
 const FLOW_HISTORY_LEN = 60;
 const MAX_BREAST_ML = 150;
 
 interface Params {
-  left: SideState;
-  right: SideState;
-  flowDataL: number[];
-  flowDataR: number[];
-  bottlePct: number;
   sessionState: SessionState;
-  enablePumpSessionMockEffects: boolean;
   setFlowDataL: Dispatch<SetStateAction<number[]>>;
   setFlowDataR: Dispatch<SetStateAction<number[]>>;
   setProgressL: Dispatch<SetStateAction<number>>;
@@ -28,13 +21,7 @@ interface Params {
 
 export function usePumpRealDisplayRuntime(params: Params) {
   const {
-    left,
-    right,
-    flowDataL,
-    flowDataR,
-    bottlePct,
     sessionState,
-    enablePumpSessionMockEffects,
     setFlowDataL,
     setFlowDataR,
     setProgressL,
@@ -61,7 +48,6 @@ export function usePumpRealDisplayRuntime(params: Params) {
   }, []);
 
   useEffect(() => {
-    if (enablePumpSessionMockEffects) return;
     const latest = getPumpAgentUploadProcessProgress();
     setProgressL(Math.max(0, Math.round(latest.processL)));
     setProgressR(Math.max(0, Math.round(latest.processR)));
@@ -72,7 +58,7 @@ export function usePumpRealDisplayRuntime(params: Params) {
       setProgressAll(Math.max(0, Math.round(processAll)));
     });
     return unsubscribe;
-  }, [enablePumpSessionMockEffects, setProgressAll, setProgressL, setProgressR]);
+  }, [setProgressAll, setProgressL, setProgressR]);
 
   // 运行中：500ms 写入新点同时同步 BreastDrop/标签快照（与 last L2872-2885 对齐）
   // 双侧曲线 buffer 各自独立：
@@ -80,7 +66,6 @@ export function usePumpRealDisplayRuntime(params: Params) {
   //   - R buffer 同理；
   //   - label snapshot 使用 lastBufferL/RRef 冻结值，掉线侧数值保留掉线那一刻的值。
   useEffect(() => {
-    if (enablePumpSessionMockEffects) return;
     if (sessionState !== "running") return;
     const timer = window.setInterval(() => {
       const { L, R } = deviceStore.get();
@@ -111,18 +96,17 @@ export function usePumpRealDisplayRuntime(params: Params) {
       setFlowUiSnapshotR(lastBufferRRef.current);
     }, 500);
     return () => window.clearInterval(timer);
-  }, [enablePumpSessionMockEffects, sessionState, setFlowDataL, setFlowDataR]);
+  }, [sessionState, setFlowDataL, setFlowDataR]);
 
   // 非运行（idle / paused）：1s 节流读取设备 ref 同步快照（与 last L2823-2831 对齐）
   useEffect(() => {
-    if (enablePumpSessionMockEffects) return;
     if (sessionState === "running") return;
     const timer = window.setInterval(() => {
       setFlowUiSnapshotL(lastFlowLRef.current);
       setFlowUiSnapshotR(lastFlowRRef.current);
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [enablePumpSessionMockEffects, sessionState]);
+  }, [sessionState]);
 
   const devL = deviceSnapshot.L;
   const devR = deviceSnapshot.R;
@@ -137,50 +121,32 @@ export function usePumpRealDisplayRuntime(params: Params) {
   const leftDeviceAutoScene = uiLeftOnline && devL?.pumpScene === 1;
   const rightDeviceAutoScene = uiRightOnline && devR?.pumpScene === 1;
 
-  const displayFlowL = enablePumpSessionMockEffects
-    ? left.flow
-    : hasRealFlowL
-      ? Math.max(0, devL!.bandpower!)
-      : 0;
-  const displayFlowR = enablePumpSessionMockEffects
-    ? right.flow
-    : hasRealFlowR
-      ? Math.max(0, devR!.bandpower!)
-      : 0;
+  const displayFlowL = hasRealFlowL ? Math.max(0, devL!.bandpower!) : 0;
+  const displayFlowR = hasRealFlowR ? Math.max(0, devR!.bandpower!) : 0;
   lastFlowLRef.current = displayFlowL;
   lastFlowRRef.current = displayFlowR;
 
-  const letdownL = enablePumpSessionMockEffects
-    ? displayFlowL > left.gear * HIGH_FLOW_MULT
-    : hasRealLetdownL
-      ? (devL!.moFlag! & 0x01) !== 0
-      : false;
-  const letdownR = enablePumpSessionMockEffects
-    ? displayFlowR > right.gear * HIGH_FLOW_MULT
-    : hasRealLetdownR
-      ? (devR!.moFlag! & 0x01) !== 0
-      : false;
+  const letdownL = hasRealLetdownL ? (devL!.moFlag! & 0x01) !== 0 : false;
+  const letdownR = hasRealLetdownR ? (devR!.moFlag! & 0x01) !== 0 : false;
 
   const totalL = useMemo(
-    () => (enablePumpSessionMockEffects ? Math.round(flowDataL.reduce((a, d) => a + d, 0) * 0.15) : hasRealMilkL ? Math.round(devL!.milkMl!) : 0),
-    [enablePumpSessionMockEffects, flowDataL, hasRealMilkL, devL?.milkMl],
+    () => (hasRealMilkL ? Math.round(devL!.milkMl!) : 0),
+    [hasRealMilkL, devL?.milkMl],
   );
   const totalR = useMemo(
-    () => (enablePumpSessionMockEffects ? Math.round(flowDataR.reduce((a, d) => a + d, 0) * 0.15) : hasRealMilkR ? Math.round(devR!.milkMl!) : 0),
-    [enablePumpSessionMockEffects, flowDataR, hasRealMilkR, devR?.milkMl],
+    () => (hasRealMilkR ? Math.round(devR!.milkMl!) : 0),
+    [hasRealMilkR, devR?.milkMl],
   );
-  const displayBottlePct = enablePumpSessionMockEffects
-    ? bottlePct
-    : Math.min(
-        100,
-        uiLeftOnline && !uiRightOnline
-          ? (totalL / MAX_BREAST_ML) * 100
-          : !uiLeftOnline && uiRightOnline
-            ? (totalR / MAX_BREAST_ML) * 100
-            : uiLeftOnline && uiRightOnline
-              ? ((totalL + totalR) / (MAX_BREAST_ML * 2)) * 100
-              : 0,
-      );
+  const displayBottlePct = Math.min(
+    100,
+    uiLeftOnline && !uiRightOnline
+      ? (totalL / MAX_BREAST_ML) * 100
+      : !uiLeftOnline && uiRightOnline
+        ? (totalR / MAX_BREAST_ML) * 100
+        : uiLeftOnline && uiRightOnline
+          ? ((totalL + totalR) / (MAX_BREAST_ML * 2)) * 100
+          : 0,
+  );
 
   /** 与 PumpSession_last aggregatePaused（L1853-1865）一致：在线侧任一为运行则视为未聚合暂停 */
   const aggregatePaused = useMemo(() => {
@@ -193,27 +159,16 @@ export function usePumpRealDisplayRuntime(params: Params) {
     if (L?.connected) parts.push(L.pumpWorkState ?? 0);
     if (R?.connected) parts.push(R.pumpWorkState ?? 0);
     if (parts.length === 0) {
-      if (enablePumpSessionMockEffects && sessionState === "running") return false;
       return true;
     }
     return !parts.some((ws) => ws === 0x01);
-  }, [deviceSnapshot, enablePumpSessionMockEffects, sessionState]);
+  }, [deviceSnapshot, sessionState]);
 
   // 与 last L2833-2838 对齐：数值标签使用快照（曲线 path 由 ForceLinePanel 各自消费 flowDataL / flowDataR 直接绘制）
-  const flowDisplayLabelL = enablePumpSessionMockEffects
-    ? sessionState === "running"
-      ? flowUiSnapshotL
-      : displayFlowL
-    : flowUiSnapshotL;
-  const flowDisplayLabelR = enablePumpSessionMockEffects
-    ? sessionState === "running"
-      ? flowUiSnapshotR
-      : displayFlowR
-    : flowUiSnapshotR;
+  const flowDisplayLabelL = flowUiSnapshotL;
+  const flowDisplayLabelR = flowUiSnapshotR;
 
   return {
-    displayFlowL,
-    displayFlowR,
     flowDisplayLabelL,
     flowDisplayLabelR,
     letdownL,

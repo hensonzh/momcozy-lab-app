@@ -19,7 +19,6 @@ import { toast } from "@/components/ui/use-toast";
 const pumpSessionPageLogger = createScopedConsole("PumpSessionPage");
 import {
   type PumpMode,
-  type MockFlow,
   type SessionState,
   type SideState,
   initialElapsedFromStore,
@@ -541,8 +540,6 @@ const BabyBottle = React.memo(({ pct, isLetdown, totalMl, unit, onToggleUnit }: 
 });
 BabyBottle.displayName = "BabyBottle";
 
-// MilkProgressBar is now imported from @/components/pump/MilkProgressBar
-
 function initialProgressAllFromSnapshot(): number {
   const st = pumpSessionLifecycle.getSessionState();
   if (st === "idle") return 0;
@@ -679,7 +676,6 @@ const PumpSession: React.FC = () => {
   const isSessionRunning = sessionState === "running";
   const isSessionEnded = sessionState === "ended";
   const {
-    enablePumpSessionMockEffects,
     maiSessionBubble,
     setMaiSessionBubble,
     pauseResume,
@@ -700,22 +696,10 @@ const PumpSession: React.FC = () => {
     handleFinish,
     confirmFinish,
   } = usePumpSessionController({
-    calData: hasCalibration,
-    fromCalibration,
-    targetGearL,
-    targetGearR,
     left,
     right,
     aiMode,
-    isSessionRunning,
     sessionState,
-    calPromptRunning,
-    setBottlePct,
-    setFlowDataL,
-    setFlowDataR,
-    setProgressL,
-    setProgressR,
-    setProgressAll,
     processAll: progressAll,
     elapsed,
     setElapsed,
@@ -742,8 +726,6 @@ const PumpSession: React.FC = () => {
 
   // Derived
   const {
-    displayFlowL,
-    displayFlowR,
     flowDisplayLabelL,
     flowDisplayLabelR,
     letdownL,
@@ -758,13 +740,7 @@ const PumpSession: React.FC = () => {
     rightDeviceAutoScene,
     aggregatePaused,
   } = usePumpRealDisplayRuntime({
-    left,
-    right,
-    flowDataL,
-    flowDataR,
-    bottlePct,
     sessionState,
-    enablePumpSessionMockEffects,
     setFlowDataL,
     setFlowDataR,
     setProgressL,
@@ -775,7 +751,6 @@ const PumpSession: React.FC = () => {
   const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
   useEffect(() => {
-    if (enablePumpSessionMockEffects) return;
     if (sessionState !== "running") return;
 
     const canTrackLetdownL = leftDeviceOnline && aiMode && leftDeviceAutoScene;
@@ -810,7 +785,6 @@ const PumpSession: React.FC = () => {
     }
   }, [
     aiMode,
-    enablePumpSessionMockEffects,
     leftDeviceAutoScene,
     leftDeviceOnline,
     letdownL,
@@ -836,7 +810,6 @@ const PumpSession: React.FC = () => {
   const displayGearR = sideOfflineRFinal ? 1 : right.gear;
 
   const syncModeHighlight = syncModeButtonHighlight({
-    enablePumpSessionMockEffects,
     leftOnline: leftDeviceOnline,
     rightOnline: rightDeviceOnline,
     leftMode: left.mode,
@@ -1095,9 +1068,6 @@ const PumpSession: React.FC = () => {
         </div>
       </div>
 
-      {/* TODO(module-migration): keep last-version MaiSessionBubbles behavior.
-         Component "@/components/pump/MaiSessionBubbles" is currently unavailable in this workspace.
-         After component is restored, replace this inline bubble with MaiSessionBubbles. */}
       <AnimatePresence>
         {maiSessionBubble && (
           <motion.div
@@ -1434,7 +1404,7 @@ const SidePumpVisual: React.FC<{
   );
 };
 
-/** 奶流强度曲线纵轴固定为 0~1（与 BLE 归一化 bandpower 一致，见 ble.ts BLE_BANDPOWER_NORMALIZATION_ENABLED） */
+/** 奶流强度曲线纵轴固定为 0~1（与原生快照中的归一化 bandpower 一致） */
 function clampFlowChart01(n: number): number {
   if (!Number.isFinite(n)) return 0;
   return Math.min(1, Math.max(0, n));

@@ -3,9 +3,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import { consumePumpNotificationPending } from "@/lib/pumpSessionNotification";
+import { notifyPumpSessionOverlayRouteChanged } from "@/lib/pumpSessionOverlay";
 import { tryRunPumpAutoEndOffPumpTeardownOnce } from "@/lib/pumpAutoEndSession";
 import AgentHub from "@/pages/AgentHub";
 import ComfortCalibration from "@/pages/ComfortCalibration";
@@ -96,6 +97,16 @@ function PumpNotificationNavigateSync() {
   return null;
 }
 
+function PumpOverlayRouteSync() {
+  const location = useLocation();
+
+  useEffect(() => {
+    notifyPumpSessionOverlayRouteChanged(location.pathname);
+  }, [location.pathname]);
+
+  return null;
+}
+
 function DeviceReminderWebSocketSync() {
   useEffect(() => startDeviceReminderWebSocket(), []);
 
@@ -109,6 +120,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <PumpNotificationNavigateSync />
+        <PumpOverlayRouteSync />
         <DeviceReminderWebSocketSync />
         <BackgroundNotifyOnboardingGate />
         <AppLayout>
