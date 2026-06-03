@@ -12,7 +12,6 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
-import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -26,6 +25,10 @@ public class PumpSessionOverlayService extends Service {
     public static final String ACTION_HIDE = "pump.session.overlay.HIDE";
     public static final String EXTRA_STATE = "state";
     public static final String EXTRA_PROCESS_ALL = "process_all";
+    private static final float OVERLAY_WIDTH_RATIO = 0.45f;
+    private static final int OVERLAY_MIN_WIDTH_DP = 155;
+    private static final int OVERLAY_HEIGHT_DP = 40;
+    private static final int OVERLAY_CONTENT_HEIGHT_DP = 34;
 
     private WindowManager windowManager;
     private View overlayView;
@@ -84,17 +87,17 @@ public class PumpSessionOverlayService extends Service {
     }
 
     private View buildOverlayView() {
-        int height = dp(46);
-        int horizontalPadding = dp(12);
+        int contentHeight = dp(OVERLAY_CONTENT_HEIGHT_DP);
+        int horizontalPadding = dp(8);
 
         FrameLayout root = new FrameLayout(this);
-        root.setPadding(horizontalPadding, dp(4), horizontalPadding, dp(4));
+        root.setPadding(horizontalPadding, dp(2), horizontalPadding, dp(3));
 
         GradientDrawable background = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT,
                 new int[]{Color.rgb(35, 35, 42), Color.rgb(69, 52, 58)}
         );
-        background.setCornerRadius(dp(14));
+        background.setCornerRadius(dp(12));
         root.setBackground(background);
         root.setAlpha(0.96f);
         root.setClickable(true);
@@ -110,16 +113,18 @@ public class PumpSessionOverlayService extends Service {
 
         titleText = new TextView(this);
         titleText.setTextColor(Color.WHITE);
-        titleText.setTextSize(13);
+        titleText.setTextSize(11);
         titleText.setTypeface(Typeface.DEFAULT_BOLD);
+        titleText.setSingleLine(true);
 
         stateText = new TextView(this);
         stateText.setTextColor(Color.argb(220, 255, 255, 255));
-        stateText.setTextSize(11);
+        stateText.setTextSize(9);
         stateText.setGravity(Gravity.RIGHT);
+        stateText.setSingleLine(true);
 
         row.addView(titleText, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        row.addView(stateText, new LinearLayout.LayoutParams(dp(64), LinearLayout.LayoutParams.WRAP_CONTENT));
+        row.addView(stateText, new LinearLayout.LayoutParams(dp(44), LinearLayout.LayoutParams.WRAP_CONTENT));
 
         progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         progressBar.setMax(100);
@@ -131,14 +136,14 @@ public class PumpSessionOverlayService extends Service {
         ));
         LinearLayout.LayoutParams progressParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                dp(7)
+                dp(4)
         );
-        progressParams.topMargin = dp(5);
+        progressParams.topMargin = dp(1);
         content.addView(progressBar, progressParams);
 
         root.addView(content, new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
-                height,
+                contentHeight,
                 Gravity.CENTER
         ));
         return root;
@@ -151,38 +156,29 @@ public class PumpSessionOverlayService extends Service {
         int flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                dp(54),
+                getOverlayWidthPx(),
+                dp(OVERLAY_HEIGHT_DP),
                 type,
                 flags,
                 PixelFormat.TRANSLUCENT
         );
         params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         params.x = 0;
-        params.y = getStatusBarInset();
+        params.y = dp(OVERLAY_HEIGHT_DP / 3);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            params.setFitInsetsTypes(0);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            params.layoutInDisplayCutoutMode =
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
         return params;
     }
 
-    private int getStatusBarInset() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            WindowInsets insets = null;
-            try {
-                View decor = overlayView;
-                if (decor != null) {
-                    insets = decor.getRootWindowInsets();
-                }
-            } catch (RuntimeException ignored) {
-                insets = null;
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && insets != null) {
-                return insets.getInsets(WindowInsets.Type.statusBars()).top;
-            }
-        }
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            return getResources().getDimensionPixelSize(resourceId);
-        }
-        return dp(24);
+    private int getOverlayWidthPx() {
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int targetWidth = Math.round(screenWidth * OVERLAY_WIDTH_RATIO);
+        return Math.max(dp(OVERLAY_MIN_WIDTH_DP), targetWidth);
     }
 
     private void hideOverlay() {

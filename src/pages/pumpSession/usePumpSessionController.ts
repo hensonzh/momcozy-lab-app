@@ -3,29 +3,16 @@ import { resetPumpAgentUploadProcessProgress } from "@/lib/pumpAgentUpload";
 import { pushPumpMilkUploadForPumpSessionEnd } from "@/lib/pumpAutoEndSession";
 import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
 import { usePumpMaiRuntime } from "./usePumpMaiRuntime";
-import { usePumpMockRuntime } from "./usePumpMockRuntime";
 import { usePumpDeviceControlRuntime } from "./usePumpDeviceControlRuntime";
 import { usePumpAgentRuntime } from "./usePumpAgentRuntime";
 import type { SessionState, SideState } from "./pumpSessionModel";
 import { initialAiModeFromStore } from "./pumpSessionModel";
 
 interface ControllerParams {
-  calData: unknown;
-  fromCalibration: boolean;
-  targetGearL: number;
-  targetGearR: number;
   left: SideState;
   right: SideState;
   aiMode: boolean;
-  isSessionRunning: boolean;
   sessionState: SessionState;
-  calPromptRunning: boolean;
-  setBottlePct: Dispatch<SetStateAction<number>>;
-  setFlowDataL: Dispatch<SetStateAction<number[]>>;
-  setFlowDataR: Dispatch<SetStateAction<number[]>>;
-  setProgressL: Dispatch<SetStateAction<number>>;
-  setProgressR: Dispatch<SetStateAction<number>>;
-  setProgressAll: Dispatch<SetStateAction<number>>;
   processAll: number;
   elapsed: number;
   setElapsed: Dispatch<SetStateAction<number>>;
@@ -44,19 +31,7 @@ export function usePumpSessionController(params: ControllerParams) {
     left,
     right,
     aiMode,
-    calData,
-    fromCalibration,
-    targetGearL,
-    targetGearR,
-    isSessionRunning,
     sessionState,
-    calPromptRunning,
-    setBottlePct,
-    setFlowDataL,
-    setFlowDataR,
-    setProgressL,
-    setProgressR,
-    setProgressAll,
     processAll,
     elapsed,
     setElapsed,
@@ -70,27 +45,6 @@ export function usePumpSessionController(params: ControllerParams) {
     navigateHome,
   } = params;
 
-  const mockRuntime = usePumpMockRuntime({
-    sessionState,
-    calData,
-    fromCalibration,
-    targetGearL,
-    targetGearR,
-    left,
-    right,
-    aiMode,
-    isSessionRunning,
-    calPromptRunning,
-    setLeft,
-    setRight,
-    setElapsed,
-    setBottlePct,
-    setFlowDataL,
-    setFlowDataR,
-    setProgressL,
-    setProgressR,
-    setProgressAll,
-  });
   const agentRuntime = usePumpAgentRuntime();
   const maiRuntime = usePumpMaiRuntime({
     isSessionRunning: sessionState === "running",
@@ -104,7 +58,6 @@ export function usePumpSessionController(params: ControllerParams) {
     left,
     right,
     aiMode,
-    enablePumpSessionMockEffects: mockRuntime.enablePumpSessionMockEffects,
     sessionState,
     setSessionState,
     setLeft,
@@ -123,24 +76,6 @@ export function usePumpSessionController(params: ControllerParams) {
   const handleAiModeRequest = useCallback(async (next: boolean) => {
     return deviceControlRuntime.handleAiModeRequest(next);
   }, [deviceControlRuntime]);
-
-  const handleMockHigh = useCallback(() => {
-    if (mockRuntime.mockFlow === "high") {
-      mockRuntime.setMockFlow("off");
-      return;
-    }
-    setModeBoth("stimulate");
-    mockRuntime.setMockFlow("high");
-  }, [mockRuntime, setModeBoth]);
-
-  const handleMockLow = useCallback(() => {
-    if (mockRuntime.mockFlow === "low") {
-      mockRuntime.setMockFlow("off");
-      return;
-    }
-    setModeBoth("deep");
-    mockRuntime.setMockFlow("low");
-  }, [mockRuntime, setModeBoth]);
 
   const summaryPushedRef = useRef(false);
   const summaryPushingRef = useRef(false);
@@ -234,7 +169,6 @@ export function usePumpSessionController(params: ControllerParams) {
   }, [navigateHome, setDevicePowerOffOpen]);
 
   return {
-    ...mockRuntime,
     ...maiRuntime,
     ...deviceControlRuntime,
     ...agentRuntime,
@@ -243,8 +177,6 @@ export function usePumpSessionController(params: ControllerParams) {
     canToggleSession,
     setModeBoth,
     handleAiModeRequest,
-    handleMockHigh,
-    handleMockLow,
     handleSwitchToManual,
     confirmSwitchToManual,
     handleBack,

@@ -56,12 +56,13 @@ public class PumpSessionOverlayPlugin extends Plugin {
         int processAll = clampProcess(call.getInt("processAll", 0));
         updateCachedSnapshot(state, processAll);
         PumpSessionNativeController.updateSession(getContext(), state, processAll);
+        PumpSessionNativeController.showOverlayIfActive(getContext());
         call.resolve();
     }
 
     @PluginMethod
     public void hide(PluginCall call) {
-        PumpSessionNativeController.stopAll(getContext());
+        PumpSessionNativeController.hideOverlayOnly(getContext());
         call.resolve();
     }
 

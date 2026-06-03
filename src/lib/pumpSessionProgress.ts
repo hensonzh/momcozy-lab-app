@@ -1,5 +1,5 @@
 /**
- * 全局吸乳 process_all（0–100）快照：供 PumpSessionIsland 与各页展示。
+ * 全局吸乳 process_all（0–100）快照：供原生通知、悬浮窗与各页展示。
  * 与 pumpSessionLifecycle 一致使用 sessionStorage，刷新保留、杀进程清空。
  */
 

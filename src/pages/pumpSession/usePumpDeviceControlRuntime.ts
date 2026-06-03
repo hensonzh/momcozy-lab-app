@@ -3,25 +3,23 @@ import { deviceStore, type DeviceSide } from "@/lib/deviceStore";
 import {
   ensureProtocolNotify,
   isBleSupported,
+  nativeAdjustGearForSide,
+  nativeSetModeForSide,
+  nativeSetSceneForSide,
+  nativeSetStartStopForSide,
   powerOffDeviceAndUpdateStore,
   queryDeviceStatusAndUpdateStore,
-  sendB1SetPumpParams,
-  subscribeProtocolNotifications,
 } from "@/lib/ble";
 import {
   markPumpAgentUploadProcessStepPause,
   markPumpAgentUploadProcessStepStop,
   setPumpAgentUploadOperationSource,
 } from "@/lib/pumpAgentUpload";
-import { CT_ACK } from "@/lib/bleProtocol";
-import type { D0OperationRecord } from "@/lib/bleProtocol";
-import { patchGearMemory, readGearB1FromMemory } from "@/lib/pumpGearMemory";
 import {
   fromProtocolGear,
   fromProtocolPumpMode,
   MAX_GEAR,
   MIN_GEAR,
-  toProtocolGear,
   toProtocolMode,
   type SessionState,
   type SideState,
@@ -32,7 +30,6 @@ interface PumpDeviceControlRuntimeParams {
   left: SideState;
   right: SideState;
   aiMode: boolean;
-  enablePumpSessionMockEffects: boolean;
   sessionState: SessionState;
   setSessionState: Dispatch<SetStateAction<SessionState>>;
   setLeft: Dispatch<SetStateAction<SideState>>;
@@ -51,7 +48,6 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     left,
     right,
     aiMode,
-    enablePumpSessionMockEffects,
     sessionState,
     setSessionState,
     setLeft,
@@ -60,9 +56,6 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     setAiMode,
   } = params;
   const deviceRuntimeLogger = createScopedConsole("PumpDeviceControlRuntime");
-  const hasSwitchedFromAutoToManualRef = useRef(false);
-  const d0UnsubRef = useRef<Partial<Record<DeviceSide, () => void>>>({});
-  const d0DeviceIdRef = useRef<Partial<Record<DeviceSide, string>>>({});
   const prevConnectedSidesRef = useRef<DeviceSide[]>([]);
   const reconnectTimerRef = useRef<number | null>(null);
 
@@ -109,34 +102,6 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     if (runningDurations.length > 0) setElapsed(Math.max(...runningDurations));
   }, [setAiMode, setElapsed, setLeft, setRight]);
 
-  const applyD0ToSide = useCallback((side: DeviceSide, d: D0OperationRecord) => {
-    const ws = d.afterStartStop === 1 ? 0x01 : 0x00;
-    const modeB1 = Math.max(0, Math.min(2, d.afterMode)) as 0 | 1 | 2;
-    const gearB1 = Math.max(0, Math.min(14, d.afterGear));
-    const scene: 0 | 1 = d.afterAutoFlag !== 0 ? 1 : 0;
-    const setter = side === "L" ? setLeft : setRight;
-    setter((prev) => ({
-      ...prev,
-      mode: fromProtocolPumpMode(modeB1),
-      gear: fromProtocolGear(gearB1),
-    }));
-
-    const current = deviceStore.get()[side];
-    if (current) {
-      const isRunning = ws === 0x01;
-      const hasValidDuration = typeof d.duration === "number" && d.duration > 0;
-      deviceStore.setDevice(side, {
-        ...current,
-        pumpScene: scene,
-        pumpWorkState: ws,
-        pumpMode: modeB1,
-        gear: gearB1,
-        duration: !isRunning && hasValidDuration ? d.duration : current.duration,
-      });
-    }
-    syncUiFromStore();
-  }, [setLeft, setRight, syncUiFromStore]);
-
   const handleNewDeviceConnection = useCallback(async (deviceId: string, side: DeviceSide) => {
     try {
       await ensureProtocolNotify(deviceId).catch(() => {});
@@ -147,30 +112,6 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
       // ignore
     }
   }, [syncUiFromStore]);
-
-  const reconcileDeviceListeners = useCallback(() => {
-    const snapshot = deviceStore.get();
-    (["L", "R"] as const).forEach((side) => {
-      const dev = snapshot[side];
-      const connected = !!dev?.connected;
-      const deviceId = dev?.deviceId;
-      const boundDeviceId = d0DeviceIdRef.current[side];
-      if (connected && deviceId) {
-        if (boundDeviceId !== deviceId) {
-          d0UnsubRef.current[side]?.();
-          d0UnsubRef.current[side] = subscribeProtocolNotifications(deviceId, (cid, data) => {
-            if (cid !== 0xd0) return;
-            applyD0ToSide(side, data as D0OperationRecord);
-          });
-          d0DeviceIdRef.current[side] = deviceId;
-        }
-      } else {
-        d0UnsubRef.current[side]?.();
-        delete d0UnsubRef.current[side];
-        delete d0DeviceIdRef.current[side];
-      }
-    });
-  }, [applyD0ToSide]);
 
   const handleConnectionDelta = useCallback(() => {
     const { L, R } = deviceStore.get();
@@ -212,44 +153,8 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
   const sideB1Params = useCallback((side: DeviceSide) => {
     const dev = deviceStore.get()[side];
     if (!dev?.connected || !dev.deviceId) return null;
-    const ui = side === "L" ? left : right;
-    const modeB1 = (dev.pumpMode ?? toProtocolMode(ui.mode)) as 0 | 1 | 2;
-    const gearB1 = dev.gear ?? toProtocolGear(ui.gear);
     const workState = dev.pumpWorkState ?? 0x00;
-    return { deviceId: dev.deviceId, modeB1, gearB1, workState, store: dev };
-  }, [left, right]);
-
-  const sendB1WithRetry = useCallback(async (
-    deviceId: string,
-    startStop: 0 | 1,
-    mode: 0 | 1 | 2,
-    gear: number,
-    scene: 0 | 1,
-  ) => {
-    const first = await sendB1SetPumpParams(deviceId, startStop, mode, gear, scene);
-    if (first?.ct === CT_ACK) return true;
-    const second = await sendB1SetPumpParams(deviceId, startStop, mode, gear, scene);
-    return second?.ct === CT_ACK;
-  }, []);
-
-  const persistPumpSnapshot = useCallback((
-    side: DeviceSide,
-    modeB1: 0 | 1 | 2,
-    gearB1: number,
-    workState: number,
-    scene: 0 | 1,
-  ) => {
-    const cur = deviceStore.get()[side];
-    if (!cur) return;
-    const memPatch = patchGearMemory(cur, scene, modeB1, gearB1);
-    deviceStore.setDevice(side, {
-      ...cur,
-      ...memPatch,
-      pumpMode: modeB1,
-      gear: gearB1,
-      pumpWorkState: workState,
-      pumpScene: scene,
-    });
+    return { deviceId: dev.deviceId, workState };
   }, []);
 
   useEffect(() => {
@@ -261,23 +166,14 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
 
   useEffect(() => {
     if (!isBleSupported()) return;
-    reconcileDeviceListeners();
     handleConnectionDelta();
-    const unsub = deviceStore.subscribe(() => {
-      reconcileDeviceListeners();
-      handleConnectionDelta();
-    });
+    const unsub = deviceStore.subscribe(handleConnectionDelta);
     return () => {
       unsub();
-      (["L", "R"] as const).forEach((side) => {
-        d0UnsubRef.current[side]?.();
-        delete d0UnsubRef.current[side];
-        delete d0DeviceIdRef.current[side];
-      });
       if (reconnectTimerRef.current != null) window.clearTimeout(reconnectTimerRef.current);
       reconnectTimerRef.current = null;
     };
-  }, [handleConnectionDelta, reconcileDeviceListeners]);
+  }, [handleConnectionDelta]);
 
   useEffect(() => {
     if (!isBleSupported()) return;
@@ -289,7 +185,6 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
   // 旧的 500ms 轮询 updateRunningState 已删除：会话状态由 pumpSessionLifecycle（基于 deviceStore 订阅 + 边缘触发）统一推进。
 
   useEffect(() => {
-    if (enablePumpSessionMockEffects) return;
     if (sessionState !== "running") return;
     const timer = window.setInterval(() => {
       const { L, R } = deviceStore.get();
@@ -312,7 +207,7 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
       }
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [enablePumpSessionMockEffects, sessionState, setElapsed]);
+  }, [sessionState, setElapsed]);
 
   const applyGearDelta = useCallback((side: DeviceSide, delta: number, source: "app" | "agent" = "app") => {
     const setter = side === "L" ? setLeft : setRight;
@@ -322,22 +217,15 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
       if (isBleSupported()) {
         const stored = deviceStore.get()[side];
         if (stored?.connected && stored.deviceId) {
-          const modeB1 = ((stored.pumpMode ?? toProtocolMode(prev.mode)) as 0 | 1 | 2);
-          const gearB1 = toProtocolGear(next);
-          const ws = stored.pumpWorkState ?? 0x00;
-          const ss: 0 | 1 = ws === 0x01 ? 1 : 0;
-          const scene: 0 | 1 = aiMode ? 1 : 0;
-          const deviceId = stored.deviceId;
           void (async () => {
-            const ok = await sendB1WithRetry(deviceId, ss, modeB1, gearB1, scene);
-            if (!ok) return;
-            persistPumpSnapshot(side, modeB1, gearB1, ws, scene);
+            const ok = await nativeAdjustGearForSide(side, delta);
+            if (ok) syncUiFromStore();
           })();
         }
       }
       return { ...prev, gear: next };
     });
-  }, [aiMode, persistPumpSnapshot, sendB1WithRetry, setLeft, setRight]);
+  }, [setLeft, setRight, syncUiFromStore]);
 
   const pauseResume = useCallback(async () => {
     if (!isBleSupported()) {
@@ -351,9 +239,6 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
       })
       .filter((x): x is NonNullable<typeof x> => x != null);
     if (items.length === 0) {
-      if (enablePumpSessionMockEffects) {
-        setSessionState((prev) => (prev === "running" ? "paused" : "running"));
-      }
       return;
     }
     // 与 last handlePauseResume 一致：按设备实际启停聚合方向下发，避免 sessionState 与上报短暂不一致时误操作
@@ -367,28 +252,19 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
       });
       nextStart = anyRunningBle ? 0 : 1;
     }
-    const scene: 0 | 1 = aiMode ? 1 : 0;
     setPumpAgentUploadOperationSource("both", "app");
     let anyFailed = false;
     for (const it of items) {
-      const { side, deviceId, modeB1, gearB1, workState } = it;
+      const { side, workState } = it;
       if (nextStart === 1 && workState !== 0x00) continue;
       if (nextStart === 0 && workState !== 0x01) continue;
       if (nextStart === 0) markPumpAgentUploadProcessStepPause(side);
-      const ok = await sendB1WithRetry(
-        deviceId,
-        nextStart,
-        modeB1,
-        gearB1,
-        scene,
-      );
+      const ok = await nativeSetStartStopForSide(side, nextStart);
       if (!ok) {
         anyFailed = true;
         continue;
       }
-      persistPumpSnapshot(side, modeB1, gearB1, nextStart === 1 ? 0x01 : 0x00, scene);
-      if (side === "L") setLeft((prev) => ({ ...prev, gear: fromProtocolGear(gearB1) }));
-      else setRight((prev) => ({ ...prev, gear: fromProtocolGear(gearB1) }));
+      syncUiFromStore();
     }
     if (!anyFailed) {
       setSessionState(nextStart === 1 ? "running" : "paused");
@@ -397,86 +273,44 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     const refreshed = deviceStore.get();
     const hasRunning = (["L", "R"] as const).some((side) => refreshed[side]?.connected && refreshed[side]?.pumpWorkState === 0x01);
     setSessionState(hasRunning ? "running" : "paused");
-  }, [aiMode, enablePumpSessionMockEffects, persistPumpSnapshot, sendB1WithRetry, sessionState, setLeft, setRight, setSessionState, sideB1Params]);
+  }, [sessionState, setSessionState, sideB1Params, syncUiFromStore]);
 
   // 与 last L3322-3363 对齐：activeSide==="SYNC" 等价于双侧顺序写入。
   const setModeBoth = useCallback(async (mode: SideState["mode"]) => {
     const applyModeForSide = async (side: DeviceSide) => {
-      const scene: 0 | 1 = aiMode ? 1 : 0;
       const modeB1 = toProtocolMode(mode);
       const dev = deviceStore.get()[side];
       const ui = side === "L" ? left : right;
-      const fallback = dev?.gear ?? toProtocolGear(ui.gear);
-      const remembered = readGearB1FromMemory(dev, scene, modeB1, fallback);
-      if (side === "L") setLeft((prev) => ({ ...prev, mode, gear: fromProtocolGear(remembered) }));
-      else setRight((prev) => ({ ...prev, mode, gear: fromProtocolGear(remembered) }));
+      if (side === "L") setLeft((prev) => ({ ...prev, mode }));
+      else setRight((prev) => ({ ...prev, mode }));
       if (!isBleSupported() || !dev?.connected || !dev.deviceId) return;
-      const ws = dev.pumpWorkState ?? 0x00;
-      const ss: 0 | 1 = ws === 0x01 ? 1 : 0;
-      const ok = await sendB1WithRetry(dev.deviceId, ss, modeB1, remembered, scene);
-      if (!ok) return;
-      persistPumpSnapshot(side, modeB1, remembered, ws, scene);
+      const ok = await nativeSetModeForSide(side, modeB1);
+      if (ok) syncUiFromStore();
     };
     setPumpAgentUploadOperationSource("both", "app");
     await applyModeForSide("L");
     await applyModeForSide("R");
-  }, [aiMode, left, persistPumpSnapshot, right, sendB1WithRetry, setLeft, setRight]);
+  }, [left, right, setLeft, setRight, syncUiFromStore]);
 
   const setModeL = useCallback(async (mode: SideState["mode"]) => {
-    const scene: 0 | 1 = aiMode ? 1 : 0;
     const modeB1 = toProtocolMode(mode);
     const dev = deviceStore.get().L;
-    const fallback = dev?.gear ?? toProtocolGear(left.gear);
-    const remembered = readGearB1FromMemory(dev, scene, modeB1, fallback);
     setPumpAgentUploadOperationSource("L", "app");
-    setLeft((prev) => ({ ...prev, mode, gear: fromProtocolGear(remembered) }));
+    setLeft((prev) => ({ ...prev, mode }));
     if (!isBleSupported() || !dev?.connected || !dev.deviceId) return;
-    const ws = dev.pumpWorkState ?? 0x00;
-    const ss: 0 | 1 = ws === 0x01 ? 1 : 0;
-    const ok = await sendB1WithRetry(dev.deviceId, ss, modeB1, remembered, scene);
-    if (!ok) return;
-    persistPumpSnapshot("L", modeB1, remembered, ws, scene);
-  }, [aiMode, left.gear, persistPumpSnapshot, sendB1WithRetry, setLeft]);
+    const ok = await nativeSetModeForSide("L", modeB1);
+    if (ok) syncUiFromStore();
+  }, [setLeft, syncUiFromStore]);
 
   const setModeR = useCallback(async (mode: SideState["mode"]) => {
-    const scene: 0 | 1 = aiMode ? 1 : 0;
     const modeB1 = toProtocolMode(mode);
     const dev = deviceStore.get().R;
-    const fallback = dev?.gear ?? toProtocolGear(right.gear);
-    const remembered = readGearB1FromMemory(dev, scene, modeB1, fallback);
     setPumpAgentUploadOperationSource("R", "app");
-    setRight((prev) => ({ ...prev, mode, gear: fromProtocolGear(remembered) }));
+    setRight((prev) => ({ ...prev, mode }));
     if (!isBleSupported() || !dev?.connected || !dev.deviceId) return;
-    const ws = dev.pumpWorkState ?? 0x00;
-    const ss: 0 | 1 = ws === 0x01 ? 1 : 0;
-    const ok = await sendB1WithRetry(dev.deviceId, ss, modeB1, remembered, scene);
-    if (!ok) return;
-    persistPumpSnapshot("R", modeB1, remembered, ws, scene);
-  }, [aiMode, persistPumpSnapshot, right.gear, sendB1WithRetry, setRight]);
-
-  const copyManualMemoryFromAi = useCallback((side: DeviceSide) => {
-    const cur = deviceStore.get()[side];
-    if (!cur?.pumpGearMemoryAi) return;
-    deviceStore.setDevice(side, {
-      ...cur,
-      pumpGearMemoryManual: {
-        stimulate: cur.pumpGearMemoryAi.stimulate,
-        deep: cur.pumpGearMemoryAi.deep,
-      },
-    });
-  }, []);
-
-  const copyAiMemoryFromCalib = useCallback((side: DeviceSide) => {
-    const cur = deviceStore.get()[side];
-    if (!cur?.pumpGearCalib) return;
-    deviceStore.setDevice(side, {
-      ...cur,
-      pumpGearMemoryAi: {
-        stimulate: cur.pumpGearCalib.stimulate,
-        deep: cur.pumpGearCalib.deep,
-      },
-    });
-  }, []);
+    const ok = await nativeSetModeForSide("R", modeB1);
+    if (ok) syncUiFromStore();
+  }, [setRight, syncUiFromStore]);
 
   const handleAiModeRequest = useCallback(async (next: boolean) => {
     const prev = aiMode;
@@ -486,8 +320,6 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     });
     setAiMode(next);
     const scene: 0 | 1 = next ? 1 : 0;
-    const isFirstAutoToManual = !next && prev === true && !hasSwitchedFromAutoToManualRef.current;
-    let shouldMarkSwitchedFromAutoToManual = false;
     if (!isBleSupported()) {
       deviceRuntimeLogger.log("handleAiModeRequest:ble-not-supported", {
         prevAiMode: prev,
@@ -501,91 +333,28 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
       });
       return true;
     }
-    const items = (["L", "R"] as const)
-      .map((side) => {
-        const p = sideB1Params(side);
-        return p == null ? null : { side, ...p };
-      })
-      .filter((x): x is NonNullable<typeof x> => x != null);
+    const items = (["L", "R"] as const).filter((side) => {
+      const dev = deviceStore.get()[side];
+      return !!dev?.connected && !!dev.deviceId;
+    });
     if (items.length === 0) return true;
     let anyFailed = false;
-    for (const it of items) {
-      const { side, deviceId, modeB1, gearB1, workState, store } = it;
-      let ss: 0 | 1;
-      let finalModeB1: 0 | 1 | 2 = modeB1;
-      const fallback = store.gear ?? toProtocolGear(side === "L" ? left.gear : right.gear);
-      let finalGearB1 = gearB1;
-      if (next && prev === false) {
-        ss = 1;
-        finalModeB1 = 0;
-        finalGearB1 = store.pumpGearCalib?.stimulate ?? readGearB1FromMemory(store, 1, 0, fallback);
-        copyAiMemoryFromCalib(side);
-      } else if (!next && prev === true) {
-        ss = 1;
-        finalModeB1 = modeB1;
-        if (isFirstAutoToManual) {
-          if (finalModeB1 === 0) {
-            finalGearB1 = store.pumpGearMemoryAi?.stimulate ?? readGearB1FromMemory(store, 1, 0, fallback);
-          } else if (finalModeB1 === 1) {
-            finalGearB1 = store.pumpGearMemoryAi?.deep ?? readGearB1FromMemory(store, 1, 1, fallback);
-          } else {
-            finalGearB1 =
-              store.pumpGearMemoryAi?.stimulate ??
-              store.pumpGearMemoryAi?.deep ??
-              readGearB1FromMemory(store, 1, finalModeB1, fallback);
-          }
-          copyManualMemoryFromAi(side);
-          shouldMarkSwitchedFromAutoToManual = true;
-        } else {
-          finalGearB1 = readGearB1FromMemory(store, 0, finalModeB1, fallback);
-        }
-      } else {
-        finalGearB1 = readGearB1FromMemory(store, scene, modeB1, fallback);
-        ss = workState === 0x01 ? 1 : 0;
-      }
-      deviceRuntimeLogger.log("handleAiModeRequest:before-send", {
-        side,
-        deviceId,
-        prevAiMode: prev,
-        nextAiMode: next,
-        from: { modeB1, gearB1, workState, pumpScene: store.pumpScene ?? null },
-        send: { ss, finalModeB1, finalGearB1, scene },
-      });
-      const ok = await sendB1WithRetry(deviceId, ss, finalModeB1, finalGearB1, scene);
+    for (const side of items) {
+      const ok = await nativeSetSceneForSide(side, scene);
       deviceRuntimeLogger.log("handleAiModeRequest:after-send", {
         side,
-        deviceId,
         ok,
       });
       if (!ok) {
         anyFailed = true;
         deviceRuntimeLogger.warn("handleAiModeRequest:send-failed", {
           side,
-          deviceId,
-          send: { ss, finalModeB1, finalGearB1, scene },
+          scene,
         });
         continue;
       }
-      const nextPumpWs = ss === 1 ? 0x01 : 0x00;
-      persistPumpSnapshot(side, finalModeB1, finalGearB1, nextPumpWs, scene);
-      const persisted = deviceStore.get()[side];
-      deviceRuntimeLogger.log("handleAiModeRequest:after-persist", {
-        side,
-        persisted: persisted
-          ? {
-              pumpMode: persisted.pumpMode ?? null,
-              gear: persisted.gear ?? null,
-              pumpWorkState: persisted.pumpWorkState ?? null,
-              pumpScene: persisted.pumpScene ?? null,
-            }
-          : null,
-      });
-      if (side === "L") setLeft((p) => ({ ...p, gear: fromProtocolGear(finalGearB1) }));
-      else setRight((p) => ({ ...p, gear: fromProtocolGear(finalGearB1) }));
     }
-    if (shouldMarkSwitchedFromAutoToManual) {
-      hasSwitchedFromAutoToManualRef.current = true;
-    }
+    syncUiFromStore();
     if (!anyFailed) {
       deviceRuntimeLogger.log("handleAiModeRequest:done", {
         prevAiMode: prev,
@@ -601,7 +370,7 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     });
     setAiMode(prev);
     return false;
-  }, [aiMode, copyAiMemoryFromCalib, copyManualMemoryFromAi, deviceRuntimeLogger, left.gear, persistPumpSnapshot, right.gear, sendB1WithRetry, setAiMode, setLeft, setRight, sideB1Params]);
+  }, [aiMode, deviceRuntimeLogger, setAiMode, syncUiFromStore]);
 
   /** 结束吸乳：对在线设备下发 FE 关机指令（非 B1 暂停） */
   const stopPumpWithBle = useCallback(async () => {
@@ -618,15 +387,12 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
     for (const it of items) {
       try {
         await powerOffDeviceAndUpdateStore(it.deviceId, it.side);
-        const cur = deviceStore.get()[it.side];
-        if (cur) {
-          deviceStore.setDevice(it.side, { ...cur, pumpWorkState: 0x00 });
-        }
+        syncUiFromStore();
       } catch (error) {
         console.error(`[PumpSession] stopPumpWithBle FE failed side=${it.side}:`, error);
       }
     }
-  }, [setElapsed, sideB1Params]);
+  }, [sideB1Params, syncUiFromStore]);
 
   return {
     pauseResume,
