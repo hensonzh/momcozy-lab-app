@@ -23,6 +23,7 @@ import { createScopedConsole } from "@/lib/logger";
 import type { SessionState } from "@/pages/pumpSession/pumpSessionModel";
 
 export const PUMP_SESSION_STATE_KEY = "pump_session_state";
+const PUMP_SESSION_LETDOWN_COUNTS_KEY = "pump_session_letdown_counts";
 
 const LEGACY_LOCAL_STORAGE_KEY = "pump_session_state";
 
@@ -62,6 +63,10 @@ let pausedAllOnlineSinceMs: number | null = null;
 /** 上一帧 reconcile 结束时各侧是否 BLE 连接，用于「全离线」时区分单侧曾在线 vs 双侧曾在线 */
 let lastReconcileLeftConn = false;
 let lastReconcileRightConn = false;
+let prevLetdownL = false;
+let prevLetdownR = false;
+let letdownCountL = 0;
+let letdownCountR = 0;
 const listeners = new Set<Listener>();
 const endedListeners = new Set<EndedListener>();
 let lastEndedEvent: PumpSessionEndedEvent | null = null;
@@ -145,6 +150,9 @@ function transition(next: SessionState): void {
   if (next === currentState) return;
   const prev = currentState;
   currentState = next;
+  if (next === "running" && (prev === "idle" || prev === "ended")) {
+    resetLetdownCounters();
+  }
   // 离开 ended 表示新一轮会话已开启，旧的结束事件对新会话不再适用，
   // 必须清空，否则消费者（PumpSession 挂载时读取 getLastEndedEvent）会跨会话误触发结束弹窗
   if (prev === "ended" && next !== "ended" && lastEndedEvent !== null) {
@@ -158,6 +166,40 @@ function transition(next: SessionState): void {
   persist();
   lifecycleLogger.log("transition", { from: prev, to: next, snapshot: snapshotForLog() });
   notify();
+}
+
+function persistLetdownCounters(): void {
+  try {
+    sessionStorage.setItem(PUMP_SESSION_LETDOWN_COUNTS_KEY, JSON.stringify({ L: letdownCountL, R: letdownCountR }));
+  } catch {
+    // 隐私模式 / 容量满，忽略
+  }
+}
+
+function resetLetdownCounters(): void {
+  prevLetdownL = false;
+  prevLetdownR = false;
+  letdownCountL = 0;
+  letdownCountR = 0;
+  persistLetdownCounters();
+}
+
+function updateLetdownCounters(): void {
+  if (currentState !== "running" && currentState !== "paused") return;
+  const { L, R } = deviceStore.get();
+  const leftRunning = !!L?.connected && L?.pumpWorkState === 0x01 && !!L?.lastDeviceWorkstateTs;
+  const rightRunning = !!R?.connected && R?.pumpWorkState === 0x01 && !!R?.lastDeviceWorkstateTs;
+  const nextLetdownL = leftRunning && typeof L?.moFlag === "number" && (L.moFlag & 0x01) !== 0;
+  const nextLetdownR = rightRunning && typeof R?.moFlag === "number" && (R.moFlag & 0x01) !== 0;
+
+  const beforeL = letdownCountL;
+  const beforeR = letdownCountR;
+  if (nextLetdownL && !prevLetdownL) letdownCountL += 1;
+  if (nextLetdownR && !prevLetdownR) letdownCountR += 1;
+
+  prevLetdownL = nextLetdownL;
+  prevLetdownR = nextLetdownR;
+  if (letdownCountL !== beforeL || letdownCountR !== beforeR) persistLetdownCounters();
 }
 
 function markEndedInternal(reason: PumpSessionEndReason): void {
@@ -236,6 +278,8 @@ function reconcileFromDevice(): void {
     transition("paused");
   }
 
+  updateLetdownCounters();
+
   // 自动结束 1：从「有在线侧」到「全离线」，仅在 running/paused 生效
   if (
     prevAnyOnline &&
@@ -285,6 +329,16 @@ function bootstrap(): void {
   } catch {
     // 忽略
   }
+  try {
+    const rawCounts = sessionStorage.getItem(PUMP_SESSION_LETDOWN_COUNTS_KEY);
+    const parsed = rawCounts ? JSON.parse(rawCounts) as { L?: unknown; R?: unknown } : null;
+    if (parsed) {
+      if (typeof parsed.L === "number" && Number.isFinite(parsed.L)) letdownCountL = Math.max(0, Math.round(parsed.L));
+      if (typeof parsed.R === "number" && Number.isFinite(parsed.R)) letdownCountR = Math.max(0, Math.round(parsed.R));
+    }
+  } catch {
+    // 忽略
+  }
 
   prevAnyOnlineRunning = readDeviceSnapshotDerived().anyOnlineRunning;
   prevAnyOnline = readDeviceSnapshotDerived().anyOnline;
@@ -316,6 +370,7 @@ export interface PumpSessionLifecycle {
   markSessionEnded(reason: PumpSessionEndReason): void;
   isActive(): boolean;
   getLastEndedEvent(): PumpSessionEndedEvent | null;
+  getLetdownCounts(): { L: number; R: number };
 }
 
 export const pumpSessionLifecycle: PumpSessionLifecycle = {
@@ -353,5 +408,8 @@ export const pumpSessionLifecycle: PumpSessionLifecycle = {
   },
   getLastEndedEvent() {
     return lastEndedEvent;
+  },
+  getLetdownCounts() {
+    return { L: letdownCountL, R: letdownCountR };
   },
 };

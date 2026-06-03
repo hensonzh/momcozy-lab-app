@@ -29,6 +29,8 @@ public class PumpSessionForegroundService extends Service {
     private static final int NOTIFICATION_ID = 21002;
 
     private boolean foregroundStarted = false;
+    private String currentState = "running";
+    private int currentProcessAll = 0;
 
     @Override
     public void onCreate() {
@@ -49,6 +51,8 @@ public class PumpSessionForegroundService extends Service {
         final String state = safeState(intent != null ? intent.getStringExtra(EXTRA_STATE) : null);
         int processAll = intent != null ? intent.getIntExtra(EXTRA_PROCESS_ALL, 0) : 0;
         processAll = clampProgress(processAll);
+        currentState = state;
+        currentProcessAll = processAll;
         Log.i(TAG, "build notification state=" + state + ", processAll=" + processAll);
 
         final Notification n = buildProgressNotification(state, processAll);
@@ -60,6 +64,7 @@ public class PumpSessionForegroundService extends Service {
             NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, n);
             Log.i(TAG, "notify updated id=" + NOTIFICATION_ID);
         }
+        PumpAgentBackgroundRunner.start(this, this::onNativeProgress);
         return START_STICKY;
     }
 
@@ -88,7 +93,18 @@ public class PumpSessionForegroundService extends Service {
         }
         NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID);
         foregroundStarted = false;
+        PumpAgentBackgroundRunner.stop();
         stopSelf();
+    }
+
+    private void onNativeProgress(int processAll) {
+        currentProcessAll = clampProgress(processAll);
+        PumpSessionNativeController.updateProcessFromNative(this, currentProcessAll);
+        if (!foregroundStarted) return;
+        NotificationManagerCompat.from(this).notify(
+                NOTIFICATION_ID,
+                buildProgressNotification(currentState, currentProcessAll)
+        );
     }
 
     private void ensureChannel() {
@@ -121,7 +137,7 @@ public class PumpSessionForegroundService extends Service {
 
         final String stateText = stateText(state);
         final String title = "吸乳会话进行中";
-        final String body = "会话状态：" + stateText;
+        final String body = "会话状态：" + stateText + "，进度 " + processAll + "%";
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_pump)
