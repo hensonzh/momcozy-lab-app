@@ -92,6 +92,64 @@ describe("applyAgUiStreamSideEffects", () => {
     ]);
   });
 
+  it("does not apply quick replies to a message that already contains a form artifact", () => {
+    const msg = applyEvents([
+      {
+        type: "ARTIFACT_CREATED",
+        artifact_id: "birth_plan_card_intake",
+        artifact_type: "form",
+        tool_call_id: "call-form",
+        tool_call_name: "birth_plan_form_create",
+        artifact: {
+          id: "birth_plan_card_intake",
+          title: "信息采集",
+          fields: [],
+        },
+      },
+      {
+        type: "QUICK_REPLIES",
+        message_id: "reply",
+        replies: [
+          { text: "我来填写", send_text: "我来填写" },
+          { text: "先解释一下", send_text: "先解释一下" },
+          { text: "晚点再说", send_text: "晚点再说" },
+        ],
+      },
+    ]);
+
+    expect(msg.richText?.action).toHaveLength(1);
+    expect(msg.quickReplies).toBeUndefined();
+  });
+
+  it("removes existing quick replies when a support ticket form artifact arrives", () => {
+    const msg = applyEvents([
+      {
+        type: "QUICK_REPLIES",
+        message_id: "reply",
+        replies: [
+          { text: "继续下一步", send_text: "继续下一步" },
+          { text: "换个方案", send_text: "换个方案" },
+          { text: "先帮我总结", send_text: "先帮我总结" },
+        ],
+      },
+      {
+        type: "ARTIFACT_CREATED",
+        artifact_id: "ticket-1",
+        artifact_type: "support_ticket",
+        tool_call_id: "call-ticket",
+        tool_call_name: "support_ticket_draft_create",
+        artifact: {
+          draft_id: "ticket-1",
+          issue_type: "malfunction",
+          issue_summary: "吸奶器无法启动",
+        },
+      },
+    ]);
+
+    expect(msg.richText?.action).toHaveLength(1);
+    expect(msg.quickReplies).toBeUndefined();
+  });
+
   it("keeps generic run and processing statuses hidden from the user-facing status line", () => {
     const msg = applyEvents([
       {

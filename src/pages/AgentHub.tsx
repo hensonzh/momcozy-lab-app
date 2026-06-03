@@ -52,6 +52,11 @@ import {
   shouldAutoScrollChatTail,
 } from "@/lib/chatAutoScroll";
 import {
+  clampChatHistoryStart,
+  previousChatHistoryStart,
+  scrollTopForPreservedAnchor,
+} from "@/lib/chatHistoryWindow";
+import {
   buildSpeakableTextForVoice,
   CHAT_BUBBLE_VOICE_MAX_CHARS,
   stopChatBubblePlayback,
@@ -112,10 +117,6 @@ import {
   HUB_BOTTOM_INPUT_GAP,
   HUB_BOTTOM_NAV_HEIGHT,
   HUB_CHAT_HISTORY_PAGE,
-  HUB_CHAT_LOAD_OLDER_COOLDOWN_MS,
-  HUB_CHAT_TOP_EPS,
-  HUB_CHAT_TOUCH_PULL_TO_LOAD,
-  HUB_CHAT_WHEEL_OVERSCROLL_TO_LOAD,
 } from "@/pages/agentHub/agentHubConstants";
 
 const SCHEDULE_LINK_ACTION_MAP: Record<string, string> = {
@@ -134,6 +135,7 @@ const LACTATION_LINK_ACTION_MAP: Record<string, string> = {
 
 const HUB_TOP_ACTION_HEIGHT_PX = 48;
 const HUB_MAIN_STREAM_NO_VISIBLE_RESPONSE_TIMEOUT_MS = 25_000;
+type PendingHistoryAnchorRestore = { messageId: string; top: number };
 const HOSPITAL_BAG_CART_FOLLOWUP_MARKER = "你的待产包已经设计好了哦～";
 const NEW_CONVERSATION_GREETING =
   "你好呀，我在。\n\n这次想先聊哪件事？你可以直接说现在最困扰你的情况，不管是孕期准备、产后恢复、喂养奶量，还是设备使用，我都会陪你一步步理清楚。";
@@ -762,8 +764,7 @@ const AgentHub: React.FC = () => {
   const workFlowRef = useRef<InlineWorkFlowHandle>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const visibleStartIndexRef = useRef(initialHistoryStart);
-  const pendingHistoryScrollRestoreRef = useRef<{ prevH: number; prevTop: number } | null>(null);
-  const loadOlderCooldownRef = useRef(0);
+  const pendingHistoryScrollRestoreRef = useRef<PendingHistoryAnchorRestore | null>(null);
   const userPinnedToTailRef = useRef(true);
   /** 底部输入发送并入队回复消息后，下一次列表更新时强制滚到最后一条（即使用户之前在回看历史） */
   const scrollTailAfterHubSendRef = useRef(false);
@@ -864,6 +865,39 @@ const AgentHub: React.FC = () => {
     return true;
   }, []);
 
+  const findChatMessageElement = useCallback((messageId: string): HTMLElement | null => {
+    const container = scrollRef.current;
+    if (!container) return null;
+    return Array.from(container.querySelectorAll<HTMLElement>("[data-chat-message-id]"))
+      .find((node) => node.dataset.chatMessageId === messageId) ?? null;
+  }, []);
+
+  const captureChatHistoryAnchor = useCallback((): PendingHistoryAnchorRestore | null => {
+    const container = scrollRef.current;
+    if (!container) return null;
+    const containerRect = container.getBoundingClientRect();
+    const nodes = Array.from(container.querySelectorAll<HTMLElement>("[data-chat-message-id]"));
+    const anchor =
+      nodes.find((node) => node.getBoundingClientRect().bottom > containerRect.top + 1) ??
+      nodes[0] ??
+      null;
+    const messageId = anchor?.dataset.chatMessageId;
+    if (!anchor || !messageId) return null;
+    return { messageId, top: anchor.getBoundingClientRect().top };
+  }, []);
+
+  const restoreChatHistoryAnchor = useCallback((restore: PendingHistoryAnchorRestore): boolean => {
+    const container = scrollRef.current;
+    const anchor = findChatMessageElement(restore.messageId);
+    if (!container || !anchor) return false;
+    const nextTop = anchor.getBoundingClientRect().top;
+    const nextScrollTop = scrollTopForPreservedAnchor(container.scrollTop, restore.top, nextTop);
+    if (Math.abs(container.scrollTop - nextScrollTop) > 0.5) {
+      container.scrollTop = nextScrollTop;
+    }
+    return true;
+  }, [findChatMessageElement]);
+
   /**
    * 停止当前对话气泡语音播放并清理播放状态。
    * @param opts.clearPlayingId 是否重置 UI 播放高亮；默认 true
@@ -924,7 +958,6 @@ const AgentHub: React.FC = () => {
     mainPendingRichTextRef.current = null;
     awaitingHubBottomReplyRef.current = false;
     pendingHistoryScrollRestoreRef.current = null;
-    loadOlderCooldownRef.current = 0;
     userPinnedToTailRef.current = true;
     scrollTailAfterHubSendRef.current = false;
     lastMessageMetaRef.current = { len: 0, lastId: null };
@@ -1151,20 +1184,22 @@ const AgentHub: React.FC = () => {
 
   useEffect(() => {
     setVisibleStartIndex((s) => {
-      if (messages.length === 0) return 0;
-      const upper = Math.max(0, messages.length - HUB_CHAT_HISTORY_PAGE);
-      return Math.min(Math.max(0, s), upper);
+      return clampChatHistoryStart(messages.length, HUB_CHAT_HISTORY_PAGE, s);
     });
   }, [messages.length]);
 
   useLayoutEffect(() => {
     const restore = pendingHistoryScrollRestoreRef.current;
     if (!restore) return;
-    pendingHistoryScrollRestoreRef.current = null;
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollTop = restore.prevTop + (el.scrollHeight - restore.prevH);
-  }, [visibleStartIndex]);
+    restoreChatHistoryAnchor(restore);
+    const frame = window.requestAnimationFrame(() => {
+      restoreChatHistoryAnchor(restore);
+      if (pendingHistoryScrollRestoreRef.current === restore) {
+        pendingHistoryScrollRestoreRef.current = null;
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [visibleStartIndex, restoreChatHistoryAnchor]);
 
   useLayoutEffect(() => {
     const el = scrollRef.current;
@@ -2552,6 +2587,16 @@ const AgentHub: React.FC = () => {
     setShowScrollToBottom(false);
     scrollToChatTail("smooth");
   };
+  const historyLoadTemporarilyDisabled = hubBottomSendBusy || Boolean(mainChatCancelRef.current || mainStreamingReplyIdRef.current);
+  const handleLoadOlderMessages = () => {
+    if (historyLoadTemporarilyDisabled || visibleStartIndexRef.current <= 0) return;
+    const restore = captureChatHistoryAnchor();
+    if (!restore) return;
+    pendingHistoryScrollRestoreRef.current = restore;
+    userPinnedToTailRef.current = false;
+    mainStreamFollowTailRef.current = false;
+    setVisibleStartIndex((s) => previousChatHistoryStart(s, HUB_CHAT_HISTORY_PAGE));
+  };
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -2594,102 +2639,6 @@ const AgentHub: React.FC = () => {
       observer.disconnect();
     };
   }, [messages, visibleStartIndex, scrollToChatTail]);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    let wheelTowardOlderAccum = 0;
-    let touchPullAccum = 0;
-    let lastTouchClientY: number | null = null;
-
-    const resetAccumAwayFromTop = () => {
-      if (el.scrollTop > HUB_CHAT_TOP_EPS + 24) {
-        wheelTowardOlderAccum = 0;
-        touchPullAccum = 0;
-      }
-    };
-
-    const attemptLoadOlder = () => {
-      if (visibleStartIndexRef.current <= 0) {
-        wheelTowardOlderAccum = 0;
-        touchPullAccum = 0;
-        return false;
-      }
-      const now = Date.now();
-      if (now - loadOlderCooldownRef.current < HUB_CHAT_LOAD_OLDER_COOLDOWN_MS) {
-        return false;
-      }
-      loadOlderCooldownRef.current = now;
-      wheelTowardOlderAccum = 0;
-      touchPullAccum = 0;
-      pendingHistoryScrollRestoreRef.current = {
-        prevH: el.scrollHeight,
-        prevTop: el.scrollTop,
-      };
-      setVisibleStartIndex((s) => Math.max(0, s - HUB_CHAT_HISTORY_PAGE));
-      return true;
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      resetAccumAwayFromTop();
-      if (visibleStartIndexRef.current <= 0 || el.scrollTop > HUB_CHAT_TOP_EPS) return;
-      if (e.deltaY >= -0.5) return;
-      wheelTowardOlderAccum += -e.deltaY;
-      if (wheelTowardOlderAccum >= HUB_CHAT_WHEEL_OVERSCROLL_TO_LOAD && attemptLoadOlder()) {
-        e.preventDefault();
-      }
-    };
-
-    const onTouchStart = (e: TouchEvent) => {
-      if (e.touches.length !== 1) {
-        lastTouchClientY = null;
-        return;
-      }
-      lastTouchClientY = e.touches[0].clientY;
-      touchPullAccum = 0;
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      if (lastTouchClientY === null || e.touches.length !== 1) return;
-      resetAccumAwayFromTop();
-      if (visibleStartIndexRef.current <= 0) return;
-      if (el.scrollTop > HUB_CHAT_TOP_EPS) {
-        lastTouchClientY = e.touches[0].clientY;
-        touchPullAccum = 0;
-        return;
-      }
-      const y = e.touches[0].clientY;
-      const dy = y - lastTouchClientY;
-      lastTouchClientY = y;
-      if (dy > 1) {
-        touchPullAccum += dy;
-        if (touchPullAccum >= HUB_CHAT_TOUCH_PULL_TO_LOAD && attemptLoadOlder()) {
-          touchPullAccum = 0;
-          e.preventDefault();
-        }
-      }
-    };
-
-    const onTouchEndReset = () => {
-      lastTouchClientY = null;
-      touchPullAccum = 0;
-    };
-
-    el.addEventListener("wheel", onWheel, { passive: false });
-    el.addEventListener("touchstart", onTouchStart, { passive: true });
-    el.addEventListener("touchmove", onTouchMove, { passive: false });
-    el.addEventListener("touchend", onTouchEndReset, { passive: true });
-    el.addEventListener("touchcancel", onTouchEndReset, { passive: true });
-
-    return () => {
-      el.removeEventListener("wheel", onWheel);
-      el.removeEventListener("touchstart", onTouchStart);
-      el.removeEventListener("touchmove", onTouchMove);
-      el.removeEventListener("touchend", onTouchEndReset);
-      el.removeEventListener("touchcancel", onTouchEndReset);
-    };
-  }, []);
 
   return (
     <div className="relative">
@@ -2754,6 +2703,22 @@ const AgentHub: React.FC = () => {
             )}
 
             <div ref={scrollRef} className="h-full overflow-y-auto px-3 pt-4 pb-6">
+              {visibleStartIndex > 0 && (
+                <div className="flex justify-center pb-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={handleLoadOlderMessages}
+                    disabled={historyLoadTemporarilyDisabled}
+                    className={cn(
+                      "rounded-full border border-border/70 bg-background/80 px-3 py-1.5 text-[12px] font-medium text-muted-foreground shadow-sm transition-colors",
+                      "hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
+                      "disabled:cursor-not-allowed disabled:border-border/50 disabled:bg-muted/50 disabled:text-muted-foreground/60",
+                    )}
+                  >
+                    {historyLoadTemporarilyDisabled ? "回复结束后可查看更早对话" : "查看更早对话"}
+                  </button>
+                </div>
+              )}
 
           {visibleMessages.map((msg, index) => {
             const isMainAssistantBubble = msg.role === "mai" && msg.chatStreamContext === "main";
@@ -2797,7 +2762,7 @@ const AgentHub: React.FC = () => {
             const messageSpacingClass = index === 0 ? "mt-0" : isConsecutiveAssistantMessage ? "mt-8" : "mt-2.5";
 
             return (
-              <div key={msg.id} className={messageSpacingClass}>
+              <div key={msg.id} data-chat-message-id={msg.id} className={messageSpacingClass}>
             {msg.cardType === "schedule-flow" ? (
               <div key={msg.id} className="animate-slide-up w-full">
                 {msg.cardData?.completed ? (
