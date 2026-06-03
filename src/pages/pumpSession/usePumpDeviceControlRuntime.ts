@@ -15,6 +15,7 @@ import {
   markPumpAgentUploadProcessStepPause,
   markPumpAgentUploadProcessStepStop,
   onPumpAgentUploadProcessProgress,
+  refreshPumpAgentUploadNativeProgressSnapshot,
   setPumpAgentUploadOperationSource,
 } from "@/lib/pumpAgentUpload";
 import {
@@ -192,6 +193,7 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
 
   useEffect(() => {
     if (!isAndroidNativeRuntime) return;
+    void refreshPumpAgentUploadNativeProgressSnapshot();
     return onPumpAgentUploadProcessProgress(({ elapsedSeconds }) => {
       if (typeof elapsedSeconds === "number" && Number.isFinite(elapsedSeconds)) {
         setElapsed(Math.max(0, Math.round(elapsedSeconds)));

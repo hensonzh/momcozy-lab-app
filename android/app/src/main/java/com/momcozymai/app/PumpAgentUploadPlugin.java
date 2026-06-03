@@ -39,6 +39,7 @@ public class PumpAgentUploadPlugin extends Plugin {
     @PluginMethod
     public void sampleFromSnapshot(PluginCall call) {
         PumpAgentNativeStore.sampleFromSnapshot();
+        PumpSessionNativeController.tickElapsedFromNative();
         call.resolve(progressResult());
     }
 
