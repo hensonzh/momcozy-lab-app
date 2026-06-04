@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Bell, BellOff, CheckCircle2, ChevronLeft, ChevronRight, Clock, HelpCircle, ImageIcon, Loader2, Plus, Trash2, X } from "lucide-react";
+import { Bell, BellOff, CheckCircle2, ChevronLeft, ChevronRight, Clock, HelpCircle, ImageIcon, Loader2, MessageCircle, Plus, Trash2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, isSameDay } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import TabPageTopReserve from "@/components/layout/TabPageTopReserve";
 import TabPageScrollRegion from "@/components/layout/TabPageScrollRegion";
 import TabPageEmbeddedNav from "@/components/layout/TabPageEmbeddedNav";
@@ -31,6 +32,7 @@ import {
   requestNativeNotifySyncNow,
   setNativeBackgroundNotifyEnabled,
 } from "@/lib/mmcBackgroundNotify";
+import momcozyAgentAvatar from "@/assets/momcozy-agent.png";
 
 const skippedMarker = "已跳过";
 
@@ -426,6 +428,7 @@ const createRecordFromTask = (task: ScheduleTask, dateStr: string): PumpRecord |
 };
 
 const Schedule: React.FC = () => {
+  const navigate = useNavigate();
   const [volUnit] = useVolumeUnit();
   
   const todayDate = useMemo(() => {
@@ -507,6 +510,19 @@ const Schedule: React.FC = () => {
       cancelled = true;
     };
   }, []);
+
+  const handleReminderToggleClick = useCallback(() => {
+    if (reminderOn) {
+      setReminderAlertOpen(true);
+      return;
+    }
+    void persistSystemReminderOn(true);
+  }, [persistSystemReminderOn, reminderOn]);
+
+  const openScheduleConversation = useCallback(() => {
+    navigate("/", { state: { agentPrefill: "我想调整今天的吸乳排期" } });
+  }, [navigate]);
+
   const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [scheduleAdjusting, setScheduleAdjusting] = useState(false);
   const [pumpEntryOpen, setPumpEntryOpen] = useState(false);
@@ -1131,20 +1147,7 @@ const Schedule: React.FC = () => {
     <div className="contents">
       <div className="flex flex-col min-h-0 bg-background w-full" style={{ height: "100vh", maxHeight: "100vh" }}>
         <TabPageTopReserve />
-      {/* Header */}
-      <div className="flex-shrink-0 px-4 pt-4 pb-2">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-extrabold text-foreground tracking-tight">呵护计划</h1>
-          <button
-            onClick={() => (reminderOn ? setReminderAlertOpen(true) : void persistSystemReminderOn(true))}
-            className="w-10 h-10 rounded-full flex items-center justify-center bg-secondary/80 text-foreground transition-all active:scale-95"
-          >
-            {reminderOn ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4 text-muted-foreground" />}
-          </button>
-        </div>
-      </div>
-
-      <div className="px-4 pb-1 flex-shrink-0">
+      <div className="px-4 pt-3 pb-1 flex-shrink-0">
         <p className="text-[13px] font-bold text-muted-foreground">
           {format(displayMonthDate, "yyyy年M月")}
         </p>
@@ -1217,8 +1220,18 @@ const Schedule: React.FC = () => {
         {/* Context Header */}
         <div className="mx-4 mt-2 mb-5 p-4 rounded-[24px] border border-border/40 bg-card/40 shadow-sm relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
+          {!isFutureWithoutPlan && (
+            <button
+              type="button"
+              aria-label={reminderOn ? "关闭计划提醒" : "开启计划提醒"}
+              onClick={handleReminderToggleClick}
+              className="absolute right-3 top-3 z-20 h-9 w-9 rounded-full bg-background/90 text-foreground shadow-sm border border-border/50 flex items-center justify-center transition-all active:scale-95"
+            >
+              {reminderOn ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4 text-muted-foreground" />}
+            </button>
+          )}
           <div className="relative z-10">
-            <div>
+            <div className="pr-10">
               <h2 className="text-[16px] font-black text-foreground tracking-tight">
                 {isFutureWithoutPlan
                   ? `${format(selectedDate, "M月d日")} 待规划`
@@ -1248,6 +1261,42 @@ const Schedule: React.FC = () => {
             )}
           </div>
         </div>
+
+        {isSelectedToday && !isFutureWithoutPlan && (
+          <section className="mx-4 mb-5 rounded-[24px] border border-primary/15 bg-card/70 p-3.5 shadow-sm">
+            <div className="flex items-start gap-3">
+              <img
+                src={momcozyAgentAvatar}
+                alt=""
+                aria-hidden="true"
+                className="h-9 w-9 shrink-0 rounded-full object-cover shadow-sm"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-[13px] font-semibold leading-relaxed text-foreground">
+                  已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleReminderToggleClick}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-[12px] font-bold text-foreground shadow-sm active:scale-95"
+                  >
+                    {reminderOn ? <Bell className="h-3.5 w-3.5" /> : <BellOff className="h-3.5 w-3.5 text-muted-foreground" />}
+                    提醒开关
+                  </button>
+                  <button
+                    type="button"
+                    onClick={openScheduleConversation}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-[12px] font-extrabold text-primary-foreground shadow-sm active:scale-95"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                    对话
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Hero: Next Action or Daily Summary */}
         {isSelectedToday ? (
