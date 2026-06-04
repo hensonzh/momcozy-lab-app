@@ -19,6 +19,7 @@ import type {
 import { deviceStore, type DeviceSide, type StoredDeviceInfo } from "@/lib/deviceStore";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
 import { createScopedConsole } from "@/lib/logger";
+import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
 import { setProcessAll } from "@/lib/pumpSessionProgress";
 
 const console = createScopedConsole("pumpAgentUpload");
@@ -32,7 +33,8 @@ const isAndroidNative = Capacitor.getPlatform() === "android";
 type PumpAgentUploadSource = "device" | "app" | "agent";
 type SideSourceState = { source: PumpAgentUploadSource; expiresAt: number };
 type PumpProcessReplyListener = (payload: { text: string; buttons: ChatRichTextButtonItem[] }) => void;
-type PumpProcessProgressListener = (payload: { processL: number; processR: number; processAll: number }) => void;
+type PumpProcessProgressPayload = { processL: number; processR: number; processAll: number; elapsedSeconds?: number };
+type PumpProcessProgressListener = (payload: PumpProcessProgressPayload) => void;
 type PumpProcessStep = "start" | "running" | "pause" | "stop";
 type PumpProcessFrame = {
   time: string;
@@ -62,8 +64,6 @@ interface NativePumpAgentUploadPlugin {
   ): Promise<PluginListenerHandle>;
 }
 
-type PumpProcessProgressPayload = { processL: number; processR: number; processAll: number };
-
 const NativePumpAgentUpload = registerPlugin<NativePumpAgentUploadPlugin>("PumpAgentUpload");
 
 function viteApiBaseUrl(): string {
@@ -92,6 +92,9 @@ function applyNativeProgress(payload: Partial<PumpProcessProgressPayload> | null
   processProgressMap.L = Math.max(0, Math.round(Number(payload.processL ?? processProgressMap.L)));
   processProgressMap.R = Math.max(0, Math.round(Number(payload.processR ?? processProgressMap.R)));
   processProgressAll = Math.max(0, Math.round(Number(payload.processAll ?? processProgressAll)));
+  if (typeof payload.elapsedSeconds === "number" && Number.isFinite(payload.elapsedSeconds)) {
+    processElapsedSeconds = Math.max(0, Math.round(payload.elapsedSeconds));
+  }
   processSnapshotMap.L = { ...processSnapshotMap.L, process: processProgressMap.L };
   processSnapshotMap.R = { ...processSnapshotMap.R, process: processProgressMap.R };
 }
@@ -116,6 +119,7 @@ let workstateSignature = "";
 let workstateUploading = false;
 let processUploading = false;
 let processDataFetching = false;
+let lifecycleResetStarted = false;
 const processReplyListenerSet = new Set<PumpProcessReplyListener>();
 const processProgressListenerSet = new Set<PumpProcessProgressListener>();
 const processFrameMap: Record<"L" | "R", PumpProcessFrame[]> = { L: [], R: [] };
@@ -126,6 +130,7 @@ const processPauseMarkedMap: Record<"L" | "R", boolean> = { L: false, R: false }
 const processPrevConnectedMap: Record<"L" | "R", boolean> = { L: false, R: false };
 const processProgressMap: Record<"L" | "R", number> = { L: 0, R: 0 };
 let processProgressAll = 0;
+let processElapsedSeconds: number | undefined;
 
 function composeMilkReelFromStore(device: StoredDeviceInfo | null | undefined): number {
   const milkFlagBit = Number(device?.milkFlag ?? 0) & 0x01;
@@ -164,8 +169,8 @@ export function onPumpAgentUploadProcessProgress(listener: PumpProcessProgressLi
   };
 }
 
-export function getPumpAgentUploadProcessProgress(): { processL: number; processR: number; processAll: number } {
-  return { processL: processProgressMap.L, processR: processProgressMap.R, processAll: processProgressAll };
+export function getPumpAgentUploadProcessProgress(): PumpProcessProgressPayload {
+  return { processL: processProgressMap.L, processR: processProgressMap.R, processAll: processProgressAll, elapsedSeconds: processElapsedSeconds };
 }
 
 function emitPumpAgentUploadProcessProgress(): void {
@@ -185,6 +190,7 @@ export function resetPumpAgentUploadProcessProgress(): void {
   processProgressMap.L = 0;
   processProgressMap.R = 0;
   processProgressAll = 0;
+  processElapsedSeconds = undefined;
   processSnapshotMap.L = { ...processSnapshotMap.L, process: 0 };
   processSnapshotMap.R = { ...processSnapshotMap.R, process: 0 };
   processFrameMap.L = [];
@@ -203,6 +209,35 @@ export function resetPumpAgentUploadProcessProgress(): void {
     void NativePumpAgentUpload.resetProgress().catch((error) => console.warn("native reset progress failed", error));
   }
 }
+
+export async function refreshPumpAgentUploadNativeProgressSnapshot(): Promise<void> {
+  if (!isAndroidNative) return;
+  try {
+    const native = await NativePumpAgentUpload.sampleFromSnapshot();
+    applyNativeProgress(native);
+    emitPumpAgentUploadProcessProgress();
+  } catch (error) {
+    console.warn("native progress snapshot refresh failed", error);
+  }
+}
+
+function isPumpLifecycleActive(state: string): boolean {
+  return state === "running" || state === "paused";
+}
+
+function startPumpAgentUploadLifecycleReset(): void {
+  if (lifecycleResetStarted) return;
+  lifecycleResetStarted = true;
+  let previous = pumpSessionLifecycle.getSessionState();
+  pumpSessionLifecycle.subscribe((next) => {
+    if (next === "running" && !isPumpLifecycleActive(previous)) {
+      resetPumpAgentUploadProcessProgress();
+    }
+    previous = next;
+  });
+}
+
+startPumpAgentUploadLifecycleReset();
 
 export function markPumpAgentUploadProcessStepStop(side: "L" | "R" | "both"): void {
   if (side === "both") {
@@ -733,7 +768,7 @@ export function startPumpAgentUploadService(): void {
   started = true;
   void syncNativePumpAgentConfig();
   if (isAndroidNative) {
-    void NativePumpAgentUpload.sampleFromSnapshot().catch((error) => console.warn("native sample failed", error));
+    void refreshPumpAgentUploadNativeProgressSnapshot();
     void NativePumpAgentUpload.addListener("nativeProcessProgress", (event) => {
       applyNativeProgress(event);
       emitPumpAgentUploadProcessProgress();

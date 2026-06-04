@@ -76,6 +76,8 @@ final class PumpAgentBackgroundRunner {
 
     private static void tick(Context context) throws Exception {
         PumpAgentNativeStore.sampleFromSnapshot();
+        int elapsedSeconds = PumpSessionNativeController.tickElapsedFromNative();
+        emitProgressSnapshot(elapsedSeconds);
         uploadWorkstateIfChanged(context);
         fetchProcessDataIfNeeded(context);
         uploadProcessIfNeeded(context);
@@ -106,6 +108,7 @@ final class PumpAgentBackgroundRunner {
         );
         PumpAgentNativeStore.applyProcessDataResponse(data, body);
         JSONObject progress = PumpAgentNativeStore.progressJson();
+        progress.put("elapsedSeconds", PumpSessionNativeController.currentElapsedSeconds());
         int processAll = progress.optInt("processAll", 0);
         PumpAgentUploadPlugin.emitNativeProcessProgress(progress);
         Listener current;
@@ -128,5 +131,11 @@ final class PumpAgentBackgroundRunner {
                 body
         );
         PumpAgentUploadPlugin.emitNativeProcessReply(data);
+    }
+
+    private static void emitProgressSnapshot(int elapsedSeconds) throws Exception {
+        JSONObject progress = PumpAgentNativeStore.progressJson();
+        progress.put("elapsedSeconds", elapsedSeconds);
+        PumpAgentUploadPlugin.emitNativeProcessProgress(progress);
     }
 }
