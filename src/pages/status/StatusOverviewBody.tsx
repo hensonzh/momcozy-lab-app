@@ -2,10 +2,8 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
-  Activity,
   Bed,
   ChevronDown,
-  ClipboardList,
   Coffee,
   Droplets,
   HelpCircle,
@@ -48,6 +46,8 @@ import {
 
 import momAvatar from "@/assets/mom-avatar-felt.png";
 import babyAvatar from "@/assets/baby-avatar-felt.png";
+import momcozyAgentAvatar from "@/assets/momcozy-agent.png";
+import postpartumRecoveryIcon from "@/assets/postpartum-recovery-icon.png";
 
 /** `/v1/mom-baby/*`、`/v1/growth/*`、`/v1/pump/info/get` 已接入部分；乳房健康和睡眠仍为占位模块。 */
 
@@ -55,9 +55,9 @@ import babyAvatar from "@/assets/baby-avatar-felt.png";
 const STATUS_OVERVIEW_CHART_MARGIN = { top: 8, right: 14, left: 0, bottom: 8 } as const;
 const LACTATION_TREND_COLORS = {
   actual: "#b9792a",
-  estimate: "#d7ad77",
-  band: "#ffe9bf",
-  grid: "#f0dfc4",
+  estimate: "#8a5f7d",
+  band: "#dff4e8",
+  grid: "#d8eadf",
   axis: "#8a6742",
 };
 const GROWTH_CHART_COLORS = {
@@ -70,6 +70,7 @@ const GROWTH_CHART_COLORS = {
 
 type BabyRecordRow = { date: string; weightKg: number; heightCm: number; headCm: number };
 type StatusDigitalTwinTab = "mom" | "baby";
+type BabyStatusPanelId = "baby-health" | "growth-milestone";
 type MomStatusPanelId =
   | "milk-info"
   | "baby-feed-info"
@@ -97,7 +98,7 @@ const BREAST_HEALTH_TIMELINE = [
   },
   {
     time: "今天",
-    title: "持续关注",
+    title: "涨奶硬块",
     detail: INITIAL_BREAST_HEALTH_SUMMARY,
   },
 ] as const;
@@ -121,16 +122,157 @@ const REST_RECOVERY_TIMELINE = [
 ] as const;
 
 const POSTPARTUM_RECOVERY_COURSES = [
-  { time: "第 1-2 天", title: "盆底肌唤醒练习", detail: "呼吸配合轻收缩，建立盆底肌发力感" },
-  { time: "第 3-5 天", title: "骨盆稳定训练", detail: "低强度核心稳定动作，帮助恢复骨盆控制" },
+  { time: "第 1-2 天", status: "已完成", title: "盆底肌唤醒练习", detail: "呼吸配合轻收缩，建立盆底肌发力感" },
+  { time: "第 3-5 天", status: "进行中", title: "骨盆稳定训练", detail: "低强度核心稳定动作，帮助恢复骨盆控制" },
   { time: "第 6-7 天", title: "腰背与肩颈放松", detail: "照护和吸奶后的短时拉伸，缓解腰背疲劳" },
 ] as const;
+
+const BABY_HEALTH_ITEMS = [
+  "自闭症风险筛查",
+  "生长发育迟缓风险筛查",
+  "消化系统风险筛查",
+  "皮肤异常风险筛查",
+  "认知互动风险筛查",
+  "宝宝情绪跟踪",
+] as const;
+
+const BABY_GROWTH_MILESTONES = [
+  { kind: "milestone", title: "出生后首次自主抬头", detail: "趴卧时能短暂抬起头，开始建立颈肩控制。" },
+  { kind: "photo", title: "宝宝微笑", detail: "清醒互动时露出微笑，回应照护者的声音和表情。" },
+  { kind: "photo", title: "宝宝微笑", detail: "看到熟悉的人会笑，互动反应更稳定。" },
+  { kind: "milestone", title: "首次完整自主翻身", detail: "能从仰卧翻到俯卧，身体协调性继续提升。" },
+  { kind: "milestone", title: "首次叫妈妈", detail: "发出接近“妈妈”的音节，开始把声音和人联系起来。" },
+  { kind: "milestone", title: "首次叫爸爸", detail: "能发出接近“爸爸”的音节，表达欲更明显。" },
+  { kind: "photo", title: "宝宝微笑", detail: "互动时表情更丰富，会用笑回应逗引。" },
+  { kind: "milestone", title: "无支撑独自坐稳", detail: "不用扶也能坐稳一段时间，核心控制更成熟。" },
+  { kind: "milestone", title: "四点手足爬行", detail: "能用手和膝盖协调前进，探索范围变大。" },
+  { kind: "milestone", title: "自主站立", detail: "短时间不用扶站立，平衡能力继续发展。" },
+  { kind: "photo", title: "宝宝微笑", detail: "和家人互动时主动露出笑容，情绪表达更清晰。" },
+  { kind: "milestone", title: "首次双脚小跑", detail: "能双脚交替快速移动，运动稳定性进一步提升。" },
+  { kind: "milestone", title: "说出首个双字短句", detail: "能把两个词连在一起表达需求或发现。" },
+  { kind: "milestone", title: "双脚离地原地跳跃", detail: "双脚能同时离地，腿部力量和协调性增强。" },
+  { kind: "photo", title: "宝宝微笑", detail: "拍照时能自然看向镜头，情绪状态更放松。" },
+  { kind: "milestone", title: "独立上下低矮台阶", detail: "能自己上下低矮台阶，动作计划能力更成熟。" },
+  { kind: "photo", title: "宝宝微笑", detail: "玩耍中频繁微笑，愿意和照护者保持互动。" },
+  { kind: "photo", title: "宝宝微笑", detail: "听到熟悉的话语会笑，社交回应更加稳定。" },
+  { kind: "milestone", title: "说出完整主谓短句", detail: "能说出带主语和动作的短句，语言组织能力继续发展。" },
+] as const;
+
+const MaiInlineAvatar = () => (
+  <img
+    src={momcozyAgentAvatar}
+    alt=""
+    aria-hidden="true"
+    className="h-5 w-5 shrink-0 rounded-full object-cover"
+  />
+);
+
+const PostpartumRecoveryIcon = () => (
+  <img
+    src={postpartumRecoveryIcon}
+    alt=""
+    aria-hidden="true"
+    className="h-5 w-5 shrink-0 object-contain"
+  />
+);
+
+const BabyStatusPanelSheet: React.FC<{
+  panel: BabyStatusPanelId;
+  onClose: () => void;
+}> = ({ panel, onClose }) => {
+  const isMilestone = panel === "growth-milestone";
+  const title = isMilestone ? "成长 milestone" : "宝宝健康";
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[60] bg-black/35 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <motion.section
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        initial={{ y: "100%", opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: "100%", opacity: 0 }}
+        transition={{ type: "spring", damping: 28, stiffness: 300 }}
+        className="fixed inset-x-0 bottom-0 z-[61] mx-auto w-full max-w-lg rounded-t-3xl border-t border-border/40 bg-card px-5 pt-4 shadow-2xl"
+        style={{ paddingBottom: "max(1.75rem, env(safe-area-inset-bottom))" }}
+      >
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h3 className="text-base font-extrabold text-foreground">{title}</h3>
+          <button type="button" onClick={onClose} className="rounded-full p-2 text-muted-foreground active:bg-muted">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {panel === "baby-health" ? (
+          <div className="space-y-2">
+            {BABY_HEALTH_ITEMS.map((item) => (
+              <article key={item} className="flex items-center justify-between gap-3 rounded-2xl border border-[#dcefea] bg-[#fbfffd] px-4 py-3">
+                <span className="text-sm font-bold text-foreground">{item}</span>
+                <span className="shrink-0 rounded-full bg-[#e5f7f0] px-2.5 py-1 text-[11px] font-extrabold text-[#2f8a72]">
+                  待开通
+                </span>
+              </article>
+            ))}
+          </div>
+        ) : null}
+
+        {isMilestone ? (
+          <div className="max-h-[72vh] overflow-y-auto pr-1">
+            <div className="relative flex flex-col gap-3 pb-1">
+              <span aria-hidden="true" className="absolute bottom-4 left-[13px] top-4 w-px bg-[#e6d9fb]" />
+              {BABY_GROWTH_MILESTONES.map((record, index) => (
+                <article key={`${record.title}-${index}`} className="relative flex gap-3">
+                  <span
+                    aria-hidden="true"
+                    className={`mt-4 h-7 w-7 shrink-0 rounded-full border-2 ${
+                      record.kind === "milestone"
+                        ? "border-[#9479c4] bg-[#f2ecff]"
+                        : "border-[#ffd7e6] bg-[#fff3f8]"
+                    }`}
+                  />
+                  <div className="min-w-0 flex-1 rounded-2xl border border-[#e6d9fb] bg-[#fbf7ff] px-3 py-3">
+                    <div className="flex gap-3">
+                      <img
+                        src={babyAvatar}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-12 w-12 shrink-0 rounded-2xl object-cover"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span className="shrink-0 rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-extrabold text-[#7d64aa]">
+                            {record.kind === "milestone" ? "milestone" : "照片记录"}
+                          </span>
+                          <p className="truncate text-sm font-extrabold text-foreground">{record.title}</p>
+                        </div>
+                        <p className="mt-1 text-xs font-medium leading-relaxed text-[#6f617a]">{record.detail}</p>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </motion.section>
+    </>
+  );
+};
 
 const MomStatusPanelSheet: React.FC<{
   panel: MomStatusPanelId;
   onClose: () => void;
   onAgentPrefill: (prompt: string) => void;
 }> = ({ panel, onClose, onAgentPrefill }) => {
+  const [postpartumTrainingHintVisible, setPostpartumTrainingHintVisible] = useState(false);
+  const postpartumTrainingHintTimerRef = useRef<number | null>(null);
   const isInfo = panel.endsWith("-info");
   const isCenteredInfo =
     panel === "milk-info" || panel === "baby-feed-info" || panel === "breast-info" || panel === "rest-info";
@@ -138,7 +280,7 @@ const MomStatusPanelSheet: React.FC<{
     "milk-info": "今日产出说明",
     "baby-feed-info": "今日摄入说明",
     "breast-info": "乳房健康说明",
-    "breast-detail": "乳房健康状态",
+    "breast-detail": "乳房健康日记",
     "postpartum-detail": POSTPARTUM_RECOVERY_PLAN_TITLE,
     "rest-info": "补能与休息说明",
     "rest-detail": "补能与休息",
@@ -150,6 +292,27 @@ const MomStatusPanelSheet: React.FC<{
     "rest-info": "所有信息来自智能体的收集。",
   };
   const infoText = infoTextMap[panel] ?? "所有信息来自智能体的收集。";
+
+  useEffect(() => {
+    return () => {
+      if (postpartumTrainingHintTimerRef.current !== null) {
+        window.clearTimeout(postpartumTrainingHintTimerRef.current);
+      }
+    };
+  }, []);
+
+  const showPostpartumTrainingHint = () => {
+    setPostpartumTrainingHintVisible(true);
+
+    if (postpartumTrainingHintTimerRef.current !== null) {
+      window.clearTimeout(postpartumTrainingHintTimerRef.current);
+    }
+
+    postpartumTrainingHintTimerRef.current = window.setTimeout(() => {
+      setPostpartumTrainingHintVisible(false);
+      postpartumTrainingHintTimerRef.current = null;
+    }, 1500);
+  };
 
   if (isCenteredInfo) {
     return (
@@ -247,8 +410,9 @@ const MomStatusPanelSheet: React.FC<{
             <button
               type="button"
               onClick={() => onAgentPrefill("我想了解乳房健康情况，最近有涨奶和硬块，按压会疼")}
-              className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
             >
+              <MaiInlineAvatar />
               让我了解更多
             </button>
           </div>
@@ -259,11 +423,41 @@ const MomStatusPanelSheet: React.FC<{
             <div className="space-y-2">
               {POSTPARTUM_RECOVERY_COURSES.map((course) => (
                 <article key={course.title} className="rounded-2xl border border-border/50 bg-background px-4 py-3">
-                  <p className="text-[11px] font-bold text-[#2f8a72]">{course.time}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-[11px] font-bold text-[#2f8a72]">{course.time}</p>
+                    {"status" in course ? (
+                      <span className="rounded-full bg-[#dcf7ed] px-2 py-0.5 text-[10px] font-extrabold text-[#2f8a72]">
+                        {course.status}
+                      </span>
+                    ) : null}
+                  </div>
                   <p className="mt-1 text-sm font-bold text-foreground">{course.title}</p>
                   <p className="mt-1 text-xs font-medium leading-snug text-muted-foreground">{course.detail}</p>
                 </article>
               ))}
+            </div>
+            <div className="relative">
+              <AnimatePresence>
+                {postpartumTrainingHintVisible ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
+                    className="pointer-events-none absolute -top-10 right-0 z-10 whitespace-nowrap rounded-full bg-[#35212c]/90 px-3 py-1.5 text-[12px] font-bold text-white shadow-lg"
+                  >
+                    暂未开通此功能
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+              <button
+                type="button"
+                onClick={showPostpartumTrainingHint}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
+              >
+                <MaiInlineAvatar />
+                继续训练
+              </button>
             </div>
           </div>
         ) : null}
@@ -420,7 +614,7 @@ const STATUS_MODULE_TONE_CLASSES: Record<
 type StatusModuleCardProps = {
   title: string;
   subtitle?: string;
-  bodyText?: string;
+  bodyText?: React.ReactNode;
   value?: string;
   supportingText?: string;
   metrics?: readonly {
@@ -430,9 +624,11 @@ type StatusModuleCardProps = {
     ariaLabel?: string;
   }[];
   action?: string;
+  secondaryAction?: string;
   icon: React.ReactNode;
   tone: StatusModuleTone;
   onClick?: () => void;
+  onSecondaryClick?: () => void;
   onInfoClick?: () => void;
   infoPlacement?: "title" | "subtitle";
   alignActionTextWithTitle?: boolean;
@@ -446,9 +642,11 @@ function StatusModuleCard({
   supportingText,
   metrics,
   action,
+  secondaryAction,
   icon,
   tone,
   onClick,
+  onSecondaryClick,
   onInfoClick,
   infoPlacement = "title",
   alignActionTextWithTitle = false,
@@ -513,16 +711,31 @@ function StatusModuleCard({
         ) : null}
         {value ? <p className="min-h-[22px] text-[16px] font-black leading-tight text-[#35212c]">{value}</p> : null}
         {supportingText ? <p className="mt-1 text-[11px] font-bold leading-snug text-[#7a5b68]">{supportingText}</p> : null}
-        {action ? (
-          onClick ? (
-            <button type="button" onClick={onClick} className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta} ${alignActionTextWithTitle ? "-ml-2.5" : ""}`}>
-              {action}
-            </button>
-          ) : (
-            <span className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta} ${alignActionTextWithTitle ? "-ml-2.5" : ""}`}>
-              {action}
-            </span>
-          )
+        {action || secondaryAction ? (
+          <div className={`mt-2 flex flex-wrap gap-1.5 ${alignActionTextWithTitle ? "-ml-2.5" : ""}`}>
+            {action ? (
+              onClick ? (
+                <button type="button" onClick={onClick} className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
+                  {action}
+                </button>
+              ) : (
+                <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
+                  {action}
+                </span>
+              )
+            ) : null}
+            {secondaryAction ? (
+              onSecondaryClick ? (
+                <button type="button" onClick={onSecondaryClick} className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
+                  {secondaryAction}
+                </button>
+              ) : (
+                <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
+                  {secondaryAction}
+                </span>
+              )
+            ) : null}
+          </div>
         ) : null}
       </div>
       <span
@@ -903,6 +1116,7 @@ const StatusOverviewBody: React.FC = () => {
   const [growthMetricsBlinkOn, setGrowthMetricsBlinkOn] = useState(false);
   const [activeDigitalTwin, setActiveDigitalTwin] = useState<StatusDigitalTwinTab>("mom");
   const [activeMomPanel, setActiveMomPanel] = useState<MomStatusPanelId | null>(null);
+  const [activeBabyPanel, setActiveBabyPanel] = useState<BabyStatusPanelId | null>(null);
   const [todayDevicePumpCount, setTodayDevicePumpCount] = useState<number | null>(null);
   const [todayPumpRecordsLoading, setTodayPumpRecordsLoading] = useState(true);
   const [todayFeedingCount, setTodayFeedingCount] = useState<number | null>(null);
@@ -1363,7 +1577,7 @@ const StatusOverviewBody: React.FC = () => {
               <StatusModuleCard
                 title="乳房健康"
                 bodyText={INITIAL_BREAST_HEALTH_SUMMARY}
-                action="查看健康状态"
+                action="查看《乳房健康日记》"
                 tone="peach"
                 icon={<HeartPulse className="h-4 w-4" />}
                 onInfoClick={() => setActiveMomPanel("breast-info")}
@@ -1375,18 +1589,20 @@ const StatusOverviewBody: React.FC = () => {
                 bodyText={POSTPARTUM_RECOVERY_PLAN_STATUS}
                 action="查看计划"
                 tone="mint"
-                icon={<Activity className="h-4 w-4" />}
+                icon={<PostpartumRecoveryIcon />}
                 onClick={() => setActiveMomPanel("postpartum-detail")}
                 alignActionTextWithTitle
               />
               <StatusModuleCard
                 title="补能与休息"
-                bodyText={INITIAL_REST_SUMMARY}
-                action="查看休息状态"
+                bodyText={
+                  <span className="font-medium">
+                    待开通 <strong className="font-bold">睡眠</strong> 与 <strong className="font-bold">营养</strong> 功能
+                  </span>
+                }
                 tone="amber"
                 icon={<Coffee className="h-4 w-4" />}
                 onInfoClick={() => setActiveMomPanel("rest-info")}
-                onClick={() => setActiveMomPanel("rest-detail")}
                 alignActionTextWithTitle
               />
             </div>
@@ -1484,10 +1700,10 @@ const StatusOverviewBody: React.FC = () => {
                         type="monotone"
                         dataKey="estimated"
                         stroke={LACTATION_TREND_COLORS.estimate}
-                        strokeDasharray="5 5"
-                        strokeWidth={1.5}
-                        strokeOpacity={0.9}
-                        dot={windowSize === 7 ? { r: 2 } : false}
+                        strokeDasharray="4 3"
+                        strokeWidth={2.4}
+                        strokeOpacity={1}
+                        dot={windowSize === 7 ? { r: 2.5, strokeWidth: 1.5, fill: "#fff", stroke: LACTATION_TREND_COLORS.estimate } : false}
                       />
                       <Line
                         type="monotone"
@@ -1533,17 +1749,19 @@ const StatusOverviewBody: React.FC = () => {
                   { label: "头围", value: babyHeadLabel },
                 ]}
                 action="修改指标"
+                secondaryAction="成长milestone"
                 tone="mint"
                 icon={<Ruler className="h-4 w-4" />}
                 onClick={openGrowthEditor}
+                onSecondaryClick={() => setActiveBabyPanel("growth-milestone")}
                 alignActionTextWithTitle
               />
               <StatusModuleCard
-                title="尿便与护理"
-                value="待记录"
-                action="快速记录"
+                title="宝宝健康"
+                action="查看健康信息"
                 tone="aqua"
-                icon={<ClipboardList className="h-4 w-4" />}
+                icon={<HeartPulse className="h-4 w-4" />}
+                onClick={() => setActiveBabyPanel("baby-health")}
                 alignActionTextWithTitle
               />
               <StatusModuleCard
@@ -1675,6 +1893,15 @@ const StatusOverviewBody: React.FC = () => {
             panel={activeMomPanel}
             onClose={() => setActiveMomPanel(null)}
             onAgentPrefill={prefillAgentHub}
+          />
+        ) : null}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {activeBabyPanel ? (
+          <BabyStatusPanelSheet
+            panel={activeBabyPanel}
+            onClose={() => setActiveBabyPanel(null)}
           />
         ) : null}
       </AnimatePresence>
