@@ -16,7 +16,8 @@ final class PumpAgentBackgroundRunner {
 
     private static final Object LOCK = new Object();
     private static boolean running;
-    private static Thread worker;
+    private static Thread progressWorker;
+    private static Thread networkWorker;
     private static String workstateSignature = "";
     private static long lastProcessUploadAt;
     private static Listener listener;
@@ -30,30 +31,62 @@ final class PumpAgentBackgroundRunner {
             listener = nextListener;
             if (running) return;
             running = true;
-            worker = new Thread(() -> runLoop(app), "PumpAgentBgRunner");
-            worker.start();
+            PumpAgentNativeStore.sampleFromSnapshot();
+            progressWorker = new Thread(PumpAgentBackgroundRunner::runProgressLoop, "PumpProgressTicker");
+            networkWorker = new Thread(() -> runNetworkLoop(app), "PumpAgentBgRunner");
+            progressWorker.start();
+            networkWorker.start();
         }
     }
 
     static void stop() {
-        Thread toJoin;
+        Thread progressToStop;
+        Thread networkToStop;
         synchronized (LOCK) {
             running = false;
             listener = null;
-            toJoin = worker;
-            worker = null;
+            progressToStop = progressWorker;
+            networkToStop = networkWorker;
+            progressWorker = null;
+            networkWorker = null;
         }
-        if (toJoin != null) {
-            toJoin.interrupt();
-        }
+        if (progressToStop != null) progressToStop.interrupt();
+        if (networkToStop != null) networkToStop.interrupt();
     }
 
-    private static void runLoop(Context context) {
+    private static void runProgressLoop() {
+        Log.i(TAG, "background pump progress loop started");
+        try {
+            Thread.sleep(PROCESS_DATA_INTERVAL_MS);
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
+        while (isRunning()) {
+            long startedAt = System.currentTimeMillis();
+            try {
+                PumpAgentNativeStore.sampleFromSnapshot();
+                int elapsedSeconds = PumpSessionNativeController.tickElapsedFromNative();
+                emitProgressSnapshot(elapsedSeconds);
+            } catch (Exception e) {
+                Log.w(TAG, "background pump progress tick failed", e);
+            }
+            long elapsed = System.currentTimeMillis() - startedAt;
+            long sleepMs = Math.max(100L, PROCESS_DATA_INTERVAL_MS - elapsed);
+            try {
+                Thread.sleep(sleepMs);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        Log.i(TAG, "background pump progress loop stopped");
+    }
+
+    private static void runNetworkLoop(Context context) {
         Log.i(TAG, "background pump agent loop started");
         while (isRunning()) {
             long startedAt = System.currentTimeMillis();
             try {
-                tick(context);
+                networkTick(context);
             } catch (Exception e) {
                 Log.w(TAG, "background pump agent tick failed", e);
             }
@@ -74,10 +107,7 @@ final class PumpAgentBackgroundRunner {
         }
     }
 
-    private static void tick(Context context) throws Exception {
-        PumpAgentNativeStore.sampleFromSnapshot();
-        int elapsedSeconds = PumpSessionNativeController.tickElapsedFromNative();
-        emitProgressSnapshot(elapsedSeconds);
+    private static void networkTick(Context context) throws Exception {
         uploadWorkstateIfChanged(context);
         fetchProcessDataIfNeeded(context);
         uploadProcessIfNeeded(context);
