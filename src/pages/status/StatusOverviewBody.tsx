@@ -6,10 +6,14 @@ import {
   ChevronDown,
   Coffee,
   Droplets,
+  Activity,
+  Frown,
   HelpCircle,
   HeartPulse,
+  Moon,
   Ruler,
   Target,
+  Timer,
   Utensils,
   Baby,
   X,
@@ -70,7 +74,7 @@ const GROWTH_CHART_COLORS = {
 
 type BabyRecordRow = { date: string; weightKg: number; heightCm: number; headCm: number };
 type StatusDigitalTwinTab = "mom" | "baby";
-type BabyStatusPanelId = "baby-health" | "growth-milestone";
+type BabyStatusPanelId = "baby-health" | "growth-milestone" | "baby-sleep";
 type MomStatusPanelId =
   | "milk-info"
   | "baby-feed-info"
@@ -137,25 +141,34 @@ const BABY_HEALTH_ITEMS = [
 ] as const;
 
 const BABY_GROWTH_MILESTONES = [
-  { kind: "milestone", title: "出生后首次自主抬头", detail: "趴卧时能短暂抬起头，开始建立颈肩控制。" },
-  { kind: "photo", title: "宝宝微笑", detail: "清醒互动时露出微笑，回应照护者的声音和表情。" },
-  { kind: "photo", title: "宝宝微笑", detail: "看到熟悉的人会笑，互动反应更稳定。" },
-  { kind: "milestone", title: "首次完整自主翻身", detail: "能从仰卧翻到俯卧，身体协调性继续提升。" },
-  { kind: "milestone", title: "首次叫妈妈", detail: "发出接近“妈妈”的音节，开始把声音和人联系起来。" },
-  { kind: "milestone", title: "首次叫爸爸", detail: "能发出接近“爸爸”的音节，表达欲更明显。" },
-  { kind: "photo", title: "宝宝微笑", detail: "互动时表情更丰富，会用笑回应逗引。" },
-  { kind: "milestone", title: "无支撑独自坐稳", detail: "不用扶也能坐稳一段时间，核心控制更成熟。" },
-  { kind: "milestone", title: "四点手足爬行", detail: "能用手和膝盖协调前进，探索范围变大。" },
-  { kind: "milestone", title: "自主站立", detail: "短时间不用扶站立，平衡能力继续发展。" },
-  { kind: "photo", title: "宝宝微笑", detail: "和家人互动时主动露出笑容，情绪表达更清晰。" },
-  { kind: "milestone", title: "首次双脚小跑", detail: "能双脚交替快速移动，运动稳定性进一步提升。" },
-  { kind: "milestone", title: "说出首个双字短句", detail: "能把两个词连在一起表达需求或发现。" },
-  { kind: "milestone", title: "双脚离地原地跳跃", detail: "双脚能同时离地，腿部力量和协调性增强。" },
-  { kind: "photo", title: "宝宝微笑", detail: "拍照时能自然看向镜头，情绪状态更放松。" },
-  { kind: "milestone", title: "独立上下低矮台阶", detail: "能自己上下低矮台阶，动作计划能力更成熟。" },
-  { kind: "photo", title: "宝宝微笑", detail: "玩耍中频繁微笑，愿意和照护者保持互动。" },
-  { kind: "photo", title: "宝宝微笑", detail: "听到熟悉的话语会笑，社交回应更加稳定。" },
-  { kind: "milestone", title: "说出完整主谓短句", detail: "能说出带主语和动作的短句，语言组织能力继续发展。" },
+  { title: "说出完整主谓短句", date: "2026.05.28", detail: "能说出带主语和动作的短句，语言组织能力继续发展。" },
+  { title: "独立上下低矮台阶", date: "2026.05.12", detail: "能自己上下低矮台阶，动作计划能力更成熟。" },
+  { title: "双脚离地原地跳跃", date: "2026.04.26", detail: "双脚能同时离地，腿部力量和协调性增强。" },
+  { title: "说出首个双字短句", date: "2026.04.08", detail: "能把两个词连在一起表达需求或发现。" },
+  { title: "首次双脚小跑", date: "2026.03.21", detail: "能双脚交替快速移动，运动稳定性进一步提升。" },
+  { title: "自主站立", date: "2026.03.02", detail: "短时间不用扶站立，平衡能力继续发展。" },
+  { title: "四点手足爬行", date: "2026.02.12", detail: "能用手和膝盖协调前进，探索范围变大。" },
+  { title: "无支撑独自坐稳", date: "2026.01.25", detail: "不用扶也能坐稳一段时间，核心控制更成熟。" },
+  { title: "首次叫爸爸", date: "2026.01.08", detail: "能发出接近“爸爸”的音节，表达欲更明显。" },
+  { title: "首次叫妈妈", date: "2025.12.22", detail: "发出接近“妈妈”的音节，开始把声音和人联系起来。" },
+  { title: "首次完整自主翻身", date: "2025.12.04", detail: "能从仰卧翻到俯卧，身体协调性继续提升。" },
+  { title: "出生后首次自主抬头", date: "2025.11.18", detail: "趴卧时能短暂抬起头，开始建立颈肩控制。" },
+] as const;
+
+const BABY_SLEEP_SUMMARY = [
+  { title: "总睡眠", value: "4h 57min", tone: "peach", icon: Moon },
+  { title: "最长睡眠", value: "3h 08min", tone: "cream", icon: Timer },
+  { title: "哭闹", value: "0次", tone: "cream", icon: Frown },
+  { title: "活动", value: "26次", tone: "peach", icon: Activity },
+] as const;
+
+const BABY_SLEEP_CHART = [
+  { period: "00:00", sleepMinutes: 74, activityMinutes: 28, cryMinutes: 0 },
+  { period: "02:00", sleepMinutes: 76, activityMinutes: 34, cryMinutes: 0 },
+  { period: "04:00", sleepMinutes: 68, activityMinutes: 24, cryMinutes: 0 },
+  { period: "06:00", sleepMinutes: 0, activityMinutes: 52, cryMinutes: 8 },
+  { period: "08:00", sleepMinutes: 0, activityMinutes: 46, cryMinutes: 0 },
+  { period: "10:00", sleepMinutes: 0, activityMinutes: 33, cryMinutes: 0 },
 ] as const;
 
 const MaiInlineAvatar = () => (
@@ -181,7 +194,8 @@ const BabyStatusPanelSheet: React.FC<{
   onClose: () => void;
 }> = ({ panel, onClose }) => {
   const isMilestone = panel === "growth-milestone";
-  const title = isMilestone ? "成长 milestone" : "宝宝健康";
+  const isSleepReport = panel === "baby-sleep";
+  const title = isMilestone ? "成长 milestone" : isSleepReport ? "宝宝睡眠报告" : "宝宝健康";
 
   return (
     <>
@@ -226,38 +240,133 @@ const BabyStatusPanelSheet: React.FC<{
         {isMilestone ? (
           <div className="max-h-[72vh] overflow-y-auto pr-1">
             <div className="relative flex flex-col gap-3 pb-1">
-              <span aria-hidden="true" className="absolute bottom-4 left-[13px] top-4 w-px bg-[#e6d9fb]" />
-              {BABY_GROWTH_MILESTONES.map((record, index) => (
-                <article key={`${record.title}-${index}`} className="relative flex gap-3">
-                  <span
-                    aria-hidden="true"
-                    className={`mt-4 h-7 w-7 shrink-0 rounded-full border-2 ${
-                      record.kind === "milestone"
-                        ? "border-[#9479c4] bg-[#f2ecff]"
-                        : "border-[#ffd7e6] bg-[#fff3f8]"
-                    }`}
-                  />
-                  <div className="min-w-0 flex-1 rounded-2xl border border-[#e6d9fb] bg-[#fbf7ff] px-3 py-3">
-                    <div className="flex gap-3">
-                      <img
-                        src={babyAvatar}
-                        alt=""
-                        aria-hidden="true"
-                        className="h-12 w-12 shrink-0 rounded-2xl object-cover"
+              <span aria-hidden="true" className="absolute bottom-4 left-[13px] top-4 w-px bg-gradient-to-t from-[#dcf7ed] via-[#cceee1] to-[#76c7ad]" />
+              {BABY_GROWTH_MILESTONES.map((record, index) => {
+                const total = Math.max(1, BABY_GROWTH_MILESTONES.length - 1);
+                const recency = 1 - index / total;
+                const hue = 146 + recency * 18;
+                const dotSize = 10 + recency * 8;
+                const borderColor = `hsl(${hue}, 42%, ${64 - recency * 10}%)`;
+                const softColor = `hsl(${hue}, 70%, ${97 - recency * 3}%)`;
+                const cardBorderColor = `hsl(${hue}, 58%, ${89 - recency * 5}%)`;
+
+                return (
+                  <article key={`${record.title}-${index}`} className="relative flex gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="mt-4 flex h-7 w-7 shrink-0 items-center justify-center"
+                    >
+                      <span
+                        className="rounded-full border-2"
+                        style={{
+                          width: dotSize,
+                          height: dotSize,
+                          borderColor,
+                          backgroundColor: softColor,
+                          boxShadow: `0 0 0 ${1 + recency * 1.5}px hsla(${hue}, 62%, 92%, 0.72)`,
+                        }}
                       />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex min-w-0 items-center gap-2">
-                          <span className="shrink-0 rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-extrabold text-[#7d64aa]">
-                            {record.kind === "milestone" ? "milestone" : "照片记录"}
-                          </span>
-                          <p className="truncate text-sm font-extrabold text-foreground">{record.title}</p>
+                    </span>
+                    <div
+                      className="min-w-0 flex-1 rounded-2xl border px-3 py-3"
+                      style={{
+                        borderColor: cardBorderColor,
+                        background: `linear-gradient(135deg, #fff 0%, ${softColor} 100%)`,
+                      }}
+                    >
+                      <div className="flex gap-3">
+                        <img
+                          src={babyAvatar}
+                          alt=""
+                          aria-hidden="true"
+                          className="h-12 w-12 shrink-0 rounded-2xl object-cover"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                            <p className="truncate text-sm font-extrabold text-foreground">{record.title}</p>
+                            <time className="shrink-0 text-[10px] font-normal text-[#9a8fa5]">{record.date}</time>
+                          </div>
+                          <p className="mt-1 text-xs font-medium leading-relaxed text-[#6f617a]">{record.detail}</p>
                         </div>
-                        <p className="mt-1 text-xs font-medium leading-relaxed text-[#6f617a]">{record.detail}</p>
                       </div>
                     </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
+        {isSleepReport ? (
+          <div className="max-h-[76vh] overflow-y-auto rounded-[28px] bg-[#fffdf8] px-4 pb-5 pt-3">
+            <div className="mb-5 flex items-center justify-between">
+              <button type="button" className="rounded-2xl bg-[#fff1c9] px-2.5 py-2 text-[10px] font-extrabold text-[#c68b36] active:scale-95">
+                前一天
+              </button>
+              <p className="text-base font-black text-foreground">11-16</p>
+              <button type="button" className="rounded-2xl bg-[#fff1c9] px-2.5 py-2 text-[10px] font-extrabold text-[#c68b36] active:scale-95">
+                后一天
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+              {BABY_SLEEP_SUMMARY.map((item) => (
+                <article
+                  key={item.title}
+                  className={`relative min-h-[110px] rounded-2xl px-3 pb-3 pt-9 text-center shadow-sm ${
+                    item.tone === "peach" ? "bg-[#ffdccc]" : "bg-[#fff4e8]"
+                  }`}
+                >
+                  <div className="absolute -top-7 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#ffe8df] text-[#ff9677] shadow-sm">
+                    <item.icon className="h-6 w-6" strokeWidth={2.3} />
                   </div>
+                  <p className="text-[12px] font-black text-[#ff9677]">{item.title}</p>
+                  <p className="mt-3 text-[15px] font-black text-foreground">{item.value}</p>
                 </article>
               ))}
+            </div>
+
+            <div className="mt-7 text-center">
+              <h4 className="text-[15px] font-black text-foreground">宝宝睡眠记录</h4>
+              <p className="mt-1 text-[10px] font-bold text-[#8a767f]">按时段看睡眠、活动和哭闹时长</p>
+              <div className="mt-3 flex justify-center gap-4 text-[10px] font-bold text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5"><i className="h-2 w-3 rounded-sm bg-[#25d6a3]" />睡眠</span>
+                <span className="inline-flex items-center gap-1.5"><i className="h-2 w-3 rounded-sm bg-[#e6b65c]" />活动</span>
+                <span className="inline-flex items-center gap-1.5"><i className="h-2 w-3 rounded-sm bg-[#8c78c8]" />哭闹</span>
+              </div>
+
+              <div className="mt-5 rounded-[24px] bg-[#fffaf2] px-3 pb-3 pt-4">
+                <div className="flex h-[142px] gap-2">
+                  <div className="flex w-7 flex-col justify-between pb-6 pt-1 text-right text-[9px] font-bold text-[#b99f86]">
+                    <span>90m</span>
+                    <span>60m</span>
+                    <span>30m</span>
+                    <span>0</span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="relative h-[112px]">
+                      <span aria-hidden="true" className="absolute inset-x-0 top-0 border-t border-dashed border-[#efdccc]" />
+                      <span aria-hidden="true" className="absolute inset-x-0 top-1/3 border-t border-dashed border-[#efdccc]" />
+                      <span aria-hidden="true" className="absolute inset-x-0 top-2/3 border-t border-dashed border-[#efdccc]" />
+                      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 border-t border-[#ead5c2]" />
+                      <div className="relative z-10 flex h-full items-end justify-between gap-1.5">
+                        {BABY_SLEEP_CHART.map((row) => (
+                          <div key={row.period} className="flex h-full min-w-0 flex-1 items-end justify-center gap-0.5">
+                            <span className="w-2 rounded-t-full bg-[#25d6a3]" style={{ height: `${Math.max(4, (row.sleepMinutes / 90) * 100)}%`, opacity: row.sleepMinutes > 0 ? 1 : 0.16 }} />
+                            <span className="w-2 rounded-t-full bg-[#e6b65c]" style={{ height: `${Math.max(4, (row.activityMinutes / 90) * 100)}%`, opacity: row.activityMinutes > 0 ? 1 : 0.16 }} />
+                            <span className="w-2 rounded-t-full bg-[#8c78c8]" style={{ height: `${Math.max(4, (row.cryMinutes / 90) * 100)}%`, opacity: row.cryMinutes > 0 ? 1 : 0.16 }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-2 flex justify-between gap-1 text-[9px] font-bold text-[#9a8170]">
+                      {BABY_SLEEP_CHART.map((row) => (
+                        <span key={row.period} className="min-w-0 flex-1 text-center">{row.period}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         ) : null}
@@ -1766,10 +1875,13 @@ const StatusOverviewBody: React.FC = () => {
               />
               <StatusModuleCard
                 title="宝宝睡眠"
-                value="待记录"
-                action="查看夜间"
+                metrics={[
+                  { label: "今日睡眠", value: "4h 57min" },
+                ]}
+                action="查看报告"
                 tone="violet"
                 icon={<Bed className="h-4 w-4" />}
+                onClick={() => setActiveBabyPanel("baby-sleep")}
                 alignActionTextWithTitle
               />
             </div>
