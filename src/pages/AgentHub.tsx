@@ -544,6 +544,8 @@ function AgentHubReportCard({
   const statusLabel = analysisStatusLabel(analysisCard);
   const statusTone = analysisStatusTone(analysisCard);
   const analysisFollowup = analysisCard?.followup?.trim() || "";
+  const isPumpSessionSummaryReport =
+    data.kind === "pump-session-summary" || analysisCard?.kind === "pump_session_summary";
 
   return (
     <article className={cn("agent-card", hasAnalysisCard ? "agent-card-analysis_report" : "agent-card-hospital_bag_card")}>
@@ -565,7 +567,14 @@ function AgentHubReportCard({
               {analysisSections.map((section, index) => {
                 const items = Array.isArray(section.items) ? section.items.map((item) => item.trim()).filter(Boolean) : [];
                 const metrics = Array.isArray(section.metrics)
-                  ? section.metrics.filter((metric) => metric && (metric.label?.trim() || metric.value?.trim()))
+                  ? section.metrics.filter((metric, metricIndex) => {
+                    if (!metric || !(metric.label?.trim() || metric.value?.trim())) return false;
+                    if (!isPumpSessionSummaryReport) return true;
+                    return !(
+                      (index === 0 && metricIndex === 0) ||
+                      (index === 1 && metricIndex === 2)
+                    );
+                  })
                   : [];
                 return (
                   <div
@@ -3136,19 +3145,6 @@ const AgentHub: React.FC = () => {
                       </>
                     ) : (
                         <>
-                          {msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
-                            <div
-                              className={richTextHasAgUiArtifactForMsg ? artifactBubbleShell : bubbleShell}
-                              data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
-                            >
-                              <AgentHubRichTextBlock
-                                payload={msg.richText}
-                                blockId={`${msg.id}-rich-pump-summary`}
-                                onButtonSelect={handleAgentRichTextButtonSelect}
-                                onOpenIbclcConsult={handleOpenIbclcConsult}
-                              />
-                          </div>
-                        ) : null}
                         {segments.map((seg, i) => (
                           <div key={i} className={bubbleShell}>
                             {i === 0 && hasSentImagePreviews ? (
@@ -3159,7 +3155,7 @@ const AgentHub: React.FC = () => {
                             <ChatMarkdown markdown={markdownForMessage(msg, seg)} variant={mdVariant} className={mdClassName} />
                           </div>
                         ))}
-                          {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
+                          {msg.richText ? (
                             <div
                               className={cn(
                                 richTextHasAgUiArtifactForMsg ? artifactBubbleShell : bubbleShell,
@@ -3281,23 +3277,6 @@ const AgentHub: React.FC = () => {
                       </>
                     ) : (
                       <>
-                          {/* 兼容历史消息：无顺序片段时沿用旧渲染 */}
-                          {msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") && msg.richText ? (
-                            <div
-                              className={cn(
-                                msg.content.trim() &&
-                                  (richTextHasAgUiArtifactForMsg ? "mb-3.5" : "mb-2"),
-                              )}
-                              data-ag-ui-artifact-anchor={richTextHasAgUiArtifactForMsg ? agUiArtifactAnchorKey(msg.id, "rich") : undefined}
-                            >
-                              <AgentHubRichTextBlock
-                                payload={msg.richText}
-                                blockId={`${msg.id}-rich-pump-summary`}
-                                onButtonSelect={handleAgentRichTextButtonSelect}
-                                onOpenIbclcConsult={handleOpenIbclcConsult}
-                              />
-                          </div>
-                        ) : null}
                         {hasSentImagePreviews ? (
                           <div className={cn(msg.content.trim() && "mb-2")}>
                             <AgentHubSentImages images={sentImagePreviews} />
@@ -3306,7 +3285,7 @@ const AgentHub: React.FC = () => {
                         {msg.content.trim() ? (
                           <ChatMarkdown markdown={markdownForMessage(msg, msg.content)} variant={mdVariant} className={mdClassName} />
                         ) : null}
-                          {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
+                          {msg.richText ? (
                             <div
                               className={cn(
                                 richTextHasAgUiArtifactForMsg
