@@ -121,6 +121,37 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.quickReplies).toBeUndefined();
   });
 
+  it("attaches web search citations to the assistant message", () => {
+    const msg = applyEvents([
+      {
+        type: "CUSTOM",
+        name: "momcozy.web_search.citations",
+        value: {
+          citations: [
+            {
+              index: 1,
+              title: "Academy of Breastfeeding Medicine Protocols",
+              url: "https://www.bfmed.org/protocols",
+            },
+            {
+              index: 2,
+              title: "Duplicate",
+              url: "https://www.bfmed.org/protocols",
+            },
+          ],
+        },
+      },
+    ]);
+
+    expect(msg.citations).toEqual([
+      {
+        index: 1,
+        title: "Academy of Breastfeeding Medicine Protocols",
+        url: "https://www.bfmed.org/protocols",
+      },
+    ]);
+  });
+
   it("removes existing quick replies when a support ticket form artifact arrives", () => {
     const msg = applyEvents([
       {
@@ -250,7 +281,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       id: "run:started-work",
       name: "run_started",
-      title: "我在接收你的消息～",
+      title: "我已经收到你的消息啦～",
       state: "running",
     });
   });
@@ -330,6 +361,62 @@ describe("applyAgUiStreamSideEffects", () => {
     });
     expect(msg.agentToolCalls?.[0].title).not.toContain("milk_records_query");
     expect(msg.agentToolCalls?.[0].title).not.toMatch(/Milk|Tool|records/i);
+  });
+
+  it("maps web search process events to one user-facing work row", () => {
+    const msg = applyEvents([
+      {
+        type: "RUN_STARTED",
+        semantic: {
+          phase: "thinking",
+          label: "我已经收到你的消息啦～",
+          visibility: "status",
+          merge_key: "run:run_1",
+          priority: 10,
+        },
+      },
+      {
+        type: "CUSTOM",
+        name: "momcozy.agent.web_search",
+        value: {
+          type: "agent.web_search",
+          status: "searching",
+          label: "我在查专业资料～",
+        },
+        semantic: {
+          phase: "reading",
+          label: "我在查专业资料～",
+          visibility: "work_item",
+          merge_key: "web_search:current",
+          priority: 55,
+        },
+      },
+      {
+        type: "CUSTOM",
+        name: "momcozy.agent.web_search",
+        value: {
+          type: "agent.web_search",
+          status: "completed",
+          label: "我查好专业资料啦",
+        },
+        semantic: {
+          phase: "done",
+          label: "我查好专业资料啦",
+          visibility: "work_item",
+          merge_key: "web_search:current",
+          priority: 55,
+        },
+      },
+    ]);
+
+    expect(msg.agentToolCalls).toHaveLength(1);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      id: "web_search:current",
+      name: "web_search",
+      title: "我查好专业资料啦",
+      state: "completed",
+    });
+    expect(msg.agentToolCalls?.some((row) => row.name === "run_started")).toBe(false);
   });
 
   it("prefers backend semantic labels over frontend fallback labels", () => {

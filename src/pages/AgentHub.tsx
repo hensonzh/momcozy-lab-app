@@ -15,7 +15,7 @@ import PillGroups from "@/components/pills/PillGroups";
 import MaiInputBar from "@/components/Mai/MaiInputBar";
 import { useAgentHubSpeechInput } from "@/hooks/useAgentHubSpeechInput";
 import { cn } from "@/lib/utils";
-import type { AgUiToolCallRow, ChatMessage, ChatMessageImageAttachment, ChatMessageLink, ChatStreamRenderItem } from "@/types/chat";
+import type { AgUiToolCallRow, ChatMessage, ChatMessageCitation, ChatMessageImageAttachment, ChatMessageLink, ChatStreamRenderItem } from "@/types/chat";
 import { chatBus } from "@/lib/chatBus";
 import { chatStore } from "@/lib/chatStore";
 import {
@@ -45,6 +45,7 @@ import { ChatMarkdown } from "@/components/chat/ChatMarkdown";
 import { ChatMarkdownImg } from "@/components/chat/ChatMarkdownImage";
 import type { ChatMarkdownVariant } from "@/components/chat/ChatMarkdown";
 import { splitChatContentByDataDelimiter } from "@/lib/chatContentSegments";
+import { replaceCitationLinksWithIndexes } from "@/lib/chatCitationMarkdown";
 import { extractChatAnswerChunk, mergeStreamingAnswer, mergeStreamingAnswerDelta } from "@/lib/chatStreaming";
 import {
   DEFAULT_CHAT_TAIL_THRESHOLD_PX,
@@ -53,6 +54,7 @@ import {
 } from "@/lib/chatAutoScroll";
 import {
   clampChatHistoryStart,
+  latestChatHistoryStart,
   previousChatHistoryStart,
   scrollTopForPreservedAnchor,
 } from "@/lib/chatHistoryWindow";
@@ -307,15 +309,17 @@ function AgentHubQuickReplies({
 }) {
   const replies = msg.quickReplies ?? [];
   if (msg.role !== "mai" || replies.length !== 3) return null;
+  const hasCitations = (msg.citations ?? []).length > 0;
   return (
     <div
       className={cn(
-        "mt-2.5 max-w-full",
+        "max-w-full",
+        hasCitations ? "mt-5" : "mt-3.5",
         disabled && "opacity-60",
       )}
     >
-      <div className="mb-1.5 flex items-center gap-1.5 px-0.5 text-[11px] font-[700] text-[#9b7a84]">
-        <span className="h-1.5 w-1.5 rounded-full bg-[#c595a5]" aria-hidden="true" />
+      <div className="mb-2 flex items-center gap-1.5 px-0.5 text-[11px] font-[700] text-[#9b7a84]">
+        <span className="h-px w-3 rounded-full bg-[#d8bac4]" aria-hidden="true" />
         <span>猜你想说</span>
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -326,10 +330,10 @@ function AgentHubQuickReplies({
             disabled={disabled}
             onClick={() => onSelect(reply.sendText)}
             className={cn(
-              "group inline-flex min-h-[34px] max-w-full items-center gap-1.5 rounded-full border border-[#e4d3d9] bg-white/80 px-3 py-1.5 text-left text-[13px] font-[650] leading-snug text-[#4a3a40] shadow-[0_2px_8px_rgba(94,55,67,0.05)] transition-colors",
+              "group inline-flex min-h-[34px] max-w-full items-center gap-1.5 rounded-full border border-[#eadde2] bg-white/70 px-3 py-1.5 text-left text-[13px] font-[650] leading-snug text-[#4a3a40] shadow-[0_1px_4px_rgba(94,55,67,0.035)] transition-colors",
               disabled
                 ? "cursor-not-allowed"
-                : "hover:border-[#c892a4] hover:bg-[#fff8fb] active:bg-[#f8edf2]",
+                : "hover:border-[#cf9aac] hover:bg-[#fff8fb] active:bg-[#f8edf2]",
             )}
           >
             <span className="min-w-0">{reply.text}</span>
@@ -345,6 +349,53 @@ function AgentHubQuickReplies({
       </div>
     </div>
   );
+}
+
+function hostFromCitationUrl(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+function citationLabel(citation: ChatMessageCitation): string {
+  const title = citation.title.trim();
+  if (title && title !== "参考来源") return title;
+  return hostFromCitationUrl(citation.url) || "参考来源";
+}
+
+function AgentHubCitations({ msg }: { msg: ChatMessage }) {
+  const citations = msg.citations ?? [];
+  if (msg.role !== "mai" || citations.length === 0) return null;
+  return (
+    <div className="mt-3.5 max-w-full px-0.5 text-[11px] leading-snug text-[#7b6671]">
+      <div className="mb-1.5 text-[10px] font-[650] tracking-[0.01em] text-[#8f7a84]">专业信息源</div>
+      <ol className="space-y-1.5">
+        {citations.map((citation) => (
+          <li
+            key={`${citation.index}-${citation.url}`}
+            className="flex max-w-full items-baseline gap-1.5 text-[#8a7480]"
+          >
+            <span className="shrink-0 text-[#aa929f]">[{citation.index}]</span>
+            <a
+              href={citation.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="min-w-0 truncate text-[#3d7d85] underline decoration-[#b8d7d4] decoration-1 underline-offset-2 transition-colors hover:text-[#2f6870]"
+            >
+              {citationLabel(citation)}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function markdownForMessage(msg: ChatMessage, markdown: string): string {
+  if (msg.role !== "mai") return markdown;
+  return replaceCitationLinksWithIndexes(markdown, msg.citations);
 }
 
 function AgentHubSentImages({ images }: { images: SentChatImagePreview[] }) {
@@ -544,7 +595,7 @@ function AgentHubReportCard({
           ) : hasContent ? (
             <section className="analysis-section-list">
               <div className="analysis-section analysis-section-default">
-                <ChatMarkdown markdown={msg.content} variant="assistant" className="text-[13px] leading-relaxed text-[#35212c]" />
+                <ChatMarkdown markdown={markdownForMessage(msg, msg.content)} variant="assistant" className="text-[13px] leading-relaxed text-[#35212c]" />
               </div>
             </section>
           ) : null}
@@ -566,7 +617,7 @@ function AgentHubReportCard({
 
           {hasContent ? (
             <section className="agent-card-section">
-              <ChatMarkdown markdown={msg.content} variant="assistant" className="text-[13px] leading-relaxed text-[#35212c]" />
+              <ChatMarkdown markdown={markdownForMessage(msg, msg.content)} variant="assistant" className="text-[13px] leading-relaxed text-[#35212c]" />
             </section>
           ) : null}
         </>
@@ -654,38 +705,6 @@ function AgentHubAgUiDecor({ msg }: { msg: ChatMessage }) {
   );
 }
 
-/** Navigation Timing API：当前页是否为完整刷新（reload） */
-function isNavigationReload(): boolean {
-  if (typeof performance === "undefined") return false;
-  try {
-    const entries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-    if (entries.length > 0) return entries[0].type === "reload";
-  } catch {
-    /* ignore */
-  }
-  const legacy = performance as Performance & { navigation?: { type?: number } };
-  return legacy.navigation?.type === 1;
-}
-
-/** 刷新后进页：移除无效本地预览 blob，以及未完成/失败的上传占位 */
-function stripPersistedBlobUploadStagingMessages(msgs: ChatMessage[]): ChatMessage[] {
-  const withoutInvalidStaging = msgs.filter((m) => {
-    if (m.role !== "user" || String(m.cardData?.kind ?? "") !== "uploaded-image") return true;
-    const st = String(m.cardData?.uploadStatus ?? "ready");
-    if (st === "uploading" || st === "failed") return false;
-    const preview = String(m.cardData?.previewUrl ?? "");
-    return !preview.startsWith("blob:");
-  });
-  return withoutInvalidStaging.map((m) => {
-    const attachments = (m.attachments ?? []).filter(
-      (item) => item.type !== "image" || !item.previewUrl.startsWith("blob:"),
-    );
-    return attachments.length === (m.attachments ?? []).length
-      ? m
-      : { ...m, attachments: attachments.length > 0 ? attachments : undefined };
-  });
-}
-
 function mergeHubMessagesPreserveOrder(base: ChatMessage[], incoming: ChatMessage[]): ChatMessage[] {
   if (base.length === 0) return incoming;
   if (incoming.length === 0) return base;
@@ -699,26 +718,26 @@ function mergeHubMessagesPreserveOrder(base: ChatMessage[], incoming: ChatMessag
   return merged;
 }
 
+let agentHubMessageIdCounter = 0;
+
+function createAgentHubMessageId(prefix: string): string {
+  agentHubMessageIdCounter += 1;
+  return `${prefix}${Date.now()}-${agentHubMessageIdCounter}`;
+}
+
 const AgentHub: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  /** 首次进入 Hub 从 localStorage 恢复对话并写入 chatStore（同次挂载内各 useState 共享） */
+  /** 首次进入 Hub：应用冷启动时开启新会话；同一 SPA 内返回时沿用内存对话。 */
   const initialHubMessagesRef = useRef<ChatMessage[] | null>(null);
   if (initialHubMessagesRef.current === null) {
     const inMemory = stripTransientAgentHubFailureMessages(chatStore.get().messages);
-    let loaded = loadPersistedChatMessages();
-    if (isNavigationReload()) {
-      const sanitized = stripPersistedBlobUploadStagingMessages(loaded);
-      if (sanitized.length !== loaded.length) {
-        savePersistedChatMessages(sanitized);
-        log("[AgentHub] 页面刷新后移除失效 blob 预览暂存", {
-          removed: loaded.length - sanitized.length,
-        });
-        loaded = sanitized;
-      }
+    const isColdStart = inMemory.length === 0;
+    if (isColdStart) {
+      clearPersistedAgentConversationId();
+      clearPersistedAgUiThreadId();
     }
-    const restored = mergeHubMessagesPreserveOrder(loaded, inMemory);
-    const merged = restored.length > 0 ? restored : [createNewConversationGreetingMessage()];
+    const merged = isColdStart ? [createNewConversationGreetingMessage()] : inMemory;
     chatStore.setMessages(merged);
     savePersistedChatMessages(merged);
     initialHubMessagesRef.current = merged;
@@ -739,7 +758,7 @@ const AgentHub: React.FC = () => {
   const awaitingHubBottomReplyRef = useRef(false);
   const hubBottomSendActionLockRef = useRef(false);
   const lastHubBottomNewTurnAtRef = useRef(0);
-  const { speechListening, startSpeech, stopSpeech } = useAgentHubSpeechInput(setInput, {
+  const { speechListening, speechPhase, startSpeech, stopSpeech } = useAgentHubSpeechInput(setInput, {
     userId: DEFAULT_CHAT_USER_ID,
   });
   const [autoVoice, setAutoVoice] = useState(true);
@@ -799,6 +818,7 @@ const AgentHub: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const visibleStartIndexRef = useRef(initialHistoryStart);
   const pendingHistoryScrollRestoreRef = useRef<PendingHistoryAnchorRestore | null>(null);
+  const pendingLatestChatWindowSyncRef = useRef(false);
   const userPinnedToTailRef = useRef(true);
   /** 底部输入发送并入队回复消息后，下一次列表更新时强制滚到最后一条（即使用户之前在回看历史） */
   const scrollTailAfterHubSendRef = useRef(false);
@@ -806,6 +826,18 @@ const AgentHub: React.FC = () => {
     len: hubInitialMessages.length,
     lastId: hubInitialMessages.at(-1)?.id ?? null,
   });
+  const showLatestChatHistoryWindow = useCallback((messageCount: number) => {
+    const nextStart = latestChatHistoryStart(messageCount, HUB_CHAT_HISTORY_PAGE);
+    pendingLatestChatWindowSyncRef.current = false;
+    visibleStartIndexRef.current = nextStart;
+    setVisibleStartIndex(nextStart);
+  }, []);
+  const prepareLatestChatWindowForNewTurn = useCallback(() => {
+    pendingLatestChatWindowSyncRef.current = true;
+    userPinnedToTailRef.current = true;
+    scrollTailAfterHubSendRef.current = true;
+    setShowScrollToBottom(false);
+  }, []);
   /** 通知进首页等场景：外部已写入 chatStore/持久化，需与首次挂载同样合并进本地 messages。 */
   useLayoutEffect(() => {
     const onExternalSync = () => {
@@ -816,11 +848,12 @@ const AgentHub: React.FC = () => {
       void savePersistedChatMessages(merged);
       userPinnedToTailRef.current = true;
       scrollTailAfterHubSendRef.current = true;
+      showLatestChatHistoryWindow(merged.length);
       setMessages(merged);
     };
     window.addEventListener(AGENT_HUB_SYNC_CHAT_EVENT, onExternalSync);
     return () => window.removeEventListener(AGENT_HUB_SYNC_CHAT_EVENT, onExternalSync);
-  }, []);
+  }, [showLatestChatHistoryWindow]);
 
   /** 非吸乳页自动结束后：进入智能体主页时若尚未执行「小结+BLE」，与通知点击路径共用 claim，只跑一次。 */
   useEffect(() => {
@@ -1220,9 +1253,14 @@ const AgentHub: React.FC = () => {
     visibleStartIndexRef.current = visibleStartIndex;
   }, [visibleStartIndex]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setVisibleStartIndex((s) => {
-      return clampChatHistoryStart(messages.length, HUB_CHAT_HISTORY_PAGE, s);
+      const nextStart = pendingLatestChatWindowSyncRef.current
+        ? latestChatHistoryStart(messages.length, HUB_CHAT_HISTORY_PAGE)
+        : clampChatHistoryStart(messages.length, HUB_CHAT_HISTORY_PAGE, s);
+      pendingLatestChatWindowSyncRef.current = false;
+      visibleStartIndexRef.current = nextStart;
+      return nextStart;
     });
   }, [messages.length]);
 
@@ -1785,6 +1823,7 @@ const AgentHub: React.FC = () => {
     query: string,
     opts?: { showUserMessage?: boolean; purgeStagedImagesAfterAttach?: boolean; userDisplayText?: string },
   ) => {
+    prepareLatestChatWindowForNewTurn();
     const showUserMessage = opts?.showUserMessage ?? true;
     const replyTs = new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
     const workTimerStartMs = Date.now();
@@ -1793,13 +1832,13 @@ const AgentHub: React.FC = () => {
     const sentImagePreviews = showUserMessage ? await buildSentImagePreviews(agUiImages) : [];
     const userVisibleText = opts?.userDisplayText !== undefined ? opts.userDisplayText.trim() : query;
     const userMsg: ChatMessage = {
-      id: `u${Date.now()}`,
+      id: createAgentHubMessageId("u"),
       role: "user",
       content: userVisibleText,
       timestamp: replyTs,
       cardData: sentImagePreviews.length > 0 ? { sentImages: sentImagePreviews } : undefined,
     };
-    const replyId = `m${Date.now()}`;
+    const replyId = createAgentHubMessageId("m");
     const replyPlaceholder: ChatMessage = {
       id: replyId,
       role: "mai",
@@ -1965,16 +2004,14 @@ const AgentHub: React.FC = () => {
     const intent = resolveDirectPumpCartUpdateIntent(query);
     if (!intent) return false;
 
-    scrollTailAfterHubSendRef.current = true;
-    userPinnedToTailRef.current = true;
-    setShowScrollToBottom(false);
+    prepareLatestChatWindowForNewTurn();
     setHubBottomSendBusy(true);
 
     const replyTs = new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
     const userVisibleText = opts?.userDisplayText !== undefined ? opts.userDisplayText.trim() : query.trim();
-    const replyId = `m-direct-cart-${Date.now()}`;
+    const replyId = createAgentHubMessageId("m-direct-cart-");
     const userMsg: ChatMessage = {
-      id: `u-direct-cart-${Date.now()}`,
+      id: createAgentHubMessageId("u-direct-cart-"),
       role: "user",
       content: userVisibleText || query,
       timestamp: replyTs,
@@ -2069,6 +2106,7 @@ const AgentHub: React.FC = () => {
 
   const handleAgentRichTextButtonSelect = (value: string, options?: { displayText?: string }) => {
     primeAutoVoicePlayback();
+    prepareLatestChatWindowForNewTurn();
     void (async () => {
       if (await startDirectHospitalBagPumpCartUpdate(value, { userDisplayText: options?.displayText })) return;
       void startMainChatStream(value, { userDisplayText: options?.displayText });
@@ -2080,9 +2118,7 @@ const AgentHub: React.FC = () => {
     if (!text) return;
     if (hubBottomSendBusy || mainChatCancelRef.current) return;
     primeAutoVoicePlayback();
-    scrollTailAfterHubSendRef.current = true;
-    userPinnedToTailRef.current = true;
-    setShowScrollToBottom(false);
+    prepareLatestChatWindowForNewTurn();
     setMessages((prev) => clearQuickRepliesFromMessages(prev));
     void (async () => {
       if (await startDirectHospitalBagPumpCartUpdate(text, { userDisplayText: text })) return;
@@ -2254,11 +2290,12 @@ const AgentHub: React.FC = () => {
   /** 吸乳报告与普通气泡底部的业务链接（日程 / 泌乳 / 设备 / 路由） */
   const handleBubbleLinkPress = (link: ChatMessageLink) => {
     const userMsg: ChatMessage = {
-      id: `u${Date.now()}`,
+      id: createAgentHubMessageId("u"),
       role: "user",
       content: link.label.replace(/→$/, "").trim(),
       timestamp: new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }),
     };
+    prepareLatestChatWindowForNewTurn();
     setMessages((prev) => [...prev, userMsg]);
     if (link.action) {
       if (link.action === "open-schedule" || link.action.startsWith("schedule-")) {
@@ -2487,7 +2524,7 @@ const AgentHub: React.FC = () => {
   };
 
   /**
-   * 发送主输入框内容：普通发送会丢弃听写收尾；语音松手提交会传入最终转写文本。
+   * 发送主输入框内容：普通发送会丢弃听写收尾；语音转写结束只回填输入框，需用户主动发送。
    */
   const handleSend = async (textOverride?: string) => {
     if (hubBottomSendActionLockRef.current) return;
@@ -2559,9 +2596,7 @@ const AgentHub: React.FC = () => {
       }
     }
 
-    scrollTailAfterHubSendRef.current = true;
-    userPinnedToTailRef.current = true;
-    setShowScrollToBottom(false);
+    prepareLatestChatWindowForNewTurn();
 
     if (pendingText && !hasReadyStagedImages) {
       const handledDirectly = await startDirectHospitalBagPumpCartUpdate(text, { userDisplayText: pendingText });
@@ -2591,7 +2626,7 @@ const AgentHub: React.FC = () => {
     const finalText = await stopSpeech();
     const text = finalText.trim() || inputRef.current.trim();
     if (!text) return;
-    await handleSend(text);
+    setInput(text);
   };
 
   /** 暂存图片文件（拍照或本地选择）：ag-ui 发送时会把预览 blob 转成 data URL。 */
@@ -3070,7 +3105,7 @@ const AgentHub: React.FC = () => {
                                 data-ag-ui-artifact-anchor={itemHasAgUiArtifact ? agUiArtifactAnchorKey(msg.id, `stream-${i}`) : undefined}
                               >
                                 {item.kind === "text" ? (
-                                  <ChatMarkdown markdown={item.text} variant={mdVariant} className={mdClassName} />
+                                  <ChatMarkdown markdown={markdownForMessage(msg, item.text)} variant={mdVariant} className={mdClassName} />
                                 ) : (
                                   <AgentHubRichTextBlock
                                     payload={item.payload}
@@ -3121,7 +3156,7 @@ const AgentHub: React.FC = () => {
                                 <AgentHubSentImages images={sentImagePreviews} />
                               </div>
                             ) : null}
-                            <ChatMarkdown markdown={seg} variant={mdVariant} className={mdClassName} />
+                            <ChatMarkdown markdown={markdownForMessage(msg, seg)} variant={mdVariant} className={mdClassName} />
                           </div>
                         ))}
                           {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
@@ -3214,7 +3249,7 @@ const AgentHub: React.FC = () => {
                                 data-ag-ui-artifact-anchor={itemHasAgUiArtifact ? agUiArtifactAnchorKey(msg.id, `stream-${i}`) : undefined}
                               >
                                 {item.kind === "text" ? (
-                                  <ChatMarkdown markdown={item.text} variant={mdVariant} className={mdClassName} />
+                                  <ChatMarkdown markdown={markdownForMessage(msg, item.text)} variant={mdVariant} className={mdClassName} />
                                 ) : (
                                   <AgentHubRichTextBlock
                                     payload={item.payload}
@@ -3269,7 +3304,7 @@ const AgentHub: React.FC = () => {
                           </div>
                         ) : null}
                         {msg.content.trim() ? (
-                          <ChatMarkdown markdown={msg.content} variant={mdVariant} className={mdClassName} />
+                          <ChatMarkdown markdown={markdownForMessage(msg, msg.content)} variant={mdVariant} className={mdClassName} />
                         ) : null}
                           {msg.richText && !msg.richText?.card?.some((card) => card.type.trim() === "吸奶结束") ? (
                             <div
@@ -3289,7 +3324,7 @@ const AgentHub: React.FC = () => {
                           </div>
                         ) : null}
                         {!msg.content.trim() && !msg.richText ? (
-                          <ChatMarkdown markdown={msg.content} variant={mdVariant} className={mdClassName} />
+                          <ChatMarkdown markdown={markdownForMessage(msg, msg.content)} variant={mdVariant} className={mdClassName} />
                         ) : null}
                       </>
                     )}
@@ -3327,6 +3362,7 @@ const AgentHub: React.FC = () => {
                     </div>
                   </>
                 )}
+                <AgentHubCitations msg={msg} />
                 <AgentHubQuickReplies
                   msg={msg}
                   disabled={hubBottomSendBusy || Boolean(mainChatCancelRef.current)}
@@ -3445,6 +3481,7 @@ const AgentHub: React.FC = () => {
             onVoiceStart={() => void startSpeech()}
             onVoiceEnd={(opts) => void handleVoiceEnd(opts)}
             speechListening={speechListening}
+            speechPhase={speechPhase}
             showPhotoMenu={showPhotoMenu}
             onTogglePhotoMenu={setShowPhotoMenu}
             onPhotoFile={(file) => {

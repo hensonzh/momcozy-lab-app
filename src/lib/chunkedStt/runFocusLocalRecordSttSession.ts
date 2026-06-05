@@ -11,7 +11,7 @@ import {
 } from "@/lib/chunkedStt/focusVoicePcm";
 
 /** 向在线接口上传累计录音的间隔（毫秒） */
-const POLL_MS = 2000;
+const POLL_MS = 800;
 /** 单轮最长录音时间 */
 const MAX_SESSION_MS = 60_000;
 /** 原生端 pcm_s16le 文件目录 */

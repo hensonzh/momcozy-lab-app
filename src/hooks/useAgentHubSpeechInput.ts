@@ -7,6 +7,7 @@ import { log } from "@/lib/logger";
 const SPEECH_CHAR_REVEAL_MS = 52;
 /** 落后目标超过该字数时单帧多吐一字 */
 const SPEECH_CATCH_UP_THRESHOLD = 18;
+export type AgentHubSpeechPhase = "idle" | "listening" | "transcribing";
 
 /**
  * Agent Hub 主输入麦克风：与专注模式共用 {@link runFocusVoiceSttSession}。
@@ -20,10 +21,12 @@ export function useAgentHubSpeechInput(
   options: { userId: string },
 ): {
   speechListening: boolean;
+  speechPhase: AgentHubSpeechPhase;
   startSpeech: () => Promise<void>;
   stopSpeech: (opts?: { discardSttResult?: boolean }) => Promise<string>;
 } {
-  const [speechListening, setSpeechListening] = useState(false);
+  const [speechPhase, setSpeechPhase] = useState<AgentHubSpeechPhase>("idle");
+  const speechListening = speechPhase !== "idle";
   const pipelineControlRef = useRef<{
     cancel: AbortController;
     finish: AbortController;
@@ -114,7 +117,7 @@ export function useAgentHubSpeechInput(
         control.finish.abort();
       }
     }
-    setSpeechListening(false);
+    setSpeechPhase(control && mode === "finish" ? "transcribing" : "idle");
   }, []);
 
   const stopSpeech = useCallback(async (opts?: { discardSttResult?: boolean }) => {
@@ -168,7 +171,7 @@ export function useAgentHubSpeechInput(
 
       resetSpeechDisplaySession("");
 
-      setSpeechListening(true);
+      setSpeechPhase("listening");
       try {
         const text = await runFocusVoiceSttSession({
           userId,
@@ -197,7 +200,7 @@ export function useAgentHubSpeechInput(
         if (pipelineControlRef.current === control) {
           pipelineControlRef.current = null;
           recordingActiveRef.current = false;
-          setSpeechListening(false);
+          setSpeechPhase("idle");
         }
         if (speechCompletionRef.current === completion) {
           speechCompletionRef.current = null;
@@ -223,6 +226,7 @@ export function useAgentHubSpeechInput(
       pipelineControlRef.current?.cancel.abort();
       pipelineControlRef.current = null;
       recordingActiveRef.current = false;
+      setSpeechPhase("idle");
       if (speechCompletionRef.current && !speechCompletionRef.current.settled) {
         speechCompletionRef.current.settled = true;
         speechCompletionRef.current.resolve("");
@@ -235,5 +239,5 @@ export function useAgentHubSpeechInput(
     };
   }, []);
 
-  return { speechListening, startSpeech, stopSpeech };
+  return { speechListening, speechPhase, startSpeech, stopSpeech };
 }
