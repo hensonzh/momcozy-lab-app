@@ -7,23 +7,11 @@
  */
 
 import { Capacitor, registerPlugin } from "@capacitor/core";
-import {
-  postAgUiWebSocketStream,
-  postPumpSessionSummaryWebSocket,
-  parseChatRichTextFromSseData,
-} from "@/lib/agentApi";
-import {
-  mergePendingRichTextPayload,
-  resolveAgUiEventType,
-  richTextFromToolResultPayload,
-} from "@/lib/agUiStreamSideEffects";
+import { postPumpSessionSummaryWebSocket } from "@/lib/agentApi";
 import {
   getAgentConversationIdForRequest,
   getAgUiThreadIdForRequest,
-  persistAgentConversationIdFromSse,
-  persistAgUiThreadId,
 } from "@/lib/agentConversationSession";
-import { extractChatAnswerChunk, mergeStreamingAnswerDelta } from "@/lib/chatStreaming";
 import { chatStore } from "@/lib/chatStore";
 import { savePersistedChatMessages } from "@/lib/chatMessagesLocalPersistence";
 import { deviceStore, type DeviceSide } from "@/lib/deviceStore";
@@ -43,14 +31,12 @@ import {
 import { showPumpAutoEndLocalNotice } from "@/lib/pumpSessionNotification";
 import { toast } from "@/components/ui/use-toast";
 import type { ChatMessage } from "@/types/chat";
-import type { ChatRichTextPayload, PumpMilkUploadBody, PumpSessionSummaryBody, PumpSessionSummarySide } from "@/lib/agentApiTypes";
+import type { PumpMilkUploadBody, PumpSessionSummaryBody, PumpSessionSummarySide } from "@/lib/agentApiTypes";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
 import { uploadPumpMilkRecord } from "@/lib/momPumpTwinAgentApi";
 
 // ─── 吸乳小结写入对话 ─────────────────────────────────────────────
 const CHAT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);
-const MAI_CHAT_QUERY_STOP_PUMP = "停止吸乳-开始吸乳APP";
-const STOP_SUMMARY_TIMEOUT_MS = 12000;
 const PUMP_SESSION_SUMMARY_WS_TIMEOUT_MS = 15000;
 
 interface NativePumpAgentUploadPlugin {
@@ -74,118 +60,6 @@ export interface PumpStopSummaryOptions {
 
 /** AgentHub 监听：外部写入 chatStore 后合并进 Hub 的 messages（与通知收尾一致） */
 export const AGENT_HUB_SYNC_CHAT_EVENT = "mmc-agent-hub-sync-chat";
-/** 吸奶结束卡片里「本次收集 / 奶量」等行的填充程度，用于多段 rich_text 时保留更完整的一条 */
-function pumpStopRichTextCompleteness(r: ChatRichTextPayload): number {
-  let score = 0;
-  for (const c of r.card ?? []) {
-    if (String(c.type ?? "").trim() !== "吸奶结束") continue;
-    for (const row of c.content ?? []) {
-      const t = row.title ?? "";
-      const v = row.content?.trim() ?? "";
-      if (!v) continue;
-      if (t.includes("收集") || t.includes("奶量")) score += 10 + v.length;
-      else score += 1 + v.length;
-    }
-  }
-  return score;
-}
-
-function mergePumpStopRichText(
-  prev: ChatRichTextPayload | null,
-  next: ChatRichTextPayload,
-): ChatRichTextPayload {
-  if (!prev) return next;
-  if (pumpStopRichTextCompleteness(next) > pumpStopRichTextCompleteness(prev)) {
-    return mergePendingRichTextPayload(null, next);
-  }
-  if (pumpStopRichTextCompleteness(prev) > pumpStopRichTextCompleteness(next)) {
-    return prev;
-  }
-  return mergePendingRichTextPayload(prev, next);
-}
-
-/** ag-ui：仅 TEXT_MESSAGE_CONTENT / 旧 message 事件取正文增量 */
-function extractPumpStopAnswerChunk(data: string | object): string {
-  const tag = resolveAgUiEventType(data);
-  if (tag) {
-    if (tag === "reasoning") return extractChatAnswerChunk(data);
-    if (tag === "message") return extractChatAnswerChunk(data);
-    if (tag !== "TEXT_MESSAGE_CONTENT") return "";
-    if (typeof data === "object" && data != null) {
-      const delta = (data as { delta?: unknown }).delta;
-      if (typeof delta === "string" && delta) return delta;
-    }
-    return "";
-  }
-  return extractChatAnswerChunk(data);
-}
-
-function parseToolResultContent(content: unknown): Record<string, unknown> | null {
-  if (content == null) return null;
-  if (typeof content === "object" && !Array.isArray(content)) {
-    return content as Record<string, unknown>;
-  }
-  if (typeof content === "string" && content.trim()) {
-    try {
-      const o = JSON.parse(content) as unknown;
-      if (typeof o === "object" && o != null && !Array.isArray(o)) return o as Record<string, unknown>;
-    } catch {
-      return null;
-    }
-  }
-  return null;
-}
-
-function handlePumpStopStreamMessage(
-  data: string | object,
-  merged: { current: string },
-  richHolder: { current: ChatRichTextPayload | null },
-): void {
-  persistAgentConversationIdFromSse(data);
-  if (typeof data === "object" && data != null) {
-    persistAgUiThreadId((data as { thread_id?: unknown }).thread_id);
-  }
-  const rich = parseChatRichTextFromSseData(data);
-  if (rich) {
-    richHolder.current = mergePumpStopRichText(richHolder.current, rich);
-  }
-  const eventType = resolveAgUiEventType(data);
-  if (eventType === "TOOL_CALL_RESULT" && typeof data === "object" && data != null) {
-    const parsed = parseToolResultContent((data as Record<string, unknown>).content);
-    if (parsed) {
-      const built = richTextFromToolResultPayload(parsed);
-      if (built) {
-        richHolder.current = mergePumpStopRichText(richHolder.current, built);
-      }
-    }
-  }
-  const chunk = extractPumpStopAnswerChunk(data);
-  if (!chunk) return;
-  const next = mergeStreamingAnswerDelta(merged.current, chunk);
-  merged.current = next.merged;
-}
-function commitPumpStopSummaryToChat(mergedText: string, rich: ChatRichTextPayload | undefined): ChatMessage {
-  const ts = new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
-  const fallbackText = mergedText.trim() || rich?.content || "已停止吸乳";
-  const msg: ChatMessage = {
-    id: `stop-report-${Date.now()}`,
-    role: "mai",
-    content: fallbackText,
-    timestamp: ts,
-    cardType: "report",
-    ...(rich ? { richText: rich } : {}),
-  };
-  const currentMsgs = chatStore.get().messages;
-  const nextMsgs = [...currentMsgs, msg];
-  chatStore.setMessages(nextMsgs);
-  void savePersistedChatMessages(nextMsgs);
-  if (typeof window !== "undefined") {
-    window.setTimeout(() => {
-      window.dispatchEvent(new CustomEvent(AGENT_HUB_SYNC_CHAT_EVENT));
-    }, 0);
-  }
-  return msg;
-}
 
 function nowChatTimestamp(): string {
   return new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
@@ -366,38 +240,6 @@ async function pushPumpSessionSummaryWebSocketToChat(
   return commitPumpSessionSummaryResponseToChat(response, body.event_id);
 }
 
-function runPumpStopSummaryStream(
-  startStream: (handlers: {
-    onMessage: (data: string | object) => void;
-    onDone: () => void;
-    onError: (err: Error) => void;
-  }) => () => void,
-): Promise<ChatMessage | null> {
-  const merged = { current: "" };
-  const richHolder: { current: ChatRichTextPayload | null } = { current: null };
-  return new Promise<ChatMessage | null>((resolve) => {
-    let resolved = false;
-    const finish = (msg: ChatMessage | null = null) => {
-      if (resolved) return;
-      resolved = true;
-      resolve(msg);
-    };
-    const cancel = startStream({
-      onMessage: (data) => handlePumpStopStreamMessage(data, merged, richHolder),
-      onDone: () => {
-        finish(commitPumpStopSummaryToChat(merged.current, richHolder.current ?? undefined));
-      },
-      onError: (err: Error) => {
-        console.error("[pushPumpStopAgentSummaryToChat] failed:", err);
-        finish();
-      },
-    });
-    window.setTimeout(() => {
-      cancel();
-      finish(null);
-    }, STOP_SUMMARY_TIMEOUT_MS);
-  });
-}
 export async function pushPumpStopAgentSummaryToChat(
   event?: PumpSessionEndedEvent | null,
   options?: PumpStopSummaryOptions | null,
@@ -405,24 +247,19 @@ export async function pushPumpStopAgentSummaryToChat(
   try {
     const summaryMessage = await pushPumpSessionSummaryWebSocketToChat(event, options);
     if (summaryMessage) return summaryMessage;
-    console.warn("[pushPumpStopAgentSummaryToChat] summary ws returned empty content, fallback to agent stream");
+    console.warn("[pushPumpStopAgentSummaryToChat] summary ws returned empty content");
+    toast({
+      title: "吸奶小结生成失败",
+      description: "本次吸奶已结束，但暂时没有生成小结内容。",
+    });
   } catch (err) {
-    console.error("[pushPumpStopAgentSummaryToChat] summary ws failed, fallback to agent stream:", err);
+    console.error("[pushPumpStopAgentSummaryToChat] summary ws failed:", err);
+    toast({
+      title: "吸奶小结生成失败",
+      description: "本次吸奶已结束，但小结服务暂时异常。",
+    });
   }
-
-  return runPumpStopSummaryStream(({ onMessage, onDone, onError }) =>
-    postAgUiWebSocketStream({
-      text: MAI_CHAT_QUERY_STOP_PUMP,
-      threadId: getAgUiThreadIdForRequest(),
-      locale: (typeof navigator !== "undefined" && navigator.language) || "zh-CN",
-      images: [],
-      forwardedProps: {},
-      parseJSON: true,
-      onMessage,
-      onDone,
-      onError,
-    }),
-  );
+  return null;
 }
 // ─── BLE 停泵（不依赖 PumpSession）────────────────────────────────
 export async function endPumpBleForBothConnectedSides(): Promise<void> {
