@@ -1309,10 +1309,10 @@ const AgentHubRichTextBlock: React.FC<{
     return result;
   }, [payload.action]);
 
-  const getCardFieldValue = (card: ChatRichTextCardItem, keyword: string): string => {
-    const row = card.content.find((item) => item.title.includes(keyword));
-    return row?.content?.trim() || "—";
-  };
+  const visibleCards = useMemo(
+    () => payload.card.filter((card) => card.type.trim() !== "吸奶结束"),
+    [payload.card],
+  );
 
   const handleRichTextButton = (b: ChatRichTextButtonItem) => {
     const buttonType = b.type.toLowerCase();
@@ -2112,9 +2112,9 @@ const AgentHubRichTextBlock: React.FC<{
       {payload.content ? (
         <ChatMarkdown markdown={payload.content} variant="muted" className="text-[12px]" />
       ) : null}
-      {payload.card.length > 0 ? (
+      {visibleCards.length > 0 ? (
         <div className="space-y-2">
-          {payload.card.map((card: ChatRichTextCardItem, i) => (
+          {visibleCards.map((card: ChatRichTextCardItem, i) => (
             <div
               key={`${card.type || "card"}-${i}`}
               className={cn(
@@ -2128,56 +2128,14 @@ const AgentHubRichTextBlock: React.FC<{
                 <p className="text-sm font-semibold text-foreground mb-2">{card.text}</p>
               ) : null}
               {card.content.length > 0 ? (
-                <>
-                  <div className="grid grid-cols-3 gap-1 w-fit">
-                    <div className="min-w-[58px] rounded-lg bg-secondary/80 p-1 text-center">
-                      <p className="text-[9px] text-muted-foreground">本次收集</p>
-                      <p className="text-[13px] font-bold text-foreground leading-tight">{getCardFieldValue(card, "本次收集")}</p>
+                <div className="space-y-1">
+                  {card.content.map((row, rowIdx) => (
+                    <div key={`${row.title}-${rowIdx}`} className="flex items-start justify-between gap-3 text-[11px]">
+                      <span className="text-muted-foreground">{row.title || "—"}</span>
+                      <span className="text-right font-medium text-foreground whitespace-pre-line">{row.content || "—"}</span>
                     </div>
-                    <div className="min-w-[58px] rounded-lg bg-secondary/80 p-1 text-center">
-                      <p className="text-[9px] text-muted-foreground">左侧奶量</p>
-                      <p className="text-[13px] font-bold text-foreground leading-tight">{getCardFieldValue(card, "左侧奶量")}</p>
-                    </div>
-                    <div className="min-w-[58px] rounded-lg bg-secondary/80 p-1 text-center">
-                      <p className="text-[9px] text-muted-foreground">右侧奶量</p>
-                      <p className="text-[13px] font-bold text-foreground leading-tight">{getCardFieldValue(card, "右侧奶量")}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg bg-primary/10 border border-primary/20 px-2 py-1 mt-1">
-                    <div>
-                      <p className="text-[9px] text-muted-foreground">吸乳侧别</p>
-                      <p className="text-sm font-bold text-foreground">{getCardFieldValue(card, "吸乳侧别")}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[9px] text-muted-foreground">奶阵情况</p>
-                      <p className="text-sm font-bold text-foreground">{getCardFieldValue(card, "奶阵情况")}</p>
-                    </div>
-                  </div>
-                  {card.content.filter((row) => (
-                    !row.title.includes("本次收集")
-                    && !row.title.includes("左侧奶量")
-                    && !row.title.includes("右侧奶量")
-                    && !row.title.includes("吸乳侧别")
-                    && !row.title.includes("奶阵情况")
-                  )).length > 0 ? (
-                    <div className="space-y-1 mt-1.5">
-                      {card.content
-                        .filter((row) => (
-                          !row.title.includes("本次收集")
-                          && !row.title.includes("左侧奶量")
-                          && !row.title.includes("右侧奶量")
-                          && !row.title.includes("吸乳侧别")
-                          && !row.title.includes("奶阵情况")
-                        ))
-                        .map((row, rowIdx) => (
-                          <div key={`${row.title}-${rowIdx}`} className="flex items-start justify-between gap-3 text-[11px]">
-                            <span className="text-muted-foreground">{row.title || "—"}</span>
-                            <span className="text-right font-medium text-foreground">{row.content || "—"}</span>
-                          </div>
-                        ))}
-                    </div>
-                  ) : null}
-                </>
+                  ))}
+                </div>
               ) : null}
             </div>
           ))}
