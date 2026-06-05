@@ -1270,15 +1270,15 @@
 .birth-journey-phase {
   position: relative;
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr);
+  grid-template-columns: 42px minmax(0, 1fr);
   gap: 10px;
 }
 
 .birth-journey-phase:not(:last-child)::before {
   content: "";
   position: absolute;
-  left: 16px;
-  top: 38px;
+  left: 20px;
+  top: 42px;
   bottom: -10px;
   width: 2px;
   border-radius: 999px;
@@ -1289,8 +1289,8 @@
   position: relative;
   z-index: 1;
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 36px;
   place-items: center;
   border: 1px solid rgba(232, 196, 207, 0.86);
   border-radius: 12px;
@@ -1300,6 +1300,10 @@
   font-weight: 860;
   line-height: 1;
   box-shadow: 0 6px 16px rgba(83, 47, 64, 0.1);
+}
+
+.birth-journey-phase-marker-number {
+  line-height: 1;
 }
 
 .birth-journey-phase.is-current .birth-journey-phase-marker {
@@ -1316,6 +1320,7 @@
 }
 
 .birth-journey-phase-body {
+  position: relative;
   min-width: 0;
   display: grid;
   gap: 10px;
@@ -1326,9 +1331,29 @@
   box-shadow: 0 10px 22px rgba(83, 47, 64, 0.07);
 }
 
+.birth-journey-phase-status-badge {
+  position: absolute;
+  top: -11px;
+  left: -1px;
+  z-index: 1;
+  display: inline-grid;
+  min-height: 20px;
+  place-items: center;
+  border: 1px solid rgba(44, 155, 146, 0.36);
+  border-radius: 7px;
+  background: #e4f8f4;
+  padding: 0 7px;
+  color: #247a70;
+  font-size: 9px;
+  font-weight: 820;
+  line-height: 1;
+  box-shadow: 0 5px 12px rgba(44, 155, 146, 0.12);
+}
+
 .birth-journey-phase.is-current .birth-journey-phase-body {
   border-color: rgba(44, 155, 146, 0.32);
   background: linear-gradient(145deg, rgba(246, 255, 252, 0.9) 0%, rgba(255, 251, 253, 0.78) 100%);
+  padding-top: 18px;
 }
 
 .birth-journey-phase.is-collapsible .birth-journey-phase-details[open] {
@@ -1347,23 +1372,31 @@
 }
 
 .birth-journey-phase-heading {
+  min-width: 0;
+}
+
+.birth-journey-phase-title-row {
   display: flex;
-  align-items: flex-start;
+  min-width: 0;
+  align-items: baseline;
   justify-content: space-between;
   gap: 10px;
 }
 
-.birth-journey-phase-heading > div {
+.birth-journey-phase-heading > div,
+.birth-journey-phase-summary .birth-journey-phase-title-row {
   min-width: 0;
   flex: 1 1 auto;
 }
 
-.birth-journey-phase-heading p {
-  margin: 0 0 2px;
+.birth-journey-phase-date {
+  flex: 0 0 auto;
+  margin: 0;
   color: #8a6d7a;
   font-size: 11px;
-  font-weight: 720;
+  font-weight: 620;
   line-height: 1.25;
+  white-space: nowrap;
 }
 
 .birth-journey-phase-heading h3 {
@@ -1412,7 +1445,7 @@
 
 .birth-journey-phase-summary h3 {
   min-width: 0;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   overflow-wrap: anywhere;
   color: #745365;
   font-size: 14px;
@@ -1430,29 +1463,17 @@
   gap: 10px;
 }
 
-.birth-journey-phase-heading span {
-  flex: 0 0 auto;
-  padding: 3px 7px;
-  border-radius: 999px;
-  background: rgba(255, 244, 248, 0.9);
-  color: #9a4e67;
-  font-size: 10px;
-  font-weight: 780;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-
-.birth-journey-phase.is-current .birth-journey-phase-heading span {
-  background: #e4f8f4;
-  color: #247a70;
-}
-
 .birth-journey-goal {
   margin: 0;
-  color: #432b36;
-  font-size: 13px;
+  color: #7a6872;
+  font-size: 12px;
   font-weight: 400;
   line-height: 1.55;
+}
+
+.birth-journey-goal strong {
+  color: #8a5068;
+  font-weight: 820;
 }
 
 .birth-journey-section-grid {

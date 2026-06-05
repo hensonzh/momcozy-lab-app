@@ -210,12 +210,14 @@ describe("AgentHubRichTextBlock birth journey plan card", () => {
     renderBlock({ payload: birthJourneyPayload() });
 
     expect(screen.getByRole("heading", { name: "孕中期" })).toBeInTheDocument();
+    expect(screen.getByText("当前阶段")).toBeInTheDocument();
+    expect(screen.getAllByText("阶段目标：").length).toBeGreaterThan(0);
     expect(screen.getByText("先把产检和医院流程确认清楚。")).toBeInTheDocument();
     expect(screen.getByText("整理产检问题。")).toBeInTheDocument();
 
     expect(screen.getByRole("heading", { name: "孕晚期" })).toBeInTheDocument();
-    expect(screen.getByText("下一阶段")).not.toBeVisible();
-    expect(screen.getByText("孕28周-36周")).not.toBeVisible();
+    expect(screen.queryByText("下一阶段")).not.toBeInTheDocument();
+    expect(screen.getByText("孕28周-36周")).toBeVisible();
     expect(screen.getByText("把入院准备收拢。")).not.toBeVisible();
     expect(screen.getByText("确认待产包。")).not.toBeVisible();
 
@@ -224,8 +226,6 @@ describe("AgentHubRichTextBlock birth journey plan card", () => {
 
     fireEvent.click(upcomingSummary!);
 
-    expect(screen.getByText("下一阶段")).toBeVisible();
-    expect(screen.getByText("孕28周-36周")).toBeVisible();
     expect(screen.getByText("把入院准备收拢。")).toBeVisible();
     expect(screen.getByText("确认待产包。")).toBeVisible();
     expect(upcomingSummary!.nextElementSibling).toHaveClass("birth-journey-phase-expanded-content");

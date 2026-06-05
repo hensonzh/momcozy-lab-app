@@ -1033,10 +1033,6 @@ function compactBirthJourneyList(values: unknown, maxItems: number): string[] {
   return uniqueDisplayStrings(rawItems, maxItems);
 }
 
-function birthJourneyStatusLabel(status: string): string {
-  return status === "current" ? "当前阶段" : "下一阶段";
-}
-
 function cardSubtitle(values: unknown[]): string {
   return values
     .filter((value) => hasDisplayValue(value) && !isConfirmPlaceholder(value))
@@ -1687,7 +1683,12 @@ const AgentHubRichTextBlock: React.FC<{
                         const isCurrentPhase = phase.status === "current";
                         const phaseDetails = (
                           <>
-                            {phase.goal ? <p className="birth-journey-goal">{phase.goal}</p> : null}
+                            {phase.goal ? (
+                              <p className="birth-journey-goal">
+                                <strong>阶段目标：</strong>
+                                <span>{phase.goal}</span>
+                              </p>
+                            ) : null}
                             <div className="birth-journey-section-grid">
                               {phase.watchouts.length > 0 ? (
                                 <section>
@@ -1731,16 +1732,16 @@ const AgentHubRichTextBlock: React.FC<{
                             )}
                           >
                             <div className="birth-journey-phase-marker" aria-hidden="true">
-                              {phaseIndex + 1}
+                              <span className="birth-journey-phase-marker-number">{phaseIndex + 1}</span>
                             </div>
                             {isCurrentPhase ? (
                               <div className="birth-journey-phase-body">
+                                <span className="birth-journey-phase-status-badge">当前阶段</span>
                                 <div className="birth-journey-phase-heading">
-                                  <div>
-                                    {phase.date_range ? <p>{phase.date_range}</p> : null}
+                                  <div className="birth-journey-phase-title-row">
                                     <h3>{phase.title}</h3>
+                                    {phase.date_range ? <p className="birth-journey-phase-date">{phase.date_range}</p> : null}
                                   </div>
-                                  <span>{birthJourneyStatusLabel(phase.status)}</span>
                                 </div>
                                 {phaseDetails}
                               </div>
@@ -1750,13 +1751,12 @@ const AgentHubRichTextBlock: React.FC<{
                                   className="birth-journey-phase-summary"
                                   onClick={handleBirthJourneyPhaseSummaryClick}
                                 >
-                                  <h3>{phase.title}</h3>
+                                  <div className="birth-journey-phase-title-row">
+                                    <h3>{phase.title}</h3>
+                                    {phase.date_range ? <p className="birth-journey-phase-date">{phase.date_range}</p> : null}
+                                  </div>
                                 </summary>
                                 <div className="birth-journey-phase-expanded-content">
-                                  <div className="birth-journey-phase-heading">
-                                    <div>{phase.date_range ? <p>{phase.date_range}</p> : null}</div>
-                                    <span>{birthJourneyStatusLabel(phase.status)}</span>
-                                  </div>
                                   {phaseDetails}
                                 </div>
                               </details>
