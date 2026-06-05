@@ -11,6 +11,11 @@ export function clampChatHistoryStart(messageCount: number, pageSize: number, st
   return Math.min(Math.max(0, start), upper);
 }
 
+export function latestChatHistoryStart(messageCount: number, pageSize: number): number {
+  const count = Math.max(0, Math.floor(Number.isFinite(messageCount) ? messageCount : 0));
+  return Math.max(0, count - normalizeChatHistoryPageSize(pageSize));
+}
+
 export function previousChatHistoryStart(startIndex: number, pageSize: number): number {
   const start = Math.floor(Number.isFinite(startIndex) ? startIndex : 0);
   return Math.max(0, start - normalizeChatHistoryPageSize(pageSize));

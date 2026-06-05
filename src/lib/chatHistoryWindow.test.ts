@@ -1,5 +1,6 @@
 import {
   clampChatHistoryStart,
+  latestChatHistoryStart,
   previousChatHistoryStart,
   scrollTopForPreservedAnchor,
 } from "./chatHistoryWindow";
@@ -12,6 +13,11 @@ describe("chatHistoryWindow", () => {
 
   it("keeps short histories anchored at the beginning", () => {
     expect(clampChatHistoryStart(6, 10, 3)).toBe(0);
+  });
+
+  it("returns the latest visible page start", () => {
+    expect(latestChatHistoryStart(25, 10)).toBe(15);
+    expect(latestChatHistoryStart(6, 10)).toBe(0);
   });
 
   it("moves to the previous history page without crossing the first message", () => {

@@ -28,6 +28,12 @@ export interface ChatQuickReply {
   sendText: string;
 }
 
+export interface ChatMessageCitation {
+  index: number;
+  title: string;
+  url: string;
+}
+
 export interface ChatStreamRenderItemText {
   kind: "text";
   text: string;
@@ -97,4 +103,6 @@ export interface ChatMessage {
   agentWorkFinishedAtMs?: number;
   /** ag-ui QUICK_REPLIES：仅最新一轮助手回复展示，点击后作为普通用户消息发送 */
   quickReplies?: ChatQuickReply[];
+  /** Responses API web_search 引用来源，需在前端展示为可点击链接。 */
+  citations?: ChatMessageCitation[];
 }

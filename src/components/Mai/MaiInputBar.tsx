@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Send, Mic, Keyboard, Camera, Upload, ImagePlus, X, Square } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { arMockResults } from "@/data/deviceMockData";
 import type { PhotoIdentifyResult } from "@/data/deviceMockData";
+import type { AgentHubSpeechPhase } from "@/hooks/useAgentHubSpeechInput";
 import mockDuckbillImg from "@/assets/mock-duckbill.jpg";
 import mockFlangeImg from "@/assets/mock-flange.jpg";
 import mockSealImg from "@/assets/mock-seal.jpg";
@@ -15,6 +16,8 @@ const mockImageMap: Record<string, string> = {
   flange: mockFlangeImg,
   seal: mockSealImg,
 };
+
+const voiceWaveBars = [8, 10, 7, 13, 18, 12, 22, 16, 25, 14, 19, 11, 16, 9, 12, 7];
 
 interface MaiInputBarProps {
   value: string;
@@ -26,6 +29,7 @@ interface MaiInputBarProps {
   onDemoIdentify?: (result: PhotoIdentifyResult) => void;
   /** 正在语音听写：高亮麦克风并让输入框只读，避免与流式转写互相覆盖 */
   speechListening?: boolean;
+  speechPhase?: AgentHubSpeechPhase;
   /** Hub 等设备：发送后对话流进行中时为 true；空输入点击停止，有内容则发送新一轮。 */
   sendLoading?: boolean;
   /** 已有图片等附件可随本轮消息发送，即使输入框为空也允许发送 */
@@ -49,6 +53,7 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   onPhotoFile,
   onDemoIdentify,
   speechListening = false,
+  speechPhase = speechListening ? "listening" : "idle",
   sendLoading = false,
   canSendWithoutText = false,
   disabled = false,
@@ -69,7 +74,11 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   const sendIsStop = sendLoading && !hasSendableContent;
   /** 有文字、附件或生成中（打断）时用主色按钮；仅完全空且非加载时置灰样式 */
   const sendLooksActive = hasSendableContent || sendLoading;
-  const voiceDisabled = disabled || !onVoiceStart || !onVoiceEnd;
+  const voiceTranscribing = speechPhase === "transcribing";
+  const voiceDisabled = disabled || !onVoiceStart || !onVoiceEnd || voiceTranscribing;
+  const voiceOverlayVisible = voiceMode && speechListening;
+  const voiceOverlayText = value.trim();
+  const previousSpeechPhaseRef = useRef<AgentHubSpeechPhase>(speechPhase);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -94,7 +103,11 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
     files.forEach((file) => onPhotoFile(file));
   };
 
-  const voiceHoldLabel = speechListening ? value.trim() || "正在识别..." : "按住说话";
+  const voiceHoldLabel = voiceTranscribing
+    ? value.trim() || "正在整理语音..."
+    : speechListening
+      ? value.trim() || "我在听，松开后文字填入输入框"
+      : "按住说话";
   const VoiceToggleIcon = voiceMode ? Keyboard : Mic;
 
   const toggleVoiceMode = () => {
@@ -123,11 +136,66 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   const finishVoiceHold = (opts?: { submit?: boolean }) => {
     if (!voicePressActiveRef.current) return;
     voicePressActiveRef.current = false;
+    textDraftBeforeVoiceRef.current = null;
+    setVoiceMode(false);
     void onVoiceEnd?.(opts);
   };
 
+  useEffect(() => {
+    const previous = previousSpeechPhaseRef.current;
+    previousSpeechPhaseRef.current = speechPhase;
+    if (previous === "idle" || speechPhase !== "idle") return;
+    voicePressActiveRef.current = false;
+    textDraftBeforeVoiceRef.current = null;
+    setVoiceMode(false);
+  }, [speechPhase]);
+
   return (
     <div className={cn("flex-shrink-0", className)}>
+      <AnimatePresence>
+        {voiceOverlayVisible && (
+          <motion.div
+            className="pointer-events-none fixed inset-x-0 bottom-[118px] z-[80] flex justify-center px-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            aria-hidden
+          >
+            <style>{`
+              @keyframes voice-wave {
+                from { transform: scaleY(0.68); opacity: 0.55; }
+                to { transform: scaleY(1.18); opacity: 1; }
+              }
+            `}</style>
+            <motion.div
+              className="relative flex min-h-[82px] w-full max-w-[310px] items-center justify-center rounded-[26px] border border-[#ead6df] bg-[#f8eef3] px-6 py-4 text-center text-[15px] font-[700] leading-relaxed text-[#563544] shadow-[0_12px_28px_rgba(117,76,94,0.16)]"
+              initial={{ scale: 0.94, y: 10 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.96, y: 8 }}
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            >
+              <div className="absolute -bottom-3 left-1/2 h-6 w-6 -translate-x-1/2 rotate-45 border-b border-r border-[#ead6df] bg-[#f8eef3]" />
+              {voiceOverlayText ? (
+                <span className="relative z-10 max-h-[4.2rem] overflow-hidden break-words">{voiceOverlayText}</span>
+              ) : (
+                <div className="relative z-10 flex h-8 items-center gap-[3px]" aria-label="正在听">
+                  {voiceWaveBars.map((height, index) => (
+                    <span
+                      key={`${height}-${index}`}
+                      className="block w-[3px] rounded-full bg-[#9a6d7f] opacity-80"
+                      style={{
+                        height,
+                        animation: `voice-wave 900ms ease-in-out ${index * 45}ms infinite alternate`,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Photo menu popup */}
       <AnimatePresence>
         {showPhotoMenu && (
@@ -228,13 +296,14 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
               onContextMenu={(e) => e.preventDefault()}
               disabled={voiceDisabled}
               aria-pressed={speechListening}
-              aria-label={speechListening ? "松开发送语音输入" : "按住说话"}
-              title={speechListening ? "松开发送" : "按住说话"}
+              aria-label={speechListening ? "松开填入语音输入" : "按住说话"}
+              title={speechListening ? "松开填入输入框" : "按住说话"}
               className={cn(
                 "flex-1 min-w-0 h-8 rounded-full px-3 text-sm font-medium transition-colors duration-200 touch-none select-none",
                 "border border-transparent bg-primary/5 text-foreground",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-                speechListening && "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-100",
+                speechPhase === "listening" && "border-[#e5cdd8] bg-[#f8eef3] text-[#563544] dark:border-[#7b4f61]/50 dark:bg-[#5a3445]/30 dark:text-[#f7e7ee]",
+                voiceTranscribing && "border-[#e5cdd8] bg-[#f6edf1] text-[#6d4e5b] dark:border-[#7b4f61]/50 dark:bg-[#5a3445]/25 dark:text-[#f7e7ee]",
                 voiceDisabled && "opacity-50",
               )}
             >
@@ -267,7 +336,7 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
                 composingRef.current = false;
                 compositionEndAtRef.current = Date.now();
               }}
-              placeholder={placeholder}
+              placeholder={voiceTranscribing ? "正在整理语音..." : placeholder}
               readOnly={speechListening}
               className="flex-1 border-0 bg-transparent focus-visible:ring-0 text-sm h-8 px-1"
             />
@@ -283,9 +352,11 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
             title={voiceMode ? "切换到文字输入" : "切换到语音输入"}
             className={cn(
               "p-1.5 rounded-full flex-shrink-0 transition-colors duration-200 touch-none select-none",
-              speechListening
-                ? "bg-emerald-600 text-white shadow-sm dark:bg-emerald-500 dark:text-white"
-                : voiceMode
+              speechPhase === "listening"
+                ? "bg-[#8b5870] text-white shadow-sm dark:bg-[#9a6d7f] dark:text-white"
+                : voiceTranscribing
+                  ? "bg-[#b98ba0] text-white shadow-sm dark:bg-[#9a6d7f] dark:text-white"
+                  : voiceMode
                   ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:text-primary bg-transparent",
               voiceDisabled && "opacity-40",

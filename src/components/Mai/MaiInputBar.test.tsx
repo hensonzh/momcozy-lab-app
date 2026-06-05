@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import MaiInputBar from "./MaiInputBar";
@@ -168,7 +168,7 @@ describe("MaiInputBar", () => {
     expect(screen.getByDisplayValue("先输入的草稿")).toBeInTheDocument();
   });
 
-  it("starts voice recognition while the hold-to-talk button is pressed and submits on release", () => {
+  it("starts voice recognition while the hold-to-talk button is pressed and finalizes on release", () => {
     const onVoiceStart = vi.fn();
     const onVoiceEnd = vi.fn();
     render(
@@ -215,6 +215,123 @@ describe("MaiInputBar", () => {
       />,
     );
 
-    expect(screen.getByText("今天吸奶感觉不错")).toBeInTheDocument();
+    expect(screen.getAllByText("今天吸奶感觉不错").length).toBeGreaterThan(1);
+  });
+
+  it("shows a compact voice overlay while recording", () => {
+    const onVoiceStart = vi.fn();
+    const onVoiceEnd = vi.fn();
+    const { rerender } = render(
+      <MaiInputBar
+        value=""
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+      />,
+    );
+
+    fireEvent.click(screen.getByTitle("切换到语音输入"));
+    rerender(
+      <MaiInputBar
+        value="我堵奶疼怎么办"
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+        speechListening
+        speechPhase="listening"
+      />,
+    );
+
+    expect(screen.getAllByText("我堵奶疼怎么办").length).toBeGreaterThan(1);
+    expect(screen.queryByText("取消")).not.toBeInTheDocument();
+    expect(screen.queryByText("松开后转文字")).not.toBeInTheDocument();
+  });
+
+  it("shows immediate listening and transcribing feedback in voice mode", () => {
+    const onVoiceStart = vi.fn();
+    const onVoiceEnd = vi.fn();
+    const { rerender } = render(
+      <MaiInputBar
+        value=""
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+      />,
+    );
+
+    fireEvent.click(screen.getByTitle("切换到语音输入"));
+    rerender(
+      <MaiInputBar
+        value=""
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+        speechListening
+        speechPhase="listening"
+      />,
+    );
+    expect(screen.getByText("我在听，松开后文字填入输入框")).toBeInTheDocument();
+
+    rerender(
+      <MaiInputBar
+        value=""
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+        speechListening
+        speechPhase="transcribing"
+      />,
+    );
+    expect(screen.getByText("正在整理语音...")).toBeInTheDocument();
+  });
+
+  it("returns to text input after speech transcription finishes", async () => {
+    const onVoiceStart = vi.fn();
+    const onVoiceEnd = vi.fn();
+    const { rerender } = render(
+      <MaiInputBar
+        value=""
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+      />,
+    );
+
+    fireEvent.click(screen.getByTitle("切换到语音输入"));
+    const holdButton = screen.getByRole("button", { name: "按住说话" });
+    fireEvent.pointerDown(holdButton, { pointerId: 1 });
+    fireEvent.pointerUp(holdButton, { pointerId: 1 });
+
+    rerender(
+      <MaiInputBar
+        value=""
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+        speechListening
+        speechPhase="transcribing"
+      />,
+    );
+    expect(screen.getByPlaceholderText("正在整理语音...")).toBeInTheDocument();
+
+    rerender(
+      <MaiInputBar
+        value="我堵奶疼怎么办"
+        onChange={vi.fn()}
+        onSend={vi.fn()}
+        onVoiceStart={onVoiceStart}
+        onVoiceEnd={onVoiceEnd}
+        speechPhase="idle"
+      />,
+    );
+
+    await waitFor(() => expect(screen.getByDisplayValue("我堵奶疼怎么办")).toBeInTheDocument());
   });
 });

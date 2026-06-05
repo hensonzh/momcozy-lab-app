@@ -40,15 +40,22 @@ describe("useAgentHubSpeechInput", () => {
       await result.current.startSpeech();
     });
     await waitFor(() => expect(finishSignal).toBeDefined());
+    expect(result.current.speechPhase).toBe("listening");
 
+    let stopPromise!: Promise<string>;
+    act(() => {
+      stopPromise = result.current.stopSpeech();
+    });
+    await waitFor(() => expect(result.current.speechPhase).toBe("transcribing"));
     let finalText = "";
     await act(async () => {
-      finalText = await result.current.stopSpeech();
+      finalText = await stopPromise;
     });
 
     expect(finishSignal?.aborted).toBe(true);
     expect(finalText).toBe("最终转录文本");
     expect(updates.at(-1)).toBe("最终转录文本");
+    expect(result.current.speechPhase).toBe("idle");
   });
 
   it("returns empty text and suppresses final writes when speech is discarded", async () => {
@@ -69,6 +76,7 @@ describe("useAgentHubSpeechInput", () => {
       await result.current.startSpeech();
     });
     await waitFor(() => expect(cancelSignal).toBeDefined());
+    expect(result.current.speechPhase).toBe("listening");
 
     let finalText = "placeholder";
     await act(async () => {
@@ -78,5 +86,6 @@ describe("useAgentHubSpeechInput", () => {
     expect(cancelSignal?.aborted).toBe(true);
     expect(finalText).toBe("");
     expect(updates).not.toContain("不应写入");
+    expect(result.current.speechPhase).toBe("idle");
   });
 });

@@ -4,7 +4,7 @@
  */
 
 import type { Dispatch, MutableRefObject, SetStateAction } from "react";
-import type { AgUiToolCallRow, ChatMessage, ChatQuickReply } from "@/types/chat";
+import type { AgUiToolCallRow, ChatMessage, ChatMessageCitation, ChatQuickReply } from "@/types/chat";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
 import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
 
@@ -41,7 +41,9 @@ const THINKING_STATUS_TEXTS = new Set([
 
 const RUN_STARTED_WORK_ROW_ID = "run:started-work";
 const RUN_STARTED_WORK_ROW_NAME = "run_started";
-const RUN_STARTED_WORK_ROW_TITLE = "我在接收你的消息～";
+const RUN_STARTED_WORK_ROW_TITLE = "我已经收到你的消息啦～";
+const WEB_SEARCH_STATUS_CUSTOM_NAME = "momcozy.agent.web_search";
+const WEB_SEARCH_CITATIONS_CUSTOM_NAME = "momcozy.web_search.citations";
 
 /** 与 AgentHub.resolveEventTag 一致：优先 `type`（大写），其次 `event`（小写） */
 export function resolveAgUiEventType(data: string | object): string {
@@ -72,6 +74,69 @@ function readQuickReplies(value: unknown): ChatQuickReply[] {
     replies.push({ text, sendText });
   }
   return replies.length === 3 ? replies : [];
+}
+
+function readWebSearchCitations(value: unknown): ChatMessageCitation[] {
+  const rec = asRecord(value);
+  const raw = Array.isArray(rec?.citations) ? rec.citations : Array.isArray(value) ? value : [];
+  const citations: ChatMessageCitation[] = [];
+  const seenUrls = new Set<string>();
+  const seenKeys = new Set<string>();
+  const hostCounts = new Map<string, number>();
+  raw.forEach((item) => {
+    const citation = asRecord(item);
+    const url = coalesceString(citation?.url);
+    if (!/^https?:\/\//i.test(url)) return;
+    const normalizedUrl = url.trim().replace(/#.*$/, "").replace(/\/$/, "");
+    if (seenUrls.has(normalizedUrl)) return;
+    let host = "";
+    try {
+      host = new URL(url).hostname.replace(/^www\./, "").toLowerCase();
+    } catch {
+      host = "";
+    }
+    const fallbackTitle = host || "参考来源";
+    const title = coalesceString(citation?.title) || fallbackTitle;
+    const titleKey = citationTitleKey(title, host);
+    const dedupeKey = `${host}:${titleKey}`;
+    if (seenKeys.has(dedupeKey)) return;
+    if (host && (hostCounts.get(host) ?? 0) >= 2) return;
+    seenUrls.add(normalizedUrl);
+    seenKeys.add(dedupeKey);
+    if (host) hostCounts.set(host, (hostCounts.get(host) ?? 0) + 1);
+    citations.push({
+      index: citations.length + 1,
+      title,
+      url,
+    });
+  });
+  return citations.slice(0, 4);
+}
+
+function citationTitleKey(title: string, host: string): string {
+  const normalized = title.trim().toLowerCase().replace(/\s+/g, " ").replace(/^www\./, "");
+  if (!normalized || normalized === "参考来源" || normalized === host || normalized === `www.${host}` || normalized === "protocols") {
+    return host || normalized;
+  }
+  return normalized;
+}
+
+function readWebSearchStatus(value: unknown): { status: "searching" | "completed" | "failed"; label: string } {
+  const rec = asRecord(value);
+  const rawStatus = coalesceString(rec?.status).toLowerCase();
+  const status =
+    rawStatus === "completed" || rawStatus === "done" || rawStatus === "finished"
+      ? "completed"
+      : rawStatus === "failed" || rawStatus === "error"
+        ? "failed"
+        : "searching";
+  const fallback =
+    status === "completed"
+      ? "我查好专业资料啦"
+      : status === "failed"
+        ? "专业资料暂时没查好"
+        : "我在查专业资料～";
+  return { status, label: coalesceString(rec?.label) || fallback };
 }
 
 function normalizeToolName(toolName: unknown): string {
@@ -218,6 +283,25 @@ function withRunStartedWorkRow(tools: AgUiToolCallRow[], title: string): AgUiToo
       state: "running",
     },
   ];
+}
+
+function upsertWebSearchWorkRow(
+  tools: AgUiToolCallRow[],
+  search: { status: "searching" | "completed" | "failed"; label: string },
+): AgUiToolCallRow[] {
+  const baseTools = withoutRunStartedWorkRow(tools);
+  return upsertToolRow(
+    baseTools,
+    ["web_search:current"],
+    {
+      kind: "tool",
+      name: "web_search",
+      title: search.label,
+      argsDigest: "",
+      state: search.status === "failed" ? "error" : search.status === "completed" ? "completed" : "running",
+    },
+    { mergeRunning: true },
+  );
 }
 
 function truncate(s: string, max: number): string {
@@ -1098,6 +1182,25 @@ export function applyAgUiStreamSideEffects(
   }
 
   if (eventType === "CUSTOM") {
+    if (String(rec.name ?? "") === WEB_SEARCH_STATUS_CUSTOM_NAME) {
+      const search = readWebSearchStatus(rec.value);
+      const startedAt = nowMs();
+      patchMsg((m) => ({
+        ...m,
+        agentThinkingTitle: undefined,
+        agentWorkStartedAtMs: m.agentWorkStartedAtMs ?? startedAt,
+        agentWorkFinishedAtMs: undefined,
+        agentToolCalls: upsertWebSearchWorkRow(m.agentToolCalls ?? [], search),
+      }));
+      return { didUpdate };
+    }
+    if (String(rec.name ?? "") === WEB_SEARCH_CITATIONS_CUSTOM_NAME) {
+      const citations = readWebSearchCitations(rec.value);
+      if (citations.length > 0) {
+        patchMsg((m) => ({ ...m, citations }));
+      }
+      return { didUpdate };
+    }
     const statusLine = extractAgentStatusLineFromCustom(rec);
     if (statusLine && !isThinkingStatusLine(statusLine)) {
       const nextStatusLine = semantic.visibility === "hidden" ? "" : semantic.visibility === "status" ? semantic.label : labelForStatus(statusLine);

@@ -22,4 +22,40 @@ describe("AgentHub artifact ordering wiring", () => {
       "agUiArtifactSpacingClass(richTextHasAgUiArtifactForMsg, Boolean(msg.content.trim()))",
     );
   });
+
+  it("moves the visible chat window to the latest page after external chat sync", () => {
+    expect(agentHubSource).toContain("showLatestChatHistoryWindow(merged.length)");
+    expect(agentHubSource).toContain("visibleStartIndexRef.current = nextStart");
+  });
+
+  it("keeps newly sent turns anchored to the latest visible chat window", () => {
+    expect(agentHubSource).toContain("pendingLatestChatWindowSyncRef.current = true");
+    expect(agentHubSource).toContain("prepareLatestChatWindowForNewTurn()");
+    expect(agentHubSource).toContain("? latestChatHistoryStart(messages.length, HUB_CHAT_HISTORY_PAGE)");
+  });
+
+  it("uses monotonic local ids for newly inserted AgentHub messages", () => {
+    expect(agentHubSource).toContain("let agentHubMessageIdCounter = 0");
+    expect(agentHubSource).toContain("function createAgentHubMessageId(prefix: string): string");
+    expect(agentHubSource).toContain('id: createAgentHubMessageId("u")');
+    expect(agentHubSource).toContain('const replyId = createAgentHubMessageId("m")');
+  });
+
+  it("renders professional sources as clickable page titles", () => {
+    expect(agentHubSource).toContain("{citationLabel(citation)}");
+    expect(agentHubSource).not.toContain("function citationDisplayUrl(url: string): string");
+  });
+
+  it("keeps voice transcription in the input until the user sends manually", () => {
+    expect(agentHubSource).toContain("语音转写结束只回填输入框，需用户主动发送");
+    expect(agentHubSource).toContain("setInput(text)");
+    expect(agentHubSource).not.toContain("await handleSend(text)");
+  });
+
+  it("starts a fresh AgentHub session on app cold start instead of restoring local cached chat", () => {
+    expect(agentHubSource).toContain("const isColdStart = inMemory.length === 0");
+    expect(agentHubSource).toContain("clearPersistedAgentConversationId()");
+    expect(agentHubSource).toContain("clearPersistedAgUiThreadId()");
+    expect(agentHubSource).toContain("const merged = isColdStart ? [createNewConversationGreetingMessage()] : inMemory");
+  });
 });
