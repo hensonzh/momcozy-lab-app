@@ -286,8 +286,8 @@ function clearQuickRepliesFromMessage(message: ChatMessage): ChatMessage {
   return rest;
 }
 
-const AG_UI_ARTIFACT_AFTER_TEXT_CLASS = "mt-3.5";
-const AG_UI_ARTIFACT_STACK_OFFSET_CLASS = "mt-2";
+const AG_UI_ARTIFACT_AFTER_TEXT_CLASS = "mt-5";
+const AG_UI_ARTIFACT_STACK_OFFSET_CLASS = "mt-3";
 
 function agUiArtifactSpacingClass(
   hasAgUiArtifact: boolean,
@@ -314,12 +314,12 @@ function AgentHubQuickReplies({
     <div
       className={cn(
         "max-w-full",
-        hasCitations ? "mt-5" : "mt-3.5",
+        hasCitations ? "mt-5" : "mt-4",
         disabled && "opacity-60",
       )}
     >
-      <div className="mb-2 flex items-center gap-1.5 px-0.5 text-[11px] font-[700] text-[#9b7a84]">
-        <span className="h-px w-3 rounded-full bg-[#d8bac4]" aria-hidden="true" />
+      <div className="mb-2 flex items-center gap-1.5 px-0.5 text-[11px] font-[600] text-[#9b7a84]">
+        <span className="h-px w-4 rounded-full bg-[#dbc3cb]" aria-hidden="true" />
         <span>猜你想说</span>
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -330,7 +330,7 @@ function AgentHubQuickReplies({
             disabled={disabled}
             onClick={() => onSelect(reply.sendText)}
             className={cn(
-              "group inline-flex min-h-[34px] max-w-full items-center gap-1.5 rounded-full border border-[#eadde2] bg-white/70 px-3 py-1.5 text-left text-[13px] font-[650] leading-snug text-[#4a3a40] shadow-[0_1px_4px_rgba(94,55,67,0.035)] transition-colors",
+              "group inline-flex min-h-[34px] max-w-full items-center gap-1.5 rounded-full border border-[#eadde2] bg-white/62 px-3 py-1.5 text-left text-[13px] font-[560] leading-snug text-[#4a3a40] transition-colors",
               disabled
                 ? "cursor-not-allowed"
                 : "hover:border-[#cf9aac] hover:bg-[#fff8fb] active:bg-[#f8edf2]",
@@ -369,9 +369,12 @@ function AgentHubCitations({ msg }: { msg: ChatMessage }) {
   const citations = msg.citations ?? [];
   if (msg.role !== "mai" || citations.length === 0) return null;
   return (
-    <div className="mt-3.5 max-w-full px-0.5 text-[11px] leading-snug text-[#7b6671]">
-      <div className="mb-1.5 text-[10px] font-[650] tracking-[0.01em] text-[#8f7a84]">专业信息源</div>
-      <ol className="space-y-1.5">
+    <div className="mt-4 max-w-full px-0.5 text-[11px] leading-snug text-[#7b6671]">
+      <div className="mb-1.5 flex items-center gap-1.5 text-[10px] font-[600] tracking-[0.01em] text-[#8f7a84]">
+        <span className="h-px w-4 rounded-full bg-[#dbc3cb]" aria-hidden="true" />
+        <span>专业信息源</span>
+      </div>
+      <ol className="space-y-1">
         {citations.map((citation) => (
           <li
             key={`${citation.index}-${citation.url}`}
@@ -2873,7 +2876,7 @@ const AgentHub: React.FC = () => {
                 : isMainAssistantBubble
                   ? cn("w-fit max-w-full", mainAssistantBubbleBase)
                   : cn(
-                      "rounded-2xl rounded-bl-md border bg-card px-3.5 py-2.5 text-[13px] leading-relaxed shadow-sm",
+                      "rounded-2xl rounded-bl-md border bg-card px-3.5 py-2.5 text-[13px] leading-relaxed shadow-[0_8px_20px_-18px_rgba(83,47,64,0.36)]",
                       msg.cardType ? cardBg[msg.cardType] : "border-border",
                     ),
             );
@@ -2884,7 +2887,7 @@ const AgentHub: React.FC = () => {
                 : isMainAssistantBubble
                   ? mainAssistantBubbleBase
                   : cn(
-                      "rounded-2xl rounded-bl-md border bg-card px-3.5 py-2.5 text-[13px] leading-relaxed shadow-sm",
+                      "rounded-2xl rounded-bl-md border bg-card px-3.5 py-2.5 text-[13px] leading-relaxed shadow-[0_8px_20px_-18px_rgba(83,47,64,0.36)]",
                       msg.cardType ? cardBg[msg.cardType] : "border-border",
                     ),
             );

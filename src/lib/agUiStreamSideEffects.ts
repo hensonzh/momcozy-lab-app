@@ -941,6 +941,12 @@ function richArtifactActionKey(action: unknown): string {
   return artifactType === "support_ticket_draft" ? "support_ticket_draft:current" : "";
 }
 
+function isAgUiArtifactAction(action: unknown): boolean {
+  const obj = asRecord(action);
+  if (!obj || coalesceString(obj.kind) !== "ag_ui_artifact") return false;
+  return Boolean(normalizeArtifactType(obj.artifact_type));
+}
+
 function isFormLikeArtifactAction(action: unknown): boolean {
   const obj = asRecord(action);
   if (!obj || coalesceString(obj.kind) !== "ag_ui_artifact") return false;
@@ -948,15 +954,15 @@ function isFormLikeArtifactAction(action: unknown): boolean {
   return artifactType === "form" || artifactType === "support_ticket" || artifactType === "support_ticket_draft";
 }
 
-function richTextPayloadHasFormLikeArtifact(payload: ChatRichTextPayload | undefined): boolean {
-  return Boolean(payload?.action?.some(isFormLikeArtifactAction));
+function richTextPayloadHasAgUiArtifact(payload: ChatRichTextPayload | undefined): boolean {
+  return Boolean(payload?.action?.some(isAgUiArtifactAction));
 }
 
-function messageHasFormLikeArtifact(message: ChatMessage): boolean {
-  if (richTextPayloadHasFormLikeArtifact(message.richText)) return true;
+function messageHasAgUiArtifact(message: ChatMessage): boolean {
+  if (richTextPayloadHasAgUiArtifact(message.richText)) return true;
   return Boolean(
     message.streamRenderItems?.some((item) =>
-      item.kind === "rich" && richTextPayloadHasFormLikeArtifact(item.payload)
+      item.kind === "rich" && richTextPayloadHasAgUiArtifact(item.payload)
     ),
   );
 }
@@ -1154,12 +1160,14 @@ export function applyAgUiStreamSideEffects(
     const replies = readQuickReplies(rec.replies);
     if (replies.length === 3) {
       didUpdate = true;
-      setMessages((prev) =>
-        prev.map((m) => ({
+      setMessages((prev) => {
+        const latestMessage = prev.at(-1);
+        const canAttachToReply = latestMessage?.id === replyId && latestMessage.role === "mai";
+        return prev.map((m) => ({
           ...withoutQuickReplies(m),
-          ...(m.id === replyId && !messageHasFormLikeArtifact(m) ? { quickReplies: replies } : {}),
-        })),
-      );
+          ...(canAttachToReply && m.id === replyId && !messageHasAgUiArtifact(m) ? { quickReplies: replies } : {}),
+        }));
+      });
     }
   }
 
@@ -1413,7 +1421,7 @@ export function applyAgUiStreamSideEffects(
           richText: m.richText ? mergePendingRichTextPayload(m.richText, rich) : rich,
           streamRenderItems: appendRichRenderItem(m.streamRenderItems, rich),
         };
-        return isFormLikeArtifactAction(action) ? withoutQuickReplies(next) : next;
+        return isAgUiArtifactAction(action) ? withoutQuickReplies(next) : next;
       });
     }
   }

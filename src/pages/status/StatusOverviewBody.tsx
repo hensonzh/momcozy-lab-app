@@ -629,7 +629,7 @@ const Expandable: React.FC<{
       id={id}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`mx-4 mb-3 rounded-2xl bg-card border border-border/40 shadow-sm overflow-hidden ${className}`}
+      className={`mx-4 mb-3 rounded-[16px] bg-card border border-border/55 shadow-none overflow-hidden ${className}`}
     >
       <button
         type="button"
@@ -768,7 +768,7 @@ function StatusModuleCard({
       type="button"
       aria-label={`${title}说明`}
       onClick={onInfoClick}
-      className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/65 text-[#8d6f7d] shadow-sm active:scale-95"
+      className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/65 text-[#8d6f7d] shadow-[0_4px_12px_-9px_rgba(83,47,64,0.35)] active:scale-95"
     >
       <HelpCircle className="h-3.5 w-3.5" />
     </button>
@@ -778,7 +778,7 @@ function StatusModuleCard({
       <div className="relative z-10 flex items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="flex min-w-0 items-center gap-1">
-            <h3 className="truncate text-[14px] font-extrabold leading-tight text-[#35212c]">{title}</h3>
+            <h3 className="truncate text-[14px] font-bold leading-tight text-[#35212c]">{title}</h3>
             {infoPlacement === "title" ? infoButton : null}
           </div>
           {subtitle ? (
@@ -788,58 +788,58 @@ function StatusModuleCard({
             </div>
           ) : null}
         </div>
-        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl ${toneClasses.icon}`}>
+        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${toneClasses.icon}`}>
           {icon}
         </span>
       </div>
       <div className={`relative z-10 ${hasMetrics ? "mt-5" : hasBodyText ? "mt-2 flex flex-1 flex-col" : "mt-auto"}`}>
         {bodyText ? (
-          <p className="my-auto line-clamp-2 text-[11px] font-bold leading-snug text-[#7a6870]">{bodyText}</p>
+          <p className="my-auto line-clamp-2 text-[11px] font-medium leading-snug text-[#7a6870]">{bodyText}</p>
         ) : null}
         {metrics?.length ? (
           <div className={`grid ${metrics.length >= 3 ? "grid-cols-3 gap-1.5" : metrics.length > 1 ? "grid-cols-2 gap-2" : "grid-cols-1 gap-2"}`}>
             {metrics.map((metric) => (
               <div key={metric.label} className="min-w-0">
                 <div className="flex min-w-0 items-center gap-1">
-                  <span className="truncate text-[11px] font-extrabold leading-tight text-[#7a5b68]">{metric.label}</span>
+                  <span className="truncate text-[11px] font-semibold leading-tight text-[#7a5b68]">{metric.label}</span>
                   {metric.onInfoClick ? (
                     <button
                       type="button"
                       aria-label={metric.ariaLabel ?? `${metric.label}说明`}
                       onClick={metric.onInfoClick}
-                      className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/65 text-[#8d6f7d] shadow-sm active:scale-95"
+                      className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/65 text-[#8d6f7d] shadow-[0_4px_12px_-9px_rgba(83,47,64,0.35)] active:scale-95"
                     >
                       <HelpCircle className="h-3 w-3" />
                     </button>
                   ) : null}
                 </div>
-                <p className={`mt-1 min-h-[22px] truncate font-black leading-tight text-[#35212c] ${metrics.length >= 3 ? "text-[14px]" : "text-[16px]"}`}>{metric.value}</p>
+                <p className={`mt-1 min-h-[22px] truncate font-bold leading-tight text-[#35212c] ${metrics.length >= 3 ? "text-[14px]" : "text-[16px]"}`}>{metric.value}</p>
               </div>
             ))}
           </div>
         ) : null}
-        {value ? <p className="min-h-[22px] text-[16px] font-black leading-tight text-[#35212c]">{value}</p> : null}
-        {supportingText ? <p className="mt-1 text-[11px] font-bold leading-snug text-[#7a5b68]">{supportingText}</p> : null}
+        {value ? <p className="min-h-[22px] text-[16px] font-bold leading-tight text-[#35212c]">{value}</p> : null}
+        {supportingText ? <p className="mt-1 text-[11px] font-medium leading-snug text-[#7a5b68]">{supportingText}</p> : null}
         {action || secondaryAction ? (
           <div className={`mt-2 flex flex-wrap gap-1.5 ${alignActionTextWithTitle ? "-ml-2.5" : ""}`}>
             {action ? (
               onClick ? (
-                <button type="button" onClick={onClick} className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
+                <button type="button" onClick={onClick} className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}>
                   {action}
                 </button>
               ) : (
-                <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
+                <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}>
                   {action}
                 </span>
               )
             ) : null}
             {secondaryAction ? (
               onSecondaryClick ? (
-                <button type="button" onClick={onSecondaryClick} className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
+                <button type="button" onClick={onSecondaryClick} className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}>
                   {secondaryAction}
                 </button>
               ) : (
-                <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${toneClasses.cta}`}>
+                <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}>
                   {secondaryAction}
                 </span>
               )
@@ -849,12 +849,12 @@ function StatusModuleCard({
       </div>
       <span
         aria-hidden="true"
-        className={`absolute -bottom-8 -right-6 h-24 w-24 rounded-full opacity-45 blur-xl ${toneClasses.glow}`}
+        className={`absolute -bottom-8 -right-6 h-24 w-24 rounded-full opacity-25 blur-lg ${toneClasses.glow}`}
       />
     </>
   );
 
-  const className = `relative flex min-h-[132px] flex-col overflow-hidden rounded-[22px] border border-white/70 bg-gradient-to-br p-3.5 text-left shadow-[0_10px_24px_rgba(83,47,64,0.06)] ${toneClasses.card}`;
+  const className = `relative flex min-h-[132px] flex-col overflow-hidden rounded-[16px] border border-white/80 bg-gradient-to-br p-3.5 text-left shadow-none ring-1 ring-border/20 ${toneClasses.card}`;
 
   return <article className={className}>{content}</article>;
 }
@@ -1632,15 +1632,15 @@ const StatusOverviewBody: React.FC = () => {
 	                role="tab"
 	                aria-selected={selected}
 	                onClick={() => setActiveDigitalTwin(tab)}
-	                className={`relative flex min-h-[68px] w-full min-w-0 items-center gap-2 overflow-hidden rounded-[22px] px-2.5 py-2 text-left transition-all ${
+	                className={`relative flex min-h-[68px] w-full min-w-0 items-center gap-2 overflow-hidden rounded-[16px] px-2.5 py-2 text-left transition-all ${
 	                  selected
-	                    ? "bg-[#fff7fb] text-[#35212c] shadow-[0_12px_28px_rgba(128,83,105,0.18)] ring-2 ring-[#d8adc2]"
-	                    : "bg-white/45 text-muted-foreground opacity-70 shadow-[0_6px_16px_rgba(83,47,64,0.05)] ring-1 ring-white/70 active:bg-white/70"
+	                    ? "bg-[#fff7fb] text-[#35212c] shadow-none ring-2 ring-[#d8adc2]"
+	                    : "bg-white/45 text-muted-foreground opacity-72 shadow-none ring-1 ring-white/70 active:bg-white/70"
 	                }`}
 	              >
 	                <span
 	                  aria-hidden="true"
-	                  className={`absolute inset-y-3 left-0 w-1.5 rounded-r-full bg-[#b46f91] transition-opacity ${
+	                  className={`absolute inset-y-3 left-0 w-1 rounded-r-full bg-[#b46f91] transition-opacity ${
 	                    selected ? "opacity-100" : "opacity-0"
 	                  }`}
 	                />
@@ -1652,7 +1652,7 @@ const StatusOverviewBody: React.FC = () => {
 	                  }`}
 	                />
 	                <span className="min-w-0">
-	                  <span className="block truncate text-[15px] font-black leading-tight">{title}</span>
+	                  <span className="block truncate text-[15px] font-bold leading-tight">{title}</span>
 	                  <span
 	                    className={`mt-1 block truncate text-[10px] font-semibold leading-tight ${
 	                      selected ? "text-[#806171]" : "text-muted-foreground"

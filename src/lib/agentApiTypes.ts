@@ -516,6 +516,29 @@ export interface PlanQueryData {
   task_list: PlanTaskItem[];
 }
 
+export interface CarePlanArtifact {
+  plan_id: number;
+  user_id: string;
+  plan_type: string;
+  title: string;
+  summary: string;
+  status: string;
+  source_artifact_type?: string;
+  created_at: string;
+  updated_at: string;
+  payload: Record<string, unknown>;
+}
+
+export interface PlanListData {
+  error: ApiErrorCode;
+  plan_list: CarePlanArtifact[];
+}
+
+export interface PlanDetailData {
+  error: ApiErrorCode;
+  plan: CarePlanArtifact | null;
+}
+
 /** V1.3 呵护计划任务条目 */
 export interface PlanTaskItem {
   task_id: number;

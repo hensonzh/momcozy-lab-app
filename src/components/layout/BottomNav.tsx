@@ -45,7 +45,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
   return (
     <nav
       className={cn(
-        "z-40 bg-card/80 backdrop-blur-xl pb-safe",
+        "z-40 border-t border-border/35 bg-card/88 backdrop-blur-xl pb-safe",
         embedded ? "relative w-full shrink-0" : "fixed bottom-0 left-0 right-0",
       )}
     >
@@ -63,7 +63,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
               <div key={tab.path} className="flex-1 flex justify-center h-full items-center">
                 <button
                   onClick={() => navigate(tab.path)}
-                  className="relative -top-3 flex h-[68px] w-[68px] flex-col items-center justify-center rounded-full border-[5px] border-background bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-[0_10px_22px_-7px_rgba(235,76,122,0.42)] transition-transform active:scale-95"
+                  className="relative -top-3 flex h-[68px] w-[68px] flex-col items-center justify-center rounded-full border-[5px] border-background bg-gradient-to-br from-primary to-primary/85 text-primary-foreground shadow-none ring-1 ring-primary/18 transition-transform active:scale-95"
                 >
                   <tab.icon className={cn("h-7 w-7 shrink-0", active && "fill-primary-foreground/20")} strokeWidth={active ? 2.5 : 2} />
                   <span className="mt-0.5 max-w-[56px] whitespace-nowrap text-center text-[8.5px] font-bold leading-none">{tab.label}</span>
@@ -85,7 +85,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
               >
                 {/* Active background glow */}
                 {active && (
-                  <div className="absolute inset-0 rounded-xl bg-primary/10" />
+                  <div className="absolute inset-0 rounded-xl bg-primary/8" />
                 )}
                 <tab.icon className={cn("w-5 h-5 relative z-10", active && "fill-primary/20")} strokeWidth={active ? 2.5 : 1.8} />
                 <span className={cn("text-[10px] font-medium relative z-10", active && "font-bold")}>{tab.label}</span>
