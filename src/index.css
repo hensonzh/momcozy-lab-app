@@ -46,6 +46,29 @@
     --mai-warm: 26 58% 67%;
     --mai-glow: 346 38% 68%;
 
+    /* Product visual system */
+    --mmc-ink: 325 18% 19%;
+    --mmc-ink-soft: 327 10% 42%;
+    --mmc-ink-muted: 330 9% 53%;
+    --mmc-surface: 24 55% 98%;
+    --mmc-surface-raised: 0 0% 100%;
+    --mmc-surface-soft: 24 34% 95%;
+    --mmc-rose: 346 29% 52%;
+    --mmc-rose-soft: 348 31% 92%;
+    --mmc-care: 172 43% 43%;
+    --mmc-care-soft: 166 49% 92%;
+    --mmc-amber: 36 69% 62%;
+    --mmc-amber-soft: 38 74% 92%;
+    --mmc-violet: 258 36% 58%;
+    --mmc-violet-soft: 263 55% 94%;
+    --mmc-card-radius: 16px;
+    --mmc-control-radius: 12px;
+    --mmc-pill-radius: 999px;
+    --mmc-border-soft: 348 22% 86%;
+    --mmc-shadow-soft: 0 8px 22px -14px hsl(var(--mmc-ink) / 0.24);
+    --mmc-shadow-card: 0 10px 26px -18px hsl(var(--mmc-ink) / 0.28);
+    --mmc-shadow-pop: 0 14px 34px -20px hsl(var(--mmc-ink) / 0.34);
+
     /* Sidebar */
     --sidebar-background: 23 45% 96%;
     --sidebar-foreground: 325 18% 19%;
@@ -101,6 +124,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Quicksand', 'Noto Sans SC', sans-serif;
+    font-weight: 400;
   }
 }
 
@@ -118,9 +142,7 @@
   }
 
   .mai-shadow {
-    box-shadow: 
-      0 4px 20px -4px hsl(var(--mai-felt) / 0.15),
-      0 2px 8px -2px hsl(var(--mai-felt) / 0.1);
+    box-shadow: var(--mmc-shadow-card);
   }
 
   .mai-glow {
@@ -136,11 +158,12 @@
   max-width: 100%;
   box-sizing: border-box;
   display: grid;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid #d6dde5;
-  border-radius: 8px;
-  background: #ffffff;
+  gap: 13px;
+  padding: 14px;
+  border: 1px solid hsl(var(--mmc-border-soft) / 0.82);
+  border-radius: 14px;
+  background: hsl(var(--mmc-surface-raised) / 0.96);
+  box-shadow: none;
 }
 
 .agent-card-hospital_bag_card,
@@ -156,30 +179,31 @@
   overflow: hidden;
   border-color: #eadbe2;
   background:
-    linear-gradient(145deg, #fff8fa 0%, #f7fcfb 48%, #fff7ec 100%);
-  box-shadow: 0 16px 38px rgba(83, 47, 64, 0.11);
+    radial-gradient(circle at 98% 0%, rgba(255, 239, 220, 0.6) 0%, rgba(255, 239, 220, 0) 28%),
+    linear-gradient(145deg, #fffafd 0%, #f8fcfb 56%, #fffaf2 100%);
+  box-shadow: none;
 }
 
 .agent-card-birth_plan_card {
   overflow: hidden;
   border-color: #d7e5e1;
   background:
-    radial-gradient(circle at 96% 0%, rgba(251, 221, 232, 0.92) 0%, rgba(251, 221, 232, 0) 30%),
-    radial-gradient(circle at 0% 12%, rgba(208, 241, 233, 0.92) 0%, rgba(208, 241, 233, 0) 34%),
-    linear-gradient(145deg, #fffafa 0%, #f6fbf8 48%, #fff7ef 100%);
+    radial-gradient(circle at 96% 0%, rgba(242, 224, 231, 0.55) 0%, rgba(242, 224, 231, 0) 30%),
+    radial-gradient(circle at 0% 12%, rgba(218, 242, 236, 0.7) 0%, rgba(218, 242, 236, 0) 34%),
+    linear-gradient(145deg, #fffdfd 0%, #f8fcfb 54%, #fffaf4 100%);
   color: #261c24;
-  box-shadow: 0 18px 42px rgba(56, 72, 71, 0.13);
+  box-shadow: none;
 }
 
 .agent-card-birth_journey_plan_card {
   overflow: hidden;
   border-color: rgba(232, 196, 207, 0.92);
   background:
-    radial-gradient(circle at 100% 0%, rgba(255, 226, 199, 0.72) 0%, rgba(255, 226, 199, 0) 34%),
-    radial-gradient(circle at 0% 10%, rgba(221, 244, 239, 0.82) 0%, rgba(221, 244, 239, 0) 32%),
-    linear-gradient(145deg, #fff8fa 0%, #fffdf8 58%, #f7fffb 100%);
+    radial-gradient(circle at 100% 0%, rgba(255, 235, 214, 0.52) 0%, rgba(255, 235, 214, 0) 34%),
+    radial-gradient(circle at 0% 10%, rgba(224, 243, 239, 0.68) 0%, rgba(224, 243, 239, 0) 32%),
+    linear-gradient(145deg, #fffdfd 0%, #fffdf8 58%, #f8fffc 100%);
   color: #3f2732;
-  box-shadow: 0 16px 38px rgba(83, 47, 64, 0.11);
+  box-shadow: none;
 }
 
 .agent-card-header {
@@ -195,32 +219,32 @@
 .agent-card-birth_plan_card .agent-card-header,
 .agent-card-birth_journey_plan_card .agent-card-header {
   position: relative;
-  min-height: 72px;
-  padding: 4px 0 14px;
+  min-height: 68px;
+  padding: 4px 0 12px;
   border-bottom-color: #dedede;
 }
 
 .agent-card-birth_journey_plan_card .agent-card-header {
-  margin: -16px -16px 0;
+  margin: -14px -14px 0;
   min-height: 64px;
-  padding: 18px 16px 14px;
+  padding: 16px 14px 13px;
   border-bottom-color: rgba(232, 196, 207, 0.72);
   background:
     linear-gradient(135deg, rgba(255, 238, 244, 0.94) 0%, rgba(255, 247, 237, 0.88) 62%, rgba(238, 250, 247, 0.9) 100%);
 }
 
 .agent-card-hospital_bag_card .agent-card-header {
-  margin: -16px -16px 0;
-  padding: 18px 16px 16px;
+  margin: -14px -14px 0;
+  padding: 16px 14px 14px;
   border-bottom-color: rgba(184, 102, 123, 0.18);
   background:
     linear-gradient(135deg, rgba(255, 235, 241, 0.86) 0%, rgba(232, 249, 246, 0.72) 56%, rgba(255, 241, 218, 0.78) 100%);
 }
 
 .agent-card-birth_plan_card .agent-card-header {
-  margin: -16px -16px 0;
+  margin: -14px -14px 0;
   min-height: 64px;
-  padding: 18px 16px 14px;
+  padding: 16px 14px 13px;
   border-bottom-color: rgba(83, 126, 119, 0.18);
   background:
     linear-gradient(135deg, rgba(238, 252, 247, 0.9) 0%, rgba(255, 243, 247, 0.78) 54%, rgba(255, 247, 231, 0.8) 100%);
@@ -282,6 +306,7 @@
   margin: 0;
   color: #111111;
   font-size: 22px;
+  font-weight: 780;
   line-height: 1.12;
 }
 
@@ -331,7 +356,7 @@
     radial-gradient(circle at 100% 0%, rgba(255, 223, 210, 0.56) 0%, rgba(255, 223, 210, 0) 32%),
     linear-gradient(145deg, #fff9f2 0%, #fff7f8 48%, #f8fbf4 100%);
   color: #35212c;
-  box-shadow: 0 12px 28px rgba(83, 47, 64, 0.09);
+  box-shadow: var(--mmc-shadow-card);
 }
 
 .analysis-card-header {
@@ -347,7 +372,7 @@
   margin: 0;
   color: #3d2130;
   font-size: 18px;
-  font-weight: 850;
+  font-weight: 780;
   line-height: 1.18;
 }
 
@@ -361,7 +386,7 @@
   background: rgba(255, 255, 255, 0.78);
   color: #7a4259;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 680;
   line-height: 1;
   border: 1px solid rgba(232, 201, 206, 0.95);
 }
@@ -402,7 +427,7 @@
   margin: 0;
   color: #442638;
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 720;
   line-height: 1.25;
 }
 
@@ -410,7 +435,7 @@
   margin: 0;
   color: #5d4853;
   font-size: 13px;
-  font-weight: 580;
+  font-weight: 400;
   line-height: 1.55;
 }
 
@@ -433,7 +458,7 @@
 .analysis-metric-grid small {
   color: #806575;
   font-size: 10px;
-  font-weight: 780;
+  font-weight: 620;
   line-height: 1.2;
 }
 
@@ -442,7 +467,7 @@
   overflow-wrap: anywhere;
   color: #3d2130;
   font-size: 13px;
-  font-weight: 860;
+  font-weight: 720;
   line-height: 1.25;
 }
 
@@ -450,7 +475,7 @@
   color: #7a6772;
   font-size: 10px;
   font-style: normal;
-  font-weight: 650;
+  font-weight: 500;
   line-height: 1.25;
 }
 
@@ -559,7 +584,7 @@
   border: 1px solid rgba(234, 219, 226, 0.9);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.68);
-  box-shadow: 0 8px 20px rgba(83, 47, 64, 0.06);
+  box-shadow: none;
 }
 
 .birth-plan-note-panel,
@@ -572,7 +597,7 @@
   border: 1px solid rgba(221, 232, 229, 0.9);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.68);
-  box-shadow: 0 8px 20px rgba(56, 72, 71, 0.07);
+  box-shadow: none;
 }
 
 .birth-plan-priority-panel {
@@ -612,7 +637,7 @@
   gap: 7px;
   color: #1f1f1f;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 720;
   text-transform: none;
 }
 
@@ -716,7 +741,7 @@
   border: 1px solid rgba(232, 206, 217, 0.85);
   border-radius: 14px;
   background: rgba(255, 251, 253, 0.82);
-  box-shadow: inset 3px 0 0 rgba(216, 107, 145, 0.42);
+  box-shadow: inset 2px 0 0 rgba(216, 107, 145, 0.3);
 }
 
 .hospital-card-focus-list li > span:first-child {
@@ -741,7 +766,7 @@
 .hospital-card-focus-list li > strong {
   min-width: 0;
   overflow-wrap: anywhere;
-  font-weight: 750;
+  font-weight: 520;
 }
 
 .hospital-card-profile-strip {
@@ -863,7 +888,7 @@
   margin: 0;
   color: #1f1f1f;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 720;
   line-height: 1.3;
 }
 
@@ -961,7 +986,7 @@
   gap: 10px;
   color: #171717;
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 680;
 }
 
 .packing-group summary::-webkit-details-marker {
@@ -1114,7 +1139,7 @@
   flex: 0 0 auto;
   color: #4f4f4f;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 620;
   text-align: right;
   white-space: nowrap;
 }
@@ -1145,7 +1170,7 @@
   background: #f5f5f5;
   color: #333333;
   font-size: 10px;
-  font-weight: 650;
+  font-weight: 560;
   text-align: center;
   white-space: nowrap;
 }
@@ -1224,7 +1249,7 @@
   background: rgba(255, 255, 255, 0.58);
   color: #6b5662;
   font-size: 10px;
-  font-weight: 720;
+  font-weight: 620;
   line-height: 1;
 }
 
@@ -1248,7 +1273,7 @@
 .birth-journey-owner-strip dt {
   color: #8a6d7a;
   font-size: 10px;
-  font-weight: 760;
+  font-weight: 620;
   line-height: 1.2;
 }
 
@@ -1297,9 +1322,9 @@
   background: #fff7fa;
   color: #a24e69;
   font-size: 15px;
-  font-weight: 860;
+  font-weight: 760;
   line-height: 1;
-  box-shadow: 0 6px 16px rgba(83, 47, 64, 0.1);
+  box-shadow: var(--mmc-shadow-soft);
 }
 
 .birth-journey-phase-marker-number {
@@ -1328,7 +1353,7 @@
   border: 1px solid rgba(232, 196, 207, 0.78);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 10px 22px rgba(83, 47, 64, 0.07);
+  box-shadow: none;
 }
 
 .birth-journey-phase-status-badge {
@@ -1345,7 +1370,7 @@
   padding: 0 7px;
   color: #247a70;
   font-size: 9px;
-  font-weight: 820;
+  font-weight: 680;
   line-height: 1;
   box-shadow: 0 5px 12px rgba(44, 155, 146, 0.12);
 }
@@ -1361,7 +1386,7 @@
   gap: 10px;
   padding: 12px;
   background: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 10px 22px rgba(83, 47, 64, 0.07);
+  box-shadow: none;
 }
 
 .birth-journey-phase.is-collapsible .birth-journey-phase-details {
@@ -1403,7 +1428,7 @@
   margin: 0;
   color: #3e2432;
   font-size: 15px;
-  font-weight: 860;
+  font-weight: 780;
   line-height: 1.25;
 }
 
@@ -1449,13 +1474,13 @@
   overflow-wrap: anywhere;
   color: #745365;
   font-size: 14px;
-  font-weight: 780;
+  font-weight: 680;
 }
 
 .birth-journey-phase-details[open] .birth-journey-phase-summary h3 {
   color: #3e2432;
   font-size: 15px;
-  font-weight: 860;
+  font-weight: 780;
 }
 
 .birth-journey-phase-expanded-content {
@@ -1473,7 +1498,7 @@
 
 .birth-journey-goal strong {
   color: #8a5068;
-  font-weight: 820;
+  font-weight: 720;
 }
 
 .birth-journey-section-grid {
@@ -1494,7 +1519,7 @@
   margin: 0;
   color: #805064;
   font-size: 11px;
-  font-weight: 820;
+  font-weight: 720;
   line-height: 1.2;
 }
 

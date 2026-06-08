@@ -30,6 +30,8 @@ import type {
   NotifyQueryParams,
   PlanMilkPeriodData,
   PlanMilkPeriodParams,
+  PlanDetailData,
+  PlanListData,
   PlanTaskMutationData,
   PlanPumpTodayParams,
   PlanQueryData,
@@ -80,6 +82,8 @@ export const API_PATHS = {
   PUMP_PROCESS_DATA: `${API_V1_PREFIX}/pump/process/data`,
   PUMP_SESSION_SUMMARY_WS: `${API_V1_PREFIX}/pump/session-summary`,
   PLAN_QUERY_TASK: `${API_V1_PREFIX}/plan/query-task`,
+  PLAN_LIST: `${API_V1_PREFIX}/plan/list`,
+  PLAN_DETAIL: `${API_V1_PREFIX}/plan/detail`,
   PLAN_ADD_TASK: `${API_V1_PREFIX}/plan/add-task`,
   PLAN_DELETE_TASK: `${API_V1_PREFIX}/plan/delete-task`,
   PLAN_REVISE_TASK: `${API_V1_PREFIX}/plan/revise-task`,
@@ -952,6 +956,32 @@ export async function queryPlanTasks(
   opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
 ): Promise<PlanQueryData> {
   return queryCarePlan(params, opts);
+}
+
+export async function queryCarePlanList(
+  params: { user_id: string; status?: string },
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<PlanListData> {
+  return apiRequest<PlanListData>(API_PATHS.PLAN_LIST, {
+    method: "GET",
+    params,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
+}
+
+export async function queryCarePlanDetail(
+  params: { user_id: string; plan_id: number },
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<PlanDetailData> {
+  return apiRequest<PlanDetailData>(API_PATHS.PLAN_DETAIL, {
+    method: "GET",
+    params,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
 }
 
 /**

@@ -92,6 +92,43 @@ describe("applyAgUiStreamSideEffects", () => {
     ]);
   });
 
+  it("does not attach quick replies to an older assistant message", () => {
+    let messages: ChatMessage[] = [
+      {
+        id: "reply",
+        role: "mai",
+        content: "上一轮助手回复",
+        timestamp: "",
+      },
+      {
+        id: "next-user",
+        role: "user",
+        content: "我又问了一句",
+        timestamp: "",
+      },
+    ];
+    const setMessages = (updater: SetStateAction<ChatMessage[]>) => {
+      messages = typeof updater === "function" ? updater(messages) : updater;
+    };
+
+    applyAgUiStreamSideEffects(
+      "reply",
+      {
+        type: "QUICK_REPLIES",
+        message_id: "reply",
+        replies: [
+          { text: "继续下一步", send_text: "继续下一步" },
+          { text: "换个方案", send_text: "我想换个方案" },
+          { text: "先帮我总结", send_text: "先帮我总结" },
+        ],
+      },
+      setMessages,
+    );
+
+    expect(messages[0].quickReplies).toBeUndefined();
+    expect(messages[1].quickReplies).toBeUndefined();
+  });
+
   it("does not apply quick replies to a message that already contains a form artifact", () => {
     const msg = applyEvents([
       {
@@ -113,6 +150,34 @@ describe("applyAgUiStreamSideEffects", () => {
           { text: "我来填写", send_text: "我来填写" },
           { text: "先解释一下", send_text: "先解释一下" },
           { text: "晚点再说", send_text: "晚点再说" },
+        ],
+      },
+    ]);
+
+    expect(msg.richText?.action).toHaveLength(1);
+    expect(msg.quickReplies).toBeUndefined();
+  });
+
+  it("does not apply quick replies to a message that already contains a card artifact", () => {
+    const msg = applyEvents([
+      {
+        type: "ARTIFACT_CREATED",
+        artifact_id: "birth_journey_1",
+        artifact_type: "birth_journey_plan_card",
+        tool_call_id: "call-card",
+        tool_call_name: "birth_journey_plan_card_create",
+        artifact: {
+          card_type: "birth_journey_plan_card",
+          card_json: { title: "生产全过程计划" },
+        },
+      },
+      {
+        type: "QUICK_REPLIES",
+        message_id: "reply",
+        replies: [
+          { text: "确认医院流程", send_text: "确认医院流程" },
+          { text: "整理待产包", send_text: "整理待产包" },
+          { text: "做沟通单", send_text: "做分娩沟通单" },
         ],
       },
     ]);
