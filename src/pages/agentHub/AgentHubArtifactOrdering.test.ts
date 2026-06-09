@@ -58,4 +58,17 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain("clearPersistedAgUiThreadId()");
     expect(agentHubSource).toContain("const merged = isColdStart ? [createNewConversationGreetingMessage()] : inMemory");
   });
+
+  it("consumes route prefill state into the bottom input once", () => {
+    expect(agentHubSource).toContain("consumedAgentPrefillKeyRef");
+    expect(agentHubSource).toContain("state?.agentPrefill");
+    expect(agentHubSource).toContain("setInput(agentPrefill)");
+    expect(agentHubSource).toContain("replace: true, state: null");
+  });
+
+  it("marks status notification when a birth journey plan artifact is generated", () => {
+    expect(agentHubSource).toContain("richTextPayloadHasBirthJourneyPlanCard");
+    expect(agentHubSource).toContain("markBirthJourneyPlanGeneratedNotification");
+    expect(agentHubSource).toContain("maybeMarkBirthJourneyNotification(payload)");
+  });
 });

@@ -6,6 +6,7 @@
 import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import type { AgUiToolCallRow, ChatMessage, ChatMessageCitation, ChatQuickReply } from "@/types/chat";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
+import { notifyBirthJourneyPlanDeleted } from "@/lib/birthJourneyPlanNotification";
 import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -331,6 +332,15 @@ function parseToolResultPayload(content: unknown): Record<string, unknown> | nul
   return null;
 }
 
+function maybeNotifyBirthJourneyPlanDeleted(parsed: Record<string, unknown> | null): void {
+  if (!parsed) return;
+  const toolName = normalizeToolName(parsed.tool_name);
+  if (toolName !== "birth_journey_plan_delete") return;
+  if (coalesceString(parsed.status) !== "plan_deleted") return;
+  if (parsed.side_effect_performed === false) return;
+  notifyBirthJourneyPlanDeleted();
+}
+
 function summarizeToolResult(parsed: Record<string, unknown>): string {
   const ok = parsed.ok;
   const base = typeof ok === "boolean" ? (ok ? "这一步处理好啦" : "这一步暂时没处理好") : "";
@@ -414,6 +424,7 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
       "milk_task_complete",
       "infant_growth_mutate",
       "hospital_bag_cart_update",
+      "birth_journey_plan_delete",
       "reminder_create",
       "reminder_update",
       "reminder_delete",
@@ -451,6 +462,7 @@ function toolStartCopy(toolName: string): { title: string } {
   if (["ui_form_create", "birth_plan_form_create", "hospital_bag_form_create"].includes(normalizedToolName)) return { title: "我先帮你准备确认内容～" };
   if (normalizedToolName === "labor_communication_card_create") return { title: "我先帮你整理分娩沟通单～" };
   if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我先帮你整理生产全过程计划～" };
+  if (normalizedToolName === "birth_journey_plan_delete") return { title: "我先帮你删除生产全过程计划～" };
   if (normalizedToolName === "hospital_bag_card_create") return { title: "我先帮你整理待产包清单～" };
   if (normalizedToolName === "ibclc_consult_card_create") return { title: "我先帮你准备 IBCLC 咨询入口～" };
   if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我先看看适合你的吸奶器型号～" };
@@ -562,6 +574,12 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
   if (["ui_form_create", "birth_plan_form_create", "hospital_bag_form_create"].includes(normalizedToolName)) return { title: "我已经准备好确认内容啦" };
   if (normalizedToolName === "labor_communication_card_create") return { title: "我已经帮你整理好分娩沟通单啦" };
   if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我已经帮你整理好生产全过程计划啦" };
+  if (normalizedToolName === "birth_journey_plan_delete") {
+    if (status === "needs_delete_confirmation") return { title: "删除前还需要你确认一下" };
+    if (status === "plan_not_found") return { title: "当前没有生产全过程计划可删除" };
+    if (status === "plan_deleted") return { title: "我已经删除生产全过程计划啦" };
+    return { title: "删除生产全过程计划暂时没成功" };
+  }
   if (normalizedToolName === "hospital_bag_card_create") return { title: "我已经帮你生成好待产包清单啦" };
   if (normalizedToolName === "ibclc_consult_card_create") return { title: "我已经准备好 IBCLC 咨询入口啦" };
   if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我已经帮你整理好吸奶器推荐啦" };
@@ -1142,6 +1160,7 @@ export function applyAgUiStreamSideEffects(
   const rec = data as Record<string, unknown>;
   const eventType = resolveAgUiEventType(data);
   const parsedToolResult = eventType === "TOOL_CALL_RESULT" ? parseToolResultPayload(rec.content) : null;
+  maybeNotifyBirthJourneyPlanDeleted(parsedToolResult);
   const semantic = semanticForAgUiEvent(rec, eventType, parsedToolResult);
   let didUpdate = false;
 

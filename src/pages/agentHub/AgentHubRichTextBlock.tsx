@@ -1004,16 +1004,20 @@ function normalizeBirthJourneyPlanCard(cardJsonRaw: Record<string, unknown>) {
   const owner = asObject(cardJsonRaw.owner) ?? {};
   const nextAction = asObject(cardJsonRaw.next_action) ?? {};
   const phases = asObjectList(cardJsonRaw.phases)
-    .map((phase, index) => ({
-      id: asString(phase.id) || `phase-${index}`,
-      title: asString(phase.title) || `阶段 ${index + 1}`,
-      date_range: asString(phase.date_range),
-      status: asString(phase.status) === "current" ? "current" : "upcoming",
-      goal: asString(phase.goal),
-      watchouts: compactBirthJourneyList(phase.watchouts, 4),
-      actions: compactBirthJourneyList(phase.actions, 4),
-      comate_help: compactBirthJourneyList(phase.comate_help, 3),
-    }))
+    .map((phase, index) => {
+      const id = asString(phase.id) || `phase-${index}`;
+      const title = asString(phase.title) || `阶段 ${index + 1}`;
+      return {
+        id,
+        title,
+        date_range: asString(phase.date_range),
+        status: asString(phase.status) === "current" ? "current" : "upcoming",
+        goal: asString(phase.goal),
+        watchouts: compactBirthJourneyList(phase.watchouts, 4),
+        actions: compactBirthJourneyList(phase.actions, 4),
+        comate_help: compactBirthJourneyHelpList(phase.comate_help, id, title),
+      };
+    })
     .filter((phase) => phase.title || phase.goal || phase.actions.length);
   return {
     title: asString(cardJsonRaw.title) || "生产全过程计划",
@@ -1031,6 +1035,20 @@ function normalizeBirthJourneyPlanCard(cardJsonRaw: Record<string, unknown>) {
 function compactBirthJourneyList(values: unknown, maxItems: number): string[] {
   const rawItems = Array.isArray(values) ? values : hasDisplayValue(values) ? [values] : [];
   return uniqueDisplayStrings(rawItems, maxItems);
+}
+
+const BIRTH_JOURNEY_HOSPITAL_BAG_HELP = "制定个性化待产清单";
+
+function isLatePregnancyBirthJourneyPhase(id: string, title: string): boolean {
+  return id === "late_pregnancy" || title === "孕晚期";
+}
+
+function compactBirthJourneyHelpList(values: unknown, id: string, title: string): string[] {
+  const items = compactBirthJourneyList(values, 4);
+  if (items.includes(BIRTH_JOURNEY_HOSPITAL_BAG_HELP) || isLatePregnancyBirthJourneyPhase(id, title)) {
+    return [BIRTH_JOURNEY_HOSPITAL_BAG_HELP];
+  }
+  return [];
 }
 
 function cardSubtitle(values: unknown[]): string {
@@ -1678,50 +1696,53 @@ const AgentHubRichTextBlock: React.FC<{
                   ) : null}
 
                   {journey.phases.length > 0 ? (
-                    <section className="birth-journey-timeline" aria-label="生产全过程阶段">
-                      {journey.phases.map((phase, phaseIndex) => {
-                        const isCurrentPhase = phase.status === "current";
-                        const phaseDetails = (
-                          <>
-                            {phase.goal ? (
-                              <p className="birth-journey-goal">
-                                <strong>阶段目标：</strong>
+                      <section className="birth-journey-timeline" aria-label="生产全过程阶段">
+                        {journey.phases.map((phase, phaseIndex) => {
+                          const isCurrentPhase = phase.status === "current";
+                          const phaseHelpItems = phase.comate_help;
+                          const phaseDetails = (
+                            <>
+                              {phase.goal ? (
+                                <p className="birth-journey-goal">
+                                  <strong>当前重点：</strong>
                                 <span>{phase.goal}</span>
                               </p>
                             ) : null}
                             <div className="birth-journey-section-grid">
                               {phase.watchouts.length > 0 ? (
                                 <section>
-                                  <h4>注意事项</h4>
+                                  <h4>温馨提醒</h4>
                                   <ul>
                                     {phase.watchouts.map((item, itemIndex) => (
                                       <li key={`${phase.id}-watch-${itemIndex}`}>{item}</li>
                                     ))}
-                                  </ul>
-                                </section>
-                              ) : null}
-                              {phase.actions.length > 0 ? (
-                                <section>
-                                  <h4>准备工作</h4>
-                                  <ul>
-                                    {phase.actions.map((item, itemIndex) => (
-                                      <li key={`${phase.id}-action-${itemIndex}`}>{item}</li>
-                                    ))}
-                                  </ul>
-                                </section>
-                              ) : null}
-                              {phase.comate_help.length > 0 ? (
-                                <section>
-                                  <h4>我能帮你做</h4>
-                                  <ul>
-                                    {phase.comate_help.map((item, itemIndex) => (
-                                      <li key={`${phase.id}-help-${itemIndex}`}>{item}</li>
-                                    ))}
-                                  </ul>
-                                </section>
-                              ) : null}
-                            </div>
-                          </>
+                                    </ul>
+                                  </section>
+                                ) : null}
+                                {phase.actions.length > 0 ? (
+                                  <section>
+                                    <h4>接下来建议</h4>
+                                    <ul>
+                                      {phase.actions.map((action, itemIndex) => (
+                                        <li key={`${phase.id}-suggestion-${itemIndex}`}>
+                                          <span>{action}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </section>
+                                ) : null}
+                                {phaseHelpItems.length > 0 ? (
+                                  <section className="birth-journey-help-section">
+                                    <h4>我能帮你做</h4>
+                                    <ul>
+                                      {phaseHelpItems.map((item, itemIndex) => (
+                                        <li key={`${phase.id}-help-${itemIndex}`}>{item}</li>
+                                      ))}
+                                    </ul>
+                                  </section>
+                                ) : null}
+                              </div>
+                            </>
                         );
                         return (
                           <article
@@ -1790,17 +1811,17 @@ const AgentHubRichTextBlock: React.FC<{
               return (
                 <article
                   key={`artifact-${index}`}
-	                  ref={(el) => {
-	                    cardArtifactRefs.current[index] = el;
-	                  }}
-	                  className="agent-card agent-card-birth_plan_card"
+                    ref={(el) => {
+                      cardArtifactRefs.current[index] = el;
+                    }}
+                    className="agent-card agent-card-birth_plan_card"
                 >
-	                  <header className="agent-card-header">
-	                    <div className="agent-card-header-text">
-	                      <h2>{bp.title}</h2>
-	                    </div>
-	                    <div className="flex items-center gap-1.5">
-	                      <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
+                    <header className="agent-card-header">
+                      <div className="agent-card-header-text">
+                        <h2>{bp.title}</h2>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
                     </div>
                   </header>
                   {groups.length > 0 ? (
@@ -1825,7 +1846,7 @@ const AgentHubRichTextBlock: React.FC<{
                       </div>
                     </section>
                   ) : null}
-	                  {bp.medical_notes.length > 0 ? (
+                    {bp.medical_notes.length > 0 ? (
                     <section className="birth-plan-medical-panel">
                       <h3>医疗或安全信息</h3>
                       <ul className="agent-card-list">
@@ -1834,9 +1855,9 @@ const AgentHubRichTextBlock: React.FC<{
                         ))}
                       </ul>
                     </section>
-	                  ) : null}
-	                  {bp.disclaimer ? <p className="agent-card-disclaimer">{bp.disclaimer}</p> : null}
-	                  {downloadButton}
+                    ) : null}
+                    {bp.disclaimer ? <p className="agent-card-disclaimer">{bp.disclaimer}</p> : null}
+                    {downloadButton}
                 </article>
               );
             }
