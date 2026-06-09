@@ -28,6 +28,8 @@ import type {
   FileUploadResponseData,
   NotifyQueryData,
   NotifyQueryParams,
+  PlanArtifactDeleteBody,
+  PlanArtifactDeleteData,
   PlanMilkPeriodData,
   PlanMilkPeriodParams,
   PlanDetailData,
@@ -36,6 +38,11 @@ import type {
   PlanPumpTodayParams,
   PlanQueryData,
   PlanQueryParams,
+  PregnancyDiaryCreateBody,
+  PregnancyDiaryDeleteBody,
+  PregnancyDiaryEntryData,
+  PregnancyDiaryListData,
+  PregnancyDiaryUpdateBody,
   PumpProcessBody,
   PumpProcessDataBody,
   PumpProcessDataResponseData,
@@ -84,9 +91,15 @@ export const API_PATHS = {
   PLAN_QUERY_TASK: `${API_V1_PREFIX}/plan/query-task`,
   PLAN_LIST: `${API_V1_PREFIX}/plan/list`,
   PLAN_DETAIL: `${API_V1_PREFIX}/plan/detail`,
+  PLAN_DELETE_ARTIFACT: `${API_V1_PREFIX}/plan/delete-artifact`,
   PLAN_ADD_TASK: `${API_V1_PREFIX}/plan/add-task`,
   PLAN_DELETE_TASK: `${API_V1_PREFIX}/plan/delete-task`,
   PLAN_REVISE_TASK: `${API_V1_PREFIX}/plan/revise-task`,
+  PREGNANCY_DIARY_LIST: `${API_V1_PREFIX}/pregnancy-diary/list`,
+  PREGNANCY_DIARY_TODAY: `${API_V1_PREFIX}/pregnancy-diary/today`,
+  PREGNANCY_DIARY_CREATE: `${API_V1_PREFIX}/pregnancy-diary/create`,
+  PREGNANCY_DIARY_UPDATE: `${API_V1_PREFIX}/pregnancy-diary/update`,
+  PREGNANCY_DIARY_DELETE: `${API_V1_PREFIX}/pregnancy-diary/delete`,
   DEVICE_INFO: `${API_V1_PREFIX}/device/info`,
   NOTIFY_QUERY: `${API_V1_PREFIX}/notify/query`,
   STATUS_CREATE: `${API_V1_PREFIX}/status/create`,
@@ -978,6 +991,84 @@ export async function queryCarePlanDetail(
   return apiRequest<PlanDetailData>(API_PATHS.PLAN_DETAIL, {
     method: "GET",
     params,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
+}
+
+export async function deleteCarePlanArtifact(
+  body: PlanArtifactDeleteBody,
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<PlanArtifactDeleteData> {
+  return apiRequest<PlanArtifactDeleteData>(API_PATHS.PLAN_DELETE_ARTIFACT, {
+    method: "POST",
+    body,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
+}
+
+export async function queryPregnancyDiaryList(
+  params: { user_id: string; start_date?: string; end_date?: string; limit?: number },
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<PregnancyDiaryListData> {
+  return apiRequest<PregnancyDiaryListData>(API_PATHS.PREGNANCY_DIARY_LIST, {
+    method: "GET",
+    params,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
+}
+
+export async function queryPregnancyDiaryToday(
+  params: { user_id: string; timestamp?: string },
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<PregnancyDiaryEntryData> {
+  return apiRequest<PregnancyDiaryEntryData>(API_PATHS.PREGNANCY_DIARY_TODAY, {
+    method: "GET",
+    params,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
+}
+
+export async function createPregnancyDiaryEntry(
+  body: PregnancyDiaryCreateBody,
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<PregnancyDiaryEntryData> {
+  return apiRequest<PregnancyDiaryEntryData>(API_PATHS.PREGNANCY_DIARY_CREATE, {
+    method: "POST",
+    body,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
+}
+
+export async function updatePregnancyDiaryEntry(
+  body: PregnancyDiaryUpdateBody,
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<PregnancyDiaryEntryData> {
+  return apiRequest<PregnancyDiaryEntryData>(API_PATHS.PREGNANCY_DIARY_UPDATE, {
+    method: "POST",
+    body,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
+}
+
+export async function deletePregnancyDiaryEntry(
+  body: PregnancyDiaryDeleteBody,
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<{ error: 0 | -1 }> {
+  return apiRequest<{ error: 0 | -1 }>(API_PATHS.PREGNANCY_DIARY_DELETE, {
+    method: "POST",
+    body,
     token: opts?.token,
     skipAuth: opts?.skipAuth,
     signal: opts?.signal,

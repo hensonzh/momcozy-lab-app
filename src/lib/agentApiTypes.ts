@@ -539,6 +539,67 @@ export interface PlanDetailData {
   plan: CarePlanArtifact | null;
 }
 
+export interface PlanArtifactDeleteBody {
+  user_id: string;
+  plan_id: number;
+}
+
+export interface PlanArtifactDeleteData {
+  error: ApiErrorCode;
+}
+
+export interface PregnancyDiaryEntry {
+  entry_id: number;
+  user_id: string;
+  entry_date: string;
+  gestational_week: string;
+  mood: string;
+  energy_level: string;
+  sleep_summary: string;
+  fetal_movement: string;
+  symptom_tags: string[];
+  appointment_note: string;
+  nutrition_note: string;
+  content: string;
+  attachments: Record<string, unknown>[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PregnancyDiaryListData {
+  error: ApiErrorCode;
+  diary_list: PregnancyDiaryEntry[];
+}
+
+export interface PregnancyDiaryEntryData {
+  error: ApiErrorCode;
+  diary: PregnancyDiaryEntry | null;
+}
+
+export interface PregnancyDiaryCreateBody {
+  user_id: string;
+  entry_date: string;
+  gestational_week?: string;
+  mood?: string;
+  energy_level?: string;
+  sleep_summary?: string;
+  fetal_movement?: string;
+  symptom_tags?: string[];
+  appointment_note?: string;
+  nutrition_note?: string;
+  content?: string;
+  attachments?: Record<string, unknown>[];
+}
+
+export interface PregnancyDiaryUpdateBody extends PregnancyDiaryCreateBody {
+  entry_id: number;
+}
+
+export interface PregnancyDiaryDeleteBody {
+  user_id: string;
+  entry_id: number;
+}
+
 /** V1.3 呵护计划任务条目 */
 export interface PlanTaskItem {
   task_id: number;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { SetStateAction } from "react";
 import { applyAgUiStreamSideEffects, semanticForAgUiEvent } from "@/lib/agUiStreamSideEffects";
+import { BIRTH_JOURNEY_PLAN_DELETED_EVENT } from "@/lib/birthJourneyPlanNotification";
 import type { ChatMessage } from "@/types/chat";
 
 function applyEvents(events: Array<Record<string, unknown>>): ChatMessage {
@@ -867,5 +868,33 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.streamRenderItems?.[1]).toMatchObject({ kind: "rich" });
     expect(msg.agentToolCalls?.some((item) => item.kind === "narration")).toBe(false);
     expect(msg.richText?.action).toHaveLength(1);
+  });
+
+  it("emits birth journey plan deleted event from the delete tool result", () => {
+    const events: string[] = [];
+    window.addEventListener(BIRTH_JOURNEY_PLAN_DELETED_EVENT, () => {
+      events.push("deleted");
+    }, { once: true });
+
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_delete_birth_journey",
+        tool_call_name: "birth_journey_plan_delete",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "birth_journey_plan_delete",
+          status: "plan_deleted",
+          side_effect_performed: true,
+        }),
+      },
+    ]);
+
+    expect(events).toEqual(["deleted"]);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      name: "birth_journey_plan_delete",
+      title: "我已经删除生产全过程计划啦",
+      state: "completed",
+    });
   });
 });

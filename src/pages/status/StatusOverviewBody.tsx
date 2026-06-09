@@ -2,8 +2,12 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
+  ArrowRight,
   Bed,
+  BookOpen,
+  CalendarDays,
   ChevronDown,
+  ClipboardList,
   Coffee,
   Droplets,
   Activity,
@@ -11,9 +15,11 @@ import {
   HelpCircle,
   HeartPulse,
   Moon,
+  PencilLine,
   Ruler,
   Target,
   Timer,
+  Trash2,
   Utensils,
   Baby,
   X,
@@ -24,11 +30,21 @@ import {
 } from "recharts";
 import { useVolumeUnit, formatVol, unitLabel } from "@/lib/volumeUnit";
 import type {
+  CarePlanArtifact,
   MomBabyTodayData,
   GrowthQueryData,
+  PregnancyDiaryEntry,
   PumpInfoLactationDayItem,
   GrowthRecord,
 } from "@/lib/agentApiTypes";
+import {
+  createPregnancyDiaryEntry,
+  deleteCarePlanArtifact,
+  queryCarePlanList,
+  queryPregnancyDiaryList,
+  queryPregnancyDiaryToday,
+  updatePregnancyDiaryEntry,
+} from "@/lib/agentApi";
 import {
   calendarDaysSinceDeliveryLocal,
   pickMomBabyDeliveryDateYmd,
@@ -47,6 +63,11 @@ import {
   consumeStatusGrowthHighlightPending,
   STATUS_GROWTH_HIGHLIGHT_EVENT,
 } from "@/lib/statusGrowthHighlight";
+import {
+  clearBirthJourneyPlanCardNotification,
+  subscribeBirthJourneyPlanDeleted,
+  useBirthJourneyPlanCardNotification,
+} from "@/lib/birthJourneyPlanNotification";
 
 import momAvatar from "@/assets/mom-avatar-felt.png";
 import babyAvatar from "@/assets/baby-avatar-felt.png";
@@ -76,6 +97,8 @@ type BabyRecordRow = { date: string; weightKg: number; heightCm: number; headCm:
 type StatusDigitalTwinTab = "mom" | "baby";
 type BabyStatusPanelId = "baby-health" | "growth-milestone" | "baby-sleep";
 type MomStatusPanelId =
+  | "birth-journey-detail"
+  | "pregnancy-diary-detail"
   | "milk-info"
   | "baby-feed-info"
   | "breast-info"
@@ -188,6 +211,125 @@ const PostpartumRecoveryIcon = () => (
     className="h-5 w-5 shrink-0 object-contain"
   />
 );
+
+type BirthJourneyPhase = {
+  id?: string;
+  title?: string;
+  date_range?: string;
+  status?: string;
+  goal?: string;
+  is_current?: boolean;
+  actions?: unknown;
+  watchouts?: unknown;
+  comate_help?: unknown;
+};
+
+type BirthJourneyPayload = {
+  subtitle?: string;
+  owner?: Record<string, unknown>;
+  phases?: BirthJourneyPhase[];
+  next_action?: { label?: string; detail?: string; send_text?: string };
+  estimated_due_date?: string;
+};
+
+function asBirthJourneyPayload(plan: CarePlanArtifact | null): BirthJourneyPayload {
+  return (plan?.payload ?? {}) as BirthJourneyPayload;
+}
+
+function compactText(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function compactTextList(value: unknown, limit = 3): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map(compactText).filter(Boolean).slice(0, limit);
+}
+
+const BIRTH_JOURNEY_HOSPITAL_BAG_HELP = "制定个性化待产清单";
+
+function birthJourneyPhaseList(plan: CarePlanArtifact | null): BirthJourneyPhase[] {
+  const phases = asBirthJourneyPayload(plan).phases;
+  return Array.isArray(phases) ? phases : [];
+}
+
+function isBirthJourneyCurrentPhase(phase: BirthJourneyPhase | null | undefined): boolean {
+  return Boolean(phase?.is_current || phase?.status === "current");
+}
+
+function birthJourneyCurrentPhaseIndex(plan: CarePlanArtifact | null): number {
+  const phases = birthJourneyPhaseList(plan);
+  const index = phases.findIndex(isBirthJourneyCurrentPhase);
+  return index >= 0 ? index : 0;
+}
+
+function currentBirthJourneyPhase(plan: CarePlanArtifact | null): BirthJourneyPhase | null {
+  const phases = birthJourneyPhaseList(plan);
+  if (phases.length === 0) return null;
+  return phases[birthJourneyCurrentPhaseIndex(plan)] ?? phases[0] ?? null;
+}
+
+function birthJourneyNextPrompt(plan: CarePlanArtifact | null): string {
+  return compactText(asBirthJourneyPayload(plan).next_action?.send_text) || "我想继续完善生产全过程计划";
+}
+
+function birthJourneyPhaseKey(phase: BirthJourneyPhase, index: number): string {
+  return compactText(phase.id) || compactText(phase.title) || `phase-${index}`;
+}
+
+function isLatePregnancyBirthJourneyPhase(phase: BirthJourneyPhase | null | undefined): boolean {
+  return compactText(phase?.id) === "late_pregnancy" || compactText(phase?.title) === "孕晚期";
+}
+
+type BirthJourneySuggestion = {
+  action: string;
+  help?: string;
+};
+
+type BirthJourneyPhaseDetail = {
+  goal: string;
+  watchouts: string[];
+  suggestions: BirthJourneySuggestion[];
+  helpPrompts: string[];
+};
+
+function birthJourneySuggestionPairs(phase: BirthJourneyPhase | null | undefined): BirthJourneySuggestion[] {
+  const actions = compactTextList(phase?.actions, 12);
+  return actions.map((action) => ({ action, help: "" }));
+}
+
+function birthJourneyHelpPrompts(phase: BirthJourneyPhase | null | undefined): string[] {
+  const items = compactTextList(phase?.comate_help, 12);
+  if (items.includes(BIRTH_JOURNEY_HOSPITAL_BAG_HELP) || isLatePregnancyBirthJourneyPhase(phase)) {
+    return [BIRTH_JOURNEY_HOSPITAL_BAG_HELP];
+  }
+  return [];
+}
+
+function birthJourneyPhaseDetailSections(phase: BirthJourneyPhase): BirthJourneyPhaseDetail {
+  return {
+    goal: compactText(phase.goal),
+    watchouts: compactTextList(phase.watchouts, 12),
+    suggestions: birthJourneySuggestionPairs(phase),
+    helpPrompts: birthJourneyHelpPrompts(phase),
+  };
+}
+
+function formatDiaryDateLabel(dateKey: string): string {
+  const parts = dateKey.split("-");
+  if (parts.length >= 3) return `${Number(parts[1])}月${Number(parts[2])}日`;
+  return dateKey;
+}
+
+function pregnancyDiarySummary(entry: PregnancyDiaryEntry | null): string {
+  if (!entry) return "记录孕期生活、身体感受和产检点滴";
+  const parts = [
+    entry.mood ? `心情${entry.mood}` : "",
+    entry.fetal_movement ? entry.fetal_movement : "",
+    entry.sleep_summary ? entry.sleep_summary : "",
+  ].filter(Boolean);
+  if (parts.length > 0) return `最近记录：${parts.slice(0, 2).join("，")}`;
+  return entry.content ? `最近记录：${entry.content}` : "今天已有孕期记录";
+}
 
 const BabyStatusPanelSheet: React.FC<{
   panel: BabyStatusPanelId;
@@ -379,13 +521,37 @@ const MomStatusPanelSheet: React.FC<{
   panel: MomStatusPanelId;
   onClose: () => void;
   onAgentPrefill: (prompt: string) => void;
-}> = ({ panel, onClose, onAgentPrefill }) => {
+  birthJourneyPlan: CarePlanArtifact | null;
+  birthJourneyLoading: boolean;
+  birthJourneyDeleting: boolean;
+  birthJourneyDeleteErr: string | null;
+  onDeleteBirthJourneyPlan: () => void;
+  pregnancyDiaryEntries: PregnancyDiaryEntry[];
+  pregnancyDiaryLoading: boolean;
+  onOpenDiaryEditor: () => void;
+}> = ({
+  panel,
+  onClose,
+  onAgentPrefill,
+  birthJourneyPlan,
+  birthJourneyLoading,
+  birthJourneyDeleting,
+  birthJourneyDeleteErr,
+  onDeleteBirthJourneyPlan,
+  pregnancyDiaryEntries,
+  pregnancyDiaryLoading,
+  onOpenDiaryEditor,
+}) => {
   const [postpartumTrainingHintVisible, setPostpartumTrainingHintVisible] = useState(false);
+  const [birthJourneyDeleteConfirmVisible, setBirthJourneyDeleteConfirmVisible] = useState(false);
+  const [expandedBirthJourneyPhaseKeys, setExpandedBirthJourneyPhaseKeys] = useState<Record<string, boolean>>({});
   const postpartumTrainingHintTimerRef = useRef<number | null>(null);
   const isInfo = panel.endsWith("-info");
   const isCenteredInfo =
     panel === "milk-info" || panel === "baby-feed-info" || panel === "breast-info" || panel === "rest-info";
   const titleMap: Record<MomStatusPanelId, string> = {
+    "birth-journey-detail": "生产全过程计划",
+    "pregnancy-diary-detail": "孕期日记",
     "milk-info": "今日产出说明",
     "baby-feed-info": "今日摄入说明",
     "breast-info": "乳房健康说明",
@@ -401,6 +567,13 @@ const MomStatusPanelSheet: React.FC<{
     "rest-info": "所有信息来自智能体的收集。",
   };
   const infoText = infoTextMap[panel] ?? "所有信息来自智能体的收集。";
+
+  useEffect(() => {
+    if (panel !== "birth-journey-detail") {
+      setBirthJourneyDeleteConfirmVisible(false);
+      setExpandedBirthJourneyPhaseKeys({});
+    }
+  }, [panel]);
 
   useEffect(() => {
     return () => {
@@ -422,6 +595,18 @@ const MomStatusPanelSheet: React.FC<{
       postpartumTrainingHintTimerRef.current = null;
     }, 1500);
   };
+
+  const birthJourneyPhases = birthJourneyPhaseList(birthJourneyPlan);
+  const birthJourneyCurrentIndex = birthJourneyCurrentPhaseIndex(birthJourneyPlan);
+  const birthJourneyCurrentPhase = currentBirthJourneyPhase(birthJourneyPlan);
+  const birthJourneyCurrentGoal = compactText(birthJourneyCurrentPhase?.goal);
+  const birthJourneyCurrentDateRange = compactText(birthJourneyCurrentPhase?.date_range);
+  const birthJourneyCurrentWatchouts = compactTextList(birthJourneyCurrentPhase?.watchouts, 12);
+  const birthJourneyCurrentSuggestions = birthJourneySuggestionPairs(birthJourneyCurrentPhase);
+  const birthJourneyCurrentHelpPrompts = birthJourneyHelpPrompts(birthJourneyCurrentPhase);
+  const birthJourneyUpcomingPhases = birthJourneyPhases
+    .map((phase, index) => ({ phase, index }))
+    .filter((item) => item.index > birthJourneyCurrentIndex);
 
   if (isCenteredInfo) {
     return (
@@ -486,6 +671,334 @@ const MomStatusPanelSheet: React.FC<{
         {isInfo ? (
           <div className="rounded-2xl bg-muted/45 px-4 py-3 text-sm font-medium leading-relaxed text-foreground">
             {infoText}
+          </div>
+        ) : null}
+
+        {panel === "birth-journey-detail" ? (
+          <div className="max-h-[76vh] space-y-3 overflow-y-auto pr-1">
+            {birthJourneyLoading ? (
+              <div className="rounded-2xl bg-muted/45 px-4 py-5 text-center text-sm font-semibold text-muted-foreground">
+                正在加载生产全过程计划…
+              </div>
+            ) : birthJourneyPlan ? (
+              <>
+                <div className="space-y-3 rounded-2xl border border-[#edb586] bg-[#fff7ee] px-4 py-3">
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f2a36e] text-white">
+                      <ClipboardList className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-bold text-[#b65c28]">当前阶段</p>
+                      <div className="mt-0.5 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <p className="text-base font-extrabold leading-tight text-foreground">
+                          {birthJourneyCurrentPhase?.title ?? "待完善"}
+                        </p>
+                        {birthJourneyCurrentDateRange ? (
+                          <p className="text-[11px] font-bold leading-tight text-[#a8653a]">
+                            {birthJourneyCurrentDateRange}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+
+                  {birthJourneyCurrentGoal ? (
+                    <section className="rounded-xl border border-[#f5d4bc] bg-white px-3 py-2.5">
+                      <p className="text-[11px] font-extrabold text-[#b65c28]">阶段目标</p>
+                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#5f5368]">{birthJourneyCurrentGoal}</p>
+                    </section>
+                  ) : null}
+
+                  {birthJourneyCurrentWatchouts.length > 0 ? (
+                    <section className="rounded-xl border border-[#f6ddb2] bg-[#fffaf2] px-3 py-2.5">
+                      <p className="text-[11px] font-extrabold text-[#805d22]">温馨提醒</p>
+                      <div className="mt-1.5 space-y-1.5">
+                        {birthJourneyCurrentWatchouts.map((item) => (
+                          <p key={item} className="text-[11px] font-semibold leading-relaxed text-[#6d5530]">{item}</p>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null}
+
+                  <section>
+                    <p className="text-sm font-extrabold text-foreground">本阶段建议做</p>
+                    {birthJourneyCurrentSuggestions.length > 0 ? (
+                      <div className="mt-2 space-y-2">
+                        {birthJourneyCurrentSuggestions.map((suggestion, suggestionIndex) => (
+                          <div key={suggestion.action} className="rounded-xl bg-white px-3 py-2">
+                            <div className="flex gap-2">
+                              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#fff0e4] text-[11px] font-extrabold leading-none text-[#b65c28]">
+                                {suggestionIndex + 1}
+                              </span>
+                              <p className="text-xs font-extrabold leading-relaxed text-[#5f5368]">{suggestion.action}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-2 rounded-xl bg-muted/30 px-3 py-2 text-xs font-semibold text-muted-foreground">
+                        暂无本阶段建议，建议继续补充计划。
+                      </p>
+                    )}
+                    {birthJourneyCurrentHelpPrompts.length > 0 ? (
+                      <div className="mt-3">
+                        <p className="text-[11px] font-extrabold text-[#b65c28]">我能帮你做</p>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {birthJourneyCurrentHelpPrompts.map((prompt) => (
+                            <button
+                              key={prompt}
+                              type="button"
+                              onClick={() => onAgentPrefill(prompt)}
+                              className="inline-flex items-center gap-1.5 rounded-xl border border-[#b65c28] bg-[#b65c28] px-3 py-2 text-[11px] font-extrabold leading-relaxed text-white transition-colors hover:bg-[#a94f22] active:scale-[0.98]"
+                            >
+                              <span>{prompt}</span>
+                              <ArrowRight className="h-3 w-3 shrink-0" />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+                  </section>
+                </div>
+
+                <div className="rounded-2xl border border-[#eadfd8] bg-[#fffdfb] px-4 py-3">
+                  <div className="mb-2 flex items-center gap-2">
+                    <p className="text-sm font-extrabold text-[#4a3f3a]">未来计划</p>
+                  </div>
+                  {birthJourneyUpcomingPhases.length > 0 ? (
+                    <div className="space-y-2">
+                          {birthJourneyUpcomingPhases.map(({ phase, index }) => {
+                            const phaseKey = birthJourneyPhaseKey(phase, index);
+                            const expanded = Boolean(expandedBirthJourneyPhaseKeys[phaseKey]);
+                            const detailSections = birthJourneyPhaseDetailSections(phase);
+                            return (
+                          <article key={phaseKey} className="rounded-xl bg-[#f8f5f2] px-3 py-2">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setExpandedBirthJourneyPhaseKeys((prev) => ({
+                                  ...prev,
+                                  [phaseKey]: !prev[phaseKey],
+                                }))
+                              }
+                              aria-expanded={expanded}
+                              className="block w-full text-left"
+                            >
+                              <div className="min-w-0 flex-1">
+                                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                                  <p className="shrink-0 text-sm font-extrabold text-foreground">{phase.title ?? "阶段"}</p>
+                                  {phase.date_range ? (
+                                    <span className="min-w-0 text-[11px] font-bold text-muted-foreground">{phase.date_range}</span>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </button>
+                                {expanded && (
+                                  detailSections.goal ||
+                                  detailSections.watchouts.length > 0 ||
+                                  detailSections.suggestions.length > 0 ||
+                                  detailSections.helpPrompts.length > 0
+                                ) ? (
+                                  <div className="mt-3 space-y-3 border-t border-[#e5ded9] pt-3">
+                                    {detailSections.goal ? (
+                                      <section>
+                                        <p className="text-[11px] font-extrabold text-[#4a4542]">阶段目标</p>
+                                        <p className="mt-1 text-[11px] font-semibold leading-relaxed text-[#5b5450]">
+                                          {detailSections.goal}
+                                        </p>
+                                      </section>
+                                    ) : null}
+                                    {detailSections.watchouts.length > 0 ? (
+                                      <section>
+                                        <p className="text-[11px] font-extrabold text-[#4a4542]">温馨提醒</p>
+                                        <div className="mt-1 space-y-1">
+                                          {detailSections.watchouts.map((item) => (
+                                            <p key={item} className="text-[11px] font-semibold leading-relaxed text-[#5b5450]">{item}</p>
+                                          ))}
+                                        </div>
+                                      </section>
+                                    ) : null}
+                                    {detailSections.suggestions.length > 0 ? (
+                                      <section>
+                                        <p className="text-[11px] font-extrabold text-[#4a4542]">本阶段建议做</p>
+                                        <div className="mt-1.5 space-y-1.5">
+                                          {detailSections.suggestions.map((suggestion, suggestionIndex) => (
+                                            <div key={suggestion.action} className="rounded-xl bg-white/70 px-3 py-2">
+                                              <div className="flex gap-1.5 text-[11px] font-extrabold leading-relaxed text-[#5b5450]">
+                                                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#ece8e4] text-[10px] font-extrabold leading-none text-[#4a4542]">
+                                                  {suggestionIndex + 1}
+                                                </span>
+                                                <span>{suggestion.action}</span>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </section>
+                                    ) : null}
+                                    {detailSections.helpPrompts.length > 0 ? (
+                                      <section>
+                                        <p className="text-[11px] font-extrabold text-[#4a4542]">我能帮你做</p>
+                                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                                          {detailSections.helpPrompts.map((prompt) => (
+                                            <button
+                                              key={prompt}
+                                              type="button"
+                                              onClick={() => onAgentPrefill(prompt)}
+                                              className="inline-flex items-center gap-1.5 rounded-xl border border-[#c9beb7] bg-white px-3 py-2 text-[11px] font-extrabold leading-relaxed text-[#4a4542] transition-colors hover:border-[#9d8f86] hover:bg-[#f8f5f2] active:scale-[0.98]"
+                                            >
+                                              <span>{prompt}</span>
+                                              <ArrowRight className="h-3 w-3 shrink-0" />
+                                            </button>
+                                          ))}
+                                        </div>
+                                      </section>
+                                    ) : null}
+                                  </div>
+                                ) : null}
+                          </article>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="rounded-xl bg-muted/30 px-3 py-3 text-xs font-semibold text-muted-foreground">
+                      当前已经是计划中的最后阶段。
+                    </p>
+                  )}
+                </div>
+
+                {birthJourneyDeleteErr ? (
+                  <p className="rounded-2xl bg-destructive/10 px-4 py-2 text-xs font-bold text-destructive">
+                    {birthJourneyDeleteErr}
+                  </p>
+                ) : null}
+
+                {birthJourneyDeleteConfirmVisible ? (
+                  <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3">
+                    <p className="text-sm font-extrabold text-foreground">确认删除生产全过程计划？</p>
+                    <p className="mt-1 text-xs font-semibold leading-relaxed text-muted-foreground">
+                      删除后，状态页不再展示这份计划。需要时可以重新生成。
+                    </p>
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setBirthJourneyDeleteConfirmVisible(false)}
+                        disabled={birthJourneyDeleting}
+                        className="inline-flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-3 text-sm font-extrabold text-foreground active:scale-[0.99] disabled:opacity-60"
+                      >
+                        取消
+                      </button>
+                      <button
+                        type="button"
+                        onClick={onDeleteBirthJourneyPlan}
+                        disabled={birthJourneyDeleting}
+                        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-destructive px-4 py-3 text-sm font-extrabold text-destructive-foreground active:scale-[0.99] disabled:opacity-60"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        {birthJourneyDeleting ? "删除中" : "确认删除"}
+                      </button>
+                    </div>
+                  </div>
+                    ) : (
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => setBirthJourneyDeleteConfirmVisible(true)}
+                          disabled={birthJourneyDeleting}
+                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-muted-foreground active:text-destructive disabled:opacity-60"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          删除计划
+                        </button>
+                      </div>
+                    )}
+              </>
+            ) : (
+              <div className="space-y-3">
+                <div className="rounded-2xl border border-[#e6d9fb] bg-[#fbf7ff] px-4 py-5 text-center">
+                  <ClipboardList className="mx-auto h-7 w-7 text-[#7d64aa]" />
+                  <p className="mt-2 text-sm font-extrabold text-foreground">还没有生产全过程计划</p>
+                  <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6f617a]">
+                    生成后会在这里展示当前阶段、下一步行动和完整生产时间线。
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onAgentPrefill("帮我制定生产全过程计划")}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
+                >
+                  <MaiInlineAvatar />
+                  制定生产全过程计划
+                </button>
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {panel === "pregnancy-diary-detail" ? (
+          <div className="max-h-[76vh] space-y-3 overflow-y-auto pr-1">
+            <button
+              type="button"
+              onClick={onOpenDiaryEditor}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
+            >
+              <PencilLine className="h-4 w-4" />
+              记录今天
+            </button>
+            <div className="rounded-2xl bg-[#fffaf0] px-4 py-3 text-[11px] font-semibold leading-relaxed text-[#6d5530]">
+              日记用于记录孕期生活和感受；若出现出血、剧烈腹痛、明显胎动异常等情况，请及时联系医生。
+            </div>
+            {pregnancyDiaryLoading ? (
+              <div className="rounded-2xl bg-muted/45 px-4 py-5 text-center text-sm font-semibold text-muted-foreground">
+                正在加载孕期日记…
+              </div>
+            ) : pregnancyDiaryEntries.length > 0 ? (
+              <div className="relative flex flex-col gap-3">
+                <span aria-hidden="true" className="absolute bottom-4 left-[9px] top-4 w-px bg-[#c8ecee]" />
+                {pregnancyDiaryEntries.map((entry, index) => (
+                  <article key={entry.entry_id} className="relative flex gap-3">
+                    <span
+                      aria-hidden="true"
+                      className={`mt-1 h-5 w-5 shrink-0 rounded-full border-2 ${
+                        index === 0
+                          ? "border-[#3b8a90] bg-[#c8ecee] shadow-[0_0_0_4px_rgba(200,236,238,0.5)]"
+                          : "border-[#c8ecee] bg-card"
+                      }`}
+                    />
+                    <div className="min-w-0 flex-1 rounded-2xl border border-[#c8ecee] bg-[#fbffff] px-4 py-3">
+                      <div className="flex min-w-0 items-center justify-between gap-2">
+                        <p className="truncate text-sm font-extrabold text-foreground">
+                          {formatDiaryDateLabel(entry.entry_date)}
+                        </p>
+                        {entry.gestational_week ? (
+                          <span className="shrink-0 text-[10px] font-bold text-[#31828b]">{entry.gestational_week}</span>
+                        ) : null}
+                      </div>
+                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#5c6870]">
+                        {pregnancyDiarySummary(entry)}
+                      </p>
+                      {entry.symptom_tags.length > 0 ? (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {entry.symptom_tags.map((tag) => (
+                            <span key={tag} className="rounded-full bg-[#d8f4f5] px-2 py-0.5 text-[10px] font-bold text-[#31828b]">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                      {entry.content ? <p className="mt-2 text-[11px] font-medium leading-relaxed text-[#5c6870]">{entry.content}</p> : null}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-[#c8ecee] bg-[#fbffff] px-4 py-5 text-center">
+                <BookOpen className="mx-auto h-7 w-7 text-[#3b8a90]" />
+                <p className="mt-2 text-sm font-extrabold text-foreground">还没有孕期日记</p>
+                <p className="mt-1 text-xs font-semibold leading-relaxed text-[#5c6870]">
+                  从今天开始记录心情、身体感受、胎动和产检点滴。
+                </p>
+              </div>
+            )}
           </div>
         ) : null}
 
@@ -734,6 +1247,7 @@ type StatusModuleCardProps = {
   }[];
   action?: string;
   secondaryAction?: string;
+  notificationLabel?: string;
   icon: React.ReactNode;
   tone: StatusModuleTone;
   onClick?: () => void;
@@ -752,6 +1266,7 @@ function StatusModuleCard({
   metrics,
   action,
   secondaryAction,
+  notificationLabel,
   icon,
   tone,
   onClick,
@@ -775,6 +1290,11 @@ function StatusModuleCard({
   ) : null;
   const content = (
     <>
+      {notificationLabel ? (
+        <span className="absolute right-12 top-3 z-20 rounded-full bg-[#d85f8c] px-2 py-0.5 text-[10px] font-extrabold leading-tight text-white shadow-sm">
+          {notificationLabel}
+        </span>
+      ) : null}
       <div className="relative z-10 flex items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="flex min-w-0 items-center gap-1">
@@ -1193,6 +1713,7 @@ const EmptyChartHint = ({ children }: { children: React.ReactNode }) => (
 const StatusOverviewBody: React.FC = () => {
   const navigate = useNavigate();
   const [unit] = useVolumeUnit();
+  const birthJourneyPlanCardNotification = useBirthJourneyPlanCardNotification();
   const isOz = unit === "oz";
   const conv = useCallback((ml: number) => (isOz ? +(ml * 0.033814).toFixed(1) : ml), [isOz]);
 
@@ -1230,6 +1751,23 @@ const StatusOverviewBody: React.FC = () => {
   const [todayPumpRecordsLoading, setTodayPumpRecordsLoading] = useState(true);
   const [todayFeedingCount, setTodayFeedingCount] = useState<number | null>(null);
   const [todayFeedingRecordsLoading, setTodayFeedingRecordsLoading] = useState(true);
+  const [birthJourneyPlan, setBirthJourneyPlan] = useState<CarePlanArtifact | null>(null);
+  const [birthJourneyLoading, setBirthJourneyLoading] = useState(true);
+  const [birthJourneyDeleting, setBirthJourneyDeleting] = useState(false);
+  const [birthJourneyDeleteErr, setBirthJourneyDeleteErr] = useState<string | null>(null);
+  const [pregnancyDiaryEntries, setPregnancyDiaryEntries] = useState<PregnancyDiaryEntry[]>([]);
+  const [pregnancyDiaryToday, setPregnancyDiaryToday] = useState<PregnancyDiaryEntry | null>(null);
+  const [pregnancyDiaryLoading, setPregnancyDiaryLoading] = useState(true);
+  const [isPregnancyDiaryEditorOpen, setIsPregnancyDiaryEditorOpen] = useState(false);
+  const [diaryGestationalWeek, setDiaryGestationalWeek] = useState("");
+  const [diaryMood, setDiaryMood] = useState("");
+  const [diaryEnergy, setDiaryEnergy] = useState("");
+  const [diarySleep, setDiarySleep] = useState("");
+  const [diaryFetalMovement, setDiaryFetalMovement] = useState("");
+  const [diarySymptomTags, setDiarySymptomTags] = useState("");
+  const [diaryContent, setDiaryContent] = useState("");
+  const [diarySaving, setDiarySaving] = useState(false);
+  const [diarySaveErr, setDiarySaveErr] = useState<string | null>(null);
   const growthMetricsRef = useRef<HTMLDivElement | null>(null);
   const growthBlinkTimerRef = useRef<number | null>(null);
 
@@ -1237,6 +1775,59 @@ const StatusOverviewBody: React.FC = () => {
     setActiveMomPanel(null);
     navigate("/", { state: { agentPrefill: prompt } });
   }, [navigate]);
+
+  const handleDeleteBirthJourneyPlan = useCallback(async () => {
+    const plan = birthJourneyPlan;
+    if (!plan || birthJourneyDeleting) return;
+    setBirthJourneyDeleting(true);
+    setBirthJourneyDeleteErr(null);
+    try {
+      const result = await deleteCarePlanArtifact({
+        user_id: DEFAULT_CHAT_USER_ID,
+        plan_id: plan.plan_id,
+      });
+      if (result.error !== 0) {
+        throw new Error("删除生产全过程计划失败");
+      }
+      setBirthJourneyPlan(null);
+      clearBirthJourneyPlanCardNotification();
+      setActiveMomPanel(null);
+    } catch (e: unknown) {
+      setBirthJourneyDeleteErr(e instanceof Error ? e.message : "删除生产全过程计划失败");
+    } finally {
+      setBirthJourneyDeleting(false);
+    }
+  }, [birthJourneyDeleting, birthJourneyPlan]);
+
+  useEffect(() => subscribeBirthJourneyPlanDeleted(() => {
+    setBirthJourneyPlan(null);
+    clearBirthJourneyPlanCardNotification();
+    setActiveMomPanel((panel) => (panel === "birth-journey-detail" ? null : panel));
+  }), []);
+
+  const reloadPregnancyDiary = useCallback(async (signal?: AbortSignal) => {
+    const todayDateKey = toLocalDateKey(new Date());
+    const [today, list] = await Promise.all([
+      queryPregnancyDiaryToday({ user_id: DEFAULT_CHAT_USER_ID, timestamp: todayDateKey }, { signal }),
+      queryPregnancyDiaryList({ user_id: DEFAULT_CHAT_USER_ID, limit: 12 }, { signal }),
+    ]);
+    setPregnancyDiaryToday(today.error === 0 ? today.diary : null);
+    setPregnancyDiaryEntries(list.error === 0 && Array.isArray(list.diary_list) ? list.diary_list : []);
+  }, []);
+
+  const openPregnancyDiaryEditor = useCallback(() => {
+    setActiveMomPanel(null);
+    setDiarySaveErr(null);
+    const entry = pregnancyDiaryToday;
+    setDiaryGestationalWeek(entry?.gestational_week ?? "");
+    setDiaryMood(entry?.mood ?? "");
+    setDiaryEnergy(entry?.energy_level ?? "");
+    setDiarySleep(entry?.sleep_summary ?? "");
+    setDiaryFetalMovement(entry?.fetal_movement ?? "");
+    setDiarySymptomTags(entry?.symptom_tags?.join("、") ?? "");
+    setDiaryContent(entry?.content ?? "");
+    setIsPregnancyDiaryEditorOpen(true);
+  }, [pregnancyDiaryToday]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1399,11 +1990,50 @@ const StatusOverviewBody: React.FC = () => {
       }
     })();
 
+    setBirthJourneyLoading(true);
+    setBirthJourneyPlan(null);
+    void (async () => {
+      try {
+        const data = await queryCarePlanList(
+          { user_id: DEFAULT_CHAT_USER_ID, status: "active" },
+          { signal: ac.signal },
+        );
+        if (cancelled) return;
+        if (data.error !== 0 || !Array.isArray(data.plan_list)) {
+          setBirthJourneyPlan(null);
+          return;
+        }
+        setBirthJourneyPlan(data.plan_list.find((plan) => plan.plan_type === "birth_journey") ?? null);
+      } catch (e: unknown) {
+        if ((e as { name?: string })?.name === "AbortError") return;
+        if (cancelled) return;
+        setBirthJourneyPlan(null);
+      } finally {
+        if (!cancelled) setBirthJourneyLoading(false);
+      }
+    })();
+
+    setPregnancyDiaryLoading(true);
+    setPregnancyDiaryToday(null);
+    setPregnancyDiaryEntries([]);
+    void (async () => {
+      try {
+        await reloadPregnancyDiary(ac.signal);
+      } catch (e: unknown) {
+        if ((e as { name?: string })?.name === "AbortError") return;
+        if (cancelled) return;
+        setPregnancyDiaryToday(null);
+        setPregnancyDiaryEntries([]);
+      } finally {
+        if (!cancelled) setPregnancyDiaryLoading(false);
+      }
+    })();
+
     return () => {
       cancelled = true;
       ac.abort();
     };
-  }, []);
+  }, [reloadPregnancyDiary]);
 
   const babyDaysSinceBirth = deliveryYmd ? calendarDaysSinceDeliveryLocal(deliveryYmd) : null;
   const babyAgeDays =
@@ -1548,6 +2178,19 @@ const StatusOverviewBody: React.FC = () => {
       : typeof babyAgeDays === "number"
         ? `宝宝已出生 ${babyAgeDays} 天`
         : "暂无有效分娩日期";
+  const birthJourneyCardPhase = currentBirthJourneyPhase(birthJourneyPlan);
+  const birthJourneyPhaseTitle = birthJourneyCardPhase?.title ?? "";
+  const birthJourneyCardFocus = compactText(birthJourneyCardPhase?.goal);
+  const birthJourneyCardText = birthJourneyLoading
+    ? "正在加载生产全过程计划"
+    : birthJourneyPlan
+      ? `当前阶段：${birthJourneyPhaseTitle || "待完善"}`
+      : "还没有计划哦";
+  const birthJourneyCardAction = birthJourneyPlan ? "查看计划" : "制定计划";
+  const pregnancyDiaryCardText = pregnancyDiaryLoading
+    ? "正在加载孕期日记"
+    : pregnancyDiarySummary(pregnancyDiaryToday ?? pregnancyDiaryEntries[0] ?? null);
+  const pregnancyDiaryAction = pregnancyDiaryToday ? "编辑今天" : "记录今天";
 
   const runGrowthMetricsHighlight = useCallback(() => {
     if (growthBlinkTimerRef.current !== null) {
@@ -1626,41 +2269,41 @@ const StatusOverviewBody: React.FC = () => {
           ].map(({ tab, title, subtitle, avatar, alt }) => {
             const selected = activeDigitalTwin === tab;
             return (
-	              <button
-	                key={tab}
-	                type="button"
-	                role="tab"
-	                aria-selected={selected}
-	                onClick={() => setActiveDigitalTwin(tab)}
-	                className={`relative flex min-h-[68px] w-full min-w-0 items-center gap-2 overflow-hidden rounded-[16px] px-2.5 py-2 text-left transition-all ${
-	                  selected
-	                    ? "bg-[#fff7fb] text-[#35212c] shadow-none ring-2 ring-[#d8adc2]"
-	                    : "bg-white/45 text-muted-foreground opacity-72 shadow-none ring-1 ring-white/70 active:bg-white/70"
-	                }`}
-	              >
-	                <span
-	                  aria-hidden="true"
-	                  className={`absolute inset-y-3 left-0 w-1 rounded-r-full bg-[#b46f91] transition-opacity ${
-	                    selected ? "opacity-100" : "opacity-0"
-	                  }`}
-	                />
-	                <img
-	                  src={avatar}
-	                  alt={alt}
-	                  className={`h-10 w-10 shrink-0 rounded-full border-2 object-cover ${
-	                    selected ? "border-[#b46f91]/45" : "border-border/50 opacity-75"
-	                  }`}
-	                />
-	                <span className="min-w-0">
-	                  <span className="block truncate text-[15px] font-bold leading-tight">{title}</span>
-	                  <span
-	                    className={`mt-1 block truncate text-[10px] font-semibold leading-tight ${
-	                      selected ? "text-[#806171]" : "text-muted-foreground"
-	                    }`}
-	                  >
-	                    {subtitle}
-	                  </span>
-	                </span>
+                  <button
+                    key={tab}
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    onClick={() => setActiveDigitalTwin(tab)}
+                    className={`relative flex min-h-[68px] w-full min-w-0 items-center gap-2 overflow-hidden rounded-[16px] px-2.5 py-2 text-left transition-all ${
+                      selected
+                        ? "bg-[#fff7fb] text-[#35212c] shadow-none ring-2 ring-[#d8adc2]"
+                        : "bg-white/45 text-muted-foreground opacity-72 shadow-none ring-1 ring-white/70 active:bg-white/70"
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`absolute inset-y-3 left-0 w-1 rounded-r-full bg-[#b46f91] transition-opacity ${
+                        selected ? "opacity-100" : "opacity-0"
+                      }`}
+                    />
+                    <img
+                      src={avatar}
+                      alt={alt}
+                      className={`h-10 w-10 shrink-0 rounded-full border-2 object-cover ${
+                        selected ? "border-[#b46f91]/45" : "border-border/50 opacity-75"
+                      }`}
+                    />
+                    <span className="min-w-0">
+                      <span className="block truncate text-[15px] font-bold leading-tight">{title}</span>
+                      <span
+                        className={`mt-1 block truncate text-[10px] font-semibold leading-tight ${
+                          selected ? "text-[#806171]" : "text-muted-foreground"
+                        }`}
+                      >
+                        {subtitle}
+                      </span>
+                    </span>
               </button>
             );
           })}
@@ -1712,6 +2355,39 @@ const StatusOverviewBody: React.FC = () => {
                 tone="amber"
                 icon={<Coffee className="h-4 w-4" />}
                 onInfoClick={() => setActiveMomPanel("rest-info")}
+                alignActionTextWithTitle
+              />
+              <StatusModuleCard
+                title="生产全过程计划"
+                bodyText={birthJourneyCardText}
+                supportingText={
+                  birthJourneyPlan && !birthJourneyLoading && birthJourneyCardFocus
+                    ? birthJourneyCardFocus
+                    : undefined
+                }
+                action={birthJourneyCardAction}
+                notificationLabel={birthJourneyPlanCardNotification ? "计划已生成" : undefined}
+                tone="violet"
+                icon={<ClipboardList className="h-4 w-4" />}
+                onClick={() => {
+                  if (birthJourneyPlan) {
+                    clearBirthJourneyPlanCardNotification();
+                    setActiveMomPanel("birth-journey-detail");
+                  } else {
+                    prefillAgentHub("帮我制定生产全过程计划");
+                  }
+                }}
+                alignActionTextWithTitle
+              />
+              <StatusModuleCard
+                title="孕期日记"
+                bodyText={pregnancyDiaryCardText}
+                action={pregnancyDiaryAction}
+                secondaryAction="查看日记"
+                tone="aqua"
+                icon={<BookOpen className="h-4 w-4" />}
+                onClick={openPregnancyDiaryEditor}
+                onSecondaryClick={() => setActiveMomPanel("pregnancy-diary-detail")}
                 alignActionTextWithTitle
               />
             </div>
@@ -1820,9 +2496,9 @@ const StatusOverviewBody: React.FC = () => {
                         stroke={LACTATION_TREND_COLORS.actual}
                         strokeWidth={2.5}
                         dot={
-	                          windowSize === 7
-	                            ? { r: 3, strokeWidth: 2, fill: "#fffaf0", stroke: LACTATION_TREND_COLORS.actual }
-	                            : false
+                              windowSize === 7
+                                ? { r: 3, strokeWidth: 2, fill: "#fffaf0", stroke: LACTATION_TREND_COLORS.actual }
+                                : false
                         }
                         activeDot={{ r: 5 }}
                       />
@@ -1925,34 +2601,34 @@ const StatusOverviewBody: React.FC = () => {
           <div className="h-[188px] w-full min-w-0 max-w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-	                <defs>
-	                  <linearGradient id="growthBandPrimary" x1="0" y1="0" x2="0" y2="1">
-	                    <stop offset="0%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.85} />
-	                    <stop offset="100%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.5} />
-	                  </linearGradient>
-	                </defs>
-	                <CartesianGrid strokeDasharray="3 3" stroke={GROWTH_CHART_COLORS.grid} opacity={0.75} vertical={false} />
-	                <XAxis
-	                  dataKey="week"
-	                  ticks={growthChartWeekTicks}
-	                  tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
-	                  stroke={GROWTH_CHART_COLORS.axis}
-	                  interval={0}
-	                  tickMargin={6}
-	                  padding={{ left: 0, right: 8 }}
-	                />
-	                <YAxis
-	                  tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
-	                  stroke={GROWTH_CHART_COLORS.axis}
-	                  width={42}
-	                  domain={growthYAxisDomains?.weight ?? [2.5, 7]}
-	                  allowDecimals
-	                  tickFormatter={(v) => formatGrowthChartYTick(v, "kg")}
-	                />
-	                <Tooltip contentStyle={{ fontSize: 11 }} />
-	                <Area type="monotone" dataKey="wP75" stroke="none" fill="url(#growthBandPrimary)" name="P75参考" fillOpacity={1} />
-	                <Area type="monotone" dataKey="wP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
-	                <Line type="monotone" dataKey="weight" name="体重" stroke={GROWTH_CHART_COLORS.actual} strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "#f7fffc", stroke: GROWTH_CHART_COLORS.actual }} />
+                    <defs>
+                      <linearGradient id="growthBandPrimary" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.85} />
+                        <stop offset="100%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.5} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke={GROWTH_CHART_COLORS.grid} opacity={0.75} vertical={false} />
+                    <XAxis
+                      dataKey="week"
+                      ticks={growthChartWeekTicks}
+                      tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+                      stroke={GROWTH_CHART_COLORS.axis}
+                      interval={0}
+                      tickMargin={6}
+                      padding={{ left: 0, right: 8 }}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+                      stroke={GROWTH_CHART_COLORS.axis}
+                      width={42}
+                      domain={growthYAxisDomains?.weight ?? [2.5, 7]}
+                      allowDecimals
+                      tickFormatter={(v) => formatGrowthChartYTick(v, "kg")}
+                    />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Area type="monotone" dataKey="wP75" stroke="none" fill="url(#growthBandPrimary)" name="P75参考" fillOpacity={1} />
+                    <Area type="monotone" dataKey="wP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
+                    <Line type="monotone" dataKey="weight" name="体重" stroke={GROWTH_CHART_COLORS.actual} strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "#f7fffc", stroke: GROWTH_CHART_COLORS.actual }} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -1960,34 +2636,34 @@ const StatusOverviewBody: React.FC = () => {
           <div className="h-[188px] w-full min-w-0 max-w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-	                <defs>
-	                  <linearGradient id="growthBandSecondary" x1="0" y1="0" x2="0" y2="1">
-	                    <stop offset="0%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.85} />
-	                    <stop offset="100%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.5} />
-	                  </linearGradient>
-	                </defs>
-	                <CartesianGrid strokeDasharray="3 3" stroke={GROWTH_CHART_COLORS.grid} opacity={0.75} vertical={false} />
-	                <XAxis
-	                  dataKey="week"
-	                  ticks={growthChartWeekTicks}
-	                  tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
-	                  stroke={GROWTH_CHART_COLORS.axis}
-	                  interval={0}
-	                  tickMargin={6}
-	                  padding={{ left: 0, right: 8 }}
-	                />
-	                <YAxis
-	                  tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
-	                  stroke={GROWTH_CHART_COLORS.axis}
-	                  width={42}
-	                  domain={growthYAxisDomains?.height ?? [46, 64]}
-	                  allowDecimals
-	                  tickFormatter={(v) => formatGrowthChartYTick(v, "cm")}
-	                />
-	                <Tooltip contentStyle={{ fontSize: 11 }} />
-	                <Area type="monotone" dataKey="hP75" stroke="none" fill="url(#growthBandSecondary)" name="P75参考" fillOpacity={1} />
-	                <Area type="monotone" dataKey="hP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
-	                <Line type="monotone" dataKey="height" name="身高" stroke={GROWTH_CHART_COLORS.height} strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "#f7fffc", stroke: GROWTH_CHART_COLORS.height }} />
+                    <defs>
+                      <linearGradient id="growthBandSecondary" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.85} />
+                        <stop offset="100%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.5} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke={GROWTH_CHART_COLORS.grid} opacity={0.75} vertical={false} />
+                    <XAxis
+                      dataKey="week"
+                      ticks={growthChartWeekTicks}
+                      tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+                      stroke={GROWTH_CHART_COLORS.axis}
+                      interval={0}
+                      tickMargin={6}
+                      padding={{ left: 0, right: 8 }}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+                      stroke={GROWTH_CHART_COLORS.axis}
+                      width={42}
+                      domain={growthYAxisDomains?.height ?? [46, 64]}
+                      allowDecimals
+                      tickFormatter={(v) => formatGrowthChartYTick(v, "cm")}
+                    />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Area type="monotone" dataKey="hP75" stroke="none" fill="url(#growthBandSecondary)" name="P75参考" fillOpacity={1} />
+                    <Area type="monotone" dataKey="hP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
+                    <Line type="monotone" dataKey="height" name="身高" stroke={GROWTH_CHART_COLORS.height} strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "#f7fffc", stroke: GROWTH_CHART_COLORS.height }} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -2005,6 +2681,14 @@ const StatusOverviewBody: React.FC = () => {
             panel={activeMomPanel}
             onClose={() => setActiveMomPanel(null)}
             onAgentPrefill={prefillAgentHub}
+            birthJourneyPlan={birthJourneyPlan}
+            birthJourneyLoading={birthJourneyLoading}
+            birthJourneyDeleting={birthJourneyDeleting}
+            birthJourneyDeleteErr={birthJourneyDeleteErr}
+            onDeleteBirthJourneyPlan={handleDeleteBirthJourneyPlan}
+            pregnancyDiaryEntries={pregnancyDiaryEntries}
+            pregnancyDiaryLoading={pregnancyDiaryLoading}
+            onOpenDiaryEditor={openPregnancyDiaryEditor}
           />
         ) : null}
       </AnimatePresence>
@@ -2015,6 +2699,182 @@ const StatusOverviewBody: React.FC = () => {
             panel={activeBabyPanel}
             onClose={() => setActiveBabyPanel(null)}
           />
+        ) : null}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isPregnancyDiaryEditorOpen ? (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+              onClick={() => {
+                if (!diarySaving) setIsPregnancyDiaryEditorOpen(false);
+              }}
+            />
+            <motion.div
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 28, stiffness: 300 }}
+              className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-lg rounded-t-3xl border-t border-border/40 bg-card px-5 pt-4 shadow-2xl"
+              style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
+            >
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="text-base font-extrabold text-foreground">记录今天的孕期日记</h3>
+                  <p className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-muted-foreground">
+                    <CalendarDays className="h-3.5 w-3.5" />
+                    {formatDiaryDateLabel(toLocalDateKey(new Date()))}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  disabled={diarySaving}
+                  onClick={() => {
+                    if (!diarySaving) setIsPregnancyDiaryEditorOpen(false);
+                  }}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/80 transition-colors active:scale-95 disabled:opacity-50"
+                >
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </button>
+              </div>
+
+              <div className="max-h-[68vh] space-y-3 overflow-y-auto pr-1">
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                    <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">孕周</span>
+                    <input
+                      value={diaryGestationalWeek}
+                      onChange={(event) => setDiaryGestationalWeek(event.target.value)}
+                      placeholder="如 孕 32 周"
+                      className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    />
+                  </label>
+                  <label className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                    <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">心情</span>
+                    <input
+                      value={diaryMood}
+                      onChange={(event) => setDiaryMood(event.target.value)}
+                      placeholder="平稳/开心/焦虑"
+                      className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    />
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                    <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">精力</span>
+                    <input
+                      value={diaryEnergy}
+                      onChange={(event) => setDiaryEnergy(event.target.value)}
+                      placeholder="良好/一般/偏低"
+                      className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    />
+                  </label>
+                  <label className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                    <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">身体标签</span>
+                    <input
+                      value={diarySymptomTags}
+                      onChange={(event) => setDiarySymptomTags(event.target.value)}
+                      placeholder="水肿、腰酸"
+                      className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    />
+                  </label>
+                </div>
+                <label className="block rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">睡眠</span>
+                  <input
+                    value={diarySleep}
+                    onChange={(event) => setDiarySleep(event.target.value)}
+                    placeholder="昨晚睡眠、醒来次数、白天补休"
+                    className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                  />
+                </label>
+                <label className="block rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">胎动</span>
+                  <input
+                    value={diaryFetalMovement}
+                    onChange={(event) => setDiaryFetalMovement(event.target.value)}
+                    placeholder="如 胎动正常 / 今天比平时少"
+                    className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                  />
+                </label>
+                <label className="block rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">今天想记录的事</span>
+                  <textarea
+                    value={diaryContent}
+                    onChange={(event) => setDiaryContent(event.target.value)}
+                    placeholder="生活片段、产检点滴、情绪变化，或想留给自己的话"
+                    rows={4}
+                    className="w-full resize-none rounded-xl border border-border/50 bg-background px-3 py-2 text-sm font-semibold leading-relaxed outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                  />
+                </label>
+                <div className="rounded-2xl bg-[#fffaf0] px-4 py-3 text-[11px] font-semibold leading-relaxed text-[#6d5530]">
+                  如果有明显胎动异常、出血、剧烈腹痛或其它担心的情况，请及时联系医生。
+                </div>
+              </div>
+
+              {diarySaveErr ? (
+                <p className="mt-3 px-0.5 text-[11px] leading-relaxed text-destructive">{diarySaveErr}</p>
+              ) : null}
+
+              <motion.button
+                type="button"
+                disabled={diarySaving}
+                whileTap={{ scale: diarySaving ? 1 : 0.97 }}
+                onClick={async () => {
+                  setDiarySaveErr(null);
+                  const todayDateKey = toLocalDateKey(new Date());
+                  const symptomTags = diarySymptomTags
+                    .split(/[、,，\s]+/)
+                    .map((tag) => tag.trim())
+                    .filter(Boolean);
+                  if (
+                    !diaryGestationalWeek.trim() &&
+                    !diaryMood.trim() &&
+                    !diaryEnergy.trim() &&
+                    !diarySleep.trim() &&
+                    !diaryFetalMovement.trim() &&
+                    symptomTags.length === 0 &&
+                    !diaryContent.trim()
+                  ) {
+                    setDiarySaveErr("至少写下一项今天的状态或记录");
+                    return;
+                  }
+                  setDiarySaving(true);
+                  try {
+                    const baseBody = {
+                      user_id: DEFAULT_CHAT_USER_ID,
+                      entry_date: todayDateKey,
+                      gestational_week: diaryGestationalWeek,
+                      mood: diaryMood,
+                      energy_level: diaryEnergy,
+                      sleep_summary: diarySleep,
+                      fetal_movement: diaryFetalMovement,
+                      symptom_tags: symptomTags,
+                      content: diaryContent,
+                    };
+                    const result = pregnancyDiaryToday
+                      ? await updatePregnancyDiaryEntry({ ...baseBody, entry_id: pregnancyDiaryToday.entry_id })
+                      : await createPregnancyDiaryEntry(baseBody);
+                    if (result.error !== 0) throw new Error("保存孕期日记失败");
+                    await reloadPregnancyDiary();
+                    setPregnancyDiaryLoading(false);
+                    setIsPregnancyDiaryEditorOpen(false);
+                  } catch (e: unknown) {
+                    setDiarySaveErr(e instanceof Error ? e.message : "保存失败，请稍后重试");
+                  } finally {
+                    setDiarySaving(false);
+                  }
+                }}
+                className="mt-4 w-full rounded-2xl bg-foreground py-3.5 text-[15px] font-bold text-background shadow-md disabled:pointer-events-none disabled:opacity-50"
+              >
+                {diarySaving ? "保存中…" : pregnancyDiaryToday ? "保存今天的修改" : "保存今天的日记"}
+              </motion.button>
+            </motion.div>
+          </>
         ) : null}
       </AnimatePresence>
 

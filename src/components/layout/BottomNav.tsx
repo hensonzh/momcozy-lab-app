@@ -2,6 +2,10 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Heart, Calendar, Bluetooth, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  transferBirthJourneyPlanNotificationToStatusCard,
+  useBirthJourneyPlanNavNotification,
+} from "@/lib/birthJourneyPlanNotification";
 
 /* Custom nursing/breastfeeding icon matching Lucide stroke style */
 const NursingIcon: React.FC<{ className?: string; strokeWidth?: number }> = ({ className, strokeWidth = 2 }) => (
@@ -38,6 +42,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const embedded = variant === "embedded";
+  const birthJourneyPlanNavNotification = useBirthJourneyPlanNavNotification();
 
   // Hide nav on independent full-screen flows
   if (location.pathname === "/pump" || location.pathname === "/calibration" || location.pathname === "/media-viewer") return null;
@@ -75,7 +80,10 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
           return (
             <div key={tab.path} className="flex-1 flex justify-center h-full items-center">
               <button
-                onClick={() => navigate(tab.path)}
+                onClick={() => {
+                  if (tab.path === "/status") transferBirthJourneyPlanNotificationToStatusCard();
+                  navigate(tab.path);
+                }}
                 className={cn(
                   "relative flex flex-col items-center gap-1 py-1.5 px-3 rounded-xl transition-all duration-200",
                   active
@@ -87,6 +95,12 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
                 {active && (
                   <div className="absolute inset-0 rounded-xl bg-primary/8" />
                 )}
+                {tab.path === "/status" && birthJourneyPlanNavNotification ? (
+                  <span
+                    aria-label="状态有新通知"
+                    className="absolute right-2 top-1 z-20 h-2.5 w-2.5 rounded-full bg-[#d85f8c] ring-2 ring-card"
+                  />
+                ) : null}
                 <tab.icon className={cn("w-5 h-5 relative z-10", active && "fill-primary/20")} strokeWidth={active ? 2.5 : 1.8} />
                 <span className={cn("text-[10px] font-medium relative z-10", active && "font-bold")}>{tab.label}</span>
               </button>
