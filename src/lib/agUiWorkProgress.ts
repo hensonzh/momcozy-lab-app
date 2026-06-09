@@ -9,6 +9,7 @@ const COMPLETED_TOOL_SUMMARY_TITLES: Record<string, string> = {
   ui_form_create: "我已经准备好确认内容啦",
   labor_communication_card_create: "我已经帮你整理好分娩沟通单啦",
   birth_journey_plan_card_create: "我已经帮你整理好生产全过程计划啦",
+  birth_journey_plan_delete: "我已经删除生产全过程计划啦",
   hospital_bag_card_create: "我已经帮你生成好待产包清单啦",
   ibclc_consult_card_create: "我已经准备好 IBCLC 咨询入口啦",
   hospital_bag_pump_recommend: "我已经帮你整理好吸奶器推荐啦",

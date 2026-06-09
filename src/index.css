@@ -1419,7 +1419,7 @@
   margin: 0;
   color: #8a6d7a;
   font-size: 11px;
-  font-weight: 620;
+  font-weight: 400;
   line-height: 1.25;
   white-space: nowrap;
 }
@@ -1549,6 +1549,24 @@
   height: 5px;
   border-radius: 999px;
   background: #d86b91;
+}
+
+.birth-journey-section-grid .birth-journey-help-section {
+  border-color: rgba(178, 207, 199, 0.7);
+  background: rgba(250, 255, 253, 0.82);
+}
+
+.birth-journey-section-grid .birth-journey-help-section h4 {
+  color: #477a70;
+}
+
+.birth-journey-section-grid .birth-journey-help-section li {
+  color: #4f625f;
+  font-weight: 560;
+}
+
+.birth-journey-section-grid .birth-journey-help-section li::before {
+  background: #76b3a8;
 }
 
 .birth-journey-footer {
