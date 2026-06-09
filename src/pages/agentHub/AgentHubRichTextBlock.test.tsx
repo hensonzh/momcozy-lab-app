@@ -1,8 +1,14 @@
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import AgentHubRichTextBlock, { type IbclcConsultOpenRequest } from "./AgentHubRichTextBlock";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const appCssSource = readFileSync(resolve(here, "../../index.css"), "utf8");
 
 vi.mock("@/lib/agentConversationSession", () => ({
   getAgUiThreadIdForRequest: () => "thread_test",
@@ -89,20 +95,20 @@ function birthJourneyPayload(): ChatRichTextPayload {
                 title: "孕中期",
                 date_range: "孕14周-27周",
                 status: "current",
-                goal: "先把产检和医院流程确认清楚。",
-                watchouts: ["按时产检。"],
-                actions: ["记录下次产检问题。"],
-                comate_help: ["整理产检问题。"],
+	                goal: "先把产检和医院流程确认清楚。",
+	                watchouts: ["按时产检。"],
+	                actions: ["记录下次产检问题。"],
+	                comate_help: ["整理产检问题。"],
               },
               {
                 id: "late",
                 title: "孕晚期",
                 date_range: "孕28周-36周",
                 status: "upcoming",
-                goal: "把入院准备收拢。",
-                watchouts: ["留意胎动变化。"],
-                actions: ["确认待产包。"],
-                comate_help: ["整理待产包。"],
+	                goal: "把入院准备收拢。",
+	                watchouts: ["留意胎动变化。"],
+	                actions: ["确认待产包。"],
+	                comate_help: [],
               },
             ],
           },
@@ -206,28 +212,40 @@ describe("AgentHubRichTextBlock support ticket draft", () => {
 });
 
 describe("AgentHubRichTextBlock birth journey plan card", () => {
+  it("keeps phase date text regular weight", () => {
+    const phaseDateRule = appCssSource.match(/\.birth-journey-phase-date\s*\{[^}]+\}/)?.[0] ?? "";
+    expect(phaseDateRule).toContain("font-weight: 400;");
+    expect(phaseDateRule).not.toContain("font-weight: 620;");
+  });
+
   it("collapses upcoming phases to the phase title and expands them on click", () => {
     renderBlock({ payload: birthJourneyPayload() });
 
     expect(screen.getByRole("heading", { name: "孕中期" })).toBeInTheDocument();
-    expect(screen.getByText("当前阶段")).toBeInTheDocument();
-    expect(screen.getAllByText("阶段目标：").length).toBeGreaterThan(0);
-    expect(screen.getByText("先把产检和医院流程确认清楚。")).toBeInTheDocument();
-    expect(screen.getByText("整理产检问题。")).toBeInTheDocument();
+        expect(screen.getByText("当前阶段")).toBeInTheDocument();
+        expect(screen.getAllByText("当前重点：").length).toBeGreaterThan(0);
+        expect(screen.getAllByText("温馨提醒").length).toBeGreaterThan(0);
+        expect(screen.getAllByText("接下来建议").length).toBeGreaterThan(0);
+        expect(screen.getByText("先把产检和医院流程确认清楚。")).toBeInTheDocument();
+        expect(screen.getByText("记录下次产检问题。")).toBeInTheDocument();
+        expect(screen.queryByText("整理产检问题。")).not.toBeInTheDocument();
 
-    expect(screen.getByRole("heading", { name: "孕晚期" })).toBeInTheDocument();
-    expect(screen.queryByText("下一阶段")).not.toBeInTheDocument();
-    expect(screen.getByText("孕28周-36周")).toBeVisible();
-    expect(screen.getByText("把入院准备收拢。")).not.toBeVisible();
-    expect(screen.getByText("确认待产包。")).not.toBeVisible();
+        expect(screen.getByRole("heading", { name: "孕晚期" })).toBeInTheDocument();
+        expect(screen.queryByText("下一阶段")).not.toBeInTheDocument();
+        expect(screen.getByText("孕28周-36周")).toBeVisible();
+        expect(screen.getByText("把入院准备收拢。")).not.toBeVisible();
+        expect(screen.getByText("确认待产包。")).not.toBeVisible();
+        expect(screen.getByText("制定个性化待产清单")).not.toBeVisible();
 
     const upcomingSummary = screen.getByText("孕晚期").closest("summary");
     expect(upcomingSummary).toBeTruthy();
 
     fireEvent.click(upcomingSummary!);
 
-    expect(screen.getByText("把入院准备收拢。")).toBeVisible();
-    expect(screen.getByText("确认待产包。")).toBeVisible();
-    expect(upcomingSummary!.nextElementSibling).toHaveClass("birth-journey-phase-expanded-content");
+        expect(screen.getByText("把入院准备收拢。")).toBeVisible();
+        expect(screen.getByText("确认待产包。")).toBeVisible();
+        expect(screen.getByText("我能帮你做")).toBeVisible();
+        expect(screen.getByText("制定个性化待产清单")).toBeVisible();
+        expect(upcomingSummary!.nextElementSibling).toHaveClass("birth-journey-phase-expanded-content");
+      });
   });
-});

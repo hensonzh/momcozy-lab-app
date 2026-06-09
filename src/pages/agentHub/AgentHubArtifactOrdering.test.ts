@@ -15,8 +15,8 @@ describe("AgentHub artifact ordering wiring", () => {
   });
 
   it("adds extra separation between assistant text and ag-ui artifacts", () => {
-    expect(agentHubSource).toContain('const AG_UI_ARTIFACT_AFTER_TEXT_CLASS = "mt-3.5"');
-    expect(agentHubSource).toContain('const AG_UI_ARTIFACT_STACK_OFFSET_CLASS = "mt-2"');
+    expect(agentHubSource).toContain('const AG_UI_ARTIFACT_AFTER_TEXT_CLASS = "mt-5"');
+    expect(agentHubSource).toContain('const AG_UI_ARTIFACT_STACK_OFFSET_CLASS = "mt-3"');
     expect(agentHubSource).toContain('agUiArtifactSpacingClass(itemHasAgUiArtifact, i > 0, "stack")');
     expect(agentHubSource).toContain(
       "agUiArtifactSpacingClass(richTextHasAgUiArtifactForMsg, Boolean(msg.content.trim()))",
@@ -57,5 +57,18 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain("clearPersistedAgentConversationId()");
     expect(agentHubSource).toContain("clearPersistedAgUiThreadId()");
     expect(agentHubSource).toContain("const merged = isColdStart ? [createNewConversationGreetingMessage()] : inMemory");
+  });
+
+  it("consumes route prefill state into the bottom input once", () => {
+    expect(agentHubSource).toContain("consumedAgentPrefillKeyRef");
+    expect(agentHubSource).toContain("state?.agentPrefill");
+    expect(agentHubSource).toContain("setInput(agentPrefill)");
+    expect(agentHubSource).toContain("replace: true, state: null");
+  });
+
+  it("marks status notification when a birth journey plan artifact is generated", () => {
+    expect(agentHubSource).toContain("richTextPayloadHasBirthJourneyPlanCard");
+    expect(agentHubSource).toContain("markBirthJourneyPlanGeneratedNotification");
+    expect(agentHubSource).toContain("maybeMarkBirthJourneyNotification(payload)");
   });
 });
