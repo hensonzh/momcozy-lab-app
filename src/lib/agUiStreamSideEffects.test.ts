@@ -158,7 +158,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(msg.quickReplies).toBeUndefined();
   });
 
-  it("does not apply quick replies to a message that already contains a card artifact", () => {
+  it("applies quick replies to a message that contains a non-form card artifact", () => {
     const msg = applyEvents([
       {
         type: "ARTIFACT_CREATED",
@@ -183,7 +183,11 @@ describe("applyAgUiStreamSideEffects", () => {
     ]);
 
     expect(msg.richText?.action).toHaveLength(1);
-    expect(msg.quickReplies).toBeUndefined();
+    expect(msg.quickReplies).toEqual([
+      { text: "确认医院流程", sendText: "确认医院流程" },
+      { text: "整理待产包", sendText: "整理待产包" },
+      { text: "做沟通单", sendText: "做分娩沟通单" },
+    ]);
   });
 
   it("attaches web search citations to the assistant message", () => {
@@ -244,6 +248,38 @@ describe("applyAgUiStreamSideEffects", () => {
 
     expect(msg.richText?.action).toHaveLength(1);
     expect(msg.quickReplies).toBeUndefined();
+  });
+
+  it("keeps existing quick replies when a non-form card artifact arrives", () => {
+    const msg = applyEvents([
+      {
+        type: "QUICK_REPLIES",
+        message_id: "reply",
+        replies: [
+          { text: "确认医院流程", send_text: "确认医院流程" },
+          { text: "整理待产包", send_text: "整理待产包" },
+          { text: "做沟通单", send_text: "做分娩沟通单" },
+        ],
+      },
+      {
+        type: "ARTIFACT_CREATED",
+        artifact_id: "birth_journey_1",
+        artifact_type: "birth_journey_plan_card",
+        tool_call_id: "call-card",
+        tool_call_name: "birth_journey_plan_card_create",
+        artifact: {
+          card_type: "birth_journey_plan_card",
+          card_json: { title: "生产全过程计划" },
+        },
+      },
+    ]);
+
+    expect(msg.richText?.action).toHaveLength(1);
+    expect(msg.quickReplies).toEqual([
+      { text: "确认医院流程", sendText: "确认医院流程" },
+      { text: "整理待产包", sendText: "整理待产包" },
+      { text: "做沟通单", sendText: "做分娩沟通单" },
+    ]);
   });
 
   it("can defer artifact rendering to the caller", () => {

@@ -56,6 +56,22 @@ describe("chatMessagesLocalPersistence", () => {
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]")[0].quickReplies).toBeUndefined();
   });
 
+  it("keeps quick replies when only cleaning live in-memory chat messages", () => {
+    const answer = message({
+      id: "m_quick",
+      content: "可以，我们继续。",
+      chatStreamContext: "main",
+      quickReplies: [
+        { text: "继续下一步", sendText: "继续下一步" },
+        { text: "换个方案", sendText: "我想换个方案" },
+        { text: "先帮我总结", sendText: "先帮我总结" },
+      ],
+    });
+
+    expect(stripTransientAgentHubFailureMessages([answer])[0].quickReplies).toEqual(answer.quickReplies);
+    expect(stripTransientAgentHubFailureMessages([answer], { stripEphemeralUi: true })[0].quickReplies).toBeUndefined();
+  });
+
   it("cleans legacy persisted transient failures on load", () => {
     const good = message({ id: "ok", content: "正常历史消息。", chatStreamContext: "main" });
     const failedUser = message({ id: "u_err", role: "user", content: "产前咨询" });
@@ -106,7 +122,7 @@ describe("chatMessagesLocalPersistence", () => {
     expect(loadPersistedChatMessages().map((m) => m.id)).toEqual(["m0", "u3", "m1"]);
   });
 
-  it("removes the new-conversation greeting when restoring an active conversation", () => {
+  it("keeps the new-conversation greeting when restoring an active conversation", () => {
     const greeting = message({
       id: "greeting",
       role: "mai",
@@ -115,10 +131,14 @@ describe("chatMessagesLocalPersistence", () => {
     });
     const user = message({ id: "u1", role: "user", content: "我消毒好了" });
     const answer = message({ id: "m1", role: "mai", content: "做得很好。", chatStreamContext: "main" });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([user, answer, greeting]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([greeting, user, answer]));
 
-    expect(loadPersistedChatMessages().map((m) => m.id)).toEqual(["u1", "m1"]);
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]").map((m: ChatMessage) => m.id)).toEqual(["u1", "m1"]);
+    expect(loadPersistedChatMessages().map((m) => m.id)).toEqual(["greeting", "u1", "m1"]);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]").map((m: ChatMessage) => m.id)).toEqual([
+      "greeting",
+      "u1",
+      "m1",
+    ]);
   });
 
   it("keeps the new-conversation greeting when it is the only chat content", () => {
