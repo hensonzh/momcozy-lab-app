@@ -63,10 +63,30 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
               <div key={tab.path} className="flex-1 flex justify-center h-full items-center">
                 <button
                   onClick={() => navigate(tab.path)}
-                  className="relative -top-3 flex h-[68px] w-[68px] flex-col items-center justify-center rounded-full border-[5px] border-background bg-gradient-to-br from-primary to-primary/85 text-primary-foreground shadow-none ring-1 ring-primary/18 transition-transform active:scale-95"
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "relative -top-3 flex h-[68px] w-[68px] flex-col items-center justify-center rounded-full border-[5px] border-background transition-all duration-200 active:scale-95 focus:outline-none focus-visible:outline-none",
+                    active
+                      ? "bg-gradient-to-br from-primary to-primary/85 text-primary-foreground shadow-[0_12px_30px_rgba(117,75,94,0.26)]"
+                      : "bg-card text-muted-foreground shadow-[0_8px_22px_rgba(58,39,49,0.10)] ring-1 ring-border/70 hover:text-primary hover:ring-primary/24",
+                  )}
                 >
-                  <tab.icon className={cn("h-7 w-7 shrink-0", active && "fill-primary-foreground/20")} strokeWidth={active ? 2.5 : 2} />
-                  <span className="mt-0.5 max-w-[56px] whitespace-nowrap text-center text-[8.5px] font-bold leading-none">{tab.label}</span>
+                  {active && <span className="absolute inset-1 rounded-full bg-white/10" />}
+                  <tab.icon
+                    className={cn(
+                      "relative z-10 h-7 w-7 shrink-0 transition-colors",
+                      active ? "fill-primary-foreground/20" : "fill-transparent",
+                    )}
+                    strokeWidth={active ? 2.6 : 2}
+                  />
+                  <span
+                    className={cn(
+                      "relative z-10 mt-0.5 max-w-[56px] whitespace-nowrap text-center text-[8.5px] leading-none transition-colors",
+                      active ? "font-extrabold" : "font-semibold",
+                    )}
+                  >
+                    {tab.label}
+                  </span>
                 </button>
               </div>
             );
