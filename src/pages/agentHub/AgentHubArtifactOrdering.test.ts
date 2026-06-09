@@ -15,8 +15,8 @@ describe("AgentHub artifact ordering wiring", () => {
   });
 
   it("adds extra separation between assistant text and ag-ui artifacts", () => {
-    expect(agentHubSource).toContain('const AG_UI_ARTIFACT_AFTER_TEXT_CLASS = "mt-3.5"');
-    expect(agentHubSource).toContain('const AG_UI_ARTIFACT_STACK_OFFSET_CLASS = "mt-2"');
+    expect(agentHubSource).toContain('const AG_UI_ARTIFACT_AFTER_TEXT_CLASS = "mt-5"');
+    expect(agentHubSource).toContain('const AG_UI_ARTIFACT_STACK_OFFSET_CLASS = "mt-3"');
     expect(agentHubSource).toContain('agUiArtifactSpacingClass(itemHasAgUiArtifact, i > 0, "stack")');
     expect(agentHubSource).toContain(
       "agUiArtifactSpacingClass(richTextHasAgUiArtifactForMsg, Boolean(msg.content.trim()))",

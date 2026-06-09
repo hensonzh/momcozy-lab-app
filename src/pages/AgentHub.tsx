@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import type { AgUiToolCallRow, ChatMessage, ChatMessageCitation, ChatMessageImageAttachment, ChatMessageLink, ChatStreamRenderItem } from "@/types/chat";
 import { chatBus } from "@/lib/chatBus";
 import { chatStore } from "@/lib/chatStore";
+import { agentHubMainChatRuntime } from "@/lib/agentHubMainChatRuntime";
 import {
   loadPersistedChatMessages,
   savePersistedChatMessages,
@@ -755,7 +756,14 @@ const AgentHub: React.FC = () => {
     initialHubMessagesRef.current = merged;
   }
   const hubInitialMessages = initialHubMessagesRef.current;
-  const [messages, setMessages] = useState<ChatMessage[]>(hubInitialMessages);
+  const messages = useSyncExternalStore(
+    chatStore.subscribe,
+    () => chatStore.get().messages,
+    () => hubInitialMessages,
+  );
+  const setMessages = useCallback((action: React.SetStateAction<ChatMessage[]>) => {
+    chatStore.updateMessages(action);
+  }, []);
   const lastAgUiArtifactAnchorKeyRef = useRef<string | null>(latestAgUiArtifactAnchorKey(hubInitialMessages));
   const pendingAgUiArtifactPositionRef = useRef(false);
   const pendingAgUiArtifactFormLikeRef = useRef(false);
@@ -903,6 +911,19 @@ const AgentHub: React.FC = () => {
     lastMergedAnswer: string;
     lastRichText: ChatRichTextPayload | null;
   } | null>(null);
+  const mainChatRuntimeSnapshot = useSyncExternalStore(
+    agentHubMainChatRuntime.subscribe,
+    agentHubMainChatRuntime.getSnapshot,
+    agentHubMainChatRuntime.getSnapshot,
+  );
+  const isMainChatRunning = mainChatRuntimeSnapshot.running || Boolean(mainChatCancelRef.current);
+
+  useEffect(() => {
+    if (!mainChatRuntimeSnapshot.running) return;
+    mainStreamFollowTailRef.current = true;
+    userPinnedToTailRef.current = true;
+    setShowScrollToBottom(false);
+  }, [mainChatRuntimeSnapshot.replyId, mainChatRuntimeSnapshot.running]);
 
   useEffect(() => {
     return () => {
@@ -1030,6 +1051,7 @@ const AgentHub: React.FC = () => {
 
   const handleCreateNewConversation = useCallback(() => {
     clearMainNoVisibleResponseTimer();
+    agentHubMainChatRuntime.cancel();
     mainChatCancelRef.current?.();
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
@@ -1330,6 +1352,7 @@ const AgentHub: React.FC = () => {
     pendingAgUiArtifactFormLikeRef.current = false;
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
+    agentHubMainChatRuntime.finish(replyId);
     window.setTimeout(() => {
       mainStreamFollowTailRef.current = false;
     }, 300);
@@ -1356,13 +1379,11 @@ const AgentHub: React.FC = () => {
 
   useEffect(
     () => () => {
-      clearMainNoVisibleResponseTimer();
       mainStreamFollowTailRef.current = false;
-      mainChatCancelRef.current?.();
       void stopCurrentBubblePlayback();
       // 暂存图 blob URL 保留到用户删除图、发送并成功附带、或整页卸载，避免路由切换后主界面预览丢失
     },
-    [clearMainNoVisibleResponseTimer, stopCurrentBubblePlayback],
+    [stopCurrentBubblePlayback],
   );
 
   useEffect(() => {
@@ -1826,7 +1847,8 @@ const AgentHub: React.FC = () => {
   const resolveThinkingStatusText = (msg: ChatMessage): string => {
     if (msg.thinkingStatus === "done") return "我想好啦";
     const isStreamingThisMessage =
-      mainStreamingReplyIdRef.current === msg.id && mainChatCancelRef.current != null;
+      (mainStreamingReplyIdRef.current === msg.id && mainChatCancelRef.current != null) ||
+      mainChatRuntimeSnapshot.replyId === msg.id;
     return isStreamingThisMessage ? "我想一下" : "我想好啦";
   };
 
@@ -1867,6 +1889,7 @@ const AgentHub: React.FC = () => {
     mainRichTextForVoiceRef.current = null;
     pendingAgUiArtifactFormLikeRef.current = false;
     clearMainNoVisibleResponseTimer();
+    agentHubMainChatRuntime.cancel();
     mainChatCancelRef.current?.();
     mainStreamingReplyIdRef.current = null;
     await stopCurrentBubblePlayback();
@@ -1884,10 +1907,12 @@ const AgentHub: React.FC = () => {
     mainNoVisibleResponseTimerRef.current = window.setTimeout(() => {
       if (mainStreamingReplyIdRef.current !== replyId) return;
       mainNoVisibleResponseTimerRef.current = null;
+      agentHubMainChatRuntime.cancel();
       mainChatCancelRef.current?.();
       void stopCurrentBubblePlayback();
       mainChatCancelRef.current = null;
       mainStreamingReplyIdRef.current = null;
+      agentHubMainChatRuntime.finish(replyId);
       window.setTimeout(() => {
         mainStreamFollowTailRef.current = false;
       }, 300);
@@ -1970,6 +1995,7 @@ const AgentHub: React.FC = () => {
         mainStreamMergedThinkingRef.current = "";
         mainChatCancelRef.current = null;
         mainStreamingReplyIdRef.current = null;
+        agentHubMainChatRuntime.finish(replyId);
         window.setTimeout(() => {
           mainStreamFollowTailRef.current = false;
         }, 300);
@@ -1996,7 +2022,30 @@ const AgentHub: React.FC = () => {
         clearAwaitingBottomSendBarLoading();
       };
     const agUiLocale = (typeof navigator !== "undefined" && navigator.language) || "zh-CN";
-    mainChatCancelRef.current = postAgUiWebSocketStream({
+    let wsCancel: (() => void) | null = null;
+    const cancelRuntimeStream = () => {
+      clearMainNoVisibleResponseTimer();
+      wsCancel?.();
+      wsCancel = null;
+      if (mainStreamingReplyIdRef.current === replyId) {
+        mainStreamingReplyIdRef.current = null;
+        mainStreamMergedAnswerRef.current = "";
+        mainStreamMergedThinkingRef.current = "";
+        mainPendingRichTextRef.current = null;
+        mainRichTextForVoiceRef.current = null;
+        pendingAgUiArtifactFormLikeRef.current = false;
+        mainStreamFollowTailRef.current = false;
+      }
+      if (mainChatCancelRef.current === cancelRuntimeStream) {
+        mainChatCancelRef.current = null;
+      }
+      clearAwaitingBottomSendBarLoading();
+      setHubBottomSendBusy(false);
+      agentHubMainChatRuntime.finish(replyId);
+    };
+    mainChatCancelRef.current = cancelRuntimeStream;
+    agentHubMainChatRuntime.start(replyId, cancelRuntimeStream);
+    wsCancel = postAgUiWebSocketStream({
       text: query,
       threadId: getAgUiThreadIdForRequest(),
       locale: agUiLocale,
@@ -2128,7 +2177,7 @@ const AgentHub: React.FC = () => {
   const handleQuickReplySelect = (sendText: string) => {
     const text = sendText.trim();
     if (!text) return;
-    if (hubBottomSendBusy || mainChatCancelRef.current) return;
+    if (hubBottomSendBusy || isMainChatRunning) return;
     primeAutoVoicePlayback();
     prepareLatestChatWindowForNewTurn();
     setMessages((prev) => clearQuickRepliesFromMessages(prev));
@@ -2326,7 +2375,6 @@ const AgentHub: React.FC = () => {
 
   useEffect(() => {
     const durableMessages = stripTransientAgentHubFailureMessages(messages);
-    chatStore.setMessages(durableMessages);
     savePersistedChatMessages(durableMessages);
     const container = scrollRef.current;
     if (!container) return;
@@ -2338,7 +2386,7 @@ const AgentHub: React.FC = () => {
     const awaitingArtifactPosition = pendingAgUiArtifactPositionRef.current;
     const forceTailAfterSend = !awaitingArtifactPosition && isNewBubble && scrollTailAfterHubSendRef.current;
     const forceTailDuringMainStream =
-      !awaitingArtifactPosition && mainStreamFollowTailRef.current && mainStreamingReplyIdRef.current != null;
+      !awaitingArtifactPosition && mainStreamFollowTailRef.current && mainChatRuntimeSnapshot.replyId != null;
     const shouldForceTail = forceTailAfterSend || forceTailDuringMainStream;
     const wasPinnedToTail = userPinnedToTailRef.current || shouldForceTail;
     const isNearTailAfterUpdate = isChatScrollNearTail(container, DEFAULT_CHAT_TAIL_THRESHOLD_PX);
@@ -2494,13 +2542,16 @@ const AgentHub: React.FC = () => {
   }, [navigate]);
 
   const interruptMainChatStream = () => {
-    const replyId = mainStreamingReplyIdRef.current;
+    const replyId = mainStreamingReplyIdRef.current ?? agentHubMainChatRuntime.getSnapshot().replyId;
     const cancelCurrentStream = mainChatCancelRef.current;
-    if (!cancelCurrentStream && !replyId && !hubBottomSendBusy) return false;
+    const runtimeRunning = agentHubMainChatRuntime.getSnapshot().running;
+    if (!cancelCurrentStream && !replyId && !hubBottomSendBusy && !runtimeRunning) return false;
 
     awaitingHubBottomReplyRef.current = false;
     clearMainNoVisibleResponseTimer();
-    cancelCurrentStream?.();
+    if (!agentHubMainChatRuntime.cancel()) {
+      cancelCurrentStream?.();
+    }
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
     mainStreamFollowTailRef.current = false;
@@ -2544,14 +2595,14 @@ const AgentHub: React.FC = () => {
     try {
     const pendingText = (textOverride ?? input).trim();
     const hasReadyStagedImages = collectAgUiReadyImages(messages).length > 0;
-    if (!hubBottomSendBusy && !mainChatCancelRef.current && (pendingText || hasReadyStagedImages)) {
+    if (!hubBottomSendBusy && !isMainChatRunning && (pendingText || hasReadyStagedImages)) {
       primeAutoVoicePlayback();
     }
 
     await stopSpeech({ discardSttResult: true });
 
     const hasNewTurnContent = Boolean(pendingText || hasReadyStagedImages);
-    if (hubBottomSendBusy || mainChatCancelRef.current) {
+    if (hubBottomSendBusy || isMainChatRunning) {
       const isLikelyDuplicateStop = !hasNewTurnContent && Date.now() - lastHubBottomNewTurnAtRef.current < 700;
       if (isLikelyDuplicateStop) return;
       interruptMainChatStream();
@@ -2730,7 +2781,7 @@ const AgentHub: React.FC = () => {
     setShowScrollToBottom(false);
     scrollToChatTail("smooth");
   };
-  const historyLoadTemporarilyDisabled = hubBottomSendBusy || Boolean(mainChatCancelRef.current || mainStreamingReplyIdRef.current);
+  const historyLoadTemporarilyDisabled = hubBottomSendBusy || isMainChatRunning;
   const handleLoadOlderMessages = () => {
     if (historyLoadTemporarilyDisabled || visibleStartIndexRef.current <= 0) return;
     const restore = captureChatHistoryAnchor();
@@ -3347,7 +3398,7 @@ const AgentHub: React.FC = () => {
                 <AgentHubCitations msg={msg} />
                 <AgentHubQuickReplies
                   msg={msg}
-                  disabled={hubBottomSendBusy || Boolean(mainChatCancelRef.current)}
+                  disabled={hubBottomSendBusy || isMainChatRunning}
                   onSelect={handleQuickReplySelect}
                 />
               </div>

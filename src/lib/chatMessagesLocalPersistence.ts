@@ -52,21 +52,6 @@ function isUploadedImageStagingMessage(message: ChatMessage): boolean {
   return message.role === "user" && String(message.cardData?.kind ?? "") === "uploaded-image";
 }
 
-function isAgentHubGreetingMessage(message: ChatMessage): boolean {
-  if (message.role !== "mai") return false;
-  if (message.chatStreamContext && message.chatStreamContext !== "main") return false;
-  const content = message.content.trim();
-  return content.startsWith("你好呀，我在。") && content.includes("这次想先聊哪件事");
-}
-
-function stripMixedGreetingMessages(messages: ChatMessage[]): ChatMessage[] {
-  const hasConversationMessage = messages.some(
-    (message) => !isAgentHubGreetingMessage(message) && !isUploadedImageStagingMessage(message),
-  );
-  if (!hasConversationMessage) return messages;
-  return messages.filter((message) => !isAgentHubGreetingMessage(message));
-}
-
 function removeUnansweredUserRuns(messages: ChatMessage[]): ChatMessage[] {
   const remove = new Set<number>();
   let index = 0;
@@ -94,7 +79,10 @@ function removeUnansweredUserRuns(messages: ChatMessage[]): ChatMessage[] {
   return messages.filter((_, index) => !remove.has(index));
 }
 
-export function stripTransientAgentHubFailureMessages(messages: ChatMessage[]): ChatMessage[] {
+export function stripTransientAgentHubFailureMessages(
+  messages: ChatMessage[],
+  opts?: { stripEphemeralUi?: boolean },
+): ChatMessage[] {
   const remove = new Set<number>();
   messages.forEach((message, index) => {
     if (!isTransientAgentHubFailureMessage(message) && !isStaleMainStreamPlaceholder(message)) return;
@@ -106,14 +94,15 @@ export function stripTransientAgentHubFailureMessages(messages: ChatMessage[]): 
     }
   });
 
-  const cleaned = removeUnansweredUserRuns(stripEphemeralChatMessageUi(messages.filter((_, index) => !remove.has(index))));
+  const remaining = messages.filter((_, index) => !remove.has(index));
+  const cleaned = removeUnansweredUserRuns(opts?.stripEphemeralUi ? stripEphemeralChatMessageUi(remaining) : remaining);
   while (cleaned.length > 0) {
     const last = cleaned.at(-1);
     if (last?.role !== "user") break;
     if (isUploadedImageStagingMessage(last)) break;
     cleaned.pop();
   }
-  return stripMixedGreetingMessages(cleaned);
+  return cleaned;
 }
 
 /**
@@ -126,9 +115,8 @@ export function loadPersistedChatMessages(): ChatMessage[] {
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
     const original = parsed as ChatMessage[];
-    const messages = stripEphemeralChatMessageUi(original);
-    const sanitized = stripTransientAgentHubFailureMessages(messages);
-    if (sanitized.length !== original.length || JSON.stringify(messages) !== JSON.stringify(original)) {
+    const sanitized = stripTransientAgentHubFailureMessages(original, { stripEphemeralUi: true });
+    if (sanitized.length !== original.length || JSON.stringify(sanitized) !== JSON.stringify(original)) {
       localStorage.setItem(CHAT_MESSAGES_STORAGE_KEY, JSON.stringify(takeLatestMessages(sanitized, CHAT_MESSAGES_LOCAL_MAX_COUNT)));
     }
     return sanitized;
@@ -143,7 +131,10 @@ export function loadPersistedChatMessages(): ChatMessage[] {
  */
 export function savePersistedChatMessages(messages: ChatMessage[]): void {
   try {
-    const slice = takeLatestMessages(stripTransientAgentHubFailureMessages(stripEphemeralChatMessageUi(messages)), CHAT_MESSAGES_LOCAL_MAX_COUNT);
+    const slice = takeLatestMessages(
+      stripTransientAgentHubFailureMessages(messages, { stripEphemeralUi: true }),
+      CHAT_MESSAGES_LOCAL_MAX_COUNT,
+    );
     localStorage.setItem(CHAT_MESSAGES_STORAGE_KEY, JSON.stringify(slice));
   } catch (e) {
     log("[chat-persist] 写入本地对话失败", e);
