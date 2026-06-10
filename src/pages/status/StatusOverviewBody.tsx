@@ -803,7 +803,7 @@ const MomStatusPanelSheet: React.FC<{
                                     {detailSections.goal ? (
                                       <section>
                                         <p className="text-[11px] font-extrabold text-[#4a4542]">阶段目标</p>
-                                        <p className="mt-1 text-[11px] font-semibold leading-relaxed text-[#5b5450]">
+                                        <p className="mt-1 text-[11px] font-normal leading-relaxed text-[#5b5450]">
                                           {detailSections.goal}
                                         </p>
                                       </section>
@@ -813,7 +813,7 @@ const MomStatusPanelSheet: React.FC<{
                                         <p className="text-[11px] font-extrabold text-[#4a4542]">温馨提醒</p>
                                         <div className="mt-1 space-y-1">
                                           {detailSections.watchouts.map((item) => (
-                                            <p key={item} className="text-[11px] font-semibold leading-relaxed text-[#5b5450]">{item}</p>
+                                            <p key={item} className="text-[11px] font-normal leading-relaxed text-[#5b5450]">{item}</p>
                                           ))}
                                         </div>
                                       </section>
@@ -824,7 +824,7 @@ const MomStatusPanelSheet: React.FC<{
                                         <div className="mt-1.5 space-y-1.5">
                                           {detailSections.suggestions.map((suggestion, suggestionIndex) => (
                                             <div key={suggestion.action} className="rounded-xl bg-white/70 px-3 py-2">
-                                              <div className="flex gap-1.5 text-[11px] font-extrabold leading-relaxed text-[#5b5450]">
+                                              <div className="flex gap-1.5 text-[11px] font-normal leading-relaxed text-[#5b5450]">
                                                 <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#ece8e4] text-[10px] font-extrabold leading-none text-[#4a4542]">
                                                   {suggestionIndex + 1}
                                                 </span>
