@@ -68,6 +68,7 @@ import {
   subscribeBirthJourneyPlanDeleted,
   useBirthJourneyPlanCardNotification,
 } from "@/lib/birthJourneyPlanNotification";
+import { subscribePregnancyDiaryChanged } from "@/lib/pregnancyDiaryEvents";
 
 import momAvatar from "@/assets/mom-avatar-felt.png";
 import babyAvatar from "@/assets/baby-avatar-felt.png";
@@ -153,6 +154,12 @@ const POSTPARTUM_RECOVERY_COURSES = [
   { time: "第 3-5 天", status: "进行中", title: "骨盆稳定训练", detail: "低强度核心稳定动作，帮助恢复骨盆控制" },
   { time: "第 6-7 天", title: "腰背与肩颈放松", detail: "照护和吸奶后的短时拉伸，缓解腰背疲劳" },
 ] as const;
+
+const DIARY_MOOD_OPTIONS = ["平稳", "开心", "焦虑", "低落", "容易烦躁"] as const;
+const DIARY_ENERGY_OPTIONS = ["不错", "一般", "很累"] as const;
+const DIARY_SLEEP_OPTIONS = ["睡得好", "易醒", "失眠", "白天补觉"] as const;
+const DIARY_FETAL_MOVEMENT_OPTIONS = ["胎动正常", "比平时少", "比平时频繁", "还没明显感觉"] as const;
+const DIARY_SYMPTOM_OPTIONS = ["腰酸", "水肿", "胃口变化", "宫缩感", "胎动变化", "头晕", "腹痛", "出血"] as const;
 
 const BABY_HEALTH_ITEMS = [
   "自闭症风险筛查",
@@ -321,14 +328,76 @@ function formatDiaryDateLabel(dateKey: string): string {
 }
 
 function pregnancyDiarySummary(entry: PregnancyDiaryEntry | null): string {
-  if (!entry) return "记录孕期生活、身体感受和产检点滴";
+  if (!entry) return "今天还没有记录";
   const parts = [
     entry.mood ? `心情${entry.mood}` : "",
     entry.fetal_movement ? entry.fetal_movement : "",
     entry.sleep_summary ? entry.sleep_summary : "",
   ].filter(Boolean);
-  if (parts.length > 0) return `最近记录：${parts.slice(0, 2).join("，")}`;
-  return entry.content ? `最近记录：${entry.content}` : "今天已有孕期记录";
+  if (parts.length > 0) return `今日已记录：${parts.slice(0, 2).join("，")}`;
+  return entry.content ? `今日已记录：${entry.content}` : "今天已有孕期记录";
+}
+
+function pregnancyDiarySignalTags(entry: PregnancyDiaryEntry): string[] {
+  return [
+    entry.mood ? `心情${entry.mood}` : "",
+    compactText(entry.fetal_movement),
+    compactText(entry.sleep_summary),
+    ...entry.symptom_tags,
+  ].map(compactText).filter(Boolean).slice(0, 4);
+}
+
+function pregnancyDiaryRecentCount(entries: PregnancyDiaryEntry[], days = 7): number {
+  const dateKeys = new Set(buildRecentDateKeys(days));
+  return entries.filter((entry) => dateKeys.has(entry.entry_date)).length;
+}
+
+function pregnancyDiaryQuestionCount(entries: PregnancyDiaryEntry[]): number {
+  return entries.reduce((total, entry) => {
+    const note = compactText(entry.appointment_note);
+    if (!note) return total;
+    return total + Math.max(1, note.split(/[？?\n；;]/).map((item) => item.trim()).filter(Boolean).length);
+  }, 0);
+}
+
+function pregnancyDiaryRecentTags(entries: PregnancyDiaryEntry[], limit = 4): string[] {
+  const seen = new Set<string>();
+  const tags: string[] = [];
+  entries.slice(0, 7).forEach((entry) => {
+    entry.symptom_tags.forEach((tag) => {
+      const text = compactText(tag);
+      if (!text || seen.has(text)) return;
+      seen.add(text);
+      tags.push(text);
+    });
+  });
+  return tags.slice(0, limit);
+}
+
+function pregnancyDiaryReviewSummary(entries: PregnancyDiaryEntry[]): string {
+  if (entries.length === 0) return "记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。";
+  const recent = entries.slice(0, 7);
+  const tags = pregnancyDiaryRecentTags(recent, 3);
+  const sleepSignals = recent.map((entry) => compactText(entry.sleep_summary)).filter(Boolean);
+  const moodSignals = recent.map((entry) => compactText(entry.mood)).filter(Boolean);
+  const parts = [
+    tags.length > 0 ? `身体感受集中在${tags.join("、")}` : "",
+    sleepSignals.length > 0 ? `睡眠记录 ${sleepSignals[0]}` : "",
+    moodSignals.length > 0 ? `最近心情${moodSignals[0]}` : "",
+  ].filter(Boolean);
+  if (parts.length === 0) return "已经开始沉淀孕期记录，继续记录后可以整理成产检沟通清单。";
+  return `${parts.slice(0, 2).join("，")}。`;
+}
+
+function pregnancyDiaryAgentPrompts(entries: PregnancyDiaryEntry[]): string[] {
+  const prompts = [
+    "帮我回顾最近7天的孕期日记",
+    "帮我根据孕期日记整理下次产检要问医生的问题",
+  ];
+  if (pregnancyDiaryQuestionCount(entries) > 0) {
+    prompts.unshift("帮我整理孕期日记里的产检问题清单");
+  }
+  return [...new Set(prompts)].slice(0, 3);
 }
 
 const BabyStatusPanelSheet: React.FC<{
@@ -528,6 +597,7 @@ const MomStatusPanelSheet: React.FC<{
   onDeleteBirthJourneyPlan: () => void;
   pregnancyDiaryEntries: PregnancyDiaryEntry[];
   pregnancyDiaryLoading: boolean;
+  pregnancyDiaryJustSaved: boolean;
   onOpenDiaryEditor: () => void;
 }> = ({
   panel,
@@ -540,6 +610,7 @@ const MomStatusPanelSheet: React.FC<{
   onDeleteBirthJourneyPlan,
   pregnancyDiaryEntries,
   pregnancyDiaryLoading,
+  pregnancyDiaryJustSaved,
   onOpenDiaryEditor,
 }) => {
   const [postpartumTrainingHintVisible, setPostpartumTrainingHintVisible] = useState(false);
@@ -607,6 +678,12 @@ const MomStatusPanelSheet: React.FC<{
   const birthJourneyUpcomingPhases = birthJourneyPhases
     .map((phase, index) => ({ phase, index }))
     .filter((item) => item.index > birthJourneyCurrentIndex);
+  const pregnancyDiaryRecentCount7 = pregnancyDiaryRecentCount(pregnancyDiaryEntries, 7);
+  const pregnancyDiaryQuestions = pregnancyDiaryQuestionCount(pregnancyDiaryEntries);
+  const pregnancyDiaryReview = pregnancyDiaryReviewSummary(pregnancyDiaryEntries);
+  const pregnancyDiaryPrompts = pregnancyDiaryAgentPrompts(pregnancyDiaryEntries);
+  const pregnancyDiaryPrimaryPrompt = pregnancyDiaryPrompts[0] ?? "帮我回顾最近7天的孕期日记";
+  const pregnancyDiaryPrimaryAction = pregnancyDiaryQuestions > 0 ? "整理产检问题" : "回顾最近记录";
 
   if (isCenteredInfo) {
     return (
@@ -935,66 +1012,121 @@ const MomStatusPanelSheet: React.FC<{
         ) : null}
 
         {panel === "pregnancy-diary-detail" ? (
-          <div className="max-h-[76vh] space-y-3 overflow-y-auto pr-1">
-            <button
-              type="button"
-              onClick={onOpenDiaryEditor}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
-            >
-              <PencilLine className="h-4 w-4" />
-              记录今天
-            </button>
-            <div className="rounded-2xl bg-[#fffaf0] px-4 py-3 text-[11px] font-semibold leading-relaxed text-[#6d5530]">
-              日记用于记录孕期生活和感受；若出现出血、剧烈腹痛、明显胎动异常等情况，请及时联系医生。
-            </div>
+          <div className="max-h-[76vh] space-y-4 overflow-y-auto pr-1">
+            <section className="rounded-[20px] border border-[#eadfd8] bg-[#fff9f2] px-5 py-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-extrabold text-[#b66335]">最近一周</p>
+                  <p className="mt-2 text-[18px] font-extrabold leading-relaxed text-[#36272f]">
+                    记录了 {pregnancyDiaryRecentCount7}/7 天
+                  </p>
+                  <p className="mt-2 text-xs font-semibold leading-relaxed text-[#7f6b70]">
+                    {pregnancyDiaryReview}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={onOpenDiaryEditor}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#b66335] px-4 py-2.5 text-xs font-extrabold text-white shadow-[0_8px_18px_rgba(182,99,53,0.22)] active:scale-[0.98]"
+                >
+                  <PencilLine className="h-3.5 w-3.5" />
+                  记录今天
+                </button>
+              </div>
+            </section>
+
+            {pregnancyDiaryJustSaved ? (
+              <p className="rounded-2xl border border-[#bfe3d8] bg-[#f2fbf7] px-4 py-3 text-xs font-bold leading-relaxed text-[#3f7162]">
+                今天的记录已保存，我可以继续帮你整理产检问题或回顾最近几天的状态变化。
+              </p>
+            ) : null}
+
+            {pregnancyDiaryEntries.length > 0 ? (
+              <section className="rounded-[20px] border border-[#eadfd8] bg-white px-4 py-3">
+                <button
+                  type="button"
+                  onClick={() => onAgentPrefill(pregnancyDiaryPrimaryPrompt)}
+                  className="flex w-full items-center justify-between gap-3 text-left active:scale-[0.99]"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <MaiInlineAvatar />
+                    <div className="min-w-0">
+                      <p className="text-sm font-extrabold text-foreground">{pregnancyDiaryPrimaryAction}</p>
+                      <p className="mt-0.5 text-[11px] font-semibold leading-relaxed text-[#8a757b]">
+                        {pregnancyDiaryQuestions > 0
+                          ? `从日记里整理 ${pregnancyDiaryQuestions} 个问题`
+                          : "把最近记录整理成一段状态回顾"}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f5eee9] text-[#9b552f]">
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </button>
+              </section>
+            ) : null}
+
             {pregnancyDiaryLoading ? (
               <div className="rounded-2xl bg-muted/45 px-4 py-5 text-center text-sm font-semibold text-muted-foreground">
                 正在加载孕期日记…
               </div>
             ) : pregnancyDiaryEntries.length > 0 ? (
-              <div className="relative flex flex-col gap-3">
-                <span aria-hidden="true" className="absolute bottom-4 left-[9px] top-4 w-px bg-[#c8ecee]" />
-                {pregnancyDiaryEntries.map((entry, index) => (
-                  <article key={entry.entry_id} className="relative flex gap-3">
-                    <span
-                      aria-hidden="true"
-                      className={`mt-1 h-5 w-5 shrink-0 rounded-full border-2 ${
+              <section className="space-y-3">
+                <div className="flex items-baseline justify-between gap-3 px-1">
+                  <p className="text-base font-extrabold text-foreground">最近记录</p>
+                  <p className="text-[10px] font-bold text-muted-foreground">{pregnancyDiaryEntries.length} 篇</p>
+                </div>
+                <div className="space-y-3">
+                  {pregnancyDiaryEntries.map((entry, index) => (
+                    <article
+                      key={entry.entry_id}
+                      className={`rounded-[18px] border px-4 py-4 ${
                         index === 0
-                          ? "border-[#3b8a90] bg-[#c8ecee] shadow-[0_0_0_4px_rgba(200,236,238,0.5)]"
-                          : "border-[#c8ecee] bg-card"
+                          ? "border-[#efc8ac] bg-[#fff7ee]"
+                          : "border-[#eadfd8] bg-[#fffdfb]"
                       }`}
-                    />
-                    <div className="min-w-0 flex-1 rounded-2xl border border-[#c8ecee] bg-[#fbffff] px-4 py-3">
-                      <div className="flex min-w-0 items-center justify-between gap-2">
-                        <p className="truncate text-sm font-extrabold text-foreground">
-                          {formatDiaryDateLabel(entry.entry_date)}
-                        </p>
-                        {entry.gestational_week ? (
-                          <span className="shrink-0 text-[10px] font-bold text-[#31828b]">{entry.gestational_week}</span>
+                    >
+                      <div className="flex min-w-0 items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-extrabold text-foreground">{formatDiaryDateLabel(entry.entry_date)}</p>
+                          {entry.gestational_week ? (
+                            <p className="mt-0.5 text-[10px] font-bold text-[#8a757b]">{entry.gestational_week}</p>
+                          ) : null}
+                        </div>
+                        {index === 0 ? (
+                          <span className="shrink-0 rounded-full bg-[#f4e3d5] px-2.5 py-1 text-[10px] font-extrabold text-[#9b552f]">
+                            今天
+                          </span>
                         ) : null}
                       </div>
-                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#5c6870]">
-                        {pregnancyDiarySummary(entry)}
-                      </p>
-                      {entry.symptom_tags.length > 0 ? (
-                        <div className="mt-2 flex flex-wrap gap-1.5">
-                          {entry.symptom_tags.map((tag) => (
-                            <span key={tag} className="rounded-full bg-[#d8f4f5] px-2 py-0.5 text-[10px] font-bold text-[#31828b]">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
-                      {entry.content ? <p className="mt-2 text-[11px] font-medium leading-relaxed text-[#5c6870]">{entry.content}</p> : null}
-                    </div>
-                  </article>
-                ))}
-              </div>
+                      {entry.content ? (
+                        <p className="mt-3 line-clamp-2 text-xs font-semibold leading-relaxed text-[#5f5357]">{entry.content}</p>
+                      ) : (
+                        <p className="mt-3 text-xs font-semibold leading-relaxed text-[#5f5357]">
+                          {pregnancyDiarySummary(entry)}
+                        </p>
+                      )}
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {pregnancyDiarySignalTags(entry).map((tag) => (
+                          <span key={tag} className="rounded-full bg-[#f5eee9] px-2.5 py-1 text-[10px] font-bold text-[#75666b]">
+                            {tag}
+                          </span>
+                        ))}
+                        {entry.appointment_note ? (
+                          <span className="rounded-full bg-[#f5eee9] px-2.5 py-1 text-[10px] font-bold text-[#9b552f]">
+                            有产检问题
+                          </span>
+                        ) : null}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
             ) : (
-              <div className="rounded-2xl border border-[#c8ecee] bg-[#fbffff] px-4 py-5 text-center">
-                <BookOpen className="mx-auto h-7 w-7 text-[#3b8a90]" />
+              <div className="rounded-[24px] border border-[#eadfd8] bg-[#fffdfb] px-4 py-5 text-center">
+                <BookOpen className="mx-auto h-7 w-7 text-[#b66335]" />
                 <p className="mt-2 text-sm font-extrabold text-foreground">还没有孕期日记</p>
-                <p className="mt-1 text-xs font-semibold leading-relaxed text-[#5c6870]">
+                <p className="mt-1 text-xs font-semibold leading-relaxed text-[#7f6b70]">
                   从今天开始记录心情、身体感受、胎动和产检点滴。
                 </p>
               </div>
@@ -1765,9 +1897,11 @@ const StatusOverviewBody: React.FC = () => {
   const [diarySleep, setDiarySleep] = useState("");
   const [diaryFetalMovement, setDiaryFetalMovement] = useState("");
   const [diarySymptomTags, setDiarySymptomTags] = useState("");
+  const [diaryAppointmentNote, setDiaryAppointmentNote] = useState("");
   const [diaryContent, setDiaryContent] = useState("");
   const [diarySaving, setDiarySaving] = useState(false);
   const [diarySaveErr, setDiarySaveErr] = useState<string | null>(null);
+  const [pregnancyDiaryJustSaved, setPregnancyDiaryJustSaved] = useState(false);
   const growthMetricsRef = useRef<HTMLDivElement | null>(null);
   const growthBlinkTimerRef = useRef<number | null>(null);
 
@@ -1811,13 +1945,20 @@ const StatusOverviewBody: React.FC = () => {
       queryPregnancyDiaryToday({ user_id: DEFAULT_CHAT_USER_ID, timestamp: todayDateKey }, { signal }),
       queryPregnancyDiaryList({ user_id: DEFAULT_CHAT_USER_ID, limit: 12 }, { signal }),
     ]);
-    setPregnancyDiaryToday(today.error === 0 ? today.diary : null);
-    setPregnancyDiaryEntries(list.error === 0 && Array.isArray(list.diary_list) ? list.diary_list : []);
+    const realEntries = list.error === 0 && Array.isArray(list.diary_list) ? list.diary_list : [];
+    setPregnancyDiaryToday(today.error === 0 ? today.diary ?? null : null);
+    setPregnancyDiaryEntries(realEntries);
   }, []);
+
+  useEffect(() => subscribePregnancyDiaryChanged(() => {
+    setPregnancyDiaryLoading(true);
+    void reloadPregnancyDiary().finally(() => setPregnancyDiaryLoading(false));
+  }), [reloadPregnancyDiary]);
 
   const openPregnancyDiaryEditor = useCallback(() => {
     setActiveMomPanel(null);
     setDiarySaveErr(null);
+    setPregnancyDiaryJustSaved(false);
     const entry = pregnancyDiaryToday;
     setDiaryGestationalWeek(entry?.gestational_week ?? "");
     setDiaryMood(entry?.mood ?? "");
@@ -1825,9 +1966,21 @@ const StatusOverviewBody: React.FC = () => {
     setDiarySleep(entry?.sleep_summary ?? "");
     setDiaryFetalMovement(entry?.fetal_movement ?? "");
     setDiarySymptomTags(entry?.symptom_tags?.join("、") ?? "");
+    setDiaryAppointmentNote(entry?.appointment_note ?? "");
     setDiaryContent(entry?.content ?? "");
     setIsPregnancyDiaryEditorOpen(true);
   }, [pregnancyDiaryToday]);
+
+  const toggleDiarySymptomTag = useCallback((tag: string) => {
+    setDiarySymptomTags((current) => {
+      const parts = current
+        .split(/[、,，\s]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+      if (parts.includes(tag)) return parts.filter((item) => item !== tag).join("、");
+      return [...parts, tag].join("、");
+    });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -2190,6 +2343,11 @@ const StatusOverviewBody: React.FC = () => {
   const pregnancyDiaryCardText = pregnancyDiaryLoading
     ? "正在加载孕期日记"
     : pregnancyDiarySummary(pregnancyDiaryToday ?? pregnancyDiaryEntries[0] ?? null);
+  const pregnancyDiaryCardSupport = pregnancyDiaryLoading
+    ? undefined
+    : pregnancyDiaryEntries.length > 0
+      ? `最近7天记录 ${pregnancyDiaryRecentCount(pregnancyDiaryEntries, 7)} 天`
+      : "记录后可整理产检问题和最近状态";
   const pregnancyDiaryAction = pregnancyDiaryToday ? "编辑今天" : "记录今天";
 
   const runGrowthMetricsHighlight = useCallback(() => {
@@ -2382,6 +2540,7 @@ const StatusOverviewBody: React.FC = () => {
               <StatusModuleCard
                 title="孕期日记"
                 bodyText={pregnancyDiaryCardText}
+                supportingText={pregnancyDiaryCardSupport}
                 action={pregnancyDiaryAction}
                 secondaryAction="查看日记"
                 tone="aqua"
@@ -2688,6 +2847,7 @@ const StatusOverviewBody: React.FC = () => {
             onDeleteBirthJourneyPlan={handleDeleteBirthJourneyPlan}
             pregnancyDiaryEntries={pregnancyDiaryEntries}
             pregnancyDiaryLoading={pregnancyDiaryLoading}
+            pregnancyDiaryJustSaved={pregnancyDiaryJustSaved}
             onOpenDiaryEditor={openPregnancyDiaryEditor}
           />
         ) : null}
@@ -2753,52 +2913,115 @@ const StatusOverviewBody: React.FC = () => {
                       className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
                     />
                   </label>
-                  <label className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                    <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">心情</span>
-                    <input
-                      value={diaryMood}
-                      onChange={(event) => setDiaryMood(event.target.value)}
-                      placeholder="平稳/开心/焦虑"
-                      className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
-                    />
-                  </label>
+                  <div className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                    <span className="mb-2 block text-xs font-semibold text-muted-foreground">心情</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {DIARY_MOOD_OPTIONS.map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => setDiaryMood(option)}
+                          className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                            diaryMood === option ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <label className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                    <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">精力</span>
-                    <input
-                      value={diaryEnergy}
-                      onChange={(event) => setDiaryEnergy(event.target.value)}
-                      placeholder="良好/一般/偏低"
-                      className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
-                    />
-                  </label>
-                  <label className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                    <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">身体标签</span>
-                    <input
-                      value={diarySymptomTags}
-                      onChange={(event) => setDiarySymptomTags(event.target.value)}
-                      placeholder="水肿、腰酸"
-                      className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
-                    />
-                  </label>
+                  <div className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                    <span className="mb-2 block text-xs font-semibold text-muted-foreground">精力</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {DIARY_ENERGY_OPTIONS.map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => setDiaryEnergy(option)}
+                          className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                            diaryEnergy === option ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                    <span className="mb-2 block text-xs font-semibold text-muted-foreground">睡眠</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {DIARY_SLEEP_OPTIONS.map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => setDiarySleep(option)}
+                          className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                            diarySleep === option ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                  <span className="mb-2 block text-xs font-semibold text-muted-foreground">胎动</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {DIARY_FETAL_MOVEMENT_OPTIONS.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setDiaryFetalMovement(option)}
+                        className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                          diaryFetalMovement === option ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                        }`}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-border/50 bg-secondary/20 p-3">
+                  <span className="mb-2 block text-xs font-semibold text-muted-foreground">身体感受</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {DIARY_SYMPTOM_OPTIONS.map((option) => {
+                      const selected = diarySymptomTags
+                        .split(/[、,，\s]+/)
+                        .map((tag) => tag.trim())
+                        .filter(Boolean)
+                        .includes(option);
+                      return (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => toggleDiarySymptomTag(option)}
+                          className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                            selected ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <input
+                    value={diarySymptomTags}
+                    onChange={(event) => setDiarySymptomTags(event.target.value)}
+                    placeholder="也可以补充其它感受"
+                    className="mt-2 h-9 w-full rounded-xl border border-border/50 bg-background px-3 text-xs font-semibold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                  />
                 </div>
                 <label className="block rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">睡眠</span>
-                  <input
-                    value={diarySleep}
-                    onChange={(event) => setDiarySleep(event.target.value)}
-                    placeholder="昨晚睡眠、醒来次数、白天补休"
-                    className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
-                  />
-                </label>
-                <label className="block rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">胎动</span>
-                  <input
-                    value={diaryFetalMovement}
-                    onChange={(event) => setDiaryFetalMovement(event.target.value)}
-                    placeholder="如 胎动正常 / 今天比平时少"
-                    className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">想问医生的问题</span>
+                  <textarea
+                    value={diaryAppointmentNote}
+                    onChange={(event) => setDiaryAppointmentNote(event.target.value)}
+                    placeholder="比如下次产检想确认的身体变化、检查结果或用药问题"
+                    rows={2}
+                    className="w-full resize-none rounded-xl border border-border/50 bg-background px-3 py-2 text-sm font-semibold leading-relaxed outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
                   />
                 </label>
                 <label className="block rounded-2xl border border-border/50 bg-secondary/20 p-3">
@@ -2838,6 +3061,7 @@ const StatusOverviewBody: React.FC = () => {
                     !diarySleep.trim() &&
                     !diaryFetalMovement.trim() &&
                     symptomTags.length === 0 &&
+                    !diaryAppointmentNote.trim() &&
                     !diaryContent.trim()
                   ) {
                     setDiarySaveErr("至少写下一项今天的状态或记录");
@@ -2854,6 +3078,7 @@ const StatusOverviewBody: React.FC = () => {
                       sleep_summary: diarySleep,
                       fetal_movement: diaryFetalMovement,
                       symptom_tags: symptomTags,
+                      appointment_note: diaryAppointmentNote,
                       content: diaryContent,
                     };
                     const result = pregnancyDiaryToday
@@ -2863,6 +3088,8 @@ const StatusOverviewBody: React.FC = () => {
                     await reloadPregnancyDiary();
                     setPregnancyDiaryLoading(false);
                     setIsPregnancyDiaryEditorOpen(false);
+                    setPregnancyDiaryJustSaved(true);
+                    setActiveMomPanel("pregnancy-diary-detail");
                   } catch (e: unknown) {
                     setDiarySaveErr(e instanceof Error ? e.message : "保存失败，请稍后重试");
                   } finally {
