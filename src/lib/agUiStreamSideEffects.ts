@@ -7,6 +7,7 @@ import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import type { AgUiToolCallRow, ChatMessage, ChatMessageCitation, ChatQuickReply } from "@/types/chat";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
 import { notifyBirthJourneyPlanDeleted } from "@/lib/birthJourneyPlanNotification";
+import { notifyPregnancyDiaryChanged } from "@/lib/pregnancyDiaryEvents";
 import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -341,6 +342,16 @@ function maybeNotifyBirthJourneyPlanDeleted(parsed: Record<string, unknown> | nu
   notifyBirthJourneyPlanDeleted();
 }
 
+function maybeNotifyPregnancyDiaryChanged(parsed: Record<string, unknown> | null): void {
+  if (!parsed) return;
+  const toolName = normalizeToolName(parsed.tool_name);
+  if (toolName !== "pregnancy_diary_manage") return;
+  const status = coalesceString(parsed.status);
+  if (!["diary_entry_created", "diary_entry_updated", "diary_entry_deleted"].includes(status)) return;
+  if (parsed.side_effect_performed === false) return;
+  notifyPregnancyDiaryChanged();
+}
+
 function summarizeToolResult(parsed: Record<string, unknown>): string {
   const ok = parsed.ok;
   const base = typeof ok === "boolean" ? (ok ? "这一步处理好啦" : "这一步暂时没处理好") : "";
@@ -393,6 +404,7 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
       "milk_records_query",
       "milk_plan_query",
       "milk_calendar_query",
+      "pregnancy_diary_manage",
       "device_manual_search",
       "knowledge_search",
       "reminder_list",
@@ -463,6 +475,7 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "labor_communication_card_create") return { title: "我先帮你整理分娩沟通单～" };
   if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我先帮你整理生产全过程计划～" };
   if (normalizedToolName === "birth_journey_plan_delete") return { title: "我先帮你删除生产全过程计划～" };
+  if (normalizedToolName === "pregnancy_diary_manage") return { title: "我先看看孕期日记～" };
   if (normalizedToolName === "hospital_bag_card_create") return { title: "我先帮你整理待产包清单～" };
   if (normalizedToolName === "ibclc_consult_card_create") return { title: "我先帮你准备 IBCLC 咨询入口～" };
   if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我先看看适合你的吸奶器型号～" };
@@ -579,6 +592,14 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
     if (status === "plan_not_found") return { title: "当前没有生产全过程计划可删除" };
     if (status === "plan_deleted") return { title: "我已经删除生产全过程计划啦" };
     return { title: "删除生产全过程计划暂时没成功" };
+  }
+  if (normalizedToolName === "pregnancy_diary_manage") {
+    if (status === "needs_delete_confirmation") return { title: "删除前还需要你确认一下" };
+    if (status === "entry_not_found") return { title: "没有找到这条孕期日记" };
+    if (status === "diary_entry_deleted") return { title: "我已经删除这条孕期日记啦" };
+    if (status === "diary_entry_created" || status === "diary_entry_updated") return { title: "我已经保存好孕期日记啦" };
+    if (status === "diary_list_read" || status === "diary_entry_read") return { title: "我看好孕期日记啦" };
+    return { title: "孕期日记这一步处理好了" };
   }
   if (normalizedToolName === "hospital_bag_card_create") return { title: "我已经帮你生成好待产包清单啦" };
   if (normalizedToolName === "ibclc_consult_card_create") return { title: "我已经准备好 IBCLC 咨询入口啦" };
@@ -1161,6 +1182,7 @@ export function applyAgUiStreamSideEffects(
   const eventType = resolveAgUiEventType(data);
   const parsedToolResult = eventType === "TOOL_CALL_RESULT" ? parseToolResultPayload(rec.content) : null;
   maybeNotifyBirthJourneyPlanDeleted(parsedToolResult);
+  maybeNotifyPregnancyDiaryChanged(parsedToolResult);
   const semantic = semanticForAgUiEvent(rec, eventType, parsedToolResult);
   let didUpdate = false;
 
