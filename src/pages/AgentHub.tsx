@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect, useCallback, useSyncExternalStore } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import InlineDeviceFlow from "@/components/device/InlineDeviceFlow";
-import type { InlineDeviceFlowHandle } from "@/components/device/InlineDeviceFlow";
 import InlineScheduleFlow from "@/components/schedule/InlineScheduleFlow";
 import type { InlineScheduleFlowHandle } from "@/components/schedule/InlineScheduleFlow";
 import InlineLactationFlow from "@/components/lactation/InlineLactationFlow";
@@ -62,6 +60,7 @@ import {
   buildSpeakableTextForVoice,
   CHAT_BUBBLE_VOICE_MAX_CHARS,
   stopChatBubblePlayback,
+  type VoiceMediaNarrationResolver,
 } from "@/lib/chatBubbleTtsPlayback";
 import {
   appendTextRenderItemBeforeAgUiArtifacts,
@@ -77,6 +76,11 @@ import {
   type FocusRealtimePlainTextVoiceSession,
 } from "@/lib/focusVoiceTtsPlayback";
 import { toast } from "sonner";
+import {
+  fallbackMediaVoiceNarration,
+  mediaVoiceLookupKeys,
+  type MediaVoiceNarrationItem,
+} from "@/lib/mediaVoiceNarration";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -741,6 +745,13 @@ function createAgentHubMessageId(prefix: string): string {
   return `${prefix}${Date.now()}-${agentHubMessageIdCounter}`;
 }
 
+function splitStaticAssistantReplyForStreaming(text: string): string[] {
+  const normalized = String(text ?? "").trim();
+  if (!normalized) return [];
+  const chunks = normalized.match(/[^，。！？；,!?;]+[，。！？；,!?;]?/g) ?? [normalized];
+  return chunks.map((chunk) => chunk.trim()).filter(Boolean);
+}
+
 const AgentHub: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -811,9 +822,6 @@ const AgentHub: React.FC = () => {
   const pumpSessionActive = pumpSessionState === "running" || pumpSessionState === "paused";
   /** Hub 底部操作区真实渲染高度（按键 + 输入框），用于对话视口动态下边界 */
   const [bottomActionHeightPx, setBottomActionHeightPx] = useState(170);
-  const [deviceFlowActive, setDeviceFlowActive] = useState(() =>
-    hubInitialMessages.some(m => m.cardType === "device-flow" && !m.cardData?.completed)
-  );
   const [scheduleFlowActive, setScheduleFlowActive] = useState(() =>
     hubInitialMessages.some(m => m.cardType === "schedule-flow" && !m.cardData?.completed)
   );
@@ -837,7 +845,6 @@ const AgentHub: React.FC = () => {
   const [workFlowActive, setWorkFlowActive] = useState(() =>
     hubInitialMessages.some(m => m.cardType === "work-flow" && !m.cardData?.completed)
   );
-  const deviceFlowRef = useRef<InlineDeviceFlowHandle>(null);
   const scheduleFlowRef = useRef<InlineScheduleFlowHandle>(null);
   const lactationFlowRef = useRef<InlineLactationFlowHandle>(null);
   const maternityFlowRef = useRef<InlineMaternityFlowHandle>(null);
@@ -903,6 +910,8 @@ const AgentHub: React.FC = () => {
   const mainRichTextForVoiceRef = useRef<ChatRichTextPayload | null>(null);
   const mainNoVisibleResponseTimerRef = useRef<number | null>(null);
   const mainStreamFollowTailRef = useRef(false);
+  const staticAssistantReplyTimersRef = useRef<number[]>([]);
+  const mainMediaVoiceByUrlRef = useRef<Map<string, string>>(new Map());
   const suppressFollowTailReleaseUntilRef = useRef(0);
   /** 对话泡语音：AbortController 与当前播放目标 id，避免快速切换气泡时误清状态 */
   const bubblePlayAbortRef = useRef<AbortController | null>(null);
@@ -918,6 +927,25 @@ const AgentHub: React.FC = () => {
     lastMergedAnswer: string;
     lastRichText: ChatRichTextPayload | null;
   } | null>(null);
+
+  const rememberMediaVoiceItems = useCallback((items: MediaVoiceNarrationItem[]) => {
+    const map = mainMediaVoiceByUrlRef.current;
+    items.forEach((item) => {
+      if (item.voicePolicy !== "announce" && item.voicePolicy !== "read_text") return;
+      const url = item.mediaId?.trim();
+      const spoken = (item.spokenLabel || item.spokenDetail || "").trim();
+      if (!url || !spoken) return;
+      mediaVoiceLookupKeys(url).forEach((key) => map.set(key, spoken));
+    });
+  }, []);
+
+  const resolveMediaVoiceNarration = useCallback<VoiceMediaNarrationResolver>(({ url }) => {
+    for (const key of mediaVoiceLookupKeys(url)) {
+      const spoken = mainMediaVoiceByUrlRef.current.get(key);
+      if (spoken) return spoken;
+    }
+    return fallbackMediaVoiceNarration(url);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -1020,6 +1048,15 @@ const AgentHub: React.FC = () => {
     mainNoVisibleResponseTimerRef.current = null;
   }, []);
 
+  const clearStaticAssistantReplyTimers = useCallback(() => {
+    staticAssistantReplyTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    staticAssistantReplyTimersRef.current = [];
+  }, []);
+
+  useEffect(() => {
+    return () => clearStaticAssistantReplyTimers();
+  }, [clearStaticAssistantReplyTimers]);
+
   const primeAutoVoicePlayback = useCallback((opts?: { disableOnFailure?: boolean }) => {
     if (!autoVoiceRef.current) return;
     void primeFocusVoicePlayback().catch((e: unknown) => {
@@ -1053,6 +1090,7 @@ const AgentHub: React.FC = () => {
     mainStreamMergedThinkingRef.current = "";
     mainPendingRichTextRef.current = null;
     mainRichTextForVoiceRef.current = null;
+    mainMediaVoiceByUrlRef.current.clear();
     pendingAgUiArtifactFormLikeRef.current = false;
     awaitingHubBottomReplyRef.current = false;
     pendingHistoryScrollRestoreRef.current = null;
@@ -1115,7 +1153,6 @@ const AgentHub: React.FC = () => {
     setShowScrollToBottom(false);
     setVisibleStartIndex(0);
     visibleStartIndexRef.current = 0;
-    setDeviceFlowActive(false);
     setScheduleFlowActive(false);
     setLactationFlowActive(false);
     setMaternityFlowActive(false);
@@ -1162,6 +1199,7 @@ const AgentHub: React.FC = () => {
         const session = startFocusRealtimePlainTextVoice({
           userId: DEFAULT_CHAT_USER_ID,
           signal: ac.signal,
+          mediaNarrationResolver: resolveMediaVoiceNarration,
           maxSegmentChars: HUB_AUTO_VOICE_STREAM_SEGMENT_MAX_CHARS,
           minSegmentChars: HUB_AUTO_VOICE_STREAM_SEGMENT_MIN_CHARS,
           eagerSegmenting: true,
@@ -1187,7 +1225,7 @@ const AgentHub: React.FC = () => {
         }
       }
     })();
-  }, [stopCurrentBubblePlayback]);
+  }, [resolveMediaVoiceNarration, stopCurrentBubblePlayback]);
 
   const startHubRealtimeAutoVoice = useCallback((replyId: string) => {
     if (!autoVoiceRef.current) return null;
@@ -1215,6 +1253,7 @@ const AgentHub: React.FC = () => {
     const session = startFocusRealtimePlainTextVoice({
       userId: DEFAULT_CHAT_USER_ID,
       signal: ac.signal,
+      mediaNarrationResolver: resolveMediaVoiceNarration,
       maxSegmentChars: HUB_AUTO_VOICE_STREAM_SEGMENT_MAX_CHARS,
       minSegmentChars: HUB_AUTO_VOICE_STREAM_SEGMENT_MIN_CHARS,
       eagerSegmenting: true,
@@ -1265,7 +1304,7 @@ const AgentHub: React.FC = () => {
         }
       });
     return sessionState;
-  }, [runHubDecoupledAutoVoice]);
+  }, [resolveMediaVoiceNarration, runHubDecoupledAutoVoice]);
 
   /**
    * 自动播报开关关闭时，若正在播报则立即停止，避免继续播放到结束。
@@ -1739,6 +1778,7 @@ const AgentHub: React.FC = () => {
         onAgUiArtifactRichText: (payload, meta) => {
           stagePendingAgUiArtifactRichText(payload, meta.formLike);
         },
+        onMediaVoice: rememberMediaVoiceItems,
         onHospitalBagCartUpdate: (groups) => {
           setHospitalBagCartGroups(cloneHospitalBagCartGroups(groups));
         },
@@ -2138,9 +2178,108 @@ const AgentHub: React.FC = () => {
     return true;
   };
 
-  const handleAgentRichTextButtonSelect = (value: string, options?: { displayText?: string }) => {
+  const appendStaticAssistantReply = (value: string, options: { displayText?: string; assistantReply: string }) => {
+    const replyTs = new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+    const userVisibleText = options.displayText?.trim() || value.trim();
+    const replyId = createAgentHubMessageId("m-static-");
+    const chunks = splitStaticAssistantReplyForStreaming(options.assistantReply);
+    const finalReply = options.assistantReply.trim();
+    const userMsg: ChatMessage = {
+      id: createAgentHubMessageId("u-static-"),
+      role: "user",
+      content: userVisibleText,
+      timestamp: replyTs,
+    };
+    const replyMsg: ChatMessage = {
+      id: replyId,
+      role: "mai",
+      content: "",
+      timestamp: replyTs,
+      cardType: "encourage",
+      chatStreamContext: "main",
+    };
+    const completeStaticReply = (content: string) => {
+      clearStaticAssistantReplyTimers();
+      const realtimeVoice = autoVoiceRealtimeSessionRef.current;
+      if (realtimeVoice?.replyId === replyId) {
+        if (realtimeVoice.appendedChars > 0) {
+          realtimeVoice.session.finish();
+        } else {
+          realtimeVoice.session.cancel();
+        }
+      }
+      mainChatCancelRef.current = null;
+      if (mainStreamingReplyIdRef.current === replyId) {
+        mainStreamingReplyIdRef.current = null;
+      }
+      setHubBottomSendBusy(false);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === replyId
+            ? {
+                ...msg,
+                content,
+                agentStatusDone: true,
+                agentWorkFinishedAtMs: Date.now(),
+              }
+            : msg,
+        ),
+      );
+    };
+    mainChatCancelRef.current?.();
+    clearStaticAssistantReplyTimers();
+    mainChatCancelRef.current = null;
+    mainStreamingReplyIdRef.current = replyId;
+    mainStreamFollowTailRef.current = true;
+    clearAwaitingBottomSendBarLoading();
+    setHubBottomSendBusy(true);
+    setMessages((prev) => [...clearQuickRepliesFromMessages(prev), userMsg, replyMsg]);
+    if (!chunks.length) {
+      completeStaticReply(finalReply);
+      return;
+    }
+    mainChatCancelRef.current = () => completeStaticReply(finalReply);
+    let merged = "";
+    chunks.forEach((chunk, index) => {
+      const timer = window.setTimeout(() => {
+        merged += chunk;
+        if (chunk && autoVoiceRef.current) {
+          let realtimeVoice = autoVoiceRealtimeSessionRef.current;
+          if (!realtimeVoice || realtimeVoice.replyId !== replyId) {
+            realtimeVoice = startHubRealtimeAutoVoice(replyId);
+          }
+          if (realtimeVoice?.replyId === replyId) {
+            realtimeVoice.appendedChars += chunk.length;
+            realtimeVoice.lastMergedAnswer = merged;
+            realtimeVoice.session.append(chunk);
+          }
+        }
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === replyId
+              ? {
+                  ...msg,
+                  content: merged,
+                  agentStatusDone: false,
+                }
+              : msg,
+          ),
+        );
+        if (index === chunks.length - 1) {
+          completeStaticReply(finalReply);
+        }
+      }, 120 + index * 180);
+      staticAssistantReplyTimersRef.current.push(timer);
+    });
+  };
+
+  const handleAgentRichTextButtonSelect = (value: string, options?: { displayText?: string; assistantReply?: string }) => {
     primeAutoVoicePlayback();
     prepareLatestChatWindowForNewTurn();
+    if (options?.assistantReply) {
+      appendStaticAssistantReply(value, { displayText: options.displayText, assistantReply: options.assistantReply });
+      return;
+    }
     void (async () => {
       if (await startDirectHospitalBagPumpCartUpdate(value, { userDisplayText: options?.displayText })) return;
       void startMainChatStream(value, { userDisplayText: options?.displayText });
@@ -2213,7 +2352,7 @@ const AgentHub: React.FC = () => {
   }, [navigate, handleStartPumpShortcut]);
 
   /**
-   * 消息内设备类 link（open-unbox / open-measure / open-identify）：开箱与法兰/硅胶塞调整仅发对话 SSE，识别仍走内联流程。
+   * 消息内设备类 link（open-unbox / open-measure / open-identify）：统一进入智能体设备指导对话。
    * @param action 来自 ChatMessageLink.action
    */
   const openDeviceFlowFromLinkAction = (action: string | undefined) => {
@@ -2232,18 +2371,7 @@ const AgentHub: React.FC = () => {
     const instructQuery = DEVICE_INSTRUCT_QUERY_BY_FLOW[flowType];
     if (instructQuery) {
       void startMainChatStream(instructQuery);
-      return;
     }
-    const flowMsg: ChatMessage = {
-      id: `df-${Date.now()}`,
-      role: "mai",
-      content: "",
-      timestamp: new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }),
-      cardType: "device-flow",
-      cardData: { flowType },
-    };
-    setMessages((prev) => [...prev, flowMsg]);
-    setDeviceFlowActive(true);
   };
 
   const appendScheduleFlowFromLink = (actionKey: string): ChatMessage => {
@@ -2393,36 +2521,6 @@ const AgentHub: React.FC = () => {
 
     lastMessageMetaRef.current = { len: messages.length, lastId: nextLastId };
   }, [messages, scrollToChatTail]);
-
-  // 回到 Hub 时尚有未结束的设备向导：扫一遍持久化消息，收敛滴定卡与设备卡状态并解锁
-  useEffect(() => {
-    if (!deviceFlowActive) return;
-    
-    // 检查是否有未完成的滴定
-    const calibrationInProgress = localStorage.getItem('calibrationInProgress');
-    
-    const source = chatStore.get().messages;
-    const refreshed = source.map((m) => {
-      // 对于calibration类型，如果滴定未完成（有calibrationInProgress标志），则不标记为completed
-      if (m.cardType === "calibration" && !m.cardData?.completed) {
-        if (calibrationInProgress === 'true') {
-          // 滴定未完成，保留未完成状态
-          return m;
-        }
-        // 滴定已完成，标记为completed
-        return { ...m, cardData: { ...m.cardData, completed: true } };
-      }
-      // 对于device-flow类型，直接标记为completed
-      if (m.cardType === "device-flow" && !m.cardData?.completed) {
-        return { ...m, cardData: { ...m.cardData, completed: true } };
-      }
-      return m;
-    });
-    chatStore.setMessages(refreshed);
-    setMessages(refreshed);
-    setDeviceFlowActive(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 仅在挂载时读取「恢复会话后的」deviceFlowActive，不重跑后续状态变化
-  }, []);
 
   useEffect(() => {
     const notice = localStorage.getItem(CALIBRATION_HUB_NOTICE_KEY);
@@ -2584,15 +2682,6 @@ const AgentHub: React.FC = () => {
     lastHubBottomNewTurnAtRef.current = Date.now();
     const text = pendingText || "请看这张图片";
     setMessages((prev) => clearQuickRepliesFromMessages(prev));
-
-    // If a device flow is active, forward input to it first
-    if (pendingText && deviceFlowActive && deviceFlowRef.current) {
-      const consumed = deviceFlowRef.current.handleExternalInput(text);
-      if (consumed) {
-        setInput("");
-        return;
-      }
-    }
 
     // If a schedule flow is active, forward input to it
     if (pendingText && scheduleFlowActive && scheduleFlowRef.current) {
@@ -3027,42 +3116,25 @@ const AgentHub: React.FC = () => {
                       ✅ {msg.cardData.flowType === "unbox" ? "开箱指引已完成" : msg.cardData.flowType === "measurement" ? "法兰/硅胶塞调整已完成" : msg.cardData.flowType === "maintenance" ? "设备保养已完成" : msg.cardData.flowType === "wearing-guide" ? "上身指引已完成" : "设备使用帮助已完成"}
                     </div>
                   </div>
-                ) : msg.cardData?.flowType === "unbox" ? (
-                  // 开箱指引已改为仅对话 SSE，历史里未完成的 unbox 卡片不再渲染 InlineDeviceFlow
+                ) : (
                   <div className="flex gap-2 items-start">
                     <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-card border border-accent/40 bg-accent/10 px-3 py-2 text-[13px] leading-relaxed space-y-2">
                       <p>
-                        开箱指引已改为<strong>对话模式</strong>，不再使用本步骤向导。请在下方点击「设备使用 → 开箱指引」或通过助手回复获取指引。
+                        设备指导已改为<strong>对话模式</strong>，不再使用本步骤向导。
                       </p>
                       <button
                         type="button"
                         className="text-[11px] font-semibold text-primary"
                         onClick={() => {
-                          setDeviceFlowActive(false);
-                          const updated = chatStore.get().messages.map((m) =>
-                            m.id === msg.id ? { ...m, cardData: { ...m.cardData, completed: true } } : m,
-                          );
-                          chatStore.setMessages(updated);
-                          setMessages(updated);
+                          const flowType = String(msg.cardData?.flowType ?? "");
+                          const instructQuery = DEVICE_INSTRUCT_QUERY_BY_FLOW[flowType] || "设备使用帮助";
+                          void startMainChatStream(instructQuery);
                         }}
                       >
-                        知道了
+                        打开设备指导
                       </button>
                     </div>
                   </div>
-                ) : (
-                  <InlineDeviceFlow
-                    ref={deviceFlowRef}
-                    flowType={msg.cardData?.flowType as "unbox" | "measurement" | "photo-identify" | "maintenance"}
-                    onComplete={() => {
-                      setDeviceFlowActive(false);
-                      const updated = chatStore.get().messages.map(m =>
-                        m.id === msg.id ? { ...m, cardData: { ...m.cardData, completed: true } } : m
-                      );
-                      chatStore.setMessages(updated);
-                      setMessages(updated);
-                    }}
-                  />
                 )}
               </div>
             ) : msg.cardType === "calibration" ? (

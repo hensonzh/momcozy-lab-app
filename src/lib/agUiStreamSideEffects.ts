@@ -7,6 +7,7 @@ import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import type { AgUiToolCallRow, ChatMessage, ChatMessageCitation, ChatQuickReply } from "@/types/chat";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
 import { notifyBirthJourneyPlanDeleted } from "@/lib/birthJourneyPlanNotification";
+import { normalizeMediaVoiceNarrationItems, type MediaVoiceNarrationItem } from "@/lib/mediaVoiceNarration";
 import { notifyPregnancyDiaryChanged } from "@/lib/pregnancyDiaryEvents";
 import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
 
@@ -484,7 +485,7 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "knowledge_search") return { title: "我去找找相关资料～" };
   if (normalizedToolName === "memory_search") return { title: "我去找一下之前的信息～" };
   if (normalizedToolName === "reminder_list") return { title: "我先看看你的提醒～" };
-  if (normalizedToolName === "support_ticket_draft_create") return { title: "我先帮你准备售后工单～" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "我先帮你准备售后信息表～" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
@@ -521,7 +522,7 @@ function toolEndCopy(toolName: string): { title: string; detail?: string } {
   if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我把推荐结果整理一下～" };
   if (normalizedToolName === "hospital_bag_cart_update") return { title: "我在保存购物车修改～" };
   if (normalizedToolName === "device_manual_search") return { title: "我把设备内容整理一下～" };
-  if (normalizedToolName === "support_ticket_draft_create") return { title: "我在整理工单草稿～" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "我在准备售后信息表～" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
@@ -610,7 +611,7 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
     return { title: "我已经帮你更新好待产包购物车啦" };
   }
   if (normalizedToolName === "device_manual_search") return { title: "我把设备资料整理好啦" };
-  if (normalizedToolName === "support_ticket_draft_create") return { title: "我已经准备好售后工单草稿啦" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "请确认售后信息" };
   if (["read_skill_file", "search_skill_assets", "knowledge_search", "memory_search"].includes(normalizedToolName)) return { title: "我找到相关资料啦" };
   if (normalizedToolName === "reminder_list") return { title: "我看好提醒啦" };
   if (normalizedToolName === "run_approved_skill_script") return { title: "这一步处理好啦" };
@@ -763,7 +764,7 @@ function artifactSemanticFromEvent(rec: Record<string, unknown>): AgUiEventSeman
     return semanticPayload("done", "我已经准备好确认内容啦", "artifact", `artifact:${artifactId}`, 70);
   }
   if (artifactType === "support_ticket" || artifactType === "support_ticket_draft") {
-    return semanticPayload("done", "我已经准备好售后工单草稿啦", "artifact", `artifact:${artifactId}`, 70);
+    return semanticPayload("done", "请确认售后信息", "artifact", `artifact:${artifactId}`, 70);
   }
   if (artifactType === "milk_plan_card" || artifactType === "milk_analysis_card") {
     return semanticPayload("done", "我已经整理好奶量计划啦", "artifact", `artifact:${artifactId}`, 70);
@@ -900,7 +901,15 @@ function richTextPayloadFromRecord(payload: Record<string, unknown>): ChatRichTe
   const button = Array.isArray(payload.button) ? payload.button : [];
   const card = Array.isArray(payload.card) ? payload.card : [];
   const action = Array.isArray(payload.action) ? payload.action : [];
-  if (!coalesceString(payload.title) && !coalesceString(payload.content) && button.length === 0 && card.length === 0 && action.length === 0) {
+  const voice = normalizeMediaVoiceNarrationItems(payload.voice ?? payload.media_voice ?? payload.mediaVoice);
+  if (
+    !coalesceString(payload.title) &&
+    !coalesceString(payload.content) &&
+    button.length === 0 &&
+    card.length === 0 &&
+    action.length === 0 &&
+    voice.length === 0
+  ) {
     return null;
   }
   return {
@@ -909,6 +918,7 @@ function richTextPayloadFromRecord(payload: Record<string, unknown>): ChatRichTe
     button: button as ChatRichTextPayload["button"],
     card: card as ChatRichTextPayload["card"],
     action,
+    ...(voice.length > 0 ? { voice } : {}),
   };
 }
 
@@ -1152,7 +1162,16 @@ export function mergePendingRichTextPayload(
     button: [...prev.button, ...next.button],
     card: [...prev.card, ...next.card],
     action: mergeRichActions(prev.action, next.action),
+    voice: mergeRichVoice(prev.voice, next.voice),
   };
+}
+
+function mergeRichVoice(
+  prev: ChatRichTextPayload["voice"] | undefined,
+  next: ChatRichTextPayload["voice"] | undefined,
+): ChatRichTextPayload["voice"] | undefined {
+  const merged = normalizeMediaVoiceNarrationItems([...(prev ?? []), ...(next ?? [])]);
+  return merged.length > 0 ? merged : undefined;
 }
 
 function appendRichRenderItem(
@@ -1179,6 +1198,7 @@ export function applyAgUiStreamSideEffects(
   opts?: {
     pendingRichTextRef?: MutableRefObject<ChatRichTextPayload | null>;
     onHospitalBagCartUpdate?: (groups: HospitalBagCartGroup[], message?: string) => void;
+    onMediaVoice?: (items: MediaVoiceNarrationItem[]) => void;
     deferAgUiArtifacts?: boolean;
     onAgUiArtifactRichText?: (payload: ChatRichTextPayload, meta: { formLike: boolean }) => void;
   },
@@ -1189,6 +1209,14 @@ export function applyAgUiStreamSideEffects(
   const parsedToolResult = eventType === "TOOL_CALL_RESULT" ? parseToolResultPayload(rec.content) : null;
   maybeNotifyBirthJourneyPlanDeleted(parsedToolResult);
   maybeNotifyPregnancyDiaryChanged(parsedToolResult);
+  if (eventType === "TOOL_CALL_RESULT") {
+    const mediaVoice = normalizeMediaVoiceNarrationItems(
+      parsedToolResult?.media_voice ?? parsedToolResult?.mediaVoice ?? parsedToolResult?.voice,
+    );
+    if (mediaVoice.length > 0) {
+      opts?.onMediaVoice?.(mediaVoice);
+    }
+  }
   const semantic = semanticForAgUiEvent(rec, eventType, parsedToolResult);
   let didUpdate = false;
 
