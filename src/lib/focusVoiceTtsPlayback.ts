@@ -2,7 +2,11 @@
  * 专注/Hub 语音播放：统一使用火山实时语音 PCM 流边收边播。
  */
 import { fetchRealtimeVoicePcmStream, resolveRealtimeVoiceSessionWebSocketUrl } from "@/lib/agentApi";
-import { createVoiceTextStreamFilter, sanitizeTextForVoice } from "@/lib/chatBubbleTtsPlayback";
+import {
+  createVoiceTextStreamFilter,
+  sanitizeTextForVoice,
+  type VoiceMediaNarrationResolver,
+} from "@/lib/chatBubbleTtsPlayback";
 
 let activeRealtimeAudioContext: AudioContext | null = null;
 let activeRealtimeGain: GainNode | null = null;
@@ -12,8 +16,8 @@ const activeRealtimeSources = new Set<AudioBufferSourceNode>();
 
 const REALTIME_VOICE_STRONG_END = /[。！？；!?]/;
 const REALTIME_VOICE_SOFT_BREAK = /[，,、：:\s]/;
-const REALTIME_VOICE_URL_TOKEN = /(^|[\s(（\[])(((?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、)]*|\/[A-Za-z][^\s<>"'，。！？；、)]*|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、)]*)?)/gi;
-const REALTIME_VOICE_TRAILING_URL = /(^|[\s(（\[])(((?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、)]*|\/[A-Za-z][^\s<>"'，。！？；、)]*|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、)]*)?)$/i;
+const REALTIME_VOICE_URL_TOKEN = /(^|[\s(（[])(((?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、)]*|\/[A-Za-z][^\s<>"'，。！？；、)]*|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、)]*)?)/gi;
+const REALTIME_VOICE_TRAILING_URL = /(^|[\s(（[])(((?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、)]*|\/[A-Za-z][^\s<>"'，。！？；、)]*|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、)]*)?)$/i;
 const REALTIME_VOICE_URL_TERMINATOR = /[，。！？；、,!?)]$/;
 const REALTIME_VOICE_DEFAULT_MAX_CHARS = 64;
 const REALTIME_VOICE_DEFAULT_MIN_CHARS = 12;
@@ -24,6 +28,7 @@ type RealtimeVoiceSplitOptions = {
   maxChars?: number;
   minChars?: number;
   eager?: boolean;
+  mediaNarrationResolver?: VoiceMediaNarrationResolver;
 };
 
 export function splitRealtimeVoiceReadySegments(
@@ -45,7 +50,9 @@ export function splitRealtimeVoiceReadySegments(
     const urlRanges = findRealtimeVoiceUrlRanges(candidate);
     const cut = findRealtimeVoiceCut(candidate, maxChars, minChars, force, eager, urlRanges);
     if (cut <= 0) break;
-    const segment = sanitizeTextForVoice(candidate.slice(0, cut));
+    const segment = sanitizeTextForVoice(candidate.slice(0, cut), {
+      mediaNarrationResolver: opts?.mediaNarrationResolver,
+    });
     rest = rest.slice(cut).trimStart();
     if (segment && hasRealtimeVoiceSpeakableText(segment)) segments.push(segment);
   }
@@ -205,6 +212,7 @@ export type FocusRealtimePlainTextVoiceSession = {
 export type StartFocusRealtimePlainTextVoiceParams = {
   userId: string;
   signal?: AbortSignal;
+  mediaNarrationResolver?: VoiceMediaNarrationResolver;
   maxSegmentChars?: number;
   minSegmentChars?: number;
   eagerSegmenting?: boolean;
@@ -428,7 +436,9 @@ export function startFocusRealtimePlainTextVoice(
   const ac = new AbortController();
   let ws: WebSocket | null = null;
   const pendingSegments: string[] = [];
-  const voiceTextFilter = createVoiceTextStreamFilter();
+  const voiceTextFilter = createVoiceTextStreamFilter({
+    mediaNarrationResolver: params.mediaNarrationResolver,
+  });
   let buffer = "";
   let finished = false;
   let cancelled = false;
@@ -472,6 +482,7 @@ export function startFocusRealtimePlainTextVoice(
       maxChars: maxSegmentChars,
       minChars: minSegmentChars,
       eager: params.eagerSegmenting ?? false,
+      mediaNarrationResolver: params.mediaNarrationResolver,
     });
     buffer = split.rest;
     split.segments.forEach(enqueueSegment);

@@ -74,7 +74,7 @@ import {
  * chat-messages 富文本卡片（标题、正文、结构化卡片与按钮）。
  * open / switch / 默认续聊交由回调或路由处理。
  */
-type ButtonSelectOptions = { displayText?: string };
+type ButtonSelectOptions = { displayText?: string; assistantReply?: string };
 
 export type IbclcConsultOpenRequest = {
   consultId: string;
@@ -479,20 +479,8 @@ function supportTicketFields(ticket: Record<string, unknown>): FormFieldSpec[] {
   ];
 }
 
-function buildSupportTicketSubmittedMessage(ticket: Record<string, unknown>): string {
-  const lines = [
-    "客服工单已模拟提交成功。请基于以下提交信息，给用户一段简短的情绪支持。",
-    ticket.issue_type ? `问题类型：${ticket.issue_type}` : "",
-    ticket.issue_summary ? `问题描述：${ticket.issue_summary}` : "",
-    ticket.product_model ? `产品型号：${ticket.product_model}` : "",
-    ticket.order_number ? `订单号：${ticket.order_number}` : "",
-    ticket.purchase_channel ? `购买渠道：${ticket.purchase_channel}` : "",
-    ticket.urgency ? `紧急程度：${ticket.urgency}` : "",
-    "能力限制：当前系统不支持查看工单进度。如果用户询问工单进度、工单状态或怎么查询工单，只直接说明目前还不支持查看工单进度，不要编造确认页、短信/邮件、账户售后记录或其他查看路径。",
-    "回复要求：不要重复工单字段，不要继续排查；根据用户的主要售后情绪做 1-3 句贴合场景的承接，并告诉用户人工客服会在 24 小时内联系你解决问题。",
-  ];
-  return lines.filter(Boolean).join("\n");
-}
+const SUPPORT_TICKET_SUBMITTED_REPLY =
+  "已经帮你提交工单啦，我们的人工客服团队会在 24 小时内主动联系你，陪你一起跟进这个问题。很抱歉这次没能直接帮你解决，给你添麻烦了。接下来还请稍微耐心等待一下，我们会尽力协助你把问题处理好。";
 
 function isConfirmPlaceholder(value: unknown): boolean {
   const text = String(value ?? "").trim().toLowerCase();
@@ -2053,7 +2041,10 @@ const AgentHubRichTextBlock: React.FC<{
                 const values = collectFormValues(form, fields);
                 setSubmittedArtifactMap((prev) => ({ ...prev, [index]: true }));
                 if (artifact.kind === "support_ticket_draft") {
-                  onButtonSelect(buildSupportTicketSubmittedMessage(values), { displayText: "已提交售后工单" });
+                  onButtonSelect("已提交售后工单", {
+                    displayText: "已提交售后工单",
+                    assistantReply: SUPPORT_TICKET_SUBMITTED_REPLY,
+                  });
                   return;
                 }
                 onButtonSelect(buildFormConfirmationMessage(normalizedFormSpec, values), { displayText: `已提交：${title}` });

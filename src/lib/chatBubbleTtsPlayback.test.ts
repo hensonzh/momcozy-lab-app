@@ -11,6 +11,12 @@ describe("sanitizeTextForVoice", () => {
     expect(sanitizeTextForVoice("详情见 https://example.com/a?x=1 或 www.example.com/path。")).toBe("详情见 或 。");
   });
 
+  it("removes media file names and resource paths", () => {
+    expect(
+      sanitizeTextForVoice("请看 pump_step_3.png 和 /skill-assets/device-guidance/air1/videos/air1-operation-zh.mp4。"),
+    ).toBe("请看 和 。");
+  });
+
   it("does not speak markdown link labels that are urls", () => {
     expect(sanitizeTextForVoice("[https://example.com](https://example.com) 已生成")).toBe("已生成");
   });
@@ -53,6 +59,73 @@ describe("createVoiceTextStreamFilter", () => {
     expect(filter.push(" 再继续。")).toBe("  再继续。");
     expect(filter.flush()).toBe("");
   });
+
+  it("skips markdown image alt text split across streaming deltas", () => {
+    const filter = createVoiceTextStreamFilter();
+
+    expect(filter.push("先看这张图：!")).toBe("先看这张图：");
+    expect(filter.push("[Air1 核心部件](")).toBe("");
+    expect(filter.push("/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png")).toBe("");
+    expect(filter.push(")，然后继续。")).toBe(" ，然后继续。");
+    expect(filter.flush()).toBe("");
+  });
+
+  it("speaks explicit media narration when markdown image url matches", () => {
+    const filter = createVoiceTextStreamFilter({
+      mediaNarrationResolver: ({ url }) =>
+        url === "/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png"
+          ? "我放了一张当前步骤的对照图，你可以边看图边完成这一步。"
+          : undefined,
+    });
+
+    expect(filter.push("先看这张图：!")).toBe("先看这张图：");
+    expect(filter.push("[Air1 核心部件](")).toBe("");
+    expect(filter.push("/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png")).toBe("");
+    expect(filter.push(")，然后继续。")).toBe(" 我放了一张当前步骤的对照图，你可以边看图边完成这一步。 ，然后继续。");
+    expect(filter.flush()).toBe("");
+  });
+
+  it("speaks explicit media narration for markdown links to images", () => {
+    const filter = createVoiceTextStreamFilter({
+      mediaNarrationResolver: ({ url }) =>
+        url === "/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png"
+          ? "我放了一张当前步骤的对照图，你可以边看图边完成这一步。"
+          : undefined,
+    });
+
+    expect(filter.push("先看 [查看图片](/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png)，然后继续。")).toBe(
+      "先看  我放了一张当前步骤的对照图，你可以边看图边完成这一步。 ，然后继续。",
+    );
+    expect(filter.flush()).toBe("");
+  });
+
+  it("speaks explicit media narration for bare media paths", () => {
+    const filter = createVoiceTextStreamFilter({
+      mediaNarrationResolver: ({ url }) =>
+        url === "/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png"
+          ? "我放了一张当前步骤的对照图，你可以边看图边完成这一步。"
+          : undefined,
+    });
+
+    expect(filter.push("先看 /skill-assets/device-guidance/air1/images/air1_guide_parts_components.png，然后继续。")).toBe(
+      "先看 我放了一张当前步骤的对照图，你可以边看图边完成这一步。 ，然后继续。",
+    );
+    expect(filter.flush()).toBe("");
+  });
+
+  it("speaks explicit media narration for bare absolute media urls", () => {
+    const filter = createVoiceTextStreamFilter({
+      mediaNarrationResolver: ({ url }) =>
+        url === "http://127.0.0.1:17769/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png"
+          ? "我放了一张当前步骤的对照图，你可以边看图边完成这一步。"
+          : undefined,
+    });
+
+    expect(filter.push("先看 http://127.0.0.1:17769/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png，然后继续。")).toBe(
+      "先看 我放了一张当前步骤的对照图，你可以边看图边完成这一步。 ，然后继续。",
+    );
+    expect(filter.flush()).toBe("");
+  });
 });
 
 describe("buildSpeakableTextForVoice", () => {
@@ -70,5 +143,58 @@ describe("buildSpeakableTextForVoice", () => {
     };
 
     expect(buildSpeakableTextForVoice(msg)).toBe("待产包清单 我已经帮你整理好了。");
+  });
+
+  it("speaks explicit media narration labels but not silent media", () => {
+    const msg: ChatMessage = {
+      id: "m2",
+      role: "mai",
+      content: "我放了一张步骤图。",
+      timestamp: "",
+      richText: {
+        title: "",
+        content: "",
+        button: [],
+        card: [],
+        action: [],
+        voice: [
+          {
+            mediaId: "step-image",
+            kind: "image",
+            voicePolicy: "announce",
+            spokenLabel: "我放了一张阀门安装方向图，你可以对照检查。",
+          },
+          {
+            mediaId: "product-image",
+            kind: "image",
+            voicePolicy: "silent",
+            spokenLabel: "Momcozy M9 产品图。",
+          },
+        ],
+      },
+    };
+
+    expect(buildSpeakableTextForVoice(msg)).toBe("我放了一张步骤图。 我放了一张阀门安装方向图，你可以对照检查。");
+  });
+
+  it("deduplicates media narration mirrored in stream render items", () => {
+    const voice = [
+      {
+        mediaId: "step-image",
+        kind: "image",
+        voicePolicy: "announce" as const,
+        spokenLabel: "我放了一张阀门安装方向图，你可以对照检查。",
+      },
+    ];
+    const msg: ChatMessage = {
+      id: "m3",
+      role: "mai",
+      content: "",
+      timestamp: "",
+      richText: { title: "", content: "", button: [], card: [], action: [], voice },
+      streamRenderItems: [{ kind: "rich", payload: { title: "", content: "", button: [], card: [], action: [], voice } }],
+    };
+
+    expect(buildSpeakableTextForVoice(msg)).toBe("我放了一张阀门安装方向图，你可以对照检查。");
   });
 });

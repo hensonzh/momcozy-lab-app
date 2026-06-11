@@ -13,6 +13,7 @@ import {
 } from "./http";
 import { log } from "./logger";
 import { resolveChatAssetUrl } from "@/lib/chatAssetUrl";
+import { normalizeMediaVoiceNarrationItems } from "@/lib/mediaVoiceNarration";
 import type {
   ChatHistoryData,
   ChatActionContentPayload,
@@ -269,7 +270,8 @@ function normalizeChatRichTextPayload(raw: Record<string, unknown>): ChatRichTex
     };
   });
   const action = Array.isArray(raw.action) ? raw.action : [];
-  return { title, content, button, card, action };
+  const voice = normalizeMediaVoiceNarrationItems(raw.voice ?? raw.media_voice ?? raw.mediaVoice);
+  return { title, content, button, card, action, ...(voice.length > 0 ? { voice } : {}) };
 }
 
 /**
