@@ -6,6 +6,7 @@ import { loadPersistedChatMessages, savePersistedChatMessages } from "@/lib/chat
 export const AGENT_HUB_SYNC_CHAT_EVENT = "mmc-agent-hub-sync-chat";
 
 type AnalysisMessageKind = "daily_summary" | "mom_baby" | "milk_analysis";
+type NotificationMessageKind = "health_issue";
 
 function nowTimestamp(): string {
   return new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
@@ -73,6 +74,26 @@ export function appendAgentHubAnalysisMessage(
     timestamp: nowTimestamp(),
     chatStreamContext: opts.analysisCard ? undefined : "main",
     ...reportPayload,
+  });
+  return id;
+}
+
+export function appendAgentHubNotificationMessage(
+  content: string,
+  opts: {
+    kind: NotificationMessageKind;
+    id?: string;
+  },
+): string | null {
+  const trimmed = content.trim();
+  if (!trimmed) return null;
+
+  const id = opts.id?.trim() || `notification-${opts.kind}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  appendMessageToAgentHubStore({
+    id,
+    role: "mai",
+    content: trimmed,
+    timestamp: nowTimestamp(),
   });
   return id;
 }

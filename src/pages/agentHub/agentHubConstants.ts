@@ -8,6 +8,7 @@ export const DEVICE_INSTRUCT_QUERY_BY_FLOW: Record<string, string> = {
   "wearing-guide": "上身指引",
   measurement: "法兰或硅胶塞调整",
   maintenance: "设备保养",
+  "photo-identify": "帮我识别吸奶器配件图片，我会上传图片",
 };
 
 export const DEFAULT_CHAT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);

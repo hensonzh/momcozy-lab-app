@@ -47,6 +47,53 @@ function applyEventSequence(
 }
 
 describe("applyAgUiStreamSideEffects", () => {
+  it("emits media voice metadata from tool results even without tool call keys", () => {
+    let messages: ChatMessage[] = [
+      {
+        id: "reply",
+        role: "mai",
+        content: "",
+        timestamp: "",
+      },
+    ];
+    const setMessages = (updater: SetStateAction<ChatMessage[]>) => {
+      messages = typeof updater === "function" ? updater(messages) : updater;
+    };
+    const received: unknown[] = [];
+
+    applyAgUiStreamSideEffects(
+      "reply",
+      {
+        type: "TOOL_CALL_RESULT",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "device_manual_search",
+          media_voice: [
+            {
+              media_id: "/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png",
+              kind: "image",
+              voice_policy: "announce",
+              spoken_label: "我放了一张当前步骤的对照图，你可以边看图边完成这一步。",
+            },
+          ],
+        }),
+      },
+      setMessages,
+      {
+        onMediaVoice: (items) => {
+          received.push(...items);
+        },
+      },
+    );
+
+    expect(received).toHaveLength(1);
+    expect(received[0]).toMatchObject({
+      mediaId: "/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png",
+      voicePolicy: "announce",
+      spokenLabel: "我放了一张当前步骤的对照图，你可以边看图边完成这一步。",
+    });
+  });
+
   it("applies quick replies only to the current assistant message", () => {
     let messages: ChatMessage[] = [
       {
@@ -208,6 +255,11 @@ describe("applyAgUiStreamSideEffects", () => {
               title: "Duplicate",
               url: "https://www.bfmed.org/protocols",
             },
+            {
+              index: 3,
+              title: "www.ncbi.nlm.nih.gov",
+              url: "https://www.ncbi.nlm.nih.gov/books/NBK148970/",
+            },
           ],
         },
       },
@@ -218,6 +270,13 @@ describe("applyAgUiStreamSideEffects", () => {
         index: 1,
         title: "Academy of Breastfeeding Medicine Protocols",
         url: "https://www.bfmed.org/protocols",
+        displayText: "ABM 哺乳医学临床指南：bfmed.org/protocols",
+      },
+      {
+        index: 2,
+        title: "www.ncbi.nlm.nih.gov",
+        url: "https://www.ncbi.nlm.nih.gov/books/NBK148970/",
+        displayText: "NCBI 医学资料：ncbi.nlm.nih.gov/books/...",
       },
     ]);
   });
@@ -359,6 +418,17 @@ describe("applyAgUiStreamSideEffects", () => {
     });
 
     expect(semantic.label).toBe("我想一下");
+  });
+
+  it("uses confirmation-oriented copy for support ticket artifact semantics", () => {
+    const semantic = semanticForAgUiEvent({
+      type: "ARTIFACT_CREATED",
+      artifact_id: "ticket-1",
+      artifact_type: "support_ticket",
+      tool_call_name: "support_ticket_draft_create",
+    });
+
+    expect(semantic.label).toBe("请确认售后信息");
   });
 
   it("shows an optimistic work panel row as soon as a run starts", () => {

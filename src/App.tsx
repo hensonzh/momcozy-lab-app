@@ -25,9 +25,10 @@ import IbclcChat from "@/pages/IbclcChat";
 import HospitalBagCart from "@/pages/HospitalBagCart";
 import BackgroundNotifyOnboardingGate from "@/components/system/BackgroundNotifyOnboardingGate";
 import { markStatusGrowthHighlightPending } from "@/lib/statusGrowthHighlight";
-import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
+import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from "@/lib/agentHubChatMessages";
 import { startDeviceReminderWebSocket } from "@/lib/deviceReminderWebSocket";
 import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
+import { HEALTH_ISSUE_NOTIFICATION_MESSAGE } from "@/lib/deviceReminderActions";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 
 const queryClient = new QueryClient();
@@ -73,6 +74,11 @@ function PumpNotificationNavigateSync() {
               }
             } else if (o?.event === "grown") {
               markStatusGrowthHighlightPending();
+            } else if (o?.event === "health_issue") {
+              appendAgentHubNotificationMessage(o.body || HEALTH_ISSUE_NOTIFICATION_MESSAGE, {
+                kind: "health_issue",
+                id: o.chatMessageId,
+              });
             }
           } catch {
             /* ignore */

@@ -3,6 +3,7 @@
  * 实际播放统一由火山实时语音流处理，当前文件不再包含第三方语音服务调用。
  */
 import { splitChatContentByDataDelimiter } from "@/lib/chatContentSegments";
+import { buildSpeakableTextForMediaVoice } from "@/lib/mediaVoiceNarration";
 import type { ChatMessage } from "@/types/chat";
 
 /** 气泡与手动语音播报可朗读正文最大字符数。 */
@@ -11,15 +12,27 @@ export const CHAT_BUBBLE_VOICE_MAX_CHARS = 4096;
 const VOICE_BARE_URL_PATTERN =
   /\b(?:(?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、]+/gi;
 const VOICE_APP_RELATIVE_URL_PATTERN =
-  /(^|[\s(（\[])\/[A-Za-z][^\s<>"'，。！？；、)]*/g;
+  /(^|[\s(（[])\/[A-Za-z][^\s<>"'，。！？；、)]*/g;
 const VOICE_HASH_OR_QUERY_URL_PATTERN =
-  /(^|[\s(（\[])[?#][A-Za-z0-9_=&%./:%+-][^\s<>"'，。！？；、)]*/g;
+  /(^|[\s(（[])[?#][A-Za-z0-9_=&%./:%+-][^\s<>"'，。！？；、)]*/g;
 const VOICE_BARE_DOMAIN_URL_LIKE_PATTERN =
   /\b(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、]*)?$/i;
 const VOICE_BARE_DOMAIN_URL_PATTERN =
   /\b(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、]*)?/gi;
 const VOICE_STREAM_TRAILING_URL_LIKE_PATTERN =
-  /(^|[\s(（\[])(((?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、)]*|\/[A-Za-z][^\s<>"'，。！？；、)]*|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、)]*)?)$/i;
+  /(^|[\s(（[])(((?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、)]*|\/[A-Za-z][^\s<>"'，。！？；、)]*|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、)]*)?)$/i;
+const VOICE_MEDIA_RESOURCE_PATH_PATTERN =
+  /(^|[\s(（[])(?:\.{0,2}\/|\/)[^\s<>"'，。！？；、)]*\.(?:png|jpe?g|webp|gif|svg|mp4|mov|m4v|webm|mp3|wav|m4a|aac|pdf)(?:[?#][^\s<>"'，。！？；、)]*)?/gi;
+const VOICE_MEDIA_FILE_NAME_PATTERN =
+  /(^|[\s(（[])[A-Za-z0-9][A-Za-z0-9._-]{1,}\.(?:png|jpe?g|webp|gif|svg|mp4|mov|m4v|webm|mp3|wav|m4a|aac|pdf)(?:[?#][^\s<>"'，。！？；、)]*)?/gi;
+const VOICE_ABSOLUTE_MEDIA_URL_PATTERN =
+  /(^|[\s(（[])(?:https?:\/\/)[^\s<>"'，。！？；、)]*\.(?:png|jpe?g|webp|gif|svg|mp4|mov|m4v|webm|mp3|wav|m4a|aac|pdf)(?:[?#][^\s<>"'，。！？；、)]*)?/gi;
+
+export type VoiceMediaNarrationResolver = (media: { url: string; alt: string }) => string | undefined;
+
+export type VoiceTextOptions = {
+  mediaNarrationResolver?: VoiceMediaNarrationResolver;
+};
 
 function isVoiceUrlLike(value: string): boolean {
   const text = value.trim();
@@ -33,15 +46,44 @@ function markdownVoiceLinkLabelReplacement(_m: string, label: string): string {
   return ` ${L} `;
 }
 
-function stripLinksForVoiceText(s: string): string {
+function markdownVoiceLinkReplacement(_m: string, label: string, destination: string, opts?: VoiceTextOptions): string {
+  const url = String(destination || "").trim().split(/\s+/)[0] ?? "";
+  const spoken = opts?.mediaNarrationResolver?.({ url, alt: String(label || "").trim() })?.trim();
+  if (spoken) return ` ${spoken} `;
+  return markdownVoiceLinkLabelReplacement(_m, label);
+}
+
+function markdownVoiceImageReplacement(_m: string, alt: string, destination: string, opts?: VoiceTextOptions): string {
+  const url = String(destination || "").trim().split(/\s+/)[0] ?? "";
+  const spoken = opts?.mediaNarrationResolver?.({ url, alt: String(alt || "").trim() })?.trim();
+  return spoken ? ` ${spoken} ` : " ";
+}
+
+function mediaResourcePathReplacement(match: string, prefix: string, opts?: VoiceTextOptions): string {
+  const raw = match.slice(prefix.length).trim();
+  const spoken = opts?.mediaNarrationResolver?.({ url: raw, alt: "" })?.trim();
+  return spoken ? `${prefix}${spoken} ` : `${prefix} `;
+}
+
+function stripLinksForVoiceText(s: string, opts?: VoiceTextOptions): string {
   let t = s;
   // Markdown 图片：行内式与参考式
-  t = t.replace(/!\[[^\]]*]\([^)]*\)/g, " ");
+  t = t.replace(/!\[([^\]]*)]\(([^)]*)\)/g, (_m, alt, destination) =>
+    markdownVoiceImageReplacement(_m, alt, destination, opts),
+  );
   t = t.replace(/!\[[^\]]*]\s*\[[^\]]*]/g, " ");
+  t = t.replace(/!\[[^\]]*]\([^)]*$/g, " ");
+  t = t.replace(/!\[[^\]]*]?\s*$/g, " ");
   // Markdown 链接：仅保留可见文案；空文案或文案为 URL 则不读
-  t = t.replace(/\[([^\]]*)\]\([^)]*\)/g, markdownVoiceLinkLabelReplacement);
+  t = t.replace(/\[([^\]]*)\]\(([^)]*)\)/g, (_m, label, destination) =>
+    markdownVoiceLinkReplacement(_m, label, destination, opts),
+  );
   // 流式输出中 Markdown 链接可能先到达 `[文案](`，此时保留文案，后续 URL 由流式过滤器跳过。
   t = t.replace(/\[([^\]]+)\]\(\s*$/g, markdownVoiceLinkLabelReplacement);
+  // 裸媒体路径如果有显式语音元数据，读语音说明；否则只静默过滤路径。
+  t = t.replace(VOICE_ABSOLUTE_MEDIA_URL_PATTERN, (match, prefix) => mediaResourcePathReplacement(match, prefix, opts));
+  t = t.replace(VOICE_MEDIA_RESOURCE_PATH_PATTERN, (match, prefix) => mediaResourcePathReplacement(match, prefix, opts));
+  t = t.replace(VOICE_MEDIA_FILE_NAME_PATTERN, (match, prefix) => mediaResourcePathReplacement(match, prefix, opts));
   // 尖括号自动链接 <https://...>
   t = t.replace(/<(?:https?|ftp):\/\/[^>\s]+>/gi, " ");
   // 裸 URL 与站内路由：不朗读地址本身。
@@ -50,7 +92,7 @@ function stripLinksForVoiceText(s: string): string {
   t = t.replace(VOICE_HASH_OR_QUERY_URL_PATTERN, "$1 ");
   t = t.replace(VOICE_BARE_DOMAIN_URL_PATTERN, " ");
   // 流式 Markdown 链接拆分后可能只剩目的地址右括号，清掉孤立闭合符号。
-  t = t.replace(/(^|[\s(（\[])[)\]](?=($|[\s，。！？；、,.!?;:]))/g, "$1 ");
+  t = t.replace(/(^|[\s(（[])[)\]](?=($|[\s，。！？；、,.!?;:]))/g, "$1 ");
   return t;
 }
 
@@ -78,7 +120,7 @@ function stripVoiceMarkupAndSymbols(s: string): string {
   // 流式切段可能留下未闭合 Markdown 标记，直接去掉符号本身。
   t = t.replace(/[*_~`]+/g, " ");
   // 装饰/结构符号不适合朗读，保留符号两侧文字。
-  t = t.replace(/[\\|#>{}\[\]<>]/g, " ");
+  t = t.replace(/[\\|#>{}[\]<>]/g, " ");
   t = t.replace(/[()（）【】「」『』“”"'‘’]/g, " ");
   t = t.replace(/={2,}|-{2,}|—{2,}|_{2,}/g, " ");
   return t;
@@ -97,6 +139,19 @@ function findIncompleteMarkdownVoiceLinkHoldStart(text: string): number {
   return destinationStart;
 }
 
+function findIncompleteMarkdownVoiceImageHoldStart(text: string): number {
+  const openImage = text.lastIndexOf("![");
+  if (openImage < 0) {
+    return text.endsWith("!") ? text.length - 1 : -1;
+  }
+  const closeLabel = text.indexOf("]", openImage + 2);
+  if (closeLabel < 0) return openImage;
+  if (closeLabel === text.length - 1) return openImage;
+  if (text[closeLabel + 1] !== "(") return -1;
+  const closeDestination = text.indexOf(")", closeLabel + 2);
+  return closeDestination >= 0 ? -1 : openImage;
+}
+
 function findTrailingVoiceUrlLikeHoldStart(text: string): number {
   const match = text.match(VOICE_STREAM_TRAILING_URL_LIKE_PATTERN);
   if (!match || match.index == null) return -1;
@@ -105,6 +160,7 @@ function findTrailingVoiceUrlLikeHoldStart(text: string): number {
 
 function findVoiceStreamHoldStart(text: string): number {
   const starts = [
+    findIncompleteMarkdownVoiceImageHoldStart(text),
     findIncompleteMarkdownVoiceLinkHoldStart(text),
     findTrailingVoiceUrlLikeHoldStart(text),
   ].filter((start) => start >= 0);
@@ -120,7 +176,7 @@ export type VoiceTextStreamFilter = {
  * 为流式语音播报准备文本：保留普通文本和 Markdown 链接文案，跳过链接地址。
  * 只暂存未完成的链接 token，避免 URL 被拆成多轮 delta 后漏进 TTS。
  */
-export function createVoiceTextStreamFilter(): VoiceTextStreamFilter {
+export function createVoiceTextStreamFilter(opts?: VoiceTextOptions): VoiceTextStreamFilter {
   let pending = "";
 
   const drain = (force: boolean): string => {
@@ -128,20 +184,20 @@ export function createVoiceTextStreamFilter(): VoiceTextStreamFilter {
     if (force) {
       const ready = pending;
       pending = "";
-      return stripLinksForVoiceText(ready);
+      return stripLinksForVoiceText(ready, opts);
     }
 
     const holdStart = findVoiceStreamHoldStart(pending);
     if (holdStart < 0) {
       const ready = pending;
       pending = "";
-      return stripLinksForVoiceText(ready);
+      return stripLinksForVoiceText(ready, opts);
     }
     if (holdStart === 0) return "";
 
     const ready = pending.slice(0, holdStart);
     pending = pending.slice(holdStart);
-    return stripLinksForVoiceText(ready);
+    return stripLinksForVoiceText(ready, opts);
   };
 
   return {
@@ -161,7 +217,7 @@ export function createVoiceTextStreamFilter(): VoiceTextStreamFilter {
  * @param s 原始文本
  * @returns 净化后的单行化近似纯文本
  */
-export function sanitizeTextForVoice(s: string): string {
+export function sanitizeTextForVoice(s: string, opts?: VoiceTextOptions): string {
   if (!s) return "";
   let t = s;
   t = t.replace(/&nbsp;|&#160;/gi, " ");
@@ -171,7 +227,7 @@ export function sanitizeTextForVoice(s: string): string {
   t = t.replace(/<[^>]+>/g, " ");
   // HTML 注释
   t = t.replace(/<!--[\s\S]*?-->/g, " ");
-  t = stripLinksForVoiceText(t);
+  t = stripLinksForVoiceText(t, opts);
   t = normalizeSlashForVoiceText(t);
   // 行内代码与围栏代码
   t = t.replace(/```[\s\S]*?```/g, " ");
@@ -197,12 +253,23 @@ export function buildSpeakableTextForVoice(msg: ChatMessage): string {
   const parts = splitChatContentByDataDelimiter(msg.content);
   const bodyRaw = parts.length > 0 ? parts.join(" ") : msg.content.trim();
   const chunks: string[] = [bodyRaw];
+  const mediaVoiceTexts = new Set<string>();
+  const appendMediaVoiceText = (text: string) => {
+    const normalized = text.trim();
+    if (!normalized || mediaVoiceTexts.has(normalized)) return;
+    mediaVoiceTexts.add(normalized);
+    chunks.push(normalized);
+  };
   if (msg.richText) {
     const rt = msg.richText;
     // 仅朗读标题与说明正文，不朗读 rich_text 中的按钮
     if (rt.title) chunks.push(rt.title);
     if (rt.content) chunks.push(rt.content);
+    appendMediaVoiceText(buildSpeakableTextForMediaVoice(rt.voice));
   }
+  msg.streamRenderItems?.forEach((item) => {
+    if (item.kind === "rich") appendMediaVoiceText(buildSpeakableTextForMediaVoice(item.payload.voice));
+  });
   return sanitizeTextForVoice(chunks.filter(Boolean).join(" "));
 }
 

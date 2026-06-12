@@ -34,6 +34,8 @@ public final class NotifyMessageResolver {
 
     private static final String GROWN =
             "建议更新一下宝宝生长数据哦~这样能更好地帮你进行奶量管理";
+    private static final String HEALTH_ISSUE =
+            "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗";
 
     private NotifyMessageResolver() {
     }
@@ -113,6 +115,8 @@ public final class NotifyMessageResolver {
                 return !fallback.isEmpty() ? fallback : WARN_150;
             case "grown":
                 return GROWN;
+            case "health_issue":
+                return !fallback.isEmpty() ? fallback : HEALTH_ISSUE;
             default:
                 return fallback;
         }
@@ -129,6 +133,8 @@ public final class NotifyMessageResolver {
                 return "宝宝生长指标";
             case "summary":
                 return "每日奶量小结";
+            case "health_issue":
+                return "健康问题通知";
             default:
                 return "Momcozy 提醒";
         }
@@ -143,6 +149,7 @@ public final class NotifyMessageResolver {
             case "grown":
                 return "/status?mmcNotify=growth";
             case "summary":
+            case "health_issue":
                 return "/";
             default:
                 return "/schedule?mmcNotify=1";
@@ -157,7 +164,7 @@ public final class NotifyMessageResolver {
         try {
             JSONObject o = new JSONObject();
             o.put("event", event);
-            if ("summary".equals(event)) {
+            if ("summary".equals(event) || "health_issue".equals(event)) {
                 o.put("body", body);
             }
             return o.toString();
