@@ -124,7 +124,7 @@ function renderBlock({
   onOpenIbclcConsult = vi.fn(),
 }: {
   payload?: ChatRichTextPayload;
-  onButtonSelect?: (value: string, options?: { displayText?: string }) => void;
+  onButtonSelect?: (value: string, options?: { displayText?: string; assistantReply?: string }) => void;
   onOpenIbclcConsult?: (request: IbclcConsultOpenRequest) => void;
 } = {}) {
   render(
@@ -186,7 +186,7 @@ describe("AgentHubRichTextBlock support ticket draft", () => {
     vi.clearAllMocks();
   });
 
-  it("renders order and purchase fields and includes them in the submit summary", () => {
+  it("renders order and purchase fields and returns the default submitted reply", () => {
     const onButtonSelect = vi.fn();
     renderBlock({ payload: supportTicketPayload(), onButtonSelect });
 
@@ -197,16 +197,11 @@ describe("AgentHubRichTextBlock support ticket draft", () => {
     fireEvent.click(screen.getByRole("button", { name: "确认并提交" }));
 
     expect(onButtonSelect).toHaveBeenCalledWith(
-      expect.stringContaining("订单号：MC123"),
-      expect.objectContaining({ displayText: "已提交售后工单" }),
-    );
-    expect(onButtonSelect).toHaveBeenCalledWith(
-      expect.stringContaining("购买渠道：官网"),
-      expect.objectContaining({ displayText: "已提交售后工单" }),
-    );
-    expect(onButtonSelect).toHaveBeenCalledWith(
-      expect.stringContaining("当前系统不支持查看工单进度"),
-      expect.objectContaining({ displayText: "已提交售后工单" }),
+      "已提交售后工单",
+      expect.objectContaining({
+        displayText: "已提交售后工单",
+        assistantReply: expect.stringContaining("人工客服团队会在 24 小时内主动联系你"),
+      }),
     );
   });
 });

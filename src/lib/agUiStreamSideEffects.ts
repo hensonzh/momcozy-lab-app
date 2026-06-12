@@ -7,6 +7,7 @@ import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import type { AgUiToolCallRow, ChatMessage, ChatMessageCitation, ChatQuickReply } from "@/types/chat";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
 import { notifyBirthJourneyPlanDeleted } from "@/lib/birthJourneyPlanNotification";
+import { normalizeMediaVoiceNarrationItems, type MediaVoiceNarrationItem } from "@/lib/mediaVoiceNarration";
 import { notifyPregnancyDiaryChanged } from "@/lib/pregnancyDiaryEvents";
 import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
 
@@ -99,6 +100,10 @@ function readWebSearchCitations(value: unknown): ChatMessageCitation[] {
     }
     const fallbackTitle = host || "参考来源";
     const title = coalesceString(citation?.title) || fallbackTitle;
+    const displayText =
+      coalesceString(citation?.displayText) ||
+      coalesceString(citation?.display_text) ||
+      `${citationDisplayTopic(title, url)}：${citationShortUrl(url)}`;
     const titleKey = citationTitleKey(title, host);
     const dedupeKey = `${host}:${titleKey}`;
     if (seenKeys.has(dedupeKey)) return;
@@ -110,9 +115,61 @@ function readWebSearchCitations(value: unknown): ChatMessageCitation[] {
       index: citations.length + 1,
       title,
       url,
+      displayText,
     });
   });
   return citations.slice(0, 4);
+}
+
+function citationDisplayTopic(title: string, url: string): string {
+  const host = hostFromUrl(url);
+  const trimmedTitle = title.trim().replace(/\s+/g, " ");
+  const lowerTitle = trimmedTitle.toLowerCase();
+  const titleKey = citationTitleKey(trimmedTitle, host);
+
+  if (trimmedTitle && titleKey !== (host || titleKey) && /[\u4e00-\u9fff]/.test(trimmedTitle)) {
+    return trimmedTitle.slice(0, 48);
+  }
+  if (lowerTitle.includes("mastitis")) return "哺乳期乳腺炎资料";
+  if (lowerTitle.includes("hand expression")) return "手挤奶指导";
+  if (lowerTitle.includes("breastfeeding medicine") || lowerTitle.includes("protocol")) return "ABM 哺乳医学临床指南";
+  if (lowerTitle.includes("breastfeeding")) return "母乳喂养专业资料";
+  if (lowerTitle.includes("infant and child feeding")) return "婴幼儿喂养指导";
+  if (lowerTitle.includes("pregnancy") || lowerTitle.includes("obstetric")) return "孕产健康专业资料";
+  if (lowerTitle.includes("postpartum")) return "产后健康专业资料";
+
+  if (host.includes("bfmed.org") || host.includes("abm.memberclicks.net")) return "ABM 哺乳医学资料";
+  if (host.includes("ncbi.nlm.nih.gov")) return "NCBI 医学资料";
+  if (host.includes("cdc.gov")) return "CDC 健康指南";
+  if (host.includes("who.int")) return "WHO 健康指南";
+  if (host.includes("nice.org.uk")) return "NICE 临床指南";
+  if (host.includes("acog.org")) return "ACOG 妇产科指南";
+  if (host.includes("aap.org")) return "AAP 儿科资料";
+  if (host.includes("nhc.gov.cn")) return "国家卫健委资料";
+  if (host.includes("unicef.org")) return "UNICEF 母婴健康资料";
+  if (host.includes("yiigle.com") || host.includes("cmcha.org") || host.includes("jundaodsj.com")) return "中文医学资料";
+  return "专业资料";
+}
+
+function citationShortUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    if (segments.length === 0) return host;
+    if (segments.length === 1) return `${host}/${segments[0]}`;
+    return `${host}/${segments[0]}/...`;
+  } catch {
+    return url;
+  }
+}
+
+function hostFromUrl(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "").toLowerCase();
+  } catch {
+    return "";
+  }
 }
 
 function citationTitleKey(title: string, host: string): string {
@@ -484,7 +541,7 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "knowledge_search") return { title: "我去找找相关资料～" };
   if (normalizedToolName === "memory_search") return { title: "我去找一下之前的信息～" };
   if (normalizedToolName === "reminder_list") return { title: "我先看看你的提醒～" };
-  if (normalizedToolName === "support_ticket_draft_create") return { title: "我先帮你准备售后工单～" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "我先帮你准备售后信息表～" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
@@ -521,7 +578,7 @@ function toolEndCopy(toolName: string): { title: string; detail?: string } {
   if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我把推荐结果整理一下～" };
   if (normalizedToolName === "hospital_bag_cart_update") return { title: "我在保存购物车修改～" };
   if (normalizedToolName === "device_manual_search") return { title: "我把设备内容整理一下～" };
-  if (normalizedToolName === "support_ticket_draft_create") return { title: "我在整理工单草稿～" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "我在准备售后信息表～" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
@@ -610,7 +667,7 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
     return { title: "我已经帮你更新好待产包购物车啦" };
   }
   if (normalizedToolName === "device_manual_search") return { title: "我把设备资料整理好啦" };
-  if (normalizedToolName === "support_ticket_draft_create") return { title: "我已经准备好售后工单草稿啦" };
+  if (normalizedToolName === "support_ticket_draft_create") return { title: "请确认售后信息" };
   if (["read_skill_file", "search_skill_assets", "knowledge_search", "memory_search"].includes(normalizedToolName)) return { title: "我找到相关资料啦" };
   if (normalizedToolName === "reminder_list") return { title: "我看好提醒啦" };
   if (normalizedToolName === "run_approved_skill_script") return { title: "这一步处理好啦" };
@@ -763,7 +820,7 @@ function artifactSemanticFromEvent(rec: Record<string, unknown>): AgUiEventSeman
     return semanticPayload("done", "我已经准备好确认内容啦", "artifact", `artifact:${artifactId}`, 70);
   }
   if (artifactType === "support_ticket" || artifactType === "support_ticket_draft") {
-    return semanticPayload("done", "我已经准备好售后工单草稿啦", "artifact", `artifact:${artifactId}`, 70);
+    return semanticPayload("done", "请确认售后信息", "artifact", `artifact:${artifactId}`, 70);
   }
   if (artifactType === "milk_plan_card" || artifactType === "milk_analysis_card") {
     return semanticPayload("done", "我已经整理好奶量计划啦", "artifact", `artifact:${artifactId}`, 70);
@@ -900,7 +957,15 @@ function richTextPayloadFromRecord(payload: Record<string, unknown>): ChatRichTe
   const button = Array.isArray(payload.button) ? payload.button : [];
   const card = Array.isArray(payload.card) ? payload.card : [];
   const action = Array.isArray(payload.action) ? payload.action : [];
-  if (!coalesceString(payload.title) && !coalesceString(payload.content) && button.length === 0 && card.length === 0 && action.length === 0) {
+  const voice = normalizeMediaVoiceNarrationItems(payload.voice ?? payload.media_voice ?? payload.mediaVoice);
+  if (
+    !coalesceString(payload.title) &&
+    !coalesceString(payload.content) &&
+    button.length === 0 &&
+    card.length === 0 &&
+    action.length === 0 &&
+    voice.length === 0
+  ) {
     return null;
   }
   return {
@@ -909,6 +974,7 @@ function richTextPayloadFromRecord(payload: Record<string, unknown>): ChatRichTe
     button: button as ChatRichTextPayload["button"],
     card: card as ChatRichTextPayload["card"],
     action,
+    ...(voice.length > 0 ? { voice } : {}),
   };
 }
 
@@ -1146,7 +1212,16 @@ export function mergePendingRichTextPayload(
     button: [...prev.button, ...next.button],
     card: [...prev.card, ...next.card],
     action: mergeRichActions(prev.action, next.action),
+    voice: mergeRichVoice(prev.voice, next.voice),
   };
+}
+
+function mergeRichVoice(
+  prev: ChatRichTextPayload["voice"] | undefined,
+  next: ChatRichTextPayload["voice"] | undefined,
+): ChatRichTextPayload["voice"] | undefined {
+  const merged = normalizeMediaVoiceNarrationItems([...(prev ?? []), ...(next ?? [])]);
+  return merged.length > 0 ? merged : undefined;
 }
 
 function appendRichRenderItem(
@@ -1173,6 +1248,7 @@ export function applyAgUiStreamSideEffects(
   opts?: {
     pendingRichTextRef?: MutableRefObject<ChatRichTextPayload | null>;
     onHospitalBagCartUpdate?: (groups: HospitalBagCartGroup[], message?: string) => void;
+    onMediaVoice?: (items: MediaVoiceNarrationItem[]) => void;
     deferAgUiArtifacts?: boolean;
     onAgUiArtifactRichText?: (payload: ChatRichTextPayload, meta: { formLike: boolean }) => void;
   },
@@ -1183,6 +1259,14 @@ export function applyAgUiStreamSideEffects(
   const parsedToolResult = eventType === "TOOL_CALL_RESULT" ? parseToolResultPayload(rec.content) : null;
   maybeNotifyBirthJourneyPlanDeleted(parsedToolResult);
   maybeNotifyPregnancyDiaryChanged(parsedToolResult);
+  if (eventType === "TOOL_CALL_RESULT") {
+    const mediaVoice = normalizeMediaVoiceNarrationItems(
+      parsedToolResult?.media_voice ?? parsedToolResult?.mediaVoice ?? parsedToolResult?.voice,
+    );
+    if (mediaVoice.length > 0) {
+      opts?.onMediaVoice?.(mediaVoice);
+    }
+  }
   const semantic = semanticForAgUiEvent(rec, eventType, parsedToolResult);
   let didUpdate = false;
 

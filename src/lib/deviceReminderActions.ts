@@ -3,15 +3,22 @@ import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
 import { createDailyAndMomBabyAnalysis } from "@/lib/agentApi";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 import { getAgUiThreadIdForRequest } from "@/lib/agentConversationSession";
-import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
+import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from "@/lib/agentHubChatMessages";
 import { apiRequestRaw } from "@/lib/http";
 import { showNativeReminder } from "@/lib/mmcBackgroundNotify";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 
-export type DeviceReminderActionKey = "task_reminder" | "daily_summary" | "mom_baby" | "milk_analysis" | "growth_update";
+export type DeviceReminderActionKey =
+  | "task_reminder"
+  | "daily_summary"
+  | "mom_baby"
+  | "milk_analysis"
+  | "growth_update"
+  | "health_issue";
 
 const MOM_BABY_CONTEXT_MAX_CHARS = 320;
 const TASK_REMINDER_MESSAGE = "妈妈，吸奶/喂养时间还有15分钟就到咯，可以提前准备一下哦～";
+export const HEALTH_ISSUE_NOTIFICATION_MESSAGE = "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗";
 
 function compactText(value: unknown): string {
   return String(value ?? "").replace(/\s+/g, " ").trim();
@@ -168,6 +175,21 @@ function handleTaskReminderNotify(): void {
   });
 }
 
+function handleHealthIssueNotify(): void {
+  const chatMessageId = `notification-health_issue-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  void notifyByNativeOrToast({
+    title: "健康问题通知",
+    message: HEALTH_ISSUE_NOTIFICATION_MESSAGE,
+    path: "/",
+    notifyJson: JSON.stringify({
+      event: "health_issue",
+      body: HEALTH_ISSUE_NOTIFICATION_MESSAGE,
+      chatMessageId,
+    }),
+  });
+  appendAgentHubNotificationMessage(HEALTH_ISSUE_NOTIFICATION_MESSAGE, { kind: "health_issue", id: chatMessageId });
+}
+
 export function getDeviceReminderActionTitle(actionKey: DeviceReminderActionKey): string {
   switch (actionKey) {
     case "task_reminder":
@@ -180,6 +202,8 @@ export function getDeviceReminderActionTitle(actionKey: DeviceReminderActionKey)
       return "奶量分析";
     case "growth_update":
       return "宝宝生长发育指标更新";
+    case "health_issue":
+      return "健康问题通知";
   }
 }
 
@@ -199,6 +223,9 @@ export async function executeDeviceReminderAction(actionKey: DeviceReminderActio
       return;
     case "growth_update":
       handleGrowthUpdateNotify();
+      return;
+    case "health_issue":
+      handleHealthIssueNotify();
       return;
   }
 }

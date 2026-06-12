@@ -14,7 +14,7 @@ const COMPLETED_TOOL_SUMMARY_TITLES: Record<string, string> = {
   ibclc_consult_card_create: "我已经准备好 IBCLC 咨询入口啦",
   hospital_bag_pump_recommend: "我已经帮你整理好吸奶器推荐啦",
   hospital_bag_cart_update: "我已经帮你更新好待产包购物车啦",
-  support_ticket_draft_create: "我已经准备好售后工单草稿啦",
+  support_ticket_draft_create: "请确认售后信息",
 };
 
 const GENERIC_DONE_TITLES = new Set([

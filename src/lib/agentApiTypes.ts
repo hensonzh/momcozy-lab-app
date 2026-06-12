@@ -1,3 +1,5 @@
+import type { MediaVoiceNarrationItem } from "@/lib/mediaVoiceNarration";
+
 /**
  * 与《API接口说明文档》V1.3 对齐的请求/响应类型（字段待补充处用可选字段兼容）。
  */
@@ -72,6 +74,8 @@ export interface ChatRichTextPayload {
   button: ChatRichTextButtonItem[];
   card: ChatRichTextCardItem[];
   action: unknown[];
+  /** 可选的媒体语音播报元数据；只有显式提供 spokenLabel 且策略允许时才会进入 TTS。 */
+  voice?: MediaVoiceNarrationItem[];
 }
 
 /** chat-messages SSE 的 data 中 action_content（字符串 JSON 或对象） */
@@ -786,7 +790,7 @@ export interface NotifyQueryParams {
 }
 
 export interface NotifyItem {
-  event: "pump" | "warning" | "grown" | "summary" | string;
+  event: "pump" | "warning" | "grown" | "summary" | "health_issue" | string;
   time: string;
   message: string;
 }
