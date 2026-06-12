@@ -10,6 +10,7 @@ import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
 import { createScopedConsole } from "@/lib/logger";
+import { queueMilkAnalysisReminderFollowup } from "@/lib/milkAnalysisReminderFollowup";
 import { markStatusGrowthHighlightPending } from "@/lib/statusGrowthHighlight";
 
 export type DeviceReminderWebSocketReminderType =
@@ -77,6 +78,7 @@ function handleNativeReminderHandled(event: { notifyJson?: string }): void {
       body?: string;
       chatMessageId?: string;
       analysis_card?: AgentAnalysisCard;
+      analysis_context?: AgentAnalysisCard;
     };
     const analysisKind =
       payload.event === "summary"
@@ -93,9 +95,14 @@ function handleNativeReminderHandled(event: { notifyJson?: string }): void {
         analysisCard: payload.analysis_card,
       });
       if (analysisKind === "milk_analysis") {
+        queueMilkAnalysisReminderFollowup({
+          chatMessageId: payload.chatMessageId,
+          message: payload.body,
+          analysisContext: payload.analysis_context ?? payload.analysis_card,
+        });
         void recordMilkAnalysisContextEvent({
           message: payload.body,
-          analysisCard: payload.analysis_card,
+          analysisCard: payload.analysis_context ?? payload.analysis_card,
           chatMessageId: payload.chatMessageId,
         });
       }

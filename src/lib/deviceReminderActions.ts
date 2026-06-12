@@ -6,6 +6,7 @@ import { getAgUiThreadIdForRequest } from "@/lib/agentConversationSession";
 import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from "@/lib/agentHubChatMessages";
 import { apiRequestRaw } from "@/lib/http";
 import { showNativeReminder } from "@/lib/mmcBackgroundNotify";
+import { queueMilkAnalysisReminderFollowup } from "@/lib/milkAnalysisReminderFollowup";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 
 export type DeviceReminderActionKey =
@@ -148,12 +149,23 @@ async function handleMilkAnalysis(): Promise<void> {
     title: "奶量分析",
     message,
     path: "/",
-    notifyJson: JSON.stringify({ event: "milk_analysis", body: message, chatMessageId, analysis_card: data.analysis_card }),
+    notifyJson: JSON.stringify({
+      event: "milk_analysis",
+      body: message,
+      chatMessageId,
+      analysis_card: data.analysis_card,
+      analysis_context: data.analysis_context,
+    }),
   });
   appendAgentHubAnalysisMessage(message, { kind: "milk_analysis", id: chatMessageId, analysisCard: data.analysis_card });
+  queueMilkAnalysisReminderFollowup({
+    chatMessageId,
+    message,
+    analysisContext: data.analysis_context ?? data.analysis_card,
+  });
   void recordMilkAnalysisContextEvent({
     message,
-    analysisCard: data.analysis_card,
+    analysisCard: data.analysis_context ?? data.analysis_card,
     chatMessageId,
   });
 }

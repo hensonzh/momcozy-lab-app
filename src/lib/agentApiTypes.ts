@@ -818,6 +818,8 @@ export interface AnalysisCreateData {
   result?: boolean;
   message: string;
   analysis_card?: AgentAnalysisCard;
+  /** 非渲染上下文：供后台提醒进入 AgentHub 后触发 LLM 接续解读。 */
+  analysis_context?: AgentAnalysisCard;
 }
 
 export interface AgentAnalysisCardSection {
