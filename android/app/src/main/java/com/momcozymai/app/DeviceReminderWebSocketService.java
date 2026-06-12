@@ -239,7 +239,8 @@ public class DeviceReminderWebSocketService extends Service {
                 || "lactation_feeding_reminder".equals(value)
                 || "daily_summary_reminder".equals(value)
                 || "milk_analysis_reminder".equals(value)
-                || "baby_growth_update_reminder".equals(value);
+                || "baby_growth_update_reminder".equals(value)
+                || "health_issue_reminder".equals(value);
     }
 
     private void executeReminder(String reminderType) {
@@ -258,6 +259,17 @@ public class DeviceReminderWebSocketService extends Service {
                             notifyJson
                     );
                     notifyWeb(reminderType, "growth_update", notifyJson);
+                    return;
+                }
+                case "health_issue_reminder": {
+                    String message = "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗";
+                    String notifyJson = new JSONObject()
+                            .put("event", "health_issue")
+                            .put("body", message)
+                            .put("chatMessageId", "notification-health_issue-" + System.currentTimeMillis())
+                            .toString();
+                    showReminder("健康问题通知", message, "/", notifyJson);
+                    notifyWeb(reminderType, "health_issue", notifyJson);
                     return;
                 }
                 case "daily_summary_reminder":

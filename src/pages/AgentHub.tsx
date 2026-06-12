@@ -373,6 +373,54 @@ function citationLabel(citation: ChatMessageCitation): string {
   return hostFromCitationUrl(citation.url) || "参考来源";
 }
 
+function citationDisplayText(citation: ChatMessageCitation): string {
+  const displayText = citation.displayText?.trim();
+  if (displayText) return displayText;
+  return `${citationDisplayTopic(citation)}：${citationShortUrl(citation.url)}`;
+}
+
+function citationDisplayTopic(citation: ChatMessageCitation): string {
+  const host = hostFromCitationUrl(citation.url).toLowerCase();
+  const title = citation.title.trim().replace(/\s+/g, " ");
+  const lowerTitle = title.toLowerCase();
+  const titleKey = lowerTitle.replace(/^www\./, "");
+
+  if (title && title !== "参考来源" && titleKey !== host && titleKey !== "protocols" && /[\u4e00-\u9fff]/.test(title)) {
+    return title.slice(0, 48);
+  }
+  if (lowerTitle.includes("mastitis")) return "哺乳期乳腺炎资料";
+  if (lowerTitle.includes("hand expression")) return "手挤奶指导";
+  if (lowerTitle.includes("breastfeeding medicine") || lowerTitle.includes("protocol")) return "ABM 哺乳医学临床指南";
+  if (lowerTitle.includes("breastfeeding")) return "母乳喂养专业资料";
+  if (lowerTitle.includes("infant and child feeding")) return "婴幼儿喂养指导";
+  if (lowerTitle.includes("pregnancy") || lowerTitle.includes("obstetric")) return "孕产健康专业资料";
+  if (lowerTitle.includes("postpartum")) return "产后健康专业资料";
+  if (host.includes("bfmed.org") || host.includes("abm.memberclicks.net")) return "ABM 哺乳医学资料";
+  if (host.includes("ncbi.nlm.nih.gov")) return "NCBI 医学资料";
+  if (host.includes("cdc.gov")) return "CDC 健康指南";
+  if (host.includes("who.int")) return "WHO 健康指南";
+  if (host.includes("nice.org.uk")) return "NICE 临床指南";
+  if (host.includes("acog.org")) return "ACOG 妇产科指南";
+  if (host.includes("aap.org")) return "AAP 儿科资料";
+  if (host.includes("nhc.gov.cn")) return "国家卫健委资料";
+  if (host.includes("unicef.org")) return "UNICEF 母婴健康资料";
+  if (host.includes("yiigle.com") || host.includes("cmcha.org") || host.includes("jundaodsj.com")) return "中文医学资料";
+  return "专业资料";
+}
+
+function citationShortUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    if (segments.length === 0) return host;
+    if (segments.length === 1) return `${host}/${segments[0]}`;
+    return `${host}/${segments[0]}/...`;
+  } catch {
+    return url;
+  }
+}
+
 function AgentHubCitations({ msg }: { msg: ChatMessage }) {
   const citations = msg.citations ?? [];
   if (msg.role !== "mai" || citations.length === 0) return null;
@@ -393,9 +441,9 @@ function AgentHubCitations({ msg }: { msg: ChatMessage }) {
               href={citation.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="min-w-0 truncate text-[#3d7d85] underline decoration-[#b8d7d4] decoration-1 underline-offset-2 transition-colors hover:text-[#2f6870]"
+              className="min-w-0 break-all text-[#3d7d85] underline decoration-[#b8d7d4] decoration-1 underline-offset-2 transition-colors hover:text-[#2f6870]"
             >
-              {citationLabel(citation)}
+              {citationDisplayText(citation)}
             </a>
           </li>
         ))}

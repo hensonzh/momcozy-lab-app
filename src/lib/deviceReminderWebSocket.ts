@@ -1,8 +1,12 @@
 import { Capacitor, registerPlugin } from "@capacitor/core";
 import type { PluginListenerHandle } from "@capacitor/core";
-import { executeDeviceReminderAction, type DeviceReminderActionKey } from "@/lib/deviceReminderActions";
+import {
+  executeDeviceReminderAction,
+  HEALTH_ISSUE_NOTIFICATION_MESSAGE,
+  type DeviceReminderActionKey,
+} from "@/lib/deviceReminderActions";
 import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
-import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
+import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from "@/lib/agentHubChatMessages";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
 import { createScopedConsole } from "@/lib/logger";
@@ -13,7 +17,8 @@ export type DeviceReminderWebSocketReminderType =
   | "lactation_feeding_reminder"
   | "daily_summary_reminder"
   | "milk_analysis_reminder"
-  | "baby_growth_update_reminder";
+  | "baby_growth_update_reminder"
+  | "health_issue_reminder";
 
 const DEVICE_REMINDER_WS_URL = "ws://192.168.204.127:8767/api/ws?token=websocket-token";
 const RECONNECT_DELAYS_MS = [1000, 3000, 5000, 10000, 15000];
@@ -38,6 +43,7 @@ const reminderTypeToActionKey: Record<DeviceReminderWebSocketReminderType, Devic
   daily_summary_reminder: "daily_summary",
   milk_analysis_reminder: "milk_analysis",
   baby_growth_update_reminder: "growth_update",
+  health_issue_reminder: "health_issue",
 };
 
 function envValue(key: keyof ImportMetaEnv): string {
@@ -95,6 +101,11 @@ function handleNativeReminderHandled(event: { notifyJson?: string }): void {
       }
     } else if (payload.event === "grown") {
       markStatusGrowthHighlightPending();
+    } else if (payload.event === "health_issue") {
+      appendAgentHubNotificationMessage(payload.body || HEALTH_ISSUE_NOTIFICATION_MESSAGE, {
+        kind: "health_issue",
+        id: payload.chatMessageId,
+      });
     }
   } catch (error) {
     log.warn("parse native reminder notifyJson failed", error);

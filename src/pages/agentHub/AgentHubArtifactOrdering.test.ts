@@ -41,8 +41,8 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain('const replyId = createAgentHubMessageId("m")');
   });
 
-  it("renders professional sources as clickable page titles", () => {
-    expect(agentHubSource).toContain("{citationLabel(citation)}");
+  it("renders professional sources as clickable page title plus url", () => {
+    expect(agentHubSource).toContain("{citationDisplayText(citation)}");
     expect(agentHubSource).not.toContain("function citationDisplayUrl(url: string): string");
   });
 

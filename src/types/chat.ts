@@ -32,6 +32,7 @@ export interface ChatMessageCitation {
   index: number;
   title: string;
   url: string;
+  displayText?: string;
 }
 
 export interface ChatStreamRenderItemText {
