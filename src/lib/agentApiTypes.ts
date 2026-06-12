@@ -790,7 +790,7 @@ export interface NotifyQueryParams {
 }
 
 export interface NotifyItem {
-  event: "pump" | "warning" | "grown" | "summary" | string;
+  event: "pump" | "warning" | "grown" | "summary" | "health_issue" | string;
   time: string;
   message: string;
 }

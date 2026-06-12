@@ -18,6 +18,7 @@ const actionItems: Array<{ key: ActionKey; label: string }> = [
   { key: "mom_baby", label: "每日泌乳建议" },
   { key: "milk_analysis", label: "奶量分析" },
   { key: "growth_update", label: "宝宝生长发育指标更新" },
+  { key: "health_issue", label: "健康问题通知" },
 ];
 
 const DeviceManageActions: React.FC = () => {
@@ -31,6 +32,7 @@ const DeviceManageActions: React.FC = () => {
       mom_baby: () => executeDeviceReminderAction("mom_baby"),
       milk_analysis: () => executeDeviceReminderAction("milk_analysis"),
       growth_update: () => executeDeviceReminderAction("growth_update"),
+      health_issue: () => executeDeviceReminderAction("health_issue"),
     }),
     [],
   );

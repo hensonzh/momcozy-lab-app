@@ -251,6 +251,11 @@ describe("applyAgUiStreamSideEffects", () => {
               title: "Duplicate",
               url: "https://www.bfmed.org/protocols",
             },
+            {
+              index: 3,
+              title: "www.ncbi.nlm.nih.gov",
+              url: "https://www.ncbi.nlm.nih.gov/books/NBK148970/",
+            },
           ],
         },
       },
@@ -261,6 +266,13 @@ describe("applyAgUiStreamSideEffects", () => {
         index: 1,
         title: "Academy of Breastfeeding Medicine Protocols",
         url: "https://www.bfmed.org/protocols",
+        displayText: "ABM 哺乳医学临床指南：bfmed.org/protocols",
+      },
+      {
+        index: 2,
+        title: "www.ncbi.nlm.nih.gov",
+        url: "https://www.ncbi.nlm.nih.gov/books/NBK148970/",
+        displayText: "NCBI 医学资料：ncbi.nlm.nih.gov/books/...",
       },
     ]);
   });

@@ -100,6 +100,10 @@ function readWebSearchCitations(value: unknown): ChatMessageCitation[] {
     }
     const fallbackTitle = host || "参考来源";
     const title = coalesceString(citation?.title) || fallbackTitle;
+    const displayText =
+      coalesceString(citation?.displayText) ||
+      coalesceString(citation?.display_text) ||
+      `${citationDisplayTopic(title, url)}：${citationShortUrl(url)}`;
     const titleKey = citationTitleKey(title, host);
     const dedupeKey = `${host}:${titleKey}`;
     if (seenKeys.has(dedupeKey)) return;
@@ -111,9 +115,61 @@ function readWebSearchCitations(value: unknown): ChatMessageCitation[] {
       index: citations.length + 1,
       title,
       url,
+      displayText,
     });
   });
   return citations.slice(0, 4);
+}
+
+function citationDisplayTopic(title: string, url: string): string {
+  const host = hostFromUrl(url);
+  const trimmedTitle = title.trim().replace(/\s+/g, " ");
+  const lowerTitle = trimmedTitle.toLowerCase();
+  const titleKey = citationTitleKey(trimmedTitle, host);
+
+  if (trimmedTitle && titleKey !== (host || titleKey) && /[\u4e00-\u9fff]/.test(trimmedTitle)) {
+    return trimmedTitle.slice(0, 48);
+  }
+  if (lowerTitle.includes("mastitis")) return "哺乳期乳腺炎资料";
+  if (lowerTitle.includes("hand expression")) return "手挤奶指导";
+  if (lowerTitle.includes("breastfeeding medicine") || lowerTitle.includes("protocol")) return "ABM 哺乳医学临床指南";
+  if (lowerTitle.includes("breastfeeding")) return "母乳喂养专业资料";
+  if (lowerTitle.includes("infant and child feeding")) return "婴幼儿喂养指导";
+  if (lowerTitle.includes("pregnancy") || lowerTitle.includes("obstetric")) return "孕产健康专业资料";
+  if (lowerTitle.includes("postpartum")) return "产后健康专业资料";
+
+  if (host.includes("bfmed.org") || host.includes("abm.memberclicks.net")) return "ABM 哺乳医学资料";
+  if (host.includes("ncbi.nlm.nih.gov")) return "NCBI 医学资料";
+  if (host.includes("cdc.gov")) return "CDC 健康指南";
+  if (host.includes("who.int")) return "WHO 健康指南";
+  if (host.includes("nice.org.uk")) return "NICE 临床指南";
+  if (host.includes("acog.org")) return "ACOG 妇产科指南";
+  if (host.includes("aap.org")) return "AAP 儿科资料";
+  if (host.includes("nhc.gov.cn")) return "国家卫健委资料";
+  if (host.includes("unicef.org")) return "UNICEF 母婴健康资料";
+  if (host.includes("yiigle.com") || host.includes("cmcha.org") || host.includes("jundaodsj.com")) return "中文医学资料";
+  return "专业资料";
+}
+
+function citationShortUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    if (segments.length === 0) return host;
+    if (segments.length === 1) return `${host}/${segments[0]}`;
+    return `${host}/${segments[0]}/...`;
+  } catch {
+    return url;
+  }
+}
+
+function hostFromUrl(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "").toLowerCase();
+  } catch {
+    return "";
+  }
 }
 
 function citationTitleKey(title: string, host: string): string {
