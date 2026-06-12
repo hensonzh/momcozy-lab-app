@@ -299,6 +299,8 @@ public class DeviceReminderWebSocketService extends Service {
                 .put("chatMessageId", chatMessageId);
         JSONObject analysisCard = data.optJSONObject("analysis_card");
         if (analysisCard != null) notifyJson.put("analysis_card", analysisCard);
+        JSONObject analysisContext = data.optJSONObject("analysis_context");
+        if (analysisContext != null) notifyJson.put("analysis_context", analysisContext);
         String notifyJsonText = notifyJson.toString();
         showReminder(title, message, "/", notifyJsonText);
         notifyWeb(reminderType, analysisType, notifyJsonText);

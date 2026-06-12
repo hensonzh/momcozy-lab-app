@@ -37,6 +37,11 @@ import {
 } from "@/lib/agentConversationSession";
 import { tryRunPumpAutoEndOffPumpTeardownOnce } from "@/lib/pumpAutoEndSession";
 import { AGENT_HUB_SYNC_CHAT_EVENT, appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
+import {
+  buildMilkAnalysisReminderFollowupPrompt,
+  consumeMilkAnalysisReminderFollowup,
+  MILK_ANALYSIS_REMINDER_FOLLOWUP_EVENT,
+} from "@/lib/milkAnalysisReminderFollowup";
 import { apiRequestRaw } from "@/lib/http";
 import type { AgentAnalysisCard, ChatRichTextPayload } from "@/lib/agentApiTypes";
 import { log, warn } from "@/lib/logger";
@@ -2167,6 +2172,27 @@ const AgentHub: React.FC = () => {
       onError: onErrorHandler,
     });
   };
+
+  const tryStartMilkAnalysisReminderFollowup = useCallback(() => {
+    if (mainChatRuntimeSnapshot.running || mainChatCancelRef.current) return;
+    const pending = consumeMilkAnalysisReminderFollowup();
+    if (!pending) return;
+    const prompt = buildMilkAnalysisReminderFollowupPrompt(pending);
+    void startMainChatStream(prompt, { showUserMessage: false });
+  }, [mainChatRuntimeSnapshot.running]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0);
+    return () => window.clearTimeout(timer);
+  }, [messages.length, tryStartMilkAnalysisReminderFollowup]);
+
+  useEffect(() => {
+    const handler = () => {
+      window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0);
+    };
+    window.addEventListener(MILK_ANALYSIS_REMINDER_FOLLOWUP_EVENT, handler);
+    return () => window.removeEventListener(MILK_ANALYSIS_REMINDER_FOLLOWUP_EVENT, handler);
+  }, [tryStartMilkAnalysisReminderFollowup]);
 
   const startDirectHospitalBagPumpCartUpdate = async (
     query: string,

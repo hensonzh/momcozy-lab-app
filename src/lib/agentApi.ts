@@ -1238,6 +1238,7 @@ export async function createDailyAndMomBabyAnalysis(
       result?: boolean;
       message?: string;
       analysis_card?: AnalysisCreateData["analysis_card"];
+      analysis_context?: AnalysisCreateData["analysis_context"];
     };
     error?: number;
     result?: boolean;
@@ -1277,5 +1278,11 @@ export async function createDailyAndMomBabyAnalysis(
     throw new Error(message || "分析请求失败");
   }
 
-  return { error: error as AnalysisCreateData["error"], result, message, analysis_card: data?.analysis_card };
+  return {
+    error: error as AnalysisCreateData["error"],
+    result,
+    message,
+    analysis_card: data?.analysis_card,
+    analysis_context: data?.analysis_context,
+  };
 }
