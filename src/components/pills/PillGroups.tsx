@@ -51,7 +51,7 @@ const PillGroups: React.FC<PillGroupsProps> = ({
               !pill.disabled &&
                 (pill.active
                   ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 border border-transparent"
-                  : "bg-primary/15 text-primary hover:bg-primary/25 border border-primary/30"),
+                  : "border border-[#d9bdc7] bg-background text-[#a76778] hover:bg-[#fff7fa] hover:border-[#cfa8b5]"),
             )}
           >
             {pill.label}

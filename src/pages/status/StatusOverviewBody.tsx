@@ -1950,10 +1950,41 @@ const StatusOverviewBody: React.FC = () => {
     setPregnancyDiaryEntries(realEntries);
   }, []);
 
+  const reloadPumpInfo = useCallback(async (signal?: AbortSignal) => {
+    const data = await getPumpInfo(DEFAULT_CHAT_USER_ID, { signal });
+    if (data.error !== 0 || !Array.isArray(data.lactation_info_list)) {
+      setLactationInfoList([]);
+      return;
+    }
+    setLactationInfoList(data.lactation_info_list);
+  }, []);
+
   useEffect(() => subscribePregnancyDiaryChanged(() => {
     setPregnancyDiaryLoading(true);
     void reloadPregnancyDiary().finally(() => setPregnancyDiaryLoading(false));
   }), [reloadPregnancyDiary]);
+
+  useEffect(() => {
+    let ac: AbortController | null = null;
+    const refreshPumpInfo = () => {
+      if (document.visibilityState !== "visible") return;
+      ac?.abort();
+      ac = new AbortController();
+      void reloadPumpInfo(ac.signal).catch((e: unknown) => {
+        if ((e as { name?: string })?.name === "AbortError") return;
+      });
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") refreshPumpInfo();
+    };
+    window.addEventListener("focus", refreshPumpInfo);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      ac?.abort();
+      window.removeEventListener("focus", refreshPumpInfo);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [reloadPumpInfo]);
 
   const openPregnancyDiaryEditor = useCallback(() => {
     setActiveMomPanel(null);
@@ -2076,23 +2107,15 @@ const StatusOverviewBody: React.FC = () => {
 
     setPumpInfoLoading(true);
     setLactationInfoList([]);
-    void (async () => {
-      try {
-        const data = await getPumpInfo(DEFAULT_CHAT_USER_ID, { signal: ac.signal });
-        if (cancelled) return;
-        if (data.error !== 0 || !Array.isArray(data.lactation_info_list)) {
-          setLactationInfoList([]);
-          return;
-        }
-        setLactationInfoList(data.lactation_info_list);
-      } catch (e: unknown) {
+    void reloadPumpInfo(ac.signal)
+      .catch((e: unknown) => {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
         setLactationInfoList([]);
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) setPumpInfoLoading(false);
-      }
-    })();
+      });
 
     setTodayPumpRecordsLoading(true);
     setTodayDevicePumpCount(null);
@@ -2186,7 +2209,7 @@ const StatusOverviewBody: React.FC = () => {
       cancelled = true;
       ac.abort();
     };
-  }, [reloadPregnancyDiary]);
+  }, [reloadPregnancyDiary, reloadPumpInfo]);
 
   const babyDaysSinceBirth = deliveryYmd ? calendarDaysSinceDeliveryLocal(deliveryYmd) : null;
   const babyAgeDays =

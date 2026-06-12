@@ -2937,17 +2937,24 @@ const AgentHub: React.FC = () => {
               )}
 
           {visibleMessages.map((msg, index) => {
-            const isMainAssistantBubble = msg.role === "mai" && msg.chatStreamContext === "main";
+            const isPlainMilkAnalysisReminder =
+              msg.role === "mai" &&
+              !msg.cardType &&
+              !msg.richText &&
+              msg.id.startsWith("analysis-milk_analysis-");
+            const isMainAssistantBubble = msg.role === "mai" && (msg.chatStreamContext === "main" || isPlainMilkAnalysisReminder);
             const containsAgUiArtifact = msg.role === "mai" && messageHasAgUiArtifact(msg);
             const richTextHasAgUiArtifactForMsg = richTextPayloadHasAgUiArtifact(msg.richText);
-            const mainAssistantBubbleBase =
-              "min-h-0 rounded-none border-0 bg-transparent px-0.5 py-[3px] text-[15px] leading-[1.45] text-[#33404d] shadow-none";
+            const mainAssistantTextBubbleBase =
+              "rounded-[18px] rounded-bl-[7px] bg-[#fff6f1] px-3.5 py-2.5 text-[15px] leading-[1.55] text-[#3f3038] shadow-none";
+            const mainAssistantArtifactShellBase =
+              "min-h-0 rounded-none border-0 bg-transparent px-0 py-0 text-[15px] leading-[1.45] text-[#33404d] shadow-none";
             const bubbleShell = cn(
               "relative group w-full break-words",
               msg.role === "user"
-                ? "rounded-2xl rounded-br-[5px] bg-[#f3e7ec] text-[#3f2d36] px-3 py-2.5 text-[15px] leading-[1.45] shadow-none"
+                ? "rounded-2xl rounded-br-[7px] border border-[#eadde2]/45 bg-[#f8f0f1] px-3 py-2.5 text-[15px] leading-[1.45] text-[#75545f] shadow-none"
                 : isMainAssistantBubble
-                  ? cn("w-fit max-w-full", mainAssistantBubbleBase)
+                  ? cn("w-fit max-w-full", mainAssistantTextBubbleBase)
                   : cn(
                       "rounded-2xl rounded-bl-md border bg-card px-3.5 py-2.5 text-[13px] leading-relaxed shadow-[0_8px_20px_-18px_rgba(83,47,64,0.36)]",
                       msg.cardType ? cardBg[msg.cardType] : "border-border",
@@ -2956,9 +2963,9 @@ const AgentHub: React.FC = () => {
             const artifactBubbleShell = cn(
               "relative group w-full min-w-0 max-w-full break-words",
               msg.role === "user"
-                ? "rounded-2xl rounded-br-[5px] bg-[#f3e7ec] text-[#3f2d36] px-3 py-2.5 text-[15px] leading-[1.45] shadow-none"
+                ? "rounded-2xl rounded-br-[7px] border border-[#eadde2]/45 bg-[#f8f0f1] px-3 py-2.5 text-[15px] leading-[1.45] text-[#75545f] shadow-none"
                 : isMainAssistantBubble
-                  ? mainAssistantBubbleBase
+                  ? mainAssistantArtifactShellBase
                   : cn(
                       "rounded-2xl rounded-bl-md border bg-card px-3.5 py-2.5 text-[13px] leading-relaxed shadow-[0_8px_20px_-18px_rgba(83,47,64,0.36)]",
                       msg.cardType ? cardBg[msg.cardType] : "border-border",
@@ -3460,7 +3467,7 @@ const AgentHub: React.FC = () => {
         className="fixed left-0 right-0 z-30"
         style={{ bottom: `calc(${HUB_BOTTOM_NAV_HEIGHT} + env(safe-area-inset-bottom) + ${HUB_BOTTOM_INPUT_GAP})` }}
       >
-        <div ref={bottomActionRef} className="max-w-lg mx-auto bg-background border-t border-border/50">
+        <div ref={bottomActionRef} className="max-w-lg mx-auto bg-background">
           {/* Pills: Grouped collapsible rows */}
           <PillGroups
             startPumpBusy={hubStartPumpBusy}

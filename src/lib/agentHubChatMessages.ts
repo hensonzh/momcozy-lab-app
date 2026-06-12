@@ -60,13 +60,19 @@ export function appendAgentHubAnalysisMessage(
   if (!trimmed && !opts.analysisCard) return null;
 
   const id = opts.id?.trim() || createMessageId(opts.kind);
+  const reportPayload = opts.analysisCard
+    ? {
+        cardType: "report" as const,
+        cardData: { kind: opts.kind, analysisCard: opts.analysisCard },
+      }
+    : {};
   appendMessageToAgentHubStore({
     id,
     role: "mai",
     content: trimmed,
     timestamp: nowTimestamp(),
-    cardType: "report",
-    cardData: { kind: opts.kind, analysisCard: opts.analysisCard },
+    chatStreamContext: opts.analysisCard ? undefined : "main",
+    ...reportPayload,
   });
   return id;
 }

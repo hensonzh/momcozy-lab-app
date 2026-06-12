@@ -46,6 +46,12 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).not.toContain("function citationDisplayUrl(url: string): string");
   });
 
+  it("renders milk analysis reminder notifications like regular assistant text bubbles", () => {
+    expect(agentHubSource).toContain("isPlainMilkAnalysisReminder");
+    expect(agentHubSource).toContain('msg.id.startsWith("analysis-milk_analysis-")');
+    expect(agentHubSource).toContain('msg.chatStreamContext === "main" || isPlainMilkAnalysisReminder');
+  });
+
   it("keeps voice transcription in the input until the user sends manually", () => {
     expect(agentHubSource).toContain("语音转写结束只回填输入框，需用户主动发送");
     expect(agentHubSource).toContain("setInput(text)");
