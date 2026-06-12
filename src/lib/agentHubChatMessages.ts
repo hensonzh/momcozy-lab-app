@@ -94,6 +94,7 @@ export function appendAgentHubNotificationMessage(
     role: "mai",
     content: trimmed,
     timestamp: nowTimestamp(),
+    chatStreamContext: "main",
   });
   return id;
 }
