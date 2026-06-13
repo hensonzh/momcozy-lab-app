@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
-import { appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
+import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from "@/lib/agentHubChatMessages";
 import { buildMilkAnalysisReminderFollowupPrompt, consumeMilkAnalysisReminderFollowup, queueMilkAnalysisReminderFollowup } from "@/lib/milkAnalysisReminderFollowup";
 import { chatStore } from "@/lib/chatStore";
 
@@ -50,6 +50,23 @@ describe("appendAgentHubAnalysisMessage", () => {
       },
     });
     expect(chatStore.get().messages[0].chatStreamContext).toBeUndefined();
+  });
+
+  it("renders health issue notifications as main assistant text bubbles", () => {
+    const id = appendAgentHubNotificationMessage("嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗", {
+      kind: "health_issue",
+      id: "notification-health_issue-1",
+    });
+
+    expect(id).toBe("notification-health_issue-1");
+    expect(chatStore.get().messages[0]).toMatchObject({
+      id: "notification-health_issue-1",
+      role: "mai",
+      content: "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗",
+      chatStreamContext: "main",
+    });
+    expect(chatStore.get().messages[0].cardType).toBeUndefined();
+    expect(chatStore.get().messages[0].cardData).toBeUndefined();
   });
 });
 
