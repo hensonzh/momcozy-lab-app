@@ -239,9 +239,33 @@ type BirthJourneyPhase = {
   comate_help?: unknown;
 };
 
+type BirthJourneyPlanItem = {
+  title?: string;
+  reason?: string;
+  timeframe?: string;
+  based_on?: unknown;
+};
+
+type BirthJourneyPlanSection = {
+  title?: string;
+  subtitle?: string;
+  items?: unknown;
+};
+
+type BirthJourneyPlanningLayers = {
+  current_week?: number;
+  current_phase_title?: string;
+  safety_gate?: BirthJourneyPlanSection;
+  current_week_focus?: BirthJourneyPlanSection;
+  next_7_days?: BirthJourneyPlanSection;
+  next_2_4_weeks?: BirthJourneyPlanSection;
+  later_milestones?: BirthJourneyPlanSection;
+};
+
 type BirthJourneyPayload = {
   subtitle?: string;
   owner?: Record<string, unknown>;
+  planning_layers?: BirthJourneyPlanningLayers;
   phases?: BirthJourneyPhase[];
   next_action?: { label?: string; detail?: string; send_text?: string };
   estimated_due_date?: string;
@@ -255,6 +279,10 @@ function compactText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function toMaternalCareStage(value: unknown): MaternalCareStage | "" {
+  return value === "pregnancy" || value === "postpartum" ? value : "";
+}
+
 function formatPregnancyStageSubtitle(value: unknown): string {
   const text = compactText(value);
   const weekMatch = text.match(/(?:孕期|孕周|怀孕|孕)?\s*(\d{1,2})\s*(?:周|w|W)/);
@@ -265,6 +293,32 @@ function formatPregnancyStageSubtitle(value: unknown): string {
 function compactTextList(value: unknown, limit = 3): string[] {
   if (!Array.isArray(value)) return [];
   return value.map(compactText).filter(Boolean).slice(0, limit);
+}
+
+function birthJourneyPlanningLayers(plan: CarePlanArtifact | null): BirthJourneyPlanningLayers | null {
+  const layers = asBirthJourneyPayload(plan).planning_layers;
+  if (!layers || typeof layers !== "object") return null;
+  return layers;
+}
+
+function birthJourneyPlanItems(value: unknown, limit = 6): BirthJourneyPlanItem[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      if (typeof item === "string") return { title: item };
+      if (item && typeof item === "object") {
+        const source = item as Record<string, unknown>;
+        return {
+          title: compactText(source.title),
+          reason: compactText(source.reason),
+          timeframe: compactText(source.timeframe),
+          based_on: source.based_on,
+        };
+      }
+      return null;
+    })
+    .filter((item): item is BirthJourneyPlanItem => Boolean(item?.title))
+    .slice(0, limit);
 }
 
 const BIRTH_JOURNEY_HOSPITAL_BAG_HELP = "制定个性化待产清单";
@@ -335,6 +389,114 @@ function birthJourneyPhaseDetailSections(phase: BirthJourneyPhase): BirthJourney
     helpPrompts: birthJourneyHelpPrompts(phase),
   };
 }
+
+const BirthJourneyPlanItemRow: React.FC<{ item: BirthJourneyPlanItem; index: number; compact?: boolean }> = ({
+  item,
+  index,
+  compact = false,
+}) => (
+  <div className={`rounded-xl bg-white px-3 ${compact ? "py-2" : "py-2.5"}`}>
+    <div className="flex gap-2">
+      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#fff0e4] text-[11px] font-extrabold leading-none text-[#b65c28]">
+        {index + 1}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-extrabold leading-relaxed text-[#4f4540]">{item.title}</p>
+        {item.reason ? (
+          <p className="mt-0.5 text-[11px] font-medium leading-relaxed text-[#7b6a61]">{item.reason}</p>
+        ) : null}
+        {item.timeframe ? (
+          <p className="mt-1 text-[10px] font-extrabold leading-tight text-[#b65c28]">{item.timeframe}</p>
+        ) : null}
+      </div>
+    </div>
+  </div>
+);
+
+const BirthJourneyPlanSectionView: React.FC<{
+  title: string;
+  subtitle?: string;
+  items: BirthJourneyPlanItem[];
+  tone?: "warm" | "plain" | "alert";
+}> = ({ title, subtitle, items, tone = "plain" }) => {
+  if (items.length === 0) return null;
+  const className =
+    tone === "alert"
+      ? "border-[#f3c59b] bg-[#fff8ef]"
+      : tone === "warm"
+        ? "border-[#edb586] bg-[#fff7ee]"
+        : "border-[#eadfd8] bg-[#fffdfb]";
+  return (
+    <section className={`rounded-2xl border px-4 py-3 ${className}`}>
+      <div className="mb-2">
+        <p className="text-sm font-extrabold text-[#352820]">{title}</p>
+        {subtitle ? <p className="mt-1 text-[11px] font-semibold leading-relaxed text-[#7b6a61]">{subtitle}</p> : null}
+      </div>
+      <div className="space-y-2">
+        {items.map((item, index) => (
+          <BirthJourneyPlanItemRow key={`${item.title}-${index}`} item={item} index={index} compact={tone !== "warm"} />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const BirthJourneyLayeredPlanView: React.FC<{
+  layers: BirthJourneyPlanningLayers;
+  currentHelpPrompts: string[];
+  onAgentPrefill: (text: string) => void;
+}> = ({ layers, currentHelpPrompts, onAgentPrefill }) => {
+  const safetyItems = birthJourneyPlanItems(layers.safety_gate?.items, 3);
+  const focusItems = birthJourneyPlanItems(layers.current_week_focus?.items, 3);
+  const next7Items = birthJourneyPlanItems(layers.next_7_days?.items, 5);
+  const next24Items = birthJourneyPlanItems(layers.next_2_4_weeks?.items, 4);
+  const milestoneItems = birthJourneyPlanItems(layers.later_milestones?.items, 4);
+  return (
+    <div className="space-y-3">
+      <BirthJourneyPlanSectionView
+        title={layers.safety_gate?.title || "需要先留意的情况"}
+        items={safetyItems}
+        tone="alert"
+      />
+      <BirthJourneyPlanSectionView
+        title={layers.current_week_focus?.title || "你的本周重点"}
+        subtitle={compactText(layers.current_week_focus?.subtitle)}
+        items={focusItems}
+        tone="warm"
+      />
+      <BirthJourneyPlanSectionView
+        title={layers.next_7_days?.title || "未来 7 天"}
+        items={next7Items}
+      />
+      <BirthJourneyPlanSectionView
+        title={layers.next_2_4_weeks?.title || "未来 2-4 周"}
+        items={next24Items}
+      />
+      <BirthJourneyPlanSectionView
+        title={layers.later_milestones?.title || "后续大节点"}
+        items={milestoneItems}
+      />
+      {currentHelpPrompts.length > 0 ? (
+        <section className="rounded-2xl border border-[#edb586] bg-[#fff7ee] px-4 py-3">
+          <p className="text-[11px] font-extrabold text-[#b65c28]">我能帮你做</p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {currentHelpPrompts.map((prompt) => (
+              <button
+                key={prompt}
+                type="button"
+                onClick={() => onAgentPrefill(prompt)}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#b65c28] bg-[#b65c28] px-3 py-2 text-[11px] font-extrabold leading-relaxed text-white transition-colors hover:bg-[#a94f22] active:scale-[0.98]"
+              >
+                <span>{prompt}</span>
+                <ArrowRight className="h-3 w-3 shrink-0" />
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+};
 
 function formatDiaryDateLabel(dateKey: string): string {
   const parts = dateKey.split("-");
@@ -709,6 +871,10 @@ const MomStatusPanelSheet: React.FC<{
   const birthJourneyCurrentWatchouts = compactTextList(birthJourneyCurrentPhase?.watchouts, 12);
   const birthJourneyCurrentSuggestions = birthJourneySuggestionPairs(birthJourneyCurrentPhase);
   const birthJourneyCurrentHelpPrompts = birthJourneyHelpPrompts(birthJourneyCurrentPhase);
+  const birthJourneyLayers = birthJourneyPlanningLayers(birthJourneyPlan);
+  const birthJourneyHasLayeredPlan = Boolean(
+    birthJourneyLayers && birthJourneyPlanItems(birthJourneyLayers.current_week_focus?.items, 1).length > 0,
+  );
   const birthJourneyUpcomingPhases = birthJourneyPhases
     .map((phase, index) => ({ phase, index }))
     .filter((item) => item.index > birthJourneyCurrentIndex);
@@ -794,6 +960,16 @@ const MomStatusPanelSheet: React.FC<{
               </div>
             ) : birthJourneyPlan ? (
               <>
+                {birthJourneyHasLayeredPlan && birthJourneyLayers ? (
+                  <BirthJourneyLayeredPlanView
+                    layers={birthJourneyLayers}
+                    currentHelpPrompts={birthJourneyCurrentHelpPrompts}
+                    onAgentPrefill={onAgentPrefill}
+                  />
+                ) : null}
+
+                {!birthJourneyHasLayeredPlan ? (
+                  <>
                 <div className="space-y-3 rounded-2xl border border-[#edb586] bg-[#fff7ee] px-4 py-3">
                   <div className="flex items-start gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f2a36e] text-white">
@@ -977,6 +1153,8 @@ const MomStatusPanelSheet: React.FC<{
                     </p>
                   )}
                 </div>
+                  </>
+                ) : null}
 
                 {birthJourneyDeleteErr ? (
                   <p className="rounded-2xl bg-destructive/10 px-4 py-2 text-xs font-bold text-destructive">
@@ -1914,6 +2092,7 @@ const StatusOverviewBody: React.FC = () => {
   const [momBabyErr, setMomBabyErr] = useState<string | null>(null);
   const [userProfileLoading, setUserProfileLoading] = useState(true);
   const [birthPrepDueDateOrWeek, setBirthPrepDueDateOrWeek] = useState("");
+  const [currentCareStage, setCurrentCareStage] = useState<MaternalCareStage | "">("");
 
   const [lactationInfoList, setLactationInfoList] = useState<PumpInfoLactationDayItem[]>([]);
   const [pumpInfoLoading, setPumpInfoLoading] = useState(true);
@@ -2123,15 +2302,18 @@ const StatusOverviewBody: React.FC = () => {
 
     setUserProfileLoading(true);
     setBirthPrepDueDateOrWeek("");
+    setCurrentCareStage("");
     void (async () => {
       try {
         const profile = await queryUserProfile({ user_id: DEFAULT_CHAT_USER_ID }, { signal: ac.signal });
         if (cancelled) return;
         setBirthPrepDueDateOrWeek(compactText(profile.birth_prep_due_date_or_week));
+        setCurrentCareStage(toMaternalCareStage(profile.current_care_stage));
       } catch (e: unknown) {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
         setBirthPrepDueDateOrWeek("");
+        setCurrentCareStage("");
       } finally {
         if (!cancelled) setUserProfileLoading(false);
       }
@@ -2301,9 +2483,8 @@ const StatusOverviewBody: React.FC = () => {
     pregnancyDiaryToday?.gestational_week ?? pregnancyDiaryEntries[0]?.gestational_week,
   );
   const pregnancyStageSourceText = birthPrepDueDateOrWeek || diaryGestationalWeekForStage;
-  const maternalCareStage: MaternalCareStage = pregnancyStageSourceText
-    ? "pregnancy"
-    : "postpartum";
+  const maternalCareStage: MaternalCareStage =
+    currentCareStage || (pregnancyStageSourceText ? "pregnancy" : "postpartum");
   const isPregnancyStage = maternalCareStage === "pregnancy";
   const isPostpartumStage = maternalCareStage !== "pregnancy";
   const statusProfileLoading = momBabyLoading || userProfileLoading;
@@ -2463,8 +2644,10 @@ const StatusOverviewBody: React.FC = () => {
         ? `宝宝已出生 ${babyAgeDays} 天`
         : "暂无有效分娩日期";
   const birthJourneyCardPhase = currentBirthJourneyPhase(birthJourneyPlan);
+  const birthJourneyCardLayers = birthJourneyPlanningLayers(birthJourneyPlan);
   const birthJourneyPhaseTitle = birthJourneyCardPhase?.title ?? "";
-  const birthJourneyCardFocus = compactText(birthJourneyCardPhase?.goal);
+  const birthJourneyCardFocusItem = birthJourneyPlanItems(birthJourneyCardLayers?.current_week_focus?.items, 1)[0];
+  const birthJourneyCardFocus = compactText(birthJourneyCardFocusItem?.title) || compactText(birthJourneyCardPhase?.goal);
   const birthJourneyCardText = birthJourneyLoading
     ? "正在加载生产全过程计划"
     : birthJourneyPlan
