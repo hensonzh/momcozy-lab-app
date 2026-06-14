@@ -65,10 +65,16 @@ import {
 } from "@/lib/statusGrowthHighlight";
 import {
   clearBirthJourneyPlanCardNotification,
+  clearBirthJourneyPlanGeneratedNotification,
   subscribeBirthJourneyPlanDeleted,
   useBirthJourneyPlanCardNotification,
 } from "@/lib/birthJourneyPlanNotification";
-import { subscribePregnancyDiaryChanged } from "@/lib/pregnancyDiaryEvents";
+import {
+  clearPregnancyDiaryCardNotification,
+  subscribePregnancyDiaryChanged,
+  usePregnancyDiaryCardNotification,
+  usePregnancyDiaryCardNotificationLabel,
+} from "@/lib/pregnancyDiaryEvents";
 
 import momAvatar from "@/assets/mom-avatar-felt.png";
 import babyAvatar from "@/assets/baby-avatar-felt.png";
@@ -1380,6 +1386,7 @@ type StatusModuleCardProps = {
   action?: string;
   secondaryAction?: string;
   notificationLabel?: string;
+  notificationActive?: boolean;
   icon: React.ReactNode;
   tone: StatusModuleTone;
   onClick?: () => void;
@@ -1399,6 +1406,7 @@ function StatusModuleCard({
   action,
   secondaryAction,
   notificationLabel,
+  notificationActive = false,
   icon,
   tone,
   onClick,
@@ -1506,7 +1514,7 @@ function StatusModuleCard({
     </>
   );
 
-  const className = `relative flex min-h-[132px] flex-col overflow-hidden rounded-[16px] border border-white/80 bg-gradient-to-br p-3.5 text-left shadow-none ring-1 ring-border/20 ${toneClasses.card}`;
+  const className = `relative flex min-h-[132px] flex-col overflow-hidden rounded-[16px] border border-white/80 bg-gradient-to-br p-3.5 text-left shadow-none ring-1 ring-border/20 ${toneClasses.card} ${notificationActive ? "status-module-card-notice" : ""}`;
 
   return <article className={className}>{content}</article>;
 }
@@ -1846,6 +1854,8 @@ const StatusOverviewBody: React.FC = () => {
   const navigate = useNavigate();
   const [unit] = useVolumeUnit();
   const birthJourneyPlanCardNotification = useBirthJourneyPlanCardNotification();
+  const pregnancyDiaryCardNotification = usePregnancyDiaryCardNotification();
+  const pregnancyDiaryCardNotificationLabel = usePregnancyDiaryCardNotificationLabel();
   const isOz = unit === "oz";
   const conv = useCallback((ml: number) => (isOz ? +(ml * 0.033814).toFixed(1) : ml), [isOz]);
 
@@ -1924,7 +1934,7 @@ const StatusOverviewBody: React.FC = () => {
         throw new Error("删除生产全过程计划失败");
       }
       setBirthJourneyPlan(null);
-      clearBirthJourneyPlanCardNotification();
+      clearBirthJourneyPlanGeneratedNotification();
       setActiveMomPanel(null);
     } catch (e: unknown) {
       setBirthJourneyDeleteErr(e instanceof Error ? e.message : "删除生产全过程计划失败");
@@ -1935,7 +1945,7 @@ const StatusOverviewBody: React.FC = () => {
 
   useEffect(() => subscribeBirthJourneyPlanDeleted(() => {
     setBirthJourneyPlan(null);
-    clearBirthJourneyPlanCardNotification();
+    clearBirthJourneyPlanGeneratedNotification();
     setActiveMomPanel((panel) => (panel === "birth-journey-detail" ? null : panel));
   }), []);
 
@@ -1987,6 +1997,7 @@ const StatusOverviewBody: React.FC = () => {
   }, [reloadPumpInfo]);
 
   const openPregnancyDiaryEditor = useCallback(() => {
+    clearPregnancyDiaryCardNotification();
     setActiveMomPanel(null);
     setDiarySaveErr(null);
     setPregnancyDiaryJustSaved(false);
@@ -2177,13 +2188,17 @@ const StatusOverviewBody: React.FC = () => {
         if (cancelled) return;
         if (data.error !== 0 || !Array.isArray(data.plan_list)) {
           setBirthJourneyPlan(null);
+          clearBirthJourneyPlanGeneratedNotification();
           return;
         }
-        setBirthJourneyPlan(data.plan_list.find((plan) => plan.plan_type === "birth_journey") ?? null);
+        const activeBirthJourneyPlan = data.plan_list.find((plan) => plan.plan_type === "birth_journey") ?? null;
+        setBirthJourneyPlan(activeBirthJourneyPlan);
+        if (!activeBirthJourneyPlan) clearBirthJourneyPlanGeneratedNotification();
       } catch (e: unknown) {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
         setBirthJourneyPlan(null);
+        clearBirthJourneyPlanGeneratedNotification();
       } finally {
         if (!cancelled) setBirthJourneyLoading(false);
       }
@@ -2547,7 +2562,8 @@ const StatusOverviewBody: React.FC = () => {
                     : undefined
                 }
                 action={birthJourneyCardAction}
-                notificationLabel={birthJourneyPlanCardNotification ? "计划已生成" : undefined}
+                notificationLabel={birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? "计划已生成" : undefined}
+                notificationActive={Boolean(birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification)}
                 tone="violet"
                 icon={<ClipboardList className="h-4 w-4" />}
                 onClick={() => {
@@ -2568,8 +2584,13 @@ const StatusOverviewBody: React.FC = () => {
                 secondaryAction="查看日记"
                 tone="aqua"
                 icon={<BookOpen className="h-4 w-4" />}
+                notificationLabel={pregnancyDiaryCardNotification ? pregnancyDiaryCardNotificationLabel : undefined}
+                notificationActive={pregnancyDiaryCardNotification}
                 onClick={openPregnancyDiaryEditor}
-                onSecondaryClick={() => setActiveMomPanel("pregnancy-diary-detail")}
+                onSecondaryClick={() => {
+                  clearPregnancyDiaryCardNotification();
+                  setActiveMomPanel("pregnancy-diary-detail");
+                }}
                 alignActionTextWithTitle
               />
             </div>

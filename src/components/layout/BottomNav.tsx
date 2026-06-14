@@ -7,6 +7,10 @@ import {
   transferBirthJourneyPlanNotificationToStatusCard,
   useBirthJourneyPlanNavNotification,
 } from "@/lib/birthJourneyPlanNotification";
+import {
+  transferPregnancyDiaryNotificationToStatusCard,
+  usePregnancyDiaryNavNotification,
+} from "@/lib/pregnancyDiaryEvents";
 
 /* Custom mom-and-baby icon matching Lucide stroke style */
 const MomBabyIcon: React.FC<{ className?: string; strokeWidth?: number }> = ({ className, strokeWidth = 2 }) => (
@@ -40,6 +44,9 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
   const navigate = useNavigate();
   const embedded = variant === "embedded";
   const birthJourneyPlanNavNotification = useBirthJourneyPlanNavNotification();
+  const pregnancyDiaryNavNotification = usePregnancyDiaryNavNotification();
+  const statusNotificationCount =
+    Number(birthJourneyPlanNavNotification) + Number(pregnancyDiaryNavNotification);
 
   // Hide nav on independent full-screen flows
   if (location.pathname === "/pump" || location.pathname === "/calibration" || location.pathname === "/media-viewer") return null;
@@ -90,7 +97,10 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
             <div key={tab.path} className="flex-1 flex justify-center h-full items-center">
               <button
                 onClick={() => {
-                  if (tab.path === "/status") transferBirthJourneyPlanNotificationToStatusCard();
+                  if (tab.path === "/status") {
+                    transferBirthJourneyPlanNotificationToStatusCard();
+                    transferPregnancyDiaryNotificationToStatusCard();
+                  }
                   navigate(tab.path);
                 }}
                 className={cn(
@@ -104,11 +114,13 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
                 {active && (
                   <div className="absolute inset-0 rounded-xl bg-primary/8" />
                 )}
-                {tab.path === "/status" && birthJourneyPlanNavNotification ? (
+                {tab.path === "/status" && statusNotificationCount > 0 ? (
                   <span
                     aria-label="宝宝和我有新通知"
-                    className="absolute right-2 top-1 z-20 h-2.5 w-2.5 rounded-full bg-[#d85f8c] ring-2 ring-card"
-                  />
+                    className="absolute right-1 top-0 z-20 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e3405f] px-1 text-[10px] font-extrabold leading-none text-white shadow-[0_5px_12px_rgba(227,64,95,0.35)] ring-2 ring-card"
+                  >
+                    {statusNotificationCount}
+                  </span>
                 ) : null}
                 <tab.icon className={cn("w-5 h-5 relative z-10", active && "fill-primary/20")} strokeWidth={active ? 2.5 : 1.8} />
                 <span className={cn("text-[10px] font-medium relative z-10", active && "font-bold")}>{tab.label}</span>
