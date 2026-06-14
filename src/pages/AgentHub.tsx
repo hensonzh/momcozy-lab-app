@@ -3373,10 +3373,10 @@ const AgentHub: React.FC = () => {
             >
               {showAssistantAvatar ? (
                 <img
-                  src={momcozyAgentAvatar}
-                  alt="CozyMate"
-                  className="mt-1 h-8 w-8 shrink-0 rounded-full object-cover shadow-sm ring-1 ring-[#eadde2]/80"
-                />
+	                  src={momcozyAgentAvatar}
+	                  alt="CozyMate"
+	                  className="-mt-1 h-8 w-8 shrink-0 rounded-full object-cover shadow-sm ring-1 ring-[#eadde2]/80"
+	                />
               ) : null}
               <div
                 className={cn(
