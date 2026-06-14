@@ -4,6 +4,7 @@ import {
   buildNotificationMessageFlags,
   type AgentNotificationKind,
 } from "@/lib/agentNotificationMessages";
+import { dispatchAgentNotificationVoiceMessage } from "@/lib/agentNotificationVoice";
 import { chatStore } from "@/lib/chatStore";
 import {
   loadPersistedChatMessages,
@@ -64,6 +65,7 @@ export function appendMessageToAgentHubStore(
 
   const next = [...base, message];
   syncAgentHubMessages(next);
+  dispatchAgentNotificationVoiceMessage(message);
   return next;
 }
 

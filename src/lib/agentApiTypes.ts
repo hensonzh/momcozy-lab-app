@@ -29,6 +29,8 @@ export interface UserProfileData {
   birth_prep_due_date_or_week?: string;
   birth_prep_birth_path?: string;
   birth_prep_support_person?: string;
+  current_care_stage?: "pregnancy" | "postpartum" | "";
+  current_care_stage_source?: string;
 }
 
 // ─── 对话 ────────────────────────────────────────────────────────────

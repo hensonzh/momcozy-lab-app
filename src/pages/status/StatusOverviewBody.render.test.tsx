@@ -163,4 +163,27 @@ describe("StatusOverviewBody render", () => {
     expect(screen.queryByText("孕期日记")).not.toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /宝宝/ })).not.toBeDisabled();
   });
+
+  it("prefers explicit postpartum stage over stale pregnancy profile fields", async () => {
+    vi.mocked(queryUserProfile).mockResolvedValue({
+      error: 0,
+      user_id: "demo_mama_increase_001",
+      birth_prep_due_date_or_week: "孕32周",
+      current_care_stage: "postpartum",
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/status"]}>
+        <StatusOverviewBody />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("母乳产出")).toBeInTheDocument();
+    });
+    expect(screen.getByText("乳房健康")).toBeInTheDocument();
+    expect(screen.queryByText("生产全过程计划")).not.toBeInTheDocument();
+    expect(screen.queryByText("孕期日记")).not.toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /宝宝/ })).not.toBeDisabled();
+  });
 });
