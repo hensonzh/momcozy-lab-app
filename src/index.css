@@ -154,6 +154,36 @@
     will-change: transform;
     animation: schedule-agent-avatar-pop 2s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
+
+  .agent-hub-assistant-avatar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .agent-hub-assistant-avatar > img {
+    position: relative;
+    z-index: 1;
+  }
+
+  .agent-hub-assistant-avatar-thinking::before {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle, rgba(184, 112, 135, 0.2) 0%, rgba(184, 112, 135, 0.1) 48%, transparent 72%);
+    opacity: 0.68;
+    transform: scale(0.92);
+    animation: agent-hub-avatar-halo 1.55s ease-out infinite;
+  }
+
+  .agent-hub-assistant-avatar-thinking > img {
+    transform-origin: center;
+    will-change: transform;
+    animation: agent-hub-avatar-breathe 1.55s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
 }
 
 @keyframes schedule-agent-avatar-pop {
@@ -177,8 +207,39 @@
   }
 }
 
+@keyframes agent-hub-avatar-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.07);
+  }
+}
+
+@keyframes agent-hub-avatar-halo {
+  0% {
+    opacity: 0.52;
+    transform: scale(0.9);
+  }
+  48% {
+    opacity: 0.95;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 0.44;
+    transform: scale(1.16);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .schedule-agent-avatar-attention {
+    animation: none;
+    will-change: auto;
+  }
+
+  .agent-hub-assistant-avatar-thinking::before,
+  .agent-hub-assistant-avatar-thinking > img {
     animation: none;
     will-change: auto;
   }

@@ -3214,6 +3214,12 @@ const AgentHub: React.FC = () => {
             const previousMsg = index > 0 ? visibleMessages[index - 1] : undefined;
             const isConsecutiveAssistantMessage = msg.role === "mai" && previousMsg?.role === "mai";
             const showAssistantAvatar = msg.role === "mai";
+            const isAssistantResponding =
+              msg.role === "mai" &&
+              (
+                (mainStreamingReplyIdRef.current === msg.id && mainChatCancelRef.current != null) ||
+                mainChatRuntimeSnapshot.replyId === msg.id
+              );
             const messageSpacingClass = index === 0 ? "mt-0" : isConsecutiveAssistantMessage ? "mt-8" : "mt-2.5";
 
             return (
@@ -3372,11 +3378,18 @@ const AgentHub: React.FC = () => {
               )}
             >
               {showAssistantAvatar ? (
-                <img
-	                  src={momcozyAgentAvatar}
-	                  alt="CozyMate"
-	                  className="-mt-1 h-8 w-8 shrink-0 rounded-full object-cover shadow-sm ring-1 ring-[#eadde2]/80"
-	                />
+                <span
+                  className={cn(
+                    "agent-hub-assistant-avatar -mt-1 h-8 w-8 shrink-0",
+                    isAssistantResponding && "agent-hub-assistant-avatar-thinking",
+                  )}
+                >
+                  <img
+                    src={momcozyAgentAvatar}
+                    alt="CozyMate"
+                    className="h-8 w-8 rounded-full object-cover shadow-sm ring-1 ring-[#eadde2]/80"
+                  />
+                </span>
               ) : null}
               <div
                 className={cn(
