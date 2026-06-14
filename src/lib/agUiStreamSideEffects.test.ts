@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import type { SetStateAction } from "react";
 import { applyAgUiStreamSideEffects, semanticForAgUiEvent } from "@/lib/agUiStreamSideEffects";
 import { BIRTH_JOURNEY_PLAN_DELETED_EVENT } from "@/lib/birthJourneyPlanNotification";
@@ -47,6 +47,10 @@ function applyEventSequence(
 }
 
 describe("applyAgUiStreamSideEffects", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it("emits media voice metadata from tool results even without tool call keys", () => {
     let messages: ChatMessage[] = [
       {
@@ -503,6 +507,33 @@ describe("applyAgUiStreamSideEffects", () => {
       state: "completed",
     });
     expect(typeof msg.agentWorkFinishedAtMs).toBe("number");
+  });
+
+  it("hides the status line when final text starts while preserving work rows", () => {
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_START",
+        tool_call_id: "call_1",
+        tool_call_name: "web_search",
+      },
+      {
+        type: "CUSTOM",
+        name: "momcozy.agent.status",
+        value: "Searching professional sources.",
+      },
+      {
+        type: "TEXT_MESSAGE_CONTENT",
+        message_id: "reply",
+        delta: "我",
+      },
+    ]);
+
+    expect(msg.agentStatusDone).toBe(true);
+    expect(msg.agentToolCalls).toHaveLength(1);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      id: "tool:call_1",
+      state: "running",
+    });
   });
 
   it("maps tool work to specific user-facing work panel text", () => {
@@ -1002,5 +1033,76 @@ describe("applyAgUiStreamSideEffects", () => {
       title: "我已经删除生产全过程计划啦",
       state: "completed",
     });
+  });
+
+  it("marks pregnancy diary created and updated tool results as status notifications", () => {
+    const created = applyEvents([
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_create_diary",
+        tool_call_name: "pregnancy_diary_manage",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "pregnancy_diary_manage",
+          status: "diary_entry_created",
+          side_effect_performed: true,
+        }),
+      },
+    ]);
+
+    expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("日记已记录");
+    expect(created.agentToolCalls?.[0]).toMatchObject({
+      name: "pregnancy_diary_manage",
+      title: "我已经记录好孕期日记啦",
+      state: "completed",
+    });
+
+    localStorage.clear();
+
+    const updated = applyEvents([
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_update_diary",
+        tool_call_name: "pregnancy_diary_manage",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "pregnancy_diary_manage",
+          status: "diary_entry_updated",
+          side_effect_performed: true,
+        }),
+      },
+    ]);
+
+    expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("日记已修改");
+    expect(updated.agentToolCalls?.[0]).toMatchObject({
+      name: "pregnancy_diary_manage",
+      title: "我已经修改好孕期日记啦",
+      state: "completed",
+    });
+  });
+
+  it("clears pregnancy diary notifications when the diary is deleted through the agent", () => {
+    localStorage.setItem("mmc_pregnancy_diary_nav_pending", "1");
+    localStorage.setItem("mmc_pregnancy_diary_card_label", "日记已修改");
+
+    applyEvents([
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_delete_diary",
+        tool_call_name: "pregnancy_diary_manage",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "pregnancy_diary_manage",
+          status: "diary_entry_deleted",
+          side_effect_performed: true,
+        }),
+      },
+    ]);
+
+    expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBeNull();
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_pending")).toBeNull();
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
   });
 });

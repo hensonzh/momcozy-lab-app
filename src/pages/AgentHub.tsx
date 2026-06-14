@@ -547,6 +547,7 @@ function AgentHubThinkingNote({ title }: { title: string }) {
 function AgentHubStatusNote({ msg }: { msg: ChatMessage }) {
   if (msg.role !== "mai") return null;
   if (msg.agentThinkingTitle?.trim()) return null;
+  if (msg.content.trim()) return null;
   const status = msg.agentStatusLine?.trim() ?? "";
   if (status === "开始处理请求。" || status === "正在处理请求。" || status === "正在处理请求") return null;
   if (!status || msg.agentStatusDone) return null;
@@ -740,14 +741,17 @@ function workProgressDotClass(tone: WorkProgressTone): string {
 function AgentHubWorkPanel({
   tools,
   finishedAtMs,
+  finalTextStarted,
 }: {
   tools: AgUiToolCallRow[];
   finishedAtMs?: number;
+  finalTextStarted?: boolean;
 }) {
   const isWorkFinished = typeof finishedAtMs === "number";
   if (tools.length === 0) return null;
   const summary = workProgressSummary(tools, isWorkFinished);
   if (!summary) return null;
+  if (finalTextStarted && (summary.tone === "running" || summary.tone === "done")) return null;
   const shouldAnimateTitle = summary.tone === "running";
 
   return (
@@ -783,6 +787,7 @@ function AgentHubAgUiDecor({ msg }: { msg: ChatMessage }) {
       <AgentHubWorkPanel
         tools={msg.agentToolCalls ?? []}
         finishedAtMs={msg.agentWorkFinishedAtMs}
+        finalTextStarted={Boolean(msg.content.trim())}
       />
       {msg.agentThinkingTitle ? <AgentHubThinkingNote title={msg.agentThinkingTitle} /> : null}
       <AgentHubStatusNote msg={msg} />
