@@ -22,6 +22,7 @@ import type {
   ChatRichTextCardContentItem,
   ChatRichTextCardItem,
   ChatRichTextPayload,
+  UserProfileData,
   AddPlanTaskBody,
   DeletePlanTaskBody,
   DeviceInfoBody,
@@ -101,6 +102,7 @@ export const API_PATHS = {
   PREGNANCY_DIARY_CREATE: `${API_V1_PREFIX}/pregnancy-diary/create`,
   PREGNANCY_DIARY_UPDATE: `${API_V1_PREFIX}/pregnancy-diary/update`,
   PREGNANCY_DIARY_DELETE: `${API_V1_PREFIX}/pregnancy-diary/delete`,
+  USER_PROFILE_QUERY: `${API_V1_PREFIX}/user/profile/query`,
   DEVICE_INFO: `${API_V1_PREFIX}/device/info`,
   NOTIFY_QUERY: `${API_V1_PREFIX}/notify/query`,
   STATUS_CREATE: `${API_V1_PREFIX}/status/create`,
@@ -1071,6 +1073,19 @@ export async function deletePregnancyDiaryEntry(
   return apiRequest<{ error: 0 | -1 }>(API_PATHS.PREGNANCY_DIARY_DELETE, {
     method: "POST",
     body,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
+}
+
+export async function queryUserProfile(
+  params: { user_id: string },
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<UserProfileData> {
+  return apiRequest<UserProfileData>(API_PATHS.USER_PROFILE_QUERY, {
+    method: "GET",
+    params,
     token: opts?.token,
     skipAuth: opts?.skipAuth,
     signal: opts?.signal,

@@ -17,6 +17,20 @@ export interface FileUploadResponseData {
   mime_type: string;
 }
 
+export interface UserProfileData {
+  error: ApiErrorCode;
+  user_id: string;
+  display_name?: string;
+  age?: number | null;
+  profile_onboarding_complete?: boolean;
+  profile_onboarding_skipped?: boolean;
+  profile_onboarding_skipped_at?: string;
+  profile_onboarding_completed_at?: string;
+  birth_prep_due_date_or_week?: string;
+  birth_prep_birth_path?: string;
+  birth_prep_support_person?: string;
+}
+
 // ─── 对话 ────────────────────────────────────────────────────────────
 
 export interface ChatMessageBody {
