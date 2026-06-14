@@ -2507,92 +2507,99 @@ const StatusOverviewBody: React.FC = () => {
 
         {activeDigitalTwin === "mom" ? (
           <>
-            <div className="order-2 mx-4 mb-4 grid grid-cols-2 gap-3">
-              <StatusModuleCard
-                title="母乳产出"
-                metrics={[
-                  {
-                    label: "今日产出",
-                    value: todayPumpLabel,
-                    onInfoClick: () => setActiveMomPanel("milk-info"),
-                    ariaLabel: "今日产出说明",
-                  },
-                  { label: "今日吸奶", value: todayPumpCountLabel },
-                ]}
-                tone="rose"
-                icon={<Droplets className="h-4 w-4" />}
-              />
-              <StatusModuleCard
-                title="乳房健康"
-                bodyText={INITIAL_BREAST_HEALTH_SUMMARY}
-                action="查看《乳房健康日记》"
-                tone="peach"
-                icon={<HeartPulse className="h-4 w-4" />}
-                onInfoClick={() => setActiveMomPanel("breast-info")}
-                onClick={() => setActiveMomPanel("breast-detail")}
-                alignActionTextWithTitle
-              />
-              <StatusModuleCard
-                title="产后恢复"
-                bodyText={POSTPARTUM_RECOVERY_PLAN_STATUS}
-                action="查看计划"
-                tone="mint"
-                icon={<PostpartumRecoveryIcon />}
-                onClick={() => setActiveMomPanel("postpartum-detail")}
-                alignActionTextWithTitle
-              />
-              <StatusModuleCard
-                title="补能与休息"
-                bodyText={
-                  <span className="font-medium">
-                    待开通 <strong className="font-bold">睡眠</strong> 与 <strong className="font-bold">营养</strong> 功能
-                  </span>
-                }
-                tone="amber"
-                icon={<Coffee className="h-4 w-4" />}
-                onInfoClick={() => setActiveMomPanel("rest-info")}
-                alignActionTextWithTitle
-              />
-              <StatusModuleCard
-                title="生产全过程计划"
-                bodyText={birthJourneyCardText}
-                supportingText={
-                  birthJourneyPlan && !birthJourneyLoading && birthJourneyCardFocus
-                    ? birthJourneyCardFocus
-                    : undefined
-                }
-                action={birthJourneyCardAction}
-                notificationLabel={birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? "计划已生成" : undefined}
-                notificationActive={Boolean(birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification)}
-                tone="violet"
-                icon={<ClipboardList className="h-4 w-4" />}
-                onClick={() => {
-                  if (birthJourneyPlan) {
-                    clearBirthJourneyPlanCardNotification();
-                    setActiveMomPanel("birth-journey-detail");
-                  } else {
-                    prefillAgentHub("帮我制定生产全过程计划");
+            <div className="order-2 mx-4 mb-4 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <StatusModuleCard
+                  title="生产全过程计划"
+                  bodyText={birthJourneyCardText}
+                  supportingText={
+                    birthJourneyPlan && !birthJourneyLoading && birthJourneyCardFocus
+                      ? birthJourneyCardFocus
+                      : undefined
                   }
-                }}
-                alignActionTextWithTitle
-              />
-              <StatusModuleCard
-                title="孕期日记"
-                bodyText={pregnancyDiaryCardText}
-                supportingText={pregnancyDiaryCardSupport}
-                action={pregnancyDiaryAction}
-                secondaryAction="查看日记"
-                tone="aqua"
-                icon={<BookOpen className="h-4 w-4" />}
-                notificationLabel={pregnancyDiaryCardNotification ? pregnancyDiaryCardNotificationLabel : undefined}
-                notificationActive={pregnancyDiaryCardNotification}
-                onClick={openPregnancyDiaryEditor}
-                onSecondaryClick={() => {
-                  clearPregnancyDiaryCardNotification();
-                  setActiveMomPanel("pregnancy-diary-detail");
-                }}
-                alignActionTextWithTitle
-              />
+                  action={birthJourneyCardAction}
+                  notificationLabel={birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? "计划已生成" : undefined}
+                  notificationActive={Boolean(birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification)}
+                  tone="violet"
+                  icon={<ClipboardList className="h-4 w-4" />}
+                  onClick={() => {
+                    if (birthJourneyPlan) {
+                      clearBirthJourneyPlanCardNotification();
+                      setActiveMomPanel("birth-journey-detail");
+                    } else {
+                      prefillAgentHub("帮我制定生产全过程计划");
+                    }
+                  }}
+                  alignActionTextWithTitle
+                />
+                <StatusModuleCard
+                  title="孕期日记"
+                  bodyText={pregnancyDiaryCardText}
+                  supportingText={pregnancyDiaryCardSupport}
+                  action={pregnancyDiaryAction}
+                  secondaryAction="查看日记"
+                  tone="aqua"
+                  icon={<BookOpen className="h-4 w-4" />}
+                  notificationLabel={pregnancyDiaryCardNotification ? pregnancyDiaryCardNotificationLabel : undefined}
+                  notificationActive={pregnancyDiaryCardNotification}
+                  onClick={openPregnancyDiaryEditor}
+                  onSecondaryClick={() => {
+                    clearPregnancyDiaryCardNotification();
+                    setActiveMomPanel("pregnancy-diary-detail");
+                  }}
+                  alignActionTextWithTitle
+                />
+              </div>
+              <div aria-hidden="true" className="px-1 py-0.5">
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-[#e7dcd6] to-transparent opacity-75" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <StatusModuleCard
+                  title="母乳产出"
+                  metrics={[
+                    {
+                      label: "今日产出",
+                      value: todayPumpLabel,
+                      onInfoClick: () => setActiveMomPanel("milk-info"),
+                      ariaLabel: "今日产出说明",
+                    },
+                    { label: "今日吸奶", value: todayPumpCountLabel },
+                  ]}
+                  tone="rose"
+                  icon={<Droplets className="h-4 w-4" />}
+                />
+                <StatusModuleCard
+                  title="乳房健康"
+                  bodyText={INITIAL_BREAST_HEALTH_SUMMARY}
+                  action="查看《乳房健康日记》"
+                  tone="peach"
+                  icon={<HeartPulse className="h-4 w-4" />}
+                  onInfoClick={() => setActiveMomPanel("breast-info")}
+                  onClick={() => setActiveMomPanel("breast-detail")}
+                  alignActionTextWithTitle
+                />
+                <StatusModuleCard
+                  title="产后恢复"
+                  bodyText={POSTPARTUM_RECOVERY_PLAN_STATUS}
+                  action="查看计划"
+                  tone="mint"
+                  icon={<PostpartumRecoveryIcon />}
+                  onClick={() => setActiveMomPanel("postpartum-detail")}
+                  alignActionTextWithTitle
+                />
+                <StatusModuleCard
+                  title="补能与休息"
+                  bodyText={
+                    <span className="font-medium">
+                      待开通 <strong className="font-bold">睡眠</strong> 与 <strong className="font-bold">营养</strong> 功能
+                    </span>
+                  }
+                  tone="amber"
+                  icon={<Coffee className="h-4 w-4" />}
+                  onInfoClick={() => setActiveMomPanel("rest-info")}
+                  alignActionTextWithTitle
+                />
+              </div>
             </div>
 
             <Expandable
