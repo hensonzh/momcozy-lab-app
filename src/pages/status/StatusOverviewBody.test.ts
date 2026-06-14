@@ -119,8 +119,11 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain('notificationLabel={birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? "计划已生成" : undefined}');
     expect(statusSource).toContain("notificationActive={Boolean(birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification)}");
     expect(statusSource).toContain("status-module-card-notice");
-    expect(statusSource.indexOf('title="补能与休息"')).toBeLessThan(statusSource.indexOf('title="生产全过程计划"'));
+    expect(statusSource).toContain("bg-gradient-to-r from-transparent via-[#e7dcd6] to-transparent");
     expect(statusSource.indexOf('title="生产全过程计划"')).toBeLessThan(statusSource.indexOf('title="孕期日记"'));
+    expect(statusSource.indexOf('title="孕期日记"')).toBeLessThan(statusSource.indexOf('title="母乳产出"'));
+    expect(statusSource.indexOf('title="母乳产出"')).toBeLessThan(statusSource.indexOf('title="乳房健康"'));
+    expect(statusSource.indexOf('title="产后恢复"')).toBeLessThan(statusSource.indexOf('title="补能与休息"'));
   });
 
   it("uses the breast health diary wording and agent-assisted CTA", () => {
