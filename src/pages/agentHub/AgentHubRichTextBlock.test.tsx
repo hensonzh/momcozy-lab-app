@@ -118,6 +118,51 @@ function birthJourneyPayload(): ChatRichTextPayload {
   };
 }
 
+function hospitalBagFormPayload(): ChatRichTextPayload {
+  return {
+    title: "",
+    content: "",
+    button: [],
+    card: [],
+    action: [
+      {
+        kind: "ag_ui_artifact",
+        artifact_type: "form",
+        artifact_id: "hospital_bag_form_1",
+        form: {
+          id: "hospital_bag_intake",
+          title: "信息采集",
+          fields: [
+            {
+              id: "due_date_or_week",
+              label: "基本信息｜预产期或当前孕周",
+              type: "text",
+              default_value: "孕34周",
+            },
+            {
+              id: "birth_path",
+              label: "生产信息｜分娩方式",
+              type: "select",
+              options: ["顺产", "剖宫产", "还不确定"],
+              default_value: "剖宫产",
+            },
+            {
+              id: "return_to_work_timing",
+              label: "偏好信息｜产后多久返工",
+              type: "text",
+            },
+            {
+              id: "top_worries",
+              label: "偏好信息｜最焦虑的三件事",
+              type: "textarea",
+            },
+          ],
+        },
+      },
+    ],
+  };
+}
+
 function renderBlock({
   payload = ibclcPayload(),
   onButtonSelect = vi.fn(),
@@ -203,6 +248,14 @@ describe("AgentHubRichTextBlock support ticket draft", () => {
         assistantReply: expect.stringContaining("人工客服团队会在 24 小时内主动联系你"),
       }),
     );
+  });
+});
+
+describe("AgentHubRichTextBlock hospital bag form", () => {
+  it("keeps the delivery method default value in the intake form", () => {
+    renderBlock({ payload: hospitalBagFormPayload() });
+
+    expect(screen.getByLabelText("分娩方式")).toHaveValue("剖宫产");
   });
 });
 

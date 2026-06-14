@@ -115,7 +115,7 @@ const HOSPITAL_BAG_FORM_FIELD_IDS = new Set([
   "top_worries",
 ]);
 const HOSPITAL_BAG_FORM_DETECTOR_FIELD_IDS = new Set(["fetus_count", "return_to_work_timing", "budget_preference", "top_worries"]);
-const HOSPITAL_BAG_DIALOGUE_PREFILL_FIELD_IDS = new Set(["due_date_or_week", "return_to_work_timing", "budget_preference", "top_worries"]);
+const HOSPITAL_BAG_DIALOGUE_PREFILL_FIELD_IDS = new Set(["due_date_or_week", "birth_path", "return_to_work_timing", "budget_preference", "top_worries"]);
 const HOSPITAL_BAG_REASON_SUPPRESSED_ITEM_LABELS = new Set([
   "检查报告/化验单",
   "医院预登记信息",
