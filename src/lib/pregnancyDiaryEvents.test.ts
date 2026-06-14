@@ -30,11 +30,11 @@ describe("pregnancy diary notification state", () => {
     expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
   });
 
-  it("uses a modified diary label and clears notices on delete", () => {
+  it("uses an updated record label and clears notices on delete", () => {
     notifyPregnancyDiaryChanged("updated");
 
     expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
-    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("日记已修改");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("记录更新");
 
     notifyPregnancyDiaryChanged("deleted");
 
