@@ -97,6 +97,12 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("pregnancyDiaryPrimaryPrompt");
     expect(statusSource).toContain("pregnancyDiaryPrimaryAction");
     expect(statusSource).toContain("subscribePregnancyDiaryChanged");
+    expect(statusSource).toContain("usePregnancyDiaryCardNotification");
+    expect(statusSource).toContain("usePregnancyDiaryCardNotificationLabel");
+    expect(statusSource).toContain("clearPregnancyDiaryCardNotification");
+    expect(statusSource).toContain("pregnancyDiaryCardNotificationLabel");
+    expect(statusSource).toContain("notificationLabel={pregnancyDiaryCardNotification ? pregnancyDiaryCardNotificationLabel : undefined}");
+    expect(statusSource).toContain("notificationActive={pregnancyDiaryCardNotification}");
     expect(statusSource).toContain("今天的记录已保存");
     expect(statusSource).toContain("整理产检问题");
     expect(statusSource).toContain("最近记录");
@@ -109,7 +115,10 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("明显胎动异常、出血、剧烈腹痛");
     expect(statusSource).toContain("useBirthJourneyPlanCardNotification");
     expect(statusSource).toContain("clearBirthJourneyPlanCardNotification");
-    expect(statusSource).toContain('notificationLabel={birthJourneyPlanCardNotification ? "计划已生成" : undefined}');
+    expect(statusSource).toContain("clearBirthJourneyPlanGeneratedNotification");
+    expect(statusSource).toContain('notificationLabel={birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? "计划已生成" : undefined}');
+    expect(statusSource).toContain("notificationActive={Boolean(birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification)}");
+    expect(statusSource).toContain("status-module-card-notice");
     expect(statusSource.indexOf('title="补能与休息"')).toBeLessThan(statusSource.indexOf('title="生产全过程计划"'));
     expect(statusSource.indexOf('title="生产全过程计划"')).toBeLessThan(statusSource.indexOf('title="孕期日记"'));
   });
