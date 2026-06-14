@@ -953,7 +953,7 @@ const MomStatusPanelSheet: React.FC<{
                   <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3">
                     <p className="text-sm font-extrabold text-foreground">确认删除生产全过程计划？</p>
                     <p className="mt-1 text-xs font-semibold leading-relaxed text-muted-foreground">
-                      删除后，状态页不再展示这份计划。需要时可以重新生成。
+                      删除后，宝宝和我页面不再展示这份计划。需要时可以重新生成。
                     </p>
                     <div className="mt-3 grid grid-cols-2 gap-2">
                       <button
