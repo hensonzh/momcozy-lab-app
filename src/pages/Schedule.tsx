@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Bell, BellOff, CheckCircle2, ChevronLeft, ChevronRight, Clock, HelpCircle, ImageIcon, Loader2, MessageCircle, Plus, Trash2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, addDays, isSameDay } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TabPageTopReserve from "@/components/layout/TabPageTopReserve";
 import TabPageScrollRegion from "@/components/layout/TabPageScrollRegion";
 import TabPageEmbeddedNav from "@/components/layout/TabPageEmbeddedNav";
@@ -429,6 +429,7 @@ const createRecordFromTask = (task: ScheduleTask, dateStr: string): PumpRecord |
 
 const Schedule: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [volUnit] = useVolumeUnit();
   
   const todayDate = useMemo(() => {
@@ -1266,10 +1267,11 @@ const Schedule: React.FC = () => {
           <section className="mx-4 mb-5 rounded-[24px] border border-primary/15 bg-card/70 p-3.5 shadow-sm">
             <div className="flex items-start gap-3">
               <img
+                key={`schedule-agent-avatar-${location.key}`}
                 src={momcozyAgentAvatar}
                 alt=""
                 aria-hidden="true"
-                className="h-9 w-9 shrink-0 rounded-full object-cover shadow-sm"
+                className="schedule-agent-avatar-attention h-9 w-9 shrink-0 rounded-full object-cover shadow-sm"
               />
               <div className="min-w-0 flex-1">
                 <p className="text-[13px] font-semibold leading-relaxed text-foreground">
