@@ -406,7 +406,9 @@ function maybeNotifyPregnancyDiaryChanged(parsed: Record<string, unknown> | null
   const status = coalesceString(parsed.status);
   if (!["diary_entry_created", "diary_entry_updated", "diary_entry_deleted"].includes(status)) return;
   if (parsed.side_effect_performed === false) return;
-  notifyPregnancyDiaryChanged();
+  if (status === "diary_entry_created") notifyPregnancyDiaryChanged("created");
+  else if (status === "diary_entry_updated") notifyPregnancyDiaryChanged("updated");
+  else notifyPregnancyDiaryChanged("deleted");
 }
 
 function summarizeToolResult(parsed: Record<string, unknown>): string {
@@ -654,7 +656,8 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
     if (status === "needs_delete_confirmation") return { title: "删除前还需要你确认一下" };
     if (status === "entry_not_found") return { title: "没有找到这条孕期日记" };
     if (status === "diary_entry_deleted") return { title: "我已经删除这条孕期日记啦" };
-    if (status === "diary_entry_created" || status === "diary_entry_updated") return { title: "我已经保存好孕期日记啦" };
+    if (status === "diary_entry_created") return { title: "我已经记录好孕期日记啦" };
+    if (status === "diary_entry_updated") return { title: "我已经修改好孕期日记啦" };
     if (status === "diary_list_read" || status === "diary_entry_read") return { title: "我看好孕期日记啦" };
     return { title: "孕期日记这一步处理好了" };
   }
@@ -1339,7 +1342,7 @@ export function applyAgUiStreamSideEffects(
     patchMsg((m) => ({
       ...m,
       agentThinkingTitle: undefined,
-      agentStatusDone: false,
+      agentStatusDone: true,
       ...(isThinkingStatusLine(m.agentStatusLine ?? "") ? { agentStatusLine: "" } : {}),
     }));
   }

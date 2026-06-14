@@ -2,6 +2,7 @@ import { describe, expect, it, beforeEach } from "vitest";
 import {
   BIRTH_JOURNEY_PLAN_DELETED_EVENT,
   clearBirthJourneyPlanCardNotification,
+  clearBirthJourneyPlanGeneratedNotification,
   markBirthJourneyPlanGeneratedNotification,
   notifyBirthJourneyPlanDeleted,
   richTextPayloadHasBirthJourneyPlanCard,
@@ -28,6 +29,22 @@ describe("birth journey plan notification state", () => {
     clearBirthJourneyPlanCardNotification();
 
     expect(localStorage.getItem("mmc_birth_journey_plan_card_pending")).toBeNull();
+  });
+
+  it("clears both nav and card generated notices without emitting a deleted event", () => {
+    const events: string[] = [];
+    const unsubscribe = subscribeBirthJourneyPlanDeleted(() => {
+      events.push("deleted");
+    });
+
+    markBirthJourneyPlanGeneratedNotification();
+    transferBirthJourneyPlanNotificationToStatusCard();
+    clearBirthJourneyPlanGeneratedNotification();
+    unsubscribe();
+
+    expect(localStorage.getItem("mmc_birth_journey_plan_nav_pending")).toBeNull();
+    expect(localStorage.getItem("mmc_birth_journey_plan_card_pending")).toBeNull();
+    expect(events).toEqual([]);
   });
 
   it("clears generated plan notices and emits a deleted event", () => {

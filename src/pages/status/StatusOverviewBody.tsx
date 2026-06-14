@@ -65,10 +65,16 @@ import {
 } from "@/lib/statusGrowthHighlight";
 import {
   clearBirthJourneyPlanCardNotification,
+  clearBirthJourneyPlanGeneratedNotification,
   subscribeBirthJourneyPlanDeleted,
   useBirthJourneyPlanCardNotification,
 } from "@/lib/birthJourneyPlanNotification";
-import { subscribePregnancyDiaryChanged } from "@/lib/pregnancyDiaryEvents";
+import {
+  clearPregnancyDiaryCardNotification,
+  subscribePregnancyDiaryChanged,
+  usePregnancyDiaryCardNotification,
+  usePregnancyDiaryCardNotificationLabel,
+} from "@/lib/pregnancyDiaryEvents";
 
 import momAvatar from "@/assets/mom-avatar-felt.png";
 import babyAvatar from "@/assets/baby-avatar-felt.png";
@@ -1380,6 +1386,7 @@ type StatusModuleCardProps = {
   action?: string;
   secondaryAction?: string;
   notificationLabel?: string;
+  notificationActive?: boolean;
   icon: React.ReactNode;
   tone: StatusModuleTone;
   onClick?: () => void;
@@ -1399,6 +1406,7 @@ function StatusModuleCard({
   action,
   secondaryAction,
   notificationLabel,
+  notificationActive = false,
   icon,
   tone,
   onClick,
@@ -1506,7 +1514,7 @@ function StatusModuleCard({
     </>
   );
 
-  const className = `relative flex min-h-[132px] flex-col overflow-hidden rounded-[16px] border border-white/80 bg-gradient-to-br p-3.5 text-left shadow-none ring-1 ring-border/20 ${toneClasses.card}`;
+  const className = `relative flex min-h-[132px] flex-col overflow-hidden rounded-[16px] border border-white/80 bg-gradient-to-br p-3.5 text-left shadow-none ring-1 ring-border/20 ${toneClasses.card} ${notificationActive ? "status-module-card-notice" : ""}`;
 
   return <article className={className}>{content}</article>;
 }
@@ -1846,6 +1854,8 @@ const StatusOverviewBody: React.FC = () => {
   const navigate = useNavigate();
   const [unit] = useVolumeUnit();
   const birthJourneyPlanCardNotification = useBirthJourneyPlanCardNotification();
+  const pregnancyDiaryCardNotification = usePregnancyDiaryCardNotification();
+  const pregnancyDiaryCardNotificationLabel = usePregnancyDiaryCardNotificationLabel();
   const isOz = unit === "oz";
   const conv = useCallback((ml: number) => (isOz ? +(ml * 0.033814).toFixed(1) : ml), [isOz]);
 
@@ -1924,7 +1934,7 @@ const StatusOverviewBody: React.FC = () => {
         throw new Error("删除生产全过程计划失败");
       }
       setBirthJourneyPlan(null);
-      clearBirthJourneyPlanCardNotification();
+      clearBirthJourneyPlanGeneratedNotification();
       setActiveMomPanel(null);
     } catch (e: unknown) {
       setBirthJourneyDeleteErr(e instanceof Error ? e.message : "删除生产全过程计划失败");
@@ -1935,7 +1945,7 @@ const StatusOverviewBody: React.FC = () => {
 
   useEffect(() => subscribeBirthJourneyPlanDeleted(() => {
     setBirthJourneyPlan(null);
-    clearBirthJourneyPlanCardNotification();
+    clearBirthJourneyPlanGeneratedNotification();
     setActiveMomPanel((panel) => (panel === "birth-journey-detail" ? null : panel));
   }), []);
 
@@ -1987,6 +1997,7 @@ const StatusOverviewBody: React.FC = () => {
   }, [reloadPumpInfo]);
 
   const openPregnancyDiaryEditor = useCallback(() => {
+    clearPregnancyDiaryCardNotification();
     setActiveMomPanel(null);
     setDiarySaveErr(null);
     setPregnancyDiaryJustSaved(false);
@@ -2177,13 +2188,17 @@ const StatusOverviewBody: React.FC = () => {
         if (cancelled) return;
         if (data.error !== 0 || !Array.isArray(data.plan_list)) {
           setBirthJourneyPlan(null);
+          clearBirthJourneyPlanGeneratedNotification();
           return;
         }
-        setBirthJourneyPlan(data.plan_list.find((plan) => plan.plan_type === "birth_journey") ?? null);
+        const activeBirthJourneyPlan = data.plan_list.find((plan) => plan.plan_type === "birth_journey") ?? null;
+        setBirthJourneyPlan(activeBirthJourneyPlan);
+        if (!activeBirthJourneyPlan) clearBirthJourneyPlanGeneratedNotification();
       } catch (e: unknown) {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
         setBirthJourneyPlan(null);
+        clearBirthJourneyPlanGeneratedNotification();
       } finally {
         if (!cancelled) setBirthJourneyLoading(false);
       }
@@ -2492,86 +2507,99 @@ const StatusOverviewBody: React.FC = () => {
 
         {activeDigitalTwin === "mom" ? (
           <>
-            <div className="order-2 mx-4 mb-4 grid grid-cols-2 gap-3">
-              <StatusModuleCard
-                title="母乳产出"
-                metrics={[
-                  {
-                    label: "今日产出",
-                    value: todayPumpLabel,
-                    onInfoClick: () => setActiveMomPanel("milk-info"),
-                    ariaLabel: "今日产出说明",
-                  },
-                  { label: "今日吸奶", value: todayPumpCountLabel },
-                ]}
-                tone="rose"
-                icon={<Droplets className="h-4 w-4" />}
-              />
-              <StatusModuleCard
-                title="乳房健康"
-                bodyText={INITIAL_BREAST_HEALTH_SUMMARY}
-                action="查看《乳房健康日记》"
-                tone="peach"
-                icon={<HeartPulse className="h-4 w-4" />}
-                onInfoClick={() => setActiveMomPanel("breast-info")}
-                onClick={() => setActiveMomPanel("breast-detail")}
-                alignActionTextWithTitle
-              />
-              <StatusModuleCard
-                title="产后恢复"
-                bodyText={POSTPARTUM_RECOVERY_PLAN_STATUS}
-                action="查看计划"
-                tone="mint"
-                icon={<PostpartumRecoveryIcon />}
-                onClick={() => setActiveMomPanel("postpartum-detail")}
-                alignActionTextWithTitle
-              />
-              <StatusModuleCard
-                title="补能与休息"
-                bodyText={
-                  <span className="font-medium">
-                    待开通 <strong className="font-bold">睡眠</strong> 与 <strong className="font-bold">营养</strong> 功能
-                  </span>
-                }
-                tone="amber"
-                icon={<Coffee className="h-4 w-4" />}
-                onInfoClick={() => setActiveMomPanel("rest-info")}
-                alignActionTextWithTitle
-              />
-              <StatusModuleCard
-                title="生产全过程计划"
-                bodyText={birthJourneyCardText}
-                supportingText={
-                  birthJourneyPlan && !birthJourneyLoading && birthJourneyCardFocus
-                    ? birthJourneyCardFocus
-                    : undefined
-                }
-                action={birthJourneyCardAction}
-                notificationLabel={birthJourneyPlanCardNotification ? "计划已生成" : undefined}
-                tone="violet"
-                icon={<ClipboardList className="h-4 w-4" />}
-                onClick={() => {
-                  if (birthJourneyPlan) {
-                    clearBirthJourneyPlanCardNotification();
-                    setActiveMomPanel("birth-journey-detail");
-                  } else {
-                    prefillAgentHub("帮我制定生产全过程计划");
+            <div className="order-2 mx-4 mb-4 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <StatusModuleCard
+                  title="生产全过程计划"
+                  bodyText={birthJourneyCardText}
+                  supportingText={
+                    birthJourneyPlan && !birthJourneyLoading && birthJourneyCardFocus
+                      ? birthJourneyCardFocus
+                      : undefined
                   }
-                }}
-                alignActionTextWithTitle
-              />
-              <StatusModuleCard
-                title="孕期日记"
-                bodyText={pregnancyDiaryCardText}
-                supportingText={pregnancyDiaryCardSupport}
-                action={pregnancyDiaryAction}
-                secondaryAction="查看日记"
-                tone="aqua"
-                icon={<BookOpen className="h-4 w-4" />}
-                onClick={openPregnancyDiaryEditor}
-                onSecondaryClick={() => setActiveMomPanel("pregnancy-diary-detail")}
-                alignActionTextWithTitle
-              />
+                  action={birthJourneyCardAction}
+                  notificationLabel={birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? "计划已生成" : undefined}
+                  notificationActive={Boolean(birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification)}
+                  tone="violet"
+                  icon={<ClipboardList className="h-4 w-4" />}
+                  onClick={() => {
+                    if (birthJourneyPlan) {
+                      clearBirthJourneyPlanCardNotification();
+                      setActiveMomPanel("birth-journey-detail");
+                    } else {
+                      prefillAgentHub("帮我制定生产全过程计划");
+                    }
+                  }}
+                  alignActionTextWithTitle
+                />
+                <StatusModuleCard
+                  title="孕期日记"
+                  bodyText={pregnancyDiaryCardText}
+                  supportingText={pregnancyDiaryCardSupport}
+                  action={pregnancyDiaryAction}
+                  secondaryAction="查看日记"
+                  tone="aqua"
+                  icon={<BookOpen className="h-4 w-4" />}
+                  notificationLabel={pregnancyDiaryCardNotification ? pregnancyDiaryCardNotificationLabel : undefined}
+                  notificationActive={pregnancyDiaryCardNotification}
+                  onClick={openPregnancyDiaryEditor}
+                  onSecondaryClick={() => {
+                    clearPregnancyDiaryCardNotification();
+                    setActiveMomPanel("pregnancy-diary-detail");
+                  }}
+                  alignActionTextWithTitle
+                />
+              </div>
+              <div aria-hidden="true" className="px-1 py-0.5">
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-[#e7dcd6] to-transparent opacity-75" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <StatusModuleCard
+                  title="母乳产出"
+                  metrics={[
+                    {
+                      label: "今日产出",
+                      value: todayPumpLabel,
+                      onInfoClick: () => setActiveMomPanel("milk-info"),
+                      ariaLabel: "今日产出说明",
+                    },
+                    { label: "今日吸奶", value: todayPumpCountLabel },
+                  ]}
+                  tone="rose"
+                  icon={<Droplets className="h-4 w-4" />}
+                />
+                <StatusModuleCard
+                  title="乳房健康"
+                  bodyText={INITIAL_BREAST_HEALTH_SUMMARY}
+                  action="查看《乳房健康日记》"
+                  tone="peach"
+                  icon={<HeartPulse className="h-4 w-4" />}
+                  onInfoClick={() => setActiveMomPanel("breast-info")}
+                  onClick={() => setActiveMomPanel("breast-detail")}
+                  alignActionTextWithTitle
+                />
+                <StatusModuleCard
+                  title="产后恢复"
+                  bodyText={POSTPARTUM_RECOVERY_PLAN_STATUS}
+                  action="查看计划"
+                  tone="mint"
+                  icon={<PostpartumRecoveryIcon />}
+                  onClick={() => setActiveMomPanel("postpartum-detail")}
+                  alignActionTextWithTitle
+                />
+                <StatusModuleCard
+                  title="补能与休息"
+                  bodyText={
+                    <span className="font-medium">
+                      待开通 <strong className="font-bold">睡眠</strong> 与 <strong className="font-bold">营养</strong> 功能
+                    </span>
+                  }
+                  tone="amber"
+                  icon={<Coffee className="h-4 w-4" />}
+                  onInfoClick={() => setActiveMomPanel("rest-info")}
+                  alignActionTextWithTitle
+                />
+              </div>
             </div>
 
             <Expandable

@@ -62,10 +62,15 @@ export function clearBirthJourneyPlanCardNotification(): void {
   dispatchChange();
 }
 
-export function notifyBirthJourneyPlanDeleted(): void {
+export function clearBirthJourneyPlanGeneratedNotification(): void {
+  const hadPending = readFlag(NAV_PENDING_KEY) || readFlag(CARD_PENDING_KEY);
   writeFlag(NAV_PENDING_KEY, false);
   writeFlag(CARD_PENDING_KEY, false);
-  dispatchChange();
+  if (hadPending) dispatchChange();
+}
+
+export function notifyBirthJourneyPlanDeleted(): void {
+  clearBirthJourneyPlanGeneratedNotification();
   try {
     window.dispatchEvent(new Event(BIRTH_JOURNEY_PLAN_DELETED_EVENT));
   } catch {
