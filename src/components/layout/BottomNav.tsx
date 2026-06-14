@@ -11,6 +11,11 @@ import {
   transferPregnancyDiaryNotificationToStatusCard,
   usePregnancyDiaryNavNotification,
 } from "@/lib/pregnancyDiaryEvents";
+import {
+  milkPlanNotificationConfig,
+  transferPlanNotificationToPage,
+  usePlanNavNotification,
+} from "@/lib/planNotification";
 
 /* Custom mom-and-baby icon matching Lucide stroke style */
 const MomBabyIcon: React.FC<{ className?: string; strokeWidth?: number }> = ({ className, strokeWidth = 2 }) => (
@@ -45,8 +50,10 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
   const embedded = variant === "embedded";
   const birthJourneyPlanNavNotification = useBirthJourneyPlanNavNotification();
   const pregnancyDiaryNavNotification = usePregnancyDiaryNavNotification();
+  const milkPlanNavNotification = usePlanNavNotification(milkPlanNotificationConfig);
   const statusNotificationCount =
     Number(birthJourneyPlanNavNotification) + Number(pregnancyDiaryNavNotification);
+  const scheduleNotificationCount = Number(milkPlanNavNotification);
 
   // Hide nav on independent full-screen flows
   if (location.pathname === "/pump" || location.pathname === "/calibration" || location.pathname === "/media-viewer") return null;
@@ -101,6 +108,9 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
                     transferBirthJourneyPlanNotificationToStatusCard();
                     transferPregnancyDiaryNotificationToStatusCard();
                   }
+                  if (tab.path === "/schedule") {
+                    transferPlanNotificationToPage(milkPlanNotificationConfig);
+                  }
                   navigate(tab.path);
                 }}
                 className={cn(
@@ -120,6 +130,14 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
                     className="absolute right-1 top-0 z-20 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e3405f] px-1 text-[10px] font-extrabold leading-none text-white shadow-[0_5px_12px_rgba(227,64,95,0.35)] ring-2 ring-card"
                   >
                     {statusNotificationCount}
+                  </span>
+                ) : null}
+                {tab.path === "/schedule" && scheduleNotificationCount > 0 ? (
+                  <span
+                    aria-label="计划有新通知"
+                    className="absolute right-1 top-0 z-20 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e3405f] px-1 text-[10px] font-extrabold leading-none text-white shadow-[0_5px_12px_rgba(227,64,95,0.35)] ring-2 ring-card"
+                  >
+                    {scheduleNotificationCount}
                   </span>
                 ) : null}
                 <tab.icon className={cn("w-5 h-5 relative z-10", active && "fill-primary/20")} strokeWidth={active ? 2.5 : 1.8} />
