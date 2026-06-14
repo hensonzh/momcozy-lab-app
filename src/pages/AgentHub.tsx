@@ -25,6 +25,7 @@ import {
 import {
   postAgUiWebSocketStream,
   prewarmAgUiThread,
+  queryUserProfile,
   parseChatRichTextFromSseData,
   type AgUiPayloadImageItem,
 } from "@/lib/agentApi";
@@ -38,7 +39,7 @@ import {
 import { tryRunPumpAutoEndOffPumpTeardownOnce } from "@/lib/pumpAutoEndSession";
 import { AGENT_HUB_SYNC_CHAT_EVENT, appendAgentHubAnalysisMessage } from "@/lib/agentHubChatMessages";
 import { apiRequestRaw } from "@/lib/http";
-import type { AgentAnalysisCard, ChatRichTextPayload } from "@/lib/agentApiTypes";
+import type { AgentAnalysisCard, ChatRichTextPayload, UserProfileData } from "@/lib/agentApiTypes";
 import { log, warn } from "@/lib/logger";
 import { ChatMarkdown } from "@/components/chat/ChatMarkdown";
 import { ChatMarkdownImg } from "@/components/chat/ChatMarkdownImage";
@@ -46,6 +47,7 @@ import type { ChatMarkdownVariant } from "@/components/chat/ChatMarkdown";
 import { splitChatContentByDataDelimiter } from "@/lib/chatContentSegments";
 import { replaceCitationLinksWithIndexes } from "@/lib/chatCitationMarkdown";
 import { extractChatAnswerChunk, mergeStreamingAnswer, mergeStreamingAnswerDelta } from "@/lib/chatStreaming";
+import momcozyAgentAvatar from "@/assets/momcozy-agent.png";
 import {
   DEFAULT_CHAT_TAIL_THRESHOLD_PX,
   isChatScrollNearTail,
@@ -153,8 +155,8 @@ const HUB_TOP_ACTION_HEIGHT_PX = 48;
 const HUB_MAIN_STREAM_NO_VISIBLE_RESPONSE_TIMEOUT_MS = 25_000;
 type PendingHistoryAnchorRestore = { messageId: string; top: number };
 const HOSPITAL_BAG_CART_FOLLOWUP_MARKER = "你的待产包已经设计好了哦～";
-const NEW_CONVERSATION_GREETING =
-  "你好呀，我在。\n\n这次想先聊哪件事？你可以直接说现在最困扰你的情况，不管是孕期准备、产后恢复、喂养奶量，还是设备使用，我都会陪你一步步理清楚。";
+const PROFILE_ONBOARDING_GREETING =
+  "嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？";
 
 const DIRECT_PUMP_CART_UPDATE_MODELS: Array<{ skuId: string; model: string; tokens: string[] }> = [
   { skuId: "pump-s12-pro-quick", model: "S12 Pro Quick", tokens: ["s12proquick", "s12pro", "s12"] },
@@ -185,11 +187,20 @@ interface DirectHospitalBagCartUpdateResponse {
   };
 }
 
-function createNewConversationGreetingMessage(): ChatMessage {
+function createNewConversationGreetingContent(profile?: UserProfileData | null): string {
+  const name = String(profile?.display_name ?? "").trim();
+  const hasAge = typeof profile?.age === "number" && Number.isFinite(profile.age);
+  if (name && hasAge) {
+    return `嗨 ${name}， \n\n今天想聊点什么呢？ \n\n把你现在最关心的事情告诉我就好，我会陪你一起梳理。`;
+  }
+  return PROFILE_ONBOARDING_GREETING;
+}
+
+function createNewConversationGreetingMessage(profile?: UserProfileData | null): ChatMessage {
   return {
     id: `mai-greeting-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     role: "mai",
-    content: NEW_CONVERSATION_GREETING,
+    content: createNewConversationGreetingContent(profile),
     timestamp: new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }),
     chatStreamContext: "main",
   };
@@ -806,14 +817,18 @@ const AgentHub: React.FC = () => {
   const location = useLocation();
   /** 首次进入 Hub：应用冷启动时开启新会话；同一 SPA 内返回时沿用内存对话。 */
   const initialHubMessagesRef = useRef<ChatMessage[] | null>(null);
+  const shouldHydrateInitialGreetingRef = useRef(false);
+  const latestUserProfileRef = useRef<UserProfileData | null>(null);
+  const pendingGreetingVoiceIdRef = useRef<string | null>(null);
   if (initialHubMessagesRef.current === null) {
     const inMemory = stripTransientAgentHubFailureMessages(chatStore.get().messages);
     const isColdStart = inMemory.length === 0;
     if (isColdStart) {
       clearPersistedAgentConversationId();
       clearPersistedAgUiThreadId();
+      shouldHydrateInitialGreetingRef.current = true;
     }
-    const merged = isColdStart ? [createNewConversationGreetingMessage()] : inMemory;
+    const merged = isColdStart ? [] : inMemory;
     chatStore.setMessages(merged);
     savePersistedChatMessages(merged);
     initialHubMessagesRef.current = merged;
@@ -828,6 +843,48 @@ const AgentHub: React.FC = () => {
     chatStore.updateMessages(action);
   }, []);
   const lastAgUiArtifactAnchorKeyRef = useRef<string | null>(latestAgUiArtifactAnchorKey(hubInitialMessages));
+
+  const applyGreetingFromProfile = useCallback(
+    (profile: UserProfileData | null, opts?: { onlyIfNoConversationStarted?: boolean }) => {
+      const greeting = createNewConversationGreetingMessage(profile);
+      const currentMessages = chatStore.get().messages;
+      if (opts?.onlyIfNoConversationStarted) {
+        if (currentMessages.some((message) => message.role === "user")) return;
+        const hasNonGreetingAssistant = currentMessages.some(
+          (message) => message.role === "mai" && !String(message.id).startsWith("mai-greeting-"),
+        );
+        if (hasNonGreetingAssistant) return;
+      }
+      pendingGreetingVoiceIdRef.current = greeting.id;
+      chatStore.setMessages([greeting]);
+      savePersistedChatMessages([greeting]);
+      setMessages([greeting]);
+    },
+    [setMessages],
+  );
+
+  const hydrateGreetingFromProfile = useCallback(
+    async (opts?: { onlyIfNoConversationStarted?: boolean; signal?: AbortSignal }) => {
+      try {
+        const profile = await queryUserProfile({ user_id: DEFAULT_CHAT_USER_ID }, { signal: opts?.signal });
+        latestUserProfileRef.current = profile;
+        applyGreetingFromProfile(profile, opts);
+      } catch (e: unknown) {
+        if ((e as { name?: string })?.name === "AbortError") return;
+        warn("[AgentHub] 读取用户基础资料失败，使用默认新会话欢迎语", e instanceof Error ? e.message : String(e));
+        applyGreetingFromProfile(latestUserProfileRef.current, opts);
+      }
+    },
+    [applyGreetingFromProfile],
+  );
+
+  useEffect(() => {
+    if (!shouldHydrateInitialGreetingRef.current) return;
+    shouldHydrateInitialGreetingRef.current = false;
+    const controller = new AbortController();
+    void hydrateGreetingFromProfile({ onlyIfNoConversationStarted: true, signal: controller.signal });
+    return () => controller.abort();
+  }, [hydrateGreetingFromProfile]);
   const pendingAgUiArtifactPositionRef = useRef(false);
   const pendingAgUiArtifactFormLikeRef = useRef(false);
   const [input, setInput] = useState("");
@@ -1213,10 +1270,11 @@ const AgentHub: React.FC = () => {
           agUiPrewarmAbortRef.current = null;
         }
       });
-    const greeting = createNewConversationGreetingMessage();
+    const greeting = createNewConversationGreetingMessage(latestUserProfileRef.current);
     chatStore.setMessages([greeting]);
     savePersistedChatMessages([greeting]);
     setMessages([greeting]);
+    void hydrateGreetingFromProfile({ onlyIfNoConversationStarted: true });
     setInput("");
     setHubBottomSendBusy(false);
     setShowPhotoMenu(false);
@@ -1231,7 +1289,7 @@ const AgentHub: React.FC = () => {
     setHospitalBagCartGroups(cloneHospitalBagCartGroups(initialHospitalBagCartGroups));
     setHubPumpGateDialog(null);
     toast.success("已新建会话");
-  }, [clearMainNoVisibleResponseTimer, stopCurrentBubblePlayback, stopSpeech]);
+  }, [clearMainNoVisibleResponseTimer, hydrateGreetingFromProfile, stopCurrentBubblePlayback, stopSpeech]);
 
   /** 自动播报兜底：只在流式会话没有启动时，对完整回复做一次播放。 */
   const runHubDecoupledAutoVoice = useCallback((
@@ -2884,7 +2942,7 @@ const AgentHub: React.FC = () => {
    * 点击气泡喇叭：与全局自动播报一致，使用火山实时语音流播放；再次点击同一气泡则停止。
    * @param msg 当前消息
    */
-  const handlePlayBubble = async (msg: ChatMessage) => {
+  const handlePlayBubble = useCallback(async (msg: ChatMessage) => {
     if (playingId === msg.id) {
       await stopCurrentBubblePlayback();
       return;
@@ -2919,7 +2977,17 @@ const AgentHub: React.FC = () => {
         bubblePlayAbortRef.current = null;
       }
     }
-  };
+  }, [playingId, stopCurrentBubblePlayback]);
+
+  useEffect(() => {
+    const pendingGreetingVoiceId = pendingGreetingVoiceIdRef.current;
+    if (!pendingGreetingVoiceId) return;
+    const greeting = messages.find((message) => message.id === pendingGreetingVoiceId && message.role === "mai");
+    if (!greeting) return;
+    pendingGreetingVoiceIdRef.current = null;
+    if (!autoVoiceRef.current) return;
+    void handlePlayBubble(greeting);
+  }, [handlePlayBubble, messages]);
 
   const visibleMessages = messages
     .slice(visibleStartIndex)
@@ -3083,7 +3151,7 @@ const AgentHub: React.FC = () => {
             const containsAgUiArtifact = msg.role === "mai" && messageHasAgUiArtifact(msg);
             const richTextHasAgUiArtifactForMsg = richTextPayloadHasAgUiArtifact(msg.richText);
             const mainAssistantTextBubbleBase =
-              "rounded-[18px] rounded-bl-[7px] bg-[#fff6f1] px-3.5 py-2.5 text-[15px] leading-[1.55] text-[#3f3038] shadow-none";
+              "rounded-none border-0 bg-transparent px-0 py-0 text-[15px] leading-[1.58] text-[#3f3038] shadow-none";
             const mainAssistantArtifactShellBase =
               "min-h-0 rounded-none border-0 bg-transparent px-0 py-0 text-[15px] leading-[1.45] text-[#33404d] shadow-none";
             const bubbleShell = cn(
@@ -3119,6 +3187,7 @@ const AgentHub: React.FC = () => {
             const hasSentImagePreviews = sentImagePreviews.length > 0;
             const previousMsg = index > 0 ? visibleMessages[index - 1] : undefined;
             const isConsecutiveAssistantMessage = msg.role === "mai" && previousMsg?.role === "mai";
+            const showAssistantAvatar = msg.role === "mai";
             const messageSpacingClass = index === 0 ? "mt-0" : isConsecutiveAssistantMessage ? "mt-8" : "mt-2.5";
 
             return (
@@ -3272,10 +3341,27 @@ const AgentHub: React.FC = () => {
               key={msg.id}
               className={cn(
                 "animate-slide-up flex",
-                msg.role === "user" ? "justify-end" : "justify-start"
+                msg.role === "user" ? "justify-end" : "justify-start",
+                showAssistantAvatar && "items-start gap-2.5"
               )}
             >
-              <div className={cn("flex flex-col gap-1.5 min-w-0", msg.role === "user" ? "max-w-[82%]" : containsAgUiArtifact ? "w-full max-w-[92%]" : "max-w-[92%]")}>
+              {showAssistantAvatar ? (
+                <img
+                  src={momcozyAgentAvatar}
+                  alt="CozyMate"
+                  className="mt-1 h-8 w-8 shrink-0 rounded-full object-cover shadow-sm ring-1 ring-[#eadde2]/80"
+                />
+              ) : null}
+              <div
+                className={cn(
+                  "flex flex-col gap-1.5 min-w-0",
+                  msg.role === "user"
+                    ? "max-w-[82%]"
+                    : containsAgUiArtifact
+                      ? "w-full max-w-[calc(100%-42px)]"
+                      : "max-w-[calc(92%-42px)]",
+                )}
+              >
                 {msg.cardType === "report" && msg.cardData ? (
                   <AgentHubReportCard
                     msg={msg}

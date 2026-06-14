@@ -148,6 +148,40 @@
   .mai-glow {
     box-shadow: 0 0 20px 4px hsl(var(--mai-glow) / 0.2);
   }
+
+  .schedule-agent-avatar-attention {
+    transform-origin: center;
+    will-change: transform;
+    animation: schedule-agent-avatar-pop 2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes schedule-agent-avatar-pop {
+  0% {
+    transform: scale(1);
+  }
+  18% {
+    transform: scale(1.32);
+  }
+  34% {
+    transform: scale(0.94);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+  66% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schedule-agent-avatar-attention {
+    animation: none;
+    will-change: auto;
+  }
 }
 
 /* Agent rich card styles (web parity: hospital bag card) */
