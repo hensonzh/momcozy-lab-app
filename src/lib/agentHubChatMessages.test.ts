@@ -5,6 +5,7 @@ import {
   appendAgentHubNotificationMessage,
 } from "@/lib/agentHubChatMessages";
 import { buildPersonalizedNotificationText } from "@/lib/agentNotificationMessages";
+import { AGENT_NOTIFICATION_VOICE_EVENT } from "@/lib/agentNotificationVoice";
 import {
   buildMilkAnalysisReminderFollowupPrompt,
   consumeMilkAnalysisReminderFollowup,
@@ -88,6 +89,28 @@ describe("appendAgentHubAnalysisMessage", () => {
     });
     expect(chatStore.get().messages[0].cardType).toBeUndefined();
     expect(chatStore.get().messages[0].cardData).toBeUndefined();
+  });
+
+  it("dispatches a global voice event when appending notification messages", () => {
+    let eventDetailId = "";
+    const handler = (event: Event) => {
+      eventDetailId = (event as CustomEvent<{ id?: string }>).detail?.id || "";
+    };
+    window.addEventListener(AGENT_NOTIFICATION_VOICE_EVENT, handler);
+
+    try {
+      appendAgentHubNotificationMessage(
+        "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗",
+        {
+          kind: "health_issue",
+          id: "notification-health_issue-voice",
+        },
+      );
+    } finally {
+      window.removeEventListener(AGENT_NOTIFICATION_VOICE_EVENT, handler);
+    }
+
+    expect(eventDetailId).toBe("notification-health_issue-voice");
   });
 });
 

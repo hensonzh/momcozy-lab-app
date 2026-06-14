@@ -68,6 +68,10 @@ import {
   consumeMilkAnalysisReminderFollowup,
   MILK_ANALYSIS_REMINDER_FOLLOWUP_EVENT,
 } from "@/lib/milkAnalysisReminderFollowup";
+import {
+  AGENT_NOTIFICATION_VOICE_IDLE_EVENT,
+  isAgentNotificationVoicePlaying,
+} from "@/lib/agentNotificationVoice";
 import { apiRequestRaw } from "@/lib/http";
 import type {
   AgentAnalysisCard,
@@ -1160,8 +1164,6 @@ const AgentHub: React.FC = () => {
   const [visibleStartIndex, setVisibleStartIndex] =
     useState(initialHistoryStart);
   const [playingId, setPlayingId] = useState<string | null>(null);
-  const notificationVoicePlayedIdsRef = useRef<Set<string>>(new Set());
-  const notificationVoiceQueueRunningRef = useRef(false);
   const [showPhotoMenu, setShowPhotoMenu] = useState(false);
   type HubPumpGateDialog = "calibration" | "device";
   const [hubPumpGateDialog, setHubPumpGateDialog] =
@@ -2698,95 +2700,14 @@ const AgentHub: React.FC = () => {
     });
   };
 
-  const playNotificationMessageVoice = useCallback(
-    async (msg: ChatMessage) => {
-      if (msg.role !== "mai") return;
-      if (!autoVoiceRef.current) return;
-      const speakable = buildSpeakableTextForVoice(msg)
-        .trim()
-        .slice(0, CHAT_BUBBLE_VOICE_MAX_CHARS);
-      if (!speakable) return;
-
-      await stopCurrentBubblePlayback();
-      const ac = new AbortController();
-      bubblePlayAbortRef.current = ac;
-      bubblePlayingTargetIdRef.current = msg.id;
-      setPlayingId(msg.id);
-      try {
-        await playFocusPlainTextVoice({
-          userId: DEFAULT_CHAT_USER_ID,
-          text: speakable,
-          signal: ac.signal,
-          onSubtitle: () => {},
-          syncSubtitle: false,
-        });
-      } catch (e: unknown) {
-        const err = e as { name?: string; message?: string };
-        if (err.name !== "AbortError") {
-          toast.error(err.message || "通知语音播报失败");
-        }
-      } finally {
-        if (bubblePlayingTargetIdRef.current === msg.id) {
-          setPlayingId(null);
-          bubblePlayingTargetIdRef.current = null;
-        }
-        if (bubblePlayAbortRef.current === ac) {
-          bubblePlayAbortRef.current = null;
-        }
-      }
-    },
-    [stopCurrentBubblePlayback],
-  );
-
   const tryStartMilkAnalysisReminderFollowup = useCallback(() => {
     if (mainChatRuntimeSnapshot.running || mainChatCancelRef.current) return;
-    if (notificationVoiceQueueRunningRef.current) return;
-    if (
-      autoVoiceRef.current &&
-      messages.some(
-        (message) =>
-          message.autoVoiceOnAppend &&
-          !notificationVoicePlayedIdsRef.current.has(message.id),
-      )
-    ) {
-      return;
-    }
+    if (isAgentNotificationVoicePlaying()) return;
     const pending = consumeMilkAnalysisReminderFollowup();
     if (!pending) return;
     const prompt = buildMilkAnalysisReminderFollowupPrompt(pending);
     void startMainChatStream(prompt, { showUserMessage: false });
-  }, [mainChatRuntimeSnapshot.running, messages]);
-
-  useEffect(() => {
-    const pendingMessages = messages.filter(
-      (message) =>
-        message.autoVoiceOnAppend &&
-        !notificationVoicePlayedIdsRef.current.has(message.id),
-    );
-    if (pendingMessages.length === 0) return;
-    if (notificationVoiceQueueRunningRef.current) return;
-
-    let cancelled = false;
-    notificationVoiceQueueRunningRef.current = true;
-    void (async () => {
-      for (const message of pendingMessages) {
-        notificationVoicePlayedIdsRef.current.add(message.id);
-        if (cancelled) break;
-        await playNotificationMessageVoice(message);
-      }
-    })().finally(() => {
-      notificationVoiceQueueRunningRef.current = false;
-      window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    messages,
-    playNotificationMessageVoice,
-    tryStartMilkAnalysisReminderFollowup,
-  ]);
+  }, [mainChatRuntimeSnapshot.running]);
 
   useEffect(() => {
     const timer = window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0);
@@ -2803,6 +2724,15 @@ const AgentHub: React.FC = () => {
         MILK_ANALYSIS_REMINDER_FOLLOWUP_EVENT,
         handler,
       );
+  }, [tryStartMilkAnalysisReminderFollowup]);
+
+  useEffect(() => {
+    const handler = () => {
+      window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0);
+    };
+    window.addEventListener(AGENT_NOTIFICATION_VOICE_IDLE_EVENT, handler);
+    return () =>
+      window.removeEventListener(AGENT_NOTIFICATION_VOICE_IDLE_EVENT, handler);
   }, [tryStartMilkAnalysisReminderFollowup]);
 
   const startDirectHospitalBagPumpCartUpdate = async (
@@ -3994,8 +3924,8 @@ const AgentHub: React.FC = () => {
                   index === 0
                     ? "mt-0"
                     : isConsecutiveAssistantMessage
-                      ? "mt-8"
-                      : "mt-2.5";
+                      ? "mt-7"
+                      : "mt-5";
 
                 return (
                   <div
