@@ -169,9 +169,9 @@ import {
   richTextPayloadHasBirthJourneyPlanCard,
 } from "@/lib/birthJourneyPlanNotification";
 import {
-  markMilkPlanSyncedNotification,
-  milkPlanNotificationFromAgUiData,
+  markPlanFeedbackNotification,
   milkPlanNotificationFromRichText,
+  planNotificationFromAgUiData,
 } from "@/lib/planNotification";
 import {
   CALIBRATION_HUB_NOTICE_KEY,
@@ -2257,9 +2257,9 @@ const AgentHub: React.FC = () => {
         const thread = (data as { thread_id?: unknown }).thread_id;
         persistAgUiThreadId(thread);
       }
-      const milkPlanNotification = milkPlanNotificationFromAgUiData(data);
-      if (milkPlanNotification) {
-        markMilkPlanSyncedNotification(milkPlanNotification);
+      const planNotification = planNotificationFromAgUiData(data);
+      if (planNotification) {
+        markPlanFeedbackNotification(planNotification);
       }
       const eventType = resolveEventTag(data);
       const rich = parseChatRichTextFromSseData(data);
@@ -2296,7 +2296,7 @@ const AgentHub: React.FC = () => {
       const maybeMarkMilkPlanNotification = (payload: ChatRichTextPayload) => {
         const notification = milkPlanNotificationFromRichText(payload);
         if (notification) {
-          markMilkPlanSyncedNotification(notification);
+          markPlanFeedbackNotification(notification);
         }
       };
       const stagePendingAgUiArtifactRichText = (
