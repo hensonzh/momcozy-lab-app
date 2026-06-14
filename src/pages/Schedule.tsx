@@ -33,10 +33,18 @@ import {
   setNativeBackgroundNotifyEnabled,
 } from "@/lib/mmcBackgroundNotify";
 import momcozyAgentAvatar from "@/assets/momcozy-agent.png";
+import {
+  consumePlanPageNotification,
+  milkPlanNotificationConfig,
+  usePlanPageNotification,
+} from "@/lib/planNotification";
 
 const skippedMarker = "已跳过";
 
 const REMINDER_PREF_KEY = "mmc_schedule_reminder_on";
+
+const nextDateKeys = (base: Date, count: number): string[] =>
+  Array.from({ length: count }, (_, i) => format(addDays(base, i + 1), "yyyy-MM-dd"));
 
 const lactationPhases = [
   { key: "colostrum", label: "初乳期", range: "0-3天", endDay: 3 },
@@ -446,6 +454,8 @@ const Schedule: React.FC = () => {
   const isSelectedToday = isSameDay(selectedDate, todayDate);
   const showBackToTodayFab = !isSelectedToday || weekOffset !== 0;
   const isSelectedPast = selectedDate.getTime() < todayDate.getTime();
+  const milkPlanPageNotification = usePlanPageNotification(milkPlanNotificationConfig);
+  const [milkPlanHighlightDates, setMilkPlanHighlightDates] = useState<string[]>([]);
 
   const [allTasks, setAllTasks] = useState<Record<string, ScheduleTask[]>>({});
   const [allRecords, setAllRecords] = useState<Record<string, PumpRecord[]>>({});
@@ -469,6 +479,22 @@ const Schedule: React.FC = () => {
 
   const [reminderOn, setReminderOn] = useState(true);
   const [reminderAlertOpen, setReminderAlertOpen] = useState(false);
+
+  useEffect(() => {
+    const payload = consumePlanPageNotification(milkPlanNotificationConfig);
+    if (!payload) return;
+
+    const todayKey = format(todayDate, "yyyy-MM-dd");
+    const dates = (payload.dates ?? [])
+      .filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(date))
+      .filter((date) => date > todayKey);
+    setMilkPlanHighlightDates(dates.length > 0 ? dates : nextDateKeys(todayDate, 3));
+
+    const timer = window.setTimeout(() => {
+      setMilkPlanHighlightDates([]);
+    }, 6500);
+    return () => window.clearTimeout(timer);
+  }, [milkPlanPageNotification, todayDate]);
 
   const persistSystemReminderOn = useCallback(async (on: boolean) => {
     setReminderOn(on);
@@ -1168,6 +1194,8 @@ const Schedule: React.FC = () => {
             {Array.from({ length: 7 }, (_, i) => addDays(todayDate, weekOffset * 7 + i - 3)).map((date) => {
               const isSelected = isSameDay(date, selectedDate);
               const isToday = isSameDay(date, todayDate);
+              const dateKey = format(date, "yyyy-MM-dd");
+              const hasMilkPlanHighlight = milkPlanHighlightDates.includes(dateKey);
               const dayLabel = ["日", "一", "二", "三", "四", "五", "六"][date.getDay()];
               return (
                 <button
@@ -1175,14 +1203,23 @@ const Schedule: React.FC = () => {
                   type="button"
                   onClick={() => setSelectedDate(date)}
                   className={cn(
-                    "flex flex-col items-center justify-center w-[36px] h-[44px] rounded-[12px] transition-all duration-300",
-                    isSelected ? "bg-primary text-primary-foreground shadow-md shadow-primary/30 scale-105" : "hover:bg-secondary/80 text-muted-foreground active:scale-95"
+                    "relative flex flex-col items-center justify-center w-[36px] h-[44px] rounded-[12px] transition-all duration-300",
+                    isSelected
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/30 scale-105"
+                      : hasMilkPlanHighlight
+                        ? "bg-[#eef8f4] text-[#477a68] ring-1 ring-[#79b8a4]/45 shadow-[0_6px_14px_rgba(78,135,112,0.14)]"
+                        : "hover:bg-secondary/80 text-muted-foreground active:scale-95"
                   )}
                 >
+                  {hasMilkPlanHighlight && !isSelected ? (
+                    <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-[#79b8a4] shadow-[0_0_0_4px_rgba(121,184,164,0.18)]">
+                      <span className="absolute inset-0 rounded-full bg-[#79b8a4] opacity-45 animate-ping" />
+                    </span>
+                  ) : null}
                   <span className={cn("text-[9px] font-extrabold mb-0.5 transition-colors", isSelected ? "text-primary-foreground/90" : "text-muted-foreground/60")}>
                     {isToday ? "今" : dayLabel}
                   </span>
-                  <span className={cn("text-[13px] font-black transition-colors", isSelected ? "text-primary-foreground" : isToday ? "text-primary" : "text-foreground")}>
+                  <span className={cn("text-[13px] font-black transition-colors", isSelected ? "text-primary-foreground" : isToday ? "text-primary" : hasMilkPlanHighlight ? "text-[#477a68]" : "text-foreground")}>
                     {format(date, "d")}
                   </span>
                 </button>

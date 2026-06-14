@@ -131,6 +131,11 @@ import {
   richTextPayloadHasBirthJourneyPlanCard,
 } from "@/lib/birthJourneyPlanNotification";
 import {
+  markMilkPlanSyncedNotification,
+  milkPlanNotificationFromAgUiData,
+  milkPlanNotificationFromRichText,
+} from "@/lib/planNotification";
+import {
   CALIBRATION_HUB_NOTICE_KEY,
   cardBg,
   DEFAULT_CHAT_USER_ID,
@@ -1849,6 +1854,10 @@ const AgentHub: React.FC = () => {
         const thread = (data as { thread_id?: unknown }).thread_id;
         persistAgUiThreadId(thread);
       }
+      const milkPlanNotification = milkPlanNotificationFromAgUiData(data);
+      if (milkPlanNotification) {
+        markMilkPlanSyncedNotification(milkPlanNotification);
+      }
       const eventType = resolveEventTag(data);
       const rich = parseChatRichTextFromSseData(data);
       const richHasAgUiArtifact = richTextPayloadHasAgUiArtifact(rich);
@@ -1876,8 +1885,15 @@ const AgentHub: React.FC = () => {
           markBirthJourneyPlanGeneratedNotification();
         }
       };
+      const maybeMarkMilkPlanNotification = (payload: ChatRichTextPayload) => {
+        const notification = milkPlanNotificationFromRichText(payload);
+        if (notification) {
+          markMilkPlanSyncedNotification(notification);
+        }
+      };
       const stagePendingAgUiArtifactRichText = (payload: ChatRichTextPayload, formLike: boolean) => {
         maybeMarkBirthJourneyNotification(payload);
+        maybeMarkMilkPlanNotification(payload);
         pendingRichTextRef.current = pendingRichTextRef.current
           ? mergePendingRichTextPayload(pendingRichTextRef.current, payload)
           : payload;
@@ -1926,6 +1942,7 @@ const AgentHub: React.FC = () => {
           stagePendingAgUiArtifactRichText(rich, richTextPayloadHasFormLikeAgUiArtifact(rich));
         } else {
           maybeMarkBirthJourneyNotification(rich);
+          maybeMarkMilkPlanNotification(rich);
           rememberRichTextForVoice(rich);
           setMessages((prev) =>
             prev.map((m) =>
