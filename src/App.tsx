@@ -3,7 +3,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import { consumePumpNotificationPending } from "@/lib/pumpSessionNotification";
 import { notifyPumpSessionOverlayRouteChanged } from "@/lib/pumpSessionOverlay";
@@ -25,11 +31,15 @@ import IbclcChat from "@/pages/IbclcChat";
 import HospitalBagCart from "@/pages/HospitalBagCart";
 import BackgroundNotifyOnboardingGate from "@/components/system/BackgroundNotifyOnboardingGate";
 import { markStatusGrowthHighlightPending } from "@/lib/statusGrowthHighlight";
-import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from "@/lib/agentHubChatMessages";
+import {
+  appendAgentHubAnalysisMessage,
+  appendAgentHubNotificationMessage,
+} from "@/lib/agentHubChatMessages";
 import { startDeviceReminderWebSocket } from "@/lib/deviceReminderWebSocket";
 import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
 import { HEALTH_ISSUE_NOTIFICATION_MESSAGE } from "@/lib/deviceReminderActions";
 import { queueMilkAnalysisReminderFollowup } from "@/lib/milkAnalysisReminderFollowup";
+import { personalizeNotificationText } from "@/lib/agentNotificationMessages";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 
 const queryClient = new QueryClient();
@@ -42,61 +52,73 @@ function PumpNotificationNavigateSync() {
     let alive = true;
 
     const tryConsume = (): void => {
-      void consumePumpNotificationPending().then(({ path, autoEndTeardown, notifyJson }) => {
-        if (!alive) return;
-        if (notifyJson) {
-          try {
-            const o = JSON.parse(notifyJson) as {
-              event?: string;
-              body?: string;
-              chatMessageId?: string;
-              analysis_card?: AgentAnalysisCard;
-              analysis_context?: AgentAnalysisCard;
-            };
-            const analysisKind =
-              o?.event === "summary"
-                ? "daily_summary"
-                : o?.event === "mom_baby"
-                  ? "mom_baby"
-                  : o?.event === "milk_analysis"
-                    ? "milk_analysis"
-                    : null;
-            if (analysisKind && typeof o.body === "string" && o.body.trim()) {
-              appendAgentHubAnalysisMessage(o.body, {
-                kind: analysisKind,
-                id: o.chatMessageId,
-                analysisCard: o.analysis_card,
-              });
-              if (analysisKind === "milk_analysis") {
-                queueMilkAnalysisReminderFollowup({
-                  chatMessageId: o.chatMessageId,
-                  message: o.body,
-                  analysisContext: o.analysis_context ?? o.analysis_card,
+      void consumePumpNotificationPending().then(
+        async ({ path, autoEndTeardown, notifyJson }) => {
+          if (!alive) return;
+          if (notifyJson) {
+            try {
+              const o = JSON.parse(notifyJson) as {
+                event?: string;
+                body?: string;
+                chatMessageId?: string;
+                analysis_card?: AgentAnalysisCard;
+                analysis_context?: AgentAnalysisCard;
+              };
+              const analysisKind =
+                o?.event === "summary"
+                  ? "daily_summary"
+                  : o?.event === "mom_baby"
+                    ? "mom_baby"
+                    : o?.event === "milk_analysis"
+                      ? "milk_analysis"
+                      : null;
+              if (analysisKind && typeof o.body === "string" && o.body.trim()) {
+                const body =
+                  analysisKind === "milk_analysis"
+                    ? await personalizeNotificationText(o.body)
+                    : o.body;
+                if (!alive) return;
+                appendAgentHubAnalysisMessage(body, {
+                  kind: analysisKind,
+                  id: o.chatMessageId,
+                  analysisCard: o.analysis_card,
+                  notification: analysisKind === "milk_analysis",
                 });
-                void recordMilkAnalysisContextEvent({
-                  message: o.body,
-                  analysisCard: o.analysis_context ?? o.analysis_card,
-                  chatMessageId: o.chatMessageId,
+                if (analysisKind === "milk_analysis") {
+                  queueMilkAnalysisReminderFollowup({
+                    chatMessageId: o.chatMessageId,
+                    message: body,
+                    analysisContext: o.analysis_context ?? o.analysis_card,
+                  });
+                  void recordMilkAnalysisContextEvent({
+                    message: body,
+                    analysisCard: o.analysis_context ?? o.analysis_card,
+                    chatMessageId: o.chatMessageId,
+                  });
+                }
+              } else if (o?.event === "grown") {
+                markStatusGrowthHighlightPending();
+              } else if (o?.event === "health_issue") {
+                const body = await personalizeNotificationText(
+                  o.body || HEALTH_ISSUE_NOTIFICATION_MESSAGE,
+                );
+                if (!alive) return;
+                appendAgentHubNotificationMessage(body, {
+                  kind: "health_issue",
+                  id: o.chatMessageId,
                 });
               }
-            } else if (o?.event === "grown") {
-              markStatusGrowthHighlightPending();
-            } else if (o?.event === "health_issue") {
-              appendAgentHubNotificationMessage(o.body || HEALTH_ISSUE_NOTIFICATION_MESSAGE, {
-                kind: "health_issue",
-                id: o.chatMessageId,
-              });
+            } catch {
+              /* ignore */
             }
-          } catch {
-            /* ignore */
           }
-        }
-        if (!path) return;
-        navigate(path);
-        if (autoEndTeardown && path === "/") {
-          void tryRunPumpAutoEndOffPumpTeardownOnce();
-        }
-      });
+          if (!path) return;
+          navigate(path);
+          if (autoEndTeardown && path === "/") {
+            void tryRunPumpAutoEndOffPumpTeardownOnce();
+          }
+        },
+      );
     };
 
     tryConsume();

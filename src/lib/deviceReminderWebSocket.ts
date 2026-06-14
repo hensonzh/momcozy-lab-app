@@ -6,7 +6,11 @@ import {
   type DeviceReminderActionKey,
 } from "@/lib/deviceReminderActions";
 import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
-import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from "@/lib/agentHubChatMessages";
+import {
+  appendAgentHubAnalysisMessage,
+  appendAgentHubNotificationMessage,
+} from "@/lib/agentHubChatMessages";
+import { personalizeNotificationText } from "@/lib/agentNotificationMessages";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
 import { createScopedConsole } from "@/lib/logger";
@@ -21,24 +25,37 @@ export type DeviceReminderWebSocketReminderType =
   | "baby_growth_update_reminder"
   | "health_issue_reminder";
 
-const DEVICE_REMINDER_WS_URL = "ws://192.168.204.127:8767/api/ws?token=websocket-token";
+const DEVICE_REMINDER_WS_URL =
+  "ws://192.168.204.127:8767/api/ws?token=websocket-token";
 const RECONNECT_DELAYS_MS = [1000, 3000, 5000, 10000, 15000];
 
 const log = createScopedConsole("DeviceReminderWebSocket");
 
 interface DeviceReminderWebSocketPlugin {
-  start(options: { wsUrl: string; apiBaseUrl: string; bearerToken: string; userId: string }): Promise<void>;
+  start(options: {
+    wsUrl: string;
+    apiBaseUrl: string;
+    bearerToken: string;
+    userId: string;
+  }): Promise<void>;
   stop(): Promise<void>;
   addListener(
     eventName: "deviceReminderHandled",
-    listenerFunc: (event: { reminderType?: string; actionKey?: string; notifyJson?: string }) => void,
+    listenerFunc: (event: {
+      reminderType?: string;
+      actionKey?: string;
+      notifyJson?: string;
+    }) => void,
   ): Promise<PluginListenerHandle>;
 }
 
 const NativeDeviceReminderWebSocket =
   registerPlugin<DeviceReminderWebSocketPlugin>("DeviceReminderWebSocket");
 
-const reminderTypeToActionKey: Record<DeviceReminderWebSocketReminderType, DeviceReminderActionKey> = {
+const reminderTypeToActionKey: Record<
+  DeviceReminderWebSocketReminderType,
+  DeviceReminderActionKey
+> = {
   task_reminder: "task_reminder",
   lactation_feeding_reminder: "mom_baby",
   daily_summary_reminder: "daily_summary",
@@ -48,7 +65,11 @@ const reminderTypeToActionKey: Record<DeviceReminderWebSocketReminderType, Devic
 };
 
 function envValue(key: keyof ImportMetaEnv): string {
-  return (typeof import.meta !== "undefined" && (import.meta.env[key] as string | undefined)?.trim()) || "";
+  return (
+    (typeof import.meta !== "undefined" &&
+      (import.meta.env[key] as string | undefined)?.trim()) ||
+    ""
+  );
 }
 
 function currentRuntimeUserId(): string {
@@ -70,7 +91,8 @@ function appendUserIdToWebSocketUrl(rawUrl: string, userId: string): string {
 }
 
 function handleNativeReminderHandled(event: { notifyJson?: string }): void {
-  const raw = typeof event.notifyJson === "string" ? event.notifyJson.trim() : "";
+  const raw =
+    typeof event.notifyJson === "string" ? event.notifyJson.trim() : "";
   if (!raw) return;
   try {
     const payload = JSON.parse(raw) as {
@@ -88,31 +110,47 @@ function handleNativeReminderHandled(event: { notifyJson?: string }): void {
           : payload.event === "milk_analysis"
             ? "milk_analysis"
             : null;
-    if (analysisKind && typeof payload.body === "string" && payload.body.trim()) {
-      appendAgentHubAnalysisMessage(payload.body, {
-        kind: analysisKind,
-        id: payload.chatMessageId,
-        analysisCard: payload.analysis_card,
-      });
-      if (analysisKind === "milk_analysis") {
-        queueMilkAnalysisReminderFollowup({
-          chatMessageId: payload.chatMessageId,
-          message: payload.body,
-          analysisContext: payload.analysis_context ?? payload.analysis_card,
+    if (
+      analysisKind &&
+      typeof payload.body === "string" &&
+      payload.body.trim()
+    ) {
+      void (async () => {
+        const body =
+          analysisKind === "milk_analysis"
+            ? await personalizeNotificationText(payload.body || "")
+            : payload.body || "";
+        appendAgentHubAnalysisMessage(body, {
+          kind: analysisKind,
+          id: payload.chatMessageId,
+          analysisCard: payload.analysis_card,
+          notification: analysisKind === "milk_analysis",
         });
-        void recordMilkAnalysisContextEvent({
-          message: payload.body,
-          analysisCard: payload.analysis_context ?? payload.analysis_card,
-          chatMessageId: payload.chatMessageId,
-        });
-      }
+        if (analysisKind === "milk_analysis") {
+          queueMilkAnalysisReminderFollowup({
+            chatMessageId: payload.chatMessageId,
+            message: body,
+            analysisContext: payload.analysis_context ?? payload.analysis_card,
+          });
+          void recordMilkAnalysisContextEvent({
+            message: body,
+            analysisCard: payload.analysis_context ?? payload.analysis_card,
+            chatMessageId: payload.chatMessageId,
+          });
+        }
+      })();
     } else if (payload.event === "grown") {
       markStatusGrowthHighlightPending();
     } else if (payload.event === "health_issue") {
-      appendAgentHubNotificationMessage(payload.body || HEALTH_ISSUE_NOTIFICATION_MESSAGE, {
-        kind: "health_issue",
-        id: payload.chatMessageId,
-      });
+      void (async () => {
+        const body = await personalizeNotificationText(
+          payload.body || HEALTH_ISSUE_NOTIFICATION_MESSAGE,
+        );
+        appendAgentHubNotificationMessage(body, {
+          kind: "health_issue",
+          id: payload.chatMessageId,
+        });
+      })();
     }
   } catch (error) {
     log.warn("parse native reminder notifyJson failed", error);
@@ -124,7 +162,10 @@ export function startDeviceReminderWebSocket(): () => void {
     let disposed = false;
     let listener: PluginListenerHandle | null = null;
 
-    void NativeDeviceReminderWebSocket.addListener("deviceReminderHandled", handleNativeReminderHandled)
+    void NativeDeviceReminderWebSocket.addListener(
+      "deviceReminderHandled",
+      handleNativeReminderHandled,
+    )
       .then((handle) => {
         if (disposed) {
           void handle.remove();
@@ -136,11 +177,16 @@ export function startDeviceReminderWebSocket(): () => void {
 
     const userId = currentRuntimeUserId();
     void NativeDeviceReminderWebSocket.start({
-      wsUrl: appendUserIdToWebSocketUrl(envValue("VITE_DEVICE_REMINDER_WS_URL") || DEVICE_REMINDER_WS_URL, userId),
+      wsUrl: appendUserIdToWebSocketUrl(
+        envValue("VITE_DEVICE_REMINDER_WS_URL") || DEVICE_REMINDER_WS_URL,
+        userId,
+      ),
       apiBaseUrl: envValue("VITE_API_BASE_URL"),
       bearerToken: envValue("VITE_API_TOKEN"),
       userId,
-    }).catch((error) => log.warn("start native websocket service failed", error));
+    }).catch((error) =>
+      log.warn("start native websocket service failed", error),
+    );
 
     return () => {
       disposed = true;
@@ -152,7 +198,8 @@ export function startDeviceReminderWebSocket(): () => void {
 }
 
 function startWebDeviceReminderWebSocket(): () => void {
-  if (typeof window === "undefined" || typeof WebSocket === "undefined") return () => {};
+  if (typeof window === "undefined" || typeof WebSocket === "undefined")
+    return () => {};
 
   let stopped = false;
   let ws: WebSocket | null = null;
@@ -168,7 +215,10 @@ function startWebDeviceReminderWebSocket(): () => void {
 
   const scheduleReconnect = (): void => {
     if (stopped || reconnectTimer != null) return;
-    const delay = RECONNECT_DELAYS_MS[Math.min(reconnectAttempt, RECONNECT_DELAYS_MS.length - 1)];
+    const delay =
+      RECONNECT_DELAYS_MS[
+        Math.min(reconnectAttempt, RECONNECT_DELAYS_MS.length - 1)
+      ];
     reconnectAttempt += 1;
     reconnectTimer = window.setTimeout(() => {
       reconnectTimer = null;
@@ -187,7 +237,11 @@ function startWebDeviceReminderWebSocket(): () => void {
     queue = queue
       .then(() => executeDeviceReminderAction(actionKey))
       .catch((error) => {
-        log.warn("execute reminder action failed", { reminderType, actionKey, error });
+        log.warn("execute reminder action failed", {
+          reminderType,
+          actionKey,
+          error,
+        });
       });
   };
 
@@ -195,7 +249,10 @@ function startWebDeviceReminderWebSocket(): () => void {
     if (stopped) return;
     try {
       ws = new WebSocket(
-        appendUserIdToWebSocketUrl(envValue("VITE_DEVICE_REMINDER_WS_URL") || DEVICE_REMINDER_WS_URL, currentRuntimeUserId()),
+        appendUserIdToWebSocketUrl(
+          envValue("VITE_DEVICE_REMINDER_WS_URL") || DEVICE_REMINDER_WS_URL,
+          currentRuntimeUserId(),
+        ),
       );
     } catch (error) {
       log.warn("create websocket failed", error);
@@ -227,7 +284,10 @@ function startWebDeviceReminderWebSocket(): () => void {
     ws.onclose = (event) => {
       if (ws && ws.readyState === WebSocket.CLOSED) ws = null;
       if (!stopped) {
-        log.warn("websocket closed", { code: event.code, reason: event.reason });
+        log.warn("websocket closed", {
+          code: event.code,
+          reason: event.reason,
+        });
         scheduleReconnect();
       }
     };
@@ -238,7 +298,11 @@ function startWebDeviceReminderWebSocket(): () => void {
   return () => {
     stopped = true;
     cleanupReconnectTimer();
-    if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) {
+    if (
+      ws &&
+      (ws.readyState === WebSocket.CONNECTING ||
+        ws.readyState === WebSocket.OPEN)
+    ) {
       ws.close(1000, "app teardown");
     }
     ws = null;
@@ -265,7 +329,9 @@ function parseJsonFrame(raw: string): unknown {
   return JSON.parse(payload);
 }
 
-function findReminderType(payload: unknown): DeviceReminderWebSocketReminderType | null {
+function findReminderType(
+  payload: unknown,
+): DeviceReminderWebSocketReminderType | null {
   if (Array.isArray(payload)) {
     for (const item of payload) {
       const reminderType = findReminderType(item);

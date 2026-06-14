@@ -10,17 +10,20 @@ describe("AgentHub artifact ordering wiring", () => {
   it("defers ag-ui artifacts and keeps later final text before artifacts", () => {
     expect(agentHubSource).toContain("deferAgUiArtifacts: true");
     expect(agentHubSource).toContain("onAgUiArtifactRichText");
-    expect(agentHubSource).toContain("appendTextRenderItemBeforeAgUiArtifacts(next.streamRenderItems, delta)");
+    expect(agentHubSource).toContain("streamRenderItems: appendTextRenderItemBeforeAgUiArtifacts(");
+    expect(agentHubSource).toContain("next.streamRenderItems");
+    expect(agentHubSource).toContain("delta");
     expect(agentHubSource).not.toContain("streamRenderItems: appendTextRenderItem(next.streamRenderItems, delta)");
   });
 
   it("adds extra separation between assistant text and ag-ui artifacts", () => {
     expect(agentHubSource).toContain('const AG_UI_ARTIFACT_AFTER_TEXT_CLASS = "mt-5"');
     expect(agentHubSource).toContain('const AG_UI_ARTIFACT_STACK_OFFSET_CLASS = "mt-3"');
-    expect(agentHubSource).toContain('agUiArtifactSpacingClass(itemHasAgUiArtifact, i > 0, "stack")');
-    expect(agentHubSource).toContain(
-      "agUiArtifactSpacingClass(richTextHasAgUiArtifactForMsg, Boolean(msg.content.trim()))",
-    );
+    expect(agentHubSource).toContain("agUiArtifactSpacingClass(");
+    expect(agentHubSource).toContain("itemHasAgUiArtifact");
+    expect(agentHubSource).toContain('"stack"');
+    expect(agentHubSource).toContain("richTextHasAgUiArtifactForMsg");
+    expect(agentHubSource).toContain("Boolean(msg.content.trim())");
   });
 
   it("moves the visible chat window to the latest page after external chat sync", () => {
@@ -49,7 +52,8 @@ describe("AgentHub artifact ordering wiring", () => {
   it("renders milk analysis reminder notifications like regular assistant text bubbles", () => {
     expect(agentHubSource).toContain("isPlainMilkAnalysisReminder");
     expect(agentHubSource).toContain('msg.id.startsWith("analysis-milk_analysis-")');
-    expect(agentHubSource).toContain('msg.chatStreamContext === "main" || isPlainMilkAnalysisReminder');
+    expect(agentHubSource).toContain('msg.chatStreamContext === "main"');
+    expect(agentHubSource).toContain("isPlainMilkAnalysisReminder");
   });
 
   it("keeps voice transcription in the input until the user sends manually", () => {
@@ -62,14 +66,22 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain("const isColdStart = inMemory.length === 0");
     expect(agentHubSource).toContain("clearPersistedAgentConversationId()");
     expect(agentHubSource).toContain("clearPersistedAgUiThreadId()");
-    expect(agentHubSource).toContain("const merged = isColdStart ? [createNewConversationGreetingMessage()] : inMemory");
+    expect(agentHubSource).toContain("const merged = isColdStart ? [] : inMemory");
+  });
+
+  it("plays notification voice before hidden milk analysis followup starts", () => {
+    expect(agentHubSource).toContain("notificationVoiceQueueRunningRef");
+    expect(agentHubSource).toContain("autoVoiceOnAppend");
+    expect(agentHubSource).toContain("playNotificationMessageVoice");
+    expect(agentHubSource).toContain("window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0)");
   });
 
   it("consumes route prefill state into the bottom input once", () => {
     expect(agentHubSource).toContain("consumedAgentPrefillKeyRef");
     expect(agentHubSource).toContain("state?.agentPrefill");
     expect(agentHubSource).toContain("setInput(agentPrefill)");
-    expect(agentHubSource).toContain("replace: true, state: null");
+    expect(agentHubSource).toContain("replace: true");
+    expect(agentHubSource).toContain("state: null");
   });
 
   it("marks status notification when a birth journey plan artifact is generated", () => {

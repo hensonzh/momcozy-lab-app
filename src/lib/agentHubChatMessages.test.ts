@@ -1,7 +1,15 @@
 import { afterEach, describe, expect, it } from "vitest";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
-import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from "@/lib/agentHubChatMessages";
-import { buildMilkAnalysisReminderFollowupPrompt, consumeMilkAnalysisReminderFollowup, queueMilkAnalysisReminderFollowup } from "@/lib/milkAnalysisReminderFollowup";
+import {
+  appendAgentHubAnalysisMessage,
+  appendAgentHubNotificationMessage,
+} from "@/lib/agentHubChatMessages";
+import { buildPersonalizedNotificationText } from "@/lib/agentNotificationMessages";
+import {
+  buildMilkAnalysisReminderFollowupPrompt,
+  consumeMilkAnalysisReminderFollowup,
+  queueMilkAnalysisReminderFollowup,
+} from "@/lib/milkAnalysisReminderFollowup";
 import { chatStore } from "@/lib/chatStore";
 
 describe("appendAgentHubAnalysisMessage", () => {
@@ -11,10 +19,14 @@ describe("appendAgentHubAnalysisMessage", () => {
   });
 
   it("appends a plain message when no analysis card is provided", () => {
-    const id = appendAgentHubAnalysisMessage("嗨，我注意到你近期奶量偏低，可以和你聊聊吗？", {
-      kind: "milk_analysis",
-      id: "milk-reminder-1",
-    });
+    const id = appendAgentHubAnalysisMessage(
+      "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
+      {
+        kind: "milk_analysis",
+        id: "milk-reminder-1",
+        notification: true,
+      },
+    );
 
     expect(id).toBe("milk-reminder-1");
     expect(chatStore.get().messages).toHaveLength(1);
@@ -23,6 +35,9 @@ describe("appendAgentHubAnalysisMessage", () => {
       role: "mai",
       content: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
       chatStreamContext: "main",
+      messageTone: "notification",
+      notificationKind: "milk_analysis",
+      autoVoiceOnAppend: true,
     });
     expect(chatStore.get().messages[0].cardType).toBeUndefined();
     expect(chatStore.get().messages[0].cardData).toBeUndefined();
@@ -53,10 +68,13 @@ describe("appendAgentHubAnalysisMessage", () => {
   });
 
   it("renders health issue notifications as main assistant text bubbles", () => {
-    const id = appendAgentHubNotificationMessage("嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗", {
-      kind: "health_issue",
-      id: "notification-health_issue-1",
-    });
+    const id = appendAgentHubNotificationMessage(
+      "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗",
+      {
+        kind: "health_issue",
+        id: "notification-health_issue-1",
+      },
+    );
 
     expect(id).toBe("notification-health_issue-1");
     expect(chatStore.get().messages[0]).toMatchObject({
@@ -64,9 +82,38 @@ describe("appendAgentHubAnalysisMessage", () => {
       role: "mai",
       content: "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗",
       chatStreamContext: "main",
+      messageTone: "notification",
+      notificationKind: "health_issue",
+      autoVoiceOnAppend: true,
     });
     expect(chatStore.get().messages[0].cardType).toBeUndefined();
     expect(chatStore.get().messages[0].cardData).toBeUndefined();
+  });
+});
+
+describe("buildPersonalizedNotificationText", () => {
+  it("inserts the display name after leading hi", () => {
+    expect(
+      buildPersonalizedNotificationText(
+        "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗",
+        "小雨",
+      ),
+    ).toBe("嗨，小雨，我发现你的乳汁电导率有点异常，可以和你聊聊吗");
+  });
+
+  it("keeps messages unchanged without a leading hi or name", () => {
+    expect(
+      buildPersonalizedNotificationText(
+        "我发现你的乳汁电导率有点异常，可以和你聊聊吗",
+        "小雨",
+      ),
+    ).toBe("我发现你的乳汁电导率有点异常，可以和你聊聊吗");
+    expect(
+      buildPersonalizedNotificationText(
+        "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗",
+        "",
+      ),
+    ).toBe("嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗");
   });
 });
 
@@ -84,7 +131,9 @@ describe("milk analysis reminder followup", () => {
       sections: [
         {
           title: "数据统计",
-          metrics: [{ label: "近7天总量", value: "3600 ml", detail: "低于参考" }],
+          metrics: [
+            { label: "近7天总量", value: "3600 ml", detail: "低于参考" },
+          ],
         },
       ],
     };

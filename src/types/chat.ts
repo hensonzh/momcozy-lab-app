@@ -45,7 +45,9 @@ export interface ChatStreamRenderItemRich {
   payload: ChatRichTextPayload;
 }
 
-export type ChatStreamRenderItem = ChatStreamRenderItemText | ChatStreamRenderItemRich;
+export type ChatStreamRenderItem =
+  | ChatStreamRenderItemText
+  | ChatStreamRenderItemRich;
 
 export interface ChatMessageImageAttachment {
   type: "image";
@@ -61,6 +63,12 @@ export interface ChatMessage {
   role: "mai" | "user";
   content: string;
   timestamp: string;
+  /** 展示语气：通知类消息用于更醒目的视觉与自动播报队列。 */
+  messageTone?: "normal" | "notification";
+  /** 通知类型，用于区分后台奶量分析、健康问题等来源。 */
+  notificationKind?: "milk_analysis" | "health_issue";
+  /** 消息被追加到对话后是否需要自动播报一次。 */
+  autoVoiceOnAppend?: boolean;
   cardType?:
     | "report"
     | "data"
