@@ -41,6 +41,18 @@ import { HEALTH_ISSUE_NOTIFICATION_MESSAGE } from "@/lib/deviceReminderActions";
 import { queueMilkAnalysisReminderFollowup } from "@/lib/milkAnalysisReminderFollowup";
 import { personalizeNotificationText } from "@/lib/agentNotificationMessages";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
+import {
+  AGENT_NOTIFICATION_VOICE_EVENT,
+  dispatchAgentNotificationVoiceIdle,
+  setAgentNotificationVoicePlaying,
+} from "@/lib/agentNotificationVoice";
+import type { ChatMessage } from "@/types/chat";
+import {
+  buildSpeakableTextForVoice,
+  CHAT_BUBBLE_VOICE_MAX_CHARS,
+} from "@/lib/chatBubbleTtsPlayback";
+import { playFocusPlainTextVoice } from "@/lib/focusVoiceTtsPlayback";
+import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 
 const queryClient = new QueryClient();
 
@@ -160,6 +172,69 @@ function DeviceReminderWebSocketSync() {
   return null;
 }
 
+function AgentNotificationVoiceSync() {
+  useEffect(() => {
+    const queue: ChatMessage[] = [];
+    const playedIds = new Set<string>();
+    let disposed = false;
+    let running = false;
+
+    const drain = async (): Promise<void> => {
+      if (running) return;
+      running = true;
+      setAgentNotificationVoicePlaying(true);
+      try {
+        while (!disposed && queue.length > 0) {
+          const message = queue.shift();
+          if (!message) continue;
+          const speakable = buildSpeakableTextForVoice(message)
+            .trim()
+            .slice(0, CHAT_BUBBLE_VOICE_MAX_CHARS);
+          if (!speakable) continue;
+          try {
+            await playFocusPlainTextVoice({
+              userId: DEFAULT_CHAT_USER_ID,
+              text: speakable,
+              onSubtitle: () => {},
+              syncSubtitle: false,
+            });
+          } catch {
+            // 通知已写入对话，语音失败不影响后续自动接续。
+          }
+        }
+      } finally {
+        running = false;
+        setAgentNotificationVoicePlaying(false);
+        dispatchAgentNotificationVoiceIdle();
+      }
+    };
+
+    const onNotificationVoice = (event: Event): void => {
+      const message = (event as CustomEvent<ChatMessage>).detail;
+      if (!message?.id || playedIds.has(message.id)) return;
+      playedIds.add(message.id);
+      queue.push(message);
+      void drain();
+    };
+
+    window.addEventListener(
+      AGENT_NOTIFICATION_VOICE_EVENT,
+      onNotificationVoice,
+    );
+    return () => {
+      disposed = true;
+      queue.length = 0;
+      setAgentNotificationVoicePlaying(false);
+      window.removeEventListener(
+        AGENT_NOTIFICATION_VOICE_EVENT,
+        onNotificationVoice,
+      );
+    };
+  }, []);
+
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -169,6 +244,7 @@ const App = () => (
         <PumpNotificationNavigateSync />
         <PumpOverlayRouteSync />
         <DeviceReminderWebSocketSync />
+        <AgentNotificationVoiceSync />
         <BackgroundNotifyOnboardingGate />
         <AppLayout>
           <Routes>
