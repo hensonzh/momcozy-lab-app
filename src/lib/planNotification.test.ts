@@ -4,6 +4,7 @@ import {
   markMilkPlanSyncedNotification,
   milkPlanNotificationConfig,
   milkPlanNotificationFromAgUiData,
+  planNotificationFromAgUiData,
   transferPlanNotificationToPage,
 } from "./planNotification";
 
@@ -61,6 +62,40 @@ describe("plan notification state", () => {
     });
 
     expect(notification?.dates).toEqual(["2026-06-15", "2026-06-16"]);
+  });
+
+  it("extracts schedule update notifications from generic plan feedback", () => {
+    const notification = planNotificationFromAgUiData({
+      ok: true,
+      tool_name: "milk_calendar_mutate",
+      plan_feedback: {
+        kind: "milk_plan",
+        target: "schedule",
+        reason: "rescheduled",
+        label: "奶量日程已重排",
+        dates: ["2026-06-15", "2026-06-16"],
+        summary: "已根据会议安排调整",
+      },
+    });
+
+    expect(notification).toEqual({
+      kind: "milk_plan",
+      target: "schedule",
+      reason: "rescheduled",
+      label: "奶量日程已重排",
+      dates: ["2026-06-15", "2026-06-16"],
+      summary: "已根据会议安排调整",
+    });
+  });
+
+  it("does not create notifications for preview-only plan tools", () => {
+    expect(
+      planNotificationFromAgUiData({
+        ok: true,
+        tool_name: "milk_calendar_reschedule_preview",
+        plan_feedback: null,
+      }),
+    ).toBeNull();
   });
 
   it("moves milk plan notification from nav to schedule page payload", () => {

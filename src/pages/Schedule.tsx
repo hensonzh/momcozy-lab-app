@@ -488,7 +488,11 @@ const Schedule: React.FC = () => {
     const dates = (payload.dates ?? [])
       .filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(date))
       .filter((date) => date > todayKey);
-    setMilkPlanHighlightDates(dates.length > 0 ? dates : nextDateKeys(todayDate, 3));
+    const fallbackDates =
+      payload.reason === "created" || payload.reason === "synced" || !payload.reason
+        ? nextDateKeys(todayDate, 3)
+        : [];
+    setMilkPlanHighlightDates(dates.length > 0 ? dates : fallbackDates);
 
     const timer = window.setTimeout(() => {
       setMilkPlanHighlightDates([]);

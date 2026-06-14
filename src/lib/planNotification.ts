@@ -3,14 +3,17 @@ import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
 
 export type PlanNotificationKind = "birth_journey_plan" | "milk_plan";
 export type PlanNotificationTarget = "status" | "schedule";
+export type PlanNotificationReason = "created" | "synced" | "updated" | "rescheduled" | "deleted";
 
 export interface PlanNotificationPayload {
   kind: PlanNotificationKind;
   target: PlanNotificationTarget;
+  reason?: PlanNotificationReason;
   label: string;
   planId?: number;
   planType?: string;
   dates?: string[];
+  summary?: string;
 }
 
 interface PlanNotificationConfig {
@@ -191,6 +194,32 @@ function datesFromDateList(value: unknown): string[] {
   return uniqueDates(value);
 }
 
+function normalizedReason(value: unknown): PlanNotificationReason | undefined {
+  const reason = asString(value);
+  if (["created", "synced", "updated", "rescheduled", "deleted"].includes(reason)) {
+    return reason as PlanNotificationReason;
+  }
+  return undefined;
+}
+
+function planNotificationFromFeedback(value: unknown): PlanNotificationPayload | null {
+  const feedback = asRecord(value);
+  if (!feedback) return null;
+  const kind = asString(feedback.kind);
+  const target = asString(feedback.target);
+  if (kind !== "milk_plan" || target !== "schedule") return null;
+  return {
+    kind,
+    target,
+    reason: normalizedReason(feedback.reason),
+    label: asString(feedback.label) || "计划已更新",
+    planId: asNumber(feedback.plan_id ?? feedback.planId),
+    planType: asString(feedback.plan_type ?? feedback.planType) || undefined,
+    dates: datesFromDateList(feedback.dates),
+    summary: asString(feedback.summary) || undefined,
+  };
+}
+
 function milkPlanCardPayloadFromCard(card: Record<string, unknown>): PlanNotificationPayload | null {
   if (asString(card.card_type) !== "milk_plan_card") return null;
   const cardJson = asRecord(card.card_json);
@@ -232,10 +261,12 @@ export function milkPlanNotificationFromRichText(payload?: ChatRichTextPayload |
   return null;
 }
 
-export function milkPlanNotificationFromAgUiData(data: unknown): PlanNotificationPayload | null {
+export function planNotificationFromAgUiData(data: unknown): PlanNotificationPayload | null {
   const event = parseRecordPayload(data);
   if (!event) return null;
   const payload = parseRecordPayload(event.content) ?? event;
+  const feedback = planNotificationFromFeedback(payload.plan_feedback);
+  if (feedback) return feedback;
   if (normalizeToolName(payload.tool_name ?? payload.toolName) !== "milk_plan_mutate") return null;
   if (payload.ok !== true) return null;
   const card = asRecord(payload.card);
@@ -253,6 +284,14 @@ export function milkPlanNotificationFromAgUiData(data: unknown): PlanNotificatio
   };
 }
 
-export function markMilkPlanSyncedNotification(payload: PlanNotificationPayload): void {
+export function milkPlanNotificationFromAgUiData(data: unknown): PlanNotificationPayload | null {
+  return planNotificationFromAgUiData(data);
+}
+
+export function markPlanFeedbackNotification(payload: PlanNotificationPayload): void {
   markPlanNotification(milkPlanNotificationConfig, payload);
+}
+
+export function markMilkPlanSyncedNotification(payload: PlanNotificationPayload): void {
+  markPlanFeedbackNotification(payload);
 }
