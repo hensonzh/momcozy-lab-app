@@ -404,10 +404,18 @@ function maybeNotifyPregnancyDiaryChanged(parsed: Record<string, unknown> | null
   const toolName = normalizeToolName(parsed.tool_name);
   if (toolName !== "pregnancy_diary_manage") return;
   const status = coalesceString(parsed.status);
-  if (!["diary_entry_created", "diary_entry_updated", "diary_entry_deleted"].includes(status)) return;
+  if (
+    ![
+      "diary_entry_created",
+      "diary_entry_updated",
+      "diary_entry_deleted",
+      "health_consultation_recorded",
+      "health_consultation_updated",
+    ].includes(status)
+  ) return;
   if (parsed.side_effect_performed === false) return;
-  if (status === "diary_entry_created") notifyPregnancyDiaryChanged("created");
-  else if (status === "diary_entry_updated") notifyPregnancyDiaryChanged("updated");
+  if (status === "diary_entry_created" || status === "health_consultation_recorded") notifyPregnancyDiaryChanged("created");
+  else if (status === "diary_entry_updated" || status === "health_consultation_updated") notifyPregnancyDiaryChanged("updated");
   else notifyPregnancyDiaryChanged("deleted");
 }
 
@@ -658,6 +666,7 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
     if (status === "diary_entry_deleted") return { title: "我已经删除这条孕期日记啦" };
     if (status === "diary_entry_created") return { title: "我已经记录好孕期日记啦" };
     if (status === "diary_entry_updated") return { title: "我已经修改好孕期日记啦" };
+    if (status === "health_consultation_recorded" || status === "health_consultation_updated") return { title: "我已经记录到孕期日记啦" };
     if (status === "diary_list_read" || status === "diary_entry_read") return { title: "我看好孕期日记啦" };
     return { title: "孕期日记这一步处理好了" };
   }

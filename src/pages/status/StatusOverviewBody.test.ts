@@ -12,6 +12,14 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain('| "birth-journey-detail"');
     expect(statusSource).toContain('| "pregnancy-diary-detail"');
     expect(statusSource).toContain("queryCarePlanList");
+    expect(statusSource).toContain("queryUserProfile");
+    expect(statusSource).toContain('type MaternalCareStage = "pregnancy" | "postpartum"');
+    expect(statusSource).toContain("formatPregnancyStageSubtitle");
+    expect(statusSource).toContain("const isPregnancyStage = maternalCareStage === \"pregnancy\";");
+    expect(statusSource).toContain("const isPostpartumStage = maternalCareStage !== \"pregnancy\";");
+    expect(statusSource).toContain("宝宝孕育中");
+    expect(statusSource).toContain("disabled={disabled}");
+    expect(statusSource).toContain("cursor-not-allowed");
     expect(statusSource).toContain("deleteCarePlanArtifact");
     expect(statusSource).toContain("subscribeBirthJourneyPlanDeleted");
     expect(statusSource).toContain('plan.plan_type === "birth_journey"');
@@ -119,7 +127,7 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain('notificationLabel={birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? "计划已生成" : undefined}');
     expect(statusSource).toContain("notificationActive={Boolean(birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification)}");
     expect(statusSource).toContain("status-module-card-notice");
-    expect(statusSource).toContain("bg-gradient-to-r from-transparent via-[#e7dcd6] to-transparent");
+    expect(statusSource).not.toContain("bg-gradient-to-r from-transparent via-[#e7dcd6] to-transparent");
     expect(statusSource.indexOf('title="生产全过程计划"')).toBeLessThan(statusSource.indexOf('title="孕期日记"'));
     expect(statusSource.indexOf('title="孕期日记"')).toBeLessThan(statusSource.indexOf('title="母乳产出"'));
     expect(statusSource.indexOf('title="母乳产出"')).toBeLessThan(statusSource.indexOf('title="乳房健康"'));

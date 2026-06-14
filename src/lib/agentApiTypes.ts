@@ -580,8 +580,23 @@ export interface PregnancyDiaryEntry {
   nutrition_note: string;
   content: string;
   attachments: Record<string, unknown>[];
+  health_notes: PregnancyDiaryHealthNote[];
   created_at: string;
   updated_at: string;
+}
+
+export interface PregnancyDiaryHealthNote {
+  note_id: number;
+  entry_id: number;
+  user_id: string;
+  entry_date: string;
+  topic: string;
+  user_report: string;
+  asked_questions: string[];
+  known_answers: string[];
+  suggestion_summary: string;
+  follow_up: string;
+  created_at: string;
 }
 
 export interface PregnancyDiaryListData {

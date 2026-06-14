@@ -1075,17 +1075,41 @@ describe("applyAgUiStreamSideEffects", () => {
     ]);
 
     expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
-    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("日记已修改");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("记录更新");
     expect(updated.agentToolCalls?.[0]).toMatchObject({
       name: "pregnancy_diary_manage",
       title: "我已经修改好孕期日记啦",
+      state: "completed",
+    });
+
+    localStorage.clear();
+
+    const healthUpdated = applyEvents([
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_update_health_diary",
+        tool_call_name: "pregnancy_diary_manage",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "pregnancy_diary_manage",
+          status: "health_consultation_updated",
+          side_effect_performed: true,
+        }),
+      },
+    ]);
+
+    expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("记录更新");
+    expect(healthUpdated.agentToolCalls?.[0]).toMatchObject({
+      name: "pregnancy_diary_manage",
+      title: "我已经记录到孕期日记啦",
       state: "completed",
     });
   });
 
   it("clears pregnancy diary notifications when the diary is deleted through the agent", () => {
     localStorage.setItem("mmc_pregnancy_diary_nav_pending", "1");
-    localStorage.setItem("mmc_pregnancy_diary_card_label", "日记已修改");
+    localStorage.setItem("mmc_pregnancy_diary_card_label", "记录更新");
 
     applyEvents([
       {

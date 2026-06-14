@@ -9,7 +9,7 @@ const CARD_LABEL_KEY = "mmc_pregnancy_diary_card_label";
 export type PregnancyDiaryChangedAction = "created" | "updated" | "deleted" | "changed";
 
 function notificationLabelForAction(action: PregnancyDiaryChangedAction): string {
-  if (action === "updated") return "日记已修改";
+  if (action === "updated") return "记录更新";
   return "日记已记录";
 }
 
