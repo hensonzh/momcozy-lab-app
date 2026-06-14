@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -82,7 +82,11 @@
     /* Gradients */
     --gradient-mai: linear-gradient(135deg, hsl(346 29% 52%), hsl(346 32% 42%));
     --gradient-warm: linear-gradient(180deg, hsl(23 50% 97%), hsl(348 31% 94%));
-    --gradient-berry: linear-gradient(135deg, hsl(348 31% 90%), hsl(346 38% 68%));
+    --gradient-berry: linear-gradient(
+      135deg,
+      hsl(348 31% 90%),
+      hsl(346 38% 68%)
+    );
   }
 
   .dark {
@@ -123,7 +127,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Quicksand', 'Noto Sans SC', sans-serif;
+    font-family: "Quicksand", "Noto Sans SC", sans-serif;
     font-weight: 400;
   }
 }
@@ -131,9 +135,17 @@
 /* Mai wool-felt texture */
 @layer utilities {
   .felt-texture {
-    background-image: 
-      radial-gradient(ellipse at 20% 30%, hsl(var(--mai-blush) / 0.3) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, hsl(var(--mai-warm) / 0.2) 0%, transparent 50%);
+    background-image:
+      radial-gradient(
+        ellipse at 20% 30%,
+        hsl(var(--mai-blush) / 0.3) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at 80% 70%,
+        hsl(var(--mai-warm) / 0.2) 0%,
+        transparent 50%
+      );
     filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='felt'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3C/svg%3E#felt");
   }
 
@@ -172,8 +184,12 @@
     position: absolute;
     inset: -5px;
     border-radius: 999px;
-    background:
-      radial-gradient(circle, rgba(184, 112, 135, 0.2) 0%, rgba(184, 112, 135, 0.1) 48%, transparent 72%);
+    background: radial-gradient(
+      circle,
+      rgba(184, 112, 135, 0.2) 0%,
+      rgba(184, 112, 135, 0.1) 48%,
+      transparent 72%
+    );
     opacity: 0.68;
     transform: scale(0.92);
     animation: agent-hub-avatar-halo 1.55s ease-out infinite;
@@ -182,13 +198,15 @@
   .agent-hub-assistant-avatar-thinking > img {
     transform-origin: center;
     will-change: transform;
-    animation: agent-hub-avatar-breathe 1.55s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    animation: agent-hub-avatar-breathe 1.55s cubic-bezier(0.16, 1, 0.3, 1)
+      infinite;
   }
 
   .status-module-card-notice {
     transform-origin: center;
     will-change: transform, box-shadow;
-    animation: status-module-card-notice-breathe 1.85s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    animation: status-module-card-notice-breathe 1.85s
+      cubic-bezier(0.16, 1, 0.3, 1) infinite;
   }
 
   .status-module-card-notice::before {
@@ -336,7 +354,11 @@
   overflow: hidden;
   border-color: #eadbe2;
   background:
-    radial-gradient(circle at 98% 0%, rgba(255, 239, 220, 0.6) 0%, rgba(255, 239, 220, 0) 28%),
+    radial-gradient(
+      circle at 98% 0%,
+      rgba(255, 239, 220, 0.6) 0%,
+      rgba(255, 239, 220, 0) 28%
+    ),
     linear-gradient(145deg, #fffafd 0%, #f8fcfb 56%, #fffaf2 100%);
   box-shadow: none;
 }
@@ -345,8 +367,16 @@
   overflow: hidden;
   border-color: #d7e5e1;
   background:
-    radial-gradient(circle at 96% 0%, rgba(242, 224, 231, 0.55) 0%, rgba(242, 224, 231, 0) 30%),
-    radial-gradient(circle at 0% 12%, rgba(218, 242, 236, 0.7) 0%, rgba(218, 242, 236, 0) 34%),
+    radial-gradient(
+      circle at 96% 0%,
+      rgba(242, 224, 231, 0.55) 0%,
+      rgba(242, 224, 231, 0) 30%
+    ),
+    radial-gradient(
+      circle at 0% 12%,
+      rgba(218, 242, 236, 0.7) 0%,
+      rgba(218, 242, 236, 0) 34%
+    ),
     linear-gradient(145deg, #fffdfd 0%, #f8fcfb 54%, #fffaf4 100%);
   color: #261c24;
   box-shadow: none;
@@ -356,8 +386,16 @@
   overflow: hidden;
   border-color: rgba(232, 196, 207, 0.92);
   background:
-    radial-gradient(circle at 100% 0%, rgba(255, 235, 214, 0.52) 0%, rgba(255, 235, 214, 0) 34%),
-    radial-gradient(circle at 0% 10%, rgba(224, 243, 239, 0.68) 0%, rgba(224, 243, 239, 0) 32%),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255, 235, 214, 0.52) 0%,
+      rgba(255, 235, 214, 0) 34%
+    ),
+    radial-gradient(
+      circle at 0% 10%,
+      rgba(224, 243, 239, 0.68) 0%,
+      rgba(224, 243, 239, 0) 32%
+    ),
     linear-gradient(145deg, #fffdfd 0%, #fffdf8 58%, #f8fffc 100%);
   color: #3f2732;
   box-shadow: none;
@@ -386,16 +424,24 @@
   min-height: 64px;
   padding: 16px 14px 13px;
   border-bottom-color: rgba(232, 196, 207, 0.72);
-  background:
-    linear-gradient(135deg, rgba(255, 238, 244, 0.94) 0%, rgba(255, 247, 237, 0.88) 62%, rgba(238, 250, 247, 0.9) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 238, 244, 0.94) 0%,
+    rgba(255, 247, 237, 0.88) 62%,
+    rgba(238, 250, 247, 0.9) 100%
+  );
 }
 
 .agent-card-hospital_bag_card .agent-card-header {
   margin: -14px -14px 0;
   padding: 16px 14px 14px;
   border-bottom-color: rgba(184, 102, 123, 0.18);
-  background:
-    linear-gradient(135deg, rgba(255, 235, 241, 0.86) 0%, rgba(232, 249, 246, 0.72) 56%, rgba(255, 241, 218, 0.78) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 235, 241, 0.86) 0%,
+    rgba(232, 249, 246, 0.72) 56%,
+    rgba(255, 241, 218, 0.78) 100%
+  );
 }
 
 .agent-card-birth_plan_card .agent-card-header {
@@ -403,8 +449,12 @@
   min-height: 64px;
   padding: 16px 14px 13px;
   border-bottom-color: rgba(83, 126, 119, 0.18);
-  background:
-    linear-gradient(135deg, rgba(238, 252, 247, 0.9) 0%, rgba(255, 243, 247, 0.78) 54%, rgba(255, 247, 231, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(238, 252, 247, 0.9) 0%,
+    rgba(255, 243, 247, 0.78) 54%,
+    rgba(255, 247, 231, 0.8) 100%
+  );
 }
 
 .agent-card-hospital_bag_card .agent-card-header::before {
@@ -510,10 +560,27 @@
   overflow: hidden;
   border-color: rgba(232, 201, 206, 0.92);
   background:
-    radial-gradient(circle at 100% 0%, rgba(255, 223, 210, 0.56) 0%, rgba(255, 223, 210, 0) 32%),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255, 223, 210, 0.56) 0%,
+      rgba(255, 223, 210, 0) 32%
+    ),
     linear-gradient(145deg, #fff9f2 0%, #fff7f8 48%, #f8fbf4 100%);
   color: #35212c;
   box-shadow: var(--mmc-shadow-card);
+}
+
+.agent-card-notification {
+  color: #b64b4b;
+}
+
+.agent-card-notification .analysis-card-header h2,
+.agent-card-notification .analysis-section h3,
+.agent-card-notification .analysis-section p,
+.agent-card-notification .analysis-metric-grid small,
+.agent-card-notification .analysis-metric-grid strong,
+.agent-card-notification .analysis-metric-grid em {
+  color: #b64b4b;
 }
 
 .analysis-card-header {
@@ -759,8 +826,11 @@
 
 .birth-plan-priority-panel {
   border-color: rgba(216, 107, 145, 0.3);
-  background:
-    linear-gradient(135deg, rgba(255, 246, 249, 0.86) 0%, rgba(255, 255, 255, 0.72) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 246, 249, 0.86) 0%,
+    rgba(255, 255, 255, 0.72) 100%
+  );
 }
 
 .birth-plan-note-panel h3,
@@ -1464,7 +1534,11 @@
   bottom: -10px;
   width: 2px;
   border-radius: 999px;
-  background: linear-gradient(180deg, rgba(216, 107, 145, 0.28), rgba(44, 155, 146, 0.18));
+  background: linear-gradient(
+    180deg,
+    rgba(216, 107, 145, 0.28),
+    rgba(44, 155, 146, 0.18)
+  );
 }
 
 .birth-journey-phase-marker {
@@ -1534,7 +1608,11 @@
 
 .birth-journey-phase.is-current .birth-journey-phase-body {
   border-color: rgba(44, 155, 146, 0.32);
-  background: linear-gradient(145deg, rgba(246, 255, 252, 0.9) 0%, rgba(255, 251, 253, 0.78) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(246, 255, 252, 0.9) 0%,
+    rgba(255, 251, 253, 0.78) 100%
+  );
   padding-top: 18px;
 }
 
@@ -1775,40 +1853,82 @@
 
 /* Calm: gentle breathing scale */
 @keyframes mai-breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
 }
-.mai-anim-breathe { animation: mai-breathe 3s ease-in-out infinite; }
+.mai-anim-breathe {
+  animation: mai-breathe 3s ease-in-out infinite;
+}
 
 /* Happy: playful bounce */
 @keyframes mai-bounce {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-3px) rotate(1.5deg); }
-  50% { transform: translateY(0) rotate(0deg); }
-  75% { transform: translateY(-2px) rotate(-1deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(1.5deg);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-2px) rotate(-1deg);
+  }
 }
-.mai-anim-bounce { animation: mai-bounce 1.8s ease-in-out infinite; }
+.mai-anim-bounce {
+  animation: mai-bounce 1.8s ease-in-out infinite;
+}
 
 /* Encourage: confident nod */
 @keyframes mai-nod {
-  0%, 100% { transform: translateY(0) scale(1); }
-  30% { transform: translateY(2px) scale(1.02); }
-  50% { transform: translateY(-1px) scale(1); }
-  70% { transform: translateY(1px) scale(1.01); }
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    transform: translateY(2px) scale(1.02);
+  }
+  50% {
+    transform: translateY(-1px) scale(1);
+  }
+  70% {
+    transform: translateY(1px) scale(1.01);
+  }
 }
-.mai-anim-nod { animation: mai-nod 2.2s ease-in-out infinite; }
+.mai-anim-nod {
+  animation: mai-nod 2.2s ease-in-out infinite;
+}
 
 /* Thinking: gentle side sway */
 @keyframes mai-sway {
-  0%, 100% { transform: rotate(0deg) translateX(0); }
-  25% { transform: rotate(-2deg) translateX(-1px); }
-  75% { transform: rotate(2deg) translateX(1px); }
+  0%,
+  100% {
+    transform: rotate(0deg) translateX(0);
+  }
+  25% {
+    transform: rotate(-2deg) translateX(-1px);
+  }
+  75% {
+    transform: rotate(2deg) translateX(1px);
+  }
 }
-.mai-anim-sway { animation: mai-sway 2.5s ease-in-out infinite; }
+.mai-anim-sway {
+  animation: mai-sway 2.5s ease-in-out infinite;
+}
 
 @keyframes work-title-sweep {
-  0% { background-position: 120% 0; }
-  100% { background-position: -120% 0; }
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
+  }
 }
 
 @keyframes messageIn {
@@ -1820,76 +1940,153 @@
 
 /* Worry: subtle tremble */
 @keyframes mai-tremble {
-  0%, 100% { transform: translateX(0) translateY(0); }
-  10% { transform: translateX(-0.5px) translateY(0.5px); }
-  20% { transform: translateX(0.8px) translateY(-0.3px); }
-  30% { transform: translateX(-0.3px) translateY(0.5px); }
-  40% { transform: translateX(0.5px) translateY(-0.5px); }
-  50% { transform: translateX(-0.5px) translateY(0); }
-  60% { transform: translateX(0.3px) translateY(0.3px); }
-  70% { transform: translateX(-0.8px) translateY(-0.3px); }
-  80% { transform: translateX(0.5px) translateY(0.5px); }
-  90% { transform: translateX(-0.3px) translateY(-0.5px); }
+  0%,
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+  10% {
+    transform: translateX(-0.5px) translateY(0.5px);
+  }
+  20% {
+    transform: translateX(0.8px) translateY(-0.3px);
+  }
+  30% {
+    transform: translateX(-0.3px) translateY(0.5px);
+  }
+  40% {
+    transform: translateX(0.5px) translateY(-0.5px);
+  }
+  50% {
+    transform: translateX(-0.5px) translateY(0);
+  }
+  60% {
+    transform: translateX(0.3px) translateY(0.3px);
+  }
+  70% {
+    transform: translateX(-0.8px) translateY(-0.3px);
+  }
+  80% {
+    transform: translateX(0.5px) translateY(0.5px);
+  }
+  90% {
+    transform: translateX(-0.3px) translateY(-0.5px);
+  }
 }
-.mai-anim-tremble { animation: mai-tremble 1.5s ease-in-out infinite; }
+.mai-anim-tremble {
+  animation: mai-tremble 1.5s ease-in-out infinite;
+}
 
 /* Alert: attention pulse */
 @keyframes mai-pulse {
-  0%, 100% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.06); filter: brightness(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.06);
+    filter: brightness(1.05);
+  }
 }
-.mai-anim-pulse { animation: mai-pulse 1s ease-in-out infinite; }
+.mai-anim-pulse {
+  animation: mai-pulse 1s ease-in-out infinite;
+}
 
 /* General utility animations */
 @keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.03); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 12px 2px hsl(var(--mai-glow) / 0.2); }
-  50% { box-shadow: 0 0 24px 6px hsl(var(--mai-glow) / 0.35); }
+  0%,
+  100% {
+    box-shadow: 0 0 12px 2px hsl(var(--mai-glow) / 0.2);
+  }
+  50% {
+    box-shadow: 0 0 24px 6px hsl(var(--mai-glow) / 0.35);
+  }
 }
 
 @keyframes flow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
 }
 
 /* Mandala rotation */
 @keyframes mandala-rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mandala pulse (breathing) */
 @keyframes mandala-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.4; }
-  50% { transform: scale(1.12); opacity: 0.8; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.8;
+  }
 }
 
 /* Spiral pump rotation (legacy compat) */
 @keyframes pump-spiral {
-  0% { transform: scale(var(--pump-scale-min, 1)) rotate(0deg); }
-  50% { transform: scale(var(--pump-scale-max, 1.1)) rotate(180deg); }
-  100% { transform: scale(var(--pump-scale-min, 1)) rotate(360deg); }
+  0% {
+    transform: scale(var(--pump-scale-min, 1)) rotate(0deg);
+  }
+  50% {
+    transform: scale(var(--pump-scale-max, 1.1)) rotate(180deg);
+  }
+  100% {
+    transform: scale(var(--pump-scale-min, 1)) rotate(360deg);
+  }
 }
 
 /* Galaxy pipe flow - moving gradient */
 @keyframes galaxy-flow {
-  0% { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: -40; }
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -40;
+  }
 }
 
 /* Bottle liquid wave */
 @keyframes bottle-wave {
-  0%, 100% { d: path("M0,4 Q5,0 10,4 Q15,8 20,4 Q25,0 30,4 V20 H0 Z"); }
-  50% { d: path("M0,4 Q5,8 10,4 Q15,0 20,4 Q25,8 30,4 V20 H0 Z"); }
+  0%,
+  100% {
+    d: path("M0,4 Q5,0 10,4 Q15,8 20,4 Q25,0 30,4 V20 H0 Z");
+  }
+  50% {
+    d: path("M0,4 Q5,8 10,4 Q15,0 20,4 Q25,8 30,4 V20 H0 Z");
+  }
 }
 
 /* Breast wave */
@@ -1897,20 +2094,40 @@
   animation: breast-wave-drift 2.5s ease-in-out infinite;
 }
 @keyframes breast-wave-drift {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(3px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(3px);
+  }
 }
 
 /* Sprout jitter for letdown */
 @keyframes sprout-jitter {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  10% { transform: translate(-1px, 1px) rotate(-3deg); }
-  30% { transform: translate(1px, -1px) rotate(3deg); }
-  50% { transform: translate(-1px, 0) rotate(-2deg); }
-  70% { transform: translate(1px, 1px) rotate(2deg); }
-  90% { transform: translate(0, -1px) rotate(-1deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  10% {
+    transform: translate(-1px, 1px) rotate(-3deg);
+  }
+  30% {
+    transform: translate(1px, -1px) rotate(3deg);
+  }
+  50% {
+    transform: translate(-1px, 0) rotate(-2deg);
+  }
+  70% {
+    transform: translate(1px, 1px) rotate(2deg);
+  }
+  90% {
+    transform: translate(0, -1px) rotate(-1deg);
+  }
 }
-.sprout-jitter { animation: sprout-jitter 0.4s ease-in-out infinite; }
+.sprout-jitter {
+  animation: sprout-jitter 0.4s ease-in-out infinite;
+}
 
 /* Birth journey markdown tables are authored as empty-header two-column tables, then rendered as mobile phase cards. */
 .birth-journey-card-table-wrap {
@@ -1964,7 +2181,11 @@
 .birth-journey-card-table td:first-child {
   padding: 11px 16px 9px !important;
   border-bottom: 1px solid rgba(232, 196, 207, 0.7) !important;
-  background: linear-gradient(135deg, rgba(255, 238, 244, 0.96) 0%, rgba(255, 247, 237, 0.96) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 238, 244, 0.96) 0%,
+    rgba(255, 247, 237, 0.96) 100%
+  ) !important;
   color: #4a2635;
   line-height: 1.22;
 }
@@ -2011,9 +2232,17 @@
 
 /* Droplet fall */
 @keyframes droplet-fall {
-  0% { transform: translateY(0) scale(1); opacity: 0.8; }
-  80% { opacity: 0.6; }
-  100% { transform: translateY(20px) scale(0.6); opacity: 0; }
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(20px) scale(0.6);
+    opacity: 0;
+  }
 }
 
 /* Mobile-first scrollbar */

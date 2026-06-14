@@ -3,7 +3,11 @@ import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
 import { createDailyAndMomBabyAnalysis } from "@/lib/agentApi";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 import { getAgUiThreadIdForRequest } from "@/lib/agentConversationSession";
-import { appendAgentHubAnalysisMessage, appendAgentHubNotificationMessage } from "@/lib/agentHubChatMessages";
+import {
+  appendAgentHubAnalysisMessage,
+  appendAgentHubNotificationMessage,
+} from "@/lib/agentHubChatMessages";
+import { personalizeNotificationText } from "@/lib/agentNotificationMessages";
 import { apiRequestRaw } from "@/lib/http";
 import { showNativeReminder } from "@/lib/mmcBackgroundNotify";
 import { queueMilkAnalysisReminderFollowup } from "@/lib/milkAnalysisReminderFollowup";
@@ -18,11 +22,15 @@ export type DeviceReminderActionKey =
   | "health_issue";
 
 const MOM_BABY_CONTEXT_MAX_CHARS = 320;
-const TASK_REMINDER_MESSAGE = "妈妈，吸奶/喂养时间还有15分钟就到咯，可以提前准备一下哦～";
-export const HEALTH_ISSUE_NOTIFICATION_MESSAGE = "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗";
+const TASK_REMINDER_MESSAGE =
+  "妈妈，吸奶/喂养时间还有15分钟就到咯，可以提前准备一下哦～";
+export const HEALTH_ISSUE_NOTIFICATION_MESSAGE =
+  "嗨，我发现你的乳汁电导率有点异常，可以和你聊聊吗";
 
 function compactText(value: unknown): string {
-  return String(value ?? "").replace(/\s+/g, " ").trim();
+  return String(value ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function truncateContextText(value: string): string {
@@ -31,19 +39,28 @@ function truncateContextText(value: string): string {
   return `${text.slice(0, MOM_BABY_CONTEXT_MAX_CHARS - 1)}…`;
 }
 
-function buildMomBabyAdviceContextText(message: string, analysisCard?: AgentAnalysisCard): string {
-  const sections = Array.isArray(analysisCard?.sections) ? analysisCard.sections : [];
+function buildMomBabyAdviceContextText(
+  message: string,
+  analysisCard?: AgentAnalysisCard,
+): string {
+  const sections = Array.isArray(analysisCard?.sections)
+    ? analysisCard.sections
+    : [];
   const sectionText = sections
     .map((section) => {
       const title = compactText(section.title);
-      const items = Array.isArray(section.items) ? section.items.map(compactText).filter(Boolean).join("；") : "";
+      const items = Array.isArray(section.items)
+        ? section.items.map(compactText).filter(Boolean).join("；")
+        : "";
       const body = compactText(section.body);
       const content = items || body;
       return title && content ? `${title}：${content}` : content || "";
     })
     .filter(Boolean)
     .join("；");
-  const statusText = analysisCard?.status_label ? `状态：${compactText(analysisCard.status_label)}；` : "";
+  const statusText = analysisCard?.status_label
+    ? `状态：${compactText(analysisCard.status_label)}；`
+    : "";
   const content = sectionText || compactText(message);
   return truncateContextText(`已生成每日泌乳建议：${statusText}${content}`);
 }
@@ -55,7 +72,8 @@ async function recordMomBabyAdviceContextEvent(params: {
 }): Promise<void> {
   const threadId = getAgUiThreadIdForRequest().trim();
   if (!threadId) return;
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Shanghai";
+  const timeZone =
+    Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Shanghai";
   try {
     await apiRequestRaw("/api/client-event", {
       method: "POST",
@@ -72,7 +90,10 @@ async function recordMomBabyAdviceContextEvent(params: {
           source: "device-manage-actions",
           chat_message_id: params.chatMessageId,
           status_label: params.analysisCard?.status_label || "",
-          context_text: buildMomBabyAdviceContextText(params.message, params.analysisCard),
+          context_text: buildMomBabyAdviceContextText(
+            params.message,
+            params.analysisCard,
+          ),
         },
       },
     });
@@ -112,9 +133,18 @@ async function handleDailySummary(): Promise<void> {
     title: "每日奶量总结",
     message,
     path: "/",
-    notifyJson: JSON.stringify({ event: "summary", body: message, chatMessageId, analysis_card: data.analysis_card }),
+    notifyJson: JSON.stringify({
+      event: "summary",
+      body: message,
+      chatMessageId,
+      analysis_card: data.analysis_card,
+    }),
   });
-  appendAgentHubAnalysisMessage(message, { kind: "daily_summary", id: chatMessageId, analysisCard: data.analysis_card });
+  appendAgentHubAnalysisMessage(message, {
+    kind: "daily_summary",
+    id: chatMessageId,
+    analysisCard: data.analysis_card,
+  });
 }
 
 async function handleMomBabyAnalysis(): Promise<void> {
@@ -128,9 +158,18 @@ async function handleMomBabyAnalysis(): Promise<void> {
     title: "每日泌乳建议",
     message,
     path: "/",
-    notifyJson: JSON.stringify({ event: "mom_baby", body: message, chatMessageId, analysis_card: data.analysis_card }),
+    notifyJson: JSON.stringify({
+      event: "mom_baby",
+      body: message,
+      chatMessageId,
+      analysis_card: data.analysis_card,
+    }),
   });
-  appendAgentHubAnalysisMessage(message, { kind: "mom_baby", id: chatMessageId, analysisCard: data.analysis_card });
+  appendAgentHubAnalysisMessage(message, {
+    kind: "mom_baby",
+    id: chatMessageId,
+    analysisCard: data.analysis_card,
+  });
   void recordMomBabyAdviceContextEvent({
     message,
     analysisCard: data.analysis_card,
@@ -143,7 +182,9 @@ async function handleMilkAnalysis(): Promise<void> {
     user_id: DEFAULT_CHAT_USER_ID,
     type: "milk_analysis",
   });
-  const message = data.message?.trim() || "已生成奶量分析。";
+  const message = await personalizeNotificationText(
+    data.message?.trim() || "已生成奶量分析。",
+  );
   const chatMessageId = `analysis-milk_analysis-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   await notifyByNativeOrToast({
     title: "奶量分析",
@@ -157,7 +198,12 @@ async function handleMilkAnalysis(): Promise<void> {
       analysis_context: data.analysis_context,
     }),
   });
-  appendAgentHubAnalysisMessage(message, { kind: "milk_analysis", id: chatMessageId, analysisCard: data.analysis_card });
+  appendAgentHubAnalysisMessage(message, {
+    kind: "milk_analysis",
+    id: chatMessageId,
+    analysisCard: data.analysis_card,
+    notification: true,
+  });
   queueMilkAnalysisReminderFollowup({
     chatMessageId,
     message,
@@ -187,22 +233,30 @@ function handleTaskReminderNotify(): void {
   });
 }
 
-function handleHealthIssueNotify(): void {
+async function handleHealthIssueNotify(): Promise<void> {
   const chatMessageId = `notification-health_issue-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  void notifyByNativeOrToast({
+  const message = await personalizeNotificationText(
+    HEALTH_ISSUE_NOTIFICATION_MESSAGE,
+  );
+  await notifyByNativeOrToast({
     title: "健康问题通知",
-    message: HEALTH_ISSUE_NOTIFICATION_MESSAGE,
+    message,
     path: "/",
     notifyJson: JSON.stringify({
       event: "health_issue",
-      body: HEALTH_ISSUE_NOTIFICATION_MESSAGE,
+      body: message,
       chatMessageId,
     }),
   });
-  appendAgentHubNotificationMessage(HEALTH_ISSUE_NOTIFICATION_MESSAGE, { kind: "health_issue", id: chatMessageId });
+  appendAgentHubNotificationMessage(message, {
+    kind: "health_issue",
+    id: chatMessageId,
+  });
 }
 
-export function getDeviceReminderActionTitle(actionKey: DeviceReminderActionKey): string {
+export function getDeviceReminderActionTitle(
+  actionKey: DeviceReminderActionKey,
+): string {
   switch (actionKey) {
     case "task_reminder":
       return "任务提醒";
@@ -219,7 +273,9 @@ export function getDeviceReminderActionTitle(actionKey: DeviceReminderActionKey)
   }
 }
 
-export async function executeDeviceReminderAction(actionKey: DeviceReminderActionKey): Promise<void> {
+export async function executeDeviceReminderAction(
+  actionKey: DeviceReminderActionKey,
+): Promise<void> {
   switch (actionKey) {
     case "task_reminder":
       handleTaskReminderNotify();
@@ -237,7 +293,7 @@ export async function executeDeviceReminderAction(actionKey: DeviceReminderActio
       handleGrowthUpdateNotify();
       return;
     case "health_issue":
-      handleHealthIssueNotify();
+      await handleHealthIssueNotify();
       return;
   }
 }

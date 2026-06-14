@@ -43,6 +43,7 @@ import {
   queryCarePlanList,
   queryPregnancyDiaryList,
   queryPregnancyDiaryToday,
+  queryUserProfile,
   updatePregnancyDiaryEntry,
 } from "@/lib/agentApi";
 import {
@@ -102,6 +103,7 @@ const GROWTH_CHART_COLORS = {
 
 type BabyRecordRow = { date: string; weightKg: number; heightCm: number; headCm: number };
 type StatusDigitalTwinTab = "mom" | "baby";
+type MaternalCareStage = "pregnancy" | "postpartum";
 type BabyStatusPanelId = "baby-health" | "growth-milestone" | "baby-sleep";
 type MomStatusPanelId =
   | "birth-journey-detail"
@@ -253,6 +255,13 @@ function compactText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function formatPregnancyStageSubtitle(value: unknown): string {
+  const text = compactText(value);
+  const weekMatch = text.match(/(?:孕期|孕周|怀孕|孕)?\s*(\d{1,2})\s*(?:周|w|W)/);
+  if (weekMatch?.[1]) return `孕期 ${weekMatch[1]} 周`;
+  return "处于孕期";
+}
+
 function compactTextList(value: unknown, limit = 3): string[] {
   if (!Array.isArray(value)) return [];
   return value.map(compactText).filter(Boolean).slice(0, limit);
@@ -334,21 +343,28 @@ function formatDiaryDateLabel(dateKey: string): string {
 }
 
 function pregnancyDiarySummary(entry: PregnancyDiaryEntry | null): string {
-  if (!entry) return "今天还没有记录";
+  if (!entry) return "今天还没有记录哦";
+  const healthNotes = Array.isArray(entry.health_notes) ? entry.health_notes : [];
   const parts = [
     entry.mood ? `心情${entry.mood}` : "",
     entry.fetal_movement ? entry.fetal_movement : "",
     entry.sleep_summary ? entry.sleep_summary : "",
   ].filter(Boolean);
   if (parts.length > 0) return `今日已记录：${parts.slice(0, 2).join("，")}`;
+  if (healthNotes.length > 0) {
+    const topic = compactText(healthNotes[0]?.topic) || "健康咨询";
+    return `今日已记录：${topic}`;
+  }
   return entry.content ? `今日已记录：${entry.content}` : "今天已有孕期记录";
 }
 
 function pregnancyDiarySignalTags(entry: PregnancyDiaryEntry): string[] {
+  const healthNotes = Array.isArray(entry.health_notes) ? entry.health_notes : [];
   return [
     entry.mood ? `心情${entry.mood}` : "",
     compactText(entry.fetal_movement),
     compactText(entry.sleep_summary),
+    ...healthNotes.map((note) => compactText(note.topic)),
     ...entry.symptom_tags,
   ].map(compactText).filter(Boolean).slice(0, 4);
 }
@@ -380,13 +396,22 @@ function pregnancyDiaryRecentTags(entries: PregnancyDiaryEntry[], limit = 4): st
   return tags.slice(0, limit);
 }
 
+function pregnancyDiaryHealthNotes(entries: PregnancyDiaryEntry[], days = 7) {
+  const dateKeys = new Set(buildRecentDateKeys(days));
+  return entries
+    .filter((entry) => dateKeys.has(entry.entry_date))
+    .flatMap((entry) => (Array.isArray(entry.health_notes) ? entry.health_notes : []));
+}
+
 function pregnancyDiaryReviewSummary(entries: PregnancyDiaryEntry[]): string {
   if (entries.length === 0) return "记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。";
   const recent = entries.slice(0, 7);
+  const healthNotes = pregnancyDiaryHealthNotes(recent);
   const tags = pregnancyDiaryRecentTags(recent, 3);
   const sleepSignals = recent.map((entry) => compactText(entry.sleep_summary)).filter(Boolean);
   const moodSignals = recent.map((entry) => compactText(entry.mood)).filter(Boolean);
   const parts = [
+    healthNotes.length > 0 ? `最近咨询过${compactText(healthNotes[0]?.topic) || "健康问题"}` : "",
     tags.length > 0 ? `身体感受集中在${tags.join("、")}` : "",
     sleepSignals.length > 0 ? `睡眠记录 ${sleepSignals[0]}` : "",
     moodSignals.length > 0 ? `最近心情${moodSignals[0]}` : "",
@@ -400,6 +425,9 @@ function pregnancyDiaryAgentPrompts(entries: PregnancyDiaryEntry[]): string[] {
     "帮我回顾最近7天的孕期日记",
     "帮我根据孕期日记整理下次产检要问医生的问题",
   ];
+  if (pregnancyDiaryHealthNotes(entries).length > 0) {
+    prompts.unshift("帮我回顾最近的健康咨询记录");
+  }
   if (pregnancyDiaryQuestionCount(entries) > 0) {
     prompts.unshift("帮我整理孕期日记里的产检问题清单");
   }
@@ -685,6 +713,7 @@ const MomStatusPanelSheet: React.FC<{
     .map((phase, index) => ({ phase, index }))
     .filter((item) => item.index > birthJourneyCurrentIndex);
   const pregnancyDiaryRecentCount7 = pregnancyDiaryRecentCount(pregnancyDiaryEntries, 7);
+  const pregnancyDiaryHealthNoteCount7 = pregnancyDiaryHealthNotes(pregnancyDiaryEntries, 7).length;
   const pregnancyDiaryQuestions = pregnancyDiaryQuestionCount(pregnancyDiaryEntries);
   const pregnancyDiaryReview = pregnancyDiaryReviewSummary(pregnancyDiaryEntries);
   const pregnancyDiaryPrompts = pregnancyDiaryAgentPrompts(pregnancyDiaryEntries);
@@ -1026,6 +1055,11 @@ const MomStatusPanelSheet: React.FC<{
                   <p className="mt-2 text-[18px] font-extrabold leading-relaxed text-[#36272f]">
                     记录了 {pregnancyDiaryRecentCount7}/7 天
                   </p>
+                  {pregnancyDiaryHealthNoteCount7 > 0 ? (
+                    <p className="mt-1 text-[11px] font-extrabold leading-relaxed text-[#b66335]">
+                      含 {pregnancyDiaryHealthNoteCount7} 条健康咨询记录
+                    </p>
+                  ) : null}
                   <p className="mt-2 text-xs font-semibold leading-relaxed text-[#7f6b70]">
                     {pregnancyDiaryReview}
                   </p>
@@ -1112,6 +1146,20 @@ const MomStatusPanelSheet: React.FC<{
                           {pregnancyDiarySummary(entry)}
                         </p>
                       )}
+                      {Array.isArray(entry.health_notes) && entry.health_notes.length > 0 ? (
+                        <div className="mt-3 rounded-2xl bg-white/75 px-3 py-3">
+                          <p className="text-[10px] font-extrabold text-[#b66335]">健康咨询记录</p>
+                          <div className="mt-2 space-y-2">
+                            {entry.health_notes.slice(0, 2).map((note) => (
+                              <div key={note.note_id} className="text-xs font-semibold leading-relaxed text-[#5f5357]">
+                                <p className="font-extrabold text-[#3a2b31]">{compactText(note.topic) || "健康咨询"}</p>
+                                {note.user_report ? <p className="mt-0.5 line-clamp-2">{note.user_report}</p> : null}
+                                {note.follow_up ? <p className="mt-0.5 text-[#8a5b3f]">{note.follow_up}</p> : null}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
                       <div className="mt-3 flex flex-wrap gap-1.5">
                         {pregnancyDiarySignalTags(entry).map((tag) => (
                           <span key={tag} className="rounded-full bg-[#f5eee9] px-2.5 py-1 text-[10px] font-bold text-[#75666b]">
@@ -1864,6 +1912,8 @@ const StatusOverviewBody: React.FC = () => {
   const [momBabyLoading, setMomBabyLoading] = useState(true);
   const [todayQueryLoading, setTodayQueryLoading] = useState(true);
   const [momBabyErr, setMomBabyErr] = useState<string | null>(null);
+  const [userProfileLoading, setUserProfileLoading] = useState(true);
+  const [birthPrepDueDateOrWeek, setBirthPrepDueDateOrWeek] = useState("");
 
   const [lactationInfoList, setLactationInfoList] = useState<PumpInfoLactationDayItem[]>([]);
   const [pumpInfoLoading, setPumpInfoLoading] = useState(true);
@@ -2071,6 +2121,22 @@ const StatusOverviewBody: React.FC = () => {
       }
     })();
 
+    setUserProfileLoading(true);
+    setBirthPrepDueDateOrWeek("");
+    void (async () => {
+      try {
+        const profile = await queryUserProfile({ user_id: DEFAULT_CHAT_USER_ID }, { signal: ac.signal });
+        if (cancelled) return;
+        setBirthPrepDueDateOrWeek(compactText(profile.birth_prep_due_date_or_week));
+      } catch (e: unknown) {
+        if ((e as { name?: string })?.name === "AbortError") return;
+        if (cancelled) return;
+        setBirthPrepDueDateOrWeek("");
+      } finally {
+        if (!cancelled) setUserProfileLoading(false);
+      }
+    })();
+
     setGrowthLoading(true);
     setLatestGrowth(null);
     void (async () => {
@@ -2231,6 +2297,29 @@ const StatusOverviewBody: React.FC = () => {
     typeof babyDaysSinceBirth === "number" ? Math.max(0, babyDaysSinceBirth) : null;
   const postpartumWeeks =
     typeof babyAgeDays === "number" ? postpartumWeekFromDay(babyAgeDays) : null;
+  const diaryGestationalWeekForStage = compactText(
+    pregnancyDiaryToday?.gestational_week ?? pregnancyDiaryEntries[0]?.gestational_week,
+  );
+  const pregnancyStageSourceText = birthPrepDueDateOrWeek || diaryGestationalWeekForStage;
+  const maternalCareStage: MaternalCareStage = pregnancyStageSourceText
+    ? "pregnancy"
+    : "postpartum";
+  const isPregnancyStage = maternalCareStage === "pregnancy";
+  const isPostpartumStage = maternalCareStage !== "pregnancy";
+  const statusProfileLoading = momBabyLoading || userProfileLoading;
+
+  useEffect(() => {
+    if (isPregnancyStage && activeDigitalTwin === "baby") {
+      setActiveDigitalTwin("mom");
+      setActiveBabyPanel(null);
+    }
+    if (isPregnancyStage && activeMomPanel && !["birth-journey-detail", "pregnancy-diary-detail"].includes(activeMomPanel)) {
+      setActiveMomPanel(null);
+    }
+    if (isPostpartumStage && ["birth-journey-detail", "pregnancy-diary-detail"].includes(activeMomPanel ?? "")) {
+      setActiveMomPanel(null);
+    }
+  }, [activeDigitalTwin, activeMomPanel, isPostpartumStage, isPregnancyStage]);
 
   /** WHO 适龄带需分娩日为周锚点；仅在无档案时用首条测量日兜底周序 */
   const growthChartBirthAnchor = deliveryYmd ?? growthHistoryRows[0]?.date ?? null;
@@ -2355,16 +2444,20 @@ const StatusOverviewBody: React.FC = () => {
       : typeof babyMetrics.headCm === "number"
         ? `${babyMetrics.headCm}cm`
         : "待记录";
-  const momStatusSubtitle = momBabyLoading
+  const momStatusSubtitle = statusProfileLoading
     ? "正在加载妈妈信息…"
-    : momBabyErr
+    : isPregnancyStage
+      ? formatPregnancyStageSubtitle(pregnancyStageSourceText)
+      : momBabyErr
       ? "妈妈档案待绑定"
       : typeof postpartumWeeks === "number"
         ? `产后第 ${postpartumWeeks} 周`
         : "暂无有效分娩日期";
-  const babyStatusSubtitle = momBabyLoading
+  const babyStatusSubtitle = statusProfileLoading
     ? "正在加载宝宝信息…"
-    : momBabyErr
+    : isPregnancyStage
+      ? "宝宝孕育中"
+      : momBabyErr
       ? "宝宝档案待绑定"
       : typeof babyAgeDays === "number"
         ? `宝宝已出生 ${babyAgeDays} 天`
@@ -2378,14 +2471,17 @@ const StatusOverviewBody: React.FC = () => {
       ? `当前阶段：${birthJourneyPhaseTitle || "待完善"}`
       : "还没有计划哦";
   const birthJourneyCardAction = birthJourneyPlan ? "查看计划" : "制定计划";
+  const pregnancyDiaryHealthNoteCount7 = pregnancyDiaryHealthNotes(pregnancyDiaryEntries, 7).length;
   const pregnancyDiaryCardText = pregnancyDiaryLoading
     ? "正在加载孕期日记"
     : pregnancyDiarySummary(pregnancyDiaryToday ?? pregnancyDiaryEntries[0] ?? null);
   const pregnancyDiaryCardSupport = pregnancyDiaryLoading
     ? undefined
     : pregnancyDiaryEntries.length > 0
-      ? `最近7天记录 ${pregnancyDiaryRecentCount(pregnancyDiaryEntries, 7)} 天`
-      : "记录后可整理产检问题和最近状态";
+      ? pregnancyDiaryHealthNoteCount7 > 0
+        ? `最近7天健康咨询 ${pregnancyDiaryHealthNoteCount7} 条`
+        : `最近7天记录 ${pregnancyDiaryRecentCount(pregnancyDiaryEntries, 7)} 天`
+      : undefined;
   const pregnancyDiaryAction = pregnancyDiaryToday ? "编辑今天" : "记录今天";
 
   const runGrowthMetricsHighlight = useCallback(() => {
@@ -2464,42 +2560,49 @@ const StatusOverviewBody: React.FC = () => {
             },
           ].map(({ tab, title, subtitle, avatar, alt }) => {
             const selected = activeDigitalTwin === tab;
+            const disabled = isPregnancyStage && tab === "baby";
             return (
-                  <button
-                    key={tab}
-                    type="button"
-                    role="tab"
-                    aria-selected={selected}
-                    onClick={() => setActiveDigitalTwin(tab)}
-                    className={`relative flex min-h-[68px] w-full min-w-0 items-center gap-2 overflow-hidden rounded-[16px] px-2.5 py-2 text-left transition-all ${
-                      selected
-                        ? "bg-[#fff7fb] text-[#35212c] shadow-none ring-2 ring-[#d8adc2]"
-                        : "bg-white/45 text-muted-foreground opacity-72 shadow-none ring-1 ring-white/70 active:bg-white/70"
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-disabled={disabled}
+                disabled={disabled}
+                onClick={() => {
+                  if (!disabled) setActiveDigitalTwin(tab);
+                }}
+                className={`relative flex min-h-[68px] w-full min-w-0 items-center gap-2 overflow-hidden rounded-[16px] px-2.5 py-2 text-left transition-all ${
+                  selected
+                    ? "bg-[#fff7fb] text-[#35212c] shadow-none ring-2 ring-[#d8adc2]"
+                    : disabled
+                      ? "cursor-not-allowed bg-white/35 text-muted-foreground opacity-45 shadow-none ring-1 ring-white/60"
+                      : "bg-white/45 text-muted-foreground opacity-72 shadow-none ring-1 ring-white/70 active:bg-white/70"
+                }`}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`absolute inset-y-3 left-0 w-1 rounded-r-full bg-[#b46f91] transition-opacity ${
+                    selected ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+                <img
+                  src={avatar}
+                  alt={alt}
+                  className={`h-10 w-10 shrink-0 rounded-full border-2 object-cover ${
+                    selected ? "border-[#b46f91]/45" : "border-border/50 opacity-75"
+                  }`}
+                />
+                <span className="min-w-0">
+                  <span className="block truncate text-[15px] font-bold leading-tight">{title}</span>
+                  <span
+                    className={`mt-1 block truncate text-[10px] font-semibold leading-tight ${
+                      selected ? "text-[#806171]" : "text-muted-foreground"
                     }`}
                   >
-                    <span
-                      aria-hidden="true"
-                      className={`absolute inset-y-3 left-0 w-1 rounded-r-full bg-[#b46f91] transition-opacity ${
-                        selected ? "opacity-100" : "opacity-0"
-                      }`}
-                    />
-                    <img
-                      src={avatar}
-                      alt={alt}
-                      className={`h-10 w-10 shrink-0 rounded-full border-2 object-cover ${
-                        selected ? "border-[#b46f91]/45" : "border-border/50 opacity-75"
-                      }`}
-                    />
-                    <span className="min-w-0">
-                      <span className="block truncate text-[15px] font-bold leading-tight">{title}</span>
-                      <span
-                        className={`mt-1 block truncate text-[10px] font-semibold leading-tight ${
-                          selected ? "text-[#806171]" : "text-muted-foreground"
-                        }`}
-                      >
-                        {subtitle}
-                      </span>
-                    </span>
+                    {subtitle}
+                  </span>
+                </span>
               </button>
             );
           })}
@@ -2508,107 +2611,109 @@ const StatusOverviewBody: React.FC = () => {
         {activeDigitalTwin === "mom" ? (
           <>
             <div className="order-2 mx-4 mb-4 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <StatusModuleCard
-                  title="生产全过程计划"
-                  bodyText={birthJourneyCardText}
-                  supportingText={
-                    birthJourneyPlan && !birthJourneyLoading && birthJourneyCardFocus
-                      ? birthJourneyCardFocus
-                      : undefined
-                  }
-                  action={birthJourneyCardAction}
-                  notificationLabel={birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? "计划已生成" : undefined}
-                  notificationActive={Boolean(birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification)}
-                  tone="violet"
-                  icon={<ClipboardList className="h-4 w-4" />}
-                  onClick={() => {
-                    if (birthJourneyPlan) {
-                      clearBirthJourneyPlanCardNotification();
-                      setActiveMomPanel("birth-journey-detail");
-                    } else {
-                      prefillAgentHub("帮我制定生产全过程计划");
+              {isPregnancyStage ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <StatusModuleCard
+                    title="生产全过程计划"
+                    bodyText={birthJourneyCardText}
+                    supportingText={
+                      birthJourneyPlan && !birthJourneyLoading && birthJourneyCardFocus
+                        ? birthJourneyCardFocus
+                        : undefined
                     }
-                  }}
-                  alignActionTextWithTitle
-                />
-                <StatusModuleCard
-                  title="孕期日记"
-                  bodyText={pregnancyDiaryCardText}
-                  supportingText={pregnancyDiaryCardSupport}
-                  action={pregnancyDiaryAction}
-                  secondaryAction="查看日记"
-                  tone="aqua"
-                  icon={<BookOpen className="h-4 w-4" />}
-                  notificationLabel={pregnancyDiaryCardNotification ? pregnancyDiaryCardNotificationLabel : undefined}
-                  notificationActive={pregnancyDiaryCardNotification}
-                  onClick={openPregnancyDiaryEditor}
-                  onSecondaryClick={() => {
-                    clearPregnancyDiaryCardNotification();
-                    setActiveMomPanel("pregnancy-diary-detail");
-                  }}
-                  alignActionTextWithTitle
-                />
-              </div>
-              <div aria-hidden="true" className="px-1 py-0.5">
-                <div className="h-px w-full bg-gradient-to-r from-transparent via-[#e7dcd6] to-transparent opacity-75" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <StatusModuleCard
-                  title="母乳产出"
-                  metrics={[
-                    {
-                      label: "今日产出",
-                      value: todayPumpLabel,
-                      onInfoClick: () => setActiveMomPanel("milk-info"),
-                      ariaLabel: "今日产出说明",
-                    },
-                    { label: "今日吸奶", value: todayPumpCountLabel },
-                  ]}
-                  tone="rose"
-                  icon={<Droplets className="h-4 w-4" />}
-                />
-                <StatusModuleCard
-                  title="乳房健康"
-                  bodyText={INITIAL_BREAST_HEALTH_SUMMARY}
-                  action="查看《乳房健康日记》"
-                  tone="peach"
-                  icon={<HeartPulse className="h-4 w-4" />}
-                  onInfoClick={() => setActiveMomPanel("breast-info")}
-                  onClick={() => setActiveMomPanel("breast-detail")}
-                  alignActionTextWithTitle
-                />
-                <StatusModuleCard
-                  title="产后恢复"
-                  bodyText={POSTPARTUM_RECOVERY_PLAN_STATUS}
-                  action="查看计划"
-                  tone="mint"
-                  icon={<PostpartumRecoveryIcon />}
-                  onClick={() => setActiveMomPanel("postpartum-detail")}
-                  alignActionTextWithTitle
-                />
-                <StatusModuleCard
-                  title="补能与休息"
-                  bodyText={
-                    <span className="font-medium">
-                      待开通 <strong className="font-bold">睡眠</strong> 与 <strong className="font-bold">营养</strong> 功能
-                    </span>
-                  }
-                  tone="amber"
-                  icon={<Coffee className="h-4 w-4" />}
-                  onInfoClick={() => setActiveMomPanel("rest-info")}
-                  alignActionTextWithTitle
-                />
-              </div>
+                    action={birthJourneyCardAction}
+                    notificationLabel={birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? "计划已生成" : undefined}
+                    notificationActive={Boolean(birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification)}
+                    tone="violet"
+                    icon={<ClipboardList className="h-4 w-4" />}
+                    onClick={() => {
+                      if (birthJourneyPlan) {
+                        clearBirthJourneyPlanCardNotification();
+                        setActiveMomPanel("birth-journey-detail");
+                      } else {
+                        prefillAgentHub("帮我制定生产全过程计划");
+                      }
+                    }}
+                    alignActionTextWithTitle
+                  />
+                  <StatusModuleCard
+                    title="孕期日记"
+                    bodyText={pregnancyDiaryCardText}
+                    supportingText={pregnancyDiaryCardSupport}
+                    action={pregnancyDiaryAction}
+                    secondaryAction="查看日记"
+                    tone="aqua"
+                    icon={<BookOpen className="h-4 w-4" />}
+                    notificationLabel={pregnancyDiaryCardNotification ? pregnancyDiaryCardNotificationLabel : undefined}
+                    notificationActive={pregnancyDiaryCardNotification}
+                    onClick={openPregnancyDiaryEditor}
+                    onSecondaryClick={() => {
+                      clearPregnancyDiaryCardNotification();
+                      setActiveMomPanel("pregnancy-diary-detail");
+                    }}
+                    alignActionTextWithTitle
+                  />
+                </div>
+              ) : null}
+              {isPostpartumStage ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <StatusModuleCard
+                    title="母乳产出"
+                    metrics={[
+                      {
+                        label: "今日产出",
+                        value: todayPumpLabel,
+                        onInfoClick: () => setActiveMomPanel("milk-info"),
+                        ariaLabel: "今日产出说明",
+                      },
+                      { label: "今日吸奶", value: todayPumpCountLabel },
+                    ]}
+                    tone="rose"
+                    icon={<Droplets className="h-4 w-4" />}
+                  />
+                  <StatusModuleCard
+                    title="乳房健康"
+                    bodyText={INITIAL_BREAST_HEALTH_SUMMARY}
+                    action="查看《乳房健康日记》"
+                    tone="peach"
+                    icon={<HeartPulse className="h-4 w-4" />}
+                    onInfoClick={() => setActiveMomPanel("breast-info")}
+                    onClick={() => setActiveMomPanel("breast-detail")}
+                    alignActionTextWithTitle
+                  />
+                  <StatusModuleCard
+                    title="产后恢复"
+                    bodyText={POSTPARTUM_RECOVERY_PLAN_STATUS}
+                    action="查看计划"
+                    tone="mint"
+                    icon={<PostpartumRecoveryIcon />}
+                    onClick={() => setActiveMomPanel("postpartum-detail")}
+                    alignActionTextWithTitle
+                  />
+                  <StatusModuleCard
+                    title="补能与休息"
+                    bodyText={
+                      <span className="font-medium">
+                        待开通 <strong className="font-bold">睡眠</strong> 与 <strong className="font-bold">营养</strong> 功能
+                      </span>
+                    }
+                    tone="amber"
+                    icon={<Coffee className="h-4 w-4" />}
+                    onInfoClick={() => setActiveMomPanel("rest-info")}
+                    alignActionTextWithTitle
+                  />
+                </div>
+              ) : null}
             </div>
 
-            <Expandable
-              id="status-milk-trend"
-              title="母乳趋势"
-              className="order-3 border-[#f0dfc4] bg-gradient-to-br from-[#fffaf0] via-white to-[#fff1d6]"
-              defaultOpen
-              icon={<div className="w-6 h-6 rounded-full bg-[#ffe4b8] flex items-center justify-center"><Target className="w-3.5 h-3.5 text-[#b9792a]" /></div>}
-            >
+            {isPostpartumStage ? (
+              <Expandable
+                id="status-milk-trend"
+                title="母乳趋势"
+                className="order-3 border-[#f0dfc4] bg-gradient-to-br from-[#fffaf0] via-white to-[#fff1d6]"
+                defaultOpen
+                icon={<div className="w-6 h-6 rounded-full bg-[#ffe4b8] flex items-center justify-center"><Target className="w-3.5 h-3.5 text-[#b9792a]" /></div>}
+              >
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-2 text-[9px] text-[#8a6742]">
                   <div className="flex items-center gap-1">
@@ -2716,7 +2821,8 @@ const StatusOverviewBody: React.FC = () => {
                   </ResponsiveContainer>
                 </div>
               )}
-            </Expandable>
+              </Expandable>
+            ) : null}
 
           </>
         ) : (

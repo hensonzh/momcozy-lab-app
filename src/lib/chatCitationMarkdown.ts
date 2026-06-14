@@ -41,5 +41,13 @@ export function replaceCitationLinksWithIndexes(
       return index == null ? match : `[${index}]`;
     },
   );
-  return replacedLinks.replace(/[（(]\[(\d+)\][）)]/g, "[$1]");
+  return stripRawWebSearchCitationMarkers(replacedLinks).replace(/[（(]\[(\d+)\][）)]/g, "[$1]");
+}
+
+function stripRawWebSearchCitationMarkers(markdown: string): string {
+  return markdown
+    .replace(/(?:^|\n)[ \t]*(?:cite[ \t]+)?turn\d+search\d+(?:[ \t,]+turn\d+search\d+)*[ \t]*(?=\n|$)/gi, "")
+    .replace(/[ \t]*(?:cite[ \t]+)?turn\d+search\d+(?:[ \t,]+turn\d+search\d+)*/gi, "")
+    .replace(/(?:\n[ \t]*){3,}/g, "\n\n")
+    .replace(/^\n+|\n+$/g, "");
 }

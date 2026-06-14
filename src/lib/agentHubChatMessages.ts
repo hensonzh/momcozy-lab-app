@@ -1,22 +1,35 @@
 import type { ChatMessage } from "@/types/chat";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
+import {
+  buildNotificationMessageFlags,
+  type AgentNotificationKind,
+} from "@/lib/agentNotificationMessages";
 import { chatStore } from "@/lib/chatStore";
-import { loadPersistedChatMessages, savePersistedChatMessages } from "@/lib/chatMessagesLocalPersistence";
+import {
+  loadPersistedChatMessages,
+  savePersistedChatMessages,
+} from "@/lib/chatMessagesLocalPersistence";
 
 export const AGENT_HUB_SYNC_CHAT_EVENT = "mmc-agent-hub-sync-chat";
 
 type AnalysisMessageKind = "daily_summary" | "mom_baby" | "milk_analysis";
-type NotificationMessageKind = "health_issue";
+type NotificationMessageKind = Extract<AgentNotificationKind, "health_issue">;
 
 function nowTimestamp(): string {
-  return new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+  return new Date().toLocaleTimeString("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function createMessageId(kind: AnalysisMessageKind): string {
   return `analysis-${kind}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function mergeMessagesPreserveOrder(base: ChatMessage[], incoming: ChatMessage[]): ChatMessage[] {
+function mergeMessagesPreserveOrder(
+  base: ChatMessage[],
+  incoming: ChatMessage[],
+): ChatMessage[] {
   if (base.length === 0) return incoming;
   if (incoming.length === 0) return base;
   const merged = [...base];
@@ -37,8 +50,13 @@ function syncAgentHubMessages(messages: ChatMessage[]): void {
   }
 }
 
-export function appendMessageToAgentHubStore(message: ChatMessage): ChatMessage[] {
-  const base = mergeMessagesPreserveOrder(loadPersistedChatMessages(), chatStore.get().messages);
+export function appendMessageToAgentHubStore(
+  message: ChatMessage,
+): ChatMessage[] {
+  const base = mergeMessagesPreserveOrder(
+    loadPersistedChatMessages(),
+    chatStore.get().messages,
+  );
   if (base.some((m) => m.id === message.id)) {
     syncAgentHubMessages(base);
     return base;
@@ -55,6 +73,7 @@ export function appendAgentHubAnalysisMessage(
     kind: AnalysisMessageKind;
     id?: string;
     analysisCard?: AgentAnalysisCard;
+    notification?: boolean;
   },
 ): string | null {
   const trimmed = content.trim();
@@ -73,6 +92,9 @@ export function appendAgentHubAnalysisMessage(
     content: trimmed,
     timestamp: nowTimestamp(),
     chatStreamContext: opts.analysisCard ? undefined : "main",
+    ...(opts.notification && opts.kind === "milk_analysis"
+      ? buildNotificationMessageFlags("milk_analysis")
+      : {}),
     ...reportPayload,
   });
   return id;
@@ -88,13 +110,16 @@ export function appendAgentHubNotificationMessage(
   const trimmed = content.trim();
   if (!trimmed) return null;
 
-  const id = opts.id?.trim() || `notification-${opts.kind}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const id =
+    opts.id?.trim() ||
+    `notification-${opts.kind}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   appendMessageToAgentHubStore({
     id,
     role: "mai",
     content: trimmed,
     timestamp: nowTimestamp(),
     chatStreamContext: "main",
+    ...buildNotificationMessageFlags(opts.kind),
   });
   return id;
 }
