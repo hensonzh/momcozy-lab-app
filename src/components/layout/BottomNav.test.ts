@@ -10,7 +10,8 @@ describe("BottomNav birth journey notification wiring", () => {
   it("shows a status notification dot and transfers it to the status card on click", () => {
     expect(bottomNavSource).toContain("useBirthJourneyPlanNavNotification");
     expect(bottomNavSource).toContain("transferBirthJourneyPlanNotificationToStatusCard");
-    expect(bottomNavSource).toContain('aria-label="状态有新通知"');
+    expect(bottomNavSource).toContain('aria-label="宝宝和我有新通知"');
+    expect(bottomNavSource).toContain('label: "宝宝和我"');
     expect(bottomNavSource).toContain('tab.path === "/status"');
   });
 });

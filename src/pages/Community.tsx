@@ -1,5 +1,5 @@
 import React from "react";
-import { Users } from "lucide-react";
+import momcozyAgentAvatar from "@/assets/momcozy-agent.png";
 import TabPageTopReserve from "@/components/layout/TabPageTopReserve";
 import TabPageScrollRegion from "@/components/layout/TabPageScrollRegion";
 import TabPageEmbeddedNav from "@/components/layout/TabPageEmbeddedNav";
@@ -13,12 +13,17 @@ const Community: React.FC = () => {
       <TabPageTopReserve />
       <TabPageScrollRegion>
         <div className="min-h-full flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <Users className="w-8 h-8 text-primary" />
+          <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 shadow-[0_10px_28px_rgba(58,39,49,0.08)]">
+            <img
+              src={momcozyAgentAvatar}
+              alt=""
+              aria-hidden="true"
+              className="h-16 w-16 rounded-full object-cover shadow-sm"
+            />
           </div>
-          <h1 className="text-xl font-bold text-foreground mb-2">社区功能建设中</h1>
+          <h1 className="text-xl font-bold text-foreground mb-2">社区功能还在建设中哦～</h1>
           <p className="text-sm text-muted-foreground">
-            未来你将在这里与更多妈妈交流分享，敬请期待！
+            我们将打造一个妈妈们一起交流分享的社区，敬请期待～
           </p>
         </div>
       </TabPageScrollRegion>

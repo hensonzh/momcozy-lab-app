@@ -1,32 +1,29 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Heart, Calendar, Bluetooth, Users } from "lucide-react";
+import { Calendar, Bluetooth, Users } from "lucide-react";
+import momcozyAgentAvatar from "@/assets/momcozy-agent.png";
 import { cn } from "@/lib/utils";
 import {
   transferBirthJourneyPlanNotificationToStatusCard,
   useBirthJourneyPlanNavNotification,
 } from "@/lib/birthJourneyPlanNotification";
 
-/* Custom nursing/breastfeeding icon matching Lucide stroke style */
-const NursingIcon: React.FC<{ className?: string; strokeWidth?: number }> = ({ className, strokeWidth = 2 }) => (
+/* Custom mom-and-baby icon matching Lucide stroke style */
+const MomBabyIcon: React.FC<{ className?: string; strokeWidth?: number }> = ({ className, strokeWidth = 2 }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-    {/* Mother head */}
-    <circle cx="10" cy="5" r="2.5" />
-    {/* Mother body holding baby */}
-    <path d="M6 10.5c0-1.5 1.5-3 4-3s4 1.5 4 3v1.5c0 .5-.2 1-.5 1.3" />
-    {/* Arms cradling */}
-    <path d="M6 12c-1.5.5-2 2-2 3s.5 2 1.5 2.5" />
-    <path d="M14 12c1 .5 1.8 1.5 1.8 2.5" />
-    {/* Baby */}
-    <circle cx="10.5" cy="15" r="1.5" />
-    <path d="M8.5 16c-.3.8-.5 1.8 0 2.5.5.8 1.5 1 2.5.8s1.8-.8 2-1.5" />
+    <circle cx="8.2" cy="7.1" r="2.8" />
+    <path d="M3.8 19.2v-1.4c0-3.1 1.9-5.4 4.4-5.4s4.4 2.3 4.4 5.4v1.4" />
+    <path d="M5.7 18.8c.7.4 1.5.6 2.5.6s1.8-.2 2.5-.6" />
+    <circle cx="16.4" cy="9.7" r="2.1" />
+    <path d="M12.9 19.2v-.9c0-2.4 1.4-4.1 3.5-4.1s3.5 1.7 3.5 4.1v.9" />
+    <path d="M14.5 18.7c.5.3 1.1.4 1.9.4s1.4-.1 1.9-.4" />
   </svg>
 );
 
 const tabs = [
-  { path: "/status", icon: NursingIcon as React.ComponentType<{ className?: string; strokeWidth?: number }>, label: "状态" },
+  { path: "/status", icon: MomBabyIcon as React.ComponentType<{ className?: string; strokeWidth?: number }>, label: "宝宝和我" },
   { path: "/schedule", icon: Calendar, label: "计划" },
-  { path: "/", icon: Heart, label: "Comate", isCenter: true },
+  { path: "/", icon: null, label: "智能体", isCenter: true },
   { path: "/community", icon: Users, label: "社区" },
   { path: "/device", icon: Bluetooth, label: "设备" },
 ];
@@ -69,6 +66,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
                 <button
                   onClick={() => navigate(tab.path)}
                   aria-current={active ? "page" : undefined}
+                  aria-label={tab.label}
                   className={cn(
                     "relative -top-3 flex h-[68px] w-[68px] flex-col items-center justify-center rounded-full border-[5px] border-background transition-all duration-200 active:scale-95 focus:outline-none focus-visible:outline-none",
                     active
@@ -77,21 +75,12 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
                   )}
                 >
                   {active && <span className="absolute inset-1 rounded-full bg-white/10" />}
-                  <tab.icon
-                    className={cn(
-                      "relative z-10 h-7 w-7 shrink-0 transition-colors",
-                      active ? "fill-primary-foreground/20" : "fill-transparent",
-                    )}
-                    strokeWidth={active ? 2.6 : 2}
+                  <img
+                    src={momcozyAgentAvatar}
+                    alt=""
+                    aria-hidden="true"
+                    className="relative z-10 h-12 w-12 shrink-0 rounded-full object-cover shadow-[0_4px_10px_rgba(58,39,49,0.14)]"
                   />
-                  <span
-                    className={cn(
-                      "relative z-10 mt-0.5 max-w-[56px] whitespace-nowrap text-center text-[8.5px] leading-none transition-colors",
-                      active ? "font-extrabold" : "font-semibold",
-                    )}
-                  >
-                    {tab.label}
-                  </span>
                 </button>
               </div>
             );
@@ -117,7 +106,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
                 )}
                 {tab.path === "/status" && birthJourneyPlanNavNotification ? (
                   <span
-                    aria-label="状态有新通知"
+                    aria-label="宝宝和我有新通知"
                     className="absolute right-2 top-1 z-20 h-2.5 w-2.5 rounded-full bg-[#d85f8c] ring-2 ring-card"
                   />
                 ) : null}
