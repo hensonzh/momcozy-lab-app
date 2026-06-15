@@ -8,7 +8,10 @@ import { buildPersonalizedNotificationText } from "@/lib/agentNotificationMessag
 import { AGENT_NOTIFICATION_VOICE_EVENT } from "@/lib/agentNotificationVoice";
 import {
   buildMilkAnalysisReminderFollowupPrompt,
+  completeMilkAnalysisReminderFollowup,
   consumeMilkAnalysisReminderFollowup,
+  markMilkAnalysisReminderFollowupAttempt,
+  peekMilkAnalysisReminderFollowup,
   queueMilkAnalysisReminderFollowup,
 } from "@/lib/milkAnalysisReminderFollowup";
 import { chatStore } from "@/lib/chatStore";
@@ -180,6 +183,32 @@ describe("milk analysis reminder followup", () => {
     expect(
       queueMilkAnalysisReminderFollowup({
         chatMessageId: "analysis-milk_analysis-1",
+        message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
+      }),
+    ).toBeNull();
+  });
+
+  it("keeps pending followup until the hidden agent run finishes", () => {
+    queueMilkAnalysisReminderFollowup({
+      chatMessageId: "analysis-milk_analysis-retry",
+      message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
+    });
+
+    expect(peekMilkAnalysisReminderFollowup()?.chatMessageId).toBe(
+      "analysis-milk_analysis-retry",
+    );
+
+    const attempt = markMilkAnalysisReminderFollowupAttempt(
+      "analysis-milk_analysis-retry",
+    );
+    expect(attempt?.attempts).toBe(1);
+    expect(peekMilkAnalysisReminderFollowup()).toBeNull();
+
+    completeMilkAnalysisReminderFollowup("analysis-milk_analysis-retry");
+    expect(consumeMilkAnalysisReminderFollowup()).toBeNull();
+    expect(
+      queueMilkAnalysisReminderFollowup({
+        chatMessageId: "analysis-milk_analysis-retry",
         message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
       }),
     ).toBeNull();

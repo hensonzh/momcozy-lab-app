@@ -65,8 +65,11 @@ import {
 } from "@/lib/agentHubChatMessages";
 import {
   buildMilkAnalysisReminderFollowupPrompt,
-  consumeMilkAnalysisReminderFollowup,
+  completeMilkAnalysisReminderFollowup,
+  markMilkAnalysisReminderFollowupAttempt,
   MILK_ANALYSIS_REMINDER_FOLLOWUP_EVENT,
+  peekMilkAnalysisReminderFollowup,
+  retryMilkAnalysisReminderFollowupLater,
 } from "@/lib/milkAnalysisReminderFollowup";
 import {
   AGENT_NOTIFICATION_VOICE_IDLE_EVENT,
@@ -1277,6 +1280,7 @@ const AgentHub: React.FC = () => {
   const lastStreamingScrollAtRef = useRef(0);
   /** Hub 对话 ag-ui WebSocket 取消句柄 */
   const mainChatCancelRef = useRef<(() => void) | null>(null);
+  const milkAnalysisFollowupInFlightRef = useRef<string | null>(null);
   /** 新会话隐藏预热请求：新建会话/离开页面时取消，避免旧 thread 后台请求继续占资源 */
   const agUiPrewarmAbortRef = useRef<AbortController | null>(null);
   /** 当前正在流式回复的 Mai 消息 id（用于区分“正在思考”与历史“已思考”展示） */
@@ -2497,6 +2501,8 @@ const AgentHub: React.FC = () => {
       showUserMessage?: boolean;
       purgeStagedImagesAfterAttach?: boolean;
       userDisplayText?: string;
+      onStreamDone?: () => void;
+      onStreamError?: (error?: Error) => void;
     },
   ) => {
     prepareLatestChatWindowForNewTurn();
@@ -2562,6 +2568,7 @@ const AgentHub: React.FC = () => {
     mainNoVisibleResponseTimerRef.current = window.setTimeout(() => {
       if (mainStreamingReplyIdRef.current !== replyId) return;
       mainNoVisibleResponseTimerRef.current = null;
+      opts?.onStreamError?.(new Error("no visible response"));
       agentHubMainChatRuntime.cancel();
       mainChatCancelRef.current?.();
       void stopCurrentBubblePlayback();
@@ -2593,6 +2600,7 @@ const AgentHub: React.FC = () => {
       clearAwaitingBottomSendBarLoading();
     }, HUB_MAIN_STREAM_NO_VISIBLE_RESPONSE_TIMEOUT_MS);
     const onDoneHandler = () => {
+      opts?.onStreamDone?.();
       setMessages((prev) =>
         prev.map((m) =>
           m.id === replyId && (m.thinkingContent?.trim() ?? "")
@@ -2642,6 +2650,7 @@ const AgentHub: React.FC = () => {
       }, 0);
     };
     const onErrorHandler = (err: Error) => {
+      opts?.onStreamError?.(err);
       clearMainNoVisibleResponseTimer();
       void stopCurrentBubblePlayback();
       mainPendingRichTextRef.current = null;
@@ -2720,10 +2729,34 @@ const AgentHub: React.FC = () => {
   const tryStartMilkAnalysisReminderFollowup = useCallback(() => {
     if (mainChatRuntimeSnapshot.running || mainChatCancelRef.current) return;
     if (isAgentNotificationVoicePlaying()) return;
-    const pending = consumeMilkAnalysisReminderFollowup();
+    if (milkAnalysisFollowupInFlightRef.current) return;
+    const pending = peekMilkAnalysisReminderFollowup();
     if (!pending) return;
-    const prompt = buildMilkAnalysisReminderFollowupPrompt(pending);
-    void startMainChatStream(prompt, { showUserMessage: false });
+    const claimed = markMilkAnalysisReminderFollowupAttempt(
+      pending.chatMessageId,
+    );
+    if (!claimed) return;
+    milkAnalysisFollowupInFlightRef.current = claimed.chatMessageId;
+    const clearInFlight = () => {
+      if (milkAnalysisFollowupInFlightRef.current === claimed.chatMessageId) {
+        milkAnalysisFollowupInFlightRef.current = null;
+      }
+    };
+    const prompt = buildMilkAnalysisReminderFollowupPrompt(claimed);
+    void startMainChatStream(prompt, {
+      showUserMessage: false,
+      onStreamDone: () => {
+        completeMilkAnalysisReminderFollowup(claimed.chatMessageId);
+        clearInFlight();
+      },
+      onStreamError: () => {
+        clearInFlight();
+        retryMilkAnalysisReminderFollowupLater(claimed.chatMessageId);
+      },
+    }).catch(() => {
+      clearInFlight();
+      retryMilkAnalysisReminderFollowupLater(claimed.chatMessageId);
+    });
   }, [mainChatRuntimeSnapshot.running]);
 
   useEffect(() => {
