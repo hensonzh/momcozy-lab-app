@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AgentAnalysisCard } from "@/lib/agentApiTypes";
 import {
   appendAgentHubAnalysisMessage,
@@ -145,6 +145,7 @@ describe("buildPersonalizedNotificationText", () => {
 
 describe("milk analysis reminder followup", () => {
   afterEach(() => {
+    vi.useRealTimers();
     localStorage.clear();
   });
 
@@ -171,6 +172,7 @@ describe("milk analysis reminder followup", () => {
     });
 
     const pending = consumeMilkAnalysisReminderFollowup();
+    expect(pending?.taskId).toContain("analysis-milk_analysis-1");
     expect(pending?.chatMessageId).toBe("analysis-milk_analysis-1");
     expect(pending?.analysisContext?.status_label).toBe("偏低但可追");
 
@@ -180,12 +182,12 @@ describe("milk analysis reminder followup", () => {
     expect(prompt).toContain("不要重复说");
 
     expect(consumeMilkAnalysisReminderFollowup()).toBeNull();
-    expect(
-      queueMilkAnalysisReminderFollowup({
-        chatMessageId: "analysis-milk_analysis-1",
-        message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
-      }),
-    ).toBeNull();
+    const next = queueMilkAnalysisReminderFollowup({
+      chatMessageId: "analysis-milk_analysis-1",
+      message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
+    });
+    expect(next?.chatMessageId).toBe("analysis-milk_analysis-1");
+    expect(next?.taskId).not.toBe(pending?.taskId);
   });
 
   it("keeps pending followup until the hidden agent run finishes", () => {
@@ -198,19 +200,55 @@ describe("milk analysis reminder followup", () => {
       "analysis-milk_analysis-retry",
     );
 
-    const attempt = markMilkAnalysisReminderFollowupAttempt(
-      "analysis-milk_analysis-retry",
-    );
+    const taskId = peekMilkAnalysisReminderFollowup()?.taskId || "";
+    const attempt = markMilkAnalysisReminderFollowupAttempt(taskId);
     expect(attempt?.attempts).toBe(1);
+    expect(attempt?.status).toBe("running");
     expect(peekMilkAnalysisReminderFollowup()).toBeNull();
 
-    completeMilkAnalysisReminderFollowup("analysis-milk_analysis-retry");
+    completeMilkAnalysisReminderFollowup(taskId);
     expect(consumeMilkAnalysisReminderFollowup()).toBeNull();
-    expect(
-      queueMilkAnalysisReminderFollowup({
-        chatMessageId: "analysis-milk_analysis-retry",
-        message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
-      }),
-    ).toBeNull();
+    const next = queueMilkAnalysisReminderFollowup({
+      chatMessageId: "analysis-milk_analysis-retry",
+      message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
+    });
+    expect(next?.chatMessageId).toBe("analysis-milk_analysis-retry");
+    expect(next?.taskId).not.toBe(taskId);
+  });
+
+  it("does not duplicate an identical pending hidden followup", () => {
+    const first = queueMilkAnalysisReminderFollowup({
+      chatMessageId: "analysis-milk_analysis-pending",
+      message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
+    });
+    const second = queueMilkAnalysisReminderFollowup({
+      chatMessageId: "analysis-milk_analysis-pending",
+      message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
+    });
+
+    expect(second?.chatMessageId).toBe(first?.chatMessageId);
+    expect(second?.taskId).toBe(first?.taskId);
+    expect(second?.message).toBe(first?.message);
+    expect(second?.createdAt).toBe(first?.createdAt);
+  });
+
+  it("recovers a stale running hidden followup task", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-06-15T00:00:00.000Z"));
+
+    const queued = queueMilkAnalysisReminderFollowup({
+      chatMessageId: "analysis-milk_analysis-stale",
+      message: "嗨，我注意到你近期奶量偏低，可以和你聊聊吗？",
+    });
+    const attempt = markMilkAnalysisReminderFollowupAttempt(
+      queued?.taskId || "",
+    );
+
+    expect(attempt?.status).toBe("running");
+    expect(peekMilkAnalysisReminderFollowup()).toBeNull();
+
+    vi.setSystemTime(new Date("2026-06-15T00:03:00.000Z"));
+
+    expect(peekMilkAnalysisReminderFollowup()?.taskId).toBe(queued?.taskId);
   });
 });

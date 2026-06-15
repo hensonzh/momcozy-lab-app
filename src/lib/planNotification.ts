@@ -85,12 +85,43 @@ function decodePayload(raw: string | null): PlanNotificationPayload | null {
   }
 }
 
+function mergeDates(left?: string[], right?: string[]): string[] | undefined {
+  const merged = uniqueDates([...(left ?? []), ...(right ?? [])]);
+  return merged.length > 0 ? merged : undefined;
+}
+
+function shouldMergePlanNotification(
+  previous: PlanNotificationPayload | null,
+  next?: PlanNotificationPayload,
+): previous is PlanNotificationPayload {
+  if (!previous || !next) return false;
+  return (
+    previous.kind === next.kind &&
+    previous.target === next.target &&
+    previous.reason === next.reason
+  );
+}
+
+function mergePlanNotificationPayload(
+  previous: PlanNotificationPayload | null,
+  next?: PlanNotificationPayload,
+): PlanNotificationPayload | undefined {
+  if (!next) return next;
+  if (!shouldMergePlanNotification(previous, next)) return next;
+  return {
+    ...previous,
+    ...next,
+    dates: mergeDates(previous.dates, next.dates),
+  };
+}
+
 function hasPending(key: string): boolean {
   return readRaw(key) != null;
 }
 
 export function markPlanNotification(config: PlanNotificationConfig, payload?: PlanNotificationPayload): void {
-  writeRaw(config.navKey, encodePayload(payload));
+  const mergedPayload = mergePlanNotificationPayload(decodePayload(readRaw(config.navKey)), payload);
+  writeRaw(config.navKey, encodePayload(mergedPayload));
   writeRaw(config.pageKey, null);
   dispatchPlanNotificationChange();
 }

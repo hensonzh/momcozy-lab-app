@@ -1129,7 +1129,7 @@ function MilkManagementStructuredCard({
   const isPlan = cardType === "milk_plan_card";
   const title = asString(cardJson.title) || (isPlan ? "奶量计划草稿" : "奶量分析");
   const subtitle = asString(cardJson.subtitle);
-  const statusLabel = asString(cardJson.status_label);
+  const statusLabel = isPlan ? "" : asString(cardJson.status_label);
   const statusTone = asString(cardJson.status_tone);
   const headline = asString(cardJson.headline);
   const sections = asObjectList(cardJson.sections);
@@ -1197,13 +1197,24 @@ function MilkManagementStructuredCard({
                   </div>
                 ) : null}
                 {items.length > 0 ? (
-                  <div className="grid gap-1.5">
-                    {items.map((item, itemIndex) => (
-                      <p key={`${item}-${itemIndex}`} className="text-[12px] font-medium leading-relaxed text-[#5c4852]">
-                        {item}
-                      </p>
-                    ))}
-                  </div>
+                  isPlan ? (
+                    <ul className="grid gap-1.5">
+                      {items.map((item, itemIndex) => (
+                        <li key={`${item}-${itemIndex}`} className="flex gap-2 text-[12px] font-medium leading-relaxed text-[#5c4852]">
+                          <span className="mt-[0.62em] h-1.5 w-1.5 shrink-0 rounded-full bg-[#b98ca1]" aria-hidden="true" />
+                          <span className="min-w-0 flex-1">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="grid gap-1.5">
+                      {items.map((item, itemIndex) => (
+                        <p key={`${item}-${itemIndex}`} className="text-[12px] font-medium leading-relaxed text-[#5c4852]">
+                          {item}
+                        </p>
+                      ))}
+                    </div>
+                  )
                 ) : null}
               </section>
             );
