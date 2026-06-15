@@ -65,6 +65,7 @@ import {
   STATUS_GROWTH_HIGHLIGHT_EVENT,
 } from "@/lib/statusGrowthHighlight";
 import {
+  clearBirthJourneyPlanCardNotification,
   clearBirthJourneyPlanGeneratedNotification,
   subscribeBirthJourneyPlanDeleted,
   useBirthJourneyPlanCardNotification,
@@ -73,7 +74,6 @@ import {
   clearPregnancyDiaryCardNotification,
   subscribePregnancyDiaryChanged,
   usePregnancyDiaryCardNotification,
-  usePregnancyDiaryCardNotificationLabel,
 } from "@/lib/pregnancyDiaryEvents";
 import { getRuntimeMomStage } from "@/lib/debugUserConfig";
 
@@ -422,9 +422,6 @@ const BirthJourneyPlanItemRow: React.FC<{ item: BirthJourneyPlanItem; index: num
         {item.reason ? (
           <p className="mt-0.5 text-[11px] font-medium leading-relaxed text-[#7b6a61]">{item.reason}</p>
         ) : null}
-        {item.timeframe ? (
-          <p className="mt-1 text-[10px] font-extrabold leading-tight text-[#b65c28]">{item.timeframe}</p>
-        ) : null}
       </div>
     </div>
   </div>
@@ -463,7 +460,6 @@ const BirthJourneyLayeredPlanView: React.FC<{
   currentHelpPrompts: string[];
   onAgentPrefill: (text: string) => void;
 }> = ({ layers, currentHelpPrompts, onAgentPrefill }) => {
-  const safetyItems = birthJourneyPlanItems(layers.safety_gate?.items, 3);
   const focusItems = birthJourneyPlanItems(layers.current_week_focus?.items, 3);
   const next7Items = birthJourneyPlanItems(layers.next_7_days?.items, 5);
   const next24Items = birthJourneyPlanItems(layers.next_2_4_weeks?.items, 4);
@@ -471,13 +467,7 @@ const BirthJourneyLayeredPlanView: React.FC<{
   return (
     <div className="space-y-3">
       <BirthJourneyPlanSectionView
-        title={layers.safety_gate?.title || "需要优先确认"}
-        items={safetyItems}
-        tone="alert"
-      />
-      <BirthJourneyPlanSectionView
         title={layers.current_week_focus?.title || "当前阶段目标"}
-        subtitle={compactText(layers.current_week_focus?.subtitle)}
         items={focusItems}
         tone="warm"
       />
@@ -550,14 +540,7 @@ const PrenatalPlanTimelineView: React.FC<{
             />
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <p className="text-sm font-extrabold leading-tight text-[#352820]">{section.title}</p>
-                  {section.items.length > 0 ? (
-                    <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-extrabold text-[#385f5b] ring-1 ring-[#cfe4df]">
-                      {section.items.length}项
-                    </span>
-                  ) : null}
-                </div>
+                <p className="text-sm font-extrabold leading-tight text-[#352820]">{section.title}</p>
                 {section.subtitle ? (
                   <p className="mt-1 text-[11px] font-semibold leading-relaxed text-[#7b6a61]">
                     {section.subtitle}
@@ -1560,45 +1543,31 @@ const MomStatusPanelSheet: React.FC<{
 const PrenatalExpandedServices: React.FC<{
   birthJourneyPlan: CarePlanArtifact | null;
   birthJourneyLoading: boolean;
-  birthJourneyCardFocus: string;
   birthJourneyPlanCardNotification: boolean;
   pregnancyDiaryEntries: PregnancyDiaryEntry[];
   pregnancyDiaryToday: PregnancyDiaryEntry | null;
   pregnancyDiaryLoading: boolean;
   pregnancyDiaryCardNotification: boolean;
-  pregnancyDiaryCardNotificationLabel: string;
   onCreateBirthJourney: () => void;
   onOpenDiaryEditor: () => void;
   onOpenDiaryDetail: () => void;
 }> = ({
   birthJourneyPlan,
   birthJourneyLoading,
-  birthJourneyCardFocus,
   birthJourneyPlanCardNotification,
   pregnancyDiaryEntries,
   pregnancyDiaryToday,
   pregnancyDiaryLoading,
   pregnancyDiaryCardNotification,
-  pregnancyDiaryCardNotificationLabel,
   onCreateBirthJourney,
   onOpenDiaryEditor,
   onOpenDiaryDetail,
 }) => {
-  const currentPhase = currentBirthJourneyPhase(birthJourneyPlan);
   const layers = birthJourneyPlanningLayers(birthJourneyPlan);
   const planStructureSections = [
     {
-      key: "safety",
-      title: layers?.safety_gate?.title || "需要优先确认",
-      subtitle: compactText(layers?.safety_gate?.subtitle),
-      items: birthJourneyPlanItems(layers?.safety_gate?.items, 3),
-      emptyLabel: "制定后会显示需要先确认的身体信号、就医提醒和产检问题。",
-      tone: "alert" as const,
-    },
-    {
       key: "current",
       title: layers?.current_week_focus?.title || "当前阶段目标",
-      subtitle: compactText(layers?.current_week_focus?.subtitle) || birthJourneyCardFocus,
       items: birthJourneyPlanItems(layers?.current_week_focus?.items, 4),
       emptyLabel: "制定后会说明这个阶段的主要照护目标和准备方向。",
       tone: "warm" as const,
@@ -1634,7 +1603,6 @@ const PrenatalExpandedServices: React.FC<{
   const healthNoteCount = healthNotes.length;
   const diaryQuestionCount = pregnancyDiaryQuestionCount(pregnancyDiaryEntries);
   const diaryReview = pregnancyDiaryReviewSummary(pregnancyDiaryEntries);
-  const currentPhaseLabel = currentPhase?.title || layers?.current_phase_title || "待生成";
 
   return (
     <section
@@ -1642,15 +1610,14 @@ const PrenatalExpandedServices: React.FC<{
       aria-label="孕期服务"
     >
       <div className="space-y-5 px-4 pb-4">
-        <section className="overflow-hidden rounded-[24px] border border-[#eadfd8] bg-[#fffaf8] shadow-sm">
+        <section
+          className={`overflow-hidden rounded-[24px] border border-[#eadfd8] bg-[#fffaf8] shadow-sm ${
+            pregnancyDiaryCardNotification ? "status-module-card-notice" : ""
+          }`}
+        >
           <div className="flex items-center justify-between gap-3 px-4 py-4">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <h3 className="text-[18px] font-black leading-tight text-foreground">孕期日记</h3>
-              {pregnancyDiaryCardNotification ? (
-                <span className="rounded-full bg-[#fff0e8] px-2.5 py-1 text-[10px] font-extrabold text-[#9b552f]">
-                  {pregnancyDiaryCardNotificationLabel}
-                </span>
-              ) : null}
             </div>
             <button
               type="button"
@@ -1738,34 +1705,6 @@ const PrenatalExpandedServices: React.FC<{
                     <p className="mt-3 text-xs font-semibold leading-relaxed text-[#6a575b]">
                       {entry.content || pregnancyDiarySummary(entry)}
                     </p>
-
-                    {Array.isArray(entry.health_notes) && entry.health_notes.length > 0 ? (
-                      <div className="mt-3 rounded-2xl border border-[#ead8ce] bg-white/75 px-3 py-3">
-                        <p className="text-[10px] font-extrabold text-[#9b552f]">健康咨询记录</p>
-                        <div className="mt-2 space-y-2">
-                          {entry.health_notes.slice(0, 2).map((note) => (
-                            <div key={note.note_id} className="text-xs font-semibold leading-relaxed text-[#6a575b]">
-                              <p className="font-extrabold text-foreground">{compactText(note.topic) || "健康咨询"}</p>
-                              {note.user_report ? <p className="mt-0.5 line-clamp-2">{note.user_report}</p> : null}
-                              {note.follow_up ? <p className="mt-0.5 text-[#9b552f]">{note.follow_up}</p> : null}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {pregnancyDiarySignalTags(entry).map((tag) => (
-                        <span key={tag} className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-[#7d666d] ring-1 ring-[#ead8ce]">
-                          {tag}
-                        </span>
-                      ))}
-                      {entry.appointment_note ? (
-                        <span className="rounded-full bg-[#f5eee9] px-2.5 py-1 text-[10px] font-bold text-[#9b552f]">
-                          有产检问题
-                        </span>
-                      ) : null}
-                    </div>
                   </article>
                 ))}
               </div>
@@ -1790,16 +1729,15 @@ const PrenatalExpandedServices: React.FC<{
           </div>
         </section>
 
-        <section className="rounded-[24px] border border-[#cfe4df] bg-[#f7fbfa] p-4 shadow-sm">
+        <section
+          className={`rounded-[24px] border border-[#cfe4df] bg-[#f7fbfa] p-4 shadow-sm ${
+            birthJourneyPlanCardNotification ? "status-module-card-notice" : ""
+          }`}
+        >
           <div className="min-w-0">
             <div className="flex min-w-0 items-center justify-between gap-3">
               <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <h3 className="text-[17px] font-black leading-tight text-foreground">孕期计划</h3>
-                {birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification ? (
-                  <span className="rounded-full bg-[#fbe7ef] px-2.5 py-1 text-[10px] font-extrabold text-[#af4268]">
-                    计划已生成
-                  </span>
-                ) : null}
               </div>
               {!birthJourneyPlan ? (
                 <button
@@ -1819,10 +1757,6 @@ const PrenatalExpandedServices: React.FC<{
             </div>
             {birthJourneyLoading ? (
               <p className="mt-2 text-sm font-bold leading-relaxed text-[#385f5b]">正在加载孕期计划</p>
-            ) : birthJourneyPlan ? (
-              <p className="mt-2 text-sm font-bold leading-relaxed text-[#385f5b]">
-                {birthJourneyCardFocus || `当前阶段：${currentPhaseLabel}`}
-              </p>
             ) : null}
           </div>
 
@@ -2467,7 +2401,6 @@ const StatusOverviewBody: React.FC = () => {
   const [unit] = useVolumeUnit();
   const birthJourneyPlanCardNotification = useBirthJourneyPlanCardNotification();
   const pregnancyDiaryCardNotification = usePregnancyDiaryCardNotification();
-  const pregnancyDiaryCardNotificationLabel = usePregnancyDiaryCardNotificationLabel();
   const isOz = unit === "oz";
   const conv = useCallback((ml: number) => (isOz ? +(ml * 0.033814).toFixed(1) : ml), [isOz]);
 
@@ -2511,6 +2444,14 @@ const StatusOverviewBody: React.FC = () => {
   const [birthJourneyPlan, setBirthJourneyPlan] = useState<CarePlanArtifact | null>(null);
   const [birthJourneyLoading, setBirthJourneyLoading] = useState(true);
   const [birthJourneyDeleting, setBirthJourneyDeleting] = useState(false);
+
+  useEffect(() => {
+    if (!birthJourneyPlan || birthJourneyLoading || !birthJourneyPlanCardNotification) return;
+    const timer = window.setTimeout(() => {
+      clearBirthJourneyPlanCardNotification();
+    }, 3000);
+    return () => window.clearTimeout(timer);
+  }, [birthJourneyPlan, birthJourneyLoading, birthJourneyPlanCardNotification]);
   const [birthJourneyDeleteErr, setBirthJourneyDeleteErr] = useState<string | null>(null);
   const [pregnancyDiaryEntries, setPregnancyDiaryEntries] = useState<PregnancyDiaryEntry[]>([]);
   const [pregnancyDiaryToday, setPregnancyDiaryToday] = useState<PregnancyDiaryEntry | null>(null);
@@ -2527,6 +2468,14 @@ const StatusOverviewBody: React.FC = () => {
   const [diarySaving, setDiarySaving] = useState(false);
   const [diarySaveErr, setDiarySaveErr] = useState<string | null>(null);
   const [pregnancyDiaryJustSaved, setPregnancyDiaryJustSaved] = useState(false);
+
+  useEffect(() => {
+    if (pregnancyDiaryLoading || !pregnancyDiaryCardNotification) return;
+    const timer = window.setTimeout(() => {
+      clearPregnancyDiaryCardNotification();
+    }, 3000);
+    return () => window.clearTimeout(timer);
+  }, [pregnancyDiaryLoading, pregnancyDiaryCardNotification]);
   const growthMetricsRef = useRef<HTMLDivElement | null>(null);
   const growthBlinkTimerRef = useRef<number | null>(null);
 
@@ -3029,11 +2978,6 @@ const StatusOverviewBody: React.FC = () => {
       : typeof babyAgeDays === "number"
         ? `宝宝已出生 ${babyAgeDays} 天`
         : "暂无有效分娩日期";
-  const birthJourneyCardPhase = currentBirthJourneyPhase(birthJourneyPlan);
-  const birthJourneyCardLayers = birthJourneyPlanningLayers(birthJourneyPlan);
-  const birthJourneyCardFocusItem = birthJourneyPlanItems(birthJourneyCardLayers?.current_week_focus?.items, 1)[0];
-  const birthJourneyCardFocus = compactText(birthJourneyCardFocusItem?.title) || compactText(birthJourneyCardPhase?.goal);
-
   const runGrowthMetricsHighlight = useCallback(() => {
     if (growthBlinkTimerRef.current !== null) {
       window.clearInterval(growthBlinkTimerRef.current);
@@ -3168,7 +3112,6 @@ const StatusOverviewBody: React.FC = () => {
                 <PrenatalExpandedServices
                   birthJourneyPlan={birthJourneyPlan}
                   birthJourneyLoading={birthJourneyLoading}
-                  birthJourneyCardFocus={birthJourneyPlan && !birthJourneyLoading ? birthJourneyCardFocus : ""}
                   birthJourneyPlanCardNotification={Boolean(
                     birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification,
                   )}
@@ -3176,7 +3119,6 @@ const StatusOverviewBody: React.FC = () => {
                   pregnancyDiaryToday={pregnancyDiaryToday}
                   pregnancyDiaryLoading={pregnancyDiaryLoading}
                   pregnancyDiaryCardNotification={pregnancyDiaryCardNotification}
-                  pregnancyDiaryCardNotificationLabel={pregnancyDiaryCardNotificationLabel}
                   onCreateBirthJourney={() => prefillAgentHub("帮我制定孕期计划")}
                   onOpenDiaryEditor={openPregnancyDiaryEditor}
                   onOpenDiaryDetail={() => {
