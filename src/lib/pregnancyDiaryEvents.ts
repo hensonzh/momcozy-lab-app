@@ -4,14 +4,9 @@ export const PREGNANCY_DIARY_CHANGED_EVENT = "momcozy-pregnancy-diary-changed";
 const PREGNANCY_DIARY_NOTIFICATION_EVENT = "momcozy-pregnancy-diary-notification-change";
 const NAV_PENDING_KEY = "mmc_pregnancy_diary_nav_pending";
 const CARD_PENDING_KEY = "mmc_pregnancy_diary_card_pending";
-const CARD_LABEL_KEY = "mmc_pregnancy_diary_card_label";
+const LEGACY_CARD_LABEL_KEY = "mmc_pregnancy_diary_card_label";
 
 export type PregnancyDiaryChangedAction = "created" | "updated" | "deleted" | "changed";
-
-function notificationLabelForAction(action: PregnancyDiaryChangedAction): string {
-  if (action === "updated") return "记录更新";
-  return "日记已记录";
-}
 
 function dispatchNotificationChange(): void {
   try {
@@ -38,20 +33,11 @@ function writeFlag(key: string, value: boolean): void {
   }
 }
 
-function writeLabel(label: string): void {
+function clearLegacyCardLabel(): void {
   try {
-    if (label) localStorage.setItem(CARD_LABEL_KEY, label);
-    else localStorage.removeItem(CARD_LABEL_KEY);
+    localStorage.removeItem(LEGACY_CARD_LABEL_KEY);
   } catch {
     /* ignore */
-  }
-}
-
-function readLabel(): string {
-  try {
-    return localStorage.getItem(CARD_LABEL_KEY) || "日记已记录";
-  } catch {
-    return "日记已记录";
   }
 }
 
@@ -71,7 +57,7 @@ export function markPregnancyDiaryChangedNotification(action: PregnancyDiaryChan
   }
   writeFlag(NAV_PENDING_KEY, true);
   writeFlag(CARD_PENDING_KEY, false);
-  writeLabel(notificationLabelForAction(action));
+  clearLegacyCardLabel();
   dispatchNotificationChange();
 }
 
@@ -86,14 +72,14 @@ export function clearPregnancyDiaryChangedNotification(): void {
   const hadPending = readFlag(NAV_PENDING_KEY) || readFlag(CARD_PENDING_KEY);
   writeFlag(NAV_PENDING_KEY, false);
   writeFlag(CARD_PENDING_KEY, false);
-  writeLabel("");
+  clearLegacyCardLabel();
   if (hadPending) dispatchNotificationChange();
 }
 
 export function clearPregnancyDiaryCardNotification(): void {
   if (!readFlag(CARD_PENDING_KEY)) return;
   writeFlag(CARD_PENDING_KEY, false);
-  writeLabel("");
+  clearLegacyCardLabel();
   dispatchNotificationChange();
 }
 
@@ -115,8 +101,4 @@ export function usePregnancyDiaryNavNotification(): boolean {
 
 export function usePregnancyDiaryCardNotification(): boolean {
   return useSyncExternalStore(subscribeNotification, () => readFlag(CARD_PENDING_KEY), () => false);
-}
-
-export function usePregnancyDiaryCardNotificationLabel(): string {
-  return useSyncExternalStore(subscribeNotification, readLabel, () => "日记已记录");
 }

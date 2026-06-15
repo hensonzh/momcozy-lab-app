@@ -540,8 +540,8 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "infant_growth_mutate") return { title: "我先帮你保存宝宝成长记录～" };
   if (["ui_form_create", "birth_plan_form_create", "hospital_bag_form_create"].includes(normalizedToolName)) return { title: "我先帮你准备确认内容～" };
   if (normalizedToolName === "labor_communication_card_create") return { title: "我先帮你整理分娩沟通单～" };
-  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我先帮你整理生产全过程计划～" };
-  if (normalizedToolName === "birth_journey_plan_delete") return { title: "我先帮你删除生产全过程计划～" };
+  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我先帮你整理孕期计划～" };
+  if (normalizedToolName === "birth_journey_plan_delete") return { title: "我先帮你删除孕期计划～" };
   if (normalizedToolName === "pregnancy_diary_manage") return { title: "我先看看孕期日记～" };
   if (normalizedToolName === "hospital_bag_card_create") return { title: "我先帮你整理待产包清单～" };
   if (normalizedToolName === "ibclc_consult_card_create") return { title: "我先帮你准备 IBCLC 咨询入口～" };
@@ -653,12 +653,12 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
   if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我整理好日程调整预览啦" };
   if (["ui_form_create", "birth_plan_form_create", "hospital_bag_form_create"].includes(normalizedToolName)) return { title: "我已经准备好确认内容啦" };
   if (normalizedToolName === "labor_communication_card_create") return { title: "我已经帮你整理好分娩沟通单啦" };
-  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我已经帮你整理好生产全过程计划啦" };
+  if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我已经帮你整理好孕期计划啦" };
   if (normalizedToolName === "birth_journey_plan_delete") {
     if (status === "needs_delete_confirmation") return { title: "删除前还需要你确认一下" };
-    if (status === "plan_not_found") return { title: "当前没有生产全过程计划可删除" };
-    if (status === "plan_deleted") return { title: "我已经删除生产全过程计划啦" };
-    return { title: "删除生产全过程计划暂时没成功" };
+    if (status === "plan_not_found") return { title: "当前没有孕期计划可删除" };
+    if (status === "plan_deleted") return { title: "我已经删除孕期计划啦" };
+    return { title: "删除孕期计划暂时没成功" };
   }
   if (normalizedToolName === "pregnancy_diary_manage") {
     if (status === "needs_delete_confirmation") return { title: "删除前还需要你确认一下" };
