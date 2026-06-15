@@ -120,4 +120,33 @@ describe("plan notification state", () => {
     expect(payload?.dates).toEqual(["2026-06-15"]);
     expect(localStorage.getItem("mmc_milk_plan_schedule_pending")).toBeNull();
   });
+
+  it("merges dates from consecutive milk plan schedule notifications", () => {
+    markMilkPlanSyncedNotification({
+      kind: "milk_plan",
+      target: "schedule",
+      reason: "rescheduled",
+      label: "奶量日程已重排",
+      dates: ["2026-06-16"],
+    });
+    markMilkPlanSyncedNotification({
+      kind: "milk_plan",
+      target: "schedule",
+      reason: "rescheduled",
+      label: "奶量日程已重排",
+      dates: ["2026-06-17"],
+    });
+    markMilkPlanSyncedNotification({
+      kind: "milk_plan",
+      target: "schedule",
+      reason: "rescheduled",
+      label: "奶量日程已重排",
+      dates: ["2026-06-18"],
+    });
+
+    transferPlanNotificationToPage(milkPlanNotificationConfig);
+
+    const payload = consumePlanPageNotification(milkPlanNotificationConfig);
+    expect(payload?.dates).toEqual(["2026-06-16", "2026-06-17", "2026-06-18"]);
+  });
 });

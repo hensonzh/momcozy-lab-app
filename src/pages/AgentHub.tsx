@@ -2732,13 +2732,11 @@ const AgentHub: React.FC = () => {
     if (milkAnalysisFollowupInFlightRef.current) return;
     const pending = peekMilkAnalysisReminderFollowup();
     if (!pending) return;
-    const claimed = markMilkAnalysisReminderFollowupAttempt(
-      pending.chatMessageId,
-    );
+    const claimed = markMilkAnalysisReminderFollowupAttempt(pending.taskId);
     if (!claimed) return;
-    milkAnalysisFollowupInFlightRef.current = claimed.chatMessageId;
+    milkAnalysisFollowupInFlightRef.current = claimed.taskId;
     const clearInFlight = () => {
-      if (milkAnalysisFollowupInFlightRef.current === claimed.chatMessageId) {
+      if (milkAnalysisFollowupInFlightRef.current === claimed.taskId) {
         milkAnalysisFollowupInFlightRef.current = null;
       }
     };
@@ -2746,16 +2744,16 @@ const AgentHub: React.FC = () => {
     void startMainChatStream(prompt, {
       showUserMessage: false,
       onStreamDone: () => {
-        completeMilkAnalysisReminderFollowup(claimed.chatMessageId);
+        completeMilkAnalysisReminderFollowup(claimed.taskId);
         clearInFlight();
       },
       onStreamError: () => {
         clearInFlight();
-        retryMilkAnalysisReminderFollowupLater(claimed.chatMessageId);
+        retryMilkAnalysisReminderFollowupLater(claimed.taskId);
       },
     }).catch(() => {
       clearInFlight();
-      retryMilkAnalysisReminderFollowupLater(claimed.chatMessageId);
+      retryMilkAnalysisReminderFollowupLater(claimed.taskId);
     });
   }, [mainChatRuntimeSnapshot.running]);
 
@@ -2765,15 +2763,28 @@ const AgentHub: React.FC = () => {
   }, [messages.length, tryStartMilkAnalysisReminderFollowup]);
 
   useEffect(() => {
+    const timers: number[] = [];
+    const schedule = (delayMs: number) => {
+      const timer = window.setTimeout(
+        tryStartMilkAnalysisReminderFollowup,
+        delayMs,
+      );
+      timers.push(timer);
+    };
     const handler = () => {
-      window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0);
+      schedule(0);
+      schedule(800);
+      schedule(1800);
+      schedule(3200);
     };
     window.addEventListener(MILK_ANALYSIS_REMINDER_FOLLOWUP_EVENT, handler);
-    return () =>
+    return () => {
+      timers.forEach((timer) => window.clearTimeout(timer));
       window.removeEventListener(
         MILK_ANALYSIS_REMINDER_FOLLOWUP_EVENT,
         handler,
       );
+    };
   }, [tryStartMilkAnalysisReminderFollowup]);
 
   useEffect(() => {
@@ -2783,6 +2794,21 @@ const AgentHub: React.FC = () => {
     window.addEventListener(AGENT_NOTIFICATION_VOICE_IDLE_EVENT, handler);
     return () =>
       window.removeEventListener(AGENT_NOTIFICATION_VOICE_IDLE_EVENT, handler);
+  }, [tryStartMilkAnalysisReminderFollowup]);
+
+  useEffect(() => {
+    const handler = () => {
+      if (document.visibilityState && document.visibilityState !== "visible") {
+        return;
+      }
+      window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0);
+    };
+    window.addEventListener("focus", handler);
+    document.addEventListener("visibilitychange", handler);
+    return () => {
+      window.removeEventListener("focus", handler);
+      document.removeEventListener("visibilitychange", handler);
+    };
   }, [tryStartMilkAnalysisReminderFollowup]);
 
   const startDirectHospitalBagPumpCartUpdate = async (

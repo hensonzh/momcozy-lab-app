@@ -163,6 +163,51 @@ function hospitalBagFormPayload(): ChatRichTextPayload {
   };
 }
 
+function milkPlanPayload(): ChatRichTextPayload {
+  return {
+    title: "",
+    content: "",
+    button: [],
+    card: [],
+    action: [
+      {
+        kind: "ag_ui_artifact",
+        artifact_type: "card",
+        artifact_id: "milk_plan_1",
+        card: {
+          card_type: "milk_plan_card",
+          schema_version: "1.0",
+          card_json: {
+            title: "追奶计划",
+            status_label: "待确认",
+            sections: [
+              {
+                id: "target",
+                title: "目标",
+                tone: "normal",
+                items: ["当前每日奶量约 549 ml，目标约 709.2 ml。"],
+              },
+              {
+                id: "plan",
+                title: "计划",
+                tone: "info",
+                metrics: [{ label: "周期", value: "3 天", detail: "从明天开始" }],
+                items: ["保留原有 8 个吸奶任务，新增 1 个吸奶任务。"],
+              },
+              {
+                id: "how",
+                title: "每次怎么做",
+                tone: "default",
+                items: ["吸奶过程中如果有明显痛感，暂停吸奶并联系医生或IBCLC顾问。"],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  };
+}
+
 function renderBlock({
   payload = ibclcPayload(),
   onButtonSelect = vi.fn(),
@@ -256,6 +301,17 @@ describe("AgentHubRichTextBlock hospital bag form", () => {
     renderBlock({ payload: hospitalBagFormPayload() });
 
     expect(screen.getByLabelText("分娩方式")).toHaveValue("剖宫产");
+  });
+});
+
+describe("AgentHubRichTextBlock milk plan card", () => {
+  it("renders section item copy as list items", () => {
+    renderBlock({ payload: milkPlanPayload() });
+
+    expect(screen.queryByText("待确认")).toBeNull();
+    expect(screen.getByText("当前每日奶量约 549 ml，目标约 709.2 ml。").closest("li")).toBeTruthy();
+    expect(screen.getByText("保留原有 8 个吸奶任务，新增 1 个吸奶任务。").closest("li")).toBeTruthy();
+    expect(screen.getByText("吸奶过程中如果有明显痛感，暂停吸奶并联系医生或IBCLC顾问。").closest("li")).toBeTruthy();
   });
 });
 
