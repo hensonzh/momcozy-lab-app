@@ -7,12 +7,16 @@ const PENDING_KEY = "mmc_milk_analysis_reminder_followup_pending";
 const CONSUMED_KEY = "mmc_milk_analysis_reminder_followup_consumed";
 const PENDING_TTL_MS = 30 * 60 * 1000;
 const MAX_CONSUMED_IDS = 30;
+const MAX_ATTEMPTS = 3;
+const ATTEMPT_COOLDOWN_MS = 3000;
 
 export interface MilkAnalysisReminderFollowup {
   chatMessageId: string;
   message: string;
   analysisContext?: AgentAnalysisCard;
   createdAt: number;
+  attempts?: number;
+  lastAttemptAt?: number;
 }
 
 function compactText(value: unknown): string {
@@ -80,6 +84,7 @@ export function queueMilkAnalysisReminderFollowup(params: {
     message,
     analysisContext: params.analysisContext,
     createdAt: Date.now(),
+    attempts: 0,
   };
   storageSet(PENDING_KEY, JSON.stringify(pending));
   if (typeof window !== "undefined") {
@@ -88,7 +93,7 @@ export function queueMilkAnalysisReminderFollowup(params: {
   return pending;
 }
 
-export function consumeMilkAnalysisReminderFollowup(): MilkAnalysisReminderFollowup | null {
+function readPendingMilkAnalysisReminderFollowup(): MilkAnalysisReminderFollowup | null {
   try {
     const parsed = JSON.parse(storageGet(PENDING_KEY)) as Partial<MilkAnalysisReminderFollowup> | null;
     const chatMessageId = compactText(parsed?.chatMessageId);
@@ -98,18 +103,67 @@ export function consumeMilkAnalysisReminderFollowup(): MilkAnalysisReminderFollo
       storageRemove(PENDING_KEY);
       return null;
     }
-    storageRemove(PENDING_KEY);
-    markConsumed(chatMessageId);
     return {
       chatMessageId,
       message,
       analysisContext: parsed?.analysisContext,
       createdAt,
+      attempts: Number(parsed?.attempts || 0),
+      lastAttemptAt: Number(parsed?.lastAttemptAt || 0),
     };
   } catch {
     storageRemove(PENDING_KEY);
     return null;
   }
+}
+
+export function peekMilkAnalysisReminderFollowup(): MilkAnalysisReminderFollowup | null {
+  const pending = readPendingMilkAnalysisReminderFollowup();
+  if (!pending || Number(pending.attempts || 0) >= MAX_ATTEMPTS) return null;
+  const lastAttemptAt = Number(pending.lastAttemptAt || 0);
+  if (lastAttemptAt > 0 && Date.now() - lastAttemptAt < ATTEMPT_COOLDOWN_MS) return null;
+  return pending;
+}
+
+export function markMilkAnalysisReminderFollowupAttempt(
+  chatMessageId: string,
+): MilkAnalysisReminderFollowup | null {
+  const pending = readPendingMilkAnalysisReminderFollowup();
+  if (!pending || pending.chatMessageId !== compactText(chatMessageId)) return null;
+  const next: MilkAnalysisReminderFollowup = {
+    ...pending,
+    attempts: Number(pending.attempts || 0) + 1,
+    lastAttemptAt: Date.now(),
+  };
+  storageSet(PENDING_KEY, JSON.stringify(next));
+  return next;
+}
+
+export function completeMilkAnalysisReminderFollowup(chatMessageId: string): void {
+  const pending = readPendingMilkAnalysisReminderFollowup();
+  if (!pending || pending.chatMessageId !== compactText(chatMessageId)) return;
+  storageRemove(PENDING_KEY);
+  markConsumed(pending.chatMessageId);
+}
+
+export function retryMilkAnalysisReminderFollowupLater(chatMessageId: string, delayMs = 3000): void {
+  const pending = readPendingMilkAnalysisReminderFollowup();
+  if (!pending || pending.chatMessageId !== compactText(chatMessageId)) return;
+  if (typeof window !== "undefined") {
+    window.setTimeout(() => {
+      const stillPending = readPendingMilkAnalysisReminderFollowup();
+      if (!stillPending || stillPending.chatMessageId !== compactText(chatMessageId)) return;
+      window.dispatchEvent(new CustomEvent(MILK_ANALYSIS_REMINDER_FOLLOWUP_EVENT, { detail: stillPending }));
+    }, delayMs);
+  }
+}
+
+export function consumeMilkAnalysisReminderFollowup(): MilkAnalysisReminderFollowup | null {
+  const pending = readPendingMilkAnalysisReminderFollowup();
+  if (!pending) return null;
+  storageRemove(PENDING_KEY);
+  markConsumed(pending.chatMessageId);
+  return pending;
 }
 
 export function buildMilkAnalysisReminderFollowupPrompt(pending: MilkAnalysisReminderFollowup): string {
