@@ -16,13 +16,13 @@ describe("pregnancy diary notification state", () => {
 
     expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
     expect(localStorage.getItem("mmc_pregnancy_diary_card_pending")).toBeNull();
-    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("日记已记录");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
 
     transferPregnancyDiaryNotificationToStatusCard();
 
     expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBeNull();
     expect(localStorage.getItem("mmc_pregnancy_diary_card_pending")).toBe("1");
-    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("日记已记录");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
 
     clearPregnancyDiaryCardNotification();
 
@@ -34,7 +34,7 @@ describe("pregnancy diary notification state", () => {
     notifyPregnancyDiaryChanged("updated");
 
     expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
-    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("记录更新");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
 
     notifyPregnancyDiaryChanged("deleted");
 

@@ -49,7 +49,7 @@ import {
 import { Capacitor } from "@capacitor/core";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import { cn } from "@/lib/utils";
-import type { ChatRichTextButtonItem, ChatRichTextPayload, ChatRichTextCardItem } from "@/lib/agentApiTypes";
+import type { ChatRichTextButtonItem, ChatRichTextPayload, ChatRichTextCardItem, UserProfileData } from "@/lib/agentApiTypes";
 import { log } from "@/lib/logger";
 import { ChatMarkdown } from "@/components/chat/ChatMarkdown";
 import { tryOpenRichTextOpenButton } from "@/lib/richTextOpenMedia";
@@ -101,6 +101,23 @@ type FormFieldGroup = {
   fields: FormFieldSpec[];
 };
 
+type BirthPrepProfileFormDefaults = Pick<
+  UserProfileData,
+  | "age"
+  | "birth_prep_due_date_or_week"
+  | "birth_prep_ivf"
+  | "birth_prep_fetus_count"
+  | "birth_prep_city_or_country"
+  | "birth_prep_birth_hospital"
+  | "birth_prep_birth_path"
+  | "birth_prep_first_birth"
+  | "birth_prep_feeding_intention"
+  | "birth_prep_return_to_work_timing"
+  | "birth_prep_support_person"
+  | "birth_prep_pregnancy_history_or_notes"
+  | "birth_prep_top_worries"
+>;
+
 const REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS = new Set(["hospital_rules_or_notes", "existing_checklist_or_photo_note"]);
 const HOSPITAL_BAG_FORM_FIELD_IDS = new Set([
   "due_date_or_week",
@@ -115,7 +132,6 @@ const HOSPITAL_BAG_FORM_FIELD_IDS = new Set([
   "top_worries",
 ]);
 const HOSPITAL_BAG_FORM_DETECTOR_FIELD_IDS = new Set(["fetus_count", "return_to_work_timing", "budget_preference", "top_worries"]);
-const HOSPITAL_BAG_DIALOGUE_PREFILL_FIELD_IDS = new Set(["due_date_or_week", "birth_path", "return_to_work_timing", "budget_preference", "top_worries"]);
 const HOSPITAL_BAG_REASON_SUPPRESSED_ITEM_LABELS = new Set([
   "检查报告/化验单",
   "医院预登记信息",
@@ -257,6 +273,30 @@ function hasFormDefaultValue(value: unknown): boolean {
   return hasDisplayValue(value) && !isConfirmPlaceholder(value);
 }
 
+function birthPrepProfileFormDefaultValues(profile?: BirthPrepProfileFormDefaults | null): Record<string, unknown> {
+  if (!profile) return {};
+  const defaults: Record<string, unknown> = {
+    age: profile.age,
+    due_date_or_week: profile.birth_prep_due_date_or_week,
+    ivf: profile.birth_prep_ivf,
+    fetus_count: profile.birth_prep_fetus_count,
+    city_or_country: profile.birth_prep_city_or_country,
+    birth_hospital: profile.birth_prep_birth_hospital,
+    birth_setting: profile.birth_prep_birth_hospital,
+    birth_path: profile.birth_prep_birth_path,
+    first_birth: profile.birth_prep_first_birth,
+    feeding_intention: profile.birth_prep_feeding_intention,
+    return_to_work_timing: profile.birth_prep_return_to_work_timing,
+    support_person: profile.birth_prep_support_person,
+    pregnancy_history_or_notes: profile.birth_prep_pregnancy_history_or_notes,
+    top_worries: profile.birth_prep_top_worries,
+  };
+  Object.keys(defaults).forEach((key) => {
+    if (!hasFormDefaultValue(defaults[key])) delete defaults[key];
+  });
+  return defaults;
+}
+
 function normalizeList(values: unknown): unknown[] {
   if (!Array.isArray(values)) return [];
   return values.filter(hasDisplayValue);
@@ -335,13 +375,17 @@ function looksLikeHospitalBagForm(fields: FormFieldSpec[]): boolean {
 }
 
 function sanitizeHospitalBagIntakeField(field: FormFieldSpec): FormFieldSpec {
-  const nextField = field.id === "pregnancy_history_or_notes"
+  if (field.id === "due_date_or_week") {
+    return {
+      ...field,
+      label: field.label || "基本信息｜预产期或当前孕周",
+      type: "text",
+      placeholder: field.placeholder || "例如：2026-06-12 或 37 周",
+    };
+  }
+  return field.id === "pregnancy_history_or_notes"
     ? { ...field, options: field.options?.filter((option) => option !== "计划剖宫产") ?? [] }
     : field;
-  if (HOSPITAL_BAG_DIALOGUE_PREFILL_FIELD_IDS.has(field.id) && hasFormDefaultValue(field.default_value)) {
-    return nextField;
-  }
-  return { ...nextField, default_value: undefined };
 }
 
 function hospitalBagGroupStyle(groupTitle: string, groupIndex: number) {
@@ -369,6 +413,14 @@ function birthPlanGroupStyle(groupTitle: string, groupIndex: number) {
   };
   const styleIndex = titleIndexMap[groupTitle] ?? groupIndex;
   return BIRTH_PLAN_FORM_GROUP_STYLES[styleIndex % BIRTH_PLAN_FORM_GROUP_STYLES.length];
+}
+
+function birthJourneyBasicInfoGroupStyle(groupTitle: string, groupIndex: number) {
+  const titleIndexMap: Record<string, number> = {
+    基本信息: 0,
+  };
+  const styleIndex = titleIndexMap[groupTitle] ?? groupIndex;
+  return HOSPITAL_BAG_FORM_GROUP_STYLES[styleIndex % HOSPITAL_BAG_FORM_GROUP_STYLES.length];
 }
 
 function collectFormValues(form: HTMLFormElement, fields: FormFieldSpec[]): Record<string, unknown> {
@@ -1008,7 +1060,7 @@ function normalizeBirthJourneyPlanCard(cardJsonRaw: Record<string, unknown>) {
     })
     .filter((phase) => phase.title || phase.goal || phase.actions.length);
   return {
-    title: asString(cardJsonRaw.title) || "生产全过程计划",
+    title: asString(cardJsonRaw.title) || "孕期计划",
     subtitle: asString(cardJsonRaw.subtitle),
     owner,
     phases,
@@ -1228,9 +1280,10 @@ function MilkManagementStructuredCard({
 const AgentHubRichTextBlock: React.FC<{
   payload: ChatRichTextPayload;
   blockId?: string;
+  birthPrepProfileDefaults?: BirthPrepProfileFormDefaults | null;
   onButtonSelect: (value: string, options?: ButtonSelectOptions) => void;
   onOpenIbclcConsult?: (request: IbclcConsultOpenRequest) => void;
-}> = ({ payload, blockId = "rich", onButtonSelect, onOpenIbclcConsult }) => {
+}> = ({ payload, blockId = "rich", birthPrepProfileDefaults = null, onButtonSelect, onOpenIbclcConsult }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [artifactError, setArtifactError] = useState<Record<number, string>>({});
@@ -1375,8 +1428,11 @@ const AgentHubRichTextBlock: React.FC<{
     const isMonochrome = variant === "monochrome";
     const hasDefaultValue = hasFormDefaultValue(field.default_value);
     const defaultValue = hasDefaultValue ? asString(field.default_value) : "";
+    const fieldKey = `${field.id}:${JSON.stringify(field.default_value ?? "")}`;
     const requiredMark = field.required ? (
-      <span className={cn("mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full", isMonochrome ? "bg-[#b8667b]" : "bg-destructive")} aria-hidden="true" />
+      <span className="mt-[1px] shrink-0 text-[15px] font-bold leading-none text-[#d84c5f]" aria-hidden="true">
+        *
+      </span>
     ) : null;
     const fieldTextClass = isMonochrome ? "text-neutral-950 dark:text-neutral-50" : "text-foreground";
     const inputClassName = cn(
@@ -1389,7 +1445,7 @@ const AgentHubRichTextBlock: React.FC<{
       const defaults = defaultMultiSelectValues(field.default_value);
       return (
         <fieldset
-          key={field.id}
+          key={fieldKey}
           className={cn(
             isMonochrome ? "rounded-[14px] border p-3" : "rounded-lg border p-2.5",
             "min-w-0",
@@ -1444,14 +1500,16 @@ const AgentHubRichTextBlock: React.FC<{
       );
     }
     return (
-      <label key={field.id} className={cn("grid min-w-0 gap-1.5", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
+      <label key={fieldKey} className={cn("grid min-w-0 gap-1.5", isMonochrome ? "text-[14px]" : "text-[12px]", fieldTextClass)}>
         <span className="inline-flex items-start gap-2 font-semibold leading-snug">
           {requiredMark}
           <span>{field.label}</span>
         </span>
         {field.type === "select" ? (
           <select
+            key={fieldKey}
             name={field.id}
+            aria-label={field.label}
             required={Boolean(field.required)}
             className={cn(inputClassName, !hasDefaultValue ? "agent-form-select-placeholder" : "")}
             defaultValue={defaultValue}
@@ -1469,7 +1527,9 @@ const AgentHubRichTextBlock: React.FC<{
           </select>
         ) : field.type === "textarea" ? (
           <textarea
+            key={fieldKey}
             name={field.id}
+            aria-label={field.label}
             required={Boolean(field.required)}
             rows={3}
             placeholder={field.placeholder}
@@ -1478,7 +1538,9 @@ const AgentHubRichTextBlock: React.FC<{
           />
         ) : (
           <input
+            key={fieldKey}
             name={field.id}
+            aria-label={field.label}
             required={Boolean(field.required)}
             type={field.type === "date" ? "date" : "text"}
             placeholder={field.placeholder}
@@ -1695,7 +1757,7 @@ const AgentHubRichTextBlock: React.FC<{
                   ) : null}
 
                   {journey.phases.length > 0 ? (
-                      <section className="birth-journey-timeline" aria-label="生产全过程阶段">
+                      <section className="birth-journey-timeline" aria-label="孕期计划阶段">
                         {journey.phases.map((phase, phaseIndex) => {
                           const isCurrentPhase = phase.status === "current";
                           const phaseHelpItems = phase.comate_help;
@@ -1961,33 +2023,43 @@ const AgentHubRichTextBlock: React.FC<{
               : artifact.form;
           const isSupportTicket = artifact.kind === "support_ticket_draft";
           const formId = asString(formSpec.id);
+          const profileFormDefaultValues = birthPrepProfileFormDefaultValues(birthPrepProfileDefaults);
+          const formDefaultValues = { ...profileFormDefaultValues, ...(asObject(formSpec.default_values) ?? {}) };
           const fieldsRaw = Array.isArray(formSpec.fields) ? formSpec.fields : [];
           const parsedFields: FormFieldSpec[] = fieldsRaw
             .map((f) => asObject(f))
             .filter((x): x is Record<string, unknown> => Boolean(x))
-            .map((f) => ({
-              id: asString(f.id),
-              label: asString(f.label),
-              type: asString(f.type) || "text",
-              required: Boolean(f.required),
-              options: Array.isArray(f.options) ? f.options.map((opt) => String(opt)) : [],
-              allow_other_input: Boolean(f.allow_other_input),
-              default_value: f.default_value,
-              placeholder: asString(f.placeholder),
-              other_placeholder: asString(f.other_placeholder),
-              help_text: asString(f.help_text),
-            }))
+            .map((f) => {
+              const id = asString(f.id);
+              const fieldDefaultValue = hasFormDefaultValue(f.default_value) ? f.default_value : formDefaultValues[id];
+              return {
+                id,
+                label: asString(f.label),
+                type: asString(f.type) || "text",
+                required: Boolean(f.required),
+                options: Array.isArray(f.options) ? f.options.map((opt) => String(opt)) : [],
+                allow_other_input: Boolean(f.allow_other_input),
+                default_value: fieldDefaultValue,
+                placeholder: asString(f.placeholder),
+                other_placeholder: asString(f.other_placeholder),
+                help_text: asString(f.help_text),
+              };
+            })
             .filter((f) => f.id);
           const isHospitalBagIntake = formId === "hospital_bag_intake" || looksLikeHospitalBagForm(parsedFields);
           const isBirthPlanIntake = formId === "birth_plan_card_intake";
+          const isBirthJourneyBasicInfoIntake = formId === "birth_journey_basic_info_intake";
           const isGroupedIntake = isHospitalBagIntake || isBirthPlanIntake;
-          const isMonochromeForm = isSupportTicket || isHospitalBagIntake || isBirthPlanIntake;
+          const isCollectionIntake = isGroupedIntake || isBirthJourneyBasicInfoIntake;
+          const isMonochromeForm = isSupportTicket || isHospitalBagIntake || isBirthPlanIntake || isBirthJourneyBasicInfoIntake;
           const title = isHospitalBagIntake || isBirthPlanIntake ? "信息采集" : asString(formSpec.title) || "Confirm details";
           const normalizedFormSpec = isHospitalBagIntake
             ? { ...formSpec, id: "hospital_bag_intake", title, description: "" }
             : isBirthPlanIntake
               ? { ...formSpec, title, description: "" }
-              : formSpec;
+              : isBirthJourneyBasicInfoIntake
+                ? { ...formSpec, title, description: asString(formSpec.description) }
+                : formSpec;
           const fields: FormFieldSpec[] = parsedFields
             .filter((field) => !(isHospitalBagIntake && REMOVED_HOSPITAL_BAG_FORM_FIELD_IDS.has(field.id)))
             .map((field) => (isHospitalBagIntake ? sanitizeHospitalBagIntakeField(field) : field))
@@ -2013,15 +2085,19 @@ const AgentHubRichTextBlock: React.FC<{
             })
             .map((field) => (isHospitalBagIntake || isBirthPlanIntake ? { ...field, help_text: "" } : field))
             .filter((f) => f.id);
-          const fieldGroups = isGroupedIntake ? groupFormFields(fields) : [{ title: "", fields }];
+          const fieldGroups = isBirthJourneyBasicInfoIntake
+            ? [{ title: "基本信息", fields }]
+            : isGroupedIntake
+              ? groupFormFields(fields)
+              : [{ title: "", fields }];
 
           return (
             <form
               key={`artifact-${index}`}
               className={cn(
                 "w-full min-w-0",
-                isGroupedIntake ? "rounded-[24px] border p-4 space-y-4" : "rounded-xl border p-3 space-y-2.5",
-                isGroupedIntake
+                isCollectionIntake ? "rounded-[24px] border p-4 space-y-4" : "rounded-xl border p-3 space-y-2.5",
+                isCollectionIntake
                   ? "border-[#eadfe5] bg-[#fffdfc] text-neutral-950 shadow-[0_10px_30px_rgba(65,42,52,0.06)] dark:border-neutral-800 dark:bg-background dark:text-neutral-50"
                   : isMonochromeForm
                     ? "border-neutral-200 bg-white text-neutral-950 shadow-none dark:border-neutral-800 dark:bg-background dark:text-neutral-50"
@@ -2061,12 +2137,12 @@ const AgentHubRichTextBlock: React.FC<{
                 onButtonSelect(buildFormConfirmationMessage(normalizedFormSpec, values), { displayText: `已提交：${title}` });
               }}
             >
-              <fieldset disabled={isSubmitted} className={cn("grid min-w-0", isGroupedIntake ? "gap-4" : "gap-2.5")}>
-                <h3 className={cn(isGroupedIntake ? "text-xl" : isMonochromeForm ? "text-base" : "text-sm", "font-semibold", isMonochromeForm ? "text-neutral-950 dark:text-neutral-50" : "text-foreground")}>
+              <fieldset disabled={isSubmitted} className={cn("grid min-w-0", isCollectionIntake ? "gap-4" : "gap-2.5")}>
+                <h3 className={cn(isCollectionIntake ? "text-xl" : isMonochromeForm ? "text-base" : "text-sm", "font-semibold", isMonochromeForm ? "text-neutral-950 dark:text-neutral-50" : "text-foreground")}>
                   {title}
                 </h3>
                 {asString(normalizedFormSpec.description) ? (
-                  <p className={cn(isGroupedIntake ? "text-[14px] leading-relaxed" : isMonochromeForm ? "text-[13px]" : "text-[12px]", isMonochromeForm ? "text-neutral-600 dark:text-neutral-400" : "text-muted-foreground")}>
+                  <p className={cn(isCollectionIntake ? "text-[14px] leading-relaxed" : isMonochromeForm ? "text-[13px]" : "text-[12px]", isMonochromeForm ? "text-neutral-600 dark:text-neutral-400" : "text-muted-foreground")}>
                     {asString(normalizedFormSpec.description)}
                   </p>
                 ) : null}
@@ -2075,7 +2151,9 @@ const AgentHubRichTextBlock: React.FC<{
                     ? hospitalBagGroupStyle(group.title, groupIndex)
                     : isBirthPlanIntake
                       ? birthPlanGroupStyle(group.title, groupIndex)
-                      : null;
+                      : isBirthJourneyBasicInfoIntake
+                        ? birthJourneyBasicInfoGroupStyle(group.title, groupIndex)
+                        : null;
                   return group.title ? (
                     <section
                       key={`${group.title}-${groupIndex}`}
@@ -2099,9 +2177,9 @@ const AgentHubRichTextBlock: React.FC<{
                 <button
                   type="submit"
                   className={cn(
-                    isGroupedIntake ? "rounded-[14px] px-4 py-3 font-semibold" : "rounded-lg px-3 py-2 font-medium border",
+                    isCollectionIntake ? "rounded-[14px] px-4 py-3 font-semibold" : "rounded-lg px-3 py-2 font-medium border",
                     isMonochromeForm ? "text-[14px]" : "text-[12px]",
-                    isGroupedIntake
+                    isCollectionIntake
                       ? isSubmitted
                         ? "border border-[#9db7bd] bg-white text-[#55727a] dark:bg-background dark:text-neutral-300"
                         : "border border-[#207d93] bg-[#207d93] text-white hover:bg-[#176b87]"

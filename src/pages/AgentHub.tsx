@@ -1051,6 +1051,7 @@ const AgentHub: React.FC = () => {
     () => chatStore.get().messages,
     () => hubInitialMessages,
   );
+  const [latestUserProfile, setLatestUserProfile] = useState<UserProfileData | null>(null);
   const setMessages = useCallback(
     (action: React.SetStateAction<ChatMessage[]>) => {
       chatStore.updateMessages(action);
@@ -1096,6 +1097,7 @@ const AgentHub: React.FC = () => {
           { signal: opts?.signal },
         );
         latestUserProfileRef.current = profile;
+        setLatestUserProfile(profile);
         applyGreetingFromProfile(profile, opts);
       } catch (e: unknown) {
         if ((e as { name?: string })?.name === "AbortError") return;
@@ -1119,6 +1121,26 @@ const AgentHub: React.FC = () => {
     });
     return () => controller.abort();
   }, [hydrateGreetingFromProfile]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void queryUserProfile(
+      { user_id: DEFAULT_CHAT_USER_ID },
+      { signal: controller.signal },
+    )
+      .then((profile) => {
+        latestUserProfileRef.current = profile;
+        setLatestUserProfile(profile);
+      })
+      .catch((e: unknown) => {
+        if ((e as { name?: string })?.name === "AbortError") return;
+        warn(
+          "[AgentHub] 读取用户基础资料失败，跳过表单预填兜底",
+          e instanceof Error ? e.message : String(e),
+        );
+      });
+    return () => controller.abort();
+  }, []);
   const pendingAgUiArtifactPositionRef = useRef(false);
   const pendingAgUiArtifactFormLikeRef = useRef(false);
   const [input, setInput] = useState("");
@@ -4331,6 +4353,7 @@ const AgentHub: React.FC = () => {
                                           <AgentHubRichTextBlock
                                             payload={item.payload}
                                             blockId={`${msg.id}-stream-${i}`}
+                                            birthPrepProfileDefaults={latestUserProfile}
                                             onButtonSelect={
                                               handleAgentRichTextButtonSelect
                                             }
@@ -4366,6 +4389,7 @@ const AgentHub: React.FC = () => {
                                       <AgentHubRichTextBlock
                                         payload={msg.richText}
                                         blockId={`${msg.id}-rich`}
+                                        birthPrepProfileDefaults={latestUserProfile}
                                         onButtonSelect={
                                           handleAgentRichTextButtonSelect
                                         }
@@ -4420,6 +4444,7 @@ const AgentHub: React.FC = () => {
                                       <AgentHubRichTextBlock
                                         payload={msg.richText}
                                         blockId={`${msg.id}-rich`}
+                                        birthPrepProfileDefaults={latestUserProfile}
                                         onButtonSelect={
                                           handleAgentRichTextButtonSelect
                                         }
@@ -4565,6 +4590,7 @@ const AgentHub: React.FC = () => {
                                             <AgentHubRichTextBlock
                                               payload={item.payload}
                                               blockId={`${msg.id}-ordered-${i}`}
+                                              birthPrepProfileDefaults={latestUserProfile}
                                               onButtonSelect={
                                                 handleAgentRichTextButtonSelect
                                               }
@@ -4599,6 +4625,7 @@ const AgentHub: React.FC = () => {
                                         <AgentHubRichTextBlock
                                           payload={msg.richText}
                                           blockId={`${msg.id}-rich`}
+                                          birthPrepProfileDefaults={latestUserProfile}
                                           onButtonSelect={
                                             handleAgentRichTextButtonSelect
                                           }
@@ -4654,6 +4681,7 @@ const AgentHub: React.FC = () => {
                                         <AgentHubRichTextBlock
                                           payload={msg.richText}
                                           blockId={`${msg.id}-rich`}
+                                          birthPrepProfileDefaults={latestUserProfile}
                                           onButtonSelect={
                                             handleAgentRichTextButtonSelect
                                           }
