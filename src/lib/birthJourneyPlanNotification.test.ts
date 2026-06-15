@@ -77,7 +77,7 @@ describe("birth journey plan notification state", () => {
           {
             kind: "ag_ui_artifact",
             artifact_type: "card",
-            card: { card_type: "birth_journey_plan_card", title: "生产全过程计划" },
+            card: { card_type: "birth_journey_plan_card", title: "孕期计划" },
           },
         ],
       }),

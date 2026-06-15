@@ -220,7 +220,7 @@ describe("applyAgUiStreamSideEffects", () => {
         tool_call_name: "birth_journey_plan_card_create",
         artifact: {
           card_type: "birth_journey_plan_card",
-          card_json: { title: "生产全过程计划" },
+          card_json: { title: "孕期计划" },
         },
       },
       {
@@ -333,7 +333,7 @@ describe("applyAgUiStreamSideEffects", () => {
         tool_call_name: "birth_journey_plan_card_create",
         artifact: {
           card_type: "birth_journey_plan_card",
-          card_json: { title: "生产全过程计划" },
+          card_json: { title: "孕期计划" },
         },
       },
     ]);
@@ -1030,7 +1030,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(events).toEqual(["deleted"]);
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "birth_journey_plan_delete",
-      title: "我已经删除生产全过程计划啦",
+      title: "我已经删除孕期计划啦",
       state: "completed",
     });
   });
@@ -1051,7 +1051,7 @@ describe("applyAgUiStreamSideEffects", () => {
     ]);
 
     expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
-    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("日记已记录");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
     expect(created.agentToolCalls?.[0]).toMatchObject({
       name: "pregnancy_diary_manage",
       title: "我已经记录好孕期日记啦",
@@ -1075,7 +1075,7 @@ describe("applyAgUiStreamSideEffects", () => {
     ]);
 
     expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
-    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("记录更新");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
     expect(updated.agentToolCalls?.[0]).toMatchObject({
       name: "pregnancy_diary_manage",
       title: "我已经修改好孕期日记啦",
@@ -1099,7 +1099,7 @@ describe("applyAgUiStreamSideEffects", () => {
     ]);
 
     expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
-    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBe("记录更新");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
     expect(healthUpdated.agentToolCalls?.[0]).toMatchObject({
       name: "pregnancy_diary_manage",
       title: "我已经记录到孕期日记啦",

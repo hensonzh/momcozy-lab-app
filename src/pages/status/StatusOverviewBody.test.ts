@@ -41,7 +41,7 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("帮我制定孕期计划");
     expect(statusSource).not.toContain("计划结构");
     expect(statusSource).not.toContain("空结构");
-    expect(statusSource).toContain("需要优先确认");
+    expect(statusSource).not.toContain("需要优先确认");
     expect(statusSource).toContain("当前阶段目标");
     expect(statusSource).toContain("接下来 7 天行动");
     expect(statusSource).toContain("未来 2-4 周");
@@ -55,8 +55,7 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("当前阶段");
     expect(statusSource).toContain("birthJourneyCurrentDateRange");
     expect(statusSource).toContain("阶段目标");
-    expect(statusSource).toContain("birthJourneyCardFocus");
-    expect(statusSource).toContain("? birthJourneyCardFocus");
+    expect(statusSource).not.toContain("birthJourneyCardFocus");
     expect(statusSource).not.toContain("`当前重点：${birthJourneyCardFocus}`");
     expect(statusSource).toContain("温馨提醒");
     expect(statusSource).not.toContain('className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#c59a51]"');
@@ -131,14 +130,15 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("pregnancyDiaryPrimaryAction");
     expect(statusSource).toContain("subscribePregnancyDiaryChanged");
     expect(statusSource).toContain("usePregnancyDiaryCardNotification");
-    expect(statusSource).toContain("usePregnancyDiaryCardNotificationLabel");
+    expect(statusSource).not.toContain("usePregnancyDiaryCardNotificationLabel");
     expect(statusSource).toContain("clearPregnancyDiaryCardNotification");
-    expect(statusSource).toContain("pregnancyDiaryCardNotificationLabel");
+    expect(statusSource).not.toContain("pregnancyDiaryCardNotificationLabel");
+    expect(statusSource).toContain("pregnancyDiaryCardNotification ? \"status-module-card-notice\" : \"\"");
+    expect(statusSource).toContain("pregnancyDiaryCardNotification={pregnancyDiaryCardNotification}");
     expect(statusSource).toContain("今天的记录已保存");
     expect(statusSource).toContain("整理产检问题");
     expect(statusSource).toContain("今日日记");
     expect(statusSource).toContain("bg-[#fff7f1]");
-    expect(statusSource).toContain("有产检问题");
     expect(statusSource).toContain("想问医生的问题");
     expect(statusSource).toContain("appointment_note: diaryAppointmentNote");
     expect(statusSource).toContain('setActiveMomPanel("pregnancy-diary-detail")');
@@ -147,8 +147,8 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("useBirthJourneyPlanCardNotification");
     expect(statusSource).toContain("clearBirthJourneyPlanGeneratedNotification");
     expect(statusSource).toContain("birthJourneyPlanCardNotification={Boolean(");
-    expect(statusSource).toContain("pregnancyDiaryCardNotification={pregnancyDiaryCardNotification}");
     expect(statusSource).toContain("status-module-card-notice");
+    expect(statusSource).not.toContain("{section.items.length}项");
     expect(statusSource).not.toContain("bg-gradient-to-r from-transparent via-[#e7dcd6] to-transparent");
     expect(statusSource.indexOf(">孕期日记</h3>")).toBeLessThan(statusSource.indexOf(">孕期计划</h3>"));
     expect(statusSource.indexOf(">孕期计划</h3>")).toBeLessThan(statusSource.indexOf('title="母乳产出"'));

@@ -84,7 +84,7 @@ function birthJourneyPayload(): ChatRichTextPayload {
           card_type: "birth_journey_plan_card",
           schema_version: "1.0",
           card_json: {
-            title: "生产全过程计划",
+            title: "孕期计划",
             owner: {
               current_week: "孕20周",
               estimated_due_date: "2026/10/15",
@@ -132,12 +132,14 @@ function hospitalBagFormPayload(): ChatRichTextPayload {
         form: {
           id: "hospital_bag_intake",
           title: "信息采集",
+          default_values: {
+            due_date_or_week: "孕34周",
+          },
           fields: [
             {
               id: "due_date_or_week",
               label: "基本信息｜预产期或当前孕周",
               type: "text",
-              default_value: "孕34周",
             },
             {
               id: "birth_path",
@@ -145,6 +147,34 @@ function hospitalBagFormPayload(): ChatRichTextPayload {
               type: "select",
               options: ["顺产", "剖宫产", "还不确定"],
               default_value: "剖宫产",
+            },
+            {
+              id: "fetus_count",
+              label: "基本信息｜这次是单胎、双胎，还是三胎及以上？",
+              type: "select",
+              options: ["单胎", "双胎", "三胎及以上", "不确定"],
+              default_value: "单胎",
+            },
+            {
+              id: "feeding_intention",
+              label: "喂养信息｜喂养意向",
+              type: "select",
+              options: ["亲喂母乳", "配方奶", "混合喂养", "还不确定"],
+              default_value: "亲喂母乳",
+            },
+            {
+              id: "support_person",
+              label: "照护信息｜产后前两周支持情况",
+              type: "select",
+              options: ["有人全天帮忙", "白天主要自己", "夜间主要自己", "支持少", "不确定"],
+              default_value: "有人全天帮忙",
+            },
+            {
+              id: "pregnancy_history_or_notes",
+              label: "基本信息｜医生是否提示过特殊情况",
+              type: "multi_select",
+              options: ["没有", "妊娠糖尿病", "计划剖宫产"],
+              default_value: ["没有"],
             },
             {
               id: "return_to_work_timing",
@@ -208,19 +238,79 @@ function milkPlanPayload(): ChatRichTextPayload {
   };
 }
 
+function birthJourneyBasicInfoFormPayload(): ChatRichTextPayload {
+  return {
+    title: "",
+    content: "",
+    button: [],
+    card: [],
+    action: [
+      {
+        kind: "ag_ui_artifact",
+        artifact_type: "form",
+        artifact_id: "birth_journey_basic_info_1",
+        form: {
+          id: "birth_journey_basic_info_intake",
+          title: "孕周与基本情况",
+          description: "",
+          submit_label: "提交",
+          fields: [
+            {
+              id: "current_week",
+              label: "当前孕周",
+              type: "text",
+              required: true,
+              default_value: "孕25周",
+            },
+            {
+              id: "ivf",
+              label: "是否 IVF（体外受精）",
+              type: "select",
+              options: ["是", "否", "不确定/暂不说"],
+            },
+            {
+              id: "fetus_count",
+              label: "单胎/双胎",
+              type: "select",
+              required: true,
+              options: ["单胎", "双胎", "多胎", "不确定/暂不说"],
+            },
+            {
+              id: "age",
+              label: "年龄",
+              type: "number",
+              required: true,
+              placeholder: "例如：32",
+            },
+            {
+              id: "city_or_country",
+              label: "所在城市/国家",
+              type: "text",
+              default_value: "深圳",
+            },
+          ],
+        },
+      },
+    ],
+  };
+}
+
 function renderBlock({
   payload = ibclcPayload(),
+  birthPrepProfileDefaults = null,
   onButtonSelect = vi.fn(),
   onOpenIbclcConsult = vi.fn(),
 }: {
   payload?: ChatRichTextPayload;
+  birthPrepProfileDefaults?: React.ComponentProps<typeof AgentHubRichTextBlock>["birthPrepProfileDefaults"];
   onButtonSelect?: (value: string, options?: { displayText?: string; assistantReply?: string }) => void;
   onOpenIbclcConsult?: (request: IbclcConsultOpenRequest) => void;
 } = {}) {
-  render(
+  return render(
     <MemoryRouter initialEntries={["/agent?tab=agent#latest"]}>
       <AgentHubRichTextBlock
         payload={payload}
+        birthPrepProfileDefaults={birthPrepProfileDefaults}
         onButtonSelect={onButtonSelect}
         onOpenIbclcConsult={onOpenIbclcConsult}
       />
@@ -297,10 +387,59 @@ describe("AgentHubRichTextBlock support ticket draft", () => {
 });
 
 describe("AgentHubRichTextBlock hospital bag form", () => {
-  it("keeps the delivery method default value in the intake form", () => {
+  it("keeps backend-provided default values in the intake form", () => {
     renderBlock({ payload: hospitalBagFormPayload() });
 
+    expect(screen.getByLabelText("预产期或当前孕周")).toHaveValue("孕34周");
     expect(screen.getByLabelText("分娩方式")).toHaveValue("剖宫产");
+    expect(screen.getByLabelText("这次是单胎、双胎，还是三胎及以上？")).toHaveValue("单胎");
+    expect(screen.getByLabelText("喂养意向")).toHaveValue("亲喂母乳");
+    expect(screen.getByLabelText("产后前两周支持情况")).toHaveValue("有人全天帮忙");
+    expect(screen.getByRole("checkbox", { name: "没有" })).toBeChecked();
+    expect(screen.queryByRole("checkbox", { name: "计划剖宫产" })).not.toBeInTheDocument();
+  });
+
+  it("fills legacy hospital bag forms from birth-prep profile defaults", () => {
+    const payload = hospitalBagFormPayload();
+    const form = payload.action?.[0]?.form;
+    if (form) {
+      delete form.default_values;
+      const dueField = form.fields?.find((field) => field.id === "due_date_or_week");
+      if (dueField) {
+        delete dueField.default_value;
+        dueField.type = "date";
+      }
+    }
+
+    renderBlock({
+      payload,
+      birthPrepProfileDefaults: {
+        birth_prep_due_date_or_week: "25周",
+        birth_prep_fetus_count: "单胎",
+        birth_prep_feeding_intention: "亲喂母乳",
+      },
+    });
+
+    expect(screen.getByLabelText("预产期或当前孕周")).toHaveValue("25周");
+    expect(screen.getByLabelText("这次是单胎、双胎，还是三胎及以上？")).toHaveValue("单胎");
+    expect(screen.getByLabelText("喂养意向")).toHaveValue("亲喂母乳");
+  });
+});
+
+describe("AgentHubRichTextBlock birth journey basic info form", () => {
+  it("renders as a grouped intake form with required fields and defaults", () => {
+    const { container } = renderBlock({ payload: birthJourneyBasicInfoFormPayload() });
+
+    expect(screen.getByRole("heading", { name: "孕周与基本情况" })).toBeInTheDocument();
+    expect(screen.queryByText("请尽量填写当前孕周；其它不清楚可以留空。")).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "基本信息" })).toBeInTheDocument();
+    expect(screen.getByLabelText("当前孕周")).toHaveValue("孕25周");
+    expect(screen.getByLabelText("当前孕周")).toBeRequired();
+    expect(screen.getByLabelText("单胎/双胎")).toBeRequired();
+    expect(screen.getByLabelText("年龄")).toBeRequired();
+    expect(screen.getByLabelText("所在城市/国家")).toHaveValue("深圳");
+    expect(screen.getByText("提交")).toHaveClass("rounded-[14px]");
+    expect(container.querySelectorAll("span[aria-hidden='true']")).toHaveLength(3);
   });
 });
 

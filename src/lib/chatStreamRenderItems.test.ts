@@ -41,20 +41,20 @@ describe("chat stream render item ordering", () => {
   });
 
   it("appends text to the last text item when there is no artifact", () => {
-    expect(appendTextRenderItem([{ kind: "text", text: "生产" }], "全过程计划")).toEqual([
-      { kind: "text", text: "生产全过程计划" },
+    expect(appendTextRenderItem([{ kind: "text", text: "孕期" }], "计划")).toEqual([
+      { kind: "text", text: "孕期计划" },
     ]);
   });
 
   it("keeps later final text before an already rendered artifact", () => {
     const artifact: ChatStreamRenderItem = { kind: "rich", payload: agUiArtifactPayload() };
     const items: ChatStreamRenderItem[] = [
-      { kind: "text", text: "生产" },
+      { kind: "text", text: "孕期" },
       artifact,
     ];
 
-    expect(appendTextRenderItemBeforeAgUiArtifacts(items, "全过程计划我整理好了。")).toEqual([
-      { kind: "text", text: "生产全过程计划我整理好了。" },
+    expect(appendTextRenderItemBeforeAgUiArtifacts(items, "计划我整理好了。")).toEqual([
+      { kind: "text", text: "孕期计划我整理好了。" },
       artifact,
     ]);
   });

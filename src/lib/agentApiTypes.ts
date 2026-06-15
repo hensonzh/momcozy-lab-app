@@ -27,8 +27,17 @@ export interface UserProfileData {
   profile_onboarding_skipped_at?: string;
   profile_onboarding_completed_at?: string;
   birth_prep_due_date_or_week?: string;
+  birth_prep_ivf?: string;
+  birth_prep_fetus_count?: string;
+  birth_prep_city_or_country?: string;
+  birth_prep_birth_hospital?: string;
   birth_prep_birth_path?: string;
+  birth_prep_first_birth?: string;
+  birth_prep_feeding_intention?: string;
+  birth_prep_return_to_work_timing?: string;
   birth_prep_support_person?: string;
+  birth_prep_pregnancy_history_or_notes?: string;
+  birth_prep_top_worries?: string;
   current_care_stage?: "pregnancy" | "postpartum" | "";
   current_care_stage_source?: string;
 }
