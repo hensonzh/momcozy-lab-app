@@ -148,7 +148,21 @@ describe("StatusOverviewBody render", () => {
       nutrition_note: "",
       content: "今天睡得一般。",
       attachments: [],
-      health_notes: [],
+      health_notes: [
+        {
+          note_id: 11,
+          entry_id: 1,
+          user_id: "demo_mama_increase_001",
+          entry_date: todayDateKey,
+          topic: "胎动咨询",
+          user_report: "下午胎动比平时少一点。",
+          asked_questions: [],
+          known_answers: [],
+          suggestion_summary: "先观察胎动变化，如明显减少及时联系医生。",
+          follow_up: "",
+          created_at: "2026-06-14 10:00:00",
+        },
+      ],
       created_at: "2026-06-14 09:00:00",
       updated_at: "2026-06-14 09:00:00",
     };
@@ -167,6 +181,11 @@ describe("StatusOverviewBody render", () => {
     expect(screen.getByText("孕期日记")).toBeInTheDocument();
     expect(screen.getByText("今日日记")).toBeInTheDocument();
     expect(await screen.findByText("今天睡得一般。")).toBeInTheDocument();
+    expect(screen.getByText("下午胎动比平时少一点。")).toBeInTheDocument();
+    expect(screen.queryByText("先观察胎动变化，如明显减少及时联系医生。")).not.toBeInTheDocument();
+    expect(screen.getByText("记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "记录今天" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "编辑今天" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "查看日记" })).toBeInTheDocument();
   });
 

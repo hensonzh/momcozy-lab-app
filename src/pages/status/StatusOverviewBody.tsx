@@ -228,18 +228,6 @@ const PostpartumRecoveryIcon = () => (
   />
 );
 
-type BirthJourneyPhase = {
-  id?: string;
-  title?: string;
-  date_range?: string;
-  status?: string;
-  goal?: string;
-  is_current?: boolean;
-  actions?: unknown;
-  watchouts?: unknown;
-  comate_help?: unknown;
-};
-
 type BirthJourneyPlanItem = {
   title?: string;
   reason?: string;
@@ -255,7 +243,7 @@ type BirthJourneyPlanSection = {
 
 type BirthJourneyPlanningLayers = {
   current_week?: number;
-  current_phase_title?: string;
+  current_stage_title?: string;
   safety_gate?: BirthJourneyPlanSection;
   current_week_focus?: BirthJourneyPlanSection;
   next_7_days?: BirthJourneyPlanSection;
@@ -267,7 +255,6 @@ type BirthJourneyPayload = {
   subtitle?: string;
   owner?: Record<string, unknown>;
   planning_layers?: BirthJourneyPlanningLayers;
-  phases?: BirthJourneyPhase[];
   next_action?: { label?: string; detail?: string; send_text?: string };
   estimated_due_date?: string;
 };
@@ -307,11 +294,6 @@ function saveStatusCareStagePreference(stage: MaternalCareStage): void {
   }
 }
 
-function compactTextList(value: unknown, limit = 3): string[] {
-  if (!Array.isArray(value)) return [];
-  return value.map(compactText).filter(Boolean).slice(0, limit);
-}
-
 function birthJourneyPlanningLayers(plan: CarePlanArtifact | null): BirthJourneyPlanningLayers | null {
   const layers = asBirthJourneyPayload(plan).planning_layers;
   if (!layers || typeof layers !== "object") return null;
@@ -338,73 +320,8 @@ function birthJourneyPlanItems(value: unknown, limit = 6): BirthJourneyPlanItem[
     .slice(0, limit);
 }
 
-const BIRTH_JOURNEY_HOSPITAL_BAG_HELP = "制定个性化待产清单";
-
-function birthJourneyPhaseList(plan: CarePlanArtifact | null): BirthJourneyPhase[] {
-  const phases = asBirthJourneyPayload(plan).phases;
-  return Array.isArray(phases) ? phases : [];
-}
-
-function isBirthJourneyCurrentPhase(phase: BirthJourneyPhase | null | undefined): boolean {
-  return Boolean(phase?.is_current || phase?.status === "current");
-}
-
-function birthJourneyCurrentPhaseIndex(plan: CarePlanArtifact | null): number {
-  const phases = birthJourneyPhaseList(plan);
-  const index = phases.findIndex(isBirthJourneyCurrentPhase);
-  return index >= 0 ? index : 0;
-}
-
-function currentBirthJourneyPhase(plan: CarePlanArtifact | null): BirthJourneyPhase | null {
-  const phases = birthJourneyPhaseList(plan);
-  if (phases.length === 0) return null;
-  return phases[birthJourneyCurrentPhaseIndex(plan)] ?? phases[0] ?? null;
-}
-
 function birthJourneyNextPrompt(plan: CarePlanArtifact | null): string {
   return compactText(asBirthJourneyPayload(plan).next_action?.send_text) || "我想继续完善孕期计划";
-}
-
-function birthJourneyPhaseKey(phase: BirthJourneyPhase, index: number): string {
-  return compactText(phase.id) || compactText(phase.title) || `phase-${index}`;
-}
-
-function isLatePregnancyBirthJourneyPhase(phase: BirthJourneyPhase | null | undefined): boolean {
-  return compactText(phase?.id) === "late_pregnancy" || compactText(phase?.title) === "孕晚期";
-}
-
-type BirthJourneySuggestion = {
-  action: string;
-  help?: string;
-};
-
-type BirthJourneyPhaseDetail = {
-  goal: string;
-  watchouts: string[];
-  suggestions: BirthJourneySuggestion[];
-  helpPrompts: string[];
-};
-
-function birthJourneySuggestionPairs(phase: BirthJourneyPhase | null | undefined): BirthJourneySuggestion[] {
-  const actions = compactTextList(phase?.actions, 12);
-  return actions.map((action) => ({ action, help: "" }));
-}
-
-function birthJourneyHelpPrompts(phase: BirthJourneyPhase | null | undefined): string[] {
-  const items = compactTextList(phase?.comate_help, 12);
-  if (items.includes(BIRTH_JOURNEY_HOSPITAL_BAG_HELP) || isLatePregnancyBirthJourneyPhase(phase)) {
-    return [BIRTH_JOURNEY_HOSPITAL_BAG_HELP];
-  }
-  return [];
-}
-
-function birthJourneyPhaseDetailSections(phase: BirthJourneyPhase): BirthJourneyPhaseDetail {
-  return {
-    goal: compactText(phase.goal),
-    watchouts: compactTextList(phase.watchouts, 12),
-    suggestions: birthJourneySuggestionPairs(phase),
-    helpPrompts: birthJourneyHelpPrompts(phase),
-  };
 }
 
 const BirthJourneyPlanItemRow: React.FC<{ item: BirthJourneyPlanItem; index: number; compact?: boolean }> = ({
@@ -457,9 +374,7 @@ const BirthJourneyPlanSectionView: React.FC<{
 
 const BirthJourneyLayeredPlanView: React.FC<{
   layers: BirthJourneyPlanningLayers;
-  currentHelpPrompts: string[];
-  onAgentPrefill: (text: string) => void;
-}> = ({ layers, currentHelpPrompts, onAgentPrefill }) => {
+}> = ({ layers }) => {
   const focusItems = birthJourneyPlanItems(layers.current_week_focus?.items, 3);
   const next7Items = birthJourneyPlanItems(layers.next_7_days?.items, 5);
   const next24Items = birthJourneyPlanItems(layers.next_2_4_weeks?.items, 4);
@@ -483,24 +398,6 @@ const BirthJourneyLayeredPlanView: React.FC<{
         title={layers.later_milestones?.title || "后续重要节点"}
         items={milestoneItems}
       />
-      {currentHelpPrompts.length > 0 ? (
-        <section className="rounded-2xl border border-[#edb586] bg-[#fff7ee] px-4 py-3">
-          <p className="text-[11px] font-extrabold text-[#b65c28]">我能帮你做</p>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {currentHelpPrompts.map((prompt) => (
-              <button
-                key={prompt}
-                type="button"
-                onClick={() => onAgentPrefill(prompt)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#b65c28] bg-[#b65c28] px-3 py-2 text-[11px] font-extrabold leading-relaxed text-white transition-colors hover:bg-[#a94f22] active:scale-[0.98]"
-              >
-                <span>{prompt}</span>
-                <ArrowRight className="h-3 w-3 shrink-0" />
-              </button>
-            ))}
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 };
@@ -601,6 +498,28 @@ function pregnancyDiarySummary(entry: PregnancyDiaryEntry | null): string {
   return entry.content ? `今日已记录：${entry.content}` : "今天已有孕期记录";
 }
 
+function pregnancyDiaryTextBlocks(entry: PregnancyDiaryEntry | null): string[] {
+  if (!entry) return [];
+  const healthNotes = Array.isArray(entry.health_notes) ? entry.health_notes : [];
+  const candidates = [
+    entry.content,
+    entry.appointment_note,
+    entry.nutrition_note,
+    ...healthNotes.flatMap((note) => {
+      const userReport = compactText(note.user_report);
+      return userReport ? [userReport] : note.known_answers;
+    }),
+  ];
+  const seen = new Set<string>();
+  return candidates
+    .map(compactText)
+    .filter((text) => {
+      if (!text || seen.has(text)) return false;
+      seen.add(text);
+      return true;
+    });
+}
+
 function pregnancyDiarySignalTags(entry: PregnancyDiaryEntry): string[] {
   const healthNotes = Array.isArray(entry.health_notes) ? entry.health_notes : [];
   return [
@@ -625,42 +544,11 @@ function pregnancyDiaryQuestionCount(entries: PregnancyDiaryEntry[]): number {
   }, 0);
 }
 
-function pregnancyDiaryRecentTags(entries: PregnancyDiaryEntry[], limit = 4): string[] {
-  const seen = new Set<string>();
-  const tags: string[] = [];
-  entries.slice(0, 7).forEach((entry) => {
-    entry.symptom_tags.forEach((tag) => {
-      const text = compactText(tag);
-      if (!text || seen.has(text)) return;
-      seen.add(text);
-      tags.push(text);
-    });
-  });
-  return tags.slice(0, limit);
-}
-
 function pregnancyDiaryHealthNotes(entries: PregnancyDiaryEntry[], days = 7) {
   const dateKeys = new Set(buildRecentDateKeys(days));
   return entries
     .filter((entry) => dateKeys.has(entry.entry_date))
     .flatMap((entry) => (Array.isArray(entry.health_notes) ? entry.health_notes : []));
-}
-
-function pregnancyDiaryReviewSummary(entries: PregnancyDiaryEntry[]): string {
-  if (entries.length === 0) return "记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。";
-  const recent = entries.slice(0, 7);
-  const healthNotes = pregnancyDiaryHealthNotes(recent);
-  const tags = pregnancyDiaryRecentTags(recent, 3);
-  const sleepSignals = recent.map((entry) => compactText(entry.sleep_summary)).filter(Boolean);
-  const moodSignals = recent.map((entry) => compactText(entry.mood)).filter(Boolean);
-  const parts = [
-    healthNotes.length > 0 ? `最近咨询过${compactText(healthNotes[0]?.topic) || "健康问题"}` : "",
-    tags.length > 0 ? `身体感受集中在${tags.join("、")}` : "",
-    sleepSignals.length > 0 ? `睡眠记录 ${sleepSignals[0]}` : "",
-    moodSignals.length > 0 ? `最近心情${moodSignals[0]}` : "",
-  ].filter(Boolean);
-  if (parts.length === 0) return "已经开始沉淀孕期记录，继续记录后可以整理成产检沟通清单。";
-  return `${parts.slice(0, 2).join("，")}。`;
 }
 
 function pregnancyDiaryAgentPrompts(entries: PregnancyDiaryEntry[]): string[] {
@@ -892,7 +780,6 @@ const MomStatusPanelSheet: React.FC<{
 }) => {
   const [postpartumTrainingHintVisible, setPostpartumTrainingHintVisible] = useState(false);
   const [birthJourneyDeleteConfirmVisible, setBirthJourneyDeleteConfirmVisible] = useState(false);
-  const [expandedBirthJourneyPhaseKeys, setExpandedBirthJourneyPhaseKeys] = useState<Record<string, boolean>>({});
   const postpartumTrainingHintTimerRef = useRef<number | null>(null);
   const isInfo = panel.endsWith("-info");
   const isCenteredInfo =
@@ -919,7 +806,6 @@ const MomStatusPanelSheet: React.FC<{
   useEffect(() => {
     if (panel !== "birth-journey-detail") {
       setBirthJourneyDeleteConfirmVisible(false);
-      setExpandedBirthJourneyPhaseKeys({});
     }
   }, [panel]);
 
@@ -944,21 +830,10 @@ const MomStatusPanelSheet: React.FC<{
     }, 1500);
   };
 
-  const birthJourneyPhases = birthJourneyPhaseList(birthJourneyPlan);
-  const birthJourneyCurrentIndex = birthJourneyCurrentPhaseIndex(birthJourneyPlan);
-  const birthJourneyCurrentPhase = currentBirthJourneyPhase(birthJourneyPlan);
-  const birthJourneyCurrentGoal = compactText(birthJourneyCurrentPhase?.goal);
-  const birthJourneyCurrentDateRange = compactText(birthJourneyCurrentPhase?.date_range);
-  const birthJourneyCurrentWatchouts = compactTextList(birthJourneyCurrentPhase?.watchouts, 12);
-  const birthJourneyCurrentSuggestions = birthJourneySuggestionPairs(birthJourneyCurrentPhase);
-  const birthJourneyCurrentHelpPrompts = birthJourneyHelpPrompts(birthJourneyCurrentPhase);
   const birthJourneyLayers = birthJourneyPlanningLayers(birthJourneyPlan);
   const birthJourneyHasLayeredPlan = Boolean(
     birthJourneyLayers && birthJourneyPlanItems(birthJourneyLayers.current_week_focus?.items, 1).length > 0,
   );
-  const birthJourneyUpcomingPhases = birthJourneyPhases
-    .map((phase, index) => ({ phase, index }))
-    .filter((item) => item.index > birthJourneyCurrentIndex);
   const pregnancyDiaryQuestions = pregnancyDiaryQuestionCount(pregnancyDiaryEntries);
   const pregnancyDiaryPrompts = pregnancyDiaryAgentPrompts(pregnancyDiaryEntries);
   const pregnancyDiaryPrimaryPrompt = pregnancyDiaryPrompts[0] ?? "帮我回顾最近7天的孕期日记";
@@ -1039,200 +914,16 @@ const MomStatusPanelSheet: React.FC<{
             ) : birthJourneyPlan ? (
               <>
                 {birthJourneyHasLayeredPlan && birthJourneyLayers ? (
-                  <BirthJourneyLayeredPlanView
-                    layers={birthJourneyLayers}
-                    currentHelpPrompts={birthJourneyCurrentHelpPrompts}
-                    onAgentPrefill={onAgentPrefill}
-                  />
-                ) : null}
-
-                {!birthJourneyHasLayeredPlan ? (
-                  <>
-                <div className="space-y-3 rounded-2xl border border-[#edb586] bg-[#fff7ee] px-4 py-3">
-                  <div className="flex items-start gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f2a36e] text-white">
-                      <ClipboardList className="h-4 w-4" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[11px] font-bold text-[#b65c28]">当前阶段</p>
-                      <div className="mt-0.5 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                        <p className="text-base font-extrabold leading-tight text-foreground">
-                          {birthJourneyCurrentPhase?.title ?? "待完善"}
-                        </p>
-                        {birthJourneyCurrentDateRange ? (
-                          <p className="text-[11px] font-bold leading-tight text-[#a8653a]">
-                            {birthJourneyCurrentDateRange}
-                          </p>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
-
-                  {birthJourneyCurrentGoal ? (
-                    <section className="rounded-xl border border-[#f5d4bc] bg-white px-3 py-2.5">
-                      <p className="text-[11px] font-extrabold text-[#b65c28]">阶段目标</p>
-                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#5f5368]">{birthJourneyCurrentGoal}</p>
-                    </section>
-                  ) : null}
-
-                  {birthJourneyCurrentWatchouts.length > 0 ? (
-                    <section className="rounded-xl border border-[#f6ddb2] bg-[#fffaf2] px-3 py-2.5">
-                      <p className="text-[11px] font-extrabold text-[#805d22]">温馨提醒</p>
-                      <div className="mt-1.5 space-y-1.5">
-                        {birthJourneyCurrentWatchouts.map((item) => (
-                          <p key={item} className="text-[11px] font-semibold leading-relaxed text-[#6d5530]">{item}</p>
-                        ))}
-                      </div>
-                    </section>
-                  ) : null}
-
-                  <section>
-                    <p className="text-sm font-extrabold text-foreground">本阶段建议做</p>
-                    {birthJourneyCurrentSuggestions.length > 0 ? (
-                      <div className="mt-2 space-y-2">
-                        {birthJourneyCurrentSuggestions.map((suggestion, suggestionIndex) => (
-                          <div key={suggestion.action} className="rounded-xl bg-white px-3 py-2">
-                            <div className="flex gap-2">
-                              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#fff0e4] text-[11px] font-extrabold leading-none text-[#b65c28]">
-                                {suggestionIndex + 1}
-                              </span>
-                              <p className="text-xs font-extrabold leading-relaxed text-[#5f5368]">{suggestion.action}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="mt-2 rounded-xl bg-muted/30 px-3 py-2 text-xs font-semibold text-muted-foreground">
-                        暂无本阶段建议，建议继续补充计划。
-                      </p>
-                    )}
-                    {birthJourneyCurrentHelpPrompts.length > 0 ? (
-                      <div className="mt-3">
-                        <p className="text-[11px] font-extrabold text-[#b65c28]">我能帮你做</p>
-                        <div className="mt-1.5 flex flex-wrap gap-1.5">
-                          {birthJourneyCurrentHelpPrompts.map((prompt) => (
-                            <button
-                              key={prompt}
-                              type="button"
-                              onClick={() => onAgentPrefill(prompt)}
-                              className="inline-flex items-center gap-1.5 rounded-xl border border-[#b65c28] bg-[#b65c28] px-3 py-2 text-[11px] font-extrabold leading-relaxed text-white transition-colors hover:bg-[#a94f22] active:scale-[0.98]"
-                            >
-                              <span>{prompt}</span>
-                              <ArrowRight className="h-3 w-3 shrink-0" />
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-                  </section>
-                </div>
-
-                <div className="rounded-2xl border border-[#eadfd8] bg-[#fffdfb] px-4 py-3">
-                  <div className="mb-2 flex items-center gap-2">
-                    <p className="text-sm font-extrabold text-[#4a3f3a]">未来计划</p>
-                  </div>
-                  {birthJourneyUpcomingPhases.length > 0 ? (
-                    <div className="space-y-2">
-                          {birthJourneyUpcomingPhases.map(({ phase, index }) => {
-                            const phaseKey = birthJourneyPhaseKey(phase, index);
-                            const expanded = Boolean(expandedBirthJourneyPhaseKeys[phaseKey]);
-                            const detailSections = birthJourneyPhaseDetailSections(phase);
-                            return (
-                          <article key={phaseKey} className="rounded-xl bg-[#f8f5f2] px-3 py-2">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setExpandedBirthJourneyPhaseKeys((prev) => ({
-                                  ...prev,
-                                  [phaseKey]: !prev[phaseKey],
-                                }))
-                              }
-                              aria-expanded={expanded}
-                              className="block w-full text-left"
-                            >
-                              <div className="min-w-0 flex-1">
-                                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                                  <p className="shrink-0 text-sm font-extrabold text-foreground">{phase.title ?? "阶段"}</p>
-                                  {phase.date_range ? (
-                                    <span className="min-w-0 text-[11px] font-bold text-muted-foreground">{phase.date_range}</span>
-                                  ) : null}
-                                </div>
-                              </div>
-                            </button>
-                                {expanded && (
-                                  detailSections.goal ||
-                                  detailSections.watchouts.length > 0 ||
-                                  detailSections.suggestions.length > 0 ||
-                                  detailSections.helpPrompts.length > 0
-                                ) ? (
-                                  <div className="mt-3 space-y-3 border-t border-[#e5ded9] pt-3">
-                                    {detailSections.goal ? (
-                                      <section>
-                                        <p className="text-[11px] font-extrabold text-[#4a4542]">阶段目标</p>
-                                        <p className="mt-1 text-[11px] font-normal leading-relaxed text-[#5b5450]">
-                                          {detailSections.goal}
-                                        </p>
-                                      </section>
-                                    ) : null}
-                                    {detailSections.watchouts.length > 0 ? (
-                                      <section>
-                                        <p className="text-[11px] font-extrabold text-[#4a4542]">温馨提醒</p>
-                                        <div className="mt-1 space-y-1">
-                                          {detailSections.watchouts.map((item) => (
-                                            <p key={item} className="text-[11px] font-normal leading-relaxed text-[#5b5450]">{item}</p>
-                                          ))}
-                                        </div>
-                                      </section>
-                                    ) : null}
-                                    {detailSections.suggestions.length > 0 ? (
-                                      <section>
-                                        <p className="text-[11px] font-extrabold text-[#4a4542]">本阶段建议做</p>
-                                        <div className="mt-1.5 space-y-1.5">
-                                          {detailSections.suggestions.map((suggestion, suggestionIndex) => (
-                                            <div key={suggestion.action} className="rounded-xl bg-white/70 px-3 py-2">
-                                              <div className="flex gap-1.5 text-[11px] font-normal leading-relaxed text-[#5b5450]">
-                                                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#ece8e4] text-[10px] font-extrabold leading-none text-[#4a4542]">
-                                                  {suggestionIndex + 1}
-                                                </span>
-                                                <span>{suggestion.action}</span>
-                                              </div>
-                                            </div>
-                                          ))}
-                                        </div>
-                                      </section>
-                                    ) : null}
-                                    {detailSections.helpPrompts.length > 0 ? (
-                                      <section>
-                                        <p className="text-[11px] font-extrabold text-[#4a4542]">我能帮你做</p>
-                                        <div className="mt-1.5 flex flex-wrap gap-1.5">
-                                          {detailSections.helpPrompts.map((prompt) => (
-                                            <button
-                                              key={prompt}
-                                              type="button"
-                                              onClick={() => onAgentPrefill(prompt)}
-                                              className="inline-flex items-center gap-1.5 rounded-xl border border-[#c9beb7] bg-white px-3 py-2 text-[11px] font-extrabold leading-relaxed text-[#4a4542] transition-colors hover:border-[#9d8f86] hover:bg-[#f8f5f2] active:scale-[0.98]"
-                                            >
-                                              <span>{prompt}</span>
-                                              <ArrowRight className="h-3 w-3 shrink-0" />
-                                            </button>
-                                          ))}
-                                        </div>
-                                      </section>
-                                    ) : null}
-                                  </div>
-                                ) : null}
-                          </article>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="rounded-xl bg-muted/30 px-3 py-3 text-xs font-semibold text-muted-foreground">
-                      当前已经是计划中的最后阶段。
+                  <BirthJourneyLayeredPlanView layers={birthJourneyLayers} />
+                ) : (
+                  <div className="rounded-2xl border border-[#eadfd8] bg-[#fffdfb] px-4 py-5 text-center">
+                    <ClipboardList className="mx-auto h-7 w-7 text-[#9b7a64]" />
+                    <p className="mt-2 text-sm font-extrabold text-foreground">这份计划缺少分层内容</p>
+                    <p className="mt-1 text-xs font-semibold leading-relaxed text-[#7b6a61]">
+                      当前只展示基于 planning_layers 的孕期计划；可以重新制定一份完整计划。
                     </p>
-                  )}
-                </div>
-                  </>
-                ) : null}
+                  </div>
+                )}
 
                 {birthJourneyDeleteErr ? (
                   <p className="rounded-2xl bg-destructive/10 px-4 py-2 text-xs font-bold text-destructive">
@@ -1286,7 +977,7 @@ const MomStatusPanelSheet: React.FC<{
                   <ClipboardList className="mx-auto h-7 w-7 text-[#7d64aa]" />
                   <p className="mt-2 text-sm font-extrabold text-foreground">还没有孕期计划</p>
                   <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6f617a]">
-                    生成后会在这里展示当前阶段、下一步行动和完整生产时间线。
+                    生成后会在这里展示本周重点、未来 7 天和后续重要节点。
                   </p>
                 </div>
                 <button
@@ -1598,11 +1289,11 @@ const PrenatalExpandedServices: React.FC<{
   const todayDiaryEntries = pregnancyDiaryToday
     ? [pregnancyDiaryToday]
     : pregnancyDiaryEntries.filter((entry) => entry.entry_date === todayDateKey).slice(0, 1);
+  const todayDiaryTextBlocks = pregnancyDiaryTextBlocks(todayDiaryEntries[0] ?? null);
   const recentCount7 = pregnancyDiaryRecentCount(pregnancyDiaryEntries, 7);
   const healthNotes = pregnancyDiaryHealthNotes(pregnancyDiaryEntries, 7);
   const healthNoteCount = healthNotes.length;
   const diaryQuestionCount = pregnancyDiaryQuestionCount(pregnancyDiaryEntries);
-  const diaryReview = pregnancyDiaryReviewSummary(pregnancyDiaryEntries);
 
   return (
     <section
@@ -1651,7 +1342,7 @@ const PrenatalExpandedServices: React.FC<{
                 className="h-7 w-7 shrink-0 rounded-full object-cover shadow-sm ring-1 ring-white"
               />
               <p className="min-w-0 text-xs font-semibold leading-relaxed text-[#6a575b]">
-                {diaryReview}
+                记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。
               </p>
             </div>
           </div>
@@ -1668,7 +1359,7 @@ const PrenatalExpandedServices: React.FC<{
                   className="inline-flex h-8 items-center justify-center gap-1.5 rounded-full bg-[#b66a3c] px-3 text-[11px] font-extrabold text-white shadow-sm active:scale-[0.98]"
                 >
                   <PencilLine className="h-3.5 w-3.5" />
-                  {pregnancyDiaryToday ? "编辑今天" : "记录今天"}
+                  记录今天
                 </button>
               </div>
             </div>
@@ -1677,42 +1368,21 @@ const PrenatalExpandedServices: React.FC<{
               <div className="rounded-[18px] border border-border/45 bg-background/70 px-4 py-5 text-center text-sm font-semibold text-muted-foreground">
                 正在加载孕期日记…
               </div>
-            ) : todayDiaryEntries.length > 0 ? (
-              <div className="space-y-3">
-                {todayDiaryEntries.map((entry, index) => (
-                  <article
-                    key={entry.entry_id}
-                    className={`rounded-[18px] border px-4 py-4 shadow-sm ${
-                      index === 0
-                        ? "border-[#ead8ce] bg-[#fff7f1]"
-                        : "border-border/45 bg-background/75"
-                    }`}
-                  >
-                    <div className="flex min-w-0 items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-sm font-extrabold text-foreground">{formatDiaryDateLabel(entry.entry_date)}</p>
-                        {entry.gestational_week ? (
-                          <p className="mt-0.5 text-[10px] font-bold text-muted-foreground">{entry.gestational_week}</p>
-                        ) : null}
-                      </div>
-                      {index === 0 ? (
-                        <span className="shrink-0 rounded-md border border-[#ead8ce] bg-white px-2 py-1 text-[10px] font-extrabold text-[#9b552f]">
-                          今天
-                        </span>
-                      ) : null}
-                    </div>
-
-                    <p className="mt-3 text-xs font-semibold leading-relaxed text-[#6a575b]">
-                      {entry.content || pregnancyDiarySummary(entry)}
-                    </p>
-                  </article>
-                ))}
-              </div>
             ) : (
               <div className="rounded-[18px] border border-dashed border-[#ead8ce] bg-[#fffaf8] px-4 py-5">
-                <p className="text-xs font-semibold leading-relaxed text-[#806c73]">
-                  今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。
-                </p>
+                {todayDiaryTextBlocks.length > 0 ? (
+                  <div className="space-y-2">
+                    {todayDiaryTextBlocks.map((text) => (
+                      <p key={text} className="text-xs font-semibold leading-relaxed text-[#806c73]">
+                        {text}
+                      </p>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs font-semibold leading-relaxed text-[#806c73]">
+                    今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。
+                  </p>
+                )}
                 <div className="mt-3 flex items-center gap-2.5">
                   <img
                     src={momcozyAgentAvatar}

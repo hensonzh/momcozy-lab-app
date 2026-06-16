@@ -196,6 +196,19 @@ const BIRTH_PLAN_FORM_GROUP_STYLES = [
 
 const MOMCOZY_LOGO_SRC = momcozyLogo;
 
+type BirthJourneyPlanCardItem = {
+  title: string;
+  reason: string;
+};
+
+type BirthJourneyPlanCardSection = {
+  key: string;
+  title: string;
+  subtitle: string;
+  items: BirthJourneyPlanCardItem[];
+  tone?: "warm" | "plain";
+};
+
 function asObject(v: unknown): Record<string, unknown> | null {
   return v && typeof v === "object" && !Array.isArray(v) ? (v as Record<string, unknown>) : null;
 }
@@ -232,32 +245,6 @@ function rememberIbclcViewportForNode(node: HTMLElement | null, returnTo: string
     scrollTop: scroller.scrollTop,
     scrollHeight: scroller.scrollHeight,
   });
-}
-
-function requestAfterNextLayout(cb: () => void): void {
-  const raf =
-    typeof window.requestAnimationFrame === "function"
-      ? window.requestAnimationFrame.bind(window)
-      : (fn: FrameRequestCallback) => window.setTimeout(() => fn(Date.now()), 0);
-  raf(() => raf(cb));
-}
-
-function preserveSummaryPositionAfterDetailsOpen(summary: HTMLElement): void {
-  const details = summary.parentElement;
-  if (details?.tagName.toLowerCase() === "details" && (details as HTMLDetailsElement).open) return;
-  const scroller = nearestScrollableParent(summary);
-  if (!scroller) return;
-  const beforeTop = summary.getBoundingClientRect().top;
-  requestAfterNextLayout(() => {
-    const deltaTop = summary.getBoundingClientRect().top - beforeTop;
-    if (Math.abs(deltaTop) > 0.5) {
-      scroller.scrollTop += deltaTop;
-    }
-  });
-}
-
-function handleBirthJourneyPhaseSummaryClick(event: React.MouseEvent<HTMLElement>): void {
-  preserveSummaryPositionAfterDetailsOpen(event.currentTarget);
 }
 
 function hasDisplayValue(value: unknown): boolean {
@@ -1043,27 +1030,13 @@ function normalizeBirthPlanCard(cardJsonRaw: Record<string, unknown>) {
 function normalizeBirthJourneyPlanCard(cardJsonRaw: Record<string, unknown>) {
   const owner = asObject(cardJsonRaw.owner) ?? {};
   const nextAction = asObject(cardJsonRaw.next_action) ?? {};
-  const phases = asObjectList(cardJsonRaw.phases)
-    .map((phase, index) => {
-      const id = asString(phase.id) || `phase-${index}`;
-      const title = asString(phase.title) || `阶段 ${index + 1}`;
-      return {
-        id,
-        title,
-        date_range: asString(phase.date_range),
-        status: asString(phase.status) === "current" ? "current" : "upcoming",
-        goal: asString(phase.goal),
-        watchouts: compactBirthJourneyList(phase.watchouts, 4),
-        actions: compactBirthJourneyList(phase.actions, 4),
-        comate_help: compactBirthJourneyHelpList(phase.comate_help, id, title),
-      };
-    })
-    .filter((phase) => phase.title || phase.goal || phase.actions.length);
+  const planningLayers = asObject(cardJsonRaw.planning_layers);
+  const layeredSections = normalizeBirthJourneyPlanningLayerSections(planningLayers);
   return {
     title: asString(cardJsonRaw.title) || "孕期计划",
     subtitle: asString(cardJsonRaw.subtitle),
     owner,
-    phases,
+    layered_sections: layeredSections,
     next_action: {
       label: asString(nextAction.label),
       send_text: asString(nextAction.send_text),
@@ -1072,23 +1045,56 @@ function normalizeBirthJourneyPlanCard(cardJsonRaw: Record<string, unknown>) {
   };
 }
 
-function compactBirthJourneyList(values: unknown, maxItems: number): string[] {
+function normalizeBirthJourneyPlanningLayerSections(
+  layers: Record<string, unknown> | null,
+): BirthJourneyPlanCardSection[] {
+  if (!layers) return [];
+  return [
+    normalizeBirthJourneyPlanningLayerSection(layers, "current_week_focus", "当前阶段目标", 4, "warm"),
+    normalizeBirthJourneyPlanningLayerSection(layers, "next_7_days", "接下来 7 天行动", 5),
+    normalizeBirthJourneyPlanningLayerSection(layers, "next_2_4_weeks", "未来 2-4 周", 4),
+    normalizeBirthJourneyPlanningLayerSection(layers, "later_milestones", "后续重要节点", 4),
+  ].filter((section): section is BirthJourneyPlanCardSection => Boolean(section));
+}
+
+function normalizeBirthJourneyPlanningLayerSection(
+  layers: Record<string, unknown>,
+  key: string,
+  fallbackTitle: string,
+  maxItems: number,
+  tone: BirthJourneyPlanCardSection["tone"] = "plain",
+): BirthJourneyPlanCardSection | null {
+  const section = asObject(layers[key]) ?? {};
+  const items = normalizeBirthJourneyPlanItems(section.items, maxItems);
+  if (items.length === 0) return null;
+  return {
+    key,
+    title: asString(section.title).trim() || fallbackTitle,
+    subtitle: asString(section.subtitle).trim(),
+    items,
+    tone,
+  };
+}
+
+function normalizeBirthJourneyPlanItems(values: unknown, maxItems: number): BirthJourneyPlanCardItem[] {
   const rawItems = Array.isArray(values) ? values : hasDisplayValue(values) ? [values] : [];
-  return uniqueDisplayStrings(rawItems, maxItems);
-}
-
-const BIRTH_JOURNEY_HOSPITAL_BAG_HELP = "制定个性化待产清单";
-
-function isLatePregnancyBirthJourneyPhase(id: string, title: string): boolean {
-  return id === "late_pregnancy" || title === "孕晚期";
-}
-
-function compactBirthJourneyHelpList(values: unknown, id: string, title: string): string[] {
-  const items = compactBirthJourneyList(values, 4);
-  if (items.includes(BIRTH_JOURNEY_HOSPITAL_BAG_HELP) || isLatePregnancyBirthJourneyPhase(id, title)) {
-    return [BIRTH_JOURNEY_HOSPITAL_BAG_HELP];
-  }
-  return [];
+  return rawItems
+    .map((item) => {
+      if (typeof item === "string") {
+        const title = item.trim();
+        return title && !isConfirmPlaceholder(title) ? { title, reason: "" } : null;
+      }
+      const source = asObject(item);
+      if (!source) return null;
+      const title = asString(source.title).trim();
+      if (!title || isConfirmPlaceholder(title)) return null;
+      return {
+        title,
+        reason: asString(source.reason).trim(),
+      };
+    })
+    .filter((item): item is BirthJourneyPlanCardItem => Boolean(item))
+    .slice(0, maxItems);
 }
 
 function cardSubtitle(values: unknown[]): string {
@@ -1738,7 +1744,6 @@ const AgentHubRichTextBlock: React.FC<{
                   <header className="agent-card-header">
                     <div className="agent-card-header-text">
                       <h2>{journey.title}</h2>
-                      {journey.subtitle ? <p>{journey.subtitle}</p> : null}
                     </div>
                     <div className="flex items-center gap-1.5">
                       <img src={MOMCOZY_LOGO_SRC} alt="Momcozy" className="agent-card-logo" />
@@ -1756,96 +1761,36 @@ const AgentHubRichTextBlock: React.FC<{
                     </dl>
                   ) : null}
 
-                  {journey.phases.length > 0 ? (
-                      <section className="birth-journey-timeline" aria-label="孕期计划阶段">
-                        {journey.phases.map((phase, phaseIndex) => {
-                          const isCurrentPhase = phase.status === "current";
-                          const phaseHelpItems = phase.comate_help;
-                          const phaseDetails = (
-                            <>
-                              {phase.goal ? (
-                                <p className="birth-journey-goal">
-                                  <strong>当前重点：</strong>
-                                <span>{phase.goal}</span>
-                              </p>
-                            ) : null}
-                            <div className="birth-journey-section-grid">
-                              {phase.watchouts.length > 0 ? (
-                                <section>
-                                  <h4>温馨提醒</h4>
-                                  <ul>
-                                    {phase.watchouts.map((item, itemIndex) => (
-                                      <li key={`${phase.id}-watch-${itemIndex}`}>{item}</li>
-                                    ))}
-                                    </ul>
-                                  </section>
-                                ) : null}
-                                {phase.actions.length > 0 ? (
-                                  <section>
-                                    <h4>接下来建议</h4>
-                                    <ul>
-                                      {phase.actions.map((action, itemIndex) => (
-                                        <li key={`${phase.id}-suggestion-${itemIndex}`}>
-                                          <span>{action}</span>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </section>
-                                ) : null}
-                                {phaseHelpItems.length > 0 ? (
-                                  <section className="birth-journey-help-section">
-                                    <h4>我能帮你做</h4>
-                                    <ul>
-                                      {phaseHelpItems.map((item, itemIndex) => (
-                                        <li key={`${phase.id}-help-${itemIndex}`}>{item}</li>
-                                      ))}
-                                    </ul>
-                                  </section>
-                                ) : null}
-                              </div>
-                            </>
-                        );
-                        return (
-                          <article
-                            key={phase.id}
-                            className={cn(
-                              "birth-journey-phase",
-                              isCurrentPhase ? "is-current" : "is-collapsible",
-                            )}
-                          >
-                            <div className="birth-journey-phase-marker" aria-hidden="true">
-                              <span className="birth-journey-phase-marker-number">{phaseIndex + 1}</span>
+                  {journey.layered_sections.length > 0 ? (
+                    <section className="birth-journey-layered-plan" aria-label="孕期计划">
+                      {journey.layered_sections.map((section, sectionIndex) => (
+                        <section
+                          key={section.key}
+                          className={cn(
+                            "birth-journey-layered-section",
+                            section.tone === "warm" ? "is-warm" : "is-plain",
+                          )}
+                        >
+                          <div className="birth-journey-layered-section-header">
+                            <div>
+                              <h3>{section.title}</h3>
+                              {section.subtitle ? <p>{section.subtitle}</p> : null}
                             </div>
-                            {isCurrentPhase ? (
-                              <div className="birth-journey-phase-body">
-                                <span className="birth-journey-phase-status-badge">当前阶段</span>
-                                <div className="birth-journey-phase-heading">
-                                  <div className="birth-journey-phase-title-row">
-                                    <h3>{phase.title}</h3>
-                                    {phase.date_range ? <p className="birth-journey-phase-date">{phase.date_range}</p> : null}
-                                  </div>
+                            <span>{String(sectionIndex + 1).padStart(2, "0")}</span>
+                          </div>
+                          <div className="birth-journey-layered-items">
+                            {section.items.map((item, itemIndex) => (
+                              <div key={`${section.key}-${item.title}-${itemIndex}`} className="birth-journey-layered-item">
+                                <span>{itemIndex + 1}</span>
+                                <div>
+                                  <p>{item.title}</p>
+                                  {item.reason ? <p>{item.reason}</p> : null}
                                 </div>
-                                {phaseDetails}
                               </div>
-                            ) : (
-                              <details className="birth-journey-phase-body birth-journey-phase-details">
-                                <summary
-                                  className="birth-journey-phase-summary"
-                                  onClick={handleBirthJourneyPhaseSummaryClick}
-                                >
-                                  <div className="birth-journey-phase-title-row">
-                                    <h3>{phase.title}</h3>
-                                    {phase.date_range ? <p className="birth-journey-phase-date">{phase.date_range}</p> : null}
-                                  </div>
-                                </summary>
-                                <div className="birth-journey-phase-expanded-content">
-                                  {phaseDetails}
-                                </div>
-                              </details>
-                            )}
-                          </article>
-                        );
-                      })}
+                            ))}
+                          </div>
+                        </section>
+                      ))}
                     </section>
                   ) : null}
 
