@@ -69,7 +69,7 @@ function supportTicketPayload(): ChatRichTextPayload {
   };
 }
 
-function birthJourneyPayload(): ChatRichTextPayload {
+function birthJourneyLayeredPayload(): ChatRichTextPayload {
   return {
     title: "",
     content: "",
@@ -79,38 +79,41 @@ function birthJourneyPayload(): ChatRichTextPayload {
       {
         kind: "ag_ui_artifact",
         artifact_type: "card",
-        artifact_id: "birth_journey_1",
+        artifact_id: "birth_journey_layered_1",
         card: {
           card_type: "birth_journey_plan_card",
           schema_version: "1.0",
           card_json: {
             title: "孕期计划",
+            subtitle: "从孕20周到产后 42 天的阶段路线图",
             owner: {
               current_week: "孕20周",
               estimated_due_date: "2026/10/15",
             },
-            phases: [
-              {
-                id: "middle",
-                title: "孕中期",
-                date_range: "孕14周-27周",
-                status: "current",
-	                goal: "先把产检和医院流程确认清楚。",
-	                watchouts: ["按时产检。"],
-	                actions: ["记录下次产检问题。"],
-	                comate_help: ["整理产检问题。"],
+            planning_layers: {
+              current_week_focus: {
+                title: "本周重点",
+                items: [
+                  {
+                    title: "确认本周产检安排",
+                    reason: "和宝宝和我页面展示同一份分层计划。",
+                  },
+                ],
               },
-              {
-                id: "late",
-                title: "孕晚期",
-                date_range: "孕28周-36周",
-                status: "upcoming",
-	                goal: "把入院准备收拢。",
-	                watchouts: ["留意胎动变化。"],
-	                actions: ["确认待产包。"],
-	                comate_help: [],
+              next_7_days: {
+                title: "未来 7 天",
+                subtitle: "先处理近期任务",
+                items: ["今天完成建档材料整理"],
               },
-            ],
+              next_2_4_weeks: {
+                title: "未来 2-4 周",
+                items: [{ title: "整理下一次产检问题" }],
+              },
+              later_milestones: {
+                title: "后续重要节点",
+                items: [{ title: "孕晚期确认待产包" }],
+              },
+            },
           },
         },
       },
@@ -455,40 +458,16 @@ describe("AgentHubRichTextBlock milk plan card", () => {
 });
 
 describe("AgentHubRichTextBlock birth journey plan card", () => {
-  it("keeps phase date text regular weight", () => {
-    const phaseDateRule = appCssSource.match(/\.birth-journey-phase-date\s*\{[^}]+\}/)?.[0] ?? "";
-    expect(phaseDateRule).toContain("font-weight: 400;");
-    expect(phaseDateRule).not.toContain("font-weight: 620;");
+  it("renders the planning layers structure", () => {
+    renderBlock({ payload: birthJourneyLayeredPayload() });
+
+    expect(screen.getByRole("heading", { name: "本周重点" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "未来 7 天" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "未来 2-4 周" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "后续重要节点" })).toBeInTheDocument();
+    expect(screen.getByText("确认本周产检安排")).toBeInTheDocument();
+    expect(screen.getByText("和宝宝和我页面展示同一份分层计划。")).toBeInTheDocument();
+    expect(screen.getByText("今天完成建档材料整理")).toBeInTheDocument();
+    expect(screen.queryByText("从孕20周到产后 42 天的阶段路线图")).not.toBeInTheDocument();
   });
-
-  it("collapses upcoming phases to the phase title and expands them on click", () => {
-    renderBlock({ payload: birthJourneyPayload() });
-
-    expect(screen.getByRole("heading", { name: "孕中期" })).toBeInTheDocument();
-        expect(screen.getByText("当前阶段")).toBeInTheDocument();
-        expect(screen.getAllByText("当前重点：").length).toBeGreaterThan(0);
-        expect(screen.getAllByText("温馨提醒").length).toBeGreaterThan(0);
-        expect(screen.getAllByText("接下来建议").length).toBeGreaterThan(0);
-        expect(screen.getByText("先把产检和医院流程确认清楚。")).toBeInTheDocument();
-        expect(screen.getByText("记录下次产检问题。")).toBeInTheDocument();
-        expect(screen.queryByText("整理产检问题。")).not.toBeInTheDocument();
-
-        expect(screen.getByRole("heading", { name: "孕晚期" })).toBeInTheDocument();
-        expect(screen.queryByText("下一阶段")).not.toBeInTheDocument();
-        expect(screen.getByText("孕28周-36周")).toBeVisible();
-        expect(screen.getByText("把入院准备收拢。")).not.toBeVisible();
-        expect(screen.getByText("确认待产包。")).not.toBeVisible();
-        expect(screen.getByText("制定个性化待产清单")).not.toBeVisible();
-
-    const upcomingSummary = screen.getByText("孕晚期").closest("summary");
-    expect(upcomingSummary).toBeTruthy();
-
-    fireEvent.click(upcomingSummary!);
-
-        expect(screen.getByText("把入院准备收拢。")).toBeVisible();
-        expect(screen.getByText("确认待产包。")).toBeVisible();
-        expect(screen.getByText("我能帮你做")).toBeVisible();
-        expect(screen.getByText("制定个性化待产清单")).toBeVisible();
-        expect(upcomingSummary!.nextElementSibling).toHaveClass("birth-journey-phase-expanded-content");
-      });
-  });
+});
