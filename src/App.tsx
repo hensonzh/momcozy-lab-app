@@ -260,6 +260,7 @@ const App = () => (
             <Route path="/device/user" element={<UserParameterConfig />} />
             <Route path="/w1" element={<W1Promo />} />
             <Route path="/hospital-bag-cart" element={<HospitalBagCart />} />
+            <Route path="/ibclc-chat.html" element={<IbclcChat />} />
             <Route path="/media-viewer" element={<MediaViewer />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
