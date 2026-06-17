@@ -1,178 +1,171 @@
-# Momcozy Agent Web 端请求 / 响应与渲染说明
+# Momcozy App 与 Agent 通信说明
 
-本文档说明默认测试 UI（`python -m momcozy_agent.server`，默认 `http://127.0.0.1:8768`）中 **Web 端发起的 HTTP 接口**、**请求与响应字段**、**解析方式**以及 **前端如何渲染**。
-
----
-
-## 一、接口总览
-
-| 方法 | 路径 | 用途 | 响应类型 |
-|------|------|------|----------|
-| `POST` | `/api/ag-ui` | 主对话：用户消息与图片 → Agent 流式输出 | `text/event-stream`（SSE） |
-| `POST` | `/api/support-ticket-submit` | 提交售后工单（当前为模拟） | `application/json` |
-| `POST` | `/api/client-event` | 记录客户端事件（如 IBCLC 咨询结束） | `application/json` |
-
-静态页面由同一进程的 `ThreadingHTTPServer` 提供（见 `server.py` 中 `STATIC_FILES`），主聊天页为 `/` → `index.html`，IBCLC 子页为 `/ibclc-chat.html`。
+本文档说明当前 `MomCozyApp` 与 `MomCozyAgent` 的通信边界。旧的 `MomCozyAgent/web/` 静态测试页面已经移除；App 是主前端，Agent 后端提供统一 API 与内部 SSE agent stream。
 
 ---
 
-## 二、`POST /api/ag-ui`（主对话）
+## 一、入口总览
 
-### 2.1 前端发出的请求体（JSON）
+| 入口 | 默认地址 | 用途 |
+|------|----------|------|
+| App 统一 API | `http://127.0.0.1:8769` | App 访问的业务与 Agent 网关；`/`、`/health` 返回 JSON 服务信息 |
+| App 聊天 WebSocket | `ws://127.0.0.1:8769/api/ag-ui-ws` | AgentHub 主聊天流 |
+| Agent SSE 上游 | `http://127.0.0.1:8768/api/ag-ui` | 后端调试和 WebSocket 桥接上游 |
+| Agent SSE 健康检查 | `http://127.0.0.1:8768/`、`/health` | 返回 JSON 服务信息，不提供 HTML demo |
 
-由 `buildAgUiPayload` 构造（`web/app.js`），主要字段如下：
+本地常用启动方式：
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `threadId` | string | 会话 ID；首次为 `thread_${uuid}`，之后会写入 `localStorage.momcozy_conversation_id` |
-| `runId` | string | 单次运行 ID，形如 `run_${Date.now()}_${runCount}` |
-| `state` | object | 当前含 `locale`（`navigator.language`） |
-| `messages` | array | 仅一条用户消息：`{ id, role: "user", content }` |
-| `content`（在 `messages[0]` 内） | string 或 array | 纯文本时为字符串；带图时为数组：可选 `{ type: "text", text }` + 若干 `{ type: "image", image_url, mime_type, name, size, detail }`（`image_url` 常用 `data:image/...` base64） |
-| `tools` | array | 测试 UI 中为空数组 |
-| `context` | array | 测试 UI 中为空数组 |
-| `forwardedProps` | object | 测试 UI 中为空对象 |
-
-请求头：`Content-Type: application/json`，`Accept: text/event-stream`。
-
-### 2.2 服务端如何把请求转成 Agent 输入
-
-`server.py` 中 `_runtime_inputs_from_ag_ui` 负责解析：
-
-- **用户文本**：从 `messages` 里 **最后一条** `role === "user"` 的 `content` 取字符串，或为 list 时合并其中 `type` 为文本的 `text` 片段。
-- **无文字仅有图**：自动设为固定提示「请根据我发送的图片提供帮助。」
-- **图片**：从用户消息 `content` 数组里取 `type` 为 `image` 或 `input_image` 的项，读取 `image_url` / `url` / `data_url`，校验为 `data:image/`、`http(s)://`，附带 `detail`（`low`/`high`/`auto`）、可选 `mime_type`、`name`、`size`；最多 4 张（与 `MAX_IMAGE_ATTACHMENTS` 一致）。
-- **上下文扩展**：若请求体存在 `state`、`forwardedProps`（或蛇形 `forwarded_props`），会把其中的 `user_profile`、`baby_profile`、`service_state`、`retrieved_records`、`retrieved_knowledge` 以及 `locale`、`timezone`、`message_sent_at`、`previous_response_id` 合并进 Agent 的 `inputs`。测试 UI 当前主要只传 `state.locale`。
-
-线程 ID：`thread_id` / `threadId` 与 `conversation_id` 等价用法中的会话键。
-
-### 2.3 响应：SSE 事件流
-
-`Content-Type: text/event-stream`。每一帧为：
-
-```text
-data: <单行 JSON>\n\n
+```bash
+cd MomCozyAgent
+.venv/bin/python -u scripts/run_all.py
 ```
 
-服务端除 Agent 发出的事件外，还会包装 **助手文本流** 为（`server.py`）：
+单独启动 SSE 服务时使用：
 
-- `TEXT_MESSAGE_START`：`message_id`、`role`
-- `TEXT_MESSAGE_CONTENT`：`delta`（文本增量）
-- `TEXT_MESSAGE_END`：`message_id`
+```bash
+cd MomCozyAgent
+.venv/bin/python -u scripts/run_chat_sse.py
+```
 
-Agent 侧在 `agents.py` 中定义并推送的典型事件类型包括：
-
-| `type` | 主要字段（节选） | 作用 |
-|--------|------------------|------|
-| `RUN_STARTED` | `thread_id`, `run_id`, 可选 `parent_run_id`, `input` | 运行开始 |
-| `RUN_FINISHED` | `thread_id`, `run_id`, 可选 `result` | 运行结束（服务端会延后到最后再下发，避免顺序问题） |
-| `RUN_ERROR` | `message`, 可选 `code` | 错误 |
-| `ACTIVITY_SNAPSHOT` | `content`（内含 `metadata` 等） | 状态快照 |
-| `CUSTOM` | `name` 为 `momcozy.agent.status` 或 `momcozy.agent.thinking`，`value` | 状态条 /「思考中」UI |
-| `TOOL_CALL_START` | `tool_call_id`, `tool_call_name`, 可选 `response_id`, `output_index`, `item_id` | 工具开始 |
-| `TOOL_CALL_ARGS` | `tool_call_id`, `delta`（JSON 字符串化的参数摘要） | 工具参数 |
-| `TOOL_CALL_END` | `tool_call_id` | 工具调用结束 |
-| `TOOL_CALL_RESULT` | `content` 为 **JSON 字符串**（工具结果经 `safe_tool_result` 脱敏后的对象） | 工具结果 |
-
-`TOOL_CALL_RESULT` 的 `content` 解析后常见字段：`ok`, `tool_name`, 以及按工具类型的 `form` / `card` / `ticket` / `skill_id` 等（见 `safe_tool_result`）。
-
-### 2.4 前端如何解析 SSE
-
-1. `fetch` 得到 `response.body`，`ReadableStream` + `TextDecoder` 读块。
-2. 按 `\n\n` 切分事件块；每块内取以 `data:` 开头的行，去掉前缀后 **拼接**（支持多行 `data:`），再 `JSON.parse` 得到事件对象（`parseSseEvent`）。
-
-### 2.5 前端如何根据事件渲染 UI
-
-- **元信息**：`RUN_STARTED`、部分 `CUSTOM`/`ACTIVITY_SNAPSHOT`/`STEP_*` 会调用 `updateMeta`，更新页面上会话简称与已加载 `loaded_skill_ids`（并回写 `localStorage` 中的 `conversation_id`）。
-- **状态行**：`addStatusNode` 生成的 `.status-note`，`updateStatus` 把英文内部状态映射成简短标签，并列出已用工具名。
-- **工作面板**（`.work-panel`）：`TOOL_CALL_*` 系列进入 `addWorkToolStart` / `addWorkToolArgs` / `addWorkToolEnd` / `addWorkToolResult`，在 `ol.work-list` 里用 `upsertWorkItem` 更新同一工具的 running/completed 状态；工具中途产生的助手正文会先 `moveProvisionalTextToWorkPanel`，用 `setAssistantMarkdown` 放进工作区叙述条。
-- **助手正文**：`TEXT_MESSAGE_CONTENT` 对 **当前助手气泡** 调用 `appendAssistantMarkdown`：把增量拼到 `node._rawMarkdown`，再用 **marked** 转 HTML，**DOMPurify** 消毒后写入 `innerHTML`；图片可点击打开放大层。
-- **思考提示**：`CUSTOM` + `momcozy.agent.thinking` 在特定 `status` 下显示 `.thinking-note`。
-- **`TOOL_CALL_RESULT` 特例**（根据解析后的 `tool_name` 与载荷）：
-  - `ui_form_create` 且含 `result.form` → `addFormCard`：渲染表单 artifact，提交后拼装确认文案再 `sendUserText`。
-  - `labor_communication_card_create` / `birth_journey_plan_card_create` / `hospital_bag_card_create` 且含 `result.card` → `addCard`：按 `card_type` / `schema_version` 渲染卡片（如 birth plan、hospital bag），否则 `renderUnsupportedCard`。
-  - `ibclc_consult_card_create` → `addIbclcConsultCard`：顾问信息 + 「在线咨询」链接。
-  - `support_ticket_draft_create` → `addSupportTicketDraft`：售后工单表单，提交再走 `/api/support-ticket-submit`。
-- **结束**：`RUN_FINISHED` 时若无表单/卡片且助手无正文，会显示 `(No text response)`；`RUN_ERROR` 抛错并在界面显示 error 消息。
+`momcozy-chat-sse` 是当前命令名；`momcozy-chat-ui` 仅作为旧脚本兼容 alias，实际启动的仍是 SSE 服务，不会恢复旧 web demo。
 
 ---
 
-## 三、`POST /api/support-ticket-submit`（售后工单）
+## 二、主聊天链路
 
-### 3.1 请求体
+当前主链路是：
 
-由 `submitSupportTicket` 发送：
+```text
+MomCozyApp AgentHub
+  -> WS /api/ag-ui-ws
+  -> FastAPI bridge
+  -> POST /api/ag-ui
+  -> Responses API agent loop
+  -> AG-UI events
+  -> WebSocket JSON text frame
+  -> MomCozyApp 渲染
+```
 
-| 字段 | 说明 |
-|------|------|
-| `ticket` | 工单对象（见下） |
-| `locale` | `navigator.language` |
-| `message_sent_at` | ISO 时间 |
-| `idempotency_key` | `crypto.randomUUID()` |
+App 侧主要文件：
 
-`ticket` 来自表单收集，经 `normalizeSupportTicketValues` 后通常含：`issue_type`, `issue_summary`, `product_model`, `urgency`, `troubleshooting_done`（数组）等。
+- `src/pages/AgentHub.tsx`
+- `src/lib/agentApi.ts`
+- `src/lib/agUiStreamSideEffects.ts`
+- `src/pages/agentHub/AgentHubRichTextBlock.tsx`
+- `src/components/chat/ChatMarkdown.tsx`
 
-### 3.2 响应体（JSON，当前为模拟）
+后端主要文件：
 
-`server.py` 中 `_submit_support_ticket` 返回：
-
-| 字段 | 说明 |
-|------|------|
-| `status` | 如 `"mock_submitted"` |
-| `ticket_id` | 模拟工单号 |
-| `side_effect_performed` | `false` |
-| `mock` | `true` |
-| `message` | 提示文案 |
-| `ticket` | 回显提交的工单对象 |
-
-### 3.3 前端渲染
-
-成功后按钮文案变为「已提交」，并 `sendUserText(buildSupportTicketSubmittedMessage(values, result), …)`，让 Agent 基于工单结果再回复用户（文案里包含工单号、问题类型等）。
+- `MomCozyAgent/src/momcozy_agent/api_app.py`
+- `MomCozyAgent/src/momcozy_agent/api/chat_ws_bridge.py`
+- `MomCozyAgent/src/momcozy_agent/server.py`
 
 ---
 
-## 四、`POST /api/client-event`（IBCLC 咨询结束等）
+## 三、`WS /api/ag-ui-ws`
 
-### 4.1 调用场景
-
-`ibclc-chat.html` 在用户点击结束咨询时 `fetch`，用于把事件记入服务端会话的 `context_state.client_events`（保留最近 10 条）。
-
-### 4.2 请求体示例字段
+App 建立 WebSocket 后，第一帧发送 AG-UI 请求体。该请求体与 `POST /api/ag-ui` 使用同一结构，常见字段包括：
 
 | 字段 | 说明 |
 |------|------|
-| `thread_id` | 与主会话一致（URL `thread_id` 或 localStorage） |
-| `event_type` | 如 `ibclc_consult_completed` |
-| `label` | 展示用短描述 |
-| `occurred_at` | ISO 时间 |
-| `metadata` | 可含 `consultant_name`, `consultant_credentials`, `source`, `consult_id` 等 |
+| `threadId` | 会话 ID；App 侧通过会话存储维护 |
+| `runId` | 单次运行 ID |
+| `state` | locale、timezone、页面状态等运行上下文 |
+| `messages` | 当前用户消息；可包含文本与图片 data URL |
+| `forwardedProps` | App 侧转发给 agent 的业务上下文 |
 
-服务端也接受 `conversation_id`、`type`、`consult_id` / `consultId` 等别名（见 `_format_client_event`、`_client_event_consult_id`）。
+鉴权使用 `ENTRY_API_KEY`。App 通常通过 `VITE_API_TOKEN` 配置，并以查询参数或 `Authorization: Bearer ...` 方式传给统一 API。
 
-### 4.3 响应体
+WebSocket 返回的每一帧都是一个 AG-UI event JSON，典型类型包括：
 
-| 字段 | 说明 |
-|------|------|
-| `status` | `"recorded"` |
-| `conversation_id` | 会话 ID |
-| `consult_id` | 咨询 ID |
-| `event` | 格式化后的单条事件字符串（用于上下文） |
-| `session_state` | 含 `conversation_id`、`previous_response_id`、`loaded_skill_ids`、`context_state`（含 `client_events` 等） |
+- `RUN_STARTED`
+- `CUSTOM`
+- `ACTIVITY_SNAPSHOT`
+- `TOOL_CALL_START`
+- `TOOL_CALL_ARGS`
+- `TOOL_CALL_END`
+- `TOOL_CALL_RESULT`
+- `TEXT_MESSAGE_START`
+- `TEXT_MESSAGE_CONTENT`
+- `TEXT_MESSAGE_END`
+- `RUN_FINISHED`
+- `RUN_ERROR`
 
-### 4.4 与主页面的联动
-
-子窗口 `postMessage` 向 opener 发送 `type: "momcozy.ibclc_consult_completed"` 等载荷；主页面 `handleIbclcConsultCompleted` 更新 meta，并对对应 `.ibclc-card` 将按钮改为「咨询结束」并禁用链接。
-
----
-
-## 五、辅助：静态资源与其它请求
-
-- **图片附件预览**：本地用 `FileReader.readAsDataURL`，不经过独立上传接口（除非未来改为 URL）。
-- **卡片导出 PNG**：`html-to-image`（`index.html` 引入）在 `attachCardDownload` 流程中使用。
-- **Markdown**：`marked` + `DOMPurify`（CDN，见 `index.html`）。
+App 不读取旧静态测试脚本。事件解析、work panel 更新、artifact 渲染和副作用处理都在 `MomCozyApp/src` 内完成。
 
 ---
 
-## 六、与「应用侧 FastAPI」的关系说明
+## 四、`POST /api/ag-ui`
 
-仓库另有 `api_app.py`（`FastAPI`）挂载 `/v1/...` 等设备与业务接口；**当前这套静态测试 UI（`web/`）未直接调用这些 `/v1` 路由**，主路径是上述三个 `/api/*` 与内置静态文件。若生产环境通过网关把同一前端挂到不同后端，字段应以实际部署的代理与 OpenAPI 为准。
+`/api/ag-ui` 是 Agent SSE 服务入口，供后端调试和 `/api/ag-ui-ws` 桥接复用。响应类型是 `text/event-stream`。
+
+服务端会把 AG-UI 请求转成 `RuntimeInputs`：
+
+- 从最后一条 user message 中提取文本。
+- 支持 `content` 为字符串或多 part 数组。
+- 支持最多 4 张图片输入。
+- 合并 `state`、`forwardedProps`、`locale`、`timezone`、`message_sent_at` 等上下文。
+- 通过 `threadId` / `thread_id` / `conversation_id` 维护 `ChatSession`。
+
+SSE 服务根路径 `/` 和 `/health` 只返回服务 JSON 信息；旧 `/app.js`、`/styles.css` 和 HTML 页面不会再被服务。
+
+---
+
+## 五、辅助接口
+
+### `POST /api/ag-ui-prewarm`
+
+App 新建会话后可调用预热接口。统一 API 校验 `ENTRY_API_KEY` 后转发到 SSE 服务的同名接口，只保存后端 session 状态，不向前端生成可见消息。
+
+### `POST /api/client-event`
+
+用于把 App 页面事件写回 agent session，例如 IBCLC 咨询结束、提醒点击、分析上下文事件等。
+
+IBCLC 页面现在由 App 路由承接：
+
+```text
+/ibclc-chat.html
+```
+
+对应组件是 `src/pages/IbclcChat.tsx`。结束咨询时，App 调用 `/api/client-event`，统一 API 再转发到 SSE 服务，最终写入 `context_state.client_events`。
+
+### `POST /api/support-ticket-submit`
+
+用于售后工单模拟提交。App artifact 收集表单后调用该接口，再把提交结果作为用户消息继续送回 Agent。
+
+---
+
+## 六、静态资源
+
+旧 web demo 静态文件已经删除，不再通过 `/`、`/app.js`、`/styles.css` 提供页面。
+
+Agent 仍提供 skill 资产访问：
+
+```text
+/skill-assets/{skill_id}/{asset_path}
+```
+
+Air1 FAQ 图片迁移到了：
+
+```text
+/skill-assets/device-guidance/air1/faq-images/...
+```
+
+为了兼容历史消息中的旧图片链接，后端保留：
+
+```text
+/images/Air_img/...
+```
+
+该兼容路径只映射到 `device-guidance` 的 Air1 FAQ 图片资产，不代表旧 web demo 仍存在。
+
+---
+
+## 七、维护检查
+
+改动 Agent 通信链路时，至少检查：
+
+- `MomCozyAgent` 后端测试：`env PYTHONPATH=src .venv/bin/python -m unittest discover -s tests`
+- App 相关测试：`npm test -- ibclcConsult AgentHubRichTextBlock ChatMarkdown chatAssetUrl`
+- 旧 demo 引用扫描：按迁移检查清单扫描旧测试 UI 关键词，确认只剩兼容 alias 和“已删除”说明。
+- 路由 smoke test：`GET /`、`GET /health`、`HEAD /skill-assets/...`
