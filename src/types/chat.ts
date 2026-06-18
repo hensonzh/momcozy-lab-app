@@ -25,7 +25,6 @@ export interface ChatMessageLink {
 
 export interface ChatQuickReply {
   text: string;
-  sendText: string;
 }
 
 export interface ChatMessageCitation {

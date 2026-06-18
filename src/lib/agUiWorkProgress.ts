@@ -45,7 +45,7 @@ function isRunStartedWorkRow(tool: AgUiToolCallRow): boolean {
 export function workItemTitle(tool: AgUiToolCallRow): string {
   if (tool.kind === "narration") return "";
   if (tool.title?.trim()) return tool.title.trim();
-  if (tool.state === "running") return "我先处理这一步～";
+  if (tool.state === "running") return "我按当前场景继续处理～";
   if (tool.state === "error") return "这一步暂时没处理好";
   return "这一步处理好啦";
 }

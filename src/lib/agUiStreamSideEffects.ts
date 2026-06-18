@@ -15,7 +15,7 @@ const STATUS_LABELS: Record<string, string> = {
   "Agent loop started.": "",
   "Evaluating user intent and safety context.": "我先理解一下你的需求～",
   "Requesting model response.": "我想一下",
-  "Requesting model response with tool outputs.": "",
+  "Requesting model response with tool outputs.": "我接着处理下一步",
   "Selecting an application tool.": "我来判断下一步怎么做～",
   "Executing an application tool.": "",
   "Selecting the next step.": "我来判断下一步怎么做～",
@@ -69,12 +69,11 @@ function readQuickReplies(value: unknown): ChatQuickReply[] {
   for (const item of value) {
     const rec = asRecord(item);
     const text = coalesceString(rec?.text);
-    const sendText = coalesceString(rec?.send_text) || coalesceString(rec?.sendText) || text;
-    if (!text || !sendText) return [];
-    const key = sendText.toLocaleLowerCase();
+    if (!text) return [];
+    const key = text.toLocaleLowerCase();
     if (seen.has(key)) return [];
     seen.add(key);
-    replies.push({ text, sendText });
+    replies.push({ text });
   }
   return replies.length === 3 ? replies : [];
 }
@@ -220,7 +219,7 @@ function labelForStep(stepName: string, state: "started" | "finished"): string {
   if (stepName === "routing") {
     return state === "started" ? "我先理解一下你的需求～" : "我判断好你的需求啦";
   }
-  return state === "started" ? "我先处理这一步～" : "这一步处理好啦";
+  return state === "started" ? "我继续处理当前步骤～" : "这一步处理好啦";
 }
 
 /** CUSTOM：momcozy.agent.status → 单行状态文案 */
@@ -466,6 +465,7 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
       "search_skill_assets",
       "profile_get",
       "memory_search",
+      "milk_analysis_intake_manage",
       "milk_snapshot_get",
       "milk_status_query",
       "milk_records_query",
@@ -479,22 +479,24 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
   ) {
     return "read";
   }
-  if (["milk_assessment_evaluate", "infant_growth_evaluate", "risk_evaluate"].includes(name)) return "evaluate";
+  if (["milk_assessment_evaluate", "milk_analysis_evaluate", "infant_growth_evaluate", "risk_evaluate"].includes(name)) return "evaluate";
   if (
     [
       "ui_form_create",
       "birth_plan_form_create",
       "hospital_bag_form_create",
       "labor_communication_card_create",
+      "birth_journey_intake_manage",
       "birth_journey_plan_card_create",
       "hospital_bag_card_create",
       "ibclc_consult_card_create",
       "support_ticket_draft_create",
+      "handoff_summary_generate",
     ].includes(name)
   ) {
     return "prepare_result";
   }
-  if (["milk_plan_preview", "milk_calendar_change_preview", "milk_calendar_reschedule_preview"].includes(name)) return "preview";
+  if (["milk_plan_preview", "milk_plan_preview_create", "milk_calendar_change_preview", "milk_calendar_reschedule_preview"].includes(name)) return "preview";
   if (
     [
       "milk_record_mutate",
@@ -507,6 +509,7 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
       "reminder_create",
       "reminder_update",
       "reminder_delete",
+      "profile_update",
     ].includes(name)
   ) {
     return "save";
@@ -523,15 +526,19 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "search_skill_assets") return { title: "我去找找相关资料～" };
   if (normalizedToolName === "read_skill_file") return { title: "我先看一下相关说明～" };
   if (normalizedToolName === "profile_get") return { title: "我先看一下你的基础信息～" };
+  if (normalizedToolName === "profile_update") return { title: "我先帮你记一下基础信息～" };
+  if (normalizedToolName === "milk_analysis_intake_manage") return { title: "我先把关键信息核对齐全～" };
   if (normalizedToolName === "milk_snapshot_get") return { title: "我先看看你的奶量情况～" };
   if (normalizedToolName === "milk_status_query") return { title: "我先看看今天的奶量状态～" };
   if (normalizedToolName === "milk_records_query") return { title: "我先看看吸奶和喂养记录～" };
   if (normalizedToolName === "milk_plan_query") return { title: "我先看看之前保存的奶量计划～" };
   if (normalizedToolName === "milk_calendar_query") return { title: "我先看看计划和日程任务～" };
   if (normalizedToolName === "milk_assessment_evaluate") return { title: "我来看看奶量趋势和执行情况～" };
+  if (normalizedToolName === "milk_analysis_evaluate") return { title: "我来综合评估一下奶量问题～" };
   if (normalizedToolName === "infant_growth_evaluate") return { title: "我来看看宝宝的生长信号～" };
   if (normalizedToolName === "risk_evaluate") return { title: "我先确认一下安全边界～" };
   if (normalizedToolName === "milk_plan_preview") return { title: "我先帮你拟一版奶量计划～" };
+  if (normalizedToolName === "milk_plan_preview_create") return { title: "我先帮你拟一版奶量计划～" };
   if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我先帮你排一下日程调整～" };
   if (normalizedToolName === "milk_record_mutate") return { title: "我先帮你处理这条记录～" };
   if (normalizedToolName === "milk_task_complete") return { title: "我先帮你记录任务完成情况～" };
@@ -540,6 +547,7 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "infant_growth_mutate") return { title: "我先帮你保存宝宝成长记录～" };
   if (["ui_form_create", "birth_plan_form_create", "hospital_bag_form_create"].includes(normalizedToolName)) return { title: "我先帮你准备确认内容～" };
   if (normalizedToolName === "labor_communication_card_create") return { title: "我先帮你整理分娩沟通单～" };
+  if (normalizedToolName === "birth_journey_intake_manage") return { title: "我先整理孕期计划信息～" };
   if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我先帮你整理孕期计划～" };
   if (normalizedToolName === "birth_journey_plan_delete") return { title: "我先帮你删除孕期计划～" };
   if (normalizedToolName === "pregnancy_diary_manage") return { title: "我先看看孕期日记～" };
@@ -551,7 +559,12 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "knowledge_search") return { title: "我去找找相关资料～" };
   if (normalizedToolName === "memory_search") return { title: "我去找一下之前的信息～" };
   if (normalizedToolName === "reminder_list") return { title: "我先看看你的提醒～" };
+  if (normalizedToolName === "reminder_create") return { title: "我先帮你创建提醒～" };
+  if (normalizedToolName === "reminder_update") return { title: "我先帮你更新提醒～" };
+  if (normalizedToolName === "reminder_delete") return { title: "我先帮你删除提醒～" };
+  if (normalizedToolName === "handoff_summary_generate") return { title: "我先整理转接摘要～" };
   if (normalizedToolName === "support_ticket_draft_create") return { title: "我先帮你准备售后信息表～" };
+  if (normalizedToolName === "run_approved_skill_script") return { title: "我按场景说明处理这一步～" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
@@ -567,9 +580,9 @@ function toolStartCopy(toolName: string): { title: string } {
     case "save":
       return { title: "我先准备保存修改～" };
     case "process":
-      return { title: "我先处理这一步～" };
+      return { title: "我按场景说明处理这一步～" };
     default:
-      return { title: "我先处理这一步～" };
+      return { title: "我按当前场景继续处理～" };
   }
 }
 
@@ -746,6 +759,13 @@ const AG_UI_SEMANTIC_VISIBILITIES = new Set<AgUiSemanticVisibility>([
   "action",
 ]);
 
+const AG_UI_PROGRESS_VISIBILITIES = new Set<AgUiSemanticVisibility>([
+  "status",
+  "work_item",
+  "artifact",
+  "action",
+]);
+
 function semanticPayload(
   phase: AgUiSemanticPhase,
   label: string,
@@ -754,6 +774,12 @@ function semanticPayload(
   priority = 0,
 ): AgUiEventSemantic {
   return { phase, label, visibility, mergeKey, priority };
+}
+
+function visibleProgressSemanticLabel(semantic: AgUiEventSemantic): string {
+  const label = semantic.label.trim();
+  if (!label || !AG_UI_PROGRESS_VISIBILITIES.has(semantic.visibility)) return "";
+  return label;
 }
 
 function normalizeSemanticPhase(value: unknown): AgUiSemanticPhase {
@@ -808,6 +834,16 @@ function toolSemanticForEvent(
   toolName: string,
   parsedResult: Record<string, unknown> | null,
 ): AgUiEventSemantic {
+  const normalizedToolName = normalizeToolName(toolName);
+  if (normalizedToolName === "ui_quick_replies_create") {
+    if (eventType === "TOOL_CALL_RESULT") {
+      return semanticPayload("done", "我帮你准备好下一轮的快捷输入啦", "status", "quick_replies:current", 60);
+    }
+    if (eventType === "TOOL_CALL_END") {
+      return semanticPayload("planning", "我在帮你准备下一轮的快捷输入～", "status", "quick_replies:current", 60);
+    }
+    return semanticPayload("planning", "我在帮你准备下一轮的快捷输入～", "status", "quick_replies:current", 60);
+  }
   const phase = eventType === "TOOL_CALL_RESULT" && parsedResult?.ok === false ? "error" : toolSemanticPhase(toolName);
   if (eventType === "TOOL_CALL_RESULT") {
     return semanticPayload(phase, toolResultCopy(toolName, parsedResult).title, "work_item", `tool:${normalizeToolName(toolName) || "current"}`, 50);
@@ -854,6 +890,17 @@ export function semanticForAgUiEvent(
   eventType = resolveAgUiEventType(data),
   parsedResult: Record<string, unknown> | null = null,
 ): AgUiEventSemantic {
+  if (eventType === "CUSTOM" && coalesceString(data.name) === "momcozy.agent.thinking") {
+    const value = asRecord(data.value);
+    const status = coalesceString(value?.status).toLowerCase();
+    const metadata = asRecord(value?.metadata);
+    if (status === "started" || status === "running") {
+      const label = metadata?.after_output_text === true ? "我接着处理下一步" : "我想一下";
+      return semanticPayload("thinking", label, "hidden", "thinking:current", 40);
+    }
+    return semanticPayload(status === "failed" ? "error" : "done", status === "failed" ? "这一步我还没想清楚" : "我想好啦", "hidden", "thinking:current", 40);
+  }
+
   const explicit = readExplicitSemantic(data);
   if (explicit) return explicit;
 
@@ -867,7 +914,7 @@ export function semanticForAgUiEvent(
     return semanticPayload("error", "这轮暂时没处理好", "status", `run_error:${coalesceString(data.code) || "current"}`, 100);
   }
   if (eventType === "QUICK_REPLIES") {
-    return semanticPayload("done", "我准备好几个下一步选项啦", "hidden", `quick_replies:${coalesceString(data.message_id) || "current"}`, 80);
+    return semanticPayload("done", "我帮你准备好下一轮的快捷输入啦", "hidden", `quick_replies:${coalesceString(data.message_id) || "current"}`, 80);
   }
   if (eventType === "TEXT_MESSAGE_START") {
     return semanticPayload("replying", "我在组织回复～", "hidden", `text:${coalesceString(data.message_id) || "current"}`, 40);
@@ -880,16 +927,6 @@ export function semanticForAgUiEvent(
   }
   if (eventType === "CUSTOM") {
     const name = coalesceString(data.name);
-    if (name === "momcozy.agent.thinking") {
-      const value = asRecord(data.value);
-      const status = coalesceString(value?.status).toLowerCase();
-      const metadata = asRecord(value?.metadata);
-      if (status === "started" || status === "running") {
-        const label = metadata?.after_output_text === true ? "我在准备下一步～" : "我想一下";
-        return semanticPayload("thinking", label, "status", "thinking:current", 40);
-      }
-      return semanticPayload(status === "failed" ? "error" : "done", status === "failed" ? "这一步我还没想清楚" : "我想好啦", "hidden", "thinking:current", 40);
-    }
     const statusLine = extractAgentStatusLineFromCustom(data) ?? "";
     return statusSemanticFromText(statusLine);
   }
@@ -905,7 +942,7 @@ export function semanticForAgUiEvent(
     if (stepName === "routing") {
       return semanticPayload(started ? "thinking" : "done", started ? "我先理解一下你的需求～" : "我判断好你的需求啦", "status", `step:${stepName}`, 30);
     }
-    return semanticPayload(started ? "working" : "done", started ? "我先处理这一步～" : "这一步处理好啦", "status", `step:${stepName}`, 30);
+    return semanticPayload(started ? "working" : "done", started ? "我继续处理当前步骤～" : "这一步处理好啦", "status", `step:${stepName}`, 30);
   }
   if (eventType.startsWith("TOOL_CALL")) {
     return toolSemanticForEvent(eventType, readToolName(data), parsedResult);
@@ -1286,6 +1323,15 @@ export function applyAgUiStreamSideEffects(
     didUpdate = true;
     setMessages((prev) => prev.map((m) => (m.id === replyId ? fn(m) : m)));
   };
+  const visibleProgressLabel = visibleProgressSemanticLabel(semantic);
+  const patchLatestProgressLabel = () => {
+    if (!visibleProgressLabel) return;
+    patchMsg((m) => ({
+      ...m,
+      agentStatusLine: visibleProgressLabel,
+      agentStatusDone: false,
+    }));
+  };
 
   if (eventType === "QUICK_REPLIES") {
     const replies = readQuickReplies(rec.replies);
@@ -1327,6 +1373,7 @@ export function applyAgUiStreamSideEffects(
       patchMsg((m) => ({
         ...m,
         agentThinkingTitle: undefined,
+        ...(visibleProgressLabel ? { agentStatusLine: visibleProgressLabel, agentStatusDone: false } : {}),
         agentWorkStartedAtMs: m.agentWorkStartedAtMs ?? startedAt,
         agentWorkFinishedAtMs: undefined,
         agentToolCalls: upsertWebSearchWorkRow(m.agentToolCalls ?? [], search),
@@ -1341,7 +1388,7 @@ export function applyAgUiStreamSideEffects(
       return { didUpdate };
     }
     const statusLine = extractAgentStatusLineFromCustom(rec);
-    if (statusLine && !isThinkingStatusLine(statusLine)) {
+    if (statusLine && !isThinkingStatusLine(statusLine) && semantic.visibility !== "hidden") {
       const nextStatusLine = semantic.visibility === "hidden" ? "" : semantic.visibility === "status" ? semantic.label : labelForStatus(statusLine);
       patchMsg((m) => ({ ...m, agentStatusLine: nextStatusLine, agentStatusDone: false }));
     }
@@ -1390,7 +1437,7 @@ export function applyAgUiStreamSideEffects(
           }
         }
         const statusLine = extractStatusLineFromMetadata(meta);
-        if (statusLine && !isThinkingStatusLine(statusLine)) {
+        if (statusLine && !isThinkingStatusLine(statusLine) && semantic.visibility !== "hidden") {
           const nextStatusLine = semantic.visibility === "hidden" ? "" : semantic.visibility === "status" ? semantic.label : labelForStatus(statusLine);
           patchMsg((m) => ({ ...m, agentStatusLine: nextStatusLine, agentStatusDone: false }));
         }
@@ -1405,6 +1452,10 @@ export function applyAgUiStreamSideEffects(
   }
 
   const toolKeys = readToolCallKeys(rec);
+  if (toolKeys.length > 0 && eventType.startsWith("TOOL_CALL") && semantic.visibility === "status") {
+    patchLatestProgressLabel();
+    return { didUpdate };
+  }
   if (toolKeys.length > 0 && eventType === "TOOL_CALL_START") {
     const startedAt = nowMs();
     const toolName = readToolName(rec);
@@ -1544,6 +1595,7 @@ export function applyAgUiStreamSideEffects(
       if (opts?.deferAgUiArtifacts) {
         didUpdate = true;
         opts.onAgUiArtifactRichText?.(rich, { formLike: isFormLikeArtifactAction(action) });
+        patchLatestProgressLabel();
         return { didUpdate };
       }
       patchMsg((m) => {
@@ -1586,6 +1638,8 @@ export function applyAgUiStreamSideEffects(
       };
     });
   }
+
+  patchLatestProgressLabel();
 
   return { didUpdate };
 }

@@ -106,9 +106,9 @@ describe("applyAgUiStreamSideEffects", () => {
         content: "上一轮",
         timestamp: "",
         quickReplies: [
-          { text: "旧提示1", sendText: "旧提示1" },
-          { text: "旧提示2", sendText: "旧提示2" },
-          { text: "旧提示3", sendText: "旧提示3" },
+          { text: "旧提示1" },
+          { text: "旧提示2" },
+          { text: "旧提示3" },
         ],
       },
       {
@@ -128,9 +128,9 @@ describe("applyAgUiStreamSideEffects", () => {
         type: "QUICK_REPLIES",
         message_id: "reply",
         replies: [
-          { text: "继续下一步", send_text: "继续下一步" },
-          { text: "换个方案", send_text: "我想换个方案" },
-          { text: "先帮我总结", send_text: "先帮我总结" },
+          { text: "继续下一步" },
+          { text: "换个方案" },
+          { text: "先帮我总结" },
         ],
       },
       setMessages,
@@ -138,9 +138,9 @@ describe("applyAgUiStreamSideEffects", () => {
 
     expect(messages[0].quickReplies).toBeUndefined();
     expect(messages[1].quickReplies).toEqual([
-      { text: "继续下一步", sendText: "继续下一步" },
-      { text: "换个方案", sendText: "我想换个方案" },
-      { text: "先帮我总结", sendText: "先帮我总结" },
+      { text: "继续下一步" },
+      { text: "换个方案" },
+      { text: "先帮我总结" },
     ]);
   });
 
@@ -169,9 +169,9 @@ describe("applyAgUiStreamSideEffects", () => {
         type: "QUICK_REPLIES",
         message_id: "reply",
         replies: [
-          { text: "继续下一步", send_text: "继续下一步" },
-          { text: "换个方案", send_text: "我想换个方案" },
-          { text: "先帮我总结", send_text: "先帮我总结" },
+          { text: "继续下一步" },
+          { text: "换个方案" },
+          { text: "先帮我总结" },
         ],
       },
       setMessages,
@@ -199,9 +199,9 @@ describe("applyAgUiStreamSideEffects", () => {
         type: "QUICK_REPLIES",
         message_id: "reply",
         replies: [
-          { text: "我来填写", send_text: "我来填写" },
-          { text: "先解释一下", send_text: "先解释一下" },
-          { text: "晚点再说", send_text: "晚点再说" },
+          { text: "我来填写" },
+          { text: "先解释一下" },
+          { text: "晚点再说" },
         ],
       },
     ]);
@@ -227,18 +227,18 @@ describe("applyAgUiStreamSideEffects", () => {
         type: "QUICK_REPLIES",
         message_id: "reply",
         replies: [
-          { text: "确认医院流程", send_text: "确认医院流程" },
-          { text: "整理待产包", send_text: "整理待产包" },
-          { text: "做沟通单", send_text: "做分娩沟通单" },
+          { text: "确认医院流程" },
+          { text: "整理待产包" },
+          { text: "做沟通单" },
         ],
       },
     ]);
 
     expect(msg.richText?.action).toHaveLength(1);
     expect(msg.quickReplies).toEqual([
-      { text: "确认医院流程", sendText: "确认医院流程" },
-      { text: "整理待产包", sendText: "整理待产包" },
-      { text: "做沟通单", sendText: "做分娩沟通单" },
+      { text: "确认医院流程" },
+      { text: "整理待产包" },
+      { text: "做沟通单" },
     ]);
   });
 
@@ -291,9 +291,9 @@ describe("applyAgUiStreamSideEffects", () => {
         type: "QUICK_REPLIES",
         message_id: "reply",
         replies: [
-          { text: "继续下一步", send_text: "继续下一步" },
-          { text: "换个方案", send_text: "换个方案" },
-          { text: "先帮我总结", send_text: "先帮我总结" },
+          { text: "继续下一步" },
+          { text: "换个方案" },
+          { text: "先帮我总结" },
         ],
       },
       {
@@ -320,9 +320,9 @@ describe("applyAgUiStreamSideEffects", () => {
         type: "QUICK_REPLIES",
         message_id: "reply",
         replies: [
-          { text: "确认医院流程", send_text: "确认医院流程" },
-          { text: "整理待产包", send_text: "整理待产包" },
-          { text: "做沟通单", send_text: "做分娩沟通单" },
+          { text: "确认医院流程" },
+          { text: "整理待产包" },
+          { text: "做沟通单" },
         ],
       },
       {
@@ -340,9 +340,9 @@ describe("applyAgUiStreamSideEffects", () => {
 
     expect(msg.richText?.action).toHaveLength(1);
     expect(msg.quickReplies).toEqual([
-      { text: "确认医院流程", sendText: "确认医院流程" },
-      { text: "整理待产包", sendText: "整理待产包" },
-      { text: "做沟通单", sendText: "做分娩沟通单" },
+      { text: "确认医院流程" },
+      { text: "整理待产包" },
+      { text: "做沟通单" },
     ]);
   });
 
@@ -354,9 +354,9 @@ describe("applyAgUiStreamSideEffects", () => {
         content: "",
         timestamp: "",
         quickReplies: [
-          { text: "继续下一步", sendText: "继续下一步" },
-          { text: "换个方案", sendText: "换个方案" },
-          { text: "先总结", sendText: "先总结" },
+          { text: "继续下一步" },
+          { text: "换个方案" },
+          { text: "先总结" },
         ],
       },
     ];
@@ -393,7 +393,7 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(deferred).toHaveLength(1);
   });
 
-  it("keeps generic run and processing statuses hidden from the user-facing status line", () => {
+  it("shows waiting-for-next-model-turn status while keeping generic processing hidden", () => {
     const msg = applyEvents([
       {
         type: "RUN_STARTED",
@@ -411,7 +411,7 @@ describe("applyAgUiStreamSideEffects", () => {
       },
     ]);
 
-    expect(msg.agentStatusLine).toBe("");
+    expect(msg.agentStatusLine).toBe("我接着处理下一步");
   });
 
   it("uses the short thinking status copy for model response requests", () => {
@@ -422,6 +422,45 @@ describe("applyAgUiStreamSideEffects", () => {
     });
 
     expect(semantic.label).toBe("我想一下");
+  });
+
+  it("keeps custom thinking events out of the main status line", () => {
+    const semantic = semanticForAgUiEvent({
+      type: "CUSTOM",
+      name: "momcozy.agent.thinking",
+      value: { status: "started" },
+      semantic: {
+        phase: "thinking",
+        label: "我想一下",
+        visibility: "status",
+        merge_key: "thinking:current",
+        priority: 40,
+      },
+    });
+
+    expect(semantic.label).toBe("我想一下");
+    expect(semantic.visibility).toBe("hidden");
+
+    const msg = applyEvents([
+      {
+        type: "RUN_STARTED",
+        metadata: { status: "Agent loop started." },
+      },
+      {
+        type: "CUSTOM",
+        name: "momcozy.agent.thinking",
+        value: { status: "started" },
+        semantic: {
+          phase: "thinking",
+          label: "我想一下",
+          visibility: "status",
+          merge_key: "thinking:current",
+          priority: 40,
+        },
+      },
+    ]);
+
+    expect(msg.agentStatusLine).toBe("我已经收到你的消息啦～");
   });
 
   it("uses confirmation-oriented copy for support ticket artifact semantics", () => {
@@ -450,7 +489,7 @@ describe("applyAgUiStreamSideEffects", () => {
       },
     ]);
 
-    expect(msg.agentStatusLine).toBe("");
+    expect(msg.agentStatusLine).toBe("我在接收你的消息～");
     expect(typeof msg.agentWorkStartedAtMs).toBe("number");
     expect(msg.agentWorkFinishedAtMs).toBeUndefined();
     expect(msg.agentToolCalls).toHaveLength(1);
@@ -645,6 +684,70 @@ describe("applyAgUiStreamSideEffects", () => {
     });
   });
 
+  it("uses specific fallback labels for tool start events without backend semantics", () => {
+    const cases = [
+      ["profile_update", "我先帮你记一下基础信息～"],
+      ["milk_analysis_intake_manage", "我先把关键信息核对齐全～"],
+      ["milk_analysis_evaluate", "我来综合评估一下奶量问题～"],
+      ["milk_plan_preview_create", "我先帮你拟一版奶量计划～"],
+      ["birth_journey_intake_manage", "我先整理孕期计划信息～"],
+      ["handoff_summary_generate", "我先整理转接摘要～"],
+      ["run_approved_skill_script", "我按场景说明处理这一步～"],
+    ] as const;
+
+    for (const [toolName, expectedTitle] of cases) {
+      const msg = applyEvents([
+        {
+          type: "TOOL_CALL_START",
+          tool_call_id: `call_${toolName}`,
+          tool_call_name: toolName,
+        },
+      ]);
+
+      expect(msg.agentToolCalls?.[0]).toMatchObject({
+        name: toolName,
+        title: expectedTitle,
+        state: "running",
+      });
+      expect(msg.agentToolCalls?.[0].title).not.toBe("我先处理这一步～");
+    }
+  });
+
+  it("shows status semantic tool events as status text without adding work rows", () => {
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_START",
+        tool_call_id: "call_quick",
+        tool_call_name: "ui_quick_replies_create",
+        semantic: {
+          phase: "planning",
+          label: "我在帮你准备下一轮的快捷输入～",
+          visibility: "status",
+          merge_key: "quick_replies:call_quick",
+          priority: 60,
+        },
+      },
+    ]);
+
+    expect(msg.agentStatusLine).toBe("我在帮你准备下一轮的快捷输入～");
+    expect(msg.agentStatusDone).toBe(false);
+    expect(msg.agentToolCalls ?? []).toHaveLength(0);
+  });
+
+  it("maps quick replies tool events to status semantics without backend metadata", () => {
+    expect(
+      semanticForAgUiEvent({
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_quick",
+        tool_call_name: "ui_quick_replies_create",
+      }),
+    ).toMatchObject({
+      phase: "done",
+      label: "我帮你准备好下一轮的快捷输入啦",
+      visibility: "status",
+    });
+  });
+
   it("keeps every AG-UI event mappable to a semantic object", () => {
     expect(
       semanticForAgUiEvent({
@@ -694,7 +797,40 @@ describe("applyAgUiStreamSideEffects", () => {
       },
     ]);
 
+    expect(msg.agentStatusLine).toBe("我已经帮你整理好吸奶器推荐啦");
     expect(msg.agentToolCalls).toHaveLength(1);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      name: "hospital_bag_pump_recommend",
+      title: "我已经帮你整理好吸奶器推荐啦",
+      state: "completed",
+    });
+  });
+
+  it("lets the latest visible semantic immediately replace the previous status text", () => {
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_START",
+        tool_call_id: "call_pump",
+        tool_call_name: "hospital_bag_pump_recommend",
+      },
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_pump",
+        tool_call_name: "hospital_bag_pump_recommend",
+        content: JSON.stringify({
+          status: "pump_recommended",
+          tool_name: "hospital_bag_pump_recommend",
+          recommended_product: { model: "S12 Pro Quick" },
+        }),
+      },
+      {
+        type: "CUSTOM",
+        name: "momcozy.agent.status",
+        value: "Requesting model response with tool outputs.",
+      },
+    ]);
+
+    expect(msg.agentStatusLine).toBe("我接着处理下一步");
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "hospital_bag_pump_recommend",
       title: "我已经帮你整理好吸奶器推荐啦",

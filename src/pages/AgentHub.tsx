@@ -420,7 +420,7 @@ function AgentHubQuickReplies({
 }: {
   msg: ChatMessage;
   disabled: boolean;
-  onSelect: (sendText: string) => void;
+  onSelect: (text: string) => void;
 }) {
   const replies = msg.quickReplies ?? [];
   if (msg.role !== "mai" || replies.length !== 3) return null;
@@ -443,10 +443,10 @@ function AgentHubQuickReplies({
       <div className="flex flex-wrap gap-1.5">
         {replies.map((reply, index) => (
           <button
-            key={`${msg.id}-quick-${index}-${reply.sendText}`}
+            key={`${msg.id}-quick-${index}-${reply.text}`}
             type="button"
             disabled={disabled}
-            onClick={() => onSelect(reply.sendText)}
+            onClick={() => onSelect(reply.text)}
             className={cn(
               "group inline-flex min-h-[34px] max-w-full items-center gap-1.5 rounded-full border border-[#eadde2] bg-white/62 px-3 py-1.5 text-left text-[13px] font-[560] leading-snug text-[#4a3a40] transition-colors",
               disabled
@@ -659,29 +659,26 @@ function bubbleSpeakerButtonClassName(
   );
 }
 
-function AgentHubThinkingNote({ title }: { title: string }) {
-  return (
-    <div className="w-fit max-w-full px-0.5 text-[12px] font-[650] whitespace-nowrap bg-[linear-gradient(90deg,#98a3af_0%,#98a3af_35%,#2d3745_50%,#98a3af_65%,#98a3af_100%)] bg-[length:240%_100%] bg-clip-text text-transparent animate-[work-title-sweep_1.35s_linear_infinite]">
-      {title || "我想一下"}
-    </div>
-  );
-}
-
-function AgentHubStatusNote({ msg }: { msg: ChatMessage }) {
-  if (msg.role !== "mai") return null;
-  if (msg.agentThinkingTitle?.trim()) return null;
-  if (msg.content.trim()) return null;
+function agentHubVisibleStatusText(msg: ChatMessage): string {
   const status = msg.agentStatusLine?.trim() ?? "";
   if (
     status === "开始处理请求。" ||
     status === "正在处理请求。" ||
     status === "正在处理请求"
   )
-    return null;
-  if (!status || msg.agentStatusDone) return null;
+    return "";
+  if (!status || msg.agentStatusDone) return "";
+  return status;
+}
+
+function AgentHubThinkingNote({ msg }: { msg: ChatMessage }) {
+  if (msg.role !== "mai") return null;
+  if (msg.content.trim()) return null;
+  const title = msg.agentThinkingTitle?.trim() ?? "";
+  if (!title) return null;
   return (
-    <div className="w-[88%] px-0.5 text-[12px] leading-[1.45] text-[#687384] whitespace-nowrap">
-      {status}
+    <div className="w-fit max-w-full px-0.5 text-[12px] font-[650] whitespace-nowrap bg-[linear-gradient(90deg,#98a3af_0%,#98a3af_35%,#2d3745_50%,#98a3af_65%,#98a3af_100%)] bg-[length:240%_100%] bg-clip-text text-transparent animate-[work-title-sweep_1.35s_linear_infinite]">
+      {title}
     </div>
   );
 }
@@ -919,25 +916,72 @@ function workProgressDotClass(tone: WorkProgressTone): string {
   return "bg-[#c98599]";
 }
 
-function AgentHubWorkPanel({
-  tools,
-  finishedAtMs,
-  finalTextStarted,
-}: {
-  tools: AgUiToolCallRow[];
-  finishedAtMs?: number;
-  finalTextStarted?: boolean;
-}) {
-  const isWorkFinished = typeof finishedAtMs === "number";
-  if (tools.length === 0) return null;
-  const summary = workProgressSummary(tools, isWorkFinished);
-  if (!summary) return null;
-  if (
-    finalTextStarted &&
-    (summary.tone === "running" || summary.tone === "done")
-  )
-    return null;
-  const shouldAnimateTitle = summary.tone === "running";
+function workProgressTitleClass(tone: WorkProgressTone): string {
+  const shimmer = "bg-[length:240%_100%] bg-clip-text text-transparent animate-[work-title-sweep_1.35s_linear_infinite]";
+  if (tone === "done") {
+    return cn(
+      shimmer,
+      "bg-[linear-gradient(90deg,#6aa889_0%,#6aa889_34%,#2f6f58_50%,#6aa889_66%,#6aa889_100%)]",
+    );
+  }
+  if (tone === "error") {
+    return cn(
+      shimmer,
+      "bg-[linear-gradient(90deg,#c75b56_0%,#c75b56_34%,#8f2f2b_50%,#c75b56_66%,#c75b56_100%)]",
+    );
+  }
+  if (tone === "waiting") {
+    return cn(
+      shimmer,
+      "bg-[linear-gradient(90deg,#d59aa8_0%,#d59aa8_34%,#9a5f70_50%,#d59aa8_66%,#d59aa8_100%)]",
+    );
+  }
+  return cn(
+    shimmer,
+    "bg-[linear-gradient(90deg,#9a7a86_0%,#9a7a86_34%,#5d3f4d_50%,#9a7a86_66%,#9a7a86_100%)]",
+  );
+}
+
+function isRunStartedWorkRow(row: AgUiToolCallRow): boolean {
+  return row.id === "run:started-work" || row.name === "run_started";
+}
+
+function hasConcreteWorkRows(rows: AgUiToolCallRow[]): boolean {
+  return rows.some(
+    (row) => row.kind !== "narration" && !isRunStartedWorkRow(row),
+  );
+}
+
+function AgentHubProgressNote({ msg }: { msg: ChatMessage }) {
+  if (msg.role !== "mai") return null;
+
+  const finalTextStarted = Boolean(msg.content.trim());
+  const tools = msg.agentToolCalls ?? [];
+  const workSummary =
+    tools.length > 0
+      ? workProgressSummary(
+          tools,
+          typeof msg.agentWorkFinishedAtMs === "number",
+        )
+      : null;
+  const canShowWork =
+    workSummary &&
+    !(
+      finalTextStarted &&
+      (workSummary.tone === "running" || workSummary.tone === "done")
+    );
+  const statusTitle = !finalTextStarted ? agentHubVisibleStatusText(msg) : "";
+
+  const progress =
+    statusTitle
+      ? { title: statusTitle, tone: "running" as WorkProgressTone }
+      : canShowWork && hasConcreteWorkRows(tools)
+        ? workSummary
+        : canShowWork
+          ? workSummary
+          : null;
+
+  if (!progress) return null;
 
   return (
     <div className="w-full max-w-full text-[12px]">
@@ -946,27 +990,24 @@ function AgentHubWorkPanel({
           className="relative mt-[5px] flex h-2 w-2 shrink-0"
           aria-hidden="true"
         >
-          {summary.tone === "running" ? (
+          {progress.tone === "running" ? (
             <span className="absolute inline-flex h-full w-full rounded-full bg-[#c98599] opacity-40 animate-ping" />
           ) : null}
           <span
             className={cn(
               "relative inline-flex h-2 w-2 rounded-full",
-              workProgressDotClass(summary.tone),
+              workProgressDotClass(progress.tone),
             )}
           />
         </span>
         <span
-          title={summary.title}
+          title={progress.title}
           className={cn(
             "block min-w-0 max-w-full flex-1 overflow-x-auto overscroll-x-contain whitespace-nowrap pr-2 text-[12px] font-[650] leading-[1.45] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-            shouldAnimateTitle
-              ? "bg-[linear-gradient(90deg,#9a7a86_0%,#9a7a86_34%,#5d3f4d_50%,#9a7a86_66%,#9a7a86_100%)] bg-[length:240%_100%] bg-clip-text text-transparent animate-[work-title-sweep_1.35s_linear_infinite]"
-              : "text-[#7a5f69]",
-            summary.tone === "error" && !shouldAnimateTitle && "text-[#9e3b38]",
+            workProgressTitleClass(progress.tone),
           )}
         >
-          {summary.title}
+          {progress.title}
         </span>
       </div>
     </div>
@@ -977,15 +1018,8 @@ function AgentHubAgUiDecor({ msg }: { msg: ChatMessage }) {
   if (msg.role !== "mai") return null;
   return (
     <>
-      <AgentHubWorkPanel
-        tools={msg.agentToolCalls ?? []}
-        finishedAtMs={msg.agentWorkFinishedAtMs}
-        finalTextStarted={Boolean(msg.content.trim())}
-      />
-      {msg.agentThinkingTitle ? (
-        <AgentHubThinkingNote title={msg.agentThinkingTitle} />
-      ) : null}
-      <AgentHubStatusNote msg={msg} />
+      <AgentHubProgressNote msg={msg} />
+      <AgentHubThinkingNote msg={msg} />
     </>
   );
 }
@@ -2108,7 +2142,7 @@ const AgentHub: React.FC = () => {
         ? (value.metadata as Record<string, unknown>)
         : null;
     const thinkingText =
-      metadata?.after_output_text === true ? "我在准备下一步～" : "我想一下";
+      metadata?.after_output_text === true ? "我接着处理下一步" : "我想一下";
     if (status === "started" || status === "running") {
       mergedThinkingRef.current = thinkingText;
       setMessages((prev) =>
@@ -3098,8 +3132,8 @@ const AgentHub: React.FC = () => {
     })();
   };
 
-  const handleQuickReplySelect = (sendText: string) => {
-    const text = sendText.trim();
+  const handleQuickReplySelect = (replyText: string) => {
+    const text = replyText.trim();
     if (!text) return;
     if (hubBottomSendBusy || isMainChatRunning) return;
     primeAutoVoicePlayback();
