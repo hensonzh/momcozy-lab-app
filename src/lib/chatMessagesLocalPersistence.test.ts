@@ -44,9 +44,9 @@ describe("chatMessagesLocalPersistence", () => {
       content: "可以，我们继续。",
       chatStreamContext: "main",
       quickReplies: [
-        { text: "继续下一步", sendText: "继续下一步" },
-        { text: "换个方案", sendText: "我想换个方案" },
-        { text: "先帮我总结", sendText: "先帮我总结" },
+        { text: "继续下一步" },
+        { text: "换个方案" },
+        { text: "先帮我总结" },
       ],
     });
 
@@ -62,9 +62,9 @@ describe("chatMessagesLocalPersistence", () => {
       content: "可以，我们继续。",
       chatStreamContext: "main",
       quickReplies: [
-        { text: "继续下一步", sendText: "继续下一步" },
-        { text: "换个方案", sendText: "我想换个方案" },
-        { text: "先帮我总结", sendText: "先帮我总结" },
+        { text: "继续下一步" },
+        { text: "换个方案" },
+        { text: "先帮我总结" },
       ],
     });
 
