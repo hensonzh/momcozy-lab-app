@@ -6,7 +6,7 @@
 import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import type { AgUiToolCallRow, ChatMessage, ChatMessageCitation, ChatQuickReply } from "@/types/chat";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
-import { notifyBirthJourneyPlanDeleted } from "@/lib/birthJourneyPlanNotification";
+import { notifyBirthJourneyPlanDeleted, notifyBirthJourneyPlanUpdated } from "@/lib/birthJourneyPlanNotification";
 import { normalizeMediaVoiceNarrationItems, type MediaVoiceNarrationItem } from "@/lib/mediaVoiceNarration";
 import { notifyPregnancyDiaryChanged } from "@/lib/pregnancyDiaryEvents";
 import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
@@ -398,6 +398,15 @@ function maybeNotifyBirthJourneyPlanDeleted(parsed: Record<string, unknown> | nu
   notifyBirthJourneyPlanDeleted();
 }
 
+function maybeNotifyBirthJourneyPlanUpdated(parsed: Record<string, unknown> | null): void {
+  if (!parsed) return;
+  const toolName = normalizeToolName(parsed.tool_name);
+  if (toolName !== "birth_journey_plan_todo_update") return;
+  if (coalesceString(parsed.status) !== "todo_completion_updated") return;
+  if (parsed.side_effect_performed === false) return;
+  notifyBirthJourneyPlanUpdated();
+}
+
 function maybeNotifyPregnancyDiaryChanged(parsed: Record<string, unknown> | null): void {
   if (!parsed) return;
   const toolName = normalizeToolName(parsed.tool_name);
@@ -405,6 +414,7 @@ function maybeNotifyPregnancyDiaryChanged(parsed: Record<string, unknown> | null
   const status = coalesceString(parsed.status);
   if (
     ![
+      "diary_entry_written",
       "diary_entry_created",
       "diary_entry_updated",
       "diary_entry_deleted",
@@ -413,7 +423,7 @@ function maybeNotifyPregnancyDiaryChanged(parsed: Record<string, unknown> | null
     ].includes(status)
   ) return;
   if (parsed.side_effect_performed === false) return;
-  if (status === "diary_entry_created" || status === "health_consultation_recorded") notifyPregnancyDiaryChanged("created");
+  if (status === "diary_entry_written" || status === "diary_entry_created" || status === "health_consultation_recorded") notifyPregnancyDiaryChanged("created");
   else if (status === "diary_entry_updated" || status === "health_consultation_updated") notifyPregnancyDiaryChanged("updated");
   else notifyPregnancyDiaryChanged("deleted");
 }
@@ -550,6 +560,7 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "birth_journey_intake_manage") return { title: "我先整理孕期计划信息～" };
   if (normalizedToolName === "birth_journey_plan_card_create") return { title: "我先帮你整理孕期计划～" };
   if (normalizedToolName === "birth_journey_plan_delete") return { title: "我先帮你删除孕期计划～" };
+  if (normalizedToolName === "birth_journey_plan_todo_update") return { title: "我先帮你同步计划完成状态～" };
   if (normalizedToolName === "pregnancy_diary_manage") return { title: "我先看看孕期日记～" };
   if (normalizedToolName === "hospital_bag_card_create") return { title: "我先帮你整理待产包清单～" };
   if (normalizedToolName === "ibclc_consult_card_create") return { title: "我先帮你准备 IBCLC 咨询入口～" };
@@ -602,6 +613,7 @@ function toolEndCopy(toolName: string): { title: string; detail?: string } {
   if (normalizedToolName === "hospital_bag_cart_update") return { title: "我在保存购物车修改～" };
   if (normalizedToolName === "device_manual_search") return { title: "我把设备内容整理一下～" };
   if (normalizedToolName === "support_ticket_draft_create") return { title: "我在准备售后信息表～" };
+  if (normalizedToolName === "birth_journey_plan_todo_update") return { title: "我在同步这项计划进度～" };
 
   switch (toolWorkPhase(toolName)) {
     case "select":
@@ -673,11 +685,17 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
     if (status === "plan_deleted") return { title: "我已经删除孕期计划啦" };
     return { title: "删除孕期计划暂时没成功" };
   }
+  if (normalizedToolName === "birth_journey_plan_todo_update") {
+    if (status === "todo_completion_updated") return { title: "我已经同步计划完成状态啦" };
+    if (status === "needs_todo_reference" || status === "todo_not_found") return { title: "我还需要确认是哪一项" };
+    if (status === "plan_not_found") return { title: "当前没有孕期计划可更新" };
+    return { title: "计划完成状态暂时没同步成功" };
+  }
   if (normalizedToolName === "pregnancy_diary_manage") {
     if (status === "needs_delete_confirmation") return { title: "删除前还需要你确认一下" };
     if (status === "entry_not_found") return { title: "没有找到这条孕期日记" };
     if (status === "diary_entry_deleted") return { title: "我已经删除这条孕期日记啦" };
-    if (status === "diary_entry_created") return { title: "我已经记录好孕期日记啦" };
+    if (status === "diary_entry_written" || status === "diary_entry_created") return { title: "我已经记录好孕期日记啦" };
     if (status === "diary_entry_updated") return { title: "我已经修改好孕期日记啦" };
     if (status === "health_consultation_recorded" || status === "health_consultation_updated") return { title: "我已经记录到孕期日记啦" };
     if (status === "diary_list_read" || status === "diary_entry_read") return { title: "我看好孕期日记啦" };
@@ -1307,6 +1325,7 @@ export function applyAgUiStreamSideEffects(
   const eventType = resolveAgUiEventType(data);
   const parsedToolResult = eventType === "TOOL_CALL_RESULT" ? parseToolResultPayload(rec.content) : null;
   maybeNotifyBirthJourneyPlanDeleted(parsedToolResult);
+  maybeNotifyBirthJourneyPlanUpdated(parsedToolResult);
   maybeNotifyPregnancyDiaryChanged(parsedToolResult);
   if (eventType === "TOOL_CALL_RESULT") {
     const mediaVoice = normalizeMediaVoiceNarrationItems(

@@ -18,6 +18,8 @@ import type {
   ChatHistoryData,
   ChatActionContentPayload,
   ChatHistoryParams,
+  BirthJourneyTodoCompletionBody,
+  BirthJourneyTodoCompletionData,
   ChatRichTextButtonItem,
   ChatRichTextCardContentItem,
   ChatRichTextCardItem,
@@ -94,6 +96,7 @@ export const API_PATHS = {
   PLAN_LIST: `${API_V1_PREFIX}/plan/list`,
   PLAN_DETAIL: `${API_V1_PREFIX}/plan/detail`,
   PLAN_DELETE_ARTIFACT: `${API_V1_PREFIX}/plan/delete-artifact`,
+  PLAN_BIRTH_JOURNEY_TODO_COMPLETION: `${API_V1_PREFIX}/plan/birth-journey/todo-completion`,
   PLAN_ADD_TASK: `${API_V1_PREFIX}/plan/add-task`,
   PLAN_DELETE_TASK: `${API_V1_PREFIX}/plan/delete-task`,
   PLAN_REVISE_TASK: `${API_V1_PREFIX}/plan/revise-task`,
@@ -1006,6 +1009,19 @@ export async function deleteCarePlanArtifact(
   opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
 ): Promise<PlanArtifactDeleteData> {
   return apiRequest<PlanArtifactDeleteData>(API_PATHS.PLAN_DELETE_ARTIFACT, {
+    method: "POST",
+    body,
+    token: opts?.token,
+    skipAuth: opts?.skipAuth,
+    signal: opts?.signal,
+  });
+}
+
+export async function updateBirthJourneyTodoCompletion(
+  body: BirthJourneyTodoCompletionBody,
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+): Promise<BirthJourneyTodoCompletionData> {
+  return apiRequest<BirthJourneyTodoCompletionData>(API_PATHS.PLAN_BIRTH_JOURNEY_TODO_COMPLETION, {
     method: "POST",
     body,
     token: opts?.token,

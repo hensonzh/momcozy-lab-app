@@ -220,6 +220,15 @@ function asString(v: unknown): string {
   return typeof v === "string" ? v : "";
 }
 
+const BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS = 22;
+const BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS = 36;
+
+function truncateBirthJourneyPlanText(value: unknown, maxChars: number): string {
+  const text = asString(value).trim();
+  if (text.length <= maxChars) return text;
+  return `${text.slice(0, Math.max(0, maxChars - 1)).replace(/[，。；、,.\s]+$/u, "")}…`;
+}
+
 function cleanIbclcConsultantBio(v: unknown): string {
   return asString(v)
     .trim()
@@ -1053,10 +1062,10 @@ function normalizeBirthJourneyPlanningLayerSections(
 ): BirthJourneyPlanCardSection[] {
   if (!layers) return [];
   return [
-    normalizeBirthJourneyPlanningLayerSection(layers, "current_week_focus", "当前阶段目标", 4, "warm"),
-    normalizeBirthJourneyPlanningLayerSection(layers, "next_7_days", "接下来 7 天行动", 5),
-    normalizeBirthJourneyPlanningLayerSection(layers, "next_2_4_weeks", "未来 2-4 周", 4),
-    normalizeBirthJourneyPlanningLayerSection(layers, "later_milestones", "后续重要节点", 4),
+    normalizeBirthJourneyPlanningLayerSection(layers, "current_week_focus", "当前阶段目标", "warm"),
+    normalizeBirthJourneyPlanningLayerSection(layers, "next_7_days", "接下来 7 天行动"),
+    normalizeBirthJourneyPlanningLayerSection(layers, "next_2_4_weeks", "未来 2-4 周"),
+    normalizeBirthJourneyPlanningLayerSection(layers, "later_milestones", "后续重要节点"),
   ].filter((section): section is BirthJourneyPlanCardSection => Boolean(section));
 }
 
@@ -1064,11 +1073,10 @@ function normalizeBirthJourneyPlanningLayerSection(
   layers: Record<string, unknown>,
   key: string,
   fallbackTitle: string,
-  maxItems: number,
   tone: BirthJourneyPlanCardSection["tone"] = "plain",
 ): BirthJourneyPlanCardSection | null {
   const section = asObject(layers[key]) ?? {};
-  const items = normalizeBirthJourneyPlanItems(section.items, maxItems);
+  const items = normalizeBirthJourneyPlanItems(section.items);
   if (items.length === 0) return null;
   return {
     key,
@@ -1079,25 +1087,24 @@ function normalizeBirthJourneyPlanningLayerSection(
   };
 }
 
-function normalizeBirthJourneyPlanItems(values: unknown, maxItems: number): BirthJourneyPlanCardItem[] {
+function normalizeBirthJourneyPlanItems(values: unknown): BirthJourneyPlanCardItem[] {
   const rawItems = Array.isArray(values) ? values : hasDisplayValue(values) ? [values] : [];
   return rawItems
     .map((item) => {
       if (typeof item === "string") {
-        const title = item.trim();
+        const title = truncateBirthJourneyPlanText(item, BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS);
         return title && !isConfirmPlaceholder(title) ? { title, reason: "" } : null;
       }
       const source = asObject(item);
       if (!source) return null;
-      const title = asString(source.title).trim();
+      const title = truncateBirthJourneyPlanText(source.title, BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS);
       if (!title || isConfirmPlaceholder(title)) return null;
       return {
         title,
-        reason: asString(source.reason).trim(),
+        reason: truncateBirthJourneyPlanText(source.reason, BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS),
       };
     })
-    .filter((item): item is BirthJourneyPlanCardItem => Boolean(item))
-    .slice(0, maxItems);
+    .filter((item): item is BirthJourneyPlanCardItem => Boolean(item));
 }
 
 function cardSubtitle(values: unknown[]): string {
