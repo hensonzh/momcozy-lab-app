@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Calendar, Bluetooth, Users } from "lucide-react";
 import momcozyAgentAvatar from "@/assets/momcozy-agent.png";
+import momcozyAgentAwakenAvatar from "@/assets/momcozy-agent-awaken.gif";
 import { cn } from "@/lib/utils";
 import {
   transferBirthJourneyPlanNotificationToStatusCard,
@@ -37,6 +38,117 @@ const tabs = [
   { path: "/device", icon: Bluetooth, label: "设备" },
 ];
 
+let agentAwakenPreloadImage: HTMLImageElement | null = null;
+let agentAwakenAvatarBlob: Blob | null = null;
+let agentAwakenAvatarBlobPromise: Promise<Blob | null> | null = null;
+let agentWakeOverlayTimer: number | null = null;
+let agentWakePlaybackObjectUrl: string | null = null;
+let agentWakePlaybackNonce = 0;
+
+const AGENT_WAKE_ANIMATION_MS = 1640;
+
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+function preloadAgentAwakenAvatar(): void {
+  if (typeof window === "undefined") return;
+
+  if (!agentAwakenPreloadImage) {
+    agentAwakenPreloadImage = new Image();
+    agentAwakenPreloadImage.decoding = "async";
+    agentAwakenPreloadImage.src = momcozyAgentAwakenAvatar;
+    void agentAwakenPreloadImage.decode?.().catch(() => undefined);
+  }
+  preloadAgentAwakenAvatarBlob();
+}
+
+function preloadAgentAwakenAvatarBlob(): void {
+  if (
+    typeof window === "undefined" ||
+    typeof window.fetch !== "function" ||
+    agentAwakenAvatarBlob ||
+    agentAwakenAvatarBlobPromise
+  ) {
+    return;
+  }
+
+  agentAwakenAvatarBlobPromise = window
+    .fetch(momcozyAgentAwakenAvatar)
+    .then((response) => (response.ok ? response.blob() : null))
+    .then((blob) => {
+      agentAwakenAvatarBlob = blob;
+      return blob;
+    })
+    .catch(() => null);
+}
+
+function revokeAgentWakePlaybackObjectUrl(): void {
+  if (
+    agentWakePlaybackObjectUrl &&
+    typeof URL !== "undefined" &&
+    typeof URL.revokeObjectURL === "function"
+  ) {
+    URL.revokeObjectURL(agentWakePlaybackObjectUrl);
+  }
+  agentWakePlaybackObjectUrl = null;
+}
+
+function createAgentWakePlaybackUrl(): string {
+  agentWakePlaybackNonce += 1;
+
+  if (
+    agentAwakenAvatarBlob &&
+    typeof URL !== "undefined" &&
+    typeof URL.createObjectURL === "function"
+  ) {
+    revokeAgentWakePlaybackObjectUrl();
+    agentWakePlaybackObjectUrl = URL.createObjectURL(agentAwakenAvatarBlob);
+    return agentWakePlaybackObjectUrl;
+  }
+
+  const separator = momcozyAgentAwakenAvatar.includes("?") ? "&" : "?";
+  return `${momcozyAgentAwakenAvatar}${separator}wake=${agentWakePlaybackNonce}`;
+}
+
+function playAgentWakeOverlay(sourceButton: HTMLButtonElement): void {
+  if (typeof document === "undefined" || prefersReducedMotion()) return;
+
+  preloadAgentAwakenAvatar();
+
+  const rect = sourceButton.getBoundingClientRect();
+  document.querySelector("[data-agent-wake-overlay]")?.remove();
+  if (agentWakeOverlayTimer != null) {
+    window.clearTimeout(agentWakeOverlayTimer);
+  }
+
+  const overlay = document.createElement("div");
+  overlay.setAttribute("data-agent-wake-overlay", "true");
+  overlay.className = "agent-nav-avatar-wake-overlay";
+  overlay.style.left = `${rect.left}px`;
+  overlay.style.top = `${rect.top}px`;
+  overlay.style.width = `${rect.width}px`;
+  overlay.style.height = `${rect.height}px`;
+
+  const image = document.createElement("img");
+  image.src = createAgentWakePlaybackUrl();
+  image.alt = "";
+  image.setAttribute("aria-hidden", "true");
+  image.className = "agent-nav-avatar-wake-overlay-media";
+  overlay.appendChild(image);
+
+  document.body.appendChild(overlay);
+  agentWakeOverlayTimer = window.setTimeout(() => {
+    overlay.remove();
+    revokeAgentWakePlaybackObjectUrl();
+    agentWakeOverlayTimer = null;
+  }, AGENT_WAKE_ANIMATION_MS);
+}
+
 export type BottomNavVariant = "fixed" | "embedded";
 
 export type BottomNavProps = {
@@ -54,6 +166,17 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
   const statusNotificationCount =
     Number(birthJourneyPlanNavNotification) + Number(pregnancyDiaryNavNotification);
   const scheduleNotificationCount = Number(milkPlanNavNotification);
+
+  useEffect(() => {
+    preloadAgentAwakenAvatar();
+  }, []);
+
+  const handleCenterTabClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (location.pathname !== "/") {
+      playAgentWakeOverlay(event.currentTarget);
+    }
+    navigate("/");
+  };
 
   // Hide nav on independent full-screen flows
   if (location.pathname === "/pump" || location.pathname === "/calibration" || location.pathname === "/media-viewer") return null;
@@ -78,7 +201,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ variant = "fixed" }) => {
             return (
               <div key={tab.path} className="flex-1 flex justify-center h-full items-center">
                 <button
-                  onClick={() => navigate(tab.path)}
+                  onClick={handleCenterTabClick}
                   aria-current={active ? "page" : undefined}
                   aria-label={tab.label}
                   className={cn(

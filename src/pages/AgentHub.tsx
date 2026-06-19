@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import PillGroups from "@/components/pills/PillGroups";
 import MaiInputBar from "@/components/Mai/MaiInputBar";
+import AgentResponseLightRail from "@/components/Mai/AgentResponseLightRail";
 import { useAgentHubSpeechInput } from "@/hooks/useAgentHubSpeechInput";
 import { cn } from "@/lib/utils";
 import type {
@@ -39,6 +40,8 @@ import type {
 import { chatBus } from "@/lib/chatBus";
 import { chatStore } from "@/lib/chatStore";
 import { agentHubMainChatRuntime } from "@/lib/agentHubMainChatRuntime";
+import { agentHubVoicePlaybackRuntime } from "@/lib/agentHubVoicePlaybackRuntime";
+import { resolveAgentResponseLightRailMode } from "@/lib/agentResponseLightRail";
 import {
   loadPersistedChatMessages,
   savePersistedChatMessages,
@@ -93,6 +96,8 @@ import {
   mergeStreamingAnswerDelta,
 } from "@/lib/chatStreaming";
 import momcozyAgentAvatar from "@/assets/momcozy-agent.png";
+import momcozyAgentSpeakingVideo from "@/assets/momcozy-agent-speaking.mp4";
+import momcozyAgentThinkingVideo from "@/assets/momcozy-agent-thinking.mp4";
 import {
   DEFAULT_CHAT_TAIL_THRESHOLD_PX,
   isChatScrollNearTail,
@@ -1371,6 +1376,11 @@ const AgentHub: React.FC = () => {
     agentHubMainChatRuntime.getSnapshot,
     agentHubMainChatRuntime.getSnapshot,
   );
+  const voicePlaybackSnapshot = useSyncExternalStore(
+    agentHubVoicePlaybackRuntime.subscribe,
+    agentHubVoicePlaybackRuntime.getSnapshot,
+    agentHubVoicePlaybackRuntime.getSnapshot,
+  );
   const isMainChatRunning =
     mainChatRuntimeSnapshot.running || Boolean(mainChatCancelRef.current);
 
@@ -1526,6 +1536,7 @@ const AgentHub: React.FC = () => {
   const stopCurrentBubblePlayback = useCallback(
     async (opts?: { clearPlayingId?: boolean }): Promise<void> => {
       autoVoiceRunIdRef.current += 1;
+      agentHubVoicePlaybackRuntime.cancelAutoVoice();
       autoVoiceRealtimeSessionRef.current?.abortController.abort();
       autoVoiceRealtimeSessionRef.current?.session.cancel();
       autoVoiceRealtimeSessionRef.current = null;
@@ -1717,8 +1728,14 @@ const AgentHub: React.FC = () => {
         bubblePlayAbortRef.current = ac;
         bubblePlayingTargetIdRef.current = replyId;
         setPlayingId(replyId);
+        let session: FocusRealtimePlainTextVoiceSession | null = null;
+        const voicePlaybackHandle =
+          agentHubVoicePlaybackRuntime.startAutoVoice(replyId, () => {
+            ac.abort();
+            session?.cancel();
+          });
         try {
-          const session = startFocusRealtimePlainTextVoice({
+          session = startFocusRealtimePlainTextVoice({
             userId: DEFAULT_CHAT_USER_ID,
             signal: ac.signal,
             mediaNarrationResolver: resolveMediaVoiceNarration,
@@ -1745,6 +1762,7 @@ const AgentHub: React.FC = () => {
             setPlayingId(null);
             bubblePlayingTargetIdRef.current = null;
           }
+          agentHubVoicePlaybackRuntime.finishAutoVoice(voicePlaybackHandle);
           if (bubblePlayAbortRef.current === ac) {
             bubblePlayAbortRef.current = null;
           }
@@ -1796,6 +1814,13 @@ const AgentHub: React.FC = () => {
       });
       sessionState.session = session;
       autoVoiceRealtimeSessionRef.current = sessionState;
+      const voicePlaybackHandle = agentHubVoicePlaybackRuntime.startAutoVoice(
+        replyId,
+        () => {
+          ac.abort();
+          session.cancel();
+        },
+      );
       void session.done
         .catch((e: unknown) => {
           const err = e as { name?: string; message?: string };
@@ -1830,6 +1855,7 @@ const AgentHub: React.FC = () => {
             setPlayingId(null);
             bubblePlayingTargetIdRef.current = null;
           }
+          agentHubVoicePlaybackRuntime.finishAutoVoice(voicePlaybackHandle);
           if (bubblePlayAbortRef.current === ac) {
             bubblePlayAbortRef.current = null;
           }
@@ -3819,6 +3845,10 @@ const AgentHub: React.FC = () => {
 
   const chatViewportTop = `calc(var(--top-safe) + ${HUB_TOP_ACTION_HEIGHT_PX}px)`;
   const chatViewportBottom = `calc(${HUB_BOTTOM_NAV_HEIGHT} + env(safe-area-inset-bottom) + ${bottomActionHeightPx}px)`;
+  const agentResponseLightRailMode = resolveAgentResponseLightRailMode(
+    mainChatRuntimeSnapshot,
+    messages,
+  );
   const handleScrollToLatest = () => {
     const container = scrollRef.current;
     if (!container) return;
@@ -3890,6 +3920,7 @@ const AgentHub: React.FC = () => {
 
   return (
     <div className="relative">
+      <AgentResponseLightRail mode={agentResponseLightRailMode} />
       <div
         className="fixed left-0 right-0 z-40"
         style={{
@@ -4052,6 +4083,18 @@ const AgentHub: React.FC = () => {
                   ((mainStreamingReplyIdRef.current === msg.id &&
                     mainChatCancelRef.current != null) ||
                     mainChatRuntimeSnapshot.replyId === msg.id);
+                const isAssistantSpeaking =
+                  voicePlaybackSnapshot.autoVoicePlayingId === msg.id;
+                const assistantAvatarMode = isAssistantSpeaking
+                  ? "speaking"
+                  : isAssistantResponding
+                    ? "thinking"
+                    : null;
+                const assistantAvatarVideoSrc = assistantAvatarMode
+                  ? assistantAvatarMode === "speaking"
+                    ? momcozyAgentSpeakingVideo
+                    : momcozyAgentThinkingVideo
+                  : null;
                 const messageSpacingClass =
                   index === 0
                     ? "mt-0"
@@ -4290,14 +4333,35 @@ const AgentHub: React.FC = () => {
                           <span
                             className={cn(
                               "agent-hub-assistant-avatar -mt-1 h-8 w-8 shrink-0",
-                              isAssistantResponding &&
-                                "agent-hub-assistant-avatar-thinking",
+                              assistantAvatarVideoSrc &&
+                                "agent-hub-assistant-avatar-active",
+                              assistantAvatarVideoSrc &&
+                                (assistantAvatarMode === "speaking"
+                                  ? "agent-hub-assistant-avatar-speaking"
+                                  : "agent-hub-assistant-avatar-thinking"),
                             )}
                           >
+                            {assistantAvatarVideoSrc ? (
+                              <video
+                                key={`${msg.id}-${assistantAvatarMode}`}
+                                className="agent-hub-assistant-avatar-video"
+                                src={assistantAvatarVideoSrc}
+                                aria-hidden="true"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                preload="auto"
+                                poster={momcozyAgentAvatar}
+                                onError={(event) => {
+                                  event.currentTarget.style.display = "none";
+                                }}
+                              />
+                            ) : null}
                             <img
                               src={momcozyAgentAvatar}
                               alt="CozyMate"
-                              className="h-8 w-8 rounded-full object-cover shadow-sm ring-1 ring-[#eadde2]/80"
+                              className="agent-hub-assistant-avatar-static h-8 w-8 rounded-full object-cover shadow-sm ring-1 ring-[#eadde2]/80"
                             />
                           </span>
                         ) : null}
