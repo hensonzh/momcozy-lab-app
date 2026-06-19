@@ -196,6 +196,43 @@ function hospitalBagFormPayload(): ChatRichTextPayload {
   };
 }
 
+function hospitalBagCardPayload(): ChatRichTextPayload {
+  return {
+    title: "",
+    content: "",
+    button: [],
+    card: [],
+    action: [
+      {
+        kind: "ag_ui_artifact",
+        artifact_type: "card",
+        artifact_id: "hospital_bag_card_1",
+        card: {
+          card_type: "hospital_bag_card",
+          schema_version: "1.0",
+          card_json: {
+            title: "待产包",
+            packing_groups: [
+              {
+                group_id: "mom_hospital_bag",
+                title: "妈妈住院包",
+                items: [
+                  {
+                    label: "产褥垫组合装",
+                    quantity: "1包",
+                    priority: "must",
+                  },
+                ],
+              },
+            ],
+            disclaimer: "以医院实际要求为准。",
+          },
+        },
+      },
+    ],
+  };
+}
+
 function milkPlanPayload(): ChatRichTextPayload {
   return {
     title: "",
@@ -426,6 +463,26 @@ describe("AgentHubRichTextBlock hospital bag form", () => {
     expect(screen.getByLabelText("预产期或当前孕周")).toHaveValue("25周");
     expect(screen.getByLabelText("这次是单胎、双胎，还是三胎及以上？")).toHaveValue("单胎");
     expect(screen.getByLabelText("喂养意向")).toHaveValue("亲喂母乳");
+  });
+});
+
+describe("AgentHubRichTextBlock hospital bag card", () => {
+  it("renders a cart entry from the generated hospital bag card", () => {
+    const openCart = vi.fn((event: Event) => event.preventDefault());
+    window.addEventListener("momcozy-open-hospital-bag-cart", openCart);
+    try {
+      renderBlock({ payload: hospitalBagCardPayload() });
+
+      fireEvent.click(screen.getByRole("button", { name: "打开待产包购物车" }));
+
+      expect(openCart).toHaveBeenCalledTimes(1);
+      expect((openCart.mock.calls[0][0] as CustomEvent).detail).toMatchObject({
+        href: "/hospital-bag-cart",
+        source: "hospital_bag_card",
+      });
+    } finally {
+      window.removeEventListener("momcozy-open-hospital-bag-cart", openCart);
+    }
   });
 });
 
