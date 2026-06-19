@@ -21,6 +21,7 @@ import {
   Copy,
   CreditCard,
   CupSoda,
+  ChevronRight,
   Download,
   Droplets,
   FileCheck,
@@ -38,6 +39,7 @@ import {
   Route,
   ShieldCheck,
   Shirt,
+  ShoppingBag,
   Smartphone,
   SprayCan,
   Stethoscope,
@@ -75,6 +77,7 @@ import {
  * open / switch / 默认续聊交由回调或路由处理。
  */
 type ButtonSelectOptions = { displayText?: string; assistantReply?: string };
+const OPEN_HOSPITAL_BAG_CART_EVENT = "momcozy-open-hospital-bag-cart";
 
 export type IbclcConsultOpenRequest = {
   consultId: string;
@@ -1430,6 +1433,16 @@ const AgentHubRichTextBlock: React.FC<{
     }
   };
 
+  const openHospitalBagCart = () => {
+    if (typeof window === "undefined") return;
+    window.dispatchEvent(
+      new CustomEvent(OPEN_HOSPITAL_BAG_CART_EVENT, {
+        cancelable: true,
+        detail: { href: "/hospital-bag-cart", source: "hospital_bag_card" },
+      }),
+    );
+  };
+
   const renderFormField = (field: FormFieldSpec, variant: "default" | "monochrome" = "default") => {
     const isMonochrome = variant === "monochrome";
     const hasDefaultValue = hasFormDefaultValue(field.default_value);
@@ -1928,7 +1941,20 @@ const AgentHubRichTextBlock: React.FC<{
                   ) : null}
                   <div className="agent-card-footer">
                     {disclaimer ? <p className="agent-card-disclaimer">{disclaimer}</p> : null}
-                    {downloadButton}
+                    <div className="birth-journey-footer-actions">
+                      <button
+                        type="button"
+                        onClick={openHospitalBagCart}
+                        className="card-export-button"
+                        title="打开待产包购物车"
+                        aria-label="打开待产包购物车"
+                      >
+                        <ShoppingBag aria-hidden="true" />
+                        <span>打开购物车</span>
+                        <ChevronRight aria-hidden="true" />
+                      </button>
+                      {downloadButton}
+                    </div>
                   </div>
                 </article>
               );
