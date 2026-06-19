@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { SetStateAction } from "react";
 import { applyAgUiStreamSideEffects, semanticForAgUiEvent } from "@/lib/agUiStreamSideEffects";
-import { BIRTH_JOURNEY_PLAN_DELETED_EVENT } from "@/lib/birthJourneyPlanNotification";
+import { BIRTH_JOURNEY_PLAN_DELETED_EVENT, BIRTH_JOURNEY_PLAN_UPDATED_EVENT } from "@/lib/birthJourneyPlanNotification";
 import type { ChatMessage } from "@/types/chat";
 
 function applyEvents(events: Array<Record<string, unknown>>): ChatMessage {
@@ -1171,11 +1171,63 @@ describe("applyAgUiStreamSideEffects", () => {
     });
   });
 
+  it("emits birth journey plan updated event from todo completion tool result", () => {
+    const events: string[] = [];
+    window.addEventListener(BIRTH_JOURNEY_PLAN_UPDATED_EVENT, () => {
+      events.push("updated");
+    }, { once: true });
+
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_birth_journey_todo",
+        tool_call_name: "birth_journey_plan_todo_update",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "birth_journey_plan_todo_update",
+          status: "todo_completion_updated",
+          side_effect_performed: true,
+        }),
+      },
+    ]);
+
+    expect(events).toEqual(["updated"]);
+    expect(msg.agentToolCalls?.[0]).toMatchObject({
+      name: "birth_journey_plan_todo_update",
+      title: "我已经同步计划完成状态啦",
+      state: "completed",
+    });
+  });
+
   it("marks pregnancy diary created and updated tool results as status notifications", () => {
     const created = applyEvents([
       {
         type: "TOOL_CALL_RESULT",
         tool_call_id: "call_create_diary",
+        tool_call_name: "pregnancy_diary_manage",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "pregnancy_diary_manage",
+          status: "diary_entry_written",
+          side_effect_performed: true,
+        }),
+      },
+    ]);
+
+    expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
+    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
+    expect(created.agentToolCalls?.[0]).toMatchObject({
+      name: "pregnancy_diary_manage",
+      title: "我已经记录好孕期日记啦",
+      state: "completed",
+    });
+
+    localStorage.clear();
+
+    const legacyCreated = applyEvents([
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_legacy_create_diary",
         tool_call_name: "pregnancy_diary_manage",
         content: JSON.stringify({
           ok: true,
@@ -1187,8 +1239,7 @@ describe("applyAgUiStreamSideEffects", () => {
     ]);
 
     expect(localStorage.getItem("mmc_pregnancy_diary_nav_pending")).toBe("1");
-    expect(localStorage.getItem("mmc_pregnancy_diary_card_label")).toBeNull();
-    expect(created.agentToolCalls?.[0]).toMatchObject({
+    expect(legacyCreated.agentToolCalls?.[0]).toMatchObject({
       name: "pregnancy_diary_manage",
       title: "我已经记录好孕期日记啦",
       state: "completed",

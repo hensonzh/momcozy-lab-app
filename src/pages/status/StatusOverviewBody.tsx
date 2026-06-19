@@ -6,6 +6,7 @@ import {
   Bed,
   BookOpen,
   CalendarDays,
+  Check,
   ChevronDown,
   ClipboardList,
   Coffee,
@@ -44,6 +45,7 @@ import {
   queryPregnancyDiaryList,
   queryPregnancyDiaryToday,
   queryUserProfile,
+  updateBirthJourneyTodoCompletion,
   updatePregnancyDiaryEntry,
 } from "@/lib/agentApi";
 import {
@@ -68,6 +70,7 @@ import {
   clearBirthJourneyPlanCardNotification,
   clearBirthJourneyPlanGeneratedNotification,
   subscribeBirthJourneyPlanDeleted,
+  subscribeBirthJourneyPlanUpdated,
   useBirthJourneyPlanCardNotification,
 } from "@/lib/birthJourneyPlanNotification";
 import {
@@ -229,10 +232,14 @@ const PostpartumRecoveryIcon = () => (
 );
 
 type BirthJourneyPlanItem = {
+  id?: string;
   title?: string;
   reason?: string;
   timeframe?: string;
   based_on?: unknown;
+  completed?: boolean;
+  completed_at?: string | null;
+  completed_source?: string | null;
 };
 
 type BirthJourneyPlanSection = {
@@ -265,6 +272,28 @@ function asBirthJourneyPayload(plan: CarePlanArtifact | null): BirthJourneyPaylo
 
 function compactText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+const BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS = 22;
+const BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS = 36;
+const BIRTH_JOURNEY_NEXT7_TODO_PREFIX = "next7_";
+
+function truncateBirthJourneyPlanText(value: unknown, maxChars: number): string {
+  const text = compactText(value);
+  if (text.length <= maxChars) return text;
+  return `${text.slice(0, Math.max(0, maxChars - 1)).replace(/[，。；、,.\s]+$/u, "")}…`;
+}
+
+function birthJourneyNext7TodoId(index: number): string {
+  return `${BIRTH_JOURNEY_NEXT7_TODO_PREFIX}${String(Math.max(1, index + 1)).padStart(2, "0")}`;
+}
+
+function birthJourneyCompletedBool(value: unknown): boolean {
+  if (value === true) return true;
+  if (typeof value === "string") {
+    return ["true", "1", "yes", "done", "completed", "完成", "已完成"].includes(value.trim().toLowerCase());
+  }
+  return typeof value === "number" ? value !== 0 : false;
 }
 
 function formatPregnancyStageSubtitle(value: unknown): string {
@@ -300,49 +329,135 @@ function birthJourneyPlanningLayers(plan: CarePlanArtifact | null): BirthJourney
   return layers;
 }
 
-function birthJourneyPlanItems(value: unknown, limit = 6): BirthJourneyPlanItem[] {
+function birthJourneyPlanItems(value: unknown): BirthJourneyPlanItem[] {
   if (!Array.isArray(value)) return [];
   return value
     .map((item) => {
-      if (typeof item === "string") return { title: item };
+      if (typeof item === "string") {
+        return { title: truncateBirthJourneyPlanText(item, BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS) };
+      }
       if (item && typeof item === "object") {
         const source = item as Record<string, unknown>;
         return {
-          title: compactText(source.title),
-          reason: compactText(source.reason),
+          id: compactText(source.id),
+          title: truncateBirthJourneyPlanText(source.title, BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS),
+          reason: truncateBirthJourneyPlanText(source.reason, BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS),
           timeframe: compactText(source.timeframe),
           based_on: source.based_on,
+          completed: birthJourneyCompletedBool(source.completed),
+          completed_at: compactText(source.completed_at) || null,
+          completed_source: compactText(source.completed_source) || null,
         };
       }
       return null;
     })
-    .filter((item): item is BirthJourneyPlanItem => Boolean(item?.title))
-    .slice(0, limit);
+    .filter((item): item is BirthJourneyPlanItem => Boolean(item?.title));
 }
 
 function birthJourneyNextPrompt(plan: CarePlanArtifact | null): string {
   return compactText(asBirthJourneyPayload(plan).next_action?.send_text) || "我想继续完善孕期计划";
 }
 
-const BirthJourneyPlanItemRow: React.FC<{ item: BirthJourneyPlanItem; index: number; compact?: boolean }> = ({
+function updateBirthJourneyPlanTodoLocally(
+  plan: CarePlanArtifact,
+  itemId: string,
+  completed: boolean,
+): CarePlanArtifact {
+  const payload = { ...(plan.payload ?? {}) };
+  const layers = payload.planning_layers && typeof payload.planning_layers === "object"
+    ? { ...(payload.planning_layers as Record<string, unknown>) }
+    : {};
+  const next7 = layers.next_7_days && typeof layers.next_7_days === "object"
+    ? { ...(layers.next_7_days as Record<string, unknown>) }
+    : {};
+  const rawItems = Array.isArray(next7.items) ? next7.items : [];
+  const nextItems = rawItems.map((rawItem, index) => {
+    const fallbackId = birthJourneyNext7TodoId(index);
+    if (typeof rawItem === "string") {
+      if (fallbackId !== itemId) return rawItem;
+      return {
+        id: fallbackId,
+        title: rawItem,
+        completed,
+        completed_at: completed ? new Date().toISOString() : null,
+        completed_source: completed ? "app" : null,
+      };
+    }
+    if (!rawItem || typeof rawItem !== "object") return rawItem;
+    const source = rawItem as Record<string, unknown>;
+    const sourceId = compactText(source.id) || fallbackId;
+    if (sourceId !== itemId) return rawItem;
+    return {
+      ...source,
+      id: sourceId,
+      completed,
+      completed_at: completed ? new Date().toISOString() : null,
+      completed_source: completed ? "app" : null,
+    };
+  });
+  next7.items = nextItems;
+  layers.next_7_days = next7;
+  payload.planning_layers = layers;
+  return { ...plan, payload };
+}
+
+const BirthJourneyPlanItemRow: React.FC<{
+  item: BirthJourneyPlanItem;
+  index: number;
+  compact?: boolean;
+  todo?: boolean;
+  disabled?: boolean;
+  onToggleCompleted?: (item: BirthJourneyPlanItem, index: number, completed: boolean) => void;
+}> = ({
   item,
   index,
   compact = false,
-}) => (
-  <div className={`rounded-xl bg-white px-3 ${compact ? "py-2" : "py-2.5"}`}>
+  todo = false,
+  disabled = false,
+  onToggleCompleted,
+}) => {
+  const completed = Boolean(item.completed);
+  const toggle = () => {
+    if (!todo || disabled) return;
+    onToggleCompleted?.(item, index, !completed);
+  };
+  return (
+  <div className={`rounded-xl bg-white px-3 ${compact ? "py-2" : "py-2.5"} ${completed ? "bg-white/75" : ""}`}>
     <div className="flex gap-2">
-      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#fff0e4] text-[11px] font-extrabold leading-none text-[#b65c28]">
-        {index + 1}
-      </span>
+      {todo ? (
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={completed}
+          aria-label={`${completed ? "取消完成" : "标记完成"}：${item.title}`}
+          disabled={disabled}
+          onClick={toggle}
+          title={completed ? "标记为未完成" : "标记为已完成"}
+          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f8f87]/35 disabled:opacity-60 ${
+            completed
+              ? "border-[#4f8f87] bg-[#4f8f87] text-white"
+              : "border-[#8eb8b1] bg-white text-transparent"
+          }`}
+        >
+          <Check className={`h-3.5 w-3.5 ${completed ? "opacity-100" : "opacity-0"}`} aria-hidden="true" />
+        </button>
+      ) : (
+        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#fff0e4] text-[11px] font-extrabold leading-none text-[#b65c28]">
+          {index + 1}
+        </span>
+      )}
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-extrabold leading-relaxed text-[#4f4540]">{item.title}</p>
+        <div className="flex min-w-0 flex-wrap items-start gap-1.5">
+          <p className={`min-w-0 flex-1 text-xs font-extrabold leading-relaxed ${completed ? "text-[#8a7a72] line-through decoration-[#9dbfba]" : "text-[#4f4540]"}`}>{item.title}</p>
+        </div>
         {item.reason ? (
-          <p className="mt-0.5 text-[11px] font-medium leading-relaxed text-[#7b6a61]">{item.reason}</p>
+          <p className={`mt-0.5 text-[11px] font-medium leading-relaxed ${completed ? "text-[#9b8d86]" : "text-[#7b6a61]"}`}>{item.reason}</p>
         ) : null}
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const BirthJourneyPlanSectionView: React.FC<{
   title: string;
@@ -361,11 +476,16 @@ const BirthJourneyPlanSectionView: React.FC<{
     <section className={`rounded-2xl border px-4 py-3 ${className}`}>
       <div className="mb-2">
         <p className="text-sm font-extrabold text-[#352820]">{title}</p>
-        {subtitle ? <p className="mt-1 text-[11px] font-semibold leading-relaxed text-[#7b6a61]">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-1 text-[11px] font-normal leading-relaxed text-[#7b6a61]">{subtitle}</p> : null}
       </div>
       <div className="space-y-2">
         {items.map((item, index) => (
-          <BirthJourneyPlanItemRow key={`${item.title}-${index}`} item={item} index={index} compact={tone !== "warm"} />
+          <BirthJourneyPlanItemRow
+            key={`${item.title}-${index}`}
+            item={item}
+            index={index}
+            compact={tone !== "warm"}
+          />
         ))}
       </div>
     </section>
@@ -375,19 +495,21 @@ const BirthJourneyPlanSectionView: React.FC<{
 const BirthJourneyLayeredPlanView: React.FC<{
   layers: BirthJourneyPlanningLayers;
 }> = ({ layers }) => {
-  const focusItems = birthJourneyPlanItems(layers.current_week_focus?.items, 3);
-  const next7Items = birthJourneyPlanItems(layers.next_7_days?.items, 5);
-  const next24Items = birthJourneyPlanItems(layers.next_2_4_weeks?.items, 4);
-  const milestoneItems = birthJourneyPlanItems(layers.later_milestones?.items, 4);
+  const focusItems = birthJourneyPlanItems(layers.current_week_focus?.items);
+  const next7Items = birthJourneyPlanItems(layers.next_7_days?.items);
+  const next24Items = birthJourneyPlanItems(layers.next_2_4_weeks?.items);
+  const milestoneItems = birthJourneyPlanItems(layers.later_milestones?.items);
   return (
     <div className="space-y-3">
       <BirthJourneyPlanSectionView
-        title={layers.current_week_focus?.title || "当前阶段目标"}
+        title={layers.current_week_focus?.title || "当前优先级"}
+        subtitle={compactText(layers.current_week_focus?.subtitle)}
         items={focusItems}
         tone="warm"
       />
       <BirthJourneyPlanSectionView
-        title={layers.next_7_days?.title || "接下来 7 天行动"}
+        title={layers.next_7_days?.title || "接下来 7 天行动清单"}
+        subtitle={compactText(layers.next_7_days?.subtitle)}
         items={next7Items}
       />
       <BirthJourneyPlanSectionView
@@ -409,70 +531,75 @@ type PrenatalPlanStructureSection = {
   items: BirthJourneyPlanItem[];
   emptyLabel: string;
   tone?: "alert" | "warm" | "plain";
+  todo?: boolean;
 };
 
 const PrenatalPlanTimelineView: React.FC<{
   sections: PrenatalPlanStructureSection[];
-}> = ({ sections }) => (
-  <div className="rounded-[18px] border border-[#cfe4df] bg-[#f7fbfa] px-4 py-2">
-    <div className="relative">
-      <div className="absolute bottom-6 left-[8px] top-6 w-px bg-[#cfe4df]" aria-hidden="true" />
-      {sections.map((section, sectionIndex) => {
-        const isAlert = section.tone === "alert";
-        const isWarm = section.tone === "warm";
-        const dotClass = isAlert
-          ? "border-[#4f8f87] bg-[#4f8f87]"
-          : isWarm
-            ? "border-[#4f8f87] bg-[#e7f3f0]"
-            : "border-[#b9d7d1] bg-[#f7fbfa]";
-
-        return (
-          <section
-            key={section.key}
-            className="relative border-b border-[#cfe4df]/80 py-4 pl-7 last:border-b-0"
-          >
+  todoUpdatingIds?: string[];
+  onToggleTodo?: (itemId: string, completed: boolean) => void;
+}> = ({ sections, todoUpdatingIds = [], onToggleTodo }) => (
+  <div className="divide-y divide-[#dbece8]">
+    {sections.map((section, sectionIndex) => {
+      const markerClass = section.todo
+        ? "border-[#b7d8d2] bg-[#eaf6f4] text-[#3f8178]"
+        : section.tone === "warm"
+          ? "border-[#efd6bf] bg-[#fff2e6] text-[#b65c28]"
+          : "border-[#e2edea] bg-white text-[#5f918b]";
+      return (
+        <section
+          key={section.key}
+          className="py-4 first:pt-0 last:pb-0"
+        >
+          <div className="flex items-start gap-3">
             <span
-              className={`absolute left-0 top-5 z-[1] h-4 w-4 rounded-full border-2 ${dotClass}`}
               aria-hidden="true"
-            />
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-sm font-extrabold leading-tight text-[#352820]">{section.title}</p>
-                {section.subtitle ? (
-                  <p className="mt-1 text-[11px] font-semibold leading-relaxed text-[#7b6a61]">
-                    {section.subtitle}
-                  </p>
-                ) : null}
-              </div>
-              <span className="shrink-0 text-[10px] font-black leading-tight text-[#4f8f87]">
-                {String(sectionIndex + 1).padStart(2, "0")}
-              </span>
+              className={`mt-0.5 inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full border px-1.5 text-[10px] font-black leading-none ${markerClass}`}
+            >
+              {String(sectionIndex + 1).padStart(2, "0")}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-extrabold leading-tight text-[#352820]">{section.title}</p>
+              {section.subtitle ? (
+                <p className="mt-1 text-[11px] font-normal leading-relaxed text-[#7b6a61]">
+                  {section.subtitle}
+                </p>
+              ) : null}
             </div>
+          </div>
 
-            <div className="mt-3 space-y-2">
-              {section.items.length > 0 ? (
-                section.items.map((item, index) => (
+          <div className="mt-3 space-y-2 pl-9">
+            {section.items.length > 0 ? (
+              section.items.map((item, index) => {
+                const itemId = item.id || (section.todo ? birthJourneyNext7TodoId(index) : "");
+                const normalizedItem = itemId ? { ...item, id: itemId } : item;
+                return (
                   <BirthJourneyPlanItemRow
-                    key={`${section.title}-${item.title}-${index}`}
-                    item={item}
+                    key={`${section.title}-${itemId || item.title}-${index}`}
+                    item={normalizedItem}
                     index={index}
                     compact
+                    todo={Boolean(section.todo)}
+                    disabled={Boolean(itemId && todoUpdatingIds.includes(itemId))}
+                    onToggleCompleted={(_, __, completed) => {
+                      if (itemId) onToggleTodo?.(itemId, completed);
+                    }}
                   />
-                ))
-              ) : (
-                <div>
-                  <p className="text-xs font-semibold leading-relaxed text-[#806c73]">{section.emptyLabel}</p>
-                  <div className="mt-3 space-y-2" aria-hidden="true">
-                    <span className="block h-2 w-4/5 rounded-full bg-[#e3efec]" />
-                    <span className="block h-2 w-7/12 rounded-full bg-[#edf5f3]" />
-                  </div>
+                );
+              })
+            ) : (
+              <div>
+                <p className="text-xs font-semibold leading-relaxed text-[#806c73]">{section.emptyLabel}</p>
+                <div className="mt-3 space-y-2" aria-hidden="true">
+                  <span className="block h-2 w-4/5 rounded-full bg-[#e3efec]" />
+                  <span className="block h-2 w-7/12 rounded-full bg-[#edf5f3]" />
                 </div>
-              )}
-            </div>
-          </section>
-        );
-      })}
-    </div>
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    })}
   </div>
 );
 
@@ -832,7 +959,7 @@ const MomStatusPanelSheet: React.FC<{
 
   const birthJourneyLayers = birthJourneyPlanningLayers(birthJourneyPlan);
   const birthJourneyHasLayeredPlan = Boolean(
-    birthJourneyLayers && birthJourneyPlanItems(birthJourneyLayers.current_week_focus?.items, 1).length > 0,
+    birthJourneyLayers && birthJourneyPlanItems(birthJourneyLayers.current_week_focus?.items).length > 0,
   );
   const pregnancyDiaryQuestions = pregnancyDiaryQuestionCount(pregnancyDiaryEntries);
   const pregnancyDiaryPrompts = pregnancyDiaryAgentPrompts(pregnancyDiaryEntries);
@@ -977,7 +1104,7 @@ const MomStatusPanelSheet: React.FC<{
                   <ClipboardList className="mx-auto h-7 w-7 text-[#7d64aa]" />
                   <p className="mt-2 text-sm font-extrabold text-foreground">还没有孕期计划</p>
                   <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6f617a]">
-                    生成后会在这里展示本周重点、未来 7 天和后续重要节点。
+                    生成后会在这里展示当前优先级、接下来 7 天行动清单和后续重要节点。
                   </p>
                 </div>
                 <button
@@ -1235,22 +1362,28 @@ const PrenatalExpandedServices: React.FC<{
   birthJourneyPlan: CarePlanArtifact | null;
   birthJourneyLoading: boolean;
   birthJourneyPlanCardNotification: boolean;
+  birthJourneyTodoUpdatingIds: string[];
+  birthJourneyTodoErr: string | null;
   pregnancyDiaryEntries: PregnancyDiaryEntry[];
   pregnancyDiaryToday: PregnancyDiaryEntry | null;
   pregnancyDiaryLoading: boolean;
   pregnancyDiaryCardNotification: boolean;
   onCreateBirthJourney: () => void;
+  onToggleBirthJourneyTodo: (itemId: string, completed: boolean) => void;
   onOpenDiaryEditor: () => void;
   onOpenDiaryDetail: () => void;
 }> = ({
   birthJourneyPlan,
   birthJourneyLoading,
   birthJourneyPlanCardNotification,
+  birthJourneyTodoUpdatingIds,
+  birthJourneyTodoErr,
   pregnancyDiaryEntries,
   pregnancyDiaryToday,
   pregnancyDiaryLoading,
   pregnancyDiaryCardNotification,
   onCreateBirthJourney,
+  onToggleBirthJourneyTodo,
   onOpenDiaryEditor,
   onOpenDiaryDetail,
 }) => {
@@ -1258,30 +1391,32 @@ const PrenatalExpandedServices: React.FC<{
   const planStructureSections = [
     {
       key: "current",
-      title: layers?.current_week_focus?.title || "当前阶段目标",
-      items: birthJourneyPlanItems(layers?.current_week_focus?.items, 4),
-      emptyLabel: "制定后会说明这个阶段的主要照护目标和准备方向。",
+      title: layers?.current_week_focus?.title || "当前优先级",
+      subtitle: compactText(layers?.current_week_focus?.subtitle),
+      items: birthJourneyPlanItems(layers?.current_week_focus?.items),
+      emptyLabel: "制定后会说明当前最该优先处理的几件事。",
       tone: "warm" as const,
     },
     {
       key: "next7",
-      title: layers?.next_7_days?.title || "接下来 7 天行动",
+      title: layers?.next_7_days?.title || "接下来 7 天行动清单",
       subtitle: compactText(layers?.next_7_days?.subtitle),
-      items: birthJourneyPlanItems(layers?.next_7_days?.items, 5),
+      items: birthJourneyPlanItems(layers?.next_7_days?.items),
       emptyLabel: "制定后会拆成接下来一周可以逐步完成的小任务。",
+      todo: true,
     },
     {
       key: "next24",
       title: layers?.next_2_4_weeks?.title || "未来 2-4 周",
       subtitle: compactText(layers?.next_2_4_weeks?.subtitle),
-      items: birthJourneyPlanItems(layers?.next_2_4_weeks?.items, 4),
+      items: birthJourneyPlanItems(layers?.next_2_4_weeks?.items),
       emptyLabel: "制定后会展示后续几周的检查、准备和沟通节点。",
     },
     {
       key: "milestones",
       title: layers?.later_milestones?.title || "后续重要节点",
       subtitle: compactText(layers?.later_milestones?.subtitle),
-      items: birthJourneyPlanItems(layers?.later_milestones?.items, 4),
+      items: birthJourneyPlanItems(layers?.later_milestones?.items),
       emptyLabel: "制定后会放入临近生产前的重要节点。",
     },
   ];
@@ -1300,7 +1435,7 @@ const PrenatalExpandedServices: React.FC<{
       className="order-2 mx-0 mb-5 bg-background"
       aria-label="孕期服务"
     >
-      <div className="space-y-5 px-4 pb-4">
+      <div className="space-y-6 px-4 pb-4">
         <section
           className={`overflow-hidden rounded-[24px] border border-[#eadfd8] bg-[#fffaf8] shadow-sm ${
             pregnancyDiaryCardNotification ? "status-module-card-notice" : ""
@@ -1400,7 +1535,7 @@ const PrenatalExpandedServices: React.FC<{
         </section>
 
         <section
-          className={`rounded-[24px] border border-[#cfe4df] bg-[#f7fbfa] p-4 shadow-sm ${
+          className={`relative rounded-[20px] border border-[#d7e8e4] bg-[#fbfefd] px-4 py-4 ${
             birthJourneyPlanCardNotification ? "status-module-card-notice" : ""
           }`}
         >
@@ -1431,7 +1566,16 @@ const PrenatalExpandedServices: React.FC<{
           </div>
 
           <div className="mt-4">
-            <PrenatalPlanTimelineView sections={planStructureSections} />
+            <PrenatalPlanTimelineView
+              sections={planStructureSections}
+              todoUpdatingIds={birthJourneyTodoUpdatingIds}
+              onToggleTodo={onToggleBirthJourneyTodo}
+            />
+            {birthJourneyTodoErr ? (
+              <p className="mt-2 rounded-2xl bg-destructive/10 px-3 py-2 text-xs font-bold text-destructive">
+                {birthJourneyTodoErr}
+              </p>
+            ) : null}
           </div>
         </section>
       </div>
@@ -2114,6 +2258,7 @@ const StatusOverviewBody: React.FC = () => {
   const [birthJourneyPlan, setBirthJourneyPlan] = useState<CarePlanArtifact | null>(null);
   const [birthJourneyLoading, setBirthJourneyLoading] = useState(true);
   const [birthJourneyDeleting, setBirthJourneyDeleting] = useState(false);
+  const [birthJourneyTodoUpdatingIds, setBirthJourneyTodoUpdatingIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!birthJourneyPlan || birthJourneyLoading || !birthJourneyPlanCardNotification) return;
@@ -2123,6 +2268,7 @@ const StatusOverviewBody: React.FC = () => {
     return () => window.clearTimeout(timer);
   }, [birthJourneyPlan, birthJourneyLoading, birthJourneyPlanCardNotification]);
   const [birthJourneyDeleteErr, setBirthJourneyDeleteErr] = useState<string | null>(null);
+  const [birthJourneyTodoErr, setBirthJourneyTodoErr] = useState<string | null>(null);
   const [pregnancyDiaryEntries, setPregnancyDiaryEntries] = useState<PregnancyDiaryEntry[]>([]);
   const [pregnancyDiaryToday, setPregnancyDiaryToday] = useState<PregnancyDiaryEntry | null>(null);
   const [pregnancyDiaryLoading, setPregnancyDiaryLoading] = useState(true);
@@ -2154,6 +2300,21 @@ const StatusOverviewBody: React.FC = () => {
     navigate("/", { state: { agentPrefill: prompt } });
   }, [navigate]);
 
+  const reloadBirthJourneyPlan = useCallback(async (signal?: AbortSignal) => {
+    const data = await queryCarePlanList(
+      { user_id: DEFAULT_CHAT_USER_ID, status: "active" },
+      { signal },
+    );
+    if (data.error !== 0 || !Array.isArray(data.plan_list)) {
+      setBirthJourneyPlan(null);
+      clearBirthJourneyPlanGeneratedNotification();
+      return;
+    }
+    const activeBirthJourneyPlan = data.plan_list.find((plan) => plan.plan_type === "birth_journey") ?? null;
+    setBirthJourneyPlan(activeBirthJourneyPlan);
+    if (!activeBirthJourneyPlan) clearBirthJourneyPlanGeneratedNotification();
+  }, []);
+
   const handleDeleteBirthJourneyPlan = useCallback(async () => {
     const plan = birthJourneyPlan;
     if (!plan || birthJourneyDeleting) return;
@@ -2182,6 +2343,37 @@ const StatusOverviewBody: React.FC = () => {
     clearBirthJourneyPlanGeneratedNotification();
     setActiveMomPanel((panel) => (panel === "birth-journey-detail" ? null : panel));
   }), []);
+
+  useEffect(() => subscribeBirthJourneyPlanUpdated(() => {
+    void reloadBirthJourneyPlan().catch(() => {
+      /* keep existing plan visible if refresh fails */
+    });
+  }), [reloadBirthJourneyPlan]);
+
+  const handleToggleBirthJourneyTodo = useCallback(async (itemId: string, completed: boolean) => {
+    const plan = birthJourneyPlan;
+    if (!plan || !itemId || birthJourneyTodoUpdatingIds.length > 0) return;
+    setBirthJourneyTodoErr(null);
+    setBirthJourneyTodoUpdatingIds([itemId]);
+    setBirthJourneyPlan(updateBirthJourneyPlanTodoLocally(plan, itemId, completed));
+    try {
+      const result = await updateBirthJourneyTodoCompletion({
+        user_id: DEFAULT_CHAT_USER_ID,
+        plan_id: plan.plan_id,
+        item_id: itemId,
+        completed,
+      });
+      if (result.error !== 0 || !result.plan) {
+        throw new Error(result.message || "同步计划完成状态失败");
+      }
+      setBirthJourneyPlan(result.plan);
+    } catch (e: unknown) {
+      setBirthJourneyPlan(plan);
+      setBirthJourneyTodoErr(e instanceof Error ? e.message : "同步计划完成状态失败");
+    } finally {
+      setBirthJourneyTodoUpdatingIds([]);
+    }
+  }, [birthJourneyPlan, birthJourneyTodoUpdatingIds.length]);
 
   const reloadPregnancyDiary = useCallback(async (signal?: AbortSignal) => {
     const todayDateKey = toLocalDateKey(new Date());
@@ -2431,19 +2623,7 @@ const StatusOverviewBody: React.FC = () => {
     setBirthJourneyPlan(null);
     void (async () => {
       try {
-        const data = await queryCarePlanList(
-          { user_id: DEFAULT_CHAT_USER_ID, status: "active" },
-          { signal: ac.signal },
-        );
-        if (cancelled) return;
-        if (data.error !== 0 || !Array.isArray(data.plan_list)) {
-          setBirthJourneyPlan(null);
-          clearBirthJourneyPlanGeneratedNotification();
-          return;
-        }
-        const activeBirthJourneyPlan = data.plan_list.find((plan) => plan.plan_type === "birth_journey") ?? null;
-        setBirthJourneyPlan(activeBirthJourneyPlan);
-        if (!activeBirthJourneyPlan) clearBirthJourneyPlanGeneratedNotification();
+        await reloadBirthJourneyPlan(ac.signal);
       } catch (e: unknown) {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
@@ -2474,7 +2654,7 @@ const StatusOverviewBody: React.FC = () => {
       cancelled = true;
       ac.abort();
     };
-  }, [reloadPregnancyDiary, reloadPumpInfo]);
+  }, [reloadBirthJourneyPlan, reloadPregnancyDiary, reloadPumpInfo]);
 
   const babyDaysSinceBirth = deliveryYmd ? calendarDaysSinceDeliveryLocal(deliveryYmd) : null;
   const babyAgeDays =
@@ -2785,11 +2965,14 @@ const StatusOverviewBody: React.FC = () => {
                   birthJourneyPlanCardNotification={Boolean(
                     birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification,
                   )}
+                  birthJourneyTodoUpdatingIds={birthJourneyTodoUpdatingIds}
+                  birthJourneyTodoErr={birthJourneyTodoErr}
                   pregnancyDiaryEntries={pregnancyDiaryEntries}
                   pregnancyDiaryToday={pregnancyDiaryToday}
                   pregnancyDiaryLoading={pregnancyDiaryLoading}
                   pregnancyDiaryCardNotification={pregnancyDiaryCardNotification}
                   onCreateBirthJourney={() => prefillAgentHub("帮我制定孕期计划")}
+                  onToggleBirthJourneyTodo={handleToggleBirthJourneyTodo}
                   onOpenDiaryEditor={openPregnancyDiaryEditor}
                   onOpenDiaryDetail={() => {
                     clearPregnancyDiaryCardNotification();

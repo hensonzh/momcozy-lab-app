@@ -577,6 +577,22 @@ export interface PlanArtifactDeleteData {
   error: ApiErrorCode;
 }
 
+export interface BirthJourneyTodoCompletionBody {
+  user_id: string;
+  plan_id: number;
+  item_id: string;
+  completed: boolean;
+}
+
+export interface BirthJourneyTodoCompletionData {
+  error: ApiErrorCode;
+  status?: string;
+  message?: string;
+  plan: CarePlanArtifact | null;
+  todo_items?: Record<string, unknown>[];
+  updated_items?: Record<string, unknown>[];
+}
+
 export interface PregnancyDiaryEntry {
   entry_id: number;
   user_id: string;

@@ -1,12 +1,15 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import {
   BIRTH_JOURNEY_PLAN_DELETED_EVENT,
+  BIRTH_JOURNEY_PLAN_UPDATED_EVENT,
   clearBirthJourneyPlanCardNotification,
   clearBirthJourneyPlanGeneratedNotification,
   markBirthJourneyPlanGeneratedNotification,
   notifyBirthJourneyPlanDeleted,
+  notifyBirthJourneyPlanUpdated,
   richTextPayloadHasBirthJourneyPlanCard,
   subscribeBirthJourneyPlanDeleted,
+  subscribeBirthJourneyPlanUpdated,
   transferBirthJourneyPlanNotificationToStatusCard,
 } from "./birthJourneyPlanNotification";
 
@@ -64,6 +67,23 @@ describe("birth journey plan notification state", () => {
     expect(localStorage.getItem("mmc_birth_journey_plan_nav_pending")).toBeNull();
     expect(localStorage.getItem("mmc_birth_journey_plan_card_pending")).toBeNull();
     expect(events).toEqual(["deleted", "window"]);
+  });
+
+  it("emits an updated event without clearing generated notices", () => {
+    const events: string[] = [];
+    const unsubscribe = subscribeBirthJourneyPlanUpdated(() => {
+      events.push("updated");
+    });
+    window.addEventListener(BIRTH_JOURNEY_PLAN_UPDATED_EVENT, () => {
+      events.push("window");
+    }, { once: true });
+
+    markBirthJourneyPlanGeneratedNotification();
+    notifyBirthJourneyPlanUpdated();
+    unsubscribe();
+
+    expect(localStorage.getItem("mmc_birth_journey_plan_nav_pending")).toBe("1");
+    expect(events).toEqual(["updated", "window"]);
   });
 
   it("detects birth journey plan card artifacts in rich text", () => {
