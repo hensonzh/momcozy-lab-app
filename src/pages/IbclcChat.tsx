@@ -10,6 +10,7 @@ import {
 } from "@/lib/ibclcConsult";
 
 const CONNECTION_STEPS = [
+  { text: "健康信息整理", duration: 3000 },
   { text: "连接中", duration: 5000 },
   { text: "连接成功", duration: 1000 },
   { text: "对方正在读取背景中", duration: 5000 },
