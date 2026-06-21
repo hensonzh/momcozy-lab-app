@@ -66,7 +66,7 @@ export function buildMilkAnalysisContextText(params: {
     [
       "已生成预置奶量分析",
       "性质：消息提醒提前生成，不是当前用户消息触发的实时工具调用",
-      "服务链：/v1/analysis/create(type=milk_analysis) -> evaluate_milk_status；等价分析口径：milk_assessment_evaluate",
+      "服务链：/v1/analysis/create(type=milk_analysis) -> evaluate_milk_status；等价分析口径：milk_analysis_evaluate",
       `参数：window_days=${MILK_ANALYSIS_WINDOW_DAYS}, include_today=${String(MILK_ANALYSIS_INCLUDE_TODAY)}`,
       subtitle ? `窗口：${subtitle}` : "窗口：最近7个完整日",
       "口径：不包含当天未完整记录；使用服务端生成时已同步到当前日期的数据",
@@ -106,7 +106,7 @@ export async function recordMilkAnalysisContextEvent(params: {
           source: "device_reminder",
           reminder_type: "milk_analysis_reminder",
           analysis_type: "milk_analysis",
-          equivalent_tool_name: "milk_assessment_evaluate",
+          equivalent_tool_name: "milk_analysis_evaluate",
           service_handler: "evaluate_milk_status",
           window_days: MILK_ANALYSIS_WINDOW_DAYS,
           include_today: MILK_ANALYSIS_INCLUDE_TODAY,

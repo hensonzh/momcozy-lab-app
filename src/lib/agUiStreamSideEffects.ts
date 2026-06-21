@@ -489,7 +489,7 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
   ) {
     return "read";
   }
-  if (["milk_assessment_evaluate", "milk_analysis_evaluate", "infant_growth_evaluate", "risk_evaluate"].includes(name)) return "evaluate";
+  if (["milk_analysis_evaluate", "infant_growth_evaluate", "risk_evaluate"].includes(name)) return "evaluate";
   if (
     [
       "ui_form_create",
@@ -506,7 +506,7 @@ function toolWorkPhase(toolName: string): "select" | "read" | "evaluate" | "prep
   ) {
     return "prepare_result";
   }
-  if (["milk_plan_preview", "milk_plan_preview_create", "milk_calendar_change_preview", "milk_calendar_reschedule_preview"].includes(name)) return "preview";
+  if (["milk_plan_preview_create", "milk_calendar_change_preview", "milk_calendar_reschedule_preview"].includes(name)) return "preview";
   if (
     [
       "milk_record_mutate",
@@ -543,11 +543,9 @@ function toolStartCopy(toolName: string): { title: string } {
   if (normalizedToolName === "milk_records_query") return { title: "我先看看吸奶和喂养记录～" };
   if (normalizedToolName === "milk_plan_query") return { title: "我先看看之前保存的奶量计划～" };
   if (normalizedToolName === "milk_calendar_query") return { title: "我先看看计划和日程任务～" };
-  if (normalizedToolName === "milk_assessment_evaluate") return { title: "我来看看奶量趋势和执行情况～" };
   if (normalizedToolName === "milk_analysis_evaluate") return { title: "我来综合评估一下奶量问题～" };
   if (normalizedToolName === "infant_growth_evaluate") return { title: "我来看看宝宝的生长信号～" };
   if (normalizedToolName === "risk_evaluate") return { title: "我先确认一下安全边界～" };
-  if (normalizedToolName === "milk_plan_preview") return { title: "我先帮你拟一版奶量计划～" };
   if (normalizedToolName === "milk_plan_preview_create") return { title: "我先帮你拟一版奶量计划～" };
   if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我先帮你排一下日程调整～" };
   if (normalizedToolName === "milk_record_mutate") return { title: "我先帮你处理这条记录～" };
@@ -605,8 +603,8 @@ function toolEndCopy(toolName: string): { title: string; detail?: string } {
   const normalizedToolName = normalizeToolName(toolName);
   if (normalizedToolName === "tool_search" || normalizedToolName === "tool_search_call") return { title: "我找到合适的方案啦" };
   if (["milk_records_query", "milk_status_query", "milk_snapshot_get", "milk_plan_query", "milk_calendar_query"].includes(normalizedToolName)) return { title: "我把奶量和日程信息整理一下～" };
-  if (["milk_assessment_evaluate", "infant_growth_evaluate", "risk_evaluate"].includes(normalizedToolName)) return { title: "我把评估结果整理一下～" };
-  if (normalizedToolName === "milk_plan_preview") return { title: "我再完善一下计划草稿～" };
+  if (["milk_analysis_evaluate", "infant_growth_evaluate", "risk_evaluate"].includes(normalizedToolName)) return { title: "我把评估结果整理一下～" };
+  if (normalizedToolName === "milk_plan_preview_create") return { title: "我再完善一下计划草稿～" };
   if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我把调整后的安排整理一下～" };
   if (["milk_record_mutate", "milk_task_complete", "milk_plan_mutate", "milk_calendar_mutate", "infant_growth_mutate"].includes(normalizedToolName)) return { title: "我在保存这次修改～" };
   if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我把推荐结果整理一下～" };
@@ -671,10 +669,10 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
   if (normalizedToolName === "milk_snapshot_get") return { title: "我把奶量情况整理好啦" };
   if (normalizedToolName === "milk_calendar_query") return { title: "我把计划和日程整理好啦" };
   if (normalizedToolName === "milk_plan_query") return { title: "我看好之前的奶量计划啦" };
-  if (normalizedToolName === "milk_assessment_evaluate") return { title: "我完成奶量评估啦" };
+  if (normalizedToolName === "milk_analysis_evaluate") return { title: "我完成奶量评估啦" };
   if (normalizedToolName === "infant_growth_evaluate") return { title: "我完成宝宝生长评估啦" };
   if (normalizedToolName === "risk_evaluate") return { title: "我确认好安全边界啦" };
-  if (normalizedToolName === "milk_plan_preview") return { title: "我拟好奶量计划草稿啦" };
+  if (normalizedToolName === "milk_plan_preview_create") return { title: "我拟好奶量计划草稿啦" };
   if (normalizedToolName === "milk_calendar_change_preview" || normalizedToolName === "milk_calendar_reschedule_preview") return { title: "我整理好日程调整预览啦" };
   if (["ui_form_create", "birth_plan_form_create", "hospital_bag_form_create"].includes(normalizedToolName)) return { title: "我已经准备好确认内容啦" };
   if (normalizedToolName === "labor_communication_card_create") return { title: "我已经帮你整理好分娩沟通单啦" };

@@ -7,10 +7,6 @@ import React, {
   useSyncExternalStore,
 } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import InlineScheduleFlow from "@/components/schedule/InlineScheduleFlow";
-import type { InlineScheduleFlowHandle } from "@/components/schedule/InlineScheduleFlow";
-import InlineLactationFlow from "@/components/lactation/InlineLactationFlow";
-import type { InlineLactationFlowHandle } from "@/components/lactation/InlineLactationFlow";
 import InlineMaternityFlow from "@/components/maternity/InlineMaternityFlow";
 import type { InlineMaternityFlowHandle } from "@/components/maternity/InlineMaternityFlow";
 import InlineWorkFlow from "@/components/work/InlineWorkFlow";
@@ -197,18 +193,40 @@ import {
   HUB_CHAT_HISTORY_PAGE,
 } from "@/pages/agentHub/agentHubConstants";
 
-const SCHEDULE_LINK_ACTION_MAP: Record<string, string> = {
-  "open-schedule": "",
-  "schedule-view-tasks": "view-tasks",
-  "schedule-add-avoidance": "add-avoidance",
-  "schedule-screenshot": "screenshot-schedule",
-  "schedule-day-summary": "day-summary",
+const SCHEDULE_LINK_PROMPT_MAP: Record<string, string> = {
+  "open-schedule":
+    "我想查看或调整今天的呵护计划，请按新版日程流程帮我处理。",
+  "schedule-view-tasks":
+    "请帮我查看今天的呵护计划任务，优先读取后台日程数据。",
+  "schedule-add-avoidance":
+    "我想添加需要避开的时间段，请按新版日程流程先确认信息，再给出调整预览。",
+  "schedule-screenshot":
+    "我想用日程截图或文字描述识别冲突，请按新版日程流程引导我上传或说明。",
+  "schedule-day-summary":
+    "请帮我查看今天的呵护计划日结，优先读取后台日程和记录数据。",
+  "view-tasks":
+    "请帮我查看今天的呵护计划任务，优先读取后台日程数据。",
+  "add-avoidance":
+    "我想添加需要避开的时间段，请按新版日程流程先确认信息，再给出调整预览。",
+  "screenshot-schedule":
+    "我想用日程截图或文字描述识别冲突，请按新版日程流程引导我上传或说明。",
+  "day-summary":
+    "请帮我查看今天的呵护计划日结，优先读取后台日程和记录数据。",
 };
 
-const LACTATION_LINK_ACTION_MAP: Record<string, string> = {
-  "lactation-phase": "view-phase",
-  "lactation-goal": "goal-adjust",
-  "lactation-trend": "view-trend",
+const LACTATION_LINK_PROMPT_MAP: Record<string, string> = {
+  "lactation-phase":
+    "我想查看当前泌乳阶段，请基于我的近期记录按新版奶量管理流程分析。",
+  "lactation-goal":
+    "我想调整奶量目标，请按新版奶量管理流程先核对必要信息，再给出方案。",
+  "lactation-trend":
+    "我想查看奶量趋势，请基于我的近期吸奶、亲喂和宝宝摄入记录分析。",
+  "view-phase":
+    "我想查看当前泌乳阶段，请基于我的近期记录按新版奶量管理流程分析。",
+  "goal-adjust":
+    "我想调整奶量目标，请按新版奶量管理流程先核对必要信息，再给出方案。",
+  "view-trend":
+    "我想查看奶量趋势，请基于我的近期吸奶、亲喂和宝宝摄入记录分析。",
 };
 
 const HUB_TOP_ACTION_HEIGHT_PX = 48;
@@ -217,6 +235,16 @@ type PendingHistoryAnchorRestore = { messageId: string; top: number };
 const HOSPITAL_BAG_CART_FOLLOWUP_MARKER = "你的待产包已经设计好了哦～";
 const PROFILE_ONBOARDING_GREETING =
   "嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？";
+const DEFAULT_SCHEDULE_PROMPT =
+  "我想管理今天的呵护计划，请按新版日程流程帮我处理。";
+const DEFAULT_LACTATION_PROMPT =
+  "我想做奶量管理，请按新版奶量管理流程帮我分析。";
+const resolveSchedulePrompt = (actionKey?: string) =>
+  (actionKey && SCHEDULE_LINK_PROMPT_MAP[actionKey]) ||
+  DEFAULT_SCHEDULE_PROMPT;
+const resolveLactationPrompt = (actionKey?: string) =>
+  (actionKey && LACTATION_LINK_PROMPT_MAP[actionKey]) ||
+  DEFAULT_LACTATION_PROMPT;
 
 const DIRECT_PUMP_CART_UPDATE_MODELS: Array<{
   skuId: string;
@@ -1248,16 +1276,6 @@ const AgentHub: React.FC = () => {
     pumpSessionState === "running" || pumpSessionState === "paused";
   /** Hub 底部操作区真实渲染高度（按键 + 输入框），用于对话视口动态下边界 */
   const [bottomActionHeightPx, setBottomActionHeightPx] = useState(170);
-  const [scheduleFlowActive, setScheduleFlowActive] = useState(() =>
-    hubInitialMessages.some(
-      (m) => m.cardType === "schedule-flow" && !m.cardData?.completed,
-    ),
-  );
-  const [lactationFlowActive, setLactationFlowActive] = useState(() =>
-    hubInitialMessages.some(
-      (m) => m.cardType === "lactation-flow" && !m.cardData?.completed,
-    ),
-  );
   const [maternityFlowActive, setMaternityFlowActive] = useState(() =>
     hubInitialMessages.some(
       (m) => m.cardType === "maternity-flow" && !m.cardData?.completed,
@@ -1282,8 +1300,6 @@ const AgentHub: React.FC = () => {
       (m) => m.cardType === "work-flow" && !m.cardData?.completed,
     ),
   );
-  const scheduleFlowRef = useRef<InlineScheduleFlowHandle>(null);
-  const lactationFlowRef = useRef<InlineLactationFlowHandle>(null);
   const maternityFlowRef = useRef<InlineMaternityFlowHandle>(null);
   const workFlowRef = useRef<InlineWorkFlowHandle>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -1343,6 +1359,8 @@ const AgentHub: React.FC = () => {
   /** Hub 对话 ag-ui WebSocket 取消句柄 */
   const mainChatCancelRef = useRef<(() => void) | null>(null);
   const milkAnalysisFollowupInFlightRef = useRef<string | null>(null);
+  const milkAnalysisFollowupBlockedRetryTimerRef = useRef<number | null>(null);
+  const tryStartMilkAnalysisReminderFollowupRef = useRef<() => void>(() => {});
   /** 新会话隐藏预热请求：新建会话/离开页面时取消，避免旧 thread 后台请求继续占资源 */
   const agUiPrewarmAbortRef = useRef<AbortController | null>(null);
   /** 当前正在流式回复的 Mai 消息 id（用于区分“正在思考”与历史“已思考”展示） */
@@ -1675,8 +1693,6 @@ const AgentHub: React.FC = () => {
     setShowScrollToBottom(false);
     setVisibleStartIndex(0);
     visibleStartIndexRef.current = 0;
-    setScheduleFlowActive(false);
-    setLactationFlowActive(false);
     setMaternityFlowActive(false);
     setWorkFlowActive(false);
     setActiveIbclcConsult(null);
@@ -2809,12 +2825,49 @@ const AgentHub: React.FC = () => {
     });
   };
 
+  const startMainChatStreamRef = useRef(startMainChatStream);
+  useEffect(() => {
+    startMainChatStreamRef.current = startMainChatStream;
+  });
+
+  const clearMilkAnalysisFollowupBlockedRetryTimer = useCallback(() => {
+    const timer = milkAnalysisFollowupBlockedRetryTimerRef.current;
+    if (timer == null) return;
+    window.clearTimeout(timer);
+    milkAnalysisFollowupBlockedRetryTimerRef.current = null;
+  }, []);
+
+  const scheduleMilkAnalysisFollowupBlockedRetry = useCallback(
+    (delayMs = 1200) => {
+      if (milkAnalysisFollowupBlockedRetryTimerRef.current != null) return;
+      milkAnalysisFollowupBlockedRetryTimerRef.current = window.setTimeout(
+        () => {
+          milkAnalysisFollowupBlockedRetryTimerRef.current = null;
+          tryStartMilkAnalysisReminderFollowupRef.current();
+        },
+        delayMs,
+      );
+    },
+    [],
+  );
+
+  useEffect(() => clearMilkAnalysisFollowupBlockedRetryTimer, [
+    clearMilkAnalysisFollowupBlockedRetryTimer,
+  ]);
+
   const tryStartMilkAnalysisReminderFollowup = useCallback(() => {
-    if (mainChatRuntimeSnapshot.running || mainChatCancelRef.current) return;
-    if (isAgentNotificationVoicePlaying()) return;
-    if (milkAnalysisFollowupInFlightRef.current) return;
     const pending = peekMilkAnalysisReminderFollowup();
     if (!pending) return;
+    if (
+      mainChatRuntimeSnapshot.running ||
+      mainChatCancelRef.current ||
+      isAgentNotificationVoicePlaying()
+    ) {
+      scheduleMilkAnalysisFollowupBlockedRetry();
+      return;
+    }
+    if (milkAnalysisFollowupInFlightRef.current) return;
+    clearMilkAnalysisFollowupBlockedRetryTimer();
     const claimed = markMilkAnalysisReminderFollowupAttempt(pending.taskId);
     if (!claimed) return;
     milkAnalysisFollowupInFlightRef.current = claimed.taskId;
@@ -2838,7 +2891,16 @@ const AgentHub: React.FC = () => {
       clearInFlight();
       retryMilkAnalysisReminderFollowupLater(claimed.taskId);
     });
-  }, [mainChatRuntimeSnapshot.running]);
+  }, [
+    clearMilkAnalysisFollowupBlockedRetryTimer,
+    mainChatRuntimeSnapshot.running,
+    scheduleMilkAnalysisFollowupBlockedRetry,
+  ]);
+
+  useEffect(() => {
+    tryStartMilkAnalysisReminderFollowupRef.current =
+      tryStartMilkAnalysisReminderFollowup;
+  }, [tryStartMilkAnalysisReminderFollowup]);
 
   useEffect(() => {
     const timer = window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0);
@@ -3261,36 +3323,6 @@ const AgentHub: React.FC = () => {
     }
   };
 
-  const appendScheduleFlowFromLink = (actionKey: string): ChatMessage => {
-    const initialAction = SCHEDULE_LINK_ACTION_MAP[actionKey] || undefined;
-    return {
-      id: `sf-${Date.now()}`,
-      role: "mai",
-      content: "",
-      timestamp: new Date().toLocaleTimeString("zh-CN", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      cardType: "schedule-flow",
-      cardData: { initialAction },
-    };
-  };
-
-  const appendLactationFlowFromLink = (actionKey: string): ChatMessage => {
-    const initialAction = LACTATION_LINK_ACTION_MAP[actionKey] || undefined;
-    return {
-      id: `lf-${Date.now()}`,
-      role: "mai",
-      content: "",
-      timestamp: new Date().toLocaleTimeString("zh-CN", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      cardType: "lactation-flow",
-      cardData: { initialAction },
-    };
-  };
-
   /** IBCLC 咨询在 Hub 内打开全屏覆盖层，避免跳出后丢失原对话位置。 */
   const handleOpenIbclcConsult = useCallback(
     (request: IbclcConsultOpenRequest) => {
@@ -3379,17 +3411,13 @@ const AgentHub: React.FC = () => {
         link.action === "open-schedule" ||
         link.action.startsWith("schedule-")
       ) {
-        setMessages((prev) => [
-          ...prev,
-          appendScheduleFlowFromLink(link.action),
-        ]);
-        setScheduleFlowActive(true);
+        void startMainChatStream(resolveSchedulePrompt(link.action), {
+          showUserMessage: false,
+        });
       } else if (link.action.startsWith("lactation-")) {
-        setMessages((prev) => [
-          ...prev,
-          appendLactationFlowFromLink(link.action),
-        ]);
-        setLactationFlowActive(true);
+        void startMainChatStream(resolveLactationPrompt(link.action), {
+          showUserMessage: false,
+        });
       } else {
         openDeviceFlowFromLinkAction(link.action);
       }
@@ -3527,32 +3555,20 @@ const AgentHub: React.FC = () => {
     return chatBus.subscribe((msg) => {
       setMessages((prev) => [...prev, msg]);
 
-      // Auto-trigger lactation assessment flow when chat pushes a lactation-flow card
+      // Legacy lactation triggers now enter the unified milk-management agent flow.
       if (
         msg.cardData?.triggerFlow === "lactation" &&
         msg.cardData?.initialAction
       ) {
-        const flowMsg: ChatMessage = {
-          id: `lf-auto-${Date.now()}`,
-          role: "mai",
-          content: "",
-          timestamp: new Date().toLocaleTimeString("zh-CN", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          cardType: "lactation-flow",
-          cardData: {
-            initialAction: msg.cardData.initialAction,
-            assessContext: msg.cardData.assessContext,
-          },
-        };
         setTimeout(() => {
-          setMessages((prev) => [...prev, flowMsg]);
-          setLactationFlowActive(true);
+          void startMainChatStreamRef.current(
+            resolveLactationPrompt(msg.cardData?.initialAction as string),
+            { showUserMessage: false },
+          );
         }, 800);
       }
     });
-  }, []);
+  }, [setMessages]);
 
   // Listen for navigate-to events from child flows
   useEffect(() => {
@@ -3668,24 +3684,6 @@ const AgentHub: React.FC = () => {
       lastHubBottomNewTurnAtRef.current = Date.now();
       const text = pendingText || "请看这张图片";
       setMessages((prev) => clearQuickRepliesFromMessages(prev));
-
-      // If a schedule flow is active, forward input to it
-      if (pendingText && scheduleFlowActive && scheduleFlowRef.current) {
-        const consumed = scheduleFlowRef.current.handleExternalInput(text);
-        if (consumed) {
-          setInput("");
-          return;
-        }
-      }
-
-      // If a lactation flow is active, forward input to it
-      if (pendingText && lactationFlowActive && lactationFlowRef.current) {
-        const consumed = lactationFlowRef.current.handleExternalInput(text);
-        if (consumed) {
-          setInput("");
-          return;
-        }
-      }
 
       // If a maternity flow is active, forward input to it
       if (pendingText && maternityFlowActive && maternityFlowRef.current) {
@@ -4110,88 +4108,7 @@ const AgentHub: React.FC = () => {
                     data-chat-message-id={msg.id}
                     className={messageSpacingClass}
                   >
-                    {msg.cardType === "schedule-flow" ? (
-                      <div key={msg.id} className="animate-slide-up w-full">
-                        {msg.cardData?.completed ? (
-                          <div className="flex gap-2 items-start">
-                            <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-card border border-accent/40 bg-accent/10 px-3 py-2 text-[13px] leading-relaxed">
-                              ✅ 日程规划已完成
-                            </div>
-                          </div>
-                        ) : (
-                          <InlineScheduleFlow
-                            ref={scheduleFlowRef}
-                            initialAction={
-                              msg.cardData?.initialAction as string | undefined
-                            }
-                            onComplete={() => {
-                              setScheduleFlowActive(false);
-                              const updated = chatStore
-                                .get()
-                                .messages.map((m) =>
-                                  m.id === msg.id
-                                    ? {
-                                        ...m,
-                                        cardData: {
-                                          ...m.cardData,
-                                          completed: true,
-                                        },
-                                      }
-                                    : m,
-                                );
-                              chatStore.setMessages(updated);
-                              setMessages(updated);
-                            }}
-                          />
-                        )}
-                      </div>
-                    ) : msg.cardType === "lactation-flow" ? (
-                      <div key={msg.id} className="animate-slide-up w-full">
-                        {msg.cardData?.completed ? (
-                          <div className="flex gap-2 items-start">
-                            <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-card border border-primary/20 bg-primary/5 px-3 py-2 text-[13px] leading-relaxed">
-                              ✅ 泌乳管理已完成
-                            </div>
-                          </div>
-                        ) : (
-                          <InlineLactationFlow
-                            ref={lactationFlowRef}
-                            initialAction={
-                              msg.cardData?.initialAction as string | undefined
-                            }
-                            assessContext={
-                              msg.cardData?.assessContext as
-                                | {
-                                    totalAvailable: number;
-                                    feedP50: number;
-                                    bfCount: number;
-                                    bfTotalMin: number;
-                                    babyName: string;
-                                  }
-                                | undefined
-                            }
-                            onComplete={() => {
-                              setLactationFlowActive(false);
-                              const updated = chatStore
-                                .get()
-                                .messages.map((m) =>
-                                  m.id === msg.id
-                                    ? {
-                                        ...m,
-                                        cardData: {
-                                          ...m.cardData,
-                                          completed: true,
-                                        },
-                                      }
-                                    : m,
-                                );
-                              chatStore.setMessages(updated);
-                              setMessages(updated);
-                            }}
-                          />
-                        )}
-                      </div>
-                    ) : msg.cardType === "maternity-flow" ? (
+                    {msg.cardType === "maternity-flow" ? (
                       <div key={msg.id} className="animate-slide-up w-full">
                         {msg.cardData?.completed ? (
                           <div className="flex gap-2 items-start">

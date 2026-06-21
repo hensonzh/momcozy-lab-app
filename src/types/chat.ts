@@ -76,8 +76,6 @@ export interface ChatMessage {
     | "encourage"
     | "calibration"
     | "device-flow"
-    | "schedule-flow"
-    | "lactation-flow"
     | "maternity-flow"
     | "work-flow";
   cardData?: Record<string, unknown>;

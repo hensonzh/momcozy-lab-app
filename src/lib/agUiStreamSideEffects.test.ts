@@ -1091,7 +1091,7 @@ describe("applyAgUiStreamSideEffects", () => {
         type: "CONFIRMATION_REQUIRED",
         confirmation_id: "confirm_1",
         tool_call_id: "call_plan",
-        tool_call_name: "milk_plan_preview",
+        tool_call_name: "milk_plan_preview_create",
         artifact_id: "draft_1",
       },
     ]);
@@ -1102,7 +1102,7 @@ describe("applyAgUiStreamSideEffects", () => {
       argsDigest: "我已经准备好相关内容，等你确认。",
       state: "completed",
     });
-    expect(msg.agentToolCalls?.[0].title).not.toContain("milk_plan_preview");
+    expect(msg.agentToolCalls?.[0].title).not.toContain("milk_plan_preview_create");
   });
 
   it("keeps intermediate text in the assistant bubble when an artifact arrives", () => {
