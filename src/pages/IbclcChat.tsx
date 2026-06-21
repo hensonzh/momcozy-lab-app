@@ -16,6 +16,8 @@ const CONNECTION_STEPS = [
   { text: "对方正在读取背景中", duration: 2000 },
 ] as const;
 
+type ConnectionStepText = (typeof CONNECTION_STEPS)[number]["text"];
+
 function safeSameOriginPath(value: string | null): string {
   const raw = value?.trim();
   if (!raw) return "/";
@@ -72,7 +74,7 @@ export function IbclcChatPanel({ conversationId, consultId, clientUserId = "", r
     () => clientUserId.trim() || readOrCreateIbclcClientUserId(DEFAULT_CHAT_USER_ID),
     [clientUserId],
   );
-  const [connectionText, setConnectionText] = useState(CONNECTION_STEPS[0].text);
+  const [connectionText, setConnectionText] = useState<ConnectionStepText>(CONNECTION_STEPS[0].text);
   const [isChatting, setIsChatting] = useState(false);
   const [ending, setEnding] = useState(false);
 
