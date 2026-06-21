@@ -381,6 +381,7 @@ describe("AgentHubRichTextBlock IBCLC consult card", () => {
 
   it("opens the IBCLC consult after the agreement is accepted", () => {
     const onOpenIbclcConsult = vi.fn<[IbclcConsultOpenRequest], void>();
+    localStorage.setItem("momcozy_user_id", "old-ibclc-user");
     renderBlock({ onOpenIbclcConsult });
 
     fireEvent.click(screen.getByRole("checkbox", { name: /隐私政策/ }));
@@ -390,13 +391,16 @@ describe("AgentHubRichTextBlock IBCLC consult card", () => {
 
     fireEvent.click(button);
 
-    expect(onOpenIbclcConsult).toHaveBeenCalledWith(
-      expect.objectContaining({
-        consultId: "ibclc_1",
-        threadId: "thread_test",
-        returnTo: "/agent?tab=agent#latest",
-      }),
-    );
+    expect(onOpenIbclcConsult).toHaveBeenCalledTimes(1);
+    const request = onOpenIbclcConsult.mock.calls[0][0];
+    expect(request).toMatchObject({
+      consultId: "ibclc_1",
+      threadId: "thread_test",
+      returnTo: "/agent?tab=agent#latest",
+    });
+    expect(request.userId).toBeTruthy();
+    expect(request.userId).not.toBe("old-ibclc-user");
+    expect(new URL(request.chatUrl, window.location.origin).searchParams.get("user_id")).toBe(request.userId);
   });
 });
 

@@ -17,9 +17,10 @@ export interface RuntimeUserConfig {
 export const RUNTIME_USER_ID_STORAGE_KEY = "mai_debug_user_id";
 export const RUNTIME_USER_STAGE_STORAGE_KEY = "mai_debug_user_stage";
 export const RUNTIME_USER_IDS_STORAGE_KEY = "mai_debug_user_ids";
+export const ANONYMOUS_RUNTIME_USER_ID_STORAGE_KEY = "mai_anonymous_user_id";
 const RUNTIME_USER_DATA_STORAGE_PREFIX = "mai_debug_user_data:";
 
-const FALLBACK_USER_ID = "app-user";
+const ANONYMOUS_USER_ID_PREFIX = "demo-user";
 
 const USER_RUNTIME_LOCAL_STORAGE_KEYS = [
   RUNTIME_USER_ID_STORAGE_KEY,
@@ -216,7 +217,26 @@ function restoreSnapshotForUser(userId: string, fallbackMomStage: RuntimeMomStag
 }
 
 export function getRuntimeUserId(defaultUserId?: string): string {
-  return readLocalStorageValue(RUNTIME_USER_ID_STORAGE_KEY) || defaultUserId?.trim() || FALLBACK_USER_ID;
+  return readLocalStorageValue(RUNTIME_USER_ID_STORAGE_KEY) || defaultUserId?.trim() || getAnonymousRuntimeUserId();
+}
+
+function getAnonymousRuntimeUserId(): string {
+  const stored = readLocalStorageValue(ANONYMOUS_RUNTIME_USER_ID_STORAGE_KEY);
+  if (stored) return stored;
+  const created = createAnonymousRuntimeUserId();
+  try {
+    localStorage.setItem(ANONYMOUS_RUNTIME_USER_ID_STORAGE_KEY, created);
+  } catch {
+    /* keep the generated id for this call even if storage is unavailable */
+  }
+  return created;
+}
+
+function createAnonymousRuntimeUserId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return `${ANONYMOUS_USER_ID_PREFIX}-${crypto.randomUUID()}`;
+  }
+  return `${ANONYMOUS_USER_ID_PREFIX}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 export function getRuntimeMomStage(defaultMomStage?: string): RuntimeMomStage {

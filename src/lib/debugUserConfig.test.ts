@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  ANONYMOUS_RUNTIME_USER_ID_STORAGE_KEY,
   clearRuntimeUserInfo,
   getRuntimeMomStage,
   getRuntimeUserConfig,
@@ -65,6 +66,16 @@ describe("debugUserConfig", () => {
       momStage: "postpartum",
       source: "env",
     });
+  });
+
+  it("creates a stable anonymous demo user when no runtime or env user is configured", () => {
+    const first = getRuntimeUserId();
+    const second = getRuntimeUserId();
+
+    expect(first).toMatch(/^demo-user-/);
+    expect(first).not.toBe("app-user");
+    expect(second).toBe(first);
+    expect(localStorage.getItem(ANONYMOUS_RUNTIME_USER_ID_STORAGE_KEY)).toBe(first);
   });
 
   it("deletes current user info, chat history, conversations, local user configs, and removes it from user list", () => {

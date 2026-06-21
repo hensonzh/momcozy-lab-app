@@ -30,6 +30,12 @@ describe("ibclcConsult", () => {
     );
   });
 
+  it("adds the creating AgentHub user id to the IBCLC chat url", () => {
+    expect(buildIbclcChatUrl("/ibclc-chat.html", "ibclc_1", "thread_1", "/?tab=agent#latest", "demo-user-1")).toBe(
+      "/ibclc-chat.html?thread_id=thread_1&consult_id=ibclc_1&return_to=%2F%3Ftab%3Dagent%23latest&user_id=demo-user-1",
+    );
+  });
+
   it("matches completion events by consult id", () => {
     const payload = {
       type: "momcozy.ibclc_consult_completed" as const,

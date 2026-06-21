@@ -71,6 +71,7 @@ import {
   stableIbclcConsultId,
   type IbclcConsultCompletedPayload,
 } from "@/lib/ibclcConsult";
+import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 
 /**
  * chat-messages 富文本卡片（标题、正文、结构化卡片与按钮）。
@@ -82,6 +83,7 @@ const OPEN_HOSPITAL_BAG_CART_EVENT = "momcozy-open-hospital-bag-cart";
 export type IbclcConsultOpenRequest = {
   consultId: string;
   threadId: string;
+  userId: string;
   returnTo: string;
   chatUrl: string;
 };
@@ -1608,7 +1610,7 @@ const AgentHubRichTextBlock: React.FC<{
               artifact.artifactId ||
               stableIbclcConsultId(JSON.stringify(artifact.card));
             const returnTo = `${location.pathname}${location.search}${location.hash}`;
-            const chatUrl = buildIbclcChatUrl(url, consultId, threadId, returnTo);
+            const chatUrl = buildIbclcChatUrl(url, consultId, threadId, returnTo, DEFAULT_CHAT_USER_ID);
             const consultCompleted = ibclcCompletions.some((completion) =>
               isIbclcCompletionForCard(completion, threadId, consultId),
             );
@@ -1617,7 +1619,7 @@ const AgentHubRichTextBlock: React.FC<{
             const openConsult = () => {
               if (consultButtonDisabled) return;
               if (onOpenIbclcConsult) {
-                onOpenIbclcConsult({ consultId, threadId, returnTo, chatUrl });
+                onOpenIbclcConsult({ consultId, threadId, userId: DEFAULT_CHAT_USER_ID, returnTo, chatUrl });
                 return;
               }
               rememberIbclcReturnTo(returnTo);

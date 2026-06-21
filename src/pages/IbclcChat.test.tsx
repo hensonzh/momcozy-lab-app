@@ -8,7 +8,7 @@ describe("IbclcChatPanel", () => {
     vi.useRealTimers();
   });
 
-  it("starts the H5 loading flow with a 3 second health information stage", () => {
+  it("starts the H5 loading flow with a 1 second health information stage", () => {
     vi.useFakeTimers();
 
     render(
@@ -17,12 +17,12 @@ describe("IbclcChatPanel", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText("健康信息整理")).toBeInTheDocument();
+    expect(screen.getByText("健康信息整理中")).toBeInTheDocument();
 
     act(() => {
-      vi.advanceTimersByTime(2999);
+      vi.advanceTimersByTime(999);
     });
-    expect(screen.getByText("健康信息整理")).toBeInTheDocument();
+    expect(screen.getByText("健康信息整理中")).toBeInTheDocument();
 
     act(() => {
       vi.advanceTimersByTime(1);
