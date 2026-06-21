@@ -32,8 +32,6 @@ export const cardBg: Record<string, string> = {
   data: "border-muted-foreground/20 bg-muted/50",
   calibration: "border-accent/40 bg-accent/10",
   "device-flow": "border-accent/40 bg-accent/10",
-  "schedule-flow": "border-accent/40 bg-accent/10",
-  "lactation-flow": "border-primary/20 bg-primary/5",
   "maternity-flow": "border-pink-200 bg-pink-50/50 dark:border-pink-800 dark:bg-pink-900/10",
   "work-flow": "border-violet-200 bg-violet-50/50 dark:border-violet-800 dark:bg-violet-900/10",
 };

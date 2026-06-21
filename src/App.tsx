@@ -55,6 +55,7 @@ import { playFocusPlainTextVoice } from "@/lib/focusVoiceTtsPlayback";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 
 const queryClient = new QueryClient();
+const NOTIFICATION_VOICE_TIMEOUT_MS = 12000;
 
 /** Android：点击前台服务通知下拉区域后原生写入待跳转路径，在此消费并进入路由。 */
 function PumpNotificationNavigateSync() {
@@ -179,6 +180,39 @@ function AgentNotificationVoiceSync() {
     let disposed = false;
     let running = false;
 
+    const playNotificationVoice = async (text: string): Promise<void> => {
+      const ac = new AbortController();
+      let timeout: ReturnType<typeof window.setTimeout> | null = null;
+      const voicePromise = playFocusPlainTextVoice({
+        userId: DEFAULT_CHAT_USER_ID,
+        text,
+        signal: ac.signal,
+        onSubtitle: () => {},
+        syncSubtitle: false,
+      });
+      voicePromise.catch(() => {
+        /* handled by race below; keep late aborts quiet */
+      });
+      try {
+        await Promise.race([
+          voicePromise,
+          new Promise<never>((_, reject) => {
+            timeout = window.setTimeout(() => {
+              ac.abort();
+              reject(
+                new DOMException(
+                  "notification voice timeout",
+                  "TimeoutError",
+                ),
+              );
+            }, NOTIFICATION_VOICE_TIMEOUT_MS);
+          }),
+        ]);
+      } finally {
+        if (timeout != null) window.clearTimeout(timeout);
+      }
+    };
+
     const drain = async (): Promise<void> => {
       if (running) return;
       running = true;
@@ -192,12 +226,7 @@ function AgentNotificationVoiceSync() {
             .slice(0, CHAT_BUBBLE_VOICE_MAX_CHARS);
           if (!speakable) continue;
           try {
-            await playFocusPlainTextVoice({
-              userId: DEFAULT_CHAT_USER_ID,
-              text: speakable,
-              onSubtitle: () => {},
-              syncSubtitle: false,
-            });
+            await playNotificationVoice(speakable);
           } catch {
             // 通知已写入对话，语音失败不影响后续自动接续。
           }
