@@ -1266,6 +1266,7 @@ const AgentHub: React.FC = () => {
   const [activeIbclcConsult, setActiveIbclcConsult] = useState<{
     conversationId: string;
     consultId: string;
+    clientUserId: string;
   } | null>(null);
   const [activeHospitalBagCart, setActiveHospitalBagCart] = useState(false);
   const [hospitalBagCartGroups, setHospitalBagCartGroups] = useState<
@@ -3296,6 +3297,7 @@ const AgentHub: React.FC = () => {
       setActiveIbclcConsult({
         conversationId: request.threadId || getAgUiThreadIdForRequest(),
         consultId: request.consultId,
+        clientUserId: request.userId || DEFAULT_CHAT_USER_ID,
       });
     },
     [],
@@ -4870,6 +4872,7 @@ const AgentHub: React.FC = () => {
           <IbclcChatPanel
             conversationId={activeIbclcConsult.conversationId}
             consultId={activeIbclcConsult.consultId}
+            clientUserId={activeIbclcConsult.clientUserId}
             onClose={() => setActiveIbclcConsult(null)}
           />
         </div>

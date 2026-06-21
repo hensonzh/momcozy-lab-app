@@ -10,10 +10,10 @@ import {
 } from "@/lib/ibclcConsult";
 
 const CONNECTION_STEPS = [
-  { text: "健康信息整理", duration: 3000 },
-  { text: "连接中", duration: 5000 },
+  { text: "健康信息整理中", duration: 1000 },
+  { text: "连接中", duration: 2000 },
   { text: "连接成功", duration: 1000 },
-  { text: "对方正在读取背景中", duration: 5000 },
+  { text: "对方正在读取背景中", duration: 2000 },
 ] as const;
 
 function safeSameOriginPath(value: string | null): string {
@@ -61,13 +61,17 @@ function MicIcon() {
 export type IbclcChatPanelProps = {
   conversationId: string;
   consultId: string;
+  clientUserId?: string;
   returnTo?: string;
   onClose?: () => void;
 };
 
-export function IbclcChatPanel({ conversationId, consultId, returnTo = "/", onClose }: IbclcChatPanelProps) {
+export function IbclcChatPanel({ conversationId, consultId, clientUserId = "", returnTo = "/", onClose }: IbclcChatPanelProps) {
   const navigate = useNavigate();
-  const clientUserId = useMemo(() => readOrCreateIbclcClientUserId(DEFAULT_CHAT_USER_ID), []);
+  const resolvedClientUserId = useMemo(
+    () => clientUserId.trim() || readOrCreateIbclcClientUserId(DEFAULT_CHAT_USER_ID),
+    [clientUserId],
+  );
   const [connectionText, setConnectionText] = useState(CONNECTION_STEPS[0].text);
   const [isChatting, setIsChatting] = useState(false);
   const [ending, setEnding] = useState(false);
@@ -111,7 +115,7 @@ export function IbclcChatPanel({ conversationId, consultId, returnTo = "/", onCl
     );
     void recordIbclcConsultCompleted({
       conversationId,
-      clientUserId,
+      clientUserId: resolvedClientUserId,
       consultId,
       locale: navigator.language || "zh-CN",
       timezone: fallbackTimezone(),
@@ -194,7 +198,11 @@ export default function IbclcChat() {
     [searchParams],
   );
   const consultId = useMemo(() => searchParams.get("consult_id")?.trim() || "", [searchParams]);
+  const clientUserId = useMemo(
+    () => searchParams.get("user_id")?.trim() || searchParams.get("userId")?.trim() || "",
+    [searchParams],
+  );
   const returnTo = useMemo(() => safeSameOriginPath(searchParams.get("return_to") || readStoredIbclcReturnTo()), [searchParams]);
 
-  return <IbclcChatPanel conversationId={conversationId} consultId={consultId} returnTo={returnTo} />;
+  return <IbclcChatPanel conversationId={conversationId} consultId={consultId} clientUserId={clientUserId} returnTo={returnTo} />;
 }

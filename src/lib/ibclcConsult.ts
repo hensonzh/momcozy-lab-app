@@ -194,13 +194,14 @@ export function readStoredIbclcReturnViewport(returnTo: string): IbclcReturnView
   }
 }
 
-export function buildIbclcChatUrl(url: string, consultId: string, threadId: string, returnTo?: string): string {
+export function buildIbclcChatUrl(url: string, consultId: string, threadId: string, returnTo?: string, userId?: string): string {
   const raw = url.trim() || "/ibclc-chat.html";
   try {
     const nextUrl = new URL(raw, window.location.origin);
     if (threadId.trim()) nextUrl.searchParams.set("thread_id", threadId.trim());
     if (consultId.trim()) nextUrl.searchParams.set("consult_id", consultId.trim());
     if (returnTo?.trim()) nextUrl.searchParams.set("return_to", returnTo.trim());
+    if (userId?.trim()) nextUrl.searchParams.set("user_id", userId.trim());
     return nextUrl.origin === window.location.origin
       ? `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`
       : nextUrl.toString();

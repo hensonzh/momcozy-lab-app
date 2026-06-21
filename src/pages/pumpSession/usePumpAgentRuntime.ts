@@ -8,6 +8,7 @@ import { pushPumpStopAgentSummaryToChat, type PumpStopSummaryOptions } from "@/l
 import { getAgUiThreadIdForRequest, persistAgUiThreadId } from "@/lib/agentConversationSession";
 import type { PumpSessionEndedEvent } from "@/lib/pumpSessionLifecycle";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
+import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 
 function extractAgUiContentChunk(data: string | object): string {
   if (typeof data === "object" && data != null) {
@@ -37,13 +38,26 @@ export function usePumpAgentRuntime() {
     setMaiAssistantRichText(null);
     mergedRef.current = "";
     setMaiAssistantContent("");
+    const locale = (typeof navigator !== "undefined" && navigator.language) || "zh-CN";
+    const timezone =
+      (typeof Intl !== "undefined" && Intl.DateTimeFormat().resolvedOptions().timeZone) ||
+      "America/Los_Angeles";
 
     cancelRef.current = postAgUiWebSocketStream({
       text: query,
       threadId: getAgUiThreadIdForRequest(),
-      locale: (typeof navigator !== "undefined" && navigator.language) || "zh-CN",
+      locale,
       images: [],
-      forwardedProps: {},
+      forwardedProps: {
+        user_id: DEFAULT_CHAT_USER_ID,
+        locale,
+        timezone,
+        message_sent_at: new Date().toISOString(),
+        user_profile: {
+          user_id: DEFAULT_CHAT_USER_ID,
+          language: locale,
+        },
+      },
       parseJSON: true,
       onMessage: (data) => {
         if (typeof data === "object" && data != null) {
