@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const agentHubSource = readFileSync(resolve(here, "../AgentHub.tsx"), "utf8");
+const appSource = readFileSync(resolve(here, "../../App.tsx"), "utf8");
 
 describe("AgentHub artifact ordering wiring", () => {
   it("defers ag-ui artifacts and keeps later final text before artifacts", () => {
@@ -103,8 +104,21 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain("isAgentNotificationVoicePlaying()");
     expect(agentHubSource).toContain("AGENT_NOTIFICATION_VOICE_IDLE_EVENT");
     expect(agentHubSource).toContain(
+      "scheduleMilkAnalysisFollowupBlockedRetry",
+    );
+    expect(agentHubSource).toContain(
+      "tryStartMilkAnalysisReminderFollowupRef.current()",
+    );
+    expect(agentHubSource).toContain(
       "window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0)",
     );
+  });
+
+  it("keeps notification voice from blocking hidden milk analysis followup forever", () => {
+    expect(appSource).toContain("NOTIFICATION_VOICE_TIMEOUT_MS");
+    expect(appSource).toContain("new AbortController()");
+    expect(appSource).toContain("setAgentNotificationVoicePlaying(false)");
+    expect(appSource).toContain("dispatchAgentNotificationVoiceIdle()");
   });
 
   it("consumes route prefill state into the bottom input once", () => {
