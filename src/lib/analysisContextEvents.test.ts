@@ -32,7 +32,7 @@ describe("buildMilkAnalysisContextText", () => {
 
     expect(text).toContain("消息提醒提前生成");
     expect(text).toContain("服务链：/v1/analysis/create(type=milk_analysis) -> evaluate_milk_status");
-    expect(text).toContain("等价分析口径：milk_assessment_evaluate");
+    expect(text).toContain("等价分析口径：milk_analysis_evaluate");
     expect(text).toContain("window_days=7");
     expect(text).toContain("include_today=false");
     expect(text).toContain("不包含当天未完整记录");
