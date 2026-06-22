@@ -28,11 +28,13 @@ describe("AgentHub assistant avatar animation wiring", () => {
     );
   });
 
-  it("tracks speaking animation from automatic voice instead of manual bubble playback", () => {
+  it("tracks speaking animation from coordinator-owned voice playback", () => {
     expect(agentHubSource).toContain("agentHubVoicePlaybackRuntime.subscribe");
-    expect(agentHubSource).toContain("agentHubVoicePlaybackRuntime.startAutoVoice");
-    expect(agentHubSource).toContain("agentHubVoicePlaybackRuntime.finishAutoVoice");
-    expect(agentHubSource).toContain("agentHubVoicePlaybackRuntime.cancelAutoVoice");
+    expect(agentHubSource).toContain("requestAgentVoicePlayback");
+    expect(agentHubSource).toContain("subscribeAgentVoicePlaybackIdle");
+    expect(agentHubSource).toContain("cancelAgentVoicePlayback");
+    expect(agentHubSource).toContain('source: "auto-reply"');
+    expect(agentHubSource).toContain('source: "greeting"');
     expect(agentHubSource).toContain(
       "const isAssistantSpeaking =\n                  voicePlaybackSnapshot.autoVoicePlayingId === msg.id",
     );

@@ -123,6 +123,13 @@ import {
   stopFocusVoicePlayback,
   type FocusRealtimePlainTextVoiceSession,
 } from "@/lib/focusVoiceTtsPlayback";
+import {
+  cancelAgentVoicePlayback,
+  requestAgentVoicePlayback,
+  subscribeAgentVoicePlaybackIdle,
+  type AgentVoicePlaybackHandle,
+  type AgentVoicePlaybackSource,
+} from "@/lib/agentVoicePlaybackCoordinator";
 import { toast } from "sonner";
 import {
   fallbackMediaVoiceNarration,
@@ -1067,6 +1074,8 @@ function splitStaticAssistantReplyForStreaming(text: string): string[] {
   return chunks.map((chunk) => chunk.trim()).filter(Boolean);
 }
 
+type AgentHubVoicePlayResult = "played" | "blocked" | "failed";
+
 const AgentHub: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1074,7 +1083,11 @@ const AgentHub: React.FC = () => {
   const initialHubMessagesRef = useRef<ChatMessage[] | null>(null);
   const shouldHydrateInitialGreetingRef = useRef(false);
   const latestUserProfileRef = useRef<UserProfileData | null>(null);
-  const pendingGreetingVoiceIdRef = useRef<string | null>(null);
+  const pendingGreetingVoiceRef = useRef<{
+    message: ChatMessage;
+    attempts: number;
+  } | null>(null);
+  const greetingVoiceInFlightRef = useRef<string | null>(null);
   if (initialHubMessagesRef.current === null) {
     const inMemory = stripTransientAgentHubFailureMessages(
       chatStore.get().messages,
@@ -1123,8 +1136,12 @@ const AgentHub: React.FC = () => {
         );
         if (hasNonGreetingAssistant) return;
       }
-      if (opts?.autoVoice ?? true) {
-        pendingGreetingVoiceIdRef.current = greeting.id;
+      const existingPendingGreetingVoice = pendingGreetingVoiceRef.current;
+      if ((opts?.autoVoice ?? true) || existingPendingGreetingVoice) {
+        pendingGreetingVoiceRef.current = {
+          message: greeting,
+          attempts: existingPendingGreetingVoice?.attempts ?? 0,
+        };
       }
       chatStore.setMessages([greeting]);
       savePersistedChatMessages([greeting]);
@@ -1354,10 +1371,22 @@ const AgentHub: React.FC = () => {
     replyId: string;
     session: FocusRealtimePlainTextVoiceSession;
     abortController: AbortController;
+    voiceHandle: AgentVoicePlaybackHandle;
     appendedChars: number;
     receivedAudioBytes: number;
     lastMergedAnswer: string;
     lastRichText: ChatRichTextPayload | null;
+  } | null>(null);
+  const autoVoiceReplyAttemptRef = useRef<{
+    replyId: string;
+    runId: number;
+    appendedChars: number;
+  } | null>(null);
+  const pendingAutoVoiceReplayRef = useRef<{
+    replyId: string;
+    message: ChatMessage;
+    expectedRunId?: number;
+    attempts: number;
   } | null>(null);
   const mainChatRuntimeSnapshot = useSyncExternalStore(
     agentHubMainChatRuntime.subscribe,
@@ -1527,7 +1556,12 @@ const AgentHub: React.FC = () => {
       preserveFocusVoice?: boolean;
     }): Promise<void> => {
       autoVoiceRunIdRef.current += 1;
-      agentHubVoicePlaybackRuntime.cancelAutoVoice();
+      pendingAutoVoiceReplayRef.current = null;
+      cancelAgentVoicePlayback(
+        opts?.preserveFocusVoice
+          ? { preserveSources: ["notification"] }
+          : undefined,
+      );
       autoVoiceRealtimeSessionRef.current?.abortController.abort();
       autoVoiceRealtimeSessionRef.current?.session.cancel();
       autoVoiceRealtimeSessionRef.current = null;
@@ -1598,6 +1632,9 @@ const AgentHub: React.FC = () => {
     mainPendingRichTextRef.current = null;
     mainRichTextForVoiceRef.current = null;
     mainMediaVoiceByUrlRef.current.clear();
+    autoVoiceReplyAttemptRef.current = null;
+    pendingAutoVoiceReplayRef.current = null;
+    greetingVoiceInFlightRef.current = null;
     pendingAgUiArtifactFormLikeRef.current = false;
     awaitingHubBottomReplyRef.current = false;
     pendingHistoryScrollRestoreRef.current = null;
@@ -1607,6 +1644,7 @@ const AgentHub: React.FC = () => {
 
     void stopSpeech({ discardSttResult: true });
     void stopCurrentBubblePlayback();
+    primeAutoVoicePlayback();
     uploadedImagePreviewUrlsRef.current.forEach((url) => {
       try {
         URL.revokeObjectURL(url);
@@ -1655,7 +1693,7 @@ const AgentHub: React.FC = () => {
     const greeting = createNewConversationGreetingMessage(
       latestUserProfileRef.current,
     );
-    pendingGreetingVoiceIdRef.current = greeting.id;
+    pendingGreetingVoiceRef.current = { message: greeting, attempts: 0 };
     chatStore.setMessages([greeting]);
     savePersistedChatMessages([greeting]);
     setMessages([greeting]);
@@ -1681,9 +1719,32 @@ const AgentHub: React.FC = () => {
   }, [
     clearMainNoVisibleResponseTimer,
     hydrateGreetingFromProfile,
+    primeAutoVoicePlayback,
     stopCurrentBubblePlayback,
     stopSpeech,
   ]);
+
+  const queueBlockedAutoVoiceReplay = useCallback(
+    (
+      replyId: string,
+      message: ChatMessage,
+      opts?: { expectedRunId?: number },
+    ) => {
+      const existing = pendingAutoVoiceReplayRef.current;
+      const attempts =
+        existing?.replyId === replyId &&
+        existing.expectedRunId === opts?.expectedRunId
+          ? existing.attempts
+          : 0;
+      pendingAutoVoiceReplayRef.current = {
+        replyId,
+        message,
+        expectedRunId: opts?.expectedRunId,
+        attempts,
+      };
+    },
+    [],
+  );
 
   /** 自动播报兜底：只在流式会话没有启动时，对完整回复做一次播放。 */
   const runHubDecoupledAutoVoice = useCallback(
@@ -1719,15 +1780,31 @@ const AgentHub: React.FC = () => {
         }
         if (!autoVoiceRef.current || !matchesExpectedRun()) return;
         const ac = new AbortController();
+        let session: FocusRealtimePlainTextVoiceSession | null = null;
+        const voicePlaybackRequest = requestAgentVoicePlayback({
+          id: replyId,
+          source: "auto-reply",
+          cancel: () => {
+            ac.abort();
+            session?.cancel();
+          },
+        });
+        if (voicePlaybackRequest.status === "blocked") {
+          queueBlockedAutoVoiceReplay(replyId, msgForVoice, opts);
+          return;
+        }
+        if (voicePlaybackRequest.status !== "started") return;
+        const voicePlaybackHandle = voicePlaybackRequest.handle;
+        const pendingReplay = pendingAutoVoiceReplayRef.current;
+        if (
+          pendingReplay?.replyId === replyId &&
+          pendingReplay.expectedRunId === opts?.expectedRunId
+        ) {
+          pendingAutoVoiceReplayRef.current = null;
+        }
         bubblePlayAbortRef.current = ac;
         bubblePlayingTargetIdRef.current = replyId;
         setPlayingId(replyId);
-        let session: FocusRealtimePlainTextVoiceSession | null = null;
-        const voicePlaybackHandle =
-          agentHubVoicePlaybackRuntime.startAutoVoice(replyId, () => {
-            ac.abort();
-            session?.cancel();
-          });
         try {
           session = startFocusRealtimePlainTextVoice({
             userId: DEFAULT_CHAT_USER_ID,
@@ -1739,6 +1816,10 @@ const AgentHub: React.FC = () => {
             resetPlaybackOnStart: false,
             onSubtitle: () => {},
             syncSubtitle: false,
+          });
+          voicePlaybackHandle.setCancel(() => {
+            ac.abort();
+            session?.cancel();
           });
           session.append(speakable);
           session.finish();
@@ -1756,14 +1837,18 @@ const AgentHub: React.FC = () => {
             setPlayingId(null);
             bubblePlayingTargetIdRef.current = null;
           }
-          agentHubVoicePlaybackRuntime.finishAutoVoice(voicePlaybackHandle);
+          voicePlaybackHandle.finish();
           if (bubblePlayAbortRef.current === ac) {
             bubblePlayAbortRef.current = null;
           }
         }
       })();
     },
-    [resolveMediaVoiceNarration, stopCurrentBubblePlayback],
+    [
+      queueBlockedAutoVoiceReplay,
+      resolveMediaVoiceNarration,
+      stopCurrentBubblePlayback,
+    ],
   );
 
   const startHubRealtimeAutoVoice = useCallback(
@@ -1776,6 +1861,17 @@ const AgentHub: React.FC = () => {
       const ac = new AbortController();
       const runId = autoVoiceRunIdRef.current + 1;
       autoVoiceRunIdRef.current = runId;
+      let session: FocusRealtimePlainTextVoiceSession | null = null;
+      const voicePlaybackRequest = requestAgentVoicePlayback({
+        id: replyId,
+        source: "auto-reply",
+        cancel: () => {
+          ac.abort();
+          session?.cancel();
+        },
+      });
+      if (voicePlaybackRequest.status !== "started") return null;
+      const voicePlaybackHandle = voicePlaybackRequest.handle;
       bubblePlayAbortRef.current = ac;
       bubblePlayingTargetIdRef.current = replyId;
       setPlayingId(replyId);
@@ -1787,12 +1883,13 @@ const AgentHub: React.FC = () => {
         replyId,
         session: null as unknown as FocusRealtimePlainTextVoiceSession,
         abortController: ac,
+        voiceHandle: voicePlaybackHandle,
         appendedChars: 0,
         receivedAudioBytes: 0,
         lastMergedAnswer: "",
         lastRichText: null,
       };
-      const session = startFocusRealtimePlainTextVoice({
+      session = startFocusRealtimePlainTextVoice({
         userId: DEFAULT_CHAT_USER_ID,
         signal: ac.signal,
         mediaNarrationResolver: resolveMediaVoiceNarration,
@@ -1807,14 +1904,16 @@ const AgentHub: React.FC = () => {
         syncSubtitle: false,
       });
       sessionState.session = session;
+      voicePlaybackHandle.setCancel(() => {
+        ac.abort();
+        session?.cancel();
+      });
       autoVoiceRealtimeSessionRef.current = sessionState;
-      const voicePlaybackHandle = agentHubVoicePlaybackRuntime.startAutoVoice(
+      autoVoiceReplyAttemptRef.current = {
         replyId,
-        () => {
-          ac.abort();
-          session.cancel();
-        },
-      );
+        runId,
+        appendedChars: 0,
+      };
       void session.done
         .catch((e: unknown) => {
           const err = e as { name?: string; message?: string };
@@ -1849,7 +1948,7 @@ const AgentHub: React.FC = () => {
             setPlayingId(null);
             bubblePlayingTargetIdRef.current = null;
           }
-          agentHubVoicePlaybackRuntime.finishAutoVoice(voicePlaybackHandle);
+          voicePlaybackHandle.finish();
           if (bubblePlayAbortRef.current === ac) {
             bubblePlayAbortRef.current = null;
           }
@@ -1863,6 +1962,40 @@ const AgentHub: React.FC = () => {
     },
     [resolveMediaVoiceNarration, runHubDecoupledAutoVoice],
   );
+
+  const tryRunPendingAutoVoiceReplay = useCallback(() => {
+    const pending = pendingAutoVoiceReplayRef.current;
+    if (!pending || !autoVoiceRef.current) return;
+    if (
+      pending.expectedRunId != null &&
+      autoVoiceRunIdRef.current !== pending.expectedRunId
+    ) {
+      pendingAutoVoiceReplayRef.current = null;
+      return;
+    }
+    if (pending.attempts >= 3) {
+      pendingAutoVoiceReplayRef.current = null;
+      return;
+    }
+    if (!buildSpeakableTextForVoice(pending.message).trim()) {
+      pendingAutoVoiceReplayRef.current = null;
+      return;
+    }
+    const nextPending = {
+      ...pending,
+      attempts: pending.attempts + 1,
+    };
+    pendingAutoVoiceReplayRef.current = nextPending;
+    runHubDecoupledAutoVoice(pending.replyId, pending.message, {
+      expectedRunId: pending.expectedRunId,
+    });
+  }, [runHubDecoupledAutoVoice]);
+
+  useEffect(() => {
+    return subscribeAgentVoicePlaybackIdle(() => {
+      window.setTimeout(tryRunPendingAutoVoiceReplay, 0);
+    });
+  }, [tryRunPendingAutoVoiceReplay]);
 
   /**
    * 自动播报开关关闭时，若正在播报则立即停止，避免继续播放到结束。
@@ -1944,6 +2077,7 @@ const AgentHub: React.FC = () => {
     clearMainNoVisibleResponseTimer();
     mainPendingRichTextRef.current = null;
     mainRichTextForVoiceRef.current = null;
+    autoVoiceReplyAttemptRef.current = null;
     pendingAgUiArtifactFormLikeRef.current = false;
     mainChatCancelRef.current = null;
     mainStreamingReplyIdRef.current = null;
@@ -2516,6 +2650,10 @@ const AgentHub: React.FC = () => {
           if (realtimeVoice?.replyId === replyId) {
             realtimeVoice.appendedChars += delta.length;
             realtimeVoice.lastMergedAnswer = merged;
+            if (autoVoiceReplyAttemptRef.current?.replyId === replyId) {
+              autoVoiceReplyAttemptRef.current.appendedChars =
+                realtimeVoice.appendedChars;
+            }
             realtimeVoice.session.append(delta);
           }
         }
@@ -2693,9 +2831,13 @@ const AgentHub: React.FC = () => {
       const richSnap =
         mainRichTextForVoiceRef.current ?? mainPendingRichTextRef.current;
       window.setTimeout(() => {
+        const realtimeVoice = autoVoiceRealtimeSessionRef.current;
+        const realtimeAttempt = autoVoiceReplyAttemptRef.current;
+        const realtimeAttemptHadText =
+          realtimeAttempt?.replyId === replyId &&
+          realtimeAttempt.appendedChars > 0;
         tryFinalizeMainReply(replyId);
         mainStreamingReplyIdRef.current = null;
-        const realtimeVoice = autoVoiceRealtimeSessionRef.current;
         if (realtimeVoice?.replyId === replyId) {
           const expectedRunId = realtimeVoice.runId;
           if (realtimeVoice.appendedChars > 0) {
@@ -2715,7 +2857,7 @@ const AgentHub: React.FC = () => {
               void runHubDecoupledAutoVoice(replyId, dummy, { expectedRunId });
             }
           }
-        } else if (autoVoiceRef.current) {
+        } else if (autoVoiceRef.current && !realtimeAttemptHadText) {
           const expectedRunId = autoVoiceRunIdRef.current;
           const dummy: ChatMessage = {
             id: replyId,
@@ -3155,6 +3297,10 @@ const AgentHub: React.FC = () => {
             if (realtimeVoice?.replyId === replyId) {
               realtimeVoice.appendedChars += chunk.length;
               realtimeVoice.lastMergedAnswer = merged;
+              if (autoVoiceReplyAttemptRef.current?.replyId === replyId) {
+                autoVoiceReplyAttemptRef.current.appendedChars =
+                  realtimeVoice.appendedChars;
+              }
               realtimeVoice.session.append(chunk);
             }
           }
@@ -3699,29 +3845,47 @@ const AgentHub: React.FC = () => {
     });
   }, []);
 
-  /**
-   * 点击气泡喇叭：与全局自动播报一致，使用火山实时语音流播放；再次点击同一气泡则停止。
-   * @param msg 当前消息
-   */
-  const handlePlayBubble = useCallback(
-    async (msg: ChatMessage) => {
-      if (playingId === msg.id) {
-        await stopCurrentBubblePlayback();
-        return;
+  const playMessageVoice = useCallback(
+    async (
+      msg: ChatMessage,
+      opts?: {
+        source?: AgentVoicePlaybackSource;
+        showErrorToast?: boolean;
+        visual?: boolean;
+      },
+    ): Promise<AgentHubVoicePlayResult> => {
+      const source = opts?.source ?? "manual-bubble";
+      const showErrorToast = opts?.showErrorToast ?? true;
+      if (source === "manual-bubble" && bubblePlayingTargetIdRef.current === msg.id) {
+        cancelAgentVoicePlayback();
+        await stopFocusVoicePlayback();
+        setPlayingId(null);
+        return "played";
       }
-      await stopCurrentBubblePlayback();
+      const speakable = buildSpeakableTextForVoice(msg)
+        .trim()
+        .slice(0, CHAT_BUBBLE_VOICE_MAX_CHARS);
+      if (!speakable) {
+        if (showErrorToast) toast.error("暂无可播报的文字");
+        return "failed";
+      }
       const ac = new AbortController();
+      const voiceRequest = requestAgentVoicePlayback({
+        id: msg.id,
+        source,
+        visual: opts?.visual ?? source !== "manual-bubble",
+        cancel: () => {
+          ac.abort();
+          void stopFocusVoicePlayback();
+        },
+      });
+      if (voiceRequest.status === "blocked") return "blocked";
+      if (voiceRequest.status !== "started") return "failed";
+      const voiceHandle = voiceRequest.handle;
       bubblePlayAbortRef.current = ac;
       bubblePlayingTargetIdRef.current = msg.id;
       setPlayingId(msg.id);
       try {
-        const speakable = buildSpeakableTextForVoice(msg)
-          .trim()
-          .slice(0, CHAT_BUBBLE_VOICE_MAX_CHARS);
-        if (!speakable) {
-          toast.error("暂无可播报的文字");
-          return;
-        }
         await playFocusPlainTextVoice({
           userId: DEFAULT_CHAT_USER_ID,
           text: speakable,
@@ -3729,12 +3893,20 @@ const AgentHub: React.FC = () => {
           onSubtitle: () => {},
           syncSubtitle: false,
         });
+        return "played";
       } catch (e: unknown) {
         const err = e as { name?: string; message?: string };
         if (err.name !== "AbortError") {
-          toast.error(err.message || "语音播报失败");
+          if (showErrorToast) toast.error(err.message || "语音播报失败");
+          warn(
+            "[AgentHub] 语音播报失败",
+            err.message || String(e),
+            { id: msg.id, source },
+          );
         }
+        return "failed";
       } finally {
+        voiceHandle.finish();
         if (bubblePlayingTargetIdRef.current === msg.id) {
           setPlayingId(null);
           bubblePlayingTargetIdRef.current = null;
@@ -3742,21 +3914,78 @@ const AgentHub: React.FC = () => {
         }
       }
     },
-    [playingId, stopCurrentBubblePlayback],
+    [],
   );
 
-  useEffect(() => {
-    const pendingGreetingVoiceId = pendingGreetingVoiceIdRef.current;
-    if (!pendingGreetingVoiceId) return;
+  /**
+   * 点击气泡喇叭：与全局自动播报一致，使用火山实时语音流播放；再次点击同一气泡则停止。
+   * @param msg 当前消息
+   */
+  const handlePlayBubble = useCallback(
+    async (msg: ChatMessage) => {
+      await playMessageVoice(msg, {
+        source: "manual-bubble",
+        visual: false,
+      });
+    },
+    [playMessageVoice],
+  );
+
+  const tryPlayPendingGreetingVoice = useCallback(() => {
+    const pending = pendingGreetingVoiceRef.current;
+    if (!pending || !autoVoiceRef.current) return;
     const greeting = messages.find(
-      (message) =>
-        message.id === pendingGreetingVoiceId && message.role === "mai",
+      (message) => message.id === pending.message.id && message.role === "mai",
     );
     if (!greeting) return;
-    pendingGreetingVoiceIdRef.current = null;
-    if (!autoVoiceRef.current) return;
-    void handlePlayBubble(greeting);
-  }, [handlePlayBubble, messages]);
+    if (pending.attempts >= 3) return;
+    if (greetingVoiceInFlightRef.current === greeting.id) return;
+    greetingVoiceInFlightRef.current = greeting.id;
+    void playMessageVoice(greeting, {
+      source: "greeting",
+      showErrorToast: false,
+      visual: true,
+    }).then((result) => {
+      const current = pendingGreetingVoiceRef.current;
+      if (current?.message.id !== greeting.id) return;
+      if (result === "played") {
+        pendingGreetingVoiceRef.current = null;
+        return;
+      }
+      if (result === "failed") {
+        pendingGreetingVoiceRef.current = {
+          ...current,
+          attempts: current.attempts + 1,
+        };
+      }
+    }).finally(() => {
+      if (greetingVoiceInFlightRef.current === greeting.id) {
+        greetingVoiceInFlightRef.current = null;
+      }
+    });
+  }, [messages, playMessageVoice]);
+
+  useEffect(() => {
+    tryPlayPendingGreetingVoice();
+  }, [tryPlayPendingGreetingVoice]);
+
+  useEffect(() => {
+    const retry = () => tryPlayPendingGreetingVoice();
+    window.addEventListener("pointerdown", retry, { capture: true });
+    window.addEventListener("keydown", retry, { capture: true });
+    window.addEventListener("touchend", retry, { capture: true });
+    return () => {
+      window.removeEventListener("pointerdown", retry, { capture: true });
+      window.removeEventListener("keydown", retry, { capture: true });
+      window.removeEventListener("touchend", retry, { capture: true });
+    };
+  }, [tryPlayPendingGreetingVoice]);
+
+  useEffect(() => {
+    return subscribeAgentVoicePlaybackIdle(() => {
+      window.setTimeout(tryPlayPendingGreetingVoice, 0);
+    });
+  }, [tryPlayPendingGreetingVoice]);
 
   const visibleMessages = messages
     .slice(visibleStartIndex)
