@@ -102,10 +102,13 @@ describe("AgentHub artifact ordering wiring", () => {
 
   it("marks manually created new-session greeting for immediate auto voice", () => {
     expect(agentHubSource).toMatch(
-      /const greeting = createNewConversationGreetingMessage\(\s*latestUserProfileRef\.current,\s*\);\s*pendingGreetingVoiceIdRef\.current = greeting\.id;\s*chatStore\.setMessages\(\[greeting\]\);/s,
+      /const greeting = createNewConversationGreetingMessage\(\s*latestUserProfileRef\.current,\s*\);\s*pendingGreetingVoiceRef\.current = \{ message: greeting, attempts: 0 \};\s*chatStore\.setMessages\(\[greeting\]\);/s,
     );
+    expect(agentHubSource).toContain("const existingPendingGreetingVoice");
     expect(agentHubSource).toContain("autoVoice?: boolean");
-    expect(agentHubSource).toContain("if (opts?.autoVoice ?? true)");
+    expect(agentHubSource).toContain(
+      "if ((opts?.autoVoice ?? true) || existingPendingGreetingVoice)",
+    );
     expect(agentHubSource).toContain("autoVoice: false");
   });
 
@@ -133,8 +136,36 @@ describe("AgentHub artifact ordering wiring", () => {
   it("keeps notification voice lifecycle bounded", () => {
     expect(appSource).toContain("NOTIFICATION_VOICE_TIMEOUT_MS");
     expect(appSource).toContain("new AbortController()");
+    expect(appSource).toContain('source: "notification"');
+    expect(appSource).toContain("beginAgentVoicePlayback");
     expect(appSource).toContain("setAgentNotificationVoicePlaying(false)");
     expect(appSource).toContain("dispatchAgentNotificationVoiceIdle()");
+  });
+
+  it("does not replay a reply from the beginning after realtime voice has started", () => {
+    expect(agentHubSource).toContain("autoVoiceReplyAttemptRef");
+    expect(agentHubSource).toContain("realtimeAttemptHadText");
+    expect(agentHubSource).toContain(
+      "autoVoiceRef.current && !realtimeAttemptHadText",
+    );
+    const attemptSnapshotIndex = agentHubSource.indexOf(
+      "const realtimeAttempt = autoVoiceReplyAttemptRef.current;",
+    );
+    const finalizeIndex = agentHubSource.indexOf(
+      "tryFinalizeMainReply(replyId);",
+    );
+    expect(attemptSnapshotIndex).toBeGreaterThan(-1);
+    expect(finalizeIndex).toBeGreaterThan(-1);
+    expect(attemptSnapshotIndex).toBeLessThan(finalizeIndex);
+  });
+
+  it("retries automatic voice once notification voice releases the playback channel", () => {
+    expect(agentHubSource).toContain("pendingAutoVoiceReplayRef");
+    expect(agentHubSource).toContain("queueBlockedAutoVoiceReplay");
+    expect(agentHubSource).toContain("requestAgentVoicePlayback");
+    expect(agentHubSource).toContain("subscribeAgentVoicePlaybackIdle");
+    expect(agentHubSource).toContain("tryRunPendingAutoVoiceReplay");
+    expect(agentHubSource).toContain('voicePlaybackRequest.status === "blocked"');
   });
 
   it("consumes route prefill state into the bottom input once", () => {

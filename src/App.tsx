@@ -51,7 +51,12 @@ import {
   buildSpeakableTextForVoice,
   CHAT_BUBBLE_VOICE_MAX_CHARS,
 } from "@/lib/chatBubbleTtsPlayback";
-import { playFocusPlainTextVoice } from "@/lib/focusVoiceTtsPlayback";
+import {
+  playFocusPlainTextVoice,
+  stopFocusVoicePlayback,
+} from "@/lib/focusVoiceTtsPlayback";
+import { beginAgentVoicePlayback } from "@/lib/agentVoicePlaybackCoordinator";
+import { warn } from "@/lib/logger";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 
 const queryClient = new QueryClient();
@@ -181,9 +186,32 @@ function AgentNotificationVoiceSync() {
     let disposed = false;
     let running = false;
 
-    const playNotificationVoice = async (text: string): Promise<void> => {
+    const notificationVoiceTimeoutMs = (text: string): number =>
+      Math.min(
+        30000,
+        Math.max(NOTIFICATION_VOICE_TIMEOUT_MS, 4000 + text.length * 220),
+      );
+
+    const playNotificationVoice = async (
+      message: ChatMessage,
+      text: string,
+    ): Promise<void> => {
       const ac = new AbortController();
-      let timeout: ReturnType<typeof window.setTimeout> | null = null;
+      const handle = beginAgentVoicePlayback({
+        id: message.id,
+        source: "notification",
+        cancel: () => {
+          ac.abort();
+          void stopFocusVoicePlayback();
+        },
+      });
+      if (!handle) {
+        warn("[AgentNotificationVoice] 通知语音被更高优先级播报占用，已跳过", {
+          id: message.id,
+        });
+        return;
+      }
+      let timeout: number | null = null;
       const voicePromise = playFocusPlainTextVoice({
         userId: DEFAULT_CHAT_USER_ID,
         text,
@@ -200,17 +228,19 @@ function AgentNotificationVoiceSync() {
           new Promise<never>((_, reject) => {
             timeout = window.setTimeout(() => {
               ac.abort();
+              void stopFocusVoicePlayback();
               reject(
                 new DOMException(
                   "notification voice timeout",
                   "TimeoutError",
                 ),
               );
-            }, NOTIFICATION_VOICE_TIMEOUT_MS);
+            }, notificationVoiceTimeoutMs(text));
           }),
         ]);
       } finally {
         if (timeout != null) window.clearTimeout(timeout);
+        handle.finish();
       }
     };
 
@@ -227,9 +257,13 @@ function AgentNotificationVoiceSync() {
             .slice(0, CHAT_BUBBLE_VOICE_MAX_CHARS);
           if (!speakable) continue;
           try {
-            await playNotificationVoice(speakable);
-          } catch {
+            await playNotificationVoice(message, speakable);
+          } catch (e: unknown) {
             // 通知已写入对话，语音失败不影响后续自动接续。
+            warn(
+              "[AgentNotificationVoice] 通知语音播报失败",
+              e instanceof Error ? e.message : String(e),
+            );
           }
         }
       } finally {
