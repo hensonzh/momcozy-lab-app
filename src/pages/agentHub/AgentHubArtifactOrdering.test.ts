@@ -153,6 +153,21 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain('agentStatusLine: "我已经收到你的消息啦～"');
   });
 
+  it("keeps a bounded idle timeout after ag-ui status events", () => {
+    expect(agentHubSource).toContain(
+      "const HUB_MAIN_STREAM_IDLE_TIMEOUT_MS = 60_000",
+    );
+    expect(agentHubSource).toContain("finishMainStreamAfterTimeout(");
+    expect(agentHubSource).toContain("scheduleMainStreamTimeout(");
+    expect(agentHubSource).toContain('"stream idle timeout"');
+    expect(agentHubSource).toContain(
+      "eventType === \"RUN_FINISHED\" ||",
+    );
+    expect(agentHubSource).toMatch(
+      /liveMainMessageHandler\(data\);[\s\S]*scheduleMainStreamTimeout\(\s*HUB_MAIN_STREAM_IDLE_TIMEOUT_MS,/,
+    );
+  });
+
   it("keeps notification voice lifecycle bounded", () => {
     expect(appSource).toContain("NOTIFICATION_VOICE_TIMEOUT_MS");
     expect(appSource).toContain("new AbortController()");
