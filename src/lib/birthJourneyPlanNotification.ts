@@ -18,6 +18,15 @@ export function markBirthJourneyPlanGeneratedNotification(): void {
   markPlanNotification(birthJourneyPlanNotificationConfig);
 }
 
+export function markBirthJourneyPlanUpdatedNotification(): void {
+  markPlanNotification(birthJourneyPlanNotificationConfig, {
+    kind: "birth_journey_plan",
+    target: "status",
+    reason: "updated",
+    label: "孕期计划已同步",
+  });
+}
+
 export function transferBirthJourneyPlanNotificationToStatusCard(): void {
   transferPlanNotificationToPage(birthJourneyPlanNotificationConfig);
 }

@@ -43,6 +43,7 @@ import {
   stripTransientAgentHubFailureMessages,
 } from "@/lib/chatMessagesLocalPersistence";
 import {
+  cancelAgUiRun,
   postAgUiWebSocketStream,
   prewarmAgUiThread,
   queryUserProfile,
@@ -1088,6 +1089,9 @@ const AgentHub: React.FC = () => {
     attempts: number;
   } | null>(null);
   const greetingVoiceInFlightRef = useRef<string | null>(null);
+  const playGreetingVoiceNowRef = useRef<(greeting: ChatMessage) => void>(
+    () => {},
+  );
   if (initialHubMessagesRef.current === null) {
     const inMemory = stripTransientAgentHubFailureMessages(
       chatStore.get().messages,
@@ -1344,6 +1348,11 @@ const AgentHub: React.FC = () => {
   const lastStreamingScrollAtRef = useRef(0);
   /** Hub 对话 ag-ui WebSocket 取消句柄 */
   const mainChatCancelRef = useRef<(() => void) | null>(null);
+  const mainActiveAgUiRunRef = useRef<{
+    replyId: string;
+    threadId: string;
+    runId: string;
+  } | null>(null);
   const milkAnalysisFollowupInFlightRef = useRef<string | null>(null);
   const milkAnalysisFollowupBlockedRetryTimerRef = useRef<number | null>(null);
   const tryStartMilkAnalysisReminderFollowupRef = useRef<() => void>(() => {});
@@ -1643,7 +1652,7 @@ const AgentHub: React.FC = () => {
     lastMessageMetaRef.current = { len: 0, lastId: null };
 
     void stopSpeech({ discardSttResult: true });
-    void stopCurrentBubblePlayback();
+    void stopCurrentBubblePlayback({ preserveFocusVoice: true });
     primeAutoVoicePlayback();
     uploadedImagePreviewUrlsRef.current.forEach((url) => {
       try {
@@ -1697,6 +1706,7 @@ const AgentHub: React.FC = () => {
     chatStore.setMessages([greeting]);
     savePersistedChatMessages([greeting]);
     setMessages([greeting]);
+    playGreetingVoiceNowRef.current(greeting);
     if (!latestUserProfileRef.current) {
       void hydrateGreetingFromProfile({
         onlyIfNoConversationStarted: true,
@@ -2722,6 +2732,10 @@ const AgentHub: React.FC = () => {
   ) => {
     prepareLatestChatWindowForNewTurn();
     const showUserMessage = opts?.showUserMessage ?? true;
+    if (showUserMessage) {
+      pendingGreetingVoiceRef.current = null;
+      greetingVoiceInFlightRef.current = null;
+    }
     const replyTs = new Date().toLocaleTimeString("zh-CN", {
       hour: "2-digit",
       minute: "2-digit",
@@ -2752,6 +2766,8 @@ const AgentHub: React.FC = () => {
       timestamp: replyTs,
       cardType: "encourage",
       chatStreamContext: "main",
+      agentStatusLine: "我已经收到你的消息啦～",
+      agentStatusDone: false,
       // Timer starts when user sends the message; panel still stays hidden until work steps appear.
       agentWorkStartedAtMs: workTimerStartMs,
     };
@@ -2820,6 +2836,12 @@ const AgentHub: React.FC = () => {
     }, HUB_MAIN_STREAM_NO_VISIBLE_RESPONSE_TIMEOUT_MS);
     const onDoneHandler = () => {
       opts?.onStreamDone?.();
+      if (mainActiveAgUiRunRef.current?.replyId === replyId) {
+        mainActiveAgUiRunRef.current = null;
+      }
+      if (mainChatCancelRef.current === cancelRuntimeStream) {
+        mainChatCancelRef.current = null;
+      }
       setMessages((prev) =>
         prev.map((m) =>
           m.id === replyId && (m.thinkingContent?.trim() ?? "")
@@ -2883,6 +2905,9 @@ const AgentHub: React.FC = () => {
       pendingAgUiArtifactFormLikeRef.current = false;
       mainStreamMergedAnswerRef.current = "";
       mainStreamMergedThinkingRef.current = "";
+      if (mainActiveAgUiRunRef.current?.replyId === replyId) {
+        mainActiveAgUiRunRef.current = null;
+      }
       mainChatCancelRef.current = null;
       mainStreamingReplyIdRef.current = null;
       agentHubMainChatRuntime.finish(replyId);
@@ -2918,6 +2943,17 @@ const AgentHub: React.FC = () => {
     let wsCancel: (() => void) | null = null;
     const cancelRuntimeStream = () => {
       clearMainNoVisibleResponseTimer();
+      const activeRun = mainActiveAgUiRunRef.current;
+      if (activeRun?.replyId === replyId) {
+        mainActiveAgUiRunRef.current = null;
+        void cancelAgUiRun({
+          threadId: activeRun.threadId,
+          runId: activeRun.runId,
+          userId: DEFAULT_CHAT_USER_ID,
+        }).catch((err) => {
+          warn("[AG_UI_CANCEL] 取消后端运行失败", err);
+        });
+      }
       wsCancel?.();
       wsCancel = null;
       if (mainStreamingReplyIdRef.current === replyId) {
@@ -2945,6 +2981,13 @@ const AgentHub: React.FC = () => {
       images: agUiImages,
       forwardedProps: buildAgUiForwardedProps(agUiLocale),
       parseJSON: true,
+      onPayload: (payload) => {
+        mainActiveAgUiRunRef.current = {
+          replyId,
+          threadId: payload.threadId,
+          runId: payload.runId,
+        };
+      },
       onMessage: onMessageHandler,
       onDone: onDoneHandler,
       onError: onErrorHandler,
@@ -3753,6 +3796,8 @@ const AgentHub: React.FC = () => {
 
       if (!hasNewTurnContent) return;
       lastHubBottomNewTurnAtRef.current = Date.now();
+      pendingGreetingVoiceRef.current = null;
+      greetingVoiceInFlightRef.current = null;
       const text = pendingText || "请看这张图片";
       setMessages((prev) => clearQuickRepliesFromMessages(prev));
 
@@ -3931,6 +3976,49 @@ const AgentHub: React.FC = () => {
     [playMessageVoice],
   );
 
+  const playGreetingVoiceNow = useCallback(
+    (greeting: ChatMessage) => {
+      if (!autoVoiceRef.current) return;
+      if (greeting.role !== "mai") return;
+      if (greetingVoiceInFlightRef.current === greeting.id) return;
+      greetingVoiceInFlightRef.current = greeting.id;
+      void playMessageVoice(greeting, {
+        source: "greeting",
+        showErrorToast: false,
+        visual: true,
+      })
+        .then((result) => {
+          const current = pendingGreetingVoiceRef.current;
+          if (current?.message.id !== greeting.id) return;
+          if (result === "played") {
+            pendingGreetingVoiceRef.current = null;
+            return;
+          }
+          if (result === "failed") {
+            pendingGreetingVoiceRef.current = {
+              ...current,
+              attempts: current.attempts + 1,
+            };
+          }
+        })
+        .finally(() => {
+          if (greetingVoiceInFlightRef.current === greeting.id) {
+            greetingVoiceInFlightRef.current = null;
+          }
+        });
+    },
+    [playMessageVoice],
+  );
+
+  useLayoutEffect(() => {
+    playGreetingVoiceNowRef.current = playGreetingVoiceNow;
+    return () => {
+      if (playGreetingVoiceNowRef.current === playGreetingVoiceNow) {
+        playGreetingVoiceNowRef.current = () => {};
+      }
+    };
+  }, [playGreetingVoiceNow]);
+
   const tryPlayPendingGreetingVoice = useCallback(() => {
     const pending = pendingGreetingVoiceRef.current;
     if (!pending || !autoVoiceRef.current) return;
@@ -3939,31 +4027,8 @@ const AgentHub: React.FC = () => {
     );
     if (!greeting) return;
     if (pending.attempts >= 3) return;
-    if (greetingVoiceInFlightRef.current === greeting.id) return;
-    greetingVoiceInFlightRef.current = greeting.id;
-    void playMessageVoice(greeting, {
-      source: "greeting",
-      showErrorToast: false,
-      visual: true,
-    }).then((result) => {
-      const current = pendingGreetingVoiceRef.current;
-      if (current?.message.id !== greeting.id) return;
-      if (result === "played") {
-        pendingGreetingVoiceRef.current = null;
-        return;
-      }
-      if (result === "failed") {
-        pendingGreetingVoiceRef.current = {
-          ...current,
-          attempts: current.attempts + 1,
-        };
-      }
-    }).finally(() => {
-      if (greetingVoiceInFlightRef.current === greeting.id) {
-        greetingVoiceInFlightRef.current = null;
-      }
-    });
-  }, [messages, playMessageVoice]);
+    playGreetingVoiceNow(greeting);
+  }, [messages, playGreetingVoiceNow]);
 
   useEffect(() => {
     tryPlayPendingGreetingVoice();

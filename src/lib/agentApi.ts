@@ -81,6 +81,7 @@ export function workflowsTasksStopPath(conversationId: string): string {
 
 /** 集中维护的路径，便于联调替换 */
 export const API_PATHS = {
+  AG_UI_CANCEL: `/api/ag-ui-cancel`,
   AG_UI_PREWARM: `/api/ag-ui-prewarm`,
   FILES_UPLOAD: `${API_V1_PREFIX}/files/upload`,
   REALTIME_VOICE_STREAM: `${API_V1_PREFIX}/realtime-voice-stream`,
@@ -336,6 +337,12 @@ function httpLikeUrlToWebSocketUrl(url: string): string {
   return url;
 }
 
+function webSocketUrlToHttpLikeUrl(url: string): string {
+  if (url.startsWith("wss://")) return `https://${url.slice(6)}`;
+  if (url.startsWith("ws://")) return `http://${url.slice(5)}`;
+  return url;
+}
+
 function isWebSocketUrl(url: string): boolean {
   return /^wss?:\/\//i.test(url);
 }
@@ -440,6 +447,23 @@ export function resolveAgUiWebSocketRequestUrl(raw?: string): string {
   return enforceSecureWebSocketInSecureContext(httpLikeUrlToWebSocketUrl(resolved));
 }
 
+function resolveAgUiHttpRequestUrl(path: string, raw?: string): string {
+  const wsUrl = resolveAgUiWebSocketRequestUrl(raw);
+  const httpUrl = webSocketUrlToHttpLikeUrl(wsUrl);
+  try {
+    const base =
+      typeof window !== "undefined" && window.location?.href
+        ? window.location.href
+        : "http://localhost";
+    const u = new URL(httpUrl, base);
+    u.pathname = path;
+    u.search = "";
+    return u.toString();
+  } catch {
+    return path;
+  }
+}
+
 function buildAgUiRunId(): string {
   agUiRunCount += 1;
   return `run_${Date.now()}_${agUiRunCount}`;
@@ -498,10 +522,44 @@ export interface PostAgUiWebSocketStreamParams {
   forwardedProps?: Record<string, unknown>;
   wsUrl?: string;
   signal?: AbortSignal;
+  onPayload?: (payload: AgUiPayload) => void;
   onMessage: (data: string | object) => void;
   onDone?: () => void;
   onError?: (err: Error) => void;
   parseJSON?: boolean;
+}
+
+export interface CancelAgUiRunParams {
+  threadId: string;
+  runId?: string;
+  userId?: string;
+  wsUrl?: string;
+  signal?: AbortSignal;
+}
+
+export async function cancelAgUiRun(params: CancelAgUiRunParams): Promise<void> {
+  const authToken =
+    (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_TOKEN as string | undefined)?.trim()) || "";
+  const url = appendQueryParams(resolveAgUiHttpRequestUrl(API_PATHS.AG_UI_CANCEL, params.wsUrl), {
+    token: authToken || undefined,
+  });
+  const body: Record<string, string> = {
+    threadId: params.threadId,
+  };
+  if (params.runId?.trim()) body.runId = params.runId.trim();
+  if (params.userId?.trim()) body.user_id = params.userId.trim();
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+    },
+    body: JSON.stringify(body),
+    signal: params.signal,
+  });
+  if (!response.ok && response.status !== 404) {
+    throw new Error(`ag-ui cancel failed: ${response.status}`);
+  }
 }
 
 export interface AgUiPrewarmResponse {
@@ -541,7 +599,7 @@ export async function prewarmAgUiThread(
  * 兼容两种消息帧：纯 JSON 或 SSE data block；在收到 `RUN_FINISHED` 时触发 onDone 并主动关闭连接。
  */
 export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): () => void {
-  const { text, threadId, locale, images = [], forwardedProps, wsUrl, signal, onMessage, onDone, onError, parseJSON = true } =
+  const { text, threadId, locale, images = [], forwardedProps, wsUrl, signal, onPayload, onMessage, onDone, onError, parseJSON = true } =
     params;
   const authToken =
     (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_TOKEN as string | undefined)?.trim()) || "";
@@ -644,6 +702,7 @@ export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): 
     if (cancelled) return;
     try {
       const payload = buildAgUiPayload(text, images, { threadId, locale, forwardedProps });
+      onPayload?.(payload);
       const serializedPayload = JSON.stringify(payload);
       log("[AG_UI_WS] send", {
         url: redactWebSocketUrl(resolvedWsUrl),
