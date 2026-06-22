@@ -223,7 +223,6 @@ function asString(v: unknown): string {
 }
 
 const BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS = 22;
-const BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS = 36;
 
 function truncateBirthJourneyPlanText(value: unknown, maxChars: number): string {
   const text = asString(value).trim();
@@ -1103,7 +1102,7 @@ function normalizeBirthJourneyPlanItems(values: unknown): BirthJourneyPlanCardIt
       if (!title || isConfirmPlaceholder(title)) return null;
       return {
         title,
-        reason: truncateBirthJourneyPlanText(source.reason, BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS),
+        reason: asString(source.reason).trim(),
       };
     })
     .filter((item): item is BirthJourneyPlanCardItem => Boolean(item));

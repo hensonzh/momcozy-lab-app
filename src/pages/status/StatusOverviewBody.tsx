@@ -277,7 +277,6 @@ function compactText(value: unknown): string {
 }
 
 const BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS = 22;
-const BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS = 36;
 const BIRTH_JOURNEY_NEXT7_TODO_PREFIX = "next7_";
 
 function truncateBirthJourneyPlanText(value: unknown, maxChars: number): string {
@@ -343,7 +342,7 @@ function birthJourneyPlanItems(value: unknown): BirthJourneyPlanItem[] {
         return {
           id: compactText(source.id),
           title: truncateBirthJourneyPlanText(source.title, BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS),
-          reason: truncateBirthJourneyPlanText(source.reason, BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS),
+          reason: compactText(source.reason),
           timeframe: compactText(source.timeframe),
           based_on: source.based_on,
           completed: birthJourneyCompletedBool(source.completed),
