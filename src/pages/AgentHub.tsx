@@ -217,6 +217,7 @@ const LACTATION_LINK_PROMPT_MAP: Record<string, string> = {
 
 const HUB_TOP_ACTION_HEIGHT_PX = 48;
 const HUB_MAIN_STREAM_NO_VISIBLE_RESPONSE_TIMEOUT_MS = 25_000;
+const HUB_MAIN_STREAM_IDLE_TIMEOUT_MS = 60_000;
 type PendingHistoryAnchorRestore = { messageId: string; top: number };
 const HOSPITAL_BAG_CART_FOLLOWUP_MARKER = "你的待产包已经设计好了哦～";
 const PROFILE_ONBOARDING_GREETING =
@@ -2792,16 +2793,13 @@ const AgentHub: React.FC = () => {
     mainStreamingReplyIdRef.current = replyId;
     mainStreamFollowTailRef.current = true;
     primeAutoVoicePlayback();
-    const onMessageHandler = handleLiveMainStreamMessage(
-      replyId,
-      mainStreamMergedAnswerRef,
-      mainStreamMergedThinkingRef,
-      mainPendingRichTextRef,
-    );
-    mainNoVisibleResponseTimerRef.current = window.setTimeout(() => {
+    const finishMainStreamAfterTimeout = (
+      errorMessage: string,
+      visibleMessage: string,
+    ) => {
       if (mainStreamingReplyIdRef.current !== replyId) return;
       mainNoVisibleResponseTimerRef.current = null;
-      opts?.onStreamError?.(new Error("no visible response"));
+      opts?.onStreamError?.(new Error(errorMessage));
       agentHubMainChatRuntime.cancel();
       mainChatCancelRef.current?.();
       void stopCurrentBubblePlayback({
@@ -2823,7 +2821,7 @@ const AgentHub: React.FC = () => {
           m.id === replyId
             ? {
                 ...m,
-                content: "这次没有拿到回复，可能是连接中断了。你再发一次就好。",
+                content: visibleMessage,
                 cardType: "data" as const,
                 agentThinkingTitle: undefined,
                 agentStatusDone: true,
@@ -2833,9 +2831,50 @@ const AgentHub: React.FC = () => {
         ),
       );
       clearAwaitingBottomSendBarLoading();
-    }, HUB_MAIN_STREAM_NO_VISIBLE_RESPONSE_TIMEOUT_MS);
+    };
+    const scheduleMainStreamTimeout = (
+      delayMs: number,
+      errorMessage: string,
+      visibleMessage: string,
+    ) => {
+      clearMainNoVisibleResponseTimer();
+      mainNoVisibleResponseTimerRef.current = window.setTimeout(
+        () => finishMainStreamAfterTimeout(errorMessage, visibleMessage),
+        delayMs,
+      );
+    };
+    const liveMainMessageHandler = handleLiveMainStreamMessage(
+      replyId,
+      mainStreamMergedAnswerRef,
+      mainStreamMergedThinkingRef,
+      mainPendingRichTextRef,
+    );
+    const onMessageHandler = (data: string | object) => {
+      liveMainMessageHandler(data);
+      const eventType = resolveEventTag(data);
+      if (
+        eventType === "RUN_FINISHED" ||
+        eventType === "RUN_ERROR" ||
+        eventType === "RUN_FAILED" ||
+        eventType === "ERROR"
+      ) {
+        return;
+      }
+      if (mainStreamingReplyIdRef.current !== replyId) return;
+      scheduleMainStreamTimeout(
+        HUB_MAIN_STREAM_IDLE_TIMEOUT_MS,
+        "stream idle timeout",
+        "这次连接中途停住了，可能是后端或网络断流。你再发一次就好。",
+      );
+    };
+    scheduleMainStreamTimeout(
+      HUB_MAIN_STREAM_NO_VISIBLE_RESPONSE_TIMEOUT_MS,
+      "no visible response",
+      "这次没有拿到回复，可能是连接中断了。你再发一次就好。",
+    );
     const onDoneHandler = () => {
       opts?.onStreamDone?.();
+      clearMainNoVisibleResponseTimer();
       if (mainActiveAgUiRunRef.current?.replyId === replyId) {
         mainActiveAgUiRunRef.current = null;
       }
