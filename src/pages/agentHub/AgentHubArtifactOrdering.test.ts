@@ -123,6 +123,14 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain("playGreetingVoiceNow(greeting)");
   });
 
+  it("marks the first local profile onboarding reply in forwarded props only", () => {
+    expect(agentHubSource).toContain("function shouldForwardProfileOnboardingPending(");
+    expect(agentHubSource).toContain("profile_onboarding_pending");
+    expect(agentHubSource).toContain("opts?.showUserMessage");
+    expect(agentHubSource).toContain("hasRealUserMessage(currentMessages)");
+    expect(agentHubSource).toContain("isProfileOnboardingGreetingMessage");
+  });
+
   it("starts hidden milk analysis followup while notification voice is playing", () => {
     expect(agentHubSource).not.toContain("isAgentNotificationVoicePlaying()");
     expect(agentHubSource).toContain("mainChatRuntimeSnapshot.running");

@@ -45,6 +45,7 @@ import {
 import {
   cancelAgUiRun,
   postAgUiWebSocketStream,
+  postAgUiTimingLog,
   prewarmAgUiThread,
   queryUserProfile,
   parseChatRichTextFromSseData,
@@ -280,6 +281,47 @@ function createNewConversationGreetingContent(
     return `嗨 ${name}， \n\n今天想聊点什么呢？ \n\n把你现在最关心的事情告诉我就好，我会陪你一起梳理。`;
   }
   return PROFILE_ONBOARDING_GREETING;
+}
+
+function profileNeedsOnboarding(profile?: UserProfileData | null): boolean {
+  if (profile?.profile_onboarding_skipped) return false;
+  const name = String(profile?.display_name ?? "").trim();
+  const hasAge =
+    typeof profile?.age === "number" && Number.isFinite(profile.age);
+  return !name || !hasAge;
+}
+
+function isProfileOnboardingGreetingMessage(message: ChatMessage): boolean {
+  return (
+    message.role === "mai" &&
+    String(message.id).startsWith("mai-greeting-") &&
+    message.content.trim() === PROFILE_ONBOARDING_GREETING.trim()
+  );
+}
+
+function hasRealUserMessage(messages: ChatMessage[]): boolean {
+  return messages.some(
+    (message) =>
+      message.role === "user" &&
+      String(message.cardData?.kind ?? "") !== "uploaded-image",
+  );
+}
+
+function shouldForwardProfileOnboardingPending(
+  profile: UserProfileData | null,
+  currentMessages: ChatMessage[],
+  userMessage: string,
+): boolean {
+  if (!userMessage.trim() || !profileNeedsOnboarding(profile)) return false;
+  if (hasRealUserMessage(currentMessages)) return false;
+  const hasOnboardingGreeting = currentMessages.some(
+    isProfileOnboardingGreetingMessage,
+  );
+  const hasNonGreetingAssistant = currentMessages.some(
+    (message) =>
+      message.role === "mai" && !isProfileOnboardingGreetingMessage(message),
+  );
+  return hasOnboardingGreeting && !hasNonGreetingAssistant;
 }
 
 function createNewConversationGreetingMessage(
@@ -2385,7 +2427,10 @@ const AgentHub: React.FC = () => {
     });
   };
 
-  const buildAgUiForwardedProps = (locale: string): Record<string, unknown> => {
+  const buildAgUiForwardedProps = (
+    locale: string,
+    opts?: { showUserMessage?: boolean; userMessage?: string; clientTimingId?: string },
+  ): Record<string, unknown> => {
     const timezone =
       (typeof Intl !== "undefined" &&
         Intl.DateTimeFormat().resolvedOptions().timeZone) ||
@@ -2400,6 +2445,19 @@ const AgentHub: React.FC = () => {
         language: locale,
       },
     };
+    if (opts?.clientTimingId) {
+      forwardedProps.client_timing_id = opts.clientTimingId;
+    }
+    if (
+      opts?.showUserMessage &&
+      shouldForwardProfileOnboardingPending(
+        latestUserProfileRef.current,
+        messages,
+        opts.userMessage ?? "",
+      )
+    ) {
+      forwardedProps.profile_onboarding_pending = true;
+    }
     if (shouldForwardHospitalBagCart()) {
       forwardedProps.hospital_bag_cart = {
         groups: hospitalBagCartGroups,
@@ -2732,7 +2790,41 @@ const AgentHub: React.FC = () => {
     },
   ) => {
     prepareLatestChatWindowForNewTurn();
+    const requestThreadId = getAgUiThreadIdForRequest();
+    const agUiLocale =
+      (typeof navigator !== "undefined" && navigator.language) || "zh-CN";
+    const clientTimingId = `ct_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const timingStartedAtMs =
+      typeof performance !== "undefined" && typeof performance.now === "function"
+        ? performance.now()
+        : Date.now();
+    const timingNowMs = () =>
+      typeof performance !== "undefined" && typeof performance.now === "function"
+        ? performance.now()
+        : Date.now();
+    let timingRunId = "";
+    const recordAgUiTiming = (
+      stage: string,
+      metadata?: Record<string, unknown>,
+    ) => {
+      void postAgUiTimingLog({
+        source: "client",
+        stage,
+        client_timing_id: clientTimingId,
+        thread_id: requestThreadId,
+        run_id: timingRunId,
+        user_id: DEFAULT_CHAT_USER_ID,
+        elapsed_ms: timingNowMs() - timingStartedAtMs,
+        client_ts_ms: Date.now(),
+        metadata,
+      });
+    };
     const showUserMessage = opts?.showUserMessage ?? true;
+    recordAgUiTiming("client.send_start", {
+      show_user_message: showUserMessage,
+      query_len: String(query ?? "").length,
+      preserve_voice_playback: Boolean(opts?.preserveCurrentVoicePlayback),
+    });
     if (showUserMessage) {
       pendingGreetingVoiceRef.current = null;
       greetingVoiceInFlightRef.current = null;
@@ -2743,7 +2835,11 @@ const AgentHub: React.FC = () => {
     });
     const workTimerStartMs = Date.now();
     const stagedImageMessages = collectAgUiReadyImages(messages);
+    recordAgUiTiming("client.images_resolve_start", {
+      staged_image_count: stagedImageMessages.length,
+    });
     const agUiImages = await resolveAgUiImagePayload(stagedImageMessages);
+    recordAgUiTiming("client.images_resolved", { image_count: agUiImages.length });
     const sentImagePreviews = showUserMessage
       ? await buildSentImagePreviews(agUiImages)
       : [];
@@ -2777,6 +2873,7 @@ const AgentHub: React.FC = () => {
       ...(showUserMessage ? [userMsg] : []),
       replyPlaceholder,
     ]);
+    recordAgUiTiming("client.placeholder_inserted", { reply_id: replyId });
     if (opts?.purgeStagedImagesAfterAttach) purgeHubStagedUploadedImages();
     mainPendingRichTextRef.current = null;
     mainRichTextForVoiceRef.current = null;
@@ -2785,9 +2882,13 @@ const AgentHub: React.FC = () => {
     agentHubMainChatRuntime.cancel();
     mainChatCancelRef.current?.();
     mainStreamingReplyIdRef.current = null;
+    recordAgUiTiming("client.stop_voice_start", {
+      preserve_focus_voice: Boolean(opts?.preserveCurrentVoicePlayback),
+    });
     await stopCurrentBubblePlayback({
       preserveFocusVoice: opts?.preserveCurrentVoicePlayback,
     });
+    recordAgUiTiming("client.stop_voice_end");
     mainStreamMergedAnswerRef.current = "";
     mainStreamMergedThinkingRef.current = "";
     mainStreamingReplyIdRef.current = replyId;
@@ -2799,6 +2900,11 @@ const AgentHub: React.FC = () => {
     ) => {
       if (mainStreamingReplyIdRef.current !== replyId) return;
       mainNoVisibleResponseTimerRef.current = null;
+      recordAgUiTiming(
+        errorMessage === "no visible response"
+          ? "client.no_visible_response_timeout"
+          : "client.stream_idle_timeout",
+      );
       opts?.onStreamError?.(new Error(errorMessage));
       agentHubMainChatRuntime.cancel();
       mainChatCancelRef.current?.();
@@ -2849,9 +2955,19 @@ const AgentHub: React.FC = () => {
       mainStreamMergedThinkingRef,
       mainPendingRichTextRef,
     );
+    let firstHandledEventLogged = false;
+    let firstTextContentHandledLogged = false;
     const onMessageHandler = (data: string | object) => {
-      liveMainMessageHandler(data);
       const eventType = resolveEventTag(data);
+      if (!firstHandledEventLogged && eventType) {
+        firstHandledEventLogged = true;
+        recordAgUiTiming("client.first_event_handled", { event_type: eventType });
+      }
+      if (!firstTextContentHandledLogged && eventType === "TEXT_MESSAGE_CONTENT") {
+        firstTextContentHandledLogged = true;
+        recordAgUiTiming("client.first_text_content_handled");
+      }
+      liveMainMessageHandler(data);
       if (
         eventType === "RUN_FINISHED" ||
         eventType === "RUN_ERROR" ||
@@ -2873,6 +2989,7 @@ const AgentHub: React.FC = () => {
       "这次没有拿到回复，可能是连接中断了。你再发一次就好。",
     );
     const onDoneHandler = () => {
+      recordAgUiTiming("client.stream_done");
       opts?.onStreamDone?.();
       clearMainNoVisibleResponseTimer();
       if (mainActiveAgUiRunRef.current?.replyId === replyId) {
@@ -2934,6 +3051,10 @@ const AgentHub: React.FC = () => {
       }, 0);
     };
     const onErrorHandler = (err: Error) => {
+      recordAgUiTiming("client.stream_error", {
+        error_name: err?.name ?? "",
+        message_len: String(err?.message ?? "").length,
+      });
       opts?.onStreamError?.(err);
       clearMainNoVisibleResponseTimer();
       void stopCurrentBubblePlayback({
@@ -2977,11 +3098,10 @@ const AgentHub: React.FC = () => {
       );
       clearAwaitingBottomSendBarLoading();
     };
-    const agUiLocale =
-      (typeof navigator !== "undefined" && navigator.language) || "zh-CN";
     let wsCancel: (() => void) | null = null;
     const cancelRuntimeStream = () => {
       clearMainNoVisibleResponseTimer();
+      recordAgUiTiming("client.cancel_requested");
       const activeRun = mainActiveAgUiRunRef.current;
       if (activeRun?.replyId === replyId) {
         mainActiveAgUiRunRef.current = null;
@@ -3013,14 +3133,25 @@ const AgentHub: React.FC = () => {
     };
     mainChatCancelRef.current = cancelRuntimeStream;
     agentHubMainChatRuntime.start(replyId, cancelRuntimeStream);
+    recordAgUiTiming("client.ws_stream_start");
     wsCancel = postAgUiWebSocketStream({
       text: query,
-      threadId: getAgUiThreadIdForRequest(),
+      threadId: requestThreadId,
       locale: agUiLocale,
       images: agUiImages,
-      forwardedProps: buildAgUiForwardedProps(agUiLocale),
+      forwardedProps: buildAgUiForwardedProps(agUiLocale, {
+        showUserMessage,
+        userMessage: query,
+        clientTimingId,
+      }),
       parseJSON: true,
+      onTiming: recordAgUiTiming,
       onPayload: (payload) => {
+        timingRunId = payload.runId;
+        recordAgUiTiming("client.payload_ready", {
+          thread_id: payload.threadId,
+          run_id: payload.runId,
+        });
         mainActiveAgUiRunRef.current = {
           replyId,
           threadId: payload.threadId,
