@@ -11,7 +11,7 @@ import {
   uploadMultipart,
   type GetBinaryStreamOptions,
 } from "./http";
-import { log } from "./logger";
+import { log, warn } from "./logger";
 import { resolveChatAssetUrl } from "@/lib/chatAssetUrl";
 import { normalizeMediaVoiceNarrationItems } from "@/lib/mediaVoiceNarration";
 import type {
@@ -83,6 +83,7 @@ export function workflowsTasksStopPath(conversationId: string): string {
 export const API_PATHS = {
   AG_UI_CANCEL: `/api/ag-ui-cancel`,
   AG_UI_PREWARM: `/api/ag-ui-prewarm`,
+  AG_UI_TIMING_LOG: `/api/ag-ui-timing-log`,
   FILES_UPLOAD: `${API_V1_PREFIX}/files/upload`,
   REALTIME_VOICE_STREAM: `${API_V1_PREFIX}/realtime-voice-stream`,
   REALTIME_VOICE_SESSION_WS: `${API_V1_PREFIX}/realtime-voice-session`,
@@ -526,6 +527,7 @@ export interface PostAgUiWebSocketStreamParams {
   onMessage: (data: string | object) => void;
   onDone?: () => void;
   onError?: (err: Error) => void;
+  onTiming?: (stage: string, metadata?: Record<string, unknown>) => void;
   parseJSON?: boolean;
 }
 
@@ -559,6 +561,49 @@ export async function cancelAgUiRun(params: CancelAgUiRunParams): Promise<void> 
   });
   if (!response.ok && response.status !== 404) {
     throw new Error(`ag-ui cancel failed: ${response.status}`);
+  }
+}
+
+export interface PostAgUiTimingLogEntry {
+  source?: string;
+  stage: string;
+  run_id?: string;
+  runId?: string;
+  thread_id?: string;
+  threadId?: string;
+  client_timing_id?: string;
+  clientTimingId?: string;
+  user_id?: string;
+  userId?: string;
+  elapsed_ms?: number;
+  elapsedMs?: number;
+  client_ts_ms?: number;
+  clientTsMs?: number;
+  metadata?: Record<string, unknown>;
+}
+
+export async function postAgUiTimingLog(
+  entry: PostAgUiTimingLogEntry,
+  opts?: { wsUrl?: string; signal?: AbortSignal },
+): Promise<void> {
+  const authToken =
+    (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_TOKEN as string | undefined)?.trim()) || "";
+  const url = appendQueryParams(resolveAgUiHttpRequestUrl(API_PATHS.AG_UI_TIMING_LOG, opts?.wsUrl), {
+    token: authToken || undefined,
+  });
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      },
+      body: JSON.stringify(entry),
+      signal: opts?.signal,
+      keepalive: true,
+    });
+  } catch (err) {
+    warn("[AG_UI_TIMING] 上报失败", err);
   }
 }
 
@@ -599,8 +644,21 @@ export async function prewarmAgUiThread(
  * 兼容两种消息帧：纯 JSON 或 SSE data block；在收到 `RUN_FINISHED` 时触发 onDone 并主动关闭连接。
  */
 export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): () => void {
-  const { text, threadId, locale, images = [], forwardedProps, wsUrl, signal, onPayload, onMessage, onDone, onError, parseJSON = true } =
-    params;
+  const {
+    text,
+    threadId,
+    locale,
+    images = [],
+    forwardedProps,
+    wsUrl,
+    signal,
+    onPayload,
+    onMessage,
+    onDone,
+    onError,
+    onTiming,
+    parseJSON = true,
+  } = params;
   const authToken =
     (typeof import.meta !== "undefined" && (import.meta.env.VITE_API_TOKEN as string | undefined)?.trim()) || "";
   let resolvedWsUrl = resolveAgUiWebSocketRequestUrl(wsUrl);
@@ -612,6 +670,16 @@ export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): 
   let doneEmitted = false;
   let failed = false;
   let sseBuffer = "";
+  let firstFrameLogged = false;
+  let firstParsedEventLogged = false;
+
+  const markTiming = (stage: string, metadata?: Record<string, unknown>) => {
+    try {
+      onTiming?.(stage, metadata);
+    } catch {
+      /* timing must never break chat streaming */
+    }
+  };
 
   const emitDoneOnce = () => {
     if (doneEmitted) return;
@@ -651,7 +719,12 @@ export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): 
       if (typeof obj === "object" && obj != null) {
         const rec = obj as Record<string, unknown>;
         const type = typeof rec.type === "string" ? rec.type : "";
+        if (!firstParsedEventLogged) {
+          firstParsedEventLogged = true;
+          markTiming("client.first_event_parsed", { event_type: type, raw_len: t.length });
+        }
         if (type === "RUN_FINISHED") {
+          markTiming("client.run_finished_frame");
           onMessage(rec);
           emitDoneOnce();
           closeSocket();
@@ -659,6 +732,7 @@ export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): 
         }
         if (type === "RUN_FAILED" || type === "ERROR" || type === "RUN_ERROR") {
           failed = true;
+          markTiming("client.run_error_frame", { event_type: type });
           const msg =
             typeof rec.message === "string" && rec.message.trim()
               ? rec.message.trim()
@@ -690,8 +764,11 @@ export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): 
   };
 
   try {
+    markTiming("client.ws_construct_start", { url: redactWebSocketUrl(resolvedWsUrl) });
     ws = new WebSocket(resolvedWsUrl);
+    markTiming("client.ws_constructed");
   } catch (e: unknown) {
+    markTiming("client.ws_construct_failed", { error_type: e instanceof Error ? e.name : typeof e });
     onError?.(e instanceof Error ? e : new Error(String(e)));
     return () => {
       cancelled = true;
@@ -700,10 +777,19 @@ export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): 
 
   ws.onopen = () => {
     if (cancelled) return;
+    markTiming("client.ws_open");
     try {
       const payload = buildAgUiPayload(text, images, { threadId, locale, forwardedProps });
+      markTiming("client.payload_built", {
+        thread_id: payload.threadId,
+        run_id: payload.runId,
+        image_count: images.length,
+        text_len: String(text ?? "").length,
+      });
       onPayload?.(payload);
       const serializedPayload = JSON.stringify(payload);
+      const serializedByteLen = new Blob([serializedPayload]).size;
+      markTiming("client.payload_serialized", { byte_len: serializedByteLen });
       log("[AG_UI_WS] send", {
         url: redactWebSocketUrl(resolvedWsUrl),
         threadId: payload.threadId,
@@ -716,8 +802,14 @@ export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): 
         serializedPayload,
       });
       ws?.send(serializedPayload);
+      markTiming("client.payload_sent", {
+        thread_id: payload.threadId,
+        run_id: payload.runId,
+        byte_len: serializedByteLen,
+      });
     } catch (e: unknown) {
       failed = true;
+      markTiming("client.payload_send_failed", { error_type: e instanceof Error ? e.name : typeof e });
       onError?.(e instanceof Error ? e : new Error(String(e)));
       closeSocket();
     }
@@ -732,6 +824,10 @@ export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): 
         dataType: raw == null ? String(raw) : Object.prototype.toString.call(raw),
       });
       return;
+    }
+    if (!firstFrameLogged) {
+      firstFrameLogged = true;
+      markTiming("client.ws_first_frame", { raw_len: raw.length });
     }
     log("[AG_UI_WS] recv-frame-raw-full", {
       url: redactWebSocketUrl(resolvedWsUrl),
@@ -748,10 +844,18 @@ export function postAgUiWebSocketStream(params: PostAgUiWebSocketStreamParams): 
   ws.onerror = () => {
     if (cancelled) return;
     failed = true;
+    markTiming("client.ws_error");
     onError?.(new Error(`ag-ui websocket connection error url=${redactWebSocketUrl(resolvedWsUrl)}`));
   };
 
   ws.onclose = (ev: CloseEvent) => {
+    markTiming("client.ws_close", {
+      code: ev.code,
+      was_clean: ev.wasClean,
+      done_emitted: doneEmitted,
+      failed,
+      cancelled,
+    });
     log("[AG_UI_WS] close", {
       code: ev.code,
       reason: ev.reason || undefined,
