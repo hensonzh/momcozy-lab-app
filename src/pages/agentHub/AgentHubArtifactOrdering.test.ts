@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 const here = dirname(fileURLToPath(import.meta.url));
 const agentHubSource = readFileSync(resolve(here, "../AgentHub.tsx"), "utf8");
 const appSource = readFileSync(resolve(here, "../../App.tsx"), "utf8");
+const agentApiSource = readFileSync(resolve(here, "../../lib/agentApi.ts"), "utf8");
 
 describe("AgentHub artifact ordering wiring", () => {
   it("defers ag-ui artifacts and keeps later final text before artifacts", () => {
@@ -102,7 +103,11 @@ describe("AgentHub artifact ordering wiring", () => {
 
   it("marks manually created new-session greeting for immediate auto voice", () => {
     expect(agentHubSource).toMatch(
-      /const greeting = createNewConversationGreetingMessage\(\s*latestUserProfileRef\.current,\s*\);\s*pendingGreetingVoiceRef\.current = \{ message: greeting, attempts: 0 \};\s*chatStore\.setMessages\(\[greeting\]\);/s,
+      /const greeting = createNewConversationGreetingMessage\(\s*latestUserProfileRef\.current,\s*\);\s*pendingGreetingVoiceRef\.current = \{ message: greeting, attempts: 0 \};\s*chatStore\.setMessages\(\[greeting\]\);\s*savePersistedChatMessages\(\[greeting\]\);\s*setMessages\(\[greeting\]\);\s*playGreetingVoiceNowRef\.current\(greeting\);/s,
+    );
+    expect(agentHubSource).toContain("playGreetingVoiceNowRef");
+    expect(agentHubSource).toContain(
+      "stopCurrentBubblePlayback({ preserveFocusVoice: true })",
     );
     expect(agentHubSource).toContain("const existingPendingGreetingVoice");
     expect(agentHubSource).toContain("autoVoice?: boolean");
@@ -110,6 +115,12 @@ describe("AgentHub artifact ordering wiring", () => {
       "if ((opts?.autoVoice ?? true) || existingPendingGreetingVoice)",
     );
     expect(agentHubSource).toContain("autoVoice: false");
+  });
+
+  it("drops stale greeting voice once the user starts a real turn", () => {
+    expect(agentHubSource).toContain("pendingGreetingVoiceRef.current = null");
+    expect(agentHubSource).toContain("greetingVoiceInFlightRef.current = null");
+    expect(agentHubSource).toContain("playGreetingVoiceNow(greeting)");
   });
 
   it("starts hidden milk analysis followup while notification voice is playing", () => {
@@ -131,6 +142,15 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain(
       "window.setTimeout(tryStartMilkAnalysisReminderFollowup, 0)",
     );
+  });
+
+  it("notifies the backend when an ag-ui main chat run is interrupted", () => {
+    expect(agentApiSource).toContain("AG_UI_CANCEL");
+    expect(agentApiSource).toContain("cancelAgUiRun");
+    expect(agentApiSource).toContain("onPayload?.(payload)");
+    expect(agentHubSource).toContain("mainActiveAgUiRunRef");
+    expect(agentHubSource).toContain("cancelAgUiRun({");
+    expect(agentHubSource).toContain('agentStatusLine: "我已经收到你的消息啦～"');
   });
 
   it("keeps notification voice lifecycle bounded", () => {

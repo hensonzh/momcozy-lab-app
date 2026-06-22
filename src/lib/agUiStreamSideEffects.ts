@@ -6,7 +6,11 @@
 import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import type { AgUiToolCallRow, ChatMessage, ChatMessageCitation, ChatQuickReply } from "@/types/chat";
 import type { ChatRichTextPayload } from "@/lib/agentApiTypes";
-import { notifyBirthJourneyPlanDeleted, notifyBirthJourneyPlanUpdated } from "@/lib/birthJourneyPlanNotification";
+import {
+  markBirthJourneyPlanUpdatedNotification,
+  notifyBirthJourneyPlanDeleted,
+  notifyBirthJourneyPlanUpdated,
+} from "@/lib/birthJourneyPlanNotification";
 import { normalizeMediaVoiceNarrationItems, type MediaVoiceNarrationItem } from "@/lib/mediaVoiceNarration";
 import { notifyPregnancyDiaryChanged } from "@/lib/pregnancyDiaryEvents";
 import type { HospitalBagCartGroup } from "@/pages/hospitalBagCartModel";
@@ -404,6 +408,7 @@ function maybeNotifyBirthJourneyPlanUpdated(parsed: Record<string, unknown> | nu
   if (toolName !== "birth_journey_plan_todo_update") return;
   if (coalesceString(parsed.status) !== "todo_completion_updated") return;
   if (parsed.side_effect_performed === false) return;
+  markBirthJourneyPlanUpdatedNotification();
   notifyBirthJourneyPlanUpdated();
 }
 

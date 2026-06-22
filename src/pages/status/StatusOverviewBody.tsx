@@ -53,7 +53,7 @@ import {
   pickMomBabyDeliveryDateYmd,
   postpartumWeekFromDay,
 } from "@/lib/momBabyDelivery";
-import { queryMomBabyInfo, queryMomBabyToday, getPumpInfo, queryPumpMilkRecords } from "@/lib/momPumpTwinAgentApi";
+import { queryMomBabyInfo, queryMomBabyToday, getPumpInfo } from "@/lib/momPumpTwinAgentApi";
 import {
   queryLatestGrowth,
   addGrowthRecord,
@@ -71,6 +71,7 @@ import {
   clearBirthJourneyPlanGeneratedNotification,
   subscribeBirthJourneyPlanDeleted,
   subscribeBirthJourneyPlanUpdated,
+  transferBirthJourneyPlanNotificationToStatusCard,
   useBirthJourneyPlanCardNotification,
 } from "@/lib/birthJourneyPlanNotification";
 import {
@@ -78,6 +79,7 @@ import {
   subscribePregnancyDiaryChanged,
   usePregnancyDiaryCardNotification,
 } from "@/lib/pregnancyDiaryEvents";
+import { subscribeMilkRecordsChanged } from "@/lib/milkRecordsEvents";
 import { getRuntimeMomStage } from "@/lib/debugUserConfig";
 
 import momAvatar from "@/assets/mom-avatar-felt.png";
@@ -2251,8 +2253,6 @@ const StatusOverviewBody: React.FC = () => {
   const [activeDigitalTwin, setActiveDigitalTwin] = useState<StatusDigitalTwinTab>("mom");
   const [activeMomPanel, setActiveMomPanel] = useState<MomStatusPanelId | null>(null);
   const [activeBabyPanel, setActiveBabyPanel] = useState<BabyStatusPanelId | null>(null);
-  const [todayDevicePumpCount, setTodayDevicePumpCount] = useState<number | null>(null);
-  const [todayPumpRecordsLoading, setTodayPumpRecordsLoading] = useState(true);
   const [todayFeedingCount, setTodayFeedingCount] = useState<number | null>(null);
   const [todayFeedingRecordsLoading, setTodayFeedingRecordsLoading] = useState(true);
   const [birthJourneyPlan, setBirthJourneyPlan] = useState<CarePlanArtifact | null>(null);
@@ -2345,6 +2345,7 @@ const StatusOverviewBody: React.FC = () => {
   }), []);
 
   useEffect(() => subscribeBirthJourneyPlanUpdated(() => {
+    transferBirthJourneyPlanNotificationToStatusCard();
     void reloadBirthJourneyPlan().catch(() => {
       /* keep existing plan visible if refresh fails */
     });
@@ -2386,6 +2387,16 @@ const StatusOverviewBody: React.FC = () => {
     setPregnancyDiaryEntries(realEntries);
   }, []);
 
+  const reloadMomBabyToday = useCallback(async (signal?: AbortSignal) => {
+    const todayDateKey = toLocalDateKey(new Date());
+    const data = await queryMomBabyToday(DEFAULT_CHAT_USER_ID, { signal, timestamp: todayDateKey });
+    if (data.error !== 0) {
+      setMomBabyToday(null);
+      return;
+    }
+    setMomBabyToday(data);
+  }, []);
+
   const reloadPumpInfo = useCallback(async (signal?: AbortSignal) => {
     const data = await getPumpInfo(DEFAULT_CHAT_USER_ID, { signal });
     if (data.error !== 0 || !Array.isArray(data.lactation_info_list)) {
@@ -2406,7 +2417,10 @@ const StatusOverviewBody: React.FC = () => {
       if (document.visibilityState !== "visible") return;
       ac?.abort();
       ac = new AbortController();
-      void reloadPumpInfo(ac.signal).catch((e: unknown) => {
+      void Promise.all([
+        reloadPumpInfo(ac.signal),
+        reloadMomBabyToday(ac.signal),
+      ]).catch((e: unknown) => {
         if ((e as { name?: string })?.name === "AbortError") return;
       });
     };
@@ -2420,7 +2434,37 @@ const StatusOverviewBody: React.FC = () => {
       window.removeEventListener("focus", refreshPumpInfo);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [reloadPumpInfo]);
+  }, [reloadMomBabyToday, reloadPumpInfo]);
+
+  useEffect(() => {
+    let cancelled = false;
+    let ac: AbortController | null = null;
+    const unsubscribe = subscribeMilkRecordsChanged((event) => {
+      const userId = event.detail?.user_id;
+      if (userId && userId !== DEFAULT_CHAT_USER_ID) return;
+      ac?.abort();
+      ac = new AbortController();
+      setTodayQueryLoading(true);
+      setPumpInfoLoading(true);
+      void Promise.all([
+        reloadMomBabyToday(ac.signal),
+        reloadPumpInfo(ac.signal),
+      ])
+        .catch((e: unknown) => {
+          if ((e as { name?: string })?.name === "AbortError") return;
+        })
+        .finally(() => {
+          if (cancelled) return;
+          setTodayQueryLoading(false);
+          setPumpInfoLoading(false);
+        });
+    });
+    return () => {
+      cancelled = true;
+      ac?.abort();
+      unsubscribe();
+    };
+  }, [reloadMomBabyToday, reloadPumpInfo]);
 
   const openPregnancyDiaryEditor = useCallback(() => {
     clearPregnancyDiaryCardNotification();
@@ -2479,23 +2523,15 @@ const StatusOverviewBody: React.FC = () => {
 
     setTodayQueryLoading(true);
     setMomBabyToday(null);
-    void (async () => {
-      try {
-        const data = await queryMomBabyToday(DEFAULT_CHAT_USER_ID, { signal: ac.signal });
-        if (cancelled) return;
-        if (data.error !== 0) {
-          setMomBabyToday(null);
-          return;
-        }
-        setMomBabyToday(data);
-      } catch (e: unknown) {
+    void reloadMomBabyToday(ac.signal)
+      .catch((e: unknown) => {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
         setMomBabyToday(null);
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) setTodayQueryLoading(false);
-      }
-    })();
+      });
 
     setUserProfileLoading(true);
     setBirthPrepDueDateOrWeek("");
@@ -2570,31 +2606,6 @@ const StatusOverviewBody: React.FC = () => {
         if (!cancelled) setPumpInfoLoading(false);
       });
 
-    setTodayPumpRecordsLoading(true);
-    setTodayDevicePumpCount(null);
-    void (async () => {
-      try {
-        const data = await queryPumpMilkRecords(
-          { user_id: DEFAULT_CHAT_USER_ID, timestamp: todayDateKey },
-          { signal: ac.signal },
-        );
-        if (cancelled) return;
-        if (data.error !== 0 || !Array.isArray(data.pump_milk_list)) {
-          setTodayDevicePumpCount(null);
-          return;
-        }
-        setTodayDevicePumpCount(
-          data.pump_milk_list.filter((item) => item.pump_type === 0 && item.pump_source === 0).length,
-        );
-      } catch (e: unknown) {
-        if ((e as { name?: string })?.name === "AbortError") return;
-        if (cancelled) return;
-        setTodayDevicePumpCount(null);
-      } finally {
-        if (!cancelled) setTodayPumpRecordsLoading(false);
-      }
-    })();
-
     setTodayFeedingRecordsLoading(true);
     setTodayFeedingCount(null);
     void (async () => {
@@ -2654,7 +2665,7 @@ const StatusOverviewBody: React.FC = () => {
       cancelled = true;
       ac.abort();
     };
-  }, [reloadBirthJourneyPlan, reloadPregnancyDiary, reloadPumpInfo]);
+  }, [reloadBirthJourneyPlan, reloadMomBabyToday, reloadPregnancyDiary, reloadPumpInfo]);
 
   const babyDaysSinceBirth = deliveryYmd ? calendarDaysSinceDeliveryLocal(deliveryYmd) : null;
   const babyAgeDays =
@@ -2698,6 +2709,11 @@ const StatusOverviewBody: React.FC = () => {
     () => (momBabyToday ? mlFromApi(momBabyToday.feeding_volum) : null),
     [momBabyToday],
   );
+  const todayPumpCount = useMemo(() => {
+    const count = momBabyToday?.pumping_count;
+    if (typeof count !== "number" || !Number.isFinite(count)) return null;
+    return Math.max(0, Math.round(count));
+  }, [momBabyToday]);
   const [windowSize, setWindowSize] = useState<7 | 30>(7);
   const [growthCurveType, setGrowthCurveType] = useState<"weight" | "height">("weight");
 
@@ -2782,10 +2798,10 @@ const StatusOverviewBody: React.FC = () => {
     : todayFeedMl !== null
       ? `${formatVol(todayFeedMl, unit)}${unitLabel(unit)}`
       : "待记录";
-  const todayPumpCountLabel = todayPumpRecordsLoading
+  const todayPumpCountLabel = todayQueryLoading
     ? "加载中"
-    : todayDevicePumpCount !== null
-      ? `${todayDevicePumpCount}次`
+    : todayPumpCount !== null
+      ? `${todayPumpCount}次`
       : "待同步";
   const todayFeedingCountLabel = todayFeedingRecordsLoading
     ? "加载中"

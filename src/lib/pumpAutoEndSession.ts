@@ -34,6 +34,7 @@ import type { ChatMessage } from "@/types/chat";
 import type { PumpMilkUploadBody, PumpSessionSummaryBody, PumpSessionSummarySide } from "@/lib/agentApiTypes";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
 import { uploadPumpMilkRecord } from "@/lib/momPumpTwinAgentApi";
+import { notifyMilkRecordsChanged } from "@/lib/milkRecordsEvents";
 
 // ─── 吸乳小结写入对话 ─────────────────────────────────────────────
 const CHAT_USER_ID = getRuntimeUserId(import.meta.env.VITE_DEFAULT_USER_ID as string | undefined);
@@ -176,6 +177,7 @@ export async function pushPumpMilkUploadForPumpSessionEnd(event?: PumpSessionEnd
     if (typeof error === "number" && error !== 0) {
       throw new Error(`native pump milk upload error=${error}`);
     }
+    notifyMilkRecordsChanged({ user_id: CHAT_USER_ID });
     return;
   }
   const body = buildPumpMilkUploadBody(event ?? pumpSessionLifecycle.getLastEndedEvent());

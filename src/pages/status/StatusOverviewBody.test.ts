@@ -14,6 +14,7 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("queryCarePlanList");
     expect(statusSource).toContain("updateBirthJourneyTodoCompletion");
     expect(statusSource).toContain("subscribeBirthJourneyPlanUpdated");
+    expect(statusSource).toContain("transferBirthJourneyPlanNotificationToStatusCard();");
     expect(statusSource).toContain("queryUserProfile");
     expect(statusSource).toContain('type MaternalCareStage = "pregnancy" | "postpartum"');
     expect(statusSource).toContain("formatPregnancyStageSubtitle");

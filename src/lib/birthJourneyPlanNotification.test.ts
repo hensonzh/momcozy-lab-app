@@ -5,6 +5,7 @@ import {
   clearBirthJourneyPlanCardNotification,
   clearBirthJourneyPlanGeneratedNotification,
   markBirthJourneyPlanGeneratedNotification,
+  markBirthJourneyPlanUpdatedNotification,
   notifyBirthJourneyPlanDeleted,
   notifyBirthJourneyPlanUpdated,
   richTextPayloadHasBirthJourneyPlanCard,
@@ -32,6 +33,18 @@ describe("birth journey plan notification state", () => {
     clearBirthJourneyPlanCardNotification();
 
     expect(localStorage.getItem("mmc_birth_journey_plan_card_pending")).toBeNull();
+  });
+
+  it("moves updated plan notice from status nav to status card", () => {
+    markBirthJourneyPlanUpdatedNotification();
+
+    expect(localStorage.getItem("mmc_birth_journey_plan_nav_pending")).toContain('"reason":"updated"');
+    expect(localStorage.getItem("mmc_birth_journey_plan_card_pending")).toBeNull();
+
+    transferBirthJourneyPlanNotificationToStatusCard();
+
+    expect(localStorage.getItem("mmc_birth_journey_plan_nav_pending")).toBeNull();
+    expect(localStorage.getItem("mmc_birth_journey_plan_card_pending")).toContain('"label":"孕期计划已同步"');
   });
 
   it("clears both nav and card generated notices without emitting a deleted event", () => {

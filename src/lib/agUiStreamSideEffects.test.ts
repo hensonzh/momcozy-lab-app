@@ -1192,6 +1192,7 @@ describe("applyAgUiStreamSideEffects", () => {
     ]);
 
     expect(events).toEqual(["updated"]);
+    expect(localStorage.getItem("mmc_birth_journey_plan_nav_pending")).toContain('"reason":"updated"');
     expect(msg.agentToolCalls?.[0]).toMatchObject({
       name: "birth_journey_plan_todo_update",
       title: "我已经同步计划完成状态啦",

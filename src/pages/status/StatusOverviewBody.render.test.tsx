@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -7,6 +7,8 @@ import {
   queryPregnancyDiaryToday,
   queryUserProfile,
 } from "@/lib/agentApi";
+import { queryMomBabyToday, queryPumpMilkRecords } from "@/lib/momPumpTwinAgentApi";
+import { notifyMilkRecordsChanged } from "@/lib/milkRecordsEvents";
 import StatusOverviewBody from "./StatusOverviewBody";
 
 vi.mock("recharts", () => ({
@@ -53,6 +55,10 @@ vi.mock("@/lib/momPumpTwinAgentApi", () => ({
     pump_milk_volum: 0,
     feeding_volum: 0,
     feeding_forecast_volum: 0,
+    pumping_count: 0,
+    device_pumping_count: 0,
+    manual_pumping_count: 0,
+    plan_pumping_count: 0,
     status_page_tabs: [],
     status_page_card: null,
   })),
@@ -71,6 +77,20 @@ describe("StatusOverviewBody render", () => {
   beforeEach(() => {
     localStorage.clear();
     sessionStorage.clear();
+    vi.mocked(queryMomBabyToday).mockReset();
+    vi.mocked(queryMomBabyToday).mockResolvedValue({
+      error: -1,
+      pump_milk_volum: 0,
+      feeding_volum: 0,
+      feeding_forecast_volum: 0,
+      pumping_count: 0,
+      device_pumping_count: 0,
+      manual_pumping_count: 0,
+      plan_pumping_count: 0,
+      status_page_tabs: [],
+      status_page_card: null,
+    });
+    vi.mocked(queryPumpMilkRecords).mockClear();
     vi.mocked(queryPregnancyDiaryList).mockResolvedValue({ error: 0, diary_list: [] });
     vi.mocked(queryPregnancyDiaryToday).mockResolvedValue({ error: 0, diary: null });
     vi.mocked(queryUserProfile).mockResolvedValue({
@@ -228,5 +248,71 @@ describe("StatusOverviewBody render", () => {
     expect(screen.queryByText("孕期计划")).not.toBeInTheDocument();
     expect(screen.queryByText("孕期日记")).not.toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /宝宝/ })).not.toBeDisabled();
+  });
+
+  it("uses the unified mom-baby today summary for today's pump count", async () => {
+    vi.mocked(queryMomBabyToday).mockResolvedValue({
+      error: 0,
+      pump_milk_volum: 120,
+      feeding_volum: 0,
+      feeding_forecast_volum: 0,
+      pumping_count: 3,
+      device_pumping_count: 1,
+      manual_pumping_count: 1,
+      plan_pumping_count: 1,
+      status_page_tabs: [],
+      status_page_card: null,
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/status"]}>
+        <StatusOverviewBody />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText("3次")).toBeInTheDocument();
+    expect(queryPumpMilkRecords).not.toHaveBeenCalled();
+  });
+
+  it("refreshes today's pump summary after milk records change", async () => {
+    vi.mocked(queryMomBabyToday)
+      .mockResolvedValueOnce({
+        error: 0,
+        pump_milk_volum: 80,
+        feeding_volum: 0,
+        feeding_forecast_volum: 0,
+        pumping_count: 1,
+        device_pumping_count: 1,
+        manual_pumping_count: 0,
+        plan_pumping_count: 0,
+        status_page_tabs: [],
+        status_page_card: null,
+      })
+      .mockResolvedValue({
+        error: 0,
+        pump_milk_volum: 140,
+        feeding_volum: 0,
+        feeding_forecast_volum: 0,
+        pumping_count: 2,
+        device_pumping_count: 1,
+        manual_pumping_count: 1,
+        plan_pumping_count: 0,
+        status_page_tabs: [],
+        status_page_card: null,
+      });
+
+    render(
+      <MemoryRouter initialEntries={["/status"]}>
+        <StatusOverviewBody />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText("1次")).toBeInTheDocument();
+
+    act(() => {
+      notifyMilkRecordsChanged();
+    });
+
+    expect(await screen.findByText("2次")).toBeInTheDocument();
   });
 });

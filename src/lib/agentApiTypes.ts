@@ -354,6 +354,7 @@ export interface MomBabyInfoData {
 
 export interface MomBabyTodayParams {
   user_id: string;
+  timestamp?: string;
 }
 
 export interface MomBabyTodayData {
@@ -361,6 +362,10 @@ export interface MomBabyTodayData {
   pump_milk_volum: number;
   feeding_volum: number;
   feeding_forecast_volum: number;
+  pumping_count?: number;
+  device_pumping_count?: number;
+  manual_pumping_count?: number;
+  plan_pumping_count?: number;
 }
 
 // ─── 宝宝与喂养 ─────────────────────────────────────────────────────

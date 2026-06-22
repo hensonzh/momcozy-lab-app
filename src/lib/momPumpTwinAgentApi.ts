@@ -15,6 +15,7 @@ import type {
   PumpMilkUploadBody,
   PumpMilkUploadData,
 } from "./agentApiTypes";
+import { notifyMilkRecordsChanged } from "./milkRecordsEvents";
 
 const V1 = "/v1" as const;
 const PATHS = {
@@ -41,11 +42,11 @@ export async function queryMomBabyInfo(
 
 export async function queryMomBabyToday(
   user_id: string,
-  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
+  opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal; timestamp?: string },
 ): Promise<MomBabyTodayData> {
   return apiRequest<MomBabyTodayData>(PATHS.MOM_BABY_TODAY_QUERY, {
     method: "GET",
-    params: { user_id },
+    params: { user_id, ...(opts?.timestamp ? { timestamp: opts.timestamp } : {}) },
     token: opts?.token,
     skipAuth: opts?.skipAuth,
     signal: opts?.signal,
@@ -83,26 +84,34 @@ export async function uploadPumpMilkRecord(
   body: PumpMilkUploadBody,
   opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
 ): Promise<PumpMilkUploadData> {
-  return apiRequest<PumpMilkUploadData>(PATHS.PUMP_MILK_UPLOAD, {
+  const response = await apiRequest<PumpMilkUploadData>(PATHS.PUMP_MILK_UPLOAD, {
     method: "POST",
     body,
     token: opts?.token,
     skipAuth: opts?.skipAuth,
     signal: opts?.signal,
   });
+  if (response.error === 0) {
+    notifyMilkRecordsChanged({ user_id: body.user_id });
+  }
+  return response;
 }
 
 export async function deletePumpMilkRecord(
   body: PumpMilkDeleteBody,
   opts?: { token?: string; skipAuth?: boolean; signal?: AbortSignal },
 ): Promise<PumpMilkDeleteData> {
-  return apiRequest<PumpMilkDeleteData>(PATHS.PUMP_MILK_DELETE, {
+  const response = await apiRequest<PumpMilkDeleteData>(PATHS.PUMP_MILK_DELETE, {
     method: "POST",
     body,
     token: opts?.token,
     skipAuth: opts?.skipAuth,
     signal: opts?.signal,
   });
+  if (response.error === 0) {
+    notifyMilkRecordsChanged({ user_id: body.user_id });
+  }
+  return response;
 }
 
 export async function queryPumpMilkRecords(
