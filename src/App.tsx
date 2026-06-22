@@ -35,8 +35,8 @@ import {
   appendAgentHubAnalysisMessage,
   appendAgentHubNotificationMessage,
 } from "@/lib/agentHubChatMessages";
-import { startDeviceReminderWebSocket } from "@/lib/deviceReminderWebSocket";
 import { recordMilkAnalysisContextEvent } from "@/lib/analysisContextEvents";
+import { startDeviceReminderWebSocket } from "@/lib/deviceReminderWebSocket";
 import { HEALTH_ISSUE_NOTIFICATION_MESSAGE } from "@/lib/deviceReminderActions";
 import { queueMilkAnalysisReminderFollowup } from "@/lib/milkAnalysisReminderFollowup";
 import { personalizeNotificationText } from "@/lib/agentNotificationMessages";
@@ -98,15 +98,16 @@ function PumpNotificationNavigateSync() {
                   notification: analysisKind === "milk_analysis",
                 });
                 if (analysisKind === "milk_analysis") {
+                  const analysisContext = o.analysis_context ?? o.analysis_card;
+                  void recordMilkAnalysisContextEvent({
+                    message: body,
+                    analysisCard: analysisContext,
+                    chatMessageId: o.chatMessageId,
+                  });
                   queueMilkAnalysisReminderFollowup({
                     chatMessageId: o.chatMessageId,
                     message: body,
-                    analysisContext: o.analysis_context ?? o.analysis_card,
-                  });
-                  void recordMilkAnalysisContextEvent({
-                    message: body,
-                    analysisCard: o.analysis_context ?? o.analysis_card,
-                    chatMessageId: o.chatMessageId,
+                    analysisContext,
                   });
                 }
               } else if (o?.event === "grown") {

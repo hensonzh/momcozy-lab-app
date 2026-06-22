@@ -100,8 +100,24 @@ describe("AgentHub artifact ordering wiring", () => {
     );
   });
 
-  it("plays notification voice before hidden milk analysis followup starts", () => {
-    expect(agentHubSource).toContain("isAgentNotificationVoicePlaying()");
+  it("marks manually created new-session greeting for immediate auto voice", () => {
+    expect(agentHubSource).toMatch(
+      /const greeting = createNewConversationGreetingMessage\(\s*latestUserProfileRef\.current,\s*\);\s*pendingGreetingVoiceIdRef\.current = greeting\.id;\s*chatStore\.setMessages\(\[greeting\]\);/s,
+    );
+    expect(agentHubSource).toContain("autoVoice?: boolean");
+    expect(agentHubSource).toContain("if (opts?.autoVoice ?? true)");
+    expect(agentHubSource).toContain("autoVoice: false");
+  });
+
+  it("starts hidden milk analysis followup while notification voice is playing", () => {
+    expect(agentHubSource).not.toContain("isAgentNotificationVoicePlaying()");
+    expect(agentHubSource).toContain("mainChatRuntimeSnapshot.running");
+    expect(agentHubSource).toContain("mainChatCancelRef.current");
+    expect(agentHubSource).toContain("preserveCurrentVoicePlayback?: boolean");
+    expect(agentHubSource).toContain(
+      "preserveFocusVoice: opts?.preserveCurrentVoicePlayback",
+    );
+    expect(agentHubSource).toContain("preserveCurrentVoicePlayback: true");
     expect(agentHubSource).toContain("AGENT_NOTIFICATION_VOICE_IDLE_EVENT");
     expect(agentHubSource).toContain(
       "scheduleMilkAnalysisFollowupBlockedRetry",
@@ -114,7 +130,7 @@ describe("AgentHub artifact ordering wiring", () => {
     );
   });
 
-  it("keeps notification voice from blocking hidden milk analysis followup forever", () => {
+  it("keeps notification voice lifecycle bounded", () => {
     expect(appSource).toContain("NOTIFICATION_VOICE_TIMEOUT_MS");
     expect(appSource).toContain("new AbortController()");
     expect(appSource).toContain("setAgentNotificationVoicePlaying(false)");
