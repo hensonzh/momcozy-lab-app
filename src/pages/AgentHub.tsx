@@ -20,7 +20,6 @@ import {
   Loader2,
   Plus,
 } from "lucide-react";
-import PillGroups from "@/components/pills/PillGroups";
 import MaiInputBar from "@/components/Mai/MaiInputBar";
 import AgentResponseLightRail from "@/components/Mai/AgentResponseLightRail";
 import { useAgentHubSpeechInput } from "@/hooks/useAgentHubSpeechInput";
@@ -130,18 +129,6 @@ import {
   mediaVoiceLookupKeys,
   type MediaVoiceNarrationItem,
 } from "@/lib/mediaVoiceNarration";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { deviceStore } from "@/lib/deviceStore";
-import { pumpSessionLifecycle } from "@/lib/pumpSessionLifecycle";
 import AgentHubRichTextBlock, {
   type IbclcConsultOpenRequest,
 } from "@/pages/agentHub/AgentHubRichTextBlock";
@@ -155,12 +142,6 @@ import {
   removeHospitalBagCartItem,
   type HospitalBagCartGroup,
 } from "@/pages/hospitalBagCartModel";
-import { resolveCalibrationComfortForPumpStart } from "@/pages/agentHub/resolveCalibrationComfortForPumpStart";
-import {
-  resolveCalibrationPromptCancelAction,
-  resolveCalibrationPromptConfirmAction,
-  resolvePumpStartGate,
-} from "@/pages/pumpSession/pumpDeviceConnectionPrompt";
 import {
   applyAgUiStreamSideEffects,
   mergePendingRichTextPayload,
@@ -1262,18 +1243,6 @@ const AgentHub: React.FC = () => {
     useState(initialHistoryStart);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [showPhotoMenu, setShowPhotoMenu] = useState(false);
-  type HubPumpGateDialog = "calibration" | "device";
-  const [hubPumpGateDialog, setHubPumpGateDialog] =
-    useState<HubPumpGateDialog | null>(null);
-  const [hubStartPumpBusy, setHubStartPumpBusy] = useState(false);
-  /** 全局会话状态：lifecycle 由 deviceStore 驱动，running/paused 时显示「吸奶中」 */
-  const pumpSessionState = useSyncExternalStore(
-    pumpSessionLifecycle.subscribe,
-    pumpSessionLifecycle.getSessionState,
-    pumpSessionLifecycle.getSessionState,
-  );
-  const pumpSessionActive =
-    pumpSessionState === "running" || pumpSessionState === "paused";
   /** Hub 底部操作区真实渲染高度（按键 + 输入框），用于对话视口动态下边界 */
   const [bottomActionHeightPx, setBottomActionHeightPx] = useState(170);
   const [maternityFlowActive, setMaternityFlowActive] = useState(() =>
@@ -1444,7 +1413,6 @@ const AgentHub: React.FC = () => {
   }, []);
 
   const bottomActionRef = useRef<HTMLDivElement>(null);
-  const hubStartPumpShortcutLockRef = useRef(false);
   /** 上传图片本地预览 blob URL 索引：便于删除气泡时 revoke；离开路由不要整表 revoke（同文档内 blob 仍有效） */
   const uploadedImagePreviewUrlsRef = useRef<Map<string, string>>(new Map());
 
@@ -1709,7 +1677,6 @@ const AgentHub: React.FC = () => {
     setHospitalBagCartGroups(
       cloneHospitalBagCartGroups(initialHospitalBagCartGroups),
     );
-    setHubPumpGateDialog(null);
     toast.success("已新建会话");
   }, [
     clearMainNoVisibleResponseTimer,
@@ -3258,65 +3225,6 @@ const AgentHub: React.FC = () => {
     })();
   };
 
-  const handleStartPumpShortcut = useCallback(async () => {
-    if (hubStartPumpShortcutLockRef.current) return;
-    hubStartPumpShortcutLockRef.current = true;
-    setHubStartPumpBusy(true);
-    try {
-      const cal =
-        await resolveCalibrationComfortForPumpStart(DEFAULT_CHAT_USER_ID);
-      log("[AgentHub][开始吸奶] 力度滴定", {
-        ok: cal.ok,
-        source: cal.source,
-        comfortSides: cal.comfortSides,
-        remoteThreshold: cal.remoteThreshold,
-        remoteFetchError: cal.remoteFetchError,
-      });
-
-      const snap = deviceStore.get();
-      const leftOk = Boolean(snap.L?.connected && snap.L.deviceId);
-      const rightOk = Boolean(snap.R?.connected && snap.R.deviceId);
-      const gate = resolvePumpStartGate(cal.ok, snap);
-      log("[AgentHub][开始吸奶] 设备连接", {
-        left: {
-          connected: leftOk,
-          deviceId: snap.L?.deviceId ?? null,
-          deviceName: snap.L?.deviceName ?? null,
-        },
-        right: {
-          connected: rightOk,
-          deviceId: snap.R?.deviceId ?? null,
-          deviceName: snap.R?.deviceName ?? null,
-        },
-        gate,
-      });
-
-      if (gate === "device") {
-        setHubPumpGateDialog("device");
-        return;
-      }
-      if (gate === "calibration") {
-        setHubPumpGateDialog("calibration");
-        return;
-      }
-      navigate("/pump");
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e);
-      toast.error(msg ? `检查失败：${msg}` : "检查失败，请稍后重试");
-    } finally {
-      hubStartPumpShortcutLockRef.current = false;
-      setHubStartPumpBusy(false);
-    }
-  }, [navigate]);
-
-  const handlePumpPillClick = useCallback(() => {
-    if (pumpSessionLifecycle.isActive()) {
-      navigate("/pump");
-      return;
-    }
-    void handleStartPumpShortcut();
-  }, [navigate, handleStartPumpShortcut]);
-
   /**
    * 消息内设备类 link（open-unbox / open-measure / open-identify）：统一进入智能体设备指导对话。
    * @param action 来自 ChatMessageLink.action
@@ -4831,14 +4739,6 @@ const AgentHub: React.FC = () => {
         }}
       >
         <div ref={bottomActionRef} className="max-w-lg mx-auto bg-background">
-          {/* Pills: Grouped collapsible rows */}
-          <PillGroups
-            startPumpBusy={hubStartPumpBusy}
-            pumpSessionActive={pumpSessionActive}
-            onFillInput={setInput}
-            onStartPump={() => void handlePumpPillClick()}
-          />
-
           {hubUploadedImages.length > 0 && (
             <div className="relative z-[1] px-3 pt-1 pb-1 pointer-events-none">
               <div
@@ -4917,74 +4817,6 @@ const AgentHub: React.FC = () => {
           />
         </div>
       </div>
-
-      <AlertDialog
-        open={hubPumpGateDialog !== null}
-        onOpenChange={(open) => {
-          if (!open) setHubPumpGateDialog(null);
-        }}
-      >
-        <AlertDialogContent className="z-[70] max-w-[min(100vw-2rem,22rem)] rounded-2xl border-border/60 p-5 gap-3 shadow-xl">
-          <AlertDialogHeader className="text-left space-y-2.5">
-            <AlertDialogTitle className="text-base font-bold text-black dark:text-white leading-snug pr-8">
-              {hubPumpGateDialog === "calibration"
-                ? "需要先完成首次力度调节"
-                : "吸奶器设备未连接"}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
-              {hubPumpGateDialog === "calibration"
-                ? "首次吸奶前需要先找到你的舒适吸力档位。完成后，M.ai 会按你的舒适档位启动吸奶。"
-                : "开始吸奶前需要确认左右吸奶器已连接。请先进入设备页完成连接后再开始。"}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-row justify-end gap-2 sm:flex-row sm:justify-end sm:space-x-0">
-            <AlertDialogCancel
-              type="button"
-              className="m-0 rounded-full border-border/80 bg-background"
-              onClick={(event) => {
-                if (!hubPumpGateDialog) return;
-                const action = resolveCalibrationPromptCancelAction(
-                  hubPumpGateDialog,
-                  deviceStore.get(),
-                );
-                if (action.type === "showDevicePrompt") {
-                  event.preventDefault();
-                  setHubPumpGateDialog("device");
-                  return;
-                }
-                if (action.type === "navigate") {
-                  setHubPumpGateDialog(null);
-                  navigate(action.route);
-                }
-              }}
-            >
-              稍后再说
-            </AlertDialogCancel>
-            <AlertDialogAction
-              type="button"
-              className="m-0 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring"
-              onClick={(event) => {
-                if (!hubPumpGateDialog) return;
-                const action = resolveCalibrationPromptConfirmAction(
-                  hubPumpGateDialog,
-                  deviceStore.get(),
-                );
-                if (action.type === "showDevicePrompt") {
-                  event.preventDefault();
-                  setHubPumpGateDialog("device");
-                  return;
-                }
-                setHubPumpGateDialog(null);
-                navigate(action.route);
-              }}
-            >
-              {hubPumpGateDialog === "calibration"
-                ? "去力度调节"
-                : "去连接设备"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
