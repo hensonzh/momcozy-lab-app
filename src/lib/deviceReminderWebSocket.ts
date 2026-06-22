@@ -120,6 +120,8 @@ function handleNativeReminderHandled(event: { notifyJson?: string }): void {
           analysisKind === "milk_analysis"
             ? await personalizeNotificationText(payload.body || "")
             : payload.body || "";
+        const analysisContext =
+          payload.analysis_context ?? payload.analysis_card;
         appendAgentHubAnalysisMessage(body, {
           kind: analysisKind,
           id: payload.chatMessageId,
@@ -127,15 +129,15 @@ function handleNativeReminderHandled(event: { notifyJson?: string }): void {
           notification: analysisKind === "milk_analysis",
         });
         if (analysisKind === "milk_analysis") {
+          void recordMilkAnalysisContextEvent({
+            message: body,
+            analysisCard: analysisContext,
+            chatMessageId: payload.chatMessageId,
+          });
           queueMilkAnalysisReminderFollowup({
             chatMessageId: payload.chatMessageId,
             message: body,
-            analysisContext: payload.analysis_context ?? payload.analysis_card,
-          });
-          void recordMilkAnalysisContextEvent({
-            message: body,
-            analysisCard: payload.analysis_context ?? payload.analysis_card,
-            chatMessageId: payload.chatMessageId,
+            analysisContext,
           });
         }
       })();

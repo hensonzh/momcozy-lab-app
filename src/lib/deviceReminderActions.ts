@@ -182,6 +182,7 @@ async function handleMilkAnalysis(): Promise<void> {
     user_id: DEFAULT_CHAT_USER_ID,
     type: "milk_analysis",
   });
+  const analysisContext = data.analysis_context ?? data.analysis_card;
   const message = await personalizeNotificationText(
     data.message?.trim() || "已生成奶量分析。",
   );
@@ -204,15 +205,15 @@ async function handleMilkAnalysis(): Promise<void> {
     analysisCard: data.analysis_card,
     notification: true,
   });
+  void recordMilkAnalysisContextEvent({
+    message,
+    analysisCard: analysisContext,
+    chatMessageId,
+  });
   queueMilkAnalysisReminderFollowup({
     chatMessageId,
     message,
-    analysisContext: data.analysis_context ?? data.analysis_card,
-  });
-  void recordMilkAnalysisContextEvent({
-    message,
-    analysisCard: data.analysis_context ?? data.analysis_card,
-    chatMessageId,
+    analysisContext,
   });
 }
 

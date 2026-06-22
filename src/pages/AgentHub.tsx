@@ -70,10 +70,7 @@ import {
   peekMilkAnalysisReminderFollowup,
   retryMilkAnalysisReminderFollowupLater,
 } from "@/lib/milkAnalysisReminderFollowup";
-import {
-  AGENT_NOTIFICATION_VOICE_IDLE_EVENT,
-  isAgentNotificationVoicePlaying,
-} from "@/lib/agentNotificationVoice";
+import { AGENT_NOTIFICATION_VOICE_IDLE_EVENT } from "@/lib/agentNotificationVoice";
 import { apiRequestRaw } from "@/lib/http";
 import type {
   AgentAnalysisCard,
@@ -1132,7 +1129,7 @@ const AgentHub: React.FC = () => {
   const applyGreetingFromProfile = useCallback(
     (
       profile: UserProfileData | null,
-      opts?: { onlyIfNoConversationStarted?: boolean },
+      opts?: { onlyIfNoConversationStarted?: boolean; autoVoice?: boolean },
     ) => {
       const greeting = createNewConversationGreetingMessage(profile);
       const currentMessages = chatStore.get().messages;
@@ -1145,7 +1142,9 @@ const AgentHub: React.FC = () => {
         );
         if (hasNonGreetingAssistant) return;
       }
-      pendingGreetingVoiceIdRef.current = greeting.id;
+      if (opts?.autoVoice ?? true) {
+        pendingGreetingVoiceIdRef.current = greeting.id;
+      }
       chatStore.setMessages([greeting]);
       savePersistedChatMessages([greeting]);
       setMessages([greeting]);
@@ -1156,6 +1155,7 @@ const AgentHub: React.FC = () => {
   const hydrateGreetingFromProfile = useCallback(
     async (opts?: {
       onlyIfNoConversationStarted?: boolean;
+      autoVoice?: boolean;
       signal?: AbortSignal;
     }) => {
       try {
@@ -1550,10 +1550,14 @@ const AgentHub: React.FC = () => {
   /**
    * 停止当前对话气泡语音播放并清理播放状态。
    * @param opts.clearPlayingId 是否重置 UI 播放高亮；默认 true
+   * @param opts.preserveFocusVoice 是否保留当前 Focus 语音通道播放
    * @returns Promise<void> 停止播放与状态清理完成
    */
   const stopCurrentBubblePlayback = useCallback(
-    async (opts?: { clearPlayingId?: boolean }): Promise<void> => {
+    async (opts?: {
+      clearPlayingId?: boolean;
+      preserveFocusVoice?: boolean;
+    }): Promise<void> => {
       autoVoiceRunIdRef.current += 1;
       agentHubVoicePlaybackRuntime.cancelAutoVoice();
       autoVoiceRealtimeSessionRef.current?.abortController.abort();
@@ -1561,7 +1565,7 @@ const AgentHub: React.FC = () => {
       autoVoiceRealtimeSessionRef.current = null;
       bubblePlayAbortRef.current?.abort();
       await stopChatBubblePlayback();
-      await stopFocusVoicePlayback();
+      if (!opts?.preserveFocusVoice) await stopFocusVoicePlayback();
       bubblePlayingTargetIdRef.current = null;
       bubblePlayAbortRef.current = null;
       if (opts?.clearPlayingId ?? true) {
@@ -1683,10 +1687,16 @@ const AgentHub: React.FC = () => {
     const greeting = createNewConversationGreetingMessage(
       latestUserProfileRef.current,
     );
+    pendingGreetingVoiceIdRef.current = greeting.id;
     chatStore.setMessages([greeting]);
     savePersistedChatMessages([greeting]);
     setMessages([greeting]);
-    void hydrateGreetingFromProfile({ onlyIfNoConversationStarted: true });
+    if (!latestUserProfileRef.current) {
+      void hydrateGreetingFromProfile({
+        onlyIfNoConversationStarted: true,
+        autoVoice: false,
+      });
+    }
     setInput("");
     setHubBottomSendBusy(false);
     setShowPhotoMenu(false);
@@ -2602,6 +2612,7 @@ const AgentHub: React.FC = () => {
       userDisplayText?: string;
       onStreamDone?: () => void;
       onStreamError?: (error?: Error) => void;
+      preserveCurrentVoicePlayback?: boolean;
     },
   ) => {
     prepareLatestChatWindowForNewTurn();
@@ -2652,7 +2663,9 @@ const AgentHub: React.FC = () => {
     agentHubMainChatRuntime.cancel();
     mainChatCancelRef.current?.();
     mainStreamingReplyIdRef.current = null;
-    await stopCurrentBubblePlayback();
+    await stopCurrentBubblePlayback({
+      preserveFocusVoice: opts?.preserveCurrentVoicePlayback,
+    });
     mainStreamMergedAnswerRef.current = "";
     mainStreamMergedThinkingRef.current = "";
     mainStreamingReplyIdRef.current = replyId;
@@ -2670,7 +2683,9 @@ const AgentHub: React.FC = () => {
       opts?.onStreamError?.(new Error("no visible response"));
       agentHubMainChatRuntime.cancel();
       mainChatCancelRef.current?.();
-      void stopCurrentBubblePlayback();
+      void stopCurrentBubblePlayback({
+        preserveFocusVoice: opts?.preserveCurrentVoicePlayback,
+      });
       mainChatCancelRef.current = null;
       mainStreamingReplyIdRef.current = null;
       agentHubMainChatRuntime.finish(replyId);
@@ -2751,7 +2766,9 @@ const AgentHub: React.FC = () => {
     const onErrorHandler = (err: Error) => {
       opts?.onStreamError?.(err);
       clearMainNoVisibleResponseTimer();
-      void stopCurrentBubblePlayback();
+      void stopCurrentBubblePlayback({
+        preserveFocusVoice: opts?.preserveCurrentVoicePlayback,
+      });
       mainPendingRichTextRef.current = null;
       mainRichTextForVoiceRef.current = null;
       pendingAgUiArtifactFormLikeRef.current = false;
@@ -2860,8 +2877,7 @@ const AgentHub: React.FC = () => {
     if (!pending) return;
     if (
       mainChatRuntimeSnapshot.running ||
-      mainChatCancelRef.current ||
-      isAgentNotificationVoicePlaying()
+      mainChatCancelRef.current
     ) {
       scheduleMilkAnalysisFollowupBlockedRetry();
       return;
@@ -2879,6 +2895,7 @@ const AgentHub: React.FC = () => {
     const prompt = buildMilkAnalysisReminderFollowupPrompt(claimed);
     void startMainChatStream(prompt, {
       showUserMessage: false,
+      preserveCurrentVoicePlayback: true,
       onStreamDone: () => {
         completeMilkAnalysisReminderFollowup(claimed.taskId);
         clearInFlight();

@@ -3,7 +3,7 @@ import { getAgUiThreadIdForRequest } from "@/lib/agentConversationSession";
 import { apiRequestRaw } from "@/lib/http";
 import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 
-const ANALYSIS_CONTEXT_MAX_CHARS = 640;
+const ANALYSIS_CONTEXT_MAX_CHARS = 1200;
 const MILK_ANALYSIS_WINDOW_DAYS = 7;
 const MILK_ANALYSIS_INCLUDE_TODAY = false;
 
@@ -34,7 +34,9 @@ function metricText(section: AgentAnalysisCardSection): string {
 function sectionText(section: AgentAnalysisCardSection): string {
   const title = compactText(section.title);
   const metrics = metricText(section);
-  const items = Array.isArray(section.items) ? section.items.map(compactText).filter(Boolean).join("；") : "";
+  const items = Array.isArray(section.items)
+    ? section.items.map(compactText).filter(Boolean).join("；")
+    : "";
   const body = compactText(section.body);
   const content = [metrics, items || body].filter(Boolean).join("；");
   if (!content) return "";
@@ -47,7 +49,10 @@ function summarizeSections(sections: AgentAnalysisCard["sections"]): string {
 }
 
 function cardHeadline(card?: AgentAnalysisCard): string {
-  return compactText((card as (AgentAnalysisCard & { headline?: unknown }) | undefined)?.headline);
+  return compactText(
+    (card as (AgentAnalysisCard & { headline?: unknown }) | undefined)
+      ?.headline,
+  );
 }
 
 export function buildMilkAnalysisContextText(params: {
@@ -89,7 +94,8 @@ export async function recordMilkAnalysisContextEvent(params: {
   if (!threadId) return;
   const contextText = buildMilkAnalysisContextText(params);
   if (!contextText) return;
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Shanghai";
+  const timeZone =
+    Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Shanghai";
   try {
     await apiRequestRaw("/api/client-event", {
       method: "POST",
@@ -118,6 +124,6 @@ export async function recordMilkAnalysisContextEvent(params: {
       },
     });
   } catch {
-    // Context injection is best-effort; notification and report-card display are already complete.
+    // Best effort: the notification and local follow-up task can still continue.
   }
 }

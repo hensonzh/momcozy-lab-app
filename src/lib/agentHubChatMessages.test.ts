@@ -181,6 +181,9 @@ describe("milk analysis reminder followup", () => {
     expect(prompt).toContain("近7天总量=3600 ml");
     expect(prompt).toContain("不要重复说");
     expect(prompt).toContain("只能作为提醒线索");
+    expect(prompt).toContain("本轮最终只能追问一个问题");
+    expect(prompt).toContain("先确认近 7 天奶量记录是否完整");
+    expect(prompt).toContain("不要在同一轮追问宝宝尿布、精神、吃奶");
     expect(prompt).toContain("按新版奶量管理流程");
 
     expect(consumeMilkAnalysisReminderFollowup()).toBeNull();
