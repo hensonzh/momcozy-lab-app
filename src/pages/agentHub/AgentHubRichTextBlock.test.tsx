@@ -96,7 +96,7 @@ function birthJourneyLayeredPayload(): ChatRichTextPayload {
                 items: [
                   {
                     title: "确认本周产检安排",
-                    reason: "和宝宝和我页面展示同一份分层计划。",
+                    reason: "孕早期常见孕吐、反酸、乏力或尿频，把每天最影响生活的变化记录下来更方便问医生。",
                   },
                 ],
               },
@@ -527,7 +527,10 @@ describe("AgentHubRichTextBlock birth journey plan card", () => {
     expect(screen.getByRole("heading", { name: "未来 2-4 周" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "后续重要节点" })).toBeInTheDocument();
     expect(screen.getByText("确认本周产检安排")).toBeInTheDocument();
-    expect(screen.getByText("和宝宝和我页面展示同一份分层计划。")).toBeInTheDocument();
+    expect(
+      screen.getByText("孕早期常见孕吐、反酸、乏力或尿频，把每天最影响生活的变化记录下来更方便问医生。"),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/更方便…/u)).not.toBeInTheDocument();
     expect(screen.getByText("今天完成建档材料整理")).toBeInTheDocument();
     expect(screen.queryByText("从孕20周到产后 42 天的阶段路线图")).not.toBeInTheDocument();
   });

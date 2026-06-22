@@ -51,7 +51,9 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("birthJourneyNext7TodoId");
     expect(statusSource).toContain("todo: true");
     expect(statusSource).toContain("BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS");
-    expect(statusSource).toContain("BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS");
+    expect(statusSource).not.toContain("BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS");
+    expect(statusSource).toContain("reason: compactText(source.reason)");
+    expect(statusSource).not.toContain("reason: truncateBirthJourneyPlanText(source.reason");
     expect(statusSource).not.toContain("birthJourneyPlanItems(layers.current_week_focus?.items, 3)");
     expect(statusSource).not.toContain("birthJourneyPlanItems(layers?.next_7_days?.items, 4)");
     expect(statusSource).toContain('className="mt-1 text-[11px] font-normal leading-relaxed text-[#7b6a61]"');
