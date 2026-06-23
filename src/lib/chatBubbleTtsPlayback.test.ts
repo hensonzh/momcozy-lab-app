@@ -22,8 +22,13 @@ describe("sanitizeTextForVoice", () => {
   });
 
   it("keeps readable markdown labels for app routes and removes route urls", () => {
-    expect(sanitizeTextForVoice("请看 [待产包清单](/hospital-bag-cart?tab=ready)。")).toBe("请看 待产包清单 。");
+    expect(sanitizeTextForVoice("请看 [日程页面](/schedule?tab=ready)。")).toBe("请看 日程页面 。");
     expect(sanitizeTextForVoice("请打开 /hospital-bag-cart?tab=ready 查看。")).toBe("请打开 查看。");
+  });
+
+  it("does not speak hospital bag cart markdown link labels", () => {
+    expect(sanitizeTextForVoice("请看 [打开待产包购物车](/hospital-bag-cart?tab=ready)。")).toBe("请看 。");
+    expect(sanitizeTextForVoice("**[打开待产包一键打包下单页](/hospital-bag-cart)**")).toBe("");
   });
 
   it("removes markdown and decorative symbols that should not be spoken", () => {
@@ -45,9 +50,18 @@ describe("createVoiceTextStreamFilter", () => {
   it("skips a markdown link href split across streaming deltas", () => {
     const filter = createVoiceTextStreamFilter();
 
-    expect(filter.push("请看 [待产包清单](")).toBe("请看  待产包清单 ");
+    expect(filter.push("请看 [查看报告](")).toBe("请看 ");
+    expect(filter.push("https://example.com/report?id=1")).toBe("");
+    expect(filter.push(")，然后继续。")).toBe(" 查看报告 ，然后继续。");
+    expect(filter.flush()).toBe("");
+  });
+
+  it("skips hospital bag cart markdown link labels split across streaming deltas", () => {
+    const filter = createVoiceTextStreamFilter();
+
+    expect(filter.push("请看 [打开待产包购物车](")).toBe("请看 ");
     expect(filter.push("/hospital-bag-cart?tab=ready")).toBe("");
-    expect(filter.push(")，然后继续。")).toBe("  ，然后继续。");
+    expect(filter.push(")，然后继续。")).toBe(" ，然后继续。");
     expect(filter.flush()).toBe("");
   });
 
