@@ -78,6 +78,7 @@ import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
  * open / switch / 默认续聊交由回调或路由处理。
  */
 type ButtonSelectOptions = { displayText?: string; assistantReply?: string };
+type ButtonSelectResult = boolean | void;
 const OPEN_HOSPITAL_BAG_CART_EVENT = "momcozy-open-hospital-bag-cart";
 
 export type IbclcConsultOpenRequest = {
@@ -1298,7 +1299,7 @@ const AgentHubRichTextBlock: React.FC<{
   payload: ChatRichTextPayload;
   blockId?: string;
   birthPrepProfileDefaults?: BirthPrepProfileFormDefaults | null;
-  onButtonSelect: (value: string, options?: ButtonSelectOptions) => void;
+  onButtonSelect: (value: string, options?: ButtonSelectOptions) => ButtonSelectResult;
   onOpenIbclcConsult?: (request: IbclcConsultOpenRequest) => void;
 }> = ({ payload, blockId = "rich", birthPrepProfileDefaults = null, onButtonSelect, onOpenIbclcConsult }) => {
   const navigate = useNavigate();
@@ -1306,6 +1307,7 @@ const AgentHubRichTextBlock: React.FC<{
   const [artifactError, setArtifactError] = useState<Record<number, string>>({});
   const [submittedArtifactMap, setSubmittedArtifactMap] = useState<Record<number, boolean>>({});
   const [downloadingCardIndex, setDownloadingCardIndex] = useState<number | null>(null);
+  const submitGuardRef = useRef<Record<number, boolean>>({});
   const [ibclcCompletions, setIbclcCompletions] = useState<IbclcConsultCompletedPayload[]>(() =>
     readStoredIbclcConsultCompletions(),
   );
@@ -2084,13 +2086,15 @@ const AgentHubRichTextBlock: React.FC<{
               )}
               onSubmit={(event) => {
                 event.preventDefault();
-                if (isSubmitted) return;
+                if (isSubmitted || submitGuardRef.current[index]) return;
+                submitGuardRef.current[index] = true;
                 const form = event.currentTarget;
                 for (const field of fields) {
                   if (!field.required || !isMultiSelectField(field)) continue;
                   const formData = new FormData(form);
                   const selectedValues = formData.getAll(field.id).map(String);
                   if (selectedValues.length === 0) {
+                    submitGuardRef.current[index] = false;
                     setArtifactError((prev) => ({ ...prev, [index]: `请选择：${splitFormFieldLabel(field.label).fieldLabel}` }));
                     return;
                   }
@@ -2099,21 +2103,43 @@ const AgentHubRichTextBlock: React.FC<{
                     selectedValues.some(isOtherOption) &&
                     !String(formData.get(otherInputName(field.id)) ?? "").trim()
                   ) {
+                    submitGuardRef.current[index] = false;
                     setArtifactError((prev) => ({ ...prev, [index]: `请填写：${splitFormFieldLabel(field.label).fieldLabel}的其它内容` }));
                     return;
                   }
                 }
                 setArtifactError((prev) => ({ ...prev, [index]: "" }));
                 const values = collectFormValues(form, fields);
-                setSubmittedArtifactMap((prev) => ({ ...prev, [index]: true }));
                 if (artifact.kind === "support_ticket_draft") {
-                  onButtonSelect("已提交售后工单", {
-                    displayText: "已提交售后工单",
-                    assistantReply: SUPPORT_TICKET_SUBMITTED_REPLY,
-                  });
+                  let accepted: ButtonSelectResult;
+                  try {
+                    accepted = onButtonSelect("已提交售后工单", {
+                      displayText: "已提交售后工单",
+                      assistantReply: SUPPORT_TICKET_SUBMITTED_REPLY,
+                    });
+                  } catch (err) {
+                    submitGuardRef.current[index] = false;
+                    throw err;
+                  }
+                  if (accepted === false) {
+                    submitGuardRef.current[index] = false;
+                    return;
+                  }
+                  setSubmittedArtifactMap((prev) => ({ ...prev, [index]: true }));
                   return;
                 }
-                onButtonSelect(buildFormConfirmationMessage(normalizedFormSpec, values), { displayText: `已提交：${title}` });
+                let accepted: ButtonSelectResult;
+                try {
+                  accepted = onButtonSelect(buildFormConfirmationMessage(normalizedFormSpec, values), { displayText: `已提交：${title}` });
+                } catch (err) {
+                  submitGuardRef.current[index] = false;
+                  throw err;
+                }
+                if (accepted === false) {
+                  submitGuardRef.current[index] = false;
+                  return;
+                }
+                setSubmittedArtifactMap((prev) => ({ ...prev, [index]: true }));
               }}
             >
               <fieldset disabled={isSubmitted} className={cn("grid min-w-0", isCollectionIntake ? "gap-4" : "gap-2.5")}>

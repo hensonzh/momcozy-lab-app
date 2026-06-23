@@ -1287,6 +1287,7 @@ const AgentHub: React.FC = () => {
   /** 最近一次来自底部输入 handleSend 的 SSE 未完成；仅此时 onDone/onError 应清除 hubBottomSendBusy */
   const awaitingHubBottomReplyRef = useRef(false);
   const hubBottomSendActionLockRef = useRef(false);
+  const richTextButtonActionLockRef = useRef(false);
   const lastHubBottomNewTurnAtRef = useRef(0);
   const { speechListening, speechPhase, startSpeech, stopSpeech } =
     useAgentHubSpeechInput(setInput, {
@@ -3541,27 +3542,49 @@ const AgentHub: React.FC = () => {
   const handleAgentRichTextButtonSelect = (
     value: string,
     options?: { displayText?: string; assistantReply?: string },
-  ) => {
-    primeAutoVoicePlayback();
-    prepareLatestChatWindowForNewTurn();
-    if (options?.assistantReply) {
-      appendStaticAssistantReply(value, {
-        displayText: options.displayText,
-        assistantReply: options.assistantReply,
-      });
-      return;
+  ): boolean => {
+    if (richTextButtonActionLockRef.current || hubBottomSendBusy || isMainChatRunning) return false;
+    richTextButtonActionLockRef.current = true;
+    try {
+      primeAutoVoicePlayback();
+      prepareLatestChatWindowForNewTurn();
+      if (options?.assistantReply) {
+        try {
+          appendStaticAssistantReply(value, {
+            displayText: options.displayText,
+            assistantReply: options.assistantReply,
+          });
+          return true;
+        } finally {
+          richTextButtonActionLockRef.current = false;
+        }
+      }
+      awaitingHubBottomReplyRef.current = true;
+      setHubBottomSendBusy(true);
+      void (async () => {
+        try {
+          if (
+            await startDirectHospitalBagPumpCartUpdate(value, {
+              userDisplayText: options?.displayText,
+            })
+          )
+            return;
+          await startMainChatStream(value, {
+            userDisplayText: options?.displayText,
+          });
+        } catch (err) {
+          warn("[AgentHub] 富文本按钮启动主对话失败", err);
+          clearAwaitingBottomSendBarLoading();
+          setHubBottomSendBusy(false);
+        } finally {
+          richTextButtonActionLockRef.current = false;
+        }
+      })();
+      return true;
+    } catch (err) {
+      richTextButtonActionLockRef.current = false;
+      throw err;
     }
-    void (async () => {
-      if (
-        await startDirectHospitalBagPumpCartUpdate(value, {
-          userDisplayText: options?.displayText,
-        })
-      )
-        return;
-      void startMainChatStream(value, {
-        userDisplayText: options?.displayText,
-      });
-    })();
   };
 
   const handleQuickReplySelect = (replyText: string) => {

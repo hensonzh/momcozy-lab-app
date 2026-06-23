@@ -343,7 +343,7 @@ function renderBlock({
 }: {
   payload?: ChatRichTextPayload;
   birthPrepProfileDefaults?: React.ComponentProps<typeof AgentHubRichTextBlock>["birthPrepProfileDefaults"];
-  onButtonSelect?: (value: string, options?: { displayText?: string; assistantReply?: string }) => void;
+  onButtonSelect?: (value: string, options?: { displayText?: string; assistantReply?: string }) => boolean | void;
   onOpenIbclcConsult?: (request: IbclcConsultOpenRequest) => void;
 } = {}) {
   return render(
@@ -441,6 +441,38 @@ describe("AgentHubRichTextBlock hospital bag form", () => {
     expect(screen.getByLabelText("产后前两周支持情况")).toHaveValue("有人全天帮忙");
     expect(screen.getByRole("checkbox", { name: "没有" })).toBeChecked();
     expect(screen.queryByRole("checkbox", { name: "计划剖宫产" })).not.toBeInTheDocument();
+  });
+
+  it("ignores duplicate form submits before the disabled state renders", () => {
+    let form: HTMLFormElement | null = null;
+    const onButtonSelect = vi.fn(() => {
+      if (form) fireEvent.submit(form);
+    });
+    renderBlock({ payload: hospitalBagFormPayload(), onButtonSelect });
+
+    const submitButton = screen.getByRole("button", { name: "Confirm" });
+    form = submitButton.closest("form");
+    expect(form).not.toBeNull();
+
+    fireEvent.submit(form!);
+
+    expect(onButtonSelect).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "已提交" })).toBeDisabled();
+  });
+
+  it("keeps the form available when the parent rejects submission", () => {
+    const onButtonSelect = vi.fn(() => false);
+    renderBlock({ payload: hospitalBagFormPayload(), onButtonSelect });
+
+    const submitButton = screen.getByRole("button", { name: "Confirm" });
+    const form = submitButton.closest("form");
+    expect(form).not.toBeNull();
+
+    fireEvent.submit(form!);
+    fireEvent.submit(form!);
+
+    expect(onButtonSelect).toHaveBeenCalledTimes(2);
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeEnabled();
   });
 
   it("fills legacy hospital bag forms from birth-prep profile defaults", () => {

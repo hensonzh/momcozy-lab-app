@@ -27,6 +27,7 @@ const VOICE_MEDIA_FILE_NAME_PATTERN =
   /(^|[\s(（[])[A-Za-z0-9][A-Za-z0-9._-]{1,}\.(?:png|jpe?g|webp|gif|svg|mp4|mov|m4v|webm|mp3|wav|m4a|aac|pdf)(?:[?#][^\s<>"'，。！？；、)]*)?/gi;
 const VOICE_ABSOLUTE_MEDIA_URL_PATTERN =
   /(^|[\s(（[])(?:https?:\/\/)[^\s<>"'，。！？；、)]*\.(?:png|jpe?g|webp|gif|svg|mp4|mov|m4v|webm|mp3|wav|m4a|aac|pdf)(?:[?#][^\s<>"'，。！？；、)]*)?/gi;
+const HOSPITAL_BAG_CART_VOICE_PATH = "/hospital-bag-cart";
 
 export type VoiceMediaNarrationResolver = (media: { url: string; alt: string }) => string | undefined;
 
@@ -40,6 +41,17 @@ function isVoiceUrlLike(value: string): boolean {
   return /^(?:(?:https?|ftp):\/\/|www\.)/i.test(text) || VOICE_BARE_DOMAIN_URL_LIKE_PATTERN.test(text);
 }
 
+function isHospitalBagCartVoiceUrl(value: string): boolean {
+  const raw = value.trim().split(/\s+/)[0] ?? "";
+  if (!raw) return false;
+  try {
+    const url = new URL(raw, "https://momcozy.local");
+    return url.pathname === HOSPITAL_BAG_CART_VOICE_PATH;
+  } catch {
+    return (raw.split(/[?#]/, 1)[0] ?? raw) === HOSPITAL_BAG_CART_VOICE_PATH;
+  }
+}
+
 function markdownVoiceLinkLabelReplacement(_m: string, label: string): string {
   const L = (label || "").trim();
   if (!L || isVoiceUrlLike(L)) return " ";
@@ -50,6 +62,7 @@ function markdownVoiceLinkReplacement(_m: string, label: string, destination: st
   const url = String(destination || "").trim().split(/\s+/)[0] ?? "";
   const spoken = opts?.mediaNarrationResolver?.({ url, alt: String(label || "").trim() })?.trim();
   if (spoken) return ` ${spoken} `;
+  if (isHospitalBagCartVoiceUrl(url)) return " ";
   return markdownVoiceLinkLabelReplacement(_m, label);
 }
 
@@ -136,7 +149,7 @@ function findIncompleteMarkdownVoiceLinkHoldStart(text: string): number {
   const destinationStart = closeLabel + 2;
   const closeDestination = text.indexOf(")", destinationStart);
   if (closeDestination >= 0) return -1;
-  return destinationStart;
+  return openLabel;
 }
 
 function findIncompleteMarkdownVoiceImageHoldStart(text: string): number {
