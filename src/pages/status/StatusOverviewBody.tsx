@@ -260,9 +260,25 @@ type BirthJourneyPlanningLayers = {
   later_milestones?: BirthJourneyPlanSection;
 };
 
+type BirthJourneyTodoPlanPeriod = {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  items?: unknown;
+};
+
+type BirthJourneyTodoPlan = {
+  title?: string;
+  cadence?: string;
+  cadence_label?: string;
+  cadence_reason?: string;
+  periods?: BirthJourneyTodoPlanPeriod[];
+};
+
 type BirthJourneyPayload = {
   subtitle?: string;
   owner?: Record<string, unknown>;
+  todo_plan?: BirthJourneyTodoPlan;
   planning_layers?: BirthJourneyPlanningLayers;
   next_action?: { label?: string; detail?: string; send_text?: string };
   estimated_due_date?: string;
@@ -328,6 +344,16 @@ function birthJourneyPlanningLayers(plan: CarePlanArtifact | null): BirthJourney
   const layers = asBirthJourneyPayload(plan).planning_layers;
   if (!layers || typeof layers !== "object") return null;
   return layers;
+}
+
+function birthJourneyTodoPlan(plan: CarePlanArtifact | null): BirthJourneyTodoPlan | null {
+  const todoPlan = asBirthJourneyPayload(plan).todo_plan;
+  if (!todoPlan || typeof todoPlan !== "object") return null;
+  const periods = Array.isArray(todoPlan.periods)
+    ? todoPlan.periods.filter((period): period is BirthJourneyTodoPlanPeriod => Boolean(period && typeof period === "object"))
+    : [];
+  if (periods.length === 0) return null;
+  return { ...todoPlan, periods };
 }
 
 function birthJourneyPlanItems(value: unknown): BirthJourneyPlanItem[] {
@@ -533,6 +559,44 @@ type PrenatalPlanStructureSection = {
   emptyLabel: string;
   tone?: "alert" | "warm" | "plain";
   todo?: boolean;
+};
+
+function birthJourneyTodoPlanSections(todoPlan: BirthJourneyTodoPlan | null): PrenatalPlanStructureSection[] {
+  if (!todoPlan?.periods) return [];
+  return todoPlan.periods
+    .map((period, index) => {
+      const items = birthJourneyPlanItems(period.items);
+      if (items.length === 0) return null;
+      return {
+        key: compactText(period.id) || `todo-period-${index + 1}`,
+        title: compactText(period.title) || `阶段 ${index + 1}`,
+        subtitle: compactText(period.subtitle),
+        items,
+        emptyLabel: "这一阶段的行动事项会在计划生成后显示。",
+        tone: index === 0 ? ("warm" as const) : ("plain" as const),
+      };
+    })
+    .filter((section): section is PrenatalPlanStructureSection => Boolean(section));
+}
+
+const BirthJourneyTodoPlanView: React.FC<{
+  todoPlan: BirthJourneyTodoPlan;
+}> = ({ todoPlan }) => {
+  const sections = birthJourneyTodoPlanSections(todoPlan);
+  if (sections.length === 0) return null;
+  return (
+    <div className="space-y-3">
+      {sections.map((section) => (
+        <BirthJourneyPlanSectionView
+          key={section.key}
+          title={section.title}
+          subtitle={section.subtitle}
+          items={section.items}
+          tone={section.tone}
+        />
+      ))}
+    </div>
+  );
 };
 
 const PrenatalPlanTimelineView: React.FC<{
@@ -958,7 +1022,9 @@ const MomStatusPanelSheet: React.FC<{
     }, 1500);
   };
 
+  const birthJourneyTodo = birthJourneyTodoPlan(birthJourneyPlan);
   const birthJourneyLayers = birthJourneyPlanningLayers(birthJourneyPlan);
+  const birthJourneyHasTodoPlan = Boolean(birthJourneyTodo && birthJourneyTodoPlanSections(birthJourneyTodo).length > 0);
   const birthJourneyHasLayeredPlan = Boolean(
     birthJourneyLayers && birthJourneyPlanItems(birthJourneyLayers.current_week_focus?.items).length > 0,
   );
@@ -1041,14 +1107,16 @@ const MomStatusPanelSheet: React.FC<{
               </div>
             ) : birthJourneyPlan ? (
               <>
-                {birthJourneyHasLayeredPlan && birthJourneyLayers ? (
+                {birthJourneyHasTodoPlan && birthJourneyTodo ? (
+                  <BirthJourneyTodoPlanView todoPlan={birthJourneyTodo} />
+                ) : birthJourneyHasLayeredPlan && birthJourneyLayers ? (
                   <BirthJourneyLayeredPlanView layers={birthJourneyLayers} />
                 ) : (
                   <div className="rounded-2xl border border-[#eadfd8] bg-[#fffdfb] px-4 py-5 text-center">
                     <ClipboardList className="mx-auto h-7 w-7 text-[#9b7a64]" />
                     <p className="mt-2 text-sm font-extrabold text-foreground">这份计划缺少分层内容</p>
                     <p className="mt-1 text-xs font-semibold leading-relaxed text-[#7b6a61]">
-                      当前只展示基于 planning_layers 的孕期计划；可以重新制定一份完整计划。
+                      当前缺少 todo_plan 或 planning_layers；可以重新制定一份完整计划。
                     </p>
                   </div>
                 )}
@@ -1388,8 +1456,10 @@ const PrenatalExpandedServices: React.FC<{
   onOpenDiaryEditor,
   onOpenDiaryDetail,
 }) => {
+  const todoPlan = birthJourneyTodoPlan(birthJourneyPlan);
+  const todoPlanSections = birthJourneyTodoPlanSections(todoPlan);
   const layers = birthJourneyPlanningLayers(birthJourneyPlan);
-  const planStructureSections = [
+  const legacyPlanStructureSections = [
     {
       key: "current",
       title: layers?.current_week_focus?.title || "当前优先级",
@@ -1421,6 +1491,7 @@ const PrenatalExpandedServices: React.FC<{
       emptyLabel: "制定后会放入临近生产前的重要节点。",
     },
   ];
+  const planStructureSections = todoPlanSections.length > 0 ? todoPlanSections : legacyPlanStructureSections;
   const todayDateKey = toLocalDateKey(new Date());
   const todayDiaryEntries = pregnancyDiaryToday
     ? [pregnancyDiaryToday]
