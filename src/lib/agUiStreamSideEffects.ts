@@ -705,7 +705,10 @@ function toolResultCopy(toolName: string, result: Record<string, unknown> | null
     return { title: "孕期日记这一步处理好了" };
   }
   if (normalizedToolName === "hospital_bag_card_create") return { title: "我已经帮你生成好待产包清单啦" };
-  if (normalizedToolName === "ibclc_consult_card_create") return { title: "我已经准备好 IBCLC 咨询入口啦" };
+  if (normalizedToolName === "ibclc_consult_card_create") {
+    if (status === "ibclc_consult_blocked") return { title: "还需要你确认 IBCLC 咨询入口" };
+    return { title: "我已经准备好 IBCLC 咨询入口啦" };
+  }
   if (normalizedToolName === "hospital_bag_pump_recommend") return { title: "我已经帮你整理好吸奶器推荐啦" };
   if (normalizedToolName === "hospital_bag_cart_update") {
     const status = coalesceString(result?.status);
@@ -1061,8 +1064,8 @@ function artifactActionFromToolResultPayload(parsed: Record<string, unknown>): R
   if (["labor_communication_card_create", "birth_journey_plan_card_create", "hospital_bag_card_create"].includes(toolName) && card) {
     return { kind: "ag_ui_artifact", artifact_type: "card", ...identity, card };
   }
-  if (toolName === "ibclc_consult_card_create") {
-    return { kind: "ag_ui_artifact", artifact_type: "ibclc_consult", ...identity, card: card ?? parsed };
+  if (toolName === "ibclc_consult_card_create" && card) {
+    return { kind: "ag_ui_artifact", artifact_type: "ibclc_consult", ...identity, card };
   }
 
   const ticket = asRecord(parsed.ticket);

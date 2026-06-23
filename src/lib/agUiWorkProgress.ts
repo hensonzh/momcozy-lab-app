@@ -58,9 +58,10 @@ function workItemNeedsConfirmation(tool: AgUiToolCallRow): boolean {
 }
 
 function completedToolSummaryTitle(tool: AgUiToolCallRow): string {
+  const title = workItemTitle(tool);
+  if (normalizeToolName(tool.name) === "ibclc_consult_card_create" && title.includes("确认")) return title;
   const mapped = COMPLETED_TOOL_SUMMARY_TITLES[normalizeToolName(tool.name)];
   if (mapped) return mapped;
-  const title = workItemTitle(tool);
   return title && !GENERIC_DONE_TITLES.has(title) ? title : "";
 }
 

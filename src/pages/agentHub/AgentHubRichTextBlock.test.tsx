@@ -121,6 +121,62 @@ function birthJourneyLayeredPayload(): ChatRichTextPayload {
   };
 }
 
+function birthJourneyTodoPlanPayload(): ChatRichTextPayload {
+  return {
+    title: "",
+    content: "",
+    button: [],
+    card: [],
+    action: [
+      {
+        kind: "ag_ui_artifact",
+        artifact_type: "card",
+        artifact_id: "birth_journey_todo_1",
+        card: {
+          card_type: "birth_journey_plan_card",
+          schema_version: "1.0",
+          card_json: {
+            title: "孕期计划",
+            owner: {
+              current_week: "孕25周",
+            },
+            todo_plan: {
+              title: "孕期 To do list",
+              cadence: "monthly",
+              cadence_label: "按月计划",
+              periods: [
+                {
+                  id: "period_01",
+                  title: "孕 25-28 周",
+                  subtitle: "重点完成糖耐、血常规/尿常规和血压体重等复查。",
+                  items: [
+                    {
+                      title: "完成糖耐并记录复查结果",
+                      reason: "排好禁食、抽血、检查后进食和结果回看，并问清是否需要复查。",
+                    },
+                  ],
+                },
+                {
+                  id: "period_02",
+                  title: "孕 29-32 周",
+                  subtitle: "开始固定胎动、血压、水肿和胎儿生长观察节奏。",
+                  items: [{ title: "固定胎动和血压观察", reason: "每天固定观察胎动和明显不适。" }],
+                },
+              ],
+            },
+            planning_layers: {
+              current_week_focus: {
+                title: "旧本周重点",
+                items: [{ title: "旧结构事项" }],
+              },
+            },
+          },
+        },
+      },
+    ],
+  };
+}
+
 function hospitalBagFormPayload(): ChatRichTextPayload {
   return {
     title: "",
@@ -306,6 +362,7 @@ function birthJourneyBasicInfoFormPayload(): ChatRichTextPayload {
               id: "ivf",
               label: "是否 IVF（体外受精）",
               type: "select",
+              required: true,
               options: ["是", "否", "不确定/暂不说"],
             },
             {
@@ -323,10 +380,30 @@ function birthJourneyBasicInfoFormPayload(): ChatRichTextPayload {
               placeholder: "例如：32",
             },
             {
+              id: "first_birth",
+              label: "是否第一胎",
+              type: "select",
+              required: true,
+              options: ["是", "否", "不确定/暂不说"],
+            },
+            {
+              id: "birth_path",
+              label: "计划分娩方式",
+              type: "select",
+              required: true,
+              options: ["顺产", "剖宫产", "还没确定", "不确定/暂不说"],
+            },
+            {
               id: "city_or_country",
               label: "所在城市/国家",
               type: "text",
               default_value: "深圳",
+            },
+            {
+              id: "birth_hospital",
+              label: "建档/生产医院",
+              type: "text",
+              placeholder: "如果还没建档，可以写“还没确定”",
             },
           ],
         },
@@ -499,11 +576,34 @@ describe("AgentHubRichTextBlock birth journey basic info form", () => {
     expect(screen.getByRole("heading", { name: "基本信息" })).toBeInTheDocument();
     expect(screen.getByLabelText("当前孕周")).toHaveValue("孕25周");
     expect(screen.getByLabelText("当前孕周")).toBeRequired();
+    expect(screen.getByLabelText("是否 IVF（体外受精）")).toBeRequired();
     expect(screen.getByLabelText("单胎/双胎")).toBeRequired();
     expect(screen.getByLabelText("年龄")).toBeRequired();
+    expect(screen.getByLabelText("是否第一胎")).toBeRequired();
+    expect(screen.getByLabelText("计划分娩方式")).toBeRequired();
     expect(screen.getByLabelText("所在城市/国家")).toHaveValue("深圳");
+    expect(screen.getByLabelText("建档/生产医院")).not.toBeRequired();
     expect(screen.getByText("提交")).toHaveClass("rounded-[14px]");
-    expect(container.querySelectorAll("span[aria-hidden='true']")).toHaveLength(3);
+    expect(container.querySelectorAll("span[aria-hidden='true']")).toHaveLength(6);
+  });
+
+  it("submits with the birth journey form id even when fields overlap with hospital bag", () => {
+    const onButtonSelect = vi.fn();
+    renderBlock({ payload: birthJourneyBasicInfoFormPayload(), onButtonSelect });
+
+    fireEvent.change(screen.getByLabelText("是否 IVF（体外受精）"), { target: { value: "否" } });
+    fireEvent.change(screen.getByLabelText("年龄"), { target: { value: "31" } });
+    fireEvent.change(screen.getByLabelText("单胎/双胎"), { target: { value: "单胎" } });
+    fireEvent.change(screen.getByLabelText("是否第一胎"), { target: { value: "是" } });
+    fireEvent.change(screen.getByLabelText("计划分娩方式"), { target: { value: "还没确定" } });
+    fireEvent.change(screen.getByLabelText("建档/生产医院"), { target: { value: "深圳市妇幼" } });
+    fireEvent.click(screen.getByRole("button", { name: "提交" }));
+
+    expect(onButtonSelect).toHaveBeenCalledTimes(1);
+    const [message, options] = onButtonSelect.mock.calls[0];
+    expect(options).toMatchObject({ displayText: "已提交：孕周与基本情况" });
+    expect(message).toContain("form_id: birth_journey_basic_info_intake");
+    expect(message).not.toContain("form_id: hospital_bag_intake");
   });
 });
 
@@ -519,6 +619,15 @@ describe("AgentHubRichTextBlock milk plan card", () => {
 });
 
 describe("AgentHubRichTextBlock birth journey plan card", () => {
+  it("renders todo plan periods before legacy planning layers", () => {
+    renderBlock({ payload: birthJourneyTodoPlanPayload() });
+
+    expect(screen.getByRole("heading", { name: "孕 25-28 周" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "孕 29-32 周" })).toBeInTheDocument();
+    expect(screen.getByText("完成糖耐并记录复查结果")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "旧本周重点" })).not.toBeInTheDocument();
+  });
+
   it("renders the planning layers structure", () => {
     renderBlock({ payload: birthJourneyLayeredPayload() });
 
