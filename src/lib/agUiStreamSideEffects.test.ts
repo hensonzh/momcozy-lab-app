@@ -927,6 +927,27 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(withArtifact.streamRenderItems?.[0]).toMatchObject({ kind: "rich" });
   });
 
+  it("does not render a blocked IBCLC tool result as a consult artifact", () => {
+    const msg = applyEvents([
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_ibclc",
+        tool_call_name: "ibclc_consult_card_create",
+        content: JSON.stringify({
+          ok: true,
+          tool_name: "ibclc_consult_card_create",
+          status: "ibclc_consult_blocked",
+          reason: "missing_explicit_ibclc_request",
+          requires_user_confirmation: true,
+          confirmation_question: "要我帮你打开 IBCLC 在线咨询入口吗？",
+        }),
+      },
+    ]);
+
+    expect(msg.richText).toBeUndefined();
+    expect(msg.streamRenderItems).toBeUndefined();
+  });
+
   it("replaces repeated artifact updates instead of appending duplicate cards", () => {
     const msg = applyEvents([
       {

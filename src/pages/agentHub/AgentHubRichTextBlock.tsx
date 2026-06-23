@@ -1044,8 +1044,10 @@ function normalizeBirthPlanCard(cardJsonRaw: Record<string, unknown>) {
 function normalizeBirthJourneyPlanCard(cardJsonRaw: Record<string, unknown>) {
   const owner = asObject(cardJsonRaw.owner) ?? {};
   const nextAction = asObject(cardJsonRaw.next_action) ?? {};
+  const todoPlan = asObject(cardJsonRaw.todo_plan);
+  const todoSections = normalizeBirthJourneyTodoPlanSections(todoPlan);
   const planningLayers = asObject(cardJsonRaw.planning_layers);
-  const layeredSections = normalizeBirthJourneyPlanningLayerSections(planningLayers);
+  const layeredSections = todoSections.length > 0 ? todoSections : normalizeBirthJourneyPlanningLayerSections(planningLayers);
   return {
     title: asString(cardJsonRaw.title) || "孕期计划",
     subtitle: asString(cardJsonRaw.subtitle),
@@ -1057,6 +1059,27 @@ function normalizeBirthJourneyPlanCard(cardJsonRaw: Record<string, unknown>) {
     },
     disclaimer: asString(cardJsonRaw.disclaimer),
   };
+}
+
+function normalizeBirthJourneyTodoPlanSections(
+  todoPlan: Record<string, unknown> | null,
+): BirthJourneyPlanCardSection[] {
+  const periods = Array.isArray(todoPlan?.periods) ? todoPlan.periods : [];
+  return periods
+    .map((period, index) => {
+      const source = asObject(period);
+      if (!source) return null;
+      const items = normalizeBirthJourneyPlanItems(source.items);
+      if (items.length === 0) return null;
+      return {
+        key: asString(source.id).trim() || `period_${index + 1}`,
+        title: asString(source.title).trim() || `阶段 ${index + 1}`,
+        subtitle: asString(source.subtitle).trim(),
+        items,
+        tone: index === 0 ? "warm" : "plain",
+      };
+    })
+    .filter((section): section is BirthJourneyPlanCardSection => Boolean(section));
 }
 
 function normalizeBirthJourneyPlanningLayerSections(
@@ -2027,9 +2050,11 @@ const AgentHubRichTextBlock: React.FC<{
               };
             })
             .filter((f) => f.id);
-          const isHospitalBagIntake = formId === "hospital_bag_intake" || looksLikeHospitalBagForm(parsedFields);
           const isBirthPlanIntake = formId === "birth_plan_card_intake";
           const isBirthJourneyBasicInfoIntake = formId === "birth_journey_basic_info_intake";
+          const isHospitalBagIntake =
+            formId === "hospital_bag_intake" ||
+            (!isBirthPlanIntake && !isBirthJourneyBasicInfoIntake && looksLikeHospitalBagForm(parsedFields));
           const isGroupedIntake = isHospitalBagIntake || isBirthPlanIntake;
           const isCollectionIntake = isGroupedIntake || isBirthJourneyBasicInfoIntake;
           const isMonochromeForm = isSupportTicket || isHospitalBagIntake || isBirthPlanIntake || isBirthJourneyBasicInfoIntake;

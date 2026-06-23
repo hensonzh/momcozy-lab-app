@@ -44,6 +44,20 @@ describe("workProgressSummary", () => {
     });
   });
 
+  it("keeps the blocked IBCLC confirmation title instead of the default consult-ready title", () => {
+    const summary = workProgressSummary(
+      [
+        row({ name: "ibclc_consult_card_create", title: "还需要你确认 IBCLC 咨询入口" }),
+      ],
+      true,
+    );
+
+    expect(summary).toEqual({
+      title: "还需要你确认 IBCLC 咨询入口",
+      tone: "done",
+    });
+  });
+
   it("hides the optimistic run-start row after a text-only reply finishes", () => {
     const summary = workProgressSummary(
       [
