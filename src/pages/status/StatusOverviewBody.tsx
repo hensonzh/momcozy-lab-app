@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -26,8 +32,14 @@ import {
   X,
 } from "lucide-react";
 import {
-  Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Line, ComposedChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Line,
+  ComposedChart,
 } from "recharts";
 import { useVolumeUnit, formatVol, unitLabel } from "@/lib/volumeUnit";
 import type {
@@ -53,7 +65,11 @@ import {
   pickMomBabyDeliveryDateYmd,
   postpartumWeekFromDay,
 } from "@/lib/momBabyDelivery";
-import { queryMomBabyInfo, queryMomBabyToday, getPumpInfo } from "@/lib/momPumpTwinAgentApi";
+import {
+  queryMomBabyInfo,
+  queryMomBabyToday,
+  getPumpInfo,
+} from "@/lib/momPumpTwinAgentApi";
 import {
   queryLatestGrowth,
   addGrowthRecord,
@@ -90,7 +106,12 @@ import postpartumRecoveryIcon from "@/assets/postpartum-recovery-icon.png";
 /** `/v1/mom-baby/*`、`/v1/growth/*`、`/v1/pump/info/get` 已接入部分；乳房健康和睡眠仍为占位模块。 */
 
 /** 母乳趋势 / 成长曲线：压缩左右与底部留白，同时保证刻度文本不被裁切 */
-const STATUS_OVERVIEW_CHART_MARGIN = { top: 8, right: 14, left: 0, bottom: 8 } as const;
+const STATUS_OVERVIEW_CHART_MARGIN = {
+  top: 8,
+  right: 14,
+  left: 0,
+  bottom: 8,
+} as const;
 const LACTATION_TREND_COLORS = {
   actual: "#b9792a",
   estimate: "#8a5f7d",
@@ -106,7 +127,12 @@ const GROWTH_CHART_COLORS = {
   axis: "#7560a0",
 };
 
-type BabyRecordRow = { date: string; weightKg: number; heightCm: number; headCm: number };
+type BabyRecordRow = {
+  date: string;
+  weightKg: number;
+  heightCm: number;
+  headCm: number;
+};
 type StatusDigitalTwinTab = "mom" | "baby";
 type MaternalCareStage = "pregnancy" | "postpartum";
 type BabyStatusPanelId = "baby-health" | "growth-milestone" | "baby-sleep";
@@ -164,16 +190,50 @@ const REST_RECOVERY_TIMELINE = [
 ] as const;
 
 const POSTPARTUM_RECOVERY_COURSES = [
-  { time: "第 1-2 天", status: "已完成", title: "盆底肌唤醒练习", detail: "呼吸配合轻收缩，建立盆底肌发力感" },
-  { time: "第 3-5 天", status: "进行中", title: "骨盆稳定训练", detail: "低强度核心稳定动作，帮助恢复骨盆控制" },
-  { time: "第 6-7 天", title: "腰背与肩颈放松", detail: "照护和吸奶后的短时拉伸，缓解腰背疲劳" },
+  {
+    time: "第 1-2 天",
+    status: "已完成",
+    title: "盆底肌唤醒练习",
+    detail: "呼吸配合轻收缩，建立盆底肌发力感",
+  },
+  {
+    time: "第 3-5 天",
+    status: "进行中",
+    title: "骨盆稳定训练",
+    detail: "低强度核心稳定动作，帮助恢复骨盆控制",
+  },
+  {
+    time: "第 6-7 天",
+    title: "腰背与肩颈放松",
+    detail: "照护和吸奶后的短时拉伸，缓解腰背疲劳",
+  },
 ] as const;
 
-const DIARY_MOOD_OPTIONS = ["平稳", "开心", "焦虑", "低落", "容易烦躁"] as const;
+const DIARY_MOOD_OPTIONS = [
+  "平稳",
+  "开心",
+  "焦虑",
+  "低落",
+  "容易烦躁",
+] as const;
 const DIARY_ENERGY_OPTIONS = ["不错", "一般", "很累"] as const;
 const DIARY_SLEEP_OPTIONS = ["睡得好", "易醒", "失眠", "白天补觉"] as const;
-const DIARY_FETAL_MOVEMENT_OPTIONS = ["胎动正常", "比平时少", "比平时频繁", "还没明显感觉"] as const;
-const DIARY_SYMPTOM_OPTIONS = ["腰酸", "水肿", "胃口变化", "宫缩感", "胎动变化", "头晕", "腹痛", "出血"] as const;
+const DIARY_FETAL_MOVEMENT_OPTIONS = [
+  "胎动正常",
+  "比平时少",
+  "比平时频繁",
+  "还没明显感觉",
+] as const;
+const DIARY_SYMPTOM_OPTIONS = [
+  "腰酸",
+  "水肿",
+  "胃口变化",
+  "宫缩感",
+  "胎动变化",
+  "头晕",
+  "腹痛",
+  "出血",
+] as const;
 
 const BABY_HEALTH_ITEMS = [
   "自闭症风险筛查",
@@ -185,18 +245,66 @@ const BABY_HEALTH_ITEMS = [
 ] as const;
 
 const BABY_GROWTH_MILESTONES = [
-  { title: "说出完整主谓短句", date: "2026.05.28", detail: "能说出带主语和动作的短句，语言组织能力继续发展。" },
-  { title: "独立上下低矮台阶", date: "2026.05.12", detail: "能自己上下低矮台阶，动作计划能力更成熟。" },
-  { title: "双脚离地原地跳跃", date: "2026.04.26", detail: "双脚能同时离地，腿部力量和协调性增强。" },
-  { title: "说出首个双字短句", date: "2026.04.08", detail: "能把两个词连在一起表达需求或发现。" },
-  { title: "首次双脚小跑", date: "2026.03.21", detail: "能双脚交替快速移动，运动稳定性进一步提升。" },
-  { title: "自主站立", date: "2026.03.02", detail: "短时间不用扶站立，平衡能力继续发展。" },
-  { title: "四点手足爬行", date: "2026.02.12", detail: "能用手和膝盖协调前进，探索范围变大。" },
-  { title: "无支撑独自坐稳", date: "2026.01.25", detail: "不用扶也能坐稳一段时间，核心控制更成熟。" },
-  { title: "首次叫爸爸", date: "2026.01.08", detail: "能发出接近“爸爸”的音节，表达欲更明显。" },
-  { title: "首次叫妈妈", date: "2025.12.22", detail: "发出接近“妈妈”的音节，开始把声音和人联系起来。" },
-  { title: "首次完整自主翻身", date: "2025.12.04", detail: "能从仰卧翻到俯卧，身体协调性继续提升。" },
-  { title: "出生后首次自主抬头", date: "2025.11.18", detail: "趴卧时能短暂抬起头，开始建立颈肩控制。" },
+  {
+    title: "说出完整主谓短句",
+    date: "2026.05.28",
+    detail: "能说出带主语和动作的短句，语言组织能力继续发展。",
+  },
+  {
+    title: "独立上下低矮台阶",
+    date: "2026.05.12",
+    detail: "能自己上下低矮台阶，动作计划能力更成熟。",
+  },
+  {
+    title: "双脚离地原地跳跃",
+    date: "2026.04.26",
+    detail: "双脚能同时离地，腿部力量和协调性增强。",
+  },
+  {
+    title: "说出首个双字短句",
+    date: "2026.04.08",
+    detail: "能把两个词连在一起表达需求或发现。",
+  },
+  {
+    title: "首次双脚小跑",
+    date: "2026.03.21",
+    detail: "能双脚交替快速移动，运动稳定性进一步提升。",
+  },
+  {
+    title: "自主站立",
+    date: "2026.03.02",
+    detail: "短时间不用扶站立，平衡能力继续发展。",
+  },
+  {
+    title: "四点手足爬行",
+    date: "2026.02.12",
+    detail: "能用手和膝盖协调前进，探索范围变大。",
+  },
+  {
+    title: "无支撑独自坐稳",
+    date: "2026.01.25",
+    detail: "不用扶也能坐稳一段时间，核心控制更成熟。",
+  },
+  {
+    title: "首次叫爸爸",
+    date: "2026.01.08",
+    detail: "能发出接近“爸爸”的音节，表达欲更明显。",
+  },
+  {
+    title: "首次叫妈妈",
+    date: "2025.12.22",
+    detail: "发出接近“妈妈”的音节，开始把声音和人联系起来。",
+  },
+  {
+    title: "首次完整自主翻身",
+    date: "2025.12.04",
+    detail: "能从仰卧翻到俯卧，身体协调性继续提升。",
+  },
+  {
+    title: "出生后首次自主抬头",
+    date: "2025.11.18",
+    detail: "趴卧时能短暂抬起头，开始建立颈肩控制。",
+  },
 ] as const;
 
 const BABY_SLEEP_SUMMARY = [
@@ -237,6 +345,8 @@ type BirthJourneyPlanItem = {
   id?: string;
   title?: string;
   reason?: string;
+  priority_label?: string;
+  steps?: string[];
   timeframe?: string;
   based_on?: unknown;
   completed?: boolean;
@@ -264,6 +374,8 @@ type BirthJourneyTodoPlanPeriod = {
   id?: string;
   title?: string;
   subtitle?: string;
+  display_mode?: string;
+  status?: string;
   items?: unknown;
 };
 
@@ -284,7 +396,9 @@ type BirthJourneyPayload = {
   estimated_due_date?: string;
 };
 
-function asBirthJourneyPayload(plan: CarePlanArtifact | null): BirthJourneyPayload {
+function asBirthJourneyPayload(
+  plan: CarePlanArtifact | null,
+): BirthJourneyPayload {
   return (plan?.payload ?? {}) as BirthJourneyPayload;
 }
 
@@ -293,12 +407,47 @@ function compactText(value: unknown): string {
 }
 
 const BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS = 22;
+const BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_CHARS = 42;
 const BIRTH_JOURNEY_NEXT7_TODO_PREFIX = "next7_";
 
-function truncateBirthJourneyPlanText(value: unknown, maxChars: number): string {
+function truncateBirthJourneyPlanText(
+  value: unknown,
+  maxChars: number,
+): string {
   const text = compactText(value);
   if (text.length <= maxChars) return text;
   return `${text.slice(0, Math.max(0, maxChars - 1)).replace(/[，。；、,.\s]+$/u, "")}…`;
+}
+
+function normalizeBirthJourneyPriorityAndReason(
+  reasonValue: unknown,
+  priorityValue: unknown,
+): { priorityLabel: string; reason: string } {
+  const explicitPriority = compactText(priorityValue);
+  const rawReason = compactText(reasonValue);
+  const match = rawReason.match(/^(重要|建议)[｜|]\s*(.+)$/u);
+  return {
+    priorityLabel: explicitPriority || match?.[1] || "",
+    reason: match?.[2]?.trim() || rawReason,
+  };
+}
+
+function birthJourneyPlanSteps(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set<string>();
+  return value
+    .map((step) =>
+      truncateBirthJourneyPlanText(
+        step,
+        BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_CHARS,
+      ),
+    )
+    .filter((step) => {
+      if (!step || seen.has(step)) return false;
+      seen.add(step);
+      return true;
+    })
+    .slice(0, 3);
 }
 
 function birthJourneyNext7TodoId(index: number): string {
@@ -308,14 +457,18 @@ function birthJourneyNext7TodoId(index: number): string {
 function birthJourneyCompletedBool(value: unknown): boolean {
   if (value === true) return true;
   if (typeof value === "string") {
-    return ["true", "1", "yes", "done", "completed", "完成", "已完成"].includes(value.trim().toLowerCase());
+    return ["true", "1", "yes", "done", "completed", "完成", "已完成"].includes(
+      value.trim().toLowerCase(),
+    );
   }
   return typeof value === "number" ? value !== 0 : false;
 }
 
 function formatPregnancyStageSubtitle(value: unknown): string {
   const text = compactText(value);
-  const weekMatch = text.match(/(?:孕期|孕周|怀孕|孕)?\s*(\d{1,2})\s*(?:周|w|W)/);
+  const weekMatch = text.match(
+    /(?:孕期|孕周|怀孕|孕)?\s*(\d{1,2})\s*(?:周|w|W)/,
+  );
   if (weekMatch?.[1]) return `孕期 ${weekMatch[1]} 周`;
   return "处于孕期";
 }
@@ -327,7 +480,9 @@ function readStatusCareStagePreference(): MaternalCareStage {
   } catch {
     /* ignore */
   }
-  return getRuntimeMomStage(import.meta.env.VITE_MOM_STAGE as string | undefined) === "prenatal"
+  return getRuntimeMomStage(
+    import.meta.env.VITE_MOM_STAGE as string | undefined,
+  ) === "prenatal"
     ? "pregnancy"
     : "postpartum";
 }
@@ -340,17 +495,23 @@ function saveStatusCareStagePreference(stage: MaternalCareStage): void {
   }
 }
 
-function birthJourneyPlanningLayers(plan: CarePlanArtifact | null): BirthJourneyPlanningLayers | null {
+function birthJourneyPlanningLayers(
+  plan: CarePlanArtifact | null,
+): BirthJourneyPlanningLayers | null {
   const layers = asBirthJourneyPayload(plan).planning_layers;
   if (!layers || typeof layers !== "object") return null;
   return layers;
 }
 
-function birthJourneyTodoPlan(plan: CarePlanArtifact | null): BirthJourneyTodoPlan | null {
+function birthJourneyTodoPlan(
+  plan: CarePlanArtifact | null,
+): BirthJourneyTodoPlan | null {
   const todoPlan = asBirthJourneyPayload(plan).todo_plan;
   if (!todoPlan || typeof todoPlan !== "object") return null;
   const periods = Array.isArray(todoPlan.periods)
-    ? todoPlan.periods.filter((period): period is BirthJourneyTodoPlanPeriod => Boolean(period && typeof period === "object"))
+    ? todoPlan.periods.filter((period): period is BirthJourneyTodoPlanPeriod =>
+        Boolean(period && typeof period === "object"),
+      )
     : [];
   if (periods.length === 0) return null;
   return { ...todoPlan, periods };
@@ -361,14 +522,30 @@ function birthJourneyPlanItems(value: unknown): BirthJourneyPlanItem[] {
   return value
     .map((item) => {
       if (typeof item === "string") {
-        return { title: truncateBirthJourneyPlanText(item, BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS) };
+        return {
+          title: truncateBirthJourneyPlanText(
+            item,
+            BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS,
+          ),
+          steps: [],
+        };
       }
       if (item && typeof item === "object") {
         const source = item as Record<string, unknown>;
+        const { priorityLabel, reason } =
+          normalizeBirthJourneyPriorityAndReason(
+            source.reason,
+            source.priority_label,
+          );
         return {
           id: compactText(source.id),
-          title: truncateBirthJourneyPlanText(source.title, BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS),
-          reason: compactText(source.reason),
+          title: truncateBirthJourneyPlanText(
+            source.title,
+            BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS,
+          ),
+          reason,
+          priority_label: priorityLabel,
+          steps: birthJourneyPlanSteps(source.steps),
           timeframe: compactText(source.timeframe),
           based_on: source.based_on,
           completed: birthJourneyCompletedBool(source.completed),
@@ -382,7 +559,61 @@ function birthJourneyPlanItems(value: unknown): BirthJourneyPlanItem[] {
 }
 
 function birthJourneyNextPrompt(plan: CarePlanArtifact | null): string {
-  return compactText(asBirthJourneyPayload(plan).next_action?.send_text) || "我想继续完善孕期计划";
+  return (
+    compactText(asBirthJourneyPayload(plan).next_action?.send_text) ||
+    "我想继续完善孕期计划"
+  );
+}
+
+function birthJourneyTodoCompletionPatch(completed: boolean) {
+  return {
+    completed,
+    completed_at: completed ? new Date().toISOString() : null,
+    completed_source: completed ? "app" : null,
+  };
+}
+
+function updateBirthJourneyRawItemCompletion(
+  rawItem: unknown,
+  itemId: string,
+  completed: boolean,
+  fallbackId: string,
+  matchedSourceIds: Set<string>,
+): unknown {
+  const patch = birthJourneyTodoCompletionPatch(completed);
+  if (typeof rawItem === "string") {
+    if (fallbackId !== itemId) return rawItem;
+    matchedSourceIds.add(fallbackId);
+    return {
+      id: fallbackId,
+      title: rawItem,
+      ...patch,
+    };
+  }
+  if (!rawItem || typeof rawItem !== "object") return rawItem;
+  const source = rawItem as Record<string, unknown>;
+  const sourceId = compactText(source.id);
+  const sourceItemId = compactText(source.source_item_id);
+  const matchIds = [sourceId, sourceItemId, fallbackId].filter(Boolean);
+  const matched =
+    matchIds.includes(itemId) ||
+    matchIds.some((matchId) => matchedSourceIds.has(matchId));
+  if (!matched) return rawItem;
+  const canonicalId =
+    sourceItemId ||
+    (sourceId && !sourceId.startsWith(BIRTH_JOURNEY_NEXT7_TODO_PREFIX)
+      ? sourceId
+      : "") ||
+    (fallbackId && !fallbackId.startsWith(BIRTH_JOURNEY_NEXT7_TODO_PREFIX)
+      ? fallbackId
+      : "");
+  if (canonicalId) matchedSourceIds.add(canonicalId);
+  if (sourceItemId) matchedSourceIds.add(sourceItemId);
+  return {
+    ...source,
+    id: sourceId || fallbackId,
+    ...patch,
+  };
 }
 
 function updateBirthJourneyPlanTodoLocally(
@@ -391,39 +622,72 @@ function updateBirthJourneyPlanTodoLocally(
   completed: boolean,
 ): CarePlanArtifact {
   const payload = { ...(plan.payload ?? {}) };
-  const layers = payload.planning_layers && typeof payload.planning_layers === "object"
-    ? { ...(payload.planning_layers as Record<string, unknown>) }
-    : {};
-  const next7 = layers.next_7_days && typeof layers.next_7_days === "object"
-    ? { ...(layers.next_7_days as Record<string, unknown>) }
-    : {};
+  const matchedSourceIds = new Set<string>();
+  const todoPlan =
+    payload.todo_plan && typeof payload.todo_plan === "object"
+      ? { ...(payload.todo_plan as Record<string, unknown>) }
+      : null;
+  if (todoPlan) {
+    const periods = Array.isArray(todoPlan.periods) ? todoPlan.periods : [];
+    todoPlan.periods = periods.map((rawPeriod, periodIndex) => {
+      if (!rawPeriod || typeof rawPeriod !== "object") return rawPeriod;
+      const period = { ...(rawPeriod as Record<string, unknown>) };
+      if (periodIndex !== 0 || !Array.isArray(period.items)) return period;
+      period.items = period.items.map((rawItem, index) =>
+        updateBirthJourneyRawItemCompletion(
+          rawItem,
+          itemId,
+          completed,
+          birthJourneyNext7TodoId(index),
+          matchedSourceIds,
+        ),
+      );
+      return period;
+    });
+    payload.todo_plan = todoPlan;
+  }
+
+  const layers =
+    payload.planning_layers && typeof payload.planning_layers === "object"
+      ? { ...(payload.planning_layers as Record<string, unknown>) }
+      : {};
+  const next7 =
+    layers.next_7_days && typeof layers.next_7_days === "object"
+      ? { ...(layers.next_7_days as Record<string, unknown>) }
+      : {};
   const rawItems = Array.isArray(next7.items) ? next7.items : [];
-  const nextItems = rawItems.map((rawItem, index) => {
-    const fallbackId = birthJourneyNext7TodoId(index);
-    if (typeof rawItem === "string") {
-      if (fallbackId !== itemId) return rawItem;
-      return {
-        id: fallbackId,
-        title: rawItem,
-        completed,
-        completed_at: completed ? new Date().toISOString() : null,
-        completed_source: completed ? "app" : null,
-      };
-    }
-    if (!rawItem || typeof rawItem !== "object") return rawItem;
-    const source = rawItem as Record<string, unknown>;
-    const sourceId = compactText(source.id) || fallbackId;
-    if (sourceId !== itemId) return rawItem;
-    return {
-      ...source,
-      id: sourceId,
+  const nextItems = rawItems.map((rawItem, index) =>
+    updateBirthJourneyRawItemCompletion(
+      rawItem,
+      itemId,
       completed,
-      completed_at: completed ? new Date().toISOString() : null,
-      completed_source: completed ? "app" : null,
-    };
-  });
+      birthJourneyNext7TodoId(index),
+      matchedSourceIds,
+    ),
+  );
   next7.items = nextItems;
   layers.next_7_days = next7;
+  for (const layerKey of [
+    "current_week_focus",
+    "next_2_4_weeks",
+    "later_milestones",
+  ]) {
+    const layer =
+      layers[layerKey] && typeof layers[layerKey] === "object"
+        ? { ...(layers[layerKey] as Record<string, unknown>) }
+        : null;
+    if (!layer || !Array.isArray(layer.items)) continue;
+    layer.items = layer.items.map((rawItem, index) =>
+      updateBirthJourneyRawItemCompletion(
+        rawItem,
+        itemId,
+        completed,
+        "",
+        matchedSourceIds,
+      ),
+    );
+    layers[layerKey] = layer;
+  }
   payload.planning_layers = layers;
   return { ...plan, payload };
 }
@@ -434,7 +698,11 @@ const BirthJourneyPlanItemRow: React.FC<{
   compact?: boolean;
   todo?: boolean;
   disabled?: boolean;
-  onToggleCompleted?: (item: BirthJourneyPlanItem, index: number, completed: boolean) => void;
+  onToggleCompleted?: (
+    item: BirthJourneyPlanItem,
+    index: number,
+    completed: boolean,
+  ) => void;
 }> = ({
   item,
   index,
@@ -449,40 +717,83 @@ const BirthJourneyPlanItemRow: React.FC<{
     onToggleCompleted?.(item, index, !completed);
   };
   return (
-  <div className={`rounded-xl bg-white px-3 ${compact ? "py-2" : "py-2.5"} ${completed ? "bg-white/75" : ""}`}>
-    <div className="flex gap-2">
-      {todo ? (
-        <button
-          type="button"
-          role="checkbox"
-          aria-checked={completed}
-          aria-label={`${completed ? "取消完成" : "标记完成"}：${item.title}`}
-          disabled={disabled}
-          onClick={toggle}
-          title={completed ? "标记为未完成" : "标记为已完成"}
-          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f8f87]/35 disabled:opacity-60 ${
-            completed
-              ? "border-[#4f8f87] bg-[#4f8f87] text-white"
-              : "border-[#8eb8b1] bg-white text-transparent"
-          }`}
-        >
-          <Check className={`h-3.5 w-3.5 ${completed ? "opacity-100" : "opacity-0"}`} aria-hidden="true" />
-        </button>
-      ) : (
-        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#fff0e4] text-[11px] font-extrabold leading-none text-[#b65c28]">
-          {index + 1}
-        </span>
-      )}
-      <div className="min-w-0 flex-1">
-        <div className="flex min-w-0 flex-wrap items-start gap-1.5">
-          <p className={`min-w-0 flex-1 text-xs font-extrabold leading-relaxed ${completed ? "text-[#8a7a72] line-through decoration-[#9dbfba]" : "text-[#4f4540]"}`}>{item.title}</p>
+    <div
+      className={`rounded-xl bg-white px-3 ${compact ? "py-2" : "py-2.5"} ${completed ? "bg-white/75" : ""}`}
+    >
+      <div className="flex gap-2">
+        {todo ? (
+          <button
+            type="button"
+            role="checkbox"
+            aria-checked={completed}
+            aria-label={`${completed ? "取消完成" : "标记完成"}：${item.title}`}
+            disabled={disabled}
+            onClick={toggle}
+            title={completed ? "标记为未完成" : "标记为已完成"}
+            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f8f87]/35 disabled:opacity-60 ${
+              completed
+                ? "border-[#4f8f87] bg-[#4f8f87] text-white"
+                : "border-[#8eb8b1] bg-white text-transparent"
+            }`}
+          >
+            <Check
+              className={`h-3.5 w-3.5 ${completed ? "opacity-100" : "opacity-0"}`}
+              aria-hidden="true"
+            />
+          </button>
+        ) : (
+          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#fff0e4] text-[11px] font-extrabold leading-none text-[#b65c28]">
+            {index + 1}
+          </span>
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 flex-wrap items-start gap-1.5">
+            {item.priority_label ? (
+              <span
+                className={`mt-[1px] inline-flex h-5 shrink-0 items-center rounded-full px-2 text-[10px] font-black leading-none ${
+                  item.priority_label === "重要"
+                    ? "bg-[#fff0e4] text-[#a95522]"
+                    : "bg-[#eaf6f4] text-[#3f8178]"
+                }`}
+              >
+                {item.priority_label}
+              </span>
+            ) : null}
+            <p
+              className={`min-w-0 flex-1 text-xs font-extrabold leading-relaxed ${completed ? "text-[#8a7a72] line-through decoration-[#9dbfba]" : "text-[#4f4540]"}`}
+            >
+              {item.title}
+            </p>
+          </div>
+          {item.reason ? (
+            <p
+              className={`mt-0.5 text-[11px] font-medium leading-relaxed ${completed ? "text-[#9b8d86]" : "text-[#7b6a61]"}`}
+            >
+              {item.reason}
+            </p>
+          ) : null}
+          {item.steps?.length ? (
+            <ol
+              className={`mt-2 space-y-1 ${completed ? "opacity-65" : ""}`}
+              aria-label={`${item.title}的具体步骤`}
+            >
+              {item.steps.map((step, stepIndex) => (
+                <li
+                  key={`${step}-${stepIndex}`}
+                  className="flex gap-1.5 text-[11px] font-semibold leading-relaxed text-[#5f514a]"
+                >
+                  <span
+                    className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#8eb8b1]"
+                    aria-hidden="true"
+                  />
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          ) : null}
         </div>
-        {item.reason ? (
-          <p className={`mt-0.5 text-[11px] font-medium leading-relaxed ${completed ? "text-[#9b8d86]" : "text-[#7b6a61]"}`}>{item.reason}</p>
-        ) : null}
       </div>
     </div>
-  </div>
   );
 };
 
@@ -503,7 +814,11 @@ const BirthJourneyPlanSectionView: React.FC<{
     <section className={`rounded-2xl border px-4 py-3 ${className}`}>
       <div className="mb-2">
         <p className="text-sm font-extrabold text-[#352820]">{title}</p>
-        {subtitle ? <p className="mt-1 text-[11px] font-normal leading-relaxed text-[#7b6a61]">{subtitle}</p> : null}
+        {subtitle ? (
+          <p className="mt-1 text-[11px] font-normal leading-relaxed text-[#7b6a61]">
+            {subtitle}
+          </p>
+        ) : null}
       </div>
       <div className="space-y-2">
         {items.map((item, index) => (
@@ -557,11 +872,15 @@ type PrenatalPlanStructureSection = {
   subtitle?: string;
   items: BirthJourneyPlanItem[];
   emptyLabel: string;
+  displayMode?: string;
+  status?: string;
   tone?: "alert" | "warm" | "plain";
   todo?: boolean;
 };
 
-function birthJourneyTodoPlanSections(todoPlan: BirthJourneyTodoPlan | null): PrenatalPlanStructureSection[] {
+function birthJourneyTodoPlanSections(
+  todoPlan: BirthJourneyTodoPlan | null,
+): PrenatalPlanStructureSection[] {
   if (!todoPlan?.periods) return [];
   return todoPlan.periods
     .map((period, index) => {
@@ -573,10 +892,26 @@ function birthJourneyTodoPlanSections(todoPlan: BirthJourneyTodoPlan | null): Pr
         subtitle: compactText(period.subtitle),
         items,
         emptyLabel: "这一阶段的行动事项会在计划生成后显示。",
-        tone: index === 0 ? ("warm" as const) : ("plain" as const),
+        displayMode:
+          compactText(period.display_mode) ||
+          (index === 0 ? "expanded" : "collapsed"),
+        status:
+          compactText(period.status) || (index === 0 ? "current" : "upcoming"),
+        tone:
+          compactText(period.display_mode) === "expanded" ||
+          compactText(period.status) === "current" ||
+          index === 0
+            ? ("warm" as const)
+            : ("plain" as const),
+        todo:
+          compactText(period.display_mode) === "expanded" ||
+          compactText(period.status) === "current" ||
+          index === 0,
       };
     })
-    .filter((section): section is PrenatalPlanStructureSection => Boolean(section));
+    .filter((section): section is PrenatalPlanStructureSection =>
+      Boolean(section),
+    );
 }
 
 const BirthJourneyTodoPlanView: React.FC<{
@@ -584,19 +919,7 @@ const BirthJourneyTodoPlanView: React.FC<{
 }> = ({ todoPlan }) => {
   const sections = birthJourneyTodoPlanSections(todoPlan);
   if (sections.length === 0) return null;
-  return (
-    <div className="space-y-3">
-      {sections.map((section) => (
-        <BirthJourneyPlanSectionView
-          key={section.key}
-          title={section.title}
-          subtitle={section.subtitle}
-          items={section.items}
-          tone={section.tone}
-        />
-      ))}
-    </div>
-  );
+  return <PrenatalPlanTimelineView sections={sections} />;
 };
 
 const PrenatalPlanTimelineView: React.FC<{
@@ -608,15 +931,24 @@ const PrenatalPlanTimelineView: React.FC<{
     {sections.map((section, sectionIndex) => {
       const markerClass = section.todo
         ? "border-[#b7d8d2] bg-[#eaf6f4] text-[#3f8178]"
+        : section.displayMode === "terminal"
+          ? "border-[#d9d3e3] bg-[#faf8ff] text-[#74628b]"
         : section.tone === "warm"
           ? "border-[#efd6bf] bg-[#fff2e6] text-[#b65c28]"
           : "border-[#e2edea] bg-white text-[#5f918b]";
+      const initiallyOpen =
+        section.displayMode === "expanded" ||
+        section.status === "current" ||
+        section.todo ||
+        section.tone === "warm" ||
+        sectionIndex === 0;
       return (
-        <section
+        <details
           key={section.key}
-          className="py-4 first:pt-0 last:pb-0"
+          className="group py-4 first:pt-0 last:pb-0"
+          open={initiallyOpen}
         >
-          <div className="flex items-start gap-3">
+          <summary className="flex cursor-pointer list-none items-start gap-3 rounded-xl outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[#4f8f87]/30 [&::-webkit-details-marker]:hidden">
             <span
               aria-hidden="true"
               className={`mt-0.5 inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full border px-1.5 text-[10px] font-black leading-none ${markerClass}`}
@@ -624,19 +956,32 @@ const PrenatalPlanTimelineView: React.FC<{
               {String(sectionIndex + 1).padStart(2, "0")}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-extrabold leading-tight text-[#352820]">{section.title}</p>
+              <p className="text-sm font-extrabold leading-tight text-[#352820]">
+                {section.title}
+              </p>
               {section.subtitle ? (
                 <p className="mt-1 text-[11px] font-normal leading-relaxed text-[#7b6a61]">
                   {section.subtitle}
                 </p>
               ) : null}
+              {!initiallyOpen ? (
+                <p className="mt-1 text-[11px] font-bold leading-relaxed text-[#5f918b]">
+                  {section.items.length} 个事项
+                </p>
+              ) : null}
             </div>
-          </div>
+            <ChevronDown
+              className="mt-0.5 h-4 w-4 shrink-0 text-[#6f9c96] transition-transform duration-200 group-open:rotate-180"
+              aria-hidden="true"
+            />
+          </summary>
 
           <div className="mt-3 space-y-2 pl-9">
             {section.items.length > 0 ? (
               section.items.map((item, index) => {
-                const itemId = item.id || (section.todo ? birthJourneyNext7TodoId(index) : "");
+                const itemId =
+                  item.id ||
+                  (section.todo ? birthJourneyNext7TodoId(index) : "");
                 const normalizedItem = itemId ? { ...item, id: itemId } : item;
                 return (
                   <BirthJourneyPlanItemRow
@@ -645,7 +990,9 @@ const PrenatalPlanTimelineView: React.FC<{
                     index={index}
                     compact
                     todo={Boolean(section.todo)}
-                    disabled={Boolean(itemId && todoUpdatingIds.includes(itemId))}
+                    disabled={Boolean(
+                      itemId && todoUpdatingIds.includes(itemId),
+                    )}
                     onToggleCompleted={(_, __, completed) => {
                       if (itemId) onToggleTodo?.(itemId, completed);
                     }}
@@ -654,7 +1001,9 @@ const PrenatalPlanTimelineView: React.FC<{
               })
             ) : (
               <div>
-                <p className="text-xs font-semibold leading-relaxed text-[#806c73]">{section.emptyLabel}</p>
+                <p className="text-xs font-semibold leading-relaxed text-[#806c73]">
+                  {section.emptyLabel}
+                </p>
                 <div className="mt-3 space-y-2" aria-hidden="true">
                   <span className="block h-2 w-4/5 rounded-full bg-[#e3efec]" />
                   <span className="block h-2 w-7/12 rounded-full bg-[#edf5f3]" />
@@ -662,7 +1011,7 @@ const PrenatalPlanTimelineView: React.FC<{
               </div>
             )}
           </div>
-        </section>
+        </details>
       );
     })}
   </div>
@@ -676,7 +1025,9 @@ function formatDiaryDateLabel(dateKey: string): string {
 
 function pregnancyDiarySummary(entry: PregnancyDiaryEntry | null): string {
   if (!entry) return "今天还没有记录哦";
-  const healthNotes = Array.isArray(entry.health_notes) ? entry.health_notes : [];
+  const healthNotes = Array.isArray(entry.health_notes)
+    ? entry.health_notes
+    : [];
   const parts = [
     entry.mood ? `心情${entry.mood}` : "",
     entry.fetal_movement ? entry.fetal_movement : "",
@@ -692,7 +1043,9 @@ function pregnancyDiarySummary(entry: PregnancyDiaryEntry | null): string {
 
 function pregnancyDiaryTextBlocks(entry: PregnancyDiaryEntry | null): string[] {
   if (!entry) return [];
-  const healthNotes = Array.isArray(entry.health_notes) ? entry.health_notes : [];
+  const healthNotes = Array.isArray(entry.health_notes)
+    ? entry.health_notes
+    : [];
   const candidates = [
     entry.content,
     entry.appointment_note,
@@ -703,27 +1056,33 @@ function pregnancyDiaryTextBlocks(entry: PregnancyDiaryEntry | null): string[] {
     }),
   ];
   const seen = new Set<string>();
-  return candidates
-    .map(compactText)
-    .filter((text) => {
-      if (!text || seen.has(text)) return false;
-      seen.add(text);
-      return true;
-    });
+  return candidates.map(compactText).filter((text) => {
+    if (!text || seen.has(text)) return false;
+    seen.add(text);
+    return true;
+  });
 }
 
 function pregnancyDiarySignalTags(entry: PregnancyDiaryEntry): string[] {
-  const healthNotes = Array.isArray(entry.health_notes) ? entry.health_notes : [];
+  const healthNotes = Array.isArray(entry.health_notes)
+    ? entry.health_notes
+    : [];
   return [
     entry.mood ? `心情${entry.mood}` : "",
     compactText(entry.fetal_movement),
     compactText(entry.sleep_summary),
     ...healthNotes.map((note) => compactText(note.topic)),
     ...entry.symptom_tags,
-  ].map(compactText).filter(Boolean).slice(0, 4);
+  ]
+    .map(compactText)
+    .filter(Boolean)
+    .slice(0, 4);
 }
 
-function pregnancyDiaryRecentCount(entries: PregnancyDiaryEntry[], days = 7): number {
+function pregnancyDiaryRecentCount(
+  entries: PregnancyDiaryEntry[],
+  days = 7,
+): number {
   const dateKeys = new Set(buildRecentDateKeys(days));
   return entries.filter((entry) => dateKeys.has(entry.entry_date)).length;
 }
@@ -732,7 +1091,16 @@ function pregnancyDiaryQuestionCount(entries: PregnancyDiaryEntry[]): number {
   return entries.reduce((total, entry) => {
     const note = compactText(entry.appointment_note);
     if (!note) return total;
-    return total + Math.max(1, note.split(/[？?\n；;]/).map((item) => item.trim()).filter(Boolean).length);
+    return (
+      total +
+      Math.max(
+        1,
+        note
+          .split(/[？?\n；;]/)
+          .map((item) => item.trim())
+          .filter(Boolean).length,
+      )
+    );
   }, 0);
 }
 
@@ -740,7 +1108,9 @@ function pregnancyDiaryHealthNotes(entries: PregnancyDiaryEntry[], days = 7) {
   const dateKeys = new Set(buildRecentDateKeys(days));
   return entries
     .filter((entry) => dateKeys.has(entry.entry_date))
-    .flatMap((entry) => (Array.isArray(entry.health_notes) ? entry.health_notes : []));
+    .flatMap((entry) =>
+      Array.isArray(entry.health_notes) ? entry.health_notes : [],
+    );
 }
 
 function pregnancyDiaryAgentPrompts(entries: PregnancyDiaryEntry[]): string[] {
@@ -763,7 +1133,11 @@ const BabyStatusPanelSheet: React.FC<{
 }> = ({ panel, onClose }) => {
   const isMilestone = panel === "growth-milestone";
   const isSleepReport = panel === "baby-sleep";
-  const title = isMilestone ? "成长 milestone" : isSleepReport ? "宝宝睡眠报告" : "宝宝健康";
+  const title = isMilestone
+    ? "成长 milestone"
+    : isSleepReport
+      ? "宝宝睡眠报告"
+      : "宝宝健康";
 
   return (
     <>
@@ -787,7 +1161,11 @@ const BabyStatusPanelSheet: React.FC<{
       >
         <div className="mb-4 flex items-center justify-between gap-3">
           <h3 className="text-base font-extrabold text-foreground">{title}</h3>
-          <button type="button" onClick={onClose} className="rounded-full p-2 text-muted-foreground active:bg-muted">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full p-2 text-muted-foreground active:bg-muted"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -795,8 +1173,13 @@ const BabyStatusPanelSheet: React.FC<{
         {panel === "baby-health" ? (
           <div className="space-y-2">
             {BABY_HEALTH_ITEMS.map((item) => (
-              <article key={item} className="flex items-center justify-between gap-3 rounded-2xl border border-[#dcefea] bg-[#fbfffd] px-4 py-3">
-                <span className="text-sm font-bold text-foreground">{item}</span>
+              <article
+                key={item}
+                className="flex items-center justify-between gap-3 rounded-2xl border border-[#dcefea] bg-[#fbfffd] px-4 py-3"
+              >
+                <span className="text-sm font-bold text-foreground">
+                  {item}
+                </span>
                 <span className="shrink-0 rounded-full bg-[#e5f7f0] px-2.5 py-1 text-[11px] font-extrabold text-[#2f8a72]">
                   待开通
                 </span>
@@ -808,7 +1191,10 @@ const BabyStatusPanelSheet: React.FC<{
         {isMilestone ? (
           <div className="max-h-[72vh] overflow-y-auto pr-1">
             <div className="relative flex flex-col gap-3 pb-1">
-              <span aria-hidden="true" className="absolute bottom-4 left-[13px] top-4 w-px bg-gradient-to-t from-[#dcf7ed] via-[#cceee1] to-[#76c7ad]" />
+              <span
+                aria-hidden="true"
+                className="absolute bottom-4 left-[13px] top-4 w-px bg-gradient-to-t from-[#dcf7ed] via-[#cceee1] to-[#76c7ad]"
+              />
               {BABY_GROWTH_MILESTONES.map((record, index) => {
                 const total = Math.max(1, BABY_GROWTH_MILESTONES.length - 1);
                 const recency = 1 - index / total;
@@ -819,7 +1205,10 @@ const BabyStatusPanelSheet: React.FC<{
                 const cardBorderColor = `hsl(${hue}, 58%, ${89 - recency * 5}%)`;
 
                 return (
-                  <article key={`${record.title}-${index}`} className="relative flex gap-3">
+                  <article
+                    key={`${record.title}-${index}`}
+                    className="relative flex gap-3"
+                  >
                     <span
                       aria-hidden="true"
                       className="mt-4 flex h-7 w-7 shrink-0 items-center justify-center"
@@ -851,10 +1240,16 @@ const BabyStatusPanelSheet: React.FC<{
                         />
                         <div className="min-w-0 flex-1">
                           <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                            <p className="truncate text-sm font-extrabold text-foreground">{record.title}</p>
-                            <time className="shrink-0 text-[10px] font-normal text-[#9a8fa5]">{record.date}</time>
+                            <p className="truncate text-sm font-extrabold text-foreground">
+                              {record.title}
+                            </p>
+                            <time className="shrink-0 text-[10px] font-normal text-[#9a8fa5]">
+                              {record.date}
+                            </time>
                           </div>
-                          <p className="mt-1 text-xs font-medium leading-relaxed text-[#6f617a]">{record.detail}</p>
+                          <p className="mt-1 text-xs font-medium leading-relaxed text-[#6f617a]">
+                            {record.detail}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -868,11 +1263,17 @@ const BabyStatusPanelSheet: React.FC<{
         {isSleepReport ? (
           <div className="max-h-[76vh] overflow-y-auto rounded-[28px] bg-[#fffdf8] px-4 pb-5 pt-3">
             <div className="mb-5 flex items-center justify-between">
-              <button type="button" className="rounded-2xl bg-[#fff1c9] px-2.5 py-2 text-[10px] font-extrabold text-[#c68b36] active:scale-95">
+              <button
+                type="button"
+                className="rounded-2xl bg-[#fff1c9] px-2.5 py-2 text-[10px] font-extrabold text-[#c68b36] active:scale-95"
+              >
                 前一天
               </button>
               <p className="text-base font-black text-foreground">11-16</p>
-              <button type="button" className="rounded-2xl bg-[#fff1c9] px-2.5 py-2 text-[10px] font-extrabold text-[#c68b36] active:scale-95">
+              <button
+                type="button"
+                className="rounded-2xl bg-[#fff1c9] px-2.5 py-2 text-[10px] font-extrabold text-[#c68b36] active:scale-95"
+              >
                 后一天
               </button>
             </div>
@@ -888,19 +1289,36 @@ const BabyStatusPanelSheet: React.FC<{
                   <div className="absolute -top-7 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#ffe8df] text-[#ff9677] shadow-sm">
                     <item.icon className="h-6 w-6" strokeWidth={2.3} />
                   </div>
-                  <p className="text-[12px] font-black text-[#ff9677]">{item.title}</p>
-                  <p className="mt-3 text-[15px] font-black text-foreground">{item.value}</p>
+                  <p className="text-[12px] font-black text-[#ff9677]">
+                    {item.title}
+                  </p>
+                  <p className="mt-3 text-[15px] font-black text-foreground">
+                    {item.value}
+                  </p>
                 </article>
               ))}
             </div>
 
             <div className="mt-7 text-center">
-              <h4 className="text-[15px] font-black text-foreground">宝宝睡眠记录</h4>
-              <p className="mt-1 text-[10px] font-bold text-[#8a767f]">按时段看睡眠、活动和哭闹时长</p>
+              <h4 className="text-[15px] font-black text-foreground">
+                宝宝睡眠记录
+              </h4>
+              <p className="mt-1 text-[10px] font-bold text-[#8a767f]">
+                按时段看睡眠、活动和哭闹时长
+              </p>
               <div className="mt-3 flex justify-center gap-4 text-[10px] font-bold text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5"><i className="h-2 w-3 rounded-sm bg-[#25d6a3]" />睡眠</span>
-                <span className="inline-flex items-center gap-1.5"><i className="h-2 w-3 rounded-sm bg-[#e6b65c]" />活动</span>
-                <span className="inline-flex items-center gap-1.5"><i className="h-2 w-3 rounded-sm bg-[#8c78c8]" />哭闹</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <i className="h-2 w-3 rounded-sm bg-[#25d6a3]" />
+                  睡眠
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <i className="h-2 w-3 rounded-sm bg-[#e6b65c]" />
+                  活动
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <i className="h-2 w-3 rounded-sm bg-[#8c78c8]" />
+                  哭闹
+                </span>
               </div>
 
               <div className="mt-5 rounded-[24px] bg-[#fffaf2] px-3 pb-3 pt-4">
@@ -913,23 +1331,61 @@ const BabyStatusPanelSheet: React.FC<{
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="relative h-[112px]">
-                      <span aria-hidden="true" className="absolute inset-x-0 top-0 border-t border-dashed border-[#efdccc]" />
-                      <span aria-hidden="true" className="absolute inset-x-0 top-1/3 border-t border-dashed border-[#efdccc]" />
-                      <span aria-hidden="true" className="absolute inset-x-0 top-2/3 border-t border-dashed border-[#efdccc]" />
-                      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 border-t border-[#ead5c2]" />
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-0 top-0 border-t border-dashed border-[#efdccc]"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-0 top-1/3 border-t border-dashed border-[#efdccc]"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-0 top-2/3 border-t border-dashed border-[#efdccc]"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-0 bottom-0 border-t border-[#ead5c2]"
+                      />
                       <div className="relative z-10 flex h-full items-end justify-between gap-1.5">
                         {BABY_SLEEP_CHART.map((row) => (
-                          <div key={row.period} className="flex h-full min-w-0 flex-1 items-end justify-center gap-0.5">
-                            <span className="w-2 rounded-t-full bg-[#25d6a3]" style={{ height: `${Math.max(4, (row.sleepMinutes / 90) * 100)}%`, opacity: row.sleepMinutes > 0 ? 1 : 0.16 }} />
-                            <span className="w-2 rounded-t-full bg-[#e6b65c]" style={{ height: `${Math.max(4, (row.activityMinutes / 90) * 100)}%`, opacity: row.activityMinutes > 0 ? 1 : 0.16 }} />
-                            <span className="w-2 rounded-t-full bg-[#8c78c8]" style={{ height: `${Math.max(4, (row.cryMinutes / 90) * 100)}%`, opacity: row.cryMinutes > 0 ? 1 : 0.16 }} />
+                          <div
+                            key={row.period}
+                            className="flex h-full min-w-0 flex-1 items-end justify-center gap-0.5"
+                          >
+                            <span
+                              className="w-2 rounded-t-full bg-[#25d6a3]"
+                              style={{
+                                height: `${Math.max(4, (row.sleepMinutes / 90) * 100)}%`,
+                                opacity: row.sleepMinutes > 0 ? 1 : 0.16,
+                              }}
+                            />
+                            <span
+                              className="w-2 rounded-t-full bg-[#e6b65c]"
+                              style={{
+                                height: `${Math.max(4, (row.activityMinutes / 90) * 100)}%`,
+                                opacity: row.activityMinutes > 0 ? 1 : 0.16,
+                              }}
+                            />
+                            <span
+                              className="w-2 rounded-t-full bg-[#8c78c8]"
+                              style={{
+                                height: `${Math.max(4, (row.cryMinutes / 90) * 100)}%`,
+                                opacity: row.cryMinutes > 0 ? 1 : 0.16,
+                              }}
+                            />
                           </div>
                         ))}
                       </div>
                     </div>
                     <div className="mt-2 flex justify-between gap-1 text-[9px] font-bold text-[#9a8170]">
                       {BABY_SLEEP_CHART.map((row) => (
-                        <span key={row.period} className="min-w-0 flex-1 text-center">{row.period}</span>
+                        <span
+                          key={row.period}
+                          className="min-w-0 flex-1 text-center"
+                        >
+                          {row.period}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -970,12 +1426,19 @@ const MomStatusPanelSheet: React.FC<{
   pregnancyDiaryJustSaved,
   onOpenDiaryEditor,
 }) => {
-  const [postpartumTrainingHintVisible, setPostpartumTrainingHintVisible] = useState(false);
-  const [birthJourneyDeleteConfirmVisible, setBirthJourneyDeleteConfirmVisible] = useState(false);
+  const [postpartumTrainingHintVisible, setPostpartumTrainingHintVisible] =
+    useState(false);
+  const [
+    birthJourneyDeleteConfirmVisible,
+    setBirthJourneyDeleteConfirmVisible,
+  ] = useState(false);
   const postpartumTrainingHintTimerRef = useRef<number | null>(null);
   const isInfo = panel.endsWith("-info");
   const isCenteredInfo =
-    panel === "milk-info" || panel === "baby-feed-info" || panel === "breast-info" || panel === "rest-info";
+    panel === "milk-info" ||
+    panel === "baby-feed-info" ||
+    panel === "breast-info" ||
+    panel === "rest-info";
   const titleMap: Record<MomStatusPanelId, string> = {
     "birth-journey-detail": "孕期计划",
     "pregnancy-diary-detail": "孕期日记",
@@ -1024,14 +1487,25 @@ const MomStatusPanelSheet: React.FC<{
 
   const birthJourneyTodo = birthJourneyTodoPlan(birthJourneyPlan);
   const birthJourneyLayers = birthJourneyPlanningLayers(birthJourneyPlan);
-  const birthJourneyHasTodoPlan = Boolean(birthJourneyTodo && birthJourneyTodoPlanSections(birthJourneyTodo).length > 0);
-  const birthJourneyHasLayeredPlan = Boolean(
-    birthJourneyLayers && birthJourneyPlanItems(birthJourneyLayers.current_week_focus?.items).length > 0,
+  const birthJourneyHasTodoPlan = Boolean(
+    birthJourneyTodo &&
+    birthJourneyTodoPlanSections(birthJourneyTodo).length > 0,
   );
-  const pregnancyDiaryQuestions = pregnancyDiaryQuestionCount(pregnancyDiaryEntries);
-  const pregnancyDiaryPrompts = pregnancyDiaryAgentPrompts(pregnancyDiaryEntries);
-  const pregnancyDiaryPrimaryPrompt = pregnancyDiaryPrompts[0] ?? "帮我回顾最近7天的孕期日记";
-  const pregnancyDiaryPrimaryAction = pregnancyDiaryQuestions > 0 ? "整理产检问题" : "回顾最近记录";
+  const birthJourneyHasLayeredPlan = Boolean(
+    birthJourneyLayers &&
+    birthJourneyPlanItems(birthJourneyLayers.current_week_focus?.items).length >
+      0,
+  );
+  const pregnancyDiaryQuestions = pregnancyDiaryQuestionCount(
+    pregnancyDiaryEntries,
+  );
+  const pregnancyDiaryPrompts = pregnancyDiaryAgentPrompts(
+    pregnancyDiaryEntries,
+  );
+  const pregnancyDiaryPrimaryPrompt =
+    pregnancyDiaryPrompts[0] ?? "帮我回顾最近7天的孕期日记";
+  const pregnancyDiaryPrimaryAction =
+    pregnancyDiaryQuestions > 0 ? "整理产检问题" : "回顾最近记录";
 
   if (isCenteredInfo) {
     return (
@@ -1055,8 +1529,14 @@ const MomStatusPanelSheet: React.FC<{
         >
           <div className="pointer-events-auto w-full max-w-[360px] rounded-3xl border border-white/70 bg-card px-5 py-4 shadow-2xl">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <h3 className="text-base font-extrabold text-foreground">{titleMap[panel]}</h3>
-              <button type="button" onClick={onClose} className="rounded-full p-2 text-muted-foreground active:bg-muted">
+              <h3 className="text-base font-extrabold text-foreground">
+                {titleMap[panel]}
+              </h3>
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-full p-2 text-muted-foreground active:bg-muted"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -1087,8 +1567,14 @@ const MomStatusPanelSheet: React.FC<{
         style={{ paddingBottom: "max(1.75rem, env(safe-area-inset-bottom))" }}
       >
         <div className="mb-4 flex items-center justify-between gap-3">
-          <h3 className="text-base font-extrabold text-foreground">{titleMap[panel]}</h3>
-          <button type="button" onClick={onClose} className="rounded-full p-2 text-muted-foreground active:bg-muted">
+          <h3 className="text-base font-extrabold text-foreground">
+            {titleMap[panel]}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full p-2 text-muted-foreground active:bg-muted"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -1114,9 +1600,12 @@ const MomStatusPanelSheet: React.FC<{
                 ) : (
                   <div className="rounded-2xl border border-[#eadfd8] bg-[#fffdfb] px-4 py-5 text-center">
                     <ClipboardList className="mx-auto h-7 w-7 text-[#9b7a64]" />
-                    <p className="mt-2 text-sm font-extrabold text-foreground">这份计划缺少分层内容</p>
+                    <p className="mt-2 text-sm font-extrabold text-foreground">
+                      这份计划缺少分层内容
+                    </p>
                     <p className="mt-1 text-xs font-semibold leading-relaxed text-[#7b6a61]">
-                      当前缺少 todo_plan 或 planning_layers；可以重新制定一份完整计划。
+                      当前缺少 todo_plan 或
+                      planning_layers；可以重新制定一份完整计划。
                     </p>
                   </div>
                 )}
@@ -1129,14 +1618,18 @@ const MomStatusPanelSheet: React.FC<{
 
                 {birthJourneyDeleteConfirmVisible ? (
                   <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3">
-                    <p className="text-sm font-extrabold text-foreground">确认删除孕期计划？</p>
+                    <p className="text-sm font-extrabold text-foreground">
+                      确认删除孕期计划？
+                    </p>
                     <p className="mt-1 text-xs font-semibold leading-relaxed text-muted-foreground">
                       删除后，宝宝和我页面不再展示这份计划。需要时可以重新生成。
                     </p>
                     <div className="mt-3 grid grid-cols-2 gap-2">
                       <button
                         type="button"
-                        onClick={() => setBirthJourneyDeleteConfirmVisible(false)}
+                        onClick={() =>
+                          setBirthJourneyDeleteConfirmVisible(false)
+                        }
                         disabled={birthJourneyDeleting}
                         className="inline-flex items-center justify-center rounded-2xl border border-border bg-card px-4 py-3 text-sm font-extrabold text-foreground active:scale-[0.99] disabled:opacity-60"
                       >
@@ -1153,27 +1646,30 @@ const MomStatusPanelSheet: React.FC<{
                       </button>
                     </div>
                   </div>
-                    ) : (
-                      <div className="flex justify-end">
-                        <button
-                          type="button"
-                          onClick={() => setBirthJourneyDeleteConfirmVisible(true)}
-                          disabled={birthJourneyDeleting}
-                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-muted-foreground active:text-destructive disabled:opacity-60"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                          删除计划
-                        </button>
-                      </div>
-                    )}
+                ) : (
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setBirthJourneyDeleteConfirmVisible(true)}
+                      disabled={birthJourneyDeleting}
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-muted-foreground active:text-destructive disabled:opacity-60"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      删除计划
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               <div className="space-y-3">
                 <div className="rounded-2xl border border-[#e6d9fb] bg-[#fbf7ff] px-4 py-5 text-center">
                   <ClipboardList className="mx-auto h-7 w-7 text-[#7d64aa]" />
-                  <p className="mt-2 text-sm font-extrabold text-foreground">还没有孕期计划</p>
+                  <p className="mt-2 text-sm font-extrabold text-foreground">
+                    还没有孕期计划
+                  </p>
                   <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6f617a]">
-                    生成后会在这里展示当前优先级、接下来 7 天行动清单和后续重要节点。
+                    生成后会在这里展示当前优先级、接下来 7
+                    天行动清单和后续重要节点。
                   </p>
                 </div>
                 <button
@@ -1207,7 +1703,9 @@ const MomStatusPanelSheet: React.FC<{
                   <div className="flex min-w-0 items-center gap-3">
                     <MaiInlineAvatar />
                     <div className="min-w-0">
-                      <p className="text-sm font-extrabold text-foreground">{pregnancyDiaryPrimaryAction}</p>
+                      <p className="text-sm font-extrabold text-foreground">
+                        {pregnancyDiaryPrimaryAction}
+                      </p>
                       <p className="mt-0.5 text-[11px] font-semibold leading-relaxed text-[#8a757b]">
                         {pregnancyDiaryQuestions > 0
                           ? `从日记里整理 ${pregnancyDiaryQuestions} 个问题`
@@ -1229,8 +1727,12 @@ const MomStatusPanelSheet: React.FC<{
             ) : pregnancyDiaryEntries.length > 0 ? (
               <section className="space-y-3">
                 <div className="flex items-baseline justify-between gap-3 px-1">
-                  <p className="text-base font-extrabold text-foreground">最近记录</p>
-                  <p className="text-[10px] font-bold text-muted-foreground">{pregnancyDiaryEntries.length} 篇</p>
+                  <p className="text-base font-extrabold text-foreground">
+                    最近记录
+                  </p>
+                  <p className="text-[10px] font-bold text-muted-foreground">
+                    {pregnancyDiaryEntries.length} 篇
+                  </p>
                 </div>
                 <div className="space-y-3">
                   {pregnancyDiaryEntries.map((entry, index) => (
@@ -1244,9 +1746,13 @@ const MomStatusPanelSheet: React.FC<{
                     >
                       <div className="flex min-w-0 items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-sm font-extrabold text-foreground">{formatDiaryDateLabel(entry.entry_date)}</p>
+                          <p className="text-sm font-extrabold text-foreground">
+                            {formatDiaryDateLabel(entry.entry_date)}
+                          </p>
                           {entry.gestational_week ? (
-                            <p className="mt-0.5 text-[10px] font-bold text-[#8a757b]">{entry.gestational_week}</p>
+                            <p className="mt-0.5 text-[10px] font-bold text-[#8a757b]">
+                              {entry.gestational_week}
+                            </p>
                           ) : null}
                         </div>
                         {index === 0 ? (
@@ -1256,21 +1762,39 @@ const MomStatusPanelSheet: React.FC<{
                         ) : null}
                       </div>
                       {entry.content ? (
-                        <p className="mt-3 line-clamp-2 text-xs font-semibold leading-relaxed text-[#5f5357]">{entry.content}</p>
+                        <p className="mt-3 line-clamp-2 text-xs font-semibold leading-relaxed text-[#5f5357]">
+                          {entry.content}
+                        </p>
                       ) : (
                         <p className="mt-3 text-xs font-semibold leading-relaxed text-[#5f5357]">
                           {pregnancyDiarySummary(entry)}
                         </p>
                       )}
-                      {Array.isArray(entry.health_notes) && entry.health_notes.length > 0 ? (
+                      {Array.isArray(entry.health_notes) &&
+                      entry.health_notes.length > 0 ? (
                         <div className="mt-3 rounded-2xl bg-white/75 px-3 py-3">
-                          <p className="text-[10px] font-extrabold text-[#b66335]">健康咨询记录</p>
+                          <p className="text-[10px] font-extrabold text-[#b66335]">
+                            健康咨询记录
+                          </p>
                           <div className="mt-2 space-y-2">
                             {entry.health_notes.slice(0, 2).map((note) => (
-                              <div key={note.note_id} className="text-xs font-semibold leading-relaxed text-[#5f5357]">
-                                <p className="font-extrabold text-[#3a2b31]">{compactText(note.topic) || "健康咨询"}</p>
-                                {note.user_report ? <p className="mt-0.5 line-clamp-2">{note.user_report}</p> : null}
-                                {note.follow_up ? <p className="mt-0.5 text-[#8a5b3f]">{note.follow_up}</p> : null}
+                              <div
+                                key={note.note_id}
+                                className="text-xs font-semibold leading-relaxed text-[#5f5357]"
+                              >
+                                <p className="font-extrabold text-[#3a2b31]">
+                                  {compactText(note.topic) || "健康咨询"}
+                                </p>
+                                {note.user_report ? (
+                                  <p className="mt-0.5 line-clamp-2">
+                                    {note.user_report}
+                                  </p>
+                                ) : null}
+                                {note.follow_up ? (
+                                  <p className="mt-0.5 text-[#8a5b3f]">
+                                    {note.follow_up}
+                                  </p>
+                                ) : null}
                               </div>
                             ))}
                           </div>
@@ -1278,7 +1802,10 @@ const MomStatusPanelSheet: React.FC<{
                       ) : null}
                       <div className="mt-3 flex flex-wrap gap-1.5">
                         {pregnancyDiarySignalTags(entry).map((tag) => (
-                          <span key={tag} className="rounded-full bg-[#f5eee9] px-2.5 py-1 text-[10px] font-bold text-[#75666b]">
+                          <span
+                            key={tag}
+                            className="rounded-full bg-[#f5eee9] px-2.5 py-1 text-[10px] font-bold text-[#75666b]"
+                          >
                             {tag}
                           </span>
                         ))}
@@ -1295,7 +1822,9 @@ const MomStatusPanelSheet: React.FC<{
             ) : (
               <div className="rounded-[24px] border border-[#eadfd8] bg-[#fffdfb] px-4 py-5 text-center">
                 <BookOpen className="mx-auto h-7 w-7 text-[#b66335]" />
-                <p className="mt-2 text-sm font-extrabold text-foreground">还没有孕期日记</p>
+                <p className="mt-2 text-sm font-extrabold text-foreground">
+                  还没有孕期日记
+                </p>
                 <p className="mt-1 text-xs font-semibold leading-relaxed text-[#7f6b70]">
                   从今天开始记录心情、身体感受、胎动和产检点滴。
                 </p>
@@ -1307,7 +1836,10 @@ const MomStatusPanelSheet: React.FC<{
         {panel === "breast-detail" ? (
           <div className="space-y-3">
             <div className="relative flex flex-col-reverse gap-3">
-              <span aria-hidden="true" className="absolute bottom-3 left-[9px] top-3 w-px bg-[#ffd9c8]" />
+              <span
+                aria-hidden="true"
+                className="absolute bottom-3 left-[9px] top-3 w-px bg-[#ffd9c8]"
+              />
               {BREAST_HEALTH_TIMELINE.map((record, index) => {
                 const isCurrent = index === BREAST_HEALTH_TIMELINE.length - 1;
                 return (
@@ -1322,10 +1854,16 @@ const MomStatusPanelSheet: React.FC<{
                     />
                     <div className="min-w-0 flex-1 rounded-2xl border border-[#ffd9c8] bg-[#fff8f1] px-4 py-3">
                       <div className="flex min-w-0 items-center justify-between gap-2">
-                        <p className="truncate text-sm font-extrabold text-foreground">{record.title}</p>
-                        <span className="shrink-0 text-[11px] font-bold text-[#b6674b]">{record.time}</span>
+                        <p className="truncate text-sm font-extrabold text-foreground">
+                          {record.title}
+                        </p>
+                        <span className="shrink-0 text-[11px] font-bold text-[#b6674b]">
+                          {record.time}
+                        </span>
                       </div>
-                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6f5560]">{record.detail}</p>
+                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6f5560]">
+                        {record.detail}
+                      </p>
                     </div>
                   </article>
                 );
@@ -1333,7 +1871,11 @@ const MomStatusPanelSheet: React.FC<{
             </div>
             <button
               type="button"
-              onClick={() => onAgentPrefill("我想了解乳房健康情况，最近有涨奶和硬块，按压会疼")}
+              onClick={() =>
+                onAgentPrefill(
+                  "我想了解乳房健康情况，最近有涨奶和硬块，按压会疼",
+                )
+              }
               className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
             >
               <MaiInlineAvatar />
@@ -1346,17 +1888,26 @@ const MomStatusPanelSheet: React.FC<{
           <div className="space-y-3">
             <div className="space-y-2">
               {POSTPARTUM_RECOVERY_COURSES.map((course) => (
-                <article key={course.title} className="rounded-2xl border border-border/50 bg-background px-4 py-3">
+                <article
+                  key={course.title}
+                  className="rounded-2xl border border-border/50 bg-background px-4 py-3"
+                >
                   <div className="flex items-center gap-1.5">
-                    <p className="text-[11px] font-bold text-[#2f8a72]">{course.time}</p>
+                    <p className="text-[11px] font-bold text-[#2f8a72]">
+                      {course.time}
+                    </p>
                     {"status" in course ? (
                       <span className="rounded-full bg-[#dcf7ed] px-2 py-0.5 text-[10px] font-extrabold text-[#2f8a72]">
                         {course.status}
                       </span>
                     ) : null}
                   </div>
-                  <p className="mt-1 text-sm font-bold text-foreground">{course.title}</p>
-                  <p className="mt-1 text-xs font-medium leading-snug text-muted-foreground">{course.detail}</p>
+                  <p className="mt-1 text-sm font-bold text-foreground">
+                    {course.title}
+                  </p>
+                  <p className="mt-1 text-xs font-medium leading-snug text-muted-foreground">
+                    {course.detail}
+                  </p>
                 </article>
               ))}
             </div>
@@ -1389,7 +1940,10 @@ const MomStatusPanelSheet: React.FC<{
         {panel === "rest-detail" ? (
           <div className="space-y-3">
             <div className="relative flex flex-col-reverse gap-3">
-              <span aria-hidden="true" className="absolute bottom-3 left-[9px] top-3 w-px bg-[#ffe4b8]" />
+              <span
+                aria-hidden="true"
+                className="absolute bottom-3 left-[9px] top-3 w-px bg-[#ffe4b8]"
+              />
               {REST_RECOVERY_TIMELINE.map((record, index) => {
                 const isCurrent = index === REST_RECOVERY_TIMELINE.length - 1;
                 return (
@@ -1404,10 +1958,16 @@ const MomStatusPanelSheet: React.FC<{
                     />
                     <div className="min-w-0 flex-1 rounded-2xl border border-[#ffe4b8] bg-[#fffaf0] px-4 py-3">
                       <div className="flex min-w-0 items-center justify-between gap-2">
-                        <p className="truncate text-sm font-extrabold text-foreground">{record.title}</p>
-                        <span className="shrink-0 text-[11px] font-bold text-[#b36d20]">{record.time}</span>
+                        <p className="truncate text-sm font-extrabold text-foreground">
+                          {record.title}
+                        </p>
+                        <span className="shrink-0 text-[11px] font-bold text-[#b36d20]">
+                          {record.time}
+                        </span>
                       </div>
-                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6d5530]">{record.detail}</p>
+                      <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6d5530]">
+                        {record.detail}
+                      </p>
                     </div>
                   </article>
                 );
@@ -1415,7 +1975,11 @@ const MomStatusPanelSheet: React.FC<{
             </div>
             <button
               type="button"
-              onClick={() => onAgentPrefill("我想了解最近的睡眠和休息情况，夜间照护后白天很疲惫")}
+              onClick={() =>
+                onAgentPrefill(
+                  "我想了解最近的睡眠和休息情况，夜间照护后白天很疲惫",
+                )
+              }
               className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground active:scale-[0.99]"
             >
               让我了解更多
@@ -1491,22 +2055,26 @@ const PrenatalExpandedServices: React.FC<{
       emptyLabel: "制定后会放入临近生产前的重要节点。",
     },
   ];
-  const planStructureSections = todoPlanSections.length > 0 ? todoPlanSections : legacyPlanStructureSections;
+  const planStructureSections =
+    todoPlanSections.length > 0
+      ? todoPlanSections
+      : legacyPlanStructureSections;
   const todayDateKey = toLocalDateKey(new Date());
   const todayDiaryEntries = pregnancyDiaryToday
     ? [pregnancyDiaryToday]
-    : pregnancyDiaryEntries.filter((entry) => entry.entry_date === todayDateKey).slice(0, 1);
-  const todayDiaryTextBlocks = pregnancyDiaryTextBlocks(todayDiaryEntries[0] ?? null);
+    : pregnancyDiaryEntries
+        .filter((entry) => entry.entry_date === todayDateKey)
+        .slice(0, 1);
+  const todayDiaryTextBlocks = pregnancyDiaryTextBlocks(
+    todayDiaryEntries[0] ?? null,
+  );
   const recentCount7 = pregnancyDiaryRecentCount(pregnancyDiaryEntries, 7);
   const healthNotes = pregnancyDiaryHealthNotes(pregnancyDiaryEntries, 7);
   const healthNoteCount = healthNotes.length;
   const diaryQuestionCount = pregnancyDiaryQuestionCount(pregnancyDiaryEntries);
 
   return (
-    <section
-      className="order-2 mx-0 mb-5 bg-background"
-      aria-label="孕期服务"
-    >
+    <section className="order-2 mx-0 mb-5 bg-background" aria-label="孕期服务">
       <div className="space-y-6 px-4 pb-4">
         <section
           className={`overflow-hidden rounded-[24px] border border-[#eadfd8] bg-[#fffaf8] shadow-sm ${
@@ -1515,7 +2083,9 @@ const PrenatalExpandedServices: React.FC<{
         >
           <div className="flex items-center justify-between gap-3 px-4 py-4">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
-              <h3 className="text-[18px] font-black leading-tight text-foreground">孕期日记</h3>
+              <h3 className="text-[18px] font-black leading-tight text-foreground">
+                孕期日记
+              </h3>
             </div>
             <button
               type="button"
@@ -1529,16 +2099,28 @@ const PrenatalExpandedServices: React.FC<{
           <div className="border-y border-[#ead8ce] bg-[#fff7f1] px-4 py-3">
             <div className="grid grid-cols-3 divide-x divide-[#ead8ce]">
               <div className="pr-3">
-                <p className="text-[20px] font-black leading-none text-[#9b552f]">{recentCount7}</p>
-                <p className="mt-1 text-[10px] font-bold text-[#7d666d]">近7天记录</p>
+                <p className="text-[20px] font-black leading-none text-[#9b552f]">
+                  {recentCount7}
+                </p>
+                <p className="mt-1 text-[10px] font-bold text-[#7d666d]">
+                  近7天记录
+                </p>
               </div>
               <div className="px-3">
-                <p className="text-[20px] font-black leading-none text-[#9b552f]">{healthNoteCount}</p>
-                <p className="mt-1 text-[10px] font-bold text-[#7d666d]">健康咨询</p>
+                <p className="text-[20px] font-black leading-none text-[#9b552f]">
+                  {healthNoteCount}
+                </p>
+                <p className="mt-1 text-[10px] font-bold text-[#7d666d]">
+                  健康咨询
+                </p>
               </div>
               <div className="pl-3">
-                <p className="text-[20px] font-black leading-none text-[#9b552f]">{diaryQuestionCount}</p>
-                <p className="mt-1 text-[10px] font-bold text-[#7d666d]">产检问题</p>
+                <p className="text-[20px] font-black leading-none text-[#9b552f]">
+                  {diaryQuestionCount}
+                </p>
+                <p className="mt-1 text-[10px] font-bold text-[#7d666d]">
+                  产检问题
+                </p>
               </div>
             </div>
             <div className="mt-3 flex items-center gap-2.5 border-t border-[#ead8ce]/85 pt-3">
@@ -1557,7 +2139,9 @@ const PrenatalExpandedServices: React.FC<{
           <div className="px-4 py-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm font-extrabold text-foreground">今日日记</p>
+                <p className="text-sm font-extrabold text-foreground">
+                  今日日记
+                </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <button
@@ -1580,7 +2164,10 @@ const PrenatalExpandedServices: React.FC<{
                 {todayDiaryTextBlocks.length > 0 ? (
                   <div className="space-y-2">
                     {todayDiaryTextBlocks.map((text) => (
-                      <p key={text} className="text-xs font-semibold leading-relaxed text-[#806c73]">
+                      <p
+                        key={text}
+                        className="text-xs font-semibold leading-relaxed text-[#806c73]"
+                      >
                         {text}
                       </p>
                     ))}
@@ -1614,7 +2201,9 @@ const PrenatalExpandedServices: React.FC<{
           <div className="min-w-0">
             <div className="flex min-w-0 items-center justify-between gap-3">
               <div className="flex min-w-0 flex-wrap items-center gap-2">
-                <h3 className="text-[17px] font-black leading-tight text-foreground">孕期计划</h3>
+                <h3 className="text-[17px] font-black leading-tight text-foreground">
+                  孕期计划
+                </h3>
               </div>
               {!birthJourneyPlan ? (
                 <button
@@ -1633,7 +2222,9 @@ const PrenatalExpandedServices: React.FC<{
               ) : null}
             </div>
             {birthJourneyLoading ? (
-              <p className="mt-2 text-sm font-bold leading-relaxed text-[#385f5b]">正在加载孕期计划</p>
+              <p className="mt-2 text-sm font-bold leading-relaxed text-[#385f5b]">
+                正在加载孕期计划
+              </p>
             ) : null}
           </div>
 
@@ -1705,7 +2296,16 @@ const Expandable: React.FC<{
   defaultOpen?: boolean;
   className?: string;
   id?: string;
-}> = ({ title, icon, badge, summary, children, defaultOpen = false, className = "", id }) => {
+}> = ({
+  title,
+  icon,
+  badge,
+  summary,
+  children,
+  defaultOpen = false,
+  className = "",
+  id,
+}) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <motion.div
@@ -1722,15 +2322,18 @@ const Expandable: React.FC<{
         <div className="w-6 h-6 shrink-0 flex items-center justify-center">
           {icon}
         </div>
-        <span className="text-sm font-semibold text-foreground flex-1">{title}</span>
+        <span className="text-sm font-semibold text-foreground flex-1">
+          {title}
+        </span>
         {badge}
-        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
+        <motion.div
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
           <ChevronDown className="w-4 h-4 text-muted-foreground" />
         </motion.div>
       </button>
-      {!open && summary && (
-        <div className="px-4 pb-3 -mt-1">{summary}</div>
-      )}
+      {!open && summary && <div className="px-4 pb-3 -mt-1">{summary}</div>}
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
@@ -1747,7 +2350,15 @@ const Expandable: React.FC<{
   );
 };
 
-type StatusModuleTone = "rose" | "amber" | "mint" | "sky" | "violet" | "peach" | "aqua" | "pink";
+type StatusModuleTone =
+  | "rose"
+  | "amber"
+  | "mint"
+  | "sky"
+  | "violet"
+  | "peach"
+  | "aqua"
+  | "pink";
 
 const STATUS_MODULE_TONE_CLASSES: Record<
   StatusModuleTone,
@@ -1870,30 +2481,44 @@ function StatusModuleCard({
       <div className="relative z-10 flex items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="flex min-w-0 items-center gap-1">
-            <h3 className="truncate text-[14px] font-bold leading-tight text-[#35212c]">{title}</h3>
+            <h3 className="truncate text-[14px] font-bold leading-tight text-[#35212c]">
+              {title}
+            </h3>
             {infoPlacement === "title" ? infoButton : null}
           </div>
           {subtitle ? (
             <div className="mt-1 flex min-w-0 items-start gap-1">
-              <p className="line-clamp-2 text-[11px] font-medium leading-snug text-[#7a6870]">{subtitle}</p>
+              <p className="line-clamp-2 text-[11px] font-medium leading-snug text-[#7a6870]">
+                {subtitle}
+              </p>
               {infoPlacement === "subtitle" ? infoButton : null}
             </div>
           ) : null}
         </div>
-        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${toneClasses.icon}`}>
+        <span
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${toneClasses.icon}`}
+        >
           {icon}
         </span>
       </div>
-      <div className={`relative z-10 ${hasMetrics ? "mt-5" : hasBodyText ? "mt-2 flex flex-1 flex-col" : "mt-auto"}`}>
+      <div
+        className={`relative z-10 ${hasMetrics ? "mt-5" : hasBodyText ? "mt-2 flex flex-1 flex-col" : "mt-auto"}`}
+      >
         {bodyText ? (
-          <p className="my-auto line-clamp-2 text-[11px] font-medium leading-snug text-[#7a6870]">{bodyText}</p>
+          <p className="my-auto line-clamp-2 text-[11px] font-medium leading-snug text-[#7a6870]">
+            {bodyText}
+          </p>
         ) : null}
         {metrics?.length ? (
-          <div className={`grid ${metrics.length >= 3 ? "grid-cols-3 gap-1.5" : metrics.length > 1 ? "grid-cols-2 gap-2" : "grid-cols-1 gap-2"}`}>
+          <div
+            className={`grid ${metrics.length >= 3 ? "grid-cols-3 gap-1.5" : metrics.length > 1 ? "grid-cols-2 gap-2" : "grid-cols-1 gap-2"}`}
+          >
             {metrics.map((metric) => (
               <div key={metric.label} className="min-w-0">
                 <div className="flex min-w-0 items-center gap-1">
-                  <span className="truncate text-[11px] font-semibold leading-tight text-[#7a5b68]">{metric.label}</span>
+                  <span className="truncate text-[11px] font-semibold leading-tight text-[#7a5b68]">
+                    {metric.label}
+                  </span>
                   {metric.onInfoClick ? (
                     <button
                       type="button"
@@ -1905,33 +2530,59 @@ function StatusModuleCard({
                     </button>
                   ) : null}
                 </div>
-                <p className={`mt-1 min-h-[22px] truncate font-bold leading-tight text-[#35212c] ${metrics.length >= 3 ? "text-[14px]" : "text-[16px]"}`}>{metric.value}</p>
+                <p
+                  className={`mt-1 min-h-[22px] truncate font-bold leading-tight text-[#35212c] ${metrics.length >= 3 ? "text-[14px]" : "text-[16px]"}`}
+                >
+                  {metric.value}
+                </p>
               </div>
             ))}
           </div>
         ) : null}
-        {value ? <p className="min-h-[22px] text-[16px] font-bold leading-tight text-[#35212c]">{value}</p> : null}
-        {supportingText ? <p className="mt-1 text-[11px] font-medium leading-snug text-[#7a5b68]">{supportingText}</p> : null}
+        {value ? (
+          <p className="min-h-[22px] text-[16px] font-bold leading-tight text-[#35212c]">
+            {value}
+          </p>
+        ) : null}
+        {supportingText ? (
+          <p className="mt-1 text-[11px] font-medium leading-snug text-[#7a5b68]">
+            {supportingText}
+          </p>
+        ) : null}
         {action || secondaryAction ? (
-          <div className={`mt-2 flex flex-wrap gap-1.5 ${alignActionTextWithTitle ? "-ml-2.5" : ""}`}>
+          <div
+            className={`mt-2 flex flex-wrap gap-1.5 ${alignActionTextWithTitle ? "-ml-2.5" : ""}`}
+          >
             {action ? (
               onClick ? (
-                <button type="button" onClick={onClick} className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}>
+                <button
+                  type="button"
+                  onClick={onClick}
+                  className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}
+                >
                   {action}
                 </button>
               ) : (
-                <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}>
+                <span
+                  className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}
+                >
                   {action}
                 </span>
               )
             ) : null}
             {secondaryAction ? (
               onSecondaryClick ? (
-                <button type="button" onClick={onSecondaryClick} className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}>
+                <button
+                  type="button"
+                  onClick={onSecondaryClick}
+                  className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}
+                >
                   {secondaryAction}
                 </button>
               ) : (
-                <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}>
+                <span
+                  className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${toneClasses.cta}`}
+                >
                   {secondaryAction}
                 </span>
               )
@@ -1952,9 +2603,10 @@ function StatusModuleCard({
 }
 
 function scrollStatusSection(id: string): void {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  document
+    .getElementById(id)
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
-
 
 type VolumeUnit = Parameters<typeof formatVol>[1];
 
@@ -2040,26 +2692,41 @@ function toLocalDateKey(date: Date): string {
 }
 
 function shiftLocalDate(base: Date, offsetDays: number): Date {
-  return new Date(base.getFullYear(), base.getMonth(), base.getDate() + offsetDays);
+  return new Date(
+    base.getFullYear(),
+    base.getMonth(),
+    base.getDate() + offsetDays,
+  );
 }
 
-function buildRecentDateKeys(windowSize: number, baseNow = new Date()): string[] {
+function buildRecentDateKeys(
+  windowSize: number,
+  baseNow = new Date(),
+): string[] {
   const out: string[] = [];
-  const baseDate = new Date(baseNow.getFullYear(), baseNow.getMonth(), baseNow.getDate());
+  const baseDate = new Date(
+    baseNow.getFullYear(),
+    baseNow.getMonth(),
+    baseNow.getDate(),
+  );
   for (let i = windowSize - 1; i >= 0; i--) {
     out.push(toLocalDateKey(shiftLocalDate(baseDate, -i)));
   }
   return out;
 }
 
-function pickLactationTrendDateTicks(dateKeys: readonly string[], windowSize: 7 | 30): string[] {
+function pickLactationTrendDateTicks(
+  dateKeys: readonly string[],
+  windowSize: 7 | 30,
+): string[] {
   const n = dateKeys.length;
   if (n === 0) return [];
   if (windowSize === 7 || n <= 8) return [...dateKeys];
   const tickCount = Math.min(7, n);
   const idxSet = new Set<number>();
   for (let i = 0; i < tickCount; i++) {
-    const idx = tickCount === 1 ? 0 : Math.round((i / (tickCount - 1)) * (n - 1));
+    const idx =
+      tickCount === 1 ? 0 : Math.round((i / (tickCount - 1)) * (n - 1));
     idxSet.add(idx);
   }
   return [...idxSet].sort((a, b) => a - b).map((idx) => dateKeys[idx]!);
@@ -2084,7 +2751,9 @@ type LactationTrendRowMl = {
   refHighMl: number;
 };
 
-function buildLactationTrendRowsMl(list: PumpInfoLactationDayItem[]): LactationTrendRowMl[] {
+function buildLactationTrendRowsMl(
+  list: PumpInfoLactationDayItem[],
+): LactationTrendRowMl[] {
   const byKey = new Map<string, PumpInfoLactationDayItem>();
   for (const item of list) {
     const key = parseLactationDateKey(item.delivery_date);
@@ -2093,12 +2762,21 @@ function buildLactationTrendRowsMl(list: PumpInfoLactationDayItem[]): LactationT
   const keys = [...byKey.keys()].sort((a, b) => a.localeCompare(b));
   return keys.map((dateKey) => {
     const item = byKey.get(dateKey)!;
-    let refLo = typeof item.reference_lower === "number" ? item.reference_lower : Number(item.reference_lower);
-    let refHi = typeof item.reference_upper === "number" ? item.reference_upper : Number(item.reference_upper);
+    let refLo =
+      typeof item.reference_lower === "number"
+        ? item.reference_lower
+        : Number(item.reference_lower);
+    let refHi =
+      typeof item.reference_upper === "number"
+        ? item.reference_upper
+        : Number(item.reference_upper);
     if (!Number.isFinite(refLo)) refLo = 0;
     if (!Number.isFinite(refHi)) refHi = 0;
     refHi = Math.max(refHi, refLo);
-    const rawAct = typeof item.total_milk === "number" ? item.total_milk : Number(item.total_milk);
+    const rawAct =
+      typeof item.total_milk === "number"
+        ? item.total_milk
+        : Number(item.total_milk);
     const actualMl = Number.isFinite(rawAct) ? Math.max(0, rawAct) : 0;
     const estimatedMl = lactationEstimateMl(item);
     return {
@@ -2158,12 +2836,16 @@ const buildGrowthChartData = (
   if (!birthDateStr || records.length === 0) return [];
   const birth = new Date(birthDateStr);
   const latest = new Date(records[records.length - 1].date);
-  const totalWeeks = Math.ceil((latest.getTime() - birth.getTime()) / (7 * 24 * 60 * 60 * 1000));
+  const totalWeeks = Math.ceil(
+    (latest.getTime() - birth.getTime()) / (7 * 24 * 60 * 60 * 1000),
+  );
 
   const points: GrowthChartPoint[] = [];
   for (let w = 0; w <= totalWeeks; w++) {
     const dayOffset = w * 7;
-    const targetDate = new Date(birth.getTime() + dayOffset * 24 * 60 * 60 * 1000);
+    const targetDate = new Date(
+      birth.getTime() + dayOffset * 24 * 60 * 60 * 1000,
+    );
 
     let before = records[0];
     let after = records[records.length - 1];
@@ -2180,15 +2862,26 @@ const buildGrowthChartData = (
     const bDate = new Date(before.date);
     const aDate = new Date(after.date);
     const span = aDate.getTime() - bDate.getTime();
-    const ratio = span > 0 ? (targetDate.getTime() - bDate.getTime()) / span : 0;
+    const ratio =
+      span > 0 ? (targetDate.getTime() - bDate.getTime()) / span : 0;
     const r = Math.max(0, Math.min(1, ratio));
-    const weight = +(before.weightKg + (after.weightKg - before.weightKg) * r).toFixed(2);
-    const height = +(before.heightCm + (after.heightCm - before.heightCm) * r).toFixed(1);
+    const weight = +(
+      before.weightKg +
+      (after.weightKg - before.weightKg) * r
+    ).toFixed(2);
+    const height = +(
+      before.heightCm +
+      (after.heightCm - before.heightCm) * r
+    ).toFixed(1);
 
     points.push({
       week: `W${w}`,
-      weight, wP25: whoWeightP25(w), wP75: whoWeightP75(w),
-      height, hP25: whoHeightP25(w), hP75: whoHeightP75(w),
+      weight,
+      wP25: whoWeightP25(w),
+      wP75: whoWeightP75(w),
+      height,
+      hP25: whoHeightP25(w),
+      hP75: whoHeightP75(w),
     });
   }
   return points;
@@ -2217,7 +2910,8 @@ function mapGrowthHistoryToBabyRows(data: GrowthRecord[]): BabyRecordRow[] {
       typeof r.weight_kg === "number" ? r.weight_kg : Number(r.weight_kg);
     const heightCm =
       typeof r.height_cm === "number" ? r.height_cm : Number(r.height_cm);
-    const headCm = typeof r.head_cm === "number" ? r.head_cm : Number(r.head_cm);
+    const headCm =
+      typeof r.head_cm === "number" ? r.head_cm : Number(r.head_cm);
     if (!Number.isFinite(weightKg) || !Number.isFinite(heightCm)) continue;
     const growthIdRaw =
       typeof r.growth_id === "number" ? r.growth_id : Number(r.growth_id);
@@ -2285,26 +2979,40 @@ const EmptyChartHint = ({ children }: { children: React.ReactNode }) => (
 const StatusOverviewBody: React.FC = () => {
   const navigate = useNavigate();
   const [unit] = useVolumeUnit();
-  const birthJourneyPlanCardNotification = useBirthJourneyPlanCardNotification();
+  const birthJourneyPlanCardNotification =
+    useBirthJourneyPlanCardNotification();
   const pregnancyDiaryCardNotification = usePregnancyDiaryCardNotification();
   const isOz = unit === "oz";
-  const conv = useCallback((ml: number) => (isOz ? +(ml * 0.033814).toFixed(1) : ml), [isOz]);
+  const conv = useCallback(
+    (ml: number) => (isOz ? +(ml * 0.033814).toFixed(1) : ml),
+    [isOz],
+  );
 
   const [deliveryYmd, setDeliveryYmd] = useState<string | null>(null);
-  const [momBabyToday, setMomBabyToday] = useState<MomBabyTodayData | null>(null);
+  const [momBabyToday, setMomBabyToday] = useState<MomBabyTodayData | null>(
+    null,
+  );
   const [momBabyLoading, setMomBabyLoading] = useState(true);
   const [todayQueryLoading, setTodayQueryLoading] = useState(true);
   const [momBabyErr, setMomBabyErr] = useState<string | null>(null);
   const [userProfileLoading, setUserProfileLoading] = useState(true);
   const [birthPrepDueDateOrWeek, setBirthPrepDueDateOrWeek] = useState("");
-  const [maternalCareStage, setMaternalCareStage] = useState<MaternalCareStage>(() => readStatusCareStagePreference());
+  const [maternalCareStage, setMaternalCareStage] = useState<MaternalCareStage>(
+    () => readStatusCareStagePreference(),
+  );
 
-  const [lactationInfoList, setLactationInfoList] = useState<PumpInfoLactationDayItem[]>([]);
+  const [lactationInfoList, setLactationInfoList] = useState<
+    PumpInfoLactationDayItem[]
+  >([]);
   const [pumpInfoLoading, setPumpInfoLoading] = useState(true);
 
   const [growthLoading, setGrowthLoading] = useState(true);
-  const [latestGrowth, setLatestGrowth] = useState<GrowthQueryData | null>(null);
-  const [growthHistoryRows, setGrowthHistoryRows] = useState<BabyRecordRow[]>([]);
+  const [latestGrowth, setLatestGrowth] = useState<GrowthQueryData | null>(
+    null,
+  );
+  const [growthHistoryRows, setGrowthHistoryRows] = useState<BabyRecordRow[]>(
+    [],
+  );
   const [growthHistoryLoading, setGrowthHistoryLoading] = useState(true);
 
   const [babyMetrics, setBabyMetrics] = useState<{
@@ -2320,29 +3028,51 @@ const StatusOverviewBody: React.FC = () => {
   const [growthSubmitting, setGrowthSubmitting] = useState(false);
   const [growthSaveErr, setGrowthSaveErr] = useState<string | null>(null);
   const [growthMetricsBlinkOn, setGrowthMetricsBlinkOn] = useState(false);
-  const [activeDigitalTwin, setActiveDigitalTwin] = useState<StatusDigitalTwinTab>("mom");
-  const [activeMomPanel, setActiveMomPanel] = useState<MomStatusPanelId | null>(null);
-  const [activeBabyPanel, setActiveBabyPanel] = useState<BabyStatusPanelId | null>(null);
-  const [todayFeedingCount, setTodayFeedingCount] = useState<number | null>(null);
-  const [todayFeedingRecordsLoading, setTodayFeedingRecordsLoading] = useState(true);
-  const [birthJourneyPlan, setBirthJourneyPlan] = useState<CarePlanArtifact | null>(null);
+  const [activeDigitalTwin, setActiveDigitalTwin] =
+    useState<StatusDigitalTwinTab>("mom");
+  const [activeMomPanel, setActiveMomPanel] = useState<MomStatusPanelId | null>(
+    null,
+  );
+  const [activeBabyPanel, setActiveBabyPanel] =
+    useState<BabyStatusPanelId | null>(null);
+  const [todayFeedingCount, setTodayFeedingCount] = useState<number | null>(
+    null,
+  );
+  const [todayFeedingRecordsLoading, setTodayFeedingRecordsLoading] =
+    useState(true);
+  const [birthJourneyPlan, setBirthJourneyPlan] =
+    useState<CarePlanArtifact | null>(null);
   const [birthJourneyLoading, setBirthJourneyLoading] = useState(true);
   const [birthJourneyDeleting, setBirthJourneyDeleting] = useState(false);
-  const [birthJourneyTodoUpdatingIds, setBirthJourneyTodoUpdatingIds] = useState<string[]>([]);
+  const [birthJourneyTodoUpdatingIds, setBirthJourneyTodoUpdatingIds] =
+    useState<string[]>([]);
 
   useEffect(() => {
-    if (!birthJourneyPlan || birthJourneyLoading || !birthJourneyPlanCardNotification) return;
+    if (
+      !birthJourneyPlan ||
+      birthJourneyLoading ||
+      !birthJourneyPlanCardNotification
+    )
+      return;
     const timer = window.setTimeout(() => {
       clearBirthJourneyPlanCardNotification();
     }, 3000);
     return () => window.clearTimeout(timer);
   }, [birthJourneyPlan, birthJourneyLoading, birthJourneyPlanCardNotification]);
-  const [birthJourneyDeleteErr, setBirthJourneyDeleteErr] = useState<string | null>(null);
-  const [birthJourneyTodoErr, setBirthJourneyTodoErr] = useState<string | null>(null);
-  const [pregnancyDiaryEntries, setPregnancyDiaryEntries] = useState<PregnancyDiaryEntry[]>([]);
-  const [pregnancyDiaryToday, setPregnancyDiaryToday] = useState<PregnancyDiaryEntry | null>(null);
+  const [birthJourneyDeleteErr, setBirthJourneyDeleteErr] = useState<
+    string | null
+  >(null);
+  const [birthJourneyTodoErr, setBirthJourneyTodoErr] = useState<string | null>(
+    null,
+  );
+  const [pregnancyDiaryEntries, setPregnancyDiaryEntries] = useState<
+    PregnancyDiaryEntry[]
+  >([]);
+  const [pregnancyDiaryToday, setPregnancyDiaryToday] =
+    useState<PregnancyDiaryEntry | null>(null);
   const [pregnancyDiaryLoading, setPregnancyDiaryLoading] = useState(true);
-  const [isPregnancyDiaryEditorOpen, setIsPregnancyDiaryEditorOpen] = useState(false);
+  const [isPregnancyDiaryEditorOpen, setIsPregnancyDiaryEditorOpen] =
+    useState(false);
   const [diaryGestationalWeek, setDiaryGestationalWeek] = useState("");
   const [diaryMood, setDiaryMood] = useState("");
   const [diaryEnergy, setDiaryEnergy] = useState("");
@@ -2365,10 +3095,13 @@ const StatusOverviewBody: React.FC = () => {
   const growthMetricsRef = useRef<HTMLDivElement | null>(null);
   const growthBlinkTimerRef = useRef<number | null>(null);
 
-  const prefillAgentHub = useCallback((prompt: string) => {
-    setActiveMomPanel(null);
-    navigate("/", { state: { agentPrefill: prompt } });
-  }, [navigate]);
+  const prefillAgentHub = useCallback(
+    (prompt: string) => {
+      setActiveMomPanel(null);
+      navigate("/", { state: { agentPrefill: prompt } });
+    },
+    [navigate],
+  );
 
   const reloadBirthJourneyPlan = useCallback(async (signal?: AbortSignal) => {
     const data = await queryCarePlanList(
@@ -2380,7 +3113,8 @@ const StatusOverviewBody: React.FC = () => {
       clearBirthJourneyPlanGeneratedNotification();
       return;
     }
-    const activeBirthJourneyPlan = data.plan_list.find((plan) => plan.plan_type === "birth_journey") ?? null;
+    const activeBirthJourneyPlan =
+      data.plan_list.find((plan) => plan.plan_type === "birth_journey") ?? null;
     setBirthJourneyPlan(activeBirthJourneyPlan);
     if (!activeBirthJourneyPlan) clearBirthJourneyPlanGeneratedNotification();
   }, []);
@@ -2402,64 +3136,93 @@ const StatusOverviewBody: React.FC = () => {
       clearBirthJourneyPlanGeneratedNotification();
       setActiveMomPanel(null);
     } catch (e: unknown) {
-      setBirthJourneyDeleteErr(e instanceof Error ? e.message : "删除孕期计划失败");
+      setBirthJourneyDeleteErr(
+        e instanceof Error ? e.message : "删除孕期计划失败",
+      );
     } finally {
       setBirthJourneyDeleting(false);
     }
   }, [birthJourneyDeleting, birthJourneyPlan]);
 
-  useEffect(() => subscribeBirthJourneyPlanDeleted(() => {
-    setBirthJourneyPlan(null);
-    clearBirthJourneyPlanGeneratedNotification();
-    setActiveMomPanel((panel) => (panel === "birth-journey-detail" ? null : panel));
-  }), []);
+  useEffect(
+    () =>
+      subscribeBirthJourneyPlanDeleted(() => {
+        setBirthJourneyPlan(null);
+        clearBirthJourneyPlanGeneratedNotification();
+        setActiveMomPanel((panel) =>
+          panel === "birth-journey-detail" ? null : panel,
+        );
+      }),
+    [],
+  );
 
-  useEffect(() => subscribeBirthJourneyPlanUpdated(() => {
-    transferBirthJourneyPlanNotificationToStatusCard();
-    void reloadBirthJourneyPlan().catch(() => {
-      /* keep existing plan visible if refresh fails */
-    });
-  }), [reloadBirthJourneyPlan]);
+  useEffect(
+    () =>
+      subscribeBirthJourneyPlanUpdated(() => {
+        transferBirthJourneyPlanNotificationToStatusCard();
+        void reloadBirthJourneyPlan().catch(() => {
+          /* keep existing plan visible if refresh fails */
+        });
+      }),
+    [reloadBirthJourneyPlan],
+  );
 
-  const handleToggleBirthJourneyTodo = useCallback(async (itemId: string, completed: boolean) => {
-    const plan = birthJourneyPlan;
-    if (!plan || !itemId || birthJourneyTodoUpdatingIds.length > 0) return;
-    setBirthJourneyTodoErr(null);
-    setBirthJourneyTodoUpdatingIds([itemId]);
-    setBirthJourneyPlan(updateBirthJourneyPlanTodoLocally(plan, itemId, completed));
-    try {
-      const result = await updateBirthJourneyTodoCompletion({
-        user_id: DEFAULT_CHAT_USER_ID,
-        plan_id: plan.plan_id,
-        item_id: itemId,
-        completed,
-      });
-      if (result.error !== 0 || !result.plan) {
-        throw new Error(result.message || "同步计划完成状态失败");
+  const handleToggleBirthJourneyTodo = useCallback(
+    async (itemId: string, completed: boolean) => {
+      const plan = birthJourneyPlan;
+      if (!plan || !itemId || birthJourneyTodoUpdatingIds.length > 0) return;
+      setBirthJourneyTodoErr(null);
+      setBirthJourneyTodoUpdatingIds([itemId]);
+      setBirthJourneyPlan(
+        updateBirthJourneyPlanTodoLocally(plan, itemId, completed),
+      );
+      try {
+        const result = await updateBirthJourneyTodoCompletion({
+          user_id: DEFAULT_CHAT_USER_ID,
+          plan_id: plan.plan_id,
+          item_id: itemId,
+          completed,
+        });
+        if (result.error !== 0 || !result.plan) {
+          throw new Error(result.message || "同步计划完成状态失败");
+        }
+        setBirthJourneyPlan(result.plan);
+      } catch (e: unknown) {
+        setBirthJourneyPlan(plan);
+        setBirthJourneyTodoErr(
+          e instanceof Error ? e.message : "同步计划完成状态失败",
+        );
+      } finally {
+        setBirthJourneyTodoUpdatingIds([]);
       }
-      setBirthJourneyPlan(result.plan);
-    } catch (e: unknown) {
-      setBirthJourneyPlan(plan);
-      setBirthJourneyTodoErr(e instanceof Error ? e.message : "同步计划完成状态失败");
-    } finally {
-      setBirthJourneyTodoUpdatingIds([]);
-    }
-  }, [birthJourneyPlan, birthJourneyTodoUpdatingIds.length]);
+    },
+    [birthJourneyPlan, birthJourneyTodoUpdatingIds.length],
+  );
 
   const reloadPregnancyDiary = useCallback(async (signal?: AbortSignal) => {
     const todayDateKey = toLocalDateKey(new Date());
     const [today, list] = await Promise.all([
-      queryPregnancyDiaryToday({ user_id: DEFAULT_CHAT_USER_ID, timestamp: todayDateKey }, { signal }),
-      queryPregnancyDiaryList({ user_id: DEFAULT_CHAT_USER_ID, limit: 12 }, { signal }),
+      queryPregnancyDiaryToday(
+        { user_id: DEFAULT_CHAT_USER_ID, timestamp: todayDateKey },
+        { signal },
+      ),
+      queryPregnancyDiaryList(
+        { user_id: DEFAULT_CHAT_USER_ID, limit: 12 },
+        { signal },
+      ),
     ]);
-    const realEntries = list.error === 0 && Array.isArray(list.diary_list) ? list.diary_list : [];
-    setPregnancyDiaryToday(today.error === 0 ? today.diary ?? null : null);
+    const realEntries =
+      list.error === 0 && Array.isArray(list.diary_list) ? list.diary_list : [];
+    setPregnancyDiaryToday(today.error === 0 ? (today.diary ?? null) : null);
     setPregnancyDiaryEntries(realEntries);
   }, []);
 
   const reloadMomBabyToday = useCallback(async (signal?: AbortSignal) => {
     const todayDateKey = toLocalDateKey(new Date());
-    const data = await queryMomBabyToday(DEFAULT_CHAT_USER_ID, { signal, timestamp: todayDateKey });
+    const data = await queryMomBabyToday(DEFAULT_CHAT_USER_ID, {
+      signal,
+      timestamp: todayDateKey,
+    });
     if (data.error !== 0) {
       setMomBabyToday(null);
       return;
@@ -2476,10 +3239,16 @@ const StatusOverviewBody: React.FC = () => {
     setLactationInfoList(data.lactation_info_list);
   }, []);
 
-  useEffect(() => subscribePregnancyDiaryChanged(() => {
-    setPregnancyDiaryLoading(true);
-    void reloadPregnancyDiary().finally(() => setPregnancyDiaryLoading(false));
-  }), [reloadPregnancyDiary]);
+  useEffect(
+    () =>
+      subscribePregnancyDiaryChanged(() => {
+        setPregnancyDiaryLoading(true);
+        void reloadPregnancyDiary().finally(() =>
+          setPregnancyDiaryLoading(false),
+        );
+      }),
+    [reloadPregnancyDiary],
+  );
 
   useEffect(() => {
     let ac: AbortController | null = null;
@@ -2559,7 +3328,8 @@ const StatusOverviewBody: React.FC = () => {
         .split(/[、,，\s]+/)
         .map((item) => item.trim())
         .filter(Boolean);
-      if (parts.includes(tag)) return parts.filter((item) => item !== tag).join("、");
+      if (parts.includes(tag))
+        return parts.filter((item) => item !== tag).join("、");
       return [...parts, tag].join("、");
     });
   }, []);
@@ -2573,7 +3343,9 @@ const StatusOverviewBody: React.FC = () => {
     setMomBabyErr(null);
     void (async () => {
       try {
-        const data = await queryMomBabyInfo(DEFAULT_CHAT_USER_ID, { signal: ac.signal });
+        const data = await queryMomBabyInfo(DEFAULT_CHAT_USER_ID, {
+          signal: ac.signal,
+        });
         if (cancelled) return;
         if (data.error !== 0) {
           setDeliveryYmd(null);
@@ -2585,7 +3357,9 @@ const StatusOverviewBody: React.FC = () => {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
         setDeliveryYmd(null);
-        setMomBabyErr(e instanceof Error ? e.message : "加载妈妈和宝宝信息失败");
+        setMomBabyErr(
+          e instanceof Error ? e.message : "加载妈妈和宝宝信息失败",
+        );
       } finally {
         if (!cancelled) setMomBabyLoading(false);
       }
@@ -2607,9 +3381,14 @@ const StatusOverviewBody: React.FC = () => {
     setBirthPrepDueDateOrWeek("");
     void (async () => {
       try {
-        const profile = await queryUserProfile({ user_id: DEFAULT_CHAT_USER_ID }, { signal: ac.signal });
+        const profile = await queryUserProfile(
+          { user_id: DEFAULT_CHAT_USER_ID },
+          { signal: ac.signal },
+        );
         if (cancelled) return;
-        setBirthPrepDueDateOrWeek(compactText(profile.birth_prep_due_date_or_week));
+        setBirthPrepDueDateOrWeek(
+          compactText(profile.birth_prep_due_date_or_week),
+        );
       } catch (e: unknown) {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
@@ -2623,7 +3402,10 @@ const StatusOverviewBody: React.FC = () => {
     setLatestGrowth(null);
     void (async () => {
       try {
-        const data = await queryLatestGrowth({ user_id: DEFAULT_CHAT_USER_ID }, { signal: ac.signal });
+        const data = await queryLatestGrowth(
+          { user_id: DEFAULT_CHAT_USER_ID },
+          { signal: ac.signal },
+        );
         if (cancelled) return;
         if (data.error !== 0) {
           setLatestGrowth(null);
@@ -2648,7 +3430,10 @@ const StatusOverviewBody: React.FC = () => {
     setGrowthHistoryRows([]);
     void (async () => {
       try {
-        const hist = await getGrowthHistory({ user_id: DEFAULT_CHAT_USER_ID }, { signal: ac.signal });
+        const hist = await getGrowthHistory(
+          { user_id: DEFAULT_CHAT_USER_ID },
+          { signal: ac.signal },
+        );
         if (cancelled) return;
         if (hist.error !== 0 || !Array.isArray(hist.growth_data)) {
           setGrowthHistoryRows([]);
@@ -2689,8 +3474,15 @@ const StatusOverviewBody: React.FC = () => {
           setTodayFeedingCount(null);
           return;
         }
-        const totalFeed = typeof data.total_feed === "number" ? data.total_feed : Number(data.total_feed);
-        setTodayFeedingCount(Number.isFinite(totalFeed) ? Math.max(0, totalFeed) : data.feed_list.length);
+        const totalFeed =
+          typeof data.total_feed === "number"
+            ? data.total_feed
+            : Number(data.total_feed);
+        setTodayFeedingCount(
+          Number.isFinite(totalFeed)
+            ? Math.max(0, totalFeed)
+            : data.feed_list.length,
+        );
       } catch (e: unknown) {
         if ((e as { name?: string })?.name === "AbortError") return;
         if (cancelled) return;
@@ -2735,17 +3527,28 @@ const StatusOverviewBody: React.FC = () => {
       cancelled = true;
       ac.abort();
     };
-  }, [reloadBirthJourneyPlan, reloadMomBabyToday, reloadPregnancyDiary, reloadPumpInfo]);
+  }, [
+    reloadBirthJourneyPlan,
+    reloadMomBabyToday,
+    reloadPregnancyDiary,
+    reloadPumpInfo,
+  ]);
 
-  const babyDaysSinceBirth = deliveryYmd ? calendarDaysSinceDeliveryLocal(deliveryYmd) : null;
+  const babyDaysSinceBirth = deliveryYmd
+    ? calendarDaysSinceDeliveryLocal(deliveryYmd)
+    : null;
   const babyAgeDays =
-    typeof babyDaysSinceBirth === "number" ? Math.max(0, babyDaysSinceBirth) : null;
+    typeof babyDaysSinceBirth === "number"
+      ? Math.max(0, babyDaysSinceBirth)
+      : null;
   const postpartumWeeks =
     typeof babyAgeDays === "number" ? postpartumWeekFromDay(babyAgeDays) : null;
   const diaryGestationalWeekForStage = compactText(
-    pregnancyDiaryToday?.gestational_week ?? pregnancyDiaryEntries[0]?.gestational_week,
+    pregnancyDiaryToday?.gestational_week ??
+      pregnancyDiaryEntries[0]?.gestational_week,
   );
-  const pregnancyStageSourceText = birthPrepDueDateOrWeek || diaryGestationalWeekForStage;
+  const pregnancyStageSourceText =
+    birthPrepDueDateOrWeek || diaryGestationalWeekForStage;
   const isPregnancyStage = maternalCareStage === "pregnancy";
   const isPostpartumStage = maternalCareStage !== "pregnancy";
   const statusProfileLoading = momBabyLoading || userProfileLoading;
@@ -2760,16 +3563,28 @@ const StatusOverviewBody: React.FC = () => {
       setActiveDigitalTwin("mom");
       setActiveBabyPanel(null);
     }
-    if (isPregnancyStage && activeMomPanel && !["birth-journey-detail", "pregnancy-diary-detail"].includes(activeMomPanel)) {
+    if (
+      isPregnancyStage &&
+      activeMomPanel &&
+      !["birth-journey-detail", "pregnancy-diary-detail"].includes(
+        activeMomPanel,
+      )
+    ) {
       setActiveMomPanel(null);
     }
-    if (isPostpartumStage && ["birth-journey-detail", "pregnancy-diary-detail"].includes(activeMomPanel ?? "")) {
+    if (
+      isPostpartumStage &&
+      ["birth-journey-detail", "pregnancy-diary-detail"].includes(
+        activeMomPanel ?? "",
+      )
+    ) {
       setActiveMomPanel(null);
     }
   }, [activeDigitalTwin, activeMomPanel, isPostpartumStage, isPregnancyStage]);
 
   /** WHO 适龄带需分娩日为周锚点；仅在无档案时用首条测量日兜底周序 */
-  const growthChartBirthAnchor = deliveryYmd ?? growthHistoryRows[0]?.date ?? null;
+  const growthChartBirthAnchor =
+    deliveryYmd ?? growthHistoryRows[0]?.date ?? null;
 
   const todayPumpMl = useMemo(
     () => (momBabyToday ? mlFromApi(momBabyToday.pump_milk_volum) : null),
@@ -2785,7 +3600,9 @@ const StatusOverviewBody: React.FC = () => {
     return Math.max(0, Math.round(count));
   }, [momBabyToday]);
   const [windowSize, setWindowSize] = useState<7 | 30>(7);
-  const [growthCurveType, setGrowthCurveType] = useState<"weight" | "height">("weight");
+  const [growthCurveType, setGrowthCurveType] = useState<"weight" | "height">(
+    "weight",
+  );
 
   const lactationRowsMl = useMemo(
     () => buildLactationTrendRowsMl(lactationInfoList),
@@ -2824,7 +3641,11 @@ const StatusOverviewBody: React.FC = () => {
   }, [lactationRowsMl, windowSize, conv]);
 
   const lactationTrendDateTicks = useMemo(
-    () => pickLactationTrendDateTicks(trendData.map((d) => d.dateKey), windowSize),
+    () =>
+      pickLactationTrendDateTicks(
+        trendData.map((d) => d.dateKey),
+        windowSize,
+      ),
     [trendData, windowSize],
   );
 
@@ -2878,48 +3699,48 @@ const StatusOverviewBody: React.FC = () => {
     : todayFeedingCount !== null
       ? `${todayFeedingCount}次`
       : "待同步";
-  const babyWeightLabel =
-    growthLoading
-      ? "加载中"
-      : typeof babyMetrics.weightKg === "number"
-        ? `${babyMetrics.weightKg}kg`
-        : "待记录";
-  const babyHeightLabel =
-    growthLoading
-      ? "加载中"
-      : typeof babyMetrics.heightCm === "number"
-        ? `${babyMetrics.heightCm}cm`
-        : "待记录";
-  const babyHeadLabel =
-    growthLoading
-      ? "加载中"
-      : typeof babyMetrics.headCm === "number"
-        ? `${babyMetrics.headCm}cm`
-        : "待记录";
+  const babyWeightLabel = growthLoading
+    ? "加载中"
+    : typeof babyMetrics.weightKg === "number"
+      ? `${babyMetrics.weightKg}kg`
+      : "待记录";
+  const babyHeightLabel = growthLoading
+    ? "加载中"
+    : typeof babyMetrics.heightCm === "number"
+      ? `${babyMetrics.heightCm}cm`
+      : "待记录";
+  const babyHeadLabel = growthLoading
+    ? "加载中"
+    : typeof babyMetrics.headCm === "number"
+      ? `${babyMetrics.headCm}cm`
+      : "待记录";
   const momStatusSubtitle = statusProfileLoading
     ? "正在加载妈妈信息…"
     : isPregnancyStage
       ? formatPregnancyStageSubtitle(pregnancyStageSourceText)
       : momBabyErr
-      ? "妈妈档案待绑定"
-      : typeof postpartumWeeks === "number"
-        ? `产后第 ${postpartumWeeks} 周`
-        : "暂无有效分娩日期";
+        ? "妈妈档案待绑定"
+        : typeof postpartumWeeks === "number"
+          ? `产后第 ${postpartumWeeks} 周`
+          : "暂无有效分娩日期";
   const babyStatusSubtitle = statusProfileLoading
     ? "正在加载宝宝信息…"
     : isPregnancyStage
       ? "宝宝孕育中"
       : momBabyErr
-      ? "宝宝档案待绑定"
-      : typeof babyAgeDays === "number"
-        ? `宝宝已出生 ${babyAgeDays} 天`
-        : "暂无有效分娩日期";
+        ? "宝宝档案待绑定"
+        : typeof babyAgeDays === "number"
+          ? `宝宝已出生 ${babyAgeDays} 天`
+          : "暂无有效分娩日期";
   const runGrowthMetricsHighlight = useCallback(() => {
     if (growthBlinkTimerRef.current !== null) {
       window.clearInterval(growthBlinkTimerRef.current);
       growthBlinkTimerRef.current = null;
     }
-    growthMetricsRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    growthMetricsRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
     setGrowthMetricsBlinkOn(true);
     let toggleCount = 0;
     growthBlinkTimerRef.current = window.setInterval(() => {
@@ -2940,9 +3761,15 @@ const StatusOverviewBody: React.FC = () => {
       runGrowthMetricsHighlight();
     }
     const onStatusGrowthHighlight = () => runGrowthMetricsHighlight();
-    window.addEventListener(STATUS_GROWTH_HIGHLIGHT_EVENT, onStatusGrowthHighlight);
+    window.addEventListener(
+      STATUS_GROWTH_HIGHLIGHT_EVENT,
+      onStatusGrowthHighlight,
+    );
     return () => {
-      window.removeEventListener(STATUS_GROWTH_HIGHLIGHT_EVENT, onStatusGrowthHighlight);
+      window.removeEventListener(
+        STATUS_GROWTH_HIGHLIGHT_EVENT,
+        onStatusGrowthHighlight,
+      );
       if (growthBlinkTimerRef.current !== null) {
         window.clearInterval(growthBlinkTimerRef.current);
         growthBlinkTimerRef.current = null;
@@ -2953,13 +3780,19 @@ const StatusOverviewBody: React.FC = () => {
   const openGrowthEditor = useCallback(() => {
     setGrowthSaveErr(null);
     setEditWeight(
-      typeof babyMetrics.weightKg === "number" ? babyMetrics.weightKg.toString() : "",
+      typeof babyMetrics.weightKg === "number"
+        ? babyMetrics.weightKg.toString()
+        : "",
     );
     setEditHeight(
-      typeof babyMetrics.heightCm === "number" ? babyMetrics.heightCm.toString() : "",
+      typeof babyMetrics.heightCm === "number"
+        ? babyMetrics.heightCm.toString()
+        : "",
     );
     setEditHead(
-      typeof babyMetrics.headCm === "number" ? babyMetrics.headCm.toString() : "",
+      typeof babyMetrics.headCm === "number"
+        ? babyMetrics.headCm.toString()
+        : "",
     );
     setIsGrowthDrawerOpen(true);
   }, [babyMetrics]);
@@ -2968,7 +3801,10 @@ const StatusOverviewBody: React.FC = () => {
     <>
       <div className="flex flex-col pb-3">
         <div className="sticky top-0 z-20 mb-4 bg-background/92 pb-2 backdrop-blur">
-          <CareStageSwitch value={maternalCareStage} onChange={handleCareStageChange} />
+          <CareStageSwitch
+            value={maternalCareStage}
+            onChange={handleCareStageChange}
+          />
           <div
             id="status-digital-twin-tabs"
             className="mx-0 mt-2 grid w-full grid-cols-2 gap-2 px-4"
@@ -3022,11 +3858,15 @@ const StatusOverviewBody: React.FC = () => {
                     src={avatar}
                     alt={alt}
                     className={`h-10 w-10 shrink-0 rounded-full border-2 object-cover ${
-                      selected ? "border-[#b46f91]/45" : "border-border/50 opacity-75"
+                      selected
+                        ? "border-[#b46f91]/45"
+                        : "border-border/50 opacity-75"
                     }`}
                   />
                   <span className="min-w-0">
-                    <span className="block truncate text-[15px] font-bold leading-tight">{title}</span>
+                    <span className="block truncate text-[15px] font-bold leading-tight">
+                      {title}
+                    </span>
                     <span
                       className={`mt-1 block truncate text-[10px] font-semibold leading-tight ${
                         selected ? "text-[#806171]" : "text-muted-foreground"
@@ -3043,21 +3883,29 @@ const StatusOverviewBody: React.FC = () => {
 
         {activeDigitalTwin === "mom" ? (
           <>
-            <div className={`order-2 mb-4 space-y-3 ${isPregnancyStage ? "mx-0" : "mx-4"}`}>
+            <div
+              className={`order-2 mb-4 space-y-3 ${isPregnancyStage ? "mx-0" : "mx-4"}`}
+            >
               {isPregnancyStage ? (
                 <PrenatalExpandedServices
                   birthJourneyPlan={birthJourneyPlan}
                   birthJourneyLoading={birthJourneyLoading}
                   birthJourneyPlanCardNotification={Boolean(
-                    birthJourneyPlan && !birthJourneyLoading && birthJourneyPlanCardNotification,
+                    birthJourneyPlan &&
+                    !birthJourneyLoading &&
+                    birthJourneyPlanCardNotification,
                   )}
                   birthJourneyTodoUpdatingIds={birthJourneyTodoUpdatingIds}
                   birthJourneyTodoErr={birthJourneyTodoErr}
                   pregnancyDiaryEntries={pregnancyDiaryEntries}
                   pregnancyDiaryToday={pregnancyDiaryToday}
                   pregnancyDiaryLoading={pregnancyDiaryLoading}
-                  pregnancyDiaryCardNotification={pregnancyDiaryCardNotification}
-                  onCreateBirthJourney={() => prefillAgentHub("帮我制定孕期计划")}
+                  pregnancyDiaryCardNotification={
+                    pregnancyDiaryCardNotification
+                  }
+                  onCreateBirthJourney={() =>
+                    prefillAgentHub("帮我制定孕期计划")
+                  }
                   onToggleBirthJourneyTodo={handleToggleBirthJourneyTodo}
                   onOpenDiaryEditor={openPregnancyDiaryEditor}
                   onOpenDiaryDetail={() => {
@@ -3105,7 +3953,8 @@ const StatusOverviewBody: React.FC = () => {
                     title="补能与休息"
                     bodyText={
                       <span className="font-medium">
-                        待开通 <strong className="font-bold">睡眠</strong> 与 <strong className="font-bold">营养</strong> 功能
+                        待开通 <strong className="font-bold">睡眠</strong> 与{" "}
+                        <strong className="font-bold">营养</strong> 功能
                       </span>
                     }
                     tone="amber"
@@ -3123,118 +3972,176 @@ const StatusOverviewBody: React.FC = () => {
                 title="母乳趋势"
                 className="order-3 border-[#f0dfc4] bg-gradient-to-br from-[#fffaf0] via-white to-[#fff1d6]"
                 defaultOpen
-                icon={<div className="w-6 h-6 rounded-full bg-[#ffe4b8] flex items-center justify-center"><Target className="w-3.5 h-3.5 text-[#b9792a]" /></div>}
+                icon={
+                  <div className="w-6 h-6 rounded-full bg-[#ffe4b8] flex items-center justify-center">
+                    <Target className="w-3.5 h-3.5 text-[#b9792a]" />
+                  </div>
+                }
               >
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2 text-[9px] text-[#8a6742]">
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-[2px]" style={{ backgroundColor: LACTATION_TREND_COLORS.actual }}></div>
-                    <span>吸乳总量</span>
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2 text-[9px] text-[#8a6742]">
+                    <div className="flex items-center gap-1">
+                      <div
+                        className="w-3 h-[2px]"
+                        style={{
+                          backgroundColor: LACTATION_TREND_COLORS.actual,
+                        }}
+                      ></div>
+                      <span>吸乳总量</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div
+                        className="w-3 h-[2px] border-b border-dashed opacity-80"
+                        style={{ borderColor: LACTATION_TREND_COLORS.estimate }}
+                      ></div>
+                      <span>含亲喂估算</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div
+                        className="w-3 h-2 opacity-80"
+                        style={{ backgroundColor: LACTATION_TREND_COLORS.band }}
+                      ></div>
+                      <span>目标参考区间</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-[2px] border-b border-dashed opacity-80" style={{ borderColor: LACTATION_TREND_COLORS.estimate }}></div>
-                    <span>含亲喂估算</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-2 opacity-80" style={{ backgroundColor: LACTATION_TREND_COLORS.band }}></div>
-                    <span>目标参考区间</span>
+                  <div className="flex rounded-full bg-[#fff1d6] p-0.5 text-[10px] font-medium">
+                    <button
+                      type="button"
+                      onClick={() => setWindowSize(7)}
+                      className={`px-2 py-0.5 rounded-full ${windowSize === 7 ? "bg-[#b9792a] text-white" : "text-[#8a6742]"}`}
+                    >
+                      周
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWindowSize(30)}
+                      className={`px-2 py-0.5 rounded-full ${windowSize === 30 ? "bg-[#b9792a] text-white" : "text-[#8a6742]"}`}
+                    >
+                      月
+                    </button>
                   </div>
                 </div>
-                <div className="flex rounded-full bg-[#fff1d6] p-0.5 text-[10px] font-medium">
-                  <button type="button" onClick={() => setWindowSize(7)} className={`px-2 py-0.5 rounded-full ${windowSize === 7 ? "bg-[#b9792a] text-white" : "text-[#8a6742]"}`}>周</button>
-                  <button type="button" onClick={() => setWindowSize(30)} className={`px-2 py-0.5 rounded-full ${windowSize === 30 ? "bg-[#b9792a] text-white" : "text-[#8a6742]"}`}>月</button>
-                </div>
-              </div>
-              {pumpInfoLoading ? (
-                <EmptyChartHint>正在加载最近一个月泌乳数据…</EmptyChartHint>
-              ) : trendData.length === 0 ? (
-                <EmptyChartHint>暂无母乳趋势数据，可多日记录产量后在本页查看。</EmptyChartHint>
-              ) : (
-                <div className="h-[188px] w-full min-w-0 max-w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={trendData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={LACTATION_TREND_COLORS.grid} />
-                      <XAxis
-                        dataKey="dateKey"
-                        ticks={lactationTrendDateTicks}
-                        tickFormatter={formatLactationTrendDateTick}
-                        tick={{ fontSize: 9, fill: LACTATION_TREND_COLORS.axis }}
-                        stroke={LACTATION_TREND_COLORS.axis}
-                        interval={0}
-                        minTickGap={8}
-                        tickMargin={6}
-                        padding={{ left: 0, right: 8 }}
-                      />
-                      <YAxis
-                        tick={{ fontSize: 9, fill: LACTATION_TREND_COLORS.axis }}
-                        stroke={LACTATION_TREND_COLORS.axis}
-                        width={unit === "oz" ? 48 : 42}
-                        domain={[0, "auto"]}
-                        tickFormatter={(v) =>
-                          typeof v !== "number" || Number.isNaN(v)
-                            ? ""
-                            : unit === "oz"
-                              ? `${v.toFixed(1)} oz`
-                              : `${Math.round(v)} mL`}
-                      />
-                      <Tooltip
-                        labelFormatter={(value) =>
-                          formatLactationTrendTooltipDate(
-                            typeof value === "string" ? value : String(value ?? ""),
-                          )}
-                        content={<LactationTrendTooltip unit={unit} />}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="refPad"
-                        stackId="refBand"
-                        stroke="none"
-                        fill="transparent"
-                        legendType="none"
-                        fillOpacity={0}
-                        dot={false}
-                        activeDot={false}
-                        isAnimationActive={false}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="refSpan"
-                        stackId="refBand"
-                        stroke="none"
-                        fill={LACTATION_TREND_COLORS.band}
-                        fillOpacity={0.75}
-                        dot={false}
-                        activeDot={false}
-                        isAnimationActive={false}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="estimated"
-                        stroke={LACTATION_TREND_COLORS.estimate}
-                        strokeDasharray="4 3"
-                        strokeWidth={2.4}
-                        strokeOpacity={1}
-                        dot={windowSize === 7 ? { r: 2.5, strokeWidth: 1.5, fill: "#fff", stroke: LACTATION_TREND_COLORS.estimate } : false}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="actual"
-                        stroke={LACTATION_TREND_COLORS.actual}
-                        strokeWidth={2.5}
-                        dot={
-                              windowSize === 7
-                                ? { r: 3, strokeWidth: 2, fill: "#fffaf0", stroke: LACTATION_TREND_COLORS.actual }
-                                : false
-                        }
-                        activeDot={{ r: 5 }}
-                      />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
+                {pumpInfoLoading ? (
+                  <EmptyChartHint>正在加载最近一个月泌乳数据…</EmptyChartHint>
+                ) : trendData.length === 0 ? (
+                  <EmptyChartHint>
+                    暂无母乳趋势数据，可多日记录产量后在本页查看。
+                  </EmptyChartHint>
+                ) : (
+                  <div className="h-[188px] w-full min-w-0 max-w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <ComposedChart
+                        data={trendData}
+                        margin={STATUS_OVERVIEW_CHART_MARGIN}
+                      >
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke={LACTATION_TREND_COLORS.grid}
+                        />
+                        <XAxis
+                          dataKey="dateKey"
+                          ticks={lactationTrendDateTicks}
+                          tickFormatter={formatLactationTrendDateTick}
+                          tick={{
+                            fontSize: 9,
+                            fill: LACTATION_TREND_COLORS.axis,
+                          }}
+                          stroke={LACTATION_TREND_COLORS.axis}
+                          interval={0}
+                          minTickGap={8}
+                          tickMargin={6}
+                          padding={{ left: 0, right: 8 }}
+                        />
+                        <YAxis
+                          tick={{
+                            fontSize: 9,
+                            fill: LACTATION_TREND_COLORS.axis,
+                          }}
+                          stroke={LACTATION_TREND_COLORS.axis}
+                          width={unit === "oz" ? 48 : 42}
+                          domain={[0, "auto"]}
+                          tickFormatter={(v) =>
+                            typeof v !== "number" || Number.isNaN(v)
+                              ? ""
+                              : unit === "oz"
+                                ? `${v.toFixed(1)} oz`
+                                : `${Math.round(v)} mL`
+                          }
+                        />
+                        <Tooltip
+                          labelFormatter={(value) =>
+                            formatLactationTrendTooltipDate(
+                              typeof value === "string"
+                                ? value
+                                : String(value ?? ""),
+                            )
+                          }
+                          content={<LactationTrendTooltip unit={unit} />}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="refPad"
+                          stackId="refBand"
+                          stroke="none"
+                          fill="transparent"
+                          legendType="none"
+                          fillOpacity={0}
+                          dot={false}
+                          activeDot={false}
+                          isAnimationActive={false}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="refSpan"
+                          stackId="refBand"
+                          stroke="none"
+                          fill={LACTATION_TREND_COLORS.band}
+                          fillOpacity={0.75}
+                          dot={false}
+                          activeDot={false}
+                          isAnimationActive={false}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="estimated"
+                          stroke={LACTATION_TREND_COLORS.estimate}
+                          strokeDasharray="4 3"
+                          strokeWidth={2.4}
+                          strokeOpacity={1}
+                          dot={
+                            windowSize === 7
+                              ? {
+                                  r: 2.5,
+                                  strokeWidth: 1.5,
+                                  fill: "#fff",
+                                  stroke: LACTATION_TREND_COLORS.estimate,
+                                }
+                              : false
+                          }
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="actual"
+                          stroke={LACTATION_TREND_COLORS.actual}
+                          strokeWidth={2.5}
+                          dot={
+                            windowSize === 7
+                              ? {
+                                  r: 3,
+                                  strokeWidth: 2,
+                                  fill: "#fffaf0",
+                                  stroke: LACTATION_TREND_COLORS.actual,
+                                }
+                              : false
+                          }
+                          activeDot={{ r: 5 }}
+                        />
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
               </Expandable>
             ) : null}
-
           </>
         ) : (
           <>
@@ -3278,9 +4185,7 @@ const StatusOverviewBody: React.FC = () => {
               />
               <StatusModuleCard
                 title="宝宝睡眠"
-                metrics={[
-                  { label: "今日睡眠", value: "4h 57min" },
-                ]}
+                metrics={[{ label: "今日睡眠", value: "4h 57min" }]}
                 action="查看报告"
                 tone="violet"
                 icon={<Bed className="h-4 w-4" />}
@@ -3302,102 +4207,221 @@ const StatusOverviewBody: React.FC = () => {
                 title="宝宝成长曲线"
                 className="border-[#e6d9fb] bg-gradient-to-br from-[#fbf7ff] via-white to-[#eee6ff]"
                 defaultOpen
-                icon={<div className="w-6 h-6 rounded-full bg-[#e6d9fb] flex items-center justify-center"><Baby className="w-3.5 h-3.5 text-[#7d64aa]" /></div>}
+                icon={
+                  <div className="w-6 h-6 rounded-full bg-[#e6d9fb] flex items-center justify-center">
+                    <Baby className="w-3.5 h-3.5 text-[#7d64aa]" />
+                  </div>
+                }
               >
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2 text-[9px] text-[#7560a0]">
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-[2px]" style={{ backgroundColor: GROWTH_CHART_COLORS.actual }}></div>
-              <span>实际测量</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-2 opacity-80" style={{ backgroundColor: GROWTH_CHART_COLORS.band }}></div>
-              <span>同龄参考区间</span>
-            </div>
-          </div>
-          <div className="flex rounded-full bg-[#f2ecff] p-0.5 text-[9px] font-medium">
-            <button type="button" onClick={() => setGrowthCurveType("weight")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "weight" ? "bg-[#7d64aa] text-white" : "text-[#7560a0]"}`}>体重</button>
-            <button type="button" onClick={() => setGrowthCurveType("height")} className={`px-2 py-0.5 rounded-full ${growthCurveType === "height" ? "bg-[#7d64aa] text-white" : "text-[#7560a0]"}`}>身高</button>
-          </div>
-        </div>
-        {growthHistoryLoading ? (
-          <EmptyChartHint>正在加载生长发育历史…</EmptyChartHint>
-        ) : growthChartData.length === 0 ? (
-          <EmptyChartHint>暂无成长曲线数据，录入多项测量后与同龄参考一同展示。</EmptyChartHint>
-        ) : growthCurveType === "weight" ? (
-          <div className="h-[188px] w-full min-w-0 max-w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-                    <defs>
-                      <linearGradient id="growthBandPrimary" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.85} />
-                        <stop offset="100%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.5} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={GROWTH_CHART_COLORS.grid} opacity={0.75} vertical={false} />
-                    <XAxis
-                      dataKey="week"
-                      ticks={growthChartWeekTicks}
-                      tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
-                      stroke={GROWTH_CHART_COLORS.axis}
-                      interval={0}
-                      tickMargin={6}
-                      padding={{ left: 0, right: 8 }}
-                    />
-                    <YAxis
-                      tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
-                      stroke={GROWTH_CHART_COLORS.axis}
-                      width={42}
-                      domain={growthYAxisDomains?.weight ?? [2.5, 7]}
-                      allowDecimals
-                      tickFormatter={(v) => formatGrowthChartYTick(v, "kg")}
-                    />
-                    <Tooltip contentStyle={{ fontSize: 11 }} />
-                    <Area type="monotone" dataKey="wP75" stroke="none" fill="url(#growthBandPrimary)" name="P75参考" fillOpacity={1} />
-                    <Area type="monotone" dataKey="wP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
-                    <Line type="monotone" dataKey="weight" name="体重" stroke={GROWTH_CHART_COLORS.actual} strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "#f7fffc", stroke: GROWTH_CHART_COLORS.actual }} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="h-[188px] w-full min-w-0 max-w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={growthChartData} margin={STATUS_OVERVIEW_CHART_MARGIN}>
-                    <defs>
-                      <linearGradient id="growthBandSecondary" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.85} />
-                        <stop offset="100%" stopColor={GROWTH_CHART_COLORS.band} stopOpacity={0.5} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={GROWTH_CHART_COLORS.grid} opacity={0.75} vertical={false} />
-                    <XAxis
-                      dataKey="week"
-                      ticks={growthChartWeekTicks}
-                      tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
-                      stroke={GROWTH_CHART_COLORS.axis}
-                      interval={0}
-                      tickMargin={6}
-                      padding={{ left: 0, right: 8 }}
-                    />
-                    <YAxis
-                      tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
-                      stroke={GROWTH_CHART_COLORS.axis}
-                      width={42}
-                      domain={growthYAxisDomains?.height ?? [46, 64]}
-                      allowDecimals
-                      tickFormatter={(v) => formatGrowthChartYTick(v, "cm")}
-                    />
-                    <Tooltip contentStyle={{ fontSize: 11 }} />
-                    <Area type="monotone" dataKey="hP75" stroke="none" fill="url(#growthBandSecondary)" name="P75参考" fillOpacity={1} />
-                    <Area type="monotone" dataKey="hP25" stroke="none" fill="hsl(var(--card))" name="P25参考" fillOpacity={1} />
-                    <Line type="monotone" dataKey="height" name="身高" stroke={GROWTH_CHART_COLORS.height} strokeWidth={3} dot={{ r: 4, strokeWidth: 1.5, fill: "#f7fffc", stroke: GROWTH_CHART_COLORS.height }} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        )}
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2 text-[9px] text-[#7560a0]">
+                    <div className="flex items-center gap-1">
+                      <div
+                        className="w-3 h-[2px]"
+                        style={{ backgroundColor: GROWTH_CHART_COLORS.actual }}
+                      ></div>
+                      <span>实际测量</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div
+                        className="w-3 h-2 opacity-80"
+                        style={{ backgroundColor: GROWTH_CHART_COLORS.band }}
+                      ></div>
+                      <span>同龄参考区间</span>
+                    </div>
+                  </div>
+                  <div className="flex rounded-full bg-[#f2ecff] p-0.5 text-[9px] font-medium">
+                    <button
+                      type="button"
+                      onClick={() => setGrowthCurveType("weight")}
+                      className={`px-2 py-0.5 rounded-full ${growthCurveType === "weight" ? "bg-[#7d64aa] text-white" : "text-[#7560a0]"}`}
+                    >
+                      体重
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGrowthCurveType("height")}
+                      className={`px-2 py-0.5 rounded-full ${growthCurveType === "height" ? "bg-[#7d64aa] text-white" : "text-[#7560a0]"}`}
+                    >
+                      身高
+                    </button>
+                  </div>
+                </div>
+                {growthHistoryLoading ? (
+                  <EmptyChartHint>正在加载生长发育历史…</EmptyChartHint>
+                ) : growthChartData.length === 0 ? (
+                  <EmptyChartHint>
+                    暂无成长曲线数据，录入多项测量后与同龄参考一同展示。
+                  </EmptyChartHint>
+                ) : growthCurveType === "weight" ? (
+                  <div className="h-[188px] w-full min-w-0 max-w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <ComposedChart
+                        data={growthChartData}
+                        margin={STATUS_OVERVIEW_CHART_MARGIN}
+                      >
+                        <defs>
+                          <linearGradient
+                            id="growthBandPrimary"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="0%"
+                              stopColor={GROWTH_CHART_COLORS.band}
+                              stopOpacity={0.85}
+                            />
+                            <stop
+                              offset="100%"
+                              stopColor={GROWTH_CHART_COLORS.band}
+                              stopOpacity={0.5}
+                            />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke={GROWTH_CHART_COLORS.grid}
+                          opacity={0.75}
+                          vertical={false}
+                        />
+                        <XAxis
+                          dataKey="week"
+                          ticks={growthChartWeekTicks}
+                          tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+                          stroke={GROWTH_CHART_COLORS.axis}
+                          interval={0}
+                          tickMargin={6}
+                          padding={{ left: 0, right: 8 }}
+                        />
+                        <YAxis
+                          tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+                          stroke={GROWTH_CHART_COLORS.axis}
+                          width={42}
+                          domain={growthYAxisDomains?.weight ?? [2.5, 7]}
+                          allowDecimals
+                          tickFormatter={(v) => formatGrowthChartYTick(v, "kg")}
+                        />
+                        <Tooltip contentStyle={{ fontSize: 11 }} />
+                        <Area
+                          type="monotone"
+                          dataKey="wP75"
+                          stroke="none"
+                          fill="url(#growthBandPrimary)"
+                          name="P75参考"
+                          fillOpacity={1}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="wP25"
+                          stroke="none"
+                          fill="hsl(var(--card))"
+                          name="P25参考"
+                          fillOpacity={1}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="weight"
+                          name="体重"
+                          stroke={GROWTH_CHART_COLORS.actual}
+                          strokeWidth={3}
+                          dot={{
+                            r: 4,
+                            strokeWidth: 1.5,
+                            fill: "#f7fffc",
+                            stroke: GROWTH_CHART_COLORS.actual,
+                          }}
+                        />
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="h-[188px] w-full min-w-0 max-w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <ComposedChart
+                        data={growthChartData}
+                        margin={STATUS_OVERVIEW_CHART_MARGIN}
+                      >
+                        <defs>
+                          <linearGradient
+                            id="growthBandSecondary"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="0%"
+                              stopColor={GROWTH_CHART_COLORS.band}
+                              stopOpacity={0.85}
+                            />
+                            <stop
+                              offset="100%"
+                              stopColor={GROWTH_CHART_COLORS.band}
+                              stopOpacity={0.5}
+                            />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke={GROWTH_CHART_COLORS.grid}
+                          opacity={0.75}
+                          vertical={false}
+                        />
+                        <XAxis
+                          dataKey="week"
+                          ticks={growthChartWeekTicks}
+                          tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+                          stroke={GROWTH_CHART_COLORS.axis}
+                          interval={0}
+                          tickMargin={6}
+                          padding={{ left: 0, right: 8 }}
+                        />
+                        <YAxis
+                          tick={{ fontSize: 9, fill: GROWTH_CHART_COLORS.axis }}
+                          stroke={GROWTH_CHART_COLORS.axis}
+                          width={42}
+                          domain={growthYAxisDomains?.height ?? [46, 64]}
+                          allowDecimals
+                          tickFormatter={(v) => formatGrowthChartYTick(v, "cm")}
+                        />
+                        <Tooltip contentStyle={{ fontSize: 11 }} />
+                        <Area
+                          type="monotone"
+                          dataKey="hP75"
+                          stroke="none"
+                          fill="url(#growthBandSecondary)"
+                          name="P75参考"
+                          fillOpacity={1}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="hP25"
+                          stroke="none"
+                          fill="hsl(var(--card))"
+                          name="P25参考"
+                          fillOpacity={1}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="height"
+                          name="身高"
+                          stroke={GROWTH_CHART_COLORS.height}
+                          strokeWidth={3}
+                          dot={{
+                            r: 4,
+                            strokeWidth: 1.5,
+                            fill: "#f7fffc",
+                            stroke: GROWTH_CHART_COLORS.height,
+                          }}
+                        />
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
               </Expandable>
             </div>
-
           </>
         )}
       </div>
@@ -3448,11 +4472,15 @@ const StatusOverviewBody: React.FC = () => {
               exit={{ y: "100%", opacity: 0 }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
               className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-lg rounded-t-3xl border-t border-border/40 bg-card px-5 pt-4 shadow-2xl"
-              style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
+              style={{
+                paddingBottom: "max(2rem, env(safe-area-inset-bottom))",
+              }}
             >
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="text-base font-extrabold text-foreground">记录今天的孕期日记</h3>
+                  <h3 className="text-base font-extrabold text-foreground">
+                    记录今天的孕期日记
+                  </h3>
                   <p className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-muted-foreground">
                     <CalendarDays className="h-3.5 w-3.5" />
                     {formatDiaryDateLabel(toLocalDateKey(new Date()))}
@@ -3473,16 +4501,22 @@ const StatusOverviewBody: React.FC = () => {
               <div className="max-h-[68vh] space-y-3 overflow-y-auto pr-1">
                 <div className="grid grid-cols-2 gap-3">
                   <label className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                    <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">孕周</span>
+                    <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">
+                      孕周
+                    </span>
                     <input
                       value={diaryGestationalWeek}
-                      onChange={(event) => setDiaryGestationalWeek(event.target.value)}
+                      onChange={(event) =>
+                        setDiaryGestationalWeek(event.target.value)
+                      }
                       placeholder="如 孕 32 周"
                       className="h-10 w-full rounded-xl border border-border/50 bg-background px-3 text-sm font-bold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
                     />
                   </label>
                   <div className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                    <span className="mb-2 block text-xs font-semibold text-muted-foreground">心情</span>
+                    <span className="mb-2 block text-xs font-semibold text-muted-foreground">
+                      心情
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
                       {DIARY_MOOD_OPTIONS.map((option) => (
                         <button
@@ -3490,7 +4524,9 @@ const StatusOverviewBody: React.FC = () => {
                           type="button"
                           onClick={() => setDiaryMood(option)}
                           className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
-                            diaryMood === option ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                            diaryMood === option
+                              ? "bg-[#2f8a91] text-white"
+                              : "bg-white text-[#5c6870]"
                           }`}
                         >
                           {option}
@@ -3501,7 +4537,9 @@ const StatusOverviewBody: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                    <span className="mb-2 block text-xs font-semibold text-muted-foreground">精力</span>
+                    <span className="mb-2 block text-xs font-semibold text-muted-foreground">
+                      精力
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
                       {DIARY_ENERGY_OPTIONS.map((option) => (
                         <button
@@ -3509,7 +4547,9 @@ const StatusOverviewBody: React.FC = () => {
                           type="button"
                           onClick={() => setDiaryEnergy(option)}
                           className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
-                            diaryEnergy === option ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                            diaryEnergy === option
+                              ? "bg-[#2f8a91] text-white"
+                              : "bg-white text-[#5c6870]"
                           }`}
                         >
                           {option}
@@ -3518,7 +4558,9 @@ const StatusOverviewBody: React.FC = () => {
                     </div>
                   </div>
                   <div className="min-w-0 rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                    <span className="mb-2 block text-xs font-semibold text-muted-foreground">睡眠</span>
+                    <span className="mb-2 block text-xs font-semibold text-muted-foreground">
+                      睡眠
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
                       {DIARY_SLEEP_OPTIONS.map((option) => (
                         <button
@@ -3526,7 +4568,9 @@ const StatusOverviewBody: React.FC = () => {
                           type="button"
                           onClick={() => setDiarySleep(option)}
                           className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
-                            diarySleep === option ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                            diarySleep === option
+                              ? "bg-[#2f8a91] text-white"
+                              : "bg-white text-[#5c6870]"
                           }`}
                         >
                           {option}
@@ -3536,7 +4580,9 @@ const StatusOverviewBody: React.FC = () => {
                   </div>
                 </div>
                 <div className="rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                  <span className="mb-2 block text-xs font-semibold text-muted-foreground">胎动</span>
+                  <span className="mb-2 block text-xs font-semibold text-muted-foreground">
+                    胎动
+                  </span>
                   <div className="flex flex-wrap gap-1.5">
                     {DIARY_FETAL_MOVEMENT_OPTIONS.map((option) => (
                       <button
@@ -3544,7 +4590,9 @@ const StatusOverviewBody: React.FC = () => {
                         type="button"
                         onClick={() => setDiaryFetalMovement(option)}
                         className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
-                          diaryFetalMovement === option ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                          diaryFetalMovement === option
+                            ? "bg-[#2f8a91] text-white"
+                            : "bg-white text-[#5c6870]"
                         }`}
                       >
                         {option}
@@ -3553,7 +4601,9 @@ const StatusOverviewBody: React.FC = () => {
                   </div>
                 </div>
                 <div className="rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                  <span className="mb-2 block text-xs font-semibold text-muted-foreground">身体感受</span>
+                  <span className="mb-2 block text-xs font-semibold text-muted-foreground">
+                    身体感受
+                  </span>
                   <div className="flex flex-wrap gap-1.5">
                     {DIARY_SYMPTOM_OPTIONS.map((option) => {
                       const selected = diarySymptomTags
@@ -3567,7 +4617,9 @@ const StatusOverviewBody: React.FC = () => {
                           type="button"
                           onClick={() => toggleDiarySymptomTag(option)}
                           className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
-                            selected ? "bg-[#2f8a91] text-white" : "bg-white text-[#5c6870]"
+                            selected
+                              ? "bg-[#2f8a91] text-white"
+                              : "bg-white text-[#5c6870]"
                           }`}
                         >
                           {option}
@@ -3577,23 +4629,31 @@ const StatusOverviewBody: React.FC = () => {
                   </div>
                   <input
                     value={diarySymptomTags}
-                    onChange={(event) => setDiarySymptomTags(event.target.value)}
+                    onChange={(event) =>
+                      setDiarySymptomTags(event.target.value)
+                    }
                     placeholder="也可以补充其它感受"
                     className="mt-2 h-9 w-full rounded-xl border border-border/50 bg-background px-3 text-xs font-semibold outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
                   />
                 </div>
                 <label className="block rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">想问医生的问题</span>
+                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">
+                    想问医生的问题
+                  </span>
                   <textarea
                     value={diaryAppointmentNote}
-                    onChange={(event) => setDiaryAppointmentNote(event.target.value)}
+                    onChange={(event) =>
+                      setDiaryAppointmentNote(event.target.value)
+                    }
                     placeholder="比如下次产检想确认的身体变化、检查结果或用药问题"
                     rows={2}
                     className="w-full resize-none rounded-xl border border-border/50 bg-background px-3 py-2 text-sm font-semibold leading-relaxed outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
                   />
                 </label>
                 <label className="block rounded-2xl border border-border/50 bg-secondary/20 p-3">
-                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">今天想记录的事</span>
+                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">
+                    今天想记录的事
+                  </span>
                   <textarea
                     value={diaryContent}
                     onChange={(event) => setDiaryContent(event.target.value)}
@@ -3608,7 +4668,9 @@ const StatusOverviewBody: React.FC = () => {
               </div>
 
               {diarySaveErr ? (
-                <p className="mt-3 px-0.5 text-[11px] leading-relaxed text-destructive">{diarySaveErr}</p>
+                <p className="mt-3 px-0.5 text-[11px] leading-relaxed text-destructive">
+                  {diarySaveErr}
+                </p>
               ) : null}
 
               <motion.button
@@ -3650,7 +4712,10 @@ const StatusOverviewBody: React.FC = () => {
                       content: diaryContent,
                     };
                     const result = pregnancyDiaryToday
-                      ? await updatePregnancyDiaryEntry({ ...baseBody, entry_id: pregnancyDiaryToday.entry_id })
+                      ? await updatePregnancyDiaryEntry({
+                          ...baseBody,
+                          entry_id: pregnancyDiaryToday.entry_id,
+                        })
                       : await createPregnancyDiaryEntry(baseBody);
                     if (result.error !== 0) throw new Error("保存孕期日记失败");
                     await reloadPregnancyDiary();
@@ -3659,14 +4724,20 @@ const StatusOverviewBody: React.FC = () => {
                     setPregnancyDiaryJustSaved(true);
                     setActiveMomPanel("pregnancy-diary-detail");
                   } catch (e: unknown) {
-                    setDiarySaveErr(e instanceof Error ? e.message : "保存失败，请稍后重试");
+                    setDiarySaveErr(
+                      e instanceof Error ? e.message : "保存失败，请稍后重试",
+                    );
                   } finally {
                     setDiarySaving(false);
                   }
                 }}
                 className="mt-4 w-full rounded-2xl bg-foreground py-3.5 text-[15px] font-bold text-background shadow-md disabled:pointer-events-none disabled:opacity-50"
               >
-                {diarySaving ? "保存中…" : pregnancyDiaryToday ? "保存今天的修改" : "保存今天的日记"}
+                {diarySaving
+                  ? "保存中…"
+                  : pregnancyDiaryToday
+                    ? "保存今天的修改"
+                    : "保存今天的日记"}
               </motion.button>
             </motion.div>
           </>
@@ -3691,10 +4762,14 @@ const StatusOverviewBody: React.FC = () => {
               exit={{ y: "100%", opacity: 0 }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
               className="fixed inset-x-0 bottom-0 z-50 w-full max-w-lg mx-auto rounded-t-3xl bg-card border-t border-border/40 shadow-2xl px-5 pt-4"
-              style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
+              style={{
+                paddingBottom: "max(2rem, env(safe-area-inset-bottom))",
+              }}
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-base font-extrabold text-foreground">修改生长指标</h3>
+                <h3 className="text-base font-extrabold text-foreground">
+                  修改生长指标
+                </h3>
                 <button
                   type="button"
                   disabled={growthSubmitting}
@@ -3709,7 +4784,9 @@ const StatusOverviewBody: React.FC = () => {
 
               <div className="space-y-4 mb-6">
                 <div className="bg-secondary/20 p-3 rounded-2xl border border-border/50">
-                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block ml-1">体重 (kg)</label>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block ml-1">
+                    体重 (kg)
+                  </label>
                   <input
                     type="number"
                     step="0.01"
@@ -3719,7 +4796,9 @@ const StatusOverviewBody: React.FC = () => {
                   />
                 </div>
                 <div className="bg-secondary/20 p-3 rounded-2xl border border-border/50">
-                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block ml-1">身高 (cm)</label>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block ml-1">
+                    身高 (cm)
+                  </label>
                   <input
                     type="number"
                     step="0.1"
@@ -3729,7 +4808,9 @@ const StatusOverviewBody: React.FC = () => {
                   />
                 </div>
                 <div className="bg-secondary/20 p-3 rounded-2xl border border-border/50">
-                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block ml-1">头围 (cm)</label>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block ml-1">
+                    头围 (cm)
+                  </label>
                   <input
                     type="number"
                     step="0.1"
@@ -3741,7 +4822,9 @@ const StatusOverviewBody: React.FC = () => {
               </div>
 
               {growthSaveErr ? (
-                <p className="text-[11px] text-destructive mb-4 px-0.5 leading-relaxed">{growthSaveErr}</p>
+                <p className="text-[11px] text-destructive mb-4 px-0.5 leading-relaxed">
+                  {growthSaveErr}
+                </p>
               ) : null}
 
               <motion.button
@@ -3754,9 +4837,15 @@ const StatusOverviewBody: React.FC = () => {
                   const w = parseFloat(editWeight);
                   const h = parseFloat(editHeight);
                   const hd = parseFloat(editHead);
-                  const weightKg = Number.isFinite(w) ? w : babyMetrics.weightKg;
-                  const heightCm = Number.isFinite(h) ? h : babyMetrics.heightCm;
-                  const headCmVal = Number.isFinite(hd) ? hd : babyMetrics.headCm;
+                  const weightKg = Number.isFinite(w)
+                    ? w
+                    : babyMetrics.weightKg;
+                  const heightCm = Number.isFinite(h)
+                    ? h
+                    : babyMetrics.heightCm;
+                  const headCmVal = Number.isFinite(hd)
+                    ? hd
+                    : babyMetrics.headCm;
 
                   if (
                     typeof weightKg !== "number" ||
@@ -3790,10 +4879,12 @@ const StatusOverviewBody: React.FC = () => {
                         height_cm: bodyBase.height_cm,
                         head_cm: bodyBase.head_cm,
                       });
-                      if (rev.error !== 0) throw new Error("修改生长发育记录失败");
+                      if (rev.error !== 0)
+                        throw new Error("修改生长发育记录失败");
                     } else {
                       const added = await addGrowthRecord(bodyBase);
-                      if (added.error !== 0) throw new Error("上报生长发育记录失败");
+                      if (added.error !== 0)
+                        throw new Error("上报生长发育记录失败");
                     }
 
                     const data = await queryLatestGrowth({
@@ -3815,12 +4906,16 @@ const StatusOverviewBody: React.FC = () => {
                       histReload.error === 0 &&
                       Array.isArray(histReload.growth_data)
                     ) {
-                      setGrowthHistoryRows(mapGrowthHistoryToBabyRows(histReload.growth_data));
+                      setGrowthHistoryRows(
+                        mapGrowthHistoryToBabyRows(histReload.growth_data),
+                      );
                     }
 
                     setIsGrowthDrawerOpen(false);
                   } catch (e: unknown) {
-                    setGrowthSaveErr(e instanceof Error ? e.message : "保存失败，请稍后重试");
+                    setGrowthSaveErr(
+                      e instanceof Error ? e.message : "保存失败，请稍后重试",
+                    );
                   } finally {
                     setGrowthSubmitting(false);
                   }

@@ -4,19 +4,26 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const statusSource = readFileSync(resolve(here, "StatusOverviewBody.tsx"), "utf8");
+const statusSource = readFileSync(
+  resolve(here, "StatusOverviewBody.tsx"),
+  "utf8",
+);
 
 describe("StatusOverviewBody status page copy", () => {
   it("adds expanded pregnancy diary and production journey modules under mom status", () => {
-    expect(statusSource).toContain('type MomStatusPanelId =');
+    expect(statusSource).toContain("type MomStatusPanelId =");
     expect(statusSource).toContain('| "birth-journey-detail"');
     expect(statusSource).toContain('| "pregnancy-diary-detail"');
     expect(statusSource).toContain("queryCarePlanList");
     expect(statusSource).toContain("updateBirthJourneyTodoCompletion");
     expect(statusSource).toContain("subscribeBirthJourneyPlanUpdated");
-    expect(statusSource).toContain("transferBirthJourneyPlanNotificationToStatusCard();");
+    expect(statusSource).toContain(
+      "transferBirthJourneyPlanNotificationToStatusCard();",
+    );
     expect(statusSource).toContain("queryUserProfile");
-    expect(statusSource).toContain('type MaternalCareStage = "pregnancy" | "postpartum"');
+    expect(statusSource).toContain(
+      'type MaternalCareStage = "pregnancy" | "postpartum"',
+    );
     expect(statusSource).toContain("formatPregnancyStageSubtitle");
     expect(statusSource).toContain("STATUS_CARE_STAGE_STORAGE_KEY");
     expect(statusSource).toContain("readStatusCareStagePreference");
@@ -26,8 +33,12 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("哺乳期");
     expect(statusSource).not.toContain("setCurrentCareStage");
     expect(statusSource).not.toContain("profile.current_care_stage");
-    expect(statusSource).toContain("const isPregnancyStage = maternalCareStage === \"pregnancy\";");
-    expect(statusSource).toContain("const isPostpartumStage = maternalCareStage !== \"pregnancy\";");
+    expect(statusSource).toContain(
+      'const isPregnancyStage = maternalCareStage === "pregnancy";',
+    );
+    expect(statusSource).toContain(
+      'const isPostpartumStage = maternalCareStage !== "pregnancy";',
+    );
     expect(statusSource).toContain("宝宝孕育中");
     expect(statusSource).toContain("disabled={disabled}");
     expect(statusSource).toContain("cursor-not-allowed");
@@ -38,7 +49,7 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("const PrenatalPlanTimelineView");
     expect(statusSource).toContain('aria-label="孕期服务"');
     expect(statusSource).not.toContain("孕期照护正在推进");
-    expect(statusSource).toContain(">孕期计划</h3>");
+    expect(statusSource).toMatch(/<h3[^>]*>\s*孕期计划\s*<\/h3>/);
     expect(statusSource).not.toContain("还没有计划哦");
     expect(statusSource).toContain("制定孕期计划");
     expect(statusSource).toContain("帮我制定孕期计划");
@@ -51,20 +62,50 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("birthJourneyNext7TodoId");
     expect(statusSource).toContain("todo: true");
     expect(statusSource).toContain("BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS");
-    expect(statusSource).not.toContain("BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS");
-    expect(statusSource).toContain("reason: compactText(source.reason)");
-    expect(statusSource).not.toContain("reason: truncateBirthJourneyPlanText(source.reason");
-    expect(statusSource).not.toContain("birthJourneyPlanItems(layers.current_week_focus?.items, 3)");
-    expect(statusSource).not.toContain("birthJourneyPlanItems(layers?.next_7_days?.items, 4)");
-    expect(statusSource).toContain('className="mt-1 text-[11px] font-normal leading-relaxed text-[#7b6a61]"');
-    expect(statusSource).not.toContain('className="mt-1 text-[11px] font-semibold leading-relaxed text-[#7b6a61]"');
+    expect(statusSource).not.toContain(
+      "BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS",
+    );
+    expect(statusSource).toMatch(
+      /const\s+\{\s*priorityLabel,\s*reason\s*\}\s*=\s*normalizeBirthJourneyPriorityAndReason/,
+    );
+    expect(statusSource).toContain(
+      "steps: birthJourneyPlanSteps(source.steps)",
+    );
+    expect(statusSource).not.toContain("点开查看具体步骤");
+    expect(statusSource).not.toContain(
+      "reason: truncateBirthJourneyPlanText(source.reason",
+    );
+    expect(statusSource).not.toContain(
+      "birthJourneyPlanItems(layers.current_week_focus?.items, 3)",
+    );
+    expect(statusSource).not.toContain(
+      "birthJourneyPlanItems(layers?.next_7_days?.items, 4)",
+    );
+    expect(statusSource).toContain(
+      'className="mt-1 text-[11px] font-normal leading-relaxed text-[#7b6a61]"',
+    );
+    expect(statusSource).not.toContain(
+      'className="mt-1 text-[11px] font-semibold leading-relaxed text-[#7b6a61]"',
+    );
     expect(statusSource).not.toContain("showTimeframe");
-    expect(statusSource).toContain("aria-label={`${completed ? \"取消完成\" : \"标记完成\"}：${item.title}`}");
-    expect(statusSource).not.toContain("absolute bottom-6 left-[8px] top-6 w-px bg-[#cfe4df]");
-    expect(statusSource).not.toContain("absolute left-0 top-5 z-[1] h-4 w-4 rounded-full");
-    expect(statusSource).not.toContain("rounded-[24px] border border-[#cfe4df] bg-[#f7fbfa] p-4 shadow-sm");
-    expect(statusSource).not.toContain("rounded-[18px] border border-[#cfe4df] bg-[#f7fbfa] px-4 py-2");
-    expect(statusSource).toContain("relative rounded-[20px] border border-[#d7e8e4] bg-[#fbfefd] px-4 py-4");
+    expect(statusSource).toContain(
+      'aria-label={`${completed ? "取消完成" : "标记完成"}：${item.title}`}',
+    );
+    expect(statusSource).not.toContain(
+      "absolute bottom-6 left-[8px] top-6 w-px bg-[#cfe4df]",
+    );
+    expect(statusSource).not.toContain(
+      "absolute left-0 top-5 z-[1] h-4 w-4 rounded-full",
+    );
+    expect(statusSource).not.toContain(
+      "rounded-[24px] border border-[#cfe4df] bg-[#f7fbfa] p-4 shadow-sm",
+    );
+    expect(statusSource).not.toContain(
+      "rounded-[18px] border border-[#cfe4df] bg-[#f7fbfa] px-4 py-2",
+    );
+    expect(statusSource).toContain(
+      "relative rounded-[20px] border border-[#d7e8e4] bg-[#fbfefd] px-4 py-4",
+    );
     expect(statusSource).toContain("divide-y divide-[#dbece8]");
     expect(statusSource).toContain("py-4 first:pt-0 last:pb-0");
     expect(statusSource).toContain("未来 2-4 周");
@@ -82,32 +123,42 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).not.toContain("`当前重点：${birthJourneyCardFocus}`");
     expect(statusSource).not.toContain("detailSections.helpPrompts");
     expect(statusSource).not.toContain("我能帮你做");
-    expect(statusSource).not.toContain('className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#c59a51]"');
+    expect(statusSource).not.toContain(
+      'className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#c59a51]"',
+    );
     expect(statusSource).not.toContain("border-[#e99d68] bg-[#fff1e5]");
     expect(statusSource).toContain("border-[#eadfd8] bg-[#fffdfb]");
     expect(statusSource).not.toContain("border-[#f1c6a8] bg-white");
     expect(statusSource).not.toContain("border-[#ddd0ff] bg-white");
     expect(statusSource).not.toContain("未来计划");
-    expect(statusSource).not.toContain('<CalendarDays className="h-4 w-4 text-[#c08a63]" />');
+    expect(statusSource).not.toContain(
+      '<CalendarDays className="h-4 w-4 text-[#c08a63]" />',
+    );
     expect(statusSource).not.toContain("接下来的阶段");
     expect(statusSource).not.toContain("待开始");
-    expect(statusSource).not.toContain('Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"');
+    expect(statusSource).not.toContain(
+      'Circle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"',
+    );
     expect(statusSource).not.toContain("继续推进");
     expect(statusSource).not.toContain("aria-expanded={expanded}");
     expect(statusSource).not.toContain("全流程总览");
     expect(statusSource).not.toContain("本阶段先做");
     expect(statusSource).not.toContain("预产期：");
     expect(statusSource).not.toContain("birthJourneyDue");
-    expect(statusSource).not.toContain('setActiveMomPanel("birth-journey-detail")');
+    expect(statusSource).not.toContain(
+      'setActiveMomPanel("birth-journey-detail")',
+    );
     expect(statusSource).not.toContain("拆成待办");
     expect(statusSource).not.toContain("让智能体拆成待办");
     expect(statusSource).not.toContain("计划信息");
     expect(statusSource).not.toContain("重新生成计划");
-    expect(statusSource).not.toContain('const birthJourneyCardAction = birthJourneyPlan ? "查看计划" : "制定计划";');
+    expect(statusSource).not.toContain(
+      'const birthJourneyCardAction = birthJourneyPlan ? "查看计划" : "制定计划";',
+    );
     expect(statusSource).toContain("onOpenDiaryDetail");
     expect(statusSource).toContain("查看日记");
     expect(statusSource).not.toContain("查看记录");
-    expect(statusSource).toContain(">孕期日记</h3>");
+    expect(statusSource).toMatch(/<h3[^>]*>\s*孕期日记\s*<\/h3>/);
     expect(statusSource).toContain("queryPregnancyDiaryToday");
     expect(statusSource).toContain("queryPregnancyDiaryList");
     expect(statusSource).toContain("createPregnancyDiaryEntry");
@@ -120,7 +171,9 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).not.toContain("mockPregnancyDiaryEntries");
     expect(statusSource).not.toContain("fallbackEntries");
     expect(statusSource).not.toContain("最近一周");
-    expect(statusSource).not.toContain("记录了 {pregnancyDiaryRecentCount7}/7 天");
+    expect(statusSource).not.toContain(
+      "记录了 {pregnancyDiaryRecentCount7}/7 天",
+    );
     expect(statusSource).toContain("近7天记录");
     expect(statusSource).toContain("健康咨询");
     expect(statusSource).toContain("产检问题");
@@ -128,37 +181,69 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("pregnancyDiaryPrimaryAction");
     expect(statusSource).toContain("subscribePregnancyDiaryChanged");
     expect(statusSource).toContain("usePregnancyDiaryCardNotification");
-    expect(statusSource).not.toContain("usePregnancyDiaryCardNotificationLabel");
+    expect(statusSource).not.toContain(
+      "usePregnancyDiaryCardNotificationLabel",
+    );
     expect(statusSource).toContain("clearPregnancyDiaryCardNotification");
     expect(statusSource).not.toContain("pregnancyDiaryCardNotificationLabel");
-    expect(statusSource).toContain("pregnancyDiaryCardNotification ? \"status-module-card-notice\" : \"\"");
-    expect(statusSource).toContain("pregnancyDiaryCardNotification={pregnancyDiaryCardNotification}");
+    expect(statusSource).toContain(
+      'pregnancyDiaryCardNotification ? "status-module-card-notice" : ""',
+    );
+    expect(statusSource).toMatch(
+      /pregnancyDiaryCardNotification=\{\s*pregnancyDiaryCardNotification\s*\}/,
+    );
     expect(statusSource).toContain("今天的记录已保存");
     expect(statusSource).toContain("整理产检问题");
     expect(statusSource).toContain("今日日记");
     expect(statusSource).toContain("bg-[#fff7f1]");
     expect(statusSource).toContain("想问医生的问题");
     expect(statusSource).toContain("appointment_note: diaryAppointmentNote");
-    expect(statusSource).toContain('setActiveMomPanel("pregnancy-diary-detail")');
-    expect(statusSource).toContain("帮我根据孕期日记整理下次产检要问医生的问题");
+    expect(statusSource).toContain(
+      'setActiveMomPanel("pregnancy-diary-detail")',
+    );
+    expect(statusSource).toContain(
+      "帮我根据孕期日记整理下次产检要问医生的问题",
+    );
     expect(statusSource).toContain("明显胎动异常、出血、剧烈腹痛");
     expect(statusSource).toContain("useBirthJourneyPlanCardNotification");
-    expect(statusSource).toContain("clearBirthJourneyPlanGeneratedNotification");
-    expect(statusSource).toContain("birthJourneyPlanCardNotification={Boolean(");
+    expect(statusSource).toContain(
+      "clearBirthJourneyPlanGeneratedNotification",
+    );
+    expect(statusSource).toContain(
+      "birthJourneyPlanCardNotification={Boolean(",
+    );
     expect(statusSource).toContain("status-module-card-notice");
     expect(statusSource).not.toContain("{section.items.length}项");
-    expect(statusSource).not.toContain("bg-gradient-to-r from-transparent via-[#e7dcd6] to-transparent");
-    expect(statusSource.indexOf(">孕期日记</h3>")).toBeLessThan(statusSource.indexOf(">孕期计划</h3>"));
-    expect(statusSource.indexOf(">孕期计划</h3>")).toBeLessThan(statusSource.indexOf('title="母乳产出"'));
-    expect(statusSource.indexOf('title="母乳产出"')).toBeLessThan(statusSource.indexOf('title="乳房健康"'));
-    expect(statusSource.indexOf('title="产后恢复"')).toBeLessThan(statusSource.indexOf('title="补能与休息"'));
+    expect(statusSource).not.toContain(
+      "bg-gradient-to-r from-transparent via-[#e7dcd6] to-transparent",
+    );
+    const pregnancyDiaryHeadingIndex = statusSource.search(
+      /<h3[^>]*>\s*孕期日记\s*<\/h3>/,
+    );
+    const pregnancyPlanHeadingIndex = statusSource.search(
+      /<h3[^>]*>\s*孕期计划\s*<\/h3>/,
+    );
+    expect(pregnancyDiaryHeadingIndex).toBeGreaterThanOrEqual(0);
+    expect(pregnancyPlanHeadingIndex).toBeGreaterThanOrEqual(0);
+    expect(pregnancyDiaryHeadingIndex).toBeLessThan(pregnancyPlanHeadingIndex);
+    expect(pregnancyPlanHeadingIndex).toBeLessThan(
+      statusSource.indexOf('title="母乳产出"'),
+    );
+    expect(statusSource.indexOf('title="母乳产出"')).toBeLessThan(
+      statusSource.indexOf('title="乳房健康"'),
+    );
+    expect(statusSource.indexOf('title="产后恢复"')).toBeLessThan(
+      statusSource.indexOf('title="补能与休息"'),
+    );
   });
 
   it("uses the breast health diary wording and agent-assisted CTA", () => {
     expect(statusSource).toContain("乳房健康日记");
     expect(statusSource).toContain("查看《乳房健康日记》");
     expect(statusSource).toContain('title: "涨奶硬块"');
-    expect(statusSource).toContain('import momcozyAgentAvatar from "@/assets/momcozy-agent.png"');
+    expect(statusSource).toContain(
+      'import momcozyAgentAvatar from "@/assets/momcozy-agent.png"',
+    );
     expect(statusSource).toContain("<MaiInlineAvatar />");
     expect(statusSource).not.toContain("查看健康状态");
     expect(statusSource).not.toContain("乳房健康状态");
@@ -166,9 +251,13 @@ describe("StatusOverviewBody status page copy", () => {
   });
 
   it("marks postpartum recovery progress and shows a non-blocking unavailable hint", () => {
-    expect(statusSource).toContain('{ time: "第 1-2 天", status: "已完成"');
-    expect(statusSource).toContain('{ time: "第 3-5 天", status: "进行中"');
-    expect(statusSource).toContain('import postpartumRecoveryIcon from "@/assets/postpartum-recovery-icon.png"');
+    expect(statusSource).toContain('time: "第 1-2 天"');
+    expect(statusSource).toContain('status: "已完成"');
+    expect(statusSource).toContain('time: "第 3-5 天"');
+    expect(statusSource).toContain('status: "进行中"');
+    expect(statusSource).toContain(
+      'import postpartumRecoveryIcon from "@/assets/postpartum-recovery-icon.png"',
+    );
     expect(statusSource).toContain("const PostpartumRecoveryIcon");
     expect(statusSource).toContain("icon={<PostpartumRecoveryIcon />}");
     expect(statusSource).toContain("postpartumTrainingHintVisible");
@@ -178,14 +267,19 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("暂未开通此功能");
     expect(statusSource).toContain("absolute -top-10 right-0");
     expect(statusSource).toContain("继续训练");
-    const unavailableHintClass = statusSource.match(/className="([^"]*absolute -top-10 right-0[^"]*)"/)?.[1] ?? "";
+    const unavailableHintClass =
+      statusSource.match(
+        /className="([^"]*absolute -top-10 right-0[^"]*)"/,
+      )?.[1] ?? "";
     expect(unavailableHintClass).not.toContain("-translate-x-1/2");
     expect(statusSource).not.toContain('window.alert("暂未开通此功能")');
     expect(statusSource).not.toContain("const YogaMomIcon");
   });
 
   it("shows rest as pending and makes lactation trend references clearer", () => {
-    expect(statusSource).toContain('待开通 <strong className="font-bold">睡眠</strong> 与 <strong className="font-bold">营养</strong> 功能');
+    expect(statusSource).toMatch(
+      /待开通[\s\S]*<strong className="font-bold">\s*睡眠\s*<\/strong>[\s\S]*<strong className="font-bold">\s*营养\s*<\/strong>[\s\S]*功能/,
+    );
     expect(statusSource).toContain('estimate: "#8a5f7d"');
     expect(statusSource).toContain('band: "#dff4e8"');
     expect(statusSource).toContain("strokeWidth={2.4}");
@@ -194,7 +288,9 @@ describe("StatusOverviewBody status page copy", () => {
   it("renames baby care to baby health and opens health information", () => {
     expect(statusSource).toContain('title="宝宝健康"');
     expect(statusSource).toContain('action="查看健康信息"');
-    expect(statusSource).toContain('onClick={() => setActiveBabyPanel("baby-health")}');
+    expect(statusSource).toContain(
+      'onClick={() => setActiveBabyPanel("baby-health")}',
+    );
     expect(statusSource).toContain("自闭症风险筛查");
     expect(statusSource).toContain("生长发育迟缓风险筛查");
     expect(statusSource).toContain("消化系统风险筛查");
@@ -207,7 +303,9 @@ describe("StatusOverviewBody status page copy", () => {
 
   it("adds a growth milestone action and timeline", () => {
     expect(statusSource).toContain('secondaryAction="成长milestone"');
-    expect(statusSource).toContain('onSecondaryClick={() => setActiveBabyPanel("growth-milestone")}');
+    expect(statusSource).toContain(
+      'onSecondaryClick={() => setActiveBabyPanel("growth-milestone")}',
+    );
     expect(statusSource).toContain("const BABY_GROWTH_MILESTONES");
     expect(statusSource).toContain("出生后首次自主抬头");
     expect(statusSource).toContain("首次完整自主翻身");
@@ -215,23 +313,35 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("无支撑独自坐稳");
     expect(statusSource).toContain("四点手足爬行");
     expect(statusSource).toContain("说出完整主谓短句");
-    expect(statusSource.indexOf("说出完整主谓短句")).toBeLessThan(statusSource.indexOf("出生后首次自主抬头"));
-    expect(statusSource.indexOf("2026.05.28")).toBeLessThan(statusSource.indexOf("2025.11.18"));
+    expect(statusSource.indexOf("说出完整主谓短句")).toBeLessThan(
+      statusSource.indexOf("出生后首次自主抬头"),
+    );
+    expect(statusSource.indexOf("2026.05.28")).toBeLessThan(
+      statusSource.indexOf("2025.11.18"),
+    );
     expect(statusSource).toContain("<time");
-    expect(statusSource).toContain('font-normal text-[#9a8fa5]');
-    expect(statusSource).toContain("bg-gradient-to-t from-[#dcf7ed] via-[#cceee1] to-[#76c7ad]");
+    expect(statusSource).toContain("font-normal text-[#9a8fa5]");
+    expect(statusSource).toContain(
+      "bg-gradient-to-t from-[#dcf7ed] via-[#cceee1] to-[#76c7ad]",
+    );
     expect(statusSource).toContain("const recency = 1 - index / total");
     expect(statusSource).toContain("const hue = 146 + recency * 18");
     expect(statusSource).toContain("const dotSize = 10 + recency * 8");
-    expect(statusSource).toContain("mt-4 flex h-7 w-7 shrink-0 items-center justify-center");
-    expect(statusSource).toContain("background: `linear-gradient(135deg, #fff 0%, ${softColor} 100%)`");
+    expect(statusSource).toContain(
+      "mt-4 flex h-7 w-7 shrink-0 items-center justify-center",
+    );
+    expect(statusSource).toContain(
+      "background: `linear-gradient(135deg, #fff 0%, ${softColor} 100%)`",
+    );
     expect(statusSource).not.toContain("宝宝微笑");
     expect(statusSource).not.toContain("照片记录");
     expect(statusSource).not.toContain("rounded-full bg-white/80 px-2 py-0.5");
   });
 
   it("opens a baby sleep report from the baby sleep card", () => {
-    expect(statusSource).toContain('type BabyStatusPanelId = "baby-health" | "growth-milestone" | "baby-sleep"');
+    expect(statusSource).toContain(
+      'type BabyStatusPanelId = "baby-health" | "growth-milestone" | "baby-sleep"',
+    );
     expect(statusSource).toContain("const BABY_SLEEP_SUMMARY");
     expect(statusSource).toContain("const BABY_SLEEP_CHART");
     expect(statusSource).toContain("icon: Moon");
@@ -254,9 +364,11 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain('title="宝宝睡眠"');
     expect(statusSource).toContain('label: "今日睡眠", value: "4h 57min"');
     expect(statusSource).toContain('action="查看报告"');
-    expect(statusSource).toContain('onClick={() => setActiveBabyPanel("baby-sleep")}');
+    expect(statusSource).toContain(
+      'onClick={() => setActiveBabyPanel("baby-sleep")}',
+    );
     expect(statusSource).not.toContain("4h57min");
     expect(statusSource).not.toContain("3h08min");
-    expect(statusSource).not.toContain('index === 0 || index === 1');
+    expect(statusSource).not.toContain("index === 0 || index === 1");
   });
 });
