@@ -361,6 +361,32 @@ type BirthJourneyTodoSyncPrompt = {
   prompt: string;
 };
 
+const BIRTH_JOURNEY_COMPLETION_SPARKS = [
+  { x: -18, y: -22, width: 5, height: 9, color: "#f5b447", rotate: -28, delay: 0 },
+  { x: -4, y: -32, width: 6, height: 6, color: "#dd7a86", rotate: 42, delay: 0.02 },
+  { x: 15, y: -28, width: 5, height: 10, color: "#71b8a8", rotate: 18, delay: 0.04 },
+  { x: 31, y: -13, width: 7, height: 7, color: "#8e79c8", rotate: -12, delay: 0.06 },
+  { x: 34, y: 8, width: 5, height: 9, color: "#f0a35f", rotate: 55, delay: 0.08 },
+  { x: 17, y: 24, width: 6, height: 6, color: "#df6f8c", rotate: -44, delay: 0.03 },
+  { x: -6, y: 25, width: 5, height: 10, color: "#5faea4", rotate: 26, delay: 0.07 },
+  { x: -23, y: 10, width: 7, height: 7, color: "#f3cf65", rotate: -8, delay: 0.05 },
+] as const;
+
+const BIRTH_JOURNEY_CENTER_CELEBRATION_SPARKS = [
+  { x: -118, y: -72, size: 12, color: "#f3b34e", rotate: -24, delay: 0.05 },
+  { x: -82, y: -126, size: 10, color: "#dc7187", rotate: 38, delay: 0.12 },
+  { x: -24, y: -150, size: 14, color: "#6db7a7", rotate: -12, delay: 0.02 },
+  { x: 42, y: -136, size: 11, color: "#8d7ac7", rotate: 54, delay: 0.16 },
+  { x: 102, y: -92, size: 13, color: "#f0cc5c", rotate: -48, delay: 0.08 },
+  { x: 136, y: -24, size: 10, color: "#e68b61", rotate: 20, delay: 0.22 },
+  { x: 126, y: 52, size: 14, color: "#d86f90", rotate: 66, delay: 0.14 },
+  { x: 76, y: 112, size: 11, color: "#5faea4", rotate: -36, delay: 0.04 },
+  { x: 8, y: 142, size: 12, color: "#efb04d", rotate: 18, delay: 0.2 },
+  { x: -62, y: 122, size: 10, color: "#9079c8", rotate: -58, delay: 0.1 },
+  { x: -124, y: 70, size: 13, color: "#70b7aa", rotate: 44, delay: 0.18 },
+  { x: -150, y: 0, size: 11, color: "#df7187", rotate: -18, delay: 0.06 },
+] as const;
+
 type BirthJourneyTodoPlanPeriod = {
   id?: string;
   title?: string;
@@ -550,23 +576,10 @@ function birthJourneyNextPrompt(plan: CarePlanArtifact | null): string {
 
 function birthJourneyTodoAgentPrompt(
   item: BirthJourneyPlanItem,
-  plan: CarePlanArtifact | null,
+  _plan: CarePlanArtifact | null,
 ): string {
   const title = compactText(item.title) || "孕期计划事项";
-  const stageTitle = compactText(asBirthJourneyPayload(plan).todo_plan?.title);
-  const detailParts = [
-    item.timeframe ? `建议时间：${item.timeframe}` : "",
-    item.reason ? `事项背景：${item.reason}` : "",
-    item.steps?.length ? `执行步骤：${item.steps.join("；")}` : "",
-  ].filter(Boolean);
-  return [
-    `我已完成【${title}】，需要记录/确认以下内容：完成时间、身体感受、是否有异常情况。`,
-    stageTitle ? `当前阶段：${stageTitle}。` : "",
-    detailParts.length ? detailParts.join("。") + "。" : "",
-    "请基于这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期计划或孕期日记。",
-  ]
-    .filter(Boolean)
-    .join("\n");
+  return `我已完成【${title}】，请给予这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记`;
 }
 
 function birthJourneyTodoCompletionPatch(completed: boolean) {
@@ -656,6 +669,118 @@ function updateBirthJourneyPlanTodoLocally(
   return { ...plan, payload };
 }
 
+const BirthJourneyCompletionFirework = () => (
+  <motion.div
+    aria-hidden="true"
+    className="pointer-events-none absolute left-1 top-0 z-20 h-20 w-24"
+    initial={{ opacity: 1 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+  >
+    <motion.span
+      className="absolute left-[13px] top-[8px] h-7 w-7 rounded-full border-2 border-[#f2c963]"
+      initial={{ opacity: 0.85, scale: 0.25 }}
+      animate={{ opacity: [0.85, 0.45, 0], scale: [0.25, 1.35, 2.05] }}
+      transition={{ duration: 0.68, ease: "easeOut" }}
+    />
+    <motion.span
+      className="absolute left-[17px] top-[12px] h-5 w-5 rounded-full bg-[#4f8f87]/18"
+      initial={{ opacity: 0.65, scale: 0.5 }}
+      animate={{ opacity: [0.65, 0.2, 0], scale: [0.5, 1.5, 2.35] }}
+      transition={{ duration: 0.62, ease: "easeOut" }}
+    />
+    {BIRTH_JOURNEY_COMPLETION_SPARKS.map((spark, index) => (
+      <motion.span
+        key={`${spark.color}-${index}`}
+        className="absolute left-[23px] top-[18px] rounded-[3px]"
+        style={{
+          width: spark.width,
+          height: spark.height,
+          backgroundColor: spark.color,
+        }}
+        initial={{ opacity: 0, x: 0, y: 0, rotate: 0, scale: 0.4 }}
+        animate={{
+          opacity: [0, 1, 0],
+          x: spark.x,
+          y: spark.y,
+          rotate: spark.rotate,
+          scale: [0.4, 1, 0.7],
+        }}
+        transition={{
+          duration: 0.72,
+          delay: spark.delay,
+          ease: "easeOut",
+        }}
+      />
+    ))}
+  </motion.div>
+);
+
+const BirthJourneyCompletionCelebration = () => (
+  <motion.div
+    aria-hidden="true"
+    className="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: [0, 1, 1, 0] }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 1, times: [0, 0.1, 0.78, 1] }}
+  >
+    <div className="relative h-72 w-72">
+      <motion.span
+        className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#f7d879]/20 blur-xl"
+        initial={{ scale: 0.35, opacity: 0 }}
+        animate={{ scale: [0.35, 1.05, 1.18], opacity: [0, 0.9, 0] }}
+        transition={{ duration: 1, times: [0, 0.24, 1], ease: "easeOut" }}
+      />
+      {[0, 0.12, 0.24].map((delay, index) => (
+        <motion.span
+          key={`ring-${delay}`}
+          className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#f1c35c]"
+          initial={{ scale: 0.45, opacity: 0 }}
+          animate={{ scale: [0.45, 2.05 + index * 0.22], opacity: [0, 0.62, 0] }}
+          transition={{ duration: 0.76, delay, ease: "easeOut" }}
+        />
+      ))}
+      <motion.div
+        className="absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#4f8f87] text-white shadow-[0_16px_38px_rgba(79,143,135,0.34)]"
+        initial={{ scale: 0.55, opacity: 0, rotate: -10 }}
+        animate={{
+          scale: [0.55, 1.16, 1],
+          opacity: [0, 1, 1],
+          rotate: [-10, 4, 0],
+        }}
+        transition={{ duration: 0.62, ease: "easeOut" }}
+      >
+        <Check className="h-12 w-12" strokeWidth={3} />
+      </motion.div>
+      {BIRTH_JOURNEY_CENTER_CELEBRATION_SPARKS.map((spark, index) => (
+        <motion.span
+          key={`${spark.color}-${index}`}
+          className="absolute left-1/2 top-1/2 rounded-[4px]"
+          style={{
+            width: spark.size,
+            height: spark.size * 1.6,
+            backgroundColor: spark.color,
+          }}
+          initial={{ opacity: 0, x: 0, y: 0, rotate: 0, scale: 0.35 }}
+          animate={{
+            opacity: [0, 1, 1, 0],
+            x: spark.x,
+            y: spark.y,
+            rotate: spark.rotate,
+            scale: [0.35, 1.15, 0.85],
+          }}
+          transition={{
+            duration: 0.82,
+            delay: spark.delay,
+            ease: "easeOut",
+          }}
+        />
+      ))}
+    </div>
+  </motion.div>
+);
+
 const BirthJourneyPlanItemRow: React.FC<{
   item: BirthJourneyPlanItem;
   index: number;
@@ -696,14 +821,30 @@ const BirthJourneyPlanItemRow: React.FC<{
         feedback === "blocked"
           ? { x: [0, -5, 5, -3, 3, 0] }
           : feedback === "completed"
-            ? { scale: [1, 1.015, 1] }
-            : { x: 0, scale: 1 }
+            ? {
+                scale: [1, 1.025, 1],
+                boxShadow: [
+                  "0 0 0 rgba(79, 143, 135, 0)",
+                  "0 12px 28px rgba(79, 143, 135, 0.18)",
+                  "0 0 0 rgba(79, 143, 135, 0)",
+                ],
+              }
+            : { x: 0, scale: 1, boxShadow: "0 0 0 rgba(79, 143, 135, 0)" }
       }
-      transition={{ duration: feedback === "blocked" ? 0.28 : 0.22 }}
-      className={`rounded-xl bg-white px-3 ${compact ? "py-2" : "py-2.5"} ${
+      transition={{ duration: feedback === "blocked" ? 0.28 : 0.58 }}
+      className={`relative overflow-visible rounded-xl bg-white px-3 ${compact ? "py-2" : "py-2.5"} ${
         completed ? "bg-white/75" : ""
-      } ${feedback === "blocked" ? "ring-1 ring-[#e48a8a]" : ""}`}
+      } ${
+        feedback === "blocked"
+          ? "ring-1 ring-[#e48a8a]"
+          : feedback === "completed"
+            ? "ring-1 ring-[#f2d37a]"
+            : ""
+      }`}
     >
+      <AnimatePresence>
+        {feedback === "completed" ? <BirthJourneyCompletionFirework /> : null}
+      </AnimatePresence>
       <div className="flex gap-2">
         {todo ? (
           <button
@@ -1971,6 +2112,7 @@ const PrenatalExpandedServices: React.FC<{
   birthJourneyTodoErr: string | null;
   birthJourneyTodoFeedbackByKey: Record<string, BirthJourneyTodoFeedback>;
   birthJourneyTodoSyncPrompt: BirthJourneyTodoSyncPrompt | null;
+  birthJourneyTodoCelebrationId: number | null;
   pregnancyDiaryEntries: PregnancyDiaryEntry[];
   pregnancyDiaryToday: PregnancyDiaryEntry | null;
   pregnancyDiaryLoading: boolean;
@@ -1994,6 +2136,7 @@ const PrenatalExpandedServices: React.FC<{
   birthJourneyTodoErr,
   birthJourneyTodoFeedbackByKey,
   birthJourneyTodoSyncPrompt,
+  birthJourneyTodoCelebrationId,
   pregnancyDiaryEntries,
   pregnancyDiaryToday,
   pregnancyDiaryLoading,
@@ -2195,9 +2338,16 @@ const PrenatalExpandedServices: React.FC<{
         </section>
       </div>
       <AnimatePresence>
+        {birthJourneyTodoCelebrationId ? (
+          <BirthJourneyCompletionCelebration
+            key={birthJourneyTodoCelebrationId}
+          />
+        ) : null}
+      </AnimatePresence>
+      <AnimatePresence>
         {birthJourneyTodoSyncPrompt ? (
           <motion.div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-[#211816]/30 px-4 pb-6 pt-6"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#211816]/30 px-4 py-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -2207,24 +2357,18 @@ const PrenatalExpandedServices: React.FC<{
               aria-modal="true"
               aria-labelledby="birth-journey-todo-sync-title"
               className="w-full max-w-sm rounded-[20px] bg-white p-4 shadow-[0_10px_32px_rgba(52,40,32,0.18)]"
-              initial={{ y: 18, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 12, opacity: 0 }}
+              initial={{ y: 10, scale: 0.98, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 8, scale: 0.98, opacity: 0 }}
               transition={{ duration: 0.18 }}
             >
               <p
                 id="birth-journey-todo-sync-title"
-                className="text-base font-black leading-snug text-[#352820]"
+                className="text-base font-black leading-relaxed text-[#5d5155]"
               >
-                已标记完成
+                要不要将完成的消息立刻告诉智能体？
               </p>
-              <p className="mt-2 text-sm font-semibold leading-relaxed text-[#6a575b]">
-                是否将该完成动作同步给智能体？
-              </p>
-              <p className="mt-2 rounded-2xl bg-[#f7fbfa] px-3 py-2 text-xs font-bold leading-relaxed text-[#4f6f6a]">
-                {birthJourneyTodoSyncPrompt.title}
-              </p>
-              <div className="mt-4 grid grid-cols-2 gap-2">
+              <div className="mt-5 grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={onCancelBirthJourneyTodoSync}
@@ -2237,7 +2381,7 @@ const PrenatalExpandedServices: React.FC<{
                   onClick={onConfirmBirthJourneyTodoSync}
                   className="inline-flex h-11 items-center justify-center rounded-full bg-[#4f8f87] px-3 text-sm font-extrabold text-white shadow-sm active:scale-[0.98]"
                 >
-                  打开智能体
+                  好的
                 </button>
               </div>
             </motion.div>
@@ -3052,7 +3196,11 @@ const StatusOverviewBody: React.FC = () => {
     useState<Record<string, BirthJourneyTodoFeedback>>({});
   const [birthJourneyTodoSyncPrompt, setBirthJourneyTodoSyncPrompt] =
     useState<BirthJourneyTodoSyncPrompt | null>(null);
+  const [birthJourneyTodoCelebrationId, setBirthJourneyTodoCelebrationId] =
+    useState<number | null>(null);
   const birthJourneyTodoFeedbackTimersRef = useRef<Record<string, number>>({});
+  const birthJourneyTodoSyncPromptTimerRef = useRef<number | null>(null);
+  const birthJourneyTodoCelebrationTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (
@@ -3139,12 +3287,31 @@ const StatusOverviewBody: React.FC = () => {
     [],
   );
 
+  const playBirthJourneyTodoCelebration = useCallback(() => {
+    if (birthJourneyTodoCelebrationTimerRef.current) {
+      window.clearTimeout(birthJourneyTodoCelebrationTimerRef.current);
+    }
+    setBirthJourneyTodoCelebrationId(Date.now());
+    birthJourneyTodoCelebrationTimerRef.current = window.setTimeout(() => {
+      setBirthJourneyTodoCelebrationId(null);
+      birthJourneyTodoCelebrationTimerRef.current = null;
+    }, 1000);
+  }, []);
+
   useEffect(
     () => () => {
       Object.values(birthJourneyTodoFeedbackTimersRef.current).forEach(
         (timer) => window.clearTimeout(timer),
       );
       birthJourneyTodoFeedbackTimersRef.current = {};
+      if (birthJourneyTodoSyncPromptTimerRef.current) {
+        window.clearTimeout(birthJourneyTodoSyncPromptTimerRef.current);
+        birthJourneyTodoSyncPromptTimerRef.current = null;
+      }
+      if (birthJourneyTodoCelebrationTimerRef.current) {
+        window.clearTimeout(birthJourneyTodoCelebrationTimerRef.current);
+        birthJourneyTodoCelebrationTimerRef.current = null;
+      }
     },
     [],
   );
@@ -3235,11 +3402,23 @@ const StatusOverviewBody: React.FC = () => {
         setBirthJourneyPlan(result.plan);
         if (completed) {
           flashBirthJourneyTodoFeedback(itemId, "completed");
-          setBirthJourneyTodoSyncPrompt({
+          playBirthJourneyTodoCelebration();
+          const nextSyncPrompt = {
             title: compactText(item.title) || "孕期计划事项",
             prompt: birthJourneyTodoAgentPrompt(item, result.plan),
-          });
+          };
+          if (birthJourneyTodoSyncPromptTimerRef.current) {
+            window.clearTimeout(birthJourneyTodoSyncPromptTimerRef.current);
+          }
+          birthJourneyTodoSyncPromptTimerRef.current = window.setTimeout(() => {
+            setBirthJourneyTodoSyncPrompt(nextSyncPrompt);
+            birthJourneyTodoSyncPromptTimerRef.current = null;
+          }, 1050);
         } else {
+          if (birthJourneyTodoSyncPromptTimerRef.current) {
+            window.clearTimeout(birthJourneyTodoSyncPromptTimerRef.current);
+            birthJourneyTodoSyncPromptTimerRef.current = null;
+          }
           setBirthJourneyTodoSyncPrompt((current) =>
             current?.title === item.title ? null : current,
           );
@@ -3257,6 +3436,7 @@ const StatusOverviewBody: React.FC = () => {
       birthJourneyPlan,
       birthJourneyTodoUpdatingIds.length,
       flashBirthJourneyTodoFeedback,
+      playBirthJourneyTodoCelebration,
     ],
   );
 
@@ -3990,6 +4170,9 @@ const StatusOverviewBody: React.FC = () => {
                     birthJourneyTodoFeedbackByKey
                   }
                   birthJourneyTodoSyncPrompt={birthJourneyTodoSyncPrompt}
+                  birthJourneyTodoCelebrationId={
+                    birthJourneyTodoCelebrationId
+                  }
                   pregnancyDiaryEntries={pregnancyDiaryEntries}
                   pregnancyDiaryToday={pregnancyDiaryToday}
                   pregnancyDiaryLoading={pregnancyDiaryLoading}
