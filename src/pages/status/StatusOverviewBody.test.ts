@@ -103,7 +103,7 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("}, 1050);");
     expect(statusSource).toContain("birthJourneyTodoAgentPrompt");
     expect(statusSource).toContain(
-      "我已完成【${title}】，请给予这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记",
+      "我已完成【${title}】，请基于这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记",
     );
     expect(statusSource).not.toContain("需要记录/确认以下内容");
     expect(statusSource).not.toContain("事项背景：");
@@ -224,6 +224,12 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("今天的记录已保存");
     expect(statusSource).toContain("整理产检问题");
     expect(statusSource).toContain("今日日记");
+    expect(statusSource).toContain(
+      'className="text-xs font-extrabold leading-relaxed text-[#2f262a]"',
+    );
+    expect(statusSource).toContain(
+      'className="min-w-0 text-xs font-medium leading-relaxed text-[#8a8185]"',
+    );
     expect(statusSource).toContain("bg-[#fff7f1]");
     expect(statusSource).toContain("想问医生的问题");
     expect(statusSource).toContain("appointment_note: diaryAppointmentNote");
