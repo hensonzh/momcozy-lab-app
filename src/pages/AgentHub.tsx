@@ -1258,11 +1258,14 @@ const AgentHub: React.FC = () => {
   const [input, setInput] = useState("");
   const inputRef = useRef(input);
   const consumedAgentPrefillKeyRef = useRef<string | null>(null);
+  const pendingAgentAutoSendRef = useRef<string | null>(null);
   useEffect(() => {
     inputRef.current = input;
   }, [input]);
   useEffect(() => {
-    const state = location.state as { agentPrefill?: unknown } | null;
+    const state = location.state as
+      | { agentPrefill?: unknown; agentAutoSend?: unknown }
+      | null;
     const agentPrefill =
       typeof state?.agentPrefill === "string" ? state.agentPrefill.trim() : "";
     if (!agentPrefill) return;
@@ -1270,6 +1273,9 @@ const AgentHub: React.FC = () => {
     if (consumedAgentPrefillKeyRef.current === prefillKey) return;
     consumedAgentPrefillKeyRef.current = prefillKey;
     setInput(agentPrefill);
+    if (state?.agentAutoSend === true) {
+      pendingAgentAutoSendRef.current = agentPrefill;
+    }
     navigate(`${location.pathname}${location.search}${location.hash}`, {
       replace: true,
       state: null,
@@ -4039,6 +4045,13 @@ const AgentHub: React.FC = () => {
       }, 120);
     }
   };
+
+  useEffect(() => {
+    const pendingAutoSend = pendingAgentAutoSendRef.current;
+    if (!pendingAutoSend || hubBottomSendBusy || isMainChatRunning) return;
+    pendingAgentAutoSendRef.current = null;
+    void handleSend(pendingAutoSend);
+  });
 
   const handleVoiceEnd = async (opts?: { submit?: boolean }) => {
     if (!opts?.submit) {

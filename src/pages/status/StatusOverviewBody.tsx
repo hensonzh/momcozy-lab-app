@@ -354,6 +354,13 @@ type BirthJourneyPlanItem = {
   completed_source?: string | null;
 };
 
+type BirthJourneyTodoFeedback = "completed" | "blocked";
+
+type BirthJourneyTodoSyncPrompt = {
+  title: string;
+  prompt: string;
+};
+
 type BirthJourneyPlanSection = {
   title?: string;
   subtitle?: string;
@@ -565,6 +572,29 @@ function birthJourneyNextPrompt(plan: CarePlanArtifact | null): string {
   );
 }
 
+function birthJourneyTodoAgentPrompt(
+  item: BirthJourneyPlanItem,
+  plan: CarePlanArtifact | null,
+): string {
+  const title = compactText(item.title) || "孕期计划事项";
+  const stageTitle =
+    compactText(asBirthJourneyPayload(plan).todo_plan?.title) ||
+    compactText(asBirthJourneyPayload(plan).planning_layers?.current_stage_title);
+  const detailParts = [
+    item.timeframe ? `建议时间：${item.timeframe}` : "",
+    item.reason ? `事项背景：${item.reason}` : "",
+    item.steps?.length ? `执行步骤：${item.steps.join("；")}` : "",
+  ].filter(Boolean);
+  return [
+    `我已完成【${title}】，需要记录/确认以下内容：完成时间、身体感受、是否有异常情况。`,
+    stageTitle ? `当前阶段：${stageTitle}。` : "",
+    detailParts.length ? detailParts.join("。") + "。" : "",
+    "请基于这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期计划或孕期日记。",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 function birthJourneyTodoCompletionPatch(completed: boolean) {
   return {
     completed,
@@ -632,13 +662,13 @@ function updateBirthJourneyPlanTodoLocally(
     todoPlan.periods = periods.map((rawPeriod, periodIndex) => {
       if (!rawPeriod || typeof rawPeriod !== "object") return rawPeriod;
       const period = { ...(rawPeriod as Record<string, unknown>) };
-      if (periodIndex !== 0 || !Array.isArray(period.items)) return period;
+      if (!Array.isArray(period.items)) return period;
       period.items = period.items.map((rawItem, index) =>
         updateBirthJourneyRawItemCompletion(
           rawItem,
           itemId,
           completed,
-          birthJourneyNext7TodoId(index),
+          periodIndex === 0 ? birthJourneyNext7TodoId(index) : "",
           matchedSourceIds,
         ),
       );
@@ -697,28 +727,48 @@ const BirthJourneyPlanItemRow: React.FC<{
   index: number;
   compact?: boolean;
   todo?: boolean;
+  locked?: boolean;
   disabled?: boolean;
+  feedback?: BirthJourneyTodoFeedback;
   onToggleCompleted?: (
     item: BirthJourneyPlanItem,
     index: number,
     completed: boolean,
   ) => void;
+  onBlocked?: () => void;
 }> = ({
   item,
   index,
   compact = false,
   todo = false,
+  locked = false,
   disabled = false,
+  feedback,
   onToggleCompleted,
+  onBlocked,
 }) => {
   const completed = Boolean(item.completed);
   const toggle = () => {
     if (!todo || disabled) return;
+    if (locked) {
+      onBlocked?.();
+      return;
+    }
     onToggleCompleted?.(item, index, !completed);
   };
   return (
-    <div
-      className={`rounded-xl bg-white px-3 ${compact ? "py-2" : "py-2.5"} ${completed ? "bg-white/75" : ""}`}
+    <motion.div
+      animate={
+        feedback === "blocked"
+          ? { x: [0, -5, 5, -3, 3, 0] }
+          : feedback === "completed"
+            ? { scale: [1, 1.015, 1] }
+            : { x: 0, scale: 1 }
+      }
+      transition={{ duration: feedback === "blocked" ? 0.28 : 0.22 }}
+      className={`rounded-xl bg-white px-3 ${compact ? "py-2" : "py-2.5"} ${
+        completed ? "bg-white/75" : ""
+      } ${feedback === "blocked" ? "ring-1 ring-[#e48a8a]" : ""}`}
     >
       <div className="flex gap-2">
         {todo ? (
@@ -726,13 +776,26 @@ const BirthJourneyPlanItemRow: React.FC<{
             type="button"
             role="checkbox"
             aria-checked={completed}
-            aria-label={`${completed ? "取消完成" : "标记完成"}：${item.title}`}
+            aria-disabled={locked || disabled}
+            aria-label={
+              locked
+                ? `当前还未到该阶段，暂不适合进行该事项：${item.title}`
+                : `${completed ? "取消完成" : "标记完成"}：${item.title}`
+            }
             disabled={disabled}
             onClick={toggle}
-            title={completed ? "标记为未完成" : "标记为已完成"}
+            title={
+              locked
+                ? "当前还未到该阶段，暂不适合进行该事项"
+                : completed
+                  ? "标记为未完成"
+                  : "标记为已完成"
+            }
             className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f8f87]/35 disabled:opacity-60 ${
               completed
                 ? "border-[#4f8f87] bg-[#4f8f87] text-white"
+                : locked
+                  ? "border-[#d77b7b] bg-[#fff7f7] text-transparent"
                 : "border-[#8eb8b1] bg-white text-transparent"
             }`}
           >
@@ -793,7 +856,7 @@ const BirthJourneyPlanItemRow: React.FC<{
           ) : null}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -886,27 +949,25 @@ function birthJourneyTodoPlanSections(
     .map((period, index) => {
       const items = birthJourneyPlanItems(period.items);
       if (items.length === 0) return null;
+      const displayMode =
+        compactText(period.display_mode) ||
+        (index === 0 ? "expanded" : "collapsed");
+      const status =
+        compactText(period.status) || (index === 0 ? "current" : "upcoming");
+      const isCurrentPeriod = status === "current";
       return {
         key: compactText(period.id) || `todo-period-${index + 1}`,
         title: compactText(period.title) || `阶段 ${index + 1}`,
         subtitle: compactText(period.subtitle),
         items,
         emptyLabel: "这一阶段的行动事项会在计划生成后显示。",
-        displayMode:
-          compactText(period.display_mode) ||
-          (index === 0 ? "expanded" : "collapsed"),
-        status:
-          compactText(period.status) || (index === 0 ? "current" : "upcoming"),
+        displayMode,
+        status,
         tone:
-          compactText(period.display_mode) === "expanded" ||
-          compactText(period.status) === "current" ||
-          index === 0
+          displayMode === "expanded" || isCurrentPeriod
             ? ("warm" as const)
             : ("plain" as const),
-        todo:
-          compactText(period.display_mode) === "expanded" ||
-          compactText(period.status) === "current" ||
-          index === 0,
+        todo: isCurrentPeriod,
       };
     })
     .filter((section): section is PrenatalPlanStructureSection =>
@@ -925,8 +986,20 @@ const BirthJourneyTodoPlanView: React.FC<{
 const PrenatalPlanTimelineView: React.FC<{
   sections: PrenatalPlanStructureSection[];
   todoUpdatingIds?: string[];
-  onToggleTodo?: (itemId: string, completed: boolean) => void;
-}> = ({ sections, todoUpdatingIds = [], onToggleTodo }) => (
+  todoFeedbackByKey?: Record<string, BirthJourneyTodoFeedback>;
+  onToggleTodo?: (
+    itemId: string,
+    completed: boolean,
+    item: BirthJourneyPlanItem,
+  ) => void;
+  onBlockedTodo?: (itemKey: string) => void;
+}> = ({
+  sections,
+  todoUpdatingIds = [],
+  todoFeedbackByKey = {},
+  onToggleTodo,
+  onBlockedTodo,
+}) => (
   <div className="divide-y divide-[#dbece8]">
     {sections.map((section, sectionIndex) => {
       const markerClass = section.todo
@@ -979,9 +1052,11 @@ const PrenatalPlanTimelineView: React.FC<{
           <div className="mt-3 space-y-2 pl-9">
             {section.items.length > 0 ? (
               section.items.map((item, index) => {
+                const rowShowsCheckbox = Boolean(section.todo || section.status);
                 const itemId =
                   item.id ||
                   (section.todo ? birthJourneyNext7TodoId(index) : "");
+                const itemKey = itemId || `${section.key}-${index}`;
                 const normalizedItem = itemId ? { ...item, id: itemId } : item;
                 return (
                   <BirthJourneyPlanItemRow
@@ -989,13 +1064,18 @@ const PrenatalPlanTimelineView: React.FC<{
                     item={normalizedItem}
                     index={index}
                     compact
-                    todo={Boolean(section.todo)}
+                    todo={rowShowsCheckbox}
+                    locked={rowShowsCheckbox && !section.todo}
                     disabled={Boolean(
                       itemId && todoUpdatingIds.includes(itemId),
                     )}
+                    feedback={todoFeedbackByKey[itemKey]}
                     onToggleCompleted={(_, __, completed) => {
-                      if (itemId) onToggleTodo?.(itemId, completed);
+                      if (itemId && section.todo) {
+                        onToggleTodo?.(itemId, completed, normalizedItem);
+                      }
                     }}
+                    onBlocked={() => onBlockedTodo?.(itemKey)}
                   />
                 );
               })
@@ -1997,12 +2077,21 @@ const PrenatalExpandedServices: React.FC<{
   birthJourneyPlanCardNotification: boolean;
   birthJourneyTodoUpdatingIds: string[];
   birthJourneyTodoErr: string | null;
+  birthJourneyTodoFeedbackByKey: Record<string, BirthJourneyTodoFeedback>;
+  birthJourneyTodoSyncPrompt: BirthJourneyTodoSyncPrompt | null;
   pregnancyDiaryEntries: PregnancyDiaryEntry[];
   pregnancyDiaryToday: PregnancyDiaryEntry | null;
   pregnancyDiaryLoading: boolean;
   pregnancyDiaryCardNotification: boolean;
   onCreateBirthJourney: () => void;
-  onToggleBirthJourneyTodo: (itemId: string, completed: boolean) => void;
+  onToggleBirthJourneyTodo: (
+    itemId: string,
+    completed: boolean,
+    item: BirthJourneyPlanItem,
+  ) => void;
+  onBlockedBirthJourneyTodo: (itemKey: string) => void;
+  onCancelBirthJourneyTodoSync: () => void;
+  onConfirmBirthJourneyTodoSync: () => void;
   onOpenDiaryEditor: () => void;
   onOpenDiaryDetail: () => void;
 }> = ({
@@ -2011,12 +2100,17 @@ const PrenatalExpandedServices: React.FC<{
   birthJourneyPlanCardNotification,
   birthJourneyTodoUpdatingIds,
   birthJourneyTodoErr,
+  birthJourneyTodoFeedbackByKey,
+  birthJourneyTodoSyncPrompt,
   pregnancyDiaryEntries,
   pregnancyDiaryToday,
   pregnancyDiaryLoading,
   pregnancyDiaryCardNotification,
   onCreateBirthJourney,
   onToggleBirthJourneyTodo,
+  onBlockedBirthJourneyTodo,
+  onCancelBirthJourneyTodoSync,
+  onConfirmBirthJourneyTodoSync,
   onOpenDiaryEditor,
   onOpenDiaryDetail,
 }) => {
@@ -2232,7 +2326,9 @@ const PrenatalExpandedServices: React.FC<{
             <PrenatalPlanTimelineView
               sections={planStructureSections}
               todoUpdatingIds={birthJourneyTodoUpdatingIds}
+              todoFeedbackByKey={birthJourneyTodoFeedbackByKey}
               onToggleTodo={onToggleBirthJourneyTodo}
+              onBlockedTodo={onBlockedBirthJourneyTodo}
             />
             {birthJourneyTodoErr ? (
               <p className="mt-2 rounded-2xl bg-destructive/10 px-3 py-2 text-xs font-bold text-destructive">
@@ -2242,6 +2338,56 @@ const PrenatalExpandedServices: React.FC<{
           </div>
         </section>
       </div>
+      <AnimatePresence>
+        {birthJourneyTodoSyncPrompt ? (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-end justify-center bg-[#211816]/30 px-4 pb-6 pt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="birth-journey-todo-sync-title"
+              className="w-full max-w-sm rounded-[20px] bg-white p-4 shadow-[0_10px_32px_rgba(52,40,32,0.18)]"
+              initial={{ y: 18, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 12, opacity: 0 }}
+              transition={{ duration: 0.18 }}
+            >
+              <p
+                id="birth-journey-todo-sync-title"
+                className="text-base font-black leading-snug text-[#352820]"
+              >
+                已标记完成
+              </p>
+              <p className="mt-2 text-sm font-semibold leading-relaxed text-[#6a575b]">
+                是否将该完成动作同步给智能体？
+              </p>
+              <p className="mt-2 rounded-2xl bg-[#f7fbfa] px-3 py-2 text-xs font-bold leading-relaxed text-[#4f6f6a]">
+                {birthJourneyTodoSyncPrompt.title}
+              </p>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={onCancelBirthJourneyTodoSync}
+                  className="inline-flex h-11 items-center justify-center rounded-full border border-[#eadfd8] bg-white px-3 text-sm font-extrabold text-[#735f5a] active:scale-[0.98]"
+                >
+                  取消
+                </button>
+                <button
+                  type="button"
+                  onClick={onConfirmBirthJourneyTodoSync}
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-[#4f8f87] px-3 text-sm font-extrabold text-white shadow-sm active:scale-[0.98]"
+                >
+                  打开智能体
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 };
@@ -3046,6 +3192,11 @@ const StatusOverviewBody: React.FC = () => {
   const [birthJourneyDeleting, setBirthJourneyDeleting] = useState(false);
   const [birthJourneyTodoUpdatingIds, setBirthJourneyTodoUpdatingIds] =
     useState<string[]>([]);
+  const [birthJourneyTodoFeedbackByKey, setBirthJourneyTodoFeedbackByKey] =
+    useState<Record<string, BirthJourneyTodoFeedback>>({});
+  const [birthJourneyTodoSyncPrompt, setBirthJourneyTodoSyncPrompt] =
+    useState<BirthJourneyTodoSyncPrompt | null>(null);
+  const birthJourneyTodoFeedbackTimersRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     if (
@@ -3096,11 +3247,50 @@ const StatusOverviewBody: React.FC = () => {
   const growthBlinkTimerRef = useRef<number | null>(null);
 
   const prefillAgentHub = useCallback(
-    (prompt: string) => {
+    (prompt: string, options?: { autoSend?: boolean }) => {
       setActiveMomPanel(null);
-      navigate("/", { state: { agentPrefill: prompt } });
+      navigate("/", {
+        state: {
+          agentPrefill: prompt,
+          agentAutoSend: options?.autoSend === true,
+        },
+      });
     },
     [navigate],
+  );
+
+  const flashBirthJourneyTodoFeedback = useCallback(
+    (itemKey: string, feedback: BirthJourneyTodoFeedback) => {
+      if (!itemKey) return;
+      const existingTimer = birthJourneyTodoFeedbackTimersRef.current[itemKey];
+      if (existingTimer) window.clearTimeout(existingTimer);
+      setBirthJourneyTodoFeedbackByKey((prev) => ({
+        ...prev,
+        [itemKey]: feedback,
+      }));
+      birthJourneyTodoFeedbackTimersRef.current[itemKey] = window.setTimeout(
+        () => {
+          setBirthJourneyTodoFeedbackByKey((prev) => {
+            const next = { ...prev };
+            delete next[itemKey];
+            return next;
+          });
+          delete birthJourneyTodoFeedbackTimersRef.current[itemKey];
+        },
+        feedback === "blocked" ? 1400 : 900,
+      );
+    },
+    [],
+  );
+
+  useEffect(
+    () => () => {
+      Object.values(birthJourneyTodoFeedbackTimersRef.current).forEach(
+        (timer) => window.clearTimeout(timer),
+      );
+      birthJourneyTodoFeedbackTimersRef.current = {};
+    },
+    [],
   );
 
   const reloadBirthJourneyPlan = useCallback(async (signal?: AbortSignal) => {
@@ -3168,7 +3358,7 @@ const StatusOverviewBody: React.FC = () => {
   );
 
   const handleToggleBirthJourneyTodo = useCallback(
-    async (itemId: string, completed: boolean) => {
+    async (itemId: string, completed: boolean, item: BirthJourneyPlanItem) => {
       const plan = birthJourneyPlan;
       if (!plan || !itemId || birthJourneyTodoUpdatingIds.length > 0) return;
       setBirthJourneyTodoErr(null);
@@ -3187,6 +3377,17 @@ const StatusOverviewBody: React.FC = () => {
           throw new Error(result.message || "同步计划完成状态失败");
         }
         setBirthJourneyPlan(result.plan);
+        if (completed) {
+          flashBirthJourneyTodoFeedback(itemId, "completed");
+          setBirthJourneyTodoSyncPrompt({
+            title: compactText(item.title) || "孕期计划事项",
+            prompt: birthJourneyTodoAgentPrompt(item, result.plan),
+          });
+        } else {
+          setBirthJourneyTodoSyncPrompt((current) =>
+            current?.title === item.title ? null : current,
+          );
+        }
       } catch (e: unknown) {
         setBirthJourneyPlan(plan);
         setBirthJourneyTodoErr(
@@ -3196,8 +3397,40 @@ const StatusOverviewBody: React.FC = () => {
         setBirthJourneyTodoUpdatingIds([]);
       }
     },
-    [birthJourneyPlan, birthJourneyTodoUpdatingIds.length],
+    [
+      birthJourneyPlan,
+      birthJourneyTodoUpdatingIds.length,
+      flashBirthJourneyTodoFeedback,
+    ],
   );
+
+  const handleBlockedBirthJourneyTodo = useCallback(
+    (itemKey: string) => {
+      flashBirthJourneyTodoFeedback(itemKey, "blocked");
+      setBirthJourneyTodoErr("当前还未到该阶段，暂不适合进行该事项");
+    },
+    [flashBirthJourneyTodoFeedback],
+  );
+
+  const handleCancelBirthJourneyTodoSync = useCallback(() => {
+    setBirthJourneyTodoSyncPrompt(null);
+  }, []);
+
+  const handleConfirmBirthJourneyTodoSync = useCallback(() => {
+    const syncPrompt = birthJourneyTodoSyncPrompt;
+    if (!syncPrompt) return;
+    setBirthJourneyTodoSyncPrompt(null);
+    prefillAgentHub(syncPrompt.prompt, { autoSend: true });
+  }, [birthJourneyTodoSyncPrompt, prefillAgentHub]);
+
+  useEffect(() => {
+    if (!birthJourneyTodoErr) return;
+    if (birthJourneyTodoErr !== "当前还未到该阶段，暂不适合进行该事项") return;
+    const timer = window.setTimeout(() => {
+      setBirthJourneyTodoErr(null);
+    }, 2400);
+    return () => window.clearTimeout(timer);
+  }, [birthJourneyTodoErr]);
 
   const reloadPregnancyDiary = useCallback(async (signal?: AbortSignal) => {
     const todayDateKey = toLocalDateKey(new Date());
@@ -3897,6 +4130,10 @@ const StatusOverviewBody: React.FC = () => {
                   )}
                   birthJourneyTodoUpdatingIds={birthJourneyTodoUpdatingIds}
                   birthJourneyTodoErr={birthJourneyTodoErr}
+                  birthJourneyTodoFeedbackByKey={
+                    birthJourneyTodoFeedbackByKey
+                  }
+                  birthJourneyTodoSyncPrompt={birthJourneyTodoSyncPrompt}
                   pregnancyDiaryEntries={pregnancyDiaryEntries}
                   pregnancyDiaryToday={pregnancyDiaryToday}
                   pregnancyDiaryLoading={pregnancyDiaryLoading}
@@ -3907,6 +4144,13 @@ const StatusOverviewBody: React.FC = () => {
                     prefillAgentHub("帮我制定孕期计划")
                   }
                   onToggleBirthJourneyTodo={handleToggleBirthJourneyTodo}
+                  onBlockedBirthJourneyTodo={handleBlockedBirthJourneyTodo}
+                  onCancelBirthJourneyTodoSync={
+                    handleCancelBirthJourneyTodoSync
+                  }
+                  onConfirmBirthJourneyTodoSync={
+                    handleConfirmBirthJourneyTodoSync
+                  }
                   onOpenDiaryEditor={openPregnancyDiaryEditor}
                   onOpenDiaryDetail={() => {
                     clearPregnancyDiaryCardNotification();

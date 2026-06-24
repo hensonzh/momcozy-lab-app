@@ -213,8 +213,11 @@ describe("AgentHub artifact ordering wiring", () => {
 
   it("consumes route prefill state into the bottom input once", () => {
     expect(agentHubSource).toContain("consumedAgentPrefillKeyRef");
+    expect(agentHubSource).toContain("pendingAgentAutoSendRef");
     expect(agentHubSource).toContain("state?.agentPrefill");
+    expect(agentHubSource).toContain("state?.agentAutoSend === true");
     expect(agentHubSource).toContain("setInput(agentPrefill)");
+    expect(agentHubSource).toContain("void handleSend(pendingAutoSend)");
     expect(agentHubSource).toContain("replace: true");
     expect(agentHubSource).toContain("state: null");
   });

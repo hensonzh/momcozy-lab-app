@@ -89,8 +89,15 @@ describe("StatusOverviewBody status page copy", () => {
     );
     expect(statusSource).not.toContain("showTimeframe");
     expect(statusSource).toContain(
-      'aria-label={`${completed ? "取消完成" : "标记完成"}：${item.title}`}',
+      '`${completed ? "取消完成" : "标记完成"}：${item.title}`',
     );
+    expect(statusSource).toContain("BirthJourneyTodoFeedback");
+    expect(statusSource).toContain("birthJourneyTodoAgentPrompt");
+    expect(statusSource).toContain("agentAutoSend: options?.autoSend === true");
+    expect(statusSource).toContain("是否将该完成动作同步给智能体？");
+    expect(statusSource).toContain("当前还未到该阶段，暂不适合进行该事项");
+    expect(statusSource).toContain("onBlockedBirthJourneyTodo");
+    expect(statusSource).toContain("locked={rowShowsCheckbox && !section.todo}");
     expect(statusSource).not.toContain(
       "absolute bottom-6 left-[8px] top-6 w-px bg-[#cfe4df]",
     );
