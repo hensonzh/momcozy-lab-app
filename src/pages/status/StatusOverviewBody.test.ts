@@ -56,11 +56,12 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).not.toContain("计划结构");
     expect(statusSource).not.toContain("空结构");
     expect(statusSource).not.toContain("需要优先确认");
-    expect(statusSource).toContain("当前优先级");
-    expect(statusSource).toContain("接下来 7 天行动清单");
+    expect(statusSource).toContain("当前阶段、后续阶段和临产住院前的待办事项");
+    expect(statusSource).not.toContain("接下来 7 天行动清单");
     expect(statusSource).toContain('role="checkbox"');
-    expect(statusSource).toContain("birthJourneyNext7TodoId");
-    expect(statusSource).toContain("todo: true");
+    expect(statusSource).toContain("birthJourneyFallbackTodoId");
+    expect(statusSource).toContain("todo:");
+    expect(statusSource).toContain('compactText(period.status) === "current"');
     expect(statusSource).toContain("BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS");
     expect(statusSource).not.toContain(
       "BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS",
@@ -108,16 +109,18 @@ describe("StatusOverviewBody status page copy", () => {
     );
     expect(statusSource).toContain("divide-y divide-[#dbece8]");
     expect(statusSource).toContain("py-4 first:pt-0 last:pb-0");
-    expect(statusSource).toContain("未来 2-4 周");
-    expect(statusSource).toContain("后续重要节点");
+    expect(statusSource).toContain("title: compactText(period.title)");
+    expect(statusSource).not.toContain("未来 2-4 周");
+    expect(statusSource).not.toContain("后续重要节点");
     expect(statusSource).toContain("继续完善孕期计划");
     expect(statusSource).toContain("删除计划");
     expect(statusSource).toContain("flex justify-end");
     expect(statusSource).toContain("确认删除孕期计划");
     expect(statusSource).toContain("deleteCarePlanArtifact({");
     expect(statusSource).toContain("setBirthJourneyPlan(null)");
-    expect(statusSource).toContain("BirthJourneyLayeredPlanView");
-    expect(statusSource).toContain("birthJourneyHasLayeredPlan");
+    expect(statusSource).not.toContain("BirthJourneyLayeredPlanView");
+    expect(statusSource).not.toContain("birthJourneyHasLayeredPlan");
+    expect(statusSource).not.toContain("planning_layers");
     expect(statusSource).toContain("这份计划缺少分层内容");
     expect(statusSource).not.toContain("birthJourneyCardFocus");
     expect(statusSource).not.toContain("`当前重点：${birthJourneyCardFocus}`");
