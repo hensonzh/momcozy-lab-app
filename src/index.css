@@ -185,17 +185,17 @@
     width: 4.65rem;
     height: 4.65rem;
     border-radius: 9999px;
-    background:
-      radial-gradient(
-        circle,
-        rgba(255, 246, 250, 0.74) 0%,
-        rgba(244, 157, 189, 0.36) 42%,
-        rgba(124, 202, 192, 0.22) 60%,
-        transparent 72%
-      );
+    background: radial-gradient(
+      circle,
+      rgba(255, 246, 250, 0.74) 0%,
+      rgba(244, 157, 189, 0.36) 42%,
+      rgba(124, 202, 192, 0.22) 60%,
+      transparent 72%
+    );
     filter: blur(7px);
     opacity: 0;
-    animation: agent-nav-avatar-wake-halo 1640ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: agent-nav-avatar-wake-halo 1640ms cubic-bezier(0.16, 1, 0.3, 1)
+      both;
   }
 
   .agent-nav-avatar-wake-overlay::after {
@@ -214,7 +214,8 @@
       0 0 22px rgba(124, 202, 192, 0.15);
     pointer-events: none;
     opacity: 0;
-    animation: agent-nav-avatar-wake-ring 1640ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: agent-nav-avatar-wake-ring 1640ms cubic-bezier(0.16, 1, 0.3, 1)
+      both;
   }
 
   .agent-nav-avatar-wake-overlay-media {
@@ -230,7 +231,8 @@
       0 4px 10px rgba(58, 39, 49, 0.14),
       0 0 0 3px rgba(255, 255, 255, 0.92);
     will-change: transform, filter;
-    animation: agent-nav-avatar-wake-presence 1640ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: agent-nav-avatar-wake-presence 1640ms
+      cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   .agent-hub-assistant-avatar {
@@ -410,10 +412,8 @@
     filter: blur(8px);
     opacity: var(--agent-rail-glow-opacity-high);
     animation:
-      agent-response-rail-glow-spin var(--agent-rail-glow-speed) linear
-        infinite,
-      agent-response-rail-breathe 2.6s cubic-bezier(0.22, 1, 0.36, 1)
-        infinite;
+      agent-response-rail-glow-spin var(--agent-rail-glow-speed) linear infinite,
+      agent-response-rail-breathe 2.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
 
   .agent-hub-assistant-avatar-active::before {
@@ -1935,12 +1935,23 @@
   background: rgba(255, 248, 239, 0.82);
 }
 
+.birth-journey-layered-section.is-terminal {
+  border-color: rgba(207, 198, 222, 0.82);
+  background: rgba(252, 250, 255, 0.9);
+}
+
 .birth-journey-layered-section-header {
   display: flex;
   min-width: 0;
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.birth-journey-layered-section-header::-webkit-details-marker {
+  display: none;
 }
 
 .birth-journey-layered-section-header h3 {
@@ -1976,7 +1987,7 @@
   display: grid;
   grid-template-columns: 20px minmax(0, 1fr);
   gap: 8px;
-  padding: 8px 9px;
+  padding: 9px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.76);
 }
@@ -1994,7 +2005,33 @@
   line-height: 1;
 }
 
-.birth-journey-layered-item p {
+.birth-journey-layered-item-title {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.birth-journey-layered-item-title strong {
+  display: inline-flex;
+  height: 18px;
+  align-items: center;
+  border-radius: 999px;
+  background: #fff0e4;
+  color: #a95522;
+  padding: 0 7px;
+  font-size: 10px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.birth-journey-layered-item-title strong.is-supportive {
+  background: #eaf6f4;
+  color: #3f8178;
+}
+
+.birth-journey-layered-item-title p {
   margin: 0;
   color: #4f4540;
   font-size: 12px;
@@ -2002,11 +2039,40 @@
   line-height: 1.45;
 }
 
-.birth-journey-layered-item p + p {
-  margin-top: 2px;
+.birth-journey-layered-item > div > p {
+  margin: 3px 0 0;
   color: #7b6a61;
   font-size: 11px;
   font-weight: 500;
+  line-height: 1.45;
+}
+
+.birth-journey-layered-steps {
+  display: grid;
+  gap: 4px;
+  margin: 7px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.birth-journey-layered-steps li {
+  position: relative;
+  padding-left: 12px;
+  color: #5f514a;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.birth-journey-layered-steps li::before {
+  position: absolute;
+  top: 0.62em;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #8eb8b1;
+  content: "";
 }
 
 .birth-journey-footer {
