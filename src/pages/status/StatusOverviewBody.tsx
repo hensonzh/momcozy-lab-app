@@ -579,7 +579,7 @@ function birthJourneyTodoAgentPrompt(
   _plan: CarePlanArtifact | null,
 ): string {
   const title = compactText(item.title) || "孕期计划事项";
-  return `我已完成【${title}】，请给予这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记`;
+  return `我已完成【${title}】，请基于这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记`;
 }
 
 function birthJourneyTodoCompletionPatch(completed: boolean) {
@@ -2223,7 +2223,7 @@ const PrenatalExpandedServices: React.FC<{
                 aria-hidden="true"
                 className="h-7 w-7 shrink-0 rounded-full object-cover shadow-sm ring-1 ring-white"
               />
-              <p className="min-w-0 text-xs font-semibold leading-relaxed text-[#6a575b]">
+              <p className="min-w-0 text-xs font-medium leading-relaxed text-[#8a8185]">
                 记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。
               </p>
             </div>
@@ -2259,14 +2259,14 @@ const PrenatalExpandedServices: React.FC<{
                     {todayDiaryTextBlocks.map((text) => (
                       <p
                         key={text}
-                        className="text-xs font-semibold leading-relaxed text-[#806c73]"
+                        className="text-xs font-extrabold leading-relaxed text-[#2f262a]"
                       >
                         {text}
                       </p>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs font-semibold leading-relaxed text-[#806c73]">
+                  <p className="text-xs font-extrabold leading-relaxed text-[#2f262a]">
                     今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。
                   </p>
                 )}
@@ -2277,7 +2277,7 @@ const PrenatalExpandedServices: React.FC<{
                     aria-hidden="true"
                     className="h-7 w-7 shrink-0 rounded-full object-cover shadow-sm ring-1 ring-white"
                   />
-                  <p className="min-w-0 text-xs font-semibold leading-relaxed text-[#6a575b]">
+                  <p className="min-w-0 text-xs font-medium leading-relaxed text-[#8a8185]">
                     和我聊天时，我会自动记录你的今日情况和健康信息
                   </p>
                 </div>
