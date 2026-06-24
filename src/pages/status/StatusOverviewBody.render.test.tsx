@@ -298,14 +298,17 @@ describe("StatusOverviewBody render", () => {
                   items: [
                     {
                       id: "todo_01",
-                      title: "安排好糖耐当天怎么做",
+                      title: "做糖耐检查（OGTT）",
                       priority_label: "重要",
                       reason:
                         "重要｜考虑到你现在孕 25 周，糖耐是这几周的关键检查。",
                       steps: [
-                        "确认禁食开始时间",
-                        "保存抽血流程和耗时",
-                        "安排检查后第一餐和返程",
+                        "确认检查时间并完成预约；如需预约制，提前锁定号源",
+                        "按医院通知提前 8-12 小时禁食，饮水要求以医院口径为准",
+                        "到院完成空腹抽血后，在要求时间内喝完 75g 葡萄糖水或指定糖水",
+                        "按 1 小时、2 小时节点完成抽血；部分医院会加 3 小时",
+                        "等待期间尽量静坐，不进食、不喝含糖饮料，也不要剧烈走动",
+                        "检查结束后及时吃第一餐，并留意头晕、乏力等不舒服",
                       ],
                     },
                   ],
@@ -367,9 +370,18 @@ describe("StatusOverviewBody render", () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByText("安排好糖耐当天怎么做")).toBeInTheDocument();
-    expect(screen.getByText("确认禁食开始时间")).toBeInTheDocument();
-    expect(screen.getByText("保存抽血流程和耗时")).toBeInTheDocument();
+    expect(await screen.findByText("做糖耐检查（OGTT）")).toBeInTheDocument();
+    expect(
+      screen.getByText("确认检查时间并完成预约；如需预约制，提前锁定号源"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "到院完成空腹抽血后，在要求时间内喝完 75g 葡萄糖水或指定糖水",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("检查结束后及时吃第一餐，并留意头晕、乏力等不舒服"),
+    ).toBeInTheDocument();
     expect(
       screen.getByText("考虑到你现在孕 25 周，糖耐是这几周的关键检查。"),
     ).toBeInTheDocument();
@@ -387,7 +399,7 @@ describe("StatusOverviewBody render", () => {
       screen.queryByText("1 个事项，点开查看具体步骤"),
     ).not.toBeInTheDocument();
     const checkbox = screen.getByRole("checkbox", {
-      name: "标记完成：安排好糖耐当天怎么做",
+      name: "标记完成：做糖耐检查（OGTT）",
     });
     vi.mocked(updateBirthJourneyTodoCompletion).mockResolvedValueOnce({
       error: 0,
@@ -409,7 +421,7 @@ describe("StatusOverviewBody render", () => {
                 items: [
                   {
                     id: "todo_01",
-                    title: "安排好糖耐当天怎么做",
+                    title: "做糖耐检查（OGTT）",
                     completed: true,
                     completed_at: "2026-06-24T08:30:00Z",
                     completed_source: "app",

@@ -361,22 +361,6 @@ type BirthJourneyTodoSyncPrompt = {
   prompt: string;
 };
 
-type BirthJourneyPlanSection = {
-  title?: string;
-  subtitle?: string;
-  items?: unknown;
-};
-
-type BirthJourneyPlanningLayers = {
-  current_week?: number;
-  current_stage_title?: string;
-  safety_gate?: BirthJourneyPlanSection;
-  current_week_focus?: BirthJourneyPlanSection;
-  next_7_days?: BirthJourneyPlanSection;
-  next_2_4_weeks?: BirthJourneyPlanSection;
-  later_milestones?: BirthJourneyPlanSection;
-};
-
 type BirthJourneyTodoPlanPeriod = {
   id?: string;
   title?: string;
@@ -398,7 +382,6 @@ type BirthJourneyPayload = {
   subtitle?: string;
   owner?: Record<string, unknown>;
   todo_plan?: BirthJourneyTodoPlan;
-  planning_layers?: BirthJourneyPlanningLayers;
   next_action?: { label?: string; detail?: string; send_text?: string };
   estimated_due_date?: string;
 };
@@ -414,8 +397,9 @@ function compactText(value: unknown): string {
 }
 
 const BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS = 22;
-const BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_CHARS = 42;
-const BIRTH_JOURNEY_NEXT7_TODO_PREFIX = "next7_";
+const BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_CHARS = 88;
+const BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_COUNT = 6;
+const BIRTH_JOURNEY_FALLBACK_TODO_PREFIX = "todo_";
 
 function truncateBirthJourneyPlanText(
   value: unknown,
@@ -454,11 +438,11 @@ function birthJourneyPlanSteps(value: unknown): string[] {
       seen.add(step);
       return true;
     })
-    .slice(0, 3);
+    .slice(0, BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_COUNT);
 }
 
-function birthJourneyNext7TodoId(index: number): string {
-  return `${BIRTH_JOURNEY_NEXT7_TODO_PREFIX}${String(Math.max(1, index + 1)).padStart(2, "0")}`;
+function birthJourneyFallbackTodoId(index: number): string {
+  return `${BIRTH_JOURNEY_FALLBACK_TODO_PREFIX}${String(Math.max(1, index + 1)).padStart(2, "0")}`;
 }
 
 function birthJourneyCompletedBool(value: unknown): boolean {
@@ -500,14 +484,6 @@ function saveStatusCareStagePreference(stage: MaternalCareStage): void {
   } catch {
     /* ignore */
   }
-}
-
-function birthJourneyPlanningLayers(
-  plan: CarePlanArtifact | null,
-): BirthJourneyPlanningLayers | null {
-  const layers = asBirthJourneyPayload(plan).planning_layers;
-  if (!layers || typeof layers !== "object") return null;
-  return layers;
 }
 
 function birthJourneyTodoPlan(
@@ -577,9 +553,7 @@ function birthJourneyTodoAgentPrompt(
   plan: CarePlanArtifact | null,
 ): string {
   const title = compactText(item.title) || "孕期计划事项";
-  const stageTitle =
-    compactText(asBirthJourneyPayload(plan).todo_plan?.title) ||
-    compactText(asBirthJourneyPayload(plan).planning_layers?.current_stage_title);
+  const stageTitle = compactText(asBirthJourneyPayload(plan).todo_plan?.title);
   const detailParts = [
     item.timeframe ? `建议时间：${item.timeframe}` : "",
     item.reason ? `事项背景：${item.reason}` : "",
@@ -631,10 +605,10 @@ function updateBirthJourneyRawItemCompletion(
   if (!matched) return rawItem;
   const canonicalId =
     sourceItemId ||
-    (sourceId && !sourceId.startsWith(BIRTH_JOURNEY_NEXT7_TODO_PREFIX)
+    (sourceId && !sourceId.startsWith(BIRTH_JOURNEY_FALLBACK_TODO_PREFIX)
       ? sourceId
       : "") ||
-    (fallbackId && !fallbackId.startsWith(BIRTH_JOURNEY_NEXT7_TODO_PREFIX)
+    (fallbackId && !fallbackId.startsWith(BIRTH_JOURNEY_FALLBACK_TODO_PREFIX)
       ? fallbackId
       : "");
   if (canonicalId) matchedSourceIds.add(canonicalId);
@@ -662,13 +636,16 @@ function updateBirthJourneyPlanTodoLocally(
     todoPlan.periods = periods.map((rawPeriod, periodIndex) => {
       if (!rawPeriod || typeof rawPeriod !== "object") return rawPeriod;
       const period = { ...(rawPeriod as Record<string, unknown>) };
+      const status =
+        compactText(period.status) || (periodIndex === 0 ? "current" : "");
+      if (status !== "current") return period;
       if (!Array.isArray(period.items)) return period;
       period.items = period.items.map((rawItem, index) =>
         updateBirthJourneyRawItemCompletion(
           rawItem,
           itemId,
           completed,
-          periodIndex === 0 ? birthJourneyNext7TodoId(index) : "",
+          birthJourneyFallbackTodoId(index),
           matchedSourceIds,
         ),
       );
@@ -676,49 +653,6 @@ function updateBirthJourneyPlanTodoLocally(
     });
     payload.todo_plan = todoPlan;
   }
-
-  const layers =
-    payload.planning_layers && typeof payload.planning_layers === "object"
-      ? { ...(payload.planning_layers as Record<string, unknown>) }
-      : {};
-  const next7 =
-    layers.next_7_days && typeof layers.next_7_days === "object"
-      ? { ...(layers.next_7_days as Record<string, unknown>) }
-      : {};
-  const rawItems = Array.isArray(next7.items) ? next7.items : [];
-  const nextItems = rawItems.map((rawItem, index) =>
-    updateBirthJourneyRawItemCompletion(
-      rawItem,
-      itemId,
-      completed,
-      birthJourneyNext7TodoId(index),
-      matchedSourceIds,
-    ),
-  );
-  next7.items = nextItems;
-  layers.next_7_days = next7;
-  for (const layerKey of [
-    "current_week_focus",
-    "next_2_4_weeks",
-    "later_milestones",
-  ]) {
-    const layer =
-      layers[layerKey] && typeof layers[layerKey] === "object"
-        ? { ...(layers[layerKey] as Record<string, unknown>) }
-        : null;
-    if (!layer || !Array.isArray(layer.items)) continue;
-    layer.items = layer.items.map((rawItem, index) =>
-      updateBirthJourneyRawItemCompletion(
-        rawItem,
-        itemId,
-        completed,
-        "",
-        matchedSourceIds,
-      ),
-    );
-    layers[layerKey] = layer;
-  }
-  payload.planning_layers = layers;
   return { ...plan, payload };
 }
 
@@ -897,38 +831,6 @@ const BirthJourneyPlanSectionView: React.FC<{
   );
 };
 
-const BirthJourneyLayeredPlanView: React.FC<{
-  layers: BirthJourneyPlanningLayers;
-}> = ({ layers }) => {
-  const focusItems = birthJourneyPlanItems(layers.current_week_focus?.items);
-  const next7Items = birthJourneyPlanItems(layers.next_7_days?.items);
-  const next24Items = birthJourneyPlanItems(layers.next_2_4_weeks?.items);
-  const milestoneItems = birthJourneyPlanItems(layers.later_milestones?.items);
-  return (
-    <div className="space-y-3">
-      <BirthJourneyPlanSectionView
-        title={layers.current_week_focus?.title || "当前优先级"}
-        subtitle={compactText(layers.current_week_focus?.subtitle)}
-        items={focusItems}
-        tone="warm"
-      />
-      <BirthJourneyPlanSectionView
-        title={layers.next_7_days?.title || "接下来 7 天行动清单"}
-        subtitle={compactText(layers.next_7_days?.subtitle)}
-        items={next7Items}
-      />
-      <BirthJourneyPlanSectionView
-        title={layers.next_2_4_weeks?.title || "未来 2-4 周"}
-        items={next24Items}
-      />
-      <BirthJourneyPlanSectionView
-        title={layers.later_milestones?.title || "后续重要节点"}
-        items={milestoneItems}
-      />
-    </div>
-  );
-};
-
 type PrenatalPlanStructureSection = {
   key: string;
   title: string;
@@ -1055,7 +957,7 @@ const PrenatalPlanTimelineView: React.FC<{
                 const rowShowsCheckbox = Boolean(section.todo || section.status);
                 const itemId =
                   item.id ||
-                  (section.todo ? birthJourneyNext7TodoId(index) : "");
+                  (section.todo ? birthJourneyFallbackTodoId(index) : "");
                 const itemKey = itemId || `${section.key}-${index}`;
                 const normalizedItem = itemId ? { ...item, id: itemId } : item;
                 return (
@@ -1566,15 +1468,9 @@ const MomStatusPanelSheet: React.FC<{
   };
 
   const birthJourneyTodo = birthJourneyTodoPlan(birthJourneyPlan);
-  const birthJourneyLayers = birthJourneyPlanningLayers(birthJourneyPlan);
   const birthJourneyHasTodoPlan = Boolean(
     birthJourneyTodo &&
     birthJourneyTodoPlanSections(birthJourneyTodo).length > 0,
-  );
-  const birthJourneyHasLayeredPlan = Boolean(
-    birthJourneyLayers &&
-    birthJourneyPlanItems(birthJourneyLayers.current_week_focus?.items).length >
-      0,
   );
   const pregnancyDiaryQuestions = pregnancyDiaryQuestionCount(
     pregnancyDiaryEntries,
@@ -1675,8 +1571,6 @@ const MomStatusPanelSheet: React.FC<{
               <>
                 {birthJourneyHasTodoPlan && birthJourneyTodo ? (
                   <BirthJourneyTodoPlanView todoPlan={birthJourneyTodo} />
-                ) : birthJourneyHasLayeredPlan && birthJourneyLayers ? (
-                  <BirthJourneyLayeredPlanView layers={birthJourneyLayers} />
                 ) : (
                   <div className="rounded-2xl border border-[#eadfd8] bg-[#fffdfb] px-4 py-5 text-center">
                     <ClipboardList className="mx-auto h-7 w-7 text-[#9b7a64]" />
@@ -1684,8 +1578,7 @@ const MomStatusPanelSheet: React.FC<{
                       这份计划缺少分层内容
                     </p>
                     <p className="mt-1 text-xs font-semibold leading-relaxed text-[#7b6a61]">
-                      当前缺少 todo_plan 或
-                      planning_layers；可以重新制定一份完整计划。
+                      当前缺少 todo_plan；可以重新制定一份完整计划。
                     </p>
                   </div>
                 )}
@@ -1748,8 +1641,7 @@ const MomStatusPanelSheet: React.FC<{
                     还没有孕期计划
                   </p>
                   <p className="mt-1 text-xs font-semibold leading-relaxed text-[#6f617a]">
-                    生成后会在这里展示当前优先级、接下来 7
-                    天行动清单和后续重要节点。
+                    生成后会在这里展示当前阶段、后续阶段和临产住院前的待办事项。
                   </p>
                 </div>
                 <button
@@ -2116,43 +2008,7 @@ const PrenatalExpandedServices: React.FC<{
 }) => {
   const todoPlan = birthJourneyTodoPlan(birthJourneyPlan);
   const todoPlanSections = birthJourneyTodoPlanSections(todoPlan);
-  const layers = birthJourneyPlanningLayers(birthJourneyPlan);
-  const legacyPlanStructureSections = [
-    {
-      key: "current",
-      title: layers?.current_week_focus?.title || "当前优先级",
-      subtitle: compactText(layers?.current_week_focus?.subtitle),
-      items: birthJourneyPlanItems(layers?.current_week_focus?.items),
-      emptyLabel: "制定后会说明当前最该优先处理的几件事。",
-      tone: "warm" as const,
-    },
-    {
-      key: "next7",
-      title: layers?.next_7_days?.title || "接下来 7 天行动清单",
-      subtitle: compactText(layers?.next_7_days?.subtitle),
-      items: birthJourneyPlanItems(layers?.next_7_days?.items),
-      emptyLabel: "制定后会拆成接下来一周可以逐步完成的小任务。",
-      todo: true,
-    },
-    {
-      key: "next24",
-      title: layers?.next_2_4_weeks?.title || "未来 2-4 周",
-      subtitle: compactText(layers?.next_2_4_weeks?.subtitle),
-      items: birthJourneyPlanItems(layers?.next_2_4_weeks?.items),
-      emptyLabel: "制定后会展示后续几周的检查、准备和沟通节点。",
-    },
-    {
-      key: "milestones",
-      title: layers?.later_milestones?.title || "后续重要节点",
-      subtitle: compactText(layers?.later_milestones?.subtitle),
-      items: birthJourneyPlanItems(layers?.later_milestones?.items),
-      emptyLabel: "制定后会放入临近生产前的重要节点。",
-    },
-  ];
-  const planStructureSections =
-    todoPlanSections.length > 0
-      ? todoPlanSections
-      : legacyPlanStructureSections;
+  const planStructureSections = todoPlanSections;
   const todayDateKey = toLocalDateKey(new Date());
   const todayDiaryEntries = pregnancyDiaryToday
     ? [pregnancyDiaryToday]
