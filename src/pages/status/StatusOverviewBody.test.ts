@@ -93,9 +93,28 @@ describe("StatusOverviewBody status page copy", () => {
       '`${completed ? "取消完成" : "标记完成"}：${item.title}`',
     );
     expect(statusSource).toContain("BirthJourneyTodoFeedback");
+    expect(statusSource).toContain("BirthJourneyCompletionFirework");
+    expect(statusSource).toContain("BirthJourneyCompletionCelebration");
+    expect(statusSource).toContain("BIRTH_JOURNEY_COMPLETION_SPARKS");
+    expect(statusSource).toContain("BIRTH_JOURNEY_CENTER_CELEBRATION_SPARKS");
+    expect(statusSource).toContain("birthJourneyTodoCelebrationId");
+    expect(statusSource).toContain("playBirthJourneyTodoCelebration");
+    expect(statusSource).toContain("}, 1000);");
+    expect(statusSource).toContain("}, 1050);");
     expect(statusSource).toContain("birthJourneyTodoAgentPrompt");
+    expect(statusSource).toContain(
+      "我已完成【${title}】，请给予这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记",
+    );
+    expect(statusSource).not.toContain("需要记录/确认以下内容");
+    expect(statusSource).not.toContain("事项背景：");
+    expect(statusSource).not.toContain("执行步骤：");
+    expect(statusSource).toContain("birthJourneyTodoSyncPromptTimerRef");
     expect(statusSource).toContain("agentAutoSend: options?.autoSend === true");
-    expect(statusSource).toContain("是否将该完成动作同步给智能体？");
+    expect(statusSource).toContain("要不要将完成的消息立刻告诉智能体？");
+    expect(statusSource).toContain("items-center justify-center bg-[#211816]/30 px-4 py-6");
+    expect(statusSource).toMatch(/>\s*好的\s*<\/button>/);
+    expect(statusSource).not.toContain("已标记完成");
+    expect(statusSource).not.toContain("{birthJourneyTodoSyncPrompt.title}");
     expect(statusSource).toContain("当前还未到该阶段，暂不适合进行该事项");
     expect(statusSource).toContain("onBlockedBirthJourneyTodo");
     expect(statusSource).toContain("locked={rowShowsCheckbox && !section.todo}");
