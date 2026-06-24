@@ -56,11 +56,12 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).not.toContain("计划结构");
     expect(statusSource).not.toContain("空结构");
     expect(statusSource).not.toContain("需要优先确认");
-    expect(statusSource).toContain("当前优先级");
-    expect(statusSource).toContain("接下来 7 天行动清单");
+    expect(statusSource).toContain("当前阶段、后续阶段和临产住院前的待办事项");
+    expect(statusSource).not.toContain("接下来 7 天行动清单");
     expect(statusSource).toContain('role="checkbox"');
-    expect(statusSource).toContain("birthJourneyNext7TodoId");
-    expect(statusSource).toContain("todo: true");
+    expect(statusSource).toContain("birthJourneyFallbackTodoId");
+    expect(statusSource).toContain("todo:");
+    expect(statusSource).toContain('status === "current"');
     expect(statusSource).toContain("BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS");
     expect(statusSource).not.toContain(
       "BIRTH_JOURNEY_PLAN_ITEM_REASON_MAX_CHARS",
@@ -89,8 +90,34 @@ describe("StatusOverviewBody status page copy", () => {
     );
     expect(statusSource).not.toContain("showTimeframe");
     expect(statusSource).toContain(
-      'aria-label={`${completed ? "取消完成" : "标记完成"}：${item.title}`}',
+      '`${completed ? "取消完成" : "标记完成"}：${item.title}`',
     );
+    expect(statusSource).toContain("BirthJourneyTodoFeedback");
+    expect(statusSource).toContain("BirthJourneyCompletionFirework");
+    expect(statusSource).toContain("BirthJourneyCompletionCelebration");
+    expect(statusSource).toContain("BIRTH_JOURNEY_COMPLETION_SPARKS");
+    expect(statusSource).toContain("BIRTH_JOURNEY_CENTER_CELEBRATION_SPARKS");
+    expect(statusSource).toContain("birthJourneyTodoCelebrationId");
+    expect(statusSource).toContain("playBirthJourneyTodoCelebration");
+    expect(statusSource).toContain("}, 1000);");
+    expect(statusSource).toContain("}, 1050);");
+    expect(statusSource).toContain("birthJourneyTodoAgentPrompt");
+    expect(statusSource).toContain(
+      "我已完成【${title}】，请基于这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记",
+    );
+    expect(statusSource).not.toContain("需要记录/确认以下内容");
+    expect(statusSource).not.toContain("事项背景：");
+    expect(statusSource).not.toContain("执行步骤：");
+    expect(statusSource).toContain("birthJourneyTodoSyncPromptTimerRef");
+    expect(statusSource).toContain("agentAutoSend: options?.autoSend === true");
+    expect(statusSource).toContain("要不要将完成的消息立刻告诉智能体？");
+    expect(statusSource).toContain("items-center justify-center bg-[#211816]/30 px-4 py-6");
+    expect(statusSource).toMatch(/>\s*好的\s*<\/button>/);
+    expect(statusSource).not.toContain("已标记完成");
+    expect(statusSource).not.toContain("{birthJourneyTodoSyncPrompt.title}");
+    expect(statusSource).toContain("当前还未到该阶段，暂不适合进行该事项");
+    expect(statusSource).toContain("onBlockedBirthJourneyTodo");
+    expect(statusSource).toContain("locked={rowShowsCheckbox && !section.todo}");
     expect(statusSource).not.toContain(
       "absolute bottom-6 left-[8px] top-6 w-px bg-[#cfe4df]",
     );
@@ -108,16 +135,18 @@ describe("StatusOverviewBody status page copy", () => {
     );
     expect(statusSource).toContain("divide-y divide-[#dbece8]");
     expect(statusSource).toContain("py-4 first:pt-0 last:pb-0");
-    expect(statusSource).toContain("未来 2-4 周");
-    expect(statusSource).toContain("后续重要节点");
+    expect(statusSource).toContain("title: compactText(period.title)");
+    expect(statusSource).not.toContain("未来 2-4 周");
+    expect(statusSource).not.toContain("后续重要节点");
     expect(statusSource).toContain("继续完善孕期计划");
     expect(statusSource).toContain("删除计划");
     expect(statusSource).toContain("flex justify-end");
     expect(statusSource).toContain("确认删除孕期计划");
     expect(statusSource).toContain("deleteCarePlanArtifact({");
     expect(statusSource).toContain("setBirthJourneyPlan(null)");
-    expect(statusSource).toContain("BirthJourneyLayeredPlanView");
-    expect(statusSource).toContain("birthJourneyHasLayeredPlan");
+    expect(statusSource).not.toContain("BirthJourneyLayeredPlanView");
+    expect(statusSource).not.toContain("birthJourneyHasLayeredPlan");
+    expect(statusSource).not.toContain("planning_layers");
     expect(statusSource).toContain("这份计划缺少分层内容");
     expect(statusSource).not.toContain("birthJourneyCardFocus");
     expect(statusSource).not.toContain("`当前重点：${birthJourneyCardFocus}`");
@@ -195,6 +224,12 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).toContain("今天的记录已保存");
     expect(statusSource).toContain("整理产检问题");
     expect(statusSource).toContain("今日日记");
+    expect(statusSource).toContain(
+      'className="text-xs font-extrabold leading-relaxed text-[#2f262a]"',
+    );
+    expect(statusSource).toContain(
+      'className="min-w-0 text-xs font-medium leading-relaxed text-[#8a8185]"',
+    );
     expect(statusSource).toContain("bg-[#fff7f1]");
     expect(statusSource).toContain("想问医生的问题");
     expect(statusSource).toContain("appointment_note: diaryAppointmentNote");

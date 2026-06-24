@@ -71,60 +71,6 @@ function supportTicketPayload(): ChatRichTextPayload {
   };
 }
 
-function birthJourneyLayeredPayload(): ChatRichTextPayload {
-  return {
-    title: "",
-    content: "",
-    button: [],
-    card: [],
-    action: [
-      {
-        kind: "ag_ui_artifact",
-        artifact_type: "card",
-        artifact_id: "birth_journey_layered_1",
-        card: {
-          card_type: "birth_journey_plan_card",
-          schema_version: "1.0",
-          card_json: {
-            title: "孕期计划",
-            subtitle: "从孕20周到产后 42 天的阶段路线图",
-            owner: {
-              current_week: "孕20周",
-              estimated_due_date: "2026/10/15",
-            },
-            planning_layers: {
-              current_week_focus: {
-                title: "本周重点",
-                items: [
-                  {
-                    title: "确认本周产检安排",
-                    reason:
-                      "孕早期常见孕吐、反酸、乏力或尿频，把每天最影响生活的变化记录下来更方便问医生。",
-                    steps: ["确认下次产检日期", "准备当天要带的检查报告"],
-                  },
-                ],
-              },
-              next_7_days: {
-                title: "未来 7 天",
-                subtitle: "先处理近期任务",
-                items: ["今天完成建档材料整理"],
-              },
-              next_2_4_weeks: {
-                title: "未来 2-4 周",
-                items: [{ title: "整理下一次产检问题" }],
-              },
-              later_milestones: {
-                title: "后续重要节点",
-                items: [{ title: "孕晚期确认待产包" }],
-              },
-            },
-          },
-        },
-      },
-    ],
-  };
-}
-
 function birthJourneyTodoPlanPayload(): ChatRichTextPayload {
   return {
     title: "",
@@ -157,14 +103,17 @@ function birthJourneyTodoPlanPayload(): ChatRichTextPayload {
                   status: "current",
                   items: [
                     {
-                      title: "完成糖耐并记录复查结果",
+                      title: "做糖耐检查（OGTT）",
                       reason:
-                        "排好禁食、抽血、检查后进食和结果回看，并问清是否需要复查。",
+                        "糖耐检查当天要连续处理预约、空腹、喝糖水、多次抽血和检查后进食。",
                       priority_label: "重要",
                       steps: [
-                        "确认禁食开始时间",
-                        "保存抽血流程和耗时",
-                        "安排检查后第一餐和返程",
+                        "确认检查时间并完成预约；如需预约制，提前锁定号源",
+                        "按医院通知提前 8-12 小时禁食，饮水要求以医院口径为准",
+                        "到院完成空腹抽血后，在要求时间内喝完 75g 葡萄糖水或指定糖水",
+                        "按 1 小时、2 小时节点完成抽血；部分医院会加 3 小时",
+                        "等待期间尽量静坐，不进食、不喝含糖饮料，也不要剧烈走动",
+                        "检查结束后及时吃第一餐，并留意头晕、乏力等不舒服",
                       ],
                     },
                   ],
@@ -203,12 +152,6 @@ function birthJourneyTodoPlanPayload(): ChatRichTextPayload {
                   ],
                 },
               ],
-            },
-            planning_layers: {
-              current_week_focus: {
-                title: "旧本周重点",
-                items: [{ title: "旧结构事项" }],
-              },
             },
           },
         },
@@ -767,7 +710,7 @@ describe("AgentHubRichTextBlock milk plan card", () => {
 });
 
 describe("AgentHubRichTextBlock birth journey plan card", () => {
-  it("renders todo plan periods before legacy planning layers", () => {
+  it("renders todo plan periods", () => {
     renderBlock({ payload: birthJourneyTodoPlanPayload() });
 
     const currentHeading = screen.getByRole("heading", { name: "孕 25-27 周" });
@@ -778,42 +721,11 @@ describe("AgentHubRichTextBlock birth journey plan card", () => {
     expect(currentHeading.closest("details")).toHaveAttribute("open");
     expect(nextHeading.closest("details")).not.toHaveAttribute("open");
     expect(terminalHeading.closest("details")).not.toHaveAttribute("open");
-    expect(screen.getByText("完成糖耐并记录复查结果")).toBeInTheDocument();
-    expect(screen.getByText("确认禁食开始时间")).toBeInTheDocument();
-    expect(screen.getByText("保存抽血流程和耗时")).toBeInTheDocument();
+    expect(screen.getByText("做糖耐检查（OGTT）")).toBeInTheDocument();
+    expect(screen.getByText("确认检查时间并完成预约；如需预约制，提前锁定号源")).toBeInTheDocument();
+    expect(screen.getByText("到院完成空腹抽血后，在要求时间内喝完 75g 葡萄糖水或指定糖水")).toBeInTheDocument();
+    expect(screen.getByText("检查结束后及时吃第一餐，并留意头晕、乏力等不舒服")).toBeInTheDocument();
     expect(screen.getByText("定好临产后怎么联系医院")).toBeInTheDocument();
     expect(screen.getAllByText("重要").length).toBeGreaterThan(0);
-    expect(
-      screen.queryByRole("heading", { name: "旧本周重点" }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("renders the planning layers structure", () => {
-    renderBlock({ payload: birthJourneyLayeredPayload() });
-
-    expect(
-      screen.getByRole("heading", { name: "本周重点" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "未来 7 天" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "未来 2-4 周" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "后续重要节点" }),
-    ).toBeInTheDocument();
-    expect(screen.getByText("确认本周产检安排")).toBeInTheDocument();
-    expect(screen.getByText("确认下次产检日期")).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "孕早期常见孕吐、反酸、乏力或尿频，把每天最影响生活的变化记录下来更方便问医生。",
-      ),
-    ).toBeInTheDocument();
-    expect(screen.queryByText(/更方便…/u)).not.toBeInTheDocument();
-    expect(screen.getByText("今天完成建档材料整理")).toBeInTheDocument();
-    expect(
-      screen.queryByText("从孕20周到产后 42 天的阶段路线图"),
-    ).not.toBeInTheDocument();
   });
 });

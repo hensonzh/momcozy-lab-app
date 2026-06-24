@@ -254,7 +254,8 @@ function asString(v: unknown): string {
 }
 
 const BIRTH_JOURNEY_PLAN_ITEM_TITLE_MAX_CHARS = 22;
-const BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_CHARS = 42;
+const BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_CHARS = 88;
+const BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_COUNT = 6;
 
 function truncateBirthJourneyPlanText(
   value: unknown,
@@ -293,7 +294,7 @@ function normalizeBirthJourneyPlanSteps(values: unknown): string[] {
       seen.add(step);
       return true;
     })
-    .slice(0, 3);
+    .slice(0, BIRTH_JOURNEY_PLAN_ITEM_STEP_MAX_COUNT);
 }
 
 function cleanIbclcConsultantBio(v: unknown): string {
@@ -1400,16 +1401,11 @@ function normalizeBirthJourneyPlanCard(cardJsonRaw: Record<string, unknown>) {
   const nextAction = asObject(cardJsonRaw.next_action) ?? {};
   const todoPlan = asObject(cardJsonRaw.todo_plan);
   const todoSections = normalizeBirthJourneyTodoPlanSections(todoPlan);
-  const planningLayers = asObject(cardJsonRaw.planning_layers);
-  const layeredSections =
-    todoSections.length > 0
-      ? todoSections
-      : normalizeBirthJourneyPlanningLayerSections(planningLayers);
   return {
     title: asString(cardJsonRaw.title) || "孕期计划",
     subtitle: asString(cardJsonRaw.subtitle),
     owner,
-    layered_sections: layeredSections,
+    layered_sections: todoSections,
     next_action: {
       label: asString(nextAction.label),
       send_text: asString(nextAction.send_text),
@@ -1450,55 +1446,6 @@ function normalizeBirthJourneyTodoPlanSections(
     .filter((section): section is BirthJourneyPlanCardSection =>
       Boolean(section),
     );
-}
-
-function normalizeBirthJourneyPlanningLayerSections(
-  layers: Record<string, unknown> | null,
-): BirthJourneyPlanCardSection[] {
-  if (!layers) return [];
-  return [
-    normalizeBirthJourneyPlanningLayerSection(
-      layers,
-      "current_week_focus",
-      "当前阶段目标",
-      "warm",
-    ),
-    normalizeBirthJourneyPlanningLayerSection(
-      layers,
-      "next_7_days",
-      "接下来 7 天行动",
-    ),
-    normalizeBirthJourneyPlanningLayerSection(
-      layers,
-      "next_2_4_weeks",
-      "未来 2-4 周",
-    ),
-    normalizeBirthJourneyPlanningLayerSection(
-      layers,
-      "later_milestones",
-      "后续重要节点",
-    ),
-  ].filter((section): section is BirthJourneyPlanCardSection =>
-    Boolean(section),
-  );
-}
-
-function normalizeBirthJourneyPlanningLayerSection(
-  layers: Record<string, unknown>,
-  key: string,
-  fallbackTitle: string,
-  tone: BirthJourneyPlanCardSection["tone"] = "plain",
-): BirthJourneyPlanCardSection | null {
-  const section = asObject(layers[key]) ?? {};
-  const items = normalizeBirthJourneyPlanItems(section.items);
-  if (items.length === 0) return null;
-  return {
-    key,
-    title: asString(section.title).trim() || fallbackTitle,
-    subtitle: asString(section.subtitle).trim(),
-    items,
-    tone,
-  };
 }
 
 function normalizeBirthJourneyPlanItems(
