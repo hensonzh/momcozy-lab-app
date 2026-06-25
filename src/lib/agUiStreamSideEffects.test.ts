@@ -424,6 +424,22 @@ describe("applyAgUiStreamSideEffects", () => {
     expect(semantic.label).toBe("我想一下");
   });
 
+  it("does not expose the generic failed-step copy for tool result failures", () => {
+    const semantic = semanticForAgUiEvent(
+      {
+        type: "TOOL_CALL_RESULT",
+        tool_call_id: "call_birth_journey",
+        tool_call_name: "birth_journey_intake_manage",
+      },
+      "TOOL_CALL_RESULT",
+      { ok: false, tool_name: "birth_journey_intake_manage" },
+    );
+
+    expect(semantic.phase).not.toBe("error");
+    expect(semantic.label).not.toBe("这一步暂时没处理好");
+    expect(semantic.label).toBeTruthy();
+  });
+
   it("keeps custom thinking events out of the main status line", () => {
     const semantic = semanticForAgUiEvent({
       type: "CUSTOM",

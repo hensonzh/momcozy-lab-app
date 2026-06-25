@@ -32,6 +32,10 @@ const GENERIC_DONE_TITLES = new Set([
   "我已经整理好结果啦",
 ]);
 
+const GENERIC_ERROR_TITLES = new Set([
+  "这一步暂时没处理好",
+]);
+
 function normalizeToolName(toolName: string): string {
   const token = String(toolName ?? "").trim();
   if (!token) return "";
@@ -45,9 +49,10 @@ function isRunStartedWorkRow(tool: AgUiToolCallRow): boolean {
 
 export function workItemTitle(tool: AgUiToolCallRow): string {
   if (tool.kind === "narration") return "";
-  if (tool.title?.trim()) return tool.title.trim();
+  const title = tool.title?.trim();
+  if (title && !GENERIC_ERROR_TITLES.has(title)) return title;
   if (tool.state === "running") return "我按当前场景继续处理～";
-  if (tool.state === "error") return "这一步暂时没处理好";
+  if (tool.state === "error") return "我继续处理一下～";
   return "这一步处理好啦";
 }
 
@@ -72,8 +77,6 @@ export function workProgressSummary(
   const actionRows = tools.filter((tool) => tool.kind !== "narration" && !(isWorkFinished && isRunStartedWorkRow(tool)));
   const running = [...actionRows].reverse().find((tool) => tool.state === "running");
   if (running) return { title: workItemTitle(running), tone: "running" };
-  const error = [...actionRows].reverse().find((tool) => tool.state === "error");
-  if (error) return { title: workItemTitle(error), tone: "error" };
   const needsConfirmation = actionRows.some(workItemNeedsConfirmation);
   if (needsConfirmation && !isWorkFinished) return { title: "等你确认", tone: "waiting" };
   if (isWorkFinished) {
@@ -85,7 +88,7 @@ export function workProgressSummary(
   if (lastAction) {
     return {
       title: workItemTitle(lastAction),
-      tone: lastAction.state === "completed" ? "done" : lastAction.state,
+      tone: lastAction.state === "completed" ? "done" : lastAction.state === "error" ? "running" : lastAction.state,
     };
   }
   return { title: "我先处理一下～", tone: "running" };

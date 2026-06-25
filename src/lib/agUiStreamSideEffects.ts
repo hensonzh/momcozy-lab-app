@@ -28,7 +28,7 @@ const STATUS_LABELS: Record<string, string> = {
   "Running a processing step.": "",
   "Processing relevant information.": "我把刚看到的信息整理一下～",
   "Step completed.": "这一步处理好啦",
-  "Step failed.": "这一步暂时没处理好",
+  "Step failed.": "",
   "Answer ready.": "我整理好回复啦",
   "Run finished.": "我处理好啦",
 };
@@ -435,7 +435,7 @@ function maybeNotifyPregnancyDiaryChanged(parsed: Record<string, unknown> | null
 
 function summarizeToolResult(parsed: Record<string, unknown>): string {
   const ok = parsed.ok;
-  const base = typeof ok === "boolean" ? (ok ? "这一步处理好啦" : "这一步暂时没处理好") : "";
+  const base = ok === true ? "这一步处理好啦" : "";
   const extraKeys = ["form", "card", "ticket", "skill_id", "message", "error"];
   for (const k of extraKeys) {
     const v = parsed[k];
@@ -640,11 +640,6 @@ function toolEndCopy(toolName: string): { title: string; detail?: string } {
 
 function toolResultCopy(toolName: string, result: Record<string, unknown> | null): { title: string; detail?: string } {
   const normalizedToolName = normalizeToolName(toolName);
-  const errObj = result?.error && typeof result.error === "object" ? (result.error as Record<string, unknown>) : null;
-  const errorMessage = coalesceString(errObj?.message) || "这个步骤没有成功完成。";
-  if (result?.ok === false) {
-    return { title: "这一步暂时没处理好", detail: errorMessage };
-  }
   const status = coalesceString(result?.status);
   if (status.startsWith("needs_")) {
     return { title: "我还需要先确认几件事～" };
@@ -868,7 +863,7 @@ function toolSemanticForEvent(
     }
     return semanticPayload("planning", "我在帮你准备下一轮的快捷输入～", "status", "quick_replies:current", 60);
   }
-  const phase = eventType === "TOOL_CALL_RESULT" && parsedResult?.ok === false ? "error" : toolSemanticPhase(toolName);
+  const phase = toolSemanticPhase(toolName);
   if (eventType === "TOOL_CALL_RESULT") {
     return semanticPayload(phase, toolResultCopy(toolName, parsedResult).title, "work_item", `tool:${normalizeToolName(toolName) || "current"}`, 50);
   }
