@@ -151,6 +151,22 @@ const HOSPITAL_BAG_FORM_DETECTOR_FIELD_IDS = new Set([
   "budget_preference",
   "top_worries",
 ]);
+const BIRTH_JOURNEY_BASIC_INFO_REQUIRED_FIELD_IDS = [
+  "current_week",
+  "ivf",
+  "fetus_count",
+  "age",
+  "first_birth",
+  "birth_path",
+] as const;
+const BIRTH_JOURNEY_BASIC_INFO_REQUIRED_FIELD_LABELS: Record<string, string> = {
+  current_week: "当前孕周",
+  ivf: "是否 IVF（体外受精）",
+  fetus_count: "单胎/双胎",
+  age: "年龄",
+  first_birth: "是否第一胎",
+  birth_path: "计划分娩方式",
+};
 const HOSPITAL_BAG_REASON_SUPPRESSED_ITEM_LABELS = new Set([
   "检查报告/化验单",
   "医院预登记信息",
@@ -544,8 +560,21 @@ function collectFormValues(
               isOtherOption(item) ? `其它：${otherText}` : item,
             )
           : selected;
+      if (!hasCompactFormValue(value)) {
+        value = formControlCurrentValue(form, field);
+      }
+      if (!hasCompactFormValue(value) && hasFormDefaultValue(field.default_value)) {
+        value = defaultMultiSelectValues(field.default_value);
+      }
     } else {
       value = String(data.get(field.id) ?? "").trim();
+      if (!hasCompactFormValue(value)) {
+        const currentValue = formControlCurrentValue(form, field);
+        value = Array.isArray(currentValue) ? currentValue[0] || "" : currentValue;
+      }
+      if (!hasCompactFormValue(value) && hasFormDefaultValue(field.default_value)) {
+        value = asString(field.default_value).trim();
+      }
     }
     if (hasCompactFormValue(value)) {
       values[field.id] = value;
@@ -554,9 +583,88 @@ function collectFormValues(
   return values;
 }
 
+function formControlCurrentValue(
+  form: HTMLFormElement,
+  field: FormFieldSpec,
+): string | string[] {
+  const controls = Array.from(form.elements).filter(
+    (
+      element,
+    ): element is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement =>
+      element instanceof HTMLInputElement ||
+      element instanceof HTMLSelectElement ||
+      element instanceof HTMLTextAreaElement,
+  );
+  const namedControls = controls.filter((control) => control.name === field.id);
+  if (isMultiSelectField(field)) {
+    const values: string[] = [];
+    for (const control of namedControls) {
+      if (control instanceof HTMLSelectElement && control.multiple) {
+        values.push(
+          ...Array.from(control.selectedOptions).map((option) => option.value),
+        );
+        continue;
+      }
+      if (
+        control instanceof HTMLInputElement &&
+        ["checkbox", "radio"].includes(control.type) &&
+        !control.checked
+      ) {
+        continue;
+      }
+      values.push(control.value);
+    }
+    return values.map((item) => item.trim()).filter(Boolean);
+  }
+  const control = namedControls[0];
+  if (!control) return "";
+  if (
+    control instanceof HTMLInputElement &&
+    ["checkbox", "radio"].includes(control.type) &&
+    !control.checked
+  ) {
+    return "";
+  }
+  if (control instanceof HTMLSelectElement && control.multiple) {
+    return Array.from(control.selectedOptions)[0]?.value?.trim() || "";
+  }
+  return control.value.trim();
+}
+
 function hasCompactFormValue(value: unknown): boolean {
   if (Array.isArray(value)) return value.some(hasCompactFormValue);
   return String(value ?? "").trim().length > 0;
+}
+
+function requiredFormFieldLabels(
+  formId: string,
+  fields: FormFieldSpec[],
+  values: Record<string, unknown>,
+): string[] {
+  const labelsById = new Map(
+    fields.map((field) => [
+      field.id,
+      splitFormFieldLabel(field.label).fieldLabel || field.label || field.id,
+    ]),
+  );
+  const requiredIds = new Set(
+    fields.filter((field) => field.required).map((field) => field.id),
+  );
+  if (formId === "birth_journey_basic_info_intake") {
+    for (const fieldId of BIRTH_JOURNEY_BASIC_INFO_REQUIRED_FIELD_IDS) {
+      requiredIds.add(fieldId);
+    }
+  }
+  const missing: string[] = [];
+  for (const fieldId of requiredIds) {
+    if (hasCompactFormValue(values[fieldId])) continue;
+    missing.push(
+      labelsById.get(fieldId) ||
+        BIRTH_JOURNEY_BASIC_INFO_REQUIRED_FIELD_LABELS[fieldId] ||
+        fieldId,
+    );
+  }
+  return missing;
 }
 
 function buildFormConfirmationMessage(
@@ -1745,16 +1853,16 @@ const AgentHubRichTextBlock: React.FC<{
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [artifactError, setArtifactError] = useState<Record<number, string>>(
+  const [artifactError, setArtifactError] = useState<Record<string, string>>(
     {},
   );
   const [submittedArtifactMap, setSubmittedArtifactMap] = useState<
-    Record<number, boolean>
+    Record<string, boolean>
   >({});
   const [downloadingCardIndex, setDownloadingCardIndex] = useState<
     number | null
   >(null);
-  const submitGuardRef = useRef<Record<number, boolean>>({});
+  const submitGuardRef = useRef<Record<string, boolean>>({});
   const [ibclcCompletions, setIbclcCompletions] = useState<
     IbclcConsultCompletedPayload[]
   >(() => readStoredIbclcConsultCompletions());
@@ -1802,8 +1910,8 @@ const AgentHubRichTextBlock: React.FC<{
 
   const mergedArtifacts = useMemo(() => {
     const result: Array<
-      | { kind: "form"; form: Record<string, unknown> }
-      | { kind: "card"; card: Record<string, unknown> }
+      | { kind: "form"; form: Record<string, unknown>; artifactId?: string }
+      | { kind: "card"; card: Record<string, unknown>; artifactId?: string }
       | {
           kind: "ibclc_consult";
           card: Record<string, unknown>;
@@ -1813,6 +1921,7 @@ const AgentHubRichTextBlock: React.FC<{
           kind: "support_ticket_draft";
           ticket: Record<string, unknown>;
           submitLabel?: string;
+          artifactId?: string;
         }
     > = [];
     const resultKeys: string[] = [];
@@ -1838,7 +1947,7 @@ const AgentHubRichTextBlock: React.FC<{
       if (artifactType === "form" && asObject(obj.form)) {
         const form = asObject(obj.form)!;
         upsertArtifact(
-          { kind: "form", form },
+          { kind: "form", form, artifactId: artifactId || undefined },
           artifactId
             ? `form:${artifactId}`
             : asString(form.id)
@@ -1848,7 +1957,7 @@ const AgentHubRichTextBlock: React.FC<{
       } else if (artifactType === "card" && asObject(obj.card)) {
         const card = asObject(obj.card)!;
         upsertArtifact(
-          { kind: "card", card },
+          { kind: "card", card, artifactId: artifactId || undefined },
           artifactId
             ? `card:${artifactId}`
             : asString(card.id)
@@ -1875,6 +1984,7 @@ const AgentHubRichTextBlock: React.FC<{
             kind: "support_ticket_draft",
             ticket,
             submitLabel: asString(obj.submit_label),
+            artifactId: artifactId || undefined,
           },
           artifactId
             ? `support_ticket_draft:${artifactId}`
@@ -2164,8 +2274,17 @@ const AgentHubRichTextBlock: React.FC<{
     return (
       <div className="w-full min-w-0 space-y-2">
         {mergedArtifacts.map((artifact, index) => {
-          const isSubmitted = Boolean(submittedArtifactMap[index]);
-          const errorText = artifactError[index] || "";
+          const rawArtifactId = artifact.artifactId;
+          const artifactKey =
+            artifact.kind === "form"
+              ? `form:${rawArtifactId || asString(artifact.form.id) || index}`
+              : artifact.kind === "card"
+                ? `card:${rawArtifactId || asString(artifact.card.id) || index}`
+                : artifact.kind === "ibclc_consult"
+                  ? `ibclc_consult:${rawArtifactId || asString(artifact.card.id) || index}`
+                  : `support_ticket_draft:${rawArtifactId || asString(artifact.ticket.id) || index}`;
+          const isSubmitted = Boolean(submittedArtifactMap[artifactKey]);
+          const errorText = artifactError[artifactKey] || "";
           if (artifact.kind === "ibclc_consult") {
             const consultant = asObject(artifact.card.consultant) ?? {};
             const chat = asObject(artifact.card.chat) ?? {};
@@ -2930,7 +3049,7 @@ const AgentHubRichTextBlock: React.FC<{
 
           return (
             <form
-              key={`artifact-${index}`}
+              key={`artifact-${artifactKey}`}
               className={cn(
                 "w-full min-w-0",
                 isCollectionIntake
@@ -2944,18 +3063,18 @@ const AgentHubRichTextBlock: React.FC<{
               )}
               onSubmit={(event) => {
                 event.preventDefault();
-                if (isSubmitted || submitGuardRef.current[index]) return;
-                submitGuardRef.current[index] = true;
+                if (isSubmitted || submitGuardRef.current[artifactKey]) return;
+                submitGuardRef.current[artifactKey] = true;
                 const form = event.currentTarget;
                 for (const field of fields) {
                   if (!field.required || !isMultiSelectField(field)) continue;
                   const formData = new FormData(form);
                   const selectedValues = formData.getAll(field.id).map(String);
                   if (selectedValues.length === 0) {
-                    submitGuardRef.current[index] = false;
+                    submitGuardRef.current[artifactKey] = false;
                     setArtifactError((prev) => ({
                       ...prev,
-                      [index]: `请选择：${splitFormFieldLabel(field.label).fieldLabel}`,
+                      [artifactKey]: `请选择：${splitFormFieldLabel(field.label).fieldLabel}`,
                     }));
                     return;
                   }
@@ -2964,16 +3083,29 @@ const AgentHubRichTextBlock: React.FC<{
                     selectedValues.some(isOtherOption) &&
                     !String(formData.get(otherInputName(field.id)) ?? "").trim()
                   ) {
-                    submitGuardRef.current[index] = false;
+                    submitGuardRef.current[artifactKey] = false;
                     setArtifactError((prev) => ({
                       ...prev,
-                      [index]: `请填写：${splitFormFieldLabel(field.label).fieldLabel}的其它内容`,
+                      [artifactKey]: `请填写：${splitFormFieldLabel(field.label).fieldLabel}的其它内容`,
                     }));
                     return;
                   }
                 }
-                setArtifactError((prev) => ({ ...prev, [index]: "" }));
                 const values = collectFormValues(form, fields);
+                const missingRequiredLabels = requiredFormFieldLabels(
+                  formId,
+                  fields,
+                  values,
+                );
+                if (missingRequiredLabels.length > 0) {
+                  submitGuardRef.current[artifactKey] = false;
+                  setArtifactError((prev) => ({
+                    ...prev,
+                    [artifactKey]: `请补充：${missingRequiredLabels.join("、")}`,
+                  }));
+                  return;
+                }
+                setArtifactError((prev) => ({ ...prev, [artifactKey]: "" }));
                 if (artifact.kind === "support_ticket_draft") {
                   let accepted: ButtonSelectResult;
                   try {
@@ -2982,16 +3114,16 @@ const AgentHubRichTextBlock: React.FC<{
                       assistantReply: SUPPORT_TICKET_SUBMITTED_REPLY,
                     });
                   } catch (err) {
-                    submitGuardRef.current[index] = false;
+                    submitGuardRef.current[artifactKey] = false;
                     throw err;
                   }
                   if (accepted === false) {
-                    submitGuardRef.current[index] = false;
+                    submitGuardRef.current[artifactKey] = false;
                     return;
                   }
                   setSubmittedArtifactMap((prev) => ({
                     ...prev,
-                    [index]: true,
+                    [artifactKey]: true,
                   }));
                   return;
                 }
@@ -3002,14 +3134,17 @@ const AgentHubRichTextBlock: React.FC<{
                     { displayText: `已提交：${title}` },
                   );
                 } catch (err) {
-                  submitGuardRef.current[index] = false;
+                  submitGuardRef.current[artifactKey] = false;
                   throw err;
                 }
                 if (accepted === false) {
-                  submitGuardRef.current[index] = false;
+                  submitGuardRef.current[artifactKey] = false;
                   return;
                 }
-                setSubmittedArtifactMap((prev) => ({ ...prev, [index]: true }));
+                setSubmittedArtifactMap((prev) => ({
+                  ...prev,
+                  [artifactKey]: true,
+                }));
               }}
             >
               <fieldset
