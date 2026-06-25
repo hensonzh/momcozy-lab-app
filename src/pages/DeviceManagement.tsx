@@ -9,8 +9,20 @@ import {
   Info,
   Sparkles,
   Plus,
+  Play,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import TabPageTopReserve from "@/components/layout/TabPageTopReserve";
 import TabPageScrollRegion from "@/components/layout/TabPageScrollRegion";
 import TabPageEmbeddedNav from "@/components/layout/TabPageEmbeddedNav";
@@ -30,6 +42,11 @@ import { cn } from "@/lib/utils";
 import { devices as deviceData } from "@/data/mockData";
 import type { DeviceInfo } from "@/data/mockData";
 import pairedPumpImg from "@/assets/M9.png";
+import { resolveCalibrationComfortForPumpStart } from "@/pages/agentHub/resolveCalibrationComfortForPumpStart";
+import { canStartPumpSession, resolvePumpStartGate } from "@/pages/pumpSession/pumpDeviceConnectionPrompt";
+import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
+
+type HubPumpGateDialog = "calibration" | "device";
 
 function storedToDeviceInfo(stored: StoredDeviceInfo, side: "L" | "R"): DeviceInfo {
   return {
@@ -184,7 +201,10 @@ const DeviceManagement: React.FC = () => {
   const [debugDrawerOpen, setDebugDrawerOpen] = useState(false);
   const [debugDrawerSide, setDebugDrawerSide] = useState<"L" | "R">("L");
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
+  const [startPumpBusy, setStartPumpBusy] = useState(false);
+  const [hubPumpGateDialog, setHubPumpGateDialog] = useState<HubPumpGateDialog | null>(null);
   const quickMenuRef = useRef<HTMLDivElement | null>(null);
+  const startPumpLockRef = useRef(false);
   /** BLE 连接后的设备信息，按侧别存储，用于在主机卡片显示；挂载与 store 变更时从 deviceStore 同步（含设备离线） */
   const [connectedDevices, setConnectedDevices] = useState<Record<"L" | "R", DeviceInfo | null>>(() => {
     const s = deviceStore.get();
@@ -208,6 +228,7 @@ const DeviceManagement: React.FC = () => {
   /** 优先使用已绑定设备（含 BLE 离线，卡片显示「离线」+ 置灰）；无绑定时再回退 mock，便于未接真机演示 */
   const leftDevice = connectedDevices.L ?? deviceData.find((d) => d.side === "L") ?? null;
   const rightDevice = connectedDevices.R ?? deviceData.find((d) => d.side === "R") ?? null;
+  const canStartFromDevicePage = canStartPumpSession(deviceStore.get());
 
   const openDeviceInfo = (device: DeviceInfo) => {
     setActiveDevice(device);
@@ -257,6 +278,30 @@ const DeviceManagement: React.FC = () => {
   const handleOpenDebugFromInfo = (device: DeviceInfo) => {
     setDeviceInfoOpen(false);
     openDebugDrawer(device.side);
+  };
+
+  const handleStartPump = async () => {
+    if (startPumpLockRef.current) return;
+    if (!canStartPumpSession(deviceStore.get())) return;
+    startPumpLockRef.current = true;
+    setStartPumpBusy(true);
+    try {
+      const cal = await resolveCalibrationComfortForPumpStart(DEFAULT_CHAT_USER_ID);
+      const gate = resolvePumpStartGate(cal.ok, deviceStore.get());
+
+      if (gate === "device") {
+        setHubPumpGateDialog("device");
+        return;
+      }
+      if (gate === "calibration") {
+        setHubPumpGateDialog("calibration");
+        return;
+      }
+      navigate("/pump");
+    } finally {
+      startPumpLockRef.current = false;
+      setStartPumpBusy(false);
+    }
   };
 
   useEffect(() => {
@@ -355,8 +400,17 @@ const DeviceManagement: React.FC = () => {
         </motion.button>
         <section className="space-y-2">
           <div className="bg-card rounded-[24px] p-3 shadow-sm border border-primary/10 relative overflow-hidden">
-            <div className="text-left mb-3 mt-1 ml-1 relative z-10">
+            <div className="mb-3 mt-1 ml-1 relative z-10 flex items-center justify-between gap-3">
               <h3 className="text-[16px] font-black text-foreground tracking-tight">Air One</h3>
+              <Button
+                type="button"
+                className="h-10 rounded-2xl gap-2 px-3 text-sm font-bold shadow-lg disabled:opacity-40 disabled:shadow-none disabled:active:scale-100"
+                onClick={() => void handleStartPump()}
+                disabled={startPumpBusy || !canStartFromDevicePage}
+              >
+                <Play className="w-4 h-4" />
+                {startPumpBusy ? "检查中..." : "开始吸奶"}
+              </Button>
             </div>
             <div className="flex gap-2 relative z-10">
               <DeviceCard
@@ -446,6 +500,42 @@ const DeviceManagement: React.FC = () => {
         onClose={() => setControlPanelOpen(false)}
         onDisconnect={handleManualDisconnect}
       />
+
+      <AlertDialog
+        open={hubPumpGateDialog !== null}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) setHubPumpGateDialog(null);
+        }}
+      >
+        <AlertDialogContent className="z-[70] max-w-[min(100vw-2rem,22rem)] rounded-2xl border-border/60 p-5 gap-3 shadow-xl">
+          <AlertDialogHeader className="text-left space-y-2.5">
+            <AlertDialogTitle className="text-base font-bold text-black dark:text-white leading-snug pr-8">
+              {hubPumpGateDialog === "calibration" ? "需要先完成首次力度调节" : "吸奶器设备未连接"}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
+              {hubPumpGateDialog === "calibration"
+                ? "首次吸奶前需要先找到你的舒适吸力档位。完成后，M.ai 会按你的舒适档位启动吸奶。"
+                : "开始吸奶前需要确认左右吸奶器已连接。请先进入设备页完成连接后再开始。"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row justify-end gap-2 sm:flex-row sm:justify-end sm:space-x-0">
+            <AlertDialogCancel type="button" className="m-0 rounded-full border-border/80 bg-background">
+              稍后再说
+            </AlertDialogCancel>
+            <AlertDialogAction
+              type="button"
+              className="m-0 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring"
+              onClick={() => {
+                const route = hubPumpGateDialog === "calibration" ? "/calibration" : "/device";
+                setHubPumpGateDialog(null);
+                navigate(route);
+              }}
+            >
+              {hubPumpGateDialog === "calibration" ? "去力度调节" : "去连接设备"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {((debugDrawerSide === "L" ? leftDevice : rightDevice)) ? (
         <DeviceDebugDrawer
