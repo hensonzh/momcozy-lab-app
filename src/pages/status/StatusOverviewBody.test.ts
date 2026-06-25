@@ -110,7 +110,7 @@ describe("StatusOverviewBody status page copy", () => {
     expect(statusSource).not.toContain("执行步骤：");
     expect(statusSource).toContain("birthJourneyTodoSyncPromptTimerRef");
     expect(statusSource).toContain("agentAutoSend: options?.autoSend === true");
-    expect(statusSource).toContain("要不要将完成的消息立刻告诉智能体？");
+    expect(statusSource).toContain("要不要将完成的消息立刻告诉 CozyMate？");
     expect(statusSource).toContain("items-center justify-center bg-[#211816]/30 px-4 py-6");
     expect(statusSource).toMatch(/>\s*好的\s*<\/button>/);
     expect(statusSource).not.toContain("已标记完成");

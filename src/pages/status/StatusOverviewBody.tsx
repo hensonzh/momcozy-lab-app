@@ -2366,7 +2366,7 @@ const PrenatalExpandedServices: React.FC<{
                 id="birth-journey-todo-sync-title"
                 className="text-base font-black leading-relaxed text-[#5d5155]"
               >
-                要不要将完成的消息立刻告诉智能体？
+                要不要将完成的消息立刻告诉 CozyMate？
               </p>
               <div className="mt-5 grid grid-cols-2 gap-2">
                 <button
