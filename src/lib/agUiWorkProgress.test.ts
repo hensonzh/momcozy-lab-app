@@ -73,4 +73,22 @@ describe("workProgressSummary", () => {
 
     expect(summary).toBeNull();
   });
+
+  it("does not surface the generic failed-step title for tool rows", () => {
+    const summary = workProgressSummary(
+      [
+        row({
+          name: "birth_journey_intake_manage",
+          title: "这一步暂时没处理好",
+          state: "error",
+        }),
+      ],
+      false,
+    );
+
+    expect(summary).toEqual({
+      title: "我继续处理一下～",
+      tone: "running",
+    });
+  });
 });
