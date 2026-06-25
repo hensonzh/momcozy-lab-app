@@ -112,8 +112,10 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain("const existingPendingGreetingVoice");
     expect(agentHubSource).toContain("autoVoice?: boolean");
     expect(agentHubSource).toContain(
-      "if ((opts?.autoVoice ?? true) || existingPendingGreetingVoice)",
+      "const autoVoiceGreeting = opts?.autoVoice ?? true",
     );
+    expect(agentHubSource).toContain("const canCarryPendingGreeting");
+    expect(agentHubSource).toContain("isPendingGreetingVoiceStale(");
     expect(agentHubSource).toContain("autoVoice: false");
   });
 
@@ -121,6 +123,16 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain("pendingGreetingVoiceRef.current = null");
     expect(agentHubSource).toContain("greetingVoiceInFlightRef.current = null");
     expect(agentHubSource).toContain("playGreetingVoiceNow(greeting)");
+    expect(agentHubSource).toContain(
+      'type AgentHubVoicePlayResult = "played" | "blocked" | "cancelled" | "failed"',
+    );
+    expect(agentHubSource).toContain(
+      'if (err.name === "AbortError") return "cancelled"',
+    );
+    expect(agentHubSource).toContain("isMainChatRunning ||");
+    expect(agentHubSource).toContain(
+      "isPendingGreetingVoiceStale(messages, pending.message.id)",
+    );
   });
 
   it("marks the first local profile onboarding reply in forwarded props only", () => {
@@ -136,10 +148,15 @@ describe("AgentHub artifact ordering wiring", () => {
     expect(agentHubSource).toContain("mainChatRuntimeSnapshot.running");
     expect(agentHubSource).toContain("mainChatCancelRef.current");
     expect(agentHubSource).toContain("preserveCurrentVoicePlayback?: boolean");
+    expect(agentHubSource).toContain("extraForwardedProps?: Record<string, unknown>");
     expect(agentHubSource).toContain(
       "preserveFocusVoice: opts?.preserveCurrentVoicePlayback",
     );
     expect(agentHubSource).toContain("preserveCurrentVoicePlayback: true");
+    expect(agentHubSource).toContain(
+      "buildMilkAnalysisReminderFollowupForwardedProps()",
+    );
+    expect(agentHubSource).toContain("extraForwardedProps: opts?.extraForwardedProps");
     expect(agentHubSource).toContain("AGENT_NOTIFICATION_VOICE_IDLE_EVENT");
     expect(agentHubSource).toContain(
       "scheduleMilkAnalysisFollowupBlockedRetry",

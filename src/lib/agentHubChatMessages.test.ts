@@ -7,6 +7,7 @@ import {
 import { buildPersonalizedNotificationText } from "@/lib/agentNotificationMessages";
 import { AGENT_NOTIFICATION_VOICE_EVENT } from "@/lib/agentNotificationVoice";
 import {
+  buildMilkAnalysisReminderFollowupForwardedProps,
   buildMilkAnalysisReminderFollowupPrompt,
   completeMilkAnalysisReminderFollowup,
   consumeMilkAnalysisReminderFollowup,
@@ -193,6 +194,21 @@ describe("milk analysis reminder followup", () => {
     });
     expect(next?.chatMessageId).toBe("analysis-milk_analysis-1");
     expect(next?.taskId).not.toBe(pending?.taskId);
+  });
+
+  it("builds background milk context props for the hidden followup", () => {
+    const props = buildMilkAnalysisReminderFollowupForwardedProps();
+
+    expect(props.serviceDomain).toBe("milk_management");
+    expect(props.triggerSource).toBe("background");
+    expect(props.milkContextMode).toBe("analysis");
+    expect(props.milkRecordContextPolicy).toEqual({
+      include_raw_records: true,
+      raw_days: 7,
+      rollup_days: 7,
+      raw_limit: 160,
+      include_today: false,
+    });
   });
 
   it("keeps pending followup until the hidden agent run finishes", () => {
