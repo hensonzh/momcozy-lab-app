@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, Minus, Plus } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ import { createScopedConsole } from "@/lib/logger";
 import { getRuntimeUserId } from "@/lib/debugUserConfig";
 import { buildCalibrationAutoStartRoute, startPumpAfterCalibration } from "@/pages/pumpSession/calibrationAutoStart";
 
-/* ── types ── */
+/* Types */
 type Side = "L" | "R";
 type Mode = "stimulate" | "deep";
 type Phase =
@@ -36,6 +36,8 @@ const console = createScopedConsole("ComfortCalibration");
 
 const ComfortCalibration: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const mockMode = searchParams.get("mock") === "1";
 
   const [phase, setPhase] = useState<Phase>("wear");
   const [gear, setGear] = useState(1);
@@ -47,8 +49,9 @@ const ComfortCalibration: React.FC = () => {
   const [restCountdown, setRestCountdown] = useState(5);
   const [applied, setApplied] = useState(false);
   const [skippedOtherSide, setSkippedOtherSide] = useState(false);
-  const [gearTimer, setGearTimer] = useState(0);
-  const [milkConfirmed, setMilkConfirmed] = useState(false);
+  const [gearActionLocked, setGearActionLocked] = useState(false);
+  const [gearActionCountdown, setGearActionCountdown] = useState<number | null>(null);
+  const [confirmGearReady, setConfirmGearReady] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const phaseRef = useRef(phase);
@@ -56,6 +59,7 @@ const ComfortCalibration: React.FC = () => {
   const currentSideRef = useRef(currentSide);
   const currentModeRef = useRef(currentMode);
   const thresholdUploadedRef = useRef(false);
+  const gearActionLockTimerRef = useRef<number | null>(null);
 
   useEffect(() => { phaseRef.current = phase; }, [phase]);
   useEffect(() => { gearRef.current = gear; }, [gear]);
@@ -63,10 +67,29 @@ const ComfortCalibration: React.FC = () => {
   useEffect(() => { currentModeRef.current = currentMode; }, [currentMode]);
 
   useEffect(() => {
+    setGearActionLocked(false);
+    setGearActionCountdown(null);
+    setConfirmGearReady(false);
+    if (gearActionLockTimerRef.current !== null) {
+      window.clearInterval(gearActionLockTimerRef.current);
+      gearActionLockTimerRef.current = null;
+    }
+  }, [phase, currentSide, currentMode]);
+
+  useEffect(() => {
+    return () => {
+      if (gearActionLockTimerRef.current !== null) {
+        window.clearInterval(gearActionLockTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [phase, gear]);
 
   useEffect(() => {
+    if (mockMode) return;
     const shouldShowFinalResultButton =
       phase === "sideResult" && (Boolean(results[otherSide(currentSide)]) || skippedOtherSide);
     if (!shouldShowFinalResultButton || thresholdUploadedRef.current) return;
@@ -98,7 +121,7 @@ const ComfortCalibration: React.FC = () => {
         );
       }
     });
-  }, [phase, results, currentSide, skippedOtherSide]);
+  }, [mockMode, phase, results, currentSide, skippedOtherSide]);
 
   useEffect(() => {
     if (phase !== "finalResult") {
@@ -110,16 +133,10 @@ const ComfortCalibration: React.FC = () => {
   }, [phase]);
 
   useEffect(() => {
-    setGearTimer(0);
-    if (phase !== "testing") return;
-    const t = setInterval(() => setGearTimer((prev) => prev + 1), 1000);
-    return () => clearInterval(t);
-  }, [gear, phase]);
-
-  useEffect(() => {
     return () => {
       const notice = phaseRef.current === "finalResult" ? "completed" : "incomplete";
       localStorage.setItem(CALIBRATION_HUB_NOTICE_KEY, notice);
+      if (mockMode) return;
       if (phaseRef.current === "testing") {
         const deviceInfo = deviceStore.get()[currentSideRef.current];
         if (deviceInfo?.connected && deviceInfo.deviceId) {
@@ -133,9 +150,9 @@ const ComfortCalibration: React.FC = () => {
         }
       }
     };
-  }, []);
+  }, [mockMode]);
 
-  // Rest countdown between stim → deep
+  // Rest countdown between stim -> deep
   useEffect(() => {
     if (phase !== "modeRest") return;
     setRestCountdown(5);
@@ -145,7 +162,6 @@ const ComfortCalibration: React.FC = () => {
           clearInterval(t);
           setCurrentMode("deep");
           setGear(1);
-          setMilkConfirmed(false);
           setPhase("modeIntro");
           return 0;
         }
@@ -159,8 +175,35 @@ const ComfortCalibration: React.FC = () => {
   const modeLabel = (m: Mode) => m === "stimulate" ? "刺激模式" : "吸乳模式";
   const otherSide = (s: Side): Side => s === "L" ? "R" : "L";
 
+  const startGearActionLock = () => {
+    setGearActionLocked(true);
+    setGearActionCountdown(3);
+    if (gearActionLockTimerRef.current !== null) {
+      window.clearInterval(gearActionLockTimerRef.current);
+    }
+    gearActionLockTimerRef.current = window.setInterval(() => {
+      setGearActionCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          setGearActionLocked(false);
+          if (gearActionLockTimerRef.current !== null) {
+            window.clearInterval(gearActionLockTimerRef.current);
+            gearActionLockTimerRef.current = null;
+          }
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
   const sendB1Command = async (side: Side, mode: Mode, targetGear: number) => {
     const adjustedGear = targetGear - 1;
+    if (mockMode) {
+      console.log(
+        `[ComfortCalibration][mock] skip B1 command: side=${side}, mode=${mode}, gear=${adjustedGear}`
+      );
+      return true;
+    }
     const deviceInfo = deviceStore.get()[side];
     if (!deviceInfo?.connected || !deviceInfo.deviceId) {
       alert(`${sideLabel(side)}设备未连接，请先连接设备后再开始测试。`);
@@ -179,7 +222,7 @@ const ComfortCalibration: React.FC = () => {
 
   const handleConfirmGear = async () => {
     const deviceInfo = deviceStore.get()[currentSide];
-    if (deviceInfo?.connected && deviceInfo.deviceId) {
+    if (!mockMode && deviceInfo?.connected && deviceInfo.deviceId) {
       try {
         const modeB1 = 0; // 刺激模式
         const stimGear = currentMode === "stimulate" ? gear : pendingStimGear ?? gear;
@@ -199,7 +242,9 @@ const ComfortCalibration: React.FC = () => {
       setResults(prev => ({ ...prev, [currentSide]: sideResult }));
 
       const currentDeviceInfo = deviceStore.get()[currentSide];
-      if (currentDeviceInfo?.connected && currentDeviceInfo.deviceId) {
+      if (mockMode) {
+        console.log(`[ComfortCalibration][mock] skip F1 command: side=${currentSide}`);
+      } else if (currentDeviceInfo?.connected && currentDeviceInfo.deviceId) {
         try {
           const stimulateGear = pendingStimGear! - 1;
           const lactateGear = gear - 1;
@@ -224,7 +269,7 @@ const ComfortCalibration: React.FC = () => {
 
   const handlePickSide = (side: Side) => {
     const deviceInfo = deviceStore.get()[side];
-    if (!deviceInfo?.connected || !deviceInfo.deviceId) {
+    if (!mockMode && (!deviceInfo?.connected || !deviceInfo.deviceId)) {
       alert(`${sideLabel(side)}设备未连接，请先连接设备后再开始测试。`);
       return;
     }
@@ -234,14 +279,13 @@ const ComfortCalibration: React.FC = () => {
     setGear(1);
     setPendingStimGear(null);
     setSkippedOtherSide(false);
-    setMilkConfirmed(true); // stim mode doesn't need milk confirm
     setPhase("modeIntro");
   };
 
   const handleStartOtherSide = () => {
     const other = otherSide(firstSide);
     const deviceInfo = deviceStore.get()[other];
-    if (!deviceInfo?.connected || !deviceInfo.deviceId) {
+    if (!mockMode && (!deviceInfo?.connected || !deviceInfo.deviceId)) {
       alert(`${sideLabel(other)}设备未连接，请先连接设备后再开始测试。`);
       return;
     }
@@ -250,7 +294,6 @@ const ComfortCalibration: React.FC = () => {
     setGear(1);
     setPendingStimGear(null);
     setSkippedOtherSide(false);
-    setMilkConfirmed(true); // stim mode doesn't need milk confirm
     setPhase("modeIntro");
   };
 
@@ -259,7 +302,9 @@ const ComfortCalibration: React.FC = () => {
     const currentResult = results[currentSide];
     const otherDeviceInfo = deviceStore.get()[otherSideKey];
 
-    if (otherDeviceInfo?.connected && otherDeviceInfo.deviceId && currentResult) {
+    if (mockMode) {
+      console.log(`[ComfortCalibration][mock] skip other-side F1/B1 commands: side=${otherSideKey}`);
+    } else if (otherDeviceInfo?.connected && otherDeviceInfo.deviceId && currentResult) {
       try {
         const stimulateGear = currentResult.stimGear - 1;
         const lactateGear = currentResult.deepGear - 1;
@@ -270,7 +315,7 @@ const ComfortCalibration: React.FC = () => {
         console.log(
           `[ComfortCalibration][F1] 跳过侧滴定结果下发成功: side=${otherSideKey}, deviceId=${otherDeviceInfo.deviceId}`
         );
-        // 跳过另一侧时，若设备在线，同步下发B1停止指令（自动场景+刺激模式+刺激挡位）
+        // 跳过另一侧时，若设备在线，同步下发 B1 停止指令（自动场景：刺激模式 + 刺激档位）。
         await sendB1SetPumpParams(otherDeviceInfo.deviceId, 0, 0, stimulateGear, 1);
         console.log(
           `[ComfortCalibration][B1] 跳过侧停止指令下发成功: side=${otherSideKey}, deviceId=${otherDeviceInfo.deviceId}, mode=stimulate, gear=${stimulateGear}, scene=auto`
@@ -375,7 +420,7 @@ const ComfortCalibration: React.FC = () => {
               <StepCard
                 eyebrow="动作确认 2"
                 title="了解本次调节方式"
-                description="我们会分别测试左右两侧，每侧包含刺激模式和吸乳模式两种模式。你只需要慢慢加档，疼了就减一档，最终确认不疼时的最大档位。"
+                description="我们会分别测试左右两侧，每侧包含刺激模式和吸乳模式两种模式。你只需要慢慢加档，感到不适就减档，最终确认未感不适时的最大档位。"
               >
                 <div className="grid grid-cols-2 gap-2.5">
                   <Button onClick={() => handlePickSide("L")} className="h-11 rounded-2xl font-bold">先测左侧</Button>
@@ -388,7 +433,7 @@ const ComfortCalibration: React.FC = () => {
               <StepCard
                 eyebrow={`${sideLabel(currentSide)} · ${modeLabel(currentMode)}`}
                 title={`准备测试${modeLabel(currentMode)}`}
-                description={`请确认当前正在调节${sideLabel(currentSide)}。开始后吸奶器会从 1 档运行，你可以逐步加档。`}
+                description={`请确认当前正在调节${sideLabel(currentSide)}。开始后吸奶器会以 1 档运行，你可以逐步加档。`}
                 primaryLabel="准备好了，开始"
                 onPrimary={async () => {
                   const success = await sendB1Command(currentSide, currentMode, 1);
@@ -404,47 +449,61 @@ const ComfortCalibration: React.FC = () => {
               <StepCard
                 eyebrow={`${sideLabel(currentSide)} · ${modeLabel(currentMode)}`}
                 title="调节到舒适最大档"
-                description="如果能接受就加一档；一旦疼痛，就减回上一档。确认当前档位舒适后，点击下方按钮记录。"
               >
                 <GearControl
                   gear={gear}
-                  gearTimer={gearTimer}
-                  onMinus={async () => {
-                    const newGear = Math.max(1, gear - 1);
-                    if (newGear !== gear) {
-                      const success = await sendB1Command(currentSide, currentMode, newGear);
-                      if (success) setGear(newGear);
-                    }
-                  }}
-                  onPlus={async () => {
-                    const newGear = Math.min(MAX_GEAR, gear + 1);
-                    if (newGear !== gear) {
-                      const success = await sendB1Command(currentSide, currentMode, newGear);
-                      if (success) setGear(newGear);
-                    }
-                  }}
+                  actionCountdown={gearActionCountdown}
                 />
-                {!milkConfirmed && (
-                  <p className="text-center text-[11px] leading-snug text-muted-foreground">
-                    💡 请先调节档位让吸奶器运行，<span className="font-bold text-primary">出奶后</span>再确认，空吸时会比实际感受更疼哦~
-                  </p>
-                )}
-                {milkConfirmed && (
-                  <p className="text-center text-[11px] leading-snug text-muted-foreground">
-                    💡 我们要找到<span className="font-bold text-primary">不疼痛时的最大档位</span>——如果加档感到疼了，就减一档，等感觉舒服了就选定它~
-                  </p>
-                )}
+                <p className="text-center text-[10px] leading-relaxed text-muted-foreground/80">
+                  未感不适时持续加档, 感受到略微不适时减1~2档, 恢复到舒适档位
+                </p>
+                <div className="flex justify-between gap-2.5">
+                  <GearActionButton
+                    disabled={gearActionLocked || gear <= 1}
+                    tone="danger"
+                    onClick={async () => {
+                      const newGear = Math.max(1, gear - 1);
+                      if (newGear !== gear) {
+                        const success = await sendB1Command(currentSide, currentMode, newGear);
+                        if (success) {
+                          setGear(newGear);
+                          setConfirmGearReady(true);
+                          startGearActionLock();
+                        }
+                      }
+                    }}
+                  >
+                    略感不适，减一档
+                  </GearActionButton>
+                  <GearActionButton
+                    disabled={gearActionLocked || gear >= MAX_GEAR}
+                    tone="success"
+                    onClick={async () => {
+                      const newGear = Math.min(MAX_GEAR, gear + 1);
+                      if (newGear !== gear) {
+                        const success = await sendB1Command(currentSide, currentMode, newGear);
+                        if (success) {
+                          setGear(newGear);
+                          setConfirmGearReady(newGear === MAX_GEAR);
+                          startGearActionLock();
+                        }
+                      }
+                    }}
+                  >
+                    未感不适，加一档
+                  </GearActionButton>
+                </div>
                 <button
                   onClick={() => {
-                    if (!milkConfirmed) {
-                      setMilkConfirmed(true);
-                    } else {
-                      void handleConfirmGear();
-                    }
+                    void handleConfirmGear();
                   }}
-                  className="h-12 w-full rounded-2xl border-2 border-primary/40 bg-primary/10 px-3 text-[13px] font-bold text-primary transition-all active:scale-95"
+                  disabled={!confirmGearReady || gearActionLocked}
+                  className={cn(
+                    "h-12 w-full rounded-2xl border-2 border-primary/40 bg-primary/10 px-3 text-[13px] font-bold text-primary transition-all active:scale-95",
+                    (!confirmGearReady || gearActionLocked) && "opacity-40 active:scale-100"
+                  )}
                 >
-                  {milkConfirmed ? "✅ 就这个档位了~" : "🍼 已经出奶了"}
+                  确认使用目前档位
                 </button>
               </StepCard>
             )}
@@ -497,6 +556,7 @@ const ComfortCalibration: React.FC = () => {
                 navigate={navigate}
                 countdown={autoCountdown}
                 setCountdown={setAutoCountdown}
+                mockMode={mockMode}
               />
             )}
           </motion.div>
@@ -506,7 +566,7 @@ const ComfortCalibration: React.FC = () => {
   );
 };
 
-/* ── FinalResultBlock for ComfortCalibration page ── */
+/* FinalResultBlock for ComfortCalibration page */
 const FinalResultBlock: React.FC<{
   results: { L?: SideResult; R?: SideResult };
   applied: boolean;
@@ -515,7 +575,8 @@ const FinalResultBlock: React.FC<{
   navigate: ReturnType<typeof useNavigate>;
   countdown: number;
   setCountdown: React.Dispatch<React.SetStateAction<number>>;
-}> = ({ results, applied, doApply, sideLabel, navigate, countdown, setCountdown }) => {
+  mockMode?: boolean;
+}> = ({ results, applied, doApply, sideLabel, navigate, countdown, setCountdown, mockMode = false }) => {
   const appliedRef = useRef(false);
   const autoStartRef = useRef(false);
 
@@ -527,6 +588,7 @@ const FinalResultBlock: React.FC<{
   }, []);
 
   useEffect(() => {
+    if (mockMode) return;
     const t = setInterval(() => {
       setCountdown((prev: number) => {
         if (prev <= 1) {
@@ -544,7 +606,7 @@ const FinalResultBlock: React.FC<{
       });
     }, 1000);
     return () => clearInterval(t);
-  }, []);
+  }, [mockMode]);
 
   const testedSide = results.L ? "L" : "R";
   const onlyOneSide = !results.L || !results.R;
@@ -553,7 +615,7 @@ const FinalResultBlock: React.FC<{
     <StepCard
       eyebrow="调节完成"
       title="已设置你的专属舒适档位"
-      description="M.ai 会用舒适档位 -2 开始，再逐步增强到舒适档位，帮助你更平稳地进入吸奶。"
+      description="M.ai 会用舒适档位-2 开始，再逐步增强到舒适档位，帮助你更平稳地进入吸奶。"
     >
       {results.L && results.R ? (
         <div className="grid grid-cols-1 gap-2.5 min-[380px]:grid-cols-2">
@@ -565,7 +627,9 @@ const FinalResultBlock: React.FC<{
       )}
       <div className="rounded-2xl border border-primary/20 bg-primary/10 p-4 text-center">
         <CheckCircle2 className="mx-auto h-6 w-6 text-primary" />
-        <p className="mt-2 text-sm font-bold text-primary">{countdown}s 后自动开始吸奶</p>
+        <p className="mt-2 text-sm font-bold text-primary">
+          {mockMode ? "设计模式：已跳过自动开始" : `${countdown}s 后自动开始吸奶`}
+        </p>
       </div>
     </StepCard>
   );
@@ -574,7 +638,7 @@ const FinalResultBlock: React.FC<{
 const StepCard: React.FC<{
   eyebrow: string;
   title: string;
-  description: string;
+  description?: string;
   primaryLabel?: string;
   onPrimary?: () => void | Promise<void>;
   children?: React.ReactNode;
@@ -583,7 +647,7 @@ const StepCard: React.FC<{
     <div className="space-y-1.5">
       <p className="text-[10px] font-bold uppercase tracking-wider text-primary">{eyebrow}</p>
       <h2 className="text-lg font-extrabold leading-snug text-foreground">{title}</h2>
-      <p className="text-[13px] leading-relaxed text-muted-foreground">{description}</p>
+      {description ? <p className="text-[13px] leading-relaxed text-muted-foreground">{description}</p> : null}
     </div>
     {children}
     {primaryLabel && onPrimary && (
@@ -596,75 +660,68 @@ const StepCard: React.FC<{
 
 const GearControl: React.FC<{
   gear: number;
-  gearTimer: number;
-  onMinus: () => void | Promise<void>;
-  onPlus: () => void | Promise<void>;
-}> = ({ gear, gearTimer, onMinus, onPlus }) => (
-  <div className="flex items-center justify-center gap-3 py-1 min-[380px]:gap-5">
-    <GearButton
-      disabled={gear <= 1}
-      onClick={onMinus}
-      label="疼了减档"
-      icon={<Minus className="h-5 w-5" />}
-    />
-    <div className="flex flex-col items-center gap-1.5">
-      <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-4 border-primary/20 min-[380px]:h-28 min-[380px]:w-28">
-        <motion.div key={gear} initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-3xl font-bold text-primary min-[380px]:text-4xl">
-          {gear}
-        </motion.div>
-        <span className="absolute bottom-2 text-[10px] font-medium text-muted-foreground">档位</span>
-        <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
-          <circle
-            cx="50"
-            cy="50"
-            r="46"
-            fill="none"
-            stroke="hsl(var(--primary))"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeDasharray={`${(gear / MAX_GEAR) * 289} 289`}
-            className="transition-all duration-500"
-          />
-        </svg>
-      </div>
-      <motion.div
-        key={`timer-${gear}`}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5"
-      >
-        <span className="text-[11px] font-mono font-semibold text-primary">{gearTimer}s</span>
-        <span className="text-[9px] text-muted-foreground">停留</span>
+  actionCountdown: number | null;
+}> = ({ gear, actionCountdown }) => (
+  <div className="flex flex-col items-center justify-center gap-2 py-1">
+    <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-4 border-primary/20 min-[380px]:h-28 min-[380px]:w-28">
+      <motion.div key={gear} initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-3xl font-bold text-primary min-[380px]:text-4xl">
+        {gear}
       </motion.div>
+      <span className="absolute bottom-2 text-[10px] font-medium text-muted-foreground">档位</span>
+      <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+        <circle
+          cx="50"
+          cy="50"
+          r="46"
+          fill="none"
+          stroke="hsl(var(--primary))"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeDasharray={`${(gear / MAX_GEAR) * 289} 289`}
+          className="transition-all duration-500"
+        />
+      </svg>
     </div>
-    <GearButton
-      disabled={gear >= MAX_GEAR}
-      onClick={onPlus}
-      label="可接受加档"
-      icon={<Plus className="h-5 w-5" />}
-    />
+    <div className="h-12">
+      {actionCountdown !== null ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1 text-[11px] font-semibold leading-tight text-primary"
+        >
+          <span>请感受舒适情况</span>
+          <motion.span
+            key={`action-countdown-value-${actionCountdown}`}
+            initial={{ opacity: 0.65 }}
+            animate={{ opacity: 1 }}
+            className="mt-0.5 font-mono text-[12px]"
+          >
+            {actionCountdown}s
+          </motion.span>
+        </motion.div>
+      ) : null}
+    </div>
   </div>
 );
 
-const GearButton: React.FC<{
-  disabled: boolean;
+const GearActionButton: React.FC<{
   onClick: () => void | Promise<void>;
-  label: string;
-  icon: React.ReactNode;
-}> = ({ disabled, onClick, label, icon }) => (
-  <div className="flex flex-col items-center gap-1.5">
-    <button
-      onClick={() => { void onClick(); }}
-      disabled={disabled}
-      className={cn(
-        "flex h-11 w-11 items-center justify-center rounded-full border-2 border-primary/30 text-primary transition-all active:scale-90 min-[380px]:h-12 min-[380px]:w-12",
-        disabled ? "opacity-30" : "hover:bg-primary/10",
-      )}
-    >
-      {icon}
-    </button>
-    <p className="max-w-[64px] text-center text-[9px] leading-tight text-muted-foreground min-[380px]:max-w-[72px]">{label}</p>
-  </div>
+  disabled: boolean;
+  tone: "danger" | "success";
+  children: React.ReactNode;
+}> = ({ disabled, onClick, tone, children }) => (
+  <button
+    type="button"
+    onClick={() => { void onClick(); }}
+    disabled={disabled}
+    className={cn(
+      "h-11 w-[12.5rem] max-w-[46vw] rounded-2xl border-2 border-primary/40 bg-primary/10 px-3 text-[12px] font-bold transition-all active:scale-95",
+      tone === "danger" ? "text-red-700" : "text-green-600",
+      disabled && "opacity-40 active:scale-100",
+    )}
+  >
+    {children}
+  </button>
 );
 
 const ResultGrid: React.FC<{ title?: string; result: SideResult }> = ({ title, result }) => (
@@ -676,7 +733,7 @@ const ResultGrid: React.FC<{ title?: string; result: SideResult }> = ({ title, r
         <p className="text-base font-bold text-primary">{result.stimGear} 档</p>
       </div>
       <div className="rounded-xl bg-background/70 p-2 text-center">
-        <p className="text-[10px] text-muted-foreground">深度</p>
+        <p className="text-[10px] text-muted-foreground">吸乳</p>
         <p className="text-base font-bold text-primary">{result.deepGear} 档</p>
       </div>
     </div>
