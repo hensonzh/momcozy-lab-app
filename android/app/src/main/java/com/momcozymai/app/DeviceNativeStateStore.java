@@ -1,9 +1,12 @@
 package com.momcozymai.app;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 final class DeviceNativeStateStore {
+    private static final String TAG = "DeviceNativeState";
     private static final Object LOCK = new Object();
     private static String snapshotJson = "{\"L\":null,\"R\":null}";
     private static double leftBandpowerMax;
@@ -122,7 +125,10 @@ final class DeviceNativeStateStore {
 
     private static boolean apply80(String deviceId, byte[] cab) throws JSONException {
         JSONObject parsed = MmcBleProtocol.parse80RealtimeMilk(cab);
-        if (parsed == null) return false;
+        if (parsed == null) {
+            Log.w(TAG, "realtime milk 0x80 parse failed deviceId=" + deviceId + ", cabLen=" + (cab != null ? cab.length : -1));
+            return false;
+        }
         return mutateDevice(deviceId, device -> {
             String side = sideForDevice(deviceId, new JSONObject(snapshotJson));
             double rawBandpower = Math.max(0, parsed.optDouble("bandpower", 0));
@@ -141,6 +147,19 @@ final class DeviceNativeStateStore {
             device.put("pressureCh1", parsed.optDouble("pressureCh1X10", 0) / 10.0);
             device.put("pressureCh2", parsed.optDouble("pressureCh2X10", 0) / 10.0);
             putPacketTimestamp(device, "lastDeviceProcessTs", parsed.optLong("timestamp", 0));
+            Log.i(TAG, "received realtime milk 0x80"
+                    + " side=" + side
+                    + ", deviceId=" + deviceId
+                    + ", timestamp=" + parsed.optLong("timestamp", 0)
+                    + ", flowFloat=" + parsed.optDouble("flowFloat", 0)
+                    + ", milkMl=" + (parsed.optDouble("milkMlX10", 0) / 10.0)
+                    + ", milkFlag=" + parsed.optInt("milkFlag", 0)
+                    + ", moFlag=" + parsed.optInt("moFlag", 0)
+                    + ", rawBandpower=" + rawBandpower
+                    + ", normalizedBandpower=" + normalized
+                    + ", storedBandpower=" + storedBandpower
+                    + ", pressureCh1=" + (parsed.optDouble("pressureCh1X10", 0) / 10.0)
+                    + ", pressureCh2=" + (parsed.optDouble("pressureCh2X10", 0) / 10.0));
         });
     }
 
