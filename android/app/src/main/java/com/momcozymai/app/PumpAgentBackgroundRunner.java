@@ -130,6 +130,7 @@ final class PumpAgentBackgroundRunner {
     private static void fetchProcessDataIfNeeded(Context context) throws Exception {
         if (!PumpAgentNativeStore.shouldFetchProcessData()) return;
         JSONObject body = PumpAgentNativeStore.buildProcessDataBody(BackgroundNotifyPrefs.getUserId(context));
+        Log.i(TAG, "get pump process data request body=" + body);
         JSONObject data = PumpAgentApiClient.post(
                 BackgroundNotifyPrefs.getApiBaseUrl(context),
                 BackgroundNotifyPrefs.getBearerToken(context),
@@ -154,6 +155,7 @@ final class PumpAgentBackgroundRunner {
         if (now - lastProcessUploadAt < PROCESS_UPLOAD_INTERVAL_MS) return;
         lastProcessUploadAt = now;
         JSONObject body = PumpAgentNativeStore.buildProcessBody(BackgroundNotifyPrefs.getUserId(context));
+        Log.i(TAG, "upload pump process request body=" + body);
         JSONObject data = PumpAgentApiClient.post(
                 BackgroundNotifyPrefs.getApiBaseUrl(context),
                 BackgroundNotifyPrefs.getBearerToken(context),

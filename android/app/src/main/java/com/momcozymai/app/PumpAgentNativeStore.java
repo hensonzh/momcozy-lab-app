@@ -121,6 +121,8 @@ final class PumpAgentNativeStore {
     static JSONObject buildProcessDataBody(String userId) throws JSONException {
         synchronized (LOCK) {
             JSONObject root = new JSONObject(DeviceNativeStateStore.getSnapshotJson());
+            sampleSide(L, root.optJSONObject("L"));
+            sampleSide(R, root.optJSONObject("R"));
             JSONObject body = new JSONObject();
             body.put("user_id", userId);
             body.put("device_left", processDataSide(root.optJSONObject("L"), L));
