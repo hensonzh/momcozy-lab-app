@@ -12,7 +12,7 @@ describe("MaiInputBar", () => {
     const onSend = vi.fn();
     render(<MaiInputBar value="ni" onChange={vi.fn()} onSend={onSend} />);
 
-    const input = screen.getByPlaceholderText("和 Comate 聊聊...");
+    const input = screen.getByPlaceholderText("和 CozyMate 聊聊...");
     fireEvent.compositionStart(input);
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
 
@@ -24,7 +24,7 @@ describe("MaiInputBar", () => {
     const onSend = vi.fn();
     render(<MaiInputBar value="你" onChange={vi.fn()} onSend={onSend} />);
 
-    const input = screen.getByPlaceholderText("和 Comate 聊聊...");
+    const input = screen.getByPlaceholderText("和 CozyMate 聊聊...");
     fireEvent.compositionStart(input);
     fireEvent.compositionEnd(input);
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
@@ -41,7 +41,7 @@ describe("MaiInputBar", () => {
     const onSend = vi.fn();
     render(<MaiInputBar value="ni" onChange={vi.fn()} onSend={onSend} />);
 
-    fireEvent.keyDown(screen.getByPlaceholderText("和 Comate 聊聊..."), {
+    fireEvent.keyDown(screen.getByPlaceholderText("和 CozyMate 聊聊..."), {
       key: "Enter",
       code: "Enter",
       keyCode: 229,
@@ -54,7 +54,7 @@ describe("MaiInputBar", () => {
     const onSend = vi.fn();
     render(<MaiInputBar value="" onChange={vi.fn()} onSend={onSend} sendLoading />);
 
-    fireEvent.keyDown(screen.getByPlaceholderText("和 Comate 聊聊..."), { key: "Enter", code: "Enter" });
+    fireEvent.keyDown(screen.getByPlaceholderText("和 CozyMate 聊聊..."), { key: "Enter", code: "Enter" });
 
     expect(onSend).toHaveBeenCalledTimes(1);
   });
@@ -73,7 +73,7 @@ describe("MaiInputBar", () => {
     const onSend = vi.fn();
     render(<MaiInputBar value="" onChange={vi.fn()} onSend={onSend} canSendWithoutText />);
 
-    fireEvent.keyDown(screen.getByPlaceholderText("和 Comate 聊聊..."), { key: "Enter", code: "Enter" });
+    fireEvent.keyDown(screen.getByPlaceholderText("和 CozyMate 聊聊..."), { key: "Enter", code: "Enter" });
 
     expect(onSend).toHaveBeenCalledTimes(1);
   });
@@ -83,7 +83,7 @@ describe("MaiInputBar", () => {
     const image = new File(["image"], "schedule.png", { type: "image/png" });
     render(<MaiInputBar value="" onChange={vi.fn()} onSend={vi.fn()} onPhotoFile={onPhotoFile} />);
 
-    fireEvent.paste(screen.getByPlaceholderText("和 Comate 聊聊..."), {
+    fireEvent.paste(screen.getByPlaceholderText("和 CozyMate 聊聊..."), {
       clipboardData: {
         items: [
           {
@@ -103,7 +103,7 @@ describe("MaiInputBar", () => {
     const onPhotoFile = vi.fn();
     render(<MaiInputBar value="" onChange={vi.fn()} onSend={vi.fn()} onPhotoFile={onPhotoFile} />);
 
-    const allowed = fireEvent.paste(screen.getByPlaceholderText("和 Comate 聊聊..."), {
+    const allowed = fireEvent.paste(screen.getByPlaceholderText("和 CozyMate 聊聊..."), {
       clipboardData: {
         items: [
           {
@@ -138,7 +138,7 @@ describe("MaiInputBar", () => {
 
     fireEvent.click(screen.getByTitle("切换到语音输入"));
 
-    expect(screen.queryByPlaceholderText("和 Comate 聊聊...")).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText("和 CozyMate 聊聊...")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "按住说话" })).toBeInTheDocument();
     expect(container.querySelector(".lucide-keyboard")).toBeInTheDocument();
     expect(onVoiceStart).not.toHaveBeenCalled();

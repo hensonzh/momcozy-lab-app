@@ -57,7 +57,7 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   sendLoading = false,
   canSendWithoutText = false,
   disabled = false,
-  placeholder = "和 Comate 聊聊...",
+  placeholder = "和 CozyMate 聊聊...",
   showPhotoMenu = false,
   onTogglePhotoMenu,
   className,

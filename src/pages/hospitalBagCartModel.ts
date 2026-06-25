@@ -63,7 +63,7 @@ const defaultHospitalBagPumpItem: HospitalBagCartItem = {
   name: "Momcozy M9 吸奶器",
   desc: "便携穿戴式双边吸乳，返家后排奶/储奶备用；是否带去医院先问医院",
   qty: 1,
-  price: 699.0,
+  price: 1087.93,
   model: "M9",
   keywords: ["吸奶器", "便携式吸奶器", "M9", "Mobile Flow"],
 };
