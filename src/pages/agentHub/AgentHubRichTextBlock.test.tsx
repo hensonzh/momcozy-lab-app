@@ -683,6 +683,37 @@ describe("AgentHubRichTextBlock birth journey basic info form", () => {
     expect(options).toMatchObject({ displayText: "已提交：孕周与基本情况" });
     expect(message).toContain("form_id: birth_journey_basic_info_intake");
     expect(message).not.toContain("form_id: hospital_bag_intake");
+    expect(message).toContain('"current_week":"孕25周"');
+    expect(message).toContain('"ivf":"否"');
+    expect(message).toContain('"age":"31"');
+  });
+
+  it("blocks birth journey form submission when required fields are missing", () => {
+    const onButtonSelect = vi.fn();
+    renderBlock({
+      payload: birthJourneyBasicInfoFormPayload(),
+      onButtonSelect,
+    });
+
+    fireEvent.change(screen.getByLabelText("是否 IVF（体外受精）"), {
+      target: { value: "否" },
+    });
+    fireEvent.change(screen.getByLabelText("单胎/双胎"), {
+      target: { value: "单胎" },
+    });
+    fireEvent.change(screen.getByLabelText("是否第一胎"), {
+      target: { value: "是" },
+    });
+    fireEvent.change(screen.getByLabelText("计划分娩方式"), {
+      target: { value: "还没确定" },
+    });
+    const submitButton = screen.getByRole("button", { name: "提交" });
+    const form = submitButton.closest("form");
+    expect(form).toBeTruthy();
+    fireEvent.submit(form!);
+
+    expect(onButtonSelect).not.toHaveBeenCalled();
+    expect(screen.getByText("请补充：年龄")).toBeInTheDocument();
   });
 });
 
