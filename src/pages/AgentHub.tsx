@@ -64,6 +64,11 @@ import {
   appendAgentHubAnalysisMessage,
 } from "@/lib/agentHubChatMessages";
 import {
+  isAgentHubGreetingMessage,
+  isPendingGreetingVoiceStale,
+} from "@/lib/agentHubGreetingVoice";
+import {
+  buildMilkAnalysisReminderFollowupForwardedProps,
   buildMilkAnalysisReminderFollowupPrompt,
   completeMilkAnalysisReminderFollowup,
   markMilkAnalysisReminderFollowupAttempt,
@@ -293,8 +298,7 @@ function profileNeedsOnboarding(profile?: UserProfileData | null): boolean {
 
 function isProfileOnboardingGreetingMessage(message: ChatMessage): boolean {
   return (
-    message.role === "mai" &&
-    String(message.id).startsWith("mai-greeting-") &&
+    isAgentHubGreetingMessage(message) &&
     message.content.trim() === PROFILE_ONBOARDING_GREETING.trim()
   );
 }
@@ -1118,7 +1122,7 @@ function splitStaticAssistantReplyForStreaming(text: string): string[] {
   return chunks.map((chunk) => chunk.trim()).filter(Boolean);
 }
 
-type AgentHubVoicePlayResult = "played" | "blocked" | "failed";
+type AgentHubVoicePlayResult = "played" | "blocked" | "cancelled" | "failed";
 
 const AgentHub: React.FC = () => {
   const navigate = useNavigate();
@@ -1179,16 +1183,25 @@ const AgentHub: React.FC = () => {
         const hasNonGreetingAssistant = currentMessages.some(
           (message) =>
             message.role === "mai" &&
-            !String(message.id).startsWith("mai-greeting-"),
+            !isAgentHubGreetingMessage(message),
         );
         if (hasNonGreetingAssistant) return;
       }
       const existingPendingGreetingVoice = pendingGreetingVoiceRef.current;
-      if ((opts?.autoVoice ?? true) || existingPendingGreetingVoice) {
+      const autoVoiceGreeting = opts?.autoVoice ?? true;
+      const canCarryPendingGreeting =
+        Boolean(existingPendingGreetingVoice) &&
+        !isPendingGreetingVoiceStale(
+          currentMessages,
+          existingPendingGreetingVoice?.message.id || "",
+        );
+      if (autoVoiceGreeting || canCarryPendingGreeting) {
         pendingGreetingVoiceRef.current = {
           message: greeting,
           attempts: existingPendingGreetingVoice?.attempts ?? 0,
         };
+      } else if (existingPendingGreetingVoice) {
+        pendingGreetingVoiceRef.current = null;
       }
       chatStore.setMessages([greeting]);
       savePersistedChatMessages([greeting]);
@@ -2436,7 +2449,12 @@ const AgentHub: React.FC = () => {
 
   const buildAgUiForwardedProps = (
     locale: string,
-    opts?: { showUserMessage?: boolean; userMessage?: string; clientTimingId?: string },
+    opts?: {
+      showUserMessage?: boolean;
+      userMessage?: string;
+      clientTimingId?: string;
+      extraForwardedProps?: Record<string, unknown>;
+    },
   ): Record<string, unknown> => {
     const timezone =
       (typeof Intl !== "undefined" &&
@@ -2470,6 +2488,9 @@ const AgentHub: React.FC = () => {
         groups: hospitalBagCartGroups,
         totals: calculateHospitalBagCartTotals(hospitalBagCartGroups),
       };
+    }
+    if (opts?.extraForwardedProps) {
+      Object.assign(forwardedProps, opts.extraForwardedProps);
     }
     return forwardedProps;
   };
@@ -2794,6 +2815,7 @@ const AgentHub: React.FC = () => {
       onStreamDone?: () => void;
       onStreamError?: (error?: Error) => void;
       preserveCurrentVoicePlayback?: boolean;
+      extraForwardedProps?: Record<string, unknown>;
     },
   ) => {
     prepareLatestChatWindowForNewTurn();
@@ -3150,6 +3172,7 @@ const AgentHub: React.FC = () => {
         showUserMessage,
         userMessage: query,
         clientTimingId,
+        extraForwardedProps: opts?.extraForwardedProps,
       }),
       parseJSON: true,
       onTiming: recordAgUiTiming,
@@ -3225,6 +3248,7 @@ const AgentHub: React.FC = () => {
     void startMainChatStream(prompt, {
       showUserMessage: false,
       preserveCurrentVoicePlayback: true,
+      extraForwardedProps: buildMilkAnalysisReminderFollowupForwardedProps(),
       onStreamDone: () => {
         completeMilkAnalysisReminderFollowup(claimed.taskId);
         clearInFlight();
@@ -4147,6 +4171,7 @@ const AgentHub: React.FC = () => {
         return "played";
       } catch (e: unknown) {
         const err = e as { name?: string; message?: string };
+        if (err.name === "AbortError") return "cancelled";
         if (err.name !== "AbortError") {
           if (showErrorToast) toast.error(err.message || "语音播报失败");
           warn(
@@ -4228,13 +4253,24 @@ const AgentHub: React.FC = () => {
   const tryPlayPendingGreetingVoice = useCallback(() => {
     const pending = pendingGreetingVoiceRef.current;
     if (!pending || !autoVoiceRef.current) return;
+    if (
+      isMainChatRunning ||
+      isPendingGreetingVoiceStale(messages, pending.message.id)
+    ) {
+      pendingGreetingVoiceRef.current = null;
+      greetingVoiceInFlightRef.current = null;
+      return;
+    }
     const greeting = messages.find(
       (message) => message.id === pending.message.id && message.role === "mai",
     );
-    if (!greeting) return;
-    if (pending.attempts >= 3) return;
+    if (!greeting || pending.attempts >= 3) {
+      pendingGreetingVoiceRef.current = null;
+      greetingVoiceInFlightRef.current = null;
+      return;
+    }
     playGreetingVoiceNow(greeting);
-  }, [messages, playGreetingVoiceNow]);
+  }, [isMainChatRunning, messages, playGreetingVoiceNow]);
 
   useEffect(() => {
     tryPlayPendingGreetingVoice();
