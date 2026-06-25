@@ -18,6 +18,8 @@ import {
   refreshPumpAgentUploadNativeProgressSnapshot,
   setPumpAgentUploadOperationSource,
 } from "@/lib/pumpAgentUpload";
+import { getNativeAndroidPumpSessionBridge } from "@/lib/nativeAndroidPumpSession";
+import { getProcessAll } from "@/lib/pumpSessionProgress";
 import {
   fromProtocolGear,
   fromProtocolPumpMode,
@@ -47,6 +49,16 @@ const nextRunningDuration = (running: boolean, duration: unknown): number | unde
 };
 
 const isAndroidNativeRuntime = Capacitor.getPlatform() === "android";
+
+function syncNativePumpSessionAfterControl(nextState: "running" | "paused"): void {
+  if (!isAndroidNativeRuntime) return;
+  try {
+    const processAll = Math.max(0, Math.min(100, Math.round(getProcessAll())));
+    getNativeAndroidPumpSessionBridge()?.updateSession?.(nextState, processAll);
+  } catch (error) {
+    createScopedConsole("PumpDeviceControlRuntime").warn("sync native session after control failed", error);
+  }
+}
 
 export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimeParams) {
   const {
@@ -285,12 +297,16 @@ export function usePumpDeviceControlRuntime(params: PumpDeviceControlRuntimePara
       syncUiFromStore();
     }
     if (!anyFailed) {
-      setSessionState(nextStart === 1 ? "running" : "paused");
+      const nextSessionState = nextStart === 1 ? "running" : "paused";
+      setSessionState(nextSessionState);
+      syncNativePumpSessionAfterControl(nextSessionState);
       return;
     }
     const refreshed = deviceStore.get();
     const hasRunning = (["L", "R"] as const).some((side) => refreshed[side]?.connected && refreshed[side]?.pumpWorkState === 0x01);
-    setSessionState(hasRunning ? "running" : "paused");
+    const fallbackSessionState = hasRunning ? "running" : "paused";
+    setSessionState(fallbackSessionState);
+    syncNativePumpSessionAfterControl(fallbackSessionState);
   }, [sessionState, setSessionState, sideB1Params, syncUiFromStore]);
 
   // 与 last L3322-3363 对齐：activeSide==="SYNC" 等价于双侧顺序写入。

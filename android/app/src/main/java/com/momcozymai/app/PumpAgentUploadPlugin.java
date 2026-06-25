@@ -93,6 +93,7 @@ public class PumpAgentUploadPlugin extends Plugin {
         runAsync(call, () -> {
             Context ctx = getContext().getApplicationContext();
             JSONObject body = PumpAgentNativeStore.buildProcessDataBody(resolveUserId(ctx, call));
+            Log.i(TAG, "get pump process data request body=" + body);
             JSONObject data = PumpAgentApiClient.post(
                     BackgroundNotifyPrefs.getApiBaseUrl(ctx),
                     BackgroundNotifyPrefs.getBearerToken(ctx),
@@ -112,6 +113,7 @@ public class PumpAgentUploadPlugin extends Plugin {
         runAsync(call, () -> {
             Context ctx = getContext().getApplicationContext();
             JSONObject body = PumpAgentNativeStore.buildProcessBody(resolveUserId(ctx, call));
+            Log.i(TAG, "upload pump process request body=" + body);
             JSONObject data = PumpAgentApiClient.post(
                     BackgroundNotifyPrefs.getApiBaseUrl(ctx),
                     BackgroundNotifyPrefs.getBearerToken(ctx),
