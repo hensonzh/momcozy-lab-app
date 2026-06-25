@@ -22,6 +22,21 @@ export interface MilkAnalysisReminderFollowup {
   lastAttemptAt?: number;
 }
 
+export function buildMilkAnalysisReminderFollowupForwardedProps(): Record<string, unknown> {
+  return {
+    serviceDomain: "milk_management",
+    triggerSource: "background",
+    milkContextMode: "analysis",
+    milkRecordContextPolicy: {
+      include_raw_records: true,
+      raw_days: 7,
+      rollup_days: 7,
+      raw_limit: 160,
+      include_today: false,
+    },
+  };
+}
+
 function compactText(value: unknown): string {
   return String(value ?? "").replace(/\s+/g, " ").trim();
 }
