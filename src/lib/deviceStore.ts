@@ -1,4 +1,4 @@
-/** 刺激/深度 分档记忆（B1 线 0–14），与 pumpGearMemory 一致 */
+/** 刺激/深度分档记忆（B1 线 0-14）。 */
 export interface PumpGearMemoryPair {
   stimulate?: number;
   deep?: number;
