@@ -4,18 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { arMockResults } from "@/data/deviceMockData";
-import type { PhotoIdentifyResult } from "@/data/deviceMockData";
 import type { AgentHubSpeechPhase } from "@/hooks/useAgentHubSpeechInput";
-import mockDuckbillImg from "@/assets/mock-duckbill.jpg";
-import mockFlangeImg from "@/assets/mock-flange.jpg";
-import mockSealImg from "@/assets/mock-seal.jpg";
-
-const mockImageMap: Record<string, string> = {
-  duckbill: mockDuckbillImg,
-  flange: mockFlangeImg,
-  seal: mockSealImg,
-};
 
 const voiceWaveBars = [8, 10, 7, 13, 18, 12, 22, 16, 25, 14, 19, 11, 16, 9, 12, 7];
 
@@ -26,7 +15,6 @@ interface MaiInputBarProps {
   onVoiceStart?: () => void | Promise<void>;
   onVoiceEnd?: (opts?: { submit?: boolean }) => void | Promise<void>;
   onPhotoFile?: (file: File) => void;
-  onDemoIdentify?: (result: PhotoIdentifyResult) => void;
   /** 正在语音听写：高亮麦克风并让输入框只读，避免与流式转写互相覆盖 */
   speechListening?: boolean;
   speechPhase?: AgentHubSpeechPhase;
@@ -51,7 +39,6 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
   onVoiceStart,
   onVoiceEnd,
   onPhotoFile,
-  onDemoIdentify,
   speechListening = false,
   speechPhase = speechListening ? "listening" : "idle",
   sendLoading = false,
@@ -217,25 +204,6 @@ const MaiInputBar: React.FC<MaiInputBarProps> = ({
                 <Upload className="w-3.5 h-3.5" /> 上传
               </Button>
             </div>
-            {onDemoIdentify && (
-              <div className="space-y-1">
-                <span className="text-[10px] text-muted-foreground font-medium">演示样本</span>
-                <div className="flex gap-1.5">
-                  {arMockResults.map((item) => (
-                    <button key={item.mockImage} onClick={() => onDemoIdentify(item)}
-                      className="flex-1 rounded-lg overflow-hidden border border-border/50 hover:border-primary/40 transition-colors group">
-                      <div className="aspect-[4/3] overflow-hidden bg-secondary/50">
-                        <img src={mockImageMap[item.mockImage]} alt={item.partName}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
-                      </div>
-                      <div className="py-0.5 bg-card">
-                        <p className="text-[9px] font-semibold text-foreground text-center">{item.partIcon} {item.partName}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </motion.div>
         )}
       </AnimatePresence>

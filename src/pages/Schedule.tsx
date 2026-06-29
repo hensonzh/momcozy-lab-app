@@ -1184,7 +1184,7 @@ const Schedule: React.FC = () => {
         </p>
       </div>
 
-      {/* Calendar Strip（与 mai-moms-magic 一致：周切换 + 7 日条） */}
+      {/* Calendar Strip：周切换 + 7 日条 */}
       <div className="px-4 pb-2 flex-shrink-0 relative">
         <div className="flex justify-between items-center bg-card rounded-xl p-1 border border-border/50 shadow-sm">
           <button

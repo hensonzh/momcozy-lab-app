@@ -61,7 +61,7 @@ function storedToDeviceInfo(stored: StoredDeviceInfo, side: "L" | "R"): DeviceIn
     serialNumber: stored.serialNumber,
   };
 }
-/* ── Device Card（与 mai-moms-magic 一致的布局，数据仍用 DeviceInfo） ── */
+/* ── Device Card（当前设备管理页布局，数据仍用 DeviceInfo） ── */
 const DeviceCard: React.FC<{
   side: "L" | "R";
   device: DeviceInfo | null;

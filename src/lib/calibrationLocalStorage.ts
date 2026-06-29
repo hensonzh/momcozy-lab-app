@@ -1,5 +1,5 @@
 /**
- * 耐受度滴定结果在 localStorage 中的读写（与 InlineCalibration / ComfortCalibration 写入结构一致）。
+ * 耐受度滴定结果在 localStorage 中的读写（与 ComfortCalibration 写入结构一致）。
  */
 
 import type { DeviceSide } from "@/lib/deviceStore";
@@ -18,7 +18,7 @@ export type CalibrationComfortSides = {
   R: { stim: number; deep: number };
 };
 
-/** 与 ComfortCalibration / InlineCalibration 的 MAX_GEAR 一致（Hub 远端回填 `maxSafe` 字段） */
+/** 与 ComfortCalibration 的 MAX_GEAR 一致（Hub 远端回填 `maxSafe` 字段） */
 const MAX_CALIBRATION_SAFE_GEAR = 15;
 
 const COMFORT_UI_MIN = 1;
