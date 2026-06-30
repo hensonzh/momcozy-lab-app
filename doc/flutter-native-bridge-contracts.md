@@ -94,6 +94,7 @@ Fake contract status:
 [x] Android Kotlin MethodChannel handler shell for `MmcBle`
 [x] Android real BLE scan/getConnectedDevices transport implementation for `MmcBle`
 [x] Android real GATT connect/read/write/notify transport implementation for `MmcBle`
+[x] Flutter `BlePumpProtocolPlatform` sends pump protocol command goldens through `BlePlatform.writeWithoutResponse`
 ```
 
 ### 4.2 `PumpSessionForegroundServicePlatform`
