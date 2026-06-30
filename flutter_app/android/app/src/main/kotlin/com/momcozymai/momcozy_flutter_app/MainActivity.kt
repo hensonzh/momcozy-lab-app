@@ -27,6 +27,11 @@ import java.util.UUID
 class MainActivity : FlutterActivity() {
     private lateinit var mmcBleChannel: MethodChannel
     private var scanCallback: ScanCallback? = null
+    private val pumpAgentCompletedUploadKeys = mutableSetOf<String>()
+    private var pumpAgentProcessL = 0
+    private var pumpAgentProcessR = 0
+    private var pumpAgentProcessAll = 0
+    private var pumpAgentElapsedSeconds = 0
     private val gatts = mutableMapOf<String, BluetoothGatt>()
     private val connectResults = mutableMapOf<String, MethodChannel.Result>()
     private val readResults = mutableMapOf<String, MethodChannel.Result>()
@@ -45,6 +50,10 @@ class MainActivity : FlutterActivity() {
             flutterEngine.dartExecutor.binaryMessenger,
             PUMP_NOTIFICATION_CHANNEL
         ).setMethodCallHandler(::handlePumpNotificationCall)
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            PUMP_AGENT_UPLOAD_CHANNEL
+        ).setMethodCallHandler(::handlePumpAgentUploadCall)
     }
 
     private fun handleMmcBleCall(call: MethodCall, result: MethodChannel.Result) {
@@ -77,6 +86,29 @@ class MainActivity : FlutterActivity() {
                 startActivity(intent)
                 result.success(null)
             }
+            else -> result.notImplemented()
+        }
+    }
+
+    private fun handlePumpAgentUploadCall(call: MethodCall, result: MethodChannel.Result) {
+        when (call.method) {
+            "setConfig",
+            "markStepStop",
+            "markStepPause",
+            "setOperationSource" -> result.success(null)
+            "sampleFromSnapshot" -> result.success(pumpAgentProgressMap())
+            "resetProgress" -> {
+                pumpAgentProcessL = 0
+                pumpAgentProcessR = 0
+                pumpAgentProcessAll = 0
+                pumpAgentElapsedSeconds = 0
+                pumpAgentCompletedUploadKeys.clear()
+                result.success(pumpAgentProgressMap())
+            }
+            "uploadWorkstate",
+            "getProcessData",
+            "uploadProcess",
+            "uploadMilkRecord" -> result.success(pumpAgentUploadResult(call))
             else -> result.notImplemented()
         }
     }
@@ -114,6 +146,33 @@ class MainActivity : FlutterActivity() {
             "restoreSnapshot" -> result.success(null)
             else -> result.notImplemented()
         }
+    }
+
+    private fun pumpAgentProgressMap(): Map<String, Any> {
+        return mapOf(
+            "processL" to pumpAgentProcessL,
+            "processR" to pumpAgentProcessR,
+            "processAll" to pumpAgentProcessAll,
+            "elapsedSeconds" to pumpAgentElapsedSeconds
+        )
+    }
+
+    private fun pumpAgentUploadResult(call: MethodCall): Map<String, Any?> {
+        val body = call.arguments as? Map<*, *> ?: emptyMap<String, Any?>()
+        val uploadKey = "${call.method}:${body.toSortedString()}"
+        val deduped = !pumpAgentCompletedUploadKeys.add(uploadKey)
+        return mapOf(
+            "body" to body,
+            "response" to mapOf("error" to 0),
+            "deduped" to deduped
+        ) + pumpAgentProgressMap()
+    }
+
+    private fun Map<*, *>.toSortedString(): String {
+        return entries
+            .map { entry -> "${entry.key}=${entry.value}" }
+            .sorted()
+            .joinToString("&")
     }
 
     private fun requestBlePermissionsIfNeeded() {
@@ -637,6 +696,8 @@ class MainActivity : FlutterActivity() {
         private const val MMC_BLE_CHANNEL = "com.momcozymai.flutter/mmc_ble"
         private const val PUMP_NOTIFICATION_CHANNEL =
             "com.momcozymai.flutter/pump_session_notification"
+        private const val PUMP_AGENT_UPLOAD_CHANNEL =
+            "com.momcozymai.flutter/pump_agent_upload"
         private const val REQUEST_BLE_PERMISSIONS = 4101
         private const val REQUEST_NOTIFICATION_PERMISSION = 4102
     }

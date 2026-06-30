@@ -64,7 +64,7 @@ Current Dart test coverage:
 
 Next migration gap:
 
-- Add the Android Kotlin `PumpAgentUploadPlatform` channel handler and then wire pump protocol state machines on top of the BLE transport.
+- Add real Android background HTTP upload for `PumpAgentUploadPlatform`, then wire pump protocol state machines on top of the BLE transport.
 
 ## Migration Notes
 
