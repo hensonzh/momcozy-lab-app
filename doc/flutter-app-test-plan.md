@@ -527,7 +527,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] transport disconnect 映射为统一断线状态，并保留 partial content
 [ ] reconnect 不重复已完成 message chunk
 [x] cancel ack 和本地 cancel 状态一致
-[ ] UI/view model 不依赖 transport 类型判断
+[x] UI/view model 不依赖 transport 类型判断
 ```
 
 ### 7.3 语音合同

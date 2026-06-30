@@ -177,6 +177,7 @@ features/
 [x] Flutter Agent stream IO transport shell 已落地，SSE POST 与 WebSocket first-frame adapter 共用 endpoint/auth/redaction config
 [x] Flutter `/api/ag-ui-cancel` control client 已落地，2xx/404 视为 ack，5xx/network 不阻塞本地停止态
 [x] Flutter `AgentStreamRunState` reducer 已落地，UI/view model 可复用统一 streaming/finished/error/disconnected/cancelled 状态
+[x] Flutter `AgentStreamRunner` 已落地，UI/view model 只依赖 `AgentStreamClient` 和统一 run state，不判断 SSE/WebSocket transport
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
