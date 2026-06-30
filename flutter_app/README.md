@@ -63,7 +63,7 @@ Current Dart test coverage:
 
 Next migration gap:
 
-- Add Android Kotlin MethodChannel handlers for `MmcBle` and pump foreground service, reusing the covered Flutter adapter contracts.
+- Port the real Android `MmcBle` scanner/GATT transport and pump foreground notification service behind the Kotlin MethodChannel handler shells.
 
 ## Migration Notes
 

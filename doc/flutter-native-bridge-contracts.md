@@ -91,7 +91,8 @@ Fake contract status:
 [x] `BlePlatform` fake method schema and streams
 [x] `PumpProtocolPlatform` fake command schema for native pump protocol methods
 [x] Flutter MethodChannel adapter tests for `MmcBle` BLE method schema and events
-[ ] Android Kotlin channel implementation for `MmcBle`
+[x] Android Kotlin MethodChannel handler shell for `MmcBle`
+[ ] Android real BLE scanner/GATT transport implementation for `MmcBle`
 ```
 
 ### 4.2 `PumpSessionForegroundServicePlatform`
@@ -110,7 +111,8 @@ Fake contract status:
 [x] restore native snapshot after app killed
 [x] foreground service event stream
 [x] Flutter MethodChannel adapter tests for `PumpSessionNotification` method schema
-[ ] Android Kotlin channel implementation for pump foreground service
+[x] Android Kotlin MethodChannel handler shell for pump foreground service
+[ ] Android real foreground notification/service implementation
 ```
 
 ### 4.3 `PumpAgentUploadPlatform`
