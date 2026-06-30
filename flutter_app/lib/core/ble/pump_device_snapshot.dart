@@ -361,6 +361,20 @@ class PumpDeviceSnapshot {
 
   Map<String, Object?> toMap() => {'L': left?.toMap(), 'R': right?.toMap()};
 
+  PumpDeviceSnapshot replaceSide(
+    PumpDeviceSide side,
+    PumpDeviceSideState device, {
+    double? leftBandpowerMax,
+    double? rightBandpowerMax,
+  }) {
+    return PumpDeviceSnapshot(
+      left: side == PumpDeviceSide.left ? device : left,
+      right: side == PumpDeviceSide.right ? device : right,
+      leftBandpowerMax: leftBandpowerMax ?? this.leftBandpowerMax,
+      rightBandpowerMax: rightBandpowerMax ?? this.rightBandpowerMax,
+    );
+  }
+
   PumpDeviceSnapshotUpdate _applyToDevice(
     String deviceId,
     PumpDeviceSnapshot? Function(
@@ -389,9 +403,9 @@ class PumpDeviceSnapshot {
     double? leftBandpowerMax,
     double? rightBandpowerMax,
   }) {
-    return PumpDeviceSnapshot(
-      left: side == PumpDeviceSide.left ? device : left,
-      right: side == PumpDeviceSide.right ? device : right,
+    return replaceSide(
+      side,
+      device,
       leftBandpowerMax: leftBandpowerMax ?? this.leftBandpowerMax,
       rightBandpowerMax: rightBandpowerMax ?? this.rightBandpowerMax,
     );
