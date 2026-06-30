@@ -130,6 +130,7 @@ features/
 [x] Android SDK / JDK / Gradle 环境可构建 debug APK
 [x] 明确 appId / flavor / signing 的临时策略，Flutter PoC 使用 `com.momcozymai.app.flutterpoc`
 [x] 决定使用 `flutter-toolchain.json` + `npm run flutter:check`，P0 不引入 FVM
+[x] Security/privacy gates 已定义，Flutter 日志脱敏工具与 P0 tests 已落地
 [x] 现有 Web baseline 仍可测试和构建
 ```
 
@@ -145,6 +146,7 @@ features/
 [x] `flutter build apk --debug` 通过
 [x] Flutter Android PoC appId / flavor / signing 策略已记录：`doc/flutter-android-packaging.md`
 [x] Flutter / Android / JDK 版本固定源已记录：`flutter-toolchain.json`
+[x] Flutter 安全隐私准入已记录：`doc/flutter-security-privacy-gates.md`
 [x] Web baseline 可测试和构建
 [x] BLE / AG-UI / API / storage / route fixtures 已准备
 [x] Flutter BLE / AG-UI / API / storage / route fixture tests 已开始落地

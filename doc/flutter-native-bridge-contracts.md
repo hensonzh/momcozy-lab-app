@@ -11,6 +11,7 @@
 - Native bridge payload 必须有 schema、错误模型和 event stream 说明。
 - 后台关键能力优先保留 Android service，再逐步抽象。
 - 所有 native event 进入 Flutter 前都要脱敏、校验和去重。
+- 日志与 failure payload 脱敏规则见 `doc/flutter-security-privacy-gates.md`，Flutter 侧统一使用 `core/privacy/log_redactor.dart`。
 
 ---
 
