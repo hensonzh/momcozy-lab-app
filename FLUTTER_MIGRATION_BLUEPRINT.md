@@ -513,7 +513,7 @@ AgentHub UI
 
 ```text
 [ ] Flutter debug build 可安装
-[ ] Android release build 可生成并签名
+[x] Android release build 可生成，当前 P0 使用 debug signing
 [ ] 核心 route shell 可导航
 [ ] 本地 storage migration 可 dry-run
 [ ] Platform channel smoke test 可跑通
@@ -650,7 +650,7 @@ AgentHub UI
 退出条件：
 
 ```text
-[ ] release build 通过并可安装
+[x] release build 通过，安装仍需真机 smoke
 [ ] P0 真实设备矩阵通过
 [ ] 真泵回归通过
 [ ] 回滚包和回滚流程确认
