@@ -142,6 +142,7 @@ Fake contract status:
 [x] Flutter runtime sync forwards `PumpDeviceSnapshotBleBinding` updates into `updateDeviceSnapshot`
 [x] Android process frame history parity with legacy `PumpAgentNativeStore`
 [x] Android foreground-service-backed progress runner shell for `sampleFromSnapshot`
+[x] Android service-backed network tick for workstate/process-data/process uploads
 [ ] Android service-backed background runner parity with legacy `PumpAgentBackgroundRunner`
 ```
 
