@@ -176,6 +176,7 @@ features/
 [x] Flutter AG-UI outbound payload builder 已对齐首帧 fixture，后续真实 SSE/WS transport 只负责传输
 [x] Flutter Agent stream IO transport shell 已落地，SSE POST 与 WebSocket first-frame adapter 共用 endpoint/auth/redaction config
 [x] Flutter `/api/ag-ui-cancel` control client 已落地，2xx/404 视为 ack，5xx/network 不阻塞本地停止态
+[x] Flutter `AgentStreamRunState` reducer 已落地，UI/view model 可复用统一 streaming/finished/error/disconnected/cancelled 状态
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
