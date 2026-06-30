@@ -92,7 +92,8 @@ Fake contract status:
 [x] `PumpProtocolPlatform` fake command schema for native pump protocol methods
 [x] Flutter MethodChannel adapter tests for `MmcBle` BLE method schema and events
 [x] Android Kotlin MethodChannel handler shell for `MmcBle`
-[ ] Android real BLE scanner/GATT transport implementation for `MmcBle`
+[x] Android real BLE scan/getConnectedDevices transport implementation for `MmcBle`
+[ ] Android real GATT connect/read/write/notify transport implementation for `MmcBle`
 ```
 
 ### 4.2 `PumpSessionForegroundServicePlatform`

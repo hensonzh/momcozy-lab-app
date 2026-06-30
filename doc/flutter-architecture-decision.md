@@ -157,6 +157,7 @@ features/
 [x] Flutter 侧 Android MethodChannel adapters 已覆盖 `MmcBle` BLE 与 Pump foreground schema tests
 [x] Android Kotlin MethodChannel handler shell 已接入 `MmcBle` 与 Pump foreground channel，debug APK 构建通过
 [x] Android Pump foreground notification service 已接入 Flutter MethodChannel，debug APK 构建通过
+[x] Android `MmcBle` scan/getConnectedDevices 已接入 Flutter MethodChannel，debug APK 构建通过
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
