@@ -115,16 +115,17 @@ Fake contract status:
 必须支持：
 
 ```text
-[ ] configure base URL/token/user id
-[ ] sample current pump snapshot
-[ ] reset progress
-[ ] mark stop/pause source
-[ ] upload workstate
-[ ] get process data
-[ ] upload process
-[ ] upload milk record
-[ ] dedupe summary/milk record/Agent context
-[ ] report upload failure without leaking payload
+[x] fake method schema for configure base URL/token/user id
+[x] fake method schema for sample current pump snapshot
+[x] fake method schema for reset progress
+[x] fake method schema for mark stop/pause source
+[x] fake method schema for upload workstate
+[x] fake method schema for get process data
+[x] fake method schema for upload process
+[x] fake method schema for upload milk record
+[x] fake dedupe key coverage for summary/milk record/Agent context upload calls
+[x] fake failure stream reports upload failure without leaking sensitive payload
+[ ] Android platform channel implementation
 ```
 
 ### 4.4 `RouteIntentPlatform`

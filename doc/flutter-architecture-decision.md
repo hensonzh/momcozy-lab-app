@@ -149,7 +149,7 @@ features/
 [x] P0 native fake platform interfaces 已开始落地
 [x] Flutter BLE golden/parity tests 已移植
 [x] BLE / PumpProtocol / Pump foreground / Route fake method schemas 与 event streams 已测试
-[ ] `PumpAgentUploadPlatform` fake method schema 尚未补齐
+[x] `PumpAgentUploadPlatform` fake method schema、失败脱敏与 dedupe tests 已补齐
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

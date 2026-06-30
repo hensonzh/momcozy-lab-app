@@ -4,6 +4,10 @@ enum BlePermissionState { unknown, denied, granted }
 
 enum PumpSide { left, right }
 
+enum PumpAgentUploadSide { left, right, both }
+
+enum PumpAgentUploadSource { device, app, agent }
+
 enum PumpSessionNativeEventType {
   started,
   updated,
@@ -150,6 +154,93 @@ class PumpSessionNativeEvent {
   final PumpSessionNativeEventType type;
   final PumpSessionSnapshot? snapshot;
   final Map<String, Object?> payload;
+}
+
+class PumpAgentUploadProgress {
+  const PumpAgentUploadProgress({
+    this.processL = 0,
+    this.processR = 0,
+    this.processAll = 0,
+    this.elapsedSeconds = 0,
+  });
+
+  final int processL;
+  final int processR;
+  final int processAll;
+  final int elapsedSeconds;
+
+  Map<String, Object?> toMap() => {
+    'processL': processL,
+    'processR': processR,
+    'processAll': processAll,
+    'elapsedSeconds': elapsedSeconds,
+  };
+}
+
+class PumpAgentUploadCall {
+  const PumpAgentUploadCall({
+    required this.method,
+    this.payload = const <String, Object?>{},
+  });
+
+  final String method;
+  final Map<String, Object?> payload;
+}
+
+class PumpAgentUploadFailure {
+  const PumpAgentUploadFailure({
+    required this.method,
+    required this.code,
+    required this.message,
+    this.retryable = false,
+    this.payload = const <String, Object?>{},
+  });
+
+  final String method;
+  final String code;
+  final String message;
+  final bool retryable;
+  final Map<String, Object?> payload;
+}
+
+class PumpAgentUploadResult {
+  const PumpAgentUploadResult({
+    this.body = const <String, Object?>{},
+    this.response = const <String, Object?>{},
+    this.progress = const PumpAgentUploadProgress(),
+    this.deduped = false,
+  });
+
+  final Map<String, Object?> body;
+  final Map<String, Object?> response;
+  final PumpAgentUploadProgress progress;
+  final bool deduped;
+}
+
+abstract interface class PumpAgentUploadPlatform {
+  Stream<PumpAgentUploadCall> get calls;
+  Stream<PumpAgentUploadFailure> get failures;
+
+  Future<void> setConfig({
+    required String apiBaseUrl,
+    required String bearerToken,
+    required String userId,
+  });
+  Future<PumpAgentUploadProgress> sampleFromSnapshot();
+  Future<PumpAgentUploadProgress> resetProgress();
+  Future<void> markStepStop(PumpAgentUploadSide side);
+  Future<void> markStepPause(PumpAgentUploadSide side);
+  Future<void> setOperationSource(
+    PumpAgentUploadSide side,
+    PumpAgentUploadSource source,
+  );
+  Future<PumpAgentUploadResult> uploadWorkstate({required String userId});
+  Future<PumpAgentUploadResult> getProcessData({required String userId});
+  Future<PumpAgentUploadResult> uploadProcess({required String userId});
+  Future<PumpAgentUploadResult> uploadMilkRecord({
+    required String userId,
+    required int endedAtMs,
+  });
 }
 
 class PendingNativeRoute {
@@ -506,6 +597,165 @@ class FakePumpProtocolPlatform implements PumpProtocolPlatform {
   }
 }
 
+class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
+  PumpAgentUploadProgress progress = const PumpAgentUploadProgress();
+  final List<PumpAgentUploadCall> recordedCalls = [];
+  final List<PumpAgentUploadFailure> recordedFailures = [];
+  final Set<String> completedUploadKeys = <String>{};
+  final Set<String> dedupedUploadKeys = <String>{};
+  final StreamController<PumpAgentUploadCall> _callController =
+      StreamController<PumpAgentUploadCall>.broadcast();
+  final StreamController<PumpAgentUploadFailure> _failureController =
+      StreamController<PumpAgentUploadFailure>.broadcast();
+
+  @override
+  Stream<PumpAgentUploadCall> get calls => _callController.stream;
+
+  @override
+  Stream<PumpAgentUploadFailure> get failures => _failureController.stream;
+
+  @override
+  Future<void> setConfig({
+    required String apiBaseUrl,
+    required String bearerToken,
+    required String userId,
+  }) async {
+    _recordCall(
+      'setConfig',
+      payload: {
+        'apiBaseUrl': apiBaseUrl,
+        'bearerToken': bearerToken,
+        'userId': userId,
+      },
+      redactPayload: true,
+    );
+  }
+
+  @override
+  Future<PumpAgentUploadProgress> sampleFromSnapshot() async {
+    _recordCall('sampleFromSnapshot');
+    return progress;
+  }
+
+  @override
+  Future<PumpAgentUploadProgress> resetProgress() async {
+    progress = const PumpAgentUploadProgress();
+    _recordCall('resetProgress');
+    return progress;
+  }
+
+  @override
+  Future<void> markStepStop(PumpAgentUploadSide side) async {
+    _recordCall('markStepStop', payload: {'side': _uploadSideValue(side)});
+  }
+
+  @override
+  Future<void> markStepPause(PumpAgentUploadSide side) async {
+    _recordCall('markStepPause', payload: {'side': _uploadSideValue(side)});
+  }
+
+  @override
+  Future<void> setOperationSource(
+    PumpAgentUploadSide side,
+    PumpAgentUploadSource source,
+  ) async {
+    _recordCall(
+      'setOperationSource',
+      payload: {
+        'side': _uploadSideValue(side),
+        'source': _uploadSourceValue(source),
+      },
+    );
+  }
+
+  @override
+  Future<PumpAgentUploadResult> uploadWorkstate({
+    required String userId,
+  }) async {
+    return _recordUpload('uploadWorkstate', {'userId': userId});
+  }
+
+  @override
+  Future<PumpAgentUploadResult> getProcessData({required String userId}) async {
+    final body = <String, Object?>{'userId': userId};
+    _recordCall('getProcessData', payload: body);
+    return PumpAgentUploadResult(
+      body: Map<String, Object?>.unmodifiable(body),
+      response: const {'error': 0},
+      progress: progress,
+    );
+  }
+
+  @override
+  Future<PumpAgentUploadResult> uploadProcess({required String userId}) async {
+    return _recordUpload('uploadProcess', {'userId': userId});
+  }
+
+  @override
+  Future<PumpAgentUploadResult> uploadMilkRecord({
+    required String userId,
+    required int endedAtMs,
+  }) async {
+    return _recordUpload('uploadMilkRecord', {
+      'userId': userId,
+      'endedAtMs': endedAtMs,
+    });
+  }
+
+  void emitFailure({
+    required String method,
+    required String code,
+    required String message,
+    Map<String, Object?> payload = const <String, Object?>{},
+    bool retryable = false,
+  }) {
+    final failure = PumpAgentUploadFailure(
+      method: method,
+      code: code,
+      message: message,
+      retryable: retryable,
+      payload: _redactMap(payload),
+    );
+    recordedFailures.add(failure);
+    _failureController.add(failure);
+  }
+
+  Future<void> dispose() async {
+    await _callController.close();
+    await _failureController.close();
+  }
+
+  PumpAgentUploadResult _recordUpload(
+    String method,
+    Map<String, Object?> body,
+  ) {
+    final frozenBody = Map<String, Object?>.unmodifiable(body);
+    final key = '$method:${_stableValueKey(frozenBody)}';
+    final deduped = !completedUploadKeys.add(key);
+    if (deduped) dedupedUploadKeys.add(key);
+    _recordCall(method, payload: {...frozenBody, if (deduped) 'deduped': true});
+    return PumpAgentUploadResult(
+      body: frozenBody,
+      response: const {'error': 0},
+      progress: progress,
+      deduped: deduped,
+    );
+  }
+
+  void _recordCall(
+    String method, {
+    Map<String, Object?> payload = const <String, Object?>{},
+    bool redactPayload = false,
+  }) {
+    final safePayload = redactPayload
+        ? _redactMap(payload)
+        : Map<String, Object?>.unmodifiable(payload);
+    final call = PumpAgentUploadCall(method: method, payload: safePayload);
+    recordedCalls.add(call);
+    _callController.add(call);
+  }
+}
+
 class FakePumpSessionForegroundServicePlatform
     implements PumpSessionForegroundServicePlatform {
   FakePumpSessionForegroundServicePlatform({this.permissionGranted = true});
@@ -645,4 +895,63 @@ class FakeRouteIntentPlatform implements RouteIntentPlatform {
   Future<void> dispose() async {
     await _activeRouteController.close();
   }
+}
+
+String _uploadSideValue(PumpAgentUploadSide side) {
+  return switch (side) {
+    PumpAgentUploadSide.left => 'L',
+    PumpAgentUploadSide.right => 'R',
+    PumpAgentUploadSide.both => 'both',
+  };
+}
+
+String _uploadSourceValue(PumpAgentUploadSource source) {
+  return switch (source) {
+    PumpAgentUploadSource.device => 'device',
+    PumpAgentUploadSource.app => 'app',
+    PumpAgentUploadSource.agent => 'agent',
+  };
+}
+
+Map<String, Object?> _redactMap(Map<String, Object?> payload) {
+  return Map<String, Object?>.unmodifiable({
+    for (final entry in payload.entries)
+      entry.key: _isSensitiveKey(entry.key) ? '***' : _redactValue(entry.value),
+  });
+}
+
+Object? _redactValue(Object? value) {
+  if (value is Map) {
+    return Map<String, Object?>.unmodifiable({
+      for (final entry in value.entries)
+        '${entry.key}': _isSensitiveKey('${entry.key}')
+            ? '***'
+            : _redactValue(entry.value),
+    });
+  }
+  if (value is Iterable) {
+    return List<Object?>.unmodifiable(value.map(_redactValue));
+  }
+  return value;
+}
+
+bool _isSensitiveKey(String key) {
+  final normalized = key.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+  return normalized == 'authorization' ||
+      normalized == 'token' ||
+      normalized.endsWith('token') ||
+      normalized == 'userid' ||
+      normalized == 'conversationid' ||
+      normalized == 'sessionid';
+}
+
+String _stableValueKey(Object? value) {
+  if (value is Map) {
+    final keys = value.keys.map((key) => '$key').toList()..sort();
+    return '{${keys.map((key) => '$key:${_stableValueKey(value[key])}').join(',')}}';
+  }
+  if (value is Iterable) {
+    return '[${value.map(_stableValueKey).join(',')}]';
+  }
+  return '$value';
 }
