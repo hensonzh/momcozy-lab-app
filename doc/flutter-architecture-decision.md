@@ -179,6 +179,7 @@ features/
 [x] Flutter `AgentStreamRunState` reducer 已落地，UI/view model 可复用统一 streaming/finished/error/disconnected/cancelled 状态
 [x] Flutter `AgentStreamRunner` 已落地，UI/view model 只依赖 `AgentStreamClient` 和统一 run state，不判断 SSE/WebSocket transport
 [x] Flutter `/api/ag-ui-prewarm` control client 已落地，兼容 envelope/root object 和 snake/camel legacy aliases
+[x] Flutter `/api/ag-ui-timing-log` control client 已落地，best-effort failure 不影响 Agent stream 主流程
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

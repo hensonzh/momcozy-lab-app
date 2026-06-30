@@ -272,6 +272,90 @@ class AgentStreamPrewarmClient {
   }
 }
 
+class AgentStreamTimingLogEntry {
+  const AgentStreamTimingLogEntry({
+    required this.stage,
+    this.source,
+    this.runId,
+    this.threadId,
+    this.clientTimingId,
+    this.userId,
+    this.elapsedMs,
+    this.clientTsMs,
+    this.metadata = const <String, Object?>{},
+  });
+
+  final String stage;
+  final String? source;
+  final String? runId;
+  final String? threadId;
+  final String? clientTimingId;
+  final String? userId;
+  final int? elapsedMs;
+  final int? clientTsMs;
+  final Map<String, Object?> metadata;
+
+  Map<String, Object?> toMap() {
+    final normalizedStage = stage.trim();
+    if (normalizedStage.isEmpty) {
+      throw const AgentStreamPayloadException('Missing timing stage.');
+    }
+
+    return {
+      if (source?.trim().isNotEmpty ?? false) 'source': source!.trim(),
+      'stage': normalizedStage,
+      if (runId?.trim().isNotEmpty ?? false) 'run_id': runId!.trim(),
+      if (threadId?.trim().isNotEmpty ?? false) 'thread_id': threadId!.trim(),
+      if (clientTimingId?.trim().isNotEmpty ?? false)
+        'client_timing_id': clientTimingId!.trim(),
+      if (userId?.trim().isNotEmpty ?? false) 'user_id': userId!.trim(),
+      if (elapsedMs != null) 'elapsed_ms': elapsedMs,
+      if (clientTsMs != null) 'client_ts_ms': clientTsMs,
+      if (metadata.isNotEmpty) 'metadata': metadata,
+    };
+  }
+}
+
+class AgentStreamTimingLogResult {
+  const AgentStreamTimingLogResult({
+    required this.sent,
+    this.statusCode,
+    this.error,
+  });
+
+  final bool sent;
+  final int? statusCode;
+  final Object? error;
+}
+
+class AgentStreamTimingLogClient {
+  const AgentStreamTimingLogClient({
+    required this.endpoint,
+    this.connector = const _DefaultControlHttpConnector(),
+  });
+
+  final AgentStreamEndpoint endpoint;
+  final AgentStreamControlHttpConnector connector;
+
+  Future<AgentStreamTimingLogResult> post(
+    AgentStreamTimingLogEntry entry,
+  ) async {
+    try {
+      final response = await connector.post(
+        endpoint.uriWithToken,
+        headers: endpoint.requestHeaders(includeContentType: true),
+        body: jsonEncode(entry.toMap()),
+      );
+      return AgentStreamTimingLogResult(
+        sent: response.statusCode >= 200 && response.statusCode < 300,
+        statusCode: response.statusCode,
+      );
+    } catch (error) {
+      return AgentStreamTimingLogResult(sent: false, error: error);
+    }
+  }
+}
+
 abstract interface class AgentStreamSseConnector {
   Stream<String> post(
     Uri uri, {
