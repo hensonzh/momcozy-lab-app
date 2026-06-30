@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
+
 enum BlePermissionState { unknown, denied, granted }
 
 enum PumpSide { left, right }
@@ -714,7 +716,7 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
       code: code,
       message: message,
       retryable: retryable,
-      payload: _redactMap(payload),
+      payload: redactLogMap(payload),
     );
     recordedFailures.add(failure);
     _failureController.add(failure);
@@ -748,7 +750,7 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
     bool redactPayload = false,
   }) {
     final safePayload = redactPayload
-        ? _redactMap(payload)
+        ? redactLogMap(payload)
         : Map<String, Object?>.unmodifiable(payload);
     final call = PumpAgentUploadCall(method: method, payload: safePayload);
     recordedCalls.add(call);
@@ -911,38 +913,6 @@ String _uploadSourceValue(PumpAgentUploadSource source) {
     PumpAgentUploadSource.app => 'app',
     PumpAgentUploadSource.agent => 'agent',
   };
-}
-
-Map<String, Object?> _redactMap(Map<String, Object?> payload) {
-  return Map<String, Object?>.unmodifiable({
-    for (final entry in payload.entries)
-      entry.key: _isSensitiveKey(entry.key) ? '***' : _redactValue(entry.value),
-  });
-}
-
-Object? _redactValue(Object? value) {
-  if (value is Map) {
-    return Map<String, Object?>.unmodifiable({
-      for (final entry in value.entries)
-        '${entry.key}': _isSensitiveKey('${entry.key}')
-            ? '***'
-            : _redactValue(entry.value),
-    });
-  }
-  if (value is Iterable) {
-    return List<Object?>.unmodifiable(value.map(_redactValue));
-  }
-  return value;
-}
-
-bool _isSensitiveKey(String key) {
-  final normalized = key.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
-  return normalized == 'authorization' ||
-      normalized == 'token' ||
-      normalized.endsWith('token') ||
-      normalized == 'userid' ||
-      normalized == 'conversationid' ||
-      normalized == 'sessionid';
 }
 
 String _stableValueKey(Object? value) {

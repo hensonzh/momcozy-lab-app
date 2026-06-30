@@ -612,6 +612,8 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 必须覆盖：
 
 ```text
+[x] Flutter 统一日志脱敏工具和测试已落地：`core/privacy/log_redactor.dart`
+[x] 上传失败日志脱敏：`PumpAgentUploadPlatform` fake failure stream
 [ ] token 存储在 secure storage 或明确的安全边界内
 [ ] HTTP/SSE 使用 HTTPS，WebSocket 使用 WSS，开发环境例外必须隔离
 [ ] 日志不输出 token
@@ -619,9 +621,10 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [ ] crash report 不包含敏感字段
 [ ] 多用户切换时清理 scoped cache
 [ ] 登出后清理本地敏感状态
-[ ] 上传失败日志脱敏
 [ ] screenshot/golden fixtures 不包含真实用户数据
 ```
+
+详细准入见 `doc/flutter-security-privacy-gates.md`。
 
 ---
 
@@ -686,7 +689,7 @@ CI 最低要求：
 [x] BLE protocol fixtures 完成
 [x] AG-UI stream fixtures 完成，并覆盖 SSE/WebSocket adapter
 [x] Native bridge contracts 完成
-[ ] Security/privacy gates 完成
+[x] Security/privacy gates 已定义，P0 redaction tests 已落地
 [x] P0 真机 smoke checklist 可执行
 [x] 真泵验证计划确认
 ```

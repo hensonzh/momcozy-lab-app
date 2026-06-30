@@ -53,6 +53,7 @@ Current Dart test coverage:
 
 - AG-UI stream fixtures parse equivalently across JSONL, SSE eventstream, and WebSocket frame forms.
 - API envelope fixtures distinguish success, business errors, HTTP errors, and legacy snake/camel aliases.
+- Privacy fixtures cover shared log redaction for sensitive keys and URL query parameters.
 - BLE fixtures cover request packet goldens, standalone hex files, valid/invalid frame parsing, parser edge cases, cross-platform parity cases, and side mapping.
 - Storage migration fixtures cover valid core state and malformed legacy fallback.
 - Route intent fixtures cover native notification navigation plus unsafe/unknown fallback routes.
