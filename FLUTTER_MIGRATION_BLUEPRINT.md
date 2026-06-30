@@ -515,7 +515,7 @@ AgentHub UI
 [ ] Flutter debug build 可安装
 [x] Android release build 可生成，当前 P0 使用 debug signing
 [ ] 核心 route shell 可导航
-[ ] 本地 storage migration 可 dry-run
+[x] 本地 storage migration 可 dry-run
 [ ] Platform channel smoke test 可跑通
 ```
 
