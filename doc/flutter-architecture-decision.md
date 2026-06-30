@@ -168,6 +168,7 @@ features/
 [x] `PumpAgentUploadSnapshotSync` 已接入，把实时 pump snapshot 串行同步给 upload platform
 [x] `BlePumpProtocolPlatform` 已接入 Flutter BLE transport，覆盖 protocol command golden writes 与缺失状态 guard
 [x] `PumpNativeRuntimeCoordinator` 已组合 snapshot binding、upload sync 与 BLE protocol state resolver
+[x] Android pump process frame history 已与 legacy `PumpAgentNativeStore` 20 帧窗口对齐
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
