@@ -63,6 +63,7 @@ class MainActivity : FlutterActivity() {
             )
         }
         pumpAgentUploadChannel.setMethodCallHandler(pumpAgentUploadHandler::handle)
+        handleLaunchNavigationIntent(intent)
     }
 
     private fun handleMmcBleCall(call: MethodCall, result: MethodChannel.Result) {
@@ -108,6 +109,12 @@ class MainActivity : FlutterActivity() {
         super.onDestroy()
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleLaunchNavigationIntent(intent)
+    }
+
     private fun handlePumpNotificationCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "requestPermission" -> {
@@ -125,7 +132,9 @@ class MainActivity : FlutterActivity() {
                         this,
                         state,
                         processAll,
-                        elapsedSeconds
+                        elapsedSeconds,
+                        call.argument<Int>("leftMilkMl"),
+                        call.argument<Int>("rightMilkMl")
                     )
                     pumpAgentBackgroundRunner.startOrUpdate(state, elapsedSeconds)
                 } else {
@@ -140,11 +149,32 @@ class MainActivity : FlutterActivity() {
                 result.success(null)
             }
             "showCompletionNotice",
-            "showAutoEndNotice",
-            "enqueuePendingNavigate" -> result.success(null)
-            "consumePendingNavigate" -> result.success(mapOf("path" to ""))
-            "restoreSnapshot" -> result.success(null)
+            "showAutoEndNotice" -> result.success(null)
+            "enqueuePendingNavigate" -> {
+                val args = call.argumentsMap()
+                PumpNavigationBridge.setPending(
+                    args.stringValue("path"),
+                    args.boolValue("autoEndTeardown"),
+                    args.mapValue("notifyJson")?.toStringMap()
+                )
+                result.success(null)
+            }
+            "consumePendingNavigate" -> {
+                result.success(PumpNavigationBridge.consumePending().toMap())
+            }
+            "restoreSnapshot" -> result.success(PumpSessionForegroundService.restoreSnapshot())
             else -> result.notImplemented()
+        }
+    }
+
+    private fun handleLaunchNavigationIntent(intent: Intent?) {
+        if (intent == null) return
+        val path = intent.getStringExtra(EXTRA_NAV_PATH)
+        val autoEndTeardown = intent.getBooleanExtra(EXTRA_AUTO_END_TEARDOWN, false)
+        intent.removeExtra(EXTRA_NAV_PATH)
+        intent.removeExtra(EXTRA_AUTO_END_TEARDOWN)
+        if (!path.isNullOrBlank()) {
+            PumpNavigationBridge.setPending(path, autoEndTeardown)
         }
     }
 
@@ -663,6 +693,33 @@ class MainActivity : FlutterActivity() {
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 
+    private fun MethodCall.argumentsMap(): Map<*, *> {
+        return arguments as? Map<*, *> ?: emptyMap<String, Any?>()
+    }
+
+    private fun Map<*, *>.mapValue(key: String): Map<*, *>? {
+        return this[key] as? Map<*, *>
+    }
+
+    private fun Map<*, *>.stringValue(key: String, fallback: String = ""): String {
+        return this[key]?.toString()?.trim().takeUnless { it.isNullOrEmpty() } ?: fallback
+    }
+
+    private fun Map<*, *>.boolValue(key: String, fallback: Boolean = false): Boolean {
+        return when (val value = this[key]) {
+            is Boolean -> value
+            is Number -> value.toInt() != 0
+            is String -> value.equals("true", ignoreCase = true) || value == "1"
+            else -> fallback
+        }
+    }
+
+    private fun Map<*, *>.toStringMap(): Map<String, Any?> {
+        return entries.associate { entry ->
+            entry.key.toString() to entry.value
+        }
+    }
+
     companion object {
         private val CLIENT_CHARACTERISTIC_CONFIG =
             UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
@@ -673,5 +730,7 @@ class MainActivity : FlutterActivity() {
             "com.momcozymai.flutter/pump_agent_upload"
         private const val REQUEST_BLE_PERMISSIONS = 4101
         private const val REQUEST_NOTIFICATION_PERMISSION = 4102
+        const val EXTRA_NAV_PATH = "momcozy.flutter.extra.NAV_PATH"
+        const val EXTRA_AUTO_END_TEARDOWN = "momcozy.flutter.extra.AUTO_END_TEARDOWN"
     }
 }

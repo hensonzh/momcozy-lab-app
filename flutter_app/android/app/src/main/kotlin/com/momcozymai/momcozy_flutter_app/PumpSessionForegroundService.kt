@@ -25,6 +25,9 @@ class PumpSessionForegroundService : Service() {
         val state = safeState(intent?.getStringExtra(EXTRA_STATE))
         val processAll = clampProgress(intent?.getIntExtra(EXTRA_PROCESS_ALL, 0) ?: 0)
         val elapsedSeconds = (intent?.getIntExtra(EXTRA_ELAPSED_SECONDS, 0) ?: 0).coerceAtLeast(0)
+        val leftMilkMl = (intent?.getIntExtra(EXTRA_LEFT_MILK_ML, 0) ?: 0).coerceAtLeast(0)
+        val rightMilkMl = (intent?.getIntExtra(EXTRA_RIGHT_MILK_ML, 0) ?: 0).coerceAtLeast(0)
+        updateSnapshot(state, elapsedSeconds, leftMilkMl, rightMilkMl)
         startForeground(
             NOTIFICATION_ID,
             buildProgressNotification(state, processAll, elapsedSeconds)
@@ -43,6 +46,7 @@ class PumpSessionForegroundService : Service() {
         }
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.cancel(NOTIFICATION_ID)
+        clearSnapshot()
         stopSelf()
     }
 
@@ -53,6 +57,7 @@ class PumpSessionForegroundService : Service() {
     ): Notification {
         val launchIntent = Intent(this, MainActivity::class.java)
         launchIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        launchIntent.putExtra(MainActivity.EXTRA_NAV_PATH, "/pump")
         val pendingIntent = PendingIntent.getActivity(
             this,
             1001,
@@ -105,23 +110,41 @@ class PumpSessionForegroundService : Service() {
         const val EXTRA_STATE = "state"
         const val EXTRA_PROCESS_ALL = "process_all"
         const val EXTRA_ELAPSED_SECONDS = "elapsed_seconds"
+        const val EXTRA_LEFT_MILK_ML = "left_milk_ml"
+        const val EXTRA_RIGHT_MILK_ML = "right_milk_ml"
 
         private const val CHANNEL_ID = "momcozy_flutter_pump_session_progress"
         private const val CHANNEL_NAME = "Pump session progress"
         private const val CHANNEL_DESCRIPTION = "Foreground pump session progress"
         private const val NOTIFICATION_ID = 21002
+        private val SNAPSHOT_LOCK = Any()
+        private var snapshotActive = false
+        private var snapshotElapsedSeconds = 0
+        private var snapshotLeftMilkMl = 0
+        private var snapshotRightMilkMl = 0
+        private var snapshotPaused = false
 
         fun startOrUpdate(
             context: Context,
             state: String,
             processAll: Int,
-            elapsedSeconds: Int
+            elapsedSeconds: Int,
+            leftMilkMl: Int? = null,
+            rightMilkMl: Int? = null
         ) {
+            updateSnapshot(
+                safeState(state),
+                elapsedSeconds.coerceAtLeast(0),
+                leftMilkMl,
+                rightMilkMl
+            )
             val intent = Intent(context, PumpSessionForegroundService::class.java)
             intent.action = ACTION_START_OR_UPDATE
             intent.putExtra(EXTRA_STATE, safeState(state))
             intent.putExtra(EXTRA_PROCESS_ALL, clampProgress(processAll))
             intent.putExtra(EXTRA_ELAPSED_SECONDS, elapsedSeconds.coerceAtLeast(0))
+            intent.putExtra(EXTRA_LEFT_MILK_ML, leftMilkMl ?: snapshotField("leftMilkMl"))
+            intent.putExtra(EXTRA_RIGHT_MILK_ML, rightMilkMl ?: snapshotField("rightMilkMl"))
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {
@@ -132,7 +155,59 @@ class PumpSessionForegroundService : Service() {
         fun stop(context: Context) {
             val intent = Intent(context, PumpSessionForegroundService::class.java)
             intent.action = ACTION_STOP
+            clearSnapshot()
             context.startService(intent)
+        }
+
+        fun restoreSnapshot(): Map<String, Any?>? {
+            return synchronized(SNAPSHOT_LOCK) {
+                if (!snapshotActive) {
+                    null
+                } else {
+                    mapOf(
+                        "active" to true,
+                        "elapsedSeconds" to snapshotElapsedSeconds,
+                        "leftMilkMl" to snapshotLeftMilkMl,
+                        "rightMilkMl" to snapshotRightMilkMl,
+                        "paused" to snapshotPaused
+                    )
+                }
+            }
+        }
+
+        private fun updateSnapshot(
+            state: String,
+            elapsedSeconds: Int,
+            leftMilkMl: Int?,
+            rightMilkMl: Int?
+        ) {
+            synchronized(SNAPSHOT_LOCK) {
+                snapshotActive = true
+                snapshotElapsedSeconds = elapsedSeconds.coerceAtLeast(0)
+                snapshotLeftMilkMl = leftMilkMl?.coerceAtLeast(0) ?: snapshotLeftMilkMl
+                snapshotRightMilkMl = rightMilkMl?.coerceAtLeast(0) ?: snapshotRightMilkMl
+                snapshotPaused = safeState(state) == "paused"
+            }
+        }
+
+        private fun clearSnapshot() {
+            synchronized(SNAPSHOT_LOCK) {
+                snapshotActive = false
+                snapshotElapsedSeconds = 0
+                snapshotLeftMilkMl = 0
+                snapshotRightMilkMl = 0
+                snapshotPaused = false
+            }
+        }
+
+        private fun snapshotField(name: String): Int {
+            return synchronized(SNAPSHOT_LOCK) {
+                when (name) {
+                    "leftMilkMl" -> snapshotLeftMilkMl
+                    "rightMilkMl" -> snapshotRightMilkMl
+                    else -> 0
+                }
+            }
         }
 
         private fun safeState(state: String?): String {
