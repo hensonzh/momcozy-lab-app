@@ -26,6 +26,7 @@ import java.util.UUID
 
 class MainActivity : FlutterActivity() {
     private lateinit var mmcBleChannel: MethodChannel
+    private lateinit var pumpNotificationChannel: MethodChannel
     private lateinit var pumpAgentUploadHandler: PumpAgentUploadChannelHandler
     private lateinit var pumpAgentBackgroundRunner: PumpAgentBackgroundRunner
     private var scanCallback: ScanCallback? = null
@@ -43,10 +44,11 @@ class MainActivity : FlutterActivity() {
             MMC_BLE_CHANNEL
         )
         mmcBleChannel.setMethodCallHandler(::handleMmcBleCall)
-        MethodChannel(
+        pumpNotificationChannel = MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             PUMP_NOTIFICATION_CHANNEL
-        ).setMethodCallHandler(::handlePumpNotificationCall)
+        )
+        pumpNotificationChannel.setMethodCallHandler(::handlePumpNotificationCall)
         val pumpAgentUploadChannel = MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             PUMP_AGENT_UPLOAD_CHANNEL
@@ -186,8 +188,19 @@ class MainActivity : FlutterActivity() {
         intent.removeExtra(EXTRA_NAV_PATH)
         intent.removeExtra(EXTRA_AUTO_END_TEARDOWN)
         if (!path.isNullOrBlank()) {
-            PumpNavigationBridge.setPending(path, autoEndTeardown)
+            val route = PumpNavigationBridge.PendingNavigate(path, autoEndTeardown)
+            PumpNavigationBridge.setPending(
+                route.path,
+                route.autoEndTeardown,
+                route.notifyJson
+            )
+            emitActiveRoute(route)
         }
+    }
+
+    private fun emitActiveRoute(route: PumpNavigationBridge.PendingNavigate) {
+        if (!::pumpNotificationChannel.isInitialized) return
+        pumpNotificationChannel.invokeMethod("activeRoute", route.toMap())
     }
 
     private fun requestBlePermissionsIfNeeded() {

@@ -265,14 +265,7 @@ class AndroidPumpSessionForegroundServicePlatform
     final result = await _channel.invokeMethod<Object?>(
       'consumePendingNavigate',
     );
-    final map = _mapFrom(result);
-    final path = _nullableString(map['path']);
-    if (path == null || path.isEmpty) return null;
-    return PendingNativeRoute(
-      path: path,
-      notifyJson: _nullableMap(map['notifyJson']),
-      autoEndTeardown: map['autoEndTeardown'] == true,
-    );
+    return _pendingNativeRouteFromMap(_mapFrom(result));
   }
 
   @override
@@ -307,6 +300,51 @@ class AndroidPumpSessionForegroundServicePlatform
       'paused': snapshot.paused,
       'processAll': snapshot.active ? 0 : 100,
     };
+  }
+}
+
+class AndroidRouteIntentPlatform implements RouteIntentPlatform {
+  AndroidRouteIntentPlatform({MethodChannel? channel})
+    : _channel =
+          channel ??
+          const MethodChannel(defaultPumpSessionNotificationChannelName) {
+    _channel.setMethodCallHandler(_handleNativeMethodCall);
+  }
+
+  final MethodChannel _channel;
+  final StreamController<PendingNativeRoute> _activeRouteController =
+      StreamController<PendingNativeRoute>.broadcast();
+
+  @override
+  Stream<PendingNativeRoute> get activeRoutes => _activeRouteController.stream;
+
+  @override
+  Future<void> enqueuePendingRoute(PendingNativeRoute route) async {
+    await _channel.invokeMethod<void>('enqueuePendingNavigate', route.toMap());
+  }
+
+  @override
+  Future<PendingNativeRoute?> consumePendingRoute() async {
+    final result = await _channel.invokeMethod<Object?>(
+      'consumePendingNavigate',
+    );
+    return _pendingNativeRouteFromMap(_mapFrom(result));
+  }
+
+  @override
+  void dispatchActiveRoute(PendingNativeRoute route) {
+    _activeRouteController.add(route);
+  }
+
+  Future<void> dispose() async {
+    _channel.setMethodCallHandler(null);
+    await _activeRouteController.close();
+  }
+
+  Future<void> _handleNativeMethodCall(MethodCall call) async {
+    if (call.method != 'activeRoute') return;
+    final route = _pendingNativeRouteFromMap(_mapFrom(call.arguments));
+    if (route != null) _activeRouteController.add(route);
   }
 }
 
@@ -516,6 +554,16 @@ PumpAgentUploadResult _uploadResultFromMap(Map<String, Object?> map) {
     response: _mapFrom(map['response']),
     progress: _progressFromMap(map),
     deduped: map['deduped'] == true,
+  );
+}
+
+PendingNativeRoute? _pendingNativeRouteFromMap(Map<String, Object?> map) {
+  final path = _nullableString(map['path']);
+  if (path == null || path.isEmpty) return null;
+  return PendingNativeRoute(
+    path: path,
+    notifyJson: _nullableMap(map['notifyJson']),
+    autoEndTeardown: map['autoEndTeardown'] == true,
   );
 }
 
