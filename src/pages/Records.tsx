@@ -34,6 +34,14 @@ const milkTypeBadge: Record<string, { label: string; className: string }> = {
   "瓶喂":   { label: "🍼 瓶喂", className: "bg-primary/10 text-primary" },
 };
 
+type StageTickProps = {
+  x?: number;
+  y?: number;
+  payload?: {
+    value?: number;
+  };
+};
+
 function getMilkType(r: PumpRecord): string {
   if (r.subLabel === "配方奶") return "配方奶";
   if (r.subLabel === "亲喂") return "亲喂";
@@ -390,7 +398,7 @@ const Records: React.FC = () => {
                     domain={volUnit === "oz" ? [0, 42] : [0, 1200]}
                     ticks={volUnit === "oz" ? [1.7, 14.4, 33.7] : [50, 425, 975]}
                     width={40}
-                    tick={({ x, y, payload }: any) => {
+                    tick={({ x = 0, y = 0, payload }: StageTickProps) => {
                       const mlLabels: Record<number, string> = { 50: "启动期", 425: "建立期", 975: "供需平衡" };
                       const ozLabels: Record<number, string> = { 1.7: "启动期", 14.4: "建立期", 33.7: "供需平衡" };
                       const labels = volUnit === "oz" ? ozLabels : mlLabels;
@@ -398,8 +406,8 @@ const Records: React.FC = () => {
                         ? { 1.7: "hsl(var(--mai-warm))", 14.4: "hsl(var(--primary))", 33.7: "hsl(var(--mai-glow))" }
                         : { 50: "hsl(var(--mai-warm))", 425: "hsl(var(--primary))", 975: "hsl(var(--mai-glow))" };
                       return (
-                        <text x={x} y={y} textAnchor="start" fontSize={8} fill={colors[payload.value]} fontWeight={600} dy={3} dx={4}>
-                          {labels[payload.value] || ""}
+                        <text x={x} y={y} textAnchor="start" fontSize={8} fill={colors[payload?.value ?? 0]} fontWeight={600} dy={3} dx={4}>
+                          {labels[payload?.value ?? 0] || ""}
                         </text>
                       );
                     }}

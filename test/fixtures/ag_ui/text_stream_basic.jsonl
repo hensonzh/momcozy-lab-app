@@ -1,0 +1,6 @@
+{"type":"RUN_STARTED","thread_id":"thread-fixture-001","run_id":"run-fixture-text-001","message_id":"msg-reply-text-001","metadata":{"status":"Loading relevant context.","loaded_skill_ids":["momcozy.pump_session"]}}
+{"type":"TEXT_MESSAGE_START","thread_id":"thread-fixture-001","run_id":"run-fixture-text-001","message_id":"msg-reply-text-001","role":"assistant"}
+{"type":"TEXT_MESSAGE_CONTENT","thread_id":"thread-fixture-001","run_id":"run-fixture-text-001","message_id":"msg-reply-text-001","delta":"I can help "}
+{"type":"TEXT_MESSAGE_CONTENT","thread_id":"thread-fixture-001","run_id":"run-fixture-text-001","message_id":"msg-reply-text-001","delta":"you review today's pumping pattern."}
+{"type":"TEXT_MESSAGE_END","thread_id":"thread-fixture-001","run_id":"run-fixture-text-001","message_id":"msg-reply-text-001"}
+{"type":"RUN_FINISHED","thread_id":"thread-fixture-001","run_id":"run-fixture-text-001","message_id":"msg-reply-text-001","thread_state":{"turn_count":1}}

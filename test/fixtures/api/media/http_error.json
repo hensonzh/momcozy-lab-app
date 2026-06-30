@@ -1,0 +1,25 @@
+{
+  "domain": "media",
+  "endpoint": "/v1/files/upload",
+  "method": "POST multipart",
+  "request": {
+    "fields": {
+      "user_id": "demo-user-fixture"
+    },
+    "file": {
+      "name": "pump-display-fixture.png",
+      "mime_type": "image/png",
+      "size": 68
+    }
+  },
+  "variant": "http_error",
+  "response": {
+    "http_status": 502,
+    "status_text": "Bad Gateway",
+    "request_id": "req-fixture-media-http-error",
+    "body": {
+      "error": "bad_gateway",
+      "message": "media upstream unavailable"
+    }
+  }
+}

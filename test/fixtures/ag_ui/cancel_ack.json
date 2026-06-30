@@ -1,0 +1,7 @@
+{
+  "status": "cancelled",
+  "threadId": "thread-fixture-001",
+  "runId": "run-fixture-tool-001",
+  "cancelled": true,
+  "reason": "user_cancelled"
+}

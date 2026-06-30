@@ -1,0 +1,25 @@
+{
+  "domain": "pregnancy_diary",
+  "endpoint": "/v1/pregnancy-diary/today",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "date": "2026-06-29"
+    }
+  },
+  "variant": "success",
+  "response": {
+    "status": 200,
+    "message": "success",
+    "data": {
+      "error": 0,
+      "entry": {
+        "id": "diary-001",
+        "mood": "steady",
+        "note": "Short fixture note.",
+        "date": "2026-06-29"
+      }
+    }
+  }
+}

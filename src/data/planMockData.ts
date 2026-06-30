@@ -80,7 +80,9 @@ export const getCurrentGoal = (): { planId: string; label: string; summary: stri
   try {
     const stored = localStorage.getItem("currentLactationGoal");
     if (stored) return JSON.parse(stored);
-  } catch {}
+  } catch {
+    return { planId: "maintain", label: "维持奶量", summary: "近7天日均580ml，节奏稳定 💪" };
+  }
   return { planId: "maintain", label: "维持奶量", summary: "近7天日均580ml，节奏稳定 💪" };
 };
 

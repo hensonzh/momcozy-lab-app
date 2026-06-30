@@ -1,0 +1,25 @@
+{
+  "domain": "media",
+  "endpoint": "/v1/files/upload",
+  "method": "POST multipart",
+  "request": {
+    "fields": {
+      "user_id": "demo-user-fixture"
+    },
+    "file": {
+      "name": "pump-display-fixture.png",
+      "mime_type": "image/png",
+      "size": 68
+    }
+  },
+  "variant": "business_error",
+  "response": {
+    "status": 40001,
+    "message": "media fixture business error",
+    "data": {
+      "error": -1,
+      "code": "MEDIA_BUSINESS_ERROR",
+      "retryable": false
+    }
+  }
+}

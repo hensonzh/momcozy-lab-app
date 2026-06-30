@@ -1,0 +1,26 @@
+{
+  "domain": "mom_baby",
+  "endpoint": "/v1/mom-baby/info/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture"
+    }
+  },
+  "variant": "success",
+  "response": {
+    "status": 200,
+    "message": "success",
+    "data": {
+      "error": 0,
+      "mom": {
+        "stage": "postpartum",
+        "postpartum_day": 42
+      },
+      "baby": {
+        "age_days": 42,
+        "nickname": "Baby"
+      }
+    }
+  }
+}

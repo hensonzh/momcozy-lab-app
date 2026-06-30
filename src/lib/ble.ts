@@ -511,7 +511,7 @@ export function sendProtocolReq(
     return Promise.reject(new Error(`duplicate pending REQ cid=0x${cid.toString(16)}`));
   }
 
-  return new Promise<SendProtocolReqResult>(async (resolve, reject) => {
+  return new Promise<SendProtocolReqResult>((resolve, reject) => {
     const entry: PendingEntry = { resolve, reject, timeoutId: null };
     byDevice!.set(cid, entry);
 
@@ -572,14 +572,14 @@ export function sendProtocolReq(
 
     // 确保通知通道建立后再发送指令
     console.log(`[BLE通知订阅] 设备 ${deviceId} 开始建立通知订阅`);
-    await ensureProtocolNotify(deviceId).catch((e) => {
+    ensureProtocolNotify(deviceId).catch((e) => {
       console.warn(`[BLE通知订阅] 设备 ${deviceId} 建立通知订阅失败:`, e);
       // 通知订阅失败不影响指令发送，只是可能收不到响应
+    }).finally(() => {
+      console.log(`[BLE通知订阅] 设备 ${deviceId} 通知订阅建立完成`);
+      // 通知通道建立后发送指令
+      run();
     });
-    console.log(`[BLE通知订阅] 设备 ${deviceId} 通知订阅建立完成`);
-
-    // 通知通道建立后发送指令
-    run();
   });
 }
 
@@ -610,7 +610,7 @@ export function sendProtocolFrame(
     return Promise.reject(new Error(`duplicate pending frame cid=0x${cid.toString(16)}`));
   }
 
-  return new Promise<Uint8Array>(async (resolve, reject) => {
+  return new Promise<Uint8Array>((resolve, reject) => {
     const entry: PendingFrameEntry = {
       cid,
       acceptCts,
@@ -668,8 +668,7 @@ export function sendProtocolFrame(
         });
     };
 
-    await ensureProtocolNotify(deviceId).catch(() => {});
-    run();
+    ensureProtocolNotify(deviceId).catch(() => {}).finally(run);
   });
 }
 

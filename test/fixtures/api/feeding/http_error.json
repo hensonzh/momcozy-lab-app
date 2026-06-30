@@ -1,0 +1,21 @@
+{
+  "domain": "feeding",
+  "endpoint": "/v1/feeding/record/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "date": "2026-06-29"
+    }
+  },
+  "variant": "http_error",
+  "response": {
+    "http_status": 502,
+    "status_text": "Bad Gateway",
+    "request_id": "req-fixture-feeding-http-error",
+    "body": {
+      "error": "bad_gateway",
+      "message": "feeding upstream unavailable"
+    }
+  }
+}

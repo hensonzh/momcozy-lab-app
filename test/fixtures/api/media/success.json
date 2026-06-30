@@ -1,0 +1,27 @@
+{
+  "domain": "media",
+  "endpoint": "/v1/files/upload",
+  "method": "POST multipart",
+  "request": {
+    "fields": {
+      "user_id": "demo-user-fixture"
+    },
+    "file": {
+      "name": "pump-display-fixture.png",
+      "mime_type": "image/png",
+      "size": 68
+    }
+  },
+  "variant": "success",
+  "response": {
+    "status": 200,
+    "message": "success",
+    "data": {
+      "id": "file-001",
+      "name": "pump-display-fixture.png",
+      "size": 68,
+      "extension": "png",
+      "mime_type": "image/png"
+    }
+  }
+}

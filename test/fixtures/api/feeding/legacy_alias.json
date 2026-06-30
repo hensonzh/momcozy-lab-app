@@ -1,0 +1,27 @@
+{
+  "domain": "feeding",
+  "endpoint": "/v1/feeding/record/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "date": "2026-06-29"
+    }
+  },
+  "variant": "legacy_alias",
+  "response": {
+    "status": 200,
+    "message": "legacy_alias",
+    "data": {
+      "error": 0,
+      "list": [
+        {
+          "recordId": "feeding-001",
+          "feedingType": "breast_milk",
+          "amountMl": 80,
+          "occurredAt": "2026-06-29T08:00:00Z"
+        }
+      ]
+    }
+  }
+}

@@ -585,6 +585,7 @@ const FinalResultBlock: React.FC<{
       appliedRef.current = true;
       doApply(results);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- finalResult 挂载时应用一次当前结果；补依赖会重复写入校准结果
   }, []);
 
   useEffect(() => {
@@ -606,6 +607,7 @@ const FinalResultBlock: React.FC<{
       });
     }, 1000);
     return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 倒计时按 finalResult 挂载启动一次；补 results/navigate 会重置自动启动时序
   }, [mockMode]);
 
   const testedSide = results.L ? "L" : "R";

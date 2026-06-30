@@ -1,0 +1,30 @@
+{
+  "domain": "pump",
+  "endpoint": "/v1/pump/workstate",
+  "method": "POST",
+  "request": {
+    "user_id": "demo-user-fixture",
+    "device_left": {
+      "state": 1,
+      "mode": "deep",
+      "level": 6
+    },
+    "device_right": {
+      "state": 0,
+      "mode": "stimulate",
+      "level": 3
+    }
+  },
+  "variant": "success",
+  "response": {
+    "status": 200,
+    "message": "success",
+    "data": {
+      "error": 0,
+      "need_reply": true,
+      "output": "Pump state received.",
+      "reply_code": "pump_state_changed",
+      "reply_side": "left"
+    }
+  }
+}

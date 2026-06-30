@@ -1,0 +1,27 @@
+{
+  "domain": "agent_chat",
+  "endpoint": "/api/ag-ui-prewarm",
+  "method": "POST",
+  "request": {
+    "threadId": "thread-fixture-001",
+    "runId": "run-api-agent-001",
+    "messages": [
+      {
+        "id": "msg-user-001",
+        "role": "user",
+        "content": "Hello"
+      }
+    ]
+  },
+  "variant": "legacy_alias",
+  "response": {
+    "status": 200,
+    "message": "legacy_alias",
+    "data": {
+      "status": "warmed",
+      "threadId": "thread-fixture-001",
+      "runId": "run-api-agent-001",
+      "responseId": "resp-fixture-001"
+    }
+  }
+}

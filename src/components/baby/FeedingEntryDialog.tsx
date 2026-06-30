@@ -49,33 +49,35 @@ const FeedingEntryDialog: React.FC<FeedingEntryDialogProps> = ({
   }, [open]);
 
   useEffect(() => {
-    if (editRecord) {
-      if (editRecord.subLabel === "亲喂") {
-        setFeedingType("亲喂");
-        setValue(editRecord.durationMin > 0 ? String(editRecord.durationMin) : "");
-        setFeedStartTime(editRecord.time || "08:00");
-      } else if (editRecord.subLabel === "配方奶") {
-        setFeedingType("配方奶");
-        const val = volUnit === "oz" ? +(editRecord.totalMl * 0.033814).toFixed(1) : editRecord.totalMl;
-        setValue(val > 0 ? String(val) : "");
-      } else {
-        setFeedingType("瓶喂母乳");
-        const val = volUnit === "oz" ? +(editRecord.totalMl * 0.033814).toFixed(1) : editRecord.totalMl;
-        setValue(val > 0 ? String(val) : "");
-      }
-    } else {
+    if (!open || !editRecord) return;
+    if (editRecord.subLabel === "亲喂") {
+      setFeedingType("亲喂");
+      setValue(editRecord.durationMin > 0 ? String(editRecord.durationMin) : "");
+      setFeedStartTime(editRecord.time || "08:00");
+    } else if (editRecord.subLabel === "配方奶") {
       setFeedingType("配方奶");
-      setValue("");
-      const raw = (defaultTime ?? "").trim();
-      const m = raw.match(/^(\d{1,2}):(\d{2})/);
-      const fromPreset =
-        m &&
-        `${String(Number(m[1])).padStart(2, "0")}:${String(Number(m[2])).padStart(2, "0")}`;
-      const now = new Date();
-      const nowStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-      setFeedStartTime(fromPreset || nowStr);
+      const val = volUnit === "oz" ? +(editRecord.totalMl * 0.033814).toFixed(1) : editRecord.totalMl;
+      setValue(val > 0 ? String(val) : "");
+    } else {
+      setFeedingType("瓶喂母乳");
+      const val = volUnit === "oz" ? +(editRecord.totalMl * 0.033814).toFixed(1) : editRecord.totalMl;
+      setValue(val > 0 ? String(val) : "");
     }
-  }, [editRecord, open, defaultTime]);
+  }, [editRecord, open, volUnit]);
+
+  useEffect(() => {
+    if (!open || editRecord) return;
+    setFeedingType("配方奶");
+    setValue("");
+    const raw = (defaultTime ?? "").trim();
+    const m = raw.match(/^(\d{1,2}):(\d{2})/);
+    const fromPreset =
+      m &&
+      `${String(Number(m[1])).padStart(2, "0")}:${String(Number(m[2])).padStart(2, "0")}`;
+    const now = new Date();
+    const nowStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    setFeedStartTime(fromPreset || nowStr);
+  }, [defaultTime, editRecord, open]);
 
   const isVolume = feedingType !== "亲喂";
   const inputLabel = feedingType === "亲喂" ? "亲喂时长" : `${feedingType === "配方奶" ? "配方奶量" : "瓶喂母乳量"} (${unitLabel(volUnit)})`;

@@ -1,0 +1,26 @@
+{
+  "domain": "pump",
+  "scenario": "session_summary_ws_disconnect",
+  "endpoint": "/v1/pump/session-summary",
+  "method": "WebSocket",
+  "transport": "websocket",
+  "request": {
+    "user_id": "demo-user-fixture",
+    "event_id": "pump-summary-fixture-001",
+    "ended_at": "2026-06-29T08:30:00Z",
+    "total_milk_ml": 180,
+    "duration_seconds": 900
+  },
+  "failure": {
+    "kind": "disconnect",
+    "close_code": 1006,
+    "was_clean": false,
+    "before_response": true
+  },
+  "expected_client_behavior": {
+    "exception": "StreamDisconnected",
+    "show_error_toast": true,
+    "retry_automatically": true,
+    "requires_idempotency_key": true
+  }
+}

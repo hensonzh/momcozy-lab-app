@@ -1,0 +1,25 @@
+{
+  "domain": "feeding",
+  "endpoint": "/v1/feeding/record/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "date": "2026-06-29"
+    }
+  },
+  "variant": "partial",
+  "response": {
+    "status": 200,
+    "message": "partial",
+    "data": {
+      "error": 0,
+      "records": [
+        {
+          "id": "feeding-001",
+          "amount_ml": 80
+        }
+      ]
+    }
+  }
+}

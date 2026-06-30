@@ -1400,7 +1400,7 @@ const AgentHub: React.FC = () => {
     window.addEventListener(AGENT_HUB_SYNC_CHAT_EVENT, onExternalSync);
     return () =>
       window.removeEventListener(AGENT_HUB_SYNC_CHAT_EVENT, onExternalSync);
-  }, [showLatestChatHistoryWindow]);
+  }, [setMessages, showLatestChatHistoryWindow]);
 
   /** 非吸乳页自动结束后：进入智能体主页时若尚未执行「小结+BLE」，与通知点击路径共用 claim，只跑一次。 */
   useEffect(() => {
@@ -1795,6 +1795,7 @@ const AgentHub: React.FC = () => {
     primeAutoVoicePlayback,
     stopCurrentBubblePlayback,
     stopSpeech,
+    setMessages,
   ]);
 
   const queueBlockedAutoVoiceReplay = useCallback(
@@ -2254,7 +2255,7 @@ const AgentHub: React.FC = () => {
           uploadFileId,
         });
     },
-    [messages],
+    [messages, setMessages],
   );
 
   /** 底部输入发送后丢弃暂存图：预览条与本地 blob URL。 */
@@ -2270,7 +2271,7 @@ const AgentHub: React.FC = () => {
       }
       return prev.filter((m) => !isUploadedImageBubble(m));
     });
-  }, []);
+  }, [setMessages]);
 
   const resolveEventTag = (data: string | object): string => {
     if (typeof data !== "object" || data == null) return "";
@@ -3245,7 +3246,7 @@ const AgentHub: React.FC = () => {
       }
     };
     const prompt = buildMilkAnalysisReminderFollowupPrompt(claimed);
-    void startMainChatStream(prompt, {
+    void startMainChatStreamRef.current(prompt, {
       showUserMessage: false,
       preserveCurrentVoicePlayback: true,
       extraForwardedProps: buildMilkAnalysisReminderFollowupForwardedProps(),
@@ -3830,7 +3831,7 @@ const AgentHub: React.FC = () => {
     }
 
     lastMessageMetaRef.current = { len: messages.length, lastId: nextLastId };
-  }, [messages, scrollToChatTail]);
+  }, [mainChatRuntimeSnapshot.replyId, messages, scrollToChatTail]);
 
   useEffect(() => {
     const notice = localStorage.getItem(CALIBRATION_HUB_NOTICE_KEY);
@@ -3850,7 +3851,7 @@ const AgentHub: React.FC = () => {
       timestamp: ts,
     };
     setMessages((prev) => [...prev, tipMsg]);
-  }, []);
+  }, [setMessages]);
 
   useEffect(() => {
     const appendLegacySummary = (body: string, id?: string) => {
@@ -3917,7 +3918,7 @@ const AgentHub: React.FC = () => {
 
     // Listen for work flow trigger from Schedule's goal sheet
     const workHandler = () => {
-      void startMainChatStream("我想制定返工计划");
+      void startMainChatStreamRef.current("我想制定返工计划");
     };
     window.addEventListener("hub-start-work-flow", workHandler);
 
@@ -4118,7 +4119,7 @@ const AgentHub: React.FC = () => {
       size: file.size,
       type: file.type,
     });
-  }, []);
+  }, [setMessages]);
 
   const playMessageVoice = useCallback(
     async (

@@ -129,14 +129,8 @@ export function usePumpRealDisplayRuntime(params: Params) {
   const letdownL = hasRealLetdownL ? (devL!.moFlag! & 0x01) !== 0 : false;
   const letdownR = hasRealLetdownR ? (devR!.moFlag! & 0x01) !== 0 : false;
 
-  const totalL = useMemo(
-    () => (hasRealMilkL ? Math.round(devL!.milkMl!) : 0),
-    [hasRealMilkL, devL?.milkMl],
-  );
-  const totalR = useMemo(
-    () => (hasRealMilkR ? Math.round(devR!.milkMl!) : 0),
-    [hasRealMilkR, devR?.milkMl],
-  );
+  const totalL = hasRealMilkL ? Math.round(devL!.milkMl!) : 0;
+  const totalR = hasRealMilkR ? Math.round(devR!.milkMl!) : 0;
   const displayBottlePct = Math.min(
     100,
     uiLeftOnline && !uiRightOnline

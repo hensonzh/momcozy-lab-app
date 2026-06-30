@@ -1,0 +1,26 @@
+{
+  "domain": "notify",
+  "endpoint": "/v1/notify/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture"
+    }
+  },
+  "variant": "success",
+  "response": {
+    "status": 200,
+    "message": "success",
+    "data": {
+      "error": 0,
+      "notifications": [
+        {
+          "id": "notify-001",
+          "type": "schedule_reminder",
+          "read": false,
+          "created_at": "2026-06-29T09:00:00Z"
+        }
+      ]
+    }
+  }
+}

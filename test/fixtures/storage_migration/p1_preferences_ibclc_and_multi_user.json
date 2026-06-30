@@ -1,0 +1,84 @@
+{
+  "id": "storage-p1-preferences-ibclc-and-multi-user",
+  "description": "P1 migration for user-scoped preferences, status care stage, IBCLC continuity, and dev multi-user snapshots.",
+  "legacy": {
+    "localStorage": {
+      "mai_debug_user_id": "demo-user-active",
+      "mai_debug_user_stage": "prenatal",
+      "mai_debug_user_ids": "[\"demo-user-old\",\"demo-user-active\"]",
+      "mai_debug_user_data:demo-user-old": "{\"momStage\":\"postpartum\",\"values\":{\"mai_agent_conversation_id\":\"conv-old\",\"momcozy_conversation_id\":\"thread-old\",\"calibration\":\"{\\\"L\\\":{\\\"stimCozy\\\":3,\\\"deepCozy\\\":6},\\\"R\\\":{\\\"stimCozy\\\":4,\\\"deepCozy\\\":7},\\\"stimCozy\\\":3,\\\"deepCozy\\\":6}\"}}",
+      "momcozy_status_care_stage": "pregnancy",
+      "volume-unit": "mL",
+      "momcozy_user_id": "ibclc-user-001",
+      "momcozy_ibclc_consult_completed": "{\"completed\":true,\"completedAt\":\"2026-06-29T10:00:00.000Z\"}",
+      "momcozy_ibclc_consult_completions": "[{\"completed\":true,\"completedAt\":\"2026-06-20T10:00:00.000Z\"},{\"completed\":true,\"completedAt\":\"2026-06-29T10:00:00.000Z\"}]",
+      "momcozy_ibclc_return_to": "/status",
+      "momcozy_ibclc_return_viewport": "{\"path\":\"/status\",\"scrollY\":420,\"createdAt\":1782687600000}"
+    },
+    "sessionStorage": {},
+    "capacitorPreferences": {},
+    "androidSharedPreferences": {}
+  },
+  "context": {
+    "activeUserId": "demo-user-active",
+    "ibclcFeatureRetained": true,
+    "internalDevBuild": true
+  },
+  "expected": {
+    "scopedKeyValue": {
+      "runtime.userId": "demo-user-active",
+      "runtime.momStage": "prenatal",
+      "status.careStage": "pregnancy",
+      "preferences.volumeUnit": "mL",
+      "ibclc.clientUserId": "ibclc-user-001",
+      "ibclc.consultCompleted": true
+    },
+    "localHistory": {
+      "ibclc.consultCompletions": [
+        {
+          "completed": true,
+          "completedAt": "2026-06-20T10:00:00.000Z"
+        },
+        {
+          "completed": true,
+          "completedAt": "2026-06-29T10:00:00.000Z"
+        }
+      ],
+      "dev.userSnapshots": [
+        {
+          "userId": "demo-user-old",
+          "momStage": "postpartum",
+          "valuesMigrated": [
+            "agent.conversationId",
+            "agent.threadId",
+            "calibration"
+          ]
+        }
+      ]
+    },
+    "routeIntentQueue": [
+      {
+        "type": "ibclcReturn",
+        "target": "/status",
+        "payload": {
+          "scrollY": 420
+        },
+        "consume": "once"
+      }
+    ],
+    "deleteLegacyKeys": {
+      "localStorage": [
+        "momcozy_ibclc_return_to",
+        "momcozy_ibclc_return_viewport"
+      ]
+    },
+    "migrationVersion": 1
+  },
+  "assertions": [
+    "status care stage is migrated only when value is pregnancy or postpartum",
+    "IBCLC durable completion state migrates only if IBCLC feature is retained",
+    "IBCLC return path and viewport become one-shot route intent",
+    "dev multi-user snapshots migrate only for internal/dev builds",
+    "active user data and other user snapshots remain isolated"
+  ]
+}

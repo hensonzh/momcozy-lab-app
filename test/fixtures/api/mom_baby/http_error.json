@@ -1,0 +1,20 @@
+{
+  "domain": "mom_baby",
+  "endpoint": "/v1/mom-baby/info/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture"
+    }
+  },
+  "variant": "http_error",
+  "response": {
+    "http_status": 502,
+    "status_text": "Bad Gateway",
+    "request_id": "req-fixture-mom_baby-http-error",
+    "body": {
+      "error": "bad_gateway",
+      "message": "mom_baby upstream unavailable"
+    }
+  }
+}

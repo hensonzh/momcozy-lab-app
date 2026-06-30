@@ -1,0 +1,61 @@
+{
+  "purpose": "Flutter device repository tests must prove that parsed packets update only the matching side.",
+  "sourceFiles": [
+    "src/lib/ble.ts",
+    "src/lib/deviceStore.ts",
+    "src/pages/pumpSession/usePumpDeviceControlRuntime.ts"
+  ],
+  "cases": [
+    {
+      "id": "left_device_packet_updates_left_only",
+      "incomingDeviceId": "left-device-id",
+      "storeBefore": {
+        "L": {
+          "deviceId": "left-device-id",
+          "connected": true
+        },
+        "R": {
+          "deviceId": "right-device-id",
+          "connected": true
+        }
+      },
+      "frameHex": "aa5504d60670a7416a015805",
+      "expectedTouchedSide": "L",
+      "expectedUntouchedSide": "R"
+    },
+    {
+      "id": "right_device_packet_updates_right_only",
+      "incomingDeviceId": "right-device-id",
+      "storeBefore": {
+        "L": {
+          "deviceId": "left-device-id",
+          "connected": true
+        },
+        "R": {
+          "deviceId": "right-device-id",
+          "connected": true
+        }
+      },
+      "frameHex": "aa5504d60670a7416a015805",
+      "expectedTouchedSide": "R",
+      "expectedUntouchedSide": "L"
+    },
+    {
+      "id": "unknown_device_packet_does_not_mutate_sides",
+      "incomingDeviceId": "unknown-device-id",
+      "storeBefore": {
+        "L": {
+          "deviceId": "left-device-id",
+          "connected": true
+        },
+        "R": {
+          "deviceId": "right-device-id",
+          "connected": true
+        }
+      },
+      "frameHex": "aa5504d60670a7416a015805",
+      "expectedTouchedSide": null,
+      "expectedUntouchedSide": "both"
+    }
+  ]
+}

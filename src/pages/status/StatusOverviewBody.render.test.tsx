@@ -20,6 +20,7 @@ import {
   queryPumpMilkRecords,
 } from "@/lib/momPumpTwinAgentApi";
 import { notifyMilkRecordsChanged } from "@/lib/milkRecordsEvents";
+import { DEFAULT_CHAT_USER_ID } from "@/pages/agentHub/agentHubConstants";
 import StatusOverviewBody from "./StatusOverviewBody";
 
 vi.mock("recharts", () => ({
@@ -438,7 +439,7 @@ describe("StatusOverviewBody render", () => {
     fireEvent.click(checkbox);
     await waitFor(() => {
       expect(updateBirthJourneyTodoCompletion).toHaveBeenCalledWith({
-        user_id: "demo_mama_increase_001",
+        user_id: DEFAULT_CHAT_USER_ID,
         plan_id: 12,
         item_id: "todo_01",
         completed: true,

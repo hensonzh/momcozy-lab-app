@@ -1,0 +1,13 @@
+{
+  "bootTime": 1782687600,
+  "workMode": 3,
+  "pumpMode": 1,
+  "gear": 6,
+  "scene": 1,
+  "workState": 1,
+  "batteryPct": 87,
+  "charging": 0,
+  "duration": 900,
+  "pumpGearCalibStimulate": 4,
+  "pumpGearCalibDeep": 8
+}

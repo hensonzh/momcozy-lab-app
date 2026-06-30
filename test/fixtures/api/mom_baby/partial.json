@@ -1,0 +1,21 @@
+{
+  "domain": "mom_baby",
+  "endpoint": "/v1/mom-baby/info/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture"
+    }
+  },
+  "variant": "partial",
+  "response": {
+    "status": 200,
+    "message": "partial",
+    "data": {
+      "error": 0,
+      "mom": {
+        "stage": "postpartum"
+      }
+    }
+  }
+}

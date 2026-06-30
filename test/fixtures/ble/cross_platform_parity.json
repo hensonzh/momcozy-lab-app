@@ -1,0 +1,203 @@
+{
+  "purpose": "The Flutter/Dart BLE implementation must match the current Web TS and Android Java behavior.",
+  "implementations": {
+    "webTs": "src/lib/bleProtocol.ts",
+    "androidJava": "android/app/src/main/java/com/momcozymai/app/MmcBleProtocol.java",
+    "futureFlutterDart": "features/device/native or packages/momcozy_ble_protocol"
+  },
+  "requiredParityCases": [
+    {
+      "id": "f0_get_device_info_default_sn",
+      "builder": "buildF0GetDeviceInfo",
+      "args": [],
+      "expectedHex": "aa5500f004001155aafc"
+    },
+    {
+      "id": "f2_set_rtc_fixed_timestamp",
+      "builder": "buildF2SetRtc",
+      "args": [
+        1782687600
+      ],
+      "expectedHex": "aa5500f20470a7416a48"
+    },
+    {
+      "id": "b1_start_deep_gear6_auto",
+      "builder": "buildB1SetPumpParams",
+      "args": [
+        1,
+        1,
+        6,
+        1
+      ],
+      "expectedHex": "aa5500b1040101060142"
+    },
+    {
+      "id": "b1_pause_stim_gear0_manual",
+      "builder": "buildB1SetPumpParams",
+      "args": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expectedHex": "aa5500b104000000004b"
+    },
+    {
+      "id": "e1_query_device_status",
+      "builder": "buildE1QueryDeviceStatus",
+      "args": [],
+      "expectedHex": "aa5500e1001f"
+    },
+    {
+      "id": "bf_end_run_reserved_zero",
+      "builder": "buildBFEndRun",
+      "args": [],
+      "expectedHex": "aa5500bf010040"
+    },
+    {
+      "id": "fe_power_off_without_reboot",
+      "builder": "buildFEPowerOff",
+      "args": [
+        0
+      ],
+      "expectedHex": "aa5500fe010001"
+    },
+    {
+      "id": "fe_power_off_with_reboot",
+      "builder": "buildFEPowerOff",
+      "args": [
+        1
+      ],
+      "expectedHex": "aa5500fe010100"
+    },
+    {
+      "id": "ack_e1_from_app",
+      "builder": "buildAck",
+      "args": [
+        225
+      ],
+      "expectedHex": "aa5501e1001e"
+    }
+  ],
+  "parserParityCases": [
+    {
+      "id": "f0_ack_device_info",
+      "frameHex": "aa5501f00409016f7022",
+      "parser": "parseF0DeviceInfo",
+      "expectedValue": {
+        "productModel": 9,
+        "hwPlatform": 1,
+        "hwVersion": "11.1",
+        "softwareVersion": "11.2"
+      }
+    },
+    {
+      "id": "e1_ack_current_status_15_bytes",
+      "frameHex": "aa5501e10f70a7416a030106010157008403040857",
+      "parser": "parseE1DeviceStatus",
+      "expectedValue": {
+        "bootTime": 1782687600,
+        "workMode": 3,
+        "pumpMode": 1,
+        "gear": 6,
+        "scene": 1,
+        "workState": 1,
+        "batteryPct": 87,
+        "charging": 0,
+        "duration": 900,
+        "pumpGearCalibStimulate": 4,
+        "pumpGearCalibDeep": 8
+      }
+    },
+    {
+      "id": "e1_ack_legacy_11_bytes",
+      "frameHex": "aa5501e10b70a7416a03010601005000f6",
+      "parser": "parseE1DeviceStatus",
+      "expectedValue": {
+        "bootTime": 1782687600,
+        "workMode": 3,
+        "pumpMode": 1,
+        "gear": 6,
+        "scene": 1,
+        "workState": 0,
+        "batteryPct": 80,
+        "charging": 0,
+        "duration": 0,
+        "pumpGearCalibStimulate": 0,
+        "pumpGearCalibDeep": 0
+      }
+    },
+    {
+      "id": "e1_ack_legacy_10_bytes",
+      "frameHex": "aa5501e10a70a7416a030106015000f7",
+      "parser": "parseE1DeviceStatus",
+      "expectedValue": {
+        "bootTime": 1782687600,
+        "workMode": 3,
+        "pumpMode": 1,
+        "gear": 6,
+        "scene": 0,
+        "workState": 1,
+        "batteryPct": 80,
+        "charging": 0,
+        "duration": 0,
+        "pumpGearCalibStimulate": 0,
+        "pumpGearCalibDeep": 0
+      }
+    },
+    {
+      "id": "d6_device_battery_notification",
+      "frameHex": "aa5504d60670a7416a015805",
+      "parser": "parseD6Battery",
+      "expectedValue": {
+        "timestamp": 1782687600,
+        "charging": 1,
+        "batteryPct": 88
+      }
+    },
+    {
+      "id": "d0_operation_record_notification",
+      "frameHex": "aa5504d00f70a7416a0000020001010601028403c7",
+      "parser": "parseD0OperationRecord",
+      "expectedValue": {
+        "timestamp": 1782687600,
+        "beforeStartStop": 0,
+        "beforeMode": 0,
+        "beforeGear": 2,
+        "beforeAutoFlag": 0,
+        "afterStartStop": 1,
+        "afterMode": 1,
+        "afterGear": 6,
+        "afterAutoFlag": 1,
+        "source": 2,
+        "duration": 900
+      }
+    },
+    {
+      "id": "80_realtime_milk_notification",
+      "frameHex": "aa5503801770a7416a0000a03fcd00030000084185ff2d00fa003601ca",
+      "parser": "parse80RealtimeMilk",
+      "expectedValue": {
+        "timestamp": 1782687600,
+        "flowFloat": 1.25,
+        "milkMlX10": 205,
+        "milkFlag": 1,
+        "moFlag": 1,
+        "bandpower": 8.5,
+        "pitchX10": -123,
+        "rollX10": 45,
+        "pressureCh1X10": 250,
+        "pressureCh2X10": 310
+      }
+    },
+    {
+      "id": "bf_ack_end_run_response",
+      "frameHex": "aa5501bf0670a7416acd00ab",
+      "parser": "parseBFEndRunResponse",
+      "expectedValue": {
+        "timestamp": 1782687600,
+        "milkMlX10": 205
+      }
+    }
+  ]
+}

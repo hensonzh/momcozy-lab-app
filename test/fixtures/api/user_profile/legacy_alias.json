@@ -1,0 +1,21 @@
+{
+  "domain": "user_profile",
+  "endpoint": "/v1/user/profile/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture"
+    }
+  },
+  "variant": "legacy_alias",
+  "response": {
+    "status": 200,
+    "message": "legacy_alias",
+    "data": {
+      "error": 0,
+      "userId": "demo-user-fixture",
+      "displayName": "Demo User",
+      "currentCareStage": "postpartum"
+    }
+  }
+}

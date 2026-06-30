@@ -1,0 +1,33 @@
+{
+  "threadId": "thread-fixture-001",
+  "runId": "run-fixture-image-001",
+  "state": {
+    "locale": "en-US",
+    "user_id": "demo-user-fixture"
+  },
+  "messages": [
+    {
+      "id": "msg-user-image-001",
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Please review this pump display photo."
+        },
+        {
+          "type": "image",
+          "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=",
+          "mime_type": "image/png",
+          "name": "pump-display-fixture.png",
+          "size": 68,
+          "detail": "low"
+        }
+      ]
+    }
+  ],
+  "tools": [],
+  "context": [],
+  "forwardedProps": {
+    "source": "flutter-migration-fixture"
+  }
+}
