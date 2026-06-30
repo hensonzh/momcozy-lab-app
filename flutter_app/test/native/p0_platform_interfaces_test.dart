@@ -180,7 +180,11 @@ void main() {
             elapsedSeconds: 180,
           );
         final calls = <PumpAgentUploadCall>[];
+        final progressEvents = <PumpAgentUploadProgress>[];
+        final processReplies = <PumpAgentProcessReply>[];
         final sub = upload.calls.listen(calls.add);
+        final progressSub = upload.progressEvents.listen(progressEvents.add);
+        final replySub = upload.processReplies.listen(processReplies.add);
 
         await upload.setConfig(
           apiBaseUrl: 'https://api.example.test',
@@ -221,6 +225,15 @@ void main() {
           userId: 'demo-user',
           endedAtMs: 1782687600000,
         );
+        upload.emitProgress(
+          const PumpAgentUploadProgress(
+            processL: 11,
+            processR: 22,
+            processAll: 33,
+            elapsedSeconds: 190,
+          ),
+        );
+        upload.emitProcessReply(const {'error': 0, 'need_reply': false});
         await flushStreams();
 
         expect(calls.map((call) => call.method), [
@@ -274,8 +287,18 @@ void main() {
         expect(calls.last.payload['deduped'], isTrue);
         expect(upload.completedUploadKeys.length, 3);
         expect(upload.dedupedUploadKeys.length, 2);
+        expect(progressEvents.single.processAll, 33);
+        expect(progressEvents.single.elapsedSeconds, 190);
+        expect(processReplies.single.response, {
+          'error': 0,
+          'need_reply': false,
+        });
+        expect(upload.recordedProgressEvents.single, progressEvents.single);
+        expect(upload.recordedProcessReplies.single, processReplies.single);
 
         await sub.cancel();
+        await progressSub.cancel();
+        await replySub.cancel();
         await upload.dispose();
       },
     );

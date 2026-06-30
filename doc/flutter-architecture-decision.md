@@ -170,6 +170,7 @@ features/
 [x] `PumpNativeRuntimeCoordinator` 已组合 snapshot binding、upload sync 与 BLE protocol state resolver
 [x] Android pump process frame history 已与 legacy `PumpAgentNativeStore` 20 帧窗口对齐
 [x] Android service-backed runner shell 已接入 foreground service 生命周期与 1 秒采样刷新
+[x] Android service-backed runner 已接入 network tick 与 process progress/reply typed streams
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
