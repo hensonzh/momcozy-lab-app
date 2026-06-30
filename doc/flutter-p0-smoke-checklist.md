@@ -68,6 +68,11 @@
 | UPLOAD-01 | summary 上传 | Pump 结束后上传 summary。 | `event_id` 幂等，成功只上传一次。 |  |  |
 | UPLOAD-02 | milk record 上传 | Pump 结束后上传 milk record。 | 奶量与 UI snapshot 一致，只上传一次。 |  |  |
 | UPLOAD-03 | Agent context 上传 | Pump 结束后推送 Agent context。 | conversation/thread id 正确，失败可重试或登记。 |  |  |
+| UPLOAD-04 | 后台 workstate 上传 | Pump 运行中切后台，观察 `/v1/pump/workstate`。 | 设备状态变化时上传，未变化时不重复刷。 |  |  |
+| UPLOAD-05 | 后台 process data | Pump 运行中切后台，观察 `/v1/pump/process/data`。 | `cap_data` 为最近最多 20 帧窗口，成功响应后进度更新。 |  |  |
+| UPLOAD-06 | 后台 process 上传 | Pump 运行中切后台至少 20 秒，观察 `/v1/pump/process`。 | 按 10 秒节流上传，process reply 可回到 App 层。 |  |  |
+| UPLOAD-07 | 后台 progress 事件 | Pump 运行中切后台，再返回 App。 | App 层收到 native progress，通知和 UI 进度不倒退。 |  |  |
+| UPLOAD-08 | 上传失败降级 | 关闭网络 30 秒后恢复。 | runner 不崩溃，失败日志不泄漏 token/user id，恢复后继续 tick。 |  |  |
 | AGENT-01 | 文本 Agent | Agent Hub 发送文本。 | 首帧及时，TEXT delta 流式展示，RUN_FINISHED 结束。 |  |  |
 | AGENT-02 | 工具流 | 触发工具调用。 | tool start/args/end/result 合并为同一 work item。 |  |  |
 | AGENT-03 | Artifact | 触发 card/form artifact。 | artifact 独立渲染，不从文本猜 schema。 |  |  |
@@ -91,6 +96,7 @@
 [ ] 所有 BOOT / AUTH / PERM / BLE / CAL P0 项通过
 [ ] Pump 启动、暂停、恢复、结束、后台、通知恢复通过
 [ ] summary、milk record、Agent context 均只上传一次
+[ ] 后台 runner 的 workstate、process data、process upload 和 progress/reply 事件通过
 [ ] Agent text stream、tool stream、artifact、取消、断线通过
 [ ] Storage migration dry-run 通过
 [ ] 无 P0 crash
