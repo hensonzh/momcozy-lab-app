@@ -45,7 +45,7 @@ void main() {
     );
 
     test(
-      'keeps transport chunks ordered and exposes terminal events',
+      'keeps transport chunks ordered and stops after run finished',
       () async {
         const request = AgentStreamRequest(
           userId: 'demo-user',
@@ -56,14 +56,14 @@ void main() {
           FixtureAgentStreamTransport([
             jsonEncode(readFixtureMap('ag_ui/run_started.json')),
             readMigrationFixture('ag_ui/tool_call_lifecycle.jsonl'),
-            jsonEncode(readFixtureMap('ag_ui/run_error.json')),
+            '{malformed-after-terminal',
           ]),
         );
 
         final events = await client.stream(request).toList();
 
         expect(events.first.type, 'RUN_STARTED');
-        expect(events.last.type, 'RUN_ERROR');
+        expect(events.last.type, 'RUN_FINISHED');
         expect(events.last.isTerminal, isTrue);
         expect(
           events.where((event) => event.mergeKey.startsWith('tool:')),
@@ -77,5 +77,25 @@ void main() {
         });
       },
     );
+
+    test('stops after run error events', () async {
+      const request = AgentStreamRequest(
+        userId: 'demo-user',
+        message: 'Create a plan.',
+        threadId: 'thread-1',
+      );
+      final client = JsonlAgentStreamClient(
+        FixtureAgentStreamTransport([
+          jsonEncode(readFixtureMap('ag_ui/run_started.json')),
+          jsonEncode(readFixtureMap('ag_ui/run_error.json')),
+          '{malformed-after-terminal',
+        ]),
+      );
+
+      final events = await client.stream(request).toList();
+
+      expect(events.map((event) => event.type), ['RUN_STARTED', 'RUN_ERROR']);
+      expect(events.last.isTerminal, isTrue);
+    });
   });
 }

@@ -66,6 +66,12 @@ isSensitiveLogKey(key)
 [ ] upload、voice、agent stream、device reminder 断线日志只输出 redacted URL 和错误码
 ```
 
+当前进展：
+
+```text
+[x] Agent stream SSE/WebSocket transport shell 已复用 `AgentStreamEndpoint` 做 token/header 注入，并通过 `redactedLogContext()` 接入统一脱敏工具
+```
+
 ## 存储规则
 
 ```text
