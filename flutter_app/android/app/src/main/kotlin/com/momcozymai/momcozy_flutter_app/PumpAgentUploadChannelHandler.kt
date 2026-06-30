@@ -35,6 +35,8 @@ internal class PumpAgentUploadChannelHandler(
     private var processAll = 0
     private var elapsedSeconds = 0
     private var deviceSnapshot: Map<*, *> = emptyMap<String, Any?>()
+    private var workstateSignature = ""
+    private var lastProcessUploadAt = 0L
 
     fun handle(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
@@ -46,45 +48,60 @@ internal class PumpAgentUploadChannelHandler(
                 result.success(null)
             }
             "updateDeviceSnapshot" -> {
-                deviceSnapshot = call.argumentsMap().mapValue("snapshot") ?: emptyMap<String, Any?>()
-                sampleCurrentSnapshot()
+                synchronized(this) {
+                    deviceSnapshot = call.argumentsMap().mapValue("snapshot") ?: emptyMap<String, Any?>()
+                    sampleCurrentSnapshot()
+                }
                 result.success(null)
             }
             "sampleFromSnapshot" -> {
-                sampleCurrentSnapshot()
-                result.success(progressMap())
+                val progress = synchronized(this) {
+                    sampleCurrentSnapshot()
+                    progressMap()
+                }
+                result.success(progress)
             }
             "resetProgress" -> {
-                processL = 0
-                processR = 0
-                processAll = 0
-                elapsedSeconds = 0
-                leftState.reset()
-                rightState.reset()
+                synchronized(this) {
+                    processL = 0
+                    processR = 0
+                    processAll = 0
+                    elapsedSeconds = 0
+                    workstateSignature = ""
+                    lastProcessUploadAt = 0L
+                    leftState.reset()
+                    rightState.reset()
+                }
                 synchronized(uploadKeyLock) {
                     completedUploadKeys.clear()
                     pendingUploadKeys.clear()
                 }
-                result.success(progressMap())
+                result.success(synchronized(this) { progressMap() })
             }
             "markStepStop" -> {
-                applySide(call.argumentsMap().stringValue("side", "both")) {
-                    it.step = "stop"
-                    it.stopMarked = true
+                synchronized(this) {
+                    applySide(call.argumentsMap().stringValue("side", "both")) {
+                        it.step = "stop"
+                        it.stopMarked = true
+                    }
                 }
                 result.success(null)
             }
             "markStepPause" -> {
-                applySide(call.argumentsMap().stringValue("side", "both")) {
-                    it.step = "pause"
-                    it.pauseMarked = true
+                synchronized(this) {
+                    applySide(call.argumentsMap().stringValue("side", "both")) {
+                        it.step = "pause"
+                        it.pauseMarked = true
+                    }
                 }
                 result.success(null)
             }
             "setOperationSource" -> {
                 val args = call.argumentsMap()
                 val source = args.stringValue("source", "device")
-                applySide(args.stringValue("side", "both")) { it.source = source }
+                synchronized(this) {
+                    applySide(args.stringValue("side", "both")) { it.source = source }
+                }
                 result.success(null)
             }
             "uploadWorkstate",
@@ -96,13 +113,36 @@ internal class PumpAgentUploadChannelHandler(
     }
 
     fun sampleFromSnapshotForRunner(nextElapsedSeconds: Int): Map<String, Int> {
-        elapsedSeconds = nextElapsedSeconds.coerceAtLeast(0)
-        sampleCurrentSnapshot()
-        return progressMap()
+        return synchronized(this) {
+            elapsedSeconds = nextElapsedSeconds.coerceAtLeast(0)
+            sampleCurrentSnapshot()
+            progressMap()
+        }
+    }
+
+    fun runBackgroundNetworkTick(nowMs: Long = System.currentTimeMillis()): Map<String, Int> {
+        nextWorkstateUpload()?.let { upload ->
+            val response = postJson(upload.path, upload.body)
+            if (response.isSuccessfulUploadResponse()) {
+                synchronized(this) {
+                    workstateSignature = upload.signature
+                }
+            }
+        }
+        nextProcessDataUpload()?.let { upload ->
+            val response = postJson(upload.path, upload.body)
+            synchronized(this) {
+                applyProcessDataResponse(response)
+            }
+        }
+        nextProcessUpload(nowMs)?.let { upload ->
+            postJson(upload.path, upload.body)
+        }
+        return synchronized(this) { progressMap() }
     }
 
     private fun upload(call: MethodCall, result: MethodChannel.Result) {
-        val body = buildBody(call)
+        val body = synchronized(this) { buildBody(call) }
         val path = pathForMethod(call.method)
         val dedupeProtected = call.method != "getProcessData"
         val uploadKey = "${call.method}:${body.dedupeKey()}"
@@ -132,7 +172,11 @@ internal class PumpAgentUploadChannelHandler(
             {
                 try {
                     val response = postJson(path, body)
-                    if (call.method == "getProcessData") applyProcessDataResponse(response)
+                    if (call.method == "getProcessData") {
+                        synchronized(this) {
+                            applyProcessDataResponse(response)
+                        }
+                    }
                     if (dedupeProtected && response.isSuccessfulUploadResponse()) {
                         synchronized(uploadKeyLock) {
                             completedUploadKeys.add(uploadKey)
@@ -209,12 +253,15 @@ internal class PumpAgentUploadChannelHandler(
     }
 
     private fun buildBody(call: MethodCall): Map<String, Any?> {
-        val args = call.argumentsMap()
+        return buildBody(call.method, call.argumentsMap())
+    }
+
+    private fun buildBody(method: String, args: Map<*, *> = emptyMap<String, Any?>()): Map<String, Any?> {
         val userId = args.stringValue("userId", configuredUserId)
-        if (call.method == "getProcessData") sampleCurrentSnapshot()
+        if (method == "getProcessData") sampleCurrentSnapshot()
         val left = snapshotDevice("L")
         val right = snapshotDevice("R")
-        return when (call.method) {
+        return when (method) {
             "uploadWorkstate" -> mapOf(
                 "user_id" to userId,
                 "device_left" to workstateSide(left, leftState, processL),
@@ -241,6 +288,43 @@ internal class PumpAgentUploadChannelHandler(
                 )
             }
             else -> emptyMap()
+        }
+    }
+
+    private fun nextWorkstateUpload(): BackgroundUpload? {
+        return synchronized(this) {
+            if (!hasAnyDeviceConnected()) return@synchronized null
+            val signature = workstateSignature()
+            if (signature == workstateSignature) return@synchronized null
+            BackgroundUpload(
+                path = pathForMethod("uploadWorkstate"),
+                body = buildBody("uploadWorkstate"),
+                signature = signature
+            )
+        }
+    }
+
+    private fun nextProcessDataUpload(): BackgroundUpload? {
+        return synchronized(this) {
+            if (!shouldFetchProcessData()) return@synchronized null
+            BackgroundUpload(
+                path = pathForMethod("getProcessData"),
+                body = buildBody("getProcessData")
+            )
+        }
+    }
+
+    private fun nextProcessUpload(nowMs: Long): BackgroundUpload? {
+        return synchronized(this) {
+            if (!hasAnyDeviceConnected()) return@synchronized null
+            if (nowMs - lastProcessUploadAt < PROCESS_UPLOAD_INTERVAL_MS) {
+                return@synchronized null
+            }
+            lastProcessUploadAt = nowMs
+            BackgroundUpload(
+                path = pathForMethod("uploadProcess"),
+                body = buildBody("uploadProcess")
+            )
         }
     }
 
@@ -412,6 +496,44 @@ internal class PumpAgentUploadChannelHandler(
 
     private fun snapshotDevice(side: String): Map<*, *>? {
         return deviceSnapshot[side] as? Map<*, *>
+    }
+
+    private fun hasAnyDeviceConnected(): Boolean {
+        return isConnected(snapshotDevice("L")) || isConnected(snapshotDevice("R"))
+    }
+
+    private fun shouldFetchProcessData(): Boolean {
+        return isRunning(snapshotDevice("L")) ||
+            isRunning(snapshotDevice("R")) ||
+            leftState.stopMarked ||
+            rightState.stopMarked ||
+            leftState.pauseMarked ||
+            rightState.pauseMarked
+    }
+
+    private fun workstateSignature(): String {
+        return mapOf(
+            "L" to workstateSignatureSide(snapshotDevice("L")),
+            "R" to workstateSignatureSide(snapshotDevice("R"))
+        ).stableString()
+    }
+
+    private fun workstateSignatureSide(device: Map<*, *>?): Map<String, Any?> {
+        return mapOf(
+            "connected" to isConnected(device),
+            "pumpWorkState" to (device?.intValue("pumpWorkState", -1) ?: -1),
+            "pumpScene" to (device?.intValue("pumpScene", -1) ?: -1),
+            "pumpMode" to (device?.intValue("pumpMode", -1) ?: -1),
+            "gear" to (device?.intValue("gear", -1) ?: -1)
+        )
+    }
+
+    private fun isConnected(device: Map<*, *>?): Boolean {
+        return device?.boolValue("connected") ?: false
+    }
+
+    private fun isRunning(device: Map<*, *>?): Boolean {
+        return isConnected(device) && device?.intValue("pumpWorkState", 0) == 1
     }
 
     private fun sampleCurrentSnapshot() {
@@ -701,6 +823,12 @@ internal class PumpAgentUploadChannelHandler(
         return SimpleDateFormat("HH:mm", Locale.US).format(Date(endedAtMs))
     }
 
+    private data class BackgroundUpload(
+        val path: String,
+        val body: Map<String, Any?>,
+        val signature: String = ""
+    )
+
     private data class PumpAgentSideState(
         var step: String = "stop",
         var source: String = "device",
@@ -746,5 +874,6 @@ internal class PumpAgentUploadChannelHandler(
     private companion object {
         private const val FRAME_SIZE = 20
         private const val HTTP_TIMEOUT_MS = 25_000
+        private const val PROCESS_UPLOAD_INTERVAL_MS = 10_000L
     }
 }

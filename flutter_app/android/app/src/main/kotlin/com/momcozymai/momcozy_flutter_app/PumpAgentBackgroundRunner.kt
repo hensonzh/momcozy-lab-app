@@ -13,38 +13,40 @@ internal class PumpAgentBackgroundRunner(
 
     private val lock = Object()
     private var running = false
-    private var worker: Thread? = null
+    private var progressWorker: Thread? = null
+    private var networkWorker: Thread? = null
     private var state = "running"
     private var baseElapsedSeconds = 0
     private var elapsedBaseMs = 0L
 
     fun startOrUpdate(nextState: String, nextElapsedSeconds: Int) {
-        val workerToStart = synchronized(lock) {
+        val workersToStart = synchronized(lock) {
             val now = SystemClock.elapsedRealtime()
             val carriedElapsed = if (running) currentElapsedLocked(now) else 0
             state = safeState(nextState)
             baseElapsedSeconds = maxOf(nextElapsedSeconds.coerceAtLeast(0), carriedElapsed)
             elapsedBaseMs = now
             if (running) {
-                null
+                emptyList()
             } else {
                 running = true
-                Thread(::runProgressLoop, "PumpAgentProgressRunner").also {
-                    worker = it
-                }
+                progressWorker = Thread(::runProgressLoop, "PumpAgentProgressRunner")
+                networkWorker = Thread(::runNetworkLoop, "PumpAgentNetworkRunner")
+                listOfNotNull(progressWorker, networkWorker)
             }
         }
-        workerToStart?.start()
+        workersToStart.forEach { it.start() }
     }
 
     fun stop() {
-        val workerToStop = synchronized(lock) {
+        val workersToStop = synchronized(lock) {
             running = false
-            val current = worker
-            worker = null
+            val current = listOfNotNull(progressWorker, networkWorker)
+            progressWorker = null
+            networkWorker = null
             current
         }
-        workerToStop?.interrupt()
+        workersToStop.forEach { it.interrupt() }
     }
 
     private fun runProgressLoop() {
@@ -56,6 +58,23 @@ internal class PumpAgentBackgroundRunner(
                 listener.onProgress(snapshot.state, processAll, snapshot.elapsedSeconds)
             } catch (error: Exception) {
                 Log.w(TAG, "pump agent progress tick failed", error)
+            }
+            sleepTick()
+        }
+    }
+
+    private fun runNetworkLoop() {
+        while (isRunning()) {
+            try {
+                val snapshot = progressSnapshot()
+                val progress = uploadHandler.runBackgroundNetworkTick()
+                listener.onProgress(
+                    snapshot.state,
+                    progress["processAll"] ?: 0,
+                    maxOf(progress["elapsedSeconds"] ?: 0, snapshot.elapsedSeconds)
+                )
+            } catch (error: Exception) {
+                Log.w(TAG, "pump agent network tick failed", error)
             }
             sleepTick()
         }
