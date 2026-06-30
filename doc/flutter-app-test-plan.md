@@ -523,6 +523,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] AG-UI 首帧 payload builder 对齐文本和图片 fixture
 [x] SSE/WebSocket IO transport shell 复用同一 auth injection 和 redacted log context
 [x] terminal event 后停止消费底层 stream，并关闭 WebSocket transport
+[x] `/api/ag-ui-cancel` 2xx/404 ack、5xx/network non-blocking failure 已覆盖
 [ ] transport disconnect 映射为统一断线事件
 [ ] reconnect 不重复已完成 message chunk
 [ ] cancel ack 和本地 cancel 状态一致

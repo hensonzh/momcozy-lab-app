@@ -30,11 +30,14 @@ class AgentStreamEndpoint {
     );
   }
 
-  Map<String, String> jsonHeaders({required bool includeContentType}) {
+  Map<String, String> requestHeaders({
+    String accept = 'application/json',
+    bool includeContentType = false,
+  }) {
     final authToken = token?.trim();
     return <String, String>{
       ...headers,
-      'Accept': includeContentType ? 'text/event-stream' : 'application/json',
+      'Accept': accept,
       if (includeContentType) 'Content-Type': 'application/json',
       if (authToken != null && authToken.isNotEmpty)
         'Authorization': 'Bearer $authToken',
@@ -43,7 +46,7 @@ class AgentStreamEndpoint {
 
   Map<String, Object?> redactedLogContext() => redactLogMap({
     'url': uriWithToken.toString(),
-    'headers': jsonHeaders(includeContentType: true),
+    'headers': requestHeaders(includeContentType: true),
   });
 }
 
@@ -54,6 +57,127 @@ class AgentStreamTransportException implements Exception {
 
   @override
   String toString() => 'AgentStreamTransportException($message)';
+}
+
+class AgentStreamCancelRequest {
+  const AgentStreamCancelRequest({
+    required this.threadId,
+    this.runId,
+    this.userId,
+  });
+
+  final String threadId;
+  final String? runId;
+  final String? userId;
+
+  Map<String, Object?> toMap() {
+    final normalizedThreadId = threadId.trim();
+    if (normalizedThreadId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing threadId.');
+    }
+
+    final normalizedRunId = runId?.trim();
+    final normalizedUserId = userId?.trim();
+    return {
+      'threadId': normalizedThreadId,
+      if (normalizedRunId != null && normalizedRunId.isNotEmpty)
+        'runId': normalizedRunId,
+      if (normalizedUserId != null && normalizedUserId.isNotEmpty)
+        'user_id': normalizedUserId,
+    };
+  }
+}
+
+class AgentStreamControlHttpResponse {
+  const AgentStreamControlHttpResponse({
+    required this.statusCode,
+    required this.body,
+  });
+
+  final int statusCode;
+  final String body;
+
+  Map<String, Object?>? get jsonBody => _decodeJsonObject(body);
+}
+
+class AgentStreamCancelResult {
+  const AgentStreamCancelResult({
+    required this.acknowledged,
+    this.statusCode,
+    this.body,
+    this.error,
+  });
+
+  final bool acknowledged;
+  final int? statusCode;
+  final Map<String, Object?>? body;
+  final Object? error;
+}
+
+abstract interface class AgentStreamControlHttpConnector {
+  Future<AgentStreamControlHttpResponse> post(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  });
+}
+
+class IoAgentStreamControlHttpConnector
+    implements AgentStreamControlHttpConnector {
+  IoAgentStreamControlHttpConnector({HttpClient? httpClient})
+    : _httpClient = httpClient ?? HttpClient();
+
+  final HttpClient _httpClient;
+
+  @override
+  Future<AgentStreamControlHttpResponse> post(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) async {
+    final request = await _httpClient.postUrl(uri);
+    headers.forEach(request.headers.set);
+    request.write(body);
+
+    final response = await request.close();
+    final responseBody = await response.transform(utf8.decoder).join();
+    return AgentStreamControlHttpResponse(
+      statusCode: response.statusCode,
+      body: responseBody,
+    );
+  }
+}
+
+class AgentStreamCancelClient {
+  const AgentStreamCancelClient({
+    required this.endpoint,
+    this.connector = const _DefaultControlHttpConnector(),
+  });
+
+  final AgentStreamEndpoint endpoint;
+  final AgentStreamControlHttpConnector connector;
+
+  Future<AgentStreamCancelResult> cancel(
+    AgentStreamCancelRequest request,
+  ) async {
+    try {
+      final response = await connector.post(
+        endpoint.uriWithToken,
+        headers: endpoint.requestHeaders(includeContentType: true),
+        body: jsonEncode(request.toMap()),
+      );
+      final acknowledged =
+          (response.statusCode >= 200 && response.statusCode < 300) ||
+          response.statusCode == 404;
+      return AgentStreamCancelResult(
+        acknowledged: acknowledged,
+        statusCode: response.statusCode,
+        body: response.jsonBody,
+      );
+    } catch (error) {
+      return AgentStreamCancelResult(acknowledged: false, error: error);
+    }
+  }
 }
 
 abstract interface class AgentStreamSseConnector {
@@ -117,7 +241,10 @@ class AgentSseHttpTransport implements AgentStreamTransport {
   Stream<String> frames(AgentStreamRequest request) {
     return connector.post(
       endpoint.uriWithToken,
-      headers: endpoint.jsonHeaders(includeContentType: true),
+      headers: endpoint.requestHeaders(
+        accept: 'text/event-stream',
+        includeContentType: true,
+      ),
       body: jsonEncode(payloadFactory(request)),
     );
   }
@@ -166,7 +293,7 @@ class AgentWebSocketTransport implements AgentStreamTransport {
   Stream<String> frames(AgentStreamRequest request) async* {
     final socket = await connector.connect(
       endpoint.uriWithToken,
-      headers: endpoint.jsonHeaders(includeContentType: false),
+      headers: endpoint.requestHeaders(),
     );
 
     try {
@@ -208,4 +335,35 @@ class _DefaultSseConnector implements AgentStreamSseConnector {
   }) {
     return IoAgentStreamSseConnector().post(uri, headers: headers, body: body);
   }
+}
+
+class _DefaultControlHttpConnector implements AgentStreamControlHttpConnector {
+  const _DefaultControlHttpConnector();
+
+  @override
+  Future<AgentStreamControlHttpResponse> post(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) {
+    return IoAgentStreamControlHttpConnector().post(
+      uri,
+      headers: headers,
+      body: body,
+    );
+  }
+}
+
+Map<String, Object?>? _decodeJsonObject(String body) {
+  final trimmed = body.trim();
+  if (trimmed.isEmpty) return null;
+
+  try {
+    final decoded = jsonDecode(trimmed);
+    if (decoded is Map) return Map<String, Object?>.from(decoded);
+  } catch (_) {
+    return null;
+  }
+
+  return null;
 }
