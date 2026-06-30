@@ -927,6 +927,7 @@ doc/flutter-app-test-plan.md
 [x] Android `RouteIntentPlatform` 已接入 pending route MethodChannel 和 active route event stream
 [x] Platform channel smoke 命令已固定为 `npm run flutter:p0:platform-smoke`，覆盖 fake interfaces、Android MethodChannel schema、BLE protocol、snapshot sync 与 native runtime coordinator
 [x] Flutter `go_router` 核心 route shell 已接入，覆盖 Agent、Status、Schedule、Community、Device、Pump、Calibration、Media 等迁移矩阵路径，并用 widget tests 验证底部导航、隐藏底栏页和 NotFound fallback
+[x] Flutter route shell contract test 已读取 route intent fixtures，确保非 NotFound 目标路径均已注册到 route map
 ```
 
 ---

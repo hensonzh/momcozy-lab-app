@@ -121,6 +121,6 @@ test/fixtures/route_intents/
 - media viewer 和 IBCLC return viewport。
 - malformed payload、unsafe route 和 unknown route fallback。
 
-当前进展：Flutter `go_router` 核心 route shell 已接入，覆盖当前路由表的主路径、底部导航、专注流程隐藏底栏和 NotFound fallback。
+当前进展：Flutter `go_router` 核心 route shell 已接入，覆盖当前路由表的主路径、底部导航、专注流程隐藏底栏和 NotFound fallback。`test/app/momcozy_route_shell_contract_test.dart` 已读取 route intent fixtures，断言非 NotFound 目标路径均已注册到 route map。
 
-下一步：Flutter router contract tests 需要读取这些 JSON，断言 deep link/native 边界输入能产生 `expectedIntents`。
+下一步：扩展 Flutter router contract tests，断言 deep link/native 边界输入能产生完整 `expectedIntents` payload 与 consume-once 语义。
