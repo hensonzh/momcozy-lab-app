@@ -10,7 +10,7 @@ void main() {
     await tester.pumpWidget(const MomCozyFlutterApp());
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
     expect(find.text('智能体'), findsWidgets);
 
     await tester.tap(find.text('设备').last);

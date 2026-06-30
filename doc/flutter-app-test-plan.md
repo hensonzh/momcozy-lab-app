@@ -707,6 +707,7 @@ CI 最低要求：
 [x] Security/privacy gates 已定义，P0 redaction tests 已落地
 [x] P0 真机 smoke checklist 可执行
 [x] 真泵验证计划确认
+[x] Flutter Agent Hub run-state UI shell 已覆盖 idle、streaming、finished 和 disconnected 状态
 ```
 
 ---
