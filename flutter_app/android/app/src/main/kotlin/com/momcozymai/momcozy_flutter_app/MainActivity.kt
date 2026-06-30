@@ -148,8 +148,20 @@ class MainActivity : FlutterActivity() {
                 PumpSessionForegroundService.stop(this)
                 result.success(null)
             }
-            "showCompletionNotice",
-            "showAutoEndNotice" -> result.success(null)
+            "showCompletionNotice" -> {
+                PumpSessionLocalNotice.showCompletion(this)
+                result.success(null)
+            }
+            "showAutoEndNotice" -> {
+                PumpSessionLocalNotice.showAutoEnd(
+                    context = this,
+                    title = call.argument<String>("title") ?: "",
+                    body = call.argument<String>("body") ?: "",
+                    path = call.argument<String>("path") ?: "/",
+                    autoEndTeardown = call.argument<Boolean>("autoEndTeardown") ?: true
+                )
+                result.success(null)
+            }
             "enqueuePendingNavigate" -> {
                 val args = call.argumentsMap()
                 PumpNavigationBridge.setPending(

@@ -46,6 +46,7 @@ class PumpSessionForegroundService : Service() {
         }
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.cancel(NOTIFICATION_ID)
+        PumpSessionLocalNotice.cancelAll(this)
         clearSnapshot()
         stopSelf()
     }
