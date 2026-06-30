@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -219,6 +220,8 @@ class MomCozyRoutePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (route.path == '/') return const AgentHubPage();
+
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 

@@ -943,6 +943,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `/api/ag-ui-prewarm` client 已覆盖隐藏首帧 payload、envelope/root response、legacy alias 和 business/HTTP failure contract
 [x] Flutter `/api/ag-ui-timing-log` client 已覆盖 best-effort 上报、auth/header contract 和敏感字段脱敏检查
 [x] Flutter `/api/client-event` client 已覆盖 IBCLC completion payload、auth/header contract 和 best-effort failure
+[x] Flutter Agent Hub 页面骨架已替换根路由占位页，状态展示由 `AgentStreamRunState` 驱动，不依赖 SSE/WebSocket transport 类型
 ```
 
 ---
