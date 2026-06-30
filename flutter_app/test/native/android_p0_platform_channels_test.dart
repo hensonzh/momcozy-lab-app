@@ -216,6 +216,78 @@ void main() {
       },
     );
 
+    test(
+      'route intent adapter invokes pending route schemas and events',
+      () async {
+        const channel = MethodChannel('test.momcozy/route_intent');
+        final calls = <MethodCall>[];
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(channel, (call) async {
+              calls.add(call);
+              return switch (call.method) {
+                'consumePendingNavigate' => {
+                  'path': '/pump',
+                  'notifyJson': {'event': 'pump'},
+                  'autoEndTeardown': false,
+                },
+                _ => null,
+              };
+            });
+        addTearDown(
+          () => TestDefaultBinaryMessengerBinding
+              .instance
+              .defaultBinaryMessenger
+              .setMockMethodCallHandler(channel, null),
+        );
+        final routes = <PendingNativeRoute>[];
+        final platform = AndroidRouteIntentPlatform(channel: channel);
+        final sub = platform.activeRoutes.listen(routes.add);
+
+        await platform.enqueuePendingRoute(
+          const PendingNativeRoute(
+            path: '/status',
+            notifyJson: {'event': 'grown'},
+            autoEndTeardown: true,
+          ),
+        );
+        final pending = await platform.consumePendingRoute();
+        await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .handlePlatformMessage(
+              channel.name,
+              channel.codec.encodeMethodCall(
+                const MethodCall('activeRoute', {
+                  'path': '/schedule',
+                  'notifyJson': {'event': 'schedule_reminder'},
+                  'autoEndTeardown': false,
+                }),
+              ),
+              (_) {},
+            );
+        await flushStreams();
+
+        expect(calls.map((call) => call.method), [
+          'enqueuePendingNavigate',
+          'consumePendingNavigate',
+        ]);
+        expect(calls.first.arguments, {
+          'path': '/status',
+          'notifyJson': {'event': 'grown'},
+          'autoEndTeardown': true,
+        });
+        expect(pending?.toMap(), {
+          'path': '/pump',
+          'notifyJson': {'event': 'pump'},
+        });
+        expect(routes.single.toMap(), {
+          'path': '/schedule',
+          'notifyJson': {'event': 'schedule_reminder'},
+        });
+
+        await sub.cancel();
+        await platform.dispose();
+      },
+    );
+
     test('pump agent upload adapter invokes method schemas', () async {
       const channel = MethodChannel('test.momcozy/pump_agent_upload');
       final calls = <MethodCall>[];

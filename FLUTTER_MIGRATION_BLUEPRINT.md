@@ -924,6 +924,7 @@ doc/flutter-app-test-plan.md
 [x] Android `PumpAgentBackgroundRunner` 已通过 `PumpAgentUploadPlatform` typed streams 回传 process progress / process reply
 [x] Android Pump foreground notification 点击已写入一次性 `/pump` pending route，并支持 native snapshot restore
 [x] Android Pump completion / auto-end notices 已接入本地通知，并复用 pending route 跳转
+[x] Android `RouteIntentPlatform` 已接入 pending route MethodChannel 和 active route event stream
 ```
 
 ---

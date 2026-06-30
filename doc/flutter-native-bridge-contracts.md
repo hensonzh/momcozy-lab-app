@@ -160,7 +160,7 @@ Fake contract status:
 [x] dispatch native route event while app is active
 [x] unknown path fallback
 [x] one-shot consumption
-[ ] Android route event channel implementation
+[x] Android route event channel implementation
 ```
 
 ---
