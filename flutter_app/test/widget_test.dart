@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 void main() {
   testWidgets('route shell starts at Agent Hub and navigates bottom tabs', (
@@ -42,5 +43,39 @@ void main() {
     expect(find.byKey(const ValueKey('route-page-/404')), findsOneWidget);
     expect(find.text('页面未找到'), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
+  });
+
+  testWidgets('route shell consumes pending native route on startup', (
+    tester,
+  ) async {
+    final routes = FakeRouteIntentPlatform();
+    await routes.enqueuePendingRoute(const PendingNativeRoute(path: '/pump'));
+
+    await tester.pumpWidget(MomCozyFlutterApp(routeIntentPlatform: routes));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+
+    await routes.dispose();
+  });
+
+  testWidgets('route shell follows active native route events', (tester) async {
+    final routes = FakeRouteIntentPlatform();
+    final router = createMomCozyRouter(initialLocation: '/status');
+
+    await tester.pumpWidget(
+      MomCozyFlutterApp(router: router, routeIntentPlatform: routes),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
+
+    routes.dispatchActiveRoute(const PendingNativeRoute(path: '/pump'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
+
+    await routes.dispose();
   });
 }

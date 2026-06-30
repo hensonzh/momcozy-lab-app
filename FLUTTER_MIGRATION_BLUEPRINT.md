@@ -933,6 +933,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter route intent mapper 已覆盖 plan / pregnancy diary pending storage 到 badge intents，并保留一次性消费语义
 [x] Flutter route intent mapper 已覆盖 Agent artifact、Schedule prefill、Device/Pump gating、Calibration auto-start 和 legacy customEvent navigation
 [x] Flutter route intent mapper 已覆盖 Media Viewer 与 IBCLC start/return viewport intents，含 `/skill-assets` URL 解析占位、unsupported toast 和 return consume-once
+[x] Flutter route shell 已接入 `RouteIntentPlatform`，启动时消费 native pending route，并监听 active route event 驱动 `go_router`
 ```
 
 ---
