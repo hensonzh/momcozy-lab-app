@@ -6,6 +6,8 @@ import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 const defaultMmcBleChannelName = 'com.momcozymai.flutter/mmc_ble';
 const defaultPumpSessionNotificationChannelName =
     'com.momcozymai.flutter/pump_session_notification';
+const defaultPumpAgentUploadChannelName =
+    'com.momcozymai.flutter/pump_agent_upload';
 const defaultPumpGattServiceUuid = '0000af00-0000-1000-8000-00805f9b34fb';
 
 class AndroidBlePlatform implements BlePlatform {
@@ -307,6 +309,143 @@ class AndroidPumpSessionForegroundServicePlatform
   }
 }
 
+class AndroidPumpAgentUploadPlatform implements PumpAgentUploadPlatform {
+  AndroidPumpAgentUploadPlatform({MethodChannel? channel})
+    : _channel =
+          channel ?? const MethodChannel(defaultPumpAgentUploadChannelName) {
+    _channel.setMethodCallHandler(_handleNativeMethodCall);
+  }
+
+  final MethodChannel _channel;
+  final StreamController<PumpAgentUploadCall> _callController =
+      StreamController<PumpAgentUploadCall>.broadcast();
+  final StreamController<PumpAgentUploadFailure> _failureController =
+      StreamController<PumpAgentUploadFailure>.broadcast();
+
+  @override
+  Stream<PumpAgentUploadCall> get calls => _callController.stream;
+
+  @override
+  Stream<PumpAgentUploadFailure> get failures => _failureController.stream;
+
+  @override
+  Future<void> setConfig({
+    required String apiBaseUrl,
+    required String bearerToken,
+    required String userId,
+  }) async {
+    await _channel.invokeMethod<void>('setConfig', {
+      'apiBaseUrl': apiBaseUrl,
+      'bearerToken': bearerToken,
+      'userId': userId,
+    });
+  }
+
+  @override
+  Future<PumpAgentUploadProgress> sampleFromSnapshot() async {
+    final result = await _channel.invokeMethod<Object?>('sampleFromSnapshot');
+    return _progressFromMap(_mapFrom(result));
+  }
+
+  @override
+  Future<PumpAgentUploadProgress> resetProgress() async {
+    final result = await _channel.invokeMethod<Object?>('resetProgress');
+    return _progressFromMap(_mapFrom(result));
+  }
+
+  @override
+  Future<void> markStepStop(PumpAgentUploadSide side) async {
+    await _channel.invokeMethod<void>('markStepStop', {
+      'side': _pumpAgentUploadSideValue(side),
+    });
+  }
+
+  @override
+  Future<void> markStepPause(PumpAgentUploadSide side) async {
+    await _channel.invokeMethod<void>('markStepPause', {
+      'side': _pumpAgentUploadSideValue(side),
+    });
+  }
+
+  @override
+  Future<void> setOperationSource(
+    PumpAgentUploadSide side,
+    PumpAgentUploadSource source,
+  ) async {
+    await _channel.invokeMethod<void>('setOperationSource', {
+      'side': _pumpAgentUploadSideValue(side),
+      'source': _pumpAgentUploadSourceValue(source),
+    });
+  }
+
+  @override
+  Future<PumpAgentUploadResult> uploadWorkstate({
+    required String userId,
+  }) async {
+    return _invokeUploadResult('uploadWorkstate', {'userId': userId});
+  }
+
+  @override
+  Future<PumpAgentUploadResult> getProcessData({required String userId}) async {
+    return _invokeUploadResult('getProcessData', {'userId': userId});
+  }
+
+  @override
+  Future<PumpAgentUploadResult> uploadProcess({required String userId}) async {
+    return _invokeUploadResult('uploadProcess', {'userId': userId});
+  }
+
+  @override
+  Future<PumpAgentUploadResult> uploadMilkRecord({
+    required String userId,
+    required int endedAtMs,
+  }) async {
+    return _invokeUploadResult('uploadMilkRecord', {
+      'userId': userId,
+      'endedAtMs': endedAtMs,
+    });
+  }
+
+  Future<void> dispose() async {
+    _channel.setMethodCallHandler(null);
+    await _callController.close();
+    await _failureController.close();
+  }
+
+  Future<PumpAgentUploadResult> _invokeUploadResult(
+    String method,
+    Map<String, Object?> args,
+  ) async {
+    final result = await _channel.invokeMethod<Object?>(method, args);
+    return _uploadResultFromMap(_mapFrom(result));
+  }
+
+  Future<void> _handleNativeMethodCall(MethodCall call) async {
+    final payload = _mapFrom(call.arguments);
+    switch (call.method) {
+      case 'uploadCall':
+        _callController.add(
+          PumpAgentUploadCall(
+            method: _string(payload['method']),
+            payload: _mapFrom(payload['payload']),
+          ),
+        );
+        break;
+      case 'uploadFailure':
+        _failureController.add(
+          PumpAgentUploadFailure(
+            method: _string(payload['method']),
+            code: _string(payload['code']),
+            message: _string(payload['message']),
+            retryable: payload['retryable'] == true,
+            payload: _mapFrom(payload['payload']),
+          ),
+        );
+        break;
+    }
+  }
+}
+
 BlePermissionState _permissionStateFromResult(
   Object? result, {
   BlePermissionState fallback = BlePermissionState.unknown,
@@ -329,6 +468,40 @@ BleDeviceSnapshot _deviceSnapshotFromMap(Map<String, Object?> map) {
     deviceName: _string(map['deviceName'] ?? map['name'] ?? map['localName']),
     connected: map['connected'] == true,
   );
+}
+
+PumpAgentUploadProgress _progressFromMap(Map<String, Object?> map) {
+  return PumpAgentUploadProgress(
+    processL: _intValue(map['processL']),
+    processR: _intValue(map['processR']),
+    processAll: _intValue(map['processAll']),
+    elapsedSeconds: _intValue(map['elapsedSeconds']),
+  );
+}
+
+PumpAgentUploadResult _uploadResultFromMap(Map<String, Object?> map) {
+  return PumpAgentUploadResult(
+    body: _mapFrom(map['body']),
+    response: _mapFrom(map['response']),
+    progress: _progressFromMap(map),
+    deduped: map['deduped'] == true,
+  );
+}
+
+String _pumpAgentUploadSideValue(PumpAgentUploadSide side) {
+  return switch (side) {
+    PumpAgentUploadSide.left => 'L',
+    PumpAgentUploadSide.right => 'R',
+    PumpAgentUploadSide.both => 'both',
+  };
+}
+
+String _pumpAgentUploadSourceValue(PumpAgentUploadSource source) {
+  return switch (source) {
+    PumpAgentUploadSource.device => 'device',
+    PumpAgentUploadSource.app => 'app',
+    PumpAgentUploadSource.agent => 'agent',
+  };
 }
 
 Map<String, Object?> _mapFrom(Object? raw) {
