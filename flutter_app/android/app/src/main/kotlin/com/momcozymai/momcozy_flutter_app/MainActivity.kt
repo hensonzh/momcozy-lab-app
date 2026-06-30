@@ -62,8 +62,19 @@ class MainActivity : FlutterActivity() {
                 result.success(mapOf("granted" to hasNotificationPermission()))
             }
             "start",
-            "update",
-            "stop",
+            "update" -> {
+                PumpSessionForegroundService.startOrUpdate(
+                    this,
+                    call.argument<String>("state") ?: "running",
+                    call.argument<Int>("processAll") ?: 0,
+                    call.argument<Int>("elapsedSeconds") ?: 0
+                )
+                result.success(null)
+            }
+            "stop" -> {
+                PumpSessionForegroundService.stop(this)
+                result.success(null)
+            }
             "showCompletionNotice",
             "showAutoEndNotice",
             "enqueuePendingNavigate" -> result.success(null)
