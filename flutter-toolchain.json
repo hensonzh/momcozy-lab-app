@@ -1,0 +1,24 @@
+{
+  "toolchainRootDefault": "~/.local/share/momcozy-toolchains",
+  "flutter": {
+    "version": "3.44.4",
+    "channel": "stable",
+    "path": "flutter"
+  },
+  "dart": {
+    "version": "3.12.2"
+  },
+  "jdk": {
+    "distribution": "Temurin",
+    "version": "17.0.19+10",
+    "homePath": "jdk/jdk-17.0.19+10/Contents/Home"
+  },
+  "android": {
+    "sdkPath": "android-sdk",
+    "platform": "android-36",
+    "buildTools": "36.0.0",
+    "platformTools": "36.0.0-13206524",
+    "ndk": "28.2.13676358",
+    "cmake": "3.22.1"
+  }
+}

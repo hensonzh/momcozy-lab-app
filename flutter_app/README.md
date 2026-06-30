@@ -30,6 +30,9 @@ npm run flutter:check
 npm run flutter:init
 ```
 
+Pinned versions live in [`flutter-toolchain.json`](../flutter-toolchain.json);
+`npm run flutter:check` validates the local SDK/JDK/Android directories and versions against that file.
+
 From this `flutter_app/` directory:
 
 ```bash

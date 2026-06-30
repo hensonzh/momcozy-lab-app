@@ -23,9 +23,10 @@ npm run flutter:check
 
 这个命令只检查环境，不写文件。它会确认：
 
-- `flutter --version --machine` 可执行；
-- `java -version` 可执行；
-- `adb version` 是否可用，用于真机 smoke test。
+- `flutter --version --machine` 可执行，且版本匹配 `flutter-toolchain.json`；
+- `java -version` 可执行，且 JDK 版本匹配 `flutter-toolchain.json`；
+- Android SDK platform、build-tools、NDK、CMake 目录存在；
+- `adb version` 是否可用且版本匹配，用于真机 smoke test。
 
 脚本会自动把默认用户目录工具链加入子进程环境：
 
@@ -35,6 +36,12 @@ MOMCOZY_TOOLCHAIN_ROOT 默认值：
 ```
 
 如果未来要换安装位置，可以在执行命令前设置 `MOMCOZY_TOOLCHAIN_ROOT`。
+
+版本基线写在仓库根目录：
+
+```text
+flutter-toolchain.json
+```
 
 当前实测状态：
 
@@ -97,6 +104,8 @@ flutter create \
 
 ## 4. 版本固定
 
+P0 决策：暂不引入 FVM，采用仓库级 `flutter-toolchain.json` 作为机器可读版本源；本地脚本和后续 CI 镜像都必须按这份文件校验。
+
 当前固定版本：
 
 ```text
@@ -108,14 +117,14 @@ flutter create \
 [x] JDK: Temurin OpenJDK 17.0.19+10
 [x] NDK: 28.2.13676358
 [x] CMake: 3.22.1
-[ ] 是否采用 FVM 或 CI 镜像固定版本
+[x] P0 不采用 FVM；CI 后续读取 `flutter-toolchain.json` 固定版本
 ```
 
-建议把最终版本写入：
+版本固定位置：
 
 - `flutter_app/README.md`
-- 如果使用 FVM，则写入 `.fvm/fvm_config.json`
-- CI 配置或 release checklist
+- `flutter-toolchain.json`
+- CI 配置或 release checklist（接入 CI 时必须复用同一文件）
 
 ---
 
