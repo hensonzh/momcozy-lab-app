@@ -5,6 +5,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
+import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
 
 import '../../support/fixture_reader.dart';
 
@@ -311,6 +312,83 @@ void main() {
         throwsA(isA<AgentStreamTransportException>()),
       );
     });
+
+    test(
+      'timing log client posts redaction-safe best-effort entries',
+      () async {
+        final connector = _RecordingControlHttpConnector(
+          const AgentStreamControlHttpResponse(statusCode: 204, body: ''),
+        );
+        final client = AgentStreamTimingLogClient(
+          endpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-timing-log'),
+            token: 'secret-token',
+          ),
+          connector: connector,
+        );
+
+        final result = await client.post(
+          const AgentStreamTimingLogEntry(
+            source: 'flutter',
+            stage: 'client.ws_open',
+            runId: 'run-fixture-001',
+            threadId: 'thread-fixture-001',
+            clientTimingId: 'timing-001',
+            userId: 'demo-user-fixture',
+            elapsedMs: 42,
+            clientTsMs: 1700000000000,
+            metadata: {'transport': 'websocket'},
+          ),
+        );
+        final body = jsonDecode(connector.body!) as Map<String, Object?>;
+        final redactedBody = redactLogMap(body).toString();
+
+        expect(result.sent, isTrue);
+        expect(result.statusCode, 204);
+        expect(connector.uri!.queryParameters['token'], 'secret-token');
+        expect(
+          connector.headers,
+          containsPair('Authorization', 'Bearer secret-token'),
+        );
+        expect(body, containsPair('stage', 'client.ws_open'));
+        expect(body, containsPair('run_id', 'run-fixture-001'));
+        expect(body, containsPair('thread_id', 'thread-fixture-001'));
+        expect(body, containsPair('user_id', 'demo-user-fixture'));
+        expect(redactedBody, isNot(contains('thread-fixture-001')));
+        expect(redactedBody, isNot(contains('demo-user-fixture')));
+      },
+    );
+
+    test(
+      'timing log client never throws for HTTP or network failures',
+      () async {
+        final connector = _RecordingControlHttpConnector(
+          const AgentStreamControlHttpResponse(statusCode: 503, body: ''),
+        );
+        final client = AgentStreamTimingLogClient(
+          endpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-timing-log'),
+          ),
+          connector: connector,
+        );
+
+        final httpFailure = await client.post(
+          const AgentStreamTimingLogEntry(stage: 'client.ws_error'),
+        );
+
+        expect(httpFailure.sent, isFalse);
+        expect(httpFailure.statusCode, 503);
+
+        connector.nextError = StateError('network down');
+
+        final networkFailure = await client.post(
+          const AgentStreamTimingLogEntry(stage: 'client.ws_error'),
+        );
+
+        expect(networkFailure.sent, isFalse);
+        expect(networkFailure.error, isA<StateError>());
+      },
+    );
   });
 }
 

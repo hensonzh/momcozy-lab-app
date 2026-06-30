@@ -941,6 +941,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `AgentStreamRunState` reducer 已覆盖流式文本累积、terminal guard、断线 retry 状态和 cancel ack/local cancel 状态
 [x] Flutter `AgentStreamRunner` 已接入 `AgentStreamClient` 抽象，SSE/WebSocket clients 产出相同 final state，transport error / missing terminal 统一映射为 disconnected
 [x] Flutter `/api/ag-ui-prewarm` client 已覆盖隐藏首帧 payload、envelope/root response、legacy alias 和 business/HTTP failure contract
+[x] Flutter `/api/ag-ui-timing-log` client 已覆盖 best-effort 上报、auth/header contract 和敏感字段脱敏检查
 ```
 
 ---
