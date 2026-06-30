@@ -937,6 +937,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `AgentStreamClient` 抽象已接入 transport-agnostic client，SSE/WebSocket/JSONL fixture transport 均输出统一 `Stream<AgentStreamEvent>`
 [x] Flutter AG-UI outbound payload builder 已对齐文本和图片首帧 fixture，并强制 threadId/runId/messageId guard
 [x] Flutter Agent stream IO transport shell 已接入 SSE POST / WebSocket first-frame adapters，复用 auth/redacted endpoint config，并在 terminal event 后关闭底层 stream
+[x] Flutter `/api/ag-ui-cancel` client 已覆盖 2xx/404 ack、5xx/network non-blocking failure 和 auth/header/body contract
 ```
 
 ---
