@@ -143,6 +143,7 @@ class TransportAgnosticAgentStreamClient implements AgentStreamClient {
     await for (final frame in transport.frames(request)) {
       for (final event in decodeFrame(frame)) {
         yield event;
+        if (event.isTerminal) return;
       }
     }
   }
