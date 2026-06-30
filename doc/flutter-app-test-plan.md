@@ -564,6 +564,14 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 | `PumpAgentUpload` | snapshot persist、upload、retry、dedupe、failure record。 |
 | `NativeDeviceState` | paired state、connected state、left/right isolation、clear on user switch。 |
 
+当前本地 P0 platform channel smoke 命令：
+
+```bash
+npm run flutter:p0:platform-smoke
+```
+
+该命令覆盖 fake interfaces、Android MethodChannel schema、BLE protocol、snapshot sync 与 native runtime coordinator。真机 BLE/通知/后台服务仍以 L4 device lab 为准。
+
 每个 bridge 的合同必须写清楚：
 
 ```text

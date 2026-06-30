@@ -516,7 +516,7 @@ AgentHub UI
 [x] Android release build 可生成，当前 P0 使用 debug signing
 [ ] 核心 route shell 可导航
 [x] 本地 storage migration 可 dry-run
-[ ] Platform channel smoke test 可跑通
+[x] Platform channel smoke test 可跑通：`npm run flutter:p0:platform-smoke`
 ```
 
 ### Phase 2: 原生能力 PoC
@@ -925,6 +925,7 @@ doc/flutter-app-test-plan.md
 [x] Android Pump foreground notification 点击已写入一次性 `/pump` pending route，并支持 native snapshot restore
 [x] Android Pump completion / auto-end notices 已接入本地通知，并复用 pending route 跳转
 [x] Android `RouteIntentPlatform` 已接入 pending route MethodChannel 和 active route event stream
+[x] Platform channel smoke 命令已固定为 `npm run flutter:p0:platform-smoke`，覆盖 fake interfaces、Android MethodChannel schema、BLE protocol、snapshot sync 与 native runtime coordinator
 ```
 
 ---
