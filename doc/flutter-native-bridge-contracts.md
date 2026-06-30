@@ -117,6 +117,7 @@ Fake contract status:
 [x] Android Kotlin MethodChannel handler shell for pump foreground service
 [x] Android real foreground notification/service implementation
 [x] Android pending route queue for foreground notification click and snapshot restore
+[x] Android real completion and auto-end local notice implementation
 ```
 
 ### 4.3 `PumpAgentUploadPlatform`

@@ -66,6 +66,7 @@ Current Dart test coverage:
 - Android pump agent background runner shell refreshes native progress while the foreground service is active.
 - Pump agent upload adapter fixtures cover native process progress and process reply event streams.
 - Android pump foreground notification click writes a one-shot `/pump` pending route and restore snapshot.
+- Android pump completion and auto-end notices are backed by local notifications.
 - P0 native fake platform interfaces cover BLE permission/settings/scan failure/notification/read/write/subscribe flows, pump protocol command schemas, pump foreground lifecycle/notice events, wake lock reference counting, and one-shot route consumption/active dispatch.
 - Android MethodChannel adapter fixtures cover `MmcBle` BLE method schemas/events and `PumpSessionNotification` foreground method schemas.
 - Pump agent upload MethodChannel adapter fixtures cover native method schemas and failure events.
