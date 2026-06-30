@@ -112,7 +112,7 @@ Fake contract status:
 [x] foreground service event stream
 [x] Flutter MethodChannel adapter tests for `PumpSessionNotification` method schema
 [x] Android Kotlin MethodChannel handler shell for pump foreground service
-[ ] Android real foreground notification/service implementation
+[x] Android real foreground notification/service implementation
 ```
 
 ### 4.3 `PumpAgentUploadPlatform`

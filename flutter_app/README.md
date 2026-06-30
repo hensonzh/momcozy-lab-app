@@ -63,7 +63,7 @@ Current Dart test coverage:
 
 Next migration gap:
 
-- Port the real Android `MmcBle` scanner/GATT transport and pump foreground notification service behind the Kotlin MethodChannel handler shells.
+- Port the real Android `MmcBle` scanner/GATT transport behind the Kotlin MethodChannel handler shell.
 
 ## Migration Notes
 
