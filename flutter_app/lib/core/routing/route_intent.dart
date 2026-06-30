@@ -58,6 +58,24 @@ List<RouteIntent> routeIntentsFromAgentNavigationEvents(List<Object?> events) {
       .toList(growable: false);
 }
 
+List<RouteIntent> routeIntentsFromMediaAndIbclcInput(
+  Map<String, Object?> input,
+) {
+  final intents = <RouteIntent>[];
+  final mediaLinks = input['mediaLinks'];
+  if (mediaLinks is List) {
+    intents.addAll(
+      mediaLinks.whereType<Map>().map((value) {
+        return _routeIntentFromMediaLink(Map<String, Object?>.from(value));
+      }),
+    );
+  }
+
+  final ibclc = _record(input['ibclc']);
+  if (ibclc != null) intents.addAll(_routeIntentsFromIbclc(ibclc));
+  return intents;
+}
+
 RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
   final path = _string(payload['path']) ?? '/';
   if (_isUnsafeRoute(path)) {
@@ -195,6 +213,69 @@ RouteIntent routeIntentFromFallbackCase(Map<String, Object?> inputCase) {
         payload: {'fallback': 'AgentHub'},
       );
   }
+}
+
+RouteIntent _routeIntentFromMediaLink(Map<String, Object?> link) {
+  final kind = _string(link['kind']) ?? '';
+  final url = _string(link['url']) ?? '';
+  final title = _string(link['title']) ?? '';
+  if (!_supportedMediaKinds.contains(kind) || url.isEmpty) {
+    return const RouteIntent(
+      type: 'ShowToast',
+      payload: {'message': '该资料暂不支持应用内打开'},
+    );
+  }
+
+  return RouteIntent(
+    type: 'OpenMediaViewer',
+    path: '/media-viewer',
+    payload: {'kind': kind, 'title': title, 'url': _resolveMediaUrl(url)},
+  );
+}
+
+List<RouteIntent> _routeIntentsFromIbclc(Map<String, Object?> input) {
+  final intents = <RouteIntent>[];
+  final start = _record(input['start']);
+  if (start != null) {
+    intents.add(
+      RouteIntent(
+        type: 'OpenIbclcChat',
+        path:
+            _safeSameOriginPath(_string(start['baseUrl'])) ??
+            '/ibclc-chat.html',
+        payload: {
+          'consultId': _string(start['consultId']) ?? '',
+          'threadId': _string(start['threadId']) ?? '',
+          'returnTo': _safeSameOriginPath(_string(start['returnTo'])) ?? '/',
+          'userId': _string(start['userId']) ?? '',
+        },
+      ),
+    );
+  }
+
+  final viewport = _record(input['storedReturnViewport']);
+  final completion = _record(input['completionPayload']);
+  final returnTo = _safeSameOriginPath(_string(viewport?['return_to']));
+  if (viewport != null && completion != null && returnTo != null) {
+    intents.add(
+      RouteIntent(
+        type: 'ReturnFromIbclc',
+        path: returnTo,
+        payload: {
+          'consultId':
+              _string(viewport['consult_id']) ??
+              _string(completion['consult_id']) ??
+              '',
+          'scrollTop': _int(viewport['scroll_top']),
+          'scrollHeight': _int(viewport['scroll_height']),
+          'completionEvent': _string(completion['event_type']) ?? '',
+        },
+        consume: 'once',
+      ),
+    );
+  }
+
+  return intents;
 }
 
 RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
@@ -339,6 +420,21 @@ List<String> _uniqueDateStrings(Object? value) {
   return dates;
 }
 
+String _resolveMediaUrl(String url) {
+  if (url.startsWith('/skill-assets/')) return 'resolved-http-url:$url';
+  return url;
+}
+
+String? _safeSameOriginPath(String? value) {
+  if (value == null || value.isEmpty || _isUnsafeReturnTo(value)) return null;
+  return value;
+}
+
+int _int(Object? value) {
+  if (value is num && value.isFinite) return value.toInt();
+  return 0;
+}
+
 Map<String, Object?>? _decodeObject(String? value) {
   if (value == null || value.trim().isEmpty) return null;
   try {
@@ -369,3 +465,5 @@ bool _isUnsafeRoute(String path) {
 bool _isUnsafeReturnTo(String path) {
   return _isUnsafeRoute(path) || !path.startsWith('/');
 }
+
+const _supportedMediaKinds = {'pdf', 'image', 'video'};

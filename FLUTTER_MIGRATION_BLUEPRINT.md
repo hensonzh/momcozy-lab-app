@@ -932,6 +932,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter pump overlay route action 已对齐 Web 端 hide/update/skip 规则，覆盖权限拒绝、泵奶页可见、后台/非泵奶页更新和进度 clamp
 [x] Flutter route intent mapper 已覆盖 plan / pregnancy diary pending storage 到 badge intents，并保留一次性消费语义
 [x] Flutter route intent mapper 已覆盖 Agent artifact、Schedule prefill、Device/Pump gating、Calibration auto-start 和 legacy customEvent navigation
+[x] Flutter route intent mapper 已覆盖 Media Viewer 与 IBCLC start/return viewport intents，含 `/skill-assets` URL 解析占位、unsupported toast 和 return consume-once
 ```
 
 ---
