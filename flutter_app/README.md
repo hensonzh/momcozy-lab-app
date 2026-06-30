@@ -57,6 +57,7 @@ Current Dart test coverage:
 - BLE fixtures cover request packet goldens, standalone hex files, valid/invalid frame parsing, parser edge cases, cross-platform parity cases, and side mapping.
 - Storage migration fixtures cover valid core state and malformed legacy fallback.
 - Route intent fixtures cover native notification navigation plus unsafe/unknown fallback routes.
+- Pump device snapshot reducer fixtures cover E1/D0/D6/0x80/BF protocol frames and left/right side isolation.
 - P0 native fake platform interfaces cover BLE permission/settings/scan failure/notification/read/write/subscribe flows, pump protocol command schemas, pump foreground lifecycle/notice events, wake lock reference counting, and one-shot route consumption/active dispatch.
 - Android MethodChannel adapter fixtures cover `MmcBle` BLE method schemas/events and `PumpSessionNotification` foreground method schemas.
 - Pump agent upload MethodChannel adapter fixtures cover native method schemas and failure events.
@@ -64,7 +65,7 @@ Current Dart test coverage:
 
 Next migration gap:
 
-- Connect the real pump snapshot/body builder to Android `PumpAgentUploadPlatform`, then wire pump protocol state machines on top of the BLE transport.
+- Connect `PumpDeviceSnapshot` to the Flutter BLE notification stream and Android `PumpAgentUploadPlatform` body builder, then wire pump protocol state machines on top of the BLE transport.
 
 ## Migration Notes
 
