@@ -2,11 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import '../network/api_envelope.dart';
 import '../privacy/log_redactor.dart';
 import 'agent_stream_client.dart';
+import 'agent_stream_event.dart';
 
 typedef AgentStreamPayloadFactory =
     Map<String, Object?> Function(AgentStreamRequest request);
+
+const agentStreamPrewarmMessage =
+    '这是一次隐藏的新会话预热。请只回复“我在。”，不要调用工具，不要生成建议、表单、卡片或面向用户的内容。下一条用户消息才是真实对话。';
 
 class AgentStreamEndpoint {
   const AgentStreamEndpoint({
@@ -177,6 +182,93 @@ class AgentStreamCancelClient {
     } catch (error) {
       return AgentStreamCancelResult(acknowledged: false, error: error);
     }
+  }
+}
+
+class AgentStreamPrewarmResult {
+  const AgentStreamPrewarmResult({
+    required this.status,
+    required this.raw,
+    this.threadId,
+    this.runId,
+    this.responseId,
+    this.sessionState,
+  });
+
+  final String status;
+  final Map<String, Object?> raw;
+  final String? threadId;
+  final String? runId;
+  final String? responseId;
+  final Object? sessionState;
+
+  factory AgentStreamPrewarmResult.fromMap(Map<String, Object?> map) {
+    return AgentStreamPrewarmResult(
+      status: stringField(map, 'status') ?? '',
+      raw: map,
+      threadId: aliasString(map, 'thread_id', 'threadId'),
+      runId: aliasString(map, 'run_id', 'runId'),
+      responseId: aliasString(map, 'response_id', 'responseId'),
+      sessionState: map['session_state'] ?? map['sessionState'],
+    );
+  }
+}
+
+class AgentStreamPrewarmClient {
+  const AgentStreamPrewarmClient({
+    required this.endpoint,
+    this.connector = const _DefaultControlHttpConnector(),
+  });
+
+  final AgentStreamEndpoint endpoint;
+  final AgentStreamControlHttpConnector connector;
+
+  Future<AgentStreamPrewarmResult> prewarm({
+    required String userId,
+    required String threadId,
+    required String runId,
+    required String messageId,
+    String locale = 'en-US',
+    Map<String, Object?> forwardedProps = const <String, Object?>{},
+  }) async {
+    final payload = buildAgentRunPayload(
+      AgentStreamRequest(
+        userId: userId,
+        message: agentStreamPrewarmMessage,
+        threadId: threadId,
+        locale: locale,
+        metadata: {...forwardedProps, 'prewarm': true},
+      ),
+      runId: runId,
+      messageId: messageId,
+    );
+    final response = await connector.post(
+      endpoint.uriWithToken,
+      headers: endpoint.requestHeaders(includeContentType: true),
+      body: jsonEncode(payload),
+    );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw AgentStreamTransportException(
+        'prewarm failed: ${response.statusCode}',
+      );
+    }
+
+    final body = response.jsonBody;
+    if (body == null) {
+      throw const AgentStreamTransportException(
+        'prewarm response must be a JSON object',
+      );
+    }
+
+    final Object? data = isApiEnvelope(body) ? unwrapApiEnvelope(body) : body;
+    if (data is! Map) {
+      throw const AgentStreamTransportException(
+        'prewarm response data must be a JSON object',
+      );
+    }
+
+    return AgentStreamPrewarmResult.fromMap(Map<String, Object?>.from(data));
   }
 }
 

@@ -178,6 +178,7 @@ features/
 [x] Flutter `/api/ag-ui-cancel` control client 已落地，2xx/404 视为 ack，5xx/network 不阻塞本地停止态
 [x] Flutter `AgentStreamRunState` reducer 已落地，UI/view model 可复用统一 streaming/finished/error/disconnected/cancelled 状态
 [x] Flutter `AgentStreamRunner` 已落地，UI/view model 只依赖 `AgentStreamClient` 和统一 run state，不判断 SSE/WebSocket transport
+[x] Flutter `/api/ag-ui-prewarm` control client 已落地，兼容 envelope/root object 和 snake/camel legacy aliases
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
