@@ -45,10 +45,18 @@ production: 仅在迁移 cutover 获批后使用 `com.momcozymai.app`。
 ```bash
 cd flutter_app
 flutter build apk --debug
+flutter build apk --release
 ```
 
 预期 debug APK applicationId：
 
 ```text
 com.momcozymai.app.flutterpoc
+```
+
+当前本机验证：
+
+```text
+[x] debug APK build/app/outputs/flutter-apk/app-debug.apk 可生成
+[x] release APK build/app/outputs/flutter-apk/app-release.apk 可生成
 ```
