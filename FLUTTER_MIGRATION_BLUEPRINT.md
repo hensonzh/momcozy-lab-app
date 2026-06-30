@@ -886,7 +886,7 @@ doc/flutter-app-test-plan.md
 
 建议按这个顺序推进：
 
-1. 将 Flutter `PumpDeviceSnapshot` reducer 接到 BLE notification stream 和 Android `PumpAgentUploadPlatform` body builder，替换当前 PoC 的占位 device/process body。
+1. 将 Flutter `PumpDeviceSnapshot` 接到 Android `PumpAgentUploadPlatform` body builder，替换当前 PoC 的占位 device/process body。
 2. 将 pump protocol state machine 接到 Flutter BLE transport。
 
 已完成的本机准入：
@@ -914,6 +914,7 @@ doc/flutter-app-test-plan.md
 [x] Android `PumpAgentUploadPlatform` Kotlin MethodChannel handler shell 已接入，debug APK 构建通过
 [x] Android `PumpAgentUploadPlatform` HTTP transport 已接入：按 method 映射 `/v1/pump/workstate`、`/v1/pump/process/data`、`/v1/pump/process`、`/v1/pump-milk/upload`，保留 dedupe/failure event 返回契约
 [x] Flutter `PumpDeviceSnapshot` reducer 已覆盖 E1/D0/D6/0x80/BF frame 更新、左右设备隔离与 legacy timestamp/milk 字段
+[x] Flutter `PumpDeviceSnapshotBleBinding` 已接入 `BlePlatform.notifications`，覆盖 connected device seed、notify subscription 与 unknown device ignore
 ```
 
 ---

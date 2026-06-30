@@ -163,6 +163,7 @@ features/
 [x] Android `PumpAgentUploadPlatform` Kotlin MethodChannel handler shell 已接入，debug APK 构建通过
 [x] Android `PumpAgentUploadPlatform` HTTP transport 已接入；真实 pump snapshot/body parity 和 service-backed runner 仍是下一步
 [x] Flutter `PumpDeviceSnapshot` reducer 已落地并覆盖 legacy BLE protocol frame 到设备快照的字段更新
+[x] Flutter `PumpDeviceSnapshotBleBinding` 已接入 `BlePlatform.notifications`，为后续 PumpAgentUpload body parity 提供实时快照源
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
