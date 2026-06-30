@@ -136,5 +136,32 @@ void main() {
         expected.map((item) => item['consume']),
       );
     });
+
+    test('map agent and feature navigation events to typed intents', () {
+      final fixture = readFixtureMap(
+        'route_intents/agent_artifact_and_feature_navigation_intents.json',
+      );
+      final input = Map<String, Object?>.from(fixture['input']! as Map);
+      final events = List<Object?>.from(input['events']! as List);
+      final expected = List<Object?>.from(fixture['expectedIntents']! as List)
+          .whereType<Map>()
+          .map((value) => Map<String, Object?>.from(value))
+          .toList(growable: false);
+
+      final actual = routeIntentsFromAgentNavigationEvents(events);
+
+      expect(
+        actual.map((intent) => intent.type),
+        expected.map((item) => item['type']),
+      );
+      expect(
+        actual.map((intent) => intent.path),
+        expected.map((item) => item['path']),
+      );
+      expect(
+        actual.map((intent) => intent.payload),
+        expected.map((item) => item['payload']),
+      );
+    });
   });
 }

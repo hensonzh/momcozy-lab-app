@@ -49,6 +49,15 @@ List<RouteIntent> routeIntentsFromPendingStorage(Map<String, Object?> storage) {
   ];
 }
 
+List<RouteIntent> routeIntentsFromAgentNavigationEvents(List<Object?> events) {
+  return events
+      .whereType<Map>()
+      .map((value) => Map<String, Object?>.from(value))
+      .map(_routeIntentFromAgentNavigationEvent)
+      .whereType<RouteIntent>()
+      .toList(growable: false);
+}
+
 RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
   final path = _string(payload['path']) ?? '/';
   if (_isUnsafeRoute(path)) {
@@ -186,6 +195,95 @@ RouteIntent routeIntentFromFallbackCase(Map<String, Object?> inputCase) {
         payload: {'fallback': 'AgentHub'},
       );
   }
+}
+
+RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
+  final source = _string(event['source']) ?? '';
+  final link = _record(event['link']);
+  final linkAction = _string(link?['action']);
+  if (linkAction == 'open-schedule') {
+    return const RouteIntent(
+      type: 'OpenScheduleFromAgent',
+      path: '/schedule',
+      payload: {'source': 'agentBubbleLink', 'action': 'open-schedule'},
+    );
+  }
+
+  final navigate = _record(event['navigate']);
+  final navigatePath = _string(navigate?['path']);
+  final navigateState = _record(navigate?['state']);
+  final agentPrefill = _string(navigateState?['agentPrefill']);
+  if (navigatePath == '/' && agentPrefill != null && agentPrefill.isNotEmpty) {
+    return RouteIntent(
+      type: 'OpenAgentHubWithPrefill',
+      path: '/',
+      payload: {'agentPrefill': agentPrefill, 'autoSend': true},
+    );
+  }
+
+  final customEvent = _record(event['customEvent']);
+  final customEventName = _string(customEvent?['name']);
+  if (customEventName == 'navigate-to' &&
+      _string(customEvent?['detail']) == '/schedule') {
+    return const RouteIntent(
+      type: 'OpenSchedule',
+      path: '/schedule',
+      payload: {'source': 'inlineFlow'},
+    );
+  }
+  if (customEventName == 'hub-start-work-flow') {
+    return const RouteIntent(
+      type: 'OpenAgentHubAndStartWorkFlow',
+      path: '/',
+      payload: {'prompt': '我想制定返工计划'},
+    );
+  }
+
+  final route = _string(event['route']);
+  if (route == null || route.isEmpty) return null;
+  final uri = Uri.tryParse(route);
+  final cleanPath = uri?.path ?? _stripQuery(route);
+
+  if (source == 'AgentHub calibration card' && cleanPath == '/calibration') {
+    return const RouteIntent(
+      type: 'OpenCalibrationFromAgent',
+      path: '/calibration',
+      payload: {'source': 'agentArtifact'},
+    );
+  }
+  if (source == 'Device start pump without calibration' &&
+      cleanPath == '/calibration') {
+    return const RouteIntent(
+      type: 'OpenCalibrationRequired',
+      path: '/calibration',
+      payload: {'source': 'deviceStartPump'},
+    );
+  }
+  if (source == 'Pump session missing connected device' &&
+      cleanPath == '/device') {
+    return const RouteIntent(
+      type: 'OpenDeviceRequired',
+      path: '/device',
+      payload: {'source': 'pumpSession'},
+    );
+  }
+  if (source == 'Calibration auto start' && cleanPath == '/pump') {
+    final payload = <String, Object?>{
+      'autoStarted': uri?.queryParameters['autoStarted'] == '1',
+    };
+    final from = uri?.queryParameters['from'];
+    if (from != null) payload['from'] = from;
+    return RouteIntent(
+      type: 'OpenPumpSession',
+      path: '/pump',
+      payload: payload,
+    );
+  }
+
+  return RouteIntent(
+    type: 'AgentArtifactRouteIntent',
+    payload: {'rawRoute': route, 'status': 'unknown'},
+  );
 }
 
 RouteIntent? _planPendingIntent({
