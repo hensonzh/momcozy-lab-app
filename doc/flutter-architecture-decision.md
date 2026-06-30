@@ -180,6 +180,7 @@ features/
 [x] Flutter `AgentStreamRunner` 已落地，UI/view model 只依赖 `AgentStreamClient` 和统一 run state，不判断 SSE/WebSocket transport
 [x] Flutter `/api/ag-ui-prewarm` control client 已落地，兼容 envelope/root object 和 snake/camel legacy aliases
 [x] Flutter `/api/ag-ui-timing-log` control client 已落地，best-effort failure 不影响 Agent stream 主流程
+[x] Flutter `/api/client-event` control client 已落地，IBCLC/通知/分析类事件可复用 best-effort 写回通道
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

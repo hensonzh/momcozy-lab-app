@@ -526,6 +526,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] `/api/ag-ui-cancel` 2xx/404 ack、5xx/network non-blocking failure 已覆盖
 [x] `/api/ag-ui-prewarm` hidden payload、envelope/root response、legacy aliases 和 failure contract 已覆盖
 [x] `/api/ag-ui-timing-log` best-effort 上报、auth/header contract 和日志脱敏检查已覆盖
+[x] `/api/client-event` IBCLC completion payload、auth/header contract 和 best-effort failure 已覆盖
 [x] transport disconnect 映射为统一断线状态，并保留 partial content
 [ ] reconnect 不重复已完成 message chunk
 [x] cancel ack 和本地 cancel 状态一致
