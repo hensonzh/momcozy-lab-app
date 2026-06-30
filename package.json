@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "flutter:check": "node scripts/check-flutter-toolchain.mjs",
     "flutter:init": "node scripts/init-flutter-shell.mjs",
+    "flutter:p0:platform-smoke": "node scripts/run-flutter-platform-smoke.mjs",
     "postinstall": "patch-package"
   },
   "dependencies": {
