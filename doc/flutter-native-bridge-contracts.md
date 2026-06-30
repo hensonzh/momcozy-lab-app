@@ -132,7 +132,8 @@ Fake contract status:
 [x] fake dedupe key coverage for summary/milk record/Agent context upload calls
 [x] fake failure stream reports upload failure without leaking sensitive payload
 [x] Flutter MethodChannel adapter tests for `PumpAgentUpload` method schema and failure events
-[ ] Android platform channel implementation
+[x] Android Kotlin MethodChannel handler shell with progress reset and dedupe response
+[ ] Android real background HTTP upload implementation
 ```
 
 ### 4.4 `RouteIntentPlatform`
