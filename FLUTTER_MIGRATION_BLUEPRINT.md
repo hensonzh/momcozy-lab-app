@@ -922,6 +922,7 @@ doc/flutter-app-test-plan.md
 [x] Android `PumpAgentBackgroundRunner` shell 已接入 foreground service 生命周期，覆盖 1 秒采样与通知进度刷新
 [x] Android `PumpAgentBackgroundRunner` network tick 已接入 workstate change upload、process data fetch 与 10 秒 process upload 节流
 [x] Android `PumpAgentBackgroundRunner` 已通过 `PumpAgentUploadPlatform` typed streams 回传 process progress / process reply
+[x] Android Pump foreground notification 点击已写入一次性 `/pump` pending route，并支持 native snapshot restore
 ```
 
 ---
