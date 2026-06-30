@@ -538,7 +538,7 @@ AgentHub UI
 [ ] 真机 BLE scan/connect 通过
 [ ] 真泵基本命令可发送和解析
 [ ] Pump foreground service 可启动、更新、停止
-[ ] 通知点击能跳转 Flutter route intent
+[x] 通知点击能跳转 Flutter route intent
 [ ] AG-UI fixture 和真实 stream 均可解析
 ```
 
@@ -934,6 +934,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter route intent mapper 已覆盖 Agent artifact、Schedule prefill、Device/Pump gating、Calibration auto-start 和 legacy customEvent navigation
 [x] Flutter route intent mapper 已覆盖 Media Viewer 与 IBCLC start/return viewport intents，含 `/skill-assets` URL 解析占位、unsupported toast 和 return consume-once
 [x] Flutter route shell 已接入 `RouteIntentPlatform`，启动时消费 native pending route，并监听 active route event 驱动 `go_router`
+[x] Flutter `AgentStreamClient` 抽象已接入 transport-agnostic client，SSE/WebSocket/JSONL fixture transport 均输出统一 `Stream<AgentStreamEvent>`
 ```
 
 ---

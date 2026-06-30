@@ -172,6 +172,7 @@ features/
 [x] Android service-backed runner shell 已接入 foreground service 生命周期与 1 秒采样刷新
 [x] Android service-backed runner 已接入 network tick 与 process progress/reply typed streams
 [x] Flutter `go_router` 核心 route shell 已接入，底部导航、专注流程隐藏底栏和 unknown route fallback 已有 widget tests
+[x] Flutter `AgentStreamClient` 抽象已落地，SSE/WebSocket adapters 共享 parser/fixtures 并通过 client tests
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
