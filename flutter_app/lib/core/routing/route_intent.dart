@@ -5,11 +5,13 @@ class RouteIntent {
     required this.type,
     this.path,
     this.payload = const <String, Object?>{},
+    this.consume,
   });
 
   final String type;
   final String? path;
   final Map<String, Object?> payload;
+  final String? consume;
 }
 
 List<RouteIntent> routeIntentsFromNativePayloads(List<Object?> payloads) {
@@ -38,6 +40,30 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
       type: 'OpenStatusGrowthHighlight',
       path: '/status',
       payload: {'source': 'native-notification', 'highlight': 'growth'},
+      consume: 'once',
+    );
+  }
+
+  if (cleanPath == '/pump' && notify == null) {
+    return const RouteIntent(
+      type: 'OpenPumpSession',
+      path: '/pump',
+      payload: {'source': 'pumpForegroundNotification'},
+      consume: 'once',
+    );
+  }
+
+  if (cleanPath == '/' &&
+      notify == null &&
+      payload['autoEndTeardown'] == true) {
+    return const RouteIntent(
+      type: 'OpenAgentHubAndRunPumpTeardown',
+      path: '/',
+      payload: {
+        'source': 'pumpAutoEndNotification',
+        'dedupe': 'tryRunPumpAutoEndOffPumpTeardownOnce',
+      },
+      consume: 'once',
     );
   }
 
@@ -62,6 +88,7 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
           'message': _string(notify?['body']) ?? '',
           'notification': false,
         },
+        consume: 'once',
       );
     case 'milk_analysis':
       final card = _record(notify?['analysis_card']);
@@ -76,6 +103,7 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
           'requiresContextEvent': true,
           'requiresFollowupQueue': true,
         },
+        consume: 'once',
       );
     case 'health_issue':
       return RouteIntent(
@@ -86,11 +114,12 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
           'chatMessageId': _string(notify?['chatMessageId']),
           'message': _string(notify?['body']) ?? '',
         },
+        consume: 'once',
       );
   }
 
   if (notify == null && path == '/') return null;
-  return RouteIntent(type: 'OpenAgentHub', path: cleanPath);
+  return RouteIntent(type: 'OpenAgentHub', path: cleanPath, consume: 'once');
 }
 
 RouteIntent routeIntentFromFallbackCase(Map<String, Object?> inputCase) {
