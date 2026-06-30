@@ -356,6 +356,101 @@ class AgentStreamTimingLogClient {
   }
 }
 
+class AgentStreamClientEventRequest {
+  const AgentStreamClientEventRequest({
+    required this.threadId,
+    required this.userId,
+    required this.eventType,
+    required this.occurredAt,
+    this.label,
+    this.locale,
+    this.timezone,
+    this.metadata = const <String, Object?>{},
+  });
+
+  final String threadId;
+  final String userId;
+  final String eventType;
+  final String occurredAt;
+  final String? label;
+  final String? locale;
+  final String? timezone;
+  final Map<String, Object?> metadata;
+
+  Map<String, Object?> toMap() {
+    final normalizedThreadId = threadId.trim();
+    final normalizedUserId = userId.trim();
+    final normalizedEventType = eventType.trim();
+    final normalizedOccurredAt = occurredAt.trim();
+    if (normalizedThreadId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing threadId.');
+    }
+    if (normalizedUserId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing userId.');
+    }
+    if (normalizedEventType.isEmpty) {
+      throw const AgentStreamPayloadException('Missing eventType.');
+    }
+    if (normalizedOccurredAt.isEmpty) {
+      throw const AgentStreamPayloadException('Missing occurredAt.');
+    }
+
+    return {
+      'thread_id': normalizedThreadId,
+      'user_id': normalizedUserId,
+      'event_type': normalizedEventType,
+      if (label?.trim().isNotEmpty ?? false) 'label': label!.trim(),
+      'occurred_at': normalizedOccurredAt,
+      if (locale?.trim().isNotEmpty ?? false) 'locale': locale!.trim(),
+      if (timezone?.trim().isNotEmpty ?? false) 'timezone': timezone!.trim(),
+      if (metadata.isNotEmpty) 'metadata': metadata,
+    };
+  }
+}
+
+class AgentStreamClientEventResult {
+  const AgentStreamClientEventResult({
+    required this.sent,
+    this.statusCode,
+    this.body,
+    this.error,
+  });
+
+  final bool sent;
+  final int? statusCode;
+  final Map<String, Object?>? body;
+  final Object? error;
+}
+
+class AgentStreamClientEventClient {
+  const AgentStreamClientEventClient({
+    required this.endpoint,
+    this.connector = const _DefaultControlHttpConnector(),
+  });
+
+  final AgentStreamEndpoint endpoint;
+  final AgentStreamControlHttpConnector connector;
+
+  Future<AgentStreamClientEventResult> post(
+    AgentStreamClientEventRequest event,
+  ) async {
+    try {
+      final response = await connector.post(
+        endpoint.uriWithToken,
+        headers: endpoint.requestHeaders(includeContentType: true),
+        body: jsonEncode(event.toMap()),
+      );
+      return AgentStreamClientEventResult(
+        sent: response.statusCode >= 200 && response.statusCode < 300,
+        statusCode: response.statusCode,
+        body: response.jsonBody,
+      );
+    } catch (error) {
+      return AgentStreamClientEventResult(sent: false, error: error);
+    }
+  }
+}
+
 abstract interface class AgentStreamSseConnector {
   Stream<String> post(
     Uri uri, {
