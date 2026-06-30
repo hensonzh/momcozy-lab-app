@@ -166,6 +166,7 @@ features/
 [x] Flutter `PumpDeviceSnapshotBleBinding` 已接入 `BlePlatform.notifications`，为后续 PumpAgentUpload body parity 提供实时快照源
 [x] `PumpAgentUploadPlatform.updateDeviceSnapshot` 与 Android upload body builder 已接入 Flutter pump snapshot contract
 [x] `PumpAgentUploadSnapshotSync` 已接入，把实时 pump snapshot 串行同步给 upload platform
+[x] `BlePumpProtocolPlatform` 已接入 Flutter BLE transport，覆盖 protocol command golden writes 与缺失状态 guard
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
