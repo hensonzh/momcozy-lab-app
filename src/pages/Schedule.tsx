@@ -674,14 +674,17 @@ const Schedule: React.FC = () => {
   const skippedTasks = useMemo(() => actionTasks.filter(isSkipped), [actionTasks]);
   const remainingTasks = useMemo(() => actionTasks.filter((task) => !task.done), [actionTasks]);
   const nextTask = remainingTasks[0] || null;
+  const nextTaskId = nextTask?.id ?? "";
+  const nextTaskTime = nextTask?.time ?? "";
+  const hasNextTask = Boolean(nextTask);
   const [scheduleNow, setScheduleNow] = useState(() => new Date());
 
   useEffect(() => {
-    if (!isSelectedToday || !nextTask) return;
+    if (!isSelectedToday || !hasNextTask) return;
     setScheduleNow(new Date());
     const timer = window.setInterval(() => setScheduleNow(new Date()), 1000);
     return () => window.clearInterval(timer);
-  }, [isSelectedToday, nextTask?.id, nextTask?.time]);
+  }, [hasNextTask, isSelectedToday, nextTaskId, nextTaskTime]);
 
   const inventoryRecords = useMemo(() => records.filter((record) => !isFeedingRecord(record)), [records]);
   const feedingRecords = useMemo(() => records.filter(isFeedingRecord), [records]);

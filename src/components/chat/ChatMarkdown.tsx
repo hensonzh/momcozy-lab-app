@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { cloneElement, isValidElement, type FC, type MouseEvent, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";

@@ -1,0 +1,26 @@
+{
+  "domain": "agent_chat",
+  "endpoint": "/api/ag-ui-prewarm",
+  "method": "POST",
+  "request": {
+    "threadId": "thread-fixture-001",
+    "runId": "run-api-agent-001",
+    "messages": [
+      {
+        "id": "msg-user-001",
+        "role": "user",
+        "content": "Hello"
+      }
+    ]
+  },
+  "variant": "http_error",
+  "response": {
+    "http_status": 502,
+    "status_text": "Bad Gateway",
+    "request_id": "req-fixture-agent_chat-http-error",
+    "body": {
+      "error": "bad_gateway",
+      "message": "agent_chat upstream unavailable"
+    }
+  }
+}

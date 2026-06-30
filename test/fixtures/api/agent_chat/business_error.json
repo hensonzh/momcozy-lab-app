@@ -1,0 +1,26 @@
+{
+  "domain": "agent_chat",
+  "endpoint": "/api/ag-ui-prewarm",
+  "method": "POST",
+  "request": {
+    "threadId": "thread-fixture-001",
+    "runId": "run-api-agent-001",
+    "messages": [
+      {
+        "id": "msg-user-001",
+        "role": "user",
+        "content": "Hello"
+      }
+    ]
+  },
+  "variant": "business_error",
+  "response": {
+    "status": 40001,
+    "message": "agent_chat fixture business error",
+    "data": {
+      "error": -1,
+      "code": "AGENT_CHAT_BUSINESS_ERROR",
+      "retryable": false
+    }
+  }
+}

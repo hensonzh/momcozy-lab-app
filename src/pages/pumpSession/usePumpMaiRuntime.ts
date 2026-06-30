@@ -22,6 +22,11 @@ export function usePumpMaiRuntime(params: {
   const encourageHideTimerRef = useRef<number | null>(null);
   const lastProcessReplyTextRef = useRef("");
   const lastProcessReplyAtRef = useRef(0);
+  const onActionClickRef = useRef(onActionClick);
+
+  useEffect(() => {
+    onActionClickRef.current = onActionClick;
+  }, [onActionClick]);
 
   useEffect(() => {
     const unsubscribe = onPumpAgentUploadProcessReply(({ text, buttons }) => {
@@ -32,7 +37,7 @@ export function usePumpMaiRuntime(params: {
         .map((btn) => ({
           label: btn.text || btn.value,
           action: () => {
-            onActionClick?.(btn.value || btn.text || "");
+            onActionClickRef.current?.(btn.value || btn.text || "");
             setMaiSessionBubble(null);
           },
         }));

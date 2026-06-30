@@ -1,0 +1,120 @@
+{
+  "id": "storage-p0-one-shot-route-intents",
+  "description": "Pending route, notification, and Agent follow-up keys are converted to one-shot intent queue entries and removed.",
+  "legacy": {
+    "localStorage": {
+      "calibrationHubNotice": "completed",
+      "mmc_birth_journey_plan_nav_pending": "{\"kind\":\"birth_journey_plan\",\"target\":\"status\",\"reason\":\"updated\",\"label\":\"待产计划已更新\",\"planId\":12,\"planType\":\"birth_journey\",\"dates\":[\"2026-06-29\"]}",
+      "mmc_birth_journey_plan_card_pending": "1",
+      "mmc_milk_plan_nav_pending": "{\"kind\":\"milk_plan\",\"target\":\"schedule\",\"reason\":\"created\",\"label\":\"追奶计划\",\"planType\":\"chase\"}",
+      "mmc_milk_plan_schedule_pending": "1",
+      "mmc_pregnancy_diary_nav_pending": "1",
+      "mmc_pregnancy_diary_card_pending": "1",
+      "mmc_pregnancy_diary_card_label": "旧标签",
+      "mmc_milk_analysis_reminder_followup_pending": "{\"taskId\":\"analysis-chat-1-1782687600000-abc123\",\"chatMessageId\":\"analysis-chat-1\",\"message\":\"奶量分析已生成\",\"createdAt\":1782687600000,\"status\":\"pending\",\"attempts\":0}"
+    },
+    "sessionStorage": {
+      "mmc_native_summary_body": "今日吸乳小结已生成。",
+      "mmc_status_growth_highlight_pending": "1",
+      "mmc_pump_auto_end_off_pump_pending": "1"
+    },
+    "capacitorPreferences": {},
+    "androidSharedPreferences": {}
+  },
+  "context": {
+    "now": 1782688200000,
+    "activeUserId": "demo-user-001"
+  },
+  "expected": {
+    "routeIntentQueue": [
+      {
+        "type": "calibrationHubNotice",
+        "payload": {
+          "notice": "completed"
+        },
+        "consume": "once"
+      },
+      {
+        "type": "planNavigation",
+        "target": "status",
+        "payload": {
+          "kind": "birth_journey_plan",
+          "reason": "updated",
+          "label": "待产计划已更新",
+          "planId": 12
+        },
+        "consume": "once"
+      },
+      {
+        "type": "planNavigation",
+        "target": "schedule",
+        "payload": {
+          "kind": "milk_plan",
+          "reason": "created",
+          "label": "追奶计划"
+        },
+        "consume": "once"
+      },
+      {
+        "type": "pregnancyDiaryNavigation",
+        "target": "status",
+        "consume": "once"
+      },
+      {
+        "type": "nativeSummary",
+        "target": "agentHub",
+        "payload": {
+          "body": "今日吸乳小结已生成。"
+        },
+        "consume": "once"
+      },
+      {
+        "type": "growthHighlight",
+        "target": "status",
+        "consume": "once"
+      },
+      {
+        "type": "pumpAutoEndOffPump",
+        "target": "agentHub",
+        "consume": "once"
+      }
+    ],
+    "backgroundJobQueue": [
+      {
+        "type": "milkAnalysisReminderFollowup",
+        "taskId": "analysis-chat-1-1782687600000-abc123",
+        "chatMessageId": "analysis-chat-1",
+        "message": "奶量分析已生成",
+        "status": "pending",
+        "attempts": 0,
+        "ttlMs": 1800000
+      }
+    ],
+    "deleteLegacyKeys": {
+      "localStorage": [
+        "calibrationHubNotice",
+        "mmc_birth_journey_plan_nav_pending",
+        "mmc_birth_journey_plan_card_pending",
+        "mmc_milk_plan_nav_pending",
+        "mmc_milk_plan_schedule_pending",
+        "mmc_pregnancy_diary_nav_pending",
+        "mmc_pregnancy_diary_card_pending",
+        "mmc_pregnancy_diary_card_label",
+        "mmc_milk_analysis_reminder_followup_pending"
+      ],
+      "sessionStorage": [
+        "mmc_native_summary_body",
+        "mmc_status_growth_highlight_pending",
+        "mmc_pump_auto_end_off_pump_pending"
+      ]
+    },
+    "migrationVersion": 1
+  },
+  "assertions": [
+    "route pending keys are never migrated as durable preferences",
+    "legacy card label is discarded",
+    "each route intent is marked consume once",
+    "milk analysis follow-up is retained only if within 30 minute TTL and attempts less than 3",
+    "all consumed legacy keys are removed after migration"
+  ]
+}

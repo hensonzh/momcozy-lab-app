@@ -1,0 +1,75 @@
+{
+  "id": "route-malformed-and-unknown-route-fallbacks",
+  "description": "Malformed notification payloads, unsafe routes, and unknown links fall back without crashing.",
+  "input": {
+    "cases": [
+      {
+        "source": "native-notification",
+        "path": "javascript:alert(1)",
+        "notifyJson": "{bad-json"
+      },
+      {
+        "source": "native-notification",
+        "path": "/unknown-old-page",
+        "notifyJson": "{\"event\":\"summary\",\"body\":\"\"}"
+      },
+      {
+        "source": "media-viewer",
+        "state": {
+          "kind": "image",
+          "url": ""
+        }
+      },
+      {
+        "source": "ibclc-return",
+        "returnTo": "https://evil.example.com/status"
+      },
+      {
+        "source": "agent-artifact",
+        "route": "/deprecated-prototype"
+      }
+    ]
+  },
+  "expectedIntents": [
+    {
+      "type": "RejectUnsafeRoute",
+      "payload": {
+        "reason": "unsupported-scheme"
+      }
+    },
+    {
+      "type": "NotFoundIntent",
+      "path": "/unknown-old-page",
+      "payload": {
+        "fallback": "AgentHub"
+      }
+    },
+    {
+      "type": "MediaViewerMissingResource",
+      "path": "/media-viewer",
+      "payload": {
+        "message": "缺少资源参数，请从资料卡片进入。"
+      }
+    },
+    {
+      "type": "RejectUnsafeReturnTo",
+      "payload": {
+        "fallback": "/"
+      }
+    },
+    {
+      "type": "AgentArtifactRouteIntent",
+      "payload": {
+        "rawRoute": "/deprecated-prototype",
+        "status": "unknown"
+      }
+    }
+  ],
+  "assertions": [
+    "malformed notifyJson is ignored and logged as sanitized diagnostic",
+    "unsafe route schemes never reach Navigator",
+    "unknown same-origin route falls back without crashing",
+    "empty media viewer state renders missing-resource UI",
+    "cross-origin IBCLC return_to is rejected"
+  ]
+}

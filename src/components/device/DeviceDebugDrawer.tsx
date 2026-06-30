@@ -269,6 +269,7 @@ const DeviceDebugDrawer: React.FC<Props> = ({ open, side, device, onClose }) => 
     if (currentTab === 0) void loadGold();
     if (currentTab === 1) void loadSoft();
     if (currentTab === 2) void loadLine();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 仅在打开/切换 tab 时读取配置；load* 依赖表单草稿，加入后会在读取回填时重复请求
   }, [open, currentTab]);
 
   const addGoldStep = () => {

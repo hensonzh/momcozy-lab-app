@@ -1,0 +1,267 @@
+{
+  "generatedFrom": [
+    "src/lib/bleProtocol.ts",
+    "android/app/src/main/java/com/momcozymai/app/MmcBleProtocol.java"
+  ],
+  "fixedInputs": {
+    "utcSeconds": 1782687600
+  },
+  "validFrames": [
+    {
+      "id": "f0_ack_device_info",
+      "frameHex": "aa5501f00409016f7022",
+      "expectedFrame": {
+        "ct": 1,
+        "cid": 240,
+        "cal": 4,
+        "cabHex": "09016f70"
+      },
+      "parser": "parseF0DeviceInfo",
+      "expectedValue": {
+        "productModel": 9,
+        "hwPlatform": 1,
+        "hwVersion": "11.1",
+        "softwareVersion": "11.2"
+      }
+    },
+    {
+      "id": "e1_ack_current_status_15_bytes",
+      "frameHex": "aa5501e10f70a7416a030106010157008403040857",
+      "expectedFrame": {
+        "ct": 1,
+        "cid": 225,
+        "cal": 15,
+        "cabHex": "70a7416a0301060101570084030408"
+      },
+      "parser": "parseE1DeviceStatus",
+      "expectedValue": {
+        "bootTime": 1782687600,
+        "workMode": 3,
+        "pumpMode": 1,
+        "gear": 6,
+        "scene": 1,
+        "workState": 1,
+        "batteryPct": 87,
+        "charging": 0,
+        "duration": 900,
+        "pumpGearCalibStimulate": 4,
+        "pumpGearCalibDeep": 8
+      }
+    },
+    {
+      "id": "e1_ack_legacy_11_bytes",
+      "frameHex": "aa5501e10b70a7416a03010601005000f6",
+      "expectedFrame": {
+        "ct": 1,
+        "cid": 225,
+        "cal": 11,
+        "cabHex": "70a7416a03010601005000"
+      },
+      "parser": "parseE1DeviceStatus",
+      "expectedValue": {
+        "bootTime": 1782687600,
+        "workMode": 3,
+        "pumpMode": 1,
+        "gear": 6,
+        "scene": 1,
+        "workState": 0,
+        "batteryPct": 80,
+        "charging": 0,
+        "duration": 0,
+        "pumpGearCalibStimulate": 0,
+        "pumpGearCalibDeep": 0
+      }
+    },
+    {
+      "id": "e1_ack_legacy_10_bytes",
+      "frameHex": "aa5501e10a70a7416a030106015000f7",
+      "expectedFrame": {
+        "ct": 1,
+        "cid": 225,
+        "cal": 10,
+        "cabHex": "70a7416a030106015000"
+      },
+      "parser": "parseE1DeviceStatus",
+      "expectedValue": {
+        "bootTime": 1782687600,
+        "workMode": 3,
+        "pumpMode": 1,
+        "gear": 6,
+        "scene": 0,
+        "workState": 1,
+        "batteryPct": 80,
+        "charging": 0,
+        "duration": 0,
+        "pumpGearCalibStimulate": 0,
+        "pumpGearCalibDeep": 0
+      }
+    },
+    {
+      "id": "d6_device_battery_notification",
+      "frameHex": "aa5504d60670a7416a015805",
+      "expectedFrame": {
+        "ct": 4,
+        "cid": 214,
+        "cal": 6,
+        "cabHex": "70a7416a0158"
+      },
+      "parser": "parseD6Battery",
+      "expectedValue": {
+        "timestamp": 1782687600,
+        "charging": 1,
+        "batteryPct": 88
+      }
+    },
+    {
+      "id": "d0_operation_record_notification",
+      "frameHex": "aa5504d00f70a7416a0000020001010601028403c7",
+      "expectedFrame": {
+        "ct": 4,
+        "cid": 208,
+        "cal": 15,
+        "cabHex": "70a7416a0000020001010601028403"
+      },
+      "parser": "parseD0OperationRecord",
+      "expectedValue": {
+        "timestamp": 1782687600,
+        "beforeStartStop": 0,
+        "beforeMode": 0,
+        "beforeGear": 2,
+        "beforeAutoFlag": 0,
+        "afterStartStop": 1,
+        "afterMode": 1,
+        "afterGear": 6,
+        "afterAutoFlag": 1,
+        "source": 2,
+        "duration": 900
+      }
+    },
+    {
+      "id": "80_realtime_milk_notification",
+      "frameHex": "aa5503801770a7416a0000a03fcd00030000084185ff2d00fa003601ca",
+      "expectedFrame": {
+        "ct": 3,
+        "cid": 128,
+        "cal": 23,
+        "cabHex": "70a7416a0000a03fcd00030000084185ff2d00fa003601"
+      },
+      "parser": "parse80RealtimeMilk",
+      "expectedValue": {
+        "timestamp": 1782687600,
+        "flowFloat": 1.25,
+        "milkMlX10": 205,
+        "milkFlag": 1,
+        "moFlag": 1,
+        "bandpower": 8.5,
+        "pitchX10": -123,
+        "rollX10": 45,
+        "pressureCh1X10": 250,
+        "pressureCh2X10": 310
+      }
+    },
+    {
+      "id": "bf_ack_end_run_response",
+      "frameHex": "aa5501bf0670a7416acd00ab",
+      "expectedFrame": {
+        "ct": 1,
+        "cid": 191,
+        "cal": 6,
+        "cabHex": "70a7416acd00"
+      },
+      "parser": "parseBFEndRunResponse",
+      "expectedValue": {
+        "timestamp": 1782687600,
+        "milkMlX10": 205
+      }
+    },
+    {
+      "id": "unknown_device_opcode_keeps_frame_and_has_no_parser_output",
+      "frameHex": "aa550499010062",
+      "expectedFrame": {
+        "ct": 4,
+        "cid": 153,
+        "cal": 1,
+        "cabHex": "00"
+      }
+    },
+    {
+      "id": "e1_ack_calibration_ff_sentinel",
+      "frameHex": "aa5501e10f70a7416a030106010157008403ffff65",
+      "expectedFrame": {
+        "ct": 1,
+        "cid": 225,
+        "cal": 15,
+        "cabHex": "70a7416a030106010157008403ffff"
+      },
+      "parser": "parseE1DeviceStatus",
+      "expectedValue": {
+        "bootTime": 1782687600,
+        "workMode": 3,
+        "pumpMode": 1,
+        "gear": 6,
+        "scene": 1,
+        "workState": 1,
+        "batteryPct": 87,
+        "charging": 0,
+        "duration": 900,
+        "pumpGearCalibStimulate": 255,
+        "pumpGearCalibDeep": 255
+      }
+    }
+  ],
+  "invalidFrames": [
+    {
+      "id": "bad_checksum_returns_null_frame",
+      "frameHex": "aa5501f00409016f70dd",
+      "expectedParseFrame": null
+    },
+    {
+      "id": "bad_sop_returns_null_frame",
+      "frameHex": "ab5501f00409016f704e",
+      "expectedParseFrame": null
+    },
+    {
+      "id": "cal_length_mismatch_returns_null_frame",
+      "frameHex": "aa5501e10f11223344",
+      "expectedParseFrame": null
+    },
+    {
+      "id": "80_realtime_short_cab_parser_returns_null",
+      "frameHex": "aa5503801670a7416a0000a03fcd00030000084185ff2d00fa0036cc",
+      "expectedFrame": {
+        "ct": 3,
+        "cid": 128,
+        "cal": 22,
+        "cabHex": "70a7416a0000a03fcd00030000084185ff2d00fa0036"
+      },
+      "parser": "parse80RealtimeMilk",
+      "expectedValue": null
+    }
+  ],
+  "parserEdgeCases": [
+    {
+      "id": "e1_too_short_cab_returns_null",
+      "parser": "parseE1DeviceStatus",
+      "cabHex": "001122334455667788",
+      "expectedValue": null
+    },
+    {
+      "id": "f0_too_short_cab_returns_null",
+      "parser": "parseF0DeviceInfo",
+      "cabHex": "09016f",
+      "expectedValue": null
+    },
+    {
+      "id": "d6_too_short_cab_returns_null",
+      "parser": "parseD6Battery",
+      "cabHex": "0011223344",
+      "expectedValue": null
+    },
+    {
+      "id": "bf_too_short_cab_returns_null",
+      "parser": "parseBFEndRunResponse",
+      "cabHex": "0011223344",
+      "expectedValue": null
+    }
+  ]
+}

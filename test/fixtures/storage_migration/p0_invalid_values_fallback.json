@@ -1,0 +1,96 @@
+{
+  "id": "storage-p0-invalid-values-fallback",
+  "description": "Invalid legacy values must fall back safely without blocking app startup.",
+  "legacy": {
+    "localStorage": {
+      "mai_debug_user_id": "   ",
+      "mai_debug_user_stage": "unknown-stage",
+      "mai_agent_hub_chat_messages_v1": "{\"not\":\"an array\"}",
+      "mai_agent_conversation_id": "",
+      "momcozy_conversation_id": "",
+      "calibration": "{\"L\":{\"stimCozy\":255,\"deepCozy\":0},\"R\":{\"stimCozy\":4},\"stimCozy\":255,\"deepCozy\":0}",
+      "calibration_prompt_disabled": "yes",
+      "calibration_decline_count": "not-a-number",
+      "device_store": "{\"L\":{\"deviceId\":\"broken-left\",\"connected\":true,\"battery\":\"full\"}",
+      "volume-unit": "cups",
+      "momcozy_status_care_stage": "nursing"
+    },
+    "sessionStorage": {
+      "mai_agent_conversation_id": "conv-session-valid"
+    },
+    "capacitorPreferences": {
+      "mmc_background_notify_onboarding_done": "maybe",
+      "mmc_schedule_reminder_on": "2"
+    },
+    "androidSharedPreferences": {}
+  },
+  "context": {
+    "envDefaultUserId": "demo-user-env",
+    "envDefaultMomStage": "postpartum",
+    "nativeActivePumpSession": null
+  },
+  "expected": {
+    "scopedKeyValue": {
+      "runtime.userId": "demo-user-env",
+      "runtime.momStage": "postpartum",
+      "agent.conversationId": "conv-session-valid",
+      "preferences.volumeUnit": "mL",
+      "status.careStage": "postpartum",
+      "calibration.promptDisabled": false,
+      "calibration.declineCount": 0,
+      "notifications.backgroundNotifyOnboardingDone": false,
+      "notifications.scheduleReminderOn": false
+    },
+    "chatCache": {
+      "messages": []
+    },
+    "calibration": null,
+    "deviceRepository": {
+      "L": null,
+      "R": null
+    },
+    "deleteLegacyKeys": {
+      "sessionStorage": [
+        "mai_agent_conversation_id"
+      ],
+      "localStorage": [
+        "calibration"
+      ]
+    },
+    "diagnostics": [
+      {
+        "code": "invalid_runtime_user_id",
+        "severity": "info"
+      },
+      {
+        "code": "invalid_runtime_stage",
+        "severity": "info"
+      },
+      {
+        "code": "invalid_chat_cache_shape",
+        "severity": "info"
+      },
+      {
+        "code": "invalid_calibration_payload",
+        "severity": "warn"
+      },
+      {
+        "code": "invalid_device_store_json",
+        "severity": "warn"
+      },
+      {
+        "code": "invalid_volume_unit",
+        "severity": "info"
+      }
+    ],
+    "migrationVersion": 1
+  },
+  "assertions": [
+    "invalid runtime user id falls back to env/default user id",
+    "invalid runtime stage falls back to postpartum",
+    "valid legacy sessionStorage conversation id may be imported when localStorage is empty",
+    "0xFF, 0, missing calibration side fields, and malformed JSON are not valid calibration",
+    "invalid booleans and counters use safe defaults",
+    "migration startup continues even when several legacy keys are malformed"
+  ]
+}

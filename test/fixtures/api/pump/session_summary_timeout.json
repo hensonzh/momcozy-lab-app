@@ -1,0 +1,25 @@
+{
+  "domain": "pump",
+  "scenario": "session_summary_timeout",
+  "endpoint": "/v1/pump/session-summary",
+  "method": "WebSocket",
+  "transport": "websocket",
+  "timeout_ms": 12000,
+  "request": {
+    "user_id": "demo-user-fixture",
+    "event_id": "pump-summary-fixture-001",
+    "ended_at": "2026-06-29T08:30:00Z",
+    "total_milk_ml": 180,
+    "duration_seconds": 900
+  },
+  "failure": {
+    "kind": "timeout",
+    "elapsed_ms": 12001
+  },
+  "expected_client_behavior": {
+    "exception": "RequestTimeout",
+    "show_error_toast": true,
+    "retry_automatically": true,
+    "requires_idempotency_key": true
+  }
+}

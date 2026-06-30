@@ -1,0 +1,9 @@
+{
+  "type": "RUN_ERROR",
+  "thread_id": "thread-fixture-001",
+  "run_id": "run-fixture-error-001",
+  "message_id": "msg-reply-error-001",
+  "code": "upstream_timeout",
+  "message": "The agent stream timed out before a final response.",
+  "retryable": true
+}

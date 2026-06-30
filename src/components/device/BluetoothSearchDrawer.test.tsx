@@ -1,4 +1,5 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import BluetoothSearchDrawer from "./BluetoothSearchDrawer";
 import { connect, getConnectedPumpDevices, startLEScan } from "@/lib/ble";
@@ -6,9 +7,10 @@ import { deviceStore, type StoredDeviceInfo } from "@/lib/deviceStore";
 
 vi.mock("framer-motion", async () => {
   const React = await import("react");
+  type MotionMockProps = Record<string, unknown> & { children?: ReactNode };
   return {
     motion: new Proxy({}, {
-      get: (_target, tag: string) => ({ children, ...props }: any) =>
+      get: (_target, tag: string) => ({ children, ...props }: MotionMockProps) =>
         React.createElement(tag, props, children),
     }),
   };

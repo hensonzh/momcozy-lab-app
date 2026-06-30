@@ -1,0 +1,20 @@
+{
+  "domain": "plan",
+  "endpoint": "/v1/plan/query-task",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "timestamp": "2026-06-29T00:00:00Z"
+    }
+  },
+  "variant": "empty",
+  "response": {
+    "status": 200,
+    "message": "empty",
+    "data": {
+      "error": 0,
+      "tasks": []
+    }
+  }
+}

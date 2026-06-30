@@ -12,6 +12,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "flutter:check": "node scripts/check-flutter-toolchain.mjs",
+    "flutter:init": "node scripts/init-flutter-shell.mjs",
     "postinstall": "patch-package"
   },
   "dependencies": {

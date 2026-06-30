@@ -1,0 +1,24 @@
+{
+  "domain": "voice",
+  "scenario": "realtime_voice_stream_cancelled",
+  "endpoint": "/v1/realtime-voice-stream",
+  "method": "GET",
+  "transport": "binary_stream",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "text": "Short fixture text for playback."
+    }
+  },
+  "failure": {
+    "kind": "cancelled",
+    "source": "barge_in",
+    "exception": "AbortError"
+  },
+  "expected_client_behavior": {
+    "exception": "RequestCancelled",
+    "stop_playback": true,
+    "show_error_toast": false,
+    "retry_automatically": false
+  }
+}

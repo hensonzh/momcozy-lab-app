@@ -1,0 +1,175 @@
+{
+  "generatedFrom": [
+    "src/lib/bleProtocol.ts",
+    "android/app/src/main/java/com/momcozymai/app/MmcBleProtocol.java"
+  ],
+  "fixedInputs": {
+    "utcSeconds": 1782687600
+  },
+  "cases": [
+    {
+      "id": "f0_get_device_info_default_sn",
+      "builder": "buildF0GetDeviceInfo",
+      "args": [],
+      "description": "F0 get device info with default little-endian SN 0xaa551100.",
+      "cid": "0xf0",
+      "expectedHex": "aa5500f004001155aafc"
+    },
+    {
+      "id": "f1_set_user_params_stim4_deep8_persist",
+      "builder": "buildF1SetUserParams",
+      "args": [
+        4,
+        8,
+        1
+      ],
+      "description": "F1 persist user stimulate/deep default gears.",
+      "cid": "0xf1",
+      "expectedHex": "aa5500f103040801ff"
+    },
+    {
+      "id": "f2_set_rtc_fixed_timestamp",
+      "builder": "buildF2SetRtc",
+      "args": [
+        1782687600
+      ],
+      "description": "F2 set RTC with a fixed UTC timestamp for cross-language golden tests.",
+      "cid": "0xf2",
+      "expectedHex": "aa5500f20470a7416a48"
+    },
+    {
+      "id": "f3_set_flags_voice_on_persist",
+      "builder": "buildF3SetFlags",
+      "args": [
+        3,
+        1
+      ],
+      "description": "F3 set flags byte and persist it.",
+      "cid": "0xf3",
+      "expectedHex": "aa5500f302030107"
+    },
+    {
+      "id": "b0_set_work_mode_agent",
+      "builder": "buildB0SetWorkMode",
+      "args": [
+        3
+      ],
+      "description": "B0 switch to Agent work mode.",
+      "cid": "0xb0",
+      "expectedHex": "aa5500b001034c"
+    },
+    {
+      "id": "b1_start_deep_gear6_auto",
+      "builder": "buildB1SetPumpParams",
+      "args": [
+        1,
+        1,
+        6,
+        1
+      ],
+      "description": "B1 start lactation mode, gear 6, auto scene.",
+      "cid": "0xb1",
+      "expectedHex": "aa5500b1040101060142"
+    },
+    {
+      "id": "b1_pause_stim_gear0_manual",
+      "builder": "buildB1SetPumpParams",
+      "args": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "description": "B1 pause/stop with stimulate mode, gear 0, manual scene.",
+      "cid": "0xb1",
+      "expectedHex": "aa5500b104000000004b"
+    },
+    {
+      "id": "b2_set_flexible_force_line_minimal",
+      "builder": "buildB2SetFlexibleForceLine",
+      "args": [
+        [
+          16,
+          32,
+          48
+        ],
+        1
+      ],
+      "description": "B2 minimal custom force-line payload plus persist byte.",
+      "cid": "0xb2",
+      "expectedHex": "aa5500b20410203001e9"
+    },
+    {
+      "id": "b3_set_lactation_curve_typical",
+      "builder": "buildB3SetLactationCurve",
+      "args": [
+        1,
+        6,
+        54,
+        230,
+        180,
+        1200,
+        1
+      ],
+      "description": "B3 typical lactation-curve parameters.",
+      "cid": "0xb3",
+      "expectedHex": "aa5500b30a010636e600b400b00401b7"
+    },
+    {
+      "id": "e0_query_pump_params",
+      "builder": "buildE0QueryDeviceInfo",
+      "args": [
+        2
+      ],
+      "description": "E0 query pump parameters.",
+      "cid": "0xe0",
+      "expectedHex": "aa5500e001021d"
+    },
+    {
+      "id": "e1_query_device_status",
+      "builder": "buildE1QueryDeviceStatus",
+      "args": [],
+      "description": "E1 query device status.",
+      "cid": "0xe1",
+      "expectedHex": "aa5500e1001f"
+    },
+    {
+      "id": "bf_end_run_reserved_zero",
+      "builder": "buildBFEndRun",
+      "args": [],
+      "description": "BF end run with reserved byte 0.",
+      "cid": "0xbf",
+      "expectedHex": "aa5500bf010040"
+    },
+    {
+      "id": "fe_power_off_without_reboot",
+      "builder": "buildFEPowerOff",
+      "args": [
+        0
+      ],
+      "description": "FE power off without reboot.",
+      "cid": "0xfe",
+      "expectedHex": "aa5500fe010001"
+    },
+    {
+      "id": "fe_power_off_with_reboot",
+      "builder": "buildFEPowerOff",
+      "args": [
+        1
+      ],
+      "description": "FE power off and reboot.",
+      "cid": "0xfe",
+      "expectedHex": "aa5500fe010100"
+    },
+    {
+      "id": "ack_e1_from_app",
+      "builder": "buildAck",
+      "args": [
+        225
+      ],
+      "description": "App ACK for an E1 report.",
+      "cid": "0xe1",
+      "expectedHex": "aa5501e1001e"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "domain": "notify",
+  "endpoint": "/v1/notify/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture"
+    }
+  },
+  "variant": "http_error",
+  "response": {
+    "http_status": 502,
+    "status_text": "Bad Gateway",
+    "request_id": "req-fixture-notify-http-error",
+    "body": {
+      "error": "bad_gateway",
+      "message": "notify upstream unavailable"
+    }
+  }
+}

@@ -112,6 +112,7 @@ const InlineWorkFlow = forwardRef<InlineWorkFlowHandle, Props>(({ onComplete }, 
       });
       setStage("ask-return-date");
     }, 1200);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 内联脚本只在挂载首帧启动一次，避免重播问答流程
   }, []);
 
   const handleChoice = (action: string) => {

@@ -1,0 +1,27 @@
+{
+  "domain": "growth",
+  "endpoint": "/v1/growth/history",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "baby_id": "baby-fixture"
+    }
+  },
+  "variant": "legacy_alias",
+  "response": {
+    "status": 200,
+    "message": "legacy_alias",
+    "data": {
+      "error": 0,
+      "growthList": [
+        {
+          "recordId": "growth-001",
+          "weightGram": 4200,
+          "heightCm": 54.5,
+          "measuredAt": "2026-06-29"
+        }
+      ]
+    }
+  }
+}

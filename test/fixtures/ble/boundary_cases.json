@@ -1,0 +1,67 @@
+{
+  "generatedFrom": [
+    "src/lib/bleProtocol.ts",
+    "android/app/src/main/java/com/momcozymai/app/MmcBleProtocol.java"
+  ],
+  "cases": [
+    {
+      "id": "b0_work_mode_device_min",
+      "builder": "buildB0SetWorkMode",
+      "args": [
+        1
+      ],
+      "description": "B0 minimum supported work mode: device mode.",
+      "cid": "0xb0",
+      "expectedHex": "aa5500b001014e"
+    },
+    {
+      "id": "b0_work_mode_guide_mid",
+      "builder": "buildB0SetWorkMode",
+      "args": [
+        2
+      ],
+      "description": "B0 guide work mode.",
+      "cid": "0xb0",
+      "expectedHex": "aa5500b001024d"
+    },
+    {
+      "id": "b0_work_mode_agent_max",
+      "builder": "buildB0SetWorkMode",
+      "args": [
+        3
+      ],
+      "description": "B0 maximum supported work mode: Agent mode.",
+      "cid": "0xb0",
+      "expectedHex": "aa5500b001034c"
+    },
+    {
+      "id": "b1_mix_gear14_auto_upper_boundary",
+      "builder": "buildB1SetPumpParams",
+      "args": [
+        1,
+        2,
+        14,
+        1
+      ],
+      "description": "B1 upper boundary for mode and gear.",
+      "cid": "0xb1",
+      "expectedHex": "aa5500b10401020e0139"
+    },
+    {
+      "id": "b3_zero_curve_lower_boundary",
+      "builder": "buildB3SetLactationCurve",
+      "args": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "description": "B3 lower boundary curve payload.",
+      "cid": "0xb3",
+      "expectedHex": "aa5500b30a0000000000000000000043"
+    }
+  ]
+}

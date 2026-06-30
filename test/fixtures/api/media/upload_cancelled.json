@@ -1,0 +1,28 @@
+{
+  "domain": "media",
+  "scenario": "upload_cancelled",
+  "endpoint": "/v1/files/upload",
+  "method": "POST multipart",
+  "transport": "http_multipart",
+  "request": {
+    "fields": {
+      "user_id": "demo-user-fixture"
+    },
+    "file": {
+      "name": "pump-display-fixture.png",
+      "mime_type": "image/png",
+      "size": 68
+    }
+  },
+  "failure": {
+    "kind": "cancelled",
+    "source": "user_action",
+    "exception": "AbortError"
+  },
+  "expected_client_behavior": {
+    "exception": "RequestCancelled",
+    "show_error_toast": false,
+    "retry_automatically": false,
+    "keep_preview": true
+  }
+}

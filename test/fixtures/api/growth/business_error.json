@@ -1,0 +1,21 @@
+{
+  "domain": "growth",
+  "endpoint": "/v1/growth/history",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "baby_id": "baby-fixture"
+    }
+  },
+  "variant": "business_error",
+  "response": {
+    "status": 40001,
+    "message": "growth fixture business error",
+    "data": {
+      "error": -1,
+      "code": "GROWTH_BUSINESS_ERROR",
+      "retryable": false
+    }
+  }
+}

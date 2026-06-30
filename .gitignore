@@ -26,5 +26,8 @@ dist-ssr
 .env.production
 src/test/*
 test/
+!test/
+!test/fixtures/
+!test/fixtures/**
 !src/test/
 !src/test/setup.ts

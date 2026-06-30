@@ -1,0 +1,18 @@
+{
+  "domain": "media",
+  "scenario": "upload_timeout",
+  "endpoint": "/v1/files/upload",
+  "method": "POST multipart",
+  "transport": "http_multipart",
+  "timeout_ms": 60000,
+  "failure": {
+    "kind": "timeout",
+    "elapsed_ms": 60001
+  },
+  "expected_client_behavior": {
+    "exception": "RequestTimeout",
+    "show_error_toast": true,
+    "retry_automatically": false,
+    "keep_preview": true
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,8 +26,8 @@ const ManualEntryDialog: React.FC<ManualEntryDialogProps> = ({
 }) => {
   const [volUnit] = useVolumeUnit();
   const isOz = volUnit === "oz";
-  const convToDisplay = (ml: number) => isOz ? +(ml * 0.033814).toFixed(1) : ml;
-  const convToMl = (val: number) => isOz ? Math.round(val / 0.033814) : val;
+  const convToDisplay = useCallback((ml: number) => isOz ? +(ml * 0.033814).toFixed(1) : ml, [isOz]);
+  const convToMl = useCallback((val: number) => isOz ? Math.round(val / 0.033814) : val, [isOz]);
 
   const [startTime, setStartTime] = useState(() => {
     const now = new Date();
@@ -43,25 +43,27 @@ const ManualEntryDialog: React.FC<ManualEntryDialogProps> = ({
   }, [open]);
 
   useEffect(() => {
-    if (editRecord) {
-      setStartTime(editRecord.time || "08:00");
-      setLeftMl(String(convToDisplay(editRecord.leftMl)));
-      setRightMl(String(convToDisplay(editRecord.rightMl)));
-      setDuration(editRecord.durationMin > 0 ? String(editRecord.durationMin) : "");
-    } else {
-      const raw = (defaultTime ?? "").trim();
-      const m = raw.match(/^(\d{1,2}):(\d{2})/);
-      const fromPreset =
-        m &&
-        `${String(Number(m[1])).padStart(2, "0")}:${String(Number(m[2])).padStart(2, "0")}`;
-      const now = new Date();
-      const nowStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-      setStartTime(fromPreset || nowStr);
-      setLeftMl("");
-      setRightMl("");
-      setDuration("");
-    }
-  }, [editRecord, open, defaultTime]);
+    if (!open || !editRecord) return;
+    setStartTime(editRecord.time || "08:00");
+    setLeftMl(String(convToDisplay(editRecord.leftMl)));
+    setRightMl(String(convToDisplay(editRecord.rightMl)));
+    setDuration(editRecord.durationMin > 0 ? String(editRecord.durationMin) : "");
+  }, [convToDisplay, editRecord, open]);
+
+  useEffect(() => {
+    if (!open || editRecord) return;
+    const raw = (defaultTime ?? "").trim();
+    const m = raw.match(/^(\d{1,2}):(\d{2})/);
+    const fromPreset =
+      m &&
+      `${String(Number(m[1])).padStart(2, "0")}:${String(Number(m[2])).padStart(2, "0")}`;
+    const now = new Date();
+    const nowStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    setStartTime(fromPreset || nowStr);
+    setLeftMl("");
+    setRightMl("");
+    setDuration("");
+  }, [defaultTime, editRecord, open]);
 
   const leftVal = parseFloat(leftMl) || 0;
   const rightVal = parseFloat(rightMl) || 0;
