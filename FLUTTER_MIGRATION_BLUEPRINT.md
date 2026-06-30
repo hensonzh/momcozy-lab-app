@@ -886,8 +886,7 @@ doc/flutter-app-test-plan.md
 
 建议按这个顺序推进：
 
-1. 补齐 process frame history，使 `/v1/pump/process/data` 的 `cap_data` 与 legacy `PumpAgentNativeStore` 对齐。
-2. 补齐 service-backed background runner parity。
+1. 补齐 service-backed background runner parity。
 
 已完成的本机准入：
 
@@ -919,6 +918,7 @@ doc/flutter-app-test-plan.md
 [x] `PumpAgentUploadSnapshotSync` 已将 `PumpDeviceSnapshotBleBinding` updates 串行同步到 `PumpAgentUploadPlatform.updateDeviceSnapshot`
 [x] `BlePumpProtocolPlatform` 已用 `BlePlatform.writeWithoutResponse` 覆盖 B1/E1 等命令黄金包与缺失 device/state guard
 [x] `PumpNativeRuntimeCoordinator` 已组合 snapshot binding、upload sync 与 BLE protocol state resolver，覆盖 E1 更新后基于实时状态下发 B1
+[x] Android `PumpAgentUploadPlatform` 已按侧维护 process frame history，`/v1/pump/process/data` 的 `cap_data` 使用最多 20 帧窗口并在成功响应后清空
 ```
 
 ---

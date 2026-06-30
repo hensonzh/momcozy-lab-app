@@ -47,9 +47,13 @@ internal class PumpAgentUploadChannelHandler(
             }
             "updateDeviceSnapshot" -> {
                 deviceSnapshot = call.argumentsMap().mapValue("snapshot") ?: emptyMap<String, Any?>()
+                sampleCurrentSnapshot()
                 result.success(null)
             }
-            "sampleFromSnapshot" -> result.success(progressMap())
+            "sampleFromSnapshot" -> {
+                sampleCurrentSnapshot()
+                result.success(progressMap())
+            }
             "resetProgress" -> {
                 processL = 0
                 processR = 0
@@ -201,6 +205,7 @@ internal class PumpAgentUploadChannelHandler(
     private fun buildBody(call: MethodCall): Map<String, Any?> {
         val args = call.argumentsMap()
         val userId = args.stringValue("userId", configuredUserId)
+        if (call.method == "getProcessData") sampleCurrentSnapshot()
         val left = snapshotDevice("L")
         val right = snapshotDevice("R")
         return when (call.method) {
@@ -216,8 +221,8 @@ internal class PumpAgentUploadChannelHandler(
             )
             "uploadProcess" -> mapOf(
                 "user_id" to userId,
-                "process_left" to processSide(left, processL),
-                "process_right" to processSide(right, processR)
+                "process_left" to processSide(left, leftState, processL),
+                "process_right" to processSide(right, rightState, processR)
             )
             "uploadMilkRecord" -> {
                 val endedAtMs = args.longValue("endedAtMs", System.currentTimeMillis())
@@ -286,33 +291,39 @@ internal class PumpAgentUploadChannelHandler(
                 device?.stringValue("lastDeviceProcessTs", now) ?: now
             )
         }
+        val lastFrame = state.frames.lastOrNull()
         return mapOf(
             "step" to resolveStep(state, connected = true, running = true),
-            "cap_data" to capDataFrame(device),
-            "time" to device?.stringValue("lastDeviceProcessTs", now),
-            "milk_reel" to milkReel(device),
-            "bandpower" to bandpower(device),
-            "milk" to milk(device)
+            "cap_data" to capDataFrame(state),
+            "time" to (lastFrame?.time ?: device?.stringValue("lastDeviceProcessTs", now)),
+            "milk_reel" to (lastFrame?.milkReel ?: 0),
+            "bandpower" to (lastFrame?.bandpower ?: 0),
+            "milk" to (lastFrame?.milk ?: 0)
         )
     }
 
-    private fun processSide(device: Map<*, *>?, process: Int): Map<String, Any?> {
+    private fun processSide(
+        device: Map<*, *>?,
+        state: PumpAgentSideState,
+        process: Int
+    ): Map<String, Any?> {
         if (device == null || !device.boolValue("connected")) {
-            return zeroProcessSide(process)
+            return zeroProcessSide(process, state)
         }
+        syncProcessFields(state, device)
         return mapOf(
-            "time" to device.stringValue("lastDeviceProcessTs", isoNow()),
+            "time" to state.time,
             "process" to process,
-            "cap_data" to roundedTwoDecimals(device.doubleValue("flowFloat", 0.0)),
-            "milk_reel" to milkReel(device),
-            "bandpower" to bandpower(device),
-            "milk" to milk(device)
+            "cap_data" to state.capData,
+            "milk_reel" to state.milkReel,
+            "bandpower" to state.bandpower,
+            "milk" to state.milk
         )
     }
 
-    private fun zeroProcessSide(process: Int): Map<String, Any?> {
+    private fun zeroProcessSide(process: Int, state: PumpAgentSideState): Map<String, Any?> {
         return mapOf(
-            "time" to isoNow(),
+            "time" to state.time.ifEmpty { isoNow() },
             "process" to process,
             "cap_data" to 0,
             "milk_reel" to 0,
@@ -333,9 +344,12 @@ internal class PumpAgentUploadChannelHandler(
     }
 
     private fun applyProcessDataResponse(response: Map<String, Any?>) {
+        if (response.intValue("error", 0) != 0) return
         processL = response.intValue("process_l", processL)
         processR = response.intValue("process_r", processR)
         processAll = response.intValue("process_all", processAll)
+        leftState.frames.clear()
+        rightState.frames.clear()
     }
 
     private fun uploadResult(
@@ -394,6 +408,54 @@ internal class PumpAgentUploadChannelHandler(
         return deviceSnapshot[side] as? Map<*, *>
     }
 
+    private fun sampleCurrentSnapshot() {
+        sampleSide(leftState, snapshotDevice("L"))
+        sampleSide(rightState, snapshotDevice("R"))
+    }
+
+    private fun sampleSide(state: PumpAgentSideState, device: Map<*, *>?) {
+        val connected = device?.boolValue("connected") ?: false
+        if (connected && !state.prevConnected) {
+            state.step = "stop"
+            state.stopMarked = false
+            state.pauseMarked = false
+            state.frames.clear()
+        }
+        if (!connected && state.prevConnected) {
+            state.step = "stop"
+            state.pauseMarked = false
+            state.frames.clear()
+        }
+        state.prevConnected = connected
+        if (!connected || device == null) return
+
+        syncProcessFields(state, device)
+        state.frames.add(
+            PumpProcessFrame(
+                time = state.time,
+                capData = state.capData,
+                milkReel = state.milkReel,
+                bandpower = state.bandpower,
+                milk = state.milk
+            )
+        )
+        while (state.frames.size > FRAME_SIZE) {
+            state.frames.removeAt(0)
+        }
+    }
+
+    private fun syncProcessFields(state: PumpAgentSideState, device: Map<*, *>) {
+        state.time = if (state.source == "device") {
+            device.stringValue("lastDeviceProcessTs", isoNow())
+        } else {
+            isoNow()
+        }
+        state.capData = Math.max(0.0, roundedTwoDecimals(device.doubleValue("flowFloat", state.capData)))
+        state.milkReel = milkReel(device)
+        state.bandpower = bandpower(device)
+        state.milk = milk(device)
+    }
+
     private fun resolveStep(
         state: PumpAgentSideState,
         connected: Boolean,
@@ -438,9 +500,10 @@ internal class PumpAgentUploadChannelHandler(
         }
     }
 
-    private fun capDataFrame(device: Map<*, *>?): List<Any> {
-        val values = MutableList<Any>(FRAME_SIZE) { 0 }
-        values[values.lastIndex] = roundedTwoDecimals(device?.doubleValue("flowFloat", 0.0) ?: 0.0)
+    private fun capDataFrame(state: PumpAgentSideState): List<Any> {
+        val frames = state.frames.takeLast(FRAME_SIZE)
+        val values = MutableList<Any>(Math.max(0, FRAME_SIZE - frames.size)) { 0 }
+        values.addAll(frames.map { it.capData })
         return values
     }
 
@@ -636,15 +699,37 @@ internal class PumpAgentUploadChannelHandler(
         var step: String = "stop",
         var source: String = "device",
         var stopMarked: Boolean = false,
-        var pauseMarked: Boolean = false
+        var pauseMarked: Boolean = false,
+        var prevConnected: Boolean = false,
+        var time: String = "",
+        var capData: Double = 0.0,
+        var milkReel: Int = 0,
+        var bandpower: Int = 0,
+        var milk: Int = 0,
+        val frames: MutableList<PumpProcessFrame> = mutableListOf()
     ) {
         fun reset() {
             step = "stop"
             source = "device"
             stopMarked = false
             pauseMarked = false
+            prevConnected = false
+            time = ""
+            capData = 0.0
+            milkReel = 0
+            bandpower = 0
+            milk = 0
+            frames.clear()
         }
     }
+
+    private data class PumpProcessFrame(
+        val time: String,
+        val capData: Double,
+        val milkReel: Int,
+        val bandpower: Int,
+        val milk: Int
+    )
 
     private class PumpAgentUploadHttpException(
         val statusCode: Int

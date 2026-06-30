@@ -140,7 +140,7 @@ Fake contract status:
 [x] Android upload failure event avoids token/user id leakage and keeps retry metadata
 [x] Android upload body builder consumes `updateDeviceSnapshot` payload for workstate/process/milk fields
 [x] Flutter runtime sync forwards `PumpDeviceSnapshotBleBinding` updates into `updateDeviceSnapshot`
-[ ] Android process frame history parity with legacy `PumpAgentNativeStore`
+[x] Android process frame history parity with legacy `PumpAgentNativeStore`
 [ ] Android service-backed background runner parity with legacy `PumpAgentBackgroundRunner`
 ```
 
