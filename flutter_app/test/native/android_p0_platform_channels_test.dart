@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/core/ble/pump_device_snapshot.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -234,6 +235,7 @@ void main() {
                 'processAll': 0,
                 'elapsedSeconds': 0,
               },
+              'updateDeviceSnapshot' => null,
               'uploadWorkstate' ||
               'getProcessData' ||
               'uploadProcess' ||
@@ -256,6 +258,17 @@ void main() {
         apiBaseUrl: 'https://api.example.test',
         bearerToken: 'secret-token',
         userId: 'demo-user',
+      );
+      await upload.updateDeviceSnapshot(
+        const PumpDeviceSnapshot(
+          left: PumpDeviceSideState(
+            deviceId: 'left-device-id',
+            deviceName: 'Left pump',
+            connected: true,
+            battery: 87,
+            serialNumber: 'left-sn',
+          ),
+        ),
       );
       expect((await upload.sampleFromSnapshot()).processAll, 30);
       expect((await upload.resetProgress()).processAll, 0);
@@ -286,6 +299,7 @@ void main() {
 
       expect(calls.map((call) => call.method), [
         'setConfig',
+        'updateDeviceSnapshot',
         'sampleFromSnapshot',
         'resetProgress',
         'markStepStop',
@@ -301,9 +315,25 @@ void main() {
         'bearerToken': 'secret-token',
         'userId': 'demo-user',
       });
-      expect(calls[3].arguments, {'side': 'both'});
-      expect(calls[4].arguments, {'side': 'L'});
-      expect(calls[5].arguments, {'side': 'R', 'source': 'agent'});
+      expect(calls[1].arguments, {
+        'snapshot': {
+          'L': {
+            'deviceId': 'left-device-id',
+            'deviceName': 'Left pump',
+            'connected': true,
+            'battery': 87,
+            'flangeSize': 24,
+            'sealSize': 'M',
+            'model': '',
+            'firmware': '-',
+            'serialNumber': 'left-sn',
+          },
+          'R': null,
+        },
+      });
+      expect(calls[4].arguments, {'side': 'both'});
+      expect(calls[5].arguments, {'side': 'L'});
+      expect(calls[6].arguments, {'side': 'R', 'source': 'agent'});
       expect(calls.last.arguments, {
         'userId': 'demo-user',
         'endedAtMs': 1782687600000,

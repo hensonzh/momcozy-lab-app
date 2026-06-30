@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:momcozy_flutter_app/core/ble/pump_device_snapshot.dart';
 import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
 
 enum BlePermissionState { unknown, denied, granted }
@@ -228,6 +229,7 @@ abstract interface class PumpAgentUploadPlatform {
     required String bearerToken,
     required String userId,
   });
+  Future<void> updateDeviceSnapshot(PumpDeviceSnapshot snapshot);
   Future<PumpAgentUploadProgress> sampleFromSnapshot();
   Future<PumpAgentUploadProgress> resetProgress();
   Future<void> markStepStop(PumpAgentUploadSide side);
@@ -629,6 +631,15 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
         'bearerToken': bearerToken,
         'userId': userId,
       },
+      redactPayload: true,
+    );
+  }
+
+  @override
+  Future<void> updateDeviceSnapshot(PumpDeviceSnapshot snapshot) async {
+    _recordCall(
+      'updateDeviceSnapshot',
+      payload: {'snapshot': snapshot.toMap()},
       redactPayload: true,
     );
   }

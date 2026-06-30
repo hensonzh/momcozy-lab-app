@@ -66,7 +66,7 @@ Current Dart test coverage:
 
 Next migration gap:
 
-- Feed `PumpDeviceSnapshot` into Android `PumpAgentUploadPlatform` body builder, then wire pump protocol state machines on top of the BLE transport.
+- Wire `PumpDeviceSnapshotBleBinding` updates into `PumpAgentUploadPlatform.updateDeviceSnapshot`, then wire pump protocol state machines on top of the BLE transport.
 
 ## Migration Notes
 

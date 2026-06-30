@@ -48,6 +48,7 @@ void main() {
     });
 
     test('leaves non-sensitive values readable for diagnostics', () {
+      expect(isSensitiveLogKey('serialNumber'), isTrue);
       expect(isSensitiveLogKey('milkMl'), isFalse);
       expect(isSensitiveLogKey('elapsedSeconds'), isFalse);
       expect(

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/core/ble/pump_device_snapshot.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 void main() {
@@ -186,6 +187,16 @@ void main() {
           bearerToken: 'secret-token',
           userId: 'demo-user',
         );
+        await upload.updateDeviceSnapshot(
+          const PumpDeviceSnapshot(
+            left: PumpDeviceSideState(
+              deviceId: 'left-secret-id',
+              deviceName: 'Left pump',
+              connected: true,
+              serialNumber: 'left-secret-sn',
+            ),
+          ),
+        );
         expect(await upload.sampleFromSnapshot(), upload.progress);
         final resetProgress = await upload.resetProgress();
         await upload.markStepStop(PumpAgentUploadSide.both);
@@ -214,6 +225,7 @@ void main() {
 
         expect(calls.map((call) => call.method), [
           'setConfig',
+          'updateDeviceSnapshot',
           'sampleFromSnapshot',
           'resetProgress',
           'markStepStop',
@@ -231,18 +243,32 @@ void main() {
           'bearerToken': '***',
           'userId': '***',
         });
+        expect(calls[1].payload['snapshot'], {
+          'L': {
+            'deviceId': '***',
+            'deviceName': 'Left pump',
+            'connected': true,
+            'battery': 0,
+            'flangeSize': 24,
+            'sealSize': 'M',
+            'model': '',
+            'firmware': '-',
+            'serialNumber': '***',
+          },
+          'R': null,
+        });
         expect(resetProgress.toMap(), {
           'processL': 0,
           'processR': 0,
           'processAll': 0,
           'elapsedSeconds': 0,
         });
-        expect(calls[3].payload, {'side': 'both'});
-        expect(calls[4].payload, {'side': 'L'});
-        expect(calls[5].payload, {'side': 'R', 'source': 'app'});
+        expect(calls[4].payload, {'side': 'both'});
+        expect(calls[5].payload, {'side': 'L'});
+        expect(calls[6].payload, {'side': 'R', 'source': 'app'});
         expect(firstWorkstate.deduped, isFalse);
         expect(duplicateWorkstate.deduped, isTrue);
-        expect(calls[7].payload['deduped'], isTrue);
+        expect(calls[8].payload['deduped'], isTrue);
         expect(firstMilkRecord.deduped, isFalse);
         expect(duplicateMilkRecord.deduped, isTrue);
         expect(calls.last.payload['deduped'], isTrue);

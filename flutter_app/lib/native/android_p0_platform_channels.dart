@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:momcozy_flutter_app/core/ble/pump_device_snapshot.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 const defaultMmcBleChannelName = 'com.momcozymai.flutter/mmc_ble';
@@ -338,6 +339,13 @@ class AndroidPumpAgentUploadPlatform implements PumpAgentUploadPlatform {
       'apiBaseUrl': apiBaseUrl,
       'bearerToken': bearerToken,
       'userId': userId,
+    });
+  }
+
+  @override
+  Future<void> updateDeviceSnapshot(PumpDeviceSnapshot snapshot) async {
+    await _channel.invokeMethod<void>('updateDeviceSnapshot', {
+      'snapshot': snapshot.toMap(),
     });
   }
 
