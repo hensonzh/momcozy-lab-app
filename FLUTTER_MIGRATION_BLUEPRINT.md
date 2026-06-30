@@ -930,6 +930,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter route shell contract test 已读取 route intent fixtures，确保非 NotFound 目标路径均已注册到 route map
 [x] Flutter route intent mapper 已覆盖 pump foreground notification 与 auto-end notification，一次性消费语义通过 fixture test 验证
 [x] Flutter pump overlay route action 已对齐 Web 端 hide/update/skip 规则，覆盖权限拒绝、泵奶页可见、后台/非泵奶页更新和进度 clamp
+[x] Flutter route intent mapper 已覆盖 plan / pregnancy diary pending storage 到 badge intents，并保留一次性消费语义
 ```
 
 ---

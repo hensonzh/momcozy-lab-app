@@ -105,5 +105,36 @@ void main() {
       expect(actual.first.payload, expected.first['payload']);
       expect(actual.last.payload, expected.last['payload']);
     });
+
+    test('map plan and pregnancy diary pending storage to badge intents', () {
+      final fixture = readFixtureMap(
+        'route_intents/plan_and_diary_pending_intents.json',
+      );
+      final input = Map<String, Object?>.from(fixture['input']! as Map);
+      final storage = Map<String, Object?>.from(input['localStorage']! as Map);
+      final expected = List<Object?>.from(fixture['expectedIntents']! as List)
+          .whereType<Map>()
+          .map((value) => Map<String, Object?>.from(value))
+          .toList(growable: false);
+
+      final actual = routeIntentsFromPendingStorage(storage);
+
+      expect(
+        actual.map((intent) => intent.type),
+        expected.map((item) => item['type']),
+      );
+      expect(
+        actual.map((intent) => intent.path),
+        expected.map((item) => item['path']),
+      );
+      expect(
+        actual.map((intent) => intent.payload),
+        expected.map((item) => item['payload']),
+      );
+      expect(
+        actual.map((intent) => intent.consume),
+        expected.map((item) => item['consume']),
+      );
+    });
   });
 }
