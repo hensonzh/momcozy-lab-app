@@ -27,6 +27,7 @@ import java.util.UUID
 class MainActivity : FlutterActivity() {
     private lateinit var mmcBleChannel: MethodChannel
     private lateinit var pumpAgentUploadHandler: PumpAgentUploadChannelHandler
+    private lateinit var pumpAgentBackgroundRunner: PumpAgentBackgroundRunner
     private var scanCallback: ScanCallback? = null
     private val gatts = mutableMapOf<String, BluetoothGatt>()
     private val connectResults = mutableMapOf<String, MethodChannel.Result>()
@@ -51,6 +52,16 @@ class MainActivity : FlutterActivity() {
             PUMP_AGENT_UPLOAD_CHANNEL
         )
         pumpAgentUploadHandler = PumpAgentUploadChannelHandler(this, pumpAgentUploadChannel)
+        pumpAgentBackgroundRunner = PumpAgentBackgroundRunner(
+            pumpAgentUploadHandler
+        ) { state, processAll, elapsedSeconds ->
+            PumpSessionForegroundService.startOrUpdate(
+                applicationContext,
+                state,
+                processAll,
+                elapsedSeconds
+            )
+        }
         pumpAgentUploadChannel.setMethodCallHandler(pumpAgentUploadHandler::handle)
     }
 
@@ -89,6 +100,9 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
+        if (::pumpAgentBackgroundRunner.isInitialized) {
+            pumpAgentBackgroundRunner.stop()
+        }
         stopBleScan()
         gatts.keys.toList().forEach(::closeGatt)
         super.onDestroy()
@@ -102,15 +116,26 @@ class MainActivity : FlutterActivity() {
             }
             "start",
             "update" -> {
-                PumpSessionForegroundService.startOrUpdate(
-                    this,
-                    call.argument<String>("state") ?: "running",
-                    call.argument<Int>("processAll") ?: 0,
-                    call.argument<Int>("elapsedSeconds") ?: 0
-                )
+                val active = call.argument<Boolean>("active") ?: true
+                val state = call.argument<String>("state") ?: "running"
+                val processAll = call.argument<Int>("processAll") ?: 0
+                val elapsedSeconds = call.argument<Int>("elapsedSeconds") ?: 0
+                if (active) {
+                    PumpSessionForegroundService.startOrUpdate(
+                        this,
+                        state,
+                        processAll,
+                        elapsedSeconds
+                    )
+                    pumpAgentBackgroundRunner.startOrUpdate(state, elapsedSeconds)
+                } else {
+                    pumpAgentBackgroundRunner.stop()
+                    PumpSessionForegroundService.stop(this)
+                }
                 result.success(null)
             }
             "stop" -> {
+                pumpAgentBackgroundRunner.stop()
                 PumpSessionForegroundService.stop(this)
                 result.success(null)
             }

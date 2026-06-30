@@ -919,6 +919,7 @@ doc/flutter-app-test-plan.md
 [x] `BlePumpProtocolPlatform` 已用 `BlePlatform.writeWithoutResponse` 覆盖 B1/E1 等命令黄金包与缺失 device/state guard
 [x] `PumpNativeRuntimeCoordinator` 已组合 snapshot binding、upload sync 与 BLE protocol state resolver，覆盖 E1 更新后基于实时状态下发 B1
 [x] Android `PumpAgentUploadPlatform` 已按侧维护 process frame history，`/v1/pump/process/data` 的 `cap_data` 使用最多 20 帧窗口并在成功响应后清空
+[x] Android `PumpAgentBackgroundRunner` shell 已接入 foreground service 生命周期，覆盖 1 秒采样与通知进度刷新
 ```
 
 ---

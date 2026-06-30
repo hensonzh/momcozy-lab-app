@@ -95,6 +95,12 @@ internal class PumpAgentUploadChannelHandler(
         }
     }
 
+    fun sampleFromSnapshotForRunner(nextElapsedSeconds: Int): Map<String, Int> {
+        elapsedSeconds = nextElapsedSeconds.coerceAtLeast(0)
+        sampleCurrentSnapshot()
+        return progressMap()
+    }
+
     private fun upload(call: MethodCall, result: MethodChannel.Result) {
         val body = buildBody(call)
         val path = pathForMethod(call.method)
