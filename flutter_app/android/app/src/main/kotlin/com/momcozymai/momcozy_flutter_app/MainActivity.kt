@@ -3,6 +3,11 @@ package com.momcozymai.momcozy_flutter_app
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCallback
+import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
+import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanCallback
@@ -16,10 +21,18 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.util.Locale
+import java.util.UUID
 
 class MainActivity : FlutterActivity() {
     private lateinit var mmcBleChannel: MethodChannel
     private var scanCallback: ScanCallback? = null
+    private val gatts = mutableMapOf<String, BluetoothGatt>()
+    private val connectResults = mutableMapOf<String, MethodChannel.Result>()
+    private val readResults = mutableMapOf<String, MethodChannel.Result>()
+    private val writeResults = mutableMapOf<String, MethodChannel.Result>()
+    private val notifyResults = mutableMapOf<String, MethodChannel.Result>()
+    private val notifyKeys = mutableSetOf<String>()
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -46,14 +59,14 @@ class MainActivity : FlutterActivity() {
                 stopBleScan()
                 result.success(null)
             }
-            "connect",
-            "disconnect",
-            "write",
-            "writeWithoutResponse",
-            "startNotifications",
-            "stopNotifications" -> result.success(null)
+            "connect" -> connectGatt(call, result)
+            "disconnect" -> disconnectGatt(call, result)
+            "write" -> writeGatt(call, result, withoutResponse = false)
+            "writeWithoutResponse" -> writeGatt(call, result, withoutResponse = true)
+            "startNotifications" -> startGattNotifications(call, result)
+            "stopNotifications" -> stopGattNotifications(call, result)
             "getConnectedDevices" -> result.success(mapOf("devices" to connectedBleDevices()))
-            "read" -> result.success(mapOf("value" to emptyList<Int>()))
+            "read" -> readGatt(call, result)
             "openBluetoothSettings" -> {
                 startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS))
                 result.success(null)
@@ -70,6 +83,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onDestroy() {
         stopBleScan()
+        gatts.keys.toList().forEach(::closeGatt)
         super.onDestroy()
     }
 
@@ -218,6 +232,391 @@ class MainActivity : FlutterActivity() {
         return getSystemService(BLUETOOTH_SERVICE) as? BluetoothManager
     }
 
+    @SuppressLint("MissingPermission")
+    private fun connectGatt(call: MethodCall, result: MethodChannel.Result) {
+        if (!hasBlePermissions()) {
+            result.error("permission_denied", "Bluetooth permission is not granted", null)
+            return
+        }
+        val deviceId = call.argument<String>("deviceId")
+        if (deviceId.isNullOrBlank()) {
+            result.error("invalid_args", "deviceId is required", null)
+            return
+        }
+        val adapter = bluetoothManager()?.adapter
+        if (adapter == null || !adapter.isEnabled) {
+            result.error("adapter_unavailable", "Bluetooth adapter is unavailable", null)
+            return
+        }
+        try {
+            closeGatt(deviceId)
+            val device = adapter.getRemoteDevice(deviceId)
+            connectResults[deviceId] = result
+            gatts[deviceId] = device.connectGatt(
+                this,
+                false,
+                GattCallback(deviceId),
+                BluetoothDevice.TRANSPORT_LE
+            )
+        } catch (error: RuntimeException) {
+            connectResults.remove(deviceId)
+            result.error("connect_failed", error.message ?: "Bluetooth connect failed", null)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun disconnectGatt(call: MethodCall, result: MethodChannel.Result) {
+        val deviceId = call.argument<String>("deviceId")
+        if (deviceId.isNullOrBlank()) {
+            result.error("invalid_args", "deviceId is required", null)
+            return
+        }
+        closeGatt(deviceId)
+        result.success(null)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun readGatt(call: MethodCall, result: MethodChannel.Result) {
+        val ref = requireCharacteristic(call, result) ?: return
+        val key = characteristicKey(ref.deviceId, ref.serviceUuid, ref.characteristicUuid)
+        readResults[key] = result
+        try {
+            if (!ref.gatt.readCharacteristic(ref.characteristic)) {
+                readResults.remove(key)
+                result.error("read_failed", "readCharacteristic returned false", null)
+            }
+        } catch (error: RuntimeException) {
+            readResults.remove(key)
+            result.error("read_failed", error.message ?: "Bluetooth read failed", null)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun writeGatt(
+        call: MethodCall,
+        result: MethodChannel.Result,
+        withoutResponse: Boolean
+    ) {
+        val ref = requireCharacteristic(call, result) ?: return
+        val value = byteArrayFrom(call.argument<List<Any?>>("value"))
+        if (value == null) {
+            result.error("invalid_args", "value must be a number array", null)
+            return
+        }
+        val key = characteristicKey(ref.deviceId, ref.serviceUuid, ref.characteristicUuid)
+        ref.characteristic.writeType = if (withoutResponse) {
+            BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+        } else {
+            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+        }
+        @Suppress("DEPRECATION")
+        ref.characteristic.value = value
+        try {
+            if (!ref.gatt.writeCharacteristic(ref.characteristic)) {
+                result.error("write_failed", "writeCharacteristic returned false", null)
+                return
+            }
+            if (withoutResponse) {
+                result.success(null)
+            } else {
+                writeResults[key] = result
+            }
+        } catch (error: RuntimeException) {
+            result.error("write_failed", error.message ?: "Bluetooth write failed", null)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startGattNotifications(call: MethodCall, result: MethodChannel.Result) {
+        val ref = requireCharacteristic(call, result) ?: return
+        val descriptor = ref.characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
+        if (descriptor == null) {
+            result.error("notify_failed", "CCCD descriptor not found", null)
+            return
+        }
+        val key = characteristicKey(ref.deviceId, ref.serviceUuid, ref.characteristicUuid)
+        try {
+            if (!ref.gatt.setCharacteristicNotification(ref.characteristic, true)) {
+                result.error("notify_failed", "setCharacteristicNotification returned false", null)
+                return
+            }
+            @Suppress("DEPRECATION")
+            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+            notifyResults[key] = result
+            @Suppress("DEPRECATION")
+            if (!ref.gatt.writeDescriptor(descriptor)) {
+                notifyResults.remove(key)
+                result.error("notify_failed", "writeDescriptor returned false", null)
+            }
+        } catch (error: RuntimeException) {
+            notifyResults.remove(key)
+            result.error("notify_failed", error.message ?: "Bluetooth notify failed", null)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun stopGattNotifications(call: MethodCall, result: MethodChannel.Result) {
+        val ref = requireCharacteristic(call, result) ?: return
+        val key = characteristicKey(ref.deviceId, ref.serviceUuid, ref.characteristicUuid)
+        notifyKeys.remove(key)
+        try {
+            ref.gatt.setCharacteristicNotification(ref.characteristic, false)
+        } catch (_: RuntimeException) {
+        }
+        result.success(null)
+    }
+
+    private fun requireCharacteristic(
+        call: MethodCall,
+        result: MethodChannel.Result
+    ): CharacteristicRef? {
+        val deviceId = call.argument<String>("deviceId")
+        val serviceUuid = call.argument<String>("serviceUUID")
+        val characteristicUuid = call.argument<String>("characteristicUUID")
+        if (deviceId.isNullOrBlank() || serviceUuid.isNullOrBlank() || characteristicUuid.isNullOrBlank()) {
+            result.error(
+                "invalid_args",
+                "deviceId, serviceUUID and characteristicUUID are required",
+                null
+            )
+            return null
+        }
+        val gatt = gatts[deviceId]
+        if (gatt == null) {
+            result.error("not_connected", "Device is not connected", null)
+            return null
+        }
+        val service = gatt.getService(parseUuid(serviceUuid))
+        if (service == null) {
+            result.error("service_not_found", "GATT service not found: $serviceUuid", null)
+            return null
+        }
+        val characteristic = service.getCharacteristic(parseUuid(characteristicUuid))
+        if (characteristic == null) {
+            result.error(
+                "characteristic_not_found",
+                "GATT characteristic not found: $characteristicUuid",
+                null
+            )
+            return null
+        }
+        return CharacteristicRef(deviceId, serviceUuid, characteristicUuid, gatt, characteristic)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun closeGatt(deviceId: String) {
+        rejectPendingForDevice(deviceId, "Bluetooth disconnected")
+        notifyKeys.removeAll { key -> key.startsWith("$deviceId|") }
+        val gatt = gatts.remove(deviceId) ?: return
+        try {
+            gatt.disconnect()
+            gatt.close()
+        } catch (_: RuntimeException) {
+        }
+    }
+
+    private fun rejectPendingForDevice(deviceId: String, message: String) {
+        connectResults.remove(deviceId)?.error("disconnected", message, null)
+        rejectPendingMap(readResults, deviceId, message)
+        rejectPendingMap(writeResults, deviceId, message)
+        rejectPendingMap(notifyResults, deviceId, message)
+    }
+
+    private fun rejectPendingMap(
+        pending: MutableMap<String, MethodChannel.Result>,
+        deviceId: String,
+        message: String
+    ) {
+        val keys = pending.keys.filter { key -> key.startsWith("$deviceId|") }
+        keys.forEach { key ->
+            pending.remove(key)?.error("disconnected", message, null)
+        }
+    }
+
+    private fun characteristicKey(
+        deviceId: String,
+        serviceUuid: String,
+        characteristicUuid: String
+    ): String {
+        return "$deviceId|${parseUuid(serviceUuid)}|${parseUuid(characteristicUuid)}"
+    }
+
+    private fun parseUuid(value: String): UUID {
+        val normalized = value.lowercase(Locale.US)
+        return if (normalized.length == 4) {
+            UUID.fromString("0000$normalized-0000-1000-8000-00805f9b34fb")
+        } else {
+            UUID.fromString(normalized)
+        }
+    }
+
+    private fun byteArrayFrom(values: List<Any?>?): ByteArray? {
+        if (values == null) return null
+        val out = ByteArray(values.size)
+        values.forEachIndexed { index, value ->
+            val number = value as? Number ?: return null
+            out[index] = (number.toInt() and 0xff).toByte()
+        }
+        return out
+    }
+
+    private fun intListFrom(value: ByteArray?): List<Int> {
+        if (value == null) return emptyList()
+        return value.map { byte -> byte.toInt() and 0xff }
+    }
+
+    private data class CharacteristicRef(
+        val deviceId: String,
+        val serviceUuid: String,
+        val characteristicUuid: String,
+        val gatt: BluetoothGatt,
+        val characteristic: BluetoothGattCharacteristic
+    )
+
+    private inner class GattCallback(private val deviceId: String) : BluetoothGattCallback() {
+        @SuppressLint("MissingPermission")
+        override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                try {
+                    gatt.discoverServices()
+                } catch (error: RuntimeException) {
+                    connectResults.remove(deviceId)?.error(
+                        "connect_failed",
+                        error.message ?: "discoverServices failed",
+                        null
+                    )
+                }
+                return
+            }
+            if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                gatts.remove(deviceId)
+                rejectPendingForDevice(deviceId, "Bluetooth disconnected")
+                mmcBleChannel.invokeMethod(
+                    "disconnected",
+                    mapOf("deviceId" to deviceId, "status" to status)
+                )
+                try {
+                    gatt.close()
+                } catch (_: RuntimeException) {
+                }
+            }
+        }
+
+        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            val result = connectResults.remove(deviceId) ?: return
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                result.success(null)
+            } else {
+                result.error("connect_failed", "GATT discovery failed: $status", null)
+            }
+        }
+
+        override fun onCharacteristicRead(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            value: ByteArray,
+            status: Int
+        ) {
+            val key = characteristicKey(
+                deviceId,
+                characteristic.service.uuid.toString(),
+                characteristic.uuid.toString()
+            )
+            val result = readResults.remove(key) ?: return
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                result.success(mapOf("value" to intListFrom(value)))
+            } else {
+                result.error("read_failed", "GATT read failed: $status", null)
+            }
+        }
+
+        @Deprecated("Android 13 calls the overload with value.")
+        override fun onCharacteristicRead(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            status: Int
+        ) {
+            @Suppress("DEPRECATION")
+            onCharacteristicRead(gatt, characteristic, characteristic.value, status)
+        }
+
+        override fun onCharacteristicWrite(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            status: Int
+        ) {
+            val key = characteristicKey(
+                deviceId,
+                characteristic.service.uuid.toString(),
+                characteristic.uuid.toString()
+            )
+            val result = writeResults.remove(key) ?: return
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                result.success(null)
+            } else {
+                result.error("write_failed", "GATT write failed: $status", null)
+            }
+        }
+
+        override fun onDescriptorWrite(
+            gatt: BluetoothGatt,
+            descriptor: BluetoothGattDescriptor,
+            status: Int
+        ) {
+            val characteristic = descriptor.characteristic
+            val key = characteristicKey(
+                deviceId,
+                characteristic.service.uuid.toString(),
+                characteristic.uuid.toString()
+            )
+            val result = notifyResults.remove(key) ?: return
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                notifyKeys.add(key)
+                result.success(null)
+            } else {
+                result.error("notify_failed", "GATT descriptor write failed: $status", null)
+            }
+        }
+
+        override fun onCharacteristicChanged(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            value: ByteArray
+        ) {
+            emitNotification(characteristic, value)
+        }
+
+        @Deprecated("Android 13 calls the overload with value.")
+        override fun onCharacteristicChanged(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic
+        ) {
+            @Suppress("DEPRECATION")
+            emitNotification(characteristic, characteristic.value)
+        }
+
+        private fun emitNotification(
+            characteristic: BluetoothGattCharacteristic,
+            value: ByteArray
+        ) {
+            val key = characteristicKey(
+                deviceId,
+                characteristic.service.uuid.toString(),
+                characteristic.uuid.toString()
+            )
+            if (!notifyKeys.contains(key)) return
+            mmcBleChannel.invokeMethod(
+                "notification",
+                mapOf(
+                    "deviceId" to deviceId,
+                    "serviceUUID" to characteristic.service.uuid.toString(),
+                    "characteristicUUID" to characteristic.uuid.toString(),
+                    "value" to intListFrom(value)
+                )
+            )
+        }
+    }
+
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
         if (hasNotificationPermission()) return
@@ -233,6 +632,8 @@ class MainActivity : FlutterActivity() {
     }
 
     companion object {
+        private val CLIENT_CHARACTERISTIC_CONFIG =
+            UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
         private const val MMC_BLE_CHANNEL = "com.momcozymai.flutter/mmc_ble"
         private const val PUMP_NOTIFICATION_CHANNEL =
             "com.momcozymai.flutter/pump_session_notification"
