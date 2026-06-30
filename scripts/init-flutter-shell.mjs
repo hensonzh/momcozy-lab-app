@@ -1,27 +1,38 @@
 #!/usr/bin/env node
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const projectRoot = process.cwd();
 const flutterAppDir = path.join(projectRoot, "flutter_app");
 const pubspecPath = path.join(flutterAppDir, "pubspec.yaml");
+const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(scriptDir, "..");
+const toolchainConfig = JSON.parse(
+  readFileSync(path.join(repoRoot, "flutter-toolchain.json"), "utf8"),
+);
+const expandHome = (value) =>
+  String(value || "").startsWith("~/")
+    ? path.join(os.homedir(), String(value).slice(2))
+    : String(value || "");
 const TOOLCHAIN_ROOT =
   process.env.MOMCOZY_TOOLCHAIN_ROOT ||
-  path.join(os.homedir(), ".local", "share", "momcozy-toolchains");
+  expandHome(toolchainConfig.toolchainRootDefault);
 const JAVA_HOME =
   process.env.JAVA_HOME ||
-  path.join(TOOLCHAIN_ROOT, "jdk", "jdk-17.0.19+10", "Contents", "Home");
+  path.join(TOOLCHAIN_ROOT, toolchainConfig.jdk.homePath);
 const ANDROID_SDK_ROOT =
-  process.env.ANDROID_SDK_ROOT || path.join(TOOLCHAIN_ROOT, "android-sdk");
+  process.env.ANDROID_SDK_ROOT ||
+  path.join(TOOLCHAIN_ROOT, toolchainConfig.android.sdkPath);
 const ENV = {
   ...process.env,
   JAVA_HOME,
   ANDROID_SDK_ROOT,
   ANDROID_HOME: process.env.ANDROID_HOME || ANDROID_SDK_ROOT,
   PATH: [
-    path.join(TOOLCHAIN_ROOT, "flutter", "bin"),
+    path.join(TOOLCHAIN_ROOT, toolchainConfig.flutter.path, "bin"),
     path.join(JAVA_HOME, "bin"),
     path.join(ANDROID_SDK_ROOT, "cmdline-tools", "latest", "bin"),
     path.join(ANDROID_SDK_ROOT, "platform-tools"),

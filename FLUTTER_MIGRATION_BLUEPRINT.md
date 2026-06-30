@@ -886,10 +886,9 @@ doc/flutter-app-test-plan.md
 
 建议按这个顺序推进：
 
-1. 决定是否用 FVM 或 CI 镜像固定 Flutter / Android toolchain。
-2. 补 Security/privacy gates 和日志脱敏验收。
-3. 接入 Android `MmcBle` / Pump foreground service PoC，实现当前 fake adapter tests 覆盖的 platform channel contracts。
-4. 为 `PumpAgentUploadPlatform` 接入 Android channel PoC，并复用已覆盖的失败脱敏和 dedupe contract tests。
+1. 补 Security/privacy gates 和日志脱敏验收。
+2. 接入 Android `MmcBle` / Pump foreground service PoC，实现当前 fake adapter tests 覆盖的 platform channel contracts。
+3. 为 `PumpAgentUploadPlatform` 接入 Android channel PoC，并复用已覆盖的失败脱敏和 dedupe contract tests。
 
 已完成的本机准入：
 
@@ -900,6 +899,7 @@ doc/flutter-app-test-plan.md
 [x] `flutter_app` 单测通过
 [x] `flutter build apk --debug` 通过
 [x] 临时 appId / flavor / signing 策略已明确，Flutter PoC 使用 `com.momcozymai.app.flutterpoc`
+[x] P0 工具链固定方案已明确：不引入 FVM，使用 `flutter-toolchain.json` + `npm run flutter:check`
 [x] BLE fixtures 已接入 Flutter golden/parity tests
 [x] AG-UI / API / storage / route fixtures 已接入 Flutter tests
 [x] P0 native fake platform interfaces 已接入 Flutter tests
