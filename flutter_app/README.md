@@ -58,11 +58,12 @@ Current Dart test coverage:
 - Storage migration fixtures cover valid core state and malformed legacy fallback.
 - Route intent fixtures cover native notification navigation plus unsafe/unknown fallback routes.
 - P0 native fake platform interfaces cover BLE permission/settings/scan failure/notification/read/write/subscribe flows, pump protocol command schemas, pump foreground lifecycle/notice events, wake lock reference counting, and one-shot route consumption/active dispatch.
+- Android MethodChannel adapter fixtures cover `MmcBle` BLE method schemas/events and `PumpSessionNotification` foreground method schemas.
 - Pump agent upload fake platform fixtures cover method schemas, call/failure streams, sensitive failure redaction, and duplicate upload dedupe keys.
 
 Next migration gap:
 
-- Wire the covered fake platform interfaces to Android platform channels, starting with `MmcBle` and pump foreground service PoCs.
+- Add Android Kotlin MethodChannel handlers for `MmcBle` and pump foreground service, reusing the covered Flutter adapter contracts.
 
 ## Migration Notes
 
