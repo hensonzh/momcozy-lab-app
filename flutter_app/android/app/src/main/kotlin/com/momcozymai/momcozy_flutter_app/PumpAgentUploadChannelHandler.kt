@@ -34,6 +34,7 @@ internal class PumpAgentUploadChannelHandler(
     private var processR = 0
     private var processAll = 0
     private var elapsedSeconds = 0
+    private var deviceSnapshot: Map<*, *> = emptyMap<String, Any?>()
 
     fun handle(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
@@ -42,6 +43,10 @@ internal class PumpAgentUploadChannelHandler(
                 apiBaseUrl = args.stringValue("apiBaseUrl")
                 bearerToken = args.stringValue("bearerToken")
                 configuredUserId = args.stringValue("userId")
+                result.success(null)
+            }
+            "updateDeviceSnapshot" -> {
+                deviceSnapshot = call.argumentsMap().mapValue("snapshot") ?: emptyMap<String, Any?>()
                 result.success(null)
             }
             "sampleFromSnapshot" -> result.success(progressMap())
@@ -59,11 +64,17 @@ internal class PumpAgentUploadChannelHandler(
                 result.success(progressMap())
             }
             "markStepStop" -> {
-                applySide(call.argumentsMap().stringValue("side", "both")) { it.step = "stop" }
+                applySide(call.argumentsMap().stringValue("side", "both")) {
+                    it.step = "stop"
+                    it.stopMarked = true
+                }
                 result.success(null)
             }
             "markStepPause" -> {
-                applySide(call.argumentsMap().stringValue("side", "both")) { it.step = "pause" }
+                applySide(call.argumentsMap().stringValue("side", "both")) {
+                    it.step = "pause"
+                    it.pauseMarked = true
+                }
                 result.success(null)
             }
             "setOperationSource" -> {
@@ -190,21 +201,23 @@ internal class PumpAgentUploadChannelHandler(
     private fun buildBody(call: MethodCall): Map<String, Any?> {
         val args = call.argumentsMap()
         val userId = args.stringValue("userId", configuredUserId)
+        val left = snapshotDevice("L")
+        val right = snapshotDevice("R")
         return when (call.method) {
             "uploadWorkstate" -> mapOf(
                 "user_id" to userId,
-                "device_left" to workstateSide(leftState, processL),
-                "device_right" to workstateSide(rightState, processR)
+                "device_left" to workstateSide(left, leftState, processL),
+                "device_right" to workstateSide(right, rightState, processR)
             )
             "getProcessData" -> mapOf(
                 "user_id" to userId,
-                "device_left" to processDataSide(leftState),
-                "device_right" to processDataSide(rightState)
+                "device_left" to processDataSide(left, leftState),
+                "device_right" to processDataSide(right, rightState)
             )
             "uploadProcess" -> mapOf(
                 "user_id" to userId,
-                "process_left" to processSide(processL),
-                "process_right" to processSide(processR)
+                "process_left" to processSide(left, processL),
+                "process_right" to processSide(right, processR)
             )
             "uploadMilkRecord" -> {
                 val endedAtMs = args.longValue("endedAtMs", System.currentTimeMillis())
@@ -213,38 +226,106 @@ internal class PumpAgentUploadChannelHandler(
                     "pump_type" to 0,
                     "pump_source" to 0,
                     "pump_time" to pumpTime(endedAtMs),
-                    "pump_milk_volum" to 0
+                    "pump_milk_volum" to roundedOneDecimal(displayedMilk(left) + displayedMilk(right))
                 )
             }
             else -> emptyMap()
         }
     }
 
-    private fun workstateSide(state: PumpAgentSideState, process: Int): Map<String, Any?> {
-        return mapOf(
-            "state" to 4,
+    private fun workstateSide(
+        device: Map<*, *>?,
+        state: PumpAgentSideState,
+        process: Int
+    ): Map<String, Any?> {
+        val now = isoNow()
+        if (device == null) {
+            return mapOf(
+                "state" to 4,
+                "process" to process,
+                "timestamp" to now,
+                "change_type" to state.source
+            )
+        }
+        val timestamp = if (state.source == "device") {
+            device.stringValue("lastDeviceWorkstateTs", now)
+        } else {
+            now
+        }
+        if (!device.boolValue("connected")) {
+            return mapOf(
+                "state" to 3,
+                "process" to process,
+                "timestamp" to timestamp,
+                "change_type" to state.source
+            )
+        }
+        val out = mutableMapOf<String, Any?>(
+            "state" to if (device.intValue("pumpWorkState", 0) == 1) 1 else 0,
+            "scene" to if (device.intValue("pumpScene", 0) == 1) "auto" else "manual",
             "process" to process,
-            "timestamp" to isoNow(),
+            "timestamp" to timestamp,
             "change_type" to state.source
+        )
+        modeLabel(device.intValue("pumpMode", -1))?.let { out["mode"] = it }
+        if (device.containsKey("gear")) out["level"] = device.intValue("gear", 0)
+        return out
+    }
+
+    private fun processDataSide(device: Map<*, *>?, state: PumpAgentSideState): Map<String, Any?> {
+        val now = isoNow()
+        val connected = device?.boolValue("connected") ?: false
+        if (!connected) {
+            resolveStep(state, connected = false, running = false)
+            return emptyProcessDataSide("offline", now)
+        }
+        val running = device?.intValue("pumpWorkState", 0) == 1
+        if (!running) {
+            return emptyProcessDataSide(
+                resolveStep(state, connected = true, running = false),
+                device?.stringValue("lastDeviceProcessTs", now) ?: now
+            )
+        }
+        return mapOf(
+            "step" to resolveStep(state, connected = true, running = true),
+            "cap_data" to capDataFrame(device),
+            "time" to device?.stringValue("lastDeviceProcessTs", now),
+            "milk_reel" to milkReel(device),
+            "bandpower" to bandpower(device),
+            "milk" to milk(device)
         )
     }
 
-    private fun processDataSide(state: PumpAgentSideState): Map<String, Any?> {
+    private fun processSide(device: Map<*, *>?, process: Int): Map<String, Any?> {
+        if (device == null || !device.boolValue("connected")) {
+            return zeroProcessSide(process)
+        }
         return mapOf(
-            "step" to state.step,
-            "cap_data" to zeroFrame(),
+            "time" to device.stringValue("lastDeviceProcessTs", isoNow()),
+            "process" to process,
+            "cap_data" to roundedTwoDecimals(device.doubleValue("flowFloat", 0.0)),
+            "milk_reel" to milkReel(device),
+            "bandpower" to bandpower(device),
+            "milk" to milk(device)
+        )
+    }
+
+    private fun zeroProcessSide(process: Int): Map<String, Any?> {
+        return mapOf(
             "time" to isoNow(),
+            "process" to process,
+            "cap_data" to 0,
             "milk_reel" to 0,
             "bandpower" to 0,
             "milk" to 0
         )
     }
 
-    private fun processSide(process: Int): Map<String, Any?> {
+    private fun emptyProcessDataSide(step: String, time: String): Map<String, Any?> {
         return mapOf(
-            "time" to isoNow(),
-            "process" to process,
-            "cap_data" to 0,
+            "step" to step,
+            "cap_data" to zeroFrame(),
+            "time" to time,
             "milk_reel" to 0,
             "bandpower" to 0,
             "milk" to 0
@@ -307,6 +388,87 @@ internal class PumpAgentUploadChannelHandler(
                 update(rightState)
             }
         }
+    }
+
+    private fun snapshotDevice(side: String): Map<*, *>? {
+        return deviceSnapshot[side] as? Map<*, *>
+    }
+
+    private fun resolveStep(
+        state: PumpAgentSideState,
+        connected: Boolean,
+        running: Boolean
+    ): String {
+        if (state.stopMarked) {
+            state.stopMarked = false
+            state.step = "stop"
+            return "stop"
+        }
+        if (state.pauseMarked) {
+            state.pauseMarked = false
+            state.step = "pause"
+            return "pause"
+        }
+        if (!connected) {
+            state.step = "stop"
+            return "stop"
+        }
+        if (!running) {
+            state.step = if (
+                state.step == "running" ||
+                state.step == "start" ||
+                state.step == "pause"
+            ) {
+                "pause"
+            } else {
+                "stop"
+            }
+            return state.step
+        }
+        state.step = if (state.step == "stop") "start" else "running"
+        return state.step
+    }
+
+    private fun modeLabel(mode: Int): String? {
+        return when (mode) {
+            0 -> "stimulate"
+            1 -> "deep"
+            2 -> "mix"
+            else -> null
+        }
+    }
+
+    private fun capDataFrame(device: Map<*, *>?): List<Any> {
+        val values = MutableList<Any>(FRAME_SIZE) { 0 }
+        values[values.lastIndex] = roundedTwoDecimals(device?.doubleValue("flowFloat", 0.0) ?: 0.0)
+        return values
+    }
+
+    private fun milkReel(device: Map<*, *>?): Int {
+        val milk = (device?.intValue("milkFlag", 0) ?: 0) and 0x01
+        val mo = (device?.intValue("moFlag", 0) ?: 0) and 0x01
+        return (mo shl 1) or milk
+    }
+
+    private fun bandpower(device: Map<*, *>?): Int {
+        return Math.max(0, Math.round((device?.doubleValue("bandpower", 0.0) ?: 0.0).toFloat()))
+    }
+
+    private fun milk(device: Map<*, *>?): Int {
+        return Math.max(0, Math.round((device?.doubleValue("milkMl", 0.0) ?: 0.0).toFloat()))
+    }
+
+    private fun displayedMilk(device: Map<*, *>?): Double {
+        if (device == null || !device.boolValue("connected")) return 0.0
+        return Math.max(0.0, device.doubleValue("milkMl", 0.0))
+    }
+
+    private fun roundedOneDecimal(value: Double): Double {
+        return Math.round(value * 10.0) / 10.0
+    }
+
+    private fun roundedTwoDecimals(value: Double): Double {
+        return Math.round(value * 100.0) / 100.0
     }
 
     private fun pathForMethod(method: String): String {
@@ -398,8 +560,21 @@ internal class PumpAgentUploadChannelHandler(
         return arguments as? Map<*, *> ?: emptyMap<String, Any?>()
     }
 
+    private fun Map<*, *>.mapValue(key: String): Map<*, *>? {
+        return this[key] as? Map<*, *>
+    }
+
     private fun Map<*, *>.stringValue(key: String, fallback: String = ""): String {
         return this[key]?.toString()?.trim().takeUnless { it.isNullOrEmpty() } ?: fallback
+    }
+
+    private fun Map<*, *>.boolValue(key: String, fallback: Boolean = false): Boolean {
+        return when (val value = this[key]) {
+            is Boolean -> value
+            is Number -> value.toInt() != 0
+            is String -> value.equals("true", ignoreCase = true) || value == "1"
+            else -> fallback
+        }
     }
 
     private fun Map<*, *>.longValue(key: String, fallback: Long): Long {
@@ -410,8 +585,16 @@ internal class PumpAgentUploadChannelHandler(
         }
     }
 
-    private fun Map<String, Any?>.intValue(key: String, fallback: Int): Int {
+    private fun Map<*, *>.intValue(key: String, fallback: Int = 0): Int {
         return numberToInt(this[key], fallback)
+    }
+
+    private fun Map<*, *>.doubleValue(key: String, fallback: Double = 0.0): Double {
+        return when (val value = this[key]) {
+            is Number -> value.toDouble()
+            is String -> value.toDoubleOrNull() ?: fallback
+            else -> fallback
+        }
     }
 
     private fun numberToInt(value: Any?, fallback: Int): Int {
@@ -451,11 +634,15 @@ internal class PumpAgentUploadChannelHandler(
 
     private data class PumpAgentSideState(
         var step: String = "stop",
-        var source: String = "device"
+        var source: String = "device",
+        var stopMarked: Boolean = false,
+        var pauseMarked: Boolean = false
     ) {
         fun reset() {
             step = "stop"
             source = "device"
+            stopMarked = false
+            pauseMarked = false
         }
     }
 

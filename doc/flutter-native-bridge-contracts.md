@@ -23,7 +23,7 @@
 | `PumpSessionNotification` | `PumpSessionNotificationPlugin.java`; `PumpSessionForegroundService.java`; `PumpSessionNativeController.java` | `consumePendingNavigate`, `start`, `update`, `stop`, `showCompletionNotice`, `showAutoEndNotice`, `requestPermission` | `PumpSessionForegroundServicePlatform` | P0 |
 | `PumpSessionKeepAlive` | `PumpSessionKeepAlivePlugin.java` | `acquire`, `release` | `PumpWakeLockPlatform` | P0 |
 | `PumpSessionOverlay` | `PumpSessionOverlayPlugin.java`; `PumpSessionOverlayService.java` | `canDrawOverlays`, `openOverlaySettings`, `snapshot`, `update`, `hide` | `PumpOverlayPlatform` | P1/TBD |
-| `PumpAgentUpload` | `PumpAgentUploadPlugin.java`; `PumpAgentBackgroundRunner.java`; `PumpAgentNativeStore.java`; `PumpAgentApiClient.java` | `setConfig`, `sampleFromSnapshot`, `resetProgress`, `markStepStop`, `markStepPause`, `setOperationSource`, `uploadWorkstate`, `getProcessData`, `uploadProcess`, `uploadMilkRecord` | `PumpAgentUploadPlatform` | P0 |
+| `PumpAgentUpload` | `PumpAgentUploadPlugin.java`; `PumpAgentBackgroundRunner.java`; `PumpAgentNativeStore.java`; `PumpAgentApiClient.java` | `setConfig`, `updateDeviceSnapshot`, `sampleFromSnapshot`, `resetProgress`, `markStepStop`, `markStepPause`, `setOperationSource`, `uploadWorkstate`, `getProcessData`, `uploadProcess`, `uploadMilkRecord` | `PumpAgentUploadPlatform` | P0 |
 | `BackgroundNotify` | `BackgroundNotifyPlugin.java`; `Notify*` classes | `setConfig`, `setEnabled`, `isEnabled`, `syncNow`, `showReminder`, `openExactAlarmSettings`, `openOverlaySettings`, `openBatteryOptimizationSettings`, `openAppNotificationSettings`, `isIgnoringBatteryOptimizations`, `canDrawOverlays`, `canScheduleExactAlarms` | `BackgroundNotifyPlatform` | P1 |
 | `DeviceReminderWebSocket` | `DeviceReminderWebSocketPlugin.java`; `DeviceReminderWebSocketService.java`; `DeviceReminderWebSocketPrefs.java` | `start`, `stop`; native foreground service reconnect and notification | `DeviceReminderRealtimePlatform` | P1/TBD |
 | `NativeDeviceState` | `DeviceNativeStateStore.java` | native left/right snapshot and active pump state | `NativeDeviceStatePlatform` | P0 |
@@ -122,6 +122,7 @@ Fake contract status:
 
 ```text
 [x] fake method schema for configure base URL/token/user id
+[x] fake method schema for update Flutter pump device snapshot
 [x] fake method schema for sample current pump snapshot
 [x] fake method schema for reset progress
 [x] fake method schema for mark stop/pause source
@@ -135,7 +136,8 @@ Fake contract status:
 [x] Android Kotlin MethodChannel handler shell with progress reset and dedupe response
 [x] Android HTTP upload transport on a background thread when `apiBaseUrl` is configured
 [x] Android upload failure event avoids token/user id leakage and keeps retry metadata
-[ ] Android native pump snapshot/body parity with legacy `PumpAgentNativeStore`
+[x] Android upload body builder consumes `updateDeviceSnapshot` payload for workstate/process/milk fields
+[ ] Android process frame history parity with legacy `PumpAgentNativeStore`
 [ ] Android service-backed background runner parity with legacy `PumpAgentBackgroundRunner`
 ```
 
