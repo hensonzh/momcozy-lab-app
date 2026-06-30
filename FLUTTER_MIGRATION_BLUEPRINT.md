@@ -890,7 +890,7 @@ doc/flutter-app-test-plan.md
 2. 决定是否用 FVM 或 CI 镜像固定 Flutter / Android toolchain。
 3. 补 Security/privacy gates 和日志脱敏验收。
 4. 接入 Android `MmcBle` / Pump foreground service PoC，实现当前 fake adapter tests 覆盖的 platform channel contracts。
-5. 为 `PumpAgentUploadPlatform` 补 fake method schema、失败脱敏和 dedupe tests。
+5. 为 `PumpAgentUploadPlatform` 接入 Android channel PoC，并复用已覆盖的失败脱敏和 dedupe contract tests。
 
 已完成的本机准入：
 
@@ -904,7 +904,7 @@ doc/flutter-app-test-plan.md
 [x] AG-UI / API / storage / route fixtures 已接入 Flutter tests
 [x] P0 native fake platform interfaces 已接入 Flutter tests
 [x] BLE / PumpProtocol / Pump foreground / Route fake method schemas 与 event streams 已接入 Flutter tests
-[ ] `PumpAgentUploadPlatform` fake method schema 尚未补齐
+[x] `PumpAgentUploadPlatform` fake method schema、失败脱敏与 dedupe tests 已补齐
 ```
 
 ---

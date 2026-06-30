@@ -169,6 +169,131 @@ void main() {
     });
 
     test(
+      'fake pump agent upload emits method schemas and dedupes uploads',
+      () async {
+        final upload = FakePumpAgentUploadPlatform()
+          ..progress = const PumpAgentUploadProgress(
+            processL: 10,
+            processR: 20,
+            processAll: 30,
+            elapsedSeconds: 180,
+          );
+        final calls = <PumpAgentUploadCall>[];
+        final sub = upload.calls.listen(calls.add);
+
+        await upload.setConfig(
+          apiBaseUrl: 'https://api.example.test',
+          bearerToken: 'secret-token',
+          userId: 'demo-user',
+        );
+        expect(await upload.sampleFromSnapshot(), upload.progress);
+        final resetProgress = await upload.resetProgress();
+        await upload.markStepStop(PumpAgentUploadSide.both);
+        await upload.markStepPause(PumpAgentUploadSide.left);
+        await upload.setOperationSource(
+          PumpAgentUploadSide.right,
+          PumpAgentUploadSource.app,
+        );
+        final firstWorkstate = await upload.uploadWorkstate(
+          userId: 'demo-user',
+        );
+        final duplicateWorkstate = await upload.uploadWorkstate(
+          userId: 'demo-user',
+        );
+        await upload.getProcessData(userId: 'demo-user');
+        await upload.uploadProcess(userId: 'demo-user');
+        final firstMilkRecord = await upload.uploadMilkRecord(
+          userId: 'demo-user',
+          endedAtMs: 1782687600000,
+        );
+        final duplicateMilkRecord = await upload.uploadMilkRecord(
+          userId: 'demo-user',
+          endedAtMs: 1782687600000,
+        );
+        await flushStreams();
+
+        expect(calls.map((call) => call.method), [
+          'setConfig',
+          'sampleFromSnapshot',
+          'resetProgress',
+          'markStepStop',
+          'markStepPause',
+          'setOperationSource',
+          'uploadWorkstate',
+          'uploadWorkstate',
+          'getProcessData',
+          'uploadProcess',
+          'uploadMilkRecord',
+          'uploadMilkRecord',
+        ]);
+        expect(calls.first.payload, {
+          'apiBaseUrl': 'https://api.example.test',
+          'bearerToken': '***',
+          'userId': '***',
+        });
+        expect(resetProgress.toMap(), {
+          'processL': 0,
+          'processR': 0,
+          'processAll': 0,
+          'elapsedSeconds': 0,
+        });
+        expect(calls[3].payload, {'side': 'both'});
+        expect(calls[4].payload, {'side': 'L'});
+        expect(calls[5].payload, {'side': 'R', 'source': 'app'});
+        expect(firstWorkstate.deduped, isFalse);
+        expect(duplicateWorkstate.deduped, isTrue);
+        expect(calls[7].payload['deduped'], isTrue);
+        expect(firstMilkRecord.deduped, isFalse);
+        expect(duplicateMilkRecord.deduped, isTrue);
+        expect(calls.last.payload['deduped'], isTrue);
+        expect(upload.completedUploadKeys.length, 3);
+        expect(upload.dedupedUploadKeys.length, 2);
+
+        await sub.cancel();
+        await upload.dispose();
+      },
+    );
+
+    test('fake pump agent upload redacts sensitive failure payloads', () async {
+      final upload = FakePumpAgentUploadPlatform();
+      final failures = <PumpAgentUploadFailure>[];
+      final sub = upload.failures.listen(failures.add);
+
+      upload.emitFailure(
+        method: 'uploadProcess',
+        code: 'network-timeout',
+        message: 'Upload timed out',
+        retryable: true,
+        payload: const {
+          'bearerToken': 'secret-token',
+          'user_id': 'demo-user',
+          'conversationId': 'conv-1',
+          'safe': 'kept',
+          'nested': {
+            'Authorization': 'Bearer secret-token',
+            'session_id': 'session-1',
+            'milk': 42,
+          },
+        },
+      );
+      await flushStreams();
+
+      expect(failures.single.method, 'uploadProcess');
+      expect(failures.single.retryable, isTrue);
+      expect(failures.single.payload, {
+        'bearerToken': '***',
+        'user_id': '***',
+        'conversationId': '***',
+        'safe': 'kept',
+        'nested': {'Authorization': '***', 'session_id': '***', 'milk': 42},
+      });
+      expect(upload.recordedFailures.single.payload, failures.single.payload);
+
+      await sub.cancel();
+      await upload.dispose();
+    });
+
+    test(
       'fake pump foreground service emits lifecycle and notice events',
       () async {
         final service = FakePumpSessionForegroundServicePlatform();
