@@ -886,8 +886,8 @@ doc/flutter-app-test-plan.md
 
 建议按这个顺序推进：
 
-1. 将 `PumpDeviceSnapshotBleBinding` updates 自动同步到 `PumpAgentUploadPlatform.updateDeviceSnapshot`。
-2. 将 pump protocol state machine 接到 Flutter BLE transport。
+1. 将 pump protocol state machine 接到 Flutter BLE transport。
+2. 补齐 process frame history 与 service-backed background runner parity。
 
 已完成的本机准入：
 
@@ -916,6 +916,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `PumpDeviceSnapshot` reducer 已覆盖 E1/D0/D6/0x80/BF frame 更新、左右设备隔离与 legacy timestamp/milk 字段
 [x] Flutter `PumpDeviceSnapshotBleBinding` 已接入 `BlePlatform.notifications`，覆盖 connected device seed、notify subscription 与 unknown device ignore
 [x] `PumpAgentUploadPlatform.updateDeviceSnapshot` MethodChannel contract 已接入，Android upload body builder 已消费 Flutter snapshot 的 workstate/process/milk 字段
+[x] `PumpAgentUploadSnapshotSync` 已将 `PumpDeviceSnapshotBleBinding` updates 串行同步到 `PumpAgentUploadPlatform.updateDeviceSnapshot`
 ```
 
 ---
