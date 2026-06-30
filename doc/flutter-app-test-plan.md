@@ -514,12 +514,13 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 必须覆盖：
 
 ```text
-[ ] `AgentStreamClient` interface 不暴露 SSE/WebSocket 细节
-[ ] `SseAgentStreamClient` 能解析 event-stream payload
-[ ] `WebSocketAgentStreamClient` 能解析 JSON/JSONL payload
-[ ] 同一 AG-UI fixture 下两个 adapter 输出一致的 `AgentStreamEvent`
-[ ] `RUN_STARTED` / `TEXT_MESSAGE_*` / `TOOL_CALL_*` / `RUN_FINISHED` 顺序一致
-[ ] `RUN_ERROR` 映射为统一错误事件
+[x] `AgentStreamClient` interface 不暴露 SSE/WebSocket 细节
+[x] `SseAgentStreamClient` 能解析 event-stream payload
+[x] `WebSocketAgentStreamClient` 能解析 JSON/JSONL payload
+[x] 同一 AG-UI fixture 下两个 adapter 输出一致的 `AgentStreamEvent`
+[x] `RUN_STARTED` / `TEXT_MESSAGE_*` / `TOOL_CALL_*` / `RUN_FINISHED` 顺序一致
+[x] `RUN_ERROR` 映射为统一错误事件
+[x] AG-UI 首帧 payload builder 对齐文本和图片 fixture
 [ ] transport disconnect 映射为统一断线事件
 [ ] reconnect 不重复已完成 message chunk
 [ ] cancel ack 和本地 cancel 状态一致

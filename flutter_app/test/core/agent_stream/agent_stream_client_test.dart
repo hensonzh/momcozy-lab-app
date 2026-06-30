@@ -73,6 +73,7 @@ void main() {
           'userId': 'demo-user',
           'message': 'Create a plan.',
           'threadId': 'thread-1',
+          'locale': 'en-US',
         });
       },
     );
