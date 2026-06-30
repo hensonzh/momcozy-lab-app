@@ -214,6 +214,133 @@ void main() {
         await service.dispose();
       },
     );
+
+    test('pump agent upload adapter invokes method schemas', () async {
+      const channel = MethodChannel('test.momcozy/pump_agent_upload');
+      final calls = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (call) async {
+            calls.add(call);
+            return switch (call.method) {
+              'sampleFromSnapshot' => {
+                'processL': 10,
+                'processR': 20,
+                'processAll': 30,
+                'elapsedSeconds': 180,
+              },
+              'resetProgress' => {
+                'processL': 0,
+                'processR': 0,
+                'processAll': 0,
+                'elapsedSeconds': 0,
+              },
+              'uploadWorkstate' ||
+              'getProcessData' ||
+              'uploadProcess' ||
+              'uploadMilkRecord' => {
+                'body': call.arguments,
+                'response': {'error': 0},
+                'processAll': 42,
+                'deduped': call.method == 'uploadMilkRecord',
+              },
+              _ => null,
+            };
+          });
+      addTearDown(
+        () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(channel, null),
+      );
+      final upload = AndroidPumpAgentUploadPlatform(channel: channel);
+
+      await upload.setConfig(
+        apiBaseUrl: 'https://api.example.test',
+        bearerToken: 'secret-token',
+        userId: 'demo-user',
+      );
+      expect((await upload.sampleFromSnapshot()).processAll, 30);
+      expect((await upload.resetProgress()).processAll, 0);
+      await upload.markStepStop(PumpAgentUploadSide.both);
+      await upload.markStepPause(PumpAgentUploadSide.left);
+      await upload.setOperationSource(
+        PumpAgentUploadSide.right,
+        PumpAgentUploadSource.agent,
+      );
+      expect((await upload.uploadWorkstate(userId: 'demo-user')).response, {
+        'error': 0,
+      });
+      expect(
+        (await upload.getProcessData(userId: 'demo-user')).progress.processAll,
+        42,
+      );
+      expect(
+        (await upload.uploadProcess(userId: 'demo-user')).deduped,
+        isFalse,
+      );
+      expect(
+        (await upload.uploadMilkRecord(
+          userId: 'demo-user',
+          endedAtMs: 1782687600000,
+        )).deduped,
+        isTrue,
+      );
+
+      expect(calls.map((call) => call.method), [
+        'setConfig',
+        'sampleFromSnapshot',
+        'resetProgress',
+        'markStepStop',
+        'markStepPause',
+        'setOperationSource',
+        'uploadWorkstate',
+        'getProcessData',
+        'uploadProcess',
+        'uploadMilkRecord',
+      ]);
+      expect(calls.first.arguments, {
+        'apiBaseUrl': 'https://api.example.test',
+        'bearerToken': 'secret-token',
+        'userId': 'demo-user',
+      });
+      expect(calls[3].arguments, {'side': 'both'});
+      expect(calls[4].arguments, {'side': 'L'});
+      expect(calls[5].arguments, {'side': 'R', 'source': 'agent'});
+      expect(calls.last.arguments, {
+        'userId': 'demo-user',
+        'endedAtMs': 1782687600000,
+      });
+
+      await upload.dispose();
+    });
+
+    test('pump agent upload adapter maps native failure events', () async {
+      const channel = MethodChannel('test.momcozy/pump_agent_upload_events');
+      final upload = AndroidPumpAgentUploadPlatform(channel: channel);
+      final failures = <PumpAgentUploadFailure>[];
+      final sub = upload.failures.listen(failures.add);
+
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            channel.name,
+            channel.codec.encodeMethodCall(
+              const MethodCall('uploadFailure', {
+                'method': 'uploadProcess',
+                'code': 'network',
+                'message': 'Network timeout',
+                'retryable': true,
+                'payload': {'token': '***'},
+              }),
+            ),
+            (_) {},
+          );
+      await flushStreams();
+
+      expect(failures.single.method, 'uploadProcess');
+      expect(failures.single.retryable, isTrue);
+      expect(failures.single.payload, {'token': '***'});
+
+      await sub.cancel();
+      await upload.dispose();
+    });
   });
 }
 

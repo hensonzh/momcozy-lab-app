@@ -131,6 +131,7 @@ Fake contract status:
 [x] fake method schema for upload milk record
 [x] fake dedupe key coverage for summary/milk record/Agent context upload calls
 [x] fake failure stream reports upload failure without leaking sensitive payload
+[x] Flutter MethodChannel adapter tests for `PumpAgentUpload` method schema and failure events
 [ ] Android platform channel implementation
 ```
 
