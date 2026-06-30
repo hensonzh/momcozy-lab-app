@@ -95,6 +95,7 @@ Fake contract status:
 [x] Android real BLE scan/getConnectedDevices transport implementation for `MmcBle`
 [x] Android real GATT connect/read/write/notify transport implementation for `MmcBle`
 [x] Flutter `BlePumpProtocolPlatform` sends pump protocol command goldens through `BlePlatform.writeWithoutResponse`
+[x] Flutter `PumpNativeRuntimeCoordinator` resolves pump protocol side state from live snapshots
 ```
 
 ### 4.2 `PumpSessionForegroundServicePlatform`
