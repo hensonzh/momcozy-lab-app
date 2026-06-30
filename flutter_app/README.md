@@ -39,6 +39,11 @@ flutter test
 flutter build apk --debug
 ```
 
+Current Android PoC package:
+
+- `applicationId`: `com.momcozymai.app.flutterpoc`
+- Packaging policy: [doc/flutter-android-packaging.md](../doc/flutter-android-packaging.md)
+
 ## Phase 0 Contract Tests
 
 Current Dart test coverage:

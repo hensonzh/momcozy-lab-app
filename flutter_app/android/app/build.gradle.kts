@@ -15,8 +15,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.momcozymai.momcozy_flutter_app"
+        // Keep the Flutter PoC installable beside the current Capacitor app
+        // (`com.momcozymai.app`) until the production cutover is approved.
+        applicationId = "com.momcozymai.app.flutterpoc"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -27,8 +28,8 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // P0 release APKs are local smoke artifacts only. Store/internal
+            // distribution must add a release signingConfig and CI secret gate.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
