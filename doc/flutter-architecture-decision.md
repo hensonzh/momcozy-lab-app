@@ -128,7 +128,7 @@ features/
 [x] `npm run flutter:check` 通过
 [x] Flutter/Dart 版本写入工程 README 或 toolchain 文件
 [x] Android SDK / JDK / Gradle 环境可构建 debug APK
-[ ] 明确 appId / flavor / signing 的临时策略
+[x] 明确 appId / flavor / signing 的临时策略，Flutter PoC 使用 `com.momcozymai.app.flutterpoc`
 [ ] 决定是否使用 FVM 或等价版本固定方案
 [x] 现有 Web baseline 仍可测试和构建
 ```
@@ -143,6 +143,7 @@ features/
 [x] Flutter shell 已初始化：`flutter_app/`
 [x] `flutter_app` 单测通过
 [x] `flutter build apk --debug` 通过
+[x] Flutter Android PoC appId / flavor / signing 策略已记录：`doc/flutter-android-packaging.md`
 [x] Web baseline 可测试和构建
 [x] BLE / AG-UI / API / storage / route fixtures 已准备
 [x] Flutter BLE / AG-UI / API / storage / route fixture tests 已开始落地
