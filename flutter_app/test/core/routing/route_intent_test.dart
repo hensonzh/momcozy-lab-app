@@ -30,6 +30,10 @@ void main() {
           actual.map((intent) => intent.path),
           expected.map((item) => item['path']),
         );
+        expect(
+          actual.map((intent) => intent.consume),
+          expected.map((item) => item['consume']),
+        );
         expect(actual.every((intent) => intent.payload.isNotEmpty), isTrue);
         expect(actual[2].payload, containsPair('requiresContextEvent', true));
         expect(actual[3].payload, containsPair('highlight', 'growth'));
@@ -70,5 +74,36 @@ void main() {
         expect(actual[4].payload, containsPair('status', 'unknown'));
       },
     );
+
+    test('map pump pending navigation payloads to one-shot intents', () {
+      final fixture = readFixtureMap(
+        'route_intents/pump_notification_and_overlay_intents.json',
+      );
+      final input = Map<String, Object?>.from(fixture['input']! as Map);
+      final payloads = List<Object?>.from(
+        input['pendingNavigatePayloads']! as List,
+      );
+      final expected = List<Object?>.from(fixture['expectedIntents']! as List)
+          .whereType<Map>()
+          .map((value) => Map<String, Object?>.from(value))
+          .toList(growable: false);
+
+      final actual = routeIntentsFromNativePayloads(payloads);
+
+      expect(
+        actual.map((intent) => intent.type),
+        expected.map((item) => item['type']),
+      );
+      expect(
+        actual.map((intent) => intent.path),
+        expected.map((item) => item['path']),
+      );
+      expect(
+        actual.map((intent) => intent.consume),
+        expected.map((item) => item['consume']),
+      );
+      expect(actual.first.payload, expected.first['payload']);
+      expect(actual.last.payload, expected.last['payload']);
+    });
   });
 }
