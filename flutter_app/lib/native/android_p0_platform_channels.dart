@@ -322,12 +322,23 @@ class AndroidPumpAgentUploadPlatform implements PumpAgentUploadPlatform {
       StreamController<PumpAgentUploadCall>.broadcast();
   final StreamController<PumpAgentUploadFailure> _failureController =
       StreamController<PumpAgentUploadFailure>.broadcast();
+  final StreamController<PumpAgentUploadProgress> _progressController =
+      StreamController<PumpAgentUploadProgress>.broadcast();
+  final StreamController<PumpAgentProcessReply> _replyController =
+      StreamController<PumpAgentProcessReply>.broadcast();
 
   @override
   Stream<PumpAgentUploadCall> get calls => _callController.stream;
 
   @override
   Stream<PumpAgentUploadFailure> get failures => _failureController.stream;
+
+  @override
+  Stream<PumpAgentUploadProgress> get progressEvents =>
+      _progressController.stream;
+
+  @override
+  Stream<PumpAgentProcessReply> get processReplies => _replyController.stream;
 
   @override
   Future<void> setConfig({
@@ -418,6 +429,8 @@ class AndroidPumpAgentUploadPlatform implements PumpAgentUploadPlatform {
     _channel.setMethodCallHandler(null);
     await _callController.close();
     await _failureController.close();
+    await _progressController.close();
+    await _replyController.close();
   }
 
   Future<PumpAgentUploadResult> _invokeUploadResult(
@@ -447,6 +460,16 @@ class AndroidPumpAgentUploadPlatform implements PumpAgentUploadPlatform {
             message: _string(payload['message']),
             retryable: payload['retryable'] == true,
             payload: _mapFrom(payload['payload']),
+          ),
+        );
+        break;
+      case 'processProgress':
+        _progressController.add(_progressFromMap(payload));
+        break;
+      case 'processReply':
+        _replyController.add(
+          PumpAgentProcessReply(
+            response: Map<String, Object?>.unmodifiable(payload),
           ),
         );
         break;

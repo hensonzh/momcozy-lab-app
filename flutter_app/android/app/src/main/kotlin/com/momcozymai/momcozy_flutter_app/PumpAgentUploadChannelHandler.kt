@@ -113,11 +113,13 @@ internal class PumpAgentUploadChannelHandler(
     }
 
     fun sampleFromSnapshotForRunner(nextElapsedSeconds: Int): Map<String, Int> {
-        return synchronized(this) {
+        val progress = synchronized(this) {
             elapsedSeconds = nextElapsedSeconds.coerceAtLeast(0)
             sampleCurrentSnapshot()
             progressMap()
         }
+        emitProcessProgress(progress)
+        return progress
     }
 
     fun runBackgroundNetworkTick(nowMs: Long = System.currentTimeMillis()): Map<String, Int> {
@@ -131,12 +133,15 @@ internal class PumpAgentUploadChannelHandler(
         }
         nextProcessDataUpload()?.let { upload ->
             val response = postJson(upload.path, upload.body)
-            synchronized(this) {
+            val progress = synchronized(this) {
                 applyProcessDataResponse(response)
+                progressMap()
             }
+            emitProcessProgress(progress)
         }
         nextProcessUpload(nowMs)?.let { upload ->
-            postJson(upload.path, upload.body)
+            val response = postJson(upload.path, upload.body)
+            emitProcessReply(response)
         }
         return synchronized(this) { progressMap() }
     }
@@ -481,6 +486,18 @@ internal class PumpAgentUploadChannelHandler(
     private fun safeFailureMessage(error: Exception): String {
         val httpError = error as? PumpAgentUploadHttpException
         return if (httpError != null) "HTTP ${httpError.statusCode}" else "native pump upload failed"
+    }
+
+    private fun emitProcessProgress(progress: Map<String, Int>) {
+        activity.runOnUiThread {
+            channel.invokeMethod("processProgress", progress)
+        }
+    }
+
+    private fun emitProcessReply(response: Map<String, Any?>) {
+        activity.runOnUiThread {
+            channel.invokeMethod("processReply", response)
+        }
     }
 
     private fun applySide(side: String, update: (PumpAgentSideState) -> Unit) {

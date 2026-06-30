@@ -64,6 +64,7 @@ Current Dart test coverage:
 - Pump native runtime coordinator fixtures cover snapshot, upload sync, and BLE protocol state resolver wiring.
 - Android pump agent upload body builder maintains the native process `cap_data` frame history.
 - Android pump agent background runner shell refreshes native progress while the foreground service is active.
+- Pump agent upload adapter fixtures cover native process progress and process reply event streams.
 - P0 native fake platform interfaces cover BLE permission/settings/scan failure/notification/read/write/subscribe flows, pump protocol command schemas, pump foreground lifecycle/notice events, wake lock reference counting, and one-shot route consumption/active dispatch.
 - Android MethodChannel adapter fixtures cover `MmcBle` BLE method schemas/events and `PumpSessionNotification` foreground method schemas.
 - Pump agent upload MethodChannel adapter fixtures cover native method schemas and failure events.
@@ -71,7 +72,7 @@ Current Dart test coverage:
 
 Next migration gap:
 
-- Add service-backed background runner parity for pump uploads.
+- Run Android real-device P0 smoke for BLE, foreground service, background runner uploads, and notification recovery.
 
 ## Migration Notes
 

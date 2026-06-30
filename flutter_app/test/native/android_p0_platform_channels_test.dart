@@ -346,7 +346,11 @@ void main() {
       const channel = MethodChannel('test.momcozy/pump_agent_upload_events');
       final upload = AndroidPumpAgentUploadPlatform(channel: channel);
       final failures = <PumpAgentUploadFailure>[];
+      final progressEvents = <PumpAgentUploadProgress>[];
+      final processReplies = <PumpAgentProcessReply>[];
       final sub = upload.failures.listen(failures.add);
+      final progressSub = upload.progressEvents.listen(progressEvents.add);
+      final replySub = upload.processReplies.listen(processReplies.add);
 
       await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .handlePlatformMessage(
@@ -362,13 +366,42 @@ void main() {
             ),
             (_) {},
           );
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            channel.name,
+            channel.codec.encodeMethodCall(
+              const MethodCall('processProgress', {
+                'processL': 12,
+                'processR': 24,
+                'processAll': 36,
+                'elapsedSeconds': 180,
+              }),
+            ),
+            (_) {},
+          );
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            channel.name,
+            channel.codec.encodeMethodCall(
+              const MethodCall('processReply', {
+                'error': 0,
+                'need_reply': false,
+              }),
+            ),
+            (_) {},
+          );
       await flushStreams();
 
       expect(failures.single.method, 'uploadProcess');
       expect(failures.single.retryable, isTrue);
       expect(failures.single.payload, {'token': '***'});
+      expect(progressEvents.single.processAll, 36);
+      expect(progressEvents.single.elapsedSeconds, 180);
+      expect(processReplies.single.response, {'error': 0, 'need_reply': false});
 
       await sub.cancel();
+      await progressSub.cancel();
+      await replySub.cancel();
       await upload.dispose();
     });
   });

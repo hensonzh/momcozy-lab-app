@@ -886,7 +886,7 @@ doc/flutter-app-test-plan.md
 
 建议按这个顺序推进：
 
-1. 补齐 service-backed background runner parity。
+1. 进入 Android 真机 P0 smoke：BLE 连接、后台通知、后台 runner 上传、杀进程恢复。
 
 已完成的本机准入：
 
@@ -921,6 +921,7 @@ doc/flutter-app-test-plan.md
 [x] Android `PumpAgentUploadPlatform` 已按侧维护 process frame history，`/v1/pump/process/data` 的 `cap_data` 使用最多 20 帧窗口并在成功响应后清空
 [x] Android `PumpAgentBackgroundRunner` shell 已接入 foreground service 生命周期，覆盖 1 秒采样与通知进度刷新
 [x] Android `PumpAgentBackgroundRunner` network tick 已接入 workstate change upload、process data fetch 与 10 秒 process upload 节流
+[x] Android `PumpAgentBackgroundRunner` 已通过 `PumpAgentUploadPlatform` typed streams 回传 process progress / process reply
 ```
 
 ---

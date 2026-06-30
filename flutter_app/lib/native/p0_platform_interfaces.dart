@@ -206,6 +206,12 @@ class PumpAgentUploadFailure {
   final Map<String, Object?> payload;
 }
 
+class PumpAgentProcessReply {
+  const PumpAgentProcessReply({this.response = const <String, Object?>{}});
+
+  final Map<String, Object?> response;
+}
+
 class PumpAgentUploadResult {
   const PumpAgentUploadResult({
     this.body = const <String, Object?>{},
@@ -223,6 +229,8 @@ class PumpAgentUploadResult {
 abstract interface class PumpAgentUploadPlatform {
   Stream<PumpAgentUploadCall> get calls;
   Stream<PumpAgentUploadFailure> get failures;
+  Stream<PumpAgentUploadProgress> get progressEvents;
+  Stream<PumpAgentProcessReply> get processReplies;
 
   Future<void> setConfig({
     required String apiBaseUrl,
@@ -605,18 +613,31 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
   PumpAgentUploadProgress progress = const PumpAgentUploadProgress();
   final List<PumpAgentUploadCall> recordedCalls = [];
   final List<PumpAgentUploadFailure> recordedFailures = [];
+  final List<PumpAgentUploadProgress> recordedProgressEvents = [];
+  final List<PumpAgentProcessReply> recordedProcessReplies = [];
   final Set<String> completedUploadKeys = <String>{};
   final Set<String> dedupedUploadKeys = <String>{};
   final StreamController<PumpAgentUploadCall> _callController =
       StreamController<PumpAgentUploadCall>.broadcast();
   final StreamController<PumpAgentUploadFailure> _failureController =
       StreamController<PumpAgentUploadFailure>.broadcast();
+  final StreamController<PumpAgentUploadProgress> _progressController =
+      StreamController<PumpAgentUploadProgress>.broadcast();
+  final StreamController<PumpAgentProcessReply> _replyController =
+      StreamController<PumpAgentProcessReply>.broadcast();
 
   @override
   Stream<PumpAgentUploadCall> get calls => _callController.stream;
 
   @override
   Stream<PumpAgentUploadFailure> get failures => _failureController.stream;
+
+  @override
+  Stream<PumpAgentUploadProgress> get progressEvents =>
+      _progressController.stream;
+
+  @override
+  Stream<PumpAgentProcessReply> get processReplies => _replyController.stream;
 
   @override
   Future<void> setConfig({
@@ -733,9 +754,25 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
     _failureController.add(failure);
   }
 
+  void emitProgress(PumpAgentUploadProgress nextProgress) {
+    progress = nextProgress;
+    recordedProgressEvents.add(nextProgress);
+    _progressController.add(nextProgress);
+  }
+
+  void emitProcessReply(Map<String, Object?> response) {
+    final reply = PumpAgentProcessReply(
+      response: Map<String, Object?>.unmodifiable(response),
+    );
+    recordedProcessReplies.add(reply);
+    _replyController.add(reply);
+  }
+
   Future<void> dispose() async {
     await _callController.close();
     await _failureController.close();
+    await _progressController.close();
+    await _replyController.close();
   }
 
   PumpAgentUploadResult _recordUpload(
