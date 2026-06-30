@@ -22,6 +22,33 @@ List<RouteIntent> routeIntentsFromNativePayloads(List<Object?> payloads) {
       .toList(growable: false);
 }
 
+List<RouteIntent> routeIntentsFromPendingStorage(Map<String, Object?> storage) {
+  final birthJourneyIntent = _planPendingIntent(
+    raw: _string(storage['mmc_birth_journey_plan_nav_pending']),
+    type: 'OpenStatusBirthJourneyBadge',
+    path: '/status',
+    fallbackPayload: const {'source': 'birthJourneyPlanChanged'},
+  );
+  final milkPlanIntent = _planPendingIntent(
+    raw: _string(storage['mmc_milk_plan_nav_pending']),
+    type: 'OpenSchedulePlanBadge',
+    path: '/schedule',
+    fallbackPayload: const {'source': 'milkPlanChanged'},
+  );
+
+  return [
+    ?birthJourneyIntent,
+    ?milkPlanIntent,
+    if (_string(storage['mmc_pregnancy_diary_nav_pending']) == '1')
+      const RouteIntent(
+        type: 'OpenStatusPregnancyDiaryBadge',
+        path: '/status',
+        payload: {'source': 'pregnancyDiaryChanged'},
+        consume: 'once',
+      ),
+  ];
+}
+
 RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
   final path = _string(payload['path']) ?? '/';
   if (_isUnsafeRoute(path)) {
@@ -159,6 +186,59 @@ RouteIntent routeIntentFromFallbackCase(Map<String, Object?> inputCase) {
         payload: {'fallback': 'AgentHub'},
       );
   }
+}
+
+RouteIntent? _planPendingIntent({
+  required String? raw,
+  required String type,
+  required String path,
+  required Map<String, Object?> fallbackPayload,
+}) {
+  if (raw == null) return null;
+  final payload = raw == '1'
+      ? fallbackPayload
+      : _planPayloadFromRecord(_decodeObject(raw)) ?? fallbackPayload;
+  return RouteIntent(type: type, path: path, payload: payload, consume: 'once');
+}
+
+Map<String, Object?>? _planPayloadFromRecord(Map<String, Object?>? record) {
+  if (record == null) return null;
+  final payload = <String, Object?>{};
+  void putString(String key) {
+    final value = _string(record[key]);
+    if (value != null && value.trim().isNotEmpty) payload[key] = value;
+  }
+
+  putString('kind');
+  putString('reason');
+  putString('label');
+  final planId = record['planId'] ?? record['plan_id'];
+  if (planId is num && planId.isFinite) payload['planId'] = planId.toInt();
+  putString('planType');
+  final planTypeSnake = _string(record['plan_type']);
+  if (!payload.containsKey('planType') &&
+      planTypeSnake != null &&
+      planTypeSnake.trim().isNotEmpty) {
+    payload['planType'] = planTypeSnake;
+  }
+  final dates = _uniqueDateStrings(record['dates']);
+  if (dates.isNotEmpty) payload['dates'] = dates;
+  putString('summary');
+  return payload.isEmpty ? null : payload;
+}
+
+List<String> _uniqueDateStrings(Object? value) {
+  if (value is! List) return const [];
+  final dates = <String>[];
+  final seen = <String>{};
+  for (final item in value) {
+    if (item is! String) continue;
+    final trimmed = item.trim();
+    if (!RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(trimmed)) continue;
+    final date = trimmed.substring(0, 10);
+    if (seen.add(date)) dates.add(date);
+  }
+  return dates;
 }
 
 Map<String, Object?>? _decodeObject(String? value) {
