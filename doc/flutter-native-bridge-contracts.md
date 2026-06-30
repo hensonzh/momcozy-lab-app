@@ -141,6 +141,7 @@ Fake contract status:
 [x] Android upload body builder consumes `updateDeviceSnapshot` payload for workstate/process/milk fields
 [x] Flutter runtime sync forwards `PumpDeviceSnapshotBleBinding` updates into `updateDeviceSnapshot`
 [x] Android process frame history parity with legacy `PumpAgentNativeStore`
+[x] Android foreground-service-backed progress runner shell for `sampleFromSnapshot`
 [ ] Android service-backed background runner parity with legacy `PumpAgentBackgroundRunner`
 ```
 
