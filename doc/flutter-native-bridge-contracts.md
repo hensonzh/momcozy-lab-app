@@ -133,7 +133,10 @@ Fake contract status:
 [x] fake failure stream reports upload failure without leaking sensitive payload
 [x] Flutter MethodChannel adapter tests for `PumpAgentUpload` method schema and failure events
 [x] Android Kotlin MethodChannel handler shell with progress reset and dedupe response
-[ ] Android real background HTTP upload implementation
+[x] Android HTTP upload transport on a background thread when `apiBaseUrl` is configured
+[x] Android upload failure event avoids token/user id leakage and keeps retry metadata
+[ ] Android native pump snapshot/body parity with legacy `PumpAgentNativeStore`
+[ ] Android service-backed background runner parity with legacy `PumpAgentBackgroundRunner`
 ```
 
 ### 4.4 `RouteIntentPlatform`

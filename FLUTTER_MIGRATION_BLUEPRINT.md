@@ -886,7 +886,7 @@ doc/flutter-app-test-plan.md
 
 建议按这个顺序推进：
 
-1. 为 `PumpAgentUploadPlatform` 接入 Android real background HTTP upload，并复用已覆盖的失败脱敏和 dedupe contract tests。
+1. 将真实 pump snapshot/body builder 接到 Android `PumpAgentUploadPlatform`，替换当前 PoC 的占位 device/process body。
 2. 将 pump protocol state machine 接到 Flutter BLE transport。
 
 已完成的本机准入：
@@ -912,6 +912,7 @@ doc/flutter-app-test-plan.md
 [x] Android `MmcBle` GATT connect/read/write/notify 已接入 Flutter MethodChannel，debug APK 构建通过
 [x] Flutter 侧 `PumpAgentUploadPlatform` MethodChannel adapter 已覆盖 method schema 与 failure events
 [x] Android `PumpAgentUploadPlatform` Kotlin MethodChannel handler shell 已接入，debug APK 构建通过
+[x] Android `PumpAgentUploadPlatform` HTTP transport 已接入：按 method 映射 `/v1/pump/workstate`、`/v1/pump/process/data`、`/v1/pump/process`、`/v1/pump-milk/upload`，保留 dedupe/failure event 返回契约
 ```
 
 ---

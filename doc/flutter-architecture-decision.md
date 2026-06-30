@@ -161,6 +161,7 @@ features/
 [x] Android `MmcBle` GATT connect/read/write/notify 已接入 Flutter MethodChannel，debug APK 构建通过
 [x] Flutter 侧 `PumpAgentUploadPlatform` MethodChannel adapter 已覆盖 method schema 与 failure events
 [x] Android `PumpAgentUploadPlatform` Kotlin MethodChannel handler shell 已接入，debug APK 构建通过
+[x] Android `PumpAgentUploadPlatform` HTTP transport 已接入；真实 pump snapshot/body parity 和 service-backed runner 仍是下一步
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

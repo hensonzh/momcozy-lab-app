@@ -64,7 +64,7 @@ Current Dart test coverage:
 
 Next migration gap:
 
-- Add real Android background HTTP upload for `PumpAgentUploadPlatform`, then wire pump protocol state machines on top of the BLE transport.
+- Connect the real pump snapshot/body builder to Android `PumpAgentUploadPlatform`, then wire pump protocol state machines on top of the BLE transport.
 
 ## Migration Notes
 
