@@ -1,10 +1,17 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
+import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
+import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 class MomCozyFlutterApp extends StatefulWidget {
-  const MomCozyFlutterApp({super.key, this.router});
+  const MomCozyFlutterApp({super.key, this.router, this.routeIntentPlatform});
 
   final GoRouter? router;
+  final RouteIntentPlatform? routeIntentPlatform;
 
   @override
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
@@ -13,11 +20,48 @@ class MomCozyFlutterApp extends StatefulWidget {
 class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
   late final GoRouter _router = widget.router ?? createMomCozyRouter();
   late final bool _ownsRouter = widget.router == null;
+  late final RouteIntentPlatform _routeIntentPlatform =
+      widget.routeIntentPlatform ?? AndroidRouteIntentPlatform();
+  late final bool _ownsRouteIntentPlatform = widget.routeIntentPlatform == null;
+  StreamSubscription<PendingNativeRoute>? _activeRouteSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _activeRouteSub = _routeIntentPlatform.activeRoutes.listen(
+      _handlePendingNativeRoute,
+    );
+    unawaited(_consumePendingNativeRoute());
+  }
 
   @override
   void dispose() {
+    unawaited(_activeRouteSub?.cancel());
+    if (_ownsRouteIntentPlatform) {
+      final platform = _routeIntentPlatform;
+      if (platform is AndroidRouteIntentPlatform) unawaited(platform.dispose());
+    }
     if (_ownsRouter) _router.dispose();
     super.dispose();
+  }
+
+  Future<void> _consumePendingNativeRoute() async {
+    try {
+      final route = await _routeIntentPlatform.consumePendingRoute();
+      if (route != null) _handlePendingNativeRoute(route);
+    } catch (_) {
+      // The MethodChannel is Android-only; non-Android test/dev targets can skip it.
+    }
+  }
+
+  void _handlePendingNativeRoute(PendingNativeRoute route) {
+    final intent = routeIntentFromNativeNotification(
+      _nativeRoutePayload(route),
+    );
+    if (intent == null || intent.type == 'RejectUnsafeRoute') return;
+    final path = intent.path;
+    if (path == null || path.isEmpty) return;
+    _router.go(path);
   }
 
   @override
@@ -29,6 +73,14 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
       debugShowCheckedModeBanner: false,
     );
   }
+}
+
+Map<String, Object?> _nativeRoutePayload(PendingNativeRoute route) {
+  return {
+    'path': route.path,
+    'autoEndTeardown': route.autoEndTeardown,
+    if (route.notifyJson != null) 'notifyJson': jsonEncode(route.notifyJson),
+  };
 }
 
 ThemeData momCozyTheme() {
