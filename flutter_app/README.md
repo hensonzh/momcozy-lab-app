@@ -63,7 +63,7 @@ Current Dart test coverage:
 
 Next migration gap:
 
-- Port the real Android `MmcBle` GATT connect/read/write/notify transport behind the Kotlin MethodChannel handler shell.
+- Add the Android `PumpAgentUploadPlatform` channel PoC and then wire pump protocol state machines on top of the BLE transport.
 
 ## Migration Notes
 

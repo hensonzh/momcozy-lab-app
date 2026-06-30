@@ -886,8 +886,8 @@ doc/flutter-app-test-plan.md
 
 建议按这个顺序推进：
 
-1. 将真实 Android `MmcBle` GATT connect/read/write/notify transport 迁到 Kotlin MethodChannel handler shell 后面。
-2. 为 `PumpAgentUploadPlatform` 接入 Android channel PoC，并复用已覆盖的失败脱敏和 dedupe contract tests。
+1. 为 `PumpAgentUploadPlatform` 接入 Android channel PoC，并复用已覆盖的失败脱敏和 dedupe contract tests。
+2. 将 pump protocol state machine 接到 Flutter BLE transport。
 
 已完成的本机准入：
 
@@ -909,6 +909,7 @@ doc/flutter-app-test-plan.md
 [x] Android Kotlin MethodChannel handler shell 已接入 `MmcBle` 与 Pump foreground channel，debug APK 构建通过
 [x] Android Pump foreground notification service 已接入 Flutter MethodChannel，debug APK 构建通过
 [x] Android `MmcBle` scan/getConnectedDevices 已接入 Flutter MethodChannel，debug APK 构建通过
+[x] Android `MmcBle` GATT connect/read/write/notify 已接入 Flutter MethodChannel，debug APK 构建通过
 ```
 
 ---
