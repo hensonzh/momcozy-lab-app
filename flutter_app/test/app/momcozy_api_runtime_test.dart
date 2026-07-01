@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
@@ -30,6 +31,10 @@ void main() {
     });
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,
+      multipartTransport: FixtureApiMultipartTransport({
+        'status': 200,
+        'data': {},
+      }),
       userId: 'user-fixture',
       babyId: 'baby-fixture',
       locale: 'zh-CN',
@@ -39,6 +44,40 @@ void main() {
     expect(runtime.scheduleRepository.transport, same(transport));
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
+    expect(runtime.mediaRepository, isA<MediaApiRepository>());
+  });
+
+  test('runtime exposes an injected multipart transport lazily', () async {
+    final multipart = FixtureApiMultipartTransport({
+      'status': 200,
+      'data': {
+        'id': 'file-runtime',
+        'name': 'runtime-fixture.png',
+        'size': 9,
+        'extension': 'png',
+        'mime_type': 'image/png',
+      },
+    });
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
+      multipartTransport: multipart,
+      userId: 'user-fixture',
+      babyId: 'baby-fixture',
+      locale: 'zh-CN',
+    );
+
+    final uploaded = await runtime.mediaRepository.uploadFile(
+      userId: runtime.userId,
+      file: const ApiUploadFile(
+        name: 'runtime-fixture.png',
+        mimeType: 'image/png',
+        sizeBytes: 9,
+      ),
+    );
+
+    expect(runtime.multipartTransport, same(multipart));
+    expect(multipart.lastFields, {'user_id': 'user-fixture'});
+    expect(uploaded.id, 'file-runtime');
   });
 
   test('runtime exposes an injected BLE platform lazily', () async {

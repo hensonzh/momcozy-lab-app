@@ -60,11 +60,13 @@ class ApiUploadFile {
     required this.name,
     required this.mimeType,
     required this.sizeBytes,
+    this.bytes = const <int>[],
   });
 
   final String name;
   final String mimeType;
   final int sizeBytes;
+  final List<int> bytes;
 }
 
 class ApiRequestCancelledException implements Exception {
@@ -224,6 +226,111 @@ class IoApiJsonTransport implements ApiJsonTransport {
     }
     return body;
   }
+}
+
+class IoApiMultipartTransport implements ApiMultipartTransport {
+  IoApiMultipartTransport({
+    required this.baseUri,
+    this.token,
+    this.headers = const <String, String>{},
+    HttpClient? httpClient,
+  }) : _httpClient = httpClient ?? HttpClient();
+
+  final Uri baseUri;
+  final String? token;
+  final Map<String, String> headers;
+  final HttpClient _httpClient;
+
+  @override
+  Future<Map<String, Object?>> uploadMultipart(
+    String path, {
+    Map<String, Object?> fields = const {},
+    required ApiUploadFile file,
+  }) async {
+    final boundary = '----momcozy-${DateTime.now().microsecondsSinceEpoch}';
+    final body = _multipartBody(boundary, fields, file);
+    final request = await _httpClient.postUrl(_resolve(path));
+    _requestHeaders(boundary).forEach(request.headers.set);
+    request.contentLength = body.length;
+    request.add(body);
+    final response = await request.close();
+    final responseBody = await response.transform(utf8.decoder).join();
+    return _decodeResponse(
+      response.statusCode,
+      response.reasonPhrase,
+      responseBody,
+    );
+  }
+
+  Uri _resolve(String path) {
+    final basePath = baseUri.path.endsWith('/')
+        ? baseUri.path
+        : '${baseUri.path}/';
+    final nextPath = path.startsWith('/') ? path.substring(1) : path;
+    return baseUri.replace(path: '$basePath$nextPath');
+  }
+
+  Map<String, String> _requestHeaders(String boundary) {
+    final authToken = token?.trim();
+    return {
+      ...headers,
+      'Accept': 'application/json',
+      'Content-Type': 'multipart/form-data; boundary=$boundary',
+      if (authToken != null && authToken.isNotEmpty)
+        'Authorization': 'Bearer $authToken',
+    };
+  }
+
+  Map<String, Object?> _decodeResponse(
+    int statusCode,
+    String statusText,
+    String body,
+  ) {
+    final decoded = _decodeJsonObject(body);
+    if (statusCode < 200 || statusCode >= 300) {
+      throw ApiHttpException(
+        statusCode: statusCode,
+        statusText: statusText,
+        body: decoded,
+        requestId: decoded?['request_id'] is String
+            ? decoded!['request_id']! as String
+            : null,
+      );
+    }
+    if (decoded == null) {
+      throw const ApiEnvelopeFormatException('Response body is not an object.');
+    }
+    return decoded;
+  }
+
+  List<int> _multipartBody(
+    String boundary,
+    Map<String, Object?> fields,
+    ApiUploadFile file,
+  ) {
+    final body = <int>[];
+    void write(String value) => body.addAll(utf8.encode(value));
+
+    for (final entry in fields.entries) {
+      if (entry.value == null) continue;
+      write('--$boundary\r\n');
+      write(
+        'Content-Disposition: form-data; name="${_escape(entry.key)}"\r\n\r\n',
+      );
+      write('${entry.value}\r\n');
+    }
+
+    write('--$boundary\r\n');
+    write(
+      'Content-Disposition: form-data; name="file"; filename="${_escape(file.name)}"\r\n',
+    );
+    write('Content-Type: ${file.mimeType}\r\n\r\n');
+    body.addAll(file.bytes.isEmpty ? utf8.encode(file.name) : file.bytes);
+    write('\r\n--$boundary--\r\n');
+    return body;
+  }
+
+  String _escape(String value) => value.replaceAll('"', r'\"');
 }
 
 Map<String, Object?>? _decodeJsonObject(String body) {

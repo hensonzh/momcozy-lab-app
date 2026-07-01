@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
@@ -2583,6 +2585,36 @@ class _MediaViewerPage extends StatefulWidget {
 
 class _MediaViewerPageState extends State<_MediaViewerPage> {
   String _type = 'pdf';
+  bool _isUploading = false;
+  UploadedMediaFile? _uploadedFile;
+  String? _uploadError;
+
+  Future<void> _uploadSampleMedia() async {
+    if (_isUploading) return;
+    setState(() {
+      _isUploading = true;
+      _uploadError = null;
+    });
+
+    try {
+      final runtime = MomCozyRuntimeScope.of(context);
+      final uploaded = await runtime.mediaRepository.uploadFile(
+        userId: runtime.userId,
+        file: _sampleMediaFile,
+      );
+      if (!mounted) return;
+      setState(() {
+        _uploadedFile = uploaded;
+        _isUploading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isUploading = false;
+        _uploadError = _mediaUploadErrorText(error);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2627,6 +2659,28 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
           accent: widget.accent,
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
+        _ActionTile(
+          icon: Icons.cloud_upload_outlined,
+          title: _uploadedFile == null
+              ? '上传示例资料'
+              : '已上传 ${_uploadedFile!.name}',
+          subtitle:
+              _uploadError ??
+              (_uploadedFile == null
+                  ? '通过 /v1/files/upload 验证媒体上传合同。'
+                  : '文件 ID ${_uploadedFile!.id}，${_uploadedFile!.sizeBytes} bytes。'),
+          accent: _uploadError == null ? const Color(0xff846bd8) : Colors.red,
+          trailing: _isUploading
+              ? const SizedBox.square(
+                  dimension: 22,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                )
+              : IconButton(
+                  tooltip: '上传',
+                  onPressed: _uploadSampleMedia,
+                  icon: const Icon(Icons.cloud_upload_outlined),
+                ),
+        ),
         const _ActionTile(
           icon: Icons.ios_share_rounded,
           title: '分享或返回',
@@ -2637,7 +2691,21 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
       ],
     );
   }
+
+  String _mediaUploadErrorText(Object error) {
+    if (error is ApiRequestCancelledException) return '上传已取消，预览内容已保留。';
+    if (error is ApiRequestTimeoutException) return '上传超时，请稍后重试。';
+    if (error is ApiHttpException) return '媒体服务暂不可用，请稍后重试。';
+    return '上传失败，请稍后重试。';
+  }
 }
+
+const _sampleMediaFile = ApiUploadFile(
+  name: 'pump-display-fixture.png',
+  mimeType: 'image/png',
+  sizeBytes: 68,
+  bytes: <int>[137, 80, 78, 71, 13, 10, 26, 10],
+);
 
 class _MediaPreview extends StatelessWidget {
   const _MediaPreview({required this.type, required this.accent});

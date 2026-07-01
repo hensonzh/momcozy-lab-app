@@ -544,6 +544,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Records pump_milk typed repository contract tests 已覆盖 `/v1/pump-milk/query` request query、legacy aliases、partial/empty、business error 和 HTTP error fixtures
 [x] Media upload typed repository contract tests 已覆盖 multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body
+[x] Flutter 通用 multipart transport 已接入 runtime，Media 页面可复用 `/v1/files/upload` repository contract
 [x] Flutter App API runtime tests 已覆盖 dart-define 默认配置、注入 transport 的 repository factory 和 runtime scope
 [x] Flutter App API runtime tests 已覆盖 lazy BLE platform 注入和 connected device fixture
 [x] Flutter App API runtime tests 已覆盖 `PumpProtocolPlatform` 注入和 native coordinator 经 BLE fake 写出协议命令
@@ -553,6 +554,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/pump` widget tests 已覆盖 session 控制触发 `/v1/pump/workstate` runtime repository 同步和后端回复展示
 [x] Flutter `/device` widget tests 已覆盖 BLE runtime fake、已连接设备恢复和扫描状态切换
 [x] Flutter `/calibration` widget tests 已覆盖保存左右舒适档位时通过 `PumpProtocolPlatform` 下发命令并进入 Pump
+[x] Flutter `/media-viewer` widget tests 已覆盖示例媒体上传的 multipart path、fields、file metadata 和成功状态渲染
 ```
 
 ### 7.3 语音合同
