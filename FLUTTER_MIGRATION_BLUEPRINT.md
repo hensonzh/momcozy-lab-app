@@ -940,6 +940,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Records typed repository contract 已覆盖 feeding/growth fixtures 的 request query、legacy aliases、partial/empty、business error 和 HTTP error
 [x] Flutter Media upload typed repository contract 已覆盖 `/v1/files/upload` multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport 已落地，覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body tests
+[x] Flutter App API runtime scope 已接入 App root，集中 dart-define base URL/token/user/baby/locale 与 typed repository factory
 [x] Flutter `AgentStreamClient` 抽象已接入 transport-agnostic client，SSE/WebSocket/JSONL fixture transport 均输出统一 `Stream<AgentStreamEvent>`
 [x] Flutter AG-UI outbound payload builder 已对齐文本和图片首帧 fixture，并强制 threadId/runId/messageId guard
 [x] Flutter Agent stream IO transport shell 已接入 SSE POST / WebSocket first-frame adapters，复用 auth/redacted endpoint config，并在 terminal event 后关闭底层 stream
