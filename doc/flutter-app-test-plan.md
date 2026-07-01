@@ -537,6 +537,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Agent Hub disconnect 后 retry 复用上一轮 request 并进入完成态已覆盖
 [x] Agent Hub tool progress、artifact created 和 confirmation required fixture UI 已覆盖，且不展示内部 tool name / raw JSON
 [x] Flutter 非 Agent route 页面骨架已覆盖全量 route map，并验证 Status、Schedule、Device、Pump、Calibration、Media 的关键区块和专注页底栏规则
+[x] Flutter 非 Agent route 已增加紧凑手机视口渲染和滚动 smoke，防止小屏 overflow 与底栏遮挡回归
 ```
 
 ### 7.3 语音合同
