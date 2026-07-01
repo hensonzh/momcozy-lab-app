@@ -545,6 +545,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body
 [x] Flutter App API runtime tests 已覆盖 dart-define 默认配置、注入 transport 的 repository factory 和 runtime scope
 [x] Flutter `/status` widget tests 已覆盖 runtime repository fixture、妈妈/宝宝切换和异步状态渲染
+[x] Flutter `/schedule` widget tests 已覆盖 runtime repository fixture、day plan 渲染和本地 checkbox 草稿交互
 ```
 
 ### 7.3 语音合同

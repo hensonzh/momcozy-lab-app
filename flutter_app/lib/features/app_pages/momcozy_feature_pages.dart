@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 
 class MomCozyFeaturePage extends StatelessWidget {
@@ -701,112 +702,232 @@ class _SchedulePage extends StatefulWidget {
 }
 
 class _SchedulePageState extends State<_SchedulePage> {
-  bool _pumpTaskDone = true;
-  bool _feedingTaskDone = false;
-  bool _summaryTaskDone = false;
   bool _pumpReminderEnabled = true;
   bool _dailySummaryEnabled = true;
+  final Map<String, bool> _taskDoneOverrides = {};
+  MomCozyApiRuntime? _runtime;
+  late DateTime _selectedDay;
+  late Future<ScheduleDayPlan> _dayPlanFuture;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final runtime = MomCozyRuntimeScope.of(context);
+    if (!identical(runtime, _runtime)) {
+      _runtime = runtime;
+      _selectedDay = runtime.now();
+      _dayPlanFuture = _fetchDayPlan(runtime);
+    }
+  }
+
+  Future<ScheduleDayPlan> _fetchDayPlan(MomCozyApiRuntime runtime) {
+    return runtime.scheduleRepository.fetchDayPlan(
+      userId: runtime.userId,
+      day: _selectedDay,
+    );
+  }
+
+  void _reloadDayPlan() {
+    final runtime = _runtime;
+    if (runtime == null) return;
+    setState(() {
+      _taskDoneOverrides.clear();
+      _dayPlanFuture = _fetchDayPlan(runtime);
+    });
+  }
+
+  void _selectDay(DateTime day) {
+    final runtime = _runtime;
+    if (runtime == null) return;
+    setState(() {
+      _selectedDay = day;
+      _taskDoneOverrides.clear();
+      _dayPlanFuture = _fetchDayPlan(runtime);
+    });
+  }
+
+  void _toggleTask(ScheduleTask task, int index, bool? value) {
+    final key = _taskKey(task, index);
+    setState(() {
+      _taskDoneOverrides[key] = value ?? !_taskDone(task, index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      priority: widget.priority,
-      trailing: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: const [
-          _StatusChip(
-            label: '今天',
-            icon: Icons.today_outlined,
-            accent: Color(0xffb2773b),
-          ),
-          _StatusChip(
-            label: '3 个提醒',
-            icon: Icons.alarm_rounded,
-            accent: Color(0xff43827b),
-          ),
-        ],
-      ),
-      children: [
-        const _SectionTitle('日期'),
-        const SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
+    return FutureBuilder<ScheduleDayPlan>(
+      future: _dayPlanFuture,
+      builder: (context, snapshot) {
+        final taskCount = snapshot.data?.tasks.length;
+
+        return _FeaturePageFrame(
+          path: widget.path,
+          title: widget.title,
+          summary: widget.summary,
+          icon: widget.icon,
+          accent: widget.accent,
+          priority: widget.priority,
+          trailing: Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              _DatePill(day: '一', date: '29', selected: false),
-              _DatePill(day: '二', date: '30', selected: false),
-              _DatePill(day: '三', date: '01', selected: true),
-              _DatePill(day: '四', date: '02', selected: false),
-              _DatePill(day: '五', date: '03', selected: false),
+              const _StatusChip(
+                label: '今天',
+                icon: Icons.today_outlined,
+                accent: Color(0xffb2773b),
+              ),
+              _StatusChip(
+                label: taskCount == null ? '同步中' : '$taskCount 项计划',
+                icon: Icons.alarm_rounded,
+                accent: const Color(0xff43827b),
+              ),
             ],
           ),
-        ),
-        const SizedBox(height: 18),
-        const _SectionTitle('计划'),
+          children: [
+            const _SectionTitle('日期'),
+            _ScheduleDateStrip(
+              selectedDay: _selectedDay,
+              onSelected: _selectDay,
+            ),
+            const SizedBox(height: 18),
+            const _SectionTitle('计划'),
+            ..._dayPlanChildren(snapshot),
+            const SizedBox(height: 8),
+            const _SectionTitle('提醒'),
+            _ActionTile(
+              icon: Icons.alarm_on_rounded,
+              title: '泵奶提醒',
+              subtitle: '需要 Android 通知权限和精确闹钟能力。',
+              accent: widget.accent,
+              trailing: Switch(
+                value: _pumpReminderEnabled,
+                onChanged: (value) =>
+                    setState(() => _pumpReminderEnabled = value),
+              ),
+            ),
+            _ActionTile(
+              icon: Icons.summarize_outlined,
+              title: '每日摘要',
+              subtitle: '跨天时汇总计划、记录和 Agent 建议。',
+              accent: const Color(0xff43827b),
+              trailing: Switch(
+                value: _dailySummaryEnabled,
+                onChanged: (value) =>
+                    setState(() => _dailySummaryEnabled = value),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<Widget> _dayPlanChildren(AsyncSnapshot<ScheduleDayPlan> snapshot) {
+    if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
+      return const [
         _ActionTile(
-          icon: Icons.water_drop_outlined,
-          title: '10:30 泵奶',
-          subtitle: '左 15 分钟，右 15 分钟；完成后同步记录和 Agent 上下文。',
+          icon: Icons.sync_rounded,
+          title: '正在同步计划',
+          subtitle: '正在读取当天任务和提醒。',
+          accent: Color(0xffb2773b),
+          trailing: SizedBox.square(
+            dimension: 22,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      ];
+    }
+
+    if (snapshot.hasError) {
+      return [
+        _ActionTile(
+          icon: Icons.cloud_off_outlined,
+          title: '计划同步失败',
+          subtitle: '检查后端连接或 token 后重试。',
           accent: widget.accent,
-          onTap: () => setState(() => _pumpTaskDone = !_pumpTaskDone),
+          trailing: IconButton(
+            tooltip: '重试',
+            onPressed: _reloadDayPlan,
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+        ),
+      ];
+    }
+
+    final plan = snapshot.data;
+    if (plan == null || plan.isEmpty) {
+      return const [
+        _ActionTile(
+          icon: Icons.event_available_outlined,
+          title: '暂无计划',
+          subtitle: '当天没有计划任务，可以从 Agent 或记录页创建。',
+          accent: Color(0xff7f6a75),
+          trailing: Icon(Icons.add_circle_outline_rounded),
+        ),
+      ];
+    }
+
+    return [
+      for (final entry in plan.tasks.asMap().entries)
+        _ActionTile(
+          icon: _taskDone(entry.value, entry.key)
+              ? Icons.check_circle_rounded
+              : Icons.radio_button_unchecked,
+          title: _textOr(entry.value.title, '未命名计划'),
+          subtitle: _taskSubtitle(entry.value),
+          accent: _taskAccent(entry.key),
+          onTap: () => _toggleTask(entry.value, entry.key, null),
           trailing: Checkbox(
-            value: _pumpTaskDone,
-            onChanged: (value) =>
-                setState(() => _pumpTaskDone = value ?? false),
+            value: _taskDone(entry.value, entry.key),
+            onChanged: (value) => _toggleTask(entry.value, entry.key, value),
           ),
         ),
-        _ActionTile(
-          icon: Icons.child_friendly_rounded,
-          title: '14:00 喂养',
-          subtitle: '可从通知直接进入记录页。',
-          accent: const Color(0xff43827b),
-          onTap: () => setState(() => _feedingTaskDone = !_feedingTaskDone),
-          trailing: Checkbox(
-            value: _feedingTaskDone,
-            onChanged: (value) =>
-                setState(() => _feedingTaskDone = value ?? false),
-          ),
-        ),
-        _ActionTile(
-          icon: Icons.self_improvement_rounded,
-          title: '20:30 晚间复盘',
-          subtitle: '生成今日摘要，供明天计划参考。',
-          accent: const Color(0xff6b6da8),
-          onTap: () => setState(() => _summaryTaskDone = !_summaryTaskDone),
-          trailing: Checkbox(
-            value: _summaryTaskDone,
-            onChanged: (value) =>
-                setState(() => _summaryTaskDone = value ?? false),
-          ),
-        ),
-        const SizedBox(height: 8),
-        const _SectionTitle('提醒'),
-        _ActionTile(
-          icon: Icons.alarm_on_rounded,
-          title: '泵奶提醒',
-          subtitle: '需要 Android 通知权限和精确闹钟能力。',
-          accent: widget.accent,
-          trailing: Switch(
-            value: _pumpReminderEnabled,
-            onChanged: (value) => setState(() => _pumpReminderEnabled = value),
-          ),
-        ),
-        _ActionTile(
-          icon: Icons.summarize_outlined,
-          title: '每日摘要',
-          subtitle: '跨天时汇总计划、记录和 Agent 建议。',
-          accent: const Color(0xff43827b),
-          trailing: Switch(
-            value: _dailySummaryEnabled,
-            onChanged: (value) => setState(() => _dailySummaryEnabled = value),
-          ),
-        ),
-      ],
+    ];
+  }
+
+  bool _taskDone(ScheduleTask task, int index) {
+    return _taskDoneOverrides[_taskKey(task, index)] ?? task.completed;
+  }
+
+  String _taskKey(ScheduleTask task, int index) {
+    return task.id.isEmpty ? 'task-$index' : task.id;
+  }
+}
+
+class _ScheduleDateStrip extends StatelessWidget {
+  const _ScheduleDateStrip({
+    required this.selectedDay,
+    required this.onSelected,
+  });
+
+  final DateTime selectedDay;
+  final ValueChanged<DateTime> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedDate = DateTime(
+      selectedDay.year,
+      selectedDay.month,
+      selectedDay.day,
+    );
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (var offset = -2; offset <= 2; offset += 1)
+            _DatePill(
+              day: _weekdayLabel(selectedDate.add(Duration(days: offset))),
+              date: selectedDate
+                  .add(Duration(days: offset))
+                  .day
+                  .toString()
+                  .padLeft(2, '0'),
+              selected: offset == 0,
+              onTap: () => onSelected(selectedDate.add(Duration(days: offset))),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -816,41 +937,86 @@ class _DatePill extends StatelessWidget {
     required this.day,
     required this.date,
     required this.selected,
+    required this.onTap,
   });
 
   final String day;
   final String date;
   final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      width: 58,
-      margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Material(
         color: selected ? colorScheme.primaryContainer : colorScheme.surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: selected ? colorScheme.primary : colorScheme.outlineVariant,
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(day, style: Theme.of(context).textTheme.labelMedium),
-          const SizedBox(height: 4),
-          Text(
-            date,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(
+            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
           ),
-        ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: SizedBox(
+            width: 58,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                children: [
+                  Text(day, style: Theme.of(context).textTheme.labelMedium),
+                  const SizedBox(height: 4),
+                  Text(
+                    date,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
+}
+
+String _taskSubtitle(ScheduleTask task) {
+  final remindAt = task.remindAt;
+  if (remindAt == null) return '暂无提醒时间，可稍后补充。';
+  return '提醒 ${_timeLabel(remindAt)} · 可从通知直接进入相关页面。';
+}
+
+Color _taskAccent(int index) {
+  return switch (index % 3) {
+    0 => const Color(0xffb2773b),
+    1 => const Color(0xff43827b),
+    _ => const Color(0xff6b6da8),
+  };
+}
+
+String _timeLabel(DateTime value) {
+  final local = value.toLocal();
+  final hour = local.hour.toString().padLeft(2, '0');
+  final minute = local.minute.toString().padLeft(2, '0');
+  return '$hour:$minute';
+}
+
+String _weekdayLabel(DateTime value) {
+  return switch (value.weekday) {
+    DateTime.monday => '一',
+    DateTime.tuesday => '二',
+    DateTime.wednesday => '三',
+    DateTime.thursday => '四',
+    DateTime.friday => '五',
+    DateTime.saturday => '六',
+    _ => '日',
+  };
 }
 
 class _DevicePage extends StatefulWidget {

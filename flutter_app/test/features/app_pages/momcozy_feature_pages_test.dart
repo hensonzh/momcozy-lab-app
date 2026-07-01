@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 
 import '../../support/fixture_api_transport.dart';
 
@@ -96,7 +98,7 @@ void main() {
       final router = createMomCozyRouter(initialLocation: '/device');
 
       await tester.pumpWidget(
-        MomCozyFlutterApp(router: router, apiRuntime: _statusRuntime()),
+        MomCozyFlutterApp(router: router, apiRuntime: _appRuntime()),
       );
       await tester.pumpAndSettle();
 
@@ -207,6 +209,23 @@ void main() {
       expect(find.text('Mia'), findsOneWidget);
       expect(find.text('88 天'), findsOneWidget);
     });
+
+    testWidgets('schedule page loads day plan from runtime repository', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('3 项计划'), findsOneWidget);
+      expect(find.text('10:30 泵奶'), findsOneWidget);
+      expect(find.text('14:00 喂养'), findsOneWidget);
+      expect(_checkboxesWithValue(tester, true), 1);
+
+      await tester.tap(find.text('14:00 喂养'));
+      await tester.pump();
+
+      expect(_checkboxesWithValue(tester, true), 2);
+    });
   });
 }
 
@@ -229,7 +248,7 @@ class _FeaturePageHost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MomCozyRuntimeScope(
-      apiRuntime: _statusRuntime(),
+      apiRuntime: _appRuntime(),
       child: MaterialApp(
         theme: momCozyTheme(),
         home: Scaffold(
@@ -247,17 +266,45 @@ class _FeaturePageHost extends StatelessWidget {
   }
 }
 
-MomCozyApiRuntime _statusRuntime() {
+MomCozyApiRuntime _appRuntime() {
   return MomCozyApiRuntime(
-    jsonTransport: FixtureApiJsonTransport(const {
-      'status': 200,
-      'data': {
-        'mom': {'stage': '哺乳期', 'postpartum_day': 21},
-        'baby': {'nickname': 'Mia', 'age_days': 88},
+    jsonTransport: FixtureApiJsonTransportByPath({
+      statusOverviewEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'mom': <String, Object?>{'stage': '哺乳期', 'postpartum_day': 21},
+          'baby': <String, Object?>{'nickname': 'Mia', 'age_days': 88},
+        },
+      },
+      scheduleDayPlanEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'tasks': <Object?>[
+            <String, Object?>{
+              'id': 'pump',
+              'title': '10:30 泵奶',
+              'completed': true,
+              'remind_at': '2026-07-01T02:30:00Z',
+            },
+            <String, Object?>{
+              'id': 'feeding',
+              'title': '14:00 喂养',
+              'completed': false,
+              'remind_at': '2026-07-01T06:00:00Z',
+            },
+            <String, Object?>{
+              'id': 'summary',
+              'title': '20:30 晚间复盘',
+              'completed': false,
+              'remind_at': '2026-07-01T12:30:00Z',
+            },
+          ],
+        },
       },
     }),
     userId: 'demo-user-fixture',
     babyId: 'demo-baby-fixture',
     locale: 'zh-CN',
+    now: () => DateTime.utc(2026, 7),
   );
 }

@@ -32,6 +32,44 @@ class FixtureApiJsonTransport implements ApiJsonTransport {
   }
 }
 
+class FixtureApiJsonTransportByPath implements ApiJsonTransport {
+  FixtureApiJsonTransportByPath(this.responsesByPath);
+
+  final Map<String, Map<String, Object?>> responsesByPath;
+  String? lastPath;
+  Map<String, Object?>? lastQuery;
+  Map<String, Object?>? lastBody;
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) async {
+    lastPath = path;
+    lastQuery = Map<String, Object?>.from(query);
+    final response = _response(path);
+    if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
+    return response;
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+  }) async {
+    lastPath = path;
+    lastBody = Map<String, Object?>.from(body);
+    final response = _response(path);
+    if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
+    return response;
+  }
+
+  Map<String, Object?> _response(String path) {
+    return responsesByPath[path] ??
+        const <String, Object?>{'status': 200, 'data': <String, Object?>{}};
+  }
+}
+
 class FixtureApiMultipartTransport implements ApiMultipartTransport {
   FixtureApiMultipartTransport(this.response, {this.failure});
 
