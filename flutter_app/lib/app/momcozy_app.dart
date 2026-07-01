@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
@@ -11,16 +12,24 @@ import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 class MomCozyFlutterApp extends StatefulWidget {
-  const MomCozyFlutterApp({super.key, this.router, this.routeIntentPlatform});
+  const MomCozyFlutterApp({
+    super.key,
+    this.router,
+    this.routeIntentPlatform,
+    this.apiRuntime,
+  });
 
   final GoRouter? router;
   final RouteIntentPlatform? routeIntentPlatform;
+  final MomCozyApiRuntime? apiRuntime;
 
   @override
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
 }
 
 class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
+  late final MomCozyApiRuntime _apiRuntime =
+      widget.apiRuntime ?? MomCozyApiRuntime.fromEnvironment();
   late final GoRouter _router = widget.router ?? createMomCozyRouter();
   late final bool _ownsRouter = widget.router == null;
   late final RouteIntentPlatform _routeIntentPlatform =
@@ -69,11 +78,14 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Momcozy',
-      theme: momCozyTheme(),
-      routerConfig: _router,
-      debugShowCheckedModeBanner: false,
+    return MomCozyRuntimeScope(
+      apiRuntime: _apiRuntime,
+      child: MaterialApp.router(
+        title: 'Momcozy',
+        theme: momCozyTheme(),
+        routerConfig: _router,
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }
