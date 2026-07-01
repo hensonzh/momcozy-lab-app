@@ -21,6 +21,25 @@ void main() {
       }
     });
 
+    testWidgets('renders every feature page on compact mobile viewport', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      for (final route in momCozyRoutes.where((route) => route.path != '/')) {
+        await tester.pumpWidget(_FeaturePageHost(route: route));
+        await tester.pump();
+
+        final page = find.byKey(ValueKey('route-page-${route.path}'));
+        expect(page, findsOneWidget);
+        await tester.drag(page, const Offset(0, -360));
+        await tester.pump();
+      }
+    });
+
     testWidgets('renders core status, schedule, device, and pump sections', (
       tester,
     ) async {
