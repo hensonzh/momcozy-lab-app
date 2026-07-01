@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_reposito
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
 
 const _defaultApiBaseUrl = String.fromEnvironment(
   'MOMCOZY_API_BASE_URL',
@@ -33,15 +34,26 @@ class MomCozyApiRuntime {
     required this.locale,
     BlePlatform? blePlatform,
     BlePlatform Function()? blePlatformFactory,
+    PumpProtocolPlatform? pumpProtocolPlatform,
+    PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
+    pumpNativeRuntimeCoordinatorFactory,
     DateTime Function()? now,
   }) : _blePlatformFactory = blePlatformFactory ?? AndroidBlePlatform.new,
+       _pumpNativeRuntimeCoordinatorFactory =
+           pumpNativeRuntimeCoordinatorFactory ??
+           ((ble) => PumpNativeRuntimeCoordinator(
+             ble: ble,
+             upload: AndroidPumpAgentUploadPlatform(),
+           )),
        now = now ?? DateTime.now {
     _blePlatform = blePlatform;
+    _pumpProtocolPlatform = pumpProtocolPlatform;
   }
 
   factory MomCozyApiRuntime.fromEnvironment({
     ApiJsonTransport? jsonTransport,
     BlePlatform? blePlatform,
+    PumpProtocolPlatform? pumpProtocolPlatform,
     String? userId,
     String? babyId,
     String? locale,
@@ -56,6 +68,7 @@ class MomCozyApiRuntime {
             headers: const {'X-Momcozy-Client': 'flutter'},
           ),
       blePlatform: blePlatform,
+      pumpProtocolPlatform: pumpProtocolPlatform,
       userId: userId ?? _defaultUserId,
       babyId: babyId ?? _defaultBabyId,
       locale: locale ?? _defaultLocale,
@@ -68,10 +81,31 @@ class MomCozyApiRuntime {
   final String locale;
   final DateTime Function() now;
   final BlePlatform Function() _blePlatformFactory;
+  final PumpNativeRuntimeCoordinator Function(BlePlatform ble)
+  _pumpNativeRuntimeCoordinatorFactory;
   BlePlatform? _blePlatform;
+  PumpProtocolPlatform? _pumpProtocolPlatform;
+  PumpNativeRuntimeCoordinator? _pumpNativeRuntimeCoordinator;
 
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();
+  }
+
+  PumpNativeRuntimeCoordinator get pumpNativeRuntimeCoordinator {
+    return _pumpNativeRuntimeCoordinator ??=
+        _pumpNativeRuntimeCoordinatorFactory(blePlatform);
+  }
+
+  PumpProtocolPlatform get pumpProtocolPlatform {
+    return _pumpProtocolPlatform ??= pumpNativeRuntimeCoordinator.protocol;
+  }
+
+  Future<void> startPumpNativeRuntime({
+    bool subscribeConnectedDevices = true,
+  }) async {
+    await pumpNativeRuntimeCoordinator.start(
+      subscribeConnectedDevices: subscribeConnectedDevices,
+    );
   }
 
   StatusApiRepository get statusRepository {

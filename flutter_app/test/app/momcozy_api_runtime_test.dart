@@ -4,6 +4,7 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
 
 import '../support/fixture_api_transport.dart';
 
@@ -62,6 +63,67 @@ void main() {
 
     expect(runtime.blePlatform, same(ble));
     expect(await runtime.blePlatform.getConnectedDevices(), hasLength(1));
+    await ble.dispose();
+  });
+
+  test('runtime exposes an injected pump protocol platform', () async {
+    final protocol = FakePumpProtocolPlatform();
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
+      pumpProtocolPlatform: protocol,
+      userId: 'user-fixture',
+      babyId: 'baby-fixture',
+      locale: 'zh-CN',
+    );
+
+    expect(runtime.pumpProtocolPlatform, same(protocol));
+    await runtime.pumpProtocolPlatform.adjustGearForSide(PumpSide.left, 5);
+    expect(protocol.recordedCommands.single.name, 'adjustGearForSide');
+    expect(protocol.recordedCommands.single.payload, containsPair('gear', 5));
+    await protocol.dispose();
+  });
+
+  test('runtime creates the pump native coordinator lazily', () async {
+    final ble = FakeBlePlatform(
+      initialPermission: BlePermissionState.granted,
+      seedDevices: const [
+        BleDeviceSnapshot(
+          side: 'L',
+          deviceId: 'ble-left-fixture',
+          deviceName: 'S12 Pro L',
+          connected: true,
+        ),
+      ],
+    );
+    final upload = FakePumpAgentUploadPlatform();
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
+      blePlatform: ble,
+      pumpNativeRuntimeCoordinatorFactory: (ble) =>
+          PumpNativeRuntimeCoordinator(ble: ble, upload: upload),
+      userId: 'user-fixture',
+      babyId: 'baby-fixture',
+      locale: 'zh-CN',
+    );
+
+    await runtime.startPumpNativeRuntime();
+    final commandFuture = expectLater(
+      runtime.pumpProtocolPlatform.commands,
+      emits(
+        isA<PumpProtocolCommand>().having(
+          (command) => command.name,
+          'name',
+          'queryDeviceStatus',
+        ),
+      ),
+    );
+    await runtime.pumpProtocolPlatform.queryDeviceStatus(PumpSide.left);
+
+    expect(ble.writes.single['deviceId'], 'ble-left-fixture');
+    await commandFuture;
+
+    await runtime.pumpNativeRuntimeCoordinator.dispose();
+    await upload.dispose();
     await ble.dispose();
   });
 
