@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../support/fixture_api_transport.dart';
 
@@ -37,6 +38,31 @@ void main() {
     expect(runtime.scheduleRepository.transport, same(transport));
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
+  });
+
+  test('runtime exposes an injected BLE platform lazily', () async {
+    final ble = FakeBlePlatform(
+      initialPermission: BlePermissionState.granted,
+      seedDevices: const [
+        BleDeviceSnapshot(
+          side: 'L',
+          deviceId: 'ble-left-fixture',
+          deviceName: 'S12 Pro L',
+          connected: true,
+        ),
+      ],
+    );
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
+      blePlatform: ble,
+      userId: 'user-fixture',
+      babyId: 'baby-fixture',
+      locale: 'zh-CN',
+    );
+
+    expect(runtime.blePlatform, same(ble));
+    expect(await runtime.blePlatform.getConnectedDevices(), hasLength(1));
+    await ble.dispose();
   });
 
   testWidgets('runtime scope exposes the injected runtime', (tester) async {

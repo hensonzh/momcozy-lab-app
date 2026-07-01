@@ -942,6 +942,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Media upload typed repository contract 已覆盖 `/v1/files/upload` multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport 已落地，覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body tests
 [x] Flutter App API runtime scope 已接入 App root，集中 dart-define base URL/token/user/baby/locale 与 typed repository factory
+[x] Flutter App API runtime 已加入 lazy BLE platform 注入点，页面可从 runtime 读取 Android/Fake `BlePlatform`
 [x] Flutter `/status` 页面已接入 App runtime repository，覆盖 loading、empty、error、success 展示和 fixture widget test
 [x] Flutter `/schedule` 页面已接入 App runtime repository，覆盖 day plan fixture、日期选择、任务 checkbox 草稿状态和同步状态展示
 [x] Flutter `/records` 页面已接入 App runtime repository，覆盖 pump_milk、feeding、growth 三类列表和筛选 widget test
