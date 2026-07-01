@@ -4,6 +4,8 @@ import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_ap
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
+import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 const _defaultApiBaseUrl = String.fromEnvironment(
   'MOMCOZY_API_BASE_URL',
@@ -29,11 +31,17 @@ class MomCozyApiRuntime {
     required this.userId,
     required this.babyId,
     required this.locale,
+    BlePlatform? blePlatform,
+    BlePlatform Function()? blePlatformFactory,
     DateTime Function()? now,
-  }) : now = now ?? DateTime.now;
+  }) : _blePlatformFactory = blePlatformFactory ?? AndroidBlePlatform.new,
+       now = now ?? DateTime.now {
+    _blePlatform = blePlatform;
+  }
 
   factory MomCozyApiRuntime.fromEnvironment({
     ApiJsonTransport? jsonTransport,
+    BlePlatform? blePlatform,
     String? userId,
     String? babyId,
     String? locale,
@@ -47,6 +55,7 @@ class MomCozyApiRuntime {
             token: token.isEmpty ? null : token,
             headers: const {'X-Momcozy-Client': 'flutter'},
           ),
+      blePlatform: blePlatform,
       userId: userId ?? _defaultUserId,
       babyId: babyId ?? _defaultBabyId,
       locale: locale ?? _defaultLocale,
@@ -58,6 +67,12 @@ class MomCozyApiRuntime {
   final String babyId;
   final String locale;
   final DateTime Function() now;
+  final BlePlatform Function() _blePlatformFactory;
+  BlePlatform? _blePlatform;
+
+  BlePlatform get blePlatform {
+    return _blePlatform ??= _blePlatformFactory();
+  }
 
   StatusApiRepository get statusRepository {
     return StatusApiRepository(transport: jsonTransport);

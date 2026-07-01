@@ -180,6 +180,7 @@ features/
 [x] Flutter Media upload typed repository contract 已开始落地，multipart 上传、取消和超时边界已测试
 [x] Flutter 通用 JSON HTTP transport 已开始落地，typed repositories 可从 fixture contract 切到真实后端 connector
 [x] Flutter App API runtime scope 已接入，feature 页面后续从 App scope 获取 repository，避免 widget 内直接拼 URL/token
+[x] Flutter App API runtime 已加入 BLE platform 注入点，Device 页面后续不直接 new Android MethodChannel adapter
 [x] Flutter `/status` 页面已从静态壳推进到 repository-driven 异步页面，作为后续 Schedule/Records 页面接入样板
 [x] Flutter `/schedule` 页面已从静态任务推进到 repository-driven day plan，页面仅保留 checkbox 草稿 UI 状态
 [x] Flutter `/records` 页面已从静态记录推进到 repository-driven records overview，筛选状态保留在页面本地
