@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
@@ -355,6 +358,50 @@ void main() {
       expect(multipart.lastFields, {'user_id': 'demo-user-fixture'});
       expect(multipart.lastFile?.name, 'pump-display-fixture.png');
     });
+
+    testWidgets('IBCLC page posts client event through runtime client', (
+      tester,
+    ) async {
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 200,
+          body: '{"status":"ok"}',
+        ),
+      );
+      final client = AgentStreamClientEventClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
+          token: 'test-token',
+        ),
+        connector: connector,
+      );
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/ibclc-chat.html'),
+          clientEventClient: client,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pumpAndSettle();
+
+      final body = jsonDecode(connector.body!) as Map<String, Object?>;
+      expect(find.text('咨询事件已同步。'), findsOneWidget);
+      expect(connector.uri!.path, '/api/client-event');
+      expect(
+        connector.headers,
+        containsPair('Authorization', 'Bearer test-token'),
+      );
+      expect(body['event_type'], 'ibclc_consult_started');
+      expect(body['user_id'], 'demo-user-fixture');
+      expect(body['thread_id'], 'thread-demo-user-fixture');
+      expect(body['locale'], 'zh-CN');
+      expect(body['metadata'], containsPair('source', 'ibclc-chat'));
+    });
   });
 }
 
@@ -370,15 +417,23 @@ int _checkboxesWithValue(WidgetTester tester, bool value) {
 }
 
 class _FeaturePageHost extends StatelessWidget {
-  const _FeaturePageHost({required this.route, this.multipartTransport});
+  const _FeaturePageHost({
+    required this.route,
+    this.clientEventClient,
+    this.multipartTransport,
+  });
 
   final MomCozyRouteConfig route;
+  final AgentStreamClientEventClient? clientEventClient;
   final FixtureApiMultipartTransport? multipartTransport;
 
   @override
   Widget build(BuildContext context) {
     return MomCozyRuntimeScope(
-      apiRuntime: _appRuntime(multipartTransport: multipartTransport),
+      apiRuntime: _appRuntime(
+        clientEventClient: clientEventClient,
+        multipartTransport: multipartTransport,
+      ),
       child: MaterialApp(
         theme: momCozyTheme(),
         home: Scaffold(
@@ -398,6 +453,7 @@ class _FeaturePageHost extends StatelessWidget {
 
 MomCozyApiRuntime _appRuntime({
   PumpProtocolPlatform? pumpProtocolPlatform,
+  AgentStreamClientEventClient? clientEventClient,
   FixtureApiMultipartTransport? multipartTransport,
 }) {
   return MomCozyApiRuntime(
@@ -485,6 +541,7 @@ MomCozyApiRuntime _appRuntime({
         },
       },
     }),
+    clientEventClient: clientEventClient,
     multipartTransport: multipartTransport,
     blePlatform: FakeBlePlatform(
       initialPermission: BlePermissionState.granted,
@@ -503,4 +560,26 @@ MomCozyApiRuntime _appRuntime({
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7),
   );
+}
+
+class _RecordingControlHttpConnector
+    implements AgentStreamControlHttpConnector {
+  _RecordingControlHttpConnector(this.response);
+
+  final AgentStreamControlHttpResponse response;
+  Uri? uri;
+  Map<String, String>? headers;
+  String? body;
+
+  @override
+  Future<AgentStreamControlHttpResponse> post(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) async {
+    this.uri = uri;
+    this.headers = Map<String, String>.from(headers);
+    this.body = body;
+    return response;
+  }
 }

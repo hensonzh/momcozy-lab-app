@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
@@ -33,6 +34,8 @@ class MomCozyApiRuntime {
     required this.userId,
     required this.babyId,
     required this.locale,
+    AgentStreamClientEventClient? clientEventClient,
+    AgentStreamClientEventClient Function()? clientEventClientFactory,
     ApiMultipartTransport? multipartTransport,
     ApiMultipartTransport Function()? multipartTransportFactory,
     BlePlatform? blePlatform,
@@ -41,7 +44,10 @@ class MomCozyApiRuntime {
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
     DateTime Function()? now,
-  }) : _multipartTransportFactory =
+  }) : _clientEventClientFactory =
+           clientEventClientFactory ??
+           (() => throw StateError('Client event client is not configured.')),
+       _multipartTransportFactory =
            multipartTransportFactory ??
            (() => throw StateError('Multipart transport is not configured.')),
        _blePlatformFactory = blePlatformFactory ?? AndroidBlePlatform.new,
@@ -52,6 +58,7 @@ class MomCozyApiRuntime {
              upload: AndroidPumpAgentUploadPlatform(),
            )),
        now = now ?? DateTime.now {
+    _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
@@ -60,6 +67,7 @@ class MomCozyApiRuntime {
 
   factory MomCozyApiRuntime.fromEnvironment({
     ApiJsonTransport? jsonTransport,
+    AgentStreamClientEventClient? clientEventClient,
     ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
@@ -86,6 +94,15 @@ class MomCozyApiRuntime {
             token: authToken,
             headers: defaultHeaders,
           ),
+      clientEventClient:
+          clientEventClient ??
+          AgentStreamClientEventClient(
+            endpoint: AgentStreamEndpoint(
+              uri: baseUri.replace(path: '/api/client-event'),
+              token: authToken,
+              headers: defaultHeaders,
+            ),
+          ),
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
       userId: userId ?? _defaultUserId,
@@ -99,10 +116,12 @@ class MomCozyApiRuntime {
   final String babyId;
   final String locale;
   final DateTime Function() now;
+  final AgentStreamClientEventClient Function() _clientEventClientFactory;
   final ApiMultipartTransport Function() _multipartTransportFactory;
   final BlePlatform Function() _blePlatformFactory;
   final PumpNativeRuntimeCoordinator Function(BlePlatform ble)
   _pumpNativeRuntimeCoordinatorFactory;
+  AgentStreamClientEventClient? _clientEventClient;
   ApiMultipartTransport? _multipartTransport;
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
@@ -111,6 +130,10 @@ class MomCozyApiRuntime {
 
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();
+  }
+
+  AgentStreamClientEventClient get clientEventClient {
+    return _clientEventClient ??= _clientEventClientFactory();
   }
 
   ApiMultipartTransport get multipartTransport {
