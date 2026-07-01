@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
@@ -402,6 +403,29 @@ void main() {
       expect(body['locale'], 'zh-CN');
       expect(body['metadata'], containsPair('source', 'ibclc-chat'));
     });
+
+    testWidgets('hospital bag page syncs cart changes through repository', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/hospital-bag-cart'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            hospitalBagCartUpdateEndpoint: const {
+              'status': 200,
+              'data': {'message': '购物车已同步', 'synced_count': 3},
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(Checkbox).at(1));
+      await tester.pumpAndSettle();
+
+      expect(find.text('2/3 已准备'), findsOneWidget);
+      expect(find.text('购物车已同步'), findsOneWidget);
+    });
   });
 }
 
@@ -420,11 +444,13 @@ class _FeaturePageHost extends StatelessWidget {
   const _FeaturePageHost({
     required this.route,
     this.clientEventClient,
+    this.jsonTransport,
     this.multipartTransport,
   });
 
   final MomCozyRouteConfig route;
   final AgentStreamClientEventClient? clientEventClient;
+  final FixtureApiJsonTransportByPath? jsonTransport;
   final FixtureApiMultipartTransport? multipartTransport;
 
   @override
@@ -432,6 +458,7 @@ class _FeaturePageHost extends StatelessWidget {
     return MomCozyRuntimeScope(
       apiRuntime: _appRuntime(
         clientEventClient: clientEventClient,
+        jsonTransport: jsonTransport,
         multipartTransport: multipartTransport,
       ),
       child: MaterialApp(
@@ -454,93 +481,96 @@ class _FeaturePageHost extends StatelessWidget {
 MomCozyApiRuntime _appRuntime({
   PumpProtocolPlatform? pumpProtocolPlatform,
   AgentStreamClientEventClient? clientEventClient,
+  FixtureApiJsonTransportByPath? jsonTransport,
   FixtureApiMultipartTransport? multipartTransport,
 }) {
   return MomCozyApiRuntime(
-    jsonTransport: FixtureApiJsonTransportByPath({
-      statusOverviewEndpoint: const <String, Object?>{
-        'status': 200,
-        'data': <String, Object?>{
-          'mom': <String, Object?>{'stage': '哺乳期', 'postpartum_day': 21},
-          'baby': <String, Object?>{'nickname': 'Mia', 'age_days': 88},
-        },
-      },
-      scheduleDayPlanEndpoint: const <String, Object?>{
-        'status': 200,
-        'data': <String, Object?>{
-          'tasks': <Object?>[
-            <String, Object?>{
-              'id': 'pump',
-              'title': '10:30 泵奶',
-              'completed': true,
-              'remind_at': '2026-07-01T02:30:00Z',
+    jsonTransport:
+        jsonTransport ??
+        FixtureApiJsonTransportByPath({
+          statusOverviewEndpoint: const <String, Object?>{
+            'status': 200,
+            'data': <String, Object?>{
+              'mom': <String, Object?>{'stage': '哺乳期', 'postpartum_day': 21},
+              'baby': <String, Object?>{'nickname': 'Mia', 'age_days': 88},
             },
-            <String, Object?>{
-              'id': 'feeding',
-              'title': '14:00 喂养',
-              'completed': false,
-              'remind_at': '2026-07-01T06:00:00Z',
+          },
+          scheduleDayPlanEndpoint: const <String, Object?>{
+            'status': 200,
+            'data': <String, Object?>{
+              'tasks': <Object?>[
+                <String, Object?>{
+                  'id': 'pump',
+                  'title': '10:30 泵奶',
+                  'completed': true,
+                  'remind_at': '2026-07-01T02:30:00Z',
+                },
+                <String, Object?>{
+                  'id': 'feeding',
+                  'title': '14:00 喂养',
+                  'completed': false,
+                  'remind_at': '2026-07-01T06:00:00Z',
+                },
+                <String, Object?>{
+                  'id': 'summary',
+                  'title': '20:30 晚间复盘',
+                  'completed': false,
+                  'remind_at': '2026-07-01T12:30:00Z',
+                },
+              ],
             },
-            <String, Object?>{
-              'id': 'summary',
-              'title': '20:30 晚间复盘',
-              'completed': false,
-              'remind_at': '2026-07-01T12:30:00Z',
+          },
+          pumpMilkRecordsEndpoint: const <String, Object?>{
+            'status': 200,
+            'data': <String, Object?>{
+              'pump_milk_list': <Object?>[
+                <String, Object?>{
+                  'pump_id': 7001,
+                  'pump_type': 0,
+                  'pump_source': 0,
+                  'pump_time': '2026-07-01T02:40:00Z',
+                  'pump_title': '晨间泵奶',
+                  'pump_milk_volum': 120,
+                },
+              ],
             },
-          ],
-        },
-      },
-      pumpMilkRecordsEndpoint: const <String, Object?>{
-        'status': 200,
-        'data': <String, Object?>{
-          'pump_milk_list': <Object?>[
-            <String, Object?>{
-              'pump_id': 7001,
-              'pump_type': 0,
-              'pump_source': 0,
-              'pump_time': '2026-07-01T02:40:00Z',
-              'pump_title': '晨间泵奶',
-              'pump_milk_volum': 120,
+          },
+          feedingRecordsEndpoint: const <String, Object?>{
+            'status': 200,
+            'data': <String, Object?>{
+              'records': <Object?>[
+                <String, Object?>{
+                  'id': 'feeding-1001',
+                  'type': 'breast_milk',
+                  'amount_ml': 80,
+                  'occurred_at': '2026-07-01T06:00:00Z',
+                },
+              ],
             },
-          ],
-        },
-      },
-      feedingRecordsEndpoint: const <String, Object?>{
-        'status': 200,
-        'data': <String, Object?>{
-          'records': <Object?>[
-            <String, Object?>{
-              'id': 'feeding-1001',
-              'type': 'breast_milk',
-              'amount_ml': 80,
-              'occurred_at': '2026-07-01T06:00:00Z',
+          },
+          growthRecordsEndpoint: const <String, Object?>{
+            'status': 200,
+            'data': <String, Object?>{
+              'records': <Object?>[
+                <String, Object?>{
+                  'id': 'growth-1001',
+                  'weight_g': 6200,
+                  'height_cm': 64.5,
+                  'measured_at': '2026-07-01',
+                },
+              ],
             },
-          ],
-        },
-      },
-      growthRecordsEndpoint: const <String, Object?>{
-        'status': 200,
-        'data': <String, Object?>{
-          'records': <Object?>[
-            <String, Object?>{
-              'id': 'growth-1001',
-              'weight_g': 6200,
-              'height_cm': 64.5,
-              'measured_at': '2026-07-01',
+          },
+          pumpWorkstateEndpoint: const <String, Object?>{
+            'status': 200,
+            'data': <String, Object?>{
+              'need_reply': true,
+              'output': 'Workstate accepted',
+              'reply_code': 'pump_state_changed',
+              'reply_side': 'left',
             },
-          ],
-        },
-      },
-      pumpWorkstateEndpoint: const <String, Object?>{
-        'status': 200,
-        'data': <String, Object?>{
-          'need_reply': true,
-          'output': 'Workstate accepted',
-          'reply_code': 'pump_state_changed',
-          'reply_side': 'left',
-        },
-      },
-    }),
+          },
+        }),
     clientEventClient: clientEventClient,
     multipartTransport: multipartTransport,
     blePlatform: FakeBlePlatform(

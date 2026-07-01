@@ -542,6 +542,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Pump workstate typed repository contract tests 已覆盖 `/v1/pump/workstate` request body、reply aliases、empty/partial、business error 和 HTTP error fixtures
 [x] Records feeding/growth typed repository contract tests 已覆盖 request query、legacy aliases、partial/empty、business error 和 HTTP error fixtures
 [x] Records pump_milk typed repository contract tests 已覆盖 `/v1/pump-milk/query` request query、legacy aliases、partial/empty、business error 和 HTTP error fixtures
+[x] Hospital Bag cart typed repository contract tests 已覆盖 `/api/hospital-bag/cart-update` body schema、success、business error 和 HTTP error
 [x] Media upload typed repository contract tests 已覆盖 multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body
 [x] Flutter 通用 multipart transport 已接入 runtime，Media 页面可复用 `/v1/files/upload` repository contract
@@ -557,6 +558,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/calibration` widget tests 已覆盖保存左右舒适档位时通过 `PumpProtocolPlatform` 下发命令并进入 Pump
 [x] Flutter `/media-viewer` widget tests 已覆盖示例媒体上传的 multipart path、fields、file metadata 和成功状态渲染
 [x] Flutter `/ibclc-chat.html` widget tests 已覆盖进入咨询时上报 `ibclc_consult_started` client event，并保持 best-effort UI
+[x] Flutter `/hospital-bag-cart` widget tests 已覆盖清单勾选后通过 runtime repository 同步购物车状态
 ```
 
 ### 7.3 语音合同
