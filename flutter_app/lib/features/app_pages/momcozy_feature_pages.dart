@@ -562,7 +562,7 @@ class _StatusPageState extends State<_StatusPage> {
           title: isMom ? '补写孕期日记' : '记录成长事件',
           subtitle: isMom ? '保留心情、体征和 Agent 分析上下文。' : '记录身高、体重、睡眠和喂养变化。',
           accent: widget.accent,
-          onTap: () {},
+          onTap: () => context.go('/records'),
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
         _ActionTile(
@@ -604,6 +604,9 @@ class _SchedulePage extends StatefulWidget {
 }
 
 class _SchedulePageState extends State<_SchedulePage> {
+  bool _pumpTaskDone = true;
+  bool _feedingTaskDone = false;
+  bool _summaryTaskDone = false;
   bool _pumpReminderEnabled = true;
   bool _dailySummaryEnabled = true;
 
@@ -653,21 +656,36 @@ class _SchedulePageState extends State<_SchedulePage> {
           title: '10:30 泵奶',
           subtitle: '左 15 分钟，右 15 分钟；完成后同步记录和 Agent 上下文。',
           accent: widget.accent,
-          trailing: Checkbox(value: true, onChanged: (_) {}),
+          onTap: () => setState(() => _pumpTaskDone = !_pumpTaskDone),
+          trailing: Checkbox(
+            value: _pumpTaskDone,
+            onChanged: (value) =>
+                setState(() => _pumpTaskDone = value ?? false),
+          ),
         ),
         _ActionTile(
           icon: Icons.child_friendly_rounded,
           title: '14:00 喂养',
           subtitle: '可从通知直接进入记录页。',
           accent: const Color(0xff43827b),
-          trailing: Checkbox(value: false, onChanged: (_) {}),
+          onTap: () => setState(() => _feedingTaskDone = !_feedingTaskDone),
+          trailing: Checkbox(
+            value: _feedingTaskDone,
+            onChanged: (value) =>
+                setState(() => _feedingTaskDone = value ?? false),
+          ),
         ),
         _ActionTile(
           icon: Icons.self_improvement_rounded,
           title: '20:30 晚间复盘',
           subtitle: '生成今日摘要，供明天计划参考。',
           accent: const Color(0xff6b6da8),
-          trailing: Checkbox(value: false, onChanged: (_) {}),
+          onTap: () => setState(() => _summaryTaskDone = !_summaryTaskDone),
+          trailing: Checkbox(
+            value: _summaryTaskDone,
+            onChanged: (value) =>
+                setState(() => _summaryTaskDone = value ?? false),
+          ),
         ),
         const SizedBox(height: 8),
         const _SectionTitle('提醒'),
@@ -868,13 +886,17 @@ class _DeviceSideTile extends StatelessWidget {
         spacing: 6,
         children: [
           IconButton(
-            tooltip: '连接',
-            onPressed: () {},
-            icon: const Icon(Icons.link_rounded),
+            tooltip: state == '已连接' ? '校准' : '连接',
+            onPressed: () => state == '已连接'
+                ? context.go('/calibration')
+                : context.go('/device/manage'),
+            icon: Icon(
+              state == '已连接' ? Icons.tune_rounded : Icons.link_rounded,
+            ),
           ),
           IconButton(
             tooltip: '更多',
-            onPressed: () {},
+            onPressed: () => context.go('/device/manage'),
             icon: const Icon(Icons.more_horiz_rounded),
           ),
         ],
@@ -1670,6 +1692,7 @@ class _IbclcPage extends StatefulWidget {
 
 class _IbclcPageState extends State<_IbclcPage> {
   bool _accepted = false;
+  bool _consultStarted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -1680,10 +1703,10 @@ class _IbclcPageState extends State<_IbclcPage> {
       icon: widget.icon,
       accent: widget.accent,
       priority: widget.priority,
-      trailing: const _StatusChip(
-        label: '咨询入口',
+      trailing: _StatusChip(
+        label: _consultStarted ? '咨询准备中' : '咨询入口',
         icon: Icons.health_and_safety_outlined,
-        accent: Color(0xff43827b),
+        accent: const Color(0xff43827b),
       ),
       children: [
         const _SectionTitle('开始前'),
@@ -1704,10 +1727,20 @@ class _IbclcPageState extends State<_IbclcPage> {
           accent: Color(0xff6b6da8),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
+        if (_consultStarted)
+          const _ActionTile(
+            icon: Icons.support_agent_rounded,
+            title: '咨询准备中',
+            subtitle: '正在保留本次咨询上下文，稍后可以继续查看。',
+            accent: Color(0xff43827b),
+            trailing: Icon(Icons.check_circle_outline_rounded),
+          ),
         FilledButton.icon(
-          onPressed: _accepted ? () {} : null,
+          onPressed: _accepted && !_consultStarted
+              ? () => setState(() => _consultStarted = true)
+              : null,
           icon: const Icon(Icons.chat_rounded),
-          label: const Text('进入 IBCLC 咨询'),
+          label: Text(_consultStarted ? '已进入咨询队列' : '进入 IBCLC 咨询'),
         ),
       ],
     );

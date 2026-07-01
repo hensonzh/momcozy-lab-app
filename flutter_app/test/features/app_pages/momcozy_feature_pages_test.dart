@@ -125,6 +125,12 @@ void main() {
 
       router.go('/status');
       await tester.pumpAndSettle();
+      await tester.tap(find.text('补写孕期日记'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('route-page-/records')), findsOneWidget);
+
+      router.go('/status');
+      await tester.pumpAndSettle();
       await tester.tap(find.text('今日待办'));
       await tester.pumpAndSettle();
       expect(
@@ -144,11 +150,49 @@ void main() {
       );
       expect(find.byType(NavigationBar), findsNothing);
     });
+
+    testWidgets('local page controls update visible state', (tester) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
+      await tester.pump();
+      expect(_checkboxesWithValue(tester, true), 1);
+
+      await tester.tap(find.text('14:00 喂养'));
+      await tester.pump();
+      expect(_checkboxesWithValue(tester, true), 2);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/ibclc-chat.html')),
+      );
+      await tester.pump();
+      expect(
+        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        isNull,
+      );
+
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      expect(
+        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        isNotNull,
+      );
+
+      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pump();
+      expect(find.text('咨询准备中'), findsWidgets);
+      expect(find.text('已进入咨询队列'), findsOneWidget);
+    });
   });
 }
 
 MomCozyRouteConfig _route(String path) {
   return momCozyRoutes.singleWhere((route) => route.path == path);
+}
+
+int _checkboxesWithValue(WidgetTester tester, bool value) {
+  return tester
+      .widgetList<Checkbox>(find.byType(Checkbox))
+      .where((checkbox) => checkbox.value == value)
+      .length;
 }
 
 class _FeaturePageHost extends StatelessWidget {
