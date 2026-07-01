@@ -177,6 +177,7 @@ features/
 [x] Flutter Pump workstate typed repository contract 已开始落地，为 Pump 页面和后台 runner 复用统一 `/v1/pump/workstate` DTO 映射
 [x] Flutter Records feeding/growth typed repository contracts 已开始落地，保留 legacy alias 与 partial data fallback
 [x] Flutter Media upload typed repository contract 已开始落地，multipart 上传、取消和超时边界已测试
+[x] Flutter 通用 JSON HTTP transport 已开始落地，typed repositories 可从 fixture contract 切到真实后端 connector
 [x] Flutter `AgentStreamClient` 抽象已落地，SSE/WebSocket adapters 共享 parser/fixtures 并通过 client tests
 [x] Flutter AG-UI outbound payload builder 已对齐首帧 fixture，后续真实 SSE/WS transport 只负责传输
 [x] Flutter Agent stream IO transport shell 已落地，SSE POST 与 WebSocket first-frame adapter 共用 endpoint/auth/redaction config
