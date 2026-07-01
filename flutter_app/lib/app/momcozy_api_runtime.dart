@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
@@ -180,6 +181,10 @@ class MomCozyApiRuntime {
 
   MediaApiRepository get mediaRepository {
     return MediaApiRepository(transport: multipartTransport);
+  }
+
+  HospitalBagCartApiRepository get hospitalBagCartRepository {
+    return HospitalBagCartApiRepository(transport: jsonTransport);
   }
 
   PumpWorkstateApiRepository get pumpWorkstateRepository {

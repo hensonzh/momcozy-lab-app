@@ -177,6 +177,7 @@ features/
 [x] Flutter Pump workstate typed repository contract 已开始落地，为 Pump 页面和后台 runner 复用统一 `/v1/pump/workstate` DTO 映射
 [x] Flutter Records feeding/growth typed repository contracts 已开始落地，保留 legacy alias 与 partial data fallback
 [x] Flutter Records pump_milk typed repository contract 已补齐，记录页可统一读取泵奶、喂养和成长列表
+[x] Flutter Hospital Bag cart typed repository contract 已开始落地，待产包购物车更新不再由页面直接拼 endpoint
 [x] Flutter Media upload typed repository contract 已开始落地，multipart 上传、取消和超时边界已测试
 [x] Flutter 通用 JSON HTTP transport 已开始落地，typed repositories 可从 fixture contract 切到真实后端 connector
 [x] Flutter 通用 multipart transport 已开始落地，Media 上传通过 App runtime 注入，不在 widget 内拼 URL/token
@@ -192,6 +193,7 @@ features/
 [x] Flutter `/calibration` 页面已将保存动作接入 `PumpProtocolPlatform`，真实左右设备校准仍保留到设备验证阶段
 [x] Flutter `/media-viewer` 页面已将上传动作接入 `MediaApiRepository`，真实相册/文件选择器仍保留到移动交互阶段
 [x] Flutter `/ibclc-chat.html` 页面已将进入咨询动作接入 `/api/client-event` best-effort 写回通道
+[x] Flutter `/hospital-bag-cart` 页面已将清单勾选/恢复动作接入 `HospitalBagCartApiRepository`
 [x] Flutter `AgentStreamClient` 抽象已落地，SSE/WebSocket adapters 共享 parser/fixtures 并通过 client tests
 [x] Flutter AG-UI outbound payload builder 已对齐首帧 fixture，后续真实 SSE/WS transport 只负责传输
 [x] Flutter Agent stream IO transport shell 已落地，SSE POST 与 WebSocket first-frame adapter 共用 endpoint/auth/redaction config

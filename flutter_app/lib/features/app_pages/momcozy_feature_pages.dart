@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
@@ -2398,6 +2399,72 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
   bool _pumpPacked = true;
   bool _padsPacked = false;
   bool _babyClothesPacked = false;
+  bool _isSyncing = false;
+  String? _syncStatus;
+
+  void _setPacked(String id, bool value) {
+    setState(() {
+      switch (id) {
+        case 'pump':
+          _pumpPacked = value;
+          break;
+        case 'pads':
+          _padsPacked = value;
+          break;
+        case 'baby_clothes':
+          _babyClothesPacked = value;
+          break;
+      }
+    });
+    unawaited(_syncCart());
+  }
+
+  void _resetCart() {
+    setState(() {
+      _pumpPacked = true;
+      _padsPacked = false;
+      _babyClothesPacked = false;
+    });
+    unawaited(_syncCart());
+  }
+
+  Future<void> _syncCart() async {
+    setState(() {
+      _isSyncing = true;
+      _syncStatus = null;
+    });
+
+    try {
+      final runtime = MomCozyRuntimeScope.of(context);
+      final result = await runtime.hospitalBagCartRepository.syncCart(
+        userId: runtime.userId,
+        items: _hospitalBagItems(),
+      );
+      if (!mounted) return;
+      setState(() {
+        _isSyncing = false;
+        _syncStatus = result.message;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isSyncing = false;
+        _syncStatus = '本地清单已更新，稍后重试同步。';
+      });
+    }
+  }
+
+  List<HospitalBagPackedItem> _hospitalBagItems() {
+    return [
+      HospitalBagPackedItem(id: 'pump', title: '吸奶器和配件', packed: _pumpPacked),
+      HospitalBagPackedItem(id: 'pads', title: '产后护理用品', packed: _padsPacked),
+      HospitalBagPackedItem(
+        id: 'baby_clothes',
+        title: '宝宝衣物',
+        packed: _babyClothesPacked,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2426,29 +2493,42 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
           subtitle: '主机、阀门、储奶袋、充电线。',
           value: _pumpPacked,
           accent: widget.accent,
-          onChanged: (value) => setState(() => _pumpPacked = value),
+          onChanged: (value) => _setPacked('pump', value),
         ),
         _ChecklistTile(
           title: '产后护理用品',
           subtitle: '护理垫、湿巾、一次性用品。',
           value: _padsPacked,
           accent: const Color(0xff43827b),
-          onChanged: (value) => setState(() => _padsPacked = value),
+          onChanged: (value) => _setPacked('pads', value),
         ),
         _ChecklistTile(
           title: '宝宝衣物',
           subtitle: '连体衣、包巾、帽子和备用衣物。',
           value: _babyClothesPacked,
           accent: const Color(0xff6b6da8),
-          onChanged: (value) => setState(() => _babyClothesPacked = value),
+          onChanged: (value) => _setPacked('baby_clothes', value),
         ),
         const SizedBox(height: 8),
-        const _ActionTile(
+        _ActionTile(
+          icon: _isSyncing ? Icons.sync_rounded : Icons.cloud_done_outlined,
+          title: '购物车同步',
+          subtitle: _syncStatus ?? '勾选变化会同步到待产包购物车状态。',
+          accent: const Color(0xff43827b),
+          trailing: _isSyncing
+              ? const SizedBox.square(
+                  dimension: 22,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                )
+              : const Icon(Icons.check_circle_outline_rounded),
+        ),
+        _ActionTile(
           icon: Icons.restore_rounded,
           title: '恢复默认清单',
           subtitle: '把待产包恢复为推荐清单，并同步购物车状态。',
-          accent: Color(0xff7f6a75),
-          trailing: Icon(Icons.chevron_right_rounded),
+          accent: const Color(0xff7f6a75),
+          trailing: const Icon(Icons.chevron_right_rounded),
+          onTap: _resetCart,
         ),
       ],
     );
