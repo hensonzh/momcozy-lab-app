@@ -552,6 +552,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/records` widget tests 已覆盖 runtime repository fixture、泵奶/喂养/成长筛选和动态汇总渲染
 [x] Flutter `/pump` widget tests 已覆盖 session 控制触发 `/v1/pump/workstate` runtime repository 同步和后端回复展示
 [x] Flutter `/device` widget tests 已覆盖 BLE runtime fake、已连接设备恢复和扫描状态切换
+[x] Flutter `/calibration` widget tests 已覆盖保存左右舒适档位时通过 `PumpProtocolPlatform` 下发命令并进入 Pump
 ```
 
 ### 7.3 语音合同

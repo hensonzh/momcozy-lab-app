@@ -48,6 +48,7 @@ class MomCozyApiRuntime {
        now = now ?? DateTime.now {
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
+    _hasInjectedPumpProtocolPlatform = pumpProtocolPlatform != null;
   }
 
   factory MomCozyApiRuntime.fromEnvironment({
@@ -86,6 +87,7 @@ class MomCozyApiRuntime {
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
   PumpNativeRuntimeCoordinator? _pumpNativeRuntimeCoordinator;
+  late final bool _hasInjectedPumpProtocolPlatform;
 
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();
@@ -104,6 +106,15 @@ class MomCozyApiRuntime {
     bool subscribeConnectedDevices = true,
   }) async {
     await pumpNativeRuntimeCoordinator.start(
+      subscribeConnectedDevices: subscribeConnectedDevices,
+    );
+  }
+
+  Future<void> ensurePumpProtocolReady({
+    bool subscribeConnectedDevices = true,
+  }) async {
+    if (_hasInjectedPumpProtocolPlatform) return;
+    await startPumpNativeRuntime(
       subscribeConnectedDevices: subscribeConnectedDevices,
     );
   }
