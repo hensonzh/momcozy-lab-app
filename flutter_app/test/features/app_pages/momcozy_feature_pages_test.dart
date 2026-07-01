@@ -99,9 +99,13 @@ void main() {
       tester,
     ) async {
       final router = createMomCozyRouter(initialLocation: '/device');
+      final pumpProtocol = FakePumpProtocolPlatform();
 
       await tester.pumpWidget(
-        MomCozyFlutterApp(router: router, apiRuntime: _appRuntime()),
+        MomCozyFlutterApp(
+          router: router,
+          apiRuntime: _appRuntime(pumpProtocolPlatform: pumpProtocol),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -132,6 +136,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
+      expect(
+        pumpProtocol.recordedCommands.map(
+          (command) =>
+              '${command.name}:${command.side.name}:${command.payload['gear']}',
+        ),
+        ['adjustGearForSide:left:4', 'adjustGearForSide:right:4'],
+      );
 
       router.go('/status');
       await tester.pumpAndSettle();
@@ -164,6 +175,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.byType(NavigationBar), findsNothing);
+      await pumpProtocol.dispose();
     });
 
     testWidgets('local page controls update visible state', (tester) async {
@@ -279,6 +291,36 @@ void main() {
       expect(find.text('正在扫描附近设备'), findsOneWidget);
       expect(find.text('停止扫描'), findsOneWidget);
     });
+
+    testWidgets('calibration page saves gears through pump protocol runtime', (
+      tester,
+    ) async {
+      final pumpProtocol = FakePumpProtocolPlatform();
+      final router = createMomCozyRouter(initialLocation: '/calibration');
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          apiRuntime: _appRuntime(pumpProtocolPlatform: pumpProtocol),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.widgetWithText(FilledButton, '保存并进入泵奶'));
+      await tester.tap(find.widgetWithText(FilledButton, '保存并进入泵奶'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
+      expect(
+        pumpProtocol.recordedCommands.map(
+          (command) =>
+              '${command.name}:${command.side.name}:${command.payload['gear']}',
+        ),
+        ['adjustGearForSide:left:4', 'adjustGearForSide:right:4'],
+      );
+
+      await pumpProtocol.dispose();
+    });
   });
 }
 
@@ -319,7 +361,7 @@ class _FeaturePageHost extends StatelessWidget {
   }
 }
 
-MomCozyApiRuntime _appRuntime() {
+MomCozyApiRuntime _appRuntime({PumpProtocolPlatform? pumpProtocolPlatform}) {
   return MomCozyApiRuntime(
     jsonTransport: FixtureApiJsonTransportByPath({
       statusOverviewEndpoint: const <String, Object?>{
@@ -416,6 +458,7 @@ MomCozyApiRuntime _appRuntime() {
         ),
       ],
     ),
+    pumpProtocolPlatform: pumpProtocolPlatform,
     userId: 'demo-user-fixture',
     babyId: 'demo-baby-fixture',
     locale: 'zh-CN',

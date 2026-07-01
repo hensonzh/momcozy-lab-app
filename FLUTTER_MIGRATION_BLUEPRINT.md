@@ -949,6 +949,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `/records` 页面已接入 App runtime repository，覆盖 pump_milk、feeding、growth 三类列表和筛选 widget test
 [x] Flutter `/pump` 页面 session 控制已接入 App runtime `/v1/pump/workstate` repository，覆盖左右侧档位 payload 和同步状态 widget test
 [x] Flutter `/device` 页面已接入 App runtime BLE platform，覆盖权限/已连接设备恢复/扫描状态 widget test
+[x] Flutter `/calibration` 页面保存动作已接入 App runtime `PumpProtocolPlatform`，覆盖左右舒适档位下发和成功后进入 Pump widget test
 [x] Flutter `AgentStreamClient` 抽象已接入 transport-agnostic client，SSE/WebSocket/JSONL fixture transport 均输出统一 `Stream<AgentStreamEvent>`
 [x] Flutter AG-UI outbound payload builder 已对齐文本和图片首帧 fixture，并强制 threadId/runId/messageId guard
 [x] Flutter Agent stream IO transport shell 已接入 SSE POST / WebSocket first-frame adapters，复用 auth/redacted endpoint config，并在 terminal event 后关闭底层 stream

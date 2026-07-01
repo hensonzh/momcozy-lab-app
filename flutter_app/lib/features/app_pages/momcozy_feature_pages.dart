@@ -1583,6 +1583,37 @@ class _CalibrationPage extends StatefulWidget {
 class _CalibrationPageState extends State<_CalibrationPage> {
   double _leftComfort = 4;
   double _rightComfort = 4;
+  bool _isSaving = false;
+  String? _saveError;
+
+  Future<void> _saveAndEnterPump() async {
+    if (_isSaving) return;
+    setState(() {
+      _isSaving = true;
+      _saveError = null;
+    });
+
+    try {
+      final runtime = MomCozyRuntimeScope.of(context);
+      await runtime.ensurePumpProtocolReady();
+      await runtime.pumpProtocolPlatform.adjustGearForSide(
+        PumpSide.left,
+        _leftComfort.round(),
+      );
+      await runtime.pumpProtocolPlatform.adjustGearForSide(
+        PumpSide.right,
+        _rightComfort.round(),
+      );
+      if (!mounted) return;
+      context.go('/pump');
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isSaving = false;
+        _saveError = _calibrationSaveErrorText(error);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1614,20 +1645,41 @@ class _CalibrationPageState extends State<_CalibrationPage> {
         ),
         const SizedBox(height: 8),
         const _SectionTitle('保存规则'),
-        const _ActionTile(
+        _ActionTile(
           icon: Icons.verified_user_outlined,
           title: '校准结果保存检查',
-          subtitle: '保存前会检查左右设备状态，并处理历史校准数据。',
-          accent: Color(0xff7f6a75),
-          trailing: Icon(Icons.rule_rounded),
+          subtitle: _saveError ?? '保存前会检查左右设备状态，并处理历史校准数据。',
+          accent: _saveError == null ? const Color(0xff7f6a75) : Colors.red,
+          trailing: _isSaving
+              ? const SizedBox.square(
+                  dimension: 22,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                )
+              : Icon(
+                  _saveError == null
+                      ? Icons.rule_rounded
+                      : Icons.error_outline_rounded,
+                ),
         ),
         FilledButton.icon(
-          onPressed: () => context.go('/pump'),
+          onPressed: _isSaving ? null : _saveAndEnterPump,
           icon: const Icon(Icons.save_rounded),
-          label: const Text('保存并进入泵奶'),
+          label: Text(_isSaving ? '保存中' : '保存并进入泵奶'),
         ),
       ],
     );
+  }
+
+  String _calibrationSaveErrorText(Object error) {
+    final text = '$error';
+    if (text.contains('No BLE device') ||
+        text.contains('No pump protocol state')) {
+      return '未检测到左右设备连接，请先在设备页连接后再保存。';
+    }
+    if (text.contains('BLE permission')) {
+      return '蓝牙权限未开启，请授权后重试。';
+    }
+    return '校准保存失败，请稍后重试。';
   }
 }
 
