@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
+import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -228,79 +229,13 @@ class MomCozyRoutePage extends StatelessWidget {
       );
     }
 
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return ListView(
-      key: ValueKey('route-page-${route.path}'),
-      padding: const EdgeInsets.fromLTRB(24, 28, 24, 32),
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: route.accent.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(route.icon, color: route.accent, size: 26),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                route.title,
-                style: textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        Text(
-          route.summary,
-          style: textTheme.bodyLarge?.copyWith(
-            height: 1.45,
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 24),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainer,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: colorScheme.outlineVariant),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Icon(Icons.route_outlined, color: colorScheme.primary),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    route.path,
-                    style: textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                ),
-                Text(
-                  route.priority,
-                  style: textTheme.labelMedium?.copyWith(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+    return MomCozyFeaturePage(
+      path: route.path,
+      title: route.title,
+      summary: route.summary,
+      icon: route.icon,
+      accent: route.accent,
+      priority: route.priority,
     );
   }
 }
