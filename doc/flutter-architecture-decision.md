@@ -184,6 +184,7 @@ features/
 [x] Flutter Agent Hub 页面骨架已接入根路由，状态 badge、transcript 和 composer 均消费统一 `AgentStreamRunState`
 [x] Flutter Agent Hub composer 已接入 injected `AgentStreamRunner`，真实 transport 仍可通过 `AgentStreamClient` 替换
 [x] Flutter App root 已注入默认 Agent Hub SSE runner，endpoint/token/user/thread 通过 dart-define 配置
+[x] Flutter Agent Hub stop 已接入 best-effort cancel client，保持 UI cancellation 与服务端 cancel 解耦
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

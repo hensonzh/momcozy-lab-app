@@ -47,12 +47,14 @@ Agent Hub 默认使用 SSE transport，并可通过 dart-define 配置：
 ```bash
 flutter run \
   --dart-define=MOMCOZY_AGENT_SSE_URL=http://192.168.x.x:8768/api/ag-ui \
+  --dart-define=MOMCOZY_API_BASE_URL=http://192.168.x.x:8769 \
   --dart-define=MOMCOZY_API_TOKEN=APP_API_TEST \
   --dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user \
   --dart-define=MOMCOZY_AGENT_THREAD_ID=thread-demo
 ```
 
 Android 真机不能使用 `127.0.0.1` 访问电脑上的 Agent 服务，需要改成手机可访问的局域网或公网地址。Android emulator 可使用 `10.0.2.2`。
+如 cancel 服务和统一 API 分开部署，可额外设置 `MOMCOZY_AGENT_CANCEL_URL`。
 
 Current Android PoC package:
 
