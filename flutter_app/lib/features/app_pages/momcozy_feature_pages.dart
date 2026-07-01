@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 
@@ -1458,82 +1459,349 @@ class _RecordsPage extends StatefulWidget {
 
 class _RecordsPageState extends State<_RecordsPage> {
   String _filter = 'pump';
+  MomCozyApiRuntime? _runtime;
+  late DateTime _recordsDay;
+  late Future<_RecordsOverview> _recordsFuture;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final runtime = MomCozyRuntimeScope.of(context);
+    if (!identical(runtime, _runtime)) {
+      _runtime = runtime;
+      _recordsDay = runtime.now();
+      _recordsFuture = _fetchRecords(runtime);
+    }
+  }
+
+  Future<_RecordsOverview> _fetchRecords(MomCozyApiRuntime runtime) async {
+    final repository = runtime.recordsRepository;
+    final pump = await repository.fetchPumpMilkRecords(
+      userId: runtime.userId,
+      date: _recordsDay,
+    );
+    final feeding = await repository.fetchFeedingRecords(
+      userId: runtime.userId,
+      date: _recordsDay,
+    );
+    final growth = await repository.fetchGrowthRecords(
+      userId: runtime.userId,
+      babyId: runtime.babyId,
+    );
+    return _RecordsOverview(pump: pump, feeding: feeding, growth: growth);
+  }
+
+  void _reloadRecords() {
+    final runtime = _runtime;
+    if (runtime == null) return;
+    setState(() {
+      _recordsFuture = _fetchRecords(runtime);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      priority: widget.priority,
-      trailing: SegmentedButton<String>(
-        selected: {_filter},
-        showSelectedIcon: false,
-        onSelectionChanged: (next) => setState(() => _filter = next.first),
-        segments: const [
-          ButtonSegment(value: 'pump', label: Text('泵奶')),
-          ButtonSegment(value: 'feed', label: Text('喂养')),
-          ButtonSegment(value: 'growth', label: Text('成长')),
-        ],
-      ),
-      children: [
-        const _SectionTitle('本周概览'),
-        _MetricWrap(
+    return FutureBuilder<_RecordsOverview>(
+      future: _recordsFuture,
+      builder: (context, snapshot) {
+        final overview = snapshot.data;
+
+        return _FeaturePageFrame(
+          path: widget.path,
+          title: widget.title,
+          summary: widget.summary,
+          icon: widget.icon,
+          accent: widget.accent,
+          priority: widget.priority,
+          trailing: SegmentedButton<String>(
+            selected: {_filter},
+            showSelectedIcon: false,
+            onSelectionChanged: (next) => setState(() => _filter = next.first),
+            segments: const [
+              ButtonSegment(value: 'pump', label: Text('泵奶')),
+              ButtonSegment(value: 'feed', label: Text('喂养')),
+              ButtonSegment(value: 'growth', label: Text('成长')),
+            ],
+          ),
           children: [
-            _MetricTile(
-              label: '总奶量',
-              value: '2.8 L',
-              icon: Icons.water_drop_outlined,
-              accent: widget.accent,
-              note: '较上周 +8%',
-            ),
-            const _MetricTile(
-              label: '记录数',
-              value: '26',
-              icon: Icons.receipt_long_outlined,
+            const _SectionTitle('本周概览'),
+            ..._recordsSummaryChildren(snapshot),
+            if (overview != null && !snapshot.hasError) ...[
+              const SizedBox(height: 18),
+              const _SectionTitle('趋势'),
+              ..._trendChildren(overview),
+              const SizedBox(height: 18),
+              const _SectionTitle('最近记录'),
+              ..._recordChildren(overview),
+            ],
+            const _ActionTile(
+              icon: Icons.add_circle_outline_rounded,
+              title: '手动补录',
+              subtitle: '支持 mL/oz、左右侧、时间和备注。',
               accent: Color(0xff43827b),
-            ),
-            const _MetricTile(
-              label: '平均间隔',
-              value: '3h',
-              icon: Icons.schedule_rounded,
-              accent: Color(0xffb2773b),
+              trailing: Icon(Icons.chevron_right_rounded),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  List<Widget> _recordsSummaryChildren(
+    AsyncSnapshot<_RecordsOverview> snapshot,
+  ) {
+    if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
+      return const [
+        _ActionTile(
+          icon: Icons.sync_rounded,
+          title: '正在同步记录',
+          subtitle: '正在读取泵奶、喂养和成长记录。',
+          accent: Color(0xff6b6da8),
+          trailing: SizedBox.square(
+            dimension: 22,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
         ),
-        const SizedBox(height: 18),
-        const _SectionTitle('趋势'),
-        const _TrendBar(label: '周一', value: 0.64),
-        const _TrendBar(label: '周二', value: 0.72),
-        const _TrendBar(label: '周三', value: 0.58),
-        const SizedBox(height: 18),
-        const _SectionTitle('最近记录'),
+      ];
+    }
+
+    if (snapshot.hasError) {
+      return [
+        _ActionTile(
+          icon: Icons.cloud_off_outlined,
+          title: '记录同步失败',
+          subtitle: '检查后端连接或 token 后重试。',
+          accent: widget.accent,
+          trailing: IconButton(
+            tooltip: '重试',
+            onPressed: _reloadRecords,
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+        ),
+      ];
+    }
+
+    final overview = snapshot.data ?? _RecordsOverview.empty;
+    return [
+      _MetricWrap(
+        children: [
+          _MetricTile(
+            label: '总奶量',
+            value: _amountLabel(overview.totalMilkMl),
+            icon: Icons.water_drop_outlined,
+            accent: widget.accent,
+            note: '泵奶 + 喂养',
+          ),
+          _MetricTile(
+            label: '记录数',
+            value: overview.recordCount.toString(),
+            icon: Icons.receipt_long_outlined,
+            accent: const Color(0xff43827b),
+          ),
+          _MetricTile(
+            label: '最近记录',
+            value: _dateTimeLabel(overview.latestAt),
+            icon: Icons.schedule_rounded,
+            accent: const Color(0xffb2773b),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  List<Widget> _trendChildren(_RecordsOverview overview) {
+    final points = overview.milkTrendPoints;
+    if (points.isEmpty) {
+      return const [
+        _ActionTile(
+          icon: Icons.insights_rounded,
+          title: '暂无奶量趋势',
+          subtitle: '泵奶或喂养记录同步后会显示趋势。',
+          accent: Color(0xff7f6a75),
+          trailing: Icon(Icons.show_chart_rounded),
+        ),
+      ];
+    }
+
+    final maxAmount = points
+        .map((point) => point.amountMl)
+        .reduce((a, b) => a > b ? a : b);
+    return [
+      for (final point in points.take(3))
+        _TrendBar(
+          label: point.label,
+          value: maxAmount <= 0 ? 0 : point.amountMl / maxAmount,
+          valueLabel: _amountLabel(point.amountMl),
+        ),
+    ];
+  }
+
+  List<Widget> _recordChildren(_RecordsOverview overview) {
+    return switch (_filter) {
+      'feed' => _feedingRecordChildren(overview.feeding),
+      'growth' => _growthRecordChildren(overview.growth),
+      _ => _pumpRecordChildren(overview.pump),
+    };
+  }
+
+  List<Widget> _pumpRecordChildren(List<PumpMilkRecord> records) {
+    if (records.isEmpty) return [_emptyRecordTile('暂无泵奶记录')];
+    return [
+      for (final record in records)
         _ActionTile(
           icon: Icons.water_drop_rounded,
-          title: _filter == 'pump' ? '10:40 泵奶 120 mL' : '10:40 记录项',
-          subtitle: '左 58 mL，右 62 mL；已同步 Agent context。',
+          title:
+              '${_dateTimeLabel(record.occurredAt)} ${_textOr(record.title, '泵奶记录')}',
+          subtitle:
+              '${_amountLabel(record.amountMl)} · 来源 ${record.pumpSource ?? '--'}',
           accent: widget.accent,
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
-        const _ActionTile(
-          icon: Icons.add_circle_outline_rounded,
-          title: '手动补录',
-          subtitle: '支持 mL/oz、左右侧、时间和备注。',
-          accent: Color(0xff43827b),
-          trailing: Icon(Icons.chevron_right_rounded),
+    ];
+  }
+
+  List<Widget> _feedingRecordChildren(List<FeedingRecord> records) {
+    if (records.isEmpty) return [_emptyRecordTile('暂无喂养记录')];
+    return [
+      for (final record in records)
+        _ActionTile(
+          icon: Icons.child_friendly_rounded,
+          title: '${_dateTimeLabel(record.occurredAt)} 喂养',
+          subtitle:
+              '${_amountLabel(record.amountMl)} · ${_textOr(record.type, '未分类')}',
+          accent: const Color(0xff43827b),
+          trailing: const Icon(Icons.chevron_right_rounded),
         ),
-      ],
+    ];
+  }
+
+  List<Widget> _growthRecordChildren(List<GrowthRecord> records) {
+    if (records.isEmpty) return [_emptyRecordTile('暂无成长记录')];
+    return [
+      for (final record in records)
+        _ActionTile(
+          icon: Icons.monitor_weight_outlined,
+          title: '${_dateLabel(record.measuredAt)} 成长记录',
+          subtitle:
+              '${_weightLabel(record.weightGram)} · ${_heightLabel(record.heightCm)}',
+          accent: const Color(0xff6b6da8),
+          trailing: const Icon(Icons.chevron_right_rounded),
+        ),
+    ];
+  }
+
+  Widget _emptyRecordTile(String title) {
+    return _ActionTile(
+      icon: Icons.info_outline_rounded,
+      title: title,
+      subtitle: '同步完成后仍没有对应记录。',
+      accent: const Color(0xff7f6a75),
+      trailing: const Icon(Icons.chevron_right_rounded),
     );
   }
 }
 
+class _RecordsOverview {
+  const _RecordsOverview({
+    required this.pump,
+    required this.feeding,
+    required this.growth,
+  });
+
+  static const empty = _RecordsOverview(
+    pump: <PumpMilkRecord>[],
+    feeding: <FeedingRecord>[],
+    growth: <GrowthRecord>[],
+  );
+
+  final List<PumpMilkRecord> pump;
+  final List<FeedingRecord> feeding;
+  final List<GrowthRecord> growth;
+
+  int get totalMilkMl {
+    final pumpTotal = pump.fold<int>(
+      0,
+      (total, record) => total + (record.amountMl ?? 0),
+    );
+    final feedingTotal = feeding.fold<int>(
+      0,
+      (total, record) => total + (record.amountMl ?? 0),
+    );
+    return pumpTotal + feedingTotal;
+  }
+
+  int get recordCount => pump.length + feeding.length + growth.length;
+
+  DateTime? get latestAt {
+    final dates = <DateTime>[
+      for (final record in pump)
+        if (record.occurredAt != null) record.occurredAt!,
+      for (final record in feeding)
+        if (record.occurredAt != null) record.occurredAt!,
+      for (final record in growth)
+        if (record.measuredAt != null) record.measuredAt!,
+    ]..sort((a, b) => b.compareTo(a));
+    return dates.isEmpty ? null : dates.first;
+  }
+
+  List<_MilkTrendPoint> get milkTrendPoints {
+    final points = <_MilkTrendPoint>[
+      for (final record in pump)
+        if (record.amountMl != null)
+          _MilkTrendPoint(
+            label: _dateTimeLabel(record.occurredAt),
+            amountMl: record.amountMl!,
+          ),
+      for (final record in feeding)
+        if (record.amountMl != null)
+          _MilkTrendPoint(
+            label: _dateTimeLabel(record.occurredAt),
+            amountMl: record.amountMl!,
+          ),
+    ];
+    return points;
+  }
+}
+
+class _MilkTrendPoint {
+  const _MilkTrendPoint({required this.label, required this.amountMl});
+
+  final String label;
+  final int amountMl;
+}
+
+String _amountLabel(int? amountMl) {
+  return amountMl == null ? '--' : '$amountMl mL';
+}
+
+String _weightLabel(int? weightGram) {
+  if (weightGram == null) return '--';
+  return '${(weightGram / 1000).toStringAsFixed(1)} kg';
+}
+
+String _heightLabel(double? heightCm) {
+  return heightCm == null ? '--' : '${heightCm.toStringAsFixed(1)} cm';
+}
+
+String _dateTimeLabel(DateTime? value) {
+  if (value == null) return '--';
+  return _timeLabel(value);
+}
+
+String _dateLabel(DateTime? value) {
+  if (value == null) return '--';
+  final local = value.toLocal();
+  final month = local.month.toString().padLeft(2, '0');
+  final day = local.day.toString().padLeft(2, '0');
+  return '$month-$day';
+}
+
 class _TrendBar extends StatelessWidget {
-  const _TrendBar({required this.label, required this.value});
+  const _TrendBar({required this.label, required this.value, this.valueLabel});
 
   final String label;
   final double value;
+  final String? valueLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -1547,13 +1815,13 @@ class _TrendBar extends StatelessWidget {
           ),
           Expanded(
             child: LinearProgressIndicator(
-              value: value,
+              value: value.clamp(0, 1),
               minHeight: 10,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
           const SizedBox(width: 10),
-          Text('${(value * 500).round()} mL'),
+          Text(valueLabel ?? '${(value * 500).round()} mL'),
         ],
       ),
     );

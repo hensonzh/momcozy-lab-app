@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
+import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 
@@ -226,6 +227,27 @@ void main() {
 
       expect(_checkboxesWithValue(tester, true), 2);
     });
+
+    testWidgets('records page loads pump feeding and growth repositories', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('200 mL'), findsOneWidget);
+      expect(find.textContaining('晨间泵奶'), findsOneWidget);
+      expect(find.textContaining('120 mL'), findsWidgets);
+
+      await tester.tap(find.text('喂养'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('breast_milk'), findsOneWidget);
+      expect(find.textContaining('80 mL'), findsWidgets);
+
+      await tester.tap(find.text('成长'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('6.2 kg'), findsOneWidget);
+      expect(find.textContaining('64.5 cm'), findsOneWidget);
+    });
   });
 }
 
@@ -297,6 +319,47 @@ MomCozyApiRuntime _appRuntime() {
               'title': '20:30 晚间复盘',
               'completed': false,
               'remind_at': '2026-07-01T12:30:00Z',
+            },
+          ],
+        },
+      },
+      pumpMilkRecordsEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'pump_milk_list': <Object?>[
+            <String, Object?>{
+              'pump_id': 7001,
+              'pump_type': 0,
+              'pump_source': 0,
+              'pump_time': '2026-07-01T02:40:00Z',
+              'pump_title': '晨间泵奶',
+              'pump_milk_volum': 120,
+            },
+          ],
+        },
+      },
+      feedingRecordsEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'records': <Object?>[
+            <String, Object?>{
+              'id': 'feeding-1001',
+              'type': 'breast_milk',
+              'amount_ml': 80,
+              'occurred_at': '2026-07-01T06:00:00Z',
+            },
+          ],
+        },
+      },
+      growthRecordsEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'records': <Object?>[
+            <String, Object?>{
+              'id': 'growth-1001',
+              'weight_g': 6200,
+              'height_cm': 64.5,
+              'measured_at': '2026-07-01',
             },
           ],
         },
