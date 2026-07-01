@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_ap
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
 
@@ -262,6 +263,22 @@ void main() {
       expect(find.text('Workstate 已同步'), findsOneWidget);
       expect(find.text('Workstate accepted'), findsOneWidget);
     });
+
+    testWidgets('device page reads connected devices from BLE runtime', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/device')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('左侧 S12 Pro L'), findsOneWidget);
+      expect(find.textContaining('已恢复 1 台已连接设备'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
+      await tester.pump();
+
+      expect(find.text('正在扫描附近设备'), findsOneWidget);
+      expect(find.text('停止扫描'), findsOneWidget);
+    });
   });
 }
 
@@ -388,6 +405,17 @@ MomCozyApiRuntime _appRuntime() {
         },
       },
     }),
+    blePlatform: FakeBlePlatform(
+      initialPermission: BlePermissionState.granted,
+      seedDevices: const [
+        BleDeviceSnapshot(
+          side: 'L',
+          deviceId: 'ble-left-fixture',
+          deviceName: 'S12 Pro L',
+          connected: true,
+        ),
+      ],
+    ),
     userId: 'demo-user-fixture',
     babyId: 'demo-baby-fixture',
     locale: 'zh-CN',
