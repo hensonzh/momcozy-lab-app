@@ -190,6 +190,7 @@ features/
 [x] Flutter `/records` 页面已从静态记录推进到 repository-driven records overview，筛选状态保留在页面本地
 [x] Flutter `/pump` 页面已将 session 控制接入 `/v1/pump/workstate` repository，真泵 BLE 控制仍保留到设备验证阶段
 [x] Flutter `/device` 页面已从静态设备卡片推进到 BLE platform-driven 状态，真机扫描/连接验证仍保留到设备阶段
+[x] Flutter `/device/manage` 与 `/device/user` 子页已推进到 runtime-driven 状态，设备解绑与用户上下文不再硬编码
 [x] Flutter `/calibration` 页面已将保存动作接入 `PumpProtocolPlatform`，真实左右设备校准仍保留到设备验证阶段
 [x] Flutter `/media-viewer` 页面已将上传动作接入 `MediaApiRepository`，真实相册/文件选择器仍保留到移动交互阶段
 [x] Flutter `/ibclc-chat.html` 页面已将进入咨询动作接入 `/api/client-event` best-effort 写回通道
