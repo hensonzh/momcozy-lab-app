@@ -2185,7 +2185,7 @@ class _CommunityPage extends StatelessWidget {
   }
 }
 
-class _DeviceManagePage extends StatelessWidget {
+class _DeviceManagePage extends StatefulWidget {
   const _DeviceManagePage({
     required this.path,
     required this.title,
@@ -2203,21 +2203,95 @@ class _DeviceManagePage extends StatelessWidget {
   final String priority;
 
   @override
+  State<_DeviceManagePage> createState() => _DeviceManagePageState();
+}
+
+class _DeviceManagePageState extends State<_DeviceManagePage> {
+  List<BleDeviceSnapshot> _connectedDevices = const [];
+  bool _isRefreshing = false;
+  String? _syncStatus;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    unawaited(_refreshDevices());
+  }
+
+  Future<void> _refreshDevices() async {
+    setState(() {
+      _isRefreshing = true;
+      _syncStatus = null;
+    });
+    try {
+      final devices = await MomCozyRuntimeScope.of(
+        context,
+      ).blePlatform.getConnectedDevices();
+      if (!mounted) return;
+      setState(() {
+        _connectedDevices = devices;
+        _isRefreshing = false;
+        _syncStatus = devices.isEmpty
+            ? '当前没有已连接设备。'
+            : '已同步 ${devices.length} 台设备。';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isRefreshing = false;
+        _syncStatus = '设备状态同步失败，请稍后重试。';
+      });
+    }
+  }
+
+  Future<void> _disconnectAll() async {
+    setState(() {
+      _isRefreshing = true;
+      _syncStatus = null;
+    });
+    try {
+      final ble = MomCozyRuntimeScope.of(context).blePlatform;
+      final devices = await ble.getConnectedDevices();
+      for (final device in devices) {
+        await ble.disconnect(device.deviceId);
+      }
+      final next = await ble.getConnectedDevices();
+      if (!mounted) return;
+      setState(() {
+        _connectedDevices = next;
+        _isRefreshing = false;
+        _syncStatus = '已解绑 ${devices.length} 台设备。';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isRefreshing = false;
+        _syncStatus = '解绑失败，请确认 session 已结束后重试。';
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final connectedSummary = _connectedDevices.isEmpty
+        ? '暂无已连接设备'
+        : _connectedDevices
+              .map((device) => '${device.side} ${device.deviceName}')
+              .join('、');
+
     return _FeaturePageFrame(
-      path: path,
-      title: title,
-      summary: summary,
-      icon: icon,
-      accent: accent,
-      priority: priority,
+      path: widget.path,
+      title: widget.title,
+      summary: widget.summary,
+      icon: widget.icon,
+      accent: widget.accent,
+      priority: widget.priority,
       children: [
         const _SectionTitle('设备操作'),
         _ActionTile(
           icon: Icons.info_outline_rounded,
           title: '固件和序列号',
-          subtitle: '展示左右设备 firmware、model、serial 和电量。',
-          accent: accent,
+          subtitle: connectedSummary,
+          accent: widget.accent,
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
         const _ActionTile(
@@ -2227,19 +2301,28 @@ class _DeviceManagePage extends StatelessWidget {
           accent: Color(0xffb2773b),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
-        const _ActionTile(
+        _ActionTile(
           icon: Icons.refresh_rounded,
           title: '重新同步设备状态',
-          subtitle: '刷新左右设备连接、电量和运行快照。',
-          accent: Color(0xff43827b),
-          trailing: Icon(Icons.sync_rounded),
+          subtitle: _syncStatus ?? '刷新左右设备连接、电量和运行快照。',
+          accent: const Color(0xff43827b),
+          onTap: _isRefreshing ? null : _refreshDevices,
+          trailing: _isRefreshing
+              ? const SizedBox.square(
+                  dimension: 22,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                )
+              : const Icon(Icons.sync_rounded),
         ),
-        const _ActionTile(
+        _ActionTile(
           icon: Icons.link_off_rounded,
           title: '解绑设备',
           subtitle: '解绑前需要确认后台 session 已结束。',
-          accent: Color(0xff9f6378),
-          trailing: Icon(Icons.chevron_right_rounded),
+          accent: const Color(0xff9f6378),
+          onTap: _connectedDevices.isEmpty || _isRefreshing
+              ? null
+              : _disconnectAll,
+          trailing: const Icon(Icons.chevron_right_rounded),
         ),
       ],
     );
@@ -2273,6 +2356,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
 
   @override
   Widget build(BuildContext context) {
+    final runtime = MomCozyRuntimeScope.of(context);
     return _FeaturePageFrame(
       path: widget.path,
       title: widget.title,
@@ -2285,7 +2369,8 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
         _ActionTile(
           icon: Icons.person_search_outlined,
           title: '当前用户',
-          subtitle: 'demo-user · 正式环境从安全会话读取。',
+          subtitle:
+              '${runtime.userId} · baby ${runtime.babyId} · ${runtime.locale}',
           accent: widget.accent,
           trailing: const Icon(Icons.lock_outline_rounded),
         ),

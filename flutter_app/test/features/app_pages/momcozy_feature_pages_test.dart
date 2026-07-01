@@ -426,6 +426,32 @@ void main() {
       expect(find.text('2/3 已准备'), findsOneWidget);
       expect(find.text('购物车已同步'), findsOneWidget);
     });
+
+    testWidgets('device subpages read and update BLE runtime state', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/device/manage')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('L S12 Pro L'), findsOneWidget);
+      expect(find.text('已同步 1 台设备。'), findsOneWidget);
+
+      await tester.tap(find.text('解绑设备'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('已解绑 1 台设备。'), findsOneWidget);
+      expect(find.text('暂无已连接设备'), findsOneWidget);
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/device/user')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('demo-user-fixture · baby demo-baby-fixture · zh-CN'),
+        findsOneWidget,
+      );
+    });
   });
 }
 
