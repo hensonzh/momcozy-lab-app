@@ -41,3 +41,37 @@ class ApiHttpException implements Exception {
   @override
   String toString() => 'ApiHttpException($statusCode, $statusText)';
 }
+
+abstract interface class ApiMultipartTransport {
+  Future<Map<String, Object?>> uploadMultipart(
+    String path, {
+    Map<String, Object?> fields = const {},
+    required ApiUploadFile file,
+  });
+}
+
+class ApiUploadFile {
+  const ApiUploadFile({
+    required this.name,
+    required this.mimeType,
+    required this.sizeBytes,
+  });
+
+  final String name;
+  final String mimeType;
+  final int sizeBytes;
+}
+
+class ApiRequestCancelledException implements Exception {
+  const ApiRequestCancelledException();
+
+  @override
+  String toString() => 'ApiRequestCancelledException()';
+}
+
+class ApiRequestTimeoutException implements Exception {
+  const ApiRequestTimeoutException();
+
+  @override
+  String toString() => 'ApiRequestTimeoutException()';
+}
