@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
@@ -2508,6 +2509,47 @@ class _IbclcPage extends StatefulWidget {
 class _IbclcPageState extends State<_IbclcPage> {
   bool _accepted = false;
   bool _consultStarted = false;
+  bool _isStarting = false;
+  String? _syncStatus;
+
+  Future<void> _startConsult() async {
+    if (!_accepted || _consultStarted || _isStarting) return;
+    setState(() {
+      _isStarting = true;
+      _syncStatus = null;
+    });
+
+    try {
+      final runtime = MomCozyRuntimeScope.of(context);
+      final result = await runtime.clientEventClient.post(
+        AgentStreamClientEventRequest(
+          threadId: 'thread-${runtime.userId}',
+          userId: runtime.userId,
+          eventType: 'ibclc_consult_started',
+          label: '用户进入 IBCLC 在线咨询队列',
+          occurredAt: runtime.now().toIso8601String(),
+          locale: runtime.locale,
+          metadata: const {
+            'consult_id': 'ibclc-flutter-default',
+            'source': 'ibclc-chat',
+          },
+        ),
+      );
+      if (!mounted) return;
+      setState(() {
+        _consultStarted = true;
+        _isStarting = false;
+        _syncStatus = result.sent ? '咨询事件已同步。' : '本地已进入队列，稍后重试同步。';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _consultStarted = true;
+        _isStarting = false;
+        _syncStatus = '本地已进入队列，稍后重试同步。';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2543,19 +2585,25 @@ class _IbclcPageState extends State<_IbclcPage> {
           trailing: Icon(Icons.chevron_right_rounded),
         ),
         if (_consultStarted)
-          const _ActionTile(
+          _ActionTile(
             icon: Icons.support_agent_rounded,
             title: '咨询准备中',
-            subtitle: '正在保留本次咨询上下文，稍后可以继续查看。',
-            accent: Color(0xff43827b),
-            trailing: Icon(Icons.check_circle_outline_rounded),
+            subtitle: _syncStatus ?? '正在保留本次咨询上下文，稍后可以继续查看。',
+            accent: const Color(0xff43827b),
+            trailing: const Icon(Icons.check_circle_outline_rounded),
           ),
         FilledButton.icon(
-          onPressed: _accepted && !_consultStarted
-              ? () => setState(() => _consultStarted = true)
+          onPressed: _accepted && !_consultStarted && !_isStarting
+              ? _startConsult
               : null,
           icon: const Icon(Icons.chat_rounded),
-          label: Text(_consultStarted ? '已进入咨询队列' : '进入 IBCLC 咨询'),
+          label: Text(
+            _consultStarted
+                ? '已进入咨询队列'
+                : _isStarting
+                ? '进入中'
+                : '进入 IBCLC 咨询',
+          ),
         ),
       ],
     );

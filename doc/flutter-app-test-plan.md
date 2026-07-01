@@ -546,6 +546,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body
 [x] Flutter 通用 multipart transport 已接入 runtime，Media 页面可复用 `/v1/files/upload` repository contract
 [x] Flutter App API runtime tests 已覆盖 dart-define 默认配置、注入 transport 的 repository factory 和 runtime scope
+[x] Flutter App API runtime 已暴露 `/api/client-event` best-effort client，页面测试可注入 recording connector 验证事件写回
 [x] Flutter App API runtime tests 已覆盖 lazy BLE platform 注入和 connected device fixture
 [x] Flutter App API runtime tests 已覆盖 `PumpProtocolPlatform` 注入和 native coordinator 经 BLE fake 写出协议命令
 [x] Flutter `/status` widget tests 已覆盖 runtime repository fixture、妈妈/宝宝切换和异步状态渲染
@@ -555,6 +556,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/device` widget tests 已覆盖 BLE runtime fake、已连接设备恢复和扫描状态切换
 [x] Flutter `/calibration` widget tests 已覆盖保存左右舒适档位时通过 `PumpProtocolPlatform` 下发命令并进入 Pump
 [x] Flutter `/media-viewer` widget tests 已覆盖示例媒体上传的 multipart path、fields、file metadata 和成功状态渲染
+[x] Flutter `/ibclc-chat.html` widget tests 已覆盖进入咨询时上报 `ibclc_consult_started` client event，并保持 best-effort UI
 ```
 
 ### 7.3 语音合同
