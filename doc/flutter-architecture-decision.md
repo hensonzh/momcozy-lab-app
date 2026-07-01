@@ -179,6 +179,7 @@ features/
 [x] Flutter Media upload typed repository contract 已开始落地，multipart 上传、取消和超时边界已测试
 [x] Flutter 通用 JSON HTTP transport 已开始落地，typed repositories 可从 fixture contract 切到真实后端 connector
 [x] Flutter App API runtime scope 已接入，feature 页面后续从 App scope 获取 repository，避免 widget 内直接拼 URL/token
+[x] Flutter `/status` 页面已从静态壳推进到 repository-driven 异步页面，作为后续 Schedule/Records 页面接入样板
 [x] Flutter `AgentStreamClient` 抽象已落地，SSE/WebSocket adapters 共享 parser/fixtures 并通过 client tests
 [x] Flutter AG-UI outbound payload builder 已对齐首帧 fixture，后续真实 SSE/WS transport 只负责传输
 [x] Flutter Agent stream IO transport shell 已落地，SSE POST 与 WebSocket first-frame adapter 共用 endpoint/auth/redaction config
