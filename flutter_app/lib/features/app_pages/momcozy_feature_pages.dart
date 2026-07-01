@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 
 class MomCozyFeaturePage extends StatelessWidget {
   const MomCozyFeaturePage({
@@ -479,107 +481,202 @@ class _StatusPage extends StatefulWidget {
 
 class _StatusPageState extends State<_StatusPage> {
   String _view = 'mom';
+  MomCozyApiRuntime? _runtime;
+  late Future<StatusOverview> _overviewFuture;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final runtime = MomCozyRuntimeScope.of(context);
+    if (!identical(runtime, _runtime)) {
+      _runtime = runtime;
+      _overviewFuture = runtime.statusRepository.fetchOverview(
+        userId: runtime.userId,
+      );
+    }
+  }
+
+  void _reloadOverview() {
+    final runtime = _runtime;
+    if (runtime == null) return;
+    setState(() {
+      _overviewFuture = runtime.statusRepository.fetchOverview(
+        userId: runtime.userId,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final isMom = _view == 'mom';
 
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      priority: widget.priority,
-      trailing: SegmentedButton<String>(
-        selected: {_view},
-        showSelectedIcon: false,
-        onSelectionChanged: (next) => setState(() => _view = next.first),
-        segments: const [
-          ButtonSegment(
-            value: 'mom',
-            icon: Icon(Icons.person_outline_rounded),
-            label: Text('妈妈'),
-          ),
-          ButtonSegment(
-            value: 'baby',
-            icon: Icon(Icons.child_care_rounded),
-            label: Text('宝宝'),
-          ),
-        ],
-      ),
-      children: [
-        const _SectionTitle('今日状态'),
-        _MetricWrap(
-          children: isMom
-              ? [
-                  _MetricTile(
-                    label: '泵奶',
-                    value: '3 次',
-                    icon: Icons.water_drop_outlined,
-                    accent: widget.accent,
-                    note: '上次 10:40',
-                  ),
-                  _MetricTile(
-                    label: '亲喂',
-                    value: '2 次',
-                    icon: Icons.restaurant_rounded,
-                    accent: const Color(0xff43827b),
-                  ),
-                  _MetricTile(
-                    label: '休息',
-                    value: '4h20m',
-                    icon: Icons.bedtime_outlined,
-                    accent: const Color(0xff6b6da8),
-                  ),
-                ]
-              : [
-                  _MetricTile(
-                    label: '喂养',
-                    value: '5 次',
-                    icon: Icons.local_drink_outlined,
-                    accent: widget.accent,
-                    note: '总量 520 mL',
-                  ),
-                  _MetricTile(
-                    label: '体重',
-                    value: '6.2 kg',
-                    icon: Icons.monitor_weight_outlined,
-                    accent: const Color(0xff43827b),
-                  ),
-                  _MetricTile(
-                    label: '睡眠',
-                    value: '3h50m',
-                    icon: Icons.nightlight_round,
-                    accent: const Color(0xff6b6da8),
-                  ),
-                ],
-        ),
-        const SizedBox(height: 18),
-        const _SectionTitle('下一步'),
-        _ActionTile(
-          icon: Icons.edit_note_rounded,
-          title: isMom ? '补写孕期日记' : '记录成长事件',
-          subtitle: isMom ? '保留心情、体征和 Agent 分析上下文。' : '记录身高、体重、睡眠和喂养变化。',
+    return FutureBuilder<StatusOverview>(
+      future: _overviewFuture,
+      builder: (context, snapshot) {
+        return _FeaturePageFrame(
+          path: widget.path,
+          title: widget.title,
+          summary: widget.summary,
+          icon: widget.icon,
           accent: widget.accent,
-          onTap: () => context.go('/records'),
-          trailing: const Icon(Icons.chevron_right_rounded),
-        ),
-        _ActionTile(
-          icon: Icons.fact_check_outlined,
-          title: '今日待办',
-          subtitle: '2 项待确认，提醒和 Agent 建议会在这里汇总。',
-          accent: const Color(0xffb2773b),
-          onTap: () => context.go('/schedule'),
-          trailing: const _StatusChip(
-            label: '2',
-            icon: Icons.notifications_active_outlined,
-            accent: Color(0xffb2773b),
+          priority: widget.priority,
+          trailing: SegmentedButton<String>(
+            selected: {_view},
+            showSelectedIcon: false,
+            onSelectionChanged: (next) => setState(() => _view = next.first),
+            segments: const [
+              ButtonSegment(
+                value: 'mom',
+                icon: Icon(Icons.person_outline_rounded),
+                label: Text('妈妈'),
+              ),
+              ButtonSegment(
+                value: 'baby',
+                icon: Icon(Icons.child_care_rounded),
+                label: Text('宝宝'),
+              ),
+            ],
           ),
-        ),
-      ],
+          children: [
+            const _SectionTitle('今日状态'),
+            ..._overviewChildren(snapshot, isMom),
+            const SizedBox(height: 18),
+            const _SectionTitle('下一步'),
+            _ActionTile(
+              icon: Icons.edit_note_rounded,
+              title: isMom ? '补写孕期日记' : '记录成长事件',
+              subtitle: isMom ? '保留心情、体征和 Agent 分析上下文。' : '记录身高、体重、睡眠和喂养变化。',
+              accent: widget.accent,
+              onTap: () => context.go('/records'),
+              trailing: const Icon(Icons.chevron_right_rounded),
+            ),
+            _ActionTile(
+              icon: Icons.fact_check_outlined,
+              title: '今日待办',
+              subtitle: '2 项待确认，提醒和 Agent 建议会在这里汇总。',
+              accent: const Color(0xffb2773b),
+              onTap: () => context.go('/schedule'),
+              trailing: const _StatusChip(
+                label: '2',
+                icon: Icons.notifications_active_outlined,
+                accent: Color(0xffb2773b),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
+
+  List<Widget> _overviewChildren(
+    AsyncSnapshot<StatusOverview> snapshot,
+    bool isMom,
+  ) {
+    if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
+      return [
+        const _ActionTile(
+          icon: Icons.sync_rounded,
+          title: '正在同步状态',
+          subtitle: '正在读取妈妈和宝宝状态。',
+          accent: Color(0xff9f6378),
+          trailing: SizedBox.square(
+            dimension: 22,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      ];
+    }
+
+    if (snapshot.hasError) {
+      return [
+        _ActionTile(
+          icon: Icons.cloud_off_outlined,
+          title: '状态同步失败',
+          subtitle: '检查后端连接或 token 后重试。',
+          accent: const Color(0xff9f6378),
+          trailing: IconButton(
+            tooltip: '重试',
+            onPressed: _reloadOverview,
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+        ),
+      ];
+    }
+
+    final overview = snapshot.data;
+    if (overview == null || overview.isEmpty) {
+      return const [
+        _ActionTile(
+          icon: Icons.info_outline_rounded,
+          title: '暂无状态数据',
+          subtitle: '完成妈妈/宝宝资料后这里会显示当前状态。',
+          accent: Color(0xff7f6a75),
+          trailing: Icon(Icons.chevron_right_rounded),
+        ),
+      ];
+    }
+
+    return [
+      _MetricWrap(
+        children: isMom
+            ? _momOverviewMetrics(overview.mom)
+            : _babyOverviewMetrics(overview.baby),
+      ),
+    ];
+  }
+
+  List<Widget> _momOverviewMetrics(MomStatus? mom) {
+    return [
+      _MetricTile(
+        label: '阶段',
+        value: _textOr(mom?.stage, '未设置'),
+        icon: Icons.favorite_border_rounded,
+        accent: widget.accent,
+        note: mom?.postpartumDay == null ? null : '产后第 ${mom!.postpartumDay} 天',
+      ),
+      _MetricTile(
+        label: '默认用户',
+        value: _textOr(_runtime?.userId, '--'),
+        icon: Icons.person_outline_rounded,
+        accent: const Color(0xff43827b),
+      ),
+      const _MetricTile(
+        label: '同步状态',
+        value: '已连接',
+        icon: Icons.cloud_done_outlined,
+        accent: Color(0xff6b6da8),
+      ),
+    ];
+  }
+
+  List<Widget> _babyOverviewMetrics(BabyStatus? baby) {
+    return [
+      _MetricTile(
+        label: '宝宝',
+        value: _textOr(baby?.nickname, '未设置'),
+        icon: Icons.child_care_rounded,
+        accent: widget.accent,
+        note: baby?.ageDays == null ? null : '${baby!.ageDays} 天',
+      ),
+      _MetricTile(
+        label: '默认宝宝',
+        value: _textOr(_runtime?.babyId, '--'),
+        icon: Icons.badge_outlined,
+        accent: const Color(0xff43827b),
+      ),
+      const _MetricTile(
+        label: '同步状态',
+        value: '已连接',
+        icon: Icons.cloud_done_outlined,
+        accent: Color(0xff6b6da8),
+      ),
+    ];
+  }
+}
+
+String _textOr(String? value, String fallback) {
+  final trimmed = value?.trim();
+  return trimmed == null || trimmed.isEmpty ? fallback : trimmed;
 }
 
 class _SchedulePage extends StatefulWidget {

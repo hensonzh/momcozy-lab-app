@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
+
+import '../../support/fixture_api_transport.dart';
 
 void main() {
   group('MomCozy feature pages', () {
@@ -92,7 +95,9 @@ void main() {
     ) async {
       final router = createMomCozyRouter(initialLocation: '/device');
 
-      await tester.pumpWidget(MomCozyFlutterApp(router: router));
+      await tester.pumpWidget(
+        MomCozyFlutterApp(router: router, apiRuntime: _statusRuntime()),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.widgetWithText(OutlinedButton, '管理'));
@@ -130,6 +135,11 @@ void main() {
       expect(find.byKey(const ValueKey('route-page-/records')), findsOneWidget);
 
       router.go('/status');
+      await tester.pumpAndSettle();
+      await Scrollable.ensureVisible(
+        tester.element(find.text('今日待办')),
+        alignment: 0.35,
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('今日待办'));
       await tester.pumpAndSettle();
@@ -181,6 +191,22 @@ void main() {
       expect(find.text('咨询准备中'), findsWidgets);
       expect(find.text('已进入咨询队列'), findsOneWidget);
     });
+
+    testWidgets('status page loads overview from runtime repository', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('哺乳期'), findsOneWidget);
+      expect(find.text('产后第 21 天'), findsOneWidget);
+
+      await tester.tap(find.text('宝宝'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Mia'), findsOneWidget);
+      expect(find.text('88 天'), findsOneWidget);
+    });
   });
 }
 
@@ -202,18 +228,36 @@ class _FeaturePageHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: momCozyTheme(),
-      home: Scaffold(
-        body: MomCozyFeaturePage(
-          path: route.path,
-          title: route.title,
-          summary: route.summary,
-          icon: route.icon,
-          accent: route.accent,
-          priority: route.priority,
+    return MomCozyRuntimeScope(
+      apiRuntime: _statusRuntime(),
+      child: MaterialApp(
+        theme: momCozyTheme(),
+        home: Scaffold(
+          body: MomCozyFeaturePage(
+            path: route.path,
+            title: route.title,
+            summary: route.summary,
+            icon: route.icon,
+            accent: route.accent,
+            priority: route.priority,
+          ),
         ),
       ),
     );
   }
+}
+
+MomCozyApiRuntime _statusRuntime() {
+  return MomCozyApiRuntime(
+    jsonTransport: FixtureApiJsonTransport(const {
+      'status': 200,
+      'data': {
+        'mom': {'stage': '哺乳期', 'postpartum_day': 21},
+        'baby': {'nickname': 'Mia', 'age_days': 88},
+      },
+    }),
+    userId: 'demo-user-fixture',
+    babyId: 'demo-baby-fixture',
+    locale: 'zh-CN',
+  );
 }
