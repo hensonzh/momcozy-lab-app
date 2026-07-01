@@ -176,6 +176,7 @@ features/
 [x] Flutter Status/Schedule typed repository contracts 已开始落地，UI 后续通过 repository/use case 读取后端权威状态
 [x] Flutter Pump workstate typed repository contract 已开始落地，为 Pump 页面和后台 runner 复用统一 `/v1/pump/workstate` DTO 映射
 [x] Flutter Records feeding/growth typed repository contracts 已开始落地，保留 legacy alias 与 partial data fallback
+[x] Flutter Records pump_milk typed repository contract 已补齐，记录页可统一读取泵奶、喂养和成长列表
 [x] Flutter Media upload typed repository contract 已开始落地，multipart 上传、取消和超时边界已测试
 [x] Flutter 通用 JSON HTTP transport 已开始落地，typed repositories 可从 fixture contract 切到真实后端 connector
 [x] Flutter App API runtime scope 已接入，feature 页面后续从 App scope 获取 repository，避免 widget 内直接拼 URL/token

@@ -3,10 +3,14 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 
 const feedingRecordsEndpoint = '/v1/feeding/record/query';
+const pumpMilkRecordsEndpoint = '/v1/pump-milk/query';
 const growthRecordsEndpoint = '/v1/growth/history';
 
 class RecordsApiRepository
-    implements FeedingRecordsRepository, GrowthRecordsRepository {
+    implements
+        FeedingRecordsRepository,
+        PumpMilkRecordsRepository,
+        GrowthRecordsRepository {
   const RecordsApiRepository({required this.transport});
 
   final ApiJsonTransport transport;
@@ -30,6 +34,31 @@ class RecordsApiRepository
               )
               .toList(growable: false)
         : const <FeedingRecord>[];
+  }
+
+  @override
+  Future<List<PumpMilkRecord>> fetchPumpMilkRecords({
+    required String userId,
+    required DateTime date,
+  }) async {
+    final response = await transport.getJson(
+      pumpMilkRecordsEndpoint,
+      query: {'user_id': userId, 'timestamp': _apiDate(date)},
+    );
+    final data = _mapOrEmpty(unwrapApiEnvelope(response));
+    final records =
+        data['pump_milk_list'] ??
+        data['pumpMilkList'] ??
+        data['records'] ??
+        data['list'];
+    return records is List
+        ? records
+              .whereType<Map>()
+              .map(
+                (record) => _pumpMilkRecord(Map<String, Object?>.from(record)),
+              )
+              .toList(growable: false)
+        : const <PumpMilkRecord>[];
   }
 
   @override
@@ -61,6 +90,28 @@ FeedingRecord _feedingRecord(Map<String, Object?> data) {
   );
 }
 
+PumpMilkRecord _pumpMilkRecord(Map<String, Object?> data) {
+  return PumpMilkRecord(
+    id: _id(data['pump_id'] ?? data['pumpId'] ?? data['id']),
+    title:
+        _string(data['pump_title'] ?? data['pumpTitle'] ?? data['title']) ?? '',
+    pumpType: _int(data['pump_type'] ?? data['pumpType']),
+    pumpSource: _int(data['pump_source'] ?? data['pumpSource']),
+    amountMl: _int(
+      data['pump_milk_volum'] ??
+          data['pumpMilkVolum'] ??
+          data['amount_ml'] ??
+          data['amountMl'],
+    ),
+    occurredAt: _dateTime(
+      data['pump_time'] ??
+          data['pumpTime'] ??
+          data['occurred_at'] ??
+          data['occurredAt'],
+    ),
+  );
+}
+
 GrowthRecord _growthRecord(Map<String, Object?> data) {
   return GrowthRecord(
     id: _string(data['id'] ?? data['recordId']) ?? '',
@@ -79,6 +130,11 @@ String _apiDate(DateTime date) {
   final month = utc.month.toString().padLeft(2, '0');
   final day = utc.day.toString().padLeft(2, '0');
   return '${utc.year}-$month-$day';
+}
+
+String _id(Object? value) {
+  if (value is int) return value.toString();
+  return value is String ? value : '';
 }
 
 String? _string(Object? value) => value is String ? value : null;

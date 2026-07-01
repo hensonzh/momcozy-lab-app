@@ -1,0 +1,24 @@
+{
+  "domain": "pump_milk",
+  "endpoint": "/v1/pump-milk/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "timestamp": "2026-06-29"
+    }
+  },
+  "variant": "partial",
+  "response": {
+    "status": 200,
+    "message": "success",
+    "data": {
+      "error": 0,
+      "pump_milk_list": [
+        {
+          "pump_id": 3001
+        }
+      ]
+    }
+  }
+}

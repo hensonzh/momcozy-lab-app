@@ -59,6 +59,59 @@ void main() {
       expect(partial.single.occurredAt, isNull);
     });
 
+    test('maps pump milk records and request contract', () async {
+      final transport = _transport('pump_milk', 'success');
+      final repository = RecordsApiRepository(transport: transport);
+
+      final records = await repository.fetchPumpMilkRecords(
+        userId: 'demo-user-fixture',
+        date: DateTime.utc(2026, 6, 29),
+      );
+
+      expect(transport.lastPath, pumpMilkRecordsEndpoint);
+      expect(transport.lastQuery, {
+        'user_id': 'demo-user-fixture',
+        'timestamp': '2026-06-29',
+      });
+      expect(records.single.id, '3001');
+      expect(records.single.title, 'Morning pump');
+      expect(records.single.pumpType, 0);
+      expect(records.single.pumpSource, 0);
+      expect(records.single.amountMl, 120);
+      expect(records.single.occurredAt, DateTime.parse('2026-06-29T08:40:00Z'));
+    });
+
+    test('maps pump milk aliases and partial empty data', () async {
+      final legacy =
+          await RecordsApiRepository(
+            transport: _transport('pump_milk', 'legacy_alias'),
+          ).fetchPumpMilkRecords(
+            userId: 'demo-user-fixture',
+            date: DateTime.utc(2026, 6, 29),
+          );
+      final empty =
+          await RecordsApiRepository(
+            transport: _transport('pump_milk', 'empty'),
+          ).fetchPumpMilkRecords(
+            userId: 'demo-user-fixture',
+            date: DateTime.utc(2026, 6, 29),
+          );
+      final partial =
+          await RecordsApiRepository(
+            transport: _transport('pump_milk', 'partial'),
+          ).fetchPumpMilkRecords(
+            userId: 'demo-user-fixture',
+            date: DateTime.utc(2026, 6, 29),
+          );
+
+      expect(legacy.single.id, '3001');
+      expect(legacy.single.amountMl, 120);
+      expect(empty, isEmpty);
+      expect(partial.single.id, '3001');
+      expect(partial.single.title, '');
+      expect(partial.single.occurredAt, isNull);
+    });
+
     test('maps growth records and aliases', () async {
       final successTransport = _transport('growth', 'success');
       final success = await RecordsApiRepository(
@@ -104,6 +157,15 @@ void main() {
           babyId: 'baby-fixture',
         ),
         throwsA(isA<ApiHttpException>()),
+      );
+      await expectLater(
+        RecordsApiRepository(
+          transport: _transport('pump_milk', 'business_error'),
+        ).fetchPumpMilkRecords(
+          userId: 'demo-user-fixture',
+          date: DateTime.utc(2026, 6, 29),
+        ),
+        throwsA(isA<ApiBusinessException>()),
       );
     });
   });
