@@ -548,6 +548,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/status` widget tests 已覆盖 runtime repository fixture、妈妈/宝宝切换和异步状态渲染
 [x] Flutter `/schedule` widget tests 已覆盖 runtime repository fixture、day plan 渲染和本地 checkbox 草稿交互
 [x] Flutter `/records` widget tests 已覆盖 runtime repository fixture、泵奶/喂养/成长筛选和动态汇总渲染
+[x] Flutter `/pump` widget tests 已覆盖 session 控制触发 `/v1/pump/workstate` runtime repository 同步和后端回复展示
 ```
 
 ### 7.3 语音合同

@@ -183,6 +183,7 @@ features/
 [x] Flutter `/status` 页面已从静态壳推进到 repository-driven 异步页面，作为后续 Schedule/Records 页面接入样板
 [x] Flutter `/schedule` 页面已从静态任务推进到 repository-driven day plan，页面仅保留 checkbox 草稿 UI 状态
 [x] Flutter `/records` 页面已从静态记录推进到 repository-driven records overview，筛选状态保留在页面本地
+[x] Flutter `/pump` 页面已将 session 控制接入 `/v1/pump/workstate` repository，真泵 BLE 控制仍保留到设备验证阶段
 [x] Flutter `AgentStreamClient` 抽象已落地，SSE/WebSocket adapters 共享 parser/fixtures 并通过 client tests
 [x] Flutter AG-UI outbound payload builder 已对齐首帧 fixture，后续真实 SSE/WS transport 只负责传输
 [x] Flutter Agent stream IO transport shell 已落地，SSE POST 与 WebSocket first-frame adapter 共用 endpoint/auth/redaction config
