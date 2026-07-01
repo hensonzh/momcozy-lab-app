@@ -42,6 +42,18 @@ flutter test
 flutter build apk --debug
 ```
 
+Agent Hub 默认使用 SSE transport，并可通过 dart-define 配置：
+
+```bash
+flutter run \
+  --dart-define=MOMCOZY_AGENT_SSE_URL=http://192.168.x.x:8768/api/ag-ui \
+  --dart-define=MOMCOZY_API_TOKEN=APP_API_TEST \
+  --dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user \
+  --dart-define=MOMCOZY_AGENT_THREAD_ID=thread-demo
+```
+
+Android 真机不能使用 `127.0.0.1` 访问电脑上的 Agent 服务，需要改成手机可访问的局域网或公网地址。Android emulator 可使用 `10.0.2.2`。
+
 Current Android PoC package:
 
 - `applicationId`: `com.momcozymai.app.flutterpoc`
@@ -72,6 +84,7 @@ Current Dart test coverage:
 - Android MethodChannel adapter fixtures cover `MmcBle` BLE method schemas/events and `PumpSessionNotification` foreground method schemas.
 - Pump agent upload MethodChannel adapter fixtures cover native method schemas and failure events.
 - Pump agent upload fake platform fixtures cover method schemas, call/failure streams, sensitive failure redaction, and duplicate upload dedupe keys.
+- Agent Hub runtime fixtures cover default SSE runner injection, AG-UI payload generation, and route-shell composer send-ready state.
 
 Next migration gap:
 
