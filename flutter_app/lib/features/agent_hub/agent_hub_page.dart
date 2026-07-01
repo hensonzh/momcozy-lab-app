@@ -55,16 +55,31 @@ class _AgentHubPageState extends State<AgentHubPage> {
       !_state.isActive &&
       _composerController.text.trim().isNotEmpty;
 
+  bool get _canRetry =>
+      widget.runner != null && _state.canRetry && _activeRequest != null;
+
   Future<void> _sendMessage() async {
     final runner = widget.runner;
     final message = _composerController.text.trim();
     if (runner == null || message.isEmpty || _state.isActive) return;
 
-    await _runSubscription?.cancel();
-    _runSubscription = null;
     final request = widget.requestBuilder(message);
-    _activeRequest = request;
     _composerController.clear();
+    await _startRun(request);
+  }
+
+  Future<void> _retryRun() async {
+    final request = _activeRequest;
+    if (request == null || widget.runner == null || !_state.canRetry) return;
+    await _startRun(request);
+  }
+
+  Future<void> _startRun(AgentStreamRequest request) async {
+    final runner = widget.runner;
+    if (runner == null || _state.isActive) return;
+
+    _cancelRunSubscription();
+    _activeRequest = request;
     setState(() {
       _state = const AgentStreamRunState().start();
     });
@@ -165,7 +180,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
           ],
         ),
         const SizedBox(height: 18),
-        AgentRunTranscript(state: _state),
+        AgentRunTranscript(
+          state: _state,
+          canRetry: _canRetry,
+          onRetry: _retryRun,
+        ),
         const SizedBox(height: 16),
         AgentComposerBar(
           controller: _composerController,
@@ -265,9 +284,16 @@ class AgentRunPhaseBadge extends StatelessWidget {
 }
 
 class AgentRunTranscript extends StatelessWidget {
-  const AgentRunTranscript({super.key, required this.state});
+  const AgentRunTranscript({
+    super.key,
+    required this.state,
+    this.canRetry = false,
+    this.onRetry,
+  });
 
   final AgentStreamRunState state;
+  final bool canRetry;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -317,6 +343,15 @@ class AgentRunTranscript extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ],
+            if (canRetry) ...[
+              const SizedBox(height: 12),
+              FilledButton.tonalIcon(
+                key: const ValueKey('agent-retry-button'),
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('重试'),
               ),
             ],
           ],

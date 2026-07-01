@@ -130,6 +130,38 @@ void main() {
     expect(body.containsKey('user_id'), isFalse);
   });
 
+  testWidgets('Agent Hub retries the last request after disconnect', (
+    tester,
+  ) async {
+    final client = _RetryAgentStreamClient();
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Retry my request',
+    );
+    await tester.pump();
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('连接中断'), findsOneWidget);
+    expect(find.textContaining('socket closed'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-retry-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests, hasLength(2));
+    expect(client.requests.first.message, 'Retry my request');
+    expect(client.requests.last.message, 'Retry my request');
+    expect(find.text('已完成'), findsOneWidget);
+    expect(find.text('Retried answer'), findsOneWidget);
+  });
+
   testWidgets('Agent Hub renders disconnected partial response state', (
     tester,
   ) async {
@@ -208,6 +240,41 @@ class _FixtureAgentStreamClient implements AgentStreamClient {
       await Future<void>.delayed(Duration.zero);
       yield event;
     }
+  }
+}
+
+class _RetryAgentStreamClient implements AgentStreamClient {
+  final requests = <AgentStreamRequest>[];
+
+  @override
+  Stream<AgentStreamEvent> stream(AgentStreamRequest request) async* {
+    requests.add(request);
+    await Future<void>.delayed(Duration.zero);
+
+    if (requests.length == 1) {
+      yield AgentStreamEvent(const {
+        'type': 'TEXT_MESSAGE_CONTENT',
+        'thread_id': 'thread-demo',
+        'run_id': 'run-first',
+        'message_id': 'msg-first',
+        'delta': 'Partial answer',
+      });
+      throw StateError('socket closed');
+    }
+
+    yield AgentStreamEvent(const {
+      'type': 'TEXT_MESSAGE_CONTENT',
+      'thread_id': 'thread-demo',
+      'run_id': 'run-retry',
+      'message_id': 'msg-retry',
+      'delta': 'Retried answer',
+    });
+    yield AgentStreamEvent(const {
+      'type': 'RUN_FINISHED',
+      'thread_id': 'thread-demo',
+      'run_id': 'run-retry',
+      'message_id': 'msg-retry',
+    });
   }
 }
 

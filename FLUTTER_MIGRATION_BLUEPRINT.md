@@ -947,6 +947,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Agent Hub composer 已接入 injected `AgentStreamRunner`，覆盖文本发送、fixture streaming 完成态和本地 stop UI
 [x] Flutter App root 已注入默认 Agent Hub SSE runner，endpoint/token/user/thread 支持 dart-define 配置
 [x] Flutter Agent Hub stop 已接入 best-effort `/api/ag-ui-cancel` client，UI 本地停止不等待网络
+[x] Flutter Agent Hub retry 已复用上一轮 `AgentStreamRequest`，覆盖断线后重试成功 flow
 ```
 
 ---
