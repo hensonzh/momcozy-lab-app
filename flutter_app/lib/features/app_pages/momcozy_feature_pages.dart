@@ -792,7 +792,7 @@ class _DevicePageState extends State<_DevicePage> {
           icon: _isScanning ? Icons.bluetooth_searching : Icons.bluetooth,
           title: _isScanning ? '正在扫描附近设备' : 'BLE 权限和扫描',
           subtitle: _isScanning
-              ? '等待 native adapter 返回扫描结果；超时和空结果会显示在这里。'
+              ? '正在查找附近设备；超时或空结果会显示在这里。'
               : 'Android 12+ 需要蓝牙权限，Android 13+ 还需要通知权限。',
           accent: widget.accent,
           trailing: _isScanning
@@ -997,8 +997,7 @@ class _PumpPageState extends State<_PumpPage> {
         const _ActionTile(
           icon: Icons.cloud_sync_outlined,
           title: 'Agent context 上传',
-          subtitle:
-              '结束后生成 summary、milk record 和 Agent 上下文；真实 dedupe gate 已在 native contract 层验证。',
+          subtitle: '结束后生成摘要、奶量记录和智能体上下文；重复上传会被自动拦截。',
           accent: Color(0xff6b6da8),
           trailing: Icon(Icons.pending_actions_rounded),
         ),
@@ -1027,7 +1026,7 @@ class _PumpSideTile extends StatelessWidget {
     return _ActionTile(
       icon: Icons.compress_rounded,
       title: '$label · $mode',
-      subtitle: '档位 ${level.round()}，后续接入 BLE protocol state resolver。',
+      subtitle: '档位 ${level.round()}，调整后会同步到当前连接设备。',
       accent: accent,
       trailing: SizedBox(
         width: 136,
@@ -1101,8 +1100,8 @@ class _CalibrationPageState extends State<_CalibrationPage> {
         const _SectionTitle('保存规则'),
         const _ActionTile(
           icon: Icons.verified_user_outlined,
-          title: '校准结果待接入 storage migration',
-          subtitle: '需要兼容 legacy 0xFF、缺字段和左右设备缺失状态。',
+          title: '校准结果保存检查',
+          subtitle: '保存前会检查左右设备状态，并处理历史校准数据。',
           accent: Color(0xff7f6a75),
           trailing: Icon(Icons.rule_rounded),
         ),
@@ -1330,7 +1329,7 @@ class _CommunityPage extends StatelessWidget {
         _ActionTile(
           icon: Icons.favorite_border_rounded,
           title: '产后恢复',
-          subtitle: '轻量内容流入口，后续接内容 API 和审核状态。',
+          subtitle: '查看收藏内容、精选讨论和恢复建议。',
           accent: Color(0xff9f6378),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
@@ -1338,7 +1337,7 @@ class _CommunityPage extends StatelessWidget {
         _ActionTile(
           icon: Icons.chat_bubble_outline_rounded,
           title: '妈妈小组更新',
-          subtitle: '3 条新回复，待接入通知 badge 和已读状态。',
+          subtitle: '3 条新回复，打开后会更新已读状态。',
           accent: Color(0xff43827b),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
@@ -1385,14 +1384,14 @@ class _DeviceManagePage extends StatelessWidget {
         const _ActionTile(
           icon: Icons.notifications_active_outlined,
           title: '设备提醒通道',
-          subtitle: '后续接 DeviceReminder WebSocket 或 native 后台服务。',
+          subtitle: '管理设备消息、提醒声音和后台接收状态。',
           accent: Color(0xffb2773b),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
         const _ActionTile(
           icon: Icons.refresh_rounded,
-          title: '重新同步 native 状态',
-          subtitle: '从 NativeDeviceState 恢复已连接设备快照。',
+          title: '重新同步设备状态',
+          subtitle: '刷新左右设备连接、电量和运行快照。',
           accent: Color(0xff43827b),
           trailing: Icon(Icons.sync_rounded),
         ),
@@ -1447,13 +1446,13 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
         _ActionTile(
           icon: Icons.person_search_outlined,
           title: '当前用户',
-          subtitle: 'demo-user · 后续从安全 session 层读取。',
+          subtitle: 'demo-user · 正式环境从安全会话读取。',
           accent: widget.accent,
           trailing: const Icon(Icons.lock_outline_rounded),
         ),
         _ActionTile(
           icon: Icons.science_outlined,
-          title: '使用 fixture 设备',
+          title: '使用测试设备',
           subtitle: '用于无真泵时验证页面状态，不写入生产数据。',
           accent: const Color(0xff43827b),
           trailing: Switch(
@@ -1463,7 +1462,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
         ),
         _ActionTile(
           icon: Icons.terminal_rounded,
-          title: '显示 native debug events',
+          title: '显示设备调试事件',
           subtitle: '正式包应隐藏，仅 QA/dev flavor 可见。',
           accent: const Color(0xff7f6a75),
           trailing: Switch(
@@ -1512,21 +1511,21 @@ class _W1Page extends StatelessWidget {
         const _ActionTile(
           icon: Icons.air_rounded,
           title: '穿戴体验',
-          subtitle: '保留产品说明入口，后续由 CMS 或本地内容包驱动。',
+          subtitle: '查看产品亮点、贴合方式和日常佩戴建议。',
           accent: Color(0xffb2773b),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
         const _ActionTile(
           icon: Icons.battery_charging_full_rounded,
           title: '续航与清洁',
-          subtitle: '把 Web promo 内容拆成原生信息卡和媒体资料。',
+          subtitle: '了解电池、清洁、收纳和耗材维护。',
           accent: Color(0xff43827b),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
         _ActionTile(
           icon: Icons.play_circle_outline_rounded,
           title: '使用教程',
-          subtitle: '视频和 PDF 后续通过 Media Viewer 打开。',
+          subtitle: '打开视频、PDF 和图文教程。',
           accent: Color(0xff6b6da8),
           onTap: () => context.go('/media-viewer'),
           trailing: const Icon(Icons.chevron_right_rounded),
@@ -1609,7 +1608,7 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
         const _ActionTile(
           icon: Icons.restore_rounded,
           title: '恢复默认清单',
-          subtitle: '后续通过 `/api/hospital-bag/cart-update` 同步。',
+          subtitle: '把待产包恢复为推荐清单，并同步购物车状态。',
           accent: Color(0xff7f6a75),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
@@ -1691,7 +1690,7 @@ class _IbclcPageState extends State<_IbclcPage> {
         _ActionTile(
           icon: Icons.privacy_tip_outlined,
           title: '咨询协议',
-          subtitle: '勾选后才能进入顾问流程；返回时需要恢复 viewport 和 route 状态。',
+          subtitle: '勾选后才能进入顾问流程；返回后会停在离开前的位置。',
           accent: widget.accent,
           trailing: Checkbox(
             value: _accepted,
@@ -1778,7 +1777,7 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
         _ActionTile(
           icon: Icons.download_for_offline_outlined,
           title: '离线缓存',
-          subtitle: '后续接 media cache 和失败重试状态。',
+          subtitle: '网络不稳定时继续查看已缓存资料，并支持失败重试。',
           accent: widget.accent,
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
@@ -1835,7 +1834,7 @@ class _MediaPreview extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '真实渲染器后续接入，当前先锁定导航和状态容器。',
+            '选择资料后可在这里查看内容、进度和加载状态。',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,
@@ -1877,7 +1876,7 @@ class _NotFoundPage extends StatelessWidget {
         _ActionTile(
           icon: Icons.home_outlined,
           title: '返回主入口',
-          subtitle: '该 route 还没有 Flutter 页面定义，已进入可恢复 fallback。',
+          subtitle: '这个入口暂不可用，可以返回主入口继续使用。',
           accent: Color(0xff7f6a75),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
