@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MomCozyFeaturePage extends StatelessWidget {
   const MomCozyFeaturePage({
@@ -569,6 +570,7 @@ class _StatusPageState extends State<_StatusPage> {
           title: '今日待办',
           subtitle: '2 项待确认，提醒和 Agent 建议会在这里汇总。',
           accent: const Color(0xffb2773b),
+          onTap: () => context.go('/schedule'),
           trailing: const _StatusChip(
             label: '2',
             icon: Icons.notifications_active_outlined,
@@ -779,7 +781,7 @@ class _DevicePageState extends State<_DevicePage> {
             label: Text(_isScanning ? '停止扫描' : '扫描'),
           ),
           OutlinedButton.icon(
-            onPressed: () {},
+            onPressed: () => context.go('/device/manage'),
             icon: const Icon(Icons.settings_remote_rounded),
             label: const Text('管理'),
           ),
@@ -822,6 +824,7 @@ class _DevicePageState extends State<_DevicePage> {
           title: '进入舒适校准',
           subtitle: '复用左右设备状态，保存后进入泵奶参数。',
           accent: const Color(0xff9b6b2f),
+          onTap: () => context.go('/calibration'),
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
         _ActionTile(
@@ -829,6 +832,7 @@ class _DevicePageState extends State<_DevicePage> {
           title: '内部调试参数',
           subtitle: '仅用于 QA/dev，正式包需要 feature flag 控制。',
           accent: const Color(0xff7f6a75),
+          onTap: () => context.go('/device/user'),
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
       ],
@@ -1103,7 +1107,7 @@ class _CalibrationPageState extends State<_CalibrationPage> {
           trailing: Icon(Icons.rule_rounded),
         ),
         FilledButton.icon(
-          onPressed: () {},
+          onPressed: () => context.go('/pump'),
           icon: const Icon(Icons.save_rounded),
           label: const Text('保存并进入泵奶'),
         ),
@@ -1503,16 +1507,16 @@ class _W1Page extends StatelessWidget {
         icon: Icons.workspace_premium_outlined,
         accent: Color(0xffb2773b),
       ),
-      children: const [
-        _SectionTitle('W1'),
-        _ActionTile(
+      children: [
+        const _SectionTitle('W1'),
+        const _ActionTile(
           icon: Icons.air_rounded,
           title: '穿戴体验',
           subtitle: '保留产品说明入口，后续由 CMS 或本地内容包驱动。',
           accent: Color(0xffb2773b),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
-        _ActionTile(
+        const _ActionTile(
           icon: Icons.battery_charging_full_rounded,
           title: '续航与清洁',
           subtitle: '把 Web promo 内容拆成原生信息卡和媒体资料。',
@@ -1524,7 +1528,8 @@ class _W1Page extends StatelessWidget {
           title: '使用教程',
           subtitle: '视频和 PDF 后续通过 Media Viewer 打开。',
           accent: Color(0xff6b6da8),
-          trailing: Icon(Icons.chevron_right_rounded),
+          onTap: () => context.go('/media-viewer'),
+          trailing: const Icon(Icons.chevron_right_rounded),
         ),
       ],
     );

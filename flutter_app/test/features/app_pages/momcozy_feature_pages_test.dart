@@ -67,6 +67,64 @@ void main() {
       expect(find.text('页面未找到'), findsOneWidget);
       expect(find.text('返回主入口'), findsOneWidget);
     });
+
+    testWidgets('feature entry actions navigate through route workflows', (
+      tester,
+    ) async {
+      final router = createMomCozyRouter(initialLocation: '/device');
+
+      await tester.pumpWidget(MomCozyFlutterApp(router: router));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(OutlinedButton, '管理'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('route-page-/device/manage')),
+        findsOneWidget,
+      );
+
+      router.go('/device');
+      await tester.pumpAndSettle();
+      await Scrollable.ensureVisible(
+        tester.element(find.text('进入舒适校准')),
+        alignment: 0.35,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('进入舒适校准'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('route-page-/calibration')),
+        findsOneWidget,
+      );
+      expect(find.byType(NavigationBar), findsNothing);
+
+      await tester.ensureVisible(find.widgetWithText(FilledButton, '保存并进入泵奶'));
+      await tester.tap(find.widgetWithText(FilledButton, '保存并进入泵奶'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+
+      router.go('/status');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('今日待办'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('route-page-/schedule')),
+        findsOneWidget,
+      );
+      expect(find.byType(NavigationBar), findsOneWidget);
+
+      router.go('/w1');
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('使用教程'));
+      await tester.tap(find.text('使用教程'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('route-page-/media-viewer')),
+        findsOneWidget,
+      );
+      expect(find.byType(NavigationBar), findsNothing);
+    });
   });
 }
 
