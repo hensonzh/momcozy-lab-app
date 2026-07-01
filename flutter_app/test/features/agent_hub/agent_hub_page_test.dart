@@ -1,8 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
@@ -88,6 +92,44 @@ void main() {
     expect(find.text('已停止本次回复'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub posts best-effort cancel for active runner', (
+    tester,
+  ) async {
+    final cancelConnector = _RecordingCancelConnector();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: const AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            threadId: 'thread-demo',
+            runId: 'run-demo',
+            textContent: 'Partial answer',
+          ),
+          cancelClient: AgentStreamCancelClient(
+            endpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-cancel'),
+            ),
+            connector: cancelConnector,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('正在回复'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
+    await tester.pump();
+    await cancelConnector.called.future;
+
+    final body = jsonDecode(cancelConnector.body!) as Map<String, Object?>;
+    expect(find.text('已停止'), findsOneWidget);
+    expect(cancelConnector.uri!.path, '/api/ag-ui-cancel');
+    expect(body['threadId'], 'thread-demo');
+    expect(body['runId'], 'run-demo');
+    expect(body.containsKey('user_id'), isFalse);
+  });
+
   testWidgets('Agent Hub renders disconnected partial response state', (
     tester,
   ) async {
@@ -166,5 +208,25 @@ class _FixtureAgentStreamClient implements AgentStreamClient {
       await Future<void>.delayed(Duration.zero);
       yield event;
     }
+  }
+}
+
+class _RecordingCancelConnector implements AgentStreamControlHttpConnector {
+  final called = Completer<void>();
+  Uri? uri;
+  Map<String, String>? headers;
+  String? body;
+
+  @override
+  Future<AgentStreamControlHttpResponse> post(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) async {
+    this.uri = uri;
+    this.headers = headers;
+    this.body = body;
+    if (!called.isCompleted) called.complete();
+    return const AgentStreamControlHttpResponse(statusCode: 200, body: '{}');
   }
 }

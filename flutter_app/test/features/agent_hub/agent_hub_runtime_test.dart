@@ -30,4 +30,17 @@ void main() {
     expect(message['id'], startsWith('msg-flutter-'));
     expect(message['content'], 'Review my pattern');
   });
+
+  test('default Agent Hub cancel client uses unified API endpoint', () {
+    final cancelClient = createDefaultAgentHubCancelClient();
+
+    expect(
+      cancelClient.endpoint.uri.toString(),
+      'http://127.0.0.1:8769/api/ag-ui-cancel',
+    );
+    expect(
+      cancelClient.endpoint.headers,
+      containsPair('X-Momcozy-Client', 'flutter'),
+    );
+  });
 }

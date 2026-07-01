@@ -222,7 +222,10 @@ class MomCozyRoutePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (route.path == '/') {
-      return AgentHubPage(runner: createDefaultAgentHubRunner());
+      return AgentHubPage(
+        runner: createDefaultAgentHubRunner(),
+        cancelClient: createDefaultAgentHubCancelClient(),
+      );
     }
 
     final textTheme = Theme.of(context).textTheme;

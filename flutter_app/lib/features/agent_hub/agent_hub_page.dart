@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
@@ -13,11 +14,13 @@ class AgentHubPage extends StatefulWidget {
     super.key,
     this.state = const AgentStreamRunState(),
     this.runner,
+    this.cancelClient,
     this.requestBuilder = buildDefaultAgentHubRequest,
   });
 
   final AgentStreamRunState state;
   final AgentStreamRunner? runner;
+  final AgentStreamCancelClient? cancelClient;
   final AgentHubRequestBuilder requestBuilder;
 
   @override
@@ -29,6 +32,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   late final TextEditingController _composerController =
       TextEditingController();
   StreamSubscription<AgentStreamRunState>? _runSubscription;
+  AgentStreamRequest? _activeRequest;
 
   @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
@@ -58,13 +62,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
     await _runSubscription?.cancel();
     _runSubscription = null;
+    final request = widget.requestBuilder(message);
+    _activeRequest = request;
     _composerController.clear();
     setState(() {
       _state = const AgentStreamRunState().start();
     });
 
     _runSubscription = runner
-        .run(widget.requestBuilder(message))
+        .run(request)
         .listen(
           (nextState) {
             if (!mounted || !_state.isActive) return;
@@ -83,6 +89,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _cancelRun() {
     if (!_state.isActive) return;
+    final activeState = _state;
+    final activeRequest = _activeRequest;
     setState(() {
       _state = _state.requestCancel();
     });
@@ -90,6 +98,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _state = _state.applyCancelResult(acknowledged: true);
     });
+    _sendBestEffortServerCancel(activeState, activeRequest);
   }
 
   void _cancelRunSubscription() {
@@ -97,6 +106,27 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _runSubscription = null;
     if (subscription == null) return;
     unawaited(subscription.cancel().catchError((Object _) {}));
+  }
+
+  void _sendBestEffortServerCancel(
+    AgentStreamRunState activeState,
+    AgentStreamRequest? activeRequest,
+  ) {
+    final cancelClient = widget.cancelClient;
+    if (cancelClient == null) return;
+
+    final threadId = activeState.threadId ?? activeRequest?.threadId;
+    if (threadId == null || threadId.trim().isEmpty) return;
+
+    unawaited(
+      cancelClient.cancel(
+        AgentStreamCancelRequest(
+          threadId: threadId,
+          runId: activeState.runId,
+          userId: activeRequest?.userId,
+        ),
+      ),
+    );
   }
 
   @override
