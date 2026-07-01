@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
@@ -302,6 +303,7 @@ class AgentRunTranscript extends StatelessWidget {
     final text = state.textContent.trim().isEmpty
         ? '我在。'
         : state.textContent.trim();
+    final workSteps = _workStepsFromEvents(state.events);
 
     return DecoratedBox(
       key: const ValueKey('agent-run-transcript'),
@@ -354,6 +356,10 @@ class AgentRunTranscript extends StatelessWidget {
                 label: const Text('重试'),
               ),
             ],
+            if (workSteps.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              AgentRunWorkPanel(steps: workSteps),
+            ],
           ],
         ),
       ),
@@ -390,6 +396,102 @@ class AgentRunTranscript extends StatelessWidget {
     };
   }
 }
+
+class AgentRunWorkPanel extends StatelessWidget {
+  const AgentRunWorkPanel({super.key, required this.steps});
+
+  final List<AgentRunWorkStep> steps;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      key: const ValueKey('agent-work-panel'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '处理进度',
+          style: textTheme.labelLarge?.copyWith(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 8),
+        for (final step in steps) ...[
+          Row(
+            key: ValueKey('agent-work-step-${step.id}'),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(step.icon, size: 18, color: step.color(colorScheme)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  step.title,
+                  style: textTheme.bodySmall?.copyWith(
+                    height: 1.35,
+                    color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                step.statusLabel,
+                style: textTheme.labelSmall?.copyWith(
+                  color: step.color(colorScheme),
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          if (step != steps.last) const SizedBox(height: 8),
+        ],
+      ],
+    );
+  }
+}
+
+class AgentRunWorkStep {
+  const AgentRunWorkStep({
+    required this.id,
+    required this.title,
+    required this.status,
+  });
+
+  final String id;
+  final String title;
+  final AgentRunWorkStepStatus status;
+
+  String get statusLabel {
+    return switch (status) {
+      AgentRunWorkStepStatus.running => '进行中',
+      AgentRunWorkStepStatus.completed => '完成',
+      AgentRunWorkStepStatus.waiting => '待确认',
+      AgentRunWorkStepStatus.failed => '失败',
+    };
+  }
+
+  IconData get icon {
+    return switch (status) {
+      AgentRunWorkStepStatus.running => Icons.sync_rounded,
+      AgentRunWorkStepStatus.completed => Icons.check_circle_outline_rounded,
+      AgentRunWorkStepStatus.waiting => Icons.fact_check_outlined,
+      AgentRunWorkStepStatus.failed => Icons.error_outline_rounded,
+    };
+  }
+
+  Color color(ColorScheme colorScheme) {
+    return switch (status) {
+      AgentRunWorkStepStatus.failed => colorScheme.error,
+      AgentRunWorkStepStatus.waiting => colorScheme.tertiary,
+      _ => colorScheme.primary,
+    };
+  }
+}
+
+enum AgentRunWorkStepStatus { running, completed, waiting, failed }
 
 class AgentComposerBar extends StatelessWidget {
   const AgentComposerBar({
@@ -457,4 +559,96 @@ class AgentComposerBar extends StatelessWidget {
       ),
     );
   }
+}
+
+List<AgentRunWorkStep> _workStepsFromEvents(List<AgentStreamEvent> events) {
+  final steps = <String, AgentRunWorkStep>{};
+
+  for (final event in events) {
+    final step = _workStepFromEvent(event);
+    if (step != null) steps[step.id] = step;
+  }
+
+  return List<AgentRunWorkStep>.unmodifiable(steps.values);
+}
+
+AgentRunWorkStep? _workStepFromEvent(AgentStreamEvent event) {
+  return switch (event.type) {
+    'CUSTOM' => _customStatusStep(event),
+    'TOOL_CALL_START' ||
+    'TOOL_CALL_ARGS' ||
+    'TOOL_CALL_END' ||
+    'TOOL_CALL_RESULT' => _toolStep(event),
+    'ARTIFACT_CREATED' => _artifactStep(event),
+    'CONFIRMATION_REQUIRED' => _confirmationStep(event),
+    'RUN_ERROR' || 'RUN_FAILED' || 'ERROR' => AgentRunWorkStep(
+      id: event.mergeKey,
+      title: '处理遇到问题',
+      status: AgentRunWorkStepStatus.failed,
+    ),
+    _ => null,
+  };
+}
+
+AgentRunWorkStep? _customStatusStep(AgentStreamEvent event) {
+  if (stringField(event.raw, 'name') != 'momcozy.agent.status') return null;
+  return AgentRunWorkStep(
+    id: event.mergeKey,
+    title: '正在读取相关信息',
+    status: AgentRunWorkStepStatus.running,
+  );
+}
+
+AgentRunWorkStep _toolStep(AgentStreamEvent event) {
+  final subject = _toolSubject(event);
+  final completed = event.type == 'TOOL_CALL_RESULT';
+  return AgentRunWorkStep(
+    id: event.mergeKey,
+    title: completed ? '$subject已读取' : '正在读取$subject',
+    status: completed
+        ? AgentRunWorkStepStatus.completed
+        : AgentRunWorkStepStatus.running,
+  );
+}
+
+AgentRunWorkStep _artifactStep(AgentStreamEvent event) {
+  final artifactId =
+      stringField(event.raw, 'artifact_id') ??
+      stringField(event.raw, 'artifactId');
+  return AgentRunWorkStep(
+    id: artifactId == null || artifactId.isEmpty
+        ? event.mergeKey
+        : 'artifact:$artifactId',
+    title: '已生成${_artifactSubject(event)}',
+    status: AgentRunWorkStepStatus.completed,
+  );
+}
+
+AgentRunWorkStep _confirmationStep(AgentStreamEvent event) {
+  final confirmationId = stringField(event.raw, 'confirmation_id');
+  return AgentRunWorkStep(
+    id: confirmationId == null || confirmationId.isEmpty
+        ? event.mergeKey
+        : 'confirmation:$confirmationId',
+    title: '需要确认后继续',
+    status: AgentRunWorkStepStatus.waiting,
+  );
+}
+
+String _toolSubject(AgentStreamEvent event) {
+  return switch (stringField(event.raw, 'tool_call_name')) {
+    'pump_session_summary_query' => '泵奶记录',
+    'growth_record_query' => '成长记录',
+    'feeding_record_query' => '喂养记录',
+    'schedule_query' => '计划信息',
+    _ => '相关信息',
+  };
+}
+
+String _artifactSubject(AgentStreamEvent event) {
+  return switch (stringField(event.raw, 'artifact_type')) {
+    'milk_analysis_card' => '分析卡片',
+    'rich_text' || 'rich_text_card' => '说明内容',
+    _ => '结果卡片',
+  };
 }

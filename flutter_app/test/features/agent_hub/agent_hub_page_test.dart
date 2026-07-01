@@ -162,6 +162,41 @@ void main() {
     expect(find.text('Retried answer'), findsOneWidget);
   });
 
+  testWidgets(
+    'Agent Hub renders user-facing tool progress from stream events',
+    (tester) async {
+      final client = _FixtureAgentStreamClient(
+        parseAgentJsonl(
+          readMigrationFixture('ag_ui/tool_call_lifecycle.jsonl'),
+        ),
+      );
+
+      await tester.pumpWidget(
+        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Review my pump sessions',
+      );
+      await tester.pump();
+
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
+      expect(find.text('泵奶记录已读取'), findsOneWidget);
+      expect(find.text('已生成分析卡片'), findsOneWidget);
+      expect(find.text('需要确认后继续'), findsOneWidget);
+      expect(
+        find.text('I found two sessions today and prepared a draft analysis.'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('pump_session_summary_query'), findsNothing);
+      expect(find.textContaining('{"ok"'), findsNothing);
+    },
+  );
+
   testWidgets('Agent Hub renders disconnected partial response state', (
     tester,
   ) async {
