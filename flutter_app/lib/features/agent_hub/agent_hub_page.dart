@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 
@@ -12,7 +13,7 @@ class AgentHubPage extends StatefulWidget {
     super.key,
     this.state = const AgentStreamRunState(),
     this.runner,
-    this.requestBuilder = _defaultAgentHubRequestBuilder,
+    this.requestBuilder = buildDefaultAgentHubRequest,
   });
 
   final AgentStreamRunState state;
@@ -147,16 +148,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ],
     );
   }
-}
-
-AgentStreamRequest _defaultAgentHubRequestBuilder(String message) {
-  return AgentStreamRequest(
-    userId: 'demo-user',
-    threadId: 'thread-demo',
-    message: message,
-    locale: 'zh-CN',
-    metadata: const {'source': 'flutter-agent-hub'},
-  );
 }
 
 class AgentRunPhaseBadge extends StatelessWidget {

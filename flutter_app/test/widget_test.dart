@@ -13,6 +13,17 @@ void main() {
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
     expect(find.text('智能体'), findsWidgets);
 
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Review my pattern',
+    );
+    await tester.pump();
+
+    final sendButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+    expect(sendButton.onPressed, isNotNull);
+
     await tester.tap(find.text('设备').last);
     await tester.pumpAndSettle();
 

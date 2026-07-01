@@ -1,0 +1,33 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
+
+void main() {
+  test('default Agent Hub runner uses SSE transport and AG-UI payload', () {
+    final runner = createDefaultAgentHubRunner();
+    final client = runner.client as SseAgentStreamClient;
+    final transport = client.transport as AgentSseHttpTransport;
+    final request = buildDefaultAgentHubRequest(' Review my pattern ');
+    final payload = transport.payloadFactory(request);
+    final messages = payload['messages']! as List<Object?>;
+    final message = messages.single! as Map<String, Object?>;
+
+    expect(
+      transport.endpoint.uri.toString(),
+      'http://127.0.0.1:8768/api/ag-ui',
+    );
+    expect(transport.endpoint.token, isNull);
+    expect(
+      transport.endpoint.headers,
+      containsPair('X-Momcozy-Client', 'flutter'),
+    );
+    expect(request.userId, 'demo-user');
+    expect(request.threadId, 'thread-demo');
+    expect(request.locale, 'zh-CN');
+    expect(payload['threadId'], 'thread-demo');
+    expect(payload['runId'], startsWith('run-flutter-'));
+    expect(message['id'], startsWith('msg-flutter-'));
+    expect(message['content'], 'Review my pattern');
+  });
+}
