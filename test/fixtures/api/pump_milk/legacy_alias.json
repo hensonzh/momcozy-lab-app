@@ -1,0 +1,29 @@
+{
+  "domain": "pump_milk",
+  "endpoint": "/v1/pump-milk/query",
+  "method": "GET",
+  "request": {
+    "query": {
+      "user_id": "demo-user-fixture",
+      "timestamp": "2026-06-29"
+    }
+  },
+  "variant": "legacy_alias",
+  "response": {
+    "status": 200,
+    "message": "success",
+    "data": {
+      "error": 0,
+      "pumpMilkList": [
+        {
+          "pumpId": 3001,
+          "pumpType": 0,
+          "pumpSource": 0,
+          "pumpTime": "2026-06-29T08:40:00Z",
+          "pumpTitle": "Morning pump",
+          "pumpMilkVolum": 120
+        }
+      ]
+    }
+  }
+}

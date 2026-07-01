@@ -541,6 +541,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Status/Schedule typed repository contract tests 已覆盖 success、legacy alias、empty、partial、business error 和 HTTP error fixtures
 [x] Pump workstate typed repository contract tests 已覆盖 `/v1/pump/workstate` request body、reply aliases、empty/partial、business error 和 HTTP error fixtures
 [x] Records feeding/growth typed repository contract tests 已覆盖 request query、legacy aliases、partial/empty、business error 和 HTTP error fixtures
+[x] Records pump_milk typed repository contract tests 已覆盖 `/v1/pump-milk/query` request query、legacy aliases、partial/empty、business error 和 HTTP error fixtures
 [x] Media upload typed repository contract tests 已覆盖 multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body
 [x] Flutter App API runtime tests 已覆盖 dart-define 默认配置、注入 transport 的 repository factory 和 runtime scope

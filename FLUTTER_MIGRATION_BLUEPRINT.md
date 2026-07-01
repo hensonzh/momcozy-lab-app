@@ -938,6 +938,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Status/Schedule 已建立 typed repository contract，覆盖 mom-baby 与 plan fixtures 的 success、legacy alias、empty、partial、business error 和 HTTP error
 [x] Flutter Pump workstate typed repository contract 已覆盖 `/v1/pump/workstate` body、reply aliases、empty/partial、business error 和 HTTP error fixtures
 [x] Flutter Records typed repository contract 已覆盖 feeding/growth fixtures 的 request query、legacy aliases、partial/empty、business error 和 HTTP error
+[x] Flutter Records repository 已补齐 `/v1/pump-milk/query` typed contract，覆盖 pump_milk fixtures 的 success、legacy alias、partial/empty、business error 和 HTTP error
 [x] Flutter Media upload typed repository contract 已覆盖 `/v1/files/upload` multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport 已落地，覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body tests
 [x] Flutter App API runtime scope 已接入 App root，集中 dart-define base URL/token/user/baby/locale 与 typed repository factory

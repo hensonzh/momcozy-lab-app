@@ -9,6 +9,7 @@ const requiredDomains = <String>[
   'pump',
   'mom_baby',
   'feeding',
+  'pump_milk',
   'growth',
   'plan',
   'pregnancy_diary',

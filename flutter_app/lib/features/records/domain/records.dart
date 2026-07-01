@@ -5,6 +5,13 @@ abstract interface class FeedingRecordsRepository {
   });
 }
 
+abstract interface class PumpMilkRecordsRepository {
+  Future<List<PumpMilkRecord>> fetchPumpMilkRecords({
+    required String userId,
+    required DateTime date,
+  });
+}
+
 abstract interface class GrowthRecordsRepository {
   Future<List<GrowthRecord>> fetchGrowthRecords({
     required String userId,
@@ -22,6 +29,24 @@ class FeedingRecord {
 
   final String id;
   final String type;
+  final int? amountMl;
+  final DateTime? occurredAt;
+}
+
+class PumpMilkRecord {
+  const PumpMilkRecord({
+    required this.id,
+    required this.title,
+    this.pumpType,
+    this.pumpSource,
+    this.amountMl,
+    this.occurredAt,
+  });
+
+  final String id;
+  final String title;
+  final int? pumpType;
+  final int? pumpSource;
   final int? amountMl;
   final DateTime? occurredAt;
 }
