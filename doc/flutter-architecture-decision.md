@@ -182,6 +182,7 @@ features/
 [x] Flutter `/api/ag-ui-timing-log` control client 已落地，best-effort failure 不影响 Agent stream 主流程
 [x] Flutter `/api/client-event` control client 已落地，IBCLC/通知/分析类事件可复用 best-effort 写回通道
 [x] Flutter Agent Hub 页面骨架已接入根路由，状态 badge、transcript 和 composer 均消费统一 `AgentStreamRunState`
+[x] Flutter Agent Hub composer 已接入 injected `AgentStreamRunner`，真实 transport 仍可通过 `AgentStreamClient` 替换
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

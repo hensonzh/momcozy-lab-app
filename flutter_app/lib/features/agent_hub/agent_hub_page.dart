@@ -1,10 +1,102 @@
-import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
+import 'dart:async';
 
-class AgentHubPage extends StatelessWidget {
-  const AgentHubPage({super.key, this.state = const AgentStreamRunState()});
+import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+
+typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
+
+class AgentHubPage extends StatefulWidget {
+  const AgentHubPage({
+    super.key,
+    this.state = const AgentStreamRunState(),
+    this.runner,
+    this.requestBuilder = _defaultAgentHubRequestBuilder,
+  });
 
   final AgentStreamRunState state;
+  final AgentStreamRunner? runner;
+  final AgentHubRequestBuilder requestBuilder;
+
+  @override
+  State<AgentHubPage> createState() => _AgentHubPageState();
+}
+
+class _AgentHubPageState extends State<AgentHubPage> {
+  late AgentStreamRunState _state = widget.state;
+  late final TextEditingController _composerController =
+      TextEditingController();
+  StreamSubscription<AgentStreamRunState>? _runSubscription;
+
+  @override
+  void didUpdateWidget(covariant AgentHubPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.state != widget.state &&
+        (widget.runner == null || !_state.isActive)) {
+      _state = widget.state;
+    }
+  }
+
+  @override
+  void dispose() {
+    _cancelRunSubscription();
+    _composerController.dispose();
+    super.dispose();
+  }
+
+  bool get _canSend =>
+      widget.runner != null &&
+      !_state.isActive &&
+      _composerController.text.trim().isNotEmpty;
+
+  Future<void> _sendMessage() async {
+    final runner = widget.runner;
+    final message = _composerController.text.trim();
+    if (runner == null || message.isEmpty || _state.isActive) return;
+
+    await _runSubscription?.cancel();
+    _runSubscription = null;
+    _composerController.clear();
+    setState(() {
+      _state = const AgentStreamRunState().start();
+    });
+
+    _runSubscription = runner
+        .run(widget.requestBuilder(message))
+        .listen(
+          (nextState) {
+            if (!mounted || !_state.isActive) return;
+            setState(() {
+              _state = nextState;
+            });
+          },
+          onError: (Object error) {
+            if (!mounted || !_state.isActive) return;
+            setState(() {
+              _state = _state.markDisconnected(error);
+            });
+          },
+        );
+  }
+
+  void _cancelRun() {
+    if (!_state.isActive) return;
+    setState(() {
+      _state = _state.requestCancel();
+    });
+    _cancelRunSubscription();
+    setState(() {
+      _state = _state.applyCancelResult(acknowledged: true);
+    });
+  }
+
+  void _cancelRunSubscription() {
+    final subscription = _runSubscription;
+    _runSubscription = null;
+    if (subscription == null) return;
+    unawaited(subscription.cancel().catchError((Object _) {}));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +130,33 @@ class AgentHubPage extends StatelessWidget {
                 ),
               ),
             ),
-            AgentRunPhaseBadge(phase: state.phase),
+            AgentRunPhaseBadge(phase: _state.phase),
           ],
         ),
         const SizedBox(height: 18),
-        AgentRunTranscript(state: state),
+        AgentRunTranscript(state: _state),
         const SizedBox(height: 16),
-        const AgentComposerBar(),
+        AgentComposerBar(
+          controller: _composerController,
+          canSend: _canSend,
+          isRunning: _state.isActive,
+          onChanged: (_) => setState(() {}),
+          onSend: _sendMessage,
+          onCancel: _cancelRun,
+        ),
       ],
     );
   }
+}
+
+AgentStreamRequest _defaultAgentHubRequestBuilder(String message) {
+  return AgentStreamRequest(
+    userId: 'demo-user',
+    threadId: 'thread-demo',
+    message: message,
+    locale: 'zh-CN',
+    metadata: const {'source': 'flutter-agent-hub'},
+  );
 }
 
 class AgentRunPhaseBadge extends StatelessWidget {
@@ -227,7 +336,22 @@ class AgentRunTranscript extends StatelessWidget {
 }
 
 class AgentComposerBar extends StatelessWidget {
-  const AgentComposerBar({super.key});
+  const AgentComposerBar({
+    super.key,
+    required this.controller,
+    required this.canSend,
+    required this.isRunning,
+    required this.onChanged,
+    required this.onSend,
+    required this.onCancel,
+  });
+
+  final TextEditingController controller;
+  final bool canSend;
+  final bool isRunning;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onSend;
+  final VoidCallback onCancel;
 
   @override
   Widget build(BuildContext context) {
@@ -246,8 +370,14 @@ class AgentComposerBar extends StatelessWidget {
             Expanded(
               child: TextField(
                 key: const ValueKey('agent-composer-input'),
+                controller: controller,
                 minLines: 1,
                 maxLines: 4,
+                enabled: !isRunning,
+                onChanged: onChanged,
+                onSubmitted: (_) {
+                  if (canSend) onSend();
+                },
                 decoration: InputDecoration(
                   hintText: '说说今天的情况',
                   border: InputBorder.none,
@@ -257,10 +387,14 @@ class AgentComposerBar extends StatelessWidget {
               ),
             ),
             IconButton.filled(
-              key: const ValueKey('agent-send-button'),
-              onPressed: null,
-              icon: const Icon(Icons.arrow_upward_rounded),
-              tooltip: '发送',
+              key: ValueKey(
+                isRunning ? 'agent-stop-button' : 'agent-send-button',
+              ),
+              onPressed: isRunning ? onCancel : (canSend ? onSend : null),
+              icon: Icon(
+                isRunning ? Icons.stop_rounded : Icons.arrow_upward_rounded,
+              ),
+              tooltip: isRunning ? '停止' : '发送',
             ),
           ],
         ),

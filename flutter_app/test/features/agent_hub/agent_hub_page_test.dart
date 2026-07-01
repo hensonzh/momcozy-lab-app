@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+
+import '../../support/fixture_reader.dart';
 
 void main() {
   testWidgets('Agent Hub renders idle composer state', (tester) async {
@@ -18,6 +23,69 @@ void main() {
       find.byKey(const ValueKey('agent-send-button')),
     );
     expect(sendButton.onPressed, isNull);
+  });
+
+  testWidgets('Agent Hub sends composer text through the injected runner', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Review my pumping pattern',
+    );
+    await tester.pump();
+
+    final sendButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+    expect(sendButton.onPressed, isNotNull);
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests.single.message, 'Review my pumping pattern');
+    expect(client.requests.single.threadId, 'thread-demo');
+    expect(find.text('已完成'), findsOneWidget);
+    expect(
+      find.text('I can help you review today\'s pumping pattern.'),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '',
+    );
+  });
+
+  testWidgets('Agent Hub can locally stop an active run', (tester) async {
+    await tester.pumpWidget(
+      _host(
+        const AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            textContent: 'Partial answer',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('正在回复'), findsOneWidget);
+    expect(find.text('Partial answer'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
+    await tester.pump();
+
+    expect(find.text('已停止'), findsOneWidget);
+    expect(find.text('已停止本次回复'), findsOneWidget);
   });
 
   testWidgets('Agent Hub renders disconnected partial response state', (
@@ -83,4 +151,20 @@ Widget _host(Widget child) {
     debugShowCheckedModeBanner: false,
     home: Scaffold(body: SafeArea(child: child)),
   );
+}
+
+class _FixtureAgentStreamClient implements AgentStreamClient {
+  _FixtureAgentStreamClient(this.events);
+
+  final List<AgentStreamEvent> events;
+  final requests = <AgentStreamRequest>[];
+
+  @override
+  Stream<AgentStreamEvent> stream(AgentStreamRequest request) async* {
+    requests.add(request);
+    for (final event in events) {
+      await Future<void>.delayed(Duration.zero);
+      yield event;
+    }
+  }
 }

@@ -531,6 +531,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [ ] reconnect 不重复已完成 message chunk
 [x] cancel ack 和本地 cancel 状态一致
 [x] UI/view model 不依赖 transport 类型判断
+[x] Agent Hub composer fixture send、streaming finished 和 local stop widget flow 已覆盖
 ```
 
 ### 7.3 语音合同
