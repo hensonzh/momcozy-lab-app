@@ -535,6 +535,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] App root 默认 Agent Hub runner 注入已覆盖，composer 输入后可进入 send-ready 状态
 [x] Agent Hub stop best-effort cancel body、endpoint 和本地停止态已覆盖
 [x] Agent Hub disconnect 后 retry 复用上一轮 request 并进入完成态已覆盖
+[x] Agent Hub tool progress、artifact created 和 confirmation required fixture UI 已覆盖，且不展示内部 tool name / raw JSON
 ```
 
 ### 7.3 语音合同
