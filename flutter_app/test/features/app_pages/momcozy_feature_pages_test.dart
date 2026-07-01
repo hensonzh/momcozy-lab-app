@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
+import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -248,6 +249,19 @@ void main() {
       expect(find.textContaining('6.2 kg'), findsOneWidget);
       expect(find.textContaining('64.5 cm'), findsOneWidget);
     });
+
+    testWidgets('pump page uploads workstate through runtime repository', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Workstate 已同步'), findsOneWidget);
+      expect(find.text('Workstate accepted'), findsOneWidget);
+    });
   });
 }
 
@@ -362,6 +376,15 @@ MomCozyApiRuntime _appRuntime() {
               'measured_at': '2026-07-01',
             },
           ],
+        },
+      },
+      pumpWorkstateEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'need_reply': true,
+          'output': 'Workstate accepted',
+          'reply_code': 'pump_state_changed',
+          'reply_side': 'left',
         },
       },
     }),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
@@ -1196,6 +1197,59 @@ class _PumpPageState extends State<_PumpPage> {
   _PumpRunState _runState = _PumpRunState.idle;
   double _leftLevel = 5;
   double _rightLevel = 5;
+  MomCozyApiRuntime? _runtime;
+  PumpWorkstateReply? _lastReply;
+  Object? _uploadError;
+  bool _isUploading = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _runtime = MomCozyRuntimeScope.of(context);
+  }
+
+  void _changeRunState(_PumpRunState next) {
+    setState(() {
+      _runState = next;
+    });
+    _uploadWorkstate(next);
+  }
+
+  Future<void> _uploadWorkstate(_PumpRunState state) async {
+    final runtime = _runtime;
+    if (runtime == null) return;
+    setState(() {
+      _isUploading = true;
+      _uploadError = null;
+    });
+
+    try {
+      final reply = await runtime.pumpWorkstateRepository.uploadWorkstate(
+        userId: runtime.userId,
+        left: PumpSideWorkstate(
+          state: _pumpStateCode(state),
+          mode: 'massage_expression',
+          level: _leftLevel.round(),
+        ),
+        right: PumpSideWorkstate(
+          state: _pumpStateCode(state),
+          mode: 'expression',
+          level: _rightLevel.round(),
+        ),
+      );
+      if (!mounted) return;
+      setState(() {
+        _lastReply = reply;
+        _isUploading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _uploadError = error;
+        _isUploading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1240,7 +1294,7 @@ class _PumpPageState extends State<_PumpPage> {
             FilledButton.icon(
               onPressed: isRunning
                   ? null
-                  : () => setState(() => _runState = _PumpRunState.running),
+                  : () => _changeRunState(_PumpRunState.running),
               icon: Icon(
                 isPaused ? Icons.play_arrow_rounded : Icons.water_drop,
               ),
@@ -1248,7 +1302,7 @@ class _PumpPageState extends State<_PumpPage> {
             ),
             OutlinedButton.icon(
               onPressed: isRunning
-                  ? () => setState(() => _runState = _PumpRunState.paused)
+                  ? () => _changeRunState(_PumpRunState.paused)
                   : null,
               icon: const Icon(Icons.pause_rounded),
               label: const Text('暂停'),
@@ -1256,7 +1310,7 @@ class _PumpPageState extends State<_PumpPage> {
             OutlinedButton.icon(
               onPressed: _runState == _PumpRunState.idle
                   ? null
-                  : () => setState(() => _runState = _PumpRunState.idle),
+                  : () => _changeRunState(_PumpRunState.idle),
               icon: const Icon(Icons.stop_rounded),
               label: const Text('结束'),
             ),
@@ -1280,16 +1334,50 @@ class _PumpPageState extends State<_PumpPage> {
         ),
         const SizedBox(height: 8),
         const _SectionTitle('上传状态'),
-        const _ActionTile(
-          icon: Icons.cloud_sync_outlined,
-          title: 'Agent context 上传',
-          subtitle: '结束后生成摘要、奶量记录和智能体上下文；重复上传会被自动拦截。',
-          accent: Color(0xff6b6da8),
-          trailing: Icon(Icons.pending_actions_rounded),
+        _ActionTile(
+          icon: _uploadError == null
+              ? Icons.cloud_sync_outlined
+              : Icons.cloud_off_outlined,
+          title: _uploadStatusTitle(),
+          subtitle: _uploadStatusSubtitle(),
+          accent: const Color(0xff6b6da8),
+          trailing: _isUploading
+              ? const SizedBox.square(
+                  dimension: 22,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : IconButton(
+                  tooltip: '重试同步',
+                  onPressed: () => _uploadWorkstate(_runState),
+                  icon: const Icon(Icons.refresh_rounded),
+                ),
         ),
       ],
     );
   }
+
+  String _uploadStatusTitle() {
+    if (_isUploading) return '正在同步 workstate';
+    if (_uploadError != null) return 'Workstate 同步失败';
+    if (_lastReply != null) return 'Workstate 已同步';
+    return 'Agent context 上传';
+  }
+
+  String _uploadStatusSubtitle() {
+    if (_uploadError != null) return '检查后端连接或 token 后重试。';
+    final reply = _lastReply;
+    if (reply == null) return '结束后生成摘要、奶量记录和智能体上下文；重复上传会被自动拦截。';
+    if (reply.output.isNotEmpty) return reply.output;
+    return reply.needReply ? '后端需要处理设备状态回复。' : '后端已接收当前左右侧状态。';
+  }
+}
+
+int _pumpStateCode(_PumpRunState state) {
+  return switch (state) {
+    _PumpRunState.running => 1,
+    _PumpRunState.paused => 2,
+    _PumpRunState.idle => 0,
+  };
 }
 
 class _PumpSideTile extends StatelessWidget {
