@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -5,6 +7,7 @@ import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
+import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 class MomCozyFeaturePage extends StatelessWidget {
   const MomCozyFeaturePage({
@@ -1044,9 +1047,118 @@ class _DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<_DevicePage> {
   bool _isScanning = false;
+  BlePlatform? _blePlatform;
+  BlePermissionState _permissionState = BlePermissionState.unknown;
+  List<BleDeviceSnapshot> _connectedDevices = const [];
+  List<BleDeviceSnapshot> _scanResults = const [];
+  String? _bleError;
+  StreamSubscription<BleDeviceSnapshot>? _scanSub;
+  StreamSubscription<BleScanFailure>? _scanFailureSub;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ble = MomCozyRuntimeScope.of(context).blePlatform;
+    if (!identical(ble, _blePlatform)) {
+      unawaited(_scanSub?.cancel());
+      unawaited(_scanFailureSub?.cancel());
+      _blePlatform = ble;
+      _scanSub = ble.scanResults.listen(_handleScanResult);
+      _scanFailureSub = ble.scanFailures.listen(_handleScanFailure);
+      unawaited(_refreshBleState());
+    }
+  }
+
+  @override
+  void dispose() {
+    unawaited(_scanSub?.cancel());
+    unawaited(_scanFailureSub?.cancel());
+    super.dispose();
+  }
+
+  Future<void> _refreshBleState() async {
+    final ble = _blePlatform;
+    if (ble == null) return;
+    try {
+      final permission = await ble.permissionState();
+      final connected = await ble.getConnectedDevices();
+      if (!mounted) return;
+      setState(() {
+        _permissionState = permission;
+        _connectedDevices = connected;
+        _bleError = null;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _bleError = 'BLE 状态读取失败';
+      });
+    }
+  }
+
+  Future<void> _toggleScan() async {
+    final ble = _blePlatform;
+    if (ble == null) return;
+    try {
+      if (_isScanning) {
+        await ble.stopScan();
+        if (!mounted) return;
+        setState(() {
+          _isScanning = false;
+        });
+        return;
+      }
+
+      final permission = await ble.requestPermission();
+      if (permission != BlePermissionState.granted) {
+        if (!mounted) return;
+        setState(() {
+          _permissionState = permission;
+          _bleError = 'BLE 权限未授权';
+        });
+        return;
+      }
+
+      await ble.startScan();
+      if (!mounted) return;
+      setState(() {
+        _permissionState = permission;
+        _isScanning = true;
+        _bleError = null;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isScanning = false;
+        _bleError = 'BLE 扫描启动失败';
+      });
+    }
+  }
+
+  void _handleScanResult(BleDeviceSnapshot snapshot) {
+    if (!mounted) return;
+    setState(() {
+      _scanResults = [
+        snapshot,
+        ..._scanResults.where((item) => item.deviceId != snapshot.deviceId),
+      ];
+      _bleError = null;
+    });
+  }
+
+  void _handleScanFailure(BleScanFailure failure) {
+    if (!mounted) return;
+    setState(() {
+      _bleError = failure.message;
+      _isScanning = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final leftDevice = _deviceForSide('L') ?? _deviceForSide('left');
+    final rightDevice = _deviceForSide('R') ?? _deviceForSide('right');
+
     return _FeaturePageFrame(
       path: widget.path,
       title: widget.title,
@@ -1059,7 +1171,7 @@ class _DevicePageState extends State<_DevicePage> {
         runSpacing: 8,
         children: [
           FilledButton.tonalIcon(
-            onPressed: () => setState(() => _isScanning = !_isScanning),
+            onPressed: _toggleScan,
             icon: Icon(_isScanning ? Icons.stop_rounded : Icons.search_rounded),
             label: Text(_isScanning ? '停止扫描' : '扫描'),
           ),
@@ -1074,9 +1186,11 @@ class _DevicePageState extends State<_DevicePage> {
         _ActionTile(
           icon: _isScanning ? Icons.bluetooth_searching : Icons.bluetooth,
           title: _isScanning ? '正在扫描附近设备' : 'BLE 权限和扫描',
-          subtitle: _isScanning
-              ? '正在查找附近设备；超时或空结果会显示在这里。'
-              : 'Android 12+ 需要蓝牙权限，Android 13+ 还需要通知权限。',
+          subtitle:
+              _bleError ??
+              (_isScanning
+                  ? '正在查找附近设备；超时或空结果会显示在这里。'
+                  : '权限状态 ${_permissionLabel(_permissionState)}，已恢复 ${_connectedDevices.length} 台已连接设备。'),
           accent: widget.accent,
           trailing: _isScanning
               ? const SizedBox.square(
@@ -1088,18 +1202,30 @@ class _DevicePageState extends State<_DevicePage> {
         const _SectionTitle('左右设备'),
         _DeviceSideTile(
           side: '左侧',
-          name: 'S12 Pro L',
-          state: '已连接',
-          battery: '82%',
+          name: leftDevice?.deviceName ?? '等待连接',
+          state: leftDevice?.connected == true ? '已连接' : '未连接',
+          battery: '--',
           accent: widget.accent,
         ),
         _DeviceSideTile(
           side: '右侧',
-          name: '等待连接',
-          state: '未连接',
+          name: rightDevice?.deviceName ?? '等待连接',
+          state: rightDevice?.connected == true ? '已连接' : '未连接',
           battery: '--',
           accent: const Color(0xff7f6a75),
         ),
+        if (_scanResults.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          const _SectionTitle('扫描结果'),
+          for (final device in _scanResults.take(3))
+            _ActionTile(
+              icon: Icons.bluetooth_searching,
+              title: device.deviceName,
+              subtitle: '${device.side} · ${device.deviceId}',
+              accent: widget.accent,
+              trailing: const Icon(Icons.link_rounded),
+            ),
+        ],
         const SizedBox(height: 8),
         const _SectionTitle('设备入口'),
         _ActionTile(
@@ -1121,6 +1247,22 @@ class _DevicePageState extends State<_DevicePage> {
       ],
     );
   }
+
+  BleDeviceSnapshot? _deviceForSide(String side) {
+    final normalized = side.toLowerCase();
+    for (final device in _connectedDevices) {
+      if (device.side.toLowerCase() == normalized) return device;
+    }
+    return null;
+  }
+}
+
+String _permissionLabel(BlePermissionState state) {
+  return switch (state) {
+    BlePermissionState.granted => '已授权',
+    BlePermissionState.denied => '未授权',
+    BlePermissionState.unknown => '未知',
+  };
 }
 
 class _DeviceSideTile extends StatelessWidget {
