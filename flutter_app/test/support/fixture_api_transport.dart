@@ -31,3 +31,28 @@ class FixtureApiJsonTransport implements ApiJsonTransport {
     return response;
   }
 }
+
+class FixtureApiMultipartTransport implements ApiMultipartTransport {
+  FixtureApiMultipartTransport(this.response, {this.failure});
+
+  final Map<String, Object?> response;
+  final Object? failure;
+  String? lastPath;
+  Map<String, Object?>? lastFields;
+  ApiUploadFile? lastFile;
+
+  @override
+  Future<Map<String, Object?>> uploadMultipart(
+    String path, {
+    Map<String, Object?> fields = const {},
+    required ApiUploadFile file,
+  }) async {
+    lastPath = path;
+    lastFields = Map<String, Object?>.from(fields);
+    lastFile = file;
+    final failure = this.failure;
+    if (failure != null) throw failure;
+    if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
+    return response;
+  }
+}
