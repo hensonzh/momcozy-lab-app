@@ -957,6 +957,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `/media-viewer` 页面上传动作已接入 App runtime `MediaApiRepository`，覆盖 multipart path/fields/file metadata widget test
 [x] Flutter `/ibclc-chat.html` 页面进入咨询动作已接入 App runtime `/api/client-event`，覆盖 best-effort body/header widget test
 [x] Flutter `/hospital-bag-cart` 页面勾选/恢复动作已接入 App runtime `HospitalBagCartApiRepository`，覆盖购物车同步 widget test
+[x] Flutter `/community` 与 `/w1` 内容动作已接入 App runtime `/api/client-event`，覆盖社区打开事件与 W1 教程跳转前事件写回 widget tests
 [x] Flutter `AgentStreamClient` 抽象已接入 transport-agnostic client，SSE/WebSocket/JSONL fixture transport 均输出统一 `Stream<AgentStreamEvent>`
 [x] Flutter AG-UI outbound payload builder 已对齐文本和图片首帧 fixture，并强制 threadId/runId/messageId guard
 [x] Flutter Agent stream IO transport shell 已接入 SSE POST / WebSocket first-frame adapters，复用 auth/redacted endpoint config，并在 terminal event 后关闭底层 stream
