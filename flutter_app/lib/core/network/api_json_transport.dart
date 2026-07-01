@@ -3,6 +3,11 @@ abstract interface class ApiJsonTransport {
     String path, {
     Map<String, Object?> query = const {},
   });
+
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+  });
 }
 
 class ApiHttpException implements Exception {

@@ -7,6 +7,7 @@ class FixtureApiJsonTransport implements ApiJsonTransport {
   final Map<String, Object?> response;
   String? lastPath;
   Map<String, Object?>? lastQuery;
+  Map<String, Object?>? lastBody;
 
   @override
   Future<Map<String, Object?>> getJson(
@@ -15,6 +16,17 @@ class FixtureApiJsonTransport implements ApiJsonTransport {
   }) async {
     lastPath = path;
     lastQuery = Map<String, Object?>.from(query);
+    if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
+    return response;
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+  }) async {
+    lastPath = path;
+    lastBody = Map<String, Object?>.from(body);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
     return response;
   }
