@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
@@ -32,13 +33,18 @@ class MomCozyApiRuntime {
     required this.userId,
     required this.babyId,
     required this.locale,
+    ApiMultipartTransport? multipartTransport,
+    ApiMultipartTransport Function()? multipartTransportFactory,
     BlePlatform? blePlatform,
     BlePlatform Function()? blePlatformFactory,
     PumpProtocolPlatform? pumpProtocolPlatform,
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
     DateTime Function()? now,
-  }) : _blePlatformFactory = blePlatformFactory ?? AndroidBlePlatform.new,
+  }) : _multipartTransportFactory =
+           multipartTransportFactory ??
+           (() => throw StateError('Multipart transport is not configured.')),
+       _blePlatformFactory = blePlatformFactory ?? AndroidBlePlatform.new,
        _pumpNativeRuntimeCoordinatorFactory =
            pumpNativeRuntimeCoordinatorFactory ??
            ((ble) => PumpNativeRuntimeCoordinator(
@@ -46,6 +52,7 @@ class MomCozyApiRuntime {
              upload: AndroidPumpAgentUploadPlatform(),
            )),
        now = now ?? DateTime.now {
+    _multipartTransport = multipartTransport;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
     _hasInjectedPumpProtocolPlatform = pumpProtocolPlatform != null;
@@ -53,6 +60,7 @@ class MomCozyApiRuntime {
 
   factory MomCozyApiRuntime.fromEnvironment({
     ApiJsonTransport? jsonTransport,
+    ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
     String? userId,
@@ -60,13 +68,23 @@ class MomCozyApiRuntime {
     String? locale,
   }) {
     final token = _defaultApiToken.trim();
+    final authToken = token.isEmpty ? null : token;
+    final baseUri = Uri.parse(_defaultApiBaseUrl);
+    const defaultHeaders = {'X-Momcozy-Client': 'flutter'};
     return MomCozyApiRuntime(
       jsonTransport:
           jsonTransport ??
           IoApiJsonTransport(
-            baseUri: Uri.parse(_defaultApiBaseUrl),
-            token: token.isEmpty ? null : token,
-            headers: const {'X-Momcozy-Client': 'flutter'},
+            baseUri: baseUri,
+            token: authToken,
+            headers: defaultHeaders,
+          ),
+      multipartTransport:
+          multipartTransport ??
+          IoApiMultipartTransport(
+            baseUri: baseUri,
+            token: authToken,
+            headers: defaultHeaders,
           ),
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
@@ -81,9 +99,11 @@ class MomCozyApiRuntime {
   final String babyId;
   final String locale;
   final DateTime Function() now;
+  final ApiMultipartTransport Function() _multipartTransportFactory;
   final BlePlatform Function() _blePlatformFactory;
   final PumpNativeRuntimeCoordinator Function(BlePlatform ble)
   _pumpNativeRuntimeCoordinatorFactory;
+  ApiMultipartTransport? _multipartTransport;
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
   PumpNativeRuntimeCoordinator? _pumpNativeRuntimeCoordinator;
@@ -91,6 +111,10 @@ class MomCozyApiRuntime {
 
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();
+  }
+
+  ApiMultipartTransport get multipartTransport {
+    return _multipartTransport ??= _multipartTransportFactory();
   }
 
   PumpNativeRuntimeCoordinator get pumpNativeRuntimeCoordinator {
@@ -129,6 +153,10 @@ class MomCozyApiRuntime {
 
   RecordsApiRepository get recordsRepository {
     return RecordsApiRepository(transport: jsonTransport);
+  }
+
+  MediaApiRepository get mediaRepository {
+    return MediaApiRepository(transport: multipartTransport);
   }
 
   PumpWorkstateApiRepository get pumpWorkstateRepository {

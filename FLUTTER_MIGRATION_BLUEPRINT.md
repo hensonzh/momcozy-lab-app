@@ -941,6 +941,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Records repository 已补齐 `/v1/pump-milk/query` typed contract，覆盖 pump_milk fixtures 的 success、legacy alias、partial/empty、business error 和 HTTP error
 [x] Flutter Media upload typed repository contract 已覆盖 `/v1/files/upload` multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport 已落地，覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body tests
+[x] Flutter 通用 multipart transport 已落地，Media repository 可通过 runtime 走 `/v1/files/upload`
 [x] Flutter App API runtime scope 已接入 App root，集中 dart-define base URL/token/user/baby/locale 与 typed repository factory
 [x] Flutter App API runtime 已加入 lazy BLE platform 注入点，页面可从 runtime 读取 Android/Fake `BlePlatform`
 [x] Flutter App API runtime 已加入 lazy pump native coordinator 与 `PumpProtocolPlatform` 注入点，Calibration/Pump 后续通过抽象协议下发设备命令
@@ -950,6 +951,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `/pump` 页面 session 控制已接入 App runtime `/v1/pump/workstate` repository，覆盖左右侧档位 payload 和同步状态 widget test
 [x] Flutter `/device` 页面已接入 App runtime BLE platform，覆盖权限/已连接设备恢复/扫描状态 widget test
 [x] Flutter `/calibration` 页面保存动作已接入 App runtime `PumpProtocolPlatform`，覆盖左右舒适档位下发和成功后进入 Pump widget test
+[x] Flutter `/media-viewer` 页面上传动作已接入 App runtime `MediaApiRepository`，覆盖 multipart path/fields/file metadata widget test
 [x] Flutter `AgentStreamClient` 抽象已接入 transport-agnostic client，SSE/WebSocket/JSONL fixture transport 均输出统一 `Stream<AgentStreamEvent>`
 [x] Flutter AG-UI outbound payload builder 已对齐文本和图片首帧 fixture，并强制 threadId/runId/messageId guard
 [x] Flutter Agent stream IO transport shell 已接入 SSE POST / WebSocket first-frame adapters，复用 auth/redacted endpoint config，并在 terminal event 后关闭底层 stream

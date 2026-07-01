@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
+import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
@@ -321,6 +322,39 @@ void main() {
 
       await pumpProtocol.dispose();
     });
+
+    testWidgets('media page uploads sample media through runtime repository', (
+      tester,
+    ) async {
+      final multipart = FixtureApiMultipartTransport({
+        'status': 200,
+        'data': {
+          'id': 'file-001',
+          'name': 'pump-display-fixture.png',
+          'size': 68,
+          'extension': 'png',
+          'mime_type': 'image/png',
+        },
+      });
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/media-viewer'),
+          multipartTransport: multipart,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.byTooltip('上传'));
+      await tester.tap(find.byTooltip('上传'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('已上传 pump-display-fixture.png'), findsOneWidget);
+      expect(find.textContaining('文件 ID file-001'), findsOneWidget);
+      expect(multipart.lastPath, mediaUploadEndpoint);
+      expect(multipart.lastFields, {'user_id': 'demo-user-fixture'});
+      expect(multipart.lastFile?.name, 'pump-display-fixture.png');
+    });
   });
 }
 
@@ -336,14 +370,15 @@ int _checkboxesWithValue(WidgetTester tester, bool value) {
 }
 
 class _FeaturePageHost extends StatelessWidget {
-  const _FeaturePageHost({required this.route});
+  const _FeaturePageHost({required this.route, this.multipartTransport});
 
   final MomCozyRouteConfig route;
+  final FixtureApiMultipartTransport? multipartTransport;
 
   @override
   Widget build(BuildContext context) {
     return MomCozyRuntimeScope(
-      apiRuntime: _appRuntime(),
+      apiRuntime: _appRuntime(multipartTransport: multipartTransport),
       child: MaterialApp(
         theme: momCozyTheme(),
         home: Scaffold(
@@ -361,7 +396,10 @@ class _FeaturePageHost extends StatelessWidget {
   }
 }
 
-MomCozyApiRuntime _appRuntime({PumpProtocolPlatform? pumpProtocolPlatform}) {
+MomCozyApiRuntime _appRuntime({
+  PumpProtocolPlatform? pumpProtocolPlatform,
+  FixtureApiMultipartTransport? multipartTransport,
+}) {
   return MomCozyApiRuntime(
     jsonTransport: FixtureApiJsonTransportByPath({
       statusOverviewEndpoint: const <String, Object?>{
@@ -447,6 +485,7 @@ MomCozyApiRuntime _appRuntime({PumpProtocolPlatform? pumpProtocolPlatform}) {
         },
       },
     }),
+    multipartTransport: multipartTransport,
     blePlatform: FakeBlePlatform(
       initialPermission: BlePermissionState.granted,
       seedDevices: const [
