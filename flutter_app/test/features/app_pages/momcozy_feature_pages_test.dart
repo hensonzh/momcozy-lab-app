@@ -452,6 +452,77 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets('community page posts item open events', (tester) async {
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 200,
+          body: '{"status":"ok"}',
+        ),
+      );
+      final client = AgentStreamClientEventClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
+          token: 'test-token',
+        ),
+        connector: connector,
+      );
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/community'),
+          clientEventClient: client,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('妈妈小组更新'));
+      await tester.pumpAndSettle();
+
+      final body = jsonDecode(connector.body!) as Map<String, Object?>;
+      expect(find.text('已记录 妈妈小组更新。'), findsOneWidget);
+      expect(body['event_type'], 'community_item_opened');
+      expect(body['metadata'], containsPair('item_key', 'group_updates'));
+    });
+
+    testWidgets('W1 page posts tutorial event before opening media viewer', (
+      tester,
+    ) async {
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 200,
+          body: '{"status":"ok"}',
+        ),
+      );
+      final client = AgentStreamClientEventClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
+          token: 'test-token',
+        ),
+        connector: connector,
+      );
+      final router = createMomCozyRouter(initialLocation: '/w1');
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          apiRuntime: _appRuntime(clientEventClient: client),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('使用教程'));
+      await tester.tap(find.text('使用教程'));
+      await tester.pumpAndSettle();
+
+      final body = jsonDecode(connector.body!) as Map<String, Object?>;
+      expect(
+        find.byKey(const ValueKey('route-page-/media-viewer')),
+        findsOneWidget,
+      );
+      expect(body['event_type'], 'w1_tutorial_opened');
+      expect(body['metadata'], containsPair('target', 'media-viewer'));
+    });
   });
 }
 

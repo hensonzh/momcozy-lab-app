@@ -195,6 +195,7 @@ features/
 [x] Flutter `/media-viewer` 页面已将上传动作接入 `MediaApiRepository`，真实相册/文件选择器仍保留到移动交互阶段
 [x] Flutter `/ibclc-chat.html` 页面已将进入咨询动作接入 `/api/client-event` best-effort 写回通道
 [x] Flutter `/hospital-bag-cart` 页面已将清单勾选/恢复动作接入 `HospitalBagCartApiRepository`
+[x] Flutter `/community` 与 `/w1` 页面已将内容打开动作接入 `/api/client-event` best-effort 写回通道
 [x] Flutter `AgentStreamClient` 抽象已落地，SSE/WebSocket adapters 共享 parser/fixtures 并通过 client tests
 [x] Flutter AG-UI outbound payload builder 已对齐首帧 fixture，后续真实 SSE/WS transport 只负责传输
 [x] Flutter Agent stream IO transport shell 已落地，SSE POST 与 WebSocket first-frame adapter 共用 endpoint/auth/redaction config

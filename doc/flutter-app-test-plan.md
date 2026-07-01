@@ -560,6 +560,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/media-viewer` widget tests 已覆盖示例媒体上传的 multipart path、fields、file metadata 和成功状态渲染
 [x] Flutter `/ibclc-chat.html` widget tests 已覆盖进入咨询时上报 `ibclc_consult_started` client event，并保持 best-effort UI
 [x] Flutter `/hospital-bag-cart` widget tests 已覆盖清单勾选后通过 runtime repository 同步购物车状态
+[x] Flutter `/community` 与 `/w1` widget tests 已覆盖内容打开事件写回和 W1 教程跳转
 ```
 
 ### 7.3 语音合同

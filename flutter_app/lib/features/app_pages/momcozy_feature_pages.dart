@@ -2114,7 +2114,7 @@ class _TrendBar extends StatelessWidget {
   }
 }
 
-class _CommunityPage extends StatelessWidget {
+class _CommunityPage extends StatefulWidget {
   const _CommunityPage({
     required this.path,
     required this.title,
@@ -2132,14 +2132,42 @@ class _CommunityPage extends StatelessWidget {
   final String priority;
 
   @override
+  State<_CommunityPage> createState() => _CommunityPageState();
+}
+
+class _CommunityPageState extends State<_CommunityPage> {
+  String? _lastActionStatus;
+  String? _postingKey;
+
+  Future<void> _openCommunityItem(String key, String label) async {
+    if (_postingKey != null) return;
+    setState(() {
+      _postingKey = key;
+      _lastActionStatus = null;
+    });
+
+    final sent = await _postFeatureClientEvent(
+      context,
+      eventType: 'community_item_opened',
+      label: '打开社区内容：$label',
+      metadata: {'item_key': key, 'source': 'community'},
+    );
+    if (!mounted) return;
+    setState(() {
+      _postingKey = null;
+      _lastActionStatus = sent ? '已记录 $label。' : '本地已打开，稍后重试同步。';
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return _FeaturePageFrame(
-      path: path,
-      title: title,
-      summary: summary,
-      icon: icon,
-      accent: accent,
-      priority: priority,
+      path: widget.path,
+      title: widget.title,
+      summary: widget.summary,
+      icon: widget.icon,
+      accent: widget.accent,
+      priority: widget.priority,
       trailing: Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -2156,31 +2184,50 @@ class _CommunityPage extends StatelessWidget {
           ),
         ],
       ),
-      children: const [
-        _SectionTitle('关注话题'),
+      children: [
+        const _SectionTitle('关注话题'),
         _ActionTile(
           icon: Icons.forum_outlined,
           title: '泵奶节奏调整',
           subtitle: '来自相同月龄妈妈的经验和已收藏讨论。',
-          accent: Color(0xff6b6da8),
-          trailing: Icon(Icons.chevron_right_rounded),
+          accent: const Color(0xff6b6da8),
+          onTap: () => _openCommunityItem('pump_rhythm', '泵奶节奏调整'),
+          trailing: _communityTrailing('pump_rhythm'),
         ),
         _ActionTile(
           icon: Icons.favorite_border_rounded,
           title: '产后恢复',
           subtitle: '查看收藏内容、精选讨论和恢复建议。',
-          accent: Color(0xff9f6378),
-          trailing: Icon(Icons.chevron_right_rounded),
+          accent: const Color(0xff9f6378),
+          onTap: () => _openCommunityItem('postpartum_recovery', '产后恢复'),
+          trailing: _communityTrailing('postpartum_recovery'),
         ),
-        _SectionTitle('最新动态'),
+        const _SectionTitle('最新动态'),
         _ActionTile(
           icon: Icons.chat_bubble_outline_rounded,
           title: '妈妈小组更新',
           subtitle: '3 条新回复，打开后会更新已读状态。',
-          accent: Color(0xff43827b),
-          trailing: Icon(Icons.chevron_right_rounded),
+          accent: const Color(0xff43827b),
+          onTap: () => _openCommunityItem('group_updates', '妈妈小组更新'),
+          trailing: _communityTrailing('group_updates'),
         ),
+        if (_lastActionStatus != null)
+          _ActionTile(
+            icon: Icons.done_all_rounded,
+            title: '社区状态',
+            subtitle: _lastActionStatus!,
+            accent: const Color(0xff43827b),
+            trailing: const Icon(Icons.check_circle_outline_rounded),
+          ),
       ],
+    );
+  }
+
+  Widget _communityTrailing(String key) {
+    if (_postingKey != key) return const Icon(Icons.chevron_right_rounded);
+    return const SizedBox.square(
+      dimension: 22,
+      child: CircularProgressIndicator(strokeWidth: 2.5),
     );
   }
 }
@@ -2399,7 +2446,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
   }
 }
 
-class _W1Page extends StatelessWidget {
+class _W1Page extends StatefulWidget {
   const _W1Page({
     required this.path,
     required this.title,
@@ -2417,14 +2464,34 @@ class _W1Page extends StatelessWidget {
   final String priority;
 
   @override
+  State<_W1Page> createState() => _W1PageState();
+}
+
+class _W1PageState extends State<_W1Page> {
+  bool _openingTutorial = false;
+
+  Future<void> _openTutorial() async {
+    if (_openingTutorial) return;
+    setState(() => _openingTutorial = true);
+    await _postFeatureClientEvent(
+      context,
+      eventType: 'w1_tutorial_opened',
+      label: '打开 W1 使用教程',
+      metadata: const {'source': 'w1', 'target': 'media-viewer'},
+    );
+    if (!mounted) return;
+    context.go('/media-viewer');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return _FeaturePageFrame(
-      path: path,
-      title: title,
-      summary: summary,
-      icon: icon,
-      accent: accent,
-      priority: priority,
+      path: widget.path,
+      title: widget.title,
+      summary: widget.summary,
+      icon: widget.icon,
+      accent: widget.accent,
+      priority: widget.priority,
       trailing: const _StatusChip(
         label: '产品内容',
         icon: Icons.workspace_premium_outlined,
@@ -2450,12 +2517,42 @@ class _W1Page extends StatelessWidget {
           icon: Icons.play_circle_outline_rounded,
           title: '使用教程',
           subtitle: '打开视频、PDF 和图文教程。',
-          accent: Color(0xff6b6da8),
-          onTap: () => context.go('/media-viewer'),
-          trailing: const Icon(Icons.chevron_right_rounded),
+          accent: const Color(0xff6b6da8),
+          onTap: _openTutorial,
+          trailing: _openingTutorial
+              ? const SizedBox.square(
+                  dimension: 22,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                )
+              : const Icon(Icons.chevron_right_rounded),
         ),
       ],
     );
+  }
+}
+
+Future<bool> _postFeatureClientEvent(
+  BuildContext context, {
+  required String eventType,
+  required String label,
+  required Map<String, Object?> metadata,
+}) async {
+  try {
+    final runtime = MomCozyRuntimeScope.of(context);
+    final result = await runtime.clientEventClient.post(
+      AgentStreamClientEventRequest(
+        threadId: 'thread-${runtime.userId}',
+        userId: runtime.userId,
+        eventType: eventType,
+        label: label,
+        occurredAt: runtime.now().toIso8601String(),
+        locale: runtime.locale,
+        metadata: metadata,
+      ),
+    );
+    return result.sent;
+  } catch (_) {
+    return false;
   }
 }
 
