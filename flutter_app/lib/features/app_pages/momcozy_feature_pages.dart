@@ -491,6 +491,8 @@ class _StatusPage extends StatefulWidget {
 
 class _StatusPageState extends State<_StatusPage> {
   String _view = 'mom';
+  String _careStage = 'postpartum';
+  bool _growthRecordAdded = false;
   MomCozyApiRuntime? _runtime;
   late Future<StatusOverview> _overviewFuture;
 
@@ -549,16 +551,40 @@ class _StatusPageState extends State<_StatusPage> {
           ),
           children: [
             const _SectionTitle('今日状态'),
+            if (isMom)
+              _CareStageSelector(
+                selectedStage: _careStage,
+                accent: widget.accent,
+                onChanged: (stage) => setState(() => _careStage = stage),
+              ),
             ..._overviewChildren(snapshot, isMom),
             const SizedBox(height: 18),
             const _SectionTitle('下一步'),
             _ActionTile(
-              icon: Icons.edit_note_rounded,
-              title: isMom ? '补写孕期日记' : '记录成长事件',
-              subtitle: isMom ? '保留心情、体征和 Agent 分析上下文。' : '记录身高、体重、睡眠和喂养变化。',
+              icon: isMom
+                  ? Icons.edit_note_rounded
+                  : Icons.monitor_weight_outlined,
+              title: isMom
+                  ? '补写孕期日记'
+                  : (_growthRecordAdded ? '成长记录已添加' : '记录成长事件'),
+              subtitle: isMom
+                  ? '保留心情、体征和 Agent 分析上下文。'
+                  : (_growthRecordAdded
+                        ? '本地草稿已保存，同步恢复后会写入成长记录。'
+                        : '记录身高、体重、睡眠和喂养变化。'),
               accent: widget.accent,
-              onTap: () => context.go('/records'),
-              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: isMom
+                  ? () => context.go('/records')
+                  : () => setState(() => _growthRecordAdded = true),
+              trailing: isMom
+                  ? const Icon(Icons.chevron_right_rounded)
+                  : _StatusChip(
+                      label: _growthRecordAdded ? '已记录' : '新增',
+                      icon: _growthRecordAdded
+                          ? Icons.check_circle_outline_rounded
+                          : Icons.add_circle_outline_rounded,
+                      accent: widget.accent,
+                    ),
             ),
             _ActionTile(
               icon: Icons.fact_check_outlined,
@@ -636,13 +662,19 @@ class _StatusPageState extends State<_StatusPage> {
   }
 
   List<Widget> _momOverviewMetrics(MomStatus? mom) {
+    final isPregnancy = _careStage == 'pregnancy';
+
     return [
       _MetricTile(
         label: '阶段',
-        value: _textOr(mom?.stage, '未设置'),
+        value: isPregnancy ? '孕期' : _textOr(mom?.stage, '哺乳期'),
         icon: Icons.favorite_border_rounded,
         accent: widget.accent,
-        note: mom?.postpartumDay == null ? null : '产后第 ${mom!.postpartumDay} 天',
+        note: isPregnancy
+            ? '孕期重点：体征与日记'
+            : (mom?.postpartumDay == null
+                  ? null
+                  : '产后第 ${mom!.postpartumDay} 天'),
       ),
       _MetricTile(
         label: '默认用户',
@@ -680,7 +712,98 @@ class _StatusPageState extends State<_StatusPage> {
         icon: Icons.cloud_done_outlined,
         accent: Color(0xff6b6da8),
       ),
+      _MetricTile(
+        label: '成长记录',
+        value: _growthRecordAdded ? '已添加' : '待记录',
+        icon: Icons.trending_up_rounded,
+        accent: const Color(0xffb2773b),
+        note: _growthRecordAdded ? '本地草稿待同步' : null,
+      ),
     ];
+  }
+}
+
+class _CareStageSelector extends StatelessWidget {
+  const _CareStageSelector({
+    required this.selectedStage,
+    required this.accent,
+    required this.onChanged,
+  });
+
+  final String selectedStage;
+  final Color accent;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isPregnancy = selectedStage == 'pregnancy';
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: colorScheme.outlineVariant),
+        ),
+        child: Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 360),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '护理阶段',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isPregnancy ? '孕期档案优先关注体征、日记和待办。' : '哺乳期档案优先关注恢复、泵奶和喂养。',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      height: 1.35,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SegmentedButton<String>(
+              selected: {selectedStage},
+              showSelectedIcon: false,
+              onSelectionChanged: (next) => onChanged(next.first),
+              style: ButtonStyle(
+                foregroundColor: WidgetStateProperty.resolveWith(
+                  (states) =>
+                      states.contains(WidgetState.selected) ? accent : null,
+                ),
+              ),
+              segments: const [
+                ButtonSegment(
+                  value: 'pregnancy',
+                  icon: Icon(Icons.pregnant_woman_rounded),
+                  label: Text('孕期模式'),
+                ),
+                ButtonSegment(
+                  value: 'postpartum',
+                  icon: Icon(Icons.favorite_border_rounded),
+                  label: Text('哺乳期模式'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
