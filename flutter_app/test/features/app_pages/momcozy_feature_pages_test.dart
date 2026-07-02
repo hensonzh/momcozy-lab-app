@@ -230,6 +230,90 @@ void main() {
       expect(find.text('88 天'), findsOneWidget);
     });
 
+    testWidgets('status page renders long text and runtime context', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/status'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            statusOverviewEndpoint: const {
+              'status': 200,
+              'data': {
+                'mom': {
+                  'stage': '哺乳期恢复阶段，需要同时关注睡眠、补水、泵奶舒适度和情绪波动',
+                  'postpartum_day': 128,
+                },
+                'baby': {
+                  'nickname': 'Mia Sophia Long Profile Name',
+                  'age_days': 188,
+                },
+              },
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('哺乳期恢复阶段'), findsOneWidget);
+      expect(find.text('demo-user-fixture'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.tap(find.text('宝宝'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Mia Sophia Long Profile Name'), findsOneWidget);
+      expect(find.text('demo-baby-fixture'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.drag(
+        find.byKey(const ValueKey('route-page-/status')),
+        const Offset(0, -360),
+      );
+      await tester.pump();
+
+      expect(find.text('今日待办'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('status page renders empty and failed states', (tester) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/status'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            statusOverviewEndpoint: const {
+              'status': 200,
+              'data': <String, Object?>{},
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('暂无状态数据'), findsOneWidget);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/status'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            statusOverviewEndpoint: const {
+              'http_status': 500,
+              'status_text': 'Server Error',
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('状态同步失败'), findsOneWidget);
+      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
+    });
+
     testWidgets('schedule page loads day plan from runtime repository', (
       tester,
     ) async {
