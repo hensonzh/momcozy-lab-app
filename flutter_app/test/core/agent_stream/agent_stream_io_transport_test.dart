@@ -170,7 +170,7 @@ void main() {
           const AgentStreamControlHttpResponse(
             statusCode: 200,
             body:
-                '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"confirmed","side_effect_level":"medium","preview_payload":{},"apply_payload":{},"idempotency_key":"agent-action-action-fixture-001","error_code":""}',
+                '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"confirmed","side_effect_level":"medium","preview_payload":{},"idempotency_key":"agent-action-action-fixture-001","error_code":""}',
           ),
         );
         final client = AgentStreamActionClient(
@@ -213,7 +213,7 @@ void main() {
         connector.nextResponse = const AgentStreamControlHttpResponse(
           statusCode: 200,
           body:
-              '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"rejected","side_effect_level":"medium","preview_payload":{},"apply_payload":{},"idempotency_key":"","error_code":"rejected_by_user"}',
+              '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"rejected","side_effect_level":"medium","preview_payload":{},"idempotency_key":"","error_code":"rejected_by_user"}',
         );
 
         final rejected = await client.reject(
