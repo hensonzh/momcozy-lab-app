@@ -42,6 +42,9 @@ Already present:
 - Pump workstate upload targets production `/v1/devices/pump-telemetry` and
   stores left/right side state in telemetry payload instead of posting
   `user_id` or legacy agent reply fields.
+- Hospital bag cart sync writes a `/v1/plans` projection with
+  `plan_type=hospital_bag_cart` and an idempotency key, removing the legacy
+  `/api/hospital-bag/cart-update` path.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -89,8 +92,8 @@ Main gaps:
    validator in both repos.
 2. Wire production auth/session into app routing and runtime replacement,
    because every owner-scoped feature depends on it.
-3. Continue migrating cart and voice repositories to `/v1`, so `user_id` can
-   stop being passed as authority.
+3. Continue migrating voice repositories to `/v1`, so `user_id` can stop being
+   passed as authority.
 4. Migrate agent chat after the runtime API adapter exists, because stream
    replay and action confirmation need a different state model from the legacy
    AG-UI transport.

@@ -1560,8 +1560,20 @@ void main() {
           route: _route('/hospital-bag-cart'),
           jsonTransport: FixtureApiJsonTransportByPath({
             hospitalBagCartUpdateEndpoint: const {
-              'status': 200,
-              'data': {'message': '购物车已同步', 'synced_count': 3},
+              'id': 'cart-plan-001',
+              'owner_user_id': 'demo-user-fixture',
+              'plan_type': 'hospital_bag_cart',
+              'title': 'Hospital bag cart',
+              'summary': '购物车已同步',
+              'status': 'active',
+              'source': 'flutter',
+              'payload': {
+                'items': <Object?>[
+                  {'id': 'pump', 'title': '吸奶器和配件', 'packed': true},
+                  {'id': 'pads', 'title': '产后护理用品', 'packed': true},
+                  {'id': 'baby', 'title': '宝宝衣物', 'packed': false},
+                ],
+              },
             },
           }),
         ),
@@ -1580,8 +1592,19 @@ void main() {
     ) async {
       final transport = FixtureApiJsonTransportByPath({
         hospitalBagCartUpdateEndpoint: const {
-          'status': 200,
-          'data': {'message': '清单已同步', 'synced_count': 2},
+          'id': 'cart-plan-001',
+          'owner_user_id': 'demo-user-fixture',
+          'plan_type': 'hospital_bag_cart',
+          'title': 'Hospital bag cart',
+          'summary': '清单已同步',
+          'status': 'active',
+          'source': 'flutter',
+          'payload': {
+            'items': <Object?>[
+              {'id': 'pump', 'title': '吸奶器和配件', 'packed': true},
+              {'id': 'pads', 'title': '产后护理用品', 'packed': false},
+            ],
+          },
         },
       });
 
@@ -1600,10 +1623,15 @@ void main() {
       expect(find.text('1/2 已准备'), findsOneWidget);
       expect(find.text('清单已同步'), findsOneWidget);
 
-      final deletedCart =
-          transport.postedBodies.last['hospital_bag_cart']!
-              as Map<String, Object?>;
-      final deletedItems = List<Object?>.from(deletedCart['items']! as List);
+      expect(transport.lastHeaders?['Idempotency-Key'], isNotEmpty);
+      expect(transport.postedBodies.last['user_id'], isNull);
+      expect(
+        transport.postedBodies.last,
+        containsPair('plan_type', 'hospital_bag_cart'),
+      );
+      final deletedPayload =
+          transport.postedBodies.last['payload']! as Map<String, Object?>;
+      final deletedItems = List<Object?>.from(deletedPayload['items']! as List);
       expect(deletedItems.whereType<Map>().map((item) => item['id']), [
         'pump',
         'pads',
@@ -1614,10 +1642,11 @@ void main() {
 
       expect(find.text('宝宝衣物'), findsOneWidget);
       expect(find.text('1/3 已准备'), findsOneWidget);
-      final restoredCart =
-          transport.postedBodies.last['hospital_bag_cart']!
-              as Map<String, Object?>;
-      final restoredItems = List<Object?>.from(restoredCart['items']! as List);
+      final restoredPayload =
+          transport.postedBodies.last['payload']! as Map<String, Object?>;
+      final restoredItems = List<Object?>.from(
+        restoredPayload['items']! as List,
+      );
       expect(restoredItems, hasLength(3));
     });
 
@@ -1651,8 +1680,20 @@ void main() {
           route: _route('/hospital-bag-cart'),
           jsonTransport: FixtureApiJsonTransportByPath({
             hospitalBagCartUpdateEndpoint: const {
-              'status': 200,
-              'data': {'message': '默认清单已恢复', 'synced_count': 3},
+              'id': 'cart-plan-001',
+              'owner_user_id': 'demo-user-fixture',
+              'plan_type': 'hospital_bag_cart',
+              'title': 'Hospital bag cart',
+              'summary': '默认清单已恢复',
+              'status': 'active',
+              'source': 'flutter',
+              'payload': {
+                'items': <Object?>[
+                  {'id': 'pump', 'title': '吸奶器和配件', 'packed': true},
+                  {'id': 'pads', 'title': '产后护理用品', 'packed': true},
+                  {'id': 'baby', 'title': '宝宝衣物', 'packed': false},
+                ],
+              },
             },
           }),
         ),
