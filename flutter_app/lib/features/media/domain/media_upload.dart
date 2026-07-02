@@ -4,6 +4,7 @@ abstract interface class MediaRepository {
   Future<UploadedMediaFile> uploadFile({
     required String userId,
     required ApiUploadFile file,
+    String? idempotencyKey,
   });
 }
 

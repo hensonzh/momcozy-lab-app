@@ -133,14 +133,12 @@ void main() {
 
   test('runtime exposes an injected multipart transport lazily', () async {
     final multipart = FixtureApiMultipartTransport({
-      'status': 200,
-      'data': {
-        'id': 'file-runtime',
-        'name': 'runtime-fixture.png',
-        'size': 9,
-        'extension': 'png',
-        'mime_type': 'image/png',
-      },
+      'id': 'file-runtime',
+      'owner_user_id': 'user-fixture',
+      'original_filename': 'runtime-fixture.png',
+      'content_type': 'image/png',
+      'size_bytes': 9,
+      'status': 'ready',
     });
     final runtime = MomCozyApiRuntime(
       jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
@@ -160,7 +158,7 @@ void main() {
     );
 
     expect(runtime.multipartTransport, same(multipart));
-    expect(multipart.lastFields, {'user_id': 'user-fixture'});
+    expect(multipart.lastFields, isEmpty);
     expect(uploaded.id, 'file-runtime');
   });
 

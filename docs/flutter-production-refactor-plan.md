@@ -32,6 +32,8 @@ Already present:
   login, refresh, logout, or account switch.
 - Network transport parses production error envelopes and supports per-request
   headers such as `Idempotency-Key`.
+- Records and media repositories target production `/v1/records/*` and
+  `/v1/files/upload` contracts without sending `user_id` as authority.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -40,7 +42,7 @@ Main gaps:
 
 - Runtime still bootstraps from dart-define demo users and optional bearer token.
 - Auth UI and route guards are not wired yet.
-- Feature repositories still pass `user_id` and target legacy endpoints.
+- Some feature repositories still pass `user_id` and target legacy endpoints.
 - Agent chat still uses legacy AG-UI endpoints instead of `/v1/agent` thread,
   run, replay, stream, cancel, and action-confirmation resources.
 - API client is handwritten and only partially validated against OpenAPI.
@@ -79,8 +81,8 @@ Main gaps:
    validator in both repos.
 2. Wire production auth/session into app routing and runtime replacement,
    because every owner-scoped feature depends on it.
-3. Migrate records/profile/media repositories to `/v1` only after auth/session
-   is available, so `user_id` can stop being passed as authority.
+3. Continue migrating profile, plans, pump workstate, cart, and voice
+   repositories to `/v1`, so `user_id` can stop being passed as authority.
 4. Migrate agent chat after the runtime API adapter exists, because stream
    replay and action confirmation need a different state model from the legacy
    AG-UI transport.
