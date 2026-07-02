@@ -55,6 +55,11 @@ Already present:
 - Agent Hub no longer ships legacy agent-stream transport/prewarm/timing clients, no longer
   requires client-supplied `user_id`, and records feature client events locally
   through observability instead of posting to the legacy client-event endpoint.
+- Native pump upload no longer sends `user_id`; workstate/process telemetry
+  writes `/v1/devices/pump-telemetry`, milk completion writes
+  `/v1/records/pumping`, and native calls use bearer-token owner scope.
+- Status, records, media, and hospital-bag repository interfaces no longer
+  expose `userId` authority parameters.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -63,7 +68,6 @@ Main gaps:
 
 - Runtime still bootstraps from dart-define demo users and optional bearer token.
 - Auth UI and route guards are not wired yet.
-- Some feature repositories still pass `user_id` and target legacy endpoints.
 - Agent replay/event-page and action confirmation UI are still partial; the main
   run/stream/cancel path is on `/v1/agent/runs`.
 - API client is handwritten and only partially validated against OpenAPI.
