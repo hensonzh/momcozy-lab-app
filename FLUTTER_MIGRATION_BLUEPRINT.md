@@ -988,6 +988,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Agent Hub composer 已补齐图片和语音入口：图片发送进入 `AgentStreamRequest.images`，语音转写回填输入框且不自动发送
 [x] Flutter `AgentStreamRunState` 已按 `event_id` / `sequence` 去重，reconnect replay 不会重复已完成 message chunk
 [x] Flutter Agent Hub artifact area 已支持 rich text/card rows/button action 白名单渲染；doc/media action 已经由 typed route handler 打开 `/media-viewer`，不展示 raw tool name 或 JSON
+[x] Flutter Agent Hub timeout/offline failure 已映射为用户可读 retry copy，不展示原始异常、host 或 transport 细节
 ```
 
 ---

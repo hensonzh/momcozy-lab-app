@@ -480,10 +480,10 @@ class AgentRunTranscript extends StatelessWidget {
   String? get _supportingText {
     if (state.phase == AgentStreamRunPhase.streaming) return '正在生成回复';
     if (state.phase == AgentStreamRunPhase.disconnected) {
-      return state.errorMessage ?? '连接中断';
+      return _safeAgentErrorText(state.errorMessage) ?? '连接中断';
     }
     if (state.phase == AgentStreamRunPhase.error) {
-      return state.errorMessage ?? '回复失败';
+      return _safeAgentErrorText(state.errorMessage) ?? '回复失败';
     }
     if (state.phase == AgentStreamRunPhase.cancelled) return '已停止本次回复';
     return null;
@@ -1165,6 +1165,22 @@ String? _firstNonEmpty(List<String?> values) {
     if (normalized != null && normalized.isNotEmpty) return normalized;
   }
   return null;
+}
+
+String? _safeAgentErrorText(String? errorMessage) {
+  final normalized = errorMessage?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  final lower = normalized.toLowerCase();
+  if (lower.contains('timeoutexception') || lower.contains('timeout')) {
+    return '请求超时，请稍后重试';
+  }
+  if (lower.contains('socketexception') ||
+      lower.contains('failed host lookup') ||
+      lower.contains('network is unreachable') ||
+      lower.contains('offline')) {
+    return '网络不可用，请检查连接后重试';
+  }
+  return normalized;
 }
 
 List<AgentRunWorkStep> _workStepsFromEvents(List<AgentStreamEvent> events) {
