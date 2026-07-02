@@ -14,26 +14,31 @@ typedef AgentHubImagePicker = Future<AgentStreamImageInput?> Function();
 typedef AgentHubVoiceInput = Future<String?> Function();
 typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
+typedef AgentHubNewSessionHandler = void Function();
 
 class AgentHubPage extends StatefulWidget {
   const AgentHubPage({
     super.key,
     this.state = const AgentStreamRunState(),
+    this.historyMessages = const <AgentHubHistoryMessage>[],
     this.runner,
     this.cancelClient,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
     this.voiceInput,
     this.onArtifactAction,
+    this.onNewSession,
   });
 
   final AgentStreamRunState state;
+  final List<AgentHubHistoryMessage> historyMessages;
   final AgentStreamRunner? runner;
   final AgentStreamCancelClient? cancelClient;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
   final AgentHubVoiceInput? voiceInput;
   final AgentArtifactActionHandler? onArtifactAction;
+  final AgentHubNewSessionHandler? onNewSession;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
@@ -41,6 +46,9 @@ class AgentHubPage extends StatefulWidget {
 
 class _AgentHubPageState extends State<AgentHubPage> {
   late AgentStreamRunState _state = widget.state;
+  late List<AgentHubHistoryMessage> _historyMessages = [
+    ...widget.historyMessages,
+  ];
   late final TextEditingController _composerController =
       TextEditingController();
   StreamSubscription<AgentStreamRunState>? _runSubscription;
@@ -54,6 +62,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (oldWidget.state != widget.state &&
         (widget.runner == null || !_state.isActive)) {
       _state = widget.state;
+    }
+    if (oldWidget.historyMessages != widget.historyMessages &&
+        !_state.isActive) {
+      _historyMessages = [...widget.historyMessages];
     }
   }
 
@@ -142,6 +154,20 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _attachedImages.clear();
     });
+  }
+
+  void _startNewSession() {
+    if (_state.isActive) return;
+    _cancelRunSubscription();
+    _composerController.clear();
+    setState(() {
+      _state = const AgentStreamRunState();
+      _historyMessages.clear();
+      _attachedImages.clear();
+      _activeRequest = null;
+      _voiceState = const AgentVoiceState();
+    });
+    widget.onNewSession?.call();
   }
 
   Future<void> _retryRun() async {
@@ -252,10 +278,21 @@ class _AgentHubPageState extends State<AgentHubPage> {
                 ),
               ),
             ),
+            IconButton(
+              key: const ValueKey('agent-new-session-button'),
+              onPressed: _state.isActive ? null : _startNewSession,
+              icon: const Icon(Icons.add_comment_outlined),
+              tooltip: '新会话',
+            ),
+            const SizedBox(width: 4),
             AgentRunPhaseBadge(phase: _state.phase),
           ],
         ),
         const SizedBox(height: 18),
+        if (_historyMessages.isNotEmpty) ...[
+          AgentHubHistoryPanel(messages: _historyMessages),
+          const SizedBox(height: 16),
+        ],
         AgentRunTranscript(
           state: _state,
           canRetry: _canRetry,
@@ -299,6 +336,85 @@ AgentStreamRequest _requestWithImages(
     images: [...request.images, ...images],
     metadata: request.metadata,
   );
+}
+
+enum AgentHubHistoryRole { user, assistant }
+
+class AgentHubHistoryMessage {
+  const AgentHubHistoryMessage({required this.role, required this.content});
+
+  final AgentHubHistoryRole role;
+  final String content;
+
+  String get roleLabel {
+    return switch (role) {
+      AgentHubHistoryRole.user => '我',
+      AgentHubHistoryRole.assistant => '智能体',
+    };
+  }
+}
+
+class AgentHubHistoryPanel extends StatelessWidget {
+  const AgentHubHistoryPanel({super.key, required this.messages});
+
+  final List<AgentHubHistoryMessage> messages;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return DecoratedBox(
+      key: const ValueKey('agent-history-panel'),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '历史会话',
+              style: textTheme.labelLarge?.copyWith(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 10),
+            for (var index = 0; index < messages.length; index++) ...[
+              Row(
+                key: ValueKey('agent-history-$index'),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    messages[index].roleLabel,
+                    style: textTheme.labelMedium?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      messages[index].content,
+                      style: textTheme.bodySmall?.copyWith(
+                        height: 1.35,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (index != messages.length - 1) const SizedBox(height: 8),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class AgentRunPhaseBadge extends StatelessWidget {
