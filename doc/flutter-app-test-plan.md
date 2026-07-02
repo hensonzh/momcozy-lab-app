@@ -285,20 +285,20 @@ Golden 视觉状态：
 [x] 已配对右设备
 [x] 左右设备均已配对
 [x] 设备已连接
-[ ] 设备已断开
-[ ] 电量展示
-[ ] 如保留 RSSI，则信号/RSSI 展示
+[x] 设备已断开
+[x] 电量展示
+[x] 如保留 RSSI，则信号/RSSI 展示
 [ ] BLE permission 未请求
 [x] BLE permission 拒绝
 [ ] BLE permission 永久拒绝
 [ ] 从系统设置返回后重新授权
-[ ] 扫描空结果
+[x] 扫描空结果
 [x] 扫描超时
 [x] 发现单个设备
-[ ] 发现多个设备
-[ ] 连接失败
+[x] 发现多个设备
+[x] 连接失败
 [ ] 断线重连
-[ ] 恢复 native 已连接设备
+[x] 恢复 native 已连接设备
 [ ] 用户切换时断开或隔离设备
 [ ] debug drawer 仅 internal/dev 环境可见
 ```
@@ -576,7 +576,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/records` widget tests 已覆盖列表加载、空态、加载失败、趋势展示和 mL/oz 单位切换
 [x] Flutter `/schedule` widget tests 已覆盖日期切换、今日任务加载、完成状态、提醒开关、本地日期到 UTC timestamp 和空/失败态
 [x] Flutter `/status` widget tests 已覆盖妈妈/宝宝 tab、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
-[x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 权限拒绝、扫描结果和扫描失败状态
+[x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 权限拒绝、扫描空态、单/多扫描结果、连接失败、battery/RSSI 展示和扫描失败状态
 [x] Flutter `/pump` widget tests 已覆盖 session 启动/暂停/恢复/结束和 workstate 上传失败状态
 [x] Flutter `/calibration` widget tests 已覆盖无设备失败提示、保存校准和保存后进入 Pump
 [x] Flutter `/media-viewer` widget tests 已覆盖 PDF/Image/Video 预览入口、示例上传成功和上传失败 fallback

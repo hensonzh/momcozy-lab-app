@@ -23,6 +23,8 @@ void main() {
                     'deviceId': 'ble-left-001',
                     'name': 'M9-L',
                     'connected': true,
+                    'battery': 87,
+                    'rssi': -54,
                   },
                 ],
               },
@@ -58,6 +60,8 @@ void main() {
 
       expect(connected.single.deviceId, 'ble-left-001');
       expect(connected.single.deviceName, 'M9-L');
+      expect(connected.single.battery, 87);
+      expect(connected.single.rssi, -54);
       expect(calls.map((call) => call.method), [
         'permissionState',
         'initialize',
@@ -98,7 +102,12 @@ void main() {
       final notificationSub = ble.notifications.listen(notifications.add);
 
       await ble.handleNativeEvent('scanResult', {
-        'device': {'deviceId': 'ble-right-001', 'name': 'M9-R'},
+        'device': {
+          'deviceId': 'ble-right-001',
+          'name': 'M9-R',
+          'batteryPct': 74,
+          'rssi': -52,
+        },
       });
       await ble.handleNativeEvent('scanFailed', {'errorCode': 7});
       await ble.handleNativeEvent('notification', {
@@ -109,6 +118,8 @@ void main() {
       await flushStreams();
 
       expect(scans.single.deviceName, 'M9-R');
+      expect(scans.single.battery, 74);
+      expect(scans.single.rssi, -52);
       expect(failures.single.code, '7');
       expect(notifications.single.value, [0xe1]);
 
