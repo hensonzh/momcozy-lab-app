@@ -36,17 +36,31 @@
 每个 bridge 必须补齐：
 
 ```text
-[ ] Method name
-[ ] Request payload schema
-[ ] Success response schema
-[ ] Error response schema
-[ ] Event names and payload schema
-[ ] Threading expectation
-[ ] Background availability
-[ ] Permission preconditions
-[ ] Idempotency expectation
-[ ] Test fixture
+[x] Method name
+[x] Request payload schema
+[x] Success response schema
+[x] Error response schema
+[x] Event names and payload schema
+[x] Threading expectation
+[x] Background availability
+[x] Permission preconditions
+[x] Idempotency expectation
+[x] Test fixture
 ```
+
+完成矩阵：
+
+| Bridge | Method / request schema | Success schema | Error schema | Events | Threading | Background availability | Permission preconditions | Idempotency | Test fixture |
+|---|---|---|---|---|---|---|---|---|---|
+| `MmcBle` | `AndroidBlePlatform` maps typed calls to `initialize`, `requestLEScan`, `stopLEScan`, `getConnectedDevices`, `connect`, `disconnect`, `read`, `write`, `writeWithoutResponse`, `startNotifications`, `stopNotifications`; payload uses `deviceId`, `serviceUUID`, `characteristicUUID`, `value`. | `permissionState` returns `{state}`; connected devices return `{devices:[{side,deviceId,name,connected,battery,rssi}]}`; reads return `{value}`. | Permission aliases map to `unknown/denied/permanentlyDenied/granted`; fake throws when scanning without grant or reading disconnected device. | `scanResult`, `scanFailed`, `notification`. | Flutter adapter calls are async; scan and notification events are broadcast streams. | BLE connection state is native-owned; Flutter runtime only treats snapshots as live when native reports them. | BLE runtime permission required before scan/connect/write/notify. | `stopScan`, `disconnect`, `stopNotifications` are repeat-safe; reconnect clears stale subscriptions. | `test/native/android_p0_platform_channels_test.dart`; `test/native/p0_platform_interfaces_test.dart`; `test/core/ble/ble_protocol_test.dart`. |
+| `PumpSessionNotification` | `start`, `update`, `stop`, `showCompletionNotice`, `showAutoEndNotice`, `enqueuePendingNavigate`, `consumePendingNavigate`, `restoreSnapshot`, `requestPermission`; snapshot payload includes active/state/elapsed/milk/paused/process. | Permission returns `{granted}`; pending route returns `{path,notifyJson,autoEndTeardown}`; restore returns snapshot or null. | Android MethodChannel errors bubble as typed async failures; fake enforces update after start. | `PumpSessionNativeEventType.started/updated/stopped/completionNotice/autoEndNotice`. | MethodChannel calls are async; native foreground service owns long-running work. | Foreground service and pending route survive background/killed-app paths subject to device lab validation. | Android 13+ notification permission required for visible notices. | `consumePendingNavigate` consumes once; `stop` clears current snapshot. | `test/native/android_p0_platform_channels_test.dart`; `test/native/p0_platform_interfaces_test.dart`; `test/native/pump_native_runtime_coordinator_test.dart`. |
+| `PumpSessionKeepAlive` | `acquire`, `release`. | Void success. | Release failure is logged native-side and not surfaced to UI. | None. | Native wake lock calls run on plugin method thread. | Partial wake lock is native-owned while pump session is active. | Requires Android wake lock capability declared in manifest. | Reference-count fake makes extra release safe. | `test/native/p0_platform_interfaces_test.dart`. |
+| `PumpSessionOverlay` | `canDrawOverlays`, `openOverlaySettings`, `snapshot`, `update`, `hide`; payload is limited to display state/process, not token/user/conversation. | Boolean permission/snapshot/update status. | Overlay unavailable/permission denied routes to recoverable UI state. | Service update/hide intents only; no Flutter event stream required for P1. | Native service updates are async and UI-triggered. | Overlay service is optional P1/TBD; foreground notification remains P0 source of truth. | `SYSTEM_ALERT_WINDOW` if feature retained. | `hide` and repeated `update` are safe. | Covered by contract inventory and Android source review; true overlay UX remains device lab. |
+| `PumpAgentUpload` | `setConfig`, `updateDeviceSnapshot`, `sampleFromSnapshot`, `resetProgress`, `markStepStop`, `markStepPause`, `setOperationSource`, `uploadWorkstate`, `getProcessData`, `uploadProcess`, `uploadMilkRecord`; payloads use user/device snapshot/process fields. | Upload methods return `{body,response,processAll,deduped}`; progress returns `{processL,processR,processAll,elapsedSeconds}`. | `uploadFailure` emits `{method,code,message,retryable,payload}` with payload redacted. | `uploadFailure`, `processProgress`, `processReply`; fake also records method calls. | Upload transport runs on background thread; progress/reply events broadcast to Flutter. | Background runner continues workstate/process-data/process uploads through foreground-service-backed loop. | Requires configured HTTPS API base URL, bearer token, user id, and active native pump/device snapshot. | Summary/workstate/milk upload keys dedupe duplicate completion calls. | `test/native/android_p0_platform_channels_test.dart`; `test/native/p0_platform_interfaces_test.dart`; `test/native/pump_native_runtime_coordinator_test.dart`. |
+| `BackgroundNotify` | `setConfig`, `setEnabled`, `isEnabled`, `syncNow`, `showReminder`, settings-open and capability-check methods. | Enabled/capability calls return booleans; sync/show methods return void or status. | Missing config returns retry/success-safe native state; logs omit token/user payload. | Native alarm/notification route intent goes through `RouteIntentPlatform`. | WorkManager/AlarmManager work runs native-side. | P1 background notifications can run without Flutter isolate. | Notification, exact alarm, battery optimization, and optional overlay permissions. | Repeated enable/sync reschedules by unique work/alarm id. | `doc/flutter-permission-lifecycle-matrix.md`; Android `Notify*` source; true permission behavior in device lab. |
+| `DeviceReminderWebSocket` | `start`, `stop` with `wsUrl`, `apiBaseUrl`, bearer token, user id config. | Start/stop resolve after native service command dispatch. | Connect/parse/execute failures log redacted failure class/code; no raw URL token. | Native `reminderHandled` event maps reminder type/action/notifyJson into route intent. | OkHttp WS and reconnect loop run native service-side. | P1/TBD native service can reconnect while app is backgrounded. | Foreground service notification permission and network availability. | `start` while running is ignored; `stop` closes socket and removes callbacks. | Android `DeviceReminderWebSocket*` source; true reconnect remains device lab. |
+| `NativeDeviceState` | JavaScript bridge legacy surface exposes snapshot/current active pump state; Flutter target is typed native device repository. | Left/right snapshot with paired/connected/runtime pump fields. | Invalid JSON or stale state falls back to disconnected/idle. | Snapshot updates are consumed through BLE notification and pump runtime coordinator streams. | Native state mutation is synchronized on Android lock. | Native store can survive foreground service lifetime. | BLE/device permission before trusting live connection state. | Stale `connected` is never trusted across cold migration without native validation. | `test/core/ble/pump_device_snapshot_test.dart`; storage migration fixtures; Android `DeviceNativeStateStore.java`. |
+| `PumpNavigationBridge` / `RouteIntentPlatform` | `enqueuePendingNavigate`, `consumePendingNavigate`, active `activeRoute` event; payload `{path,notifyJson,autoEndTeardown}`. | Pending route returns once or null. | Unsafe/unknown route maps to `RejectUnsafeRoute` or 404 fallback. | `activeRoute` stream while app is foreground. | MethodChannel call/event stream on Flutter UI isolate; native intent handling in `MainActivity`. | Pending route survives notification tap and app cold start subject to Android lifecycle. | No direct permission; caller must re-authorize route content after navigation. | Pending route consumption is one-shot. | `test/native/android_p0_platform_channels_test.dart`; `test/core/routing/route_intent_test.dart`. |
 
 ---
 
