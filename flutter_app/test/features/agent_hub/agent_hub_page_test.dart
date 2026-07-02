@@ -114,7 +114,7 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
     );
 
     await tester.pumpWidget(
@@ -155,7 +155,7 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
     );
 
     await tester.pumpWidget(
@@ -204,7 +204,7 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
     );
 
     await tester.pumpWidget(
@@ -264,7 +264,7 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
     );
 
     await tester.pumpWidget(
@@ -306,7 +306,7 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
     );
     final recorder = _PageFakeVoiceRecorder(
       initialPermission: AgentVoiceInputPermissionState.unknown,
@@ -345,7 +345,7 @@ void main() {
   ) async {
     final coordinator = AgentVoicePlaybackCoordinator();
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
     );
 
     await tester.pumpWidget(
@@ -381,7 +381,7 @@ void main() {
       cancel: () => notificationCancelled = true,
     );
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
     );
 
     await tester.pumpWidget(
@@ -555,7 +555,7 @@ void main() {
     (tester) async {
       final client = _FixtureAgentStreamClient(
         parseAgentJsonl(
-          readMigrationFixture('ag_ui/tool_call_lifecycle.jsonl'),
+          readMigrationFixture('agent_events/tool_call_lifecycle.jsonl'),
         ),
       );
 
@@ -594,20 +594,22 @@ void main() {
             textContent: '我会尽量继续整理。',
             events: [
               AgentStreamEvent(const {
-                'type': 'TOOL_CALL_START',
+                'type': 'tool.started',
                 'thread_id': 'thread-tool-fail',
                 'run_id': 'run-tool-fail',
                 'tool_call_id': 'call_growth_fail',
-                'tool_call_name': 'growth_record_query',
+                'payload': {'tool_name': 'growth_record_query'},
               }),
               AgentStreamEvent(const {
-                'type': 'TOOL_CALL_FAILED',
+                'type': 'tool.failed',
                 'thread_id': 'thread-tool-fail',
                 'run_id': 'run-tool-fail',
                 'tool_call_id': 'call_growth_fail',
-                'tool_call_name': 'growth_record_query',
-                'message': 'database timeout for child profile',
-                'content': '{"childId":"baby-secret","error":"timeout"}',
+                'payload': {
+                  'tool_name': 'growth_record_query',
+                  'message': 'database timeout for child profile',
+                  'details': '{"childId":"baby-secret","error":"timeout"}',
+                },
               }),
             ],
           ),
@@ -627,7 +629,7 @@ void main() {
     tester,
   ) async {
     final artifactEvent = AgentStreamEvent(
-      readFixtureMap('ag_ui/rich_text_artifact.json'),
+      readFixtureMap('agent_events/rich_text_artifact.json'),
     );
 
     await tester.pumpWidget(
@@ -670,27 +672,29 @@ void main() {
   ) async {
     final actions = <AgentArtifactActionView>[];
     final artifactEvent = AgentStreamEvent({
-      'type': 'ARTIFACT_CREATED',
+      'type': 'artifact.created',
       'thread_id': 'thread-resource',
       'run_id': 'run-resource',
       'message_id': 'msg-resource',
       'artifact_id': 'resource-card',
-      'artifact_type': 'rich_text',
-      'rich_text': {
-        'title': '资源',
-        'content': '可以打开这些资料。',
-        'button': [
-          {'text': '打开文档', 'type': 'doc', 'value': '/docs/a.pdf'},
-          {'text': '查看图片', 'type': 'media', 'value': '/media/a.png'},
-        ],
-        'card': [
-          {
-            'title': '参考',
-            'content': [
-              {'title': '指南', 'content': '泵奶姿势'},
-            ],
-          },
-        ],
+      'payload': {
+        'artifact_type': 'rich_text',
+        'rich_text': {
+          'title': '资源',
+          'content': '可以打开这些资料。',
+          'button': [
+            {'text': '打开文档', 'type': 'doc', 'value': '/docs/a.pdf'},
+            {'text': '查看图片', 'type': 'media', 'value': '/media/a.png'},
+          ],
+          'card': [
+            {
+              'title': '参考',
+              'content': [
+                {'title': '指南', 'content': '泵奶姿势'},
+              ],
+            },
+          ],
+        },
       },
     });
 
@@ -743,23 +747,25 @@ void main() {
   ) async {
     final actions = <AgentArtifactActionView>[];
     final artifactEvent = AgentStreamEvent({
-      'type': 'ARTIFACT_CREATED',
+      'type': 'artifact.created',
       'thread_id': 'thread-citation',
       'run_id': 'run-citation',
       'message_id': 'msg-citation',
       'artifact_id': 'citation-card',
-      'artifact_type': 'rich_text',
-      'rich_text': {
-        'title': '参考资料',
-        'content': '这些资料可以作为进一步阅读。',
-        'citations': [
-          {
-            'index': 1,
-            'title': 'CDC Breastfeeding',
-            'url': 'https://www.cdc.gov/breastfeeding/mastitis',
-          },
-          {'displayText': 'ABM Protocol', 'href': '/guides/abm.pdf'},
-        ],
+      'payload': {
+        'artifact_type': 'rich_text',
+        'rich_text': {
+          'title': '参考资料',
+          'content': '这些资料可以作为进一步阅读。',
+          'citations': [
+            {
+              'index': 1,
+              'title': 'CDC Breastfeeding',
+              'url': 'https://www.cdc.gov/breastfeeding/mastitis',
+            },
+            {'displayText': 'ABM Protocol', 'href': '/guides/abm.pdf'},
+          ],
+        },
       },
     });
 
@@ -804,26 +810,28 @@ void main() {
       '今天的泵奶记录很多，我需要把左右侧奶量、舒适度、间隔和宝宝喂养情况一起整理给你。',
     ).join();
     final artifactEvent = AgentStreamEvent({
-      'type': 'ARTIFACT_CREATED',
+      'type': 'artifact.created',
       'thread_id': 'thread-long-copy',
       'run_id': 'run-long-copy',
       'message_id': 'msg-long-copy',
       'artifact_id': 'long-copy-card',
-      'artifact_type': 'rich_text',
-      'rich_text': {
-        'title': '长内容建议',
-        'content': longText,
-        'card': [
-          {
-            'title': '下一步',
-            'content': [
-              {
-                'title': '观察重点',
-                'content': '连续记录三次泵奶后的舒适度和奶量变化，尤其关注左侧是否仍然明显偏低。',
-              },
-            ],
-          },
-        ],
+      'payload': {
+        'artifact_type': 'rich_text',
+        'rich_text': {
+          'title': '长内容建议',
+          'content': longText,
+          'card': [
+            {
+              'title': '下一步',
+              'content': [
+                {
+                  'title': '观察重点',
+                  'content': '连续记录三次泵奶后的舒适度和奶量变化，尤其关注左侧是否仍然明显偏低。',
+                },
+              ],
+            },
+          ],
+        },
       },
     });
 
@@ -944,24 +952,24 @@ class _RetryAgentStreamClient implements AgentStreamClient {
 
     if (requests.length == 1) {
       yield AgentStreamEvent(const {
-        'type': 'TEXT_MESSAGE_CONTENT',
+        'type': 'message.delta',
         'thread_id': 'thread-demo',
         'run_id': 'run-first',
         'message_id': 'msg-first',
-        'delta': 'Partial answer',
+        'payload': {'text': 'Partial answer'},
       });
       throw StateError('socket closed');
     }
 
     yield AgentStreamEvent(const {
-      'type': 'TEXT_MESSAGE_CONTENT',
+      'type': 'message.delta',
       'thread_id': 'thread-demo',
       'run_id': 'run-retry',
       'message_id': 'msg-retry',
-      'delta': 'Retried answer',
+      'payload': {'text': 'Retried answer'},
     });
     yield AgentStreamEvent(const {
-      'type': 'RUN_FINISHED',
+      'type': 'run.completed',
       'thread_id': 'thread-demo',
       'run_id': 'run-retry',
       'message_id': 'msg-retry',
