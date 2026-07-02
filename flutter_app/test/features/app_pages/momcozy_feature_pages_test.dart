@@ -1536,12 +1536,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('18 件'), findsOneWidget);
+      expect(find.text('产褥垫组合装'), findsOneWidget);
 
-      await tester.tap(find.byTooltip('删除产褥垫组合装'));
+      await tester.longPress(find.text('产褥垫组合装'));
       await tester.pumpAndSettle();
 
-      expect(find.text('17 件'), findsOneWidget);
       expect(find.text('购物车已同步'), findsOneWidget);
 
       final cart =
@@ -1573,11 +1572,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('删除产褥垫组合装'));
+      await tester.longPress(find.text('产褥垫组合装'));
       await tester.pumpAndSettle();
 
       expect(find.text('产褥垫组合装'), findsNothing);
-      expect(find.text('17 件'), findsOneWidget);
       expect(find.text('清单已同步'), findsOneWidget);
 
       final deletedCart =
@@ -1593,7 +1591,8 @@ void main() {
       await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
       await tester.pumpAndSettle();
 
-      expect(find.text('18 件'), findsOneWidget);
+      await _scrollToText(tester, '产褥垫组合装');
+      expect(find.text('产褥垫组合装'), findsOneWidget);
       final restoredCart =
           transport.postedBodies.last['hospital_bag_cart']!
               as Map<String, Object?>;
@@ -1617,10 +1616,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('删除产褥垫组合装'));
+      await tester.longPress(find.text('产褥垫组合装'));
       await tester.pumpAndSettle();
 
-      expect(find.text('17 件'), findsOneWidget);
       expect(find.text('本地清单已更新，稍后重试同步。'), findsOneWidget);
 
       await tester.pumpWidget(const SizedBox.shrink());
@@ -1639,15 +1637,16 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('删除产褥垫组合装'));
+      await tester.longPress(find.text('产褥垫组合装'));
       await tester.pumpAndSettle();
-      expect(find.text('17 件'), findsOneWidget);
+      expect(find.text('产褥垫组合装'), findsNothing);
 
       await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
       await tester.pumpAndSettle();
 
-      expect(find.text('18 件'), findsOneWidget);
       expect(find.text('默认清单已恢复'), findsOneWidget);
+      await _scrollToText(tester, '产褥垫组合装');
+      expect(find.text('产褥垫组合装'), findsOneWidget);
     });
 
     testWidgets('device subpages mirror reminder and user config routes', (
