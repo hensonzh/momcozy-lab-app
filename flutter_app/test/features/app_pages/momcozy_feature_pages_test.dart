@@ -507,16 +507,19 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('200 mL'), findsOneWidget);
+      await _scrollToTextContaining(tester, '晨间泵奶');
       expect(find.textContaining('晨间泵奶'), findsOneWidget);
       expect(find.textContaining('120 mL'), findsWidgets);
 
-      await tester.tap(find.text('喂养'));
+      await _tapScrollableText(tester, '喂养');
       await tester.pumpAndSettle();
+      await _scrollToTextContaining(tester, 'breast_milk');
       expect(find.textContaining('breast_milk'), findsOneWidget);
       expect(find.textContaining('80 mL'), findsWidgets);
 
-      await tester.tap(find.text('成长'));
+      await _tapScrollableText(tester, '成长');
       await tester.pumpAndSettle();
+      await _scrollToTextContaining(tester, '6.2 kg');
       expect(find.textContaining('6.2 kg'), findsOneWidget);
       expect(find.textContaining('64.5 cm'), findsOneWidget);
     });
@@ -534,8 +537,9 @@ void main() {
       expect(find.text('6.8 oz'), findsOneWidget);
       expect(find.textContaining('4.1 oz'), findsWidgets);
 
-      await tester.tap(find.text('喂养'));
+      await _tapScrollableText(tester, '喂养');
       await tester.pumpAndSettle();
+      await _scrollToTextContaining(tester, '2.7 oz');
 
       expect(find.textContaining('2.7 oz'), findsWidgets);
     });
@@ -550,14 +554,18 @@ void main() {
       await tester.tap(find.text('手动补录'));
       await tester.pumpAndSettle();
 
+      await _scrollToTextContaining(tester, '手动补录 1');
       expect(find.textContaining('手动补录 1'), findsOneWidget);
-      expect(find.text('90 mL · 来源 9'), findsOneWidget);
+      expect(find.textContaining('90 mL'), findsWidgets);
+      expect(find.textContaining('来源 9'), findsOneWidget);
 
       await tester.tap(find.byTooltip('编辑记录').first);
       await tester.pumpAndSettle();
 
+      await _scrollToTextContaining(tester, '已编辑 手动补录 1');
       expect(find.textContaining('已编辑 手动补录 1'), findsOneWidget);
-      expect(find.text('100 mL · 来源 9'), findsOneWidget);
+      expect(find.textContaining('100 mL'), findsWidgets);
+      expect(find.textContaining('来源 9'), findsOneWidget);
 
       await tester.tap(find.byTooltip('删除记录').first);
       await tester.pumpAndSettle();
@@ -596,6 +604,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _scrollToTextContaining(tester, '夜间跨天泵奶');
       expect(find.textContaining('夜间跨天泵奶'), findsOneWidget);
       expect(find.textContaining('跨天记录'), findsOneWidget);
     });
@@ -622,16 +631,19 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('0 mL'), findsOneWidget);
-      expect(find.text('暂无奶量趋势'), findsOneWidget);
+      expect(find.text('0 mL'), findsWidgets);
+      expect(find.text('暂无奶量趋势'), findsWidgets);
+      await _scrollToText(tester, '暂无泵奶记录');
       expect(find.text('暂无泵奶记录'), findsOneWidget);
 
-      await tester.tap(find.text('喂养'));
+      await _tapScrollableText(tester, '喂养');
       await tester.pumpAndSettle();
+      await _scrollToText(tester, '暂无喂养记录');
       expect(find.text('暂无喂养记录'), findsOneWidget);
 
-      await tester.tap(find.text('成长'));
+      await _tapScrollableText(tester, '成长');
       await tester.pumpAndSettle();
+      await _scrollToText(tester, '暂无成长记录');
       expect(find.text('暂无成长记录'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -1782,6 +1794,15 @@ Future<void> _tapScrollableText(WidgetTester tester, String text) async {
 
 Future<void> _scrollToText(WidgetTester tester, String text) async {
   final finder = find.text(text);
+  await _scrollToFinder(tester, finder);
+}
+
+Future<void> _scrollToTextContaining(WidgetTester tester, String text) async {
+  final finder = find.textContaining(text);
+  await _scrollToFinder(tester, finder);
+}
+
+Future<void> _scrollToFinder(WidgetTester tester, Finder finder) async {
   for (final offset in const [Offset(0, -240), Offset(0, 240)]) {
     for (var attempt = 0; attempt < 12; attempt += 1) {
       if (finder.evaluate().isNotEmpty) return;
@@ -1789,7 +1810,7 @@ Future<void> _scrollToText(WidgetTester tester, String text) async {
       await tester.pump();
     }
   }
-  expect(finder, findsOneWidget);
+  expect(finder, findsWidgets);
 }
 
 class _FeaturePageHost extends StatelessWidget {

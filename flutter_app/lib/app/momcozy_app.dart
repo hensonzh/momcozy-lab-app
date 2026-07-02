@@ -817,7 +817,7 @@ const momCozyRoutes = [
   ),
   MomCozyRouteConfig(
     path: '/records',
-    title: '记录',
+    title: '妈妈点滴',
     summary: '泵奶、喂养和成长记录的列表与图表入口。',
     icon: Icons.insights_rounded,
     accent: Color(0xff6b6da8),
