@@ -28,6 +28,11 @@
         "path": "/",
         "autoEndTeardown": false,
         "notifyJson": "{\"event\":\"health_issue\",\"body\":\"乳汁电导率异常提醒\",\"chatMessageId\":\"notification-health_issue-001\"}"
+      },
+      {
+        "path": "/schedule?mmcNotify=1",
+        "autoEndTeardown": false,
+        "notifyJson": "{\"event\":\"schedule_reminder\",\"taskId\":\"task-001\"}"
       }
     ]
   },
@@ -85,6 +90,15 @@
         "message": "乳汁电导率异常提醒"
       },
       "consume": "once"
+    },
+    {
+      "type": "OpenScheduleReminder",
+      "path": "/schedule",
+      "payload": {
+        "source": "native-notification",
+        "taskId": "task-001"
+      },
+      "consume": "once"
     }
   ],
   "sideEffects": {
@@ -107,6 +121,7 @@
     "milk_analysis is personalized before chat insertion when personalization service is available",
     "milk_analysis uses analysis_context when present, otherwise analysis_card",
     "growth notification strips query string into typed highlight payload",
-    "health_issue message is treated as sensitive notification copy"
+    "health_issue message is treated as sensitive notification copy",
+    "schedule reminder strips query string into typed reminder payload"
   ]
 }

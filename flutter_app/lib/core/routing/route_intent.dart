@@ -85,9 +85,26 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
     );
   }
 
-  final cleanPath = _stripQuery(path);
+  final uri = Uri.tryParse(path);
+  final cleanPath = uri?.path ?? _stripQuery(path);
+  final query = uri?.queryParameters ?? const <String, String>{};
   final notify = _decodeObject(_string(payload['notifyJson']));
   final event = _string(notify?['event']);
+
+  if (cleanPath == '/schedule' &&
+      (event == 'schedule_reminder' || query['mmcNotify'] == '1')) {
+    final intentPayload = <String, Object?>{'source': 'native-notification'};
+    final taskId = _string(notify?['taskId']) ?? _string(notify?['task_id']);
+    if (taskId != null && taskId.isNotEmpty) {
+      intentPayload['taskId'] = taskId;
+    }
+    return RouteIntent(
+      type: 'OpenScheduleReminder',
+      path: '/schedule',
+      payload: intentPayload,
+      consume: 'once',
+    );
+  }
 
   if (cleanPath == '/status' && event == 'grown') {
     return const RouteIntent(

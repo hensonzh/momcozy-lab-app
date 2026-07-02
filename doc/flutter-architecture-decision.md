@@ -164,7 +164,7 @@ features/
 [x] Android `MmcBle` GATT connect/read/write/notify 已接入 Flutter MethodChannel，debug APK 构建通过
 [x] Flutter 侧 `PumpAgentUploadPlatform` MethodChannel adapter 已覆盖 method schema 与 failure events
 [x] Android `PumpAgentUploadPlatform` Kotlin MethodChannel handler shell 已接入，debug APK 构建通过
-[x] Android `PumpAgentUploadPlatform` HTTP transport 已接入；真实 pump snapshot/body parity 和 service-backed runner 仍是下一步
+[x] Android `PumpAgentUploadPlatform` HTTP transport 已接入；pump snapshot/body parity 和 service-backed runner shell 已落地，真实 parity 仍由真泵回归确认
 [x] Flutter `PumpDeviceSnapshot` reducer 已落地并覆盖 legacy BLE protocol frame 到设备快照的字段更新
 [x] Flutter `PumpDeviceSnapshotBleBinding` 已接入 `BlePlatform.notifications`，为后续 PumpAgentUpload body parity 提供实时快照源
 [x] `PumpAgentUploadPlatform.updateDeviceSnapshot` 与 Android upload body builder 已接入 Flutter pump snapshot contract
@@ -227,7 +227,7 @@ features/
 [x] Flutter Agent Hub auto-reply/notification voice playback coordinator 已覆盖优先级、阻塞、打断和 UI 播放状态，平台 TTS driver 留给 native/audio 集成
 [x] Flutter Agent voice input controller 已覆盖 microphone permission、录音 start/stop、转写回填和 Agent Hub 权限拒绝 UI
 [x] Flutter Records 页面已覆盖加载、空态、失败、趋势展示、手动补录、编辑/删除、本地跨天标记、弱网重试文案和 mL/oz 单位切换
-[x] Flutter Schedule 页面已覆盖日期切换、任务添加/删除、任务完成、提醒开关、未完成 badge、跨天倒计时、本地日期到 UTC timestamp 和空/失败态；通知跳转仍按后续 parity 推进
+[x] Flutter Schedule 页面已覆盖日期切换、任务添加/删除、任务完成、提醒开关、未完成 badge、跨天倒计时、本地日期到 UTC timestamp、空/失败态和 schedule reminder typed route intent
 [x] Flutter Status 页面已覆盖孕期/哺乳期切换、妈妈/宝宝 tab、成长记录本地草稿、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 [x] Flutter Device 页面已覆盖无设备、左右已连接、BLE 未请求/拒绝/永久拒绝、系统设置返回重授权、internal/dev debug gate、扫描空态、单/多扫描结果、battery/RSSI 展示、连接失败和扫描失败状态；真实 scan/connect 留给设备实验室
 [x] Flutter Pump/Calibration 页面已覆盖 session 启动/暂停/恢复/结束、左右侧进度、结束上传一次性 guard、重复结束拦截、多用户切换清理、workstate 失败重试、无设备校准失败提示、左/右/双侧校准设备状态、档位调整、未保存退出提示、合法/缺字段/非法/0xFF legacy calibration migration 和保存后进入 Pump

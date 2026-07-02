@@ -50,7 +50,7 @@
 | Milk analysis | `notifyJson.event = "milk_analysis"` | `/` + Agent message + follow-up | `OpenAgentHubWithMilkAnalysis` | 需要 context event 和 follow-up queue。 |
 | Growth update | `notifyJson.event = "grown"` | `/status` highlight | `OpenStatusGrowthHighlight` | 当前通过 sessionStorage pending highlight。 |
 | Health issue | `notifyJson.event = "health_issue"` | `/` + Agent notification | `OpenAgentHubWithHealthIssue` | 高敏感文案必须脱敏。 |
-| Schedule reminder | native service path | `/schedule?mmcNotify=1` | `OpenScheduleReminder` | URL query 应改成 typed intent。 |
+| Schedule reminder | native service path | `/schedule?mmcNotify=1` | `OpenScheduleReminder` | URL query 已转为 typed intent。 |
 
 ---
 
@@ -114,7 +114,7 @@ test/fixtures/route_intents/
 
 这些 fixtures 覆盖：
 
-- native notification `notifyJson` 到 AgentHub / Status 的 typed intent。
+- native notification `notifyJson` 到 AgentHub / Status / Schedule 的 typed intent。
 - pump foreground notification、auto-end teardown 和 overlay route observer。
 - plan、pregnancy diary 的 pending storage 到 badge/navigation intent。
 - AG-UI artifact、feature-to-feature navigation、query/state/custom event 的 typed 化。
