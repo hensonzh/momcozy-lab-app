@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
@@ -254,6 +255,10 @@ class MomCozyApiRuntime {
 
   PumpProtocolPlatform get pumpProtocolPlatform {
     return _pumpProtocolPlatform ??= pumpNativeRuntimeCoordinator.protocol;
+  }
+
+  MomCozyAuthApiRepository get authRepository {
+    return MomCozyAuthApiRepository(transport: jsonTransport);
   }
 
   Future<void> startPumpNativeRuntime({
