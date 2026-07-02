@@ -14,6 +14,17 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('MomCozy feature page goldens', () {
+    testWidgets('agent hub matches compact mobile baseline', (tester) async {
+      await _setCompactMobileViewport(tester);
+      await _pumpGoldenApp(tester, initialLocation: '/');
+
+      expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+      await expectLater(
+        find.byKey(_goldenSurfaceKey),
+        matchesGoldenFile('../../goldens/feature_pages/agent_hub_mobile.png'),
+      );
+    });
+
     testWidgets('status page matches compact mobile baseline', (tester) async {
       await _setCompactMobileViewport(tester);
       await _pumpGoldenApp(tester, initialLocation: '/status');

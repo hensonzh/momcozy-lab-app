@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
@@ -297,34 +298,54 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return ListView(
       key: const ValueKey('agent-hub-page'),
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
       children: [
         Row(
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              alignment: Alignment.center,
+            DecoratedBox(
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
+                shape: BoxShape.circle,
+                color: MomCozyColors.card,
+                border: Border.all(color: MomCozyColors.background, width: 3),
+                boxShadow: MomCozyShadows.soft,
               ),
-              child: Icon(
-                Icons.auto_awesome_rounded,
-                color: colorScheme.onPrimaryContainer,
+              child: const Padding(
+                padding: EdgeInsets.all(3),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: AssetImage(MomCozyAssets.agentAvatar),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: SizedBox.square(dimension: 46),
+                ),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                '智能体',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '智能体',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Momcozy Agent',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
             ),
             IconButton(
@@ -411,16 +432,11 @@ class AgentHubHistoryPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return DecoratedBox(
       key: const ValueKey('agent-history-panel'),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorScheme.outlineVariant),
-      ),
+      decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(
@@ -429,7 +445,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
             Text(
               '历史会话',
               style: textTheme.labelLarge?.copyWith(
-                color: colorScheme.onSurface,
+                color: MomCozyColors.foreground,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -442,7 +458,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
                   Text(
                     messages[index].roleLabel,
                     style: textTheme.labelMedium?.copyWith(
-                      color: colorScheme.primary,
+                      color: MomCozyColors.primary,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -452,7 +468,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
                       messages[index].content,
                       style: textTheme.bodySmall?.copyWith(
                         height: 1.35,
-                        color: colorScheme.onSurfaceVariant,
+                        color: MomCozyColors.mutedForeground,
                       ),
                     ),
                   ),
@@ -485,7 +501,7 @@ class AgentRunPhaseBadge extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(MomCozyRadii.pill),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -545,8 +561,8 @@ class AgentRunPhaseBadge extends StatelessWidget {
       AgentStreamRunPhase.error || AgentStreamRunPhase.disconnected =>
         colorScheme.errorContainer.withValues(alpha: 0.5),
       AgentStreamRunPhase.cancelRequested ||
-      AgentStreamRunPhase.cancelled => colorScheme.surfaceContainerHighest,
-      _ => colorScheme.primaryContainer.withValues(alpha: 0.58),
+      AgentStreamRunPhase.cancelled => MomCozyColors.muted,
+      _ => MomCozyColors.roseSoft.withValues(alpha: 0.86),
     };
   }
 }
@@ -577,11 +593,7 @@ class AgentRunTranscript extends StatelessWidget {
 
     return DecoratedBox(
       key: const ValueKey('agent-run-transcript'),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorScheme.outlineVariant),
-      ),
+      decoration: MomCozyDecorations.card(),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -591,7 +603,7 @@ class AgentRunTranscript extends StatelessWidget {
               text,
               style: textTheme.bodyLarge?.copyWith(
                 height: 1.42,
-                color: colorScheme.onSurface,
+                color: MomCozyColors.foreground,
               ),
             ),
             if (_supportingText != null) ...[
@@ -610,7 +622,7 @@ class AgentRunTranscript extends StatelessWidget {
                       _supportingText!,
                       style: textTheme.bodySmall?.copyWith(
                         height: 1.35,
-                        color: colorScheme.onSurfaceVariant,
+                        color: MomCozyColors.mutedForeground,
                       ),
                     ),
                   ),
@@ -691,7 +703,7 @@ class AgentRunWorkPanel extends StatelessWidget {
         Text(
           '处理进度',
           style: textTheme.labelLarge?.copyWith(
-            color: colorScheme.onSurface,
+            color: MomCozyColors.foreground,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -708,7 +720,7 @@ class AgentRunWorkPanel extends StatelessWidget {
                   step.title,
                   style: textTheme.bodySmall?.copyWith(
                     height: 1.35,
-                    color: colorScheme.onSurfaceVariant,
+                    color: MomCozyColors.mutedForeground,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -788,7 +800,7 @@ class AgentArtifactPanel extends StatelessWidget {
         Text(
           '结果卡片',
           style: textTheme.labelLarge?.copyWith(
-            color: colorScheme.onSurface,
+            color: MomCozyColors.foreground,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -797,11 +809,11 @@ class AgentArtifactPanel extends StatelessWidget {
           DecoratedBox(
             key: ValueKey('agent-artifact-card-${card.id}'),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(
-                alpha: 0.48,
+              color: MomCozyColors.roseSoft.withValues(alpha: 0.54),
+              borderRadius: BorderRadius.circular(MomCozyRadii.control),
+              border: Border.all(
+                color: MomCozyColors.border.withValues(alpha: 0.74),
               ),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: colorScheme.outlineVariant),
             ),
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -821,7 +833,7 @@ class AgentArtifactPanel extends StatelessWidget {
                         child: Text(
                           card.title,
                           style: textTheme.titleSmall?.copyWith(
-                            color: colorScheme.onSurface,
+                            color: MomCozyColors.foreground,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -844,7 +856,7 @@ class AgentArtifactPanel extends StatelessWidget {
                       card.content!,
                       style: textTheme.bodySmall?.copyWith(
                         height: 1.35,
-                        color: colorScheme.onSurfaceVariant,
+                        color: MomCozyColors.mutedForeground,
                       ),
                     ),
                   ],
@@ -854,7 +866,7 @@ class AgentArtifactPanel extends StatelessWidget {
                       row,
                       style: textTheme.bodySmall?.copyWith(
                         height: 1.35,
-                        color: colorScheme.onSurfaceVariant,
+                        color: MomCozyColors.mutedForeground,
                       ),
                     ),
                   ],
@@ -963,13 +975,9 @@ class AgentComposerBar extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorScheme.outlineVariant),
-      ),
+      decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+        padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -987,7 +995,7 @@ class AgentComposerBar extends StatelessWidget {
                     child: Text(
                       '图片 $imageCount',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                        color: MomCozyColors.mutedForeground,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -1017,21 +1025,43 @@ class AgentComposerBar extends StatelessWidget {
                   tooltip: _voiceTooltip,
                 ),
                 Expanded(
-                  child: TextField(
-                    key: const ValueKey('agent-composer-input'),
-                    controller: controller,
-                    minLines: 1,
-                    maxLines: 4,
-                    enabled: !isRunning,
-                    onChanged: onChanged,
-                    onSubmitted: (_) {
-                      if (canSend) onSend();
-                    },
-                    decoration: InputDecoration(
-                      hintText: '说说今天的情况',
-                      border: InputBorder.none,
-                      isDense: true,
-                      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: MomCozyColors.muted,
+                      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                      border: Border.all(
+                        color: MomCozyColors.border.withValues(alpha: 0.58),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: TextField(
+                        key: const ValueKey('agent-composer-input'),
+                        controller: controller,
+                        minLines: 1,
+                        maxLines: 4,
+                        enabled: !isRunning,
+                        onChanged: onChanged,
+                        onSubmitted: (_) {
+                          if (canSend) onSend();
+                        },
+                        decoration: InputDecoration(
+                          hintText: '说说今天的情况',
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          filled: false,
+                          isDense: true,
+                          hintStyle: TextStyle(
+                            fontFamily: MomCozyTypography.fontFamily,
+                            fontFamilyFallback:
+                                MomCozyTypography.fontFamilyFallback,
+                            color: MomCozyColors.mutedForeground.withValues(
+                              alpha: 0.82,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
