@@ -52,6 +52,9 @@ Already present:
   `/v1/agent/runs/{run_id}/stream`, cancels through
   `/v1/agent/runs/{run_id}/cancel`, and reduces production
   `message.*`/`run.*` events.
+- Agent Hub no longer ships legacy agent-stream transport/prewarm/timing clients, no longer
+  requires client-supplied `user_id`, and records feature client events locally
+  through observability instead of posting to the legacy client-event endpoint.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -61,8 +64,8 @@ Main gaps:
 - Runtime still bootstraps from dart-define demo users and optional bearer token.
 - Auth UI and route guards are not wired yet.
 - Some feature repositories still pass `user_id` and target legacy endpoints.
-- Agent chat still uses legacy AG-UI endpoints instead of `/v1/agent` thread,
-  run, replay, stream, cancel, and action-confirmation resources.
+- Agent replay/event-page and action confirmation UI are still partial; the main
+  run/stream/cancel path is on `/v1/agent/runs`.
 - API client is handwritten and only partially validated against OpenAPI.
 - CI cannot yet run Flutter format/analyze/test in this local environment.
 
@@ -89,7 +92,7 @@ Main gaps:
 | 1. Auth/session | `api-state-auth.md`, backend `/v1/auth/*` | Add auth DTOs/repository/session service, refresh lock, logout cache purge. | Unit tests cover signup/login/refresh/logout, expired token refresh, logout cleanup. |
 | 2. Network contract | `api-state-auth.md` | Add stable error envelope mapper, idempotency header support, generated-client policy. | Tests cover `{error:{code,message,request_id}}`, 401, 403, 409, 422, 429, 5xx. |
 | 3. Records/profile/files | `project-organization.md` | Move status/records/media repositories to production `/v1` endpoints and remove `user_id` authority params from requests. | Repository tests use OpenAPI-aligned fixtures and no legacy path constants. |
-| 4. Agent runtime UI | `agent-streaming-ui.md`, production agent contract | Replace legacy AG-UI endpoints with `/v1/agent/threads`, `/runs`, `/events`, `/stream`, `/cancel`, `/actions`. | Reducer tests cover replay, duplicate events, action IDs, cancel, reconnect cursor. |
+| 4. Agent runtime UI | `agent-streaming-ui.md`, production agent contract | Replace legacy agent stream endpoints with `/v1/agent/threads`, `/runs`, `/events`, `/stream`, `/cancel`, `/actions`. | Main run/stream/cancel path uses production events; remaining work is replay/event-page and action confirmation UI. |
 | 5. App shell hardening | `complete-flutter-build.md` | Add authenticated/anonymous routing states, production flavors, diagnostics screen, and privacy redaction review. | Widget tests cover auth gate, route restore, offline/error/permission states. |
 | 6. Release gates | `testing-release.md` | Add CI for contract validator, Flutter format/analyze/test, Android build, staging smoke flow. | CI blocks stale contract, legacy endpoints, token URLs, and failing tests. |
 
@@ -101,8 +104,8 @@ Main gaps:
    because every owner-scoped feature depends on it.
 3. Add formal production OpenAPI coverage for voice/transcription endpoints or
    replace them with the production agent runtime media flow.
-4. Remove remaining AG-UI-only helper clients and migrate client events/timing
-   diagnostics to production agent events or observability endpoints.
+4. Add production replay/event-page and action confirmation flows for Agent Hub
+   once the backend endpoints are exposed in the OpenAPI snapshot.
 
 ## Non-Goals
 
