@@ -14,13 +14,8 @@ const _defaultAgentHubCancelUrl = String.fromEnvironment(
   'MOMCOZY_AGENT_CANCEL_URL',
 );
 const _defaultAgentHubToken = String.fromEnvironment('MOMCOZY_API_TOKEN');
-const _defaultAgentHubUserId = String.fromEnvironment(
-  'MOMCOZY_DEFAULT_USER_ID',
-  defaultValue: 'demo-user',
-);
 const _defaultAgentHubThreadId = String.fromEnvironment(
   'MOMCOZY_AGENT_THREAD_ID',
-  defaultValue: 'thread-demo',
 );
 const _defaultAgentHubLocale = String.fromEnvironment(
   'MOMCOZY_LOCALE',
@@ -29,8 +24,7 @@ const _defaultAgentHubLocale = String.fromEnvironment(
 
 AgentStreamRequest buildDefaultAgentHubRequest(String message) {
   return AgentStreamRequest(
-    userId: _defaultAgentHubUserId,
-    threadId: _defaultAgentHubThreadId,
+    threadId: _resolvedThreadId(_defaultAgentHubThreadId),
     message: message,
     locale: _defaultAgentHubLocale,
     metadata: const {'source': 'flutter-agent-hub'},
@@ -43,8 +37,7 @@ AgentStreamRequest buildSessionAgentHubRequest(
   String? threadId,
 }) {
   return AgentStreamRequest(
-    userId: session.userId,
-    threadId: _resolvedThreadId(session, threadId),
+    threadId: _resolvedThreadId(threadId),
     message: message,
     locale: session.locale,
     metadata: const {'source': 'flutter-agent-hub'},
@@ -149,7 +142,7 @@ Map<String, Object?> buildDefaultAgentHubPayload(AgentStreamRequest request) {
   return buildProductionAgentRunPayload(request);
 }
 
-String _resolvedThreadId(MomCozySession session, String? threadId) {
+String? _resolvedThreadId(String? threadId) {
   final explicitThreadId = threadId?.trim();
   if (explicitThreadId != null && explicitThreadId.isNotEmpty) {
     return explicitThreadId;
@@ -158,5 +151,5 @@ String _resolvedThreadId(MomCozySession session, String? threadId) {
   if (dartDefinedThreadId.isNotEmpty && dartDefinedThreadId != 'thread-demo') {
     return dartDefinedThreadId;
   }
-  return 'thread-${session.userId}';
+  return null;
 }

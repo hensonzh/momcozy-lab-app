@@ -6,7 +6,6 @@ void main() {
     test('builds the text-only production run create contract', () {
       final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(
-          userId: 'demo-user-fixture',
           message: '  Please review today\'s pumping pattern.  ',
           threadId: '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
           locale: 'en-US',
@@ -23,7 +22,6 @@ void main() {
     test('adds image attachments to the production run create contract', () {
       final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(
-          userId: 'demo-user-fixture',
           message: 'Please review this pump display photo.',
           threadId: 'not-a-production-uuid',
           locale: 'en-US',
@@ -54,7 +52,6 @@ void main() {
       expect(
         () => buildProductionAgentRunPayload(
           const AgentStreamRequest(
-            userId: 'demo-user-fixture',
             message: '   ',
           ),
         ),

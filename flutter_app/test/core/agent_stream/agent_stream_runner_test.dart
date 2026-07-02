@@ -14,7 +14,6 @@ void main() {
       'produces the same final state for SSE and JSONL clients',
       () async {
         const request = AgentStreamRequest(
-          userId: 'demo-user',
           message: 'Review my pumping pattern.',
         );
         final sseRunner = AgentStreamRunner(
@@ -94,7 +93,6 @@ void main() {
 }
 
 const _request = AgentStreamRequest(
-  userId: 'demo-user',
   message: 'Review my pumping pattern.',
 );
 
