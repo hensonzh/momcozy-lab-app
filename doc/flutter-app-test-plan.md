@@ -691,7 +691,7 @@ npm run flutter:p0:platform-smoke
 [x] HTTP/SSE 使用 HTTPS，WebSocket 使用 WSS，开发环境例外必须隔离
 [x] 日志不输出 token
 [x] 日志不输出完整健康数据 payload
-[ ] crash report 不包含敏感字段
+[x] crash report 不包含敏感字段
 [ ] 多用户切换时清理 scoped cache
 [x] 登出后清理 secure session 中的 token / refresh token 敏感状态
 [ ] screenshot/golden fixtures 不包含真实用户数据
