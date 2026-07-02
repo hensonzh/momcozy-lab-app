@@ -314,7 +314,11 @@ GoRouter createMomCozyRouter({String initialLocation = '/'}) {
           for (final route in momCozyRoutes)
             GoRoute(
               path: route.path,
-              builder: (context, state) => MomCozyRoutePage(route: route),
+              builder: (context, state) => MomCozyRoutePage(
+                route: route,
+                uri: state.uri,
+                extra: state.extra,
+              ),
             ),
         ],
       ),
@@ -734,9 +738,16 @@ class _MomBabyNavIconPainter extends CustomPainter {
 }
 
 class MomCozyRoutePage extends StatelessWidget {
-  const MomCozyRoutePage({super.key, required this.route});
+  const MomCozyRoutePage({
+    super.key,
+    required this.route,
+    this.uri,
+    this.extra,
+  });
 
   final MomCozyRouteConfig route;
+  final Uri? uri;
+  final Object? extra;
 
   @override
   Widget build(BuildContext context) {
@@ -759,6 +770,8 @@ class MomCozyRoutePage extends StatelessWidget {
       icon: route.icon,
       accent: route.accent,
       priority: route.priority,
+      routeUri: uri,
+      routeExtra: extra,
     );
   }
 }
