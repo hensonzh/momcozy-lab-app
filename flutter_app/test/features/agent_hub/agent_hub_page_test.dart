@@ -503,6 +503,68 @@ void main() {
     expect(actions.last.routePath, '/media-viewer');
   });
 
+  testWidgets('Agent Hub wraps long content on compact mobile viewport', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final longText = List.filled(
+      6,
+      '今天的泵奶记录很多，我需要把左右侧奶量、舒适度、间隔和宝宝喂养情况一起整理给你。',
+    ).join();
+    final artifactEvent = AgentStreamEvent({
+      'type': 'ARTIFACT_CREATED',
+      'thread_id': 'thread-long-copy',
+      'run_id': 'run-long-copy',
+      'message_id': 'msg-long-copy',
+      'artifact_id': 'long-copy-card',
+      'artifact_type': 'rich_text',
+      'rich_text': {
+        'title': '长内容建议',
+        'content': longText,
+        'card': [
+          {
+            'title': '下一步',
+            'content': [
+              {
+                'title': '观察重点',
+                'content': '连续记录三次泵奶后的舒适度和奶量变化，尤其关注左侧是否仍然明显偏低。',
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: longText,
+            events: [artifactEvent],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.textContaining('今天的泵奶记录很多'), findsWidgets);
+    expect(find.text('长内容建议'), findsOneWidget);
+
+    await tester.drag(
+      find.byKey(const ValueKey('agent-hub-page')),
+      const Offset(0, -280),
+    );
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Agent Hub renders disconnected partial response state', (
     tester,
   ) async {

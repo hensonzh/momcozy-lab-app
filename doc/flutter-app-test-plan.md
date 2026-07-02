@@ -257,7 +257,7 @@ test/fixtures/api/
 [ ] 自动语音播放
 [ ] 通知语音播放
 [x] 用户 barge-in / 手动打断 transport cancel contract
-[ ] 长消息换行
+[x] 长消息换行
 [x] Empty Agent Hub
 [x] 后端超时
 [x] Agent stream 断线和重试 UX
@@ -541,6 +541,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Agent Hub tool failure work step 已覆盖，同一 tool_call_id 失败事件覆盖进行中状态且不展示 raw error / tool name
 [x] Agent Hub rich text artifact、card rows 和 button/doc/media action 已覆盖；doc/media action 经白名单 route handler 打开 `/media-viewer`
 [x] Agent Hub timeout/offline send failure 已映射为用户可读 retry copy，原始异常、host 和 transport 细节不进入 UI
+[x] Agent Hub compact mobile viewport 已覆盖长回复和长 artifact 文案换行，不触发布局 overflow
 [x] Flutter 非 Agent route 页面骨架已覆盖全量 route map，并验证 Status、Schedule、Device、Pump、Calibration、Media 的关键区块和专注页底栏规则
 [x] Flutter 非 Agent route 已增加紧凑手机视口渲染和滚动 smoke，防止小屏 overflow 与底栏遮挡回归
 [x] Status/Schedule typed repository contract tests 已覆盖 success、legacy alias、empty、partial、business error 和 HTTP error fixtures

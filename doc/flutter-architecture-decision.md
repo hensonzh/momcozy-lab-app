@@ -221,6 +221,7 @@ features/
 [x] Flutter Agent stream reducer 已按 `event_id` / `sequence` 去重，reconnect replay 不重复已完成 message chunk
 [x] Flutter Agent Hub artifact area 已支持 rich text、card rows 和 button action 白名单渲染，doc/media 打开通过 typed route action handler 接入 `/media-viewer`
 [x] Flutter Agent Hub timeout/offline failure 已映射为用户可读 retry copy，原始异常、host 和 transport 细节不进入 UI
+[x] Flutter Agent Hub 紧凑手机视口已覆盖长回复和长 artifact 文案换行，不触发布局 overflow
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
