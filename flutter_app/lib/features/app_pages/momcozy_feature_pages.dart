@@ -751,6 +751,13 @@ class _StatusPageState extends State<_StatusPage> {
     });
   }
 
+  void _changeCareStage(String stage) {
+    setState(() {
+      _careStage = stage;
+      if (stage == 'pregnancy') _view = 'mom';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMom = _view == 'mom';
@@ -758,71 +765,45 @@ class _StatusPageState extends State<_StatusPage> {
     return FutureBuilder<StatusOverview>(
       future: _overviewFuture,
       builder: (context, snapshot) {
-        return _FeaturePageFrame(
-          path: widget.path,
-          title: widget.title,
-          summary: widget.summary,
-          icon: widget.icon,
-          accent: widget.accent,
-          trailing: _StatusIdentityTabs(
-            selected: _view,
-            momSubtitle: _careStage == 'pregnancy'
-                ? '孕期档案'
-                : _textOr(snapshot.data?.mom?.stage, '哺乳期档案'),
-            babySubtitle: _textOr(
-              snapshot.data?.baby?.nickname,
-              _runtime?.babyId ?? '宝宝档案',
-            ),
-            onChanged: (next) => setState(() => _view = next),
-          ),
+        final overview = snapshot.data;
+        final isPregnancy = _careStage == 'pregnancy';
+        final momSubtitle = isPregnancy
+            ? '孕期档案'
+            : _textOr(overview?.mom?.stage, '哺乳期档案');
+        final babySubtitle = isPregnancy
+            ? '宝宝孕育中'
+            : _textOr(overview?.baby?.nickname, _runtime?.babyId ?? '宝宝档案');
+
+        return ListView(
+          key: ValueKey('route-page-${widget.path}'),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           children: [
-            const _SectionTitle('今日状态'),
-            if (isMom)
-              _CareStageSelector(
-                selectedStage: _careStage,
-                accent: widget.accent,
-                onChanged: (stage) => setState(() => _careStage = stage),
-              ),
-            ..._overviewChildren(snapshot, isMom),
-            const SizedBox(height: 18),
-            const _SectionTitle('下一步'),
-            _ActionTile(
-              icon: isMom
-                  ? Icons.edit_note_rounded
-                  : Icons.monitor_weight_outlined,
-              title: isMom
-                  ? '补写孕期日记'
-                  : (_growthRecordAdded ? '成长记录已添加' : '记录成长事件'),
-              subtitle: isMom
-                  ? '保留心情、体征和 Agent 分析上下文。'
-                  : (_growthRecordAdded
-                        ? '本地草稿已保存，同步恢复后会写入成长记录。'
-                        : '记录身高、体重、睡眠和喂养变化。'),
+            _CareStageSelector(
+              selectedStage: _careStage,
               accent: widget.accent,
-              onTap: isMom
-                  ? () => context.go('/records')
-                  : () => setState(() => _growthRecordAdded = true),
-              trailing: isMom
-                  ? const Icon(Icons.chevron_right_rounded)
-                  : _StatusChip(
-                      label: _growthRecordAdded ? '已记录' : '新增',
-                      icon: _growthRecordAdded
-                          ? Icons.check_circle_outline_rounded
-                          : Icons.add_circle_outline_rounded,
-                      accent: widget.accent,
-                    ),
+              onChanged: _changeCareStage,
             ),
-            _ActionTile(
-              icon: Icons.fact_check_outlined,
-              title: '今日待办',
-              subtitle: '2 项待确认，提醒和 Agent 建议会在这里汇总。',
-              accent: const Color(0xffb2773b),
-              onTap: () => context.go('/schedule'),
-              trailing: const _StatusChip(
-                label: '2',
-                icon: Icons.notifications_active_outlined,
-                accent: Color(0xffb2773b),
-              ),
+            const SizedBox(height: 8),
+            _StatusIdentityTabs(
+              selected: _view,
+              momSubtitle: momSubtitle,
+              babySubtitle: babySubtitle,
+              babyDisabled: isPregnancy,
+              onChanged: (next) {
+                if (next == 'baby' && isPregnancy) return;
+                setState(() => _view = next);
+              },
+            ),
+            const SizedBox(height: 16),
+            ..._statusOverviewChildren(snapshot, isMom),
+            const SizedBox(height: 14),
+            _StatusNextActions(
+              isMom: isMom,
+              growthRecordAdded: _growthRecordAdded,
+              accent: widget.accent,
+              onMomDiaryTap: () => context.go('/records'),
+              onBabyGrowthTap: () => setState(() => _growthRecordAdded = true),
+              onScheduleTap: () => context.go('/schedule'),
             ),
           ],
         );
@@ -830,7 +811,7 @@ class _StatusPageState extends State<_StatusPage> {
     );
   }
 
-  List<Widget> _overviewChildren(
+  List<Widget> _statusOverviewChildren(
     AsyncSnapshot<StatusOverview> snapshot,
     bool isMom,
   ) {
@@ -878,74 +859,740 @@ class _StatusPageState extends State<_StatusPage> {
       ];
     }
 
-    return [
-      _MetricWrap(
-        children: isMom
-            ? _momOverviewMetrics(overview.mom)
-            : _babyOverviewMetrics(overview.baby),
-      ),
-    ];
+    return isMom ? _momStatusChildren(overview) : _babyStatusChildren(overview);
   }
 
-  List<Widget> _momOverviewMetrics(MomStatus? mom) {
+  List<Widget> _momStatusChildren(StatusOverview overview) {
     final isPregnancy = _careStage == 'pregnancy';
+    final mom = overview.mom;
+    final stage = isPregnancy ? '孕期' : _textOr(mom?.stage, '哺乳期');
+    final stageNote = isPregnancy
+        ? '孕期重点：体征与日记'
+        : (mom?.postpartumDay == null
+              ? '产后恢复期'
+              : '产后第 ${mom!.postpartumDay} 天');
 
     return [
-      _MetricTile(
-        label: '阶段',
-        value: isPregnancy ? '孕期' : _textOr(mom?.stage, '哺乳期'),
-        icon: Icons.favorite_border_rounded,
-        accent: widget.accent,
-        note: isPregnancy
-            ? '孕期重点：体征与日记'
-            : (mom?.postpartumDay == null
-                  ? null
-                  : '产后第 ${mom!.postpartumDay} 天'),
+      _StatusModuleGrid(
+        children: isPregnancy
+            ? [
+                _StatusModuleCard(
+                  title: '孕期日记',
+                  subtitle: stageNote,
+                  bodyText: '记录心情、睡眠、胎动和想问医生的问题。',
+                  icon: Icons.book_outlined,
+                  accent: const Color(0xffb66335),
+                  background: const Color(0xfffff8f1),
+                  action: '记录今日',
+                  onAction: () => context.go('/records'),
+                ),
+                const _StatusModuleCard(
+                  title: '孕期计划',
+                  subtitle: '跟进待产、产检和准备事项。',
+                  bodyText: '制定孕期计划',
+                  icon: Icons.assignment_outlined,
+                  accent: Color(0xff4f8f87),
+                  background: Color(0xfffbfefd),
+                  action: '查看计划',
+                ),
+                const _StatusModuleCard(
+                  title: '今日体征',
+                  subtitle: '体感、能量和风险提示。',
+                  bodyText: '暂无异常提醒',
+                  icon: Icons.monitor_heart_outlined,
+                  accent: Color(0xff8a5f7d),
+                  background: Color(0xfffff7fb),
+                ),
+                const _StatusModuleCard(
+                  title: '待产包',
+                  subtitle: '物品准备和缺口提醒。',
+                  bodyText: '可同步到待产包清单',
+                  icon: Icons.shopping_bag_outlined,
+                  accent: Color(0xffb9792a),
+                  background: Color(0xfffffaf0),
+                ),
+              ]
+            : [
+                _StatusModuleCard(
+                  title: '母乳产出',
+                  icon: Icons.water_drop_outlined,
+                  accent: MomCozyColors.primary,
+                  background: const Color(0xfffff7fb),
+                  metrics: [
+                    const _StatusModuleMetric(label: '今日产出', value: '待同步'),
+                    _StatusModuleMetric(
+                      label: '阶段',
+                      value: stage,
+                      note: stageNote,
+                    ),
+                  ],
+                ),
+                const _StatusModuleCard(
+                  title: '乳房健康',
+                  bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
+                  action: '查看《乳房健康日记》',
+                  icon: Icons.heart_broken_outlined,
+                  accent: Color(0xffb96f55),
+                  background: Color(0xfffff8f1),
+                ),
+                const _StatusModuleCard(
+                  title: '产后恢复',
+                  bodyText: '正在执行盆底肌康复训练',
+                  action: '查看计划',
+                  icon: Icons.self_improvement_rounded,
+                  accent: Color(0xff388b72),
+                  background: Color(0xfff2fffb),
+                ),
+                const _StatusModuleCard(
+                  title: '补能与休息',
+                  bodyText: '待开通睡眠与营养功能',
+                  icon: Icons.local_cafe_outlined,
+                  accent: Color(0xffb9792a),
+                  background: Color(0xfffffaf0),
+                ),
+              ],
       ),
-      _MetricTile(
-        label: '默认用户',
-        value: _textOr(_runtime?.userId, '--'),
-        icon: Icons.person_outline_rounded,
-        accent: const Color(0xff43827b),
-      ),
-      const _MetricTile(
-        label: '同步状态',
-        value: '已连接',
-        icon: Icons.cloud_done_outlined,
-        accent: Color(0xff6b6da8),
-      ),
+      if (!isPregnancy) ...[
+        const SizedBox(height: 12),
+        const _StatusTrendPreview(),
+      ],
     ];
   }
 
-  List<Widget> _babyOverviewMetrics(BabyStatus? baby) {
+  List<Widget> _babyStatusChildren(StatusOverview overview) {
+    final baby = overview.baby;
+    final ageLabel = baby?.ageDays == null ? '待同步' : '${baby!.ageDays} 天';
+
     return [
-      _MetricTile(
-        label: '宝宝',
-        value: _textOr(baby?.nickname, '未设置'),
-        icon: Icons.child_care_rounded,
-        accent: widget.accent,
-        note: baby?.ageDays == null ? null : '${baby!.ageDays} 天',
+      _StatusModuleGrid(
+        children: [
+          const _StatusModuleCard(
+            title: '奶量摄入',
+            icon: Icons.restaurant_outlined,
+            accent: Color(0xff4f84a6),
+            background: Color(0xfff4fbff),
+            metrics: [
+              _StatusModuleMetric(label: '今日摄入', value: '待同步'),
+              _StatusModuleMetric(label: '今日喂奶', value: '待同步'),
+            ],
+          ),
+          _StatusModuleCard(
+            title: '成长发育',
+            icon: Icons.straighten_outlined,
+            accent: const Color(0xff388b72),
+            background: const Color(0xfff2fffb),
+            metrics: [
+              _StatusModuleMetric(
+                label: '宝宝',
+                value: _textOr(baby?.nickname, '未设置'),
+                note: ageLabel,
+              ),
+              _StatusModuleMetric(
+                label: '成长记录',
+                value: _growthRecordAdded ? '已添加' : '待记录',
+              ),
+            ],
+            action: _growthRecordAdded ? '已记录' : '记录成长事件',
+            onAction: () => setState(() => _growthRecordAdded = true),
+          ),
+          const _StatusModuleCard(
+            title: '宝宝健康',
+            bodyText: '筛查、消化、皮肤和情绪跟踪',
+            icon: Icons.health_and_safety_outlined,
+            accent: Color(0xff7d64aa),
+            background: Color(0xfffbf7ff),
+            action: '查看筛查',
+          ),
+          const _StatusModuleCard(
+            title: '宝宝睡眠',
+            bodyText: '总睡眠、最长睡眠、活动和哭闹',
+            icon: Icons.nightlight_outlined,
+            accent: Color(0xffff9677),
+            background: Color(0xfffff8f1),
+            action: '查看报告',
+          ),
+        ],
       ),
-      _MetricTile(
-        label: '默认宝宝',
-        value: _textOr(_runtime?.babyId, '--'),
-        icon: Icons.badge_outlined,
-        accent: const Color(0xff43827b),
-      ),
-      const _MetricTile(
-        label: '同步状态',
-        value: '已连接',
-        icon: Icons.cloud_done_outlined,
-        accent: Color(0xff6b6da8),
-      ),
-      _MetricTile(
-        label: '成长记录',
-        value: _growthRecordAdded ? '已添加' : '待记录',
-        icon: Icons.trending_up_rounded,
-        accent: const Color(0xffb2773b),
-        note: _growthRecordAdded ? '本地草稿待同步' : null,
-      ),
+      const SizedBox(height: 12),
+      const _StatusMilestonePreview(),
     ];
+  }
+}
+
+class _StatusNextActions extends StatelessWidget {
+  const _StatusNextActions({
+    required this.isMom,
+    required this.growthRecordAdded,
+    required this.accent,
+    required this.onMomDiaryTap,
+    required this.onBabyGrowthTap,
+    required this.onScheduleTap,
+  });
+
+  final bool isMom;
+  final bool growthRecordAdded;
+  final Color accent;
+  final VoidCallback onMomDiaryTap;
+  final VoidCallback onBabyGrowthTap;
+  final VoidCallback onScheduleTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _SectionTitle('下一步'),
+        _ActionTile(
+          icon: isMom ? Icons.edit_note_rounded : Icons.monitor_weight_outlined,
+          title: isMom ? '补写孕期日记' : (growthRecordAdded ? '成长记录已添加' : '记录成长事件'),
+          subtitle: isMom
+              ? '保留心情、体征和 Agent 分析上下文。'
+              : (growthRecordAdded
+                    ? '本地草稿已保存，同步恢复后会写入成长记录。'
+                    : '记录身高、体重、睡眠和喂养变化。'),
+          accent: accent,
+          onTap: isMom ? onMomDiaryTap : onBabyGrowthTap,
+          trailing: isMom
+              ? const Icon(Icons.chevron_right_rounded)
+              : _StatusChip(
+                  label: growthRecordAdded ? '已记录' : '新增',
+                  icon: growthRecordAdded
+                      ? Icons.check_circle_outline_rounded
+                      : Icons.add_circle_outline_rounded,
+                  accent: accent,
+                ),
+        ),
+        _ActionTile(
+          icon: Icons.fact_check_outlined,
+          title: '今日待办',
+          subtitle: '2 项待确认，提醒和 Agent 建议会在这里汇总。',
+          accent: const Color(0xffb2773b),
+          onTap: onScheduleTap,
+          trailing: const _StatusChip(
+            label: '2',
+            icon: Icons.notifications_active_outlined,
+            accent: Color(0xffb2773b),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatusModuleMetric {
+  const _StatusModuleMetric({
+    required this.label,
+    required this.value,
+    this.note,
+  });
+
+  final String label;
+  final String value;
+  final String? note;
+}
+
+class _StatusModuleGrid extends StatelessWidget {
+  const _StatusModuleGrid({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+      crossAxisCount: 2,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      childAspectRatio: 1.03,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: children,
+    );
+  }
+}
+
+class _StatusModuleCard extends StatelessWidget {
+  const _StatusModuleCard({
+    required this.title,
+    required this.icon,
+    required this.accent,
+    required this.background,
+    this.subtitle,
+    this.bodyText,
+    this.metrics = const [],
+    this.action,
+    this.onAction,
+  });
+
+  final String title;
+  final String? subtitle;
+  final String? bodyText;
+  final List<_StatusModuleMetric> metrics;
+  final String? action;
+  final VoidCallback? onAction;
+  final IconData icon;
+  final Color accent;
+  final Color background;
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
+      color: MomCozyColors.foreground,
+      fontWeight: FontWeight.w900,
+      height: 1.05,
+    );
+    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: MomCozyColors.mutedForeground,
+      fontWeight: FontWeight.w700,
+      height: 1.18,
+    );
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.86)),
+        boxShadow: MomCozyShadows.soft,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onAction,
+          child: Stack(
+            children: [
+              Positioned(
+                right: -22,
+                bottom: -24,
+                child: Container(
+                  width: 86,
+                  height: 86,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: accent.withValues(alpha: 0.1),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(13),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: titleStyle,
+                              ),
+                              if (subtitle != null) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  subtitle!,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: helperStyle,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: accent.withValues(alpha: 0.16),
+                            borderRadius: BorderRadius.circular(11),
+                          ),
+                          child: Icon(icon, size: 18, color: accent),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    if (metrics.isNotEmpty)
+                      _StatusModuleMetricRows(metrics: metrics)
+                    else if (bodyText != null)
+                      Text(
+                        bodyText!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: helperStyle,
+                      ),
+                    if (action != null) ...[
+                      const SizedBox(height: 8),
+                      _StatusModuleActionPill(
+                        label: action!,
+                        accent: accent,
+                        onTap: onAction,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusModuleMetricRows extends StatelessWidget {
+  const _StatusModuleMetricRows({required this.metrics});
+
+  final List<_StatusModuleMetric> metrics;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        for (final metric in metrics)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    metric.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    metric.value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  if (metric.note != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      metric.note!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: MomCozyColors.primary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _StatusModuleActionPill extends StatelessWidget {
+  const _StatusModuleActionPill({
+    required this.label,
+    required this.accent,
+    this.onTap,
+  });
+
+  final String label;
+  final Color accent;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: onTap != null,
+      label: label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.72),
+            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+          ),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: accent,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusTrendPreview extends StatelessWidget {
+  const _StatusTrendPreview();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xfffffaf0),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xfff0dfc4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: const Color(0xffffe4b8),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.track_changes_rounded,
+                  size: 16,
+                  color: Color(0xffb9792a),
+                ),
+              ),
+              const SizedBox(width: 9),
+              Expanded(
+                child: Text(
+                  '母乳趋势',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              const _StatusChip(
+                label: '周',
+                icon: Icons.show_chart_rounded,
+                accent: Color(0xffb9792a),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            height: 74,
+            child: CustomPaint(
+              painter: const _StatusTrendPreviewPainter(),
+              child: const SizedBox.expand(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusTrendPreviewPainter extends CustomPainter {
+  const _StatusTrendPreviewPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bandPaint = Paint()
+      ..color = const Color(0xffdff4e8)
+      ..style = PaintingStyle.fill;
+    final linePaint = Paint()
+      ..color = const Color(0xffb9792a)
+      ..strokeWidth = 2.5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    final estimatePaint = Paint()
+      ..color = const Color(0xff8a5f7d)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    final gridPaint = Paint()
+      ..color = const Color(0xffeadfc7)
+      ..strokeWidth = 1;
+
+    for (var i = 0; i < 3; i += 1) {
+      final y = size.height * (0.18 + i * 0.32);
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
+    }
+
+    final band = Path()
+      ..moveTo(0, size.height * 0.62)
+      ..cubicTo(
+        size.width * 0.25,
+        size.height * 0.54,
+        size.width * 0.5,
+        size.height * 0.5,
+        size.width,
+        size.height * 0.36,
+      )
+      ..lineTo(size.width, size.height * 0.76)
+      ..cubicTo(
+        size.width * 0.56,
+        size.height * 0.72,
+        size.width * 0.28,
+        size.height * 0.8,
+        0,
+        size.height * 0.72,
+      )
+      ..close();
+    canvas.drawPath(band, bandPaint);
+
+    final estimate = Path()
+      ..moveTo(0, size.height * 0.72)
+      ..cubicTo(
+        size.width * 0.25,
+        size.height * 0.62,
+        size.width * 0.56,
+        size.height * 0.58,
+        size.width,
+        size.height * 0.42,
+      );
+    canvas.drawPath(estimate, estimatePaint);
+
+    final actual = Path()
+      ..moveTo(0, size.height * 0.78)
+      ..cubicTo(
+        size.width * 0.22,
+        size.height * 0.7,
+        size.width * 0.48,
+        size.height * 0.64,
+        size.width * 0.72,
+        size.height * 0.5,
+      )
+      ..cubicTo(
+        size.width * 0.84,
+        size.height * 0.43,
+        size.width * 0.92,
+        size.height * 0.39,
+        size.width,
+        size.height * 0.34,
+      );
+    canvas.drawPath(actual, linePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _StatusTrendPreviewPainter oldDelegate) => false;
+}
+
+class _StatusMilestonePreview extends StatelessWidget {
+  const _StatusMilestonePreview();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xfffbf7ff),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xffe6d9fb)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '成长milestone',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: MomCozyColors.foreground,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 12),
+          const _StatusTimelineRow(
+            title: '说出完整主谓短句',
+            date: '2026.05.28',
+            detail: '语言组织能力继续发展。',
+          ),
+          const _StatusTimelineRow(
+            title: '独立上下低矮台阶',
+            date: '2026.05.12',
+            detail: '动作计划能力更成熟。',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusTimelineRow extends StatelessWidget {
+  const _StatusTimelineRow({
+    required this.title,
+    required this.date,
+    required this.detail,
+  });
+
+  final String title;
+  final String date;
+  final String detail;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 9),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            margin: const EdgeInsets.only(top: 6),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xff7d64aa),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      date,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  detail,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -965,58 +1612,87 @@ class _CareStageSelector extends StatelessWidget {
     final isPregnancy = selectedStage == 'pregnancy';
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
-        child: Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 360),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '护理阶段',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    isPregnancy ? '孕期档案优先关注体征、日记和待办。' : '哺乳期档案优先关注恢复、泵奶和喂养。',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      height: 1.35,
-                      color: MomCozyColors.mutedForeground,
-                    ),
-                  ),
-                ],
+      padding: const EdgeInsets.only(top: 1),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.28),
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              border: Border.all(
+                color: MomCozyColors.border.withValues(alpha: 0.5),
               ),
             ),
-            _LegacySegmentedTabs(
-              selected: selectedStage,
-              onChanged: onChanged,
-              accent: accent,
-              minItemWidth: 118,
-              items: const [
-                _LegacySegmentedTabItem(
-                  value: 'pregnancy',
-                  icon: Icons.pregnant_woman_rounded,
-                  label: '孕期模式',
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _StatusCareStagePill(
+                  label: '孕期',
+                  selected: isPregnancy,
+                  accent: accent,
+                  onTap: () => onChanged('pregnancy'),
                 ),
-                _LegacySegmentedTabItem(
-                  value: 'postpartum',
-                  icon: Icons.favorite_border_rounded,
-                  label: '哺乳期模式',
+                _StatusCareStagePill(
+                  label: '哺乳期',
+                  selected: !isPregnancy,
+                  accent: accent,
+                  onTap: () => onChanged('postpartum'),
                 ),
               ],
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusCareStagePill extends StatelessWidget {
+  const _StatusCareStagePill({
+    required this.label,
+    required this.selected,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        child: Container(
+          constraints: const BoxConstraints(minWidth: 54),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: selected
+                ? Colors.white.withValues(alpha: 0.72)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+            border: selected
+                ? Border.all(color: MomCozyColors.border.withValues(alpha: 0.7))
+                : null,
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: selected ? accent : MomCozyColors.mutedForeground,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
         ),
       ),
     );
@@ -1028,12 +1704,14 @@ class _StatusIdentityTabs extends StatelessWidget {
     required this.selected,
     required this.momSubtitle,
     required this.babySubtitle,
+    required this.babyDisabled,
     required this.onChanged,
   });
 
   final String selected;
   final String momSubtitle;
   final String babySubtitle;
+  final bool babyDisabled;
   final ValueChanged<String> onChanged;
 
   @override
@@ -1058,6 +1736,7 @@ class _StatusIdentityTabs extends StatelessWidget {
             subtitle: babySubtitle,
             asset: MomCozyAssets.babyAvatar,
             selected: selected == 'baby',
+            disabled: babyDisabled,
             onTap: () => onChanged('baby'),
           ),
         ),
@@ -1073,6 +1752,7 @@ class _StatusIdentityTab extends StatelessWidget {
     required this.subtitle,
     required this.asset,
     required this.selected,
+    this.disabled = false,
     required this.onTap,
   });
 
@@ -1081,6 +1761,7 @@ class _StatusIdentityTab extends StatelessWidget {
   final String subtitle;
   final String asset;
   final bool selected;
+  final bool disabled;
   final VoidCallback onTap;
 
   @override
@@ -1092,21 +1773,24 @@ class _StatusIdentityTab extends StatelessWidget {
       selected: selected,
       button: true,
       label: title,
+      enabled: !disabled,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: selected
-              ? MomCozyColors.raised.withValues(alpha: 0.72)
+          color: disabled
+              ? MomCozyColors.raised.withValues(alpha: 0.24)
+              : selected
+              ? const Color(0xfffff7fb)
               : MomCozyColors.raised.withValues(alpha: 0.44),
-          borderRadius: BorderRadius.circular(MomCozyRadii.card),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: borderColor, width: selected ? 1.4 : 1),
         ),
         child: Material(
           type: MaterialType.transparency,
-          borderRadius: BorderRadius.circular(MomCozyRadii.card),
+          borderRadius: BorderRadius.circular(16),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             key: ValueKey('status-identity-tab-$value'),
-            onTap: onTap,
+            onTap: disabled ? null : onTap,
             child: Stack(
               children: [
                 AnimatedOpacity(
@@ -1127,16 +1811,18 @@ class _StatusIdentityTab extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(10, 9, 10, 9),
                   child: Row(
                     children: [
                       Container(
-                        width: 42,
-                        height: 42,
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: selected
+                            color: disabled
+                                ? MomCozyColors.border.withValues(alpha: 0.35)
+                                : selected
                                 ? MomCozyColors.primary.withValues(alpha: 0.4)
                                 : MomCozyColors.border,
                             width: 2,
@@ -1159,7 +1845,10 @@ class _StatusIdentityTab extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.labelLarge
                                   ?.copyWith(
-                                    color: selected
+                                    color: disabled
+                                        ? MomCozyColors.mutedForeground
+                                              .withValues(alpha: 0.6)
+                                        : selected
                                         ? MomCozyColors.foreground
                                         : MomCozyColors.mutedForeground,
                                     fontWeight: FontWeight.w900,
@@ -1172,7 +1861,10 @@ class _StatusIdentityTab extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.labelSmall
                                   ?.copyWith(
-                                    color: selected
+                                    color: disabled
+                                        ? MomCozyColors.mutedForeground
+                                              .withValues(alpha: 0.52)
+                                        : selected
                                         ? MomCozyColors.mutedForeground
                                         : MomCozyColors.mutedForeground
                                               .withValues(alpha: 0.75),

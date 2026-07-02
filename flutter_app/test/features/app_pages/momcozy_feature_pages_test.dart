@@ -29,7 +29,11 @@ void main() {
           find.byKey(ValueKey('route-page-${route.path}')),
           findsOneWidget,
         );
-        expect(find.text(route.title), findsWidgets);
+        if (route.path == '/status') {
+          expect(find.text('妈妈'), findsWidgets);
+        } else {
+          expect(find.text(route.title), findsWidgets);
+        }
         expect(find.text(route.path), findsNothing);
       }
     });
@@ -57,8 +61,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
-      await tester.pump();
-      expect(find.text('今日状态'), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(find.text('母乳产出'), findsOneWidget);
+      await _scrollToText(tester, '下一步');
       expect(find.text('下一步'), findsOneWidget);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
@@ -231,24 +236,27 @@ void main() {
 
       expect(find.text('产后第 21 天'), findsOneWidget);
 
-      await tester.tap(find.text('孕期模式'));
+      await tester.tap(find.text('孕期').first);
       await tester.pumpAndSettle();
 
       expect(find.text('孕期'), findsOneWidget);
       expect(find.text('孕期重点：体征与日记'), findsOneWidget);
 
+      await tester.tap(find.text('哺乳期'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
       expect(find.text('待记录'), findsOneWidget);
 
-      await _tapScrollableText(tester, '记录成长事件');
+      await _scrollToText(tester, '记录成长事件');
+      await tester.tap(find.text('记录成长事件').first);
       await tester.pumpAndSettle();
 
+      expect(find.text('已添加'), findsOneWidget);
+      await _scrollToText(tester, '成长记录已添加');
       expect(find.text('成长记录已添加'), findsOneWidget);
       expect(find.text('本地草稿已保存，同步恢复后会写入成长记录。'), findsOneWidget);
-      expect(find.text('已添加'), findsOneWidget);
-      expect(find.text('本地草稿待同步'), findsOneWidget);
     });
 
     testWidgets('status page renders long text and runtime context', (
@@ -282,14 +290,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('哺乳期恢复阶段'), findsWidgets);
-      expect(find.text('demo-user-fixture'), findsOneWidget);
+      expect(find.text('母乳产出'), findsOneWidget);
       expect(tester.takeException(), isNull);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
       expect(find.text('Mia Sophia Long Profile Name'), findsWidgets);
-      expect(find.text('demo-baby-fixture'), findsOneWidget);
+      expect(find.text('188 天'), findsOneWidget);
       expect(tester.takeException(), isNull);
 
       await tester.drag(
