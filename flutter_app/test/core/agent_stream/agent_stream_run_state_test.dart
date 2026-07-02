@@ -52,6 +52,89 @@ void main() {
       expect(state.errorMessage, contains('socket closed'));
     });
 
+    test('deduplicates replayed events by event id or sequence', () {
+      var state = const AgentStreamRunState().start();
+      final replayedEvents = [
+        const {
+          'type': 'RUN_STARTED',
+          'thread_id': 'thread-fixture-001',
+          'run_id': 'run-replay-001',
+          'sequence': 1,
+        },
+        const {
+          'type': 'TEXT_MESSAGE_CONTENT',
+          'thread_id': 'thread-fixture-001',
+          'run_id': 'run-replay-001',
+          'message_id': 'msg-replay-001',
+          'sequence': 2,
+          'delta': 'Already streamed ',
+        },
+        const {
+          'type': 'TEXT_MESSAGE_CONTENT',
+          'thread_id': 'thread-fixture-001',
+          'run_id': 'run-replay-001',
+          'message_id': 'msg-replay-001',
+          'sequence': 2,
+          'delta': 'Already streamed ',
+        },
+        const {
+          'event_id': 'evt-replay-003',
+          'type': 'TEXT_MESSAGE_CONTENT',
+          'thread_id': 'thread-fixture-001',
+          'run_id': 'run-replay-001',
+          'message_id': 'msg-replay-001',
+          'delta': 'only once.',
+        },
+        const {
+          'event_id': 'evt-replay-003',
+          'type': 'TEXT_MESSAGE_CONTENT',
+          'thread_id': 'thread-fixture-001',
+          'run_id': 'run-replay-001',
+          'message_id': 'msg-replay-001',
+          'delta': 'only once.',
+        },
+        const {
+          'type': 'RUN_FINISHED',
+          'thread_id': 'thread-fixture-001',
+          'run_id': 'run-replay-001',
+          'message_id': 'msg-replay-001',
+          'sequence': 4,
+        },
+      ].map(AgentStreamEvent.new);
+
+      for (final event in replayedEvents) {
+        state = state.applyEvent(event);
+      }
+
+      expect(state.phase, AgentStreamRunPhase.finished);
+      expect(state.textContent, 'Already streamed only once.');
+      expect(state.events.length, 4);
+    });
+
+    test('keeps repeated text deltas when no replay key is present', () {
+      var state = const AgentStreamRunState().start();
+
+      for (final event in [
+        const {
+          'type': 'TEXT_MESSAGE_CONTENT',
+          'run_id': 'run-repeat-001',
+          'message_id': 'msg-repeat-001',
+          'delta': 'ha ',
+        },
+        const {
+          'type': 'TEXT_MESSAGE_CONTENT',
+          'run_id': 'run-repeat-001',
+          'message_id': 'msg-repeat-001',
+          'delta': 'ha ',
+        },
+      ].map(AgentStreamEvent.new)) {
+        state = state.applyEvent(event);
+      }
+
+      expect(state.textContent, 'ha ha ');
+      expect(state.events.length, 2);
+    });
+
     test('maps run error events to retryable error state', () {
       var state = const AgentStreamRunState().start();
 

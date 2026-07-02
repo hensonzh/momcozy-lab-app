@@ -217,6 +217,7 @@ features/
 [x] Flutter Agent Hub work panel 已从统一 stream events 派生，不直接消费 provider/raw tool JSON
 [x] Flutter Agent voice typed repository 已落地，STT multipart、realtime PCM stream 和 realtime voice session 均独立于 Agent 文本 stream
 [x] Flutter Agent Hub composer 已补齐图片和语音入口，图片进入 AG-UI image payload，语音回填输入框且不自动发送
+[x] Flutter Agent stream reducer 已按 `event_id` / `sequence` 去重，reconnect replay 不重复已完成 message chunk
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

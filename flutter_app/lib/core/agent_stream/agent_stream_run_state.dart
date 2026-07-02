@@ -47,6 +47,7 @@ class AgentStreamRunState {
 
   AgentStreamRunState applyEvent(AgentStreamEvent event) {
     if (!isActive) return this;
+    if (_hasSeenReplayKey(event)) return this;
 
     final type = event.type;
     final nextEvents = List<AgentStreamEvent>.unmodifiable([...events, event]);
@@ -91,6 +92,12 @@ class AgentStreamRunState {
       messageId: nextMessageId,
       textContent: nextText,
     );
+  }
+
+  bool _hasSeenReplayKey(AgentStreamEvent event) {
+    final replayKey = event.replayKey;
+    if (replayKey == null || replayKey.isEmpty) return false;
+    return events.any((seen) => seen.replayKey == replayKey);
   }
 
   AgentStreamRunState requestCancel() {
