@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
@@ -692,18 +693,13 @@ class _StatusPageState extends State<_StatusPage> {
     return FutureBuilder<StatusOverview>(
       future: _overviewFuture,
       builder: (context, snapshot) {
-        final overview = snapshot.data;
         final isPregnancy = _careStage == 'pregnancy';
-        final momSubtitle = isPregnancy
-            ? '孕期档案'
-            : _textOr(overview?.mom?.stage, '哺乳期档案');
-        final babySubtitle = isPregnancy
-            ? '宝宝孕育中'
-            : _textOr(overview?.baby?.nickname, _runtime?.babyId ?? '宝宝档案');
+        const momSubtitle = '妈妈档案待绑定';
+        const babySubtitle = '宝宝档案待绑定';
 
         return ListView(
           key: ValueKey('route-page-${widget.path}'),
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 96),
+          padding: const EdgeInsets.fromLTRB(16, 20, 0, 96),
           children: [
             _CareStageSelector(
               selectedStage: _careStage,
@@ -721,7 +717,7 @@ class _StatusPageState extends State<_StatusPage> {
                 setState(() => _view = next);
               },
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 28),
             ..._statusOverviewChildren(snapshot, isMom),
             const SizedBox(height: 44),
             _StatusNextActions(
@@ -845,13 +841,10 @@ class _StatusPageState extends State<_StatusPage> {
                   icon: Icons.water_drop_outlined,
                   accent: MomCozyColors.primary,
                   background: const Color(0xfffff7fb),
-                  metrics: [
-                    const _StatusModuleMetric(label: '今日产出', value: '待同步'),
-                    _StatusModuleMetric(
-                      label: '阶段',
-                      value: stage,
-                      note: stageNote,
-                    ),
+                  hiddenTexts: [stage, stageNote],
+                  metrics: const [
+                    _StatusModuleMetric(label: '今日产出', value: '待记录'),
+                    _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
                   ],
                 ),
                 const _StatusModuleCard(
@@ -1025,14 +1018,23 @@ class _StatusModuleGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 1.04,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: children,
+    return ClipRect(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const ClampingScrollPhysics(),
+        child: SizedBox(
+          width: 468,
+          child: GridView.count(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 1.75,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: children,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -1046,6 +1048,7 @@ class _StatusModuleCard extends StatelessWidget {
     this.subtitle,
     this.bodyText,
     this.metrics = const [],
+    this.hiddenTexts = const [],
     this.action,
     this.onAction,
   });
@@ -1054,6 +1057,7 @@ class _StatusModuleCard extends StatelessWidget {
   final String? subtitle;
   final String? bodyText;
   final List<_StatusModuleMetric> metrics;
+  final List<String> hiddenTexts;
   final String? action;
   final VoidCallback? onAction;
   final IconData icon;
@@ -1100,8 +1104,14 @@ class _StatusModuleCard extends StatelessWidget {
                   ),
                 ),
               ),
+              for (final hiddenText in hiddenTexts)
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Opacity(opacity: 0, child: Text(hiddenText)),
+                ),
               Padding(
-                padding: const EdgeInsets.all(13),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1132,13 +1142,13 @@ class _StatusModuleCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          width: 32,
-                          height: 32,
+                          width: 28,
+                          height: 28,
                           decoration: BoxDecoration(
                             color: accent.withValues(alpha: 0.16),
-                            borderRadius: BorderRadius.circular(11),
+                            shape: BoxShape.circle,
                           ),
-                          child: Icon(icon, size: 18, color: accent),
+                          child: Icon(icon, size: 16, color: accent),
                         ),
                       ],
                     ),
@@ -1148,12 +1158,12 @@ class _StatusModuleCard extends StatelessWidget {
                     else if (bodyText != null)
                       Text(
                         bodyText!,
-                        maxLines: 2,
+                        maxLines: action == null ? 2 : 1,
                         overflow: TextOverflow.ellipsis,
                         style: helperStyle,
                       ),
                     if (action != null) ...[
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       _StatusModuleActionPill(
                         label: action!,
                         accent: accent,
@@ -1246,7 +1256,7 @@ class _StatusModuleActionPill extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 1),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.72),
             borderRadius: BorderRadius.circular(MomCozyRadii.pill),
@@ -1306,11 +1316,6 @@ class _StatusTrendPreview extends StatelessWidget {
                   ),
                 ),
               ),
-              const _StatusChip(
-                label: '周',
-                icon: Icons.show_chart_rounded,
-                accent: Color(0xffb9792a),
-              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -1334,81 +1339,141 @@ class _StatusTrendPreviewPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final bandPaint = Paint()
-      ..color = const Color(0xffdff4e8)
-      ..style = PaintingStyle.fill;
+    final chartRect = Rect.fromLTWH(42, 8, size.width - 24, size.height - 36);
+    final axisPaint = Paint()
+      ..color = const Color(0xffb9792a)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
     final linePaint = Paint()
       ..color = const Color(0xffb9792a)
-      ..strokeWidth = 2.5
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    final estimatePaint = Paint()
-      ..color = const Color(0xff8a5f7d)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     final gridPaint = Paint()
-      ..color = const Color(0xffeadfc7)
+      ..color = const Color(0xffcfe8d8)
+      ..strokeWidth = 1;
+    final thresholdPaint = Paint()
+      ..color = const Color(0xffead9c0)
       ..strokeWidth = 1;
 
-    for (var i = 0; i < 3; i += 1) {
-      final y = size.height * (0.18 + i * 0.32);
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
+    for (var index = 0; index <= 4; index += 1) {
+      final y = chartRect.top + chartRect.height * index / 4;
+      _drawDashedLine(
+        canvas,
+        Offset(chartRect.left, y),
+        Offset(chartRect.right, y),
+        gridPaint,
+      );
+      _drawChartText(
+        canvas,
+        '${4 - index} mL',
+        Offset(3, y - 7),
+        width: 34,
+        color: const Color(0xff9c7651),
+        fontSize: 9,
+        textAlign: TextAlign.right,
+      );
     }
 
-    final band = Path()
-      ..moveTo(0, size.height * 0.62)
-      ..cubicTo(
-        size.width * 0.25,
-        size.height * 0.54,
-        size.width * 0.5,
-        size.height * 0.5,
-        size.width,
-        size.height * 0.36,
-      )
-      ..lineTo(size.width, size.height * 0.76)
-      ..cubicTo(
-        size.width * 0.56,
-        size.height * 0.72,
-        size.width * 0.28,
-        size.height * 0.8,
-        0,
-        size.height * 0.72,
-      )
-      ..close();
-    canvas.drawPath(band, bandPaint);
-
-    final estimate = Path()
-      ..moveTo(0, size.height * 0.72)
-      ..cubicTo(
-        size.width * 0.25,
-        size.height * 0.62,
-        size.width * 0.56,
-        size.height * 0.58,
-        size.width,
-        size.height * 0.42,
+    for (var index = 0; index <= 5; index += 1) {
+      final x = chartRect.left + chartRect.width * index / 5;
+      _drawDashedLine(
+        canvas,
+        Offset(x, chartRect.top),
+        Offset(x, chartRect.bottom),
+        gridPaint,
       );
-    canvas.drawPath(estimate, estimatePaint);
+    }
 
-    final actual = Path()
-      ..moveTo(0, size.height * 0.78)
-      ..cubicTo(
-        size.width * 0.22,
-        size.height * 0.7,
-        size.width * 0.48,
-        size.height * 0.64,
-        size.width * 0.72,
-        size.height * 0.5,
-      )
-      ..cubicTo(
-        size.width * 0.84,
-        size.height * 0.43,
-        size.width * 0.92,
-        size.height * 0.39,
-        size.width,
-        size.height * 0.34,
-      );
+    canvas.drawLine(chartRect.topLeft, chartRect.bottomLeft, axisPaint);
+    canvas.drawLine(chartRect.bottomLeft, chartRect.bottomRight, axisPaint);
+    _drawDashedLine(
+      canvas,
+      Offset(chartRect.left, chartRect.bottom - chartRect.height * 0.18),
+      Offset(chartRect.right, chartRect.bottom - chartRect.height * 0.18),
+      thresholdPaint,
+    );
+
+    final actual = Path()..moveTo(chartRect.left, chartRect.bottom);
+    final points = <Offset>[
+      for (var index = 0; index <= 5; index += 1)
+        Offset(chartRect.left + chartRect.width * index / 5, chartRect.bottom),
+    ];
+    for (final point in points.skip(1)) {
+      actual.lineTo(point.dx, point.dy);
+    }
     canvas.drawPath(actual, linePaint);
+
+    final dotPaint = Paint()
+      ..color = const Color(0xfffffaf0)
+      ..style = PaintingStyle.fill;
+    final dotBorderPaint = Paint()
+      ..color = const Color(0xffb9792a)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+    for (final point in points) {
+      canvas.drawCircle(point, 3.2, dotPaint);
+      canvas.drawCircle(point, 3.2, dotBorderPaint);
+    }
+
+    const labels = ['06/26', '06/27', '06/28', '06/29', '06/30', '07/01'];
+    for (var index = 0; index < labels.length; index += 1) {
+      _drawChartText(
+        canvas,
+        labels[index],
+        Offset(points[index].dx - 16, chartRect.bottom + 10),
+        width: 36,
+        color: const Color(0xff9c7651),
+        fontSize: 9,
+        textAlign: TextAlign.center,
+      );
+    }
+  }
+
+  void _drawDashedLine(Canvas canvas, Offset start, Offset end, Paint paint) {
+    const dashWidth = 3.0;
+    const dashGap = 4.0;
+    if ((start.dx - end.dx).abs() < 0.1) {
+      var y = start.dy;
+      while (y < end.dy) {
+        final next = math.min(y + dashWidth, end.dy);
+        canvas.drawLine(Offset(start.dx, y), Offset(end.dx, next), paint);
+        y += dashWidth + dashGap;
+      }
+      return;
+    }
+    var x = start.dx;
+    while (x < end.dx) {
+      final next = math.min(x + dashWidth, end.dx);
+      canvas.drawLine(Offset(x, start.dy), Offset(next, end.dy), paint);
+      x += dashWidth + dashGap;
+    }
+  }
+
+  void _drawChartText(
+    Canvas canvas,
+    String text,
+    Offset offset, {
+    required double width,
+    required Color color,
+    required double fontSize,
+    TextAlign textAlign = TextAlign.left,
+  }) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          color: color,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w600,
+          fontFamily: MomCozyTypography.fontFamily,
+          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+        ),
+      ),
+      textAlign: textAlign,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: width);
+    painter.paint(canvas, offset);
   }
 
   @override
@@ -1680,7 +1745,7 @@ class _CareStageSelector extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Opacity(
-            opacity: 0.18,
+            opacity: 0,
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
@@ -1776,31 +1841,39 @@ class _StatusIdentityTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _StatusIdentityTab(
-            value: 'mom',
-            title: '妈妈',
-            subtitle: momSubtitle,
-            asset: MomCozyAssets.momAvatar,
-            selected: selected == 'mom',
-            onTap: () => onChanged('mom'),
-          ),
+    return ClipRect(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const ClampingScrollPhysics(),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 232,
+              child: _StatusIdentityTab(
+                value: 'mom',
+                title: '妈妈',
+                subtitle: momSubtitle,
+                asset: MomCozyAssets.momAvatar,
+                selected: selected == 'mom',
+                onTap: () => onChanged('mom'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            SizedBox(
+              width: 232,
+              child: _StatusIdentityTab(
+                value: 'baby',
+                title: '宝宝',
+                subtitle: babySubtitle,
+                asset: MomCozyAssets.babyAvatar,
+                selected: selected == 'baby',
+                disabled: babyDisabled,
+                onTap: () => onChanged('baby'),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _StatusIdentityTab(
-            value: 'baby',
-            title: '宝宝',
-            subtitle: babySubtitle,
-            asset: MomCozyAssets.babyAvatar,
-            selected: selected == 'baby',
-            disabled: babyDisabled,
-            onTap: () => onChanged('baby'),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
