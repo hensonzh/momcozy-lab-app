@@ -1,5 +1,3 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 enum MomCozySessionStatus { anonymous, authenticated, expired, revoked }
 
 class MomCozySession {
@@ -85,80 +83,6 @@ abstract interface class MomCozySessionStore {
   Future<void> clearSession();
 }
 
-class FlutterSecureMomCozySessionStore implements MomCozySessionStore {
-  const FlutterSecureMomCozySessionStore({
-    this.storage = const FlutterSecureStorage(),
-    this.namespace = 'momcozy.session.v1',
-  });
-
-  final FlutterSecureStorage storage;
-  final String namespace;
-
-  @override
-  Future<MomCozySession?> readSession() async {
-    final values = await Future.wait([
-      storage.read(key: _key('status')),
-      storage.read(key: _key('userId')),
-      storage.read(key: _key('babyId')),
-      storage.read(key: _key('locale')),
-      storage.read(key: _key('accessToken')),
-      storage.read(key: _key('refreshToken')),
-    ]);
-
-    final userId = _trimmedOrNull(values[1]);
-    final babyId = _trimmedOrNull(values[2]);
-    final locale = _trimmedOrNull(values[3]);
-    final accessToken = _trimmedOrNull(values[4]);
-    final refreshToken = _trimmedOrNull(values[5]);
-    if (userId == null &&
-        babyId == null &&
-        locale == null &&
-        accessToken == null &&
-        refreshToken == null) {
-      return null;
-    }
-
-    return MomCozySession(
-      status: _parseStatus(values[0]) ?? _statusFor(accessToken, refreshToken),
-      userId: userId ?? 'demo-user',
-      babyId: babyId ?? 'demo-baby',
-      locale: locale ?? 'zh-CN',
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    );
-  }
-
-  @override
-  Future<void> writeSession(MomCozySession session) async {
-    await Future.wait([
-      _write('status', session.status.name),
-      _write('userId', session.userId),
-      _write('babyId', session.babyId),
-      _write('locale', session.locale),
-      _write('accessToken', session.accessToken),
-      _write('refreshToken', session.refreshToken),
-    ]);
-  }
-
-  @override
-  Future<void> clearSession() async {
-    await Future.wait([
-      storage.delete(key: _key('status')),
-      storage.delete(key: _key('userId')),
-      storage.delete(key: _key('babyId')),
-      storage.delete(key: _key('locale')),
-      storage.delete(key: _key('accessToken')),
-      storage.delete(key: _key('refreshToken')),
-    ]);
-  }
-
-  Future<void> _write(String key, String? value) {
-    return storage.write(key: _key(key), value: _trimmedOrNull(value));
-  }
-
-  String _key(String key) => '$namespace.$key';
-}
-
 class MemoryMomCozySessionStore implements MomCozySessionStore {
   MemoryMomCozySessionStore([MomCozySession? session]) : _session = session;
 
@@ -216,14 +140,17 @@ class MomCozySessionManager {
   }
 }
 
-MomCozySessionStatus _statusFor(String? accessToken, String? refreshToken) {
+MomCozySessionStatus statusForSessionSecrets(
+  String? accessToken,
+  String? refreshToken,
+) {
   if (accessToken == null && refreshToken == null) {
     return MomCozySessionStatus.anonymous;
   }
   return MomCozySessionStatus.authenticated;
 }
 
-MomCozySessionStatus? _parseStatus(String? value) {
+MomCozySessionStatus? parseMomCozySessionStatus(String? value) {
   final normalized = _trimmedOrNull(value);
   if (normalized == null) return null;
   for (final status in MomCozySessionStatus.values) {
@@ -237,6 +164,8 @@ String? _trimmedOrNull(String? value) {
   if (trimmed == null || trimmed.isEmpty) return null;
   return trimmed;
 }
+
+String? trimmedSessionValue(String? value) => _trimmedOrNull(value);
 
 String _trimmedOrDefault(String value, String fallback) {
   return _trimmedOrNull(value) ?? fallback;

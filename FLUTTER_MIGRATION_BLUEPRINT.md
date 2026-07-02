@@ -943,6 +943,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Media upload typed repository contract 已覆盖 `/v1/files/upload` multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport 已落地，覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body tests
 [x] Flutter 通用 multipart transport 已落地，Media repository 可通过 runtime 走 `/v1/files/upload`
+[x] Flutter staging smoke harness 已落地：可用环境变量直连 staging 验证 HTTP、client-event、media upload 和 Agent SSE；本机无凭证时默认安全 skip
 [x] Flutter App API runtime scope 已接入 App root，集中 dart-define / secure session base URL/token/user/baby/locale 与 typed repository factory
 [x] Flutter App 启动已接入 secure storage session bootstrap，token/refresh token 不再只能依赖普通 env 注入
 [x] Flutter App API runtime 已加入 `/api/client-event` best-effort control client 注入点，IBCLC/通知/分析类页面可复用事件写回
