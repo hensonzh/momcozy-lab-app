@@ -40,14 +40,14 @@ void main() {
 
     test('redacts sensitive query parameters in log URLs', () {
       final url = redactUrlForLog(
-        'wss://api.example.test/api/ag-ui-ws?token=secret'
+        'https://api.example.test/v1/agent/runs/run-1/stream?token=secret'
         '&user_id=demo-user&conversation_id=conv-1'
         '&text=private%20voice%20text&mode=voice#frag',
       );
 
       expect(
         url,
-        'wss://api.example.test/api/ag-ui-ws?token=***'
+        'https://api.example.test/v1/agent/runs/run-1/stream?token=***'
         '&user_id=***&conversation_id=***'
         '&text=***&mode=voice#frag',
       );
