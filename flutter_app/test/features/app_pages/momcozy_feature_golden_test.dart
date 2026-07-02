@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
+import '../../support/momcozy_test_fonts.dart';
 
 void main() {
+  setUpAll(loadMomCozyTestFonts);
+
   group('MomCozy feature page goldens', () {
     testWidgets('status page matches compact mobile baseline', (tester) async {
       await _setCompactMobileViewport(tester);
@@ -60,6 +64,14 @@ Future<void> _pumpGoldenApp(
       ),
     ),
   );
+  await tester.pump();
+  final appContext = tester.element(find.byType(MomCozyFlutterApp));
+  await tester.runAsync(() async {
+    await precacheImage(
+      const AssetImage(MomCozyAssets.agentAvatar),
+      appContext,
+    ).timeout(const Duration(seconds: 5));
+  });
   await tester.pumpAndSettle();
 }
 

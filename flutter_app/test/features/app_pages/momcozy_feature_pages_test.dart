@@ -136,12 +136,12 @@ void main() {
         find.byKey(const ValueKey('route-page-/calibration')),
         findsOneWidget,
       );
-      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(MomCozyBottomNavigation), findsNothing);
 
       await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
-      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(MomCozyBottomNavigation), findsNothing);
       expect(
         pumpProtocol.recordedCommands.map(
           (command) =>
@@ -164,7 +164,7 @@ void main() {
         find.byKey(const ValueKey('route-page-/schedule')),
         findsOneWidget,
       );
-      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.byType(MomCozyBottomNavigation), findsOneWidget);
 
       router.go('/w1');
       await tester.pumpAndSettle();
@@ -175,7 +175,7 @@ void main() {
         find.byKey(const ValueKey('route-page-/media-viewer')),
         findsOneWidget,
       );
-      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(MomCozyBottomNavigation), findsNothing);
       await pumpProtocol.dispose();
     });
 
@@ -1776,7 +1776,8 @@ String _apiTimestamp(DateTime value) {
 }
 
 Future<void> _tapScrollableText(WidgetTester tester, String text) async {
-  final finder = find.text(text, skipOffstage: false);
+  await _scrollToText(tester, text);
+  final finder = find.text(text);
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
   await tester.tap(finder);
@@ -1784,10 +1785,12 @@ Future<void> _tapScrollableText(WidgetTester tester, String text) async {
 
 Future<void> _scrollToText(WidgetTester tester, String text) async {
   final finder = find.text(text);
-  for (var attempt = 0; attempt < 12; attempt += 1) {
-    if (finder.evaluate().isNotEmpty) return;
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -240));
-    await tester.pump();
+  for (final offset in const [Offset(0, -240), Offset(0, 240)]) {
+    for (var attempt = 0; attempt < 12; attempt += 1) {
+      if (finder.evaluate().isNotEmpty) return;
+      await tester.drag(find.byType(Scrollable).first, offset);
+      await tester.pump();
+    }
   }
   expect(finder, findsOneWidget);
 }

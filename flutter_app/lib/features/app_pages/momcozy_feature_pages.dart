@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
@@ -178,7 +179,6 @@ class _FeaturePageFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
 
     return ListView(
       key: ValueKey('route-page-$path'),
@@ -193,7 +193,7 @@ class _FeaturePageFrame extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: accent.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(MomCozyRadii.control),
               ),
               child: Icon(icon, color: accent, size: 24),
             ),
@@ -206,7 +206,7 @@ class _FeaturePageFrame extends StatelessWidget {
                     title,
                     style: textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: colorScheme.onSurface,
+                      color: MomCozyColors.foreground,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -214,7 +214,7 @@ class _FeaturePageFrame extends StatelessWidget {
                     summary,
                     style: textTheme.bodyMedium?.copyWith(
                       height: 1.35,
-                      color: colorScheme.onSurfaceVariant,
+                      color: MomCozyColors.mutedForeground,
                     ),
                   ),
                 ],
@@ -244,7 +244,7 @@ class _PriorityBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
       ),
       child: Text(
         priority,
@@ -310,17 +310,11 @@ class _MetricTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
       width: 162,
       constraints: const BoxConstraints(minHeight: 104),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorScheme.outlineVariant),
-      ),
+      decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -330,14 +324,14 @@ class _MetricTile extends StatelessWidget {
             value,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w900,
-              color: colorScheme.onSurface,
+              color: MomCozyColors.foreground,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: MomCozyColors.mutedForeground,
             ),
           ),
           if (note != null) ...[
@@ -345,7 +339,7 @@ class _MetricTile extends StatelessWidget {
             Text(
               note!,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: colorScheme.primary,
+                color: MomCozyColors.primary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -380,53 +374,56 @@ class _ActionTile extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Material(
-        color: colorScheme.surfaceContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-          side: BorderSide(color: colorScheme.outlineVariant),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Row(
-              children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: foreground.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
+      child: DecoratedBox(
+        decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(MomCozyRadii.card),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: foreground.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(MomCozyRadii.control),
+                    ),
+                    child: Icon(icon, color: foreground, size: 21),
                   ),
-                  child: Icon(icon, color: foreground, size: 21),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.w800),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          height: 1.35,
-                          color: colorScheme.onSurfaceVariant,
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                height: 1.35,
+                                color: MomCozyColors.mutedForeground,
+                              ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                if (trailing != null) ...[const SizedBox(width: 8), trailing!],
-              ],
+                  if (trailing != null) ...[
+                    const SizedBox(width: 8),
+                    trailing!,
+                  ],
+                ],
+              ),
             ),
           ),
         ),
@@ -452,7 +449,7 @@ class _StatusChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -740,7 +737,6 @@ class _CareStageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final isPregnancy = selectedStage == 'pregnancy';
 
     return Padding(
@@ -748,11 +744,7 @@ class _CareStageSelector extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: colorScheme.outlineVariant),
-        ),
+        decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
         child: Wrap(
           spacing: 12,
           runSpacing: 12,
@@ -775,7 +767,7 @@ class _CareStageSelector extends StatelessWidget {
                     isPregnancy ? '孕期档案优先关注体征、日记和待办。' : '哺乳期档案优先关注恢复、泵奶和喂养。',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       height: 1.35,
-                      color: colorScheme.onSurfaceVariant,
+                      color: MomCozyColors.mutedForeground,
                     ),
                   ),
                 ],
@@ -1210,16 +1202,14 @@ class _DatePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Material(
-        color: selected ? colorScheme.primaryContainer : colorScheme.surface,
+        color: selected ? MomCozyColors.roseSoft : MomCozyColors.card,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(MomCozyRadii.control),
           side: BorderSide(
-            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+            color: selected ? MomCozyColors.primary : MomCozyColors.border,
           ),
         ),
         clipBehavior: Clip.antiAlias,
@@ -2880,7 +2870,7 @@ class _TrendBar extends StatelessWidget {
             child: LinearProgressIndicator(
               value: value.clamp(0, 1),
               minHeight: 10,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
             ),
           ),
           const SizedBox(width: 10),
@@ -3889,11 +3879,7 @@ class _MediaPreview extends StatelessWidget {
     return Container(
       height: 210,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorScheme.outlineVariant),
-      ),
+      decoration: MomCozyDecorations.card(),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

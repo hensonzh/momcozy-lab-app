@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
@@ -100,31 +101,139 @@ Map<String, Object?> _nativeRoutePayload(PendingNativeRoute route) {
 }
 
 ThemeData momCozyTheme() {
-  final colorScheme = ColorScheme.fromSeed(
-    seedColor: const Color(0xff9f6378),
-    brightness: Brightness.light,
+  final colorScheme = const ColorScheme.light(
+    primary: MomCozyColors.primary,
+    onPrimary: MomCozyColors.background,
+    primaryContainer: MomCozyColors.roseSoft,
+    onPrimaryContainer: MomCozyColors.foreground,
+    secondary: MomCozyColors.secondary,
+    onSecondary: MomCozyColors.foreground,
+    secondaryContainer: MomCozyColors.secondary,
+    onSecondaryContainer: MomCozyColors.foreground,
+    tertiary: MomCozyColors.warm,
+    onTertiary: MomCozyColors.foreground,
+    surface: MomCozyColors.background,
+    onSurface: MomCozyColors.foreground,
+    surfaceContainerLowest: MomCozyColors.background,
+    surfaceContainerLow: MomCozyColors.card,
+    surfaceContainer: MomCozyColors.muted,
+    surfaceContainerHigh: MomCozyColors.secondary,
+    surfaceContainerHighest: MomCozyColors.roseSoft,
+    onSurfaceVariant: MomCozyColors.mutedForeground,
+    outline: MomCozyColors.border,
+    outlineVariant: MomCozyColors.border,
+    error: Color(0xffdc2626),
+    errorContainer: Color(0xffffe4e6),
   );
 
   return ThemeData(
     useMaterial3: true,
-    colorScheme: colorScheme.copyWith(
-      surface: const Color(0xfffffbfc),
-      surfaceContainer: const Color(0xfffff2f5),
-      surfaceContainerHighest: const Color(0xfff4e3e8),
+    colorScheme: colorScheme,
+    scaffoldBackgroundColor: MomCozyColors.background,
+    fontFamily: MomCozyTypography.fontFamily,
+    fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+    textTheme: Typography.blackCupertino.apply(
+      bodyColor: MomCozyColors.foreground,
+      displayColor: MomCozyColors.foreground,
+      fontFamily: MomCozyTypography.fontFamily,
+      fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
     ),
-    scaffoldBackgroundColor: const Color(0xfffffbfc),
-    navigationBarTheme: NavigationBarThemeData(
-      height: 72,
-      backgroundColor: const Color(0xfffffbfc),
-      indicatorColor: colorScheme.primaryContainer,
-      labelTextStyle: WidgetStateProperty.resolveWith((states) {
-        final selected = states.contains(WidgetState.selected);
-        return TextStyle(
-          fontSize: 11,
-          height: 1.1,
-          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-        );
-      }),
+    dividerTheme: const DividerThemeData(
+      color: MomCozyColors.border,
+      thickness: 1,
+      space: 1,
+    ),
+    iconTheme: const IconThemeData(color: MomCozyColors.foreground),
+    cardTheme: CardThemeData(
+      color: MomCozyColors.card,
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(MomCozyRadii.card),
+        side: const BorderSide(color: MomCozyColors.border),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: MomCozyColors.primary,
+        foregroundColor: MomCozyColors.background,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        ),
+        textStyle: const TextStyle(
+          fontFamily: MomCozyTypography.fontFamily,
+          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: MomCozyColors.primary,
+        side: const BorderSide(color: MomCozyColors.border),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        ),
+        textStyle: const TextStyle(
+          fontFamily: MomCozyTypography.fontFamily,
+          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        foregroundColor: MomCozyColors.mutedForeground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        ),
+      ),
+    ),
+    segmentedButtonTheme: SegmentedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          return states.contains(WidgetState.selected)
+              ? MomCozyColors.roseSoft
+              : MomCozyColors.card;
+        }),
+        foregroundColor: WidgetStateProperty.resolveWith((states) {
+          return states.contains(WidgetState.selected)
+              ? MomCozyColors.primary
+              : MomCozyColors.mutedForeground;
+        }),
+        side: WidgetStateProperty.all(
+          const BorderSide(color: MomCozyColors.border),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(MomCozyRadii.control),
+          ),
+        ),
+        textStyle: WidgetStateProperty.all(
+          const TextStyle(
+            fontFamily: MomCozyTypography.fontFamily,
+            fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: MomCozyColors.card,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        borderSide: const BorderSide(color: MomCozyColors.border),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        borderSide: const BorderSide(color: MomCozyColors.border),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        borderSide: const BorderSide(color: MomCozyColors.primary, width: 1.4),
+      ),
     ),
   );
 }
@@ -175,12 +284,15 @@ class MomCozyRouteShell extends StatelessWidget {
     final hideNavigation = _routesWithoutBottomNavigation.contains(location);
 
     return Scaffold(
+      backgroundColor: MomCozyColors.background,
       body: SafeArea(
         bottom: hideNavigation,
         child: Align(
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
+            constraints: const BoxConstraints(
+              maxWidth: MomCozyLayout.maxAppWidth,
+            ),
             child: child,
           ),
         ),
@@ -199,37 +311,366 @@ class MomCozyBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: _selectedTabIndex(location),
-      destinations: const [
-        NavigationDestination(
-          icon: Icon(Icons.favorite_border_rounded),
-          selectedIcon: Icon(Icons.favorite_rounded),
-          label: '宝宝和我',
+    final selectedIndex = _selectedTabIndex(location);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.card.withValues(alpha: 0.92),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: MomCozyLayout.bottomNavHeight,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: MomCozyLayout.bottomNavChromeHeight,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: MomCozyColors.border.withValues(alpha: 0.52),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: MomCozyLayout.bottomNavChromeHeight,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: MomCozyLayout.maxAppWidth,
+                      ),
+                      child: Row(
+                        children: [
+                          _MomCozyNavTab(
+                            label: '宝宝和我',
+                            selected: selectedIndex == 0,
+                            icon: const _MomBabyNavIcon(),
+                            selectedIcon: const _MomBabyNavIcon(filled: true),
+                            onTap: () => context.go(_tabPaths[0]),
+                          ),
+                          _MomCozyNavTab(
+                            label: '计划',
+                            selected: selectedIndex == 1,
+                            icon: const Icon(Icons.event_note_outlined),
+                            selectedIcon: const Icon(Icons.event_note_rounded),
+                            onTap: () => context.go(_tabPaths[1]),
+                          ),
+                          _MomCozyAgentNavTab(
+                            selected: selectedIndex == 2,
+                            onTap: () => context.go(_tabPaths[2]),
+                          ),
+                          _MomCozyNavTab(
+                            label: '社区',
+                            selected: selectedIndex == 3,
+                            icon: const Icon(Icons.groups_2_outlined),
+                            selectedIcon: const Icon(Icons.groups_2_rounded),
+                            onTap: () => context.go(_tabPaths[3]),
+                          ),
+                          _MomCozyNavTab(
+                            label: '设备',
+                            selected: selectedIndex == 4,
+                            icon: const Icon(
+                              Icons.bluetooth_connected_outlined,
+                            ),
+                            selectedIcon: const Icon(
+                              Icons.bluetooth_connected_rounded,
+                            ),
+                            onTap: () => context.go(_tabPaths[4]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        NavigationDestination(
-          icon: Icon(Icons.event_note_outlined),
-          selectedIcon: Icon(Icons.event_note_rounded),
-          label: '计划',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.auto_awesome_outlined),
-          selectedIcon: Icon(Icons.auto_awesome_rounded),
-          label: '智能体',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.groups_2_outlined),
-          selectedIcon: Icon(Icons.groups_2_rounded),
-          label: '社区',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.bluetooth_connected_outlined),
-          selectedIcon: Icon(Icons.bluetooth_connected_rounded),
-          label: '设备',
-        ),
-      ],
-      onDestinationSelected: (index) => context.go(_tabPaths[index]),
+      ),
     );
+  }
+}
+
+class _MomCozyNavTab extends StatelessWidget {
+  const _MomCozyNavTab({
+    required this.label,
+    required this.selected,
+    required this.icon,
+    required this.selectedIcon,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final Widget icon;
+  final Widget selectedIcon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = selected
+        ? MomCozyColors.primary
+        : MomCozyColors.mutedForeground;
+
+    return Expanded(
+      child: Center(
+        child: Semantics(
+          selected: selected,
+          button: true,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(MomCozyRadii.control),
+            onTap: onTap,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+              decoration: BoxDecoration(
+                color: selected
+                    ? MomCozyColors.primary.withValues(alpha: 0.08)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(MomCozyRadii.control),
+              ),
+              child: IconTheme(
+                data: IconThemeData(color: foreground, size: 21),
+                child: DefaultTextStyle(
+                  style: TextStyle(
+                    fontFamily: MomCozyTypography.fontFamily,
+                    fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                    color: foreground,
+                    fontSize: 10,
+                    height: 1.05,
+                    fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox.square(
+                        dimension: 22,
+                        child: Center(child: selected ? selectedIcon : icon),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(label, maxLines: 1, overflow: TextOverflow.visible),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MomCozyAgentNavTab extends StatelessWidget {
+  const _MomCozyAgentNavTab({required this.selected, required this.onTap});
+
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Center(
+        child: Transform.translate(
+          offset: const Offset(0, -12),
+          child: Semantics(
+            label: '智能体',
+            selected: selected,
+            button: true,
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: onTap,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: MomCozyLayout.bottomNavCenterSize,
+                height: MomCozyLayout.bottomNavCenterSize,
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: selected ? MomCozyGradients.primary : null,
+                  color: selected ? null : MomCozyColors.card,
+                  border: Border.all(color: MomCozyColors.background, width: 5),
+                  boxShadow: selected
+                      ? const [
+                          BoxShadow(
+                            color: Color(0x42754b5e),
+                            blurRadius: 30,
+                            offset: Offset(0, 12),
+                          ),
+                        ]
+                      : MomCozyShadows.soft,
+                ),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: selected ? 0.1 : 0),
+                    image: const DecorationImage(
+                      image: AssetImage(MomCozyAssets.agentAvatar),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: const SizedBox.square(
+                    dimension: MomCozyLayout.bottomNavCenterSize - 10,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MomBabyNavIcon extends StatelessWidget {
+  const _MomBabyNavIcon({this.filled = false});
+
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: const Size(22, 22),
+      painter: _MomBabyNavIconPainter(
+        color: IconTheme.of(context).color ?? MomCozyColors.primary,
+        strokeWidth: filled ? 2.5 : 1.8,
+        fill: filled,
+      ),
+    );
+  }
+}
+
+class _MomBabyNavIconPainter extends CustomPainter {
+  const _MomBabyNavIconPainter({
+    required this.color,
+    required this.strokeWidth,
+    required this.fill,
+  });
+
+  final Color color;
+  final double strokeWidth;
+  final bool fill;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final scaleX = size.width / 24;
+    final scaleY = size.height / 24;
+    final stroke = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final wash = Paint()
+      ..color = color.withValues(alpha: fill ? 0.18 : 0)
+      ..style = PaintingStyle.fill;
+
+    Offset p(double x, double y) => Offset(x * scaleX, y * scaleY);
+    if (fill) canvas.drawCircle(p(8.2, 7.1), 2.8 * scaleX, wash);
+    canvas.drawCircle(p(8.2, 7.1), 2.8 * scaleX, stroke);
+    final momPath = Path()
+      ..moveTo(3.8 * scaleX, 19.2 * scaleY)
+      ..lineTo(3.8 * scaleX, 17.8 * scaleY)
+      ..cubicTo(
+        3.8 * scaleX,
+        14.7 * scaleY,
+        5.7 * scaleX,
+        12.4 * scaleY,
+        8.2 * scaleX,
+        12.4 * scaleY,
+      )
+      ..cubicTo(
+        10.7 * scaleX,
+        12.4 * scaleY,
+        12.6 * scaleX,
+        14.7 * scaleY,
+        12.6 * scaleX,
+        17.8 * scaleY,
+      )
+      ..lineTo(12.6 * scaleX, 19.2 * scaleY);
+    canvas.drawPath(momPath, stroke);
+    final momSmile = Path()
+      ..moveTo(5.7 * scaleX, 18.8 * scaleY)
+      ..cubicTo(
+        6.4 * scaleX,
+        19.2 * scaleY,
+        7.2 * scaleX,
+        19.4 * scaleY,
+        8.2 * scaleX,
+        19.4 * scaleY,
+      )
+      ..cubicTo(
+        9.2 * scaleX,
+        19.4 * scaleY,
+        10 * scaleX,
+        19.2 * scaleY,
+        10.7 * scaleX,
+        18.8 * scaleY,
+      );
+    canvas.drawPath(momSmile, stroke);
+
+    if (fill) canvas.drawCircle(p(16.4, 9.7), 2.1 * scaleX, wash);
+    canvas.drawCircle(p(16.4, 9.7), 2.1 * scaleX, stroke);
+    final babyPath = Path()
+      ..moveTo(12.9 * scaleX, 19.2 * scaleY)
+      ..lineTo(12.9 * scaleX, 18.3 * scaleY)
+      ..cubicTo(
+        12.9 * scaleX,
+        15.9 * scaleY,
+        14.3 * scaleX,
+        14.2 * scaleY,
+        16.4 * scaleX,
+        14.2 * scaleY,
+      )
+      ..cubicTo(
+        18.5 * scaleX,
+        14.2 * scaleY,
+        19.9 * scaleX,
+        15.9 * scaleY,
+        19.9 * scaleX,
+        18.3 * scaleY,
+      )
+      ..lineTo(19.9 * scaleX, 19.2 * scaleY);
+    canvas.drawPath(babyPath, stroke);
+    final babySmile = Path()
+      ..moveTo(14.5 * scaleX, 18.7 * scaleY)
+      ..cubicTo(
+        15 * scaleX,
+        19 * scaleY,
+        15.6 * scaleX,
+        19.1 * scaleY,
+        16.4 * scaleX,
+        19.1 * scaleY,
+      )
+      ..cubicTo(
+        17.2 * scaleX,
+        19.1 * scaleY,
+        17.8 * scaleX,
+        19 * scaleY,
+        18.3 * scaleX,
+        18.7 * scaleY,
+      );
+    canvas.drawPath(babySmile, stroke);
+  }
+
+  @override
+  bool shouldRepaint(covariant _MomBabyNavIconPainter oldDelegate) {
+    return oldDelegate.color != color ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.fill != fill;
   }
 }
 
