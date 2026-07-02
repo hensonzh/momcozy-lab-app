@@ -990,6 +990,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Agent Hub artifact area 已支持 rich text/card rows/button action 白名单渲染；doc/media action 已经由 typed route handler 打开 `/media-viewer`，不展示 raw tool name 或 JSON
 [x] Flutter Agent Hub timeout/offline failure 已映射为用户可读 retry copy，不展示原始异常、host 或 transport 细节
 [x] Flutter Agent Hub 紧凑手机视口已覆盖长回复和长 artifact 文案换行，不触发布局 overflow
+[x] Flutter Agent Hub citation/reference links 已支持索引/标题白名单渲染和点击回调，UI 不展示完整外部 URL
 ```
 
 ---

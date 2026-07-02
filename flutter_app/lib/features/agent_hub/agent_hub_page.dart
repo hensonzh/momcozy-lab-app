@@ -973,6 +973,7 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
   ];
   final actions = <AgentArtifactActionView>[
     ..._buttonActions(richText['button']),
+    ..._referenceActionsFromRichText(richText),
     ..._semanticActions(richText['action'], event),
   ];
 
@@ -1053,6 +1054,51 @@ List<AgentArtifactActionView> _buttonActions(Object? rawButtons) {
       .toList(growable: false);
 }
 
+List<AgentArtifactActionView> _referenceActionsFromRichText(
+  Map<String, Object?> richText,
+) {
+  return <AgentArtifactActionView>[
+    ..._referenceActions(richText['citation']),
+    ..._referenceActions(richText['citations']),
+    ..._referenceActions(richText['reference']),
+    ..._referenceActions(richText['references']),
+  ];
+}
+
+List<AgentArtifactActionView> _referenceActions(Object? rawReferences) {
+  final references = switch (rawReferences) {
+    List value => value,
+    Map value => [value],
+    _ => const <Object?>[],
+  };
+
+  return references
+      .whereType<Map>()
+      .map((rawReference) => Map<String, Object?>.from(rawReference))
+      .map((reference) {
+        final value = _firstNonEmpty([
+          _stringField(reference, 'url'),
+          _stringField(reference, 'href'),
+          _stringField(reference, 'value'),
+        ]);
+        final title =
+            _firstNonEmpty([
+              _stringField(reference, 'title'),
+              _stringField(reference, 'label'),
+              _stringField(reference, 'displayText'),
+              _hostFromUrl(value),
+            ]) ??
+            '参考来源';
+        return AgentArtifactActionView(
+          label: _citationLabel(reference['index'], title),
+          icon: _actionIcon('citation'),
+          kind: 'citation',
+          value: value,
+        );
+      })
+      .toList(growable: false);
+}
+
 List<AgentArtifactActionView> _semanticActions(
   Object? rawActions,
   AgentStreamEvent event,
@@ -1091,6 +1137,7 @@ IconData _actionIcon(String? kind) {
   return switch (kind) {
     'doc' || 'document' || 'pdf' => Icons.description_outlined,
     'media' || 'image' || 'video' || 'open' => Icons.open_in_new_rounded,
+    'citation' || 'reference' => Icons.link_rounded,
     'ag_ui_artifact' => Icons.fact_check_outlined,
     _ => Icons.touch_app_outlined,
   };
@@ -1116,6 +1163,23 @@ String? _safeSameOriginPath(String? value) {
   final path = uri.path.isEmpty ? normalized : uri.path;
   if (!path.startsWith('/')) return null;
   return path;
+}
+
+String _citationLabel(Object? rawIndex, String title) {
+  final index = switch (rawIndex) {
+    int value => value.toString(),
+    String value => value.trim(),
+    _ => '',
+  };
+  return index.isEmpty ? title : '[$index] $title';
+}
+
+String? _hostFromUrl(String? value) {
+  final normalized = value?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  final uri = Uri.tryParse(normalized);
+  final host = uri?.host.replaceFirst(RegExp(r'^www\.'), '');
+  return host == null || host.isEmpty ? null : host;
 }
 
 Map<String, Object?> _mapField(
