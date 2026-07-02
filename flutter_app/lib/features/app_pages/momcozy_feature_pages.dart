@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -237,74 +238,6 @@ class _SectionTitle extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MetricWrap extends StatelessWidget {
-  const _MetricWrap({required this.children});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(spacing: 10, runSpacing: 10, children: children);
-  }
-}
-
-class _MetricTile extends StatelessWidget {
-  const _MetricTile({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.accent,
-    this.note,
-  });
-
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color accent;
-  final String? note;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 162,
-      constraints: const BoxConstraints(minHeight: 104),
-      padding: const EdgeInsets.all(14),
-      decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _IconBubble(icon: icon, accent: accent, size: 36, iconSize: 20),
-          const SizedBox(height: 10),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w900,
-              color: MomCozyColors.foreground,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: MomCozyColors.mutedForeground,
-            ),
-          ),
-          if (note != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              note!,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: MomCozyColors.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -3399,153 +3332,121 @@ class _PumpPageState extends State<_PumpPage> {
     final isRunning = _runState == _PumpRunState.running;
     final isPaused = _runState == _PumpRunState.paused;
 
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      trailing: Wrap(
-        spacing: 8,
-        runSpacing: 8,
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xfffffaf8), Color(0xfffbf2f2), Color(0xfff8edf0)],
+          stops: [0, 0.56, 1],
+        ),
+      ),
+      child: ListView(
+        key: ValueKey('route-page-${widget.path}'),
+        scrollCacheExtent: const ScrollCacheExtent.pixels(1600),
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 22),
         children: [
-          _StatusChip(
-            label: isRunning
-                ? '进行中'
-                : isPaused
-                ? '已暂停'
-                : '待开始',
-            icon: isRunning
-                ? Icons.play_circle_outline_rounded
-                : Icons.pause_circle_outline_rounded,
+          _PumpTopBar(sessionLabel: _headerSessionLabel),
+          const SizedBox(height: 10),
+          _PumpMetricConsole(
+            totalVolumeMl: _totalVolumeMl,
+            elapsedMinutes: _elapsedMinutes,
+            progress: _sessionProgress,
+            userLabel: _sessionOwnerUserId == null
+                ? '未绑定用户'
+                : '绑定 $_sessionOwnerUserId',
             accent: widget.accent,
           ),
-          const _StatusChip(
-            label: '前台服务待验证',
-            icon: Icons.notifications_active_outlined,
-            accent: Color(0xffb2773b),
+          const SizedBox(height: 10),
+          _PumpSessionStage(
+            leftVolumeMl: _leftVolumeMl,
+            rightVolumeMl: _rightVolumeMl,
+            leftLevel: _leftLevel.round(),
+            rightLevel: _rightLevel.round(),
+            bottleFill: _bottleFill,
+            totalVolumeMl: _totalVolumeMl,
+            isRunning: isRunning,
+            accent: widget.accent,
           ),
-        ],
-      ),
-      children: [
-        const _SectionTitle('Session 控制'),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            FilledButton.icon(
-              onPressed: isRunning
-                  ? null
-                  : () => _changeRunState(_PumpRunState.running),
-              icon: Icon(
-                isPaused ? Icons.play_arrow_rounded : Icons.water_drop,
-              ),
-              label: Text(isPaused ? '恢复' : '开始'),
-            ),
-            OutlinedButton.icon(
-              onPressed: isRunning
-                  ? () => _changeRunState(_PumpRunState.paused)
-                  : null,
-              icon: const Icon(Icons.pause_rounded),
-              label: const Text('暂停'),
-            ),
-            OutlinedButton.icon(
-              onPressed: _runState == _PumpRunState.idle
-                  ? null
-                  : () => _changeRunState(_PumpRunState.idle),
-              icon: const Icon(Icons.stop_rounded),
-              label: const Text('结束'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 18),
-        const _SectionTitle('Session 进度'),
-        _MetricWrap(
-          children: [
-            _MetricTile(
-              label: '运行时长',
-              value: '$_elapsedMinutes 分钟',
-              icon: Icons.timer_outlined,
-              accent: widget.accent,
-              note: _sessionOwnerUserId == null
-                  ? '未绑定用户'
-                  : '绑定 $_sessionOwnerUserId',
-            ),
-            _MetricTile(
-              label: '左侧进度',
-              value: '$_leftVolumeMl mL',
-              icon: Icons.water_drop_outlined,
-              accent: widget.accent,
-              note: '档位 ${_leftLevel.round()}',
-            ),
-            _MetricTile(
-              label: '右侧进度',
-              value: '$_rightVolumeMl mL',
-              icon: Icons.water_drop_outlined,
-              accent: const Color(0xff43827b),
-              note: '档位 ${_rightLevel.round()}',
-            ),
-          ],
-        ),
-        const SizedBox(height: 18),
-        const _SectionTitle('左右侧参数'),
-        _PumpSideTile(
-          label: '左侧',
-          mode: '按摩 + 吸乳',
-          level: _leftLevel,
-          accent: widget.accent,
-          onChanged: (value) => setState(() => _leftLevel = value),
-        ),
-        _PumpSideTile(
-          label: '右侧',
-          mode: '吸乳',
-          level: _rightLevel,
-          accent: const Color(0xff43827b),
-          onChanged: (value) => setState(() => _rightLevel = value),
-        ),
-        const SizedBox(height: 8),
-        const _SectionTitle('结束保护'),
-        _ActionTile(
-          icon: _duplicateCompletionBlocked
-              ? Icons.block_rounded
-              : Icons.verified_outlined,
-          title: _completionGuardTitle(),
-          subtitle: _guardNotice ?? '开始后绑定当前用户，结束时锁定一次性上传标记。',
-          accent: _duplicateCompletionBlocked
-              ? const Color(0xffb2773b)
-              : const Color(0xff43827b),
-          trailing: _StatusChip(
-            label: _completionUploadLocked ? '1/1' : '待结束',
-            icon: _completionUploadLocked
-                ? Icons.lock_outline_rounded
-                : Icons.hourglass_empty_rounded,
+          const SizedBox(height: 10),
+          _PumpControlConsole(
+            leftLevel: _leftLevel,
+            rightLevel: _rightLevel,
+            isRunning: isRunning,
+            isPaused: isPaused,
+            onLeftLevelChanged: (value) => setState(() => _leftLevel = value),
+            onRightLevelChanged: (value) => setState(() => _rightLevel = value),
+            onStart: isRunning
+                ? null
+                : () => _changeRunState(_PumpRunState.running),
+            onPause: isRunning
+                ? () => _changeRunState(_PumpRunState.paused)
+                : null,
+            onEnd: _runState == _PumpRunState.idle
+                ? null
+                : () => _changeRunState(_PumpRunState.idle),
+          ),
+          const SizedBox(height: 10),
+          _PumpStatusStrip(
+            label: '结束保护',
+            icon: _duplicateCompletionBlocked
+                ? Icons.block_rounded
+                : Icons.verified_outlined,
+            title: _completionGuardTitle(),
+            subtitle: _guardNotice ?? '开始后绑定当前用户，结束时锁定一次性上传标记。',
             accent: _duplicateCompletionBlocked
                 ? const Color(0xffb2773b)
                 : const Color(0xff43827b),
+            trailing: _StatusChip(
+              label: _completionUploadLocked ? '1/1' : '待结束',
+              icon: _completionUploadLocked
+                  ? Icons.lock_outline_rounded
+                  : Icons.hourglass_empty_rounded,
+              accent: _duplicateCompletionBlocked
+                  ? const Color(0xffb2773b)
+                  : const Color(0xff43827b),
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        const _SectionTitle('上传状态'),
-        _ActionTile(
-          icon: _uploadError == null
-              ? Icons.cloud_sync_outlined
-              : Icons.cloud_off_outlined,
-          title: _uploadStatusTitle(),
-          subtitle: _uploadStatusSubtitle(),
-          accent: const Color(0xff6b6da8),
-          trailing: _isUploading
-              ? const SizedBox.square(
-                  dimension: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : IconButton(
-                  tooltip: '重试同步',
-                  onPressed: () => _uploadWorkstate(_runState),
-                  icon: const Icon(Icons.refresh_rounded),
-                ),
-        ),
-      ],
+          _PumpStatusStrip(
+            label: '上传状态',
+            icon: _uploadError == null
+                ? Icons.cloud_sync_outlined
+                : Icons.cloud_off_outlined,
+            title: _uploadStatusTitle(),
+            subtitle: _uploadStatusSubtitle(),
+            accent: const Color(0xff6b6da8),
+            trailing: _isUploading
+                ? const SizedBox.square(
+                    dimension: 22,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : IconButton(
+                    tooltip: '重试同步',
+                    onPressed: () => _uploadWorkstate(_runState),
+                    icon: const Icon(Icons.refresh_rounded),
+                  ),
+          ),
+        ],
+      ),
     );
+  }
+
+  int get _totalVolumeMl => _leftVolumeMl + _rightVolumeMl;
+
+  double get _sessionProgress {
+    return ((_elapsedMinutes / 30) * 100).clamp(0, 100).toDouble();
+  }
+
+  double get _bottleFill {
+    return (_totalVolumeMl / 180).clamp(0, 1).toDouble();
+  }
+
+  String get _headerSessionLabel {
+    return switch (_runState) {
+      _PumpRunState.running => '运行中',
+      _PumpRunState.paused => '已暂停',
+      _PumpRunState.idle => '待开始',
+    };
   }
 
   String _uploadStatusTitle() {
@@ -3580,33 +3481,1196 @@ int _pumpStateCode(_PumpRunState state) {
   };
 }
 
-class _PumpSideTile extends StatelessWidget {
-  const _PumpSideTile({
+class _PumpTopBar extends StatelessWidget {
+  const _PumpTopBar({required this.sessionLabel});
+
+  final String sessionLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = sessionLabel == '运行中';
+    return SizedBox(
+      height: 48,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () => context.go('/'),
+              style: TextButton.styleFrom(
+                foregroundColor: MomCozyColors.mutedForeground,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                minimumSize: const Size(0, 34),
+              ),
+              icon: const Icon(Icons.arrow_back_rounded, size: 18),
+              label: const Text(
+                '返回',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
+              ),
+            ),
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '沉浸式吸乳',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? MomCozyColors.primary.withValues(alpha: 0.12)
+                      : MomCozyColors.muted,
+                  borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                ),
+                child: Text(
+                  sessionLabel,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: isActive
+                        ? MomCozyColors.primary
+                        : MomCozyColors.mutedForeground,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PumpMetricConsole extends StatelessWidget {
+  const _PumpMetricConsole({
+    required this.totalVolumeMl,
+    required this.elapsedMinutes,
+    required this.progress,
+    required this.userLabel,
+    required this.accent,
+  });
+
+  final int totalVolumeMl;
+  final int elapsedMinutes;
+  final double progress;
+  final String userLabel;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card.withValues(alpha: 0.84),
+        borderColor: accent.withValues(alpha: 0.12),
+        radius: 26,
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: _PumpMetricPanel(
+                    label: '吸乳量',
+                    value: '$totalVolumeMl',
+                    unit: 'mL',
+                    accent: accent,
+                    emphasized: true,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _PumpMetricPanel(
+                    label: '时间',
+                    value: '$elapsedMinutes 分钟',
+                    accent: const Color(0xff836775),
+                    note: userLabel,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '本次吸乳进度',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                Text(
+                  '${progress.round()}%',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: accent,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              child: LinearProgressIndicator(
+                value: progress / 100,
+                minHeight: 9,
+                color: accent,
+                backgroundColor: MomCozyColors.secondary.withValues(
+                  alpha: 0.86,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PumpMetricPanel extends StatelessWidget {
+  const _PumpMetricPanel({
     required this.label,
-    required this.mode,
-    required this.level,
+    required this.value,
+    required this.accent,
+    this.unit,
+    this.note,
+    this.emphasized = false,
+  });
+
+  final String label;
+  final String value;
+  final String? unit;
+  final String? note;
+  final Color accent;
+  final bool emphasized;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 72),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: emphasized
+            ? accent.withValues(alpha: 0.08)
+            : MomCozyColors.muted.withValues(alpha: 0.42),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: accent.withValues(alpha: 0.08)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: MomCozyColors.mutedForeground,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Flexible(
+                child: Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ),
+              if (unit != null) ...[
+                const SizedBox(width: 4),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Text(
+                    unit!,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          if (note != null) ...[
+            const SizedBox(height: 3),
+            Text(
+              note!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: accent,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PumpSessionStage extends StatelessWidget {
+  const _PumpSessionStage({
+    required this.leftVolumeMl,
+    required this.rightVolumeMl,
+    required this.leftLevel,
+    required this.rightLevel,
+    required this.bottleFill,
+    required this.totalVolumeMl,
+    required this.isRunning,
+    required this.accent,
+  });
+
+  final int leftVolumeMl;
+  final int rightVolumeMl;
+  final int leftLevel;
+  final int rightLevel;
+  final double bottleFill;
+  final int totalVolumeMl;
+  final bool isRunning;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card.withValues(alpha: 0.68),
+        borderColor: MomCozyColors.border.withValues(alpha: 0.46),
+        radius: 26,
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 12, 10, 10),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 194,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _PumpSideMetric(
+                    label: '左侧',
+                    value: '$leftVolumeMl mL',
+                    meta: '$leftLevel档 · 按摩+吸乳',
+                    alignRight: true,
+                  ),
+                  const SizedBox(width: 4),
+                  _PumpCupVisual(
+                    sideLabel: 'L',
+                    volumeMl: leftVolumeMl,
+                    isRunning: isRunning,
+                    tone: accent,
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: _PumpBottleGauge(
+                        fill: bottleFill,
+                        totalVolumeMl: totalVolumeMl,
+                        active: isRunning,
+                      ),
+                    ),
+                  ),
+                  _PumpCupVisual(
+                    sideLabel: 'R',
+                    volumeMl: rightVolumeMl,
+                    isRunning: isRunning,
+                    tone: const Color(0xffc86d92),
+                  ),
+                  const SizedBox(width: 4),
+                  _PumpSideMetric(
+                    label: '右侧',
+                    value: '$rightVolumeMl mL',
+                    meta: '$rightLevel档 · 吸乳',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                Expanded(
+                  child: _PumpForcePanel(
+                    label: '奶流强度曲线',
+                    sideLabel: 'Left',
+                    value: isRunning ? '稳定' : '待开始',
+                    active: isRunning,
+                    tone: const Color(0xffd87542),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _PumpForcePanel(
+                    label: '奶流强度曲线',
+                    sideLabel: 'Right',
+                    value: isRunning ? '柔和' : '待开始',
+                    active: isRunning,
+                    tone: const Color(0xffc86d92),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PumpSideMetric extends StatelessWidget {
+  const _PumpSideMetric({
+    required this.label,
+    required this.value,
+    required this.meta,
+    this.alignRight = false,
+  });
+
+  final String label;
+  final String value;
+  final String meta;
+  final bool alignRight;
+
+  @override
+  Widget build(BuildContext context) {
+    final alignment = alignRight ? TextAlign.right : TextAlign.left;
+    return SizedBox(
+      width: 66,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: alignRight
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            textAlign: alignment,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: MomCozyColors.mutedForeground,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            value,
+            textAlign: alignment,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: MomCozyColors.foreground,
+              fontWeight: FontWeight.w900,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            meta,
+            textAlign: alignment,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: MomCozyColors.mutedForeground,
+              height: 1.12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PumpBottleGauge extends StatelessWidget {
+  const _PumpBottleGauge({
+    required this.fill,
+    required this.totalVolumeMl,
+    required this.active,
+  });
+
+  final double fill;
+  final int totalVolumeMl;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 82,
+          height: 150,
+          child: CustomPaint(
+            painter: _PumpBottlePainter(fill: fill, active: active),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '$totalVolumeMl',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+            const SizedBox(width: 2),
+            Text(
+              'mL',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _PumpBottlePainter extends CustomPainter {
+  const _PumpBottlePainter({required this.fill, required this.active});
+
+  final double fill;
+  final bool active;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final sx = size.width / 120;
+    final sy = size.height / 215;
+    canvas.save();
+    canvas.scale(sx, sy);
+
+    final shadowPaint = Paint()
+      ..color = MomCozyColors.primary.withValues(alpha: 0.08)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(32, 56, 56, 146),
+        const Radius.circular(24),
+      ),
+      shadowPaint,
+    );
+
+    final capPaint = Paint()..color = MomCozyColors.card;
+    final borderPaint = Paint()
+      ..color = MomCozyColors.border
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
+    canvas
+      ..drawRRect(
+        RRect.fromRectAndRadius(
+          const Rect.fromLTWH(50, 18, 20, 18),
+          const Radius.circular(7),
+        ),
+        capPaint,
+      )
+      ..drawRRect(
+        RRect.fromRectAndRadius(
+          const Rect.fromLTWH(45, 32, 30, 14),
+          const Radius.circular(5),
+        ),
+        Paint()..color = MomCozyColors.secondary,
+      )
+      ..drawRRect(
+        RRect.fromRectAndRadius(
+          const Rect.fromLTWH(47, 44, 26, 18),
+          const Radius.circular(6),
+        ),
+        capPaint,
+      );
+
+    final bottlePath = Path()
+      ..moveTo(34, 78)
+      ..cubicTo(34, 66, 43, 58, 50, 58)
+      ..lineTo(70, 58)
+      ..cubicTo(77, 58, 86, 66, 86, 78)
+      ..lineTo(86, 182)
+      ..cubicTo(86, 192, 78, 200, 68, 200)
+      ..lineTo(52, 200)
+      ..cubicTo(42, 200, 34, 192, 34, 182)
+      ..close();
+
+    final bodyRect = const Rect.fromLTWH(34, 58, 52, 142);
+    final bodyPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0x26a86172), Color(0x12ffffff), Color(0x33a86172)],
+      ).createShader(bodyRect);
+    canvas.drawPath(bottlePath, bodyPaint);
+    canvas.drawPath(bottlePath, borderPaint);
+
+    final fillHeight = (134 * fill.clamp(0, 1)).toDouble();
+    final fillY = 192 - fillHeight;
+    canvas.save();
+    canvas.clipPath(bottlePath);
+    canvas.drawRect(
+      Rect.fromLTWH(34, fillY, 52, 160),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xfffff4d8), Color(0xffead6a5)],
+        ).createShader(Rect.fromLTWH(34, fillY, 52, 160)),
+    );
+    if (fill > 0.02) {
+      final wavePaint = Paint()
+        ..color = const Color(0xfffff8df).withValues(alpha: 0.72);
+      final wave = Path()
+        ..moveTo(34, fillY + 2)
+        ..quadraticBezierTo(47, fillY - 4, 60, fillY + 2)
+        ..quadraticBezierTo(73, fillY + 8, 86, fillY + 2)
+        ..lineTo(86, 204)
+        ..lineTo(34, 204)
+        ..close();
+      canvas.drawPath(wave, wavePaint);
+    }
+    canvas.restore();
+
+    final shinePaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Colors.transparent, Color(0x33ffffff), Colors.transparent],
+      ).createShader(bodyRect);
+    canvas.drawPath(bottlePath, shinePaint);
+
+    final markPaint = Paint()
+      ..color = MomCozyColors.mutedForeground.withValues(alpha: 0.36)
+      ..strokeWidth = 0.8;
+    for (final mark in [20, 40, 60, 80, 100, 120, 140, 160]) {
+      final y = 192 - (mark / 180) * 134;
+      if (y < 66) continue;
+      final major = mark % 40 == 0;
+      canvas.drawLine(
+        Offset(major ? 72 : 76, y),
+        Offset(83, y),
+        markPaint..strokeWidth = major ? 0.9 : 0.45,
+      );
+    }
+
+    final portPaint = Paint()..color = MomCozyColors.card;
+    canvas
+      ..drawCircle(const Offset(34, 112), 4, portPaint)
+      ..drawCircle(const Offset(86, 112), 4, portPaint)
+      ..drawCircle(const Offset(34, 112), 4, borderPaint)
+      ..drawCircle(const Offset(86, 112), 4, borderPaint);
+
+    if (active) {
+      final glowPaint = Paint()
+        ..color = const Color(0xfffff1bd).withValues(alpha: 0.18)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18);
+      canvas.drawOval(const Rect.fromLTWH(18, 50, 84, 140), glowPaint);
+    }
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _PumpBottlePainter oldDelegate) {
+    return oldDelegate.fill != fill || oldDelegate.active != active;
+  }
+}
+
+class _PumpCupVisual extends StatelessWidget {
+  const _PumpCupVisual({
+    required this.sideLabel,
+    required this.volumeMl,
+    required this.isRunning,
+    required this.tone,
+  });
+
+  final String sideLabel;
+  final int volumeMl;
+  final bool isRunning;
+  final Color tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final fill = (volumeMl / 36).clamp(0.08, 1).toDouble();
+    return SizedBox(
+      width: 36,
+      height: 98,
+      child: CustomPaint(
+        painter: _PumpCupPainter(
+          fill: fill,
+          tone: tone,
+          active: isRunning,
+          leftSide: sideLabel == 'L',
+        ),
+      ),
+    );
+  }
+}
+
+class _PumpCupPainter extends CustomPainter {
+  const _PumpCupPainter({
+    required this.fill,
+    required this.tone,
+    required this.active,
+    required this.leftSide,
+  });
+
+  final double fill;
+  final Color tone;
+  final bool active;
+  final bool leftSide;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..moveTo(size.width * 0.5, size.height * 0.06)
+      ..cubicTo(
+        size.width * (leftSide ? 0.1 : 0.9),
+        size.height * 0.3,
+        size.width * 0.06,
+        size.height * 0.62,
+        size.width * 0.5,
+        size.height * 0.94,
+      )
+      ..cubicTo(
+        size.width * 0.94,
+        size.height * 0.62,
+        size.width * (leftSide ? 0.9 : 0.1),
+        size.height * 0.3,
+        size.width * 0.5,
+        size.height * 0.06,
+      )
+      ..close();
+
+    canvas.drawPath(
+      path,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            tone.withValues(alpha: 0.16),
+            Colors.white.withValues(alpha: 0.88),
+          ],
+        ).createShader(Offset.zero & size),
+    );
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.1
+        ..color = tone.withValues(alpha: 0.34),
+    );
+
+    canvas.save();
+    canvas.clipPath(path);
+    canvas.drawRect(
+      Rect.fromLTWH(0, size.height * (1 - fill), size.width, size.height),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xfffff2cf).withValues(alpha: active ? 0.94 : 0.52),
+            tone.withValues(alpha: active ? 0.26 : 0.12),
+          ],
+        ).createShader(Offset.zero & size),
+    );
+    canvas.restore();
+
+    final tubePaint = Paint()
+      ..color = MomCozyColors.border.withValues(alpha: 0.66)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round;
+    final start = Offset(leftSide ? size.width : 0, size.height * 0.5);
+    final end = Offset(leftSide ? size.width + 22 : -22, size.height * 0.38);
+    canvas.drawLine(start, end, tubePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _PumpCupPainter oldDelegate) {
+    return oldDelegate.fill != fill ||
+        oldDelegate.tone != tone ||
+        oldDelegate.active != active ||
+        oldDelegate.leftSide != leftSide;
+  }
+}
+
+class _PumpForcePanel extends StatelessWidget {
+  const _PumpForcePanel({
+    required this.label,
+    required this.sideLabel,
+    required this.value,
+    required this.active,
+    required this.tone,
+  });
+
+  final String label;
+  final String sideLabel;
+  final String value;
+  final bool active;
+  final Color tone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 62,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: MomCozyColors.raised.withValues(alpha: 0.66),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.46)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        value,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      sideLabel,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 44,
+            height: 36,
+            child: CustomPaint(
+              painter: _PumpForcePainter(active: active, tone: tone),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PumpForcePainter extends CustomPainter {
+  const _PumpForcePainter({required this.active, required this.tone});
+
+  final bool active;
+  final Color tone;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final baseline = Paint()
+      ..color = MomCozyColors.border.withValues(alpha: 0.52)
+      ..strokeWidth = 1;
+    canvas.drawLine(
+      Offset(0, size.height * 0.76),
+      Offset(size.width, size.height * 0.76),
+      baseline,
+    );
+
+    final path = Path()..moveTo(0, size.height * 0.66);
+    final points = active
+        ? const [0.62, 0.3, 0.5, 0.22, 0.42, 0.18]
+        : const [0.62, 0.58, 0.64, 0.56, 0.62, 0.6];
+    for (var i = 0; i < points.length; i += 1) {
+      final x = size.width * ((i + 1) / points.length);
+      final y = size.height * points[i];
+      path.lineTo(x, y);
+    }
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = tone.withValues(alpha: active ? 0.94 : 0.42)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _PumpForcePainter oldDelegate) {
+    return oldDelegate.active != active || oldDelegate.tone != tone;
+  }
+}
+
+class _PumpControlConsole extends StatelessWidget {
+  const _PumpControlConsole({
+    required this.leftLevel,
+    required this.rightLevel,
+    required this.isRunning,
+    required this.isPaused,
+    required this.onLeftLevelChanged,
+    required this.onRightLevelChanged,
+    required this.onStart,
+    required this.onPause,
+    required this.onEnd,
+  });
+
+  final double leftLevel;
+  final double rightLevel;
+  final bool isRunning;
+  final bool isPaused;
+  final ValueChanged<double> onLeftLevelChanged;
+  final ValueChanged<double> onRightLevelChanged;
+  final VoidCallback? onStart;
+  final VoidCallback? onPause;
+  final VoidCallback? onEnd;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card.withValues(alpha: 0.9),
+        borderColor: MomCozyColors.border.withValues(alpha: 0.5),
+        radius: 24,
+        shadows: MomCozyShadows.card,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '设备控制',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 7),
+            _LegacySegmentedTabs(
+              selected: 'ai',
+              expand: true,
+              accent: MomCozyColors.primary,
+              items: const [
+                _LegacySegmentedTabItem(
+                  value: 'ai',
+                  label: '自动托管',
+                  icon: Icons.auto_awesome_rounded,
+                ),
+                _LegacySegmentedTabItem(
+                  value: 'manual',
+                  label: '手动调整',
+                  icon: Icons.tune_rounded,
+                ),
+              ],
+              onChanged: (_) {},
+            ),
+            const SizedBox(height: 7),
+            _LegacySegmentedTabs(
+              selected: isRunning ? 'deep' : 'stimulate',
+              expand: true,
+              accent: isRunning ? MomCozyColors.warm : MomCozyColors.primary,
+              items: const [
+                _LegacySegmentedTabItem(value: 'stimulate', label: '刺激模式'),
+                _LegacySegmentedTabItem(value: 'deep', label: '吸乳模式'),
+              ],
+              onChanged: (_) {},
+            ),
+            const SizedBox(height: 7),
+            Row(
+              children: [
+                Expanded(
+                  child: _PumpMiniGearPanel(
+                    label: '左侧档位',
+                    value: leftLevel,
+                    accent: MomCozyColors.primary,
+                    onChanged: onLeftLevelChanged,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _PumpMiniGearPanel(
+                    label: '右侧档位',
+                    value: rightLevel,
+                    accent: const Color(0xffc86d92),
+                    onChanged: onRightLevelChanged,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: onStart,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: MomCozyColors.primary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: MomCozyColors.muted,
+                      disabledForegroundColor: MomCozyColors.mutedForeground,
+                      minimumSize: const Size(0, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    icon: Icon(
+                      isPaused
+                          ? Icons.play_arrow_rounded
+                          : Icons.water_drop_rounded,
+                      size: 18,
+                    ),
+                    label: Text(isPaused ? '恢复' : '开始'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: onPause,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: MomCozyColors.foreground,
+                      side: BorderSide(
+                        color: MomCozyColors.border.withValues(alpha: 0.7),
+                      ),
+                      minimumSize: const Size(0, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    icon: const Icon(Icons.pause_rounded, size: 18),
+                    label: const Text('暂停'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: onEnd,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xffb24b4b),
+                      side: BorderSide(
+                        color: const Color(0xffb24b4b).withValues(alpha: 0.24),
+                      ),
+                      minimumSize: const Size(0, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    icon: const Icon(Icons.stop_rounded, size: 18),
+                    label: const Text('结束'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PumpMiniGearPanel extends StatelessWidget {
+  const _PumpMiniGearPanel({
+    required this.label,
+    required this.value,
     required this.accent,
     required this.onChanged,
   });
 
   final String label;
-  final String mode;
-  final double level;
+  final double value;
   final Color accent;
   final ValueChanged<double> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return _ActionTile(
-      icon: Icons.compress_rounded,
-      title: '$label · $mode',
-      subtitle: '档位 ${level.round()}，调整后会同步到当前连接设备。',
-      accent: accent,
-      trailing: _GearStepper(
-        label: label,
-        value: level,
-        accent: accent,
-        onChanged: onChanged,
+    const minLevel = 1;
+    const maxLevel = 9;
+    final current = value.round().clamp(minLevel, maxLevel);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 7),
+      decoration: BoxDecoration(
+        color: MomCozyColors.muted.withValues(alpha: 0.34),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: accent,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _PumpRoundStepButton(
+                tooltip: '降低$label',
+                icon: Icons.remove_rounded,
+                enabled: current > minLevel,
+                onTap: () => onChanged((current - 1).toDouble()),
+              ),
+              SizedBox(
+                width: 40,
+                child: Text(
+                  '$current',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ),
+              _PumpRoundStepButton(
+                tooltip: '提高$label',
+                icon: Icons.add_rounded,
+                enabled: current < maxLevel,
+                onTap: () => onChanged((current + 1).toDouble()),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PumpRoundStepButton extends StatelessWidget {
+  const _PumpRoundStepButton({
+    required this.tooltip,
+    required this.icon,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final String tooltip;
+  final IconData icon;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: IconButton(
+        onPressed: enabled ? onTap : null,
+        style: IconButton.styleFrom(
+          fixedSize: const Size(30, 30),
+          minimumSize: const Size(30, 30),
+          padding: EdgeInsets.zero,
+          backgroundColor: MomCozyColors.muted.withValues(alpha: 0.82),
+          disabledBackgroundColor: MomCozyColors.muted.withValues(alpha: 0.46),
+        ),
+        icon: Icon(icon, size: 17),
+      ),
+    );
+  }
+}
+
+class _PumpStatusStrip extends StatelessWidget {
+  const _PumpStatusStrip({
+    required this.label,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.accent,
+    required this.trailing,
+  });
+
+  final String label;
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color accent;
+  final Widget trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: DecoratedBox(
+        decoration: MomCozyDecorations.card(
+          color: MomCozyColors.card.withValues(alpha: 0.84),
+          shadows: MomCozyShadows.soft,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              _IconBubble(icon: icon, accent: accent, size: 38, iconSize: 20),
+              const SizedBox(width: 11),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: MomCozyColors.foreground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: MomCozyColors.mutedForeground,
+                        height: 1.25,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              trailing,
+            ],
+          ),
+        ),
       ),
     );
   }
