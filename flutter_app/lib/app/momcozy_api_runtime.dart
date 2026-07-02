@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
@@ -340,5 +341,28 @@ class MomCozyRuntimeScope extends InheritedWidget {
   @override
   bool updateShouldNotify(MomCozyRuntimeScope oldWidget) {
     return apiRuntime != oldWidget.apiRuntime;
+  }
+}
+
+class MomCozyRuntimeController extends ChangeNotifier {
+  MomCozyRuntimeController(this._runtime);
+
+  MomCozyApiRuntime _runtime;
+
+  MomCozyApiRuntime get runtime => _runtime;
+
+  void replaceRuntime(MomCozyApiRuntime runtime) {
+    if (identical(_runtime, runtime)) return;
+    _runtime = runtime;
+    notifyListeners();
+  }
+
+  void replaceSession(MomCozySession session) {
+    replaceRuntime(
+      MomCozyApiRuntime.fromSession(
+        session,
+        observability: _runtime.observability,
+      ),
+    );
   }
 }

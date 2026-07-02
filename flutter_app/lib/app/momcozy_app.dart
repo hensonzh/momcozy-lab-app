@@ -18,19 +18,28 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.router,
     this.routeIntentPlatform,
     this.apiRuntime,
-  });
+    this.runtimeController,
+  }) : assert(
+         apiRuntime == null || runtimeController == null,
+         'Pass either apiRuntime or runtimeController, not both.',
+       );
 
   final GoRouter? router;
   final RouteIntentPlatform? routeIntentPlatform;
   final MomCozyApiRuntime? apiRuntime;
+  final MomCozyRuntimeController? runtimeController;
 
   @override
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
 }
 
 class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
-  late final MomCozyApiRuntime _apiRuntime =
-      widget.apiRuntime ?? MomCozyApiRuntime.fromEnvironment();
+  late final MomCozyRuntimeController _runtimeController =
+      widget.runtimeController ??
+      MomCozyRuntimeController(
+        widget.apiRuntime ?? MomCozyApiRuntime.fromEnvironment(),
+      );
+  late final bool _ownsRuntimeController = widget.runtimeController == null;
   late final GoRouter _router = widget.router ?? createMomCozyRouter();
   late final bool _ownsRouter = widget.router == null;
   late final RouteIntentPlatform _routeIntentPlatform =
@@ -54,6 +63,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
       final platform = _routeIntentPlatform;
       if (platform is AndroidRouteIntentPlatform) unawaited(platform.dispose());
     }
+    if (_ownsRuntimeController) _runtimeController.dispose();
     if (_ownsRouter) _router.dispose();
     super.dispose();
   }
@@ -79,8 +89,14 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MomCozyRuntimeScope(
-      apiRuntime: _apiRuntime,
+    return AnimatedBuilder(
+      animation: _runtimeController,
+      builder: (context, child) {
+        return MomCozyRuntimeScope(
+          apiRuntime: _runtimeController.runtime,
+          child: child!,
+        );
+      },
       child: MaterialApp.router(
         title: 'Momcozy',
         theme: momCozyTheme(),

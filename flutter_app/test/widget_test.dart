@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -166,5 +167,44 @@ void main() {
 
     expect(routeEvents, containsAll(['/', '/schedule']));
     expect(sink.events.toString(), isNot(contains('route-user')));
+  });
+
+  testWidgets('runtime controller updates Agent Hub session context', (
+    tester,
+  ) async {
+    final controller = MomCozyRuntimeController(
+      MomCozyApiRuntime(
+        jsonTransport: FixtureApiJsonTransport(
+          const {'status': 200, 'data': {}},
+        ),
+        userId: 'initial-user',
+        babyId: 'initial-baby',
+        locale: 'zh-CN',
+      ),
+    );
+
+    await tester.pumpWidget(MomCozyFlutterApp(runtimeController: controller));
+    await tester.pumpAndSettle();
+
+    var page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
+    expect(page.requestBuilder('hello').userId, 'initial-user');
+
+    controller.replaceSession(
+      const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'secure-user',
+        babyId: 'secure-baby',
+        locale: 'en-US',
+        accessToken: 'secure-access',
+      ),
+    );
+    await tester.pump();
+
+    page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
+    expect(page.requestBuilder('hello').userId, 'secure-user');
+    expect(page.requestBuilder('hello').locale, 'en-US');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
   });
 }
