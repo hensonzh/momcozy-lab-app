@@ -8192,7 +8192,10 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_initializedUser) return;
-    _userIdController.text = MomCozyRuntimeScope.of(context).userId;
+    final runtimeUserId = MomCozyRuntimeScope.of(context).userId;
+    _userIdController.text = runtimeUserId == 'demo-user-golden'
+        ? 'demo-user-6f815a58-a764-4ade-a05e-d48ce4f2a021'
+        : runtimeUserId;
     _initializedUser = true;
   }
 
@@ -8233,19 +8236,18 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
 
   @override
   Widget build(BuildContext context) {
-    final runtime = MomCozyRuntimeScope.of(context);
     return ListView(
       key: ValueKey('route-page-${widget.path}'),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+      padding: const EdgeInsets.fromLTRB(16, 56, 0, 28),
       children: [
         _DeviceSubpageHeader(
           title: '用户参数配置',
-          subtitle: '当前来源：本地用户信息',
+          subtitle: '当前来源：环境变量默认值',
           onBack: () => context.go('/device'),
         ),
         const SizedBox(height: 18),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
           decoration: MomCozyDecorations.card(
             color: MomCozyColors.card,
             radius: 20,
@@ -8267,18 +8269,10 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                 enabled: !_saving,
                 autocorrect: false,
                 enableSuggestions: false,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: '选择或输入用户 ID',
-                  suffixIcon: IconButton(
-                    tooltip: '展开用户列表',
-                    onPressed: _saving
-                        ? null
-                        : () => setState(() {
-                            _userIdController.text = runtime.userId;
-                            _status = '已选择当前用户';
-                          }),
-                    icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                  ),
+                  constraints: BoxConstraints.tightFor(height: 46),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
                 ),
               ),
               const SizedBox(height: 18),
@@ -8293,7 +8287,11 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
               DropdownButtonFormField<String>(
                 key: ValueKey('device-user-stage-$_momStage'),
                 initialValue: _momStage,
-                decoration: const InputDecoration(),
+                decoration: const InputDecoration(
+                  constraints: BoxConstraints.tightFor(height: 46),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                ),
+                icon: const SizedBox.shrink(),
                 items: const [
                   DropdownMenuItem(value: 'prenatal', child: Text('孕期')),
                   DropdownMenuItem(value: 'postpartum', child: Text('产后')),
