@@ -1,5 +1,7 @@
 package com.momcozymai.app;
 
+import org.json.JSONObject;
+
 /**
  * 承载从原生 Intent 传递到 WebView 侧的一次性路由（例如点击吸乳会话通知）。
  */
@@ -33,8 +35,9 @@ public final class PumpNavigationBridge {
         if (path == null || path.isEmpty()) return;
         pendingPath = path;
         pendingAutoEndTeardown = autoEndTeardown;
-        if (notifyJson != null && !notifyJson.isEmpty()) {
-            pendingNotifyJson = notifyJson;
+        final String sanitizedNotifyJson = sanitizeNotifyJson(notifyJson);
+        if (!sanitizedNotifyJson.isEmpty()) {
+            pendingNotifyJson = sanitizedNotifyJson;
         } else {
             pendingNotifyJson = null;
         }
@@ -51,5 +54,18 @@ public final class PumpNavigationBridge {
         final String nj = pendingNotifyJson;
         pendingNotifyJson = null;
         return new PendingNavigate(p != null ? p : "", t, nj != null ? nj : "");
+    }
+
+    private static String sanitizeNotifyJson(String notifyJson) {
+        if (notifyJson == null || notifyJson.trim().isEmpty()) return "";
+        try {
+            JSONObject raw = new JSONObject(notifyJson);
+            JSONObject safe = new JSONObject();
+            String event = raw.optString("event", "").trim();
+            if (!event.isEmpty()) safe.put("event", event);
+            return safe.length() > 0 ? safe.toString() : "";
+        } catch (Exception ignored) {
+            return "";
+        }
     }
 }
