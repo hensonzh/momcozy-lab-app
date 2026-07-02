@@ -315,7 +315,7 @@ P0 视觉状态 widget contract：
 [x] 档位调整
 [x] 保存校准
 [x] 退出未保存
-[ ] 中断恢复
+[x] 中断恢复
 [x] legacy calibration 数据合法
 [x] legacy calibration 数据缺字段
 [x] legacy calibration 数据非法

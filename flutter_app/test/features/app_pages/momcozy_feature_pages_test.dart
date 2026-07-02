@@ -1175,6 +1175,37 @@ void main() {
       },
     );
 
+    testWidgets('calibration page can recover interrupted unsaved changes', (
+      tester,
+    ) async {
+      final router = createMomCozyRouter(initialLocation: '/calibration');
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(router: router, apiRuntime: _appRuntime()),
+      );
+      await tester.pumpAndSettle();
+
+      tester.widget<Slider>(find.byType(Slider).first).onChanged!(7);
+      await tester.pump();
+
+      await _tapScrollableText(tester, '退出校准');
+      await tester.pumpAndSettle();
+
+      expect(find.text('有未保存校准更改，请先保存或恢复默认后再退出。'), findsOneWidget);
+      expect(find.text('左侧 舒适档位 7'), findsOneWidget);
+
+      await _tapScrollableText(tester, '恢复默认');
+      await tester.pumpAndSettle();
+
+      expect(find.text('已恢复默认校准档位，可安全退出。'), findsOneWidget);
+      expect(find.text('左侧 舒适档位 4'), findsOneWidget);
+
+      await _tapScrollableText(tester, '退出校准');
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('route-page-/device')), findsOneWidget);
+    });
+
     testWidgets('calibration page renders right-only and dual device states', (
       tester,
     ) async {

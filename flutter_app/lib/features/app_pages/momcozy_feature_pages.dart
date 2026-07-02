@@ -2147,6 +2147,15 @@ class _CalibrationPageState extends State<_CalibrationPage> {
     });
   }
 
+  void _resetCalibrationChanges() {
+    setState(() {
+      _leftComfort = 4;
+      _rightComfort = 4;
+      _hasUnsavedChanges = false;
+      _saveError = '已恢复默认校准档位，可安全退出。';
+    });
+  }
+
   Future<void> _saveAndEnterPump() async {
     if (_isSaving) return;
     setState(() {
@@ -2277,6 +2286,11 @@ class _CalibrationPageState extends State<_CalibrationPage> {
               onPressed: _isSaving ? null : _exitCalibration,
               icon: const Icon(Icons.close_rounded),
               label: const Text('退出校准'),
+            ),
+            OutlinedButton.icon(
+              onPressed: _isSaving ? null : _resetCalibrationChanges,
+              icon: const Icon(Icons.restore_rounded),
+              label: const Text('恢复默认'),
             ),
           ],
         ),
