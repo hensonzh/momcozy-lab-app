@@ -393,16 +393,16 @@ Golden 视觉状态：
 
 ```text
 [ ] 孕期/哺乳期切换
-[ ] 妈妈 tab
-[ ] 宝宝 tab
+[x] 妈妈 tab
+[x] 宝宝 tab
 [ ] 成长记录
-[ ] 孕期日记
-[ ] 今日状态
-[ ] 计划 todo
-[ ] 长文本
-[ ] 空数据
-[ ] API 失败
-[ ] demo/runtime user id 一致性
+[x] 孕期日记
+[x] 今日状态
+[x] 计划 todo
+[x] 长文本
+[x] 空数据
+[x] API 失败
+[x] demo/runtime user id 一致性
 ```
 
 ### 5.8 Media、IBCLC、Hospital Bag
@@ -575,6 +575,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter Agent voice input controller tests 已覆盖 microphone permission 未请求/拒绝、录音 start/stop、转写回填和失败清理
 [x] Flutter `/records` widget tests 已覆盖列表加载、空态、加载失败、趋势展示和 mL/oz 单位切换
 [x] Flutter `/schedule` widget tests 已覆盖日期切换、今日任务加载、完成状态、提醒开关、本地日期到 UTC timestamp 和空/失败态
+[x] Flutter `/status` widget tests 已覆盖妈妈/宝宝 tab、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 ```
 
 ### 7.3 语音合同
