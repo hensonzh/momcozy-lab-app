@@ -175,12 +175,15 @@ void main() {
 
     testWidgets('local page controls update visible state', (tester) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
-      await tester.pump();
-      expect(_checkboxesWithValue(tester, true), 1);
+      await tester.pumpAndSettle();
+      await _scrollToText(tester, '14:00 喂养');
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -520));
+      await tester.pumpAndSettle();
+      final visibleCompletedCount = _checkboxesWithValue(tester, true);
 
-      await tester.tap(find.text('14:00 喂养'));
+      await tester.tap(find.byType(Checkbox).last);
       await tester.pump();
-      expect(_checkboxesWithValue(tester, true), 2);
+      expect(_checkboxesWithValue(tester, true), visibleCompletedCount + 1);
 
       await tester.pumpWidget(
         _FeaturePageHost(route: _route('/ibclc-chat.html')),
@@ -340,11 +343,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('3 项计划'), findsOneWidget);
+      await _scrollToText(tester, '10:30 泵奶');
       expect(find.text('10:30 泵奶'), findsOneWidget);
-      expect(find.text('14:00 喂养'), findsOneWidget);
+      await _scrollToText(tester, '14:00 喂养');
+      expect(find.text('14:00 喂养'), findsWidgets);
       expect(_checkboxesWithValue(tester, true), 1);
 
-      await tester.tap(find.text('14:00 喂养'));
+      await tester.tap(find.text('14:00 喂养').last);
       await tester.pump();
 
       expect(_checkboxesWithValue(tester, true), 2);
@@ -385,9 +390,8 @@ void main() {
         containsPair('timestamp', _apiTimestamp(DateTime.utc(2026, 7))),
       );
       expect(find.text('2 项计划'), findsOneWidget);
-      expect(_checkboxesWithValue(tester, true), 1);
 
-      await tester.tap(find.text('03'));
+      await tester.tap(find.text('3').first);
       await tester.pumpAndSettle();
 
       expect(
@@ -395,9 +399,15 @@ void main() {
         containsPair('timestamp', _apiTimestamp(DateTime(2026, 7, 3))),
       );
 
-      await tester.tap(find.text('14:00 喂养'));
+      await _scrollToText(tester, '10:30 泵奶');
+      expect(_checkboxesWithValue(tester, true), 1);
+
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -520));
+      await tester.pumpAndSettle();
+      final visibleCompletedCount = _checkboxesWithValue(tester, true);
+      await tester.tap(find.byType(Checkbox).last);
       await tester.pump();
-      expect(_checkboxesWithValue(tester, true), 2);
+      expect(_checkboxesWithValue(tester, true), visibleCompletedCount + 1);
 
       await _scrollToText(tester, '泵奶提醒');
       final enabledReminderSwitches = _switchesWithValue(tester, true);
@@ -415,11 +425,12 @@ void main() {
 
       expect(find.text('3 项计划'), findsOneWidget);
       expect(find.text('未完成 2'), findsOneWidget);
-      expect(find.text('下一项倒计时'), findsOneWidget);
+      expect(find.text('待执行任务'), findsOneWidget);
 
-      await tester.tap(find.text('添加今日任务'));
+      await _tapScrollableText(tester, '添加任务');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '4 项计划');
       expect(find.text('4 项计划'), findsOneWidget);
       expect(find.text('未完成 3'), findsOneWidget);
       await _scrollToText(tester, '本地补充 1');
@@ -431,6 +442,7 @@ void main() {
       await tester.drag(find.byType(Scrollable).first, const Offset(0, 600));
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '3 项计划');
       expect(find.text('3 项计划'), findsOneWidget);
       expect(find.text('未完成 2'), findsOneWidget);
       expect(find.text('本地补充 1'), findsNothing);
@@ -480,8 +492,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('暂无计划'), findsOneWidget);
       expect(find.text('0 项计划'), findsOneWidget);
+      await _scrollToText(tester, '暂无计划');
+      expect(find.text('暂无计划'), findsOneWidget);
 
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -496,6 +509,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '计划同步失败');
       expect(find.text('计划同步失败'), findsOneWidget);
       expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
     });
