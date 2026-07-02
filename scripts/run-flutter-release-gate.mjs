@@ -69,6 +69,7 @@ if (!hasReleaseSigning) {
 
 const steps = [
   ["node", ["scripts/check-flutter-android-packaging.mjs"], projectRoot],
+  ["node", ["scripts/check-flutter-security-privacy.mjs"], projectRoot],
   ["npm", ["run", "build"], projectRoot],
   ["flutter", ["pub", "get"], flutterAppDir],
   ["dart", ["format", "--set-exit-if-changed", "lib", "test", "tool"], flutterAppDir],

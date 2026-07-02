@@ -126,7 +126,7 @@ final class DeviceNativeStateStore {
     private static boolean apply80(String deviceId, byte[] cab) throws JSONException {
         JSONObject parsed = MmcBleProtocol.parse80RealtimeMilk(cab);
         if (parsed == null) {
-            Log.w(TAG, "realtime milk 0x80 parse failed deviceId=" + deviceId + ", cabLen=" + (cab != null ? cab.length : -1));
+            Log.w(TAG, "realtime milk 0x80 parse failed deviceHash=" + PrivacyLog.shortHash(deviceId) + ", cabLen=" + (cab != null ? cab.length : -1));
             return false;
         }
         return mutateDevice(deviceId, device -> {
@@ -149,7 +149,7 @@ final class DeviceNativeStateStore {
             putPacketTimestamp(device, "lastDeviceProcessTs", parsed.optLong("timestamp", 0));
             Log.i(TAG, "received realtime milk 0x80"
                     + " side=" + side
-                    + ", deviceId=" + deviceId
+                    + ", deviceHash=" + PrivacyLog.shortHash(deviceId)
                     + ", timestamp=" + parsed.optLong("timestamp", 0)
                     + ", flowFloat=" + parsed.optDouble("flowFloat", 0)
                     + ", milkMl=" + (parsed.optDouble("milkMlX10", 0) / 10.0)

@@ -171,9 +171,9 @@ public final class NotifyAlarmScheduler {
                         "scheduled alarm"
                                 + " alarmId=" + alarmId
                                 + " event=" + event
-                                + " title=" + title
+                                + " title=" + PrivacyLog.textShape(title)
                                 + " executeAt=" + formatLogTime(when)
-                                + " body=" + body
+                                + " body=" + PrivacyLog.textShape(body)
                 );
                 newIds.add(String.valueOf(alarmId));
                 scheduled.add(alarmId);

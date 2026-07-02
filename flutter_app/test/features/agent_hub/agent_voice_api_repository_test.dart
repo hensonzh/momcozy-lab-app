@@ -135,6 +135,55 @@ void main() {
       },
     );
 
+    test('rejects remote plaintext voice base URLs', () {
+      expect(
+        () => AgentVoiceApiRepository(
+          multipartTransport: FixtureApiMultipartTransport(const {
+            'status': 200,
+            'data': {},
+          }),
+          baseUri: Uri.parse('http://voice.example.test'),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('builds redacted realtime voice log contexts', () {
+      final repository = AgentVoiceApiRepository(
+        multipartTransport: FixtureApiMultipartTransport(const {
+          'status': 200,
+          'data': {},
+        }),
+        baseUri: Uri.parse('https://voice.example.test/base'),
+        token: 'voice-token',
+        headers: const {'X-Momcozy-Client': 'flutter'},
+      );
+
+      final streamContext = repository.redactedRealtimeVoiceStreamLogContext(
+        userId: 'demo-user-fixture',
+        text: 'private voice playback text',
+      );
+      final sessionContext = repository.redactedRealtimeVoiceSessionLogContext(
+        userId: 'demo-user-fixture',
+      );
+
+      expect(
+        streamContext['url'],
+        'https://voice.example.test/base/v1/realtime-voice-stream'
+        '?user_id=***&text=***',
+      );
+      expect(
+        sessionContext['url'],
+        'wss://voice.example.test/base/v1/realtime-voice-session'
+        '?user_id=***&token=***',
+      );
+      expect(streamContext['headers'], containsPair('Authorization', '***'));
+      expect(sessionContext['headers'], containsPair('Authorization', '***'));
+      expect(streamContext.toString(), isNot(contains('demo-user-fixture')));
+      expect(streamContext.toString(), isNot(contains('private voice')));
+      expect(sessionContext.toString(), isNot(contains('voice-token')));
+    });
+
     test('realtime PCM stream cancellation follows voice fixture behavior', () {
       final fixture = readFixtureMap(
         'api/voice/realtime_voice_stream_cancelled.json',

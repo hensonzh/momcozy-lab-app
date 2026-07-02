@@ -12,11 +12,11 @@ MomCozy App 会处理妈妈、宝宝、泵奶、喂养、成长、健康问题�
 [x] Flutter 侧提供统一日志脱敏工具：`core/privacy/log_redactor.dart`
 [x] Flutter 测试覆盖 token/user/conversation/session/device id 脱敏
 [x] Native fake failure stream 使用统一脱敏工具
-[ ] HTTP/SSE/WS client 接入统一脱敏工具后才能输出请求日志
-[ ] Android platform channel event/failure log 接入统一脱敏工具
+[x] HTTP/SSE/WS/voice client 接入统一脱敏工具后才能输出请求日志；release gate 已加入 `flutter:security-check`
+[x] Android platform channel event/failure log 不输出原始 device id、pump request body 或通知正文；release gate 已加入静态检查
 [x] token/secret 不落普通 preferences；Flutter session bootstrap 已接入 secure storage，dart-define 仅作为 dev/staging fallback
-[ ] crash/perf report 接入前必须有敏感字段 denylist
-[ ] fixtures、golden、截图不得包含真实用户数据
+[x] crash/perf report 接入前必须有敏感字段 denylist；`redactCrashReport()`/`redactCrashContext()` 已覆盖 free-form message、用户、会话、设备、健康容器
+[x] fixtures、golden、截图不得包含真实用户数据；`fixture_privacy_test.dart` 已纳入完整 Flutter test gate
 ```
 
 ## 日志规则
@@ -60,16 +60,17 @@ isSensitiveLogKey(key)
 ## Transport 安全规则
 
 ```text
-[ ] 生产和候选包只允许 HTTPS / WSS
-[ ] SSE 与 WebSocket transport 都必须复用同一 auth injection 和 redacted logging
-[ ] 明确 dev endpoint allowlist，避免 release 包连接本地/明文地址
-[ ] upload、voice、agent stream、device reminder 断线日志只输出 redacted URL 和错误码
+[x] 生产和候选包只允许 HTTPS / WSS；HTTP/WS 仅允许 localhost/127.0.0.1/::1 开发入口
+[x] SSE、WebSocket 与 voice transport 都必须复用同一 auth injection 和 redacted logging
+[x] 明确 dev endpoint allowlist，避免 release 包连接本地/明文地址
+[x] upload、voice、agent stream、device reminder 断线日志只输出 redacted URL、payload shape 或错误码
 ```
 
 当前进展：
 
 ```text
 [x] Agent stream SSE/WebSocket transport shell 已复用 `AgentStreamEndpoint` 做 token/header 注入，并通过 `redactedLogContext()` 接入统一脱敏工具
+[x] Agent voice API 已复用 `TransportSecurityPolicy`，并提供 redacted realtime stream/session log context
 ```
 
 ## 存储规则
@@ -86,10 +87,10 @@ isSensitiveLogKey(key)
 
 ```text
 [x] `PumpAgentUploadPlatform` fake failure payload 已脱敏
-[ ] Android `MmcBle` event log 不输出原始 device id，必要时使用短 hash
+[x] Android `MmcBle` event log 不输出原始 device id，必要时使用短 hash
 [ ] Pump foreground service notification payload 不包含 token/user/conversation
 [ ] Native pending route 只传 event type 和必要 route，不传完整业务 payload
-[ ] Native upload failure 只回传 method/code/retryable/redacted payload
+[x] Native upload/background request 日志只输出 payload shape；failure log 不回传 token/user/conversation 明文
 ```
 
 ## 验收命令
@@ -98,6 +99,7 @@ isSensitiveLogKey(key)
 cd flutter_app
 flutter test test/core/privacy/log_redactor_test.dart
 flutter test test/native/p0_platform_interfaces_test.dart
+npm run flutter:security-check
 ```
 
 进入核心迁移前，完整 gate 至少执行：
