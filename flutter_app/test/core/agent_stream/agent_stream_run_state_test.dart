@@ -10,7 +10,7 @@ void main() {
       var state = const AgentStreamRunState().start();
 
       for (final event in parseAgentJsonl(
-        readMigrationFixture('ag_ui/text_stream_basic.jsonl'),
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
       )) {
         state = state.applyEvent(event);
       }
@@ -24,20 +24,20 @@ void main() {
         'I can help you review today\'s pumping pattern.',
       );
       expect(state.canRetry, isFalse);
-      expect(state.events.length, 6);
+      expect(state.events.length, 5);
 
       final afterTerminal = state.applyEvent(
-        AgentStreamEvent(readFixtureMap('ag_ui/run_error.json')),
+        AgentStreamEvent(readFixtureMap('agent_events/run_failed.json')),
       );
 
       expect(afterTerminal.phase, AgentStreamRunPhase.finished);
-      expect(afterTerminal.events.length, 6);
+      expect(afterTerminal.events.length, 5);
     });
 
     test('preserves partial text and marks disconnect as retryable', () {
       var state = const AgentStreamRunState().start();
       final events = parseAgentJsonl(
-        readMigrationFixture('ag_ui/text_stream_basic.jsonl'),
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
       );
 
       for (final event in events.take(3)) {
@@ -56,45 +56,45 @@ void main() {
       var state = const AgentStreamRunState().start();
       final replayedEvents = [
         const {
-          'type': 'RUN_STARTED',
+          'type': 'run.started',
           'thread_id': 'thread-fixture-001',
           'run_id': 'run-replay-001',
           'sequence': 1,
         },
         const {
-          'type': 'TEXT_MESSAGE_CONTENT',
+          'type': 'message.delta',
           'thread_id': 'thread-fixture-001',
           'run_id': 'run-replay-001',
           'message_id': 'msg-replay-001',
           'sequence': 2,
-          'delta': 'Already streamed ',
+          'payload': {'text': 'Already streamed '},
         },
         const {
-          'type': 'TEXT_MESSAGE_CONTENT',
+          'type': 'message.delta',
           'thread_id': 'thread-fixture-001',
           'run_id': 'run-replay-001',
           'message_id': 'msg-replay-001',
           'sequence': 2,
-          'delta': 'Already streamed ',
+          'payload': {'text': 'Already streamed '},
         },
         const {
           'event_id': 'evt-replay-003',
-          'type': 'TEXT_MESSAGE_CONTENT',
+          'type': 'message.delta',
           'thread_id': 'thread-fixture-001',
           'run_id': 'run-replay-001',
           'message_id': 'msg-replay-001',
-          'delta': 'only once.',
+          'payload': {'text': 'only once.'},
         },
         const {
           'event_id': 'evt-replay-003',
-          'type': 'TEXT_MESSAGE_CONTENT',
+          'type': 'message.delta',
           'thread_id': 'thread-fixture-001',
           'run_id': 'run-replay-001',
           'message_id': 'msg-replay-001',
-          'delta': 'only once.',
+          'payload': {'text': 'only once.'},
         },
         const {
-          'type': 'RUN_FINISHED',
+          'type': 'run.completed',
           'thread_id': 'thread-fixture-001',
           'run_id': 'run-replay-001',
           'message_id': 'msg-replay-001',
@@ -116,16 +116,16 @@ void main() {
 
       for (final event in [
         const {
-          'type': 'TEXT_MESSAGE_CONTENT',
+          'type': 'message.delta',
           'run_id': 'run-repeat-001',
           'message_id': 'msg-repeat-001',
-          'delta': 'ha ',
+          'payload': {'text': 'ha '},
         },
         const {
-          'type': 'TEXT_MESSAGE_CONTENT',
+          'type': 'message.delta',
           'run_id': 'run-repeat-001',
           'message_id': 'msg-repeat-001',
-          'delta': 'ha ',
+          'payload': {'text': 'ha '},
         },
       ].map(AgentStreamEvent.new)) {
         state = state.applyEvent(event);
@@ -139,7 +139,7 @@ void main() {
       var state = const AgentStreamRunState().start();
 
       state = state.applyEvent(
-        AgentStreamEvent(readFixtureMap('ag_ui/run_error.json')),
+        AgentStreamEvent(readFixtureMap('agent_events/run_failed.json')),
       );
 
       expect(state.phase, AgentStreamRunPhase.error);

@@ -51,7 +51,7 @@ class AgentStreamRunState {
 
     final type = event.type;
     final nextEvents = List<AgentStreamEvent>.unmodifiable([...events, event]);
-    final nextText = type == 'TEXT_MESSAGE_CONTENT' || type == 'message.delta'
+    final nextText = type == 'message.delta'
         ? '$textContent${event.textDelta ?? ''}'
         : type == 'message.completed'
         ? event.textDelta ?? textContent
@@ -60,7 +60,7 @@ class AgentStreamRunState {
     final nextRunId = event.runId ?? runId;
     final nextMessageId = event.messageId ?? messageId;
 
-    if (type == 'RUN_FINISHED' || type == 'run.completed') {
+    if (type == 'run.completed') {
       return copyWith(
         phase: AgentStreamRunPhase.finished,
         events: nextEvents,
@@ -83,11 +83,7 @@ class AgentStreamRunState {
       );
     }
 
-    if (type == 'RUN_ERROR' ||
-        type == 'RUN_FAILED' ||
-        type == 'ERROR' ||
-        type == 'run.failed' ||
-        type == 'error') {
+    if (type == 'run.failed' || type == 'error') {
       return copyWith(
         phase: AgentStreamRunPhase.error,
         events: nextEvents,

@@ -41,10 +41,6 @@ class AgentStreamEvent {
   }
 
   bool get isTerminal =>
-      type == 'RUN_FINISHED' ||
-      type == 'RUN_ERROR' ||
-      type == 'RUN_FAILED' ||
-      type == 'ERROR' ||
       type == 'run.completed' ||
       type == 'run.failed' ||
       type == 'run.cancelled';
@@ -103,21 +99,6 @@ List<AgentStreamEvent> parseAgentEventStream(String input) {
   }
 
   return events;
-}
-
-List<AgentStreamEvent> parseAgentWebSocketFixtureJsonl(String input) {
-  return parseJsonlMaps(input)
-      .expand(
-        (entry) => parseAgentWebSocketFrame(stringField(entry, 'frame') ?? ''),
-      )
-      .toList(growable: false);
-}
-
-List<AgentStreamEvent> parseAgentWebSocketFrame(String frame) {
-  final trimmed = frame.trim();
-  if (trimmed.isEmpty) return const [];
-  if (trimmed.contains('data:')) return parseAgentEventStream(trimmed);
-  return [parseAgentJson(trimmed)];
 }
 
 AgentStreamEvent parseAgentJson(String input) {
