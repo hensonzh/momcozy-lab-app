@@ -694,7 +694,7 @@ npm run flutter:p0:platform-smoke
 [x] crash report 不包含敏感字段
 [x] 多用户切换时清理 scoped cache
 [x] 登出后清理 secure session 中的 token / refresh token 敏感状态
-[ ] screenshot/golden fixtures 不包含真实用户数据
+[x] screenshot/golden fixtures 不包含真实用户数据
 ```
 
 详细准入见 `doc/flutter-security-privacy-gates.md`。
