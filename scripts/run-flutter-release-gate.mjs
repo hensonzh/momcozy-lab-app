@@ -90,6 +90,7 @@ const steps = [
     ],
     flutterAppDir,
   ],
+  ["node", ["scripts/write-flutter-rollback-manifest.mjs"], projectRoot],
 ];
 
 for (const [command, args, cwd] of steps) {

@@ -67,6 +67,7 @@ npm run flutter:packaging-check
 - Flutter PoC 使用独立 appId，同机安装不会覆盖当前生产 App 的 WebView storage、Android native service store、通知渠道、权限授权或 FileProvider authority。
 - 正式 cutover 前不能把 Flutter production-shaped appId 改成 `com.momcozymai.app`；如需覆盖生产包，必须先完成真机同装/覆盖、storage migration、通知渠道、BLE 绑定和 rollback package rehearsal。
 - 回滚时优先发布现有 Capacitor 包的更高 versionCode hotfix；Flutter 独立 PoC 包可直接停止灰度或下架，不影响生产 App 数据。
+- 非真机 gate 会执行 `npm run flutter:rollback-check`，在 `dist/flutter-rollback-manifest.json` 写入 Web rollback bundle 和 Flutter APK artifact 的 size / sha256，作为发布交接和回滚包核对清单。
 - 已迁移到 Flutter 的 legacy storage 规则以 `dart run tool/storage_migration_dry_run.dart` 为非真机前置；真实 installed data rollback 仍需 device lab 和 release owner 确认。
 
 Release signing 环境变量：

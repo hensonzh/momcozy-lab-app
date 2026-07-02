@@ -737,7 +737,7 @@ CI 最低要求：
 [ ] 前后台切换无 crash
 [ ] 24h smoke 无后台服务异常
 [ ] crash-free sessions 达到发布阈值
-[ ] rollback package 可用
+[x] rollback package 可用：`npm run flutter:rollback-check` 会生成 `dist/flutter-rollback-manifest.json`
 ```
 
 建议 device lab：
