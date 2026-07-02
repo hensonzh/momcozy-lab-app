@@ -374,17 +374,17 @@ Golden 视觉状态：
 必测：
 
 ```text
-[ ] 日期切换
-[ ] 今日任务加载
+[x] 日期切换
+[x] 今日任务加载
 [ ] 添加任务
 [ ] 删除任务
-[ ] 完成任务
-[ ] 提醒开关
+[x] 完成任务
+[x] 提醒开关
 [ ] 通知 badge
 [ ] 通知点击进入对应任务
 [ ] 跨天倒计时
-[ ] 时区变化
-[ ] 离线/弱网状态
+[x] 时区变化
+[x] 离线/弱网状态
 ```
 
 ### 5.7 Status
@@ -574,6 +574,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter Agent voice typed repository tests 已覆盖 STT multipart 分片、timeout fallback、barge-in cancel、realtime PCM stream、realtime voice session frames 和 WS disconnect
 [x] Flutter Agent voice input controller tests 已覆盖 microphone permission 未请求/拒绝、录音 start/stop、转写回填和失败清理
 [x] Flutter `/records` widget tests 已覆盖列表加载、空态、加载失败、趋势展示和 mL/oz 单位切换
+[x] Flutter `/schedule` widget tests 已覆盖日期切换、今日任务加载、完成状态、提醒开关、本地日期到 UTC timestamp 和空/失败态
 ```
 
 ### 7.3 语音合同

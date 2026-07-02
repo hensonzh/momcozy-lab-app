@@ -227,6 +227,7 @@ features/
 [x] Flutter Agent Hub auto-reply/notification voice playback coordinator 已覆盖优先级、阻塞、打断和 UI 播放状态，平台 TTS driver 留给 native/audio 集成
 [x] Flutter Agent voice input controller 已覆盖 microphone permission、录音 start/stop、转写回填和 Agent Hub 权限拒绝 UI
 [x] Flutter Records 页面已覆盖加载、空态、失败、趋势展示和 mL/oz 单位切换；编辑/删除/跨天仍按产品 parity 决策推进
+[x] Flutter Schedule 页面已覆盖日期切换、任务完成、提醒开关、本地日期到 UTC timestamp 和空/失败态；添加/删除/通知跳转仍按后续 parity 推进
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 
