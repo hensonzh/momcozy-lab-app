@@ -2091,9 +2091,6 @@ class _SchedulePageState extends State<_SchedulePage> {
                   ? 0
                   : taskCount - pendingTaskCount,
               totalCount: taskCount ?? 0,
-              reminderEnabled: _pumpReminderEnabled,
-              onReminderTap: () =>
-                  setState(() => _pumpReminderEnabled = !_pumpReminderEnabled),
             ),
             const SizedBox(height: 20),
             _ScheduleAgentCard(
@@ -2327,7 +2324,7 @@ class _ScheduleDateStrip extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    for (var offset = -3; offset <= 3; offset += 1)
+                    for (var offset = -3; offset <= 2; offset += 1)
                       _DatePill(
                         day: offset == 0
                             ? '今'
@@ -2345,11 +2342,6 @@ class _ScheduleDateStrip extends StatelessWidget {
                       ),
                   ],
                 ),
-              ),
-              _ScheduleWeekButton(
-                icon: Icons.chevron_right_rounded,
-                onTap: () =>
-                    onSelected(selectedDate.add(const Duration(days: 7))),
               ),
             ],
           ),
@@ -2399,7 +2391,7 @@ class _ScheduleAgentCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: MomCozyDecorations.card(
-        color: MomCozyColors.card.withValues(alpha: 0.7),
+        color: MomCozyColors.raised,
         borderColor: MomCozyColors.primary.withValues(alpha: 0.15),
         radius: 24,
         shadows: MomCozyShadows.soft,
@@ -2521,16 +2513,12 @@ class _ScheduleContextCard extends StatelessWidget {
     required this.subtitle,
     required this.completedCount,
     required this.totalCount,
-    required this.reminderEnabled,
-    required this.onReminderTap,
   });
 
   final String title;
   final String subtitle;
   final int completedCount;
   final int totalCount;
-  final bool reminderEnabled;
-  final VoidCallback onReminderTap;
 
   @override
   Widget build(BuildContext context) {
@@ -2539,91 +2527,46 @@ class _ScheduleContextCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: MomCozyDecorations.card(
-        color: MomCozyColors.card.withValues(alpha: 0.42),
+        color: MomCozyColors.raised,
         borderColor: MomCozyColors.border.withValues(alpha: 0.4),
         radius: 24,
         shadows: MomCozyShadows.soft,
       ),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned(
-            right: 0,
-            top: 0,
-            child: IconButton(
-              tooltip: reminderEnabled ? '关闭计划提醒' : '开启计划提醒',
-              onPressed: onReminderTap,
-              style: IconButton.styleFrom(
-                backgroundColor: MomCozyColors.background.withValues(
-                  alpha: 0.9,
-                ),
-                side: BorderSide(
-                  color: MomCozyColors.border.withValues(alpha: 0.5),
-                ),
-              ),
-              icon: Icon(
-                reminderEnabled
-                    ? Icons.notifications_active_outlined
-                    : Icons.notifications_off_outlined,
-                color: reminderEnabled
-                    ? MomCozyColors.primary
-                    : MomCozyColors.mutedForeground,
-              ),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: MomCozyColors.foreground,
+              fontWeight: FontWeight.w900,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 44),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: MomCozyColors.mutedForeground,
-                    fontWeight: FontWeight.w700,
-                    height: 1.28,
-                  ),
-                ),
-                const SizedBox(height: 18),
-                Row(
-                  children: [
-                    Text(
-                      '今日任务',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: MomCozyColors.foreground.withValues(alpha: 0.72),
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '$completedCount/$totalCount',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                  child: LinearProgressIndicator(
-                    value: progress.clamp(0, 1),
-                    minHeight: 9,
-                    color: MomCozyColors.primary,
-                    backgroundColor: MomCozyColors.secondary.withValues(
-                      alpha: 0.72,
-                    ),
-                  ),
-                ),
-              ],
+          const SizedBox(height: 5),
+          Text(
+            subtitle,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: MomCozyColors.mutedForeground,
+              fontWeight: FontWeight.w700,
+              height: 1.28,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Text(
+            '今日任务',
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: MomCozyColors.foreground.withValues(alpha: 0.72),
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+            child: LinearProgressIndicator(
+              value: progress.clamp(0, 1),
+              minHeight: 9,
+              color: MomCozyColors.primary,
+              backgroundColor: MomCozyColors.secondary.withValues(alpha: 0.72),
             ),
           ),
         ],
@@ -2837,18 +2780,29 @@ class _ScheduleListToolbar extends StatelessWidget {
               ],
             ),
           ),
-          TextButton.icon(
-            onPressed: () {},
-            style: _scheduleToolbarButtonStyle(context),
-            icon: const Icon(Icons.image_outlined, size: 15),
-            label: const Text('调整日程'),
-          ),
-          const SizedBox(width: 8),
-          TextButton.icon(
-            onPressed: onAdd,
-            style: _scheduleToolbarButtonStyle(context),
-            icon: const Icon(Icons.add_rounded, size: 16),
-            label: const Text('添加任务'),
+          SizedBox(
+            width: 112,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const ClampingScrollPhysics(),
+              child: Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: () {},
+                    style: _scheduleToolbarButtonStyle(context),
+                    icon: const Icon(Icons.image_outlined, size: 15),
+                    label: const Text('调整日程'),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton.icon(
+                    onPressed: onAdd,
+                    style: _scheduleToolbarButtonStyle(context),
+                    icon: const Icon(Icons.add_rounded, size: 16),
+                    label: const Text('添加任务'),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
