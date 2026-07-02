@@ -1745,6 +1745,7 @@ class _RecordsPage extends StatefulWidget {
 
 class _RecordsPageState extends State<_RecordsPage> {
   String _filter = 'pump';
+  String _volumeUnit = 'mL';
   MomCozyApiRuntime? _runtime;
   late DateTime _recordsDay;
   late Future<_RecordsOverview> _recordsFuture;
@@ -1799,14 +1800,33 @@ class _RecordsPageState extends State<_RecordsPage> {
           icon: widget.icon,
           accent: widget.accent,
           priority: widget.priority,
-          trailing: SegmentedButton<String>(
-            selected: {_filter},
-            showSelectedIcon: false,
-            onSelectionChanged: (next) => setState(() => _filter = next.first),
-            segments: const [
-              ButtonSegment(value: 'pump', label: Text('泵奶')),
-              ButtonSegment(value: 'feed', label: Text('喂养')),
-              ButtonSegment(value: 'growth', label: Text('成长')),
+          trailing: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              SegmentedButton<String>(
+                key: const ValueKey('records-filter-segment'),
+                selected: {_filter},
+                showSelectedIcon: false,
+                onSelectionChanged: (next) =>
+                    setState(() => _filter = next.first),
+                segments: const [
+                  ButtonSegment(value: 'pump', label: Text('泵奶')),
+                  ButtonSegment(value: 'feed', label: Text('喂养')),
+                  ButtonSegment(value: 'growth', label: Text('成长')),
+                ],
+              ),
+              SegmentedButton<String>(
+                key: const ValueKey('records-unit-segment'),
+                selected: {_volumeUnit},
+                showSelectedIcon: false,
+                onSelectionChanged: (next) =>
+                    setState(() => _volumeUnit = next.first),
+                segments: const [
+                  ButtonSegment(value: 'mL', label: Text('mL')),
+                  ButtonSegment(value: 'oz', label: Text('oz')),
+                ],
+              ),
             ],
           ),
           children: [
@@ -1873,7 +1893,7 @@ class _RecordsPageState extends State<_RecordsPage> {
         children: [
           _MetricTile(
             label: '总奶量',
-            value: _amountLabel(overview.totalMilkMl),
+            value: _amountLabel(overview.totalMilkMl, unit: _volumeUnit),
             icon: Icons.water_drop_outlined,
             accent: widget.accent,
             note: '泵奶 + 喂养',
@@ -1917,7 +1937,7 @@ class _RecordsPageState extends State<_RecordsPage> {
         _TrendBar(
           label: point.label,
           value: maxAmount <= 0 ? 0 : point.amountMl / maxAmount,
-          valueLabel: _amountLabel(point.amountMl),
+          valueLabel: _amountLabel(point.amountMl, unit: _volumeUnit),
         ),
     ];
   }
@@ -1939,7 +1959,7 @@ class _RecordsPageState extends State<_RecordsPage> {
           title:
               '${_dateTimeLabel(record.occurredAt)} ${_textOr(record.title, '泵奶记录')}',
           subtitle:
-              '${_amountLabel(record.amountMl)} · 来源 ${record.pumpSource ?? '--'}',
+              '${_amountLabel(record.amountMl, unit: _volumeUnit)} · 来源 ${record.pumpSource ?? '--'}',
           accent: widget.accent,
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
@@ -1954,7 +1974,7 @@ class _RecordsPageState extends State<_RecordsPage> {
           icon: Icons.child_friendly_rounded,
           title: '${_dateTimeLabel(record.occurredAt)} 喂养',
           subtitle:
-              '${_amountLabel(record.amountMl)} · ${_textOr(record.type, '未分类')}',
+              '${_amountLabel(record.amountMl, unit: _volumeUnit)} · ${_textOr(record.type, '未分类')}',
           accent: const Color(0xff43827b),
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
@@ -2056,8 +2076,12 @@ class _MilkTrendPoint {
   final int amountMl;
 }
 
-String _amountLabel(int? amountMl) {
-  return amountMl == null ? '--' : '$amountMl mL';
+String _amountLabel(int? amountMl, {String unit = 'mL'}) {
+  if (amountMl == null) return '--';
+  if (unit == 'oz') {
+    return '${(amountMl / 29.5735).toStringAsFixed(1)} oz';
+  }
+  return '$amountMl mL';
 }
 
 String _weightLabel(int? weightGram) {

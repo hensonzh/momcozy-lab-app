@@ -268,6 +268,76 @@ void main() {
       expect(find.textContaining('64.5 cm'), findsOneWidget);
     });
 
+    testWidgets('records page switches mL and oz units', (tester) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('200 mL'), findsOneWidget);
+      expect(find.textContaining('120 mL'), findsWidgets);
+
+      await tester.tap(find.text('oz'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('6.8 oz'), findsOneWidget);
+      expect(find.textContaining('4.1 oz'), findsWidgets);
+
+      await tester.tap(find.text('喂养'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('2.7 oz'), findsWidgets);
+    });
+
+    testWidgets('records page renders empty and failed states', (tester) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/records'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            pumpMilkRecordsEndpoint: const {
+              'status': 200,
+              'data': {'pump_milk_list': <Object?>[]},
+            },
+            feedingRecordsEndpoint: const {
+              'status': 200,
+              'data': {'records': <Object?>[]},
+            },
+            growthRecordsEndpoint: const {
+              'status': 200,
+              'data': {'records': <Object?>[]},
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('0 mL'), findsOneWidget);
+      expect(find.text('暂无奶量趋势'), findsOneWidget);
+      expect(find.text('暂无泵奶记录'), findsOneWidget);
+
+      await tester.tap(find.text('喂养'));
+      await tester.pumpAndSettle();
+      expect(find.text('暂无喂养记录'), findsOneWidget);
+
+      await tester.tap(find.text('成长'));
+      await tester.pumpAndSettle();
+      expect(find.text('暂无成长记录'), findsOneWidget);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/records'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            pumpMilkRecordsEndpoint: const {
+              'http_status': 500,
+              'status_text': 'Server Error',
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('记录同步失败'), findsOneWidget);
+      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
+    });
+
     testWidgets('pump page uploads workstate through runtime repository', (
       tester,
     ) async {
