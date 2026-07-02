@@ -45,7 +45,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(MomCozyBottomNavigation), findsNothing);
   });
 
   testWidgets('route shell renders recoverable not found route', (
@@ -58,7 +58,7 @@ void main() {
 
     expect(find.byKey(const ValueKey('route-page-/404')), findsOneWidget);
     expect(find.text('页面未找到'), findsOneWidget);
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(MomCozyBottomNavigation), findsOneWidget);
   });
 
   testWidgets('route shell opens media viewer from Agent artifact action', (
@@ -83,7 +83,7 @@ void main() {
       find.byKey(const ValueKey('route-page-/media-viewer')),
       findsOneWidget,
     );
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(MomCozyBottomNavigation), findsNothing);
   });
 
   testWidgets('route shell consumes pending native route on startup', (
@@ -96,7 +96,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(MomCozyBottomNavigation), findsNothing);
 
     await routes.dispose();
   });
@@ -139,7 +139,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(MomCozyBottomNavigation), findsOneWidget);
 
     await routes.dispose();
   });
