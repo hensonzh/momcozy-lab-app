@@ -299,7 +299,7 @@ P0 视觉状态 widget contract：
 [x] 连接失败
 [x] 断线重连
 [x] 恢复 native 已连接设备
-[ ] 用户切换时断开或隔离设备
+[x] 用户切换时断开或隔离设备
 [x] debug drawer 仅 internal/dev 环境可见
 ```
 
