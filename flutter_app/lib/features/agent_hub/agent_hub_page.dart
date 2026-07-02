@@ -1119,15 +1119,22 @@ List<AgentArtifactCardView> _artifactCardsFromEvents(
 }
 
 AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
-  if (event.type != 'ARTIFACT_CREATED' && event.type != 'ARTIFACT_UPDATED') {
+  if (event.type != 'artifact.created' && event.type != 'artifact.updated') {
     return null;
   }
 
-  final richText = _mapField(event.raw, 'rich_text', 'richText');
-  final artifact = _mapField(event.raw, 'artifact');
-  final cardJson = _mapField(artifact, 'card_json', 'cardJson');
+  final payload = event.payload;
+  final rawRichText = _mapField(event.raw, 'rich_text', 'richText');
+  final payloadRichText = _mapField(payload, 'rich_text', 'richText');
+  final richText = rawRichText.isNotEmpty ? rawRichText : payloadRichText;
+  final rawArtifact = _mapField(event.raw, 'artifact');
+  final payloadArtifact = _mapField(payload, 'artifact');
+  final artifact = rawArtifact.isNotEmpty ? rawArtifact : payloadArtifact;
+  final rawCardJson = _mapField(artifact, 'card_json', 'cardJson');
+  final cardJson = rawCardJson.isNotEmpty ? rawCardJson : payload;
   final artifactId =
       stringField(event.raw, 'artifact_id') ??
+      stringField(payload, 'artifact_id') ??
       stringField(event.raw, 'artifactId') ??
       stringField(artifact, 'id') ??
       event.mergeKey;
@@ -1136,21 +1143,29 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
       _firstNonEmpty([
         _stringField(richText, 'title'),
         _stringField(cardJson, 'title'),
+        _stringField(payload, 'title'),
         _artifactSubject(event),
       ]) ??
       '结果卡片';
-  final content = _firstNonEmpty([_stringField(richText, 'content')]);
+  final content = _firstNonEmpty([
+    _stringField(richText, 'content'),
+    _stringField(payload, 'content'),
+    _stringField(payload, 'summary'),
+  ]);
   final status = _firstNonEmpty([
     _stringField(cardJson, 'status_label', 'statusLabel'),
+    _stringField(payload, 'status_label', 'statusLabel'),
   ]);
   final rows = <String>[
     ..._stringList(cardJson['steps']),
+    ..._stringList(payload['steps']),
     ..._richTextCardRows(richText['card']),
   ];
   final actions = <AgentArtifactActionView>[
     ..._buttonActions(richText['button']),
     ..._referenceActionsFromRichText(richText),
     ..._semanticActions(richText['action'], event),
+    ..._semanticActions(payload['actions'], event),
   ];
 
   if (title.trim().isEmpty &&
@@ -1295,7 +1310,7 @@ List<AgentArtifactActionView> _semanticActions(
         final label = _firstNonEmpty([
           _stringField(action, 'label'),
           _stringField(action, 'text'),
-          kind == 'ag_ui_artifact' ? '打开${_artifactSubject(event)}' : null,
+          kind == 'artifact' ? '打开${_artifactSubject(event)}' : null,
           '打开',
         ]);
         return AgentArtifactActionView(
@@ -1314,7 +1329,7 @@ IconData _actionIcon(String? kind) {
     'doc' || 'document' || 'pdf' => Icons.description_outlined,
     'media' || 'image' || 'video' || 'open' => Icons.open_in_new_rounded,
     'citation' || 'reference' => Icons.link_rounded,
-    'ag_ui_artifact' => Icons.fact_check_outlined,
+    'artifact' => Icons.fact_check_outlined,
     _ => Icons.touch_app_outlined,
   };
 }
@@ -1436,16 +1451,14 @@ List<AgentRunWorkStep> _workStepsFromEvents(List<AgentStreamEvent> events) {
 
 AgentRunWorkStep? _workStepFromEvent(AgentStreamEvent event) {
   return switch (event.type) {
-    'CUSTOM' => _customStatusStep(event),
-    'TOOL_CALL_START' ||
-    'TOOL_CALL_ARGS' ||
-    'TOOL_CALL_END' ||
-    'TOOL_CALL_RESULT' ||
-    'TOOL_CALL_ERROR' ||
-    'TOOL_CALL_FAILED' => _toolStep(event),
-    'ARTIFACT_CREATED' => _artifactStep(event),
-    'CONFIRMATION_REQUIRED' => _confirmationStep(event),
-    'RUN_ERROR' || 'RUN_FAILED' || 'ERROR' => AgentRunWorkStep(
+    'run.progress' => _progressStep(event),
+    'tool.started' ||
+    'tool.progress' ||
+    'tool.completed' ||
+    'tool.failed' => _toolStep(event),
+    'artifact.created' || 'artifact.updated' => _artifactStep(event),
+    'action.confirmation_required' => _confirmationStep(event),
+    'run.failed' || 'error' => AgentRunWorkStep(
       id: event.mergeKey,
       title: '处理遇到问题',
       status: AgentRunWorkStepStatus.failed,
@@ -1454,11 +1467,16 @@ AgentRunWorkStep? _workStepFromEvent(AgentStreamEvent event) {
   };
 }
 
-AgentRunWorkStep? _customStatusStep(AgentStreamEvent event) {
-  if (stringField(event.raw, 'name') != 'momcozy.agent.status') return null;
+AgentRunWorkStep? _progressStep(AgentStreamEvent event) {
+  final title =
+      _firstNonEmpty([
+        _stringField(event.payload, 'label'),
+        _stringField(event.payload, 'message'),
+      ]) ??
+      '正在处理';
   return AgentRunWorkStep(
     id: event.mergeKey,
-    title: '正在读取相关信息',
+    title: title,
     status: AgentRunWorkStepStatus.running,
   );
 }
@@ -1466,7 +1484,7 @@ AgentRunWorkStep? _customStatusStep(AgentStreamEvent event) {
 AgentRunWorkStep _toolStep(AgentStreamEvent event) {
   final subject = _toolSubject(event);
   final failed = _toolFailed(event);
-  final completed = event.type == 'TOOL_CALL_RESULT' && !failed;
+  final completed = event.type == 'tool.completed' && !failed;
   return AgentRunWorkStep(
     id: event.mergeKey,
     title: failed
@@ -1483,17 +1501,20 @@ AgentRunWorkStep _toolStep(AgentStreamEvent event) {
 }
 
 bool _toolFailed(AgentStreamEvent event) {
-  if (event.type == 'TOOL_CALL_ERROR' || event.type == 'TOOL_CALL_FAILED') {
+  if (event.type == 'tool.failed') {
     return true;
   }
   if (event.raw['is_error'] == true || event.raw['error'] is Map) return true;
-  final status = stringField(event.raw, 'status')?.toLowerCase();
+  final status =
+      stringField(event.raw, 'status')?.toLowerCase() ??
+      stringField(event.payload, 'status')?.toLowerCase();
   return status == 'error' || status == 'failed';
 }
 
 AgentRunWorkStep _artifactStep(AgentStreamEvent event) {
   final artifactId =
       stringField(event.raw, 'artifact_id') ??
+      stringField(event.payload, 'artifact_id') ??
       stringField(event.raw, 'artifactId');
   return AgentRunWorkStep(
     id: artifactId == null || artifactId.isEmpty
@@ -1505,7 +1526,10 @@ AgentRunWorkStep _artifactStep(AgentStreamEvent event) {
 }
 
 AgentRunWorkStep _confirmationStep(AgentStreamEvent event) {
-  final confirmationId = stringField(event.raw, 'confirmation_id');
+  final confirmationId =
+      stringField(event.raw, 'action_id') ??
+      stringField(event.payload, 'action_id') ??
+      stringField(event.raw, 'confirmation_id');
   return AgentRunWorkStep(
     id: confirmationId == null || confirmationId.isEmpty
         ? event.mergeKey
@@ -1516,7 +1540,13 @@ AgentRunWorkStep _confirmationStep(AgentStreamEvent event) {
 }
 
 String _toolSubject(AgentStreamEvent event) {
-  return switch (stringField(event.raw, 'tool_call_name')) {
+  final label = _stringField(event.payload, 'label');
+  if (label != null && label.trim().isNotEmpty) return label.trim();
+  return switch (_firstNonEmpty([
+    stringField(event.raw, 'tool_name'),
+    stringField(event.payload, 'tool_name'),
+    stringField(event.raw, 'tool_call_name'),
+  ])) {
     'pump_session_summary_query' => '泵奶记录',
     'growth_record_query' => '成长记录',
     'feeding_record_query' => '喂养记录',
@@ -1526,8 +1556,12 @@ String _toolSubject(AgentStreamEvent event) {
 }
 
 String _artifactSubject(AgentStreamEvent event) {
-  return switch (stringField(event.raw, 'artifact_type')) {
+  return switch (_firstNonEmpty([
+    stringField(event.raw, 'artifact_type'),
+    stringField(event.payload, 'artifact_type'),
+  ])) {
     'milk_analysis_card' => '分析卡片',
+    'milk_plan_card' => '结果卡片',
     'rich_text' || 'rich_text_card' => '说明内容',
     _ => '结果卡片',
   };
