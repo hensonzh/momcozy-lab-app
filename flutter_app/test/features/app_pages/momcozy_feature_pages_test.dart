@@ -35,6 +35,8 @@ void main() {
           expect(find.text('沉浸式吸乳'), findsWidgets);
         } else if (route.path == '/device') {
           expect(find.text('设备连接'), findsWidgets);
+        } else if (route.path == '/device/user') {
+          expect(find.text('用户参数配置'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }
@@ -1708,30 +1710,51 @@ void main() {
       expect(find.text('默认清单已恢复'), findsOneWidget);
     });
 
-    testWidgets('device subpages read and update BLE runtime state', (
+    testWidgets('device subpages mirror reminder and user config routes', (
       tester,
     ) async {
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 200,
+          body: '{"status":"ok"}',
+        ),
+      );
+      final client = AgentStreamClientEventClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
+          token: 'test-token',
+        ),
+        connector: connector,
+      );
+
       await tester.pumpWidget(
-        _FeaturePageHost(route: _route('/device/manage')),
+        _FeaturePageHost(
+          route: _route('/device/manage'),
+          clientEventClient: client,
+        ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('L S12 Pro L'), findsOneWidget);
-      expect(find.text('已同步 1 台设备。'), findsOneWidget);
+      expect(find.text('设备提醒'), findsOneWidget);
+      expect(find.text('任务提醒'), findsOneWidget);
+      expect(find.text('健康问题通知'), findsOneWidget);
 
-      await tester.tap(find.text('解绑设备'));
+      await tester.tap(find.text('任务提醒'));
       await tester.pumpAndSettle();
 
-      expect(find.text('已解绑 1 台设备。'), findsOneWidget);
-      expect(find.text('暂无已连接设备'), findsOneWidget);
+      final body = jsonDecode(connector.body!) as Map<String, Object?>;
+      expect(find.text('任务提醒已发送到设备提醒通道。'), findsOneWidget);
+      expect(body['event_type'], 'device_reminder_action_triggered');
+      expect(body['metadata'], containsPair('action_key', 'task_reminder'));
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/device/user')));
       await tester.pumpAndSettle();
 
-      expect(
-        find.text('demo-user-fixture · baby demo-baby-fixture · zh-CN'),
-        findsOneWidget,
-      );
+      expect(find.text('用户参数配置'), findsOneWidget);
+      expect(find.text('用户名'), findsOneWidget);
+      expect(find.text('用户类型'), findsOneWidget);
+      expect(find.text('删除用户'), findsOneWidget);
+      expect(find.text('切换用户'), findsOneWidget);
     });
 
     testWidgets('community page posts item open events', (tester) async {
