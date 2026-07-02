@@ -692,7 +692,7 @@ npm run flutter:p0:platform-smoke
 [x] 日志不输出 token
 [x] 日志不输出完整健康数据 payload
 [x] crash report 不包含敏感字段
-[ ] 多用户切换时清理 scoped cache
+[x] 多用户切换时清理 scoped cache
 [x] 登出后清理 secure session 中的 token / refresh token 敏感状态
 [ ] screenshot/golden fixtures 不包含真实用户数据
 ```
