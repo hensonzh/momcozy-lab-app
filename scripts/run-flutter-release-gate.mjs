@@ -68,13 +68,15 @@ if (!hasReleaseSigning) {
 }
 
 const steps = [
-  ["flutter", ["pub", "get"]],
-  ["dart", ["format", "--set-exit-if-changed", "lib", "test", "tool"]],
-  ["flutter", ["analyze"]],
-  ["flutter", ["test"]],
-  ["dart", ["run", "tool/staging_smoke.dart"]],
-  ["dart", ["run", "tool/storage_migration_dry_run.dart"]],
-  ["flutter", ["build", "apk", "--debug", "--flavor", "local"]],
+  ["node", ["scripts/check-flutter-android-packaging.mjs"], projectRoot],
+  ["npm", ["run", "build"], projectRoot],
+  ["flutter", ["pub", "get"], flutterAppDir],
+  ["dart", ["format", "--set-exit-if-changed", "lib", "test", "tool"], flutterAppDir],
+  ["flutter", ["analyze"], flutterAppDir],
+  ["flutter", ["test"], flutterAppDir],
+  ["dart", ["run", "tool/staging_smoke.dart"], flutterAppDir],
+  ["dart", ["run", "tool/storage_migration_dry_run.dart"], flutterAppDir],
+  ["flutter", ["build", "apk", "--debug", "--flavor", "local"], flutterAppDir],
   [
     "flutter",
     [
@@ -85,14 +87,15 @@ const steps = [
       "staging",
       "--dart-define=MOMCOZY_ENV=staging",
     ],
+    flutterAppDir,
   ],
 ];
 
-for (const [command, args] of steps) {
+for (const [command, args, cwd] of steps) {
   console.log("");
   console.log(`$ ${command} ${args.join(" ")}`);
   const result = spawnSync(command, args, {
-    cwd: flutterAppDir,
+    cwd,
     env,
     stdio: "inherit",
   });
