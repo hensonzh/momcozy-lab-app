@@ -28,10 +28,12 @@ From the parent `MomCozyApp/` directory:
 ```bash
 npm run flutter:check
 npm run flutter:init
+npm run flutter:release-gate
 ```
 
 Pinned versions live in [`flutter-toolchain.json`](../flutter-toolchain.json);
 `npm run flutter:check` validates the local SDK/JDK/Android directories and versions against that file.
+`npm run flutter:release-gate` runs the non-device release gate: format, analyze, tests, staging smoke harness, storage migration dry-run, local debug APK, and staging release APK.
 
 From this `flutter_app/` directory:
 
@@ -39,7 +41,8 @@ From this `flutter_app/` directory:
 flutter pub get
 flutter analyze
 flutter test
-flutter build apk --debug
+flutter build apk --debug --flavor local
+flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
 ```
 
 Agent Hub 默认使用 SSE transport，并可通过 dart-define 配置：
@@ -58,8 +61,11 @@ Android 真机不能使用 `127.0.0.1` 访问电脑上的 Agent 服务，需要�
 
 Current Android PoC package:
 
-- `applicationId`: `com.momcozymai.app.flutterpoc`
+- `local` applicationId: `com.momcozymai.app.flutterpoc.local`
+- `staging` applicationId: `com.momcozymai.app.flutterpoc.staging`
+- `production` applicationId: `com.momcozymai.app.flutterpoc`
 - Packaging policy: [doc/flutter-android-packaging.md](../doc/flutter-android-packaging.md)
+- Release gate: [doc/flutter-release-gate.md](../doc/flutter-release-gate.md)
 
 ## Phase 0 Contract Tests
 
@@ -67,6 +73,8 @@ Current Dart test coverage:
 
 - AG-UI stream fixtures parse equivalently across JSONL, SSE eventstream, and WebSocket frame forms.
 - API envelope fixtures distinguish success, business errors, HTTP errors, and legacy snake/camel aliases.
+- Staging smoke CLI validates env parsing, safe default skip, optional staging HTTP/client-event/media upload probes, and optional Agent SSE probe.
+- Storage migration dry-run CLI covers legacy fixture batches and reports unhandled legacy keys before app cutover.
 - Privacy fixtures cover shared log redaction for sensitive keys and URL query parameters.
 - BLE fixtures cover request packet goldens, standalone hex files, valid/invalid frame parsing, parser edge cases, cross-platform parity cases, and side mapping.
 - Storage migration fixtures cover valid core state and malformed legacy fallback.

@@ -136,7 +136,7 @@ P0 决策：暂不引入 FVM，采用仓库级 `flutter-toolchain.json` 作为�
 cd flutter_app
 flutter pub get
 flutter test
-flutter build apk --debug
+flutter build apk --debug --flavor local
 ```
 
 当前本机验证：
@@ -145,7 +145,8 @@ flutter build apk --debug
 [x] npm run flutter:check
 [x] npm run flutter:init
 [x] cd flutter_app && flutter test
-[x] cd flutter_app && flutter build apk --debug
+[x] cd flutter_app && flutter build apk --debug --flavor local
+[x] npm run flutter:release-gate
 ```
 
 `flutter doctor -v` 当前只剩 iOS/macOS 相关告警：Xcode 未完整安装、CocoaPods 未安装。P0 为 Android-first，这两项不阻塞 Android shell 和 APK 构建。

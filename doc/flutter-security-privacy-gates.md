@@ -104,8 +104,5 @@ flutter test test/native/p0_platform_interfaces_test.dart
 
 ```bash
 npm run flutter:check
-cd flutter_app
-flutter analyze
-flutter test
-flutter build apk --debug
+npm run flutter:release-gate
 ```
