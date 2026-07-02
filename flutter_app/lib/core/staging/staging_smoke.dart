@@ -189,11 +189,6 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
     token: token,
     headers: headers,
   );
-  final controlEndpoint = AgentStreamEndpoint(
-    uri: config.apiBaseUri.replace(path: '/api/client-event'),
-    token: token,
-    headers: headers,
-  );
   final agentEndpoint = AgentStreamEndpoint(
     uri: config.agentRunsUri,
     token: token,
@@ -205,10 +200,6 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
     _ScheduleProbe(config, ScheduleApiRepository(transport: jsonTransport)),
     _RecordsProbe(config, RecordsApiRepository(transport: jsonTransport)),
     _PumpWorkstateProbe(PumpWorkstateApiRepository(transport: jsonTransport)),
-    _ClientEventProbe(
-      config,
-      AgentStreamClientEventClient(endpoint: controlEndpoint),
-    ),
     _HospitalBagProbe(
       config,
       HospitalBagCartApiRepository(transport: jsonTransport),
@@ -315,42 +306,6 @@ class _PumpWorkstateProbe implements StagingSmokeProbe {
     await repository.uploadWorkstate(
       left: const PumpSideWorkstate(state: 1, mode: 'staging_smoke', level: 1),
     );
-  }
-}
-
-class _ClientEventProbe implements StagingSmokeProbe {
-  const _ClientEventProbe(this.config, this.client);
-
-  final StagingSmokeConfig config;
-  final AgentStreamClientEventClient client;
-
-  @override
-  String get name => 'client-event /api/client-event';
-
-  @override
-  bool get requiresMutation => true;
-
-  @override
-  bool get requiresAgentStream => false;
-
-  @override
-  Future<void> run() async {
-    final result = await client.post(
-      AgentStreamClientEventRequest(
-        threadId: 'staging-smoke-${config.session.userId}',
-        userId: config.session.userId,
-        eventType: 'flutter_staging_smoke',
-        label: 'Flutter staging smoke',
-        locale: config.session.locale,
-        occurredAt: DateTime.now().toUtc().toIso8601String(),
-        metadata: const {'source': 'flutter_staging_smoke'},
-      ),
-    );
-    if (!result.sent) {
-      throw StateError(
-        'client event failed: ${result.statusCode ?? result.error}',
-      );
-    }
   }
 }
 

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -1432,19 +1430,8 @@ void main() {
     testWidgets('IBCLC page posts client event through runtime client', (
       tester,
     ) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: '{"status":"ok"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      final recorded = <Map<String, Object?>>[];
+      final client = AgentStreamClientEventClient(recorder: recorded.add);
 
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -1459,16 +1446,11 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
       await tester.pumpAndSettle();
 
-      final body = jsonDecode(connector.body!) as Map<String, Object?>;
+      final body = recorded.single;
       expect(find.text('咨询事件已同步。'), findsOneWidget);
-      expect(connector.uri!.path, '/api/client-event');
-      expect(
-        connector.headers,
-        containsPair('Authorization', 'Bearer test-token'),
-      );
       expect(body['event_type'], 'ibclc_consult_started');
-      expect(body['user_id'], 'demo-user-fixture');
-      expect(body['thread_id'], 'thread-demo-user-fixture');
+      expect(body.containsKey('user_id'), isFalse);
+      expect(body.containsKey('thread_id'), isFalse);
       expect(body['locale'], 'zh-CN');
       expect(body['metadata'], containsPair('source', 'ibclc-chat'));
       expect(body['metadata'], containsPair('handoff', 'vendor_h5_native'));
@@ -1478,19 +1460,7 @@ void main() {
     testWidgets('IBCLC page enters local queue when event sync fails', (
       tester,
     ) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 503,
-          body: '{"error":"unavailable"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      const client = AgentStreamClientEventClient(sent: false);
 
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -1507,25 +1477,12 @@ void main() {
 
       expect(find.text('已进入咨询队列'), findsOneWidget);
       expect(find.text('本地已进入队列，稍后重试同步。'), findsOneWidget);
-      expect(connector.uri!.path, '/api/client-event');
     });
 
     testWidgets('IBCLC page opens vendor handoff and returns to status route', (
       tester,
     ) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: '{"status":"ok"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      final client = AgentStreamClientEventClient();
       final router = createMomCozyRouter(initialLocation: '/ibclc-chat.html');
 
       await tester.pumpWidget(
@@ -1738,19 +1695,8 @@ void main() {
     });
 
     testWidgets('community page posts item open events', (tester) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: '{"status":"ok"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      final recorded = <Map<String, Object?>>[];
+      final client = AgentStreamClientEventClient(recorder: recorded.add);
 
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -1763,28 +1709,18 @@ void main() {
       await tester.tap(find.text('妈妈小组更新'));
       await tester.pumpAndSettle();
 
-      final body = jsonDecode(connector.body!) as Map<String, Object?>;
+      final body = recorded.single;
       expect(find.text('已记录 妈妈小组更新。'), findsOneWidget);
       expect(body['event_type'], 'community_item_opened');
       expect(body['metadata'], containsPair('item_key', 'group_updates'));
+      expect(body.containsKey('user_id'), isFalse);
     });
 
     testWidgets('W1 page posts tutorial event before opening media viewer', (
       tester,
     ) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: '{"status":"ok"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      final recorded = <Map<String, Object?>>[];
+      final client = AgentStreamClientEventClient(recorder: recorded.add);
       final router = createMomCozyRouter(initialLocation: '/w1');
 
       await tester.pumpWidget(
@@ -1799,13 +1735,14 @@ void main() {
       await tester.tap(find.text('使用教程'));
       await tester.pumpAndSettle();
 
-      final body = jsonDecode(connector.body!) as Map<String, Object?>;
+      final body = recorded.single;
       expect(
         find.byKey(const ValueKey('route-page-/media-viewer')),
         findsOneWidget,
       );
       expect(body['event_type'], 'w1_tutorial_opened');
       expect(body['metadata'], containsPair('target', 'media-viewer'));
+      expect(body.containsKey('user_id'), isFalse);
     });
   });
 }
@@ -2144,27 +2081,5 @@ class _ConnectFailingBlePlatform extends FakeBlePlatform {
   @override
   Future<void> connect(String deviceId) async {
     throw StateError('connect failed');
-  }
-}
-
-class _RecordingControlHttpConnector
-    implements AgentStreamControlHttpConnector {
-  _RecordingControlHttpConnector(this.response);
-
-  final AgentStreamControlHttpResponse response;
-  Uri? uri;
-  Map<String, String>? headers;
-  String? body;
-
-  @override
-  Future<AgentStreamControlHttpResponse> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) async {
-    this.uri = uri;
-    this.headers = Map<String, String>.from(headers);
-    this.body = body;
-    return response;
   }
 }
