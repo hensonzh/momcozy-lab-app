@@ -125,12 +125,7 @@ void main() {
 
       router.go('/device');
       await tester.pumpAndSettle();
-      await Scrollable.ensureVisible(
-        tester.element(find.text('进入舒适校准')),
-        alignment: 0.35,
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('进入舒适校准'));
+      await _tapScrollableText(tester, '进入舒适校准');
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('route-page-/calibration')),
@@ -216,13 +211,13 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
       await tester.pumpAndSettle();
 
-      expect(find.text('哺乳期'), findsOneWidget);
+      expect(find.text('哺乳期'), findsWidgets);
       expect(find.text('产后第 21 天'), findsOneWidget);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Mia'), findsOneWidget);
+      expect(find.text('Mia'), findsWidgets);
       expect(find.text('88 天'), findsOneWidget);
     });
 
@@ -284,14 +279,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('哺乳期恢复阶段'), findsOneWidget);
+      expect(find.textContaining('哺乳期恢复阶段'), findsWidgets);
       expect(find.text('demo-user-fixture'), findsOneWidget);
       expect(tester.takeException(), isNull);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Mia Sophia Long Profile Name'), findsOneWidget);
+      expect(find.text('Mia Sophia Long Profile Name'), findsWidgets);
       expect(find.text('demo-baby-fixture'), findsOneWidget);
       expect(tester.takeException(), isNull);
 
@@ -986,7 +981,7 @@ void main() {
 
       expect(find.text('左侧 S12 Pro L'), findsOneWidget);
       expect(find.text('右侧 S12 Pro R'), findsOneWidget);
-      expect(find.textContaining('电量 87%'), findsOneWidget);
+      expect(find.textContaining('已连接 · 87%'), findsOneWidget);
       expect(find.textContaining('已恢复 2 台已连接设备'), findsOneWidget);
 
       await tester.tap(find.widgetWithText(FilledButton, '扫描'));
@@ -1058,7 +1053,7 @@ void main() {
 
       expect(find.text('Nearby Pump L 已连接'), findsOneWidget);
       expect(find.text('左侧 Nearby Pump L'), findsOneWidget);
-      expect(find.textContaining('状态 已连接 · 电量 76%'), findsOneWidget);
+      expect(find.textContaining('已连接 · 76%'), findsOneWidget);
 
       final failingBle = _ConnectFailingBlePlatform(
         initialPermission: BlePermissionState.granted,

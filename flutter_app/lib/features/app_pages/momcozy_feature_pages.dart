@@ -561,22 +561,16 @@ class _StatusPageState extends State<_StatusPage> {
           icon: widget.icon,
           accent: widget.accent,
           priority: widget.priority,
-          trailing: SegmentedButton<String>(
-            selected: {_view},
-            showSelectedIcon: false,
-            onSelectionChanged: (next) => setState(() => _view = next.first),
-            segments: const [
-              ButtonSegment(
-                value: 'mom',
-                icon: Icon(Icons.person_outline_rounded),
-                label: Text('妈妈'),
-              ),
-              ButtonSegment(
-                value: 'baby',
-                icon: Icon(Icons.child_care_rounded),
-                label: Text('宝宝'),
-              ),
-            ],
+          trailing: _StatusIdentityTabs(
+            selected: _view,
+            momSubtitle: _careStage == 'pregnancy'
+                ? '孕期档案'
+                : _textOr(snapshot.data?.mom?.stage, '哺乳期档案'),
+            babySubtitle: _textOr(
+              snapshot.data?.baby?.nickname,
+              _runtime?.babyId ?? '宝宝档案',
+            ),
+            onChanged: (next) => setState(() => _view = next),
           ),
           children: [
             const _SectionTitle('今日状态'),
@@ -825,6 +819,177 @@ class _CareStageSelector extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusIdentityTabs extends StatelessWidget {
+  const _StatusIdentityTabs({
+    required this.selected,
+    required this.momSubtitle,
+    required this.babySubtitle,
+    required this.onChanged,
+  });
+
+  final String selected;
+  final String momSubtitle;
+  final String babySubtitle;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _StatusIdentityTab(
+            value: 'mom',
+            title: '妈妈',
+            subtitle: momSubtitle,
+            asset: MomCozyAssets.momAvatar,
+            selected: selected == 'mom',
+            onTap: () => onChanged('mom'),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _StatusIdentityTab(
+            value: 'baby',
+            title: '宝宝',
+            subtitle: babySubtitle,
+            asset: MomCozyAssets.babyAvatar,
+            selected: selected == 'baby',
+            onTap: () => onChanged('baby'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatusIdentityTab extends StatelessWidget {
+  const _StatusIdentityTab({
+    required this.value,
+    required this.title,
+    required this.subtitle,
+    required this.asset,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String value;
+  final String title;
+  final String subtitle;
+  final String asset;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final borderColor = selected
+        ? MomCozyColors.primary.withValues(alpha: 0.42)
+        : MomCozyColors.border.withValues(alpha: 0.62);
+    return Semantics(
+      selected: selected,
+      button: true,
+      label: title,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: selected
+              ? MomCozyColors.raised.withValues(alpha: 0.72)
+              : MomCozyColors.raised.withValues(alpha: 0.44),
+          borderRadius: BorderRadius.circular(MomCozyRadii.card),
+          border: Border.all(color: borderColor, width: selected ? 1.4 : 1),
+        ),
+        child: Material(
+          type: MaterialType.transparency,
+          borderRadius: BorderRadius.circular(MomCozyRadii.card),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            key: ValueKey('status-identity-tab-$value'),
+            onTap: onTap,
+            child: Stack(
+              children: [
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 160),
+                  opacity: selected ? 1 : 0,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      width: 4,
+                      height: 44,
+                      decoration: const BoxDecoration(
+                        color: MomCozyColors.primary,
+                        borderRadius: BorderRadius.horizontal(
+                          right: Radius.circular(MomCozyRadii.pill),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: selected
+                                ? MomCozyColors.primary.withValues(alpha: 0.4)
+                                : MomCozyColors.border,
+                            width: 2,
+                          ),
+                          image: DecorationImage(
+                            image: AssetImage(asset),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelLarge
+                                  ?.copyWith(
+                                    color: selected
+                                        ? MomCozyColors.foreground
+                                        : MomCozyColors.mutedForeground,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              subtitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: selected
+                                        ? MomCozyColors.mutedForeground
+                                        : MomCozyColors.mutedForeground
+                                              .withValues(alpha: 0.75),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -1707,11 +1872,13 @@ class _DeviceSideTile extends StatelessWidget {
           ? Icons.bluetooth_connected_rounded
           : Icons.bluetooth_disabled_rounded,
       title: '$side $name',
-      subtitle: '状态 $state · 电量 $battery',
+      subtitle: '$state · $battery',
       accent: accent,
       trailing: Wrap(
         spacing: 6,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
+          _PumpDeviceThumbnail(connected: state == '已连接', size: 38),
           IconButton(
             tooltip: state == '已连接' ? '校准' : '连接',
             onPressed: () => state == '已连接'
@@ -1720,13 +1887,46 @@ class _DeviceSideTile extends StatelessWidget {
             icon: Icon(
               state == '已连接' ? Icons.tune_rounded : Icons.link_rounded,
             ),
+            constraints: const BoxConstraints.tightFor(width: 34, height: 34),
+            padding: EdgeInsets.zero,
           ),
           IconButton(
             tooltip: '更多',
             onPressed: () => context.go('/device/manage'),
             icon: const Icon(Icons.more_horiz_rounded),
+            constraints: const BoxConstraints.tightFor(width: 34, height: 34),
+            padding: EdgeInsets.zero,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PumpDeviceThumbnail extends StatelessWidget {
+  const _PumpDeviceThumbnail({this.connected = true, this.size = 46});
+
+  final bool connected;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: connected ? 1 : 0.52,
+      child: Container(
+        width: size,
+        height: size,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: connected
+              ? MomCozyColors.raised
+              : MomCozyColors.muted.withValues(alpha: 0.72),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: MomCozyColors.border.withValues(alpha: 0.58),
+          ),
+        ),
+        child: Image.asset(MomCozyAssets.pumpM9, fit: BoxFit.contain),
       ),
     );
   }
@@ -3227,7 +3427,7 @@ class _DeviceManagePageState extends State<_DeviceManagePage> {
           title: '固件和序列号',
           subtitle: connectedSummary,
           accent: widget.accent,
-          trailing: const Icon(Icons.chevron_right_rounded),
+          trailing: const _PumpDeviceThumbnail(size: 42),
         ),
         const _ActionTile(
           icon: Icons.notifications_active_outlined,
@@ -3757,6 +3957,7 @@ class _IbclcPageState extends State<_IbclcPage> {
       ),
       children: [
         const _SectionTitle('开始前'),
+        const _IbclcConsultantCard(),
         _ActionTile(
           icon: Icons.privacy_tip_outlined,
           title: '咨询协议',
@@ -3801,6 +4002,84 @@ class _IbclcPageState extends State<_IbclcPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _IbclcConsultantCard extends StatelessWidget {
+  const _IbclcConsultantCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: DecoratedBox(
+        decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 58,
+                height: 58,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: MomCozyColors.care.withValues(alpha: 0.22),
+                    width: 2,
+                  ),
+                  image: const DecorationImage(
+                    image: AssetImage(MomCozyAssets.ibclcConsultantAvatar),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'IBCLC 顾问',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: MomCozyColors.foreground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 7),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: const [
+                        _StatusChip(
+                          label: '国际认证',
+                          icon: Icons.verified_user_outlined,
+                          accent: MomCozyColors.care,
+                        ),
+                        _StatusChip(
+                          label: '哺乳支持',
+                          icon: Icons.favorite_border_rounded,
+                          accent: MomCozyColors.primary,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '含乳头疼痛、堵奶、亲喂姿势和泵奶节奏咨询。',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        height: 1.35,
+                        color: MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
