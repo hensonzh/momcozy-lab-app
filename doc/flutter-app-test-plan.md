@@ -297,7 +297,7 @@ Golden 视觉状态：
 [x] 发现单个设备
 [x] 发现多个设备
 [x] 连接失败
-[ ] 断线重连
+[x] 断线重连
 [x] 恢复 native 已连接设备
 [ ] 用户切换时断开或隔离设备
 [x] debug drawer 仅 internal/dev 环境可见
@@ -630,17 +630,24 @@ npm run flutter:p0:platform-smoke
 
 该命令覆盖 fake interfaces、Android MethodChannel schema、BLE protocol、snapshot sync 与 native runtime coordinator。真机 BLE/通知/后台服务仍以 L4 device lab 为准。
 
+本地合同覆盖说明：
+
+- `android_p0_platform_channels_test.dart` 覆盖 `MmcBle`、`PumpSessionForegroundService`、`RouteIntentPlatform`、`PumpAgentUpload` 的 method name、request payload、success response 和 Flutter 侧事件 payload。
+- `p0_platform_interfaces_test.dart` 覆盖 fake interface 的错误路径、BLE 断开后重连、pending route 单次消费、wake lock 幂等、upload dedupe 和敏感 payload 脱敏。
+- `pump_native_runtime_coordinator_test.dart`、`pump_device_snapshot_binding_test.dart` 和 `pump_agent_upload_snapshot_sync_test.dart` 覆盖 snapshot sync、left/right isolation 和 native runtime coordinator 边界。
+- Flutter 侧线程期望为：MethodChannel 调用返回 `Future`，native event 统一转成 broadcast stream；真实 Android service/background thread 亲测留在 L4 device lab。
+
 每个 bridge 的合同必须写清楚：
 
 ```text
-[ ] Method name
-[ ] Request payload
-[ ] Success response
-[ ] Error response
-[ ] Event stream payload
-[ ] Threading expectation
-[ ] Background availability
-[ ] Idempotency expectation
+[x] Method name
+[x] Request payload
+[x] Success response
+[x] Error response
+[x] Event stream payload
+[x] Threading expectation
+[x] Background availability
+[x] Idempotency expectation
 ```
 
 ---

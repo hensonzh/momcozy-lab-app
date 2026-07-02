@@ -112,6 +112,69 @@ void main() {
       },
     );
 
+    test(
+      'fake BLE platform clears subscriptions and reads again after reconnect',
+      () async {
+        final ble = FakeBlePlatform(
+          initialPermission: BlePermissionState.granted,
+          seedDevices: const [
+            BleDeviceSnapshot(
+              side: 'L',
+              deviceId: 'ble-left-001',
+              deviceName: 'M9-L',
+            ),
+          ],
+        );
+        final notifications = <BleNotification>[];
+        final notificationSub = ble.notifications.listen(notifications.add);
+
+        await ble.connect('ble-left-001');
+        await ble.startNotifications('ble-left-001', 'notify-char');
+        expect(ble.isSubscribed('ble-left-001', 'notify-char'), isTrue);
+
+        await ble.disconnect('ble-left-001');
+        expect(await ble.getConnectedDevices(), isEmpty);
+        expect(ble.isSubscribed('ble-left-001', 'notify-char'), isFalse);
+        expect(
+          ble.read('ble-left-001', 'status-char'),
+          throwsA(isA<StateError>()),
+        );
+        ble.emitNotification(
+          const BleNotification(
+            deviceId: 'ble-left-001',
+            characteristicUuid: 'notify-char',
+            value: [0xff],
+          ),
+        );
+        await flushStreams();
+        expect(notifications, isEmpty);
+
+        await ble.connect('ble-left-001');
+        ble.setReadValue('ble-left-001', 'status-char', const [0xaa, 0x55]);
+        expect(await ble.read('ble-left-001', 'status-char'), [0xaa, 0x55]);
+        await ble.startNotifications('ble-left-001', 'notify-char');
+        ble.emitNotification(
+          const BleNotification(
+            deviceId: 'ble-left-001',
+            characteristicUuid: 'notify-char',
+            value: [0xe1],
+          ),
+        );
+        await flushStreams();
+
+        expect(
+          (await ble.getConnectedDevices()).map((device) => device.deviceId),
+          ['ble-left-001'],
+        );
+        expect(notifications.map((event) => event.value), [
+          [0xe1],
+        ]);
+
+        await notificationSub.cancel();
+        await ble.dispose();
+      },
+    );
+
     test('fake BLE platform records settings handoffs', () async {
       final ble = FakeBlePlatform();
 
