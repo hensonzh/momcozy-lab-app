@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+
+import 'support/fixture_api_transport.dart';
 
 void main() {
   testWidgets('route shell starts at Agent Hub and navigates bottom tabs', (
@@ -138,5 +142,29 @@ void main() {
     expect(find.byType(NavigationBar), findsOneWidget);
 
     await routes.dispose();
+  });
+
+  testWidgets('route shell records route view telemetry', (tester) async {
+    final sink = MemoryMomCozyTelemetrySink();
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport(const {'status': 200, 'data': {}}),
+      userId: 'route-user',
+      babyId: 'route-baby',
+      locale: 'zh-CN',
+      observability: MomCozyObservability(sink: sink),
+    );
+
+    await tester.pumpWidget(MomCozyFlutterApp(apiRuntime: runtime));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('计划').last);
+    await tester.pumpAndSettle();
+
+    final routeEvents = sink.events
+        .where((event) => event.name == 'route.view')
+        .map((event) => event.attributes['route'])
+        .toList(growable: false);
+
+    expect(routeEvents, containsAll(['/', '/schedule']));
+    expect(sink.events.toString(), isNot(contains('route-user')));
   });
 }

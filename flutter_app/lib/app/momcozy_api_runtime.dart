@@ -3,6 +3,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
@@ -50,6 +51,7 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
+    MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
   }) : session =
@@ -74,6 +76,7 @@ class MomCozyApiRuntime {
              ble: ble,
              upload: AndroidPumpAgentUploadPlatform(),
            )),
+       observability = observability ?? MomCozyObservability(),
        now = now ?? DateTime.now {
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
@@ -88,6 +91,7 @@ class MomCozyApiRuntime {
     ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
+    MomCozyObservability? observability,
     String? userId,
     String? babyId,
     String? locale,
@@ -106,6 +110,7 @@ class MomCozyApiRuntime {
       multipartTransport: multipartTransport,
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
+      observability: observability,
     );
   }
 
@@ -117,24 +122,32 @@ class MomCozyApiRuntime {
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
     StorageMigrationApplyResult? storageMigrationResult,
+    MomCozyObservability? observability,
   }) {
     final baseUri = Uri.parse(_defaultApiBaseUrl);
     final authToken = session.accessToken;
     const defaultHeaders = {'X-Momcozy-Client': 'flutter'};
+    final runtimeObservability = observability ?? MomCozyObservability();
     return MomCozyApiRuntime(
       jsonTransport:
           jsonTransport ??
-          IoApiJsonTransport(
-            baseUri: baseUri,
-            token: authToken,
-            headers: defaultHeaders,
+          ObservedApiJsonTransport(
+            inner: IoApiJsonTransport(
+              baseUri: baseUri,
+              token: authToken,
+              headers: defaultHeaders,
+            ),
+            observability: runtimeObservability,
           ),
       multipartTransport:
           multipartTransport ??
-          IoApiMultipartTransport(
-            baseUri: baseUri,
-            token: authToken,
-            headers: defaultHeaders,
+          ObservedApiMultipartTransport(
+            inner: IoApiMultipartTransport(
+              baseUri: baseUri,
+              token: authToken,
+              headers: defaultHeaders,
+            ),
+            observability: runtimeObservability,
           ),
       clientEventClient:
           clientEventClient ??
@@ -149,6 +162,7 @@ class MomCozyApiRuntime {
       pumpProtocolPlatform: pumpProtocolPlatform,
       session: session,
       storageMigrationResult: storageMigrationResult,
+      observability: runtimeObservability,
     );
   }
 
@@ -160,6 +174,7 @@ class MomCozyApiRuntime {
     ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
+    MomCozyObservability? observability,
     Map<String, Object?>? legacyStorageSnapshot,
     StorageMigrationTargetStore? storageMigrationTargetStore,
   }) async {
@@ -193,12 +208,14 @@ class MomCozyApiRuntime {
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
       storageMigrationResult: storageMigrationResult,
+      observability: observability,
     );
   }
 
   final ApiJsonTransport jsonTransport;
   final MomCozySession session;
   final StorageMigrationApplyResult? storageMigrationResult;
+  final MomCozyObservability observability;
   final DateTime Function() now;
   final AgentStreamClientEventClient Function() _clientEventClientFactory;
   final ApiMultipartTransport Function() _multipartTransportFactory;

@@ -679,6 +679,7 @@ H5/WebView 依赖 owner：
 [ ] 真泵回归通过
 [x] 回滚包和回滚流程确认：非真机 gate 生成 `dist/flutter-rollback-manifest.json`，真机覆盖/回滚演练仍归 Phase 7 device lab
 [x] 隐私、安全、日志脱敏检查通过
+[x] 本地 telemetry / diagnostics 边界已落地：route、API、Agent lifecycle、feature event、non-fatal event 均经过统一脱敏；真实性能阈值和 crash-free 指标仍由发布环境与 device lab 验证
 ```
 
 ---
@@ -972,6 +973,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter 通用 multipart transport 已落地，Media repository 可通过 runtime 走 `/v1/files/upload`
 [x] Flutter staging smoke harness 已落地：可用环境变量直连 staging 验证 HTTP、client-event、media upload 和 Agent SSE；本机无凭证时默认安全 skip
 [x] Flutter release gate 已落地：`npm run flutter:release-gate` 统一执行非真机 CI/发布准入，并记录 release signing env gate
+[x] Flutter observability 边界已落地：`MomCozyObservability` 默认 Noop sink，API transport、route shell、Agent lifecycle 和 non-fatal events 使用统一脱敏事件模型，真实 crash/perf SDK 接入留给发布环境配置
 [x] Flutter App API runtime scope 已接入 App root，集中 dart-define / secure session base URL/token/user/baby/locale 与 typed repository factory
 [x] Flutter App 启动已接入 secure storage session bootstrap，token/refresh token 不再只能依赖普通 env 注入
 [x] Flutter App API runtime 已加入 `/api/client-event` best-effort control client 注入点，IBCLC/通知/分析类页面可复用事件写回
