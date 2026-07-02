@@ -23,6 +23,7 @@ class AgentHubPage extends StatefulWidget {
     this.historyMessages = const <AgentHubHistoryMessage>[],
     this.runner,
     this.cancelClient,
+    this.actionClient,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
     this.voiceInput,
@@ -36,6 +37,7 @@ class AgentHubPage extends StatefulWidget {
   final List<AgentHubHistoryMessage> historyMessages;
   final AgentStreamRunner? runner;
   final AgentStreamCancelClient? cancelClient;
+  final AgentStreamActionClient? actionClient;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
   final AgentHubVoiceInput? voiceInput;
@@ -59,6 +61,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
+  final Set<String> _pendingActionIds = <String>{};
+  final Map<String, String> _localActionStatuses = <String, String>{};
 
   @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
@@ -186,6 +190,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _state = const AgentStreamRunState();
       _historyMessages.clear();
       _attachedImages.clear();
+      _pendingActionIds.clear();
+      _localActionStatuses.clear();
       _activeRequest = null;
       _voiceState = const AgentVoiceState();
     });
@@ -206,6 +212,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _activeRequest = request;
     setState(() {
       _state = const AgentStreamRunState().start();
+      _pendingActionIds.clear();
+      _localActionStatuses.clear();
     });
 
     _runSubscription = runner
@@ -295,6 +303,49 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
   }
 
+  Future<void> _confirmAction(AgentActionCardView action) async {
+    final actionClient = widget.actionClient;
+    if (actionClient == null || _pendingActionIds.contains(action.id)) return;
+    setState(() {
+      _pendingActionIds.add(action.id);
+      _localActionStatuses[action.id] = 'confirming';
+    });
+
+    final result = await actionClient.confirm(
+      AgentStreamActionConfirmRequest(actionId: action.id),
+    );
+    if (!mounted) return;
+    setState(() {
+      _pendingActionIds.remove(action.id);
+      _localActionStatuses[action.id] = result.accepted
+          ? result.actionStatus ?? 'confirmed'
+          : 'failed';
+    });
+  }
+
+  Future<void> _rejectAction(AgentActionCardView action) async {
+    final actionClient = widget.actionClient;
+    if (actionClient == null || _pendingActionIds.contains(action.id)) return;
+    setState(() {
+      _pendingActionIds.add(action.id);
+      _localActionStatuses[action.id] = 'rejecting';
+    });
+
+    final result = await actionClient.reject(
+      AgentStreamActionRejectRequest(
+        actionId: action.id,
+        reason: 'user_rejected',
+      ),
+    );
+    if (!mounted) return;
+    setState(() {
+      _pendingActionIds.remove(action.id);
+      _localActionStatuses[action.id] = result.accepted
+          ? result.actionStatus ?? 'rejected'
+          : 'failed';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -347,6 +398,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
           canRetry: _canRetry,
           onRetry: _retryRun,
           onArtifactAction: widget.onArtifactAction,
+          pendingActionIds: _pendingActionIds,
+          localActionStatuses: _localActionStatuses,
+          onConfirmAction: widget.actionClient == null ? null : _confirmAction,
+          onRejectAction: widget.actionClient == null ? null : _rejectAction,
         ),
         const SizedBox(height: 16),
         AgentComposerBar(
@@ -508,6 +563,7 @@ class AgentRunPhaseBadge extends StatelessWidget {
     return switch (phase) {
       AgentStreamRunPhase.idle => '准备就绪',
       AgentStreamRunPhase.streaming => '正在回复',
+      AgentStreamRunPhase.waitingForConfirmation => '待确认',
       AgentStreamRunPhase.finished => '已完成',
       AgentStreamRunPhase.error => '需要重试',
       AgentStreamRunPhase.disconnected => '连接中断',
@@ -520,6 +576,7 @@ class AgentRunPhaseBadge extends StatelessWidget {
     return switch (phase) {
       AgentStreamRunPhase.idle => Icons.bolt_outlined,
       AgentStreamRunPhase.streaming => Icons.sync_rounded,
+      AgentStreamRunPhase.waitingForConfirmation => Icons.fact_check_outlined,
       AgentStreamRunPhase.finished => Icons.check_circle_outline_rounded,
       AgentStreamRunPhase.error => Icons.error_outline_rounded,
       AgentStreamRunPhase.disconnected => Icons.wifi_off_rounded,
@@ -533,6 +590,7 @@ class AgentRunPhaseBadge extends StatelessWidget {
       AgentStreamRunPhase.error ||
       AgentStreamRunPhase.disconnected => colorScheme.error,
       AgentStreamRunPhase.finished => colorScheme.primary,
+      AgentStreamRunPhase.waitingForConfirmation => colorScheme.tertiary,
       AgentStreamRunPhase.cancelRequested ||
       AgentStreamRunPhase.cancelled => colorScheme.onSurfaceVariant,
       _ => colorScheme.primary,
@@ -543,6 +601,8 @@ class AgentRunPhaseBadge extends StatelessWidget {
     return switch (phase) {
       AgentStreamRunPhase.error || AgentStreamRunPhase.disconnected =>
         colorScheme.errorContainer.withValues(alpha: 0.5),
+      AgentStreamRunPhase.waitingForConfirmation =>
+        colorScheme.tertiaryContainer.withValues(alpha: 0.58),
       AgentStreamRunPhase.cancelRequested ||
       AgentStreamRunPhase.cancelled => colorScheme.surfaceContainerHighest,
       _ => colorScheme.primaryContainer.withValues(alpha: 0.58),
@@ -557,12 +617,20 @@ class AgentRunTranscript extends StatelessWidget {
     this.canRetry = false,
     this.onRetry,
     this.onArtifactAction,
+    this.pendingActionIds = const <String>{},
+    this.localActionStatuses = const <String, String>{},
+    this.onConfirmAction,
+    this.onRejectAction,
   });
 
   final AgentStreamRunState state;
   final bool canRetry;
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
+  final Set<String> pendingActionIds;
+  final Map<String, String> localActionStatuses;
+  final ValueChanged<AgentActionCardView>? onConfirmAction;
+  final ValueChanged<AgentActionCardView>? onRejectAction;
 
   @override
   Widget build(BuildContext context) {
@@ -573,6 +641,10 @@ class AgentRunTranscript extends StatelessWidget {
         : state.textContent.trim();
     final workSteps = _workStepsFromEvents(state.events);
     final artifactCards = _artifactCardsFromEvents(state.events);
+    final actionCards = _actionCardsFromEvents(
+      state.events,
+      localActionStatuses,
+    );
 
     return DecoratedBox(
       key: const ValueKey('agent-run-transcript'),
@@ -636,6 +708,15 @@ class AgentRunTranscript extends StatelessWidget {
                 onAction: onArtifactAction,
               ),
             ],
+            if (actionCards.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              AgentActionPanel(
+                actions: actionCards,
+                pendingActionIds: pendingActionIds,
+                onConfirm: onConfirmAction,
+                onReject: onRejectAction,
+              ),
+            ],
           ],
         ),
       ),
@@ -644,6 +725,9 @@ class AgentRunTranscript extends StatelessWidget {
 
   String? get _supportingText {
     if (state.phase == AgentStreamRunPhase.streaming) return '正在生成回复';
+    if (state.phase == AgentStreamRunPhase.waitingForConfirmation) {
+      return '等待确认后继续';
+    }
     if (state.phase == AgentStreamRunPhase.disconnected) {
       return _safeAgentErrorText(state.errorMessage) ?? '连接中断';
     }
@@ -657,6 +741,7 @@ class AgentRunTranscript extends StatelessWidget {
   IconData get _supportingIcon {
     return switch (state.phase) {
       AgentStreamRunPhase.streaming => Icons.more_horiz_rounded,
+      AgentStreamRunPhase.waitingForConfirmation => Icons.fact_check_outlined,
       AgentStreamRunPhase.disconnected => Icons.wifi_off_rounded,
       AgentStreamRunPhase.error => Icons.error_outline_rounded,
       AgentStreamRunPhase.cancelled => Icons.pause_circle_outline_rounded,
@@ -668,6 +753,7 @@ class AgentRunTranscript extends StatelessWidget {
     return switch (state.phase) {
       AgentStreamRunPhase.disconnected ||
       AgentStreamRunPhase.error => colorScheme.error,
+      AgentStreamRunPhase.waitingForConfirmation => colorScheme.tertiary,
       _ => colorScheme.primary,
     };
   }
@@ -923,6 +1009,180 @@ class AgentArtifactActionView {
   final String kind;
   final String? value;
   final String? routePath;
+}
+
+class AgentActionPanel extends StatelessWidget {
+  const AgentActionPanel({
+    super.key,
+    required this.actions,
+    this.pendingActionIds = const <String>{},
+    this.onConfirm,
+    this.onReject,
+  });
+
+  final List<AgentActionCardView> actions;
+  final Set<String> pendingActionIds;
+  final ValueChanged<AgentActionCardView>? onConfirm;
+  final ValueChanged<AgentActionCardView>? onReject;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      key: const ValueKey('agent-action-panel'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '待处理动作',
+          style: textTheme.labelLarge?.copyWith(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 8),
+        for (final action in actions) ...[
+          DecoratedBox(
+            key: ValueKey('agent-action-card-${action.id}'),
+            decoration: BoxDecoration(
+              color: colorScheme.tertiaryContainer.withValues(alpha: 0.38),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: colorScheme.outlineVariant),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        action.icon,
+                        size: 18,
+                        color: action.color(colorScheme),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          action.title,
+                          style: textTheme.titleSmall?.copyWith(
+                            color: colorScheme.onSurface,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        action.statusLabel,
+                        style: textTheme.labelSmall?.copyWith(
+                          color: action.color(colorScheme),
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (action.subtitle != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      action.subtitle!,
+                      style: textTheme.bodySmall?.copyWith(
+                        height: 1.35,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                  if (action.canConfirm) ...[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        FilledButton.icon(
+                          key: ValueKey('agent-action-confirm-${action.id}'),
+                          onPressed:
+                              pendingActionIds.contains(action.id) ||
+                                  onConfirm == null
+                              ? null
+                              : () => onConfirm?.call(action),
+                          icon: const Icon(Icons.check_rounded),
+                          label: const Text('确认'),
+                        ),
+                        OutlinedButton.icon(
+                          key: ValueKey('agent-action-reject-${action.id}'),
+                          onPressed:
+                              pendingActionIds.contains(action.id) ||
+                                  onReject == null
+                              ? null
+                              : () => onReject?.call(action),
+                          icon: const Icon(Icons.close_rounded),
+                          label: const Text('拒绝'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          if (action != actions.last) const SizedBox(height: 10),
+        ],
+      ],
+    );
+  }
+}
+
+class AgentActionCardView {
+  const AgentActionCardView({
+    required this.id,
+    required this.title,
+    required this.status,
+    this.subtitle,
+  });
+
+  final String id;
+  final String title;
+  final String status;
+  final String? subtitle;
+
+  bool get canConfirm {
+    return status == 'proposed' || status == 'confirmation_required';
+  }
+
+  String get statusLabel {
+    return switch (status) {
+      'confirming' => '确认中',
+      'rejecting' => '拒绝中',
+      'proposed' => '待确认',
+      'confirmation_required' => '待确认',
+      'confirmed' => '已确认',
+      'queued' => '已提交',
+      'applied' => '已应用',
+      'rejected' => '已拒绝',
+      'failed' => '失败',
+      _ => status,
+    };
+  }
+
+  IconData get icon {
+    return switch (status) {
+      'applied' => Icons.check_circle_outline_rounded,
+      'rejected' => Icons.block_rounded,
+      'failed' => Icons.error_outline_rounded,
+      'confirming' || 'rejecting' || 'queued' => Icons.sync_rounded,
+      _ => Icons.fact_check_outlined,
+    };
+  }
+
+  Color color(ColorScheme colorScheme) {
+    return switch (status) {
+      'failed' => colorScheme.error,
+      'applied' || 'confirmed' || 'queued' => colorScheme.primary,
+      'rejected' => colorScheme.onSurfaceVariant,
+      _ => colorScheme.tertiary,
+    };
+  }
 }
 
 class AgentComposerBar extends StatelessWidget {
@@ -1182,6 +1442,89 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
     rows: rows,
     actions: actions,
   );
+}
+
+List<AgentActionCardView> _actionCardsFromEvents(
+  List<AgentStreamEvent> events,
+  Map<String, String> localStatuses,
+) {
+  final cards = <String, AgentActionCardView>{};
+  for (final event in events) {
+    final card = _actionCardFromEvent(event);
+    if (card != null) cards[card.id] = card;
+  }
+
+  for (final entry in localStatuses.entries) {
+    final existing = cards[entry.key];
+    if (existing == null) continue;
+    cards[entry.key] = AgentActionCardView(
+      id: existing.id,
+      title: existing.title,
+      status: entry.value,
+      subtitle: existing.subtitle,
+    );
+  }
+
+  return List<AgentActionCardView>.unmodifiable(cards.values);
+}
+
+AgentActionCardView? _actionCardFromEvent(AgentStreamEvent event) {
+  if (!event.type.startsWith('action.')) return null;
+
+  final actionId =
+      stringField(event.raw, 'action_id') ??
+      stringField(event.raw, 'actionId') ??
+      stringField(event.payload, 'action_id') ??
+      stringField(event.payload, 'actionId');
+  if (actionId == null || actionId.trim().isEmpty) return null;
+
+  final preview = _mapField(event.payload, 'preview_payload', 'previewPayload');
+  final title =
+      _firstNonEmpty([
+        _stringField(event.payload, 'title'),
+        _stringField(preview, 'title'),
+        _stringField(preview, 'summary'),
+        _stringField(event.payload, 'action_type', 'actionType'),
+        stringField(event.raw, 'action_type') ??
+            stringField(event.raw, 'actionType'),
+        '需要确认后继续',
+      ]) ??
+      '需要确认后继续';
+  final subtitle = _firstNonEmpty([
+    _stringField(event.payload, 'summary'),
+    _stringField(preview, 'description'),
+    _stringField(preview, 'message'),
+    _stringField(event.payload, 'target_type', 'targetType'),
+  ]);
+
+  return AgentActionCardView(
+    id: actionId.trim(),
+    title: title,
+    status: _actionStatus(event),
+    subtitle: subtitle,
+  );
+}
+
+String _actionStatus(AgentStreamEvent event) {
+  final statusFromType = switch (event.type) {
+    'action.proposed' => 'proposed',
+    'action.confirmation_required' => 'confirmation_required',
+    'action.queued' => 'queued',
+    'action.applied' => 'applied',
+    'action.failed' => 'failed',
+    'action.rejected' => 'rejected',
+    _ => null,
+  };
+  if (statusFromType != null) return statusFromType;
+
+  final explicit = _firstNonEmpty([
+    _stringField(event.payload, 'action_status', 'actionStatus'),
+    _stringField(event.payload, 'status'),
+    stringField(event.raw, 'status'),
+  ]);
+  if (explicit != null) return explicit;
+
+  return 'proposed';
 }
 
 List<String> _richTextCardRows(Object? rawCards) {
@@ -1456,7 +1799,12 @@ AgentRunWorkStep? _workStepFromEvent(AgentStreamEvent event) {
     'tool.completed' ||
     'tool.failed' => _toolStep(event),
     'artifact.created' || 'artifact.updated' => _artifactStep(event),
-    'action.confirmation_required' => _confirmationStep(event),
+    'action.proposed' ||
+    'action.confirmation_required' ||
+    'action.queued' ||
+    'action.applied' ||
+    'action.failed' ||
+    'action.rejected' => _actionStep(event),
     'run.failed' || 'error' => AgentRunWorkStep(
       id: event.mergeKey,
       title: '处理遇到问题',
@@ -1524,17 +1872,29 @@ AgentRunWorkStep _artifactStep(AgentStreamEvent event) {
   );
 }
 
-AgentRunWorkStep _confirmationStep(AgentStreamEvent event) {
-  final confirmationId =
+AgentRunWorkStep _actionStep(AgentStreamEvent event) {
+  final actionId =
       stringField(event.raw, 'action_id') ??
       stringField(event.payload, 'action_id') ??
       stringField(event.raw, 'confirmation_id');
+  final status = _actionStatus(event);
   return AgentRunWorkStep(
-    id: confirmationId == null || confirmationId.isEmpty
+    id: actionId == null || actionId.isEmpty
         ? event.mergeKey
-        : 'confirmation:$confirmationId',
-    title: '需要确认后继续',
-    status: AgentRunWorkStepStatus.waiting,
+        : 'action:$actionId',
+    title: switch (status) {
+      'queued' => '动作已提交',
+      'applied' => '动作已应用',
+      'rejected' => '动作已拒绝',
+      'failed' => '动作处理失败',
+      _ => '需要确认后继续',
+    },
+    status: switch (status) {
+      'queued' || 'applied' => AgentRunWorkStepStatus.completed,
+      'rejected' => AgentRunWorkStepStatus.completed,
+      'failed' => AgentRunWorkStepStatus.failed,
+      _ => AgentRunWorkStepStatus.waiting,
+    },
   );
 }
 

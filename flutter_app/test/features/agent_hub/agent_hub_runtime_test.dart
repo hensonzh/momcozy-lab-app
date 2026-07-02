@@ -31,6 +31,7 @@ void main() {
 
   test('default Agent Hub cancel client uses unified API endpoint', () {
     final cancelClient = createDefaultAgentHubCancelClient();
+    final actionClient = createDefaultAgentHubActionClient();
 
     expect(
       cancelClient.endpoint.uri.toString(),
@@ -38,6 +39,14 @@ void main() {
     );
     expect(
       cancelClient.endpoint.headers,
+      containsPair('X-Momcozy-Client', 'flutter'),
+    );
+    expect(
+      actionClient.endpoint.uri.toString(),
+      'http://127.0.0.1:8769/v1/agent/actions',
+    );
+    expect(
+      actionClient.endpoint.headers,
       containsPair('X-Momcozy-Client', 'flutter'),
     );
   });
@@ -54,6 +63,7 @@ void main() {
     final client = runner.client as SseAgentStreamClient;
     final transport = client.transport as ProductionAgentSseTransport;
     final cancelClient = createSessionAgentHubCancelClient(session);
+    final actionClient = createSessionAgentHubActionClient(session);
     final request = buildSessionAgentHubRequest(
       '  Help me plan today  ',
       session: session,
@@ -62,6 +72,11 @@ void main() {
 
     expect(transport.runsEndpoint.token, 'secure-access');
     expect(cancelClient.endpoint.token, 'secure-access');
+    expect(actionClient.endpoint.token, 'secure-access');
+    expect(
+      actionClient.endpoint.uri.toString(),
+      'http://127.0.0.1:8769/v1/agent/actions',
+    );
     expect(request.threadId, isNull);
     expect(request.locale, 'en-US');
     expect(request.message, '  Help me plan today  ');

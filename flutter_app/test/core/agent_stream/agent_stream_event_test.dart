@@ -61,5 +61,28 @@ void main() {
         containsAll(['run.completed', 'run.failed']),
       );
     });
+
+    test('treats waiting for confirmation as a stable terminal stream event', () {
+      final event = AgentStreamEvent(const {
+        'type': 'run.waiting_for_confirmation',
+        'thread_id': 'thread-action-001',
+        'run_id': 'run-action-001',
+        'sequence': 5,
+      });
+
+      expect(event.isTerminal, isTrue);
+      expect(event.replayKey, 'sequence:run-action-001:5');
+    });
+
+    test('uses payload action ids as stable reducer keys', () {
+      final event = AgentStreamEvent(const {
+        'type': 'action.queued',
+        'thread_id': 'thread-action-001',
+        'run_id': 'run-action-001',
+        'payload': {'action_id': 'action-support-001'},
+      });
+
+      expect(event.mergeKey, 'action:action-support-001');
+    });
   });
 }

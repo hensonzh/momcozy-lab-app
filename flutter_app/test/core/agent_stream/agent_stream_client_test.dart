@@ -92,5 +92,32 @@ void main() {
       expect(events.map((event) => event.type), ['run.started', 'run.failed']);
       expect(events.last.isTerminal, isTrue);
     });
+
+    test('stops after confirmation wait events', () async {
+      const request = AgentStreamRequest(
+        message: 'Create a support ticket.',
+        threadId: 'thread-1',
+      );
+      final client = JsonlAgentStreamClient(
+        FixtureAgentStreamTransport([
+          jsonEncode(readFixtureMap('agent_events/run_started.json')),
+          jsonEncode({
+            'type': 'run.waiting_for_confirmation',
+            'thread_id': 'thread-fixture-001',
+            'run_id': 'run-fixture-001',
+            'payload': {'pending_action_id': 'action-support-001'},
+          }),
+          '{malformed-after-terminal',
+        ]),
+      );
+
+      final events = await client.stream(request).toList();
+
+      expect(events.map((event) => event.type), [
+        'run.started',
+        'run.waiting_for_confirmation',
+      ]);
+      expect(events.last.isTerminal, isTrue);
+    });
   });
 }

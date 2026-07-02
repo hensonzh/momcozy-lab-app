@@ -106,6 +106,73 @@ class AgentStreamCancelResult {
   final Object? error;
 }
 
+class AgentStreamActionConfirmRequest {
+  const AgentStreamActionConfirmRequest({
+    required this.actionId,
+    this.editedApplyPayload,
+    this.idempotencyKey,
+  });
+
+  final String actionId;
+  final Map<String, Object?>? editedApplyPayload;
+  final String? idempotencyKey;
+
+  Map<String, Object?> toMap() {
+    final normalizedActionId = actionId.trim();
+    if (normalizedActionId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing actionId.');
+    }
+
+    final normalizedIdempotencyKey = idempotencyKey?.trim();
+    return {
+      if (editedApplyPayload != null)
+        'edited_apply_payload': editedApplyPayload,
+      if (normalizedIdempotencyKey != null &&
+          normalizedIdempotencyKey.isNotEmpty)
+        'idempotency_key': normalizedIdempotencyKey,
+    };
+  }
+}
+
+class AgentStreamActionRejectRequest {
+  const AgentStreamActionRejectRequest({required this.actionId, this.reason});
+
+  final String actionId;
+  final String? reason;
+
+  Map<String, Object?> toMap() {
+    final normalizedActionId = actionId.trim();
+    if (normalizedActionId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing actionId.');
+    }
+
+    final normalizedReason = reason?.trim();
+    return {
+      if (normalizedReason != null && normalizedReason.isNotEmpty)
+        'reason': normalizedReason,
+    };
+  }
+}
+
+class AgentStreamActionResult {
+  const AgentStreamActionResult({
+    required this.accepted,
+    this.statusCode,
+    this.body,
+    this.error,
+  });
+
+  final bool accepted;
+  final int? statusCode;
+  final Map<String, Object?>? body;
+  final Object? error;
+
+  String? get actionStatus {
+    final rawStatus = body?['status'];
+    return rawStatus is String ? rawStatus : null;
+  }
+}
+
 abstract interface class AgentStreamControlHttpConnector {
   Future<AgentStreamControlHttpResponse> post(
     Uri uri, {
@@ -176,12 +243,87 @@ class AgentStreamCancelClient {
   }
 }
 
+class AgentStreamActionClient {
+  const AgentStreamActionClient({
+    required this.endpoint,
+    this.connector = const _DefaultControlHttpConnector(),
+  });
+
+  final AgentStreamEndpoint endpoint;
+  final AgentStreamControlHttpConnector connector;
+
+  Future<AgentStreamActionResult> confirm(
+    AgentStreamActionConfirmRequest request,
+  ) {
+    final idempotencyKey =
+        request.idempotencyKey?.trim().isNotEmpty == true
+        ? request.idempotencyKey!.trim()
+        : 'agent-action-${request.actionId.trim()}';
+    return _postAction(
+      actionId: request.actionId,
+      suffix: 'confirm',
+      body: request.toMap(),
+      extraHeaders: {'Idempotency-Key': idempotencyKey},
+    );
+  }
+
+  Future<AgentStreamActionResult> reject(
+    AgentStreamActionRejectRequest request,
+  ) {
+    return _postAction(
+      actionId: request.actionId,
+      suffix: 'reject',
+      body: request.toMap(),
+    );
+  }
+
+  Future<AgentStreamActionResult> _postAction({
+    required String actionId,
+    required String suffix,
+    required Map<String, Object?> body,
+    Map<String, String> extraHeaders = const {},
+  }) async {
+    try {
+      final normalizedActionId = actionId.trim();
+      if (normalizedActionId.isEmpty) {
+        throw const AgentStreamPayloadException('Missing actionId.');
+      }
+      final response = await connector.post(
+        _actionScopedUri(endpoint.requestUri, normalizedActionId, suffix),
+        headers: {
+          ...endpoint.requestHeaders(includeContentType: true),
+          ...extraHeaders,
+        },
+        body: jsonEncode(body),
+      );
+      final accepted = response.statusCode >= 200 && response.statusCode < 300;
+      return AgentStreamActionResult(
+        accepted: accepted,
+        statusCode: response.statusCode,
+        body: response.jsonBody,
+      );
+    } catch (error) {
+      return AgentStreamActionResult(accepted: false, error: error);
+    }
+  }
+}
+
 Uri _runScopedUri(Uri runsUri, String runId, String suffix) {
   final basePath = runsUri.path.endsWith('/')
       ? runsUri.path.substring(0, runsUri.path.length - 1)
       : runsUri.path;
   return runsUri.replace(
     path: '$basePath/$runId/$suffix',
+    queryParameters: null,
+  );
+}
+
+Uri _actionScopedUri(Uri actionsUri, String actionId, String suffix) {
+  final basePath = actionsUri.path.endsWith('/')
+      ? actionsUri.path.substring(0, actionsUri.path.length - 1)
+      : actionsUri.path;
+  return actionsUri.replace(
+    path: '$basePath/$actionId/$suffix',
     queryParameters: null,
   );
 }

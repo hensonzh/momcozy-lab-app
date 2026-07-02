@@ -13,6 +13,9 @@ const _defaultAgentHubApiBaseUrl = String.fromEnvironment(
 const _defaultAgentHubCancelUrl = String.fromEnvironment(
   'MOMCOZY_AGENT_CANCEL_URL',
 );
+const _defaultAgentHubActionsUrl = String.fromEnvironment(
+  'MOMCOZY_AGENT_ACTIONS_URL',
+);
 const _defaultAgentHubToken = String.fromEnvironment('MOMCOZY_API_TOKEN');
 const _defaultAgentHubThreadId = String.fromEnvironment(
   'MOMCOZY_AGENT_THREAD_ID',
@@ -86,6 +89,23 @@ AgentStreamCancelClient createSessionAgentHubCancelClient(
   );
 }
 
+AgentStreamActionClient createDefaultAgentHubActionClient({
+  AgentStreamEndpoint? endpoint,
+}) {
+  return AgentStreamActionClient(
+    endpoint: endpoint ?? defaultAgentHubActionEndpoint(),
+  );
+}
+
+AgentStreamActionClient createSessionAgentHubActionClient(
+  MomCozySession session, {
+  AgentStreamEndpoint? endpoint,
+}) {
+  return AgentStreamActionClient(
+    endpoint: endpoint ?? sessionAgentHubActionEndpoint(session),
+  );
+}
+
 AgentStreamEndpoint defaultAgentHubSseEndpoint() {
   final explicitRunsUrl = _defaultAgentHubRunsUrl.trim();
   return _agentHubEndpoint(
@@ -101,6 +121,15 @@ AgentStreamEndpoint defaultAgentHubCancelEndpoint() {
     explicitCancelUrl.isEmpty
         ? _agentHubApiUri('/v1/agent/runs')
         : Uri.parse(explicitCancelUrl),
+  );
+}
+
+AgentStreamEndpoint defaultAgentHubActionEndpoint() {
+  final explicitActionsUrl = _defaultAgentHubActionsUrl.trim();
+  return _agentHubEndpoint(
+    explicitActionsUrl.isEmpty
+        ? _agentHubApiUri('/v1/agent/actions')
+        : Uri.parse(explicitActionsUrl),
   );
 }
 
@@ -120,6 +149,16 @@ AgentStreamEndpoint sessionAgentHubCancelEndpoint(MomCozySession session) {
     explicitCancelUrl.isEmpty
         ? _agentHubApiUri('/v1/agent/runs')
         : Uri.parse(explicitCancelUrl),
+    token: session.accessToken,
+  );
+}
+
+AgentStreamEndpoint sessionAgentHubActionEndpoint(MomCozySession session) {
+  final explicitActionsUrl = _defaultAgentHubActionsUrl.trim();
+  return _agentHubEndpoint(
+    explicitActionsUrl.isEmpty
+        ? _agentHubApiUri('/v1/agent/actions')
+        : Uri.parse(explicitActionsUrl),
     token: session.accessToken,
   );
 }

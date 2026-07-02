@@ -585,6 +585,84 @@ void main() {
     },
   );
 
+  testWidgets('Agent Hub renders and confirms production action cards', (
+    tester,
+  ) async {
+    const actionId = '11111111-1111-1111-1111-111111111111';
+    final connector = _RecordingActionConnector();
+    final actionClient = AgentStreamActionClient(
+      endpoint: AgentStreamEndpoint(
+        uri: Uri.parse('http://127.0.0.1:8769/v1/agent/actions'),
+        token: 'secret-token',
+      ),
+      connector: connector,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.waitingForConfirmation,
+            textContent: '请确认是否创建支持工单。',
+            events: [
+              AgentStreamEvent(const {
+                'type': 'action.confirmation_required',
+                'thread_id': 'thread-action',
+                'run_id': 'run-action',
+                'action_id': actionId,
+                'payload': {
+                  'action_type': 'support_ticket_create',
+                  'summary': '将当前问题提交给人工支持团队',
+                  'preview_payload': {'title': '创建支持工单'},
+                },
+              }),
+              AgentStreamEvent(const {
+                'type': 'run.waiting_for_confirmation',
+                'thread_id': 'thread-action',
+                'run_id': 'run-action',
+                'payload': {'pending_action_id': actionId},
+              }),
+            ],
+          ),
+          actionClient: actionClient,
+        ),
+      ),
+    );
+
+    expect(find.text('待确认'), findsWidgets);
+    expect(find.text('等待确认后继续'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
+    expect(
+      find.byKey(ValueKey('agent-action-card-$actionId')),
+      findsOneWidget,
+    );
+    expect(find.text('创建支持工单'), findsOneWidget);
+    expect(find.text('将当前问题提交给人工支持团队'), findsOneWidget);
+
+    await tester.tap(find.byKey(ValueKey('agent-action-confirm-$actionId')));
+    await connector.called.future;
+    await tester.pumpAndSettle();
+
+    expect(
+      connector.uri!.path,
+      '/v1/agent/actions/$actionId/confirm',
+    );
+    expect(
+      connector.uri!.queryParameters,
+      isNot(containsPair('token', anything)),
+    );
+    expect(
+      connector.headers,
+      containsPair('Authorization', 'Bearer secret-token'),
+    );
+    expect(
+      connector.headers,
+      containsPair('Idempotency-Key', 'agent-action-$actionId'),
+    );
+    expect(jsonDecode(connector.body!) as Map<String, Object?>, isEmpty);
+    expect(find.text('已确认'), findsOneWidget);
+  });
+
   testWidgets('Agent Hub renders safe tool failure progress', (tester) async {
     await tester.pumpWidget(
       _host(
@@ -992,6 +1070,26 @@ class _FailingAgentStreamClient implements AgentStreamClient {
 }
 
 class _RecordingCancelConnector implements AgentStreamControlHttpConnector {
+  final called = Completer<void>();
+  Uri? uri;
+  Map<String, String>? headers;
+  String? body;
+
+  @override
+  Future<AgentStreamControlHttpResponse> post(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) async {
+    this.uri = uri;
+    this.headers = headers;
+    this.body = body;
+    if (!called.isCompleted) called.complete();
+    return const AgentStreamControlHttpResponse(statusCode: 200, body: '{}');
+  }
+}
+
+class _RecordingActionConnector implements AgentStreamControlHttpConnector {
   final called = Completer<void>();
   Uri? uri;
   Map<String, String>? headers;
