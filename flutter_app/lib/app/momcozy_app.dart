@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
+import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
@@ -134,7 +135,12 @@ GoRouter createMomCozyRouter({String initialLocation = '/'}) {
     routes: [
       ShellRoute(
         builder: (context, state, child) {
-          return MomCozyRouteShell(location: state.uri.path, child: child);
+          final runtime = MomCozyRuntimeScope.of(context);
+          return MomCozyRouteTelemetry(
+            location: state.uri.path,
+            observability: runtime.observability,
+            child: MomCozyRouteShell(location: state.uri.path, child: child),
+          );
         },
         routes: [
           for (final route in momCozyRoutes)

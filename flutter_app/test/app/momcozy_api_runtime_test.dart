@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
@@ -16,7 +17,8 @@ import '../support/fixture_api_transport.dart';
 void main() {
   test('default runtime builds JSON transport from dart-define defaults', () {
     final runtime = MomCozyApiRuntime.fromEnvironment();
-    final transport = runtime.jsonTransport as IoApiJsonTransport;
+    final observed = runtime.jsonTransport as ObservedApiJsonTransport;
+    final transport = observed.inner as IoApiJsonTransport;
 
     expect(runtime.userId, 'demo-user');
     expect(runtime.babyId, 'demo-baby');
@@ -25,6 +27,7 @@ void main() {
     expect(transport.baseUri, Uri.parse('http://127.0.0.1:8769'));
     expect(transport.token, isNull);
     expect(transport.headers, containsPair('X-Momcozy-Client', 'flutter'));
+    expect(runtime.observability, same(observed.observability));
   });
 
   test('runtime can be bootstrapped from secure session store', () async {
@@ -40,7 +43,8 @@ void main() {
     );
 
     final runtime = await MomCozyApiRuntime.bootstrap(store: store);
-    final transport = runtime.jsonTransport as IoApiJsonTransport;
+    final observed = runtime.jsonTransport as ObservedApiJsonTransport;
+    final transport = observed.inner as IoApiJsonTransport;
 
     expect(runtime.userId, 'secure-user');
     expect(runtime.babyId, 'secure-baby');
@@ -48,6 +52,7 @@ void main() {
     expect(runtime.session.refreshToken, 'secure-refresh');
     expect(transport.token, 'secure-access');
     expect(runtime.clientEventClient.endpoint.token, 'secure-access');
+    expect(runtime.observability, same(observed.observability));
   });
 
   test('runtime bootstrap can apply a legacy storage snapshot', () async {
@@ -85,11 +90,13 @@ void main() {
         accessToken: 'session-access',
       ),
     );
-    final transport = runtime.jsonTransport as IoApiJsonTransport;
+    final observed = runtime.jsonTransport as ObservedApiJsonTransport;
+    final transport = observed.inner as IoApiJsonTransport;
 
     expect(runtime.userId, 'session-user');
     expect(runtime.session.isAuthenticated, isTrue);
     expect(transport.token, 'session-access');
+    expect(runtime.observability, same(observed.observability));
   });
 
   test('runtime creates typed repositories over the injected transport', () {

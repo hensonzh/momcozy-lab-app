@@ -699,6 +699,7 @@ npm run flutter:p0:platform-smoke
 [x] 日志不输出 token
 [x] 日志不输出完整健康数据 payload
 [x] crash report 不包含敏感字段
+[x] route/API/Agent/feature/non-fatal telemetry event 不包含 token、用户、会话、设备、文件名或健康正文
 [x] 多用户切换时清理 scoped cache
 [x] 登出后清理 secure session 中的 token / refresh token 敏感状态
 [x] screenshot/golden fixtures 不包含真实用户数据
@@ -719,6 +720,7 @@ CI 最低要求：
 [x] flutter test
 [x] contract fixture tests
 [x] golden tests
+[x] observability / diagnostics contract tests
 [x] staging smoke harness 默认安全 skip，凭证齐全时可直连 staging
 [x] storage migration dry-run
 [x] Android debug build：local flavor
