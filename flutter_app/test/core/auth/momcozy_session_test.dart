@@ -71,6 +71,7 @@ void main() {
     test(
       'logout clears stored secrets and returns anonymous session',
       () async {
+        final operations = <String>[];
         final current = const MomCozySession(
           status: MomCozySessionStatus.authenticated,
           userId: 'user-001',
@@ -79,15 +80,22 @@ void main() {
           accessToken: 'access-secret',
           refreshToken: 'refresh-secret',
         );
-        final store = MemoryMomCozySessionStore(current);
+        final store = _TracingSessionStore(current, operations);
+        final scopedCacheStore = _TracingScopedCacheStore(operations);
         final manager = MomCozySessionManager(
           store: store,
           environmentSession: current,
+          scopedCacheStore: scopedCacheStore,
         );
 
         final loggedOut = await manager.logout(current);
 
         expect(await store.readSession(), isNull);
+        expect(operations, [
+          'clearUserScope:user-001',
+          'clearNativePendingState',
+          'clear',
+        ]);
         expect(loggedOut.status, MomCozySessionStatus.anonymous);
         expect(loggedOut.accessToken, isNull);
         expect(loggedOut.refreshToken, isNull);
@@ -134,6 +142,7 @@ void main() {
     test(
       'switchAccount clears scoped cache before persisting next account',
       (() async {
+        final operations = <String>[];
         final store = _TracingSessionStore(
           const MomCozySession(
             status: MomCozySessionStatus.authenticated,
@@ -143,7 +152,9 @@ void main() {
             accessToken: 'old-access',
             refreshToken: 'old-refresh',
           ),
+          operations,
         );
+        final scopedCacheStore = _TracingScopedCacheStore(operations);
         const next = MomCozySession(
           status: MomCozySessionStatus.authenticated,
           userId: 'next-user',
@@ -155,11 +166,17 @@ void main() {
         final manager = MomCozySessionManager(
           store: store,
           environmentSession: next,
+          scopedCacheStore: scopedCacheStore,
         );
 
         await manager.switchAccount(next);
 
-        expect(store.operations, ['clear', 'write:next-user']);
+        expect(operations, [
+          'clearUserScope:old-user',
+          'clearNativePendingState',
+          'clear',
+          'write:next-user',
+        ]);
         expect(store.session?.userId, 'next-user');
         expect(store.session?.accessToken, 'next-access');
       }),
@@ -168,10 +185,10 @@ void main() {
 }
 
 class _TracingSessionStore implements MomCozySessionStore {
-  _TracingSessionStore(this.session);
+  _TracingSessionStore(this.session, this.operations);
 
   MomCozySession? session;
-  final operations = <String>[];
+  final List<String> operations;
 
   @override
   Future<void> clearSession() async {
@@ -186,5 +203,21 @@ class _TracingSessionStore implements MomCozySessionStore {
   Future<void> writeSession(MomCozySession session) async {
     operations.add('write:${session.userId}');
     this.session = session;
+  }
+}
+
+class _TracingScopedCacheStore implements MomCozyScopedCacheStore {
+  _TracingScopedCacheStore(this.operations);
+
+  final List<String> operations;
+
+  @override
+  Future<void> clearNativePendingState() async {
+    operations.add('clearNativePendingState');
+  }
+
+  @override
+  Future<void> clearUserScope(String userId) async {
+    operations.add('clearUserScope:$userId');
   }
 }
