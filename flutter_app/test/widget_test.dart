@@ -16,7 +16,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-    expect(find.text('智能体'), findsWidgets);
+    expect(find.text('我在。'), findsOneWidget);
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
