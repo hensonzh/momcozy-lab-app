@@ -181,7 +181,7 @@ features/
 [x] Flutter Media upload typed repository contract 已开始落地，multipart 上传、取消和超时边界已测试
 [x] Flutter 通用 JSON HTTP transport 已开始落地，typed repositories 可从 fixture contract 切到真实后端 connector
 [x] Flutter 通用 multipart transport 已开始落地，Media 上传通过 App runtime 注入，不在 widget 内拼 URL/token
-[x] Flutter App API runtime scope 已接入，feature 页面后续从 App scope 获取 repository，避免 widget 内直接拼 URL/token
+[x] Flutter App API runtime scope 已接入 secure session bootstrap，feature 页面从 App scope 获取 repository，避免 widget 内直接拼 URL/token
 [x] Flutter App API runtime 已加入 `/api/client-event` control client 注入点，IBCLC 等页面不直接持有 endpoint/token
 [x] Flutter App API runtime 已加入 BLE platform 注入点，Device 页面后续不直接 new Android MethodChannel adapter
 [x] Flutter App API runtime 已加入 `PumpProtocolPlatform` 与 native coordinator 注入点，设备命令从 feature UI 统一走 typed platform boundary
@@ -207,7 +207,7 @@ features/
 [x] Flutter `/api/client-event` control client 已落地，IBCLC/通知/分析类事件可复用 best-effort 写回通道
 [x] Flutter Agent Hub 页面骨架已接入根路由，状态 badge、transcript 和 composer 均消费统一 `AgentStreamRunState`
 [x] Flutter Agent Hub composer 已接入 injected `AgentStreamRunner`，真实 transport 仍可通过 `AgentStreamClient` 替换
-[x] Flutter App root 已注入默认 Agent Hub SSE runner，endpoint/token/user/thread 通过 dart-define 配置
+[x] Flutter App root 已注入 session-aware Agent Hub SSE runner，endpoint/token/user/thread 通过 secure session 与 dart-define fallback 配置
 [x] Flutter Agent Hub stop 已接入 best-effort cancel client，保持 UI cancellation 与服务端 cancel 解耦
 [x] Flutter Agent Hub retry 已在 UI 层复用缓存 request，不向 transport 暴露重试策略细节
 [x] Flutter Agent Hub work panel 已从统一 stream events 派生，不直接消费 provider/raw tool JSON

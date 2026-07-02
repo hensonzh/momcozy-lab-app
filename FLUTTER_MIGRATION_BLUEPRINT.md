@@ -943,7 +943,8 @@ doc/flutter-app-test-plan.md
 [x] Flutter Media upload typed repository contract 已覆盖 `/v1/files/upload` multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport 已落地，覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body tests
 [x] Flutter 通用 multipart transport 已落地，Media repository 可通过 runtime 走 `/v1/files/upload`
-[x] Flutter App API runtime scope 已接入 App root，集中 dart-define base URL/token/user/baby/locale 与 typed repository factory
+[x] Flutter App API runtime scope 已接入 App root，集中 dart-define / secure session base URL/token/user/baby/locale 与 typed repository factory
+[x] Flutter App 启动已接入 secure storage session bootstrap，token/refresh token 不再只能依赖普通 env 注入
 [x] Flutter App API runtime 已加入 `/api/client-event` best-effort control client 注入点，IBCLC/通知/分析类页面可复用事件写回
 [x] Flutter App API runtime 已加入 lazy BLE platform 注入点，页面可从 runtime 读取 Android/Fake `BlePlatform`
 [x] Flutter App API runtime 已加入 lazy pump native coordinator 与 `PumpProtocolPlatform` 注入点，Calibration/Pump 后续通过抽象协议下发设备命令
@@ -969,7 +970,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `/api/client-event` client 已覆盖 IBCLC completion payload、auth/header contract 和 best-effort failure
 [x] Flutter Agent Hub 页面骨架已替换根路由占位页，状态展示由 `AgentStreamRunState` 驱动，不依赖 SSE/WebSocket transport 类型
 [x] Flutter Agent Hub composer 已接入 injected `AgentStreamRunner`，覆盖文本发送、fixture streaming 完成态和本地 stop UI
-[x] Flutter App root 已注入默认 Agent Hub SSE runner，endpoint/token/user/thread 支持 dart-define 配置
+[x] Flutter App root 已注入 session-aware Agent Hub SSE runner，endpoint/token/user/thread 支持 secure session 与 dart-define fallback
 [x] Flutter Agent Hub stop 已接入 best-effort `/api/ag-ui-cancel` client，UI 本地停止不等待网络
 [x] Flutter Agent Hub retry 已复用上一轮 `AgentStreamRequest`，覆盖断线后重试成功 flow
 [x] Flutter Agent Hub work panel 已将 `TOOL_CALL_*` / artifact / confirmation events 映射为用户可读进度，不暴露内部 tool name 或 JSON

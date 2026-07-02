@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
@@ -16,6 +17,7 @@ const _defaultApiBaseUrl = String.fromEnvironment(
   defaultValue: 'http://127.0.0.1:8769',
 );
 const _defaultApiToken = String.fromEnvironment('MOMCOZY_API_TOKEN');
+const _defaultRefreshToken = String.fromEnvironment('MOMCOZY_REFRESH_TOKEN');
 const _defaultUserId = String.fromEnvironment(
   'MOMCOZY_DEFAULT_USER_ID',
   defaultValue: 'demo-user',
@@ -32,9 +34,10 @@ const _defaultLocale = String.fromEnvironment(
 class MomCozyApiRuntime {
   MomCozyApiRuntime({
     required this.jsonTransport,
-    required this.userId,
-    required this.babyId,
-    required this.locale,
+    MomCozySession? session,
+    String? userId,
+    String? babyId,
+    String? locale,
     AgentStreamClientEventClient? clientEventClient,
     AgentStreamClientEventClient Function()? clientEventClientFactory,
     ApiMultipartTransport? multipartTransport,
@@ -45,7 +48,16 @@ class MomCozyApiRuntime {
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
     DateTime Function()? now,
-  }) : _clientEventClientFactory =
+  }) : session =
+           session ??
+           MomCozySession.fromEnvironment(
+             accessToken: '',
+             refreshToken: '',
+             userId: userId ?? _defaultUserId,
+             babyId: babyId ?? _defaultBabyId,
+             locale: locale ?? _defaultLocale,
+           ),
+       _clientEventClientFactory =
            clientEventClientFactory ??
            (() => throw StateError('Client event client is not configured.')),
        _multipartTransportFactory =
@@ -76,9 +88,33 @@ class MomCozyApiRuntime {
     String? babyId,
     String? locale,
   }) {
-    final token = _defaultApiToken.trim();
-    final authToken = token.isEmpty ? null : token;
+    final session = MomCozySession.fromEnvironment(
+      accessToken: _defaultApiToken,
+      refreshToken: _defaultRefreshToken,
+      userId: userId ?? _defaultUserId,
+      babyId: babyId ?? _defaultBabyId,
+      locale: locale ?? _defaultLocale,
+    );
+    return MomCozyApiRuntime.fromSession(
+      session,
+      jsonTransport: jsonTransport,
+      clientEventClient: clientEventClient,
+      multipartTransport: multipartTransport,
+      blePlatform: blePlatform,
+      pumpProtocolPlatform: pumpProtocolPlatform,
+    );
+  }
+
+  factory MomCozyApiRuntime.fromSession(
+    MomCozySession session, {
+    ApiJsonTransport? jsonTransport,
+    AgentStreamClientEventClient? clientEventClient,
+    ApiMultipartTransport? multipartTransport,
+    BlePlatform? blePlatform,
+    PumpProtocolPlatform? pumpProtocolPlatform,
+  }) {
     final baseUri = Uri.parse(_defaultApiBaseUrl);
+    final authToken = session.accessToken;
     const defaultHeaders = {'X-Momcozy-Client': 'flutter'};
     return MomCozyApiRuntime(
       jsonTransport:
@@ -106,16 +142,44 @@ class MomCozyApiRuntime {
           ),
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
-      userId: userId ?? _defaultUserId,
-      babyId: babyId ?? _defaultBabyId,
-      locale: locale ?? _defaultLocale,
+      session: session,
+    );
+  }
+
+  static Future<MomCozyApiRuntime> bootstrap({
+    MomCozySessionStore store = const FlutterSecureMomCozySessionStore(),
+    MomCozySession? environmentSession,
+    ApiJsonTransport? jsonTransport,
+    AgentStreamClientEventClient? clientEventClient,
+    ApiMultipartTransport? multipartTransport,
+    BlePlatform? blePlatform,
+    PumpProtocolPlatform? pumpProtocolPlatform,
+  }) async {
+    final manager = MomCozySessionManager(
+      store: store,
+      environmentSession:
+          environmentSession ??
+          MomCozySession.fromEnvironment(
+            accessToken: _defaultApiToken,
+            refreshToken: _defaultRefreshToken,
+            userId: _defaultUserId,
+            babyId: _defaultBabyId,
+            locale: _defaultLocale,
+          ),
+    );
+    final session = await manager.bootstrap();
+    return MomCozyApiRuntime.fromSession(
+      session,
+      jsonTransport: jsonTransport,
+      clientEventClient: clientEventClient,
+      multipartTransport: multipartTransport,
+      blePlatform: blePlatform,
+      pumpProtocolPlatform: pumpProtocolPlatform,
     );
   }
 
   final ApiJsonTransport jsonTransport;
-  final String userId;
-  final String babyId;
-  final String locale;
+  final MomCozySession session;
   final DateTime Function() now;
   final AgentStreamClientEventClient Function() _clientEventClientFactory;
   final ApiMultipartTransport Function() _multipartTransportFactory;
@@ -128,6 +192,12 @@ class MomCozyApiRuntime {
   PumpProtocolPlatform? _pumpProtocolPlatform;
   PumpNativeRuntimeCoordinator? _pumpNativeRuntimeCoordinator;
   late final bool _hasInjectedPumpProtocolPlatform;
+
+  String get userId => session.userId;
+
+  String get babyId => session.babyId;
+
+  String get locale => session.locale;
 
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();
