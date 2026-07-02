@@ -410,10 +410,10 @@ Golden 视觉状态：
 Media 必测：
 
 ```text
-[ ] PDF 打开
-[ ] Image 打开
-[ ] Video 打开
-[ ] 加载失败
+[x] PDF 打开 / 预览入口
+[x] Image 打开 / 预览入口
+[x] Video 打开 / 预览入口
+[x] 加载失败 / 上传失败
 [ ] 返回上一页
 [ ] 横竖屏或尺寸变化
 [ ] 缓存清理
@@ -422,21 +422,21 @@ Media 必测：
 IBCLC 必测：
 
 ```text
-[ ] 协议勾选
-[ ] 未勾选时阻止继续
+[x] 协议勾选
+[x] 未勾选时阻止继续
 [ ] 跳转 vendor/H5/native flow
 [ ] 返回后 viewport 和 route 状态正确
-[ ] 网络失败
+[x] 网络失败
 ```
 
 Hospital Bag 必测：
 
 ```text
-[ ] card 列表加载
-[ ] cart update
+[x] card 列表加载
+[x] cart update
 [ ] 删除 item
-[ ] 恢复默认
-[ ] API 失败
+[x] 恢复默认
+[x] API 失败
 ```
 
 ---
@@ -579,6 +579,9 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 权限拒绝、扫描结果和扫描失败状态
 [x] Flutter `/pump` widget tests 已覆盖 session 启动/暂停/恢复/结束和 workstate 上传失败状态
 [x] Flutter `/calibration` widget tests 已覆盖无设备失败提示、保存校准和保存后进入 Pump
+[x] Flutter `/media-viewer` widget tests 已覆盖 PDF/Image/Video 预览入口、示例上传成功和上传失败 fallback
+[x] Flutter `/ibclc-chat.html` widget tests 已覆盖协议勾选、未勾选阻止继续、事件写回成功和网络失败本地入队
+[x] Flutter `/hospital-bag-cart` widget tests 已覆盖清单加载、cart update、恢复默认和 API 失败 fallback
 ```
 
 ### 7.3 语音合同

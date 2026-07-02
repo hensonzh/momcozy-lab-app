@@ -752,6 +752,41 @@ void main() {
       expect(multipart.lastFile?.name, 'pump-display-fixture.png');
     });
 
+    testWidgets(
+      'media page switches preview types and surfaces upload failure',
+      (tester) async {
+        final multipart = FixtureApiMultipartTransport(const {
+          'http_status': 503,
+          'status_text': 'Service Unavailable',
+        });
+
+        await tester.pumpWidget(
+          _FeaturePageHost(
+            route: _route('/media-viewer'),
+            multipartTransport: multipart,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('PDF 预览'), findsOneWidget);
+
+        await tester.tap(find.text('图片'));
+        await tester.pumpAndSettle();
+        expect(find.text('图片预览'), findsOneWidget);
+
+        await tester.tap(find.text('视频'));
+        await tester.pumpAndSettle();
+        expect(find.text('视频预览'), findsOneWidget);
+
+        await tester.ensureVisible(find.byTooltip('上传'));
+        await tester.tap(find.byTooltip('上传'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('媒体服务暂不可用，请稍后重试。'), findsOneWidget);
+        expect(multipart.lastPath, mediaUploadEndpoint);
+      },
+    );
+
     testWidgets('IBCLC page posts client event through runtime client', (
       tester,
     ) async {
@@ -796,6 +831,41 @@ void main() {
       expect(body['metadata'], containsPair('source', 'ibclc-chat'));
     });
 
+    testWidgets('IBCLC page enters local queue when event sync fails', (
+      tester,
+    ) async {
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 503,
+          body: '{"error":"unavailable"}',
+        ),
+      );
+      final client = AgentStreamClientEventClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
+          token: 'test-token',
+        ),
+        connector: connector,
+      );
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/ibclc-chat.html'),
+          clientEventClient: client,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('已进入咨询队列'), findsOneWidget);
+      expect(find.text('本地已进入队列，稍后重试同步。'), findsOneWidget);
+      expect(connector.uri!.path, '/api/client-event');
+    });
+
     testWidgets('hospital bag page syncs cart changes through repository', (
       tester,
     ) async {
@@ -817,6 +887,55 @@ void main() {
 
       expect(find.text('2/3 已准备'), findsOneWidget);
       expect(find.text('购物车已同步'), findsOneWidget);
+    });
+
+    testWidgets('hospital bag page handles sync failure and default restore', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/hospital-bag-cart'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            hospitalBagCartUpdateEndpoint: const {
+              'http_status': 500,
+              'status_text': 'Server Error',
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(Checkbox).at(1));
+      await tester.pumpAndSettle();
+
+      expect(find.text('2/3 已准备'), findsOneWidget);
+      expect(find.text('本地清单已更新，稍后重试同步。'), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/hospital-bag-cart'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            hospitalBagCartUpdateEndpoint: const {
+              'status': 200,
+              'data': {'message': '默认清单已恢复', 'synced_count': 3},
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(Checkbox).at(1));
+      await tester.pumpAndSettle();
+      expect(find.text('2/3 已准备'), findsOneWidget);
+
+      await tester.tap(find.text('恢复默认清单'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('1/3 已准备'), findsOneWidget);
+      expect(find.text('默认清单已恢复'), findsOneWidget);
     });
 
     testWidgets('device subpages read and update BLE runtime state', (

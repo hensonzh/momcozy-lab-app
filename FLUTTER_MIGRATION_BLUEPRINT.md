@@ -994,6 +994,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Agent Hub citation/reference links 已支持索引/标题白名单渲染和点击回调，UI 不展示完整外部 URL
 [x] Flutter Agent Hub history restore/new session UI contract 已覆盖：历史消息可注入渲染，新会话清空本地状态并预留 runtime thread reset 回调
 [x] Flutter Agent Hub auto-reply/notification voice playback coordinator 已覆盖优先级、阻塞、打断和 UI 播放状态；平台 TTS driver 留给 native/audio 集成
+[x] Flutter Media/IBCLC/Hospital Bag 页面已覆盖媒体预览切换、上传失败 fallback、咨询事件网络失败本地入队、待产包恢复默认和 API 失败 fallback
 ```
 
 ---
