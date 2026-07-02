@@ -317,20 +317,20 @@ flutter_app/
    - 如果 Android 已经验证稳定，短期可包装现有 Java。
 4. 用真泵做 P0 smoke 后再接入 UI。
 
-必须验证：
+必须验证。以下勾选代表 Dart protocol fixture、fake platform 和 Android MethodChannel 合同已覆盖；真实泵、真实通知和系统回收仍以 L4 device lab 为准：
 
 ```text
-[ ] F0 获取设备信息
-[ ] F2 设置 RTC
-[ ] B0 设置工作模式
-[ ] B1 设置吸奶参数
-[ ] B2 设置 flexible force line
-[ ] B3 设置 lactation curve
-[ ] BF 结束运行
-[ ] E1 设备状态解析
-[ ] 左右设备状态隔离
-[ ] 断线重连
-[ ] app killed 后恢复 native 已连接设备
+[x] F0 获取设备信息
+[x] F2 设置 RTC
+[x] B0 设置工作模式
+[x] B1 设置吸奶参数
+[x] B2 设置 flexible force line
+[x] B3 设置 lactation curve
+[x] BF 结束运行
+[x] E1 设备状态解析
+[x] 左右设备状态隔离
+[x] 断线重连
+[x] app killed 后恢复 native 已连接设备
 ```
 
 ### 6.2 Pump Session 生命周期
@@ -540,7 +540,8 @@ AgentHub UI
 [ ] 真泵基本命令可发送和解析
 [ ] Pump foreground service 可启动、更新、停止
 [x] 通知点击能跳转 Flutter route intent
-[ ] AG-UI fixture 和真实 stream 均可解析
+[x] AG-UI fixture 可解析
+[ ] AG-UI 真实 stream 可解析
 ```
 
 ### Phase 3: Device + Pump Foundation
@@ -560,11 +561,11 @@ AgentHub UI
 退出条件：
 
 ```text
-[ ] 单侧设备可连接和控制
-[ ] 双侧设备状态不串扰
-[ ] 校准数据可保存并用于 Pump
+[x] 单侧设备可连接和控制
+[x] 双侧设备状态不串扰
+[x] 校准数据可保存并用于 Pump
 [ ] Pump session 前后台恢复通过
-[ ] summary/milk record/Agent context 只上传一次
+[x] summary/milk record/Agent context 只上传一次
 [ ] 真泵 P0 smoke 通过
 ```
 

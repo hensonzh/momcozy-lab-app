@@ -427,11 +427,12 @@ class FakeBlePlatform implements BlePlatform {
   Future<void> disconnect(String deviceId) async {
     final current = _deviceOrThrow(deviceId);
     _devices[deviceId] = current.copyWith(connected: false);
+    _notificationKeys.removeWhere((key) => key.startsWith('$deviceId::'));
   }
 
   @override
   Future<List<int>> read(String deviceId, String characteristicUuid) async {
-    _deviceOrThrow(deviceId);
+    _connectedDeviceOrThrow(deviceId);
     return List<int>.from(
       _readValues[_key(deviceId, characteristicUuid)] ?? const [],
     );
@@ -460,7 +461,7 @@ class FakeBlePlatform implements BlePlatform {
     String deviceId,
     String characteristicUuid,
   ) async {
-    _deviceOrThrow(deviceId);
+    _connectedDeviceOrThrow(deviceId);
     _notificationKeys.add(_key(deviceId, characteristicUuid));
   }
 
@@ -484,7 +485,7 @@ class FakeBlePlatform implements BlePlatform {
     String characteristicUuid,
     List<int> bytes,
   ) {
-    _deviceOrThrow(deviceId);
+    _connectedDeviceOrThrow(deviceId);
     writes.add({
       'method': method,
       'deviceId': deviceId,
@@ -497,6 +498,14 @@ class FakeBlePlatform implements BlePlatform {
     final device = _devices[deviceId];
     if (device == null) {
       throw StateError('Unknown BLE device: $deviceId');
+    }
+    return device;
+  }
+
+  BleDeviceSnapshot _connectedDeviceOrThrow(String deviceId) {
+    final device = _deviceOrThrow(deviceId);
+    if (!device.connected) {
+      throw StateError('BLE device is not connected: $deviceId');
     }
     return device;
   }
