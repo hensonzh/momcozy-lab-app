@@ -6,8 +6,18 @@ enum AgentVoicePhase {
   transcribing,
   playing,
   cancelled,
+  permissionDenied,
   error,
 }
+
+enum AgentVoiceInputPermissionState {
+  unknown,
+  granted,
+  denied,
+  permanentlyDenied,
+}
+
+enum AgentVoiceInputResultStatus { transcribed, empty, permissionDenied }
 
 enum AgentVoicePlaybackSource {
   autoReply,
@@ -68,12 +78,146 @@ class AgentVoiceState {
     );
   }
 
+  AgentVoiceState markPermissionDenied(
+    AgentVoiceInputPermissionState permissionState,
+  ) {
+    return AgentVoiceState(
+      phase: AgentVoicePhase.permissionDenied,
+      transcriptDraft: transcriptDraft,
+      errorMessage: switch (permissionState) {
+        AgentVoiceInputPermissionState.permanentlyDenied => '麦克风权限已关闭',
+        _ => '麦克风权限未开启',
+      },
+    );
+  }
+
   AgentVoiceState fail(Object error) {
     return AgentVoiceState(
       phase: AgentVoicePhase.error,
       transcriptDraft: transcriptDraft,
       errorMessage: error.toString(),
     );
+  }
+}
+
+class AgentVoiceRecording {
+  const AgentVoiceRecording({
+    required this.name,
+    required this.mimeType,
+    this.bytes = const <int>[],
+    this.path,
+    this.durationMs,
+  });
+
+  final String name;
+  final String mimeType;
+  final List<int> bytes;
+  final String? path;
+  final int? durationMs;
+
+  int get sizeBytes => bytes.length;
+
+  bool get isEmpty {
+    return bytes.isEmpty && (path == null || path!.trim().isEmpty);
+  }
+}
+
+abstract interface class AgentVoiceRecorder {
+  Future<AgentVoiceInputPermissionState> permissionState();
+  Future<AgentVoiceInputPermissionState> requestPermission();
+  Future<void> start();
+  Future<AgentVoiceRecording?> stop();
+  Future<void> cancel();
+}
+
+abstract interface class AgentVoiceTranscriber {
+  Future<String?> transcribe(AgentVoiceRecording recording);
+}
+
+class AgentVoiceInputResult {
+  const AgentVoiceInputResult._({
+    required this.status,
+    this.text,
+    this.permissionState,
+  });
+
+  factory AgentVoiceInputResult.fromText(String? text) {
+    final trimmed = text?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return const AgentVoiceInputResult.empty();
+    }
+    return AgentVoiceInputResult._(
+      status: AgentVoiceInputResultStatus.transcribed,
+      text: trimmed,
+    );
+  }
+
+  const AgentVoiceInputResult.empty()
+    : this._(status: AgentVoiceInputResultStatus.empty);
+
+  const AgentVoiceInputResult.permissionDenied(
+    AgentVoiceInputPermissionState permissionState,
+  ) : this._(
+        status: AgentVoiceInputResultStatus.permissionDenied,
+        permissionState: permissionState,
+      );
+
+  final AgentVoiceInputResultStatus status;
+  final String? text;
+  final AgentVoiceInputPermissionState? permissionState;
+}
+
+class AgentVoiceInputController {
+  const AgentVoiceInputController({
+    required this.recorder,
+    required this.transcriber,
+  });
+
+  final AgentVoiceRecorder recorder;
+  final AgentVoiceTranscriber transcriber;
+
+  Future<AgentVoiceInputResult> captureAndTranscribe() async {
+    final permission = await _ensurePermission();
+    if (permission != AgentVoiceInputPermissionState.granted) {
+      return AgentVoiceInputResult.permissionDenied(permission);
+    }
+
+    var recordingStarted = false;
+    var recordingStopped = false;
+    try {
+      await recorder.start();
+      recordingStarted = true;
+      final recording = await recorder.stop();
+      recordingStopped = true;
+      if (recording == null || recording.isEmpty) {
+        return const AgentVoiceInputResult.empty();
+      }
+      return AgentVoiceInputResult.fromText(
+        await transcriber.transcribe(recording),
+      );
+    } catch (_) {
+      if (recordingStarted && !recordingStopped) {
+        await _cancelRecorderQuietly();
+      }
+      rethrow;
+    }
+  }
+
+  Future<AgentVoiceInputPermissionState> _ensurePermission() async {
+    final current = await recorder.permissionState();
+    if (current == AgentVoiceInputPermissionState.granted ||
+        current == AgentVoiceInputPermissionState.permanentlyDenied) {
+      return current;
+    }
+    return recorder.requestPermission();
+  }
+
+  Future<void> _cancelRecorderQuietly() async {
+    try {
+      await recorder.cancel();
+    } catch (_) {
+      // Best-effort cleanup; preserve the original recording/transcription error.
+    }
   }
 }
 

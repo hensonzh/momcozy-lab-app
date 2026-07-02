@@ -572,6 +572,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/hospital-bag-cart` widget tests 已覆盖清单勾选后通过 runtime repository 同步购物车状态
 [x] Flutter `/community` 与 `/w1` widget tests 已覆盖内容打开事件写回和 W1 教程跳转
 [x] Flutter Agent voice typed repository tests 已覆盖 STT multipart 分片、timeout fallback、barge-in cancel、realtime PCM stream、realtime voice session frames 和 WS disconnect
+[x] Flutter Agent voice input controller tests 已覆盖 microphone permission 未请求/拒绝、录音 start/stop、转写回填和失败清理
 ```
 
 ### 7.3 语音合同
@@ -581,17 +582,17 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 必须覆盖：
 
 ```text
-[ ] 麦克风 permission 未请求
-[ ] 麦克风 permission 拒绝
-[ ] 开始录音
-[ ] 停止录音
+[x] 麦克风 permission 未请求
+[x] 麦克风 permission 拒绝
+[x] 开始录音
+[x] 停止录音
 [x] 分片上传
 [x] 分片转写成功
 [x] 分片转写失败
 [x] realtime voice session 创建
 [x] realtime voice stream cancel / barge-in
 [x] TTS 播放协调和 UI 入口（平台 TTS driver 待 native/audio 集成）
-[ ] 通知语音打断当前播放
+[x] 通知语音打断当前播放
 [x] 用户手动打断播放的 transport cancel 合同
 [x] 语音状态和文本 stream 状态不互相污染
 ```
