@@ -229,7 +229,7 @@ class _StatusProbe implements StagingSmokeProbe {
 
   @override
   Future<void> run() async {
-    await repository.fetchOverview(userId: config.session.userId);
+    await repository.fetchOverview();
   }
 }
 
@@ -273,15 +273,12 @@ class _RecordsProbe implements StagingSmokeProbe {
   Future<void> run() async {
     final today = DateTime.now();
     await repository.fetchFeedingRecords(
-      userId: config.session.userId,
       date: today,
     );
     await repository.fetchPumpMilkRecords(
-      userId: config.session.userId,
       date: today,
     );
     await repository.fetchGrowthRecords(
-      userId: config.session.userId,
       babyId: config.session.babyId,
     );
   }
@@ -327,7 +324,6 @@ class _HospitalBagProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     await repository.syncCart(
-      userId: config.session.userId,
       items: const [
         HospitalBagPackedItem(
           id: 'flutter-staging-smoke',
@@ -357,7 +353,6 @@ class _MediaUploadProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     await repository.uploadFile(
-      userId: config.session.userId,
       file: const ApiUploadFile(
         name: 'flutter-staging-smoke.txt',
         mimeType: 'text/plain',

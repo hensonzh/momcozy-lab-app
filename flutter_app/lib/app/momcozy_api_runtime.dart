@@ -267,6 +267,10 @@ class MomCozyApiRuntime {
   Future<void> startPumpNativeRuntime({
     bool subscribeConnectedDevices = true,
   }) async {
+    await pumpNativeRuntimeCoordinator.snapshotSync.upload.setConfig(
+      apiBaseUrl: _defaultApiBaseUrl,
+      bearerToken: session.accessToken,
+    );
     await pumpNativeRuntimeCoordinator.start(
       subscribeConnectedDevices: subscribeConnectedDevices,
     );

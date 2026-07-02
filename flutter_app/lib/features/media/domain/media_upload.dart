@@ -2,7 +2,6 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 
 abstract interface class MediaRepository {
   Future<UploadedMediaFile> uploadFile({
-    required String userId,
     required ApiUploadFile file,
     String? idempotencyKey,
   });

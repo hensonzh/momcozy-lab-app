@@ -1,5 +1,5 @@
 abstract interface class StatusRepository {
-  Future<StatusOverview> fetchOverview({required String userId});
+  Future<StatusOverview> fetchOverview();
 }
 
 class StatusOverview {

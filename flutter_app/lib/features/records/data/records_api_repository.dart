@@ -16,7 +16,6 @@ class RecordsApiRepository
 
   @override
   Future<List<FeedingRecord>> fetchFeedingRecords({
-    required String userId,
     required DateTime date,
   }) async {
     final range = _dayRange(date);
@@ -41,7 +40,6 @@ class RecordsApiRepository
 
   @override
   Future<List<PumpMilkRecord>> fetchPumpMilkRecords({
-    required String userId,
     required DateTime date,
   }) async {
     final range = _dayRange(date);
@@ -66,7 +64,6 @@ class RecordsApiRepository
 
   @override
   Future<List<GrowthRecord>> fetchGrowthRecords({
-    required String userId,
     required String babyId,
   }) async {
     final response = await transport.getJson(
