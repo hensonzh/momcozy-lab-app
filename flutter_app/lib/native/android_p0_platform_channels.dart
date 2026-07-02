@@ -536,6 +536,10 @@ BleDeviceSnapshot _deviceSnapshotFromMap(Map<String, Object?> map) {
     deviceId: _string(map['deviceId']),
     deviceName: _string(map['deviceName'] ?? map['name'] ?? map['localName']),
     connected: map['connected'] == true,
+    battery: _nullableIntValue(
+      map['battery'] ?? map['batteryPct'] ?? map['batteryPercent'],
+    ),
+    rssi: _nullableIntValue(map['rssi']),
   );
 }
 
@@ -606,6 +610,13 @@ int _intValue(Object? raw) {
   if (raw is int) return raw;
   if (raw is num) return raw.round();
   return int.tryParse('$raw') ?? 0;
+}
+
+int? _nullableIntValue(Object? raw) {
+  if (raw == null) return null;
+  if (raw is int) return raw;
+  if (raw is num) return raw.round();
+  return int.tryParse('$raw');
 }
 
 String _string(Object? raw) => raw == null ? '' : '$raw';

@@ -25,12 +25,16 @@ class BleDeviceSnapshot {
     required this.deviceId,
     required this.deviceName,
     this.connected = false,
+    this.battery,
+    this.rssi,
   });
 
   final String side;
   final String deviceId;
   final String deviceName;
   final bool connected;
+  final int? battery;
+  final int? rssi;
 
   BleDeviceSnapshot copyWith({bool? connected}) {
     return BleDeviceSnapshot(
@@ -38,6 +42,8 @@ class BleDeviceSnapshot {
       deviceId: deviceId,
       deviceName: deviceName,
       connected: connected ?? this.connected,
+      battery: battery,
+      rssi: rssi,
     );
   }
 }

@@ -1056,6 +1056,7 @@ class _DevicePageState extends State<_DevicePage> {
   List<BleDeviceSnapshot> _connectedDevices = const [];
   List<BleDeviceSnapshot> _scanResults = const [];
   String? _bleError;
+  bool _scanAttempted = false;
   StreamSubscription<BleDeviceSnapshot>? _scanSub;
   StreamSubscription<BleScanFailure>? _scanFailureSub;
 
@@ -1128,6 +1129,8 @@ class _DevicePageState extends State<_DevicePage> {
       setState(() {
         _permissionState = permission;
         _isScanning = true;
+        _scanAttempted = true;
+        _scanResults = const [];
         _bleError = null;
       });
     } catch (error) {
@@ -1156,6 +1159,28 @@ class _DevicePageState extends State<_DevicePage> {
       _bleError = failure.message;
       _isScanning = false;
     });
+  }
+
+  Future<void> _connectScanResult(BleDeviceSnapshot snapshot) async {
+    final ble = _blePlatform;
+    if (ble == null) return;
+    try {
+      await ble.connect(snapshot.deviceId);
+      await ble.stopScan();
+      await _refreshBleState();
+      if (!mounted) return;
+      setState(() {
+        _isScanning = false;
+        _bleError = '${snapshot.deviceName} 已连接';
+      });
+    } catch (_) {
+      await ble.stopScan();
+      if (!mounted) return;
+      setState(() {
+        _isScanning = false;
+        _bleError = '连接 ${snapshot.deviceName} 失败，请重试。';
+      });
+    }
   }
 
   @override
@@ -1208,27 +1233,37 @@ class _DevicePageState extends State<_DevicePage> {
           side: '左侧',
           name: leftDevice?.deviceName ?? '等待连接',
           state: leftDevice?.connected == true ? '已连接' : '未连接',
-          battery: '--',
+          battery: _deviceBatteryLabel(leftDevice),
           accent: widget.accent,
         ),
         _DeviceSideTile(
           side: '右侧',
           name: rightDevice?.deviceName ?? '等待连接',
           state: rightDevice?.connected == true ? '已连接' : '未连接',
-          battery: '--',
+          battery: _deviceBatteryLabel(rightDevice),
           accent: const Color(0xff7f6a75),
         ),
-        if (_scanResults.isNotEmpty) ...[
+        if (_scanAttempted) ...[
           const SizedBox(height: 8),
           const _SectionTitle('扫描结果'),
-          for (final device in _scanResults.take(3))
-            _ActionTile(
-              icon: Icons.bluetooth_searching,
-              title: device.deviceName,
-              subtitle: '${device.side} · ${device.deviceId}',
-              accent: widget.accent,
-              trailing: const Icon(Icons.link_rounded),
-            ),
+          if (_scanResults.isEmpty)
+            const _ActionTile(
+              icon: Icons.bluetooth_disabled_rounded,
+              title: '暂无扫描结果',
+              subtitle: '请确认设备已开机并靠近手机后重试。',
+              accent: Color(0xff7f6a75),
+              trailing: Icon(Icons.refresh_rounded),
+            )
+          else
+            for (final device in _scanResults.take(3))
+              _ActionTile(
+                icon: Icons.bluetooth_searching,
+                title: device.deviceName,
+                subtitle: _scanResultSubtitle(device),
+                accent: widget.accent,
+                onTap: () => _connectScanResult(device),
+                trailing: const Icon(Icons.link_rounded),
+              ),
         ],
         const SizedBox(height: 8),
         const _SectionTitle('设备入口'),
@@ -1259,6 +1294,22 @@ class _DevicePageState extends State<_DevicePage> {
     }
     return null;
   }
+}
+
+String _deviceBatteryLabel(BleDeviceSnapshot? device) {
+  final battery = device?.battery;
+  if (battery == null) return '--';
+  return '$battery%';
+}
+
+String _scanResultSubtitle(BleDeviceSnapshot device) {
+  final details = <String>[
+    device.side,
+    device.deviceId,
+    if (device.battery != null) '电量 ${device.battery}%',
+    if (device.rssi != null) 'RSSI ${device.rssi}',
+  ];
+  return details.join(' · ');
 }
 
 String _permissionLabel(BlePermissionState state) {

@@ -628,6 +628,8 @@ void main() {
             deviceId: 'left-connected',
             deviceName: 'S12 Pro L',
             connected: true,
+            battery: 87,
+            rssi: -54,
           ),
           BleDeviceSnapshot(
             side: 'R',
@@ -646,6 +648,7 @@ void main() {
 
       expect(find.text('左侧 S12 Pro L'), findsOneWidget);
       expect(find.text('右侧 S12 Pro R'), findsOneWidget);
+      expect(find.textContaining('电量 87%'), findsOneWidget);
       expect(find.textContaining('已恢复 2 台已连接设备'), findsOneWidget);
 
       await tester.tap(find.widgetWithText(FilledButton, '扫描'));
@@ -656,17 +659,96 @@ void main() {
           side: 'L',
           deviceId: 'nearby-left',
           deviceName: 'Nearby Pump L',
+          battery: 76,
+          rssi: -48,
+        ),
+      );
+      ble.addScanResult(
+        const BleDeviceSnapshot(
+          side: 'R',
+          deviceId: 'nearby-right',
+          deviceName: 'Nearby Pump R',
+          battery: 74,
+          rssi: -52,
         ),
       );
       await tester.pump();
 
       expect(find.text('Nearby Pump L'), findsOneWidget);
+      expect(find.text('Nearby Pump R'), findsOneWidget);
       expect(find.textContaining('nearby-left'), findsOneWidget);
+      expect(find.textContaining('电量 76%'), findsOneWidget);
+      expect(find.textContaining('RSSI -48'), findsOneWidget);
 
       ble.failScan(const BleScanFailure(code: 'timeout', message: '扫描超时'));
       await tester.pump();
 
       expect(find.text('扫描超时'), findsOneWidget);
+    });
+
+    testWidgets('device page renders scan empty and connect outcomes', (
+      tester,
+    ) async {
+      final ble = FakeBlePlatform(
+        initialPermission: BlePermissionState.granted,
+      );
+      addTearDown(ble.dispose);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/device'), blePlatform: ble),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
+      await tester.pump();
+
+      expect(find.text('暂无扫描结果'), findsOneWidget);
+
+      ble.addScanResult(
+        const BleDeviceSnapshot(
+          side: 'L',
+          deviceId: 'nearby-left',
+          deviceName: 'Nearby Pump L',
+          battery: 76,
+          rssi: -48,
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('Nearby Pump L'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Nearby Pump L 已连接'), findsOneWidget);
+      expect(find.text('左侧 Nearby Pump L'), findsOneWidget);
+      expect(find.textContaining('状态 已连接 · 电量 76%'), findsOneWidget);
+
+      final failingBle = _ConnectFailingBlePlatform(
+        initialPermission: BlePermissionState.granted,
+      );
+      addTearDown(failingBle.dispose);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/device'), blePlatform: failingBle),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
+      await tester.pump();
+      failingBle.addScanResult(
+        const BleDeviceSnapshot(
+          side: 'R',
+          deviceId: 'nearby-right',
+          deviceName: 'Nearby Pump R',
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('Nearby Pump R'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('连接 Nearby Pump R 失败，请重试。'), findsOneWidget);
     });
 
     testWidgets('calibration page saves gears through pump protocol runtime', (
@@ -1276,6 +1358,15 @@ class _ThrowingPumpProtocolPlatform implements PumpProtocolPlatform {
   @override
   Future<void> setStartStopForSide(PumpSide side, int startStop) async {
     throw error;
+  }
+}
+
+class _ConnectFailingBlePlatform extends FakeBlePlatform {
+  _ConnectFailingBlePlatform({super.initialPermission});
+
+  @override
+  Future<void> connect(String deviceId) async {
+    throw StateError('connect failed');
   }
 }
 
