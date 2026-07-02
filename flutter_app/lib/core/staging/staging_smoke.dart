@@ -252,7 +252,7 @@ class _ScheduleProbe implements StagingSmokeProbe {
   final ScheduleApiRepository repository;
 
   @override
-  String get name => 'schedule /v1/plan/query-task';
+  String get name => 'schedule /v1/plans/tasks/list';
 
   @override
   bool get requiresMutation => false;
@@ -262,10 +262,7 @@ class _ScheduleProbe implements StagingSmokeProbe {
 
   @override
   Future<void> run() async {
-    await repository.fetchDayPlan(
-      userId: config.session.userId,
-      day: DateTime.now(),
-    );
+    await repository.fetchDayPlan(day: DateTime.now());
   }
 }
 

@@ -36,6 +36,9 @@ Already present:
   `/v1/files/upload` contracts without sending `user_id` as authority.
 - Status repository targets production `/v1/profile/me` and
   `/v1/profile/infants` contracts.
+- Schedule repository targets production `/v1/plans/tasks/list` and maps
+  `PlanTaskRead` into the existing day-plan domain model without sending
+  `user_id` as authority.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -83,8 +86,8 @@ Main gaps:
    validator in both repos.
 2. Wire production auth/session into app routing and runtime replacement,
    because every owner-scoped feature depends on it.
-3. Continue migrating plans, pump workstate, cart, and voice repositories to
-   `/v1`, so `user_id` can stop being passed as authority.
+3. Continue migrating pump workstate, cart, and voice repositories to `/v1`, so
+   `user_id` can stop being passed as authority.
 4. Migrate agent chat after the runtime API adapter exists, because stream
    replay and action confirmation need a different state model from the legacy
    AG-UI transport.

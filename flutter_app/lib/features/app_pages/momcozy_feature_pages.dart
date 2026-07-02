@@ -860,10 +860,7 @@ class _SchedulePageState extends State<_SchedulePage> {
   }
 
   Future<ScheduleDayPlan> _fetchDayPlan(MomCozyApiRuntime runtime) {
-    return runtime.scheduleRepository.fetchDayPlan(
-      userId: runtime.userId,
-      day: _selectedDay,
-    );
+    return runtime.scheduleRepository.fetchDayPlan(day: _selectedDay);
   }
 
   void _reloadDayPlan() {
