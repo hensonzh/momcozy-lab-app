@@ -230,6 +230,7 @@ features/
 [x] Flutter Schedule 页面已覆盖日期切换、任务完成、提醒开关、本地日期到 UTC timestamp 和空/失败态；添加/删除/通知跳转仍按后续 parity 推进
 [x] Flutter Status 页面已覆盖妈妈/宝宝 tab、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 [x] Flutter Device 页面已覆盖无设备、左右已连接、BLE 权限拒绝、扫描结果和扫描失败状态；真实 scan/connect 留给设备实验室
+[x] Flutter Pump/Calibration 页面已覆盖 session 启动/暂停/恢复/结束、workstate 失败重试、无设备校准失败提示和保存后进入 Pump
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

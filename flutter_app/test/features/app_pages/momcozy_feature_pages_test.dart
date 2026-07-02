@@ -527,6 +527,55 @@ void main() {
       expect(find.text('Workstate accepted'), findsOneWidget);
     });
 
+    testWidgets('pump page moves through local session states', (tester) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('待开始'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await tester.pumpAndSettle();
+      expect(find.text('进行中'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(OutlinedButton, '暂停'));
+      await tester.pumpAndSettle();
+      expect(find.text('已暂停'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, '恢复'));
+      await tester.pumpAndSettle();
+      expect(find.text('进行中'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(OutlinedButton, '结束'));
+      await tester.pumpAndSettle();
+      expect(find.text('待开始'), findsOneWidget);
+    });
+
+    testWidgets('pump page renders upload failure state', (tester) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/pump'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            pumpWorkstateEndpoint: const {
+              'http_status': 500,
+              'status_text': 'Server Error',
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Workstate 同步失败'), findsOneWidget);
+      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('重试同步'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Workstate 同步失败'), findsOneWidget);
+    });
+
     testWidgets('device page reads connected devices from BLE runtime', (
       tester,
     ) async {
@@ -648,6 +697,26 @@ void main() {
       );
 
       await pumpProtocol.dispose();
+    });
+
+    testWidgets('calibration page surfaces missing device failures', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/calibration'),
+          pumpProtocolPlatform: _ThrowingPumpProtocolPlatform(
+            StateError('No BLE device connected'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.widgetWithText(FilledButton, '保存并进入泵奶'));
+      await tester.tap(find.widgetWithText(FilledButton, '保存并进入泵奶'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('未检测到左右设备连接，请先在设备页连接后再保存。'), findsOneWidget);
     });
 
     testWidgets('media page uploads sample media through runtime repository', (
@@ -878,6 +947,7 @@ class _FeaturePageHost extends StatelessWidget {
     this.jsonTransport,
     this.multipartTransport,
     this.blePlatform,
+    this.pumpProtocolPlatform,
   });
 
   final MomCozyRouteConfig route;
@@ -885,6 +955,7 @@ class _FeaturePageHost extends StatelessWidget {
   final FixtureApiJsonTransportByPath? jsonTransport;
   final FixtureApiMultipartTransport? multipartTransport;
   final BlePlatform? blePlatform;
+  final PumpProtocolPlatform? pumpProtocolPlatform;
 
   @override
   Widget build(BuildContext context) {
@@ -894,6 +965,7 @@ class _FeaturePageHost extends StatelessWidget {
         jsonTransport: jsonTransport,
         multipartTransport: multipartTransport,
         blePlatform: blePlatform,
+        pumpProtocolPlatform: pumpProtocolPlatform,
       ),
       child: MaterialApp(
         theme: momCozyTheme(),
@@ -1027,6 +1099,65 @@ MomCozyApiRuntime _appRuntime({
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7),
   );
+}
+
+class _ThrowingPumpProtocolPlatform implements PumpProtocolPlatform {
+  const _ThrowingPumpProtocolPlatform(this.error);
+
+  final Object error;
+
+  @override
+  Stream<PumpProtocolCommand> get commands => const Stream.empty();
+
+  @override
+  Future<void> adjustGearForSide(PumpSide side, int gear) async {
+    throw error;
+  }
+
+  @override
+  Future<void> endRun(PumpSide side) async {
+    throw error;
+  }
+
+  @override
+  Future<void> getDeviceInfo(PumpSide side) async {
+    throw error;
+  }
+
+  @override
+  Future<void> powerOff(PumpSide side, {bool reboot = false}) async {
+    throw error;
+  }
+
+  @override
+  Future<void> queryDeviceStatus(PumpSide side) async {
+    throw error;
+  }
+
+  @override
+  Future<void> setModeForSide(PumpSide side, int mode) async {
+    throw error;
+  }
+
+  @override
+  Future<void> setPumpParams(PumpSide side, PumpParamsRequest request) async {
+    throw error;
+  }
+
+  @override
+  Future<void> setRtc(PumpSide side, int utcSeconds) async {
+    throw error;
+  }
+
+  @override
+  Future<void> setSceneForSide(PumpSide side, int scene) async {
+    throw error;
+  }
+
+  @override
+  Future<void> setStartStopForSide(PumpSide side, int startStop) async {
+    throw error;
+  }
 }
 
 class _RecordingControlHttpConnector
