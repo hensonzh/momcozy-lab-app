@@ -236,18 +236,18 @@ test/fixtures/api/
 必测：
 
 ```text
-[ ] 首次进入状态
+[x] 首次进入状态
 [ ] 历史会话恢复
 [ ] 新会话
-[ ] 文本输入
-[ ] 图片上传
-[ ] 语音输入
-[ ] 发送 loading 状态
-[ ] 取消 / 停止生成
-[ ] AG-UI 文本渐进流式输出
-[ ] 工具进度 / 工作状态
+[x] 文本输入
+[x] 图片输入 / AG-UI image payload
+[x] 语音输入入口 / STT 回填输入框
+[x] 发送 loading 状态
+[x] 取消 / 停止生成
+[x] AG-UI 文本渐进流式输出
+[x] 工具进度 / 工作状态
 [ ] 工具失败状态
-[ ] 失败后重试
+[x] 失败后重试
 [ ] Rich text block 渲染
 [ ] Card 渲染
 [ ] Button action 渲染和点击
@@ -256,11 +256,11 @@ test/fixtures/api/
 [ ] Media link 打开
 [ ] 自动语音播放
 [ ] 通知语音播放
-[ ] 用户 barge-in / 手动打断
+[x] 用户 barge-in / 手动打断 transport cancel contract
 [ ] 长消息换行
-[ ] 空响应
+[x] Empty Agent Hub
 [ ] 后端超时
-[ ] Agent stream 断线和重连 UX
+[x] Agent stream 断线和重试 UX
 [ ] 离线发送失败
 ```
 

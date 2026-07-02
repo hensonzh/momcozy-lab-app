@@ -22,11 +22,21 @@ void main() {
     expect(find.text('准备就绪'), findsOneWidget);
     expect(find.text('我在。'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-composer-input')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-image-button')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-voice-button')), findsOneWidget);
 
     final sendButton = tester.widget<IconButton>(
       find.byKey(const ValueKey('agent-send-button')),
     );
+    final imageButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-image-button')),
+    );
+    final voiceButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-voice-button')),
+    );
     expect(sendButton.onPressed, isNull);
+    expect(imageButton.onPressed, isNull);
+    expect(voiceButton.onPressed, isNull);
   });
 
   testWidgets('Agent Hub sends composer text through the injected runner', (
@@ -68,6 +78,97 @@ void main() {
           ?.text,
       '',
     );
+  });
+
+  testWidgets('Agent Hub attaches image input to the next request', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl:
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+            mimeType: 'image/png',
+            name: 'pump-display.png',
+            size: 68,
+            detail: 'low',
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+    expect(find.text('图片 1'), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Review this display',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests.single.message, 'Review this display');
+    expect(client.requests.single.images, hasLength(1));
+    expect(client.requests.single.images.single.name, 'pump-display.png');
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Agent Hub voice input fills composer without sending', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voiceInput: () async {
+            await Future<void>.delayed(Duration.zero);
+            return '今天左侧奶量偏低';
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('agent-voice-status')), findsOneWidget);
+
+    await tester.pumpAndSettle();
+
+    expect(client.requests, isEmpty);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '今天左侧奶量偏低',
+    );
+    expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests.single.message, '今天左侧奶量偏低');
   });
 
   testWidgets('Agent Hub can locally stop an active run', (tester) async {
