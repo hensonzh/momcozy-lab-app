@@ -363,23 +363,28 @@ void main() {
     ) async {
       final transport = FixtureApiJsonTransportByPath({
         scheduleDayPlanEndpoint: const {
-          'status': 200,
-          'data': {
-            'tasks': <Object?>[
-              {
-                'id': 'pump',
-                'title': '10:30 泵奶',
-                'completed': true,
-                'remind_at': '2026-07-01T02:30:00Z',
-              },
-              {
-                'id': 'feeding',
-                'title': '14:00 喂养',
-                'completed': false,
-                'remind_at': '2026-07-01T06:00:00Z',
-              },
-            ],
-          },
+          'items': <Object?>[
+            {
+              'id': 'pump',
+              'owner_user_id': 'demo-user-fixture',
+              'task_date': '2026-07-01',
+              'task_time': '10:30',
+              'title': '泵奶',
+              'description': '',
+              'status': 'completed',
+              'payload': <String, Object?>{},
+            },
+            {
+              'id': 'feeding',
+              'owner_user_id': 'demo-user-fixture',
+              'task_date': '2026-07-01',
+              'task_time': '14:00',
+              'title': '喂养',
+              'description': '',
+              'status': 'pending',
+              'payload': <String, Object?>{},
+            },
+          ],
         },
       });
 
@@ -390,8 +395,9 @@ void main() {
 
       expect(
         transport.lastQuery,
-        containsPair('timestamp', _apiTimestamp(DateTime.utc(2026, 7))),
+        containsPair('task_date', '2026-07-01'),
       );
+      expect(transport.lastQuery, isNot(containsPair('user_id', anything)));
       expect(find.text('2 项计划'), findsOneWidget);
       expect(_checkboxesWithValue(tester, true), 1);
 
@@ -400,7 +406,7 @@ void main() {
 
       expect(
         transport.lastQuery,
-        containsPair('timestamp', _apiTimestamp(DateTime(2026, 7, 3))),
+        containsPair('task_date', '2026-07-03'),
       );
 
       await tester.tap(find.text('14:00 喂养'));
@@ -450,17 +456,18 @@ void main() {
           route: _route('/schedule'),
           jsonTransport: FixtureApiJsonTransportByPath({
             scheduleDayPlanEndpoint: const {
-              'status': 200,
-              'data': {
-                'tasks': <Object?>[
-                  {
-                    'id': 'prenatal-check',
-                    'title': '周五产检',
-                    'completed': false,
-                    'remind_at': '2026-07-03T06:00:00Z',
-                  },
-                ],
-              },
+              'items': <Object?>[
+                {
+                  'id': 'prenatal-check',
+                  'owner_user_id': 'demo-user-fixture',
+                  'task_date': '2026-07-03',
+                  'task_time': '14:00',
+                  'title': '周五产检',
+                  'description': '',
+                  'status': 'pending',
+                  'payload': <String, Object?>{},
+                },
+              ],
             },
           }),
         ),
@@ -479,10 +486,7 @@ void main() {
         _FeaturePageHost(
           route: _route('/schedule'),
           jsonTransport: FixtureApiJsonTransportByPath({
-            scheduleDayPlanEndpoint: const {
-              'status': 200,
-              'data': {'tasks': <Object?>[]},
-            },
+            scheduleDayPlanEndpoint: const {'items': <Object?>[]},
           }),
         ),
       );
@@ -1773,10 +1777,6 @@ int _switchesWithValue(WidgetTester tester, bool value) {
       .length;
 }
 
-String _apiTimestamp(DateTime value) {
-  return value.toUtc().toIso8601String().replaceFirst('.000Z', 'Z');
-}
-
 Future<void> _tapScrollableText(WidgetTester tester, String text) async {
   final finder = find.text(text, skipOffstage: false);
   await tester.ensureVisible(finder);
@@ -1922,29 +1922,38 @@ MomCozyApiRuntime _appRuntime({
             ],
           },
           scheduleDayPlanEndpoint: const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'tasks': <Object?>[
-                <String, Object?>{
-                  'id': 'pump',
-                  'title': '10:30 泵奶',
-                  'completed': true,
-                  'remind_at': '2026-07-01T02:30:00Z',
-                },
-                <String, Object?>{
-                  'id': 'feeding',
-                  'title': '14:00 喂养',
-                  'completed': false,
-                  'remind_at': '2026-07-01T06:00:00Z',
-                },
-                <String, Object?>{
-                  'id': 'summary',
-                  'title': '20:30 晚间复盘',
-                  'completed': false,
-                  'remind_at': '2026-07-01T12:30:00Z',
-                },
-              ],
-            },
+            'items': <Object?>[
+              <String, Object?>{
+                'id': 'pump',
+                'owner_user_id': 'demo-user-fixture',
+                'task_date': '2026-07-01',
+                'task_time': '10:30',
+                'title': '泵奶',
+                'description': '',
+                'status': 'completed',
+                'payload': <String, Object?>{},
+              },
+              <String, Object?>{
+                'id': 'feeding',
+                'owner_user_id': 'demo-user-fixture',
+                'task_date': '2026-07-01',
+                'task_time': '14:00',
+                'title': '喂养',
+                'description': '',
+                'status': 'pending',
+                'payload': <String, Object?>{},
+              },
+              <String, Object?>{
+                'id': 'summary',
+                'owner_user_id': 'demo-user-fixture',
+                'task_date': '2026-07-01',
+                'task_time': '20:30',
+                'title': '晚间复盘',
+                'description': '',
+                'status': 'pending',
+                'payload': <String, Object?>{},
+              },
+            ],
           },
           pumpMilkRecordsEndpoint: const <String, Object?>{
             'status': 200,
