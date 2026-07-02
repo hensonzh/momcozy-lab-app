@@ -34,6 +34,8 @@ Already present:
   headers such as `Idempotency-Key`.
 - Records and media repositories target production `/v1/records/*` and
   `/v1/files/upload` contracts without sending `user_id` as authority.
+- Status repository targets production `/v1/profile/me` and
+  `/v1/profile/infants` contracts.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -81,8 +83,8 @@ Main gaps:
    validator in both repos.
 2. Wire production auth/session into app routing and runtime replacement,
    because every owner-scoped feature depends on it.
-3. Continue migrating profile, plans, pump workstate, cart, and voice
-   repositories to `/v1`, so `user_id` can stop being passed as authority.
+3. Continue migrating plans, pump workstate, cart, and voice repositories to
+   `/v1`, so `user_id` can stop being passed as authority.
 4. Migrate agent chat after the runtime API adapter exists, because stream
    replay and action confirmation need a different state model from the legacy
    AG-UI transport.

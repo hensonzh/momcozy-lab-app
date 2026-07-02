@@ -231,7 +231,7 @@ class _StatusProbe implements StagingSmokeProbe {
   final StatusApiRepository repository;
 
   @override
-  String get name => 'status /v1/mom-baby/info/query';
+  String get name => 'status /v1/profile/me + /v1/profile/infants';
 
   @override
   bool get requiresMutation => false;
