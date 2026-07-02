@@ -424,8 +424,8 @@ IBCLC 必测：
 ```text
 [x] 协议勾选
 [x] 未勾选时阻止继续
-[ ] 跳转 vendor/H5/native flow
-[ ] 返回后 viewport 和 route 状态正确
+[x] 跳转 vendor/H5/native flow
+[x] 返回后 viewport 和 route 状态正确
 [x] 网络失败
 ```
 

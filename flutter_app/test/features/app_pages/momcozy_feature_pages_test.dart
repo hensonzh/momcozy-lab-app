@@ -1455,6 +1455,8 @@ void main() {
       expect(body['thread_id'], 'thread-demo-user-fixture');
       expect(body['locale'], 'zh-CN');
       expect(body['metadata'], containsPair('source', 'ibclc-chat'));
+      expect(body['metadata'], containsPair('handoff', 'vendor_h5_native'));
+      expect(body['metadata'], containsPair('return_to', '/status'));
     });
 
     testWidgets('IBCLC page enters local queue when event sync fails', (
@@ -1490,6 +1492,48 @@ void main() {
       expect(find.text('已进入咨询队列'), findsOneWidget);
       expect(find.text('本地已进入队列，稍后重试同步。'), findsOneWidget);
       expect(connector.uri!.path, '/api/client-event');
+    });
+
+    testWidgets('IBCLC page opens vendor handoff and returns to status route', (
+      tester,
+    ) async {
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 200,
+          body: '{"status":"ok"}',
+        ),
+      );
+      final client = AgentStreamClientEventClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
+          token: 'test-token',
+        ),
+        connector: connector,
+      );
+      final router = createMomCozyRouter(initialLocation: '/ibclc-chat.html');
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          apiRuntime: _appRuntime(clientEventClient: client),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('顾问流程已打开'), findsOneWidget);
+
+      await _scrollToText(tester, '顾问流程已打开');
+      await tester.tap(
+        find.byKey(const ValueKey('ibclc-return-status-button')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
     });
 
     testWidgets('hospital bag page syncs cart changes through repository', (
