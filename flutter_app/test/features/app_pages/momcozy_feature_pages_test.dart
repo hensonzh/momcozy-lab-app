@@ -95,7 +95,7 @@ void main() {
     ) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/calibration')));
       await tester.pump();
-      expect(find.text('舒适档位'), findsOneWidget);
+      expect(find.text('舒适负压调节'), findsOneWidget);
       expect(find.text('/calibration'), findsNothing);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/media-viewer')));
@@ -1215,8 +1215,14 @@ void main() {
         expect(find.textContaining('Calibration L · 电量 83%'), findsOneWidget);
         expect(find.text('右侧设备未连接'), findsOneWidget);
 
+        final leftGearUp = find.byTooltip('提高左侧档位');
+        await tester.drag(
+          find.byKey(const ValueKey('route-page-/calibration')),
+          const Offset(0, -260),
+        );
+        await tester.pumpAndSettle();
         for (var i = 0; i < 3; i += 1) {
-          await tester.tap(find.byTooltip('提高左侧档位'));
+          await tester.tap(leftGearUp);
           await tester.pump();
         }
 
@@ -1239,8 +1245,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      final leftGearUp = find.byTooltip('提高左侧档位');
+      await tester.drag(
+        find.byKey(const ValueKey('route-page-/calibration')),
+        const Offset(0, -260),
+      );
+      await tester.pumpAndSettle();
       for (var i = 0; i < 3; i += 1) {
-        await tester.tap(find.byTooltip('提高左侧档位'));
+        await tester.tap(leftGearUp);
         await tester.pump();
       }
 
