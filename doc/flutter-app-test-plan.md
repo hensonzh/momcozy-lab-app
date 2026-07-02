@@ -434,7 +434,7 @@ Hospital Bag 必测：
 ```text
 [x] card 列表加载
 [x] cart update
-[ ] 删除 item
+[x] 删除 item
 [x] 恢复默认
 [x] API 失败
 ```

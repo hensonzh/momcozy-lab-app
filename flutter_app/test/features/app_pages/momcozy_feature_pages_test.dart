@@ -1358,6 +1358,52 @@ void main() {
       expect(find.text('购物车已同步'), findsOneWidget);
     });
 
+    testWidgets('hospital bag page deletes items and restores defaults', (
+      tester,
+    ) async {
+      final transport = FixtureApiJsonTransportByPath({
+        hospitalBagCartUpdateEndpoint: const {
+          'status': 200,
+          'data': {'message': '清单已同步', 'synced_count': 2},
+        },
+      });
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/hospital-bag-cart'),
+          jsonTransport: transport,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byTooltip('删除宝宝衣物'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('宝宝衣物'), findsNothing);
+      expect(find.text('1/2 已准备'), findsOneWidget);
+      expect(find.text('清单已同步'), findsOneWidget);
+
+      final deletedCart =
+          transport.postedBodies.last['hospital_bag_cart']!
+              as Map<String, Object?>;
+      final deletedItems = List<Object?>.from(deletedCart['items']! as List);
+      expect(deletedItems.whereType<Map>().map((item) => item['id']), [
+        'pump',
+        'pads',
+      ]);
+
+      await tester.tap(find.text('恢复默认清单'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('宝宝衣物'), findsOneWidget);
+      expect(find.text('1/3 已准备'), findsOneWidget);
+      final restoredCart =
+          transport.postedBodies.last['hospital_bag_cart']!
+              as Map<String, Object?>;
+      final restoredItems = List<Object?>.from(restoredCart['items']! as List);
+      expect(restoredItems, hasLength(3));
+    });
+
     testWidgets('hospital bag page handles sync failure and default restore', (
       tester,
     ) async {
