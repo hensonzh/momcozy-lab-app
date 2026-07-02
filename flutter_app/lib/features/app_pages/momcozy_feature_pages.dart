@@ -1819,7 +1819,6 @@ class _PumpPageState extends State<_PumpPage> {
 
     try {
       final reply = await runtime.pumpWorkstateRepository.uploadWorkstate(
-        userId: runtime.userId,
         left: PumpSideWorkstate(
           state: _pumpStateCode(state),
           mode: 'massage_expression',
