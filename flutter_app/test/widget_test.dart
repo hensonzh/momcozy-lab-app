@@ -13,7 +13,9 @@ void main() {
   testWidgets('route shell starts at Agent Hub and navigates bottom tabs', (
     tester,
   ) async {
-    await tester.pumpWidget(const MomCozyFlutterApp());
+    await tester.pumpWidget(
+      MomCozyFlutterApp(apiRuntime: _authenticatedRuntime()),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
@@ -65,7 +67,9 @@ void main() {
   testWidgets('route shell opens media viewer from Agent artifact action', (
     tester,
   ) async {
-    await tester.pumpWidget(const MomCozyFlutterApp());
+    await tester.pumpWidget(
+      MomCozyFlutterApp(apiRuntime: _authenticatedRuntime()),
+    );
     await tester.pumpAndSettle();
 
     final page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
@@ -93,7 +97,12 @@ void main() {
     final routes = FakeRouteIntentPlatform();
     await routes.enqueuePendingRoute(const PendingNativeRoute(path: '/pump'));
 
-    await tester.pumpWidget(MomCozyFlutterApp(routeIntentPlatform: routes));
+    await tester.pumpWidget(
+      MomCozyFlutterApp(
+        apiRuntime: _authenticatedRuntime(),
+        routeIntentPlatform: routes,
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
@@ -126,7 +135,12 @@ void main() {
   ) async {
     final routes = FakeRouteIntentPlatform();
 
-    await tester.pumpWidget(MomCozyFlutterApp(routeIntentPlatform: routes));
+    await tester.pumpWidget(
+      MomCozyFlutterApp(
+        apiRuntime: _authenticatedRuntime(),
+        routeIntentPlatform: routes,
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
@@ -147,11 +161,9 @@ void main() {
 
   testWidgets('route shell records route view telemetry', (tester) async {
     final sink = MemoryMomCozyTelemetrySink();
-    final runtime = MomCozyApiRuntime(
-      jsonTransport: FixtureApiJsonTransport(const {'status': 200, 'data': {}}),
+    final runtime = _authenticatedRuntime(
       userId: 'route-user',
       babyId: 'route-baby',
-      locale: 'zh-CN',
       observability: MomCozyObservability(sink: sink),
     );
 
@@ -173,10 +185,7 @@ void main() {
     tester,
   ) async {
     final controller = MomCozyRuntimeController(
-      MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransport(
-          const {'status': 200, 'data': {}},
-        ),
+      _authenticatedRuntime(
         userId: 'initial-user',
         babyId: 'initial-baby',
         locale: 'zh-CN',
@@ -208,4 +217,93 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     controller.dispose();
   });
+
+  testWidgets('route guard sends anonymous sessions to login', (tester) async {
+    await tester.pumpWidget(
+      MomCozyFlutterApp(
+        apiRuntime: MomCozyApiRuntime(
+          jsonTransport: FixtureApiJsonTransport(
+            const {'status': 200, 'data': {}},
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('auth-email-field')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-hub-page')), findsNothing);
+  });
+
+  testWidgets('login replaces runtime session and opens requested page', (
+    tester,
+  ) async {
+    final store = MemoryMomCozySessionStore();
+    final controller = MomCozyRuntimeController(
+      MomCozyApiRuntime(
+        jsonTransport: FixtureApiJsonTransport(const {
+          'access_token': 'access-login',
+          'refresh_token': 'refresh-login',
+          'token_type': 'bearer',
+          'expires_in': 3600,
+          'user': {'id': 'login-user', 'display_name': 'Login User'},
+        }),
+      ),
+    );
+    final router = createMomCozyRouter(
+      initialLocation: '/media-viewer',
+      runtimeController: controller,
+      sessionStore: store,
+    );
+
+    await tester.pumpWidget(
+      MomCozyFlutterApp(
+        router: router,
+        runtimeController: controller,
+        sessionStore: store,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-email-field')),
+      'mom@example.test',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-password-field')),
+      'secret123',
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+    await tester.pumpAndSettle();
+
+    expect(controller.runtime.session.isAuthenticated, isTrue);
+    expect(controller.runtime.userId, 'login-user');
+    expect((await store.readSession())?.accessToken, 'access-login');
+    expect(
+      find.byKey(const ValueKey('route-page-/media-viewer')),
+      findsOneWidget,
+    );
+
+    router.dispose();
+    controller.dispose();
+  });
+}
+
+MomCozyApiRuntime _authenticatedRuntime({
+  String userId = 'demo-user',
+  String babyId = 'demo-baby',
+  String locale = 'zh-CN',
+  MomCozyObservability? observability,
+}) {
+  return MomCozyApiRuntime.fromSession(
+    MomCozySession(
+      status: MomCozySessionStatus.authenticated,
+      userId: userId,
+      babyId: babyId,
+      locale: locale,
+      accessToken: 'test-access-token',
+      refreshToken: 'test-refresh-token',
+    ),
+    jsonTransport: FixtureApiJsonTransport(const {'status': 200, 'data': {}}),
+    observability: observability,
+  );
 }

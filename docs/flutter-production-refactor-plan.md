@@ -30,6 +30,9 @@ Already present:
   `/v1/auth/signup`, `/login`, `/refresh`, and `/logout`.
 - App shell runtime controller can replace the active session/runtime after
   login, refresh, logout, or account switch.
+- Default router redirects anonymous sessions to `/login`, the login/register
+  page writes authenticated sessions to secure storage, and successful auth
+  replaces the runtime before returning to the requested route.
 - Network transport parses production error envelopes and supports per-request
   headers such as `Idempotency-Key`.
 - Records and media repositories target production `/v1/records/*` and
@@ -67,7 +70,8 @@ Already present:
 Main gaps:
 
 - Runtime still bootstraps from dart-define demo users and optional bearer token.
-- Auth UI and route guards are not wired yet.
+- Account settings, password reset, and session/device management UI are not
+  wired yet.
 - Agent replay/event-page and action confirmation UI are still partial; the main
   run/stream/cancel path is on `/v1/agent/runs`.
 - API client is handwritten and only partially validated against OpenAPI.
@@ -93,7 +97,7 @@ Main gaps:
 | Phase | Skill/reference | PR slice | Acceptance gate |
 |---|---|---|---|
 | 0. Contract foundation | Flutter API/auth + backend handoff | Copy backend contract snapshot and add validator. | `python scripts/validate_backend_contract.py` passes. |
-| 1. Auth/session | `api-state-auth.md`, backend `/v1/auth/*` | Add auth DTOs/repository/session service, refresh lock, logout cache purge. | Unit tests cover signup/login/refresh/logout, expired token refresh, logout cleanup. |
+| 1. Auth/session | `api-state-auth.md`, backend `/v1/auth/*` | Add auth DTOs/repository/session service, refresh lock, login/signup UI, route guard, logout cache purge. | Unit/widget tests cover signup/login/refresh/logout, anonymous redirect, expired token refresh, logout cleanup. |
 | 2. Network contract | `api-state-auth.md` | Add stable error envelope mapper, idempotency header support, generated-client policy. | Tests cover `{error:{code,message,request_id}}`, 401, 403, 409, 422, 429, 5xx. |
 | 3. Records/profile/files | `project-organization.md` | Move status/records/media repositories to production `/v1` endpoints and remove `user_id` authority params from requests. | Repository tests use OpenAPI-aligned fixtures and no legacy path constants. |
 | 4. Agent runtime UI | `agent-streaming-ui.md`, production agent contract | Replace legacy agent stream endpoints with `/v1/agent/threads`, `/runs`, `/events`, `/stream`, `/cancel`, `/actions`. | Main run/stream/cancel path uses production events; remaining work is replay/event-page and action confirmation UI. |

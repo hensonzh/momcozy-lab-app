@@ -4,11 +4,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
+import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -19,6 +22,7 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.routeIntentPlatform,
     this.apiRuntime,
     this.runtimeController,
+    this.sessionStore = const FlutterSecureMomCozySessionStore(),
   }) : assert(
          apiRuntime == null || runtimeController == null,
          'Pass either apiRuntime or runtimeController, not both.',
@@ -28,6 +32,7 @@ class MomCozyFlutterApp extends StatefulWidget {
   final RouteIntentPlatform? routeIntentPlatform;
   final MomCozyApiRuntime? apiRuntime;
   final MomCozyRuntimeController? runtimeController;
+  final MomCozySessionStore sessionStore;
 
   @override
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
@@ -40,7 +45,12 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
         widget.apiRuntime ?? MomCozyApiRuntime.fromEnvironment(),
       );
   late final bool _ownsRuntimeController = widget.runtimeController == null;
-  late final GoRouter _router = widget.router ?? createMomCozyRouter();
+  late final GoRouter _router =
+      widget.router ??
+      createMomCozyRouter(
+        runtimeController: _runtimeController,
+        sessionStore: widget.sessionStore,
+      );
   late final bool _ownsRouter = widget.router == null;
   late final RouteIntentPlatform _routeIntentPlatform =
       widget.routeIntentPlatform ?? AndroidRouteIntentPlatform();
@@ -145,10 +155,27 @@ ThemeData momCozyTheme() {
   );
 }
 
-GoRouter createMomCozyRouter({String initialLocation = '/'}) {
+GoRouter createMomCozyRouter({
+  String initialLocation = '/',
+  MomCozyRuntimeController? runtimeController,
+  MomCozySessionStore sessionStore = const FlutterSecureMomCozySessionStore(),
+}) {
   return GoRouter(
     initialLocation: initialLocation,
+    refreshListenable: runtimeController,
+    redirect: runtimeController == null
+        ? null
+        : (context, state) => _authRedirect(runtimeController, state),
     routes: [
+      if (runtimeController != null)
+        GoRoute(
+          path: '/login',
+          builder: (context, state) => MomCozyAuthPage(
+            runtimeController: runtimeController,
+            sessionStore: sessionStore,
+            redirectTo: state.uri.queryParameters['from'],
+          ),
+        ),
       ShellRoute(
         builder: (context, state, child) {
           final runtime = MomCozyRuntimeScope.of(context);
@@ -174,6 +201,34 @@ GoRouter createMomCozyRouter({String initialLocation = '/'}) {
       );
     },
   );
+}
+
+String? _authRedirect(
+  MomCozyRuntimeController runtimeController,
+  GoRouterState state,
+) {
+  final path = state.uri.path;
+  final isLogin = path == '/login';
+  final isAuthenticated = runtimeController.runtime.session.isAuthenticated;
+  if (!isAuthenticated && !isLogin) {
+    final from = state.uri.toString();
+    return Uri(
+      path: '/login',
+      queryParameters: from == '/' ? null : {'from': from},
+    ).toString();
+  }
+  if (isAuthenticated && isLogin) {
+    return _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/';
+  }
+  return null;
+}
+
+String? _safeAuthRedirect(String? value) {
+  final uri = Uri.tryParse(value ?? '');
+  if (uri == null || uri.hasScheme || uri.hasAuthority) return null;
+  final path = uri.path;
+  if (path.isEmpty || !path.startsWith('/') || path == '/login') return null;
+  return uri.toString();
 }
 
 class MomCozyRouteShell extends StatelessWidget {
