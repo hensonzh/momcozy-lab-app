@@ -223,6 +223,7 @@ features/
 [x] Flutter Agent Hub timeout/offline failure 已映射为用户可读 retry copy，原始异常、host 和 transport 细节不进入 UI
 [x] Flutter Agent Hub 紧凑手机视口已覆盖长回复和长 artifact 文案换行，不触发布局 overflow
 [x] Flutter Agent Hub citation/reference links 已支持索引/标题白名单渲染和点击回调，UI 不展示完整外部 URL
+[x] Flutter Agent Hub history restore/new session UI contract 已覆盖，runtime thread reset 可通过 `onNewSession` 接入
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

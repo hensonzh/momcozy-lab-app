@@ -237,8 +237,8 @@ test/fixtures/api/
 
 ```text
 [x] 首次进入状态
-[ ] 历史会话恢复
-[ ] 新会话
+[x] 历史会话恢复
+[x] 新会话
 [x] 文本输入
 [x] 图片输入 / AG-UI image payload
 [x] 语音输入入口 / STT 回填输入框
@@ -543,6 +543,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Agent Hub timeout/offline send failure 已映射为用户可读 retry copy，原始异常、host 和 transport 细节不进入 UI
 [x] Agent Hub compact mobile viewport 已覆盖长回复和长 artifact 文案换行，不触发布局 overflow
 [x] Agent Hub citation/reference links 已覆盖白名单渲染和点击回调，UI 不展示完整外部 URL
+[x] Agent Hub history restore/new session UI contract 已覆盖：可注入历史消息，新会话清空本地历史/输入/状态并预留 runtime thread reset 回调
 [x] Flutter 非 Agent route 页面骨架已覆盖全量 route map，并验证 Status、Schedule、Device、Pump、Calibration、Media 的关键区块和专注页底栏规则
 [x] Flutter 非 Agent route 已增加紧凑手机视口渲染和滚动 smoke，防止小屏 overflow 与底栏遮挡回归
 [x] Status/Schedule typed repository contract tests 已覆盖 success、legacy alias、empty、partial、business error 和 HTTP error fixtures

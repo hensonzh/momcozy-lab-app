@@ -21,6 +21,10 @@ void main() {
     expect(find.byKey(const ValueKey('agent-run-phase-badge')), findsOneWidget);
     expect(find.text('准备就绪'), findsOneWidget);
     expect(find.text('我在。'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-new-session-button')),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('agent-composer-input')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-image-button')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-voice-button')), findsOneWidget);
@@ -37,6 +41,72 @@ void main() {
     expect(sendButton.onPressed, isNull);
     expect(imageButton.onPressed, isNull);
     expect(voiceButton.onPressed, isNull);
+  });
+
+  testWidgets('Agent Hub restores history and starts a new local session', (
+    tester,
+  ) async {
+    var newSessionStarted = false;
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.user,
+              content: '昨天晚上左侧奶量偏低',
+            ),
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '我建议你先观察舒适度和间隔。',
+            ),
+          ],
+          onNewSession: () => newSessionStarted = true,
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-history-panel')), findsOneWidget);
+    expect(find.text('历史会话'), findsOneWidget);
+    expect(find.text('昨天晚上左侧奶量偏低'), findsOneWidget);
+    expect(find.text('我建议你先观察舒适度和间隔。'), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '开始新的问题',
+    );
+    await tester.pump();
+
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(newSessionStarted, isTrue);
+    expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
+    expect(find.text('我在。'), findsOneWidget);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '',
+    );
+  });
+
+  testWidgets('Agent Hub disables new session while a run is active', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const AgentHubPage(
+          state: AgentStreamRunState(phase: AgentStreamRunPhase.streaming),
+        ),
+      ),
+    );
+
+    final button = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-new-session-button')),
+    );
+    expect(button.onPressed, isNull);
   });
 
   testWidgets('Agent Hub sends composer text through the injected runner', (
