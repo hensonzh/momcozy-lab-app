@@ -1,0 +1,103 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+
+import '../../support/fixture_api_transport.dart';
+
+void main() {
+  group('MomCozy feature page goldens', () {
+    testWidgets('status page matches compact mobile baseline', (tester) async {
+      await _setCompactMobileViewport(tester);
+      await _pumpGoldenApp(tester, initialLocation: '/status');
+
+      expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
+      await expectLater(
+        find.byKey(_goldenSurfaceKey),
+        matchesGoldenFile('../../goldens/feature_pages/status_page_mobile.png'),
+      );
+    });
+
+    testWidgets('pump page matches compact mobile baseline', (tester) async {
+      await _setCompactMobileViewport(tester);
+      await _pumpGoldenApp(tester, initialLocation: '/pump');
+
+      expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
+      await expectLater(
+        find.byKey(_goldenSurfaceKey),
+        matchesGoldenFile('../../goldens/feature_pages/pump_page_mobile.png'),
+      );
+    });
+  });
+}
+
+const _goldenSurfaceKey = ValueKey('momcozy-feature-golden-surface');
+
+Future<void> _setCompactMobileViewport(WidgetTester tester) async {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+}
+
+Future<void> _pumpGoldenApp(
+  WidgetTester tester, {
+  required String initialLocation,
+}) async {
+  final routeIntentPlatform = FakeRouteIntentPlatform();
+  addTearDown(routeIntentPlatform.dispose);
+
+  await tester.pumpWidget(
+    RepaintBoundary(
+      key: _goldenSurfaceKey,
+      child: MomCozyFlutterApp(
+        router: createMomCozyRouter(initialLocation: initialLocation),
+        routeIntentPlatform: routeIntentPlatform,
+        apiRuntime: _goldenRuntime(),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+MomCozyApiRuntime _goldenRuntime() {
+  return MomCozyApiRuntime(
+    jsonTransport: FixtureApiJsonTransportByPath({
+      statusOverviewEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'mom': <String, Object?>{'stage': '哺乳期', 'postpartum_day': 21},
+          'baby': <String, Object?>{'nickname': 'Mia', 'age_days': 88},
+        },
+      },
+      pumpWorkstateEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'need_reply': true,
+          'output': 'Workstate accepted',
+          'reply_code': 'pump_state_changed',
+          'reply_side': 'left',
+        },
+      },
+    }),
+    blePlatform: FakeBlePlatform(
+      initialPermission: BlePermissionState.granted,
+      seedDevices: const [
+        BleDeviceSnapshot(
+          side: 'L',
+          deviceId: 'ble-left-golden',
+          deviceName: 'S12 Pro L',
+          connected: true,
+          battery: 87,
+        ),
+      ],
+    ),
+    userId: 'demo-user-golden',
+    babyId: 'demo-baby-golden',
+    locale: 'zh-CN',
+    now: () => DateTime.utc(2026, 7),
+  );
+}
