@@ -521,6 +521,66 @@ void main() {
       expect(find.textContaining('2.7 oz'), findsWidgets);
     });
 
+    testWidgets('records page adds edits and deletes manual pump records', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
+      await tester.pumpAndSettle();
+
+      await _scrollToText(tester, '手动补录');
+      await tester.tap(find.text('手动补录'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('手动补录 1'), findsOneWidget);
+      expect(find.text('90 mL · 来源 9'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('编辑记录').first);
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('已编辑 手动补录 1'), findsOneWidget);
+      expect(find.text('100 mL · 来源 9'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('删除记录').first);
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('已编辑 手动补录 1'), findsNothing);
+    });
+
+    testWidgets('records page marks cross-day pump records', (tester) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/records'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            pumpMilkRecordsEndpoint: const {
+              'status': 200,
+              'data': {
+                'pump_milk_list': <Object?>[
+                  {
+                    'pump_id': 8001,
+                    'pump_title': '夜间跨天泵奶',
+                    'pump_milk_volum': 95,
+                    'pump_time': '2026-06-30T23:30:00Z',
+                  },
+                ],
+              },
+            },
+            feedingRecordsEndpoint: const {
+              'status': 200,
+              'data': {'records': <Object?>[]},
+            },
+            growthRecordsEndpoint: const {
+              'status': 200,
+              'data': {'records': <Object?>[]},
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('夜间跨天泵奶'), findsOneWidget);
+      expect(find.textContaining('跨天记录'), findsOneWidget);
+    });
+
     testWidgets('records page renders empty and failed states', (tester) async {
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -569,7 +629,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('记录同步失败'), findsOneWidget);
-      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
+      expect(find.text('弱网/离线时保留本地筛选，可点击重试。'), findsOneWidget);
     });
 
     testWidgets('pump page uploads workstate through runtime repository', (
