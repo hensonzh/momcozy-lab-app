@@ -264,15 +264,15 @@ test/fixtures/api/
 [x] 离线发送失败
 ```
 
-Golden 视觉状态：
+P0 视觉状态 widget contract：
 
 ```text
-[ ] Empty Agent Hub
-[ ] Streaming message
-[ ] Tool in progress
-[ ] Rich text artifact
-[ ] Error/retry
-[ ] Image attached before send
+[x] Empty Agent Hub
+[x] Streaming message
+[x] Tool in progress
+[x] Rich text artifact
+[x] Error/retry
+[x] Image attached before send
 ```
 
 ### 5.2 Device
