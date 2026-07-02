@@ -215,6 +215,7 @@ features/
 [x] Flutter Agent Hub stop 已接入 best-effort cancel client，保持 UI cancellation 与服务端 cancel 解耦
 [x] Flutter Agent Hub retry 已在 UI 层复用缓存 request，不向 transport 暴露重试策略细节
 [x] Flutter Agent Hub work panel 已从统一 stream events 派生，不直接消费 provider/raw tool JSON
+[x] Flutter Agent Hub work panel 已支持 tool failure 覆盖进行中状态，失败文案不展示 raw tool name、error 或敏感 payload
 [x] Flutter Agent voice typed repository 已落地，STT multipart、realtime PCM stream 和 realtime voice session 均独立于 Agent 文本 stream
 [x] Flutter Agent Hub composer 已补齐图片和语音入口，图片进入 AG-UI image payload，语音回填输入框且不自动发送
 [x] Flutter Agent stream reducer 已按 `event_id` / `sequence` 去重，reconnect replay 不重复已完成 message chunk

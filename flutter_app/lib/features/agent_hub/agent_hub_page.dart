@@ -1184,7 +1184,9 @@ AgentRunWorkStep? _workStepFromEvent(AgentStreamEvent event) {
     'TOOL_CALL_START' ||
     'TOOL_CALL_ARGS' ||
     'TOOL_CALL_END' ||
-    'TOOL_CALL_RESULT' => _toolStep(event),
+    'TOOL_CALL_RESULT' ||
+    'TOOL_CALL_ERROR' ||
+    'TOOL_CALL_FAILED' => _toolStep(event),
     'ARTIFACT_CREATED' => _artifactStep(event),
     'CONFIRMATION_REQUIRED' => _confirmationStep(event),
     'RUN_ERROR' || 'RUN_FAILED' || 'ERROR' => AgentRunWorkStep(
@@ -1207,14 +1209,30 @@ AgentRunWorkStep? _customStatusStep(AgentStreamEvent event) {
 
 AgentRunWorkStep _toolStep(AgentStreamEvent event) {
   final subject = _toolSubject(event);
-  final completed = event.type == 'TOOL_CALL_RESULT';
+  final failed = _toolFailed(event);
+  final completed = event.type == 'TOOL_CALL_RESULT' && !failed;
   return AgentRunWorkStep(
     id: event.mergeKey,
-    title: completed ? '$subject已读取' : '正在读取$subject',
+    title: failed
+        ? '$subject暂时无法读取'
+        : completed
+        ? '$subject已读取'
+        : '正在读取$subject',
     status: completed
         ? AgentRunWorkStepStatus.completed
+        : failed
+        ? AgentRunWorkStepStatus.failed
         : AgentRunWorkStepStatus.running,
   );
+}
+
+bool _toolFailed(AgentStreamEvent event) {
+  if (event.type == 'TOOL_CALL_ERROR' || event.type == 'TOOL_CALL_FAILED') {
+    return true;
+  }
+  if (event.raw['is_error'] == true || event.raw['error'] is Map) return true;
+  final status = stringField(event.raw, 'status')?.toLowerCase();
+  return status == 'error' || status == 'failed';
 }
 
 AgentRunWorkStep _artifactStep(AgentStreamEvent event) {

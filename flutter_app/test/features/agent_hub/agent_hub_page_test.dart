@@ -298,6 +298,44 @@ void main() {
     },
   );
 
+  testWidgets('Agent Hub renders safe tool failure progress', (tester) async {
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            textContent: '我会尽量继续整理。',
+            events: [
+              AgentStreamEvent(const {
+                'type': 'TOOL_CALL_START',
+                'thread_id': 'thread-tool-fail',
+                'run_id': 'run-tool-fail',
+                'tool_call_id': 'call_growth_fail',
+                'tool_call_name': 'growth_record_query',
+              }),
+              AgentStreamEvent(const {
+                'type': 'TOOL_CALL_FAILED',
+                'thread_id': 'thread-tool-fail',
+                'run_id': 'run-tool-fail',
+                'tool_call_id': 'call_growth_fail',
+                'tool_call_name': 'growth_record_query',
+                'message': 'database timeout for child profile',
+                'content': '{"childId":"baby-secret","error":"timeout"}',
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
+    expect(find.text('成长记录暂时无法读取'), findsOneWidget);
+    expect(find.text('失败'), findsOneWidget);
+    expect(find.textContaining('growth_record_query'), findsNothing);
+    expect(find.textContaining('database timeout'), findsNothing);
+    expect(find.textContaining('baby-secret'), findsNothing);
+  });
+
   testWidgets('Agent Hub renders safe artifact cards from stream events', (
     tester,
   ) async {

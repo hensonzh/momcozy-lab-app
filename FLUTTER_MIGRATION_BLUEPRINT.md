@@ -983,6 +983,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Agent Hub stop 已接入 best-effort `/api/ag-ui-cancel` client，UI 本地停止不等待网络
 [x] Flutter Agent Hub retry 已复用上一轮 `AgentStreamRequest`，覆盖断线后重试成功 flow
 [x] Flutter Agent Hub work panel 已将 `TOOL_CALL_*` / artifact / confirmation events 映射为用户可读进度，不暴露内部 tool name 或 JSON
+[x] Flutter Agent Hub work panel 已支持 tool failure 覆盖进行中状态，失败文案不暴露 raw tool name、error 或敏感 payload
 [x] Flutter Agent voice typed repository 已覆盖 `/v1/speech/transcribe-chunk`、`/v1/realtime-voice-stream` 和 `/v1/realtime-voice-session`，并验证语音状态不污染文本 stream state
 [x] Flutter Agent Hub composer 已补齐图片和语音入口：图片发送进入 `AgentStreamRequest.images`，语音转写回填输入框且不自动发送
 [x] Flutter `AgentStreamRunState` 已按 `event_id` / `sequence` 去重，reconnect replay 不会重复已完成 message chunk
