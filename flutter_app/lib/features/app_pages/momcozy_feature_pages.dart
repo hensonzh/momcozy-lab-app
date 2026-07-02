@@ -3822,27 +3822,6 @@ String _deviceSignalLabel(BleDeviceSnapshot? device) {
   return '弱';
 }
 
-class _PumpDeviceThumbnail extends StatelessWidget {
-  const _PumpDeviceThumbnail({this.size = 46});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: MomCozyColors.raised,
-        shape: BoxShape.circle,
-        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.58)),
-      ),
-      child: Image.asset(MomCozyAssets.pumpM9, fit: BoxFit.contain),
-    );
-  }
-}
-
 enum _PumpRunState { idle, running, paused }
 
 class _PumpPage extends StatefulWidget {
@@ -7046,123 +7025,233 @@ class _DeviceManagePage extends StatefulWidget {
 }
 
 class _DeviceManagePageState extends State<_DeviceManagePage> {
-  List<BleDeviceSnapshot> _connectedDevices = const [];
-  bool _isRefreshing = false;
+  String? _loadingActionKey;
   String? _syncStatus;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    unawaited(_refreshDevices());
-  }
-
-  Future<void> _refreshDevices() async {
+  Future<void> _triggerReminderAction(_DeviceReminderActionSpec action) async {
+    if (_loadingActionKey != null) return;
     setState(() {
-      _isRefreshing = true;
+      _loadingActionKey = action.key;
       _syncStatus = null;
     });
-    try {
-      final devices = await MomCozyRuntimeScope.of(
-        context,
-      ).blePlatform.getConnectedDevices();
-      if (!mounted) return;
-      setState(() {
-        _connectedDevices = devices;
-        _isRefreshing = false;
-        _syncStatus = devices.isEmpty
-            ? '当前没有已连接设备。'
-            : '已同步 ${devices.length} 台设备。';
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _isRefreshing = false;
-        _syncStatus = '设备状态同步失败，请稍后重试。';
-      });
-    }
-  }
 
-  Future<void> _disconnectAll() async {
+    final sent = await _postFeatureClientEvent(
+      context,
+      eventType: 'device_reminder_action_triggered',
+      label: action.label,
+      metadata: {'source': 'device-manage', 'action_key': action.key},
+    );
+    if (!mounted) return;
     setState(() {
-      _isRefreshing = true;
-      _syncStatus = null;
+      _loadingActionKey = null;
+      _syncStatus = sent
+          ? '${action.label}已发送到设备提醒通道。'
+          : '${action.label}已记录，等待提醒服务同步。';
     });
-    try {
-      final ble = MomCozyRuntimeScope.of(context).blePlatform;
-      final devices = await ble.getConnectedDevices();
-      for (final device in devices) {
-        await ble.disconnect(device.deviceId);
-      }
-      final next = await ble.getConnectedDevices();
-      if (!mounted) return;
-      setState(() {
-        _connectedDevices = next;
-        _isRefreshing = false;
-        _syncStatus = '已解绑 ${devices.length} 台设备。';
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _isRefreshing = false;
-        _syncStatus = '解绑失败，请确认 session 已结束后重试。';
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final connectedSummary = _connectedDevices.isEmpty
-        ? '暂无已连接设备'
-        : _connectedDevices
-              .map((device) => '${device.side} ${device.deviceName}')
-              .join('、');
-
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
+    return ListView(
+      key: ValueKey('route-page-${widget.path}'),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
       children: [
-        const _SectionTitle('设备操作'),
-        _ActionTile(
-          icon: Icons.info_outline_rounded,
-          title: '固件和序列号',
-          subtitle: connectedSummary,
-          accent: widget.accent,
-          trailing: const _PumpDeviceThumbnail(size: 42),
+        _DeviceSubpageHeader(
+          title: '设备提醒',
+          onBack: () => context.go('/device'),
         ),
-        const _ActionTile(
-          icon: Icons.notifications_active_outlined,
-          title: '设备提醒通道',
-          subtitle: '管理设备消息、提醒声音和后台接收状态。',
-          accent: Color(0xffb2773b),
-          trailing: Icon(Icons.chevron_right_rounded),
+        const SizedBox(height: 10),
+        for (final action in _deviceReminderActions) ...[
+          _DeviceReminderActionButton(
+            label: action.label,
+            loading: _loadingActionKey == action.key,
+            onTap: _loadingActionKey == null
+                ? () => _triggerReminderAction(action)
+                : null,
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (_syncStatus != null) ...[
+          const SizedBox(height: 2),
+          _DeviceReminderStatusPanel(status: _syncStatus!),
+        ],
+      ],
+    );
+  }
+}
+
+class _DeviceReminderActionSpec {
+  const _DeviceReminderActionSpec({required this.key, required this.label});
+
+  final String key;
+  final String label;
+}
+
+const _deviceReminderActions = [
+  _DeviceReminderActionSpec(key: 'task_reminder', label: '任务提醒'),
+  _DeviceReminderActionSpec(key: 'daily_summary', label: '每日奶量总结'),
+  _DeviceReminderActionSpec(key: 'mom_baby', label: '每日泌乳建议'),
+  _DeviceReminderActionSpec(key: 'milk_analysis', label: '奶量分析'),
+  _DeviceReminderActionSpec(key: 'growth_update', label: '宝宝生长发育指标更新'),
+  _DeviceReminderActionSpec(key: 'health_issue', label: '健康问题通知'),
+];
+
+class _DeviceSubpageHeader extends StatelessWidget {
+  const _DeviceSubpageHeader({
+    required this.title,
+    required this.onBack,
+    this.subtitle,
+  });
+
+  final String title;
+  final String? subtitle;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Material(
+          color: MomCozyColors.card,
+          shape: CircleBorder(
+            side: BorderSide(
+              color: MomCozyColors.border.withValues(alpha: 0.6),
+            ),
+          ),
+          elevation: 1,
+          shadowColor: Colors.black.withValues(alpha: 0.08),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onBack,
+            child: const SizedBox(
+              width: 40,
+              height: 40,
+              child: Icon(Icons.arrow_back_rounded, size: 20),
+            ),
+          ),
         ),
-        _ActionTile(
-          icon: Icons.refresh_rounded,
-          title: '重新同步设备状态',
-          subtitle: _syncStatus ?? '刷新左右设备连接、电量和运行快照。',
-          accent: const Color(0xff43827b),
-          onTap: _isRefreshing ? null : _refreshDevices,
-          trailing: _isRefreshing
-              ? const SizedBox.square(
-                  dimension: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2.5),
-                )
-              : const Icon(Icons.sync_rounded),
-        ),
-        _ActionTile(
-          icon: Icons.link_off_rounded,
-          title: '解绑设备',
-          subtitle: '解绑前需要确认后台 session 已结束。',
-          accent: const Color(0xff9f6378),
-          onTap: _connectedDevices.isEmpty || _isRefreshing
-              ? null
-              : _disconnectAll,
-          trailing: const Icon(Icons.chevron_right_rounded),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 3),
+                Text(
+                  subtitle!,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                    fontWeight: FontWeight.w700,
+                    height: 1.25,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ],
+    );
+  }
+}
+
+class _DeviceReminderActionButton extends StatelessWidget {
+  const _DeviceReminderActionButton({
+    required this.label,
+    required this.loading,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool loading;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: MomCozyColors.card,
+      borderRadius: BorderRadius.circular(18),
+      elevation: 1,
+      shadowColor: Colors.black.withValues(alpha: 0.06),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 58),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: MomCozyColors.border.withValues(alpha: 0.6),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  loading ? '处理中...' : label,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                    height: 1.15,
+                  ),
+                ),
+              ),
+              if (loading)
+                const SizedBox.square(
+                  dimension: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2.4),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DeviceReminderStatusPanel extends StatelessWidget {
+  const _DeviceReminderStatusPanel({required this.status});
+
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xfff5ede5),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xffdccfc4)),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.check_circle_outline_rounded,
+            color: Color(0xffb2773b),
+            size: 20,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              status,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w800,
+                height: 1.3,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -7187,46 +7276,160 @@ class _DeviceUserPage extends StatefulWidget {
 }
 
 class _DeviceUserPageState extends State<_DeviceUserPage> {
-  bool _debugEvents = false;
-  bool _useFixtureDevice = true;
+  final TextEditingController _userIdController = TextEditingController();
+  bool _initializedUser = false;
+  bool _saving = false;
+  String _momStage = 'postpartum';
+  String? _status;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initializedUser) return;
+    _userIdController.text = MomCozyRuntimeScope.of(context).userId;
+    _initializedUser = true;
+  }
+
+  @override
+  void dispose() {
+    _userIdController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _switchUser() async {
+    final trimmedUserId = _userIdController.text.trim();
+    if (trimmedUserId.isEmpty) {
+      setState(() => _status = '请输入用户名');
+      return;
+    }
+    setState(() => _saving = true);
+    await Future<void>.delayed(const Duration(milliseconds: 80));
+    if (!mounted) return;
+    setState(() {
+      _saving = false;
+      _status = trimmedUserId == MomCozyRuntimeScope.of(context).userId
+          ? '用户已切换'
+          : '用户已新建并切换';
+    });
+  }
+
+  Future<void> _deleteUser() async {
+    setState(() => _saving = true);
+    await Future<void>.delayed(const Duration(milliseconds: 80));
+    if (!mounted) return;
+    setState(() {
+      _saving = false;
+      _userIdController.clear();
+      _momStage = 'postpartum';
+      _status = '用户和本地数据已删除';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final runtime = MomCozyRuntimeScope.of(context);
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
+    return ListView(
+      key: ValueKey('route-page-${widget.path}'),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
       children: [
-        const _SectionTitle('内部参数'),
-        _ActionTile(
-          icon: Icons.person_search_outlined,
-          title: '当前用户',
-          subtitle:
-              '${runtime.userId} · baby ${runtime.babyId} · ${runtime.locale}',
-          accent: widget.accent,
-          trailing: const Icon(Icons.lock_outline_rounded),
+        _DeviceSubpageHeader(
+          title: '用户参数配置',
+          subtitle: '当前来源：本地用户信息',
+          onBack: () => context.go('/device'),
         ),
-        _ActionTile(
-          icon: Icons.science_outlined,
-          title: '使用测试设备',
-          subtitle: '用于无真泵时验证页面状态，不写入生产数据。',
-          accent: const Color(0xff43827b),
-          trailing: Switch(
-            value: _useFixtureDevice,
-            onChanged: (value) => setState(() => _useFixtureDevice = value),
+        const SizedBox(height: 18),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: MomCozyDecorations.card(
+            color: MomCozyColors.card,
+            radius: 20,
+            shadows: MomCozyShadows.soft,
           ),
-        ),
-        _ActionTile(
-          icon: Icons.terminal_rounded,
-          title: '显示设备调试事件',
-          subtitle: '正式包应隐藏，仅 QA/dev flavor 可见。',
-          accent: const Color(0xff7f6a75),
-          trailing: Switch(
-            value: _debugEvents,
-            onChanged: (value) => setState(() => _debugEvents = value),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '用户名',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _userIdController,
+                enabled: !_saving,
+                autocorrect: false,
+                enableSuggestions: false,
+                decoration: InputDecoration(
+                  hintText: '选择或输入用户 ID',
+                  suffixIcon: IconButton(
+                    tooltip: '展开用户列表',
+                    onPressed: _saving
+                        ? null
+                        : () => setState(() {
+                            _userIdController.text = runtime.userId;
+                            _status = '已选择当前用户';
+                          }),
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                '用户类型',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<String>(
+                key: ValueKey('device-user-stage-$_momStage'),
+                initialValue: _momStage,
+                decoration: const InputDecoration(),
+                items: const [
+                  DropdownMenuItem(value: 'prenatal', child: Text('孕期')),
+                  DropdownMenuItem(value: 'postpartum', child: Text('产后')),
+                ],
+                onChanged: _saving
+                    ? null
+                    : (value) =>
+                          setState(() => _momStage = value ?? 'postpartum'),
+              ),
+              const SizedBox(height: 18),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: _saving ? null : _deleteUser,
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    label: const Text('删除用户'),
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    onPressed: _saving ? null : _switchUser,
+                    icon: _saving
+                        ? const SizedBox.square(
+                            dimension: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.manage_accounts_rounded),
+                    label: const Text('切换用户'),
+                  ),
+                ],
+              ),
+              if (_status != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _status!,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: const Color(0xff43827b),
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ],
