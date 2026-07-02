@@ -308,19 +308,19 @@ Golden 视觉状态：
 必测：
 
 ```text
-[ ] 无设备进入
+[x] 无设备进入
 [ ] 仅左设备
 [ ] 仅右设备
 [ ] 双侧设备
 [ ] 档位调整
-[ ] 保存校准
+[x] 保存校准
 [ ] 退出未保存
 [ ] 中断恢复
 [ ] legacy calibration 数据合法
 [ ] legacy calibration 数据缺字段
 [ ] legacy calibration 数据非法
 [ ] legacy calibration 包含 0xFF
-[ ] 校准后进入 Pump 参数正确
+[x] 校准后进入 Pump 参数正确
 ```
 
 ### 5.4 Pump Session
@@ -328,10 +328,10 @@ Golden 视觉状态：
 必测：
 
 ```text
-[ ] 启动 session
-[ ] 暂停
-[ ] 恢复
-[ ] 结束
+[x] 启动 session
+[x] 暂停
+[x] 恢复
+[x] 结束
 [ ] 左侧独立模式/档位/奶量/进度
 [ ] 右侧独立模式/档位/奶量/进度
 [ ] 双侧同步运行
@@ -347,7 +347,7 @@ Golden 视觉状态：
 [ ] summary 只上传一次
 [ ] milk record 只创建一次
 [ ] Agent context 只上传一次
-[ ] 网络失败后重试
+[x] 网络失败后重试
 [ ] 结束时并发点击幂等
 [ ] 多用户切换保护
 ```
@@ -577,6 +577,8 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/schedule` widget tests 已覆盖日期切换、今日任务加载、完成状态、提醒开关、本地日期到 UTC timestamp 和空/失败态
 [x] Flutter `/status` widget tests 已覆盖妈妈/宝宝 tab、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 [x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 权限拒绝、扫描结果和扫描失败状态
+[x] Flutter `/pump` widget tests 已覆盖 session 启动/暂停/恢复/结束和 workstate 上传失败状态
+[x] Flutter `/calibration` widget tests 已覆盖无设备失败提示、保存校准和保存后进入 Pump
 ```
 
 ### 7.3 语音合同
