@@ -313,7 +313,7 @@ class _HospitalBagProbe implements StagingSmokeProbe {
   final HospitalBagCartApiRepository repository;
 
   @override
-  String get name => 'hospital-bag /api/hospital-bag/cart-update';
+  String get name => 'hospital-bag /v1/plans';
 
   @override
   bool get requiresMutation => true;

@@ -43,6 +43,12 @@ transport errors.
 These issues are real, but should be resolved against the production backend
 contract rather than patched around the legacy API.
 
+Resolution on 2026-07-02: the records, media, status, hospital-bag, pump
+workstate, native pump upload, and main agent run/stream/cancel clients now
+target the production backend contract. Remaining integration work is limited
+to auth UI/route guards, agent replay/action confirmation UI, and formal
+production voice endpoint coverage.
+
 | Priority | Area | Legacy Mismatch | Target Handling |
 |---|---|---|---|
 | P1 | API envelope | `api_envelope.dart` expects mandatory `{status, data}`, while legacy endpoints return raw objects with `error` and payload fields. | Generate or validate DTOs from the new backend OpenAPI and use one stable success/error shape. |
