@@ -337,10 +337,11 @@ P0 视觉状态 widget contract：
 [x] 双侧同步运行
 [ ] 前后台切换
 [ ] 锁屏
-[ ] 通知点击恢复
-[ ] 悬浮窗显示
-[ ] 悬浮窗关闭
-[ ] 悬浮窗无权限
+[x] 通知 route intent 合同和一次性消费
+[ ] 真机通知点击恢复
+[ ] 真机悬浮窗显示
+[ ] 真机悬浮窗关闭
+[x] 悬浮窗无权限 fallback
 [ ] App killed 后重启
 [ ] 系统回收后恢复或安全结束
 [ ] Doze / battery optimization 场景
