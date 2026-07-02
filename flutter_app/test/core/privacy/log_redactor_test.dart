@@ -77,5 +77,49 @@ void main() {
         });
       },
     );
+
+    test('builds crash reports without sensitive context fields', () {
+      final report = redactCrashReport(
+        error: StateError(
+          'failed Bearer secret-token '
+          'https://api.example.test/path?token=secret&mode=debug',
+        ),
+        stackTrace: StackTrace.fromString('#0 PumpPage.finish\n#1 main'),
+        context: <String, Object?>{
+          'route': '/pump',
+          'feature': 'pump-session',
+          'statusCode': 503,
+          'requestId': 'req-123',
+          'user_id': 'demo-user',
+          'threadId': 'thread-1',
+          'healthData': {'milkMl': 120, 'symptoms': 'private note'},
+          'message': 'baby private note',
+          'metadata': {'token': 'nested-token'},
+        },
+      );
+
+      expect(report['errorType'], 'StateError');
+      expect(
+        report['error'],
+        'Bad state: failed Bearer *** '
+        'https://api.example.test/path?token=***&mode=debug',
+      );
+      expect(report['stack'], ['#0 PumpPage.finish', '#1 main']);
+      expect(report['context'], {
+        'route': '/pump',
+        'feature': 'pump-session',
+        'statusCode': 503,
+        'requestId': 'req-123',
+        'user_id': '***',
+        'threadId': '***',
+        'healthData': '***',
+        'message': '***',
+        'metadata': '***',
+      });
+      expect(report.toString(), isNot(contains('secret-token')));
+      expect(report.toString(), isNot(contains('private note')));
+      expect(report.toString(), isNot(contains('demo-user')));
+      expect(report.toString(), isNot(contains('thread-1')));
+    });
   });
 }

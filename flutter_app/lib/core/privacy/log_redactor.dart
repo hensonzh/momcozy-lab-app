@@ -9,6 +9,28 @@ Map<String, Object?> redactLogMap(Map<String, Object?> payload) {
   });
 }
 
+Map<String, Object?> redactCrashReport({
+  required Object error,
+  StackTrace? stackTrace,
+  Map<String, Object?> context = const <String, Object?>{},
+}) {
+  return Map<String, Object?>.unmodifiable({
+    'errorType': error.runtimeType.toString(),
+    'error': _redactCrashString(error.toString()),
+    if (stackTrace != null) 'stack': _stackFingerprint(stackTrace),
+    'context': redactCrashContext(context),
+  });
+}
+
+Map<String, Object?> redactCrashContext(Map<String, Object?> context) {
+  return Map<String, Object?>.unmodifiable({
+    for (final entry in context.entries)
+      entry.key: _isAllowedCrashContextKey(entry.key)
+          ? redactLogValue(entry.value)
+          : redactedLogValue,
+  });
+}
+
 Object? redactLogValue(Object? value) {
   if (value is Map) {
     return Map<String, Object?>.unmodifiable({
@@ -70,6 +92,46 @@ bool isSensitiveLogKey(String key) {
       normalized == 'feedingrecords' ||
       normalized == 'growthrecords' ||
       normalized == 'pregnancydiary';
+}
+
+bool _isAllowedCrashContextKey(String key) {
+  if (isSensitiveLogKey(key)) return false;
+  final normalized = key.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+  return normalized == 'route' ||
+      normalized == 'screen' ||
+      normalized == 'feature' ||
+      normalized == 'operation' ||
+      normalized == 'transport' ||
+      normalized == 'method' ||
+      normalized == 'statuscode' ||
+      normalized == 'requestid' ||
+      normalized == 'retryable' ||
+      normalized == 'elapsedms' ||
+      normalized == 'platform' ||
+      normalized == 'appversion' ||
+      normalized == 'buildnumber';
+}
+
+String _redactCrashString(String value) {
+  final urlRedacted = value.contains('?') ? redactUrlForLog(value) : value;
+  return urlRedacted
+      .replaceAll(RegExp(r'Bearer\s+[^\s,;]+'), 'Bearer ***')
+      .replaceAllMapped(
+        RegExp(r'(api[-_ ]?key|token)=([^&\s,;]+)', caseSensitive: false),
+        (match) {
+          return '${match.group(1)}=***';
+        },
+      );
+}
+
+List<String> _stackFingerprint(StackTrace stackTrace) {
+  return stackTrace
+      .toString()
+      .split('\n')
+      .where((line) => line.trim().isNotEmpty)
+      .take(8)
+      .map((line) => line.trim())
+      .toList(growable: false);
 }
 
 String _redactQueryPart(String part) {
