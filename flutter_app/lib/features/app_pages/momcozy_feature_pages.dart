@@ -8910,7 +8910,7 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
         children: [
           Column(
             children: [
-              _HospitalBagHeader(itemCount: _itemCount, onBack: _handleBack),
+              _HospitalBagHeader(onBack: _handleBack),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(14, 12, 14, 148),
@@ -8946,11 +8946,7 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: _HospitalBagFooter(
-              total: _total,
-              discount: _discount,
-              money: _money,
-            ),
+            child: _HospitalBagFooter(total: _total, money: _money),
           ),
         ],
       ),
@@ -8959,9 +8955,8 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
 }
 
 class _HospitalBagHeader extends StatelessWidget {
-  const _HospitalBagHeader({required this.itemCount, required this.onBack});
+  const _HospitalBagHeader({required this.onBack});
 
-  final int itemCount;
   final VoidCallback onBack;
 
   @override
@@ -9002,26 +8997,6 @@ class _HospitalBagHeader extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-            ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: const Color(0xffeef9f5),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: const Color(0xffd7ece6)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                child: Text(
-                  '$itemCount 件',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: const Color(0xff267c68),
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
               ),
             ),
           ],
@@ -9097,18 +9072,12 @@ class _HospitalBagGroupSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(
-                child: Text(
-                  group.title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: const Color(0xff372330),
-                    fontWeight: FontWeight.w900,
-                  ),
+              Text(
+                group.title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: const Color(0xff372330),
+                  fontWeight: FontWeight.w900,
                 ),
-              ),
-              _HospitalBagTonePill(
-                label: '${group.items.length} 件',
-                tone: group.tone,
               ),
             ],
           ),
@@ -9120,35 +9089,6 @@ class _HospitalBagGroupSection extends StatelessWidget {
               onDelete: () => onDelete(item.id),
             ),
         ],
-      ),
-    );
-  }
-}
-
-class _HospitalBagTonePill extends StatelessWidget {
-  const _HospitalBagTonePill({required this.label, required this.tone});
-
-  final String label;
-  final _HospitalBagTone tone;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = _hospitalBagToneColors(tone);
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: colors.border),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: colors.foreground,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
       ),
     );
   }
@@ -9167,102 +9107,132 @@ class _HospitalBagCartItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _hospitalBagToneColors(tone);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xfff0e1e7)),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0f5b3748),
-              blurRadius: 18,
-              offset: Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _HospitalBagItemIcon(tone: tone),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: const Color(0xff372330),
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item.desc,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: const Color(0xff7e6672),
-                        height: 1.25,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'x${item.qty}',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: const Color(0xff9a7b89),
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
+      child: Tooltip(
+        message: '长按删除${item.name}',
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onLongPress: onDelete,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xfff0e1e7)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0f5b3748),
+                  blurRadius: 18,
+                  offset: Offset(0, 8),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '¥${item.price.toStringAsFixed(2)}',
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: const Color(0xff372330),
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Tooltip(
-                    message: '删除${item.name}',
-                    child: OutlinedButton.icon(
-                      onPressed: onDelete,
-                      icon: const Icon(Icons.delete_outline_rounded, size: 14),
-                      label: const Text('删除'),
-                      style: OutlinedButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        foregroundColor: const Color(0xff6c4457),
-                        side: BorderSide(color: colors.border),
-                        textStyle: Theme.of(context).textTheme.labelSmall
-                            ?.copyWith(fontWeight: FontWeight.w900),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        minimumSize: const Size(0, 30),
-                      ),
+                  _HospitalBagItemImage(item: item, tone: tone),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelLarge
+                              ?.copyWith(
+                                color: const Color(0xff372330),
+                                fontWeight: FontWeight.w900,
+                              ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          item.desc,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: const Color(0xff7e6672),
+                                height: 1.25,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'x${item.qty}',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: const Color(0xff9a7b89),
+                                fontWeight: FontWeight.w900,
+                              ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+class _HospitalBagItemImage extends StatelessWidget {
+  const _HospitalBagItemImage({required this.item, required this.tone});
+
+  final _HospitalBagCartItemSpec item;
+  final _HospitalBagTone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final assetPath = _hospitalBagItemImageAssets[item.id];
+    if (assetPath == null) return _HospitalBagItemIcon(tone: tone);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xfff0e1e7)),
+        ),
+        child: Image.asset(
+          assetPath,
+          width: 56,
+          height: 56,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) =>
+              _HospitalBagItemIcon(tone: tone),
+        ),
+      ),
+    );
+  }
+}
+
+const _hospitalBagItemImageAssets = {
+  'mom-pad': 'assets/images/hospital_bag_mom_pad.jpg',
+  'mom-sanitary': 'assets/images/hospital_bag_mom_sanitary.jpg',
+  'mom-underwear': 'assets/images/hospital_bag_mom_underwear.png',
+  'mom-wipes': 'assets/images/hospital_bag_mom_wipes.jpg',
+  'mom-bottle': 'assets/images/hospital_bag_mom_bottle.jpg',
+  'mom-briefs': 'assets/images/hospital_bag_mom_briefs.png',
+  'baby-diaper': 'assets/images/hospital_bag_baby_diaper.jpg',
+  'baby-wipes': 'assets/images/hospital_bag_baby_wipes.jpg',
+  'baby-towel': 'assets/images/hospital_bag_baby_towel.jpg',
+  'baby-blanket': 'assets/images/hospital_bag_baby_blanket.jpg',
+  'baby-clothes': 'assets/images/hospital_bag_baby_clothes.jpg',
+  'baby-bath-towel': 'assets/images/hospital_bag_baby_bath_towel.jpg',
+  'milk-pad': 'assets/images/hospital_bag_milk_pad.jpg',
+  'milk-cream': 'assets/images/hospital_bag_milk_cream.jpg',
+  'milk-storage': 'assets/images/hospital_bag_milk_storage.jpg',
+  'pump-m9': 'assets/images/hospital_bag_pump_m9.jpg',
+  'milk-bra': 'assets/images/hospital_bag_milk_bra.jpg',
+  'milk-bottle': 'assets/images/hospital_bag_milk_bottle.jpg',
+};
 
 class _HospitalBagItemIcon extends StatelessWidget {
   const _HospitalBagItemIcon({required this.tone});
@@ -9467,21 +9437,16 @@ class _HospitalBagEmptyCart extends StatelessWidget {
 }
 
 class _HospitalBagFooter extends StatelessWidget {
-  const _HospitalBagFooter({
-    required this.total,
-    required this.discount,
-    required this.money,
-  });
+  const _HospitalBagFooter({required this.total, required this.money});
 
   final double total;
-  final double discount;
   final String Function(double amount) money;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: const BoxDecoration(
-        color: Color(0xf5fff9fb),
+        color: Color(0xfffff9fb),
         border: Border(top: BorderSide(color: Color(0xffead8df))),
         boxShadow: [
           BoxShadow(
@@ -9520,14 +9485,6 @@ class _HospitalBagFooter extends StatelessWidget {
                             ),
                       ),
                     ],
-                  ),
-                ),
-                Text(
-                  '已含组合优惠 ${money(discount)}',
-                  textAlign: TextAlign.end,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: const Color(0xff8a6d7a),
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
