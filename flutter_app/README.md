@@ -72,6 +72,7 @@ Current Android PoC package:
 Current Dart test coverage:
 
 - AG-UI stream fixtures parse equivalently across JSONL, SSE eventstream, and WebSocket frame forms.
+- Agent stream reducer fixtures cover reconnect replay idempotency by `event_id` and `sequence`.
 - API envelope fixtures distinguish success, business errors, HTTP errors, and legacy snake/camel aliases.
 - Agent voice fixtures cover STT multipart chunk transcription, timeout fallback, realtime PCM stream cancellation, realtime voice session frames, and WebSocket disconnect behavior.
 - Agent Hub widget tests cover composer text send, image attachment payloads, voice transcription fill-in, stop, retry, and user-facing work progress.

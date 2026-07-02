@@ -530,7 +530,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] `/api/ag-ui-timing-log` best-effort 上报、auth/header contract 和日志脱敏检查已覆盖
 [x] `/api/client-event` IBCLC completion payload、auth/header contract 和 best-effort failure 已覆盖
 [x] transport disconnect 映射为统一断线状态，并保留 partial content
-[ ] reconnect 不重复已完成 message chunk
+[x] reconnect 不重复已完成 message chunk
 [x] cancel ack 和本地 cancel 状态一致
 [x] UI/view model 不依赖 transport 类型判断
 [x] Agent Hub composer fixture send、streaming finished 和 local stop widget flow 已覆盖

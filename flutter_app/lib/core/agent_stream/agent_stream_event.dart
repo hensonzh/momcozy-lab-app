@@ -13,6 +13,24 @@ class AgentStreamEvent {
       stringField(raw, 'message_id') ?? stringField(raw, 'messageId');
   String? get textDelta =>
       stringField(raw, 'delta') ?? stringField(raw, 'text');
+  String? get eventId =>
+      stringField(raw, 'event_id') ?? stringField(raw, 'eventId');
+
+  String? get replayKey {
+    final id = eventId?.trim();
+    if (id != null && id.isNotEmpty) return 'event:$id';
+
+    final sequence = raw['sequence'] ?? raw['seq'];
+    final sequenceText = switch (sequence) {
+      int value => value.toString(),
+      String value => value.trim(),
+      _ => '',
+    };
+    if (sequenceText.isEmpty) return null;
+
+    final scope = runId ?? threadId ?? messageId ?? 'global';
+    return 'sequence:$scope:$sequenceText';
+  }
 
   bool get isTerminal =>
       type == 'RUN_FINISHED' ||
