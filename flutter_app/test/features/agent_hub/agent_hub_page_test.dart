@@ -263,6 +263,58 @@ void main() {
     expect(find.text('Retried answer'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub maps backend timeout to retryable copy', (
+    tester,
+  ) async {
+    final client = _FailingAgentStreamClient(
+      TimeoutException('agent request timeout'),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Check my records',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('连接中断'), findsOneWidget);
+    expect(find.text('请求超时，请稍后重试'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
+    expect(find.textContaining('TimeoutException'), findsNothing);
+    expect(find.textContaining('agent request timeout'), findsNothing);
+  });
+
+  testWidgets('Agent Hub maps offline send failure to retryable copy', (
+    tester,
+  ) async {
+    final client = _FailingAgentStreamClient(
+      StateError('SocketException: Failed host lookup: api.momcozy.test'),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Send while offline',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('连接中断'), findsOneWidget);
+    expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
+    expect(find.textContaining('SocketException'), findsNothing);
+    expect(find.textContaining('api.momcozy.test'), findsNothing);
+  });
+
   testWidgets(
     'Agent Hub renders user-facing tool progress from stream events',
     (tester) async {
@@ -564,6 +616,20 @@ class _RetryAgentStreamClient implements AgentStreamClient {
       'run_id': 'run-retry',
       'message_id': 'msg-retry',
     });
+  }
+}
+
+class _FailingAgentStreamClient implements AgentStreamClient {
+  _FailingAgentStreamClient(this.error);
+
+  final Object error;
+  final requests = <AgentStreamRequest>[];
+
+  @override
+  Stream<AgentStreamEvent> stream(AgentStreamRequest request) async* {
+    requests.add(request);
+    await Future<void>.delayed(Duration.zero);
+    throw error;
   }
 }
 
