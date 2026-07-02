@@ -965,7 +965,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `/pump` 页面 session 控制已接入 App runtime `/v1/pump/workstate` repository，覆盖左右侧档位 payload、左右侧进度、结束上传一次性 guard、重复结束拦截、多用户切换清理和同步状态 widget test
 [x] Flutter `/device` 页面已接入 App runtime BLE platform，覆盖未请求/拒绝/永久拒绝权限、系统设置返回重授权、internal/dev debug gate、已连接设备恢复、扫描空态、单/多扫描结果、battery/RSSI、连接失败和扫描失败状态 widget test
 [x] Flutter `/device/manage` 和 `/device/user` 子页已接入 App runtime BLE/user context，覆盖已连接设备读取、解绑和 runtime 用户信息 widget test
-[x] Flutter `/calibration` 页面保存动作已接入 App runtime `PumpProtocolPlatform`，覆盖左/右/双侧设备状态、档位调整、未保存退出提示、左右舒适档位下发和成功后进入 Pump widget test
+[x] Flutter `/calibration` 页面保存动作已接入 App runtime `PumpProtocolPlatform`，覆盖左/右/双侧设备状态、档位调整、未保存退出提示、左右舒适档位下发、合法/缺字段/非法/0xFF legacy calibration storage migration 和成功后进入 Pump widget test
 [x] Flutter `/media-viewer` 页面上传动作已接入 App runtime `MediaApiRepository`，覆盖 multipart path/fields/file metadata widget test
 [x] Flutter `/ibclc-chat.html` 页面进入咨询动作已接入 App runtime `/api/client-event`，覆盖 best-effort body/header widget test
 [x] Flutter `/hospital-bag-cart` 页面勾选/恢复动作已接入 App runtime `HospitalBagCartApiRepository`，覆盖购物车同步 widget test
