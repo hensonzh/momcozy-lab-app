@@ -361,12 +361,12 @@ Golden 视觉状态：
 [x] 空态
 [x] 加载失败
 [x] 图表展示
-[ ] 手动补录
-[ ] 编辑记录
-[ ] 删除记录
+[x] 手动补录
+[x] 编辑记录
+[x] 删除记录
 [x] mL/oz 单位切换
-[ ] 跨天记录
-[ ] 弱网重试
+[x] 跨天记录
+[x] 弱网重试
 ```
 
 ### 5.6 Schedule
@@ -573,7 +573,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/community` 与 `/w1` widget tests 已覆盖内容打开事件写回和 W1 教程跳转
 [x] Flutter Agent voice typed repository tests 已覆盖 STT multipart 分片、timeout fallback、barge-in cancel、realtime PCM stream、realtime voice session frames 和 WS disconnect
 [x] Flutter Agent voice input controller tests 已覆盖 microphone permission 未请求/拒绝、录音 start/stop、转写回填和失败清理
-[x] Flutter `/records` widget tests 已覆盖列表加载、空态、加载失败、趋势展示和 mL/oz 单位切换
+[x] Flutter `/records` widget tests 已覆盖列表加载、空态、加载失败、趋势展示、手动补录、编辑/删除、本地跨天标记、弱网重试文案和 mL/oz 单位切换
 [x] Flutter `/schedule` widget tests 已覆盖日期切换、今日任务加载、添加/删除本地任务、完成状态、提醒开关、未完成 badge、跨天倒计时、本地日期到 UTC timestamp 和空/失败态
 [x] Flutter `/status` widget tests 已覆盖妈妈/宝宝 tab、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 [x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 权限拒绝、扫描空态、单/多扫描结果、连接失败、battery/RSSI 展示和扫描失败状态

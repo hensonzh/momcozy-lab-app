@@ -2069,6 +2069,10 @@ class _RecordsPage extends StatefulWidget {
 class _RecordsPageState extends State<_RecordsPage> {
   String _filter = 'pump';
   String _volumeUnit = 'mL';
+  final List<PumpMilkRecord> _localPumpRecords = [];
+  final Map<String, PumpMilkRecord> _editedPumpRecords = {};
+  final Set<String> _deletedPumpRecordIds = {};
+  int _localPumpRecordSequence = 0;
   MomCozyApiRuntime? _runtime;
   late DateTime _recordsDay;
   late Future<_RecordsOverview> _recordsFuture;
@@ -2109,12 +2113,56 @@ class _RecordsPageState extends State<_RecordsPage> {
     });
   }
 
+  void _addManualPumpRecord() {
+    _localPumpRecordSequence += 1;
+    final occurredAt = DateTime.utc(
+      _recordsDay.year,
+      _recordsDay.month,
+      _recordsDay.day,
+      21,
+      45,
+    );
+    final record = PumpMilkRecord(
+      id: 'local-pump-$_localPumpRecordSequence',
+      title: '手动补录 $_localPumpRecordSequence',
+      pumpSource: 9,
+      amountMl: 90,
+      occurredAt: occurredAt,
+    );
+    setState(() {
+      _filter = 'pump';
+      _localPumpRecords.insert(0, record);
+    });
+  }
+
+  void _editPumpRecord(PumpMilkRecord record) {
+    final edited = PumpMilkRecord(
+      id: record.id,
+      title: '已编辑 ${_textOr(record.title, '泵奶记录')}',
+      pumpType: record.pumpType,
+      pumpSource: record.pumpSource,
+      amountMl: (record.amountMl ?? 0) + 10,
+      occurredAt: record.occurredAt,
+    );
+    setState(() {
+      _editedPumpRecords[record.id] = edited;
+    });
+  }
+
+  void _deletePumpRecord(PumpMilkRecord record) {
+    setState(() {
+      _deletedPumpRecordIds.add(record.id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<_RecordsOverview>(
       future: _recordsFuture,
       builder: (context, snapshot) {
-        final overview = snapshot.data;
+        final overview = snapshot.data == null
+            ? null
+            : _applyLocalRecordEdits(snapshot.data!);
 
         return _FeaturePageFrame(
           path: widget.path,
@@ -2154,7 +2202,7 @@ class _RecordsPageState extends State<_RecordsPage> {
           ),
           children: [
             const _SectionTitle('本周概览'),
-            ..._recordsSummaryChildren(snapshot),
+            ..._recordsSummaryChildren(snapshot, overview),
             if (overview != null && !snapshot.hasError) ...[
               const SizedBox(height: 18),
               const _SectionTitle('趋势'),
@@ -2163,12 +2211,13 @@ class _RecordsPageState extends State<_RecordsPage> {
               const _SectionTitle('最近记录'),
               ..._recordChildren(overview),
             ],
-            const _ActionTile(
+            _ActionTile(
               icon: Icons.add_circle_outline_rounded,
               title: '手动补录',
               subtitle: '支持 mL/oz、左右侧、时间和备注。',
-              accent: Color(0xff43827b),
-              trailing: Icon(Icons.chevron_right_rounded),
+              accent: const Color(0xff43827b),
+              onTap: _addManualPumpRecord,
+              trailing: const Icon(Icons.chevron_right_rounded),
             ),
           ],
         );
@@ -2178,6 +2227,7 @@ class _RecordsPageState extends State<_RecordsPage> {
 
   List<Widget> _recordsSummaryChildren(
     AsyncSnapshot<_RecordsOverview> snapshot,
+    _RecordsOverview? visibleOverview,
   ) {
     if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
       return const [
@@ -2199,7 +2249,7 @@ class _RecordsPageState extends State<_RecordsPage> {
         _ActionTile(
           icon: Icons.cloud_off_outlined,
           title: '记录同步失败',
-          subtitle: '检查后端连接或 token 后重试。',
+          subtitle: '弱网/离线时保留本地筛选，可点击重试。',
           accent: widget.accent,
           trailing: IconButton(
             tooltip: '重试',
@@ -2210,7 +2260,7 @@ class _RecordsPageState extends State<_RecordsPage> {
       ];
     }
 
-    final overview = snapshot.data ?? _RecordsOverview.empty;
+    final overview = visibleOverview ?? _RecordsOverview.empty;
     return [
       _MetricWrap(
         children: [
@@ -2282,9 +2332,23 @@ class _RecordsPageState extends State<_RecordsPage> {
           title:
               '${_dateTimeLabel(record.occurredAt)} ${_textOr(record.title, '泵奶记录')}',
           subtitle:
-              '${_amountLabel(record.amountMl, unit: _volumeUnit)} · 来源 ${record.pumpSource ?? '--'}',
+              '${_amountLabel(record.amountMl, unit: _volumeUnit)} · 来源 ${record.pumpSource ?? '--'}${_crossDaySuffix(record.occurredAt)}',
           accent: widget.accent,
-          trailing: const Icon(Icons.chevron_right_rounded),
+          trailing: Wrap(
+            spacing: 4,
+            children: [
+              IconButton(
+                tooltip: '编辑记录',
+                onPressed: () => _editPumpRecord(record),
+                icon: const Icon(Icons.edit_outlined),
+              ),
+              IconButton(
+                tooltip: '删除记录',
+                onPressed: () => _deletePumpRecord(record),
+                icon: const Icon(Icons.delete_outline_rounded),
+              ),
+            ],
+          ),
         ),
     ];
   }
@@ -2327,6 +2391,33 @@ class _RecordsPageState extends State<_RecordsPage> {
       accent: const Color(0xff7f6a75),
       trailing: const Icon(Icons.chevron_right_rounded),
     );
+  }
+
+  _RecordsOverview _applyLocalRecordEdits(_RecordsOverview overview) {
+    final pump = <PumpMilkRecord>[..._localPumpRecords, ...overview.pump]
+        .where((record) => !_deletedPumpRecordIds.contains(record.id))
+        .map((record) => _editedPumpRecords[record.id] ?? record)
+        .toList(growable: false);
+    return _RecordsOverview(
+      pump: pump,
+      feeding: overview.feeding,
+      growth: overview.growth,
+    );
+  }
+
+  String _crossDaySuffix(DateTime? occurredAt) {
+    if (occurredAt == null) return '';
+    final day = DateTime.utc(
+      _recordsDay.year,
+      _recordsDay.month,
+      _recordsDay.day,
+    );
+    final recordDay = DateTime.utc(
+      occurredAt.toUtc().year,
+      occurredAt.toUtc().month,
+      occurredAt.toUtc().day,
+    );
+    return recordDay == day ? '' : ' · 跨天记录';
   }
 }
 

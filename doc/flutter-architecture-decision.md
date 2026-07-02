@@ -226,7 +226,7 @@ features/
 [x] Flutter Agent Hub history restore/new session UI contract 已覆盖，runtime thread reset 可通过 `onNewSession` 接入
 [x] Flutter Agent Hub auto-reply/notification voice playback coordinator 已覆盖优先级、阻塞、打断和 UI 播放状态，平台 TTS driver 留给 native/audio 集成
 [x] Flutter Agent voice input controller 已覆盖 microphone permission、录音 start/stop、转写回填和 Agent Hub 权限拒绝 UI
-[x] Flutter Records 页面已覆盖加载、空态、失败、趋势展示和 mL/oz 单位切换；编辑/删除/跨天仍按产品 parity 决策推进
+[x] Flutter Records 页面已覆盖加载、空态、失败、趋势展示、手动补录、编辑/删除、本地跨天标记、弱网重试文案和 mL/oz 单位切换
 [x] Flutter Schedule 页面已覆盖日期切换、任务添加/删除、任务完成、提醒开关、未完成 badge、跨天倒计时、本地日期到 UTC timestamp 和空/失败态；通知跳转仍按后续 parity 推进
 [x] Flutter Status 页面已覆盖妈妈/宝宝 tab、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 [x] Flutter Device 页面已覆盖无设备、左右已连接、BLE 权限拒绝、扫描空态、单/多扫描结果、battery/RSSI 展示、连接失败和扫描失败状态；真实 scan/connect 留给设备实验室
