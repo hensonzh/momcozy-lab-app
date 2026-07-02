@@ -235,9 +235,12 @@ class MomCozyRoutePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (route.path == '/') {
+      final runtime = MomCozyRuntimeScope.of(context);
       return AgentHubPage(
-        runner: createDefaultAgentHubRunner(),
-        cancelClient: createDefaultAgentHubCancelClient(),
+        runner: createSessionAgentHubRunner(runtime.session),
+        cancelClient: createSessionAgentHubCancelClient(runtime.session),
+        requestBuilder: (message) =>
+            buildSessionAgentHubRequest(message, session: runtime.session),
       );
     }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
@@ -18,9 +19,50 @@ void main() {
     expect(runtime.userId, 'demo-user');
     expect(runtime.babyId, 'demo-baby');
     expect(runtime.locale, 'zh-CN');
+    expect(runtime.session.status, MomCozySessionStatus.anonymous);
     expect(transport.baseUri, Uri.parse('http://127.0.0.1:8769'));
     expect(transport.token, isNull);
     expect(transport.headers, containsPair('X-Momcozy-Client', 'flutter'));
+  });
+
+  test('runtime can be bootstrapped from secure session store', () async {
+    final store = MemoryMomCozySessionStore(
+      const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'secure-user',
+        babyId: 'secure-baby',
+        locale: 'en-US',
+        accessToken: 'secure-access',
+        refreshToken: 'secure-refresh',
+      ),
+    );
+
+    final runtime = await MomCozyApiRuntime.bootstrap(store: store);
+    final transport = runtime.jsonTransport as IoApiJsonTransport;
+
+    expect(runtime.userId, 'secure-user');
+    expect(runtime.babyId, 'secure-baby');
+    expect(runtime.locale, 'en-US');
+    expect(runtime.session.refreshToken, 'secure-refresh');
+    expect(transport.token, 'secure-access');
+    expect(runtime.clientEventClient.endpoint.token, 'secure-access');
+  });
+
+  test('runtime can be created directly from session', () {
+    final runtime = MomCozyApiRuntime.fromSession(
+      const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'session-user',
+        babyId: 'session-baby',
+        locale: 'en-US',
+        accessToken: 'session-access',
+      ),
+    );
+    final transport = runtime.jsonTransport as IoApiJsonTransport;
+
+    expect(runtime.userId, 'session-user');
+    expect(runtime.session.isAuthenticated, isTrue);
+    expect(transport.token, 'session-access');
   });
 
   test('runtime creates typed repositories over the injected transport', () {

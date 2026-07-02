@@ -546,7 +546,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Media upload typed repository contract tests 已覆盖 multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body
 [x] Flutter 通用 multipart transport 已接入 runtime，Media 页面可复用 `/v1/files/upload` repository contract
-[x] Flutter App API runtime tests 已覆盖 dart-define 默认配置、注入 transport 的 repository factory 和 runtime scope
+[x] Flutter App API runtime tests 已覆盖 dart-define 默认配置、secure session bootstrap、注入 transport 的 repository factory 和 runtime scope
 [x] Flutter App API runtime 已暴露 `/api/client-event` best-effort client，页面测试可注入 recording connector 验证事件写回
 [x] Flutter App API runtime tests 已覆盖 lazy BLE platform 注入和 connected device fixture
 [x] Flutter App API runtime tests 已覆盖 `PumpProtocolPlatform` 注入和 native coordinator 经 BLE fake 写出协议命令
@@ -659,13 +659,13 @@ npm run flutter:p0:platform-smoke
 ```text
 [x] Flutter 统一日志脱敏工具和测试已落地：`core/privacy/log_redactor.dart`
 [x] 上传失败日志脱敏：`PumpAgentUploadPlatform` fake failure stream
-[ ] token 存储在 secure storage 或明确的安全边界内
+[x] token / refresh token 已接入 `flutter_secure_storage` session store，并保留内存 store 供测试注入
 [ ] HTTP/SSE 使用 HTTPS，WebSocket 使用 WSS，开发环境例外必须隔离
 [ ] 日志不输出 token
 [ ] 日志不输出完整健康数据 payload
 [ ] crash report 不包含敏感字段
 [ ] 多用户切换时清理 scoped cache
-[ ] 登出后清理本地敏感状态
+[x] 登出后清理 secure session 中的 token / refresh token 敏感状态
 [ ] screenshot/golden fixtures 不包含真实用户数据
 ```
 

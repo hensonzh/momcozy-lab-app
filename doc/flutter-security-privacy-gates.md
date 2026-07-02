@@ -14,7 +14,7 @@ MomCozy App 会处理妈妈、宝宝、泵奶、喂养、成长、健康问题�
 [x] Native fake failure stream 使用统一脱敏工具
 [ ] HTTP/SSE/WS client 接入统一脱敏工具后才能输出请求日志
 [ ] Android platform channel event/failure log 接入统一脱敏工具
-[ ] token/secret 不落普通 preferences；正式鉴权接入前必须明确 dev-only 边界
+[x] token/secret 不落普通 preferences；Flutter session bootstrap 已接入 secure storage，dart-define 仅作为 dev/staging fallback
 [ ] crash/perf report 接入前必须有敏感字段 denylist
 [ ] fixtures、golden、截图不得包含真实用户数据
 ```
@@ -75,11 +75,11 @@ isSensitiveLogKey(key)
 ## 存储规则
 
 ```text
-[ ] token、refresh token、长期 session secret 进入 secure storage
+[x] token、refresh token、长期 session secret 进入 secure storage
 [ ] demo/dev user id 明确标记 dev-only，不作为正式身份体系
 [ ] conversation/thread id 迁移时按 user scope 隔离
 [ ] 多用户切换清理 chat、calibration、device、pending route、pump runtime scoped cache
-[ ] 登出/删除用户后清理 scoped cache 和 native pending state
+[ ] 登出/删除用户后清理 scoped cache 和 native pending state；当前已覆盖 secure session token 清理
 ```
 
 ## Native Bridge 规则
