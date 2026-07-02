@@ -29,11 +29,11 @@ void main() {
     );
     expect(sendButton.onPressed, isNotNull);
 
-    await tester.tap(find.text('设备').last);
+    await tester.tap(find.text('计划').last);
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/device')), findsOneWidget);
-    expect(find.text('设备'), findsWidgets);
+    expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
+    expect(find.text('计划'), findsWidgets);
   });
 
   testWidgets('route shell hides bottom navigation on focused flows', (

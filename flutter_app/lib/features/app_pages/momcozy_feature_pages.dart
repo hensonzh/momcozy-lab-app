@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show ScrollCacheExtent;
+import 'package:flutter/rendering.dart' show OverflowBoxFit, ScrollCacheExtent;
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -3379,7 +3379,7 @@ class _DevicePageState extends State<_DevicePage> {
 
     return ListView(
       key: ValueKey('route-page-${widget.path}'),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+      padding: const EdgeInsets.fromLTRB(16, 40, 0, 28),
       children: [
         _DeviceHeader(
           onAdd: _toggleScan,
@@ -3544,18 +3544,21 @@ class _DeviceHeader extends StatelessWidget {
               child: _DeviceQuickMenuLabel('设备提醒'),
             ),
           ],
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: MomCozyColors.card,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: MomCozyColors.border.withValues(alpha: 0.5),
+          child: Opacity(
+            opacity: 0,
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: MomCozyColors.card,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: MomCozyColors.border.withValues(alpha: 0.5),
+                ),
+                boxShadow: MomCozyShadows.soft,
               ),
-              boxShadow: MomCozyShadows.soft,
+              child: const Icon(Icons.add_rounded, size: 22),
             ),
-            child: const Icon(Icons.add_rounded, size: 22),
           ),
         ),
       ],
@@ -3630,10 +3633,6 @@ class _DeviceW1Banner extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  color: Color(0x99ffffff),
-                ),
               ],
             ),
           ),
@@ -3683,20 +3682,23 @@ class _DeviceAirOnePanel extends StatelessWidget {
                     ),
                   ),
                 ),
-                FilledButton.icon(
-                  onPressed: onStartPump,
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(0, 40),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                Transform.translate(
+                  offset: const Offset(104, 0),
+                  child: FilledButton.icon(
+                    onPressed: onStartPump,
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 40),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      disabledBackgroundColor: MomCozyColors.primary.withValues(
+                        alpha: 0.42,
+                      ),
                     ),
-                    disabledBackgroundColor: MomCozyColors.primary.withValues(
-                      alpha: 0.42,
-                    ),
+                    icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                    label: const Text('开始吸奶'),
                   ),
-                  icon: const Icon(Icons.play_arrow_rounded, size: 18),
-                  label: const Text('开始吸奶'),
                 ),
               ],
             ),
@@ -4581,131 +4583,125 @@ class _PumpCalibrationPromptOverlay extends StatelessWidget {
     return Positioned.fill(
       child: ColoredBox(
         color: MomCozyColors.foreground.withValues(alpha: 0.4),
-        child: Center(
+        child: Align(
+          alignment: Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 384),
-              child: DecoratedBox(
-                decoration: MomCozyDecorations.card(
-                  color: MomCozyColors.card,
-                  borderColor: MomCozyColors.border,
-                  radius: 24,
-                  shadows: const [
-                    BoxShadow(
-                      color: Color(0x40392832),
-                      blurRadius: 36,
-                      spreadRadius: -10,
-                      offset: Offset(0, 18),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              color: MomCozyColors.roseSoft,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: MomCozyColors.primary.withValues(
-                                  alpha: 0.16,
-                                ),
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.local_florist_rounded,
-                              size: 17,
-                              color: MomCozyColors.primary,
-                            ),
-                          ),
-                          const SizedBox(width: 9),
-                          Text(
-                            '个性化舒适档位',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  color: MomCozyColors.foreground,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-                      _PumpPromptRichLine(
-                        segments: [
-                          const TextSpan(text: '妈妈，检测到您还没有进行过'),
-                          TextSpan(
-                            text: '耐受度滴定',
-                            style: _pumpPromptEmphasisStyle(context),
-                          ),
-                          const TextSpan(text: '哦~'),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      _PumpPromptRichLine(
-                        segments: [
-                          const TextSpan(text: '滴定可以帮您找到'),
-                          TextSpan(
-                            text: '最舒适且高效',
-                            style: _pumpPromptEmphasisStyle(context),
-                          ),
-                          const TextSpan(text: '的吸力档位，避免吸乳时疼痛或效率不佳'),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      _PumpPromptRichLine(
-                        segments: [
-                          const TextSpan(text: '只需要 '),
-                          TextSpan(
-                            text: '2分钟',
-                            style: _pumpPromptEmphasisStyle(context),
-                          ),
-                          const TextSpan(text: '，就能让每次吸乳都更舒适~'),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: onSkip,
-                              style: OutlinedButton.styleFrom(
-                                minimumSize: const Size.fromHeight(40),
-                                side: BorderSide(
-                                  color: MomCozyColors.border.withValues(
-                                    alpha: 0.8,
-                                  ),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: const Text('先跳过'),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: FilledButton(
-                              onPressed: onStartCalibration,
-                              style: FilledButton.styleFrom(
-                                minimumSize: const Size.fromHeight(40),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: const Text('开始滴定'),
-                            ),
-                          ),
-                        ],
+            padding: const EdgeInsets.only(left: 58),
+            child: OverflowBox(
+              alignment: Alignment.centerLeft,
+              fit: OverflowBoxFit.deferToChild,
+              minWidth: 392,
+              maxWidth: 392,
+              child: SizedBox(
+                width: 392,
+                child: DecoratedBox(
+                  decoration: MomCozyDecorations.card(
+                    color: MomCozyColors.card,
+                    borderColor: MomCozyColors.border,
+                    radius: 24,
+                    shadows: const [
+                      BoxShadow(
+                        color: Color(0x40392832),
+                        blurRadius: 36,
+                        spreadRadius: -10,
+                        offset: Offset(0, 18),
                       ),
                     ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const _PumpPromptFlowerIcon(),
+                            const SizedBox(width: 9),
+                            Text(
+                              '个性化舒适档位',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
+                                    color: MomCozyColors.foreground,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        _PumpPromptRichLine(
+                          segments: [
+                            const TextSpan(text: '妈妈，检测到您还没有进行过'),
+                            TextSpan(
+                              text: '耐受度滴定',
+                              style: _pumpPromptEmphasisStyle(context),
+                            ),
+                            const TextSpan(text: '哦~'),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        _PumpPromptRichLine(
+                          segments: [
+                            const TextSpan(text: '滴定可以帮您找到'),
+                            TextSpan(
+                              text: '最舒适且高效',
+                              style: _pumpPromptEmphasisStyle(context),
+                            ),
+                            const TextSpan(text: '的吸力档位，避免吸乳时疼痛或效率不佳 '),
+                            const WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
+                              child: _PumpPromptHeartIcon(),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        _PumpPromptRichLine(
+                          segments: [
+                            const TextSpan(text: '只需要 '),
+                            TextSpan(
+                              text: '2分钟',
+                              style: _pumpPromptEmphasisStyle(context),
+                            ),
+                            const TextSpan(text: '，就能让每次吸乳都更舒适~'),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: onSkip,
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(40),
+                                  side: BorderSide(
+                                    color: MomCozyColors.border.withValues(
+                                      alpha: 0.8,
+                                    ),
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: const Text('先跳过'),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: FilledButton(
+                                onPressed: onStartCalibration,
+                                style: FilledButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(40),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: const Text('开始滴定'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -4715,6 +4711,95 @@ class _PumpCalibrationPromptOverlay extends StatelessWidget {
       ),
     );
   }
+}
+
+class _PumpPromptFlowerIcon extends StatelessWidget {
+  const _PumpPromptFlowerIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 24,
+      height: 24,
+      child: CustomPaint(painter: _PumpPromptFlowerPainter()),
+    );
+  }
+}
+
+class _PumpPromptFlowerPainter extends CustomPainter {
+  const _PumpPromptFlowerPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final petalPaint = Paint()..color = const Color(0xffff8fb8);
+    final petalShadePaint = Paint()..color = const Color(0xffff6fa7);
+    final centerPaint = Paint()..color = const Color(0xffffd166);
+    final centerDotPaint = Paint()..color = const Color(0xffcc8d24);
+
+    for (var index = 0; index < 5; index += 1) {
+      final angle = -math.pi / 2 + index * math.pi * 2 / 5;
+      canvas
+        ..save()
+        ..translate(center.dx, center.dy)
+        ..rotate(angle);
+      canvas.drawOval(
+        Rect.fromCenter(center: const Offset(0, -6.2), width: 8.5, height: 12),
+        petalPaint,
+      );
+      canvas.drawOval(
+        Rect.fromCenter(center: const Offset(1.3, -6.5), width: 3, height: 7),
+        petalShadePaint,
+      );
+      canvas.restore();
+    }
+
+    canvas.drawCircle(center, 4, centerPaint);
+    canvas.drawCircle(center.translate(0.7, -0.7), 1.1, centerDotPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _PumpPromptHeartIcon extends StatelessWidget {
+  const _PumpPromptHeartIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.only(left: 1, bottom: 1),
+      child: SizedBox(
+        width: 11,
+        height: 10,
+        child: CustomPaint(painter: _PumpPromptHeartPainter()),
+      ),
+    );
+  }
+}
+
+class _PumpPromptHeartPainter extends CustomPainter {
+  const _PumpPromptHeartPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final path = Path()
+      ..moveTo(w * 0.5, h * 0.94)
+      ..cubicTo(w * 0.08, h * 0.62, 0, h * 0.42, 0, h * 0.24)
+      ..cubicTo(0, h * 0.06, w * 0.17, 0, w * 0.3, 0)
+      ..cubicTo(w * 0.42, 0, w * 0.49, h * 0.09, w * 0.5, h * 0.18)
+      ..cubicTo(w * 0.51, h * 0.09, w * 0.58, 0, w * 0.7, 0)
+      ..cubicTo(w * 0.83, 0, w, h * 0.06, w, h * 0.24)
+      ..cubicTo(w, h * 0.42, w * 0.92, h * 0.62, w * 0.5, h * 0.94)
+      ..close();
+
+    canvas.drawPath(path, Paint()..color = MomCozyColors.primary);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _PumpPromptRichLine extends StatelessWidget {
@@ -6091,18 +6176,25 @@ class _CalibrationPageState extends State<_CalibrationPage> {
         ),
         if (!_introAcknowledged)
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
+            padding: const EdgeInsets.fromLTRB(12, 12, 0, 20),
             child: SizedBox(
               height: MediaQuery.sizeOf(context).height - 104,
               child: Center(
-                child: SizedBox(
-                  height: 204,
-                  child: _CalibrationStepCard(
-                    eyebrow: '动作确认 1',
-                    title: '请先正确穿戴吸奶器',
-                    description: '确认法兰/硅胶塞贴合，左右主机放置稳定。穿戴完成后再进入吸力调节，能减少空吸带来的不适。',
-                    primaryLabel: '我已穿戴好',
-                    onPrimary: () => setState(() => _introAcknowledged = true),
+                child: Transform.translate(
+                  offset: const Offset(0, 8),
+                  child: _CalibrationWideCardShell(
+                    child: SizedBox(
+                      height: 204,
+                      child: _CalibrationStepCard(
+                        eyebrow: '动作确认 1',
+                        title: '请先正确穿戴吸奶器',
+                        description:
+                            '确认法兰/硅胶塞贴合，左右主机放置稳定。穿戴完成后再进入吸力调节，能减少空吸带来的不适。',
+                        primaryLabel: '我已穿戴好',
+                        onPrimary: () =>
+                            setState(() => _introAcknowledged = true),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -6110,89 +6202,93 @@ class _CalibrationPageState extends State<_CalibrationPage> {
           )
         else
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
-            child: _CalibrationStepCard(
-              eyebrow: '左右侧 · 舒适档位',
-              title: '调节到舒适最大档',
-              description: '未感不适时持续加档，感受到略微不适时减 1-2 档，恢复到舒适档位。',
-              children: [
-                if (_deviceStatusError != null)
-                  _ActionTile(
-                    icon: Icons.bluetooth_disabled_rounded,
-                    title: '设备状态同步失败',
-                    subtitle: _deviceStatusError!,
-                    accent: Colors.red,
-                    trailing: IconButton(
-                      tooltip: '重试设备状态',
-                      onPressed: _refreshCalibrationDevices,
-                      icon: const Icon(Icons.refresh_rounded),
+            padding: const EdgeInsets.fromLTRB(12, 12, 0, 20),
+            child: _CalibrationWideCardShell(
+              child: _CalibrationStepCard(
+                eyebrow: '左右侧 · 舒适档位',
+                title: '调节到舒适最大档',
+                description: '未感不适时持续加档，感受到略微不适时减 1-2 档，恢复到舒适档位。',
+                children: [
+                  if (_deviceStatusError != null)
+                    _ActionTile(
+                      icon: Icons.bluetooth_disabled_rounded,
+                      title: '设备状态同步失败',
+                      subtitle: _deviceStatusError!,
+                      accent: Colors.red,
+                      trailing: IconButton(
+                        tooltip: '重试设备状态',
+                        onPressed: _refreshCalibrationDevices,
+                        icon: const Icon(Icons.refresh_rounded),
+                      ),
+                    )
+                  else ...[
+                    _CalibrationDeviceTile(
+                      label: '左侧',
+                      device: leftDevice,
+                      accent: widget.accent,
                     ),
-                  )
-                else ...[
-                  _CalibrationDeviceTile(
+                    _CalibrationDeviceTile(
+                      label: '右侧',
+                      device: rightDevice,
+                      accent: const Color(0xff43827b),
+                    ),
+                  ],
+                  const SizedBox(height: 6),
+                  _CalibrationSideTile(
                     label: '左侧',
-                    device: leftDevice,
+                    value: _leftComfort,
                     accent: widget.accent,
+                    onChanged: _setLeftComfort,
                   ),
-                  _CalibrationDeviceTile(
+                  _CalibrationSideTile(
                     label: '右侧',
-                    device: rightDevice,
+                    value: _rightComfort,
                     accent: const Color(0xff43827b),
+                    onChanged: _setRightComfort,
                   ),
-                ],
-                const SizedBox(height: 6),
-                _CalibrationSideTile(
-                  label: '左侧',
-                  value: _leftComfort,
-                  accent: widget.accent,
-                  onChanged: _setLeftComfort,
-                ),
-                _CalibrationSideTile(
-                  label: '右侧',
-                  value: _rightComfort,
-                  accent: const Color(0xff43827b),
-                  onChanged: _setRightComfort,
-                ),
-                if (_saveError != null) ...[
-                  const SizedBox(height: 8),
-                  _CalibrationFeedbackBanner(
-                    text: _saveError!,
-                    isError: !_saveError!.startsWith('已恢复'),
-                  ),
-                ],
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: _isSaving ? null : _saveAndEnterPump,
-                        icon: const Icon(Icons.check_circle_rounded),
-                        label: Text(_isSaving ? '保存中' : '保存并进入泵奶'),
-                      ),
+                  if (_saveError != null) ...[
+                    const SizedBox(height: 8),
+                    _CalibrationFeedbackBanner(
+                      text: _saveError!,
+                      isError: !_saveError!.startsWith('已恢复'),
                     ),
                   ],
-                ),
-                const SizedBox(height: 9),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _isSaving ? null : _exitCalibration,
-                        icon: const Icon(Icons.close_rounded),
-                        label: const Text('退出校准'),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton.icon(
+                          onPressed: _isSaving ? null : _saveAndEnterPump,
+                          icon: const Icon(Icons.check_circle_rounded),
+                          label: Text(_isSaving ? '保存中' : '保存并进入泵奶'),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 9),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _isSaving ? null : _resetCalibrationChanges,
-                        icon: const Icon(Icons.restore_rounded),
-                        label: const Text('恢复默认'),
+                    ],
+                  ),
+                  const SizedBox(height: 9),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _isSaving ? null : _exitCalibration,
+                          icon: const Icon(Icons.close_rounded),
+                          label: const Text('退出校准'),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 9),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _isSaving
+                              ? null
+                              : _resetCalibrationChanges,
+                          icon: const Icon(Icons.restore_rounded),
+                          label: const Text('恢复默认'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
       ],
@@ -6236,7 +6332,7 @@ class _CalibrationTopBar extends StatelessWidget {
     final ratio = (progress / total).clamp(0.0, 1.0);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+      padding: const EdgeInsets.fromLTRB(12, 10, 0, 12),
       decoration: BoxDecoration(
         color: MomCozyColors.background,
         border: Border(
@@ -6288,13 +6384,6 @@ class _CalibrationTopBar extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(
-                '$progress/$total',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: MomCozyColors.primary,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -6310,6 +6399,26 @@ class _CalibrationTopBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CalibrationWideCardShell extends StatelessWidget {
+  const _CalibrationWideCardShell({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: OverflowBox(
+        alignment: Alignment.centerLeft,
+        fit: OverflowBoxFit.deferToChild,
+        minWidth: 396,
+        maxWidth: 396,
+        child: SizedBox(width: 396, child: child),
       ),
     );
   }
@@ -7960,7 +8069,7 @@ class _DeviceManagePageState extends State<_DeviceManagePage> {
   Widget build(BuildContext context) {
     return ListView(
       key: ValueKey('route-page-${widget.path}'),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+      padding: const EdgeInsets.fromLTRB(16, 40, 0, 28),
       children: [
         _DeviceSubpageHeader(
           title: '设备提醒',
