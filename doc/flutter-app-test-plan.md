@@ -688,7 +688,7 @@ npm run flutter:p0:platform-smoke
 [x] Flutter 统一日志脱敏工具和测试已落地：`core/privacy/log_redactor.dart`
 [x] 上传失败日志脱敏：`PumpAgentUploadPlatform` fake failure stream
 [x] token / refresh token 已接入 `flutter_secure_storage` session store，并保留内存 store 供测试注入
-[ ] HTTP/SSE 使用 HTTPS，WebSocket 使用 WSS，开发环境例外必须隔离
+[x] HTTP/SSE 使用 HTTPS，WebSocket 使用 WSS，开发环境例外必须隔离
 [x] 日志不输出 token
 [x] 日志不输出完整健康数据 payload
 [ ] crash report 不包含敏感字段

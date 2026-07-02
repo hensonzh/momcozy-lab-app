@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'api_envelope.dart';
+import 'transport_security_policy.dart';
 
 abstract interface class ApiJsonTransport {
   Future<Map<String, Object?>> getJson(
@@ -145,12 +146,12 @@ class IoApiHttpConnector implements ApiHttpConnector {
 }
 
 class IoApiJsonTransport implements ApiJsonTransport {
-  const IoApiJsonTransport({
-    required this.baseUri,
+  IoApiJsonTransport({
+    required Uri baseUri,
     this.token,
     this.headers = const <String, String>{},
     this.connector = const _DefaultApiHttpConnector(),
-  });
+  }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri);
 
   final Uri baseUri;
   final String? token;
@@ -230,11 +231,12 @@ class IoApiJsonTransport implements ApiJsonTransport {
 
 class IoApiMultipartTransport implements ApiMultipartTransport {
   IoApiMultipartTransport({
-    required this.baseUri,
+    required Uri baseUri,
     this.token,
     this.headers = const <String, String>{},
     HttpClient? httpClient,
-  }) : _httpClient = httpClient ?? HttpClient();
+  }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri),
+       _httpClient = httpClient ?? HttpClient();
 
   final Uri baseUri;
   final String? token;

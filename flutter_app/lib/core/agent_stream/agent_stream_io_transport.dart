@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../network/api_envelope.dart';
+import '../network/transport_security_policy.dart';
 import '../privacy/log_redactor.dart';
 import 'agent_stream_client.dart';
 import 'agent_stream_event.dart';
@@ -14,11 +15,11 @@ const agentStreamPrewarmMessage =
     '这是一次隐藏的新会话预热。请只回复“我在。”，不要调用工具，不要生成建议、表单、卡片或面向用户的内容。下一条用户消息才是真实对话。';
 
 class AgentStreamEndpoint {
-  const AgentStreamEndpoint({
-    required this.uri,
+  AgentStreamEndpoint({
+    required Uri uri,
     this.token,
     this.headers = const <String, String>{},
-  });
+  }) : uri = TransportSecurityPolicy.requireSecureHttpOrWebSocket(uri);
 
   final Uri uri;
   final String? token;
