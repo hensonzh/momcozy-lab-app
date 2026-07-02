@@ -60,8 +60,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/momcozy-agent.png
-    - assets/images/momcozy-agent-awaken.gif
+    - assets/images/
 
   fonts:
     - family: Quicksand

@@ -163,13 +163,24 @@ Future<void> _pumpGoldenApp(
   await tester.pump();
   final appContext = tester.element(find.byType(MomCozyFlutterApp));
   await tester.runAsync(() async {
-    await precacheImage(
-      const AssetImage(MomCozyAssets.agentAvatar),
-      appContext,
-    ).timeout(const Duration(seconds: 5));
+    for (final asset in _goldenImageAssets) {
+      await precacheImage(
+        AssetImage(asset),
+        appContext,
+      ).timeout(const Duration(seconds: 5));
+    }
   });
   await tester.pumpAndSettle();
 }
+
+const _goldenImageAssets = [
+  MomCozyAssets.agentAvatar,
+  MomCozyAssets.momAvatar,
+  MomCozyAssets.babyAvatar,
+  MomCozyAssets.pumpM9,
+  MomCozyAssets.ibclcConsultantAvatar,
+  MomCozyAssets.postpartumRecoveryIcon,
+];
 
 MomCozyApiRuntime _goldenRuntime() {
   return MomCozyApiRuntime(

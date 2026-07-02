@@ -46,6 +46,14 @@ class MomCozyAssets {
 
   static const agentAvatar = 'assets/images/momcozy-agent.png';
   static const agentAwakenAvatar = 'assets/images/momcozy-agent-awaken.gif';
+  static const momAvatar = 'assets/images/mom-avatar-felt.png';
+  static const babyAvatar = 'assets/images/baby-avatar-felt.png';
+  static const pumpM9 = 'assets/images/M9.png';
+  static const ibclcConsultantAvatar =
+      'assets/images/ibclc-consultant-avatar.jpg';
+  static const postpartumRecoveryIcon =
+      'assets/images/postpartum-recovery-icon.png';
+  static const momcozyLogo = 'assets/images/momcozy_logo.png';
 }
 
 class MomCozyTypography {
