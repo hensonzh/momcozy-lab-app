@@ -545,6 +545,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Hospital Bag cart typed repository contract tests 已覆盖 `/api/hospital-bag/cart-update` body schema、success、business error 和 HTTP error
 [x] Media upload typed repository contract tests 已覆盖 multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body
+[x] Flutter staging smoke CLI 已覆盖 env 解析、mutating/agent gating、失败脱敏和默认 skip；真实 staging 运行见 `doc/flutter-staging-smoke.md`
 [x] Flutter 通用 multipart transport 已接入 runtime，Media 页面可复用 `/v1/files/upload` repository contract
 [x] Flutter App API runtime tests 已覆盖 dart-define 默认配置、secure session bootstrap、注入 transport 的 repository factory 和 runtime scope
 [x] Flutter App API runtime 已暴露 `/api/client-event` best-effort client，页面测试可注入 recording connector 验证事件写回

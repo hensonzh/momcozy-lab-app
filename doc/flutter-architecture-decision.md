@@ -180,6 +180,7 @@ features/
 [x] Flutter Hospital Bag cart typed repository contract 已开始落地，待产包购物车更新不再由页面直接拼 endpoint
 [x] Flutter Media upload typed repository contract 已开始落地，multipart 上传、取消和超时边界已测试
 [x] Flutter 通用 JSON HTTP transport 已开始落地，typed repositories 可从 fixture contract 切到真实后端 connector
+[x] Flutter staging smoke CLI 已落地，typed repositories 可在无真机条件下直连 staging 做只读/写入/Agent SSE 探针验证
 [x] Flutter 通用 multipart transport 已开始落地，Media 上传通过 App runtime 注入，不在 widget 内拼 URL/token
 [x] Flutter App API runtime scope 已接入 secure session bootstrap，feature 页面从 App scope 获取 repository，避免 widget 内直接拼 URL/token
 [x] Flutter App API runtime 已加入 `/api/client-event` control client 注入点，IBCLC 等页面不直接持有 endpoint/token
