@@ -48,18 +48,20 @@ BLUETOOTH_CONNECT
 
 ## 3. 权限流验收
 
-每个权限能力都必须覆盖：
+本地 fake/platform contract 已覆盖通用权限状态；真实系统弹窗、设置页回跳、厂商差异和 Android 版本差异仍按第 5、6 节的 device lab 清单执行。
 
 ```text
-[ ] 未请求
-[ ] 首次允许
-[ ] 首次拒绝
-[ ] 永久拒绝
-[ ] 打开系统设置
-[ ] 从系统设置返回
-[ ] 功能降级提示
-[ ] 不可用状态下不崩溃
+[x] 未请求
+[x] 首次允许
+[x] 首次拒绝
+[x] 永久拒绝
+[x] 打开系统设置
+[x] 从系统设置返回
+[x] 功能降级提示
+[x] 不可用状态下不崩溃
 ```
+
+当前本地覆盖来源：BLE 权限与设置页 handoff 使用 `momcozy_feature_pages_test.dart`、`p0_platform_interfaces_test.dart` 和 `android_p0_platform_channels_test.dart`；麦克风权限使用 Agent voice controller/page tests；overlay permission fallback 使用 `pump_overlay_route_action_test.dart`；foreground notification permission 使用 Android MethodChannel schema tests。
 
 ---
 
