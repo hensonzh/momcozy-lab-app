@@ -229,6 +229,7 @@ features/
 [x] Flutter Records 页面已覆盖加载、空态、失败、趋势展示和 mL/oz 单位切换；编辑/删除/跨天仍按产品 parity 决策推进
 [x] Flutter Schedule 页面已覆盖日期切换、任务完成、提醒开关、本地日期到 UTC timestamp 和空/失败态；添加/删除/通知跳转仍按后续 parity 推进
 [x] Flutter Status 页面已覆盖妈妈/宝宝 tab、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
+[x] Flutter Device 页面已覆盖无设备、左右已连接、BLE 权限拒绝、扫描结果和扫描失败状态；真实 scan/connect 留给设备实验室
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

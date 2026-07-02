@@ -543,6 +543,83 @@ void main() {
       expect(find.text('停止扫描'), findsOneWidget);
     });
 
+    testWidgets('device page handles empty and denied permission states', (
+      tester,
+    ) async {
+      final ble = FakeBlePlatform(
+        initialPermission: BlePermissionState.unknown,
+        requestPermissionResult: BlePermissionState.denied,
+      );
+      addTearDown(ble.dispose);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/device'), blePlatform: ble),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('左侧 等待连接'), findsOneWidget);
+      expect(find.text('右侧 等待连接'), findsOneWidget);
+      expect(find.textContaining('权限状态 未知'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('BLE 权限未授权'), findsOneWidget);
+      expect(find.textContaining('已恢复 0 台已连接设备'), findsNothing);
+    });
+
+    testWidgets('device page renders dual devices and scan outcomes', (
+      tester,
+    ) async {
+      final ble = FakeBlePlatform(
+        initialPermission: BlePermissionState.granted,
+        seedDevices: const [
+          BleDeviceSnapshot(
+            side: 'L',
+            deviceId: 'left-connected',
+            deviceName: 'S12 Pro L',
+            connected: true,
+          ),
+          BleDeviceSnapshot(
+            side: 'R',
+            deviceId: 'right-connected',
+            deviceName: 'S12 Pro R',
+            connected: true,
+          ),
+        ],
+      );
+      addTearDown(ble.dispose);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/device'), blePlatform: ble),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('左侧 S12 Pro L'), findsOneWidget);
+      expect(find.text('右侧 S12 Pro R'), findsOneWidget);
+      expect(find.textContaining('已恢复 2 台已连接设备'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
+      await tester.pump();
+
+      ble.addScanResult(
+        const BleDeviceSnapshot(
+          side: 'L',
+          deviceId: 'nearby-left',
+          deviceName: 'Nearby Pump L',
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Nearby Pump L'), findsOneWidget);
+      expect(find.textContaining('nearby-left'), findsOneWidget);
+
+      ble.failScan(const BleScanFailure(code: 'timeout', message: '扫描超时'));
+      await tester.pump();
+
+      expect(find.text('扫描超时'), findsOneWidget);
+    });
+
     testWidgets('calibration page saves gears through pump protocol runtime', (
       tester,
     ) async {
@@ -800,12 +877,14 @@ class _FeaturePageHost extends StatelessWidget {
     this.clientEventClient,
     this.jsonTransport,
     this.multipartTransport,
+    this.blePlatform,
   });
 
   final MomCozyRouteConfig route;
   final AgentStreamClientEventClient? clientEventClient;
   final FixtureApiJsonTransportByPath? jsonTransport;
   final FixtureApiMultipartTransport? multipartTransport;
+  final BlePlatform? blePlatform;
 
   @override
   Widget build(BuildContext context) {
@@ -814,6 +893,7 @@ class _FeaturePageHost extends StatelessWidget {
         clientEventClient: clientEventClient,
         jsonTransport: jsonTransport,
         multipartTransport: multipartTransport,
+        blePlatform: blePlatform,
       ),
       child: MaterialApp(
         theme: momCozyTheme(),
@@ -837,6 +917,7 @@ MomCozyApiRuntime _appRuntime({
   AgentStreamClientEventClient? clientEventClient,
   FixtureApiJsonTransportByPath? jsonTransport,
   FixtureApiMultipartTransport? multipartTransport,
+  BlePlatform? blePlatform,
 }) {
   return MomCozyApiRuntime(
     jsonTransport:
@@ -927,17 +1008,19 @@ MomCozyApiRuntime _appRuntime({
         }),
     clientEventClient: clientEventClient,
     multipartTransport: multipartTransport,
-    blePlatform: FakeBlePlatform(
-      initialPermission: BlePermissionState.granted,
-      seedDevices: const [
-        BleDeviceSnapshot(
-          side: 'L',
-          deviceId: 'ble-left-fixture',
-          deviceName: 'S12 Pro L',
-          connected: true,
+    blePlatform:
+        blePlatform ??
+        FakeBlePlatform(
+          initialPermission: BlePermissionState.granted,
+          seedDevices: const [
+            BleDeviceSnapshot(
+              side: 'L',
+              deviceId: 'ble-left-fixture',
+              deviceName: 'S12 Pro L',
+              connected: true,
+            ),
+          ],
         ),
-      ],
-    ),
     pumpProtocolPlatform: pumpProtocolPlatform,
     userId: 'demo-user-fixture',
     babyId: 'demo-baby-fixture',
