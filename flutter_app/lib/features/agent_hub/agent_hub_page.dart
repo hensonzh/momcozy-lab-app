@@ -26,6 +26,7 @@ class AgentHubPage extends StatefulWidget {
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
     this.voiceInput,
+    this.voicePlaybackCoordinator,
     this.onArtifactAction,
     this.onNewSession,
   });
@@ -37,6 +38,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
   final AgentHubVoiceInput? voiceInput;
+  final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubNewSessionHandler? onNewSession;
 
@@ -194,6 +196,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             setState(() {
               _state = nextState;
             });
+            _maybeStartAutoVoicePlayback(nextState);
           },
           onError: (Object error) {
             if (!mounted || !_state.isActive) return;
@@ -202,6 +205,32 @@ class _AgentHubPageState extends State<AgentHubPage> {
             });
           },
         );
+  }
+
+  void _maybeStartAutoVoicePlayback(AgentStreamRunState nextState) {
+    final coordinator = widget.voicePlaybackCoordinator;
+    final text = nextState.textContent.trim();
+    if (coordinator == null ||
+        nextState.phase != AgentStreamRunPhase.finished ||
+        text.isEmpty) {
+      return;
+    }
+
+    final playbackId =
+        nextState.messageId ?? nextState.runId ?? nextState.threadId ?? '';
+    final result = coordinator.request(
+      id: playbackId,
+      source: AgentVoicePlaybackSource.autoReply,
+    );
+    final handle = result.handle;
+    if (!mounted ||
+        result.status != AgentVoicePlaybackRequestStatus.started ||
+        handle == null) {
+      return;
+    }
+    setState(() {
+      _voiceState = _voiceState.startPlayback(handle.id);
+    });
   }
 
   void _cancelRun() {
@@ -1023,6 +1052,7 @@ class AgentComposerBar extends StatelessWidget {
     return switch (voicePhase) {
       AgentVoicePhase.listening => Icons.graphic_eq_rounded,
       AgentVoicePhase.transcribing => Icons.hourglass_bottom_rounded,
+      AgentVoicePhase.playing => Icons.volume_up_outlined,
       AgentVoicePhase.error => Icons.mic_off_outlined,
       _ => Icons.mic_none_rounded,
     };
@@ -1032,6 +1062,8 @@ class AgentComposerBar extends StatelessWidget {
     return switch (voicePhase) {
       AgentVoicePhase.listening => '正在听',
       AgentVoicePhase.transcribing => '正在转写',
+      AgentVoicePhase.playing => '正在播放语音',
+      AgentVoicePhase.cancelled => '语音播放已停止',
       AgentVoicePhase.error => '语音失败',
       _ => '语音输入',
     };
@@ -1041,6 +1073,8 @@ class AgentComposerBar extends StatelessWidget {
     return switch (voicePhase) {
       AgentVoicePhase.listening => '正在听',
       AgentVoicePhase.transcribing => '正在整理语音',
+      AgentVoicePhase.playing => '正在播放语音',
+      AgentVoicePhase.cancelled => '语音播放已停止',
       AgentVoicePhase.error => '语音输入失败',
       _ => null,
     };

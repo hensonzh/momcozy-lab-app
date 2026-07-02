@@ -254,8 +254,8 @@ test/fixtures/api/
 [x] Doc link 渲染和打开
 [x] Citation/reference link 渲染
 [x] Media link 打开
-[ ] 自动语音播放
-[ ] 通知语音播放
+[x] 自动语音播放协调入口
+[x] 通知语音播放优先级
 [x] 用户 barge-in / 手动打断 transport cancel contract
 [x] 长消息换行
 [x] Empty Agent Hub
@@ -544,6 +544,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Agent Hub compact mobile viewport 已覆盖长回复和长 artifact 文案换行，不触发布局 overflow
 [x] Agent Hub citation/reference links 已覆盖白名单渲染和点击回调，UI 不展示完整外部 URL
 [x] Agent Hub history restore/new session UI contract 已覆盖：可注入历史消息，新会话清空本地历史/输入/状态并预留 runtime thread reset 回调
+[x] Agent Hub auto-reply/notification voice playback coordinator 已覆盖优先级、阻塞、打断和 UI 播放状态；平台 TTS driver 仍待 native/audio 集成
 [x] Flutter 非 Agent route 页面骨架已覆盖全量 route map，并验证 Status、Schedule、Device、Pump、Calibration、Media 的关键区块和专注页底栏规则
 [x] Flutter 非 Agent route 已增加紧凑手机视口渲染和滚动 smoke，防止小屏 overflow 与底栏遮挡回归
 [x] Status/Schedule typed repository contract tests 已覆盖 success、legacy alias、empty、partial、business error 和 HTTP error fixtures
@@ -589,7 +590,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] 分片转写失败
 [x] realtime voice session 创建
 [x] realtime voice stream cancel / barge-in
-[ ] TTS 播放
+[x] TTS 播放协调和 UI 入口（平台 TTS driver 待 native/audio 集成）
 [ ] 通知语音打断当前播放
 [x] 用户手动打断播放的 transport cancel 合同
 [x] 语音状态和文本 stream 状态不互相污染

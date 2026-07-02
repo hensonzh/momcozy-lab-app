@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
 import '../../support/fixture_reader.dart';
 
@@ -239,6 +240,73 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(client.requests.single.message, '今天左侧奶量偏低');
+  });
+
+  testWidgets('Agent Hub starts auto voice playback after finished reply', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Read this aloud',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
+    expect(coordinator.activeId, 'msg-reply-text-001');
+    expect(find.text('正在播放语音'), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub keeps notification voice ahead of auto reply', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    var notificationCancelled = false;
+    coordinator.request(
+      id: 'notification-1',
+      source: AgentVoicePlaybackSource.notification,
+      cancel: () => notificationCancelled = true,
+    );
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Do not interrupt notification',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(notificationCancelled, isFalse);
+    expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
+    expect(coordinator.activeId, 'notification-1');
+    expect(find.text('正在播放语音'), findsNothing);
   });
 
   testWidgets('Agent Hub can locally stop an active run', (tester) async {

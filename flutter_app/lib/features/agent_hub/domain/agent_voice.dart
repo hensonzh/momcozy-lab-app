@@ -9,6 +9,15 @@ enum AgentVoicePhase {
   error,
 }
 
+enum AgentVoicePlaybackSource {
+  autoReply,
+  greeting,
+  notification,
+  manualBubble,
+}
+
+enum AgentVoicePlaybackRequestStatus { started, blocked, rejected }
+
 class AgentVoiceState {
   const AgentVoiceState({
     this.phase = AgentVoicePhase.idle,
@@ -66,6 +75,164 @@ class AgentVoiceState {
       errorMessage: error.toString(),
     );
   }
+}
+
+class AgentVoicePlaybackRequestResult {
+  const AgentVoicePlaybackRequestResult._({
+    required this.status,
+    this.handle,
+    this.activeId,
+    this.activeSource,
+  });
+
+  factory AgentVoicePlaybackRequestResult.started(
+    AgentVoicePlaybackHandle handle,
+  ) {
+    return AgentVoicePlaybackRequestResult._(
+      status: AgentVoicePlaybackRequestStatus.started,
+      handle: handle,
+    );
+  }
+
+  factory AgentVoicePlaybackRequestResult.blocked({
+    required String activeId,
+    required AgentVoicePlaybackSource activeSource,
+  }) {
+    return AgentVoicePlaybackRequestResult._(
+      status: AgentVoicePlaybackRequestStatus.blocked,
+      activeId: activeId,
+      activeSource: activeSource,
+    );
+  }
+
+  const AgentVoicePlaybackRequestResult.rejected()
+    : this._(status: AgentVoicePlaybackRequestStatus.rejected);
+
+  final AgentVoicePlaybackRequestStatus status;
+  final AgentVoicePlaybackHandle? handle;
+  final String? activeId;
+  final AgentVoicePlaybackSource? activeSource;
+}
+
+class AgentVoicePlaybackHandle {
+  AgentVoicePlaybackHandle._({
+    required this.id,
+    required this.source,
+    required this.token,
+    required this._coordinator,
+  });
+
+  final String id;
+  final AgentVoicePlaybackSource source;
+  final int token;
+  final AgentVoicePlaybackCoordinator _coordinator;
+
+  bool get isCurrent => _coordinator._active?.token == token;
+
+  void finish() {
+    if (!isCurrent) return;
+    _coordinator._finishActive(runCancel: false);
+  }
+
+  bool cancel() {
+    return _coordinator.cancel(handle: this);
+  }
+}
+
+class AgentVoicePlaybackCoordinator {
+  AgentVoicePlaybackCoordinator();
+
+  _ActiveAgentVoicePlayback? _active;
+  int _nextToken = 0;
+
+  AgentVoicePlaybackSource? get activeSource => _active?.source;
+
+  String? get activeId => _active?.id;
+
+  AgentVoicePlaybackRequestResult request({
+    required String id,
+    required AgentVoicePlaybackSource source,
+    void Function()? cancel,
+    int? priority,
+  }) {
+    final playbackId = id.trim();
+    if (playbackId.isEmpty) {
+      return const AgentVoicePlaybackRequestResult.rejected();
+    }
+
+    final requestedPriority = priority ?? _sourcePriority(source);
+    final current = _active;
+    if (current != null) {
+      if (requestedPriority < current.priority) {
+        return AgentVoicePlaybackRequestResult.blocked(
+          activeId: current.id,
+          activeSource: current.source,
+        );
+      }
+      _finishActive(runCancel: true);
+    }
+
+    _nextToken += 1;
+    final handle = AgentVoicePlaybackHandle._(
+      id: playbackId,
+      source: source,
+      token: _nextToken,
+      coordinator: this,
+    );
+    _active = _ActiveAgentVoicePlayback(
+      id: playbackId,
+      source: source,
+      token: _nextToken,
+      priority: requestedPriority,
+      cancel: cancel,
+    );
+    return AgentVoicePlaybackRequestResult.started(handle);
+  }
+
+  bool cancel({
+    AgentVoicePlaybackHandle? handle,
+    Set<AgentVoicePlaybackSource> preserveSources =
+        const <AgentVoicePlaybackSource>{},
+  }) {
+    final current = _active;
+    if (current == null) return false;
+    if (handle != null && handle.token != current.token) return false;
+    if (preserveSources.contains(current.source)) return false;
+    _finishActive(runCancel: true);
+    return true;
+  }
+
+  void _finishActive({required bool runCancel}) {
+    final current = _active;
+    if (current == null) return;
+    _active = null;
+    if (runCancel) current.cancel?.call();
+  }
+}
+
+class _ActiveAgentVoicePlayback {
+  const _ActiveAgentVoicePlayback({
+    required this.id,
+    required this.source,
+    required this.token,
+    required this.priority,
+    this.cancel,
+  });
+
+  final String id;
+  final AgentVoicePlaybackSource source;
+  final int token;
+  final int priority;
+  final void Function()? cancel;
+}
+
+int _sourcePriority(AgentVoicePlaybackSource source) {
+  return switch (source) {
+    AgentVoicePlaybackSource.autoReply => 50,
+    AgentVoicePlaybackSource.greeting => 70,
+    AgentVoicePlaybackSource.notification => 90,
+    AgentVoicePlaybackSource.manualBubble => 100,
+  };
 }
 
 enum AgentVoiceSessionEventType { opened, audioChunk, completed, failed }
