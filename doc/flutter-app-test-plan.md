@@ -206,12 +206,12 @@ test/fixtures/api/
 每个 fixture 必须定义：
 
 ```text
-[ ] Legacy key
-[ ] Legacy value
-[ ] Expected Flutter storage key
-[ ] Expected parsed value
-[ ] Invalid value fallback
-[ ] Idempotency expectation
+[x] Legacy key
+[x] Legacy value
+[x] Expected Flutter storage key
+[x] Expected parsed value
+[x] Invalid value fallback
+[x] Idempotency expectation
 ```
 
 必须覆盖的状态类别：
@@ -224,6 +224,8 @@ test/fixtures/api/
 - pending navigation key。
 - multi-user snapshot。
 - sessionStorage pump state。
+
+当前 Flutter dry-run 覆盖 `p0_valid_core_state`、`p0_invalid_values_fallback`、`p0_one_shot_route_intents`、`p0_pump_runtime_not_trusted_without_native_session` 和 `p1_preferences_ibclc_and_multi_user`，并报告 `unhandledLegacyKeys`。
 
 ---
 

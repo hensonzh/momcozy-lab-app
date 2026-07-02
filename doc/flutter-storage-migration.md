@@ -99,8 +99,9 @@
 [x] 运行态 key 默认不迁移，除非能和 native active session 校验
 [x] route pending key 只能消费一次
 [x] legacy/mock key 默认不迁移，除非产品确认保留
-[ ] 迁移完成写入 migration version
-[ ] 迁移失败不阻塞 App 启动，但必须记录脱敏诊断
+[x] dry-run 输出 migration version、wouldWrite、wouldDeleteLegacyKeys、diagnostics 和 unhandledLegacyKeys
+[x] 迁移失败不阻塞 dry-run，但必须记录脱敏诊断
+[ ] App 内真实写入迁移完成后持久化 migration version
 ```
 
 ## 7. Phase 0 fixtures
@@ -124,4 +125,10 @@ test/fixtures/storage_migration/
 - pump runtime key 不直接恢复的安全规则。
 - P1 偏好、IBCLC 连续性和 internal/dev 多用户快照。
 
-下一步：Flutter migration runner 需要读取这些 JSON，断言 `legacy` 输入能产生 `expected` 输出。
+当前 Flutter migration runner 已读取这些 JSON，断言 `legacy` 输入能产生 `expected` 输出；dry-run CLI 可对 fixtures 或真实导出的 legacy storage JSON 生成只读报告。
+
+```bash
+cd flutter_app
+dart run tool/storage_migration_dry_run.dart
+dart run tool/storage_migration_dry_run.dart path/to/legacy-storage-export.json
+```

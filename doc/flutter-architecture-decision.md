@@ -150,6 +150,7 @@ features/
 [x] Web baseline 可测试和构建
 [x] BLE / AG-UI / API / storage / route fixtures 已准备
 [x] Flutter BLE / AG-UI / API / storage / route fixture tests 已开始落地
+[x] Flutter storage migration runner 已覆盖核心状态、pending route、pump runtime guard、IBCLC 和 dev multi-user fixtures，并提供 dry-run CLI
 [x] P0 native fake platform interfaces 已开始落地
 [x] Flutter BLE golden/parity tests 已移植
 [x] BLE / PumpProtocol / Pump foreground / Route fake method schemas 与 event streams 已测试

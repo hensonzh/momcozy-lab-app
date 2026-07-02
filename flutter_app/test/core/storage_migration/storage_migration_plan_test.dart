@@ -41,5 +41,46 @@ void main() {
       expect(plan.diagnostics, expected['diagnostics']);
       expect(plan.migrationVersion, expected['migrationVersion']);
     });
+
+    test('convert pending route keys into one-shot queues', () {
+      final fixture = readFixtureMap(
+        'storage_migration/p0_one_shot_route_intents.json',
+      );
+      final expected = Map<String, Object?>.from(fixture['expected']! as Map);
+      final plan = buildStorageMigrationPlan(fixture);
+
+      expect(plan.routeIntentQueue, expected['routeIntentQueue']);
+      expect(plan.backgroundJobQueue, expected['backgroundJobQueue']);
+      expect(plan.deleteLegacyKeys, expected['deleteLegacyKeys']);
+      expect(plan.migrationVersion, expected['migrationVersion']);
+    });
+
+    test('do not restore browser pump runtime without native validation', () {
+      final fixture = readFixtureMap(
+        'storage_migration/p0_pump_runtime_not_trusted_without_native_session.json',
+      );
+      final expected = Map<String, Object?>.from(fixture['expected']! as Map);
+      final plan = buildStorageMigrationPlan(fixture);
+
+      expect(plan.pumpSessionState, expected['pumpSessionState']);
+      expect(plan.nativeServiceStore, expected['nativeServiceStore']);
+      expect(plan.deleteLegacyKeys, expected['deleteLegacyKeys']);
+      expect(plan.diagnostics, expected['diagnostics']);
+      expect(plan.migrationVersion, expected['migrationVersion']);
+    });
+
+    test('migrate retained IBCLC state and dev multi-user snapshots', () {
+      final fixture = readFixtureMap(
+        'storage_migration/p1_preferences_ibclc_and_multi_user.json',
+      );
+      final expected = Map<String, Object?>.from(fixture['expected']! as Map);
+      final plan = buildStorageMigrationPlan(fixture);
+
+      expect(plan.scopedKeyValue, expected['scopedKeyValue']);
+      expect(plan.localHistory, expected['localHistory']);
+      expect(plan.routeIntentQueue, expected['routeIntentQueue']);
+      expect(plan.deleteLegacyKeys, expected['deleteLegacyKeys']);
+      expect(plan.migrationVersion, expected['migrationVersion']);
+    });
   });
 }

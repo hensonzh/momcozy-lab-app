@@ -935,6 +935,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter route intent mapper 已覆盖 Agent artifact、Schedule prefill、Device/Pump gating、Calibration auto-start 和 legacy customEvent navigation
 [x] Flutter route intent mapper 已覆盖 Media Viewer 与 IBCLC start/return viewport intents，含 `/skill-assets` URL 解析占位、unsupported toast 和 return consume-once
 [x] Flutter route shell 已接入 `RouteIntentPlatform`，启动时消费 native pending route，并监听 active route event 驱动 `go_router`
+[x] Flutter storage migration dry-run CLI 已覆盖核心状态、一次性 route intents、pump runtime guard、IBCLC 和 internal/dev 多用户快照 fixtures，并报告未处理 legacy keys
 [x] Flutter Status/Schedule 已建立 typed repository contract，覆盖 mom-baby 与 plan fixtures 的 success、legacy alias、empty、partial、business error 和 HTTP error
 [x] Flutter Pump workstate typed repository contract 已覆盖 `/v1/pump/workstate` body、reply aliases、empty/partial、business error 和 HTTP error fixtures
 [x] Flutter Records typed repository contract 已覆盖 feeding/growth fixtures 的 request query、legacy aliases、partial/empty、business error 和 HTTP error
