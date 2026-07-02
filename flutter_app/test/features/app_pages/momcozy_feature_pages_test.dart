@@ -31,6 +31,8 @@ void main() {
         );
         if (route.path == '/status') {
           expect(find.text('妈妈'), findsWidgets);
+        } else if (route.path == '/pump') {
+          expect(find.text('沉浸式吸乳'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }
@@ -79,7 +81,7 @@ void main() {
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pump();
-      expect(find.text('Session 控制'), findsOneWidget);
+      expect(find.text('设备控制'), findsOneWidget);
       await _scrollToText(tester, '上传状态');
       expect(find.text('上传状态'), findsOneWidget);
     });
@@ -691,7 +693,7 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
       await tester.pumpAndSettle();
 
       await _scrollToText(tester, 'Workstate 已同步');
@@ -703,23 +705,26 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pumpAndSettle();
 
-      expect(find.text('待开始'), findsOneWidget);
+      expect(find.text('待开始'), findsWidgets);
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
       await tester.pumpAndSettle();
-      expect(find.text('进行中'), findsOneWidget);
+      await _scrollToText(tester, '运行中');
+      expect(find.text('运行中'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(OutlinedButton, '暂停'));
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '暂停');
       await tester.pumpAndSettle();
+      await _scrollToText(tester, '已暂停');
       expect(find.text('已暂停'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, '恢复'));
+      await _tapScrollableWidgetWithText(tester, FilledButton, '恢复');
       await tester.pumpAndSettle();
-      expect(find.text('进行中'), findsOneWidget);
+      await _scrollToText(tester, '运行中');
+      expect(find.text('运行中'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(OutlinedButton, '结束'));
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '结束');
       await tester.pumpAndSettle();
-      expect(find.text('待开始'), findsOneWidget);
+      expect(find.text('待开始'), findsWidgets);
     });
 
     testWidgets('pump page tracks side progress and blocks duplicate finish', (
@@ -745,12 +750,16 @@ void main() {
       expect(find.text('0 分钟'), findsOneWidget);
       expect(find.text('0 mL'), findsNWidgets(2));
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '2 分钟');
       expect(find.text('2 分钟'), findsOneWidget);
+      await _scrollToText(tester, '10 mL');
       expect(find.text('10 mL'), findsOneWidget);
+      await _scrollToText(tester, '8 mL');
       expect(find.text('8 mL'), findsOneWidget);
+      await _scrollToText(tester, '绑定 demo-user-fixture');
       expect(find.text('绑定 demo-user-fixture'), findsOneWidget);
       expect(transport.postedBodies, hasLength(1));
       expect(transport.postedBodies.first['user_id'], 'demo-user-fixture');
@@ -765,8 +774,12 @@ void main() {
         'level': 5,
       });
 
-      await tester.tap(find.widgetWithText(OutlinedButton, '结束'));
-      await tester.tap(find.widgetWithText(OutlinedButton, '结束'));
+      final endButton = find.widgetWithText(OutlinedButton, '结束');
+      await _scrollToFinder(tester, endButton);
+      await tester.ensureVisible(endButton);
+      await tester.pumpAndSettle();
+      await tester.tap(endButton);
+      await tester.tap(endButton);
       await tester.pumpAndSettle();
 
       expect(transport.postedBodies, hasLength(2));
@@ -802,17 +815,20 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '绑定 user-a');
       expect(find.text('绑定 user-a'), findsOneWidget);
       expect(transport.postedBodies.last['user_id'], 'user-a');
 
       hostKey.currentState!.switchUser('user-b');
       await tester.pumpAndSettle();
 
-      expect(find.text('待开始'), findsOneWidget);
+      expect(find.text('待开始'), findsWidgets);
+      await _scrollToText(tester, '未绑定用户');
       expect(find.text('未绑定用户'), findsOneWidget);
+      await _scrollToText(tester, '0 分钟');
       expect(find.text('0 分钟'), findsOneWidget);
       await _scrollToText(tester, '检测到用户切换，已清空上一用户 session。');
       expect(find.text('检测到用户切换，已清空上一用户 session。'), findsOneWidget);
@@ -821,6 +837,7 @@ void main() {
       await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '绑定 user-b');
       expect(find.text('绑定 user-b'), findsOneWidget);
       expect(transport.postedBodies, hasLength(2));
       expect(transport.postedBodies.last['user_id'], 'user-b');
@@ -840,7 +857,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
       await tester.pumpAndSettle();
 
       await _scrollToText(tester, 'Workstate 同步失败');
@@ -1809,6 +1826,18 @@ String _apiTimestamp(DateTime value) {
 Future<void> _tapScrollableText(WidgetTester tester, String text) async {
   await _scrollToText(tester, text);
   final finder = find.text(text);
+  await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
+  await tester.tap(finder);
+}
+
+Future<void> _tapScrollableWidgetWithText(
+  WidgetTester tester,
+  Type widgetType,
+  String text,
+) async {
+  final finder = find.widgetWithText(widgetType, text);
+  await _scrollToFinder(tester, finder);
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
   await tester.tap(finder);
