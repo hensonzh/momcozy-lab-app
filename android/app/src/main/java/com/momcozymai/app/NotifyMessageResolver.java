@@ -157,16 +157,13 @@ public final class NotifyMessageResolver {
     }
 
     /**
-     * 供 Web 侧消费（如 summary 注入对话）：仅 summary 需要 body。
+     * 供 Web/Flutter 侧消费：pending route 只携带事件类型，完整业务正文仅用于通知展示。
      */
     @NonNull
     static String buildNotifyJsonForWeb(@NonNull String event, @NonNull String body) {
         try {
             JSONObject o = new JSONObject();
             o.put("event", event);
-            if ("summary".equals(event) || "health_issue".equals(event)) {
-                o.put("body", body);
-            }
             return o.toString();
         } catch (Exception e) {
             return "{\"event\":\"" + event + "\"}";

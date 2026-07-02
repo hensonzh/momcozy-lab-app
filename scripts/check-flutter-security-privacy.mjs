@@ -69,6 +69,31 @@ forbidContains(
   'body=" + body',
   "Native alarm logs must not include raw notification body",
 );
+requireContains(
+  "android/app/src/main/java/com/momcozymai/app/PumpNavigationBridge.java",
+  "sanitizeNotifyJson",
+  "Native pending route payload must be sanitized before storage",
+);
+forbidContains(
+  "android/app/src/main/java/com/momcozymai/app/PumpNavigationBridge.java",
+  "pendingNotifyJson = notifyJson",
+  "Native pending route must not store raw notifyJson",
+);
+forbidContains(
+  "android/app/src/main/java/com/momcozymai/app/NotifyMessageResolver.java",
+  'o.put("body"',
+  "Native pending route notifyJson must not include full notification body",
+);
+requireContains(
+  "android/app/src/main/java/com/momcozymai/app/PumpSessionForegroundService.java",
+  'launchIntent.putExtra(MainActivity.EXTRA_NAV_PATH, "/pump")',
+  "Pump foreground notification should navigate with route only",
+);
+forbidContains(
+  "android/app/src/main/java/com/momcozymai/app/PumpSessionForegroundService.java",
+  "EXTRA_NOTIFY_JSON",
+  "Pump foreground notification must not carry business payload",
+);
 
 if (failures.length > 0) {
   console.error("Flutter security privacy check failed:");

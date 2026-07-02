@@ -88,8 +88,8 @@ isSensitiveLogKey(key)
 ```text
 [x] `PumpAgentUploadPlatform` fake failure payload 已脱敏
 [x] Android `MmcBle` event log 不输出原始 device id，必要时使用短 hash
-[ ] Pump foreground service notification payload 不包含 token/user/conversation
-[ ] Native pending route 只传 event type 和必要 route，不传完整业务 payload
+[x] Pump foreground service notification payload 不包含 token/user/conversation；静态 gate 禁止 foreground notice 携带 `EXTRA_NOTIFY_JSON`
+[x] Native pending route 只传 event type 和必要 route，不传完整业务 payload；`PumpNavigationBridge` 会 sanitize `notifyJson`
 [x] Native upload/background request 日志只输出 payload shape；failure log 不回传 token/user/conversation 明文
 ```
 
