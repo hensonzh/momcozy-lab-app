@@ -909,6 +909,7 @@ const _routesWithoutBottomNavigation = {
   '/calibration',
   '/pump',
   '/hospital-bag-cart',
+  '/ibclc-chat.html',
   '/media-viewer',
 };
 
