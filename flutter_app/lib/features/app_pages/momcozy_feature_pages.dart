@@ -154,7 +154,6 @@ class _FeaturePageFrame extends StatelessWidget {
     required this.icon,
     required this.accent,
     required this.children,
-    this.trailing,
   });
 
   final String path;
@@ -163,7 +162,6 @@ class _FeaturePageFrame extends StatelessWidget {
   final IconData icon;
   final Color accent;
   final List<Widget> children;
-  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +212,6 @@ class _FeaturePageFrame extends StatelessWidget {
             ),
           ],
         ),
-        if (trailing != null) ...[const SizedBox(height: 16), trailing!],
         const SizedBox(height: 20),
         ...children,
       ],
@@ -2082,43 +2079,18 @@ class _SchedulePageState extends State<_SchedulePage> {
             .where((entry) => !_taskDone(entry.value, entry.key))
             .length;
 
-        return _FeaturePageFrame(
-          path: widget.path,
-          title: widget.title,
-          summary: widget.summary,
-          icon: widget.icon,
-          accent: widget.accent,
-          trailing: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              const _StatusChip(
-                label: '今天',
-                icon: Icons.today_outlined,
-                accent: Color(0xffb2773b),
-              ),
-              _StatusChip(
-                label: taskCount == null ? '同步中' : '$taskCount 项计划',
-                icon: Icons.alarm_rounded,
-                accent: const Color(0xff43827b),
-              ),
-              if (taskCount != null)
-                _StatusChip(
-                  label: '未完成 $pendingTaskCount',
-                  icon: Icons.notification_important_outlined,
-                  accent: const Color(0xff6b6da8),
-                ),
-            ],
-          ),
+        return ListView(
+          key: ValueKey('route-page-${widget.path}'),
+          padding: const EdgeInsets.fromLTRB(16, 34, 16, 96),
           children: [
             _ScheduleDateStrip(
               selectedDay: _selectedDay,
               onSelected: _selectDay,
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             _ScheduleContextCard(
               title: taskCount == null ? '计划同步中' : '稳奶计划执行中',
-              subtitle: '产后阶段和当天记录会一起影响今日任务节奏。',
+              subtitle: '产后第29周（离乳期）',
               completedCount: taskCount == null
                   ? 0
                   : taskCount - pendingTaskCount,
@@ -2127,7 +2099,14 @@ class _SchedulePageState extends State<_SchedulePage> {
               onReminderTap: () =>
                   setState(() => _pumpReminderEnabled = !_pumpReminderEnabled),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 20),
+            _ScheduleAgentCard(
+              reminderEnabled: _pumpReminderEnabled,
+              onReminderTap: () =>
+                  setState(() => _pumpReminderEnabled = !_pumpReminderEnabled),
+              onConversationTap: () => context.go('/'),
+            ),
+            const SizedBox(height: 20),
             _ScheduleNextTaskCard(
               subtitle: _nextTaskSubtitle(visibleTasks),
               task: _nextPendingTask(visibleTasks),
@@ -2138,10 +2117,12 @@ class _SchedulePageState extends State<_SchedulePage> {
                 _toggleTask(next, index, true);
               },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 30),
             _ScheduleListToolbar(onAdd: _addLocalTask),
             ..._dayPlanChildren(snapshot),
-            const SizedBox(height: 10),
+            const SizedBox(height: 18),
+            const _ScheduleQuickActions(),
+            const SizedBox(height: 18),
             const _SectionTitle('提醒'),
             _ActionTile(
               icon: Icons.alarm_on_rounded,
@@ -2207,12 +2188,18 @@ class _SchedulePageState extends State<_SchedulePage> {
     final tasks = plan == null ? const <ScheduleTask>[] : _visibleTasks(plan);
     if (tasks.isEmpty) {
       return const [
-        _ActionTile(
-          icon: Icons.event_available_outlined,
-          title: '暂无计划',
-          subtitle: '当天没有计划任务，可以从 Agent 或记录页创建。',
-          accent: Color(0xff7f6a75),
-          trailing: Icon(Icons.add_circle_outline_rounded),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 14),
+          child: Center(
+            child: Text(
+              '当天暂无执行内容',
+              style: TextStyle(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
+            ),
+          ),
         ),
       ];
     }
@@ -2328,9 +2315,10 @@ class _ScheduleDateStrip extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(5),
           decoration: MomCozyDecorations.card(
-            color: MomCozyColors.card.withValues(alpha: 0.82),
+            color: MomCozyColors.card,
+            borderColor: MomCozyColors.border.withValues(alpha: 0.5),
             shadows: MomCozyShadows.soft,
-            radius: 14,
+            radius: 16,
           ),
           child: Row(
             children: [
@@ -2399,6 +2387,138 @@ class _ScheduleWeekButton extends StatelessWidget {
   }
 }
 
+class _ScheduleAgentCard extends StatelessWidget {
+  const _ScheduleAgentCard({
+    required this.reminderEnabled,
+    required this.onReminderTap,
+    required this.onConversationTap,
+  });
+
+  final bool reminderEnabled;
+  final VoidCallback onReminderTap;
+  final VoidCallback onConversationTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card.withValues(alpha: 0.7),
+        borderColor: MomCozyColors.primary.withValues(alpha: 0.15),
+        radius: 24,
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipOval(
+            child: Image.asset(
+              MomCozyAssets.agentAvatar,
+              width: 36,
+              height: 36,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w800,
+                    height: 1.45,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    _ScheduleAgentButton(
+                      icon: reminderEnabled
+                          ? Icons.notifications_none_rounded
+                          : Icons.notifications_off_outlined,
+                      label: '提醒开关',
+                      filled: false,
+                      onTap: onReminderTap,
+                    ),
+                    const SizedBox(width: 8),
+                    _ScheduleAgentButton(
+                      icon: Icons.chat_bubble_outline_rounded,
+                      label: '对话',
+                      filled: true,
+                      onTap: onConversationTap,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScheduleAgentButton extends StatelessWidget {
+  const _ScheduleAgentButton({
+    required this.icon,
+    required this.label,
+    required this.filled,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool filled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: filled ? MomCozyColors.primary : MomCozyColors.background,
+      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        child: Container(
+          height: 32,
+          padding: const EdgeInsets.symmetric(horizontal: 13),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+            border: Border.all(
+              color: filled
+                  ? MomCozyColors.primary
+                  : MomCozyColors.border.withValues(alpha: 0.8),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 15,
+                color: filled ? MomCozyColors.raised : MomCozyColors.foreground,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: filled
+                      ? MomCozyColors.raised
+                      : MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _ScheduleContextCard extends StatelessWidget {
   const _ScheduleContextCard({
     required this.title,
@@ -2423,8 +2543,9 @@ class _ScheduleContextCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: MomCozyDecorations.card(
-        color: MomCozyColors.card.withValues(alpha: 0.72),
-        radius: 22,
+        color: MomCozyColors.card.withValues(alpha: 0.42),
+        borderColor: MomCozyColors.border.withValues(alpha: 0.4),
+        radius: 24,
         shadows: MomCozyShadows.soft,
       ),
       child: Stack(
@@ -2435,6 +2556,14 @@ class _ScheduleContextCard extends StatelessWidget {
             child: IconButton(
               tooltip: reminderEnabled ? '关闭计划提醒' : '开启计划提醒',
               onPressed: onReminderTap,
+              style: IconButton.styleFrom(
+                backgroundColor: MomCozyColors.background.withValues(
+                  alpha: 0.9,
+                ),
+                side: BorderSide(
+                  color: MomCozyColors.border.withValues(alpha: 0.5),
+                ),
+              ),
               icon: Icon(
                 reminderEnabled
                     ? Icons.notifications_active_outlined
@@ -2491,7 +2620,7 @@ class _ScheduleContextCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(MomCozyRadii.pill),
                   child: LinearProgressIndicator(
                     value: progress.clamp(0, 1),
-                    minHeight: 10,
+                    minHeight: 9,
                     color: MomCozyColors.primary,
                     backgroundColor: MomCozyColors.secondary.withValues(
                       alpha: 0.72,
@@ -2522,6 +2651,55 @@ class _ScheduleNextTaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final task = this.task;
     final hasTask = task != null;
+
+    if (!hasTask) {
+      return Container(
+        padding: const EdgeInsets.fromLTRB(18, 24, 18, 20),
+        decoration: MomCozyDecorations.card(
+          color: MomCozyColors.secondary.withValues(alpha: 0.3),
+          borderColor: MomCozyColors.border.withValues(alpha: 0.4),
+          radius: 28,
+          shadows: const [],
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: MomCozyColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.schedule_rounded,
+                size: 34,
+                color: MomCozyColors.primary,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              '今天还没有计划任务',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 7),
+            Text(
+              '可以先从对话里生成计划并同步到日历，或手动添加任务。',
+              maxLines: 1,
+              overflow: TextOverflow.clip,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w600,
+                height: 1.35,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -2558,7 +2736,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _nullableTimeLabel(task?.remindAt),
+                      _nullableTimeLabel(task.remindAt),
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(
                             color: MomCozyColors.foreground,
@@ -2567,7 +2745,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      _textOr(task?.title, subtitle),
+                      _textOr(task.title, subtitle),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -2627,38 +2805,144 @@ class _ScheduleListToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
           Expanded(
-            child: Text(
-              '今日任务',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
+            child: Row(
+              children: [
+                Text(
+                  '今日任务',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Tooltip(
+                  message: '今日任务说明',
+                  child: Container(
+                    width: 18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: MomCozyColors.raised.withValues(alpha: 0.72),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: MomCozyColors.border.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.question_mark_rounded,
+                      size: 12,
+                      color: MomCozyColors.mutedForeground,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           TextButton.icon(
+            onPressed: () {},
+            style: _scheduleToolbarButtonStyle(context),
+            icon: const Icon(Icons.image_outlined, size: 15),
+            label: const Text('调整日程'),
+          ),
+          const SizedBox(width: 8),
+          TextButton.icon(
             onPressed: onAdd,
-            style: TextButton.styleFrom(
-              foregroundColor: MomCozyColors.foreground,
-              backgroundColor: MomCozyColors.card,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                side: BorderSide(
-                  color: MomCozyColors.border.withValues(alpha: 0.7),
-                ),
-              ),
-              textStyle: Theme.of(
-                context,
-              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
-            ),
+            style: _scheduleToolbarButtonStyle(context),
             icon: const Icon(Icons.add_rounded, size: 16),
             label: const Text('添加任务'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+ButtonStyle _scheduleToolbarButtonStyle(BuildContext context) {
+  return TextButton.styleFrom(
+    foregroundColor: MomCozyColors.foreground,
+    backgroundColor: MomCozyColors.card,
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    minimumSize: const Size(0, 32),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+      side: BorderSide(color: MomCozyColors.border.withValues(alpha: 0.7)),
+    ),
+    textStyle: Theme.of(
+      context,
+    ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w900),
+  );
+}
+
+class _ScheduleQuickActions extends StatelessWidget {
+  const _ScheduleQuickActions();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: const [
+        Expanded(
+          child: _ScheduleQuickActionButton(
+            icon: Icons.add_rounded,
+            label: '吸奶补录',
+          ),
+        ),
+        SizedBox(width: 10),
+        Expanded(
+          child: _ScheduleQuickActionButton(
+            icon: Icons.add_rounded,
+            label: '喂养记录',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ScheduleQuickActionButton extends StatelessWidget {
+  const _ScheduleQuickActionButton({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.raised.withValues(alpha: 0.92),
+        borderColor: MomCozyColors.border.withValues(alpha: 0.45),
+        radius: 14,
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        borderRadius: BorderRadius.circular(14),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () {},
+          child: SizedBox(
+            height: 54,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 17, color: MomCozyColors.foreground),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -2780,53 +3064,49 @@ class _DatePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0.5),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: selected ? MomCozyColors.roseSoft : MomCozyColors.card,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected
-                ? MomCozyColors.primary.withValues(alpha: 0.48)
-                : MomCozyColors.border.withValues(alpha: 0.72),
-          ),
-          boxShadow: selected ? MomCozyShadows.soft : const [],
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: selected ? MomCozyColors.primary : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: selected ? MomCozyColors.primary : Colors.transparent,
         ),
-        child: Material(
-          type: MaterialType.transparency,
-          borderRadius: BorderRadius.circular(15),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: onTap,
-            child: SizedBox(
-              width: 32,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Column(
-                  children: [
-                    Text(
-                      day,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: selected
-                            ? MomCozyColors.primary
-                            : MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      date,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: selected
-                            ? MomCozyColors.primary
-                            : MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
+        boxShadow: selected ? MomCozyShadows.soft : const [],
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        borderRadius: BorderRadius.circular(15),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: SizedBox(
+            width: 36,
+            height: 44,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  day,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: selected
+                        ? MomCozyColors.raised.withValues(alpha: 0.9)
+                        : MomCozyColors.mutedForeground.withValues(alpha: 0.65),
+                    fontWeight: FontWeight.w800,
+                    fontSize: 10,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 2),
+                Text(
+                  date,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: selected
+                        ? MomCozyColors.raised
+                        : MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

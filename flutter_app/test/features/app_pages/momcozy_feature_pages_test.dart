@@ -44,6 +44,8 @@ void main() {
           expect(find.text('IBCLC 在线咨询'), findsWidgets);
         } else if (route.path == '/media-viewer') {
           expect(find.text('媒体'), findsWidgets);
+        } else if (route.path == '/schedule') {
+          expect(find.text('稳奶计划执行中'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }
@@ -81,7 +83,7 @@ void main() {
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pump();
-      expect(find.text('计划'), findsWidgets);
+      expect(find.text('稳奶计划执行中'), findsOneWidget);
       await _scrollToText(tester, '泵奶提醒');
       expect(find.text('泵奶提醒'), findsOneWidget);
 
@@ -357,7 +359,7 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pumpAndSettle();
 
-      expect(find.text('3 项计划'), findsOneWidget);
+      expect(find.text('1/3'), findsOneWidget);
       await _scrollToText(tester, '10:30 泵奶');
       expect(find.text('10:30 泵奶'), findsOneWidget);
       await _scrollToText(tester, '14:00 喂养');
@@ -404,7 +406,7 @@ void main() {
         transport.lastQuery,
         containsPair('timestamp', _apiTimestamp(DateTime.utc(2026, 7))),
       );
-      expect(find.text('2 项计划'), findsOneWidget);
+      expect(find.text('1/2'), findsOneWidget);
 
       await tester.tap(find.text('3').first);
       await tester.pumpAndSettle();
@@ -438,16 +440,14 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pumpAndSettle();
 
-      expect(find.text('3 项计划'), findsOneWidget);
-      expect(find.text('未完成 2'), findsOneWidget);
+      expect(find.text('1/3'), findsOneWidget);
       expect(find.text('待执行任务'), findsOneWidget);
 
       await _tapScrollableText(tester, '添加任务');
       await tester.pumpAndSettle();
 
-      await _scrollToText(tester, '4 项计划');
-      expect(find.text('4 项计划'), findsOneWidget);
-      expect(find.text('未完成 3'), findsOneWidget);
+      await _scrollToText(tester, '1/4');
+      expect(find.text('1/4'), findsOneWidget);
       await _scrollToText(tester, '本地补充 1');
       expect(find.text('本地补充 1'), findsOneWidget);
 
@@ -457,9 +457,8 @@ void main() {
       await tester.drag(find.byType(Scrollable).first, const Offset(0, 600));
       await tester.pumpAndSettle();
 
-      await _scrollToText(tester, '3 项计划');
-      expect(find.text('3 项计划'), findsOneWidget);
-      expect(find.text('未完成 2'), findsOneWidget);
+      await _scrollToText(tester, '1/3');
+      expect(find.text('1/3'), findsOneWidget);
       expect(find.text('本地补充 1'), findsNothing);
     });
 
@@ -486,8 +485,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('1 项计划'), findsOneWidget);
-      expect(find.text('未完成 1'), findsOneWidget);
+      expect(find.text('0/1'), findsOneWidget);
       expect(find.textContaining('周五产检 还有 2 天 6 小时'), findsOneWidget);
     });
 
@@ -507,9 +505,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('0 项计划'), findsOneWidget);
-      await _scrollToText(tester, '暂无计划');
-      expect(find.text('暂无计划'), findsOneWidget);
+      expect(find.text('0/0'), findsOneWidget);
+      expect(find.text('今天还没有计划任务'), findsOneWidget);
+      await _scrollToText(tester, '当天暂无执行内容');
+      expect(find.text('当天暂无执行内容'), findsOneWidget);
 
       await tester.pumpWidget(
         _FeaturePageHost(

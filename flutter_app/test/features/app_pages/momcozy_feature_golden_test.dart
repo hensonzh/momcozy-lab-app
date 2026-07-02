@@ -203,28 +203,7 @@ MomCozyApiRuntime _goldenRuntime() {
       },
       scheduleDayPlanEndpoint: const <String, Object?>{
         'status': 200,
-        'data': <String, Object?>{
-          'tasks': [
-            {
-              'id': 'task-feed-1',
-              'title': '亲喂观察',
-              'completed': false,
-              'remindAt': '2026-07-02T09:30:00Z',
-            },
-            {
-              'id': 'task-pump-1',
-              'title': '泵奶 session',
-              'completed': true,
-              'remindAt': '2026-07-02T12:00:00Z',
-            },
-            {
-              'id': 'task-summary-1',
-              'title': '晚间状态回顾',
-              'completed': false,
-              'remindAt': '2026-07-02T21:30:00Z',
-            },
-          ],
-        },
+        'data': <String, Object?>{'tasks': <Object?>[]},
       },
       pumpMilkRecordsEndpoint: const <String, Object?>{
         'status': 200,
@@ -299,6 +278,6 @@ MomCozyApiRuntime _goldenRuntime() {
     userId: 'demo-user-golden',
     babyId: 'demo-baby-golden',
     locale: 'zh-CN',
-    now: () => DateTime.utc(2026, 7),
+    now: () => DateTime.utc(2026, 7, 3),
   );
 }
