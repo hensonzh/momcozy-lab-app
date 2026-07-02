@@ -337,8 +337,12 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
 
 Map<String, Object?>? _decodeJsonObject(String body) {
   if (body.trim().isEmpty) return null;
-  final decoded = jsonDecode(body);
-  return decoded is Map ? Map<String, Object?>.from(decoded) : null;
+  try {
+    final decoded = jsonDecode(body);
+    return decoded is Map ? Map<String, Object?>.from(decoded) : null;
+  } on FormatException {
+    return null;
+  }
 }
 
 class _DefaultApiHttpConnector implements ApiHttpConnector {

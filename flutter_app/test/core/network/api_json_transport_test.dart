@@ -84,6 +84,13 @@ void main() {
       final malformedConnector = _RecordingApiHttpConnector(
         const ApiHttpResponse(statusCode: 200, statusText: 'OK', body: '[]'),
       );
+      final nonJsonHttpConnector = _RecordingApiHttpConnector(
+        const ApiHttpResponse(
+          statusCode: 503,
+          statusText: 'Service Unavailable',
+          body: '<html>temporarily unavailable</html>',
+        ),
+      );
 
       await expectLater(
         IoApiJsonTransport(
@@ -104,6 +111,17 @@ void main() {
           connector: malformedConnector,
         ).getJson('/v1/user/profile'),
         throwsA(isA<ApiEnvelopeFormatException>()),
+      );
+      await expectLater(
+        IoApiJsonTransport(
+          baseUri: Uri.parse('http://127.0.0.1:8769'),
+          connector: nonJsonHttpConnector,
+        ).getJson('/v1/user/profile'),
+        throwsA(
+          isA<ApiHttpException>()
+              .having((error) => error.statusCode, 'statusCode', 503)
+              .having((error) => error.body, 'body', isNull),
+        ),
       );
     });
 

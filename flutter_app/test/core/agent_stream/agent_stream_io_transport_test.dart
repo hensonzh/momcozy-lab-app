@@ -34,10 +34,7 @@ void main() {
         final postedBody = jsonDecode(connector.body!) as Map<String, Object?>;
 
         expect(events.last.type, 'RUN_FINISHED');
-        expect(connector.uri!.queryParameters, {
-          'existing': '1',
-          'token': 'secret-token',
-        });
+        expect(connector.uri!.queryParameters, {'existing': '1'});
         expect(connector.headers, containsPair('Accept', 'text/event-stream'));
         expect(
           connector.headers,
@@ -83,7 +80,10 @@ void main() {
             jsonDecode(connection.sent.single) as Map<String, Object?>;
 
         expect(events.last.type, 'RUN_FINISHED');
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
+        expect(
+          connector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
         expect(
           connector.headers,
           containsPair('Authorization', 'Bearer secret-token'),
@@ -123,7 +123,10 @@ void main() {
         expect(result.acknowledged, isTrue);
         expect(result.statusCode, 200);
         expect(result.body, ack);
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
+        expect(
+          connector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
         expect(
           connector.headers,
           containsPair('Authorization', 'Bearer secret-token'),
@@ -218,7 +221,10 @@ void main() {
         expect(result.threadId, 'thread-fixture-001');
         expect(result.runId, 'run-api-agent-001');
         expect(result.responseId, 'resp-fixture-001');
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
+        expect(
+          connector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
         expect(
           connector.headers,
           containsPair('Authorization', 'Bearer secret-token'),
@@ -345,7 +351,10 @@ void main() {
 
         expect(result.sent, isTrue);
         expect(result.statusCode, 204);
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
+        expect(
+          connector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
         expect(
           connector.headers,
           containsPair('Authorization', 'Bearer secret-token'),
@@ -435,7 +444,10 @@ void main() {
 
         expect(result.sent, isTrue);
         expect(result.body, {'status': 'ok'});
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
+        expect(
+          connector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
         expect(
           connector.headers,
           containsPair('Authorization', 'Bearer secret-token'),
