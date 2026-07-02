@@ -1158,8 +1158,10 @@ void main() {
         expect(find.textContaining('Calibration L · 电量 83%'), findsOneWidget);
         expect(find.text('右侧设备未连接'), findsOneWidget);
 
-        tester.widget<Slider>(find.byType(Slider).first).onChanged!(7);
-        await tester.pump();
+        for (var i = 0; i < 3; i += 1) {
+          await tester.tap(find.byTooltip('提高左侧档位'));
+          await tester.pump();
+        }
 
         expect(find.text('左侧 舒适档位 7'), findsOneWidget);
 
@@ -1180,8 +1182,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      tester.widget<Slider>(find.byType(Slider).first).onChanged!(7);
-      await tester.pump();
+      for (var i = 0; i < 3; i += 1) {
+        await tester.tap(find.byTooltip('提高左侧档位'));
+        await tester.pump();
+      }
 
       await _tapScrollableText(tester, '退出校准');
       await tester.pumpAndSettle();
