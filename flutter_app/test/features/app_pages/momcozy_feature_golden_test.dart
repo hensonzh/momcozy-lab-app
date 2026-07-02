@@ -120,6 +120,12 @@ const _routeGoldens = [
     fileName: 'media_viewer_page_mobile.png',
     pageKey: ValueKey('route-page-/media-viewer'),
   ),
+  _RouteGolden(
+    label: 'not found page',
+    path: '/404',
+    fileName: 'not_found_page_mobile.png',
+    pageKey: ValueKey('route-page-/404'),
+  ),
 ];
 
 class _RouteGolden {

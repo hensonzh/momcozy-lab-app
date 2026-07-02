@@ -57,7 +57,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/404')), findsOneWidget);
-    expect(find.text('页面未找到'), findsOneWidget);
+    expect(find.text('Oops! Page not found'), findsOneWidget);
     expect(find.byType(MomCozyBottomNavigation), findsOneWidget);
   });
 

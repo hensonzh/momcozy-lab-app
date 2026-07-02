@@ -125,8 +125,8 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const ValueKey('route-page-/404')), findsOneWidget);
-      expect(find.text('页面未找到'), findsOneWidget);
-      expect(find.text('返回主入口'), findsOneWidget);
+      expect(find.text('Oops! Page not found'), findsOneWidget);
+      expect(find.text('Return to Home'), findsOneWidget);
     });
 
     testWidgets('feature entry actions navigate through route workflows', (
