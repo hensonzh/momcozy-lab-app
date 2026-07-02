@@ -151,18 +151,13 @@ void main() {
 
       router.go('/status');
       await tester.pumpAndSettle();
-      await tester.tap(find.text('补写孕期日记'));
+      await _tapScrollableText(tester, '补写孕期日记');
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('route-page-/records')), findsOneWidget);
 
       router.go('/status');
       await tester.pumpAndSettle();
-      await Scrollable.ensureVisible(
-        tester.element(find.text('今日待办')),
-        alignment: 0.35,
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('今日待办'));
+      await _tapScrollableText(tester, '今日待办');
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('route-page-/schedule')),
@@ -230,6 +225,34 @@ void main() {
       expect(find.text('88 天'), findsOneWidget);
     });
 
+    testWidgets('status page switches care stage and records growth locally', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('产后第 21 天'), findsOneWidget);
+
+      await tester.tap(find.text('孕期模式'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('孕期'), findsOneWidget);
+      expect(find.text('孕期重点：体征与日记'), findsOneWidget);
+
+      await tester.tap(find.text('宝宝'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('待记录'), findsOneWidget);
+
+      await _tapScrollableText(tester, '记录成长事件');
+      await tester.pumpAndSettle();
+
+      expect(find.text('成长记录已添加'), findsOneWidget);
+      expect(find.text('本地草稿已保存，同步恢复后会写入成长记录。'), findsOneWidget);
+      expect(find.text('已添加'), findsOneWidget);
+      expect(find.text('本地草稿待同步'), findsOneWidget);
+    });
+
     testWidgets('status page renders long text and runtime context', (
       tester,
     ) async {
@@ -277,6 +300,7 @@ void main() {
       );
       await tester.pump();
 
+      await _scrollToText(tester, '今日待办');
       expect(find.text('今日待办'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
