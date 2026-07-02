@@ -3821,21 +3821,43 @@ class _W1PageState extends State<_W1Page> {
         accent: Color(0xffb2773b),
       ),
       children: [
-        const _SectionTitle('W1'),
-        const _ActionTile(
-          icon: Icons.air_rounded,
-          title: '穿戴体验',
-          subtitle: '查看产品亮点、贴合方式和日常佩戴建议。',
-          accent: Color(0xffb2773b),
-          trailing: Icon(Icons.chevron_right_rounded),
+        const _W1PromoHero(),
+        const _W1ProductSummary(),
+        const _SectionTitle('核心亮点'),
+        const _W1SellingPoint(
+          icon: Icons.favorite_border_rounded,
+          title: '妈妈身心关怀模式',
+          subtitle: '内置心率感应与呼吸引导，吸乳时自动播放舒缓白噪音。',
+          accent: MomCozyColors.primary,
         ),
-        const _ActionTile(
-          icon: Icons.battery_charging_full_rounded,
-          title: '续航与清洁',
-          subtitle: '了解电池、清洁、收纳和耗材维护。',
+        const _W1SellingPoint(
+          icon: Icons.eco_outlined,
+          title: '亲肤零压穿戴',
+          subtitle: '医疗级液态硅胶和记忆棉衬垫，轻量机身更适合日常佩戴。',
           accent: Color(0xff43827b),
+        ),
+        const _W1SellingPoint(
+          icon: Icons.bolt_rounded,
+          title: '智能节律吸力',
+          subtitle: 'M.ai 分析泌乳节奏，自动切换刺激和吸乳模式。',
+          accent: Color(0xffb2773b),
+        ),
+        const _ActionTile(
+          icon: Icons.shield_outlined,
+          title: '全密封防回流',
+          subtitle: '三重密封结构，降低漏奶和回流风险。',
+          accent: Color(0xff6b6da8),
           trailing: Icon(Icons.chevron_right_rounded),
         ),
+        const _ActionTile(
+          icon: Icons.volume_down_outlined,
+          title: '静音科技 ≤35dB',
+          subtitle: '无刷电机和降噪腔体，夜间使用更安静。',
+          accent: Color(0xff9f6378),
+          trailing: Icon(Icons.chevron_right_rounded),
+        ),
+        const SizedBox(height: 8),
+        const _SectionTitle('教程'),
         _ActionTile(
           icon: Icons.play_circle_outline_rounded,
           title: '使用教程',
@@ -3850,6 +3872,236 @@ class _W1PageState extends State<_W1Page> {
               : const Icon(Icons.chevron_right_rounded),
         ),
       ],
+    );
+  }
+}
+
+class _W1PromoHero extends StatelessWidget {
+  const _W1PromoHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xff4a2635), Color(0xff743448), Color(0xff4d2938)],
+          ),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: MomCozyColors.primary.withValues(alpha: 0.2),
+          ),
+          boxShadow: MomCozyShadows.soft,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+          child: Column(
+            children: [
+              Text(
+                'Momcozy · New',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: MomCozyColors.background.withValues(alpha: 0.58),
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'W1',
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  color: MomCozyColors.background,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Wellness & Well-being',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: MomCozyColors.background.withValues(alpha: 0.76),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '为妈妈的身心健康而生',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: MomCozyColors.background.withValues(alpha: 0.58),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Container(
+                width: 108,
+                height: 108,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: MomCozyColors.background.withValues(alpha: 0.12),
+                    width: 2,
+                  ),
+                  color: MomCozyColors.background.withValues(alpha: 0.06),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 38,
+                      color: MomCozyColors.background.withValues(alpha: 0.52),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'W1',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: MomCozyColors.background.withValues(alpha: 0.52),
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _W1ProductSummary extends StatelessWidget {
+  const _W1ProductSummary();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: DecoratedBox(
+        decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  const _IconBubble(
+                    icon: Icons.favorite_border_rounded,
+                    accent: MomCozyColors.primary,
+                    size: 34,
+                    iconSize: 18,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Momcozy W1 穿戴式吸奶器',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                color: MomCozyColors.foreground,
+                                fontWeight: FontWeight.w900,
+                              ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '新一代身心关怀智能吸乳体验',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: MomCozyColors.mutedForeground,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Row(
+                children: [
+                  Expanded(
+                    child: _W1SpecTile(label: '重量', value: '180g'),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: _W1SpecTile(label: '噪音', value: '≤35dB'),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: _W1SpecTile(label: '续航', value: '4h+'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _W1SpecTile extends StatelessWidget {
+  const _W1SpecTile({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.muted.withValues(alpha: 0.48),
+        borderRadius: BorderRadius.circular(13),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 6),
+        child: Column(
+          children: [
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _W1SellingPoint extends StatelessWidget {
+  const _W1SellingPoint({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.accent,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return _ActionTile(
+      icon: icon,
+      title: title,
+      subtitle: subtitle,
+      accent: accent,
+      trailing: const Icon(Icons.chevron_right_rounded),
     );
   }
 }
