@@ -13,10 +13,6 @@ import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart'
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
-const _internalDeviceDebugEnabled = bool.fromEnvironment(
-  'MOMCOZY_INTERNAL_BUILD',
-);
-
 class MomCozyFeaturePage extends StatelessWidget {
   const MomCozyFeaturePage({
     super.key,
@@ -3359,8 +3355,9 @@ class _DevicePageState extends State<_DevicePage> {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
       children: [
         _DeviceHeader(
-          onManage: () => context.go('/device/manage'),
+          onAdd: _toggleScan,
           onUser: () => context.go('/device/user'),
+          onManage: () => context.go('/device/manage'),
         ),
         const SizedBox(height: 14),
         const _DeviceW1Banner(),
@@ -3378,16 +3375,18 @@ class _DevicePageState extends State<_DevicePage> {
               ? () => context.go('/calibration')
               : _toggleScan,
         ),
-        const SizedBox(height: 14),
-        _DeviceScanPanel(
-          isScanning: _isScanning,
-          permissionState: _permissionState,
-          connectedCount: _connectedDevices.length,
-          error: _bleError,
-          accent: widget.accent,
-          action: _permissionAction(),
-          onScan: _toggleScan,
-        ),
+        if (_scanAttempted || _bleError != null) ...[
+          const SizedBox(height: 14),
+          _DeviceScanPanel(
+            isScanning: _isScanning,
+            permissionState: _permissionState,
+            connectedCount: _connectedDevices.length,
+            error: _bleError,
+            accent: widget.accent,
+            action: _permissionAction(),
+            onScan: _toggleScan,
+          ),
+        ],
         if (_scanAttempted) ...[
           const SizedBox(height: 12),
           _DeviceScanResultsPanel(
@@ -3396,13 +3395,6 @@ class _DevicePageState extends State<_DevicePage> {
             accent: widget.accent,
           ),
         ],
-        const SizedBox(height: 14),
-        _DeviceEntryPanel(
-          onCalibration: () => context.go('/calibration'),
-          onManage: () => context.go('/device/manage'),
-          showDebug: _internalDeviceDebugEnabled,
-          onDebug: () => context.go('/device/user'),
-        ),
       ],
     );
   }
@@ -3471,8 +3463,13 @@ bool _canStartPump(BleDeviceSnapshot? left, BleDeviceSnapshot? right) {
 }
 
 class _DeviceHeader extends StatelessWidget {
-  const _DeviceHeader({required this.onManage, required this.onUser});
+  const _DeviceHeader({
+    required this.onAdd,
+    required this.onUser,
+    required this.onManage,
+  });
 
+  final VoidCallback onAdd;
   final VoidCallback onManage;
   final VoidCallback onUser;
 
@@ -3489,32 +3486,71 @@ class _DeviceHeader extends StatelessWidget {
             ),
           ),
         ),
-        OutlinedButton.icon(
-          onPressed: onManage,
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size(0, 38),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
+        PopupMenuButton<String>(
+          tooltip: '打开设备快捷菜单',
+          color: MomCozyColors.foreground.withValues(alpha: 0.92),
+          elevation: 14,
+          offset: const Offset(0, 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
           ),
-          icon: const Icon(Icons.notifications_active_outlined, size: 17),
-          label: const Text('管理'),
-        ),
-        const SizedBox(width: 8),
-        IconButton(
-          tooltip: '用户管理',
-          onPressed: onUser,
-          style: IconButton.styleFrom(
-            fixedSize: const Size(38, 38),
-            backgroundColor: MomCozyColors.card,
-            side: BorderSide(
-              color: MomCozyColors.border.withValues(alpha: 0.7),
+          onSelected: (value) {
+            switch (value) {
+              case 'add':
+                onAdd();
+                break;
+              case 'user':
+                onUser();
+                break;
+              case 'manage':
+                onManage();
+                break;
+            }
+          },
+          itemBuilder: (context) => const [
+            PopupMenuItem(value: 'add', child: _DeviceQuickMenuLabel('添加设备')),
+            PopupMenuDivider(height: 1),
+            PopupMenuItem(value: 'user', child: _DeviceQuickMenuLabel('用户管理')),
+            PopupMenuDivider(height: 1),
+            PopupMenuItem(
+              value: 'manage',
+              child: _DeviceQuickMenuLabel('设备提醒'),
             ),
+          ],
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: MomCozyColors.card,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: MomCozyColors.border.withValues(alpha: 0.5),
+              ),
+              boxShadow: MomCozyShadows.soft,
+            ),
+            child: const Icon(Icons.add_rounded, size: 22),
           ),
-          icon: const Icon(Icons.add_rounded),
         ),
       ],
+    );
+  }
+}
+
+class _DeviceQuickMenuLabel extends StatelessWidget {
+  const _DeviceQuickMenuLabel(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+          color: MomCozyColors.background,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
     );
   }
 }
@@ -3600,7 +3636,7 @@ class _DeviceAirOnePanel extends StatelessWidget {
     return DecoratedBox(
       decoration: MomCozyDecorations.card(
         color: MomCozyColors.card,
-        borderColor: MomCozyColors.primary.withValues(alpha: 0.1),
+        borderColor: MomCozyColors.border.withValues(alpha: 0.6),
         radius: 24,
         shadows: MomCozyShadows.soft,
       ),
@@ -3611,35 +3647,25 @@ class _DeviceAirOnePanel extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Air One',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: MomCozyColors.foreground,
-                              fontWeight: FontWeight.w900,
-                            ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '左右设备',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: MomCozyColors.mutedForeground,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    'Air One',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
                 FilledButton.icon(
                   onPressed: onStartPump,
                   style: FilledButton.styleFrom(
-                    minimumSize: const Size(0, 38),
+                    minimumSize: const Size(0, 40),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
+                    ),
+                    disabledBackgroundColor: MomCozyColors.primary.withValues(
+                      alpha: 0.42,
                     ),
                   ),
                   icon: const Icon(Icons.play_arrow_rounded, size: 18),
@@ -3648,27 +3674,33 @@ class _DeviceAirOnePanel extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _DeviceDeckCard(
-                    sideCode: 'L',
-                    sideLabel: '左侧',
-                    device: leftDevice,
-                    onTap: onLeftAction,
+            SingleChildScrollView(
+              clipBehavior: Clip.none,
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 214,
+                    child: _DeviceDeckCard(
+                      sideCode: 'L',
+                      sideLabel: '左侧',
+                      device: leftDevice,
+                      onTap: onLeftAction,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _DeviceDeckCard(
-                    sideCode: 'R',
-                    sideLabel: '右侧',
-                    device: rightDevice,
-                    onTap: onRightAction,
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 214,
+                    child: _DeviceDeckCard(
+                      sideCode: 'R',
+                      sideLabel: '右侧',
+                      device: rightDevice,
+                      onTap: onRightAction,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -3697,7 +3729,6 @@ class _DeviceDeckCard extends StatelessWidget {
     final statusColor = connected
         ? const Color(0xff3f9d74)
         : MomCozyColors.mutedForeground;
-    final name = device?.deviceName ?? '等待连接';
 
     return Material(
       color: Colors.transparent,
@@ -3706,16 +3737,17 @@ class _DeviceDeckCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          height: 224,
+          height: 196,
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: connected ? MomCozyColors.raised : const Color(0xfff6f3f3),
+            color: connected ? MomCozyColors.card : const Color(0xfff7f7f8),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: connected
-                  ? MomCozyColors.primary.withValues(alpha: 0.12)
+                  ? MomCozyColors.primary.withValues(alpha: 0.1)
                   : Colors.transparent,
             ),
+            boxShadow: connected ? MomCozyShadows.soft : null,
           ),
           child: Column(
             children: [
@@ -3723,10 +3755,11 @@ class _DeviceDeckCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      sideCode == 'L' ? 'Left' : 'Right',
+                      sideCode == 'L' ? 'LEFT' : 'RIGHT',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: MomCozyColors.foreground.withValues(alpha: 0.72),
+                        color: MomCozyColors.foreground.withValues(alpha: 0.78),
                         fontWeight: FontWeight.w900,
+                        letterSpacing: 0,
                       ),
                     ),
                   ),
@@ -3745,15 +3778,15 @@ class _DeviceDeckCard extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               SizedBox(
-                height: 76,
+                height: 58,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      width: 78,
-                      height: 78,
+                      width: 58,
+                      height: 58,
                       decoration: BoxDecoration(
                         color: connected
                             ? MomCozyColors.primary.withValues(alpha: 0.06)
@@ -3767,8 +3800,8 @@ class _DeviceDeckCard extends StatelessWidget {
                     if (paired)
                       Image.asset(
                         MomCozyAssets.pumpM9,
-                        width: 72,
-                        height: 72,
+                        width: 58,
+                        height: 58,
                         fit: BoxFit.contain,
                         opacity: AlwaysStoppedAnimation(connected ? 1 : 0.46),
                       )
@@ -3776,140 +3809,144 @@ class _DeviceDeckCard extends StatelessWidget {
                       Icon(
                         Icons.photo_camera_outlined,
                         color: MomCozyColors.foreground.withValues(alpha: 0.38),
-                        size: 26,
+                        size: 25,
                       ),
                   ],
                 ),
               ),
               const Spacer(),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: MomCozyColors.background,
-                  borderRadius: BorderRadius.circular(17),
-                  border: Border.all(
-                    color: MomCozyColors.border.withValues(alpha: 0.48),
+              if (paired)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.background,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: MomCozyColors.border.withValues(alpha: 0.48),
+                    ),
+                  ),
+                  child: _DeviceConnectedDetails(
+                    sideLabel: sideLabel,
+                    device: device!,
+                    statusColor: statusColor,
+                  ),
+                )
+              else
+                Container(
+                  width: double.infinity,
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: MomCozyColors.border.withValues(alpha: 0.54),
+                    ),
+                    boxShadow: MomCozyShadows.soft,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.bluetooth_rounded, size: 16),
+                      const SizedBox(width: 6),
+                      Text(
+                        '连接设备',
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: MomCozyColors.foreground,
+                              fontWeight: FontWeight.w900,
+                            ),
+                      ),
+                    ],
                   ),
                 ),
-                child: paired
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: statusColor,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  connected ? '已连接' : '未连接',
-                                  style: Theme.of(context).textTheme.labelMedium
-                                      ?.copyWith(
-                                        color: connected
-                                            ? MomCozyColors.foreground
-                                            : MomCozyColors.mutedForeground,
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 7),
-                          Text(
-                            '$sideLabel $name',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: MomCozyColors.foreground,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              const Icon(Icons.battery_5_bar_rounded, size: 14),
-                              const SizedBox(width: 3),
-                              Text(
-                                _deviceBatteryLabel(device),
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: MomCozyColors.foreground,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                              ),
-                              const Spacer(),
-                              const Icon(
-                                Icons.signal_cellular_alt_rounded,
-                                size: 13,
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                _deviceSignalLabel(device),
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: MomCozyColors.mutedForeground,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          Text(
-                            '$sideLabel $name',
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: MomCozyColors.mutedForeground,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            width: double.infinity,
-                            height: 36,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: MomCozyColors.raised,
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(
-                                color: MomCozyColors.border.withValues(
-                                  alpha: 0.54,
-                                ),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.bluetooth_rounded, size: 15),
-                                const SizedBox(width: 6),
-                                Text(
-                                  '连接设备',
-                                  style: Theme.of(context).textTheme.labelMedium
-                                      ?.copyWith(
-                                        color: MomCozyColors.foreground,
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DeviceConnectedDetails extends StatelessWidget {
+  const _DeviceConnectedDetails({
+    required this.sideLabel,
+    required this.device,
+    required this.statusColor,
+  });
+
+  final String sideLabel;
+  final BleDeviceSnapshot device;
+  final Color statusColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final connected = device.connected;
+    final name = device.deviceName;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: statusColor,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                connected ? '已连接' : '未连接',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: connected
+                      ? MomCozyColors.foreground
+                      : MomCozyColors.mutedForeground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Text(
+          '$sideLabel $name',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: MomCozyColors.foreground,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            const Icon(Icons.battery_5_bar_rounded, size: 14),
+            const SizedBox(width: 3),
+            Text(
+              _deviceBatteryLabel(device),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const Spacer(),
+            const Icon(Icons.signal_cellular_alt_rounded, size: 13),
+            const SizedBox(width: 3),
+            Text(
+              _deviceSignalLabel(device),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -4180,53 +4217,6 @@ class _DeviceSearchRow extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _DeviceEntryPanel extends StatelessWidget {
-  const _DeviceEntryPanel({
-    required this.onCalibration,
-    required this.onManage,
-    required this.showDebug,
-    required this.onDebug,
-  });
-
-  final VoidCallback onCalibration;
-  final VoidCallback onManage;
-  final bool showDebug;
-  final VoidCallback onDebug;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _ActionTile(
-          icon: Icons.tune_rounded,
-          title: '进入舒适校准',
-          subtitle: '复用左右设备状态，保存后进入泵奶参数。',
-          accent: const Color(0xff9b6b2f),
-          onTap: onCalibration,
-          trailing: const Icon(Icons.chevron_right_rounded),
-        ),
-        _ActionTile(
-          icon: Icons.notifications_active_outlined,
-          title: '设备提醒',
-          subtitle: '同步设备连接、电量和提醒服务入口。',
-          accent: const Color(0xff7f6a75),
-          onTap: onManage,
-          trailing: const Icon(Icons.chevron_right_rounded),
-        ),
-        if (showDebug)
-          _ActionTile(
-            icon: Icons.bug_report_outlined,
-            title: '内部调试参数',
-            subtitle: '仅用于 QA/dev，正式包需要 feature flag 控制。',
-            accent: const Color(0xff7f6a75),
-            onTap: onDebug,
-            trailing: const Icon(Icons.chevron_right_rounded),
-          ),
-      ],
     );
   }
 }
@@ -6072,106 +6062,112 @@ class _CalibrationPageState extends State<_CalibrationPage> {
           total: 7,
           onBack: _exitCalibration,
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
-          child: Column(
-            children: [
-              _CalibrationStepCard(
-                eyebrow: '动作确认 1',
-                title: '请先正确穿戴吸奶器',
-                description: '确认法兰/硅胶塞贴合，左右主机放置稳定。穿戴完成后再进入吸力调节，能减少空吸带来的不适。',
-                primaryLabel: _introAcknowledged ? '已穿戴好' : '我已穿戴好',
-                onPrimary: () => setState(() => _introAcknowledged = true),
+        if (!_introAcknowledged)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
+            child: SizedBox(
+              height: MediaQuery.sizeOf(context).height - 104,
+              child: Center(
+                child: SizedBox(
+                  height: 204,
+                  child: _CalibrationStepCard(
+                    eyebrow: '动作确认 1',
+                    title: '请先正确穿戴吸奶器',
+                    description: '确认法兰/硅胶塞贴合，左右主机放置稳定。穿戴完成后再进入吸力调节，能减少空吸带来的不适。',
+                    primaryLabel: '我已穿戴好',
+                    onPrimary: () => setState(() => _introAcknowledged = true),
+                  ),
+                ),
               ),
-              const SizedBox(height: 12),
-              _CalibrationStepCard(
-                eyebrow: '左右侧 · 舒适档位',
-                title: '调节到舒适最大档',
-                description: '未感不适时持续加档，感受到略微不适时减 1-2 档，恢复到舒适档位。',
-                children: [
-                  if (_deviceStatusError != null)
-                    _ActionTile(
-                      icon: Icons.bluetooth_disabled_rounded,
-                      title: '设备状态同步失败',
-                      subtitle: _deviceStatusError!,
-                      accent: Colors.red,
-                      trailing: IconButton(
-                        tooltip: '重试设备状态',
-                        onPressed: _refreshCalibrationDevices,
-                        icon: const Icon(Icons.refresh_rounded),
-                      ),
-                    )
-                  else ...[
-                    _CalibrationDeviceTile(
-                      label: '左侧',
-                      device: leftDevice,
-                      accent: widget.accent,
+            ),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
+            child: _CalibrationStepCard(
+              eyebrow: '左右侧 · 舒适档位',
+              title: '调节到舒适最大档',
+              description: '未感不适时持续加档，感受到略微不适时减 1-2 档，恢复到舒适档位。',
+              children: [
+                if (_deviceStatusError != null)
+                  _ActionTile(
+                    icon: Icons.bluetooth_disabled_rounded,
+                    title: '设备状态同步失败',
+                    subtitle: _deviceStatusError!,
+                    accent: Colors.red,
+                    trailing: IconButton(
+                      tooltip: '重试设备状态',
+                      onPressed: _refreshCalibrationDevices,
+                      icon: const Icon(Icons.refresh_rounded),
                     ),
-                    _CalibrationDeviceTile(
-                      label: '右侧',
-                      device: rightDevice,
-                      accent: const Color(0xff43827b),
-                    ),
-                  ],
-                  const SizedBox(height: 6),
-                  _CalibrationSideTile(
+                  )
+                else ...[
+                  _CalibrationDeviceTile(
                     label: '左侧',
-                    value: _leftComfort,
+                    device: leftDevice,
                     accent: widget.accent,
-                    onChanged: _setLeftComfort,
                   ),
-                  _CalibrationSideTile(
+                  _CalibrationDeviceTile(
                     label: '右侧',
-                    value: _rightComfort,
+                    device: rightDevice,
                     accent: const Color(0xff43827b),
-                    onChanged: _setRightComfort,
-                  ),
-                  if (_saveError != null) ...[
-                    const SizedBox(height: 8),
-                    _CalibrationFeedbackBanner(
-                      text: _saveError!,
-                      isError: !_saveError!.startsWith('已恢复'),
-                    ),
-                  ],
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FilledButton.icon(
-                          onPressed: _isSaving ? null : _saveAndEnterPump,
-                          icon: const Icon(Icons.check_circle_rounded),
-                          label: Text(_isSaving ? '保存中' : '保存并进入泵奶'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 9),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _isSaving ? null : _exitCalibration,
-                          icon: const Icon(Icons.close_rounded),
-                          label: const Text('退出校准'),
-                        ),
-                      ),
-                      const SizedBox(width: 9),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _isSaving
-                              ? null
-                              : _resetCalibrationChanges,
-                          icon: const Icon(Icons.restore_rounded),
-                          label: const Text('恢复默认'),
-                        ),
-                      ),
-                    ],
                   ),
                 ],
-              ),
-            ],
+                const SizedBox(height: 6),
+                _CalibrationSideTile(
+                  label: '左侧',
+                  value: _leftComfort,
+                  accent: widget.accent,
+                  onChanged: _setLeftComfort,
+                ),
+                _CalibrationSideTile(
+                  label: '右侧',
+                  value: _rightComfort,
+                  accent: const Color(0xff43827b),
+                  onChanged: _setRightComfort,
+                ),
+                if (_saveError != null) ...[
+                  const SizedBox(height: 8),
+                  _CalibrationFeedbackBanner(
+                    text: _saveError!,
+                    isError: !_saveError!.startsWith('已恢复'),
+                  ),
+                ],
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: _isSaving ? null : _saveAndEnterPump,
+                        icon: const Icon(Icons.check_circle_rounded),
+                        label: Text(_isSaving ? '保存中' : '保存并进入泵奶'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 9),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _isSaving ? null : _exitCalibration,
+                        icon: const Icon(Icons.close_rounded),
+                        label: const Text('退出校准'),
+                      ),
+                    ),
+                    const SizedBox(width: 9),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _isSaving ? null : _resetCalibrationChanges,
+                        icon: const Icon(Icons.restore_rounded),
+                        label: const Text('恢复默认'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }

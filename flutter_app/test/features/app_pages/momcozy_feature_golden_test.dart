@@ -263,18 +263,7 @@ MomCozyApiRuntime _goldenRuntime() {
         'mime_type': 'image/png',
       },
     }),
-    blePlatform: FakeBlePlatform(
-      initialPermission: BlePermissionState.granted,
-      seedDevices: const [
-        BleDeviceSnapshot(
-          side: 'L',
-          deviceId: 'ble-left-golden',
-          deviceName: 'S12 Pro L',
-          connected: true,
-          battery: 87,
-        ),
-      ],
-    ),
+    blePlatform: FakeBlePlatform(initialPermission: BlePermissionState.granted),
     userId: 'demo-user-golden',
     babyId: 'demo-baby-golden',
     locale: 'zh-CN',
