@@ -4275,6 +4275,7 @@ class _PumpPageState extends State<_PumpPage> {
   Object? _uploadError;
   String? _guardNotice;
   bool _isUploading = false;
+  bool _calibrationPromptVisible = true;
 
   @override
   void didChangeDependencies() {
@@ -4394,102 +4395,116 @@ class _PumpPageState extends State<_PumpPage> {
     final isRunning = _runState == _PumpRunState.running;
     final isPaused = _runState == _PumpRunState.paused;
 
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xfffffaf8), Color(0xfffbf2f2), Color(0xfff8edf0)],
-          stops: [0, 0.56, 1],
-        ),
-      ),
-      child: ListView(
-        key: ValueKey('route-page-${widget.path}'),
-        scrollCacheExtent: const ScrollCacheExtent.pixels(1600),
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 22),
-        children: [
-          _PumpTopBar(sessionLabel: _headerSessionLabel),
-          const SizedBox(height: 10),
-          _PumpMetricConsole(
-            totalVolumeMl: _totalVolumeMl,
-            elapsedMinutes: _elapsedMinutes,
-            progress: _sessionProgress,
-            userLabel: _sessionOwnerUserId == null
-                ? '未绑定用户'
-                : '绑定 $_sessionOwnerUserId',
-            accent: widget.accent,
-          ),
-          const SizedBox(height: 10),
-          _PumpSessionStage(
-            leftVolumeMl: _leftVolumeMl,
-            rightVolumeMl: _rightVolumeMl,
-            leftLevel: _leftLevel.round(),
-            rightLevel: _rightLevel.round(),
-            bottleFill: _bottleFill,
-            totalVolumeMl: _totalVolumeMl,
-            isRunning: isRunning,
-            accent: widget.accent,
-          ),
-          const SizedBox(height: 10),
-          _PumpControlConsole(
-            leftLevel: _leftLevel,
-            rightLevel: _rightLevel,
-            isRunning: isRunning,
-            isPaused: isPaused,
-            onLeftLevelChanged: (value) => setState(() => _leftLevel = value),
-            onRightLevelChanged: (value) => setState(() => _rightLevel = value),
-            onStart: isRunning
-                ? null
-                : () => _changeRunState(_PumpRunState.running),
-            onPause: isRunning
-                ? () => _changeRunState(_PumpRunState.paused)
-                : null,
-            onEnd: _runState == _PumpRunState.idle
-                ? null
-                : () => _changeRunState(_PumpRunState.idle),
-          ),
-          const SizedBox(height: 10),
-          _PumpStatusStrip(
-            label: '结束保护',
-            icon: _duplicateCompletionBlocked
-                ? Icons.block_rounded
-                : Icons.verified_outlined,
-            title: _completionGuardTitle(),
-            subtitle: _guardNotice ?? '开始后绑定当前用户，结束时锁定一次性上传标记。',
-            accent: _duplicateCompletionBlocked
-                ? const Color(0xffb2773b)
-                : const Color(0xff43827b),
-            trailing: _StatusChip(
-              label: _completionUploadLocked ? '1/1' : '待结束',
-              icon: _completionUploadLocked
-                  ? Icons.lock_outline_rounded
-                  : Icons.hourglass_empty_rounded,
-              accent: _duplicateCompletionBlocked
-                  ? const Color(0xffb2773b)
-                  : const Color(0xff43827b),
+    return Stack(
+      children: [
+        DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xfffffaf8), Color(0xfffbf2f2), Color(0xfff8edf0)],
+              stops: [0, 0.56, 1],
             ),
           ),
-          _PumpStatusStrip(
-            label: '上传状态',
-            icon: _uploadError == null
-                ? Icons.cloud_sync_outlined
-                : Icons.cloud_off_outlined,
-            title: _uploadStatusTitle(),
-            subtitle: _uploadStatusSubtitle(),
-            accent: const Color(0xff6b6da8),
-            trailing: _isUploading
-                ? const SizedBox.square(
-                    dimension: 22,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : IconButton(
-                    tooltip: '重试同步',
-                    onPressed: () => _uploadWorkstate(_runState),
-                    icon: const Icon(Icons.refresh_rounded),
-                  ),
+          child: ListView(
+            key: ValueKey('route-page-${widget.path}'),
+            scrollCacheExtent: const ScrollCacheExtent.pixels(1600),
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 22),
+            children: [
+              _PumpTopBar(sessionLabel: _headerSessionLabel),
+              const SizedBox(height: 10),
+              _PumpMetricConsole(
+                totalVolumeMl: _totalVolumeMl,
+                elapsedMinutes: _elapsedMinutes,
+                progress: _sessionProgress,
+                userLabel: _sessionOwnerUserId == null
+                    ? '未绑定用户'
+                    : '绑定 $_sessionOwnerUserId',
+                accent: widget.accent,
+              ),
+              const SizedBox(height: 10),
+              _PumpSessionStage(
+                leftVolumeMl: _leftVolumeMl,
+                rightVolumeMl: _rightVolumeMl,
+                leftLevel: _leftLevel.round(),
+                rightLevel: _rightLevel.round(),
+                bottleFill: _bottleFill,
+                totalVolumeMl: _totalVolumeMl,
+                isRunning: isRunning,
+                accent: widget.accent,
+              ),
+              const SizedBox(height: 10),
+              _PumpControlConsole(
+                leftLevel: _leftLevel,
+                rightLevel: _rightLevel,
+                isRunning: isRunning,
+                isPaused: isPaused,
+                onLeftLevelChanged: (value) =>
+                    setState(() => _leftLevel = value),
+                onRightLevelChanged: (value) =>
+                    setState(() => _rightLevel = value),
+                onStart: isRunning
+                    ? null
+                    : () => _changeRunState(_PumpRunState.running),
+                onPause: isRunning
+                    ? () => _changeRunState(_PumpRunState.paused)
+                    : null,
+                onEnd: _runState == _PumpRunState.idle
+                    ? null
+                    : () => _changeRunState(_PumpRunState.idle),
+              ),
+              const SizedBox(height: 10),
+              _PumpStatusStrip(
+                label: '结束保护',
+                icon: _duplicateCompletionBlocked
+                    ? Icons.block_rounded
+                    : Icons.verified_outlined,
+                title: _completionGuardTitle(),
+                subtitle: _guardNotice ?? '开始后绑定当前用户，结束时锁定一次性上传标记。',
+                accent: _duplicateCompletionBlocked
+                    ? const Color(0xffb2773b)
+                    : const Color(0xff43827b),
+                trailing: _StatusChip(
+                  label: _completionUploadLocked ? '1/1' : '待结束',
+                  icon: _completionUploadLocked
+                      ? Icons.lock_outline_rounded
+                      : Icons.hourglass_empty_rounded,
+                  accent: _duplicateCompletionBlocked
+                      ? const Color(0xffb2773b)
+                      : const Color(0xff43827b),
+                ),
+              ),
+              _PumpStatusStrip(
+                label: '上传状态',
+                icon: _uploadError == null
+                    ? Icons.cloud_sync_outlined
+                    : Icons.cloud_off_outlined,
+                title: _uploadStatusTitle(),
+                subtitle: _uploadStatusSubtitle(),
+                accent: const Color(0xff6b6da8),
+                trailing: _isUploading
+                    ? const SizedBox.square(
+                        dimension: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : IconButton(
+                        tooltip: '重试同步',
+                        onPressed: () => _uploadWorkstate(_runState),
+                        icon: const Icon(Icons.refresh_rounded),
+                      ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        if (_calibrationPromptVisible)
+          _PumpCalibrationPromptOverlay(
+            onSkip: () => setState(() => _calibrationPromptVisible = false),
+            onStartCalibration: () {
+              setState(() => _calibrationPromptVisible = false);
+              context.go('/calibration');
+            },
+          ),
+      ],
     );
   }
 
@@ -4533,6 +4548,184 @@ class _PumpPageState extends State<_PumpPage> {
     if (_sessionOwnerUserId != null) return 'Session 用户已绑定';
     return 'Session 等待开始';
   }
+}
+
+class _PumpCalibrationPromptOverlay extends StatelessWidget {
+  const _PumpCalibrationPromptOverlay({
+    required this.onSkip,
+    required this.onStartCalibration,
+  });
+
+  final VoidCallback onSkip;
+  final VoidCallback onStartCalibration;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: ColoredBox(
+        color: MomCozyColors.foreground.withValues(alpha: 0.4),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 384),
+              child: DecoratedBox(
+                decoration: MomCozyDecorations.card(
+                  color: MomCozyColors.card,
+                  borderColor: MomCozyColors.border,
+                  radius: 24,
+                  shadows: const [
+                    BoxShadow(
+                      color: Color(0x40392832),
+                      blurRadius: 36,
+                      spreadRadius: -10,
+                      offset: Offset(0, 18),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: MomCozyColors.roseSoft,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: MomCozyColors.primary.withValues(
+                                  alpha: 0.16,
+                                ),
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.local_florist_rounded,
+                              size: 17,
+                              color: MomCozyColors.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 9),
+                          Text(
+                            '个性化舒适档位',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: MomCozyColors.foreground,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      _PumpPromptRichLine(
+                        segments: [
+                          const TextSpan(text: '妈妈，检测到您还没有进行过'),
+                          TextSpan(
+                            text: '耐受度滴定',
+                            style: _pumpPromptEmphasisStyle(context),
+                          ),
+                          const TextSpan(text: '哦~'),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      _PumpPromptRichLine(
+                        segments: [
+                          const TextSpan(text: '滴定可以帮您找到'),
+                          TextSpan(
+                            text: '最舒适且高效',
+                            style: _pumpPromptEmphasisStyle(context),
+                          ),
+                          const TextSpan(text: '的吸力档位，避免吸乳时疼痛或效率不佳'),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      _PumpPromptRichLine(
+                        segments: [
+                          const TextSpan(text: '只需要 '),
+                          TextSpan(
+                            text: '2分钟',
+                            style: _pumpPromptEmphasisStyle(context),
+                          ),
+                          const TextSpan(text: '，就能让每次吸乳都更舒适~'),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: onSkip,
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(40),
+                                side: BorderSide(
+                                  color: MomCozyColors.border.withValues(
+                                    alpha: 0.8,
+                                  ),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: const Text('先跳过'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: FilledButton(
+                              onPressed: onStartCalibration,
+                              style: FilledButton.styleFrom(
+                                minimumSize: const Size.fromHeight(40),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: const Text('开始滴定'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PumpPromptRichLine extends StatelessWidget {
+  const _PumpPromptRichLine({required this.segments});
+
+  final List<InlineSpan> segments;
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: MomCozyColors.mutedForeground,
+          fontWeight: FontWeight.w700,
+          height: 1.55,
+        ),
+        children: segments,
+      ),
+    );
+  }
+}
+
+TextStyle _pumpPromptEmphasisStyle(BuildContext context) {
+  return Theme.of(context).textTheme.labelMedium!.copyWith(
+    color: MomCozyColors.primary,
+    fontWeight: FontWeight.w900,
+    height: 1.55,
+  );
 }
 
 int _pumpStateCode(_PumpRunState state) {

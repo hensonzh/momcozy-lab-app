@@ -67,6 +67,9 @@ void main() {
 
         final page = find.byKey(ValueKey('route-page-${route.path}'));
         expect(page, findsOneWidget);
+        if (route.path == '/pump') {
+          await _dismissPumpCalibrationPrompt(tester);
+        }
         await tester.drag(page, const Offset(0, -360));
         await tester.pump();
       }
@@ -95,6 +98,8 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pump();
       expect(find.text('设备控制'), findsOneWidget);
+      expect(find.text('个性化舒适档位'), findsOneWidget);
+      await _dismissPumpCalibrationPrompt(tester);
       await _scrollToText(tester, '上传状态');
       expect(find.text('上传状态'), findsOneWidget);
     });
@@ -695,6 +700,7 @@ void main() {
     ) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
       await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
       await tester.pumpAndSettle();
@@ -707,6 +713,7 @@ void main() {
     testWidgets('pump page moves through local session states', (tester) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
       expect(find.text('待开始'), findsWidgets);
 
@@ -749,6 +756,7 @@ void main() {
         _FeaturePageHost(route: _route('/pump'), jsonTransport: transport),
       );
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
       expect(find.text('0 分钟'), findsOneWidget);
       expect(find.text('0 mL'), findsNWidgets(2));
@@ -817,6 +825,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
       await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
       await tester.pumpAndSettle();
@@ -859,6 +868,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
       await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
       await tester.pumpAndSettle();
@@ -1798,6 +1808,13 @@ Future<void> _scrollToFinder(WidgetTester tester, Finder finder) async {
     }
   }
   expect(finder, findsWidgets);
+}
+
+Future<void> _dismissPumpCalibrationPrompt(WidgetTester tester) async {
+  final skipButton = find.widgetWithText(OutlinedButton, '先跳过');
+  expect(skipButton, findsOneWidget);
+  await tester.tap(skipButton);
+  await tester.pumpAndSettle();
 }
 
 class _FeaturePageHost extends StatelessWidget {
