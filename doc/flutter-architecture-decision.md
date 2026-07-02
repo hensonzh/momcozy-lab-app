@@ -232,7 +232,7 @@ features/
 [x] Flutter Device 页面已覆盖无设备、左右已连接、BLE 未请求/拒绝/永久拒绝、系统设置返回重授权、internal/dev debug gate、扫描空态、单/多扫描结果、battery/RSSI 展示、连接失败和扫描失败状态；真实 scan/connect 留给设备实验室
 [x] Flutter Pump/Calibration 页面已覆盖 session 启动/暂停/恢复/结束、左右侧进度、结束上传一次性 guard、重复结束拦截、多用户切换清理、workstate 失败重试、无设备校准失败提示、左/右/双侧校准设备状态、档位调整、未保存退出提示、合法/缺字段/非法/0xFF legacy calibration migration 和保存后进入 Pump
 [x] Flutter Media/IBCLC/Hospital Bag 页面已覆盖媒体预览切换、上传失败 fallback、咨询网络失败本地入队、待产包恢复默认和 API 失败 fallback
-[ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
+[ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate；2026-07-02 探测结果为完整 Xcode 未安装、CocoaPods 未安装）
 ```
 
 工具链安装和初始化流程见 `doc/flutter-toolchain-bootstrap.md`。

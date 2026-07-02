@@ -149,7 +149,17 @@ flutter build apk --debug --flavor local
 [x] npm run flutter:release-gate
 ```
 
-`flutter doctor -v` 当前只剩 iOS/macOS 相关告警：Xcode 未完整安装、CocoaPods 未安装。P0 为 Android-first，这两项不阻塞 Android shell 和 APK 构建。
+`flutter doctor -v` 直接运行时会读取当前 shell 环境；若没有注入 `ANDROID_SDK_ROOT`，可能提示找不到 Android SDK。`npm run flutter:check` 和 `npm run flutter:release-gate` 会按 `flutter-toolchain.json` 自动注入用户目录工具链，且 `flutter_app/android/local.properties` 已指向同一 Android SDK，所以以这两个脚本作为 Android P0 gate。
+
+2026-07-02 的 standalone `flutter doctor -v` 仍有以下非 P0 告警：
+
+```text
+[ ] 完整 Xcode 未安装，当前 `xcodebuild -version` 只看到 Command Line Tools
+[ ] CocoaPods 未安装，`pod --version` 不可用
+[ ] 未注入脚本环境时，doctor 可能无法定位用户目录 Android SDK
+```
+
+P0 为 Android-first；只要 `npm run flutter:check`、`npm run flutter:release-gate` 和 flavored APK build 通过，上述告警不阻塞 Android shell 和 APK 构建。iOS/Xcode/CocoaPods 在进入 iOS scope 前单独补齐。
 
 然后把现有 fixtures 拷贝或链接到 Flutter 测试目录：
 
