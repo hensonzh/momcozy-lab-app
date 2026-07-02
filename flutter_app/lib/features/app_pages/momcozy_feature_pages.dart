@@ -3314,8 +3314,6 @@ Future<bool> _postFeatureClientEvent(
     final runtime = MomCozyRuntimeScope.of(context);
     final result = await runtime.clientEventClient.post(
       AgentStreamClientEventRequest(
-        threadId: 'thread-${runtime.userId}',
-        userId: runtime.userId,
         eventType: eventType,
         label: label,
         occurredAt: runtime.now().toIso8601String(),
@@ -3591,8 +3589,6 @@ class _IbclcPageState extends State<_IbclcPage> {
       final runtime = MomCozyRuntimeScope.of(context);
       final result = await runtime.clientEventClient.post(
         AgentStreamClientEventRequest(
-          threadId: 'thread-${runtime.userId}',
-          userId: runtime.userId,
           eventType: 'ibclc_consult_started',
           label: '用户进入 IBCLC 在线咨询队列',
           occurredAt: runtime.now().toIso8601String(),

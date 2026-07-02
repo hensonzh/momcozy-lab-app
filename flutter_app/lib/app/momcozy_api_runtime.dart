@@ -154,10 +154,12 @@ class MomCozyApiRuntime {
       clientEventClient:
           clientEventClient ??
           AgentStreamClientEventClient(
-            endpoint: AgentStreamEndpoint(
-              uri: baseUri.replace(path: '/api/client-event'),
-              token: authToken,
-              headers: defaultHeaders,
+            recorder: (event) => runtimeObservability.recordFeatureEvent(
+              'client_event',
+              event['event_type'] is String
+                  ? event['event_type'] as String
+                  : 'unknown',
+              attributes: event,
             ),
           ),
       blePlatform: blePlatform,

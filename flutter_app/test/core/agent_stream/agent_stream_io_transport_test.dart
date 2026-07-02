@@ -164,7 +164,7 @@ void main() {
     });
 
     test(
-      'client event client posts IBCLC completion events best-effort',
+      'client event client records safe local events without user authority',
       () async {
         final fixture = readFixtureMap(
           'route_intents/media_viewer_and_ibclc_return_intents.json',
@@ -174,50 +174,28 @@ void main() {
         final completion = Map<String, Object?>.from(
           ibclc['completionPayload']! as Map,
         );
-        final connector = _RecordingControlHttpConnector(
-          const AgentStreamControlHttpResponse(
-            statusCode: 200,
-            body: '{"status":"ok"}',
-          ),
-        );
-        final client = AgentStreamClientEventClient(
-          endpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-            token: 'secret-token',
-          ),
-          connector: connector,
-        );
+        final recorded = <Map<String, Object?>>[];
+        final client = AgentStreamClientEventClient(recorder: recorded.add);
 
         final result = await client.post(
           AgentStreamClientEventRequest(
-            threadId: completion['conversation_id']! as String,
-            userId: 'demo-user-001',
             eventType: completion['event_type']! as String,
             label: '用户已完成一次 IBCLC 在线咨询',
             occurredAt: completion['completed_at']! as String,
             locale: 'zh-CN',
             timezone: 'Asia/Shanghai',
             metadata: {
-              'user_id': 'demo-user-001',
               'consult_id': completion['consult_id'],
               'source': 'ibclc-chat',
             },
           ),
         );
-        final body = jsonDecode(connector.body!) as Map<String, Object?>;
+        final body = recorded.single;
 
         expect(result.sent, isTrue);
-        expect(result.body, {'status': 'ok'});
-        expect(
-          connector.uri!.queryParameters,
-          isNot(containsPair('token', anything)),
-        );
-        expect(
-          connector.headers,
-          containsPair('Authorization', 'Bearer secret-token'),
-        );
-        expect(body['thread_id'], 'thread-ibclc-001');
-        expect(body['user_id'], 'demo-user-001');
+        expect(result.body, body);
+        expect(body.containsKey('thread_id'), isFalse);
+        expect(body.containsKey('user_id'), isFalse);
         expect(body['event_type'], 'ibclc_consult_completed');
         expect(body['occurred_at'], '2026-06-29T10:00:00+08:00');
         expect(body['locale'], 'zh-CN');
@@ -227,35 +205,13 @@ void main() {
     );
 
     test(
-      'client event client reports guard, HTTP, and network failures',
+      'client event client reports guard and local recorder failures',
       () async {
-        final connector = _RecordingControlHttpConnector(
-          const AgentStreamControlHttpResponse(statusCode: 500, body: ''),
-        );
-        final client = AgentStreamClientEventClient(
-          endpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          ),
-          connector: connector,
-        );
-
-        final httpFailure = await client.post(
-          const AgentStreamClientEventRequest(
-            threadId: 'thread-fixture-001',
-            userId: 'demo-user-001',
-            eventType: 'milk_analysis_generated',
-            occurredAt: '2026-06-29T10:00:00+08:00',
-          ),
-        );
-
-        expect(httpFailure.sent, isFalse);
-        expect(httpFailure.statusCode, 500);
+        const client = AgentStreamClientEventClient(sent: false);
 
         final guardFailure = await client.post(
           const AgentStreamClientEventRequest(
-            threadId: '',
-            userId: 'demo-user-001',
-            eventType: 'milk_analysis_generated',
+            eventType: '',
             occurredAt: '2026-06-29T10:00:00+08:00',
           ),
         );
@@ -263,19 +219,19 @@ void main() {
         expect(guardFailure.sent, isFalse);
         expect(guardFailure.error, isA<AgentStreamPayloadException>());
 
-        connector.nextError = StateError('network down');
+        final failingClient = AgentStreamClientEventClient(
+          recorder: (_) => throw StateError('recorder down'),
+        );
 
-        final networkFailure = await client.post(
+        final recorderFailure = await failingClient.post(
           const AgentStreamClientEventRequest(
-            threadId: 'thread-fixture-001',
-            userId: 'demo-user-001',
             eventType: 'milk_analysis_generated',
             occurredAt: '2026-06-29T10:00:00+08:00',
           ),
         );
 
-        expect(networkFailure.sent, isFalse);
-        expect(networkFailure.error, isA<StateError>());
+        expect(recorderFailure.sent, isFalse);
+        expect(recorderFailure.error, isA<StateError>());
       },
     );
   });

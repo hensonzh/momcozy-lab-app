@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
@@ -46,13 +47,20 @@ void main() {
     final runtime = await MomCozyApiRuntime.bootstrap(store: store);
     final observed = runtime.jsonTransport as ObservedApiJsonTransport;
     final transport = observed.inner as IoApiJsonTransport;
+    final eventResult = await runtime.clientEventClient.post(
+      const AgentStreamClientEventRequest(
+        eventType: 'runtime_bootstrap_test',
+        occurredAt: '2026-07-01T00:00:00Z',
+      ),
+    );
 
     expect(runtime.userId, 'secure-user');
     expect(runtime.babyId, 'secure-baby');
     expect(runtime.locale, 'en-US');
     expect(runtime.session.refreshToken, 'secure-refresh');
     expect(transport.token, 'secure-access');
-    expect(runtime.clientEventClient.endpoint.token, 'secure-access');
+    expect(eventResult.sent, isTrue);
+    expect(eventResult.body?['event_type'], 'runtime_bootstrap_test');
     expect(runtime.observability, same(observed.observability));
   });
 

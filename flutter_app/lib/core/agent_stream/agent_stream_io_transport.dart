@@ -188,8 +188,6 @@ Uri _runScopedUri(Uri runsUri, String runId, String suffix) {
 
 class AgentStreamClientEventRequest {
   const AgentStreamClientEventRequest({
-    required this.threadId,
-    required this.userId,
     required this.eventType,
     required this.occurredAt,
     this.label,
@@ -198,8 +196,6 @@ class AgentStreamClientEventRequest {
     this.metadata = const <String, Object?>{},
   });
 
-  final String threadId;
-  final String userId;
   final String eventType;
   final String occurredAt;
   final String? label;
@@ -208,16 +204,8 @@ class AgentStreamClientEventRequest {
   final Map<String, Object?> metadata;
 
   Map<String, Object?> toMap() {
-    final normalizedThreadId = threadId.trim();
-    final normalizedUserId = userId.trim();
     final normalizedEventType = eventType.trim();
     final normalizedOccurredAt = occurredAt.trim();
-    if (normalizedThreadId.isEmpty) {
-      throw const AgentStreamPayloadException('Missing threadId.');
-    }
-    if (normalizedUserId.isEmpty) {
-      throw const AgentStreamPayloadException('Missing userId.');
-    }
     if (normalizedEventType.isEmpty) {
       throw const AgentStreamPayloadException('Missing eventType.');
     }
@@ -226,8 +214,6 @@ class AgentStreamClientEventRequest {
     }
 
     return {
-      'thread_id': normalizedThreadId,
-      'user_id': normalizedUserId,
       'event_type': normalizedEventType,
       if (label?.trim().isNotEmpty ?? false) 'label': label!.trim(),
       'occurred_at': normalizedOccurredAt,
@@ -241,39 +227,45 @@ class AgentStreamClientEventRequest {
 class AgentStreamClientEventResult {
   const AgentStreamClientEventResult({
     required this.sent,
-    this.statusCode,
     this.body,
     this.error,
   });
 
   final bool sent;
-  final int? statusCode;
   final Map<String, Object?>? body;
   final Object? error;
 }
 
+typedef AgentStreamClientEventRecorder =
+    void Function(Map<String, Object?> event);
+
 class AgentStreamClientEventClient {
   const AgentStreamClientEventClient({
-    required this.endpoint,
-    this.connector = const _DefaultControlHttpConnector(),
+    this.recorder,
+    this.sent = true,
+    this.error,
   });
 
-  final AgentStreamEndpoint endpoint;
-  final AgentStreamControlHttpConnector connector;
+  final AgentStreamClientEventRecorder? recorder;
+  final bool sent;
+  final Object? error;
 
   Future<AgentStreamClientEventResult> post(
     AgentStreamClientEventRequest event,
   ) async {
     try {
-      final response = await connector.post(
-        endpoint.requestUri,
-        headers: endpoint.requestHeaders(includeContentType: true),
-        body: jsonEncode(event.toMap()),
-      );
+      final body = event.toMap();
+      if (!sent) {
+        return AgentStreamClientEventResult(
+          sent: false,
+          body: body,
+          error: error,
+        );
+      }
+      recorder?.call(body);
       return AgentStreamClientEventResult(
-        sent: response.statusCode >= 200 && response.statusCode < 300,
-        statusCode: response.statusCode,
-        body: response.jsonBody,
+        sent: true,
+        body: body,
       );
     } catch (error) {
       return AgentStreamClientEventResult(sent: false, error: error);
