@@ -45,6 +45,9 @@ Already present:
 - Hospital bag cart sync writes a `/v1/plans` projection with
   `plan_type=hospital_bag_cart` and an idempotency key, removing the legacy
   `/api/hospital-bag/cart-update` path.
+- Voice repository no longer sends `user_id` as authority or bearer tokens in
+  realtime voice URLs; voice endpoints still need to be added to the production
+  OpenAPI contract before they can be treated as fully stable.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -92,8 +95,8 @@ Main gaps:
    validator in both repos.
 2. Wire production auth/session into app routing and runtime replacement,
    because every owner-scoped feature depends on it.
-3. Continue migrating voice repositories to `/v1`, so `user_id` can stop being
-   passed as authority.
+3. Add formal production OpenAPI coverage for voice/transcription endpoints or
+   replace them with the production agent runtime media flow.
 4. Migrate agent chat after the runtime API adapter exists, because stream
    replay and action confirmation need a different state model from the legacy
    AG-UI transport.
