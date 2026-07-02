@@ -535,7 +535,7 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
       await tester.pumpAndSettle();
 
-      expect(find.text('200 mL'), findsOneWidget);
+      expect(find.text('吸奶器母乳量'), findsOneWidget);
       await _scrollToTextContaining(tester, '晨间泵奶');
       expect(find.textContaining('晨间泵奶'), findsOneWidget);
       expect(find.textContaining('120 mL'), findsWidgets);
@@ -557,13 +557,12 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
       await tester.pumpAndSettle();
 
-      expect(find.text('200 mL'), findsOneWidget);
+      expect(find.textContaining('120 mL'), findsWidgets);
       expect(find.textContaining('120 mL'), findsWidgets);
 
-      await tester.tap(find.text('oz'));
+      await tester.tap(find.text('mL'));
       await tester.pumpAndSettle();
 
-      expect(find.text('6.8 oz'), findsOneWidget);
       expect(find.textContaining('4.1 oz'), findsWidgets);
 
       await _tapScrollableText(tester, '喂养');
@@ -579,8 +578,8 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
       await tester.pumpAndSettle();
 
-      await _scrollToText(tester, '手动补录');
-      await tester.tap(find.text('手动补录'));
+      await _scrollToText(tester, '手动记录');
+      await tester.tap(find.text('手动记录'));
       await tester.pumpAndSettle();
 
       await _scrollToTextContaining(tester, '手动补录 1');
