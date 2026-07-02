@@ -7,7 +7,6 @@ import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
-import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
@@ -43,6 +42,8 @@ void main() {
           expect(find.text('待产包一键打包'), findsWidgets);
         } else if (route.path == '/ibclc-chat.html') {
           expect(find.text('IBCLC 在线咨询'), findsWidgets);
+        } else if (route.path == '/media-viewer') {
+          expect(find.text('媒体'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }
@@ -106,7 +107,8 @@ void main() {
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/media-viewer')));
       await tester.pump();
-      expect(find.text('预览'), findsOneWidget);
+      expect(find.text('媒体'), findsOneWidget);
+      expect(find.text('缺少资源参数，请从资料卡片进入。'), findsOneWidget);
       expect(find.text('/media-viewer'), findsNothing);
     });
 
@@ -1336,124 +1338,38 @@ void main() {
       expect(find.textContaining('Dual R · 电量 81%'), findsOneWidget);
     });
 
-    testWidgets('media page uploads sample media through runtime repository', (
+    testWidgets('media viewer renders old Web missing-resource chrome', (
       tester,
     ) async {
-      final multipart = FixtureApiMultipartTransport({
-        'status': 200,
-        'data': {
-          'id': 'file-001',
-          'name': 'pump-display-fixture.png',
-          'size': 68,
-          'extension': 'png',
-          'mime_type': 'image/png',
-        },
-      });
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/media-viewer'),
-          multipartTransport: multipart,
-        ),
-      );
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/media-viewer')));
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.byTooltip('上传'));
-      await tester.tap(find.byTooltip('上传'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('已上传 pump-display-fixture.png'), findsOneWidget);
-      expect(find.textContaining('文件 ID file-001'), findsOneWidget);
-      expect(multipart.lastPath, mediaUploadEndpoint);
-      expect(multipart.lastFields, {'user_id': 'demo-user-fixture'});
-      expect(multipart.lastFile?.name, 'pump-display-fixture.png');
+      expect(find.text('媒体'), findsOneWidget);
+      expect(find.byKey(const ValueKey('media-return-button')), findsOneWidget);
+      expect(find.text('缺少资源参数，请从资料卡片进入。'), findsOneWidget);
+      expect(find.text('资料预览'), findsNothing);
+      expect(find.text('上传示例资料'), findsNothing);
     });
 
-    testWidgets(
-      'media page switches preview types and surfaces upload failure',
-      (tester) async {
-        final multipart = FixtureApiMultipartTransport(const {
-          'http_status': 503,
-          'status_text': 'Service Unavailable',
-        });
+    testWidgets('media viewer reads resource query and renders viewer state', (
+      tester,
+    ) async {
+      final router = createMomCozyRouter(
+        initialLocation:
+            '/media-viewer?kind=pdf&url=%2Fdemo%2Fw1.pdf&title=W1%20使用教程',
+      );
 
-        await tester.pumpWidget(
-          _FeaturePageHost(
-            route: _route('/media-viewer'),
-            multipartTransport: multipart,
-          ),
-        );
-        await tester.pumpAndSettle();
+      await tester.pumpWidget(MomCozyFlutterApp(router: router));
+      await tester.pumpAndSettle();
 
-        expect(find.text('PDF 预览'), findsOneWidget);
-
-        await tester.tap(find.text('图片'));
-        await tester.pumpAndSettle();
-        expect(find.text('图片预览'), findsOneWidget);
-
-        await tester.tap(find.text('视频'));
-        await tester.pumpAndSettle();
-        expect(find.text('视频预览'), findsOneWidget);
-
-        await tester.ensureVisible(find.byTooltip('上传'));
-        await tester.tap(find.byTooltip('上传'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('媒体服务暂不可用，请稍后重试。'), findsOneWidget);
-        expect(multipart.lastPath, mediaUploadEndpoint);
-      },
-    );
-
-    testWidgets(
-      'media page clears cache and keeps preview across size changes',
-      (tester) async {
-        final multipart = FixtureApiMultipartTransport({
-          'status': 200,
-          'data': {
-            'id': 'file-cache',
-            'name': 'cached-preview.png',
-            'size': 68,
-          },
-        });
-        tester.view.physicalSize = const Size(390, 844);
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-
-        await tester.pumpWidget(
-          _FeaturePageHost(
-            route: _route('/media-viewer'),
-            multipartTransport: multipart,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.text('图片'));
-        await tester.pumpAndSettle();
-        await tester.ensureVisible(find.byTooltip('上传'));
-        await tester.tap(find.byTooltip('上传'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('图片预览'), findsOneWidget);
-        expect(find.text('已上传 cached-preview.png'), findsOneWidget);
-
-        tester.view.physicalSize = const Size(844, 390);
-        await tester.pumpAndSettle();
-
-        expect(tester.takeException(), isNull);
-        expect(find.text('图片预览'), findsOneWidget);
-
-        await _scrollToText(tester, '离线缓存');
-        const clearCacheButton = ValueKey('media-clear-cache-button');
-        await tester.ensureVisible(find.byKey(clearCacheButton));
-        await tester.tap(find.byKey(clearCacheButton));
-        await tester.pumpAndSettle();
-
-        expect(find.text('已清理离线缓存和临时上传结果。'), findsOneWidget);
-        expect(find.text('上传示例资料'), findsOneWidget);
-        expect(find.text('已上传 cached-preview.png'), findsNothing);
-      },
-    );
+      expect(
+        find.byKey(const ValueKey('route-page-/media-viewer')),
+        findsOneWidget,
+      );
+      expect(find.text('W1 使用教程'), findsOneWidget);
+      expect(find.text('加载 PDF…'), findsOneWidget);
+      expect(find.text('缺少资源参数，请从资料卡片进入。'), findsNothing);
+    });
 
     testWidgets('media page returns to the previous route when pushed', (
       tester,
@@ -1471,9 +1387,7 @@ void main() {
         findsOneWidget,
       );
 
-      await _scrollToText(tester, '分享或返回');
       const returnButton = ValueKey('media-return-button');
-      await tester.ensureVisible(find.byKey(returnButton));
       await tester.tap(find.byKey(returnButton));
       await tester.pumpAndSettle();
 
@@ -1893,7 +1807,6 @@ class _FeaturePageHost extends StatelessWidget {
     required this.route,
     this.clientEventClient,
     this.jsonTransport,
-    this.multipartTransport,
     this.blePlatform,
     this.pumpProtocolPlatform,
   });
@@ -1901,7 +1814,6 @@ class _FeaturePageHost extends StatelessWidget {
   final MomCozyRouteConfig route;
   final AgentStreamClientEventClient? clientEventClient;
   final FixtureApiJsonTransportByPath? jsonTransport;
-  final FixtureApiMultipartTransport? multipartTransport;
   final BlePlatform? blePlatform;
   final PumpProtocolPlatform? pumpProtocolPlatform;
 
@@ -1911,7 +1823,6 @@ class _FeaturePageHost extends StatelessWidget {
       apiRuntime: _appRuntime(
         clientEventClient: clientEventClient,
         jsonTransport: jsonTransport,
-        multipartTransport: multipartTransport,
         blePlatform: blePlatform,
         pumpProtocolPlatform: pumpProtocolPlatform,
       ),
@@ -1990,7 +1901,6 @@ MomCozyApiRuntime _appRuntime({
   PumpProtocolPlatform? pumpProtocolPlatform,
   AgentStreamClientEventClient? clientEventClient,
   FixtureApiJsonTransportByPath? jsonTransport,
-  FixtureApiMultipartTransport? multipartTransport,
   BlePlatform? blePlatform,
   String userId = 'demo-user-fixture',
 }) {
@@ -2082,7 +1992,6 @@ MomCozyApiRuntime _appRuntime({
           },
         }),
     clientEventClient: clientEventClient,
-    multipartTransport: multipartTransport,
     blePlatform:
         blePlatform ??
         FakeBlePlatform(

@@ -6,9 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
-import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
@@ -28,6 +26,8 @@ class MomCozyFeaturePage extends StatelessWidget {
     required this.icon,
     required this.accent,
     required this.priority,
+    this.routeUri,
+    this.routeExtra,
   });
 
   final String path;
@@ -36,6 +36,8 @@ class MomCozyFeaturePage extends StatelessWidget {
   final IconData icon;
   final Color accent;
   final String priority;
+  final Uri? routeUri;
+  final Object? routeExtra;
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +132,8 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        routeUri: routeUri,
+        routeExtra: routeExtra,
       ),
       _ => _NotFoundPage(
         path: path,
@@ -7066,63 +7070,6 @@ String _dateLabel(DateTime? value) {
   return '$month-$day';
 }
 
-class _MediaPreview extends StatelessWidget {
-  const _MediaPreview({required this.type, required this.accent});
-
-  final String type;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    final icon = switch (type) {
-      'image' => Icons.image_outlined,
-      'video' => Icons.play_circle_outline_rounded,
-      _ => Icons.picture_as_pdf_outlined,
-    };
-    final label = switch (type) {
-      'image' => '图片预览',
-      'video' => '视频预览',
-      _ => 'PDF 预览',
-    };
-
-    return Container(
-      height: 210,
-      alignment: Alignment.center,
-      decoration: MomCozyDecorations.card(
-        color: MomCozyColors.card,
-        shadows: MomCozyShadows.soft,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _IconBubble(icon: icon, accent: accent, size: 58, iconSize: 30),
-            const SizedBox(height: 14),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 7),
-            Text(
-              '选择资料后可在这里查看内容、进度和加载状态。',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                height: 1.35,
-                color: MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _CommunityPage extends StatefulWidget {
   const _CommunityPage({
     required this.path,
@@ -9520,6 +9467,8 @@ class _MediaViewerPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.routeUri,
+    this.routeExtra,
   });
 
   final String path;
@@ -9527,53 +9476,14 @@ class _MediaViewerPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Uri? routeUri;
+  final Object? routeExtra;
 
   @override
   State<_MediaViewerPage> createState() => _MediaViewerPageState();
 }
 
 class _MediaViewerPageState extends State<_MediaViewerPage> {
-  String _type = 'pdf';
-  bool _isUploading = false;
-  UploadedMediaFile? _uploadedFile;
-  String? _uploadError;
-  String _cacheStatus = '离线资料已缓存，网络不稳定时可继续查看并失败重试。';
-
-  Future<void> _uploadSampleMedia() async {
-    if (_isUploading) return;
-    setState(() {
-      _isUploading = true;
-      _uploadError = null;
-    });
-
-    try {
-      final runtime = MomCozyRuntimeScope.of(context);
-      final uploaded = await runtime.mediaRepository.uploadFile(
-        userId: runtime.userId,
-        file: _sampleMediaFile,
-      );
-      if (!mounted) return;
-      setState(() {
-        _uploadedFile = uploaded;
-        _isUploading = false;
-      });
-    } catch (error) {
-      if (!mounted) return;
-      setState(() {
-        _isUploading = false;
-        _uploadError = _mediaUploadErrorText(error);
-      });
-    }
-  }
-
-  void _clearOfflineCache() {
-    setState(() {
-      _uploadedFile = null;
-      _uploadError = null;
-      _cacheStatus = '已清理离线缓存和临时上传结果。';
-    });
-  }
-
   void _returnFromMediaViewer() {
     if (context.canPop()) {
       context.pop();
@@ -9584,105 +9494,276 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      trailing: _LegacySegmentedTabs(
-        selected: _type,
-        onChanged: (next) => setState(() => _type = next),
-        accent: MomCozyColors.primary,
-        expand: true,
-        minItemWidth: 82,
-        items: const [
-          _LegacySegmentedTabItem(
-            value: 'pdf',
-            icon: Icons.picture_as_pdf_outlined,
-            label: 'PDF',
+    final media = _MediaViewerRouteState.from(
+      routeUri: widget.routeUri,
+      routeExtra: widget.routeExtra,
+    );
+    final headerTitle = media?.title ?? '媒体';
+
+    return ColoredBox(
+      key: ValueKey('route-page-${widget.path}'),
+      color: MomCozyColors.background,
+      child: Column(
+        children: [
+          _MediaViewerHeader(
+            title: headerTitle,
+            onBack: _returnFromMediaViewer,
           ),
-          _LegacySegmentedTabItem(
-            value: 'image',
-            icon: Icons.image_outlined,
-            label: '图片',
-          ),
-          _LegacySegmentedTabItem(
-            value: 'video',
-            icon: Icons.play_circle_outline_rounded,
-            label: '视频',
+          Expanded(
+            child: media == null
+                ? const _MediaViewerMissingResource()
+                : _MediaViewerContent(media: media),
           ),
         ],
       ),
-      children: [
-        const _SectionTitle('预览'),
-        _MediaPreview(type: _type, accent: widget.accent),
-        const SizedBox(height: 18),
-        const _SectionTitle('操作'),
-        _ActionTile(
-          icon: Icons.download_for_offline_outlined,
-          title: '离线缓存',
-          subtitle: _cacheStatus,
-          accent: widget.accent,
-          trailing: IconButton(
-            key: const ValueKey('media-clear-cache-button'),
-            tooltip: '清理缓存',
-            onPressed: _clearOfflineCache,
-            icon: const Icon(Icons.cleaning_services_outlined),
-          ),
-        ),
-        _ActionTile(
-          icon: Icons.cloud_upload_outlined,
-          title: _uploadedFile == null
-              ? '上传示例资料'
-              : '已上传 ${_uploadedFile!.name}',
-          subtitle:
-              _uploadError ??
-              (_uploadedFile == null
-                  ? '通过 /v1/files/upload 验证媒体上传合同。'
-                  : '文件 ID ${_uploadedFile!.id}，${_uploadedFile!.sizeBytes} bytes。'),
-          accent: _uploadError == null ? const Color(0xff846bd8) : Colors.red,
-          trailing: _isUploading
-              ? const SizedBox.square(
-                  dimension: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2.5),
-                )
-              : IconButton(
-                  tooltip: '上传',
-                  onPressed: _uploadSampleMedia,
-                  icon: const Icon(Icons.cloud_upload_outlined),
-                ),
-        ),
-        _ActionTile(
-          icon: Icons.ios_share_rounded,
-          title: '分享或返回',
-          subtitle: '从 Agent artifact、IBCLC 和 W1 内容跳入时保留返回意图。',
-          accent: const Color(0xff43827b),
-          trailing: IconButton(
-            key: const ValueKey('media-return-button'),
-            tooltip: '返回上一页',
-            onPressed: _returnFromMediaViewer,
-            icon: const Icon(Icons.arrow_back_rounded),
-          ),
-        ),
-      ],
     );
-  }
-
-  String _mediaUploadErrorText(Object error) {
-    if (error is ApiRequestCancelledException) return '上传已取消，预览内容已保留。';
-    if (error is ApiRequestTimeoutException) return '上传超时，请稍后重试。';
-    if (error is ApiHttpException) return '媒体服务暂不可用，请稍后重试。';
-    return '上传失败，请稍后重试。';
   }
 }
 
-const _sampleMediaFile = ApiUploadFile(
-  name: 'pump-display-fixture.png',
-  mimeType: 'image/png',
-  sizeBytes: 68,
-  bytes: <int>[137, 80, 78, 71, 13, 10, 26, 10],
-);
+class _MediaViewerHeader extends StatelessWidget {
+  const _MediaViewerHeader({required this.title, required this.onBack});
+
+  final String title;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: MomCozyColors.background,
+        border: Border(bottom: BorderSide(color: MomCozyColors.border)),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: [
+              SizedBox.square(
+                dimension: 40,
+                child: IconButton(
+                  key: const ValueKey('media-return-button'),
+                  tooltip: '返回',
+                  onPressed: onBack,
+                  icon: const Icon(Icons.arrow_back_rounded, size: 22),
+                  color: MomCozyColors.foreground,
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MediaViewerMissingResource extends StatelessWidget {
+  const _MediaViewerMissingResource();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          '缺少资源参数，请从资料卡片进入。',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: MomCozyColors.mutedForeground,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MediaViewerContent extends StatelessWidget {
+  const _MediaViewerContent({required this.media});
+
+  final _MediaViewerRouteState media;
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (media.kind) {
+      'image' => const _ImageViewerStage(),
+      'video' => const _VideoViewerStage(),
+      _ => const _PdfViewerStage(),
+    };
+  }
+}
+
+class _PdfViewerStage extends StatelessWidget {
+  const _PdfViewerStage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: MomCozyColors.background,
+      alignment: Alignment.topCenter,
+      padding: const EdgeInsets.only(top: 40),
+      child: Text(
+        '加载 PDF…',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: MomCozyColors.mutedForeground,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageViewerStage extends StatelessWidget {
+  const _ImageViewerStage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const ColoredBox(
+      color: Colors.black,
+      child: Center(
+        child: Text(
+          '加载图片…',
+          style: TextStyle(
+            color: Color(0xb3ffffff),
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _VideoViewerStage extends StatelessWidget {
+  const _VideoViewerStage();
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: MomCozyColors.background,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            OutlinedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.open_in_full_rounded, size: 18),
+              label: const Text('全屏播放'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: MomCozyColors.foreground,
+                backgroundColor: MomCozyColors.secondary,
+                side: BorderSide.none,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                textStyle: Theme.of(
+                  context,
+                ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w800),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: const ColoredBox(
+                  color: Colors.black,
+                  child: Center(
+                    child: Icon(
+                      Icons.play_arrow_rounded,
+                      color: Color(0xb3ffffff),
+                      size: 54,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MediaViewerRouteState {
+  const _MediaViewerRouteState({
+    required this.kind,
+    required this.url,
+    required this.title,
+  });
+
+  final String kind;
+  final String url;
+  final String title;
+
+  static const _supportedKinds = {'pdf', 'image', 'video'};
+
+  static _MediaViewerRouteState? from({
+    required Uri? routeUri,
+    required Object? routeExtra,
+  }) {
+    final extra = routeExtra is Map ? routeExtra : null;
+    final query = routeUri?.queryParameters ?? const <String, String>{};
+    final kind = _normalizeKind(
+      _stringFromMap(extra, 'kind') ?? _stringFromQuery(query, 'kind'),
+    );
+    final url = _nonEmpty(
+      _stringFromMap(extra, 'url') ?? _stringFromQuery(query, 'url'),
+    );
+    if (kind == null || url == null) return null;
+    final title =
+        _nonEmpty(
+          _stringFromMap(extra, 'title') ?? _stringFromQuery(query, 'title'),
+        ) ??
+        _defaultTitleForKind(kind);
+    return _MediaViewerRouteState(kind: kind, url: url, title: title);
+  }
+
+  static String? _normalizeKind(String? value) {
+    final normalized = _nonEmpty(value)?.toLowerCase();
+    if (normalized == null || !_supportedKinds.contains(normalized)) {
+      return null;
+    }
+    return normalized;
+  }
+
+  static String? _stringFromMap(Map<Object?, Object?>? map, String key) {
+    final value = map?[key];
+    return value is String ? value : null;
+  }
+
+  static String? _stringFromQuery(Map<String, String> query, String key) {
+    final value = query[key];
+    return value;
+  }
+
+  static String? _nonEmpty(String? value) {
+    final trimmed = value?.trim();
+    return trimmed == null || trimmed.isEmpty ? null : trimmed;
+  }
+
+  static String _defaultTitleForKind(String kind) {
+    return switch (kind) {
+      'image' => '图片',
+      'video' => '视频',
+      _ => 'PDF',
+    };
+  }
+}
 
 class _NotFoundPage extends StatelessWidget {
   const _NotFoundPage({
