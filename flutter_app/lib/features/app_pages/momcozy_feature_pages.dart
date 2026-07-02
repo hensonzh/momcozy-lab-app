@@ -9786,7 +9786,7 @@ class _IbclcPageState extends State<_IbclcPage> {
   bool _isStarting = false;
   bool _isEnding = false;
   bool _chatReady = false;
-  int _connectionStepIndex = 0;
+  int _connectionStepIndex = 1;
   String? _syncStatus;
   final List<Timer> _connectionTimers = [];
   static const String _returnToPath = '/status';
@@ -9817,7 +9817,7 @@ class _IbclcPageState extends State<_IbclcPage> {
       Duration(milliseconds: 2000),
     ];
     var elapsed = Duration.zero;
-    for (var index = 0; index < _connectionSteps.length; index += 1) {
+    for (var index = 1; index < _connectionSteps.length; index += 1) {
       _connectionTimers.add(
         Timer(elapsed, () {
           if (mounted) setState(() => _connectionStepIndex = index);
@@ -9887,13 +9887,7 @@ class _IbclcPageState extends State<_IbclcPage> {
   Widget build(BuildContext context) {
     return DecoratedBox(
       key: ValueKey('route-page-${widget.path}'),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xfff8fcfb), Color(0xffe9f2ef)],
-        ),
-      ),
+      decoration: const BoxDecoration(color: Colors.white),
       child: Column(
         children: [
           _IbclcChatHeader(isEnding: _isEnding, onEndConsult: _endConsult),
@@ -9904,7 +9898,6 @@ class _IbclcPageState extends State<_IbclcPage> {
               syncStatus: _syncStatus,
             ),
           ),
-          const _IbclcChatInputBar(),
         ],
       ),
     );
@@ -9978,6 +9971,45 @@ class _IbclcChatBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!chatReady) {
+      return Center(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: const Color(0xfff7fcfa),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xffd9e8e4)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x14224844),
+                blurRadius: 34,
+                offset: Offset(0, 14),
+              ),
+            ],
+          ),
+          child: SizedBox(
+            width: 300,
+            height: 50,
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const _IbclcPulseDot(),
+                  const SizedBox(width: 10),
+                  Text(
+                    connectionText,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: const Color(0xff177a89),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return ListView(
       padding: EdgeInsets.fromLTRB(14, chatReady ? 14 : 0, 14, 14),
       children: [
@@ -9998,21 +10030,25 @@ class _IbclcChatBody extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const _IbclcPulseDot(),
-                      const SizedBox(width: 10),
-                      Text(
-                        connectionText,
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: const Color(0xff177a89),
-                          fontWeight: FontWeight.w900,
+                child: SizedBox(
+                  width: 300,
+                  height: 50,
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const _IbclcPulseDot(),
+                        const SizedBox(width: 10),
+                        Text(
+                          connectionText,
+                          style: Theme.of(context).textTheme.labelLarge
+                              ?.copyWith(
+                                color: const Color(0xff177a89),
+                                fontWeight: FontWeight.w900,
+                              ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -10088,106 +10124,6 @@ class _IbclcPulseDot extends StatelessWidget {
         decoration: BoxDecoration(
           color: Color(0xff177a89),
           shape: BoxShape.circle,
-        ),
-      ),
-    );
-  }
-}
-
-class _IbclcChatInputBar extends StatelessWidget {
-  const _IbclcChatInputBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: Color(0xfffbfefd),
-        border: Border(top: BorderSide(color: Color(0xffdce8e5))),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
-        child: Row(
-          children: [
-            const _IbclcRoundButton(
-              icon: Icons.image_outlined,
-              tooltip: '上传图片',
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: TextField(
-                readOnly: true,
-                decoration: InputDecoration(
-                  hintText: '输入消息...',
-                  isDense: true,
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 11,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(999),
-                    borderSide: const BorderSide(color: Color(0xffd5e1de)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(999),
-                    borderSide: const BorderSide(color: Color(0xffd5e1de)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(999),
-                    borderSide: const BorderSide(color: Color(0xff177a89)),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-            const _IbclcRoundButton(
-              icon: Icons.mic_none_rounded,
-              tooltip: '语音输入',
-            ),
-            const SizedBox(width: 6),
-            FilledButton(
-              onPressed: () {},
-              style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xff177a89),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(0, 40),
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                textStyle: Theme.of(
-                  context,
-                ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
-              ),
-              child: const Text('发送'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _IbclcRoundButton extends StatelessWidget {
-  const _IbclcRoundButton({required this.icon, required this.tooltip});
-
-  final IconData icon;
-  final String tooltip;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: SizedBox.square(
-        dimension: 40,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: const Color(0xfff2f8f6),
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: const Color(0xffd5e1de)),
-          ),
-          child: Icon(icon, color: const Color(0xff28615c), size: 20),
         ),
       ),
     );
