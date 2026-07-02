@@ -304,6 +304,7 @@ class FakeBlePlatform implements BlePlatform {
   FakeBlePlatform({
     List<BleDeviceSnapshot> seedDevices = const [],
     BlePermissionState initialPermission = BlePermissionState.unknown,
+    this.requestPermissionResult = BlePermissionState.granted,
   }) : _permissionState = initialPermission,
        _devices = {for (final device in seedDevices) device.deviceId: device};
 
@@ -318,6 +319,7 @@ class FakeBlePlatform implements BlePlatform {
   final StreamController<BleNotification> _notificationController =
       StreamController<BleNotification>.broadcast();
   BlePermissionState _permissionState;
+  final BlePermissionState requestPermissionResult;
   bool scanning = false;
   bool openedBluetoothSettings = false;
   bool openedAppSettings = false;
@@ -336,7 +338,7 @@ class FakeBlePlatform implements BlePlatform {
 
   @override
   Future<BlePermissionState> requestPermission() async {
-    _permissionState = BlePermissionState.granted;
+    _permissionState = requestPermissionResult;
     return _permissionState;
   }
 
