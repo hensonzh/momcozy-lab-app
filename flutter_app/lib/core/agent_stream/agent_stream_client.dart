@@ -59,6 +59,15 @@ class AgentStreamImageInput {
     'size': size,
     'detail': detail.trim().isEmpty ? 'auto' : detail,
   };
+
+  Map<String, Object?> toProductionAttachment() => {
+    'type': 'image',
+    'data_url': dataUrl,
+    'mime_type': mimeType.trim().isEmpty ? 'image/png' : mimeType,
+    'name': name.trim().isEmpty ? 'image.png' : name,
+    'size': size,
+    'detail': detail.trim().isEmpty ? 'auto' : detail,
+  };
 }
 
 class AgentStreamPayloadException implements Exception {
@@ -117,6 +126,40 @@ Map<String, Object?> buildAgentRunPayload(
     'context': <Object?>[],
     'forwardedProps': request.metadata,
   };
+}
+
+Map<String, Object?> buildProductionAgentRunPayload(
+  AgentStreamRequest request, {
+  String? idempotencyKey,
+}) {
+  final text = request.message.trim();
+  if (text.isEmpty) {
+    throw const AgentStreamPayloadException('Missing message.');
+  }
+
+  final threadId = request.threadId?.trim();
+  final attachments = request.images
+      .map((image) => image.toProductionAttachment())
+      .toList(growable: false);
+  final normalizedIdempotencyKey = idempotencyKey?.trim();
+
+  return {
+    if (threadId != null && threadId.isNotEmpty && _looksLikeUuid(threadId))
+      'thread_id': threadId,
+    'message': text,
+    if (attachments.isNotEmpty) 'attachments': attachments,
+    'runtime_pattern': 'langgraph_sdk',
+    if (normalizedIdempotencyKey != null &&
+        normalizedIdempotencyKey.isNotEmpty)
+      'idempotency_key': normalizedIdempotencyKey,
+  };
+}
+
+bool _looksLikeUuid(String value) {
+  return RegExp(
+    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-'
+    r'[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+  ).hasMatch(value);
 }
 
 abstract interface class AgentStreamClient {

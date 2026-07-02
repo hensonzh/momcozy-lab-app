@@ -63,27 +63,23 @@ class AgentStreamCancelRequest {
   const AgentStreamCancelRequest({
     required this.threadId,
     this.runId,
-    this.userId,
+    this.reason,
   });
 
   final String threadId;
   final String? runId;
-  final String? userId;
+  final String? reason;
 
   Map<String, Object?> toMap() {
-    final normalizedThreadId = threadId.trim();
-    if (normalizedThreadId.isEmpty) {
-      throw const AgentStreamPayloadException('Missing threadId.');
+    final normalizedRunId = runId?.trim();
+    if (normalizedRunId == null || normalizedRunId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing runId.');
     }
 
-    final normalizedRunId = runId?.trim();
-    final normalizedUserId = userId?.trim();
+    final normalizedReason = reason?.trim();
     return {
-      'threadId': normalizedThreadId,
-      if (normalizedRunId != null && normalizedRunId.isNotEmpty)
-        'runId': normalizedRunId,
-      if (normalizedUserId != null && normalizedUserId.isNotEmpty)
-        'user_id': normalizedUserId,
+      if (normalizedReason != null && normalizedReason.isNotEmpty)
+        'reason': normalizedReason,
     };
   }
 }
@@ -161,8 +157,12 @@ class AgentStreamCancelClient {
     AgentStreamCancelRequest request,
   ) async {
     try {
+      final runId = request.runId?.trim();
+      if (runId == null || runId.isEmpty) {
+        throw const AgentStreamPayloadException('Missing runId.');
+      }
       final response = await connector.post(
-        endpoint.requestUri,
+        _runScopedUri(endpoint.requestUri, runId, 'cancel'),
         headers: endpoint.requestHeaders(includeContentType: true),
         body: jsonEncode(request.toMap()),
       );
@@ -178,6 +178,16 @@ class AgentStreamCancelClient {
       return AgentStreamCancelResult(acknowledged: false, error: error);
     }
   }
+}
+
+Uri _runScopedUri(Uri runsUri, String runId, String suffix) {
+  final basePath = runsUri.path.endsWith('/')
+      ? runsUri.path.substring(0, runsUri.path.length - 1)
+      : runsUri.path;
+  return runsUri.replace(
+    path: '$basePath/$runId/$suffix',
+    queryParameters: null,
+  );
 }
 
 class AgentStreamPrewarmResult {
@@ -454,6 +464,10 @@ abstract interface class AgentStreamSseConnector {
   });
 }
 
+abstract interface class AgentStreamSseGetConnector {
+  Stream<String> get(Uri uri, {required Map<String, String> headers});
+}
+
 class IoAgentStreamSseConnector implements AgentStreamSseConnector {
   IoAgentStreamSseConnector({HttpClient? httpClient})
     : _httpClient = httpClient ?? HttpClient();
@@ -477,19 +491,45 @@ class IoAgentStreamSseConnector implements AgentStreamSseConnector {
       );
     }
 
-    var buffer = '';
-    await for (final chunk in response.transform(utf8.decoder)) {
-      buffer += chunk;
-      final blocks = buffer.split(RegExp(r'\r?\n\r?\n'));
-      buffer = blocks.removeLast();
-      for (final block in blocks) {
-        final trimmed = block.trim();
-        if (trimmed.isNotEmpty) yield '$trimmed\n\n';
-      }
+    yield* _decodeSseBlocks(response.transform(utf8.decoder));
+  }
+}
+
+class IoAgentStreamSseGetConnector implements AgentStreamSseGetConnector {
+  IoAgentStreamSseGetConnector({HttpClient? httpClient})
+    : _httpClient = httpClient ?? HttpClient();
+
+  final HttpClient _httpClient;
+
+  @override
+  Stream<String> get(Uri uri, {required Map<String, String> headers}) async* {
+    final request = await _httpClient.getUrl(uri);
+    headers.forEach(request.headers.set);
+
+    final response = await request.close();
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw AgentStreamTransportException(
+        'SSE request failed: ${response.statusCode}',
+      );
     }
 
-    if (buffer.trim().isNotEmpty) yield buffer;
+    yield* _decodeSseBlocks(response.transform(utf8.decoder));
   }
+}
+
+Stream<String> _decodeSseBlocks(Stream<String> chunks) async* {
+  var buffer = '';
+  await for (final chunk in chunks) {
+    buffer += chunk;
+    final blocks = buffer.split(RegExp(r'\r?\n\r?\n'));
+    buffer = blocks.removeLast();
+    for (final block in blocks) {
+      final trimmed = block.trim();
+      if (trimmed.isNotEmpty) yield '$trimmed\n\n';
+    }
+  }
+
+  if (buffer.trim().isNotEmpty) yield buffer;
 }
 
 class AgentSseHttpTransport implements AgentStreamTransport {
@@ -514,6 +554,71 @@ class AgentSseHttpTransport implements AgentStreamTransport {
       body: jsonEncode(payloadFactory(request)),
     );
   }
+}
+
+class ProductionAgentSseTransport implements AgentStreamTransport {
+  const ProductionAgentSseTransport({
+    required this.runsEndpoint,
+    required this.payloadFactory,
+    this.runConnector = const _DefaultControlHttpConnector(),
+    this.streamConnector = const _DefaultSseGetConnector(),
+  });
+
+  final AgentStreamEndpoint runsEndpoint;
+  final AgentStreamPayloadFactory payloadFactory;
+  final AgentStreamControlHttpConnector runConnector;
+  final AgentStreamSseGetConnector streamConnector;
+
+  @override
+  Stream<String> frames(AgentStreamRequest request) async* {
+    final payload = Map<String, Object?>.from(payloadFactory(request));
+    final idempotencyKey =
+        stringField(payload, 'idempotency_key') ?? _agentRunIdempotencyKey();
+    payload['idempotency_key'] = idempotencyKey;
+
+    final response = await runConnector.post(
+      runsEndpoint.requestUri,
+      headers: {
+        ...runsEndpoint.requestHeaders(includeContentType: true),
+        'Idempotency-Key': idempotencyKey,
+      },
+      body: jsonEncode(payload),
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw AgentStreamTransportException(
+        'run create failed: ${response.statusCode}',
+      );
+    }
+
+    final body = response.jsonBody;
+    final runId = body == null ? null : stringField(body, 'id');
+    if (runId == null || runId.isEmpty) {
+      throw const AgentStreamTransportException(
+        'run create response must include id',
+      );
+    }
+
+    final streamUri = _runScopedUri(
+      runsEndpoint.requestUri,
+      runId,
+      'stream',
+    ).replace(
+      queryParameters: const {
+        'after_sequence': '0',
+        'follow': 'true',
+        'limit': '200',
+      },
+    );
+
+    yield* streamConnector.get(
+      streamUri,
+      headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
+    );
+  }
+}
+
+String _agentRunIdempotencyKey() {
+  return 'agent-run-${DateTime.now().microsecondsSinceEpoch}';
 }
 
 abstract interface class AgentStreamWebSocketConnection {
@@ -600,6 +705,15 @@ class _DefaultSseConnector implements AgentStreamSseConnector {
     required String body,
   }) {
     return IoAgentStreamSseConnector().post(uri, headers: headers, body: body);
+  }
+}
+
+class _DefaultSseGetConnector implements AgentStreamSseGetConnector {
+  const _DefaultSseGetConnector();
+
+  @override
+  Stream<String> get(Uri uri, {required Map<String, String> headers}) {
+    return IoAgentStreamSseGetConnector().get(uri, headers: headers);
   }
 }
 

@@ -281,15 +281,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final cancelClient = widget.cancelClient;
     if (cancelClient == null) return;
 
-    final threadId = activeState.threadId ?? activeRequest?.threadId;
-    if (threadId == null || threadId.trim().isEmpty) return;
+    final runId = activeState.runId;
+    if (runId == null || runId.trim().isEmpty) return;
 
     unawaited(
       cancelClient.cancel(
         AgentStreamCancelRequest(
-          threadId: threadId,
-          runId: activeState.runId,
-          userId: activeRequest?.userId,
+          threadId: activeState.threadId ?? activeRequest?.threadId ?? '',
+          runId: runId,
+          reason: 'user_cancelled',
         ),
       ),
     );

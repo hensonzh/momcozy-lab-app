@@ -51,14 +51,16 @@ class AgentStreamRunState {
 
     final type = event.type;
     final nextEvents = List<AgentStreamEvent>.unmodifiable([...events, event]);
-    final nextText = type == 'TEXT_MESSAGE_CONTENT'
+    final nextText = type == 'TEXT_MESSAGE_CONTENT' || type == 'message.delta'
         ? '$textContent${event.textDelta ?? ''}'
+        : type == 'message.completed'
+        ? event.textDelta ?? textContent
         : textContent;
     final nextThreadId = event.threadId ?? threadId;
     final nextRunId = event.runId ?? runId;
     final nextMessageId = event.messageId ?? messageId;
 
-    if (type == 'RUN_FINISHED') {
+    if (type == 'RUN_FINISHED' || type == 'run.completed') {
       return copyWith(
         phase: AgentStreamRunPhase.finished,
         events: nextEvents,
@@ -69,7 +71,23 @@ class AgentStreamRunState {
       );
     }
 
-    if (type == 'RUN_ERROR' || type == 'RUN_FAILED' || type == 'ERROR') {
+    if (type == 'run.cancelled') {
+      return copyWith(
+        phase: AgentStreamRunPhase.cancelled,
+        events: nextEvents,
+        threadId: nextThreadId,
+        runId: nextRunId,
+        messageId: nextMessageId,
+        textContent: nextText,
+        cancelAcknowledged: true,
+      );
+    }
+
+    if (type == 'RUN_ERROR' ||
+        type == 'RUN_FAILED' ||
+        type == 'ERROR' ||
+        type == 'run.failed' ||
+        type == 'error') {
       return copyWith(
         phase: AgentStreamRunPhase.error,
         events: nextEvents,
@@ -79,7 +97,9 @@ class AgentStreamRunState {
         textContent: nextText,
         errorMessage:
             stringField(event.raw, 'message') ??
+            stringField(event.payload, 'message') ??
             stringField(event.raw, 'code') ??
+            stringField(event.payload, 'code') ??
             'Agent stream error.',
       );
     }
