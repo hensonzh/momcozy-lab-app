@@ -246,7 +246,7 @@ test/fixtures/api/
 [x] 取消 / 停止生成
 [x] AG-UI 文本渐进流式输出
 [x] 工具进度 / 工作状态
-[ ] 工具失败状态
+[x] 工具失败状态
 [x] 失败后重试
 [x] Rich text block 渲染
 [x] Card 渲染
@@ -538,6 +538,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Agent Hub stop best-effort cancel body、endpoint 和本地停止态已覆盖
 [x] Agent Hub disconnect 后 retry 复用上一轮 request 并进入完成态已覆盖
 [x] Agent Hub tool progress、artifact created 和 confirmation required fixture UI 已覆盖，且不展示内部 tool name / raw JSON
+[x] Agent Hub tool failure work step 已覆盖，同一 tool_call_id 失败事件覆盖进行中状态且不展示 raw error / tool name
 [x] Agent Hub rich text artifact、card rows 和 button/doc/media action 已覆盖；doc/media action 经白名单 route handler 打开 `/media-viewer`
 [x] Flutter 非 Agent route 页面骨架已覆盖全量 route map，并验证 Status、Schedule、Device、Pump、Calibration、Media 的关键区块和专注页底栏规则
 [x] Flutter 非 Agent route 已增加紧凑手机视口渲染和滚动 smoke，防止小屏 overflow 与底栏遮挡回归
