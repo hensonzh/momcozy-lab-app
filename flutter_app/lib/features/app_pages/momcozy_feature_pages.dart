@@ -8128,35 +8128,12 @@ class _HospitalBagCartPage extends StatefulWidget {
 }
 
 class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
-  bool _pumpPacked = true;
-  bool _padsPacked = false;
-  bool _babyClothesPacked = false;
   bool _isSyncing = false;
   String? _syncStatus;
   final Set<String> _removedItemIds = {};
 
-  void _setPacked(String id, bool value) {
-    setState(() {
-      switch (id) {
-        case 'pump':
-          _pumpPacked = value;
-          break;
-        case 'pads':
-          _padsPacked = value;
-          break;
-        case 'baby_clothes':
-          _babyClothesPacked = value;
-          break;
-      }
-    });
-    unawaited(_syncCart());
-  }
-
   void _resetCart() {
     setState(() {
-      _pumpPacked = true;
-      _padsPacked = false;
-      _babyClothesPacked = false;
       _removedItemIds.clear();
     });
     unawaited(_syncCart());
@@ -8165,17 +8142,6 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
   void _deleteItem(String id) {
     setState(() {
       _removedItemIds.add(id);
-      switch (id) {
-        case 'pump':
-          _pumpPacked = false;
-          break;
-        case 'pads':
-          _padsPacked = false;
-          break;
-        case 'baby_clothes':
-          _babyClothesPacked = false;
-          break;
-      }
     });
     unawaited(_syncCart());
   }
@@ -8207,127 +8173,913 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
   }
 
   List<HospitalBagPackedItem> _hospitalBagItems() {
-    return [
-      HospitalBagPackedItem(id: 'pump', title: '吸奶器和配件', packed: _pumpPacked),
-      HospitalBagPackedItem(id: 'pads', title: '产后护理用品', packed: _padsPacked),
-      HospitalBagPackedItem(
-        id: 'baby_clothes',
-        title: '宝宝衣物',
-        packed: _babyClothesPacked,
-      ),
-    ].where((item) => !_removedItemIds.contains(item.id)).toList();
+    return _visibleCartItems
+        .map(
+          (item) => HospitalBagPackedItem(
+            id: item.id,
+            title: item.name,
+            packed: true,
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  List<_HospitalBagCartItemSpec> get _visibleCartItems => _hospitalBagCartGroups
+      .expand((group) => group.items)
+      .where((item) => !_removedItemIds.contains(item.id))
+      .toList(growable: false);
+
+  int get _itemCount =>
+      _visibleCartItems.fold(0, (sum, item) => sum + item.qty);
+
+  double get _subtotal =>
+      _visibleCartItems.fold(0.0, (sum, item) => sum + item.price * item.qty);
+
+  double get _discount => _itemCount > 0 ? _subtotal * 0.08 : 0;
+
+  double get _total => _subtotal - _discount;
+
+  String _money(double amount) => '¥${amount.toStringAsFixed(2)}';
+
+  void _handleBack() {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    context.go('/');
   }
 
   @override
   Widget build(BuildContext context) {
-    final items = _hospitalBagItems();
-    final packed = items.where((item) => item.packed).length;
+    final visibleGroups = _hospitalBagCartGroups
+        .map(
+          (group) => group.copyWith(
+            items: group.items
+                .where((item) => !_removedItemIds.contains(item.id))
+                .toList(growable: false),
+          ),
+        )
+        .where((group) => group.items.isNotEmpty)
+        .toList(growable: false);
 
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      trailing: _StatusChip(
-        label: '$packed/${items.length} 已准备',
-        icon: Icons.inventory_2_outlined,
-        accent: widget.accent,
+    return DecoratedBox(
+      key: ValueKey('route-page-${widget.path}'),
+      decoration: const BoxDecoration(color: Color(0xfffff9fb)),
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              _HospitalBagHeader(itemCount: _itemCount, onBack: _handleBack),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 148),
+                  children: [
+                    if (_isSyncing || _syncStatus != null)
+                      _HospitalBagSyncStatusBanner(
+                        isSyncing: _isSyncing,
+                        message: _syncStatus,
+                      ),
+                    for (final group in visibleGroups)
+                      _HospitalBagGroupSection(
+                        group: group,
+                        onDelete: _deleteItem,
+                      ),
+                    if (_itemCount == 0)
+                      _HospitalBagEmptyCart(onResetCart: _resetCart),
+                    _HospitalBagOrderSummary(
+                      subtotal: _subtotal,
+                      discount: _discount,
+                      total: _total,
+                      syncStatus: _syncStatus,
+                      isSyncing: _isSyncing,
+                      canReset: _removedItemIds.isNotEmpty,
+                      onResetCart: _resetCart,
+                      money: _money,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _HospitalBagFooter(
+              total: _total,
+              discount: _discount,
+              money: _money,
+            ),
+          ),
+        ],
       ),
-      children: [
-        const _SectionTitle('清单'),
-        if (!_removedItemIds.contains('pump'))
-          _ChecklistTile(
-            title: '吸奶器和配件',
-            subtitle: '主机、阀门、储奶袋、充电线。',
-            value: _pumpPacked,
-            accent: widget.accent,
-            onChanged: (value) => _setPacked('pump', value),
-            onDelete: () => _deleteItem('pump'),
-          ),
-        if (!_removedItemIds.contains('pads'))
-          _ChecklistTile(
-            title: '产后护理用品',
-            subtitle: '护理垫、湿巾、一次性用品。',
-            value: _padsPacked,
-            accent: const Color(0xff43827b),
-            onChanged: (value) => _setPacked('pads', value),
-            onDelete: () => _deleteItem('pads'),
-          ),
-        if (!_removedItemIds.contains('baby_clothes'))
-          _ChecklistTile(
-            title: '宝宝衣物',
-            subtitle: '连体衣、包巾、帽子和备用衣物。',
-            value: _babyClothesPacked,
-            accent: const Color(0xff6b6da8),
-            onChanged: (value) => _setPacked('baby_clothes', value),
-            onDelete: () => _deleteItem('baby_clothes'),
-          ),
-        const SizedBox(height: 8),
-        _ActionTile(
-          icon: _isSyncing ? Icons.sync_rounded : Icons.cloud_done_outlined,
-          title: '购物车同步',
-          subtitle: _syncStatus ?? '勾选变化会同步到待产包购物车状态。',
-          accent: const Color(0xff43827b),
-          trailing: _isSyncing
-              ? const SizedBox.square(
-                  dimension: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2.5),
-                )
-              : const Icon(Icons.check_circle_outline_rounded),
-        ),
-        _ActionTile(
-          icon: Icons.restore_rounded,
-          title: '恢复默认清单',
-          subtitle: '把待产包恢复为推荐清单，并同步购物车状态。',
-          accent: const Color(0xff7f6a75),
-          trailing: const Icon(Icons.chevron_right_rounded),
-          onTap: _resetCart,
-        ),
-      ],
     );
   }
 }
 
-class _ChecklistTile extends StatelessWidget {
-  const _ChecklistTile({
-    required this.title,
-    required this.subtitle,
-    required this.value,
-    required this.accent,
-    required this.onChanged,
-    this.onDelete,
-  });
+class _HospitalBagHeader extends StatelessWidget {
+  const _HospitalBagHeader({required this.itemCount, required this.onBack});
 
-  final String title;
-  final String subtitle;
-  final bool value;
-  final Color accent;
-  final ValueChanged<bool> onChanged;
-  final VoidCallback? onDelete;
+  final int itemCount;
+  final VoidCallback onBack;
 
   @override
   Widget build(BuildContext context) {
-    return _ActionTile(
-      icon: value ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
-      title: title,
-      subtitle: subtitle,
-      accent: accent,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Color(0xf2fff9fb),
+        border: Border(bottom: BorderSide(color: Color(0xfff0dde5))),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+        child: Row(
+          children: [
+            _CircleIconButton(
+              icon: Icons.arrow_back_rounded,
+              onPressed: onBack,
+              foreground: const Color(0xff6c4457),
+              background: Colors.white,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '待产包一键打包',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: const Color(0xff372330),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '已按待产包物品清单整理',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: const Color(0xff8a6d7a),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0xffeef9f5),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: const Color(0xffd7ece6)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                child: Text(
+                  '$itemCount 件',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: const Color(0xff267c68),
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HospitalBagSyncStatusBanner extends StatelessWidget {
+  const _HospitalBagSyncStatusBanner({
+    required this.isSyncing,
+    required this.message,
+  });
+
+  final bool isSyncing;
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: const Color(0xffeef9f5),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xffd7ece6)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            children: [
+              if (isSyncing)
+                const SizedBox.square(
+                  dimension: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              else
+                const Icon(
+                  Icons.cloud_done_outlined,
+                  color: Color(0xff267c68),
+                  size: 18,
+                ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  isSyncing ? '购物车同步中...' : message ?? '购物车已同步',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: const Color(0xff267c68),
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HospitalBagGroupSection extends StatelessWidget {
+  const _HospitalBagGroupSection({required this.group, required this.onDelete});
+
+  final _HospitalBagCartGroupSpec group;
+  final ValueChanged<String> onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
         children: [
-          Checkbox(value: value, onChanged: (next) => onChanged(next ?? false)),
-          if (onDelete != null)
-            IconButton(
-              tooltip: '删除$title',
-              onPressed: onDelete,
-              icon: const Icon(Icons.delete_outline_rounded),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  group.title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: const Color(0xff372330),
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              _HospitalBagTonePill(
+                label: '${group.items.length} 件',
+                tone: group.tone,
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          for (final item in group.items)
+            _HospitalBagCartItemTile(
+              item: item,
+              tone: group.tone,
+              onDelete: () => onDelete(item.id),
             ),
         ],
       ),
     );
   }
 }
+
+class _HospitalBagTonePill extends StatelessWidget {
+  const _HospitalBagTonePill({required this.label, required this.tone});
+
+  final String label;
+  final _HospitalBagTone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = _hospitalBagToneColors(tone);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.background,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: colors.border),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: colors.foreground,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HospitalBagCartItemTile extends StatelessWidget {
+  const _HospitalBagCartItemTile({
+    required this.item,
+    required this.tone,
+    required this.onDelete,
+  });
+
+  final _HospitalBagCartItemSpec item;
+  final _HospitalBagTone tone;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = _hospitalBagToneColors(tone);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xfff0e1e7)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0f5b3748),
+              blurRadius: 18,
+              offset: Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _HospitalBagItemIcon(tone: tone),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: const Color(0xff372330),
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.desc,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: const Color(0xff7e6672),
+                        height: 1.25,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'x${item.qty}',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: const Color(0xff9a7b89),
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '¥${item.price.toStringAsFixed(2)}',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: const Color(0xff372330),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Tooltip(
+                    message: '删除${item.name}',
+                    child: OutlinedButton.icon(
+                      onPressed: onDelete,
+                      icon: const Icon(Icons.delete_outline_rounded, size: 14),
+                      label: const Text('删除'),
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        foregroundColor: const Color(0xff6c4457),
+                        side: BorderSide(color: colors.border),
+                        textStyle: Theme.of(context).textTheme.labelSmall
+                            ?.copyWith(fontWeight: FontWeight.w900),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        minimumSize: const Size(0, 30),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HospitalBagItemIcon extends StatelessWidget {
+  const _HospitalBagItemIcon({required this.tone});
+
+  final _HospitalBagTone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = _hospitalBagToneColors(tone);
+    final icon = switch (tone) {
+      _HospitalBagTone.mint => Icons.child_care_rounded,
+      _HospitalBagTone.sky => Icons.favorite_border_rounded,
+      _HospitalBagTone.rose => Icons.inventory_2_outlined,
+    };
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        color: colors.iconBackground,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Icon(icon, color: colors.foreground, size: 24),
+    );
+  }
+}
+
+class _HospitalBagOrderSummary extends StatelessWidget {
+  const _HospitalBagOrderSummary({
+    required this.subtotal,
+    required this.discount,
+    required this.total,
+    required this.syncStatus,
+    required this.isSyncing,
+    required this.canReset,
+    required this.onResetCart,
+    required this.money,
+  });
+
+  final double subtotal;
+  final double discount;
+  final double total;
+  final String? syncStatus;
+  final bool isSyncing;
+  final bool canReset;
+  final VoidCallback onResetCart;
+  final String Function(double amount) money;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: const Color(0xffefdbe4)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x145b3748),
+              blurRadius: 28,
+              offset: Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '订单摘要',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: const Color(0xff372330),
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _HospitalBagSummaryRow(label: '商品小计', value: money(subtotal)),
+              _HospitalBagSummaryRow(
+                label: '组合优惠',
+                value: '-${money(discount)}',
+                valueColor: const Color(0xff267c68),
+              ),
+              const _HospitalBagSummaryRow(label: '配送', value: '免运费'),
+              const Divider(height: 24, color: Color(0xfff0e1e7)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Text(
+                      isSyncing
+                          ? '购物车同步中...'
+                          : syncStatus ?? '购物车状态会在删除或恢复后同步。',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: const Color(0xff8a6d7a),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    money(total),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: const Color(0xff24889a),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+              if (canReset) ...[
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: onResetCart,
+                  icon: const Icon(Icons.restore_rounded, size: 16),
+                  label: const Text('恢复默认清单'),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HospitalBagSummaryRow extends StatelessWidget {
+  const _HospitalBagSummaryRow({
+    required this.label,
+    required this.value,
+    this.valueColor = const Color(0xff6f5663),
+  });
+
+  final String label;
+  final String value;
+  final Color valueColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: const Color(0xff6f5663),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: valueColor,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HospitalBagEmptyCart extends StatelessWidget {
+  const _HospitalBagEmptyCart({required this.onResetCart});
+
+  final VoidCallback onResetCart;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: const Color(0xffefdbe4)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Text(
+                '购物车已经清空',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: const Color(0xff372330),
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: onResetCart,
+                icon: const Icon(Icons.restore_rounded, size: 16),
+                label: const Text('恢复默认清单'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HospitalBagFooter extends StatelessWidget {
+  const _HospitalBagFooter({
+    required this.total,
+    required this.discount,
+    required this.money,
+  });
+
+  final double total;
+  final double discount;
+  final String Function(double amount) money;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Color(0xf5fff9fb),
+        border: Border(top: BorderSide(color: Color(0xffead8df))),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x1a5b3748),
+            blurRadius: 28,
+            offset: Offset(0, -10),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '预计合计',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: const Color(0xff8a6d7a),
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Text(
+                        money(total),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              color: const Color(0xff24889a),
+                              fontWeight: FontWeight.w900,
+                              height: 1,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  '已含组合优惠 ${money(discount)}',
+                  textAlign: TextAlign.end,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: const Color(0xff8a6d7a),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.credit_card_rounded, size: 18),
+                label: const Text('去结算'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xff24889a),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  textStyle: Theme.of(
+                    context,
+                  ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum _HospitalBagTone { rose, mint, sky }
+
+class _HospitalBagToneColors {
+  const _HospitalBagToneColors({
+    required this.background,
+    required this.iconBackground,
+    required this.foreground,
+    required this.border,
+  });
+
+  final Color background;
+  final Color iconBackground;
+  final Color foreground;
+  final Color border;
+}
+
+_HospitalBagToneColors _hospitalBagToneColors(_HospitalBagTone tone) {
+  return switch (tone) {
+    _HospitalBagTone.rose => const _HospitalBagToneColors(
+      background: Color(0xfffff0f5),
+      iconBackground: Color(0xfff9d9e4),
+      foreground: Color(0xffb84d73),
+      border: Color(0xfff5cfdb),
+    ),
+    _HospitalBagTone.mint => const _HospitalBagToneColors(
+      background: Color(0xffedf9f5),
+      iconBackground: Color(0xffd4f0e7),
+      foreground: Color(0xff267c68),
+      border: Color(0xffccebe2),
+    ),
+    _HospitalBagTone.sky => const _HospitalBagToneColors(
+      background: Color(0xffedf6ff),
+      iconBackground: Color(0xffd8ebfb),
+      foreground: Color(0xff2f6fa8),
+      border: Color(0xffcfe5f8),
+    ),
+  };
+}
+
+class _HospitalBagCartGroupSpec {
+  const _HospitalBagCartGroupSpec({
+    required this.title,
+    required this.tone,
+    required this.items,
+  });
+
+  final String title;
+  final _HospitalBagTone tone;
+  final List<_HospitalBagCartItemSpec> items;
+
+  _HospitalBagCartGroupSpec copyWith({List<_HospitalBagCartItemSpec>? items}) {
+    return _HospitalBagCartGroupSpec(
+      title: title,
+      tone: tone,
+      items: items ?? this.items,
+    );
+  }
+}
+
+class _HospitalBagCartItemSpec {
+  const _HospitalBagCartItemSpec({
+    required this.id,
+    required this.name,
+    required this.desc,
+    required this.price,
+  });
+
+  final String id;
+  final String name;
+  final String desc;
+  final double price;
+  int get qty => 1;
+}
+
+const _hospitalBagCartGroups = [
+  _HospitalBagCartGroupSpec(
+    title: '妈妈护理',
+    tone: _HospitalBagTone.rose,
+    items: [
+      _HospitalBagCartItemSpec(
+        id: 'mom-pad',
+        name: '产褥垫组合装',
+        desc: '入院与产后前几天使用',
+        price: 59.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'mom-sanitary',
+        name: '产妇卫生巾',
+        desc: '夜用加长款，按住院天数准备',
+        price: 39.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'mom-underwear',
+        name: '一次性内裤',
+        desc: '高腰柔软，产后更方便更换',
+        price: 49.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'mom-wipes',
+        name: '产后护理湿巾',
+        desc: '温和清洁，适合住院随身包',
+        price: 29.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'mom-bottle',
+        name: '产后冲洗瓶',
+        desc: '产后清洁更方便，是否带去医院按医院建议',
+        price: 39.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'mom-briefs',
+        name: '高腰收腹内裤',
+        desc: '不压腹，更适合产后恢复期穿着',
+        price: 69.9,
+      ),
+    ],
+  ),
+  _HospitalBagCartGroupSpec(
+    title: '宝宝出院',
+    tone: _HospitalBagTone.mint,
+    items: [
+      _HospitalBagCartItemSpec(
+        id: 'baby-diaper',
+        name: '新生儿纸尿裤',
+        desc: 'NB 码小包装，避免带太多',
+        price: 59.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'baby-wipes',
+        name: '婴儿柔湿巾',
+        desc: '无香精，适合换尿裤场景',
+        price: 29.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'baby-towel',
+        name: '棉柔巾',
+        desc: '洗脸、擦手、护理都可用',
+        price: 29.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'baby-blanket',
+        name: '宝宝出院包被',
+        desc: '柔软包裹，按季节搭配外层',
+        price: 129,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'baby-clothes',
+        name: '新生儿连体衣礼盒',
+        desc: '出院和回家第一周可替换穿',
+        price: 159,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'baby-bath-towel',
+        name: '婴儿浴巾',
+        desc: '洗澡、包裹和保暖都可用',
+        price: 59.9,
+      ),
+    ],
+  ),
+  _HospitalBagCartGroupSpec(
+    title: '母乳喂养',
+    tone: _HospitalBagTone.sky,
+    items: [
+      _HospitalBagCartItemSpec(
+        id: 'milk-pad',
+        name: '防溢乳垫',
+        desc: '母乳或混合喂养可先备小包装',
+        price: 39.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'milk-cream',
+        name: '乳头护理霜',
+        desc: '哺乳初期不适时可咨询后使用',
+        price: 49.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'milk-storage',
+        name: '储奶袋',
+        desc: '返家后储奶备用，住院可少量准备',
+        price: 49.9,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'pump-m9',
+        name: 'Momcozy M9 吸奶器',
+        desc: '便携穿戴式双边吸乳，返家后排奶/储奶备用',
+        price: 1087.93,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'milk-bra',
+        name: '哺乳文胸',
+        desc: '产后和哺乳初期更舒适',
+        price: 159,
+      ),
+      _HospitalBagCartItemSpec(
+        id: 'milk-bottle',
+        name: '宽口径奶瓶',
+        desc: '混合喂养或返家后备用',
+        price: 89.9,
+      ),
+    ],
+  ),
+];
 
 class _IbclcPage extends StatefulWidget {
   const _IbclcPage({
