@@ -204,10 +204,7 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
     _StatusProbe(config, StatusApiRepository(transport: jsonTransport)),
     _ScheduleProbe(config, ScheduleApiRepository(transport: jsonTransport)),
     _RecordsProbe(config, RecordsApiRepository(transport: jsonTransport)),
-    _PumpWorkstateProbe(
-      config,
-      PumpWorkstateApiRepository(transport: jsonTransport),
-    ),
+    _PumpWorkstateProbe(PumpWorkstateApiRepository(transport: jsonTransport)),
     _ClientEventProbe(
       config,
       AgentStreamClientEventClient(endpoint: controlEndpoint),
@@ -300,13 +297,12 @@ class _RecordsProbe implements StagingSmokeProbe {
 }
 
 class _PumpWorkstateProbe implements StagingSmokeProbe {
-  const _PumpWorkstateProbe(this.config, this.repository);
+  const _PumpWorkstateProbe(this.repository);
 
-  final StagingSmokeConfig config;
   final PumpWorkstateApiRepository repository;
 
   @override
-  String get name => 'pump /v1/pump/workstate';
+  String get name => 'pump /v1/devices/pump-telemetry';
 
   @override
   bool get requiresMutation => true;
@@ -317,7 +313,6 @@ class _PumpWorkstateProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     await repository.uploadWorkstate(
-      userId: config.session.userId,
       left: const PumpSideWorkstate(state: 1, mode: 'staging_smoke', level: 1),
     );
   }

@@ -1,6 +1,6 @@
 abstract interface class PumpWorkstateRepository {
   Future<PumpWorkstateReply> uploadWorkstate({
-    required String userId,
+    String deviceId = 'app-pump-session',
     PumpSideWorkstate? left,
     PumpSideWorkstate? right,
   });

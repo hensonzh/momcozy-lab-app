@@ -84,13 +84,12 @@ MomCozyApiRuntime _goldenRuntime() {
         ],
       },
       pumpWorkstateEndpoint: const <String, Object?>{
-        'status': 200,
-        'data': <String, Object?>{
-          'need_reply': true,
-          'output': 'Workstate accepted',
-          'reply_code': 'pump_state_changed',
-          'reply_side': 'left',
-        },
+        'id': 'telemetry-001',
+        'owner_user_id': 'demo-user-fixture',
+        'device_id': 'app-pump-session',
+        'event_type': 'workstate',
+        'occurred_at': '2026-07-01T10:00:00Z',
+        'payload': <String, Object?>{},
       },
     }),
     blePlatform: FakeBlePlatform(

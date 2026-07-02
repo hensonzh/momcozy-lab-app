@@ -705,13 +705,12 @@ void main() {
     ) async {
       final transport = FixtureApiJsonTransportByPath({
         pumpWorkstateEndpoint: const {
-          'status': 200,
-          'data': {
-            'need_reply': true,
-            'output': 'Workstate accepted',
-            'reply_code': 'pump_state_changed',
-            'reply_side': 'left',
-          },
+          'id': 'telemetry-001',
+          'owner_user_id': 'demo-user-fixture',
+          'device_id': 'app-pump-session',
+          'event_type': 'workstate',
+          'occurred_at': '2026-07-01T10:00:00Z',
+          'payload': <String, Object?>{},
         },
       });
 
@@ -731,13 +730,18 @@ void main() {
       expect(find.text('8 mL'), findsOneWidget);
       expect(find.text('绑定 demo-user-fixture'), findsOneWidget);
       expect(transport.postedBodies, hasLength(1));
-      expect(transport.postedBodies.first['user_id'], 'demo-user-fixture');
-      expect(transport.postedBodies.first['device_left'], {
+      expect(transport.postedBodies.first['user_id'], isNull);
+      expect(transport.postedBodies.first['device_id'], 'app-pump-session');
+      expect(transport.postedBodies.first['event_type'], 'workstate');
+      expect(transport.postedBodies.first['occurred_at'], isA<String>());
+      final firstPayload =
+          transport.postedBodies.first['payload'] as Map<String, Object?>;
+      expect(firstPayload['left'], {
         'state': 1,
         'mode': 'massage_expression',
         'level': 5,
       });
-      expect(transport.postedBodies.first['device_right'], {
+      expect(firstPayload['right'], {
         'state': 1,
         'mode': 'expression',
         'level': 5,
@@ -748,7 +752,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(transport.postedBodies, hasLength(2));
-      expect(transport.postedBodies.last['device_left'], {
+      final lastPayload =
+          transport.postedBodies.last['payload'] as Map<String, Object?>;
+      expect(lastPayload['left'], {
         'state': 0,
         'mode': 'massage_expression',
         'level': 5,
@@ -764,8 +770,12 @@ void main() {
     ) async {
       final transport = FixtureApiJsonTransportByPath({
         pumpWorkstateEndpoint: const {
-          'status': 200,
-          'data': {'output': 'Workstate accepted'},
+          'id': 'telemetry-001',
+          'owner_user_id': 'demo-user-fixture',
+          'device_id': 'app-pump-session',
+          'event_type': 'workstate',
+          'occurred_at': '2026-07-01T10:00:00Z',
+          'payload': <String, Object?>{},
         },
       });
       final hostKey = GlobalKey<_RuntimeSwapFeaturePageHostState>();
@@ -784,7 +794,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('绑定 user-a'), findsOneWidget);
-      expect(transport.postedBodies.last['user_id'], 'user-a');
+      expect(transport.postedBodies.last['user_id'], isNull);
 
       hostKey.currentState!.switchUser('user-b');
       await tester.pumpAndSettle();
@@ -801,7 +811,7 @@ void main() {
 
       expect(find.text('绑定 user-b'), findsOneWidget);
       expect(transport.postedBodies, hasLength(2));
-      expect(transport.postedBodies.last['user_id'], 'user-b');
+      expect(transport.postedBodies.last['user_id'], isNull);
     });
 
     testWidgets('pump page renders upload failure state', (tester) async {
@@ -1997,13 +2007,12 @@ MomCozyApiRuntime _appRuntime({
             },
           },
           pumpWorkstateEndpoint: const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'need_reply': true,
-              'output': 'Workstate accepted',
-              'reply_code': 'pump_state_changed',
-              'reply_side': 'left',
-            },
+            'id': 'telemetry-001',
+            'owner_user_id': 'demo-user-fixture',
+            'device_id': 'app-pump-session',
+            'event_type': 'workstate',
+            'occurred_at': '2026-07-01T10:00:00Z',
+            'payload': <String, Object?>{},
           },
         }),
     clientEventClient: clientEventClient,
