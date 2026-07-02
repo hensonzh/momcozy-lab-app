@@ -143,79 +143,6 @@ class MomCozyFeaturePage extends StatelessWidget {
   }
 }
 
-class _FeaturePageFrame extends StatelessWidget {
-  const _FeaturePageFrame({
-    required this.path,
-    required this.title,
-    required this.summary,
-    required this.icon,
-    required this.accent,
-    required this.children,
-  });
-
-  final String path;
-  final String title;
-  final String summary;
-  final IconData icon;
-  final Color accent;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return ListView(
-      key: ValueKey('route-page-$path'),
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: accent.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: accent.withValues(alpha: 0.08)),
-              ),
-              child: SizedBox(
-                width: 44,
-                height: 44,
-                child: Icon(icon, color: accent, size: 24),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: MomCozyColors.foreground,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    summary,
-                    style: textTheme.bodyMedium?.copyWith(
-                      height: 1.32,
-                      color: MomCozyColors.mutedForeground,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        ...children,
-      ],
-    );
-  }
-}
-
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle(this.label);
 
@@ -10574,19 +10501,51 @@ class _NotFoundPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _FeaturePageFrame(
-      path: path,
-      title: title,
-      summary: summary,
-      icon: icon,
-      accent: accent,
-      children: const [
-        _ActionTile(
-          icon: Icons.home_outlined,
-          title: '返回主入口',
-          subtitle: '这个入口暂不可用，可以返回主入口继续使用。',
-          accent: Color(0xff7f6a75),
-          trailing: Icon(Icons.chevron_right_rounded),
+    return ListView(
+      key: ValueKey('route-page-$path'),
+      padding: EdgeInsets.zero,
+      children: [
+        SizedBox(
+          height: 700,
+          child: Center(
+            child: Transform.translate(
+              offset: const Offset(0, 103),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '404',
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                      height: 1.05,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    'Oops! Page not found',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  TextButton(
+                    onPressed: () => context.go('/'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: MomCozyColors.primary,
+                      textStyle: Theme.of(context).textTheme.bodyMedium
+                          ?.copyWith(
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    child: const Text('Return to Home'),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );
