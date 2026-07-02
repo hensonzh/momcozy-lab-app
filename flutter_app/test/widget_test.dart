@@ -115,4 +115,28 @@ void main() {
 
     await routes.dispose();
   });
+
+  testWidgets('route shell opens schedule from native reminder notification', (
+    tester,
+  ) async {
+    final routes = FakeRouteIntentPlatform();
+
+    await tester.pumpWidget(MomCozyFlutterApp(routeIntentPlatform: routes));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+
+    routes.dispatchActiveRoute(
+      const PendingNativeRoute(
+        path: '/schedule',
+        notifyJson: {'event': 'schedule_reminder', 'taskId': 'task-001'},
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
+    expect(find.byType(NavigationBar), findsOneWidget);
+
+    await routes.dispose();
+  });
 }
