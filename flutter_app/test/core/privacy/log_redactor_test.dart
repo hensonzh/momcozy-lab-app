@@ -9,6 +9,8 @@ void main() {
         'user_id': 'demo-user',
         'conversationId': 'conv-1',
         'deviceId': 'ble-left-001',
+        'text': 'private voice playback text',
+        'transcript': 'private speech transcript',
         'url': 'wss://api.example.test/ws?token=secret&mode=voice',
         'safe': 'kept',
         'nested': {'session_id': 'session-1', 'milkMl': 42},
@@ -24,6 +26,8 @@ void main() {
         'user_id': '***',
         'conversationId': '***',
         'deviceId': '***',
+        'text': '***',
+        'transcript': '***',
         'url': 'wss://api.example.test/ws?token=***&mode=voice',
         'safe': 'kept',
         'nested': {'session_id': '***', 'milkMl': 42},
@@ -37,18 +41,22 @@ void main() {
     test('redacts sensitive query parameters in log URLs', () {
       final url = redactUrlForLog(
         'wss://api.example.test/api/ag-ui-ws?token=secret'
-        '&user_id=demo-user&conversation_id=conv-1&mode=voice#frag',
+        '&user_id=demo-user&conversation_id=conv-1'
+        '&text=private%20voice%20text&mode=voice#frag',
       );
 
       expect(
         url,
         'wss://api.example.test/api/ag-ui-ws?token=***'
-        '&user_id=***&conversation_id=***&mode=voice#frag',
+        '&user_id=***&conversation_id=***'
+        '&text=***&mode=voice#frag',
       );
     });
 
     test('leaves non-sensitive values readable for diagnostics', () {
       expect(isSensitiveLogKey('serialNumber'), isTrue);
+      expect(isSensitiveLogKey('text'), isTrue);
+      expect(isSensitiveLogKey('message'), isTrue);
       expect(isSensitiveLogKey('milkMl'), isFalse);
       expect(isSensitiveLogKey('elapsedSeconds'), isFalse);
       expect(

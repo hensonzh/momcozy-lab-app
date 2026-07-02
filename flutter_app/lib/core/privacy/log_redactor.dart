@@ -81,6 +81,14 @@ bool isSensitiveLogKey(String key) {
       normalized == 'conversationid' ||
       normalized == 'threadid' ||
       normalized == 'sessionid' ||
+      normalized == 'message' ||
+      normalized == 'content' ||
+      normalized == 'text' ||
+      normalized == 'transcript' ||
+      normalized == 'prompt' ||
+      normalized == 'voicetext' ||
+      normalized == 'speechtext' ||
+      normalized == 'audiotext' ||
       normalized == 'serialnumber' ||
       normalized == 'deviceid' ||
       normalized == 'bledeviceid' ||

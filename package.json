@@ -15,6 +15,7 @@
     "flutter:check": "node scripts/check-flutter-toolchain.mjs",
     "flutter:init": "node scripts/init-flutter-shell.mjs",
     "flutter:packaging-check": "node scripts/check-flutter-android-packaging.mjs",
+    "flutter:security-check": "node scripts/check-flutter-security-privacy.mjs",
     "flutter:p0:platform-smoke": "node scripts/run-flutter-platform-smoke.mjs",
     "flutter:release-gate": "node scripts/run-flutter-release-gate.mjs",
     "postinstall": "patch-package"

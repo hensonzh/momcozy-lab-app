@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/network/transport_security_policy.dart';
+import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
 const speechTranscribeChunkEndpoint = '/v1/speech/transcribe-chunk';
@@ -26,14 +28,14 @@ abstract interface class AgentVoiceRepository {
 }
 
 class AgentVoiceApiRepository implements AgentVoiceRepository {
-  const AgentVoiceApiRepository({
+  AgentVoiceApiRepository({
     required this.multipartTransport,
-    required this.baseUri,
+    required Uri baseUri,
     this.token,
     this.headers = const <String, String>{},
     this.binaryConnector = const _DefaultAgentVoiceBinaryStreamConnector(),
     this.websocketConnector = const _DefaultAgentVoiceWebSocketConnector(),
-  });
+  }) : baseUri = TransportSecurityPolicy.requireSecureHttp(baseUri);
 
   final ApiMultipartTransport multipartTransport;
   final Uri baseUri;
@@ -82,6 +84,19 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     );
   }
 
+  Map<String, Object?> redactedRealtimeVoiceStreamLogContext({
+    required String userId,
+    required String text,
+  }) {
+    return _redactedRequestContext(
+      _resolveHttp(
+        realtimeVoiceStreamEndpoint,
+        query: {'user_id': userId, 'text': text},
+      ),
+      accept: 'audio/pcm',
+    );
+  }
+
   @override
   Stream<AgentVoiceSessionEvent> realtimeVoiceSession({
     required String userId,
@@ -104,6 +119,21 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     } finally {
       await connection.close();
     }
+  }
+
+  Map<String, Object?> redactedRealtimeVoiceSessionLogContext({
+    required String userId,
+  }) {
+    return _redactedRequestContext(
+      _resolveWebSocket(
+        realtimeVoiceSessionEndpoint,
+        query: {
+          'user_id': userId,
+          if (token != null && token!.trim().isNotEmpty) 'token': token!.trim(),
+        },
+      ),
+      accept: 'application/json',
+    );
   }
 
   Uri _resolveHttp(String path, {Map<String, Object?> query = const {}}) {
@@ -136,6 +166,16 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
       if (authToken != null && authToken.isNotEmpty)
         'Authorization': 'Bearer $authToken',
     };
+  }
+
+  Map<String, Object?> _redactedRequestContext(
+    Uri uri, {
+    required String accept,
+  }) {
+    return redactLogMap({
+      'url': uri,
+      'headers': _requestHeaders(accept: accept),
+    });
   }
 }
 
