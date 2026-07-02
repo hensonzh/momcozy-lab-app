@@ -163,8 +163,7 @@ void main() {
 
       router.go('/w1');
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('使用教程'));
-      await tester.tap(find.text('使用教程'));
+      await _tapScrollableText(tester, '使用教程');
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('route-page-/media-viewer')),
@@ -1737,8 +1736,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('使用教程'));
-      await tester.tap(find.text('使用教程'));
+      await _tapScrollableText(tester, '使用教程');
       await tester.pumpAndSettle();
 
       final body = jsonDecode(connector.body!) as Map<String, Object?>;
