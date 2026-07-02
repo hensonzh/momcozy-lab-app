@@ -56,5 +56,26 @@ void main() {
         'https://example.test/path?mode=debug',
       );
     });
+
+    test(
+      'redacts full health data containers while keeping scalar diagnostics',
+      () {
+        final payload = <String, Object?>{
+          'healthData': {'milkMl': 120, 'symptoms': 'private note'},
+          'growth_records': [
+            {'weight_g': 6200, 'height_cm': 64.5},
+          ],
+          'pregnancyDiary': {'mood': 'tired'},
+          'milkMl': 42,
+        };
+
+        expect(redactLogMap(payload), {
+          'healthData': '***',
+          'growth_records': '***',
+          'pregnancyDiary': '***',
+          'milkMl': 42,
+        });
+      },
+    );
   });
 }

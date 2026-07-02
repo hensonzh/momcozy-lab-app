@@ -461,18 +461,18 @@ Hospital Bag 必测：
 每个接口都需要覆盖：
 
 ```text
-[ ] 成功响应
-[ ] 业务错误响应
-[ ] HTTP 错误
-[ ] 超时
-[ ] 取消
-[ ] token 缺失
-[ ] token 过期
-[ ] 重试 / 不重试规则
-[ ] DTO 映射
-[ ] 空字段
-[ ] 兼容旧字段
-[ ] 日志脱敏
+[x] 成功响应
+[x] 业务错误响应
+[x] HTTP 错误
+[x] 超时
+[x] 取消
+[x] token 缺失
+[x] token 过期
+[x] 重试 / 不重试规则
+[x] DTO 映射
+[x] 空字段
+[x] 兼容旧字段
+[x] 日志脱敏
 ```
 
 ### 7.1 HTTP、SSE 和 WebSocket 合同
@@ -553,7 +553,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Records pump_milk typed repository contract tests 已覆盖 `/v1/pump-milk/query` request query、legacy aliases、partial/empty、business error 和 HTTP error fixtures
 [x] Hospital Bag cart typed repository contract tests 已覆盖 `/api/hospital-bag/cart-update` body schema、success、business error 和 HTTP error
 [x] Media upload typed repository contract tests 已覆盖 multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
-[x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body
+[x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、token 缺失、401/token 过期、query merge、HTTP error 和 malformed body
 [x] Flutter staging smoke CLI 已覆盖 env 解析、mutating/agent gating、失败脱敏和默认 skip；真实 staging 运行见 `doc/flutter-staging-smoke.md`
 [x] Flutter 通用 multipart transport 已接入 runtime，Media 页面可复用 `/v1/files/upload` repository contract
 [x] Flutter App API runtime tests 已覆盖 dart-define 默认配置、secure session bootstrap、注入 transport 的 repository factory 和 runtime scope
@@ -682,8 +682,8 @@ npm run flutter:p0:platform-smoke
 [x] 上传失败日志脱敏：`PumpAgentUploadPlatform` fake failure stream
 [x] token / refresh token 已接入 `flutter_secure_storage` session store，并保留内存 store 供测试注入
 [ ] HTTP/SSE 使用 HTTPS，WebSocket 使用 WSS，开发环境例外必须隔离
-[ ] 日志不输出 token
-[ ] 日志不输出完整健康数据 payload
+[x] 日志不输出 token
+[x] 日志不输出完整健康数据 payload
 [ ] crash report 不包含敏感字段
 [ ] 多用户切换时清理 scoped cache
 [x] 登出后清理 secure session 中的 token / refresh token 敏感状态

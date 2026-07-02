@@ -106,6 +106,53 @@ void main() {
         throwsA(isA<ApiEnvelopeFormatException>()),
       );
     });
+
+    test(
+      'omits missing tokens and surfaces expired-token HTTP status',
+      () async {
+        final missingTokenConnector = _RecordingApiHttpConnector(
+          const ApiHttpResponse(
+            statusCode: 200,
+            statusText: 'OK',
+            body: '{"status":200,"data":{"ok":true}}',
+          ),
+        );
+        final expiredTokenConnector = _RecordingApiHttpConnector(
+          const ApiHttpResponse(
+            statusCode: 401,
+            statusText: 'Unauthorized',
+            body: '{"request_id":"auth-expired","message":"token expired"}',
+          ),
+        );
+
+        await IoApiJsonTransport(
+          baseUri: Uri.parse('http://127.0.0.1:8769'),
+          token: ' ',
+          connector: missingTokenConnector,
+        ).getJson('/v1/mom-baby/info/query');
+
+        expect(
+          missingTokenConnector.headers,
+          isNot(containsPair('Authorization', anything)),
+        );
+        await expectLater(
+          IoApiJsonTransport(
+            baseUri: Uri.parse('http://127.0.0.1:8769'),
+            token: 'expired-token',
+            connector: expiredTokenConnector,
+          ).getJson('/v1/mom-baby/info/query'),
+          throwsA(
+            isA<ApiHttpException>()
+                .having((error) => error.statusCode, 'statusCode', 401)
+                .having(
+                  (error) => error.requestId,
+                  'requestId',
+                  'auth-expired',
+                ),
+          ),
+        );
+      },
+    );
   });
 }
 

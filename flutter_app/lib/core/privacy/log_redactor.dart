@@ -61,7 +61,15 @@ bool isSensitiveLogKey(String key) {
       normalized == 'sessionid' ||
       normalized == 'serialnumber' ||
       normalized == 'deviceid' ||
-      normalized == 'bledeviceid';
+      normalized == 'bledeviceid' ||
+      normalized == 'healthdata' ||
+      normalized == 'healthpayload' ||
+      normalized == 'momhealth' ||
+      normalized == 'babyhealth' ||
+      normalized == 'pumpmilkrecords' ||
+      normalized == 'feedingrecords' ||
+      normalized == 'growthrecords' ||
+      normalized == 'pregnancydiary';
 }
 
 String _redactQueryPart(String part) {
