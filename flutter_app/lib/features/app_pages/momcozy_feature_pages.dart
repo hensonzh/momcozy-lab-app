@@ -10306,7 +10306,7 @@ class _MediaViewerHeader extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.fromLTRB(12, 28, 12, 12),
           child: Row(
             children: [
               SizedBox.square(
@@ -10347,14 +10347,17 @@ class _MediaViewerMissingResource extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Text(
-          '缺少资源参数，请从资料卡片进入。',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: MomCozyColors.mutedForeground,
-            fontWeight: FontWeight.w600,
+      child: Transform.translate(
+        offset: const Offset(0, -6),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            '缺少资源参数，请从资料卡片进入。',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: MomCozyColors.mutedForeground,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
