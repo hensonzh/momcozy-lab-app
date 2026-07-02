@@ -7972,46 +7972,52 @@ class _CommunityPageState extends State<_CommunityPage> {
         ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 660),
           child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 84,
-                  height: 84,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: MomCozyColors.primary.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                    boxShadow: MomCozyShadows.soft,
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      MomCozyAssets.agentAvatar,
-                      fit: BoxFit.cover,
+            child: Transform.translate(
+              offset: const Offset(54, 40),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 76,
+                    height: 76,
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: MomCozyColors.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                      boxShadow: MomCozyShadows.soft,
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        MomCozyAssets.agentAvatar,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  '社区功能还在建设中哦～',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
-                    height: 1.2,
+                  const SizedBox(height: 18),
+                  Text(
+                    '社区功能还在建设中哦～',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                      height: 1.2,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '我们将打造一个妈妈们一起交流分享的社区，敬请期待～',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: MomCozyColors.mutedForeground,
-                    fontWeight: FontWeight.w700,
-                    height: 1.4,
+                  const SizedBox(height: 10),
+                  Text(
+                    '我们将打造一个妈妈们一起交流分享的社区，敬请期待～',
+                    maxLines: 1,
+                    overflow: TextOverflow.visible,
+                    softWrap: false,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                      fontWeight: FontWeight.w700,
+                      height: 1.4,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
