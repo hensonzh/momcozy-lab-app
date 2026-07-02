@@ -91,6 +91,31 @@ void main() {
       await ble.dispose();
     });
 
+    test('BLE adapter maps permanently denied permission aliases', () async {
+      const channel = MethodChannel('test.momcozy/mmc_ble_permission_aliases');
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (call) async {
+            return switch (call.method) {
+              'permissionState' => {'state': 'blocked'},
+              'initialize' => {'state': 'permanently_denied'},
+              _ => null,
+            };
+          });
+      addTearDown(
+        () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(channel, null),
+      );
+      final ble = AndroidBlePlatform(channel: channel);
+
+      expect(await ble.permissionState(), BlePermissionState.permanentlyDenied);
+      expect(
+        await ble.requestPermission(),
+        BlePermissionState.permanentlyDenied,
+      );
+
+      await ble.dispose();
+    });
+
     test('BLE adapter maps native events into streams', () async {
       const channel = MethodChannel('test.momcozy/mmc_ble_events');
       final ble = AndroidBlePlatform(channel: channel);

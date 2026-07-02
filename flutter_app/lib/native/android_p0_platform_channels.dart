@@ -524,6 +524,9 @@ BlePermissionState _permissionStateFromResult(
       : _nullableString(_mapFrom(result)['state']);
   return switch (value) {
     'granted' => BlePermissionState.granted,
+    'permanentlyDenied' ||
+    'permanently_denied' ||
+    'blocked' => BlePermissionState.permanentlyDenied,
     'denied' => BlePermissionState.denied,
     'unknown' => BlePermissionState.unknown,
     _ => fallback,

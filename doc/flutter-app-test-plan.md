@@ -288,10 +288,10 @@ Golden 视觉状态：
 [x] 设备已断开
 [x] 电量展示
 [x] 如保留 RSSI，则信号/RSSI 展示
-[ ] BLE permission 未请求
+[x] BLE permission 未请求
 [x] BLE permission 拒绝
-[ ] BLE permission 永久拒绝
-[ ] 从系统设置返回后重新授权
+[x] BLE permission 永久拒绝
+[x] 从系统设置返回后重新授权
 [x] 扫描空结果
 [x] 扫描超时
 [x] 发现单个设备
@@ -300,7 +300,7 @@ Golden 视觉状态：
 [ ] 断线重连
 [x] 恢复 native 已连接设备
 [ ] 用户切换时断开或隔离设备
-[ ] debug drawer 仅 internal/dev 环境可见
+[x] debug drawer 仅 internal/dev 环境可见
 ```
 
 ### 5.3 Calibration
@@ -564,7 +564,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/schedule` widget tests 已覆盖 runtime repository fixture、day plan 渲染和本地 checkbox 草稿交互
 [x] Flutter `/records` widget tests 已覆盖 runtime repository fixture、泵奶/喂养/成长筛选和动态汇总渲染
 [x] Flutter `/pump` widget tests 已覆盖 session 控制触发 `/v1/pump/workstate` runtime repository 同步和后端回复展示
-[x] Flutter `/device` widget tests 已覆盖 BLE runtime fake、已连接设备恢复和扫描状态切换
+[x] Flutter `/device` widget tests 已覆盖 BLE runtime fake、已连接设备恢复、未请求/拒绝/永久拒绝权限、系统设置返回重授权、扫描状态切换和 internal/dev debug gate
 [x] Flutter `/device/manage` 与 `/device/user` widget tests 已覆盖 BLE runtime 已连接设备读取/解绑和 runtime user context 展示
 [x] Flutter `/calibration` widget tests 已覆盖保存左右舒适档位时通过 `PumpProtocolPlatform` 下发命令并进入 Pump
 [x] Flutter `/media-viewer` widget tests 已覆盖示例媒体上传的 multipart path、fields、file metadata 和成功状态渲染
@@ -576,7 +576,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/records` widget tests 已覆盖列表加载、空态、加载失败、趋势展示、手动补录、编辑/删除、本地跨天标记、弱网重试文案和 mL/oz 单位切换
 [x] Flutter `/schedule` widget tests 已覆盖日期切换、今日任务加载、添加/删除本地任务、完成状态、提醒开关、未完成 badge、跨天倒计时、本地日期到 UTC timestamp 和空/失败态
 [x] Flutter `/status` widget tests 已覆盖孕期/哺乳期切换、妈妈/宝宝 tab、成长记录本地草稿、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
-[x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 权限拒绝、扫描空态、单/多扫描结果、连接失败、battery/RSSI 展示和扫描失败状态
+[x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 未请求/拒绝/永久拒绝、系统设置返回重授权、internal/dev debug gate、扫描空态、单/多扫描结果、连接失败、battery/RSSI 展示和扫描失败状态
 [x] Flutter `/pump` widget tests 已覆盖 session 启动/暂停/恢复/结束、左右侧进度、双侧 workstate payload、结束上传一次性 guard、重复结束拦截、多用户切换清理和 workstate 上传失败状态
 [x] Flutter `/calibration` widget tests 已覆盖无设备失败提示、左/右/双侧设备状态、档位调整、未保存退出提示、保存校准和保存后进入 Pump
 [x] Flutter `/media-viewer` widget tests 已覆盖 PDF/Image/Video 预览入口、示例上传成功和上传失败 fallback

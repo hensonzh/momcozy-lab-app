@@ -229,7 +229,7 @@ features/
 [x] Flutter Records 页面已覆盖加载、空态、失败、趋势展示、手动补录、编辑/删除、本地跨天标记、弱网重试文案和 mL/oz 单位切换
 [x] Flutter Schedule 页面已覆盖日期切换、任务添加/删除、任务完成、提醒开关、未完成 badge、跨天倒计时、本地日期到 UTC timestamp 和空/失败态；通知跳转仍按后续 parity 推进
 [x] Flutter Status 页面已覆盖孕期/哺乳期切换、妈妈/宝宝 tab、成长记录本地草稿、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
-[x] Flutter Device 页面已覆盖无设备、左右已连接、BLE 权限拒绝、扫描空态、单/多扫描结果、battery/RSSI 展示、连接失败和扫描失败状态；真实 scan/connect 留给设备实验室
+[x] Flutter Device 页面已覆盖无设备、左右已连接、BLE 未请求/拒绝/永久拒绝、系统设置返回重授权、internal/dev debug gate、扫描空态、单/多扫描结果、battery/RSSI 展示、连接失败和扫描失败状态；真实 scan/connect 留给设备实验室
 [x] Flutter Pump/Calibration 页面已覆盖 session 启动/暂停/恢复/结束、左右侧进度、结束上传一次性 guard、重复结束拦截、多用户切换清理、workstate 失败重试、无设备校准失败提示、左/右/双侧校准设备状态、档位调整、未保存退出提示和保存后进入 Pump
 [x] Flutter Media/IBCLC/Hospital Bag 页面已覆盖媒体预览切换、上传失败 fallback、咨询网络失败本地入队、待产包恢复默认和 API 失败 fallback
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
