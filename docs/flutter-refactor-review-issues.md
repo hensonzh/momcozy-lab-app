@@ -1,6 +1,6 @@
 # Flutter Refactor Review Issues
 
-Status: active
+Status: immediate engineering fixes resolved; backend-contract integration pending
 
 This document records the Flutter-side issues found during the production
 refactor review. The backend is being refactored independently first, so App
@@ -24,6 +24,12 @@ The Flutter app should:
 
 These issues do not depend on the new backend contract and should be fixed in
 the Flutter project directly.
+
+Resolution on 2026-07-02: completed in the Flutter project. The app module now
+applies the Kotlin Android plugin, agent stream transports keep bearer tokens
+out of URLs, Android permission requests complete after the platform callback,
+and non-JSON HTTP error bodies preserve their HTTP status through typed
+transport errors.
 
 | Priority | Area | Issue | Required Fix |
 |---|---|---|---|

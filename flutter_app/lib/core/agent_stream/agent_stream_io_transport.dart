@@ -25,16 +25,10 @@ class AgentStreamEndpoint {
   final String? token;
   final Map<String, String> headers;
 
-  Uri get uriWithToken {
-    final authToken = token?.trim();
-    if (authToken == null || authToken.isEmpty) return uri;
-    return uri.replace(
-      queryParameters: <String, String>{
-        ...uri.queryParameters,
-        'token': authToken,
-      },
-    );
-  }
+  Uri get requestUri => uri;
+
+  @Deprecated('Use requestUri. Tokens are sent in headers, never URLs.')
+  Uri get uriWithToken => requestUri;
 
   Map<String, String> requestHeaders({
     String accept = 'application/json',
@@ -51,7 +45,7 @@ class AgentStreamEndpoint {
   }
 
   Map<String, Object?> redactedLogContext() => redactLogMap({
-    'url': uriWithToken.toString(),
+    'url': requestUri.toString(),
     'headers': requestHeaders(includeContentType: true),
   });
 }
@@ -168,7 +162,7 @@ class AgentStreamCancelClient {
   ) async {
     try {
       final response = await connector.post(
-        endpoint.uriWithToken,
+        endpoint.requestUri,
         headers: endpoint.requestHeaders(includeContentType: true),
         body: jsonEncode(request.toMap()),
       );
@@ -244,7 +238,7 @@ class AgentStreamPrewarmClient {
       messageId: messageId,
     );
     final response = await connector.post(
-      endpoint.uriWithToken,
+      endpoint.requestUri,
       headers: endpoint.requestHeaders(includeContentType: true),
       body: jsonEncode(payload),
     );
@@ -343,7 +337,7 @@ class AgentStreamTimingLogClient {
   ) async {
     try {
       final response = await connector.post(
-        endpoint.uriWithToken,
+        endpoint.requestUri,
         headers: endpoint.requestHeaders(includeContentType: true),
         body: jsonEncode(entry.toMap()),
       );
@@ -437,7 +431,7 @@ class AgentStreamClientEventClient {
   ) async {
     try {
       final response = await connector.post(
-        endpoint.uriWithToken,
+        endpoint.requestUri,
         headers: endpoint.requestHeaders(includeContentType: true),
         body: jsonEncode(event.toMap()),
       );
@@ -512,7 +506,7 @@ class AgentSseHttpTransport implements AgentStreamTransport {
   @override
   Stream<String> frames(AgentStreamRequest request) {
     return connector.post(
-      endpoint.uriWithToken,
+      endpoint.requestUri,
       headers: endpoint.requestHeaders(
         accept: 'text/event-stream',
         includeContentType: true,
@@ -564,7 +558,7 @@ class AgentWebSocketTransport implements AgentStreamTransport {
   @override
   Stream<String> frames(AgentStreamRequest request) async* {
     final socket = await connector.connect(
-      endpoint.uriWithToken,
+      endpoint.requestUri,
       headers: endpoint.requestHeaders(),
     );
 

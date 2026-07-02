@@ -36,6 +36,8 @@ class MainActivity : FlutterActivity() {
     private val writeResults = mutableMapOf<String, MethodChannel.Result>()
     private val notifyResults = mutableMapOf<String, MethodChannel.Result>()
     private val notifyKeys = mutableSetOf<String>()
+    private var pendingBlePermissionResult: MethodChannel.Result? = null
+    private var pendingNotificationPermissionResult: MethodChannel.Result? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -72,8 +74,9 @@ class MainActivity : FlutterActivity() {
         when (call.method) {
             "permissionState" -> result.success(mapOf("state" to blePermissionState()))
             "initialize" -> {
-                requestBlePermissionsIfNeeded()
-                result.success(mapOf("state" to blePermissionState()))
+                if (!requestBlePermissionsIfNeeded(result)) {
+                    result.success(mapOf("state" to blePermissionState()))
+                }
             }
             "requestLEScan" -> startBleScan(result)
             "stopLEScan" -> {
@@ -106,9 +109,43 @@ class MainActivity : FlutterActivity() {
         if (::pumpAgentBackgroundRunner.isInitialized) {
             pumpAgentBackgroundRunner.stop()
         }
+        pendingBlePermissionResult?.error(
+            "permission_request_cancelled",
+            "Bluetooth permission request was cancelled",
+            null
+        )
+        pendingBlePermissionResult = null
+        pendingNotificationPermissionResult?.error(
+            "permission_request_cancelled",
+            "Notification permission request was cancelled",
+            null
+        )
+        pendingNotificationPermissionResult = null
         stopBleScan()
         gatts.keys.toList().forEach(::closeGatt)
         super.onDestroy()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_BLE_PERMISSIONS -> {
+                pendingBlePermissionResult?.success(
+                    mapOf("state" to blePermissionState())
+                )
+                pendingBlePermissionResult = null
+            }
+            REQUEST_NOTIFICATION_PERMISSION -> {
+                pendingNotificationPermissionResult?.success(
+                    mapOf("granted" to hasNotificationPermission())
+                )
+                pendingNotificationPermissionResult = null
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -120,8 +157,9 @@ class MainActivity : FlutterActivity() {
     private fun handlePumpNotificationCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "requestPermission" -> {
-                requestNotificationPermissionIfNeeded()
-                result.success(mapOf("granted" to hasNotificationPermission()))
+                if (!requestNotificationPermissionIfNeeded(result)) {
+                    result.success(mapOf("granted" to hasNotificationPermission()))
+                }
             }
             "start",
             "update" -> {
@@ -203,8 +241,17 @@ class MainActivity : FlutterActivity() {
         pumpNotificationChannel.invokeMethod("activeRoute", route.toMap())
     }
 
-    private fun requestBlePermissionsIfNeeded() {
-        if (hasBlePermissions()) return
+    private fun requestBlePermissionsIfNeeded(result: MethodChannel.Result): Boolean {
+        if (hasBlePermissions()) return false
+        if (pendingBlePermissionResult != null) {
+            result.error(
+                "permission_request_in_progress",
+                "Bluetooth permission request is already in progress",
+                null
+            )
+            return true
+        }
+        pendingBlePermissionResult = result
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             requestPermissions(
                 arrayOf(
@@ -219,6 +266,7 @@ class MainActivity : FlutterActivity() {
                 REQUEST_BLE_PERMISSIONS
             )
         }
+        return true
     }
 
     private fun hasBlePermissions(): Boolean {
@@ -704,13 +752,23 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun requestNotificationPermissionIfNeeded() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
-        if (hasNotificationPermission()) return
+    private fun requestNotificationPermissionIfNeeded(result: MethodChannel.Result): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return false
+        if (hasNotificationPermission()) return false
+        if (pendingNotificationPermissionResult != null) {
+            result.error(
+                "permission_request_in_progress",
+                "Notification permission request is already in progress",
+                null
+            )
+            return true
+        }
+        pendingNotificationPermissionResult = result
         requestPermissions(
             arrayOf(Manifest.permission.POST_NOTIFICATIONS),
             REQUEST_NOTIFICATION_PERMISSION
         )
+        return true
     }
 
     private fun hasNotificationPermission(): Boolean {
