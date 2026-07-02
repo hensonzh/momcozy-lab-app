@@ -156,7 +156,7 @@ flutter build apk --debug --flavor local
 ```text
 [ ] 完整 Xcode 未安装，当前 `xcodebuild -version` 只看到 Command Line Tools
 [ ] CocoaPods 未安装，`pod --version` 不可用
-[ ] 未注入脚本环境时，doctor 可能无法定位用户目录 Android SDK
+[x] Android P0 脚本 gate 已自动注入用户目录 Android SDK；standalone doctor 若未注入 shell 环境的告警不作为迁移阻塞
 ```
 
 P0 为 Android-first；只要 `npm run flutter:check`、`npm run flutter:release-gate` 和 flavored APK build 通过，上述告警不阻塞 Android shell 和 APK 构建。iOS/Xcode/CocoaPods 在进入 iOS scope 前单独补齐。
