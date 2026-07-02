@@ -101,7 +101,7 @@
 [x] legacy/mock key 默认不迁移，除非产品确认保留
 [x] dry-run 输出 migration version、wouldWrite、wouldDeleteLegacyKeys、diagnostics 和 unhandledLegacyKeys
 [x] 迁移失败不阻塞 dry-run，但必须记录脱敏诊断
-[ ] App 内真实写入迁移完成后持久化 migration version
+[x] App 内真实写入迁移完成后持久化 migration version；`StorageMigrationExecutor` 在 scoped writes 和 legacy delete marker 完成后最后写入 `momcozy.storageMigration.version`
 ```
 
 ## 7. Phase 0 fixtures
@@ -126,6 +126,13 @@ test/fixtures/storage_migration/
 - P1 偏好、IBCLC 连续性和 internal/dev 多用户快照。
 
 当前 Flutter migration runner 已读取这些 JSON，断言 `legacy` 输入能产生 `expected` 输出；dry-run CLI 可对 fixtures 或真实导出的 legacy storage JSON 生成只读报告。
+
+App 内真实迁移使用 `core/storage_migration/storage_migration_executor.dart`：
+
+- `applyInputIfNeeded()` 接受 fixture 结构或原始 legacy bucket export。
+- 所有写入使用 `momcozy.storageMigration.v1.user.<encoded-user-id>.*` 前缀隔离。
+- `momcozy.storageMigration.version` 在所有目标写入和 legacy delete marker 完成后最后写入，失败时不会误标已迁移。
+- `MomCozyApiRuntime.bootstrap()` 已支持注入 `legacyStorageSnapshot` 和 `StorageMigrationTargetStore`，用于 cutover 时由原生/导出层提供真实 legacy snapshot；没有 snapshot 时不会触发迁移。
 
 ```bash
 cd flutter_app

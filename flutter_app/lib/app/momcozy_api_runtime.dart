@@ -3,6 +3,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
@@ -49,6 +50,7 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
+    this.storageMigrationResult,
     DateTime Function()? now,
   }) : session =
            session ??
@@ -114,6 +116,7 @@ class MomCozyApiRuntime {
     ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
+    StorageMigrationApplyResult? storageMigrationResult,
   }) {
     final baseUri = Uri.parse(_defaultApiBaseUrl);
     final authToken = session.accessToken;
@@ -145,6 +148,7 @@ class MomCozyApiRuntime {
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
       session: session,
+      storageMigrationResult: storageMigrationResult,
     );
   }
 
@@ -156,6 +160,8 @@ class MomCozyApiRuntime {
     ApiMultipartTransport? multipartTransport,
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
+    Map<String, Object?>? legacyStorageSnapshot,
+    StorageMigrationTargetStore? storageMigrationTargetStore,
   }) async {
     final manager = MomCozySessionManager(
       store: store,
@@ -170,6 +176,15 @@ class MomCozyApiRuntime {
           ),
     );
     final session = await manager.bootstrap();
+    final storageMigrationResult = legacyStorageSnapshot == null
+        ? null
+        : await StorageMigrationExecutor(
+            storageMigrationTargetStore ??
+                const FlutterSecureStorageMigrationTargetStore(),
+          ).applyInputIfNeeded(
+            legacyStorageSnapshot,
+            context: {'envDefaultUserId': session.userId},
+          );
     return MomCozyApiRuntime.fromSession(
       session,
       jsonTransport: jsonTransport,
@@ -177,11 +192,13 @@ class MomCozyApiRuntime {
       multipartTransport: multipartTransport,
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
+      storageMigrationResult: storageMigrationResult,
     );
   }
 
   final ApiJsonTransport jsonTransport;
   final MomCozySession session;
+  final StorageMigrationApplyResult? storageMigrationResult;
   final DateTime Function() now;
   final AgentStreamClientEventClient Function() _clientEventClientFactory;
   final ApiMultipartTransport Function() _multipartTransportFactory;
