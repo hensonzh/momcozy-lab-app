@@ -8,6 +8,17 @@ Future<void> loadMomCozyTestFonts() async {
     ..addFont(rootBundle.load('assets/fonts/Quicksand-VF.ttf'));
   final notoSansSc = FontLoader('NotoSansSC')
     ..addFont(rootBundle.load('assets/fonts/NotoSansCJKsc-Regular.otf'));
+  final materialIcons = FontLoader('MaterialIcons')
+    ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
+  final cupertinoIcons = FontLoader('CupertinoIcons')
+    ..addFont(
+      rootBundle.load('packages/cupertino_icons/assets/CupertinoIcons.ttf'),
+    );
 
-  await Future.wait([quicksand.load(), notoSansSc.load()]);
+  await Future.wait([
+    quicksand.load(),
+    notoSansSc.load(),
+    materialIcons.load(),
+    cupertinoIcons.load(),
+  ]);
 }
