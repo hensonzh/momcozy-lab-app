@@ -3708,6 +3708,7 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
   bool _isUploading = false;
   UploadedMediaFile? _uploadedFile;
   String? _uploadError;
+  String _cacheStatus = '离线资料已缓存，网络不稳定时可继续查看并失败重试。';
 
   Future<void> _uploadSampleMedia() async {
     if (_isUploading) return;
@@ -3734,6 +3735,22 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
         _uploadError = _mediaUploadErrorText(error);
       });
     }
+  }
+
+  void _clearOfflineCache() {
+    setState(() {
+      _uploadedFile = null;
+      _uploadError = null;
+      _cacheStatus = '已清理离线缓存和临时上传结果。';
+    });
+  }
+
+  void _returnFromMediaViewer() {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    context.go('/');
   }
 
   @override
@@ -3775,9 +3792,14 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
         _ActionTile(
           icon: Icons.download_for_offline_outlined,
           title: '离线缓存',
-          subtitle: '网络不稳定时继续查看已缓存资料，并支持失败重试。',
+          subtitle: _cacheStatus,
           accent: widget.accent,
-          trailing: const Icon(Icons.chevron_right_rounded),
+          trailing: IconButton(
+            key: const ValueKey('media-clear-cache-button'),
+            tooltip: '清理缓存',
+            onPressed: _clearOfflineCache,
+            icon: const Icon(Icons.cleaning_services_outlined),
+          ),
         ),
         _ActionTile(
           icon: Icons.cloud_upload_outlined,
@@ -3801,12 +3823,17 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
                   icon: const Icon(Icons.cloud_upload_outlined),
                 ),
         ),
-        const _ActionTile(
+        _ActionTile(
           icon: Icons.ios_share_rounded,
           title: '分享或返回',
           subtitle: '从 Agent artifact、IBCLC 和 W1 内容跳入时保留返回意图。',
-          accent: Color(0xff43827b),
-          trailing: Icon(Icons.chevron_right_rounded),
+          accent: const Color(0xff43827b),
+          trailing: IconButton(
+            key: const ValueKey('media-return-button'),
+            tooltip: '返回上一页',
+            onPressed: _returnFromMediaViewer,
+            icon: const Icon(Icons.arrow_back_rounded),
+          ),
         ),
       ],
     );

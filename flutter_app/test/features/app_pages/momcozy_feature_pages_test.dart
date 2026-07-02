@@ -1337,6 +1337,82 @@ void main() {
       },
     );
 
+    testWidgets(
+      'media page clears cache and keeps preview across size changes',
+      (tester) async {
+        final multipart = FixtureApiMultipartTransport({
+          'status': 200,
+          'data': {
+            'id': 'file-cache',
+            'name': 'cached-preview.png',
+            'size': 68,
+          },
+        });
+        tester.view.physicalSize = const Size(390, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(
+          _FeaturePageHost(
+            route: _route('/media-viewer'),
+            multipartTransport: multipart,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('图片'));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.byTooltip('上传'));
+        await tester.tap(find.byTooltip('上传'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('图片预览'), findsOneWidget);
+        expect(find.text('已上传 cached-preview.png'), findsOneWidget);
+
+        tester.view.physicalSize = const Size(844, 390);
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('图片预览'), findsOneWidget);
+
+        await _scrollToText(tester, '离线缓存');
+        const clearCacheButton = ValueKey('media-clear-cache-button');
+        await tester.ensureVisible(find.byKey(clearCacheButton));
+        await tester.tap(find.byKey(clearCacheButton));
+        await tester.pumpAndSettle();
+
+        expect(find.text('已清理离线缓存和临时上传结果。'), findsOneWidget);
+        expect(find.text('上传示例资料'), findsOneWidget);
+        expect(find.text('已上传 cached-preview.png'), findsNothing);
+      },
+    );
+
+    testWidgets('media page returns to the previous route when pushed', (
+      tester,
+    ) async {
+      final router = createMomCozyRouter(initialLocation: '/status');
+
+      await tester.pumpWidget(MomCozyFlutterApp(router: router));
+      await tester.pumpAndSettle();
+
+      router.push('/media-viewer');
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('route-page-/media-viewer')),
+        findsOneWidget,
+      );
+
+      await _scrollToText(tester, '分享或返回');
+      const returnButton = ValueKey('media-return-button');
+      await tester.ensureVisible(find.byKey(returnButton));
+      await tester.tap(find.byKey(returnButton));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
+    });
+
     testWidgets('IBCLC page posts client event through runtime client', (
       tester,
     ) async {
