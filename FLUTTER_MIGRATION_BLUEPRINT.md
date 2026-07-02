@@ -347,13 +347,13 @@ Pump session 不应只作为一个 Flutter 页面来实现。它需要是一个�
 必须保证：
 
 ```text
-[ ] summary 只上传一次
-[ ] milk record 只创建一次
-[ ] Agent context 只上传一次
+[x] summary 只上传一次
+[x] milk record 只创建一次
+[x] Agent context 只上传一次
 [ ] 前后台切换不丢失计时
 [ ] 锁屏后通知仍可恢复
 [ ] App killed 后重启可恢复或安全结束
-[ ] 多用户切换不会沿用上一用户 session
+[x] 多用户切换不会沿用上一用户 session
 ```
 
 ### 6.3 通知与后台任务
@@ -962,7 +962,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `/status` 页面已覆盖孕期/哺乳期切换、妈妈/宝宝 tab、成长记录本地草稿、今日状态、计划 todo 和孕期日记入口 widget test
 [x] Flutter `/schedule` 页面已接入 App runtime repository，覆盖 day plan fixture、日期选择、任务添加/删除、checkbox 草稿状态、未完成 badge、跨天倒计时和同步状态展示
 [x] Flutter `/records` 页面已接入 App runtime repository，覆盖 pump_milk、feeding、growth 三类列表、筛选、手动补录、编辑/删除、本地跨天标记和弱网重试文案 widget test
-[x] Flutter `/pump` 页面 session 控制已接入 App runtime `/v1/pump/workstate` repository，覆盖左右侧档位 payload 和同步状态 widget test
+[x] Flutter `/pump` 页面 session 控制已接入 App runtime `/v1/pump/workstate` repository，覆盖左右侧档位 payload、左右侧进度、结束上传一次性 guard、重复结束拦截、多用户切换清理和同步状态 widget test
 [x] Flutter `/device` 页面已接入 App runtime BLE platform，覆盖权限/已连接设备恢复、扫描空态、单/多扫描结果、battery/RSSI、连接失败和扫描失败状态 widget test
 [x] Flutter `/device/manage` 和 `/device/user` 子页已接入 App runtime BLE/user context，覆盖已连接设备读取、解绑和 runtime 用户信息 widget test
 [x] Flutter `/calibration` 页面保存动作已接入 App runtime `PumpProtocolPlatform`，覆盖左/右/双侧设备状态、档位调整、未保存退出提示、左右舒适档位下发和成功后进入 Pump widget test
