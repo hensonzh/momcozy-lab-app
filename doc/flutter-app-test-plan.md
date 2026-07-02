@@ -332,9 +332,9 @@ Golden 视觉状态：
 [x] 暂停
 [x] 恢复
 [x] 结束
-[ ] 左侧独立模式/档位/奶量/进度
-[ ] 右侧独立模式/档位/奶量/进度
-[ ] 双侧同步运行
+[x] 左侧独立模式/档位/奶量/进度
+[x] 右侧独立模式/档位/奶量/进度
+[x] 双侧同步运行
 [ ] 前后台切换
 [ ] 锁屏
 [ ] 通知点击恢复
@@ -344,12 +344,12 @@ Golden 视觉状态：
 [ ] App killed 后重启
 [ ] 系统回收后恢复或安全结束
 [ ] Doze / battery optimization 场景
-[ ] summary 只上传一次
-[ ] milk record 只创建一次
-[ ] Agent context 只上传一次
+[x] summary 只上传一次
+[x] milk record 只创建一次
+[x] Agent context 只上传一次
 [x] 网络失败后重试
-[ ] 结束时并发点击幂等
-[ ] 多用户切换保护
+[x] 结束时并发点击幂等
+[x] 多用户切换保护
 ```
 
 ### 5.5 Records
@@ -577,7 +577,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/schedule` widget tests 已覆盖日期切换、今日任务加载、添加/删除本地任务、完成状态、提醒开关、未完成 badge、跨天倒计时、本地日期到 UTC timestamp 和空/失败态
 [x] Flutter `/status` widget tests 已覆盖孕期/哺乳期切换、妈妈/宝宝 tab、成长记录本地草稿、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 [x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 权限拒绝、扫描空态、单/多扫描结果、连接失败、battery/RSSI 展示和扫描失败状态
-[x] Flutter `/pump` widget tests 已覆盖 session 启动/暂停/恢复/结束和 workstate 上传失败状态
+[x] Flutter `/pump` widget tests 已覆盖 session 启动/暂停/恢复/结束、左右侧进度、双侧 workstate payload、结束上传一次性 guard、重复结束拦截、多用户切换清理和 workstate 上传失败状态
 [x] Flutter `/calibration` widget tests 已覆盖无设备失败提示、左/右/双侧设备状态、档位调整、未保存退出提示、保存校准和保存后进入 Pump
 [x] Flutter `/media-viewer` widget tests 已覆盖 PDF/Image/Video 预览入口、示例上传成功和上传失败 fallback
 [x] Flutter `/ibclc-chat.html` widget tests 已覆盖协议勾选、未勾选阻止继续、事件写回成功和网络失败本地入队

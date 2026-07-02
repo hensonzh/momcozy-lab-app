@@ -1650,22 +1650,93 @@ class _PumpPageState extends State<_PumpPage> {
   _PumpRunState _runState = _PumpRunState.idle;
   double _leftLevel = 5;
   double _rightLevel = 5;
+  int _elapsedMinutes = 0;
+  int _leftVolumeMl = 0;
+  int _rightVolumeMl = 0;
+  String? _sessionOwnerUserId;
+  bool _completionUploadLocked = false;
+  bool _duplicateCompletionBlocked = false;
   MomCozyApiRuntime? _runtime;
   PumpWorkstateReply? _lastReply;
   Object? _uploadError;
+  String? _guardNotice;
   bool _isUploading = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _runtime = MomCozyRuntimeScope.of(context);
+    final runtime = MomCozyRuntimeScope.of(context);
+    final previousRuntime = _runtime;
+    if (previousRuntime != null &&
+        previousRuntime.userId != runtime.userId &&
+        _runState != _PumpRunState.idle) {
+      _runState = _PumpRunState.idle;
+      _isUploading = false;
+      _elapsedMinutes = 0;
+      _leftVolumeMl = 0;
+      _rightVolumeMl = 0;
+      _sessionOwnerUserId = null;
+      _completionUploadLocked = false;
+      _duplicateCompletionBlocked = false;
+      _lastReply = null;
+      _uploadError = null;
+      _guardNotice = '检测到用户切换，已清空上一用户 session。';
+    }
+    _runtime = runtime;
   }
 
   void _changeRunState(_PumpRunState next) {
+    if (next == _PumpRunState.idle && _completionUploadLocked) {
+      setState(() {
+        _duplicateCompletionBlocked = true;
+        _guardNotice = '重复结束已拦截，本次 session 只保留一组结束上传。';
+      });
+      return;
+    }
+
     setState(() {
+      _applyLocalSessionTransition(next);
       _runState = next;
     });
     _uploadWorkstate(next);
+  }
+
+  void _applyLocalSessionTransition(_PumpRunState next) {
+    final previous = _runState;
+    if (previous == _PumpRunState.idle && next == _PumpRunState.running) {
+      _sessionOwnerUserId = _runtime?.userId;
+      _completionUploadLocked = false;
+      _duplicateCompletionBlocked = false;
+      _elapsedMinutes = 0;
+      _leftVolumeMl = 0;
+      _rightVolumeMl = 0;
+      _guardNotice = '已绑定 ${_sessionOwnerUserId ?? '当前用户'}。';
+      _advanceLocalProgress(minutes: 2);
+      return;
+    }
+
+    if (previous == _PumpRunState.running && next == _PumpRunState.paused) {
+      _advanceLocalProgress(minutes: 3);
+      return;
+    }
+
+    if (previous == _PumpRunState.paused && next == _PumpRunState.running) {
+      _advanceLocalProgress(minutes: 2);
+      return;
+    }
+
+    if (next == _PumpRunState.idle && previous != _PumpRunState.idle) {
+      _advanceLocalProgress(minutes: 1);
+      _completionUploadLocked = true;
+      _duplicateCompletionBlocked = false;
+      _guardNotice = '结束上传已锁定：summary、milk record、Agent context 仅允许一次。';
+    }
+  }
+
+  void _advanceLocalProgress({required int minutes}) {
+    _elapsedMinutes += minutes;
+    _leftVolumeMl += (_leftLevel * minutes).round();
+    _rightVolumeMl += (_rightLevel * minutes * 0.8).round();
   }
 
   Future<void> _uploadWorkstate(_PumpRunState state) async {
@@ -1770,6 +1841,35 @@ class _PumpPageState extends State<_PumpPage> {
           ],
         ),
         const SizedBox(height: 18),
+        const _SectionTitle('Session 进度'),
+        _MetricWrap(
+          children: [
+            _MetricTile(
+              label: '运行时长',
+              value: '$_elapsedMinutes 分钟',
+              icon: Icons.timer_outlined,
+              accent: widget.accent,
+              note: _sessionOwnerUserId == null
+                  ? '未绑定用户'
+                  : '绑定 $_sessionOwnerUserId',
+            ),
+            _MetricTile(
+              label: '左侧进度',
+              value: '$_leftVolumeMl mL',
+              icon: Icons.water_drop_outlined,
+              accent: widget.accent,
+              note: '档位 ${_leftLevel.round()}',
+            ),
+            _MetricTile(
+              label: '右侧进度',
+              value: '$_rightVolumeMl mL',
+              icon: Icons.water_drop_outlined,
+              accent: const Color(0xff43827b),
+              note: '档位 ${_rightLevel.round()}',
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
         const _SectionTitle('左右侧参数'),
         _PumpSideTile(
           label: '左侧',
@@ -1784,6 +1884,27 @@ class _PumpPageState extends State<_PumpPage> {
           level: _rightLevel,
           accent: const Color(0xff43827b),
           onChanged: (value) => setState(() => _rightLevel = value),
+        ),
+        const SizedBox(height: 8),
+        const _SectionTitle('结束保护'),
+        _ActionTile(
+          icon: _duplicateCompletionBlocked
+              ? Icons.block_rounded
+              : Icons.verified_outlined,
+          title: _completionGuardTitle(),
+          subtitle: _guardNotice ?? '开始后绑定当前用户，结束时锁定一次性上传标记。',
+          accent: _duplicateCompletionBlocked
+              ? const Color(0xffb2773b)
+              : const Color(0xff43827b),
+          trailing: _StatusChip(
+            label: _completionUploadLocked ? '1/1' : '待结束',
+            icon: _completionUploadLocked
+                ? Icons.lock_outline_rounded
+                : Icons.hourglass_empty_rounded,
+            accent: _duplicateCompletionBlocked
+                ? const Color(0xffb2773b)
+                : const Color(0xff43827b),
+          ),
         ),
         const SizedBox(height: 8),
         const _SectionTitle('上传状态'),
@@ -1817,11 +1938,19 @@ class _PumpPageState extends State<_PumpPage> {
   }
 
   String _uploadStatusSubtitle() {
+    if (_uploadError is String) return _uploadError! as String;
     if (_uploadError != null) return '检查后端连接或 token 后重试。';
     final reply = _lastReply;
     if (reply == null) return '结束后生成摘要、奶量记录和智能体上下文；重复上传会被自动拦截。';
     if (reply.output.isNotEmpty) return reply.output;
     return reply.needReply ? '后端需要处理设备状态回复。' : '后端已接收当前左右侧状态。';
+  }
+
+  String _completionGuardTitle() {
+    if (_duplicateCompletionBlocked) return '重复结束已拦截';
+    if (_completionUploadLocked) return '结束同步已锁定';
+    if (_sessionOwnerUserId != null) return 'Session 用户已绑定';
+    return 'Session 等待开始';
   }
 }
 

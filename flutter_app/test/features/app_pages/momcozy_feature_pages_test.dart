@@ -75,6 +75,7 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pump();
       expect(find.text('Session 控制'), findsOneWidget);
+      await _scrollToText(tester, '上传状态');
       expect(find.text('上传状态'), findsOneWidget);
     });
 
@@ -665,6 +666,7 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, '开始'));
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, 'Workstate 已同步');
       expect(find.text('Workstate 已同步'), findsOneWidget);
       expect(find.text('Workstate accepted'), findsOneWidget);
     });
@@ -692,6 +694,110 @@ void main() {
       expect(find.text('待开始'), findsOneWidget);
     });
 
+    testWidgets('pump page tracks side progress and blocks duplicate finish', (
+      tester,
+    ) async {
+      final transport = FixtureApiJsonTransportByPath({
+        pumpWorkstateEndpoint: const {
+          'status': 200,
+          'data': {
+            'need_reply': true,
+            'output': 'Workstate accepted',
+            'reply_code': 'pump_state_changed',
+            'reply_side': 'left',
+          },
+        },
+      });
+
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/pump'), jsonTransport: transport),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('0 分钟'), findsOneWidget);
+      expect(find.text('0 mL'), findsNWidgets(2));
+
+      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('2 分钟'), findsOneWidget);
+      expect(find.text('10 mL'), findsOneWidget);
+      expect(find.text('8 mL'), findsOneWidget);
+      expect(find.text('绑定 demo-user-fixture'), findsOneWidget);
+      expect(transport.postedBodies, hasLength(1));
+      expect(transport.postedBodies.first['user_id'], 'demo-user-fixture');
+      expect(transport.postedBodies.first['device_left'], {
+        'state': 1,
+        'mode': 'massage_expression',
+        'level': 5,
+      });
+      expect(transport.postedBodies.first['device_right'], {
+        'state': 1,
+        'mode': 'expression',
+        'level': 5,
+      });
+
+      await tester.tap(find.widgetWithText(OutlinedButton, '结束'));
+      await tester.tap(find.widgetWithText(OutlinedButton, '结束'));
+      await tester.pumpAndSettle();
+
+      expect(transport.postedBodies, hasLength(2));
+      expect(transport.postedBodies.last['device_left'], {
+        'state': 0,
+        'mode': 'massage_expression',
+        'level': 5,
+      });
+      await _scrollToText(tester, '重复结束已拦截');
+      expect(find.text('重复结束已拦截'), findsOneWidget);
+      expect(find.textContaining('只保留一组结束上传'), findsOneWidget);
+      expect(find.text('1/1'), findsOneWidget);
+    });
+
+    testWidgets('pump page clears active session when runtime user changes', (
+      tester,
+    ) async {
+      final transport = FixtureApiJsonTransportByPath({
+        pumpWorkstateEndpoint: const {
+          'status': 200,
+          'data': {'output': 'Workstate accepted'},
+        },
+      });
+      final hostKey = GlobalKey<_RuntimeSwapFeaturePageHostState>();
+
+      await tester.pumpWidget(
+        _RuntimeSwapFeaturePageHost(
+          key: hostKey,
+          route: _route('/pump'),
+          jsonTransport: transport,
+          initialUserId: 'user-a',
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('绑定 user-a'), findsOneWidget);
+      expect(transport.postedBodies.last['user_id'], 'user-a');
+
+      hostKey.currentState!.switchUser('user-b');
+      await tester.pumpAndSettle();
+
+      expect(find.text('待开始'), findsOneWidget);
+      expect(find.text('未绑定用户'), findsOneWidget);
+      expect(find.text('0 分钟'), findsOneWidget);
+      await _scrollToText(tester, '检测到用户切换，已清空上一用户 session。');
+      expect(find.text('检测到用户切换，已清空上一用户 session。'), findsOneWidget);
+      expect(transport.postedBodies, hasLength(1));
+
+      await _tapScrollableText(tester, '开始');
+      await tester.pumpAndSettle();
+
+      expect(find.text('绑定 user-b'), findsOneWidget);
+      expect(transport.postedBodies, hasLength(2));
+      expect(transport.postedBodies.last['user_id'], 'user-b');
+    });
+
     testWidgets('pump page renders upload failure state', (tester) async {
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -709,6 +815,7 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, '开始'));
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, 'Workstate 同步失败');
       expect(find.text('Workstate 同步失败'), findsOneWidget);
       expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
 
@@ -1443,12 +1550,64 @@ class _FeaturePageHost extends StatelessWidget {
   }
 }
 
+class _RuntimeSwapFeaturePageHost extends StatefulWidget {
+  const _RuntimeSwapFeaturePageHost({
+    super.key,
+    required this.route,
+    required this.jsonTransport,
+    required this.initialUserId,
+  });
+
+  final MomCozyRouteConfig route;
+  final FixtureApiJsonTransportByPath jsonTransport;
+  final String initialUserId;
+
+  @override
+  State<_RuntimeSwapFeaturePageHost> createState() =>
+      _RuntimeSwapFeaturePageHostState();
+}
+
+class _RuntimeSwapFeaturePageHostState
+    extends State<_RuntimeSwapFeaturePageHost> {
+  late String _userId = widget.initialUserId;
+
+  void switchUser(String userId) {
+    setState(() {
+      _userId = userId;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MomCozyRuntimeScope(
+      apiRuntime: _appRuntime(
+        jsonTransport: widget.jsonTransport,
+        userId: _userId,
+      ),
+      child: MaterialApp(
+        theme: momCozyTheme(),
+        home: Scaffold(
+          body: MomCozyFeaturePage(
+            path: widget.route.path,
+            title: widget.route.title,
+            summary: widget.route.summary,
+            icon: widget.route.icon,
+            accent: widget.route.accent,
+            priority: widget.route.priority,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 MomCozyApiRuntime _appRuntime({
   PumpProtocolPlatform? pumpProtocolPlatform,
   AgentStreamClientEventClient? clientEventClient,
   FixtureApiJsonTransportByPath? jsonTransport,
   FixtureApiMultipartTransport? multipartTransport,
   BlePlatform? blePlatform,
+  String userId = 'demo-user-fixture',
 }) {
   return MomCozyApiRuntime(
     jsonTransport:
@@ -1553,7 +1712,7 @@ MomCozyApiRuntime _appRuntime({
           ],
         ),
     pumpProtocolPlatform: pumpProtocolPlatform,
-    userId: 'demo-user-fixture',
+    userId: userId,
     babyId: 'demo-baby-fixture',
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7),
