@@ -7,8 +7,11 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
+typedef AgentHubImagePicker = Future<AgentStreamImageInput?> Function();
+typedef AgentHubVoiceInput = Future<String?> Function();
 
 class AgentHubPage extends StatefulWidget {
   const AgentHubPage({
@@ -17,12 +20,16 @@ class AgentHubPage extends StatefulWidget {
     this.runner,
     this.cancelClient,
     this.requestBuilder = buildDefaultAgentHubRequest,
+    this.pickImage,
+    this.voiceInput,
   });
 
   final AgentStreamRunState state;
   final AgentStreamRunner? runner;
   final AgentStreamCancelClient? cancelClient;
   final AgentHubRequestBuilder requestBuilder;
+  final AgentHubImagePicker? pickImage;
+  final AgentHubVoiceInput? voiceInput;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
@@ -34,6 +41,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       TextEditingController();
   StreamSubscription<AgentStreamRunState>? _runSubscription;
   AgentStreamRequest? _activeRequest;
+  AgentVoiceState _voiceState = const AgentVoiceState();
+  final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
 
   @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
@@ -54,7 +63,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool get _canSend =>
       widget.runner != null &&
       !_state.isActive &&
-      _composerController.text.trim().isNotEmpty;
+      (_composerController.text.trim().isNotEmpty ||
+          _attachedImages.isNotEmpty);
 
   bool get _canRetry =>
       widget.runner != null && _state.canRetry && _activeRequest != null;
@@ -62,11 +72,72 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _sendMessage() async {
     final runner = widget.runner;
     final message = _composerController.text.trim();
-    if (runner == null || message.isEmpty || _state.isActive) return;
+    if (runner == null ||
+        (message.isEmpty && _attachedImages.isEmpty) ||
+        _state.isActive) {
+      return;
+    }
 
-    final request = widget.requestBuilder(message);
+    final request = _requestWithImages(
+      widget.requestBuilder(message),
+      _attachedImages,
+    );
     _composerController.clear();
+    setState(() {
+      _attachedImages.clear();
+    });
     await _startRun(request);
+  }
+
+  Future<void> _attachImage() async {
+    final pickImage = widget.pickImage;
+    if (pickImage == null || _state.isActive) return;
+    final image = await pickImage();
+    if (!mounted || image == null) return;
+    setState(() {
+      _attachedImages.add(image);
+    });
+  }
+
+  Future<void> _startVoiceInput() async {
+    final voiceInput = widget.voiceInput;
+    if (voiceInput == null || _state.isActive || _voiceState.isInputActive) {
+      return;
+    }
+
+    setState(() {
+      _voiceState = _voiceState.startListening();
+    });
+
+    try {
+      setState(() {
+        _voiceState = _voiceState.startTranscribing(
+          draft: _composerController.text,
+        );
+      });
+      final text = (await voiceInput())?.trim();
+      if (!mounted) return;
+      setState(() {
+        if (text != null && text.isNotEmpty) {
+          _composerController.text = text;
+          _composerController.selection = TextSelection.collapsed(
+            offset: _composerController.text.length,
+          );
+        }
+        _voiceState = _voiceState.applyTranscription(text ?? '');
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _voiceState = _voiceState.fail(error);
+      });
+    }
+  }
+
+  void _removeAttachedImages() {
+    setState(() {
+      _attachedImages.clear();
+    });
   }
 
   Future<void> _retryRun() async {
@@ -191,13 +262,38 @@ class _AgentHubPageState extends State<AgentHubPage> {
           controller: _composerController,
           canSend: _canSend,
           isRunning: _state.isActive,
+          imageCount: _attachedImages.length,
+          canAttachImage: widget.pickImage != null && !_state.isActive,
+          canUseVoice:
+              widget.voiceInput != null &&
+              !_state.isActive &&
+              !_voiceState.isInputActive,
+          voicePhase: _voiceState.phase,
           onChanged: (_) => setState(() {}),
           onSend: _sendMessage,
           onCancel: _cancelRun,
+          onAttachImage: _attachImage,
+          onRemoveImages: _removeAttachedImages,
+          onVoiceInput: _startVoiceInput,
         ),
       ],
     );
   }
+}
+
+AgentStreamRequest _requestWithImages(
+  AgentStreamRequest request,
+  List<AgentStreamImageInput> images,
+) {
+  if (images.isEmpty) return request;
+  return AgentStreamRequest(
+    userId: request.userId,
+    message: request.message,
+    threadId: request.threadId,
+    locale: request.locale,
+    images: [...request.images, ...images],
+    metadata: request.metadata,
+  );
 }
 
 class AgentRunPhaseBadge extends StatelessWidget {
@@ -499,17 +595,31 @@ class AgentComposerBar extends StatelessWidget {
     required this.controller,
     required this.canSend,
     required this.isRunning,
+    required this.imageCount,
+    required this.canAttachImage,
+    required this.canUseVoice,
+    required this.voicePhase,
     required this.onChanged,
     required this.onSend,
     required this.onCancel,
+    required this.onAttachImage,
+    required this.onRemoveImages,
+    required this.onVoiceInput,
   });
 
   final TextEditingController controller;
   final bool canSend;
   final bool isRunning;
+  final int imageCount;
+  final bool canAttachImage;
+  final bool canUseVoice;
+  final AgentVoicePhase voicePhase;
   final ValueChanged<String> onChanged;
   final VoidCallback onSend;
   final VoidCallback onCancel;
+  final VoidCallback onAttachImage;
+  final VoidCallback onRemoveImages;
+  final VoidCallback onVoiceInput;
 
   @override
   Widget build(BuildContext context) {
@@ -523,41 +633,130 @@ class AgentComposerBar extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: TextField(
-                key: const ValueKey('agent-composer-input'),
-                controller: controller,
-                minLines: 1,
-                maxLines: 4,
-                enabled: !isRunning,
-                onChanged: onChanged,
-                onSubmitted: (_) {
-                  if (canSend) onSend();
-                },
-                decoration: InputDecoration(
-                  hintText: '说说今天的情况',
-                  border: InputBorder.none,
-                  isDense: true,
-                  hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+            if (imageCount > 0) ...[
+              Row(
+                key: const ValueKey('agent-image-attachment-chip'),
+                children: [
+                  Icon(
+                    Icons.image_outlined,
+                    size: 18,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      '图片 $imageCount',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    key: const ValueKey('agent-remove-image-button'),
+                    onPressed: isRunning ? null : onRemoveImages,
+                    icon: const Icon(Icons.close_rounded),
+                    tooltip: '移除图片',
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+            ],
+            Row(
+              children: [
+                IconButton(
+                  key: const ValueKey('agent-image-button'),
+                  onPressed: canAttachImage ? onAttachImage : null,
+                  icon: const Icon(Icons.add_photo_alternate_outlined),
+                  tooltip: '添加图片',
+                ),
+                IconButton(
+                  key: const ValueKey('agent-voice-button'),
+                  onPressed: canUseVoice ? onVoiceInput : null,
+                  icon: Icon(_voiceIcon),
+                  tooltip: _voiceTooltip,
+                ),
+                Expanded(
+                  child: TextField(
+                    key: const ValueKey('agent-composer-input'),
+                    controller: controller,
+                    minLines: 1,
+                    maxLines: 4,
+                    enabled: !isRunning,
+                    onChanged: onChanged,
+                    onSubmitted: (_) {
+                      if (canSend) onSend();
+                    },
+                    decoration: InputDecoration(
+                      hintText: '说说今天的情况',
+                      border: InputBorder.none,
+                      isDense: true,
+                      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                    ),
+                  ),
+                ),
+                IconButton.filled(
+                  key: ValueKey(
+                    isRunning ? 'agent-stop-button' : 'agent-send-button',
+                  ),
+                  onPressed: isRunning ? onCancel : (canSend ? onSend : null),
+                  icon: Icon(
+                    isRunning ? Icons.stop_rounded : Icons.arrow_upward_rounded,
+                  ),
+                  tooltip: isRunning ? '停止' : '发送',
+                ),
+              ],
+            ),
+            if (_voiceStatusLabel != null) ...[
+              const SizedBox(height: 4),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  _voiceStatusLabel!,
+                  key: const ValueKey('agent-voice-status'),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: voicePhase == AgentVoicePhase.error
+                        ? colorScheme.error
+                        : colorScheme.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-            ),
-            IconButton.filled(
-              key: ValueKey(
-                isRunning ? 'agent-stop-button' : 'agent-send-button',
-              ),
-              onPressed: isRunning ? onCancel : (canSend ? onSend : null),
-              icon: Icon(
-                isRunning ? Icons.stop_rounded : Icons.arrow_upward_rounded,
-              ),
-              tooltip: isRunning ? '停止' : '发送',
-            ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  IconData get _voiceIcon {
+    return switch (voicePhase) {
+      AgentVoicePhase.listening => Icons.graphic_eq_rounded,
+      AgentVoicePhase.transcribing => Icons.hourglass_bottom_rounded,
+      AgentVoicePhase.error => Icons.mic_off_outlined,
+      _ => Icons.mic_none_rounded,
+    };
+  }
+
+  String get _voiceTooltip {
+    return switch (voicePhase) {
+      AgentVoicePhase.listening => '正在听',
+      AgentVoicePhase.transcribing => '正在转写',
+      AgentVoicePhase.error => '语音失败',
+      _ => '语音输入',
+    };
+  }
+
+  String? get _voiceStatusLabel {
+    return switch (voicePhase) {
+      AgentVoicePhase.listening => '正在听',
+      AgentVoicePhase.transcribing => '正在整理语音',
+      AgentVoicePhase.error => '语音输入失败',
+      _ => null,
+    };
   }
 }
 

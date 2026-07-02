@@ -74,6 +74,7 @@ Current Dart test coverage:
 - AG-UI stream fixtures parse equivalently across JSONL, SSE eventstream, and WebSocket frame forms.
 - API envelope fixtures distinguish success, business errors, HTTP errors, and legacy snake/camel aliases.
 - Agent voice fixtures cover STT multipart chunk transcription, timeout fallback, realtime PCM stream cancellation, realtime voice session frames, and WebSocket disconnect behavior.
+- Agent Hub widget tests cover composer text send, image attachment payloads, voice transcription fill-in, stop, retry, and user-facing work progress.
 - Staging smoke CLI validates env parsing, safe default skip, optional staging HTTP/client-event/media upload probes, and optional Agent SSE probe.
 - Storage migration dry-run CLI covers legacy fixture batches and reports unhandled legacy keys before app cutover.
 - Privacy fixtures cover shared log redaction for sensitive keys and URL query parameters.
