@@ -17,6 +17,8 @@ typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
 typedef AgentHubNewSessionHandler = void Function();
 
+const _agentDefaultGreeting = '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
+
 class AgentHubPage extends StatefulWidget {
   const AgentHubPage({
     super.key,
@@ -300,12 +302,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   Widget build(BuildContext context) {
+    final showTopControls = _historyMessages.isNotEmpty || _state.isActive;
+
     return ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
       child: Column(
         children: [
           AgentHubTopBar(
+            showControls: showTopControls,
             autoVoiceEnabled: _autoVoiceEnabled,
             isRunning: _state.isActive,
             onToggleAutoVoice: () =>
@@ -368,12 +373,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
 class AgentHubTopBar extends StatelessWidget {
   const AgentHubTopBar({
     super.key,
+    required this.showControls,
     required this.autoVoiceEnabled,
     required this.isRunning,
     required this.onToggleAutoVoice,
     required this.onNewSession,
   });
 
+  final bool showControls;
   final bool autoVoiceEnabled;
   final bool isRunning;
   final VoidCallback onToggleAutoVoice;
@@ -389,42 +396,46 @@ class AgentHubTopBar extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              key: const ValueKey('agent-auto-voice-button'),
-              onPressed: onToggleAutoVoice,
-              icon: Icon(
-                autoVoiceEnabled
-                    ? Icons.volume_up_outlined
-                    : Icons.volume_off_outlined,
-                size: 20,
-              ),
-              tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
-              color: autoVoiceEnabled ? Colors.black : MomCozyColors.background,
-              style: IconButton.styleFrom(
-                backgroundColor: autoVoiceEnabled
-                    ? Colors.transparent
-                    : const Color(0xff7a6670),
-                fixedSize: const Size.square(36),
-                minimumSize: const Size.square(36),
-                padding: EdgeInsets.zero,
-              ),
-            ),
-            const SizedBox(width: 4),
-            IconButton(
-              key: const ValueKey('agent-new-session-button'),
-              onPressed: isRunning ? null : onNewSession,
-              icon: const Icon(Icons.add_rounded, size: 22),
-              tooltip: '新建会话',
-              color: const Color(0xff3b2f36),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                fixedSize: const Size.square(36),
-                minimumSize: const Size.square(36),
-                padding: EdgeInsets.zero,
-              ),
-            ),
-          ],
+          children: showControls
+              ? [
+                  IconButton(
+                    key: const ValueKey('agent-auto-voice-button'),
+                    onPressed: onToggleAutoVoice,
+                    icon: Icon(
+                      autoVoiceEnabled
+                          ? Icons.volume_up_outlined
+                          : Icons.volume_off_outlined,
+                      size: 20,
+                    ),
+                    tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
+                    color: autoVoiceEnabled
+                        ? Colors.black
+                        : MomCozyColors.background,
+                    style: IconButton.styleFrom(
+                      backgroundColor: autoVoiceEnabled
+                          ? Colors.transparent
+                          : const Color(0xff7a6670),
+                      fixedSize: const Size.square(36),
+                      minimumSize: const Size.square(36),
+                      padding: EdgeInsets.zero,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  IconButton(
+                    key: const ValueKey('agent-new-session-button'),
+                    onPressed: isRunning ? null : onNewSession,
+                    icon: const Icon(Icons.add_rounded, size: 22),
+                    tooltip: '新建会话',
+                    color: const Color(0xff3b2f36),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      fixedSize: const Size.square(36),
+                      minimumSize: const Size.square(36),
+                      padding: EdgeInsets.zero,
+                    ),
+                  ),
+                ]
+              : const [SizedBox(width: 36, height: 56)],
         ),
       ),
     );
@@ -656,7 +667,7 @@ class AgentRunTranscript extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final text = state.textContent.trim().isEmpty
-        ? '我在。'
+        ? _agentDefaultGreeting
         : state.textContent.trim();
     final workSteps = _workStepsFromEvents(state.events);
     final artifactCards = _artifactCardsFromEvents(state.events);
@@ -1163,16 +1174,17 @@ class AgentComposerBar extends StatelessWidget {
                       color: MomCozyColors.mutedForeground,
                       visualDensity: VisualDensity.compact,
                     ),
-                    IconButton(
-                      key: const ValueKey('agent-voice-button'),
-                      onPressed: canUseVoice ? onVoiceInput : null,
-                      icon: Icon(_voiceIcon),
-                      tooltip: _voiceTooltip,
-                      color: voicePhase == AgentVoicePhase.listening
-                          ? colorScheme.primary
-                          : MomCozyColors.mutedForeground,
-                      visualDensity: VisualDensity.compact,
-                    ),
+                    if (canUseVoice || voicePhase != AgentVoicePhase.idle)
+                      IconButton(
+                        key: const ValueKey('agent-voice-button'),
+                        onPressed: canUseVoice ? onVoiceInput : null,
+                        icon: Icon(_voiceIcon),
+                        tooltip: _voiceTooltip,
+                        color: voicePhase == AgentVoicePhase.listening
+                            ? colorScheme.primary
+                            : MomCozyColors.mutedForeground,
+                        visualDensity: VisualDensity.compact,
+                      ),
                     Expanded(
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -1213,32 +1225,25 @@ class AgentComposerBar extends StatelessWidget {
                         ),
                       ),
                     ),
-                    IconButton.filled(
-                      key: ValueKey(
-                        isRunning ? 'agent-stop-button' : 'agent-send-button',
+                    if (isRunning || canSend)
+                      IconButton.filled(
+                        key: ValueKey(
+                          isRunning ? 'agent-stop-button' : 'agent-send-button',
+                        ),
+                        onPressed: isRunning ? onCancel : onSend,
+                        icon: Icon(
+                          isRunning ? Icons.stop_rounded : Icons.send_rounded,
+                          size: isRunning ? 18 : 17,
+                        ),
+                        tooltip: isRunning ? '停止' : '发送',
+                        style: IconButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          fixedSize: const Size.square(36),
+                          minimumSize: const Size.square(36),
+                          padding: EdgeInsets.zero,
+                        ),
                       ),
-                      onPressed: isRunning
-                          ? onCancel
-                          : (canSend ? onSend : null),
-                      icon: Icon(
-                        isRunning ? Icons.stop_rounded : Icons.send_rounded,
-                        size: isRunning ? 18 : 17,
-                      ),
-                      tooltip: isRunning ? '停止' : '发送',
-                      style: IconButton.styleFrom(
-                        backgroundColor: canSend || isRunning
-                            ? colorScheme.primary
-                            : MomCozyColors.muted,
-                        foregroundColor: canSend || isRunning
-                            ? colorScheme.onPrimary
-                            : MomCozyColors.mutedForeground,
-                        disabledBackgroundColor: MomCozyColors.muted,
-                        disabledForegroundColor: MomCozyColors.mutedForeground,
-                        fixedSize: const Size.square(36),
-                        minimumSize: const Size.square(36),
-                        padding: EdgeInsets.zero,
-                      ),
-                    ),
                   ],
                 ),
               ),

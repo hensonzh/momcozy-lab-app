@@ -19,31 +19,22 @@ void main() {
     await tester.pumpWidget(_host(const AgentHubPage()));
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-auto-voice-button')),
-      findsOneWidget,
-    );
-    expect(find.text('我在。'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('你希望我怎么称呼你？'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-auto-voice-button')), findsNothing);
     expect(
       find.byKey(const ValueKey('agent-new-session-button')),
-      findsOneWidget,
+      findsNothing,
     );
     expect(find.byKey(const ValueKey('agent-composer-input')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-image-button')), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-voice-button')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-voice-button')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-send-button')), findsNothing);
 
-    final sendButton = tester.widget<IconButton>(
-      find.byKey(const ValueKey('agent-send-button')),
-    );
     final imageButton = tester.widget<IconButton>(
       find.byKey(const ValueKey('agent-image-button')),
     );
-    final voiceButton = tester.widget<IconButton>(
-      find.byKey(const ValueKey('agent-voice-button')),
-    );
-    expect(sendButton.onPressed, isNull);
     expect(imageButton.onPressed, isNull);
-    expect(voiceButton.onPressed, isNull);
   });
 
   testWidgets('Agent Hub restores history and starts a new local session', (
@@ -85,7 +76,7 @@ void main() {
 
     expect(newSessionStarted, isTrue);
     expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
-    expect(find.text('我在。'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
@@ -242,12 +233,7 @@ void main() {
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsNothing,
     );
-    expect(
-      tester
-          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
-          .onPressed,
-      isNull,
-    );
+    expect(find.byKey(const ValueKey('agent-send-button')), findsNothing);
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
