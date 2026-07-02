@@ -714,6 +714,9 @@ class _SchedulePageState extends State<_SchedulePage> {
   bool _pumpReminderEnabled = true;
   bool _dailySummaryEnabled = true;
   final Map<String, bool> _taskDoneOverrides = {};
+  final Map<String, List<ScheduleTask>> _localTasksByDay = {};
+  final Set<String> _deletedTaskKeys = {};
+  int _localTaskSequence = 0;
   MomCozyApiRuntime? _runtime;
   late DateTime _selectedDay;
   late Future<ScheduleDayPlan> _dayPlanFuture;
@@ -741,6 +744,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     if (runtime == null) return;
     setState(() {
       _taskDoneOverrides.clear();
+      _deletedTaskKeys.clear();
       _dayPlanFuture = _fetchDayPlan(runtime);
     });
   }
@@ -751,14 +755,45 @@ class _SchedulePageState extends State<_SchedulePage> {
     setState(() {
       _selectedDay = day;
       _taskDoneOverrides.clear();
+      _deletedTaskKeys.clear();
       _dayPlanFuture = _fetchDayPlan(runtime);
     });
   }
 
   void _toggleTask(ScheduleTask task, int index, bool? value) {
-    final key = _taskKey(task, index);
+    final key = _taskScopedKey(task, index);
     setState(() {
       _taskDoneOverrides[key] = value ?? !_taskDone(task, index);
+    });
+  }
+
+  void _addLocalTask() {
+    final dayKey = _dayKey(_selectedDay);
+    final localTasks = _localTasksByDay[dayKey] ?? const <ScheduleTask>[];
+    _localTaskSequence += 1;
+    final remindAt = DateTime.utc(
+      _selectedDay.year,
+      _selectedDay.month,
+      _selectedDay.day,
+      21,
+      30,
+    );
+    final task = ScheduleTask(
+      id: 'local-$dayKey-$_localTaskSequence',
+      title: '本地补充 ${localTasks.length + 1}',
+      completed: false,
+      remindAt: remindAt,
+    );
+    setState(() {
+      _localTasksByDay[dayKey] = [...localTasks, task];
+    });
+  }
+
+  void _deleteTask(ScheduleTask task, int index) {
+    final key = _taskScopedKey(task, index);
+    setState(() {
+      _deletedTaskKeys.add(key);
+      _taskDoneOverrides.remove(key);
     });
   }
 
@@ -767,7 +802,15 @@ class _SchedulePageState extends State<_SchedulePage> {
     return FutureBuilder<ScheduleDayPlan>(
       future: _dayPlanFuture,
       builder: (context, snapshot) {
-        final taskCount = snapshot.data?.tasks.length;
+        final visibleTasks = snapshot.hasData
+            ? _visibleTasks(snapshot.data!)
+            : const <ScheduleTask>[];
+        final taskCount = snapshot.hasData ? visibleTasks.length : null;
+        final pendingTaskCount = visibleTasks
+            .asMap()
+            .entries
+            .where((entry) => !_taskDone(entry.value, entry.key))
+            .length;
 
         return _FeaturePageFrame(
           path: widget.path,
@@ -790,6 +833,12 @@ class _SchedulePageState extends State<_SchedulePage> {
                 icon: Icons.alarm_rounded,
                 accent: const Color(0xff43827b),
               ),
+              if (taskCount != null)
+                _StatusChip(
+                  label: '未完成 $pendingTaskCount',
+                  icon: Icons.notification_important_outlined,
+                  accent: const Color(0xff6b6da8),
+                ),
             ],
           ),
           children: [
@@ -799,6 +848,22 @@ class _SchedulePageState extends State<_SchedulePage> {
               onSelected: _selectDay,
             ),
             const SizedBox(height: 18),
+            _ActionTile(
+              icon: Icons.timer_outlined,
+              title: '下一项倒计时',
+              subtitle: _nextTaskSubtitle(visibleTasks),
+              accent: const Color(0xff6b6da8),
+              trailing: const Icon(Icons.schedule_rounded),
+            ),
+            _ActionTile(
+              icon: Icons.add_task_rounded,
+              title: '添加今日任务',
+              subtitle: '先创建本地草稿；后端 create/delete 合同确认后接入同步。',
+              accent: const Color(0xff43827b),
+              onTap: _addLocalTask,
+              trailing: const Icon(Icons.add_circle_outline_rounded),
+            ),
+            const SizedBox(height: 8),
             const _SectionTitle('计划'),
             ..._dayPlanChildren(snapshot),
             const SizedBox(height: 8),
@@ -864,7 +929,8 @@ class _SchedulePageState extends State<_SchedulePage> {
     }
 
     final plan = snapshot.data;
-    if (plan == null || plan.isEmpty) {
+    final tasks = plan == null ? const <ScheduleTask>[] : _visibleTasks(plan);
+    if (tasks.isEmpty) {
       return const [
         _ActionTile(
           icon: Icons.event_available_outlined,
@@ -877,7 +943,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     }
 
     return [
-      for (final entry in plan.tasks.asMap().entries)
+      for (final entry in tasks.asMap().entries)
         _ActionTile(
           icon: _taskDone(entry.value, entry.key)
               ? Icons.check_circle_rounded
@@ -886,16 +952,77 @@ class _SchedulePageState extends State<_SchedulePage> {
           subtitle: _taskSubtitle(entry.value),
           accent: _taskAccent(entry.key),
           onTap: () => _toggleTask(entry.value, entry.key, null),
-          trailing: Checkbox(
-            value: _taskDone(entry.value, entry.key),
-            onChanged: (value) => _toggleTask(entry.value, entry.key, value),
+          trailing: Wrap(
+            spacing: 4,
+            children: [
+              IconButton(
+                tooltip: '删除任务',
+                onPressed: () => _deleteTask(entry.value, entry.key),
+                icon: const Icon(Icons.delete_outline_rounded),
+              ),
+              Checkbox(
+                value: _taskDone(entry.value, entry.key),
+                onChanged: (value) =>
+                    _toggleTask(entry.value, entry.key, value),
+              ),
+            ],
           ),
         ),
     ];
   }
 
   bool _taskDone(ScheduleTask task, int index) {
-    return _taskDoneOverrides[_taskKey(task, index)] ?? task.completed;
+    return _taskDoneOverrides[_taskScopedKey(task, index)] ?? task.completed;
+  }
+
+  List<ScheduleTask> _visibleTasks(ScheduleDayPlan plan) {
+    final dayKey = _dayKey(_selectedDay);
+    final tasks = [...plan.tasks, ...?_localTasksByDay[dayKey]];
+    return tasks
+        .asMap()
+        .entries
+        .where(
+          (entry) => !_deletedTaskKeys.contains(
+            _taskScopedKey(entry.value, entry.key),
+          ),
+        )
+        .map((entry) => entry.value)
+        .toList(growable: false);
+  }
+
+  String _nextTaskSubtitle(List<ScheduleTask> tasks) {
+    final runtime = _runtime;
+    final now = runtime?.now().toUtc() ?? DateTime.now().toUtc();
+    final next =
+        tasks
+            .asMap()
+            .entries
+            .where((entry) => !_taskDone(entry.value, entry.key))
+            .map((entry) => entry.value)
+            .where((task) => task.remindAt != null)
+            .toList()
+          ..sort((a, b) => a.remindAt!.compareTo(b.remindAt!));
+    if (next.isEmpty) return '没有待提醒任务。';
+
+    final task = next.first;
+    final minutes = task.remindAt!.toUtc().difference(now).inMinutes;
+    if (minutes <= 0) return '${_textOr(task.title, '下一项')} 已到提醒时间。';
+    const minutesPerHour = 60;
+    const minutesPerDay = 24 * minutesPerHour;
+    final days = minutes ~/ minutesPerDay;
+    final hours = (minutes % minutesPerDay) ~/ minutesPerHour;
+    final remainingMinutes = minutes % minutesPerHour;
+    if (days > 0) {
+      return '${_textOr(task.title, '下一项')} 还有 $days 天 $hours 小时。';
+    }
+    if (hours > 0) {
+      return '${_textOr(task.title, '下一项')} 还有 $hours 小时 $remainingMinutes 分钟。';
+    }
+    return '${_textOr(task.title, '下一项')} 还有 $remainingMinutes 分钟。';
+  }
+
+  String _taskScopedKey(ScheduleTask task, int index) {
+    return '${_dayKey(_selectedDay)}:${_taskKey(task, index)}';
   }
 
   String _taskKey(ScheduleTask task, int index) {
@@ -1014,6 +1141,12 @@ String _timeLabel(DateTime value) {
   final hour = local.hour.toString().padLeft(2, '0');
   final minute = local.minute.toString().padLeft(2, '0');
   return '$hour:$minute';
+}
+
+String _dayKey(DateTime value) {
+  return '${value.year.toString().padLeft(4, '0')}-'
+      '${value.month.toString().padLeft(2, '0')}-'
+      '${value.day.toString().padLeft(2, '0')}';
 }
 
 String _weekdayLabel(DateTime value) {

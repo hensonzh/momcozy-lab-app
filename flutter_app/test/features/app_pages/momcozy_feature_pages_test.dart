@@ -64,7 +64,8 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pump();
       expect(find.text('计划'), findsWidgets);
-      expect(find.text('提醒'), findsOneWidget);
+      await _scrollToText(tester, '泵奶提醒');
+      expect(find.text('泵奶提醒'), findsOneWidget);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/device')));
       await tester.pump();
@@ -379,11 +380,69 @@ void main() {
       await tester.pump();
       expect(_checkboxesWithValue(tester, true), 2);
 
+      await _scrollToText(tester, '泵奶提醒');
       final enabledReminderSwitches = _switchesWithValue(tester, true);
       expect(enabledReminderSwitches, greaterThanOrEqualTo(1));
       await tester.tap(find.byType(Switch).first);
       await tester.pump();
       expect(_switchesWithValue(tester, true), enabledReminderSwitches - 1);
+    });
+
+    testWidgets('schedule page adds deletes local tasks and shows badge', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('3 项计划'), findsOneWidget);
+      expect(find.text('未完成 2'), findsOneWidget);
+      expect(find.text('下一项倒计时'), findsOneWidget);
+
+      await tester.tap(find.text('添加今日任务'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('4 项计划'), findsOneWidget);
+      expect(find.text('未完成 3'), findsOneWidget);
+      await _scrollToText(tester, '本地补充 1');
+      expect(find.text('本地补充 1'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('删除任务').last);
+      await tester.pumpAndSettle();
+
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, 600));
+      await tester.pumpAndSettle();
+
+      expect(find.text('3 项计划'), findsOneWidget);
+      expect(find.text('未完成 2'), findsOneWidget);
+      expect(find.text('本地补充 1'), findsNothing);
+    });
+
+    testWidgets('schedule page renders cross-day countdown', (tester) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/schedule'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            scheduleDayPlanEndpoint: const {
+              'status': 200,
+              'data': {
+                'tasks': <Object?>[
+                  {
+                    'id': 'prenatal-check',
+                    'title': '周五产检',
+                    'completed': false,
+                    'remind_at': '2026-07-03T06:00:00Z',
+                  },
+                ],
+              },
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('1 项计划'), findsOneWidget);
+      expect(find.text('未完成 1'), findsOneWidget);
+      expect(find.textContaining('周五产检 还有 2 天 6 小时'), findsOneWidget);
     });
 
     testWidgets('schedule page renders empty and failed states', (
@@ -1244,6 +1303,16 @@ Future<void> _tapScrollableText(WidgetTester tester, String text) async {
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
   await tester.tap(finder);
+}
+
+Future<void> _scrollToText(WidgetTester tester, String text) async {
+  final finder = find.text(text);
+  for (var attempt = 0; attempt < 12; attempt += 1) {
+    if (finder.evaluate().isNotEmpty) return;
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -240));
+    await tester.pump();
+  }
+  expect(finder, findsOneWidget);
 }
 
 class _FeaturePageHost extends StatelessWidget {
