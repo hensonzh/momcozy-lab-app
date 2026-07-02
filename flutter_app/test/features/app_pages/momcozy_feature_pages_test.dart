@@ -33,6 +33,8 @@ void main() {
           expect(find.text('妈妈'), findsWidgets);
         } else if (route.path == '/pump') {
           expect(find.text('沉浸式吸乳'), findsWidgets);
+        } else if (route.path == '/device') {
+          expect(find.text('设备连接'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }
@@ -1031,7 +1033,8 @@ void main() {
 
       expect(find.text('左侧 S12 Pro L'), findsOneWidget);
       expect(find.text('右侧 S12 Pro R'), findsOneWidget);
-      expect(find.textContaining('已连接 · 87%'), findsOneWidget);
+      expect(find.text('已连接'), findsWidgets);
+      expect(find.text('87%'), findsOneWidget);
       expect(find.textContaining('已恢复 2 台已连接设备'), findsOneWidget);
 
       await tester.tap(find.widgetWithText(FilledButton, '扫描'));
@@ -1098,12 +1101,13 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.text('Nearby Pump L'));
+      await _tapScrollableText(tester, 'Nearby Pump L');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, 'Nearby Pump L 已连接');
       expect(find.text('Nearby Pump L 已连接'), findsOneWidget);
       expect(find.text('左侧 Nearby Pump L'), findsOneWidget);
-      expect(find.textContaining('已连接 · 76%'), findsOneWidget);
+      expect(find.text('76%'), findsOneWidget);
 
       final failingBle = _ConnectFailingBlePlatform(
         initialPermission: BlePermissionState.granted,
@@ -1128,9 +1132,10 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.text('Nearby Pump R'));
+      await _tapScrollableText(tester, 'Nearby Pump R');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '连接 Nearby Pump R 失败，请重试。');
       expect(find.text('连接 Nearby Pump R 失败，请重试。'), findsOneWidget);
     });
 

@@ -2937,101 +2937,55 @@ class _DevicePageState extends State<_DevicePage> {
     final leftDevice = _deviceForSide('L') ?? _deviceForSide('left');
     final rightDevice = _deviceForSide('R') ?? _deviceForSide('right');
 
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      trailing: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: [
-          FilledButton.tonalIcon(
-            onPressed: _toggleScan,
-            icon: Icon(_isScanning ? Icons.stop_rounded : Icons.search_rounded),
-            label: Text(_isScanning ? '停止扫描' : '扫描'),
-          ),
-          OutlinedButton.icon(
-            onPressed: () => context.go('/device/manage'),
-            icon: const Icon(Icons.settings_remote_rounded),
-            label: const Text('管理'),
-          ),
-        ],
-      ),
+    return ListView(
+      key: ValueKey('route-page-${widget.path}'),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
       children: [
-        _ActionTile(
-          icon: _isScanning ? Icons.bluetooth_searching : Icons.bluetooth,
-          title: _isScanning ? '正在扫描附近设备' : 'BLE 权限和扫描',
-          subtitle:
-              _bleError ??
-              (_isScanning
-                  ? '正在查找附近设备；超时或空结果会显示在这里。'
-                  : '权限状态 ${_permissionLabel(_permissionState)}，已恢复 ${_connectedDevices.length} 台已连接设备。'),
-          accent: widget.accent,
-          trailing: _isScanning
-              ? const SizedBox.square(
-                  dimension: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : _permissionAction(),
+        _DeviceHeader(
+          onManage: () => context.go('/device/manage'),
+          onUser: () => context.go('/device/user'),
         ),
-        const _SectionTitle('左右设备'),
-        _DeviceSideTile(
-          side: '左侧',
-          name: leftDevice?.deviceName ?? '等待连接',
-          state: leftDevice?.connected == true ? '已连接' : '未连接',
-          battery: _deviceBatteryLabel(leftDevice),
-          accent: widget.accent,
+        const SizedBox(height: 14),
+        const _DeviceW1Banner(),
+        const SizedBox(height: 14),
+        _DeviceAirOnePanel(
+          leftDevice: leftDevice,
+          rightDevice: rightDevice,
+          onStartPump: _canStartPump(leftDevice, rightDevice)
+              ? () => context.go('/pump')
+              : null,
+          onLeftAction: leftDevice?.connected == true
+              ? () => context.go('/calibration')
+              : _toggleScan,
+          onRightAction: rightDevice?.connected == true
+              ? () => context.go('/calibration')
+              : _toggleScan,
         ),
-        _DeviceSideTile(
-          side: '右侧',
-          name: rightDevice?.deviceName ?? '等待连接',
-          state: rightDevice?.connected == true ? '已连接' : '未连接',
-          battery: _deviceBatteryLabel(rightDevice),
-          accent: const Color(0xff7f6a75),
+        const SizedBox(height: 14),
+        _DeviceScanPanel(
+          isScanning: _isScanning,
+          permissionState: _permissionState,
+          connectedCount: _connectedDevices.length,
+          error: _bleError,
+          accent: widget.accent,
+          action: _permissionAction(),
+          onScan: _toggleScan,
         ),
         if (_scanAttempted) ...[
-          const SizedBox(height: 8),
-          const _SectionTitle('扫描结果'),
-          if (_scanResults.isEmpty)
-            const _ActionTile(
-              icon: Icons.bluetooth_disabled_rounded,
-              title: '暂无扫描结果',
-              subtitle: '请确认设备已开机并靠近手机后重试。',
-              accent: Color(0xff7f6a75),
-              trailing: Icon(Icons.refresh_rounded),
-            )
-          else
-            for (final device in _scanResults.take(3))
-              _ActionTile(
-                icon: Icons.bluetooth_searching,
-                title: device.deviceName,
-                subtitle: _scanResultSubtitle(device),
-                accent: widget.accent,
-                onTap: () => _connectScanResult(device),
-                trailing: const Icon(Icons.link_rounded),
-              ),
-        ],
-        const SizedBox(height: 8),
-        const _SectionTitle('设备入口'),
-        _ActionTile(
-          icon: Icons.tune_rounded,
-          title: '进入舒适校准',
-          subtitle: '复用左右设备状态，保存后进入泵奶参数。',
-          accent: const Color(0xff9b6b2f),
-          onTap: () => context.go('/calibration'),
-          trailing: const Icon(Icons.chevron_right_rounded),
-        ),
-        if (_internalDeviceDebugEnabled)
-          _ActionTile(
-            icon: Icons.bug_report_outlined,
-            title: '内部调试参数',
-            subtitle: '仅用于 QA/dev，正式包需要 feature flag 控制。',
-            accent: const Color(0xff7f6a75),
-            onTap: () => context.go('/device/user'),
-            trailing: const Icon(Icons.chevron_right_rounded),
+          const SizedBox(height: 12),
+          _DeviceScanResultsPanel(
+            scanResults: _scanResults,
+            onConnect: _connectScanResult,
+            accent: widget.accent,
           ),
+        ],
+        const SizedBox(height: 14),
+        _DeviceEntryPanel(
+          onCalibration: () => context.go('/calibration'),
+          onManage: () => context.go('/device/manage'),
+          showDebug: _internalDeviceDebugEnabled,
+          onDebug: () => context.go('/device/user'),
+        ),
       ],
     );
   }
@@ -3095,52 +3049,597 @@ String _permissionDeniedMessage(BlePermissionState state) {
   return 'BLE 权限未授权';
 }
 
-class _DeviceSideTile extends StatelessWidget {
-  const _DeviceSideTile({
-    required this.side,
-    required this.name,
-    required this.state,
-    required this.battery,
-    required this.accent,
+bool _canStartPump(BleDeviceSnapshot? left, BleDeviceSnapshot? right) {
+  return left?.connected == true && right?.connected == true;
+}
+
+class _DeviceHeader extends StatelessWidget {
+  const _DeviceHeader({required this.onManage, required this.onUser});
+
+  final VoidCallback onManage;
+  final VoidCallback onUser;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            '设备连接',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: MomCozyColors.foreground,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        OutlinedButton.icon(
+          onPressed: onManage,
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(0, 38),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+          ),
+          icon: const Icon(Icons.notifications_active_outlined, size: 17),
+          label: const Text('管理'),
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          tooltip: '用户管理',
+          onPressed: onUser,
+          style: IconButton.styleFrom(
+            fixedSize: const Size(38, 38),
+            backgroundColor: MomCozyColors.card,
+            side: BorderSide(
+              color: MomCozyColors.border.withValues(alpha: 0.7),
+            ),
+          ),
+          icon: const Icon(Icons.add_rounded),
+        ),
+      ],
+    );
+  }
+}
+
+class _DeviceW1Banner extends StatelessWidget {
+  const _DeviceW1Banner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(18),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => context.go('/w1'),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xff4b2738), Color(0xff7c3d50)],
+            ),
+            boxShadow: MomCozyShadows.soft,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.auto_awesome_rounded,
+                    color: Color(0xffffdce5),
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Momcozy W1 · 全新上市',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: Color(0x99ffffff),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DeviceAirOnePanel extends StatelessWidget {
+  const _DeviceAirOnePanel({
+    required this.leftDevice,
+    required this.rightDevice,
+    required this.onStartPump,
+    required this.onLeftAction,
+    required this.onRightAction,
   });
 
-  final String side;
-  final String name;
-  final String state;
-  final String battery;
+  final BleDeviceSnapshot? leftDevice;
+  final BleDeviceSnapshot? rightDevice;
+  final VoidCallback? onStartPump;
+  final VoidCallback onLeftAction;
+  final VoidCallback onRightAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card,
+        borderColor: MomCozyColors.primary.withValues(alpha: 0.1),
+        radius: 24,
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Air One',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: MomCozyColors.foreground,
+                              fontWeight: FontWeight.w900,
+                            ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '左右设备',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: MomCozyColors.mutedForeground,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                FilledButton.icon(
+                  onPressed: onStartPump,
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(0, 38),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                  label: const Text('开始吸奶'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _DeviceDeckCard(
+                    sideCode: 'L',
+                    sideLabel: '左侧',
+                    device: leftDevice,
+                    onTap: onLeftAction,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _DeviceDeckCard(
+                    sideCode: 'R',
+                    sideLabel: '右侧',
+                    device: rightDevice,
+                    onTap: onRightAction,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DeviceDeckCard extends StatelessWidget {
+  const _DeviceDeckCard({
+    required this.sideCode,
+    required this.sideLabel,
+    required this.device,
+    required this.onTap,
+  });
+
+  final String sideCode;
+  final String sideLabel;
+  final BleDeviceSnapshot? device;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final paired = device != null;
+    final connected = device?.connected == true;
+    final statusColor = connected
+        ? const Color(0xff3f9d74)
+        : MomCozyColors.mutedForeground;
+    final name = device?.deviceName ?? '等待连接';
+
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          height: 224,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: connected ? MomCozyColors.raised : const Color(0xfff6f3f3),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: connected
+                  ? MomCozyColors.primary.withValues(alpha: 0.12)
+                  : Colors.transparent,
+            ),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      sideCode == 'L' ? 'Left' : 'Right',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: MomCozyColors.foreground.withValues(alpha: 0.72),
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  if (paired)
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: MomCozyColors.background.withValues(alpha: 0.8),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: MomCozyColors.border.withValues(alpha: 0.48),
+                        ),
+                      ),
+                      child: const Icon(Icons.info_outline_rounded, size: 15),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 76,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 78,
+                      height: 78,
+                      decoration: BoxDecoration(
+                        color: connected
+                            ? MomCozyColors.primary.withValues(alpha: 0.06)
+                            : MomCozyColors.background,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: MomCozyColors.border.withValues(alpha: 0.4),
+                        ),
+                      ),
+                    ),
+                    if (paired)
+                      Image.asset(
+                        MomCozyAssets.pumpM9,
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.contain,
+                        opacity: AlwaysStoppedAnimation(connected ? 1 : 0.46),
+                      )
+                    else
+                      Icon(
+                        Icons.photo_camera_outlined,
+                        color: MomCozyColors.foreground.withValues(alpha: 0.38),
+                        size: 26,
+                      ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: MomCozyColors.background,
+                  borderRadius: BorderRadius.circular(17),
+                  border: Border.all(
+                    color: MomCozyColors.border.withValues(alpha: 0.48),
+                  ),
+                ),
+                child: paired
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: statusColor,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  connected ? '已连接' : '未连接',
+                                  style: Theme.of(context).textTheme.labelMedium
+                                      ?.copyWith(
+                                        color: connected
+                                            ? MomCozyColors.foreground
+                                            : MomCozyColors.mutedForeground,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 7),
+                          Text(
+                            '$sideLabel $name',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: MomCozyColors.foreground,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              const Icon(Icons.battery_5_bar_rounded, size: 14),
+                              const SizedBox(width: 3),
+                              Text(
+                                _deviceBatteryLabel(device),
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
+                                      color: MomCozyColors.foreground,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                              ),
+                              const Spacer(),
+                              const Icon(
+                                Icons.signal_cellular_alt_rounded,
+                                size: 13,
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                _deviceSignalLabel(device),
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
+                                      color: MomCozyColors.mutedForeground,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          Text(
+                            '$sideLabel $name',
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: MomCozyColors.mutedForeground,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            width: double.infinity,
+                            height: 36,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: MomCozyColors.raised,
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(
+                                color: MomCozyColors.border.withValues(
+                                  alpha: 0.54,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.bluetooth_rounded, size: 15),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '连接设备',
+                                  style: Theme.of(context).textTheme.labelMedium
+                                      ?.copyWith(
+                                        color: MomCozyColors.foreground,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DeviceScanPanel extends StatelessWidget {
+  const _DeviceScanPanel({
+    required this.isScanning,
+    required this.permissionState,
+    required this.connectedCount,
+    required this.error,
+    required this.accent,
+    required this.action,
+    required this.onScan,
+  });
+
+  final bool isScanning;
+  final BlePermissionState permissionState;
+  final int connectedCount;
+  final String? error;
+  final Color accent;
+  final Widget action;
+  final VoidCallback onScan;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = isScanning ? '正在扫描附近设备' : 'BLE 权限和扫描';
+    final subtitle =
+        error ??
+        (isScanning
+            ? '请确保设备已开机（长按电源键3秒），并靠近手机。'
+            : '权限状态 ${_permissionLabel(permissionState)}，已恢复 $connectedCount 台已连接设备。');
+
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card.withValues(alpha: 0.92),
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(13),
+        child: Row(
+          children: [
+            _DeviceRadarIcon(isScanning: isScanning, accent: accent),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: error == null
+                          ? MomCozyColors.mutedForeground
+                          : const Color(0xffa94747),
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FilledButton.icon(
+                  onPressed: onScan,
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(84, 38),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  icon: Icon(
+                    isScanning
+                        ? Icons.stop_rounded
+                        : Icons.bluetooth_searching_rounded,
+                    size: 17,
+                  ),
+                  label: Text(isScanning ? '停止扫描' : '扫描'),
+                ),
+                if (!isScanning) ...[
+                  const SizedBox(height: 4),
+                  SizedBox(width: 38, height: 32, child: Center(child: action)),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DeviceRadarIcon extends StatelessWidget {
+  const _DeviceRadarIcon({required this.isScanning, required this.accent});
+
+  final bool isScanning;
   final Color accent;
 
   @override
   Widget build(BuildContext context) {
-    return _ActionTile(
-      icon: state == '已连接'
-          ? Icons.bluetooth_connected_rounded
-          : Icons.bluetooth_disabled_rounded,
-      title: '$side $name',
-      subtitle: '$state · $battery',
-      accent: accent,
-      trailing: Wrap(
-        spacing: 6,
-        crossAxisAlignment: WrapCrossAlignment.center,
+    return Container(
+      width: 58,
+      height: 58,
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.08),
+        shape: BoxShape.circle,
+      ),
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          _PumpDeviceThumbnail(connected: state == '已连接', size: 38),
-          IconButton(
-            tooltip: state == '已连接' ? '校准' : '连接',
-            onPressed: () => state == '已连接'
-                ? context.go('/calibration')
-                : context.go('/device/manage'),
-            icon: Icon(
-              state == '已连接' ? Icons.tune_rounded : Icons.link_rounded,
+          if (isScanning)
+            for (final size in const [58.0, 42.0])
+              Container(
+                width: size,
+                height: size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: accent.withValues(alpha: 0.18)),
+                ),
+              ),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: MomCozyColors.card,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: MomCozyColors.border.withValues(alpha: 0.48),
+              ),
+              boxShadow: MomCozyShadows.soft,
             ),
-            constraints: const BoxConstraints.tightFor(width: 34, height: 34),
-            padding: EdgeInsets.zero,
-          ),
-          IconButton(
-            tooltip: '更多',
-            onPressed: () => context.go('/device/manage'),
-            icon: const Icon(Icons.more_horiz_rounded),
-            constraints: const BoxConstraints.tightFor(width: 34, height: 34),
-            padding: EdgeInsets.zero,
+            child: Icon(
+              isScanning
+                  ? Icons.navigation_rounded
+                  : Icons.bluetooth_searching_rounded,
+              color: isScanning ? accent : MomCozyColors.mutedForeground,
+              size: 21,
+            ),
           ),
         ],
       ),
@@ -3148,31 +3647,198 @@ class _DeviceSideTile extends StatelessWidget {
   }
 }
 
-class _PumpDeviceThumbnail extends StatelessWidget {
-  const _PumpDeviceThumbnail({this.connected = true, this.size = 46});
+class _DeviceScanResultsPanel extends StatelessWidget {
+  const _DeviceScanResultsPanel({
+    required this.scanResults,
+    required this.onConnect,
+    required this.accent,
+  });
 
-  final bool connected;
+  final List<BleDeviceSnapshot> scanResults;
+  final ValueChanged<BleDeviceSnapshot> onConnect;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '扫描结果',
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: MomCozyColors.foreground,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (scanResults.isEmpty)
+          _DeviceSearchRow(
+            icon: Icons.bluetooth_disabled_rounded,
+            title: '暂无扫描结果',
+            subtitle: '请确认设备已开机并靠近手机后重试。',
+            accent: MomCozyColors.mutedForeground,
+          )
+        else
+          for (final device in scanResults.take(3))
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: _DeviceSearchRow(
+                icon: Icons.bluetooth_searching_rounded,
+                title: device.deviceName,
+                subtitle: _scanResultSubtitle(device),
+                accent: accent,
+                onTap: () => onConnect(device),
+                trailing: const Text(
+                  '连接',
+                  style: TextStyle(fontWeight: FontWeight.w900),
+                ),
+              ),
+            ),
+      ],
+    );
+  }
+}
+
+class _DeviceSearchRow extends StatelessWidget {
+  const _DeviceSearchRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.accent,
+    this.onTap,
+    this.trailing,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color accent;
+  final VoidCallback? onTap;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card.withValues(alpha: 0.82),
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(MomCozyRadii.card),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(13),
+            child: Row(
+              children: [
+                _IconBubble(icon: icon, accent: accent, size: 40, iconSize: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        subtitle,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: MomCozyColors.mutedForeground,
+                          height: 1.28,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DeviceEntryPanel extends StatelessWidget {
+  const _DeviceEntryPanel({
+    required this.onCalibration,
+    required this.onManage,
+    required this.showDebug,
+    required this.onDebug,
+  });
+
+  final VoidCallback onCalibration;
+  final VoidCallback onManage;
+  final bool showDebug;
+  final VoidCallback onDebug;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _ActionTile(
+          icon: Icons.tune_rounded,
+          title: '进入舒适校准',
+          subtitle: '复用左右设备状态，保存后进入泵奶参数。',
+          accent: const Color(0xff9b6b2f),
+          onTap: onCalibration,
+          trailing: const Icon(Icons.chevron_right_rounded),
+        ),
+        _ActionTile(
+          icon: Icons.notifications_active_outlined,
+          title: '设备提醒',
+          subtitle: '同步设备连接、电量和提醒服务入口。',
+          accent: const Color(0xff7f6a75),
+          onTap: onManage,
+          trailing: const Icon(Icons.chevron_right_rounded),
+        ),
+        if (showDebug)
+          _ActionTile(
+            icon: Icons.bug_report_outlined,
+            title: '内部调试参数',
+            subtitle: '仅用于 QA/dev，正式包需要 feature flag 控制。',
+            accent: const Color(0xff7f6a75),
+            onTap: onDebug,
+            trailing: const Icon(Icons.chevron_right_rounded),
+          ),
+      ],
+    );
+  }
+}
+
+String _deviceSignalLabel(BleDeviceSnapshot? device) {
+  final rssi = device?.rssi;
+  if (rssi == null) return '强';
+  if (rssi >= -55) return '强';
+  if (rssi >= -70) return '中';
+  return '弱';
+}
+
+class _PumpDeviceThumbnail extends StatelessWidget {
+  const _PumpDeviceThumbnail({this.size = 46});
+
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: connected ? 1 : 0.52,
-      child: Container(
-        width: size,
-        height: size,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: connected
-              ? MomCozyColors.raised
-              : MomCozyColors.muted.withValues(alpha: 0.72),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: MomCozyColors.border.withValues(alpha: 0.58),
-          ),
-        ),
-        child: Image.asset(MomCozyAssets.pumpM9, fit: BoxFit.contain),
+    return Container(
+      width: size,
+      height: size,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: MomCozyColors.raised,
+        shape: BoxShape.circle,
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.58)),
       ),
+      child: Image.asset(MomCozyAssets.pumpM9, fit: BoxFit.contain),
     );
   }
 }
