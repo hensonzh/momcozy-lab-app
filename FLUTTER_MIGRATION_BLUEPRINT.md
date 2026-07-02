@@ -592,6 +592,7 @@ AgentHub UI
 [ ] 文本、图片、语音输入可用
 [ ] Tool progress、失败、重试可用
 [ ] 长消息、弱网、断线恢复可用
+[x] 语音 STT/TTS transport contract 已独立于 Agent 文本 stream 落地
 [ ] Agent Hub P0 widget/integration tests 通过
 ```
 
@@ -982,6 +983,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter Agent Hub stop 已接入 best-effort `/api/ag-ui-cancel` client，UI 本地停止不等待网络
 [x] Flutter Agent Hub retry 已复用上一轮 `AgentStreamRequest`，覆盖断线后重试成功 flow
 [x] Flutter Agent Hub work panel 已将 `TOOL_CALL_*` / artifact / confirmation events 映射为用户可读进度，不暴露内部 tool name 或 JSON
+[x] Flutter Agent voice typed repository 已覆盖 `/v1/speech/transcribe-chunk`、`/v1/realtime-voice-stream` 和 `/v1/realtime-voice-session`，并验证语音状态不污染文本 stream state
 ```
 
 ---

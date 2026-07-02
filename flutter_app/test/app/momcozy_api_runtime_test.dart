@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -88,6 +89,7 @@ void main() {
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
+    expect(runtime.agentVoiceRepository, isA<AgentVoiceApiRepository>());
     expect(
       runtime.hospitalBagCartRepository,
       isA<HospitalBagCartApiRepository>(),
@@ -126,6 +128,43 @@ void main() {
     expect(multipart.lastFields, {'user_id': 'user-fixture'});
     expect(uploaded.id, 'file-runtime');
   });
+
+  test(
+    'runtime exposes voice repository over the session multipart transport',
+    () async {
+      final multipart = FixtureApiMultipartTransport({
+        'status': 200,
+        'data': {'transcript': 'runtime voice text'},
+      });
+      final runtime = MomCozyApiRuntime.fromSession(
+        const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'voice-user',
+          babyId: 'voice-baby',
+          locale: 'zh-CN',
+          accessToken: 'voice-access',
+        ),
+        multipartTransport: multipart,
+      );
+
+      final voiceText = await runtime.agentVoiceRepository
+          .transcribeSpeechChunk(
+            userId: runtime.userId,
+            file: const ApiUploadFile(
+              name: 'voice.wav',
+              mimeType: 'audio/wav',
+              sizeBytes: 4,
+            ),
+          );
+      final repository = runtime.agentVoiceRepository;
+
+      expect(repository.token, 'voice-access');
+      expect(repository.multipartTransport, same(multipart));
+      expect(voiceText, 'runtime voice text');
+      expect(multipart.lastPath, speechTranscribeChunkEndpoint);
+      expect(multipart.lastFields, {'user_id': 'voice-user'});
+    },
+  );
 
   test('runtime exposes an injected BLE platform lazily', () async {
     final ble = FakeBlePlatform(
