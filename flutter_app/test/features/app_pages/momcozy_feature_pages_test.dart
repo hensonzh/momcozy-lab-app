@@ -841,6 +841,56 @@ void main() {
       expect(find.text('停止扫描'), findsOneWidget);
     });
 
+    testWidgets(
+      'device page disconnects local devices when runtime user changes',
+      (tester) async {
+        final ble = FakeBlePlatform(
+          initialPermission: BlePermissionState.granted,
+          seedDevices: const [
+            BleDeviceSnapshot(
+              side: 'L',
+              deviceId: 'user-a-left',
+              deviceName: 'User A L',
+              connected: true,
+              battery: 86,
+            ),
+            BleDeviceSnapshot(
+              side: 'R',
+              deviceId: 'user-a-right',
+              deviceName: 'User A R',
+              connected: true,
+              battery: 82,
+            ),
+          ],
+        );
+        addTearDown(ble.dispose);
+        final hostKey = GlobalKey<_RuntimeSwapFeaturePageHostState>();
+
+        await tester.pumpWidget(
+          _RuntimeSwapFeaturePageHost(
+            key: hostKey,
+            route: _route('/device'),
+            jsonTransport: FixtureApiJsonTransportByPath(const {}),
+            blePlatform: ble,
+            initialUserId: 'user-a',
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('左侧 User A L'), findsOneWidget);
+        expect(find.text('右侧 User A R'), findsOneWidget);
+        expect(await ble.getConnectedDevices(), hasLength(2));
+
+        hostKey.currentState!.switchUser('user-b');
+        await tester.pumpAndSettle();
+
+        expect(await ble.getConnectedDevices(), isEmpty);
+        expect(find.text('左侧 等待连接'), findsOneWidget);
+        expect(find.text('右侧 等待连接'), findsOneWidget);
+        expect(find.text('检测到用户切换，已隔离上一用户设备连接。'), findsOneWidget);
+      },
+    );
+
     testWidgets('device page handles empty and denied permission states', (
       tester,
     ) async {
@@ -1641,11 +1691,13 @@ class _RuntimeSwapFeaturePageHost extends StatefulWidget {
     required this.route,
     required this.jsonTransport,
     required this.initialUserId,
+    this.blePlatform,
   });
 
   final MomCozyRouteConfig route;
   final FixtureApiJsonTransportByPath jsonTransport;
   final String initialUserId;
+  final BlePlatform? blePlatform;
 
   @override
   State<_RuntimeSwapFeaturePageHost> createState() =>
@@ -1667,6 +1719,7 @@ class _RuntimeSwapFeaturePageHostState
     return MomCozyRuntimeScope(
       apiRuntime: _appRuntime(
         jsonTransport: widget.jsonTransport,
+        blePlatform: widget.blePlatform,
         userId: _userId,
       ),
       child: MaterialApp(

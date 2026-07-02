@@ -1317,13 +1317,19 @@ class _DevicePageState extends State<_DevicePage> {
   List<BleDeviceSnapshot> _scanResults = const [];
   String? _bleError;
   bool _scanAttempted = false;
+  String? _runtimeUserId;
   StreamSubscription<BleDeviceSnapshot>? _scanSub;
   StreamSubscription<BleScanFailure>? _scanFailureSub;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final ble = MomCozyRuntimeScope.of(context).blePlatform;
+    final runtime = MomCozyRuntimeScope.of(context);
+    final ble = runtime.blePlatform;
+    final previousUserId = _runtimeUserId;
+    final userChanged =
+        previousUserId != null && previousUserId != runtime.userId;
+    _runtimeUserId = runtime.userId;
     if (!identical(ble, _blePlatform)) {
       unawaited(_scanSub?.cancel());
       unawaited(_scanFailureSub?.cancel());
@@ -1332,6 +1338,7 @@ class _DevicePageState extends State<_DevicePage> {
       _scanFailureSub = ble.scanFailures.listen(_handleScanFailure);
       unawaited(_refreshBleState());
     }
+    if (userChanged) unawaited(_clearDevicesForUserSwitch());
   }
 
   @override
@@ -1359,6 +1366,30 @@ class _DevicePageState extends State<_DevicePage> {
         _bleError = 'BLE 状态读取失败';
       });
     }
+  }
+
+  Future<void> _clearDevicesForUserSwitch() async {
+    final ble = _blePlatform;
+    if (ble == null) return;
+    final devices = _connectedDevices.isEmpty
+        ? await ble.getConnectedDevices()
+        : _connectedDevices;
+    try {
+      if (_isScanning) await ble.stopScan();
+      for (final device in devices.where((device) => device.connected)) {
+        await ble.disconnect(device.deviceId);
+      }
+    } catch (_) {
+      // Best-effort local isolation; native cleanup is verified in device lab.
+    }
+    if (!mounted) return;
+    setState(() {
+      _isScanning = false;
+      _connectedDevices = const [];
+      _scanResults = const [];
+      _scanAttempted = false;
+      _bleError = '检测到用户切换，已隔离上一用户设备连接。';
+    });
   }
 
   Future<void> _toggleScan() async {
