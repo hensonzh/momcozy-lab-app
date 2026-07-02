@@ -130,5 +130,61 @@ void main() {
         expect(stored?.accessToken, 'next-access');
       },
     );
+
+    test(
+      'switchAccount clears scoped cache before persisting next account',
+      (() async {
+        final store = _TracingSessionStore(
+          const MomCozySession(
+            status: MomCozySessionStatus.authenticated,
+            userId: 'old-user',
+            babyId: 'old-baby',
+            locale: 'zh-CN',
+            accessToken: 'old-access',
+            refreshToken: 'old-refresh',
+          ),
+        );
+        const next = MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'next-user',
+          babyId: 'next-baby',
+          locale: 'en-US',
+          accessToken: 'next-access',
+          refreshToken: 'next-refresh',
+        );
+        final manager = MomCozySessionManager(
+          store: store,
+          environmentSession: next,
+        );
+
+        await manager.switchAccount(next);
+
+        expect(store.operations, ['clear', 'write:next-user']);
+        expect(store.session?.userId, 'next-user');
+        expect(store.session?.accessToken, 'next-access');
+      }),
+    );
   });
+}
+
+class _TracingSessionStore implements MomCozySessionStore {
+  _TracingSessionStore(this.session);
+
+  MomCozySession? session;
+  final operations = <String>[];
+
+  @override
+  Future<void> clearSession() async {
+    operations.add('clear');
+    session = null;
+  }
+
+  @override
+  Future<MomCozySession?> readSession() async => session;
+
+  @override
+  Future<void> writeSession(MomCozySession session) async {
+    operations.add('write:${session.userId}');
+    this.session = session;
+  }
 }
