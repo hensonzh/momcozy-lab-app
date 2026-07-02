@@ -316,10 +316,10 @@ Golden 视觉状态：
 [x] 保存校准
 [x] 退出未保存
 [ ] 中断恢复
-[ ] legacy calibration 数据合法
-[ ] legacy calibration 数据缺字段
-[ ] legacy calibration 数据非法
-[ ] legacy calibration 包含 0xFF
+[x] legacy calibration 数据合法
+[x] legacy calibration 数据缺字段
+[x] legacy calibration 数据非法
+[x] legacy calibration 包含 0xFF
 [x] 校准后进入 Pump 参数正确
 ```
 
@@ -566,7 +566,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/pump` widget tests 已覆盖 session 控制触发 `/v1/pump/workstate` runtime repository 同步和后端回复展示
 [x] Flutter `/device` widget tests 已覆盖 BLE runtime fake、已连接设备恢复、未请求/拒绝/永久拒绝权限、系统设置返回重授权、扫描状态切换和 internal/dev debug gate
 [x] Flutter `/device/manage` 与 `/device/user` widget tests 已覆盖 BLE runtime 已连接设备读取/解绑和 runtime user context 展示
-[x] Flutter `/calibration` widget tests 已覆盖保存左右舒适档位时通过 `PumpProtocolPlatform` 下发命令并进入 Pump
+[x] Flutter `/calibration` widget tests 已覆盖保存左右舒适档位时通过 `PumpProtocolPlatform` 下发命令并进入 Pump；storage migration tests 已显式覆盖合法、缺字段、非法和 0xFF legacy calibration
 [x] Flutter `/media-viewer` widget tests 已覆盖示例媒体上传的 multipart path、fields、file metadata 和成功状态渲染
 [x] Flutter `/ibclc-chat.html` widget tests 已覆盖进入咨询时上报 `ibclc_consult_started` client event，并保持 best-effort UI
 [x] Flutter `/hospital-bag-cart` widget tests 已覆盖清单勾选后通过 runtime repository 同步购物车状态
@@ -578,7 +578,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/status` widget tests 已覆盖孕期/哺乳期切换、妈妈/宝宝 tab、成长记录本地草稿、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 [x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 未请求/拒绝/永久拒绝、系统设置返回重授权、internal/dev debug gate、扫描空态、单/多扫描结果、连接失败、battery/RSSI 展示和扫描失败状态
 [x] Flutter `/pump` widget tests 已覆盖 session 启动/暂停/恢复/结束、左右侧进度、双侧 workstate payload、结束上传一次性 guard、重复结束拦截、多用户切换清理和 workstate 上传失败状态
-[x] Flutter `/calibration` widget tests 已覆盖无设备失败提示、左/右/双侧设备状态、档位调整、未保存退出提示、保存校准和保存后进入 Pump
+[x] Flutter `/calibration` widget tests 已覆盖无设备失败提示、左/右/双侧设备状态、档位调整、未保存退出提示、保存校准和保存后进入 Pump；storage migration tests 已显式覆盖合法、缺字段、非法和 0xFF legacy calibration
 [x] Flutter `/media-viewer` widget tests 已覆盖 PDF/Image/Video 预览入口、示例上传成功和上传失败 fallback
 [x] Flutter `/ibclc-chat.html` widget tests 已覆盖协议勾选、未勾选阻止继续、事件写回成功和网络失败本地入队
 [x] Flutter `/hospital-bag-cart` widget tests 已覆盖清单加载、cart update、恢复默认和 API 失败 fallback

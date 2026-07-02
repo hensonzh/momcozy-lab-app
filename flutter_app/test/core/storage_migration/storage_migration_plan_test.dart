@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_plan.dart';
 
@@ -42,6 +44,64 @@ void main() {
       expect(plan.migrationVersion, expected['migrationVersion']);
     });
 
+    test('classify legacy calibration payload variants explicitly', () {
+      final valid = buildStorageMigrationPlan(
+        _fixtureWithCalibration({
+          'L': {'stimCozy': 4, 'deepCozy': 7},
+          'R': {'stimCozy': 5, 'deepCozy': 8},
+          'maxSafe': 15,
+        }),
+      );
+
+      expect(valid.calibration, {
+        'L': {'stimCozy': 4, 'deepCozy': 7},
+        'R': {'stimCozy': 5, 'deepCozy': 8},
+        'maxSafe': 15,
+        'source': 'legacy-localStorage',
+      });
+
+      final cases = <String, Map<String, Object?>>{
+        'missing side field': {
+          'L': {'stimCozy': 4},
+          'R': {'stimCozy': 5, 'deepCozy': 8},
+          'maxSafe': 15,
+        },
+        'invalid zero gear': {
+          'L': {'stimCozy': 0, 'deepCozy': 7},
+          'R': {'stimCozy': 5, 'deepCozy': 8},
+          'maxSafe': 15,
+        },
+        '0xFF gear': {
+          'L': {'stimCozy': 0xff, 'deepCozy': 7},
+          'R': {'stimCozy': 5, 'deepCozy': 8},
+          'maxSafe': 15,
+        },
+      };
+
+      for (final entry in cases.entries) {
+        final plan = buildStorageMigrationPlan(
+          _fixtureWithCalibration(entry.value),
+        );
+
+        expect(plan.calibration, isNull, reason: entry.key);
+        expect(
+          plan.diagnostics,
+          contains(
+            allOf(
+              containsPair('code', 'invalid_calibration_payload'),
+              containsPair('severity', 'warn'),
+            ),
+          ),
+          reason: entry.key,
+        );
+        expect(
+          plan.deleteLegacyKeys['localStorage'],
+          contains('calibration'),
+          reason: entry.key,
+        );
+      }
+    });
+
     test('convert pending route keys into one-shot queues', () {
       final fixture = readFixtureMap(
         'storage_migration/p0_one_shot_route_intents.json',
@@ -83,4 +143,16 @@ void main() {
       expect(plan.migrationVersion, expected['migrationVersion']);
     });
   });
+}
+
+Map<String, Object?> _fixtureWithCalibration(Map<String, Object?> calibration) {
+  return {
+    'legacy': {
+      'localStorage': {'calibration': jsonEncode(calibration)},
+      'sessionStorage': <String, String>{},
+      'capacitorPreferences': <String, String>{},
+      'androidSharedPreferences': <String, String>{},
+    },
+    'context': <String, Object?>{},
+  };
 }
