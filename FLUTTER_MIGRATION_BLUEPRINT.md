@@ -124,11 +124,11 @@ React/Vite SPA
 | Schedule | `Schedule.tsx` | 是 | 是 | 否 | 依赖 plan/task API 合同。 |
 | Status | `Status.tsx` | 是 | 是 | 否 | 依赖 mom/baby profile 合同。 |
 | Media viewer | `MediaViewer.tsx` + media components | 是 | 是 | 否 | PDF/image/video parity。 |
-| IBCLC chat | `IbclcChat.tsx` | 待定 | 待定 | 待定 | 澄清 vendor/H5/native 方向。 |
-| Community | `Community.tsx` | 待定 | 待定 | 待定 | 产品决策。 |
-| W1 promo | `W1Promo.tsx` | 待定 | 待定 | 待定 | 产品决策。 |
-| Hospital bag cart | `HospitalBagCart.tsx` | 待定 | 待定 | 待定 | 产品决策。 |
-| Debug user/device pages | `UserParameterConfig`, debug drawers | 保留 | Flutter dev-only gate | 否 | 仅 internal/dev 构建显示，正式包默认隐藏入口。 |
+| IBCLC chat | `IbclcChat.tsx` | 是 | 是 | 否 | 首版 Flutter 不内嵌 WebView，保留 vendor/H5 外部 handoff，Flutter 负责同意、事件写回和返回恢复。 |
+| Community | `Community.tsx` | 是 | 是 | 否 | 保留轻量入口和事件写回，深度 feed 后续单独排期。 |
+| W1 promo | `W1Promo.tsx` | 是 | 是 | 否 | 保留活动入口和教程媒体跳转，内容运营归产品。 |
+| Hospital bag cart | `HospitalBagCart.tsx` | 是 | 是 | 否 | 保留购物车清单、同步、删除和恢复默认能力。 |
+| Debug user/device pages | `UserParameterConfig`, debug drawers | 是 | Flutter dev-only gate | 否 | 仅 internal/dev 构建显示，正式包默认隐藏入口。 |
 
 输出产物：
 
@@ -630,12 +630,30 @@ AgentHub UI
 - W1 promo。
 - Debug/admin tools。
 
+Phase 6 功能边界：
+
+| 功能 | 决策 | 产品 owner | 技术 owner | Flutter 边界 | 非真机 parity gate |
+|---|---|---|---|---|---|
+| Media viewer | 保留并重建 | Product content | Mobile | Flutter 原生 PDF/image/video 预览、缓存清理和返回 | widget tests + golden tests |
+| IBCLC vendor/H5 | 保留外部 handoff，不在首版内嵌 WebView | IBCLC product/vendor owner | Mobile + backend contract | Flutter 原生同意页、`/api/client-event`、vendor handoff、`/status` 返回恢复 | client-event contract + route/widget tests |
+| Hospital bag cart | 保留并重建 | Product commerce/content | Mobile + backend contract | Flutter 原生清单、cart update、删除和恢复默认 | repository + widget tests |
+| Community | 保留轻量入口 | Product community/content | Mobile + backend contract | Flutter 原生入口和打开事件写回；深度 feed 另排期 | client-event + widget tests |
+| W1 promo | 保留活动入口 | Product campaign/content | Mobile + media contract | Flutter 原生入口、教程媒体跳转和事件写回 | client-event + widget tests |
+| Debug/admin tools | 仅 internal/dev 保留 | QA/mobile dev | Mobile | Flutter dev-only gate，不进入 production 用户路径 | widget tests 验证 production 隐藏 |
+
+H5/WebView 依赖 owner：
+
+| 依赖 | 首版决策 | 产品 owner | 技术 owner | 退出条件 |
+|---|---|---|---|---|
+| IBCLC vendor/H5 | 外部 handoff；不作为核心 Flutter shell 内嵌 WebView | IBCLC product/vendor owner | Mobile + backend contract | 同意页、事件写回、本地失败入队、返回 `/status` 已有测试覆盖 |
+| Legacy Capacitor WebView shell | 仅作为 rollback 包来源保留，不进入 Flutter runtime | Release owner + product owner | Mobile | Flutter 非真机 release gate 通过；真机替换仍由 Phase 7 管控 |
+
 退出条件：
 
 ```text
-[ ] 每个功能有明确 retain/rebuild/drop 决策
-[ ] 保留的功能完成 parity tests
-[ ] H5/WebView 依赖有产品和技术 owner
+[x] 每个功能有明确 retain/rebuild/drop 决策
+[x] 保留的功能完成非真机 parity tests；真机/真泵仍由 Phase 7 gate 管控
+[x] H5/WebView 依赖有产品和技术 owner
 ```
 
 ### Phase 7: Release Hardening
@@ -1008,7 +1026,7 @@ doc/flutter-app-test-plan.md
 ```text
 [x] Web/Capacitor 当前行为已冻结
 [x] 已知测试和 lint 问题已修复或登记
-[ ] 保留、重建、删除的功能边界明确
+[x] 保留、重建、删除的功能边界明确
 [x] API 合同可测试
 [x] Storage migration 可测试
 [x] BLE protocol 有 fixture/golden tests
