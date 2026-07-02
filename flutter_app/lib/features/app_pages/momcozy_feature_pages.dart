@@ -8499,14 +8499,14 @@ class _W1PageState extends State<_W1Page> {
       children: [
         _W1PromoHero(onBack: () => context.go('/device')),
         Transform.translate(
-          offset: const Offset(0, -20),
+          offset: Offset.zero,
           child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.only(left: 16),
             child: _W1ProductSummary(),
           ),
         ),
         Transform.translate(
-          offset: const Offset(0, -8),
+          offset: const Offset(0, 24),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
             child: Column(
@@ -8576,109 +8576,121 @@ class _W1PromoHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 336,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xff4a2635), Color(0xff743448), Color(0xff4d2938)],
-          ),
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              top: 10,
-              left: 16,
-              child: _CircleIconButton(
-                icon: Icons.arrow_back_rounded,
-                onPressed: onBack,
-                foreground: MomCozyColors.background.withValues(alpha: 0.84),
-                background: MomCozyColors.background.withValues(alpha: 0.1),
-              ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: SizedBox(
+        height: 352,
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xff4a2635), Color(0xff743448), Color(0xff4d2938)],
             ),
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 54, 24, 28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Momcozy · New',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: MomCozyColors.background.withValues(alpha: 0.58),
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 7),
-                    Text(
-                      'W1',
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        color: MomCozyColors.background,
-                        fontWeight: FontWeight.w900,
-                        height: 1.05,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Wellness & Well-being',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: MomCozyColors.background.withValues(alpha: 0.76),
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '为妈妈的身心健康而生',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: MomCozyColors.background.withValues(alpha: 0.58),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      width: 144,
-                      height: 144,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: MomCozyColors.background.withValues(
-                            alpha: 0.12,
-                          ),
-                          width: 2,
-                        ),
-                        color: MomCozyColors.background.withValues(alpha: 0.06),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.auto_awesome_rounded,
-                            size: 42,
-                            color: MomCozyColors.background.withValues(
-                              alpha: 0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'W1',
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: MomCozyColors.background.withValues(
-                                    alpha: 0.5,
-                                  ),
-                                  fontWeight: FontWeight.w900,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: 10,
+                left: 16,
+                child: _CircleIconButton(
+                  icon: Icons.arrow_back_rounded,
+                  onPressed: onBack,
+                  foreground: MomCozyColors.background.withValues(alpha: 0.84),
+                  background: MomCozyColors.background.withValues(alpha: 0.1),
                 ),
               ),
-            ),
-          ],
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 62, 24, 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Momcozy · New',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: MomCozyColors.background.withValues(
+                            alpha: 0.58,
+                          ),
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 7),
+                      Text(
+                        'W1',
+                        style: Theme.of(context).textTheme.displaySmall
+                            ?.copyWith(
+                              color: MomCozyColors.background,
+                              fontWeight: FontWeight.w900,
+                              height: 1.05,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Wellness & Well-being',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: MomCozyColors.background.withValues(
+                            alpha: 0.76,
+                          ),
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '为妈妈的身心健康而生',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: MomCozyColors.background.withValues(
+                            alpha: 0.58,
+                          ),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        width: 144,
+                        height: 144,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: MomCozyColors.background.withValues(
+                              alpha: 0.12,
+                            ),
+                            width: 2,
+                          ),
+                          color: MomCozyColors.background.withValues(
+                            alpha: 0.06,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 42,
+                              color: MomCozyColors.background.withValues(
+                                alpha: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'W1',
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: MomCozyColors.background.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -8779,20 +8791,27 @@ class _W1ProductSummary extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            const Row(
-              children: [
-                Expanded(
-                  child: _W1SpecTile(label: '重量', value: '180g'),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _W1SpecTile(label: '噪音', value: '≤35dB'),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _W1SpecTile(label: '续航', value: '4h+'),
-                ),
-              ],
+            const SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: NeverScrollableScrollPhysics(),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 140,
+                    child: _W1SpecTile(label: '重量', value: '180g'),
+                  ),
+                  SizedBox(width: 8),
+                  SizedBox(
+                    width: 128,
+                    child: _W1SpecTile(label: '噪音', value: '≤35dB'),
+                  ),
+                  SizedBox(width: 8),
+                  SizedBox(
+                    width: 140,
+                    child: _W1SpecTile(label: '续航', value: '4h+'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
