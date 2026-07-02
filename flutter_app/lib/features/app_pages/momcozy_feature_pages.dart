@@ -592,6 +592,133 @@ class _LegacySegmentedTabButton extends StatelessWidget {
   }
 }
 
+class _GearStepper extends StatelessWidget {
+  const _GearStepper({
+    required this.label,
+    required this.value,
+    required this.accent,
+    required this.onChanged,
+  });
+
+  final String label;
+  final double value;
+  final Color accent;
+  final ValueChanged<double> onChanged;
+
+  static const _min = 1;
+  static const _max = 9;
+
+  @override
+  Widget build(BuildContext context) {
+    final current = value.round().clamp(_min, _max);
+
+    return SizedBox(
+      width: 136,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _GearStepButton(
+                tooltip: '降低$label档位',
+                icon: Icons.remove_rounded,
+                enabled: current > _min,
+                onTap: () => onChanged((current - 1).toDouble()),
+              ),
+              const SizedBox(width: 7),
+              Container(
+                width: 42,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(13),
+                  border: Border.all(color: accent.withValues(alpha: 0.16)),
+                ),
+                child: Text(
+                  '$current',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 7),
+              _GearStepButton(
+                tooltip: '提高$label档位',
+                icon: Icons.add_rounded,
+                enabled: current < _max,
+                onTap: () => onChanged((current + 1).toDouble()),
+              ),
+            ],
+          ),
+          const SizedBox(height: 7),
+          Row(
+            children: [
+              for (var index = _min; index <= _max; index += 1)
+                Expanded(
+                  child: Container(
+                    height: 4,
+                    margin: const EdgeInsets.symmetric(horizontal: 1.4),
+                    decoration: BoxDecoration(
+                      color: index <= current
+                          ? accent.withValues(alpha: 0.76)
+                          : MomCozyColors.border.withValues(alpha: 0.72),
+                      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GearStepButton extends StatelessWidget {
+  const _GearStepButton({
+    required this.tooltip,
+    required this.icon,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final String tooltip;
+  final IconData icon;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: enabled
+            ? MomCozyColors.muted.withValues(alpha: 0.78)
+            : MomCozyColors.muted.withValues(alpha: 0.34),
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: enabled ? onTap : null,
+          child: SizedBox(
+            width: 30,
+            height: 30,
+            child: Icon(
+              icon,
+              size: 16,
+              color: enabled
+                  ? MomCozyColors.foreground
+                  : MomCozyColors.mutedForeground.withValues(alpha: 0.45),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _IconBubble extends StatelessWidget {
   const _IconBubble({
     required this.icon,
@@ -2411,16 +2538,11 @@ class _PumpSideTile extends StatelessWidget {
       title: '$label · $mode',
       subtitle: '档位 ${level.round()}，调整后会同步到当前连接设备。',
       accent: accent,
-      trailing: SizedBox(
-        width: 136,
-        child: Slider(
-          value: level,
-          min: 1,
-          max: 9,
-          divisions: 8,
-          label: level.round().toString(),
-          onChanged: onChanged,
-        ),
+      trailing: _GearStepper(
+        label: label,
+        value: level,
+        accent: accent,
+        onChanged: onChanged,
       ),
     );
   }
@@ -2723,16 +2845,11 @@ class _CalibrationSideTile extends StatelessWidget {
       title: '$label 舒适档位 ${value.round()}',
       subtitle: '低档位用于找舒适点，高档位需二次确认。',
       accent: accent,
-      trailing: SizedBox(
-        width: 136,
-        child: Slider(
-          value: value,
-          min: 1,
-          max: 9,
-          divisions: 8,
-          label: value.round().toString(),
-          onChanged: onChanged,
-        ),
+      trailing: _GearStepper(
+        label: label,
+        value: value,
+        accent: accent,
+        onChanged: onChanged,
       ),
     );
   }
