@@ -241,6 +241,8 @@ class MomCozyRoutePage extends StatelessWidget {
         cancelClient: createSessionAgentHubCancelClient(runtime.session),
         requestBuilder: (message) =>
             buildSessionAgentHubRequest(message, session: runtime.session),
+        onArtifactAction: (action) =>
+            _handleAgentArtifactAction(context, action),
       );
     }
 
@@ -413,3 +415,16 @@ int _selectedTabIndex(String location) {
   if (location.startsWith('/device') || location == '/w1') return 4;
   return 2;
 }
+
+void _handleAgentArtifactAction(
+  BuildContext context,
+  AgentArtifactActionView action,
+) {
+  final path = action.routePath;
+  if (path == null || !_knownFlutterRoutePaths.contains(path)) return;
+  context.go(path);
+}
+
+final _knownFlutterRoutePaths = momCozyRoutes
+    .map((route) => route.path)
+    .toSet();

@@ -343,6 +343,7 @@ void main() {
   testWidgets('Agent Hub renders rich text card rows and button actions', (
     tester,
   ) async {
+    final actions = <AgentArtifactActionView>[];
     final artifactEvent = AgentStreamEvent({
       'type': 'ARTIFACT_CREATED',
       'thread_id': 'thread-resource',
@@ -376,6 +377,7 @@ void main() {
             textContent: '这些资源可以参考。',
             events: [artifactEvent],
           ),
+          onArtifactAction: actions.add,
         ),
       ),
     );
@@ -396,6 +398,19 @@ void main() {
       find.byKey(const ValueKey('agent-artifact-action-resource-card-0')),
     );
     await tester.pump();
+
+    expect(actions.single.kind, 'doc');
+    expect(actions.single.value, '/docs/a.pdf');
+    expect(actions.single.routePath, '/media-viewer');
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-artifact-action-resource-card-1')),
+    );
+    await tester.pump();
+
+    expect(actions.last.kind, 'media');
+    expect(actions.last.value, '/media/a.png');
+    expect(actions.last.routePath, '/media-viewer');
   });
 
   testWidgets('Agent Hub renders disconnected partial response state', (
