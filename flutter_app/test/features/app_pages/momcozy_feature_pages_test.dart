@@ -857,13 +857,52 @@ void main() {
 
       expect(find.text('左侧 等待连接'), findsOneWidget);
       expect(find.text('右侧 等待连接'), findsOneWidget);
-      expect(find.textContaining('权限状态 未知'), findsOneWidget);
+      expect(find.textContaining('权限状态 未请求'), findsOneWidget);
+      expect(find.text('内部调试参数'), findsNothing);
 
       await tester.tap(find.widgetWithText(FilledButton, '扫描'));
       await tester.pumpAndSettle();
 
       expect(find.text('BLE 权限未授权'), findsOneWidget);
+      expect(find.byTooltip('打开蓝牙设置'), findsOneWidget);
       expect(find.textContaining('已恢复 0 台已连接设备'), findsNothing);
+    });
+
+    testWidgets('device page recovers from permanently denied permission', (
+      tester,
+    ) async {
+      final ble = FakeBlePlatform(
+        initialPermission: BlePermissionState.permanentlyDenied,
+        requestPermissionResult: BlePermissionState.permanentlyDenied,
+      );
+      addTearDown(ble.dispose);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/device'), blePlatform: ble),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('权限状态 永久拒绝'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('BLE 权限已永久拒绝，请从系统设置重新开启。'), findsOneWidget);
+
+      ble.setPermissionState(
+        BlePermissionState.granted,
+        nextRequestPermissionResult: BlePermissionState.granted,
+      );
+      await tester.tap(find.byTooltip('打开系统设置'));
+      await tester.pumpAndSettle();
+
+      expect(ble.openedAppSettings, isTrue);
+      expect(find.textContaining('权限状态 已授权'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
+      await tester.pump();
+
+      expect(find.text('正在扫描附近设备'), findsOneWidget);
     });
 
     testWidgets('device page renders dual devices and scan outcomes', (

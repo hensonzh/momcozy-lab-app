@@ -128,7 +128,7 @@ React/Vite SPA
 | Community | `Community.tsx` | 待定 | 待定 | 待定 | 产品决策。 |
 | W1 promo | `W1Promo.tsx` | 待定 | 待定 | 待定 | 产品决策。 |
 | Hospital bag cart | `HospitalBagCart.tsx` | 待定 | 待定 | 待定 | 产品决策。 |
-| Debug user/device pages | `UserParameterConfig`, debug drawers | 待定 | 待定 | 待定 | 仅在 QA/dev 有价值时保留。 |
+| Debug user/device pages | `UserParameterConfig`, debug drawers | 保留 | Flutter dev-only gate | 否 | 仅 internal/dev 构建显示，正式包默认隐藏入口。 |
 
 输出产物：
 
@@ -963,7 +963,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter `/schedule` 页面已接入 App runtime repository，覆盖 day plan fixture、日期选择、任务添加/删除、checkbox 草稿状态、未完成 badge、跨天倒计时和同步状态展示
 [x] Flutter `/records` 页面已接入 App runtime repository，覆盖 pump_milk、feeding、growth 三类列表、筛选、手动补录、编辑/删除、本地跨天标记和弱网重试文案 widget test
 [x] Flutter `/pump` 页面 session 控制已接入 App runtime `/v1/pump/workstate` repository，覆盖左右侧档位 payload、左右侧进度、结束上传一次性 guard、重复结束拦截、多用户切换清理和同步状态 widget test
-[x] Flutter `/device` 页面已接入 App runtime BLE platform，覆盖权限/已连接设备恢复、扫描空态、单/多扫描结果、battery/RSSI、连接失败和扫描失败状态 widget test
+[x] Flutter `/device` 页面已接入 App runtime BLE platform，覆盖未请求/拒绝/永久拒绝权限、系统设置返回重授权、internal/dev debug gate、已连接设备恢复、扫描空态、单/多扫描结果、battery/RSSI、连接失败和扫描失败状态 widget test
 [x] Flutter `/device/manage` 和 `/device/user` 子页已接入 App runtime BLE/user context，覆盖已连接设备读取、解绑和 runtime 用户信息 widget test
 [x] Flutter `/calibration` 页面保存动作已接入 App runtime `PumpProtocolPlatform`，覆盖左/右/双侧设备状态、档位调整、未保存退出提示、左右舒适档位下发和成功后进入 Pump widget test
 [x] Flutter `/media-viewer` 页面上传动作已接入 App runtime `MediaApiRepository`，覆盖 multipart path/fields/file metadata widget test

@@ -13,6 +13,10 @@ import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart'
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
+const _internalDeviceDebugEnabled = bool.fromEnvironment(
+  'MOMCOZY_INTERNAL_BUILD',
+);
+
 class MomCozyFeaturePage extends StatelessWidget {
   const MomCozyFeaturePage({
     super.key,
@@ -1375,7 +1379,7 @@ class _DevicePageState extends State<_DevicePage> {
         if (!mounted) return;
         setState(() {
           _permissionState = permission;
-          _bleError = 'BLE 权限未授权';
+          _bleError = _permissionDeniedMessage(permission);
         });
         return;
       }
@@ -1439,6 +1443,17 @@ class _DevicePageState extends State<_DevicePage> {
     }
   }
 
+  Future<void> _openPermissionSettings() async {
+    final ble = _blePlatform;
+    if (ble == null) return;
+    if (_permissionState == BlePermissionState.permanentlyDenied) {
+      await ble.openAppSettings();
+    } else {
+      await ble.openBluetoothSettings();
+    }
+    await _refreshBleState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final leftDevice = _deviceForSide('L') ?? _deviceForSide('left');
@@ -1482,7 +1497,7 @@ class _DevicePageState extends State<_DevicePage> {
                   dimension: 22,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Icon(Icons.chevron_right_rounded),
+              : _permissionAction(),
         ),
         const _SectionTitle('左右设备'),
         _DeviceSideTile(
@@ -1531,16 +1546,35 @@ class _DevicePageState extends State<_DevicePage> {
           onTap: () => context.go('/calibration'),
           trailing: const Icon(Icons.chevron_right_rounded),
         ),
-        _ActionTile(
-          icon: Icons.bug_report_outlined,
-          title: '内部调试参数',
-          subtitle: '仅用于 QA/dev，正式包需要 feature flag 控制。',
-          accent: const Color(0xff7f6a75),
-          onTap: () => context.go('/device/user'),
-          trailing: const Icon(Icons.chevron_right_rounded),
-        ),
+        if (_internalDeviceDebugEnabled)
+          _ActionTile(
+            icon: Icons.bug_report_outlined,
+            title: '内部调试参数',
+            subtitle: '仅用于 QA/dev，正式包需要 feature flag 控制。',
+            accent: const Color(0xff7f6a75),
+            onTap: () => context.go('/device/user'),
+            trailing: const Icon(Icons.chevron_right_rounded),
+          ),
       ],
     );
+  }
+
+  Widget _permissionAction() {
+    if (_permissionState == BlePermissionState.permanentlyDenied) {
+      return IconButton(
+        tooltip: '打开系统设置',
+        onPressed: _openPermissionSettings,
+        icon: const Icon(Icons.settings_rounded),
+      );
+    }
+    if (_permissionState == BlePermissionState.denied) {
+      return IconButton(
+        tooltip: '打开蓝牙设置',
+        onPressed: _openPermissionSettings,
+        icon: const Icon(Icons.bluetooth_disabled_rounded),
+      );
+    }
+    return const Icon(Icons.chevron_right_rounded);
   }
 
   BleDeviceSnapshot? _deviceForSide(String side) {
@@ -1572,8 +1606,16 @@ String _permissionLabel(BlePermissionState state) {
   return switch (state) {
     BlePermissionState.granted => '已授权',
     BlePermissionState.denied => '未授权',
-    BlePermissionState.unknown => '未知',
+    BlePermissionState.permanentlyDenied => '永久拒绝',
+    BlePermissionState.unknown => '未请求',
   };
+}
+
+String _permissionDeniedMessage(BlePermissionState state) {
+  if (state == BlePermissionState.permanentlyDenied) {
+    return 'BLE 权限已永久拒绝，请从系统设置重新开启。';
+  }
+  return 'BLE 权限未授权';
 }
 
 class _DeviceSideTile extends StatelessWidget {

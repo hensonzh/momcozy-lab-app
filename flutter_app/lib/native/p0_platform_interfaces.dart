@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:momcozy_flutter_app/core/ble/pump_device_snapshot.dart';
 import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
 
-enum BlePermissionState { unknown, denied, granted }
+enum BlePermissionState { unknown, denied, permanentlyDenied, granted }
 
 enum PumpSide { left, right }
 
@@ -325,7 +325,7 @@ class FakeBlePlatform implements BlePlatform {
   final StreamController<BleNotification> _notificationController =
       StreamController<BleNotification>.broadcast();
   BlePermissionState _permissionState;
-  final BlePermissionState requestPermissionResult;
+  BlePermissionState requestPermissionResult;
   bool scanning = false;
   bool openedBluetoothSettings = false;
   bool openedAppSettings = false;
@@ -356,6 +356,16 @@ class FakeBlePlatform implements BlePlatform {
   @override
   Future<void> openAppSettings() async {
     openedAppSettings = true;
+  }
+
+  void setPermissionState(
+    BlePermissionState state, {
+    BlePermissionState? nextRequestPermissionResult,
+  }) {
+    _permissionState = state;
+    if (nextRequestPermissionResult != null) {
+      requestPermissionResult = nextRequestPermissionResult;
+    }
   }
 
   void addScanResult(BleDeviceSnapshot snapshot) {
