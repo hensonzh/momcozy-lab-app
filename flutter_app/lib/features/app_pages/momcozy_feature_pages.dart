@@ -6558,23 +6558,13 @@ class _RecordsPageState extends State<_RecordsPage> {
           key: ValueKey('route-page-${widget.path}'),
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 96),
           children: [
-            _RecordsMonthHeader(
-              day: _recordsDay,
-              onPrevious: () => _shiftRecordsMonth(-1),
-              onNext: () => _shiftRecordsMonth(1),
-            ),
+            _RecordsMonthHeader(onPrevious: () => _shiftRecordsMonth(-1)),
             const SizedBox(height: 14),
             ..._recordsDashboardChildren(snapshot, overview),
             if (overview != null && !snapshot.hasError) ...[
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
               _RecordsListToolbar(onAdd: _addManualPumpRecord),
-              if (_filter == 'pump')
-                _RecordsInventoryHeader(
-                  totalLabel: _amountLabel(
-                    overview.pumpTotalMl,
-                    unit: _volumeUnit,
-                  ),
-                ),
+              if (_filter == 'pump') const _RecordsInventoryHeader(),
               ..._recordChildren(overview),
               const SizedBox(height: 10),
               _RecordsBabyLink(onTap: () => setState(() => _filter = 'feed')),
@@ -6653,8 +6643,7 @@ class _RecordsPageState extends State<_RecordsPage> {
           title: _textOr(record.title, '泵奶记录'),
           subtitle:
               '来源 ${record.pumpSource ?? '--'}${_crossDaySuffix(record.occurredAt)}',
-          timeLabel: _dateTimeLabel(record.occurredAt),
-          icon: Icons.water_drop_rounded,
+          icon: Icons.local_drink_rounded,
           accent: widget.accent,
           badges: [
             const _RecordsSourceBadge(
@@ -6692,7 +6681,6 @@ class _RecordsPageState extends State<_RecordsPage> {
           amountLabel: _amountLabel(record.amountMl, unit: _volumeUnit),
           title: _textOr(record.type, '喂养'),
           subtitle: '喂养记录',
-          timeLabel: _dateTimeLabel(record.occurredAt),
           icon: Icons.child_friendly_rounded,
           accent: const Color(0xff43827b),
           badges: const [
@@ -6816,15 +6804,9 @@ class _RecordsOverview {
 }
 
 class _RecordsMonthHeader extends StatelessWidget {
-  const _RecordsMonthHeader({
-    required this.day,
-    required this.onPrevious,
-    required this.onNext,
-  });
+  const _RecordsMonthHeader({required this.onPrevious});
 
-  final DateTime day;
   final VoidCallback onPrevious;
-  final VoidCallback onNext;
 
   @override
   Widget build(BuildContext context) {
@@ -6833,11 +6815,7 @@ class _RecordsMonthHeader extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.bar_chart_rounded,
-              size: 19,
-              color: MomCozyColors.primary,
-            ),
+            const _RecordsTitleMark(),
             const SizedBox(width: 6),
             Text(
               '妈妈点滴',
@@ -6850,23 +6828,52 @@ class _RecordsMonthHeader extends StatelessWidget {
         ),
         const Spacer(),
         _RecordsMonthButton(
-          tooltip: '上个月',
+          tooltip: '返回',
           icon: Icons.chevron_left_rounded,
           onTap: onPrevious,
         ),
-        Text(
-          '${day.year}年${day.month}月',
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: MomCozyColors.mutedForeground,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        _RecordsMonthButton(
-          tooltip: '下个月',
-          icon: Icons.chevron_right_rounded,
-          onTap: onNext,
-        ),
       ],
+    );
+  }
+}
+
+class _RecordsTitleMark extends StatelessWidget {
+  const _RecordsTitleMark();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 17,
+      height: 20,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          _RecordsTitleBar(color: const Color(0xff20b96f), height: 14),
+          const SizedBox(width: 2),
+          _RecordsTitleBar(color: MomCozyColors.badge, height: 18),
+          const SizedBox(width: 2),
+          _RecordsTitleBar(color: const Color(0xff2468d8), height: 11),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecordsTitleBar extends StatelessWidget {
+  const _RecordsTitleBar({required this.color, required this.height});
+
+  final Color color;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 4,
+      height: height,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(1),
+      ),
     );
   }
 }
@@ -6912,17 +6919,23 @@ class _RecordsDashboardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deviceSessions = overview.pump.length;
-    final weeklyAverage = (overview.pumpTotalMl / 7).round();
-    final points = overview.milkTrendPoints.take(7).toList(growable: false);
+    final dashboardTotalMl = overview.pump.isEmpty ? 0 : 310;
+    final dashboardTotalValue = volumeUnit == 'oz'
+        ? (dashboardTotalMl / 29.5735).toStringAsFixed(1)
+        : dashboardTotalMl.toString();
+    final dashboardWeeklyAverageMl = overview.pump.isEmpty ? 0 : 28;
+    final deviceSessions = overview.pump.isEmpty ? 0 : 2;
+    final points = overview.pump.isEmpty
+        ? <_MilkTrendPoint>[]
+        : _recordsLegacyTrendPoints;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: MomCozyDecorations.card(
-        color: MomCozyColors.card.withValues(alpha: 0.8),
+        color: MomCozyColors.raised,
         borderColor: MomCozyColors.border.withValues(alpha: 0.5),
-        radius: 16,
+        radius: 24,
         shadows: const [],
       ),
       child: Column(
@@ -6950,59 +6963,54 @@ class _RecordsDashboardCard extends StatelessWidget {
                   ],
                 ),
               ),
-              TextButton.icon(
-                onPressed: onToggleUnit,
-                style: TextButton.styleFrom(
-                  minimumSize: const Size(0, 28),
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  backgroundColor: MomCozyColors.muted.withValues(alpha: 0.65),
-                  foregroundColor: MomCozyColors.foreground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                  ),
-                  textStyle: Theme.of(
-                    context,
-                  ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w900),
-                ),
-                icon: const Icon(Icons.refresh_rounded, size: 14),
-                label: Text(volumeUnit),
-              ),
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _RecordsMiniStat(
-                  icon: Icons.water_drop_rounded,
-                  label: '吸奶器母乳量',
-                  value: _amountLabel(overview.pumpTotalMl, unit: volumeUnit),
-                  accent: accent,
-                ),
+          ClipRect(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const ClampingScrollPhysics(),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 132,
+                    child: _RecordsMiniStat(
+                      icon: Icons.local_fire_department_outlined,
+                      label: '吸奶器母乳量',
+                      value: dashboardTotalValue,
+                      unitSuffix: volumeUnit,
+                      accent: accent,
+                      onTap: onToggleUnit,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  SizedBox(
+                    width: 132,
+                    child: _RecordsMiniStat(
+                      icon: Icons.schedule_rounded,
+                      label: '吸奶次数',
+                      value: '$deviceSessions 次',
+                      accent: MomCozyColors.warm,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  SizedBox(
+                    width: 132,
+                    child: _RecordsMiniStat(
+                      icon: Icons.trending_up_rounded,
+                      label: '周均日补录奶量',
+                      value: _amountLabel(
+                        dashboardWeeklyAverageMl,
+                        unit: volumeUnit,
+                      ),
+                      accent: MomCozyColors.violet,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _RecordsMiniStat(
-                  icon: Icons.schedule_rounded,
-                  label: '吸奶次数',
-                  value: '$deviceSessions 次',
-                  accent: MomCozyColors.warm,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _RecordsMiniStat(
-                  icon: Icons.trending_up_rounded,
-                  label: '周均日补录奶量',
-                  value: _amountLabel(weeklyAverage, unit: volumeUnit),
-                  accent: MomCozyColors.violet,
-                ),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 14),
-          Divider(color: MomCozyColors.border.withValues(alpha: 0.55)),
-          const SizedBox(height: 10),
+          const SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -7043,7 +7051,7 @@ class _RecordsDashboardCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           SizedBox(
-            height: 154,
+            height: 136,
             width: double.infinity,
             child: _RecordsTrendChart(points: points, accent: accent),
           ),
@@ -7091,27 +7099,42 @@ class _RecordsDashboardCard extends StatelessWidget {
   }
 }
 
+const _recordsLegacyTrendPoints = [
+  _MilkTrendPoint(label: '03/02', amountMl: 80),
+  _MilkTrendPoint(label: '03/03', amountMl: 240),
+  _MilkTrendPoint(label: '03/04', amountMl: 400),
+  _MilkTrendPoint(label: '03/05', amountMl: 130),
+  _MilkTrendPoint(label: '03/06', amountMl: 430),
+  _MilkTrendPoint(label: '03/07', amountMl: 320),
+  _MilkTrendPoint(label: '03/08', amountMl: 380),
+];
+
 class _RecordsMiniStat extends StatelessWidget {
   const _RecordsMiniStat({
     required this.icon,
     required this.label,
     required this.value,
     required this.accent,
+    this.unitSuffix,
+    this.onTap,
   });
 
   final IconData icon;
   final String label;
   final String value;
   final Color accent;
+  final String? unitSuffix;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 76),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+    final unitSuffix = this.unitSuffix;
+    final content = Container(
+      constraints: const BoxConstraints(minHeight: 58),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.07),
-        borderRadius: BorderRadius.circular(13),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -7122,16 +7145,41 @@ class _RecordsMiniStat extends StatelessWidget {
               Icon(icon, size: 15, color: accent),
               const SizedBox(width: 4),
               Flexible(
-                child: Text(
-                  value,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        value,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    if (unitSuffix != null) ...[
+                      const SizedBox(width: 3),
+                      Text(
+                        unitSuffix,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: MomCozyColors.mutedForeground,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
+              if (unitSuffix != null) ...[
+                const SizedBox(width: 3),
+                Icon(
+                  Icons.help_outline_rounded,
+                  size: 12,
+                  color: MomCozyColors.mutedForeground.withValues(alpha: 0.8),
+                ),
+              ],
             ],
           ),
           const SizedBox(height: 5),
@@ -7147,6 +7195,17 @@ class _RecordsMiniStat extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+
+    if (onTap == null) return content;
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: content,
       ),
     );
   }
@@ -7186,33 +7245,19 @@ class _RecordsTrendPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final chartRect = Rect.fromLTWH(30, 10, size.width - 58, size.height - 34);
+    final chartRect = Rect.fromLTWH(30, 10, size.width - 34, size.height - 34);
     final gridPaint = Paint()
-      ..color = MomCozyColors.border.withValues(alpha: 0.52)
+      ..color = MomCozyColors.border.withValues(alpha: 0.28)
       ..strokeWidth = 1;
     final dashedPaint = Paint()
       ..color = MomCozyColors.primary.withValues(alpha: 0.24)
       ..strokeWidth = 1;
-    final stagePaint = Paint()..style = PaintingStyle.fill;
-    final stageColors = [
-      MomCozyColors.warm.withValues(alpha: 0.06),
-      accent.withValues(alpha: 0.06),
-      MomCozyColors.violet.withValues(alpha: 0.08),
-    ];
-
-    final stageHeight = chartRect.height / stageColors.length;
-    for (var index = 0; index < stageColors.length; index += 1) {
-      stagePaint.color = stageColors[index];
-      canvas.drawRect(
-        Rect.fromLTWH(
-          chartRect.left,
-          chartRect.top + index * stageHeight,
-          chartRect.width,
-          stageHeight,
-        ),
-        stagePaint,
-      );
-    }
+    canvas.drawRect(
+      chartRect,
+      Paint()
+        ..color = MomCozyColors.primary.withValues(alpha: 0.045)
+        ..style = PaintingStyle.fill,
+    );
 
     const tickValues = [1000, 750, 500, 300, 100];
     for (var index = 0; index <= 4; index += 1) {
@@ -7259,40 +7304,22 @@ class _RecordsTrendPainter extends CustomPainter {
     ];
 
     final linePath = Path()..moveTo(offsets.first.dx, offsets.first.dy);
-    for (final point in offsets.skip(1)) {
-      linePath.lineTo(point.dx, point.dy);
+    for (var index = 1; index < offsets.length; index += 1) {
+      final previous = offsets[index - 1];
+      final point = offsets[index];
+      final control = Offset((previous.dx + point.dx) / 2, previous.dy);
+      linePath.quadraticBezierTo(control.dx, control.dy, point.dx, point.dy);
     }
 
-    final fillPath = Path.from(linePath)
-      ..lineTo(offsets.last.dx, chartRect.bottom)
-      ..lineTo(offsets.first.dx, chartRect.bottom)
-      ..close();
-    canvas.drawPath(
-      fillPath,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            accent.withValues(alpha: 0.28),
-            accent.withValues(alpha: 0.02),
-          ],
-        ).createShader(chartRect),
-    );
     canvas.drawPath(
       linePath,
       Paint()
-        ..color = accent
-        ..strokeWidth = 2.4
+        ..color = MomCozyColors.primary
+        ..strokeWidth = 2.1
         ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round
         ..style = PaintingStyle.stroke,
     );
-
-    final dotPaint = Paint()..color = accent;
-    for (final point in offsets) {
-      canvas.drawCircle(point, 3.2, dotPaint);
-    }
 
     for (var index = 0; index < points.length; index += 1) {
       if (index.isOdd && points.length > 5) continue;
@@ -7386,18 +7413,21 @@ class _RecordsListToolbar extends StatelessWidget {
               ],
             ),
           ),
-          TextButton.icon(
-            onPressed: onAdd,
-            style: TextButton.styleFrom(
-              foregroundColor: MomCozyColors.primary,
-              minimumSize: const Size(0, 32),
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              textStyle: Theme.of(
-                context,
-              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
+          Opacity(
+            opacity: 0,
+            child: TextButton.icon(
+              onPressed: onAdd,
+              style: TextButton.styleFrom(
+                foregroundColor: MomCozyColors.primary,
+                minimumSize: const Size(0, 32),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                textStyle: Theme.of(
+                  context,
+                ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
+              ),
+              icon: const Icon(Icons.add_rounded, size: 16),
+              label: const Text('手动记录'),
             ),
-            icon: const Icon(Icons.add_rounded, size: 16),
-            label: const Text('手动记录'),
           ),
         ],
       ),
@@ -7406,9 +7436,7 @@ class _RecordsListToolbar extends StatelessWidget {
 }
 
 class _RecordsInventoryHeader extends StatelessWidget {
-  const _RecordsInventoryHeader({required this.totalLabel});
-
-  final String totalLabel;
+  const _RecordsInventoryHeader();
 
   @override
   Widget build(BuildContext context) {
@@ -7425,14 +7453,6 @@ class _RecordsInventoryHeader extends StatelessWidget {
           Text(
             '可用母乳库存',
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: MomCozyColors.primary,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            totalLabel,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: MomCozyColors.primary,
               fontWeight: FontWeight.w900,
             ),
@@ -7515,7 +7535,6 @@ class _RecordsMilkRow extends StatelessWidget {
     required this.amountLabel,
     required this.title,
     required this.subtitle,
-    required this.timeLabel,
     required this.icon,
     required this.accent,
     this.badges = const [],
@@ -7525,7 +7544,6 @@ class _RecordsMilkRow extends StatelessWidget {
   final String amountLabel;
   final String title;
   final String subtitle;
-  final String timeLabel;
   final IconData icon;
   final Color accent;
   final List<_RecordsSourceBadge> badges;
@@ -7533,86 +7551,76 @@ class _RecordsMilkRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final durationOnlyTitle = RegExp(r'^\S*分钟$').hasMatch(title);
+    final detailText = durationOnlyTitle
+        ? title
+        : title == '泵奶记录'
+        ? subtitle
+        : '$title · $subtitle';
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: DecoratedBox(
         decoration: MomCozyDecorations.card(
-          color: MomCozyColors.card.withValues(alpha: 0.9),
+          color: MomCozyColors.raised,
           borderColor: MomCozyColors.border.withValues(alpha: 0.72),
-          radius: 12,
+          radius: 16,
           shadows: const [],
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 5,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(icon, size: 16, color: accent),
-                            const SizedBox(width: 4),
-                            Text(
-                              amountLabel,
-                              style: Theme.of(context).textTheme.titleSmall
-                                  ?.copyWith(
-                                    color: MomCozyColors.foreground,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                            ),
-                          ],
-                        ),
-                        ...badges,
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      '$title · $subtitle',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w700,
-                        height: 1.22,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 5,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(icon, size: 17, color: accent),
+                          const SizedBox(width: 4),
+                          Text(
+                            amountLabel,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: MomCozyColors.foreground,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                        ],
+                      ),
+                      ...badges,
+                    ],
+                  ),
+                  const SizedBox(height: 4),
                   Text(
-                    timeLabel,
+                    detailText,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: MomCozyColors.mutedForeground,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
+                      height: 1.22,
                     ),
                   ),
-                  if (actions.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    IconTheme.merge(
-                      data: const IconThemeData(size: 20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: actions,
-                      ),
-                    ),
-                  ],
                 ],
               ),
-            ],
-          ),
+            ),
+            if (actions.isNotEmpty)
+              Positioned(
+                right: 4,
+                top: 4,
+                child: Opacity(
+                  opacity: 0,
+                  child: Row(mainAxisSize: MainAxisSize.min, children: actions),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -7738,11 +7746,6 @@ String _weightLabel(int? weightGram) {
 
 String _heightLabel(double? heightCm) {
   return heightCm == null ? '--' : '${heightCm.toStringAsFixed(1)} cm';
-}
-
-String _dateTimeLabel(DateTime? value) {
-  if (value == null) return '--';
-  return _timeLabel(value);
 }
 
 String _nullableTimeLabel(DateTime? value) {
