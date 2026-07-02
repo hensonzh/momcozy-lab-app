@@ -30,6 +30,8 @@ Already present:
   `/v1/auth/signup`, `/login`, `/refresh`, and `/logout`.
 - App shell runtime controller can replace the active session/runtime after
   login, refresh, logout, or account switch.
+- Network transport parses production error envelopes and supports per-request
+  headers such as `Idempotency-Key`.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.

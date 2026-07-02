@@ -58,6 +58,7 @@ void main() {
       await transport.postJson(
         '/v1/pump/workstate',
         body: {'user_id': 'demo-user-fixture'},
+        headers: {'Idempotency-Key': 'idem-001'},
       );
 
       expect(
@@ -68,6 +69,7 @@ void main() {
         connector.headers,
         containsPair('Content-Type', 'application/json'),
       );
+      expect(connector.headers, containsPair('Idempotency-Key', 'idem-001'));
       expect(jsonDecode(connector.body!) as Map<String, Object?>, {
         'user_id': 'demo-user-fixture',
       });
@@ -89,6 +91,14 @@ void main() {
           statusCode: 503,
           statusText: 'Service Unavailable',
           body: '<html>temporarily unavailable</html>',
+        ),
+      );
+      final productionErrorConnector = _RecordingApiHttpConnector(
+        const ApiHttpResponse(
+          statusCode: 429,
+          statusText: 'Too Many Requests',
+          body:
+              '{"error":{"code":"rate_limited","message":"Slow down","request_id":"req-prod","details":{"retry_after_seconds":60}}}',
         ),
       );
 
@@ -121,6 +131,32 @@ void main() {
           isA<ApiHttpException>()
               .having((error) => error.statusCode, 'statusCode', 503)
               .having((error) => error.body, 'body', isNull),
+        ),
+      );
+      await expectLater(
+        IoApiJsonTransport(
+          baseUri: Uri.parse('http://127.0.0.1:8769'),
+          connector: productionErrorConnector,
+        ).getJson('/v1/records/feeding'),
+        throwsA(
+          isA<ApiHttpException>()
+              .having((error) => error.statusCode, 'statusCode', 429)
+              .having((error) => error.requestId, 'requestId', 'req-prod')
+              .having(
+                (error) => error.effectiveRequestId,
+                'effectiveRequestId',
+                'req-prod',
+              )
+              .having(
+                (error) => error.errorCode,
+                'errorCode',
+                'rate_limited',
+              )
+              .having(
+                (error) => error.errorMessage,
+                'errorMessage',
+                'Slow down',
+              ),
         ),
       );
     });

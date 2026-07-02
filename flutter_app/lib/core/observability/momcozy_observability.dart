@@ -135,11 +135,12 @@ class ObservedApiJsonTransport implements ApiJsonTransport {
   Future<Map<String, Object?>> postJson(
     String path, {
     Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
   }) {
     return _record(
       method: 'POST',
       path: path,
-      action: () => inner.postJson(path, body: body),
+      action: () => inner.postJson(path, body: body, headers: headers),
     );
   }
 
@@ -186,6 +187,7 @@ class ObservedApiMultipartTransport implements ApiMultipartTransport {
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
     Map<String, Object?> fields = const {},
+    Map<String, String> headers = const {},
     required ApiUploadFile file,
   }) async {
     final watch = Stopwatch()..start();
@@ -193,6 +195,7 @@ class ObservedApiMultipartTransport implements ApiMultipartTransport {
       final response = await inner.uploadMultipart(
         path,
         fields: fields,
+        headers: headers,
         file: file,
       );
       watch.stop();

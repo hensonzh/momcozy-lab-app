@@ -177,6 +177,7 @@ class _DeferredRefreshTransport implements ApiJsonTransport {
   Future<Map<String, Object?>> postJson(
     String path, {
     Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
   }) async {
     expect(path, authRefreshEndpoint);
     expect(body, {'refresh_token': 'old-refresh'});
