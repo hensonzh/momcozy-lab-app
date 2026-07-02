@@ -310,6 +310,39 @@ void main() {
 
     expect(resolved, same(runtime));
   });
+
+  test('runtime controller replaces runtime and preserves observability', () {
+    final observability = MomCozyObservability();
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
+      userId: 'user-fixture',
+      babyId: 'baby-fixture',
+      locale: 'zh-CN',
+      observability: observability,
+    );
+    final controller = MomCozyRuntimeController(runtime);
+    var notifyCount = 0;
+    controller.addListener(() {
+      notifyCount += 1;
+    });
+
+    controller.replaceSession(
+      const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'session-user',
+        babyId: 'session-baby',
+        locale: 'en-US',
+        accessToken: 'session-access',
+        refreshToken: 'session-refresh',
+      ),
+    );
+
+    expect(notifyCount, 1);
+    expect(controller.runtime.userId, 'session-user');
+    expect(controller.runtime.session.accessToken, 'session-access');
+    expect(controller.runtime.observability, same(observability));
+    controller.dispose();
+  });
 }
 
 class _RuntimeMigrationStore implements StorageMigrationTargetStore {

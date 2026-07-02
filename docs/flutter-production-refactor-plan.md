@@ -28,6 +28,8 @@ Already present:
   migration helpers, BLE/native platform interfaces, and feature repositories.
 - Production auth data-layer repository and refresh coordinator for
   `/v1/auth/signup`, `/login`, `/refresh`, and `/logout`.
+- App shell runtime controller can replace the active session/runtime after
+  login, refresh, logout, or account switch.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -35,7 +37,7 @@ Already present:
 Main gaps:
 
 - Runtime still bootstraps from dart-define demo users and optional bearer token.
-- Auth UI, route guards, and runtime session replacement are not wired yet.
+- Auth UI and route guards are not wired yet.
 - Feature repositories still pass `user_id` and target legacy endpoints.
 - Agent chat still uses legacy AG-UI endpoints instead of `/v1/agent` thread,
   run, replay, stream, cancel, and action-confirmation resources.
