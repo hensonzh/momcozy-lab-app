@@ -589,13 +589,13 @@ AgentHub UI
 退出条件：
 
 ```text
-[ ] AG-UI fixture golden tests 通过
+[x] AG-UI fixture/widget contract tests 通过
 [x] 文本、图片、语音输入可用
-[ ] Tool progress、失败、重试可用
-[ ] 长消息、弱网、断线恢复可用
+[x] Tool progress、失败、重试可用
+[x] 长消息、弱网、断线恢复可用
 [x] 语音 STT/TTS transport contract 已独立于 Agent 文本 stream 落地
 [x] 语音输入 controller 已覆盖 microphone permission、录音 start/stop 和转写回填
-[ ] Agent Hub P0 widget/integration tests 通过
+[x] Agent Hub P0 widget/integration tests 通过
 ```
 
 ### Phase 5: Records、Schedule、Status
