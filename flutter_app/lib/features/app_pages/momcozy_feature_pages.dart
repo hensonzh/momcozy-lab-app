@@ -364,12 +364,10 @@ class _StatusChip extends StatelessWidget {
 
 class _LegacySegmentedTabs extends StatelessWidget {
   const _LegacySegmentedTabs({
-    super.key,
     required this.selected,
     required this.items,
     required this.onChanged,
     required this.accent,
-    this.minItemWidth = 70,
     this.expand = false,
   });
 
@@ -377,7 +375,6 @@ class _LegacySegmentedTabs extends StatelessWidget {
   final List<_LegacySegmentedTabItem> items;
   final ValueChanged<String> onChanged;
   final Color accent;
-  final double minItemWidth;
   final bool expand;
 
   @override
@@ -388,7 +385,7 @@ class _LegacySegmentedTabs extends StatelessWidget {
           item: item,
           selected: item.value == selected,
           accent: accent,
-          minWidth: minItemWidth,
+          minWidth: 70,
           onTap: () => onChanged(item.value),
         ),
     ];
@@ -6000,47 +5997,17 @@ class _RecordsPageState extends State<_RecordsPage> {
 
         return ListView(
           key: ValueKey('route-page-${widget.path}'),
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
+          padding: const EdgeInsets.fromLTRB(16, 18, 16, 96),
           children: [
             _RecordsMonthHeader(
               day: _recordsDay,
               onPrevious: () => _shiftRecordsMonth(-1),
               onNext: () => _shiftRecordsMonth(1),
             ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _LegacySegmentedTabs(
-                  key: const ValueKey('records-filter-segment'),
-                  selected: _filter,
-                  onChanged: (next) => setState(() => _filter = next),
-                  accent: MomCozyColors.primary,
-                  minItemWidth: 58,
-                  items: const [
-                    _LegacySegmentedTabItem(value: 'pump', label: '泵奶'),
-                    _LegacySegmentedTabItem(value: 'feed', label: '喂养'),
-                    _LegacySegmentedTabItem(value: 'growth', label: '成长'),
-                  ],
-                ),
-                _LegacySegmentedTabs(
-                  key: const ValueKey('records-unit-segment'),
-                  selected: _volumeUnit,
-                  onChanged: (next) => setState(() => _volumeUnit = next),
-                  accent: MomCozyColors.primary,
-                  minItemWidth: 52,
-                  items: const [
-                    _LegacySegmentedTabItem(value: 'mL', label: 'mL'),
-                    _LegacySegmentedTabItem(value: 'oz', label: 'oz'),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             ..._recordsDashboardChildren(snapshot, overview),
             if (overview != null && !snapshot.hasError) ...[
-              const SizedBox(height: 18),
+              const SizedBox(height: 20),
               _RecordsListToolbar(onAdd: _addManualPumpRecord),
               if (_filter == 'pump')
                 _RecordsInventoryHeader(
@@ -6050,6 +6017,13 @@ class _RecordsPageState extends State<_RecordsPage> {
                   ),
                 ),
               ..._recordChildren(overview),
+              const SizedBox(height: 10),
+              _RecordsBabyLink(onTap: () => setState(() => _filter = 'feed')),
+              const SizedBox(height: 10),
+              _RecordsSecondaryModePicker(
+                selected: _filter,
+                onChanged: (next) => setState(() => _filter = next),
+              ),
             ],
           ],
         );
@@ -6268,13 +6242,13 @@ class _RecordsOverview {
       for (final record in pump)
         if (record.amountMl != null)
           _MilkTrendPoint(
-            label: _dateTimeLabel(record.occurredAt),
+            label: _dateLabel(record.occurredAt),
             amountMl: record.amountMl!,
           ),
       for (final record in feeding)
         if (record.amountMl != null)
           _MilkTrendPoint(
-            label: _dateTimeLabel(record.occurredAt),
+            label: _dateLabel(record.occurredAt),
             amountMl: record.amountMl!,
           ),
     ];
@@ -6301,8 +6275,8 @@ class _RecordsMonthHeader extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(
-              Icons.insights_rounded,
-              size: 18,
+              Icons.bar_chart_rounded,
+              size: 19,
               color: MomCozyColors.primary,
             ),
             const SizedBox(width: 6),
@@ -6380,19 +6354,17 @@ class _RecordsDashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceSessions = overview.pump.length;
-    final average = deviceSessions == 0
-        ? 0
-        : (overview.pumpTotalMl / deviceSessions).round();
+    final weeklyAverage = (overview.pumpTotalMl / 7).round();
     final points = overview.milkTrendPoints.take(7).toList(growable: false);
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: MomCozyDecorations.card(
-        color: MomCozyColors.raised.withValues(alpha: 0.72),
-        borderColor: MomCozyColors.border.withValues(alpha: 0.76),
-        radius: 18,
-        shadows: MomCozyShadows.soft,
+        color: MomCozyColors.card.withValues(alpha: 0.8),
+        borderColor: MomCozyColors.border.withValues(alpha: 0.5),
+        radius: 16,
+        shadows: const [],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -6445,7 +6417,7 @@ class _RecordsDashboardCard extends StatelessWidget {
                 child: _RecordsMiniStat(
                   icon: Icons.water_drop_rounded,
                   label: '吸奶器母乳量',
-                  value: _amountLabel(overview.totalMilkMl, unit: volumeUnit),
+                  value: _amountLabel(overview.pumpTotalMl, unit: volumeUnit),
                   accent: accent,
                 ),
               ),
@@ -6462,8 +6434,8 @@ class _RecordsDashboardCard extends StatelessWidget {
               Expanded(
                 child: _RecordsMiniStat(
                   icon: Icons.trending_up_rounded,
-                  label: '单次均量',
-                  value: _amountLabel(average, unit: volumeUnit),
+                  label: '周均日补录奶量',
+                  value: _amountLabel(weeklyAverage, unit: volumeUnit),
                   accent: MomCozyColors.violet,
                 ),
               ),
@@ -6479,7 +6451,7 @@ class _RecordsDashboardCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      Icons.trending_up_rounded,
+                      Icons.show_chart_rounded,
                       size: 15,
                       color: MomCozyColors.primary.withValues(alpha: 0.78),
                     ),
@@ -6500,7 +6472,7 @@ class _RecordsDashboardCard extends StatelessWidget {
                 ),
               ),
               Text(
-                points.isEmpty ? '暂无奶量趋势' : '波动正常，放轻松就好',
+                points.isEmpty ? '暂无奶量趋势' : '补录奶量 = 吸奶器 + 补录\n波动正常，放轻松就好',
                 textAlign: TextAlign.right,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: MomCozyColors.mutedForeground.withValues(alpha: 0.75),
@@ -6512,16 +6484,16 @@ class _RecordsDashboardCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           SizedBox(
-            height: 142,
+            height: 154,
             width: double.infinity,
             child: _RecordsTrendChart(points: points, accent: accent),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Row(
             children: [
               Container(
-                width: 34,
-                height: 34,
+                width: 42,
+                height: 42,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -6533,15 +6505,26 @@ class _RecordsDashboardCard extends StatelessWidget {
               const SizedBox(width: 9),
               Expanded(
                 child: Text(
-                  '←问问M.ai呀~\n最近记录保持稳定，继续按自己的节奏来就好。',
+                  '←问问M.ai呀~',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: MomCozyColors.primary,
                     fontWeight: FontWeight.w800,
-                    height: 1.25,
                   ),
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.only(left: 52),
+            child: Text(
+              '"最近补录奶量稳步上升，今天也很棒哦～继续保持，你和宝宝都在进步中"',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontStyle: FontStyle.italic,
+                height: 1.35,
+              ),
+            ),
           ),
         ],
       ),
@@ -6644,9 +6627,12 @@ class _RecordsTrendPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final chartRect = Rect.fromLTWH(30, 8, size.width - 70, size.height - 30);
+    final chartRect = Rect.fromLTWH(30, 10, size.width - 58, size.height - 34);
     final gridPaint = Paint()
       ..color = MomCozyColors.border.withValues(alpha: 0.52)
+      ..strokeWidth = 1;
+    final dashedPaint = Paint()
+      ..color = MomCozyColors.primary.withValues(alpha: 0.24)
       ..strokeWidth = 1;
     final stagePaint = Paint()..style = PaintingStyle.fill;
     final stageColors = [
@@ -6669,6 +6655,7 @@ class _RecordsTrendPainter extends CustomPainter {
       );
     }
 
+    const tickValues = [1000, 750, 500, 300, 100];
     for (var index = 0; index <= 4; index += 1) {
       final y = chartRect.top + chartRect.height * index / 4;
       canvas.drawLine(
@@ -6678,11 +6665,29 @@ class _RecordsTrendPainter extends CustomPainter {
       );
     }
 
+    for (final tick in tickValues) {
+      final y = _yForAmount(tick, chartRect);
+      if (tick == 100 || tick == 750) {
+        _drawDashedLine(
+          canvas,
+          Offset(chartRect.left, y),
+          Offset(chartRect.right, y),
+          dashedPaint,
+        );
+      }
+      _drawChartText(
+        canvas,
+        '$tick',
+        Offset(0, y - 6),
+        width: 24,
+        color: MomCozyColors.mutedForeground.withValues(alpha: 0.78),
+        fontSize: 8,
+        textAlign: TextAlign.right,
+      );
+    }
+
     if (points.isEmpty) return;
 
-    final maxAmount = points
-        .map((point) => point.amountMl)
-        .fold<int>(1, (max, value) => value > max ? value : max);
     final step = points.length == 1
         ? chartRect.width
         : chartRect.width / (points.length - 1);
@@ -6690,8 +6695,7 @@ class _RecordsTrendPainter extends CustomPainter {
       for (var index = 0; index < points.length; index += 1)
         Offset(
           chartRect.left + step * index,
-          chartRect.bottom -
-              chartRect.height * (points[index].amountMl / maxAmount),
+          _yForAmount(points[index].amountMl, chartRect),
         ),
     ];
 
@@ -6730,6 +6734,61 @@ class _RecordsTrendPainter extends CustomPainter {
     for (final point in offsets) {
       canvas.drawCircle(point, 3.2, dotPaint);
     }
+
+    for (var index = 0; index < points.length; index += 1) {
+      if (index.isOdd && points.length > 5) continue;
+      _drawChartText(
+        canvas,
+        points[index].label,
+        Offset(offsets[index].dx - 16, chartRect.bottom + 8),
+        width: 34,
+        color: MomCozyColors.mutedForeground.withValues(alpha: 0.82),
+        fontSize: 8,
+        textAlign: TextAlign.center,
+      );
+    }
+  }
+
+  double _yForAmount(int amountMl, Rect chartRect) {
+    final clamped = amountMl.clamp(0, 1200).toDouble();
+    return chartRect.bottom - chartRect.height * (clamped / 1200);
+  }
+
+  void _drawDashedLine(Canvas canvas, Offset start, Offset end, Paint paint) {
+    const dashWidth = 4.0;
+    const dashGap = 4.0;
+    var x = start.dx;
+    while (x < end.dx) {
+      final next = (x + dashWidth > end.dx) ? end.dx : x + dashWidth;
+      canvas.drawLine(Offset(x, start.dy), Offset(next, end.dy), paint);
+      x += dashWidth + dashGap;
+    }
+  }
+
+  void _drawChartText(
+    Canvas canvas,
+    String text,
+    Offset offset, {
+    required double width,
+    required Color color,
+    required double fontSize,
+    TextAlign textAlign = TextAlign.left,
+  }) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          color: color,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w600,
+          fontFamily: MomCozyTypography.fontFamily,
+          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+        ),
+      ),
+      textAlign: textAlign,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: width);
+    painter.paint(canvas, offset);
   }
 
   @override
@@ -6779,7 +6838,7 @@ class _RecordsListToolbar extends StatelessWidget {
               ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
             ),
             icon: const Icon(Icons.add_rounded, size: 16),
-            label: const Text('手动补录'),
+            label: const Text('手动记录'),
           ),
         ],
       ),
@@ -6825,6 +6884,73 @@ class _RecordsInventoryHeader extends StatelessWidget {
   }
 }
 
+class _RecordsBabyLink extends StatelessWidget {
+  const _RecordsBabyLink({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onTap,
+      style: TextButton.styleFrom(
+        foregroundColor: MomCozyColors.primary,
+        minimumSize: const Size.fromHeight(36),
+        textStyle: Theme.of(
+          context,
+        ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
+      ),
+      child: const Text('想看看宝宝吗？ >'),
+    );
+  }
+}
+
+class _RecordsSecondaryModePicker extends StatelessWidget {
+  const _RecordsSecondaryModePicker({
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final String selected;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    const items = [('pump', '泵奶'), ('feed', '喂养'), ('growth', '成长')];
+    return Align(
+      alignment: Alignment.center,
+      child: Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        alignment: WrapAlignment.center,
+        children: [
+          for (final item in items)
+            ChoiceChip(
+              label: Text(item.$2),
+              selected: selected == item.$1,
+              onSelected: (_) => onChanged(item.$1),
+              visualDensity: VisualDensity.compact,
+              labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: selected == item.$1
+                    ? MomCozyColors.primary
+                    : MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w800,
+              ),
+              selectedColor: MomCozyColors.roseSoft,
+              backgroundColor: MomCozyColors.card.withValues(alpha: 0.62),
+              side: BorderSide(
+                color: MomCozyColors.border.withValues(alpha: 0.62),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _RecordsMilkRow extends StatelessWidget {
   const _RecordsMilkRow({
     required this.amountLabel,
@@ -6853,31 +6979,28 @@ class _RecordsMilkRow extends StatelessWidget {
       child: DecoratedBox(
         decoration: MomCozyDecorations.card(
           color: MomCozyColors.card.withValues(alpha: 0.9),
+          borderColor: MomCozyColors.border.withValues(alpha: 0.72),
+          radius: 12,
           shadows: const [],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _IconBubble(icon: icon, accent: accent, size: 34, iconSize: 18),
-              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Wrap(
-                      spacing: 7,
+                      spacing: 8,
                       runSpacing: 5,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.local_drink_outlined,
-                              size: 16,
-                              color: accent,
-                            ),
+                            Icon(icon, size: 16, color: accent),
                             const SizedBox(width: 4),
                             Text(
                               amountLabel,
@@ -6892,7 +7015,7 @@ class _RecordsMilkRow extends StatelessWidget {
                         ...badges,
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 5),
                     Text(
                       '$title · $subtitle',
                       maxLines: 2,
@@ -6919,7 +7042,13 @@ class _RecordsMilkRow extends StatelessWidget {
                   ),
                   if (actions.isNotEmpty) ...[
                     const SizedBox(height: 4),
-                    Row(mainAxisSize: MainAxisSize.min, children: actions),
+                    IconTheme.merge(
+                      data: const IconThemeData(size: 20),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: actions,
+                      ),
+                    ),
                   ],
                 ],
               ),
