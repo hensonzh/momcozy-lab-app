@@ -247,6 +247,98 @@ void main() {
       expect(_checkboxesWithValue(tester, true), 2);
     });
 
+    testWidgets('schedule page switches date and reminder state', (
+      tester,
+    ) async {
+      final transport = FixtureApiJsonTransportByPath({
+        scheduleDayPlanEndpoint: const {
+          'status': 200,
+          'data': {
+            'tasks': <Object?>[
+              {
+                'id': 'pump',
+                'title': '10:30 泵奶',
+                'completed': true,
+                'remind_at': '2026-07-01T02:30:00Z',
+              },
+              {
+                'id': 'feeding',
+                'title': '14:00 喂养',
+                'completed': false,
+                'remind_at': '2026-07-01T06:00:00Z',
+              },
+            ],
+          },
+        },
+      });
+
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/schedule'), jsonTransport: transport),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        transport.lastQuery,
+        containsPair('timestamp', _apiTimestamp(DateTime.utc(2026, 7))),
+      );
+      expect(find.text('2 项计划'), findsOneWidget);
+      expect(_checkboxesWithValue(tester, true), 1);
+
+      await tester.tap(find.text('03'));
+      await tester.pumpAndSettle();
+
+      expect(
+        transport.lastQuery,
+        containsPair('timestamp', _apiTimestamp(DateTime(2026, 7, 3))),
+      );
+
+      await tester.tap(find.text('14:00 喂养'));
+      await tester.pump();
+      expect(_checkboxesWithValue(tester, true), 2);
+
+      final enabledReminderSwitches = _switchesWithValue(tester, true);
+      expect(enabledReminderSwitches, greaterThanOrEqualTo(1));
+      await tester.tap(find.byType(Switch).first);
+      await tester.pump();
+      expect(_switchesWithValue(tester, true), enabledReminderSwitches - 1);
+    });
+
+    testWidgets('schedule page renders empty and failed states', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/schedule'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            scheduleDayPlanEndpoint: const {
+              'status': 200,
+              'data': {'tasks': <Object?>[]},
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('暂无计划'), findsOneWidget);
+      expect(find.text('0 项计划'), findsOneWidget);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/schedule'),
+          jsonTransport: FixtureApiJsonTransportByPath({
+            scheduleDayPlanEndpoint: const {
+              'http_status': 503,
+              'status_text': 'Service Unavailable',
+            },
+          }),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('计划同步失败'), findsOneWidget);
+      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
+    });
+
     testWidgets('records page loads pump feeding and growth repositories', (
       tester,
     ) async {
@@ -605,6 +697,17 @@ int _checkboxesWithValue(WidgetTester tester, bool value) {
       .widgetList<Checkbox>(find.byType(Checkbox))
       .where((checkbox) => checkbox.value == value)
       .length;
+}
+
+int _switchesWithValue(WidgetTester tester, bool value) {
+  return tester
+      .widgetList<Switch>(find.byType(Switch))
+      .where((switchWidget) => switchWidget.value == value)
+      .length;
+}
+
+String _apiTimestamp(DateTime value) {
+  return value.toUtc().toIso8601String().replaceFirst('.000Z', 'Z');
 }
 
 class _FeaturePageHost extends StatelessWidget {
