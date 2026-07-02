@@ -298,6 +298,106 @@ void main() {
     },
   );
 
+  testWidgets('Agent Hub renders safe artifact cards from stream events', (
+    tester,
+  ) async {
+    final artifactEvent = AgentStreamEvent(
+      readFixtureMap('ag_ui/rich_text_artifact.json'),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: 'I prepared a draft plan.',
+            events: [artifactEvent],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-artifact-card-milk-plan-001')),
+      findsOneWidget,
+    );
+    expect(find.text('Milk supply plan'), findsOneWidget);
+    expect(find.text('Draft'), findsOneWidget);
+    expect(
+      find.text('Draft card generated from safe artifact payload.'),
+      findsOneWidget,
+    );
+    expect(find.text('Review flange comfort'), findsOneWidget);
+    expect(find.text('Track two more pumping sessions'), findsOneWidget);
+    expect(find.text('打开结果卡片'), findsOneWidget);
+    expect(find.textContaining('milk_plan_preview_create'), findsNothing);
+    expect(find.textContaining('{"'), findsNothing);
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-artifact-action-milk-plan-001-0')),
+    );
+    await tester.pump();
+  });
+
+  testWidgets('Agent Hub renders rich text card rows and button actions', (
+    tester,
+  ) async {
+    final artifactEvent = AgentStreamEvent({
+      'type': 'ARTIFACT_CREATED',
+      'thread_id': 'thread-resource',
+      'run_id': 'run-resource',
+      'message_id': 'msg-resource',
+      'artifact_id': 'resource-card',
+      'artifact_type': 'rich_text',
+      'rich_text': {
+        'title': '资源',
+        'content': '可以打开这些资料。',
+        'button': [
+          {'text': '打开文档', 'type': 'doc', 'value': '/docs/a.pdf'},
+          {'text': '查看图片', 'type': 'media', 'value': '/media/a.png'},
+        ],
+        'card': [
+          {
+            'title': '参考',
+            'content': [
+              {'title': '指南', 'content': '泵奶姿势'},
+            ],
+          },
+        ],
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '这些资源可以参考。',
+            events: [artifactEvent],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-artifact-card-resource-card')),
+      findsOneWidget,
+    );
+    expect(find.text('资源'), findsOneWidget);
+    expect(find.text('可以打开这些资料。'), findsOneWidget);
+    expect(find.text('参考'), findsOneWidget);
+    expect(find.text('指南: 泵奶姿势'), findsOneWidget);
+    expect(find.text('打开文档'), findsOneWidget);
+    expect(find.text('查看图片'), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-artifact-action-resource-card-0')),
+    );
+    await tester.pump();
+  });
+
   testWidgets('Agent Hub renders disconnected partial response state', (
     tester,
   ) async {

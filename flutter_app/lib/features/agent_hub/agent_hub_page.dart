@@ -400,6 +400,7 @@ class AgentRunTranscript extends StatelessWidget {
         ? '我在。'
         : state.textContent.trim();
     final workSteps = _workStepsFromEvents(state.events);
+    final artifactCards = _artifactCardsFromEvents(state.events);
 
     return DecoratedBox(
       key: const ValueKey('agent-run-transcript'),
@@ -455,6 +456,10 @@ class AgentRunTranscript extends StatelessWidget {
             if (workSteps.isNotEmpty) ...[
               const SizedBox(height: 16),
               AgentRunWorkPanel(steps: workSteps),
+            ],
+            if (artifactCards.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              AgentArtifactPanel(cards: artifactCards),
             ],
           ],
         ),
@@ -588,6 +593,151 @@ class AgentRunWorkStep {
 }
 
 enum AgentRunWorkStepStatus { running, completed, waiting, failed }
+
+class AgentArtifactPanel extends StatelessWidget {
+  const AgentArtifactPanel({super.key, required this.cards});
+
+  final List<AgentArtifactCardView> cards;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      key: const ValueKey('agent-artifact-panel'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '结果卡片',
+          style: textTheme.labelLarge?.copyWith(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 8),
+        for (final card in cards) ...[
+          DecoratedBox(
+            key: ValueKey('agent-artifact-card-${card.id}'),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.48,
+              ),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: colorScheme.outlineVariant),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.dashboard_customize_outlined,
+                        size: 18,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          card.title,
+                          style: textTheme.titleSmall?.copyWith(
+                            color: colorScheme.onSurface,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      if (card.statusLabel != null) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          card.statusLabel!,
+                          style: textTheme.labelSmall?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  if (card.content != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      card.content!,
+                      style: textTheme.bodySmall?.copyWith(
+                        height: 1.35,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                  for (final row in card.rows) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      row,
+                      style: textTheme.bodySmall?.copyWith(
+                        height: 1.35,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                  if (card.actions.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (
+                          var index = 0;
+                          index < card.actions.length;
+                          index++
+                        )
+                          OutlinedButton.icon(
+                            key: ValueKey(
+                              'agent-artifact-action-${card.id}-$index',
+                            ),
+                            onPressed: () {},
+                            icon: Icon(card.actions[index].icon),
+                            label: Text(card.actions[index].label),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          if (card != cards.last) const SizedBox(height: 10),
+        ],
+      ],
+    );
+  }
+}
+
+class AgentArtifactCardView {
+  const AgentArtifactCardView({
+    required this.id,
+    required this.title,
+    this.content,
+    this.statusLabel,
+    this.rows = const <String>[],
+    this.actions = const <AgentArtifactActionView>[],
+  });
+
+  final String id;
+  final String title;
+  final String? content;
+  final String? statusLabel;
+  final List<String> rows;
+  final List<AgentArtifactActionView> actions;
+}
+
+class AgentArtifactActionView {
+  const AgentArtifactActionView({required this.label, required this.icon});
+
+  final String label;
+  final IconData icon;
+}
 
 class AgentComposerBar extends StatelessWidget {
   const AgentComposerBar({
@@ -758,6 +908,196 @@ class AgentComposerBar extends StatelessWidget {
       _ => null,
     };
   }
+}
+
+List<AgentArtifactCardView> _artifactCardsFromEvents(
+  List<AgentStreamEvent> events,
+) {
+  final cards = <String, AgentArtifactCardView>{};
+  for (final event in events) {
+    final card = _artifactCardFromEvent(event);
+    if (card != null) cards[card.id] = card;
+  }
+  return List<AgentArtifactCardView>.unmodifiable(cards.values);
+}
+
+AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
+  if (event.type != 'ARTIFACT_CREATED' && event.type != 'ARTIFACT_UPDATED') {
+    return null;
+  }
+
+  final richText = _mapField(event.raw, 'rich_text', 'richText');
+  final artifact = _mapField(event.raw, 'artifact');
+  final cardJson = _mapField(artifact, 'card_json', 'cardJson');
+  final artifactId =
+      stringField(event.raw, 'artifact_id') ??
+      stringField(event.raw, 'artifactId') ??
+      stringField(artifact, 'id') ??
+      event.mergeKey;
+
+  final title =
+      _firstNonEmpty([
+        _stringField(richText, 'title'),
+        _stringField(cardJson, 'title'),
+        _artifactSubject(event),
+      ]) ??
+      '结果卡片';
+  final content = _firstNonEmpty([_stringField(richText, 'content')]);
+  final status = _firstNonEmpty([
+    _stringField(cardJson, 'status_label', 'statusLabel'),
+  ]);
+  final rows = <String>[
+    ..._stringList(cardJson['steps']),
+    ..._richTextCardRows(richText['card']),
+  ];
+  final actions = <AgentArtifactActionView>[
+    ..._buttonActions(richText['button']),
+    ..._semanticActions(richText['action'], event),
+  ];
+
+  if (title.trim().isEmpty &&
+      (content == null || content.trim().isEmpty) &&
+      rows.isEmpty &&
+      actions.isEmpty) {
+    return null;
+  }
+
+  return AgentArtifactCardView(
+    id: artifactId,
+    title: title,
+    content: content,
+    statusLabel: status,
+    rows: rows,
+    actions: actions,
+  );
+}
+
+List<String> _richTextCardRows(Object? rawCards) {
+  if (rawCards is! List) return const <String>[];
+  final rows = <String>[];
+  for (final rawCard in rawCards) {
+    if (rawCard is! Map) continue;
+    final card = Map<String, Object?>.from(rawCard);
+    final title = _firstNonEmpty([
+      _stringField(card, 'title'),
+      _stringField(card, 'label'),
+    ]);
+    if (title != null) rows.add(title);
+    final content = card['content'];
+    if (content is List) {
+      for (final rawRow in content) {
+        if (rawRow is! Map) continue;
+        final row = Map<String, Object?>.from(rawRow);
+        final rowTitle = _stringField(row, 'title');
+        final rowContent = _stringField(row, 'content', 'value');
+        final combined = _combineLabelValue(rowTitle, rowContent);
+        if (combined != null) rows.add(combined);
+      }
+    }
+  }
+  return rows;
+}
+
+List<AgentArtifactActionView> _buttonActions(Object? rawButtons) {
+  if (rawButtons is! List) return const <AgentArtifactActionView>[];
+  return rawButtons
+      .whereType<Map>()
+      .map((rawButton) => Map<String, Object?>.from(rawButton))
+      .map((button) {
+        final label = _firstNonEmpty([
+          _stringField(button, 'text'),
+          _stringField(button, 'label'),
+          _stringField(button, 'title'),
+          '打开',
+        ]);
+        return AgentArtifactActionView(
+          label: label ?? '打开',
+          icon: _actionIcon(_stringField(button, 'type', 'kind')),
+        );
+      })
+      .toList(growable: false);
+}
+
+List<AgentArtifactActionView> _semanticActions(
+  Object? rawActions,
+  AgentStreamEvent event,
+) {
+  if (rawActions is! List) return const <AgentArtifactActionView>[];
+  return rawActions
+      .whereType<Map>()
+      .map((rawAction) => Map<String, Object?>.from(rawAction))
+      .map((action) {
+        final kind = _stringField(action, 'kind', 'type');
+        final label = _firstNonEmpty([
+          _stringField(action, 'label'),
+          _stringField(action, 'text'),
+          kind == 'ag_ui_artifact' ? '打开${_artifactSubject(event)}' : null,
+          '打开',
+        ]);
+        return AgentArtifactActionView(
+          label: label ?? '打开',
+          icon: _actionIcon(kind),
+        );
+      })
+      .toList(growable: false);
+}
+
+IconData _actionIcon(String? kind) {
+  return switch (kind) {
+    'doc' || 'document' || 'pdf' => Icons.description_outlined,
+    'media' || 'image' || 'video' || 'open' => Icons.open_in_new_rounded,
+    'ag_ui_artifact' => Icons.fact_check_outlined,
+    _ => Icons.touch_app_outlined,
+  };
+}
+
+Map<String, Object?> _mapField(
+  Map<String, Object?> map,
+  String key, [
+  String? alias,
+]) {
+  final value = map[key] ?? (alias == null ? null : map[alias]);
+  return value is Map ? Map<String, Object?>.from(value) : const {};
+}
+
+String? _stringField(Map<String, Object?> map, String key, [String? alias]) {
+  return stringField(map, key) ??
+      (alias == null ? null : stringField(map, alias));
+}
+
+List<String> _stringList(Object? value) {
+  if (value is! List) return const <String>[];
+  return value
+      .whereType<String>()
+      .map((item) => item.trim())
+      .where((item) => item.isNotEmpty)
+      .toList(growable: false);
+}
+
+String? _combineLabelValue(String? label, String? value) {
+  final normalizedLabel = label?.trim();
+  final normalizedValue = value?.trim();
+  if (normalizedLabel != null &&
+      normalizedLabel.isNotEmpty &&
+      normalizedValue != null &&
+      normalizedValue.isNotEmpty) {
+    return '$normalizedLabel: $normalizedValue';
+  }
+  if (normalizedLabel != null && normalizedLabel.isNotEmpty) {
+    return normalizedLabel;
+  }
+  if (normalizedValue != null && normalizedValue.isNotEmpty) {
+    return normalizedValue;
+  }
+  return null;
+}
+
+String? _firstNonEmpty(List<String?> values) {
+  for (final value in values) {
+    final normalized = value?.trim();
+    if (normalized != null && normalized.isNotEmpty) return normalized;
+  }
+  return null;
 }
 
 List<AgentRunWorkStep> _workStepsFromEvents(List<AgentStreamEvent> events) {
