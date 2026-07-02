@@ -26,6 +26,8 @@ Already present:
 - `go_router` shell, bottom navigation, route intent bridge, and agent hub.
 - Core network transport, session model/store, observability redaction, storage
   migration helpers, BLE/native platform interfaces, and feature repositories.
+- Production auth data-layer repository and refresh coordinator for
+  `/v1/auth/signup`, `/login`, `/refresh`, and `/logout`.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -33,7 +35,7 @@ Already present:
 Main gaps:
 
 - Runtime still bootstraps from dart-define demo users and optional bearer token.
-- Auth has no production login/refresh/logout repository or refresh lock.
+- Auth UI, route guards, and runtime session replacement are not wired yet.
 - Feature repositories still pass `user_id` and target legacy endpoints.
 - Agent chat still uses legacy AG-UI endpoints instead of `/v1/agent` thread,
   run, replay, stream, cancel, and action-confirmation resources.
@@ -71,8 +73,8 @@ Main gaps:
 
 1. Keep `docs/backend-contract/` synchronized with backend PRs and run the
    validator in both repos.
-2. Implement production auth/session service first, because every owner-scoped
-   feature depends on it.
+2. Wire production auth/session into app routing and runtime replacement,
+   because every owner-scoped feature depends on it.
 3. Migrate records/profile/media repositories to `/v1` only after auth/session
    is available, so `user_id` can stop being passed as authority.
 4. Migrate agent chat after the runtime API adapter exists, because stream

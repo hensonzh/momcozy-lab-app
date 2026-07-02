@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
@@ -118,6 +119,7 @@ void main() {
     );
 
     expect(runtime.statusRepository, isA<StatusApiRepository>());
+    expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
     expect(runtime.scheduleRepository.transport, same(transport));
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
