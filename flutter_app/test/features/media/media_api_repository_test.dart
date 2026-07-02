@@ -18,7 +18,6 @@ void main() {
       final repository = MediaApiRepository(transport: transport);
 
       final uploaded = await repository.uploadFile(
-        userId: 'ignored-user-authority',
         idempotencyKey: ' upload-idem-001 ',
         file: _file,
       );
@@ -41,7 +40,6 @@ void main() {
       final uploaded = await MediaApiRepository(
         transport: transport,
       ).uploadFile(
-        userId: 'ignored-user-authority',
         idempotencyKey: ' ',
         file: _file,
       );
@@ -70,7 +68,7 @@ void main() {
                 },
               },
             }),
-          ).uploadFile(userId: 'ignored-user-authority', file: _file),
+          ).uploadFile(file: _file),
           throwsA(
             isA<ApiHttpException>().having(
               (error) => error.errorCode,
@@ -82,13 +80,13 @@ void main() {
         await expectLater(
           MediaApiRepository(
             transport: _failureTransport(const ApiRequestCancelledException()),
-          ).uploadFile(userId: 'ignored-user-authority', file: _file),
+          ).uploadFile(file: _file),
           throwsA(isA<ApiRequestCancelledException>()),
         );
         await expectLater(
           MediaApiRepository(
             transport: _failureTransport(const ApiRequestTimeoutException()),
-          ).uploadFile(userId: 'ignored-user-authority', file: _file),
+          ).uploadFile(file: _file),
           throwsA(isA<ApiRequestTimeoutException>()),
         );
       },

@@ -506,9 +506,7 @@ class _StatusPageState extends State<_StatusPage> {
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
       _runtime = runtime;
-      _overviewFuture = runtime.statusRepository.fetchOverview(
-        userId: runtime.userId,
-      );
+      _overviewFuture = runtime.statusRepository.fetchOverview();
     }
   }
 
@@ -516,9 +514,7 @@ class _StatusPageState extends State<_StatusPage> {
     final runtime = _runtime;
     if (runtime == null) return;
     setState(() {
-      _overviewFuture = runtime.statusRepository.fetchOverview(
-        userId: runtime.userId,
-      );
+      _overviewFuture = runtime.statusRepository.fetchOverview();
     });
   }
 
@@ -2426,15 +2422,12 @@ class _RecordsPageState extends State<_RecordsPage> {
   Future<_RecordsOverview> _fetchRecords(MomCozyApiRuntime runtime) async {
     final repository = runtime.recordsRepository;
     final pump = await repository.fetchPumpMilkRecords(
-      userId: runtime.userId,
       date: _recordsDay,
     );
     final feeding = await repository.fetchFeedingRecords(
-      userId: runtime.userId,
       date: _recordsDay,
     );
     final growth = await repository.fetchGrowthRecords(
-      userId: runtime.userId,
       babyId: runtime.babyId,
     );
     return _RecordsOverview(pump: pump, feeding: feeding, growth: growth);
@@ -3723,7 +3716,6 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
     try {
       final runtime = MomCozyRuntimeScope.of(context);
       final uploaded = await runtime.mediaRepository.uploadFile(
-        userId: runtime.userId,
         file: _sampleMediaFile,
       );
       if (!mounted) return;

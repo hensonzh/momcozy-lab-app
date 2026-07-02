@@ -365,7 +365,6 @@ void main() {
       await upload.setConfig(
         apiBaseUrl: 'https://api.example.test',
         bearerToken: 'secret-token',
-        userId: 'demo-user',
       );
       await upload.updateDeviceSnapshot(
         const PumpDeviceSnapshot(
@@ -386,20 +385,19 @@ void main() {
         PumpAgentUploadSide.right,
         PumpAgentUploadSource.agent,
       );
-      expect((await upload.uploadWorkstate(userId: 'demo-user')).response, {
+      expect((await upload.uploadWorkstate()).response, {
         'error': 0,
       });
       expect(
-        (await upload.getProcessData(userId: 'demo-user')).progress.processAll,
+        (await upload.getProcessData()).progress.processAll,
         42,
       );
       expect(
-        (await upload.uploadProcess(userId: 'demo-user')).deduped,
+        (await upload.uploadProcess()).deduped,
         isFalse,
       );
       expect(
         (await upload.uploadMilkRecord(
-          userId: 'demo-user',
           endedAtMs: 1782687600000,
         )).deduped,
         isTrue,
@@ -421,7 +419,6 @@ void main() {
       expect(calls.first.arguments, {
         'apiBaseUrl': 'https://api.example.test',
         'bearerToken': 'secret-token',
-        'userId': 'demo-user',
       });
       expect(calls[1].arguments, {
         'snapshot': {
@@ -442,10 +439,7 @@ void main() {
       expect(calls[4].arguments, {'side': 'both'});
       expect(calls[5].arguments, {'side': 'L'});
       expect(calls[6].arguments, {'side': 'R', 'source': 'agent'});
-      expect(calls.last.arguments, {
-        'userId': 'demo-user',
-        'endedAtMs': 1782687600000,
-      });
+      expect(calls.last.arguments, {'endedAtMs': 1782687600000});
 
       await upload.dispose();
     });

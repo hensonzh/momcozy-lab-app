@@ -20,7 +20,6 @@ void main() {
       final repository = RecordsApiRepository(transport: transport);
 
       final records = await repository.fetchFeedingRecords(
-        userId: 'ignored-user-authority',
         date: DateTime.utc(2026, 6, 29),
       );
 
@@ -53,7 +52,6 @@ void main() {
       final repository = RecordsApiRepository(transport: transport);
 
       final records = await repository.fetchPumpMilkRecords(
-        userId: 'ignored-user-authority',
         date: DateTime.utc(2026, 6, 29),
       );
 
@@ -86,7 +84,6 @@ void main() {
       final repository = RecordsApiRepository(transport: transport);
 
       final records = await repository.fetchGrowthRecords(
-        userId: 'ignored-user-authority',
         babyId: 'infant-fixture',
       );
 
@@ -105,15 +102,12 @@ void main() {
       );
 
       final feeding = await repository.fetchFeedingRecords(
-        userId: 'ignored-user-authority',
         date: DateTime.utc(2026, 6, 29),
       );
       final pumping = await repository.fetchPumpMilkRecords(
-        userId: 'ignored-user-authority',
         date: DateTime.utc(2026, 6, 29),
       );
       final growth = await repository.fetchGrowthRecords(
-        userId: 'ignored-user-authority',
         babyId: 'infant-fixture',
       );
 
@@ -139,7 +133,6 @@ void main() {
 
       await expectLater(
         repository.fetchFeedingRecords(
-          userId: 'ignored-user-authority',
           date: DateTime.utc(2026, 6, 29),
         ),
         throwsA(

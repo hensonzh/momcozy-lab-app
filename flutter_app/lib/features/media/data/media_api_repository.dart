@@ -10,7 +10,6 @@ class MediaApiRepository implements MediaRepository {
 
   @override
   Future<UploadedMediaFile> uploadFile({
-    required String userId,
     required ApiUploadFile file,
     String? idempotencyKey,
   }) async {

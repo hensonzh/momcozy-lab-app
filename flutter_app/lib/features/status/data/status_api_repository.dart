@@ -12,7 +12,7 @@ class StatusApiRepository implements StatusRepository {
   final DateTime Function()? now;
 
   @override
-  Future<StatusOverview> fetchOverview({required String userId}) async {
+  Future<StatusOverview> fetchOverview() async {
     final profile = await transport.getJson(statusProfileEndpoint);
     final infants = await transport.getJson(statusInfantsEndpoint);
     final infantItems = infants['items'];

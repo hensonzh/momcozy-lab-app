@@ -241,7 +241,6 @@ abstract interface class PumpAgentUploadPlatform {
   Future<void> setConfig({
     required String apiBaseUrl,
     required String bearerToken,
-    required String userId,
   });
   Future<void> updateDeviceSnapshot(PumpDeviceSnapshot snapshot);
   Future<PumpAgentUploadProgress> sampleFromSnapshot();
@@ -252,11 +251,10 @@ abstract interface class PumpAgentUploadPlatform {
     PumpAgentUploadSide side,
     PumpAgentUploadSource source,
   );
-  Future<PumpAgentUploadResult> uploadWorkstate({required String userId});
-  Future<PumpAgentUploadResult> getProcessData({required String userId});
-  Future<PumpAgentUploadResult> uploadProcess({required String userId});
+  Future<PumpAgentUploadResult> uploadWorkstate();
+  Future<PumpAgentUploadResult> getProcessData();
+  Future<PumpAgentUploadResult> uploadProcess();
   Future<PumpAgentUploadResult> uploadMilkRecord({
-    required String userId,
     required int endedAtMs,
   });
 }
@@ -670,14 +668,12 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
   Future<void> setConfig({
     required String apiBaseUrl,
     required String bearerToken,
-    required String userId,
   }) async {
     _recordCall(
       'setConfig',
       payload: {
         'apiBaseUrl': apiBaseUrl,
         'bearerToken': bearerToken,
-        'userId': userId,
       },
       redactPayload: true,
     );
@@ -730,15 +726,13 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
   }
 
   @override
-  Future<PumpAgentUploadResult> uploadWorkstate({
-    required String userId,
-  }) async {
-    return _recordUpload('uploadWorkstate', {'userId': userId});
+  Future<PumpAgentUploadResult> uploadWorkstate() async {
+    return _recordUpload('uploadWorkstate', const <String, Object?>{});
   }
 
   @override
-  Future<PumpAgentUploadResult> getProcessData({required String userId}) async {
-    final body = <String, Object?>{'userId': userId};
+  Future<PumpAgentUploadResult> getProcessData() async {
+    final body = <String, Object?>{};
     _recordCall('getProcessData', payload: body);
     return PumpAgentUploadResult(
       body: Map<String, Object?>.unmodifiable(body),
@@ -748,17 +742,15 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
   }
 
   @override
-  Future<PumpAgentUploadResult> uploadProcess({required String userId}) async {
-    return _recordUpload('uploadProcess', {'userId': userId});
+  Future<PumpAgentUploadResult> uploadProcess() async {
+    return _recordUpload('uploadProcess', const <String, Object?>{});
   }
 
   @override
   Future<PumpAgentUploadResult> uploadMilkRecord({
-    required String userId,
     required int endedAtMs,
   }) async {
     return _recordUpload('uploadMilkRecord', {
-      'userId': userId,
       'endedAtMs': endedAtMs,
     });
   }

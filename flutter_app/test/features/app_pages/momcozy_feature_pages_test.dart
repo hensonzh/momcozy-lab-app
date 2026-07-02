@@ -1312,7 +1312,7 @@ void main() {
       expect(find.text('已上传 pump-display-fixture.png'), findsOneWidget);
       expect(find.textContaining('文件 ID file-001'), findsOneWidget);
       expect(multipart.lastPath, mediaUploadEndpoint);
-      expect(multipart.lastFields, {'user_id': 'demo-user-fixture'});
+      expect(multipart.lastFields, isEmpty);
       expect(multipart.lastFile?.name, 'pump-display-fixture.png');
     });
 

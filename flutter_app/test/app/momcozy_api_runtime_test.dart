@@ -155,7 +155,6 @@ void main() {
     );
 
     final uploaded = await runtime.mediaRepository.uploadFile(
-      userId: runtime.userId,
       file: const ApiUploadFile(
         name: 'runtime-fixture.png',
         mimeType: 'image/png',

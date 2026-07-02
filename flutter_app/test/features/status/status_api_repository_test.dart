@@ -31,9 +31,7 @@ void main() {
         now: () => DateTime.utc(2026, 7, 1),
       );
 
-      final overview = await repository.fetchOverview(
-        userId: 'ignored-user-authority',
-      );
+      final overview = await repository.fetchOverview();
 
       expect(transport.postedBodies, isEmpty);
       expect(transport.lastPath, statusInfantsEndpoint);
@@ -53,9 +51,7 @@ void main() {
         now: () => DateTime.utc(2026, 7, 1),
       );
 
-      final overview = await repository.fetchOverview(
-        userId: 'ignored-user-authority',
-      );
+      final overview = await repository.fetchOverview();
 
       expect(overview.mom, isNull);
       expect(overview.baby, isNull);
@@ -79,7 +75,7 @@ void main() {
       );
 
       await expectLater(
-        repository.fetchOverview(userId: 'ignored-user-authority'),
+        repository.fetchOverview(),
         throwsA(
           isA<ApiHttpException>().having(
             (error) => error.errorCode,

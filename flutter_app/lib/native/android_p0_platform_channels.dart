@@ -382,12 +382,10 @@ class AndroidPumpAgentUploadPlatform implements PumpAgentUploadPlatform {
   Future<void> setConfig({
     required String apiBaseUrl,
     required String bearerToken,
-    required String userId,
   }) async {
     await _channel.invokeMethod<void>('setConfig', {
       'apiBaseUrl': apiBaseUrl,
       'bearerToken': bearerToken,
-      'userId': userId,
     });
   }
 
@@ -436,29 +434,25 @@ class AndroidPumpAgentUploadPlatform implements PumpAgentUploadPlatform {
   }
 
   @override
-  Future<PumpAgentUploadResult> uploadWorkstate({
-    required String userId,
-  }) async {
-    return _invokeUploadResult('uploadWorkstate', {'userId': userId});
+  Future<PumpAgentUploadResult> uploadWorkstate() async {
+    return _invokeUploadResult('uploadWorkstate', const <String, Object?>{});
   }
 
   @override
-  Future<PumpAgentUploadResult> getProcessData({required String userId}) async {
-    return _invokeUploadResult('getProcessData', {'userId': userId});
+  Future<PumpAgentUploadResult> getProcessData() async {
+    return _invokeUploadResult('getProcessData', const <String, Object?>{});
   }
 
   @override
-  Future<PumpAgentUploadResult> uploadProcess({required String userId}) async {
-    return _invokeUploadResult('uploadProcess', {'userId': userId});
+  Future<PumpAgentUploadResult> uploadProcess() async {
+    return _invokeUploadResult('uploadProcess', const <String, Object?>{});
   }
 
   @override
   Future<PumpAgentUploadResult> uploadMilkRecord({
-    required String userId,
     required int endedAtMs,
   }) async {
     return _invokeUploadResult('uploadMilkRecord', {
-      'userId': userId,
       'endedAtMs': endedAtMs,
     });
   }
