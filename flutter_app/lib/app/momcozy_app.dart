@@ -181,6 +181,19 @@ ThemeData momCozyTheme() {
         ),
       ),
     ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: MomCozyColors.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        ),
+        textStyle: const TextStyle(
+          fontFamily: MomCozyTypography.fontFamily,
+          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    ),
     iconButtonTheme: IconButtonThemeData(
       style: IconButton.styleFrom(
         foregroundColor: MomCozyColors.mutedForeground,
@@ -188,6 +201,52 @@ ThemeData momCozyTheme() {
           borderRadius: BorderRadius.circular(MomCozyRadii.control),
         ),
       ),
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return MomCozyColors.raised;
+        }
+        return MomCozyColors.mutedForeground.withValues(alpha: 0.82);
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return MomCozyColors.primary;
+        }
+        return MomCozyColors.border.withValues(alpha: 0.72);
+      }),
+      trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return MomCozyColors.care;
+        }
+        return MomCozyColors.raised;
+      }),
+      checkColor: WidgetStateProperty.all(MomCozyColors.raised),
+      side: const BorderSide(color: MomCozyColors.care, width: 1.8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+    ),
+    sliderTheme: SliderThemeData(
+      activeTrackColor: MomCozyColors.primary,
+      inactiveTrackColor: MomCozyColors.border.withValues(alpha: 0.7),
+      overlayColor: MomCozyColors.primary.withValues(alpha: 0.12),
+      thumbColor: MomCozyColors.primary,
+      valueIndicatorColor: MomCozyColors.primary,
+      valueIndicatorTextStyle: const TextStyle(
+        color: MomCozyColors.background,
+        fontFamily: MomCozyTypography.fontFamily,
+        fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+        fontWeight: FontWeight.w800,
+      ),
+      trackHeight: 5,
+      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: MomCozyColors.primary,
+      linearTrackColor: MomCozyColors.roseSoft,
+      circularTrackColor: MomCozyColors.roseSoft,
     ),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: ButtonStyle(

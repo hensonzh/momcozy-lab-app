@@ -4,6 +4,8 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
+import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -14,42 +16,125 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('MomCozy feature page goldens', () {
-    testWidgets('agent hub matches compact mobile baseline', (tester) async {
-      await _setCompactMobileViewport(tester);
-      await _pumpGoldenApp(tester, initialLocation: '/');
+    for (final route in _routeGoldens) {
+      testWidgets('${route.label} matches compact mobile baseline', (
+        tester,
+      ) async {
+        await _setCompactMobileViewport(tester);
+        await _pumpGoldenApp(tester, initialLocation: route.path);
 
-      expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-      await expectLater(
-        find.byKey(_goldenSurfaceKey),
-        matchesGoldenFile('../../goldens/feature_pages/agent_hub_mobile.png'),
-      );
-    });
-
-    testWidgets('status page matches compact mobile baseline', (tester) async {
-      await _setCompactMobileViewport(tester);
-      await _pumpGoldenApp(tester, initialLocation: '/status');
-
-      expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
-      await expectLater(
-        find.byKey(_goldenSurfaceKey),
-        matchesGoldenFile('../../goldens/feature_pages/status_page_mobile.png'),
-      );
-    });
-
-    testWidgets('pump page matches compact mobile baseline', (tester) async {
-      await _setCompactMobileViewport(tester);
-      await _pumpGoldenApp(tester, initialLocation: '/pump');
-
-      expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
-      await expectLater(
-        find.byKey(_goldenSurfaceKey),
-        matchesGoldenFile('../../goldens/feature_pages/pump_page_mobile.png'),
-      );
-    });
+        expect(find.byKey(route.pageKey), findsOneWidget);
+        await expectLater(
+          find.byKey(_goldenSurfaceKey),
+          matchesGoldenFile('../../goldens/feature_pages/${route.fileName}'),
+        );
+      });
+    }
   });
 }
 
 const _goldenSurfaceKey = ValueKey('momcozy-feature-golden-surface');
+
+const _routeGoldens = [
+  _RouteGolden(
+    label: 'agent hub',
+    path: '/',
+    fileName: 'agent_hub_mobile.png',
+    pageKey: ValueKey('agent-hub-page'),
+  ),
+  _RouteGolden(
+    label: 'status page',
+    path: '/status',
+    fileName: 'status_page_mobile.png',
+    pageKey: ValueKey('route-page-/status'),
+  ),
+  _RouteGolden(
+    label: 'schedule page',
+    path: '/schedule',
+    fileName: 'schedule_page_mobile.png',
+    pageKey: ValueKey('route-page-/schedule'),
+  ),
+  _RouteGolden(
+    label: 'records page',
+    path: '/records',
+    fileName: 'records_page_mobile.png',
+    pageKey: ValueKey('route-page-/records'),
+  ),
+  _RouteGolden(
+    label: 'pump page',
+    path: '/pump',
+    fileName: 'pump_page_mobile.png',
+    pageKey: ValueKey('route-page-/pump'),
+  ),
+  _RouteGolden(
+    label: 'device page',
+    path: '/device',
+    fileName: 'device_page_mobile.png',
+    pageKey: ValueKey('route-page-/device'),
+  ),
+  _RouteGolden(
+    label: 'device manage page',
+    path: '/device/manage',
+    fileName: 'device_manage_page_mobile.png',
+    pageKey: ValueKey('route-page-/device/manage'),
+  ),
+  _RouteGolden(
+    label: 'device user page',
+    path: '/device/user',
+    fileName: 'device_user_page_mobile.png',
+    pageKey: ValueKey('route-page-/device/user'),
+  ),
+  _RouteGolden(
+    label: 'calibration page',
+    path: '/calibration',
+    fileName: 'calibration_page_mobile.png',
+    pageKey: ValueKey('route-page-/calibration'),
+  ),
+  _RouteGolden(
+    label: 'community page',
+    path: '/community',
+    fileName: 'community_page_mobile.png',
+    pageKey: ValueKey('route-page-/community'),
+  ),
+  _RouteGolden(
+    label: 'w1 page',
+    path: '/w1',
+    fileName: 'w1_page_mobile.png',
+    pageKey: ValueKey('route-page-/w1'),
+  ),
+  _RouteGolden(
+    label: 'hospital bag page',
+    path: '/hospital-bag-cart',
+    fileName: 'hospital_bag_page_mobile.png',
+    pageKey: ValueKey('route-page-/hospital-bag-cart'),
+  ),
+  _RouteGolden(
+    label: 'ibclc page',
+    path: '/ibclc-chat.html',
+    fileName: 'ibclc_page_mobile.png',
+    pageKey: ValueKey('route-page-/ibclc-chat.html'),
+  ),
+  _RouteGolden(
+    label: 'media viewer page',
+    path: '/media-viewer',
+    fileName: 'media_viewer_page_mobile.png',
+    pageKey: ValueKey('route-page-/media-viewer'),
+  ),
+];
+
+class _RouteGolden {
+  const _RouteGolden({
+    required this.label,
+    required this.path,
+    required this.fileName,
+    required this.pageKey,
+  });
+
+  final String label;
+  final String path;
+  final String fileName;
+  final ValueKey<String> pageKey;
+}
 
 Future<void> _setCompactMobileViewport(WidgetTester tester) async {
   tester.view.physicalSize = const Size(390, 844);
@@ -104,6 +189,88 @@ MomCozyApiRuntime _goldenRuntime() {
           'reply_code': 'pump_state_changed',
           'reply_side': 'left',
         },
+      },
+      scheduleDayPlanEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'tasks': [
+            {
+              'id': 'task-feed-1',
+              'title': '亲喂观察',
+              'completed': false,
+              'remindAt': '2026-07-02T09:30:00Z',
+            },
+            {
+              'id': 'task-pump-1',
+              'title': '泵奶 session',
+              'completed': true,
+              'remindAt': '2026-07-02T12:00:00Z',
+            },
+            {
+              'id': 'task-summary-1',
+              'title': '晚间状态回顾',
+              'completed': false,
+              'remindAt': '2026-07-02T21:30:00Z',
+            },
+          ],
+        },
+      },
+      pumpMilkRecordsEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'records': [
+            {
+              'id': 'pump-1',
+              'title': '上午泵奶',
+              'amountMl': 95,
+              'pumpSource': 1,
+              'occurredAt': '2026-07-02T08:40:00Z',
+            },
+            {
+              'id': 'pump-2',
+              'title': '午间泵奶',
+              'amountMl': 82,
+              'pumpSource': 1,
+              'occurredAt': '2026-07-02T13:20:00Z',
+            },
+          ],
+        },
+      },
+      feedingRecordsEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'records': [
+            {
+              'id': 'feed-1',
+              'type': 'bottle',
+              'amountMl': 70,
+              'occurredAt': '2026-07-02T10:10:00Z',
+            },
+          ],
+        },
+      },
+      growthRecordsEndpoint: const <String, Object?>{
+        'status': 200,
+        'data': <String, Object?>{
+          'records': [
+            {
+              'id': 'growth-1',
+              'weightGram': 5600,
+              'heightCm': 58.2,
+              'measuredAt': '2026-07-01T08:00:00Z',
+            },
+          ],
+        },
+      },
+    }),
+    multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
+      'status': 200,
+      'data': <String, Object?>{
+        'id': 'file-golden',
+        'name': 'pump-display-fixture.png',
+        'size': 68,
+        'extension': 'png',
+        'mime_type': 'image/png',
       },
     }),
     blePlatform: FakeBlePlatform(

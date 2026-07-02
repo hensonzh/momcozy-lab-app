@@ -182,20 +182,22 @@ class _FeaturePageFrame extends StatelessWidget {
 
     return ListView(
       key: ValueKey('route-page-$path'),
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              alignment: Alignment.center,
+            DecoratedBox(
               decoration: BoxDecoration(
                 color: accent.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(MomCozyRadii.control),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: accent.withValues(alpha: 0.08)),
               ),
-              child: Icon(icon, color: accent, size: 24),
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: Icon(icon, color: accent, size: 24),
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -205,16 +207,17 @@ class _FeaturePageFrame extends StatelessWidget {
                   Text(
                     title,
                     style: textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w900,
                       color: MomCozyColors.foreground,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 5),
                   Text(
                     summary,
                     style: textTheme.bodyMedium?.copyWith(
-                      height: 1.35,
+                      height: 1.32,
                       color: MomCozyColors.mutedForeground,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
@@ -245,6 +248,7 @@ class _PriorityBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        border: Border.all(color: accent.withValues(alpha: 0.06)),
       ),
       child: Text(
         priority,
@@ -265,15 +269,16 @@ class _SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 10),
+      padding: const EdgeInsets.only(top: 4, bottom: 10, left: 1),
       child: Row(
         children: [
           Expanded(
             child: Text(
               label,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
         ],
@@ -318,7 +323,7 @@ class _MetricTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: accent, size: 22),
+          _IconBubble(icon: icon, accent: accent, size: 36, iconSize: 20),
           const SizedBox(height: 10),
           Text(
             value,
@@ -386,16 +391,7 @@ class _ActionTile extends StatelessWidget {
               padding: const EdgeInsets.all(14),
               child: Row(
                 children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: foreground.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(MomCozyRadii.control),
-                    ),
-                    child: Icon(icon, color: foreground, size: 21),
-                  ),
+                  _IconBubble(icon: icon, accent: foreground),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -404,7 +400,10 @@ class _ActionTile extends StatelessWidget {
                         Text(
                           title,
                           style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.w800),
+                              ?.copyWith(
+                                color: MomCozyColors.foreground,
+                                fontWeight: FontWeight.w900,
+                              ),
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -446,10 +445,11 @@ class _StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        border: Border.all(color: accent.withValues(alpha: 0.08)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -460,11 +460,39 @@ class _StatusChip extends StatelessWidget {
             label,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: accent,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _IconBubble extends StatelessWidget {
+  const _IconBubble({
+    required this.icon,
+    required this.accent,
+    this.size = 38,
+    this.iconSize = 21,
+  });
+
+  final IconData icon;
+  final Color accent;
+  final double size;
+  final double iconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.11),
+        borderRadius: BorderRadius.circular(size <= 28 ? 8 : 12),
+      ),
+      child: Icon(icon, color: accent, size: iconSize),
     );
   }
 }
@@ -1204,32 +1232,50 @@ class _DatePill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: Material(
-        color: selected ? MomCozyColors.roseSoft : MomCozyColors.card,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(MomCozyRadii.control),
-          side: BorderSide(
-            color: selected ? MomCozyColors.primary : MomCozyColors.border,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: selected ? MomCozyColors.roseSoft : MomCozyColors.card,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: selected
+                ? MomCozyColors.primary.withValues(alpha: 0.48)
+                : MomCozyColors.border.withValues(alpha: 0.72),
           ),
+          boxShadow: selected ? MomCozyShadows.soft : const [],
         ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: SizedBox(
-            width: 58,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Column(
-                children: [
-                  Text(day, style: Theme.of(context).textTheme.labelMedium),
-                  const SizedBox(height: 4),
-                  Text(
-                    date,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w900,
+        child: Material(
+          type: MaterialType.transparency,
+          borderRadius: BorderRadius.circular(15),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: SizedBox(
+              width: 58,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  children: [
+                    Text(
+                      day,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: selected
+                            ? MomCozyColors.primary
+                            : MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      date,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: selected
+                            ? MomCozyColors.primary
+                            : MomCozyColors.foreground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -2860,22 +2906,97 @@ class _TrendBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 44,
-            child: Text(label, style: Theme.of(context).textTheme.labelMedium),
+      child: DecoratedBox(
+        decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 46,
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: value.clamp(0, 1),
+                  minHeight: 10,
+                  borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                valueLabel ?? '${(value * 500).round()} mL',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: LinearProgressIndicator(
-              value: value.clamp(0, 1),
-              minHeight: 10,
-              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        ),
+      ),
+    );
+  }
+}
+
+class _MediaPreview extends StatelessWidget {
+  const _MediaPreview({required this.type, required this.accent});
+
+  final String type;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final icon = switch (type) {
+      'image' => Icons.image_outlined,
+      'video' => Icons.play_circle_outline_rounded,
+      _ => Icons.picture_as_pdf_outlined,
+    };
+    final label = switch (type) {
+      'image' => '图片预览',
+      'video' => '视频预览',
+      _ => 'PDF 预览',
+    };
+
+    return Container(
+      height: 210,
+      alignment: Alignment.center,
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card,
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _IconBubble(icon: icon, accent: accent, size: 58, iconSize: 30),
+            const SizedBox(height: 14),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Text(valueLabel ?? '${(value * 500).round()} mL'),
-        ],
+            const SizedBox(height: 7),
+            Text(
+              '选择资料后可在这里查看内容、进度和加载状态。',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                height: 1.35,
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -3855,55 +3976,6 @@ const _sampleMediaFile = ApiUploadFile(
   sizeBytes: 68,
   bytes: <int>[137, 80, 78, 71, 13, 10, 26, 10],
 );
-
-class _MediaPreview extends StatelessWidget {
-  const _MediaPreview({required this.type, required this.accent});
-
-  final String type;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final icon = switch (type) {
-      'image' => Icons.image_outlined,
-      'video' => Icons.play_circle_outline_rounded,
-      _ => Icons.picture_as_pdf_outlined,
-    };
-    final label = switch (type) {
-      'image' => '图片预览',
-      'video' => '视频预览',
-      _ => 'PDF 预览',
-    };
-
-    return Container(
-      height: 210,
-      alignment: Alignment.center,
-      decoration: MomCozyDecorations.card(),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 54, color: accent),
-          const SizedBox(height: 12),
-          Text(
-            label,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '选择资料后可在这里查看内容、进度和加载状态。',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _NotFoundPage extends StatelessWidget {
   const _NotFoundPage({
