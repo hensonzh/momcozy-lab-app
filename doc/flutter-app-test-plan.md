@@ -681,14 +681,17 @@ npm run flutter:p0:platform-smoke
 CI 最低要求：
 
 ```text
-[ ] flutter analyze
-[ ] dart format check
-[ ] flutter test
-[ ] contract fixture tests
+[x] `npm run flutter:release-gate` 已固定非真机 gate
+[x] flutter analyze
+[x] dart format check
+[x] flutter test
+[x] contract fixture tests
 [ ] golden tests
-[ ] Android debug build
-[ ] Android release build
-[ ] signing check
+[x] staging smoke harness 默认安全 skip，凭证齐全时可直连 staging
+[x] storage migration dry-run
+[x] Android debug build：local flavor
+[x] Android release build：staging flavor
+[x] signing check：CI 可用 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1` 强制 release signing env
 ```
 
 发布门槛最低要求：

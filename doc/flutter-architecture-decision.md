@@ -2,7 +2,7 @@
 
 > 状态：Phase 0 ADR，PoC 执行前可复核。  
 > 范围：MomCozyApp 从 Web/Capacitor 迁移到 Flutter-first Android App 的首版技术栈。  
-> 当前本机状态：Flutter / JDK / Android SDK 已安装，`flutter_app/` shell 已创建，`flutter test` 和 debug APK 构建已通过；iOS/Xcode/CocoaPods 暂不作为 P0 gate。
+> 当前本机状态：Flutter / JDK / Android SDK 已安装，`flutter_app/` shell 已创建，`flutter test`、local debug APK 和 staging release APK 构建已通过；iOS/Xcode/CocoaPods 暂不作为 P0 gate。
 
 ---
 
@@ -128,7 +128,7 @@ features/
 [x] `npm run flutter:check` 通过
 [x] Flutter/Dart 版本写入工程 README 或 toolchain 文件
 [x] Android SDK / JDK / Gradle 环境可构建 debug APK
-[x] 明确 appId / flavor / signing 的临时策略，Flutter PoC 使用 `com.momcozymai.app.flutterpoc`
+[x] 明确 appId / flavor / signing 的临时策略，Flutter PoC 使用 local/staging/production-shaped 独立 appId
 [x] 决定使用 `flutter-toolchain.json` + `npm run flutter:check`，P0 不引入 FVM
 [x] Security/privacy gates 已定义，Flutter 日志脱敏工具与 P0 tests 已落地
 [x] 现有 Web baseline 仍可测试和构建
@@ -143,8 +143,10 @@ features/
 [x] adb / Android platform-tools 可用：36.0.0-13206524
 [x] Flutter shell 已初始化：`flutter_app/`
 [x] `flutter_app` 单测通过
-[x] `flutter build apk --debug` 通过
-[x] Flutter Android PoC appId / flavor / signing 策略已记录：`doc/flutter-android-packaging.md`
+[x] `npm run flutter:release-gate` 已固定 format、analyze、test、staging smoke、storage dry-run 和 flavored APK build
+[x] `flutter build apk --debug --flavor local` 通过
+[x] `flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging` 通过
+[x] Flutter Android PoC appId / flavor / signing 策略已记录：`doc/flutter-android-packaging.md` 与 `doc/flutter-release-gate.md`
 [x] Flutter / Android / JDK 版本固定源已记录：`flutter-toolchain.json`
 [x] Flutter 安全隐私准入已记录：`doc/flutter-security-privacy-gates.md`
 [x] Web baseline 可测试和构建

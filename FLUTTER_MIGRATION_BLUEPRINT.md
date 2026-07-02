@@ -507,13 +507,14 @@ AgentHub UI
 - 网络层、日志、错误模型、auth injection。
 - storage migration framework。
 - platform channel typed interfaces。
-- basic CI：analyze、format、unit tests、Android debug/release build。
+- basic CI：analyze、format、unit tests、staging smoke harness、storage migration dry-run、Android flavored debug/release build。
 
 退出条件：
 
 ```text
-[ ] Flutter debug build 可安装
-[x] Android release build 可生成，当前 P0 使用 debug signing
+[x] `npm run flutter:release-gate` 通过
+[x] Flutter local debug build 可生成，安装仍需真机 smoke
+[x] Flutter staging release build 可生成，未注入 release signing 时仅作为本地 smoke artifact
 [x] 核心 route shell 可导航
 [x] 本地 storage migration 可 dry-run
 [x] Platform channel smoke test 可跑通：`npm run flutter:p0:platform-smoke`
@@ -650,7 +651,9 @@ AgentHub UI
 退出条件：
 
 ```text
-[x] release build 通过，安装仍需真机 smoke
+[x] `npm run flutter:release-gate` 已覆盖 local debug build 和 staging release build
+[x] release signing env gate 已定义，CI 可用 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1` 强制检查
+[x] installation build artifact 可生成，安装仍需真机 smoke
 [ ] P0 真实设备矩阵通过
 [ ] 真泵回归通过
 [ ] 回滚包和回滚流程确认
@@ -895,8 +898,10 @@ doc/flutter-app-test-plan.md
 [x] `npm run flutter:check` 通过
 [x] `npm run flutter:init` 已创建 `flutter_app/`
 [x] `flutter_app` 单测通过
-[x] `flutter build apk --debug` 通过
-[x] 临时 appId / flavor / signing 策略已明确，Flutter PoC 使用 `com.momcozymai.app.flutterpoc`
+[x] `npm run flutter:release-gate` 已固定 format、analyze、test、staging smoke、storage dry-run 和 flavored APK build
+[x] `flutter build apk --debug --flavor local` 通过
+[x] `flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging` 通过
+[x] local/staging/production appId / flavor / signing 策略已明确，Flutter PoC production-shaped appId 使用 `com.momcozymai.app.flutterpoc`
 [x] P0 工具链固定方案已明确：不引入 FVM，使用 `flutter-toolchain.json` + `npm run flutter:check`
 [x] Security/privacy gates 已定义，Flutter 日志脱敏工具与 P0 tests 已落地
 [x] BLE fixtures 已接入 Flutter golden/parity tests
@@ -945,6 +950,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter 通用 JSON HTTP transport 已落地，覆盖 GET/POST、auth/header 注入、query merge、HTTP error 和 malformed body tests
 [x] Flutter 通用 multipart transport 已落地，Media repository 可通过 runtime 走 `/v1/files/upload`
 [x] Flutter staging smoke harness 已落地：可用环境变量直连 staging 验证 HTTP、client-event、media upload 和 Agent SSE；本机无凭证时默认安全 skip
+[x] Flutter release gate 已落地：`npm run flutter:release-gate` 统一执行非真机 CI/发布准入，并记录 release signing env gate
 [x] Flutter App API runtime scope 已接入 App root，集中 dart-define / secure session base URL/token/user/baby/locale 与 typed repository factory
 [x] Flutter App 启动已接入 secure storage session bootstrap，token/refresh token 不再只能依赖普通 env 注入
 [x] Flutter App API runtime 已加入 `/api/client-event` best-effort control client 注入点，IBCLC/通知/分析类页面可复用事件写回
