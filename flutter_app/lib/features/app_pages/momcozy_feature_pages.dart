@@ -3315,6 +3315,7 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
   bool _babyClothesPacked = false;
   bool _isSyncing = false;
   String? _syncStatus;
+  final Set<String> _removedItemIds = {};
 
   void _setPacked(String id, bool value) {
     setState(() {
@@ -3338,6 +3339,25 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
       _pumpPacked = true;
       _padsPacked = false;
       _babyClothesPacked = false;
+      _removedItemIds.clear();
+    });
+    unawaited(_syncCart());
+  }
+
+  void _deleteItem(String id) {
+    setState(() {
+      _removedItemIds.add(id);
+      switch (id) {
+        case 'pump':
+          _pumpPacked = false;
+          break;
+        case 'pads':
+          _padsPacked = false;
+          break;
+        case 'baby_clothes':
+          _babyClothesPacked = false;
+          break;
+      }
     });
     unawaited(_syncCart());
   }
@@ -3377,16 +3397,13 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
         title: '宝宝衣物',
         packed: _babyClothesPacked,
       ),
-    ];
+    ].where((item) => !_removedItemIds.contains(item.id)).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final packed = [
-      _pumpPacked,
-      _padsPacked,
-      _babyClothesPacked,
-    ].where((item) => item).length;
+    final items = _hospitalBagItems();
+    final packed = items.where((item) => item.packed).length;
 
     return _FeaturePageFrame(
       path: widget.path,
@@ -3396,33 +3413,39 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
       accent: widget.accent,
       priority: widget.priority,
       trailing: _StatusChip(
-        label: '$packed/3 已准备',
+        label: '$packed/${items.length} 已准备',
         icon: Icons.inventory_2_outlined,
         accent: widget.accent,
       ),
       children: [
         const _SectionTitle('清单'),
-        _ChecklistTile(
-          title: '吸奶器和配件',
-          subtitle: '主机、阀门、储奶袋、充电线。',
-          value: _pumpPacked,
-          accent: widget.accent,
-          onChanged: (value) => _setPacked('pump', value),
-        ),
-        _ChecklistTile(
-          title: '产后护理用品',
-          subtitle: '护理垫、湿巾、一次性用品。',
-          value: _padsPacked,
-          accent: const Color(0xff43827b),
-          onChanged: (value) => _setPacked('pads', value),
-        ),
-        _ChecklistTile(
-          title: '宝宝衣物',
-          subtitle: '连体衣、包巾、帽子和备用衣物。',
-          value: _babyClothesPacked,
-          accent: const Color(0xff6b6da8),
-          onChanged: (value) => _setPacked('baby_clothes', value),
-        ),
+        if (!_removedItemIds.contains('pump'))
+          _ChecklistTile(
+            title: '吸奶器和配件',
+            subtitle: '主机、阀门、储奶袋、充电线。',
+            value: _pumpPacked,
+            accent: widget.accent,
+            onChanged: (value) => _setPacked('pump', value),
+            onDelete: () => _deleteItem('pump'),
+          ),
+        if (!_removedItemIds.contains('pads'))
+          _ChecklistTile(
+            title: '产后护理用品',
+            subtitle: '护理垫、湿巾、一次性用品。',
+            value: _padsPacked,
+            accent: const Color(0xff43827b),
+            onChanged: (value) => _setPacked('pads', value),
+            onDelete: () => _deleteItem('pads'),
+          ),
+        if (!_removedItemIds.contains('baby_clothes'))
+          _ChecklistTile(
+            title: '宝宝衣物',
+            subtitle: '连体衣、包巾、帽子和备用衣物。',
+            value: _babyClothesPacked,
+            accent: const Color(0xff6b6da8),
+            onChanged: (value) => _setPacked('baby_clothes', value),
+            onDelete: () => _deleteItem('baby_clothes'),
+          ),
         const SizedBox(height: 8),
         _ActionTile(
           icon: _isSyncing ? Icons.sync_rounded : Icons.cloud_done_outlined,
@@ -3456,6 +3479,7 @@ class _ChecklistTile extends StatelessWidget {
     required this.value,
     required this.accent,
     required this.onChanged,
+    this.onDelete,
   });
 
   final String title;
@@ -3463,6 +3487,7 @@ class _ChecklistTile extends StatelessWidget {
   final bool value;
   final Color accent;
   final ValueChanged<bool> onChanged;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -3471,9 +3496,17 @@ class _ChecklistTile extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       accent: accent,
-      trailing: Checkbox(
-        value: value,
-        onChanged: (next) => onChanged(next ?? false),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Checkbox(value: value, onChanged: (next) => onChanged(next ?? false)),
+          if (onDelete != null)
+            IconButton(
+              tooltip: '删除$title',
+              onPressed: onDelete,
+              icon: const Icon(Icons.delete_outline_rounded),
+            ),
+        ],
       ),
     );
   }
