@@ -49,8 +49,11 @@ Already present:
   `plan_type=hospital_bag_cart` and an idempotency key, removing the legacy
   `/api/hospital-bag/cart-update` path.
 - Voice repository no longer sends `user_id` as authority or bearer tokens in
-  realtime voice URLs; voice endpoints still need to be added to the production
-  OpenAPI contract before they can be treated as fully stable.
+  realtime voice URLs. Production OpenAPI now covers speech transcription and
+  PCM playback; realtime WebSocket auth also uses the bearer header. The voice
+  provider is disabled by default and returns the stable
+  `voice_provider_disabled` unavailable state until a managed provider adapter
+  is configured.
 - Agent Hub default run path now creates runs through `/v1/agent/runs`, follows
   `/v1/agent/runs/{run_id}/stream`, cancels through
   `/v1/agent/runs/{run_id}/cancel`, and reduces production
@@ -110,8 +113,8 @@ Main gaps:
    validator in both repos.
 2. Wire production auth/session into app routing and runtime replacement,
    because every owner-scoped feature depends on it.
-3. Add formal production OpenAPI coverage for voice/transcription endpoints or
-   replace them with the production agent runtime media flow.
+3. Add a managed production voice provider adapter behind `VOICE_PROVIDER`;
+   keep the current disabled contract as the UI unavailable state until then.
 4. Add production replay/event-page and action confirmation flows for Agent Hub
    once the backend endpoints are exposed in the OpenAPI snapshot.
 

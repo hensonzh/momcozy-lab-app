@@ -23,6 +23,8 @@ REQUIRED_OPENAPI_PATHS = {
     "/v1/records/pumping",
     "/v1/records/growth",
     "/v1/plans",
+    "/v1/speech/transcribe-chunk",
+    "/v1/realtime-voice-stream",
     "/v1/agent/threads",
     "/v1/agent/runs",
     "/v1/agent/runs/{run_id}/events",

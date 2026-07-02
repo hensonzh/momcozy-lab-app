@@ -46,8 +46,9 @@ contract rather than patched around the legacy API.
 Resolution on 2026-07-02: the records, media, status, hospital-bag, pump
 workstate, native pump upload, and main agent run/stream/cancel clients now
 target the production backend contract. Remaining integration work is limited
-to auth UI/route guards, agent replay/action confirmation UI, and formal
-production voice endpoint coverage.
+to auth UI/route guards, agent replay/action confirmation UI, and wiring a
+managed production voice provider behind the new disabled-by-default voice
+contract.
 
 | Priority | Area | Legacy Mismatch | Target Handling |
 |---|---|---|---|
