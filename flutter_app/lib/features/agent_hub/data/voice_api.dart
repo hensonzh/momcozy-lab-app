@@ -139,6 +139,33 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   }
 }
 
+class AgentVoiceApiInputTranscriber implements AgentVoiceTranscriber {
+  const AgentVoiceApiInputTranscriber({
+    required this.repository,
+    required this.userId,
+    this.language,
+  });
+
+  final AgentVoiceRepository repository;
+  final String userId;
+  final String? language;
+
+  @override
+  Future<String?> transcribe(AgentVoiceRecording recording) {
+    if (recording.bytes.isEmpty) return Future<String?>.value();
+    return repository.transcribeSpeechChunk(
+      userId: userId,
+      language: language,
+      file: ApiUploadFile(
+        name: recording.name,
+        mimeType: recording.mimeType,
+        sizeBytes: recording.sizeBytes,
+        bytes: recording.bytes,
+      ),
+    );
+  }
+}
+
 abstract interface class AgentVoiceBinaryStreamConnector {
   Stream<List<int>> get(Uri uri, {required Map<String, String> headers});
 }

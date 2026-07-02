@@ -242,6 +242,44 @@ void main() {
     expect(client.requests.single.message, '今天左侧奶量偏低');
   });
 
+  testWidgets('Agent Hub surfaces denied microphone permission', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+    );
+    final recorder = _PageFakeVoiceRecorder(
+      initialPermission: AgentVoiceInputPermissionState.unknown,
+      requestResult: AgentVoiceInputPermissionState.denied,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voiceInputController: AgentVoiceInputController(
+            recorder: recorder,
+            transcriber: _PageFakeVoiceTranscriber('ignored'),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('麦克风权限未开启'), findsOneWidget);
+    expect(recorder.calls, ['permissionState', 'requestPermission']);
+    expect(client.requests, isEmpty);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '',
+    );
+  });
+
   testWidgets('Agent Hub starts auto voice playback after finished reply', (
     tester,
   ) async {
@@ -904,4 +942,56 @@ class _RecordingCancelConnector implements AgentStreamControlHttpConnector {
     if (!called.isCompleted) called.complete();
     return const AgentStreamControlHttpResponse(statusCode: 200, body: '{}');
   }
+}
+
+class _PageFakeVoiceRecorder implements AgentVoiceRecorder {
+  _PageFakeVoiceRecorder({
+    this.initialPermission = AgentVoiceInputPermissionState.granted,
+    this.requestResult = AgentVoiceInputPermissionState.granted,
+  });
+
+  final AgentVoiceInputPermissionState initialPermission;
+  final AgentVoiceInputPermissionState requestResult;
+  final List<String> calls = [];
+
+  @override
+  Future<AgentVoiceInputPermissionState> permissionState() async {
+    calls.add('permissionState');
+    return initialPermission;
+  }
+
+  @override
+  Future<AgentVoiceInputPermissionState> requestPermission() async {
+    calls.add('requestPermission');
+    return requestResult;
+  }
+
+  @override
+  Future<void> start() async {
+    calls.add('start');
+  }
+
+  @override
+  Future<AgentVoiceRecording?> stop() async {
+    calls.add('stop');
+    return const AgentVoiceRecording(
+      name: 'speech.webm',
+      mimeType: 'audio/webm',
+      bytes: [1],
+    );
+  }
+
+  @override
+  Future<void> cancel() async {
+    calls.add('cancel');
+  }
+}
+
+class _PageFakeVoiceTranscriber implements AgentVoiceTranscriber {
+  const _PageFakeVoiceTranscriber(this.text);
+
+  final String? text;
+
+  @override
+  Future<String?> transcribe(AgentVoiceRecording recording) async => text;
 }

@@ -31,6 +31,26 @@ void main() {
       expect(coordinator.activeSource, isNull);
     });
 
+    test('lets notification voice interrupt auto reply playback', () {
+      final coordinator = AgentVoicePlaybackCoordinator();
+      var autoCancelled = false;
+
+      coordinator.request(
+        id: 'reply-1',
+        source: AgentVoicePlaybackSource.autoReply,
+        cancel: () => autoCancelled = true,
+      );
+      final notification = coordinator.request(
+        id: 'notification-1',
+        source: AgentVoicePlaybackSource.notification,
+      );
+
+      expect(notification.status, AgentVoicePlaybackRequestStatus.started);
+      expect(autoCancelled, isTrue);
+      expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
+      expect(coordinator.activeId, 'notification-1');
+    });
+
     test('lets manual bubble playback interrupt notification voice', () {
       final coordinator = AgentVoicePlaybackCoordinator();
       var notificationCancelled = false;

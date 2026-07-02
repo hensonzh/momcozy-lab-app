@@ -26,6 +26,7 @@ class AgentHubPage extends StatefulWidget {
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
     this.voiceInput,
+    this.voiceInputController,
     this.voicePlaybackCoordinator,
     this.onArtifactAction,
     this.onNewSession,
@@ -38,6 +39,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
   final AgentHubVoiceInput? voiceInput;
+  final AgentVoiceInputController? voiceInputController;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubNewSessionHandler? onNewSession;
@@ -118,8 +120,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   Future<void> _startVoiceInput() async {
-    final voiceInput = widget.voiceInput;
-    if (voiceInput == null || _state.isActive || _voiceState.isInputActive) {
+    if ((widget.voiceInputController == null && widget.voiceInput == null) ||
+        _state.isActive ||
+        _voiceState.isInputActive) {
       return;
     }
 
@@ -133,9 +136,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
           draft: _composerController.text,
         );
       });
-      final text = (await voiceInput())?.trim();
+      final result = await _captureVoiceInput();
       if (!mounted) return;
       setState(() {
+        if (result.status == AgentVoiceInputResultStatus.permissionDenied) {
+          _voiceState = _voiceState.markPermissionDenied(
+            result.permissionState ?? AgentVoiceInputPermissionState.denied,
+          );
+          return;
+        }
+
+        final text = result.text;
         if (text != null && text.isNotEmpty) {
           _composerController.text = text;
           _composerController.selection = TextSelection.collapsed(
@@ -150,6 +161,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _voiceState = _voiceState.fail(error);
       });
     }
+  }
+
+  Future<AgentVoiceInputResult> _captureVoiceInput() async {
+    final controller = widget.voiceInputController;
+    if (controller != null) {
+      return controller.captureAndTranscribe();
+    }
+
+    return AgentVoiceInputResult.fromText(await widget.voiceInput?.call());
   }
 
   void _removeAttachedImages() {
@@ -336,7 +356,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
           imageCount: _attachedImages.length,
           canAttachImage: widget.pickImage != null && !_state.isActive,
           canUseVoice:
-              widget.voiceInput != null &&
+              (widget.voiceInputController != null ||
+                  widget.voiceInput != null) &&
               !_state.isActive &&
               !_voiceState.isInputActive,
           voicePhase: _voiceState.phase,
@@ -1034,7 +1055,9 @@ class AgentComposerBar extends StatelessWidget {
                   _voiceStatusLabel!,
                   key: const ValueKey('agent-voice-status'),
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: voicePhase == AgentVoicePhase.error
+                    color:
+                        voicePhase == AgentVoicePhase.error ||
+                            voicePhase == AgentVoicePhase.permissionDenied
                         ? colorScheme.error
                         : colorScheme.primary,
                     fontWeight: FontWeight.w700,
@@ -1053,6 +1076,7 @@ class AgentComposerBar extends StatelessWidget {
       AgentVoicePhase.listening => Icons.graphic_eq_rounded,
       AgentVoicePhase.transcribing => Icons.hourglass_bottom_rounded,
       AgentVoicePhase.playing => Icons.volume_up_outlined,
+      AgentVoicePhase.permissionDenied => Icons.mic_off_outlined,
       AgentVoicePhase.error => Icons.mic_off_outlined,
       _ => Icons.mic_none_rounded,
     };
@@ -1064,6 +1088,7 @@ class AgentComposerBar extends StatelessWidget {
       AgentVoicePhase.transcribing => '正在转写',
       AgentVoicePhase.playing => '正在播放语音',
       AgentVoicePhase.cancelled => '语音播放已停止',
+      AgentVoicePhase.permissionDenied => '麦克风权限未开启',
       AgentVoicePhase.error => '语音失败',
       _ => '语音输入',
     };
@@ -1075,6 +1100,7 @@ class AgentComposerBar extends StatelessWidget {
       AgentVoicePhase.transcribing => '正在整理语音',
       AgentVoicePhase.playing => '正在播放语音',
       AgentVoicePhase.cancelled => '语音播放已停止',
+      AgentVoicePhase.permissionDenied => '麦克风权限未开启',
       AgentVoicePhase.error => '语音输入失败',
       _ => null,
     };
