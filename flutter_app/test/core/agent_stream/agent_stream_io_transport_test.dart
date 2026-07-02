@@ -238,7 +238,6 @@ void main() {
 }
 
 const _request = AgentStreamRequest(
-  userId: 'demo-user-fixture',
   message: 'Review my pumping pattern.',
   threadId: 'thread-fixture-001',
   metadata: {'source': 'io-transport-test'},

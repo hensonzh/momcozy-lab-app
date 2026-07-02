@@ -21,8 +21,7 @@ void main() {
       transport.runsEndpoint.headers,
       containsPair('X-Momcozy-Client', 'flutter'),
     );
-    expect(request.userId, 'demo-user');
-    expect(request.threadId, 'thread-demo');
+    expect(request.threadId, isNull);
     expect(request.locale, 'zh-CN');
     expect(payload['message'], 'Review my pattern');
     expect(payload['runtime_pattern'], 'langgraph_sdk');
@@ -63,8 +62,7 @@ void main() {
 
     expect(transport.runsEndpoint.token, 'secure-access');
     expect(cancelClient.endpoint.token, 'secure-access');
-    expect(request.userId, 'secure-user');
-    expect(request.threadId, 'thread-secure-user');
+    expect(request.threadId, isNull);
     expect(request.locale, 'en-US');
     expect(request.message, '  Help me plan today  ');
     expect(payload['message'], 'Help me plan today');

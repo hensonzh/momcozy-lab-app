@@ -187,7 +187,8 @@ void main() {
     await tester.pumpAndSettle();
 
     var page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
-    expect(page.requestBuilder('hello').userId, 'initial-user');
+    expect(page.requestBuilder('hello').locale, 'zh-CN');
+    expect(page.requestBuilder('hello').threadId, isNull);
 
     controller.replaceSession(
       const MomCozySession(
@@ -201,8 +202,8 @@ void main() {
     await tester.pump();
 
     page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
-    expect(page.requestBuilder('hello').userId, 'secure-user');
     expect(page.requestBuilder('hello').locale, 'en-US');
+    expect(page.requestBuilder('hello').threadId, isNull);
 
     await tester.pumpWidget(const SizedBox.shrink());
     controller.dispose();

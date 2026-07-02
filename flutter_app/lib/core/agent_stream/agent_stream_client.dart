@@ -2,7 +2,6 @@ import 'agent_stream_event.dart';
 
 class AgentStreamRequest {
   const AgentStreamRequest({
-    required this.userId,
     required this.message,
     this.threadId,
     this.locale = 'en-US',
@@ -10,7 +9,6 @@ class AgentStreamRequest {
     this.metadata = const <String, Object?>{},
   });
 
-  final String userId;
   final String message;
   final String? threadId;
   final String locale;
@@ -18,7 +16,6 @@ class AgentStreamRequest {
   final Map<String, Object?> metadata;
 
   Map<String, Object?> toMap() => {
-    'userId': userId,
     'message': message,
     if (threadId != null) 'threadId': threadId,
     if (locale.trim().isNotEmpty) 'locale': locale,

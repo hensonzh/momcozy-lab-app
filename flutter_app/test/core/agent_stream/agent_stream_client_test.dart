@@ -12,7 +12,6 @@ void main() {
       'normalizes SSE and JSONL transports into the same event stream',
       () async {
         const request = AgentStreamRequest(
-          userId: 'demo-user',
           message: 'Review my pumping pattern.',
         );
         final expected = parseAgentJsonl(
@@ -47,7 +46,6 @@ void main() {
       'keeps transport chunks ordered and stops after run finished',
       () async {
         const request = AgentStreamRequest(
-          userId: 'demo-user',
           message: 'Create a plan.',
           threadId: 'thread-1',
         );
@@ -69,7 +67,6 @@ void main() {
           isNotEmpty,
         );
         expect(request.toMap(), {
-          'userId': 'demo-user',
           'message': 'Create a plan.',
           'threadId': 'thread-1',
           'locale': 'en-US',
@@ -79,7 +76,6 @@ void main() {
 
     test('stops after run error events', () async {
       const request = AgentStreamRequest(
-        userId: 'demo-user',
         message: 'Create a plan.',
         threadId: 'thread-1',
       );

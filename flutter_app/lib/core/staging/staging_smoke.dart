@@ -394,7 +394,6 @@ class _AgentSseProbe implements StagingSmokeProbe {
     final event = await client
         .stream(
           AgentStreamRequest(
-            userId: config.session.userId,
             locale: config.session.locale,
             message: 'Reply with a short staging smoke acknowledgement.',
             metadata: const {'source': 'flutter_staging_smoke'},

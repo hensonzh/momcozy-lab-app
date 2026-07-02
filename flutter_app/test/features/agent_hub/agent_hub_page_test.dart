@@ -136,7 +136,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(client.requests.single.message, 'Review my pumping pattern');
-    expect(client.requests.single.threadId, 'thread-demo');
+    expect(client.requests.single.threadId, isNull);
     expect(find.text('已完成'), findsOneWidget);
     expect(
       find.text('I can help you review today\'s pumping pattern.'),

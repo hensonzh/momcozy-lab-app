@@ -379,7 +379,6 @@ AgentStreamRequest _requestWithImages(
 ) {
   if (images.isEmpty) return request;
   return AgentStreamRequest(
-    userId: request.userId,
     message: request.message,
     threadId: request.threadId,
     locale: request.locale,
