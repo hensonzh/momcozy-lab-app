@@ -711,7 +711,7 @@ CI 最低要求：
 [x] dart format check
 [x] flutter test
 [x] contract fixture tests
-[ ] golden tests
+[x] golden tests
 [x] staging smoke harness 默认安全 skip，凭证齐全时可直连 staging
 [x] storage migration dry-run
 [x] Android debug build：local flavor
