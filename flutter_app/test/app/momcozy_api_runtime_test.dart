@@ -102,10 +102,8 @@ void main() {
 
   test('runtime creates typed repositories over the injected transport', () {
     final transport = FixtureApiJsonTransport({
-      'status': 200,
-      'data': {
-        'mom': {'stage': 'postpartum', 'postpartum_day': 21},
-      },
+      'user_id': 'user-fixture',
+      'daily_summary': '哺乳期',
     });
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,

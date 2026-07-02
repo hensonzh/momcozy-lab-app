@@ -79,8 +79,7 @@ void main() {
       );
 
       await successTransport.getJson(
-        '/v1/mom-baby/info/query?token=secret',
-        query: const {'user_id': 'demo-user'},
+        '/v1/profile/me?token=secret',
       );
       await expectLater(
         failureTransport.postJson('/v1/pump/workstate'),
@@ -93,7 +92,7 @@ void main() {
       ]);
       expect(sink.events[0].attributes, {
         'method': 'GET',
-        'path': '/v1/mom-baby/info/query',
+        'path': '/v1/profile/me',
         'elapsedMs': sink.events[0].attributes['elapsedMs'],
         'statusCode': 200,
         'retryable': false,

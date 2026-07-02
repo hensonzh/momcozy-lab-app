@@ -1,67 +1,93 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 
 import '../../support/fixture_api_transport.dart';
-import '../../support/fixture_reader.dart';
 
 void main() {
   group('StatusApiRepository', () {
-    test('maps mom/baby success response and request contract', () async {
-      final transport = _transport('success');
-      final repository = StatusApiRepository(transport: transport);
-
-      final overview = await repository.fetchOverview(
-        userId: 'demo-user-fixture',
+    test('maps production profile and infant overview', () async {
+      final transport = FixtureApiJsonTransportByPath({
+        statusProfileEndpoint: {
+          'user_id': 'user-001',
+          'display_name': 'Mom',
+          'delivery_date': '2026-05-20',
+        },
+        statusInfantsEndpoint: {
+          'items': [
+            {
+              'id': 'infant-001',
+              'owner_user_id': 'user-001',
+              'infant_name': 'Baby',
+              'birth_date': '2026-05-20',
+              'sex': 'female',
+              'status': 'active',
+            },
+          ],
+        },
+      });
+      final repository = StatusApiRepository(
+        transport: transport,
+        now: () => DateTime.utc(2026, 7, 1),
       );
 
-      expect(transport.lastPath, statusOverviewEndpoint);
-      expect(transport.lastQuery, containsPair('user_id', 'demo-user-fixture'));
-      expect(overview.mom?.stage, 'postpartum');
+      final overview = await repository.fetchOverview(
+        userId: 'ignored-user-authority',
+      );
+
+      expect(transport.postedBodies, isEmpty);
+      expect(transport.lastPath, statusInfantsEndpoint);
+      expect(transport.lastQuery, isEmpty);
+      expect(overview.mom?.stage, '哺乳期');
       expect(overview.mom?.postpartumDay, 42);
       expect(overview.baby?.nickname, 'Baby');
       expect(overview.baby?.ageDays, 42);
     });
 
-    test('accepts legacy aliases and partial empty data', () async {
-      final legacy = await StatusApiRepository(
-        transport: _transport('legacy_alias'),
-      ).fetchOverview(userId: 'demo-user-fixture');
-      final empty = await StatusApiRepository(
-        transport: _transport('empty'),
-      ).fetchOverview(userId: 'demo-user-fixture');
-      final partial = await StatusApiRepository(
-        transport: _transport('partial'),
-      ).fetchOverview(userId: 'demo-user-fixture');
+    test('maps empty profile and infants list', () async {
+      final repository = StatusApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          statusProfileEndpoint: const {'user_id': 'user-001'},
+          statusInfantsEndpoint: const {'items': []},
+        }),
+        now: () => DateTime.utc(2026, 7, 1),
+      );
 
-      expect(legacy.mom?.stage, 'postpartum');
-      expect(legacy.baby?.nickname, 'Baby');
-      expect(empty.isEmpty, isTrue);
-      expect(partial.mom?.stage, 'postpartum');
-      expect(partial.baby, isNull);
+      final overview = await repository.fetchOverview(
+        userId: 'ignored-user-authority',
+      );
+
+      expect(overview.mom, isNull);
+      expect(overview.baby, isNull);
     });
 
-    test('keeps business and HTTP failures distinct', () async {
-      await expectLater(
-        StatusApiRepository(
-          transport: _transport('business_error'),
-        ).fetchOverview(userId: 'demo-user-fixture'),
-        throwsA(isA<ApiBusinessException>()),
+    test('preserves production HTTP failures', () async {
+      final repository = StatusApiRepository(
+        transport: FixtureApiJsonTransportByPath({
+          statusProfileEndpoint: const {
+            'http_status': 500,
+            'status_text': 'Server Error',
+            'body': {
+              'error': {
+                'code': 'dependency_failed',
+                'message': 'Profile unavailable',
+                'request_id': 'req-profile-001',
+              },
+            },
+          },
+        }),
       );
+
       await expectLater(
-        StatusApiRepository(
-          transport: _transport('http_error'),
-        ).fetchOverview(userId: 'demo-user-fixture'),
-        throwsA(isA<ApiHttpException>()),
+        repository.fetchOverview(userId: 'ignored-user-authority'),
+        throwsA(
+          isA<ApiHttpException>().having(
+            (error) => error.errorCode,
+            'errorCode',
+            'dependency_failed',
+          ),
+        ),
       );
     });
   });
-}
-
-FixtureApiJsonTransport _transport(String variant) {
-  final fixture = readFixtureMap('api/mom_baby/$variant.json');
-  return FixtureApiJsonTransport(
-    Map<String, Object?>.from(fixture['response']! as Map),
-  );
 }

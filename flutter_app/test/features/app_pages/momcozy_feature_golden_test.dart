@@ -66,12 +66,22 @@ Future<void> _pumpGoldenApp(
 MomCozyApiRuntime _goldenRuntime() {
   return MomCozyApiRuntime(
     jsonTransport: FixtureApiJsonTransportByPath({
-      statusOverviewEndpoint: const <String, Object?>{
-        'status': 200,
-        'data': <String, Object?>{
-          'mom': <String, Object?>{'stage': '哺乳期', 'postpartum_day': 21},
-          'baby': <String, Object?>{'nickname': 'Mia', 'age_days': 88},
-        },
+      statusProfileEndpoint: const <String, Object?>{
+        'user_id': 'demo-user-fixture',
+        'daily_summary': '哺乳期',
+        'delivery_date': '2026-06-11',
+      },
+      statusInfantsEndpoint: const <String, Object?>{
+        'items': <Object?>[
+          <String, Object?>{
+            'id': 'demo-baby-fixture',
+            'owner_user_id': 'demo-user-fixture',
+            'infant_name': 'Mia',
+            'birth_date': '2026-04-05',
+            'sex': 'female',
+            'status': 'active',
+          },
+        ],
       },
       pumpWorkstateEndpoint: const <String, Object?>{
         'status': 200,

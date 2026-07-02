@@ -266,18 +266,22 @@ void main() {
         _FeaturePageHost(
           route: _route('/status'),
           jsonTransport: FixtureApiJsonTransportByPath({
-            statusOverviewEndpoint: const {
-              'status': 200,
-              'data': {
-                'mom': {
-                  'stage': '哺乳期恢复阶段，需要同时关注睡眠、补水、泵奶舒适度和情绪波动',
-                  'postpartum_day': 128,
+            statusProfileEndpoint: const {
+              'user_id': 'demo-user-fixture',
+              'daily_summary': '哺乳期恢复阶段，需要同时关注睡眠、补水、泵奶舒适度和情绪波动',
+              'delivery_date': '2026-02-24',
+            },
+            statusInfantsEndpoint: const {
+              'items': [
+                {
+                  'id': 'demo-baby-fixture',
+                  'owner_user_id': 'demo-user-fixture',
+                  'infant_name': 'Mia Sophia Long Profile Name',
+                  'birth_date': '2025-12-26',
+                  'sex': 'female',
+                  'status': 'active',
                 },
-                'baby': {
-                  'nickname': 'Mia Sophia Long Profile Name',
-                  'age_days': 188,
-                },
-              },
+              ],
             },
           }),
         ),
@@ -311,10 +315,8 @@ void main() {
         _FeaturePageHost(
           route: _route('/status'),
           jsonTransport: FixtureApiJsonTransportByPath({
-            statusOverviewEndpoint: const {
-              'status': 200,
-              'data': <String, Object?>{},
-            },
+            statusProfileEndpoint: const {'user_id': 'demo-user-fixture'},
+            statusInfantsEndpoint: const {'items': []},
           }),
         ),
       );
@@ -326,7 +328,7 @@ void main() {
         _FeaturePageHost(
           route: _route('/status'),
           jsonTransport: FixtureApiJsonTransportByPath({
-            statusOverviewEndpoint: const {
+            statusProfileEndpoint: const {
               'http_status': 500,
               'status_text': 'Server Error',
             },
@@ -1902,12 +1904,22 @@ MomCozyApiRuntime _appRuntime({
     jsonTransport:
         jsonTransport ??
         FixtureApiJsonTransportByPath({
-          statusOverviewEndpoint: const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'mom': <String, Object?>{'stage': '哺乳期', 'postpartum_day': 21},
-              'baby': <String, Object?>{'nickname': 'Mia', 'age_days': 88},
-            },
+          statusProfileEndpoint: const <String, Object?>{
+            'user_id': 'demo-user-fixture',
+            'daily_summary': '哺乳期',
+            'delivery_date': '2026-06-11',
+          },
+          statusInfantsEndpoint: const <String, Object?>{
+            'items': <Object?>[
+              <String, Object?>{
+                'id': 'demo-baby-fixture',
+                'owner_user_id': 'demo-user-fixture',
+                'infant_name': 'Mia',
+                'birth_date': '2026-04-05',
+                'sex': 'female',
+                'status': 'active',
+              },
+            ],
           },
           scheduleDayPlanEndpoint: const <String, Object?>{
             'status': 200,
