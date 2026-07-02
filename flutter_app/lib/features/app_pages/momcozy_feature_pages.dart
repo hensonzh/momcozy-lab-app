@@ -1638,8 +1638,56 @@ class _CalibrationPage extends StatefulWidget {
 class _CalibrationPageState extends State<_CalibrationPage> {
   double _leftComfort = 4;
   double _rightComfort = 4;
+  BlePlatform? _blePlatform;
+  List<BleDeviceSnapshot> _connectedDevices = const [];
+  String? _deviceStatusError;
   bool _isSaving = false;
+  bool _hasUnsavedChanges = false;
   String? _saveError;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ble = MomCozyRuntimeScope.of(context).blePlatform;
+    if (!identical(ble, _blePlatform)) {
+      _blePlatform = ble;
+      unawaited(_refreshCalibrationDevices());
+    }
+  }
+
+  Future<void> _refreshCalibrationDevices() async {
+    final ble = _blePlatform;
+    if (ble == null) return;
+    try {
+      final devices = await ble.getConnectedDevices();
+      if (!mounted) return;
+      setState(() {
+        _connectedDevices = devices;
+        _deviceStatusError = null;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _deviceStatusError = '设备状态同步失败，请稍后重试。';
+      });
+    }
+  }
+
+  void _setLeftComfort(double value) {
+    setState(() {
+      _leftComfort = value;
+      _hasUnsavedChanges = true;
+      _saveError = null;
+    });
+  }
+
+  void _setRightComfort(double value) {
+    setState(() {
+      _rightComfort = value;
+      _hasUnsavedChanges = true;
+      _saveError = null;
+    });
+  }
 
   Future<void> _saveAndEnterPump() async {
     if (_isSaving) return;
@@ -1660,6 +1708,9 @@ class _CalibrationPageState extends State<_CalibrationPage> {
         _rightComfort.round(),
       );
       if (!mounted) return;
+      setState(() {
+        _hasUnsavedChanges = false;
+      });
       context.go('/pump');
     } catch (error) {
       if (!mounted) return;
@@ -1670,8 +1721,21 @@ class _CalibrationPageState extends State<_CalibrationPage> {
     }
   }
 
+  void _exitCalibration() {
+    if (_hasUnsavedChanges) {
+      setState(() {
+        _saveError = '有未保存校准更改，请先保存或恢复默认后再退出。';
+      });
+      return;
+    }
+    context.go('/device');
+  }
+
   @override
   Widget build(BuildContext context) {
+    final leftDevice = _deviceForSide('L') ?? _deviceForSide('left');
+    final rightDevice = _deviceForSide('R') ?? _deviceForSide('right');
+
     return _FeaturePageFrame(
       path: widget.path,
       title: widget.title,
@@ -1685,18 +1749,44 @@ class _CalibrationPageState extends State<_CalibrationPage> {
         accent: Color(0xff9b6b2f),
       ),
       children: [
+        const _SectionTitle('设备状态'),
+        if (_deviceStatusError != null)
+          _ActionTile(
+            icon: Icons.bluetooth_disabled_rounded,
+            title: '设备状态同步失败',
+            subtitle: _deviceStatusError!,
+            accent: Colors.red,
+            trailing: IconButton(
+              tooltip: '重试设备状态',
+              onPressed: _refreshCalibrationDevices,
+              icon: const Icon(Icons.refresh_rounded),
+            ),
+          )
+        else ...[
+          _CalibrationDeviceTile(
+            label: '左侧',
+            device: leftDevice,
+            accent: widget.accent,
+          ),
+          _CalibrationDeviceTile(
+            label: '右侧',
+            device: rightDevice,
+            accent: const Color(0xff43827b),
+          ),
+        ],
+        const SizedBox(height: 8),
         const _SectionTitle('舒适档位'),
         _CalibrationSideTile(
           label: '左侧',
           value: _leftComfort,
           accent: widget.accent,
-          onChanged: (value) => setState(() => _leftComfort = value),
+          onChanged: _setLeftComfort,
         ),
         _CalibrationSideTile(
           label: '右侧',
           value: _rightComfort,
           accent: const Color(0xff43827b),
-          onChanged: (value) => setState(() => _rightComfort = value),
+          onChanged: _setRightComfort,
         ),
         const SizedBox(height: 8),
         const _SectionTitle('保存规则'),
@@ -1716,13 +1806,32 @@ class _CalibrationPageState extends State<_CalibrationPage> {
                       : Icons.error_outline_rounded,
                 ),
         ),
-        FilledButton.icon(
-          onPressed: _isSaving ? null : _saveAndEnterPump,
-          icon: const Icon(Icons.save_rounded),
-          label: Text(_isSaving ? '保存中' : '保存并进入泵奶'),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            FilledButton.icon(
+              onPressed: _isSaving ? null : _saveAndEnterPump,
+              icon: const Icon(Icons.save_rounded),
+              label: Text(_isSaving ? '保存中' : '保存并进入泵奶'),
+            ),
+            OutlinedButton.icon(
+              onPressed: _isSaving ? null : _exitCalibration,
+              icon: const Icon(Icons.close_rounded),
+              label: const Text('退出校准'),
+            ),
+          ],
         ),
       ],
     );
+  }
+
+  BleDeviceSnapshot? _deviceForSide(String side) {
+    final normalized = side.toLowerCase();
+    for (final device in _connectedDevices) {
+      if (device.side.toLowerCase() == normalized) return device;
+    }
+    return null;
   }
 
   String _calibrationSaveErrorText(Object error) {
@@ -1735,6 +1844,36 @@ class _CalibrationPageState extends State<_CalibrationPage> {
       return '蓝牙权限未开启，请授权后重试。';
     }
     return '校准保存失败，请稍后重试。';
+  }
+}
+
+class _CalibrationDeviceTile extends StatelessWidget {
+  const _CalibrationDeviceTile({
+    required this.label,
+    required this.device,
+    required this.accent,
+  });
+
+  final String label;
+  final BleDeviceSnapshot? device;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final connected = device != null;
+    return _ActionTile(
+      icon: connected
+          ? Icons.bluetooth_connected_rounded
+          : Icons.bluetooth_disabled_rounded,
+      title: '$label设备${connected ? '已连接' : '未连接'}',
+      subtitle: connected
+          ? '${device!.deviceName} · 电量 ${_deviceBatteryLabel(device)}'
+          : '未检测到连接设备，保存时会提示重试。',
+      accent: connected ? accent : const Color(0xff7f6a75),
+      trailing: Icon(
+        connected ? Icons.check_circle_outline_rounded : Icons.info_outline,
+      ),
+    );
   }
 }
 

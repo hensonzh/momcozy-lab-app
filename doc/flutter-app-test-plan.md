@@ -309,12 +309,12 @@ Golden 视觉状态：
 
 ```text
 [x] 无设备进入
-[ ] 仅左设备
-[ ] 仅右设备
-[ ] 双侧设备
-[ ] 档位调整
+[x] 仅左设备
+[x] 仅右设备
+[x] 双侧设备
+[x] 档位调整
 [x] 保存校准
-[ ] 退出未保存
+[x] 退出未保存
 [ ] 中断恢复
 [ ] legacy calibration 数据合法
 [ ] legacy calibration 数据缺字段
@@ -578,7 +578,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter `/status` widget tests 已覆盖妈妈/宝宝 tab、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 [x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 权限拒绝、扫描空态、单/多扫描结果、连接失败、battery/RSSI 展示和扫描失败状态
 [x] Flutter `/pump` widget tests 已覆盖 session 启动/暂停/恢复/结束和 workstate 上传失败状态
-[x] Flutter `/calibration` widget tests 已覆盖无设备失败提示、保存校准和保存后进入 Pump
+[x] Flutter `/calibration` widget tests 已覆盖无设备失败提示、左/右/双侧设备状态、档位调整、未保存退出提示、保存校准和保存后进入 Pump
 [x] Flutter `/media-viewer` widget tests 已覆盖 PDF/Image/Video 预览入口、示例上传成功和上传失败 fallback
 [x] Flutter `/ibclc-chat.html` widget tests 已覆盖协议勾选、未勾选阻止继续、事件写回成功和网络失败本地入队
 [x] Flutter `/hospital-bag-cart` widget tests 已覆盖清单加载、cart update、恢复默认和 API 失败 fallback
