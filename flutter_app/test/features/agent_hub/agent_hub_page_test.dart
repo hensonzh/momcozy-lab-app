@@ -19,8 +19,10 @@ void main() {
     await tester.pumpWidget(_host(const AgentHubPage()));
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-run-phase-badge')), findsOneWidget);
-    expect(find.text('准备就绪'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-auto-voice-button')),
+      findsOneWidget,
+    );
     expect(find.text('我在。'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('agent-new-session-button')),
@@ -68,7 +70,7 @@ void main() {
     );
 
     expect(find.byKey(const ValueKey('agent-history-panel')), findsOneWidget);
-    expect(find.text('历史会话'), findsOneWidget);
+    expect(find.text('历史会话'), findsNothing);
     expect(find.text('昨天晚上左侧奶量偏低'), findsOneWidget);
     expect(find.text('我建议你先观察舒适度和间隔。'), findsOneWidget);
 
@@ -137,7 +139,6 @@ void main() {
 
     expect(client.requests.single.message, 'Review my pumping pattern');
     expect(client.requests.single.threadId, 'thread-demo');
-    expect(find.text('已完成'), findsOneWidget);
     expect(
       find.text('I can help you review today\'s pumping pattern.'),
       findsOneWidget,
@@ -419,13 +420,12 @@ void main() {
       ),
     );
 
-    expect(find.text('正在回复'), findsOneWidget);
+    expect(find.text('正在生成回复'), findsOneWidget);
     expect(find.text('Partial answer'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
 
-    expect(find.text('已停止'), findsOneWidget);
     expect(find.text('已停止本次回复'), findsOneWidget);
   });
 
@@ -453,14 +453,13 @@ void main() {
       ),
     );
 
-    expect(find.text('正在回复'), findsOneWidget);
+    expect(find.text('正在生成回复'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
     await cancelConnector.called.future;
 
     final body = jsonDecode(cancelConnector.body!) as Map<String, Object?>;
-    expect(find.text('已停止'), findsOneWidget);
     expect(cancelConnector.uri!.path, '/api/ag-ui-cancel');
     expect(body['threadId'], 'thread-demo');
     expect(body['runId'], 'run-demo');
@@ -485,7 +484,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.textContaining('socket closed'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
 
@@ -495,7 +493,6 @@ void main() {
     expect(client.requests, hasLength(2));
     expect(client.requests.first.message, 'Retry my request');
     expect(client.requests.last.message, 'Retry my request');
-    expect(find.text('已完成'), findsOneWidget);
     expect(find.text('Retried answer'), findsOneWidget);
   });
 
@@ -518,7 +515,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.text('请求超时，请稍后重试'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
     expect(find.textContaining('TimeoutException'), findsNothing);
@@ -544,7 +540,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
     expect(find.textContaining('SocketException'), findsNothing);
@@ -869,7 +864,6 @@ void main() {
       ),
     );
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.text('Partial answer'), findsOneWidget);
     expect(find.text('socket closed'), findsOneWidget);
     expect(find.textContaining('WebSocket'), findsNothing);
@@ -890,7 +884,6 @@ void main() {
         ),
       );
 
-      expect(find.text('正在回复'), findsOneWidget);
       expect(find.text('正在生成回复'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -904,7 +897,6 @@ void main() {
         ),
       );
 
-      expect(find.text('已完成'), findsOneWidget);
       expect(find.text('I can help you review today.'), findsOneWidget);
       expect(find.text('正在生成回复'), findsNothing);
     },

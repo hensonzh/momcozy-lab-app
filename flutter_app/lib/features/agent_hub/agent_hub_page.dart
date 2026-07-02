@@ -60,6 +60,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
+  bool _autoVoiceEnabled = true;
 
   @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
@@ -232,6 +233,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final coordinator = widget.voicePlaybackCoordinator;
     final text = nextState.textContent.trim();
     if (coordinator == null ||
+        !_autoVoiceEnabled ||
         nextState.phase != AgentStreamRunPhase.finished ||
         text.isEmpty) {
       return;
@@ -298,98 +300,150 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return ColoredBox(
       key: const ValueKey('agent-hub-page'),
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
-      children: [
-        Row(
-          children: [
-            DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: MomCozyColors.card,
-                border: Border.all(color: MomCozyColors.background, width: 3),
-                boxShadow: MomCozyShadows.soft,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(3),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage(MomCozyAssets.agentAvatar),
-                      fit: BoxFit.cover,
+      color: MomCozyColors.background,
+      child: Column(
+        children: [
+          AgentHubTopBar(
+            autoVoiceEnabled: _autoVoiceEnabled,
+            isRunning: _state.isActive,
+            onToggleAutoVoice: () =>
+                setState(() => _autoVoiceEnabled = !_autoVoiceEnabled),
+            onNewSession: _startNewSession,
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                ListView(
+                  padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
+                  children: [
+                    if (_historyMessages.isNotEmpty) ...[
+                      AgentHubHistoryPanel(messages: _historyMessages),
+                      const SizedBox(height: 18),
+                    ],
+                    AgentRunTranscript(
+                      state: _state,
+                      canRetry: _canRetry,
+                      onRetry: _retryRun,
+                      onArtifactAction: widget.onArtifactAction,
                     ),
-                  ),
-                  child: SizedBox.square(dimension: 46),
+                  ],
                 ),
-              ),
+                const Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  height: 24,
+                  child: IgnorePointer(child: _AgentHubTopFade()),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '智能体',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Momcozy Agent',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: MomCozyColors.mutedForeground,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          ),
+          AgentComposerBar(
+            controller: _composerController,
+            canSend: _canSend,
+            isRunning: _state.isActive,
+            imageCount: _attachedImages.length,
+            canAttachImage: widget.pickImage != null && !_state.isActive,
+            canUseVoice:
+                (widget.voiceInputController != null ||
+                    widget.voiceInput != null) &&
+                !_state.isActive &&
+                !_voiceState.isInputActive,
+            voicePhase: _voiceState.phase,
+            onChanged: (_) => setState(() {}),
+            onSend: _sendMessage,
+            onCancel: _cancelRun,
+            onAttachImage: _attachImage,
+            onRemoveImages: _removeAttachedImages,
+            onVoiceInput: _startVoiceInput,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AgentHubTopBar extends StatelessWidget {
+  const AgentHubTopBar({
+    super.key,
+    required this.autoVoiceEnabled,
+    required this.isRunning,
+    required this.onToggleAutoVoice,
+    required this.onNewSession,
+  });
+
+  final bool autoVoiceEnabled;
+  final bool isRunning;
+  final VoidCallback onToggleAutoVoice;
+  final VoidCallback onNewSession;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.background.withValues(alpha: 0.9),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
             IconButton(
-              key: const ValueKey('agent-new-session-button'),
-              onPressed: _state.isActive ? null : _startNewSession,
-              icon: const Icon(Icons.add_comment_outlined),
-              tooltip: '新会话',
+              key: const ValueKey('agent-auto-voice-button'),
+              onPressed: onToggleAutoVoice,
+              icon: Icon(
+                autoVoiceEnabled
+                    ? Icons.volume_up_outlined
+                    : Icons.volume_off_outlined,
+                size: 20,
+              ),
+              tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
+              color: autoVoiceEnabled ? Colors.black : MomCozyColors.background,
+              style: IconButton.styleFrom(
+                backgroundColor: autoVoiceEnabled
+                    ? Colors.transparent
+                    : const Color(0xff7a6670),
+                fixedSize: const Size.square(36),
+                minimumSize: const Size.square(36),
+                padding: EdgeInsets.zero,
+              ),
             ),
             const SizedBox(width: 4),
-            AgentRunPhaseBadge(phase: _state.phase),
+            IconButton(
+              key: const ValueKey('agent-new-session-button'),
+              onPressed: isRunning ? null : onNewSession,
+              icon: const Icon(Icons.add_rounded, size: 22),
+              tooltip: '新建会话',
+              color: const Color(0xff3b2f36),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                fixedSize: const Size.square(36),
+                minimumSize: const Size.square(36),
+                padding: EdgeInsets.zero,
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 18),
-        if (_historyMessages.isNotEmpty) ...[
-          AgentHubHistoryPanel(messages: _historyMessages),
-          const SizedBox(height: 16),
-        ],
-        AgentRunTranscript(
-          state: _state,
-          canRetry: _canRetry,
-          onRetry: _retryRun,
-          onArtifactAction: widget.onArtifactAction,
+      ),
+    );
+  }
+}
+
+class _AgentHubTopFade extends StatelessWidget {
+  const _AgentHubTopFade();
+
+  @override
+  Widget build(BuildContext context) {
+    return const DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [MomCozyColors.background, Color(0x00fff8f6)],
         ),
-        const SizedBox(height: 16),
-        AgentComposerBar(
-          controller: _composerController,
-          canSend: _canSend,
-          isRunning: _state.isActive,
-          imageCount: _attachedImages.length,
-          canAttachImage: widget.pickImage != null && !_state.isActive,
-          canUseVoice:
-              (widget.voiceInputController != null ||
-                  widget.voiceInput != null) &&
-              !_state.isActive &&
-              !_voiceState.isInputActive,
-          voicePhase: _voiceState.phase,
-          onChanged: (_) => setState(() {}),
-          onSend: _sendMessage,
-          onCancel: _cancelRun,
-          onAttachImage: _attachImage,
-          onRemoveImages: _removeAttachedImages,
-          onVoiceInput: _startVoiceInput,
-        ),
-      ],
+      ),
     );
   }
 }
@@ -432,53 +486,69 @@ class AgentHubHistoryPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return DecoratedBox(
+    return Column(
       key: const ValueKey('agent-history-panel'),
-      decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '历史会话',
-              style: textTheme.labelLarge?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w800,
+      children: [
+        for (var index = 0; index < messages.length; index++) ...[
+          _AgentHistoryBubble(
+            key: ValueKey('agent-history-$index'),
+            message: messages[index],
+          ),
+          if (index != messages.length - 1) const SizedBox(height: 20),
+        ],
+      ],
+    );
+  }
+}
+
+class _AgentHistoryBubble extends StatelessWidget {
+  const _AgentHistoryBubble({super.key, required this.message});
+
+  final AgentHubHistoryMessage message;
+
+  @override
+  Widget build(BuildContext context) {
+    final isUser = message.role == AgentHubHistoryRole.user;
+    final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+      height: 1.45,
+      color: isUser ? const Color(0xff75545f) : const Color(0xff3f3038),
+      fontWeight: FontWeight.w500,
+    );
+
+    if (!isUser) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _AgentAssistantAvatar(),
+          const SizedBox(width: 10),
+          Expanded(child: Text(message.content, style: textStyle)),
+        ],
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 294),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: const Color(0xfff8f0f1),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(18),
+                topRight: Radius.circular(18),
+                bottomLeft: Radius.circular(18),
+                bottomRight: Radius.circular(7),
               ),
+              border: Border.all(color: const Color(0x73eadde2)),
             ),
-            const SizedBox(height: 10),
-            for (var index = 0; index < messages.length; index++) ...[
-              Row(
-                key: ValueKey('agent-history-$index'),
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    messages[index].roleLabel,
-                    style: textTheme.labelMedium?.copyWith(
-                      color: MomCozyColors.primary,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      messages[index].content,
-                      style: textTheme.bodySmall?.copyWith(
-                        height: 1.35,
-                        color: MomCozyColors.mutedForeground,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              if (index != messages.length - 1) const SizedBox(height: 8),
-            ],
-          ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Text(message.content, style: textStyle),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -591,67 +661,75 @@ class AgentRunTranscript extends StatelessWidget {
     final workSteps = _workStepsFromEvents(state.events);
     final artifactCards = _artifactCardsFromEvents(state.events);
 
-    return DecoratedBox(
+    return Row(
       key: const ValueKey('agent-run-transcript'),
-      decoration: MomCozyDecorations.card(),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: textTheme.bodyLarge?.copyWith(
-                height: 1.42,
-                color: MomCozyColors.foreground,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _AgentAssistantAvatar(),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                text,
+                style: textTheme.bodyMedium?.copyWith(
+                  height: 1.58,
+                  color:
+                      state.phase == AgentStreamRunPhase.error ||
+                          state.phase == AgentStreamRunPhase.disconnected
+                      ? const Color(0xffb64b4b)
+                      : const Color(0xff3f3038),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            if (_supportingText != null) ...[
-              const SizedBox(height: 14),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    _supportingIcon,
-                    size: 18,
-                    color: _supportingColor(colorScheme),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _supportingText!,
-                      style: textTheme.bodySmall?.copyWith(
-                        height: 1.35,
-                        color: MomCozyColors.mutedForeground,
+              if (_supportingText != null) ...[
+                const SizedBox(height: 14),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      _supportingIcon,
+                      size: 18,
+                      color: _supportingColor(colorScheme),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _supportingText!,
+                        style: textTheme.bodySmall?.copyWith(
+                          height: 1.35,
+                          color: MomCozyColors.mutedForeground,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
+              if (canRetry) ...[
+                const SizedBox(height: 12),
+                FilledButton.tonalIcon(
+                  key: const ValueKey('agent-retry-button'),
+                  onPressed: onRetry,
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('重试'),
+                ),
+              ],
+              if (workSteps.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                AgentRunWorkPanel(steps: workSteps),
+              ],
+              if (artifactCards.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                AgentArtifactPanel(
+                  cards: artifactCards,
+                  onAction: onArtifactAction,
+                ),
+              ],
             ],
-            if (canRetry) ...[
-              const SizedBox(height: 12),
-              FilledButton.tonalIcon(
-                key: const ValueKey('agent-retry-button'),
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('重试'),
-              ),
-            ],
-            if (workSteps.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              AgentRunWorkPanel(steps: workSteps),
-            ],
-            if (artifactCards.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              AgentArtifactPanel(
-                cards: artifactCards,
-                onAction: onArtifactAction,
-              ),
-            ],
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -683,6 +761,34 @@ class AgentRunTranscript extends StatelessWidget {
       AgentStreamRunPhase.error => colorScheme.error,
       _ => colorScheme.primary,
     };
+  }
+}
+
+class _AgentAssistantAvatar extends StatelessWidget {
+  const _AgentAssistantAvatar();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xff754c5e).withValues(alpha: 0.12),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: Image.asset(
+          MomCozyAssets.agentAvatar,
+          width: 32,
+          height: 32,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 }
 
@@ -974,108 +1080,168 @@ class AgentComposerBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return DecoratedBox(
-      decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+      child: DecoratedBox(
+        decoration: const BoxDecoration(color: MomCozyColors.background),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (imageCount > 0) ...[
-              Row(
-                key: const ValueKey('agent-image-attachment-chip'),
-                children: [
-                  Icon(
-                    Icons.image_outlined,
-                    size: 18,
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      '图片 $imageCount',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w700,
-                      ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.card.withValues(alpha: 0.86),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: MomCozyColors.border.withValues(alpha: 0.6),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xff754c5e).withValues(alpha: 0.08),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    key: const ValueKey('agent-remove-image-button'),
-                    onPressed: isRunning ? null : onRemoveImages,
-                    icon: const Icon(Icons.close_rounded),
-                    tooltip: '移除图片',
+                  child: Row(
+                    key: const ValueKey('agent-image-attachment-chip'),
+                    children: [
+                      const SizedBox(width: 10),
+                      Icon(
+                        Icons.image_outlined,
+                        size: 18,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          '图片 $imageCount',
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
+                                color: MomCozyColors.mutedForeground,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ),
+                      IconButton(
+                        key: const ValueKey('agent-remove-image-button'),
+                        onPressed: isRunning ? null : onRemoveImages,
+                        icon: const Icon(Icons.close_rounded, size: 18),
+                        tooltip: '移除图片',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: MomCozyColors.card.withValues(alpha: 0.88),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: MomCozyColors.border.withValues(alpha: 0.64),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xff754c5e).withValues(alpha: 0.08),
+                    blurRadius: 18,
+                    offset: const Offset(0, 9),
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
-            ],
-            Row(
-              children: [
-                IconButton(
-                  key: const ValueKey('agent-image-button'),
-                  onPressed: canAttachImage ? onAttachImage : null,
-                  icon: const Icon(Icons.add_photo_alternate_outlined),
-                  tooltip: '添加图片',
-                ),
-                IconButton(
-                  key: const ValueKey('agent-voice-button'),
-                  onPressed: canUseVoice ? onVoiceInput : null,
-                  icon: Icon(_voiceIcon),
-                  tooltip: _voiceTooltip,
-                ),
-                Expanded(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: MomCozyColors.muted,
-                      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                      border: Border.all(
-                        color: MomCozyColors.border.withValues(alpha: 0.58),
-                      ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: Row(
+                  children: [
+                    IconButton(
+                      key: const ValueKey('agent-image-button'),
+                      onPressed: canAttachImage ? onAttachImage : null,
+                      icon: const Icon(Icons.add_photo_alternate_outlined),
+                      tooltip: '添加图片',
+                      color: MomCozyColors.mutedForeground,
+                      visualDensity: VisualDensity.compact,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: TextField(
-                        key: const ValueKey('agent-composer-input'),
-                        controller: controller,
-                        minLines: 1,
-                        maxLines: 4,
-                        enabled: !isRunning,
-                        onChanged: onChanged,
-                        onSubmitted: (_) {
-                          if (canSend) onSend();
-                        },
-                        decoration: InputDecoration(
-                          hintText: '说说今天的情况',
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          filled: false,
-                          isDense: true,
-                          hintStyle: TextStyle(
-                            fontFamily: MomCozyTypography.fontFamily,
-                            fontFamilyFallback:
-                                MomCozyTypography.fontFamilyFallback,
-                            color: MomCozyColors.mutedForeground.withValues(
-                              alpha: 0.82,
+                    IconButton(
+                      key: const ValueKey('agent-voice-button'),
+                      onPressed: canUseVoice ? onVoiceInput : null,
+                      icon: Icon(_voiceIcon),
+                      tooltip: _voiceTooltip,
+                      color: voicePhase == AgentVoicePhase.listening
+                          ? colorScheme.primary
+                          : MomCozyColors.mutedForeground,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    Expanded(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(
+                            MomCozyRadii.pill,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: TextField(
+                            key: const ValueKey('agent-composer-input'),
+                            controller: controller,
+                            minLines: 1,
+                            maxLines: 4,
+                            enabled: !isRunning,
+                            onChanged: onChanged,
+                            onSubmitted: (_) {
+                              if (canSend) onSend();
+                            },
+                            decoration: InputDecoration(
+                              hintText: '和 CozyMate 聊聊...',
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              filled: false,
+                              isDense: true,
+                              hintStyle: TextStyle(
+                                fontFamily: MomCozyTypography.fontFamily,
+                                fontFamilyFallback:
+                                    MomCozyTypography.fontFamilyFallback,
+                                color: MomCozyColors.mutedForeground.withValues(
+                                  alpha: 0.82,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                    IconButton.filled(
+                      key: ValueKey(
+                        isRunning ? 'agent-stop-button' : 'agent-send-button',
+                      ),
+                      onPressed: isRunning
+                          ? onCancel
+                          : (canSend ? onSend : null),
+                      icon: Icon(
+                        isRunning ? Icons.stop_rounded : Icons.send_rounded,
+                        size: isRunning ? 18 : 17,
+                      ),
+                      tooltip: isRunning ? '停止' : '发送',
+                      style: IconButton.styleFrom(
+                        backgroundColor: canSend || isRunning
+                            ? colorScheme.primary
+                            : MomCozyColors.muted,
+                        foregroundColor: canSend || isRunning
+                            ? colorScheme.onPrimary
+                            : MomCozyColors.mutedForeground,
+                        disabledBackgroundColor: MomCozyColors.muted,
+                        disabledForegroundColor: MomCozyColors.mutedForeground,
+                        fixedSize: const Size.square(36),
+                        minimumSize: const Size.square(36),
+                        padding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ],
                 ),
-                IconButton.filled(
-                  key: ValueKey(
-                    isRunning ? 'agent-stop-button' : 'agent-send-button',
-                  ),
-                  onPressed: isRunning ? onCancel : (canSend ? onSend : null),
-                  icon: Icon(
-                    isRunning ? Icons.stop_rounded : Icons.arrow_upward_rounded,
-                  ),
-                  tooltip: isRunning ? '停止' : '发送',
-                ),
-              ],
+              ),
             ),
             if (_voiceStatusLabel != null) ...[
               const SizedBox(height: 4),
