@@ -801,8 +801,8 @@ const momCozyRoutes = [
   ),
   MomCozyRouteConfig(
     path: '/calibration',
-    title: '舒适校准',
-    summary: '泵奶前的左右侧舒适档位校准流程。',
+    title: '舒适负压调节',
+    summary: '每一步确认一个动作，找到你的舒适档位。',
     icon: Icons.tune_rounded,
     accent: Color(0xff9b6b2f),
     priority: 'P0',

@@ -5348,6 +5348,7 @@ class _CalibrationPageState extends State<_CalibrationPage> {
   String? _deviceStatusError;
   bool _isSaving = false;
   bool _hasUnsavedChanges = false;
+  bool _introAcknowledged = false;
   String? _saveError;
 
   @override
@@ -5450,95 +5451,116 @@ class _CalibrationPageState extends State<_CalibrationPage> {
     final leftDevice = _deviceForSide('L') ?? _deviceForSide('left');
     final rightDevice = _deviceForSide('R') ?? _deviceForSide('right');
 
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      trailing: const _StatusChip(
-        label: '左右独立',
-        icon: Icons.compare_arrows_rounded,
-        accent: Color(0xff9b6b2f),
-      ),
+    final progress = _introAcknowledged || _hasUnsavedChanges ? 4 : 1;
+
+    return ListView(
+      key: ValueKey('route-page-${widget.path}'),
+      padding: EdgeInsets.zero,
       children: [
-        const _SectionTitle('设备状态'),
-        if (_deviceStatusError != null)
-          _ActionTile(
-            icon: Icons.bluetooth_disabled_rounded,
-            title: '设备状态同步失败',
-            subtitle: _deviceStatusError!,
-            accent: Colors.red,
-            trailing: IconButton(
-              tooltip: '重试设备状态',
-              onPressed: _refreshCalibrationDevices,
-              icon: const Icon(Icons.refresh_rounded),
-            ),
-          )
-        else ...[
-          _CalibrationDeviceTile(
-            label: '左侧',
-            device: leftDevice,
-            accent: widget.accent,
+        _CalibrationTopBar(
+          progress: progress,
+          total: 7,
+          onBack: _exitCalibration,
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
+          child: Column(
+            children: [
+              _CalibrationStepCard(
+                eyebrow: '动作确认 1',
+                title: '请先正确穿戴吸奶器',
+                description: '确认法兰/硅胶塞贴合，左右主机放置稳定。穿戴完成后再进入吸力调节，能减少空吸带来的不适。',
+                primaryLabel: _introAcknowledged ? '已穿戴好' : '我已穿戴好',
+                onPrimary: () => setState(() => _introAcknowledged = true),
+              ),
+              const SizedBox(height: 12),
+              _CalibrationStepCard(
+                eyebrow: '左右侧 · 舒适档位',
+                title: '调节到舒适最大档',
+                description: '未感不适时持续加档，感受到略微不适时减 1-2 档，恢复到舒适档位。',
+                children: [
+                  if (_deviceStatusError != null)
+                    _ActionTile(
+                      icon: Icons.bluetooth_disabled_rounded,
+                      title: '设备状态同步失败',
+                      subtitle: _deviceStatusError!,
+                      accent: Colors.red,
+                      trailing: IconButton(
+                        tooltip: '重试设备状态',
+                        onPressed: _refreshCalibrationDevices,
+                        icon: const Icon(Icons.refresh_rounded),
+                      ),
+                    )
+                  else ...[
+                    _CalibrationDeviceTile(
+                      label: '左侧',
+                      device: leftDevice,
+                      accent: widget.accent,
+                    ),
+                    _CalibrationDeviceTile(
+                      label: '右侧',
+                      device: rightDevice,
+                      accent: const Color(0xff43827b),
+                    ),
+                  ],
+                  const SizedBox(height: 6),
+                  _CalibrationSideTile(
+                    label: '左侧',
+                    value: _leftComfort,
+                    accent: widget.accent,
+                    onChanged: _setLeftComfort,
+                  ),
+                  _CalibrationSideTile(
+                    label: '右侧',
+                    value: _rightComfort,
+                    accent: const Color(0xff43827b),
+                    onChanged: _setRightComfort,
+                  ),
+                  if (_saveError != null) ...[
+                    const SizedBox(height: 8),
+                    _CalibrationFeedbackBanner(
+                      text: _saveError!,
+                      isError: !_saveError!.startsWith('已恢复'),
+                    ),
+                  ],
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton.icon(
+                          onPressed: _isSaving ? null : _saveAndEnterPump,
+                          icon: const Icon(Icons.check_circle_rounded),
+                          label: Text(_isSaving ? '保存中' : '保存并进入泵奶'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 9),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _isSaving ? null : _exitCalibration,
+                          icon: const Icon(Icons.close_rounded),
+                          label: const Text('退出校准'),
+                        ),
+                      ),
+                      const SizedBox(width: 9),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _isSaving
+                              ? null
+                              : _resetCalibrationChanges,
+                          icon: const Icon(Icons.restore_rounded),
+                          label: const Text('恢复默认'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
-          _CalibrationDeviceTile(
-            label: '右侧',
-            device: rightDevice,
-            accent: const Color(0xff43827b),
-          ),
-        ],
-        const SizedBox(height: 8),
-        const _SectionTitle('舒适档位'),
-        _CalibrationSideTile(
-          label: '左侧',
-          value: _leftComfort,
-          accent: widget.accent,
-          onChanged: _setLeftComfort,
-        ),
-        _CalibrationSideTile(
-          label: '右侧',
-          value: _rightComfort,
-          accent: const Color(0xff43827b),
-          onChanged: _setRightComfort,
-        ),
-        const SizedBox(height: 8),
-        const _SectionTitle('保存规则'),
-        _ActionTile(
-          icon: Icons.verified_user_outlined,
-          title: '校准结果保存检查',
-          subtitle: _saveError ?? '保存前会检查左右设备状态，并处理历史校准数据。',
-          accent: _saveError == null ? const Color(0xff7f6a75) : Colors.red,
-          trailing: _isSaving
-              ? const SizedBox.square(
-                  dimension: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2.5),
-                )
-              : Icon(
-                  _saveError == null
-                      ? Icons.rule_rounded
-                      : Icons.error_outline_rounded,
-                ),
-        ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            FilledButton.icon(
-              onPressed: _isSaving ? null : _saveAndEnterPump,
-              icon: const Icon(Icons.save_rounded),
-              label: Text(_isSaving ? '保存中' : '保存并进入泵奶'),
-            ),
-            OutlinedButton.icon(
-              onPressed: _isSaving ? null : _exitCalibration,
-              icon: const Icon(Icons.close_rounded),
-              label: const Text('退出校准'),
-            ),
-            OutlinedButton.icon(
-              onPressed: _isSaving ? null : _resetCalibrationChanges,
-              icon: const Icon(Icons.restore_rounded),
-              label: const Text('恢复默认'),
-            ),
-          ],
         ),
       ],
     );
@@ -5562,6 +5584,217 @@ class _CalibrationPageState extends State<_CalibrationPage> {
       return '蓝牙权限未开启，请授权后重试。';
     }
     return '校准保存失败，请稍后重试。';
+  }
+}
+
+class _CalibrationTopBar extends StatelessWidget {
+  const _CalibrationTopBar({
+    required this.progress,
+    required this.total,
+    required this.onBack,
+  });
+
+  final int progress;
+  final int total;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    final ratio = (progress / total).clamp(0.0, 1.0);
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+      decoration: BoxDecoration(
+        color: MomCozyColors.background,
+        border: Border(
+          bottom: BorderSide(
+            color: MomCozyColors.border.withValues(alpha: 0.5),
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Material(
+                color: Colors.transparent,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: onBack,
+                  child: const SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Icon(Icons.arrow_back_rounded, size: 20),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '舒适负压调节',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: MomCozyColors.foreground,
+                        fontWeight: FontWeight.w900,
+                        height: 1.15,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '每一步确认一个动作，找到你的舒适档位',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                '$progress/$total',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: MomCozyColors.primary,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+            child: LinearProgressIndicator(
+              minHeight: 6,
+              value: ratio,
+              backgroundColor: MomCozyColors.muted,
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                MomCozyColors.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CalibrationStepCard extends StatelessWidget {
+  const _CalibrationStepCard({
+    required this.eyebrow,
+    required this.title,
+    this.description,
+    this.primaryLabel,
+    this.onPrimary,
+    this.children = const [],
+  });
+
+  final String eyebrow;
+  final String title;
+  final String? description;
+  final String? primaryLabel;
+  final VoidCallback? onPrimary;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card,
+        radius: 24,
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            eyebrow,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: MomCozyColors.primary,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: MomCozyColors.foreground,
+              fontWeight: FontWeight.w900,
+              height: 1.18,
+            ),
+          ),
+          if (description != null) ...[
+            const SizedBox(height: 10),
+            Text(
+              description!,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w700,
+                height: 1.45,
+              ),
+            ),
+          ],
+          if (children.isNotEmpty) ...[const SizedBox(height: 14), ...children],
+          if (primaryLabel != null) ...[
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: onPrimary,
+                child: Text(primaryLabel!),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CalibrationFeedbackBanner extends StatelessWidget {
+  const _CalibrationFeedbackBanner({required this.text, required this.isError});
+
+  final String text;
+  final bool isError;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isError ? Colors.red : const Color(0xff43827b);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isError
+                ? Icons.error_outline_rounded
+                : Icons.check_circle_outline_rounded,
+            size: 18,
+            color: color,
+          ),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w800,
+                height: 1.28,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
