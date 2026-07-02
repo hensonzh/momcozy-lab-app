@@ -11,8 +11,16 @@ class AgentStreamEvent {
   String? get runId => stringField(raw, 'run_id') ?? stringField(raw, 'runId');
   String? get messageId =>
       stringField(raw, 'message_id') ?? stringField(raw, 'messageId');
+  Map<String, Object?> get payload {
+    final value = raw['payload'];
+    return value is Map ? Map<String, Object?>.from(value) : const {};
+  }
+
   String? get textDelta =>
-      stringField(raw, 'delta') ?? stringField(raw, 'text');
+      stringField(raw, 'delta') ??
+      stringField(raw, 'text') ??
+      stringField(payload, 'delta') ??
+      stringField(payload, 'text');
   String? get eventId =>
       stringField(raw, 'event_id') ?? stringField(raw, 'eventId');
 
@@ -36,7 +44,10 @@ class AgentStreamEvent {
       type == 'RUN_FINISHED' ||
       type == 'RUN_ERROR' ||
       type == 'RUN_FAILED' ||
-      type == 'ERROR';
+      type == 'ERROR' ||
+      type == 'run.completed' ||
+      type == 'run.failed' ||
+      type == 'run.cancelled';
 
   String get mergeKey {
     final toolCallId = stringField(raw, 'tool_call_id');
@@ -48,6 +59,12 @@ class AgentStreamEvent {
         stringField(raw, 'artifact_id') ?? stringField(raw, 'artifactId');
     if (artifactId != null && artifactId.isNotEmpty) {
       return 'artifact:$artifactId';
+    }
+
+    final actionId =
+        stringField(raw, 'action_id') ?? stringField(raw, 'actionId');
+    if (actionId != null && actionId.isNotEmpty) {
+      return 'action:$actionId';
     }
 
     if (messageId != null && messageId!.isNotEmpty) {

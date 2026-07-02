@@ -3,9 +3,8 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 
-const _defaultAgentHubSseUrl = String.fromEnvironment(
-  'MOMCOZY_AGENT_SSE_URL',
-  defaultValue: 'http://127.0.0.1:8768/api/ag-ui',
+const _defaultAgentHubRunsUrl = String.fromEnvironment(
+  'MOMCOZY_AGENT_RUNS_URL',
 );
 const _defaultAgentHubApiBaseUrl = String.fromEnvironment(
   'MOMCOZY_API_BASE_URL',
@@ -55,8 +54,8 @@ AgentStreamRequest buildSessionAgentHubRequest(
 AgentStreamRunner createDefaultAgentHubRunner({AgentStreamEndpoint? endpoint}) {
   return AgentStreamRunner(
     SseAgentStreamClient(
-      AgentSseHttpTransport(
-        endpoint: endpoint ?? defaultAgentHubSseEndpoint(),
+      ProductionAgentSseTransport(
+        runsEndpoint: endpoint ?? defaultAgentHubSseEndpoint(),
         payloadFactory: buildDefaultAgentHubPayload,
       ),
     ),
@@ -69,8 +68,8 @@ AgentStreamRunner createSessionAgentHubRunner(
 }) {
   return AgentStreamRunner(
     SseAgentStreamClient(
-      AgentSseHttpTransport(
-        endpoint: endpoint ?? sessionAgentHubSseEndpoint(session),
+      ProductionAgentSseTransport(
+        runsEndpoint: endpoint ?? sessionAgentHubSseEndpoint(session),
         payloadFactory: buildDefaultAgentHubPayload,
       ),
     ),
@@ -95,21 +94,29 @@ AgentStreamCancelClient createSessionAgentHubCancelClient(
 }
 
 AgentStreamEndpoint defaultAgentHubSseEndpoint() {
-  return _agentHubEndpoint(Uri.parse(_defaultAgentHubSseUrl));
+  final explicitRunsUrl = _defaultAgentHubRunsUrl.trim();
+  return _agentHubEndpoint(
+    explicitRunsUrl.isEmpty
+        ? _agentHubApiUri('/v1/agent/runs')
+        : Uri.parse(explicitRunsUrl),
+  );
 }
 
 AgentStreamEndpoint defaultAgentHubCancelEndpoint() {
   final explicitCancelUrl = _defaultAgentHubCancelUrl.trim();
   return _agentHubEndpoint(
     explicitCancelUrl.isEmpty
-        ? _agentHubApiUri('/api/ag-ui-cancel')
+        ? _agentHubApiUri('/v1/agent/runs')
         : Uri.parse(explicitCancelUrl),
   );
 }
 
 AgentStreamEndpoint sessionAgentHubSseEndpoint(MomCozySession session) {
+  final explicitRunsUrl = _defaultAgentHubRunsUrl.trim();
   return _agentHubEndpoint(
-    Uri.parse(_defaultAgentHubSseUrl),
+    explicitRunsUrl.isEmpty
+        ? _agentHubApiUri('/v1/agent/runs')
+        : Uri.parse(explicitRunsUrl),
     token: session.accessToken,
   );
 }
@@ -118,7 +125,7 @@ AgentStreamEndpoint sessionAgentHubCancelEndpoint(MomCozySession session) {
   final explicitCancelUrl = _defaultAgentHubCancelUrl.trim();
   return _agentHubEndpoint(
     explicitCancelUrl.isEmpty
-        ? _agentHubApiUri('/api/ag-ui-cancel')
+        ? _agentHubApiUri('/v1/agent/runs')
         : Uri.parse(explicitCancelUrl),
     token: session.accessToken,
   );
@@ -139,15 +146,7 @@ Uri _agentHubApiUri(String path) {
 }
 
 Map<String, Object?> buildDefaultAgentHubPayload(AgentStreamRequest request) {
-  return buildAgentRunPayload(
-    request,
-    runId: _timestampedId('run-flutter'),
-    messageId: _timestampedId('msg-flutter'),
-  );
-}
-
-String _timestampedId(String prefix) {
-  return '$prefix-${DateTime.now().microsecondsSinceEpoch}';
+  return buildProductionAgentRunPayload(request);
 }
 
 String _resolvedThreadId(MomCozySession session, String? threadId) {

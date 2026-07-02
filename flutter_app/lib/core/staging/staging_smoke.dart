@@ -18,7 +18,7 @@ class StagingSmokeConfig {
   const StagingSmokeConfig({
     required this.enabled,
     required this.apiBaseUri,
-    required this.agentSseUri,
+    required this.agentRunsUri,
     required this.session,
     this.includeMutating = false,
     this.includeAgentStream = false,
@@ -29,15 +29,15 @@ class StagingSmokeConfig {
     final apiBase = Uri.parse(
       _envOrDefault(env, 'MOMCOZY_API_BASE_URL', 'http://127.0.0.1:8769'),
     );
-    final agentSseUrl = _envOrNull(env, 'MOMCOZY_AGENT_SSE_URL');
+    final agentRunsUrl = _envOrNull(env, 'MOMCOZY_AGENT_RUNS_URL');
     return StagingSmokeConfig(
       enabled: _flag(env, 'MOMCOZY_STAGING_SMOKE'),
       includeMutating: _flag(env, 'MOMCOZY_STAGING_SMOKE_MUTATE'),
       includeAgentStream: _flag(env, 'MOMCOZY_STAGING_SMOKE_AGENT'),
       apiBaseUri: apiBase,
-      agentSseUri: agentSseUrl == null
-          ? apiBase.replace(path: '/api/ag-ui-ws')
-          : Uri.parse(agentSseUrl),
+      agentRunsUri: agentRunsUrl == null
+          ? apiBase.replace(path: '/v1/agent/runs')
+          : Uri.parse(agentRunsUrl),
       session: MomCozySession.fromEnvironment(
         accessToken: _envOrDefault(env, 'MOMCOZY_API_TOKEN', ''),
         refreshToken: _envOrDefault(env, 'MOMCOZY_REFRESH_TOKEN', ''),
@@ -52,7 +52,7 @@ class StagingSmokeConfig {
   final bool includeMutating;
   final bool includeAgentStream;
   final Uri apiBaseUri;
-  final Uri agentSseUri;
+  final Uri agentRunsUri;
   final MomCozySession session;
   final Duration timeout;
 }
@@ -195,7 +195,7 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
     headers: headers,
   );
   final agentEndpoint = AgentStreamEndpoint(
-    uri: config.agentSseUri,
+    uri: config.agentRunsUri,
     token: token,
     headers: headers,
   );
@@ -431,23 +431,15 @@ class _AgentSseProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     final client = SseAgentStreamClient(
-      AgentSseHttpTransport(
-        endpoint: endpoint,
-        payloadFactory: (request) {
-          final suffix = DateTime.now().microsecondsSinceEpoch;
-          return buildAgentRunPayload(
-            request,
-            runId: 'run-flutter-smoke-$suffix',
-            messageId: 'msg-flutter-smoke-$suffix',
-          );
-        },
+      ProductionAgentSseTransport(
+        runsEndpoint: endpoint,
+        payloadFactory: buildProductionAgentRunPayload,
       ),
     );
     final event = await client
         .stream(
           AgentStreamRequest(
             userId: config.session.userId,
-            threadId: 'thread-flutter-smoke-${config.session.userId}',
             locale: config.session.locale,
             message: 'Reply with a short staging smoke acknowledgement.',
             metadata: const {'source': 'flutter_staging_smoke'},

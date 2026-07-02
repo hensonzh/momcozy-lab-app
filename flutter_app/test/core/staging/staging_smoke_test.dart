@@ -9,7 +9,7 @@ void main() {
       'MOMCOZY_STAGING_SMOKE_MUTATE': 'true',
       'MOMCOZY_STAGING_SMOKE_AGENT': 'yes',
       'MOMCOZY_API_BASE_URL': 'https://api.example.test/base',
-      'MOMCOZY_AGENT_SSE_URL': 'https://agent.example.test/sse',
+      'MOMCOZY_AGENT_RUNS_URL': 'https://agent.example.test/v1/agent/runs',
       'MOMCOZY_API_TOKEN': ' secret-token ',
       'MOMCOZY_REFRESH_TOKEN': ' refresh-token ',
       'MOMCOZY_DEFAULT_USER_ID': ' user-001 ',
@@ -21,7 +21,10 @@ void main() {
     expect(config.includeMutating, isTrue);
     expect(config.includeAgentStream, isTrue);
     expect(config.apiBaseUri, Uri.parse('https://api.example.test/base'));
-    expect(config.agentSseUri, Uri.parse('https://agent.example.test/sse'));
+    expect(
+      config.agentRunsUri,
+      Uri.parse('https://agent.example.test/v1/agent/runs'),
+    );
     expect(config.session.userId, 'user-001');
     expect(config.session.babyId, 'baby-001');
     expect(config.session.locale, 'en-US');
@@ -94,7 +97,7 @@ StagingSmokeConfig _config({
     includeMutating: includeMutating,
     includeAgentStream: includeAgentStream,
     apiBaseUri: Uri.parse('https://api.example.test'),
-    agentSseUri: Uri.parse('https://api.example.test/api/ag-ui-ws'),
+    agentRunsUri: Uri.parse('https://api.example.test/v1/agent/runs'),
     session: const MomCozySession(
       status: MomCozySessionStatus.authenticated,
       userId: 'user-001',

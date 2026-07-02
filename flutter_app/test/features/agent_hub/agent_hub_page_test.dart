@@ -445,7 +445,7 @@ void main() {
           ),
           cancelClient: AgentStreamCancelClient(
             endpoint: AgentStreamEndpoint(
-              uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-cancel'),
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
             ),
             connector: cancelConnector,
           ),
@@ -461,9 +461,8 @@ void main() {
 
     final body = jsonDecode(cancelConnector.body!) as Map<String, Object?>;
     expect(find.text('已停止'), findsOneWidget);
-    expect(cancelConnector.uri!.path, '/api/ag-ui-cancel');
-    expect(body['threadId'], 'thread-demo');
-    expect(body['runId'], 'run-demo');
+    expect(cancelConnector.uri!.path, '/v1/agent/runs/run-demo/cancel');
+    expect(body['reason'], 'user_cancelled');
     expect(body.containsKey('user_id'), isFalse);
   });
 

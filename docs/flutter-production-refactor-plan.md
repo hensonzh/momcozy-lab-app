@@ -48,6 +48,10 @@ Already present:
 - Voice repository no longer sends `user_id` as authority or bearer tokens in
   realtime voice URLs; voice endpoints still need to be added to the production
   OpenAPI contract before they can be treated as fully stable.
+- Agent Hub default run path now creates runs through `/v1/agent/runs`, follows
+  `/v1/agent/runs/{run_id}/stream`, cancels through
+  `/v1/agent/runs/{run_id}/cancel`, and reduces production
+  `message.*`/`run.*` events.
 - Immediate App blockers fixed: Kotlin Android plugin, no bearer token in agent
   stream URLs, callback-based Android permission results, typed non-JSON HTTP
   errors.
@@ -97,9 +101,8 @@ Main gaps:
    because every owner-scoped feature depends on it.
 3. Add formal production OpenAPI coverage for voice/transcription endpoints or
    replace them with the production agent runtime media flow.
-4. Migrate agent chat after the runtime API adapter exists, because stream
-   replay and action confirmation need a different state model from the legacy
-   AG-UI transport.
+4. Remove remaining AG-UI-only helper clients and migrate client events/timing
+   diagnostics to production agent events or observability endpoints.
 
 ## Non-Goals
 
