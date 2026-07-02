@@ -42,6 +42,7 @@ class AgentStreamEvent {
 
   bool get isTerminal =>
       type == 'run.completed' ||
+      type == 'run.waiting_for_confirmation' ||
       type == 'run.failed' ||
       type == 'run.cancelled';
 
@@ -58,7 +59,10 @@ class AgentStreamEvent {
     }
 
     final actionId =
-        stringField(raw, 'action_id') ?? stringField(raw, 'actionId');
+        stringField(raw, 'action_id') ??
+        stringField(raw, 'actionId') ??
+        stringField(payload, 'action_id') ??
+        stringField(payload, 'actionId');
     if (actionId != null && actionId.isNotEmpty) {
       return 'action:$actionId';
     }

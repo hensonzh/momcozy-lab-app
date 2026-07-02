@@ -89,6 +89,28 @@ void main() {
         contains('ended before a terminal event'),
       );
     });
+
+    test('does not mark confirmation waits as disconnected', () async {
+      final runner = AgentStreamRunner(
+        JsonlAgentStreamClient(
+          FixtureAgentStreamTransport([
+            jsonEncode(readFixtureMap('agent_events/run_started.json')),
+            jsonEncode({
+              'type': 'run.waiting_for_confirmation',
+              'thread_id': 'thread-fixture-001',
+              'run_id': 'run-fixture-001',
+              'payload': {'pending_action_id': 'action-support-001'},
+            }),
+            '{malformed-after-waiting-terminal',
+          ]),
+        ),
+      );
+
+      final states = await runner.run(_request).toList();
+
+      expect(states.last.phase, AgentStreamRunPhase.waitingForConfirmation);
+      expect(states.last.errorMessage, isNull);
+    });
   });
 }
 

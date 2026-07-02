@@ -316,6 +316,7 @@ class MomCozyRoutePage extends StatelessWidget {
       return AgentHubPage(
         runner: createSessionAgentHubRunner(runtime.session),
         cancelClient: createSessionAgentHubCancelClient(runtime.session),
+        actionClient: createSessionAgentHubActionClient(runtime.session),
         requestBuilder: (message) =>
             buildSessionAgentHubRequest(message, session: runtime.session),
         onArtifactAction: (action) =>

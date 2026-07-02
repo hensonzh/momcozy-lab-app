@@ -164,6 +164,79 @@ void main() {
     });
 
     test(
+      'action client posts confirmation and rejection to action-scoped endpoints',
+      () async {
+        final connector = _RecordingControlHttpConnector(
+          const AgentStreamControlHttpResponse(
+            statusCode: 200,
+            body:
+                '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"confirmed","side_effect_level":"medium","preview_payload":{},"apply_payload":{},"idempotency_key":"agent-action-action-fixture-001","error_code":""}',
+          ),
+        );
+        final client = AgentStreamActionClient(
+          endpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8769/v1/agent/actions'),
+            token: 'secret-token',
+          ),
+          connector: connector,
+        );
+
+        final confirmed = await client.confirm(
+          const AgentStreamActionConfirmRequest(
+            actionId: 'action-fixture-001',
+            editedApplyPayload: {'priority': 'normal'},
+          ),
+        );
+
+        expect(confirmed.accepted, isTrue);
+        expect(confirmed.actionStatus, 'confirmed');
+        expect(
+          connector.uri!.path,
+          '/v1/agent/actions/action-fixture-001/confirm',
+        );
+        expect(
+          connector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
+        expect(
+          connector.headers,
+          containsPair('Authorization', 'Bearer secret-token'),
+        );
+        expect(
+          connector.headers,
+          containsPair('Idempotency-Key', 'agent-action-action-fixture-001'),
+        );
+        expect(jsonDecode(connector.body!) as Map<String, Object?>, {
+          'edited_apply_payload': {'priority': 'normal'},
+        });
+
+        connector.nextResponse = const AgentStreamControlHttpResponse(
+          statusCode: 200,
+          body:
+              '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"rejected","side_effect_level":"medium","preview_payload":{},"apply_payload":{},"idempotency_key":"","error_code":"rejected_by_user"}',
+        );
+
+        final rejected = await client.reject(
+          const AgentStreamActionRejectRequest(
+            actionId: 'action-fixture-001',
+            reason: 'user_rejected',
+          ),
+        );
+
+        expect(rejected.accepted, isTrue);
+        expect(rejected.actionStatus, 'rejected');
+        expect(
+          connector.uri!.path,
+          '/v1/agent/actions/action-fixture-001/reject',
+        );
+        expect(connector.headers?.containsKey('Idempotency-Key'), isFalse);
+        expect(jsonDecode(connector.body!) as Map<String, Object?>, {
+          'reason': 'user_rejected',
+        });
+      },
+    );
+
+    test(
       'client event client records safe local events without user authority',
       () async {
         final fixture = readFixtureMap(

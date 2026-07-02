@@ -3,6 +3,7 @@ import 'agent_stream_event.dart';
 enum AgentStreamRunPhase {
   idle,
   streaming,
+  waitingForConfirmation,
   finished,
   error,
   disconnected,
@@ -80,6 +81,17 @@ class AgentStreamRunState {
         messageId: nextMessageId,
         textContent: nextText,
         cancelAcknowledged: true,
+      );
+    }
+
+    if (type == 'run.waiting_for_confirmation') {
+      return copyWith(
+        phase: AgentStreamRunPhase.waitingForConfirmation,
+        events: nextEvents,
+        threadId: nextThreadId,
+        runId: nextRunId,
+        messageId: nextMessageId,
+        textContent: nextText,
       );
     }
 
