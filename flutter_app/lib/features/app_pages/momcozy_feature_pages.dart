@@ -469,6 +469,129 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
+class _LegacySegmentedTabs extends StatelessWidget {
+  const _LegacySegmentedTabs({
+    super.key,
+    required this.selected,
+    required this.items,
+    required this.onChanged,
+    required this.accent,
+    this.minItemWidth = 70,
+    this.expand = false,
+  });
+
+  final String selected;
+  final List<_LegacySegmentedTabItem> items;
+  final ValueChanged<String> onChanged;
+  final Color accent;
+  final double minItemWidth;
+  final bool expand;
+
+  @override
+  Widget build(BuildContext context) {
+    final children = [
+      for (final item in items)
+        _LegacySegmentedTabButton(
+          item: item,
+          selected: item.value == selected,
+          accent: accent,
+          minWidth: minItemWidth,
+          onTap: () => onChanged(item.value),
+        ),
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: MomCozyColors.card.withValues(alpha: 0.74),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        border: Border.all(color: MomCozyColors.border),
+      ),
+      child: Row(
+        mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,
+        children: expand
+            ? [for (final child in children) Expanded(child: child)]
+            : children,
+      ),
+    );
+  }
+}
+
+class _LegacySegmentedTabItem {
+  const _LegacySegmentedTabItem({
+    required this.value,
+    required this.label,
+    this.icon,
+  });
+
+  final String value;
+  final String label;
+  final IconData? icon;
+}
+
+class _LegacySegmentedTabButton extends StatelessWidget {
+  const _LegacySegmentedTabButton({
+    required this.item,
+    required this.selected,
+    required this.accent,
+    required this.minWidth,
+    required this.onTap,
+  });
+
+  final _LegacySegmentedTabItem item;
+  final bool selected;
+  final Color accent;
+  final double minWidth;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = selected ? accent : MomCozyColors.mutedForeground;
+    final labelStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
+      color: foreground,
+      fontWeight: selected ? FontWeight.w900 : FontWeight.w800,
+    );
+
+    return Semantics(
+      selected: selected,
+      button: true,
+      label: item.label,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: minWidth, minHeight: 34),
+        child: Material(
+          color: selected ? accent.withValues(alpha: 0.12) : Colors.transparent,
+          borderRadius: BorderRadius.circular(MomCozyRadii.control - 3),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(MomCozyRadii.control - 3),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (item.icon != null) ...[
+                    Icon(item.icon, size: 15, color: foreground),
+                    const SizedBox(width: 5),
+                  ],
+                  Flexible(
+                    child: Text(
+                      item.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: labelStyle,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _IconBubble extends StatelessWidget {
   const _IconBubble({
     required this.icon,
@@ -795,26 +918,21 @@ class _CareStageSelector extends StatelessWidget {
                 ],
               ),
             ),
-            SegmentedButton<String>(
-              selected: {selectedStage},
-              showSelectedIcon: false,
-              onSelectionChanged: (next) => onChanged(next.first),
-              style: ButtonStyle(
-                foregroundColor: WidgetStateProperty.resolveWith(
-                  (states) =>
-                      states.contains(WidgetState.selected) ? accent : null,
-                ),
-              ),
-              segments: const [
-                ButtonSegment(
+            _LegacySegmentedTabs(
+              selected: selectedStage,
+              onChanged: onChanged,
+              accent: accent,
+              minItemWidth: 118,
+              items: const [
+                _LegacySegmentedTabItem(
                   value: 'pregnancy',
-                  icon: Icon(Icons.pregnant_woman_rounded),
-                  label: Text('孕期模式'),
+                  icon: Icons.pregnant_woman_rounded,
+                  label: '孕期模式',
                 ),
-                ButtonSegment(
+                _LegacySegmentedTabItem(
                   value: 'postpartum',
-                  icon: Icon(Icons.favorite_border_rounded),
-                  label: Text('哺乳期模式'),
+                  icon: Icons.favorite_border_rounded,
+                  label: '哺乳期模式',
                 ),
               ],
             ),
@@ -2750,27 +2868,27 @@ class _RecordsPageState extends State<_RecordsPage> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              SegmentedButton<String>(
+              _LegacySegmentedTabs(
                 key: const ValueKey('records-filter-segment'),
-                selected: {_filter},
-                showSelectedIcon: false,
-                onSelectionChanged: (next) =>
-                    setState(() => _filter = next.first),
-                segments: const [
-                  ButtonSegment(value: 'pump', label: Text('泵奶')),
-                  ButtonSegment(value: 'feed', label: Text('喂养')),
-                  ButtonSegment(value: 'growth', label: Text('成长')),
+                selected: _filter,
+                onChanged: (next) => setState(() => _filter = next),
+                accent: MomCozyColors.primary,
+                minItemWidth: 58,
+                items: const [
+                  _LegacySegmentedTabItem(value: 'pump', label: '泵奶'),
+                  _LegacySegmentedTabItem(value: 'feed', label: '喂养'),
+                  _LegacySegmentedTabItem(value: 'growth', label: '成长'),
                 ],
               ),
-              SegmentedButton<String>(
+              _LegacySegmentedTabs(
                 key: const ValueKey('records-unit-segment'),
-                selected: {_volumeUnit},
-                showSelectedIcon: false,
-                onSelectionChanged: (next) =>
-                    setState(() => _volumeUnit = next.first),
-                segments: const [
-                  ButtonSegment(value: 'mL', label: Text('mL')),
-                  ButtonSegment(value: 'oz', label: Text('oz')),
+                selected: _volumeUnit,
+                onChanged: (next) => setState(() => _volumeUnit = next),
+                accent: MomCozyColors.primary,
+                minItemWidth: 52,
+                items: const [
+                  _LegacySegmentedTabItem(value: 'mL', label: 'mL'),
+                  _LegacySegmentedTabItem(value: 'oz', label: 'oz'),
                 ],
               ),
             ],
@@ -4164,25 +4282,27 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
       icon: widget.icon,
       accent: widget.accent,
       priority: widget.priority,
-      trailing: SegmentedButton<String>(
-        selected: {_type},
-        showSelectedIcon: false,
-        onSelectionChanged: (next) => setState(() => _type = next.first),
-        segments: const [
-          ButtonSegment(
+      trailing: _LegacySegmentedTabs(
+        selected: _type,
+        onChanged: (next) => setState(() => _type = next),
+        accent: MomCozyColors.primary,
+        expand: true,
+        minItemWidth: 82,
+        items: const [
+          _LegacySegmentedTabItem(
             value: 'pdf',
-            icon: Icon(Icons.picture_as_pdf_outlined),
-            label: Text('PDF'),
+            icon: Icons.picture_as_pdf_outlined,
+            label: 'PDF',
           ),
-          ButtonSegment(
+          _LegacySegmentedTabItem(
             value: 'image',
-            icon: Icon(Icons.image_outlined),
-            label: Text('图片'),
+            icon: Icons.image_outlined,
+            label: '图片',
           ),
-          ButtonSegment(
+          _LegacySegmentedTabItem(
             value: 'video',
-            icon: Icon(Icons.play_circle_outline_rounded),
-            label: Text('视频'),
+            icon: Icons.play_circle_outline_rounded,
+            label: '视频',
           ),
         ],
       ),
