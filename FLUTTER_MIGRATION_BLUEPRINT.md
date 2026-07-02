@@ -612,9 +612,9 @@ AgentHub UI
 退出条件：
 
 ```text
-[ ] records/schedule/status API contract tests 通过
-[ ] mL/oz、跨天、时区、长文本测试通过
-[ ] 通知跳转和 badge 状态通过
+[x] records/schedule/status API contract tests 通过
+[x] mL/oz、跨天、时区、长文本测试通过
+[x] 通知跳转和 badge 状态通过
 ```
 
 ### Phase 6: 扩展功能与 WebView 替换
