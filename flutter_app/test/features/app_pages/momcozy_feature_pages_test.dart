@@ -92,8 +92,9 @@ void main() {
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/device')));
       await tester.pump();
-      expect(find.text('左右设备'), findsOneWidget);
-      expect(find.text('BLE 权限和扫描'), findsOneWidget);
+      expect(find.text('Momcozy W1 · 全新上市'), findsOneWidget);
+      expect(find.text('Air One'), findsOneWidget);
+      expect(find.text('RIGHT'), findsOneWidget);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pump();
@@ -142,8 +143,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(OutlinedButton, '管理'));
-      await tester.pumpAndSettle();
+      await _tapDeviceQuickMenuItem(tester, '设备提醒');
       expect(
         find.byKey(const ValueKey('route-page-/device/manage')),
         findsOneWidget,
@@ -151,7 +151,7 @@ void main() {
 
       router.go('/device');
       await tester.pumpAndSettle();
-      await _tapScrollableText(tester, '进入舒适校准');
+      await _tapScrollableText(tester, '左侧 S12 Pro L');
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('route-page-/calibration')),
@@ -159,6 +159,7 @@ void main() {
       );
       expect(find.byType(MomCozyBottomNavigation), findsNothing);
 
+      await _acknowledgeCalibrationIntro(tester);
       await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
@@ -890,10 +891,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('左侧 S12 Pro L'), findsOneWidget);
-      expect(find.textContaining('已恢复 1 台已连接设备'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
 
       expect(find.text('正在扫描附近设备'), findsOneWidget);
       expect(find.text('停止扫描'), findsOneWidget);
@@ -943,8 +942,9 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(await ble.getConnectedDevices(), isEmpty);
-        expect(find.text('左侧 等待连接'), findsOneWidget);
-        expect(find.text('右侧 等待连接'), findsOneWidget);
+        expect(find.text('LEFT'), findsOneWidget);
+        expect(find.text('RIGHT'), findsOneWidget);
+        expect(find.text('连接设备'), findsNWidgets(2));
         expect(find.text('检测到用户切换，已隔离上一用户设备连接。'), findsOneWidget);
       },
     );
@@ -963,13 +963,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('左侧 等待连接'), findsOneWidget);
-      expect(find.text('右侧 等待连接'), findsOneWidget);
-      expect(find.textContaining('权限状态 未请求'), findsOneWidget);
+      expect(find.text('LEFT'), findsOneWidget);
+      expect(find.text('RIGHT'), findsOneWidget);
+      expect(find.text('连接设备'), findsNWidgets(2));
+      expect(find.textContaining('权限状态 未请求'), findsNothing);
       expect(find.text('内部调试参数'), findsNothing);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pumpAndSettle();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
 
       expect(find.text('BLE 权限未授权'), findsOneWidget);
       expect(find.byTooltip('打开蓝牙设置'), findsOneWidget);
@@ -990,11 +990,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('权限状态 永久拒绝'), findsOneWidget);
+      expect(find.textContaining('权限状态 永久拒绝'), findsNothing);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pumpAndSettle();
-
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
       expect(find.text('BLE 权限已永久拒绝，请从系统设置重新开启。'), findsOneWidget);
 
       ble.setPermissionState(
@@ -1005,10 +1003,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(ble.openedAppSettings, isTrue);
-      expect(find.textContaining('权限状态 已授权'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
 
       expect(find.text('正在扫描附近设备'), findsOneWidget);
     });
@@ -1046,10 +1042,9 @@ void main() {
       expect(find.text('右侧 S12 Pro R'), findsOneWidget);
       expect(find.text('已连接'), findsWidgets);
       expect(find.text('87%'), findsOneWidget);
-      expect(find.textContaining('已恢复 2 台已连接设备'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
+      expect(find.text('停止扫描'), findsOneWidget);
 
       ble.addScanResult(
         const BleDeviceSnapshot(
@@ -1071,6 +1066,7 @@ void main() {
       );
       await tester.pump();
 
+      await _scrollToText(tester, 'Nearby Pump L');
       expect(find.text('Nearby Pump L'), findsOneWidget);
       expect(find.text('Nearby Pump R'), findsOneWidget);
       expect(find.textContaining('nearby-left'), findsOneWidget);
@@ -1096,8 +1092,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
 
       expect(find.text('暂无扫描结果'), findsOneWidget);
 
@@ -1132,8 +1127,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
       failingBle.addScanResult(
         const BleDeviceSnapshot(
           side: 'R',
@@ -1164,6 +1158,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _acknowledgeCalibrationIntro(tester);
       await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
 
@@ -1192,6 +1187,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _acknowledgeCalibrationIntro(tester);
       await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
 
@@ -1220,6 +1216,7 @@ void main() {
         );
         await tester.pumpAndSettle();
 
+        await _acknowledgeCalibrationIntro(tester);
         expect(find.text('左侧设备已连接'), findsOneWidget);
         expect(find.textContaining('Calibration L · 电量 83%'), findsOneWidget);
         expect(find.text('右侧设备未连接'), findsOneWidget);
@@ -1254,6 +1251,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _acknowledgeCalibrationIntro(tester);
       final leftGearUp = find.byTooltip('提高左侧档位');
       await tester.drag(
         find.byKey(const ValueKey('route-page-/calibration')),
@@ -1308,6 +1306,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _acknowledgeCalibrationIntro(tester);
       expect(find.text('左侧设备未连接'), findsOneWidget);
       expect(find.text('右侧设备已连接'), findsOneWidget);
       expect(find.textContaining('Calibration R · 电量 79%'), findsOneWidget);
@@ -1340,6 +1339,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _acknowledgeCalibrationIntro(tester);
       expect(find.text('左侧设备已连接'), findsOneWidget);
       expect(find.textContaining('Dual L · 电量 84%'), findsOneWidget);
       expect(find.text('右侧设备已连接'), findsOneWidget);
@@ -1787,6 +1787,19 @@ Future<void> _tapScrollableWidgetWithText(
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
   await tester.tap(finder);
+}
+
+Future<void> _tapDeviceQuickMenuItem(WidgetTester tester, String label) async {
+  await tester.tap(find.byTooltip('打开设备快捷菜单'));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(label));
+  await tester.pumpAndSettle();
+}
+
+Future<void> _acknowledgeCalibrationIntro(WidgetTester tester) async {
+  expect(find.text('请先正确穿戴吸奶器'), findsOneWidget);
+  await tester.tap(find.widgetWithText(FilledButton, '我已穿戴好'));
+  await tester.pumpAndSettle();
 }
 
 Future<void> _scrollToText(WidgetTester tester, String text) async {
