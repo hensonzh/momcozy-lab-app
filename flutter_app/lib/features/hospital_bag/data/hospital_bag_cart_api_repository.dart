@@ -1,8 +1,7 @@
-import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
-const hospitalBagCartUpdateEndpoint = '/api/hospital-bag/cart-update';
+const hospitalBagCartUpdateEndpoint = '/v1/plans';
 
 class HospitalBagCartApiRepository implements HospitalBagCartRepository {
   const HospitalBagCartApiRepository({required this.transport});
@@ -11,26 +10,46 @@ class HospitalBagCartApiRepository implements HospitalBagCartRepository {
 
   @override
   Future<HospitalBagCartSyncResult> syncCart({
-    required String userId,
     required List<HospitalBagPackedItem> items,
   }) async {
+    final serializedItems = items.map((item) => item.toMap()).toList(
+      growable: false,
+    );
     final response = await transport.postJson(
       hospitalBagCartUpdateEndpoint,
+      headers: {'Idempotency-Key': _idempotencyKey(items)},
       body: {
-        'user_id': userId,
+        'title': 'Hospital bag cart',
+        'plan_type': 'hospital_bag_cart',
         'source': 'flutter',
-        'hospital_bag_cart': {
-          'items': items.map((item) => item.toMap()).toList(growable: false),
-        },
+        'summary': _summary(items),
+        'payload': {'items': serializedItems},
       },
     );
-    final data = _mapOrEmpty(unwrapApiEnvelope(response));
+    final payload = _mapOrEmpty(response['payload']);
+    final responseItems = payload['items'];
     return HospitalBagCartSyncResult(
-      message: _string(data['message']) ?? '购物车已同步',
-      syncedCount:
-          _int(data['synced_count'] ?? data['syncedCount']) ?? items.length,
+      message: _string(response['summary']) ?? '购物车已同步',
+      syncedCount: responseItems is List ? responseItems.length : items.length,
     );
   }
+}
+
+String _summary(List<HospitalBagPackedItem> items) {
+  final packedCount = items.where((item) => item.packed).length;
+  return '购物车已同步：$packedCount/${items.length} 已打包';
+}
+
+String _idempotencyKey(List<HospitalBagPackedItem> items) {
+  final stableItems = [...items]..sort((a, b) => a.id.compareTo(b.id));
+  final encoded = stableItems
+      .map((item) => '${_keyPart(item.id)}:${item.packed ? '1' : '0'}')
+      .join('|');
+  return 'hospital-bag-cart:$encoded';
+}
+
+String _keyPart(String value) {
+  return value.trim().replaceAll(RegExp(r'[^A-Za-z0-9_.:-]'), '_');
 }
 
 Map<String, Object?> _mapOrEmpty(Object? value) {
@@ -38,5 +57,3 @@ Map<String, Object?> _mapOrEmpty(Object? value) {
 }
 
 String? _string(Object? value) => value is String ? value : null;
-
-int? _int(Object? value) => value is int ? value : null;

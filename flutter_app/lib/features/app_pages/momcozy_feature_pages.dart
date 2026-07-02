@@ -3412,7 +3412,6 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
     try {
       final runtime = MomCozyRuntimeScope.of(context);
       final result = await runtime.hospitalBagCartRepository.syncCart(
-        userId: runtime.userId,
         items: _hospitalBagItems(),
       );
       if (!mounted) return;
