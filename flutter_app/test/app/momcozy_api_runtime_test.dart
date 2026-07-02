@@ -163,9 +163,8 @@ void main() {
   test(
     'runtime exposes voice repository over the session multipart transport',
     () async {
-      final multipart = FixtureApiMultipartTransport({
-        'status': 200,
-        'data': {'transcript': 'runtime voice text'},
+      final multipart = FixtureApiMultipartTransport(const {
+        'transcript': 'runtime voice text',
       });
       final runtime = MomCozyApiRuntime.fromSession(
         const MomCozySession(
@@ -180,7 +179,6 @@ void main() {
 
       final voiceText = await runtime.agentVoiceRepository
           .transcribeSpeechChunk(
-            userId: runtime.userId,
             file: const ApiUploadFile(
               name: 'voice.wav',
               mimeType: 'audio/wav',
@@ -193,7 +191,11 @@ void main() {
       expect(repository.multipartTransport, same(multipart));
       expect(voiceText, 'runtime voice text');
       expect(multipart.lastPath, speechTranscribeChunkEndpoint);
-      expect(multipart.lastFields, {'user_id': 'voice-user'});
+      expect(multipart.lastFields, isEmpty);
+      expect(
+        multipart.lastHeaders,
+        containsPair('Authorization', 'Bearer voice-access'),
+      );
     },
   );
 
