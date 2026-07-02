@@ -908,6 +908,7 @@ const momCozyRoutes = [
 const _routesWithoutBottomNavigation = {
   '/calibration',
   '/pump',
+  '/hospital-bag-cart',
   '/media-viewer',
 };
 

@@ -39,6 +39,8 @@ void main() {
           expect(find.text('用户参数配置'), findsWidgets);
         } else if (route.path == '/community') {
           expect(find.text('社区功能还在建设中哦～'), findsWidgets);
+        } else if (route.path == '/hospital-bag-cart') {
+          expect(find.text('待产包一键打包'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }
@@ -1609,24 +1611,38 @@ void main() {
     testWidgets('hospital bag page syncs cart changes through repository', (
       tester,
     ) async {
+      final transport = FixtureApiJsonTransportByPath({
+        hospitalBagCartUpdateEndpoint: const {
+          'status': 200,
+          'data': {'message': '购物车已同步', 'synced_count': 17},
+        },
+      });
+
       await tester.pumpWidget(
         _FeaturePageHost(
           route: _route('/hospital-bag-cart'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            hospitalBagCartUpdateEndpoint: const {
-              'status': 200,
-              'data': {'message': '购物车已同步', 'synced_count': 3},
-            },
-          }),
+          jsonTransport: transport,
         ),
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox).at(1));
+      expect(find.text('18 件'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('删除产褥垫组合装'));
       await tester.pumpAndSettle();
 
-      expect(find.text('2/3 已准备'), findsOneWidget);
+      expect(find.text('17 件'), findsOneWidget);
       expect(find.text('购物车已同步'), findsOneWidget);
+
+      final cart =
+          transport.postedBodies.last['hospital_bag_cart']!
+              as Map<String, Object?>;
+      final items = List<Object?>.from(cart['items']! as List);
+      expect(items, hasLength(17));
+      expect(
+        items.whereType<Map>().map((item) => item['id']),
+        isNot(contains('mom-pad')),
+      );
     });
 
     testWidgets('hospital bag page deletes items and restores defaults', (
@@ -1647,32 +1663,32 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('删除宝宝衣物'));
+      await tester.tap(find.byTooltip('删除产褥垫组合装'));
       await tester.pumpAndSettle();
 
-      expect(find.text('宝宝衣物'), findsNothing);
-      expect(find.text('1/2 已准备'), findsOneWidget);
+      expect(find.text('产褥垫组合装'), findsNothing);
+      expect(find.text('17 件'), findsOneWidget);
       expect(find.text('清单已同步'), findsOneWidget);
 
       final deletedCart =
           transport.postedBodies.last['hospital_bag_cart']!
               as Map<String, Object?>;
       final deletedItems = List<Object?>.from(deletedCart['items']! as List);
-      expect(deletedItems.whereType<Map>().map((item) => item['id']), [
-        'pump',
-        'pads',
-      ]);
+      expect(deletedItems, hasLength(17));
+      expect(
+        deletedItems.whereType<Map>().map((item) => item['id']),
+        isNot(contains('mom-pad')),
+      );
 
-      await tester.tap(find.text('恢复默认清单'));
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
       await tester.pumpAndSettle();
 
-      expect(find.text('宝宝衣物'), findsOneWidget);
-      expect(find.text('1/3 已准备'), findsOneWidget);
+      expect(find.text('18 件'), findsOneWidget);
       final restoredCart =
           transport.postedBodies.last['hospital_bag_cart']!
               as Map<String, Object?>;
       final restoredItems = List<Object?>.from(restoredCart['items']! as List);
-      expect(restoredItems, hasLength(3));
+      expect(restoredItems, hasLength(18));
     });
 
     testWidgets('hospital bag page handles sync failure and default restore', (
@@ -1691,10 +1707,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox).at(1));
+      await tester.tap(find.byTooltip('删除产褥垫组合装'));
       await tester.pumpAndSettle();
 
-      expect(find.text('2/3 已准备'), findsOneWidget);
+      expect(find.text('17 件'), findsOneWidget);
       expect(find.text('本地清单已更新，稍后重试同步。'), findsOneWidget);
 
       await tester.pumpWidget(const SizedBox.shrink());
@@ -1713,14 +1729,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox).at(1));
+      await tester.tap(find.byTooltip('删除产褥垫组合装'));
       await tester.pumpAndSettle();
-      expect(find.text('2/3 已准备'), findsOneWidget);
+      expect(find.text('17 件'), findsOneWidget);
 
-      await tester.tap(find.text('恢复默认清单'));
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
       await tester.pumpAndSettle();
 
-      expect(find.text('1/3 已准备'), findsOneWidget);
+      expect(find.text('18 件'), findsOneWidget);
       expect(find.text('默认清单已恢复'), findsOneWidget);
     });
 
