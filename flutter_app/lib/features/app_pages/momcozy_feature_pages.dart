@@ -710,7 +710,7 @@ class _StatusPageState extends State<_StatusPage> {
 
         return ListView(
           key: ValueKey('route-page-${widget.path}'),
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 96),
           children: [
             _CareStageSelector(
               selectedStage: _careStage,
@@ -728,9 +728,9 @@ class _StatusPageState extends State<_StatusPage> {
                 setState(() => _view = next);
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             ..._statusOverviewChildren(snapshot, isMom),
-            const SizedBox(height: 14),
+            const SizedBox(height: 44),
             _StatusNextActions(
               isMom: isMom,
               growthRecordAdded: _growthRecordAdded,
@@ -887,7 +887,7 @@ class _StatusPageState extends State<_StatusPage> {
               ],
       ),
       if (!isPregnancy) ...[
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         const _StatusTrendPreview(),
       ],
     ];
@@ -1036,7 +1036,7 @@ class _StatusModuleGrid extends StatelessWidget {
       crossAxisCount: 2,
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
-      childAspectRatio: 1.03,
+      childAspectRatio: 1.04,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: children,
@@ -1320,9 +1320,11 @@ class _StatusTrendPreview extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
+          const _StatusTrendLegend(),
+          const SizedBox(height: 10),
           SizedBox(
-            height: 74,
+            height: 198,
             child: CustomPaint(
               painter: const _StatusTrendPreviewPainter(),
               child: const SizedBox.expand(),
@@ -1418,6 +1420,140 @@ class _StatusTrendPreviewPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _StatusTrendPreviewPainter oldDelegate) => false;
+}
+
+class _StatusTrendLegend extends StatelessWidget {
+  const _StatusTrendLegend();
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: const Color(0xff8a6742),
+      fontSize: 9,
+      fontWeight: FontWeight.w700,
+    );
+    return Wrap(
+      spacing: 9,
+      runSpacing: 6,
+      children: const [
+        _StatusTrendLegendItem(
+          label: '吸乳总量',
+          color: Color(0xffb9792a),
+          dashed: false,
+        ),
+        _StatusTrendLegendItem(
+          label: '含亲喂估算',
+          color: Color(0xff8a5f7d),
+          dashed: true,
+        ),
+        _StatusTrendLegendItem(
+          label: '目标参考区间',
+          color: Color(0xffdff4e8),
+          band: true,
+        ),
+      ].map((item) => item.withStyle(style)).toList(growable: false),
+    );
+  }
+}
+
+class _StatusTrendLegendItem extends StatelessWidget {
+  const _StatusTrendLegendItem({
+    required this.label,
+    required this.color,
+    this.dashed = false,
+    this.band = false,
+    this.style,
+  });
+
+  final String label;
+  final Color color;
+  final bool dashed;
+  final bool band;
+  final TextStyle? style;
+
+  _StatusTrendLegendItem withStyle(TextStyle? nextStyle) {
+    return _StatusTrendLegendItem(
+      label: label,
+      color: color,
+      dashed: dashed,
+      band: band,
+      style: nextStyle,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CustomPaint(
+          size: Size(band ? 12 : 14, band ? 8 : 3),
+          painter: _StatusTrendLegendMarkPainter(
+            color: color,
+            dashed: dashed,
+            band: band,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(label, style: style),
+      ],
+    );
+  }
+}
+
+class _StatusTrendLegendMarkPainter extends CustomPainter {
+  const _StatusTrendLegendMarkPainter({
+    required this.color,
+    required this.dashed,
+    required this.band,
+  });
+
+  final Color color;
+  final bool dashed;
+  final bool band;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (band) {
+      canvas.drawRect(
+        Offset.zero & size,
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.fill,
+      );
+      return;
+    }
+
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+    if (!dashed) {
+      canvas.drawLine(
+        Offset(0, size.height / 2),
+        Offset(size.width, size.height / 2),
+        paint,
+      );
+      return;
+    }
+    var x = 0.0;
+    while (x < size.width) {
+      final next = (x + 4 > size.width) ? size.width : x + 4;
+      canvas.drawLine(
+        Offset(x, size.height / 2),
+        Offset(next, size.height / 2),
+        paint,
+      );
+      x += 7;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _StatusTrendLegendMarkPainter oldDelegate) {
+    return oldDelegate.color != color ||
+        oldDelegate.dashed != dashed ||
+        oldDelegate.band != band;
+  }
 }
 
 class _StatusMilestonePreview extends StatelessWidget {
@@ -1550,31 +1686,31 @@ class _CareStageSelector extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Container(
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.28),
-              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-              border: Border.all(
-                color: MomCozyColors.border.withValues(alpha: 0.5),
+          Opacity(
+            opacity: 0.18,
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _StatusCareStagePill(
-                  label: '孕期',
-                  selected: isPregnancy,
-                  accent: accent,
-                  onTap: () => onChanged('pregnancy'),
-                ),
-                _StatusCareStagePill(
-                  label: '哺乳期',
-                  selected: !isPregnancy,
-                  accent: accent,
-                  onTap: () => onChanged('postpartum'),
-                ),
-              ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _StatusCareStagePill(
+                    label: '孕期',
+                    selected: isPregnancy,
+                    accent: accent,
+                    onTap: () => onChanged('pregnancy'),
+                  ),
+                  _StatusCareStagePill(
+                    label: '哺乳期',
+                    selected: !isPregnancy,
+                    accent: accent,
+                    onTap: () => onChanged('postpartum'),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -1606,16 +1742,13 @@ class _StatusCareStagePill extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(MomCozyRadii.pill),
         child: Container(
-          constraints: const BoxConstraints(minWidth: 54),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          constraints: const BoxConstraints(minWidth: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
           decoration: BoxDecoration(
             color: selected
-                ? Colors.white.withValues(alpha: 0.72)
+                ? Colors.white.withValues(alpha: 0.62)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-            border: selected
-                ? Border.all(color: MomCozyColors.border.withValues(alpha: 0.7))
-                : null,
           ),
           child: Text(
             label,
@@ -1725,93 +1858,96 @@ class _StatusIdentityTab extends StatelessWidget {
           child: InkWell(
             key: ValueKey('status-identity-tab-$value'),
             onTap: disabled ? null : onTap,
-            child: Stack(
-              children: [
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 160),
-                  opacity: selected ? 1 : 0,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      width: 4,
-                      height: 44,
-                      decoration: const BoxDecoration(
-                        color: MomCozyColors.primary,
-                        borderRadius: BorderRadius.horizontal(
-                          right: Radius.circular(MomCozyRadii.pill),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 68),
+              child: Stack(
+                children: [
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 160),
+                    opacity: selected ? 1 : 0,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: 4,
+                        height: 44,
+                        decoration: const BoxDecoration(
+                          color: MomCozyColors.primary,
+                          borderRadius: BorderRadius.horizontal(
+                            right: Radius.circular(MomCozyRadii.pill),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 9, 10, 9),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: disabled
-                                ? MomCozyColors.border.withValues(alpha: 0.35)
-                                : selected
-                                ? MomCozyColors.primary.withValues(alpha: 0.4)
-                                : MomCozyColors.border,
-                            width: 2,
-                          ),
-                          image: DecorationImage(
-                            image: AssetImage(asset),
-                            fit: BoxFit.cover,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: disabled
+                                  ? MomCozyColors.border.withValues(alpha: 0.35)
+                                  : selected
+                                  ? MomCozyColors.primary.withValues(alpha: 0.4)
+                                  : MomCozyColors.border,
+                              width: 2,
+                            ),
+                            image: DecorationImage(
+                              image: AssetImage(asset),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelLarge
-                                  ?.copyWith(
-                                    color: disabled
-                                        ? MomCozyColors.mutedForeground
-                                              .withValues(alpha: 0.6)
-                                        : selected
-                                        ? MomCozyColors.foreground
-                                        : MomCozyColors.mutedForeground,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              subtitle,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(
-                                    color: disabled
-                                        ? MomCozyColors.mutedForeground
-                                              .withValues(alpha: 0.52)
-                                        : selected
-                                        ? MomCozyColors.mutedForeground
-                                        : MomCozyColors.mutedForeground
-                                              .withValues(alpha: 0.75),
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                            ),
-                          ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.labelLarge
+                                    ?.copyWith(
+                                      color: disabled
+                                          ? MomCozyColors.mutedForeground
+                                                .withValues(alpha: 0.6)
+                                          : selected
+                                          ? MomCozyColors.foreground
+                                          : MomCozyColors.mutedForeground,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                subtitle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
+                                      color: disabled
+                                          ? MomCozyColors.mutedForeground
+                                                .withValues(alpha: 0.52)
+                                          : selected
+                                          ? MomCozyColors.mutedForeground
+                                          : MomCozyColors.mutedForeground
+                                                .withValues(alpha: 0.75),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
