@@ -215,6 +215,7 @@ features/
 [x] Flutter Agent Hub stop 已接入 best-effort cancel client，保持 UI cancellation 与服务端 cancel 解耦
 [x] Flutter Agent Hub retry 已在 UI 层复用缓存 request，不向 transport 暴露重试策略细节
 [x] Flutter Agent Hub work panel 已从统一 stream events 派生，不直接消费 provider/raw tool JSON
+[x] Flutter Agent voice typed repository 已落地，STT multipart、realtime PCM stream 和 realtime voice session 均独立于 Agent 文本 stream
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate）
 ```
 

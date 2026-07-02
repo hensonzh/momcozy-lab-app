@@ -336,7 +336,7 @@ type RealtimeVoiceSessionQuery = {
 };
 ```
 
-当前帧结构由 `focusVoiceTtsPlayback.ts` 解析，Flutter 迁移前需补 voice session fixture：open、audio chunk、done、error、barge-in cancel。
+当前帧结构由 `focusVoiceTtsPlayback.ts` 解析。Flutter 侧已补基础 voice session fixture：open、audio chunk、done、WS disconnect；error 和更完整 barge-in 播放器行为仍由后续播放器/真机交互测试覆盖。
 
 #### 3.1.5 `/v1/chat-message/history`
 

@@ -3,6 +3,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
@@ -252,6 +253,15 @@ class MomCozyApiRuntime {
 
   MediaApiRepository get mediaRepository {
     return MediaApiRepository(transport: multipartTransport);
+  }
+
+  AgentVoiceApiRepository get agentVoiceRepository {
+    return AgentVoiceApiRepository(
+      multipartTransport: multipartTransport,
+      baseUri: Uri.parse(_defaultApiBaseUrl),
+      token: session.accessToken,
+      headers: const {'X-Momcozy-Client': 'flutter'},
+    );
   }
 
   HospitalBagCartApiRepository get hospitalBagCartRepository {
