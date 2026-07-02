@@ -139,11 +139,6 @@ class SseAgentStreamClient extends TransportAgnosticAgentStreamClient {
     : super(transport: transport, decodeFrame: parseAgentEventStream);
 }
 
-class WebSocketAgentStreamClient extends TransportAgnosticAgentStreamClient {
-  const WebSocketAgentStreamClient(AgentStreamTransport transport)
-    : super(transport: transport, decodeFrame: parseAgentWebSocketFrame);
-}
-
 class JsonlAgentStreamClient extends TransportAgnosticAgentStreamClient {
   const JsonlAgentStreamClient(AgentStreamTransport transport)
     : super(transport: transport, decodeFrame: parseAgentJsonl);

@@ -6,66 +6,59 @@ import '../../support/fixture_reader.dart';
 void main() {
   group('Agent stream fixtures', () {
     test(
-      'parse the same logical text stream from JSONL, SSE, and WebSocket frames',
+      'parse the same logical text stream from JSONL and SSE frames',
       () {
         final jsonl = parseAgentJsonl(
-          readMigrationFixture('ag_ui/text_stream_basic.jsonl'),
+          readMigrationFixture('agent_events/text_stream_basic.jsonl'),
         );
         final sse = parseAgentEventStream(
-          readMigrationFixture('ag_ui/text_stream_basic.eventstream'),
-        );
-        final websocket = parseAgentWebSocketFixtureJsonl(
-          readMigrationFixture('ag_ui/text_stream_basic.websocket.jsonl'),
+          readMigrationFixture('agent_events/text_stream_basic.eventstream'),
         );
 
         expect(sse.map((event) => event.raw), jsonl.map((event) => event.raw));
         expect(
-          websocket.map((event) => event.raw),
-          jsonl.map((event) => event.raw),
-        );
-        expect(
-          jsonl.map((event) => event.textDelta).whereType<String>().join(),
-          ('I can help you review today\'s pumping pattern.'),
+          jsonl
+              .where((event) => event.type == 'message.delta')
+              .map((event) => event.textDelta)
+              .whereType<String>()
+              .join(),
+          'I can help you review today\'s pumping pattern.',
         );
       },
     );
 
     test('cover the required domain event types and stable merge keys', () {
       final events = <AgentStreamEvent>[
-        AgentStreamEvent(readFixtureMap('ag_ui/run_started.json')),
+        AgentStreamEvent(readFixtureMap('agent_events/run_started.json')),
         ...parseAgentJsonl(
-          readMigrationFixture('ag_ui/text_stream_basic.jsonl'),
+          readMigrationFixture('agent_events/text_stream_basic.jsonl'),
         ),
         ...parseAgentJsonl(
-          readMigrationFixture('ag_ui/tool_call_lifecycle.jsonl'),
+          readMigrationFixture('agent_events/tool_call_lifecycle.jsonl'),
         ),
-        AgentStreamEvent(readFixtureMap('ag_ui/activity_snapshot.json')),
-        AgentStreamEvent(readFixtureMap('ag_ui/rich_text_artifact.json')),
-        AgentStreamEvent(readFixtureMap('ag_ui/run_error.json')),
+        AgentStreamEvent(readFixtureMap('agent_events/rich_text_artifact.json')),
+        AgentStreamEvent(readFixtureMap('agent_events/run_failed.json')),
       ];
       final types = events.map((event) => event.type).toSet();
 
       expect(
         types,
         containsAll(<String>[
-          'RUN_STARTED',
-          'CUSTOM',
-          'ACTIVITY_SNAPSHOT',
-          'TOOL_CALL_START',
-          'TOOL_CALL_ARGS',
-          'TOOL_CALL_END',
-          'TOOL_CALL_RESULT',
-          'TEXT_MESSAGE_START',
-          'TEXT_MESSAGE_CONTENT',
-          'TEXT_MESSAGE_END',
-          'RUN_FINISHED',
-          'RUN_ERROR',
+          'run.started',
+          'message.delta',
+          'message.completed',
+          'run.completed',
+          'run.failed',
+          'tool.started',
+          'tool.completed',
+          'artifact.created',
+          'action.confirmation_required',
         ]),
       );
       expect(events.every((event) => event.mergeKey.isNotEmpty), isTrue);
       expect(
         events.where((event) => event.isTerminal).map((event) => event.type),
-        containsAll(['RUN_FINISHED', 'RUN_ERROR']),
+        containsAll(['run.completed', 'run.failed']),
       );
     });
   });

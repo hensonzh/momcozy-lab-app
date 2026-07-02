@@ -11,7 +11,7 @@ import '../../support/fixture_reader.dart';
 void main() {
   group('AgentStreamRunner', () {
     test(
-      'produces the same final state for SSE and WebSocket clients',
+      'produces the same final state for SSE and JSONL clients',
       () async {
         const request = AgentStreamRequest(
           userId: 'demo-user',
@@ -20,29 +20,28 @@ void main() {
         final sseRunner = AgentStreamRunner(
           SseAgentStreamClient(
             FixtureAgentStreamTransport([
-              readMigrationFixture('ag_ui/text_stream_basic.eventstream'),
+              readMigrationFixture('agent_events/text_stream_basic.eventstream'),
             ]),
           ),
         );
-        final websocketFrames = parseJsonlMaps(
-          readMigrationFixture('ag_ui/text_stream_basic.websocket.jsonl'),
-        ).map((frame) => stringField(frame, 'frame') ?? '');
-        final websocketRunner = AgentStreamRunner(
-          WebSocketAgentStreamClient(
-            FixtureAgentStreamTransport(websocketFrames),
+        final jsonlRunner = AgentStreamRunner(
+          JsonlAgentStreamClient(
+            FixtureAgentStreamTransport([
+              readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+            ]),
           ),
         );
 
         final sseStates = await sseRunner.run(request).toList();
-        final websocketStates = await websocketRunner.run(request).toList();
+        final jsonlStates = await jsonlRunner.run(request).toList();
         final sseFinal = sseStates.last;
-        final websocketFinal = websocketStates.last;
+        final jsonlFinal = jsonlStates.last;
 
         expect(sseStates.first.phase, AgentStreamRunPhase.streaming);
         expect(sseFinal.phase, AgentStreamRunPhase.finished);
-        expect(websocketFinal.phase, AgentStreamRunPhase.finished);
-        expect(websocketFinal.textContent, sseFinal.textContent);
-        expect(websocketFinal.runId, sseFinal.runId);
+        expect(jsonlFinal.phase, AgentStreamRunPhase.finished);
+        expect(jsonlFinal.textContent, sseFinal.textContent);
+        expect(jsonlFinal.runId, sseFinal.runId);
       },
     );
 
@@ -52,13 +51,13 @@ void main() {
         final runner = AgentStreamRunner(
           JsonlAgentStreamClient(
             _FailingTransport([
-              jsonEncode(readFixtureMap('ag_ui/run_started.json')),
+              jsonEncode(readFixtureMap('agent_events/run_started.json')),
               jsonEncode({
-                'type': 'TEXT_MESSAGE_CONTENT',
+                'type': 'message.delta',
                 'thread_id': 'thread-fixture-001',
                 'run_id': 'run-fixture-001',
                 'message_id': 'msg-reply-001',
-                'delta': 'Partial answer',
+                'payload': {'text': 'Partial answer'},
               }),
             ]),
           ),
@@ -78,7 +77,7 @@ void main() {
       final runner = AgentStreamRunner(
         JsonlAgentStreamClient(
           FixtureAgentStreamTransport([
-            jsonEncode(readFixtureMap('ag_ui/run_started.json')),
+            jsonEncode(readFixtureMap('agent_events/run_started.json')),
           ]),
         ),
       );

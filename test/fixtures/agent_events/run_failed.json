@@ -1,0 +1,12 @@
+{
+  "event_id": "evt-failed-001",
+  "thread_id": "thread-fixture-001",
+  "run_id": "run-fixture-error-001",
+  "sequence": 1,
+  "type": "run.failed",
+  "payload": {
+    "code": "agent_timeout",
+    "message": "The agent stream timed out before a final response."
+  },
+  "created_at": "2026-07-01T00:01:00Z"
+}

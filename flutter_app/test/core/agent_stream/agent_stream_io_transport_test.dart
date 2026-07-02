@@ -64,7 +64,7 @@ void main() {
     test(
       'cancel client posts production run-scoped cancel and accepts 2xx or 404',
       () async {
-        final ack = readFixtureMap('ag_ui/cancel_ack.json');
+        final ack = readFixtureMap('agent_events/cancel_ack.json');
         final connector = _RecordingControlHttpConnector(
           AgentStreamControlHttpResponse(
             statusCode: 200,
