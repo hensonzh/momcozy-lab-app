@@ -22,18 +22,7 @@ void main() {
 
         final actual = routeIntentsFromNativePayloads(payloads);
 
-        expect(
-          actual.map((intent) => intent.type),
-          expected.map((item) => item['type']),
-        );
-        expect(
-          actual.map((intent) => intent.path),
-          expected.map((item) => item['path']),
-        );
-        expect(
-          actual.map((intent) => intent.consume),
-          expected.map((item) => item['consume']),
-        );
+        _expectIntentsMatchExpected(actual, expected);
         expect(actual.every((intent) => intent.payload.isNotEmpty), isTrue);
         expect(actual[2].payload, containsPair('requiresContextEvent', true));
         expect(actual[3].payload, containsPair('highlight', 'growth'));
@@ -60,10 +49,7 @@ void main() {
             .map(routeIntentFromFallbackCase)
             .toList(growable: false);
 
-        expect(
-          actual.map((intent) => intent.type),
-          expected.map((item) => item['type']),
-        );
+        _expectIntentsMatchExpected(actual, expected);
         expect(
           actual.first.payload,
           containsPair('reason', 'unsupported-scheme'),
@@ -90,20 +76,7 @@ void main() {
 
       final actual = routeIntentsFromNativePayloads(payloads);
 
-      expect(
-        actual.map((intent) => intent.type),
-        expected.map((item) => item['type']),
-      );
-      expect(
-        actual.map((intent) => intent.path),
-        expected.map((item) => item['path']),
-      );
-      expect(
-        actual.map((intent) => intent.consume),
-        expected.map((item) => item['consume']),
-      );
-      expect(actual.first.payload, expected.first['payload']);
-      expect(actual.last.payload, expected.last['payload']);
+      _expectIntentsMatchExpected(actual, expected);
     });
 
     test('map plan and pregnancy diary pending storage to badge intents', () {
@@ -119,22 +92,7 @@ void main() {
 
       final actual = routeIntentsFromPendingStorage(storage);
 
-      expect(
-        actual.map((intent) => intent.type),
-        expected.map((item) => item['type']),
-      );
-      expect(
-        actual.map((intent) => intent.path),
-        expected.map((item) => item['path']),
-      );
-      expect(
-        actual.map((intent) => intent.payload),
-        expected.map((item) => item['payload']),
-      );
-      expect(
-        actual.map((intent) => intent.consume),
-        expected.map((item) => item['consume']),
-      );
+      _expectIntentsMatchExpected(actual, expected);
     });
 
     test('map agent and feature navigation events to typed intents', () {
@@ -150,18 +108,7 @@ void main() {
 
       final actual = routeIntentsFromAgentNavigationEvents(events);
 
-      expect(
-        actual.map((intent) => intent.type),
-        expected.map((item) => item['type']),
-      );
-      expect(
-        actual.map((intent) => intent.path),
-        expected.map((item) => item['path']),
-      );
-      expect(
-        actual.map((intent) => intent.payload),
-        expected.map((item) => item['payload']),
-      );
+      _expectIntentsMatchExpected(actual, expected);
     });
 
     test('map media viewer and IBCLC return inputs to typed intents', () {
@@ -176,22 +123,27 @@ void main() {
 
       final actual = routeIntentsFromMediaAndIbclcInput(input);
 
-      expect(
-        actual.map((intent) => intent.type),
-        expected.map((item) => item['type']),
-      );
-      expect(
-        actual.map((intent) => intent.path),
-        expected.map((item) => item['path']),
-      );
-      expect(
-        actual.map((intent) => intent.payload),
-        expected.map((item) => item['payload']),
-      );
-      expect(
-        actual.map((intent) => intent.consume),
-        expected.map((item) => item['consume']),
-      );
+      _expectIntentsMatchExpected(actual, expected);
     });
   });
+}
+
+void _expectIntentsMatchExpected(
+  List<RouteIntent> actual,
+  List<Map<String, Object?>> expected,
+) {
+  expect(actual, hasLength(expected.length));
+  for (var i = 0; i < expected.length; i += 1) {
+    final expectedIntent = expected[i];
+    final actualIntent = actual[i];
+    final reason = 'intent #$i ${expectedIntent['type']}';
+    expect(actualIntent.type, expectedIntent['type'], reason: reason);
+    expect(actualIntent.path, expectedIntent['path'], reason: reason);
+    expect(
+      actualIntent.payload,
+      expectedIntent['payload'] ?? const <String, Object?>{},
+      reason: reason,
+    );
+    expect(actualIntent.consume, expectedIntent['consume'], reason: reason);
+  }
 }
