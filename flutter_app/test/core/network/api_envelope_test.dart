@@ -4,7 +4,6 @@ import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
 import '../../support/fixture_reader.dart';
 
 const requiredDomains = <String>[
-  'agent_chat',
   'user_profile',
   'pump',
   'mom_baby',
@@ -82,7 +81,7 @@ void main() {
     test(
       'accept legacy snake/camel aliases without adding secret-shaped values',
       () {
-        final fixture = readFixtureMap('api/agent_chat/legacy_alias.json');
+        final fixture = readFixtureMap('api/user_profile/legacy_alias.json');
         final response = Map<String, Object?>.from(fixture['response']! as Map);
         final data = Map<String, Object?>.from(
           unwrapApiEnvelope(response)! as Map,
@@ -97,10 +96,13 @@ void main() {
             .toString();
 
         expect(
-          aliasString(data, 'thread_id', 'threadId'),
-          'thread-fixture-001',
+          aliasString(data, 'display_name', 'displayName'),
+          'Demo User',
         );
-        expect(aliasString(data, 'run_id', 'runId'), 'run-api-agent-001');
+        expect(
+          aliasString(data, 'current_care_stage', 'currentCareStage'),
+          'postpartum',
+        );
         expect(
           payload,
           isNot(contains(RegExp('Bearer\\s+', caseSensitive: false))),
