@@ -2,7 +2,7 @@
 
 > 状态：Phase 0 P0/P1 schema + fixtures 版  
 > 范围：当前 Web/Capacitor App 使用或文档声明的 HTTP、SSE/WebSocket、上传、语音和后台服务接口。  
-> 下一步：把 API fixtures 移植到 Flutter repository contract tests，并接入 mock server。
+> 当前状态：API fixtures 已接入 Flutter repository contract tests，并通过 `FixtureApiJsonTransport` / `FixtureApiMultipartTransport` 作为进程内 mock transport 覆盖请求和响应合同。
 
 ---
 
