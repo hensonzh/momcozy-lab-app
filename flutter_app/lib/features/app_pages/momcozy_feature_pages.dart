@@ -3583,6 +3583,7 @@ class _IbclcPageState extends State<_IbclcPage> {
   bool _consultStarted = false;
   bool _isStarting = false;
   String? _syncStatus;
+  static const String _returnToPath = '/status';
 
   Future<void> _startConsult() async {
     if (!_accepted || _consultStarted || _isStarting) return;
@@ -3604,6 +3605,8 @@ class _IbclcPageState extends State<_IbclcPage> {
           metadata: const {
             'consult_id': 'ibclc-flutter-default',
             'source': 'ibclc-chat',
+            'handoff': 'vendor_h5_native',
+            'return_to': _returnToPath,
           },
         ),
       );
@@ -3621,6 +3624,10 @@ class _IbclcPageState extends State<_IbclcPage> {
         _syncStatus = '本地已进入队列，稍后重试同步。';
       });
     }
+  }
+
+  void _returnToStatus() {
+    context.go(_returnToPath);
   }
 
   @override
@@ -3659,10 +3666,15 @@ class _IbclcPageState extends State<_IbclcPage> {
         if (_consultStarted)
           _ActionTile(
             icon: Icons.support_agent_rounded,
-            title: '咨询准备中',
+            title: '顾问流程已打开',
             subtitle: _syncStatus ?? '正在保留本次咨询上下文，稍后可以继续查看。',
             accent: const Color(0xff43827b),
-            trailing: const Icon(Icons.check_circle_outline_rounded),
+            trailing: IconButton(
+              key: const ValueKey('ibclc-return-status-button'),
+              tooltip: '返回状态页',
+              onPressed: _returnToStatus,
+              icon: const Icon(Icons.arrow_back_rounded),
+            ),
           ),
         FilledButton.icon(
           onPressed: _accepted && !_consultStarted && !_isStarting
