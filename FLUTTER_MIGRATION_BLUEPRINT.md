@@ -677,7 +677,7 @@ H5/WebView 依赖 owner：
 [x] installation build artifact 可生成，安装仍需真机 smoke
 [ ] P0 真实设备矩阵通过
 [ ] 真泵回归通过
-[ ] 回滚包和回滚流程确认
+[x] 回滚包和回滚流程确认：非真机 gate 生成 `dist/flutter-rollback-manifest.json`，真机覆盖/回滚演练仍归 Phase 7 device lab
 [x] 隐私、安全、日志脱敏检查通过
 ```
 
