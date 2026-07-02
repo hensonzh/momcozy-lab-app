@@ -7143,97 +7143,59 @@ class _CommunityPage extends StatefulWidget {
 }
 
 class _CommunityPageState extends State<_CommunityPage> {
-  String? _lastActionStatus;
-  String? _postingKey;
-
-  Future<void> _openCommunityItem(String key, String label) async {
-    if (_postingKey != null) return;
-    setState(() {
-      _postingKey = key;
-      _lastActionStatus = null;
-    });
-
-    final sent = await _postFeatureClientEvent(
-      context,
-      eventType: 'community_item_opened',
-      label: '打开社区内容：$label',
-      metadata: {'item_key': key, 'source': 'community'},
-    );
-    if (!mounted) return;
-    setState(() {
-      _postingKey = null;
-      _lastActionStatus = sent ? '已记录 $label。' : '本地已打开，稍后重试同步。';
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      trailing: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: const [
-          _StatusChip(
-            label: '同城',
-            icon: Icons.location_on_outlined,
-            accent: Color(0xff6b6da8),
-          ),
-          _StatusChip(
-            label: '哺乳支持',
-            icon: Icons.volunteer_activism_outlined,
-            accent: Color(0xff43827b),
-          ),
-        ],
-      ),
+    return ListView(
+      key: ValueKey('route-page-${widget.path}'),
+      padding: const EdgeInsets.fromLTRB(24, 18, 24, 28),
       children: [
-        const _SectionTitle('关注话题'),
-        _ActionTile(
-          icon: Icons.forum_outlined,
-          title: '泵奶节奏调整',
-          subtitle: '来自相同月龄妈妈的经验和已收藏讨论。',
-          accent: const Color(0xff6b6da8),
-          onTap: () => _openCommunityItem('pump_rhythm', '泵奶节奏调整'),
-          trailing: _communityTrailing('pump_rhythm'),
-        ),
-        _ActionTile(
-          icon: Icons.favorite_border_rounded,
-          title: '产后恢复',
-          subtitle: '查看收藏内容、精选讨论和恢复建议。',
-          accent: const Color(0xff9f6378),
-          onTap: () => _openCommunityItem('postpartum_recovery', '产后恢复'),
-          trailing: _communityTrailing('postpartum_recovery'),
-        ),
-        const _SectionTitle('最新动态'),
-        _ActionTile(
-          icon: Icons.chat_bubble_outline_rounded,
-          title: '妈妈小组更新',
-          subtitle: '3 条新回复，打开后会更新已读状态。',
-          accent: const Color(0xff43827b),
-          onTap: () => _openCommunityItem('group_updates', '妈妈小组更新'),
-          trailing: _communityTrailing('group_updates'),
-        ),
-        if (_lastActionStatus != null)
-          _ActionTile(
-            icon: Icons.done_all_rounded,
-            title: '社区状态',
-            subtitle: _lastActionStatus!,
-            accent: const Color(0xff43827b),
-            trailing: const Icon(Icons.check_circle_outline_rounded),
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 660),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 84,
+                  height: 84,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.primary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                    boxShadow: MomCozyShadows.soft,
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      MomCozyAssets.agentAvatar,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  '社区功能还在建设中哦～',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  '我们将打造一个妈妈们一起交流分享的社区，敬请期待～',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                    fontWeight: FontWeight.w700,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
           ),
+        ),
       ],
-    );
-  }
-
-  Widget _communityTrailing(String key) {
-    if (_postingKey != key) return const Icon(Icons.chevron_right_rounded);
-    return const SizedBox.square(
-      dimension: 22,
-      child: CircularProgressIndicator(strokeWidth: 2.5),
     );
   }
 }

@@ -37,6 +37,8 @@ void main() {
           expect(find.text('设备连接'), findsWidgets);
         } else if (route.path == '/device/user') {
           expect(find.text('用户参数配置'), findsWidgets);
+        } else if (route.path == '/community') {
+          expect(find.text('社区功能还在建设中哦～'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }
@@ -1769,36 +1771,15 @@ void main() {
       expect(find.text('切换用户'), findsOneWidget);
     });
 
-    testWidgets('community page posts item open events', (tester) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: '{"status":"ok"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/community'),
-          clientEventClient: client,
-        ),
-      );
+    testWidgets('community page renders construction empty state', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/community')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('妈妈小组更新'));
-      await tester.pumpAndSettle();
-
-      final body = jsonDecode(connector.body!) as Map<String, Object?>;
-      expect(find.text('已记录 妈妈小组更新。'), findsOneWidget);
-      expect(body['event_type'], 'community_item_opened');
-      expect(body['metadata'], containsPair('item_key', 'group_updates'));
+      expect(find.text('社区功能还在建设中哦～'), findsOneWidget);
+      expect(find.text('我们将打造一个妈妈们一起交流分享的社区，敬请期待～'), findsOneWidget);
+      expect(find.text('妈妈小组更新'), findsNothing);
     });
 
     testWidgets('W1 page posts tutorial event before opening media viewer', (
