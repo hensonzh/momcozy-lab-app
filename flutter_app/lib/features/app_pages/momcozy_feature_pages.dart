@@ -45,7 +45,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/pump' => _PumpPage(
         path: path,
@@ -53,7 +52,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/records' => _RecordsPage(
         path: path,
@@ -61,7 +59,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/schedule' => _SchedulePage(
         path: path,
@@ -69,7 +66,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/status' => _StatusPage(
         path: path,
@@ -77,7 +73,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/community' => _CommunityPage(
         path: path,
@@ -85,7 +80,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/device' => _DevicePage(
         path: path,
@@ -93,7 +87,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/device/manage' => _DeviceManagePage(
         path: path,
@@ -101,7 +94,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/device/user' => _DeviceUserPage(
         path: path,
@@ -109,7 +101,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/w1' => _W1Page(
         path: path,
@@ -117,7 +108,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/hospital-bag-cart' => _HospitalBagCartPage(
         path: path,
@@ -125,7 +115,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/ibclc-chat.html' => _IbclcPage(
         path: path,
@@ -133,7 +122,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       '/media-viewer' => _MediaViewerPage(
         path: path,
@@ -141,7 +129,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
       _ => _NotFoundPage(
         path: path,
@@ -149,7 +136,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
-        priority: priority,
       ),
     };
   }
@@ -162,7 +148,6 @@ class _FeaturePageFrame extends StatelessWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
     required this.children,
     this.trailing,
   });
@@ -172,7 +157,6 @@ class _FeaturePageFrame extends StatelessWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
   final List<Widget> children;
   final Widget? trailing;
 
@@ -223,40 +207,12 @@ class _FeaturePageFrame extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 10),
-            _PriorityBadge(priority: priority, accent: accent),
           ],
         ),
         if (trailing != null) ...[const SizedBox(height: 16), trailing!],
         const SizedBox(height: 20),
         ...children,
       ],
-    );
-  }
-}
-
-class _PriorityBadge extends StatelessWidget {
-  const _PriorityBadge({required this.priority, required this.accent});
-
-  final String priority;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        border: Border.all(color: accent.withValues(alpha: 0.06)),
-      ),
-      child: Text(
-        priority,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: accent,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
     );
   }
 }
@@ -754,7 +710,6 @@ class _StatusPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -762,7 +717,6 @@ class _StatusPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_StatusPage> createState() => _StatusPageState();
@@ -810,7 +764,6 @@ class _StatusPageState extends State<_StatusPage> {
           summary: widget.summary,
           icon: widget.icon,
           accent: widget.accent,
-          priority: widget.priority,
           trailing: _StatusIdentityTabs(
             selected: _view,
             momSubtitle: _careStage == 'pregnancy'
@@ -1253,7 +1206,6 @@ class _SchedulePage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -1261,7 +1213,6 @@ class _SchedulePage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_SchedulePage> createState() => _SchedulePageState();
@@ -1375,7 +1326,6 @@ class _SchedulePageState extends State<_SchedulePage> {
           summary: widget.summary,
           icon: widget.icon,
           accent: widget.accent,
-          priority: widget.priority,
           trailing: Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -1741,7 +1691,6 @@ class _DevicePage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -1749,7 +1698,6 @@ class _DevicePage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_DevicePage> createState() => _DevicePageState();
@@ -1942,7 +1890,6 @@ class _DevicePageState extends State<_DevicePage> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       trailing: Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -2186,7 +2133,6 @@ class _PumpPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -2194,7 +2140,6 @@ class _PumpPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_PumpPage> createState() => _PumpPageState();
@@ -2340,7 +2285,6 @@ class _PumpPageState extends State<_PumpPage> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       trailing: Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -2555,7 +2499,6 @@ class _CalibrationPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -2563,7 +2506,6 @@ class _CalibrationPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_CalibrationPage> createState() => _CalibrationPageState();
@@ -2685,7 +2627,6 @@ class _CalibrationPageState extends State<_CalibrationPage> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       trailing: const _StatusChip(
         label: '左右独立',
         icon: Icons.compare_arrows_rounded,
@@ -2862,7 +2803,6 @@ class _RecordsPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -2870,7 +2810,6 @@ class _RecordsPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_RecordsPage> createState() => _RecordsPageState();
@@ -2980,7 +2919,6 @@ class _RecordsPageState extends State<_RecordsPage> {
           summary: widget.summary,
           icon: widget.icon,
           accent: widget.accent,
-          priority: widget.priority,
           trailing: Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -3444,7 +3382,6 @@ class _CommunityPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -3452,7 +3389,6 @@ class _CommunityPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_CommunityPage> createState() => _CommunityPageState();
@@ -3490,7 +3426,6 @@ class _CommunityPageState extends State<_CommunityPage> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       trailing: Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -3562,7 +3497,6 @@ class _DeviceManagePage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -3570,7 +3504,6 @@ class _DeviceManagePage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_DeviceManagePage> createState() => _DeviceManagePageState();
@@ -3654,7 +3587,6 @@ class _DeviceManagePageState extends State<_DeviceManagePage> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       children: [
         const _SectionTitle('设备操作'),
         _ActionTile(
@@ -3706,7 +3638,6 @@ class _DeviceUserPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -3714,7 +3645,6 @@ class _DeviceUserPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_DeviceUserPage> createState() => _DeviceUserPageState();
@@ -3733,7 +3663,6 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       children: [
         const _SectionTitle('内部参数'),
         _ActionTile(
@@ -3776,7 +3705,6 @@ class _W1Page extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -3784,7 +3712,6 @@ class _W1Page extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_W1Page> createState() => _W1PageState();
@@ -3814,7 +3741,6 @@ class _W1PageState extends State<_W1Page> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       trailing: const _StatusChip(
         label: '产品内容',
         icon: Icons.workspace_premium_outlined,
@@ -4138,7 +4064,6 @@ class _HospitalBagCartPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -4146,7 +4071,6 @@ class _HospitalBagCartPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_HospitalBagCartPage> createState() => _HospitalBagCartPageState();
@@ -4254,7 +4178,6 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       trailing: _StatusChip(
         label: '$packed/${items.length} 已准备',
         icon: Icons.inventory_2_outlined,
@@ -4362,7 +4285,6 @@ class _IbclcPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -4370,7 +4292,6 @@ class _IbclcPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_IbclcPage> createState() => _IbclcPageState();
@@ -4436,7 +4357,6 @@ class _IbclcPageState extends State<_IbclcPage> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       trailing: _StatusChip(
         label: _consultStarted ? '咨询准备中' : '咨询入口',
         icon: Icons.health_and_safety_outlined,
@@ -4578,7 +4498,6 @@ class _MediaViewerPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -4586,7 +4505,6 @@ class _MediaViewerPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   State<_MediaViewerPage> createState() => _MediaViewerPageState();
@@ -4650,7 +4568,6 @@ class _MediaViewerPageState extends State<_MediaViewerPage> {
       summary: widget.summary,
       icon: widget.icon,
       accent: widget.accent,
-      priority: widget.priority,
       trailing: _LegacySegmentedTabs(
         selected: _type,
         onChanged: (next) => setState(() => _type = next),
@@ -4752,7 +4669,6 @@ class _NotFoundPage extends StatelessWidget {
     required this.summary,
     required this.icon,
     required this.accent,
-    required this.priority,
   });
 
   final String path;
@@ -4760,7 +4676,6 @@ class _NotFoundPage extends StatelessWidget {
   final String summary;
   final IconData icon;
   final Color accent;
-  final String priority;
 
   @override
   Widget build(BuildContext context) {
@@ -4770,7 +4685,6 @@ class _NotFoundPage extends StatelessWidget {
       summary: summary,
       icon: icon,
       accent: accent,
-      priority: priority,
       children: const [
         _ActionTile(
           icon: Icons.home_outlined,
