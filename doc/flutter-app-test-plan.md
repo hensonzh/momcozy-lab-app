@@ -663,18 +663,25 @@ npm run flutter:p0:platform-smoke
 | Exact alarm | 较宽松 | 需要关注精确闹钟限制 | 需要设置页 fallback | 更严格 |
 | Battery optimization | 厂商差异 | 厂商差异 | 厂商差异 | 厂商差异 + FGS 限制 |
 
-每个权限流必须覆盖：
+本地 fake/platform contract 必须覆盖通用权限状态；真实系统弹窗、设置页回跳和厂商差异仍按 device lab 执行：
 
 ```text
-[ ] 未请求
-[ ] 首次允许
-[ ] 首次拒绝
-[ ] 永久拒绝
-[ ] 打开系统设置
-[ ] 从系统设置返回
-[ ] 功能降级提示
-[ ] 不可用状态下不崩溃
+[x] 未请求
+[x] 首次允许
+[x] 首次拒绝
+[x] 永久拒绝
+[x] 打开系统设置
+[x] 从系统设置返回
+[x] 功能降级提示
+[x] 不可用状态下不崩溃
 ```
+
+当前本地覆盖来源：
+
+- BLE：`momcozy_feature_pages_test.dart` 覆盖未请求、拒绝、永久拒绝、系统设置返回、扫描不可用和连接失败。
+- Microphone：Agent voice controller/page tests 覆盖未请求、允许、拒绝和用户可见降级提示。
+- Overlay：`pump_overlay_route_action_test.dart` 覆盖无悬浮窗权限时跳过 overlay 并保留通知/页面内状态 fallback。
+- Foreground notification permission：Android MethodChannel schema tests 覆盖 request permission 合同；真实通知授权和点击恢复留给真机 smoke。
 
 ---
 
