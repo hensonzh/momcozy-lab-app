@@ -83,6 +83,12 @@ abstract interface class MomCozySessionStore {
   Future<void> clearSession();
 }
 
+abstract interface class MomCozyScopedCacheStore {
+  Future<void> clearUserScope(String userId);
+
+  Future<void> clearNativePendingState();
+}
+
 class MemoryMomCozySessionStore implements MomCozySessionStore {
   MemoryMomCozySessionStore([MomCozySession? session]) : _session = session;
 
@@ -102,14 +108,26 @@ class MemoryMomCozySessionStore implements MomCozySessionStore {
   }
 }
 
+class NoopMomCozyScopedCacheStore implements MomCozyScopedCacheStore {
+  const NoopMomCozyScopedCacheStore();
+
+  @override
+  Future<void> clearNativePendingState() async {}
+
+  @override
+  Future<void> clearUserScope(String userId) async {}
+}
+
 class MomCozySessionManager {
   const MomCozySessionManager({
     required this.store,
     required this.environmentSession,
+    this.scopedCacheStore = const NoopMomCozyScopedCacheStore(),
   });
 
   final MomCozySessionStore store;
   final MomCozySession environmentSession;
+  final MomCozyScopedCacheStore scopedCacheStore;
 
   Future<MomCozySession> bootstrap() async {
     final stored = await store.readSession();
@@ -130,11 +148,18 @@ class MomCozySessionManager {
   }
 
   Future<MomCozySession> logout(MomCozySession current) async {
+    await scopedCacheStore.clearUserScope(current.userId);
+    await scopedCacheStore.clearNativePendingState();
     await store.clearSession();
     return current.loggedOut();
   }
 
   Future<MomCozySession> switchAccount(MomCozySession next) async {
+    final current = await store.readSession();
+    await scopedCacheStore.clearUserScope(
+      current?.userId ?? environmentSession.userId,
+    );
+    await scopedCacheStore.clearNativePendingState();
     await store.clearSession();
     return authenticate(next);
   }
