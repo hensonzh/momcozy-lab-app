@@ -136,8 +136,7 @@ void main() {
       );
       expect(find.byType(NavigationBar), findsNothing);
 
-      await tester.ensureVisible(find.widgetWithText(FilledButton, '保存并进入泵奶'));
-      await tester.tap(find.widgetWithText(FilledButton, '保存并进入泵奶'));
+      await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
@@ -765,8 +764,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.widgetWithText(FilledButton, '保存并进入泵奶'));
-      await tester.tap(find.widgetWithText(FilledButton, '保存并进入泵奶'));
+      await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
@@ -794,11 +792,111 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.widgetWithText(FilledButton, '保存并进入泵奶'));
-      await tester.tap(find.widgetWithText(FilledButton, '保存并进入泵奶'));
+      await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
 
       expect(find.text('未检测到左右设备连接，请先在设备页连接后再保存。'), findsOneWidget);
+    });
+
+    testWidgets(
+      'calibration page renders side availability and unsaved guard',
+      (tester) async {
+        final ble = FakeBlePlatform(
+          initialPermission: BlePermissionState.granted,
+          seedDevices: const [
+            BleDeviceSnapshot(
+              side: 'L',
+              deviceId: 'left-calibration',
+              deviceName: 'Calibration L',
+              connected: true,
+              battery: 83,
+            ),
+          ],
+        );
+        addTearDown(ble.dispose);
+
+        await tester.pumpWidget(
+          _FeaturePageHost(route: _route('/calibration'), blePlatform: ble),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('左侧设备已连接'), findsOneWidget);
+        expect(find.textContaining('Calibration L · 电量 83%'), findsOneWidget);
+        expect(find.text('右侧设备未连接'), findsOneWidget);
+
+        tester.widget<Slider>(find.byType(Slider).first).onChanged!(7);
+        await tester.pump();
+
+        expect(find.text('左侧 舒适档位 7'), findsOneWidget);
+
+        await _tapScrollableText(tester, '退出校准');
+        await tester.pumpAndSettle();
+
+        expect(find.text('有未保存校准更改，请先保存或恢复默认后再退出。'), findsOneWidget);
+      },
+    );
+
+    testWidgets('calibration page renders right-only and dual device states', (
+      tester,
+    ) async {
+      final rightOnlyBle = FakeBlePlatform(
+        initialPermission: BlePermissionState.granted,
+        seedDevices: const [
+          BleDeviceSnapshot(
+            side: 'R',
+            deviceId: 'right-calibration',
+            deviceName: 'Calibration R',
+            connected: true,
+            battery: 79,
+          ),
+        ],
+      );
+      addTearDown(rightOnlyBle.dispose);
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/calibration'),
+          blePlatform: rightOnlyBle,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('左侧设备未连接'), findsOneWidget);
+      expect(find.text('右侧设备已连接'), findsOneWidget);
+      expect(find.textContaining('Calibration R · 电量 79%'), findsOneWidget);
+
+      final dualBle = FakeBlePlatform(
+        initialPermission: BlePermissionState.granted,
+        seedDevices: const [
+          BleDeviceSnapshot(
+            side: 'L',
+            deviceId: 'dual-left-calibration',
+            deviceName: 'Dual L',
+            connected: true,
+            battery: 84,
+          ),
+          BleDeviceSnapshot(
+            side: 'R',
+            deviceId: 'dual-right-calibration',
+            deviceName: 'Dual R',
+            connected: true,
+            battery: 81,
+          ),
+        ],
+      );
+      addTearDown(dualBle.dispose);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/calibration'), blePlatform: dualBle),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('左侧设备已连接'), findsOneWidget);
+      expect(find.textContaining('Dual L · 电量 84%'), findsOneWidget);
+      expect(find.text('右侧设备已连接'), findsOneWidget);
+      expect(find.textContaining('Dual R · 电量 81%'), findsOneWidget);
     });
 
     testWidgets('media page uploads sample media through runtime repository', (
@@ -1139,6 +1237,13 @@ int _switchesWithValue(WidgetTester tester, bool value) {
 
 String _apiTimestamp(DateTime value) {
   return value.toUtc().toIso8601String().replaceFirst('.000Z', 'Z');
+}
+
+Future<void> _tapScrollableText(WidgetTester tester, String text) async {
+  final finder = find.text(text, skipOffstage: false);
+  await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
+  await tester.tap(finder);
 }
 
 class _FeaturePageHost extends StatelessWidget {
