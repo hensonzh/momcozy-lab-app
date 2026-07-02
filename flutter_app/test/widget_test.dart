@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 void main() {
@@ -54,6 +55,31 @@ void main() {
     expect(find.byKey(const ValueKey('route-page-/404')), findsOneWidget);
     expect(find.text('页面未找到'), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
+  });
+
+  testWidgets('route shell opens media viewer from Agent artifact action', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MomCozyFlutterApp());
+    await tester.pumpAndSettle();
+
+    final page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
+    page.onArtifactAction?.call(
+      const AgentArtifactActionView(
+        label: '打开文档',
+        icon: Icons.description_outlined,
+        kind: 'doc',
+        value: '/docs/a.pdf',
+        routePath: '/media-viewer',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('route-page-/media-viewer')),
+      findsOneWidget,
+    );
+    expect(find.byType(NavigationBar), findsNothing);
   });
 
   testWidgets('route shell consumes pending native route on startup', (

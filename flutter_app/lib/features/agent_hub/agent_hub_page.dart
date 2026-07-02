@@ -12,6 +12,8 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 typedef AgentHubImagePicker = Future<AgentStreamImageInput?> Function();
 typedef AgentHubVoiceInput = Future<String?> Function();
+typedef AgentArtifactActionHandler =
+    void Function(AgentArtifactActionView action);
 
 class AgentHubPage extends StatefulWidget {
   const AgentHubPage({
@@ -22,6 +24,7 @@ class AgentHubPage extends StatefulWidget {
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
     this.voiceInput,
+    this.onArtifactAction,
   });
 
   final AgentStreamRunState state;
@@ -30,6 +33,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
   final AgentHubVoiceInput? voiceInput;
+  final AgentArtifactActionHandler? onArtifactAction;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
@@ -256,6 +260,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           state: _state,
           canRetry: _canRetry,
           onRetry: _retryRun,
+          onArtifactAction: widget.onArtifactAction,
         ),
         const SizedBox(height: 16),
         AgentComposerBar(
@@ -386,11 +391,13 @@ class AgentRunTranscript extends StatelessWidget {
     required this.state,
     this.canRetry = false,
     this.onRetry,
+    this.onArtifactAction,
   });
 
   final AgentStreamRunState state;
   final bool canRetry;
   final VoidCallback? onRetry;
+  final AgentArtifactActionHandler? onArtifactAction;
 
   @override
   Widget build(BuildContext context) {
@@ -459,7 +466,10 @@ class AgentRunTranscript extends StatelessWidget {
             ],
             if (artifactCards.isNotEmpty) ...[
               const SizedBox(height: 16),
-              AgentArtifactPanel(cards: artifactCards),
+              AgentArtifactPanel(
+                cards: artifactCards,
+                onAction: onArtifactAction,
+              ),
             ],
           ],
         ),
@@ -595,9 +605,10 @@ class AgentRunWorkStep {
 enum AgentRunWorkStepStatus { running, completed, waiting, failed }
 
 class AgentArtifactPanel extends StatelessWidget {
-  const AgentArtifactPanel({super.key, required this.cards});
+  const AgentArtifactPanel({super.key, required this.cards, this.onAction});
 
   final List<AgentArtifactCardView> cards;
+  final AgentArtifactActionHandler? onAction;
 
   @override
   Widget build(BuildContext context) {
@@ -696,7 +707,8 @@ class AgentArtifactPanel extends StatelessWidget {
                             key: ValueKey(
                               'agent-artifact-action-${card.id}-$index',
                             ),
-                            onPressed: () {},
+                            onPressed: () =>
+                                onAction?.call(card.actions[index]),
                             icon: Icon(card.actions[index].icon),
                             label: Text(card.actions[index].label),
                           ),
@@ -733,10 +745,19 @@ class AgentArtifactCardView {
 }
 
 class AgentArtifactActionView {
-  const AgentArtifactActionView({required this.label, required this.icon});
+  const AgentArtifactActionView({
+    required this.label,
+    required this.icon,
+    required this.kind,
+    this.value,
+    this.routePath,
+  });
 
   final String label;
   final IconData icon;
+  final String kind;
+  final String? value;
+  final String? routePath;
 }
 
 class AgentComposerBar extends StatelessWidget {
@@ -1004,6 +1025,17 @@ List<AgentArtifactActionView> _buttonActions(Object? rawButtons) {
       .whereType<Map>()
       .map((rawButton) => Map<String, Object?>.from(rawButton))
       .map((button) {
+        final kind = _firstNonEmpty([
+          _stringField(button, 'type', 'kind'),
+          _stringField(button, 'action'),
+        ]);
+        final value = _firstNonEmpty([
+          _stringField(button, 'value'),
+          _stringField(button, 'url'),
+          _stringField(button, 'href'),
+          _stringField(button, 'route'),
+          _stringField(button, 'path'),
+        ]);
         final label = _firstNonEmpty([
           _stringField(button, 'text'),
           _stringField(button, 'label'),
@@ -1012,7 +1044,10 @@ List<AgentArtifactActionView> _buttonActions(Object? rawButtons) {
         ]);
         return AgentArtifactActionView(
           label: label ?? '打开',
-          icon: _actionIcon(_stringField(button, 'type', 'kind')),
+          icon: _actionIcon(kind),
+          kind: kind ?? 'button',
+          value: value,
+          routePath: _actionRoutePath(kind: kind, value: value),
         );
       })
       .toList(growable: false);
@@ -1028,6 +1063,13 @@ List<AgentArtifactActionView> _semanticActions(
       .map((rawAction) => Map<String, Object?>.from(rawAction))
       .map((action) {
         final kind = _stringField(action, 'kind', 'type');
+        final value = _firstNonEmpty([
+          _stringField(action, 'value'),
+          _stringField(action, 'url'),
+          _stringField(action, 'href'),
+          _stringField(action, 'route'),
+          _stringField(action, 'path'),
+        ]);
         final label = _firstNonEmpty([
           _stringField(action, 'label'),
           _stringField(action, 'text'),
@@ -1037,6 +1079,9 @@ List<AgentArtifactActionView> _semanticActions(
         return AgentArtifactActionView(
           label: label ?? '打开',
           icon: _actionIcon(kind),
+          kind: kind ?? 'action',
+          value: value,
+          routePath: _actionRoutePath(kind: kind, value: value),
         );
       })
       .toList(growable: false);
@@ -1049,6 +1094,28 @@ IconData _actionIcon(String? kind) {
     'ag_ui_artifact' => Icons.fact_check_outlined,
     _ => Icons.touch_app_outlined,
   };
+}
+
+String? _actionRoutePath({required String? kind, required String? value}) {
+  if (_isMediaActionKind(kind)) return '/media-viewer';
+  return _safeSameOriginPath(value);
+}
+
+bool _isMediaActionKind(String? kind) {
+  return switch (kind) {
+    'doc' || 'document' || 'pdf' || 'media' || 'image' || 'video' => true,
+    _ => false,
+  };
+}
+
+String? _safeSameOriginPath(String? value) {
+  final normalized = value?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  final uri = Uri.tryParse(normalized);
+  if (uri == null || uri.hasScheme || uri.hasAuthority) return null;
+  final path = uri.path.isEmpty ? normalized : uri.path;
+  if (!path.startsWith('/')) return null;
+  return path;
 }
 
 Map<String, Object?> _mapField(
