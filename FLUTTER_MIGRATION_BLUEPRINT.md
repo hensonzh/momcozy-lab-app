@@ -959,7 +959,7 @@ doc/flutter-app-test-plan.md
 [x] Flutter App API runtime 已加入 lazy BLE platform 注入点，页面可从 runtime 读取 Android/Fake `BlePlatform`
 [x] Flutter App API runtime 已加入 lazy pump native coordinator 与 `PumpProtocolPlatform` 注入点，Calibration/Pump 后续通过抽象协议下发设备命令
 [x] Flutter `/status` 页面已接入 App runtime repository，覆盖 loading、empty、error、success 展示和 fixture widget test
-[x] Flutter `/schedule` 页面已接入 App runtime repository，覆盖 day plan fixture、日期选择、任务 checkbox 草稿状态和同步状态展示
+[x] Flutter `/schedule` 页面已接入 App runtime repository，覆盖 day plan fixture、日期选择、任务添加/删除、checkbox 草稿状态、未完成 badge、跨天倒计时和同步状态展示
 [x] Flutter `/records` 页面已接入 App runtime repository，覆盖 pump_milk、feeding、growth 三类列表和筛选 widget test
 [x] Flutter `/pump` 页面 session 控制已接入 App runtime `/v1/pump/workstate` repository，覆盖左右侧档位 payload 和同步状态 widget test
 [x] Flutter `/device` 页面已接入 App runtime BLE platform，覆盖权限/已连接设备恢复、扫描空态、单/多扫描结果、battery/RSSI、连接失败和扫描失败状态 widget test

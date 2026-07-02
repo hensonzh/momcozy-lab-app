@@ -376,13 +376,13 @@ Golden 视觉状态：
 ```text
 [x] 日期切换
 [x] 今日任务加载
-[ ] 添加任务
-[ ] 删除任务
+[x] 添加任务
+[x] 删除任务
 [x] 完成任务
 [x] 提醒开关
-[ ] 通知 badge
+[x] 通知 badge
 [ ] 通知点击进入对应任务
-[ ] 跨天倒计时
+[x] 跨天倒计时
 [x] 时区变化
 [x] 离线/弱网状态
 ```
@@ -574,7 +574,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter Agent voice typed repository tests 已覆盖 STT multipart 分片、timeout fallback、barge-in cancel、realtime PCM stream、realtime voice session frames 和 WS disconnect
 [x] Flutter Agent voice input controller tests 已覆盖 microphone permission 未请求/拒绝、录音 start/stop、转写回填和失败清理
 [x] Flutter `/records` widget tests 已覆盖列表加载、空态、加载失败、趋势展示和 mL/oz 单位切换
-[x] Flutter `/schedule` widget tests 已覆盖日期切换、今日任务加载、完成状态、提醒开关、本地日期到 UTC timestamp 和空/失败态
+[x] Flutter `/schedule` widget tests 已覆盖日期切换、今日任务加载、添加/删除本地任务、完成状态、提醒开关、未完成 badge、跨天倒计时、本地日期到 UTC timestamp 和空/失败态
 [x] Flutter `/status` widget tests 已覆盖妈妈/宝宝 tab、今日状态、计划 todo、孕期日记入口、长文本、空数据、API 失败和 runtime user/baby context
 [x] Flutter `/device` widget tests 已覆盖无设备、左右已连接、BLE 权限拒绝、扫描空态、单/多扫描结果、连接失败、battery/RSSI 展示和扫描失败状态
 [x] Flutter `/pump` widget tests 已覆盖 session 启动/暂停/恢复/结束和 workstate 上传失败状态
