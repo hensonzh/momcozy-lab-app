@@ -503,6 +503,59 @@ void main() {
     expect(actions.last.routePath, '/media-viewer');
   });
 
+  testWidgets('Agent Hub renders citation and reference links safely', (
+    tester,
+  ) async {
+    final actions = <AgentArtifactActionView>[];
+    final artifactEvent = AgentStreamEvent({
+      'type': 'ARTIFACT_CREATED',
+      'thread_id': 'thread-citation',
+      'run_id': 'run-citation',
+      'message_id': 'msg-citation',
+      'artifact_id': 'citation-card',
+      'artifact_type': 'rich_text',
+      'rich_text': {
+        'title': '参考资料',
+        'content': '这些资料可以作为进一步阅读。',
+        'citations': [
+          {
+            'index': 1,
+            'title': 'CDC Breastfeeding',
+            'url': 'https://www.cdc.gov/breastfeeding/mastitis',
+          },
+          {'displayText': 'ABM Protocol', 'href': '/guides/abm.pdf'},
+        ],
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '我找到两条参考资料。',
+            events: [artifactEvent],
+          ),
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+
+    expect(find.text('[1] CDC Breastfeeding'), findsOneWidget);
+    expect(find.text('ABM Protocol'), findsOneWidget);
+    expect(find.textContaining('https://www.cdc.gov'), findsNothing);
+    expect(find.textContaining('/guides/abm.pdf'), findsNothing);
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-artifact-action-citation-card-0')),
+    );
+    await tester.pump();
+
+    expect(actions.single.kind, 'citation');
+    expect(actions.single.value, 'https://www.cdc.gov/breastfeeding/mastitis');
+    expect(actions.single.routePath, isNull);
+  });
+
   testWidgets('Agent Hub wraps long content on compact mobile viewport', (
     tester,
   ) async {
