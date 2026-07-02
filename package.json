@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "flutter:check": "node scripts/check-flutter-toolchain.mjs",
     "flutter:init": "node scripts/init-flutter-shell.mjs",
+    "flutter:dev": "cd flutter_app && PATH=\"$HOME/.local/share/momcozy-toolchains/flutter/bin:$PATH\" flutter run --flavor local",
     "flutter:packaging-check": "node scripts/check-flutter-android-packaging.mjs",
     "flutter:security-check": "node scripts/check-flutter-security-privacy.mjs",
     "flutter:p0:platform-smoke": "node scripts/run-flutter-platform-smoke.mjs",
