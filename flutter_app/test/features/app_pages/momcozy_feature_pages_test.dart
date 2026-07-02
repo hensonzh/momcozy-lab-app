@@ -41,6 +41,8 @@ void main() {
           expect(find.text('社区功能还在建设中哦～'), findsWidgets);
         } else if (route.path == '/hospital-bag-cart') {
           expect(find.text('待产包一键打包'), findsWidgets);
+        } else if (route.path == '/ibclc-chat.html') {
+          expect(find.text('IBCLC 在线咨询'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }
@@ -204,22 +206,15 @@ void main() {
         _FeaturePageHost(route: _route('/ibclc-chat.html')),
       );
       await tester.pump();
-      expect(
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
-        isNull,
-      );
+      expect(find.text('IBCLC 在线咨询'), findsOneWidget);
+      expect(find.text('发送'), findsOneWidget);
 
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
       expect(
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        tester
+            .widget<FilledButton>(find.widgetWithText(FilledButton, '结束咨询'))
+            .onPressed,
         isNotNull,
       );
-
-      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
-      await tester.pump();
-      expect(find.text('咨询准备中'), findsWidgets);
-      expect(find.text('已进入咨询队列'), findsOneWidget);
     });
 
     testWidgets('status page loads overview from runtime repository', (
@@ -1510,9 +1505,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 
       final body = jsonDecode(connector.body!) as Map<String, Object?>;
@@ -1556,12 +1549,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 
-      expect(find.text('已进入咨询队列'), findsOneWidget);
       expect(find.text('本地已进入队列，稍后重试同步。'), findsOneWidget);
       expect(connector.uri!.path, '/api/client-event');
     });
@@ -1592,14 +1582,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 
-      expect(find.text('顾问流程已打开'), findsOneWidget);
+      expect(find.textContaining('你好，我是 Emily Chen'), findsOneWidget);
 
-      await _scrollToText(tester, '顾问流程已打开');
       await tester.tap(
         find.byKey(const ValueKey('ibclc-return-status-button')),
       );

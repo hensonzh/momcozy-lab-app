@@ -9101,14 +9101,58 @@ class _IbclcPage extends StatefulWidget {
 }
 
 class _IbclcPageState extends State<_IbclcPage> {
-  bool _accepted = false;
   bool _consultStarted = false;
   bool _isStarting = false;
+  bool _isEnding = false;
+  bool _chatReady = false;
+  int _connectionStepIndex = 0;
   String? _syncStatus;
+  final List<Timer> _connectionTimers = [];
   static const String _returnToPath = '/status';
+  static const _connectionSteps = ['健康信息整理中', '连接中', '连接成功', '对方正在读取背景中'];
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleConnectionFlow();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(_startConsult());
+    });
+  }
+
+  @override
+  void dispose() {
+    for (final timer in _connectionTimers) {
+      timer.cancel();
+    }
+    super.dispose();
+  }
+
+  void _scheduleConnectionFlow() {
+    const durations = [
+      Duration(milliseconds: 1000),
+      Duration(milliseconds: 2000),
+      Duration(milliseconds: 1000),
+      Duration(milliseconds: 2000),
+    ];
+    var elapsed = Duration.zero;
+    for (var index = 0; index < _connectionSteps.length; index += 1) {
+      _connectionTimers.add(
+        Timer(elapsed, () {
+          if (mounted) setState(() => _connectionStepIndex = index);
+        }),
+      );
+      elapsed += durations[index];
+    }
+    _connectionTimers.add(
+      Timer(elapsed + const Duration(milliseconds: 700), () {
+        if (mounted) setState(() => _chatReady = true);
+      }),
+    );
+  }
 
   Future<void> _startConsult() async {
-    if (!_accepted || _consultStarted || _isStarting) return;
+    if (_consultStarted || _isStarting) return;
     setState(() {
       _isStarting = true;
       _syncStatus = null;
@@ -9152,142 +9196,317 @@ class _IbclcPageState extends State<_IbclcPage> {
     context.go(_returnToPath);
   }
 
+  void _endConsult() {
+    if (_isEnding) return;
+    setState(() => _isEnding = true);
+    _returnToStatus();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return _FeaturePageFrame(
-      path: widget.path,
-      title: widget.title,
-      summary: widget.summary,
-      icon: widget.icon,
-      accent: widget.accent,
-      trailing: _StatusChip(
-        label: _consultStarted ? '咨询准备中' : '咨询入口',
-        icon: Icons.health_and_safety_outlined,
-        accent: const Color(0xff43827b),
+    return DecoratedBox(
+      key: ValueKey('route-page-${widget.path}'),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xfff8fcfb), Color(0xffe9f2ef)],
+        ),
       ),
-      children: [
-        const _SectionTitle('开始前'),
-        const _IbclcConsultantCard(),
-        _ActionTile(
-          icon: Icons.privacy_tip_outlined,
-          title: '咨询协议',
-          subtitle: '勾选后才能进入顾问流程；返回后会停在离开前的位置。',
-          accent: widget.accent,
-          trailing: Checkbox(
-            value: _accepted,
-            onChanged: (value) => setState(() => _accepted = value ?? false),
-          ),
-        ),
-        const _ActionTile(
-          icon: Icons.question_answer_outlined,
-          title: '常见问题',
-          subtitle: '含乳头疼痛、堵奶、亲喂姿势和泵奶节奏。',
-          accent: Color(0xff6b6da8),
-          trailing: Icon(Icons.chevron_right_rounded),
-        ),
-        if (_consultStarted)
-          _ActionTile(
-            icon: Icons.support_agent_rounded,
-            title: '顾问流程已打开',
-            subtitle: _syncStatus ?? '正在保留本次咨询上下文，稍后可以继续查看。',
-            accent: const Color(0xff43827b),
-            trailing: IconButton(
-              key: const ValueKey('ibclc-return-status-button'),
-              tooltip: '返回状态页',
-              onPressed: _returnToStatus,
-              icon: const Icon(Icons.arrow_back_rounded),
+      child: Column(
+        children: [
+          _IbclcChatHeader(isEnding: _isEnding, onEndConsult: _endConsult),
+          Expanded(
+            child: _IbclcChatBody(
+              chatReady: _chatReady,
+              connectionText: _connectionSteps[_connectionStepIndex],
+              syncStatus: _syncStatus,
             ),
           ),
-        FilledButton.icon(
-          onPressed: _accepted && !_consultStarted && !_isStarting
-              ? _startConsult
-              : null,
-          icon: const Icon(Icons.chat_rounded),
-          label: Text(
-            _consultStarted
-                ? '已进入咨询队列'
-                : _isStarting
-                ? '进入中'
-                : '进入 IBCLC 咨询',
-          ),
+          const _IbclcChatInputBar(),
+        ],
+      ),
+    );
+  }
+}
+
+class _IbclcChatHeader extends StatelessWidget {
+  const _IbclcChatHeader({required this.isEnding, required this.onEndConsult});
+
+  final bool isEnding;
+  final VoidCallback onEndConsult;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: Color(0xffdce8e5))),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                'IBCLC 在线咨询',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: const Color(0xff172625),
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            FilledButton(
+              key: const ValueKey('ibclc-return-status-button'),
+              onPressed: isEnding ? null : onEndConsult,
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xffd64b4b),
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: const Color(0xffd64b4b),
+                disabledForegroundColor: Colors.white.withValues(alpha: 0.75),
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                minimumSize: const Size(0, 32),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
+                  side: const BorderSide(color: Color(0xffc84444)),
+                ),
+                textStyle: Theme.of(
+                  context,
+                ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
+              ),
+              child: Text(isEnding ? '结束中...' : '结束咨询'),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _IbclcChatBody extends StatelessWidget {
+  const _IbclcChatBody({
+    required this.chatReady,
+    required this.connectionText,
+    required this.syncStatus,
+  });
+
+  final bool chatReady;
+  final String connectionText;
+  final String? syncStatus;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.fromLTRB(14, chatReady ? 14 : 0, 14, 14),
+      children: [
+        if (!chatReady)
+          SizedBox(
+            height: 560,
+            child: Center(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: const Color(0xfff7fcfa),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xffd9e8e4)),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x14224844),
+                      blurRadius: 34,
+                      offset: Offset(0, 14),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const _IbclcPulseDot(),
+                      const SizedBox(width: 10),
+                      Text(
+                        connectionText,
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: const Color(0xff177a89),
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
+        else ...[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 310),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: const Color(0xfff1f7f5),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  child: Text(
+                    '你好，我是 Emily Chen，IBCLC。我已经看到你从 CoMate 带过来的背景了，你可以先告诉我现在最困扰你的哺乳问题。',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xff233c39),
+                      height: 1.45,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (syncStatus != null) ...[
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: const Color(0xffedf6f3),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: const Color(0xffd5e5e1)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  child: Text(
+                    syncStatus!,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: const Color(0xff28615c),
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
       ],
     );
   }
 }
 
-class _IbclcConsultantCard extends StatelessWidget {
-  const _IbclcConsultantCard();
+class _IbclcPulseDot extends StatelessWidget {
+  const _IbclcPulseDot();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+    return const SizedBox.square(
+      dimension: 9,
       child: DecoratedBox(
-        decoration: MomCozyDecorations.card(shadows: MomCozyShadows.soft),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 58,
-                height: 58,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: MomCozyColors.care.withValues(alpha: 0.22),
-                    width: 2,
+        decoration: BoxDecoration(
+          color: Color(0xff177a89),
+          shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}
+
+class _IbclcChatInputBar extends StatelessWidget {
+  const _IbclcChatInputBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Color(0xfffbfefd),
+        border: Border(top: BorderSide(color: Color(0xffdce8e5))),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
+        child: Row(
+          children: [
+            const _IbclcRoundButton(
+              icon: Icons.image_outlined,
+              tooltip: '上传图片',
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: TextField(
+                readOnly: true,
+                decoration: InputDecoration(
+                  hintText: '输入消息...',
+                  isDense: true,
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 11,
                   ),
-                  image: const DecorationImage(
-                    image: AssetImage(MomCozyAssets.ibclcConsultantAvatar),
-                    fit: BoxFit.cover,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(999),
+                    borderSide: const BorderSide(color: Color(0xffd5e1de)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(999),
+                    borderSide: const BorderSide(color: Color(0xffd5e1de)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(999),
+                    borderSide: const BorderSide(color: Color(0xff177a89)),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'IBCLC 顾问',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 7),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: const [
-                        _StatusChip(
-                          label: '国际认证',
-                          icon: Icons.verified_user_outlined,
-                          accent: MomCozyColors.care,
-                        ),
-                        _StatusChip(
-                          label: '哺乳支持',
-                          icon: Icons.favorite_border_rounded,
-                          accent: MomCozyColors.primary,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '含乳头疼痛、堵奶、亲喂姿势和泵奶节奏咨询。',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        height: 1.35,
-                        color: MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+            ),
+            const SizedBox(width: 6),
+            const _IbclcRoundButton(
+              icon: Icons.mic_none_rounded,
+              tooltip: '语音输入',
+            ),
+            const SizedBox(width: 6),
+            FilledButton(
+              onPressed: () {},
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xff177a89),
+                foregroundColor: Colors.white,
+                minimumSize: const Size(0, 40),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
                 ),
+                textStyle: Theme.of(
+                  context,
+                ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
               ),
-            ],
+              child: const Text('发送'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _IbclcRoundButton extends StatelessWidget {
+  const _IbclcRoundButton({required this.icon, required this.tooltip});
+
+  final IconData icon;
+  final String tooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: SizedBox.square(
+        dimension: 40,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: const Color(0xfff2f8f6),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: const Color(0xffd5e1de)),
           ),
+          child: Icon(icon, color: const Color(0xff28615c), size: 20),
         ),
       ),
     );
