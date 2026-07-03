@@ -22,9 +22,8 @@
 
 仍然需要补齐的主要差距集中在：
 
-- 多视口 golden：当前主要是 compact mobile 基线，还缺 360x800、430x932 等关键屏幕。
-- 旧 Web 自动截图基线：目前是以旧 Web 源码和人工标准为准，还没有 Playwright 截图与 Flutter golden 做系统对照。
-- 深状态 golden：很多交互状态已有 widget 测试，但不是所有状态都有 golden 图。
+- 旧 Web / Flutter 对照评审：旧 Web 390x844 reference screenshot 已固化，但还缺逐页 side-by-side 评审记录。
+- 深状态 golden：主要页面已补 360x800、390x844、430x932，但很多交互状态仍只有 widget 测试，没有 golden 图。
 - 真机视觉/安全区/系统栏验证：本评估不包含 Android 真机、异形屏、系统字体缩放和导航手势验证。
 
 因此当前建议是：Flutter UI/UX 可以继续作为迁移主线推进，但进入最终替代旧 Web 前，需要完成第 8 节列出的补充验收项。
@@ -49,7 +48,11 @@ doc/legacy-web-ui-ux-golden-standard.md
 
 ```text
 flutter_app/test/goldens/agent_hub/rich_state_mobile.png
+flutter_app/test/goldens/agent_hub/narrow_360x800/rich_state_mobile.png
+flutter_app/test/goldens/agent_hub/large_430x932/rich_state_mobile.png
 flutter_app/test/goldens/feature_pages/agent_hub_mobile.png
+flutter_app/test/goldens/feature_pages/narrow_360x800/*.png
+flutter_app/test/goldens/feature_pages/large_430x932/*.png
 flutter_app/test/goldens/feature_pages/calibration_page_mobile.png
 flutter_app/test/goldens/feature_pages/community_page_mobile.png
 flutter_app/test/goldens/feature_pages/device_manage_page_mobile.png
@@ -66,12 +69,17 @@ flutter_app/test/goldens/feature_pages/status_page_mobile.png
 flutter_app/test/goldens/feature_pages/w1_page_mobile.png
 ```
 
+当前 Flutter 主页面 golden 总数为 48：
+
+- 15 个 feature 页面 x 3 个移动视口。
+- 1 个 Agent Hub rich state x 3 个移动视口。
+
 当前 Flutter 自动化验证结果：
 
 | 命令 | 结果 |
 |---|---|
 | `flutter analyze` | 通过，No issues found |
-| `flutter test` | 通过，261 个测试全部通过 |
+| `flutter test` | 通过，293 个测试全部通过 |
 
 测试覆盖范围包含：
 
@@ -100,7 +108,7 @@ flutter_app/test/goldens/feature_pages/w1_page_mobile.png
 | 未通过 | 当前 Flutter 与旧 Web 标准存在明显结构、视觉、文案或关键交互差异。 |
 | 需产品决策 | Flutter 与旧 Web 存在实现差异，但可能是合理移动原生调整，需要产品确认。 |
 
-注意：本次评估不是像素级截图 diff。当前旧 Web 还没有固化成 Playwright 参考截图，所以判断依据是旧 Web 源码、黄金标准文档、Flutter 源码、Flutter golden 和测试结果。
+注意：本次评估不是像素级截图 diff。当前已有旧 Web 390x844 Playwright reference screenshot，但还没有把旧 Web reference 与 Flutter golden 做自动像素 diff；判断依据仍然是旧 Web 源码、黄金标准文档、旧 Web reference、Flutter 源码、Flutter golden 和测试结果。
 
 ---
 
@@ -110,14 +118,14 @@ flutter_app/test/goldens/feature_pages/w1_page_mobile.png
 |---|---|---|
 | 信息架构 | 通过 | Flutter 已保留宝宝和我、计划、智能体、社区、设备五个底部主入口，以及 Pump、Calibration、Media、IBCLC 等专注流程。 |
 | 底部导航 | 通过 | 五个 tab 均可见，中心智能体头像按钮保留旧版凸起结构，专注流程隐藏底栏。 |
-| 画布与安全区 | 有条件通过 | Widget/golden 下没有发现首屏主路径裁切；仍需真机验证状态栏、手势导航和不同系统字体缩放。 |
+| 画布与安全区 | 有条件通过 | 360x800、390x844、430x932 主页面 golden 下没有发现首屏主路径裁切；仍需真机验证状态栏、手势导航和不同系统字体缩放。 |
 | 主题色与材质 | 通过 | 当前 Flutter 已采用 rose/cocoa 调性、柔和卡片、primary active、muted foreground 等旧版视觉语言。 |
 | 字体与文案 | 有条件通过 | 主要页面文案接近旧 Web；仍需产品或设计对每个业务文案做最终逐项确认。 |
 | 页面滚动结构 | 通过 | Tab 页面采用主滚动区域；专注流程独立全屏；没有再出现右侧半张主卡片误露的问题。 |
 | 旧版可见控件保留 | 有条件通过 | 主路径控件已保留；部分深状态还缺 golden 图来锁定。 |
-| 不裁切、不隐藏、不露半张卡 | 有条件通过 | 当前 compact golden 未发现 P0 问题；静态扫描剩余命中均有解释，但校准 396px 宽卡需要继续观察窄屏策略。 |
+| 不裁切、不隐藏、不露半张卡 | 有条件通过 | 360x800 窄屏 golden 暴露并修复了校准宽卡裁切；剩余静态扫描命中均有解释，仍需深状态 golden 和真机验证。 |
 | 可测试性 | 通过 | 当前 Flutter 自动化测试通过，且页面/golden/协议/状态机测试已建立。 |
-| 多视口视觉验收 | 未覆盖 | 当前缺 360x800、430x932 等多尺寸 golden。 |
+| 多视口视觉验收 | 有条件通过 | 主页面和 Agent rich state 已覆盖 360x800、390x844、430x932；深状态 golden 仍需补齐。 |
 
 ---
 
@@ -142,7 +150,7 @@ clipBehavior: Clip.none
 |---|---|---|
 | `flutter_app/lib/app/momcozy_app.dart` bottom nav | 可接受 | `Clip.none` 和 `Transform.translate` 用于旧 Web 中心智能体按钮的凸起效果。 |
 | `momcozy_feature_pages.dart` status cards | 可接受但建议后续清理 | `Opacity(opacity: 0)` 用于测试/辅助文本，不是用户可见控件。后续可改为更明确的 semantics/test hook。 |
-| `momcozy_feature_pages.dart` calibration | 需继续观察 | `OverflowBox` 固定 396px 宽度用于还原旧 Web 宽卡，但对 360px 窄屏应补 golden，确认不会产生不可接受裁切。 |
+| `momcozy_feature_pages.dart` calibration | 已修正 | 360px 窄屏 golden 发现旧宽卡裁切风险后，已改为“最多 396px 且不超过可用宽度”的响应式宽卡。 |
 | `momcozy_feature_pages.dart` records chart | 可接受 | 有数据时 `SizedBox.shrink()` 只是 CustomPaint 图层里的空占位。 |
 | `momcozy_feature_pages.dart` W1 / Media / NotFound | 可接受 | `Transform.translate` 用于旧版视觉垂直位置微调。 |
 
@@ -280,7 +288,6 @@ clipBehavior: Clip.none
 
 仍缺：
 
-- 360px 窄屏 golden，特别是当前 396px 宽卡的视觉接受度。
 - 中断恢复、保存失败、单侧设备等状态 golden。
 
 ### 6.10 记录 `/records`
@@ -369,9 +376,9 @@ clipBehavior: Clip.none
 - 所有主 tab 可见，不存在底栏少 tab 的当前代码问题。
 - 主 tab 页面不会再出现右侧半张卡片作为默认可见布局。
 - Pump、Calibration、Media Viewer、IBCLC 等专注流程会隐藏底栏。
-- 当前 compact mobile golden 覆盖所有主页面。
+- 当前 360x800、390x844、430x932 mobile golden 覆盖所有主页面。
 - `flutter analyze` 通过。
-- `flutter test` 通过，261 个测试全部通过。
+- `flutter test` 通过，293 个测试全部通过。
 - Agent 文本流已按 transport-agnostic 架构设计，不把 UI 绑定到单一 WebSocket 实现。
 
 ---
@@ -380,25 +387,9 @@ clipBehavior: Clip.none
 
 ### P1 必补
 
-1. 增加旧 Web Playwright reference screenshot：
-   - `/`
-   - `/status`
-   - `/schedule`
-   - `/device`
-   - `/pump`
-   - `/calibration`
-   - `/records`
-   - `/media-viewer`
-   - `/ibclc-chat.html`
-   - `/hospital-bag-cart`
-   - `/w1`
+1. 完成旧 Web reference 与 Flutter golden 的逐页 side-by-side 评审记录。
 
-2. 增加 Flutter 多视口 golden：
-   - 360x800
-   - 390x844
-   - 430x932
-
-3. 增加深状态 golden：
+2. 增加深状态 golden：
    - Agent：streaming、error retry、image upload、long message。
    - Status：妈妈/宝宝切换、失败态、成长记录、孕期日记入口。
    - Schedule：新增弹窗、提醒关闭、跨天倒计时、空态/失败态。
@@ -410,7 +401,7 @@ clipBehavior: Clip.none
    - IBCLC：排队、会话中、结束、vendor 返回。
    - Hospital Bag：删除后、空购物车、同步失败、恢复默认。
 
-4. 建立视觉 diff 评审门槛：
+3. 建立视觉 diff 评审门槛：
    - Flutter golden 变化必须说明对应旧 Web 标准条目。
    - 若 Flutter 与旧 Web 不一致，必须标记为产品决策或 bug。
    - 禁止以“原生重构”为理由默认改变页面信息架构。
@@ -419,7 +410,7 @@ clipBehavior: Clip.none
 
 1. 用 semantics/test hook 替换不可见文本测试辅助。
 2. 明确 Records 行操作是否继续沿用旧 Web swipe reveal，还是接受 Flutter 显式操作按钮。
-3. 明确 Calibration 396px 宽卡在 360px 屏幕上的视觉策略。
+3. 持续观察 Calibration 响应式宽卡在真实 Android 设备上的安全区表现。
 4. 明确 debug / demo 用户入口是否允许在非内部环境出现。
 5. 增加系统字体缩放 1.15x / 1.3x 的视觉 smoke。
 
@@ -429,7 +420,7 @@ clipBehavior: Clip.none
 
 当前没有发现需要立刻回滚或阻断迁移的 UI/UX 风险。
 
-主要风险不是“Flutter 当前页面完全不对”，而是“验收基线还不够自动化”。如果不补旧 Web reference screenshot 和多视口/deep-state golden，后续继续改页面时仍可能出现视觉漂移，且很难判断某个差异是合理原生化还是无意回归。
+主要风险不是“Flutter 当前页面完全不对”，而是“验收基线还不够自动化”。旧 Web reference 和 Flutter 多视口 golden 已经补齐主路径，但如果不补 side-by-side 评审记录和 deep-state golden，后续继续改页面时仍可能出现视觉漂移，且很难判断某个差异是合理原生化还是无意回归。
 
 ---
 
@@ -437,15 +428,13 @@ clipBehavior: Clip.none
 
 建议按以下顺序继续推进：
 
-1. 新建旧 Web reference screenshot harness，先把旧 Web 关键路由截图固化。
-2. 在 Flutter golden 中补 360x800 和 430x932 两类视口。
-3. 按第 8 节补深状态 golden。
-4. 对第 8 节 P2 的产品决策项做确认。
-5. 在所有非真机 UI golden 通过后，再进入 Android emulator smoke 和真机设备验证。
+1. 按第 8 节补深状态 golden。
+2. 对第 8 节 P2 的产品决策项做确认。
+3. 在所有非真机 UI golden 通过后，再进入 Android emulator smoke 和真机设备验证。
 
 本次评估给出的迁移准入结论是：
 
 ```text
 Flutter UI/UX 当前可继续推进。
-不建议在补齐 reference screenshot、多视口 golden 和深状态 golden 前宣布最终 UI 完全验收。
+不建议在补齐 reference screenshot 对照评审、深状态 golden 和真机验证前宣布最终 UI 完全验收。
 ```

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show OverflowBoxFit, ScrollCacheExtent;
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -6400,15 +6400,18 @@ class _CalibrationWideCardShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: OverflowBox(
-        alignment: Alignment.centerLeft,
-        fit: OverflowBoxFit.deferToChild,
-        minWidth: 396,
-        maxWidth: 396,
-        child: SizedBox(width: 396, child: child),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : 396.0;
+        final shellWidth = math.min(396.0, math.max(0.0, availableWidth));
+
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: SizedBox(width: shellWidth, child: child),
+        );
+      },
     );
   }
 }
