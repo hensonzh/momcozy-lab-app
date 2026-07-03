@@ -428,7 +428,7 @@ clipBehavior: Clip.none
 建议按以下顺序继续推进：
 
 1. 已完成 `npm run flutter:release-gate`，非真机构建、测试、Android packaging、安全隐私和 rollback manifest 均通过。
-2. 继续运行 Android emulator smoke，确认当前模拟器首启和基础导航。
+2. 已完成 Android emulator smoke，确认 Pixel 7 API 36 模拟器首启、Agent Hub 首屏、Schedule / Device 基础导航和无 fatal/crash 日志。
 3. 进入真机 P0 smoke，并同步产品确认 Records / W1 两个决策项。
 
 本次评估给出的迁移准入结论是：
