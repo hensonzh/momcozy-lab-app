@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "ui:legacy-reference": "node scripts/capture-legacy-web-references.mjs",
     "flutter:check": "node scripts/check-flutter-toolchain.mjs",
     "flutter:init": "node scripts/init-flutter-shell.mjs",
     "flutter:dev": "cd flutter_app && PATH=\"$HOME/.local/share/momcozy-toolchains/flutter/bin:$PATH\" flutter run --flavor local",
@@ -60,6 +61,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.0.0",
