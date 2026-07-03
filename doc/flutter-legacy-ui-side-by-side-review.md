@@ -16,16 +16,15 @@
 
 | 类别 | 数量 | 页面 |
 |---|---:|---|
-| 结构通过 | 10 | Agent Hub、Schedule、Device、Device Manage、Device User、W1、IBCLC、Media Viewer、Community、Not Found |
-| 需修正 | 4 | Calibration、Records、Hospital Bag、Status |
+| 结构通过 | 11 | Agent Hub、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Media Viewer、Community、Not Found |
+| 需修正 | 3 | Calibration、Records、Status |
 | 需深状态补图后复核 | 2 | Pump、Agent Hub rich states |
 
 最重要的待修正项：
 
-1. Hospital Bag 列表行缺少旧 Web 首屏可见的价格和删除按钮。
-2. Calibration 顶部缺少旧 Web 右上 `1/7` 步数文本。
-3. Records 图表轴标、右侧区间标签和记录行操作与旧 Web 不完全一致。
-4. Status 母乳趋势日期刻度与旧 Web reference 有轻微差异。
+1. Calibration 顶部缺少旧 Web 右上 `1/7` 步数文本。
+2. Records 图表轴标、右侧区间标签和记录行操作与旧 Web 不完全一致。
+3. Status 母乳趋势日期刻度与旧 Web reference 有轻微差异。
 
 ---
 
@@ -52,7 +51,7 @@
 | Device Manage `/device/manage` | ![](../test/screenshots/legacy_web/compact_390x844/device_manage.png) | ![](../flutter_app/test/goldens/feature_pages/device_manage_page_mobile.png) | 结构通过 | 子页结构可接受；后续需补加载/失败状态 golden。 |
 | Device User `/device/user` | ![](../test/screenshots/legacy_web/compact_390x844/device_user.png) | ![](../flutter_app/test/goldens/feature_pages/device_user_page_mobile.png) | 结构通过 | 表单结构可接受；后续需补选择展开和保存失败状态 golden。 |
 | W1 `/w1` | ![](../test/screenshots/legacy_web/compact_390x844/w1.png) | ![](../flutter_app/test/goldens/feature_pages/w1_page_mobile.png) | 结构通过 | 首屏产品页结构、主色和内容密度接近；营销素材文案需产品最终确认。 |
-| Hospital Bag `/hospital-bag-cart` | ![](../test/screenshots/legacy_web/compact_390x844/hospital_bag_cart.png) | ![](../flutter_app/test/goldens/feature_pages/hospital_bag_page_mobile.png) | 需修正 | Flutter 保留分组、数量和底部结算，但列表行缺少旧 Web 首屏可见的价格和删除按钮。 |
+| Hospital Bag `/hospital-bag-cart` | ![](../test/screenshots/legacy_web/compact_390x844/hospital_bag_cart.png) | ![](../flutter_app/test/goldens/feature_pages/hospital_bag_page_mobile.png) | 结构通过 | Flutter 已恢复分组数量、列表行价格和删除按钮，底部结算栏保持一致。 |
 | IBCLC `/ibclc-chat.html` | ![](../test/screenshots/legacy_web/compact_390x844/ibclc_chat.png) | ![](../flutter_app/test/goldens/feature_pages/ibclc_page_mobile.png) | 结构通过 | 首屏咨询入口结构接近；会话中、排队、结束状态仍需 deep-state golden。 |
 | Media Viewer `/media-viewer` | ![](../test/screenshots/legacy_web/compact_390x844/media_viewer.png) | ![](../flutter_app/test/goldens/feature_pages/media_viewer_page_mobile.png) | 结构通过 | 缺资源状态一致；PDF/image/video 实际资源状态仍需 deep-state golden。 |
 | Pump `/pump` | ![](../test/screenshots/legacy_web/compact_390x844/pump.png) | ![](../flutter_app/test/goldens/feature_pages/pump_page_mobile.png) | 需深状态补图后复核 | 首次校准弹窗结构一致；背景内容、模糊强度和运行/暂停/结束状态仍需补图后复核。 |
@@ -69,7 +68,6 @@
 
 | ID | 页面 | 问题 | 验收方式 |
 |---|---|---|---|
-| UI-P1-001 | Hospital Bag | 列表行缺少旧 Web 可见价格和删除按钮。 | Flutter 390/360/430 golden 中每个首屏 item 行都显示价格和删除按钮，底部结算栏不变。 |
 | UI-P1-002 | Calibration | 顶部缺少 `1/7` 步数文本。 | Flutter calibration 三个视口 golden 顶部右侧显示当前步数/总步数。 |
 | UI-P1-003 | Records | 图表区间标签、单位切换、记录行操作与旧 Web 不一致。 | Flutter records 三个视口 golden 与旧 Web reference 的图表和列表行控件一致；如保留显式编辑/删除，需产品确认。 |
 
@@ -87,9 +85,8 @@
 
 优先按 P1 修正：
 
-1. Hospital Bag 恢复列表行价格和删除按钮。
-2. Calibration 恢复右上步数文本。
-3. Records 对齐图表和行操作。
+1. Calibration 恢复右上步数文本。
+2. Records 对齐图表和行操作。
 
 每完成一项都需要：
 
