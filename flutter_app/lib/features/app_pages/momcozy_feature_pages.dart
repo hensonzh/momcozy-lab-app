@@ -6321,7 +6321,7 @@ class _CalibrationTopBar extends StatelessWidget {
     final ratio = (progress / total).clamp(0.0, 1.0);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 10, 0, 12),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
       decoration: BoxDecoration(
         color: MomCozyColors.background,
         border: Border(
@@ -6371,6 +6371,14 @@ class _CalibrationTopBar extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                '$progress/$total',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: MomCozyColors.primary,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ],
