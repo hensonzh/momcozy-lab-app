@@ -75,6 +75,34 @@ void main() {
       }
     });
 
+    testWidgets('status page and bottom tabs fit compact mobile width', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final router = createMomCozyRouter(initialLocation: '/status');
+      await tester.pumpWidget(
+        MomCozyFlutterApp(router: router, apiRuntime: _appRuntime()),
+      );
+      await tester.pumpAndSettle();
+
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('status-identity-tab-mom')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('status-identity-tab-baby')),
+      );
+
+      for (final label in const ['宝宝和我', '计划', '智能体', '社区', '设备']) {
+        _expectFinderWithinViewport(tester, find.text(label));
+      }
+    });
+
     testWidgets('renders core status, schedule, device, and pump sections', (
       tester,
     ) async {
@@ -1819,6 +1847,20 @@ Future<void> _scrollToFinder(WidgetTester tester, Finder finder) async {
     }
   }
   expect(finder, findsWidgets);
+}
+
+void _expectFinderWithinViewport(WidgetTester tester, Finder finder) {
+  expect(finder, findsOneWidget);
+  final rect = tester.getRect(finder);
+  final viewportWidth =
+      tester.view.physicalSize.width / tester.view.devicePixelRatio;
+  final viewportHeight =
+      tester.view.physicalSize.height / tester.view.devicePixelRatio;
+
+  expect(rect.left, greaterThanOrEqualTo(0));
+  expect(rect.right, lessThanOrEqualTo(viewportWidth));
+  expect(rect.top, greaterThanOrEqualTo(0));
+  expect(rect.bottom, lessThanOrEqualTo(viewportHeight));
 }
 
 Future<void> _dismissPumpCalibrationPrompt(WidgetTester tester) async {

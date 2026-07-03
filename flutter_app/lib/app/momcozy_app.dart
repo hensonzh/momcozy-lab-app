@@ -415,75 +415,63 @@ class MomCozyBottomNavigation extends StatelessWidget {
                       constraints: const BoxConstraints(
                         maxWidth: MomCozyLayout.maxAppWidth,
                       ),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const NeverScrollableScrollPhysics(),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 7),
-                          child: SizedBox(
-                            width: 490,
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 98,
-                                  child: _MomCozyNavTab(
-                                    label: '宝宝和我',
-                                    selected: selectedIndex == 0,
-                                    icon: const _MomBabyNavIcon(),
-                                    selectedIcon: const _MomBabyNavIcon(
-                                      filled: true,
-                                    ),
-                                    onTap: () => context.go(_tabPaths[0]),
-                                  ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _MomCozyNavTab(
+                                label: '宝宝和我',
+                                selected: selectedIndex == 0,
+                                icon: const _MomBabyNavIcon(),
+                                selectedIcon: const _MomBabyNavIcon(
+                                  filled: true,
                                 ),
-                                SizedBox(
-                                  width: 98,
-                                  child: _MomCozyNavTab(
-                                    label: '计划',
-                                    selected: selectedIndex == 1,
-                                    icon: const Icon(Icons.event_note_outlined),
-                                    selectedIcon: const Icon(
-                                      Icons.event_note_rounded,
-                                    ),
-                                    onTap: () => context.go(_tabPaths[1]),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 98,
-                                  child: _MomCozyAgentNavTab(
-                                    selected: selectedIndex == 2,
-                                    onTap: () => context.go(_tabPaths[2]),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 98,
-                                  child: _MomCozyNavTab(
-                                    label: '社区',
-                                    selected: selectedIndex == 3,
-                                    icon: const Icon(Icons.groups_2_outlined),
-                                    selectedIcon: const Icon(
-                                      Icons.groups_2_rounded,
-                                    ),
-                                    onTap: () => context.go(_tabPaths[3]),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 98,
-                                  child: _MomCozyNavTab(
-                                    label: '设备',
-                                    selected: selectedIndex == 4,
-                                    icon: const Icon(
-                                      Icons.bluetooth_connected_outlined,
-                                    ),
-                                    selectedIcon: const Icon(
-                                      Icons.bluetooth_connected_rounded,
-                                    ),
-                                    onTap: () => context.go(_tabPaths[4]),
-                                  ),
-                                ),
-                              ],
+                                onTap: () => context.go(_tabPaths[0]),
+                              ),
                             ),
-                          ),
+                            Expanded(
+                              child: _MomCozyNavTab(
+                                label: '计划',
+                                selected: selectedIndex == 1,
+                                icon: const Icon(Icons.event_note_outlined),
+                                selectedIcon: const Icon(
+                                  Icons.event_note_rounded,
+                                ),
+                                onTap: () => context.go(_tabPaths[1]),
+                              ),
+                            ),
+                            Expanded(
+                              child: _MomCozyAgentNavTab(
+                                selected: selectedIndex == 2,
+                                onTap: () => context.go(_tabPaths[2]),
+                              ),
+                            ),
+                            Expanded(
+                              child: _MomCozyNavTab(
+                                label: '社区',
+                                selected: selectedIndex == 3,
+                                icon: const Icon(Icons.groups_2_outlined),
+                                selectedIcon: const Icon(
+                                  Icons.groups_2_rounded,
+                                ),
+                                onTap: () => context.go(_tabPaths[3]),
+                              ),
+                            ),
+                            Expanded(
+                              child: _MomCozyNavTab(
+                                label: '设备',
+                                selected: selectedIndex == 4,
+                                icon: const Icon(
+                                  Icons.bluetooth_connected_outlined,
+                                ),
+                                selectedIcon: const Icon(
+                                  Icons.bluetooth_connected_rounded,
+                                ),
+                                onTap: () => context.go(_tabPaths[4]),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -554,7 +542,12 @@ class _MomCozyNavTab extends StatelessWidget {
                       child: Center(child: selected ? selectedIcon : icon),
                     ),
                     const SizedBox(height: 5),
-                    Text(label, maxLines: 1, overflow: TextOverflow.visible),
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
@@ -574,48 +567,83 @@ class _MomCozyAgentNavTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final foreground = selected
+        ? MomCozyColors.primary
+        : MomCozyColors.mutedForeground;
+
     return Center(
-      child: Transform.translate(
-        offset: const Offset(0, -12),
-        child: Semantics(
-          label: '智能体',
-          selected: selected,
-          button: true,
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: onTap,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              width: MomCozyLayout.bottomNavCenterSize,
-              height: MomCozyLayout.bottomNavCenterSize,
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: selected ? MomCozyGradients.primary : null,
-                color: selected ? null : MomCozyColors.card,
-                border: Border.all(color: MomCozyColors.background, width: 5),
-                boxShadow: selected
-                    ? const [
-                        BoxShadow(
-                          color: Color(0x42754b5e),
-                          blurRadius: 30,
-                          offset: Offset(0, 12),
-                        ),
-                      ]
-                    : MomCozyShadows.soft,
+      child: Semantics(
+        label: '智能体',
+        selected: selected,
+        button: true,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(MomCozyRadii.control),
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+            decoration: BoxDecoration(
+              color: selected
+                  ? MomCozyColors.primary.withValues(alpha: 0.08)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(MomCozyRadii.control),
+            ),
+            child: DefaultTextStyle(
+              style: TextStyle(
+                fontFamily: MomCozyTypography.fontFamily,
+                fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                color: foreground,
+                fontSize: 10,
+                height: 1.05,
+                fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
               ),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: selected ? 0.1 : 0),
-                  image: const DecorationImage(
-                    image: AssetImage(MomCozyAssets.agentAvatar),
-                    fit: BoxFit.cover,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: MomCozyLayout.bottomNavCenterSize,
+                    height: MomCozyLayout.bottomNavCenterSize,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: selected ? MomCozyGradients.primary : null,
+                      color: selected ? null : MomCozyColors.card,
+                      border: Border.all(
+                        color: MomCozyColors.background,
+                        width: 3,
+                      ),
+                      boxShadow: selected
+                          ? const [
+                              BoxShadow(
+                                color: Color(0x32754b5e),
+                                blurRadius: 18,
+                                offset: Offset(0, 8),
+                              ),
+                            ]
+                          : MomCozyShadows.soft,
+                    ),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withValues(
+                          alpha: selected ? 0.1 : 0,
+                        ),
+                        image: const DecorationImage(
+                          image: AssetImage(MomCozyAssets.agentAvatar),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: const SizedBox.expand(),
+                    ),
                   ),
-                ),
-                child: const SizedBox.square(
-                  dimension: MomCozyLayout.bottomNavCenterSize - 10,
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '智能体',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
           ),
