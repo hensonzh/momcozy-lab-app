@@ -46,6 +46,18 @@ void main() {
 
     expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
     expect(find.byType(MomCozyBottomNavigation), findsNothing);
+
+    for (final route in const [
+      '/calibration',
+      '/hospital-bag-cart',
+      '/ibclc-chat.html',
+      '/media-viewer',
+    ]) {
+      router.go(route);
+      await tester.pumpAndSettle();
+      expect(find.byKey(ValueKey('route-page-$route')), findsOneWidget);
+      expect(find.byType(MomCozyBottomNavigation), findsNothing);
+    }
   });
 
   testWidgets('route shell renders recoverable not found route', (
