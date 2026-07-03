@@ -6829,6 +6829,7 @@ class _RecordsPageState extends State<_RecordsPage> {
           title: _textOr(record.title, '泵奶记录'),
           subtitle:
               '来源 ${record.pumpSource ?? '--'}${_crossDaySuffix(record.occurredAt)}',
+          trailingLabel: _recordTimeLabel(record.occurredAt),
           icon: Icons.local_drink_rounded,
           accent: widget.accent,
           badges: [
@@ -7167,6 +7168,7 @@ class _RecordsDashboardCard extends StatelessWidget {
                   ],
                 ),
               ),
+              _RecordsUnitToggle(unit: volumeUnit, onTap: onToggleUnit),
             ],
           ),
           const SizedBox(height: 12),
@@ -7406,6 +7408,52 @@ class _RecordsMiniStat extends StatelessWidget {
   }
 }
 
+class _RecordsUnitToggle extends StatelessWidget {
+  const _RecordsUnitToggle({required this.unit, required this.onTap});
+
+  final String unit;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+      child: InkWell(
+        key: const ValueKey('records-unit-toggle'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: MomCozyColors.muted.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.refresh_rounded,
+                size: 12,
+                color: MomCozyColors.mutedForeground,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                unit,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _RecordsTrendChart extends StatelessWidget {
   const _RecordsTrendChart({required this.points, required this.accent});
 
@@ -7440,7 +7488,7 @@ class _RecordsTrendPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final chartRect = Rect.fromLTWH(30, 10, size.width - 34, size.height - 34);
+    final chartRect = Rect.fromLTWH(30, 10, size.width - 72, size.height - 34);
     final gridPaint = Paint()
       ..color = MomCozyColors.border.withValues(alpha: 0.28)
       ..strokeWidth = 1;
@@ -7452,6 +7500,27 @@ class _RecordsTrendPainter extends CustomPainter {
       Paint()
         ..color = MomCozyColors.primary.withValues(alpha: 0.045)
         ..style = PaintingStyle.fill,
+    );
+    _drawBand(
+      canvas,
+      chartRect,
+      minAmountMl: 0,
+      maxAmountMl: 100,
+      color: MomCozyColors.warm.withValues(alpha: 0.045),
+    );
+    _drawBand(
+      canvas,
+      chartRect,
+      minAmountMl: 100,
+      maxAmountMl: 750,
+      color: MomCozyColors.primary.withValues(alpha: 0.042),
+    );
+    _drawBand(
+      canvas,
+      chartRect,
+      minAmountMl: 750,
+      maxAmountMl: 1200,
+      color: MomCozyColors.violet.withValues(alpha: 0.048),
     );
 
     const tickValues = [1000, 750, 500, 300, 100];
@@ -7484,6 +7553,10 @@ class _RecordsTrendPainter extends CustomPainter {
         textAlign: TextAlign.right,
       );
     }
+
+    _drawStageLabel(canvas, '供需平衡', 975, chartRect, MomCozyColors.violet);
+    _drawStageLabel(canvas, '建立期', 425, chartRect, MomCozyColors.primary);
+    _drawStageLabel(canvas, '启动期', 50, chartRect, MomCozyColors.warm);
 
     if (points.isEmpty) return;
 
@@ -7533,6 +7606,39 @@ class _RecordsTrendPainter extends CustomPainter {
   double _yForAmount(int amountMl, Rect chartRect) {
     final clamped = amountMl.clamp(0, 1200).toDouble();
     return chartRect.bottom - chartRect.height * (clamped / 1200);
+  }
+
+  void _drawBand(
+    Canvas canvas,
+    Rect chartRect, {
+    required int minAmountMl,
+    required int maxAmountMl,
+    required Color color,
+  }) {
+    final top = _yForAmount(maxAmountMl, chartRect);
+    final bottom = _yForAmount(minAmountMl, chartRect);
+    canvas.drawRect(
+      Rect.fromLTRB(chartRect.left, top, chartRect.right, bottom),
+      Paint()..color = color,
+    );
+  }
+
+  void _drawStageLabel(
+    Canvas canvas,
+    String label,
+    int amountMl,
+    Rect chartRect,
+    Color color,
+  ) {
+    final y = _yForAmount(amountMl, chartRect);
+    _drawChartText(
+      canvas,
+      label,
+      Offset(chartRect.right + 4, y - 5),
+      width: 42,
+      color: color.withValues(alpha: 0.9),
+      fontSize: 8,
+    );
   }
 
   void _drawDashedLine(Canvas canvas, Offset start, Offset end, Paint paint) {
@@ -7730,6 +7836,7 @@ class _RecordsMilkRow extends StatelessWidget {
     required this.subtitle,
     required this.icon,
     required this.accent,
+    this.trailingLabel,
     this.badges = const [],
     this.actions = const [],
   });
@@ -7739,6 +7846,7 @@ class _RecordsMilkRow extends StatelessWidget {
   final String subtitle;
   final IconData icon;
   final Color accent;
+  final String? trailingLabel;
   final List<_RecordsSourceBadge> badges;
   final List<Widget> actions;
 
@@ -7766,7 +7874,7 @@ class _RecordsMilkRow extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(
                 14,
                 12,
-                actions.isEmpty ? 14 : 82,
+                actions.isEmpty && trailingLabel == null ? 14 : 86,
                 12,
               ),
               child: Column(
@@ -7811,27 +7919,65 @@ class _RecordsMilkRow extends StatelessWidget {
             ),
             if (actions.isNotEmpty)
               Positioned(
-                right: 4,
-                top: 4,
-                child: IconTheme(
-                  data: const IconThemeData(
-                    size: 18,
-                    color: MomCozyColors.mutedForeground,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: actions
-                        .map(
-                          (action) =>
-                              SizedBox.square(dimension: 34, child: action),
-                        )
-                        .toList(growable: false),
-                  ),
+                right: 6,
+                top: 9,
+                child: _RecordsRowTrailing(
+                  label: trailingLabel,
+                  actions: actions,
                 ),
+              )
+            else if (trailingLabel != null)
+              Positioned(
+                right: 14,
+                top: 16,
+                child: _RecordsRowTrailing(label: trailingLabel),
               ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _RecordsRowTrailing extends StatelessWidget {
+  const _RecordsRowTrailing({this.label, this.actions = const []});
+
+  final String? label;
+  final List<Widget> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = this.label;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (label != null)
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: MomCozyColors.mutedForeground,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        if (actions.isNotEmpty) ...[
+          if (label != null) const SizedBox(height: 3),
+          IconTheme(
+            data: const IconThemeData(
+              size: 17,
+              color: MomCozyColors.mutedForeground,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: actions
+                  .map(
+                    (action) => SizedBox.square(dimension: 28, child: action),
+                  )
+                  .toList(growable: false),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -7947,6 +8093,19 @@ String _amountLabel(int? amountMl, {String unit = 'mL'}) {
   }
   return '$amountMl mL';
 }
+
+String _recordTimeLabel(Object? value) {
+  final parsed = switch (value) {
+    DateTime dateTime => dateTime,
+    String text => DateTime.tryParse(text),
+    _ => null,
+  };
+  if (parsed == null) return '--:--';
+  final local = parsed.toLocal();
+  return '${_twoDigits(local.hour)}:${_twoDigits(local.minute)}';
+}
+
+String _twoDigits(int value) => value.toString().padLeft(2, '0');
 
 String _weightLabel(int? weightGram) {
   if (weightGram == null) return '--';

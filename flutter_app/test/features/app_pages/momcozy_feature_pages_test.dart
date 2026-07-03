@@ -684,7 +684,10 @@ void main() {
       expect(find.textContaining('120 mL'), findsWidgets);
       expect(find.textContaining('120 mL'), findsWidgets);
 
-      await tester.tap(find.text('mL'));
+      final unitToggle = find.byKey(const ValueKey('records-unit-toggle'));
+      await _scrollToFinder(tester, unitToggle);
+      await tester.ensureVisible(unitToggle);
+      await tester.tap(unitToggle);
       await tester.pumpAndSettle();
 
       expect(find.textContaining('4.1 oz'), findsWidgets);
