@@ -626,7 +626,7 @@ class _StatusPageState extends State<_StatusPage> {
 
         return ListView(
           key: ValueKey('route-page-${widget.path}'),
-          padding: const EdgeInsets.fromLTRB(16, 20, 0, 96),
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 96),
           children: [
             _CareStageSelector(
               selectedStage: _careStage,
@@ -945,23 +945,24 @@ class _StatusModuleGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const ClampingScrollPhysics(),
-        child: SizedBox(
-          width: 468,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : MomCozyLayout.maxAppWidth;
+        return SizedBox(
+          width: width,
           child: GridView.count(
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 1.75,
+            childAspectRatio: 1.24,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             children: children,
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -1768,14 +1769,15 @@ class _StatusIdentityTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const ClampingScrollPhysics(),
-        child: Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const gap = 10.0;
+        final tabWidth = (constraints.maxWidth - gap) / 2;
+
+        return Row(
           children: [
             SizedBox(
-              width: 232,
+              width: tabWidth,
               child: _StatusIdentityTab(
                 value: 'mom',
                 title: '妈妈',
@@ -1785,9 +1787,9 @@ class _StatusIdentityTabs extends StatelessWidget {
                 onTap: () => onChanged('mom'),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: gap),
             SizedBox(
-              width: 232,
+              width: tabWidth,
               child: _StatusIdentityTab(
                 value: 'baby',
                 title: '宝宝',
@@ -1799,8 +1801,8 @@ class _StatusIdentityTabs extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

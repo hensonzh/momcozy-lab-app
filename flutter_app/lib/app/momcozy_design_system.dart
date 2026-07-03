@@ -38,7 +38,7 @@ class MomCozyLayout {
   static const maxAppWidth = 430.0;
   static const bottomNavHeight = 84.0;
   static const bottomNavChromeHeight = 72.0;
-  static const bottomNavCenterSize = 68.0;
+  static const bottomNavCenterSize = 46.0;
 }
 
 class MomCozyAssets {
