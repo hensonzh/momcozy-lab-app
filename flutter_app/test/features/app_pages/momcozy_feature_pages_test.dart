@@ -1640,12 +1640,18 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      expect(
+        find.byKey(const ValueKey('hospital-bag-item-count-chip')),
+        findsOneWidget,
+      );
+      expect(find.text('18 件'), findsOneWidget);
       expect(find.text('产褥垫组合装'), findsOneWidget);
 
       await tester.longPress(find.text('产褥垫组合装'));
       await tester.pumpAndSettle();
 
       expect(find.text('购物车已同步'), findsOneWidget);
+      expect(find.text('17 件'), findsOneWidget);
 
       final cart =
           transport.postedBodies.last['hospital_bag_cart']!
