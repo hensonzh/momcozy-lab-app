@@ -1669,53 +1669,6 @@ class _CareStageSelector extends StatelessWidget {
   }
 }
 
-class _StatusCareStagePill extends StatelessWidget {
-  const _StatusCareStagePill({
-    required this.label,
-    required this.selected,
-    required this.accent,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final Color accent;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: label,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        child: Container(
-          constraints: const BoxConstraints(minWidth: 50),
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-          decoration: BoxDecoration(
-            color: selected
-                ? Colors.white.withValues(alpha: 0.62)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-          ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: selected ? accent : MomCozyColors.mutedForeground,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _StatusIdentityTabs extends StatelessWidget {
   const _StatusIdentityTabs({
     required this.selected,
@@ -4470,125 +4423,119 @@ class _PumpCalibrationPromptOverlay extends StatelessWidget {
     return Positioned.fill(
       child: ColoredBox(
         color: MomCozyColors.foreground.withValues(alpha: 0.4),
-        child: Align(
-          alignment: Alignment.centerLeft,
+        child: Center(
           child: Padding(
-            padding: const EdgeInsets.only(left: 58),
-            child: OverflowBox(
-              alignment: Alignment.centerLeft,
-              fit: OverflowBoxFit.deferToChild,
-              minWidth: 392,
-              maxWidth: 392,
-              child: SizedBox(
-                width: 392,
-                child: DecoratedBox(
-                  decoration: MomCozyDecorations.card(
-                    color: MomCozyColors.card,
-                    borderColor: MomCozyColors.border,
-                    radius: 24,
-                    shadows: const [
-                      BoxShadow(
-                        color: Color(0x40392832),
-                        blurRadius: 36,
-                        spreadRadius: -10,
-                        offset: Offset(0, 18),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: ConstrainedBox(
+              key: const ValueKey('pump-calibration-prompt-card'),
+              constraints: const BoxConstraints(maxWidth: 392),
+              child: DecoratedBox(
+                decoration: MomCozyDecorations.card(
+                  color: MomCozyColors.card,
+                  borderColor: MomCozyColors.border,
+                  radius: 24,
+                  shadows: const [
+                    BoxShadow(
+                      color: Color(0x40392832),
+                      blurRadius: 36,
+                      spreadRadius: -10,
+                      offset: Offset(0, 18),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const _PumpPromptFlowerIcon(),
+                          const SizedBox(width: 9),
+                          Text(
+                            '个性化舒适档位',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: MomCozyColors.foreground,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      _PumpPromptRichLine(
+                        segments: [
+                          const TextSpan(text: '妈妈，检测到您还没有进行过'),
+                          TextSpan(
+                            text: '耐受度滴定',
+                            style: _pumpPromptEmphasisStyle(context),
+                          ),
+                          const TextSpan(text: '哦~'),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      _PumpPromptRichLine(
+                        segments: [
+                          const TextSpan(text: '滴定可以帮您找到'),
+                          TextSpan(
+                            text: '最舒适且高效',
+                            style: _pumpPromptEmphasisStyle(context),
+                          ),
+                          const TextSpan(text: '的吸力档位，避免吸乳时疼痛或效率不佳 '),
+                          const WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: _PumpPromptHeartIcon(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      _PumpPromptRichLine(
+                        segments: [
+                          const TextSpan(text: '只需要 '),
+                          TextSpan(
+                            text: '2分钟',
+                            style: _pumpPromptEmphasisStyle(context),
+                          ),
+                          const TextSpan(text: '，就能让每次吸乳都更舒适~'),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: onSkip,
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(40),
+                                side: BorderSide(
+                                  color: MomCozyColors.border.withValues(
+                                    alpha: 0.8,
+                                  ),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: const Text('先跳过'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: FilledButton(
+                              onPressed: onStartCalibration,
+                              style: FilledButton.styleFrom(
+                                minimumSize: const Size.fromHeight(40),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: const Text('开始滴定'),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const _PumpPromptFlowerIcon(),
-                            const SizedBox(width: 9),
-                            Text(
-                              '个性化舒适档位',
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(
-                                    color: MomCozyColors.foreground,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        _PumpPromptRichLine(
-                          segments: [
-                            const TextSpan(text: '妈妈，检测到您还没有进行过'),
-                            TextSpan(
-                              text: '耐受度滴定',
-                              style: _pumpPromptEmphasisStyle(context),
-                            ),
-                            const TextSpan(text: '哦~'),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        _PumpPromptRichLine(
-                          segments: [
-                            const TextSpan(text: '滴定可以帮您找到'),
-                            TextSpan(
-                              text: '最舒适且高效',
-                              style: _pumpPromptEmphasisStyle(context),
-                            ),
-                            const TextSpan(text: '的吸力档位，避免吸乳时疼痛或效率不佳 '),
-                            const WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              child: _PumpPromptHeartIcon(),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        _PumpPromptRichLine(
-                          segments: [
-                            const TextSpan(text: '只需要 '),
-                            TextSpan(
-                              text: '2分钟',
-                              style: _pumpPromptEmphasisStyle(context),
-                            ),
-                            const TextSpan(text: '，就能让每次吸乳都更舒适~'),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: onSkip,
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: const Size.fromHeight(40),
-                                  side: BorderSide(
-                                    color: MomCozyColors.border.withValues(
-                                      alpha: 0.8,
-                                    ),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                child: const Text('先跳过'),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: FilledButton(
-                                onPressed: onStartCalibration,
-                                style: FilledButton.styleFrom(
-                                  minimumSize: const Size.fromHeight(40),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                child: const Text('开始滴定'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
@@ -7035,49 +6982,40 @@ class _RecordsDashboardCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          ClipRect(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const ClampingScrollPhysics(),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 132,
-                    child: _RecordsMiniStat(
-                      icon: Icons.local_fire_department_outlined,
-                      label: '吸奶器母乳量',
-                      value: dashboardTotalValue,
-                      unitSuffix: volumeUnit,
-                      accent: accent,
-                      onTap: onToggleUnit,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: 132,
-                    child: _RecordsMiniStat(
-                      icon: Icons.schedule_rounded,
-                      label: '吸奶次数',
-                      value: '$deviceSessions 次',
-                      accent: MomCozyColors.warm,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: 132,
-                    child: _RecordsMiniStat(
-                      icon: Icons.trending_up_rounded,
-                      label: '周均日补录奶量',
-                      value: _amountLabel(
-                        dashboardWeeklyAverageMl,
-                        unit: volumeUnit,
-                      ),
-                      accent: MomCozyColors.violet,
-                    ),
-                  ),
-                ],
+          Row(
+            children: [
+              Expanded(
+                child: _RecordsMiniStat(
+                  icon: Icons.local_fire_department_outlined,
+                  label: '吸奶器母乳量',
+                  value: dashboardTotalValue,
+                  unitSuffix: volumeUnit,
+                  accent: accent,
+                  onTap: onToggleUnit,
+                ),
               ),
-            ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _RecordsMiniStat(
+                  icon: Icons.schedule_rounded,
+                  label: '吸奶次数',
+                  value: '$deviceSessions 次',
+                  accent: MomCozyColors.warm,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _RecordsMiniStat(
+                  icon: Icons.trending_up_rounded,
+                  label: '周均日补录奶量',
+                  value: _amountLabel(
+                    dashboardWeeklyAverageMl,
+                    unit: volumeUnit,
+                  ),
+                  accent: MomCozyColors.violet,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           Row(
@@ -8675,27 +8613,20 @@ class _W1ProductSummary extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            const SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: NeverScrollableScrollPhysics(),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 140,
-                    child: _W1SpecTile(label: '重量', value: '180g'),
-                  ),
-                  SizedBox(width: 8),
-                  SizedBox(
-                    width: 128,
-                    child: _W1SpecTile(label: '噪音', value: '≤35dB'),
-                  ),
-                  SizedBox(width: 8),
-                  SizedBox(
-                    width: 140,
-                    child: _W1SpecTile(label: '续航', value: '4h+'),
-                  ),
-                ],
-              ),
+            const Row(
+              children: [
+                Expanded(
+                  child: _W1SpecTile(label: '重量', value: '180g'),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: _W1SpecTile(label: '噪音', value: '≤35dB'),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: _W1SpecTile(label: '续航', value: '4h+'),
+                ),
+              ],
             ),
           ],
         ),
@@ -8723,6 +8654,8 @@ class _W1SpecTile extends StatelessWidget {
           children: [
             Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: MomCozyColors.mutedForeground,
                 fontWeight: FontWeight.w700,
@@ -8731,6 +8664,8 @@ class _W1SpecTile extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: MomCozyColors.foreground,
                 fontWeight: FontWeight.w900,

@@ -101,6 +101,13 @@ void main() {
       for (final label in const ['宝宝和我', '计划', '智能体', '社区', '设备']) {
         _expectFinderWithinViewport(tester, find.text(label));
       }
+
+      router.go('/');
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('agent-composer-input')),
+      );
     });
 
     testWidgets('device and community content fit compact mobile width', (
@@ -128,6 +135,31 @@ void main() {
       _expectFinderWithinViewport(
         tester,
         find.textContaining('我们将打造一个妈妈们一起交流分享的社区'),
+      );
+    });
+
+    testWidgets('legacy horizontal panels fit compact mobile width', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(tester, find.text('周均日补录奶量'));
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/w1')));
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(tester, find.text('续航'));
+      _expectFinderWithinViewport(tester, find.text('4h+'));
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('pump-calibration-prompt-card')),
       );
     });
 

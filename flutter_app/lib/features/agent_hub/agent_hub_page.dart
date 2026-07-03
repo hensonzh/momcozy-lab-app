@@ -345,27 +345,24 @@ class _AgentHubPageState extends State<AgentHubPage> {
               ],
             ),
           ),
-          Transform.translate(
-            offset: const Offset(0, 27),
-            child: AgentComposerBar(
-              controller: _composerController,
-              canSend: _canSend,
-              isRunning: _state.isActive,
-              imageCount: _attachedImages.length,
-              canAttachImage: widget.pickImage != null && !_state.isActive,
-              canUseVoice:
-                  (widget.voiceInputController != null ||
-                      widget.voiceInput != null) &&
-                  !_state.isActive &&
-                  !_voiceState.isInputActive,
-              voicePhase: _voiceState.phase,
-              onChanged: (_) => setState(() {}),
-              onSend: _sendMessage,
-              onCancel: _cancelRun,
-              onAttachImage: _attachImage,
-              onRemoveImages: _removeAttachedImages,
-              onVoiceInput: _startVoiceInput,
-            ),
+          AgentComposerBar(
+            controller: _composerController,
+            canSend: _canSend,
+            isRunning: _state.isActive,
+            imageCount: _attachedImages.length,
+            canAttachImage: widget.pickImage != null && !_state.isActive,
+            canUseVoice:
+                (widget.voiceInputController != null ||
+                    widget.voiceInput != null) &&
+                !_state.isActive &&
+                !_voiceState.isInputActive,
+            voicePhase: _voiceState.phase,
+            onChanged: (_) => setState(() {}),
+            onSend: _sendMessage,
+            onCancel: _cancelRun,
+            onAttachImage: _attachImage,
+            onRemoveImages: _removeAttachedImages,
+            onVoiceInput: _startVoiceInput,
           ),
         ],
       ),
