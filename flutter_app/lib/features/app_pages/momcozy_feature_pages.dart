@@ -626,7 +626,7 @@ class _StatusPageState extends State<_StatusPage> {
 
         return ListView(
           key: ValueKey('route-page-${widget.path}'),
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 96),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
           children: [
             _CareStageSelector(
               selectedStage: _careStage,
@@ -1665,43 +1665,7 @@ class _CareStageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPregnancy = selectedStage == 'pregnancy';
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 1),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Opacity(
-            opacity: 0,
-            child: Container(
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _StatusCareStagePill(
-                    label: '孕期',
-                    selected: isPregnancy,
-                    accent: accent,
-                    onTap: () => onChanged('pregnancy'),
-                  ),
-                  _StatusCareStagePill(
-                    label: '哺乳期',
-                    selected: !isPregnancy,
-                    accent: accent,
-                    onTap: () => onChanged('postpartum'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return const SizedBox.shrink();
   }
 }
 
@@ -3308,7 +3272,7 @@ class _DevicePageState extends State<_DevicePage> {
 
     return ListView(
       key: ValueKey('route-page-${widget.path}'),
-      padding: const EdgeInsets.fromLTRB(16, 40, 0, 28),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
       children: [
         _DeviceHeader(
           onAdd: _toggleScan,
@@ -3611,54 +3575,43 @@ class _DeviceAirOnePanel extends StatelessWidget {
                     ),
                   ),
                 ),
-                Transform.translate(
-                  offset: const Offset(104, 0),
-                  child: FilledButton.icon(
+                if (onStartPump != null)
+                  FilledButton.icon(
                     onPressed: onStartPump,
                     style: FilledButton.styleFrom(
-                      minimumSize: const Size(0, 40),
+                      minimumSize: const Size(0, 38),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                      ),
-                      disabledBackgroundColor: MomCozyColors.primary.withValues(
-                        alpha: 0.42,
                       ),
                     ),
                     icon: const Icon(Icons.play_arrow_rounded, size: 18),
                     label: const Text('开始吸奶'),
                   ),
-                ),
               ],
             ),
             const SizedBox(height: 12),
-            SingleChildScrollView(
-              clipBehavior: Clip.none,
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 214,
-                    child: _DeviceDeckCard(
-                      sideCode: 'L',
-                      sideLabel: '左侧',
-                      device: leftDevice,
-                      onTap: onLeftAction,
-                    ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _DeviceDeckCard(
+                    sideCode: 'L',
+                    sideLabel: '左侧',
+                    device: leftDevice,
+                    onTap: onLeftAction,
                   ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 214,
-                    child: _DeviceDeckCard(
-                      sideCode: 'R',
-                      sideLabel: '右侧',
-                      device: rightDevice,
-                      onTap: onRightAction,
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _DeviceDeckCard(
+                    sideCode: 'R',
+                    sideLabel: '右侧',
+                    device: rightDevice,
+                    onTap: onRightAction,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
@@ -3689,6 +3642,7 @@ class _DeviceDeckCard extends StatelessWidget {
         : MomCozyColors.mutedForeground;
 
     return Material(
+      key: ValueKey('device-deck-card-$sideCode'),
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(20),
       clipBehavior: Clip.antiAlias,
@@ -3808,13 +3762,17 @@ class _DeviceDeckCard extends StatelessWidget {
                     children: [
                       const Icon(Icons.bluetooth_rounded, size: 16),
                       const SizedBox(width: 6),
-                      Text(
-                        '连接设备',
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              color: MomCozyColors.foreground,
-                              fontWeight: FontWeight.w900,
-                            ),
+                      Flexible(
+                        child: Text(
+                          '连接设备',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
+                                color: MomCozyColors.foreground,
+                                fontWeight: FontWeight.w900,
+                              ),
+                        ),
                       ),
                     ],
                   ),
@@ -7901,52 +7859,49 @@ class _CommunityPageState extends State<_CommunityPage> {
         ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 660),
           child: Center(
-            child: Transform.translate(
-              offset: const Offset(54, 40),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 76,
-                    height: 76,
-                    padding: const EdgeInsets.all(7),
-                    decoration: BoxDecoration(
-                      color: MomCozyColors.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                      boxShadow: MomCozyShadows.soft,
-                    ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        MomCozyAssets.agentAvatar,
-                        fit: BoxFit.cover,
-                      ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 76,
+                  height: 76,
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.primary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                    boxShadow: MomCozyShadows.soft,
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      MomCozyAssets.agentAvatar,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  const SizedBox(height: 18),
-                  Text(
-                    '社区功能还在建设中哦～',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w900,
-                      height: 1.2,
-                    ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  '社区功能还在建设中哦～',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                    height: 1.2,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    '我们将打造一个妈妈们一起交流分享的社区，敬请期待～',
-                    maxLines: 1,
-                    overflow: TextOverflow.visible,
-                    softWrap: false,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: MomCozyColors.mutedForeground,
-                      fontWeight: FontWeight.w700,
-                      height: 1.4,
-                    ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  '我们将打造一个妈妈们一起交流分享的社区，\n敬请期待～',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                    fontWeight: FontWeight.w700,
+                    height: 1.4,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
