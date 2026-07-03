@@ -641,6 +641,10 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
       await tester.pumpAndSettle();
 
+      expect(find.text('妈妈点滴'), findsOneWidget);
+      expect(find.text('2026年7月'), findsOneWidget);
+      expect(find.byTooltip('上个月'), findsOneWidget);
+      expect(find.byTooltip('下个月'), findsOneWidget);
       expect(find.text('吸奶器母乳量'), findsOneWidget);
       await _scrollToTextContaining(tester, '晨间泵奶');
       expect(find.textContaining('晨间泵奶'), findsOneWidget);
