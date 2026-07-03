@@ -750,12 +750,13 @@ class _StatusPageState extends State<_StatusPage> {
             background: const Color(0xfffff7fb),
             hiddenTexts: [stage, stageNote],
             metrics: const [
-              _StatusModuleMetric(label: '今日产出', value: '待记录'),
+              _StatusModuleMetric(label: '今日产出', value: '待记录', showHelp: true),
               _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
             ],
           ),
           const _StatusModuleCard(
             title: '乳房健康',
+            showHelp: true,
             bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
             action: '查看《乳房健康日记》',
             icon: Icons.heart_broken_outlined,
@@ -772,6 +773,7 @@ class _StatusPageState extends State<_StatusPage> {
           ),
           const _StatusModuleCard(
             title: '补能与休息',
+            showHelp: true,
             bodyText: '待开通睡眠与营养功能',
             icon: Icons.local_cafe_outlined,
             accent: Color(0xffb9792a),
@@ -909,11 +911,13 @@ class _StatusModuleMetric {
     required this.label,
     required this.value,
     this.note,
+    this.showHelp = false,
   });
 
   final String label;
   final String value;
   final String? note;
+  final bool showHelp;
 }
 
 class _StatusModuleGrid extends StatelessWidget {
@@ -956,6 +960,7 @@ class _StatusModuleCard extends StatelessWidget {
     this.hiddenTexts = const [],
     this.action,
     this.onAction,
+    this.showHelp = false,
   });
 
   final String title;
@@ -964,6 +969,7 @@ class _StatusModuleCard extends StatelessWidget {
   final List<String> hiddenTexts;
   final String? action;
   final VoidCallback? onAction;
+  final bool showHelp;
   final IconData icon;
   final Color accent;
   final Color background;
@@ -1023,15 +1029,18 @@ class _StatusModuleCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: titleStyle,
+                              Flexible(
+                                child: Text(
+                                  title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: titleStyle,
+                                ),
                               ),
+                              if (showHelp) const _StatusHelpDot(),
                             ],
                           ),
                         ),
@@ -1053,7 +1062,7 @@ class _StatusModuleCard extends StatelessWidget {
                     else if (bodyText != null)
                       Text(
                         bodyText!,
-                        maxLines: action == null ? 2 : 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: helperStyle,
                       ),
@@ -1092,14 +1101,23 @@ class _StatusModuleMetricRows extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    metric.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: MomCozyColors.mutedForeground,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          metric.label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: MomCozyColors.mutedForeground,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ),
+                      if (metric.showHelp) const _StatusHelpDot(size: 14),
+                    ],
                   ),
                   const SizedBox(height: 3),
                   Text(
@@ -1128,6 +1146,40 @@ class _StatusModuleMetricRows extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class _StatusHelpDot extends StatelessWidget {
+  const _StatusHelpDot({this.size = 16});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 5),
+      child: Container(
+        width: size,
+        height: size,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.72),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: MomCozyColors.mutedForeground.withValues(alpha: 0.46),
+          ),
+        ),
+        child: Text(
+          '?',
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: MomCozyColors.mutedForeground,
+            fontSize: size <= 14 ? 8 : 9,
+            height: 1,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -1674,10 +1726,24 @@ class _StatusTrendPreview extends StatelessWidget {
                   ),
                 ),
               ),
+              const Icon(
+                Icons.keyboard_arrow_up_rounded,
+                size: 20,
+                color: MomCozyColors.mutedForeground,
+              ),
             ],
           ),
           const SizedBox(height: 12),
-          const _StatusTrendLegend(),
+          const Row(
+            children: [
+              Expanded(child: _StatusTrendLegend()),
+              _StatusSegmentedPills(
+                selected: '周',
+                options: ['周', '月'],
+                color: Color(0xffb9792a),
+              ),
+            ],
+          ),
           const SizedBox(height: 10),
           SizedBox(
             height: 198,
