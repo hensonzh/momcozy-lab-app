@@ -302,15 +302,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   Widget build(BuildContext context) {
-    final showTopControls = _historyMessages.isNotEmpty || _state.isActive;
-
     return ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
       child: Column(
         children: [
           AgentHubTopBar(
-            showControls: showTopControls,
+            showControls: true,
             autoVoiceEnabled: _autoVoiceEnabled,
             isRunning: _state.isActive,
             onToggleAutoVoice: () =>

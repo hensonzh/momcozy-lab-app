@@ -21,10 +21,13 @@ void main() {
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
     expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
     expect(find.textContaining('你希望我怎么称呼你？'), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-auto-voice-button')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-auto-voice-button')),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const ValueKey('agent-new-session-button')),
-      findsNothing,
+      findsOneWidget,
     );
     expect(find.byKey(const ValueKey('agent-composer-input')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-image-button')), findsOneWidget);
