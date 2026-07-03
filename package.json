@@ -19,6 +19,7 @@
     "flutter:packaging-check": "node scripts/check-flutter-android-packaging.mjs",
     "flutter:security-check": "node scripts/check-flutter-security-privacy.mjs",
     "flutter:p0:platform-smoke": "node scripts/run-flutter-platform-smoke.mjs",
+    "flutter:emulator-smoke": "node scripts/run-flutter-emulator-smoke.mjs",
     "flutter:rollback-check": "node scripts/write-flutter-rollback-manifest.mjs",
     "flutter:release-gate": "node scripts/run-flutter-release-gate.mjs",
     "postinstall": "patch-package"
