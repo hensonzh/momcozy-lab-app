@@ -9345,17 +9345,40 @@ class _HospitalBagGroupSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = _hospitalBagToneColors(group.tone);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         children: [
           Row(
             children: [
-              Text(
-                group.title,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: const Color(0xff372330),
-                  fontWeight: FontWeight.w900,
+              Expanded(
+                child: Text(
+                  group.title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: const Color(0xff372330),
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.background,
+                  borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                  border: Border.all(color: colors.border),
+                ),
+                child: Text(
+                  '${group.items.length} 件',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: colors.foreground,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 10,
+                  ),
                 ),
               ),
             ],
@@ -9451,12 +9474,75 @@ class _HospitalBagCartItemTile extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  _HospitalBagItemActions(item: item, onDelete: onDelete),
                 ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _HospitalBagItemActions extends StatelessWidget {
+  const _HospitalBagItemActions({required this.item, required this.onDelete});
+
+  final _HospitalBagCartItemSpec item;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          _hospitalBagMoney(item.price),
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: const Color(0xff372330),
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Semantics(
+          button: true,
+          label: '删除${item.name}',
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              onTap: onDelete,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                  border: Border.all(color: const Color(0xffedd6df)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.delete_outline_rounded,
+                      size: 12,
+                      color: Color(0xff6c4457),
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      '删除',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: const Color(0xff6c4457),
+                        fontWeight: FontWeight.w900,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -9868,6 +9954,8 @@ class _HospitalBagCartItemSpec {
   final double price;
   int get qty => 1;
 }
+
+String _hospitalBagMoney(double amount) => '¥${amount.toStringAsFixed(2)}';
 
 const _hospitalBagCartGroups = [
   _HospitalBagCartGroupSpec(
