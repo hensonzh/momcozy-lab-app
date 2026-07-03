@@ -16,14 +16,13 @@
 
 | 类别 | 数量 | 页面 |
 |---|---:|---|
-| 结构通过 | 13 | Agent Hub、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Media Viewer、Calibration、Records、Community、Not Found |
-| 需修正 | 1 | Status |
+| 结构通过 | 14 | Agent Hub、Status、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Media Viewer、Calibration、Records、Community、Not Found |
+| 需修正 | 0 | - |
 | 需深状态补图后复核 | 2 | Pump、Agent Hub rich states |
 
 最重要的待修正项：
 
-1. Status 母乳趋势日期刻度与旧 Web reference 有轻微差异。
-2. Records 显式编辑按钮是否替代旧 Web swipe reveal，需要产品确认。
+1. Records 显式编辑按钮是否替代旧 Web swipe reveal，需要产品确认。
 
 ---
 
@@ -44,7 +43,7 @@
 | 页面 | 旧 Web | Flutter | 结论 | 记录 |
 |---|---|---|---|---|
 | Agent Hub `/` | ![](../test/screenshots/legacy_web/compact_390x844/agent_hub.png) | ![](../flutter_app/test/goldens/feature_pages/agent_hub_mobile.png) | 结构通过 | 首屏问候、输入栏、右上图标、底栏结构一致；图标细节和输入栏高度有轻微 Flutter 差异，可暂不阻断。 |
-| Status `/status` | ![](../test/screenshots/legacy_web/compact_390x844/status.png) | ![](../flutter_app/test/goldens/feature_pages/status_page_mobile.png) | 需修正 | 主结构一致；母乳趋势 x 轴日期范围与 reference 有轻微不一致，需要统一 fixture 或刻度算法。 |
+| Status `/status` | ![](../test/screenshots/legacy_web/compact_390x844/status.png) | ![](../flutter_app/test/goldens/feature_pages/status_page_mobile.png) | 结构通过 | 主结构一致；母乳趋势 x 轴已统一为旧 Web reference 的 `06/26` 到 `07/02` 七天窗口。 |
 | Schedule `/schedule` | ![](../test/screenshots/legacy_web/compact_390x844/schedule.png) | ![](../flutter_app/test/goldens/feature_pages/schedule_page_mobile.png) | 结构通过 | 月份、日期条、计划卡、Agent 提醒卡、空态、底栏结构一致；Flutter 今日任务工具按钮略贴底，需要后续深状态复核。 |
 | Device `/device` | ![](../test/screenshots/legacy_web/compact_390x844/device.png) | ![](../flutter_app/test/goldens/feature_pages/device_page_mobile.png) | 结构通过 | 标题、加号、W1 横幅、Air One、左右设备卡和底栏一致。 |
 | Device Manage `/device/manage` | ![](../test/screenshots/legacy_web/compact_390x844/device_manage.png) | ![](../flutter_app/test/goldens/feature_pages/device_manage_page_mobile.png) | 结构通过 | 子页结构可接受；后续需补加载/失败状态 golden。 |
@@ -73,10 +72,9 @@
 
 | ID | 页面 | 问题 | 验收方式 |
 |---|---|---|---|
-| UI-P2-001 | Status | 母乳趋势日期刻度与旧 Web reference 轻微不一致。 | 统一 reference fixture 或刻度算法，golden 不再漂移。 |
-| UI-P2-002 | Agent Hub | 输入栏高度、图标样式与旧 Web 有轻微差异。 | 设计确认可接受，或调整后更新 golden。 |
-| UI-P2-003 | Pump | 背景模糊强度和深状态仍未完全评审。 | 增加 running、paused、finished、upload failed golden 后复核。 |
-| UI-P2-004 | Records | 旧 Web 编辑操作主要通过 swipe reveal 暴露；Flutter 当前显式展示编辑/删除按钮。 | 产品确认接受显式按钮，或后续改为 swipe reveal 并保留测试入口。 |
+| UI-P2-001 | Agent Hub | 输入栏高度、图标样式与旧 Web 有轻微差异。 | 设计确认可接受，或调整后更新 golden。 |
+| UI-P2-002 | Pump | 背景模糊强度和深状态仍未完全评审。 | 增加 running、paused、finished、upload failed golden 后复核。 |
+| UI-P2-003 | Records | 旧 Web 编辑操作主要通过 swipe reveal 暴露；Flutter 当前显式展示编辑/删除按钮。 | 产品确认接受显式按钮，或后续改为 swipe reveal 并保留测试入口。 |
 
 ---
 
