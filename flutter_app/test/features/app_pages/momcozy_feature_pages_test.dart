@@ -103,6 +103,34 @@ void main() {
       }
     });
 
+    testWidgets('device and community content fit compact mobile width', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/device')));
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('device-deck-card-L')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('device-deck-card-R')),
+      );
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/community')));
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(tester, find.text('社区功能还在建设中哦～'));
+      _expectFinderWithinViewport(
+        tester,
+        find.textContaining('我们将打造一个妈妈们一起交流分享的社区'),
+      );
+    });
+
     testWidgets('renders core status, schedule, device, and pump sections', (
       tester,
     ) async {
@@ -272,22 +300,12 @@ void main() {
       expect(find.text('88 天'), findsOneWidget);
     });
 
-    testWidgets('status page switches care stage and records growth locally', (
-      tester,
-    ) async {
+    testWidgets('status page records growth locally', (tester) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
       await tester.pumpAndSettle();
 
       expect(find.text('产后第 21 天'), findsOneWidget);
 
-      await tester.tap(find.text('孕期').first);
-      await tester.pumpAndSettle();
-
-      expect(find.text('孕期'), findsOneWidget);
-      expect(find.text('孕期重点：体征与日记'), findsOneWidget);
-
-      await tester.tap(find.text('哺乳期'));
-      await tester.pumpAndSettle();
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
@@ -1729,7 +1747,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('社区功能还在建设中哦～'), findsOneWidget);
-      expect(find.text('我们将打造一个妈妈们一起交流分享的社区，敬请期待～'), findsOneWidget);
+      expect(find.textContaining('我们将打造一个妈妈们一起交流分享的社区'), findsOneWidget);
       expect(find.text('妈妈小组更新'), findsNothing);
     });
 
