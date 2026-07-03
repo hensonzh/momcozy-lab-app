@@ -6667,7 +6667,11 @@ class _RecordsPageState extends State<_RecordsPage> {
           key: ValueKey('route-page-${widget.path}'),
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 96),
           children: [
-            _RecordsMonthHeader(onPrevious: () => _shiftRecordsMonth(-1)),
+            _RecordsMonthHeader(
+              monthLabel: '${_recordsDay.year}年${_recordsDay.month}月',
+              onPrevious: () => _shiftRecordsMonth(-1),
+              onNext: () => _shiftRecordsMonth(1),
+            ),
             const SizedBox(height: 14),
             ..._recordsDashboardChildren(snapshot, overview),
             if (overview != null && !snapshot.hasError) ...[
@@ -6913,9 +6917,15 @@ class _RecordsOverview {
 }
 
 class _RecordsMonthHeader extends StatelessWidget {
-  const _RecordsMonthHeader({required this.onPrevious});
+  const _RecordsMonthHeader({
+    required this.monthLabel,
+    required this.onPrevious,
+    required this.onNext,
+  });
 
+  final String monthLabel;
   final VoidCallback onPrevious;
+  final VoidCallback onNext;
 
   @override
   Widget build(BuildContext context) {
@@ -6937,9 +6947,21 @@ class _RecordsMonthHeader extends StatelessWidget {
         ),
         const Spacer(),
         _RecordsMonthButton(
-          tooltip: '返回',
+          tooltip: '上个月',
           icon: Icons.chevron_left_rounded,
           onTap: onPrevious,
+        ),
+        Text(
+          monthLabel,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: MomCozyColors.mutedForeground,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        _RecordsMonthButton(
+          tooltip: '下个月',
+          icon: Icons.chevron_right_rounded,
+          onTap: onNext,
         ),
       ],
     );
