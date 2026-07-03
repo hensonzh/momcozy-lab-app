@@ -729,6 +729,24 @@ CI 最低要求：
 [x] signing check：CI 可用 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1` 强制 release signing env
 ```
 
+最新本机执行记录：
+
+```text
+[x] 2026-07-03 `npm run flutter:release-gate` 通过
+[x] Android packaging check 通过
+[x] security/privacy check 通过
+[x] `npm run build` 通过
+[x] `dart format --set-exit-if-changed lib test tool` 通过，0 changed
+[x] `flutter analyze` 通过
+[x] `flutter test` 通过，356 个测试全部通过
+[x] staging smoke harness 安全跳过：未设置 `MOMCOZY_STAGING_SMOKE=1`
+[x] storage migration dry-run 通过，unhandled legacy key 为 0
+[x] local debug APK 构建通过：`app-local-debug.apk`
+[x] staging release APK 构建通过：`app-staging-release.apk`
+[x] rollback manifest 生成通过：`dist/flutter-rollback-manifest.json`
+[ ] release signing env 未在本机配置；如需 CI 强制签名，设置 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1`
+```
+
 发布门槛最低要求：
 
 ```text
