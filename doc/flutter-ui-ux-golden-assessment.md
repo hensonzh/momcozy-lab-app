@@ -190,6 +190,7 @@ clipBehavior: Clip.none
 已满足：
 
 - 妈妈/宝宝档案 tab 保留。
+- 模块帮助点、乳房健康两行说明、母乳趋势折叠箭头和 `周/月` 控件已恢复到旧 Web 主路径结构。
 - 后端失败和空数据不会再替代旧 Web 首屏，妈妈哺乳期、宝宝哺乳期、妈妈孕期 offline fallback 均保留旧版主结构。
 - 状态页已有成功、空态、失败、长文本、成长记录等 widget 测试。
 - 已补三档 viewport Status offline fallback golden：`flutter_app/test/goldens/status_states/`。
