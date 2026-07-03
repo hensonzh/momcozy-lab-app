@@ -91,6 +91,14 @@ void main() {
 
       _expectFinderWithinViewport(
         tester,
+        find.byKey(const ValueKey('status-care-stage-pregnancy')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('status-care-stage-postpartum')),
+      );
+      _expectFinderWithinViewport(
+        tester,
         find.byKey(const ValueKey('status-identity-tab-mom')),
       );
       _expectFinderWithinViewport(

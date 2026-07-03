@@ -1665,7 +1665,89 @@ class _CareStageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox.shrink();
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Semantics(
+        container: true,
+        label: '照护阶段切换',
+        child: Container(
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _CareStageOption(
+                key: const ValueKey('status-care-stage-pregnancy'),
+                label: '孕期',
+                selected: selectedStage == 'pregnancy',
+                onTap: () => onChanged('pregnancy'),
+              ),
+              const SizedBox(width: 2),
+              _CareStageOption(
+                key: const ValueKey('status-care-stage-postpartum'),
+                label: '哺乳期',
+                selected: selectedStage == 'postpartum',
+                onTap: () => onChanged('postpartum'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CareStageOption extends StatelessWidget {
+  const _CareStageOption({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: selected
+          ? Colors.white.withValues(alpha: 0.7)
+          : Colors.transparent,
+      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        onTap: onTap,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 24, minWidth: 42),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+            border: selected
+                ? Border.all(
+                    color: const Color(0xffeadfd8).withValues(alpha: 0.7),
+                  )
+                : null,
+          ),
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: selected
+                  ? const Color(0xff6f5964)
+                  : const Color(0xffaa98a1),
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              height: 1,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
