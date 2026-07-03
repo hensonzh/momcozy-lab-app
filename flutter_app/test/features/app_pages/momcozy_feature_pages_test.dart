@@ -439,6 +439,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      expect(find.text('母乳产出'), findsOneWidget);
+      await _scrollToText(tester, '母乳趋势');
+      expect(find.text('母乳趋势'), findsOneWidget);
+      await _scrollToText(tester, '暂无状态数据');
       expect(find.text('暂无状态数据'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -454,6 +458,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      expect(find.text('母乳产出'), findsOneWidget);
+      await _scrollToText(tester, '母乳趋势');
+      expect(find.text('母乳趋势'), findsOneWidget);
+      await _scrollToText(tester, '状态同步失败');
       expect(find.text('状态同步失败'), findsOneWidget);
       expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
     });

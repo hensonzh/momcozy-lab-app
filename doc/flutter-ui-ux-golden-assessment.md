@@ -73,12 +73,13 @@ flutter_app/test/goldens/ibclc_states/*_mobile.png
 flutter_app/test/goldens/media_viewer_states/*_mobile.png
 flutter_app/test/goldens/pump_states/*_mobile.png
 flutter_app/test/goldens/schedule_states/*_mobile.png
+flutter_app/test/goldens/status_states/*_mobile.png
 ```
 
-当前 Flutter golden 总数为 111：
+当前 Flutter golden 总数为 120：
 
 - 15 个 feature 页面 x 3 个移动视口。
-- Agent Hub、Schedule、Pump、IBCLC、Media Viewer 与 Device 子页深状态 golden。
+- Agent Hub、Status、Schedule、Pump、IBCLC、Media Viewer 与 Device 子页深状态 golden。
 
 当前 Flutter 自动化验证结果：
 
@@ -93,7 +94,7 @@ flutter_app/test/goldens/schedule_states/*_mobile.png
 - 全部非 Agent 页面渲染。
 - compact mobile 页面 golden。
 - Agent Hub rich/deep state golden。
-- Schedule、Pump、IBCLC、Media Viewer 与 Device 子页深状态 golden。
+- Status、Schedule、Pump、IBCLC、Media Viewer 与 Device 子页深状态 golden。
 - Agent SSE/WebSocket transport-agnostic 流处理。
 - BLE protocol fixture。
 - Storage migration。
@@ -189,12 +190,13 @@ clipBehavior: Clip.none
 已满足：
 
 - 妈妈/宝宝档案 tab 保留。
-- 状态同步失败、下一步、孕期日记、今日待办等主结构保留。
+- 后端失败和空数据不会再替代旧 Web 首屏，妈妈哺乳期、宝宝哺乳期、妈妈孕期 offline fallback 均保留旧版主结构。
 - 状态页已有成功、空态、失败、长文本、成长记录等 widget 测试。
+- 已补三档 viewport Status offline fallback golden：`flutter_app/test/goldens/status_states/`。
 
 后续增强：
 
-- 若产品调整妈妈/宝宝档案内容或通知 badge 规则，需要补对应状态 golden。
+- 若产品调整妈妈/宝宝档案内容或通知 badge 规则，需要继续补对应状态 golden。
 
 ### 6.3 计划 `/schedule`
 
@@ -379,7 +381,7 @@ clipBehavior: Clip.none
 - 主 tab 页面不会再出现右侧半张卡片作为默认可见布局。
 - Pump、Calibration、Media Viewer、IBCLC 等专注流程会隐藏底栏。
 - 当前 360x800、390x844、430x932 mobile golden 覆盖所有主页面。
-- Agent Hub、Schedule、Pump、IBCLC、Media Viewer 与 Device 子页高风险状态已有三档 viewport golden。
+- Agent Hub、Status、Schedule、Pump、IBCLC、Media Viewer 与 Device 子页高风险状态已有三档 viewport golden。
 - `flutter analyze` 通过。
 - `flutter test` 通过，356 个测试全部通过。
 - Agent 文本流已按 transport-agnostic 架构设计，不把 UI 绑定到单一 WebSocket 实现。
@@ -394,6 +396,7 @@ clipBehavior: Clip.none
 
 2. 已增加高风险深状态 golden：
    - Agent：rich、streaming、cancelled、disconnected、voice error。
+   - Status：妈妈哺乳期、宝宝哺乳期、妈妈孕期 offline fallback。
    - Schedule：populated、local task added、sync failed。
    - Device 子页：manage loading、manage offline sync、user expanded、user save failed。
    - Pump：running、paused、finished locked、upload failed。
