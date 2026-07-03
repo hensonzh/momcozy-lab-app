@@ -22,8 +22,7 @@
 
 剩余产品决策项：
 
-1. Records 显式编辑按钮是否替代旧 Web swipe reveal，需要产品确认。
-2. W1 营销素材和最终文案，需要产品确认。
+1. W1 营销素材和最终文案，需要产品确认。
 
 ---
 
@@ -55,7 +54,7 @@
 | Media Viewer `/media-viewer` | ![](../test/screenshots/legacy_web/compact_390x844/media_viewer.png) | ![](../flutter_app/test/goldens/feature_pages/media_viewer_page_mobile.png) | 结构通过 | 缺资源状态一致；已补 PDF、image、video 三档 viewport 资源状态 golden：`flutter_app/test/goldens/media_viewer_states/`。 |
 | Pump `/pump` | ![](../test/screenshots/legacy_web/compact_390x844/pump.png) | ![](../flutter_app/test/goldens/feature_pages/pump_page_mobile.png) | 结构通过 | 首次校准弹窗结构一致；已补 running、paused、finished locked、upload failed 三档 viewport 深状态 golden：`flutter_app/test/goldens/pump_states/`。 |
 | Calibration `/calibration` | ![](../test/screenshots/legacy_web/compact_390x844/calibration.png) | ![](../flutter_app/test/goldens/feature_pages/calibration_page_mobile.png) | 结构通过 | 主卡片、进度条、右上 `1/7` 步数文本和 CTA 已对齐；360 窄屏裁切已修复。 |
-| Records `/records` | ![](../test/screenshots/legacy_web/compact_390x844/records.png) | ![](../flutter_app/test/goldens/feature_pages/records_page_mobile.png) | 结构通过 | 已恢复 reference 月份、周均奶量、记录时间、M.ai logo、单位切换、图表右侧阶段标签、分段背景和记录行右侧时间；当前显式编辑/删除按钮作为工程基线通过，是否回退到旧 Web swipe reveal 留给产品确认。 |
+| Records `/records` | ![](../test/screenshots/legacy_web/compact_390x844/records.png) | ![](../flutter_app/test/goldens/feature_pages/records_page_mobile.png) | 结构通过 | 已恢复 reference 月份、周均奶量、记录时间、M.ai logo、单位切换、图表右侧阶段标签、分段背景、每日 x 轴日期、记录行右侧时间；记录行不再常驻编辑/删除双按钮，设备同步记录保持只读视觉，手动记录保留旧版删除入口，编辑通过长按行触发。 |
 | Community `/community` | ![](../test/screenshots/legacy_web/compact_390x844/community.png) | ![](../flutter_app/test/goldens/feature_pages/community_page_mobile.png) | 结构通过 | 建设中空态结构一致。 |
 | Not Found `*` | ![](../test/screenshots/legacy_web/compact_390x844/not_found.png) | ![](../flutter_app/test/goldens/feature_pages/not_found_page_mobile.png) | 结构通过 | 404 fallback 可接受。 |
 
@@ -73,14 +72,13 @@
 
 | ID | 页面 | 问题 | 验收方式 |
 |---|---|---|---|
-| UI-P2-001 | Records | 旧 Web 编辑操作主要通过 swipe reveal 暴露；Flutter 当前显式展示编辑/删除按钮。 | 产品确认接受显式按钮，或后续改为 swipe reveal 并保留测试入口。 |
-| UI-P2-002 | W1 | Flutter 已保留产品页结构，但营销素材和最终文案不属于工程侧可自动判定内容。 | 产品确认最终素材、文案和价格展示后，再更新 golden。 |
+| UI-P2-001 | W1 | Flutter 已保留产品页结构，但营销素材和最终文案不属于工程侧可自动判定内容。 | 产品确认最终素材、文案和价格展示后，再更新 golden。 |
 
 ---
 
 ## 5. 下一步
 
-主路径 P1 已清空，已补 Status、Schedule、Pump、Agent Hub、IBCLC、Media Viewer 与 Device 子页 deep-state golden；release gate 与 Android emulator smoke 已通过，下一步是后续真机 P0 smoke 和产品决策确认。
+主路径 P1 已清空，已补 Status、Schedule、Pump、Agent Hub、IBCLC、Media Viewer 与 Device 子页 deep-state golden；release gate 与 Android emulator smoke 已通过，下一步是后续真机 P0 smoke 和 W1 产品素材确认。
 
 后续若产品决策或真机反馈引入 UI 变更，需要：
 

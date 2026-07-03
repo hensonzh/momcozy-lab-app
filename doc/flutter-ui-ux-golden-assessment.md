@@ -22,7 +22,7 @@
 
 当前仍需留到产品或真机阶段确认的边界集中在：
 
-- 产品决策：Records 显式编辑/删除按钮是否替代旧 Web swipe reveal；W1 最终营销素材和文案。
+- 产品决策：W1 最终营销素材和文案。
 - 增强型状态覆盖：Status、Records、Hospital Bag、Calibration 等页面已有 widget 测试和主路径 golden，后续仍可按风险继续补更细的状态 golden。
 - 真机视觉/安全区/系统栏验证：本评估不包含 Android 真机、异形屏、系统字体缩放和导航手势验证。
 
@@ -86,7 +86,7 @@ flutter_app/test/goldens/status_states/*_mobile.png
 | 命令 | 结果 |
 |---|---|
 | `flutter analyze` | 通过，No issues found |
-| `flutter test` | 通过，356 个测试全部通过 |
+| `flutter test` | 通过，365 个测试全部通过 |
 
 测试覆盖范围包含：
 
@@ -130,7 +130,7 @@ flutter_app/test/goldens/status_states/*_mobile.png
 | 主题色与材质 | 通过 | 当前 Flutter 已采用 rose/cocoa 调性、柔和卡片、primary active、muted foreground 等旧版视觉语言。 |
 | 字体与文案 | 有条件通过 | 主要页面文案接近旧 Web；仍需产品或设计对每个业务文案做最终逐项确认。 |
 | 页面滚动结构 | 通过 | Tab 页面采用主滚动区域；专注流程独立全屏；没有再出现右侧半张主卡片误露的问题。 |
-| 旧版可见控件保留 | 通过 | 主路径控件已保留；Records 行操作与 W1 文案属于产品决策。 |
+| 旧版可见控件保留 | 通过 | 主路径控件已保留；Records 行操作已恢复旧版默认视觉，W1 文案属于产品决策。 |
 | 不裁切、不隐藏、不露半张卡 | 有条件通过 | 360x800 窄屏 golden 暴露并修复了校准宽卡裁切；剩余静态扫描命中均有解释，真机安全区仍需设备验证。 |
 | 可测试性 | 通过 | 当前 Flutter 自动化测试通过，且页面/golden/协议/状态机测试已建立。 |
 | 多视口视觉验收 | 通过 | 主页面和高风险深状态已覆盖 360x800、390x844、430x932；后续可按产品风险继续追加增强型状态 golden。 |
@@ -308,9 +308,10 @@ clipBehavior: Clip.none
 - 主 golden 已恢复旧 Web reference 的 `2026年3月`、`280 mL` 周均奶量、`06:30/10:00/14:00` 记录时间和 M.ai logo 入口。
 - mL/oz、添加/编辑/删除、跨天记录、空态/失败态已有测试。
 
-产品确认：
+已补充：
 
-- 旧 Web 是否依赖 swipe reveal 行操作，需要产品确认。当前 Flutter 显式编辑/删除更移动原生，但不一定是旧版完全一致。
+- 记录行不再常驻编辑/删除双按钮；设备同步记录保持只读视觉，手动记录保留旧版删除入口，编辑通过长按行触发。
+- 图表 x 轴恢复旧 Web reference 的每日日期标签。
 
 ### 6.11 Media Viewer `/media-viewer`
 
@@ -388,7 +389,7 @@ clipBehavior: Clip.none
 - 当前 360x800、390x844、430x932 mobile golden 覆盖所有主页面。
 - Agent Hub、Status、Schedule、Pump、IBCLC、Media Viewer 与 Device 子页高风险状态已有三档 viewport golden。
 - `flutter analyze` 通过。
-- `flutter test` 通过，356 个测试全部通过。
+- `flutter test` 通过，365 个测试全部通过。
 - Agent 文本流已按 transport-agnostic 架构设计，不把 UI 绑定到单一 WebSocket 实现。
 
 ---
@@ -415,11 +416,10 @@ clipBehavior: Clip.none
 
 ### 产品 / 真机边界
 
-1. 产品确认 Records 行操作是否继续沿用旧 Web swipe reveal，还是接受 Flutter 显式操作按钮。
-2. 产品确认 W1 最终营销素材、价格和文案。
-3. 真机验证 Calibration 响应式宽卡、Android 状态栏/手势导航、安全区和系统字体缩放。
-4. 真机验证 BLE、通知、后台服务、悬浮窗、真泵恢复和只上传一次。
-5. 集成验证真实第三方 IBCLC 入口和外部资源权限。
+1. 产品确认 W1 最终营销素材、价格和文案。
+2. 真机验证 Calibration 响应式宽卡、Android 状态栏/手势导航、安全区和系统字体缩放。
+3. 真机验证 BLE、通知、后台服务、悬浮窗、真泵恢复和只上传一次。
+4. 集成验证真实第三方 IBCLC 入口和外部资源权限。
 
 ---
 
@@ -437,7 +437,7 @@ clipBehavior: Clip.none
 
 1. 已完成 `npm run flutter:release-gate`，非真机构建、测试、Android packaging、安全隐私和 rollback manifest 均通过。
 2. 已完成 Android emulator smoke，确认 Pixel 7 API 36 模拟器首启、Agent Hub 首屏、Schedule / Device 基础导航和无 fatal/crash 日志。
-3. 进入真机 P0 smoke，并同步产品确认 Records / W1 两个决策项。
+3. 进入真机 P0 smoke，并同步产品确认 W1 决策项。
 
 本次评估给出的迁移准入结论是：
 
