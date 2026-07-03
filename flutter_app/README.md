@@ -29,11 +29,13 @@ From the parent `MomCozyApp/` directory:
 npm run flutter:check
 npm run flutter:init
 npm run flutter:release-gate
+npm run flutter:emulator-smoke
 ```
 
 Pinned versions live in [`flutter-toolchain.json`](../flutter-toolchain.json);
 `npm run flutter:check` validates the local SDK/JDK/Android directories and versions against that file.
 `npm run flutter:release-gate` runs the non-device release gate: format, analyze, tests, staging smoke harness, storage migration dry-run, local debug APK, and staging release APK.
+`npm run flutter:emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `flutter_app/build/emulator-smoke/`, and checks the process/window/crash log.
 
 From this `flutter_app/` directory:
 
