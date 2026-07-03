@@ -80,7 +80,7 @@
 
 ## 5. 下一步
 
-主路径 P1 已清空，已补 Schedule、Pump、Agent Hub、IBCLC、Media Viewer 与 Device 子页 deep-state golden；当前非真机 UI 工程基线已可进入 release gate、Android emulator smoke 和后续真机 P0 smoke。
+主路径 P1 已清空，已补 Schedule、Pump、Agent Hub、IBCLC、Media Viewer 与 Device 子页 deep-state golden；release gate 与 Android emulator smoke 已通过，下一步是后续真机 P0 smoke 和产品决策确认。
 
 后续若产品决策或真机反馈引入 UI 变更，需要：
 

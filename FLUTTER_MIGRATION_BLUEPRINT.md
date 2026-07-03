@@ -674,7 +674,7 @@ H5/WebView 依赖 owner：
 ```text
 [x] `npm run flutter:release-gate` 已覆盖 local debug build 和 staging release build
 [x] release signing env gate 已定义，CI 可用 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1` 强制检查
-[x] installation build artifact 可生成，安装仍需真机 smoke
+[x] installation build artifact 可生成，Pixel 7 API 36 emulator install/run smoke 已通过；真机安装仍归 Phase 7
 [ ] P0 真实设备矩阵通过
 [ ] 真泵回归通过
 [x] 回滚包和回滚流程确认：非真机 gate 生成 `dist/flutter-rollback-manifest.json`，真机覆盖/回滚演练仍归 Phase 7 device lab
@@ -923,6 +923,7 @@ doc/flutter-app-test-plan.md
 [x] `npm run flutter:release-gate` 已固定 format、analyze、test、staging smoke、storage dry-run 和 flavored APK build
 [x] `flutter build apk --debug --flavor local` 通过
 [x] `flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging` 通过
+[x] Pixel 7 API 36 emulator local debug APK 安装、启动、Agent Hub 首屏和 Schedule / Device 基础导航通过
 [x] local/staging/production appId / flavor / signing 策略已明确，Flutter PoC production-shaped appId 使用 `com.momcozymai.app.flutterpoc`
 [x] P0 工具链固定方案已明确：不引入 FVM，使用 `flutter-toolchain.json` + `npm run flutter:check`
 [x] Security/privacy gates 已定义，Flutter 日志脱敏工具与 P0 tests 已落地
@@ -1040,5 +1041,6 @@ doc/flutter-app-test-plan.md
 [x] `npm run flutter:check` 通过
 [x] Flutter shell debug APK 可构建
 [x] 真机和真泵 P0 smoke 计划可执行
-[ ] Flutter shell 可以安装、运行，并完成真机 smoke
+[x] Flutter shell 可以在 Android emulator 安装、运行并完成基础导航 smoke
+[ ] Flutter shell 可以在 Android 真机安装、运行，并完成真机 smoke
 ```
