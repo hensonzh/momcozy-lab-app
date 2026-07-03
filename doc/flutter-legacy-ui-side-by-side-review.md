@@ -46,8 +46,8 @@
 | Status `/status` | ![](../test/screenshots/legacy_web/compact_390x844/status.png) | ![](../flutter_app/test/goldens/feature_pages/status_page_mobile.png) | 结构通过 | 主结构一致；母乳趋势 x 轴已统一为旧 Web reference 的 `06/26` 到 `07/02` 七天窗口。 |
 | Schedule `/schedule` | ![](../test/screenshots/legacy_web/compact_390x844/schedule.png) | ![](../flutter_app/test/goldens/feature_pages/schedule_page_mobile.png) | 结构通过 | 月份、日期条、计划卡、Agent 提醒卡、空态、底栏结构一致；Flutter 今日任务工具按钮略贴底，需要后续深状态复核。 |
 | Device `/device` | ![](../test/screenshots/legacy_web/compact_390x844/device.png) | ![](../flutter_app/test/goldens/feature_pages/device_page_mobile.png) | 结构通过 | 标题、加号、W1 横幅、Air One、左右设备卡和底栏一致。 |
-| Device Manage `/device/manage` | ![](../test/screenshots/legacy_web/compact_390x844/device_manage.png) | ![](../flutter_app/test/goldens/feature_pages/device_manage_page_mobile.png) | 结构通过 | 子页结构可接受；后续需补加载/失败状态 golden。 |
-| Device User `/device/user` | ![](../test/screenshots/legacy_web/compact_390x844/device_user.png) | ![](../flutter_app/test/goldens/feature_pages/device_user_page_mobile.png) | 结构通过 | 表单结构可接受；后续需补选择展开和保存失败状态 golden。 |
+| Device Manage `/device/manage` | ![](../test/screenshots/legacy_web/compact_390x844/device_manage.png) | ![](../flutter_app/test/goldens/feature_pages/device_manage_page_mobile.png) | 结构通过 | 子页结构可接受；已补 loading、offline sync 三档 viewport 深状态 golden：`flutter_app/test/goldens/device_subpages/`。 |
+| Device User `/device/user` | ![](../test/screenshots/legacy_web/compact_390x844/device_user.png) | ![](../flutter_app/test/goldens/feature_pages/device_user_page_mobile.png) | 结构通过 | 表单结构可接受；已补用户列表展开、保存失败三档 viewport 深状态 golden，并将保存失败状态改为红色错误提示：`flutter_app/test/goldens/device_subpages/`。 |
 | W1 `/w1` | ![](../test/screenshots/legacy_web/compact_390x844/w1.png) | ![](../flutter_app/test/goldens/feature_pages/w1_page_mobile.png) | 结构通过 | 首屏产品页结构、主色和内容密度接近；营销素材文案需产品最终确认。 |
 | Hospital Bag `/hospital-bag-cart` | ![](../test/screenshots/legacy_web/compact_390x844/hospital_bag_cart.png) | ![](../flutter_app/test/goldens/feature_pages/hospital_bag_page_mobile.png) | 结构通过 | Flutter 已恢复分组数量、列表行价格和删除按钮，底部结算栏保持一致。 |
 | IBCLC `/ibclc-chat.html` | ![](../test/screenshots/legacy_web/compact_390x844/ibclc_chat.png) | ![](../flutter_app/test/goldens/feature_pages/ibclc_page_mobile.png) | 结构通过 | 首屏咨询入口结构接近；已补 queue、chat ready synced、local queue failed sync 三档 viewport 深状态 golden：`flutter_app/test/goldens/ibclc_states/`。 |
@@ -66,7 +66,7 @@
 
 | ID | 页面 | 问题 | 验收方式 |
 |---|---|---|---|
-| - | - | 暂无剩余主路径 P1 UI 修正项。 | 继续补 deep-state golden。 |
+| - | - | 暂无剩余主路径 P1 UI 修正项。 | 继续补 P2 决策项和非真机收尾核对。 |
 
 ### P2
 
@@ -79,7 +79,7 @@
 
 ## 5. 下一步
 
-主路径 P1 已清空，已补 Pump 与 Agent Hub deep-state golden；下一步转入 P2 决策项和非真机收尾核对。
+主路径 P1 已清空，已补 Pump、Agent Hub、IBCLC、Media Viewer 与 Device 子页 deep-state golden；下一步转入 P2 决策项和非真机收尾核对。
 
 每完成一项都需要：
 
