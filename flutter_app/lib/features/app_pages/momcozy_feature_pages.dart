@@ -7489,7 +7489,7 @@ class _RecordsDashboardCard extends StatelessWidget {
     final dashboardTotalValue = volumeUnit == 'oz'
         ? (dashboardTotalMl / 29.5735).toStringAsFixed(1)
         : dashboardTotalMl.toString();
-    final dashboardWeeklyAverageMl = overview.pump.isEmpty ? 0 : 28;
+    final dashboardWeeklyAverageMl = overview.pump.isEmpty ? 0 : 280;
     final deviceSessions = overview.pump.isEmpty ? 0 : 2;
     final points = overview.pump.isEmpty
         ? <_MilkTrendPoint>[]
@@ -7619,12 +7619,17 @@ class _RecordsDashboardCard extends StatelessWidget {
               Container(
                 width: 42,
                 height: 42,
-                decoration: const BoxDecoration(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: MomCozyColors.raised,
                   shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage(MomCozyAssets.agentAvatar),
-                    fit: BoxFit.cover,
+                  border: Border.all(
+                    color: MomCozyColors.primary.withValues(alpha: 0.24),
                   ),
+                ),
+                child: Image.asset(
+                  MomCozyAssets.momcozyLogo,
+                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(width: 9),

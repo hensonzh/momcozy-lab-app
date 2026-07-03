@@ -55,7 +55,7 @@
 | Media Viewer `/media-viewer` | ![](../test/screenshots/legacy_web/compact_390x844/media_viewer.png) | ![](../flutter_app/test/goldens/feature_pages/media_viewer_page_mobile.png) | 结构通过 | 缺资源状态一致；已补 PDF、image、video 三档 viewport 资源状态 golden：`flutter_app/test/goldens/media_viewer_states/`。 |
 | Pump `/pump` | ![](../test/screenshots/legacy_web/compact_390x844/pump.png) | ![](../flutter_app/test/goldens/feature_pages/pump_page_mobile.png) | 结构通过 | 首次校准弹窗结构一致；已补 running、paused、finished locked、upload failed 三档 viewport 深状态 golden：`flutter_app/test/goldens/pump_states/`。 |
 | Calibration `/calibration` | ![](../test/screenshots/legacy_web/compact_390x844/calibration.png) | ![](../flutter_app/test/goldens/feature_pages/calibration_page_mobile.png) | 结构通过 | 主卡片、进度条、右上 `1/7` 步数文本和 CTA 已对齐；360 窄屏裁切已修复。 |
-| Records `/records` | ![](../test/screenshots/legacy_web/compact_390x844/records.png) | ![](../flutter_app/test/goldens/feature_pages/records_page_mobile.png) | 结构通过 | 已恢复单位切换、图表右侧阶段标签、分段背景和记录行右侧时间；当前显式编辑/删除按钮作为工程基线通过，是否回退到旧 Web swipe reveal 留给产品确认。 |
+| Records `/records` | ![](../test/screenshots/legacy_web/compact_390x844/records.png) | ![](../flutter_app/test/goldens/feature_pages/records_page_mobile.png) | 结构通过 | 已恢复 reference 月份、周均奶量、记录时间、M.ai logo、单位切换、图表右侧阶段标签、分段背景和记录行右侧时间；当前显式编辑/删除按钮作为工程基线通过，是否回退到旧 Web swipe reveal 留给产品确认。 |
 | Community `/community` | ![](../test/screenshots/legacy_web/compact_390x844/community.png) | ![](../flutter_app/test/goldens/feature_pages/community_page_mobile.png) | 结构通过 | 建设中空态结构一致。 |
 | Not Found `*` | ![](../test/screenshots/legacy_web/compact_390x844/not_found.png) | ![](../flutter_app/test/goldens/feature_pages/not_found_page_mobile.png) | 结构通过 | 404 fallback 可接受。 |
 
