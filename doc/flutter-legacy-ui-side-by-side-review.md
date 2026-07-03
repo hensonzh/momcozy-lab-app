@@ -18,7 +18,7 @@
 |---|---:|---|
 | 结构通过 | 15 | Agent Hub、Status、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Media Viewer、Pump、Calibration、Records、Community、Not Found |
 | 需修正 | 0 | - |
-| 需深状态补图后复核 | 1 | Agent Hub rich states |
+| 需深状态补图后复核 | 0 | - |
 
 最重要的待修正项：
 
@@ -42,7 +42,7 @@
 
 | 页面 | 旧 Web | Flutter | 结论 | 记录 |
 |---|---|---|---|---|
-| Agent Hub `/` | ![](../test/screenshots/legacy_web/compact_390x844/agent_hub.png) | ![](../flutter_app/test/goldens/feature_pages/agent_hub_mobile.png) | 结构通过 | 首屏问候、输入栏、右上图标、底栏结构一致；图标细节和输入栏高度有轻微 Flutter 差异，可暂不阻断。 |
+| Agent Hub `/` | ![](../test/screenshots/legacy_web/compact_390x844/agent_hub.png) | ![](../flutter_app/test/goldens/feature_pages/agent_hub_mobile.png) | 结构通过 | 首屏问候、输入栏、右上图标、底栏结构一致；已有 rich artifact golden，并补充 streaming、cancelled、disconnected、voice error 三档 viewport 深状态 golden：`flutter_app/test/goldens/agent_hub/`。 |
 | Status `/status` | ![](../test/screenshots/legacy_web/compact_390x844/status.png) | ![](../flutter_app/test/goldens/feature_pages/status_page_mobile.png) | 结构通过 | 主结构一致；母乳趋势 x 轴已统一为旧 Web reference 的 `06/26` 到 `07/02` 七天窗口。 |
 | Schedule `/schedule` | ![](../test/screenshots/legacy_web/compact_390x844/schedule.png) | ![](../flutter_app/test/goldens/feature_pages/schedule_page_mobile.png) | 结构通过 | 月份、日期条、计划卡、Agent 提醒卡、空态、底栏结构一致；Flutter 今日任务工具按钮略贴底，需要后续深状态复核。 |
 | Device `/device` | ![](../test/screenshots/legacy_web/compact_390x844/device.png) | ![](../flutter_app/test/goldens/feature_pages/device_page_mobile.png) | 结构通过 | 标题、加号、W1 横幅、Air One、左右设备卡和底栏一致。 |
@@ -79,7 +79,7 @@
 
 ## 5. 下一步
 
-主路径 P1 已清空，下一步转入 deep-state golden 和 P2 决策项。
+主路径 P1 已清空，已补 Pump 与 Agent Hub deep-state golden；下一步转入 P2 决策项和非真机收尾核对。
 
 每完成一项都需要：
 
