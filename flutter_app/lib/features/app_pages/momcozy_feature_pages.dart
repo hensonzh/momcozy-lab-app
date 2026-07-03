@@ -9006,7 +9006,7 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
         children: [
           Column(
             children: [
-              _HospitalBagHeader(onBack: _handleBack),
+              _HospitalBagHeader(onBack: _handleBack, itemCount: _itemCount),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(14, 12, 14, 148),
@@ -9051,9 +9051,10 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
 }
 
 class _HospitalBagHeader extends StatelessWidget {
-  const _HospitalBagHeader({required this.onBack});
+  const _HospitalBagHeader({required this.onBack, required this.itemCount});
 
   final VoidCallback onBack;
+  final int itemCount;
 
   @override
   Widget build(BuildContext context) {
@@ -9093,6 +9094,23 @@ class _HospitalBagHeader extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Container(
+              key: const ValueKey('hospital-bag-item-count-chip'),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: const Color(0xffeef9f5),
+                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                border: Border.all(color: const Color(0xffd7ece6)),
+              ),
+              child: Text(
+                '$itemCount 件',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: const Color(0xff267c68),
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
           ],
