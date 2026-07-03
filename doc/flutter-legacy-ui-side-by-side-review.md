@@ -44,7 +44,7 @@
 | 页面 | 旧 Web | Flutter | 结论 | 记录 |
 |---|---|---|---|---|
 | Agent Hub `/` | ![](../test/screenshots/legacy_web/compact_390x844/agent_hub.png) | ![](../flutter_app/test/goldens/feature_pages/agent_hub_mobile.png) | 结构通过 | 首屏问候、右上图标、底栏结构一致；输入栏已恢复旧 Web 的图片、麦克风、纸飞机同排胶囊样式；已有 rich artifact golden，并补充 streaming、cancelled、disconnected、voice error 三档 viewport 深状态 golden：`flutter_app/test/goldens/agent_hub/`。 |
-| Status `/status` | ![](../test/screenshots/legacy_web/compact_390x844/status.png) | ![](../flutter_app/test/goldens/feature_pages/status_page_mobile.png) | 结构通过 | 主结构一致；母乳趋势 x 轴已统一为旧 Web reference 的 `06/26` 到 `07/02` 七天窗口。 |
+| Status `/status` | ![](../test/screenshots/legacy_web/compact_390x844/status.png) | ![](../flutter_app/test/goldens/feature_pages/status_page_mobile.png) | 结构通过 | 主结构一致；母乳趋势 x 轴已统一为旧 Web reference 的 `06/26` 到 `07/02` 七天窗口；后端失败/空数据不再用错误卡替代首屏，已补妈妈哺乳期、宝宝哺乳期、妈妈孕期三档 viewport offline fallback golden：`flutter_app/test/goldens/status_states/`。 |
 | Schedule `/schedule` | ![](../test/screenshots/legacy_web/compact_390x844/schedule.png) | ![](../flutter_app/test/goldens/feature_pages/schedule_page_mobile.png) | 结构通过 | 月份、日期条、计划卡、Agent 提醒卡、空态、底栏结构一致；今日任务工具按钮已恢复旧 Web 图标+文字胶囊，并补充 populated、local task added、sync failed 三档 viewport 深状态 golden：`flutter_app/test/goldens/schedule_states/`。 |
 | Device `/device` | ![](../test/screenshots/legacy_web/compact_390x844/device.png) | ![](../flutter_app/test/goldens/feature_pages/device_page_mobile.png) | 结构通过 | 标题、加号、W1 横幅、Air One、左右设备卡和底栏一致。 |
 | Device Manage `/device/manage` | ![](../test/screenshots/legacy_web/compact_390x844/device_manage.png) | ![](../flutter_app/test/goldens/feature_pages/device_manage_page_mobile.png) | 结构通过 | 子页结构可接受；已补 loading、offline sync 三档 viewport 深状态 golden：`flutter_app/test/goldens/device_subpages/`。 |
@@ -80,7 +80,7 @@
 
 ## 5. 下一步
 
-主路径 P1 已清空，已补 Schedule、Pump、Agent Hub、IBCLC、Media Viewer 与 Device 子页 deep-state golden；release gate 与 Android emulator smoke 已通过，下一步是后续真机 P0 smoke 和产品决策确认。
+主路径 P1 已清空，已补 Status、Schedule、Pump、Agent Hub、IBCLC、Media Viewer 与 Device 子页 deep-state golden；release gate 与 Android emulator smoke 已通过，下一步是后续真机 P0 smoke 和产品决策确认。
 
 后续若产品决策或真机反馈引入 UI 变更，需要：
 

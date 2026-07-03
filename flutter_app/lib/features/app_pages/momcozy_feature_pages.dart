@@ -665,8 +665,15 @@ class _StatusPageState extends State<_StatusPage> {
     AsyncSnapshot<StatusOverview> snapshot,
     bool isMom,
   ) {
+    final overview = snapshot.data ?? const StatusOverview();
+    final content = isMom
+        ? _momStatusChildren(overview)
+        : _babyStatusChildren(overview);
+
     if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
       return [
+        ...content,
+        const SizedBox(height: 14),
         const _ActionTile(
           icon: Icons.sync_rounded,
           title: '正在同步状态',
@@ -682,6 +689,8 @@ class _StatusPageState extends State<_StatusPage> {
 
     if (snapshot.hasError) {
       return [
+        ...content,
+        const SizedBox(height: 14),
         _ActionTile(
           icon: Icons.cloud_off_outlined,
           title: '状态同步失败',
@@ -696,10 +705,11 @@ class _StatusPageState extends State<_StatusPage> {
       ];
     }
 
-    final overview = snapshot.data;
-    if (overview == null || overview.isEmpty) {
-      return const [
-        _ActionTile(
+    if (overview.isEmpty) {
+      return [
+        ...content,
+        const SizedBox(height: 14),
+        const _ActionTile(
           icon: Icons.info_outline_rounded,
           title: '暂无状态数据',
           subtitle: '完成妈妈/宝宝资料后这里会显示当前状态。',
@@ -709,7 +719,7 @@ class _StatusPageState extends State<_StatusPage> {
       ];
     }
 
-    return isMom ? _momStatusChildren(overview) : _babyStatusChildren(overview);
+    return content;
   }
 
   List<Widget> _momStatusChildren(StatusOverview overview) {
@@ -722,87 +732,55 @@ class _StatusPageState extends State<_StatusPage> {
               ? '产后恢复期'
               : '产后第 ${mom!.postpartumDay} 天');
 
+    if (isPregnancy) {
+      return const [
+        _StatusPregnancyDiaryPreview(),
+        SizedBox(height: 18),
+        _StatusPregnancyPlanPreview(),
+      ];
+    }
+
     return [
       _StatusModuleGrid(
-        children: isPregnancy
-            ? [
-                _StatusModuleCard(
-                  title: '孕期日记',
-                  subtitle: stageNote,
-                  bodyText: '记录心情、睡眠、胎动和想问医生的问题。',
-                  icon: Icons.book_outlined,
-                  accent: const Color(0xffb66335),
-                  background: const Color(0xfffff8f1),
-                  action: '记录今日',
-                  onAction: () => context.go('/records'),
-                ),
-                const _StatusModuleCard(
-                  title: '孕期计划',
-                  subtitle: '跟进待产、产检和准备事项。',
-                  bodyText: '制定孕期计划',
-                  icon: Icons.assignment_outlined,
-                  accent: Color(0xff4f8f87),
-                  background: Color(0xfffbfefd),
-                  action: '查看计划',
-                ),
-                const _StatusModuleCard(
-                  title: '今日体征',
-                  subtitle: '体感、能量和风险提示。',
-                  bodyText: '暂无异常提醒',
-                  icon: Icons.monitor_heart_outlined,
-                  accent: Color(0xff8a5f7d),
-                  background: Color(0xfffff7fb),
-                ),
-                const _StatusModuleCard(
-                  title: '待产包',
-                  subtitle: '物品准备和缺口提醒。',
-                  bodyText: '可同步到待产包清单',
-                  icon: Icons.shopping_bag_outlined,
-                  accent: Color(0xffb9792a),
-                  background: Color(0xfffffaf0),
-                ),
-              ]
-            : [
-                _StatusModuleCard(
-                  title: '母乳产出',
-                  icon: Icons.water_drop_outlined,
-                  accent: MomCozyColors.primary,
-                  background: const Color(0xfffff7fb),
-                  hiddenTexts: [stage, stageNote],
-                  metrics: const [
-                    _StatusModuleMetric(label: '今日产出', value: '待记录'),
-                    _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
-                  ],
-                ),
-                const _StatusModuleCard(
-                  title: '乳房健康',
-                  bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
-                  action: '查看《乳房健康日记》',
-                  icon: Icons.heart_broken_outlined,
-                  accent: Color(0xffb96f55),
-                  background: Color(0xfffff8f1),
-                ),
-                const _StatusModuleCard(
-                  title: '产后恢复',
-                  bodyText: '正在执行盆底肌康复训练',
-                  action: '查看计划',
-                  icon: Icons.self_improvement_rounded,
-                  accent: Color(0xff388b72),
-                  background: Color(0xfff2fffb),
-                ),
-                const _StatusModuleCard(
-                  title: '补能与休息',
-                  bodyText: '待开通睡眠与营养功能',
-                  icon: Icons.local_cafe_outlined,
-                  accent: Color(0xffb9792a),
-                  background: Color(0xfffffaf0),
-                ),
-              ],
+        children: [
+          _StatusModuleCard(
+            title: '母乳产出',
+            icon: Icons.water_drop_outlined,
+            accent: MomCozyColors.primary,
+            background: const Color(0xfffff7fb),
+            hiddenTexts: [stage, stageNote],
+            metrics: const [
+              _StatusModuleMetric(label: '今日产出', value: '待记录'),
+              _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
+            ],
+          ),
+          const _StatusModuleCard(
+            title: '乳房健康',
+            bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
+            action: '查看《乳房健康日记》',
+            icon: Icons.heart_broken_outlined,
+            accent: Color(0xffb96f55),
+            background: Color(0xfffff8f1),
+          ),
+          const _StatusModuleCard(
+            title: '产后恢复',
+            bodyText: '正在执行盆底肌康复训练',
+            action: '查看计划',
+            icon: Icons.self_improvement_rounded,
+            accent: Color(0xff388b72),
+            background: Color(0xfff2fffb),
+          ),
+          const _StatusModuleCard(
+            title: '补能与休息',
+            bodyText: '待开通睡眠与营养功能',
+            icon: Icons.local_cafe_outlined,
+            accent: Color(0xffb9792a),
+            background: Color(0xfffffaf0),
+          ),
+        ],
       ),
-      if (!isPregnancy) ...[
-        const SizedBox(height: 16),
-        const _StatusTrendPreview(),
-      ],
+      const SizedBox(height: 16),
+      const _StatusTrendPreview(),
     ];
   }
 
@@ -861,7 +839,7 @@ class _StatusPageState extends State<_StatusPage> {
         ],
       ),
       const SizedBox(height: 12),
-      const _StatusMilestonePreview(),
+      const _StatusBabyGrowthCurvePreview(),
     ];
   }
 }
@@ -973,7 +951,6 @@ class _StatusModuleCard extends StatelessWidget {
     required this.icon,
     required this.accent,
     required this.background,
-    this.subtitle,
     this.bodyText,
     this.metrics = const [],
     this.hiddenTexts = const [],
@@ -982,7 +959,6 @@ class _StatusModuleCard extends StatelessWidget {
   });
 
   final String title;
-  final String? subtitle;
   final String? bodyText;
   final List<_StatusModuleMetric> metrics;
   final List<String> hiddenTexts;
@@ -1056,15 +1032,6 @@ class _StatusModuleCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: titleStyle,
                               ),
-                              if (subtitle != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  subtitle!,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: helperStyle,
-                                ),
-                              ],
                             ],
                           ),
                         ),
@@ -1199,6 +1166,469 @@ class _StatusModuleActionPill extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _StatusPregnancyDiaryPreview extends StatelessWidget {
+  const _StatusPregnancyDiaryPreview();
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
+      color: MomCozyColors.foreground,
+      fontWeight: FontWeight.w900,
+    );
+    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: MomCozyColors.mutedForeground,
+      fontWeight: FontWeight.w800,
+      height: 1.35,
+    );
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xffeadfd8)),
+        boxShadow: MomCozyShadows.soft,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+            child: Row(
+              children: [
+                Expanded(child: Text('孕期日记', style: titleStyle)),
+                _StatusOutlinedPill(
+                  label: '查看日记',
+                  icon: null,
+                  accent: const Color(0xffa0603a),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: Color(0xffeadfd8)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            child: Row(
+              children: const [
+                Expanded(
+                  child: _StatusPregnancyStat(value: '0', label: '近7天记录'),
+                ),
+                _StatusVerticalDivider(),
+                Expanded(
+                  child: _StatusPregnancyStat(value: '0', label: '健康咨询'),
+                ),
+                _StatusVerticalDivider(),
+                Expanded(
+                  child: _StatusPregnancyStat(value: '0', label: '产检问题'),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: Color(0xffeadfd8)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 18,
+                  backgroundImage: AssetImage(MomCozyAssets.agentAvatar),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    '记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。',
+                    style: helperStyle,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: Color(0xffeadfd8)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '今日日记',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: MomCozyColors.foreground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const Spacer(),
+                    _StatusFilledPill(
+                      label: '记录今天',
+                      icon: Icons.edit_outlined,
+                      color: const Color(0xffb06f45),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.35),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: const Color(0xffead2c3),
+                      style: BorderStyle.solid,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          const CircleAvatar(
+                            radius: 15,
+                            backgroundImage: AssetImage(
+                              MomCozyAssets.agentAvatar,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              '和我聊天时，我会自动记录你的今日情况和健康信息。',
+                              style: helperStyle,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusPregnancyStat extends StatelessWidget {
+  const _StatusPregnancyStat({required this.value, required this.label});
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            color: const Color(0xff985f3b),
+            fontWeight: FontWeight.w900,
+            height: 1,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: MomCozyColors.mutedForeground,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatusVerticalDivider extends StatelessWidget {
+  const _StatusVerticalDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: 44,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      color: const Color(0xffeadfd8),
+    );
+  }
+}
+
+class _StatusPregnancyPlanPreview extends StatelessWidget {
+  const _StatusPregnancyPlanPreview();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xfffbfefd),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xffcae6e0)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '孕期计划',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          _StatusFilledPill(
+            label: '制定孕期计划',
+            icon: null,
+            color: const Color(0xff5f978b),
+            avatar: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusBabyGrowthCurvePreview extends StatelessWidget {
+  const _StatusBabyGrowthCurvePreview();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 246,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xfffbf7ff),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xffe6d9fb)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: const Color(0xffe5d9ff),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.child_care_rounded,
+                  size: 16,
+                  color: Color(0xff7d64aa),
+                ),
+              ),
+              const SizedBox(width: 9),
+              Expanded(
+                child: Text(
+                  '宝宝成长曲线',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              const Icon(
+                Icons.keyboard_arrow_up_rounded,
+                color: MomCozyColors.mutedForeground,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              _StatusTrendLegendItem(
+                label: '实际测量',
+                color: const Color(0xff7d64aa),
+                dashed: false,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: const Color(0xff7d64aa),
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(width: 10),
+              _StatusTrendLegendItem(
+                label: '同龄参考区间',
+                color: const Color(0xffeee8ff),
+                band: true,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: const Color(0xff7d64aa),
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const Spacer(),
+              _StatusSegmentedPills(
+                selected: '体重',
+                options: const ['体重', '身高'],
+                color: const Color(0xff7d64aa),
+              ),
+            ],
+          ),
+          const Spacer(),
+          Center(
+            child: Text(
+              '暂无成长曲线数据，录入多项测量后与同龄参考一同展示。',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          const Spacer(),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusFilledPill extends StatelessWidget {
+  const _StatusFilledPill({
+    required this.label,
+    required this.icon,
+    required this.color,
+    this.avatar = false,
+  });
+
+  final String label;
+  final IconData? icon;
+  final Color color;
+  final bool avatar;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(avatar ? 6 : 12, 8, 14, 8),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        boxShadow: MomCozyShadows.soft,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (avatar) ...[
+            const CircleAvatar(
+              radius: 13,
+              backgroundImage: AssetImage(MomCozyAssets.agentAvatar),
+            ),
+            const SizedBox(width: 6),
+          ] else if (icon != null) ...[
+            Icon(icon, size: 15, color: Colors.white),
+            const SizedBox(width: 6),
+          ],
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusOutlinedPill extends StatelessWidget {
+  const _StatusOutlinedPill({
+    required this.label,
+    required this.icon,
+    required this.accent,
+  });
+
+  final String label;
+  final IconData? icon;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        border: Border.all(color: const Color(0xffeadfd8)),
+        boxShadow: MomCozyShadows.soft,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 15, color: accent),
+            const SizedBox(width: 6),
+          ],
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: accent,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusSegmentedPills extends StatelessWidget {
+  const _StatusSegmentedPills({
+    required this.selected,
+    required this.options,
+    required this.color,
+  });
+
+  final String selected;
+  final List<String> options;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final option in options)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+              decoration: BoxDecoration(
+                color: option == selected ? color : Colors.transparent,
+                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              ),
+              child: Text(
+                option,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: option == selected ? Colors.white : color,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -1551,116 +1981,6 @@ class _StatusTrendLegendMarkPainter extends CustomPainter {
     return oldDelegate.color != color ||
         oldDelegate.dashed != dashed ||
         oldDelegate.band != band;
-  }
-}
-
-class _StatusMilestonePreview extends StatelessWidget {
-  const _StatusMilestonePreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xfffbf7ff),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xffe6d9fb)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '成长milestone',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: MomCozyColors.foreground,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 12),
-          const _StatusTimelineRow(
-            title: '说出完整主谓短句',
-            date: '2026.05.28',
-            detail: '语言组织能力继续发展。',
-          ),
-          const _StatusTimelineRow(
-            title: '独立上下低矮台阶',
-            date: '2026.05.12',
-            detail: '动作计划能力更成熟。',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusTimelineRow extends StatelessWidget {
-  const _StatusTimelineRow({
-    required this.title,
-    required this.date,
-    required this.detail,
-  });
-
-  final String title;
-  final String date;
-  final String detail;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 9),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            margin: const EdgeInsets.only(top: 6),
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xff7d64aa),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: MomCozyColors.foreground,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      date,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  detail,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: MomCozyColors.mutedForeground,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 

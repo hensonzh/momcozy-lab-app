@@ -562,6 +562,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter App API runtime tests 已覆盖 lazy BLE platform 注入和 connected device fixture
 [x] Flutter App API runtime tests 已覆盖 `PumpProtocolPlatform` 注入和 native coordinator 经 BLE fake 写出协议命令
 [x] Flutter `/status` widget tests 已覆盖 runtime repository fixture、孕期/哺乳期切换、妈妈/宝宝切换、成长记录本地草稿和异步状态渲染
+[x] Flutter `/status` offline fallback golden 已覆盖妈妈哺乳期、宝宝哺乳期、妈妈孕期三档 viewport，确保 API 失败不替代旧 Web 首屏结构
 [x] Flutter `/schedule` widget tests 已覆盖 runtime repository fixture、day plan 渲染和本地 checkbox 草稿交互
 [x] Flutter `/records` widget tests 已覆盖 runtime repository fixture、泵奶/喂养/成长筛选和动态汇总渲染
 [x] Flutter `/pump` widget tests 已覆盖 session 控制触发 `/v1/pump/workstate` runtime repository 同步和后端回复展示
