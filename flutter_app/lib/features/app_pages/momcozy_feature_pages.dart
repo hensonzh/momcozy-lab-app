@@ -2699,29 +2699,22 @@ class _ScheduleListToolbar extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            width: 112,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const ClampingScrollPhysics(),
-              child: Row(
-                children: [
-                  TextButton.icon(
-                    onPressed: () {},
-                    style: _scheduleToolbarButtonStyle(context),
-                    icon: const Icon(Icons.image_outlined, size: 15),
-                    label: const Text('调整日程'),
-                  ),
-                  const SizedBox(width: 8),
-                  TextButton.icon(
-                    onPressed: onAdd,
-                    style: _scheduleToolbarButtonStyle(context),
-                    icon: const Icon(Icons.add_rounded, size: 16),
-                    label: const Text('添加任务'),
-                  ),
-                ],
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _ScheduleToolbarIconButton(
+                tooltip: '调整日程',
+                icon: Icons.image_outlined,
+                onPressed: () {},
               ),
-            ),
+              const SizedBox(width: 8),
+              _ScheduleToolbarIconButton(
+                key: const ValueKey('schedule-add-task-button'),
+                tooltip: '添加任务',
+                icon: Icons.add_rounded,
+                onPressed: onAdd,
+              ),
+            ],
           ),
         ],
       ),
@@ -2729,20 +2722,34 @@ class _ScheduleListToolbar extends StatelessWidget {
   }
 }
 
-ButtonStyle _scheduleToolbarButtonStyle(BuildContext context) {
-  return TextButton.styleFrom(
-    foregroundColor: MomCozyColors.foreground,
-    backgroundColor: MomCozyColors.card,
-    padding: const EdgeInsets.symmetric(horizontal: 12),
-    minimumSize: const Size(0, 32),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-      side: BorderSide(color: MomCozyColors.border.withValues(alpha: 0.7)),
-    ),
-    textStyle: Theme.of(
-      context,
-    ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w900),
-  );
+class _ScheduleToolbarIconButton extends StatelessWidget {
+  const _ScheduleToolbarIconButton({
+    super.key,
+    required this.tooltip,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final String tooltip;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton.outlined(
+      tooltip: tooltip,
+      onPressed: onPressed,
+      icon: Icon(icon, size: 17),
+      style: IconButton.styleFrom(
+        fixedSize: const Size.square(34),
+        minimumSize: const Size.square(34),
+        padding: EdgeInsets.zero,
+        foregroundColor: MomCozyColors.foreground,
+        side: BorderSide(color: MomCozyColors.border.withValues(alpha: 0.8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17)),
+      ),
+    );
+  }
 }
 
 class _ScheduleQuickActions extends StatelessWidget {
