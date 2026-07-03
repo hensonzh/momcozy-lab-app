@@ -1678,6 +1678,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('18 件'), findsOneWidget);
+      expect(find.textContaining('已含组合优惠'), findsOneWidget);
       expect(find.text('产褥垫组合装'), findsOneWidget);
 
       await tester.longPress(find.text('产褥垫组合装'));

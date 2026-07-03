@@ -9748,7 +9748,11 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: _HospitalBagFooter(total: _total, money: _money),
+            child: _HospitalBagFooter(
+              total: _total,
+              discount: _discount,
+              money: _money,
+            ),
           ),
         ],
       ),
@@ -10343,9 +10347,14 @@ class _HospitalBagEmptyCart extends StatelessWidget {
 }
 
 class _HospitalBagFooter extends StatelessWidget {
-  const _HospitalBagFooter({required this.total, required this.money});
+  const _HospitalBagFooter({
+    required this.total,
+    required this.discount,
+    required this.money,
+  });
 
   final double total;
+  final double discount;
   final String Function(double amount) money;
 
   @override
@@ -10391,6 +10400,17 @@ class _HospitalBagFooter extends StatelessWidget {
                             ),
                       ),
                     ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Text(
+                    '已含组合优惠 ${money(discount)}',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: const Color(0xff8a6d7a),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ],
