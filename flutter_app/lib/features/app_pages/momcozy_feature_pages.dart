@@ -2861,6 +2861,7 @@ class _ScheduleListToolbar extends StatelessWidget {
               _ScheduleToolbarIconButton(
                 tooltip: '调整日程',
                 icon: Icons.image_outlined,
+                label: '调整日程',
                 onPressed: () {},
               ),
               const SizedBox(width: 8),
@@ -2868,6 +2869,7 @@ class _ScheduleListToolbar extends StatelessWidget {
                 key: const ValueKey('schedule-add-task-button'),
                 tooltip: '添加任务',
                 icon: Icons.add_rounded,
+                label: '添加任务',
                 onPressed: onAdd,
               ),
             ],
@@ -2883,26 +2885,37 @@ class _ScheduleToolbarIconButton extends StatelessWidget {
     super.key,
     required this.tooltip,
     required this.icon,
+    required this.label,
     required this.onPressed,
   });
 
   final String tooltip;
   final IconData icon;
+  final String label;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return IconButton.outlined(
-      tooltip: tooltip,
-      onPressed: onPressed,
-      icon: Icon(icon, size: 17),
-      style: IconButton.styleFrom(
-        fixedSize: const Size.square(34),
-        minimumSize: const Size.square(34),
-        padding: EdgeInsets.zero,
-        foregroundColor: MomCozyColors.foreground,
-        side: BorderSide(color: MomCozyColors.border.withValues(alpha: 0.8)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17)),
+    return Tooltip(
+      message: tooltip,
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 15),
+        label: Text(label),
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(0, 34),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          foregroundColor: MomCozyColors.foreground,
+          side: BorderSide(color: MomCozyColors.border.withValues(alpha: 0.8)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(17),
+          ),
+          textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0,
+          ),
+        ),
       ),
     );
   }
