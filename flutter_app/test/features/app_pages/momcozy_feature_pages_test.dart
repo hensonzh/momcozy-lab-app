@@ -528,7 +528,11 @@ void main() {
       expect(find.text('1/3'), findsNothing);
       expect(find.text('待执行任务'), findsOneWidget);
 
-      await _tapScrollableText(tester, '添加任务');
+      final addTaskButton = find.byKey(
+        const ValueKey('schedule-add-task-button'),
+      );
+      await _scrollToFinder(tester, addTaskButton);
+      await tester.tap(addTaskButton);
       await tester.pumpAndSettle();
 
       expect(find.text('1/4'), findsNothing);
