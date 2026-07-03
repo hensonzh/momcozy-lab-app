@@ -1532,6 +1532,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      expect(
+        find.byKey(const ValueKey('ibclc-upload-image-button')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('ibclc-message-input')), findsOneWidget);
+      expect(find.byKey(const ValueKey('ibclc-voice-button')), findsOneWidget);
+      expect(find.byKey(const ValueKey('ibclc-send-button')), findsOneWidget);
+
       await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 

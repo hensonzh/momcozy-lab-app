@@ -9969,6 +9969,7 @@ class _IbclcPageState extends State<_IbclcPage> {
               syncStatus: _syncStatus,
             ),
           ),
+          const _IbclcChatComposer(),
         ],
       ),
     );
@@ -10195,6 +10196,128 @@ class _IbclcPulseDot extends StatelessWidget {
         decoration: BoxDecoration(
           color: Color(0xff177a89),
           shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}
+
+class _IbclcChatComposer extends StatelessWidget {
+  const _IbclcChatComposer();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Color(0xfffbfefd),
+        border: Border(top: BorderSide(color: Color(0xffdce8e5))),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
+          child: Row(
+            children: [
+              const _IbclcComposerIconButton(
+                key: ValueKey('ibclc-upload-image-button'),
+                icon: Icons.add_photo_alternate_outlined,
+                tooltip: '上传图片',
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: TextField(
+                    key: const ValueKey('ibclc-message-input'),
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      hintText: '输入消息...',
+                      hintStyle: Theme.of(context).textTheme.bodyMedium
+                          ?.copyWith(
+                            color: const Color(0xff78918e),
+                            fontWeight: FontWeight.w500,
+                          ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 9,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(999),
+                        borderSide: const BorderSide(color: Color(0xffd5e1de)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(999),
+                        borderSide: const BorderSide(color: Color(0xff177a89)),
+                      ),
+                    ),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xff172625),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              const _IbclcComposerIconButton(
+                key: ValueKey('ibclc-voice-button'),
+                icon: Icons.mic_none_rounded,
+                tooltip: '语音输入',
+              ),
+              const SizedBox(width: 6),
+              FilledButton(
+                key: const ValueKey('ibclc-send-button'),
+                onPressed: () {},
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xff177a89),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  minimumSize: const Size(0, 40),
+                  visualDensity: VisualDensity.compact,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  textStyle: Theme.of(
+                    context,
+                  ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900),
+                ),
+                child: const Text('发送'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _IbclcComposerIconButton extends StatelessWidget {
+  const _IbclcComposerIconButton({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+  });
+
+  final IconData icon;
+  final String tooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: SizedBox.square(
+        dimension: 40,
+        child: IconButton(
+          tooltip: tooltip,
+          onPressed: () {},
+          icon: Icon(icon, size: 20),
+          color: const Color(0xff28615c),
+          style: IconButton.styleFrom(
+            backgroundColor: const Color(0xfff2f8f6),
+            side: const BorderSide(color: Color(0xffd5e1de)),
+            shape: const CircleBorder(),
+            padding: EdgeInsets.zero,
+          ),
         ),
       ),
     );
