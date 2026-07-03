@@ -567,83 +567,81 @@ class _MomCozyAgentNavTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = selected
-        ? MomCozyColors.primary
-        : MomCozyColors.mutedForeground;
-
     return Center(
       child: Semantics(
         label: '智能体',
         selected: selected,
         button: true,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(MomCozyRadii.control),
-          onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
-            decoration: BoxDecoration(
-              color: selected
-                  ? MomCozyColors.primary.withValues(alpha: 0.08)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(MomCozyRadii.control),
-            ),
-            child: DefaultTextStyle(
-              style: TextStyle(
-                fontFamily: MomCozyTypography.fontFamily,
-                fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-                color: foreground,
-                fontSize: 10,
-                height: 1.05,
-                fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: MomCozyLayout.bottomNavCenterSize,
-                    height: MomCozyLayout.bottomNavCenterSize,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: selected ? MomCozyGradients.primary : null,
-                      color: selected ? null : MomCozyColors.card,
-                      border: Border.all(
-                        color: MomCozyColors.background,
-                        width: 3,
-                      ),
-                      boxShadow: selected
-                          ? const [
-                              BoxShadow(
-                                color: Color(0x32754b5e),
-                                blurRadius: 18,
-                                offset: Offset(0, 8),
-                              ),
-                            ]
-                          : MomCozyShadows.soft,
-                    ),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(
-                          alpha: selected ? 0.1 : 0,
+        child: Transform.translate(
+          offset: const Offset(0, -10),
+          child: Material(
+            key: const ValueKey('bottom-nav-agent'),
+            color: Colors.transparent,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: onTap,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: MomCozyLayout.bottomNavCenterSize,
+                height: MomCozyLayout.bottomNavCenterSize,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: selected ? MomCozyGradients.primary : null,
+                  color: selected ? null : MomCozyColors.card,
+                  border: Border.all(color: MomCozyColors.background, width: 5),
+                  boxShadow: selected
+                      ? const [
+                          BoxShadow(
+                            color: Color(0x42754b5e),
+                            blurRadius: 30,
+                            offset: Offset(0, 12),
+                          ),
+                        ]
+                      : const [
+                          BoxShadow(
+                            color: Color(0x1a3a2731),
+                            blurRadius: 22,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    if (selected)
+                      Positioned.fill(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.1),
+                            ),
+                          ),
                         ),
-                        image: const DecorationImage(
+                      ),
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
                           image: AssetImage(MomCozyAssets.agentAvatar),
                           fit: BoxFit.cover,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x243a2731),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: const SizedBox.expand(),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '智能体',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
