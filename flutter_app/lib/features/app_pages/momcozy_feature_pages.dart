@@ -4055,6 +4055,11 @@ class _DeviceW1Banner extends StatelessWidget {
                     ),
                   ),
                 ),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: Color(0x66ffffff),
+                  size: 20,
+                ),
               ],
             ),
           ),
