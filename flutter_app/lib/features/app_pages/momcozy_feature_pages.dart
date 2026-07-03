@@ -8642,7 +8642,7 @@ class _CommunityPageState extends State<_CommunityPage> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  '我们将打造一个妈妈们一起交流分享的社区，\n敬请期待～',
+                  '我们将打造一个妈妈们一起交流分享的社区，敬请期待～',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   softWrap: true,
