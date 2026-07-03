@@ -439,6 +439,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '母乳产出');
       expect(find.text('母乳产出'), findsOneWidget);
       await _scrollToText(tester, '母乳趋势');
       expect(find.text('母乳趋势'), findsOneWidget);
@@ -458,6 +459,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '母乳产出');
       expect(find.text('母乳产出'), findsOneWidget);
       await _scrollToText(tester, '母乳趋势');
       expect(find.text('母乳趋势'), findsOneWidget);
