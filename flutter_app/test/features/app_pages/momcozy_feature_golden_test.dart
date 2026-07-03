@@ -16,24 +16,40 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('MomCozy feature page goldens', () {
-    for (final route in _routeGoldens) {
-      testWidgets('${route.label} matches compact mobile baseline', (
-        tester,
-      ) async {
-        await _setCompactMobileViewport(tester);
-        await _pumpGoldenApp(tester, initialLocation: route.path);
+    for (final viewport in _goldenViewports) {
+      for (final route in _routeGoldens) {
+        testWidgets('${route.label} matches ${viewport.label} baseline', (
+          tester,
+        ) async {
+          await _setViewport(tester, viewport.size);
+          await _pumpGoldenApp(tester, initialLocation: route.path);
 
-        expect(find.byKey(route.pageKey), findsOneWidget);
-        await expectLater(
-          find.byKey(_goldenSurfaceKey),
-          matchesGoldenFile('../../goldens/feature_pages/${route.fileName}'),
-        );
-      });
+          expect(find.byKey(route.pageKey), findsOneWidget);
+          await expectLater(
+            find.byKey(_goldenSurfaceKey),
+            matchesGoldenFile(viewport.filePath(route.fileName)),
+          );
+        });
+      }
     }
   });
 }
 
 const _goldenSurfaceKey = ValueKey('momcozy-feature-golden-surface');
+
+const _goldenViewports = [
+  _GoldenViewport(
+    label: 'narrow mobile 360x800',
+    size: Size(360, 800),
+    directory: 'narrow_360x800',
+  ),
+  _GoldenViewport(label: 'compact mobile', size: Size(390, 844)),
+  _GoldenViewport(
+    label: 'large mobile 430x932',
+    size: Size(430, 932),
+    directory: 'large_430x932',
+  ),
+];
 
 const _routeGoldens = [
   _RouteGolden(
@@ -142,8 +158,28 @@ class _RouteGolden {
   final ValueKey<String> pageKey;
 }
 
-Future<void> _setCompactMobileViewport(WidgetTester tester) async {
-  tester.view.physicalSize = const Size(390, 844);
+class _GoldenViewport {
+  const _GoldenViewport({
+    required this.label,
+    required this.size,
+    this.directory,
+  });
+
+  final String label;
+  final Size size;
+  final String? directory;
+
+  String filePath(String fileName) {
+    final viewportDirectory = directory;
+    if (viewportDirectory == null) {
+      return '../../goldens/feature_pages/$fileName';
+    }
+    return '../../goldens/feature_pages/$viewportDirectory/$fileName';
+  }
+}
+
+Future<void> _setViewport(WidgetTester tester, Size size) async {
+  tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
