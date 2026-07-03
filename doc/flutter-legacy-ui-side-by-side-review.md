@@ -44,7 +44,7 @@
 |---|---|---|---|---|
 | Agent Hub `/` | ![](../test/screenshots/legacy_web/compact_390x844/agent_hub.png) | ![](../flutter_app/test/goldens/feature_pages/agent_hub_mobile.png) | 结构通过 | 首屏问候、输入栏、右上图标、底栏结构一致；已有 rich artifact golden，并补充 streaming、cancelled、disconnected、voice error 三档 viewport 深状态 golden：`flutter_app/test/goldens/agent_hub/`。 |
 | Status `/status` | ![](../test/screenshots/legacy_web/compact_390x844/status.png) | ![](../flutter_app/test/goldens/feature_pages/status_page_mobile.png) | 结构通过 | 主结构一致；母乳趋势 x 轴已统一为旧 Web reference 的 `06/26` 到 `07/02` 七天窗口。 |
-| Schedule `/schedule` | ![](../test/screenshots/legacy_web/compact_390x844/schedule.png) | ![](../flutter_app/test/goldens/feature_pages/schedule_page_mobile.png) | 结构通过 | 月份、日期条、计划卡、Agent 提醒卡、空态、底栏结构一致；Flutter 今日任务工具按钮略贴底，需要后续深状态复核。 |
+| Schedule `/schedule` | ![](../test/screenshots/legacy_web/compact_390x844/schedule.png) | ![](../flutter_app/test/goldens/feature_pages/schedule_page_mobile.png) | 结构通过 | 月份、日期条、计划卡、Agent 提醒卡、空态、底栏结构一致；今日任务工具按钮已恢复旧 Web 图标+文字胶囊，并补充 populated、local task added、sync failed 三档 viewport 深状态 golden：`flutter_app/test/goldens/schedule_states/`。 |
 | Device `/device` | ![](../test/screenshots/legacy_web/compact_390x844/device.png) | ![](../flutter_app/test/goldens/feature_pages/device_page_mobile.png) | 结构通过 | 标题、加号、W1 横幅、Air One、左右设备卡和底栏一致。 |
 | Device Manage `/device/manage` | ![](../test/screenshots/legacy_web/compact_390x844/device_manage.png) | ![](../flutter_app/test/goldens/feature_pages/device_manage_page_mobile.png) | 结构通过 | 子页结构可接受；已补 loading、offline sync 三档 viewport 深状态 golden：`flutter_app/test/goldens/device_subpages/`。 |
 | Device User `/device/user` | ![](../test/screenshots/legacy_web/compact_390x844/device_user.png) | ![](../flutter_app/test/goldens/feature_pages/device_user_page_mobile.png) | 结构通过 | 表单结构可接受；已补用户列表展开、保存失败三档 viewport 深状态 golden，并将保存失败状态改为红色错误提示：`flutter_app/test/goldens/device_subpages/`。 |
@@ -79,7 +79,7 @@
 
 ## 5. 下一步
 
-主路径 P1 已清空，已补 Pump、Agent Hub、IBCLC、Media Viewer 与 Device 子页 deep-state golden；下一步转入 P2 决策项和非真机收尾核对。
+主路径 P1 已清空，已补 Schedule、Pump、Agent Hub、IBCLC、Media Viewer 与 Device 子页 deep-state golden；下一步转入 P2 决策项和非真机收尾核对。
 
 每完成一项都需要：
 
