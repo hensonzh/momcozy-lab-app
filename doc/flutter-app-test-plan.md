@@ -747,6 +747,17 @@ CI 最低要求：
 [ ] release signing env 未在本机配置；如需 CI 强制签名，设置 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1`
 ```
 
+最新 P0 platform smoke：
+
+```text
+[x] 2026-07-03 `npm run flutter:p0:platform-smoke` 通过
+[x] fake BLE permission / scan / settings handoff 通过
+[x] pump device snapshot binding 通过
+[x] pump agent upload snapshot sync 通过
+[x] Android MethodChannel schemas 与 event streams 通过
+[x] route intent、pump foreground、wake lock platform contract 通过
+```
+
 发布门槛最低要求：
 
 ```text
