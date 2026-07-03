@@ -623,6 +623,7 @@ class _StatusPageState extends State<_StatusPage> {
         final isPregnancy = _careStage == 'pregnancy';
         const momSubtitle = '妈妈档案待绑定';
         const babySubtitle = '宝宝档案待绑定';
+        final syncNotice = _statusSyncNotice(snapshot);
 
         return ListView(
           key: ValueKey('route-page-${widget.path}'),
@@ -655,6 +656,7 @@ class _StatusPageState extends State<_StatusPage> {
               onBabyGrowthTap: () => setState(() => _growthRecordAdded = true),
               onScheduleTap: () => context.go('/schedule'),
             ),
+            if (syncNotice != null) ...[const SizedBox(height: 18), syncNotice],
           ],
         );
       },
@@ -670,56 +672,50 @@ class _StatusPageState extends State<_StatusPage> {
         ? _momStatusChildren(overview)
         : _babyStatusChildren(overview);
 
+    return content;
+  }
+
+  Widget? _statusSyncNotice(AsyncSnapshot<StatusOverview> snapshot) {
+    final overview = snapshot.data ?? const StatusOverview();
+
     if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return [
-        ...content,
-        const SizedBox(height: 14),
-        const _ActionTile(
-          icon: Icons.sync_rounded,
-          title: '正在同步状态',
-          subtitle: '正在读取妈妈和宝宝状态。',
-          accent: Color(0xff9f6378),
-          trailing: SizedBox.square(
-            dimension: 22,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
+      return const _ActionTile(
+        icon: Icons.sync_rounded,
+        title: '正在同步状态',
+        subtitle: '正在读取妈妈和宝宝状态。',
+        accent: Color(0xff9f6378),
+        trailing: SizedBox.square(
+          dimension: 22,
+          child: CircularProgressIndicator(strokeWidth: 2),
         ),
-      ];
+      );
     }
 
     if (snapshot.hasError) {
-      return [
-        ...content,
-        const SizedBox(height: 14),
-        _ActionTile(
-          icon: Icons.cloud_off_outlined,
-          title: '状态同步失败',
-          subtitle: '检查后端连接或 token 后重试。',
-          accent: const Color(0xff9f6378),
-          trailing: IconButton(
-            tooltip: '重试',
-            onPressed: _reloadOverview,
-            icon: const Icon(Icons.refresh_rounded),
-          ),
+      return _ActionTile(
+        icon: Icons.cloud_off_outlined,
+        title: '状态同步失败',
+        subtitle: '检查后端连接或 token 后重试。',
+        accent: const Color(0xff9f6378),
+        trailing: IconButton(
+          tooltip: '重试',
+          onPressed: _reloadOverview,
+          icon: const Icon(Icons.refresh_rounded),
         ),
-      ];
+      );
     }
 
     if (overview.isEmpty) {
-      return [
-        ...content,
-        const SizedBox(height: 14),
-        const _ActionTile(
-          icon: Icons.info_outline_rounded,
-          title: '暂无状态数据',
-          subtitle: '完成妈妈/宝宝资料后这里会显示当前状态。',
-          accent: Color(0xff7f6a75),
-          trailing: Icon(Icons.chevron_right_rounded),
-        ),
-      ];
+      return const _ActionTile(
+        icon: Icons.info_outline_rounded,
+        title: '暂无状态数据',
+        subtitle: '完成妈妈/宝宝资料后这里会显示当前状态。',
+        accent: Color(0xff7f6a75),
+        trailing: Icon(Icons.chevron_right_rounded),
+      );
     }
 
-    return content;
+    return null;
   }
 
   List<Widget> _momStatusChildren(StatusOverview overview) {
@@ -2541,6 +2537,10 @@ class _SchedulePageState extends State<_SchedulePage> {
                     setState(() => _dailySummaryEnabled = value),
               ),
             ),
+            if (_scheduleSyncNotice(snapshot) case final syncNotice?) ...[
+              const SizedBox(height: 18),
+              syncNotice,
+            ],
           ],
         );
       },
@@ -2549,38 +2549,11 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   List<Widget> _dayPlanChildren(AsyncSnapshot<ScheduleDayPlan> snapshot) {
     if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return [
-        const _ScheduleEmptyTaskNotice(),
-        const SizedBox(height: 20),
-        _ActionTile(
-          icon: Icons.sync_rounded,
-          title: '正在同步计划',
-          subtitle: '正在读取当天任务和提醒。',
-          accent: widget.accent,
-          trailing: const SizedBox.square(
-            dimension: 22,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-      ];
+      return const [_ScheduleEmptyTaskNotice()];
     }
 
     if (snapshot.hasError) {
-      return [
-        const _ScheduleEmptyTaskNotice(),
-        const SizedBox(height: 20),
-        _ActionTile(
-          icon: Icons.cloud_off_outlined,
-          title: '计划同步失败',
-          subtitle: '检查后端连接或 token 后重试。',
-          accent: widget.accent,
-          trailing: IconButton(
-            tooltip: '重试',
-            onPressed: _reloadDayPlan,
-            icon: const Icon(Icons.refresh_rounded),
-          ),
-        ),
-      ];
+      return const [_ScheduleEmptyTaskNotice()];
     }
 
     final plan = snapshot.data;
@@ -2602,6 +2575,37 @@ class _SchedulePageState extends State<_SchedulePage> {
           onChanged: (value) => _toggleTask(entry.value, entry.key, value),
         ),
     ];
+  }
+
+  Widget? _scheduleSyncNotice(AsyncSnapshot<ScheduleDayPlan> snapshot) {
+    if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
+      return _ActionTile(
+        icon: Icons.sync_rounded,
+        title: '正在同步计划',
+        subtitle: '正在读取当天任务和提醒。',
+        accent: widget.accent,
+        trailing: const SizedBox.square(
+          dimension: 22,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      );
+    }
+
+    if (snapshot.hasError) {
+      return _ActionTile(
+        icon: Icons.cloud_off_outlined,
+        title: '计划同步失败',
+        subtitle: '检查后端连接或 token 后重试。',
+        accent: widget.accent,
+        trailing: IconButton(
+          tooltip: '重试',
+          onPressed: _reloadDayPlan,
+          icon: const Icon(Icons.refresh_rounded),
+        ),
+      );
+    }
+
+    return null;
   }
 
   bool _taskDone(ScheduleTask task, int index) {
