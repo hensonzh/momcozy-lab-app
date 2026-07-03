@@ -650,6 +650,16 @@ void main() {
       expect(find.byTooltip('上个月'), findsOneWidget);
       expect(find.byTooltip('下个月'), findsOneWidget);
       expect(find.text('吸奶器母乳量'), findsOneWidget);
+      await _scrollToFinder(
+        tester,
+        find.byKey(const ValueKey('records-manual-entry-button')),
+      );
+      expect(
+        find.byKey(const ValueKey('records-manual-entry-button')),
+        findsOneWidget,
+      );
+      expect(find.byTooltip('编辑记录'), findsWidgets);
+      expect(find.byTooltip('删除记录'), findsWidgets);
       await _scrollToTextContaining(tester, '晨间泵奶');
       expect(find.textContaining('晨间泵奶'), findsOneWidget);
       expect(find.textContaining('120 mL'), findsWidgets);

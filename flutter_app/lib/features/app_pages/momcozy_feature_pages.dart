@@ -7597,21 +7597,19 @@ class _RecordsListToolbar extends StatelessWidget {
               ],
             ),
           ),
-          Opacity(
-            opacity: 0,
-            child: TextButton.icon(
-              onPressed: onAdd,
-              style: TextButton.styleFrom(
-                foregroundColor: MomCozyColors.primary,
-                minimumSize: const Size(0, 32),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                textStyle: Theme.of(
-                  context,
-                ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
-              ),
-              icon: const Icon(Icons.add_rounded, size: 16),
-              label: const Text('手动记录'),
+          TextButton.icon(
+            key: const ValueKey('records-manual-entry-button'),
+            onPressed: onAdd,
+            style: TextButton.styleFrom(
+              foregroundColor: MomCozyColors.primary,
+              minimumSize: const Size(0, 32),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              textStyle: Theme.of(
+                context,
+              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
             ),
+            icon: const Icon(Icons.add_rounded, size: 16),
+            label: const Text('手动记录'),
           ),
         ],
       ),
@@ -7754,7 +7752,12 @@ class _RecordsMilkRow extends StatelessWidget {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding: EdgeInsets.fromLTRB(
+                14,
+                12,
+                actions.isEmpty ? 14 : 82,
+                12,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -7799,9 +7802,20 @@ class _RecordsMilkRow extends StatelessWidget {
               Positioned(
                 right: 4,
                 top: 4,
-                child: Opacity(
-                  opacity: 0,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: actions),
+                child: IconTheme(
+                  data: const IconThemeData(
+                    size: 18,
+                    color: MomCozyColors.mutedForeground,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: actions
+                        .map(
+                          (action) =>
+                              SizedBox.square(dimension: 34, child: action),
+                        )
+                        .toList(growable: false),
+                  ),
                 ),
               ),
           ],
