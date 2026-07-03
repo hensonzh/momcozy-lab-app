@@ -16,14 +16,14 @@
 
 | 类别 | 数量 | 页面 |
 |---|---:|---|
-| 结构通过 | 12 | Agent Hub、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Media Viewer、Calibration、Community、Not Found |
-| 需修正 | 2 | Records、Status |
+| 结构通过 | 13 | Agent Hub、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Media Viewer、Calibration、Records、Community、Not Found |
+| 需修正 | 1 | Status |
 | 需深状态补图后复核 | 2 | Pump、Agent Hub rich states |
 
 最重要的待修正项：
 
-1. Records 图表轴标、右侧区间标签和记录行操作与旧 Web 不完全一致。
-2. Status 母乳趋势日期刻度与旧 Web reference 有轻微差异。
+1. Status 母乳趋势日期刻度与旧 Web reference 有轻微差异。
+2. Records 显式编辑按钮是否替代旧 Web swipe reveal，需要产品确认。
 
 ---
 
@@ -55,7 +55,7 @@
 | Media Viewer `/media-viewer` | ![](../test/screenshots/legacy_web/compact_390x844/media_viewer.png) | ![](../flutter_app/test/goldens/feature_pages/media_viewer_page_mobile.png) | 结构通过 | 缺资源状态一致；PDF/image/video 实际资源状态仍需 deep-state golden。 |
 | Pump `/pump` | ![](../test/screenshots/legacy_web/compact_390x844/pump.png) | ![](../flutter_app/test/goldens/feature_pages/pump_page_mobile.png) | 需深状态补图后复核 | 首次校准弹窗结构一致；背景内容、模糊强度和运行/暂停/结束状态仍需补图后复核。 |
 | Calibration `/calibration` | ![](../test/screenshots/legacy_web/compact_390x844/calibration.png) | ![](../flutter_app/test/goldens/feature_pages/calibration_page_mobile.png) | 结构通过 | 主卡片、进度条、右上 `1/7` 步数文本和 CTA 已对齐；360 窄屏裁切已修复。 |
-| Records `/records` | ![](../test/screenshots/legacy_web/compact_390x844/records.png) | ![](../flutter_app/test/goldens/feature_pages/records_page_mobile.png) | 需修正 | 页面结构一致；图表右侧区间标签、y 轴/单位切换、记录行徽标与编辑/删除操作仍有差异。 |
+| Records `/records` | ![](../test/screenshots/legacy_web/compact_390x844/records.png) | ![](../flutter_app/test/goldens/feature_pages/records_page_mobile.png) | 结构通过 | 已恢复单位切换、图表右侧阶段标签、分段背景和记录行右侧时间；显式编辑按钮是否替代旧 Web swipe reveal 仍需产品确认。 |
 | Community `/community` | ![](../test/screenshots/legacy_web/compact_390x844/community.png) | ![](../flutter_app/test/goldens/feature_pages/community_page_mobile.png) | 结构通过 | 建设中空态结构一致。 |
 | Not Found `*` | ![](../test/screenshots/legacy_web/compact_390x844/not_found.png) | ![](../flutter_app/test/goldens/feature_pages/not_found_page_mobile.png) | 结构通过 | 404 fallback 可接受。 |
 
@@ -67,7 +67,7 @@
 
 | ID | 页面 | 问题 | 验收方式 |
 |---|---|---|---|
-| UI-P1-003 | Records | 图表区间标签、单位切换、记录行操作与旧 Web 不一致。 | Flutter records 三个视口 golden 与旧 Web reference 的图表和列表行控件一致；如保留显式编辑/删除，需产品确认。 |
+| - | - | 暂无剩余主路径 P1 UI 修正项。 | 继续补 deep-state golden。 |
 
 ### P2
 
@@ -76,14 +76,13 @@
 | UI-P2-001 | Status | 母乳趋势日期刻度与旧 Web reference 轻微不一致。 | 统一 reference fixture 或刻度算法，golden 不再漂移。 |
 | UI-P2-002 | Agent Hub | 输入栏高度、图标样式与旧 Web 有轻微差异。 | 设计确认可接受，或调整后更新 golden。 |
 | UI-P2-003 | Pump | 背景模糊强度和深状态仍未完全评审。 | 增加 running、paused、finished、upload failed golden 后复核。 |
+| UI-P2-004 | Records | 旧 Web 编辑操作主要通过 swipe reveal 暴露；Flutter 当前显式展示编辑/删除按钮。 | 产品确认接受显式按钮，或后续改为 swipe reveal 并保留测试入口。 |
 
 ---
 
 ## 5. 下一步
 
-优先按 P1 修正：
-
-1. Records 对齐图表和行操作。
+主路径 P1 已清空，下一步转入 deep-state golden 和 P2 决策项。
 
 每完成一项都需要：
 
