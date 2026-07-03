@@ -464,7 +464,11 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pumpAndSettle();
 
-      expect(find.text('1/3'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('schedule-context-reminder-button')),
+        findsOneWidget,
+      );
+      expect(find.text('1/3'), findsOneWidget);
       await _scrollToText(tester, '10:30 泵奶');
       expect(find.text('10:30 泵奶'), findsOneWidget);
       await _scrollToText(tester, '14:00 喂养');
@@ -511,7 +515,7 @@ void main() {
         transport.lastQuery,
         containsPair('timestamp', _apiTimestamp(DateTime.utc(2026, 7))),
       );
-      expect(find.text('1/2'), findsNothing);
+      expect(find.text('1/2'), findsOneWidget);
 
       await tester.tap(find.text('3').first);
       await tester.pumpAndSettle();
@@ -545,7 +549,7 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pumpAndSettle();
 
-      expect(find.text('1/3'), findsNothing);
+      expect(find.text('1/3'), findsOneWidget);
       expect(find.text('待执行任务'), findsOneWidget);
 
       final addTaskButton = find.byKey(
@@ -555,7 +559,7 @@ void main() {
       await tester.tap(addTaskButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('1/4'), findsNothing);
+      expect(find.text('1/4'), findsOneWidget);
       await _scrollToText(tester, '本地补充 1');
       expect(find.text('本地补充 1'), findsOneWidget);
 
@@ -565,7 +569,7 @@ void main() {
       await tester.drag(find.byType(Scrollable).first, const Offset(0, 600));
       await tester.pumpAndSettle();
 
-      expect(find.text('1/3'), findsNothing);
+      expect(find.text('1/3'), findsOneWidget);
       expect(find.text('本地补充 1'), findsNothing);
     });
 
@@ -592,7 +596,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('0/1'), findsNothing);
+      expect(find.text('0/1'), findsOneWidget);
       expect(find.textContaining('周五产检 还有 2 天 6 小时'), findsOneWidget);
     });
 
@@ -612,7 +616,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('0/0'), findsNothing);
+      expect(find.text('0/0'), findsOneWidget);
       expect(find.text('今天还没有计划任务'), findsOneWidget);
       await _scrollToText(tester, '当天暂无执行内容');
       expect(find.text('当天暂无执行内容'), findsOneWidget);
