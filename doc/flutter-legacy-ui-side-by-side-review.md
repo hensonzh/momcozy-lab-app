@@ -16,9 +16,9 @@
 
 | 类别 | 数量 | 页面 |
 |---|---:|---|
-| 结构通过 | 14 | Agent Hub、Status、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Media Viewer、Calibration、Records、Community、Not Found |
+| 结构通过 | 15 | Agent Hub、Status、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Media Viewer、Pump、Calibration、Records、Community、Not Found |
 | 需修正 | 0 | - |
-| 需深状态补图后复核 | 2 | Pump、Agent Hub rich states |
+| 需深状态补图后复核 | 1 | Agent Hub rich states |
 
 最重要的待修正项：
 
@@ -52,7 +52,7 @@
 | Hospital Bag `/hospital-bag-cart` | ![](../test/screenshots/legacy_web/compact_390x844/hospital_bag_cart.png) | ![](../flutter_app/test/goldens/feature_pages/hospital_bag_page_mobile.png) | 结构通过 | Flutter 已恢复分组数量、列表行价格和删除按钮，底部结算栏保持一致。 |
 | IBCLC `/ibclc-chat.html` | ![](../test/screenshots/legacy_web/compact_390x844/ibclc_chat.png) | ![](../flutter_app/test/goldens/feature_pages/ibclc_page_mobile.png) | 结构通过 | 首屏咨询入口结构接近；会话中、排队、结束状态仍需 deep-state golden。 |
 | Media Viewer `/media-viewer` | ![](../test/screenshots/legacy_web/compact_390x844/media_viewer.png) | ![](../flutter_app/test/goldens/feature_pages/media_viewer_page_mobile.png) | 结构通过 | 缺资源状态一致；PDF/image/video 实际资源状态仍需 deep-state golden。 |
-| Pump `/pump` | ![](../test/screenshots/legacy_web/compact_390x844/pump.png) | ![](../flutter_app/test/goldens/feature_pages/pump_page_mobile.png) | 需深状态补图后复核 | 首次校准弹窗结构一致；背景内容、模糊强度和运行/暂停/结束状态仍需补图后复核。 |
+| Pump `/pump` | ![](../test/screenshots/legacy_web/compact_390x844/pump.png) | ![](../flutter_app/test/goldens/feature_pages/pump_page_mobile.png) | 结构通过 | 首次校准弹窗结构一致；已补 running、paused、finished locked、upload failed 三档 viewport 深状态 golden：`flutter_app/test/goldens/pump_states/`。 |
 | Calibration `/calibration` | ![](../test/screenshots/legacy_web/compact_390x844/calibration.png) | ![](../flutter_app/test/goldens/feature_pages/calibration_page_mobile.png) | 结构通过 | 主卡片、进度条、右上 `1/7` 步数文本和 CTA 已对齐；360 窄屏裁切已修复。 |
 | Records `/records` | ![](../test/screenshots/legacy_web/compact_390x844/records.png) | ![](../flutter_app/test/goldens/feature_pages/records_page_mobile.png) | 结构通过 | 已恢复单位切换、图表右侧阶段标签、分段背景和记录行右侧时间；显式编辑按钮是否替代旧 Web swipe reveal 仍需产品确认。 |
 | Community `/community` | ![](../test/screenshots/legacy_web/compact_390x844/community.png) | ![](../flutter_app/test/goldens/feature_pages/community_page_mobile.png) | 结构通过 | 建设中空态结构一致。 |
@@ -73,8 +73,7 @@
 | ID | 页面 | 问题 | 验收方式 |
 |---|---|---|---|
 | UI-P2-001 | Agent Hub | 输入栏高度、图标样式与旧 Web 有轻微差异。 | 设计确认可接受，或调整后更新 golden。 |
-| UI-P2-002 | Pump | 背景模糊强度和深状态仍未完全评审。 | 增加 running、paused、finished、upload failed golden 后复核。 |
-| UI-P2-003 | Records | 旧 Web 编辑操作主要通过 swipe reveal 暴露；Flutter 当前显式展示编辑/删除按钮。 | 产品确认接受显式按钮，或后续改为 swipe reveal 并保留测试入口。 |
+| UI-P2-002 | Records | 旧 Web 编辑操作主要通过 swipe reveal 暴露；Flutter 当前显式展示编辑/删除按钮。 | 产品确认接受显式按钮，或后续改为 swipe reveal 并保留测试入口。 |
 
 ---
 
