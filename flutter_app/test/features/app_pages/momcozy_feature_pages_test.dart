@@ -106,9 +106,13 @@ void main() {
         find.byKey(const ValueKey('status-identity-tab-baby')),
       );
 
-      for (final label in const ['宝宝和我', '计划', '智能体', '社区', '设备']) {
+      for (final label in const ['宝宝和我', '计划', '社区', '设备']) {
         _expectFinderWithinViewport(tester, find.text(label));
       }
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('bottom-nav-agent')),
+      );
 
       router.go('/');
       await tester.pumpAndSettle();
