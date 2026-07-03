@@ -8498,6 +8498,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
   bool _userListOpen = false;
   String _momStage = 'postpartum';
   String? _status;
+  bool _statusIsError = false;
 
   @override
   void didChangeDependencies() {
@@ -8519,7 +8520,10 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
   Future<void> _switchUser() async {
     final trimmedUserId = _userIdController.text.trim();
     if (trimmedUserId.isEmpty) {
-      setState(() => _status = '请输入用户名');
+      setState(() {
+        _status = '保存失败：请输入用户名';
+        _statusIsError = true;
+      });
       return;
     }
     setState(() => _saving = true);
@@ -8528,6 +8532,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
     setState(() {
       _saving = false;
       _userListOpen = false;
+      _statusIsError = false;
       _status = trimmedUserId == MomCozyRuntimeScope.of(context).userId
           ? '用户已切换'
           : '用户已新建并切换';
@@ -8543,6 +8548,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
       _userListOpen = false;
       _userIdController.clear();
       _momStage = 'postpartum';
+      _statusIsError = false;
       _status = '用户和本地数据已删除';
     });
   }
@@ -8724,7 +8730,9 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                 Text(
                   _status!,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: const Color(0xff43827b),
+                    color: _statusIsError
+                        ? const Color(0xffa94747)
+                        : const Color(0xff43827b),
                     fontWeight: FontWeight.w900,
                   ),
                 ),
