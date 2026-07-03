@@ -326,7 +326,7 @@ void main() {
       await tester.pump();
       expect(find.text('IBCLC 在线咨询'), findsOneWidget);
       expect(find.text('连接中'), findsOneWidget);
-      expect(find.text('发送'), findsNothing);
+      expect(find.text('发送'), findsOneWidget);
 
       expect(
         tester
