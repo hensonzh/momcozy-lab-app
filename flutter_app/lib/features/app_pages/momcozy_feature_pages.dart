@@ -2092,6 +2092,9 @@ class _SchedulePageState extends State<_SchedulePage> {
                   ? 0
                   : taskCount - pendingTaskCount,
               totalCount: taskCount ?? 0,
+              reminderEnabled: _pumpReminderEnabled,
+              onReminderTap: () =>
+                  setState(() => _pumpReminderEnabled = !_pumpReminderEnabled),
             ),
             const SizedBox(height: 20),
             _ScheduleAgentCard(
@@ -2514,12 +2517,16 @@ class _ScheduleContextCard extends StatelessWidget {
     required this.subtitle,
     required this.completedCount,
     required this.totalCount,
+    required this.reminderEnabled,
+    required this.onReminderTap,
   });
 
   final String title;
   final String subtitle;
   final int completedCount;
   final int totalCount;
+  final bool reminderEnabled;
+  final VoidCallback onReminderTap;
 
   @override
   Widget build(BuildContext context) {
@@ -2533,42 +2540,97 @@ class _ScheduleContextCard extends StatelessWidget {
         radius: 24,
         shadows: MomCozyShadows.soft,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: MomCozyColors.foreground,
-              fontWeight: FontWeight.w900,
+          Positioned(
+            right: 0,
+            top: 0,
+            child: IconButton(
+              key: const ValueKey('schedule-context-reminder-button'),
+              tooltip: reminderEnabled ? '关闭计划提醒' : '开启计划提醒',
+              onPressed: onReminderTap,
+              style: IconButton.styleFrom(
+                backgroundColor: MomCozyColors.background.withValues(
+                  alpha: 0.9,
+                ),
+                side: BorderSide(
+                  color: MomCozyColors.border.withValues(alpha: 0.5),
+                ),
+                shape: const CircleBorder(),
+                shadowColor: Colors.black.withValues(alpha: 0.08),
+                elevation: 2,
+              ),
+              icon: Icon(
+                reminderEnabled
+                    ? Icons.notifications_none_rounded
+                    : Icons.notifications_off_outlined,
+                size: 18,
+                color: reminderEnabled
+                    ? MomCozyColors.foreground
+                    : MomCozyColors.mutedForeground,
+              ),
             ),
           ),
-          const SizedBox(height: 5),
-          Text(
-            subtitle,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: MomCozyColors.mutedForeground,
-              fontWeight: FontWeight.w700,
-              height: 1.28,
-            ),
-          ),
-          const SizedBox(height: 18),
-          Text(
-            '今日任务',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: MomCozyColors.foreground.withValues(alpha: 0.72),
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-            child: LinearProgressIndicator(
-              value: progress.clamp(0, 1),
-              minHeight: 9,
-              color: MomCozyColors.primary,
-              backgroundColor: MomCozyColors.secondary.withValues(alpha: 0.72),
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 46),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: MomCozyColors.foreground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w700,
+                        height: 1.28,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Text(
+                    '今日任务',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: MomCozyColors.foreground.withValues(alpha: 0.72),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '$completedCount/$totalCount',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                child: LinearProgressIndicator(
+                  value: progress.clamp(0, 1),
+                  minHeight: 9,
+                  color: MomCozyColors.primary,
+                  backgroundColor: MomCozyColors.secondary.withValues(
+                    alpha: 0.72,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
