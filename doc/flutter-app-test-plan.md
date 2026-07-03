@@ -758,6 +758,19 @@ CI 最低要求：
 [x] route intent、pump foreground、wake lock platform contract 通过
 ```
 
+最新 Android emulator smoke：
+
+```text
+[x] 2026-07-03 Pixel 7 API 36 emulator (`emulator-5554`) 可被 Flutter 识别
+[x] local debug APK 安装通过：`com.momcozymai.app.flutterpoc.local`
+[x] launcher 启动通过：`com.momcozymai.momcozy_flutter_app.MainActivity`
+[x] Agent Hub 首屏渲染通过，底部 5 个 tab 可见
+[x] Schedule tab 点击切换通过
+[x] Device tab 点击切换通过，左右设备卡未裁切
+[x] 当前 app 进程存在，窗口焦点在 Flutter MainActivity
+[x] smoke 期间未发现 `FATAL EXCEPTION`、`AndroidRuntime`、`E/flutter` 或 crash 日志
+```
+
 发布门槛最低要求：
 
 ```text
