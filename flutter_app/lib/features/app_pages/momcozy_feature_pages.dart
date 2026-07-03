@@ -9333,12 +9333,13 @@ class _W1PromoHero extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Momcozy · New',
+                        'MOMCOZY · NEW',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: MomCozyColors.background.withValues(
                             alpha: 0.58,
                           ),
                           fontWeight: FontWeight.w900,
+                          letterSpacing: 2.2,
                         ),
                       ),
                       const SizedBox(height: 7),
