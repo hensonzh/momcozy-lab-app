@@ -31,13 +31,21 @@ void main() {
     );
     expect(find.byKey(const ValueKey('agent-composer-input')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-image-button')), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-voice-button')), findsNothing);
-    expect(find.byKey(const ValueKey('agent-send-button')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-voice-button')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
 
     final imageButton = tester.widget<IconButton>(
       find.byKey(const ValueKey('agent-image-button')),
     );
     expect(imageButton.onPressed, isNull);
+    final voiceButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-voice-button')),
+    );
+    expect(voiceButton.onPressed, isNull);
+    final sendButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+    expect(sendButton.onPressed, isNull);
   });
 
   testWidgets('Agent Hub restores history and starts a new local session', (
@@ -236,7 +244,12 @@ void main() {
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsNothing,
     );
-    expect(find.byKey(const ValueKey('agent-send-button')), findsNothing);
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
+          .onPressed,
+      isNull,
+    );
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),

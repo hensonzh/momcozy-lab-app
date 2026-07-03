@@ -42,7 +42,7 @@
 
 | 页面 | 旧 Web | Flutter | 结论 | 记录 |
 |---|---|---|---|---|
-| Agent Hub `/` | ![](../test/screenshots/legacy_web/compact_390x844/agent_hub.png) | ![](../flutter_app/test/goldens/feature_pages/agent_hub_mobile.png) | 结构通过 | 首屏问候、输入栏、右上图标、底栏结构一致；已有 rich artifact golden，并补充 streaming、cancelled、disconnected、voice error 三档 viewport 深状态 golden：`flutter_app/test/goldens/agent_hub/`。 |
+| Agent Hub `/` | ![](../test/screenshots/legacy_web/compact_390x844/agent_hub.png) | ![](../flutter_app/test/goldens/feature_pages/agent_hub_mobile.png) | 结构通过 | 首屏问候、右上图标、底栏结构一致；输入栏已恢复旧 Web 的图片、麦克风、纸飞机同排胶囊样式；已有 rich artifact golden，并补充 streaming、cancelled、disconnected、voice error 三档 viewport 深状态 golden：`flutter_app/test/goldens/agent_hub/`。 |
 | Status `/status` | ![](../test/screenshots/legacy_web/compact_390x844/status.png) | ![](../flutter_app/test/goldens/feature_pages/status_page_mobile.png) | 结构通过 | 主结构一致；母乳趋势 x 轴已统一为旧 Web reference 的 `06/26` 到 `07/02` 七天窗口。 |
 | Schedule `/schedule` | ![](../test/screenshots/legacy_web/compact_390x844/schedule.png) | ![](../flutter_app/test/goldens/feature_pages/schedule_page_mobile.png) | 结构通过 | 月份、日期条、计划卡、Agent 提醒卡、空态、底栏结构一致；今日任务工具按钮已恢复旧 Web 图标+文字胶囊，并补充 populated、local task added、sync failed 三档 viewport 深状态 golden：`flutter_app/test/goldens/schedule_states/`。 |
 | Device `/device` | ![](../test/screenshots/legacy_web/compact_390x844/device.png) | ![](../flutter_app/test/goldens/feature_pages/device_page_mobile.png) | 结构通过 | 标题、加号、W1 横幅、Air One、左右设备卡和底栏一致。 |
@@ -72,8 +72,7 @@
 
 | ID | 页面 | 问题 | 验收方式 |
 |---|---|---|---|
-| UI-P2-001 | Agent Hub | 输入栏高度、图标样式与旧 Web 有轻微差异。 | 设计确认可接受，或调整后更新 golden。 |
-| UI-P2-002 | Records | 旧 Web 编辑操作主要通过 swipe reveal 暴露；Flutter 当前显式展示编辑/删除按钮。 | 产品确认接受显式按钮，或后续改为 swipe reveal 并保留测试入口。 |
+| UI-P2-001 | Records | 旧 Web 编辑操作主要通过 swipe reveal 暴露；Flutter 当前显式展示编辑/删除按钮。 | 产品确认接受显式按钮，或后续改为 swipe reveal 并保留测试入口。 |
 
 ---
 
