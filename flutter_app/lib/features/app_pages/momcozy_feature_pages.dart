@@ -1267,7 +1267,17 @@ class _StatusTrendPreviewPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final chartRect = Rect.fromLTWH(42, 8, size.width - 24, size.height - 36);
+    const labels = [
+      '06/26',
+      '06/27',
+      '06/28',
+      '06/29',
+      '06/30',
+      '07/01',
+      '07/02',
+    ];
+    final segmentCount = labels.length - 1;
+    final chartRect = Rect.fromLTWH(42, 8, size.width - 58, size.height - 36);
     final axisPaint = Paint()
       ..color = const Color(0xffb9792a)
       ..strokeWidth = 1
@@ -1303,8 +1313,8 @@ class _StatusTrendPreviewPainter extends CustomPainter {
       );
     }
 
-    for (var index = 0; index <= 5; index += 1) {
-      final x = chartRect.left + chartRect.width * index / 5;
+    for (var index = 0; index <= segmentCount; index += 1) {
+      final x = chartRect.left + chartRect.width * index / segmentCount;
       _drawDashedLine(
         canvas,
         Offset(x, chartRect.top),
@@ -1324,8 +1334,11 @@ class _StatusTrendPreviewPainter extends CustomPainter {
 
     final actual = Path()..moveTo(chartRect.left, chartRect.bottom);
     final points = <Offset>[
-      for (var index = 0; index <= 5; index += 1)
-        Offset(chartRect.left + chartRect.width * index / 5, chartRect.bottom),
+      for (var index = 0; index <= segmentCount; index += 1)
+        Offset(
+          chartRect.left + chartRect.width * index / segmentCount,
+          chartRect.bottom,
+        ),
     ];
     for (final point in points.skip(1)) {
       actual.lineTo(point.dx, point.dy);
@@ -1344,7 +1357,6 @@ class _StatusTrendPreviewPainter extends CustomPainter {
       canvas.drawCircle(point, 3.2, dotBorderPaint);
     }
 
-    const labels = ['06/26', '06/27', '06/28', '06/29', '06/30', '07/01'];
     for (var index = 0; index < labels.length; index += 1) {
       _drawChartText(
         canvas,
