@@ -204,7 +204,9 @@ clipBehavior: Clip.none
 
 已满足：
 
+- 日期条已恢复旧 Web 的 7 日按钮和左右切周箭头。
 - 日期切换、提醒上下文、任务列表、Agent 建议入口和 badge 结构保留。
+- 后端失败时首屏仍保留旧 Web 的空计划结构，错误重试入口下移，不再替代主结构。
 - 添加、删除、本地任务、跨天倒计时、空态/失败态已有测试。
 - 已补 populated、local task added、sync failed 三档 viewport 深状态 golden。
 

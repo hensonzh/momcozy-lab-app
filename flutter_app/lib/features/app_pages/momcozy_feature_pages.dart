@@ -2418,7 +2418,7 @@ class _SchedulePageState extends State<_SchedulePage> {
             ),
             const SizedBox(height: 16),
             _ScheduleContextCard(
-              title: taskCount == null ? '计划同步中' : '稳奶计划执行中',
+              title: '稳奶计划执行中',
               subtitle: '产后第29周（离乳期）',
               completedCount: taskCount == null
                   ? 0
@@ -2483,13 +2483,15 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   List<Widget> _dayPlanChildren(AsyncSnapshot<ScheduleDayPlan> snapshot) {
     if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return const [
+      return [
+        const _ScheduleEmptyTaskNotice(),
+        const SizedBox(height: 20),
         _ActionTile(
           icon: Icons.sync_rounded,
           title: '正在同步计划',
           subtitle: '正在读取当天任务和提醒。',
-          accent: Color(0xffb2773b),
-          trailing: SizedBox.square(
+          accent: widget.accent,
+          trailing: const SizedBox.square(
             dimension: 22,
             child: CircularProgressIndicator(strokeWidth: 2),
           ),
@@ -2499,6 +2501,8 @@ class _SchedulePageState extends State<_SchedulePage> {
 
     if (snapshot.hasError) {
       return [
+        const _ScheduleEmptyTaskNotice(),
+        const SizedBox(height: 20),
         _ActionTile(
           icon: Icons.cloud_off_outlined,
           title: '计划同步失败',
@@ -2516,21 +2520,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     final plan = snapshot.data;
     final tasks = plan == null ? const <ScheduleTask>[] : _visibleTasks(plan);
     if (tasks.isEmpty) {
-      return const [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 14),
-          child: Center(
-            child: Text(
-              '当天暂无执行内容',
-              style: TextStyle(
-                color: MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w700,
-                fontSize: 12,
-              ),
-            ),
-          ),
-        ),
-      ];
+      return const [_ScheduleEmptyTaskNotice()];
     }
 
     return [
@@ -2660,7 +2650,7 @@ class _ScheduleDateStrip extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    for (var offset = -3; offset <= 2; offset += 1)
+                    for (var offset = -3; offset <= 3; offset += 1)
                       _DatePill(
                         day: offset == 0
                             ? '今'
@@ -2679,10 +2669,36 @@ class _ScheduleDateStrip extends StatelessWidget {
                   ],
                 ),
               ),
+              _ScheduleWeekButton(
+                icon: Icons.chevron_right_rounded,
+                onTap: () =>
+                    onSelected(selectedDate.add(const Duration(days: 7))),
+              ),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ScheduleEmptyTaskNotice extends StatelessWidget {
+  const _ScheduleEmptyTaskNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 14),
+      child: Center(
+        child: Text(
+          '当天暂无执行内容',
+          style: TextStyle(
+            color: MomCozyColors.mutedForeground,
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+          ),
+        ),
+      ),
     );
   }
 }

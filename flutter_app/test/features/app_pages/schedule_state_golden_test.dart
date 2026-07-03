@@ -82,7 +82,7 @@ const _scheduleStates = [
     label: 'sync failed',
     fileName: 'schedule_sync_failed_mobile.png',
     response: {'http_status': 503, 'status_text': 'Service Unavailable'},
-    expectedText: '计划同步失败',
+    expectedText: '当天暂无执行内容',
   ),
 ];
 
