@@ -8237,6 +8237,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
   final TextEditingController _userIdController = TextEditingController();
   bool _initializedUser = false;
   bool _saving = false;
+  bool _userListOpen = false;
   String _momStage = 'postpartum';
   String? _status;
 
@@ -8268,6 +8269,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
     if (!mounted) return;
     setState(() {
       _saving = false;
+      _userListOpen = false;
       _status = trimmedUserId == MomCozyRuntimeScope.of(context).userId
           ? '用户已切换'
           : '用户已新建并切换';
@@ -8280,6 +8282,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
     if (!mounted) return;
     setState(() {
       _saving = false;
+      _userListOpen = false;
       _userIdController.clear();
       _momStage = 'postpartum';
       _status = '用户和本地数据已删除';
@@ -8316,17 +8319,96 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              TextField(
-                controller: _userIdController,
-                enabled: !_saving,
-                autocorrect: false,
-                enableSuggestions: false,
-                decoration: const InputDecoration(
-                  hintText: '选择或输入用户 ID',
-                  constraints: BoxConstraints.tightFor(height: 46),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
+              SizedBox(
+                height: 46,
+                child: Stack(
+                  children: [
+                    TextField(
+                      controller: _userIdController,
+                      enabled: !_saving,
+                      autocorrect: false,
+                      enableSuggestions: false,
+                      decoration: const InputDecoration(
+                        hintText: '选择或输入用户 ID',
+                        constraints: BoxConstraints.tightFor(height: 46),
+                        contentPadding: EdgeInsets.fromLTRB(16, 0, 48, 0),
+                      ),
+                    ),
+                    Positioned(
+                      right: 4,
+                      top: 4,
+                      child: IconButton(
+                        key: const ValueKey('device-user-list-button'),
+                        tooltip: '展开用户列表',
+                        visualDensity: VisualDensity.compact,
+                        constraints: const BoxConstraints.tightFor(
+                          width: 38,
+                          height: 38,
+                        ),
+                        padding: EdgeInsets.zero,
+                        onPressed: _saving
+                            ? null
+                            : () => setState(
+                                () => _userListOpen = !_userListOpen,
+                              ),
+                        icon: Icon(
+                          _userListOpen
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          size: 20,
+                        ),
+                        color: MomCozyColors.mutedForeground,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              if (_userListOpen) ...[
+                const SizedBox(height: 6),
+                Container(
+                  key: const ValueKey('device-user-list-panel'),
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.card,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: MomCozyColors.border),
+                    boxShadow: MomCozyShadows.soft,
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(6),
+                    onTap: () => setState(() => _userListOpen = false),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _userIdController.text.isEmpty
+                                  ? '暂无已保存用户'
+                                  : _userIdController.text,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: MomCozyColors.foreground,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                          ),
+                          const Icon(
+                            Icons.check_rounded,
+                            size: 16,
+                            color: MomCozyColors.primary,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 18),
               Text(
                 '用户类型',
@@ -8343,7 +8425,11 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                   constraints: BoxConstraints.tightFor(height: 46),
                   contentPadding: EdgeInsets.symmetric(horizontal: 16),
                 ),
-                icon: const SizedBox.shrink(),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  key: ValueKey('device-user-stage-menu-icon'),
+                  color: MomCozyColors.mutedForeground,
+                ),
                 items: const [
                   DropdownMenuItem(value: 'prenatal', child: Text('孕期')),
                   DropdownMenuItem(value: 'postpartum', child: Text('产后')),

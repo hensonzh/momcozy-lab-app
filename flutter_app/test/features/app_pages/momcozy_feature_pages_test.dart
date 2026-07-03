@@ -1810,8 +1810,24 @@ void main() {
       expect(find.text('用户参数配置'), findsOneWidget);
       expect(find.text('用户名'), findsOneWidget);
       expect(find.text('用户类型'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('device-user-list-button')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('device-user-stage-menu-icon')),
+        findsOneWidget,
+      );
       expect(find.text('删除用户'), findsOneWidget);
       expect(find.text('切换用户'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('device-user-list-button')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('device-user-list-panel')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('community page renders construction empty state', (
