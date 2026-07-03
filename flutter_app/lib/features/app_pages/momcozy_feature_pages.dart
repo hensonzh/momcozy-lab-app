@@ -3397,21 +3397,19 @@ class _DeviceHeader extends StatelessWidget {
               child: _DeviceQuickMenuLabel('设备提醒'),
             ),
           ],
-          child: Opacity(
-            opacity: 0,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: MomCozyColors.card,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: MomCozyColors.border.withValues(alpha: 0.5),
-                ),
-                boxShadow: MomCozyShadows.soft,
+          child: Container(
+            key: const ValueKey('device-quick-menu-button'),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: MomCozyColors.card,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: MomCozyColors.border.withValues(alpha: 0.5),
               ),
-              child: const Icon(Icons.add_rounded, size: 22),
+              boxShadow: MomCozyShadows.soft,
             ),
+            child: const Icon(Icons.add_rounded, size: 22),
           ),
         ),
       ],
@@ -3535,19 +3533,25 @@ class _DeviceAirOnePanel extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (onStartPump != null)
-                  FilledButton.icon(
-                    onPressed: onStartPump,
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(0, 38),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                FilledButton.icon(
+                  key: const ValueKey('device-start-pump-button'),
+                  onPressed: onStartPump,
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(0, 38),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    disabledBackgroundColor: MomCozyColors.primary.withValues(
+                      alpha: 0.36,
                     ),
-                    icon: const Icon(Icons.play_arrow_rounded, size: 18),
-                    label: const Text('开始吸奶'),
+                    disabledForegroundColor: Colors.white.withValues(
+                      alpha: 0.72,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
+                  icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                  label: const Text('开始吸奶'),
+                ),
               ],
             ),
             const SizedBox(height: 12),

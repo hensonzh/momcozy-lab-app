@@ -122,6 +122,14 @@ void main() {
       await tester.pumpAndSettle();
       _expectFinderWithinViewport(
         tester,
+        find.byKey(const ValueKey('device-quick-menu-button')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('device-start-pump-button')),
+      );
+      _expectFinderWithinViewport(
+        tester,
         find.byKey(const ValueKey('device-deck-card-L')),
       );
       _expectFinderWithinViewport(
