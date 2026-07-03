@@ -666,8 +666,6 @@ void main() {
         find.byKey(const ValueKey('records-manual-entry-button')),
         findsOneWidget,
       );
-      expect(find.byTooltip('编辑记录'), findsWidgets);
-      expect(find.byTooltip('删除记录'), findsWidgets);
       await _scrollToTextContaining(tester, '晨间泵奶');
       expect(find.textContaining('晨间泵奶'), findsOneWidget);
       expect(find.textContaining('120 mL'), findsWidgets);
@@ -722,7 +720,8 @@ void main() {
       expect(find.textContaining('90 mL'), findsWidgets);
       expect(find.textContaining('来源 9'), findsOneWidget);
 
-      await tester.tap(find.byTooltip('编辑记录').first);
+      const rowKey = ValueKey('records-pump-row-local-pump-1');
+      await tester.longPress(find.byKey(rowKey));
       await tester.pumpAndSettle();
 
       await _scrollToTextContaining(tester, '已编辑 手动补录 1');
@@ -730,7 +729,9 @@ void main() {
       expect(find.textContaining('100 mL'), findsWidgets);
       expect(find.textContaining('来源 9'), findsOneWidget);
 
-      await tester.tap(find.byTooltip('删除记录').first);
+      await tester.tap(
+        find.byKey(const ValueKey('records-delete-local-pump-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.textContaining('已编辑 手动补录 1'), findsNothing);

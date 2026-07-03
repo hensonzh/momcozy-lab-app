@@ -7252,6 +7252,8 @@ class _RecordsPageState extends State<_RecordsPage> {
     return [
       for (final record in records)
         _RecordsMilkRow(
+          rowKey: ValueKey('records-pump-row-${record.id}'),
+          deleteKey: ValueKey('records-delete-${record.id}'),
           amountLabel: _amountLabel(record.amountMl, unit: _volumeUnit),
           title: _textOr(record.title, '泵奶记录'),
           subtitle:
@@ -7271,18 +7273,10 @@ class _RecordsPageState extends State<_RecordsPage> {
                   : Icons.phone_android_rounded,
             ),
           ],
-          actions: [
-            IconButton(
-              tooltip: '编辑记录',
-              onPressed: () => _editPumpRecord(record),
-              icon: const Icon(Icons.edit_outlined),
-            ),
-            IconButton(
-              tooltip: '删除记录',
-              onPressed: () => _deletePumpRecord(record),
-              icon: const Icon(Icons.delete_outline_rounded),
-            ),
-          ],
+          onEdit: record.pumpSource == 9 ? () => _editPumpRecord(record) : null,
+          onDelete: record.pumpSource == 9
+              ? () => _deletePumpRecord(record)
+              : null,
         ),
     ];
   }
@@ -8022,7 +8016,6 @@ class _RecordsTrendPainter extends CustomPainter {
     );
 
     for (var index = 0; index < points.length; index += 1) {
-      if (index.isOdd && points.length > 5) continue;
       _drawChartText(
         canvas,
         points[index].label,
@@ -8263,6 +8256,8 @@ class _RecordsSecondaryModePicker extends StatelessWidget {
 
 class _RecordsMilkRow extends StatelessWidget {
   const _RecordsMilkRow({
+    this.rowKey,
+    this.deleteKey,
     required this.amountLabel,
     required this.title,
     required this.subtitle,
@@ -8270,9 +8265,12 @@ class _RecordsMilkRow extends StatelessWidget {
     required this.accent,
     this.trailingLabel,
     this.badges = const [],
-    this.actions = const [],
+    this.onEdit,
+    this.onDelete,
   });
 
+  final Key? rowKey;
+  final Key? deleteKey;
   final String amountLabel;
   final String title;
   final String subtitle;
@@ -8280,7 +8278,8 @@ class _RecordsMilkRow extends StatelessWidget {
   final Color accent;
   final String? trailingLabel;
   final List<_RecordsSourceBadge> badges;
-  final List<Widget> actions;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -8290,81 +8289,86 @@ class _RecordsMilkRow extends StatelessWidget {
         : title == '泵奶记录'
         ? subtitle
         : '$title · $subtitle';
+    final hasTrailing = trailingLabel != null || onDelete != null;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: DecoratedBox(
-        decoration: MomCozyDecorations.card(
-          color: MomCozyColors.raised,
-          borderColor: MomCozyColors.border.withValues(alpha: 0.72),
-          radius: 16,
-          shadows: const [],
-        ),
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                14,
-                12,
-                actions.isEmpty && trailingLabel == null ? 14 : 86,
-                12,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 5,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+      child: Semantics(
+        label: onEdit == null ? null : '编辑记录',
+        onLongPress: onEdit,
+        child: GestureDetector(
+          key: rowKey,
+          behavior: HitTestBehavior.opaque,
+          onLongPress: onEdit,
+          child: DecoratedBox(
+            decoration: MomCozyDecorations.card(
+              color: MomCozyColors.raised,
+              borderColor: MomCozyColors.border.withValues(alpha: 0.72),
+              radius: 16,
+              shadows: const [],
+            ),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    14,
+                    12,
+                    hasTrailing ? (onDelete == null ? 70 : 86) : 14,
+                    12,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 5,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Icon(icon, size: 17, color: accent),
-                          const SizedBox(width: 4),
-                          Text(
-                            amountLabel,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  color: MomCozyColors.foreground,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(icon, size: 17, color: accent),
+                              const SizedBox(width: 4),
+                              Text(
+                                amountLabel,
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(
+                                      color: MomCozyColors.foreground,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                              ),
+                            ],
                           ),
+                          ...badges,
                         ],
                       ),
-                      ...badges,
+                      const SizedBox(height: 4),
+                      Text(
+                        detailText,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: MomCozyColors.mutedForeground,
+                          fontWeight: FontWeight.w700,
+                          height: 1.22,
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    detailText,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: MomCozyColors.mutedForeground,
-                      fontWeight: FontWeight.w700,
-                      height: 1.22,
+                ),
+                if (hasTrailing)
+                  Positioned(
+                    right: onDelete == null ? 14 : 8,
+                    top: onDelete == null ? 16 : 10,
+                    child: _RecordsRowTrailing(
+                      label: trailingLabel,
+                      onDelete: onDelete,
+                      deleteKey: deleteKey,
                     ),
                   ),
-                ],
-              ),
+              ],
             ),
-            if (actions.isNotEmpty)
-              Positioned(
-                right: 6,
-                top: 9,
-                child: _RecordsRowTrailing(
-                  label: trailingLabel,
-                  actions: actions,
-                ),
-              )
-            else if (trailingLabel != null)
-              Positioned(
-                right: 14,
-                top: 16,
-                child: _RecordsRowTrailing(label: trailingLabel),
-              ),
-          ],
+          ),
         ),
       ),
     );
@@ -8372,10 +8376,11 @@ class _RecordsMilkRow extends StatelessWidget {
 }
 
 class _RecordsRowTrailing extends StatelessWidget {
-  const _RecordsRowTrailing({this.label, this.actions = const []});
+  const _RecordsRowTrailing({this.label, this.onDelete, this.deleteKey});
 
   final String? label;
-  final List<Widget> actions;
+  final VoidCallback? onDelete;
+  final Key? deleteKey;
 
   @override
   Widget build(BuildContext context) {
@@ -8384,31 +8389,38 @@ class _RecordsRowTrailing extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if (label != null)
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: MomCozyColors.mutedForeground,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        if (actions.isNotEmpty) ...[
-          if (label != null) const SizedBox(height: 3),
-          IconTheme(
-            data: const IconThemeData(
-              size: 17,
-              color: MomCozyColors.mutedForeground,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: actions
-                  .map(
-                    (action) => SizedBox.square(dimension: 28, child: action),
-                  )
-                  .toList(growable: false),
-            ),
-          ),
-        ],
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (label != null)
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: MomCozyColors.mutedForeground,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            if (onDelete != null)
+              SizedBox.square(
+                dimension: 28,
+                child: IconButton(
+                  key: deleteKey,
+                  tooltip: '删除记录',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints.tightFor(
+                    width: 28,
+                    height: 28,
+                  ),
+                  onPressed: onDelete,
+                  icon: const Icon(
+                    Icons.delete_outline_rounded,
+                    size: 16,
+                    color: MomCozyColors.mutedForeground,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ],
     );
   }
