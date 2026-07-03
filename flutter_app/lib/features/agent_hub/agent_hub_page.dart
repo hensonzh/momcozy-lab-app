@@ -1148,7 +1148,7 @@ class AgentComposerBar extends StatelessWidget {
             DecoratedBox(
               decoration: BoxDecoration(
                 color: MomCozyColors.card.withValues(alpha: 0.88),
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(22),
                 border: Border.all(
                   color: MomCozyColors.border.withValues(alpha: 0.64),
                 ),
@@ -1161,7 +1161,7 @@ class AgentComposerBar extends StatelessWidget {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 child: Row(
                   children: [
                     IconButton(
@@ -1171,18 +1171,13 @@ class AgentComposerBar extends StatelessWidget {
                       tooltip: '添加图片',
                       color: MomCozyColors.mutedForeground,
                       visualDensity: VisualDensity.compact,
-                    ),
-                    if (canUseVoice || voicePhase != AgentVoicePhase.idle)
-                      IconButton(
-                        key: const ValueKey('agent-voice-button'),
-                        onPressed: canUseVoice ? onVoiceInput : null,
-                        icon: Icon(_voiceIcon),
-                        tooltip: _voiceTooltip,
-                        color: voicePhase == AgentVoicePhase.listening
-                            ? colorScheme.primary
-                            : MomCozyColors.mutedForeground,
-                        visualDensity: VisualDensity.compact,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 36,
+                        height: 36,
                       ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    const SizedBox(width: 4),
                     Expanded(
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -1210,6 +1205,7 @@ class AgentComposerBar extends StatelessWidget {
                               focusedBorder: InputBorder.none,
                               filled: false,
                               isDense: true,
+                              contentPadding: EdgeInsets.zero,
                               hintStyle: TextStyle(
                                 fontFamily: MomCozyTypography.fontFamily,
                                 fontFamilyFallback:
@@ -1223,25 +1219,45 @@ class AgentComposerBar extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (isRunning || canSend)
-                      IconButton.filled(
-                        key: ValueKey(
-                          isRunning ? 'agent-stop-button' : 'agent-send-button',
-                        ),
-                        onPressed: isRunning ? onCancel : onSend,
-                        icon: Icon(
-                          isRunning ? Icons.stop_rounded : Icons.send_rounded,
-                          size: isRunning ? 18 : 17,
-                        ),
-                        tooltip: isRunning ? '停止' : '发送',
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.primary,
-                          foregroundColor: colorScheme.onPrimary,
-                          fixedSize: const Size.square(36),
-                          minimumSize: const Size.square(36),
-                          padding: EdgeInsets.zero,
-                        ),
+                    const SizedBox(width: 4),
+                    IconButton(
+                      key: const ValueKey('agent-voice-button'),
+                      onPressed: canUseVoice ? onVoiceInput : null,
+                      icon: Icon(_voiceIcon, size: 20),
+                      tooltip: _voiceTooltip,
+                      color: voicePhase == AgentVoicePhase.listening
+                          ? colorScheme.primary
+                          : MomCozyColors.mutedForeground,
+                      visualDensity: VisualDensity.compact,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 34,
+                        height: 34,
                       ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    const SizedBox(width: 4),
+                    IconButton.filled(
+                      key: ValueKey(
+                        isRunning ? 'agent-stop-button' : 'agent-send-button',
+                      ),
+                      onPressed: isRunning
+                          ? onCancel
+                          : (canSend ? onSend : null),
+                      icon: Icon(
+                        isRunning ? Icons.stop_rounded : Icons.send_rounded,
+                        size: isRunning ? 18 : 17,
+                      ),
+                      tooltip: isRunning ? '停止' : '发送',
+                      style: IconButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: colorScheme.onPrimary,
+                        disabledBackgroundColor: MomCozyColors.muted,
+                        disabledForegroundColor: MomCozyColors.mutedForeground,
+                        fixedSize: const Size.square(36),
+                        minimumSize: const Size.square(36),
+                        padding: EdgeInsets.zero,
+                      ),
+                    ),
                   ],
                 ),
               ),
