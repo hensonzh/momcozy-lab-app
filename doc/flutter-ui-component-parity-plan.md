@@ -120,12 +120,12 @@ Current compact report after the last accepted visual commits:
 | P0 | 待产包 | 4.30% | 14,153 | below 4.00%, then below 3.00% | product row, section header, checkout footer |
 | P0 | 妈妈点滴 | 4.27% | 14,068 | below 4.00%, then below 3.00% | dashboard, chart, rows |
 | P0 | 吸乳 | 4.13% | 13,579 | below 3.75%, then below 3.00% | prompt modal, backdrop, controls |
-| P0 | 宝宝和我 | 3.87% | 12,751 | below 3.50%, then below 2.50% | module cards, then trend card/painter |
+| P0 | 宝宝和我 | 3.87% | 12,747 | below 3.50%, then below 2.50% | module cards, then trend card/painter |
 | P0 | 计划 | 3.76% | 12,360 | below 3.50%, then below 2.50% | week strip, context card, empty/task blocks |
 | P1 | W1 | 3.09% | 10,172 | below 2.75%, then below 2.25% | hero, product summary, selling points |
 | P1 | 用户参数 | 2.49% | 8,182 | below 2.00% | subpage header, form controls |
 | P1 | 舒适负压调节 | 2.22% | 7,294 | below 2.00% | top bar typography, intro card |
-| P1 | Agent Hub | 1.54% | 5,065 | below 1.50% | composer, greeting typography, avatar opacity |
+| P1 | Agent Hub | 1.51% | 4,968 | below 1.50% | composer, greeting typography, avatar opacity |
 | P2 | 设备 | 1.50% | 4,927 | keep at or below threshold | header/banner final polish |
 | P2 | IBCLC | 1.49% | 4,908 | keep OK | header/loading |
 | P2 | 设备提醒 | 1.29% | 4,239 | keep OK | regression guard only |
@@ -138,11 +138,19 @@ Accepted component slices so far:
 | Page | Component | Before | After | Commit |
 |---|---|---:|---:|---|
 | 宝宝和我 | Trend target icon | 12,958 px | 12,751 px | `be81d27` |
+| 宝宝和我 | Breast health icon | 12,751 px | 12,747 px | `d0885e0` |
 | 妈妈点滴 | Milk stat accent | 14,256 px | 14,144 px | `db5bfcd` |
 | 妈妈点滴 | Mini stat units | 14,144 px | 14,068 px | `0389c1f` |
 | 计划 | Agent context card surface | 12,492 px | 12,360 px | `ac67052` |
 | W1 | Summary typography | 10,195 px | 10,172 px | `933ca14` |
 | 舒适负压调节 | Intro card position | 7,501 px | 7,294 px | `b67fb25` |
+| Agent Hub | Selected agent nav gradient | 5,065 px | 4,968 px | `2243ab2` |
+
+Component guard additions:
+
+| Scope | Test coverage | Commit |
+|---|---|---|
+| Bottom navigation | selected Agent center tab golden | `4c4e2a8` |
 
 ## 6. Page Component Matrix
 
