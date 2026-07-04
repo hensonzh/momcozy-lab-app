@@ -7641,7 +7641,7 @@ class _RecordsDashboardCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _RecordsMiniStat(
-                  icon: Icons.local_fire_department_outlined,
+                  icon: Icons.water_drop_outlined,
                   label: '吸奶器母乳量',
                   value: dashboardTotalValue,
                   unitSuffix: volumeUnit,
