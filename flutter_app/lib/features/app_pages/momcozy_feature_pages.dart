@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
@@ -5012,121 +5013,144 @@ class _PumpCalibrationPromptOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned.fill(
-      child: ColoredBox(
-        color: MomCozyColors.foreground.withValues(alpha: 0.4),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: ConstrainedBox(
-              key: const ValueKey('pump-calibration-prompt-card'),
-              constraints: const BoxConstraints(maxWidth: 392),
-              child: DecoratedBox(
-                decoration: MomCozyDecorations.card(
-                  color: MomCozyColors.card,
-                  borderColor: MomCozyColors.border,
-                  radius: 24,
-                  shadows: const [
-                    BoxShadow(
-                      color: Color(0x40392832),
-                      blurRadius: 36,
-                      spreadRadius: -10,
-                      offset: Offset(0, 18),
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: ColoredBox(
+            color: MomCozyColors.foreground.withValues(alpha: 0.43),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ConstrainedBox(
+                  key: const ValueKey('pump-calibration-prompt-card'),
+                  constraints: const BoxConstraints(maxWidth: 392),
+                  child: DecoratedBox(
+                    decoration: MomCozyDecorations.card(
+                      color: MomCozyColors.card,
+                      borderColor: MomCozyColors.border,
+                      radius: 16,
+                      shadows: const [
+                        BoxShadow(
+                          color: Color(0x40392832),
+                          blurRadius: 36,
+                          spreadRadius: -10,
+                          offset: Offset(0, 18),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const _PumpPromptFlowerIcon(),
-                          const SizedBox(width: 9),
-                          Text(
-                            '个性化舒适档位',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  color: MomCozyColors.foreground,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                          Row(
+                            children: [
+                              const _PumpPromptFlowerIcon(),
+                              const SizedBox(width: 8),
+                              Text(
+                                '个性化舒适档位',
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(
+                                      color: MomCozyColors.foreground,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-                      _PumpPromptRichLine(
-                        segments: [
-                          const TextSpan(text: '妈妈，检测到您还没有进行过'),
-                          TextSpan(
-                            text: '耐受度滴定',
-                            style: _pumpPromptEmphasisStyle(context),
+                          const SizedBox(height: 12),
+                          _PumpPromptRichLine(
+                            segments: [
+                              const TextSpan(text: '妈妈，检测到您还没有进行过'),
+                              TextSpan(
+                                text: '耐受度滴定',
+                                style: _pumpPromptEmphasisStyle(context),
+                              ),
+                              const TextSpan(text: '哦~'),
+                            ],
                           ),
-                          const TextSpan(text: '哦~'),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      _PumpPromptRichLine(
-                        segments: [
-                          const TextSpan(text: '滴定可以帮您找到'),
-                          TextSpan(
-                            text: '最舒适且高效',
-                            style: _pumpPromptEmphasisStyle(context),
+                          const SizedBox(height: 8),
+                          _PumpPromptRichLine(
+                            segments: [
+                              const TextSpan(text: '滴定可以帮您找到'),
+                              TextSpan(
+                                text: '最舒适且高效',
+                                style: _pumpPromptEmphasisStyle(context),
+                              ),
+                              const TextSpan(text: '的吸力档位，避免吸乳时疼痛或效率不佳 '),
+                              const WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: _PumpPromptHeartIcon(),
+                              ),
+                            ],
                           ),
-                          const TextSpan(text: '的吸力档位，避免吸乳时疼痛或效率不佳 '),
-                          const WidgetSpan(
-                            alignment: PlaceholderAlignment.middle,
-                            child: _PumpPromptHeartIcon(),
+                          const SizedBox(height: 8),
+                          _PumpPromptRichLine(
+                            segments: [
+                              const TextSpan(text: '只需要 '),
+                              TextSpan(
+                                text: '2分钟',
+                                style: _pumpPromptEmphasisStyle(context),
+                              ),
+                              const TextSpan(text: '，就能让每次吸乳都更舒适~'),
+                            ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      _PumpPromptRichLine(
-                        segments: [
-                          const TextSpan(text: '只需要 '),
-                          TextSpan(
-                            text: '2分钟',
-                            style: _pumpPromptEmphasisStyle(context),
-                          ),
-                          const TextSpan(text: '，就能让每次吸乳都更舒适~'),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: onSkip,
-                              style: OutlinedButton.styleFrom(
-                                minimumSize: const Size.fromHeight(40),
-                                side: BorderSide(
-                                  color: MomCozyColors.border.withValues(
-                                    alpha: 0.8,
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton(
+                                  onPressed: onSkip,
+                                  style: OutlinedButton.styleFrom(
+                                    minimumSize: const Size.fromHeight(40),
+                                    side: BorderSide(
+                                      color: MomCozyColors.border.withValues(
+                                        alpha: 0.8,
+                                      ),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    '先跳过',
+                                    style: TextStyle(
+                                      fontFamily: MomCozyTypography.fontFamily,
+                                      fontFamilyFallback:
+                                          MomCozyTypography.fontFamilyFallback,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: FilledButton(
+                                  onPressed: onStartCalibration,
+                                  style: FilledButton.styleFrom(
+                                    minimumSize: const Size.fromHeight(40),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    '开始滴定',
+                                    style: TextStyle(
+                                      fontFamily: MomCozyTypography.fontFamily,
+                                      fontFamilyFallback:
+                                          MomCozyTypography.fontFamilyFallback,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              child: const Text('先跳过'),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: FilledButton(
-                              onPressed: onStartCalibration,
-                              style: FilledButton.styleFrom(
-                                minimumSize: const Size.fromHeight(40),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: const Text('开始滴定'),
-                            ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -5238,7 +5262,8 @@ class _PumpPromptRichLine extends StatelessWidget {
       text: TextSpan(
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
           color: MomCozyColors.mutedForeground,
-          fontWeight: FontWeight.w700,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
           height: 1.55,
         ),
         children: segments,
@@ -5250,7 +5275,8 @@ class _PumpPromptRichLine extends StatelessWidget {
 TextStyle _pumpPromptEmphasisStyle(BuildContext context) {
   return Theme.of(context).textTheme.labelMedium!.copyWith(
     color: MomCozyColors.primary,
-    fontWeight: FontWeight.w900,
+    fontSize: 13,
+    fontWeight: FontWeight.w700,
     height: 1.55,
   );
 }
