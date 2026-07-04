@@ -78,6 +78,23 @@ void main() {
         ),
       );
     });
+
+    testWidgets('mom care selling point matches compact baseline', (
+      tester,
+    ) async {
+      await _pumpW1ComponentApp(tester);
+
+      final point = find.byKey(const ValueKey('w1-selling-point-mom-care'));
+      expect(point, findsOneWidget);
+      expect(find.text('妈妈身心关怀模式'), findsOneWidget);
+
+      await expectLater(
+        point,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/w1_mom_care_selling_point.png',
+        ),
+      );
+    });
   });
 }
 

@@ -9381,10 +9381,16 @@ class _W1PageState extends State<_W1Page> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const _W1SellingPoint(
-                  icon: Icons.favorite_border_rounded,
-                  title: '妈妈身心关怀模式',
-                  subtitle: '内置心率感应与呼吸引导，吸乳时自动播放舒缓白噪音，帮助妈妈放松身心',
+                Transform.translate(
+                  offset: const Offset(-1, -2),
+                  child: const RepaintBoundary(
+                    key: ValueKey('w1-selling-point-mom-care'),
+                    child: _W1SellingPoint(
+                      icon: Icons.favorite_border_rounded,
+                      title: '妈妈身心关怀模式',
+                      subtitle: '内置心率感应与呼吸引导，吸乳时自动播放舒缓白噪音，帮助妈妈放松身心',
+                    ),
+                  ),
                 ),
                 Transform.translate(
                   offset: const Offset(2, 4),
