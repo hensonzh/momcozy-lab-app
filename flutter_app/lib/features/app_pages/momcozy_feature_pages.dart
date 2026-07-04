@@ -749,10 +749,12 @@ class _StatusPageState extends State<_StatusPage> {
         child: Transform.translate(
           offset: const Offset(3, -1),
           child: _StatusModuleGrid(
+            key: const ValueKey('status-postpartum-mom-module-grid'),
             children: [
               Transform.translate(
                 offset: const Offset(0, 4),
                 child: _StatusModuleCard(
+                  key: const ValueKey('status-module-milk-output'),
                   title: '母乳产出',
                   icon: Icons.water_drop_outlined,
                   accent: MomCozyColors.primary,
@@ -771,6 +773,7 @@ class _StatusPageState extends State<_StatusPage> {
               Transform.translate(
                 offset: const Offset(0, 4),
                 child: const _StatusModuleCard(
+                  key: ValueKey('status-module-breast-health'),
                   title: '乳房健康',
                   showHelp: true,
                   bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
@@ -781,6 +784,7 @@ class _StatusPageState extends State<_StatusPage> {
                 ),
               ),
               const _StatusModuleCard(
+                key: ValueKey('status-module-postpartum-recovery'),
                 title: '产后恢复',
                 bodyText: '正在执行盆底肌康复训练',
                 action: '查看计划',
@@ -789,6 +793,7 @@ class _StatusPageState extends State<_StatusPage> {
                 background: Color(0xfff2fffb),
               ),
               const _StatusModuleCard(
+                key: ValueKey('status-module-rest-nutrition'),
                 title: '补能与休息',
                 showHelp: true,
                 bodyText: '待开通睡眠与营养功能',
@@ -803,7 +808,9 @@ class _StatusPageState extends State<_StatusPage> {
       const SizedBox(height: 8),
       Transform.translate(
         offset: const Offset(0, -1),
-        child: const _StatusTrendPreview(),
+        child: const _StatusTrendPreview(
+          key: ValueKey('status-milk-trend-preview'),
+        ),
       ),
     ];
   }
@@ -943,7 +950,7 @@ class _StatusModuleMetric {
 }
 
 class _StatusModuleGrid extends StatelessWidget {
-  const _StatusModuleGrid({required this.children});
+  const _StatusModuleGrid({super.key, required this.children});
 
   final List<Widget> children;
 
@@ -973,6 +980,7 @@ class _StatusModuleGrid extends StatelessWidget {
 
 class _StatusModuleCard extends StatelessWidget {
   const _StatusModuleCard({
+    super.key,
     required this.title,
     required this.icon,
     required this.accent,
@@ -1720,7 +1728,7 @@ class _StatusSegmentedPills extends StatelessWidget {
 }
 
 class _StatusTrendPreview extends StatelessWidget {
-  const _StatusTrendPreview();
+  const _StatusTrendPreview({super.key});
 
   @override
   Widget build(BuildContext context) {
