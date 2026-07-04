@@ -2550,6 +2550,7 @@ class _SchedulePageState extends State<_SchedulePage> {
             Transform.translate(
               offset: const Offset(0, -8),
               child: _ScheduleDateStrip(
+                key: const ValueKey('schedule-date-strip'),
                 selectedDay: _selectedDay,
                 onSelected: _selectDay,
               ),
@@ -2753,6 +2754,7 @@ class _SchedulePageState extends State<_SchedulePage> {
 
 class _ScheduleDateStrip extends StatelessWidget {
   const _ScheduleDateStrip({
+    super.key,
     required this.selectedDay,
     required this.onSelected,
   });
