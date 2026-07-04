@@ -9528,7 +9528,7 @@ class _W1PromoHero extends StatelessWidget {
                         '为妈妈的身心健康而生',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: MomCozyColors.background.withValues(
-                            alpha: 0.58,
+                            alpha: 0.5,
                           ),
                           fontWeight: FontWeight.w600,
                         ),
