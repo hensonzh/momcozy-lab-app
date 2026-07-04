@@ -1835,10 +1835,6 @@ class _StatusTrendPreviewPainter extends CustomPainter {
     final gridPaint = Paint()
       ..color = const Color(0xffcfe8d8)
       ..strokeWidth = 1;
-    final thresholdPaint = Paint()
-      ..color = const Color(0xffead9c0)
-      ..strokeWidth = 1;
-
     for (var index = 0; index <= 4; index += 1) {
       final y = chartRect.top + chartRect.height * index / 4;
       _drawDashedLine(
@@ -1870,13 +1866,6 @@ class _StatusTrendPreviewPainter extends CustomPainter {
 
     canvas.drawLine(chartRect.topLeft, chartRect.bottomLeft, axisPaint);
     canvas.drawLine(chartRect.bottomLeft, chartRect.bottomRight, axisPaint);
-    _drawDashedLine(
-      canvas,
-      Offset(chartRect.left, chartRect.bottom - chartRect.height * 0.18),
-      Offset(chartRect.right, chartRect.bottom - chartRect.height * 0.18),
-      thresholdPaint,
-    );
-
     final actual = Path()..moveTo(chartRect.left, chartRect.bottom);
     final points = <Offset>[
       for (var index = 0; index <= segmentCount; index += 1)
