@@ -7285,7 +7285,7 @@ class _RecordsPageState extends State<_RecordsPage> {
     final overview = visibleOverview ?? _RecordsOverview.empty;
     return [
       Transform.translate(
-        offset: const Offset(-3, 2),
+        offset: const Offset(1, 1),
         child: _RecordsDashboardCard(
           key: const ValueKey('records-dashboard-card'),
           overview: overview,
