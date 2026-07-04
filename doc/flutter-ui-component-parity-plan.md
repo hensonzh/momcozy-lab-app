@@ -118,7 +118,7 @@ Current compact report after the last accepted visual commits:
 | Priority | Page | Current diff | Pixels | Target for this phase | Commit granularity |
 |---:|---|---:|---:|---|---|
 | P0 | 待产包 | 4.30% | 14,153 | below 4.00%, then below 3.00% | product row, section header, checkout footer |
-| P0 | 妈妈点滴 | 4.27% | 14,068 | below 4.00%, then below 3.00% | dashboard, chart, rows |
+| P0 | 妈妈点滴 | 4.27% | 14,045 | below 4.00%, then below 3.00% | dashboard, chart, rows |
 | P0 | 吸乳 | 4.13% | 13,579 | below 3.75%, then below 3.00% | prompt modal, backdrop, controls |
 | P0 | 宝宝和我 | 3.87% | 12,747 | below 3.50%, then below 2.50% | module cards, then trend card/painter |
 | P0 | 计划 | 3.76% | 12,360 | below 3.50%, then below 2.50% | week strip, context card, empty/task blocks |
@@ -141,6 +141,8 @@ Accepted component slices so far:
 | 宝宝和我 | Breast health icon | 12,751 px | 12,747 px | `d0885e0` |
 | 妈妈点滴 | Milk stat accent | 14,256 px | 14,144 px | `db5bfcd` |
 | 妈妈点滴 | Mini stat units | 14,144 px | 14,068 px | `0389c1f` |
+| 妈妈点滴 | Month label weight | 14,068 px | 14,049 px | `d283bae` |
+| 妈妈点滴 | Month chevron size | 14,049 px | 14,045 px | `2c3a3f2` |
 | 计划 | Agent context card surface | 12,492 px | 12,360 px | `ac67052` |
 | W1 | Summary typography | 10,195 px | 10,172 px | `933ca14` |
 | W1 | Hero eyebrow weight | 10,172 px | 10,166 px | `07abe7b` |
@@ -297,6 +299,11 @@ Latest rejected probes to avoid repeating:
 |---|---|---:|---|
 | 待产包 | Footer CTA height 48 -> 46 | 14,153 px -> 15,194 px | reverted |
 | 待产包 | Product row shadow to Tailwind shadow-sm geometry | 14,153 px -> 14,153 px | reverted |
+| 妈妈点滴 | Dashboard chart height 136 -> 160 | 14,068 px -> 16,800 px | reverted |
+| 妈妈点滴 | Page title weight w900 -> w700 | 14,068 px -> 14,068 px | reverted |
+| 妈妈点滴 | Month button width 30 -> 20 | 14,045 px -> 14,045 px | reverted |
+| 妈妈点滴 | Dashboard mini-stat radius 16 -> 12 | 14,045 px -> 14,045 px | reverted |
+| 妈妈点滴 | Trend title emoji -> Material chart icon | 14,045 px -> 14,050 px | reverted |
 | 宝宝和我 | Postpartum recovery card old PNG asset icon | 12,747 px -> 12,852 px | reverted |
 | 宝宝和我 | Milk trend axis tick font 8 -> 9 | 12,747 px -> 12,805 px | reverted |
 | 宝宝和我 | Milk trend chart height 188 -> 185 | 12,747 px -> 13,666 px | reverted |
