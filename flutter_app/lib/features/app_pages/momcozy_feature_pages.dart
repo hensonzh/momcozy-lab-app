@@ -10220,6 +10220,9 @@ class _HospitalBagGroupSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = _hospitalBagToneColors(group.tone);
+    final headerOffset = group.title == '宝宝出院'
+        ? const Offset(0, -3)
+        : const Offset(0, -1);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -10228,7 +10231,7 @@ class _HospitalBagGroupSection extends StatelessWidget {
           RepaintBoundary(
             key: ValueKey('hospital-bag-group-header-${group.title}'),
             child: Transform.translate(
-              offset: const Offset(0, -1),
+              offset: headerOffset,
               child: Row(
                 children: [
                   Expanded(

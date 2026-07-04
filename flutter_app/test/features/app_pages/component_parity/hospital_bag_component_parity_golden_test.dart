@@ -27,6 +27,23 @@ void main() {
       );
     });
 
+    testWidgets('baby group header matches compact baseline', (tester) async {
+      await _pumpHospitalBagPage(tester);
+
+      final header = find.byKey(
+        const ValueKey('hospital-bag-group-header-宝宝出院'),
+      );
+      expect(header, findsOneWidget);
+      expect(find.text('宝宝出院'), findsOneWidget);
+
+      await expectLater(
+        header,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/hospital_bag_baby_group_header.png',
+        ),
+      );
+    });
+
     testWidgets('product row matches compact baseline', (tester) async {
       await _pumpHospitalBagPage(tester);
 
