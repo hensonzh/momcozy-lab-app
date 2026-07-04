@@ -989,7 +989,7 @@ int _selectedTabIndex(String location) {
   if (location == '/') return 2;
   if (location == '/community') return 3;
   if (location.startsWith('/device') || location == '/w1') return 4;
-  return 2;
+  return -1;
 }
 
 void _handleAgentArtifactAction(
