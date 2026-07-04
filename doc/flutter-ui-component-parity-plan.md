@@ -317,6 +317,7 @@ Latest rejected probes to avoid repeating:
 | 待产包 | Header/group chip vertical padding 5 -> Web-like 4 | 14,153 px -> 19,312 px | reverted |
 | 待产包 | Product image radius 28 -> Web `rounded-2xl` 16 | 14,153 px -> 14,286 px | reverted |
 | 待产包 | Product image offset `(1,1)` -> `(0,0)` | 14,153 px -> 15,196 px | reverted |
+| 待产包 | Product image `FilterQuality.high` -> `medium` | 14,153 px -> 14,222 px | reverted |
 | 待产包 | Footer total row offset `(0,3)` -> `(0,0)` | 14,153 px -> 14,783 px | reverted |
 | 妈妈点滴 | Dashboard chart height 136 -> 160 | 14,068 px -> 16,800 px | reverted |
 | 妈妈点滴 | Page title weight w900 -> w700 | 14,068 px -> 14,068 px | reverted |
