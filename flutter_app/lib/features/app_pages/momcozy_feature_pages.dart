@@ -9867,7 +9867,7 @@ class _W1SpecTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w400,
               ),
             ),
             const SizedBox(height: 2),
