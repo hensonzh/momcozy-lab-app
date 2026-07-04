@@ -1744,38 +1744,41 @@ class _StatusTrendPreview extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: const Color(0xffffe4b8),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.track_changes_rounded,
-                  size: 14,
-                  color: Color(0xffb9792a),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  '母乳趋势',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: MomCozyColors.foreground,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+          Transform.translate(
+            offset: const Offset(0, -3),
+            child: Row(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: const Color(0xffffe4b8),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.track_changes_rounded,
+                    size: 14,
+                    color: Color(0xffb9792a),
                   ),
                 ),
-              ),
-              const Icon(
-                Icons.keyboard_arrow_up_rounded,
-                size: 16,
-                color: MomCozyColors.mutedForeground,
-              ),
-            ],
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '母乳趋势',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const Icon(
+                  Icons.keyboard_arrow_up_rounded,
+                  size: 16,
+                  color: MomCozyColors.mutedForeground,
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           const Row(
