@@ -4917,92 +4917,95 @@ class _PumpPageState extends State<_PumpPage> {
               stops: [0, 0.56, 1],
             ),
           ),
-          child: ListView(
-            key: ValueKey('route-page-${widget.path}'),
-            scrollCacheExtent: const ScrollCacheExtent.pixels(1600),
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 22),
-            children: [
-              _PumpTopBar(sessionLabel: _headerSessionLabel),
-              const SizedBox(height: 10),
-              _PumpMetricConsole(
-                totalVolumeMl: _totalVolumeMl,
-                elapsedMinutes: _elapsedMinutes,
-                progress: _sessionProgress,
-                userLabel: _sessionOwnerUserId == null
-                    ? '未绑定用户'
-                    : '绑定 $_sessionOwnerUserId',
-                accent: widget.accent,
-              ),
-              const SizedBox(height: 10),
-              _PumpSessionStage(
-                leftVolumeMl: _leftVolumeMl,
-                rightVolumeMl: _rightVolumeMl,
-                leftLevel: _leftLevel.round(),
-                rightLevel: _rightLevel.round(),
-                bottleFill: _bottleFill,
-                totalVolumeMl: _totalVolumeMl,
-                isRunning: isRunning,
-                accent: widget.accent,
-              ),
-              const SizedBox(height: 36),
-              _PumpControlConsole(
-                leftLevel: _leftLevel,
-                rightLevel: _rightLevel,
-                isRunning: isRunning,
-                isPaused: isPaused,
-                onLeftLevelChanged: (value) =>
-                    setState(() => _leftLevel = value),
-                onRightLevelChanged: (value) =>
-                    setState(() => _rightLevel = value),
-                onStart: isRunning
-                    ? null
-                    : () => _changeRunState(_PumpRunState.running),
-                onPause: isRunning
-                    ? () => _changeRunState(_PumpRunState.paused)
-                    : null,
-                onEnd: () => _changeRunState(_PumpRunState.idle),
-              ),
-              const SizedBox(height: 10),
-              _PumpStatusStrip(
-                label: '结束保护',
-                icon: _duplicateCompletionBlocked
-                    ? Icons.block_rounded
-                    : Icons.verified_outlined,
-                title: _completionGuardTitle(),
-                subtitle: _guardNotice ?? '开始后绑定当前用户，结束时锁定一次性上传标记。',
-                accent: _duplicateCompletionBlocked
-                    ? const Color(0xffb2773b)
-                    : const Color(0xff43827b),
-                trailing: _StatusChip(
-                  label: _completionUploadLocked ? '1/1' : '待结束',
-                  icon: _completionUploadLocked
-                      ? Icons.lock_outline_rounded
-                      : Icons.hourglass_empty_rounded,
+          child: Transform.translate(
+            offset: const Offset(0, -3),
+            child: ListView(
+              key: ValueKey('route-page-${widget.path}'),
+              scrollCacheExtent: const ScrollCacheExtent.pixels(1600),
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 22),
+              children: [
+                _PumpTopBar(sessionLabel: _headerSessionLabel),
+                const SizedBox(height: 10),
+                _PumpMetricConsole(
+                  totalVolumeMl: _totalVolumeMl,
+                  elapsedMinutes: _elapsedMinutes,
+                  progress: _sessionProgress,
+                  userLabel: _sessionOwnerUserId == null
+                      ? '未绑定用户'
+                      : '绑定 $_sessionOwnerUserId',
+                  accent: widget.accent,
+                ),
+                const SizedBox(height: 10),
+                _PumpSessionStage(
+                  leftVolumeMl: _leftVolumeMl,
+                  rightVolumeMl: _rightVolumeMl,
+                  leftLevel: _leftLevel.round(),
+                  rightLevel: _rightLevel.round(),
+                  bottleFill: _bottleFill,
+                  totalVolumeMl: _totalVolumeMl,
+                  isRunning: isRunning,
+                  accent: widget.accent,
+                ),
+                const SizedBox(height: 36),
+                _PumpControlConsole(
+                  leftLevel: _leftLevel,
+                  rightLevel: _rightLevel,
+                  isRunning: isRunning,
+                  isPaused: isPaused,
+                  onLeftLevelChanged: (value) =>
+                      setState(() => _leftLevel = value),
+                  onRightLevelChanged: (value) =>
+                      setState(() => _rightLevel = value),
+                  onStart: isRunning
+                      ? null
+                      : () => _changeRunState(_PumpRunState.running),
+                  onPause: isRunning
+                      ? () => _changeRunState(_PumpRunState.paused)
+                      : null,
+                  onEnd: () => _changeRunState(_PumpRunState.idle),
+                ),
+                const SizedBox(height: 10),
+                _PumpStatusStrip(
+                  label: '结束保护',
+                  icon: _duplicateCompletionBlocked
+                      ? Icons.block_rounded
+                      : Icons.verified_outlined,
+                  title: _completionGuardTitle(),
+                  subtitle: _guardNotice ?? '开始后绑定当前用户，结束时锁定一次性上传标记。',
                   accent: _duplicateCompletionBlocked
                       ? const Color(0xffb2773b)
                       : const Color(0xff43827b),
+                  trailing: _StatusChip(
+                    label: _completionUploadLocked ? '1/1' : '待结束',
+                    icon: _completionUploadLocked
+                        ? Icons.lock_outline_rounded
+                        : Icons.hourglass_empty_rounded,
+                    accent: _duplicateCompletionBlocked
+                        ? const Color(0xffb2773b)
+                        : const Color(0xff43827b),
+                  ),
                 ),
-              ),
-              _PumpStatusStrip(
-                label: '上传状态',
-                icon: _uploadError == null
-                    ? Icons.cloud_sync_outlined
-                    : Icons.cloud_off_outlined,
-                title: _uploadStatusTitle(),
-                subtitle: _uploadStatusSubtitle(),
-                accent: const Color(0xff6b6da8),
-                trailing: _isUploading
-                    ? const SizedBox.square(
-                        dimension: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : IconButton(
-                        tooltip: '重试同步',
-                        onPressed: () => _uploadWorkstate(_runState),
-                        icon: const Icon(Icons.refresh_rounded),
-                      ),
-              ),
-            ],
+                _PumpStatusStrip(
+                  label: '上传状态',
+                  icon: _uploadError == null
+                      ? Icons.cloud_sync_outlined
+                      : Icons.cloud_off_outlined,
+                  title: _uploadStatusTitle(),
+                  subtitle: _uploadStatusSubtitle(),
+                  accent: const Color(0xff6b6da8),
+                  trailing: _isUploading
+                      ? const SizedBox.square(
+                          dimension: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : IconButton(
+                          tooltip: '重试同步',
+                          onPressed: () => _uploadWorkstate(_runState),
+                          icon: const Icon(Icons.refresh_rounded),
+                        ),
+                ),
+              ],
+            ),
           ),
         ),
         if (_calibrationPromptVisible)
