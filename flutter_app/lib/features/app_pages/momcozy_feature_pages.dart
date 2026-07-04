@@ -4759,6 +4759,7 @@ class _PumpPageState extends State<_PumpPage> {
       });
       return;
     }
+    if (next == _runState) return;
 
     setState(() {
       _applyLocalSessionTransition(next);
@@ -4884,7 +4885,7 @@ class _PumpPageState extends State<_PumpPage> {
                 isRunning: isRunning,
                 accent: widget.accent,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 36),
               _PumpControlConsole(
                 leftLevel: _leftLevel,
                 rightLevel: _rightLevel,
@@ -4900,9 +4901,7 @@ class _PumpPageState extends State<_PumpPage> {
                 onPause: isRunning
                     ? () => _changeRunState(_PumpRunState.paused)
                     : null,
-                onEnd: _runState == _PumpRunState.idle
-                    ? null
-                    : () => _changeRunState(_PumpRunState.idle),
+                onEnd: () => _changeRunState(_PumpRunState.idle),
               ),
               const SizedBox(height: 10),
               _PumpStatusStrip(
@@ -6167,6 +6166,12 @@ class _PumpControlConsole extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryAction = isRunning ? onPause : onStart;
+    final primaryLabel = isRunning ? '暂停' : (isPaused ? '恢复' : '开始');
+    final primaryIcon = isRunning
+        ? Icons.pause_rounded
+        : Icons.play_arrow_rounded;
+
     return DecoratedBox(
       decoration: MomCozyDecorations.card(
         color: MomCozyColors.card.withValues(alpha: 0.9),
@@ -6242,60 +6247,48 @@ class _PumpControlConsole extends StatelessWidget {
             Row(
               children: [
                 Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: primaryAction,
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: MomCozyColors.card.withValues(
+                        alpha: 0.7,
+                      ),
+                      foregroundColor: MomCozyColors.foreground,
+                      disabledBackgroundColor: MomCozyColors.muted.withValues(
+                        alpha: 0.5,
+                      ),
+                      disabledForegroundColor: MomCozyColors.mutedForeground,
+                      side: BorderSide(
+                        color: MomCozyColors.border.withValues(alpha: 0.4),
+                      ),
+                      minimumSize: const Size(0, 42),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      textStyle: Theme.of(context).textTheme.labelMedium
+                          ?.copyWith(fontSize: 14, fontWeight: FontWeight.w700),
+                    ),
+                    icon: Icon(primaryIcon, size: 14),
+                    label: Text(primaryLabel),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
                   child: FilledButton.icon(
-                    onPressed: onStart,
+                    onPressed: onEnd,
                     style: FilledButton.styleFrom(
-                      backgroundColor: MomCozyColors.primary,
+                      backgroundColor: const Color(0xffb91c1c),
                       foregroundColor: Colors.white,
                       disabledBackgroundColor: MomCozyColors.muted,
                       disabledForegroundColor: MomCozyColors.mutedForeground,
-                      minimumSize: const Size(0, 40),
+                      minimumSize: const Size(0, 42),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(16),
                       ),
+                      textStyle: Theme.of(context).textTheme.labelMedium
+                          ?.copyWith(fontSize: 14, fontWeight: FontWeight.w700),
                     ),
-                    icon: Icon(
-                      isPaused
-                          ? Icons.play_arrow_rounded
-                          : Icons.water_drop_rounded,
-                      size: 18,
-                    ),
-                    label: Text(isPaused ? '恢复' : '开始'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: onPause,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: MomCozyColors.foreground,
-                      side: BorderSide(
-                        color: MomCozyColors.border.withValues(alpha: 0.7),
-                      ),
-                      minimumSize: const Size(0, 40),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                    icon: const Icon(Icons.pause_rounded, size: 18),
-                    label: const Text('暂停'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: onEnd,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xffb24b4b),
-                      side: BorderSide(
-                        color: const Color(0xffb24b4b).withValues(alpha: 0.24),
-                      ),
-                      minimumSize: const Size(0, 40),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                    icon: const Icon(Icons.stop_rounded, size: 18),
+                    icon: const Icon(Icons.stop_rounded, size: 12),
                     label: const Text('结束'),
                   ),
                 ),
