@@ -73,6 +73,24 @@ void main() {
       );
     });
 
+    testWidgets('breast health module card matches compact baseline', (
+      tester,
+    ) async {
+      await _pumpStatusComponentApp(tester);
+
+      final card = find.byKey(const ValueKey('status-module-breast-health'));
+      expect(card, findsOneWidget);
+      expect(find.text('乳房健康'), findsOneWidget);
+      expect(find.text('查看《乳房健康日记》'), findsOneWidget);
+
+      await expectLater(
+        card,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/status_breast_health_module_card.png',
+        ),
+      );
+    });
+
     testWidgets('postpartum mom trend card matches compact baseline', (
       tester,
     ) async {
