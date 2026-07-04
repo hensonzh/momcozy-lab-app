@@ -2569,15 +2569,18 @@ class _SchedulePageState extends State<_SchedulePage> {
               ),
             ),
             const SizedBox(height: 20),
-            _ScheduleNextTaskCard(
-              subtitle: _nextTaskSubtitle(visibleTasks),
-              task: _nextPendingTask(visibleTasks),
-              onComplete: () {
-                final next = _nextPendingTask(visibleTasks);
-                if (next == null) return;
-                final index = visibleTasks.indexOf(next);
-                _toggleTask(next, index, true);
-              },
+            Transform.translate(
+              offset: const Offset(1, 1),
+              child: _ScheduleNextTaskCard(
+                subtitle: _nextTaskSubtitle(visibleTasks),
+                task: _nextPendingTask(visibleTasks),
+                onComplete: () {
+                  final next = _nextPendingTask(visibleTasks);
+                  if (next == null) return;
+                  final index = visibleTasks.indexOf(next);
+                  _toggleTask(next, index, true);
+                },
+              ),
             ),
             const SizedBox(height: 30),
             _ScheduleListToolbar(onAdd: _addLocalTask),
