@@ -2898,7 +2898,7 @@ class _ScheduleAgentCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: MomCozyDecorations.card(
-        color: MomCozyColors.raised,
+        color: MomCozyColors.card.withValues(alpha: 0.7),
         borderColor: MomCozyColors.primary.withValues(alpha: 0.15),
         radius: 24,
         shadows: MomCozyShadows.soft,
