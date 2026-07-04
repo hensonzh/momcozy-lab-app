@@ -8465,7 +8465,7 @@ class _RecordsMilkRow extends StatelessWidget {
                                   style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
                                         color: MomCozyColors.foreground,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                 ),
                               ],
