@@ -5141,7 +5141,6 @@ class _PumpCalibrationPromptOverlay extends StatelessWidget {
                                       const TextSpan(
                                         text: '的吸力档位，避免吸乳时疼痛或效率不佳 ',
                                       ),
-                                      const TextSpan(text: '💕'),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
