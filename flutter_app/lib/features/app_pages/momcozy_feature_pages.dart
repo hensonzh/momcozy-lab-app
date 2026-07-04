@@ -9171,7 +9171,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                           decoration: const InputDecoration(
                             hintText: '选择或输入用户 ID',
                             constraints: BoxConstraints.tightFor(height: 46),
-                            contentPadding: EdgeInsets.fromLTRB(16, 0, 48, 0),
+                            contentPadding: EdgeInsets.fromLTRB(12, 0, 44, 0),
                           ),
                         ),
                         Positioned(
@@ -9263,7 +9263,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                     initialValue: _momStage,
                     decoration: const InputDecoration(
                       constraints: BoxConstraints.tightFor(height: 46),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     ),
                     icon: const Icon(
                       Icons.keyboard_arrow_down_rounded,
