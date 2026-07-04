@@ -6614,10 +6614,13 @@ class _CalibrationPageState extends State<_CalibrationPage> {
       children: [
         RepaintBoundary(
           key: const ValueKey('calibration-top-bar'),
-          child: _CalibrationTopBar(
-            progress: progress,
-            total: 7,
-            onBack: _exitCalibration,
+          child: Transform.translate(
+            offset: const Offset(-7, 2),
+            child: _CalibrationTopBar(
+              progress: progress,
+              total: 7,
+              onBack: _exitCalibration,
+            ),
           ),
         ),
         if (!_introAcknowledged)
