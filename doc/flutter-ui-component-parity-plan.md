@@ -351,6 +351,7 @@ Latest rejected probes to avoid repeating:
 | Agent Hub | Greeting max width 260 -> 258 | 4,942 px -> 4,942 px | reverted |
 | 用户参数 | Form label weight w900 -> Web-like w500 | 8,086 px -> 8,089 px | reverted |
 | 用户参数 | Form card y offset 7 -> 2 | 8,086 px -> 10,601 px | reverted |
+| 用户参数 | Form card x offset 0 -> -3 | 8,055 px -> 8,678 px | reverted |
 
 ## 8. Starting Slice
 
