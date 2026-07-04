@@ -125,7 +125,7 @@ Current compact report after the last accepted visual commits:
 | P1 | W1 | 3.07% | 10,089 | below 2.75%, then below 2.25% | hero, product summary, selling points |
 | P1 | 用户参数 | 2.49% | 8,182 | below 2.00% | subpage header, form controls |
 | P1 | 舒适负压调节 | 2.22% | 7,294 | below 2.00% | top bar typography, intro card |
-| P1 | Agent Hub | 1.50% | 4,950 | below 1.50% | composer, greeting typography, avatar opacity |
+| P1 | Agent Hub | 1.50% | 4,946 | below 1.50% | composer, greeting typography, avatar opacity |
 | P2 | 设备 | 1.50% | 4,927 | keep at or below threshold | header/banner final polish |
 | P2 | IBCLC | 1.49% | 4,908 | keep OK | header/loading |
 | P2 | 设备提醒 | 1.29% | 4,239 | keep OK | regression guard only |
@@ -156,6 +156,7 @@ Accepted component slices so far:
 | 舒适负压调节 | Intro card position | 7,501 px | 7,294 px | `b67fb25` |
 | Agent Hub | Selected agent nav gradient | 5,065 px | 4,968 px | `2243ab2` |
 | Agent Hub | Composer image icon size | 4,968 px | 4,950 px | `3840bc6` |
+| Agent Hub | Composer send icon size | 4,950 px | 4,946 px | `408aeb8` |
 
 Component guard additions:
 
