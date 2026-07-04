@@ -13,6 +13,32 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('Status component parity goldens', () {
+    testWidgets('profile selector matches compact baseline', (tester) async {
+      await _pumpStatusComponentApp(tester);
+
+      final selector = find.byKey(const ValueKey('status-profile-selector'));
+      expect(selector, findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('status-care-stage-postpartum')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('status-identity-tab-mom')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('status-identity-tab-baby')),
+        findsOneWidget,
+      );
+
+      await expectLater(
+        selector,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/status_profile_selector.png',
+        ),
+      );
+    });
+
     testWidgets('postpartum mom module grid matches compact baseline', (
       tester,
     ) async {

@@ -630,26 +630,33 @@ class _StatusPageState extends State<_StatusPage> {
           key: ValueKey('route-page-${widget.path}'),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
           children: [
-            Transform.translate(
-              offset: const Offset(1, 11),
-              child: _CareStageSelector(
-                selectedStage: _careStage,
-                accent: widget.accent,
-                onChanged: _changeCareStage,
-              ),
-            ),
-            const SizedBox(height: 18),
-            Transform.translate(
-              offset: const Offset(0, 5),
-              child: _StatusIdentityTabs(
-                selected: _view,
-                momSubtitle: momSubtitle,
-                babySubtitle: babySubtitle,
-                babyDisabled: isPregnancy,
-                onChanged: (next) {
-                  if (next == 'baby' && isPregnancy) return;
-                  setState(() => _view = next);
-                },
+            RepaintBoundary(
+              key: const ValueKey('status-profile-selector'),
+              child: Column(
+                children: [
+                  Transform.translate(
+                    offset: const Offset(1, 11),
+                    child: _CareStageSelector(
+                      selectedStage: _careStage,
+                      accent: widget.accent,
+                      onChanged: _changeCareStage,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Transform.translate(
+                    offset: const Offset(0, 5),
+                    child: _StatusIdentityTabs(
+                      selected: _view,
+                      momSubtitle: momSubtitle,
+                      babySubtitle: babySubtitle,
+                      babyDisabled: isPregnancy,
+                      onChanged: (next) {
+                        if (next == 'baby' && isPregnancy) return;
+                        setState(() => _view = next);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 14),
