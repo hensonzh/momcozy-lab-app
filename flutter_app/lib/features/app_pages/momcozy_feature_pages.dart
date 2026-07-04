@@ -1757,20 +1757,20 @@ class _StatusTrendPreview extends StatelessWidget {
                   color: Color(0xffb9792a),
                 ),
               ),
-              const SizedBox(width: 9),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   '母乳趋势',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: MomCozyColors.foreground,
                     fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
               const Icon(
                 Icons.keyboard_arrow_up_rounded,
-                size: 20,
+                size: 16,
                 color: MomCozyColors.mutedForeground,
               ),
             ],
@@ -1846,7 +1846,7 @@ class _StatusTrendPreviewPainter extends CustomPainter {
         Offset(5, y - 7),
         width: 34,
         color: const Color(0xff9c7651),
-        fontSize: 9,
+        fontSize: 8,
         textAlign: TextAlign.right,
       );
     }
@@ -1902,7 +1902,7 @@ class _StatusTrendPreviewPainter extends CustomPainter {
         Offset(points[index].dx - 16, chartRect.bottom + 10),
         width: 36,
         color: const Color(0xff9c7651),
-        fontSize: 9,
+        fontSize: 8,
         textAlign: TextAlign.center,
       );
     }
@@ -1943,7 +1943,7 @@ class _StatusTrendPreviewPainter extends CustomPainter {
         style: TextStyle(
           color: color,
           fontSize: fontSize,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w400,
           fontFamily: MomCozyTypography.fontFamily,
           fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
         ),
@@ -1966,7 +1966,7 @@ class _StatusTrendLegend extends StatelessWidget {
     final style = Theme.of(context).textTheme.labelSmall?.copyWith(
       color: const Color(0xff8a6742),
       fontSize: 9,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w400,
     );
     return Wrap(
       spacing: 9,
