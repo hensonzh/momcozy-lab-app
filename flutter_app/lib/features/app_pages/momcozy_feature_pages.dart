@@ -7283,7 +7283,7 @@ class _RecordsPageState extends State<_RecordsPage> {
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 96),
           children: [
             Transform.translate(
-              offset: const Offset(3, 4),
+              offset: const Offset(5, 10),
               child: _RecordsMonthHeader(
                 monthLabel: '${_recordsDay.year}年${_recordsDay.month}月',
                 onPrevious: () => _shiftRecordsMonth(-1),
@@ -7807,7 +7807,7 @@ class _RecordsDashboardCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Transform.translate(
-            offset: const Offset(-8, 5),
+            offset: const Offset(-12, 5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
