@@ -9747,38 +9747,43 @@ class _W1ProductSummary extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         child: Column(
           children: [
-            Row(
-              children: [
-                const _IconBubble(
-                  icon: Icons.favorite_border_rounded,
-                  accent: MomCozyColors.primary,
-                  size: 34,
-                  iconSize: 18,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Momcozy W1 穿戴式吸奶器',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: MomCozyColors.foreground,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '新一代身心关怀智能吸乳体验',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: MomCozyColors.mutedForeground,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+            Transform.translate(
+              offset: const Offset(0, 3),
+              child: Row(
+                children: [
+                  const _IconBubble(
+                    icon: Icons.favorite_border_rounded,
+                    accent: MomCozyColors.primary,
+                    size: 34,
+                    iconSize: 18,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Momcozy W1 穿戴式吸奶器',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                color: MomCozyColors.foreground,
+                                fontWeight: FontWeight.w900,
+                              ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '新一代身心关怀智能吸乳体验',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: MomCozyColors.mutedForeground,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 12),
             const Row(
