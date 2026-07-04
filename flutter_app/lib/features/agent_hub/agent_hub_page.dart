@@ -1210,6 +1210,12 @@ class AgentComposerBar extends StatelessWidget {
                             minLines: 1,
                             maxLines: 4,
                             enabled: !isRunning,
+                            style: const TextStyle(
+                              fontFamily: MomCozyTypography.fontFamily,
+                              fontFamilyFallback:
+                                  MomCozyTypography.fontFamilyFallback,
+                              fontSize: 14,
+                            ),
                             onChanged: onChanged,
                             onSubmitted: (_) {
                               if (canSend) onSend();
@@ -1226,6 +1232,7 @@ class AgentComposerBar extends StatelessWidget {
                                 fontFamily: MomCozyTypography.fontFamily,
                                 fontFamilyFallback:
                                     MomCozyTypography.fontFamilyFallback,
+                                fontSize: 14,
                                 color: MomCozyColors.mutedForeground.withValues(
                                   alpha: 0.82,
                                 ),
