@@ -9367,14 +9367,14 @@ class _W1PageState extends State<_W1Page> {
       children: [
         _W1PromoHero(onBack: () => context.go('/device')),
         Transform.translate(
-          offset: Offset.zero,
+          offset: const Offset(-2, -2),
           child: const Padding(
             padding: EdgeInsets.only(left: 16),
             child: _W1ProductSummary(),
           ),
         ),
         Transform.translate(
-          offset: const Offset(0, 24),
+          offset: const Offset(0, 28),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
             child: Column(
@@ -9515,43 +9515,45 @@ class _W1PromoHero extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      Container(
-                        width: 144,
-                        height: 144,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: MomCozyColors.background.withValues(
-                              alpha: 0.12,
-                            ),
-                            width: 2,
-                          ),
-                          color: MomCozyColors.background.withValues(
-                            alpha: 0.06,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.auto_awesome_rounded,
-                              size: 40,
+                      Transform.translate(
+                        offset: const Offset(0, 2),
+                        child: Container(
+                          width: 144,
+                          height: 144,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
                               color: MomCozyColors.background.withValues(
-                                alpha: 0.4,
+                                alpha: 0.12,
                               ),
+                              width: 2,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'W1',
-                              style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(
-                                    color: MomCozyColors.background.withValues(
-                                      alpha: 0.4,
+                            color: MomCozyColors.background.withValues(
+                              alpha: 0.06,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.auto_awesome_rounded,
+                                size: 40,
+                                color: MomCozyColors.background.withValues(
+                                  alpha: 0.4,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'W1',
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
+                                      color: MomCozyColors.background
+                                          .withValues(alpha: 0.4),
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
