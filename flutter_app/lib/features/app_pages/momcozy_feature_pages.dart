@@ -9906,7 +9906,9 @@ class _HospitalBagHeader extends StatelessWidget {
                     '待产包一键打包',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: const Color(0xff372330),
-                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -9914,7 +9916,8 @@ class _HospitalBagHeader extends StatelessWidget {
                     '已按待产包物品清单整理',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: const Color(0xff8a6d7a),
-                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -9933,7 +9936,8 @@ class _HospitalBagHeader extends StatelessWidget {
                 '$itemCount 件',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: const Color(0xff267c68),
-                  fontWeight: FontWeight.w900,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -10017,7 +10021,8 @@ class _HospitalBagGroupSection extends StatelessWidget {
                   group.title,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: const Color(0xff372330),
-                    fontWeight: FontWeight.w900,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -10035,8 +10040,8 @@ class _HospitalBagGroupSection extends StatelessWidget {
                   '${group.items.length} 件',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: colors.foreground,
-                    fontWeight: FontWeight.w900,
                     fontSize: 10,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -10106,7 +10111,8 @@ class _HospitalBagCartItemTile extends StatelessWidget {
                           style: Theme.of(context).textTheme.labelLarge
                               ?.copyWith(
                                 color: const Color(0xff372330),
-                                fontWeight: FontWeight.w900,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
                               ),
                         ),
                         const SizedBox(height: 4),
@@ -10117,8 +10123,9 @@ class _HospitalBagCartItemTile extends StatelessWidget {
                           style: Theme.of(context).textTheme.labelSmall
                               ?.copyWith(
                                 color: const Color(0xff7e6672),
-                                height: 1.25,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 11,
+                                height: 1.375,
+                                fontWeight: FontWeight.w400,
                               ),
                         ),
                         const SizedBox(height: 5),
@@ -10127,7 +10134,8 @@ class _HospitalBagCartItemTile extends StatelessWidget {
                           style: Theme.of(context).textTheme.labelSmall
                               ?.copyWith(
                                 color: const Color(0xff9a7b89),
-                                fontWeight: FontWeight.w900,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
                               ),
                         ),
                       ],
@@ -10160,7 +10168,8 @@ class _HospitalBagItemActions extends StatelessWidget {
           _hospitalBagMoney(item.price),
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: const Color(0xff372330),
-            fontWeight: FontWeight.w900,
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 8),
@@ -10173,7 +10182,7 @@ class _HospitalBagItemActions extends StatelessWidget {
               borderRadius: BorderRadius.circular(MomCozyRadii.pill),
               onTap: onDelete,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(MomCozyRadii.pill),
                   border: Border.all(color: const Color(0xffedd6df)),
@@ -10186,13 +10195,13 @@ class _HospitalBagItemActions extends StatelessWidget {
                       size: 12,
                       color: Color(0xff6c4457),
                     ),
-                    const SizedBox(width: 3),
+                    const SizedBox(width: 4),
                     Text(
                       '删除',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: const Color(0xff6c4457),
-                        fontWeight: FontWeight.w900,
                         fontSize: 10,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -10501,7 +10510,8 @@ class _HospitalBagFooter extends StatelessWidget {
                         '预计合计',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: const Color(0xff8a6d7a),
-                          fontWeight: FontWeight.w800,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
@@ -10523,7 +10533,9 @@ class _HospitalBagFooter extends StatelessWidget {
                     '已含组合优惠 ${money(discount)}',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: const Color(0xff8a6d7a),
-                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                      height: 1.375,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
@@ -10534,7 +10546,7 @@ class _HospitalBagFooter extends StatelessWidget {
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: () {},
-                icon: const Icon(Icons.credit_card_rounded, size: 18),
+                icon: const Icon(Icons.credit_card_rounded, size: 16),
                 label: const Text('去结算'),
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xff24889a),
@@ -10543,9 +10555,10 @@ class _HospitalBagFooter extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  textStyle: Theme.of(
-                    context,
-                  ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900),
+                  textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
