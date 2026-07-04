@@ -373,6 +373,7 @@ Latest rejected probes to avoid repeating:
 | 宝宝和我 | Milk trend card three-stop Web gradient | 12,747 px -> 13,092 px | reverted |
 | 宝宝和我 | Identity tab minHeight 72 -> Web 68 | 12,670 px -> 16,089 px | reverted |
 | 宝宝和我 | Module cards solid surface -> Web three-stop gradients | 12,670 px -> 13,323 px | reverted |
+| 宝宝和我 | Trend collapse icon rounded -> non-rounded Material arrow | 12,670 px -> 12,670 px | reverted |
 | W1 | Hero circular product stage radial fill | 10,089 px -> 10,123 px | reverted |
 | W1 | Hero title explicit Web 30px | 10,089 px -> 10,816 px | reverted |
 | W1 | Summary spec tile vertical padding 9 -> Web-like 8 | 10,089 px -> 11,295 px | reverted |
