@@ -10275,6 +10275,7 @@ class _HospitalBagItemImage extends StatelessWidget {
           width: 56,
           height: 56,
           fit: BoxFit.cover,
+          filterQuality: FilterQuality.high,
           errorBuilder: (context, error, stackTrace) =>
               _HospitalBagItemIcon(tone: tone),
         ),
