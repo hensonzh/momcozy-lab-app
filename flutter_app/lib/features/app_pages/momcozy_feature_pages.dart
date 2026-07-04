@@ -7635,7 +7635,7 @@ class _RecordsDashboardCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Transform.translate(
-            offset: const Offset(-4, -4),
+            offset: const Offset(-5, -5),
             child: Row(
               children: [
                 Expanded(
