@@ -2562,6 +2562,7 @@ class _SchedulePageState extends State<_SchedulePage> {
             ),
             const SizedBox(height: 20),
             _ScheduleAgentCard(
+              key: const ValueKey('schedule-agent-card'),
               reminderEnabled: _pumpReminderEnabled,
               onReminderTap: () =>
                   setState(() => _pumpReminderEnabled = !_pumpReminderEnabled),
@@ -2868,6 +2869,7 @@ class _ScheduleWeekButton extends StatelessWidget {
 
 class _ScheduleAgentCard extends StatelessWidget {
   const _ScheduleAgentCard({
+    super.key,
     required this.reminderEnabled,
     required this.onReminderTap,
     required this.onConversationTap,
