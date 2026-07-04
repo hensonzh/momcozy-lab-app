@@ -1822,7 +1822,7 @@ class _StatusTrendPreviewPainter extends CustomPainter {
       '07/02',
     ];
     final segmentCount = labels.length - 1;
-    final chartRect = Rect.fromLTWH(44, 9, size.width - 58, size.height - 36);
+    final chartRect = Rect.fromLTWH(44, 1, size.width - 58, size.height - 44);
     final axisPaint = Paint()
       ..color = const Color(0xffb9792a)
       ..strokeWidth = 1
