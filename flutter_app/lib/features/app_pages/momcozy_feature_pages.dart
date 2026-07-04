@@ -10160,7 +10160,10 @@ class _HospitalBagCartItemTile extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _HospitalBagItemImage(item: item, tone: tone),
+                  Transform.translate(
+                    offset: const Offset(1, 1),
+                    child: _HospitalBagItemImage(item: item, tone: tone),
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(
