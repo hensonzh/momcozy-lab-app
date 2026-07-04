@@ -1261,7 +1261,7 @@ class AgentComposerBar extends StatelessWidget {
                           : (canSend ? onSend : null),
                       icon: Icon(
                         isRunning ? Icons.stop_rounded : Icons.send_rounded,
-                        size: isRunning ? 18 : 17,
+                        size: isRunning ? 18 : 16,
                       ),
                       tooltip: isRunning ? '停止' : '发送',
                       style: IconButton.styleFrom(
