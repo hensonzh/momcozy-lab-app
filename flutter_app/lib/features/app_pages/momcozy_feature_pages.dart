@@ -7717,7 +7717,7 @@ class _RecordsDashboardCard extends StatelessWidget {
             width: double.infinity,
             child: _RecordsTrendChart(points: points, accent: accent),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 24),
           Row(
             children: [
               Container(
