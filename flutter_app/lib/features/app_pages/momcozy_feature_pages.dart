@@ -4149,7 +4149,9 @@ class _DeviceW1Banner extends StatelessWidget {
                     'Momcozy W1 · 全新上市',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: Colors.white,
-                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.3,
                       height: 1,
                     ),
                   ),
@@ -4157,7 +4159,7 @@ class _DeviceW1Banner extends StatelessWidget {
                 const Icon(
                   Icons.chevron_right_rounded,
                   color: Color(0x66ffffff),
-                  size: 20,
+                  size: 16,
                 ),
               ],
             ),
