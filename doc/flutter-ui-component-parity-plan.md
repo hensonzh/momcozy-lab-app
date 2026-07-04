@@ -1,6 +1,6 @@
 # Flutter UI Component Parity Plan
 
-> Status: execution plan v0.2
+> Status: execution plan v0.3
 > Date: 2026-07-04  
 > Branch: `feat/test2`  
 > Scope: component-level visual parity between legacy Web and Flutter for the compact `390x844` baseline first.
@@ -122,7 +122,7 @@ Current compact report after the last accepted visual commits:
 | P0 | 吸乳 | 4.13% | 13,579 | below 3.75%, then below 3.00% | prompt modal, backdrop, controls |
 | P0 | 宝宝和我 | 3.87% | 12,747 | below 3.50%, then below 2.50% | module cards, then trend card/painter |
 | P0 | 计划 | 3.76% | 12,360 | below 3.50%, then below 2.50% | week strip, context card, empty/task blocks |
-| P1 | W1 | 3.09% | 10,172 | below 2.75%, then below 2.25% | hero, product summary, selling points |
+| P1 | W1 | 3.07% | 10,089 | below 2.75%, then below 2.25% | hero, product summary, selling points |
 | P1 | 用户参数 | 2.49% | 8,182 | below 2.00% | subpage header, form controls |
 | P1 | 舒适负压调节 | 2.22% | 7,294 | below 2.00% | top bar typography, intro card |
 | P1 | Agent Hub | 1.51% | 4,968 | below 1.50% | composer, greeting typography, avatar opacity |
@@ -143,6 +143,10 @@ Accepted component slices so far:
 | 妈妈点滴 | Mini stat units | 14,144 px | 14,068 px | `0389c1f` |
 | 计划 | Agent context card surface | 12,492 px | 12,360 px | `ac67052` |
 | W1 | Summary typography | 10,195 px | 10,172 px | `933ca14` |
+| W1 | Hero eyebrow weight | 10,172 px | 10,166 px | `07abe7b` |
+| W1 | Hero eyebrow tone | 10,166 px | 10,143 px | `489d06b` |
+| W1 | Hero subtitle tone | 10,143 px | 10,115 px | `7f3b33c` |
+| W1 | Hero wellness tone | 10,115 px | 10,089 px | `9b1fba6` |
 | 舒适负压调节 | Intro card position | 7,501 px | 7,294 px | `b67fb25` |
 | Agent Hub | Selected agent nav gradient | 5,065 px | 4,968 px | `2243ab2` |
 
@@ -286,6 +290,12 @@ Notes:
 ```
 
 The assessment can live in the commit summary or in the working log for the turn. Do not commit visual changes that raise the page diff unless the change fixes a product-critical UX issue and is explicitly accepted.
+
+Latest rejected probes to avoid repeating:
+
+| Page | Probe | Result | Decision |
+|---|---|---:|---|
+| W1 | Hero circular product stage radial fill | 10,089 px -> 10,123 px | reverted |
 
 ## 8. Starting Slice
 
