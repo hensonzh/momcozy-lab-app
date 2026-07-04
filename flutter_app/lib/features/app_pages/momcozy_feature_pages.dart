@@ -10939,7 +10939,7 @@ class _IbclcPageState extends State<_IbclcPage> {
               syncStatus: _syncStatus,
             ),
           ),
-          const _IbclcChatComposer(),
+          if (_chatReady) const _IbclcChatComposer(),
         ],
       ),
     );
