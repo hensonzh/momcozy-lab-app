@@ -7720,7 +7720,7 @@ class _RecordsDashboardCard extends StatelessWidget {
       decoration: MomCozyDecorations.card(
         color: MomCozyColors.raised,
         borderColor: MomCozyColors.border.withValues(alpha: 0.5),
-        radius: 24,
+        radius: 16,
         shadows: const [],
       ),
       child: Column(
@@ -7741,7 +7741,7 @@ class _RecordsDashboardCard extends StatelessWidget {
                       '今日吸奶器使用',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0,
                       ),
                     ),
@@ -7811,7 +7811,7 @@ class _RecordsDashboardCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.labelMedium
                             ?.copyWith(
                               color: MomCozyColors.mutedForeground,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                             ),
                       ),
                     ),
@@ -7959,7 +7959,8 @@ class _RecordsMiniStat extends StatelessWidget {
                         unitSuffix,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: MomCozyColors.mutedForeground,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
@@ -7984,8 +7985,9 @@ class _RecordsMiniStat extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: MomCozyColors.mutedForeground,
+              fontSize: 9,
               height: 1.15,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ],
@@ -8263,7 +8265,7 @@ class _RecordsTrendPainter extends CustomPainter {
         style: TextStyle(
           color: color,
           fontSize: fontSize,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w400,
           fontFamily: MomCozyTypography.fontFamily,
           fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
         ),
