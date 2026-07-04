@@ -315,6 +315,7 @@ Latest rejected probes to avoid repeating:
 | 宝宝和我 | Milk trend axis label color `#9c7651` -> Web `#8a6742` | 12,747 px -> 12,754 px | reverted |
 | 宝宝和我 | Milk trend legend spacing 9 -> Web-like 8 | 12,747 px -> 12,747 px | reverted |
 | 宝宝和我 | Status segmented vertical padding 4 -> Web-like 2 | 12,673 px -> 13,753 px | reverted |
+| 宝宝和我 | Status segmented horizontal padding 9 -> Web-like 8 | 12,673 px -> 12,704 px | reverted |
 | 宝宝和我 | Milk trend chart height 188 -> 185 | 12,747 px -> 13,666 px | reverted |
 | 宝宝和我 | Milk trend card three-stop Web gradient | 12,747 px -> 13,092 px | reverted |
 | W1 | Hero circular product stage radial fill | 10,089 px -> 10,123 px | reverted |
