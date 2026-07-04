@@ -342,6 +342,7 @@ Latest rejected probes to avoid repeating:
 | 宝宝和我 | Milk trend chart height 188 -> 185 | 12,747 px -> 13,666 px | reverted |
 | 宝宝和我 | Milk trend card three-stop Web gradient | 12,747 px -> 13,092 px | reverted |
 | W1 | Hero circular product stage radial fill | 10,089 px -> 10,123 px | reverted |
+| W1 | Summary spec tile vertical padding 9 -> Web-like 8 | 10,089 px -> 11,295 px | reverted |
 | Agent Hub | Composer vertical offset 16 -> 17 | 4,942 px -> 4,952 px | reverted |
 | Agent Hub | Top action gap 4 -> Web gap 8 | 4,942 px -> 4,942 px | reverted |
 | Agent Hub | Greeting max width 260 -> 258 | 4,942 px -> 4,942 px | reverted |
