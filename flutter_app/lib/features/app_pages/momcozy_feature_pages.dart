@@ -790,14 +790,17 @@ class _StatusPageState extends State<_StatusPage> {
                   background: Color(0xfffff8f1),
                 ),
               ),
-              const _StatusModuleCard(
-                key: ValueKey('status-module-postpartum-recovery'),
-                title: '产后恢复',
-                bodyText: '正在执行盆底肌康复训练',
-                action: '查看计划',
-                icon: Icons.self_improvement_rounded,
-                accent: Color(0xff388b72),
-                background: Color(0xfff2fffb),
+              Transform.translate(
+                offset: const Offset(0, 1),
+                child: const _StatusModuleCard(
+                  key: ValueKey('status-module-postpartum-recovery'),
+                  title: '产后恢复',
+                  bodyText: '正在执行盆底肌康复训练',
+                  action: '查看计划',
+                  icon: Icons.self_improvement_rounded,
+                  accent: Color(0xff388b72),
+                  background: Color(0xfff2fffb),
+                ),
               ),
               const _StatusModuleCard(
                 key: ValueKey('status-module-rest-nutrition'),
