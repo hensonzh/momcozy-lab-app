@@ -319,6 +319,7 @@ Latest rejected probes to avoid repeating:
 | 吸乳 | Prompt overlay alpha 0.43 -> 0.40 | 13,579 px -> 14,021 px | reverted |
 | 吸乳 | Prompt overlay blur 5 -> 4 | 13,579 px -> 13,893 px | reverted |
 | 吸乳 | Prompt rich text line-height 1.55 -> 1.625 | 13,579 px -> 15,049 px | reverted |
+| 吸乳 | Prompt card shadow to Tailwind `shadow-2xl` geometry | 13,579 px -> 13,579 px | reverted |
 | 计划 | Agent button weights w900 -> Web-like bold/extrabold | 12,360 px -> 12,360 px | reverted |
 | 计划 | Week strip chevron size 19 -> 16 | 12,360 px -> 12,362 px | reverted |
 | 宝宝和我 | Postpartum recovery card old PNG asset icon | 12,747 px -> 12,852 px | reverted |
