@@ -357,6 +357,7 @@ Latest rejected probes to avoid repeating:
 | 舒适负压调节 | Step card title weight w900 -> Web-like w800 | 7,202 px -> 7,202 px | reverted |
 | 舒适负压调节 | Step card eyebrow weight w900 -> Web-like w700 | 7,202 px -> 7,203 px | reverted |
 | 舒适负压调节 | Intro card x offset 0 -> -4 | 7,142 px -> 7,965 px | reverted |
+| Agent Hub | Send icon rounded -> outlined | 4,942 px -> 4,945 px | reverted |
 
 ## 8. Starting Slice
 
