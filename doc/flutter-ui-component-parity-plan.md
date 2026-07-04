@@ -337,6 +337,7 @@ Latest rejected probes to avoid repeating:
 | 妈妈点滴 | Trend chart rect to Recharts axis widths | 14,016 px -> 14,164 px | reverted |
 | 妈妈点滴 | Page title mark custom bars -> emoji | 14,016 px -> 14,150 px | reverted |
 | 妈妈点滴 | Mini-stat icon size 15 -> Web 14 | 14,016 px -> 14,031 px | reverted |
+| 妈妈点滴 | Dashboard title Material flower -> emoji | 14,016 px -> 14,178 px | reverted |
 | 吸乳 | Prompt overlay alpha 0.43 -> 0.40 | 13,579 px -> 14,021 px | reverted |
 | 吸乳 | Prompt overlay blur 5 -> 4 | 13,579 px -> 13,893 px | reverted |
 | 吸乳 | Prompt rich text line-height 1.55 -> 1.625 | 13,579 px -> 15,049 px | reverted |
