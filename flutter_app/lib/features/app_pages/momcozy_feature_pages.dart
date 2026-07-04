@@ -7292,11 +7292,14 @@ class _RecordsPageState extends State<_RecordsPage> {
 
     final overview = visibleOverview ?? _RecordsOverview.empty;
     return [
-      _RecordsDashboardCard(
-        overview: overview,
-        volumeUnit: _volumeUnit,
-        accent: widget.accent,
-        onToggleUnit: _toggleVolumeUnit,
+      Transform.translate(
+        offset: const Offset(-3, 2),
+        child: _RecordsDashboardCard(
+          overview: overview,
+          volumeUnit: _volumeUnit,
+          accent: widget.accent,
+          onToggleUnit: _toggleVolumeUnit,
+        ),
       ),
     ];
   }
