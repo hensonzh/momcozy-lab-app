@@ -7279,10 +7279,13 @@ class _RecordsPageState extends State<_RecordsPage> {
           key: ValueKey('route-page-${widget.path}'),
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 96),
           children: [
-            _RecordsMonthHeader(
-              monthLabel: '${_recordsDay.year}年${_recordsDay.month}月',
-              onPrevious: () => _shiftRecordsMonth(-1),
-              onNext: () => _shiftRecordsMonth(1),
+            Transform.translate(
+              offset: const Offset(3, 4),
+              child: _RecordsMonthHeader(
+                monthLabel: '${_recordsDay.year}年${_recordsDay.month}月',
+                onPrevious: () => _shiftRecordsMonth(-1),
+                onNext: () => _shiftRecordsMonth(1),
+              ),
             ),
             const SizedBox(height: 14),
             ..._recordsDashboardChildren(snapshot, overview),
