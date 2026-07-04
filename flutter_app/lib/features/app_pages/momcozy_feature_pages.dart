@@ -9072,10 +9072,13 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
       key: ValueKey('route-page-${widget.path}'),
       padding: const EdgeInsets.fromLTRB(16, 56, 16, 28),
       children: [
-        _DeviceSubpageHeader(
-          title: '用户参数配置',
-          subtitle: '当前来源：环境变量默认值',
-          onBack: () => context.go('/device'),
+        Transform.translate(
+          offset: const Offset(4, -1),
+          child: _DeviceSubpageHeader(
+            title: '用户参数配置',
+            subtitle: '当前来源：环境变量默认值',
+            onBack: () => context.go('/device'),
+          ),
         ),
         const SizedBox(height: 18),
         Transform.translate(
