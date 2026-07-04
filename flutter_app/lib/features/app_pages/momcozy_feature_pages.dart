@@ -3314,63 +3314,69 @@ class _ScheduleListToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 4),
-      child: Row(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Text(
-                  '今日任务',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Tooltip(
-                  message: '今日任务说明',
-                  child: Container(
-                    width: 18,
-                    height: 18,
-                    decoration: BoxDecoration(
-                      color: MomCozyColors.raised.withValues(alpha: 0.72),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: MomCozyColors.border.withValues(alpha: 0.6),
+    return RepaintBoundary(
+      key: const ValueKey('schedule-list-toolbar'),
+      child: Transform.translate(
+        offset: const Offset(-1, 0),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 12, bottom: 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Text(
+                      '今日任务',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: MomCozyColors.foreground,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
-                    child: const Icon(
-                      Icons.question_mark_rounded,
-                      size: 12,
-                      color: MomCozyColors.mutedForeground,
+                    const SizedBox(width: 6),
+                    Tooltip(
+                      message: '今日任务说明',
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          color: MomCozyColors.raised.withValues(alpha: 0.72),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: MomCozyColors.border.withValues(alpha: 0.6),
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.question_mark_rounded,
+                          size: 12,
+                          color: MomCozyColors.mutedForeground,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _ScheduleToolbarIconButton(
-                tooltip: '调整日程',
-                icon: Icons.image_outlined,
-                label: '调整日程',
-                onPressed: () {},
               ),
-              const SizedBox(width: 8),
-              _ScheduleToolbarIconButton(
-                key: const ValueKey('schedule-add-task-button'),
-                tooltip: '添加任务',
-                icon: Icons.add_rounded,
-                label: '添加任务',
-                onPressed: onAdd,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _ScheduleToolbarIconButton(
+                    tooltip: '调整日程',
+                    icon: Icons.image_outlined,
+                    label: '调整日程',
+                    onPressed: () {},
+                  ),
+                  const SizedBox(width: 8),
+                  _ScheduleToolbarIconButton(
+                    key: const ValueKey('schedule-add-task-button'),
+                    tooltip: '添加任务',
+                    icon: Icons.add_rounded,
+                    label: '添加任务',
+                    onPressed: onAdd,
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

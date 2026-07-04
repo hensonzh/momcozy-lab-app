@@ -59,6 +59,23 @@ void main() {
         ),
       );
     });
+
+    testWidgets('list toolbar matches compact baseline', (tester) async {
+      await _pumpScheduleComponentApp(tester);
+
+      final toolbar = find.byKey(const ValueKey('schedule-list-toolbar'));
+      expect(toolbar, findsOneWidget);
+      expect(find.text('今日任务'), findsWidgets);
+      expect(find.text('调整日程'), findsOneWidget);
+      expect(find.text('添加任务'), findsOneWidget);
+
+      await expectLater(
+        toolbar,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_list_toolbar.png',
+        ),
+      );
+    });
   });
 }
 
