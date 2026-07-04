@@ -699,7 +699,7 @@ class AgentRunTranscript extends StatelessWidget {
                               state.phase == AgentStreamRunPhase.disconnected
                           ? const Color(0xffb64b4b)
                           : const Color(0xff3f3038),
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
