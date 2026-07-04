@@ -60,6 +60,21 @@ void main() {
       );
     });
 
+    testWidgets('mom briefs row matches compact baseline', (tester) async {
+      await _pumpHospitalBagPage(tester);
+
+      final row = find.byKey(const ValueKey('hospital-bag-item-mom-briefs'));
+      expect(row, findsOneWidget);
+      expect(find.text('高腰收腹内裤'), findsOneWidget);
+
+      await expectLater(
+        row,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/hospital_bag_mom_briefs_row.png',
+        ),
+      );
+    });
+
     testWidgets('footer matches compact baseline', (tester) async {
       await _pumpHospitalBagPage(tester);
 
