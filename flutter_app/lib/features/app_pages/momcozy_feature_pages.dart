@@ -9910,10 +9910,13 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: _HospitalBagFooter(
-              total: _total,
-              discount: _discount,
-              money: _money,
+            child: Transform.translate(
+              offset: const Offset(0, 1),
+              child: _HospitalBagFooter(
+                total: _total,
+                discount: _discount,
+                money: _money,
+              ),
             ),
           ),
         ],
