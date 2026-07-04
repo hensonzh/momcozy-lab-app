@@ -61,6 +61,23 @@ void main() {
         ),
       );
     });
+
+    testWidgets('skin fit selling point matches compact baseline', (
+      tester,
+    ) async {
+      await _pumpW1ComponentApp(tester);
+
+      final point = find.byKey(const ValueKey('w1-selling-point-skin-fit'));
+      expect(point, findsOneWidget);
+      expect(find.text('亲肤零压穿戴'), findsOneWidget);
+
+      await expectLater(
+        point,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/w1_skin_fit_selling_point.png',
+        ),
+      );
+    });
   });
 }
 

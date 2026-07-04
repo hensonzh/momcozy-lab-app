@@ -9386,10 +9386,16 @@ class _W1PageState extends State<_W1Page> {
                   title: '妈妈身心关怀模式',
                   subtitle: '内置心率感应与呼吸引导，吸乳时自动播放舒缓白噪音，帮助妈妈放松身心',
                 ),
-                const _W1SellingPoint(
-                  icon: Icons.eco_outlined,
-                  title: '亲肤零压穿戴',
-                  subtitle: '医疗级液态硅胶+记忆棉衬垫，仅 180g 极轻机身，穿戴几乎无感',
+                Transform.translate(
+                  offset: const Offset(2, 4),
+                  child: const RepaintBoundary(
+                    key: ValueKey('w1-selling-point-skin-fit'),
+                    child: _W1SellingPoint(
+                      icon: Icons.eco_outlined,
+                      title: '亲肤零压穿戴',
+                      subtitle: '医疗级液态硅胶+记忆棉衬垫，仅 180g 极轻机身，穿戴几乎无感',
+                    ),
+                  ),
                 ),
                 const _W1SellingPoint(
                   icon: Icons.bolt_rounded,
