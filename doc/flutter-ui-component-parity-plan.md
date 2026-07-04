@@ -125,7 +125,7 @@ Current compact report after the last accepted visual commits:
 | P1 | W1 | 3.07% | 10,089 | below 2.75%, then below 2.25% | hero, product summary, selling points |
 | P1 | 用户参数 | 2.49% | 8,182 | below 2.00% | subpage header, form controls |
 | P1 | 舒适负压调节 | 2.22% | 7,294 | below 2.00% | top bar typography, intro card |
-| P1 | Agent Hub | 1.50% | 4,946 | below 1.50% | composer, greeting typography, avatar opacity |
+| P1 | Agent Hub | 1.50% | 4,942 | below 1.50% | composer, greeting typography, avatar opacity |
 | P2 | 设备 | 1.50% | 4,927 | keep at or below threshold | header/banner final polish |
 | P2 | IBCLC | 1.49% | 4,908 | keep OK | header/loading |
 | P2 | 设备提醒 | 1.29% | 4,239 | keep OK | regression guard only |
@@ -157,6 +157,7 @@ Accepted component slices so far:
 | Agent Hub | Selected agent nav gradient | 5,065 px | 4,968 px | `2243ab2` |
 | Agent Hub | Composer image icon size | 4,968 px | 4,950 px | `3840bc6` |
 | Agent Hub | Composer send icon size | 4,950 px | 4,946 px | `408aeb8` |
+| Agent Hub | Composer vertical offset 15 -> 16 | 4,946 px | 4,942 px | `9d026ac` |
 
 Component guard additions:
 
@@ -341,6 +342,7 @@ Latest rejected probes to avoid repeating:
 | 宝宝和我 | Milk trend chart height 188 -> 185 | 12,747 px -> 13,666 px | reverted |
 | 宝宝和我 | Milk trend card three-stop Web gradient | 12,747 px -> 13,092 px | reverted |
 | W1 | Hero circular product stage radial fill | 10,089 px -> 10,123 px | reverted |
+| Agent Hub | Composer vertical offset 16 -> 17 | 4,942 px -> 4,952 px | reverted |
 
 ## 8. Starting Slice
 
