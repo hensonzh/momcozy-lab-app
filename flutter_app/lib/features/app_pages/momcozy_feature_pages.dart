@@ -1021,7 +1021,7 @@ class _StatusModuleCard extends StatelessWidget {
     );
     final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
       color: const Color(0xff7a6870),
-      fontSize: 11,
+      fontSize: 10.5,
       fontWeight: FontWeight.w500,
       height: 1.24,
     );
