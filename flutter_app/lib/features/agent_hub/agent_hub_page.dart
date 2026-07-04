@@ -1102,6 +1102,7 @@ class AgentComposerBar extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
+      key: const ValueKey('agent-composer-bar'),
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: DecoratedBox(
         decoration: const BoxDecoration(color: MomCozyColors.background),
