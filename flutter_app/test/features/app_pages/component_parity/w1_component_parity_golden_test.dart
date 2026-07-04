@@ -44,6 +44,23 @@ void main() {
         ),
       );
     });
+
+    testWidgets('core highlights label matches compact baseline', (
+      tester,
+    ) async {
+      await _pumpW1ComponentApp(tester);
+
+      final label = find.byKey(const ValueKey('w1-core-highlights-label'));
+      expect(label, findsOneWidget);
+      expect(find.text('核心亮点'), findsOneWidget);
+
+      await expectLater(
+        label,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/w1_core_highlights_label.png',
+        ),
+      );
+    });
   });
 }
 
