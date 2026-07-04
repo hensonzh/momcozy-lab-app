@@ -7243,6 +7243,7 @@ class _RecordsPageState extends State<_RecordsPage> {
             Transform.translate(
               offset: const Offset(5, 10),
               child: _RecordsMonthHeader(
+                key: const ValueKey('records-month-header'),
                 monthLabel: '${_recordsDay.year}年${_recordsDay.month}月',
                 onPrevious: () => _shiftRecordsMonth(-1),
                 onNext: () => _shiftRecordsMonth(1),
@@ -7501,6 +7502,7 @@ class _RecordsOverview {
 
 class _RecordsMonthHeader extends StatelessWidget {
   const _RecordsMonthHeader({
+    super.key,
     required this.monthLabel,
     required this.onPrevious,
     required this.onNext,
