@@ -310,6 +310,7 @@ Latest rejected probes to avoid repeating:
 | 妈妈点滴 | Month button width 30 -> 20 | 14,045 px -> 14,045 px | reverted |
 | 妈妈点滴 | Dashboard mini-stat radius 16 -> 12 | 14,045 px -> 14,045 px | reverted |
 | 妈妈点滴 | Trend title emoji -> Material chart icon | 14,045 px -> 14,050 px | reverted |
+| 妈妈点滴 | Pump row detail weight w700 -> Web-like w400 | 14,016 px -> 14,016 px | reverted |
 | 吸乳 | Prompt overlay alpha 0.43 -> 0.40 | 13,579 px -> 14,021 px | reverted |
 | 吸乳 | Prompt overlay blur 5 -> 4 | 13,579 px -> 13,893 px | reverted |
 | 吸乳 | Prompt rich text line-height 1.55 -> 1.625 | 13,579 px -> 15,049 px | reverted |
