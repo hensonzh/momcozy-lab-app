@@ -353,6 +353,7 @@ Latest rejected probes to avoid repeating:
 | 用户参数 | Form label weight w900 -> Web-like w500 | 8,086 px -> 8,089 px | reverted |
 | 用户参数 | Form card y offset 7 -> 2 | 8,086 px -> 10,601 px | reverted |
 | 用户参数 | Form card x offset 0 -> -3 | 8,055 px -> 8,678 px | reverted |
+| 舒适负压调节 | Step card title weight w900 -> Web-like w800 | 7,202 px -> 7,202 px | reverted |
 
 ## 8. Starting Slice
 
