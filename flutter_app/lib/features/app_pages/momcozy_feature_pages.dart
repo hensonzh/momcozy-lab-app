@@ -6202,6 +6202,7 @@ class _PumpControlConsole extends StatelessWidget {
         : Icons.play_arrow_rounded;
 
     return DecoratedBox(
+      key: const ValueKey('pump-control-console'),
       decoration: MomCozyDecorations.card(
         color: MomCozyColors.card.withValues(alpha: 0.9),
         borderColor: MomCozyColors.border.withValues(alpha: 0.5),
