@@ -43,6 +43,22 @@ void main() {
         ),
       );
     });
+
+    testWidgets('empty task card matches compact baseline', (tester) async {
+      await _pumpScheduleComponentApp(tester);
+
+      final emptyCard = find.byKey(const ValueKey('schedule-empty-task-card'));
+      expect(emptyCard, findsOneWidget);
+      expect(find.text('今天还没有计划任务'), findsOneWidget);
+      expect(find.text('可以先从对话里生成计划并同步到日历，或手动添加任务。'), findsOneWidget);
+
+      await expectLater(
+        emptyCard,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_empty_task_card.png',
+        ),
+      );
+    });
   });
 }
 

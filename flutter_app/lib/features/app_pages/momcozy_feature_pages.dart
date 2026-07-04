@@ -3149,6 +3149,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
 
     if (!hasTask) {
       return Container(
+        key: const ValueKey('schedule-empty-task-card'),
         padding: const EdgeInsets.fromLTRB(18, 24, 18, 20),
         decoration: MomCozyDecorations.card(
           color: MomCozyColors.secondary.withValues(alpha: 0.3),
@@ -3182,8 +3183,8 @@ class _ScheduleNextTaskCard extends StatelessWidget {
             const SizedBox(height: 7),
             Text(
               '可以先从对话里生成计划并同步到日历，或手动添加任务。',
-              maxLines: 1,
-              overflow: TextOverflow.clip,
+              maxLines: 2,
+              overflow: TextOverflow.visible,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: MomCozyColors.mutedForeground,
