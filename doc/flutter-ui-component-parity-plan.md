@@ -343,6 +343,7 @@ Latest rejected probes to avoid repeating:
 | 宝宝和我 | Milk trend card three-stop Web gradient | 12,747 px -> 13,092 px | reverted |
 | W1 | Hero circular product stage radial fill | 10,089 px -> 10,123 px | reverted |
 | Agent Hub | Composer vertical offset 16 -> 17 | 4,942 px -> 4,952 px | reverted |
+| Agent Hub | Top action gap 4 -> Web gap 8 | 4,942 px -> 4,942 px | reverted |
 
 ## 8. Starting Slice
 
