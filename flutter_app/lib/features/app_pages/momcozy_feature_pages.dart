@@ -9425,7 +9425,10 @@ class _W1PageState extends State<_W1Page> {
       key: ValueKey('route-page-${widget.path}'),
       padding: EdgeInsets.zero,
       children: [
-        _W1PromoHero(onBack: () => context.go('/device')),
+        RepaintBoundary(
+          key: const ValueKey('w1-promo-hero'),
+          child: _W1PromoHero(onBack: () => context.go('/device')),
+        ),
         Transform.translate(
           offset: const Offset(-2, -2),
           child: const Padding(
