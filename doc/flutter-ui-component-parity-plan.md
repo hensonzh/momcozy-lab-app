@@ -321,6 +321,7 @@ Latest rejected probes to avoid repeating:
 | 吸乳 | Prompt rich text line-height 1.55 -> 1.625 | 13,579 px -> 15,049 px | reverted |
 | 吸乳 | Prompt card shadow to Tailwind `shadow-2xl` geometry | 13,579 px -> 13,579 px | reverted |
 | 吸乳 | Control console AI/manual tab icons removed | 13,579 px -> 13,579 px | reverted |
+| 吸乳 | Prompt flower painter -> native emoji | 13,579 px -> 14,100 px | reverted |
 | 计划 | Agent button weights w900 -> Web-like bold/extrabold | 12,360 px -> 12,360 px | reverted |
 | 计划 | Week strip chevron size 19 -> 16 | 12,360 px -> 12,362 px | reverted |
 | 宝宝和我 | Postpartum recovery card old PNG asset icon | 12,747 px -> 12,852 px | reverted |
