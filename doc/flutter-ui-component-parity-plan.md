@@ -411,7 +411,29 @@ Latest rejected probes to avoid repeating:
 | 待产包 | Footer checkout icon rounded -> outlined | 14,153 px -> 14,153 px | reverted |
 | 妈妈点滴 | Pump row Material icon -> bottle emoji | 14,016 px -> 14,212 px | reverted |
 
-## 8. Starting Slice
+## 8. Residual Diff Audit
+
+Latest report after `d9a4b1b`:
+
+| Page | Current diff | Human visual status | Residual source |
+|---|---:|---|---|
+| 待产包 | 14,128 px | Structure aligned | product image raster, text antialiasing, sticky footer text/button edges |
+| 妈妈点滴 | 13,991 px | Structure aligned | chart painter antialiasing, text/icon raster, list row labels |
+| 吸乳 | 13,537 px | Structure aligned | modal backdrop blur, background blur raster, prompt text antialiasing |
+| 宝宝和我 | 12,670 px | Structure aligned | chart axis/text raster, module icon antialiasing |
+| 计划 | 12,253 px | Structure aligned | week strip text/icon raster, agent card text antialiasing |
+| W1 | 10,062 px | Structure aligned | product image/video frame raster, text antialiasing |
+| 用户参数 | 8,048 px | Structure aligned | form text/control raster |
+| 舒适负压调节 | 7,102 px | Structure aligned | step text, top bar, and control antialiasing |
+
+Residual handling rule:
+
+1. Do not rewrite a visually aligned component only to chase renderer noise.
+2. Continue accepting only component-local changes that reduce the page report.
+3. Record zero-delta and regressing probes so they are not retried.
+4. Treat browser-vs-Flutter font antialiasing, platform icon raster, blur kernels, and image decode differences as residual unless a focused component test proves a real improvement.
+
+## 9. Starting Slice
 
 Initial execution started with `宝宝和我` because it was the highest-ranked page at v0.1.
 
