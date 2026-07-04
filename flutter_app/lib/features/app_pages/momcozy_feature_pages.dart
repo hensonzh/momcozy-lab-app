@@ -4038,22 +4038,26 @@ class _DeviceW1Banner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => context.go('/w1'),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(16),
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xff4b2738), Color(0xff7c3d50)],
+              stops: [0, 0.6, 1],
+              colors: [Color(0xff562938), Color(0xff723141), Color(0xff602e37)],
+            ),
+            border: Border.all(
+              color: MomCozyColors.primary.withValues(alpha: 0.2),
             ),
             boxShadow: MomCozyShadows.soft,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
                 Container(
@@ -4073,9 +4077,10 @@ class _DeviceW1Banner extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Momcozy W1 · 全新上市',
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
+                      height: 1,
                     ),
                   ),
                 ),
@@ -4256,13 +4261,13 @@ class _DeviceDeckCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               SizedBox(
-                height: 58,
+                height: 80,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      width: 58,
-                      height: 58,
+                      width: 80,
+                      height: 80,
                       decoration: BoxDecoration(
                         color: connected
                             ? MomCozyColors.primary.withValues(alpha: 0.06)
@@ -4276,8 +4281,8 @@ class _DeviceDeckCard extends StatelessWidget {
                     if (paired)
                       Image.asset(
                         MomCozyAssets.pumpM9,
-                        width: 58,
-                        height: 58,
+                        width: 72,
+                        height: 72,
                         fit: BoxFit.contain,
                         opacity: AlwaysStoppedAnimation(connected ? 1 : 0.46),
                       )
@@ -4311,7 +4316,7 @@ class _DeviceDeckCard extends StatelessWidget {
               else
                 Container(
                   width: double.infinity,
-                  height: 44,
+                  height: 48,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.white,
