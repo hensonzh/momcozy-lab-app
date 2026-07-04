@@ -1108,10 +1108,13 @@ class _StatusModuleCard extends StatelessWidget {
                       ),
                     if (action != null) ...[
                       const SizedBox(height: 4),
-                      _StatusModuleActionPill(
-                        label: action!,
-                        accent: accent,
-                        onTap: onAction,
+                      Transform.translate(
+                        offset: const Offset(-10, 0),
+                        child: _StatusModuleActionPill(
+                          label: action!,
+                          accent: accent,
+                          onTap: onAction,
+                        ),
                       ),
                     ],
                   ],
