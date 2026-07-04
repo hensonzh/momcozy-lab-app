@@ -172,6 +172,7 @@ Accepted component slices so far:
 | 用户参数 | Dropdown chevron icon size | 8,055 px | 8,048 px | `a7feb1b` |
 | 舒适负压调节 | Intro description weight | 7,294 px | 7,202 px | `2ccce9d` |
 | 舒适负压调节 | Top progress track position | 7,202 px | 7,142 px | `f56b3b8` |
+| 舒适负压调节 | Top bar subtitle weight | 7,142 px | 7,102 px | `fdd4793` |
 
 Component guard additions:
 
