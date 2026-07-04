@@ -415,63 +415,66 @@ class MomCozyBottomNavigation extends StatelessWidget {
                       constraints: const BoxConstraints(
                         maxWidth: MomCozyLayout.maxAppWidth,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: _MomCozyNavTab(
-                                label: '宝宝和我',
-                                selected: selectedIndex == 0,
-                                icon: const _MomBabyNavIcon(),
-                                selectedIcon: const _MomBabyNavIcon(
-                                  filled: true,
+                      child: Transform.translate(
+                        offset: const Offset(0, -2),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _MomCozyNavTab(
+                                  label: '宝宝和我',
+                                  selected: selectedIndex == 0,
+                                  icon: const _MomBabyNavIcon(),
+                                  selectedIcon: const _MomBabyNavIcon(
+                                    filled: true,
+                                  ),
+                                  onTap: () => context.go(_tabPaths[0]),
                                 ),
-                                onTap: () => context.go(_tabPaths[0]),
                               ),
-                            ),
-                            Expanded(
-                              child: _MomCozyNavTab(
-                                label: '计划',
-                                selected: selectedIndex == 1,
-                                icon: const Icon(Icons.event_note_outlined),
-                                selectedIcon: const Icon(
-                                  Icons.event_note_rounded,
+                              Expanded(
+                                child: _MomCozyNavTab(
+                                  label: '计划',
+                                  selected: selectedIndex == 1,
+                                  icon: const Icon(Icons.event_note_outlined),
+                                  selectedIcon: const Icon(
+                                    Icons.event_note_rounded,
+                                  ),
+                                  onTap: () => context.go(_tabPaths[1]),
                                 ),
-                                onTap: () => context.go(_tabPaths[1]),
                               ),
-                            ),
-                            Expanded(
-                              child: _MomCozyAgentNavTab(
-                                selected: selectedIndex == 2,
-                                onTap: () => context.go(_tabPaths[2]),
-                              ),
-                            ),
-                            Expanded(
-                              child: _MomCozyNavTab(
-                                label: '社区',
-                                selected: selectedIndex == 3,
-                                icon: const Icon(Icons.groups_2_outlined),
-                                selectedIcon: const Icon(
-                                  Icons.groups_2_rounded,
+                              Expanded(
+                                child: _MomCozyAgentNavTab(
+                                  selected: selectedIndex == 2,
+                                  onTap: () => context.go(_tabPaths[2]),
                                 ),
-                                onTap: () => context.go(_tabPaths[3]),
                               ),
-                            ),
-                            Expanded(
-                              child: _MomCozyNavTab(
-                                label: '设备',
-                                selected: selectedIndex == 4,
-                                icon: const Icon(
-                                  Icons.bluetooth_connected_outlined,
+                              Expanded(
+                                child: _MomCozyNavTab(
+                                  label: '社区',
+                                  selected: selectedIndex == 3,
+                                  icon: const Icon(Icons.groups_2_outlined),
+                                  selectedIcon: const Icon(
+                                    Icons.groups_2_rounded,
+                                  ),
+                                  onTap: () => context.go(_tabPaths[3]),
                                 ),
-                                selectedIcon: const Icon(
-                                  Icons.bluetooth_connected_rounded,
-                                ),
-                                onTap: () => context.go(_tabPaths[4]),
                               ),
-                            ),
-                          ],
+                              Expanded(
+                                child: _MomCozyNavTab(
+                                  label: '设备',
+                                  selected: selectedIndex == 4,
+                                  icon: const Icon(
+                                    Icons.bluetooth_connected_outlined,
+                                  ),
+                                  selectedIcon: const Icon(
+                                    Icons.bluetooth_connected_rounded,
+                                  ),
+                                  onTap: () => context.go(_tabPaths[4]),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
