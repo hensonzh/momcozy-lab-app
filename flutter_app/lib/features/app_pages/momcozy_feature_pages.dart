@@ -10541,18 +10541,21 @@ class _HospitalBagItemImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: const Color(0xfff0e1e7)),
-        ),
-        child: Image.asset(
-          assetPath,
-          width: 56,
-          height: 56,
-          fit: BoxFit.cover,
-          filterQuality: FilterQuality.high,
-          errorBuilder: (context, error, stackTrace) =>
-              _HospitalBagItemIcon(tone: tone),
+        decoration: const BoxDecoration(color: Colors.white),
+        child: DecoratedBox(
+          position: DecorationPosition.foreground,
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xfff0e1e7)),
+          ),
+          child: Image.asset(
+            assetPath,
+            width: 56,
+            height: 56,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.high,
+            errorBuilder: (context, error, stackTrace) =>
+                _HospitalBagItemIcon(tone: tone),
+          ),
         ),
       ),
     );
