@@ -2774,11 +2774,14 @@ class _ScheduleDateStrip extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 7),
-          child: Text(
-            '${selectedDate.year}年${selectedDate.month}月',
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: MomCozyColors.mutedForeground,
-              fontWeight: FontWeight.w900,
+          child: Transform.translate(
+            offset: const Offset(-4, 4),
+            child: Text(
+              '${selectedDate.year}年${selectedDate.month}月',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
         ),
