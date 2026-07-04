@@ -7753,7 +7753,7 @@ class _RecordsDashboardCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Transform.translate(
-            offset: const Offset(-12, 5),
+            offset: const Offset(-16, 6),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
