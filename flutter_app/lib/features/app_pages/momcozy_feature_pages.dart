@@ -5104,56 +5104,76 @@ class _PumpCalibrationPromptOverlay extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                const _PumpPromptFlowerIcon(),
-                                const SizedBox(width: 8),
-                                Text(
-                                  '个性化舒适档位',
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(
-                                        color: MomCozyColors.foreground,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                ),
-                              ],
+                            Transform.translate(
+                              offset: const Offset(0, -2),
+                              child: Row(
+                                children: [
+                                  const _PumpPromptFlowerIcon(),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '个性化舒适档位',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: MomCozyColors.foreground,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                  ),
+                                ],
+                              ),
                             ),
                             const SizedBox(height: 12),
-                            _PumpPromptRichLine(
-                              segments: [
-                                const TextSpan(text: '妈妈，检测到您还没有进行过'),
-                                TextSpan(
-                                  text: '耐受度滴定',
-                                  style: _pumpPromptEmphasisStyle(context),
-                                ),
-                                const TextSpan(text: '哦~'),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            _PumpPromptRichLine(
-                              segments: [
-                                const TextSpan(text: '滴定可以帮您找到'),
-                                TextSpan(
-                                  text: '最舒适且高效',
-                                  style: _pumpPromptEmphasisStyle(context),
-                                ),
-                                const TextSpan(text: '的吸力档位，避免吸乳时疼痛或效率不佳 '),
-                                const WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: _PumpPromptHeartIcon(),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            _PumpPromptRichLine(
-                              segments: [
-                                const TextSpan(text: '只需要 '),
-                                TextSpan(
-                                  text: '2分钟',
-                                  style: _pumpPromptEmphasisStyle(context),
-                                ),
-                                const TextSpan(text: '，就能让每次吸乳都更舒适~'),
-                              ],
+                            Transform.translate(
+                              offset: const Offset(-1, 2),
+                              child: Column(
+                                children: [
+                                  _PumpPromptRichLine(
+                                    segments: [
+                                      const TextSpan(text: '妈妈，检测到您还没有进行过'),
+                                      TextSpan(
+                                        text: '耐受度滴定',
+                                        style: _pumpPromptEmphasisStyle(
+                                          context,
+                                        ),
+                                      ),
+                                      const TextSpan(text: '哦~'),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  _PumpPromptRichLine(
+                                    segments: [
+                                      const TextSpan(text: '滴定可以帮您找到'),
+                                      TextSpan(
+                                        text: '最舒适且高效',
+                                        style: _pumpPromptEmphasisStyle(
+                                          context,
+                                        ),
+                                      ),
+                                      const TextSpan(
+                                        text: '的吸力档位，避免吸乳时疼痛或效率不佳 ',
+                                      ),
+                                      const WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: _PumpPromptHeartIcon(),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  _PumpPromptRichLine(
+                                    segments: [
+                                      const TextSpan(text: '只需要 '),
+                                      TextSpan(
+                                        text: '2分钟',
+                                        style: _pumpPromptEmphasisStyle(
+                                          context,
+                                        ),
+                                      ),
+                                      const TextSpan(text: '，就能让每次吸乳都更舒适~'),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                             const SizedBox(height: 16),
                             Row(
