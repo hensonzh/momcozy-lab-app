@@ -9499,7 +9499,7 @@ class _W1PromoHero extends StatelessWidget {
                           color: MomCozyColors.background.withValues(
                             alpha: 0.58,
                           ),
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.2,
                         ),
                       ),
