@@ -5114,10 +5114,7 @@ class _PumpCalibrationPromptOverlay extends StatelessWidget {
                                       const TextSpan(
                                         text: '的吸力档位，避免吸乳时疼痛或效率不佳 ',
                                       ),
-                                      const WidgetSpan(
-                                        alignment: PlaceholderAlignment.middle,
-                                        child: _PumpPromptHeartIcon(),
-                                      ),
+                                      const TextSpan(text: '💕'),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
@@ -5249,46 +5246,6 @@ class _PumpPromptFlowerPainter extends CustomPainter {
 
     canvas.drawCircle(center, 4, centerPaint);
     canvas.drawCircle(center.translate(0.7, -0.7), 1.1, centerDotPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _PumpPromptHeartIcon extends StatelessWidget {
-  const _PumpPromptHeartIcon();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(left: 1, bottom: 1),
-      child: SizedBox(
-        width: 11,
-        height: 10,
-        child: CustomPaint(painter: _PumpPromptHeartPainter()),
-      ),
-    );
-  }
-}
-
-class _PumpPromptHeartPainter extends CustomPainter {
-  const _PumpPromptHeartPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final path = Path()
-      ..moveTo(w * 0.5, h * 0.94)
-      ..cubicTo(w * 0.08, h * 0.62, 0, h * 0.42, 0, h * 0.24)
-      ..cubicTo(0, h * 0.06, w * 0.17, 0, w * 0.3, 0)
-      ..cubicTo(w * 0.42, 0, w * 0.49, h * 0.09, w * 0.5, h * 0.18)
-      ..cubicTo(w * 0.51, h * 0.09, w * 0.58, 0, w * 0.7, 0)
-      ..cubicTo(w * 0.83, 0, w, h * 0.06, w, h * 0.24)
-      ..cubicTo(w, h * 0.42, w * 0.92, h * 0.62, w * 0.5, h * 0.94)
-      ..close();
-
-    canvas.drawPath(path, Paint()..color = MomCozyColors.primary);
   }
 
   @override
