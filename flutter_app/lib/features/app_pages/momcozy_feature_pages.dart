@@ -2217,7 +2217,7 @@ class _StatusIdentityTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const gap = 10.0;
+        const gap = 7.0;
         final tabWidth = (constraints.maxWidth - gap) / 2;
 
         return Row(
@@ -2279,7 +2279,7 @@ class _StatusIdentityTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final borderColor = selected
         ? MomCozyColors.primary.withValues(alpha: 0.42)
-        : MomCozyColors.border.withValues(alpha: 0.62);
+        : Colors.white.withValues(alpha: 0.70);
     return Semantics(
       selected: selected,
       button: true,
@@ -2315,7 +2315,7 @@ class _StatusIdentityTab extends StatelessWidget {
                         width: 4,
                         height: 44,
                         decoration: const BoxDecoration(
-                          color: MomCozyColors.primary,
+                          color: Color(0xffb46f91),
                           borderRadius: BorderRadius.horizontal(
                             right: Radius.circular(MomCozyRadii.pill),
                           ),
@@ -2327,22 +2327,35 @@ class _StatusIdentityTab extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                     child: Row(
                       children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: disabled
-                                  ? MomCozyColors.border.withValues(alpha: 0.35)
-                                  : selected
-                                  ? MomCozyColors.primary.withValues(alpha: 0.4)
-                                  : MomCozyColors.border,
-                              width: 2,
-                            ),
-                            image: DecorationImage(
-                              image: AssetImage(asset),
-                              fit: BoxFit.cover,
+                        Opacity(
+                          opacity: disabled
+                              ? 0.45
+                              : selected
+                              ? 1
+                              : 0.75,
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: disabled
+                                    ? MomCozyColors.border.withValues(
+                                        alpha: 0.35,
+                                      )
+                                    : selected
+                                    ? const Color(
+                                        0xffb46f91,
+                                      ).withValues(alpha: 0.45)
+                                    : MomCozyColors.border.withValues(
+                                        alpha: 0.5,
+                                      ),
+                                width: 2,
+                              ),
+                              image: DecorationImage(
+                                image: AssetImage(asset),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
