@@ -306,6 +306,7 @@ Latest rejected probes to avoid repeating:
 | 待产包 | Product row title-desc gap 4 -> Web-like 2 | 14,153 px -> 14,153 px | reverted |
 | 待产包 | Product row text column y offset -1 -> 0 | 14,153 px -> 14,906 px | reverted |
 | 待产包 | Header/group chip vertical padding 5 -> Web-like 4 | 14,153 px -> 19,312 px | reverted |
+| 待产包 | Product image radius 28 -> Web `rounded-2xl` 16 | 14,153 px -> 14,286 px | reverted |
 | 妈妈点滴 | Dashboard chart height 136 -> 160 | 14,068 px -> 16,800 px | reverted |
 | 妈妈点滴 | Page title weight w900 -> w700 | 14,068 px -> 14,068 px | reverted |
 | 妈妈点滴 | Month button width 30 -> 20 | 14,045 px -> 14,045 px | reverted |
