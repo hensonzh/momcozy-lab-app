@@ -7696,7 +7696,7 @@ class _RecordsDashboardCard extends StatelessWidget {
                     label: '吸奶器母乳量',
                     value: dashboardTotalValue,
                     unitSuffix: volumeUnit,
-                    accent: accent,
+                    accent: MomCozyColors.primary,
                     onTap: onToggleUnit,
                   ),
                 ),
