@@ -10503,7 +10503,7 @@ class _HospitalBagItemActions extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
-                      Icons.delete_outline_rounded,
+                      Icons.delete_outline,
                       size: 12,
                       color: Color(0xff6c4457),
                     ),
