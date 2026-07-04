@@ -8658,9 +8658,9 @@ class _CommunityPageState extends State<_CommunityPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 76,
-                  height: 76,
-                  padding: const EdgeInsets.all(7),
+                  width: 80,
+                  height: 80,
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: MomCozyColors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
@@ -8673,13 +8673,13 @@ class _CommunityPageState extends State<_CommunityPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 16),
                 Text(
                   '社区功能还在建设中哦～',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     height: 1.2,
                   ),
                 ),
@@ -8692,7 +8692,7 @@ class _CommunityPageState extends State<_CommunityPage> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: MomCozyColors.mutedForeground,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w400,
                     height: 1.4,
                   ),
                 ),
