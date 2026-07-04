@@ -357,6 +357,7 @@ Latest rejected probes to avoid repeating:
 | 宝宝和我 | Identity tab minHeight 72 -> Web 68 | 12,670 px -> 16,089 px | reverted |
 | W1 | Hero circular product stage radial fill | 10,089 px -> 10,123 px | reverted |
 | W1 | Summary spec tile vertical padding 9 -> Web-like 8 | 10,089 px -> 11,295 px | reverted |
+| W1 | Section label weight w900 -> Web-like w600 | 10,089 px -> 10,089 px | reverted |
 | Agent Hub | Composer vertical offset 16 -> 17 | 4,942 px -> 4,952 px | reverted |
 | Agent Hub | Top action gap 4 -> Web gap 8 | 4,942 px -> 4,942 px | reverted |
 | Agent Hub | Greeting max width 260 -> 258 | 4,942 px -> 4,942 px | reverted |
