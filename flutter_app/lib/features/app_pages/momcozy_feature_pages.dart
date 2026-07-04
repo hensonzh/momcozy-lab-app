@@ -2558,12 +2558,15 @@ class _SchedulePageState extends State<_SchedulePage> {
               ),
             ),
             const SizedBox(height: 20),
-            _ScheduleAgentCard(
-              key: const ValueKey('schedule-agent-card'),
-              reminderEnabled: _pumpReminderEnabled,
-              onReminderTap: () =>
-                  setState(() => _pumpReminderEnabled = !_pumpReminderEnabled),
-              onConversationTap: () => context.go('/'),
+            Transform.translate(
+              offset: const Offset(-1, 0),
+              child: _ScheduleAgentCard(
+                key: const ValueKey('schedule-agent-card'),
+                reminderEnabled: _pumpReminderEnabled,
+                onReminderTap: () =>
+                    setState(() => _pumpReminderEnabled = !_pumpReminderEnabled),
+                onConversationTap: () => context.go('/'),
+              ),
             ),
             const SizedBox(height: 20),
             _ScheduleNextTaskCard(
