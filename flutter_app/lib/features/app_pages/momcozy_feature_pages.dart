@@ -6974,7 +6974,6 @@ class _CalibrationStepCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: MomCozyColors.mutedForeground,
                 fontSize: 13,
-                fontWeight: FontWeight.w600,
                 height: 1.62,
               ),
             ),
