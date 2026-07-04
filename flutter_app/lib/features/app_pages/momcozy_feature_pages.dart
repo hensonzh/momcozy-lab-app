@@ -738,47 +738,54 @@ class _StatusPageState extends State<_StatusPage> {
     }
 
     return [
-      _StatusModuleGrid(
-        children: [
-          _StatusModuleCard(
-            title: '母乳产出',
-            icon: Icons.water_drop_outlined,
-            accent: MomCozyColors.primary,
-            background: const Color(0xfffff7fb),
-            hiddenTexts: [stage, stageNote],
-            metrics: const [
-              _StatusModuleMetric(label: '今日产出', value: '待记录', showHelp: true),
-              _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
-            ],
-          ),
-          const _StatusModuleCard(
-            title: '乳房健康',
-            showHelp: true,
-            bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
-            action: '查看《乳房健康日记》',
-            icon: Icons.heart_broken_outlined,
-            accent: Color(0xffb96f55),
-            background: Color(0xfffff8f1),
-          ),
-          const _StatusModuleCard(
-            title: '产后恢复',
-            bodyText: '正在执行盆底肌康复训练',
-            action: '查看计划',
-            icon: Icons.self_improvement_rounded,
-            accent: Color(0xff388b72),
-            background: Color(0xfff2fffb),
-          ),
-          const _StatusModuleCard(
-            title: '补能与休息',
-            showHelp: true,
-            bodyText: '待开通睡眠与营养功能',
-            icon: Icons.local_cafe_outlined,
-            accent: Color(0xffb9792a),
-            background: Color(0xfffffaf0),
-          ),
-        ],
+      Padding(
+        padding: const EdgeInsets.only(top: 7),
+        child: _StatusModuleGrid(
+          children: [
+            _StatusModuleCard(
+              title: '母乳产出',
+              icon: Icons.water_drop_outlined,
+              accent: MomCozyColors.primary,
+              background: const Color(0xfffff7fb),
+              hiddenTexts: [stage, stageNote],
+              metrics: const [
+                _StatusModuleMetric(
+                  label: '今日产出',
+                  value: '待记录',
+                  showHelp: true,
+                ),
+                _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
+              ],
+            ),
+            const _StatusModuleCard(
+              title: '乳房健康',
+              showHelp: true,
+              bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
+              action: '查看《乳房健康日记》',
+              icon: Icons.heart_broken_outlined,
+              accent: Color(0xffb96f55),
+              background: Color(0xfffff8f1),
+            ),
+            const _StatusModuleCard(
+              title: '产后恢复',
+              bodyText: '正在执行盆底肌康复训练',
+              action: '查看计划',
+              icon: Icons.self_improvement_rounded,
+              accent: Color(0xff388b72),
+              background: Color(0xfff2fffb),
+            ),
+            const _StatusModuleCard(
+              title: '补能与休息',
+              showHelp: true,
+              bodyText: '待开通睡眠与营养功能',
+              icon: Icons.local_cafe_outlined,
+              accent: Color(0xffb9792a),
+              background: Color(0xfffffaf0),
+            ),
+          ],
+        ),
       ),
-      const SizedBox(height: 16),
+      const SizedBox(height: 9),
       const _StatusTrendPreview(),
     ];
   }
