@@ -337,6 +337,7 @@ Latest rejected probes to avoid repeating:
 | 吸乳 | Prompt flower painter -> native emoji | 13,579 px -> 14,100 px | reverted |
 | 计划 | Agent button weights w900 -> Web-like bold/extrabold | 12,360 px -> 12,360 px | reverted |
 | 计划 | Agent button label explicit 12px | 12,284 px -> 12,556 px | reverted |
+| 计划 | Agent text line-height 1.45 -> Web-like 1.625 | 12,284 px -> 13,939 px | reverted |
 | 计划 | Week strip chevron size 19 -> 16 | 12,360 px -> 12,362 px | reverted |
 | 计划 | Empty task title to Web 18px/700 | 12,360 px -> 13,009 px | reverted |
 | 宝宝和我 | Postpartum recovery card old PNG asset icon | 12,747 px -> 12,852 px | reverted |
