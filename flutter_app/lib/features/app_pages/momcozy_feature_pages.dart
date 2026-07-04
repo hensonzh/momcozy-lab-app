@@ -631,7 +631,7 @@ class _StatusPageState extends State<_StatusPage> {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
           children: [
             Transform.translate(
-              offset: const Offset(2, 8),
+              offset: const Offset(1, 11),
               child: _CareStageSelector(
                 selectedStage: _careStage,
                 accent: widget.accent,
