@@ -295,6 +295,8 @@ Latest rejected probes to avoid repeating:
 
 | Page | Probe | Result | Decision |
 |---|---|---:|---|
+| 待产包 | Footer CTA height 48 -> 46 | 14,153 px -> 15,194 px | reverted |
+| 待产包 | Product row shadow to Tailwind shadow-sm geometry | 14,153 px -> 14,153 px | reverted |
 | 宝宝和我 | Postpartum recovery card old PNG asset icon | 12,747 px -> 12,852 px | reverted |
 | 宝宝和我 | Milk trend axis tick font 8 -> 9 | 12,747 px -> 12,805 px | reverted |
 | 宝宝和我 | Milk trend chart height 188 -> 185 | 12,747 px -> 13,666 px | reverted |
