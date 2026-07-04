@@ -739,7 +739,7 @@ class _StatusPageState extends State<_StatusPage> {
 
     return [
       Padding(
-        padding: const EdgeInsets.only(top: 7),
+        padding: const EdgeInsets.only(top: 8),
         child: _StatusModuleGrid(
           children: [
             _StatusModuleCard(
@@ -785,7 +785,7 @@ class _StatusPageState extends State<_StatusPage> {
           ],
         ),
       ),
-      const SizedBox(height: 9),
+      const SizedBox(height: 8),
       const _StatusTrendPreview(),
     ];
   }
