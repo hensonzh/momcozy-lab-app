@@ -935,7 +935,7 @@ class _StatusModuleGrid extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 1.24,
+            childAspectRatio: 1.26,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             children: children,
