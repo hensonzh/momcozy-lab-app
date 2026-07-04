@@ -9518,7 +9518,7 @@ class _W1PromoHero extends StatelessWidget {
                         'Wellness & Well-being',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: MomCozyColors.background.withValues(
-                            alpha: 0.76,
+                            alpha: 0.7,
                           ),
                           fontWeight: FontWeight.w800,
                         ),
