@@ -6639,7 +6639,7 @@ class _CalibrationPageState extends State<_CalibrationPage> {
         ),
         if (!_introAcknowledged)
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 0, 20),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
             child: SizedBox(
               height: MediaQuery.sizeOf(context).height - 104,
               child: Center(
@@ -6665,7 +6665,7 @@ class _CalibrationPageState extends State<_CalibrationPage> {
           )
         else
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 0, 20),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
             child: _CalibrationWideCardShell(
               child: _CalibrationStepCard(
                 eyebrow: '左右侧 · 舒适档位',
