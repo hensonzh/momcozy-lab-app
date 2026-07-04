@@ -7680,40 +7680,43 @@ class _RecordsDashboardCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _RecordsMiniStat(
-                  icon: Icons.water_drop_outlined,
-                  label: '吸奶器母乳量',
-                  value: dashboardTotalValue,
-                  unitSuffix: volumeUnit,
-                  accent: accent,
-                  onTap: onToggleUnit,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _RecordsMiniStat(
-                  icon: Icons.schedule_rounded,
-                  label: '吸奶次数',
-                  value: '$deviceSessions 次',
-                  accent: MomCozyColors.warm,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _RecordsMiniStat(
-                  icon: Icons.trending_up_rounded,
-                  label: '周均日补录奶量',
-                  value: _amountLabel(
-                    dashboardWeeklyAverageMl,
-                    unit: volumeUnit,
+          Transform.translate(
+            offset: const Offset(-1, -4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _RecordsMiniStat(
+                    icon: Icons.water_drop_outlined,
+                    label: '吸奶器母乳量',
+                    value: dashboardTotalValue,
+                    unitSuffix: volumeUnit,
+                    accent: accent,
+                    onTap: onToggleUnit,
                   ),
-                  accent: MomCozyColors.warm,
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _RecordsMiniStat(
+                    icon: Icons.schedule_rounded,
+                    label: '吸奶次数',
+                    value: '$deviceSessions 次',
+                    accent: MomCozyColors.warm,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _RecordsMiniStat(
+                    icon: Icons.trending_up_rounded,
+                    label: '周均日补录奶量',
+                    value: _amountLabel(
+                      dashboardWeeklyAverageMl,
+                      unit: volumeUnit,
+                    ),
+                    accent: MomCozyColors.warm,
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           Row(
