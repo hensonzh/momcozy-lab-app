@@ -3600,49 +3600,54 @@ class _DatePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: selected ? MomCozyColors.primary : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
+    return Transform.scale(
+      scale: selected ? 1.05 : 1,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
           color: selected ? MomCozyColors.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected ? MomCozyColors.primary : Colors.transparent,
+          ),
+          boxShadow: selected ? MomCozyShadows.soft : const [],
         ),
-        boxShadow: selected ? MomCozyShadows.soft : const [],
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        borderRadius: BorderRadius.circular(15),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: SizedBox(
-            width: 36,
-            height: 44,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  day,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: selected
-                        ? MomCozyColors.raised.withValues(alpha: 0.9)
-                        : MomCozyColors.mutedForeground.withValues(alpha: 0.65),
-                    fontWeight: FontWeight.w800,
-                    fontSize: 10,
+        child: Material(
+          type: MaterialType.transparency,
+          borderRadius: BorderRadius.circular(15),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: SizedBox(
+              width: 36,
+              height: 44,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    day,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: selected
+                          ? MomCozyColors.raised.withValues(alpha: 0.9)
+                          : MomCozyColors.mutedForeground.withValues(
+                              alpha: 0.65,
+                            ),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 10,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  date,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: selected
-                        ? MomCozyColors.raised
-                        : MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 14,
+                  const SizedBox(height: 2),
+                  Text(
+                    date,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: selected
+                          ? MomCozyColors.raised
+                          : MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
