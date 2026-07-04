@@ -359,6 +359,7 @@ Latest rejected probes to avoid repeating:
 | 吸乳 | Prompt card vertical offset 4 -> 0 | 13,579 px -> 15,647 px | reverted |
 | 吸乳 | Prompt removed emoji placeholder -> colored heart glyph | 13,551 px -> 13,604 px | reverted |
 | 吸乳 | Prompt title row offset -2 -> 0 | 13,551 px -> 13,933 px | reverted |
+| 吸乳 | Prompt skip button border alpha 0.8 -> solid border | 13,537 px -> 13,556 px | reverted |
 | 计划 | Agent button weights w900 -> Web-like bold/extrabold | 12,360 px -> 12,360 px | reverted |
 | 计划 | Agent button label explicit 12px | 12,284 px -> 12,556 px | reverted |
 | 计划 | Agent text line-height 1.45 -> Web-like 1.625 | 12,284 px -> 13,939 px | reverted |
