@@ -2519,21 +2519,28 @@ class _SchedulePageState extends State<_SchedulePage> {
           key: ValueKey('route-page-${widget.path}'),
           padding: const EdgeInsets.fromLTRB(16, 34, 16, 96),
           children: [
-            _ScheduleDateStrip(
-              selectedDay: _selectedDay,
-              onSelected: _selectDay,
+            Transform.translate(
+              offset: const Offset(0, -8),
+              child: _ScheduleDateStrip(
+                selectedDay: _selectedDay,
+                onSelected: _selectDay,
+              ),
             ),
             const SizedBox(height: 16),
-            _ScheduleContextCard(
-              title: '稳奶计划执行中',
-              subtitle: '产后第29周（离乳期）',
-              completedCount: taskCount == null
-                  ? 0
-                  : taskCount - pendingTaskCount,
-              totalCount: taskCount ?? 0,
-              reminderEnabled: _pumpReminderEnabled,
-              onReminderTap: () =>
-                  setState(() => _pumpReminderEnabled = !_pumpReminderEnabled),
+            Transform.translate(
+              offset: const Offset(-2, -9),
+              child: _ScheduleContextCard(
+                title: '稳奶计划执行中',
+                subtitle: '产后第29周（离乳期）',
+                completedCount: taskCount == null
+                    ? 0
+                    : taskCount - pendingTaskCount,
+                totalCount: taskCount ?? 0,
+                reminderEnabled: _pumpReminderEnabled,
+                onReminderTap: () => setState(
+                  () => _pumpReminderEnabled = !_pumpReminderEnabled,
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             _ScheduleAgentCard(
