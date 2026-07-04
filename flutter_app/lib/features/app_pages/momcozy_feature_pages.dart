@@ -5166,6 +5166,8 @@ class _PumpCalibrationPromptOverlay extends StatelessWidget {
                                   child: OutlinedButton(
                                     onPressed: onSkip,
                                     style: OutlinedButton.styleFrom(
+                                      foregroundColor:
+                                          MomCozyColors.foreground,
                                       minimumSize: const Size.fromHeight(40),
                                       side: BorderSide(
                                         color: MomCozyColors.border.withValues(
