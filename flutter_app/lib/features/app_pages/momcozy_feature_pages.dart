@@ -7387,6 +7387,7 @@ class _RecordsPageState extends State<_RecordsPage> {
       Transform.translate(
         offset: const Offset(-3, 2),
         child: _RecordsDashboardCard(
+          key: const ValueKey('records-dashboard-card'),
           overview: overview,
           volumeUnit: _volumeUnit,
           accent: widget.accent,
@@ -7689,6 +7690,7 @@ class _RecordsMonthButton extends StatelessWidget {
 
 class _RecordsDashboardCard extends StatelessWidget {
   const _RecordsDashboardCard({
+    super.key,
     required this.overview,
     required this.volumeUnit,
     required this.accent,
