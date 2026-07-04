@@ -3405,7 +3405,7 @@ class _ScheduleToolbarIconButton extends StatelessWidget {
       message: tooltip,
       child: OutlinedButton.icon(
         onPressed: onPressed,
-        icon: Icon(icon, size: 15),
+        icon: Icon(icon, size: 14),
         label: Text(label),
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(0, 34),
