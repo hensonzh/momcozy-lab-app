@@ -349,6 +349,7 @@ Latest rejected probes to avoid repeating:
 | Agent Hub | Top action gap 4 -> Web gap 8 | 4,942 px -> 4,942 px | reverted |
 | Agent Hub | Greeting max width 260 -> 258 | 4,942 px -> 4,942 px | reverted |
 | 用户参数 | Form label weight w900 -> Web-like w500 | 8,086 px -> 8,089 px | reverted |
+| 用户参数 | Form card y offset 7 -> 2 | 8,086 px -> 10,601 px | reverted |
 
 ## 8. Starting Slice
 
