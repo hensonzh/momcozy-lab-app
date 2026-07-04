@@ -338,6 +338,7 @@ Latest rejected probes to avoid repeating:
 | 吸乳 | Prompt card shadow to Tailwind `shadow-2xl` geometry | 13,579 px -> 13,579 px | reverted |
 | 吸乳 | Control console AI/manual tab icons removed | 13,579 px -> 13,579 px | reverted |
 | 吸乳 | Prompt flower painter -> native emoji | 13,579 px -> 14,100 px | reverted |
+| 吸乳 | Prompt card vertical offset 4 -> 0 | 13,579 px -> 15,647 px | reverted |
 | 计划 | Agent button weights w900 -> Web-like bold/extrabold | 12,360 px -> 12,360 px | reverted |
 | 计划 | Agent button label explicit 12px | 12,284 px -> 12,556 px | reverted |
 | 计划 | Agent text line-height 1.45 -> Web-like 1.625 | 12,284 px -> 13,939 px | reverted |
