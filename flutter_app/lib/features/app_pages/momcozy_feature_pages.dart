@@ -7742,10 +7742,12 @@ class _RecordsDashboardCard extends StatelessWidget {
               Expanded(
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.show_chart_rounded,
-                      size: 15,
-                      color: MomCozyColors.primary.withValues(alpha: 0.78),
+                    Text(
+                      '📈',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontSize: 12,
+                        height: 1,
+                      ),
                     ),
                     const SizedBox(width: 5),
                     Flexible(
