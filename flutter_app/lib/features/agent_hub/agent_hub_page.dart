@@ -1180,7 +1180,10 @@ class AgentComposerBar extends StatelessWidget {
                     IconButton(
                       key: const ValueKey('agent-image-button'),
                       onPressed: canAttachImage ? onAttachImage : null,
-                      icon: const Icon(Icons.add_photo_alternate_outlined),
+                      icon: const Icon(
+                        Icons.add_photo_alternate_outlined,
+                        size: 20,
+                      ),
                       tooltip: '添加图片',
                       color: MomCozyColors.mutedForeground,
                       visualDensity: VisualDensity.compact,
