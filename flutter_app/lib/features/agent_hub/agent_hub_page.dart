@@ -693,7 +693,7 @@ class AgentRunTranscript extends StatelessWidget {
                   child: Text(
                     text,
                     style: textTheme.bodyMedium?.copyWith(
-                      height: 1.58,
+                      height: 1.40,
                       color:
                           state.phase == AgentStreamRunPhase.error ||
                               state.phase == AgentStreamRunPhase.disconnected
