@@ -9,24 +9,24 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('Calibration component parity goldens', () {
-    testWidgets('intro step card matches compact baseline', (tester) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+    testWidgets('top bar matches compact baseline', (tester) async {
+      await _pumpCalibrationComponentApp(tester);
 
-      final routeIntentPlatform = FakeRouteIntentPlatform();
-      addTearDown(routeIntentPlatform.dispose);
+      final topBar = find.byKey(const ValueKey('calibration-top-bar'));
+      expect(topBar, findsOneWidget);
+      expect(find.text('舒适负压调节'), findsOneWidget);
+      expect(find.text('1/7'), findsOneWidget);
 
-      await tester.pumpWidget(
-        RepaintBoundary(
-          child: MomCozyFlutterApp(
-            router: createMomCozyRouter(initialLocation: '/calibration'),
-            routeIntentPlatform: routeIntentPlatform,
-          ),
+      await expectLater(
+        topBar,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/calibration_top_bar.png',
         ),
       );
-      await tester.pumpAndSettle();
+    });
+
+    testWidgets('intro step card matches compact baseline', (tester) async {
+      await _pumpCalibrationComponentApp(tester);
 
       final introCard = find.byKey(
         const ValueKey('calibration-intro-step-card'),
@@ -44,4 +44,24 @@ void main() {
       );
     });
   });
+}
+
+Future<void> _pumpCalibrationComponentApp(WidgetTester tester) async {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
+  final routeIntentPlatform = FakeRouteIntentPlatform();
+  addTearDown(routeIntentPlatform.dispose);
+
+  await tester.pumpWidget(
+    RepaintBoundary(
+      child: MomCozyFlutterApp(
+        router: createMomCozyRouter(initialLocation: '/calibration'),
+        routeIntentPlatform: routeIntentPlatform,
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
 }
