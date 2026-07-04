@@ -2203,13 +2203,16 @@ class _StatusIdentityTabs extends StatelessWidget {
           children: [
             SizedBox(
               width: tabWidth,
-              child: _StatusIdentityTab(
-                value: 'mom',
-                title: '妈妈',
-                subtitle: momSubtitle,
-                asset: MomCozyAssets.momAvatar,
-                selected: selected == 'mom',
-                onTap: () => onChanged('mom'),
+              child: Transform.translate(
+                offset: selected == 'mom' ? const Offset(0, -5) : Offset.zero,
+                child: _StatusIdentityTab(
+                  value: 'mom',
+                  title: '妈妈',
+                  subtitle: momSubtitle,
+                  asset: MomCozyAssets.momAvatar,
+                  selected: selected == 'mom',
+                  onTap: () => onChanged('mom'),
+                ),
               ),
             ),
             const SizedBox(width: gap),
