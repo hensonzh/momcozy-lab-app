@@ -11131,36 +11131,39 @@ class _IbclcChatBody extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!chatReady) {
       return Center(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: const Color(0xfff7fcfa),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xffd9e8e4)),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x14224844),
-                blurRadius: 34,
-                offset: Offset(0, 14),
-              ),
-            ],
-          ),
-          child: SizedBox(
-            width: 300,
-            height: 50,
-            child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const _IbclcPulseDot(),
-                  const SizedBox(width: 10),
-                  Text(
-                    connectionText,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: const Color(0xff177a89),
-                      fontWeight: FontWeight.w900,
+        child: Transform.translate(
+          offset: const Offset(0, 19),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: const Color(0xfff7fcfa),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xffd9e8e4)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x14224844),
+                  blurRadius: 34,
+                  offset: Offset(0, 14),
+                ),
+              ],
+            ),
+            child: SizedBox(
+              width: 300,
+              height: 50,
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const _IbclcPulseDot(),
+                    const SizedBox(width: 10),
+                    Text(
+                      connectionText,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: const Color(0xff177a89),
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
