@@ -119,7 +119,7 @@ Current compact report after the last accepted visual commits:
 |---:|---|---:|---:|---|---|
 | P0 | 待产包 | 4.29% | 14,128 | below 4.00%, then below 3.00% | product row, section header, checkout footer |
 | P0 | 妈妈点滴 | 4.26% | 14,016 | below 4.00%, then below 3.00% | dashboard, chart, rows |
-| P0 | 吸乳 | 4.13% | 13,579 | below 3.75%, then below 3.00% | prompt modal, backdrop, controls |
+| P0 | 吸乳 | 4.12% | 13,551 | below 3.75%, then below 3.00% | prompt modal, backdrop, controls |
 | P0 | 宝宝和我 | 3.85% | 12,670 | below 3.50%, then below 2.50% | module cards, then trend card/painter |
 | P0 | 计划 | 3.72% | 12,255 | below 3.50%, then below 2.50% | week strip, context card, empty/task blocks |
 | P1 | W1 | 3.07% | 10,089 | below 2.75%, then below 2.25% | hero, product summary, selling points |
@@ -152,6 +152,7 @@ Accepted component slices so far:
 | 计划 | Agent context card surface | 12,492 px | 12,360 px | `ac67052` |
 | 计划 | Agent context button icons | 12,360 px | 12,284 px | `383c505` |
 | 计划 | Today task toolbar icon size | 12,284 px | 12,255 px | `01a2b88` |
+| 吸乳 | Prompt unsupported emoji placeholder | 13,579 px | 13,551 px | `ed4a517` |
 | W1 | Summary typography | 10,195 px | 10,172 px | `933ca14` |
 | W1 | Hero eyebrow weight | 10,172 px | 10,166 px | `07abe7b` |
 | W1 | Hero eyebrow tone | 10,166 px | 10,143 px | `489d06b` |
