@@ -147,11 +147,13 @@ Accepted component slices so far:
 | 妈妈点滴 | Month label weight | 14,068 px | 14,049 px | `d283bae` |
 | 妈妈点滴 | Month chevron size | 14,049 px | 14,045 px | `2c3a3f2` |
 | 妈妈点滴 | Milk row amount weight | 14,045 px | 14,016 px | `5243d83` |
+| 妈妈点滴 | Bottom nav surface tone | 14,016 px | 13,991 px | `d9a4b1b` |
 | 待产包 | Product image foreground border | 14,153 px | 14,139 px | `25495c9` |
 | 待产包 | Delete action icon style | 14,139 px | 14,128 px | `53bb451` |
 | 计划 | Agent context card surface | 12,492 px | 12,360 px | `ac67052` |
 | 计划 | Agent context button icons | 12,360 px | 12,284 px | `383c505` |
 | 计划 | Today task toolbar icon size | 12,284 px | 12,255 px | `01a2b88` |
+| 计划 | Bottom nav surface tone | 12,255 px | 12,253 px | `d9a4b1b` |
 | 吸乳 | Prompt unsupported emoji placeholder | 13,579 px | 13,551 px | `ed4a517` |
 | 吸乳 | Prompt skip button foreground | 13,551 px | 13,537 px | `9d4e043` |
 | W1 | Summary typography | 10,195 px | 10,172 px | `933ca14` |
@@ -166,6 +168,9 @@ Accepted component slices so far:
 | Agent Hub | Composer send icon size | 4,950 px | 4,946 px | `408aeb8` |
 | Agent Hub | Composer vertical offset 15 -> 16 | 4,946 px | 4,942 px | `9d026ac` |
 | Agent Hub | Composer input typography | 4,942 px | 4,766 px | `135616c` |
+| IBCLC | Bottom nav surface tone | 4,908 px | 4,826 px | `d9a4b1b` |
+| 社区 | Bottom nav surface tone | 3,893 px | 3,892 px | `d9a4b1b` |
+| 404 | Bottom nav surface tone | 2,225 px | 2,220 px | `d9a4b1b` |
 | 用户参数 | Delete outline button foreground | 8,182 px | 8,129 px | `ee85581` |
 | 用户参数 | Action icon size | 8,129 px | 8,086 px | `3b03b33` |
 | 用户参数 | Form control horizontal padding | 8,086 px | 8,055 px | `fc899fd` |
