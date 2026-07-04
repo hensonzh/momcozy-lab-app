@@ -6752,7 +6752,7 @@ class _CalibrationPageState extends State<_CalibrationPage> {
                     key: const ValueKey('calibration-intro-step-card'),
                     child: _CalibrationWideCardShell(
                       child: SizedBox(
-                        height: 204,
+                        height: 190,
                         child: _CalibrationStepCard(
                         eyebrow: '动作确认 1',
                         title: '请先正确穿戴吸奶器',
@@ -7025,10 +7025,10 @@ class _CalibrationStepCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       decoration: MomCozyDecorations.card(
         color: MomCozyColors.card,
-        radius: 24,
+        radius: 22,
         shadows: MomCozyShadows.soft,
       ),
       child: Column(
@@ -7038,16 +7038,19 @@ class _CalibrationStepCard extends StatelessWidget {
             eyebrow,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: MomCozyColors.primary,
+              fontSize: 10,
               fontWeight: FontWeight.w900,
+              height: 1.2,
             ),
           ),
-          const SizedBox(height: 7),
+          const SizedBox(height: 6),
           Text(
             title,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: MomCozyColors.foreground,
+              fontSize: 18,
               fontWeight: FontWeight.w900,
-              height: 1.18,
+              height: 1.35,
             ),
           ),
           if (description != null) ...[
@@ -7056,8 +7059,9 @@ class _CalibrationStepCard extends StatelessWidget {
               description!,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: MomCozyColors.mutedForeground,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
-                height: 1.45,
+                height: 1.62,
               ),
             ),
           ],
@@ -7066,7 +7070,13 @@ class _CalibrationStepCard extends StatelessWidget {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
+              height: 44,
               child: FilledButton(
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
                 onPressed: onPrimary,
                 child: Text(primaryLabel!),
               ),
