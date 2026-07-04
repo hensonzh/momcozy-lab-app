@@ -2593,8 +2593,6 @@ class _SchedulePageState extends State<_SchedulePage> {
             _ScheduleListToolbar(onAdd: _addLocalTask),
             ..._dayPlanChildren(snapshot),
             const SizedBox(height: 18),
-            const _ScheduleQuickActions(),
-            const SizedBox(height: 18),
             const _SectionTitle('提醒'),
             _ActionTile(
               icon: Icons.alarm_on_rounded,
@@ -3405,78 +3403,6 @@ class _ScheduleToolbarIconButton extends StatelessWidget {
           textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
             fontWeight: FontWeight.w900,
             letterSpacing: 0,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScheduleQuickActions extends StatelessWidget {
-  const _ScheduleQuickActions();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: const [
-        Expanded(
-          child: _ScheduleQuickActionButton(
-            icon: Icons.add_rounded,
-            label: '吸奶补录',
-          ),
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: _ScheduleQuickActionButton(
-            icon: Icons.add_rounded,
-            label: '喂养记录',
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ScheduleQuickActionButton extends StatelessWidget {
-  const _ScheduleQuickActionButton({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: MomCozyDecorations.card(
-        color: MomCozyColors.raised.withValues(alpha: 0.92),
-        borderColor: MomCozyColors.border.withValues(alpha: 0.45),
-        radius: 14,
-        shadows: MomCozyShadows.soft,
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        borderRadius: BorderRadius.circular(14),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: () {},
-          child: SizedBox(
-            height: 54,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 17, color: MomCozyColors.foreground),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    label,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
