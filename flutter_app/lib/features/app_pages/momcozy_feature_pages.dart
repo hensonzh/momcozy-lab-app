@@ -2984,6 +2984,9 @@ class _ScheduleContextCard extends StatelessWidget {
               key: const ValueKey('schedule-context-reminder-button'),
               tooltip: reminderEnabled ? '关闭计划提醒' : '开启计划提醒',
               onPressed: onReminderTap,
+              constraints: const BoxConstraints.tightFor(width: 36, height: 36),
+              padding: EdgeInsets.zero,
+              visualDensity: VisualDensity.compact,
               style: IconButton.styleFrom(
                 backgroundColor: MomCozyColors.background.withValues(
                   alpha: 0.9,
