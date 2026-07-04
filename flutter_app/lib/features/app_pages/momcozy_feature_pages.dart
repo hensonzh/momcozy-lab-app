@@ -813,11 +813,8 @@ class _StatusPageState extends State<_StatusPage> {
         ),
       ),
       const SizedBox(height: 8),
-      Transform.translate(
-        offset: const Offset(0, -1),
-        child: const _StatusTrendPreview(
-          key: ValueKey('status-milk-trend-preview'),
-        ),
+      const _StatusTrendPreview(
+        key: ValueKey('status-milk-trend-preview'),
       ),
     ];
   }
