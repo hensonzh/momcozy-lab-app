@@ -339,6 +339,7 @@ Latest rejected probes to avoid repeating:
 | 妈妈点滴 | Mini-stat icon size 15 -> Web 14 | 14,016 px -> 14,031 px | reverted |
 | 妈妈点滴 | Dashboard title Material flower -> emoji | 14,016 px -> 14,178 px | reverted |
 | 妈妈点滴 | Trend line stroke width 2.1 -> Web 2.0 | 14,016 px -> 14,033 px | reverted |
+| 妈妈点滴 | M.ai avatar to full Web sm badge structure | 14,016 px -> 14,475 px | reverted |
 | 吸乳 | Prompt overlay alpha 0.43 -> 0.40 | 13,579 px -> 14,021 px | reverted |
 | 吸乳 | Prompt overlay blur 5 -> 4 | 13,579 px -> 13,893 px | reverted |
 | 吸乳 | Prompt rich text line-height 1.55 -> 1.625 | 13,579 px -> 15,049 px | reverted |
