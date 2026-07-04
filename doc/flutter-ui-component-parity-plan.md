@@ -123,7 +123,7 @@ Current compact report after the last accepted visual commits:
 | P0 | 宝宝和我 | 3.85% | 12,670 | below 3.50%, then below 2.50% | module cards, then trend card/painter |
 | P0 | 计划 | 3.76% | 12,360 | below 3.50%, then below 2.50% | week strip, context card, empty/task blocks |
 | P1 | W1 | 3.07% | 10,089 | below 2.75%, then below 2.25% | hero, product summary, selling points |
-| P1 | 用户参数 | 2.49% | 8,182 | below 2.00% | subpage header, form controls |
+| P1 | 用户参数 | 2.47% | 8,129 | below 2.00% | subpage header, form controls |
 | P1 | 舒适负压调节 | 2.22% | 7,294 | below 2.00% | top bar typography, intro card |
 | P1 | Agent Hub | 1.50% | 4,942 | below 1.50% | composer, greeting typography, avatar opacity |
 | P2 | 设备 | 1.50% | 4,927 | keep at or below threshold | header/banner final polish |
@@ -158,6 +158,7 @@ Accepted component slices so far:
 | Agent Hub | Composer image icon size | 4,968 px | 4,950 px | `3840bc6` |
 | Agent Hub | Composer send icon size | 4,950 px | 4,946 px | `408aeb8` |
 | Agent Hub | Composer vertical offset 15 -> 16 | 4,946 px | 4,942 px | `9d026ac` |
+| 用户参数 | Delete outline button foreground | 8,182 px | 8,129 px | `ee85581` |
 
 Component guard additions:
 
