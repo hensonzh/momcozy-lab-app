@@ -6878,14 +6878,17 @@ class _CalibrationTopBar extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-            child: LinearProgressIndicator(
-              minHeight: 6,
-              value: ratio,
-              backgroundColor: MomCozyColors.muted,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                MomCozyColors.primary,
+          Transform.translate(
+            offset: const Offset(7, 0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              child: LinearProgressIndicator(
+                minHeight: 6,
+                value: ratio,
+                backgroundColor: MomCozyColors.muted,
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  MomCozyColors.primary,
+                ),
               ),
             ),
           ),
