@@ -1829,7 +1829,7 @@ class _StatusTrendPreviewPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
     final linePaint = Paint()
       ..color = const Color(0xffb9792a)
-      ..strokeWidth = 2
+      ..strokeWidth = 2.5
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     final gridPaint = Paint()
@@ -1887,8 +1887,8 @@ class _StatusTrendPreviewPainter extends CustomPainter {
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     for (final point in points) {
-      canvas.drawCircle(point, 3.2, dotPaint);
-      canvas.drawCircle(point, 3.2, dotBorderPaint);
+      canvas.drawCircle(point, 3, dotPaint);
+      canvas.drawCircle(point, 3, dotBorderPaint);
     }
 
     for (var index = 0; index < labels.length; index += 1) {
@@ -2019,7 +2019,7 @@ class _StatusTrendLegendItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         CustomPaint(
-          size: Size(band ? 12 : 14, band ? 8 : 3),
+          size: Size(12, band ? 8 : 2),
           painter: _StatusTrendLegendMarkPainter(
             color: color,
             dashed: dashed,
