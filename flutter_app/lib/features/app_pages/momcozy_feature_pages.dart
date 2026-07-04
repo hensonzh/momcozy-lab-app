@@ -1098,7 +1098,7 @@ class _StatusModuleCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Spacer(),
+                    SizedBox(height: metrics.isNotEmpty ? 20 : 14),
                     if (metrics.isNotEmpty)
                       _StatusModuleMetricRows(metrics: metrics)
                     else if (bodyText != null)
