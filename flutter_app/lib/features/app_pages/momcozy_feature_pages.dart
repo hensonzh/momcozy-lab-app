@@ -7667,7 +7667,7 @@ class _RecordsDashboardCard extends StatelessWidget {
                     dashboardWeeklyAverageMl,
                     unit: volumeUnit,
                   ),
-                  accent: MomCozyColors.violet,
+                  accent: MomCozyColors.warm,
                 ),
               ),
             ],
