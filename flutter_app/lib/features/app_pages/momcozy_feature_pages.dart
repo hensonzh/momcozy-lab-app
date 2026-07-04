@@ -217,7 +217,7 @@ class _ActionTile extends StatelessWidget {
                           style: Theme.of(context).textTheme.titleSmall
                               ?.copyWith(
                                 color: MomCozyColors.foreground,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                               ),
                         ),
                         const SizedBox(height: 4),
@@ -9858,7 +9858,7 @@ class _W1SpecTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],
