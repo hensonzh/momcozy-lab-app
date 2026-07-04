@@ -8466,80 +8466,83 @@ class _RecordsMilkRow extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Semantics(
-        label: onEdit == null ? null : '编辑记录',
-        onLongPress: onEdit,
-        child: GestureDetector(
-          key: rowKey,
-          behavior: HitTestBehavior.opaque,
+      child: RepaintBoundary(
+        key: rowKey,
+        child: Semantics(
+          label: onEdit == null ? null : '编辑记录',
           onLongPress: onEdit,
-          child: DecoratedBox(
-            decoration: MomCozyDecorations.card(
-              color: MomCozyColors.raised,
-              borderColor: MomCozyColors.border.withValues(alpha: 0.72),
-              radius: 16,
-              shadows: const [],
-            ),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    14,
-                    12,
-                    hasTrailing ? (onDelete == null ? 70 : 86) : 14,
-                    12,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 5,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(icon, size: 17, color: accent),
-                              const SizedBox(width: 4),
-                              Text(
-                                amountLabel,
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(
-                                      color: MomCozyColors.foreground,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          ...badges,
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        detailText,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: MomCozyColors.mutedForeground,
-                          fontWeight: FontWeight.w700,
-                          height: 1.22,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onLongPress: onEdit,
+            child: DecoratedBox(
+              decoration: MomCozyDecorations.card(
+                color: MomCozyColors.raised,
+                borderColor: MomCozyColors.border.withValues(alpha: 0.72),
+                radius: 16,
+                shadows: const [],
+              ),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      14,
+                      12,
+                      hasTrailing ? (onDelete == null ? 70 : 86) : 14,
+                      12,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 5,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(icon, size: 17, color: accent),
+                                const SizedBox(width: 4),
+                                Text(
+                                  amountLabel,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        color: MomCozyColors.foreground,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            ...badges,
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (hasTrailing)
-                  Positioned(
-                    right: onDelete == null ? 14 : 8,
-                    top: onDelete == null ? 16 : 10,
-                    child: _RecordsRowTrailing(
-                      label: trailingLabel,
-                      onDelete: onDelete,
-                      deleteKey: deleteKey,
+                        const SizedBox(height: 4),
+                        Text(
+                          detailText,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: MomCozyColors.mutedForeground,
+                                fontWeight: FontWeight.w700,
+                                height: 1.22,
+                              ),
+                        ),
+                      ],
                     ),
                   ),
-              ],
+                  if (hasTrailing)
+                    Positioned(
+                      right: onDelete == null ? 14 : 8,
+                      top: onDelete == null ? 16 : 10,
+                      child: _RecordsRowTrailing(
+                        label: trailingLabel,
+                        onDelete: onDelete,
+                        deleteKey: deleteKey,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
