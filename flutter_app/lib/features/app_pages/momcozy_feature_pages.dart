@@ -9598,8 +9598,7 @@ class _W1PromoHero extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.auto_awesome_rounded,
+                              _W1SparklesIcon(
                                 size: 40,
                                 color: MomCozyColors.background.withValues(
                                   alpha: 0.4,
@@ -9628,6 +9627,111 @@ class _W1PromoHero extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _W1SparklesIcon extends StatelessWidget {
+  const _W1SparklesIcon({required this.size, required this.color});
+
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size.square(size),
+      painter: _W1SparklesPainter(color),
+    );
+  }
+}
+
+class _W1SparklesPainter extends CustomPainter {
+  const _W1SparklesPainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final scale = size.width / 24;
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2 * scale
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    Offset p(double x, double y) => Offset(x * scale, y * scale);
+
+    final sparkle = Path()
+      ..moveTo(p(9.94, 15.5).dx, p(9.94, 15.5).dy)
+      ..quadraticBezierTo(
+        p(9.55, 14.55).dx,
+        p(9.55, 14.55).dy,
+        p(8.5, 14.06).dx,
+        p(8.5, 14.06).dy,
+      )
+      ..lineTo(p(2.36, 12.48).dx, p(2.36, 12.48).dy)
+      ..quadraticBezierTo(
+        p(1.86, 12.0).dx,
+        p(1.86, 12.0).dy,
+        p(2.36, 11.52).dx,
+        p(2.36, 11.52).dy,
+      )
+      ..lineTo(p(8.5, 9.94).dx, p(8.5, 9.94).dy)
+      ..quadraticBezierTo(
+        p(9.55, 9.45).dx,
+        p(9.55, 9.45).dy,
+        p(9.94, 8.5).dx,
+        p(9.94, 8.5).dy,
+      )
+      ..lineTo(p(11.52, 2.36).dx, p(11.52, 2.36).dy)
+      ..quadraticBezierTo(
+        p(12.0, 1.86).dx,
+        p(12.0, 1.86).dy,
+        p(12.48, 2.36).dx,
+        p(12.48, 2.36).dy,
+      )
+      ..lineTo(p(14.06, 8.5).dx, p(14.06, 8.5).dy)
+      ..quadraticBezierTo(
+        p(14.45, 9.45).dx,
+        p(14.45, 9.45).dy,
+        p(15.5, 9.94).dx,
+        p(15.5, 9.94).dy,
+      )
+      ..lineTo(p(21.64, 11.52).dx, p(21.64, 11.52).dy)
+      ..quadraticBezierTo(
+        p(22.14, 12.0).dx,
+        p(22.14, 12.0).dy,
+        p(21.64, 12.48).dx,
+        p(21.64, 12.48).dy,
+      )
+      ..lineTo(p(15.5, 14.06).dx, p(15.5, 14.06).dy)
+      ..quadraticBezierTo(
+        p(14.45, 14.55).dx,
+        p(14.45, 14.55).dy,
+        p(14.06, 15.5).dx,
+        p(14.06, 15.5).dy,
+      )
+      ..lineTo(p(12.48, 21.64).dx, p(12.48, 21.64).dy)
+      ..quadraticBezierTo(
+        p(12.0, 22.14).dx,
+        p(12.0, 22.14).dy,
+        p(11.52, 21.64).dx,
+        p(11.52, 21.64).dy,
+      )
+      ..close();
+    canvas.drawPath(sparkle, paint);
+
+    canvas
+      ..drawLine(p(20, 3), p(20, 7), paint)
+      ..drawLine(p(22, 5), p(18, 5), paint)
+      ..drawLine(p(4, 17), p(4, 19), paint)
+      ..drawLine(p(5, 18), p(3, 18), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _W1SparklesPainter oldDelegate) {
+    return oldDelegate.color != color;
   }
 }
 
