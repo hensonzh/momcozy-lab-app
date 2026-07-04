@@ -28,6 +28,22 @@ void main() {
         ),
       );
     });
+
+    testWidgets('pump milk row matches compact baseline', (tester) async {
+      await _pumpRecordsComponentApp(tester);
+
+      final row = find.byKey(const ValueKey('records-pump-row-pump-legacy-1'));
+      expect(row, findsOneWidget);
+      expect(find.text('175 mL'), findsOneWidget);
+      expect(find.text('20分钟'), findsOneWidget);
+
+      await expectLater(
+        row,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/records_pump_milk_row.png',
+        ),
+      );
+    });
   });
 }
 
