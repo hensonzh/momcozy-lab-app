@@ -125,7 +125,7 @@ Current compact report after the last accepted visual commits:
 | P1 | W1 | 3.07% | 10,089 | below 2.75%, then below 2.25% | hero, product summary, selling points |
 | P1 | 用户参数 | 2.45% | 8,055 | below 2.00% | subpage header, form controls |
 | P1 | 舒适负压调节 | 2.17% | 7,142 | below 2.00% | top bar typography, intro card |
-| P1 | Agent Hub | 1.50% | 4,942 | below 1.50% | composer, greeting typography, avatar opacity |
+| P2 | Agent Hub | 1.45% | 4,766 | keep OK | composer, greeting typography, avatar opacity |
 | P2 | 设备 | 1.50% | 4,927 | keep at or below threshold | header/banner final polish |
 | P2 | IBCLC | 1.49% | 4,908 | keep OK | header/loading |
 | P2 | 设备提醒 | 1.29% | 4,239 | keep OK | regression guard only |
@@ -159,6 +159,7 @@ Accepted component slices so far:
 | Agent Hub | Composer image icon size | 4,968 px | 4,950 px | `3840bc6` |
 | Agent Hub | Composer send icon size | 4,950 px | 4,946 px | `408aeb8` |
 | Agent Hub | Composer vertical offset 15 -> 16 | 4,946 px | 4,942 px | `9d026ac` |
+| Agent Hub | Composer input typography | 4,942 px | 4,766 px | `135616c` |
 | 用户参数 | Delete outline button foreground | 8,182 px | 8,129 px | `ee85581` |
 | 用户参数 | Action icon size | 8,129 px | 8,086 px | `3b03b33` |
 | 用户参数 | Form control horizontal padding | 8,086 px | 8,055 px | `fc899fd` |
