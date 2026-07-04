@@ -9469,25 +9469,35 @@ class _CircleIconButton extends StatelessWidget {
     required this.onPressed,
     required this.foreground,
     required this.background,
+    this.size = 32,
+    this.iconSize = 18,
+    this.borderColor,
   });
 
   final IconData icon;
   final VoidCallback onPressed;
   final Color foreground;
   final Color background;
+  final double size;
+  final double iconSize;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox.square(
-      dimension: 32,
+      dimension: size,
       child: Material(
         color: background,
-        shape: const CircleBorder(),
+        shape: CircleBorder(
+          side: borderColor == null
+              ? BorderSide.none
+              : BorderSide(color: borderColor!),
+        ),
         clipBehavior: Clip.antiAlias,
         child: IconButton(
           padding: EdgeInsets.zero,
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          icon: Icon(icon, size: 18, color: foreground),
+          icon: Icon(icon, size: iconSize, color: foreground),
           onPressed: onPressed,
         ),
       ),
@@ -9905,6 +9915,9 @@ class _HospitalBagHeader extends StatelessWidget {
               onPressed: onBack,
               foreground: const Color(0xff6c4457),
               background: Colors.white,
+              size: 36,
+              iconSize: 16,
+              borderColor: Color(0xffedd6df),
             ),
             const SizedBox(width: 12),
             Expanded(
