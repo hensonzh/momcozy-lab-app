@@ -10493,7 +10493,7 @@ class _HospitalBagFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: const BoxDecoration(
-        color: Color(0xfffff9fb),
+        color: Color(0xf5fff9fb),
         border: Border(top: BorderSide(color: Color(0xffead8df))),
         boxShadow: [
           BoxShadow(
