@@ -41,5 +41,37 @@ void main() {
         ),
       );
     });
+
+    testWidgets('metric console matches compact baseline', (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          child: MomCozyFlutterApp(
+            router: createMomCozyRouter(initialLocation: '/pump'),
+            routeIntentPlatform: routeIntentPlatform,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final console = find.byKey(const ValueKey('pump-metric-console'));
+      expect(console, findsOneWidget);
+      expect(find.text('吸乳量'), findsOneWidget);
+      expect(find.text('本次吸乳进度'), findsOneWidget);
+
+      await expectLater(
+        console,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/pump_metric_console.png',
+        ),
+      );
+    });
   });
 }

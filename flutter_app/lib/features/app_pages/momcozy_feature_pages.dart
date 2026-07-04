@@ -4886,14 +4886,18 @@ class _PumpPageState extends State<_PumpPage> {
               children: [
                 _PumpTopBar(sessionLabel: _headerSessionLabel),
                 const SizedBox(height: 10),
-                _PumpMetricConsole(
-                  totalVolumeMl: _totalVolumeMl,
-                  elapsedMinutes: _elapsedMinutes,
-                  progress: _sessionProgress,
-                  userLabel: _sessionOwnerUserId == null
-                      ? '未绑定用户'
-                      : '绑定 $_sessionOwnerUserId',
-                  accent: widget.accent,
+                Transform.translate(
+                  key: const ValueKey('pump-metric-console'),
+                  offset: const Offset(6, -6),
+                  child: _PumpMetricConsole(
+                    totalVolumeMl: _totalVolumeMl,
+                    elapsedMinutes: _elapsedMinutes,
+                    progress: _sessionProgress,
+                    userLabel: _sessionOwnerUserId == null
+                        ? '未绑定用户'
+                        : '绑定 $_sessionOwnerUserId',
+                    accent: widget.accent,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 _PumpSessionStage(
