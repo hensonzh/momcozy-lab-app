@@ -3827,7 +3827,7 @@ class _DevicePageState extends State<_DevicePage> {
 
     return ListView(
       key: ValueKey('route-page-${widget.path}'),
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
+      padding: const EdgeInsets.fromLTRB(16, 38, 16, 28),
       children: [
         _DeviceHeader(
           onAdd: _toggleScan,
