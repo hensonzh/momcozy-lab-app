@@ -3945,7 +3945,8 @@ class _DeviceHeader extends StatelessWidget {
             '设备连接',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: MomCozyColors.foreground,
-              fontWeight: FontWeight.w900,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
@@ -3992,7 +3993,7 @@ class _DeviceHeader extends StatelessWidget {
               ),
               boxShadow: MomCozyShadows.soft,
             ),
-            child: const Icon(Icons.add_rounded, size: 22),
+            child: const Icon(Icons.add_rounded, size: 20),
           ),
         ),
       ],
@@ -4329,7 +4330,8 @@ class _DeviceDeckCard extends StatelessWidget {
                           style: Theme.of(context).textTheme.labelMedium
                               ?.copyWith(
                                 color: MomCozyColors.foreground,
-                                fontWeight: FontWeight.w900,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
                               ),
                         ),
                       ),
