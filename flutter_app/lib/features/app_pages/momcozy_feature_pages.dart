@@ -10738,7 +10738,7 @@ class _HospitalBagFooter extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Transform.translate(
-                    offset: const Offset(0, 4),
+                    offset: const Offset(0, 3),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
