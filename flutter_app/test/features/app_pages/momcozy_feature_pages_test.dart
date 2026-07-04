@@ -836,7 +836,7 @@ void main() {
       await tester.pumpAndSettle();
       await _dismissPumpCalibrationPrompt(tester);
 
-      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
       await _scrollToText(tester, 'Workstate 已同步');
@@ -851,22 +851,22 @@ void main() {
 
       expect(find.text('待开始'), findsWidgets);
 
-      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
       await _scrollToText(tester, '运行中');
       expect(find.text('运行中'), findsOneWidget);
 
-      await _tapScrollableWidgetWithText(tester, OutlinedButton, '暂停');
+      await _tapScrollableText(tester, '暂停');
       await tester.pumpAndSettle();
       await _scrollToText(tester, '已暂停');
       expect(find.text('已暂停'), findsOneWidget);
 
-      await _tapScrollableWidgetWithText(tester, FilledButton, '恢复');
+      await _tapScrollableText(tester, '恢复');
       await tester.pumpAndSettle();
       await _scrollToText(tester, '运行中');
       expect(find.text('运行中'), findsOneWidget);
 
-      await _tapScrollableWidgetWithText(tester, OutlinedButton, '结束');
+      await _tapScrollableText(tester, '结束');
       await tester.pumpAndSettle();
       expect(find.text('待开始'), findsWidgets);
     });
@@ -895,7 +895,7 @@ void main() {
       expect(find.text('0 分钟'), findsOneWidget);
       expect(find.text('0 mL'), findsNWidgets(2));
 
-      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
       await _scrollToText(tester, '2 分钟');
@@ -919,7 +919,7 @@ void main() {
         'level': 5,
       });
 
-      final endButton = find.widgetWithText(OutlinedButton, '结束');
+      final endButton = find.widgetWithText(FilledButton, '结束');
       await _scrollToFinder(tester, endButton);
       await tester.ensureVisible(endButton);
       await tester.pumpAndSettle();
@@ -961,7 +961,7 @@ void main() {
       await tester.pumpAndSettle();
       await _dismissPumpCalibrationPrompt(tester);
 
-      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
       await _scrollToText(tester, '绑定 user-a');
@@ -1004,7 +1004,7 @@ void main() {
       await tester.pumpAndSettle();
       await _dismissPumpCalibrationPrompt(tester);
 
-      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
       await _scrollToText(tester, 'Workstate 同步失败');
