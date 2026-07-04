@@ -153,6 +153,7 @@ Accepted component slices so far:
 | 计划 | Agent context button icons | 12,360 px | 12,284 px | `383c505` |
 | 计划 | Today task toolbar icon size | 12,284 px | 12,255 px | `01a2b88` |
 | 吸乳 | Prompt unsupported emoji placeholder | 13,579 px | 13,551 px | `ed4a517` |
+| 吸乳 | Prompt skip button foreground | 13,551 px | 13,537 px | `9d4e043` |
 | W1 | Summary typography | 10,195 px | 10,172 px | `933ca14` |
 | W1 | Hero eyebrow weight | 10,172 px | 10,166 px | `07abe7b` |
 | W1 | Hero eyebrow tone | 10,166 px | 10,143 px | `489d06b` |
