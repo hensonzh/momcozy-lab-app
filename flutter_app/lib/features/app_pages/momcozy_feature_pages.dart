@@ -9497,7 +9497,7 @@ class _W1PromoHero extends StatelessWidget {
                         'MOMCOZY · NEW',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: MomCozyColors.background.withValues(
-                            alpha: 0.58,
+                            alpha: 0.5,
                           ),
                           fontWeight: FontWeight.w600,
                           letterSpacing: 2.2,
