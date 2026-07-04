@@ -1253,7 +1253,7 @@ class _StatusModuleActionPill extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.72),
+            color: Colors.white.withValues(alpha: 0.80),
             borderRadius: BorderRadius.circular(MomCozyRadii.pill),
           ),
           child: Text(
