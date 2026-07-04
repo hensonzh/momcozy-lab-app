@@ -7958,7 +7958,7 @@ class _RecordsTrendPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final chartRect = Rect.fromLTWH(30, 10, size.width - 72, size.height - 34);
+    final chartRect = Rect.fromLTWH(30, 0, size.width - 72, size.height - 24);
     final gridPaint = Paint()
       ..color = MomCozyColors.border.withValues(alpha: 0.28)
       ..strokeWidth = 1;
