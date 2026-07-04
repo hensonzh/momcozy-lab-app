@@ -9285,6 +9285,9 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                     children: [
                       OutlinedButton.icon(
                         onPressed: _saving ? null : _deleteUser,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MomCozyColors.foreground,
+                        ),
                         icon: const Icon(Icons.delete_outline_rounded),
                         label: const Text('删除用户'),
                       ),
