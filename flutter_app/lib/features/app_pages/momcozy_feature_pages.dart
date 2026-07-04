@@ -7703,44 +7703,50 @@ class _RecordsDashboardCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Text(
-                      '📈',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.labelSmall?.copyWith(fontSize: 12, height: 1),
-                    ),
-                    const SizedBox(width: 5),
-                    Flexible(
-                      child: Text(
-                        '过去1周日补录奶量趋势',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              color: MomCozyColors.mutedForeground,
-                              fontWeight: FontWeight.w600,
-                            ),
+          Transform.translate(
+            offset: const Offset(3, 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Text(
+                        '📈',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontSize: 12,
+                          height: 1,
+                        ),
                       ),
+                      const SizedBox(width: 5),
+                      Flexible(
+                        child: Text(
+                          '过去1周日补录奶量趋势',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
+                                color: MomCozyColors.mutedForeground,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  points.isEmpty ? '暂无奶量趋势' : '补录奶量 = 吸奶器 + 补录\n波动正常，放轻松就好',
+                  textAlign: TextAlign.right,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: MomCozyColors.mutedForeground.withValues(
+                      alpha: 0.75,
                     ),
-                  ],
+                    fontStyle: FontStyle.italic,
+                    height: 1.2,
+                  ),
                 ),
-              ),
-              Text(
-                points.isEmpty ? '暂无奶量趋势' : '补录奶量 = 吸奶器 + 补录\n波动正常，放轻松就好',
-                textAlign: TextAlign.right,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: MomCozyColors.mutedForeground.withValues(alpha: 0.75),
-                  fontStyle: FontStyle.italic,
-                  height: 1.2,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 8),
           SizedBox(
