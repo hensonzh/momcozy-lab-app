@@ -10,31 +10,7 @@ void main() {
 
   group('Bottom navigation component parity goldens', () {
     testWidgets('status tab selected matches compact baseline', (tester) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
-      await tester.pumpWidget(
-        const RepaintBoundary(
-          child: MaterialApp(
-            home: Scaffold(
-              backgroundColor: MomCozyColors.background,
-              bottomNavigationBar: MomCozyBottomNavigation(location: '/status'),
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      final appContext = tester.element(find.byType(MaterialApp));
-      await tester.runAsync(() async {
-        await precacheImage(
-          const AssetImage(MomCozyAssets.agentAvatar),
-          appContext,
-        ).timeout(const Duration(seconds: 5));
-      });
-      await tester.pumpAndSettle();
+      await _bottomNavigationComponentApp(tester, location: '/status');
 
       final bottomNav = find.byType(MomCozyBottomNavigation);
       expect(bottomNav, findsOneWidget);
@@ -47,5 +23,51 @@ void main() {
         ),
       );
     });
+
+    testWidgets('agent tab selected matches compact baseline', (tester) async {
+      await _bottomNavigationComponentApp(tester, location: '/');
+
+      final bottomNav = find.byType(MomCozyBottomNavigation);
+      expect(bottomNav, findsOneWidget);
+      expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
+
+      await expectLater(
+        bottomNav,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/bottom_nav_agent_selected.png',
+        ),
+      );
+    });
   });
+}
+
+Future<void> _bottomNavigationComponentApp(
+  WidgetTester tester, {
+  required String location,
+}) async {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
+  await tester.pumpWidget(
+    RepaintBoundary(
+      child: MaterialApp(
+        home: Scaffold(
+          backgroundColor: MomCozyColors.background,
+          bottomNavigationBar: MomCozyBottomNavigation(location: location),
+        ),
+      ),
+    ),
+  );
+  await tester.pump();
+
+  final appContext = tester.element(find.byType(MaterialApp));
+  await tester.runAsync(() async {
+    await precacheImage(
+      const AssetImage(MomCozyAssets.agentAvatar),
+      appContext,
+    ).timeout(const Duration(seconds: 5));
+  });
+  await tester.pumpAndSettle();
 }
