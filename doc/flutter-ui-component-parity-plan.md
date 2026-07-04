@@ -356,6 +356,7 @@ Latest rejected probes to avoid repeating:
 | 用户参数 | Form card x offset 0 -> -3 | 8,055 px -> 8,678 px | reverted |
 | 舒适负压调节 | Step card title weight w900 -> Web-like w800 | 7,202 px -> 7,202 px | reverted |
 | 舒适负压调节 | Step card eyebrow weight w900 -> Web-like w700 | 7,202 px -> 7,203 px | reverted |
+| 舒适负压调节 | Intro card x offset 0 -> -4 | 7,142 px -> 7,965 px | reverted |
 
 ## 8. Starting Slice
 
