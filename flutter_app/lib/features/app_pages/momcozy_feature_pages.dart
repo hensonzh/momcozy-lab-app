@@ -9922,7 +9922,7 @@ class _HospitalBagHeader extends StatelessWidget {
         border: Border(bottom: BorderSide(color: Color(0xfff0dde5))),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+        padding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
         child: Row(
           children: [
             _CircleIconButton(
