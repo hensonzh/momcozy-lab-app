@@ -6657,7 +6657,7 @@ class _CalibrationPageState extends State<_CalibrationPage> {
               height: MediaQuery.sizeOf(context).height - 104,
               child: Center(
                 child: Transform.translate(
-                  offset: const Offset(0, 2),
+                  offset: const Offset(0, 1),
                   child: RepaintBoundary(
                     key: const ValueKey('calibration-intro-step-card'),
                     child: _CalibrationWideCardShell(
