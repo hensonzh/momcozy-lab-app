@@ -7540,7 +7540,7 @@ class _RecordsMonthHeader extends StatelessWidget {
           monthLabel,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
             color: MomCozyColors.mutedForeground,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w500,
           ),
         ),
         _RecordsMonthButton(
