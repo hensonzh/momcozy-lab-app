@@ -326,6 +326,10 @@ void main() {
       await tester.pump();
       expect(find.text('IBCLC 在线咨询'), findsOneWidget);
       expect(find.text('连接中'), findsOneWidget);
+      expect(find.text('发送'), findsNothing);
+
+      await tester.pump(const Duration(seconds: 8));
+      await tester.pumpAndSettle();
       expect(find.text('发送'), findsOneWidget);
 
       expect(
@@ -1560,6 +1564,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await tester.pump(const Duration(seconds: 8));
+      await tester.pumpAndSettle();
+
       expect(
         find.byKey(const ValueKey('ibclc-upload-image-button')),
         findsOneWidget,
@@ -1567,9 +1574,6 @@ void main() {
       expect(find.byKey(const ValueKey('ibclc-message-input')), findsOneWidget);
       expect(find.byKey(const ValueKey('ibclc-voice-button')), findsOneWidget);
       expect(find.byKey(const ValueKey('ibclc-send-button')), findsOneWidget);
-
-      await tester.pump(const Duration(seconds: 8));
-      await tester.pumpAndSettle();
 
       final body = jsonDecode(connector.body!) as Map<String, Object?>;
       expect(find.text('咨询事件已同步。'), findsOneWidget);
