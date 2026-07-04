@@ -10430,7 +10430,7 @@ class _HospitalBagItemImage extends StatelessWidget {
     if (assetPath == null) return _HospitalBagItemIcon(tone: tone);
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: Colors.white,
