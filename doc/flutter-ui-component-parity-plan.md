@@ -310,6 +310,7 @@ Latest rejected probes to avoid repeating:
 | 计划 | Agent button weights w900 -> Web-like bold/extrabold | 12,360 px -> 12,360 px | reverted |
 | 计划 | Week strip chevron size 19 -> 16 | 12,360 px -> 12,362 px | reverted |
 | 宝宝和我 | Postpartum recovery card old PNG asset icon | 12,747 px -> 12,852 px | reverted |
+| 宝宝和我 | Module card padding 12 -> Web-like 14 | 12,747 px -> 14,694 px | reverted |
 | 宝宝和我 | Milk trend axis tick font 8 -> 9 | 12,747 px -> 12,805 px | reverted |
 | 宝宝和我 | Milk trend chart height 188 -> 185 | 12,747 px -> 13,666 px | reverted |
 | 宝宝和我 | Milk trend card three-stop Web gradient | 12,747 px -> 13,092 px | reverted |
