@@ -391,7 +391,7 @@ class AgentHubTopBar extends StatelessWidget {
         color: MomCozyColors.background.withValues(alpha: 0.9),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: showControls
@@ -664,7 +664,8 @@ class AgentRunTranscript extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final text = state.textContent.trim().isEmpty
+    final isDefaultGreeting = state.textContent.trim().isEmpty;
+    final text = isDefaultGreeting
         ? _agentDefaultGreeting
         : state.textContent.trim();
     final workSteps = _workStepsFromEvents(state.events);
@@ -680,16 +681,24 @@ class AgentRunTranscript extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                text,
-                style: textTheme.bodyMedium?.copyWith(
-                  height: 1.58,
-                  color:
-                      state.phase == AgentStreamRunPhase.error ||
-                          state.phase == AgentStreamRunPhase.disconnected
-                      ? const Color(0xffb64b4b)
-                      : const Color(0xff3f3038),
-                  fontWeight: FontWeight.w500,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isDefaultGreeting ? 260 : double.infinity,
+                  ),
+                  child: Text(
+                    text,
+                    style: textTheme.bodyMedium?.copyWith(
+                      height: 1.58,
+                      color:
+                          state.phase == AgentStreamRunPhase.error ||
+                              state.phase == AgentStreamRunPhase.disconnected
+                          ? const Color(0xffb64b4b)
+                          : const Color(0xff3f3038),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ),
               if (_supportingText != null) ...[
