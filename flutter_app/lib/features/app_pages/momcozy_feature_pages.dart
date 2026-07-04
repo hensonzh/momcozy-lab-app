@@ -630,10 +630,13 @@ class _StatusPageState extends State<_StatusPage> {
           key: ValueKey('route-page-${widget.path}'),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
           children: [
-            _CareStageSelector(
-              selectedStage: _careStage,
-              accent: widget.accent,
-              onChanged: _changeCareStage,
+            Transform.translate(
+              offset: const Offset(2, 8),
+              child: _CareStageSelector(
+                selectedStage: _careStage,
+                accent: widget.accent,
+                onChanged: _changeCareStage,
+              ),
             ),
             const SizedBox(height: 18),
             Transform.translate(
