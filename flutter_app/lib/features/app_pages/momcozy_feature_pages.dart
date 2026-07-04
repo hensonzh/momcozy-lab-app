@@ -9435,9 +9435,9 @@ class _W1PromoHero extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.auto_awesome_rounded,
-                              size: 42,
+                              size: 40,
                               color: MomCozyColors.background.withValues(
-                                alpha: 0.5,
+                                alpha: 0.4,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -9446,9 +9446,9 @@ class _W1PromoHero extends StatelessWidget {
                               style: Theme.of(context).textTheme.labelSmall
                                   ?.copyWith(
                                     color: MomCozyColors.background.withValues(
-                                      alpha: 0.5,
+                                      alpha: 0.4,
                                     ),
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w500,
                                   ),
                             ),
                           ],
