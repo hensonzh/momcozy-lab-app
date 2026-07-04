@@ -9076,7 +9076,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
     if (_initializedUser) return;
     final runtimeUserId = MomCozyRuntimeScope.of(context).userId;
     _userIdController.text = runtimeUserId == 'demo-user-golden'
-        ? 'demo-user-6f815a58-a764-4ade-a05e-d48ce4f2a021'
+        ? 'demo-user-b158a211-1294-448e-82ec-000000000000'
         : runtimeUserId;
     _initializedUser = true;
   }
@@ -9135,179 +9135,182 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
           onBack: () => context.go('/device'),
         ),
         const SizedBox(height: 18),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: MomCozyDecorations.card(
-            color: MomCozyColors.card,
-            radius: 20,
-            shadows: MomCozyShadows.soft,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '用户名',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: MomCozyColors.foreground,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 46,
-                child: Stack(
-                  children: [
-                    TextField(
-                      controller: _userIdController,
-                      enabled: !_saving,
-                      autocorrect: false,
-                      enableSuggestions: false,
-                      decoration: const InputDecoration(
-                        hintText: '选择或输入用户 ID',
-                        constraints: BoxConstraints.tightFor(height: 46),
-                        contentPadding: EdgeInsets.fromLTRB(16, 0, 48, 0),
-                      ),
-                    ),
-                    Positioned(
-                      right: 4,
-                      top: 4,
-                      child: IconButton(
-                        key: const ValueKey('device-user-list-button'),
-                        tooltip: '展开用户列表',
-                        visualDensity: VisualDensity.compact,
-                        constraints: const BoxConstraints.tightFor(
-                          width: 38,
-                          height: 38,
-                        ),
-                        padding: EdgeInsets.zero,
-                        onPressed: _saving
-                            ? null
-                            : () => setState(
-                                () => _userListOpen = !_userListOpen,
-                              ),
-                        icon: Icon(
-                          _userListOpen
-                              ? Icons.keyboard_arrow_up_rounded
-                              : Icons.keyboard_arrow_down_rounded,
-                          size: 20,
-                        ),
-                        color: MomCozyColors.mutedForeground,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (_userListOpen) ...[
-                const SizedBox(height: 6),
-                Container(
-                  key: const ValueKey('device-user-list-panel'),
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: MomCozyColors.card,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: MomCozyColors.border),
-                    boxShadow: MomCozyShadows.soft,
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(6),
-                    onTap: () => setState(() => _userListOpen = false),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              _userIdController.text.isEmpty
-                                  ? '暂无已保存用户'
-                                  : _userIdController.text,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: MomCozyColors.foreground,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                            ),
-                          ),
-                          const Icon(
-                            Icons.check_rounded,
-                            size: 16,
-                            color: MomCozyColors.primary,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-              const SizedBox(height: 18),
-              Text(
-                '用户类型',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: MomCozyColors.foreground,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                key: ValueKey('device-user-stage-$_momStage'),
-                initialValue: _momStage,
-                decoration: const InputDecoration(
-                  constraints: BoxConstraints.tightFor(height: 46),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                ),
-                icon: const Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  key: ValueKey('device-user-stage-menu-icon'),
-                  color: MomCozyColors.mutedForeground,
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'prenatal', child: Text('孕期')),
-                  DropdownMenuItem(value: 'postpartum', child: Text('产后')),
-                ],
-                onChanged: _saving
-                    ? null
-                    : (value) =>
-                          setState(() => _momStage = value ?? 'postpartum'),
-              ),
-              const SizedBox(height: 18),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: _saving ? null : _deleteUser,
-                    icon: const Icon(Icons.delete_outline_rounded),
-                    label: const Text('删除用户'),
-                  ),
-                  const SizedBox(height: 12),
-                  FilledButton.icon(
-                    onPressed: _saving ? null : _switchUser,
-                    icon: _saving
-                        ? const SizedBox.square(
-                            dimension: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.manage_accounts_rounded),
-                    label: const Text('切换用户'),
-                  ),
-                ],
-              ),
-              if (_status != null) ...[
-                const SizedBox(height: 12),
+        Transform.translate(
+          offset: const Offset(0, 7),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MomCozyDecorations.card(
+              color: MomCozyColors.card,
+              radius: 20,
+              shadows: MomCozyShadows.soft,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  _status!,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: _statusIsError
-                        ? const Color(0xffa94747)
-                        : const Color(0xff43827b),
+                  '用户名',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: MomCozyColors.foreground,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 46,
+                  child: Stack(
+                    children: [
+                      TextField(
+                        controller: _userIdController,
+                        enabled: !_saving,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        decoration: const InputDecoration(
+                          hintText: '选择或输入用户 ID',
+                          constraints: BoxConstraints.tightFor(height: 46),
+                          contentPadding: EdgeInsets.fromLTRB(16, 0, 48, 0),
+                        ),
+                      ),
+                      Positioned(
+                        right: 4,
+                        top: 4,
+                        child: IconButton(
+                          key: const ValueKey('device-user-list-button'),
+                          tooltip: '展开用户列表',
+                          visualDensity: VisualDensity.compact,
+                          constraints: const BoxConstraints.tightFor(
+                            width: 38,
+                            height: 38,
+                          ),
+                          padding: EdgeInsets.zero,
+                          onPressed: _saving
+                              ? null
+                              : () => setState(
+                                  () => _userListOpen = !_userListOpen,
+                                ),
+                          icon: Icon(
+                            _userListOpen
+                                ? Icons.keyboard_arrow_up_rounded
+                                : Icons.keyboard_arrow_down_rounded,
+                            size: 20,
+                          ),
+                          color: MomCozyColors.mutedForeground,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_userListOpen) ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    key: const ValueKey('device-user-list-panel'),
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: MomCozyColors.card,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: MomCozyColors.border),
+                      boxShadow: MomCozyShadows.soft,
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(6),
+                      onTap: () => setState(() => _userListOpen = false),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _userIdController.text.isEmpty
+                                    ? '暂无已保存用户'
+                                    : _userIdController.text,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: MomCozyColors.foreground,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                            ),
+                            const Icon(
+                              Icons.check_rounded,
+                              size: 16,
+                              color: MomCozyColors.primary,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 18),
+                Text(
+                  '用户类型',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: MomCozyColors.foreground,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  key: ValueKey('device-user-stage-$_momStage'),
+                  initialValue: _momStage,
+                  decoration: const InputDecoration(
+                    constraints: BoxConstraints.tightFor(height: 46),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    key: ValueKey('device-user-stage-menu-icon'),
+                    color: MomCozyColors.mutedForeground,
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'prenatal', child: Text('孕期')),
+                    DropdownMenuItem(value: 'postpartum', child: Text('产后')),
+                  ],
+                  onChanged: _saving
+                      ? null
+                      : (value) =>
+                            setState(() => _momStage = value ?? 'postpartum'),
+                ),
+                const SizedBox(height: 18),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: _saving ? null : _deleteUser,
+                      icon: const Icon(Icons.delete_outline_rounded),
+                      label: const Text('删除用户'),
+                    ),
+                    const SizedBox(height: 12),
+                    FilledButton.icon(
+                      onPressed: _saving ? null : _switchUser,
+                      icon: _saving
+                          ? const SizedBox.square(
+                              dimension: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.manage_accounts_rounded),
+                      label: const Text('切换用户'),
+                    ),
+                  ],
+                ),
+                if (_status != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    _status!,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: _statusIsError
+                          ? const Color(0xffa94747)
+                          : const Color(0xff43827b),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ],
