@@ -792,7 +792,10 @@ class _StatusPageState extends State<_StatusPage> {
         ),
       ),
       const SizedBox(height: 8),
-      const _StatusTrendPreview(),
+      Transform.translate(
+        offset: const Offset(0, -1),
+        child: const _StatusTrendPreview(),
+      ),
     ];
   }
 
