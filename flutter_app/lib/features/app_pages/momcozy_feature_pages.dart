@@ -9430,10 +9430,13 @@ class _W1PageState extends State<_W1Page> {
           child: _W1PromoHero(onBack: () => context.go('/device')),
         ),
         Transform.translate(
-          offset: const Offset(-2, -2),
+          offset: const Offset(0, -2),
           child: const Padding(
-            padding: EdgeInsets.only(left: 16),
-            child: _W1ProductSummary(),
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: RepaintBoundary(
+              key: ValueKey('w1-product-summary-card'),
+              child: _W1ProductSummary(),
+            ),
           ),
         ),
         Transform.translate(
