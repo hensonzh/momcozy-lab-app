@@ -10202,38 +10202,44 @@ class _HospitalBagGroupSection extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  group.title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: const Color(0xff372330),
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
+          RepaintBoundary(
+            key: ValueKey('hospital-bag-group-header-${group.title}'),
+            child: Transform.translate(
+              offset: const Offset(0, -1),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      group.title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: const Color(0xff372330),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: colors.background,
-                  borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                  border: Border.all(color: colors.border),
-                ),
-                child: Text(
-                  '${group.items.length} 件',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: colors.foreground,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.background,
+                      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                      border: Border.all(color: colors.border),
+                    ),
+                    child: Text(
+                      '${group.items.length} 件',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: colors.foreground,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
           const SizedBox(height: 8),
           for (final (index, item) in group.items.indexed)

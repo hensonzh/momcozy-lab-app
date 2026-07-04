@@ -9,6 +9,24 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('Hospital bag component parity goldens', () {
+    testWidgets('group header matches compact baseline', (tester) async {
+      await _pumpHospitalBagPage(tester);
+
+      final header = find.byKey(
+        const ValueKey('hospital-bag-group-header-妈妈护理'),
+      );
+      expect(header, findsOneWidget);
+      expect(find.text('妈妈护理'), findsOneWidget);
+      expect(find.text('6 件'), findsWidgets);
+
+      await expectLater(
+        header,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/hospital_bag_group_header.png',
+        ),
+      );
+    });
+
     testWidgets('product row matches compact baseline', (tester) async {
       await _pumpHospitalBagPage(tester);
 
