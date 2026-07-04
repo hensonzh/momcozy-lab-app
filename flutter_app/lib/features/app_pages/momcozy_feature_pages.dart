@@ -750,29 +750,35 @@ class _StatusPageState extends State<_StatusPage> {
           offset: const Offset(3, -1),
           child: _StatusModuleGrid(
             children: [
-              _StatusModuleCard(
-                title: '母乳产出',
-                icon: Icons.water_drop_outlined,
-                accent: MomCozyColors.primary,
-                background: const Color(0xfffff7fb),
-                hiddenTexts: [stage, stageNote],
-                metrics: const [
-                  _StatusModuleMetric(
-                    label: '今日产出',
-                    value: '待记录',
-                    showHelp: true,
-                  ),
-                  _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
-                ],
+              Transform.translate(
+                offset: const Offset(0, 4),
+                child: _StatusModuleCard(
+                  title: '母乳产出',
+                  icon: Icons.water_drop_outlined,
+                  accent: MomCozyColors.primary,
+                  background: const Color(0xfffff7fb),
+                  hiddenTexts: [stage, stageNote],
+                  metrics: const [
+                    _StatusModuleMetric(
+                      label: '今日产出',
+                      value: '待记录',
+                      showHelp: true,
+                    ),
+                    _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
+                  ],
+                ),
               ),
-              const _StatusModuleCard(
-                title: '乳房健康',
-                showHelp: true,
-                bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
-                action: '查看《乳房健康日记》',
-                icon: Icons.heart_broken_outlined,
-                accent: Color(0xffb96f55),
-                background: Color(0xfffff8f1),
+              Transform.translate(
+                offset: const Offset(0, 4),
+                child: const _StatusModuleCard(
+                  title: '乳房健康',
+                  showHelp: true,
+                  bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
+                  action: '查看《乳房健康日记》',
+                  icon: Icons.heart_broken_outlined,
+                  accent: Color(0xffb96f55),
+                  background: Color(0xfffff8f1),
+                ),
               ),
               const _StatusModuleCard(
                 title: '产后恢复',
