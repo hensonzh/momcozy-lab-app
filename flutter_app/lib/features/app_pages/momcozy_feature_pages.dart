@@ -1781,15 +1781,18 @@ class _StatusTrendPreview extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const Row(
-            children: [
-              Expanded(child: _StatusTrendLegend()),
-              _StatusSegmentedPills(
-                selected: '周',
-                options: ['周', '月'],
-                color: Color(0xffb9792a),
-              ),
-            ],
+          Transform.translate(
+            offset: const Offset(1, -1),
+            child: const Row(
+              children: [
+                Expanded(child: _StatusTrendLegend()),
+                _StatusSegmentedPills(
+                  selected: '周',
+                  options: ['周', '月'],
+                  color: Color(0xffb9792a),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           SizedBox(
