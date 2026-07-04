@@ -7635,30 +7635,34 @@ class _RecordsDashboardCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.local_florist_rounded,
-                      size: 15,
-                      color: MomCozyColors.primary.withValues(alpha: 0.78),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '今日吸奶器使用',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0,
+          Transform.translate(
+            offset: const Offset(-4, -4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.local_florist_rounded,
+                        size: 15,
+                        color: MomCozyColors.primary.withValues(alpha: 0.78),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 5),
+                      Text(
+                        '今日吸奶器使用',
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: MomCozyColors.mutedForeground,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0,
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              _RecordsUnitToggle(unit: volumeUnit, onTap: onToggleUnit),
-            ],
+                _RecordsUnitToggle(unit: volumeUnit, onTap: onToggleUnit),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           Transform.translate(
