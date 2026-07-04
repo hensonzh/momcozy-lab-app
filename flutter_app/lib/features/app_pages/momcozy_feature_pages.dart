@@ -7639,6 +7639,9 @@ class _RecordsDashboardCard extends StatelessWidget {
         ? (dashboardTotalMl / 29.5735).toStringAsFixed(1)
         : dashboardTotalMl.toString();
     final dashboardWeeklyAverageMl = overview.pump.isEmpty ? 0 : 280;
+    final dashboardWeeklyAverageValue = volumeUnit == 'oz'
+        ? (dashboardWeeklyAverageMl / 29.5735).toStringAsFixed(1)
+        : dashboardWeeklyAverageMl.toString();
     final deviceSessions = overview.pump.isEmpty ? 0 : 2;
     final points = overview.pump.isEmpty
         ? <_MilkTrendPoint>[]
@@ -7705,7 +7708,8 @@ class _RecordsDashboardCard extends StatelessWidget {
                   child: _RecordsMiniStat(
                     icon: Icons.schedule_rounded,
                     label: '吸奶次数',
-                    value: '$deviceSessions 次',
+                    value: '$deviceSessions',
+                    unitSuffix: '次',
                     accent: MomCozyColors.warm,
                   ),
                 ),
@@ -7714,10 +7718,8 @@ class _RecordsDashboardCard extends StatelessWidget {
                   child: _RecordsMiniStat(
                     icon: Icons.trending_up_rounded,
                     label: '周均日补录奶量',
-                    value: _amountLabel(
-                      dashboardWeeklyAverageMl,
-                      unit: volumeUnit,
-                    ),
+                    value: dashboardWeeklyAverageValue,
+                    unitSuffix: volumeUnit,
                     accent: MomCozyColors.warm,
                   ),
                 ),
