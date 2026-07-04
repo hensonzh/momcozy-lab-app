@@ -9786,20 +9786,23 @@ class _W1ProductSummary extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            const Row(
-              children: [
-                Expanded(
-                  child: _W1SpecTile(label: '重量', value: '180g'),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _W1SpecTile(label: '噪音', value: '≤35dB'),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _W1SpecTile(label: '续航', value: '4h+'),
-                ),
-              ],
+            Transform.translate(
+              offset: const Offset(4, -2),
+              child: const Row(
+                children: [
+                  Expanded(
+                    child: _W1SpecTile(label: '重量', value: '180g'),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: _W1SpecTile(label: '噪音', value: '≤35dB'),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: _W1SpecTile(label: '续航', value: '4h+'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
