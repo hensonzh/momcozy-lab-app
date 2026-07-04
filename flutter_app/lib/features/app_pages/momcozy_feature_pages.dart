@@ -10067,7 +10067,7 @@ class _HospitalBagHeader extends StatelessWidget {
         border: Border(bottom: BorderSide(color: Color(0xfff0dde5))),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+        padding: const EdgeInsets.fromLTRB(13, 10, 15, 12),
         child: Row(
           children: [
             _CircleIconButton(
