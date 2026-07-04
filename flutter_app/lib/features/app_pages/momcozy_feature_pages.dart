@@ -1725,7 +1725,7 @@ class _StatusSegmentedPills extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: option == selected ? Colors.white : color,
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
