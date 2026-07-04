@@ -7223,7 +7223,7 @@ class _RecordsPageState extends State<_RecordsPage> {
             if (overview != null && !snapshot.hasError) ...[
               const SizedBox(height: 8),
               Transform.translate(
-                offset: const Offset(-1, 1),
+                offset: const Offset(-1, 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
