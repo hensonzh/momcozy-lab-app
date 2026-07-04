@@ -338,6 +338,7 @@ Latest rejected probes to avoid repeating:
 | 待产包 | Header horizontal padding 13/15 -> Web 14/14 | 14,128 px -> 14,221 px | reverted |
 | 待产包 | Product image shadow-sm | 14,128 px -> 14,141 px | reverted |
 | 待产包 | Footer credit card icon rounded -> outlined | 14,128 px -> 14,128 px | reverted |
+| 待产包 | Header top padding 10 -> Web 12 | 14,128 px -> 18,558 px | reverted |
 | 妈妈点滴 | Dashboard chart height 136 -> 160 | 14,068 px -> 16,800 px | reverted |
 | 妈妈点滴 | Page title weight w900 -> w700 | 14,068 px -> 14,068 px | reverted |
 | 妈妈点滴 | Month button width 30 -> 20 | 14,045 px -> 14,045 px | reverted |
