@@ -9036,7 +9036,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
   Widget build(BuildContext context) {
     return ListView(
       key: ValueKey('route-page-${widget.path}'),
-      padding: const EdgeInsets.fromLTRB(16, 56, 0, 28),
+      padding: const EdgeInsets.fromLTRB(16, 56, 16, 28),
       children: [
         _DeviceSubpageHeader(
           title: '用户参数配置',
@@ -9045,7 +9045,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
         ),
         const SizedBox(height: 18),
         Container(
-          padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
+          padding: const EdgeInsets.all(16),
           decoration: MomCozyDecorations.card(
             color: MomCozyColors.card,
             radius: 20,
