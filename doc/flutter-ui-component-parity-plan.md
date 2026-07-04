@@ -1,6 +1,6 @@
 # Flutter UI Component Parity Plan
 
-> Status: execution plan v0.1  
+> Status: execution plan v0.2
 > Date: 2026-07-04  
 > Branch: `feat/test2`  
 > Scope: component-level visual parity between legacy Web and Flutter for the compact `390x844` baseline first.
@@ -117,21 +117,32 @@ Current compact report after the last accepted visual commits:
 
 | Priority | Page | Current diff | Pixels | Target for this phase | Commit granularity |
 |---:|---|---:|---:|---|---|
-| P0 | 宝宝和我 | 5.07% | 16,699 | below 4.50%, then below 3.50% | module cards, then trend card/painter |
-| P0 | 妈妈点滴 | 4.96% | 16,338 | below 4.50%, then below 3.50% | dashboard, chart, rows |
-| P0 | 待产包 | 4.80% | 15,816 | below 4.00%, then below 3.00% | product row, section header, checkout footer |
-| P0 | 计划 | 4.50% | 14,824 | below 4.00%, then below 3.00% | week strip, context card, empty/task blocks |
-| P0 | 吸乳 | 4.32% | 14,229 | below 3.75%, then below 3.00% | prompt modal, backdrop, controls |
-| P1 | W1 | 3.72% | 12,235 | below 3.00%, then below 2.25% | hero, product summary, selling points |
-| P1 | 舒适负压调节 | 2.59% | 8,509 | below 2.00% | top bar typography, intro card |
-| P1 | 用户参数 | 2.55% | 8,400 | below 2.00% | subpage header, form controls |
-| P1 | IBCLC | 2.03% | 6,689 | below 1.50% | header, loading card, bottom nav edge |
-| P1 | Agent Hub | 1.70% | 5,589 | below 1.50% | composer, greeting typography, avatar opacity |
-| P1 | 设备 | 1.59% | 5,229 | below 1.50% | header/banner final polish |
+| P0 | 待产包 | 4.30% | 14,153 | below 4.00%, then below 3.00% | product row, section header, checkout footer |
+| P0 | 妈妈点滴 | 4.27% | 14,068 | below 4.00%, then below 3.00% | dashboard, chart, rows |
+| P0 | 吸乳 | 4.13% | 13,579 | below 3.75%, then below 3.00% | prompt modal, backdrop, controls |
+| P0 | 宝宝和我 | 3.87% | 12,751 | below 3.50%, then below 2.50% | module cards, then trend card/painter |
+| P0 | 计划 | 3.76% | 12,360 | below 3.50%, then below 2.50% | week strip, context card, empty/task blocks |
+| P1 | W1 | 3.09% | 10,172 | below 2.75%, then below 2.25% | hero, product summary, selling points |
+| P1 | 用户参数 | 2.49% | 8,182 | below 2.00% | subpage header, form controls |
+| P1 | 舒适负压调节 | 2.22% | 7,294 | below 2.00% | top bar typography, intro card |
+| P1 | Agent Hub | 1.54% | 5,065 | below 1.50% | composer, greeting typography, avatar opacity |
+| P2 | 设备 | 1.50% | 4,927 | keep at or below threshold | header/banner final polish |
+| P2 | IBCLC | 1.49% | 4,908 | keep OK | header/loading |
 | P2 | 设备提醒 | 1.29% | 4,239 | keep OK | regression guard only |
 | P2 | 社区 | 1.18% | 3,893 | keep OK | regression guard only |
-| P2 | 404 | 0.93% | 3,054 | keep OK | regression guard only |
+| P2 | 404 | 0.68% | 2,225 | keep OK | regression guard only |
 | P2 | 媒体 | 0.44% | 1,435 | keep OK | regression guard only |
+
+Accepted component slices so far:
+
+| Page | Component | Before | After | Commit |
+|---|---|---:|---:|---|
+| 宝宝和我 | Trend target icon | 12,958 px | 12,751 px | `be81d27` |
+| 妈妈点滴 | Milk stat accent | 14,256 px | 14,144 px | `db5bfcd` |
+| 妈妈点滴 | Mini stat units | 14,144 px | 14,068 px | `0389c1f` |
+| 计划 | Agent context card surface | 12,492 px | 12,360 px | `ac67052` |
+| W1 | Summary typography | 10,195 px | 10,172 px | `933ca14` |
+| 舒适负压调节 | Intro card position | 7,501 px | 7,294 px | `b67fb25` |
 
 ## 6. Page Component Matrix
 
@@ -242,8 +253,8 @@ Commit order:
 | Page | Components | Test file | Commit granularity |
 |---|---|---|---|
 | W1 | hero, product summary, selling points | `w1_component_parity_golden_test.dart` | one component group at a time |
-| 舒适负压调节 | top bar, progress, intro card | `device_component_parity_golden_test.dart` or dedicated calibration file | top bar, then card |
-| 用户参数 | subpage header, dropdowns, action buttons | `device_component_parity_golden_test.dart` | header/form |
+| 舒适负压调节 | top bar, progress, intro card | `calibration_component_parity_golden_test.dart` | top bar, then card |
+| 用户参数 | subpage header, dropdowns, action buttons | `device_user_component_parity_golden_test.dart` | header/form |
 | IBCLC | header, loading card | `agent_component_parity_golden_test.dart` | header/loading |
 | Agent Hub | greeting, composer | `agent_component_parity_golden_test.dart` | greeting/composer |
 | 设备 | header, banner, deck cards | `device_component_parity_golden_test.dart` | final polish only |
@@ -270,7 +281,7 @@ The assessment can live in the commit summary or in the working log for the turn
 
 ## 8. Starting Slice
 
-Start with `宝宝和我` because it is currently the highest-ranked page.
+Initial execution started with `宝宝和我` because it was the highest-ranked page at v0.1.
 
 First execution slice:
 
@@ -284,3 +295,9 @@ First execution slice:
 5. Commit if the page diff drops.
 6. Repaint status trend chart.
 7. Run the same gate and commit if the page diff drops.
+
+Current continuation policy:
+
+1. Prefer the highest-ranked page when there is a clear component-local candidate.
+2. For pages where broad movement has regressed, move to the next smallest near-threshold component and return later with a narrower repaint.
+3. Keep or commit only candidates that reduce the page-level pixel diff.
