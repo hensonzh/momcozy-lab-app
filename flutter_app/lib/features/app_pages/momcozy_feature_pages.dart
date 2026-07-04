@@ -2997,7 +2997,7 @@ class _ScheduleAgentButton extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 15,
+                size: 14,
                 color: filled ? MomCozyColors.raised : MomCozyColors.foreground,
               ),
               const SizedBox(width: 6),
