@@ -10521,47 +10521,51 @@ class _HospitalBagFooter extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '预计合计',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xff8a6d7a),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
+            Transform.translate(
+              offset: const Offset(0, 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '预计合计',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: const Color(0xff8a6d7a),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
                         ),
-                      ),
-                      Text(
-                        money(total),
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              color: const Color(0xff24889a),
-                              fontWeight: FontWeight.w900,
-                              height: 1,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text(
-                    '已含组合优惠 ${money(discount)}',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: const Color(0xff8a6d7a),
-                      fontSize: 10,
-                      height: 1.375,
-                      fontWeight: FontWeight.w400,
+                        Text(
+                          money(total),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                color: const Color(0xff24889a),
+                                fontWeight: FontWeight.w900,
+                                height: 1,
+                              ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      '已含组合优惠 ${money(discount)}',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: const Color(0xff8a6d7a),
+                        fontSize: 10,
+                        height: 1.375,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 10),
             SizedBox(
