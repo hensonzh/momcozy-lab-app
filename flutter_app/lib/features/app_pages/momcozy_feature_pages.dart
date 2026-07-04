@@ -2909,7 +2909,8 @@ class _ScheduleAgentCard extends StatelessWidget {
                   '已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                     height: 1.45,
                   ),
                 ),
