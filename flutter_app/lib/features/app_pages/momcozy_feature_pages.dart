@@ -636,15 +636,18 @@ class _StatusPageState extends State<_StatusPage> {
               onChanged: _changeCareStage,
             ),
             const SizedBox(height: 18),
-            _StatusIdentityTabs(
-              selected: _view,
-              momSubtitle: momSubtitle,
-              babySubtitle: babySubtitle,
-              babyDisabled: isPregnancy,
-              onChanged: (next) {
-                if (next == 'baby' && isPregnancy) return;
-                setState(() => _view = next);
-              },
+            Transform.translate(
+              offset: const Offset(0, 5),
+              child: _StatusIdentityTabs(
+                selected: _view,
+                momSubtitle: momSubtitle,
+                babySubtitle: babySubtitle,
+                babyDisabled: isPregnancy,
+                onChanged: (next) {
+                  if (next == 'baby' && isPregnancy) return;
+                  setState(() => _view = next);
+                },
+              ),
             ),
             const SizedBox(height: 14),
             ..._statusOverviewChildren(snapshot, isMom),
