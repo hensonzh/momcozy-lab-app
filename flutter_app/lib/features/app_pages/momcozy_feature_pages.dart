@@ -778,7 +778,7 @@ class _StatusPageState extends State<_StatusPage> {
                   showHelp: true,
                   bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
                   action: '查看《乳房健康日记》',
-                  icon: Icons.heart_broken_outlined,
+                  icon: Icons.monitor_heart_outlined,
                   accent: Color(0xffb96f55),
                   background: Color(0xfffff8f1),
                 ),
