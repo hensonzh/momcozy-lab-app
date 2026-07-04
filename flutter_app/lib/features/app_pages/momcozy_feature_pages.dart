@@ -7767,46 +7767,55 @@ class _RecordsDashboardCard extends StatelessWidget {
             child: _RecordsTrendChart(points: points, accent: accent),
           ),
           const SizedBox(height: 24),
-          Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: MomCozyColors.raised,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: MomCozyColors.primary.withValues(alpha: 0.24),
+          Transform.translate(
+            offset: const Offset(-8, 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: MomCozyColors.raised,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: MomCozyColors.primary.withValues(alpha: 0.24),
+                        ),
+                      ),
+                      child: Image.asset(
+                        MomCozyAssets.momcozyLogo,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const SizedBox(width: 9),
+                    Expanded(
+                      child: Text(
+                        '←问问M.ai呀~',
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: MomCozyColors.primary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.only(left: 52),
+                  child: Text(
+                    '"最近补录奶量稳步上升，今天也很棒哦～继续保持，你和宝宝都在进步中"',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                      fontStyle: FontStyle.italic,
+                      height: 1.35,
+                    ),
                   ),
                 ),
-                child: Image.asset(
-                  MomCozyAssets.momcozyLogo,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const SizedBox(width: 9),
-              Expanded(
-                child: Text(
-                  '←问问M.ai呀~',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: MomCozyColors.primary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.only(left: 52),
-            child: Text(
-              '"最近补录奶量稳步上升，今天也很棒哦～继续保持，你和宝宝都在进步中"',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontStyle: FontStyle.italic,
-                height: 1.35,
-              ),
+              ],
             ),
           ),
         ],
