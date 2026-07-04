@@ -8644,7 +8644,7 @@ class _CommunityPageState extends State<_CommunityPage> {
   Widget build(BuildContext context) {
     return ListView(
       key: ValueKey('route-page-${widget.path}'),
-      padding: const EdgeInsets.fromLTRB(24, 18, 24, 28),
+      padding: const EdgeInsets.fromLTRB(24, 57, 24, 28),
       children: [
         ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 660),
