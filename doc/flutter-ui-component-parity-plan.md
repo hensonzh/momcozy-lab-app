@@ -359,6 +359,7 @@ Latest rejected probes to avoid repeating:
 | 妈妈点滴 | Inventory total amount in normal Row layout | 14,016 px -> 15,124 px | reverted |
 | 妈妈点滴 | Inventory total amount as absolute overlay | 14,016 px -> 14,156 px | reverted |
 | 妈妈点滴 | Pump row leading icon -> legacy bottle emoji | 14,016 px -> 14,268 px | reverted |
+| 妈妈点滴 | Trend chart grid lines to Web tick values | 13,991 px -> 13,993 px | reverted |
 | 吸乳 | Prompt overlay alpha 0.43 -> 0.40 | 13,579 px -> 14,021 px | reverted |
 | 吸乳 | Prompt overlay blur 5 -> 4 | 13,579 px -> 13,893 px | reverted |
 | 吸乳 | Prompt rich text line-height 1.55 -> 1.625 | 13,579 px -> 15,049 px | reverted |
