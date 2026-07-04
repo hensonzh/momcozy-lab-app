@@ -27,6 +27,22 @@ void main() {
         ),
       );
     });
+
+    testWidgets('agent card matches compact baseline', (tester) async {
+      await _pumpScheduleComponentApp(tester);
+
+      final card = find.byKey(const ValueKey('schedule-agent-card'));
+      expect(card, findsOneWidget);
+      expect(find.text('提醒开关'), findsOneWidget);
+      expect(find.text('对话'), findsOneWidget);
+
+      await expectLater(
+        card,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_agent_card.png',
+        ),
+      );
+    });
   });
 }
 
