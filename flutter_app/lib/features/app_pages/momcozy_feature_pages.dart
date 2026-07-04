@@ -9196,7 +9196,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                               _userListOpen
                                   ? Icons.keyboard_arrow_up_rounded
                                   : Icons.keyboard_arrow_down_rounded,
-                              size: 20,
+                              size: 16,
                             ),
                             color: MomCozyColors.mutedForeground,
                           ),
@@ -9269,6 +9269,7 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                     icon: const Icon(
                       Icons.keyboard_arrow_down_rounded,
                       key: ValueKey('device-user-stage-menu-icon'),
+                      size: 16,
                       color: MomCozyColors.mutedForeground,
                     ),
                     items: const [
