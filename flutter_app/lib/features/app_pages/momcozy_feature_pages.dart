@@ -7238,9 +7238,17 @@ class _RecordsPageState extends State<_RecordsPage> {
             ..._recordsDashboardChildren(snapshot, overview),
             if (overview != null && !snapshot.hasError) ...[
               const SizedBox(height: 8),
-              _RecordsListToolbar(onAdd: _addManualPumpRecord),
-              if (_filter == 'pump') const _RecordsInventoryHeader(),
-              ..._recordChildren(overview),
+              Transform.translate(
+                offset: const Offset(-1, 1),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _RecordsListToolbar(onAdd: _addManualPumpRecord),
+                    if (_filter == 'pump') const _RecordsInventoryHeader(),
+                    ..._recordChildren(overview),
+                  ],
+                ),
+              ),
               const SizedBox(height: 10),
               _RecordsBabyLink(onTap: () => setState(() => _filter = 'feed')),
               const SizedBox(height: 10),
