@@ -1014,13 +1014,13 @@ class _StatusModuleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-      color: MomCozyColors.foreground,
+      color: const Color(0xff35212c),
       fontSize: 14,
       fontWeight: FontWeight.w700,
       height: 1.05,
     );
     final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: MomCozyColors.mutedForeground,
+      color: const Color(0xff7a6870),
       fontSize: 11,
       fontWeight: FontWeight.w500,
       height: 1.24,
@@ -1153,7 +1153,7 @@ class _StatusModuleMetricRows extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.labelSmall
                               ?.copyWith(
-                                color: MomCozyColors.mutedForeground,
+                                color: const Color(0xff7a5b68),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1168,7 +1168,7 @@ class _StatusModuleMetricRows extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: MomCozyColors.foreground,
+                      color: const Color(0xff35212c),
                       fontSize: metrics.length >= 3 ? 14 : 16,
                       fontWeight: FontWeight.w700,
                       height: 1,
