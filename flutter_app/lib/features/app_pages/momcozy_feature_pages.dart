@@ -1759,7 +1759,7 @@ class _StatusTrendPreview extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
-                    Icons.track_changes_rounded,
+                    Icons.gps_fixed_rounded,
                     size: 14,
                     color: Color(0xffb9792a),
                   ),
