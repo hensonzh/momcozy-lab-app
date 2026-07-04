@@ -91,7 +91,7 @@ class MomCozyGradients {
   static const primary = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [MomCozyColors.primary, MomCozyColors.primaryDark],
+    colors: [MomCozyColors.primary, Color(0xd9a86172)],
   );
 }
 
