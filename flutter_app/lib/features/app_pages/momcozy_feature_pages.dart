@@ -11288,14 +11288,16 @@ class _IbclcChatHeader extends StatelessWidget {
                 disabledForegroundColor: Colors.white.withValues(alpha: 0.75),
                 visualDensity: VisualDensity.compact,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                minimumSize: const Size(0, 32),
+                fixedSize: const Size(78, 32),
+                minimumSize: const Size(78, 32),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(999),
                   side: const BorderSide(color: Color(0xffc84444)),
                 ),
-                textStyle: Theme.of(
-                  context,
-                ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
+                textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               child: Text(isEnding ? '结束中...' : '结束咨询'),
             ),
