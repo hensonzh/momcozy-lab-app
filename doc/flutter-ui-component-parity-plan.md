@@ -326,6 +326,7 @@ Latest rejected probes to avoid repeating:
 | 待产包 | Product image `FilterQuality.high` -> `medium` | 14,153 px -> 14,222 px | reverted |
 | 待产包 | Footer total row offset `(0,3)` -> `(0,0)` | 14,153 px -> 14,783 px | reverted |
 | 待产包 | Product row action gap/offset to Web-like 10px/0px | 14,128 px -> 14,507 px | reverted |
+| 待产包 | Footer backdrop blur sigma 8 -> 10 | 14,128 px -> 14,234 px | reverted |
 | 妈妈点滴 | Dashboard chart height 136 -> 160 | 14,068 px -> 16,800 px | reverted |
 | 妈妈点滴 | Page title weight w900 -> w700 | 14,068 px -> 14,068 px | reverted |
 | 妈妈点滴 | Month button width 30 -> 20 | 14,045 px -> 14,045 px | reverted |
