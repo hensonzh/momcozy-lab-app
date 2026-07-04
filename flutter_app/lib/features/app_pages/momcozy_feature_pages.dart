@@ -1002,14 +1002,17 @@ class _StatusModuleCard extends StatelessWidget {
           child: Stack(
             children: [
               Positioned(
-                right: -22,
-                bottom: -24,
-                child: Container(
-                  width: 86,
-                  height: 86,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: accent.withValues(alpha: 0.1),
+                right: -24,
+                bottom: -32,
+                child: ImageFiltered(
+                  imageFilter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                  child: Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: accent.withValues(alpha: 0.12),
+                    ),
                   ),
                 ),
               ),
@@ -1020,7 +1023,7 @@ class _StatusModuleCard extends StatelessWidget {
                   child: Opacity(opacity: 0, child: Text(hiddenText)),
                 ),
               Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1045,8 +1048,8 @@ class _StatusModuleCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          width: 28,
-                          height: 28,
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
                             color: accent.withValues(alpha: 0.16),
                             borderRadius: BorderRadius.circular(12),
