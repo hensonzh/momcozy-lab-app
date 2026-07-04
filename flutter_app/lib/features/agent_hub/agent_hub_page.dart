@@ -406,7 +406,7 @@ class AgentHubTopBar extends StatelessWidget {
                       autoVoiceEnabled
                           ? Icons.volume_up_outlined
                           : Icons.volume_off_outlined,
-                      size: 20,
+                      size: 16,
                     ),
                     tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
                     color: autoVoiceEnabled
@@ -425,7 +425,7 @@ class AgentHubTopBar extends StatelessWidget {
                   IconButton(
                     key: const ValueKey('agent-new-session-button'),
                     onPressed: isRunning ? null : onNewSession,
-                    icon: const Icon(Icons.add_rounded, size: 22),
+                    icon: const Icon(Icons.add_rounded, size: 16),
                     tooltip: '新建会话',
                     color: const Color(0xff3b2f36),
                     style: IconButton.styleFrom(
