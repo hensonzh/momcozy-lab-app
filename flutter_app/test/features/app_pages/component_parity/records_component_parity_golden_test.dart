@@ -44,6 +44,22 @@ void main() {
         ),
       );
     });
+
+    testWidgets('list toolbar matches compact baseline', (tester) async {
+      await _pumpRecordsComponentApp(tester);
+
+      final toolbar = find.byKey(const ValueKey('records-list-toolbar'));
+      expect(toolbar, findsOneWidget);
+      expect(find.text('今日记录'), findsOneWidget);
+      expect(find.text('手动记录'), findsOneWidget);
+
+      await expectLater(
+        toolbar,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/records_list_toolbar.png',
+        ),
+      );
+    });
   });
 }
 

@@ -813,9 +813,7 @@ class _StatusPageState extends State<_StatusPage> {
         ),
       ),
       const SizedBox(height: 8),
-      const _StatusTrendPreview(
-        key: ValueKey('status-milk-trend-preview'),
-      ),
+      const _StatusTrendPreview(key: ValueKey('status-milk-trend-preview')),
     ];
   }
 
@@ -2563,8 +2561,9 @@ class _SchedulePageState extends State<_SchedulePage> {
               child: _ScheduleAgentCard(
                 key: const ValueKey('schedule-agent-card'),
                 reminderEnabled: _pumpReminderEnabled,
-                onReminderTap: () =>
-                    setState(() => _pumpReminderEnabled = !_pumpReminderEnabled),
+                onReminderTap: () => setState(
+                  () => _pumpReminderEnabled = !_pumpReminderEnabled,
+                ),
                 onConversationTap: () => context.go('/'),
               ),
             ),
@@ -7712,10 +7711,9 @@ class _RecordsDashboardCard extends StatelessWidget {
                   children: [
                     Text(
                       '📈',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        fontSize: 12,
-                        height: 1,
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelSmall?.copyWith(fontSize: 12, height: 1),
                     ),
                     const SizedBox(width: 5),
                     Flexible(
@@ -8204,44 +8202,50 @@ class _RecordsListToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Icon(
-                  Icons.edit_note_rounded,
-                  size: 16,
-                  color: MomCozyColors.primary.withValues(alpha: 0.78),
+    return RepaintBoundary(
+      key: const ValueKey('records-list-toolbar'),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Transform.translate(
+          offset: const Offset(-4, -4),
+          child: Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.edit_note_rounded,
+                      size: 16,
+                      color: MomCozyColors.primary.withValues(alpha: 0.78),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      '今日记录',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 5),
-                Text(
-                  '今日记录',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: MomCozyColors.mutedForeground,
+              ),
+              TextButton.icon(
+                key: const ValueKey('records-manual-entry-button'),
+                onPressed: onAdd,
+                style: TextButton.styleFrom(
+                  foregroundColor: MomCozyColors.primary,
+                  minimumSize: const Size(0, 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-              ],
-            ),
+                icon: const Icon(Icons.add_rounded, size: 16),
+                label: const Text('手动记录'),
+              ),
+            ],
           ),
-          TextButton.icon(
-            key: const ValueKey('records-manual-entry-button'),
-            onPressed: onAdd,
-            style: TextButton.styleFrom(
-              foregroundColor: MomCozyColors.primary,
-              minimumSize: const Size(0, 32),
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              textStyle: Theme.of(
-                context,
-              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
-            ),
-            icon: const Icon(Icons.add_rounded, size: 16),
-            label: const Text('手动记录'),
-          ),
-        ],
+        ),
       ),
     );
   }
