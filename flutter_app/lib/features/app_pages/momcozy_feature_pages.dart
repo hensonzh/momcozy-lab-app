@@ -635,7 +635,7 @@ class _StatusPageState extends State<_StatusPage> {
               accent: widget.accent,
               onChanged: _changeCareStage,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 18),
             _StatusIdentityTabs(
               selected: _view,
               momSubtitle: momSubtitle,
@@ -646,7 +646,7 @@ class _StatusPageState extends State<_StatusPage> {
                 setState(() => _view = next);
               },
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 14),
             ..._statusOverviewChildren(snapshot, isMom),
             const SizedBox(height: 44),
             _StatusNextActions(
@@ -991,7 +991,7 @@ class _StatusModuleCard extends StatelessWidget {
         color: background,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.86)),
-        boxShadow: MomCozyShadows.soft,
+        boxShadow: const [],
       ),
       child: Material(
         color: Colors.transparent,
@@ -2257,7 +2257,7 @@ class _StatusIdentityTab extends StatelessWidget {
             key: ValueKey('status-identity-tab-$value'),
             onTap: disabled ? null : onTap,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 68),
+              constraints: const BoxConstraints(minHeight: 72),
               child: Stack(
                 children: [
                   AnimatedOpacity(
