@@ -6655,10 +6655,13 @@ class _CalibrationPageState extends State<_CalibrationPage> {
       key: ValueKey('route-page-${widget.path}'),
       padding: EdgeInsets.zero,
       children: [
-        _CalibrationTopBar(
-          progress: progress,
-          total: 7,
-          onBack: _exitCalibration,
+        RepaintBoundary(
+          key: const ValueKey('calibration-top-bar'),
+          child: _CalibrationTopBar(
+            progress: progress,
+            total: 7,
+            onBack: _exitCalibration,
+          ),
         ),
         if (!_introAcknowledged)
           Padding(
