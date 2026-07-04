@@ -377,9 +377,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
     final selectedIndex = _selectedTabIndex(location);
 
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: MomCozyColors.card.withValues(alpha: 0.92),
-      ),
+      decoration: const BoxDecoration(color: Color(0xfffcf7f5)),
       child: SafeArea(
         top: false,
         child: SizedBox(
