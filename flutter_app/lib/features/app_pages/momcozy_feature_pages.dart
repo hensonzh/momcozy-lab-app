@@ -8840,7 +8840,7 @@ class _DeviceManagePageState extends State<_DeviceManagePage> {
   Widget build(BuildContext context) {
     return ListView(
       key: ValueKey('route-page-${widget.path}'),
-      padding: const EdgeInsets.fromLTRB(16, 40, 0, 28),
+      padding: const EdgeInsets.fromLTRB(16, 40, 16, 28),
       children: [
         _DeviceSubpageHeader(
           title: '设备提醒',
@@ -8848,12 +8848,15 @@ class _DeviceManagePageState extends State<_DeviceManagePage> {
         ),
         const SizedBox(height: 10),
         for (final action in _deviceReminderActions) ...[
-          _DeviceReminderActionButton(
-            label: action.label,
-            loading: _loadingActionKey == action.key,
-            onTap: _loadingActionKey == null
-                ? () => _triggerReminderAction(action)
-                : null,
+          Transform.translate(
+            offset: const Offset(-2, 1),
+            child: _DeviceReminderActionButton(
+              label: action.label,
+              loading: _loadingActionKey == action.key,
+              onTap: _loadingActionKey == null
+                  ? () => _triggerReminderAction(action)
+                  : null,
+            ),
           ),
           const SizedBox(height: 12),
         ],
