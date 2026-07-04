@@ -10714,106 +10714,112 @@ class _HospitalBagFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepaintBoundary(
       key: const ValueKey('hospital-bag-footer'),
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: Color(0xf5fff9fb),
-          border: Border(top: BorderSide(color: Color(0xffead8df))),
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x1a5b3748),
-              blurRadius: 28,
-              offset: Offset(0, -10),
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: DecoratedBox(
+            decoration: const BoxDecoration(
+              color: Color(0xf5fff9fb),
+              border: Border(top: BorderSide(color: Color(0xffead8df))),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x1a5b3748),
+                  blurRadius: 28,
+                  offset: Offset(0, -10),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Transform.translate(
-                offset: const Offset(0, 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '预计合计',
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Transform.translate(
+                    offset: const Offset(0, 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '预计合计',
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
+                                      color: const Color(0xff8a6d7a),
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              Text(
+                                money(total),
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(
+                                      color: const Color(0xff24889a),
+                                      fontWeight: FontWeight.w900,
+                                      height: 1,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            '已含组合优惠 ${money(discount)}',
                             style: Theme.of(context).textTheme.labelSmall
                                 ?.copyWith(
                                   color: const Color(0xff8a6d7a),
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w600,
+                                  height: 1.375,
+                                  fontWeight: FontWeight.w400,
                                 ),
                           ),
-                          Text(
-                            money(total),
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(
-                                  color: const Color(0xff24889a),
-                                  fontWeight: FontWeight.w900,
-                                  height: 1,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        '已含组合优惠 ${money(discount)}',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xff8a6d7a),
-                          fontSize: 10,
-                          height: 1.375,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {},
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff24889a),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.credit_card_rounded,
-                          size: 16,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '去结算',
-                          style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
                         ),
                       ],
                     ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {},
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff24889a),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.credit_card_rounded,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '去结算',
+                              style: Theme.of(context).textTheme.labelLarge
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
