@@ -1090,7 +1090,7 @@ class AgentComposerBar extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: DecoratedBox(
         decoration: const BoxDecoration(color: MomCozyColors.background),
         child: Column(
@@ -1161,7 +1161,7 @@ class AgentComposerBar extends StatelessWidget {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: Row(
                   children: [
                     IconButton(
@@ -1172,8 +1172,8 @@ class AgentComposerBar extends StatelessWidget {
                       color: MomCozyColors.mutedForeground,
                       visualDensity: VisualDensity.compact,
                       constraints: const BoxConstraints.tightFor(
-                        width: 36,
-                        height: 36,
+                        width: 32,
+                        height: 32,
                       ),
                       padding: EdgeInsets.zero,
                     ),
@@ -1230,8 +1230,8 @@ class AgentComposerBar extends StatelessWidget {
                           : MomCozyColors.mutedForeground,
                       visualDensity: VisualDensity.compact,
                       constraints: const BoxConstraints.tightFor(
-                        width: 34,
-                        height: 34,
+                        width: 32,
+                        height: 32,
                       ),
                       padding: EdgeInsets.zero,
                     ),
