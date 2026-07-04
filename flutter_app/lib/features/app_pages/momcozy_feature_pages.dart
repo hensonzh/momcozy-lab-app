@@ -9340,7 +9340,13 @@ class _W1PageState extends State<_W1Page> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const _W1SectionLabel('核心亮点'),
+                RepaintBoundary(
+                  key: const ValueKey('w1-core-highlights-label'),
+                  child: Transform.translate(
+                    offset: const Offset(0, -5),
+                    child: const _W1SectionLabel('核心亮点'),
+                  ),
+                ),
                 const SizedBox(height: 10),
                 const _W1SellingPoint(
                   icon: Icons.favorite_border_rounded,
