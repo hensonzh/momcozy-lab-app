@@ -6748,17 +6748,20 @@ class _CalibrationPageState extends State<_CalibrationPage> {
               child: Center(
                 child: Transform.translate(
                   offset: const Offset(0, 2),
-                  child: _CalibrationWideCardShell(
-                    child: SizedBox(
-                      height: 204,
-                      child: _CalibrationStepCard(
+                  child: RepaintBoundary(
+                    key: const ValueKey('calibration-intro-step-card'),
+                    child: _CalibrationWideCardShell(
+                      child: SizedBox(
+                        height: 204,
+                        child: _CalibrationStepCard(
                         eyebrow: '动作确认 1',
                         title: '请先正确穿戴吸奶器',
                         description:
                             '确认法兰/硅胶塞贴合，左右主机放置稳定。穿戴完成后再进入吸力调节，能减少空吸带来的不适。',
                         primaryLabel: '我已穿戴好',
-                        onPrimary: () =>
-                            setState(() => _introAcknowledged = true),
+                          onPrimary: () =>
+                              setState(() => _introAcknowledged = true),
+                        ),
                       ),
                     ),
                   ),
