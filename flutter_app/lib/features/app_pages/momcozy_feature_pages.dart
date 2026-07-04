@@ -4253,7 +4253,7 @@ class _DeviceDeckCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          height: 196,
+          height: 188,
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: connected ? MomCozyColors.card : const Color(0xfff7f7f8),
