@@ -9288,7 +9288,10 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: MomCozyColors.foreground,
                         ),
-                        icon: const Icon(Icons.delete_outline_rounded),
+                        icon: const Icon(
+                          Icons.delete_outline_rounded,
+                          size: 16,
+                        ),
                         label: const Text('删除用户'),
                       ),
                       const SizedBox(height: 12),
@@ -9301,7 +9304,10 @@ class _DeviceUserPageState extends State<_DeviceUserPage> {
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Icon(Icons.manage_accounts_rounded),
+                            : const Icon(
+                                Icons.manage_accounts_rounded,
+                                size: 16,
+                              ),
                         label: const Text('切换用户'),
                       ),
                     ],
