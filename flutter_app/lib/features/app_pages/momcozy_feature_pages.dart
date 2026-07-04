@@ -10291,6 +10291,7 @@ class _HospitalBagCartItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
+      key: ValueKey('hospital-bag-item-${item.id}'),
       padding: const EdgeInsets.only(bottom: 8),
       child: Tooltip(
         message: '长按删除${item.name}',

@@ -9,33 +9,24 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('Hospital bag component parity goldens', () {
-    testWidgets('footer matches compact baseline', (tester) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+    testWidgets('product row matches compact baseline', (tester) async {
+      await _pumpHospitalBagPage(tester);
 
-      final routeIntentPlatform = FakeRouteIntentPlatform();
-      addTearDown(routeIntentPlatform.dispose);
+      final row = find.byKey(const ValueKey('hospital-bag-item-mom-pad'));
+      expect(row, findsOneWidget);
+      expect(find.text('产褥垫组合装'), findsOneWidget);
+      expect(find.text('¥59.90'), findsWidgets);
 
-      await tester.pumpWidget(
-        RepaintBoundary(
-          child: MomCozyFlutterApp(
-            router: createMomCozyRouter(initialLocation: '/hospital-bag-cart'),
-            routeIntentPlatform: routeIntentPlatform,
-          ),
+      await expectLater(
+        row,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/hospital_bag_product_row.png',
         ),
       );
-      await tester.pump();
+    });
 
-      final appContext = tester.element(find.byType(MomCozyFlutterApp));
-      await tester.runAsync(() async {
-        await Future.wait([
-          for (final asset in _hospitalBagAssets)
-            precacheImage(AssetImage(asset), appContext),
-        ]).timeout(const Duration(seconds: 5));
-      });
-      await tester.pumpAndSettle();
+    testWidgets('footer matches compact baseline', (tester) async {
+      await _pumpHospitalBagPage(tester);
 
       final footer = find.byKey(const ValueKey('hospital-bag-footer'));
       expect(footer, findsOneWidget);
@@ -50,6 +41,35 @@ void main() {
       );
     });
   });
+}
+
+Future<void> _pumpHospitalBagPage(WidgetTester tester) async {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
+  final routeIntentPlatform = FakeRouteIntentPlatform();
+  addTearDown(routeIntentPlatform.dispose);
+
+  await tester.pumpWidget(
+    RepaintBoundary(
+      child: MomCozyFlutterApp(
+        router: createMomCozyRouter(initialLocation: '/hospital-bag-cart'),
+        routeIntentPlatform: routeIntentPlatform,
+      ),
+    ),
+  );
+  await tester.pump();
+
+  final appContext = tester.element(find.byType(MomCozyFlutterApp));
+  await tester.runAsync(() async {
+    await Future.wait([
+      for (final asset in _hospitalBagAssets)
+        precacheImage(AssetImage(asset), appContext),
+    ]).timeout(const Duration(seconds: 5));
+  });
+  await tester.pumpAndSettle();
 }
 
 const _hospitalBagAssets = [
