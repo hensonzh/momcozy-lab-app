@@ -120,7 +120,7 @@ Current compact report after the last accepted visual commits:
 | P0 | 待产包 | 4.30% | 14,153 | below 4.00%, then below 3.00% | product row, section header, checkout footer |
 | P0 | 妈妈点滴 | 4.27% | 14,045 | below 4.00%, then below 3.00% | dashboard, chart, rows |
 | P0 | 吸乳 | 4.13% | 13,579 | below 3.75%, then below 3.00% | prompt modal, backdrop, controls |
-| P0 | 宝宝和我 | 3.87% | 12,747 | below 3.50%, then below 2.50% | module cards, then trend card/painter |
+| P0 | 宝宝和我 | 3.85% | 12,670 | below 3.50%, then below 2.50% | module cards, then trend card/painter |
 | P0 | 计划 | 3.76% | 12,360 | below 3.50%, then below 2.50% | week strip, context card, empty/task blocks |
 | P1 | W1 | 3.07% | 10,089 | below 2.75%, then below 2.25% | hero, product summary, selling points |
 | P1 | 用户参数 | 2.49% | 8,182 | below 2.00% | subpage header, form controls |
@@ -139,6 +139,9 @@ Accepted component slices so far:
 |---|---|---:|---:|---|
 | 宝宝和我 | Trend target icon | 12,958 px | 12,751 px | `be81d27` |
 | 宝宝和我 | Breast health icon | 12,751 px | 12,747 px | `d0885e0` |
+| 宝宝和我 | Module action pill text alignment | 12,747 px | 12,676 px | `9eb5a7b` |
+| 宝宝和我 | Trend segmented weight | 12,676 px | 12,673 px | `e679e9e` |
+| 宝宝和我 | Module action pill surface | 12,673 px | 12,670 px | `04a3efa` |
 | 妈妈点滴 | Milk stat accent | 14,256 px | 14,144 px | `db5bfcd` |
 | 妈妈点滴 | Mini stat units | 14,144 px | 14,068 px | `0389c1f` |
 | 妈妈点滴 | Month label weight | 14,068 px | 14,049 px | `d283bae` |
