@@ -344,7 +344,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             ),
           ),
           Transform.translate(
-            offset: const Offset(0, 15),
+            offset: const Offset(0, 16),
             child: AgentComposerBar(
               controller: _composerController,
               canSend: _canSend,
