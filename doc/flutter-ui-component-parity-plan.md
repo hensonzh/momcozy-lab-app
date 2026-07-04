@@ -159,6 +159,7 @@ Accepted component slices so far:
 | W1 | Hero eyebrow tone | 10,166 px | 10,143 px | `489d06b` |
 | W1 | Hero subtitle tone | 10,143 px | 10,115 px | `7f3b33c` |
 | W1 | Hero wellness tone | 10,115 px | 10,089 px | `9b1fba6` |
+| W1 | Summary spec label weight | 10,089 px | 10,062 px | `1294e85` |
 | 舒适负压调节 | Intro card position | 7,501 px | 7,294 px | `b67fb25` |
 | Agent Hub | Selected agent nav gradient | 5,065 px | 4,968 px | `2243ab2` |
 | Agent Hub | Composer image icon size | 4,968 px | 4,950 px | `3840bc6` |
