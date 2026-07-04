@@ -13,6 +13,22 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
 
   group('Records component parity goldens', () {
+    testWidgets('month header matches compact baseline', (tester) async {
+      await _pumpRecordsComponentApp(tester);
+
+      final header = find.byKey(const ValueKey('records-month-header'));
+      expect(header, findsOneWidget);
+      expect(find.text('妈妈点滴'), findsOneWidget);
+      expect(find.text('2026年3月'), findsOneWidget);
+
+      await expectLater(
+        header,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/records_month_header.png',
+        ),
+      );
+    });
+
     testWidgets('dashboard card matches compact baseline', (tester) async {
       await _pumpRecordsComponentApp(tester);
 
