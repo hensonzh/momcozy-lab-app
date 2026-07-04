@@ -975,13 +975,15 @@ class _StatusModuleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
       color: MomCozyColors.foreground,
-      fontWeight: FontWeight.w900,
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
       height: 1.05,
     );
     final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
       color: MomCozyColors.mutedForeground,
-      fontWeight: FontWeight.w700,
-      height: 1.18,
+      fontSize: 11,
+      fontWeight: FontWeight.w500,
+      height: 1.24,
     );
 
     return DecoratedBox(
@@ -1047,7 +1049,7 @@ class _StatusModuleCard extends StatelessWidget {
                           height: 28,
                           decoration: BoxDecoration(
                             color: accent.withValues(alpha: 0.16),
-                            shape: BoxShape.circle,
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(icon, size: 16, color: accent),
                         ),
@@ -1109,7 +1111,8 @@ class _StatusModuleMetricRows extends StatelessWidget {
                           style: Theme.of(context).textTheme.labelSmall
                               ?.copyWith(
                                 color: MomCozyColors.mutedForeground,
-                                fontWeight: FontWeight.w700,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
                               ),
                         ),
                       ),
@@ -1123,7 +1126,9 @@ class _StatusModuleMetricRows extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w900,
+                      fontSize: metrics.length >= 3 ? 14 : 16,
+                      fontWeight: FontWeight.w700,
+                      height: 1,
                     ),
                   ),
                   if (metric.note != null) ...[
@@ -1134,6 +1139,8 @@ class _StatusModuleMetricRows extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: MomCozyColors.primary,
+                        fontSize: 10,
+                        height: 1,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -1171,9 +1178,9 @@ class _StatusHelpDot extends StatelessWidget {
           '?',
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: MomCozyColors.mutedForeground,
-            fontSize: size <= 14 ? 8 : 9,
+            fontSize: size <= 14 ? 8 : 10,
             height: 1,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -1200,7 +1207,7 @@ class _StatusModuleActionPill extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 1),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.72),
             borderRadius: BorderRadius.circular(MomCozyRadii.pill),
@@ -1211,7 +1218,8 @@ class _StatusModuleActionPill extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: accent,
-              fontWeight: FontWeight.w900,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -1701,15 +1709,15 @@ class _StatusTrendPreview extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 28,
-                height: 28,
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
                   color: const Color(0xffffe4b8),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.track_changes_rounded,
-                  size: 16,
+                  size: 14,
                   color: Color(0xffb9792a),
                 ),
               ),
@@ -1719,7 +1727,8 @@ class _StatusTrendPreview extends StatelessWidget {
                   '母乳趋势',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -1743,7 +1752,7 @@ class _StatusTrendPreview extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           SizedBox(
-            height: 198,
+            height: 188,
             child: CustomPaint(
               painter: const _StatusTrendPreviewPainter(),
               child: const SizedBox.expand(),
@@ -2309,7 +2318,9 @@ class _StatusIdentityTab extends StatelessWidget {
                                           : selected
                                           ? MomCozyColors.foreground
                                           : MomCozyColors.mutedForeground,
-                                      fontWeight: FontWeight.w900,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.15,
                                     ),
                               ),
                               const SizedBox(height: 3),
@@ -2326,7 +2337,9 @@ class _StatusIdentityTab extends StatelessWidget {
                                           ? MomCozyColors.mutedForeground
                                           : MomCozyColors.mutedForeground
                                                 .withValues(alpha: 0.75),
-                                      fontWeight: FontWeight.w700,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.15,
                                     ),
                               ),
                             ],
