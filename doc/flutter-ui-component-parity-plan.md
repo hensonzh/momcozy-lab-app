@@ -314,6 +314,7 @@ Latest rejected probes to avoid repeating:
 | 妈妈点滴 | Source badge weight w800 -> Web-like w600 | 14,016 px -> 14,016 px | reverted |
 | 妈妈点滴 | List toolbar text 12/w900 -> Web-like 11/w600 | 14,016 px -> 14,019 px | reverted |
 | 妈妈点滴 | Add inventory total to header | 14,016 px -> 14,996 px | reverted |
+| 妈妈点滴 | Dashboard header label explicit 11px | 14,016 px -> 14,202 px | reverted |
 | 吸乳 | Prompt overlay alpha 0.43 -> 0.40 | 13,579 px -> 14,021 px | reverted |
 | 吸乳 | Prompt overlay blur 5 -> 4 | 13,579 px -> 13,893 px | reverted |
 | 吸乳 | Prompt rich text line-height 1.55 -> 1.625 | 13,579 px -> 15,049 px | reverted |
