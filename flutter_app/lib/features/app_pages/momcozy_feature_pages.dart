@@ -7614,7 +7614,7 @@ class _RecordsMonthButton extends StatelessWidget {
         constraints: const BoxConstraints.tightFor(width: 30, height: 30),
         padding: EdgeInsets.zero,
         onPressed: onTap,
-        icon: Icon(icon, size: 20, color: MomCozyColors.mutedForeground),
+        icon: Icon(icon, size: 16, color: MomCozyColors.mutedForeground),
       ),
     );
   }
