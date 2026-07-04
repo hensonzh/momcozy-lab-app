@@ -7321,7 +7321,7 @@ class _RecordsPageState extends State<_RecordsPage> {
               '来源 ${record.pumpSource ?? '--'}${_crossDaySuffix(record.occurredAt)}',
           trailingLabel: _recordTimeLabel(record.occurredAt),
           icon: Icons.local_drink_rounded,
-          accent: widget.accent,
+          accent: const Color(0xffb2773b),
           badges: [
             const _RecordsSourceBadge(
               label: '母乳',
