@@ -10273,10 +10273,11 @@ class _HospitalBagGroupSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          for (final item in group.items)
+          for (final (index, item) in group.items.indexed)
             _HospitalBagCartItemTile(
               item: item,
               tone: group.tone,
+              bottomGap: index == group.items.length - 1 ? 0 : 8,
               onDelete: () => onDelete(item.id),
             ),
         ],
@@ -10289,17 +10290,19 @@ class _HospitalBagCartItemTile extends StatelessWidget {
   const _HospitalBagCartItemTile({
     required this.item,
     required this.tone,
+    required this.bottomGap,
     required this.onDelete,
   });
 
   final _HospitalBagCartItemSpec item;
   final _HospitalBagTone tone;
+  final double bottomGap;
   final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: bottomGap),
       child: Tooltip(
         message: '长按删除${item.name}',
         child: GestureDetector(
