@@ -5,7 +5,7 @@ MomCozyApp 现在同时保留 Flutter 原生重构实现和旧 Web/Capacitor 实
 ```text
 flutter_app/   新版 Flutter 移动原生实现
 legacy_web/    旧版 React/Vite/Capacitor 实现，作为 UI 对齐基线和回滚来源
-doc/           迁移蓝图、测试方案、API/存储/权限/视觉标准
+docs/          迁移、Flutter、API、旧 Web、UI parity 和后端合同文档
 scripts/       Flutter 迁移 gate、UI parity、回滚包和审计脚本
 test/          UI parity 截图与报告
 ```
@@ -65,4 +65,8 @@ Flutter 与旧 Web 的页面级视觉 diff：
 npm run ui:parity-report
 ```
 
-旧 Web 的 UI/UX 黄金标准见 `doc/legacy-web-ui-ux-golden-standard.md`；组件级重绘计划见 `doc/flutter-ui-component-parity-plan.md`。
+旧 Web 的 UI/UX 黄金标准见 `docs/ui-parity/legacy-web-ui-ux-golden-standard.md`；组件级重绘计划见 `docs/ui-parity/flutter-ui-component-parity-plan.md`。
+
+## 文档目录
+
+文档统一存放在 `docs/` 下，目录说明见 `docs/README.md`。

@@ -146,9 +146,9 @@ features/
 [x] `npm run flutter:release-gate` 已固定 format、analyze、test、staging smoke、storage dry-run 和 flavored APK build
 [x] `flutter build apk --debug --flavor local` 通过
 [x] `flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging` 通过
-[x] Flutter Android PoC appId / flavor / signing 策略已记录：`doc/flutter-android-packaging.md` 与 `doc/flutter-release-gate.md`
+[x] Flutter Android PoC appId / flavor / signing 策略已记录：`docs/flutter/android-packaging.md` 与 `docs/flutter/release-gate.md`
 [x] Flutter / Android / JDK 版本固定源已记录：`flutter-toolchain.json`
-[x] Flutter 安全隐私准入已记录：`doc/flutter-security-privacy-gates.md`
+[x] Flutter 安全隐私准入已记录：`docs/flutter/security-privacy-gates.md`
 [x] Web baseline 可测试和构建
 [x] BLE / AG-UI / API / storage / route fixtures 已准备
 [x] Flutter BLE / AG-UI / API / storage / route fixture tests 已开始落地
@@ -235,7 +235,7 @@ features/
 [ ] iOS/Xcode/CocoaPods 环境可用（非 P0 Android gate；2026-07-02 探测结果为完整 Xcode 未安装、CocoaPods 未安装）
 ```
 
-工具链安装和初始化流程见 `doc/flutter-toolchain-bootstrap.md`。
+工具链安装和初始化流程见 `docs/flutter/toolchain-bootstrap.md`。
 
 ---
 
