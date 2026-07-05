@@ -3420,6 +3420,7 @@ class _ScheduleDateStrip extends StatelessWidget {
           child: Row(
             children: [
               _ScheduleWeekButton(
+                key: const ValueKey('schedule-week-prev-button'),
                 icon: Icons.chevron_left_rounded,
                 onTap: () =>
                     onSelected(selectedDate.subtract(const Duration(days: 7))),
@@ -3447,6 +3448,7 @@ class _ScheduleDateStrip extends StatelessWidget {
                 ),
               ),
               _ScheduleWeekButton(
+                key: const ValueKey('schedule-week-next-button'),
                 icon: Icons.chevron_right_rounded,
                 onTap: () =>
                     onSelected(selectedDate.add(const Duration(days: 7))),
@@ -3565,7 +3567,11 @@ class _ScheduleQuickActionButton extends StatelessWidget {
 }
 
 class _ScheduleWeekButton extends StatelessWidget {
-  const _ScheduleWeekButton({required this.icon, required this.onTap});
+  const _ScheduleWeekButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
