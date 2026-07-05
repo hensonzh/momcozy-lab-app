@@ -136,32 +136,6 @@ class MomCozyFeaturePage extends StatelessWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 10, left: 1),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _ActionTile extends StatelessWidget {
   const _ActionTile({
     required this.icon,
@@ -2306,7 +2280,6 @@ class _SchedulePage extends StatefulWidget {
 
 class _SchedulePageState extends State<_SchedulePage> {
   bool _pumpReminderEnabled = true;
-  bool _dailySummaryEnabled = true;
   final Map<String, bool> _taskDoneOverrides = {};
   final Map<String, List<ScheduleTask>> _localTasksByDay = {};
   final Set<String> _deletedTaskKeys = {};
@@ -2328,16 +2301,6 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   Future<ScheduleDayPlan> _fetchDayPlan(MomCozyApiRuntime runtime) {
     return runtime.scheduleRepository.fetchDayPlan(day: _selectedDay);
-  }
-
-  void _reloadDayPlan() {
-    final runtime = _runtime;
-    if (runtime == null) return;
-    setState(() {
-      _taskDoneOverrides.clear();
-      _deletedTaskKeys.clear();
-      _dayPlanFuture = _fetchDayPlan(runtime);
-    });
   }
 
   void _selectDay(DateTime day) {
@@ -2460,34 +2423,6 @@ class _SchedulePageState extends State<_SchedulePage> {
             const SizedBox(height: 30),
             _ScheduleListToolbar(onAdd: _addLocalTask),
             ..._dayPlanChildren(snapshot),
-            const SizedBox(height: 18),
-            const _SectionTitle('提醒'),
-            _ActionTile(
-              icon: Icons.alarm_on_rounded,
-              title: '泵奶提醒',
-              subtitle: '需要 Android 通知权限和精确闹钟能力。',
-              accent: widget.accent,
-              trailing: Switch(
-                value: _pumpReminderEnabled,
-                onChanged: (value) =>
-                    setState(() => _pumpReminderEnabled = value),
-              ),
-            ),
-            _ActionTile(
-              icon: Icons.summarize_outlined,
-              title: '每日摘要',
-              subtitle: '跨天时汇总计划、记录和 Agent 建议。',
-              accent: const Color(0xff43827b),
-              trailing: Switch(
-                value: _dailySummaryEnabled,
-                onChanged: (value) =>
-                    setState(() => _dailySummaryEnabled = value),
-              ),
-            ),
-            if (_scheduleSyncNotice(snapshot) case final syncNotice?) ...[
-              const SizedBox(height: 18),
-              syncNotice,
-            ],
           ],
         );
       },
@@ -2496,17 +2431,17 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   List<Widget> _dayPlanChildren(AsyncSnapshot<ScheduleDayPlan> snapshot) {
     if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return const [_ScheduleEmptyTaskNotice()];
+      return const [_ScheduleEmptyTaskNotice(), _ScheduleQuickActions()];
     }
 
     if (snapshot.hasError) {
-      return const [_ScheduleEmptyTaskNotice()];
+      return const [_ScheduleEmptyTaskNotice(), _ScheduleQuickActions()];
     }
 
     final plan = snapshot.data;
     final tasks = plan == null ? const <ScheduleTask>[] : _visibleTasks(plan);
     if (tasks.isEmpty) {
-      return const [_ScheduleEmptyTaskNotice()];
+      return const [_ScheduleEmptyTaskNotice(), _ScheduleQuickActions()];
     }
 
     return [
@@ -2522,37 +2457,6 @@ class _SchedulePageState extends State<_SchedulePage> {
           onChanged: (value) => _toggleTask(entry.value, entry.key, value),
         ),
     ];
-  }
-
-  Widget? _scheduleSyncNotice(AsyncSnapshot<ScheduleDayPlan> snapshot) {
-    if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return _ActionTile(
-        icon: Icons.sync_rounded,
-        title: '正在同步计划',
-        subtitle: '正在读取当天任务和提醒。',
-        accent: widget.accent,
-        trailing: const SizedBox.square(
-          dimension: 22,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-      );
-    }
-
-    if (snapshot.hasError) {
-      return _ActionTile(
-        icon: Icons.cloud_off_outlined,
-        title: '计划同步失败',
-        subtitle: '检查后端连接或 token 后重试。',
-        accent: widget.accent,
-        trailing: IconButton(
-          tooltip: '重试',
-          onPressed: _reloadDayPlan,
-          icon: const Icon(Icons.refresh_rounded),
-        ),
-      );
-    }
-
-    return null;
   }
 
   bool _taskDone(ScheduleTask task, int index) {
@@ -2718,6 +2622,56 @@ class _ScheduleEmptyTaskNotice extends StatelessWidget {
             fontWeight: FontWeight.w700,
             fontSize: 12,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScheduleQuickActions extends StatelessWidget {
+  const _ScheduleQuickActions();
+
+  @override
+  Widget build(BuildContext context) {
+    return const RepaintBoundary(
+      key: ValueKey('schedule-empty-quick-actions'),
+      child: Padding(
+        padding: EdgeInsets.only(top: 14, bottom: 22),
+        child: Row(
+          children: [
+            Expanded(child: _ScheduleQuickActionButton(label: '吸奶补录')),
+            SizedBox(width: 10),
+            Expanded(child: _ScheduleQuickActionButton(label: '喂养记录')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ScheduleQuickActionButton extends StatelessWidget {
+  const _ScheduleQuickActionButton({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 40,
+      child: FilledButton.tonalIcon(
+        onPressed: () {},
+        icon: const Icon(Icons.add_rounded, size: 16),
+        label: Text(label),
+        style: FilledButton.styleFrom(
+          backgroundColor: MomCozyColors.raised,
+          foregroundColor: MomCozyColors.foreground,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          textStyle: Theme.of(
+            context,
+          ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900),
         ),
       ),
     );
