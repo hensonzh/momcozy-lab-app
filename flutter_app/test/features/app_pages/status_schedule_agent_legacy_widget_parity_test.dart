@@ -424,6 +424,23 @@ void main() {
         expect(find.text('14:00 喂养'), findsWidgets);
         expect(find.byTooltip('删除任务'), findsWidgets);
         expect(_checkboxesWithValue(tester, true), 1);
+
+        await tester.tap(find.text('14:00 喂养').last);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('schedule-task-edit-title-input')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('schedule-task-edit-time-input')),
+          findsOneWidget,
+        );
+        expect(_checkboxesWithValue(tester, true), 1);
+        await tester.tap(
+          find.byKey(const ValueKey('schedule-task-edit-cancel-button')),
+        );
+        await tester.pumpAndSettle();
+
         await tester.tap(find.byType(Checkbox).last);
         await tester.pump();
         expect(_checkboxesWithValue(tester, true), 2);

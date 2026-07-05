@@ -472,8 +472,38 @@ void main() {
       expect(_checkboxesWithValue(tester, true), 1);
 
       await tester.tap(find.text('14:00 喂养').last);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
+      expect(
+        find.byKey(const ValueKey('schedule-task-edit-title-input')),
+        findsOneWidget,
+      );
+      expect(_checkboxesWithValue(tester, true), 1);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-task-edit-title-input')),
+        '下午喂养',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-task-edit-time-input')),
+        '14:15',
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('schedule-task-edit-save-button')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-task-edit-save-button')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('任务已更新'), findsOneWidget);
+      expect(find.text('14:15'), findsWidgets);
+      expect(find.text('下午喂养'), findsWidgets);
+      expect(_checkboxesWithValue(tester, true), 1);
+
+      await tester.tap(find.byType(Checkbox).last);
+      await tester.pump();
       expect(_checkboxesWithValue(tester, true), 2);
     });
 
