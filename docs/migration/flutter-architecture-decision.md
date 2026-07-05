@@ -191,7 +191,7 @@ features/
 [x] Flutter App API runtime 已加入 `PumpProtocolPlatform` 与 native coordinator 注入点，设备命令从 feature UI 统一走 typed platform boundary
 [x] Flutter `/status` 页面已从静态壳推进到 repository-driven 异步页面，作为后续 Schedule/Records 页面接入样板
 [x] Flutter `/schedule` 页面已从静态任务推进到 repository-driven day plan，页面仅保留 checkbox 草稿 UI 状态
-[x] Flutter `/records` 页面已从静态记录推进到 repository-driven records overview，筛选状态保留在页面本地
+[x] Flutter `/records` UI 路由已退役；records repository-driven contract 保留在独立测试与 staging smoke 中
 [x] Flutter `/pump` 页面已将 session 控制接入 `/v1/pump/workstate` repository，真泵 BLE 控制仍保留到设备验证阶段
 [x] Flutter `/device` 页面已从静态设备卡片推进到 BLE platform-driven 状态，真机扫描/连接验证仍保留到设备阶段
 [x] Flutter `/device/manage` 与 `/device/user` 子页已推进到 runtime-driven 状态，设备解绑与用户上下文不再硬编码

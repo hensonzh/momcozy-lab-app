@@ -64,7 +64,6 @@ flutter_app/test/goldens/feature_pages/hospital_bag_page_mobile.png
 flutter_app/test/goldens/feature_pages/ibclc_page_mobile.png
 flutter_app/test/goldens/feature_pages/media_viewer_page_mobile.png
 flutter_app/test/goldens/feature_pages/pump_page_mobile.png
-flutter_app/test/goldens/feature_pages/records_page_mobile.png
 flutter_app/test/goldens/feature_pages/schedule_page_mobile.png
 flutter_app/test/goldens/feature_pages/status_page_mobile.png
 flutter_app/test/goldens/feature_pages/w1_page_mobile.png
@@ -299,18 +298,13 @@ clipBehavior: Clip.none
 
 ### 6.10 记录 `/records`
 
-结论：已退出旧 Web UI parity 基线，保留为 Flutter-owned regression 页面。
+结论：已退出旧 Web UI parity 基线，Flutter UI 路由也已退役。
 
 已满足：
 
-- Flutter 侧保留月切换、汇总卡、趋势、泵奶/喂养/成长记录、手动补录、单位切换。
-- 旧 Web `/records` mock 页面已从 active reference capture 移除，不再作为 pixel parity 目标。
-- mL/oz、添加/编辑/删除、跨天记录、空态/失败态已有测试。
-
-已补充：
-
-- 记录行不再常驻编辑/删除双按钮；设备同步记录保持只读视觉，手动记录保留旧版删除入口，编辑通过长按行触发。
-- 图表 x 轴恢复旧 Web reference 的每日日期标签。
+- 状态页不再展示“下一步/补写孕期日记/今日待办”入口。
+- `/records` 不再作为 feature route 或 golden capture 目标。
+- records repository/API contract 保留在独立测试和 staging smoke 中，避免误删后端契约。
 
 ### 6.11 Media Viewer `/media-viewer`
 

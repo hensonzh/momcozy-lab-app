@@ -89,9 +89,9 @@ void main() {
       expect(find.text('母乳趋势'), findsOneWidget);
       expect(find.text('吸乳总量'), findsOneWidget);
 
-      await _scrollToText(tester, '下一步');
-      expect(find.text('补写孕期日记'), findsOneWidget);
-      expect(find.text('今日待办'), findsOneWidget);
+      expect(find.text('下一步'), findsNothing);
+      expect(find.text('补写孕期日记'), findsNothing);
+      expect(find.text('今日待办'), findsNothing);
       expect(find.byKey(const ValueKey('bottom-nav-status')), findsOneWidget);
       expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
       for (final label in const ['宝宝和我', '计划', '社区', '设备']) {

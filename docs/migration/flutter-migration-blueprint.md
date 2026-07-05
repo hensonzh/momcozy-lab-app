@@ -60,7 +60,7 @@ React/Vite SPA
 | `/` | `AgentHub` | 必须迁移，产品优先级最高。 |
 | `/calibration` | `ComfortCalibration` | 必须迁移，依赖 BLE 和泵校准 API。 |
 | `/pump` | `PumpSession` | 必须早期迁移，原生和设备风险最高。 |
-| `/records` | 旧 Web mock page 已退出；Flutter Records 已保留为产品路由 | 不再按旧 Web 页面迁移，只保留 Flutter 产品页和 API/交互测试。 |
+| `/records` | 旧 Web mock page 已退出；Flutter UI 路由已退役 | 不再作为可见页面或状态页跳转目标，仅保留 records API/repository 契约测试。 |
 | `/schedule` | `Schedule` | API 合同澄清后迁移。 |
 | `/status` | `Status` | 妈妈、宝宝、profile 合同澄清后迁移。 |
 | `/community` | `Community` | 低风险，后期迁移或替换。 |
@@ -120,7 +120,7 @@ React/Vite SPA
 | Pump session | `PumpSession.tsx` + pump runtime modules | 是 | 是 | 否 | 原生风险最高。 |
 | Comfort calibration | `ComfortCalibration.tsx` | 是 | 是 | 否 | BLE + calibration persistence。 |
 | Device management | `DeviceManagement.tsx` | 是 | 是 | 否 | BLE + native device state。 |
-| Records | Flutter `/records`；旧 Web `Records.tsx` 已退出基线 | 是 | 是 | 否 | 依赖 milk record API/storage，不再按旧 Web mock 页面做 parity。 |
+| Records | UI 路由已退役；旧 Web `Records.tsx` 已退出基线 | 否 | 是 | 否 | 仅保留 milk record API/storage 契约，不作为页面 parity 目标。 |
 | Schedule | `Schedule.tsx` | 是 | 是 | 否 | 依赖 plan/task API 合同。 |
 | Status | `Status.tsx` | 是 | 是 | 否 | 依赖 mom/baby profile 合同。 |
 | Media viewer | `MediaViewer.tsx` + media components | 是 | 是 | 否 | PDF/image/video parity。 |
@@ -981,9 +981,9 @@ docs/migration/flutter-app-test-plan.md
 [x] Flutter App API runtime 已加入 lazy BLE platform 注入点，页面可从 runtime 读取 Android/Fake `BlePlatform`
 [x] Flutter App API runtime 已加入 lazy pump native coordinator 与 `PumpProtocolPlatform` 注入点，Calibration/Pump 后续通过抽象协议下发设备命令
 [x] Flutter `/status` 页面已接入 App runtime repository，覆盖 loading、empty、error、success 展示和 fixture widget test
-[x] Flutter `/status` 页面已覆盖孕期/哺乳期切换、妈妈/宝宝 tab、成长记录本地草稿、今日状态、计划 todo 和孕期日记入口 widget test
+[x] Flutter `/status` 页面已覆盖孕期/哺乳期切换、妈妈/宝宝 tab、成长记录本地草稿、今日状态，并断言已退役的“下一步/孕期日记入口”不再出现
 [x] Flutter `/schedule` 页面已接入 App runtime repository，覆盖 day plan fixture、日期选择、任务添加/删除、checkbox 草稿状态、未完成 badge、跨天倒计时和同步状态展示
-[x] Flutter `/records` 页面已接入 App runtime repository，覆盖 pump_milk、feeding、growth 三类列表、筛选、手动补录、编辑/删除、本地跨天标记和弱网重试文案 widget test
+[x] Flutter `/records` UI 路由已退役；records API/repository contract 保留在独立测试和 staging smoke 中
 [x] Flutter `/pump` 页面 session 控制已接入 App runtime `/v1/pump/workstate` repository，覆盖左右侧档位 payload、左右侧进度、结束上传一次性 guard、重复结束拦截、多用户切换清理和同步状态 widget test
 [x] Flutter `/device` 页面已接入 App runtime BLE platform，覆盖未请求/拒绝/永久拒绝权限、系统设置返回重授权、internal/dev debug gate、已连接设备恢复、扫描空态、单/多扫描结果、battery/RSSI、连接失败和扫描失败状态 widget test
 [x] Flutter `/device/manage` 和 `/device/user` 子页已接入 App runtime BLE/user context，覆盖已连接设备读取、解绑和 runtime 用户信息 widget test

@@ -13,7 +13,6 @@
 | `/` | `AgentHub` | `AgentHubIntent` | show | P0 |
 | `/calibration` | `ComfortCalibration` | `CalibrationIntent` | hide | P0 |
 | `/pump` | `PumpSession` | `PumpSessionIntent` | hide | P0 |
-| `/records` | `Records` | `RecordsIntent` | show | P1 |
 | `/schedule` | `Schedule` | `ScheduleIntent` | show | P1 |
 | `/status` | `Status` | `StatusIntent` | show | P1 |
 | `/community` | `Community` | `CommunityIntent` | show | TBD |

@@ -161,7 +161,7 @@ flutter_app/test/goldens/agent_hub/
 - 妈妈/宝宝两个身份卡，选中卡左侧有竖向 primary 标记。
 - 哺乳期妈妈视图为 2 列模块卡：母乳产出、乳房健康、产后恢复、补能与休息等。
 - 趋势图卡位于模块区下方，包含 legend 和坐标网格。
-- 孕期视图包含孕期日记、今日待办等下一步操作。
+- 孕期视图不再包含已退役的“下一步/补写孕期日记/今日待办”操作。
 - 底部导航 active 在 `宝宝和我`。
 
 关键 UX：
@@ -290,8 +290,8 @@ flutter_app/test/goldens/agent_hub/
 原因：
 
 - 旧 Web `/records` 是早期 mock 数据页面，已不属于 active legacy reference capture。
-- Flutter `/records` 仍保留为产品页面，但其测试目标改为 Flutter-owned regression golden 和 API/交互 widget tests。
-- 后续 Records 视觉评审应基于 Flutter 产品规格、接口数据和移动端交互，而不是旧 Web mock 截图。
+- Flutter `/records` UI 路由已退役；仅保留 records API/repository 契约测试。
+- 后续如恢复 Records 页面，需要重新建立 Flutter 产品规格，而不是复用旧 Web mock 截图。
 
 ### 5.11 媒体查看 `/media-viewer`
 
@@ -386,7 +386,6 @@ device_user_page_mobile.png
 w1_page_mobile.png
 pump_page_mobile.png
 calibration_page_mobile.png
-records_page_mobile.png
 media_viewer_page_mobile.png
 ibclc_page_mobile.png
 hospital_bag_page_mobile.png

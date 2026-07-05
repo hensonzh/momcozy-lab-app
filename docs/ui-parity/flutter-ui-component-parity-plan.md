@@ -75,7 +75,6 @@ Recommended files:
 | Test file | Scope |
 |---|---|
 | `status_component_parity_golden_test.dart` | Status identity cards, module cards, trend card/painter. |
-| `records_component_parity_golden_test.dart` | Flutter-owned Records dashboard, trend chart, milk rows regression guard. |
 | `hospital_bag_component_parity_golden_test.dart` | Product rows, section headers, fixed checkout footer. |
 | `schedule_component_parity_golden_test.dart` | Week strip, plan summary, Agent context card, empty/task blocks. |
 | `pump_component_parity_golden_test.dart` | Calibration prompt modal, pump control groups, blurred backdrop. |
@@ -222,25 +221,7 @@ Commit order:
 
 ### 6.2 妈妈点滴 `/records`
 
-Legacy Web `/records` has been retired from the active reference capture because
-it was a mock-data early page. These component goldens now protect the Flutter
-Records implementation itself, not a legacy Web screenshot.
-
-Components:
-
-| Component | Test file | Initial target | Notes |
-|---|---|---|---|
-| Month header | `records_component_parity_golden_test.dart` | stable | Already improved; guard against regression. |
-| Dashboard mini stats | `records_component_parity_golden_test.dart` | reduce dashboard diff | Icon and label treatment differs. |
-| Records trend painter | `records_component_parity_golden_test.dart` | reduce chart diff | Chart geometry already close; focus icon/text/axis painter. |
-| M.ai insight row | `records_component_parity_golden_test.dart` | stable | Already improved; guard. |
-| Milk record row | `records_component_parity_golden_test.dart` | reduce row diff | Badge/icon style differs from Web. |
-
-Commit order:
-
-1. dashboard/stat cards,
-2. trend painter,
-3. milk rows.
+已退役为 Flutter UI 路由；component parity 不再捕获 Records 页面。底层 records repository/API contract 仍由 `test/features/records/` 和 staging smoke 覆盖，不作为可见页面或状态页跳转目标。
 
 ### 6.3 待产包 `/hospital-bag-cart`
 
