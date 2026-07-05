@@ -330,6 +330,75 @@ void main() {
     expect(client.requests.single.images, isEmpty);
   });
 
+  testWidgets('Agent Hub restores draft and image attachment by cache key', (
+    tester,
+  ) async {
+    final cacheKey = Object();
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'retained-across-tab.png',
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '跨模块回来继续问',
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(_host(const SizedBox.shrink()));
+    await tester.pumpAndSettle();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'retained-across-tab.png',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '跨模块回来继续问',
+    );
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+    expect(find.text('图片 1'), findsOneWidget);
+  });
+
   testWidgets('Agent Hub sends image-only request with legacy prompt', (
     tester,
   ) async {
