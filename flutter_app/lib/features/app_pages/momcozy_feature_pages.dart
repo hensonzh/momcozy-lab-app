@@ -2966,7 +2966,11 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   void _startEditTask(ScheduleTask task, int index) {
     final key = _taskScopedKey(task, index);
-    if (_taskDone(task, index) || _taskSkipped(task, index)) return;
+    if (!_isSelectedToday ||
+        _taskDone(task, index) ||
+        _taskSkipped(task, index)) {
+      return;
+    }
     setState(() {
       _editingTaskKey = key;
       _editingTaskTime = _nullableTimeLabel(_effectiveRemindAt(task, index));
