@@ -346,14 +346,14 @@ void main() {
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
-      expect(find.text('待记录'), findsOneWidget);
+      expect(find.text('待记录'), findsNWidgets(3));
 
-      await _scrollToText(tester, '记录成长事件');
-      await tester.tap(find.text('记录成长事件').first);
+      await _scrollToText(tester, '修改指标');
+      await tester.tap(find.text('修改指标').first);
       await tester.pumpAndSettle();
 
       expect(find.text('已添加'), findsOneWidget);
-      expect(find.text('已记录'), findsOneWidget);
+      expect(find.text('待记录'), findsNWidgets(3));
       expect(find.text('成长记录已添加'), findsNothing);
     });
 
@@ -459,8 +459,9 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('1/3'), findsOneWidget);
-      await _scrollToText(tester, '10:30 泵奶');
-      expect(find.text('10:30 泵奶'), findsOneWidget);
+      expect(find.text('7月3日 稳奶计划'), findsOneWidget);
+      expect(find.text('未来的计划'), findsOneWidget);
+      expect(find.text('10:30 泵奶'), findsNothing);
       await _scrollToText(tester, '14:00 喂养');
       expect(find.text('14:00 喂养'), findsWidgets);
       expect(_checkboxesWithValue(tester, true), 1);
@@ -515,8 +516,9 @@ void main() {
 
       expect(transport.lastQuery, containsPair('task_date', '2026-07-03'));
 
-      await _scrollToText(tester, '10:30 泵奶');
-      expect(find.text('10:30 泵奶'), findsOneWidget);
+      expect(find.text('7月3日 稳奶计划'), findsOneWidget);
+      expect(find.text('未来的计划'), findsOneWidget);
+      expect(find.text('10:30 泵奶'), findsNothing);
 
       expect(find.text('泵奶提醒'), findsNothing);
       expect(find.text('每日摘要'), findsNothing);
