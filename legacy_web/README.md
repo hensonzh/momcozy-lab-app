@@ -8,13 +8,17 @@ It remains useful for:
 - current Web/Capacitor rollback packaging,
 - historical API, storage, route, and native bridge behavior checks.
 
-Run common commands from the repository root:
+Install and run the legacy Web toolchain from this directory:
 
 ```bash
+cd legacy_web
+npm install
 npm run dev
 npm run build
 npm test
 ```
+
+The repository root keeps forwarding scripts such as `npm run dev/build/test`, but the legacy Web Node dependencies and lockfile are owned by this directory.
 
 Run legacy Capacitor sync from this directory after building:
 

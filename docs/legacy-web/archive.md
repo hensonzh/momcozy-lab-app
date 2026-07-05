@@ -16,6 +16,7 @@ legacy_web/
 | `legacy_web/android/` | 旧 Capacitor Android 工程和原生插件。 |
 | `legacy_web/public/` | 旧 Web 静态资源。 |
 | `legacy_web/patches/` | 旧 Capacitor 依赖补丁。 |
+| `legacy_web/package.json` / `package-lock.json` | 旧 Web React/Vite/Capacitor 依赖、脚本和锁文件。 |
 | `legacy_web/vite.config.ts` | 旧 Web Vite 开发和构建配置。 |
 | `legacy_web/vitest.config.ts` | 旧 Web Vitest 配置。 |
 | `legacy_web/tailwind.config.ts` | 旧 Web Tailwind 配置。 |
@@ -26,7 +27,7 @@ legacy_web/
 flutter_app/
 ```
 
-根目录 `package.json` 仍保留 `npm run dev/build/test`，这些命令现在显式指向 `legacy_web/`，用于旧 Web 调试、UI parity 基线和回滚包生成。
+根目录 `package.json` 只保留迁移期转发命令；旧 Web 的依赖和 lockfile 归 `legacy_web/` 所有。`npm run dev/build/test` 会转发到 `legacy_web/`，用于旧 Web 调试、UI parity 基线和回滚包生成。
 
 ## Flutter 对旧 Web 的依赖结论
 
