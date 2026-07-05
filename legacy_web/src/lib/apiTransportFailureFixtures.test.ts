@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-const API_FIXTURE_ROOT = path.join(process.cwd(), "test/fixtures/api");
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+const API_FIXTURE_ROOT = path.join(repoRoot, "test/fixtures/api");
 
 const REQUIRED_TRANSPORT_FAILURE_FIXTURES = [
   "media/upload_cancelled.json",

@@ -10,6 +10,8 @@ scripts/       Flutter 迁移 gate、UI parity、回滚包和审计脚本
 test/          UI parity 截图与报告
 ```
 
+根目录 `package.json` 只保留 Flutter 迁移和 UI parity 的轻量脚本。旧 Web 的 React/Vite/Capacitor 依赖和 lockfile 已归入 `legacy_web/`。
+
 ## 新版 Flutter
 
 首次检查本地 Flutter 工具链：
@@ -32,16 +34,25 @@ npm run flutter:release-gate
 
 ## 旧版 Web
 
-旧版实现已归档到 `legacy_web/`，但根目录仍保留常用 npm 命令：
+旧版实现已归档到 `legacy_web/`，旧 Web 依赖需要在该目录安装：
 
 ```bash
+cd legacy_web
 npm install
 npm run dev
 npm run build
 npm test
 ```
 
-其中 `npm run dev/build/test` 会使用 `legacy_web/vite.config.ts` 和 `legacy_web/vitest.config.ts`。
+根目录仍保留转发命令，便于迁移 gate 和旧 UI 基线复用：
+
+```bash
+npm run dev
+npm run build
+npm test
+```
+
+这些命令会转发到 `legacy_web/` 下的对应脚本。
 
 如需同步旧 Capacitor Android 工程：
 

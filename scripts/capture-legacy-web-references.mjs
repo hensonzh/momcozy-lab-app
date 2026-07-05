@@ -171,7 +171,7 @@ function startViteServer() {
       env: {
         ...process.env,
         BROWSER: "none",
-        PATH: `${path.join(repoRoot, "node_modules", ".bin")}${path.delimiter}${process.env.PATH || ""}`,
+        PATH: `${path.join(legacyWebRoot, "node_modules", ".bin")}${path.delimiter}${process.env.PATH || ""}`,
         VITE_API_BASE_URL:
           process.env.VITE_API_BASE_URL || "http://127.0.0.1:8769",
       },

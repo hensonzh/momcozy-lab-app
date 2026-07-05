@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   buildAck,
@@ -72,14 +74,17 @@ const parsers = {
 
 type ParserName = keyof typeof parsers;
 
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+const fixtureRoot = path.join(repoRoot, "test/fixtures/ble");
+
 const readFixture = <T,>(filename: string): T => {
   return JSON.parse(
-    fs.readFileSync(`${process.cwd()}/test/fixtures/ble/${filename}`, "utf8")
+    fs.readFileSync(path.join(fixtureRoot, filename), "utf8")
   ) as T;
 };
 
 const readTextFixture = (filename: string): string => {
-  return fs.readFileSync(`${process.cwd()}/test/fixtures/ble/${filename}`, "utf8").trim();
+  return fs.readFileSync(path.join(fixtureRoot, filename), "utf8").trim();
 };
 
 const toHex = (bytes: Uint8Array): string =>
