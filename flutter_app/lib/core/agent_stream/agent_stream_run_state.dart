@@ -266,6 +266,43 @@ class AgentStreamRunState {
       cancelStatusCode: cancelStatusCode ?? this.cancelStatusCode,
     );
   }
+
+  Map<String, Object?> toMap() => {
+    'phase': phase.name,
+    if (events.isNotEmpty)
+      'events': events.map((event) => event.raw).toList(growable: false),
+    if (_hasValue(threadId)) 'threadId': threadId,
+    if (_hasValue(runId)) 'runId': runId,
+    if (_hasValue(messageId)) 'messageId': messageId,
+    if (textContent.isNotEmpty) 'textContent': textContent,
+    if (provisionalTextContent.isNotEmpty)
+      'provisionalTextContent': provisionalTextContent,
+    if (lastSequence != null) 'lastSequence': lastSequence,
+    if (_hasValue(errorMessage)) 'errorMessage': errorMessage,
+    if (cancelAcknowledged) 'cancelAcknowledged': cancelAcknowledged,
+    if (cancelStatusCode != null) 'cancelStatusCode': cancelStatusCode,
+  };
+
+  static AgentStreamRunState fromMap(Map<String, Object?> map) {
+    final events = _eventsFromRawList(map['events']);
+    return AgentStreamRunState(
+      phase: _phaseFromName(_string(map['phase'])),
+      events: events,
+      threadId: _string(map['threadId']) ?? _string(map['thread_id']),
+      runId: _string(map['runId']) ?? _string(map['run_id']),
+      messageId: _string(map['messageId']) ?? _string(map['message_id']),
+      textContent: _string(map['textContent']) ?? '',
+      provisionalTextContent: _string(map['provisionalTextContent']) ?? '',
+      toolEvents: _indexedEvents(events, (event) => event.toolCallId),
+      artifactEvents: _indexedEvents(events, (event) => event.artifactId),
+      actionEvents: _indexedEvents(events, (event) => event.actionId),
+      lastSequence: _int(map['lastSequence']) ?? _int(map['last_sequence']),
+      errorMessage: _string(map['errorMessage']) ?? _string(map['error']),
+      cancelAcknowledged: map['cancelAcknowledged'] == true,
+      cancelStatusCode:
+          _int(map['cancelStatusCode']) ?? _int(map['cancel_status_code']),
+    );
+  }
 }
 
 Map<String, AgentStreamEvent> _nextIndexedEvents(
@@ -291,4 +328,44 @@ String? _stringifyError(Object? error) {
   if (error == null) return null;
   if (error is String) return error;
   return error.toString();
+}
+
+bool _hasValue(String? value) => value != null && value.trim().isNotEmpty;
+
+String? _string(Object? value) => value is String ? value : null;
+
+int? _int(Object? value) {
+  if (value is int) return value;
+  if (value is String) return int.tryParse(value.trim());
+  return null;
+}
+
+AgentStreamRunPhase _phaseFromName(String? value) {
+  for (final phase in AgentStreamRunPhase.values) {
+    if (phase.name == value) return phase;
+  }
+  return AgentStreamRunPhase.idle;
+}
+
+List<AgentStreamEvent> _eventsFromRawList(Object? rawEvents) {
+  if (rawEvents is! List) return const <AgentStreamEvent>[];
+  final events = <AgentStreamEvent>[];
+  for (final rawEvent in rawEvents) {
+    if (rawEvent is Map) {
+      events.add(AgentStreamEvent(Map<String, Object?>.from(rawEvent)));
+    }
+  }
+  return List<AgentStreamEvent>.unmodifiable(events);
+}
+
+Map<String, AgentStreamEvent> _indexedEvents(
+  List<AgentStreamEvent> events,
+  String? Function(AgentStreamEvent event) keyOf,
+) {
+  final indexed = <String, AgentStreamEvent>{};
+  for (final event in events) {
+    final key = keyOf(event)?.trim();
+    if (key != null && key.isNotEmpty) indexed[key] = event;
+  }
+  return Map<String, AgentStreamEvent>.unmodifiable(indexed);
 }

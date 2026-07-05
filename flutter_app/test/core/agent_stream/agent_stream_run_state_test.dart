@@ -380,5 +380,44 @@ void main() {
       expect(state.cancelStatusCode, 404);
       expect(state.errorMessage, isNull);
     });
+
+    test('serializes and restores stable replay state', () {
+      var state = const AgentStreamRunState().start();
+      final events = [
+        const {
+          'event_id': 'evt-action-1',
+          'type': 'action.confirmation_required',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'action_id': 'action-1',
+          'sequence': 2,
+          'payload': {
+            'summary': '创建支持工单',
+            'preview_payload': {'title': '提交人工支持'},
+          },
+        },
+        const {
+          'event_id': 'evt-wait-1',
+          'type': 'run.waiting_for_confirmation',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'sequence': 3,
+        },
+      ].map(AgentStreamEvent.new);
+
+      for (final event in events) {
+        state = state.applyEvent(event);
+      }
+
+      final restored = AgentStreamRunState.fromMap(state.toMap());
+
+      expect(restored.phase, AgentStreamRunPhase.waitingForConfirmation);
+      expect(restored.threadId, 'thread-action');
+      expect(restored.runId, 'run-action');
+      expect(restored.lastSequence, 3);
+      expect(restored.events.length, 2);
+      expect(restored.actionEvents, contains('action-1'));
+      expect(restored.applyEvent(events.last).events.length, 2);
+    });
   });
 }
