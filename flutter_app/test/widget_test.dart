@@ -19,7 +19,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-    expect(find.text('智能体'), findsWidgets);
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
@@ -32,11 +32,11 @@ void main() {
     );
     expect(sendButton.onPressed, isNotNull);
 
-    await tester.tap(find.text('设备').last);
+    await tester.tap(find.text('计划').last);
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('route-page-/device')), findsOneWidget);
-    expect(find.text('设备'), findsWidgets);
+    expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
+    expect(find.text('计划'), findsWidgets);
   });
 
   testWidgets('route shell hides bottom navigation on focused flows', (
@@ -48,7 +48,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(MomCozyBottomNavigation), findsNothing);
+
+    for (final route in const [
+      '/calibration',
+      '/hospital-bag-cart',
+      '/ibclc-chat.html',
+      '/media-viewer',
+    ]) {
+      router.go(route);
+      await tester.pumpAndSettle();
+      expect(find.byKey(ValueKey('route-page-$route')), findsOneWidget);
+      expect(find.byType(MomCozyBottomNavigation), findsNothing);
+    }
   });
 
   testWidgets('route shell renders recoverable not found route', (
@@ -60,8 +72,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/404')), findsOneWidget);
-    expect(find.text('页面未找到'), findsOneWidget);
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.text('Oops! Page not found'), findsOneWidget);
+    expect(find.byType(MomCozyBottomNavigation), findsOneWidget);
   });
 
   testWidgets('route shell opens media viewer from Agent artifact action', (
@@ -88,7 +100,7 @@ void main() {
       find.byKey(const ValueKey('route-page-/media-viewer')),
       findsOneWidget,
     );
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(MomCozyBottomNavigation), findsNothing);
   });
 
   testWidgets('route shell consumes pending native route on startup', (
@@ -106,7 +118,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(MomCozyBottomNavigation), findsNothing);
 
     await routes.dispose();
   });
@@ -154,7 +166,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(MomCozyBottomNavigation), findsOneWidget);
 
     await routes.dispose();
   });

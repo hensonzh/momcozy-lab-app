@@ -1,0 +1,132 @@
+{
+  "source": "legacy-web",
+  "command": "npm run ui:legacy-reference",
+  "baseUrl": "http://127.0.0.1:4187",
+  "fixedNowIso": "2026-07-03T09:00:00+08:00",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "routes": [
+    {
+      "id": "agent_hub",
+      "path": "/",
+      "file": "agent_hub.png",
+      "sha256": "df671a1c7314721bb936b4fb0bc35da0e3fc8bfae02ec0d5b921aeed34d3c4ca",
+      "bytes": 38072,
+      "consoleErrorCount": 5
+    },
+    {
+      "id": "status",
+      "path": "/status",
+      "file": "status.png",
+      "sha256": "fb4f5c96799dfb39de974214219e88b0d85ebd8664315a19a7ae308a7ef796b7",
+      "bytes": 138548,
+      "consoleErrorCount": 10
+    },
+    {
+      "id": "schedule",
+      "path": "/schedule",
+      "file": "schedule.png",
+      "sha256": "8721cde9e3cbba75741b9e2204d57b7bb088427413d94cd8bbd8c8b074143a0b",
+      "bytes": 74702,
+      "consoleErrorCount": 6
+    },
+    {
+      "id": "device",
+      "path": "/device",
+      "file": "device.png",
+      "sha256": "050ecdcdface3efa3450f4bc7f6a7aa093bdc2d3e7a011f2eea93eb52ebca24a",
+      "bytes": 45157,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "device_manage",
+      "path": "/device/manage",
+      "file": "device_manage.png",
+      "sha256": "74fbc80301395846dcae71fc249566d27749ed7d460b6776d0a81443a9cb4d80",
+      "bytes": 41751,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "device_user",
+      "path": "/device/user",
+      "file": "device_user.png",
+      "sha256": "34846ced802f896e92093da6e78efae152109685ddca891830234cc805b715ae",
+      "bytes": 38009,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "w1",
+      "path": "/w1",
+      "file": "w1.png",
+      "sha256": "507dcd6fe7cecbbbaa1acce2003a058322453b6ec4235bc881a504947d1d37dd",
+      "bytes": 127954,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "hospital_bag_cart",
+      "path": "/hospital-bag-cart",
+      "file": "hospital_bag_cart.png",
+      "sha256": "6ec5158c5c344eb05af8200be4952e2a35c5f84f3b82b5bf1b4b2fedaca91037",
+      "bytes": 114685,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "ibclc_chat",
+      "path": "/ibclc-chat.html",
+      "file": "ibclc_chat.png",
+      "sha256": "71a1c6b179c29325514727f362d5485d510493cf6c2c9e928599749376e4fd25",
+      "bytes": 34274,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "media_viewer",
+      "path": "/media-viewer",
+      "file": "media_viewer.png",
+      "sha256": "859174850ecb9982deceea3f52e0d8767a65f75b160a3fb3c748fa48c25b5ef6",
+      "bytes": 9256,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "pump",
+      "path": "/pump",
+      "file": "pump.png",
+      "sha256": "2882b21f8191fc40bbf4b7035964bec2db2cca2e4918a902b80d08eb97256716",
+      "bytes": 88085,
+      "consoleErrorCount": 2
+    },
+    {
+      "id": "calibration",
+      "path": "/calibration",
+      "file": "calibration.png",
+      "sha256": "2837f286d02365ab6cc2b57f7f633c3356cfa6c021892bbb9803ee347cc2f364",
+      "bytes": 30884,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "records",
+      "path": "/records",
+      "file": "records.png",
+      "sha256": "036701a9c4732996d244446be87131980309188f314144cbbe0d0364931d7cf1",
+      "bytes": 81328,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "community",
+      "path": "/community",
+      "file": "community.png",
+      "sha256": "530c351b2efcbf9813fa25ec7099d701e77549177a8e09525ebbd6efc696a5be",
+      "bytes": 41494,
+      "consoleErrorCount": 0
+    },
+    {
+      "id": "not_found",
+      "path": "/__reference_not_found__",
+      "file": "not_found.png",
+      "sha256": "bafc2defde4887a324edf36b2ccb16b7aae24647b8f52864caeff0e65ee921f0",
+      "bytes": 23931,
+      "consoleErrorCount": 1
+    }
+  ]
+}
