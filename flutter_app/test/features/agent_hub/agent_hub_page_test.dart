@@ -66,6 +66,11 @@ void main() {
               content: '我建议你先观察舒适度和间隔。',
             ),
           ],
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'staged-before-new-session.png',
+          ),
           onNewSession: () => newSessionStarted = true,
         ),
       ),
@@ -81,6 +86,15 @@ void main() {
       '开始新的问题',
     );
     await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
     await tester.pump();
@@ -88,6 +102,11 @@ void main() {
     expect(newSessionStarted, isTrue);
     expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
     expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsNothing,
+    );
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
