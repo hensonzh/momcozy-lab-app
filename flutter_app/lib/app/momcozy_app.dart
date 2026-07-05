@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -692,6 +693,15 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
     const [28, 27, 27, 18],
   );
   int _wakeReplayCount = 0;
+  Uint8List? _wakeGifBytes;
+  late final Future<Uint8List> _wakeGifSourceBytes =
+      _loadAgentWakeGifSourceBytes();
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_wakeGifSourceBytes);
+  }
 
   Animation<double> _wakeTween(List<double> values, List<double> weights) {
     assert(values.length == weights.length + 1);
@@ -711,7 +721,7 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
   void didUpdateWidget(covariant _MomCozyAgentNavTab oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.selected && !oldWidget.selected) {
-      _playWakeAnimation();
+      unawaited(_playWakeAnimation());
     }
   }
 
@@ -721,9 +731,12 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
     super.dispose();
   }
 
-  void _playWakeAnimation() {
+  Future<void> _playWakeAnimation() async {
+    final sourceBytes = await _wakeGifSourceBytes;
+    if (!mounted) return;
     setState(() {
       _wakeReplayCount += 1;
+      _wakeGifBytes = Uint8List.fromList(sourceBytes);
     });
     _wakeController.forward(from: 0);
   }
@@ -893,10 +906,7 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
                                             image: AssetImage(
-                                              widget.selected
-                                                  ? MomCozyAssets
-                                                        .agentAwakenAvatar
-                                                  : MomCozyAssets.agentAvatar,
+                                              MomCozyAssets.agentAvatar,
                                             ),
                                             fit: BoxFit.cover,
                                           ),
@@ -909,10 +919,10 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
                                           ],
                                         ),
                                       ),
-                                      if (waking)
+                                      if (waking && _wakeGifBytes != null)
                                         ClipOval(
-                                          child: Image.asset(
-                                            MomCozyAssets.agentAwakenAvatar,
+                                          child: Image.memory(
+                                            _wakeGifBytes!,
                                             key: ValueKey(
                                               'bottom-nav-agent-avatar-wake-media-$_wakeReplayCount',
                                             ),
@@ -940,6 +950,13 @@ class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
       ),
     );
   }
+}
+
+Future<Uint8List> _loadAgentWakeGifSourceBytes() async {
+  final data = await rootBundle.load(MomCozyAssets.agentAwakenAvatar);
+  return Uint8List.fromList(
+    data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+  );
 }
 
 double _degreesToRadians(double degrees) => degrees * 3.141592653589793 / 180;
