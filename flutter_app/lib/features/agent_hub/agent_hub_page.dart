@@ -1537,7 +1537,7 @@ class AgentComposerBar extends StatelessWidget {
       fontFamily: MomCozyTypography.fontFamily,
       fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
       fontSize: 14,
-      height: 1.32,
+      height: 1.5,
     );
 
     return Padding(
@@ -1748,7 +1748,7 @@ class AgentComposerBar extends StatelessWidget {
                             fontFamilyFallback:
                                 MomCozyTypography.fontFamilyFallback,
                             fontSize: 14,
-                            height: 1.32,
+                            height: 1.5,
                             color: MomCozyColors.mutedForeground.withValues(
                               alpha: 0.82,
                             ),
@@ -1776,10 +1776,12 @@ class AgentComposerBar extends StatelessWidget {
                     ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                    padding: shouldExpand
+                        ? const EdgeInsets.fromLTRB(12, 10, 14, 8)
+                        : const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                     child: shouldExpand
                         ? Column(
                             mainAxisSize: MainAxisSize.min,
