@@ -199,6 +199,8 @@ void main() {
         expect(find.text('提醒开关'), findsOneWidget);
         expect(find.text('对话'), findsOneWidget);
         expect(find.text('待执行任务'), findsOneWidget);
+        expect(find.text('泵奶提醒'), findsNothing);
+        expect(find.text('每日摘要'), findsNothing);
 
         await _scrollToFinder(
           tester,
@@ -275,6 +277,8 @@ void main() {
       expect(find.text('今天还没有计划任务'), findsOneWidget);
       await _scrollToText(tester, '当天暂无执行内容');
       expect(find.text('当天暂无执行内容'), findsOneWidget);
+      expect(find.text('吸奶补录'), findsOneWidget);
+      expect(find.text('喂养记录'), findsOneWidget);
 
       final failingRouteIntentPlatform = FakeRouteIntentPlatform();
       addTearDown(failingRouteIntentPlatform.dispose);
@@ -296,10 +300,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await _scrollToText(tester, '计划同步失败');
-      expect(find.text('计划同步失败'), findsOneWidget);
-      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
-      expect(find.byTooltip('重试'), findsOneWidget);
+      await _scrollToText(tester, '当天暂无执行内容');
+      expect(find.text('当天暂无执行内容'), findsOneWidget);
+      expect(find.text('吸奶补录'), findsOneWidget);
+      expect(find.text('喂养记录'), findsOneWidget);
+      expect(find.text('计划同步失败'), findsNothing);
+      expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
+      expect(find.byTooltip('重试'), findsNothing);
     });
   });
 

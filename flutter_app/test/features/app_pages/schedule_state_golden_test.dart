@@ -42,39 +42,36 @@ const _scheduleStates = [
     label: 'populated plan',
     fileName: 'schedule_populated_plan_mobile.png',
     response: {
-      'status': 200,
-      'data': {
-        'tasks': [
-          {
-            'id': 'pump-morning',
-            'title': '10:30 泵奶',
-            'completed': true,
-            'remind_at': '2026-07-03T02:30:00Z',
-          },
-          {
-            'id': 'feeding-afternoon',
-            'title': '14:00 喂养',
-            'completed': false,
-            'remind_at': '2026-07-03T06:00:00Z',
-          },
-          {
-            'id': 'summary-evening',
-            'title': '20:30 晚间复盘',
-            'completed': false,
-            'remind_at': '2026-07-03T12:30:00Z',
-          },
-        ],
-      },
+      'items': [
+        {
+          'id': 'pump-morning',
+          'title': '泵奶',
+          'task_date': '2026-07-03',
+          'task_time': '10:30',
+          'status': 'completed',
+        },
+        {
+          'id': 'feeding-afternoon',
+          'title': '喂养',
+          'task_date': '2026-07-03',
+          'task_time': '14:00',
+          'status': 'pending',
+        },
+        {
+          'id': 'summary-evening',
+          'title': '晚间复盘',
+          'task_date': '2026-07-03',
+          'task_time': '20:30',
+          'status': 'pending',
+        },
+      ],
     },
-    expectedText: '14:00 喂养',
+    expectedText: '待执行任务',
   ),
   _ScheduleGoldenState(
     label: 'local task added',
     fileName: 'schedule_local_task_added_mobile.png',
-    response: {
-      'status': 200,
-      'data': {'tasks': <Object?>[]},
-    },
+    response: {'items': <Object?>[]},
     expectedText: '本地补充 1',
     interact: _addLocalTask,
   ),

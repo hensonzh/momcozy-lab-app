@@ -33,7 +33,7 @@ flutter_app/test/features/app_pages/status_schedule_agent_legacy_widget_parity_t
 | 今日任务工具栏 | `schedule-list-toolbar`、`schedule-task-help-button`、调整日程、添加任务 |
 | 任务说明弹窗 | `schedule-task-explanation-dialog` |
 | 任务行操作 | checkbox 完成态、删除 tooltip、本地新增任务文案 |
-| 空态 / 失败态 | `0/0`、今天还没有计划任务、当天暂无执行内容、计划同步失败 |
+| 空态 / 失败态 | `0/0`、今天还没有计划任务、当天暂无执行内容、吸奶补录、喂养记录；计划同步失败不进用户首屏 |
 | 底部导航当前项 | `bottom-nav-schedule`，中心 `bottom-nav-agent` |
 
 ## 智能体主页 `/`

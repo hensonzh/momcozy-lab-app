@@ -190,8 +190,8 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pump();
       expect(find.text('稳奶计划执行中'), findsOneWidget);
-      await _scrollToText(tester, '泵奶提醒');
-      expect(find.text('泵奶提醒'), findsOneWidget);
+      expect(find.text('泵奶提醒'), findsNothing);
+      expect(find.text('每日摘要'), findsNothing);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/device')));
       await tester.pump();
@@ -518,12 +518,9 @@ void main() {
       await _scrollToText(tester, '10:30 泵奶');
       expect(find.text('10:30 泵奶'), findsOneWidget);
 
-      await _scrollToText(tester, '泵奶提醒');
-      final enabledReminderSwitches = _switchesWithValue(tester, true);
-      expect(enabledReminderSwitches, greaterThanOrEqualTo(1));
-      await tester.tap(find.byType(Switch).first);
-      await tester.pump();
-      expect(_switchesWithValue(tester, true), enabledReminderSwitches - 1);
+      expect(find.text('泵奶提醒'), findsNothing);
+      expect(find.text('每日摘要'), findsNothing);
+      expect(find.byType(Switch), findsNothing);
     });
 
     testWidgets('schedule page adds deletes local tasks and shows badge', (
@@ -601,6 +598,12 @@ void main() {
       expect(find.text('今天还没有计划任务'), findsOneWidget);
       await _scrollToText(tester, '当天暂无执行内容');
       expect(find.text('当天暂无执行内容'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-empty-quick-actions')),
+        findsOneWidget,
+      );
+      expect(find.text('吸奶补录'), findsOneWidget);
+      expect(find.text('喂养记录'), findsOneWidget);
 
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -615,9 +618,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await _scrollToText(tester, '计划同步失败');
-      expect(find.text('计划同步失败'), findsOneWidget);
-      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
+      await _scrollToText(tester, '当天暂无执行内容');
+      expect(find.text('当天暂无执行内容'), findsOneWidget);
+      expect(find.text('吸奶补录'), findsOneWidget);
+      expect(find.text('喂养记录'), findsOneWidget);
+      expect(find.text('计划同步失败'), findsNothing);
+      expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
+      expect(find.byTooltip('重试'), findsNothing);
     });
 
     testWidgets('pump page uploads workstate through runtime repository', (
@@ -1687,13 +1694,6 @@ int _checkboxesWithValue(WidgetTester tester, bool value) {
   return tester
       .widgetList<Checkbox>(find.byType(Checkbox))
       .where((checkbox) => checkbox.value == value)
-      .length;
-}
-
-int _switchesWithValue(WidgetTester tester, bool value) {
-  return tester
-      .widgetList<Switch>(find.byType(Switch))
-      .where((switchWidget) => switchWidget.value == value)
       .length;
 }
 
