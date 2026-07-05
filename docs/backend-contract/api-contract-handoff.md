@@ -48,10 +48,40 @@ Stream URLs do not accept access tokens as query parameters. Clients must send
 the bearer token in headers. Events are application-level runtime events, not
 provider raw events.
 
+AG-UI is not a production compatibility target. The legacy `/api/ag-ui`,
+`/api/ag-ui-ws`, prewarm, and WebSocket bridge contracts are replaced by the
+typed run/event APIs above. Flutter/Web clients should implement a MomCozy
+application-event reducer instead of an AG-UI adapter.
+
 The SSE stream replays persisted events by default. Clients that need live
 consumption can pass `follow=true` with bounded `poll_interval_seconds` and
-`max_wait_seconds`; the backend still emits only persisted application events
-and exits when a terminal run event is observed or the wait budget expires.
+`max_wait_seconds`. Persisted events are the source of truth and carry a
+monotonic `sequence` for replay.
+
+In live follow mode, the backend may also emit transient `message.delta`
+application events from Redis for token-level typing UI. These events are not
+provider raw events, are not persisted to Postgres, and do not carry a
+`sequence`; their SSE id is `delta:<redis-stream-id>` and their payload includes
+`transient: true` plus a Redis `cursor`. Clients must treat them as provisional:
+they can be replayed within the short Redis TTL or lost after disconnect.
+The final assistant content is authoritative only after the persisted assistant
+`message.completed` event is available; that event includes
+`payload.message_id`, `payload.role=assistant`, and `payload.text`.
+
+A client reducer is the deterministic function that folds an ordered event
+stream into visible UI state:
+
+```text
+previous AgentChatState + AgentEvent -> next AgentChatState
+```
+
+It deduplicates by `event_id` or `sequence`, merges message updates by
+`message_id`, tool updates by `tool_call_id`, artifacts by `artifact_id`, and
+action cards by `action_id`. Transient `message.delta` events should update only
+the provisional streaming buffer and must be replaced by the persisted assistant
+`message.completed` payload. The reducer must not infer state from
+natural-language assistant text, provider raw events, or legacy AG-UI event
+names.
 
 ## Agent Action Events
 
@@ -66,11 +96,22 @@ clients can merge replayed events into the same action card. `apply_payload` is
 never streamed; it is only persisted inside the server-side action/outbox apply
 path.
 
+Action API responses likewise expose preview/status metadata only. They do not
+return server-side `apply_payload` or action idempotency keys.
+
 ## Files
 
 File upload uses multipart form data at `POST /v1/files/upload`. File metadata
 is owner-scoped and object bytes are stored through the configured object
 storage provider.
+
+## Product Assets
+
+Legacy `/skill-assets/...` and `/images/Air_img/...` paths are retired. Product
+assets are served through `GET /v1/assets` and `GET /v1/assets/{asset_id}` using
+allowlisted manifest asset ids. Asset bytes live in the configured object
+storage provider; clients never construct URLs from local skill directory names,
+filesystem paths, or object-storage keys.
 
 ## Voice
 
@@ -88,6 +129,13 @@ envelope with `code=voice_provider_disabled` and status `503`. The WebSocket
 accepts authenticated clients, sends an `error` frame with the same code, and
 then closes. `VOICE_PROVIDER=local_stub` exists only for local/test contract
 checks and is rejected in production startup validation.
+
+`VISION_PROVIDER=disabled` is the default stable production contract until a
+managed image analysis provider is configured. The production replacement for
+the legacy vision WebSocket is `GET /v1/files/{file_id}/vision/events/stream`;
+it requires bearer auth, verifies file ownership through current user scope, and
+never accepts tokens in URLs. Disabled provider responses use the standard error
+envelope with `code=vision_provider_disabled` and status `503`.
 
 ## Flutter Integration Rule
 

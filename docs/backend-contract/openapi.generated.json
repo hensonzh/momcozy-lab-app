@@ -99,10 +99,6 @@
             "title": "Id",
             "type": "string"
           },
-          "idempotency_key": {
-            "title": "Idempotency Key",
-            "type": "string"
-          },
           "preview_payload": {
             "additionalProperties": true,
             "title": "Preview Payload",
@@ -140,7 +136,6 @@
           "status",
           "side_effect_level",
           "preview_payload",
-          "idempotency_key",
           "error_code"
         ],
         "title": "AgentActionRead",
@@ -162,6 +157,38 @@
           }
         },
         "title": "AgentActionReject",
+        "type": "object"
+      },
+      "AgentClientEventCreate": {
+        "properties": {
+          "client_sequence": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Sequence"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          },
+          "type": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "AgentClientEventCreate",
         "type": "object"
       },
       "AgentEvalCaseCreate": {
@@ -351,6 +378,184 @@
           "payload"
         ],
         "title": "AgentEventRead",
+        "type": "object"
+      },
+      "AgentMemoryListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AgentMemoryRead"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "AgentMemoryListResponse",
+        "type": "object"
+      },
+      "AgentMemoryRead": {
+        "properties": {
+          "archived_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
+          "confidence_score": {
+            "title": "Confidence Score",
+            "type": "integer"
+          },
+          "content": {
+            "additionalProperties": true,
+            "title": "Content",
+            "type": "object"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "memory_type": {
+            "title": "Memory Type",
+            "type": "string"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "source_message_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Message Id"
+          },
+          "source_run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Run Id"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "id",
+          "owner_user_id",
+          "memory_type",
+          "status",
+          "schema_version",
+          "content",
+          "confidence_score"
+        ],
+        "title": "AgentMemoryRead",
+        "type": "object"
+      },
+      "AgentMemorySettingsRead": {
+        "properties": {
+          "memory_enabled": {
+            "title": "Memory Enabled",
+            "type": "boolean"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "owner_user_id",
+          "memory_enabled"
+        ],
+        "title": "AgentMemorySettingsRead",
+        "type": "object"
+      },
+      "AgentMemorySettingsUpdate": {
+        "properties": {
+          "memory_enabled": {
+            "title": "Memory Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "memory_enabled"
+        ],
+        "title": "AgentMemorySettingsUpdate",
         "type": "object"
       },
       "AgentReplayBundle": {
@@ -1177,6 +1382,72 @@
         "title": "GrowthRecordRead",
         "type": "object"
       },
+      "GrowthRecordUpdate": {
+        "properties": {
+          "head_cm": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Head Cm"
+          },
+          "height_cm": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height Cm"
+          },
+          "infant_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Infant Id"
+          },
+          "measured_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measured At"
+          },
+          "weight_kg": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Kg"
+          }
+        },
+        "title": "GrowthRecordUpdate",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1329,6 +1600,61 @@
           }
         },
         "title": "LogoutResponse",
+        "type": "object"
+      },
+      "MilkTrendDayRead": {
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "measured_only": {
+            "default": true,
+            "title": "Measured Only",
+            "type": "boolean"
+          },
+          "pumped_milk_volume_ml": {
+            "title": "Pumped Milk Volume Ml",
+            "type": "number"
+          },
+          "pumping_count": {
+            "title": "Pumping Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "date",
+          "pumped_milk_volume_ml",
+          "pumping_count"
+        ],
+        "title": "MilkTrendDayRead",
+        "type": "object"
+      },
+      "MilkTrendListResponse": {
+        "properties": {
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "include_today": {
+            "title": "Include Today",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MilkTrendDayRead"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "days",
+          "include_today"
+        ],
+        "title": "MilkTrendListResponse",
         "type": "object"
       },
       "NotificationListResponse": {
@@ -1801,6 +2127,84 @@
         "title": "PlanTaskRead",
         "type": "object"
       },
+      "PlanTaskUpdate": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "payload": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payload"
+          },
+          "plan_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Id"
+          },
+          "task_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Date"
+          },
+          "task_time": {
+            "anyOf": [
+              {
+                "maxLength": 16,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Time"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "PlanTaskUpdate",
+        "type": "object"
+      },
       "PregnancyDiaryEntryListResponse": {
         "properties": {
           "items": {
@@ -2021,6 +2425,66 @@
         "title": "PregnancyDiaryEntryUpdate",
         "type": "object"
       },
+      "ProductAssetListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProductAssetRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ProductAssetListResponse",
+        "type": "object"
+      },
+      "ProductAssetRead": {
+        "properties": {
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "domain",
+          "content_type",
+          "size_bytes"
+        ],
+        "title": "ProductAssetRead",
+        "type": "object"
+      },
       "PumpDeviceListResponse": {
         "properties": {
           "items": {
@@ -2131,6 +2595,118 @@
         "title": "PumpDeviceUpsert",
         "type": "object"
       },
+      "PumpEnergyTargetRead": {
+        "properties": {
+          "lower_value": {
+            "title": "Lower Value",
+            "type": "integer"
+          },
+          "upper_value": {
+            "title": "Upper Value",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "lower_value",
+          "upper_value"
+        ],
+        "title": "PumpEnergyTargetRead",
+        "type": "object"
+      },
+      "PumpHealthCreate": {
+        "properties": {
+          "device_id": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Device Id",
+            "type": "string"
+          },
+          "health_l": {
+            "maximum": 2.0,
+            "minimum": 0.0,
+            "title": "Health L",
+            "type": "integer"
+          },
+          "health_r": {
+            "maximum": 2.0,
+            "minimum": 0.0,
+            "title": "Health R",
+            "type": "integer"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "device",
+            "title": "Source"
+          }
+        },
+        "required": [
+          "device_id",
+          "occurred_at",
+          "health_l",
+          "health_r"
+        ],
+        "title": "PumpHealthCreate",
+        "type": "object"
+      },
+      "PumpHealthRead": {
+        "properties": {
+          "device_id": {
+            "title": "Device Id",
+            "type": "string"
+          },
+          "health_l": {
+            "title": "Health L",
+            "type": "integer"
+          },
+          "health_r": {
+            "title": "Health R",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "owner_user_id",
+          "device_id",
+          "occurred_at",
+          "health_l",
+          "health_r",
+          "source"
+        ],
+        "title": "PumpHealthRead",
+        "type": "object"
+      },
       "PumpTelemetryEventCreate": {
         "properties": {
           "device_id": {
@@ -2220,6 +2796,201 @@
           "payload"
         ],
         "title": "PumpTelemetryEventRead",
+        "type": "object"
+      },
+      "PumpThresholdCreate": {
+        "properties": {
+          "deep_level_l": {
+            "exclusiveMinimum": 0.0,
+            "title": "Deep Level L",
+            "type": "integer"
+          },
+          "deep_level_r": {
+            "exclusiveMinimum": 0.0,
+            "title": "Deep Level R",
+            "type": "integer"
+          },
+          "device_id": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Device Id",
+            "type": "string"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "device",
+            "title": "Source"
+          },
+          "stimulate_level_l": {
+            "exclusiveMinimum": 0.0,
+            "title": "Stimulate Level L",
+            "type": "integer"
+          },
+          "stimulate_level_r": {
+            "exclusiveMinimum": 0.0,
+            "title": "Stimulate Level R",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "device_id",
+          "occurred_at",
+          "stimulate_level_l",
+          "deep_level_l",
+          "stimulate_level_r",
+          "deep_level_r"
+        ],
+        "title": "PumpThresholdCreate",
+        "type": "object"
+      },
+      "PumpThresholdRead": {
+        "properties": {
+          "deep_level_l": {
+            "title": "Deep Level L",
+            "type": "integer"
+          },
+          "deep_level_r": {
+            "title": "Deep Level R",
+            "type": "integer"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "stimulate_level_l": {
+            "title": "Stimulate Level L",
+            "type": "integer"
+          },
+          "stimulate_level_r": {
+            "title": "Stimulate Level R",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "owner_user_id",
+          "device_id",
+          "occurred_at",
+          "stimulate_level_l",
+          "deep_level_l",
+          "stimulate_level_r",
+          "deep_level_r",
+          "source"
+        ],
+        "title": "PumpThresholdRead",
+        "type": "object"
+      },
+      "PumpWorkstateCreate": {
+        "properties": {
+          "device_id": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Device Id",
+            "type": "string"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "device",
+            "title": "Source"
+          },
+          "state": {
+            "additionalProperties": true,
+            "title": "State",
+            "type": "object"
+          }
+        },
+        "required": [
+          "device_id",
+          "occurred_at"
+        ],
+        "title": "PumpWorkstateCreate",
+        "type": "object"
+      },
+      "PumpWorkstateRead": {
+        "properties": {
+          "device_id": {
+            "title": "Device Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "owner_user_id": {
+            "format": "uuid",
+            "title": "Owner User Id",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "state": {
+            "additionalProperties": true,
+            "title": "State",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "owner_user_id",
+          "device_id",
+          "occurred_at",
+          "source",
+          "state"
+        ],
+        "title": "PumpWorkstateRead",
         "type": "object"
       },
       "PumpingRecordCreate": {
@@ -2463,6 +3234,90 @@
           }
         },
         "title": "SpeechTranscriptionResponse",
+        "type": "object"
+      },
+      "StatusPageTodayRead": {
+        "properties": {
+          "completed_task_count": {
+            "title": "Completed Task Count",
+            "type": "integer"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "feeding_count": {
+            "title": "Feeding Count",
+            "type": "integer"
+          },
+          "infant_count": {
+            "title": "Infant Count",
+            "type": "integer"
+          },
+          "pending_task_count": {
+            "title": "Pending Task Count",
+            "type": "integer"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/StatusProfileSummary"
+          },
+          "pumped_milk_volume_ml": {
+            "title": "Pumped Milk Volume Ml",
+            "type": "number"
+          },
+          "pumping_count": {
+            "title": "Pumping Count",
+            "type": "integer"
+          },
+          "task_count": {
+            "title": "Task Count",
+            "type": "integer"
+          },
+          "unread_notification_count": {
+            "title": "Unread Notification Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "date",
+          "profile",
+          "infant_count",
+          "feeding_count",
+          "pumping_count",
+          "pumped_milk_volume_ml",
+          "task_count",
+          "completed_task_count",
+          "pending_task_count",
+          "unread_notification_count"
+        ],
+        "title": "StatusPageTodayRead",
+        "type": "object"
+      },
+      "StatusProfileSummary": {
+        "properties": {
+          "daily_summary": {
+            "default": "",
+            "title": "Daily Summary",
+            "type": "string"
+          },
+          "display_name": {
+            "default": "",
+            "title": "Display Name",
+            "type": "string"
+          },
+          "feeding_advice": {
+            "default": "",
+            "title": "Feeding Advice",
+            "type": "string"
+          },
+          "lactation_advice": {
+            "default": "",
+            "title": "Lactation Advice",
+            "type": "string"
+          }
+        },
+        "title": "StatusProfileSummary",
         "type": "object"
       },
       "SupportTicketCreate": {
@@ -2855,6 +3710,45 @@
           "user_id"
         ],
         "title": "UserProfileRead",
+        "type": "object"
+      },
+      "UserProfileStatusSummaryUpdate": {
+        "properties": {
+          "daily_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Daily Summary"
+          },
+          "feeding_advice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feeding Advice"
+          },
+          "lactation_advice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lactation Advice"
+          }
+        },
+        "title": "UserProfileStatusSummaryUpdate",
         "type": "object"
       },
       "UserProfileUpdate": {
@@ -3329,6 +4223,225 @@
         ]
       }
     },
+    "/v1/agent/artifacts/{artifact_id}": {
+      "delete": {
+        "operationId": "delete_artifact_v1_agent_artifacts__artifact_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "artifact_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Artifact Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Artifact",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/v1/agent/memories": {
+      "get": {
+        "operationId": "list_memories_v1_agent_memories_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "memory_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Memory Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentMemoryListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Memories",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/v1/agent/memories/settings": {
+      "get": {
+        "operationId": "get_memory_settings_v1_agent_memories_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentMemorySettingsRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Memory Settings",
+        "tags": [
+          "agent"
+        ]
+      },
+      "put": {
+        "operationId": "update_memory_settings_v1_agent_memories_settings_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentMemorySettingsUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentMemorySettingsRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Memory Settings",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/v1/agent/memories/{memory_id}": {
+      "delete": {
+        "operationId": "delete_memory_v1_agent_memories__memory_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "memory_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Memory Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Memory",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
     "/v1/agent/runs": {
       "post": {
         "operationId": "create_run_v1_agent_runs_post",
@@ -3494,6 +4607,64 @@
           }
         ],
         "summary": "Cancel Run",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/v1/agent/runs/{run_id}/client-events": {
+      "post": {
+        "operationId": "record_client_event_v1_agent_runs__run_id__client_events_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentClientEventCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentEventRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Record Client Event",
         "tags": [
           "agent"
         ]
@@ -3815,6 +4986,91 @@
         ]
       }
     },
+    "/v1/assets": {
+      "get": {
+        "operationId": "list_product_assets_v1_assets_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductAssetListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Product Assets",
+        "tags": [
+          "assets"
+        ]
+      }
+    },
+    "/v1/assets/{asset_id}": {
+      "get": {
+        "operationId": "get_product_asset_v1_assets__asset_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "title": "Asset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Product Asset",
+        "tags": [
+          "assets"
+        ]
+      }
+    },
     "/v1/auth/login": {
       "post": {
         "operationId": "login_v1_auth_login_post",
@@ -3964,6 +5220,145 @@
         ]
       }
     },
+    "/v1/devices/pump-energy-target": {
+      "get": {
+        "operationId": "get_pump_energy_target_v1_devices_pump_energy_target_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PumpEnergyTargetRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Pump Energy Target",
+        "tags": [
+          "devices"
+        ]
+      }
+    },
+    "/v1/devices/pump-health": {
+      "post": {
+        "operationId": "create_pump_health_v1_devices_pump_health_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PumpHealthCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PumpHealthRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Pump Health",
+        "tags": [
+          "devices"
+        ]
+      }
+    },
+    "/v1/devices/pump-health/latest": {
+      "get": {
+        "operationId": "get_latest_pump_health_v1_devices_pump_health_latest_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "device_id",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "title": "Device Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PumpHealthRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Latest Pump Health",
+        "tags": [
+          "devices"
+        ]
+      }
+    },
     "/v1/devices/pump-telemetry": {
       "get": {
         "operationId": "list_pump_telemetry_v1_devices_pump_telemetry_get",
@@ -4103,6 +5498,232 @@
           }
         ],
         "summary": "Create Pump Telemetry",
+        "tags": [
+          "devices"
+        ]
+      }
+    },
+    "/v1/devices/pump-threshold": {
+      "post": {
+        "operationId": "create_pump_threshold_v1_devices_pump_threshold_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PumpThresholdCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PumpThresholdRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Pump Threshold",
+        "tags": [
+          "devices"
+        ]
+      }
+    },
+    "/v1/devices/pump-threshold/latest": {
+      "get": {
+        "operationId": "get_latest_pump_threshold_v1_devices_pump_threshold_latest_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "device_id",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "title": "Device Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PumpThresholdRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Latest Pump Threshold",
+        "tags": [
+          "devices"
+        ]
+      }
+    },
+    "/v1/devices/pump-workstate": {
+      "post": {
+        "operationId": "create_pump_workstate_v1_devices_pump_workstate_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PumpWorkstateCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PumpWorkstateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Pump Workstate",
+        "tags": [
+          "devices"
+        ]
+      }
+    },
+    "/v1/devices/pump-workstate/latest": {
+      "get": {
+        "operationId": "get_latest_pump_workstate_v1_devices_pump_workstate_latest_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "device_id",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "title": "Device Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PumpWorkstateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Latest Pump Workstate",
         "tags": [
           "devices"
         ]
@@ -4403,6 +6024,52 @@
           }
         ],
         "summary": "Get File",
+        "tags": [
+          "files"
+        ]
+      }
+    },
+    "/v1/files/{file_id}/vision/events/stream": {
+      "get": {
+        "operationId": "stream_file_vision_events_v1_files__file_id__vision_events_stream_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "file_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "File Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Stream File Vision Events",
         "tags": [
           "files"
         ]
@@ -5060,6 +6727,62 @@
         "tags": [
           "plans"
         ]
+      },
+      "patch": {
+        "operationId": "update_task_v1_plans_tasks__task_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanTaskUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanTaskRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Task",
+        "tags": [
+          "plans"
+        ]
       }
     },
     "/v1/plans/tasks/{task_id}/completion": {
@@ -5592,6 +7315,52 @@
         ]
       }
     },
+    "/v1/profile/status-summary": {
+      "put": {
+        "operationId": "update_my_status_summary_v1_profile_status_summary_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserProfileStatusSummaryUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update My Status Summary",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
     "/v1/realtime-voice-stream": {
       "get": {
         "operationId": "realtime_voice_stream_v1_realtime_voice_stream_get",
@@ -5994,6 +7763,139 @@
         "tags": [
           "records"
         ]
+      },
+      "patch": {
+        "operationId": "update_growth_v1_records_growth__record_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrowthRecordUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrowthRecordRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Growth",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/v1/records/milk-trends": {
+      "get": {
+        "operationId": "get_milk_trends_v1_records_milk_trends_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 90,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_today",
+            "required": false,
+            "schema": {
+              "default": true,
+              "title": "Include Today",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilkTrendListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Milk Trends",
+        "tags": [
+          "records"
+        ]
       }
     },
     "/v1/records/pumping": {
@@ -6226,6 +8128,61 @@
         "summary": "Transcribe Speech Chunk",
         "tags": [
           "voice"
+        ]
+      }
+    },
+    "/v1/status-page/today": {
+      "get": {
+        "operationId": "get_today_status_page_v1_status_page_today_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "day",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Day"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusPageTodayRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Today Status Page",
+        "tags": [
+          "status-page"
         ]
       }
     },
