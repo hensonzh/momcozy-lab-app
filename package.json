@@ -19,7 +19,7 @@
     "ui:parity-gate": "MOMCOZY_UI_PARITY_FAIL=1 node scripts/compare-ui-parity.mjs",
     "flutter:check": "node scripts/check-flutter-toolchain.mjs",
     "flutter:init": "node scripts/init-flutter-shell.mjs",
-    "flutter:dev": "cd flutter_app && PATH=\"$HOME/.local/share/momcozy-toolchains/flutter/bin:$PATH\" flutter run --flavor local",
+    "flutter:dev": "cd flutter_app && PATH=\"$HOME/.local/share/momcozy-toolchains/flutter/bin:$PATH\" flutter run --flavor local --dart-define=MOMCOZY_API_BASE_URL=http://10.0.2.2:8769 --dart-define=MOMCOZY_API_TOKEN=APP_API_TEST --dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user --dart-define=MOMCOZY_DEFAULT_BABY_ID=demo-baby",
     "flutter:packaging-check": "node scripts/check-flutter-android-packaging.mjs",
     "flutter:security-check": "node scripts/check-flutter-security-privacy.mjs",
     "flutter:p0:platform-smoke": "node scripts/run-flutter-platform-smoke.mjs",
