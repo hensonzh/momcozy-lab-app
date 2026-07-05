@@ -641,18 +641,99 @@ class _MomCozyNavTab extends StatelessWidget {
   }
 }
 
-class _MomCozyAgentNavTab extends StatelessWidget {
+const _agentNavWakeDuration = Duration(milliseconds: 1640);
+
+class _MomCozyAgentNavTab extends StatefulWidget {
   const _MomCozyAgentNavTab({required this.selected, required this.onTap});
 
   final bool selected;
   final VoidCallback onTap;
 
   @override
+  State<_MomCozyAgentNavTab> createState() => _MomCozyAgentNavTabState();
+}
+
+class _MomCozyAgentNavTabState extends State<_MomCozyAgentNavTab>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _wakeController = AnimationController(
+    vsync: this,
+    duration: _agentNavWakeDuration,
+  );
+  late final Animation<double> _presenceScale = _wakeTween(
+    const [0.9, 0.86, 1.2, 1.08, 1.12, 1],
+    const [18, 28, 22, 16, 16],
+  );
+  late final Animation<double> _presenceOffsetY = _wakeTween(
+    const [3, 5, -7, -2, -4, 0],
+    const [18, 28, 22, 16, 16],
+  );
+  late final Animation<double> _presenceRotation = _wakeTween(
+    const [-3.5, -5, 4, -1.6, 1, 0],
+    const [18, 28, 22, 16, 16],
+  );
+  late final Animation<double> _haloOpacity = _wakeTween(
+    const [0, 0.34, 0.72, 0.42, 0],
+    const [26, 26, 26, 22],
+  );
+  late final Animation<double> _haloScale = _wakeTween(
+    const [0.7, 0.92, 1.1, 1.2, 1.28],
+    const [26, 26, 26, 22],
+  );
+  late final Animation<double> _ringOpacity = _wakeTween(
+    const [0, 0.46, 0.96, 0.5, 0],
+    const [28, 27, 27, 18],
+  );
+  late final Animation<double> _ringScale = _wakeTween(
+    const [0.72, 0.98, 1.16, 1.22, 1.32],
+    const [28, 27, 27, 18],
+  );
+  late final Animation<double> _ringRotation = _wakeTween(
+    const [-38, -8, 42, 86, 118],
+    const [28, 27, 27, 18],
+  );
+  int _wakeReplayCount = 0;
+
+  Animation<double> _wakeTween(List<double> values, List<double> weights) {
+    assert(values.length == weights.length + 1);
+    return TweenSequence<double>([
+      for (var index = 0; index < weights.length; index += 1)
+        TweenSequenceItem<double>(
+          tween: Tween<double>(
+            begin: values[index],
+            end: values[index + 1],
+          ).chain(CurveTween(curve: Curves.easeOutCubic)),
+          weight: weights[index],
+        ),
+    ]).animate(_wakeController);
+  }
+
+  @override
+  void didUpdateWidget(covariant _MomCozyAgentNavTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selected && !oldWidget.selected) {
+      _playWakeAnimation();
+    }
+  }
+
+  @override
+  void dispose() {
+    _wakeController.dispose();
+    super.dispose();
+  }
+
+  void _playWakeAnimation() {
+    setState(() {
+      _wakeReplayCount += 1;
+    });
+    _wakeController.forward(from: 0);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Semantics(
         label: '智能体',
-        selected: selected,
+        selected: widget.selected,
         button: true,
         child: Transform.translate(
           offset: const Offset(0, -10),
@@ -662,7 +743,7 @@ class _MomCozyAgentNavTab extends StatelessWidget {
             shape: const CircleBorder(),
             child: InkWell(
               customBorder: const CircleBorder(),
-              onTap: onTap,
+              onTap: widget.onTap,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
                 width: MomCozyLayout.bottomNavCenterSize,
@@ -670,10 +751,10 @@ class _MomCozyAgentNavTab extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: selected ? MomCozyGradients.primary : null,
-                  color: selected ? null : MomCozyColors.card,
+                  gradient: widget.selected ? MomCozyGradients.primary : null,
+                  color: widget.selected ? null : MomCozyColors.card,
                   border: Border.all(color: MomCozyColors.background, width: 5),
-                  boxShadow: selected
+                  boxShadow: widget.selected
                       ? const [
                           BoxShadow(
                             color: Color(0x42754b5e),
@@ -690,9 +771,10 @@ class _MomCozyAgentNavTab extends StatelessWidget {
                         ],
                 ),
                 child: Stack(
+                  clipBehavior: Clip.none,
                   alignment: Alignment.center,
                   children: [
-                    if (selected)
+                    if (widget.selected)
                       Positioned.fill(
                         child: Padding(
                           padding: const EdgeInsets.all(4),
@@ -704,28 +786,150 @@ class _MomCozyAgentNavTab extends StatelessWidget {
                           ),
                         ),
                       ),
-                    Container(
-                      key: const ValueKey('bottom-nav-agent-avatar'),
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(
-                            selected
-                                ? MomCozyAssets.agentAwakenAvatar
-                                : MomCozyAssets.agentAvatar,
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x243a2731),
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
+                    AnimatedBuilder(
+                      animation: _wakeController,
+                      builder: (context, child) {
+                        final waking =
+                            _wakeController.value > 0 &&
+                            _wakeController.value < 1;
+                        final haloOpacity = waking ? _haloOpacity.value : 0.0;
+                        final haloScale = waking ? _haloScale.value : 1.0;
+                        final ringOpacity = waking ? _ringOpacity.value : 0.0;
+                        final ringScale = waking ? _ringScale.value : 1.0;
+                        final ringRotation = waking ? _ringRotation.value : 0.0;
+                        final presenceScale = waking
+                            ? _presenceScale.value
+                            : 1.0;
+                        final presenceOffsetY = waking
+                            ? _presenceOffsetY.value
+                            : 0.0;
+                        final presenceRotation = waking
+                            ? _presenceRotation.value
+                            : 0.0;
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.center,
+                          children: [
+                            Opacity(
+                              key: const ValueKey(
+                                'bottom-nav-agent-avatar-wake-halo',
+                              ),
+                              opacity: haloOpacity,
+                              child: Transform.scale(
+                                scale: haloScale,
+                                child: Container(
+                                  width: 74,
+                                  height: 74,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        Color(0xbdfff6fa),
+                                        Color(0x5cf49dbd),
+                                        Color(0x387ccac0),
+                                        Color(0x00ffffff),
+                                      ],
+                                      stops: [0, 0.42, 0.6, 0.72],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Opacity(
+                              key: const ValueKey(
+                                'bottom-nav-agent-avatar-wake-ring-opacity',
+                              ),
+                              opacity: ringOpacity,
+                              child: Transform.rotate(
+                                angle: _degreesToRadians(ringRotation),
+                                child: Transform.scale(
+                                  key: const ValueKey(
+                                    'bottom-nav-agent-avatar-wake-ring',
+                                  ),
+                                  scale: ringScale,
+                                  child: Container(
+                                    width: 66,
+                                    height: 66,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: const Color(0xb87ccac0),
+                                        width: 2.5,
+                                      ),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Color(0x3ddb799a),
+                                          blurRadius: 12,
+                                        ),
+                                        BoxShadow(
+                                          color: Color(0x267ccac0),
+                                          blurRadius: 22,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Transform.translate(
+                              offset: Offset(0, presenceOffsetY),
+                              child: Transform.rotate(
+                                angle: _degreesToRadians(presenceRotation),
+                                child: Transform.scale(
+                                  key: const ValueKey(
+                                    'bottom-nav-agent-avatar-presence-scale',
+                                  ),
+                                  scale: presenceScale,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Container(
+                                        key: const ValueKey(
+                                          'bottom-nav-agent-avatar',
+                                        ),
+                                        width: 48,
+                                        height: 48,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                              widget.selected
+                                                  ? MomCozyAssets
+                                                        .agentAwakenAvatar
+                                                  : MomCozyAssets.agentAvatar,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                              color: Color(0x243a2731),
+                                              blurRadius: 10,
+                                              offset: Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (waking)
+                                        ClipOval(
+                                          child: Image.asset(
+                                            MomCozyAssets.agentAwakenAvatar,
+                                            key: ValueKey(
+                                              'bottom-nav-agent-avatar-wake-media-$_wakeReplayCount',
+                                            ),
+                                            width: 60,
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                            gaplessPlayback: false,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -737,6 +941,8 @@ class _MomCozyAgentNavTab extends StatelessWidget {
     );
   }
 }
+
+double _degreesToRadians(double degrees) => degrees * 3.141592653589793 / 180;
 
 class _MomBabyNavIcon extends StatelessWidget {
   const _MomBabyNavIcon({this.filled = false});
