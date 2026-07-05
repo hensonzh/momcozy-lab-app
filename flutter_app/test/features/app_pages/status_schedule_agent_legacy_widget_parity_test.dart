@@ -154,6 +154,112 @@ void main() {
         expect(find.byTooltip('重试'), findsNothing);
       },
     );
+
+    testWidgets('covers postpartum mom chart and module actions', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: createMomCozyRouter(initialLocation: '/status'),
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await _scrollToFinder(
+        tester,
+        find.byKey(const ValueKey('status-milk-trend-preview')),
+      );
+      expect(find.text('近7日趋势'), findsOneWidget);
+      await tester.tap(
+        find.byKey(const ValueKey('status-milk-trend-segment-月')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('近30日趋势'), findsOneWidget);
+
+      await _scrollToText(tester, '乳房健康');
+      await tester.tap(find.text('查看《乳房健康日记》'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-breast-health')),
+        findsOneWidget,
+      );
+      expect(find.text('涨奶硬块'), findsOneWidget);
+      await tester.tap(find.byTooltip('关闭详情'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-breast-health')),
+        findsNothing,
+      );
+
+      await tester.tap(find.text('查看计划'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-postpartum-recovery')),
+        findsOneWidget,
+      );
+      expect(find.text('盆底肌康复训练'), findsOneWidget);
+    });
+
+    testWidgets('covers baby growth interactions and tab state retention', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: createMomCozyRouter(initialLocation: '/status'),
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const ValueKey('status-identity-tab-baby')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('体重'), findsWidgets);
+      expect(find.text('身高'), findsWidgets);
+      expect(find.text('头围'), findsOneWidget);
+      expect(find.text('成长milestone'), findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('status-growth-record-action')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('已添加'), findsOneWidget);
+
+      await _scrollToFinder(
+        tester,
+        find.byKey(const ValueKey('status-baby-growth-curve-preview')),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('status-baby-growth-segment-身高')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('当前查看：身高'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('route-page-/schedule')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
+      expect(find.text('宝宝成长曲线'), findsOneWidget);
+      expect(find.text('已添加'), findsOneWidget);
+      expect(find.text('当前查看：身高'), findsOneWidget);
+    });
   });
 
   group('Legacy Web widget parity: 计划', () {
