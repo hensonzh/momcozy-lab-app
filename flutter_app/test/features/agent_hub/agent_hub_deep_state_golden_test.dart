@@ -46,11 +46,11 @@ final _agentStates = [
         textContent: '我正在读取今天的泵奶记录，并同步检查左右侧节奏。',
         events: [
           AgentStreamEvent(const {
-            'type': 'TOOL_CALL_START',
+            'type': 'tool.started',
             'thread_id': 'thread-streaming-001',
             'run_id': 'run-streaming-001',
             'tool_call_id': 'call-pump-summary',
-            'tool_call_name': 'pump_session_summary_query',
+            'payload': {'tool_name': 'pump_session_summary_query'},
           }),
         ],
       ),

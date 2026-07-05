@@ -41,7 +41,7 @@ final _pumpStates = [
     label: 'running state',
     fileName: 'running_state_mobile.png',
     drive: (tester) async {
-      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '开始');
       await _scrollToText(tester, 'Session 用户已绑定');
       await tester.pumpAndSettle();
     },
@@ -50,10 +50,10 @@ final _pumpStates = [
     label: 'paused state',
     fileName: 'paused_state_mobile.png',
     drive: (tester) async {
-      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '开始');
       await _tapScrollableWidgetWithText(tester, OutlinedButton, '暂停');
-      await _scrollToFinder(tester, find.widgetWithText(FilledButton, '恢复'));
-      await tester.ensureVisible(find.widgetWithText(FilledButton, '恢复'));
+      await _scrollToFinder(tester, find.widgetWithText(OutlinedButton, '恢复'));
+      await tester.ensureVisible(find.widgetWithText(OutlinedButton, '恢复'));
       await tester.pumpAndSettle();
     },
   ),
@@ -61,8 +61,8 @@ final _pumpStates = [
     label: 'finished locked state',
     fileName: 'finished_locked_state_mobile.png',
     drive: (tester) async {
-      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
-      await _tapScrollableWidgetWithText(tester, OutlinedButton, '结束');
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '开始');
+      await _tapScrollableWidgetWithText(tester, FilledButton, '结束');
       await tester.ensureVisible(find.text('结束同步已锁定'));
       await tester.pumpAndSettle();
     },
@@ -72,7 +72,7 @@ final _pumpStates = [
     fileName: 'upload_failed_state_mobile.png',
     transport: _failingPumpTransport,
     drive: (tester) async {
-      await _tapScrollableWidgetWithText(tester, FilledButton, '开始');
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '开始');
       await tester.ensureVisible(find.text('Workstate 同步失败'));
       await tester.pumpAndSettle();
     },
