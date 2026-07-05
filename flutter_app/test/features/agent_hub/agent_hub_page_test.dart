@@ -245,6 +245,7 @@ void main() {
         .style;
     expect(inputStyle?.height, greaterThanOrEqualTo(1.55));
     _expectComposerControlsInsideSurface(tester);
+    _expectComposerSendVisualInsideExpandedCorner(tester);
     _expectComposerExpandedInputUsesWideTextArea(tester);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -302,6 +303,7 @@ void main() {
       expect(controller?.selection.baseOffset, wrappedText.length);
       expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
       _expectComposerControlsInsideSurface(tester);
+      _expectComposerSendVisualInsideExpandedCorner(tester);
       _expectComposerExpandedInputUsesWideTextArea(tester);
     },
   );
@@ -354,6 +356,7 @@ void main() {
 
     expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
     _expectComposerControlsInsideSurface(tester);
+    _expectComposerSendVisualInsideExpandedCorner(tester);
     _expectComposerExpandedInputUsesWideTextArea(tester);
   });
 
@@ -1405,6 +1408,18 @@ void _expectComposerSendButtonBreathesVertically(WidgetTester tester) {
 
   expect(sendRect.top - surfaceRect.top, greaterThanOrEqualTo(6));
   expect(surfaceRect.bottom - sendRect.bottom, greaterThanOrEqualTo(6));
+}
+
+void _expectComposerSendVisualInsideExpandedCorner(WidgetTester tester) {
+  final surfaceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-surface')),
+  );
+  final visualRect = tester.getRect(
+    find.byKey(const ValueKey('agent-send-button-visual')),
+  );
+
+  expect(surfaceRect.right - visualRect.right, greaterThanOrEqualTo(18));
+  expect(surfaceRect.bottom - visualRect.bottom, greaterThanOrEqualTo(12));
 }
 
 void _expectComposerExpandedInputUsesWideTextArea(WidgetTester tester) {
