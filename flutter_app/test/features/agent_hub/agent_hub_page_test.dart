@@ -143,6 +143,7 @@ void main() {
 
     expect(client.requests.single.message, 'Review my pumping pattern');
     expect(client.requests.single.threadId, isNull);
+    expect(find.text('Review my pumping pattern'), findsOneWidget);
     expect(
       find.text('I can help you review today\'s pumping pattern.'),
       findsOneWidget,

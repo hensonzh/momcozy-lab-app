@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
@@ -588,6 +589,53 @@ void main() {
         );
         expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
         expect(find.byKey(const ValueKey('bottom-nav-agent')), findsOneWidget);
+        final agentAvatar = tester.widget<Container>(
+          find.byKey(const ValueKey('bottom-nav-agent-avatar')),
+        );
+        final agentAvatarDecoration = agentAvatar.decoration as BoxDecoration;
+        final agentAvatarImage =
+            agentAvatarDecoration.image?.image as AssetImage;
+        expect(agentAvatarImage.assetName, MomCozyAssets.agentAwakenAvatar);
+
+        final imageButton = tester.widget<IconButton>(
+          find.byKey(const ValueKey('agent-image-button')),
+        );
+        expect(imageButton.onPressed, isNotNull);
+        final voiceButton = tester.widget<IconButton>(
+          find.byKey(const ValueKey('agent-voice-button')),
+        );
+        expect(voiceButton.onPressed, isNotNull);
+
+        await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<TextField>(
+                find.byKey(const ValueKey('agent-composer-input')),
+              )
+              .controller
+              ?.text,
+          '我想记录今天的泵奶和宝宝状态',
+        );
+
+        await tester.enterText(
+          find.byKey(const ValueKey('agent-composer-input')),
+          '第一行\n第二行\n第三行',
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<TextField>(
+                find.byKey(const ValueKey('agent-composer-input')),
+              )
+              .controller
+              ?.text,
+          '第一行\n第二行\n第三行',
+        );
       },
     );
 
