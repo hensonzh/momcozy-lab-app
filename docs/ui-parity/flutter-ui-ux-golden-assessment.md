@@ -23,7 +23,7 @@
 当前仍需留到产品或真机阶段确认的边界集中在：
 
 - 产品决策：W1 最终营销素材和文案。
-- 增强型状态覆盖：Status、Records、Hospital Bag、Calibration 等页面已有 widget 测试和主路径 golden，后续仍可按风险继续补更细的状态 golden。
+- 增强型状态覆盖：Status、Hospital Bag、Calibration 等页面已有 widget 测试和主路径 golden，后续仍可按风险继续补更细的状态 golden；Records 已退出旧 Web reference capture，保留为 Flutter-owned regression golden。
 - 真机视觉/安全区/系统栏验证：本评估不包含 Android 真机、异形屏、系统字体缩放和导航手势验证。
 
 因此当前建议是：Flutter UI/UX 可以继续作为迁移主线推进，非真机主路径工程基线可以进入 release gate 与 Android emulator smoke；最终替代旧 Web 前仍需完成真机 P0 smoke 和上述产品确认。
@@ -63,7 +63,6 @@ flutter_app/test/goldens/feature_pages/device_user_page_mobile.png
 flutter_app/test/goldens/feature_pages/hospital_bag_page_mobile.png
 flutter_app/test/goldens/feature_pages/ibclc_page_mobile.png
 flutter_app/test/goldens/feature_pages/media_viewer_page_mobile.png
-flutter_app/test/goldens/feature_pages/not_found_page_mobile.png
 flutter_app/test/goldens/feature_pages/pump_page_mobile.png
 flutter_app/test/goldens/feature_pages/records_page_mobile.png
 flutter_app/test/goldens/feature_pages/schedule_page_mobile.png
@@ -300,12 +299,12 @@ clipBehavior: Clip.none
 
 ### 6.10 记录 `/records`
 
-结论：有条件通过。
+结论：已退出旧 Web UI parity 基线，保留为 Flutter-owned regression 页面。
 
 已满足：
 
-- 保留月切换、汇总卡、趋势、泵奶/喂养/成长记录、手动补录、单位切换。
-- 主 golden 已恢复旧 Web reference 的 `2026年3月`、`280 mL` 周均奶量、`06:30/10:00/14:00` 记录时间和 M.ai logo 入口。
+- Flutter 侧保留月切换、汇总卡、趋势、泵奶/喂养/成长记录、手动补录、单位切换。
+- 旧 Web `/records` mock 页面已从 active reference capture 移除，不再作为 pixel parity 目标。
 - mL/oz、添加/编辑/删除、跨天记录、空态/失败态已有测试。
 
 已补充：

@@ -38,11 +38,10 @@ Flutter 允许因平台字体渲染、原生控件和像素密度带来轻微视
 | 计划 | `src/pages/Schedule.tsx` |
 | 设备 | `src/pages/DeviceManagement.tsx`、`src/pages/DeviceManageActions.tsx`、`src/pages/UserParameterConfig.tsx` |
 | 泵奶/校准 | `src/pages/PumpSession.tsx`、`src/pages/ComfortCalibration.tsx`、`src/pages/pumpSession/*` |
-| 记录 | `src/pages/Records.tsx`、`src/components/records/*` |
 | 媒体 | `src/pages/MediaViewer.tsx`、`src/components/media/*` |
 | IBCLC | `src/pages/IbclcChat.tsx` |
 | 待产包 | `src/pages/HospitalBagCart.tsx`、`src/pages/hospitalBagCartModel.ts` |
-| W1 / 社区 / 404 | `src/pages/W1Promo.tsx`、`src/pages/Community.tsx`、`src/pages/NotFound.tsx` |
+| W1 / 社区 | `src/pages/W1Promo.tsx`、`src/pages/Community.tsx` |
 
 Flutter 当前已有 golden 图片位于：
 
@@ -286,22 +285,13 @@ flutter_app/test/goldens/agent_hub/
 
 ### 5.10 记录 `/records`
 
-旧 Web 基线：`src/pages/Records.tsx`。
+已退出旧 Web golden 基线。
 
-必须保留：
+原因：
 
-- 顶部标题 `📊 妈妈点滴`，右侧月份切换：左箭头、月份、右箭头。
-- 综合卡：今日吸奶器使用、单位切换、三列 mini stats、趋势图、M.ai 评论入口。
-- 今日记录标题行，右侧 `手动记录` 可见。
-- 可用母乳库存分组和记录行。
-- 泵奶记录行可见徽章：母乳、设备/手动。
-- 可修改记录需要有编辑/删除入口；旧 Web 支持滑出操作，Flutter 可以原生按钮化，但不能隐藏。
-- 喂养/成长模式切换、mL/oz 单位切换、空态和失败态。
-
-关键 UX：
-
-- 图表、统计、列表密度必须接近旧 Web；不能改成大卡片低密度样式。
-- 手动补录、编辑、删除都必须有可见或可发现入口。
+- 旧 Web `/records` 是早期 mock 数据页面，已不属于 active legacy reference capture。
+- Flutter `/records` 仍保留为产品页面，但其测试目标改为 Flutter-owned regression golden 和 API/交互 widget tests。
+- 后续 Records 视觉评审应基于 Flutter 产品规格、接口数据和移动端交互，而不是旧 Web mock 截图。
 
 ### 5.11 媒体查看 `/media-viewer`
 
@@ -362,14 +352,9 @@ flutter_app/test/goldens/agent_hub/
 
 ### 5.15 404 `*`
 
-旧 Web 基线：`src/pages/NotFound.tsx`。
+已退出旧 Web golden 基线。
 
-必须保留：
-
-- 居中 `404`。
-- 文案 `Oops! Page not found`。
-- 链接 `Return to Home`。
-- 背景使用 muted/background 调性；在 AppLayout 中可保留底部导航。
+说明：Not Found 仍可作为 Flutter route fallback regression 测试，但不再采集旧 Web `not_found.png`，也不作为 active UI parity 页面。
 
 ---
 
@@ -406,7 +391,6 @@ media_viewer_page_mobile.png
 ibclc_page_mobile.png
 hospital_bag_page_mobile.png
 community_page_mobile.png
-not_found_page_mobile.png
 ```
 
 重点交互还需要 state golden 或 widget assertions：
@@ -416,7 +400,6 @@ not_found_page_mobile.png
 - Schedule：有任务、无任务、跨天、提醒开关、任务说明弹窗。
 - Device：无权限、扫描中、空结果、左右设备连接。
 - Pump：idle/running/paused、校准弹窗、上传失败。
-- Records：mL/oz、补录后、编辑后、删除后、喂养/成长模式。
 - IBCLC：连接中、聊天中、结束中。
 - Hospital Bag：删除后、清空后、恢复默认。
 
@@ -487,8 +470,7 @@ flutter test
 2. `/device/user` 这类 debug 用户入口在 production 是否继续可见，还是用 internal flavor gate 隐藏。
 3. IBCLC 是否长期保持外部 vendor/H5 handoff，Flutter 只承载事件写回和返回恢复。
 4. Pump/Calibration 的旧 Web 宽卡视觉在极小屏上是否允许缩放，还是必须保持固定宽并裁出旧版视觉。
-5. Records 行内操作在 Flutter 是否采用显式编辑/删除按钮，还是必须实现旧 Web 的左滑 reveal。
-6. W1 页面是否仍以旧 Web 营销内容为基线，后续是否由产品运营单独维护内容配置。
+5. W1 页面是否仍以旧 Web 营销内容为基线，后续是否由产品运营单独维护内容配置。
 
 ---
 

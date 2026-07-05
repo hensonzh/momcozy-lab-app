@@ -60,7 +60,7 @@ React/Vite SPA
 | `/` | `AgentHub` | 必须迁移，产品优先级最高。 |
 | `/calibration` | `ComfortCalibration` | 必须迁移，依赖 BLE 和泵校准 API。 |
 | `/pump` | `PumpSession` | 必须早期迁移，原生和设备风险最高。 |
-| `/records` | `Records` | 在泵奶和会话数据模型稳定后迁移。 |
+| `/records` | 旧 Web mock page 已退出；Flutter Records 已保留为产品路由 | 不再按旧 Web 页面迁移，只保留 Flutter 产品页和 API/交互测试。 |
 | `/schedule` | `Schedule` | API 合同澄清后迁移。 |
 | `/status` | `Status` | 妈妈、宝宝、profile 合同澄清后迁移。 |
 | `/community` | `Community` | 低风险，后期迁移或替换。 |
@@ -120,7 +120,7 @@ React/Vite SPA
 | Pump session | `PumpSession.tsx` + pump runtime modules | 是 | 是 | 否 | 原生风险最高。 |
 | Comfort calibration | `ComfortCalibration.tsx` | 是 | 是 | 否 | BLE + calibration persistence。 |
 | Device management | `DeviceManagement.tsx` | 是 | 是 | 否 | BLE + native device state。 |
-| Records | `Records.tsx` | 是 | 是 | 否 | 依赖 milk record API/storage。 |
+| Records | Flutter `/records`；旧 Web `Records.tsx` 已退出基线 | 是 | 是 | 否 | 依赖 milk record API/storage，不再按旧 Web mock 页面做 parity。 |
 | Schedule | `Schedule.tsx` | 是 | 是 | 否 | 依赖 plan/task API 合同。 |
 | Status | `Status.tsx` | 是 | 是 | 否 | 依赖 mom/baby profile 合同。 |
 | Media viewer | `MediaViewer.tsx` + media components | 是 | 是 | 否 | PDF/image/video parity。 |

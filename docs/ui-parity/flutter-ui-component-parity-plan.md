@@ -75,7 +75,7 @@ Recommended files:
 | Test file | Scope |
 |---|---|
 | `status_component_parity_golden_test.dart` | Status identity cards, module cards, trend card/painter. |
-| `records_component_parity_golden_test.dart` | Records dashboard, trend chart, milk rows. |
+| `records_component_parity_golden_test.dart` | Flutter-owned Records dashboard, trend chart, milk rows regression guard. |
 | `hospital_bag_component_parity_golden_test.dart` | Product rows, section headers, fixed checkout footer. |
 | `schedule_component_parity_golden_test.dart` | Week strip, plan summary, Agent context card, empty/task blocks. |
 | `pump_component_parity_golden_test.dart` | Calibration prompt modal, pump control groups, blurred backdrop. |
@@ -132,7 +132,6 @@ Current compact report after the last accepted visual commits:
 | P2 | IBCLC | 1.49% | 4,908 | keep OK | header/loading |
 | P2 | 设备提醒 | 1.29% | 4,239 | keep OK | regression guard only |
 | P2 | 社区 | 1.18% | 3,893 | keep OK | regression guard only |
-| P2 | 404 | 0.68% | 2,225 | keep OK | regression guard only |
 | P2 | 媒体 | 0.44% | 1,435 | keep OK | regression guard only |
 
 Accepted component slices so far:
@@ -172,7 +171,6 @@ Accepted component slices so far:
 | Agent Hub | Composer input typography | 4,942 px | 4,766 px | `135616c` |
 | IBCLC | Bottom nav surface tone | 4,908 px | 4,826 px | `d9a4b1b` |
 | 社区 | Bottom nav surface tone | 3,893 px | 3,892 px | `d9a4b1b` |
-| 404 | Bottom nav surface tone | 2,225 px | 2,220 px | `d9a4b1b` |
 | 用户参数 | Delete outline button foreground | 8,182 px | 8,129 px | `ee85581` |
 | 用户参数 | Action icon size | 8,129 px | 8,086 px | `3b03b33` |
 | 用户参数 | Form control horizontal padding | 8,086 px | 8,055 px | `fc899fd` |
@@ -223,6 +221,10 @@ Commit order:
 3. `fix: align status trend chart`
 
 ### 6.2 妈妈点滴 `/records`
+
+Legacy Web `/records` has been retired from the active reference capture because
+it was a mock-data early page. These component goldens now protect the Flutter
+Records implementation itself, not a legacy Web screenshot.
 
 Components:
 
