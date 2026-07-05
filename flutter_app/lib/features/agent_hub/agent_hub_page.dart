@@ -1533,10 +1533,14 @@ class AgentComposerBar extends StatefulWidget {
 
 class _AgentComposerBarState extends State<AgentComposerBar> {
   static const double _controlSize = 32;
-  static const double _compactHorizontalPadding = 8;
-  static const double _compactControlGap = 4;
-  static const double _inputHorizontalPadding = 4;
-  static const double _lineWrapGuard = 10;
+  static const double _surfaceMinHeight = 48;
+  static const double _surfaceHorizontalInset = 12;
+  static const double _surfaceVerticalInset = 8;
+  static const double _controlGap = 8;
+  static const double _inputLeftInset =
+      _surfaceHorizontalInset + _controlSize + _controlGap;
+  static const double _inputRightInset =
+      _surfaceHorizontalInset + (_controlSize * 2) + (_controlGap * 2);
 
   @override
   void initState() {
@@ -1585,7 +1589,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       fontFamily: MomCozyTypography.fontFamily,
       fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
       fontSize: 14,
-      height: 1.5,
+      height: 1.6,
     );
 
     return Padding(
@@ -1694,85 +1698,35 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                 ),
               ),
             ],
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final shouldExpand =
-                    _visualLineCountForWidth(
-                      context,
-                      _compactInputTextWidth(constraints.maxWidth),
-                      inputTextStyle,
-                    ) >
-                    1;
-
-                Widget imageButton() {
-                  return IconButton(
-                    key: const ValueKey('agent-image-button'),
-                    onPressed: canAttachImage ? onTogglePhotoMenu : null,
-                    icon: const Icon(
-                      Icons.add_photo_alternate_outlined,
-                      size: 20,
-                    ),
-                    tooltip: '添加图片',
-                    color: MomCozyColors.mutedForeground,
-                    visualDensity: VisualDensity.compact,
-                    constraints: const BoxConstraints.tightFor(
-                      width: _controlSize,
-                      height: _controlSize,
-                    ),
-                    padding: EdgeInsets.zero,
-                  );
-                }
-
-                Widget voiceButton() {
-                  return IconButton(
-                    key: const ValueKey('agent-voice-button'),
-                    onPressed: canUseVoice ? onVoiceInput : null,
-                    icon: Icon(_voiceIcon, size: 20),
-                    tooltip: _voiceTooltip,
-                    color: voicePhase == AgentVoicePhase.listening
-                        ? colorScheme.primary
-                        : MomCozyColors.mutedForeground,
-                    visualDensity: VisualDensity.compact,
-                    constraints: const BoxConstraints.tightFor(
-                      width: _controlSize,
-                      height: _controlSize,
-                    ),
-                    padding: EdgeInsets.zero,
-                  );
-                }
-
-                Widget sendButton() {
-                  return IconButton.filled(
-                    key: ValueKey(
-                      isRunning ? 'agent-stop-button' : 'agent-send-button',
-                    ),
-                    onPressed: isRunning ? onCancel : (canSend ? onSend : null),
-                    icon: Icon(
-                      isRunning ? Icons.stop_rounded : Icons.send_rounded,
-                      size: isRunning ? 18 : 16,
-                    ),
-                    tooltip: isRunning ? '停止' : '发送',
-                    style: IconButton.styleFrom(
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: colorScheme.onPrimary,
-                      disabledBackgroundColor: MomCozyColors.muted,
-                      disabledForegroundColor: MomCozyColors.mutedForeground,
-                      fixedSize: const Size.square(_controlSize),
-                      minimumSize: const Size.square(_controlSize),
-                      padding: EdgeInsets.zero,
-                    ),
-                  );
-                }
-
-                Widget inputField() {
-                  return DecoratedBox(
-                    key: const ValueKey('agent-composer-input-frame'),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
+            DecoratedBox(
+              key: const ValueKey('agent-composer-surface'),
+              decoration: BoxDecoration(
+                color: MomCozyColors.card.withValues(alpha: 0.88),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: MomCozyColors.border.withValues(alpha: 0.64),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xff754c5e).withValues(alpha: 0.08),
+                    blurRadius: 18,
+                    offset: const Offset(0, 9),
+                  ),
+                ],
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: _surfaceMinHeight),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Padding(
+                      key: const ValueKey('agent-composer-input-frame'),
+                      padding: const EdgeInsets.fromLTRB(
+                        _inputLeftInset,
+                        _surfaceVerticalInset,
+                        _inputRightInset,
+                        _surfaceVerticalInset,
+                      ),
                       child: TextField(
                         key: const ValueKey('agent-composer-input'),
                         controller: controller,
@@ -1783,6 +1737,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         enabled: !isRunning,
                         style: inputTextStyle,
                         onChanged: onChanged,
+                        scrollPadding: const EdgeInsets.only(bottom: 96),
                         decoration: InputDecoration(
                           hintText: '和 CozyMate 聊聊...',
                           border: InputBorder.none,
@@ -1790,13 +1745,14 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                           focusedBorder: InputBorder.none,
                           filled: false,
                           isDense: true,
+                          isCollapsed: true,
                           contentPadding: EdgeInsets.zero,
                           hintStyle: TextStyle(
                             fontFamily: MomCozyTypography.fontFamily,
                             fontFamilyFallback:
                                 MomCozyTypography.fontFamilyFallback,
                             fontSize: 14,
-                            height: 1.5,
+                            height: 1.6,
                             color: MomCozyColors.mutedForeground.withValues(
                               alpha: 0.82,
                             ),
@@ -1804,63 +1760,76 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         ),
                       ),
                     ),
-                  );
-                }
-
-                return DecoratedBox(
-                  key: const ValueKey('agent-composer-surface'),
-                  decoration: BoxDecoration(
-                    color: MomCozyColors.card.withValues(alpha: 0.88),
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
-                      color: MomCozyColors.border.withValues(alpha: 0.64),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xff754c5e).withValues(alpha: 0.08),
-                        blurRadius: 18,
-                        offset: const Offset(0, 9),
+                    Positioned(
+                      left: _surfaceHorizontalInset,
+                      bottom: _surfaceVerticalInset,
+                      child: IconButton(
+                        key: const ValueKey('agent-image-button'),
+                        onPressed: canAttachImage ? onTogglePhotoMenu : null,
+                        icon: const Icon(
+                          Icons.add_photo_alternate_outlined,
+                          size: 20,
+                        ),
+                        tooltip: '添加图片',
+                        color: MomCozyColors.mutedForeground,
+                        visualDensity: VisualDensity.compact,
+                        constraints: const BoxConstraints.tightFor(
+                          width: _controlSize,
+                          height: _controlSize,
+                        ),
+                        padding: EdgeInsets.zero,
                       ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: shouldExpand
-                        ? const EdgeInsets.fromLTRB(12, 10, 14, 8)
-                        : const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                    child: shouldExpand
-                        ? Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              inputField(),
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  imageButton(),
-                                  const Spacer(),
-                                  voiceButton(),
-                                  const SizedBox(width: _compactControlGap),
-                                  sendButton(),
-                                ],
-                              ),
-                            ],
-                          )
-                        : Row(
-                            children: [
-                              imageButton(),
-                              const SizedBox(width: _compactControlGap),
-                              Expanded(child: inputField()),
-                              const SizedBox(width: _compactControlGap),
-                              voiceButton(),
-                              const SizedBox(width: _compactControlGap),
-                              sendButton(),
-                            ],
-                          ),
-                  ),
-                );
-              },
+                    ),
+                    Positioned(
+                      right:
+                          _surfaceHorizontalInset + _controlSize + _controlGap,
+                      bottom: _surfaceVerticalInset,
+                      child: IconButton(
+                        key: const ValueKey('agent-voice-button'),
+                        onPressed: canUseVoice ? onVoiceInput : null,
+                        icon: Icon(_voiceIcon, size: 20),
+                        tooltip: _voiceTooltip,
+                        color: voicePhase == AgentVoicePhase.listening
+                            ? colorScheme.primary
+                            : MomCozyColors.mutedForeground,
+                        visualDensity: VisualDensity.compact,
+                        constraints: const BoxConstraints.tightFor(
+                          width: _controlSize,
+                          height: _controlSize,
+                        ),
+                        padding: EdgeInsets.zero,
+                      ),
+                    ),
+                    Positioned(
+                      right: _surfaceHorizontalInset,
+                      bottom: _surfaceVerticalInset,
+                      child: IconButton.filled(
+                        key: ValueKey(
+                          isRunning ? 'agent-stop-button' : 'agent-send-button',
+                        ),
+                        onPressed: isRunning
+                            ? onCancel
+                            : (canSend ? onSend : null),
+                        icon: Icon(
+                          isRunning ? Icons.stop_rounded : Icons.send_rounded,
+                          size: isRunning ? 18 : 16,
+                        ),
+                        tooltip: isRunning ? '停止' : '发送',
+                        style: IconButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          disabledBackgroundColor: MomCozyColors.muted,
+                          disabledForegroundColor:
+                              MomCozyColors.mutedForeground,
+                          fixedSize: const Size.square(_controlSize),
+                          minimumSize: const Size.square(_controlSize),
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             if (_voiceStatusLabel != null) ...[
               const SizedBox(height: 4),
@@ -1884,29 +1853,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
         ),
       ),
     );
-  }
-
-  double _compactInputTextWidth(double surfaceWidth) {
-    return surfaceWidth -
-        (_compactHorizontalPadding * 2) -
-        (_controlSize * 3) -
-        (_compactControlGap * 3) -
-        (_inputHorizontalPadding * 2) -
-        _lineWrapGuard;
-  }
-
-  int _visualLineCountForWidth(
-    BuildContext context,
-    double maxWidth,
-    TextStyle style,
-  ) {
-    final text = widget.controller.text.isEmpty ? ' ' : widget.controller.text;
-    final painter = TextPainter(
-      text: TextSpan(text: text, style: style),
-      textDirection: Directionality.of(context),
-      maxLines: 100,
-    )..layout(maxWidth: maxWidth.clamp(1.0, double.infinity));
-    return painter.computeLineMetrics().length.clamp(1, 100);
   }
 
   IconData get _voiceIcon {
