@@ -345,20 +345,22 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('哺乳期'), findsWidgets);
-      expect(find.text('产后第 21 天'), findsOneWidget);
+      expect(find.text('妈妈档案待绑定'), findsOneWidget);
+      expect(find.text('母乳产出'), findsOneWidget);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
+      expect(find.text('成长发育'), findsOneWidget);
       expect(find.text('Mia'), findsWidgets);
-      expect(find.text('88 天'), findsOneWidget);
+      expect(find.text('待记录'), findsWidgets);
     });
 
     testWidgets('status page records growth locally', (tester) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
       await tester.pumpAndSettle();
 
-      expect(find.text('产后第 21 天'), findsOneWidget);
+      expect(find.text('母乳产出'), findsOneWidget);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
@@ -417,7 +419,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Mia Sophia Long Profile Name'), findsWidgets);
-      expect(find.text('188 天'), findsOneWidget);
+      expect(find.text('成长发育'), findsOneWidget);
+      expect(find.text('待记录'), findsWidgets);
       expect(tester.takeException(), isNull);
 
       await tester.drag(

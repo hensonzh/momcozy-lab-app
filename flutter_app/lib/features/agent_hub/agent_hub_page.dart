@@ -66,7 +66,18 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
+  final ScrollController _chatScrollController = ScrollController();
   bool _autoVoiceEnabled = true;
+  bool _showLatestButton = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _chatScrollController.addListener(_updateLatestButtonVisibility);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _updateLatestButtonVisibility();
+    });
+  }
 
   @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
@@ -84,8 +95,38 @@ class _AgentHubPageState extends State<AgentHubPage> {
   @override
   void dispose() {
     _cancelRunSubscription();
+    _chatScrollController
+      ..removeListener(_updateLatestButtonVisibility)
+      ..dispose();
     _composerController.dispose();
     super.dispose();
+  }
+
+  void _updateLatestButtonVisibility() {
+    if (!_chatScrollController.hasClients) return;
+    final position = _chatScrollController.position;
+    final shouldShow =
+        position.maxScrollExtent > 160 &&
+        position.pixels < position.maxScrollExtent - 40;
+    if (shouldShow == _showLatestButton) return;
+    setState(() {
+      _showLatestButton = shouldShow;
+    });
+  }
+
+  Future<void> _scrollToLatest() async {
+    if (!_chatScrollController.hasClients) return;
+    await _chatScrollController.animateTo(
+      _chatScrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+    );
+    if (!_chatScrollController.hasClients) return;
+    final position = _chatScrollController.position;
+    if (position.pixels > position.maxScrollExtent) {
+      _chatScrollController.jumpTo(position.maxScrollExtent);
+    }
+    _updateLatestButtonVisibility();
   }
 
   bool get _canSend =>
@@ -370,6 +411,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
             child: Stack(
               children: [
                 ListView(
+                  key: const ValueKey('agent-chat-scroll-view'),
+                  controller: _chatScrollController,
                   padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
                   children: [
                     if (_historyMessages.isNotEmpty) ...[
@@ -399,6 +442,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
                   height: 24,
                   child: IgnorePointer(child: _AgentHubTopFade()),
                 ),
+                if (_showLatestButton)
+                  Positioned(
+                    right: 12,
+                    bottom: 12,
+                    child: FilledButton.tonalIcon(
+                      key: const ValueKey('agent-scroll-latest-button'),
+                      onPressed: _scrollToLatest,
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                      label: const Text('回到最新消息'),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -508,6 +562,7 @@ class _AgentHubTopFade extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const DecoratedBox(
+      key: ValueKey('agent-top-fade'),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,

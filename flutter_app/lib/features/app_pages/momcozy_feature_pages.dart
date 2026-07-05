@@ -962,13 +962,14 @@ class _StatusModuleGrid extends StatelessWidget {
         final width = constraints.maxWidth.isFinite
             ? constraints.maxWidth
             : MomCozyLayout.maxAppWidth;
+        final childAspectRatio = width < 340 ? 1.04 : 1.26;
         return SizedBox(
           width: width,
           child: GridView.count(
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 1.26,
+            childAspectRatio: childAspectRatio,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             children: children,
@@ -3308,6 +3309,25 @@ class _ScheduleListToolbar extends StatelessWidget {
 
   final VoidCallback onAdd;
 
+  void _showTaskExplanation(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-task-explanation-dialog'),
+          title: const Text('今日任务说明'),
+          content: const Text('今天的计划任务会同步 Agent 建议、提醒和手动添加内容。完成或删除后，计数会即时更新。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('知道了'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
@@ -3331,20 +3351,28 @@ class _ScheduleListToolbar extends StatelessWidget {
                     const SizedBox(width: 6),
                     Tooltip(
                       message: '今日任务说明',
-                      child: Container(
-                        width: 18,
-                        height: 18,
-                        decoration: BoxDecoration(
-                          color: MomCozyColors.raised.withValues(alpha: 0.72),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: MomCozyColors.border.withValues(alpha: 0.6),
+                      child: InkWell(
+                        key: const ValueKey('schedule-task-help-button'),
+                        customBorder: const CircleBorder(),
+                        onTap: () => _showTaskExplanation(context),
+                        child: Container(
+                          width: 22,
+                          height: 22,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: MomCozyColors.raised.withValues(alpha: 0.72),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: MomCozyColors.border.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
                           ),
-                        ),
-                        child: const Icon(
-                          Icons.question_mark_rounded,
-                          size: 12,
-                          color: MomCozyColors.mutedForeground,
+                          child: const Icon(
+                            Icons.question_mark_rounded,
+                            size: 12,
+                            color: MomCozyColors.mutedForeground,
+                          ),
                         ),
                       ),
                     ),
