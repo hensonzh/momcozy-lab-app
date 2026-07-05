@@ -58,5 +58,5 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 npm run flutter:release-gate
 
 - 该 gate 覆盖非真机构建、静态检查、单元/widget/fixture 测试、staging smoke harness 和 storage migration dry-run。
 - 该 gate 同时验证当前 Web/Capacitor rollback source 仍可 `npm run build`，并静态校验 Flutter PoC 不抢占现有 Capacitor appId、FileProvider authority 或外部 deep link。
-- 该 gate 会在 `dist/flutter-rollback-manifest.json` 生成回滚 manifest，记录 Web rollback bundle、Flutter local debug APK 和 Flutter staging release APK 的 size / sha256。
+- 该 gate 会在 `legacy_web/dist/flutter-rollback-manifest.json` 生成回滚 manifest，记录 Web rollback bundle、Flutter local debug APK 和 Flutter staging release APK 的 size / sha256。
 - 真机安装、BLE、通知、后台服务、Doze、电池优化和真泵行为仍属于 L4 device lab。

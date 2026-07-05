@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { inflateSync } from 'node:zlib';
 
-const repoRoot = process.cwd();
-const androidSourceDir = resolve(repoRoot, 'android/app/src/main/java/com/momcozymai/app');
+const legacyWebRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+const androidSourceDir = resolve(legacyWebRoot, 'android/app/src/main/java/com/momcozymai/app');
 
 const notificationSources = [
   'NotifyAlarmReceiver.java',
@@ -84,8 +85,8 @@ function decodeRgbaPng(path: string) {
 }
 
 function launcherBackgroundColor() {
-  const backgroundXml = readFileSync(
-    resolve(repoRoot, 'android/app/src/main/res/values/ic_launcher_background.xml'),
+    const backgroundXml = readFileSync(
+    resolve(legacyWebRoot, 'android/app/src/main/res/values/ic_launcher_background.xml'),
     'utf8',
   );
   const uncommentedXml = backgroundXml.replace(/<!--[\s\S]*?-->/g, '');
@@ -152,13 +153,13 @@ describe('Android notification icons', () => {
     ];
 
     for (const resource of requiredResources) {
-      expect(existsSync(resolve(repoRoot, resource)), resource).toBe(true);
+      expect(existsSync(resolve(legacyWebRoot, resource)), resource).toBe(true);
     }
   });
 
   it('uses an off-white launcher background color', () => {
     const backgroundXml = readFileSync(
-      resolve(repoRoot, 'android/app/src/main/res/values/ic_launcher_background.xml'),
+      resolve(legacyWebRoot, 'android/app/src/main/res/values/ic_launcher_background.xml'),
       'utf8',
     );
 
@@ -167,7 +168,7 @@ describe('Android notification icons', () => {
 
   it('keeps the launcher portrait at about 57 percent of the icon', () => {
     const ratio = nonBackgroundBoundsRatio(
-      resolve(repoRoot, 'android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png'),
+      resolve(legacyWebRoot, 'android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png'),
     );
 
     expect(ratio).toBeGreaterThanOrEqual(0.56);

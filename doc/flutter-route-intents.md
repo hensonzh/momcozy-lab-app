@@ -2,6 +2,7 @@
 
 > 状态：Phase 0 inventory + fixtures 版  
 > 目标：把当前 BrowserRouter、通知跳转、AG-UI side effects、pending storage 和 native bridge 事件整理成 Flutter route intents。
+> 路径说明：当前旧 Web 源码已归档到 `legacy_web/`，本文件中的 `src/...` 引用均指 `legacy_web/src/...`。
 
 ---
 

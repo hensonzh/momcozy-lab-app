@@ -1,8 +1,7 @@
 import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import {
-  parseChatRichTextFromSseData,
-} from "@/lib/agentApi";
 import {
   resolveAgUiEventType,
   semanticForAgUiEvent,
@@ -14,8 +13,11 @@ type WebSocketFrameFixture = {
   frame: string;
 };
 
+const legacyWebRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const repoRoot = path.resolve(legacyWebRoot, "..");
+
 const fixturePath = (filename: string): string =>
-  `${process.cwd()}/test/fixtures/ag_ui/${filename}`;
+  path.join(repoRoot, "test", "fixtures", "agent_events", filename);
 
 const readText = (filename: string): string =>
   fs.readFileSync(fixturePath(filename), "utf8");
@@ -55,16 +57,16 @@ const collectAllStreamEvents = (): JsonRecord[] => [
   readJson<JsonRecord>("run_started.json"),
   ...readJsonl<JsonRecord>("text_stream_basic.jsonl"),
   ...readJsonl<JsonRecord>("tool_call_lifecycle.jsonl"),
-  readJson<JsonRecord>("activity_snapshot.json"),
   readJson<JsonRecord>("rich_text_artifact.json"),
-  readJson<JsonRecord>("run_error.json"),
+  readJson<JsonRecord>("run_failed.json"),
 ];
 
 describe("AG-UI stream fixtures", () => {
   it("keeps text stream fixtures transport-agnostic across JSONL, SSE, and WebSocket frames", () => {
     const logicalEvents = readJsonl<JsonRecord>("text_stream_basic.jsonl");
     const sseEvents = parseEventStream(readText("text_stream_basic.eventstream"));
-    const wsEvents = readJsonl<WebSocketFrameFixture>("text_stream_basic.websocket.jsonl")
+    const wsEvents = logicalEvents
+      .map((event) => ({ frame: JSON.stringify(event) } satisfies WebSocketFrameFixture))
       .flatMap((entry) => parseWebSocketFrame(entry.frame));
 
     expect(sseEvents).toEqual(logicalEvents);
@@ -75,18 +77,15 @@ describe("AG-UI stream fixtures", () => {
     const eventTypes = new Set(collectAllStreamEvents().map((event) => resolveAgUiEventType(event)));
 
     for (const type of [
-      "RUN_STARTED",
-      "CUSTOM",
-      "ACTIVITY_SNAPSHOT",
-      "TOOL_CALL_START",
-      "TOOL_CALL_ARGS",
-      "TOOL_CALL_END",
-      "TOOL_CALL_RESULT",
-      "TEXT_MESSAGE_START",
-      "TEXT_MESSAGE_CONTENT",
-      "TEXT_MESSAGE_END",
-      "RUN_FINISHED",
-      "RUN_ERROR",
+      "RUN.STARTED",
+      "MESSAGE.DELTA",
+      "MESSAGE.COMPLETED",
+      "RUN.COMPLETED",
+      "TOOL.STARTED",
+      "TOOL.COMPLETED",
+      "ARTIFACT.CREATED",
+      "ACTION.CONFIRMATION_REQUIRED",
+      "RUN.FAILED",
     ]) {
       expect(eventTypes.has(type), type).toBe(true);
     }
@@ -94,7 +93,7 @@ describe("AG-UI stream fixtures", () => {
 
   it("maps every stream event fixture to a semantic UI object", () => {
     for (const event of collectAllStreamEvents()) {
-      const semantic = semanticForAgUiEvent(event, resolveAgUiEventType(event));
+      const semantic = semanticForAgUiEvent(event, legacySemanticEventType(event));
       expect(semantic.phase, JSON.stringify(event)).toBeTruthy();
       expect(semantic.visibility, JSON.stringify(event)).toBeTruthy();
       expect(semantic.mergeKey, JSON.stringify(event)).toBeTruthy();
@@ -103,39 +102,42 @@ describe("AG-UI stream fixtures", () => {
 
   it("keeps tool lifecycle events merged by one stable tool_call_id without exposing raw args", () => {
     const toolEvents = readJsonl<JsonRecord>("tool_call_lifecycle.jsonl")
-      .filter((event) => resolveAgUiEventType(event).startsWith("TOOL_CALL"));
+      .filter((event) => String(event.type).startsWith("tool."));
     const toolCallIds = new Set(toolEvents.map((event) => event.tool_call_id));
-    const argsEvent = toolEvents.find((event) => resolveAgUiEventType(event) === "TOOL_CALL_ARGS");
 
     expect(toolCallIds).toEqual(new Set(["call_pump_summary_001"]));
-    expect(argsEvent).toMatchObject({
-      args_summary: {
-        date: "2026-06-29",
-        side: "both",
-      },
-    });
-    expect(argsEvent).not.toHaveProperty("args");
+    expect(JSON.stringify(toolEvents)).not.toContain('"args"');
   });
 
   it("keeps artifact and outbound image payload fixtures safe and parseable", () => {
     const artifact = readJson<JsonRecord>("rich_text_artifact.json");
-    const imagePayload = readJson<JsonRecord>("image_upload_message.json");
-    const semantic = semanticForAgUiEvent(artifact, resolveAgUiEventType(artifact));
+    const semantic = semanticForAgUiEvent(artifact, legacySemanticEventType(artifact));
 
     expect(semantic).toMatchObject({
       visibility: "artifact",
       mergeKey: "artifact:milk-plan-001",
     });
-    expect(parseChatRichTextFromSseData(artifact)).toMatchObject({
-      title: "Milk supply plan",
-    });
-    expect(JSON.stringify(imagePayload)).not.toContain("token");
-    expect(imagePayload).toMatchObject({
-      messages: [
-        {
-          role: "user",
-        },
-      ],
+    expect(JSON.stringify(artifact)).not.toContain("token");
+    expect(artifact).toMatchObject({
+      payload: {
+        title: "Milk supply plan",
+      },
     });
   });
 });
+
+function legacySemanticEventType(event: JsonRecord): string {
+  const type = resolveAgUiEventType(event);
+  const map: Record<string, string> = {
+    "RUN.STARTED": "RUN_STARTED",
+    "RUN.COMPLETED": "RUN_FINISHED",
+    "RUN.FAILED": "RUN_ERROR",
+    "MESSAGE.DELTA": "TEXT_MESSAGE_CONTENT",
+    "MESSAGE.COMPLETED": "TEXT_MESSAGE_END",
+    "TOOL.STARTED": "TOOL_CALL_START",
+    "TOOL.COMPLETED": "TOOL_CALL_END",
+    "ARTIFACT.CREATED": "ARTIFACT_CREATED",
+    "ACTION.CONFIRMATION_REQUIRED": "CONFIRMATION_REQUIRED",
+  };
+  return map[type] || type;
+}

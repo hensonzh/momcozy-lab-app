@@ -3,6 +3,7 @@
 > 范围：`MomCozyApp` 从 Vite + React + Capacitor 迁移到 Flutter 的 App 端测试方案。  
 > 状态：Phase 0 准入推进版。  
 > 负责人：mobile engineering + QA + backend contract owners。
+> 路径说明：当前旧 Web 源码已归档到 `legacy_web/`，本文件中的 `src/...` 引用均指 `legacy_web/src/...`。
 
 ---
 
@@ -744,7 +745,7 @@ CI 最低要求：
 [x] storage migration dry-run 通过，unhandled legacy key 为 0
 [x] local debug APK 构建通过：`app-local-debug.apk`
 [x] staging release APK 构建通过：`app-staging-release.apk`
-[x] rollback manifest 生成通过：`dist/flutter-rollback-manifest.json`
+[x] rollback manifest 生成通过：`legacy_web/dist/flutter-rollback-manifest.json`
 [ ] release signing env 未在本机配置；如需 CI 强制签名，设置 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1`
 ```
 
@@ -785,7 +786,7 @@ CI 最低要求：
 [ ] 前后台切换无 crash
 [ ] 24h smoke 无后台服务异常
 [ ] crash-free sessions 达到发布阈值
-[x] rollback package 可用：`npm run flutter:rollback-check` 会生成 `dist/flutter-rollback-manifest.json`
+[x] rollback package 可用：`npm run flutter:rollback-check` 会生成 `legacy_web/dist/flutter-rollback-manifest.json`
 ```
 
 建议 device lab：
