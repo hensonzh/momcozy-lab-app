@@ -492,6 +492,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _MomCozyNavTab(
+                                  navKey: const ValueKey('bottom-nav-status'),
                                   label: '宝宝和我',
                                   selected: selectedIndex == 0,
                                   icon: const _MomBabyNavIcon(),
@@ -503,6 +504,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
+                                  navKey: const ValueKey('bottom-nav-schedule'),
                                   label: '计划',
                                   selected: selectedIndex == 1,
                                   icon: const Icon(Icons.event_note_outlined),
@@ -520,6 +522,9 @@ class MomCozyBottomNavigation extends StatelessWidget {
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
+                                  navKey: const ValueKey(
+                                    'bottom-nav-community',
+                                  ),
                                   label: '社区',
                                   selected: selectedIndex == 3,
                                   icon: const Icon(Icons.groups_2_outlined),
@@ -531,6 +536,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
+                                  navKey: const ValueKey('bottom-nav-device'),
                                   label: '设备',
                                   selected: selectedIndex == 4,
                                   icon: const Icon(
@@ -560,6 +566,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
 
 class _MomCozyNavTab extends StatelessWidget {
   const _MomCozyNavTab({
+    required this.navKey,
     required this.label,
     required this.selected,
     required this.icon,
@@ -567,6 +574,7 @@ class _MomCozyNavTab extends StatelessWidget {
     required this.onTap,
   });
 
+  final Key navKey;
   final String label;
   final bool selected;
   final Widget icon;
@@ -581,6 +589,7 @@ class _MomCozyNavTab extends StatelessWidget {
 
     return Center(
       child: Semantics(
+        key: navKey,
         selected: selected,
         button: true,
         child: InkWell(
