@@ -965,7 +965,7 @@ class _StatusModuleGrid extends StatelessWidget {
         final width = constraints.maxWidth.isFinite
             ? constraints.maxWidth
             : MomCozyLayout.maxAppWidth;
-        final childAspectRatio = width < 390 ? 1.03 : 1.14;
+        final childAspectRatio = width < 390 ? 0.94 : 1.08;
         return SizedBox(
           width: width,
           child: GridView.count(
