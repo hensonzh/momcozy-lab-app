@@ -626,6 +626,47 @@ class _StatusPageState extends State<_StatusPage> {
     });
   }
 
+  Future<void> _showGrowthEditor() async {
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('status-growth-editor-dialog'),
+          title: const Text('修改成长指标'),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                key: ValueKey('status-growth-weight-input'),
+                decoration: InputDecoration(labelText: '体重'),
+              ),
+              TextField(
+                key: ValueKey('status-growth-height-input'),
+                decoration: InputDecoration(labelText: '身高'),
+              ),
+              TextField(
+                key: ValueKey('status-growth-head-input'),
+                decoration: InputDecoration(labelText: '头围'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('status-growth-save-button'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('保存指标'),
+            ),
+          ],
+        );
+      },
+    );
+    if (saved == true) _recordGrowth();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMom = _view == 'mom';
@@ -729,13 +770,15 @@ class _StatusPageState extends State<_StatusPage> {
                   accent: MomCozyColors.primary,
                   background: const Color(0xfffff7fb),
                   hiddenTexts: [stage, stageNote],
-                  metrics: const [
+                  metrics: [
                     _StatusModuleMetric(
                       label: '今日产出',
                       value: '待记录',
                       showHelp: true,
+                      helpKey: ValueKey('status-milk-output-info-button'),
+                      onHelpTap: () => _showDetail('milk-info'),
                     ),
-                    _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
+                    const _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
                   ],
                 ),
               ),
@@ -745,6 +788,8 @@ class _StatusPageState extends State<_StatusPage> {
                   key: ValueKey('status-module-breast-health'),
                   title: '乳房健康',
                   showHelp: true,
+                  helpKey: ValueKey('status-breast-health-info-button'),
+                  onHelpTap: () => _showDetail('breast-info'),
                   bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
                   action: '查看《乳房健康日记》',
                   icon: Icons.favorite_border_rounded,
@@ -766,21 +811,47 @@ class _StatusPageState extends State<_StatusPage> {
                   onAction: () => _showDetail('postpartum-recovery'),
                 ),
               ),
-              const _StatusModuleCard(
-                key: ValueKey('status-module-rest-nutrition'),
+              _StatusModuleCard(
+                key: const ValueKey('status-module-rest-nutrition'),
                 title: '补能与休息',
                 showHelp: true,
+                helpKey: const ValueKey('status-rest-info-button'),
+                onHelpTap: () => _showDetail('rest-info'),
                 bodyText: '待开通睡眠与营养功能',
                 icon: Icons.local_cafe_outlined,
-                accent: Color(0xffb9792a),
-                background: Color(0xfffffaf0),
+                accent: const Color(0xffb9792a),
+                background: const Color(0xfffffaf0),
               ),
             ],
           ),
         ),
       ),
       const SizedBox(height: 8),
-      if (_activeDetail == 'breast-health') ...[
+      if (_activeDetail == 'milk-info') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-milk-info'),
+          title: '今日产出说明',
+          subtitle: '母乳产出统计',
+          rows: const [
+            ('今日产出', '待记录', '会汇总吸乳记录与亲喂估算。'),
+            ('今日吸奶', '待同步', '同步后展示次数、时长和左右侧数据。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ] else if (_activeDetail == 'breast-info') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-breast-info'),
+          title: '乳房健康说明',
+          subtitle: '涨奶、硬块和疼痛追踪',
+          rows: const [
+            ('记录内容', '不适位置和疼痛等级', '帮助后续分析风险与护理建议。'),
+            ('异常提醒', '持续疼痛需咨询专业人士', '必要时联系 IBCLC 或医生。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ] else if (_activeDetail == 'breast-health') ...[
         _StatusDetailPanel(
           key: const ValueKey('status-detail-breast-health'),
           title: '乳房健康日记',
@@ -806,6 +877,18 @@ class _StatusPageState extends State<_StatusPage> {
           onClose: _closeDetail,
         ),
         const SizedBox(height: 8),
+      ] else if (_activeDetail == 'rest-info') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-rest-info'),
+          title: '补能与休息说明',
+          subtitle: '睡眠与营养能力建设中',
+          rows: const [
+            ('睡眠', '待开通', '后续会汇总夜间睡眠和白天休息。'),
+            ('营养', '待开通', '后续会记录补水、热量和重点营养。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
       ],
       _StatusTrendPreview(
         key: const ValueKey('status-milk-trend-preview'),
@@ -827,14 +910,19 @@ class _StatusPageState extends State<_StatusPage> {
     return [
       _StatusModuleGrid(
         children: [
-          const _StatusModuleCard(
+          _StatusModuleCard(
             title: '奶量摄入',
             icon: Icons.restaurant_outlined,
-            accent: Color(0xff4f84a6),
-            background: Color(0xfff4fbff),
+            accent: const Color(0xff4f84a6),
+            background: const Color(0xfff4fbff),
             metrics: [
               _StatusModuleMetric(label: '今日摄入', value: '待同步'),
-              _StatusModuleMetric(label: '今日喂奶', value: '待同步'),
+              _StatusModuleMetric(
+                label: '今日喂奶',
+                value: '待同步',
+                helpKey: const ValueKey('status-baby-feed-info-button'),
+                onHelpTap: () => _showDetail('baby-feed-info'),
+              ),
             ],
           ),
           _StatusModuleCard(
@@ -852,7 +940,7 @@ class _StatusPageState extends State<_StatusPage> {
               _StatusModuleAction(
                 key: const ValueKey('status-growth-record-action'),
                 label: _growthRecordAdded ? '已添加' : '修改指标',
-                onTap: _recordGrowth,
+                onTap: _showGrowthEditor,
               ),
               _StatusModuleAction(
                 key: const ValueKey('status-growth-milestone-action'),
@@ -882,7 +970,19 @@ class _StatusPageState extends State<_StatusPage> {
         ],
       ),
       const SizedBox(height: 12),
-      if (_activeDetail == 'growth-milestone') ...[
+      if (_activeDetail == 'baby-feed-info') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-baby-feed-info'),
+          title: '奶量摄入说明',
+          subtitle: '亲喂、瓶喂与辅食记录',
+          rows: const [
+            ('今日摄入', '待同步', '会汇总瓶喂奶量、亲喂估算和辅食。'),
+            ('今日喂奶', '待同步', '同步后展示次数和时间分布。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 12),
+      ] else if (_activeDetail == 'growth-milestone') ...[
         _StatusDetailPanel(
           key: const ValueKey('status-detail-growth-milestone'),
           title: '成长 milestone',
@@ -938,11 +1038,15 @@ class _StatusModuleMetric {
     required this.label,
     required this.value,
     this.showHelp = false,
+    this.helpKey,
+    this.onHelpTap,
   });
 
   final String label;
   final String value;
   final bool showHelp;
+  final Key? helpKey;
+  final VoidCallback? onHelpTap;
 }
 
 class _StatusModuleAction {
@@ -997,6 +1101,8 @@ class _StatusModuleCard extends StatelessWidget {
     this.onAction,
     this.actions = const [],
     this.showHelp = false,
+    this.helpKey,
+    this.onHelpTap,
   });
 
   final String title;
@@ -1007,6 +1113,8 @@ class _StatusModuleCard extends StatelessWidget {
   final VoidCallback? onAction;
   final List<_StatusModuleAction> actions;
   final bool showHelp;
+  final Key? helpKey;
+  final VoidCallback? onHelpTap;
   final IconData icon;
   final Color accent;
   final Color background;
@@ -1088,7 +1196,8 @@ class _StatusModuleCard extends StatelessWidget {
                                   style: titleStyle,
                                 ),
                               ),
-                              if (showHelp) const _StatusHelpDot(),
+                              if (showHelp || onHelpTap != null)
+                                _StatusHelpDot(key: helpKey, onTap: onHelpTap),
                             ],
                           ),
                         ),
@@ -1176,7 +1285,12 @@ class _StatusModuleMetricRows extends StatelessWidget {
                               ),
                         ),
                       ),
-                      if (metric.showHelp) const _StatusHelpDot(size: 14),
+                      if (metric.showHelp || metric.onHelpTap != null)
+                        _StatusHelpDot(
+                          key: metric.helpKey,
+                          size: 14,
+                          onTap: metric.onHelpTap,
+                        ),
                     ],
                   ),
                   const SizedBox(height: 3),
@@ -1201,32 +1315,40 @@ class _StatusModuleMetricRows extends StatelessWidget {
 }
 
 class _StatusHelpDot extends StatelessWidget {
-  const _StatusHelpDot({this.size = 16});
+  const _StatusHelpDot({super.key, this.size = 16, this.onTap});
 
   final double size;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 5),
-      child: Container(
-        width: size,
-        height: size,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.72),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: MomCozyColors.mutedForeground.withValues(alpha: 0.46),
-          ),
-        ),
-        child: Text(
-          '?',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: MomCozyColors.mutedForeground,
-            fontSize: size <= 14 ? 8 : 10,
-            height: 1,
-            fontWeight: FontWeight.w700,
+      child: Semantics(
+        button: onTap != null,
+        label: '说明',
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: size,
+            height: size,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.72),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: MomCozyColors.mutedForeground.withValues(alpha: 0.46),
+              ),
+            ),
+            child: Text(
+              '?',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontSize: size <= 14 ? 8 : 10,
+                height: 1,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ),
       ),

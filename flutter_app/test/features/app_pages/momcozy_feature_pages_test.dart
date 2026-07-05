@@ -351,6 +351,12 @@ void main() {
       await _scrollToText(tester, '修改指标');
       await tester.tap(find.text('修改指标').first);
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-growth-editor-dialog')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('status-growth-save-button')));
+      await tester.pumpAndSettle();
 
       expect(find.text('已添加'), findsOneWidget);
       expect(find.text('待记录'), findsNWidgets(3));
