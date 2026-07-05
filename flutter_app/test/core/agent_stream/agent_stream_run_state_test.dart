@@ -19,6 +19,7 @@ void main() {
       expect(state.threadId, 'thread-fixture-001');
       expect(state.runId, 'run-fixture-text-001');
       expect(state.messageId, 'msg-reply-text-001');
+      expect(state.lastSequence, 5);
       expect(
         state.textContent,
         'I can help you review today\'s pumping pattern.',
@@ -111,6 +112,56 @@ void main() {
       expect(state.events.length, 4);
     });
 
+    test('tracks transient deltas until assistant completed replaces text', () {
+      var state = const AgentStreamRunState().start();
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'event_id': 'delta:1720000000-0',
+          'type': 'message.delta',
+          'thread_id': 'thread-transient-001',
+          'run_id': 'run-transient-001',
+          'transient': true,
+          'cursor': '1720000000-0',
+          'payload': {'delta': '正在'},
+        }),
+      );
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'event_id': 'delta:1720000000-1',
+          'type': 'message.delta',
+          'thread_id': 'thread-transient-001',
+          'run_id': 'run-transient-001',
+          'transient': true,
+          'cursor': '1720000000-1',
+          'payload': {'delta': '生成'},
+        }),
+      );
+
+      expect(state.textContent, '正在生成');
+      expect(state.provisionalTextContent, '正在生成');
+      expect(state.lastSequence, isNull);
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'event_id': 'evt-final-001',
+          'type': 'message.completed',
+          'thread_id': 'thread-transient-001',
+          'run_id': 'run-transient-001',
+          'message_id': 'msg-final-001',
+          'sequence': 4,
+          'payload': {
+            'role': 'assistant',
+            'text': '这是最终回复。',
+          },
+        }),
+      );
+
+      expect(state.textContent, '这是最终回复。');
+      expect(state.provisionalTextContent, '');
+      expect(state.lastSequence, 4);
+    });
+
     test('keeps repeated text deltas when no replay key is present', () {
       var state = const AgentStreamRunState().start();
 
@@ -177,6 +228,130 @@ void main() {
       expect(state.canRetry, isFalse);
       expect(state.textContent, '请确认是否创建支持工单。');
       expect(state.runId, 'run-action-001');
+    });
+
+    test('merges action events after waiting for confirmation', () {
+      var state = const AgentStreamRunState().start();
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'action.confirmation_required',
+          'thread_id': 'thread-action-001',
+          'run_id': 'run-action-001',
+          'sequence': 3,
+          'payload': {
+            'action_id': 'action-support-001',
+            'action_status': 'confirmation_required',
+            'action_type': 'support.ticket.create',
+            'target_type': 'support_ticket',
+            'preview_payload': {'title': '创建售后工单'},
+          },
+        }),
+      );
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'run.waiting_for_confirmation',
+          'thread_id': 'thread-action-001',
+          'run_id': 'run-action-001',
+          'sequence': 4,
+          'payload': {'action_id': 'action-support-001'},
+        }),
+      );
+
+      expect(state.phase, AgentStreamRunPhase.waitingForConfirmation);
+      expect(
+        state.actionEvents['action-support-001']?.type,
+        'action.confirmation_required',
+      );
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'action.queued',
+          'thread_id': 'thread-action-001',
+          'run_id': 'run-action-001',
+          'sequence': 5,
+          'payload': {
+            'action_id': 'action-support-001',
+            'action_status': 'confirmed',
+            'action_type': 'support.ticket.create',
+            'target_type': 'support_ticket',
+          },
+        }),
+      );
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'action.applied',
+          'thread_id': 'thread-action-001',
+          'run_id': 'run-action-001',
+          'sequence': 6,
+          'payload': {
+            'action_id': 'action-support-001',
+            'action_status': 'applied',
+            'action_type': 'support.ticket.create',
+            'target_type': 'support_ticket',
+          },
+        }),
+      );
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'run.completed',
+          'thread_id': 'thread-action-001',
+          'run_id': 'run-action-001',
+          'sequence': 7,
+          'payload': {'action_id': 'action-support-001'},
+        }),
+      );
+
+      expect(state.phase, AgentStreamRunPhase.finished);
+      expect(state.lastSequence, 7);
+      expect(state.actionEvents['action-support-001']?.type, 'action.applied');
+      expect(state.events.map((event) => event.type), [
+        'action.confirmation_required',
+        'run.waiting_for_confirmation',
+        'action.queued',
+        'action.applied',
+        'run.completed',
+      ]);
+    });
+
+    test('indexes tool and artifact lifecycle by stable ids', () {
+      var state = const AgentStreamRunState().start();
+
+      for (final event in [
+        const {
+          'type': 'tool.started',
+          'thread_id': 'thread-tool-001',
+          'run_id': 'run-tool-001',
+          'sequence': 2,
+          'payload': {'tool_call_id': 'tool-read-001'},
+        },
+        const {
+          'type': 'tool.completed',
+          'thread_id': 'thread-tool-001',
+          'run_id': 'run-tool-001',
+          'sequence': 3,
+          'payload': {'tool_call_id': 'tool-read-001'},
+        },
+        const {
+          'type': 'artifact.created',
+          'thread_id': 'thread-tool-001',
+          'run_id': 'run-tool-001',
+          'sequence': 4,
+          'payload': {
+            'artifact_id': 'artifact-plan-001',
+            'title': '今日计划',
+          },
+        },
+      ].map(AgentStreamEvent.new)) {
+        state = state.applyEvent(event);
+      }
+
+      expect(state.toolEvents['tool-read-001']?.type, 'tool.completed');
+      expect(
+        state.artifactEvents['artifact-plan-001']?.type,
+        'artifact.created',
+      );
+      expect(state.lastSequence, 4);
     });
 
     test('keeps local cancel state even when backend cancel fails', () {

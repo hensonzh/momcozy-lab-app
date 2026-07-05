@@ -11,6 +11,22 @@ class AgentStreamEvent {
   String? get runId => stringField(raw, 'run_id') ?? stringField(raw, 'runId');
   String? get messageId =>
       stringField(raw, 'message_id') ?? stringField(raw, 'messageId');
+  String? get toolCallId =>
+      stringField(raw, 'tool_call_id') ??
+      stringField(raw, 'toolCallId') ??
+      stringField(payload, 'tool_call_id') ??
+      stringField(payload, 'toolCallId');
+  String? get artifactId =>
+      stringField(raw, 'artifact_id') ??
+      stringField(raw, 'artifactId') ??
+      stringField(payload, 'artifact_id') ??
+      stringField(payload, 'artifactId');
+  String? get actionId =>
+      stringField(raw, 'action_id') ??
+      stringField(raw, 'actionId') ??
+      stringField(payload, 'action_id') ??
+      stringField(payload, 'actionId');
+  String? get role => stringField(raw, 'role') ?? stringField(payload, 'role');
   Map<String, Object?> get payload {
     final value = raw['payload'];
     return value is Map ? Map<String, Object?>.from(value) : const {};
@@ -23,17 +39,26 @@ class AgentStreamEvent {
       stringField(payload, 'text');
   String? get eventId =>
       stringField(raw, 'event_id') ?? stringField(raw, 'eventId');
+  int? get sequence {
+    final value = raw['sequence'] ?? raw['seq'];
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value.trim());
+    return null;
+  }
+
+  String? get cursor =>
+      stringField(raw, 'cursor') ?? stringField(payload, 'cursor');
+
+  bool get isTransient =>
+      raw['transient'] == true ||
+      payload['transient'] == true ||
+      (eventId?.startsWith('delta:') ?? false);
 
   String? get replayKey {
     final id = eventId?.trim();
     if (id != null && id.isNotEmpty) return 'event:$id';
 
-    final sequence = raw['sequence'] ?? raw['seq'];
-    final sequenceText = switch (sequence) {
-      int value => value.toString(),
-      String value => value.trim(),
-      _ => '',
-    };
+    final sequenceText = sequence?.toString() ?? '';
     if (sequenceText.isEmpty) return null;
 
     final scope = runId ?? threadId ?? messageId ?? 'global';
@@ -47,22 +72,17 @@ class AgentStreamEvent {
       type == 'run.cancelled';
 
   String get mergeKey {
-    final toolCallId = stringField(raw, 'tool_call_id');
+    final toolCallId = this.toolCallId;
     if (toolCallId != null && toolCallId.isNotEmpty) {
       return 'tool:$toolCallId';
     }
 
-    final artifactId =
-        stringField(raw, 'artifact_id') ?? stringField(raw, 'artifactId');
+    final artifactId = this.artifactId;
     if (artifactId != null && artifactId.isNotEmpty) {
       return 'artifact:$artifactId';
     }
 
-    final actionId =
-        stringField(raw, 'action_id') ??
-        stringField(raw, 'actionId') ??
-        stringField(payload, 'action_id') ??
-        stringField(payload, 'actionId');
+    final actionId = this.actionId;
     if (actionId != null && actionId.isNotEmpty) {
       return 'action:$actionId';
     }

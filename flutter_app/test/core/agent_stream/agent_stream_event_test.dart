@@ -84,5 +84,48 @@ void main() {
 
       expect(event.mergeKey, 'action:action-support-001');
     });
+
+    test('exposes production reducer ids from raw or payload fields', () {
+      final event = AgentStreamEvent(const {
+        'event_id': 'evt-action-001',
+        'type': 'action.applied',
+        'thread_id': 'thread-action-001',
+        'run_id': 'run-action-001',
+        'sequence': '8',
+        'payload': {
+          'action_id': 'action-support-001',
+          'tool_call_id': 'tool-support-001',
+          'artifact_id': 'artifact-support-001',
+          'cursor': '1720000000-0',
+        },
+      });
+
+      expect(event.sequence, 8);
+      expect(event.actionId, 'action-support-001');
+      expect(event.toolCallId, 'tool-support-001');
+      expect(event.artifactId, 'artifact-support-001');
+      expect(event.cursor, '1720000000-0');
+      expect(event.isTransient, isFalse);
+    });
+
+    test('recognizes transient message delta events', () {
+      final event = AgentStreamEvent(const {
+        'event_id': 'delta:1720000000-0',
+        'type': 'message.delta',
+        'thread_id': 'thread-stream-001',
+        'run_id': 'run-stream-001',
+        'transient': true,
+        'cursor': '1720000000-0',
+        'payload': {
+          'delta': '正在生成',
+          'message_stream_id': 'assistant',
+        },
+      });
+
+      expect(event.isTransient, isTrue);
+      expect(event.sequence, isNull);
+      expect(event.textDelta, '正在生成');
+      expect(event.replayKey, 'event:delta:1720000000-0');
+    });
   });
 }

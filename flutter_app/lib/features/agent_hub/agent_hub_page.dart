@@ -474,9 +474,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _pendingActionIds.remove(action.id);
       _localActionStatuses[action.id] = result.accepted
-          ? result.actionStatus ?? 'confirmed'
+          ? _acceptedConfirmStatus(result.actionStatus)
           : 'failed';
     });
+  }
+
+  String _acceptedConfirmStatus(String? actionStatus) {
+    final normalized = actionStatus?.trim();
+    if (normalized == null || normalized.isEmpty || normalized == 'confirmed') {
+      return 'queued';
+    }
+    return normalized;
   }
 
   Future<void> _rejectAction(AgentActionCardView action) async {
