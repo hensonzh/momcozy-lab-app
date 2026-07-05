@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
@@ -492,6 +493,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _MomCozyNavTab(
+                                  navKey: const ValueKey('bottom-nav-status'),
                                   label: '宝宝和我',
                                   selected: selectedIndex == 0,
                                   icon: const _MomBabyNavIcon(),
@@ -503,6 +505,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
+                                  navKey: const ValueKey('bottom-nav-schedule'),
                                   label: '计划',
                                   selected: selectedIndex == 1,
                                   icon: const Icon(Icons.event_note_outlined),
@@ -520,6 +523,9 @@ class MomCozyBottomNavigation extends StatelessWidget {
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
+                                  navKey: const ValueKey(
+                                    'bottom-nav-community',
+                                  ),
                                   label: '社区',
                                   selected: selectedIndex == 3,
                                   icon: const Icon(Icons.groups_2_outlined),
@@ -531,6 +537,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
                               ),
                               Expanded(
                                 child: _MomCozyNavTab(
+                                  navKey: const ValueKey('bottom-nav-device'),
                                   label: '设备',
                                   selected: selectedIndex == 4,
                                   icon: const Icon(
@@ -560,6 +567,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
 
 class _MomCozyNavTab extends StatelessWidget {
   const _MomCozyNavTab({
+    required this.navKey,
     required this.label,
     required this.selected,
     required this.icon,
@@ -567,6 +575,7 @@ class _MomCozyNavTab extends StatelessWidget {
     required this.onTap,
   });
 
+  final Key navKey;
   final String label;
   final bool selected;
   final Widget icon;
@@ -581,6 +590,7 @@ class _MomCozyNavTab extends StatelessWidget {
 
     return Center(
       child: Semantics(
+        key: navKey,
         selected: selected,
         button: true,
         child: InkWell(
@@ -695,15 +705,20 @@ class _MomCozyAgentNavTab extends StatelessWidget {
                         ),
                       ),
                     Container(
+                      key: const ValueKey('bottom-nav-agent-avatar'),
                       width: 48,
                       height: 48,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: AssetImage(MomCozyAssets.agentAvatar),
+                          image: AssetImage(
+                            selected
+                                ? MomCozyAssets.agentAwakenAvatar
+                                : MomCozyAssets.agentAvatar,
+                          ),
                           fit: BoxFit.cover,
                         ),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             color: Color(0x243a2731),
                             blurRadius: 10,
@@ -879,13 +894,17 @@ class MomCozyRoutePage extends StatelessWidget {
     if (route.path == '/') {
       final runtime = MomCozyRuntimeScope.of(context);
       return AgentHubPage(
+        stateCacheKey: runtime,
         runner: createSessionAgentHubRunner(runtime.session),
         cancelClient: createSessionAgentHubCancelClient(runtime.session),
         actionClient: createSessionAgentHubActionClient(runtime.session),
         requestBuilder: (message) =>
             buildSessionAgentHubRequest(message, session: runtime.session),
+        pickImage: _pickLocalAgentHubImage,
+        voiceInput: _captureLocalAgentVoiceDraft,
         onArtifactAction: (action) =>
             _handleAgentArtifactAction(context, action),
+        initialComposerText: _agentPrefillFromRoute(uri, extra),
       );
     }
 
@@ -900,6 +919,19 @@ class MomCozyRoutePage extends StatelessWidget {
       routeExtra: extra,
     );
   }
+}
+
+String? _agentPrefillFromRoute(Uri? uri, Object? extra) {
+  final extraMap = extra is Map ? extra : null;
+  final extraPrefill = extraMap?['agentPrefill'];
+  if (extraPrefill is String && extraPrefill.trim().isNotEmpty) {
+    return extraPrefill.trim();
+  }
+  final queryPrefill = uri?.queryParameters['agentPrefill'];
+  if (queryPrefill != null && queryPrefill.trim().isNotEmpty) {
+    return queryPrefill.trim();
+  }
+  return null;
 }
 
 class MomCozyRouteConfig {
@@ -953,14 +985,6 @@ const momCozyRoutes = [
     icon: Icons.water_drop_rounded,
     accent: Color(0xff43827b),
     priority: 'P0',
-  ),
-  MomCozyRouteConfig(
-    path: '/records',
-    title: '妈妈点滴',
-    summary: '泵奶、喂养和成长记录的列表与图表入口。',
-    icon: Icons.insights_rounded,
-    accent: Color(0xff6b6da8),
-    priority: 'P1',
   ),
   MomCozyRouteConfig(
     path: '/schedule',
@@ -1060,6 +1084,24 @@ int _selectedTabIndex(String location) {
   if (location == '/community') return 3;
   if (location.startsWith('/device') || location == '/w1') return 4;
   return -1;
+}
+
+const _agentHubLocalImageDataUrl =
+    'data:image/png;base64,'
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8'
+    'z8BQDwAFgwJ/lR4nWQAAAABJRU5ErkJggg==';
+
+Future<AgentStreamImageInput?> _pickLocalAgentHubImage() async {
+  return const AgentStreamImageInput(
+    dataUrl: _agentHubLocalImageDataUrl,
+    mimeType: 'image/png',
+    name: 'momcozy-local-photo.png',
+    size: 68,
+  );
+}
+
+Future<String?> _captureLocalAgentVoiceDraft() async {
+  return '我想记录今天的泵奶和宝宝状态';
 }
 
 void _handleAgentArtifactAction(

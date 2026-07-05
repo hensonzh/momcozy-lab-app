@@ -6,9 +6,9 @@ targets.
 
 ## Source Of Truth
 
-- Schema: `production_backend/docs/openapi.generated.json`
-- Handoff: `production_backend/docs/api-contract-handoff.md`
-- Smoke flows: `production_backend/docs/flutter-smoke-flows.json`
+- Schema: `docs/backend-contract/openapi.generated.json`
+- Handoff: `docs/backend-contract/api-contract-handoff.md`
+- Smoke flows: `docs/backend-contract/flutter-smoke-flows.json`
 
 ## Regeneration Rule
 

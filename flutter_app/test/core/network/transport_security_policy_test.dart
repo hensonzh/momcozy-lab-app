@@ -39,6 +39,16 @@ void main() {
         ),
         isTrue,
       );
+      expect(
+        TransportSecurityPolicy.requireSecureHttp(
+          Uri.parse('http://10.0.2.2:8769'),
+        ),
+        Uri.parse('http://10.0.2.2:8769'),
+      );
+      expect(
+        AgentStreamEndpoint(uri: Uri.parse('ws://10.0.2.2:8768/api/ag-ui')).uri,
+        Uri.parse('ws://10.0.2.2:8768/api/ag-ui'),
+      );
     });
 
     test('rejects remote plaintext HTTP and WebSocket endpoints', () {

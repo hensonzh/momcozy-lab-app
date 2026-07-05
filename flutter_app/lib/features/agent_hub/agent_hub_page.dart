@@ -19,9 +19,23 @@ typedef AgentHubNewSessionHandler = void Function();
 
 const _agentDefaultGreeting = '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
 
+final _agentHubInteractionStates = Expando<_AgentHubInteractionState>(
+  'momcozy-agent-hub-interaction-state',
+);
+
+class _AgentHubInteractionState {
+  AgentStreamRunState runState = const AgentStreamRunState();
+  List<AgentHubHistoryMessage>? historyMessages;
+  String composerText = '';
+  List<AgentStreamImageInput> attachedImages = const <AgentStreamImageInput>[];
+  bool autoVoiceEnabled = true;
+  AgentStreamRequest? activeRequest;
+}
+
 class AgentHubPage extends StatefulWidget {
   const AgentHubPage({
     super.key,
+    this.stateCacheKey,
     this.state = const AgentStreamRunState(),
     this.historyMessages = const <AgentHubHistoryMessage>[],
     this.runner,
@@ -34,8 +48,10 @@ class AgentHubPage extends StatefulWidget {
     this.voicePlaybackCoordinator,
     this.onArtifactAction,
     this.onNewSession,
+    this.initialComposerText,
   });
 
+  final Object? stateCacheKey;
   final AgentStreamRunState state;
   final List<AgentHubHistoryMessage> historyMessages;
   final AgentStreamRunner? runner;
@@ -48,44 +64,142 @@ class AgentHubPage extends StatefulWidget {
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubNewSessionHandler? onNewSession;
+  final String? initialComposerText;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
 }
 
 class _AgentHubPageState extends State<AgentHubPage> {
-  late AgentStreamRunState _state = widget.state;
-  late List<AgentHubHistoryMessage> _historyMessages = [
-    ...widget.historyMessages,
-  ];
-  late final TextEditingController _composerController =
-      TextEditingController();
+  late AgentStreamRunState _state;
+  late List<AgentHubHistoryMessage> _historyMessages;
+  late final TextEditingController _composerController;
+  _AgentHubInteractionState? _interactionState;
   StreamSubscription<AgentStreamRunState>? _runSubscription;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
+  final ScrollController _chatScrollController = ScrollController();
   bool _autoVoiceEnabled = true;
+  bool _showLatestButton = false;
+  bool _showPhotoMenu = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _restoreCachedInteractionState();
+    _applyInitialComposerText();
+    _composerController.addListener(_persistInteractionState);
+    _chatScrollController.addListener(_updateLatestButtonVisibility);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _updateLatestButtonVisibility();
+    });
+  }
 
   @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.state != widget.state &&
+    if (_interactionState == null &&
+        oldWidget.state != widget.state &&
         (widget.runner == null || !_state.isActive)) {
       _state = widget.state;
     }
-    if (oldWidget.historyMessages != widget.historyMessages &&
+    if (_interactionState == null &&
+        oldWidget.historyMessages != widget.historyMessages &&
         !_state.isActive) {
       _historyMessages = [...widget.historyMessages];
+      _persistInteractionState();
+    }
+    if (oldWidget.initialComposerText != widget.initialComposerText) {
+      _applyInitialComposerText();
     }
   }
 
   @override
   void dispose() {
     _cancelRunSubscription();
+    _composerController.removeListener(_persistInteractionState);
+    _chatScrollController
+      ..removeListener(_updateLatestButtonVisibility)
+      ..dispose();
     _composerController.dispose();
     super.dispose();
+  }
+
+  void _restoreCachedInteractionState() {
+    final stateCacheKey = widget.stateCacheKey;
+    if (stateCacheKey == null) {
+      _state = widget.state;
+      _historyMessages = [...widget.historyMessages];
+      _composerController = TextEditingController();
+      return;
+    }
+
+    final interactionState = _agentHubInteractionStates[stateCacheKey] ??=
+        _AgentHubInteractionState();
+    _interactionState = interactionState;
+    _state = interactionState.historyMessages == null
+        ? widget.state
+        : interactionState.runState;
+    _historyMessages = [
+      ...(interactionState.historyMessages ?? widget.historyMessages),
+    ];
+    _composerController = TextEditingController(
+      text: interactionState.composerText,
+    );
+    _attachedImages.addAll(interactionState.attachedImages);
+    _autoVoiceEnabled = interactionState.autoVoiceEnabled;
+    _activeRequest = interactionState.activeRequest;
+  }
+
+  void _persistInteractionState() {
+    final interactionState = _interactionState;
+    if (interactionState == null) return;
+    interactionState
+      ..runState = _state
+      ..historyMessages = [..._historyMessages]
+      ..composerText = _composerController.text
+      ..attachedImages = [..._attachedImages]
+      ..autoVoiceEnabled = _autoVoiceEnabled
+      ..activeRequest = _activeRequest;
+  }
+
+  void _applyInitialComposerText() {
+    final text = widget.initialComposerText?.trim();
+    if (text == null || text.isEmpty || _state.isActive) return;
+    _composerController
+      ..text = text
+      ..selection = TextSelection.collapsed(offset: text.length);
+    _persistInteractionState();
+  }
+
+  void _updateLatestButtonVisibility() {
+    if (!_chatScrollController.hasClients) return;
+    final position = _chatScrollController.position;
+    final shouldShow =
+        position.maxScrollExtent > 160 &&
+        position.pixels < position.maxScrollExtent - 40;
+    if (shouldShow == _showLatestButton) return;
+    setState(() {
+      _showLatestButton = shouldShow;
+    });
+  }
+
+  Future<void> _scrollToLatest() async {
+    if (!_chatScrollController.hasClients) return;
+    await _chatScrollController.animateTo(
+      _chatScrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+    );
+    if (!_chatScrollController.hasClients) return;
+    final position = _chatScrollController.position;
+    if (position.pixels > position.maxScrollExtent) {
+      _chatScrollController.jumpTo(position.maxScrollExtent);
+    }
+    _updateLatestButtonVisibility();
   }
 
   bool get _canSend =>
@@ -106,14 +220,26 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
 
+    final requestMessage = message.isEmpty ? '请看这张图片' : message;
+    final optimisticContent = message.isEmpty
+        ? '图片 ${_attachedImages.length}'
+        : message;
     final request = _requestWithImages(
-      widget.requestBuilder(message),
+      widget.requestBuilder(requestMessage),
       _attachedImages,
     );
     _composerController.clear();
     setState(() {
+      _historyMessages.add(
+        AgentHubHistoryMessage(
+          role: AgentHubHistoryRole.user,
+          content: optimisticContent,
+        ),
+      );
       _attachedImages.clear();
+      _showPhotoMenu = false;
     });
+    _persistInteractionState();
     await _startRun(request);
   }
 
@@ -124,6 +250,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted || image == null) return;
     setState(() {
       _attachedImages.add(image);
+      _showPhotoMenu = false;
+    });
+    _persistInteractionState();
+  }
+
+  void _togglePhotoMenu() {
+    if (widget.pickImage == null || _state.isActive) return;
+    setState(() {
+      _showPhotoMenu = !_showPhotoMenu;
     });
   }
 
@@ -163,6 +298,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         }
         _voiceState = _voiceState.applyTranscription(text ?? '');
       });
+      _persistInteractionState();
     } catch (error) {
       if (!mounted) return;
       setState(() {
@@ -184,6 +320,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _attachedImages.clear();
     });
+    _persistInteractionState();
   }
 
   void _startNewSession() {
@@ -194,11 +331,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _state = const AgentStreamRunState();
       _historyMessages.clear();
       _attachedImages.clear();
+      _showPhotoMenu = false;
       _pendingActionIds.clear();
       _localActionStatuses.clear();
       _activeRequest = null;
       _voiceState = const AgentVoiceState();
     });
+    _persistInteractionState();
     widget.onNewSession?.call();
   }
 
@@ -219,6 +358,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _pendingActionIds.clear();
       _localActionStatuses.clear();
     });
+    _persistInteractionState();
 
     _runSubscription = runner
         .run(request)
@@ -228,6 +368,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             setState(() {
               _state = nextState;
             });
+            _persistInteractionState();
             _maybeStartAutoVoicePlayback(nextState);
           },
           onError: (Object error) {
@@ -235,6 +376,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             setState(() {
               _state = _state.markDisconnected(error);
             });
+            _persistInteractionState();
           },
         );
   }
@@ -273,11 +415,20 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _state = _state.requestCancel();
     });
+    _persistInteractionState();
     _cancelRunSubscription();
     setState(() {
       _state = _state.applyCancelResult(acknowledged: true);
     });
+    _persistInteractionState();
     _sendBestEffortServerCancel(activeState, activeRequest);
+  }
+
+  void _toggleAutoVoice() {
+    setState(() {
+      _autoVoiceEnabled = !_autoVoiceEnabled;
+    });
+    _persistInteractionState();
   }
 
   void _cancelRunSubscription() {
@@ -362,14 +513,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
             showControls: true,
             autoVoiceEnabled: _autoVoiceEnabled,
             isRunning: _state.isActive,
-            onToggleAutoVoice: () =>
-                setState(() => _autoVoiceEnabled = !_autoVoiceEnabled),
+            onToggleAutoVoice: _toggleAutoVoice,
             onNewSession: _startNewSession,
           ),
           Expanded(
             child: Stack(
               children: [
                 ListView(
+                  key: const ValueKey('agent-chat-scroll-view'),
+                  controller: _chatScrollController,
                   padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
                   children: [
                     if (_historyMessages.isNotEmpty) ...[
@@ -399,6 +551,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
                   height: 24,
                   child: IgnorePointer(child: _AgentHubTopFade()),
                 ),
+                if (_showLatestButton)
+                  Positioned(
+                    right: 12,
+                    bottom: 12,
+                    child: FilledButton.tonalIcon(
+                      key: const ValueKey('agent-scroll-latest-button'),
+                      onPressed: _scrollToLatest,
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                      label: const Text('回到最新消息'),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -409,6 +572,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
               canSend: _canSend,
               isRunning: _state.isActive,
               imageCount: _attachedImages.length,
+              showPhotoMenu: _showPhotoMenu,
               canAttachImage: widget.pickImage != null && !_state.isActive,
               canUseVoice:
                   (widget.voiceInputController != null ||
@@ -419,6 +583,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
               onChanged: (_) => setState(() {}),
               onSend: _sendMessage,
               onCancel: _cancelRun,
+              onTogglePhotoMenu: _togglePhotoMenu,
               onAttachImage: _attachImage,
               onRemoveImages: _removeAttachedImages,
               onVoiceInput: _startVoiceInput,
@@ -508,6 +673,7 @@ class _AgentHubTopFade extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const DecoratedBox(
+      key: ValueKey('agent-top-fade'),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -1335,12 +1501,14 @@ class AgentComposerBar extends StatelessWidget {
     required this.canSend,
     required this.isRunning,
     required this.imageCount,
+    required this.showPhotoMenu,
     required this.canAttachImage,
     required this.canUseVoice,
     required this.voicePhase,
     required this.onChanged,
     required this.onSend,
     required this.onCancel,
+    required this.onTogglePhotoMenu,
     required this.onAttachImage,
     required this.onRemoveImages,
     required this.onVoiceInput,
@@ -1350,12 +1518,14 @@ class AgentComposerBar extends StatelessWidget {
   final bool canSend;
   final bool isRunning;
   final int imageCount;
+  final bool showPhotoMenu;
   final bool canAttachImage;
   final bool canUseVoice;
   final AgentVoicePhase voicePhase;
   final ValueChanged<String> onChanged;
   final VoidCallback onSend;
   final VoidCallback onCancel;
+  final VoidCallback onTogglePhotoMenu;
   final VoidCallback onAttachImage;
   final VoidCallback onRemoveImages;
   final VoidCallback onVoiceInput;
@@ -1372,6 +1542,55 @@ class AgentComposerBar extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (showPhotoMenu) ...[
+              Padding(
+                key: const ValueKey('agent-photo-menu'),
+                padding: const EdgeInsets.only(bottom: 8),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.card.withValues(alpha: 0.92),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: MomCozyColors.border.withValues(alpha: 0.62),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xff754c5e).withValues(alpha: 0.12),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton.tonalIcon(
+                            key: const ValueKey('agent-photo-camera-button'),
+                            onPressed: canAttachImage ? onAttachImage : null,
+                            icon: const Icon(
+                              Icons.photo_camera_outlined,
+                              size: 18,
+                            ),
+                            label: const Text('拍照'),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            key: const ValueKey('agent-photo-upload-button'),
+                            onPressed: canAttachImage ? onAttachImage : null,
+                            icon: const Icon(Icons.upload_rounded, size: 18),
+                            label: const Text('上传'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
             if (imageCount > 0) ...[
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -1442,7 +1661,7 @@ class AgentComposerBar extends StatelessWidget {
                   children: [
                     IconButton(
                       key: const ValueKey('agent-image-button'),
-                      onPressed: canAttachImage ? onAttachImage : null,
+                      onPressed: canAttachImage ? onTogglePhotoMenu : null,
                       icon: const Icon(
                         Icons.add_photo_alternate_outlined,
                         size: 20,

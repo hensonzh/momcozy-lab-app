@@ -66,8 +66,8 @@ Current Android PoC package:
 - `local` applicationId: `com.momcozymai.app.flutterpoc.local`
 - `staging` applicationId: `com.momcozymai.app.flutterpoc.staging`
 - `production` applicationId: `com.momcozymai.app.flutterpoc`
-- Packaging policy: [doc/flutter-android-packaging.md](../doc/flutter-android-packaging.md)
-- Release gate: [doc/flutter-release-gate.md](../doc/flutter-release-gate.md)
+- Packaging policy: [docs/flutter/android-packaging.md](../docs/flutter/android-packaging.md)
+- Release gate: [docs/flutter/release-gate.md](../docs/flutter/release-gate.md)
 
 ## Phase 0 Contract Tests
 

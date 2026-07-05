@@ -66,6 +66,11 @@ void main() {
               content: '我建议你先观察舒适度和间隔。',
             ),
           ],
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'staged-before-new-session.png',
+          ),
           onNewSession: () => newSessionStarted = true,
         ),
       ),
@@ -81,6 +86,15 @@ void main() {
       '开始新的问题',
     );
     await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
     await tester.pump();
@@ -88,6 +102,11 @@ void main() {
     expect(newSessionStarted, isTrue);
     expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
     expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsNothing,
+    );
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
@@ -143,6 +162,7 @@ void main() {
 
     expect(client.requests.single.message, 'Review my pumping pattern');
     expect(client.requests.single.threadId, isNull);
+    expect(find.text('Review my pumping pattern'), findsOneWidget);
     expect(
       find.text('I can help you review today\'s pumping pattern.'),
       findsOneWidget,
@@ -154,6 +174,33 @@ void main() {
           ?.text,
       '',
     );
+  });
+
+  testWidgets('Agent Hub keeps send disabled for empty runner input', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    final sendButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+    expect(sendButton.onPressed, isNull);
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-send-button')),
+      warnIfMissed: false,
+    );
+    await tester.pumpAndSettle();
+
+    expect(client.requests, isEmpty);
   });
 
   testWidgets('Agent Hub attaches image input to the next request', (
@@ -182,6 +229,18 @@ void main() {
     );
 
     await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
+    expect(find.text('拍照'), findsOneWidget);
+    expect(find.text('上传'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
     await tester.pumpAndSettle();
 
     expect(
@@ -231,6 +290,8 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('agent-image-button')));
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
 
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
@@ -267,6 +328,123 @@ void main() {
 
     expect(client.requests.single.message, 'Send text only');
     expect(client.requests.single.images, isEmpty);
+  });
+
+  testWidgets('Agent Hub restores draft and image attachment by cache key', (
+    tester,
+  ) async {
+    final cacheKey = Object();
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'retained-across-tab.png',
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '跨模块回来继续问',
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(_host(const SizedBox.shrink()));
+    await tester.pumpAndSettle();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'retained-across-tab.png',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '跨模块回来继续问',
+    );
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+    expect(find.text('图片 1'), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub sends image-only request with legacy prompt', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'only-image.png',
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-camera-button')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests.single.message, '请看这张图片');
+    expect(client.requests.single.images.single.name, 'only-image.png');
+  });
+
+  testWidgets('Agent Hub applies initial composer prefill', (tester) async {
+    await tester.pumpWidget(
+      _host(const AgentHubPage(initialComposerText: '我想调整今天的吸乳排期')),
+    );
+
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '我想调整今天的吸乳排期',
+    );
   });
 
   testWidgets('Agent Hub voice input fills composer without sending', (

@@ -81,35 +81,11 @@
       "consoleErrorCount": 0
     },
     {
-      "id": "media_viewer",
-      "path": "/media-viewer",
-      "file": "media_viewer.png",
-      "sha256": "859174850ecb9982deceea3f52e0d8767a65f75b160a3fb3c748fa48c25b5ef6",
-      "bytes": 9256,
-      "consoleErrorCount": 0
-    },
-    {
-      "id": "pump",
-      "path": "/pump",
-      "file": "pump.png",
-      "sha256": "2882b21f8191fc40bbf4b7035964bec2db2cca2e4918a902b80d08eb97256716",
-      "bytes": 88085,
-      "consoleErrorCount": 2
-    },
-    {
       "id": "calibration",
       "path": "/calibration",
       "file": "calibration.png",
       "sha256": "2837f286d02365ab6cc2b57f7f633c3356cfa6c021892bbb9803ee347cc2f364",
       "bytes": 30884,
-      "consoleErrorCount": 0
-    },
-    {
-      "id": "records",
-      "path": "/records",
-      "file": "records.png",
-      "sha256": "036701a9c4732996d244446be87131980309188f314144cbbe0d0364931d7cf1",
-      "bytes": 81328,
       "consoleErrorCount": 0
     },
     {
@@ -119,14 +95,6 @@
       "sha256": "530c351b2efcbf9813fa25ec7099d701e77549177a8e09525ebbd6efc696a5be",
       "bytes": 41494,
       "consoleErrorCount": 0
-    },
-    {
-      "id": "not_found",
-      "path": "/__reference_not_found__",
-      "file": "not_found.png",
-      "sha256": "bafc2defde4887a324edf36b2ccb16b7aae24647b8f52864caeff0e65ee921f0",
-      "bytes": 23931,
-      "consoleErrorCount": 1
     }
   ]
 }
