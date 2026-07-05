@@ -1830,7 +1830,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         Positioned(
                           right: _surfaceHorizontalInset,
                           bottom: _surfaceVerticalInset,
-                          child: IconButton.filled(
+                          child: IconButton(
                             key: ValueKey(
                               isRunning
                                   ? 'agent-stop-button'
@@ -1839,19 +1839,35 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                             onPressed: isRunning
                                 ? onCancel
                                 : (canSend ? onSend : null),
-                            icon: Icon(
-                              isRunning
-                                  ? Icons.stop_rounded
-                                  : Icons.send_rounded,
-                              size: isRunning ? 18 : 16,
+                            icon: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: isRunning || canSend
+                                    ? colorScheme.primary
+                                    : MomCozyColors.muted,
+                                shape: BoxShape.circle,
+                              ),
+                              child: SizedBox.square(
+                                dimension: _controlSize,
+                                child: Center(
+                                  child: Icon(
+                                    isRunning
+                                        ? Icons.stop_rounded
+                                        : Icons.send_rounded,
+                                    size: isRunning ? 18 : 16,
+                                    color: isRunning || canSend
+                                        ? colorScheme.onPrimary
+                                        : MomCozyColors.mutedForeground,
+                                  ),
+                                ),
+                              ),
                             ),
                             tooltip: isRunning ? '停止' : '发送',
                             style: IconButton.styleFrom(
-                              backgroundColor: colorScheme.primary,
-                              foregroundColor: colorScheme.onPrimary,
-                              disabledBackgroundColor: MomCozyColors.muted,
-                              disabledForegroundColor:
-                                  MomCozyColors.mutedForeground,
+                              backgroundColor: Colors.transparent,
+                              disabledBackgroundColor: Colors.transparent,
+                              overlayColor: colorScheme.primary.withValues(
+                                alpha: 0.08,
+                              ),
                               fixedSize: const Size.square(_controlSize),
                               minimumSize: const Size.square(_controlSize),
                               maximumSize: const Size.square(_controlSize),
