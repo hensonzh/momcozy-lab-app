@@ -565,29 +565,26 @@ class _AgentHubPageState extends State<AgentHubPage> {
               ],
             ),
           ),
-          Transform.translate(
-            offset: const Offset(0, 16),
-            child: AgentComposerBar(
-              controller: _composerController,
-              canSend: _canSend,
-              isRunning: _state.isActive,
-              imageCount: _attachedImages.length,
-              showPhotoMenu: _showPhotoMenu,
-              canAttachImage: widget.pickImage != null && !_state.isActive,
-              canUseVoice:
-                  (widget.voiceInputController != null ||
-                      widget.voiceInput != null) &&
-                  !_state.isActive &&
-                  !_voiceState.isInputActive,
-              voicePhase: _voiceState.phase,
-              onChanged: (_) => setState(() {}),
-              onSend: _sendMessage,
-              onCancel: _cancelRun,
-              onTogglePhotoMenu: _togglePhotoMenu,
-              onAttachImage: _attachImage,
-              onRemoveImages: _removeAttachedImages,
-              onVoiceInput: _startVoiceInput,
-            ),
+          AgentComposerBar(
+            controller: _composerController,
+            canSend: _canSend,
+            isRunning: _state.isActive,
+            imageCount: _attachedImages.length,
+            showPhotoMenu: _showPhotoMenu,
+            canAttachImage: widget.pickImage != null && !_state.isActive,
+            canUseVoice:
+                (widget.voiceInputController != null ||
+                    widget.voiceInput != null) &&
+                !_state.isActive &&
+                !_voiceState.isInputActive,
+            voicePhase: _voiceState.phase,
+            onChanged: (_) => setState(() {}),
+            onSend: _sendMessage,
+            onCancel: _cancelRun,
+            onTogglePhotoMenu: _togglePhotoMenu,
+            onAttachImage: _attachImage,
+            onRemoveImages: _removeAttachedImages,
+            onVoiceInput: _startVoiceInput,
           ),
         ],
       ),
@@ -1494,7 +1491,7 @@ class AgentActionCardView {
   }
 }
 
-class AgentComposerBar extends StatelessWidget {
+class AgentComposerBar extends StatefulWidget {
   const AgentComposerBar({
     super.key,
     required this.controller,
@@ -1530,6 +1527,11 @@ class AgentComposerBar extends StatelessWidget {
   final VoidCallback onRemoveImages;
   final VoidCallback onVoiceInput;
 
+  @override
+  State<AgentComposerBar> createState() => _AgentComposerBarState();
+}
+
+class _AgentComposerBarState extends State<AgentComposerBar> {
   static const double _controlSize = 32;
   static const double _compactHorizontalPadding = 8;
   static const double _compactControlGap = 4;
@@ -1537,8 +1539,48 @@ class AgentComposerBar extends StatelessWidget {
   static const double _lineWrapGuard = 10;
 
   @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_handleControllerChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant AgentComposerBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller == widget.controller) return;
+    oldWidget.controller.removeListener(_handleControllerChanged);
+    widget.controller.addListener(_handleControllerChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_handleControllerChanged);
+    super.dispose();
+  }
+
+  void _handleControllerChanged() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final controller = widget.controller;
+    final isRunning = widget.isRunning;
+    final canSend = widget.canSend;
+    final imageCount = widget.imageCount;
+    final showPhotoMenu = widget.showPhotoMenu;
+    final canAttachImage = widget.canAttachImage;
+    final canUseVoice = widget.canUseVoice;
+    final voicePhase = widget.voicePhase;
+    final onChanged = widget.onChanged;
+    final onSend = widget.onSend;
+    final onCancel = widget.onCancel;
+    final onTogglePhotoMenu = widget.onTogglePhotoMenu;
+    final onAttachImage = widget.onAttachImage;
+    final onRemoveImages = widget.onRemoveImages;
+    final onVoiceInput = widget.onVoiceInput;
     const inputTextStyle = TextStyle(
       fontFamily: MomCozyTypography.fontFamily,
       fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
@@ -1858,7 +1900,7 @@ class AgentComposerBar extends StatelessWidget {
     double maxWidth,
     TextStyle style,
   ) {
-    final text = controller.text.isEmpty ? ' ' : controller.text;
+    final text = widget.controller.text.isEmpty ? ' ' : widget.controller.text;
     final painter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: Directionality.of(context),
@@ -1868,7 +1910,7 @@ class AgentComposerBar extends StatelessWidget {
   }
 
   IconData get _voiceIcon {
-    return switch (voicePhase) {
+    return switch (widget.voicePhase) {
       AgentVoicePhase.listening => Icons.graphic_eq_rounded,
       AgentVoicePhase.transcribing => Icons.hourglass_bottom_rounded,
       AgentVoicePhase.playing => Icons.volume_up_outlined,
@@ -1879,7 +1921,7 @@ class AgentComposerBar extends StatelessWidget {
   }
 
   String get _voiceTooltip {
-    return switch (voicePhase) {
+    return switch (widget.voicePhase) {
       AgentVoicePhase.listening => '正在听',
       AgentVoicePhase.transcribing => '正在转写',
       AgentVoicePhase.playing => '正在播放语音',
@@ -1891,7 +1933,7 @@ class AgentComposerBar extends StatelessWidget {
   }
 
   String? get _voiceStatusLabel {
-    return switch (voicePhase) {
+    return switch (widget.voicePhase) {
       AgentVoicePhase.listening => '正在听',
       AgentVoicePhase.transcribing => '正在整理语音',
       AgentVoicePhase.playing => '正在播放语音',

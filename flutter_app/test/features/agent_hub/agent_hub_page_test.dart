@@ -302,6 +302,63 @@ void main() {
     },
   );
 
+  testWidgets('Agent Hub composer resizes from controller updates directly', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 160);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final controller = TextEditingController();
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: momCozyTheme(),
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.bottomCenter,
+            child: AgentComposerBar(
+              controller: controller,
+              canSend: true,
+              isRunning: false,
+              imageCount: 0,
+              showPhotoMenu: false,
+              canAttachImage: true,
+              canUseVoice: true,
+              voicePhase: AgentVoicePhase.idle,
+              onChanged: (_) {},
+              onSend: () {},
+              onCancel: () {},
+              onTogglePhotoMenu: () {},
+              onAttachImage: () {},
+              onRemoveImages: () {},
+              onVoiceInput: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final compactHeight = _composerSurfaceHeight(tester);
+
+    controller.text =
+        'nihao a dsdkfj ksdjf ksjdf jdfg jdh kasjdf klsjdflk jskldjf';
+    await tester.pump();
+
+    final inputRect = tester.getRect(
+      find.byKey(const ValueKey('agent-composer-input-frame')),
+    );
+    final sendRect = tester.getRect(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+
+    expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
+    expect(sendRect.top, greaterThan(inputRect.bottom));
+  });
+
   testWidgets('Agent Hub keeps send disabled for empty runner input', (
     tester,
   ) async {
