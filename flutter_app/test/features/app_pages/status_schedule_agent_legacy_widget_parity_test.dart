@@ -444,6 +444,9 @@ void main() {
         await tester.tap(find.byType(Checkbox).last);
         await tester.pump();
         expect(_checkboxesWithValue(tester, true), 2);
+        await tester.tap(find.byType(Checkbox).last);
+        await tester.pump();
+        expect(_checkboxesWithValue(tester, true), 1);
 
         await _scrollToFinder(
           tester,
