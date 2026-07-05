@@ -844,7 +844,7 @@ void main() {
       containsPair('Idempotency-Key', 'agent-action-$actionId'),
     );
     expect(jsonDecode(connector.body!) as Map<String, Object?>, isEmpty);
-    expect(find.text('已确认'), findsOneWidget);
+    expect(find.text('已提交'), findsOneWidget);
   });
 
   testWidgets('Agent Hub renders safe tool failure progress', (tester) async {

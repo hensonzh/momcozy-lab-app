@@ -19,6 +19,11 @@ class AgentStreamRunState {
     this.runId,
     this.messageId,
     this.textContent = '',
+    this.provisionalTextContent = '',
+    this.toolEvents = const <String, AgentStreamEvent>{},
+    this.artifactEvents = const <String, AgentStreamEvent>{},
+    this.actionEvents = const <String, AgentStreamEvent>{},
+    this.lastSequence,
     this.errorMessage,
     this.cancelAcknowledged = false,
     this.cancelStatusCode,
@@ -30,6 +35,11 @@ class AgentStreamRunState {
   final String? runId;
   final String? messageId;
   final String textContent;
+  final String provisionalTextContent;
+  final Map<String, AgentStreamEvent> toolEvents;
+  final Map<String, AgentStreamEvent> artifactEvents;
+  final Map<String, AgentStreamEvent> actionEvents;
+  final int? lastSequence;
   final String? errorMessage;
   final bool cancelAcknowledged;
   final int? cancelStatusCode;
@@ -47,19 +57,30 @@ class AgentStreamRunState {
   }
 
   AgentStreamRunState applyEvent(AgentStreamEvent event) {
-    if (!isActive) return this;
+    if (!_canApplyEvent(event)) return this;
     if (_hasSeenReplayKey(event)) return this;
 
     final type = event.type;
     final nextEvents = List<AgentStreamEvent>.unmodifiable([...events, event]);
-    final nextText = type == 'message.delta'
-        ? '$textContent${event.textDelta ?? ''}'
-        : type == 'message.completed'
-        ? event.textDelta ?? textContent
-        : textContent;
+    final nextText = _nextTextContent(event);
+    final nextProvisionalText = _nextProvisionalTextContent(event);
     final nextThreadId = event.threadId ?? threadId;
     final nextRunId = event.runId ?? runId;
     final nextMessageId = event.messageId ?? messageId;
+    final nextToolEvents = event.type.startsWith('tool.')
+        ? _nextIndexedEvents(toolEvents, event.toolCallId, event)
+        : toolEvents;
+    final nextArtifactEvents = _nextIndexedEvents(
+      artifactEvents,
+      event.type.startsWith('artifact.') ? event.artifactId : null,
+      event,
+    );
+    final nextActionEvents = _nextIndexedEvents(
+      actionEvents,
+      event.type.startsWith('action.') ? event.actionId : null,
+      event,
+    );
+    final nextSequence = _maxSequence(lastSequence, event.sequence);
 
     if (type == 'run.completed') {
       return copyWith(
@@ -69,6 +90,11 @@ class AgentStreamRunState {
         runId: nextRunId,
         messageId: nextMessageId,
         textContent: nextText,
+        provisionalTextContent: nextProvisionalText,
+        toolEvents: nextToolEvents,
+        artifactEvents: nextArtifactEvents,
+        actionEvents: nextActionEvents,
+        lastSequence: nextSequence,
       );
     }
 
@@ -80,6 +106,11 @@ class AgentStreamRunState {
         runId: nextRunId,
         messageId: nextMessageId,
         textContent: nextText,
+        provisionalTextContent: nextProvisionalText,
+        toolEvents: nextToolEvents,
+        artifactEvents: nextArtifactEvents,
+        actionEvents: nextActionEvents,
+        lastSequence: nextSequence,
         cancelAcknowledged: true,
       );
     }
@@ -92,6 +123,11 @@ class AgentStreamRunState {
         runId: nextRunId,
         messageId: nextMessageId,
         textContent: nextText,
+        provisionalTextContent: nextProvisionalText,
+        toolEvents: nextToolEvents,
+        artifactEvents: nextArtifactEvents,
+        actionEvents: nextActionEvents,
+        lastSequence: nextSequence,
       );
     }
 
@@ -103,6 +139,11 @@ class AgentStreamRunState {
         runId: nextRunId,
         messageId: nextMessageId,
         textContent: nextText,
+        provisionalTextContent: nextProvisionalText,
+        toolEvents: nextToolEvents,
+        artifactEvents: nextArtifactEvents,
+        actionEvents: nextActionEvents,
+        lastSequence: nextSequence,
         errorMessage:
             stringField(event.raw, 'message') ??
             stringField(event.payload, 'message') ??
@@ -119,7 +160,43 @@ class AgentStreamRunState {
       runId: nextRunId,
       messageId: nextMessageId,
       textContent: nextText,
+      provisionalTextContent: nextProvisionalText,
+      toolEvents: nextToolEvents,
+      artifactEvents: nextArtifactEvents,
+      actionEvents: nextActionEvents,
+      lastSequence: nextSequence,
     );
+  }
+
+  bool _canApplyEvent(AgentStreamEvent event) {
+    if (isActive) return true;
+    if (phase != AgentStreamRunPhase.waitingForConfirmation) return false;
+    return event.type.startsWith('action.') ||
+        event.type == 'message.completed' ||
+        event.type == 'run.completed' ||
+        event.type == 'run.failed' ||
+        event.type == 'run.cancelled';
+  }
+
+  String _nextTextContent(AgentStreamEvent event) {
+    final type = event.type;
+    if (type == 'message.delta') {
+      return '$textContent${event.textDelta ?? ''}';
+    }
+    if (type == 'message.completed' && event.role != 'user') {
+      return event.textDelta ?? textContent;
+    }
+    return textContent;
+  }
+
+  String _nextProvisionalTextContent(AgentStreamEvent event) {
+    if (event.type == 'message.delta' && event.isTransient) {
+      return '$provisionalTextContent${event.textDelta ?? ''}';
+    }
+    if (event.type == 'message.completed' && event.role != 'user') {
+      return '';
+    }
+    return provisionalTextContent;
   }
 
   bool _hasSeenReplayKey(AgentStreamEvent event) {
@@ -162,6 +239,11 @@ class AgentStreamRunState {
     String? runId,
     String? messageId,
     String? textContent,
+    String? provisionalTextContent,
+    Map<String, AgentStreamEvent>? toolEvents,
+    Map<String, AgentStreamEvent>? artifactEvents,
+    Map<String, AgentStreamEvent>? actionEvents,
+    int? lastSequence,
     String? errorMessage,
     bool? cancelAcknowledged,
     int? cancelStatusCode,
@@ -173,11 +255,36 @@ class AgentStreamRunState {
       runId: runId ?? this.runId,
       messageId: messageId ?? this.messageId,
       textContent: textContent ?? this.textContent,
+      provisionalTextContent:
+          provisionalTextContent ?? this.provisionalTextContent,
+      toolEvents: toolEvents ?? this.toolEvents,
+      artifactEvents: artifactEvents ?? this.artifactEvents,
+      actionEvents: actionEvents ?? this.actionEvents,
+      lastSequence: lastSequence ?? this.lastSequence,
       errorMessage: errorMessage ?? this.errorMessage,
       cancelAcknowledged: cancelAcknowledged ?? this.cancelAcknowledged,
       cancelStatusCode: cancelStatusCode ?? this.cancelStatusCode,
     );
   }
+}
+
+Map<String, AgentStreamEvent> _nextIndexedEvents(
+  Map<String, AgentStreamEvent> current,
+  String? id,
+  AgentStreamEvent event,
+) {
+  final normalizedId = id?.trim();
+  if (normalizedId == null || normalizedId.isEmpty) return current;
+  return Map<String, AgentStreamEvent>.unmodifiable({
+    ...current,
+    normalizedId: event,
+  });
+}
+
+int? _maxSequence(int? current, int? next) {
+  if (next == null) return current;
+  if (current == null || next > current) return next;
+  return current;
 }
 
 String? _stringifyError(Object? error) {
