@@ -2866,7 +2866,9 @@ class _SchedulePageState extends State<_SchedulePage> {
     final dayKey = _dayKey(_selectedDay);
     final remoteTasks = plan.tasks.where((task) {
       final remindAt = task.remindAt;
-      return remindAt == null || _sameDay(remindAt, _selectedDay);
+      return remindAt == null ||
+          _sameDay(remindAt, _selectedDay) ||
+          (_isSelectedToday && remindAt.isAfter(_selectedDay));
     });
     final tasks = [...remoteTasks, ...?_localTasksByDay[dayKey]];
     return tasks
