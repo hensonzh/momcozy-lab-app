@@ -167,7 +167,7 @@ flutter_app/test/goldens/agent_hub/
 关键 UX：
 
 - 孕期状态下宝宝 tab 的 disabled 行为必须可见。
-- 状态同步失败时显示重试入口，不能空白。
+- 状态同步失败不在用户首屏展示工程错误卡，页面保留本地 fallback 内容。
 - 通知 badge 从底栏转入状态卡后要有明确视觉提示。
 
 ### 5.3 计划 `/schedule`

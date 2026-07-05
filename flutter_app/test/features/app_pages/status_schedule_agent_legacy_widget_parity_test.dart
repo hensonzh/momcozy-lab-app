@@ -100,7 +100,7 @@ void main() {
     });
 
     testWidgets(
-      'covers pregnancy widgets, disabled baby tab, and sync failure',
+      'covers pregnancy widgets, disabled baby tab, and hidden sync failure',
       (tester) async {
         await _setCompactViewport(tester);
         final routeIntentPlatform = FakeRouteIntentPlatform();
@@ -149,10 +149,9 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        await _scrollToText(tester, '状态同步失败');
-        expect(find.text('状态同步失败'), findsOneWidget);
-        expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
-        expect(find.byTooltip('重试'), findsOneWidget);
+        expect(find.text('状态同步失败'), findsNothing);
+        expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
+        expect(find.byTooltip('重试'), findsNothing);
       },
     );
   });
