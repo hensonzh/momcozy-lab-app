@@ -235,20 +235,13 @@ void main() {
     await tester.pumpAndSettle();
     final sevenLineHeight = _composerSurfaceHeight(tester);
     expect(sevenLineHeight, closeTo(fiveLineHeight, 1));
-    expect(_composerInputHeight(tester), lessThan(sevenLineHeight));
 
     final inputStyle = tester
         .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
         .style;
-    expect(inputStyle?.height, greaterThanOrEqualTo(1.45));
-    final surfaceRect = tester.getRect(
-      find.byKey(const ValueKey('agent-composer-surface')),
-    );
-    final sendRect = tester.getRect(
-      find.byKey(const ValueKey('agent-send-button')),
-    );
-    expect(surfaceRect.right - sendRect.right, greaterThanOrEqualTo(12));
-    expect(surfaceRect.bottom - sendRect.bottom, greaterThanOrEqualTo(8));
+    expect(inputStyle?.height, greaterThanOrEqualTo(1.55));
+    _expectComposerControlsInsideSurface(tester);
+    _expectComposerInputAvoidsControls(tester);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
@@ -283,22 +276,29 @@ void main() {
       );
 
       final compactHeight = _composerSurfaceHeight(tester);
+      const wrappedText = 'nihao a dsdkfj ksdjf ksjdf jdfg jdh kasjdf klsjdflk';
+
+      await tester.tap(find.byKey(const ValueKey('agent-composer-input')));
+      await tester.pump();
 
       await tester.enterText(
         find.byKey(const ValueKey('agent-composer-input')),
-        'nihao a dsdkfj ksdjf ksjdf jdfg jdh kasjdf klsjdflk',
+        wrappedText,
       );
       await tester.pump();
 
-      final inputRect = tester.getRect(
-        find.byKey(const ValueKey('agent-composer-input-frame')),
+      final editable = tester.state<EditableTextState>(
+        find.byType(EditableText),
       );
-      final sendRect = tester.getRect(
-        find.byKey(const ValueKey('agent-send-button')),
-      );
+      final controller = tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller;
 
+      expect(editable.widget.focusNode.hasFocus, isTrue);
+      expect(controller?.selection.baseOffset, wrappedText.length);
       expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
-      expect(sendRect.top, greaterThan(inputRect.bottom));
+      _expectComposerControlsInsideSurface(tester);
+      _expectComposerInputAvoidsControls(tester);
     },
   );
 
@@ -349,14 +349,15 @@ void main() {
     await tester.pump();
 
     final inputRect = tester.getRect(
-      find.byKey(const ValueKey('agent-composer-input-frame')),
+      find.byKey(const ValueKey('agent-composer-input')),
     );
     final sendRect = tester.getRect(
       find.byKey(const ValueKey('agent-send-button')),
     );
 
     expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
-    expect(sendRect.top, greaterThan(inputRect.bottom));
+    expect(sendRect.left, greaterThan(inputRect.right));
+    _expectComposerControlsInsideSurface(tester);
   });
 
   testWidgets('Agent Hub keeps send disabled for empty runner input', (
@@ -1378,6 +1379,38 @@ double _composerInputHeight(WidgetTester tester) {
   return tester
       .getSize(find.byKey(const ValueKey('agent-composer-input-frame')))
       .height;
+}
+
+void _expectComposerControlsInsideSurface(WidgetTester tester) {
+  final surfaceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-surface')),
+  );
+  for (final key in [
+    'agent-image-button',
+    'agent-voice-button',
+    'agent-send-button',
+  ]) {
+    final rect = tester.getRect(find.byKey(ValueKey(key)));
+    expect(rect.left, greaterThanOrEqualTo(surfaceRect.left));
+    expect(rect.right, lessThanOrEqualTo(surfaceRect.right));
+    expect(rect.top, greaterThanOrEqualTo(surfaceRect.top));
+    expect(rect.bottom, lessThanOrEqualTo(surfaceRect.bottom));
+  }
+}
+
+void _expectComposerInputAvoidsControls(WidgetTester tester) {
+  final inputRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-input')),
+  );
+  final imageRect = tester.getRect(
+    find.byKey(const ValueKey('agent-image-button')),
+  );
+  final voiceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-voice-button')),
+  );
+
+  expect(inputRect.left, greaterThanOrEqualTo(imageRect.right));
+  expect(inputRect.right, lessThanOrEqualTo(voiceRect.left));
 }
 
 class _FixtureAgentStreamClient implements AgentStreamClient {
