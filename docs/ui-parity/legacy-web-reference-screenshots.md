@@ -59,12 +59,8 @@ npm run ui:legacy-reference
 /w1
 /hospital-bag-cart
 /ibclc-chat.html
-/media-viewer
-/pump
 /calibration
-/records
 /community
-404 fallback
 ```
 
 每次生成会同时写入 `manifest.json`，记录截图文件、路由、viewport 和 sha256，便于评审时确认截图是否发生变化。

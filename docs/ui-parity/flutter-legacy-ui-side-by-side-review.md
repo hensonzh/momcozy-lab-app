@@ -16,7 +16,7 @@
 
 | 类别 | 数量 | 页面 |
 |---|---:|---|
-| 结构通过 | 15 | Agent Hub、Status、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Media Viewer、Pump、Calibration、Records、Community、Not Found |
+| 结构通过 | 11 | Agent Hub、Status、Schedule、Device、Device Manage、Device User、W1、Hospital Bag、IBCLC、Calibration、Community |
 | 需修正 | 0 | - |
 | 需深状态补图后复核 | 0 | - |
 
@@ -51,12 +51,8 @@
 | W1 `/w1` | ![](../test/screenshots/legacy_web/compact_390x844/w1.png) | ![](../flutter_app/test/goldens/feature_pages/w1_page_mobile.png) | 结构通过 | 首屏产品页结构、hero 全大写 eyebrow、主色和内容密度接近；当前作为工程基线通过，营销素材文案留给产品最终确认。 |
 | Hospital Bag `/hospital-bag-cart` | ![](../test/screenshots/legacy_web/compact_390x844/hospital_bag_cart.png) | ![](../flutter_app/test/goldens/feature_pages/hospital_bag_page_mobile.png) | 结构通过 | Flutter 已恢复分组数量、列表行价格、删除按钮和底部固定结算栏的组合优惠说明。 |
 | IBCLC `/ibclc-chat.html` | ![](../test/screenshots/legacy_web/compact_390x844/ibclc_chat.png) | ![](../flutter_app/test/goldens/feature_pages/ibclc_page_mobile.png) | 结构通过 | 首屏咨询入口结构接近；已补 queue、chat ready synced、local queue failed sync 三档 viewport 深状态 golden：`flutter_app/test/goldens/ibclc_states/`。 |
-| Media Viewer `/media-viewer` | ![](../test/screenshots/legacy_web/compact_390x844/media_viewer.png) | ![](../flutter_app/test/goldens/feature_pages/media_viewer_page_mobile.png) | 结构通过 | 缺资源状态一致；已补 PDF、image、video 三档 viewport 资源状态 golden：`flutter_app/test/goldens/media_viewer_states/`。 |
-| Pump `/pump` | ![](../test/screenshots/legacy_web/compact_390x844/pump.png) | ![](../flutter_app/test/goldens/feature_pages/pump_page_mobile.png) | 结构通过 | 首次校准弹窗结构一致；已补 running、paused、finished locked、upload failed 三档 viewport 深状态 golden：`flutter_app/test/goldens/pump_states/`。 |
 | Calibration `/calibration` | ![](../test/screenshots/legacy_web/compact_390x844/calibration.png) | ![](../flutter_app/test/goldens/feature_pages/calibration_page_mobile.png) | 结构通过 | 主卡片、进度条、右上 `1/7` 步数文本和 CTA 已对齐；360 窄屏裁切已修复。 |
-| Records `/records` | ![](../test/screenshots/legacy_web/compact_390x844/records.png) | ![](../flutter_app/test/goldens/feature_pages/records_page_mobile.png) | 结构通过 | 已恢复 reference 月份、周均奶量、记录时间、M.ai logo、单位切换、图表右侧阶段标签、分段背景、每日 x 轴日期、记录行右侧时间；记录行不再常驻编辑/删除双按钮，设备同步记录保持只读视觉，手动记录保留旧版删除入口，编辑通过长按行触发。 |
 | Community `/community` | ![](../test/screenshots/legacy_web/compact_390x844/community.png) | ![](../flutter_app/test/goldens/feature_pages/community_page_mobile.png) | 结构通过 | 建设中空态结构一致。 |
-| Not Found `*` | ![](../test/screenshots/legacy_web/compact_390x844/not_found.png) | ![](../flutter_app/test/goldens/feature_pages/not_found_page_mobile.png) | 结构通过 | 404 fallback 可接受。 |
 
 ---
 

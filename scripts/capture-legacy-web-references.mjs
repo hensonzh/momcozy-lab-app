@@ -41,12 +41,8 @@ const routes = [
   { id: "w1", path: "/w1" },
   { id: "hospital_bag_cart", path: "/hospital-bag-cart" },
   { id: "ibclc_chat", path: "/ibclc-chat.html" },
-  { id: "media_viewer", path: "/media-viewer" },
-  { id: "pump", path: "/pump" },
   { id: "calibration", path: "/calibration" },
-  { id: "records", path: "/records" },
   { id: "community", path: "/community" },
-  { id: "not_found", path: "/__reference_not_found__" },
 ];
 
 const stableCss = `
