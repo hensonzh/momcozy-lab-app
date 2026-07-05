@@ -1,6 +1,6 @@
 /**
  * BLE 公共协议：组包（REQ 下发）、校验、解析（上报）。
- * 参见 doc/设备APP蓝牙通信协议.md 3.1 节。
+ * 参见 docs/api/设备APP蓝牙通信协议.md 3.1 节。
  */
 
 // ─── 常量 ─────────────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ export function buildB0SetWorkMode(mode: 1 | 2 | 3): Uint8Array {
 
 /**
  * 3.1.8 设置吸乳参数 B1：CAL=4 — 启停、模式、挡位、场景（协议：0x00 手动，0x01 自动）
- * 真机核对：固件须接受 CAL=4；若拒收请对照 doc/设备APP蓝牙通信协议.md「设置吸乳参数 B1」与 E1 的 scene/workState 字节。
+ * 真机核对：固件须接受 CAL=4；若拒收请对照 docs/api/设备APP蓝牙通信协议.md「设置吸乳参数 B1」与 E1 的 scene/workState 字节。
  * @param startStop 0 停止，1 启动
  * @param mode 0 刺激，1 吸乳，2 混合
  * @param gear 挡位（B1 线 0–14，与 E1 经 e1GearToB1Gear 对齐）

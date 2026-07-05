@@ -24,7 +24,7 @@ Primary references:
 
 | Reference | Purpose |
 |---|---|
-| `doc/legacy-web-ui-ux-golden-standard.md` | Product UI/UX contract. |
+| `docs/ui-parity/legacy-web-ui-ux-golden-standard.md` | Product UI/UX contract. |
 | `test/screenshots/legacy_web/compact_390x844/*.png` | Legacy page-level visual reference. |
 | `test/reports/ui_parity/compact_390x844/report.md` | Ranked page-level diff queue. |
 | `test/reports/ui_parity/compact_390x844/triptychs/*.png` | Human review artifact for each page. |

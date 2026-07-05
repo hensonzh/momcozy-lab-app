@@ -1,10 +1,10 @@
 # Flutter UI/UX Golden 标准评估
 
 > 状态：评估稿 v0.2
-> 评估日期：2026-07-03  
-> 工作分支：`feat/test2`  
-> 基线标准：`doc/legacy-web-ui-ux-golden-standard.md`  
-> 范围：评估当前 Flutter App 是否满足旧 Web UI/UX Golden 标准的页面结构、视觉层级、关键交互和测试准入。  
+> 评估日期：2026-07-03
+> 工作分支：`feat/test2`
+> 基线标准：`docs/ui-parity/legacy-web-ui-ux-golden-standard.md`
+> 范围：评估当前 Flutter App 是否满足旧 Web UI/UX Golden 标准的页面结构、视觉层级、关键交互和测试准入。
 
 ---
 
@@ -37,7 +37,7 @@
 本评估采用以下文档为 UI/UX 判断标准：
 
 ```text
-doc/legacy-web-ui-ux-golden-standard.md
+docs/ui-parity/legacy-web-ui-ux-golden-standard.md
 ```
 
 该标准明确：旧 Web 不是视觉灵感，而是替换前的产品基线。Flutter 默认不得重设计旧 Web 的信息架构、页面层级、关键控件、文案和主要视觉比例。
@@ -398,7 +398,7 @@ clipBehavior: Clip.none
 
 ### 已完成的非真机 P1
 
-1. 已完成旧 Web reference 与 Flutter golden 的逐页 side-by-side 评审记录：`doc/flutter-legacy-ui-side-by-side-review.md`。
+1. 已完成旧 Web reference 与 Flutter golden 的逐页 side-by-side 评审记录：`docs/ui-parity/flutter-legacy-ui-side-by-side-review.md`。
 
 2. 已增加高风险深状态 golden：
    - Agent：rich、streaming、cancelled、disconnected、voice error。

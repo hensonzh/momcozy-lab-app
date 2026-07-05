@@ -133,7 +133,7 @@ React/Vite SPA
 输出产物：
 
 ```text
-doc/flutter-feature-baseline.csv
+docs/migration/flutter-feature-baseline.csv
 ```
 
 ### 4.2 提取 API 合同
@@ -154,10 +154,10 @@ doc/flutter-feature-baseline.csv
 
 | Domain | 当前来源 | Flutter owner |
 |---|---|---|
-| Agent / AG-UI chat | `doc/web-api.md`, `src/lib/agentApi.ts` | `features/agent_hub/data` |
-| Pump session summary | `doc/websocket接口说明文档.md`, `src/lib/pumpAutoEndSession.ts` | `features/pump_session/data` |
+| Agent / AG-UI chat | `docs/api/web-api.md`, `src/lib/agentApi.ts` | `features/agent_hub/data` |
+| Pump session summary | `docs/api/websocket接口说明文档.md`, `src/lib/pumpAutoEndSession.ts` | `features/pump_session/data` |
 | Pump agent upload | `src/lib/pumpAgentUpload.ts`, Android `PumpAgent*` | `features/pump_session/native` |
-| BLE protocol | `doc/设备APP蓝牙通信协议.md`, `src/lib/bleProtocol.ts`, `MmcBleProtocol.java` | `features/device/native` |
+| BLE protocol | `docs/api/设备APP蓝牙通信协议.md`, `src/lib/bleProtocol.ts`, `MmcBleProtocol.java` | `features/device/native` |
 | Device state/report | `src/lib/deviceStore.ts`, `DeviceNativeStateStore.java` | `features/device/data` |
 | Notifications | `src/lib/mmcBackgroundNotify.ts`, `src/lib/pumpSessionNotification.ts`, Android `Notify*` | `core/notifications` |
 | Schedule/plan | `src/pages/Schedule.tsx`, `src/lib/planNotification.ts`, `src/lib/agentApi.ts` | `features/schedule/data` |
@@ -460,16 +460,16 @@ AgentHub UI
 
 产物：
 
-- `doc/flutter-feature-baseline.csv`
-- `doc/flutter-api-contracts.md`
-- `doc/flutter-storage-migration.md`
-- `doc/flutter-route-intents.md`
-- `doc/flutter-permission-lifecycle-matrix.md`
-- `doc/flutter-native-bridge-contracts.md`
-- `doc/flutter-baseline-defects.md`
-- `doc/flutter-app-test-plan.md`
-- `doc/flutter-architecture-decision.md`
-- `doc/flutter-p0-smoke-checklist.md`
+- `docs/migration/flutter-feature-baseline.csv`
+- `docs/migration/flutter-api-contracts.md`
+- `docs/migration/flutter-storage-migration.md`
+- `docs/migration/flutter-route-intents.md`
+- `docs/migration/flutter-permission-lifecycle-matrix.md`
+- `docs/migration/flutter-native-bridge-contracts.md`
+- `docs/migration/flutter-baseline-defects.md`
+- `docs/migration/flutter-app-test-plan.md`
+- `docs/migration/flutter-architecture-decision.md`
+- `docs/flutter/p0-smoke-checklist.md`
 - `test/fixtures/ble/*`
 - `src/lib/bleProtocol.fixtures.test.ts`
 - `test/fixtures/ag_ui/*`
@@ -791,7 +791,7 @@ features/device/
 可执行测试方案见：
 
 ```text
-doc/flutter-app-test-plan.md
+docs/migration/flutter-app-test-plan.md
 ```
 
 本节只保留迁移蓝图级别的测试原则。

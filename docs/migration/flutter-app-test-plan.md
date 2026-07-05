@@ -44,7 +44,7 @@
 每个 baseline defect 必须包含：
 
 ```text
-[x] 负责人：记录在 `doc/flutter-baseline-defects.md` 的 Owner 列
+[x] 负责人：记录在 `docs/migration/flutter-baseline-defects.md` 的 Owner 列
 [x] 严重级别：记录在 Severity 列
 [x] 决策：记录在 Decision 列，取值为迁移前修复 / 接受为基线 / Flutter 中废弃 / 已修复
 [x] issue 或跟踪文档链接：记录在 Tracker 列
@@ -556,7 +556,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Hospital Bag cart typed repository contract tests 已覆盖 `/api/hospital-bag/cart-update` body schema、success、business error 和 HTTP error
 [x] Media upload typed repository contract tests 已覆盖 multipart metadata、legacy aliases、partial/empty、business error、HTTP error、cancel 和 timeout fixtures
 [x] Flutter 通用 JSON HTTP transport tests 已覆盖 GET/POST、auth/header 注入、token 缺失、401/token 过期、query merge、HTTP error 和 malformed body
-[x] Flutter staging smoke CLI 已覆盖 env 解析、mutating/agent gating、失败脱敏和默认 skip；真实 staging 运行见 `doc/flutter-staging-smoke.md`
+[x] Flutter staging smoke CLI 已覆盖 env 解析、mutating/agent gating、失败脱敏和默认 skip；真实 staging 运行见 `docs/flutter/staging-smoke.md`
 [x] Flutter 通用 multipart transport 已接入 runtime，Media 页面可复用 `/v1/files/upload` repository contract
 [x] Flutter App API runtime tests 已覆盖 dart-define 默认配置、secure session bootstrap、注入 transport 的 repository factory 和 runtime scope
 [x] Flutter App API runtime 已暴露 `/api/client-event` best-effort client，页面测试可注入 recording connector 验证事件写回
@@ -708,7 +708,7 @@ npm run flutter:p0:platform-smoke
 [x] screenshot/golden fixtures 不包含真实用户数据
 ```
 
-详细准入见 `doc/flutter-security-privacy-gates.md`。
+详细准入见 `docs/flutter/security-privacy-gates.md`。
 
 ---
 
@@ -869,30 +869,30 @@ CI 最低要求：
 Phase 0 至少补齐这些文件或等价追踪系统：
 
 ```text
-doc/flutter-feature-baseline.csv
-doc/flutter-api-contracts.md
-doc/flutter-storage-migration.md
-doc/flutter-route-intents.md
-doc/flutter-permission-lifecycle-matrix.md
-doc/flutter-native-bridge-contracts.md
-doc/flutter-baseline-defects.md
-doc/flutter-architecture-decision.md
-doc/flutter-p0-smoke-checklist.md
+docs/migration/flutter-feature-baseline.csv
+docs/migration/flutter-api-contracts.md
+docs/migration/flutter-storage-migration.md
+docs/migration/flutter-route-intents.md
+docs/migration/flutter-permission-lifecycle-matrix.md
+docs/migration/flutter-native-bridge-contracts.md
+docs/migration/flutter-baseline-defects.md
+docs/migration/flutter-architecture-decision.md
+docs/flutter/p0-smoke-checklist.md
 ```
 
 建议每个追踪产物都有：
 
 | Tracking artifact | 负责人 | Last reviewed date | Source files | Open decisions | Test coverage | Exit criteria |
 |---|---|---|---|---|---|---|
-| `doc/flutter-feature-baseline.csv` | mobile engineering + product owner | 2026-07-02 | Web routes, `src/pages/*`, Flutter route map | 真机替换时机 | feature parity tests + route shell tests | retain/rebuild/drop 全部明确 |
-| `doc/flutter-api-contracts.md` | mobile engineering + backend contract owner | 2026-07-02 | `src/lib/*Api.ts`, API docs, Flutter repositories | staging endpoint/env | repository contract tests + staging smoke harness | P0/P1 endpoint fixtures 覆盖成功/错误/兼容字段 |
-| `doc/flutter-storage-migration.md` | mobile engineering | 2026-07-02 | localStorage/sessionStorage fixtures, migration CLI | 真机 native service store cutover | storage migration unit tests + dry-run CLI | unhandled legacy keys 为 0 |
-| `doc/flutter-route-intents.md` | mobile engineering + QA | 2026-07-02 | Web route events, notification payload fixtures | 真机通知恢复 | route intent fixture tests + shell contract tests | 非 NotFound intent 目标均注册 |
-| `doc/flutter-permission-lifecycle-matrix.md` | mobile engineering + QA device lab | 2026-07-02 | Android manifest, native bridge contracts | 真机权限差异 | fake platform tests + P0 smoke checklist | 本地降级可测，系统权限留给 device lab |
-| `doc/flutter-native-bridge-contracts.md` | mobile engineering + Android owner | 2026-07-02 | Capacitor plugins, Android services, Flutter interfaces | 真泵接入窗口 | fake platform tests + MethodChannel schema tests | P0 method/event schema 已定义 |
-| `doc/flutter-baseline-defects.md` | mobile engineering + QA | 2026-07-02 | `npm test`, `npm run lint`, `npm run build` | 无阻断 baseline defect | Web baseline commands | 失败项已修复或登记 |
-| `doc/flutter-architecture-decision.md` | mobile engineering | 2026-07-02 | Flutter shell, toolchain docs, native bridge plan | iOS 非 P0 gate | release gate + architecture checklist | Android-first 架构和工具链 gate 明确 |
-| `doc/flutter-p0-smoke-checklist.md` | QA device lab + mobile engineering | 2026-07-02 | release APK, device matrix, true pump scenarios | 真机排期和设备池 | 手工/自动真机 smoke | P0 真机/真泵通过后才能替换 |
+| `docs/migration/flutter-feature-baseline.csv` | mobile engineering + product owner | 2026-07-02 | Web routes, `src/pages/*`, Flutter route map | 真机替换时机 | feature parity tests + route shell tests | retain/rebuild/drop 全部明确 |
+| `docs/migration/flutter-api-contracts.md` | mobile engineering + backend contract owner | 2026-07-02 | `src/lib/*Api.ts`, API docs, Flutter repositories | staging endpoint/env | repository contract tests + staging smoke harness | P0/P1 endpoint fixtures 覆盖成功/错误/兼容字段 |
+| `docs/migration/flutter-storage-migration.md` | mobile engineering | 2026-07-02 | localStorage/sessionStorage fixtures, migration CLI | 真机 native service store cutover | storage migration unit tests + dry-run CLI | unhandled legacy keys 为 0 |
+| `docs/migration/flutter-route-intents.md` | mobile engineering + QA | 2026-07-02 | Web route events, notification payload fixtures | 真机通知恢复 | route intent fixture tests + shell contract tests | 非 NotFound intent 目标均注册 |
+| `docs/migration/flutter-permission-lifecycle-matrix.md` | mobile engineering + QA device lab | 2026-07-02 | Android manifest, native bridge contracts | 真机权限差异 | fake platform tests + P0 smoke checklist | 本地降级可测，系统权限留给 device lab |
+| `docs/migration/flutter-native-bridge-contracts.md` | mobile engineering + Android owner | 2026-07-02 | Capacitor plugins, Android services, Flutter interfaces | 真泵接入窗口 | fake platform tests + MethodChannel schema tests | P0 method/event schema 已定义 |
+| `docs/migration/flutter-baseline-defects.md` | mobile engineering + QA | 2026-07-02 | `npm test`, `npm run lint`, `npm run build` | 无阻断 baseline defect | Web baseline commands | 失败项已修复或登记 |
+| `docs/migration/flutter-architecture-decision.md` | mobile engineering | 2026-07-02 | Flutter shell, toolchain docs, native bridge plan | iOS 非 P0 gate | release gate + architecture checklist | Android-first 架构和工具链 gate 明确 |
+| `docs/flutter/p0-smoke-checklist.md` | QA device lab + mobile engineering | 2026-07-02 | release APK, device matrix, true pump scenarios | 真机排期和设备池 | 手工/自动真机 smoke | P0 真机/真泵通过后才能替换 |
 
 ```text
 [x] 负责人

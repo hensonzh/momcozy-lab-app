@@ -23,8 +23,8 @@
 
 | ID | Owner | Source | Symptom | Severity | Decision | Tracker | Recheck |
 |---|---|---|---|---|---|---|---|
-| WEB-BASELINE-001 | mobile engineering | `src/lib/androidNotificationIcons.test.ts:174` | launcher portrait ratio 期望 `0.56-0.58`，旧资源实际 `0.8020833333333334`。 | P1 | 已修复 launcher PNG 资源，使 legacy icon 人物边界回到安全范围。 | `doc/flutter-baseline-defects.md#2-test-baseline-defects` | `npm test -- src/lib/androidNotificationIcons.test.ts` |
-| WEB-BASELINE-002 | mobile engineering | `src/pages/status/StatusOverviewBody.render.test.tsx:440` | 测试期望固定 `demo_mama_increase_001`，运行时使用 generated runtime user id。 | P1 | 已修复测试期望，改为跟随 `DEFAULT_CHAT_USER_ID`。 | `doc/flutter-baseline-defects.md#2-test-baseline-defects` | `npm test -- src/pages/status/StatusOverviewBody.render.test.tsx` |
+| WEB-BASELINE-001 | mobile engineering | `src/lib/androidNotificationIcons.test.ts:174` | launcher portrait ratio 期望 `0.56-0.58`，旧资源实际 `0.8020833333333334`。 | P1 | 已修复 launcher PNG 资源，使 legacy icon 人物边界回到安全范围。 | `docs/migration/flutter-baseline-defects.md#2-test-baseline-defects` | `npm test -- src/lib/androidNotificationIcons.test.ts` |
+| WEB-BASELINE-002 | mobile engineering | `src/pages/status/StatusOverviewBody.render.test.tsx:440` | 测试期望固定 `demo_mama_increase_001`，运行时使用 generated runtime user id。 | P1 | 已修复测试期望，改为跟随 `DEFAULT_CHAT_USER_ID`。 | `docs/migration/flutter-baseline-defects.md#2-test-baseline-defects` | `npm test -- src/pages/status/StatusOverviewBody.render.test.tsx` |
 
 ---
 
@@ -34,13 +34,13 @@
 
 | ID | Owner | Source | Rule | Severity | Decision | Tracker | Recheck |
 |---|---|---|---|---|---|---|---|
-| LINT-BASELINE-001 | mobile engineering | `src/components/device/BluetoothSearchDrawer.test.tsx:11` | `@typescript-eslint/no-explicit-any` | P2 | 已修复测试 mock typing。 | `doc/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
-| LINT-BASELINE-002 | mobile engineering | `src/data/planMockData.ts:83` | `no-empty` | P2 | 已修复空 catch。 | `doc/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
-| LINT-BASELINE-003 | mobile engineering | `src/lib/ble.ts:514` | `no-async-promise-executor` | P1 | 已修复 Promise executor，保持 BLE notify 初始化后再发送的原流程。 | `doc/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
-| LINT-BASELINE-004 | mobile engineering | `src/lib/ble.ts:613` | `no-async-promise-executor` | P1 | 已修复 Promise executor，保持 frame retry/timeout 逻辑。 | `doc/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
-| LINT-BASELINE-005 | mobile engineering | `src/pages/Records.tsx:393` | `@typescript-eslint/no-explicit-any` | P2 | 已补 Recharts tick props 类型。 | `doc/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
-| LINT-BASELINE-006 | mobile engineering | `tailwind.config.ts:124` | `@typescript-eslint/no-require-imports` | P2 | 已改 ESM plugin import。 | `doc/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
-| LINT-BASELINE-007 | mobile engineering | `tailwind.config.ts:124` | `@typescript-eslint/no-require-imports` | P2 | 已改 ESM plugin import。 | `doc/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
+| LINT-BASELINE-001 | mobile engineering | `src/components/device/BluetoothSearchDrawer.test.tsx:11` | `@typescript-eslint/no-explicit-any` | P2 | 已修复测试 mock typing。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
+| LINT-BASELINE-002 | mobile engineering | `src/data/planMockData.ts:83` | `no-empty` | P2 | 已修复空 catch。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
+| LINT-BASELINE-003 | mobile engineering | `src/lib/ble.ts:514` | `no-async-promise-executor` | P1 | 已修复 Promise executor，保持 BLE notify 初始化后再发送的原流程。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
+| LINT-BASELINE-004 | mobile engineering | `src/lib/ble.ts:613` | `no-async-promise-executor` | P1 | 已修复 Promise executor，保持 frame retry/timeout 逻辑。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
+| LINT-BASELINE-005 | mobile engineering | `src/pages/Records.tsx:393` | `@typescript-eslint/no-explicit-any` | P2 | 已补 Recharts tick props 类型。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
+| LINT-BASELINE-006 | mobile engineering | `tailwind.config.ts:124` | `@typescript-eslint/no-require-imports` | P2 | 已改 ESM plugin import。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
+| LINT-BASELINE-007 | mobile engineering | `tailwind.config.ts:124` | `@typescript-eslint/no-require-imports` | P2 | 已改 ESM plugin import。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
 
 ---
 
