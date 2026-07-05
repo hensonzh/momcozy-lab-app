@@ -1533,6 +1533,12 @@ class AgentComposerBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    const inputTextStyle = TextStyle(
+      fontFamily: MomCozyTypography.fontFamily,
+      fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+      fontSize: 14,
+      height: 1.32,
+    );
 
     return Padding(
       key: const ValueKey('agent-composer-bar'),
@@ -1640,132 +1646,171 @@ class AgentComposerBar extends StatelessWidget {
                 ),
               ),
             ],
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: MomCozyColors.card.withValues(alpha: 0.88),
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(
-                  color: MomCozyColors.border.withValues(alpha: 0.64),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xff754c5e).withValues(alpha: 0.08),
-                    blurRadius: 18,
-                    offset: const Offset(0, 9),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final shouldExpand =
+                    _visualLineCountForWidth(
+                      context,
+                      constraints.maxWidth - 124,
+                      inputTextStyle,
+                    ) >
+                    1;
+
+                Widget imageButton() {
+                  return IconButton(
+                    key: const ValueKey('agent-image-button'),
+                    onPressed: canAttachImage ? onTogglePhotoMenu : null,
+                    icon: const Icon(
+                      Icons.add_photo_alternate_outlined,
+                      size: 20,
+                    ),
+                    tooltip: '添加图片',
+                    color: MomCozyColors.mutedForeground,
+                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints.tightFor(
+                      width: 32,
+                      height: 32,
+                    ),
+                    padding: EdgeInsets.zero,
+                  );
+                }
+
+                Widget voiceButton() {
+                  return IconButton(
+                    key: const ValueKey('agent-voice-button'),
+                    onPressed: canUseVoice ? onVoiceInput : null,
+                    icon: Icon(_voiceIcon, size: 20),
+                    tooltip: _voiceTooltip,
+                    color: voicePhase == AgentVoicePhase.listening
+                        ? colorScheme.primary
+                        : MomCozyColors.mutedForeground,
+                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints.tightFor(
+                      width: 32,
+                      height: 32,
+                    ),
+                    padding: EdgeInsets.zero,
+                  );
+                }
+
+                Widget sendButton() {
+                  return IconButton.filled(
+                    key: ValueKey(
+                      isRunning ? 'agent-stop-button' : 'agent-send-button',
+                    ),
+                    onPressed: isRunning ? onCancel : (canSend ? onSend : null),
+                    icon: Icon(
+                      isRunning ? Icons.stop_rounded : Icons.send_rounded,
+                      size: isRunning ? 18 : 16,
+                    ),
+                    tooltip: isRunning ? '停止' : '发送',
+                    style: IconButton.styleFrom(
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
+                      disabledBackgroundColor: MomCozyColors.muted,
+                      disabledForegroundColor: MomCozyColors.mutedForeground,
+                      fixedSize: const Size.square(32),
+                      minimumSize: const Size.square(32),
+                      padding: EdgeInsets.zero,
+                    ),
+                  );
+                }
+
+                Widget inputField() {
+                  return DecoratedBox(
+                    key: const ValueKey('agent-composer-input-frame'),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: TextField(
+                        key: const ValueKey('agent-composer-input'),
+                        controller: controller,
+                        minLines: 1,
+                        maxLines: 5,
+                        keyboardType: TextInputType.multiline,
+                        textInputAction: TextInputAction.newline,
+                        enabled: !isRunning,
+                        style: inputTextStyle,
+                        onChanged: onChanged,
+                        decoration: InputDecoration(
+                          hintText: '和 CozyMate 聊聊...',
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          filled: false,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                          hintStyle: TextStyle(
+                            fontFamily: MomCozyTypography.fontFamily,
+                            fontFamilyFallback:
+                                MomCozyTypography.fontFamilyFallback,
+                            fontSize: 14,
+                            height: 1.32,
+                            color: MomCozyColors.mutedForeground.withValues(
+                              alpha: 0.82,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                return DecoratedBox(
+                  key: const ValueKey('agent-composer-surface'),
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.card.withValues(alpha: 0.88),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: MomCozyColors.border.withValues(alpha: 0.64),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xff754c5e).withValues(alpha: 0.08),
+                        blurRadius: 18,
+                        offset: const Offset(0, 9),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  children: [
-                    IconButton(
-                      key: const ValueKey('agent-image-button'),
-                      onPressed: canAttachImage ? onTogglePhotoMenu : null,
-                      icon: const Icon(
-                        Icons.add_photo_alternate_outlined,
-                        size: 20,
-                      ),
-                      tooltip: '添加图片',
-                      color: MomCozyColors.mutedForeground,
-                      visualDensity: VisualDensity.compact,
-                      constraints: const BoxConstraints.tightFor(
-                        width: 32,
-                        height: 32,
-                      ),
-                      padding: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
                     ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(
-                            MomCozyRadii.pill,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: TextField(
-                            key: const ValueKey('agent-composer-input'),
-                            controller: controller,
-                            minLines: 1,
-                            maxLines: 4,
-                            enabled: !isRunning,
-                            style: const TextStyle(
-                              fontFamily: MomCozyTypography.fontFamily,
-                              fontFamilyFallback:
-                                  MomCozyTypography.fontFamilyFallback,
-                              fontSize: 14,
-                            ),
-                            onChanged: onChanged,
-                            onSubmitted: (_) {
-                              if (canSend) onSend();
-                            },
-                            decoration: InputDecoration(
-                              hintText: '和 CozyMate 聊聊...',
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              filled: false,
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                              hintStyle: TextStyle(
-                                fontFamily: MomCozyTypography.fontFamily,
-                                fontFamilyFallback:
-                                    MomCozyTypography.fontFamilyFallback,
-                                fontSize: 14,
-                                color: MomCozyColors.mutedForeground.withValues(
-                                  alpha: 0.82,
-                                ),
+                    child: shouldExpand
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              inputField(),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  imageButton(),
+                                  const Spacer(),
+                                  voiceButton(),
+                                  const SizedBox(width: 4),
+                                  sendButton(),
+                                ],
                               ),
-                            ),
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              imageButton(),
+                              const SizedBox(width: 4),
+                              Expanded(child: inputField()),
+                              const SizedBox(width: 4),
+                              voiceButton(),
+                              const SizedBox(width: 4),
+                              sendButton(),
+                            ],
                           ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    IconButton(
-                      key: const ValueKey('agent-voice-button'),
-                      onPressed: canUseVoice ? onVoiceInput : null,
-                      icon: Icon(_voiceIcon, size: 20),
-                      tooltip: _voiceTooltip,
-                      color: voicePhase == AgentVoicePhase.listening
-                          ? colorScheme.primary
-                          : MomCozyColors.mutedForeground,
-                      visualDensity: VisualDensity.compact,
-                      constraints: const BoxConstraints.tightFor(
-                        width: 32,
-                        height: 32,
-                      ),
-                      padding: EdgeInsets.zero,
-                    ),
-                    const SizedBox(width: 4),
-                    IconButton.filled(
-                      key: ValueKey(
-                        isRunning ? 'agent-stop-button' : 'agent-send-button',
-                      ),
-                      onPressed: isRunning
-                          ? onCancel
-                          : (canSend ? onSend : null),
-                      icon: Icon(
-                        isRunning ? Icons.stop_rounded : Icons.send_rounded,
-                        size: isRunning ? 18 : 16,
-                      ),
-                      tooltip: isRunning ? '停止' : '发送',
-                      style: IconButton.styleFrom(
-                        backgroundColor: colorScheme.primary,
-                        foregroundColor: colorScheme.onPrimary,
-                        disabledBackgroundColor: MomCozyColors.muted,
-                        disabledForegroundColor: MomCozyColors.mutedForeground,
-                        fixedSize: const Size.square(32),
-                        minimumSize: const Size.square(32),
-                        padding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
             if (_voiceStatusLabel != null) ...[
               const SizedBox(height: 4),
@@ -1789,6 +1834,20 @@ class AgentComposerBar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  int _visualLineCountForWidth(
+    BuildContext context,
+    double maxWidth,
+    TextStyle style,
+  ) {
+    final text = controller.text.isEmpty ? ' ' : controller.text;
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: Directionality.of(context),
+      maxLines: 100,
+    )..layout(maxWidth: maxWidth.clamp(120, double.infinity));
+    return painter.computeLineMetrics().length.clamp(1, 100);
   }
 
   IconData get _voiceIcon {
