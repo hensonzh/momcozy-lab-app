@@ -525,6 +525,19 @@ class _IconBubble extends StatelessWidget {
   }
 }
 
+final _statusInteractionStates = Expando<_StatusInteractionState>(
+  'momcozy-status-interaction-state',
+);
+
+class _StatusInteractionState {
+  String view = 'mom';
+  String careStage = 'postpartum';
+  bool growthRecordAdded = false;
+  String milkTrendMode = '周';
+  String babyGrowthMetric = '体重';
+  String? activeDetail;
+}
+
 class _StatusPage extends StatefulWidget {
   const _StatusPage({
     required this.path,
@@ -548,6 +561,10 @@ class _StatusPageState extends State<_StatusPage> {
   String _view = 'mom';
   String _careStage = 'postpartum';
   bool _growthRecordAdded = false;
+  String _milkTrendMode = '周';
+  String _babyGrowthMetric = '体重';
+  String? _activeDetail;
+  late _StatusInteractionState _interactionState = _StatusInteractionState();
   MomCozyApiRuntime? _runtime;
   late Future<StatusOverview> _overviewFuture;
 
@@ -557,6 +574,14 @@ class _StatusPageState extends State<_StatusPage> {
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
       _runtime = runtime;
+      _interactionState = _statusInteractionStates[runtime] ??=
+          _StatusInteractionState();
+      _view = _interactionState.view;
+      _careStage = _interactionState.careStage;
+      _growthRecordAdded = _interactionState.growthRecordAdded;
+      _milkTrendMode = _interactionState.milkTrendMode;
+      _babyGrowthMetric = _interactionState.babyGrowthMetric;
+      _activeDetail = _interactionState.activeDetail;
       _overviewFuture = runtime.statusRepository.fetchOverview();
     }
   }
@@ -565,6 +590,39 @@ class _StatusPageState extends State<_StatusPage> {
     setState(() {
       _careStage = stage;
       if (stage == 'pregnancy') _view = 'mom';
+      _activeDetail = null;
+      _persistInteractionState();
+    });
+  }
+
+  void _persistInteractionState() {
+    _interactionState
+      ..view = _view
+      ..careStage = _careStage
+      ..growthRecordAdded = _growthRecordAdded
+      ..milkTrendMode = _milkTrendMode
+      ..babyGrowthMetric = _babyGrowthMetric
+      ..activeDetail = _activeDetail;
+  }
+
+  void _showDetail(String detail) {
+    setState(() {
+      _activeDetail = detail;
+      _persistInteractionState();
+    });
+  }
+
+  void _closeDetail() {
+    setState(() {
+      _activeDetail = null;
+      _persistInteractionState();
+    });
+  }
+
+  void _recordGrowth() {
+    setState(() {
+      _growthRecordAdded = true;
+      _persistInteractionState();
     });
   }
 
@@ -605,7 +663,11 @@ class _StatusPageState extends State<_StatusPage> {
                       babyDisabled: isPregnancy,
                       onChanged: (next) {
                         if (next == 'baby' && isPregnancy) return;
-                        setState(() => _view = next);
+                        setState(() {
+                          _view = next;
+                          _activeDetail = null;
+                          _persistInteractionState();
+                        });
                       },
                     ),
                   ),
@@ -679,27 +741,29 @@ class _StatusPageState extends State<_StatusPage> {
               ),
               Transform.translate(
                 offset: const Offset(0, 4),
-                child: const _StatusModuleCard(
+                child: _StatusModuleCard(
                   key: ValueKey('status-module-breast-health'),
                   title: '乳房健康',
                   showHelp: true,
                   bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
                   action: '查看《乳房健康日记》',
                   icon: Icons.favorite_border_rounded,
-                  accent: Color(0xffb96f55),
-                  background: Color(0xfffff8f1),
+                  accent: const Color(0xffb96f55),
+                  background: const Color(0xfffff8f1),
+                  onAction: () => _showDetail('breast-health'),
                 ),
               ),
               Transform.translate(
                 offset: const Offset(0, 1),
-                child: const _StatusModuleCard(
+                child: _StatusModuleCard(
                   key: ValueKey('status-module-postpartum-recovery'),
                   title: '产后恢复',
                   bodyText: '正在执行盆底肌康复训练',
                   action: '查看计划',
                   icon: Icons.self_improvement_rounded,
-                  accent: Color(0xff388b72),
-                  background: Color(0xfff2fffb),
+                  accent: const Color(0xff388b72),
+                  background: const Color(0xfff2fffb),
+                  onAction: () => _showDetail('postpartum-recovery'),
                 ),
               ),
               const _StatusModuleCard(
@@ -716,7 +780,43 @@ class _StatusPageState extends State<_StatusPage> {
         ),
       ),
       const SizedBox(height: 8),
-      const _StatusTrendPreview(key: ValueKey('status-milk-trend-preview')),
+      if (_activeDetail == 'breast-health') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-breast-health'),
+          title: '乳房健康日记',
+          subtitle: '最近 3 天记录',
+          rows: const [
+            ('三天前 晚间', '轻微涨奶', '右侧乳房有胀感，吸奶后明显缓解。'),
+            ('昨天 上午', '发现硬块', '左侧外上区域摸到硬块，按压时有疼痛感。'),
+            ('今天', '涨奶硬块', '最近出现涨奶和硬块，伴随按压疼痛。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ] else if (_activeDetail == 'postpartum-recovery') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-postpartum-recovery'),
+          title: '盆底肌康复训练',
+          subtitle: '产后恢复计划',
+          rows: const [
+            ('第 1-2 天', '已完成', '盆底肌唤醒练习'),
+            ('第 3-5 天', '进行中', '骨盆稳定训练'),
+            ('第 6-7 天', '待开始', '腰背与肩颈放松'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ],
+      _StatusTrendPreview(
+        key: const ValueKey('status-milk-trend-preview'),
+        selectedMode: _milkTrendMode,
+        onModeChanged: (mode) {
+          setState(() {
+            _milkTrendMode = mode;
+            _persistInteractionState();
+          });
+        },
+      ),
     ];
   }
 
@@ -742,40 +842,93 @@ class _StatusPageState extends State<_StatusPage> {
             icon: Icons.straighten_outlined,
             accent: const Color(0xff388b72),
             background: const Color(0xfff2fffb),
-            metrics: [
-              _StatusModuleMetric(
-                label: '宝宝',
-                value: _textOr(baby?.nickname, '未设置'),
-                note: ageLabel,
+            hiddenTexts: [_textOr(baby?.nickname, '未设置'), ageLabel],
+            metrics: const [
+              _StatusModuleMetric(label: '体重', value: '待记录'),
+              _StatusModuleMetric(label: '身高', value: '待记录'),
+              _StatusModuleMetric(label: '头围', value: '待记录'),
+            ],
+            actions: [
+              _StatusModuleAction(
+                key: const ValueKey('status-growth-record-action'),
+                label: _growthRecordAdded ? '已添加' : '修改指标',
+                onTap: _recordGrowth,
               ),
-              _StatusModuleMetric(
-                label: '成长记录',
-                value: _growthRecordAdded ? '已添加' : '待记录',
+              _StatusModuleAction(
+                key: const ValueKey('status-growth-milestone-action'),
+                label: '成长milestone',
+                onTap: () => _showDetail('growth-milestone'),
               ),
             ],
-            action: _growthRecordAdded ? '已记录' : '记录成长事件',
-            onAction: () => setState(() => _growthRecordAdded = true),
           ),
-          const _StatusModuleCard(
+          _StatusModuleCard(
             title: '宝宝健康',
             bodyText: '筛查、消化、皮肤和情绪跟踪',
             icon: Icons.health_and_safety_outlined,
-            accent: Color(0xff7d64aa),
-            background: Color(0xfffbf7ff),
+            accent: const Color(0xff7d64aa),
+            background: const Color(0xfffbf7ff),
             action: '查看筛查',
+            onAction: () => _showDetail('baby-health'),
           ),
-          const _StatusModuleCard(
+          _StatusModuleCard(
             title: '宝宝睡眠',
             bodyText: '总睡眠、最长睡眠、活动和哭闹',
             icon: Icons.nightlight_outlined,
-            accent: Color(0xffff9677),
-            background: Color(0xfffff8f1),
+            accent: const Color(0xffff9677),
+            background: const Color(0xfffff8f1),
             action: '查看报告',
+            onAction: () => _showDetail('baby-sleep'),
           ),
         ],
       ),
       const SizedBox(height: 12),
-      const _StatusBabyGrowthCurvePreview(),
+      if (_activeDetail == 'growth-milestone') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-growth-milestone'),
+          title: '成长 milestone',
+          subtitle: '最近成长事件',
+          rows: const [
+            ('2026.05.28', '说出完整主谓短句', '语言组织能力继续发展。'),
+            ('2026.05.12', '独立上下低矮台阶', '动作计划能力更成熟。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 12),
+      ] else if (_activeDetail == 'baby-health') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-baby-health'),
+          title: '宝宝健康',
+          subtitle: '健康筛查入口',
+          rows: const [
+            ('筛查', '自闭症风险筛查', '待接入后台结果。'),
+            ('消化', '消化系统风险筛查', '待接入后台结果。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 12),
+      ] else if (_activeDetail == 'baby-sleep') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-baby-sleep'),
+          title: '宝宝睡眠',
+          subtitle: '睡眠报告入口',
+          rows: const [
+            ('今日睡眠', '4h 57min', '夜间睡眠和白天小睡汇总。'),
+            ('报告', '待同步', '同步后展示趋势和建议。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 12),
+      ],
+      _StatusBabyGrowthCurvePreview(
+        key: const ValueKey('status-baby-growth-curve-preview'),
+        selectedMetric: _babyGrowthMetric,
+        onMetricChanged: (metric) {
+          setState(() {
+            _babyGrowthMetric = metric;
+            _persistInteractionState();
+          });
+        },
+      ),
     ];
   }
 }
@@ -784,14 +937,20 @@ class _StatusModuleMetric {
   const _StatusModuleMetric({
     required this.label,
     required this.value,
-    this.note,
     this.showHelp = false,
   });
 
   final String label;
   final String value;
-  final String? note;
   final bool showHelp;
+}
+
+class _StatusModuleAction {
+  const _StatusModuleAction({required this.label, this.key, this.onTap});
+
+  final Key? key;
+  final String label;
+  final VoidCallback? onTap;
 }
 
 class _StatusModuleGrid extends StatelessWidget {
@@ -806,7 +965,7 @@ class _StatusModuleGrid extends StatelessWidget {
         final width = constraints.maxWidth.isFinite
             ? constraints.maxWidth
             : MomCozyLayout.maxAppWidth;
-        final childAspectRatio = width < 340 ? 1.04 : 1.26;
+        final childAspectRatio = width < 390 ? 1.03 : 1.14;
         return SizedBox(
           width: width,
           child: GridView.count(
@@ -836,6 +995,7 @@ class _StatusModuleCard extends StatelessWidget {
     this.hiddenTexts = const [],
     this.action,
     this.onAction,
+    this.actions = const [],
     this.showHelp = false,
   });
 
@@ -845,6 +1005,7 @@ class _StatusModuleCard extends StatelessWidget {
   final List<String> hiddenTexts;
   final String? action;
   final VoidCallback? onAction;
+  final List<_StatusModuleAction> actions;
   final bool showHelp;
   final IconData icon;
   final Color accent;
@@ -852,6 +1013,12 @@ class _StatusModuleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveActions = actions.isNotEmpty
+        ? actions
+        : [
+            if (action != null)
+              _StatusModuleAction(label: action!, onTap: onAction),
+          ];
     final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
       color: const Color(0xff35212c),
       fontSize: 14,
@@ -947,14 +1114,22 @@ class _StatusModuleCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: helperStyle,
                       ),
-                    if (action != null) ...[
+                    if (effectiveActions.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Transform.translate(
                         offset: const Offset(-10, 0),
-                        child: _StatusModuleActionPill(
-                          label: action!,
-                          accent: accent,
-                          onTap: onAction,
+                        child: Wrap(
+                          spacing: 5,
+                          runSpacing: 4,
+                          children: [
+                            for (final action in effectiveActions)
+                              _StatusModuleActionPill(
+                                key: action.key,
+                                label: action.label,
+                                accent: accent,
+                                onTap: action.onTap,
+                              ),
+                          ],
                         ),
                       ),
                     ],
@@ -1016,20 +1191,6 @@ class _StatusModuleMetricRows extends StatelessWidget {
                       height: 1,
                     ),
                   ),
-                  if (metric.note != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      metric.note!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: MomCozyColors.primary,
-                        fontSize: 10,
-                        height: 1,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -1075,6 +1236,7 @@ class _StatusHelpDot extends StatelessWidget {
 
 class _StatusModuleActionPill extends StatelessWidget {
   const _StatusModuleActionPill({
+    super.key,
     required this.label,
     required this.accent,
     this.onTap,
@@ -1349,7 +1511,14 @@ class _StatusPregnancyPlanPreview extends StatelessWidget {
 }
 
 class _StatusBabyGrowthCurvePreview extends StatelessWidget {
-  const _StatusBabyGrowthCurvePreview();
+  const _StatusBabyGrowthCurvePreview({
+    super.key,
+    required this.selectedMetric,
+    required this.onMetricChanged,
+  });
+
+  final String selectedMetric;
+  final ValueChanged<String> onMetricChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -1419,11 +1588,21 @@ class _StatusBabyGrowthCurvePreview extends StatelessWidget {
               ),
               const Spacer(),
               _StatusSegmentedPills(
-                selected: '体重',
+                selected: selectedMetric,
                 options: const ['体重', '身高'],
                 color: const Color(0xff7d64aa),
+                keyPrefix: 'status-baby-growth',
+                onChanged: onMetricChanged,
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '当前查看：$selectedMetric',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: const Color(0xff7d64aa),
+              fontWeight: FontWeight.w800,
+            ),
           ),
           const Spacer(),
           Center(
@@ -1438,6 +1617,101 @@ class _StatusBabyGrowthCurvePreview extends StatelessWidget {
           ),
           const Spacer(),
         ],
+      ),
+    );
+  }
+}
+
+class _StatusDetailPanel extends StatelessWidget {
+  const _StatusDetailPanel({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.rows,
+    required this.onClose,
+  });
+
+  final String title;
+  final String subtitle;
+  final List<(String, String, String)> rows;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
+      color: MomCozyColors.foreground,
+      fontWeight: FontWeight.w900,
+    );
+    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: MomCozyColors.mutedForeground,
+      fontWeight: FontWeight.w700,
+      height: 1.35,
+    );
+
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card.withValues(alpha: 0.72),
+        borderColor: MomCozyColors.border.withValues(alpha: 0.72),
+        radius: 18,
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 12, 10, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: titleStyle),
+                      const SizedBox(height: 3),
+                      Text(subtitle, style: helperStyle),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  tooltip: '关闭详情',
+                  onPressed: onClose,
+                  icon: const Icon(Icons.close_rounded, size: 18),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            for (final row in rows) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 78,
+                      child: Text(
+                        row.$1,
+                        style: helperStyle?.copyWith(
+                          color: const Color(0xff9c6b7f),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(row.$2, style: titleStyle),
+                          const SizedBox(height: 2),
+                          Text(row.$3, style: helperStyle),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -1537,11 +1811,15 @@ class _StatusSegmentedPills extends StatelessWidget {
     required this.selected,
     required this.options,
     required this.color,
+    this.keyPrefix,
+    this.onChanged,
   });
 
   final String selected;
   final List<String> options;
   final Color color;
+  final String? keyPrefix;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -1555,18 +1833,32 @@ class _StatusSegmentedPills extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           for (final option in options)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-              decoration: BoxDecoration(
-                color: option == selected ? color : Colors.transparent,
-                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-              ),
-              child: Text(
-                option,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: option == selected ? Colors.white : color,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
+            Semantics(
+              selected: option == selected,
+              button: onChanged != null,
+              label: option,
+              child: GestureDetector(
+                key: keyPrefix == null
+                    ? null
+                    : ValueKey('$keyPrefix-segment-$option'),
+                onTap: onChanged == null ? null : () => onChanged!(option),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: option == selected ? color : Colors.transparent,
+                    borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                  ),
+                  child: Text(
+                    option,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: option == selected ? Colors.white : color,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -1577,10 +1869,18 @@ class _StatusSegmentedPills extends StatelessWidget {
 }
 
 class _StatusTrendPreview extends StatelessWidget {
-  const _StatusTrendPreview({super.key});
+  const _StatusTrendPreview({
+    super.key,
+    required this.selectedMode,
+    required this.onModeChanged,
+  });
+
+  final String selectedMode;
+  final ValueChanged<String> onModeChanged;
 
   @override
   Widget build(BuildContext context) {
+    final modeLabel = selectedMode == '月' ? '近30日趋势' : '近7日趋势';
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -1630,22 +1930,33 @@ class _StatusTrendPreview extends StatelessWidget {
           const SizedBox(height: 12),
           Transform.translate(
             offset: const Offset(1, -1),
-            child: const Row(
+            child: Row(
               children: [
-                Expanded(child: _StatusTrendLegend()),
+                const Expanded(child: _StatusTrendLegend()),
                 _StatusSegmentedPills(
-                  selected: '周',
-                  options: ['周', '月'],
-                  color: Color(0xffb9792a),
+                  selected: selectedMode,
+                  options: const ['周', '月'],
+                  color: const Color(0xffb9792a),
+                  keyPrefix: 'status-milk-trend',
+                  onChanged: onModeChanged,
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            modeLabel,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: const Color(0xff9c7651),
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 10),
           SizedBox(
             height: 188,
             child: CustomPaint(
-              painter: const _StatusTrendPreviewPainter(),
+              painter: _StatusTrendPreviewPainter(mode: selectedMode),
               child: const SizedBox.expand(),
             ),
           ),
@@ -1656,19 +1967,15 @@ class _StatusTrendPreview extends StatelessWidget {
 }
 
 class _StatusTrendPreviewPainter extends CustomPainter {
-  const _StatusTrendPreviewPainter();
+  const _StatusTrendPreviewPainter({required this.mode});
+
+  final String mode;
 
   @override
   void paint(Canvas canvas, Size size) {
-    const labels = [
-      '06/26',
-      '06/27',
-      '06/28',
-      '06/29',
-      '06/30',
-      '07/01',
-      '07/02',
-    ];
+    final labels = mode == '月'
+        ? const ['第1周', '第2周', '第3周', '第4周']
+        : const ['06/26', '06/27', '06/28', '06/29', '06/30', '07/01', '07/02'];
     final segmentCount = labels.length - 1;
     final chartRect = Rect.fromLTWH(44, 1, size.width - 58, size.height - 44);
     final axisPaint = Paint()
@@ -1799,7 +2106,9 @@ class _StatusTrendPreviewPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _StatusTrendPreviewPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _StatusTrendPreviewPainter oldDelegate) {
+    return oldDelegate.mode != mode;
+  }
 }
 
 class _StatusTrendLegend extends StatelessWidget {
