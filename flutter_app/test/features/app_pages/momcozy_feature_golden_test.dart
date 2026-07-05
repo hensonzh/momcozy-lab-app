@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
@@ -12,7 +13,24 @@ import '../../support/fixture_api_transport.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
-  setUpAll(loadMomCozyTestFonts);
+  setUpAll(() async {
+    await loadMomCozyTestFonts();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, (call) async {
+          return switch (call.method) {
+            'read' => null,
+            'readAll' => <String, String>{},
+            'containsKey' => false,
+            'write' || 'delete' || 'deleteAll' => null,
+            _ => null,
+          };
+        });
+  });
+
+  tearDownAll(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, null);
+  });
 
   group('MomCozy feature page goldens', () {
     for (final viewport in _goldenViewports) {
@@ -35,6 +53,9 @@ void main() {
 }
 
 const _goldenSurfaceKey = ValueKey('momcozy-feature-golden-surface');
+const _secureStorageChannel = MethodChannel(
+  'plugins.it_nomads.com/flutter_secure_storage',
+);
 
 const _goldenViewports = [
   _GoldenViewport(
@@ -206,6 +227,7 @@ Future<void> _pumpGoldenApp(
       ).timeout(const Duration(seconds: 5));
     }
   });
+  await tester.pump(const Duration(milliseconds: 300));
   await tester.pumpAndSettle();
 }
 
