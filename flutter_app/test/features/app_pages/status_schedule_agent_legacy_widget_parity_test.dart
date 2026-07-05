@@ -417,6 +417,16 @@ void main() {
           findsOneWidget,
         );
         expect(find.text('今日任务说明'), findsOneWidget);
+        await tester.tapAt(const Offset(12, 12));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('schedule-task-explanation-dialog')),
+          findsNothing,
+        );
+        await tester.tap(
+          find.byKey(const ValueKey('schedule-task-help-button')),
+        );
+        await tester.pumpAndSettle();
         await tester.tap(find.text('知道了'));
         await tester.pumpAndSettle();
 
@@ -452,6 +462,22 @@ void main() {
           tester,
           find.byKey(const ValueKey('schedule-add-task-button')),
         );
+        await tester.tap(
+          find.byKey(const ValueKey('schedule-add-task-button')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('schedule-add-task-dialog')),
+          findsOneWidget,
+        );
+        await tester.tap(find.text('取消'));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('schedule-add-task-dialog')),
+          findsNothing,
+        );
+        expect(find.text('本地补充 1'), findsNothing);
+
         await tester.tap(
           find.byKey(const ValueKey('schedule-add-task-button')),
         );
