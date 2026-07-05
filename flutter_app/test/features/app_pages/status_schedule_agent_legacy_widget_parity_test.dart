@@ -781,6 +781,9 @@ void main() {
 
       await tester.tap(find.byKey(const ValueKey('agent-image-button')));
       await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+      await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('agent-image-attachment-chip')),
         findsOneWidget,
