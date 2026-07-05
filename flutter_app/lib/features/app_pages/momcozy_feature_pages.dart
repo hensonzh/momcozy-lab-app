@@ -4162,7 +4162,7 @@ class _ScheduleListToolbar extends StatelessWidget {
                         ? Icons.check_circle_outline_rounded
                         : Icons.image_outlined,
                     label: adjustmentQueued ? '已提交' : '调整日程',
-                    onPressed: onAdjust,
+                    onPressed: adjustmentQueued ? null : onAdjust,
                   ),
                   const SizedBox(width: 8),
                   _ScheduleToolbarIconButton(
@@ -4196,7 +4196,7 @@ class _ScheduleToolbarIconButton extends StatelessWidget {
   final String tooltip;
   final IconData icon;
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {

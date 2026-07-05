@@ -598,6 +598,24 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('schedule-adjust-submit')));
       await tester.pumpAndSettle();
       expect(find.text('日程调整已提交'), findsOneWidget);
+      expect(find.text('已提交'), findsOneWidget);
+      expect(
+        tester
+            .widget<OutlinedButton>(
+              find.byKey(const ValueKey('schedule-adjust-button')),
+            )
+            .onPressed,
+        isNull,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-adjust-button')),
+        warnIfMissed: false,
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-adjust-upload-dialog')),
+        findsNothing,
+      );
 
       await tester.tap(find.byKey(const ValueKey('schedule-add-task-button')));
       await tester.pumpAndSettle();
