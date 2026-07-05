@@ -19,9 +19,23 @@ typedef AgentHubNewSessionHandler = void Function();
 
 const _agentDefaultGreeting = '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
 
+final _agentHubInteractionStates = Expando<_AgentHubInteractionState>(
+  'momcozy-agent-hub-interaction-state',
+);
+
+class _AgentHubInteractionState {
+  AgentStreamRunState runState = const AgentStreamRunState();
+  List<AgentHubHistoryMessage>? historyMessages;
+  String composerText = '';
+  List<AgentStreamImageInput> attachedImages = const <AgentStreamImageInput>[];
+  bool autoVoiceEnabled = true;
+  AgentStreamRequest? activeRequest;
+}
+
 class AgentHubPage extends StatefulWidget {
   const AgentHubPage({
     super.key,
+    this.stateCacheKey,
     this.state = const AgentStreamRunState(),
     this.historyMessages = const <AgentHubHistoryMessage>[],
     this.runner,
@@ -36,6 +50,7 @@ class AgentHubPage extends StatefulWidget {
     this.onNewSession,
   });
 
+  final Object? stateCacheKey;
   final AgentStreamRunState state;
   final List<AgentHubHistoryMessage> historyMessages;
   final AgentStreamRunner? runner;
@@ -54,12 +69,10 @@ class AgentHubPage extends StatefulWidget {
 }
 
 class _AgentHubPageState extends State<AgentHubPage> {
-  late AgentStreamRunState _state = widget.state;
-  late List<AgentHubHistoryMessage> _historyMessages = [
-    ...widget.historyMessages,
-  ];
-  late final TextEditingController _composerController =
-      TextEditingController();
+  late AgentStreamRunState _state;
+  late List<AgentHubHistoryMessage> _historyMessages;
+  late final TextEditingController _composerController;
+  _AgentHubInteractionState? _interactionState;
   StreamSubscription<AgentStreamRunState>? _runSubscription;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
@@ -73,6 +86,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   @override
   void initState() {
     super.initState();
+    _restoreCachedInteractionState();
+    _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_updateLatestButtonVisibility);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _updateLatestButtonVisibility();
@@ -82,24 +97,66 @@ class _AgentHubPageState extends State<AgentHubPage> {
   @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.state != widget.state &&
+    if (_interactionState == null &&
+        oldWidget.state != widget.state &&
         (widget.runner == null || !_state.isActive)) {
       _state = widget.state;
     }
-    if (oldWidget.historyMessages != widget.historyMessages &&
+    if (_interactionState == null &&
+        oldWidget.historyMessages != widget.historyMessages &&
         !_state.isActive) {
       _historyMessages = [...widget.historyMessages];
+      _persistInteractionState();
     }
   }
 
   @override
   void dispose() {
     _cancelRunSubscription();
+    _composerController.removeListener(_persistInteractionState);
     _chatScrollController
       ..removeListener(_updateLatestButtonVisibility)
       ..dispose();
     _composerController.dispose();
     super.dispose();
+  }
+
+  void _restoreCachedInteractionState() {
+    final stateCacheKey = widget.stateCacheKey;
+    if (stateCacheKey == null) {
+      _state = widget.state;
+      _historyMessages = [...widget.historyMessages];
+      _composerController = TextEditingController();
+      return;
+    }
+
+    final interactionState = _agentHubInteractionStates[stateCacheKey] ??=
+        _AgentHubInteractionState();
+    _interactionState = interactionState;
+    _state = interactionState.historyMessages == null
+        ? widget.state
+        : interactionState.runState;
+    _historyMessages = [
+      ...(interactionState.historyMessages ?? widget.historyMessages),
+    ];
+    _composerController = TextEditingController(
+      text: interactionState.composerText,
+    );
+    _attachedImages.addAll(interactionState.attachedImages);
+    _autoVoiceEnabled = interactionState.autoVoiceEnabled;
+    _activeRequest = interactionState.activeRequest;
+  }
+
+  void _persistInteractionState() {
+    final interactionState = _interactionState;
+    if (interactionState == null) return;
+    interactionState
+      ..runState = _state
+      ..historyMessages = [..._historyMessages]
+      ..composerText = _composerController.text
+      ..attachedImages = [..._attachedImages]
+      ..autoVoiceEnabled = _autoVoiceEnabled
+      ..activeRequest = _activeRequest;
   }
 
   void _updateLatestButtonVisibility() {
@@ -147,14 +204,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
 
+    final requestMessage = message.isEmpty ? '请分析这张图片' : message;
+    final optimisticContent = message.isEmpty
+        ? '图片 ${_attachedImages.length}'
+        : message;
     final request = _requestWithImages(
-      widget.requestBuilder(message),
+      widget.requestBuilder(requestMessage),
       _attachedImages,
     );
     _composerController.clear();
     setState(() {
+      _historyMessages.add(
+        AgentHubHistoryMessage(
+          role: AgentHubHistoryRole.user,
+          content: optimisticContent,
+        ),
+      );
       _attachedImages.clear();
     });
+    _persistInteractionState();
     await _startRun(request);
   }
 
@@ -166,6 +234,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _attachedImages.add(image);
     });
+    _persistInteractionState();
   }
 
   Future<void> _startVoiceInput() async {
@@ -204,6 +273,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         }
         _voiceState = _voiceState.applyTranscription(text ?? '');
       });
+      _persistInteractionState();
     } catch (error) {
       if (!mounted) return;
       setState(() {
@@ -225,6 +295,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _attachedImages.clear();
     });
+    _persistInteractionState();
   }
 
   void _startNewSession() {
@@ -240,6 +311,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _activeRequest = null;
       _voiceState = const AgentVoiceState();
     });
+    _persistInteractionState();
     widget.onNewSession?.call();
   }
 
@@ -260,6 +332,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _pendingActionIds.clear();
       _localActionStatuses.clear();
     });
+    _persistInteractionState();
 
     _runSubscription = runner
         .run(request)
@@ -269,6 +342,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             setState(() {
               _state = nextState;
             });
+            _persistInteractionState();
             _maybeStartAutoVoicePlayback(nextState);
           },
           onError: (Object error) {
@@ -276,6 +350,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             setState(() {
               _state = _state.markDisconnected(error);
             });
+            _persistInteractionState();
           },
         );
   }
@@ -314,11 +389,20 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _state = _state.requestCancel();
     });
+    _persistInteractionState();
     _cancelRunSubscription();
     setState(() {
       _state = _state.applyCancelResult(acknowledged: true);
     });
+    _persistInteractionState();
     _sendBestEffortServerCancel(activeState, activeRequest);
+  }
+
+  void _toggleAutoVoice() {
+    setState(() {
+      _autoVoiceEnabled = !_autoVoiceEnabled;
+    });
+    _persistInteractionState();
   }
 
   void _cancelRunSubscription() {
@@ -403,8 +487,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             showControls: true,
             autoVoiceEnabled: _autoVoiceEnabled,
             isRunning: _state.isActive,
-            onToggleAutoVoice: () =>
-                setState(() => _autoVoiceEnabled = !_autoVoiceEnabled),
+            onToggleAutoVoice: _toggleAutoVoice,
             onNewSession: _startNewSession,
           ),
           Expanded(
