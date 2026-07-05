@@ -241,7 +241,7 @@ void main() {
         .style;
     expect(inputStyle?.height, greaterThanOrEqualTo(1.55));
     _expectComposerControlsInsideSurface(tester);
-    _expectComposerInputAvoidsControls(tester);
+    _expectComposerExpandedInputUsesWideTextArea(tester);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
@@ -298,7 +298,7 @@ void main() {
       expect(controller?.selection.baseOffset, wrappedText.length);
       expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
       _expectComposerControlsInsideSurface(tester);
-      _expectComposerInputAvoidsControls(tester);
+      _expectComposerExpandedInputUsesWideTextArea(tester);
     },
   );
 
@@ -348,16 +348,9 @@ void main() {
         'nihao a dsdkfj ksdjf ksjdf jdfg jdh kasjdf klsjdflk jskldjf';
     await tester.pump();
 
-    final inputRect = tester.getRect(
-      find.byKey(const ValueKey('agent-composer-input')),
-    );
-    final sendRect = tester.getRect(
-      find.byKey(const ValueKey('agent-send-button')),
-    );
-
     expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
-    expect(sendRect.left, greaterThan(inputRect.right));
     _expectComposerControlsInsideSurface(tester);
+    _expectComposerExpandedInputUsesWideTextArea(tester);
   });
 
   testWidgets('Agent Hub keeps send disabled for empty runner input', (
@@ -1398,7 +1391,10 @@ void _expectComposerControlsInsideSurface(WidgetTester tester) {
   }
 }
 
-void _expectComposerInputAvoidsControls(WidgetTester tester) {
+void _expectComposerExpandedInputUsesWideTextArea(WidgetTester tester) {
+  final surfaceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-surface')),
+  );
   final inputRect = tester.getRect(
     find.byKey(const ValueKey('agent-composer-input')),
   );
@@ -1409,8 +1405,10 @@ void _expectComposerInputAvoidsControls(WidgetTester tester) {
     find.byKey(const ValueKey('agent-voice-button')),
   );
 
-  expect(inputRect.left, greaterThanOrEqualTo(imageRect.right));
-  expect(inputRect.right, lessThanOrEqualTo(voiceRect.left));
+  expect(inputRect.left - surfaceRect.left, lessThanOrEqualTo(24));
+  expect(surfaceRect.right - inputRect.right, lessThanOrEqualTo(24));
+  expect(inputRect.left, lessThan(imageRect.right));
+  expect(inputRect.right, greaterThan(voiceRect.left));
 }
 
 class _FixtureAgentStreamClient implements AgentStreamClient {
