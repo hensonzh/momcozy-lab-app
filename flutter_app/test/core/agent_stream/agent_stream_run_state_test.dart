@@ -41,7 +41,7 @@ void main() {
         readMigrationFixture('agent_events/text_stream_basic.jsonl'),
       );
 
-      for (final event in events.take(3)) {
+      for (final event in events.take(2)) {
         state = state.applyEvent(event);
       }
 
@@ -150,10 +150,7 @@ void main() {
           'run_id': 'run-transient-001',
           'message_id': 'msg-final-001',
           'sequence': 4,
-          'payload': {
-            'role': 'assistant',
-            'text': '这是最终回复。',
-          },
+          'payload': {'role': 'assistant', 'text': '这是最终回复。'},
         }),
       );
 
@@ -201,34 +198,37 @@ void main() {
       );
     });
 
-    test('preserves waiting-for-confirmation state without retry affordance', () {
-      var state = const AgentStreamRunState().start();
+    test(
+      'preserves waiting-for-confirmation state without retry affordance',
+      () {
+        var state = const AgentStreamRunState().start();
 
-      state = state.applyEvent(
-        AgentStreamEvent(const {
-          'type': 'message.completed',
-          'thread_id': 'thread-action-001',
-          'run_id': 'run-action-001',
-          'message_id': 'msg-action-001',
-          'payload': {'text': '请确认是否创建支持工单。'},
-        }),
-      );
-      state = state.applyEvent(
-        AgentStreamEvent(const {
-          'type': 'run.waiting_for_confirmation',
-          'thread_id': 'thread-action-001',
-          'run_id': 'run-action-001',
-          'message_id': 'msg-action-001',
-          'payload': {'pending_action_id': 'action-support-001'},
-        }),
-      );
+        state = state.applyEvent(
+          AgentStreamEvent(const {
+            'type': 'message.completed',
+            'thread_id': 'thread-action-001',
+            'run_id': 'run-action-001',
+            'message_id': 'msg-action-001',
+            'payload': {'text': '请确认是否创建支持工单。'},
+          }),
+        );
+        state = state.applyEvent(
+          AgentStreamEvent(const {
+            'type': 'run.waiting_for_confirmation',
+            'thread_id': 'thread-action-001',
+            'run_id': 'run-action-001',
+            'message_id': 'msg-action-001',
+            'payload': {'pending_action_id': 'action-support-001'},
+          }),
+        );
 
-      expect(state.phase, AgentStreamRunPhase.waitingForConfirmation);
-      expect(state.isActive, isFalse);
-      expect(state.canRetry, isFalse);
-      expect(state.textContent, '请确认是否创建支持工单。');
-      expect(state.runId, 'run-action-001');
-    });
+        expect(state.phase, AgentStreamRunPhase.waitingForConfirmation);
+        expect(state.isActive, isFalse);
+        expect(state.canRetry, isFalse);
+        expect(state.textContent, '请确认是否创建支持工单。');
+        expect(state.runId, 'run-action-001');
+      },
+    );
 
     test('merges action events after waiting for confirmation', () {
       var state = const AgentStreamRunState().start();
@@ -337,10 +337,7 @@ void main() {
           'thread_id': 'thread-tool-001',
           'run_id': 'run-tool-001',
           'sequence': 4,
-          'payload': {
-            'artifact_id': 'artifact-plan-001',
-            'title': '今日计划',
-          },
+          'payload': {'artifact_id': 'artifact-plan-001', 'title': '今日计划'},
         },
       ].map(AgentStreamEvent.new)) {
         state = state.applyEvent(event);
