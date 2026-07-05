@@ -560,6 +560,49 @@ void main() {
       expect(find.byType(Switch), findsNothing);
     });
 
+    testWidgets('schedule page does not edit tasks outside today', (
+      tester,
+    ) async {
+      final transport = FixtureApiJsonTransportByPath({
+        scheduleDayPlanEndpoint: const {
+          'items': <Object?>[
+            {
+              'id': 'future-feeding',
+              'owner_user_id': 'demo-user-fixture',
+              'task_date': '2026-07-03',
+              'task_time': '14:00',
+              'title': '喂养',
+              'description': '',
+              'status': 'pending',
+              'payload': <String, Object?>{},
+            },
+          ],
+        },
+      });
+
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/schedule'), jsonTransport: transport),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('3').first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('7月3日 稳奶计划'), findsOneWidget);
+      await _scrollToText(tester, '14:00 喂养');
+      await tester.tap(find.text('14:00 喂养').last);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('schedule-task-edit-title-input')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('schedule-task-edit-time-input')),
+        findsNothing,
+      );
+    });
+
     testWidgets('schedule page adds deletes local tasks and shows badge', (
       tester,
     ) async {
