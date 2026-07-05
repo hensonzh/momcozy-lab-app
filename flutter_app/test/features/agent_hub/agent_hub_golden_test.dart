@@ -57,6 +57,8 @@ void main() {
 
       await tester.tap(find.byKey(const ValueKey('agent-image-button')));
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+      await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('agent-history-panel')), findsOneWidget);
       expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
@@ -136,10 +138,10 @@ Widget _host(Widget child) {
 
 AgentStreamRunState _richAgentState() {
   final toolEvents = parseAgentJsonl(
-    readMigrationFixture('ag_ui/tool_call_lifecycle.jsonl'),
+    readMigrationFixture('agent_events/tool_call_lifecycle.jsonl'),
   );
   final richArtifact = AgentStreamEvent(
-    readFixtureMap('ag_ui/rich_text_artifact.json'),
+    readFixtureMap('agent_events/rich_text_artifact.json'),
   );
   return AgentStreamRunState(
     phase: AgentStreamRunPhase.finished,
