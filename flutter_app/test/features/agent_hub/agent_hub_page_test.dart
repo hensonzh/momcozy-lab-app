@@ -46,6 +46,8 @@ void main() {
       find.byKey(const ValueKey('agent-send-button')),
     );
     expect(sendButton.onPressed, isNull);
+    _expectComposerControlsInsideSurface(tester);
+    _expectComposerSendButtonBreathesVertically(tester);
   });
 
   testWidgets('Agent Hub restores history and starts a new local session', (
@@ -156,6 +158,8 @@ void main() {
       find.byKey(const ValueKey('agent-send-button')),
     );
     expect(sendButton.onPressed, isNotNull);
+    _expectComposerControlsInsideSurface(tester);
+    _expectComposerSendButtonBreathesVertically(tester);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
@@ -1389,6 +1393,18 @@ void _expectComposerControlsInsideSurface(WidgetTester tester) {
     expect(rect.top, greaterThanOrEqualTo(surfaceRect.top));
     expect(rect.bottom, lessThanOrEqualTo(surfaceRect.bottom));
   }
+}
+
+void _expectComposerSendButtonBreathesVertically(WidgetTester tester) {
+  final surfaceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-surface')),
+  );
+  final sendRect = tester.getRect(
+    find.byKey(const ValueKey('agent-send-button')),
+  );
+
+  expect(sendRect.top - surfaceRect.top, greaterThanOrEqualTo(6));
+  expect(surfaceRect.bottom - sendRect.bottom, greaterThanOrEqualTo(6));
 }
 
 void _expectComposerExpandedInputUsesWideTextArea(WidgetTester tester) {

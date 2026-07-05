@@ -1854,6 +1854,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                                   MomCozyColors.mutedForeground,
                               fixedSize: const Size.square(_controlSize),
                               minimumSize: const Size.square(_controlSize),
+                              maximumSize: const Size.square(_controlSize),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               padding: EdgeInsets.zero,
                             ),
                           ),
