@@ -19,13 +19,13 @@ void main() {
         tester,
       ) async {
         await _setViewport(tester, viewport.size);
-        final connector = _PendingControlHttpConnector();
-        addTearDown(connector.complete);
+        final client = _PendingClientEventClient();
+        addTearDown(client.complete);
 
         await _pumpDeviceStateApp(
           tester,
           initialLocation: '/device/manage',
-          clientEventConnector: connector,
+          clientEventClient: client,
         );
         await tester.tap(find.text('任务提醒'));
         await tester.pump();
@@ -47,7 +47,7 @@ void main() {
         await _pumpDeviceStateApp(
           tester,
           initialLocation: '/device/manage',
-          clientEventConnector: const _StaticControlHttpConnector(503),
+          clientEventClient: const AgentStreamClientEventClient(sent: false),
         );
         await tester.tap(find.text('任务提醒'));
         await tester.pumpAndSettle();
@@ -150,8 +150,8 @@ Future<void> _setViewport(WidgetTester tester, Size size) async {
 Future<void> _pumpDeviceStateApp(
   WidgetTester tester, {
   required String initialLocation,
-  AgentStreamControlHttpConnector clientEventConnector =
-      const _StaticControlHttpConnector(200),
+  AgentStreamClientEventClient clientEventClient =
+      const AgentStreamClientEventClient(),
 }) async {
   final routeIntentPlatform = FakeRouteIntentPlatform();
   addTearDown(routeIntentPlatform.dispose);
@@ -162,7 +162,7 @@ Future<void> _pumpDeviceStateApp(
       child: MomCozyFlutterApp(
         router: createMomCozyRouter(initialLocation: initialLocation),
         routeIntentPlatform: routeIntentPlatform,
-        apiRuntime: _deviceRuntime(clientEventConnector),
+        apiRuntime: _deviceRuntime(clientEventClient),
       ),
     ),
   );
@@ -170,7 +170,7 @@ Future<void> _pumpDeviceStateApp(
 }
 
 MomCozyApiRuntime _deviceRuntime(
-  AgentStreamControlHttpConnector clientEventConnector,
+  AgentStreamClientEventClient clientEventClient,
 ) {
   return MomCozyApiRuntime(
     jsonTransport: FixtureApiJsonTransportByPath(const {
@@ -182,13 +182,7 @@ MomCozyApiRuntime _deviceRuntime(
         },
       },
     }),
-    clientEventClient: AgentStreamClientEventClient(
-      endpoint: AgentStreamEndpoint(
-        uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-        token: 'test-token',
-      ),
-      connector: clientEventConnector,
-    ),
+    clientEventClient: clientEventClient,
     blePlatform: FakeBlePlatform(initialPermission: BlePermissionState.granted),
     userId: 'demo-user-golden',
     babyId: 'demo-baby-golden',
@@ -197,37 +191,22 @@ MomCozyApiRuntime _deviceRuntime(
   );
 }
 
-class _PendingControlHttpConnector implements AgentStreamControlHttpConnector {
-  final Completer<AgentStreamControlHttpResponse> _completer = Completer();
+class _PendingClientEventClient extends AgentStreamClientEventClient {
+  _PendingClientEventClient();
+
+  final Completer<AgentStreamClientEventResult> _completer = Completer();
 
   @override
-  Future<AgentStreamControlHttpResponse> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) {
+  Future<AgentStreamClientEventResult> post(
+    AgentStreamClientEventRequest event,
+  ) {
     return _completer.future;
   }
 
   void complete() {
     if (_completer.isCompleted) return;
     _completer.complete(
-      const AgentStreamControlHttpResponse(statusCode: 200, body: '{}'),
+      const AgentStreamClientEventResult(sent: true, body: {}),
     );
-  }
-}
-
-class _StaticControlHttpConnector implements AgentStreamControlHttpConnector {
-  const _StaticControlHttpConnector(this.statusCode);
-
-  final int statusCode;
-
-  @override
-  Future<AgentStreamControlHttpResponse> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) async {
-    return AgentStreamControlHttpResponse(statusCode: statusCode, body: '{}');
   }
 }

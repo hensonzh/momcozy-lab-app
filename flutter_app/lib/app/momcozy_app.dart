@@ -997,7 +997,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/device/manage',
     title: '设备提醒',
-    summary: '任务提醒、奶量总结和健康通知动作入口。',
+    summary: '任务提醒和奶量分析动作入口。',
     icon: Icons.notifications_active_rounded,
     accent: Color(0xffb2773b),
     priority: 'P1',
