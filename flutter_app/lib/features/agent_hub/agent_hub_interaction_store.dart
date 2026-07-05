@@ -45,9 +45,7 @@ class AgentHubInteractionSnapshot {
           .toList(growable: false),
     if (composerText.isNotEmpty) 'composerText': composerText,
     if (attachedImages.isNotEmpty)
-      'attachedImages': attachedImages
-          .map(_imageToMap)
-          .toList(growable: false),
+      'attachedImages': attachedImages.map(_imageToMap).toList(growable: false),
     'autoVoiceEnabled': autoVoiceEnabled,
     if (activeRequest != null) 'activeRequest': _requestToMap(activeRequest!),
     if (localActionStatuses.isNotEmpty)
@@ -199,8 +197,7 @@ AgentStreamRequest? _requestFromMap(Object? value) {
     message: message,
     threadId: _string(map['threadId']) ?? _string(map['thread_id']),
     runId: _string(map['runId']) ?? _string(map['run_id']),
-    afterSequence:
-        _int(map['afterSequence']) == 0
+    afterSequence: _int(map['afterSequence']) == 0
         ? _int(map['after_sequence'])
         : _int(map['afterSequence']),
     locale: _string(map['locale']) ?? 'zh-CN',

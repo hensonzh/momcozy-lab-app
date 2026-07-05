@@ -4188,7 +4188,6 @@ class _ScheduleListToolbar extends StatelessWidget {
 
 class _ScheduleToolbarIconButton extends StatelessWidget {
   const _ScheduleToolbarIconButton({
-    super.key,
     this.buttonKey,
     required this.tooltip,
     required this.icon,

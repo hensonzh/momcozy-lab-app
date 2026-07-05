@@ -891,9 +891,7 @@ void main() {
       ),
     );
 
-    await tester.pumpWidget(
-      _host(AgentHubPage(interactionStateStore: store)),
-    );
+    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
     await tester.pumpAndSettle();
 
     expect(find.text('请确认是否提交给人工支持。'), findsOneWidget);
