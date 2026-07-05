@@ -8,6 +8,10 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const legacyWebRoot = path.resolve(
+  repoRoot,
+  process.env.MOMCOZY_LEGACY_WEB_ROOT || "legacy_web",
+);
 
 const viewport = {
   width: numberFromEnv("MOMCOZY_REFERENCE_WIDTH", 390),
@@ -101,6 +105,7 @@ async function main() {
       command: "npm run ui:legacy-reference",
       baseUrl,
       fixedNowIso,
+      legacyWebRoot: path.relative(repoRoot, legacyWebRoot),
       viewport,
       routes: [],
     };
@@ -162,7 +167,7 @@ function startViteServer() {
     viteBin,
     ["--host", host, "--port", String(port), "--strictPort"],
     {
-      cwd: repoRoot,
+      cwd: legacyWebRoot,
       env: {
         ...process.env,
         BROWSER: "none",

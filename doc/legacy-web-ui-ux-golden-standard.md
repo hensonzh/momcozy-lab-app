@@ -1,5 +1,6 @@
 # 旧 Web UI/UX Golden 标准
 
+> 路径说明：本文档中的旧 Web 源码路径现在以 `legacy_web/` 为根，例如 `src/pages/Status.tsx` 表示 `legacy_web/src/pages/Status.tsx`。
 > 状态：评审稿 v0.1  
 > 范围：以当前旧版 Vite + React + Capacitor Web App 为 UI/UX 基线，约束 Flutter 原生重构的视觉、交互和 golden 验收。  
 > 结论：Flutter 可以使用原生实现方式，但默认不得重设计旧 Web 的信息架构、页面层级、关键控件、文案和主要视觉比例。

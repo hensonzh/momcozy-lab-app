@@ -1,13 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-const API_FIXTURE_ROOT = path.join(process.cwd(), "test/fixtures/api");
+const legacyWebRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const API_FIXTURE_ROOT = path.join(legacyWebRoot, "..", "test", "fixtures", "api");
 
 const REQUIRED_DOMAINS = [
-  "agent_chat",
   "user_profile",
   "pump",
+  "pump_milk",
   "mom_baby",
   "feeding",
   "growth",

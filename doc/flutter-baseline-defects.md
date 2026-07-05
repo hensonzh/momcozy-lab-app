@@ -3,6 +3,7 @@
 > 状态：Phase 0 当前基线记录  
 > 记录日期：2026-06-29  
 > 目的：把迁移前已存在的失败项与后续 Flutter 迁移回归区分开。
+> 路径说明：当前旧 Web 源码已归档到 `legacy_web/`，本文件中的 `src/...` 和 `tailwind.config.ts` 历史引用均指 `legacy_web/` 下的对应文件。
 
 ---
 
@@ -60,9 +61,9 @@
 `npm run build` 通过，但有以下 warning：
 
 - `@capacitor/core` 同时被动态和静态 import，Rollup 不会移动 chunk。
-- `src/lib/ble.ts` 同时被动态和静态 import，Rollup 不会移动 chunk。
+- `legacy_web/src/lib/ble.ts` 同时被动态和静态 import，Rollup 不会移动 chunk。
 - `@capacitor/preferences` 同时被动态和静态 import，Rollup 不会移动 chunk。
-- `dist/assets/index-*.js` 超过 500 kB，当前约 2.25 MB minified / 694 kB gzip。
+- `legacy_web/dist/assets/index-*.js` 超过 500 kB，当前约 2.25 MB minified / 694 kB gzip。
 
 这些不是 Flutter 迁移阻断项，但能说明当前 Web App 体量和 Capacitor coupling 较高。
 

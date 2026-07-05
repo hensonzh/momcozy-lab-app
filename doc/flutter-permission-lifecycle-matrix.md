@@ -7,7 +7,7 @@
 
 ## 1. 当前 Android manifest 权限
 
-当前 `android/app/src/main/AndroidManifest.xml` 声明：
+当前旧 Capacitor manifest `legacy_web/android/app/src/main/AndroidManifest.xml` 声明：
 
 ```text
 INTERNET

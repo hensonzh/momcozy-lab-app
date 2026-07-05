@@ -33,6 +33,8 @@ Primary references:
 
 Flutter page goldens remain current snapshots, not the source of truth.
 
+Note: after the legacy archive split, `src/` references in this plan mean `legacy_web/src/`.
+
 ## 3. Execution Loop
 
 Every component-level change follows this loop:
