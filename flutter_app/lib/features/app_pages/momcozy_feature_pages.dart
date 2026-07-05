@@ -2568,6 +2568,21 @@ String _textOr(String? value, String fallback) {
   return trimmed == null || trimmed.isEmpty ? fallback : trimmed;
 }
 
+final _scheduleInteractionStates = Expando<_ScheduleInteractionState>(
+  'momcozy-schedule-interaction-state',
+);
+
+class _ScheduleInteractionState {
+  bool pumpReminderEnabled = true;
+  DateTime? selectedDay;
+  Map<String, bool> taskDoneOverrides = {};
+  Map<String, List<ScheduleTask>> localTasksByDay = {};
+  Set<String> deletedTaskKeys = {};
+  int localTaskSequence = 0;
+  bool scheduleAdjustmentQueued = false;
+  String? feedbackMessage;
+}
+
 class _SchedulePage extends StatefulWidget {
   const _SchedulePage({
     required this.path,
@@ -2589,10 +2604,14 @@ class _SchedulePage extends StatefulWidget {
 
 class _SchedulePageState extends State<_SchedulePage> {
   bool _pumpReminderEnabled = true;
-  final Map<String, bool> _taskDoneOverrides = {};
-  final Map<String, List<ScheduleTask>> _localTasksByDay = {};
-  final Set<String> _deletedTaskKeys = {};
+  late Map<String, bool> _taskDoneOverrides = {};
+  late Map<String, List<ScheduleTask>> _localTasksByDay = {};
+  late Set<String> _deletedTaskKeys = {};
   int _localTaskSequence = 0;
+  bool _scheduleAdjustmentQueued = false;
+  String? _feedbackMessage;
+  late _ScheduleInteractionState _interactionState =
+      _ScheduleInteractionState();
   MomCozyApiRuntime? _runtime;
   late DateTime _selectedDay;
   late Future<ScheduleDayPlan> _dayPlanFuture;
@@ -2603,7 +2622,16 @@ class _SchedulePageState extends State<_SchedulePage> {
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
       _runtime = runtime;
-      _selectedDay = runtime.now();
+      _interactionState = _scheduleInteractionStates[runtime] ??=
+          _ScheduleInteractionState();
+      _pumpReminderEnabled = _interactionState.pumpReminderEnabled;
+      _selectedDay = _interactionState.selectedDay ?? runtime.now();
+      _taskDoneOverrides = _interactionState.taskDoneOverrides;
+      _localTasksByDay = _interactionState.localTasksByDay;
+      _deletedTaskKeys = _interactionState.deletedTaskKeys;
+      _localTaskSequence = _interactionState.localTaskSequence;
+      _scheduleAdjustmentQueued = _interactionState.scheduleAdjustmentQueued;
+      _feedbackMessage = _interactionState.feedbackMessage;
       _dayPlanFuture = _fetchDayPlan(runtime);
     }
   }
@@ -2617,9 +2645,8 @@ class _SchedulePageState extends State<_SchedulePage> {
     if (runtime == null) return;
     setState(() {
       _selectedDay = day;
-      _taskDoneOverrides.clear();
-      _deletedTaskKeys.clear();
       _dayPlanFuture = _fetchDayPlan(runtime);
+      _persistScheduleState();
     });
   }
 
@@ -2627,10 +2654,47 @@ class _SchedulePageState extends State<_SchedulePage> {
     final key = _taskScopedKey(task, index);
     setState(() {
       _taskDoneOverrides[key] = value ?? !_taskDone(task, index);
+      _persistScheduleState();
     });
   }
 
-  void _addLocalTask() {
+  void _persistScheduleState() {
+    _interactionState
+      ..pumpReminderEnabled = _pumpReminderEnabled
+      ..selectedDay = _selectedDay
+      ..taskDoneOverrides = _taskDoneOverrides
+      ..localTasksByDay = _localTasksByDay
+      ..deletedTaskKeys = _deletedTaskKeys
+      ..localTaskSequence = _localTaskSequence
+      ..scheduleAdjustmentQueued = _scheduleAdjustmentQueued
+      ..feedbackMessage = _feedbackMessage;
+  }
+
+  DateTime get _today {
+    final runtime = _runtime;
+    return _dateOnly(runtime?.now() ?? DateTime.now());
+  }
+
+  bool get _isSelectedToday => _sameDay(_selectedDay, _today);
+  bool get _isSelectedPast => _dateOnly(_selectedDay).isBefore(_today);
+  bool get _isSelectedFuture => _dateOnly(_selectedDay).isAfter(_today);
+
+  void _toggleReminder() {
+    setState(() {
+      _pumpReminderEnabled = !_pumpReminderEnabled;
+      _persistScheduleState();
+    });
+  }
+
+  void _queueScheduleAdjustment() {
+    setState(() {
+      _scheduleAdjustmentQueued = true;
+      _feedbackMessage = '日程调整已提交';
+      _persistScheduleState();
+    });
+  }
+
+  void _addLocalTask({String? title, String? feedback}) {
     final dayKey = _dayKey(_selectedDay);
     final localTasks = _localTasksByDay[dayKey] ?? const <ScheduleTask>[];
     _localTaskSequence += 1;
@@ -2643,13 +2707,19 @@ class _SchedulePageState extends State<_SchedulePage> {
     );
     final task = ScheduleTask(
       id: 'local-$dayKey-$_localTaskSequence',
-      title: '本地补充 ${localTasks.length + 1}',
+      title: title ?? '本地补充 ${localTasks.length + 1}',
       completed: false,
       remindAt: remindAt,
     );
     setState(() {
       _localTasksByDay[dayKey] = [...localTasks, task];
+      _feedbackMessage = feedback;
+      _persistScheduleState();
     });
+  }
+
+  void _addQuickActionTask(String label) {
+    _addLocalTask(title: label, feedback: '$label已添加');
   }
 
   void _deleteTask(ScheduleTask task, int index) {
@@ -2657,6 +2727,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     setState(() {
       _deletedTaskKeys.add(key);
       _taskDoneOverrides.remove(key);
+      _persistScheduleState();
     });
   }
 
@@ -2665,6 +2736,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     return FutureBuilder<ScheduleDayPlan>(
       future: _dayPlanFuture,
       builder: (context, snapshot) {
+        final taskLabel = _isSelectedToday ? '今日任务' : '执行记录';
         final visibleTasks = snapshot.hasData
             ? _visibleTasks(snapshot.data!)
             : const <ScheduleTask>[];
@@ -2683,6 +2755,7 @@ class _SchedulePageState extends State<_SchedulePage> {
               offset: const Offset(0, -8),
               child: _ScheduleDateStrip(
                 key: const ValueKey('schedule-date-strip'),
+                today: _today,
                 selectedDay: _selectedDay,
                 onSelected: _selectDay,
               ),
@@ -2691,16 +2764,15 @@ class _SchedulePageState extends State<_SchedulePage> {
             Transform.translate(
               offset: const Offset(-2, -9),
               child: _ScheduleContextCard(
-                title: '稳奶计划执行中',
+                title: _scheduleContextTitle(),
                 subtitle: '产后第29周（离乳期）',
+                taskLabel: taskLabel,
                 completedCount: taskCount == null
                     ? 0
                     : taskCount - pendingTaskCount,
                 totalCount: taskCount ?? 0,
                 reminderEnabled: _pumpReminderEnabled,
-                onReminderTap: () => setState(
-                  () => _pumpReminderEnabled = !_pumpReminderEnabled,
-                ),
+                onReminderTap: _toggleReminder,
               ),
             ),
             const SizedBox(height: 20),
@@ -2709,9 +2781,7 @@ class _SchedulePageState extends State<_SchedulePage> {
               child: _ScheduleAgentCard(
                 key: const ValueKey('schedule-agent-card'),
                 reminderEnabled: _pumpReminderEnabled,
-                onReminderTap: () => setState(
-                  () => _pumpReminderEnabled = !_pumpReminderEnabled,
-                ),
+                onReminderTap: _toggleReminder,
                 onConversationTap: () => context.go('/'),
               ),
             ),
@@ -2721,6 +2791,8 @@ class _SchedulePageState extends State<_SchedulePage> {
               child: _ScheduleNextTaskCard(
                 subtitle: _nextTaskSubtitle(visibleTasks),
                 task: _nextPendingTask(visibleTasks),
+                emptyTitle: _scheduleEmptyHeroTitle(),
+                emptyDescription: _scheduleEmptyHeroDescription(),
                 onComplete: () {
                   final next = _nextPendingTask(visibleTasks);
                   if (next == null) return;
@@ -2730,7 +2802,16 @@ class _SchedulePageState extends State<_SchedulePage> {
               ),
             ),
             const SizedBox(height: 30),
-            _ScheduleListToolbar(onAdd: _addLocalTask),
+            _ScheduleListToolbar(
+              taskLabel: taskLabel,
+              adjustmentQueued: _scheduleAdjustmentQueued,
+              onAdjust: _queueScheduleAdjustment,
+              onAdd: () => _addLocalTask(),
+            ),
+            if (_feedbackMessage != null) ...[
+              _ScheduleFeedbackBanner(message: _feedbackMessage!),
+              const SizedBox(height: 8),
+            ],
             ..._dayPlanChildren(snapshot),
           ],
         );
@@ -2740,17 +2821,26 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   List<Widget> _dayPlanChildren(AsyncSnapshot<ScheduleDayPlan> snapshot) {
     if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return const [_ScheduleEmptyTaskNotice(), _ScheduleQuickActions()];
+      return [
+        const _ScheduleEmptyTaskNotice(),
+        _ScheduleQuickActions(onAction: _addQuickActionTask),
+      ];
     }
 
     if (snapshot.hasError) {
-      return const [_ScheduleEmptyTaskNotice(), _ScheduleQuickActions()];
+      return [
+        const _ScheduleEmptyTaskNotice(),
+        _ScheduleQuickActions(onAction: _addQuickActionTask),
+      ];
     }
 
     final plan = snapshot.data;
     final tasks = plan == null ? const <ScheduleTask>[] : _visibleTasks(plan);
     if (tasks.isEmpty) {
-      return const [_ScheduleEmptyTaskNotice(), _ScheduleQuickActions()];
+      return [
+        const _ScheduleEmptyTaskNotice(),
+        _ScheduleQuickActions(onAction: _addQuickActionTask),
+      ];
     }
 
     return [
@@ -2774,7 +2864,11 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   List<ScheduleTask> _visibleTasks(ScheduleDayPlan plan) {
     final dayKey = _dayKey(_selectedDay);
-    final tasks = [...plan.tasks, ...?_localTasksByDay[dayKey]];
+    final remoteTasks = plan.tasks.where((task) {
+      final remindAt = task.remindAt;
+      return remindAt == null || _sameDay(remindAt, _selectedDay);
+    });
+    final tasks = [...remoteTasks, ...?_localTasksByDay[dayKey]];
     return tasks
         .asMap()
         .entries
@@ -2829,15 +2923,39 @@ class _SchedulePageState extends State<_SchedulePage> {
   String _taskKey(ScheduleTask task, int index) {
     return task.id.isEmpty ? 'task-$index' : task.id;
   }
+
+  String _scheduleContextTitle() {
+    if (_isSelectedToday) return '稳奶计划执行中';
+    if (_isSelectedFuture) {
+      return '${_selectedDay.month}月${_selectedDay.day}日 稳奶计划';
+    }
+    return '稳奶计划';
+  }
+
+  String _scheduleEmptyHeroTitle() {
+    if (_isSelectedToday) return '今天还没有计划任务';
+    if (_isSelectedPast) return '这天没有计划任务';
+    return '未来的计划';
+  }
+
+  String _scheduleEmptyHeroDescription() {
+    if (_isSelectedToday) {
+      return '可以先从对话里生成计划并同步到日历，或手动添加任务。';
+    }
+    if (_isSelectedPast) return '没有看到当天的计划任务。';
+    return '系统会在生成计划后同步当天的吸乳和喂养日程。';
+  }
 }
 
 class _ScheduleDateStrip extends StatelessWidget {
   const _ScheduleDateStrip({
     super.key,
+    required this.today,
     required this.selectedDay,
     required this.onSelected,
   });
 
+  final DateTime today;
   final DateTime selectedDay;
   final ValueChanged<DateTime> onSelected;
 
@@ -2848,6 +2966,8 @@ class _ScheduleDateStrip extends StatelessWidget {
       selectedDay.month,
       selectedDay.day,
     );
+    final todayDate = _dateOnly(today);
+    final showBackToToday = !_sameDay(selectedDate, todayDate);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2885,20 +3005,19 @@ class _ScheduleDateStrip extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     for (var offset = -3; offset <= 3; offset += 1)
-                      _DatePill(
-                        day: offset == 0
-                            ? '今'
-                            : _weekdayLabel(
-                                selectedDate.add(Duration(days: offset)),
-                              ),
-                        date: selectedDate
-                            .add(Duration(days: offset))
-                            .day
-                            .toString(),
-                        selected: offset == 0,
-                        onTap: () => onSelected(
-                          selectedDate.add(Duration(days: offset)),
-                        ),
+                      Builder(
+                        builder: (context) {
+                          final date = selectedDate.add(Duration(days: offset));
+                          return _DatePill(
+                            key: ValueKey('schedule-date-${_dayKey(date)}'),
+                            day: _sameDay(date, todayDate)
+                                ? '今'
+                                : _weekdayLabel(date),
+                            date: date.day.toString(),
+                            selected: _sameDay(date, selectedDate),
+                            onTap: () => onSelected(date),
+                          );
+                        },
                       ),
                   ],
                 ),
@@ -2911,6 +3030,24 @@ class _ScheduleDateStrip extends StatelessWidget {
             ],
           ),
         ),
+        if (showBackToToday) ...[
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton.tonal(
+              key: const ValueKey('schedule-back-to-today-button'),
+              onPressed: () => onSelected(todayDate),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(0, 32),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                backgroundColor: MomCozyColors.roseSoft,
+                foregroundColor: MomCozyColors.primary,
+              ),
+              child: const Text('今天'),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -2938,19 +3075,31 @@ class _ScheduleEmptyTaskNotice extends StatelessWidget {
 }
 
 class _ScheduleQuickActions extends StatelessWidget {
-  const _ScheduleQuickActions();
+  const _ScheduleQuickActions({required this.onAction});
+
+  final ValueChanged<String> onAction;
 
   @override
   Widget build(BuildContext context) {
-    return const RepaintBoundary(
-      key: ValueKey('schedule-empty-quick-actions'),
+    return RepaintBoundary(
+      key: const ValueKey('schedule-empty-quick-actions'),
       child: Padding(
-        padding: EdgeInsets.only(top: 14, bottom: 22),
+        padding: const EdgeInsets.only(top: 14, bottom: 22),
         child: Row(
           children: [
-            Expanded(child: _ScheduleQuickActionButton(label: '吸奶补录')),
-            SizedBox(width: 10),
-            Expanded(child: _ScheduleQuickActionButton(label: '喂养记录')),
+            Expanded(
+              child: _ScheduleQuickActionButton(
+                label: '吸奶补录',
+                onPressed: () => onAction('吸奶补录'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _ScheduleQuickActionButton(
+                label: '喂养记录',
+                onPressed: () => onAction('喂养记录'),
+              ),
+            ),
           ],
         ),
       ),
@@ -2959,16 +3108,20 @@ class _ScheduleQuickActions extends StatelessWidget {
 }
 
 class _ScheduleQuickActionButton extends StatelessWidget {
-  const _ScheduleQuickActionButton({required this.label});
+  const _ScheduleQuickActionButton({
+    required this.label,
+    required this.onPressed,
+  });
 
   final String label;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 40,
       child: FilledButton.tonalIcon(
-        onPressed: () {},
+        onPressed: onPressed,
         icon: const Icon(Icons.add_rounded, size: 16),
         label: Text(label),
         style: FilledButton.styleFrom(
@@ -3149,6 +3302,7 @@ class _ScheduleContextCard extends StatelessWidget {
   const _ScheduleContextCard({
     required this.title,
     required this.subtitle,
+    required this.taskLabel,
     required this.completedCount,
     required this.totalCount,
     required this.reminderEnabled,
@@ -3157,6 +3311,7 @@ class _ScheduleContextCard extends StatelessWidget {
 
   final String title;
   final String subtitle;
+  final String taskLabel;
   final int completedCount;
   final int totalCount;
   final bool reminderEnabled;
@@ -3232,6 +3387,16 @@ class _ScheduleContextCard extends StatelessWidget {
                         height: 1.28,
                       ),
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      reminderEnabled ? '提醒已开启' : '提醒已关闭',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: reminderEnabled
+                            ? MomCozyColors.primary
+                            : MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -3239,7 +3404,7 @@ class _ScheduleContextCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '今日任务',
+                    taskLabel,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: MomCozyColors.foreground.withValues(alpha: 0.72),
                       fontWeight: FontWeight.w900,
@@ -3279,11 +3444,15 @@ class _ScheduleNextTaskCard extends StatelessWidget {
   const _ScheduleNextTaskCard({
     required this.subtitle,
     required this.task,
+    required this.emptyTitle,
+    required this.emptyDescription,
     required this.onComplete,
   });
 
   final String subtitle;
   final ScheduleTask? task;
+  final String emptyTitle;
+  final String emptyDescription;
   final VoidCallback onComplete;
 
   @override
@@ -3318,7 +3487,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              '今天还没有计划任务',
+              emptyTitle,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: MomCozyColors.foreground,
                 fontWeight: FontWeight.w900,
@@ -3326,7 +3495,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
             ),
             const SizedBox(height: 7),
             Text(
-              '可以先从对话里生成计划并同步到日历，或手动添加任务。',
+              emptyDescription,
               maxLines: 2,
               overflow: TextOverflow.visible,
               textAlign: TextAlign.center,
@@ -3438,8 +3607,16 @@ class _ScheduleNextTaskCard extends StatelessWidget {
 }
 
 class _ScheduleListToolbar extends StatelessWidget {
-  const _ScheduleListToolbar({required this.onAdd});
+  const _ScheduleListToolbar({
+    required this.taskLabel,
+    required this.adjustmentQueued,
+    required this.onAdjust,
+    required this.onAdd,
+  });
 
+  final String taskLabel;
+  final bool adjustmentQueued;
+  final VoidCallback onAdjust;
   final VoidCallback onAdd;
 
   void _showTaskExplanation(BuildContext context) {
@@ -3475,7 +3652,7 @@ class _ScheduleListToolbar extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      '今日任务',
+                      taskLabel,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: MomCozyColors.foreground,
                         fontWeight: FontWeight.w900,
@@ -3516,14 +3693,17 @@ class _ScheduleListToolbar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _ScheduleToolbarIconButton(
+                    buttonKey: const ValueKey('schedule-adjust-button'),
                     tooltip: '调整日程',
-                    icon: Icons.image_outlined,
-                    label: '调整日程',
-                    onPressed: () {},
+                    icon: adjustmentQueued
+                        ? Icons.check_circle_outline_rounded
+                        : Icons.image_outlined,
+                    label: adjustmentQueued ? '已提交' : '调整日程',
+                    onPressed: onAdjust,
                   ),
                   const SizedBox(width: 8),
                   _ScheduleToolbarIconButton(
-                    key: const ValueKey('schedule-add-task-button'),
+                    buttonKey: const ValueKey('schedule-add-task-button'),
                     tooltip: '添加任务',
                     icon: Icons.add_rounded,
                     label: '添加任务',
@@ -3542,12 +3722,14 @@ class _ScheduleListToolbar extends StatelessWidget {
 class _ScheduleToolbarIconButton extends StatelessWidget {
   const _ScheduleToolbarIconButton({
     super.key,
+    this.buttonKey,
     required this.tooltip,
     required this.icon,
     required this.label,
     required this.onPressed,
   });
 
+  final Key? buttonKey;
   final String tooltip;
   final IconData icon;
   final String label;
@@ -3558,6 +3740,7 @@ class _ScheduleToolbarIconButton extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: OutlinedButton.icon(
+        key: buttonKey,
         onPressed: onPressed,
         icon: Icon(icon, size: 14),
         label: Text(label),
@@ -3574,6 +3757,46 @@ class _ScheduleToolbarIconButton extends StatelessWidget {
             fontWeight: FontWeight.w900,
             letterSpacing: 0,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScheduleFeedbackBanner extends StatelessWidget {
+  const _ScheduleFeedbackBanner({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.roseSoft.withValues(alpha: 0.48),
+        borderColor: MomCozyColors.primary.withValues(alpha: 0.18),
+        radius: 14,
+        shadows: const [],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.check_circle_outline_rounded,
+              size: 18,
+              color: MomCozyColors.primary,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                message,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -3683,6 +3906,7 @@ class _ScheduleTaskRow extends StatelessWidget {
 
 class _DatePill extends StatelessWidget {
   const _DatePill({
+    super.key,
     required this.day,
     required this.date,
     required this.selected,
@@ -3756,6 +3980,18 @@ String _taskSubtitle(ScheduleTask task) {
   final remindAt = task.remindAt;
   if (remindAt == null) return '暂无提醒时间，可稍后补充。';
   return '提醒 ${_timeLabel(remindAt)} · 可从通知直接进入相关页面。';
+}
+
+DateTime _dateOnly(DateTime value) {
+  return DateTime(value.year, value.month, value.day);
+}
+
+bool _sameDay(DateTime first, DateTime second) {
+  final left = _dateOnly(first);
+  final right = _dateOnly(second);
+  return left.year == right.year &&
+      left.month == right.month &&
+      left.day == right.day;
 }
 
 Color _taskAccent(int index) {
