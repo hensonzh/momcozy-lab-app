@@ -1544,9 +1544,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   static const double _expandedInputHorizontalInset = 20;
   static const double _expandedInputTopInset = 14;
   static const double _expandedInputBottomInset =
-      _expandedControlBottomInset + _controlSize + 12;
-  static const double _expandedControlHorizontalInset = 20;
-  static const double _expandedControlBottomInset = 14;
+      _surfaceVerticalInset + _controlSize + 18;
   static const double _lineWrapGuard = 10;
 
   @override
@@ -1725,13 +1723,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         _inputRightInset,
                         _surfaceVerticalInset,
                       );
-                final controlHorizontalInset = expandedTextLayout
-                    ? _expandedControlHorizontalInset
-                    : _surfaceHorizontalInset;
-                final controlBottomInset = expandedTextLayout
-                    ? _expandedControlBottomInset
-                    : _surfaceVerticalInset;
-
                 return DecoratedBox(
                   key: const ValueKey('agent-composer-surface'),
                   decoration: BoxDecoration(
@@ -1792,8 +1783,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                           ),
                         ),
                         Positioned(
-                          left: controlHorizontalInset,
-                          bottom: controlBottomInset,
+                          left: _surfaceHorizontalInset,
+                          bottom: _surfaceVerticalInset,
                           child: IconButton(
                             key: const ValueKey('agent-image-button'),
                             onPressed: canAttachImage
@@ -1815,10 +1806,10 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         ),
                         Positioned(
                           right:
-                              controlHorizontalInset +
+                              _surfaceHorizontalInset +
                               _controlSize +
                               _controlGap,
-                          bottom: controlBottomInset,
+                          bottom: _surfaceVerticalInset,
                           child: IconButton(
                             key: const ValueKey('agent-voice-button'),
                             onPressed: canUseVoice ? onVoiceInput : null,
@@ -1836,8 +1827,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                           ),
                         ),
                         Positioned(
-                          right: controlHorizontalInset,
-                          bottom: controlBottomInset,
+                          right: _surfaceHorizontalInset,
+                          bottom: _surfaceVerticalInset,
                           child: IconButton(
                             key: ValueKey(
                               isRunning

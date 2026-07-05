@@ -245,7 +245,7 @@ void main() {
         .style;
     expect(inputStyle?.height, greaterThanOrEqualTo(1.55));
     _expectComposerControlsInsideSurface(tester);
-    _expectComposerSendVisualInsideExpandedCorner(tester);
+    _expectComposerControlsUseDefaultInsets(tester);
     _expectComposerExpandedInputUsesWideTextArea(tester);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -303,7 +303,7 @@ void main() {
       expect(controller?.selection.baseOffset, wrappedText.length);
       expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
       _expectComposerControlsInsideSurface(tester);
-      _expectComposerSendVisualInsideExpandedCorner(tester);
+      _expectComposerControlsUseDefaultInsets(tester);
       _expectComposerExpandedInputUsesWideTextArea(tester);
     },
   );
@@ -356,7 +356,7 @@ void main() {
 
     expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
     _expectComposerControlsInsideSurface(tester);
-    _expectComposerSendVisualInsideExpandedCorner(tester);
+    _expectComposerControlsUseDefaultInsets(tester);
     _expectComposerExpandedInputUsesWideTextArea(tester);
   });
 
@@ -1410,16 +1410,26 @@ void _expectComposerSendButtonBreathesVertically(WidgetTester tester) {
   expect(surfaceRect.bottom - sendRect.bottom, greaterThanOrEqualTo(6));
 }
 
-void _expectComposerSendVisualInsideExpandedCorner(WidgetTester tester) {
+void _expectComposerControlsUseDefaultInsets(WidgetTester tester) {
   final surfaceRect = tester.getRect(
     find.byKey(const ValueKey('agent-composer-surface')),
   );
-  final visualRect = tester.getRect(
-    find.byKey(const ValueKey('agent-send-button-visual')),
+  final imageRect = tester.getRect(
+    find.byKey(const ValueKey('agent-image-button')),
+  );
+  final voiceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-voice-button')),
+  );
+  final sendRect = tester.getRect(
+    find.byKey(const ValueKey('agent-send-button')),
   );
 
-  expect(surfaceRect.right - visualRect.right, greaterThanOrEqualTo(18));
-  expect(surfaceRect.bottom - visualRect.bottom, greaterThanOrEqualTo(12));
+  expect(imageRect.left - surfaceRect.left, closeTo(12, 0.1));
+  expect(surfaceRect.right - sendRect.right, closeTo(12, 0.1));
+  expect(surfaceRect.right - voiceRect.right, closeTo(52, 0.1));
+  expect(surfaceRect.bottom - imageRect.bottom, closeTo(8, 0.1));
+  expect(surfaceRect.bottom - voiceRect.bottom, closeTo(8, 0.1));
+  expect(surfaceRect.bottom - sendRect.bottom, closeTo(8, 0.1));
 }
 
 void _expectComposerExpandedInputUsesWideTextArea(WidgetTester tester) {
