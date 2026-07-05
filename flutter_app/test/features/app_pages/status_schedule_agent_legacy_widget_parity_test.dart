@@ -850,7 +850,7 @@ void main() {
         final agentAvatarDecoration = agentAvatar.decoration as BoxDecoration;
         final agentAvatarImage =
             agentAvatarDecoration.image?.image as AssetImage;
-        expect(agentAvatarImage.assetName, MomCozyAssets.agentAwakenAvatar);
+        expect(agentAvatarImage.assetName, MomCozyAssets.agentAvatar);
 
         final imageButton = tester.widget<IconButton>(
           find.byKey(const ValueKey('agent-image-button')),
@@ -915,7 +915,7 @@ void main() {
         expect(_agentAvatarWakeMedia(), findsNothing);
 
         await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
-        await tester.pump();
+        await _pumpUntilFinder(tester, _agentAvatarWakeMedia());
         await tester.pump(const Duration(milliseconds: 760));
 
         expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
@@ -929,6 +929,9 @@ void main() {
           greaterThan(0.2),
         );
         expect(_agentAvatarWakeMedia(), findsOneWidget);
+        final firstWakeImage = tester.widget<Image>(_agentAvatarWakeMedia());
+        expect(firstWakeImage.image, isA<MemoryImage>());
+        final firstWakeKey = firstWakeImage.key;
 
         await tester.pumpAndSettle();
         expect(_agentAvatarPresenceScale(tester), closeTo(1, 0.001));
@@ -941,12 +944,14 @@ void main() {
         await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
-        await tester.pump();
+        await _pumpUntilFinder(tester, _agentAvatarWakeMedia());
         await tester.pump(const Duration(milliseconds: 760));
 
         expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
         expect(_agentAvatarPresenceScale(tester), greaterThan(1.08));
         expect(_agentAvatarWakeMedia(), findsOneWidget);
+        final secondWakeImage = tester.widget<Image>(_agentAvatarWakeMedia());
+        expect(secondWakeImage.key, isNot(firstWakeKey));
       },
     );
 
@@ -1132,6 +1137,14 @@ Future<void> _scrollToFinder(WidgetTester tester, Finder finder) async {
     maxScrolls: 18,
   );
   await tester.pumpAndSettle();
+}
+
+Future<void> _pumpUntilFinder(WidgetTester tester, Finder finder) async {
+  for (var index = 0; index < 20; index += 1) {
+    await tester.pump(const Duration(milliseconds: 16));
+    if (finder.evaluate().isNotEmpty) return;
+  }
+  expect(finder, findsOneWidget);
 }
 
 double _agentAvatarPresenceScale(WidgetTester tester) {
