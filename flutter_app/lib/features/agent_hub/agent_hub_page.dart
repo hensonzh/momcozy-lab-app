@@ -48,6 +48,7 @@ class AgentHubPage extends StatefulWidget {
     this.voicePlaybackCoordinator,
     this.onArtifactAction,
     this.onNewSession,
+    this.initialComposerText,
   });
 
   final Object? stateCacheKey;
@@ -63,6 +64,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubNewSessionHandler? onNewSession;
+  final String? initialComposerText;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
@@ -87,6 +89,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void initState() {
     super.initState();
     _restoreCachedInteractionState();
+    _applyInitialComposerText();
     _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_updateLatestButtonVisibility);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -107,6 +110,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
         !_state.isActive) {
       _historyMessages = [...widget.historyMessages];
       _persistInteractionState();
+    }
+    if (oldWidget.initialComposerText != widget.initialComposerText) {
+      _applyInitialComposerText();
     }
   }
 
@@ -157,6 +163,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ..attachedImages = [..._attachedImages]
       ..autoVoiceEnabled = _autoVoiceEnabled
       ..activeRequest = _activeRequest;
+  }
+
+  void _applyInitialComposerText() {
+    final text = widget.initialComposerText?.trim();
+    if (text == null || text.isEmpty || _state.isActive) return;
+    _composerController
+      ..text = text
+      ..selection = TextSelection.collapsed(offset: text.length);
+    _persistInteractionState();
   }
 
   void _updateLatestButtonVisibility() {

@@ -904,6 +904,7 @@ class MomCozyRoutePage extends StatelessWidget {
         voiceInput: _captureLocalAgentVoiceDraft,
         onArtifactAction: (action) =>
             _handleAgentArtifactAction(context, action),
+        initialComposerText: _agentPrefillFromRoute(uri, extra),
       );
     }
 
@@ -918,6 +919,19 @@ class MomCozyRoutePage extends StatelessWidget {
       routeExtra: extra,
     );
   }
+}
+
+String? _agentPrefillFromRoute(Uri? uri, Object? extra) {
+  final extraMap = extra is Map ? extra : null;
+  final extraPrefill = extraMap?['agentPrefill'];
+  if (extraPrefill is String && extraPrefill.trim().isNotEmpty) {
+    return extraPrefill.trim();
+  }
+  final queryPrefill = uri?.queryParameters['agentPrefill'];
+  if (queryPrefill != null && queryPrefill.trim().isNotEmpty) {
+    return queryPrefill.trim();
+  }
+  return null;
 }
 
 class MomCozyRouteConfig {

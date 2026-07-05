@@ -455,6 +455,22 @@ void main() {
         find.byKey(const ValueKey('schedule-context-reminder-button')),
       );
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-reminder-confirm-dialog')),
+        findsOneWidget,
+      );
+      expect(find.text('关闭计划提醒？'), findsOneWidget);
+      expect(find.text('提醒已开启'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('schedule-reminder-cancel')));
+      await tester.pumpAndSettle();
+      expect(find.text('提醒已开启'), findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-context-reminder-button')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('schedule-reminder-confirm')));
+      await tester.pumpAndSettle();
       expect(find.text('提醒已关闭'), findsOneWidget);
       expect(find.byTooltip('开启计划提醒'), findsOneWidget);
       await tester.tap(find.text('提醒开关'));
@@ -467,9 +483,25 @@ void main() {
       );
       await tester.tap(find.byKey(const ValueKey('schedule-adjust-button')));
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-adjust-upload-dialog')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('schedule-adjust-submit')));
+      await tester.pumpAndSettle();
       expect(find.text('日程调整已提交'), findsOneWidget);
 
       await tester.tap(find.byKey(const ValueKey('schedule-add-task-button')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-add-task-dialog')),
+        findsOneWidget,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-add-task-title-input')),
+        '本地补充 1',
+      );
+      await tester.tap(find.byKey(const ValueKey('schedule-add-task-submit')));
       await tester.pumpAndSettle();
       await _scrollToText(tester, '本地补充 1');
       expect(find.text('本地补充 1'), findsOneWidget);
@@ -482,6 +514,62 @@ void main() {
       await _scrollToText(tester, '本地补充 1');
       expect(find.text('本地补充 1'), findsOneWidget);
       expect(find.text('已提交'), findsOneWidget);
+    });
+
+    testWidgets('covers schedule conversation prefill and next task controls', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: createMomCozyRouter(initialLocation: '/schedule'),
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('手动完成并记录数据'), findsOneWidget);
+      expect(find.text('顺延半小时'), findsOneWidget);
+      expect(find.text('跳过这次任务'), findsOneWidget);
+
+      await tester.tap(find.text('顺延半小时'));
+      await tester.pumpAndSettle();
+      expect(find.text('顺延半小时已更新'), findsOneWidget);
+      expect(find.text('14:30'), findsWidgets);
+
+      await tester.tap(find.text('跳过这次任务'));
+      await tester.pumpAndSettle();
+      expect(find.text('已跳过'), findsOneWidget);
+      expect(find.text('20:30'), findsWidgets);
+
+      await tester.tap(find.text('手动完成并记录数据'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-record-entry-dialog')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-record-complete-only')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('执行记录已完成'), findsOneWidget);
+
+      await tester.tap(find.text('对话'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('agent-composer-input')),
+            )
+            .controller
+            ?.text,
+        '我想调整今天的吸乳排期',
+      );
     });
 
     testWidgets('covers empty quick actions as local entry shortcuts', (

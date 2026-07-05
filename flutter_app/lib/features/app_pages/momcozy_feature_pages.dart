@@ -2576,8 +2576,10 @@ class _ScheduleInteractionState {
   bool pumpReminderEnabled = true;
   DateTime? selectedDay;
   Map<String, bool> taskDoneOverrides = {};
+  Map<String, DateTime> delayedTaskReminders = {};
   Map<String, List<ScheduleTask>> localTasksByDay = {};
   Set<String> deletedTaskKeys = {};
+  Set<String> skippedTaskKeys = {};
   int localTaskSequence = 0;
   bool scheduleAdjustmentQueued = false;
   String? feedbackMessage;
@@ -2605,8 +2607,10 @@ class _SchedulePage extends StatefulWidget {
 class _SchedulePageState extends State<_SchedulePage> {
   bool _pumpReminderEnabled = true;
   late Map<String, bool> _taskDoneOverrides = {};
+  late Map<String, DateTime> _delayedTaskReminders = {};
   late Map<String, List<ScheduleTask>> _localTasksByDay = {};
   late Set<String> _deletedTaskKeys = {};
+  late Set<String> _skippedTaskKeys = {};
   int _localTaskSequence = 0;
   bool _scheduleAdjustmentQueued = false;
   String? _feedbackMessage;
@@ -2627,8 +2631,10 @@ class _SchedulePageState extends State<_SchedulePage> {
       _pumpReminderEnabled = _interactionState.pumpReminderEnabled;
       _selectedDay = _interactionState.selectedDay ?? runtime.now();
       _taskDoneOverrides = _interactionState.taskDoneOverrides;
+      _delayedTaskReminders = _interactionState.delayedTaskReminders;
       _localTasksByDay = _interactionState.localTasksByDay;
       _deletedTaskKeys = _interactionState.deletedTaskKeys;
+      _skippedTaskKeys = _interactionState.skippedTaskKeys;
       _localTaskSequence = _interactionState.localTaskSequence;
       _scheduleAdjustmentQueued = _interactionState.scheduleAdjustmentQueued;
       _feedbackMessage = _interactionState.feedbackMessage;
@@ -2654,6 +2660,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     final key = _taskScopedKey(task, index);
     setState(() {
       _taskDoneOverrides[key] = value ?? !_taskDone(task, index);
+      _skippedTaskKeys.remove(key);
       _persistScheduleState();
     });
   }
@@ -2663,8 +2670,10 @@ class _SchedulePageState extends State<_SchedulePage> {
       ..pumpReminderEnabled = _pumpReminderEnabled
       ..selectedDay = _selectedDay
       ..taskDoneOverrides = _taskDoneOverrides
+      ..delayedTaskReminders = _delayedTaskReminders
       ..localTasksByDay = _localTasksByDay
       ..deletedTaskKeys = _deletedTaskKeys
+      ..skippedTaskKeys = _skippedTaskKeys
       ..localTaskSequence = _localTaskSequence
       ..scheduleAdjustmentQueued = _scheduleAdjustmentQueued
       ..feedbackMessage = _feedbackMessage;
@@ -2679,11 +2688,42 @@ class _SchedulePageState extends State<_SchedulePage> {
   bool get _isSelectedPast => _dateOnly(_selectedDay).isBefore(_today);
   bool get _isSelectedFuture => _dateOnly(_selectedDay).isAfter(_today);
 
-  void _toggleReminder() {
+  void _setReminderEnabled(bool enabled) {
     setState(() {
-      _pumpReminderEnabled = !_pumpReminderEnabled;
+      _pumpReminderEnabled = enabled;
       _persistScheduleState();
     });
+  }
+
+  Future<void> _handleReminderTap() async {
+    if (!_pumpReminderEnabled) {
+      _setReminderEnabled(true);
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-reminder-confirm-dialog'),
+          title: const Text('关闭计划提醒？'),
+          content: const Text('关闭后，吸奶提醒和每日摘要不会再主动通知你。'),
+          actions: [
+            TextButton(
+              key: const ValueKey('schedule-reminder-cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('schedule-reminder-confirm'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('确认关闭'),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed == true) _setReminderEnabled(false);
   }
 
   void _queueScheduleAdjustment() {
@@ -2692,6 +2732,32 @@ class _SchedulePageState extends State<_SchedulePage> {
       _feedbackMessage = '日程调整已提交';
       _persistScheduleState();
     });
+  }
+
+  Future<void> _showScheduleAdjustmentDialog() async {
+    final submitted = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-adjust-upload-dialog'),
+          title: const Text('调整日程'),
+          content: const Text('上传会议日程后，我会按旧 Web 流程重新生成今天的吸乳排期。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            FilledButton.icon(
+              key: const ValueKey('schedule-adjust-submit'),
+              onPressed: () => Navigator.of(context).pop(true),
+              icon: const Icon(Icons.image_outlined, size: 16),
+              label: const Text('开始上传'),
+            ),
+          ],
+        );
+      },
+    );
+    if (submitted == true) _queueScheduleAdjustment();
   }
 
   void _addLocalTask({String? title, String? feedback}) {
@@ -2722,11 +2788,105 @@ class _SchedulePageState extends State<_SchedulePage> {
     _addLocalTask(title: label, feedback: '$label已添加');
   }
 
+  Future<void> _showAddTaskDialog() async {
+    final controller = TextEditingController(text: '本地补充 1');
+    final title = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-add-task-dialog'),
+          title: const Text('添加任务'),
+          content: TextField(
+            key: const ValueKey('schedule-add-task-title-input'),
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(labelText: '任务名称'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('schedule-add-task-submit'),
+              onPressed: () => Navigator.of(context).pop(controller.text),
+              child: const Text('添加'),
+            ),
+          ],
+        );
+      },
+    );
+    final trimmed = title?.trim();
+    if (trimmed == null || trimmed.isEmpty) return;
+    _addLocalTask(title: trimmed);
+  }
+
   void _deleteTask(ScheduleTask task, int index) {
     final key = _taskScopedKey(task, index);
     setState(() {
       _deletedTaskKeys.add(key);
       _taskDoneOverrides.remove(key);
+      _delayedTaskReminders.remove(key);
+      _skippedTaskKeys.remove(key);
+      _persistScheduleState();
+    });
+  }
+
+  Future<void> _showRecordEntryDialog(ScheduleTask task, int index) async {
+    final completed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-record-entry-dialog'),
+          title: const Text('记录执行数据'),
+          content: const Text('选择本次执行的记录方式，或先仅标记任务完成。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('吸奶补录'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('喂养记录'),
+            ),
+            FilledButton(
+              key: const ValueKey('schedule-record-complete-only'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('仅标记完成'),
+            ),
+          ],
+        );
+      },
+    );
+    if (completed != true) return;
+    setState(() {
+      _taskDoneOverrides[_taskScopedKey(task, index)] = true;
+      _feedbackMessage = '执行记录已完成';
+      _persistScheduleState();
+    });
+  }
+
+  void _delayTask(ScheduleTask task, int index) {
+    final key = _taskScopedKey(task, index);
+    final remindAt = _effectiveRemindAt(task, index);
+    if (remindAt == null) return;
+    setState(() {
+      _delayedTaskReminders[key] = remindAt.add(const Duration(minutes: 30));
+      _feedbackMessage = '顺延半小时已更新';
+      _persistScheduleState();
+    });
+  }
+
+  void _skipTask(ScheduleTask task, int index) {
+    final key = _taskScopedKey(task, index);
+    setState(() {
+      _skippedTaskKeys.add(key);
+      _taskDoneOverrides[key] = false;
+      _feedbackMessage = '已跳过';
       _persistScheduleState();
     });
   }
@@ -2744,7 +2904,11 @@ class _SchedulePageState extends State<_SchedulePage> {
         final pendingTaskCount = visibleTasks
             .asMap()
             .entries
-            .where((entry) => !_taskDone(entry.value, entry.key))
+            .where(
+              (entry) =>
+                  !_taskDone(entry.value, entry.key) &&
+                  !_taskSkipped(entry.value, entry.key),
+            )
             .length;
 
         return ListView(
@@ -2772,7 +2936,7 @@ class _SchedulePageState extends State<_SchedulePage> {
                     : taskCount - pendingTaskCount,
                 totalCount: taskCount ?? 0,
                 reminderEnabled: _pumpReminderEnabled,
-                onReminderTap: _toggleReminder,
+                onReminderTap: () => unawaited(_handleReminderTap()),
               ),
             ),
             const SizedBox(height: 20),
@@ -2781,8 +2945,11 @@ class _SchedulePageState extends State<_SchedulePage> {
               child: _ScheduleAgentCard(
                 key: const ValueKey('schedule-agent-card'),
                 reminderEnabled: _pumpReminderEnabled,
-                onReminderTap: _toggleReminder,
-                onConversationTap: () => context.go('/'),
+                onReminderTap: () => unawaited(_handleReminderTap()),
+                onConversationTap: () => context.go(
+                  '/',
+                  extra: const {'agentPrefill': '我想调整今天的吸乳排期'},
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -2791,13 +2958,26 @@ class _SchedulePageState extends State<_SchedulePage> {
               child: _ScheduleNextTaskCard(
                 subtitle: _nextTaskSubtitle(visibleTasks),
                 task: _nextPendingTask(visibleTasks),
+                taskRemindAt: _nextPendingTaskRemindAt(visibleTasks),
                 emptyTitle: _scheduleEmptyHeroTitle(),
                 emptyDescription: _scheduleEmptyHeroDescription(),
                 onComplete: () {
                   final next = _nextPendingTask(visibleTasks);
                   if (next == null) return;
                   final index = visibleTasks.indexOf(next);
-                  _toggleTask(next, index, true);
+                  unawaited(_showRecordEntryDialog(next, index));
+                },
+                onDelay: () {
+                  final next = _nextPendingTask(visibleTasks);
+                  if (next == null) return;
+                  final index = visibleTasks.indexOf(next);
+                  _delayTask(next, index);
+                },
+                onSkip: () {
+                  final next = _nextPendingTask(visibleTasks);
+                  if (next == null) return;
+                  final index = visibleTasks.indexOf(next);
+                  _skipTask(next, index);
                 },
               ),
             ),
@@ -2805,8 +2985,8 @@ class _SchedulePageState extends State<_SchedulePage> {
             _ScheduleListToolbar(
               taskLabel: taskLabel,
               adjustmentQueued: _scheduleAdjustmentQueued,
-              onAdjust: _queueScheduleAdjustment,
-              onAdd: () => _addLocalTask(),
+              onAdjust: () => unawaited(_showScheduleAdjustmentDialog()),
+              onAdd: () => unawaited(_showAddTaskDialog()),
             ),
             if (_feedbackMessage != null) ...[
               _ScheduleFeedbackBanner(message: _feedbackMessage!),
@@ -2847,9 +3027,12 @@ class _SchedulePageState extends State<_SchedulePage> {
       for (final entry in tasks.asMap().entries)
         _ScheduleTaskRow(
           title: _textOr(entry.value.title, '未命名计划'),
-          subtitle: _taskSubtitle(entry.value),
-          timeLabel: _nullableTimeLabel(entry.value.remindAt),
+          subtitle: _taskSubtitleFor(entry.value, entry.key),
+          timeLabel: _nullableTimeLabel(
+            _effectiveRemindAt(entry.value, entry.key),
+          ),
           completed: _taskDone(entry.value, entry.key),
+          skipped: _taskSkipped(entry.value, entry.key),
           accent: _taskAccent(entry.key),
           onTap: () => _toggleTask(entry.value, entry.key, null),
           onDelete: () => _deleteTask(entry.value, entry.key),
@@ -2860,6 +3043,18 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   bool _taskDone(ScheduleTask task, int index) {
     return _taskDoneOverrides[_taskScopedKey(task, index)] ?? task.completed;
+  }
+
+  bool _taskSkipped(ScheduleTask task, int index) {
+    return _skippedTaskKeys.contains(_taskScopedKey(task, index));
+  }
+
+  DateTime? _effectiveRemindAt(ScheduleTask task, int index) {
+    return _delayedTaskReminders[_taskScopedKey(task, index)] ?? task.remindAt;
+  }
+
+  String _taskSubtitleFor(ScheduleTask task, int index) {
+    return _taskSubtitleWithReminder(_effectiveRemindAt(task, index));
   }
 
   List<ScheduleTask> _visibleTasks(ScheduleDayPlan plan) {
@@ -2885,15 +3080,25 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   ScheduleTask? _nextPendingTask(List<ScheduleTask> tasks) {
     final pending =
-        tasks
-            .asMap()
-            .entries
-            .where((entry) => !_taskDone(entry.value, entry.key))
-            .map((entry) => entry.value)
-            .where((task) => task.remindAt != null)
-            .toList()
-          ..sort((a, b) => a.remindAt!.compareTo(b.remindAt!));
-    return pending.isEmpty ? null : pending.first;
+        tasks.asMap().entries.where((entry) {
+          return !_taskDone(entry.value, entry.key) &&
+              !_taskSkipped(entry.value, entry.key) &&
+              _effectiveRemindAt(entry.value, entry.key) != null;
+        }).toList()..sort(
+          (a, b) => _effectiveRemindAt(
+            a.value,
+            a.key,
+          )!.compareTo(_effectiveRemindAt(b.value, b.key)!),
+        );
+    return pending.isEmpty ? null : pending.first.value;
+  }
+
+  DateTime? _nextPendingTaskRemindAt(List<ScheduleTask> tasks) {
+    final task = _nextPendingTask(tasks);
+    if (task == null) return null;
+    final index = tasks.indexOf(task);
+    if (index < 0) return task.remindAt;
+    return _effectiveRemindAt(task, index);
   }
 
   String _nextTaskSubtitle(List<ScheduleTask> tasks) {
@@ -2901,21 +3106,25 @@ class _SchedulePageState extends State<_SchedulePage> {
     final now = runtime?.now().toUtc() ?? DateTime.now().toUtc();
     final task = _nextPendingTask(tasks);
     if (task == null) return '没有待提醒任务。';
+    final index = tasks.indexOf(task);
+    final remindAt = _effectiveRemindAt(task, index);
+    if (remindAt == null) return '没有待提醒任务。';
+    final title = _textOr(_taskDisplayTitle(task), '下一项');
 
-    final minutes = task.remindAt!.toUtc().difference(now).inMinutes;
-    if (minutes <= 0) return '${_textOr(task.title, '下一项')} 已到提醒时间。';
+    final minutes = remindAt.toUtc().difference(now).inMinutes;
+    if (minutes <= 0) return '$title 已到提醒时间。';
     const minutesPerHour = 60;
     const minutesPerDay = 24 * minutesPerHour;
     final days = minutes ~/ minutesPerDay;
     final hours = (minutes % minutesPerDay) ~/ minutesPerHour;
     final remainingMinutes = minutes % minutesPerHour;
     if (days > 0) {
-      return '${_textOr(task.title, '下一项')} 还有 $days 天 $hours 小时。';
+      return '$title 还有 $days 天 $hours 小时。';
     }
     if (hours > 0) {
-      return '${_textOr(task.title, '下一项')} 还有 $hours 小时 $remainingMinutes 分钟。';
+      return '$title 还有 $hours 小时 $remainingMinutes 分钟。';
     }
-    return '${_textOr(task.title, '下一项')} 还有 $remainingMinutes 分钟。';
+    return '$title 还有 $remainingMinutes 分钟。';
   }
 
   String _taskScopedKey(ScheduleTask task, int index) {
@@ -3446,16 +3655,22 @@ class _ScheduleNextTaskCard extends StatelessWidget {
   const _ScheduleNextTaskCard({
     required this.subtitle,
     required this.task,
+    required this.taskRemindAt,
     required this.emptyTitle,
     required this.emptyDescription,
     required this.onComplete,
+    required this.onDelay,
+    required this.onSkip,
   });
 
   final String subtitle;
   final ScheduleTask? task;
+  final DateTime? taskRemindAt;
   final String emptyTitle;
   final String emptyDescription;
   final VoidCallback onComplete;
+  final VoidCallback onDelay;
+  final VoidCallback onSkip;
 
   @override
   Widget build(BuildContext context) {
@@ -3547,7 +3762,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _nullableTimeLabel(task.remindAt),
+                      _nullableTimeLabel(taskRemindAt),
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(
                             color: MomCozyColors.foreground,
@@ -3556,7 +3771,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      _textOr(task.title, subtitle),
+                      _textOr(_taskDisplayTitle(task), subtitle),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -3596,10 +3811,35 @@ class _ScheduleNextTaskCard extends StatelessWidget {
           ),
           if (hasTask) ...[
             const SizedBox(height: 14),
-            FilledButton.icon(
-              onPressed: onComplete,
-              icon: const Icon(Icons.check_rounded, size: 17),
-              label: const Text('手动完成'),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                key: const ValueKey('schedule-next-complete-button'),
+                onPressed: onComplete,
+                icon: const Icon(Icons.check_rounded, size: 17),
+                label: const Text('手动完成并记录数据'),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    key: const ValueKey('schedule-next-delay-button'),
+                    onPressed: onDelay,
+                    icon: const Icon(Icons.schedule_rounded, size: 16),
+                    label: const Text('顺延半小时'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    key: const ValueKey('schedule-next-skip-button'),
+                    onPressed: onSkip,
+                    child: const Text('跳过这次任务'),
+                  ),
+                ),
+              ],
             ),
           ],
         ],
@@ -3811,6 +4051,7 @@ class _ScheduleTaskRow extends StatelessWidget {
     required this.subtitle,
     required this.timeLabel,
     required this.completed,
+    required this.skipped,
     required this.accent,
     required this.onTap,
     required this.onDelete,
@@ -3821,6 +4062,7 @@ class _ScheduleTaskRow extends StatelessWidget {
   final String subtitle;
   final String timeLabel;
   final bool completed;
+  final bool skipped;
   final Color accent;
   final VoidCallback onTap;
   final VoidCallback onDelete;
@@ -3871,8 +4113,13 @@ class _ScheduleTaskRow extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.titleSmall
                               ?.copyWith(
-                                color: MomCozyColors.foreground,
+                                color: skipped
+                                    ? MomCozyColors.mutedForeground
+                                    : MomCozyColors.foreground,
                                 fontWeight: FontWeight.w900,
+                                decoration: skipped
+                                    ? TextDecoration.lineThrough
+                                    : null,
                               ),
                         ),
                         const SizedBox(height: 4),
@@ -3895,7 +4142,27 @@ class _ScheduleTaskRow extends StatelessWidget {
                     onPressed: onDelete,
                     icon: const Icon(Icons.delete_outline_rounded),
                   ),
-                  Checkbox(value: completed, onChanged: onChanged),
+                  if (skipped)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: MomCozyColors.secondary.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        '已跳过',
+                        style: TextStyle(
+                          color: MomCozyColors.mutedForeground,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    )
+                  else
+                    Checkbox(value: completed, onChanged: onChanged),
                 ],
               ),
             ),
@@ -3978,10 +4245,15 @@ class _DatePill extends StatelessWidget {
   }
 }
 
-String _taskSubtitle(ScheduleTask task) {
-  final remindAt = task.remindAt;
+String _taskSubtitleWithReminder(DateTime? remindAt) {
   if (remindAt == null) return '暂无提醒时间，可稍后补充。';
   return '提醒 ${_timeLabel(remindAt)} · 可从通知直接进入相关页面。';
+}
+
+String _taskDisplayTitle(ScheduleTask task) {
+  final title = task.title.trim();
+  final withoutTime = title.replaceFirst(RegExp(r'^\d{1,2}:\d{2}\s+'), '');
+  return withoutTime.trim().isEmpty ? title : withoutTime.trim();
 }
 
 DateTime _dateOnly(DateTime value) {

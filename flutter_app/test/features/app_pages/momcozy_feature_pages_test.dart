@@ -539,6 +539,12 @@ void main() {
       await _scrollToFinder(tester, addTaskButton);
       await tester.tap(addTaskButton);
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-add-task-dialog')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('schedule-add-task-submit')));
+      await tester.pumpAndSettle();
 
       expect(find.text('1/4'), findsOneWidget);
       await _scrollToText(tester, '本地补充 1');
