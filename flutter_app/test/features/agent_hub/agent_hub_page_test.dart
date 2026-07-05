@@ -237,6 +237,19 @@ void main() {
     expect(sevenLineHeight, closeTo(fiveLineHeight, 1));
     expect(_composerInputHeight(tester), lessThan(sevenLineHeight));
 
+    final inputStyle = tester
+        .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+        .style;
+    expect(inputStyle?.height, greaterThanOrEqualTo(1.45));
+    final surfaceRect = tester.getRect(
+      find.byKey(const ValueKey('agent-composer-surface')),
+    );
+    final sendRect = tester.getRect(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+    expect(surfaceRect.right - sendRect.right, greaterThanOrEqualTo(12));
+    expect(surfaceRect.bottom - sendRect.bottom, greaterThanOrEqualTo(8));
+
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
     expect(client.requests.single.message, '第一行\n第二行\n第三行\n第四行\n第五行\n第六行\n第七行');
