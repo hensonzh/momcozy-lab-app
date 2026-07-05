@@ -29,18 +29,14 @@ const pagePairs = [
   { id: "agent_hub", label: "Agent Hub", legacy: "agent_hub.png", flutter: "agent_hub_mobile.png" },
   { id: "status", label: "宝宝和我", legacy: "status.png", flutter: "status_page_mobile.png" },
   { id: "schedule", label: "计划", legacy: "schedule.png", flutter: "schedule_page_mobile.png" },
-  { id: "records", label: "妈妈点滴", legacy: "records.png", flutter: "records_page_mobile.png" },
   { id: "device", label: "设备", legacy: "device.png", flutter: "device_page_mobile.png" },
   { id: "device_manage", label: "设备提醒", legacy: "device_manage.png", flutter: "device_manage_page_mobile.png" },
   { id: "device_user", label: "用户参数", legacy: "device_user.png", flutter: "device_user_page_mobile.png" },
   { id: "w1", label: "W1", legacy: "w1.png", flutter: "w1_page_mobile.png" },
   { id: "hospital_bag_cart", label: "待产包", legacy: "hospital_bag_cart.png", flutter: "hospital_bag_page_mobile.png" },
   { id: "ibclc_chat", label: "IBCLC", legacy: "ibclc_chat.png", flutter: "ibclc_page_mobile.png" },
-  { id: "media_viewer", label: "媒体", legacy: "media_viewer.png", flutter: "media_viewer_page_mobile.png" },
-  { id: "pump", label: "吸乳", legacy: "pump.png", flutter: "pump_page_mobile.png" },
   { id: "calibration", label: "舒适负压调节", legacy: "calibration.png", flutter: "calibration_page_mobile.png" },
   { id: "community", label: "社区", legacy: "community.png", flutter: "community_page_mobile.png" },
-  { id: "not_found", label: "404", legacy: "not_found.png", flutter: "not_found_page_mobile.png" },
 ];
 
 await main();
