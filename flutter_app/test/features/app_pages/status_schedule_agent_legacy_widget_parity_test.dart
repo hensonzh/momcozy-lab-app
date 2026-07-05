@@ -547,6 +547,18 @@ void main() {
       expect(find.text('稳奶计划执行中'), findsOneWidget);
       expect(find.text('提醒已开启'), findsOneWidget);
 
+      await tester.tap(find.byKey(const ValueKey('schedule-week-next-button')));
+      await tester.pumpAndSettle();
+      expect(find.text('7月10日 稳奶计划'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-date-2026-07-10')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('schedule-week-prev-button')));
+      await tester.pumpAndSettle();
+      expect(find.text('稳奶计划执行中'), findsOneWidget);
+
       await tester.tap(
         find.byKey(const ValueKey('schedule-context-reminder-button')),
       );
