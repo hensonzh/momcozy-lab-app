@@ -4,7 +4,6 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
-import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -22,11 +21,7 @@ void main() {
           tester,
         ) async {
           await _setViewport(tester, viewport.size);
-          await _pumpGoldenApp(
-            tester,
-            initialLocation: route.path,
-            apiRuntime: route.runtimeBuilder?.call(),
-          );
+          await _pumpGoldenApp(tester, initialLocation: route.path);
 
           expect(find.byKey(route.pageKey), findsOneWidget);
           await expectLater(
@@ -73,13 +68,6 @@ final _routeGoldens = [
     path: '/schedule',
     fileName: 'schedule_page_mobile.png',
     pageKey: ValueKey('route-page-/schedule'),
-  ),
-  _RouteGolden(
-    label: 'records page',
-    path: '/records',
-    fileName: 'records_page_mobile.png',
-    pageKey: ValueKey('route-page-/records'),
-    runtimeBuilder: _recordsGoldenRuntime,
   ),
   _RouteGolden(
     label: 'pump page',
@@ -155,14 +143,12 @@ class _RouteGolden {
     required this.path,
     required this.fileName,
     required this.pageKey,
-    this.runtimeBuilder,
   });
 
   final String label;
   final String path;
   final String fileName;
   final ValueKey<String> pageKey;
-  final MomCozyApiRuntime Function()? runtimeBuilder;
 }
 
 class _GoldenViewport {
@@ -251,12 +237,7 @@ const _goldenImageAssets = [
   'assets/images/hospital_bag_milk_bottle.jpg',
 ];
 
-MomCozyApiRuntime _goldenRuntime({
-  DateTime Function()? now,
-  Map<String, Object?>? pumpMilkRecordsResponse,
-  Map<String, Object?>? feedingRecordsResponse,
-  Map<String, Object?>? growthRecordsResponse,
-}) {
+MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
   return MomCozyApiRuntime(
     jsonTransport: FixtureApiJsonTransportByPath({
       statusProfileEndpoint: const <String, Object?>{
@@ -288,66 +269,6 @@ MomCozyApiRuntime _goldenRuntime({
         'status': 200,
         'data': <String, Object?>{'tasks': <Object?>[]},
       },
-      pumpMilkRecordsEndpoint:
-          pumpMilkRecordsResponse ??
-          const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'records': [
-                {
-                  'id': 'pump-1',
-                  'title': '20分钟',
-                  'amountMl': 175,
-                  'pumpSource': 1,
-                  'occurredAt': '2026-07-02T08:20:00Z',
-                },
-                {
-                  'id': 'pump-2',
-                  'title': '15分钟',
-                  'amountMl': 135,
-                  'pumpSource': 1,
-                  'occurredAt': '2026-07-02T13:20:00Z',
-                },
-                {
-                  'id': 'pump-3',
-                  'title': '一分钟',
-                  'amountMl': 155,
-                  'pumpSource': 9,
-                  'occurredAt': '2026-07-02T18:10:00Z',
-                },
-              ],
-            },
-          },
-      feedingRecordsEndpoint:
-          feedingRecordsResponse ??
-          const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'records': [
-                {
-                  'id': 'feed-1',
-                  'type': 'bottle',
-                  'amountMl': 70,
-                  'occurredAt': '2026-07-02T10:10:00Z',
-                },
-              ],
-            },
-          },
-      growthRecordsEndpoint:
-          growthRecordsResponse ??
-          const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'records': [
-                {
-                  'id': 'growth-1',
-                  'weightGram': 5600,
-                  'heightCm': 58.2,
-                  'measuredAt': '2026-07-01T08:00:00Z',
-                },
-              ],
-            },
-          },
     }),
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
       'status': 200,
@@ -364,65 +285,5 @@ MomCozyApiRuntime _goldenRuntime({
     babyId: 'demo-baby-golden',
     locale: 'zh-CN',
     now: now ?? () => DateTime.utc(2026, 7, 3),
-  );
-}
-
-MomCozyApiRuntime _recordsGoldenRuntime() {
-  return _goldenRuntime(
-    now: () => DateTime.utc(2026, 3, 8),
-    pumpMilkRecordsResponse: const <String, Object?>{
-      'status': 200,
-      'data': <String, Object?>{
-        'records': [
-          {
-            'id': 'pump-legacy-1',
-            'title': '20分钟',
-            'amountMl': 175,
-            'pumpSource': 1,
-            'occurredAt': '2026-03-08T06:30:00',
-          },
-          {
-            'id': 'pump-legacy-2',
-            'title': '15分钟',
-            'amountMl': 135,
-            'pumpSource': 1,
-            'occurredAt': '2026-03-08T10:00:00',
-          },
-          {
-            'id': 'pump-legacy-3',
-            'title': '一分钟',
-            'amountMl': 155,
-            'pumpSource': 9,
-            'occurredAt': '2026-03-08T14:00:00',
-          },
-        ],
-      },
-    },
-    feedingRecordsResponse: const <String, Object?>{
-      'status': 200,
-      'data': <String, Object?>{
-        'records': [
-          {
-            'id': 'feed-legacy-1',
-            'type': 'bottle',
-            'amountMl': 70,
-            'occurredAt': '2026-03-08T15:10:00',
-          },
-        ],
-      },
-    },
-    growthRecordsResponse: const <String, Object?>{
-      'status': 200,
-      'data': <String, Object?>{
-        'records': [
-          {
-            'id': 'growth-legacy-1',
-            'weightGram': 5600,
-            'heightCm': 58.2,
-            'measuredAt': '2026-03-08',
-          },
-        ],
-      },
-    },
   );
 }

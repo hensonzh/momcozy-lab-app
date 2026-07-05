@@ -17,7 +17,7 @@ flutter_app/test/features/app_pages/status_schedule_agent_legacy_widget_parity_t
 | 孕期下宝宝卡禁用 | 孕期点击宝宝卡后仍停留在孕期日记视图 |
 | 哺乳期妈妈模块宫格 | `status-postpartum-mom-module-grid`，并覆盖母乳产出、乳房健康、产后恢复、补能与休息 |
 | 母乳趋势卡 | `status-milk-trend-preview` 与图例文案 |
-| 孕期下一步行动 | 孕期日记、孕期计划、补写孕期日记、今日待办 |
+| 孕期下一步行动 | 已退役；断言 `下一步`、`补写孕期日记`、`今日待办` 不再出现 |
 | 状态同步失败卡 | 状态同步失败、错误说明、重试 tooltip |
 | 底部导航当前项 | `bottom-nav-status`，可见 tab 文案，中心 `bottom-nav-agent` |
 

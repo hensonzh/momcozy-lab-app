@@ -164,10 +164,6 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
-      await tester.pumpAndSettle();
-      _expectFinderWithinViewport(tester, find.text('周均日补录奶量'));
-
       await tester.pumpWidget(_FeaturePageHost(route: _route('/w1')));
       await tester.pumpAndSettle();
       _expectFinderWithinViewport(tester, find.text('续航'));
@@ -187,8 +183,9 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
       await tester.pumpAndSettle();
       expect(find.text('母乳产出'), findsOneWidget);
-      await _scrollToText(tester, '下一步');
-      expect(find.text('下一步'), findsOneWidget);
+      expect(find.text('下一步'), findsNothing);
+      expect(find.text('补写孕期日记'), findsNothing);
+      expect(find.text('今日待办'), findsNothing);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pump();
@@ -278,22 +275,6 @@ void main() {
         ['adjustGearForSide:left:4', 'adjustGearForSide:right:4'],
       );
 
-      router.go('/status');
-      await tester.pumpAndSettle();
-      await _tapScrollableText(tester, '补写孕期日记');
-      await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('route-page-/records')), findsOneWidget);
-
-      router.go('/status');
-      await tester.pumpAndSettle();
-      await _tapScrollableText(tester, '今日待办');
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('route-page-/schedule')),
-        findsOneWidget,
-      );
-      expect(find.byType(MomCozyBottomNavigation), findsOneWidget);
-
       router.go('/w1');
       await tester.pumpAndSettle();
       await _tapScrollableText(tester, '使用教程');
@@ -372,9 +353,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('已添加'), findsOneWidget);
-      await _scrollToText(tester, '成长记录已添加');
-      expect(find.text('成长记录已添加'), findsOneWidget);
-      expect(find.text('本地草稿已保存，同步恢复后会写入成长记录。'), findsOneWidget);
+      expect(find.text('已记录'), findsOneWidget);
+      expect(find.text('成长记录已添加'), findsNothing);
     });
 
     testWidgets('status page renders long text and runtime context', (
@@ -423,14 +403,8 @@ void main() {
       expect(find.text('待记录'), findsWidgets);
       expect(tester.takeException(), isNull);
 
-      await tester.drag(
-        find.byKey(const ValueKey('route-page-/status')),
-        const Offset(0, -360),
-      );
-      await tester.pump();
-
-      await _scrollToText(tester, '今日待办');
-      expect(find.text('今日待办'), findsOneWidget);
+      expect(find.text('下一步'), findsNothing);
+      expect(find.text('今日待办'), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -647,186 +621,6 @@ void main() {
       expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
     });
 
-    testWidgets('records page loads pump feeding and growth repositories', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('妈妈点滴'), findsOneWidget);
-      expect(find.text('2026年7月'), findsOneWidget);
-      expect(find.byTooltip('上个月'), findsOneWidget);
-      expect(find.byTooltip('下个月'), findsOneWidget);
-      expect(find.text('吸奶器母乳量'), findsOneWidget);
-      await _scrollToFinder(
-        tester,
-        find.byKey(const ValueKey('records-manual-entry-button')),
-      );
-      expect(
-        find.byKey(const ValueKey('records-manual-entry-button')),
-        findsOneWidget,
-      );
-      await _scrollToTextContaining(tester, '晨间泵奶');
-      expect(find.textContaining('晨间泵奶'), findsOneWidget);
-      expect(find.textContaining('120 mL'), findsWidgets);
-
-      await _tapScrollableText(tester, '喂养');
-      await tester.pumpAndSettle();
-      await _scrollToTextContaining(tester, 'breast_milk');
-      expect(find.textContaining('breast_milk'), findsOneWidget);
-      expect(find.textContaining('80 mL'), findsWidgets);
-
-      await _tapScrollableText(tester, '成长');
-      await tester.pumpAndSettle();
-      await _scrollToTextContaining(tester, '6.2 kg');
-      expect(find.textContaining('6.2 kg'), findsOneWidget);
-      expect(find.textContaining('64.5 cm'), findsOneWidget);
-    });
-
-    testWidgets('records page switches mL and oz units', (tester) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('120 mL'), findsWidgets);
-      expect(find.textContaining('120 mL'), findsWidgets);
-
-      final unitToggle = find.byKey(const ValueKey('records-unit-toggle'));
-      await _scrollToFinder(tester, unitToggle);
-      await tester.ensureVisible(unitToggle);
-      await tester.tap(unitToggle);
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('4.1 oz'), findsWidgets);
-
-      await _tapScrollableText(tester, '喂养');
-      await tester.pumpAndSettle();
-      await _scrollToTextContaining(tester, '2.7 oz');
-
-      expect(find.textContaining('2.7 oz'), findsWidgets);
-    });
-
-    testWidgets('records page adds edits and deletes manual pump records', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
-      await tester.pumpAndSettle();
-
-      await _scrollToText(tester, '手动记录');
-      await tester.tap(find.text('手动记录'));
-      await tester.pumpAndSettle();
-
-      await _scrollToTextContaining(tester, '手动补录 1');
-      expect(find.textContaining('手动补录 1'), findsOneWidget);
-      expect(find.textContaining('90 mL'), findsWidgets);
-      expect(find.textContaining('来源 9'), findsOneWidget);
-
-      const rowKey = ValueKey('records-pump-row-local-pump-1');
-      await tester.longPress(find.byKey(rowKey));
-      await tester.pumpAndSettle();
-
-      await _scrollToTextContaining(tester, '已编辑 手动补录 1');
-      expect(find.textContaining('已编辑 手动补录 1'), findsOneWidget);
-      expect(find.textContaining('100 mL'), findsWidgets);
-      expect(find.textContaining('来源 9'), findsOneWidget);
-
-      await tester.tap(
-        find.byKey(const ValueKey('records-delete-local-pump-1')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('已编辑 手动补录 1'), findsNothing);
-    });
-
-    testWidgets('records page marks cross-day pump records', (tester) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/records'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            pumpMilkRecordsEndpoint: const {
-              'status': 200,
-              'data': {
-                'pump_milk_list': <Object?>[
-                  {
-                    'pump_id': 8001,
-                    'pump_title': '夜间跨天泵奶',
-                    'pump_milk_volum': 95,
-                    'pump_time': '2026-06-30T23:30:00Z',
-                  },
-                ],
-              },
-            },
-            feedingRecordsEndpoint: const {
-              'status': 200,
-              'data': {'records': <Object?>[]},
-            },
-            growthRecordsEndpoint: const {
-              'status': 200,
-              'data': {'records': <Object?>[]},
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await _scrollToTextContaining(tester, '夜间跨天泵奶');
-      expect(find.textContaining('夜间跨天泵奶'), findsOneWidget);
-      expect(find.textContaining('跨天记录'), findsOneWidget);
-    });
-
-    testWidgets('records page renders empty and failed states', (tester) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/records'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            pumpMilkRecordsEndpoint: const {
-              'status': 200,
-              'data': {'pump_milk_list': <Object?>[]},
-            },
-            feedingRecordsEndpoint: const {
-              'status': 200,
-              'data': {'records': <Object?>[]},
-            },
-            growthRecordsEndpoint: const {
-              'status': 200,
-              'data': {'records': <Object?>[]},
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('0 mL'), findsWidgets);
-      expect(find.text('暂无奶量趋势'), findsWidgets);
-      await _scrollToText(tester, '暂无泵奶记录');
-      expect(find.text('暂无泵奶记录'), findsOneWidget);
-
-      await _tapScrollableText(tester, '喂养');
-      await tester.pumpAndSettle();
-      await _scrollToText(tester, '暂无喂养记录');
-      expect(find.text('暂无喂养记录'), findsOneWidget);
-
-      await _tapScrollableText(tester, '成长');
-      await tester.pumpAndSettle();
-      await _scrollToText(tester, '暂无成长记录');
-      expect(find.text('暂无成长记录'), findsOneWidget);
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/records'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            pumpMilkRecordsEndpoint: const {
-              'http_status': 500,
-              'status_text': 'Server Error',
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('记录同步失败'), findsOneWidget);
-      expect(find.text('弱网/离线时保留本地筛选，可点击重试。'), findsOneWidget);
-    });
-
     testWidgets('pump page uploads workstate through runtime repository', (
       tester,
     ) async {
@@ -839,7 +633,7 @@ void main() {
 
       await _scrollToText(tester, 'Workstate 已同步');
       expect(find.text('Workstate 已同步'), findsOneWidget);
-      expect(find.text('Workstate accepted'), findsOneWidget);
+      expect(find.text('Pump telemetry accepted.'), findsOneWidget);
     });
 
     testWidgets('pump page moves through local session states', (tester) async {
@@ -1939,11 +1733,6 @@ Future<void> _acknowledgeCalibrationIntro(WidgetTester tester) async {
 
 Future<void> _scrollToText(WidgetTester tester, String text) async {
   final finder = find.text(text);
-  await _scrollToFinder(tester, finder);
-}
-
-Future<void> _scrollToTextContaining(WidgetTester tester, String text) async {
-  final finder = find.textContaining(text);
   await _scrollToFinder(tester, finder);
 }
 

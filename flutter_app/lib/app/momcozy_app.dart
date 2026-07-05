@@ -964,14 +964,6 @@ const momCozyRoutes = [
     priority: 'P0',
   ),
   MomCozyRouteConfig(
-    path: '/records',
-    title: '妈妈点滴',
-    summary: '泵奶、喂养和成长记录的列表与图表入口。',
-    icon: Icons.insights_rounded,
-    accent: Color(0xff6b6da8),
-    priority: 'P1',
-  ),
-  MomCozyRouteConfig(
     path: '/schedule',
     title: '计划',
     summary: '日程、任务、提醒和计划状态的管理入口。',
