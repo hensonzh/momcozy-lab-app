@@ -27,8 +27,18 @@ REQUIRED_OPENAPI_PATHS = {
     "/v1/realtime-voice-stream",
     "/v1/agent/threads",
     "/v1/agent/runs",
+    "/v1/agent/actions/{action_id}",
+    "/v1/agent/actions/{action_id}/confirm",
+    "/v1/agent/actions/{action_id}/reject",
     "/v1/agent/runs/{run_id}/events",
     "/v1/agent/runs/{run_id}/stream",
+}
+REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS = {
+    ("POST", "/v1/agent/runs"),
+    ("POST", "/v1/agent/actions/{action_id}/confirm"),
+}
+REQUIRED_STREAM_QUERY_KEYS = {
+    "/v1/agent/runs/{run_id}/stream": {"after_sequence", "follow"},
 }
 FORBIDDEN_QUERY_KEYS = {
     "access_token",
@@ -57,6 +67,30 @@ def main() -> int:
     for path in sorted(REQUIRED_OPENAPI_PATHS):
         if path not in paths:
             errors.append(f"Missing required OpenAPI path: {path}")
+
+    for method, path in sorted(REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS):
+        operation = _operation(paths, path, method)
+        if operation is None:
+            errors.append(f"Missing required idempotent operation: {method} {path}")
+        elif not _requires_idempotency(operation):
+            errors.append(f"{method} {path} must declare Idempotency-Key.")
+
+    for path, required_query_keys in sorted(REQUIRED_STREAM_QUERY_KEYS.items()):
+        operation = _operation(paths, path, "GET")
+        if operation is None:
+            errors.append(f"Missing required stream operation: GET {path}")
+            continue
+        query_keys = {
+            parameter.get("name")
+            for parameter in _list(operation.get("parameters"))
+            if isinstance(parameter, dict) and parameter.get("in") == "query"
+        }
+        missing = sorted(required_query_keys - query_keys)
+        if missing:
+            errors.append(
+                f"GET {path} is missing stream query parameters: "
+                f"{', '.join(missing)}."
+            )
 
     for flow in _list(smoke_flows.get("flows")):
         flow_name = str(flow.get("name", "<unnamed>"))
