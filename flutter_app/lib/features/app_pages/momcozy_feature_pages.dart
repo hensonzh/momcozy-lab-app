@@ -2700,6 +2700,7 @@ class _ScheduleInteractionState {
   Map<String, bool> taskDoneOverrides = {};
   Map<String, DateTime> delayedTaskReminders = {};
   Map<String, List<ScheduleTask>> localTasksByDay = {};
+  Map<String, String> editedTaskTitles = {};
   Set<String> deletedTaskKeys = {};
   Set<String> skippedTaskKeys = {};
   int localTaskSequence = 0;
@@ -2731,11 +2732,15 @@ class _SchedulePageState extends State<_SchedulePage> {
   late Map<String, bool> _taskDoneOverrides = {};
   late Map<String, DateTime> _delayedTaskReminders = {};
   late Map<String, List<ScheduleTask>> _localTasksByDay = {};
+  late Map<String, String> _editedTaskTitles = {};
   late Set<String> _deletedTaskKeys = {};
   late Set<String> _skippedTaskKeys = {};
   int _localTaskSequence = 0;
   bool _scheduleAdjustmentQueued = false;
   String? _feedbackMessage;
+  String? _editingTaskKey;
+  String _editingTaskTime = '';
+  String _editingTaskTitle = '';
   late _ScheduleInteractionState _interactionState =
       _ScheduleInteractionState();
   MomCozyApiRuntime? _runtime;
@@ -2755,6 +2760,7 @@ class _SchedulePageState extends State<_SchedulePage> {
       _taskDoneOverrides = _interactionState.taskDoneOverrides;
       _delayedTaskReminders = _interactionState.delayedTaskReminders;
       _localTasksByDay = _interactionState.localTasksByDay;
+      _editedTaskTitles = _interactionState.editedTaskTitles;
       _deletedTaskKeys = _interactionState.deletedTaskKeys;
       _skippedTaskKeys = _interactionState.skippedTaskKeys;
       _localTaskSequence = _interactionState.localTaskSequence;
@@ -2783,6 +2789,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     setState(() {
       _taskDoneOverrides[key] = value ?? !_taskDone(task, index);
       _skippedTaskKeys.remove(key);
+      if (_editingTaskKey == key) _editingTaskKey = null;
       _persistScheduleState();
     });
   }
@@ -2794,6 +2801,7 @@ class _SchedulePageState extends State<_SchedulePage> {
       ..taskDoneOverrides = _taskDoneOverrides
       ..delayedTaskReminders = _delayedTaskReminders
       ..localTasksByDay = _localTasksByDay
+      ..editedTaskTitles = _editedTaskTitles
       ..deletedTaskKeys = _deletedTaskKeys
       ..skippedTaskKeys = _skippedTaskKeys
       ..localTaskSequence = _localTaskSequence
@@ -2886,7 +2894,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     final dayKey = _dayKey(_selectedDay);
     final localTasks = _localTasksByDay[dayKey] ?? const <ScheduleTask>[];
     _localTaskSequence += 1;
-    final remindAt = DateTime.utc(
+    final remindAt = DateTime(
       _selectedDay.year,
       _selectedDay.month,
       _selectedDay.day,
@@ -2949,7 +2957,49 @@ class _SchedulePageState extends State<_SchedulePage> {
       _deletedTaskKeys.add(key);
       _taskDoneOverrides.remove(key);
       _delayedTaskReminders.remove(key);
+      _editedTaskTitles.remove(key);
       _skippedTaskKeys.remove(key);
+      if (_editingTaskKey == key) _editingTaskKey = null;
+      _persistScheduleState();
+    });
+  }
+
+  void _startEditTask(ScheduleTask task, int index) {
+    final key = _taskScopedKey(task, index);
+    if (_taskDone(task, index) || _taskSkipped(task, index)) return;
+    setState(() {
+      _editingTaskKey = key;
+      _editingTaskTime = _nullableTimeLabel(_effectiveRemindAt(task, index));
+      _editingTaskTitle = _taskDisplayTitleFor(task, index);
+    });
+  }
+
+  void _cancelTaskEdit() {
+    setState(() => _editingTaskKey = null);
+  }
+
+  void _saveTaskEdit(ScheduleTask task, int index) {
+    final key = _taskScopedKey(task, index);
+    final title = _editingTaskTitle.trim();
+    if (title.isEmpty) return;
+
+    final parsedTime = _parseTaskTime(_editingTaskTime.trim());
+    if (parsedTime == null) {
+      setState(() => _feedbackMessage = '请输入 HH:mm 格式的提醒时间');
+      return;
+    }
+
+    setState(() {
+      _editedTaskTitles[key] = title;
+      _delayedTaskReminders[key] = DateTime(
+        _selectedDay.year,
+        _selectedDay.month,
+        _selectedDay.day,
+        parsedTime.$1,
+        parsedTime.$2,
+      );
+      _editingTaskKey = null;
+      _feedbackMessage = '任务已更新';
       _persistScheduleState();
     });
   }
@@ -3008,6 +3058,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     setState(() {
       _skippedTaskKeys.add(key);
       _taskDoneOverrides[key] = false;
+      if (_editingTaskKey == key) _editingTaskKey = null;
       _feedbackMessage = '已跳过';
       _persistScheduleState();
     });
@@ -3080,6 +3131,7 @@ class _SchedulePageState extends State<_SchedulePage> {
               child: _ScheduleNextTaskCard(
                 subtitle: _nextTaskSubtitle(visibleTasks),
                 task: _nextPendingTask(visibleTasks),
+                taskTitle: _nextPendingTaskTitle(visibleTasks),
                 taskRemindAt: _nextPendingTaskRemindAt(visibleTasks),
                 emptyTitle: _scheduleEmptyHeroTitle(),
                 emptyDescription: _scheduleEmptyHeroDescription(),
@@ -3148,17 +3200,24 @@ class _SchedulePageState extends State<_SchedulePage> {
     return [
       for (final entry in tasks.asMap().entries)
         _ScheduleTaskRow(
-          title: _textOr(entry.value.title, '未命名计划'),
+          title: _taskListTitleFor(entry.value, entry.key),
           subtitle: _taskSubtitleFor(entry.value, entry.key),
           timeLabel: _nullableTimeLabel(
             _effectiveRemindAt(entry.value, entry.key),
           ),
           completed: _taskDone(entry.value, entry.key),
           skipped: _taskSkipped(entry.value, entry.key),
+          editing: _editingTaskKey == _taskScopedKey(entry.value, entry.key),
+          editTime: _editingTaskTime,
+          editTitle: _editingTaskTitle,
           accent: _taskAccent(entry.key),
-          onTap: () => _toggleTask(entry.value, entry.key, null),
+          onTap: () => _startEditTask(entry.value, entry.key),
           onDelete: () => _deleteTask(entry.value, entry.key),
           onChanged: (value) => _toggleTask(entry.value, entry.key, value),
+          onEditTimeChanged: (value) => _editingTaskTime = value,
+          onEditTitleChanged: (value) => _editingTaskTitle = value,
+          onSaveEdit: () => _saveTaskEdit(entry.value, entry.key),
+          onCancelEdit: _cancelTaskEdit,
         ),
     ];
   }
@@ -3173,6 +3232,20 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   DateTime? _effectiveRemindAt(ScheduleTask task, int index) {
     return _delayedTaskReminders[_taskScopedKey(task, index)] ?? task.remindAt;
+  }
+
+  String _taskDisplayTitleFor(ScheduleTask task, int index) {
+    return _textOr(
+      _editedTaskTitles[_taskScopedKey(task, index)] ?? _taskDisplayTitle(task),
+      '未命名计划',
+    );
+  }
+
+  String _taskListTitleFor(ScheduleTask task, int index) {
+    return _textOr(
+      _editedTaskTitles[_taskScopedKey(task, index)] ?? task.title,
+      '未命名计划',
+    );
   }
 
   String _taskSubtitleFor(ScheduleTask task, int index) {
@@ -3223,6 +3296,14 @@ class _SchedulePageState extends State<_SchedulePage> {
     return _effectiveRemindAt(task, index);
   }
 
+  String? _nextPendingTaskTitle(List<ScheduleTask> tasks) {
+    final task = _nextPendingTask(tasks);
+    if (task == null) return null;
+    final index = tasks.indexOf(task);
+    if (index < 0) return _taskDisplayTitle(task);
+    return _taskDisplayTitleFor(task, index);
+  }
+
   String _nextTaskSubtitle(List<ScheduleTask> tasks) {
     final runtime = _runtime;
     final now = runtime?.now().toUtc() ?? DateTime.now().toUtc();
@@ -3231,7 +3312,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     final index = tasks.indexOf(task);
     final remindAt = _effectiveRemindAt(task, index);
     if (remindAt == null) return '没有待提醒任务。';
-    final title = _textOr(_taskDisplayTitle(task), '下一项');
+    final title = _textOr(_taskDisplayTitleFor(task, index), '下一项');
 
     final minutes = remindAt.toUtc().difference(now).inMinutes;
     if (minutes <= 0) return '$title 已到提醒时间。';
@@ -3247,6 +3328,16 @@ class _SchedulePageState extends State<_SchedulePage> {
       return '$title 还有 $hours 小时 $remainingMinutes 分钟。';
     }
     return '$title 还有 $remainingMinutes 分钟。';
+  }
+
+  (int, int)? _parseTaskTime(String value) {
+    final match = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(value);
+    if (match == null) return null;
+    final hour = int.tryParse(match.group(1)!);
+    final minute = int.tryParse(match.group(2)!);
+    if (hour == null || minute == null) return null;
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+    return (hour, minute);
   }
 
   String _taskScopedKey(ScheduleTask task, int index) {
@@ -3777,6 +3868,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
   const _ScheduleNextTaskCard({
     required this.subtitle,
     required this.task,
+    required this.taskTitle,
     required this.taskRemindAt,
     required this.emptyTitle,
     required this.emptyDescription,
@@ -3787,6 +3879,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
 
   final String subtitle;
   final ScheduleTask? task;
+  final String? taskTitle;
   final DateTime? taskRemindAt;
   final String emptyTitle;
   final String emptyDescription;
@@ -3893,7 +3986,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      _textOr(_taskDisplayTitle(task), subtitle),
+                      _textOr(taskTitle, subtitle),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -4174,10 +4267,17 @@ class _ScheduleTaskRow extends StatelessWidget {
     required this.timeLabel,
     required this.completed,
     required this.skipped,
+    required this.editing,
+    required this.editTime,
+    required this.editTitle,
     required this.accent,
     required this.onTap,
     required this.onDelete,
     required this.onChanged,
+    required this.onEditTimeChanged,
+    required this.onEditTitleChanged,
+    required this.onSaveEdit,
+    required this.onCancelEdit,
   });
 
   final String title;
@@ -4185,10 +4285,17 @@ class _ScheduleTaskRow extends StatelessWidget {
   final String timeLabel;
   final bool completed;
   final bool skipped;
+  final bool editing;
+  final String editTime;
+  final String editTitle;
   final Color accent;
   final VoidCallback onTap;
   final VoidCallback onDelete;
   final ValueChanged<bool?> onChanged;
+  final ValueChanged<String> onEditTimeChanged;
+  final ValueChanged<String> onEditTitleChanged;
+  final VoidCallback onSaveEdit;
+  final VoidCallback onCancelEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -4210,87 +4317,158 @@ class _ScheduleTaskRow extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
-            onTap: onTap,
+            onTap: editing ? null : onTap,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 48,
-                    child: Text(
-                      timeLabel,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: accent,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(
-                                color: skipped
-                                    ? MomCozyColors.mutedForeground
-                                    : MomCozyColors.foreground,
-                                fontWeight: FontWeight.w900,
-                                decoration: skipped
-                                    ? TextDecoration.lineThrough
-                                    : null,
-                              ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: MomCozyColors.mutedForeground,
-                                fontWeight: FontWeight.w700,
-                                height: 1.22,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: '删除任务',
-                    onPressed: onDelete,
-                    icon: const Icon(Icons.delete_outline_rounded),
-                  ),
-                  if (skipped)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: MomCozyColors.secondary.withValues(alpha: 0.7),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        '已跳过',
-                        style: TextStyle(
-                          color: MomCozyColors.mutedForeground,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    )
-                  else
-                    Checkbox(value: completed, onChanged: onChanged),
-                ],
-              ),
+              child: editing
+                  ? _buildEditBody(context)
+                  : _buildReadBody(context),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildReadBody(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 48,
+          child: Text(
+            timeLabel,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: accent,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: skipped
+                      ? MomCozyColors.mutedForeground
+                      : MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                  decoration: skipped ? TextDecoration.lineThrough : null,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: MomCozyColors.mutedForeground,
+                  fontWeight: FontWeight.w700,
+                  height: 1.22,
+                ),
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          tooltip: '删除任务',
+          onPressed: onDelete,
+          icon: const Icon(Icons.delete_outline_rounded),
+        ),
+        if (skipped)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: MomCozyColors.secondary.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              '已跳过',
+              style: TextStyle(
+                color: MomCozyColors.mutedForeground,
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          )
+        else
+          Checkbox(value: completed, onChanged: onChanged),
+      ],
+    );
+  }
+
+  Widget _buildEditBody(BuildContext context) {
+    final inputStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+      color: MomCozyColors.foreground,
+      fontWeight: FontWeight.w800,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '编辑任务',
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: MomCozyColors.primary,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            SizedBox(
+              width: 74,
+              child: TextFormField(
+                key: const ValueKey('schedule-task-edit-time-input'),
+                initialValue: editTime,
+                onChanged: onEditTimeChanged,
+                keyboardType: TextInputType.datetime,
+                textInputAction: TextInputAction.next,
+                style: inputStyle,
+                decoration: const InputDecoration(
+                  isDense: true,
+                  labelText: '时间',
+                  hintText: '14:00',
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextFormField(
+                key: const ValueKey('schedule-task-edit-title-input'),
+                initialValue: editTitle,
+                onChanged: onEditTitleChanged,
+                textInputAction: TextInputAction.done,
+                maxLines: 1,
+                style: inputStyle,
+                decoration: const InputDecoration(
+                  isDense: true,
+                  labelText: '任务',
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            TextButton(
+              key: const ValueKey('schedule-task-edit-cancel-button'),
+              onPressed: onCancelEdit,
+              child: const Text('取消'),
+            ),
+            const Spacer(),
+            FilledButton(
+              key: const ValueKey('schedule-task-edit-save-button'),
+              onPressed: onSaveEdit,
+              child: const Text('保存'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
