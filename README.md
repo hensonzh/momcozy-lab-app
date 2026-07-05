@@ -1,39 +1,83 @@
-# Mai MomCozy APP
+# MomCozy App
 
-## 环境搭建
+MomCozyApp 现在同时保留 Flutter 原生重构实现和旧 Web/Capacitor 实现，目录边界如下：
 
-从 Git 远程仓库 clone 到本地后，打开终端并进入工程根目录。
-
-安装依赖：
-
+```text
+flutter_app/   新版 Flutter 移动原生实现
+legacy_web/    旧版 React/Vite/Capacitor 实现，作为 UI 对齐基线和回滚来源
+docs/          迁移、Flutter、API、旧 Web、UI parity 和后端合同文档
+scripts/       Flutter 迁移 gate、UI parity、回滚包和审计脚本
+test/          UI parity 截图与报告
 ```
+
+根目录 `package.json` 只保留 Flutter 迁移和 UI parity 的轻量脚本。旧 Web 的 React/Vite/Capacitor 依赖和 lockfile 已归入 `legacy_web/`。
+
+## 新版 Flutter
+
+首次检查本地 Flutter 工具链：
+
+```bash
+npm run flutter:check
+```
+
+启动 Flutter App：
+
+```bash
+npm run flutter:dev
+```
+
+非真机构建和测试 gate：
+
+```bash
+npm run flutter:release-gate
+```
+
+## 旧版 Web
+
+旧版实现已归档到 `legacy_web/`，旧 Web 依赖需要在该目录安装：
+
+```bash
+cd legacy_web
 npm install
-```
-
-本地开发：
-
-```
 npm run dev
-```
-
-构建 Web 工程：
-
-```
 npm run build
+npm test
 ```
 
-同步到 Android 工程：
+根目录仍保留转发命令，便于迁移 gate 和旧 UI 基线复用：
 
+```bash
+npm run dev
+npm run build
+npm test
 ```
+
+这些命令会转发到 `legacy_web/` 下的对应脚本。
+
+如需同步旧 Capacitor Android 工程：
+
+```bash
+npm run build
+cd legacy_web
 npx cap sync android
 ```
 
-## Android Studio配置
+## UI 对齐
 
-执行完 `npm run build && npx cap sync android` 后，打开 Android Studio，配置好 JDK 等环境即可编译运行。
+旧 Web 截图基线：
 
-当修改了 Web 工程后，请再次执行：
-
+```bash
+npm run ui:legacy-reference
 ```
-npm run build && npx cap sync android
+
+Flutter 与旧 Web 的页面级视觉 diff：
+
+```bash
+npm run ui:parity-report
 ```
+
+旧 Web 的 UI/UX 黄金标准见 `docs/ui-parity/legacy-web-ui-ux-golden-standard.md`；组件级重绘计划见 `docs/ui-parity/flutter-ui-component-parity-plan.md`。
+
+## 文档目录
+
+文档统一存放在 `docs/` 下，目录说明见 `docs/README.md`。

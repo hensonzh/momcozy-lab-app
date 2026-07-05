@@ -18,7 +18,7 @@ const projectRoot = path.resolve(scriptDir, "..");
 const requiredArtifacts = [
   {
     kind: "web-rollback-bundle",
-    relPath: "dist/index.html",
+    relPath: "legacy_web/dist/index.html",
     command: "npm run build",
   },
   {
@@ -47,7 +47,7 @@ function sha256(absPath) {
 }
 
 function collectDistFiles() {
-  const distDir = path.join(projectRoot, "dist");
+  const distDir = path.join(projectRoot, "legacy_web", "dist");
   const files = [];
   const walk = (dir) => {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -89,8 +89,8 @@ const artifacts = requiredArtifacts.map((artifact) => {
 const distFiles = collectDistFiles();
 const hasJs = distFiles.some((file) => file.relPath.endsWith(".js"));
 const hasCss = distFiles.some((file) => file.relPath.endsWith(".css"));
-if (!hasJs) failures.push("dist/ has no JavaScript bundle");
-if (!hasCss) failures.push("dist/ has no CSS bundle");
+if (!hasJs) failures.push("legacy_web/dist/ has no JavaScript bundle");
+if (!hasCss) failures.push("legacy_web/dist/ has no CSS bundle");
 
 if (failures.length > 0) {
   console.error("Flutter rollback package check failed:");
@@ -125,7 +125,12 @@ const manifest = {
   },
 };
 
-const outputPath = path.join(projectRoot, "dist", "flutter-rollback-manifest.json");
+const outputPath = path.join(
+  projectRoot,
+  "legacy_web",
+  "dist",
+  "flutter-rollback-manifest.json",
+);
 mkdirSync(path.dirname(outputPath), { recursive: true });
 writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
 

@@ -8,6 +8,10 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const legacyWebRoot = path.resolve(
+  repoRoot,
+  process.env.MOMCOZY_LEGACY_WEB_ROOT || "legacy_web",
+);
 
 const viewport = {
   width: numberFromEnv("MOMCOZY_REFERENCE_WIDTH", 390),
@@ -37,12 +41,8 @@ const routes = [
   { id: "w1", path: "/w1" },
   { id: "hospital_bag_cart", path: "/hospital-bag-cart" },
   { id: "ibclc_chat", path: "/ibclc-chat.html" },
-  { id: "media_viewer", path: "/media-viewer" },
-  { id: "pump", path: "/pump" },
   { id: "calibration", path: "/calibration" },
-  { id: "records", path: "/records" },
   { id: "community", path: "/community" },
-  { id: "not_found", path: "/__reference_not_found__" },
 ];
 
 const stableCss = `
@@ -101,6 +101,7 @@ async function main() {
       command: "npm run ui:legacy-reference",
       baseUrl,
       fixedNowIso,
+      legacyWebRoot: path.relative(repoRoot, legacyWebRoot),
       viewport,
       routes: [],
     };
@@ -162,11 +163,11 @@ function startViteServer() {
     viteBin,
     ["--host", host, "--port", String(port), "--strictPort"],
     {
-      cwd: repoRoot,
+      cwd: legacyWebRoot,
       env: {
         ...process.env,
         BROWSER: "none",
-        PATH: `${path.join(repoRoot, "node_modules", ".bin")}${path.delimiter}${process.env.PATH || ""}`,
+        PATH: `${path.join(legacyWebRoot, "node_modules", ".bin")}${path.delimiter}${process.env.PATH || ""}`,
         VITE_API_BASE_URL:
           process.env.VITE_API_BASE_URL || "http://127.0.0.1:8769",
       },

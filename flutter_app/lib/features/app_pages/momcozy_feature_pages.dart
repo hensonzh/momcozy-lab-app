@@ -10,7 +10,6 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
-import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -48,13 +47,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         accent: accent,
       ),
       '/pump' => _PumpPage(
-        path: path,
-        title: title,
-        summary: summary,
-        icon: icon,
-        accent: accent,
-      ),
-      '/records' => _RecordsPage(
         path: path,
         title: title,
         summary: summary,
@@ -141,32 +133,6 @@ class MomCozyFeaturePage extends StatelessWidget {
         accent: accent,
       ),
     };
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 10, left: 1),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 
@@ -559,6 +525,19 @@ class _IconBubble extends StatelessWidget {
   }
 }
 
+final _statusInteractionStates = Expando<_StatusInteractionState>(
+  'momcozy-status-interaction-state',
+);
+
+class _StatusInteractionState {
+  String view = 'mom';
+  String careStage = 'postpartum';
+  bool growthRecordAdded = false;
+  String milkTrendMode = '周';
+  String babyGrowthMetric = '体重';
+  String? activeDetail;
+}
+
 class _StatusPage extends StatefulWidget {
   const _StatusPage({
     required this.path,
@@ -582,6 +561,10 @@ class _StatusPageState extends State<_StatusPage> {
   String _view = 'mom';
   String _careStage = 'postpartum';
   bool _growthRecordAdded = false;
+  String _milkTrendMode = '周';
+  String _babyGrowthMetric = '体重';
+  String? _activeDetail;
+  late _StatusInteractionState _interactionState = _StatusInteractionState();
   MomCozyApiRuntime? _runtime;
   late Future<StatusOverview> _overviewFuture;
 
@@ -591,23 +574,97 @@ class _StatusPageState extends State<_StatusPage> {
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
       _runtime = runtime;
+      _interactionState = _statusInteractionStates[runtime] ??=
+          _StatusInteractionState();
+      _view = _interactionState.view;
+      _careStage = _interactionState.careStage;
+      _growthRecordAdded = _interactionState.growthRecordAdded;
+      _milkTrendMode = _interactionState.milkTrendMode;
+      _babyGrowthMetric = _interactionState.babyGrowthMetric;
+      _activeDetail = _interactionState.activeDetail;
       _overviewFuture = runtime.statusRepository.fetchOverview();
     }
-  }
-
-  void _reloadOverview() {
-    final runtime = _runtime;
-    if (runtime == null) return;
-    setState(() {
-      _overviewFuture = runtime.statusRepository.fetchOverview();
-    });
   }
 
   void _changeCareStage(String stage) {
     setState(() {
       _careStage = stage;
       if (stage == 'pregnancy') _view = 'mom';
+      _activeDetail = null;
+      _persistInteractionState();
     });
+  }
+
+  void _persistInteractionState() {
+    _interactionState
+      ..view = _view
+      ..careStage = _careStage
+      ..growthRecordAdded = _growthRecordAdded
+      ..milkTrendMode = _milkTrendMode
+      ..babyGrowthMetric = _babyGrowthMetric
+      ..activeDetail = _activeDetail;
+  }
+
+  void _showDetail(String detail) {
+    setState(() {
+      _activeDetail = detail;
+      _persistInteractionState();
+    });
+  }
+
+  void _closeDetail() {
+    setState(() {
+      _activeDetail = null;
+      _persistInteractionState();
+    });
+  }
+
+  void _recordGrowth() {
+    setState(() {
+      _growthRecordAdded = true;
+      _persistInteractionState();
+    });
+  }
+
+  Future<void> _showGrowthEditor() async {
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('status-growth-editor-dialog'),
+          title: const Text('修改成长指标'),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                key: ValueKey('status-growth-weight-input'),
+                decoration: InputDecoration(labelText: '体重'),
+              ),
+              TextField(
+                key: ValueKey('status-growth-height-input'),
+                decoration: InputDecoration(labelText: '身高'),
+              ),
+              TextField(
+                key: ValueKey('status-growth-head-input'),
+                decoration: InputDecoration(labelText: '头围'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('status-growth-save-button'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('保存指标'),
+            ),
+          ],
+        );
+      },
+    );
+    if (saved == true) _recordGrowth();
   }
 
   @override
@@ -620,7 +677,6 @@ class _StatusPageState extends State<_StatusPage> {
         final isPregnancy = _careStage == 'pregnancy';
         const momSubtitle = '妈妈档案待绑定';
         const babySubtitle = '宝宝档案待绑定';
-        final syncNotice = _statusSyncNotice(snapshot);
 
         return ListView(
           key: ValueKey('route-page-${widget.path}'),
@@ -648,7 +704,11 @@ class _StatusPageState extends State<_StatusPage> {
                       babyDisabled: isPregnancy,
                       onChanged: (next) {
                         if (next == 'baby' && isPregnancy) return;
-                        setState(() => _view = next);
+                        setState(() {
+                          _view = next;
+                          _activeDetail = null;
+                          _persistInteractionState();
+                        });
                       },
                     ),
                   ),
@@ -657,16 +717,6 @@ class _StatusPageState extends State<_StatusPage> {
             ),
             const SizedBox(height: 14),
             ..._statusOverviewChildren(snapshot, isMom),
-            const SizedBox(height: 44),
-            _StatusNextActions(
-              isMom: isMom,
-              growthRecordAdded: _growthRecordAdded,
-              accent: widget.accent,
-              onMomDiaryTap: () => context.go('/records'),
-              onBabyGrowthTap: () => setState(() => _growthRecordAdded = true),
-              onScheduleTap: () => context.go('/schedule'),
-            ),
-            if (syncNotice != null) ...[const SizedBox(height: 18), syncNotice],
           ],
         );
       },
@@ -683,49 +733,6 @@ class _StatusPageState extends State<_StatusPage> {
         : _babyStatusChildren(overview);
 
     return content;
-  }
-
-  Widget? _statusSyncNotice(AsyncSnapshot<StatusOverview> snapshot) {
-    final overview = snapshot.data ?? const StatusOverview();
-
-    if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return const _ActionTile(
-        icon: Icons.sync_rounded,
-        title: '正在同步状态',
-        subtitle: '正在读取妈妈和宝宝状态。',
-        accent: Color(0xff9f6378),
-        trailing: SizedBox.square(
-          dimension: 22,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-      );
-    }
-
-    if (snapshot.hasError) {
-      return _ActionTile(
-        icon: Icons.cloud_off_outlined,
-        title: '状态同步失败',
-        subtitle: '检查后端连接或 token 后重试。',
-        accent: const Color(0xff9f6378),
-        trailing: IconButton(
-          tooltip: '重试',
-          onPressed: _reloadOverview,
-          icon: const Icon(Icons.refresh_rounded),
-        ),
-      );
-    }
-
-    if (overview.isEmpty) {
-      return const _ActionTile(
-        icon: Icons.info_outline_rounded,
-        title: '暂无状态数据',
-        subtitle: '完成妈妈/宝宝资料后这里会显示当前状态。',
-        accent: Color(0xff7f6a75),
-        trailing: Icon(Icons.chevron_right_rounded),
-      );
-    }
-
-    return null;
   }
 
   List<Widget> _momStatusChildren(StatusOverview overview) {
@@ -763,56 +770,136 @@ class _StatusPageState extends State<_StatusPage> {
                   accent: MomCozyColors.primary,
                   background: const Color(0xfffff7fb),
                   hiddenTexts: [stage, stageNote],
-                  metrics: const [
+                  metrics: [
                     _StatusModuleMetric(
                       label: '今日产出',
                       value: '待记录',
                       showHelp: true,
+                      helpKey: ValueKey('status-milk-output-info-button'),
+                      onHelpTap: () => _showDetail('milk-info'),
                     ),
-                    _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
+                    const _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
                   ],
                 ),
               ),
               Transform.translate(
                 offset: const Offset(0, 4),
-                child: const _StatusModuleCard(
+                child: _StatusModuleCard(
                   key: ValueKey('status-module-breast-health'),
                   title: '乳房健康',
                   showHelp: true,
+                  helpKey: ValueKey('status-breast-health-info-button'),
+                  onHelpTap: () => _showDetail('breast-info'),
                   bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
                   action: '查看《乳房健康日记》',
                   icon: Icons.favorite_border_rounded,
-                  accent: Color(0xffb96f55),
-                  background: Color(0xfffff8f1),
+                  accent: const Color(0xffb96f55),
+                  background: const Color(0xfffff8f1),
+                  onAction: () => _showDetail('breast-health'),
                 ),
               ),
               Transform.translate(
                 offset: const Offset(0, 1),
-                child: const _StatusModuleCard(
+                child: _StatusModuleCard(
                   key: ValueKey('status-module-postpartum-recovery'),
                   title: '产后恢复',
                   bodyText: '正在执行盆底肌康复训练',
                   action: '查看计划',
                   icon: Icons.self_improvement_rounded,
-                  accent: Color(0xff388b72),
-                  background: Color(0xfff2fffb),
+                  accent: const Color(0xff388b72),
+                  background: const Color(0xfff2fffb),
+                  onAction: () => _showDetail('postpartum-recovery'),
                 ),
               ),
-              const _StatusModuleCard(
-                key: ValueKey('status-module-rest-nutrition'),
+              _StatusModuleCard(
+                key: const ValueKey('status-module-rest-nutrition'),
                 title: '补能与休息',
                 showHelp: true,
+                helpKey: const ValueKey('status-rest-info-button'),
+                onHelpTap: () => _showDetail('rest-info'),
                 bodyText: '待开通睡眠与营养功能',
                 icon: Icons.local_cafe_outlined,
-                accent: Color(0xffb9792a),
-                background: Color(0xfffffaf0),
+                accent: const Color(0xffb9792a),
+                background: const Color(0xfffffaf0),
               ),
             ],
           ),
         ),
       ),
       const SizedBox(height: 8),
-      const _StatusTrendPreview(key: ValueKey('status-milk-trend-preview')),
+      if (_activeDetail == 'milk-info') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-milk-info'),
+          title: '今日产出说明',
+          subtitle: '母乳产出统计',
+          rows: const [
+            ('今日产出', '待记录', '会汇总吸乳记录与亲喂估算。'),
+            ('今日吸奶', '待同步', '同步后展示次数、时长和左右侧数据。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ] else if (_activeDetail == 'breast-info') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-breast-info'),
+          title: '乳房健康说明',
+          subtitle: '涨奶、硬块和疼痛追踪',
+          rows: const [
+            ('记录内容', '不适位置和疼痛等级', '帮助后续分析风险与护理建议。'),
+            ('异常提醒', '持续疼痛需咨询专业人士', '必要时联系 IBCLC 或医生。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ] else if (_activeDetail == 'breast-health') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-breast-health'),
+          title: '乳房健康日记',
+          subtitle: '最近 3 天记录',
+          rows: const [
+            ('三天前 晚间', '轻微涨奶', '右侧乳房有胀感，吸奶后明显缓解。'),
+            ('昨天 上午', '发现硬块', '左侧外上区域摸到硬块，按压时有疼痛感。'),
+            ('今天', '涨奶硬块', '最近出现涨奶和硬块，伴随按压疼痛。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ] else if (_activeDetail == 'postpartum-recovery') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-postpartum-recovery'),
+          title: '盆底肌康复训练',
+          subtitle: '产后恢复计划',
+          rows: const [
+            ('第 1-2 天', '已完成', '盆底肌唤醒练习'),
+            ('第 3-5 天', '进行中', '骨盆稳定训练'),
+            ('第 6-7 天', '待开始', '腰背与肩颈放松'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ] else if (_activeDetail == 'rest-info') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-rest-info'),
+          title: '补能与休息说明',
+          subtitle: '睡眠与营养能力建设中',
+          rows: const [
+            ('睡眠', '待开通', '后续会汇总夜间睡眠和白天休息。'),
+            ('营养', '待开通', '后续会记录补水、热量和重点营养。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ],
+      _StatusTrendPreview(
+        key: const ValueKey('status-milk-trend-preview'),
+        selectedMode: _milkTrendMode,
+        onModeChanged: (mode) {
+          setState(() {
+            _milkTrendMode = mode;
+            _persistInteractionState();
+          });
+        },
+      ),
     ];
   }
 
@@ -823,14 +910,19 @@ class _StatusPageState extends State<_StatusPage> {
     return [
       _StatusModuleGrid(
         children: [
-          const _StatusModuleCard(
+          _StatusModuleCard(
             title: '奶量摄入',
             icon: Icons.restaurant_outlined,
-            accent: Color(0xff4f84a6),
-            background: Color(0xfff4fbff),
+            accent: const Color(0xff4f84a6),
+            background: const Color(0xfff4fbff),
             metrics: [
               _StatusModuleMetric(label: '今日摄入', value: '待同步'),
-              _StatusModuleMetric(label: '今日喂奶', value: '待同步'),
+              _StatusModuleMetric(
+                label: '今日喂奶',
+                value: '待同步',
+                helpKey: const ValueKey('status-baby-feed-info-button'),
+                onHelpTap: () => _showDetail('baby-feed-info'),
+              ),
             ],
           ),
           _StatusModuleCard(
@@ -838,101 +930,106 @@ class _StatusPageState extends State<_StatusPage> {
             icon: Icons.straighten_outlined,
             accent: const Color(0xff388b72),
             background: const Color(0xfff2fffb),
-            metrics: [
-              _StatusModuleMetric(
-                label: '宝宝',
-                value: _textOr(baby?.nickname, '未设置'),
-                note: ageLabel,
+            hiddenTexts: [_textOr(baby?.nickname, '未设置'), ageLabel],
+            metrics: const [
+              _StatusModuleMetric(label: '体重', value: '待记录'),
+              _StatusModuleMetric(label: '身高', value: '待记录'),
+              _StatusModuleMetric(label: '头围', value: '待记录'),
+            ],
+            actions: [
+              _StatusModuleAction(
+                key: const ValueKey('status-growth-record-action'),
+                label: _growthRecordAdded ? '已添加' : '修改指标',
+                onTap: _showGrowthEditor,
               ),
-              _StatusModuleMetric(
-                label: '成长记录',
-                value: _growthRecordAdded ? '已添加' : '待记录',
+              _StatusModuleAction(
+                key: const ValueKey('status-growth-milestone-action'),
+                label: '成长milestone',
+                onTap: () => _showDetail('growth-milestone'),
               ),
             ],
-            action: _growthRecordAdded ? '已记录' : '记录成长事件',
-            onAction: () => setState(() => _growthRecordAdded = true),
           ),
-          const _StatusModuleCard(
+          _StatusModuleCard(
             title: '宝宝健康',
             bodyText: '筛查、消化、皮肤和情绪跟踪',
             icon: Icons.health_and_safety_outlined,
-            accent: Color(0xff7d64aa),
-            background: Color(0xfffbf7ff),
+            accent: const Color(0xff7d64aa),
+            background: const Color(0xfffbf7ff),
             action: '查看筛查',
+            onAction: () => _showDetail('baby-health'),
           ),
-          const _StatusModuleCard(
+          _StatusModuleCard(
             title: '宝宝睡眠',
             bodyText: '总睡眠、最长睡眠、活动和哭闹',
             icon: Icons.nightlight_outlined,
-            accent: Color(0xffff9677),
-            background: Color(0xfffff8f1),
+            accent: const Color(0xffff9677),
+            background: const Color(0xfffff8f1),
             action: '查看报告',
+            onAction: () => _showDetail('baby-sleep'),
           ),
         ],
       ),
       const SizedBox(height: 12),
-      const _StatusBabyGrowthCurvePreview(),
-    ];
-  }
-}
-
-class _StatusNextActions extends StatelessWidget {
-  const _StatusNextActions({
-    required this.isMom,
-    required this.growthRecordAdded,
-    required this.accent,
-    required this.onMomDiaryTap,
-    required this.onBabyGrowthTap,
-    required this.onScheduleTap,
-  });
-
-  final bool isMom;
-  final bool growthRecordAdded;
-  final Color accent;
-  final VoidCallback onMomDiaryTap;
-  final VoidCallback onBabyGrowthTap;
-  final VoidCallback onScheduleTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const _SectionTitle('下一步'),
-        _ActionTile(
-          icon: isMom ? Icons.edit_note_rounded : Icons.monitor_weight_outlined,
-          title: isMom ? '补写孕期日记' : (growthRecordAdded ? '成长记录已添加' : '记录成长事件'),
-          subtitle: isMom
-              ? '保留心情、体征和 Agent 分析上下文。'
-              : (growthRecordAdded
-                    ? '本地草稿已保存，同步恢复后会写入成长记录。'
-                    : '记录身高、体重、睡眠和喂养变化。'),
-          accent: accent,
-          onTap: isMom ? onMomDiaryTap : onBabyGrowthTap,
-          trailing: isMom
-              ? const Icon(Icons.chevron_right_rounded)
-              : _StatusChip(
-                  label: growthRecordAdded ? '已记录' : '新增',
-                  icon: growthRecordAdded
-                      ? Icons.check_circle_outline_rounded
-                      : Icons.add_circle_outline_rounded,
-                  accent: accent,
-                ),
+      if (_activeDetail == 'baby-feed-info') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-baby-feed-info'),
+          title: '奶量摄入说明',
+          subtitle: '亲喂、瓶喂与辅食记录',
+          rows: const [
+            ('今日摄入', '待同步', '会汇总瓶喂奶量、亲喂估算和辅食。'),
+            ('今日喂奶', '待同步', '同步后展示次数和时间分布。'),
+          ],
+          onClose: _closeDetail,
         ),
-        _ActionTile(
-          icon: Icons.fact_check_outlined,
-          title: '今日待办',
-          subtitle: '2 项待确认，提醒和 Agent 建议会在这里汇总。',
-          accent: const Color(0xffb2773b),
-          onTap: onScheduleTap,
-          trailing: const _StatusChip(
-            label: '2',
-            icon: Icons.notifications_active_outlined,
-            accent: Color(0xffb2773b),
-          ),
+        const SizedBox(height: 12),
+      ] else if (_activeDetail == 'growth-milestone') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-growth-milestone'),
+          title: '成长 milestone',
+          subtitle: '最近成长事件',
+          rows: const [
+            ('2026.05.28', '说出完整主谓短句', '语言组织能力继续发展。'),
+            ('2026.05.12', '独立上下低矮台阶', '动作计划能力更成熟。'),
+          ],
+          onClose: _closeDetail,
         ),
+        const SizedBox(height: 12),
+      ] else if (_activeDetail == 'baby-health') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-baby-health'),
+          title: '宝宝健康',
+          subtitle: '健康筛查入口',
+          rows: const [
+            ('筛查', '自闭症风险筛查', '待接入后台结果。'),
+            ('消化', '消化系统风险筛查', '待接入后台结果。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 12),
+      ] else if (_activeDetail == 'baby-sleep') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-baby-sleep'),
+          title: '宝宝睡眠',
+          subtitle: '睡眠报告入口',
+          rows: const [
+            ('今日睡眠', '4h 57min', '夜间睡眠和白天小睡汇总。'),
+            ('报告', '待同步', '同步后展示趋势和建议。'),
+          ],
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 12),
       ],
-    );
+      _StatusBabyGrowthCurvePreview(
+        key: const ValueKey('status-baby-growth-curve-preview'),
+        selectedMetric: _babyGrowthMetric,
+        onMetricChanged: (metric) {
+          setState(() {
+            _babyGrowthMetric = metric;
+            _persistInteractionState();
+          });
+        },
+      ),
+    ];
   }
 }
 
@@ -940,14 +1037,24 @@ class _StatusModuleMetric {
   const _StatusModuleMetric({
     required this.label,
     required this.value,
-    this.note,
     this.showHelp = false,
+    this.helpKey,
+    this.onHelpTap,
   });
 
   final String label;
   final String value;
-  final String? note;
   final bool showHelp;
+  final Key? helpKey;
+  final VoidCallback? onHelpTap;
+}
+
+class _StatusModuleAction {
+  const _StatusModuleAction({required this.label, this.key, this.onTap});
+
+  final Key? key;
+  final String label;
+  final VoidCallback? onTap;
 }
 
 class _StatusModuleGrid extends StatelessWidget {
@@ -962,13 +1069,14 @@ class _StatusModuleGrid extends StatelessWidget {
         final width = constraints.maxWidth.isFinite
             ? constraints.maxWidth
             : MomCozyLayout.maxAppWidth;
+        final childAspectRatio = width < 390 ? 0.94 : 1.08;
         return SizedBox(
           width: width,
           child: GridView.count(
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 1.26,
+            childAspectRatio: childAspectRatio,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             children: children,
@@ -991,7 +1099,10 @@ class _StatusModuleCard extends StatelessWidget {
     this.hiddenTexts = const [],
     this.action,
     this.onAction,
+    this.actions = const [],
     this.showHelp = false,
+    this.helpKey,
+    this.onHelpTap,
   });
 
   final String title;
@@ -1000,13 +1111,22 @@ class _StatusModuleCard extends StatelessWidget {
   final List<String> hiddenTexts;
   final String? action;
   final VoidCallback? onAction;
+  final List<_StatusModuleAction> actions;
   final bool showHelp;
+  final Key? helpKey;
+  final VoidCallback? onHelpTap;
   final IconData icon;
   final Color accent;
   final Color background;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveActions = actions.isNotEmpty
+        ? actions
+        : [
+            if (action != null)
+              _StatusModuleAction(label: action!, onTap: onAction),
+          ];
     final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
       color: const Color(0xff35212c),
       fontSize: 14,
@@ -1076,7 +1196,8 @@ class _StatusModuleCard extends StatelessWidget {
                                   style: titleStyle,
                                 ),
                               ),
-                              if (showHelp) const _StatusHelpDot(),
+                              if (showHelp || onHelpTap != null)
+                                _StatusHelpDot(key: helpKey, onTap: onHelpTap),
                             ],
                           ),
                         ),
@@ -1102,14 +1223,22 @@ class _StatusModuleCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: helperStyle,
                       ),
-                    if (action != null) ...[
+                    if (effectiveActions.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Transform.translate(
                         offset: const Offset(-10, 0),
-                        child: _StatusModuleActionPill(
-                          label: action!,
-                          accent: accent,
-                          onTap: onAction,
+                        child: Wrap(
+                          spacing: 5,
+                          runSpacing: 4,
+                          children: [
+                            for (final action in effectiveActions)
+                              _StatusModuleActionPill(
+                                key: action.key,
+                                label: action.label,
+                                accent: accent,
+                                onTap: action.onTap,
+                              ),
+                          ],
                         ),
                       ),
                     ],
@@ -1156,7 +1285,12 @@ class _StatusModuleMetricRows extends StatelessWidget {
                               ),
                         ),
                       ),
-                      if (metric.showHelp) const _StatusHelpDot(size: 14),
+                      if (metric.showHelp || metric.onHelpTap != null)
+                        _StatusHelpDot(
+                          key: metric.helpKey,
+                          size: 14,
+                          onTap: metric.onHelpTap,
+                        ),
                     ],
                   ),
                   const SizedBox(height: 3),
@@ -1171,20 +1305,6 @@ class _StatusModuleMetricRows extends StatelessWidget {
                       height: 1,
                     ),
                   ),
-                  if (metric.note != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      metric.note!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: MomCozyColors.primary,
-                        fontSize: 10,
-                        height: 1,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -1195,32 +1315,40 @@ class _StatusModuleMetricRows extends StatelessWidget {
 }
 
 class _StatusHelpDot extends StatelessWidget {
-  const _StatusHelpDot({this.size = 16});
+  const _StatusHelpDot({super.key, this.size = 16, this.onTap});
 
   final double size;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 5),
-      child: Container(
-        width: size,
-        height: size,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.72),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: MomCozyColors.mutedForeground.withValues(alpha: 0.46),
-          ),
-        ),
-        child: Text(
-          '?',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: MomCozyColors.mutedForeground,
-            fontSize: size <= 14 ? 8 : 10,
-            height: 1,
-            fontWeight: FontWeight.w700,
+      child: Semantics(
+        button: onTap != null,
+        label: '说明',
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: size,
+            height: size,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.72),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: MomCozyColors.mutedForeground.withValues(alpha: 0.46),
+              ),
+            ),
+            child: Text(
+              '?',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontSize: size <= 14 ? 8 : 10,
+                height: 1,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ),
       ),
@@ -1230,6 +1358,7 @@ class _StatusHelpDot extends StatelessWidget {
 
 class _StatusModuleActionPill extends StatelessWidget {
   const _StatusModuleActionPill({
+    super.key,
     required this.label,
     required this.accent,
     this.onTap,
@@ -1504,7 +1633,14 @@ class _StatusPregnancyPlanPreview extends StatelessWidget {
 }
 
 class _StatusBabyGrowthCurvePreview extends StatelessWidget {
-  const _StatusBabyGrowthCurvePreview();
+  const _StatusBabyGrowthCurvePreview({
+    super.key,
+    required this.selectedMetric,
+    required this.onMetricChanged,
+  });
+
+  final String selectedMetric;
+  final ValueChanged<String> onMetricChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -1574,11 +1710,21 @@ class _StatusBabyGrowthCurvePreview extends StatelessWidget {
               ),
               const Spacer(),
               _StatusSegmentedPills(
-                selected: '体重',
+                selected: selectedMetric,
                 options: const ['体重', '身高'],
                 color: const Color(0xff7d64aa),
+                keyPrefix: 'status-baby-growth',
+                onChanged: onMetricChanged,
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '当前查看：$selectedMetric',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: const Color(0xff7d64aa),
+              fontWeight: FontWeight.w800,
+            ),
           ),
           const Spacer(),
           Center(
@@ -1593,6 +1739,101 @@ class _StatusBabyGrowthCurvePreview extends StatelessWidget {
           ),
           const Spacer(),
         ],
+      ),
+    );
+  }
+}
+
+class _StatusDetailPanel extends StatelessWidget {
+  const _StatusDetailPanel({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.rows,
+    required this.onClose,
+  });
+
+  final String title;
+  final String subtitle;
+  final List<(String, String, String)> rows;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
+      color: MomCozyColors.foreground,
+      fontWeight: FontWeight.w900,
+    );
+    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: MomCozyColors.mutedForeground,
+      fontWeight: FontWeight.w700,
+      height: 1.35,
+    );
+
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.card.withValues(alpha: 0.72),
+        borderColor: MomCozyColors.border.withValues(alpha: 0.72),
+        radius: 18,
+        shadows: MomCozyShadows.soft,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 12, 10, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: titleStyle),
+                      const SizedBox(height: 3),
+                      Text(subtitle, style: helperStyle),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  tooltip: '关闭详情',
+                  onPressed: onClose,
+                  icon: const Icon(Icons.close_rounded, size: 18),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            for (final row in rows) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 78,
+                      child: Text(
+                        row.$1,
+                        style: helperStyle?.copyWith(
+                          color: const Color(0xff9c6b7f),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(row.$2, style: titleStyle),
+                          const SizedBox(height: 2),
+                          Text(row.$3, style: helperStyle),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -1692,11 +1933,15 @@ class _StatusSegmentedPills extends StatelessWidget {
     required this.selected,
     required this.options,
     required this.color,
+    this.keyPrefix,
+    this.onChanged,
   });
 
   final String selected;
   final List<String> options;
   final Color color;
+  final String? keyPrefix;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -1710,18 +1955,32 @@ class _StatusSegmentedPills extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           for (final option in options)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-              decoration: BoxDecoration(
-                color: option == selected ? color : Colors.transparent,
-                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-              ),
-              child: Text(
-                option,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: option == selected ? Colors.white : color,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
+            Semantics(
+              selected: option == selected,
+              button: onChanged != null,
+              label: option,
+              child: GestureDetector(
+                key: keyPrefix == null
+                    ? null
+                    : ValueKey('$keyPrefix-segment-$option'),
+                onTap: onChanged == null ? null : () => onChanged!(option),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: option == selected ? color : Colors.transparent,
+                    borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                  ),
+                  child: Text(
+                    option,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: option == selected ? Colors.white : color,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -1732,10 +1991,18 @@ class _StatusSegmentedPills extends StatelessWidget {
 }
 
 class _StatusTrendPreview extends StatelessWidget {
-  const _StatusTrendPreview({super.key});
+  const _StatusTrendPreview({
+    super.key,
+    required this.selectedMode,
+    required this.onModeChanged,
+  });
+
+  final String selectedMode;
+  final ValueChanged<String> onModeChanged;
 
   @override
   Widget build(BuildContext context) {
+    final modeLabel = selectedMode == '月' ? '近30日趋势' : '近7日趋势';
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -1785,22 +2052,33 @@ class _StatusTrendPreview extends StatelessWidget {
           const SizedBox(height: 12),
           Transform.translate(
             offset: const Offset(1, -1),
-            child: const Row(
+            child: Row(
               children: [
-                Expanded(child: _StatusTrendLegend()),
+                const Expanded(child: _StatusTrendLegend()),
                 _StatusSegmentedPills(
-                  selected: '周',
-                  options: ['周', '月'],
-                  color: Color(0xffb9792a),
+                  selected: selectedMode,
+                  options: const ['周', '月'],
+                  color: const Color(0xffb9792a),
+                  keyPrefix: 'status-milk-trend',
+                  onChanged: onModeChanged,
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            modeLabel,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: const Color(0xff9c7651),
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 10),
           SizedBox(
             height: 188,
             child: CustomPaint(
-              painter: const _StatusTrendPreviewPainter(),
+              painter: _StatusTrendPreviewPainter(mode: selectedMode),
               child: const SizedBox.expand(),
             ),
           ),
@@ -1811,19 +2089,15 @@ class _StatusTrendPreview extends StatelessWidget {
 }
 
 class _StatusTrendPreviewPainter extends CustomPainter {
-  const _StatusTrendPreviewPainter();
+  const _StatusTrendPreviewPainter({required this.mode});
+
+  final String mode;
 
   @override
   void paint(Canvas canvas, Size size) {
-    const labels = [
-      '06/26',
-      '06/27',
-      '06/28',
-      '06/29',
-      '06/30',
-      '07/01',
-      '07/02',
-    ];
+    final labels = mode == '月'
+        ? const ['第1周', '第2周', '第3周', '第4周']
+        : const ['06/26', '06/27', '06/28', '06/29', '06/30', '07/01', '07/02'];
     final segmentCount = labels.length - 1;
     final chartRect = Rect.fromLTWH(44, 1, size.width - 58, size.height - 44);
     final axisPaint = Paint()
@@ -1954,7 +2228,9 @@ class _StatusTrendPreviewPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _StatusTrendPreviewPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _StatusTrendPreviewPainter oldDelegate) {
+    return oldDelegate.mode != mode;
+  }
 }
 
 class _StatusTrendLegend extends StatelessWidget {
@@ -2414,6 +2690,24 @@ String _textOr(String? value, String fallback) {
   return trimmed == null || trimmed.isEmpty ? fallback : trimmed;
 }
 
+final _scheduleInteractionStates = Expando<_ScheduleInteractionState>(
+  'momcozy-schedule-interaction-state',
+);
+
+class _ScheduleInteractionState {
+  bool pumpReminderEnabled = true;
+  DateTime? selectedDay;
+  Map<String, bool> taskDoneOverrides = {};
+  Map<String, DateTime> delayedTaskReminders = {};
+  Map<String, List<ScheduleTask>> localTasksByDay = {};
+  Map<String, String> editedTaskTitles = {};
+  Set<String> deletedTaskKeys = {};
+  Set<String> skippedTaskKeys = {};
+  int localTaskSequence = 0;
+  bool scheduleAdjustmentQueued = false;
+  String? feedbackMessage;
+}
+
 class _SchedulePage extends StatefulWidget {
   const _SchedulePage({
     required this.path,
@@ -2435,11 +2729,20 @@ class _SchedulePage extends StatefulWidget {
 
 class _SchedulePageState extends State<_SchedulePage> {
   bool _pumpReminderEnabled = true;
-  bool _dailySummaryEnabled = true;
-  final Map<String, bool> _taskDoneOverrides = {};
-  final Map<String, List<ScheduleTask>> _localTasksByDay = {};
-  final Set<String> _deletedTaskKeys = {};
+  late Map<String, bool> _taskDoneOverrides = {};
+  late Map<String, DateTime> _delayedTaskReminders = {};
+  late Map<String, List<ScheduleTask>> _localTasksByDay = {};
+  late Map<String, String> _editedTaskTitles = {};
+  late Set<String> _deletedTaskKeys = {};
+  late Set<String> _skippedTaskKeys = {};
   int _localTaskSequence = 0;
+  bool _scheduleAdjustmentQueued = false;
+  String? _feedbackMessage;
+  String? _editingTaskKey;
+  String _editingTaskTime = '';
+  String _editingTaskTitle = '';
+  late _ScheduleInteractionState _interactionState =
+      _ScheduleInteractionState();
   MomCozyApiRuntime? _runtime;
   late DateTime _selectedDay;
   late Future<ScheduleDayPlan> _dayPlanFuture;
@@ -2450,7 +2753,19 @@ class _SchedulePageState extends State<_SchedulePage> {
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
       _runtime = runtime;
-      _selectedDay = runtime.now();
+      _interactionState = _scheduleInteractionStates[runtime] ??=
+          _ScheduleInteractionState();
+      _pumpReminderEnabled = _interactionState.pumpReminderEnabled;
+      _selectedDay = _interactionState.selectedDay ?? runtime.now();
+      _taskDoneOverrides = _interactionState.taskDoneOverrides;
+      _delayedTaskReminders = _interactionState.delayedTaskReminders;
+      _localTasksByDay = _interactionState.localTasksByDay;
+      _editedTaskTitles = _interactionState.editedTaskTitles;
+      _deletedTaskKeys = _interactionState.deletedTaskKeys;
+      _skippedTaskKeys = _interactionState.skippedTaskKeys;
+      _localTaskSequence = _interactionState.localTaskSequence;
+      _scheduleAdjustmentQueued = _interactionState.scheduleAdjustmentQueued;
+      _feedbackMessage = _interactionState.feedbackMessage;
       _dayPlanFuture = _fetchDayPlan(runtime);
     }
   }
@@ -2459,24 +2774,13 @@ class _SchedulePageState extends State<_SchedulePage> {
     return runtime.scheduleRepository.fetchDayPlan(day: _selectedDay);
   }
 
-  void _reloadDayPlan() {
-    final runtime = _runtime;
-    if (runtime == null) return;
-    setState(() {
-      _taskDoneOverrides.clear();
-      _deletedTaskKeys.clear();
-      _dayPlanFuture = _fetchDayPlan(runtime);
-    });
-  }
-
   void _selectDay(DateTime day) {
     final runtime = _runtime;
     if (runtime == null) return;
     setState(() {
       _selectedDay = day;
-      _taskDoneOverrides.clear();
-      _deletedTaskKeys.clear();
       _dayPlanFuture = _fetchDayPlan(runtime);
+      _persistScheduleState();
     });
   }
 
@@ -2484,14 +2788,113 @@ class _SchedulePageState extends State<_SchedulePage> {
     final key = _taskScopedKey(task, index);
     setState(() {
       _taskDoneOverrides[key] = value ?? !_taskDone(task, index);
+      _skippedTaskKeys.remove(key);
+      if (_editingTaskKey == key) _editingTaskKey = null;
+      _persistScheduleState();
     });
   }
 
-  void _addLocalTask() {
+  void _persistScheduleState() {
+    _interactionState
+      ..pumpReminderEnabled = _pumpReminderEnabled
+      ..selectedDay = _selectedDay
+      ..taskDoneOverrides = _taskDoneOverrides
+      ..delayedTaskReminders = _delayedTaskReminders
+      ..localTasksByDay = _localTasksByDay
+      ..editedTaskTitles = _editedTaskTitles
+      ..deletedTaskKeys = _deletedTaskKeys
+      ..skippedTaskKeys = _skippedTaskKeys
+      ..localTaskSequence = _localTaskSequence
+      ..scheduleAdjustmentQueued = _scheduleAdjustmentQueued
+      ..feedbackMessage = _feedbackMessage;
+  }
+
+  DateTime get _today {
+    final runtime = _runtime;
+    return _dateOnly(runtime?.now() ?? DateTime.now());
+  }
+
+  bool get _isSelectedToday => _sameDay(_selectedDay, _today);
+  bool get _isSelectedPast => _dateOnly(_selectedDay).isBefore(_today);
+  bool get _isSelectedFuture => _dateOnly(_selectedDay).isAfter(_today);
+
+  void _setReminderEnabled(bool enabled) {
+    setState(() {
+      _pumpReminderEnabled = enabled;
+      _persistScheduleState();
+    });
+  }
+
+  Future<void> _handleReminderTap() async {
+    if (!_pumpReminderEnabled) {
+      _setReminderEnabled(true);
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-reminder-confirm-dialog'),
+          title: const Text('关闭计划提醒？'),
+          content: const Text('关闭后，吸奶提醒和每日摘要不会再主动通知你。'),
+          actions: [
+            TextButton(
+              key: const ValueKey('schedule-reminder-cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('schedule-reminder-confirm'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('确认关闭'),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed == true) _setReminderEnabled(false);
+  }
+
+  void _queueScheduleAdjustment() {
+    setState(() {
+      _scheduleAdjustmentQueued = true;
+      _feedbackMessage = '日程调整已提交';
+      _persistScheduleState();
+    });
+  }
+
+  Future<void> _showScheduleAdjustmentDialog() async {
+    final submitted = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-adjust-upload-dialog'),
+          title: const Text('调整日程'),
+          content: const Text('上传会议日程后，我会按旧 Web 流程重新生成今天的吸乳排期。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            FilledButton.icon(
+              key: const ValueKey('schedule-adjust-submit'),
+              onPressed: () => Navigator.of(context).pop(true),
+              icon: const Icon(Icons.image_outlined, size: 16),
+              label: const Text('开始上传'),
+            ),
+          ],
+        );
+      },
+    );
+    if (submitted == true) _queueScheduleAdjustment();
+  }
+
+  void _addLocalTask({String? title, String? feedback}) {
     final dayKey = _dayKey(_selectedDay);
     final localTasks = _localTasksByDay[dayKey] ?? const <ScheduleTask>[];
     _localTaskSequence += 1;
-    final remindAt = DateTime.utc(
+    final remindAt = DateTime(
       _selectedDay.year,
       _selectedDay.month,
       _selectedDay.day,
@@ -2500,13 +2903,52 @@ class _SchedulePageState extends State<_SchedulePage> {
     );
     final task = ScheduleTask(
       id: 'local-$dayKey-$_localTaskSequence',
-      title: '本地补充 ${localTasks.length + 1}',
+      title: title ?? '本地补充 ${localTasks.length + 1}',
       completed: false,
       remindAt: remindAt,
     );
     setState(() {
       _localTasksByDay[dayKey] = [...localTasks, task];
+      _feedbackMessage = feedback;
+      _persistScheduleState();
     });
+  }
+
+  void _addQuickActionTask(String label) {
+    _addLocalTask(title: label, feedback: '$label已添加');
+  }
+
+  Future<void> _showAddTaskDialog() async {
+    final controller = TextEditingController(text: '本地补充 1');
+    final title = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-add-task-dialog'),
+          title: const Text('添加任务'),
+          content: TextField(
+            key: const ValueKey('schedule-add-task-title-input'),
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(labelText: '任务名称'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('schedule-add-task-submit'),
+              onPressed: () => Navigator.of(context).pop(controller.text),
+              child: const Text('添加'),
+            ),
+          ],
+        );
+      },
+    );
+    final trimmed = title?.trim();
+    if (trimmed == null || trimmed.isEmpty) return;
+    _addLocalTask(title: trimmed);
   }
 
   void _deleteTask(ScheduleTask task, int index) {
@@ -2514,6 +2956,115 @@ class _SchedulePageState extends State<_SchedulePage> {
     setState(() {
       _deletedTaskKeys.add(key);
       _taskDoneOverrides.remove(key);
+      _delayedTaskReminders.remove(key);
+      _editedTaskTitles.remove(key);
+      _skippedTaskKeys.remove(key);
+      if (_editingTaskKey == key) _editingTaskKey = null;
+      _persistScheduleState();
+    });
+  }
+
+  void _startEditTask(ScheduleTask task, int index) {
+    final key = _taskScopedKey(task, index);
+    if (!_isSelectedToday ||
+        _taskDone(task, index) ||
+        _taskSkipped(task, index)) {
+      return;
+    }
+    setState(() {
+      _editingTaskKey = key;
+      _editingTaskTime = _nullableTimeLabel(_effectiveRemindAt(task, index));
+      _editingTaskTitle = _taskDisplayTitleFor(task, index);
+    });
+  }
+
+  void _cancelTaskEdit() {
+    setState(() => _editingTaskKey = null);
+  }
+
+  void _saveTaskEdit(ScheduleTask task, int index) {
+    final key = _taskScopedKey(task, index);
+    final title = _editingTaskTitle.trim();
+    if (title.isEmpty) return;
+
+    final parsedTime = _parseTaskTime(_editingTaskTime.trim());
+    if (parsedTime == null) {
+      setState(() => _feedbackMessage = '请输入 HH:mm 格式的提醒时间');
+      return;
+    }
+
+    setState(() {
+      _editedTaskTitles[key] = title;
+      _delayedTaskReminders[key] = DateTime(
+        _selectedDay.year,
+        _selectedDay.month,
+        _selectedDay.day,
+        parsedTime.$1,
+        parsedTime.$2,
+      );
+      _editingTaskKey = null;
+      _feedbackMessage = '任务已更新';
+      _persistScheduleState();
+    });
+  }
+
+  Future<void> _showRecordEntryDialog(ScheduleTask task, int index) async {
+    final completed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-record-entry-dialog'),
+          title: const Text('记录执行数据'),
+          content: const Text('选择本次执行的记录方式，或先仅标记任务完成。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('吸奶补录'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('喂养记录'),
+            ),
+            FilledButton(
+              key: const ValueKey('schedule-record-complete-only'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('仅标记完成'),
+            ),
+          ],
+        );
+      },
+    );
+    if (completed != true) return;
+    setState(() {
+      _taskDoneOverrides[_taskScopedKey(task, index)] = true;
+      _feedbackMessage = '执行记录已完成';
+      _persistScheduleState();
+    });
+  }
+
+  void _delayTask(ScheduleTask task, int index) {
+    final key = _taskScopedKey(task, index);
+    final remindAt = _effectiveRemindAt(task, index);
+    if (remindAt == null) return;
+    setState(() {
+      _delayedTaskReminders[key] = remindAt.add(const Duration(minutes: 30));
+      _feedbackMessage = '顺延半小时已更新';
+      _persistScheduleState();
+    });
+  }
+
+  void _skipTask(ScheduleTask task, int index) {
+    final key = _taskScopedKey(task, index);
+    setState(() {
+      _skippedTaskKeys.add(key);
+      _taskDoneOverrides[key] = false;
+      if (_editingTaskKey == key) _editingTaskKey = null;
+      _feedbackMessage = '已跳过';
+      _persistScheduleState();
     });
   }
 
@@ -2522,6 +3073,7 @@ class _SchedulePageState extends State<_SchedulePage> {
     return FutureBuilder<ScheduleDayPlan>(
       future: _dayPlanFuture,
       builder: (context, snapshot) {
+        final taskLabel = _isSelectedToday ? '今日任务' : '执行记录';
         final visibleTasks = snapshot.hasData
             ? _visibleTasks(snapshot.data!)
             : const <ScheduleTask>[];
@@ -2529,7 +3081,11 @@ class _SchedulePageState extends State<_SchedulePage> {
         final pendingTaskCount = visibleTasks
             .asMap()
             .entries
-            .where((entry) => !_taskDone(entry.value, entry.key))
+            .where(
+              (entry) =>
+                  !_taskDone(entry.value, entry.key) &&
+                  !_taskSkipped(entry.value, entry.key),
+            )
             .length;
 
         return ListView(
@@ -2540,6 +3096,7 @@ class _SchedulePageState extends State<_SchedulePage> {
               offset: const Offset(0, -8),
               child: _ScheduleDateStrip(
                 key: const ValueKey('schedule-date-strip'),
+                today: _today,
                 selectedDay: _selectedDay,
                 onSelected: _selectDay,
               ),
@@ -2548,16 +3105,15 @@ class _SchedulePageState extends State<_SchedulePage> {
             Transform.translate(
               offset: const Offset(-2, -9),
               child: _ScheduleContextCard(
-                title: '稳奶计划执行中',
+                title: _scheduleContextTitle(),
                 subtitle: '产后第29周（离乳期）',
+                taskLabel: taskLabel,
                 completedCount: taskCount == null
                     ? 0
                     : taskCount - pendingTaskCount,
                 totalCount: taskCount ?? 0,
                 reminderEnabled: _pumpReminderEnabled,
-                onReminderTap: () => setState(
-                  () => _pumpReminderEnabled = !_pumpReminderEnabled,
-                ),
+                onReminderTap: () => unawaited(_handleReminderTap()),
               ),
             ),
             const SizedBox(height: 20),
@@ -2566,10 +3122,11 @@ class _SchedulePageState extends State<_SchedulePage> {
               child: _ScheduleAgentCard(
                 key: const ValueKey('schedule-agent-card'),
                 reminderEnabled: _pumpReminderEnabled,
-                onReminderTap: () => setState(
-                  () => _pumpReminderEnabled = !_pumpReminderEnabled,
+                onReminderTap: () => unawaited(_handleReminderTap()),
+                onConversationTap: () => context.go(
+                  '/',
+                  extra: const {'agentPrefill': '我想调整今天的吸乳排期'},
                 ),
-                onConversationTap: () => context.go('/'),
               ),
             ),
             const SizedBox(height: 20),
@@ -2578,45 +3135,42 @@ class _SchedulePageState extends State<_SchedulePage> {
               child: _ScheduleNextTaskCard(
                 subtitle: _nextTaskSubtitle(visibleTasks),
                 task: _nextPendingTask(visibleTasks),
+                taskTitle: _nextPendingTaskTitle(visibleTasks),
+                taskRemindAt: _nextPendingTaskRemindAt(visibleTasks),
+                emptyTitle: _scheduleEmptyHeroTitle(),
+                emptyDescription: _scheduleEmptyHeroDescription(),
                 onComplete: () {
                   final next = _nextPendingTask(visibleTasks);
                   if (next == null) return;
                   final index = visibleTasks.indexOf(next);
-                  _toggleTask(next, index, true);
+                  unawaited(_showRecordEntryDialog(next, index));
+                },
+                onDelay: () {
+                  final next = _nextPendingTask(visibleTasks);
+                  if (next == null) return;
+                  final index = visibleTasks.indexOf(next);
+                  _delayTask(next, index);
+                },
+                onSkip: () {
+                  final next = _nextPendingTask(visibleTasks);
+                  if (next == null) return;
+                  final index = visibleTasks.indexOf(next);
+                  _skipTask(next, index);
                 },
               ),
             ),
             const SizedBox(height: 30),
-            _ScheduleListToolbar(onAdd: _addLocalTask),
-            ..._dayPlanChildren(snapshot),
-            const SizedBox(height: 18),
-            const _SectionTitle('提醒'),
-            _ActionTile(
-              icon: Icons.alarm_on_rounded,
-              title: '泵奶提醒',
-              subtitle: '需要 Android 通知权限和精确闹钟能力。',
-              accent: widget.accent,
-              trailing: Switch(
-                value: _pumpReminderEnabled,
-                onChanged: (value) =>
-                    setState(() => _pumpReminderEnabled = value),
-              ),
+            _ScheduleListToolbar(
+              taskLabel: taskLabel,
+              adjustmentQueued: _scheduleAdjustmentQueued,
+              onAdjust: () => unawaited(_showScheduleAdjustmentDialog()),
+              onAdd: () => unawaited(_showAddTaskDialog()),
             ),
-            _ActionTile(
-              icon: Icons.summarize_outlined,
-              title: '每日摘要',
-              subtitle: '跨天时汇总计划、记录和 Agent 建议。',
-              accent: const Color(0xff43827b),
-              trailing: Switch(
-                value: _dailySummaryEnabled,
-                onChanged: (value) =>
-                    setState(() => _dailySummaryEnabled = value),
-              ),
-            ),
-            if (_scheduleSyncNotice(snapshot) case final syncNotice?) ...[
-              const SizedBox(height: 18),
-              syncNotice,
+            if (_feedbackMessage != null) ...[
+              _ScheduleFeedbackBanner(message: _feedbackMessage!),
+              const SizedBox(height: 8),
             ],
+            ..._dayPlanChildren(snapshot),
           ],
         );
       },
@@ -2625,72 +3179,92 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   List<Widget> _dayPlanChildren(AsyncSnapshot<ScheduleDayPlan> snapshot) {
     if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return const [_ScheduleEmptyTaskNotice()];
+      return [
+        const _ScheduleEmptyTaskNotice(),
+        _ScheduleQuickActions(onAction: _addQuickActionTask),
+      ];
     }
 
     if (snapshot.hasError) {
-      return const [_ScheduleEmptyTaskNotice()];
+      return [
+        const _ScheduleEmptyTaskNotice(),
+        _ScheduleQuickActions(onAction: _addQuickActionTask),
+      ];
     }
 
     final plan = snapshot.data;
     final tasks = plan == null ? const <ScheduleTask>[] : _visibleTasks(plan);
     if (tasks.isEmpty) {
-      return const [_ScheduleEmptyTaskNotice()];
+      return [
+        const _ScheduleEmptyTaskNotice(),
+        _ScheduleQuickActions(onAction: _addQuickActionTask),
+      ];
     }
 
     return [
       for (final entry in tasks.asMap().entries)
         _ScheduleTaskRow(
-          title: _textOr(entry.value.title, '未命名计划'),
-          subtitle: _taskSubtitle(entry.value),
-          timeLabel: _nullableTimeLabel(entry.value.remindAt),
+          title: _taskListTitleFor(entry.value, entry.key),
+          subtitle: _taskSubtitleFor(entry.value, entry.key),
+          timeLabel: _nullableTimeLabel(
+            _effectiveRemindAt(entry.value, entry.key),
+          ),
           completed: _taskDone(entry.value, entry.key),
+          skipped: _taskSkipped(entry.value, entry.key),
+          editing: _editingTaskKey == _taskScopedKey(entry.value, entry.key),
+          editTime: _editingTaskTime,
+          editTitle: _editingTaskTitle,
           accent: _taskAccent(entry.key),
-          onTap: () => _toggleTask(entry.value, entry.key, null),
+          onTap: () => _startEditTask(entry.value, entry.key),
           onDelete: () => _deleteTask(entry.value, entry.key),
           onChanged: (value) => _toggleTask(entry.value, entry.key, value),
+          onEditTimeChanged: (value) => _editingTaskTime = value,
+          onEditTitleChanged: (value) => _editingTaskTitle = value,
+          onSaveEdit: () => _saveTaskEdit(entry.value, entry.key),
+          onCancelEdit: _cancelTaskEdit,
         ),
     ];
-  }
-
-  Widget? _scheduleSyncNotice(AsyncSnapshot<ScheduleDayPlan> snapshot) {
-    if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return _ActionTile(
-        icon: Icons.sync_rounded,
-        title: '正在同步计划',
-        subtitle: '正在读取当天任务和提醒。',
-        accent: widget.accent,
-        trailing: const SizedBox.square(
-          dimension: 22,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-      );
-    }
-
-    if (snapshot.hasError) {
-      return _ActionTile(
-        icon: Icons.cloud_off_outlined,
-        title: '计划同步失败',
-        subtitle: '检查后端连接或 token 后重试。',
-        accent: widget.accent,
-        trailing: IconButton(
-          tooltip: '重试',
-          onPressed: _reloadDayPlan,
-          icon: const Icon(Icons.refresh_rounded),
-        ),
-      );
-    }
-
-    return null;
   }
 
   bool _taskDone(ScheduleTask task, int index) {
     return _taskDoneOverrides[_taskScopedKey(task, index)] ?? task.completed;
   }
 
+  bool _taskSkipped(ScheduleTask task, int index) {
+    return _skippedTaskKeys.contains(_taskScopedKey(task, index));
+  }
+
+  DateTime? _effectiveRemindAt(ScheduleTask task, int index) {
+    return _delayedTaskReminders[_taskScopedKey(task, index)] ?? task.remindAt;
+  }
+
+  String _taskDisplayTitleFor(ScheduleTask task, int index) {
+    return _textOr(
+      _editedTaskTitles[_taskScopedKey(task, index)] ?? _taskDisplayTitle(task),
+      '未命名计划',
+    );
+  }
+
+  String _taskListTitleFor(ScheduleTask task, int index) {
+    return _textOr(
+      _editedTaskTitles[_taskScopedKey(task, index)] ?? task.title,
+      '未命名计划',
+    );
+  }
+
+  String _taskSubtitleFor(ScheduleTask task, int index) {
+    return _taskSubtitleWithReminder(_effectiveRemindAt(task, index));
+  }
+
   List<ScheduleTask> _visibleTasks(ScheduleDayPlan plan) {
     final dayKey = _dayKey(_selectedDay);
-    final tasks = [...plan.tasks, ...?_localTasksByDay[dayKey]];
+    final remoteTasks = plan.tasks.where((task) {
+      final remindAt = task.remindAt;
+      return remindAt == null ||
+          _sameDay(remindAt, _selectedDay) ||
+          (_isSelectedToday && remindAt.isAfter(_selectedDay));
+    });
+    final tasks = [...remoteTasks, ...?_localTasksByDay[dayKey]];
     return tasks
         .asMap()
         .entries
@@ -2705,15 +3279,33 @@ class _SchedulePageState extends State<_SchedulePage> {
 
   ScheduleTask? _nextPendingTask(List<ScheduleTask> tasks) {
     final pending =
-        tasks
-            .asMap()
-            .entries
-            .where((entry) => !_taskDone(entry.value, entry.key))
-            .map((entry) => entry.value)
-            .where((task) => task.remindAt != null)
-            .toList()
-          ..sort((a, b) => a.remindAt!.compareTo(b.remindAt!));
-    return pending.isEmpty ? null : pending.first;
+        tasks.asMap().entries.where((entry) {
+          return !_taskDone(entry.value, entry.key) &&
+              !_taskSkipped(entry.value, entry.key) &&
+              _effectiveRemindAt(entry.value, entry.key) != null;
+        }).toList()..sort(
+          (a, b) => _effectiveRemindAt(
+            a.value,
+            a.key,
+          )!.compareTo(_effectiveRemindAt(b.value, b.key)!),
+        );
+    return pending.isEmpty ? null : pending.first.value;
+  }
+
+  DateTime? _nextPendingTaskRemindAt(List<ScheduleTask> tasks) {
+    final task = _nextPendingTask(tasks);
+    if (task == null) return null;
+    final index = tasks.indexOf(task);
+    if (index < 0) return task.remindAt;
+    return _effectiveRemindAt(task, index);
+  }
+
+  String? _nextPendingTaskTitle(List<ScheduleTask> tasks) {
+    final task = _nextPendingTask(tasks);
+    if (task == null) return null;
+    final index = tasks.indexOf(task);
+    if (index < 0) return _taskDisplayTitle(task);
+    return _taskDisplayTitleFor(task, index);
   }
 
   String _nextTaskSubtitle(List<ScheduleTask> tasks) {
@@ -2721,21 +3313,35 @@ class _SchedulePageState extends State<_SchedulePage> {
     final now = runtime?.now().toUtc() ?? DateTime.now().toUtc();
     final task = _nextPendingTask(tasks);
     if (task == null) return '没有待提醒任务。';
+    final index = tasks.indexOf(task);
+    final remindAt = _effectiveRemindAt(task, index);
+    if (remindAt == null) return '没有待提醒任务。';
+    final title = _textOr(_taskDisplayTitleFor(task, index), '下一项');
 
-    final minutes = task.remindAt!.toUtc().difference(now).inMinutes;
-    if (minutes <= 0) return '${_textOr(task.title, '下一项')} 已到提醒时间。';
+    final minutes = remindAt.toUtc().difference(now).inMinutes;
+    if (minutes <= 0) return '$title 已到提醒时间。';
     const minutesPerHour = 60;
     const minutesPerDay = 24 * minutesPerHour;
     final days = minutes ~/ minutesPerDay;
     final hours = (minutes % minutesPerDay) ~/ minutesPerHour;
     final remainingMinutes = minutes % minutesPerHour;
     if (days > 0) {
-      return '${_textOr(task.title, '下一项')} 还有 $days 天 $hours 小时。';
+      return '$title 还有 $days 天 $hours 小时。';
     }
     if (hours > 0) {
-      return '${_textOr(task.title, '下一项')} 还有 $hours 小时 $remainingMinutes 分钟。';
+      return '$title 还有 $hours 小时 $remainingMinutes 分钟。';
     }
-    return '${_textOr(task.title, '下一项')} 还有 $remainingMinutes 分钟。';
+    return '$title 还有 $remainingMinutes 分钟。';
+  }
+
+  (int, int)? _parseTaskTime(String value) {
+    final match = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(value);
+    if (match == null) return null;
+    final hour = int.tryParse(match.group(1)!);
+    final minute = int.tryParse(match.group(2)!);
+    if (hour == null || minute == null) return null;
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+    return (hour, minute);
   }
 
   String _taskScopedKey(ScheduleTask task, int index) {
@@ -2745,15 +3351,39 @@ class _SchedulePageState extends State<_SchedulePage> {
   String _taskKey(ScheduleTask task, int index) {
     return task.id.isEmpty ? 'task-$index' : task.id;
   }
+
+  String _scheduleContextTitle() {
+    if (_isSelectedToday) return '稳奶计划执行中';
+    if (_isSelectedFuture) {
+      return '${_selectedDay.month}月${_selectedDay.day}日 稳奶计划';
+    }
+    return '稳奶计划';
+  }
+
+  String _scheduleEmptyHeroTitle() {
+    if (_isSelectedToday) return '今天还没有计划任务';
+    if (_isSelectedPast) return '这天没有计划任务';
+    return '未来的计划';
+  }
+
+  String _scheduleEmptyHeroDescription() {
+    if (_isSelectedToday) {
+      return '可以先从对话里生成计划并同步到日历，或手动添加任务。';
+    }
+    if (_isSelectedPast) return '没有看到当天的计划任务。';
+    return '系统会在生成计划后同步当天的吸乳和喂养日程。';
+  }
 }
 
 class _ScheduleDateStrip extends StatelessWidget {
   const _ScheduleDateStrip({
     super.key,
+    required this.today,
     required this.selectedDay,
     required this.onSelected,
   });
 
+  final DateTime today;
   final DateTime selectedDay;
   final ValueChanged<DateTime> onSelected;
 
@@ -2764,6 +3394,8 @@ class _ScheduleDateStrip extends StatelessWidget {
       selectedDay.month,
       selectedDay.day,
     );
+    final todayDate = _dateOnly(today);
+    final showBackToToday = !_sameDay(selectedDate, todayDate);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2792,6 +3424,7 @@ class _ScheduleDateStrip extends StatelessWidget {
           child: Row(
             children: [
               _ScheduleWeekButton(
+                key: const ValueKey('schedule-week-prev-button'),
                 icon: Icons.chevron_left_rounded,
                 onTap: () =>
                     onSelected(selectedDate.subtract(const Duration(days: 7))),
@@ -2801,25 +3434,25 @@ class _ScheduleDateStrip extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     for (var offset = -3; offset <= 3; offset += 1)
-                      _DatePill(
-                        day: offset == 0
-                            ? '今'
-                            : _weekdayLabel(
-                                selectedDate.add(Duration(days: offset)),
-                              ),
-                        date: selectedDate
-                            .add(Duration(days: offset))
-                            .day
-                            .toString(),
-                        selected: offset == 0,
-                        onTap: () => onSelected(
-                          selectedDate.add(Duration(days: offset)),
-                        ),
+                      Builder(
+                        builder: (context) {
+                          final date = selectedDate.add(Duration(days: offset));
+                          return _DatePill(
+                            key: ValueKey('schedule-date-${_dayKey(date)}'),
+                            day: _sameDay(date, todayDate)
+                                ? '今'
+                                : _weekdayLabel(date),
+                            date: date.day.toString(),
+                            selected: _sameDay(date, selectedDate),
+                            onTap: () => onSelected(date),
+                          );
+                        },
                       ),
                   ],
                 ),
               ),
               _ScheduleWeekButton(
+                key: const ValueKey('schedule-week-next-button'),
                 icon: Icons.chevron_right_rounded,
                 onTap: () =>
                     onSelected(selectedDate.add(const Duration(days: 7))),
@@ -2827,6 +3460,24 @@ class _ScheduleDateStrip extends StatelessWidget {
             ],
           ),
         ),
+        if (showBackToToday) ...[
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton.tonal(
+              key: const ValueKey('schedule-back-to-today-button'),
+              onPressed: () => onSelected(todayDate),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(0, 32),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                backgroundColor: MomCozyColors.roseSoft,
+                foregroundColor: MomCozyColors.primary,
+              ),
+              child: const Text('今天'),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -2853,8 +3504,78 @@ class _ScheduleEmptyTaskNotice extends StatelessWidget {
   }
 }
 
+class _ScheduleQuickActions extends StatelessWidget {
+  const _ScheduleQuickActions({required this.onAction});
+
+  final ValueChanged<String> onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      key: const ValueKey('schedule-empty-quick-actions'),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 14, bottom: 22),
+        child: Row(
+          children: [
+            Expanded(
+              child: _ScheduleQuickActionButton(
+                label: '吸奶补录',
+                onPressed: () => onAction('吸奶补录'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _ScheduleQuickActionButton(
+                label: '喂养记录',
+                onPressed: () => onAction('喂养记录'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ScheduleQuickActionButton extends StatelessWidget {
+  const _ScheduleQuickActionButton({
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 40,
+      child: FilledButton.tonalIcon(
+        onPressed: onPressed,
+        icon: const Icon(Icons.add_rounded, size: 16),
+        label: Text(label),
+        style: FilledButton.styleFrom(
+          backgroundColor: MomCozyColors.raised,
+          foregroundColor: MomCozyColors.foreground,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          textStyle: Theme.of(
+            context,
+          ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900),
+        ),
+      ),
+    );
+  }
+}
+
 class _ScheduleWeekButton extends StatelessWidget {
-  const _ScheduleWeekButton({required this.icon, required this.onTap});
+  const _ScheduleWeekButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
@@ -3015,6 +3736,7 @@ class _ScheduleContextCard extends StatelessWidget {
   const _ScheduleContextCard({
     required this.title,
     required this.subtitle,
+    required this.taskLabel,
     required this.completedCount,
     required this.totalCount,
     required this.reminderEnabled,
@@ -3023,6 +3745,7 @@ class _ScheduleContextCard extends StatelessWidget {
 
   final String title;
   final String subtitle;
+  final String taskLabel;
   final int completedCount;
   final int totalCount;
   final bool reminderEnabled;
@@ -3098,6 +3821,16 @@ class _ScheduleContextCard extends StatelessWidget {
                         height: 1.28,
                       ),
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      reminderEnabled ? '提醒已开启' : '提醒已关闭',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: reminderEnabled
+                            ? MomCozyColors.primary
+                            : MomCozyColors.mutedForeground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -3105,7 +3838,7 @@ class _ScheduleContextCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '今日任务',
+                    taskLabel,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: MomCozyColors.foreground.withValues(alpha: 0.72),
                       fontWeight: FontWeight.w900,
@@ -3145,12 +3878,24 @@ class _ScheduleNextTaskCard extends StatelessWidget {
   const _ScheduleNextTaskCard({
     required this.subtitle,
     required this.task,
+    required this.taskTitle,
+    required this.taskRemindAt,
+    required this.emptyTitle,
+    required this.emptyDescription,
     required this.onComplete,
+    required this.onDelay,
+    required this.onSkip,
   });
 
   final String subtitle;
   final ScheduleTask? task;
+  final String? taskTitle;
+  final DateTime? taskRemindAt;
+  final String emptyTitle;
+  final String emptyDescription;
   final VoidCallback onComplete;
+  final VoidCallback onDelay;
+  final VoidCallback onSkip;
 
   @override
   Widget build(BuildContext context) {
@@ -3184,7 +3929,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              '今天还没有计划任务',
+              emptyTitle,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: MomCozyColors.foreground,
                 fontWeight: FontWeight.w900,
@@ -3192,7 +3937,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
             ),
             const SizedBox(height: 7),
             Text(
-              '可以先从对话里生成计划并同步到日历，或手动添加任务。',
+              emptyDescription,
               maxLines: 2,
               overflow: TextOverflow.visible,
               textAlign: TextAlign.center,
@@ -3242,7 +3987,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _nullableTimeLabel(task.remindAt),
+                      _nullableTimeLabel(taskRemindAt),
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(
                             color: MomCozyColors.foreground,
@@ -3251,7 +3996,7 @@ class _ScheduleNextTaskCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      _textOr(task.title, subtitle),
+                      _textOr(taskTitle, subtitle),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -3291,10 +4036,35 @@ class _ScheduleNextTaskCard extends StatelessWidget {
           ),
           if (hasTask) ...[
             const SizedBox(height: 14),
-            FilledButton.icon(
-              onPressed: onComplete,
-              icon: const Icon(Icons.check_rounded, size: 17),
-              label: const Text('手动完成'),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                key: const ValueKey('schedule-next-complete-button'),
+                onPressed: onComplete,
+                icon: const Icon(Icons.check_rounded, size: 17),
+                label: const Text('手动完成并记录数据'),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    key: const ValueKey('schedule-next-delay-button'),
+                    onPressed: onDelay,
+                    icon: const Icon(Icons.schedule_rounded, size: 16),
+                    label: const Text('顺延半小时'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    key: const ValueKey('schedule-next-skip-button'),
+                    onPressed: onSkip,
+                    child: const Text('跳过这次任务'),
+                  ),
+                ),
+              ],
             ),
           ],
         ],
@@ -3304,9 +4074,36 @@ class _ScheduleNextTaskCard extends StatelessWidget {
 }
 
 class _ScheduleListToolbar extends StatelessWidget {
-  const _ScheduleListToolbar({required this.onAdd});
+  const _ScheduleListToolbar({
+    required this.taskLabel,
+    required this.adjustmentQueued,
+    required this.onAdjust,
+    required this.onAdd,
+  });
 
+  final String taskLabel;
+  final bool adjustmentQueued;
+  final VoidCallback onAdjust;
   final VoidCallback onAdd;
+
+  void _showTaskExplanation(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('schedule-task-explanation-dialog'),
+          title: const Text('今日任务说明'),
+          content: const Text('今天的计划任务会同步 Agent 建议、提醒和手动添加内容。完成或删除后，计数会即时更新。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('知道了'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -3322,7 +4119,7 @@ class _ScheduleListToolbar extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      '今日任务',
+                      taskLabel,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: MomCozyColors.foreground,
                         fontWeight: FontWeight.w900,
@@ -3331,20 +4128,28 @@ class _ScheduleListToolbar extends StatelessWidget {
                     const SizedBox(width: 6),
                     Tooltip(
                       message: '今日任务说明',
-                      child: Container(
-                        width: 18,
-                        height: 18,
-                        decoration: BoxDecoration(
-                          color: MomCozyColors.raised.withValues(alpha: 0.72),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: MomCozyColors.border.withValues(alpha: 0.6),
+                      child: InkWell(
+                        key: const ValueKey('schedule-task-help-button'),
+                        customBorder: const CircleBorder(),
+                        onTap: () => _showTaskExplanation(context),
+                        child: Container(
+                          width: 22,
+                          height: 22,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: MomCozyColors.raised.withValues(alpha: 0.72),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: MomCozyColors.border.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
                           ),
-                        ),
-                        child: const Icon(
-                          Icons.question_mark_rounded,
-                          size: 12,
-                          color: MomCozyColors.mutedForeground,
+                          child: const Icon(
+                            Icons.question_mark_rounded,
+                            size: 12,
+                            color: MomCozyColors.mutedForeground,
+                          ),
                         ),
                       ),
                     ),
@@ -3355,14 +4160,17 @@ class _ScheduleListToolbar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _ScheduleToolbarIconButton(
+                    buttonKey: const ValueKey('schedule-adjust-button'),
                     tooltip: '调整日程',
-                    icon: Icons.image_outlined,
-                    label: '调整日程',
-                    onPressed: () {},
+                    icon: adjustmentQueued
+                        ? Icons.check_circle_outline_rounded
+                        : Icons.image_outlined,
+                    label: adjustmentQueued ? '已提交' : '调整日程',
+                    onPressed: adjustmentQueued ? null : onAdjust,
                   ),
                   const SizedBox(width: 8),
                   _ScheduleToolbarIconButton(
-                    key: const ValueKey('schedule-add-task-button'),
+                    buttonKey: const ValueKey('schedule-add-task-button'),
                     tooltip: '添加任务',
                     icon: Icons.add_rounded,
                     label: '添加任务',
@@ -3381,22 +4189,25 @@ class _ScheduleListToolbar extends StatelessWidget {
 class _ScheduleToolbarIconButton extends StatelessWidget {
   const _ScheduleToolbarIconButton({
     super.key,
+    this.buttonKey,
     required this.tooltip,
     required this.icon,
     required this.label,
     required this.onPressed,
   });
 
+  final Key? buttonKey;
   final String tooltip;
   final IconData icon;
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
       child: OutlinedButton.icon(
+        key: buttonKey,
         onPressed: onPressed,
         icon: Icon(icon, size: 14),
         label: Text(label),
@@ -3419,26 +4230,82 @@ class _ScheduleToolbarIconButton extends StatelessWidget {
   }
 }
 
+class _ScheduleFeedbackBanner extends StatelessWidget {
+  const _ScheduleFeedbackBanner({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: MomCozyDecorations.card(
+        color: MomCozyColors.roseSoft.withValues(alpha: 0.48),
+        borderColor: MomCozyColors.primary.withValues(alpha: 0.18),
+        radius: 14,
+        shadows: const [],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.check_circle_outline_rounded,
+              size: 18,
+              color: MomCozyColors.primary,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                message,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ScheduleTaskRow extends StatelessWidget {
   const _ScheduleTaskRow({
     required this.title,
     required this.subtitle,
     required this.timeLabel,
     required this.completed,
+    required this.skipped,
+    required this.editing,
+    required this.editTime,
+    required this.editTitle,
     required this.accent,
     required this.onTap,
     required this.onDelete,
     required this.onChanged,
+    required this.onEditTimeChanged,
+    required this.onEditTitleChanged,
+    required this.onSaveEdit,
+    required this.onCancelEdit,
   });
 
   final String title;
   final String subtitle;
   final String timeLabel;
   final bool completed;
+  final bool skipped;
+  final bool editing;
+  final String editTime;
+  final String editTitle;
   final Color accent;
   final VoidCallback onTap;
   final VoidCallback onDelete;
   final ValueChanged<bool?> onChanged;
+  final ValueChanged<String> onEditTimeChanged;
+  final ValueChanged<String> onEditTitleChanged;
+  final VoidCallback onSaveEdit;
+  final VoidCallback onCancelEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -3460,68 +4327,165 @@ class _ScheduleTaskRow extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
-            onTap: onTap,
+            onTap: editing ? null : onTap,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 48,
-                    child: Text(
-                      timeLabel,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: accent,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(
-                                color: MomCozyColors.foreground,
-                                fontWeight: FontWeight.w900,
-                              ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: MomCozyColors.mutedForeground,
-                                fontWeight: FontWeight.w700,
-                                height: 1.22,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: '删除任务',
-                    onPressed: onDelete,
-                    icon: const Icon(Icons.delete_outline_rounded),
-                  ),
-                  Checkbox(value: completed, onChanged: onChanged),
-                ],
-              ),
+              child: editing
+                  ? _buildEditBody(context)
+                  : _buildReadBody(context),
             ),
           ),
         ),
       ),
     );
   }
+
+  Widget _buildReadBody(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 48,
+          child: Text(
+            timeLabel,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: accent,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: skipped
+                      ? MomCozyColors.mutedForeground
+                      : MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                  decoration: skipped ? TextDecoration.lineThrough : null,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: MomCozyColors.mutedForeground,
+                  fontWeight: FontWeight.w700,
+                  height: 1.22,
+                ),
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          tooltip: '删除任务',
+          onPressed: onDelete,
+          icon: const Icon(Icons.delete_outline_rounded),
+        ),
+        if (skipped)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: MomCozyColors.secondary.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              '已跳过',
+              style: TextStyle(
+                color: MomCozyColors.mutedForeground,
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          )
+        else
+          Checkbox(value: completed, onChanged: onChanged),
+      ],
+    );
+  }
+
+  Widget _buildEditBody(BuildContext context) {
+    final inputStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+      color: MomCozyColors.foreground,
+      fontWeight: FontWeight.w800,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '编辑任务',
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: MomCozyColors.primary,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            SizedBox(
+              width: 74,
+              child: TextFormField(
+                key: const ValueKey('schedule-task-edit-time-input'),
+                initialValue: editTime,
+                onChanged: onEditTimeChanged,
+                keyboardType: TextInputType.datetime,
+                textInputAction: TextInputAction.next,
+                style: inputStyle,
+                decoration: const InputDecoration(
+                  isDense: true,
+                  labelText: '时间',
+                  hintText: '14:00',
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextFormField(
+                key: const ValueKey('schedule-task-edit-title-input'),
+                initialValue: editTitle,
+                onChanged: onEditTitleChanged,
+                textInputAction: TextInputAction.done,
+                maxLines: 1,
+                style: inputStyle,
+                decoration: const InputDecoration(
+                  isDense: true,
+                  labelText: '任务',
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            TextButton(
+              key: const ValueKey('schedule-task-edit-cancel-button'),
+              onPressed: onCancelEdit,
+              child: const Text('取消'),
+            ),
+            const Spacer(),
+            FilledButton(
+              key: const ValueKey('schedule-task-edit-save-button'),
+              onPressed: onSaveEdit,
+              child: const Text('保存'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }
 
 class _DatePill extends StatelessWidget {
   const _DatePill({
+    super.key,
     required this.day,
     required this.date,
     required this.selected,
@@ -3591,10 +4555,27 @@ class _DatePill extends StatelessWidget {
   }
 }
 
-String _taskSubtitle(ScheduleTask task) {
-  final remindAt = task.remindAt;
+String _taskSubtitleWithReminder(DateTime? remindAt) {
   if (remindAt == null) return '暂无提醒时间，可稍后补充。';
   return '提醒 ${_timeLabel(remindAt)} · 可从通知直接进入相关页面。';
+}
+
+String _taskDisplayTitle(ScheduleTask task) {
+  final title = task.title.trim();
+  final withoutTime = title.replaceFirst(RegExp(r'^\d{1,2}:\d{2}\s+'), '');
+  return withoutTime.trim().isEmpty ? title : withoutTime.trim();
+}
+
+DateTime _dateOnly(DateTime value) {
+  return DateTime(value.year, value.month, value.day);
+}
+
+bool _sameDay(DateTime first, DateTime second) {
+  final left = _dateOnly(first);
+  final right = _dateOnly(second);
+  return left.year == right.year &&
+      left.month == right.month &&
+      left.day == right.day;
 }
 
 Color _taskAccent(int index) {
@@ -7098,1598 +8079,9 @@ class _CalibrationSideTile extends StatelessWidget {
   }
 }
 
-class _RecordsPage extends StatefulWidget {
-  const _RecordsPage({
-    required this.path,
-    required this.title,
-    required this.summary,
-    required this.icon,
-    required this.accent,
-  });
-
-  final String path;
-  final String title;
-  final String summary;
-  final IconData icon;
-  final Color accent;
-
-  @override
-  State<_RecordsPage> createState() => _RecordsPageState();
-}
-
-class _RecordsPageState extends State<_RecordsPage> {
-  String _filter = 'pump';
-  String _volumeUnit = 'mL';
-  final List<PumpMilkRecord> _localPumpRecords = [];
-  final Map<String, PumpMilkRecord> _editedPumpRecords = {};
-  final Set<String> _deletedPumpRecordIds = {};
-  int _localPumpRecordSequence = 0;
-  MomCozyApiRuntime? _runtime;
-  late DateTime _recordsDay;
-  late Future<_RecordsOverview> _recordsFuture;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final runtime = MomCozyRuntimeScope.of(context);
-    if (!identical(runtime, _runtime)) {
-      _runtime = runtime;
-      _recordsDay = runtime.now();
-      _recordsFuture = _fetchRecords(runtime);
-    }
-  }
-
-  Future<_RecordsOverview> _fetchRecords(MomCozyApiRuntime runtime) async {
-    final repository = runtime.recordsRepository;
-    final pump = await repository.fetchPumpMilkRecords(date: _recordsDay);
-    final feeding = await repository.fetchFeedingRecords(date: _recordsDay);
-    final growth = await repository.fetchGrowthRecords(babyId: runtime.babyId);
-    return _RecordsOverview(pump: pump, feeding: feeding, growth: growth);
-  }
-
-  void _reloadRecords() {
-    final runtime = _runtime;
-    if (runtime == null) return;
-    setState(() {
-      _recordsFuture = _fetchRecords(runtime);
-    });
-  }
-
-  void _shiftRecordsMonth(int delta) {
-    final runtime = _runtime;
-    if (runtime == null) return;
-    setState(() {
-      _recordsDay = DateTime.utc(
-        _recordsDay.year,
-        _recordsDay.month + delta,
-        _recordsDay.day,
-      );
-      _recordsFuture = _fetchRecords(runtime);
-    });
-  }
-
-  void _toggleVolumeUnit() {
-    setState(() {
-      _volumeUnit = _volumeUnit == 'mL' ? 'oz' : 'mL';
-    });
-  }
-
-  void _addManualPumpRecord() {
-    _localPumpRecordSequence += 1;
-    final occurredAt = DateTime.utc(
-      _recordsDay.year,
-      _recordsDay.month,
-      _recordsDay.day,
-      21,
-      45,
-    );
-    final record = PumpMilkRecord(
-      id: 'local-pump-$_localPumpRecordSequence',
-      title: '手动补录 $_localPumpRecordSequence',
-      pumpSource: 9,
-      amountMl: 90,
-      occurredAt: occurredAt,
-    );
-    setState(() {
-      _filter = 'pump';
-      _localPumpRecords.insert(0, record);
-    });
-  }
-
-  void _editPumpRecord(PumpMilkRecord record) {
-    final edited = PumpMilkRecord(
-      id: record.id,
-      title: '已编辑 ${_textOr(record.title, '泵奶记录')}',
-      pumpType: record.pumpType,
-      pumpSource: record.pumpSource,
-      amountMl: (record.amountMl ?? 0) + 10,
-      occurredAt: record.occurredAt,
-    );
-    setState(() {
-      _editedPumpRecords[record.id] = edited;
-    });
-  }
-
-  void _deletePumpRecord(PumpMilkRecord record) {
-    setState(() {
-      _deletedPumpRecordIds.add(record.id);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<_RecordsOverview>(
-      future: _recordsFuture,
-      builder: (context, snapshot) {
-        final overview = snapshot.data == null
-            ? null
-            : _applyLocalRecordEdits(snapshot.data!);
-
-        return ListView(
-          key: ValueKey('route-page-${widget.path}'),
-          padding: const EdgeInsets.fromLTRB(16, 18, 16, 96),
-          children: [
-            Transform.translate(
-              offset: const Offset(5, 10),
-              child: _RecordsMonthHeader(
-                key: const ValueKey('records-month-header'),
-                monthLabel: '${_recordsDay.year}年${_recordsDay.month}月',
-                onPrevious: () => _shiftRecordsMonth(-1),
-                onNext: () => _shiftRecordsMonth(1),
-              ),
-            ),
-            const SizedBox(height: 14),
-            ..._recordsDashboardChildren(snapshot, overview),
-            if (overview != null && !snapshot.hasError) ...[
-              const SizedBox(height: 8),
-              Transform.translate(
-                offset: const Offset(-1, 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _RecordsListToolbar(onAdd: _addManualPumpRecord),
-                    if (_filter == 'pump') const _RecordsInventoryHeader(),
-                    ..._recordChildren(overview),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              _RecordsBabyLink(onTap: () => setState(() => _filter = 'feed')),
-              const SizedBox(height: 10),
-              _RecordsSecondaryModePicker(
-                selected: _filter,
-                onChanged: (next) => setState(() => _filter = next),
-              ),
-            ],
-          ],
-        );
-      },
-    );
-  }
-
-  List<Widget> _recordsDashboardChildren(
-    AsyncSnapshot<_RecordsOverview> snapshot,
-    _RecordsOverview? visibleOverview,
-  ) {
-    if (snapshot.connectionState != ConnectionState.done && !snapshot.hasData) {
-      return const [
-        _ActionTile(
-          icon: Icons.sync_rounded,
-          title: '正在同步记录',
-          subtitle: '正在读取泵奶、喂养和成长记录。',
-          accent: Color(0xff6b6da8),
-          trailing: SizedBox.square(
-            dimension: 22,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-      ];
-    }
-
-    if (snapshot.hasError) {
-      return [
-        _ActionTile(
-          icon: Icons.cloud_off_outlined,
-          title: '记录同步失败',
-          subtitle: '弱网/离线时保留本地筛选，可点击重试。',
-          accent: widget.accent,
-          trailing: IconButton(
-            tooltip: '重试',
-            onPressed: _reloadRecords,
-            icon: const Icon(Icons.refresh_rounded),
-          ),
-        ),
-      ];
-    }
-
-    final overview = visibleOverview ?? _RecordsOverview.empty;
-    return [
-      Transform.translate(
-        offset: const Offset(1, 1),
-        child: _RecordsDashboardCard(
-          key: const ValueKey('records-dashboard-card'),
-          overview: overview,
-          volumeUnit: _volumeUnit,
-          accent: widget.accent,
-          onToggleUnit: _toggleVolumeUnit,
-        ),
-      ),
-    ];
-  }
-
-  List<Widget> _recordChildren(_RecordsOverview overview) {
-    return switch (_filter) {
-      'feed' => _feedingRecordChildren(overview.feeding),
-      'growth' => _growthRecordChildren(overview.growth),
-      _ => _pumpRecordChildren(overview.pump),
-    };
-  }
-
-  List<Widget> _pumpRecordChildren(List<PumpMilkRecord> records) {
-    if (records.isEmpty) return [_emptyRecordTile('暂无泵奶记录')];
-    return [
-      for (final record in records)
-        _RecordsMilkRow(
-          rowKey: ValueKey('records-pump-row-${record.id}'),
-          deleteKey: ValueKey('records-delete-${record.id}'),
-          amountLabel: _amountLabel(record.amountMl, unit: _volumeUnit),
-          title: _textOr(record.title, '泵奶记录'),
-          subtitle:
-              '来源 ${record.pumpSource ?? '--'}${_crossDaySuffix(record.occurredAt)}',
-          trailingLabel: _recordTimeLabel(record.occurredAt),
-          icon: Icons.local_drink_rounded,
-          accent: const Color(0xffb2773b),
-          badges: [
-            const _RecordsSourceBadge(
-              label: '母乳',
-              icon: Icons.favorite_border_rounded,
-            ),
-            _RecordsSourceBadge(
-              label: record.pumpSource == 9 ? '手动' : '设备',
-              icon: record.pumpSource == 9
-                  ? Icons.edit_outlined
-                  : Icons.phone_android_rounded,
-            ),
-          ],
-          onEdit: record.pumpSource == 9 ? () => _editPumpRecord(record) : null,
-          onDelete: record.pumpSource == 9
-              ? () => _deletePumpRecord(record)
-              : null,
-        ),
-    ];
-  }
-
-  List<Widget> _feedingRecordChildren(List<FeedingRecord> records) {
-    if (records.isEmpty) return [_emptyRecordTile('暂无喂养记录')];
-    return [
-      for (final record in records)
-        _RecordsMilkRow(
-          amountLabel: _amountLabel(record.amountMl, unit: _volumeUnit),
-          title: _textOr(record.type, '喂养'),
-          subtitle: '喂养记录',
-          icon: Icons.child_friendly_rounded,
-          accent: const Color(0xff43827b),
-          badges: const [
-            _RecordsSourceBadge(label: '瓶喂', icon: Icons.local_drink_outlined),
-            _RecordsSourceBadge(label: '同步', icon: Icons.auto_awesome_rounded),
-          ],
-        ),
-    ];
-  }
-
-  List<Widget> _growthRecordChildren(List<GrowthRecord> records) {
-    if (records.isEmpty) return [_emptyRecordTile('暂无成长记录')];
-    return [
-      for (final record in records)
-        _RecordsGrowthRow(
-          dateLabel: _dateLabel(record.measuredAt),
-          weightLabel: _weightLabel(record.weightGram),
-          heightLabel: _heightLabel(record.heightCm),
-        ),
-    ];
-  }
-
-  Widget _emptyRecordTile(String title) {
-    return _ActionTile(
-      icon: Icons.info_outline_rounded,
-      title: title,
-      subtitle: '同步完成后仍没有对应记录。',
-      accent: const Color(0xff7f6a75),
-      trailing: const Icon(Icons.chevron_right_rounded),
-    );
-  }
-
-  _RecordsOverview _applyLocalRecordEdits(_RecordsOverview overview) {
-    final pump = <PumpMilkRecord>[..._localPumpRecords, ...overview.pump]
-        .where((record) => !_deletedPumpRecordIds.contains(record.id))
-        .map((record) => _editedPumpRecords[record.id] ?? record)
-        .toList(growable: false);
-    return _RecordsOverview(
-      pump: pump,
-      feeding: overview.feeding,
-      growth: overview.growth,
-    );
-  }
-
-  String _crossDaySuffix(DateTime? occurredAt) {
-    if (occurredAt == null) return '';
-    final day = DateTime.utc(
-      _recordsDay.year,
-      _recordsDay.month,
-      _recordsDay.day,
-    );
-    final recordDay = DateTime.utc(
-      occurredAt.toUtc().year,
-      occurredAt.toUtc().month,
-      occurredAt.toUtc().day,
-    );
-    return recordDay == day ? '' : ' · 跨天记录';
-  }
-}
-
-class _RecordsOverview {
-  const _RecordsOverview({
-    required this.pump,
-    required this.feeding,
-    required this.growth,
-  });
-
-  static const empty = _RecordsOverview(
-    pump: <PumpMilkRecord>[],
-    feeding: <FeedingRecord>[],
-    growth: <GrowthRecord>[],
-  );
-
-  final List<PumpMilkRecord> pump;
-  final List<FeedingRecord> feeding;
-  final List<GrowthRecord> growth;
-
-  int get pumpTotalMl {
-    return pump.fold<int>(0, (total, record) => total + (record.amountMl ?? 0));
-  }
-
-  int get totalMilkMl {
-    final feedingTotal = feeding.fold<int>(
-      0,
-      (total, record) => total + (record.amountMl ?? 0),
-    );
-    return pumpTotalMl + feedingTotal;
-  }
-
-  int get recordCount => pump.length + feeding.length + growth.length;
-
-  DateTime? get latestAt {
-    final dates = <DateTime>[
-      for (final record in pump)
-        if (record.occurredAt != null) record.occurredAt!,
-      for (final record in feeding)
-        if (record.occurredAt != null) record.occurredAt!,
-      for (final record in growth)
-        if (record.measuredAt != null) record.measuredAt!,
-    ]..sort((a, b) => b.compareTo(a));
-    return dates.isEmpty ? null : dates.first;
-  }
-
-  List<_MilkTrendPoint> get milkTrendPoints {
-    final points = <_MilkTrendPoint>[
-      for (final record in pump)
-        if (record.amountMl != null)
-          _MilkTrendPoint(
-            label: _dateLabel(record.occurredAt),
-            amountMl: record.amountMl!,
-          ),
-      for (final record in feeding)
-        if (record.amountMl != null)
-          _MilkTrendPoint(
-            label: _dateLabel(record.occurredAt),
-            amountMl: record.amountMl!,
-          ),
-    ];
-    return points;
-  }
-}
-
-class _RecordsMonthHeader extends StatelessWidget {
-  const _RecordsMonthHeader({
-    super.key,
-    required this.monthLabel,
-    required this.onPrevious,
-    required this.onNext,
-  });
-
-  final String monthLabel;
-  final VoidCallback onPrevious;
-  final VoidCallback onNext;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const _RecordsTitleMark(),
-            const SizedBox(width: 6),
-            Text(
-              '妈妈点滴',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ],
-        ),
-        const Spacer(),
-        _RecordsMonthButton(
-          tooltip: '上个月',
-          icon: Icons.chevron_left_rounded,
-          onTap: onPrevious,
-        ),
-        Text(
-          monthLabel,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: MomCozyColors.mutedForeground,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        _RecordsMonthButton(
-          tooltip: '下个月',
-          icon: Icons.chevron_right_rounded,
-          onTap: onNext,
-        ),
-      ],
-    );
-  }
-}
-
-class _RecordsTitleMark extends StatelessWidget {
-  const _RecordsTitleMark();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 17,
-      height: 20,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          _RecordsTitleBar(color: const Color(0xff20b96f), height: 14),
-          const SizedBox(width: 2),
-          _RecordsTitleBar(color: MomCozyColors.badge, height: 18),
-          const SizedBox(width: 2),
-          _RecordsTitleBar(color: const Color(0xff2468d8), height: 11),
-        ],
-      ),
-    );
-  }
-}
-
-class _RecordsTitleBar extends StatelessWidget {
-  const _RecordsTitleBar({required this.color, required this.height});
-
-  final Color color;
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 4,
-      height: height,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(1),
-      ),
-    );
-  }
-}
-
-class _RecordsMonthButton extends StatelessWidget {
-  const _RecordsMonthButton({
-    required this.tooltip,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String tooltip;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: IconButton(
-        visualDensity: VisualDensity.compact,
-        constraints: const BoxConstraints.tightFor(width: 30, height: 30),
-        padding: EdgeInsets.zero,
-        onPressed: onTap,
-        icon: Icon(icon, size: 16, color: MomCozyColors.mutedForeground),
-      ),
-    );
-  }
-}
-
-class _RecordsDashboardCard extends StatelessWidget {
-  const _RecordsDashboardCard({
-    super.key,
-    required this.overview,
-    required this.volumeUnit,
-    required this.accent,
-    required this.onToggleUnit,
-  });
-
-  final _RecordsOverview overview;
-  final String volumeUnit;
-  final Color accent;
-  final VoidCallback onToggleUnit;
-
-  @override
-  Widget build(BuildContext context) {
-    final dashboardTotalMl = overview.pump.isEmpty ? 0 : 310;
-    final dashboardTotalValue = volumeUnit == 'oz'
-        ? (dashboardTotalMl / 29.5735).toStringAsFixed(1)
-        : dashboardTotalMl.toString();
-    final dashboardWeeklyAverageMl = overview.pump.isEmpty ? 0 : 280;
-    final dashboardWeeklyAverageValue = volumeUnit == 'oz'
-        ? (dashboardWeeklyAverageMl / 29.5735).toStringAsFixed(1)
-        : dashboardWeeklyAverageMl.toString();
-    final deviceSessions = overview.pump.isEmpty ? 0 : 2;
-    final points = overview.pump.isEmpty
-        ? <_MilkTrendPoint>[]
-        : _recordsLegacyTrendPoints;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: MomCozyDecorations.card(
-        color: MomCozyColors.raised,
-        borderColor: MomCozyColors.border.withValues(alpha: 0.5),
-        radius: 16,
-        shadows: const [],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Transform.translate(
-            offset: const Offset(-5, -5),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.local_florist_rounded,
-                        size: 15,
-                        color: MomCozyColors.primary.withValues(alpha: 0.78),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        '今日吸奶器使用',
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              color: MomCozyColors.mutedForeground,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                _RecordsUnitToggle(unit: volumeUnit, onTap: onToggleUnit),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Transform.translate(
-            offset: const Offset(-1, -4),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _RecordsMiniStat(
-                    icon: Icons.water_drop_outlined,
-                    label: '吸奶器母乳量',
-                    value: dashboardTotalValue,
-                    unitSuffix: volumeUnit,
-                    accent: MomCozyColors.primary,
-                    onTap: onToggleUnit,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _RecordsMiniStat(
-                    icon: Icons.schedule_rounded,
-                    label: '吸奶次数',
-                    value: '$deviceSessions',
-                    unitSuffix: '次',
-                    accent: MomCozyColors.warm,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _RecordsMiniStat(
-                    icon: Icons.trending_up_rounded,
-                    label: '周均日补录奶量',
-                    value: dashboardWeeklyAverageValue,
-                    unitSuffix: volumeUnit,
-                    accent: MomCozyColors.warm,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Transform.translate(
-            offset: const Offset(3, 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Text(
-                        '📈',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          fontSize: 12,
-                          height: 1,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      Flexible(
-                        child: Text(
-                          '过去1周日补录奶量趋势',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                color: MomCozyColors.mutedForeground,
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Text(
-                  points.isEmpty ? '暂无奶量趋势' : '补录奶量 = 吸奶器 + 补录\n波动正常，放轻松就好',
-                  textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: MomCozyColors.mutedForeground.withValues(
-                      alpha: 0.75,
-                    ),
-                    fontStyle: FontStyle.italic,
-                    height: 1.2,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 136,
-            width: double.infinity,
-            child: Transform.translate(
-              offset: const Offset(-4, 1),
-              child: _RecordsTrendChart(points: points, accent: accent),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Transform.translate(
-            offset: const Offset(-16, 6),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 42,
-                      height: 42,
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: MomCozyColors.raised,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: MomCozyColors.primary.withValues(alpha: 0.24),
-                        ),
-                      ),
-                      child: Image.asset(
-                        MomCozyAssets.momcozyLogo,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    const SizedBox(width: 9),
-                    Expanded(
-                      child: Text(
-                        '←问问M.ai呀~',
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              color: MomCozyColors.primary,
-                              fontWeight: FontWeight.w800,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.only(left: 52),
-                  child: Text(
-                    '"最近补录奶量稳步上升，今天也很棒哦～继续保持，你和宝宝都在进步中"',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: MomCozyColors.mutedForeground,
-                      fontStyle: FontStyle.italic,
-                      height: 1.35,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-const _recordsLegacyTrendPoints = [
-  _MilkTrendPoint(label: '03/02', amountMl: 80),
-  _MilkTrendPoint(label: '03/03', amountMl: 240),
-  _MilkTrendPoint(label: '03/04', amountMl: 400),
-  _MilkTrendPoint(label: '03/05', amountMl: 130),
-  _MilkTrendPoint(label: '03/06', amountMl: 430),
-  _MilkTrendPoint(label: '03/07', amountMl: 320),
-  _MilkTrendPoint(label: '03/08', amountMl: 380),
-];
-
-class _RecordsMiniStat extends StatelessWidget {
-  const _RecordsMiniStat({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.accent,
-    this.unitSuffix,
-    this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color accent;
-  final String? unitSuffix;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final unitSuffix = this.unitSuffix;
-    final content = Container(
-      constraints: const BoxConstraints(minHeight: 58),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.07),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 15, color: accent),
-              const SizedBox(width: 4),
-              Flexible(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        value,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: MomCozyColors.foreground,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                    if (unitSuffix != null) ...[
-                      const SizedBox(width: 3),
-                      Text(
-                        unitSuffix,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: MomCozyColors.mutedForeground,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              if (unitSuffix != null) ...[
-                const SizedBox(width: 3),
-                Icon(
-                  Icons.help_outline_rounded,
-                  size: 12,
-                  color: MomCozyColors.mutedForeground.withValues(alpha: 0.8),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 5),
-          Text(
-            label,
-            maxLines: 2,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: MomCozyColors.mutedForeground,
-              fontSize: 9,
-              height: 1.15,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (onTap == null) return content;
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: content,
-      ),
-    );
-  }
-}
-
-class _RecordsUnitToggle extends StatelessWidget {
-  const _RecordsUnitToggle({required this.unit, required this.onTap});
-
-  final String unit;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-      child: InkWell(
-        key: const ValueKey('records-unit-toggle'),
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: MomCozyColors.muted.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.refresh_rounded,
-                size: 12,
-                color: MomCozyColors.mutedForeground,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                unit,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: MomCozyColors.foreground,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 10,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RecordsTrendChart extends StatelessWidget {
-  const _RecordsTrendChart({required this.points, required this.accent});
-
-  final List<_MilkTrendPoint> points;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _RecordsTrendPainter(points: points, accent: accent),
-      child: Align(
-        alignment: Alignment.center,
-        child: points.isEmpty
-            ? Text(
-                '暂无奶量趋势',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: MomCozyColors.mutedForeground,
-                  fontWeight: FontWeight.w800,
-                ),
-              )
-            : const SizedBox.shrink(),
-      ),
-    );
-  }
-}
-
-class _RecordsTrendPainter extends CustomPainter {
-  const _RecordsTrendPainter({required this.points, required this.accent});
-
-  final List<_MilkTrendPoint> points;
-  final Color accent;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final chartRect = Rect.fromLTWH(20, 5, size.width - 72, size.height - 24);
-    final gridPaint = Paint()
-      ..color = MomCozyColors.border.withValues(alpha: 0.28)
-      ..strokeWidth = 1;
-    final dashedPaint = Paint()
-      ..color = MomCozyColors.primary.withValues(alpha: 0.24)
-      ..strokeWidth = 1;
-    canvas.drawRect(
-      chartRect,
-      Paint()
-        ..color = MomCozyColors.primary.withValues(alpha: 0.045)
-        ..style = PaintingStyle.fill,
-    );
-    _drawBand(
-      canvas,
-      chartRect,
-      minAmountMl: 0,
-      maxAmountMl: 100,
-      color: MomCozyColors.warm.withValues(alpha: 0.045),
-    );
-    _drawBand(
-      canvas,
-      chartRect,
-      minAmountMl: 100,
-      maxAmountMl: 750,
-      color: MomCozyColors.primary.withValues(alpha: 0.042),
-    );
-    _drawBand(
-      canvas,
-      chartRect,
-      minAmountMl: 750,
-      maxAmountMl: 1200,
-      color: MomCozyColors.violet.withValues(alpha: 0.048),
-    );
-
-    const tickValues = [1000, 750, 500, 300, 100];
-    for (var index = 0; index <= 4; index += 1) {
-      final y = chartRect.top + chartRect.height * index / 4;
-      canvas.drawLine(
-        Offset(chartRect.left, y),
-        Offset(chartRect.right, y),
-        gridPaint,
-      );
-    }
-
-    for (final tick in tickValues) {
-      final y = _yForAmount(tick, chartRect);
-      if (tick == 100 || tick == 750) {
-        _drawDashedLine(
-          canvas,
-          Offset(chartRect.left, y),
-          Offset(chartRect.right, y),
-          dashedPaint,
-        );
-      }
-      _drawChartText(
-        canvas,
-        '$tick',
-        Offset(0, y - 6),
-        width: 24,
-        color: MomCozyColors.mutedForeground.withValues(alpha: 0.78),
-        fontSize: 8,
-        textAlign: TextAlign.right,
-      );
-    }
-
-    _drawStageLabel(canvas, '供需平衡', 975, chartRect, MomCozyColors.violet);
-    _drawStageLabel(canvas, '建立期', 425, chartRect, MomCozyColors.primary);
-    _drawStageLabel(canvas, '启动期', 50, chartRect, MomCozyColors.warm);
-
-    if (points.isEmpty) return;
-
-    final step = points.length == 1
-        ? chartRect.width
-        : chartRect.width / (points.length - 1);
-    final offsets = <Offset>[
-      for (var index = 0; index < points.length; index += 1)
-        Offset(
-          chartRect.left + step * index,
-          _yForAmount(points[index].amountMl, chartRect),
-        ),
-    ];
-
-    final linePath = Path()..moveTo(offsets.first.dx, offsets.first.dy);
-    for (var index = 1; index < offsets.length; index += 1) {
-      final previous = offsets[index - 1];
-      final point = offsets[index];
-      final control = Offset((previous.dx + point.dx) / 2, previous.dy);
-      linePath.quadraticBezierTo(control.dx, control.dy, point.dx, point.dy);
-    }
-
-    canvas.drawPath(
-      linePath,
-      Paint()
-        ..color = MomCozyColors.primary
-        ..strokeWidth = 2.1
-        ..strokeCap = StrokeCap.round
-        ..strokeJoin = StrokeJoin.round
-        ..style = PaintingStyle.stroke,
-    );
-
-    for (var index = 0; index < points.length; index += 1) {
-      _drawChartText(
-        canvas,
-        points[index].label,
-        Offset(offsets[index].dx - 16, chartRect.bottom + 8),
-        width: 34,
-        color: MomCozyColors.mutedForeground.withValues(alpha: 0.82),
-        fontSize: 8,
-        textAlign: TextAlign.center,
-      );
-    }
-  }
-
-  double _yForAmount(int amountMl, Rect chartRect) {
-    final clamped = amountMl.clamp(0, 1200).toDouble();
-    return chartRect.bottom - chartRect.height * (clamped / 1200);
-  }
-
-  void _drawBand(
-    Canvas canvas,
-    Rect chartRect, {
-    required int minAmountMl,
-    required int maxAmountMl,
-    required Color color,
-  }) {
-    final top = _yForAmount(maxAmountMl, chartRect);
-    final bottom = _yForAmount(minAmountMl, chartRect);
-    canvas.drawRect(
-      Rect.fromLTRB(chartRect.left, top, chartRect.right, bottom),
-      Paint()..color = color,
-    );
-  }
-
-  void _drawStageLabel(
-    Canvas canvas,
-    String label,
-    int amountMl,
-    Rect chartRect,
-    Color color,
-  ) {
-    final y = _yForAmount(amountMl, chartRect);
-    _drawChartText(
-      canvas,
-      label,
-      Offset(chartRect.right + 4, y - 5),
-      width: 42,
-      color: color.withValues(alpha: 0.9),
-      fontSize: 8,
-    );
-  }
-
-  void _drawDashedLine(Canvas canvas, Offset start, Offset end, Paint paint) {
-    const dashWidth = 4.0;
-    const dashGap = 4.0;
-    var x = start.dx;
-    while (x < end.dx) {
-      final next = (x + dashWidth > end.dx) ? end.dx : x + dashWidth;
-      canvas.drawLine(Offset(x, start.dy), Offset(next, end.dy), paint);
-      x += dashWidth + dashGap;
-    }
-  }
-
-  void _drawChartText(
-    Canvas canvas,
-    String text,
-    Offset offset, {
-    required double width,
-    required Color color,
-    required double fontSize,
-    TextAlign textAlign = TextAlign.left,
-  }) {
-    final painter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: FontWeight.w400,
-          fontFamily: MomCozyTypography.fontFamily,
-          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-        ),
-      ),
-      textAlign: textAlign,
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: width);
-    painter.paint(canvas, offset);
-  }
-
-  @override
-  bool shouldRepaint(covariant _RecordsTrendPainter oldDelegate) {
-    return oldDelegate.points != points || oldDelegate.accent != accent;
-  }
-}
-
-class _RecordsListToolbar extends StatelessWidget {
-  const _RecordsListToolbar({required this.onAdd});
-
-  final VoidCallback onAdd;
-
-  @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
-      key: const ValueKey('records-list-toolbar'),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: Transform.translate(
-          offset: const Offset(-4, -4),
-          child: Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.edit_note_rounded,
-                      size: 16,
-                      color: MomCozyColors.primary.withValues(alpha: 0.78),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '今日记录',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              TextButton.icon(
-                key: const ValueKey('records-manual-entry-button'),
-                onPressed: onAdd,
-                style: TextButton.styleFrom(
-                  foregroundColor: MomCozyColors.primary,
-                  minimumSize: const Size(0, 32),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                icon: const Icon(Icons.add_rounded, size: 16),
-                label: const Text('手动记录'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RecordsInventoryHeader extends StatelessWidget {
-  const _RecordsInventoryHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.inventory_2_outlined,
-            size: 17,
-            color: MomCozyColors.primary,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            '可用母乳库存',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: MomCozyColors.primary,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RecordsBabyLink extends StatelessWidget {
-  const _RecordsBabyLink({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onTap,
-      style: TextButton.styleFrom(
-        foregroundColor: MomCozyColors.primary,
-        minimumSize: const Size.fromHeight(36),
-        textStyle: Theme.of(
-          context,
-        ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
-      ),
-      child: const Text('想看看宝宝吗？ >'),
-    );
-  }
-}
-
-class _RecordsSecondaryModePicker extends StatelessWidget {
-  const _RecordsSecondaryModePicker({
-    required this.selected,
-    required this.onChanged,
-  });
-
-  final String selected;
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    const items = [('pump', '泵奶'), ('feed', '喂养'), ('growth', '成长')];
-    return Align(
-      alignment: Alignment.center,
-      child: Wrap(
-        spacing: 6,
-        runSpacing: 6,
-        alignment: WrapAlignment.center,
-        children: [
-          for (final item in items)
-            ChoiceChip(
-              label: Text(item.$2),
-              selected: selected == item.$1,
-              onSelected: (_) => onChanged(item.$1),
-              visualDensity: VisualDensity.compact,
-              labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: selected == item.$1
-                    ? MomCozyColors.primary
-                    : MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w800,
-              ),
-              selectedColor: MomCozyColors.roseSoft,
-              backgroundColor: MomCozyColors.card.withValues(alpha: 0.62),
-              side: BorderSide(
-                color: MomCozyColors.border.withValues(alpha: 0.62),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RecordsMilkRow extends StatelessWidget {
-  const _RecordsMilkRow({
-    this.rowKey,
-    this.deleteKey,
-    required this.amountLabel,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.accent,
-    this.trailingLabel,
-    this.badges = const [],
-    this.onEdit,
-    this.onDelete,
-  });
-
-  final Key? rowKey;
-  final Key? deleteKey;
-  final String amountLabel;
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color accent;
-  final String? trailingLabel;
-  final List<_RecordsSourceBadge> badges;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    final durationOnlyTitle = RegExp(r'^\S*分钟$').hasMatch(title);
-    final detailText = durationOnlyTitle
-        ? title
-        : title == '泵奶记录'
-        ? subtitle
-        : '$title · $subtitle';
-    final hasTrailing = trailingLabel != null || onDelete != null;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: RepaintBoundary(
-        key: rowKey,
-        child: Semantics(
-          label: onEdit == null ? null : '编辑记录',
-          onLongPress: onEdit,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onLongPress: onEdit,
-            child: DecoratedBox(
-              decoration: MomCozyDecorations.card(
-                color: MomCozyColors.raised,
-                borderColor: MomCozyColors.border.withValues(alpha: 0.72),
-                radius: 16,
-                shadows: const [],
-              ),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      14,
-                      12,
-                      hasTrailing ? (onDelete == null ? 70 : 86) : 14,
-                      12,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 5,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(icon, size: 17, color: accent),
-                                const SizedBox(width: 4),
-                                Text(
-                                  amountLabel,
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(
-                                        color: MomCozyColors.foreground,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                ),
-                              ],
-                            ),
-                            ...badges,
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          detailText,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: MomCozyColors.mutedForeground,
-                                fontWeight: FontWeight.w700,
-                                height: 1.22,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (hasTrailing)
-                    Positioned(
-                      right: onDelete == null ? 14 : 8,
-                      top: onDelete == null ? 16 : 10,
-                      child: _RecordsRowTrailing(
-                        label: trailingLabel,
-                        onDelete: onDelete,
-                        deleteKey: deleteKey,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RecordsRowTrailing extends StatelessWidget {
-  const _RecordsRowTrailing({this.label, this.onDelete, this.deleteKey});
-
-  final String? label;
-  final VoidCallback? onDelete;
-  final Key? deleteKey;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = this.label;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (label != null)
-              Text(
-                label,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: MomCozyColors.mutedForeground,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            if (onDelete != null)
-              SizedBox.square(
-                dimension: 28,
-                child: IconButton(
-                  key: deleteKey,
-                  tooltip: '删除记录',
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints.tightFor(
-                    width: 28,
-                    height: 28,
-                  ),
-                  onPressed: onDelete,
-                  icon: const Icon(
-                    Icons.delete_outline_rounded,
-                    size: 16,
-                    color: MomCozyColors.mutedForeground,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _RecordsSourceBadge extends StatelessWidget {
-  const _RecordsSourceBadge({required this.label, required this.icon});
-
-  final String label;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-      decoration: BoxDecoration(
-        color: MomCozyColors.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: MomCozyColors.primary),
-          const SizedBox(width: 3),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: MomCozyColors.primary,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RecordsGrowthRow extends StatelessWidget {
-  const _RecordsGrowthRow({
-    required this.dateLabel,
-    required this.weightLabel,
-    required this.heightLabel,
-  });
-
-  final String dateLabel;
-  final String weightLabel;
-  final String heightLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: DecoratedBox(
-        decoration: MomCozyDecorations.card(
-          color: MomCozyColors.card.withValues(alpha: 0.9),
-          shadows: const [],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              const _IconBubble(
-                icon: Icons.monitor_weight_outlined,
-                accent: Color(0xff6b6da8),
-                size: 34,
-                iconSize: 18,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '$dateLabel 成长记录',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$weightLabel · $heightLabel',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: MomCozyColors.mutedForeground,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: MomCozyColors.mutedForeground,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MilkTrendPoint {
-  const _MilkTrendPoint({required this.label, required this.amountMl});
-
-  final String label;
-  final int amountMl;
-}
-
-String _amountLabel(int? amountMl, {String unit = 'mL'}) {
-  if (amountMl == null) return '--';
-  if (unit == 'oz') {
-    return '${(amountMl / 29.5735).toStringAsFixed(1)} oz';
-  }
-  return '$amountMl mL';
-}
-
-String _recordTimeLabel(Object? value) {
-  final parsed = switch (value) {
-    DateTime dateTime => dateTime,
-    String text => DateTime.tryParse(text),
-    _ => null,
-  };
-  if (parsed == null) return '--:--';
-  final local = parsed.toLocal();
-  return '${_twoDigits(local.hour)}:${_twoDigits(local.minute)}';
-}
-
-String _twoDigits(int value) => value.toString().padLeft(2, '0');
-
-String _weightLabel(int? weightGram) {
-  if (weightGram == null) return '--';
-  return '${(weightGram / 1000).toStringAsFixed(1)} kg';
-}
-
-String _heightLabel(double? heightCm) {
-  return heightCm == null ? '--' : '${heightCm.toStringAsFixed(1)} cm';
-}
-
 String _nullableTimeLabel(DateTime? value) {
   if (value == null) return '--';
   return _timeLabel(value);
-}
-
-String _dateLabel(DateTime? value) {
-  if (value == null) return '--';
-  final local = value.toLocal();
-  final month = local.month.toString().padLeft(2, '0');
-  final day = local.day.toString().padLeft(2, '0');
-  return '$month-$day';
 }
 
 class _CommunityPage extends StatefulWidget {
