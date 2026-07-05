@@ -176,6 +176,33 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub keeps send disabled for empty runner input', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    final sendButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+    expect(sendButton.onPressed, isNull);
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-send-button')),
+      warnIfMissed: false,
+    );
+    await tester.pumpAndSettle();
+
+    expect(client.requests, isEmpty);
+  });
+
   testWidgets('Agent Hub attaches image input to the next request', (
     tester,
   ) async {
@@ -207,6 +234,12 @@ void main() {
     expect(find.text('拍照'), findsOneWidget);
     expect(find.text('上传'), findsOneWidget);
 
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
     await tester.pumpAndSettle();
 

@@ -77,12 +77,12 @@
 | 新建会话 | 顶部加号。 | 取消流、清空图片、清空输入、重置 thread、插入 greeting、toast。 | 已覆盖运行中禁用、greeting、草稿清空、附件清理和照片菜单关闭。 | 需补运行中服务端 cancel 与 toast。 |
 | 回到最新消息 | 只有滚动离底部时显示。 | 平滑滚到底部并隐藏按钮。 | 已覆盖显示、点击滚到底部和隐藏。 | 无。 |
 | 查看更早对话 | 有历史窗口时显示。 | 非运行态加载更早；运行/发送中禁用，文案变为“回复结束后可查看更早对话”。 | 未覆盖。 | P1 补。 |
-| 图片按钮 | 默认可点；发送运行中禁用。 | 打开 photo menu；再次点击关闭。 | 已覆盖打开菜单、上传、附件预览和新会话关闭菜单。 | 需补再次点击关闭。 |
+| 图片按钮 | 默认可点；发送运行中禁用。 | 打开 photo menu；再次点击关闭。 | 已覆盖打开菜单、再次点击关闭、上传、附件预览和新会话关闭菜单。 | 无。 |
 | Photo menu：拍照 | 菜单按钮。 | 触发 camera file input。 | 已覆盖拍照入口触发 picker。 | 无。 |
 | Photo menu：上传 | 菜单按钮。 | 触发 upload file input。 | 已覆盖上传入口触发 picker。 | 无。 |
 | 图片预览移除 | 每张预览右上角 X。 | 从 staged image 中删除；发送按钮是否可点随之变化。 | Agent 单测覆盖 remove before send。 | 需补 ready/uploading/failed 三态。 |
 | 输入框 Enter | 中文 composition 期间不发送；普通 Enter 发送。 | 清空输入、追加用户气泡、启动流。 | 部分覆盖发送。 | P1 补 composition 和多行高度。 |
-| 发送按钮空态 | 无文字、无图片、非运行时置灰禁用。 | 点击无效。 | 已覆盖无 runner disabled。 | 需补有 runner 但空内容禁用。 |
+| 发送按钮空态 | 无文字、无图片、非运行时置灰禁用。 | 点击无效。 | 已覆盖无 runner disabled 和有 runner 空内容禁用。 | 无。 |
 | 发送按钮有内容 | 主色可点。 | 停止语音听写、清 quick replies、追加用户气泡、启动流。 | 已覆盖 optimistic bubble 和图片-only 文案“请看这张图片”。 | 需补停止语音听写和 quick replies 清理。 |
 | 发送中空输入 | 按钮变 stop/square。 | 点击中断当前流；短时间重复 stop 被忽略。 | Agent 单测覆盖 stop。 | 需补 shell parity 与重复点击。 |
 | 发送中有新内容 | 仍允许作为新一轮发送。 | 先 interrupt 当前流，再发送新内容。 | 未覆盖。 | P1 补。 |
