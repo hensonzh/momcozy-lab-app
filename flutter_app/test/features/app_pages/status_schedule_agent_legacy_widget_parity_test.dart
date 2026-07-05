@@ -414,6 +414,124 @@ void main() {
       expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
       expect(find.byTooltip('重试'), findsNothing);
     });
+
+    testWidgets('covers date switching, reminders, and local state retention', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: createMomCozyRouter(initialLocation: '/schedule'),
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('今'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('schedule-date-2026-07-04')));
+      await tester.pumpAndSettle();
+      expect(find.text('7月4日 稳奶计划'), findsOneWidget);
+      expect(find.text('未来的计划'), findsOneWidget);
+      expect(find.text('今'), findsOneWidget);
+      expect(find.text('六'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-back-to-today-button')),
+        findsOneWidget,
+      );
+
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-back-to-today-button')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('稳奶计划执行中'), findsOneWidget);
+      expect(find.text('提醒已开启'), findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-context-reminder-button')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('提醒已关闭'), findsOneWidget);
+      expect(find.byTooltip('开启计划提醒'), findsOneWidget);
+      await tester.tap(find.text('提醒开关'));
+      await tester.pumpAndSettle();
+      expect(find.text('提醒已开启'), findsOneWidget);
+
+      await _scrollToFinder(
+        tester,
+        find.byKey(const ValueKey('schedule-adjust-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('schedule-adjust-button')));
+      await tester.pumpAndSettle();
+      expect(find.text('日程调整已提交'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('schedule-add-task-button')));
+      await tester.pumpAndSettle();
+      await _scrollToText(tester, '本地补充 1');
+      expect(find.text('本地补充 1'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+      await tester.pumpAndSettle();
+      expect(find.text('提醒已开启'), findsOneWidget);
+      await _scrollToText(tester, '本地补充 1');
+      expect(find.text('本地补充 1'), findsOneWidget);
+      expect(find.text('已提交'), findsOneWidget);
+    });
+
+    testWidgets('covers empty quick actions as local entry shortcuts', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: createMomCozyRouter(initialLocation: '/schedule'),
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(
+            responsesByPath: {
+              scheduleDayPlanEndpoint: const {'items': <Object?>[]},
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await _scrollToText(tester, '吸奶补录');
+      await tester.tap(find.text('吸奶补录'));
+      await tester.pumpAndSettle();
+      expect(find.text('吸奶补录'), findsWidgets);
+      expect(find.text('吸奶补录已添加'), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+
+      final feedingRouteIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(feedingRouteIntentPlatform.dispose);
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: createMomCozyRouter(initialLocation: '/schedule'),
+          routeIntentPlatform: feedingRouteIntentPlatform,
+          apiRuntime: _runtime(
+            responsesByPath: {
+              scheduleDayPlanEndpoint: const {'items': <Object?>[]},
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await _scrollToText(tester, '喂养记录');
+      await tester.tap(find.text('喂养记录').last);
+      await tester.pumpAndSettle();
+      expect(find.text('喂养记录已添加'), findsOneWidget);
+    });
   });
 
   group('Legacy Web widget parity: 智能体主页', () {
