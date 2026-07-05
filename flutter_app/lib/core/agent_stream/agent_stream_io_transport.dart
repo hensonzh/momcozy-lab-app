@@ -471,6 +471,31 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
 
   @override
   Stream<String> frames(AgentStreamRequest request) async* {
+    final existingRunId = request.runId?.trim();
+    final runId = existingRunId != null && existingRunId.isNotEmpty
+        ? existingRunId
+        : await _createRun(request);
+    final afterSequence = request.afterSequence < 0 ? 0 : request.afterSequence;
+
+    final streamUri = _runScopedUri(
+      runsEndpoint.requestUri,
+      runId,
+      'stream',
+    ).replace(
+      queryParameters: {
+        'after_sequence': afterSequence.toString(),
+        'follow': 'true',
+        'limit': '200',
+      },
+    );
+
+    yield* streamConnector.get(
+      streamUri,
+      headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
+    );
+  }
+
+  Future<String> _createRun(AgentStreamRequest request) async {
     final payload = Map<String, Object?>.from(payloadFactory(request));
     final idempotencyKey =
         stringField(payload, 'idempotency_key') ?? _agentRunIdempotencyKey();
@@ -497,23 +522,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
         'run create response must include id',
       );
     }
-
-    final streamUri = _runScopedUri(
-      runsEndpoint.requestUri,
-      runId,
-      'stream',
-    ).replace(
-      queryParameters: const {
-        'after_sequence': '0',
-        'follow': 'true',
-        'limit': '200',
-      },
-    );
-
-    yield* streamConnector.get(
-      streamUri,
-      headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
-    );
+    return runId;
   }
 }
 

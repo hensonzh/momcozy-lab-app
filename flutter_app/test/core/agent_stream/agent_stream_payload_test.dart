@@ -58,5 +58,26 @@ void main() {
         throwsA(isA<AgentStreamPayloadException>()),
       );
     });
+
+    test('builds resume requests without adding run ids to create payloads', () {
+      const request = AgentStreamRequest(
+        message: 'Retry the interrupted answer.',
+        threadId: '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+        locale: 'zh-CN',
+        metadata: {'source': 'resume-test'},
+      );
+
+      final resume = request.resume(
+        runId: '0d39da8a-6f31-4e23-b5ac-b81d9808fb8c',
+        afterSequence: 12,
+      );
+      final payload = buildProductionAgentRunPayload(resume);
+
+      expect(resume.runId, '0d39da8a-6f31-4e23-b5ac-b81d9808fb8c');
+      expect(resume.afterSequence, 12);
+      expect(payload.containsKey('run_id'), isFalse);
+      expect(payload.containsKey('after_sequence'), isFalse);
+      expect(payload['thread_id'], '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5');
+    });
   });
 }

@@ -344,24 +344,43 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _retryRun() async {
     final request = _activeRequest;
     if (request == null || widget.runner == null || !_state.canRetry) return;
+    final runId = _state.runId?.trim();
+    if (runId != null && runId.isNotEmpty) {
+      await _startRun(
+        request.resume(
+          runId: runId,
+          threadId: _state.threadId,
+          afterSequence: _state.lastSequence ?? 0,
+        ),
+        initialState: _state.copyWith(phase: AgentStreamRunPhase.streaming),
+        preserveActionState: true,
+      );
+      return;
+    }
     await _startRun(request);
   }
 
-  Future<void> _startRun(AgentStreamRequest request) async {
+  Future<void> _startRun(
+    AgentStreamRequest request, {
+    AgentStreamRunState? initialState,
+    bool preserveActionState = false,
+  }) async {
     final runner = widget.runner;
     if (runner == null || _state.isActive) return;
 
     _cancelRunSubscription();
     _activeRequest = request;
     setState(() {
-      _state = const AgentStreamRunState().start();
-      _pendingActionIds.clear();
-      _localActionStatuses.clear();
+      _state = initialState ?? const AgentStreamRunState().start();
+      if (!preserveActionState) {
+        _pendingActionIds.clear();
+        _localActionStatuses.clear();
+      }
     });
     _persistInteractionState();
 
     _runSubscription = runner
-        .run(request)
+        .run(request, initialState: initialState)
         .listen(
           (nextState) {
             if (!mounted || !_state.isActive) return;
