@@ -183,7 +183,30 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('近30日趋势'), findsOneWidget);
 
+      await _scrollToText(tester, '母乳产出');
+      await tester.tap(
+        find.byKey(const ValueKey('status-milk-output-info-button')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-milk-info')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byTooltip('关闭详情'));
+      await tester.pumpAndSettle();
+
       await _scrollToText(tester, '乳房健康');
+      await tester.tap(
+        find.byKey(const ValueKey('status-breast-health-info-button')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-breast-info')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byTooltip('关闭详情'));
+      await tester.pumpAndSettle();
+
       await tester.tap(find.text('查看《乳房健康日记》'));
       await tester.pumpAndSettle();
       expect(
@@ -205,6 +228,16 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('盆底肌康复训练'), findsOneWidget);
+      await tester.tap(find.byTooltip('关闭详情'));
+      await tester.pumpAndSettle();
+
+      await _scrollToText(tester, '补能与休息');
+      await tester.tap(find.byKey(const ValueKey('status-rest-info-button')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-rest-info')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('covers baby growth interactions and tab state retention', (
@@ -232,10 +265,56 @@ void main() {
       expect(find.text('成长milestone'), findsOneWidget);
 
       await tester.tap(
+        find.byKey(const ValueKey('status-baby-feed-info-button')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-baby-feed-info')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byTooltip('关闭详情'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(
         find.byKey(const ValueKey('status-growth-record-action')),
       );
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-growth-editor-dialog')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('status-growth-save-button')));
+      await tester.pumpAndSettle();
       expect(find.text('已添加'), findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('status-growth-milestone-action')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-growth-milestone')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byTooltip('关闭详情'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('查看筛查'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-baby-health')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byTooltip('关闭详情'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('查看报告'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-baby-sleep')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byTooltip('关闭详情'));
+      await tester.pumpAndSettle();
 
       await _scrollToFinder(
         tester,
