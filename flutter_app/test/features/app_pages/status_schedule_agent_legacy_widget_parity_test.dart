@@ -326,6 +326,18 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('当前查看：身高'), findsOneWidget);
 
+      await tester.tap(
+        find.byKey(const ValueKey('status-baby-growth-segment-体重')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('当前查看：体重'), findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('status-baby-growth-segment-身高')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('当前查看：身高'), findsOneWidget);
+
       await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
       await tester.pumpAndSettle();
       expect(
