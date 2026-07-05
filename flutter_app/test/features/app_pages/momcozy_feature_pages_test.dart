@@ -424,8 +424,7 @@ void main() {
       expect(find.text('母乳产出'), findsOneWidget);
       await _scrollToText(tester, '母乳趋势');
       expect(find.text('母乳趋势'), findsOneWidget);
-      await _scrollToText(tester, '暂无状态数据');
-      expect(find.text('暂无状态数据'), findsOneWidget);
+      expect(find.text('暂无状态数据'), findsNothing);
 
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -444,9 +443,9 @@ void main() {
       expect(find.text('母乳产出'), findsOneWidget);
       await _scrollToText(tester, '母乳趋势');
       expect(find.text('母乳趋势'), findsOneWidget);
-      await _scrollToText(tester, '状态同步失败');
-      expect(find.text('状态同步失败'), findsOneWidget);
-      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
+      expect(find.text('状态同步失败'), findsNothing);
+      expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
+      expect(find.byTooltip('重试'), findsNothing);
     });
 
     testWidgets('schedule page loads day plan from runtime repository', (
