@@ -176,6 +176,77 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub composer expands to five lines then scrolls', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voiceInput: () async => '第一行\n第二行\n第三行',
+        ),
+      ),
+    );
+
+    final compactHeight = _composerSurfaceHeight(tester);
+    final compactInputHeight = _composerInputHeight(tester);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '宁敏同学top糯米您噢噢噢噢噢噢噢噢哦哦狗哦噢噢噢噢噢咯'
+      '继续输入更多更多更多文字直到自然换行展示第二行',
+    );
+    await tester.pumpAndSettle();
+    expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '第一行\n第二行',
+    );
+    await tester.pumpAndSettle();
+    final twoLineHeight = _composerSurfaceHeight(tester);
+    expect(twoLineHeight, greaterThan(compactHeight));
+    expect(_composerInputHeight(tester), greaterThan(compactInputHeight));
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .maxLines,
+      5,
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '第一行\n第二行\n第三行\n第四行\n第五行',
+    );
+    await tester.pumpAndSettle();
+    final fiveLineHeight = _composerSurfaceHeight(tester);
+    expect(fiveLineHeight, greaterThan(twoLineHeight));
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '第一行\n第二行\n第三行\n第四行\n第五行\n第六行\n第七行',
+    );
+    await tester.pumpAndSettle();
+    final sevenLineHeight = _composerSurfaceHeight(tester);
+    expect(sevenLineHeight, closeTo(fiveLineHeight, 1));
+    expect(_composerInputHeight(tester), lessThan(sevenLineHeight));
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+    expect(client.requests.single.message, '第一行\n第二行\n第三行\n第四行\n第五行\n第六行\n第七行');
+    expect(_composerSurfaceHeight(tester), closeTo(compactHeight, 1));
+
+    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pumpAndSettle();
+    expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
+  });
+
   testWidgets('Agent Hub keeps send disabled for empty runner input', (
     tester,
   ) async {
@@ -1183,6 +1254,18 @@ Widget _host(Widget child) {
     debugShowCheckedModeBanner: false,
     home: Scaffold(body: SafeArea(child: child)),
   );
+}
+
+double _composerSurfaceHeight(WidgetTester tester) {
+  return tester
+      .getSize(find.byKey(const ValueKey('agent-composer-surface')))
+      .height;
+}
+
+double _composerInputHeight(WidgetTester tester) {
+  return tester
+      .getSize(find.byKey(const ValueKey('agent-composer-input-frame')))
+      .height;
 }
 
 class _FixtureAgentStreamClient implements AgentStreamClient {
