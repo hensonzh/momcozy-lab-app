@@ -74,30 +74,6 @@ export interface DeviceInfo {
   serialNumber: string;
 }
 
-// 7-day pump records
-export const pumpRecords: PumpRecord[] = [
-  { id: "p1", date: "2026-03-09", time: "06:30", durationMin: 20, leftMl: 85, rightMl: 90, totalMl: 175, source: "device", mode: "deep" },
-  { id: "p2", date: "2026-03-09", time: "10:00", durationMin: 15, leftMl: 70, rightMl: 65, totalMl: 135, source: "device", mode: "deep" },
-  { id: "p3", date: "2026-03-09", time: "14:00", durationMin: 0, leftMl: 80, rightMl: 75, totalMl: 155, source: "manual", mode: "deep" },
-  { id: "p4", date: "2026-03-08", time: "06:00", durationMin: 22, leftMl: 90, rightMl: 85, totalMl: 175, source: "device", mode: "deep" },
-  { id: "p5", date: "2026-03-08", time: "10:30", durationMin: 16, leftMl: 75, rightMl: 70, totalMl: 145, source: "device", mode: "deep" },
-  { id: "p6", date: "2026-03-08", time: "14:30", durationMin: 20, leftMl: 80, rightMl: 80, totalMl: 160, source: "voice", mode: "deep" },
-  { id: "p7", date: "2026-03-08", time: "21:00", durationMin: 18, leftMl: 70, rightMl: 65, totalMl: 135, source: "device", mode: "deep" },
-  { id: "p8", date: "2026-03-07", time: "07:00", durationMin: 20, leftMl: 80, rightMl: 85, totalMl: 165, source: "device", mode: "deep" },
-  { id: "p9", date: "2026-03-07", time: "11:00", durationMin: 15, leftMl: 65, rightMl: 70, totalMl: 135, source: "device", mode: "stimulate" },
-  { id: "p10", date: "2026-03-07", time: "15:00", durationMin: 17, leftMl: 75, rightMl: 70, totalMl: 145, source: "manual", mode: "deep" },
-  { id: "p11", date: "2026-03-06", time: "06:30", durationMin: 20, leftMl: 70, rightMl: 75, totalMl: 145, source: "device", mode: "deep" },
-  { id: "p12", date: "2026-03-06", time: "10:00", durationMin: 14, leftMl: 60, rightMl: 65, totalMl: 125, source: "device", mode: "deep" },
-  { id: "p13", date: "2026-03-06", time: "22:00", durationMin: 20, leftMl: 80, rightMl: 75, totalMl: 155, source: "device", mode: "deep" },
-  { id: "p14", date: "2026-03-05", time: "07:00", durationMin: 18, leftMl: 75, rightMl: 70, totalMl: 145, source: "device", mode: "deep" },
-  { id: "p15", date: "2026-03-05", time: "13:00", durationMin: 15, leftMl: 65, rightMl: 60, totalMl: 125, source: "manual", mode: "stimulate" },
-  { id: "p16", date: "2026-03-04", time: "06:00", durationMin: 22, leftMl: 70, rightMl: 65, totalMl: 135, source: "device", mode: "deep" },
-  { id: "p17", date: "2026-03-04", time: "12:00", durationMin: 16, leftMl: 60, rightMl: 55, totalMl: 115, source: "device", mode: "deep" },
-  { id: "p18", date: "2026-03-04", time: "20:00", durationMin: 20, leftMl: 75, rightMl: 70, totalMl: 145, source: "device", mode: "deep" },
-  { id: "p19", date: "2026-03-03", time: "07:00", durationMin: 20, leftMl: 65, rightMl: 60, totalMl: 125, source: "device", mode: "deep" },
-  { id: "p20", date: "2026-03-03", time: "14:00", durationMin: 15, leftMl: 55, rightMl: 60, totalMl: 115, source: "device", mode: "deep" },
-];
-
 export const dailySummary = [
   { date: "02/07", total: 250, sessions: 2 },
   { date: "02/08", total: 275, sessions: 3 },

@@ -17,7 +17,6 @@ import { tryRunPumpAutoEndOffPumpTeardownOnce } from "@/lib/pumpAutoEndSession";
 import AgentHub from "@/pages/AgentHub";
 import ComfortCalibration from "@/pages/ComfortCalibration";
 import PumpSession from "@/pages/PumpSession";
-import Records from "@/pages/Records";
 import Schedule from "@/pages/Schedule";
 import DeviceManagement from "@/pages/DeviceManagement";
 import DeviceManageActions from "@/pages/DeviceManageActions";
@@ -315,7 +314,6 @@ const App = () => (
             <Route path="/" element={<AgentHub />} />
             <Route path="/calibration" element={<ComfortCalibration />} />
             <Route path="/pump" element={<PumpSession />} />
-            <Route path="/records" element={<Records />} />
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/status" element={<StatusPage />} />
             <Route path="/community" element={<Community />} />

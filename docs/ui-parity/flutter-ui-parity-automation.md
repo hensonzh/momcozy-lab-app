@@ -43,7 +43,6 @@ The first automated pass covers the compact `390x844` page set:
 - Agent Hub
 - Status
 - Schedule
-- Records
 - Device
 - Device manage
 - Device user
@@ -54,7 +53,11 @@ The first automated pass covers the compact `390x844` page set:
 - Pump
 - Calibration
 - Community
-- Not found
+
+Records and Not Found now remain Flutter-owned route regression goldens only.
+They are no longer captured as legacy Web reference pages because the old Web
+`/records` mock page and stale 404 screenshot were retired from the active UI
+parity baseline.
 
 ## Outputs
 

@@ -38,7 +38,7 @@
 | LINT-BASELINE-002 | mobile engineering | `src/data/planMockData.ts:83` | `no-empty` | P2 | 已修复空 catch。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
 | LINT-BASELINE-003 | mobile engineering | `src/lib/ble.ts:514` | `no-async-promise-executor` | P1 | 已修复 Promise executor，保持 BLE notify 初始化后再发送的原流程。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
 | LINT-BASELINE-004 | mobile engineering | `src/lib/ble.ts:613` | `no-async-promise-executor` | P1 | 已修复 Promise executor，保持 frame retry/timeout 逻辑。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
-| LINT-BASELINE-005 | mobile engineering | `src/pages/Records.tsx:393` | `@typescript-eslint/no-explicit-any` | P2 | 已补 Recharts tick props 类型。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
+| LINT-BASELINE-005 | mobile engineering | old Web `/records` mock page | `@typescript-eslint/no-explicit-any` | P2 | 已随旧 Web Records 页面退出基线，不再作为 active lint baseline。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
 | LINT-BASELINE-006 | mobile engineering | `tailwind.config.ts:124` | `@typescript-eslint/no-require-imports` | P2 | 已改 ESM plugin import。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
 | LINT-BASELINE-007 | mobile engineering | `tailwind.config.ts:124` | `@typescript-eslint/no-require-imports` | P2 | 已改 ESM plugin import。 | `docs/migration/flutter-baseline-defects.md#3-lint-baseline-defects` | `npm run lint` |
 
