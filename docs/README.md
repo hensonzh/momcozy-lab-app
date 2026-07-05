@@ -6,8 +6,8 @@
 
 | 目录 | 内容 |
 | --- | --- |
-| `api/` | 旧 Web/Agent/API/BLE 协议资料，作为迁移对照和合同来源。 |
 | `backend-contract/` | 生产后端 OpenAPI 快照、Flutter client compatibility 和 smoke flows。 |
+| `device/` | 硬件设备协议资料，例如 BLE 通信协议。 |
 | `flutter/` | Flutter 工程化、打包、发布 gate、安全隐私和 staging smoke 文档。 |
 | `legacy-web/` | 旧 React/Vite/Capacitor 实现的归档说明。 |
 | `migration/` | Flutter 迁移蓝图、测试方案、feature/API/storage/route/native bridge 矩阵。 |
@@ -21,4 +21,5 @@
 - 旧 Web 归档说明：`legacy-web/archive.md`
 - UI/UX 黄金标准：`ui-parity/legacy-web-ui-ux-golden-standard.md`
 - 组件级 parity 计划：`ui-parity/flutter-ui-component-parity-plan.md`
+- BLE 设备协议：`device/设备APP蓝牙通信协议.md`
 - 后端合同快照：`backend-contract/openapi.generated.json`

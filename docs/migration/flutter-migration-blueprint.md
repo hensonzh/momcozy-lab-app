@@ -154,10 +154,10 @@ docs/migration/flutter-feature-baseline.csv
 
 | Domain | 当前来源 | Flutter owner |
 |---|---|---|
-| Agent / AG-UI chat | `docs/api/web-api.md`, `src/lib/agentApi.ts` | `features/agent_hub/data` |
-| Pump session summary | `docs/api/websocket接口说明文档.md`, `src/lib/pumpAutoEndSession.ts` | `features/pump_session/data` |
+| Agent / AG-UI chat | `legacy_web/src/lib/agentApi.ts`; production contract: `docs/backend-contract/` | `features/agent_hub/data` |
+| Pump session summary | `legacy_web/src/lib/pumpAutoEndSession.ts`; production contract: `docs/backend-contract/` | `features/pump_session/data` |
 | Pump agent upload | `src/lib/pumpAgentUpload.ts`, Android `PumpAgent*` | `features/pump_session/native` |
-| BLE protocol | `docs/api/设备APP蓝牙通信协议.md`, `src/lib/bleProtocol.ts`, `MmcBleProtocol.java` | `features/device/native` |
+| BLE protocol | `docs/device/设备APP蓝牙通信协议.md`, `legacy_web/src/lib/bleProtocol.ts`, `MmcBleProtocol.java` | `features/device/native` |
 | Device state/report | `src/lib/deviceStore.ts`, `DeviceNativeStateStore.java` | `features/device/data` |
 | Notifications | `src/lib/mmcBackgroundNotify.ts`, `src/lib/pumpSessionNotification.ts`, Android `Notify*` | `core/notifications` |
 | Schedule/plan | `src/pages/Schedule.tsx`, `src/lib/planNotification.ts`, `src/lib/agentApi.ts` | `features/schedule/data` |
