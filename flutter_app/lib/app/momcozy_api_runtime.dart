@@ -269,7 +269,7 @@ class MomCozyApiRuntime {
   }) async {
     await pumpNativeRuntimeCoordinator.snapshotSync.upload.setConfig(
       apiBaseUrl: _defaultApiBaseUrl,
-      bearerToken: session.accessToken,
+      bearerToken: session.accessToken ?? '',
     );
     await pumpNativeRuntimeCoordinator.start(
       subscribeConnectedDevices: subscribeConnectedDevices,

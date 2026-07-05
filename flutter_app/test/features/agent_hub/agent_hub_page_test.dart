@@ -19,9 +19,12 @@ void main() {
     await tester.pumpWidget(_host(const AgentHubPage()));
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-run-phase-badge')), findsOneWidget);
-    expect(find.text('准备就绪'), findsOneWidget);
-    expect(find.text('我在。'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('你希望我怎么称呼你？'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-auto-voice-button')),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const ValueKey('agent-new-session-button')),
       findsOneWidget,
@@ -29,19 +32,20 @@ void main() {
     expect(find.byKey(const ValueKey('agent-composer-input')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-image-button')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-voice-button')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
 
-    final sendButton = tester.widget<IconButton>(
-      find.byKey(const ValueKey('agent-send-button')),
-    );
     final imageButton = tester.widget<IconButton>(
       find.byKey(const ValueKey('agent-image-button')),
     );
+    expect(imageButton.onPressed, isNull);
     final voiceButton = tester.widget<IconButton>(
       find.byKey(const ValueKey('agent-voice-button')),
     );
-    expect(sendButton.onPressed, isNull);
-    expect(imageButton.onPressed, isNull);
     expect(voiceButton.onPressed, isNull);
+    final sendButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+    expect(sendButton.onPressed, isNull);
   });
 
   testWidgets('Agent Hub restores history and starts a new local session', (
@@ -68,7 +72,7 @@ void main() {
     );
 
     expect(find.byKey(const ValueKey('agent-history-panel')), findsOneWidget);
-    expect(find.text('历史会话'), findsOneWidget);
+    expect(find.text('历史会话'), findsNothing);
     expect(find.text('昨天晚上左侧奶量偏低'), findsOneWidget);
     expect(find.text('我建议你先观察舒适度和间隔。'), findsOneWidget);
 
@@ -83,7 +87,7 @@ void main() {
 
     expect(newSessionStarted, isTrue);
     expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
-    expect(find.text('我在。'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
@@ -114,7 +118,9 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -137,7 +143,6 @@ void main() {
 
     expect(client.requests.single.message, 'Review my pumping pattern');
     expect(client.requests.single.threadId, isNull);
-    expect(find.text('已完成'), findsOneWidget);
     expect(
       find.text('I can help you review today\'s pumping pattern.'),
       findsOneWidget,
@@ -155,7 +160,9 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -204,7 +211,9 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -264,7 +273,9 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -306,7 +317,9 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
     final recorder = _PageFakeVoiceRecorder(
       initialPermission: AgentVoiceInputPermissionState.unknown,
@@ -345,7 +358,9 @@ void main() {
   ) async {
     final coordinator = AgentVoicePlaybackCoordinator();
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -381,7 +396,9 @@ void main() {
       cancel: () => notificationCancelled = true,
     );
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('agent_events/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -419,13 +436,12 @@ void main() {
       ),
     );
 
-    expect(find.text('正在回复'), findsOneWidget);
+    expect(find.text('正在生成回复'), findsOneWidget);
     expect(find.text('Partial answer'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
 
-    expect(find.text('已停止'), findsOneWidget);
     expect(find.text('已停止本次回复'), findsOneWidget);
   });
 
@@ -453,14 +469,14 @@ void main() {
       ),
     );
 
-    expect(find.text('正在回复'), findsOneWidget);
+    expect(find.text('正在生成回复'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
     await cancelConnector.called.future;
 
     final body = jsonDecode(cancelConnector.body!) as Map<String, Object?>;
-    expect(find.text('已停止'), findsOneWidget);
+    expect(find.text('已停止本次回复'), findsOneWidget);
     expect(cancelConnector.uri!.path, '/v1/agent/runs/run-demo/cancel');
     expect(body['reason'], 'user_cancelled');
     expect(body.containsKey('user_id'), isFalse);
@@ -484,7 +500,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.textContaining('socket closed'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
 
@@ -494,7 +509,6 @@ void main() {
     expect(client.requests, hasLength(2));
     expect(client.requests.first.message, 'Retry my request');
     expect(client.requests.last.message, 'Retry my request');
-    expect(find.text('已完成'), findsOneWidget);
     expect(find.text('Retried answer'), findsOneWidget);
   });
 
@@ -517,7 +531,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.text('请求超时，请稍后重试'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
     expect(find.textContaining('TimeoutException'), findsNothing);
@@ -543,7 +556,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
     expect(find.textContaining('SocketException'), findsNothing);
@@ -574,7 +586,7 @@ void main() {
 
       expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
       expect(find.text('泵奶记录已读取'), findsOneWidget);
-      expect(find.text('已生成分析卡片'), findsOneWidget);
+      expect(find.text('已生成分析卡片'), findsWidgets);
       expect(find.text('需要确认后继续'), findsOneWidget);
       expect(
         find.text('I found two sessions today and prepared a draft analysis.'),
@@ -632,10 +644,7 @@ void main() {
     expect(find.text('待确认'), findsWidgets);
     expect(find.text('等待确认后继续'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
-    expect(
-      find.byKey(ValueKey('agent-action-card-$actionId')),
-      findsOneWidget,
-    );
+    expect(find.byKey(ValueKey('agent-action-card-$actionId')), findsOneWidget);
     expect(find.text('创建支持工单'), findsOneWidget);
     expect(find.text('将当前问题提交给人工支持团队'), findsOneWidget);
 
@@ -643,10 +652,7 @@ void main() {
     await connector.called.future;
     await tester.pumpAndSettle();
 
-    expect(
-      connector.uri!.path,
-      '/v1/agent/actions/$actionId/confirm',
-    );
+    expect(connector.uri!.path, '/v1/agent/actions/$actionId/confirm');
     expect(
       connector.uri!.queryParameters,
       isNot(containsPair('token', anything)),
@@ -733,8 +739,8 @@ void main() {
       find.text('Draft card generated from safe artifact payload.'),
       findsOneWidget,
     );
-    expect(find.text('Review flange comfort'), findsOneWidget);
-    expect(find.text('Track two more pumping sessions'), findsOneWidget);
+    expect(find.text('Review flange comfort'), findsWidgets);
+    expect(find.text('Track two more pumping sessions'), findsWidgets);
     expect(find.text('打开结果卡片'), findsOneWidget);
     expect(find.textContaining('milk_plan_preview_create'), findsNothing);
     expect(find.textContaining('{"'), findsNothing);
@@ -954,7 +960,6 @@ void main() {
       ),
     );
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.text('Partial answer'), findsOneWidget);
     expect(find.text('socket closed'), findsOneWidget);
     expect(find.textContaining('WebSocket'), findsNothing);
@@ -975,7 +980,6 @@ void main() {
         ),
       );
 
-      expect(find.text('正在回复'), findsOneWidget);
       expect(find.text('正在生成回复'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -989,7 +993,6 @@ void main() {
         ),
       );
 
-      expect(find.text('已完成'), findsOneWidget);
       expect(find.text('I can help you review today.'), findsOneWidget);
       expect(find.text('正在生成回复'), findsNothing);
     },

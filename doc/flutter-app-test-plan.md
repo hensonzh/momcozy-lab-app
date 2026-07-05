@@ -562,6 +562,7 @@ Agent 文本和工具事件流必须设计成 transport-agnostic。测试目标�
 [x] Flutter App API runtime tests 已覆盖 lazy BLE platform 注入和 connected device fixture
 [x] Flutter App API runtime tests 已覆盖 `PumpProtocolPlatform` 注入和 native coordinator 经 BLE fake 写出协议命令
 [x] Flutter `/status` widget tests 已覆盖 runtime repository fixture、孕期/哺乳期切换、妈妈/宝宝切换、成长记录本地草稿和异步状态渲染
+[x] Flutter `/status` offline fallback golden 已覆盖妈妈哺乳期、宝宝哺乳期、妈妈孕期三档 viewport，确保 API 失败不替代旧 Web 首屏结构
 [x] Flutter `/schedule` widget tests 已覆盖 runtime repository fixture、day plan 渲染和本地 checkbox 草稿交互
 [x] Flutter `/records` widget tests 已覆盖 runtime repository fixture、泵奶/喂养/成长筛选和动态汇总渲染
 [x] Flutter `/pump` widget tests 已覆盖 session 控制触发 `/v1/pump/workstate` runtime repository 同步和后端回复展示
@@ -727,6 +728,50 @@ CI 最低要求：
 [x] Android debug build：local flavor
 [x] Android release build：staging flavor
 [x] signing check：CI 可用 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1` 强制 release signing env
+```
+
+最新本机执行记录：
+
+```text
+[x] 2026-07-03 `npm run flutter:release-gate` 通过
+[x] Android packaging check 通过
+[x] security/privacy check 通过
+[x] `npm run build` 通过
+[x] `dart format --set-exit-if-changed lib test tool` 通过，0 changed
+[x] `flutter analyze` 通过
+[x] `flutter test` 通过，356 个测试全部通过
+[x] staging smoke harness 安全跳过：未设置 `MOMCOZY_STAGING_SMOKE=1`
+[x] storage migration dry-run 通过，unhandled legacy key 为 0
+[x] local debug APK 构建通过：`app-local-debug.apk`
+[x] staging release APK 构建通过：`app-staging-release.apk`
+[x] rollback manifest 生成通过：`dist/flutter-rollback-manifest.json`
+[ ] release signing env 未在本机配置；如需 CI 强制签名，设置 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1`
+```
+
+最新 P0 platform smoke：
+
+```text
+[x] 2026-07-03 `npm run flutter:p0:platform-smoke` 通过
+[x] fake BLE permission / scan / settings handoff 通过
+[x] pump device snapshot binding 通过
+[x] pump agent upload snapshot sync 通过
+[x] Android MethodChannel schemas 与 event streams 通过
+[x] route intent、pump foreground、wake lock platform contract 通过
+```
+
+最新 Android emulator smoke：
+
+```text
+[x] 2026-07-03 `npm run flutter:emulator-smoke` 通过
+[x] Pixel 7 API 36 emulator (`emulator-5554`) 可被 Flutter 识别
+[x] local debug APK 安装通过：`com.momcozymai.app.flutterpoc.local`
+[x] launcher 启动通过：`com.momcozymai.momcozy_flutter_app.MainActivity`
+[x] Agent Hub 首屏渲染通过，底部 5 个 tab 可见
+[x] Schedule tab 点击切换通过
+[x] Device tab 点击切换通过，左右设备卡未裁切
+[x] 当前 app 进程存在，窗口焦点在 Flutter MainActivity
+[x] smoke 期间未发现 `FATAL EXCEPTION`、`AndroidRuntime`、`E/flutter` 或 crash 日志
+[x] smoke 截图输出到 `flutter_app/build/emulator-smoke/`
 ```
 
 发布门槛最低要求：
