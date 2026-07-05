@@ -2,6 +2,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 
 const _defaultAgentHubRunsUrl = String.fromEnvironment(
   'MOMCOZY_AGENT_RUNS_URL',
@@ -104,6 +105,12 @@ AgentStreamActionClient createSessionAgentHubActionClient(
   return AgentStreamActionClient(
     endpoint: endpoint ?? sessionAgentHubActionEndpoint(session),
   );
+}
+
+AgentHubInteractionStateStore createSessionAgentHubInteractionStateStore(
+  MomCozySession session,
+) {
+  return FlutterSecureAgentHubInteractionStateStore(userId: session.userId);
 }
 
 AgentStreamEndpoint defaultAgentHubSseEndpoint() {

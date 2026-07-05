@@ -9,6 +9,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
@@ -849,6 +850,153 @@ void main() {
     expect(find.text('已提交'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub restores waiting action state from durable snapshot', (
+    tester,
+  ) async {
+    const actionId = '22222222-2222-2222-2222-222222222222';
+    final store = _MemoryAgentHubInteractionStateStore(
+      AgentHubInteractionSnapshot(
+        runState: AgentStreamRunState(
+          phase: AgentStreamRunPhase.waitingForConfirmation,
+          threadId: 'thread-restore',
+          runId: 'run-restore',
+          textContent: '请确认是否提交给人工支持。',
+          lastSequence: 4,
+          events: [
+            AgentStreamEvent(const {
+              'event_id': 'evt-action-restore',
+              'type': 'action.confirmation_required',
+              'thread_id': 'thread-restore',
+              'run_id': 'run-restore',
+              'action_id': actionId,
+              'sequence': 3,
+              'payload': {
+                'summary': '恢复后仍可确认',
+                'preview_payload': {'title': '提交人工支持'},
+              },
+            }),
+            AgentStreamEvent(const {
+              'event_id': 'evt-wait-restore',
+              'type': 'run.waiting_for_confirmation',
+              'thread_id': 'thread-restore',
+              'run_id': 'run-restore',
+              'sequence': 4,
+            }),
+          ],
+        ),
+        activeRequest: const AgentStreamRequest(
+          message: '我需要人工帮助',
+          locale: 'zh-CN',
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(interactionStateStore: store)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('请确认是否提交给人工支持。'), findsOneWidget);
+    expect(find.text('等待确认后继续'), findsOneWidget);
+    expect(find.byKey(ValueKey('agent-action-card-$actionId')), findsOneWidget);
+    expect(find.text('提交人工支持'), findsOneWidget);
+  });
+
+  testWidgets(
+    'Agent Hub resumes stream after action confirmation and keeps backend terminal status',
+    (tester) async {
+      const actionId = '33333333-3333-3333-3333-333333333333';
+      final connector = _RecordingActionConnector();
+      final streamClient = _FixtureAgentStreamClient([
+        AgentStreamEvent(const {
+          'event_id': 'evt-action-applied',
+          'type': 'action.applied',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'action_id': actionId,
+          'sequence': 3,
+          'payload': {
+            'status': 'applied',
+            'summary': '已提交给人工支持团队',
+            'preview_payload': {'title': '创建支持工单'},
+          },
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-action-final',
+          'type': 'message.completed',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'message_id': 'msg-action-final',
+          'sequence': 4,
+          'payload': {'role': 'assistant', 'text': '工单已经创建。'},
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-action-run-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'message_id': 'msg-action-final',
+          'sequence': 5,
+        }),
+      ]);
+      final actionClient = AgentStreamActionClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/actions'),
+          token: 'secret-token',
+        ),
+        connector: connector,
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.waitingForConfirmation,
+              threadId: 'thread-action',
+              runId: 'run-action',
+              lastSequence: 2,
+              textContent: '请确认是否创建支持工单。',
+              events: [
+                AgentStreamEvent(const {
+                  'event_id': 'evt-action-required',
+                  'type': 'action.confirmation_required',
+                  'thread_id': 'thread-action',
+                  'run_id': 'run-action',
+                  'action_id': actionId,
+                  'sequence': 1,
+                  'payload': {
+                    'summary': '将当前问题提交给人工支持团队',
+                    'preview_payload': {'title': '创建支持工单'},
+                  },
+                }),
+                AgentStreamEvent(const {
+                  'event_id': 'evt-action-wait',
+                  'type': 'run.waiting_for_confirmation',
+                  'thread_id': 'thread-action',
+                  'run_id': 'run-action',
+                  'sequence': 2,
+                }),
+              ],
+            ),
+            runner: AgentStreamRunner(streamClient),
+            actionClient: actionClient,
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(ValueKey('agent-action-confirm-$actionId')));
+      await connector.called.future;
+      await tester.pumpAndSettle();
+
+      expect(streamClient.requests.single.runId, 'run-action');
+      expect(streamClient.requests.single.threadId, 'thread-action');
+      expect(streamClient.requests.single.afterSequence, 2);
+      expect(find.text('工单已经创建。'), findsOneWidget);
+      expect(find.text('已应用'), findsOneWidget);
+      expect(find.text('已提交'), findsNothing);
+    },
+  );
+
   testWidgets('Agent Hub renders safe tool failure progress', (tester) async {
     await tester.pumpWidget(
       _host(
@@ -1200,6 +1348,26 @@ class _FixtureAgentStreamClient implements AgentStreamClient {
       await Future<void>.delayed(Duration.zero);
       yield event;
     }
+  }
+}
+
+class _MemoryAgentHubInteractionStateStore
+    implements AgentHubInteractionStateStore {
+  _MemoryAgentHubInteractionStateStore([this.snapshot]);
+
+  AgentHubInteractionSnapshot? snapshot;
+
+  @override
+  Future<AgentHubInteractionSnapshot?> read() async => snapshot;
+
+  @override
+  Future<void> write(AgentHubInteractionSnapshot snapshot) async {
+    this.snapshot = snapshot;
+  }
+
+  @override
+  Future<void> clear() async {
+    snapshot = null;
   }
 }
 

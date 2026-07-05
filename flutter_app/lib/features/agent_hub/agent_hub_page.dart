@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
@@ -30,6 +31,7 @@ class _AgentHubInteractionState {
   List<AgentStreamImageInput> attachedImages = const <AgentStreamImageInput>[];
   bool autoVoiceEnabled = true;
   AgentStreamRequest? activeRequest;
+  Map<String, String> localActionStatuses = const <String, String>{};
 }
 
 class AgentHubPage extends StatefulWidget {
@@ -41,6 +43,7 @@ class AgentHubPage extends StatefulWidget {
     this.runner,
     this.cancelClient,
     this.actionClient,
+    this.interactionStateStore,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
     this.voiceInput,
@@ -57,6 +60,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentStreamRunner? runner;
   final AgentStreamCancelClient? cancelClient;
   final AgentStreamActionClient? actionClient;
+  final AgentHubInteractionStateStore? interactionStateStore;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
   final AgentHubVoiceInput? voiceInput;
@@ -85,11 +89,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _autoVoiceEnabled = true;
   bool _showLatestButton = false;
   bool _showPhotoMenu = false;
+  Timer? _persistentWriteTimer;
+  AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
 
   @override
   void initState() {
     super.initState();
     _restoreCachedInteractionState();
+    _restorePersistedInteractionState();
     _applyInitialComposerText();
     _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_updateLatestButtonVisibility);
@@ -120,6 +127,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   @override
   void dispose() {
     _cancelRunSubscription();
+    _flushPersistentInteractionState();
     _composerController.removeListener(_persistInteractionState);
     _chatScrollController
       ..removeListener(_updateLatestButtonVisibility)
@@ -152,18 +160,117 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _attachedImages.addAll(interactionState.attachedImages);
     _autoVoiceEnabled = interactionState.autoVoiceEnabled;
     _activeRequest = interactionState.activeRequest;
+    _localActionStatuses.addAll(interactionState.localActionStatuses);
   }
 
   void _persistInteractionState() {
     final interactionState = _interactionState;
-    if (interactionState == null) return;
-    interactionState
-      ..runState = _state
-      ..historyMessages = [..._historyMessages]
-      ..composerText = _composerController.text
-      ..attachedImages = [..._attachedImages]
-      ..autoVoiceEnabled = _autoVoiceEnabled
-      ..activeRequest = _activeRequest;
+    if (interactionState != null) {
+      interactionState
+        ..runState = _state
+        ..historyMessages = [..._historyMessages]
+        ..composerText = _composerController.text
+        ..attachedImages = [..._attachedImages]
+        ..autoVoiceEnabled = _autoVoiceEnabled
+        ..activeRequest = _activeRequest
+        ..localActionStatuses = {..._localActionStatuses};
+    }
+    _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
+  }
+
+  Future<void> _restorePersistedInteractionState() async {
+    final store = widget.interactionStateStore;
+    if (store == null) return;
+    final snapshot = await store.read();
+    if (!mounted || snapshot == null || !snapshot.hasContent) return;
+    if (_hasLocalInteraction()) return;
+    setState(() {
+      _applyInteractionSnapshot(snapshot);
+    });
+    _persistInteractionState();
+  }
+
+  bool _hasLocalInteraction() {
+    return _state.events.isNotEmpty ||
+        _state.textContent.trim().isNotEmpty ||
+        _state.provisionalTextContent.trim().isNotEmpty ||
+        _state.threadId?.trim().isNotEmpty == true ||
+        _state.runId?.trim().isNotEmpty == true ||
+        _historyMessages.isNotEmpty ||
+        _composerController.text.trim().isNotEmpty ||
+        _attachedImages.isNotEmpty ||
+        _activeRequest != null ||
+        _localActionStatuses.isNotEmpty;
+  }
+
+  void _applyInteractionSnapshot(AgentHubInteractionSnapshot snapshot) {
+    final restoredState = snapshot.runState.isActive
+        ? snapshot.runState.markDisconnected('连接已中断，可继续接收。')
+        : snapshot.runState;
+    _state = restoredState;
+    _historyMessages = snapshot.historyMessages
+        .map(_historyMessageFromSnapshot)
+        .toList(growable: false);
+    _composerController
+      ..text = snapshot.composerText
+      ..selection = TextSelection.collapsed(
+        offset: snapshot.composerText.length,
+      );
+    _attachedImages
+      ..clear()
+      ..addAll(snapshot.attachedImages);
+    _autoVoiceEnabled = snapshot.autoVoiceEnabled;
+    _activeRequest = snapshot.activeRequest;
+    _localActionStatuses
+      ..clear()
+      ..addAll(snapshot.localActionStatuses);
+  }
+
+  AgentHubInteractionSnapshot _buildInteractionSnapshot() {
+    return AgentHubInteractionSnapshot(
+      runState: _state,
+      historyMessages: _historyMessages
+          .map(_historySnapshotFromMessage)
+          .toList(growable: false),
+      composerText: _composerController.text,
+      attachedImages: [..._attachedImages],
+      autoVoiceEnabled: _autoVoiceEnabled,
+      activeRequest: _activeRequest,
+      localActionStatuses: {..._localActionStatuses},
+    );
+  }
+
+  void _schedulePersistentInteractionStateWrite(
+    AgentHubInteractionSnapshot snapshot,
+  ) {
+    if (widget.interactionStateStore == null) return;
+    _pendingPersistentSnapshot = snapshot;
+    _persistentWriteTimer?.cancel();
+    _persistentWriteTimer = Timer(
+      const Duration(milliseconds: 250),
+      _flushPersistentInteractionState,
+    );
+  }
+
+  void _flushPersistentInteractionState() {
+    final store = widget.interactionStateStore;
+    final snapshot = _pendingPersistentSnapshot;
+    _persistentWriteTimer?.cancel();
+    _persistentWriteTimer = null;
+    _pendingPersistentSnapshot = null;
+    if (store == null || snapshot == null) return;
+    final operation = snapshot.hasContent
+        ? store.write(snapshot)
+        : store.clear();
+    unawaited(_ignorePersistentWriteError(operation));
+  }
+
+  Future<void> _ignorePersistentWriteError(Future<void> operation) async {
+    try {
+      await operation;
+    } catch (_) {
+      // State persistence is recoverability aid; UI should not fail on it.
+    }
   }
 
   void _applyInitialComposerText() {
@@ -360,6 +467,24 @@ class _AgentHubPageState extends State<AgentHubPage> {
     await _startRun(request);
   }
 
+  Future<void> _resumeCurrentRun({bool preserveActionState = false}) async {
+    if (widget.runner == null || _state.isActive) return;
+    final runId = _state.runId?.trim();
+    if (runId == null || runId.isEmpty) return;
+    final baseRequest =
+        _activeRequest ??
+        AgentStreamRequest(message: '', threadId: _state.threadId);
+    await _startRun(
+      baseRequest.resume(
+        runId: runId,
+        threadId: _state.threadId,
+        afterSequence: _state.lastSequence ?? 0,
+      ),
+      initialState: _state.copyWith(phase: AgentStreamRunPhase.streaming),
+      preserveActionState: preserveActionState,
+    );
+  }
+
   Future<void> _startRun(
     AgentStreamRequest request, {
     AgentStreamRunState? initialState,
@@ -496,6 +621,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
           ? _acceptedConfirmStatus(result.actionStatus)
           : 'failed';
     });
+    _persistInteractionState();
+    if (result.accepted) {
+      await _resumeCurrentRun(preserveActionState: true);
+    }
   }
 
   String _acceptedConfirmStatus(String? actionStatus) {
@@ -527,6 +656,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
           ? result.actionStatus ?? 'rejected'
           : 'failed';
     });
+    _persistInteractionState();
+    if (result.accepted) {
+      await _resumeCurrentRun(preserveActionState: true);
+    }
   }
 
   @override
@@ -740,6 +873,26 @@ class AgentHubHistoryMessage {
       AgentHubHistoryRole.assistant => '智能体',
     };
   }
+}
+
+AgentHubHistoryMessage _historyMessageFromSnapshot(
+  AgentHubHistorySnapshot snapshot,
+) {
+  return AgentHubHistoryMessage(
+    role: snapshot.role == 'user'
+        ? AgentHubHistoryRole.user
+        : AgentHubHistoryRole.assistant,
+    content: snapshot.content,
+  );
+}
+
+AgentHubHistorySnapshot _historySnapshotFromMessage(
+  AgentHubHistoryMessage message,
+) {
+  return AgentHubHistorySnapshot(
+    role: message.role == AgentHubHistoryRole.user ? 'user' : 'assistant',
+    content: message.content,
+  );
 }
 
 class AgentHubHistoryPanel extends StatelessWidget {
@@ -1945,6 +2098,7 @@ List<AgentActionCardView> _actionCardsFromEvents(
   for (final entry in localStatuses.entries) {
     final existing = cards[entry.key];
     if (existing == null) continue;
+    if (_isFinalActionStatus(existing.status)) continue;
     cards[entry.key] = AgentActionCardView(
       id: existing.id,
       title: existing.title,
@@ -1954,6 +2108,10 @@ List<AgentActionCardView> _actionCardsFromEvents(
   }
 
   return List<AgentActionCardView>.unmodifiable(cards.values);
+}
+
+bool _isFinalActionStatus(String status) {
+  return status == 'applied' || status == 'failed' || status == 'rejected';
 }
 
 AgentActionCardView? _actionCardFromEvent(AgentStreamEvent event) {
