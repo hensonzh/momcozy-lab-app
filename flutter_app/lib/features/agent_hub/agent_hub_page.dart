@@ -1530,6 +1530,12 @@ class AgentComposerBar extends StatelessWidget {
   final VoidCallback onRemoveImages;
   final VoidCallback onVoiceInput;
 
+  static const double _controlSize = 32;
+  static const double _compactHorizontalPadding = 8;
+  static const double _compactControlGap = 4;
+  static const double _inputHorizontalPadding = 4;
+  static const double _lineWrapGuard = 10;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -1651,7 +1657,7 @@ class AgentComposerBar extends StatelessWidget {
                 final shouldExpand =
                     _visualLineCountForWidth(
                       context,
-                      constraints.maxWidth - 124,
+                      _compactInputTextWidth(constraints.maxWidth),
                       inputTextStyle,
                     ) >
                     1;
@@ -1668,8 +1674,8 @@ class AgentComposerBar extends StatelessWidget {
                     color: MomCozyColors.mutedForeground,
                     visualDensity: VisualDensity.compact,
                     constraints: const BoxConstraints.tightFor(
-                      width: 32,
-                      height: 32,
+                      width: _controlSize,
+                      height: _controlSize,
                     ),
                     padding: EdgeInsets.zero,
                   );
@@ -1686,8 +1692,8 @@ class AgentComposerBar extends StatelessWidget {
                         : MomCozyColors.mutedForeground,
                     visualDensity: VisualDensity.compact,
                     constraints: const BoxConstraints.tightFor(
-                      width: 32,
-                      height: 32,
+                      width: _controlSize,
+                      height: _controlSize,
                     ),
                     padding: EdgeInsets.zero,
                   );
@@ -1709,8 +1715,8 @@ class AgentComposerBar extends StatelessWidget {
                       foregroundColor: colorScheme.onPrimary,
                       disabledBackgroundColor: MomCozyColors.muted,
                       disabledForegroundColor: MomCozyColors.mutedForeground,
-                      fixedSize: const Size.square(32),
-                      minimumSize: const Size.square(32),
+                      fixedSize: const Size.square(_controlSize),
+                      minimumSize: const Size.square(_controlSize),
                       padding: EdgeInsets.zero,
                     ),
                   );
@@ -1793,7 +1799,7 @@ class AgentComposerBar extends StatelessWidget {
                                   imageButton(),
                                   const Spacer(),
                                   voiceButton(),
-                                  const SizedBox(width: 4),
+                                  const SizedBox(width: _compactControlGap),
                                   sendButton(),
                                 ],
                               ),
@@ -1802,11 +1808,11 @@ class AgentComposerBar extends StatelessWidget {
                         : Row(
                             children: [
                               imageButton(),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: _compactControlGap),
                               Expanded(child: inputField()),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: _compactControlGap),
                               voiceButton(),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: _compactControlGap),
                               sendButton(),
                             ],
                           ),
@@ -1838,6 +1844,15 @@ class AgentComposerBar extends StatelessWidget {
     );
   }
 
+  double _compactInputTextWidth(double surfaceWidth) {
+    return surfaceWidth -
+        (_compactHorizontalPadding * 2) -
+        (_controlSize * 3) -
+        (_compactControlGap * 3) -
+        (_inputHorizontalPadding * 2) -
+        _lineWrapGuard;
+  }
+
   int _visualLineCountForWidth(
     BuildContext context,
     double maxWidth,
@@ -1848,7 +1863,7 @@ class AgentComposerBar extends StatelessWidget {
       text: TextSpan(text: text, style: style),
       textDirection: Directionality.of(context),
       maxLines: 100,
-    )..layout(maxWidth: maxWidth.clamp(120, double.infinity));
+    )..layout(maxWidth: maxWidth.clamp(1.0, double.infinity));
     return painter.computeLineMetrics().length.clamp(1, 100);
   }
 

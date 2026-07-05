@@ -260,6 +260,48 @@ void main() {
     expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
   });
 
+  testWidgets(
+    'Agent Hub composer expands at first visual wrap without refocus',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(
+              _FixtureAgentStreamClient(
+                parseAgentJsonl(
+                  readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final compactHeight = _composerSurfaceHeight(tester);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'nihao a dsdkfj ksdjf ksjdf jdfg jdh kasjdf klsjdflk',
+      );
+      await tester.pump();
+
+      final inputRect = tester.getRect(
+        find.byKey(const ValueKey('agent-composer-input-frame')),
+      );
+      final sendRect = tester.getRect(
+        find.byKey(const ValueKey('agent-send-button')),
+      );
+
+      expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
+      expect(sendRect.top, greaterThan(inputRect.bottom));
+    },
+  );
+
   testWidgets('Agent Hub keeps send disabled for empty runner input', (
     tester,
   ) async {
