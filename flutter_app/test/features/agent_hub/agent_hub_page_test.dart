@@ -184,6 +184,12 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('agent-image-button')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
+    expect(find.text('拍照'), findsOneWidget);
+    expect(find.text('上传'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
 
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
@@ -232,6 +238,8 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('agent-image-button')));
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
 
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
@@ -268,6 +276,54 @@ void main() {
 
     expect(client.requests.single.message, 'Send text only');
     expect(client.requests.single.images, isEmpty);
+  });
+
+  testWidgets('Agent Hub sends image-only request with legacy prompt', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'only-image.png',
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-camera-button')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests.single.message, '请看这张图片');
+    expect(client.requests.single.images.single.name, 'only-image.png');
+  });
+
+  testWidgets('Agent Hub applies initial composer prefill', (tester) async {
+    await tester.pumpWidget(
+      _host(const AgentHubPage(initialComposerText: '我想调整今天的吸乳排期')),
+    );
+
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '我想调整今天的吸乳排期',
+    );
   });
 
   testWidgets('Agent Hub voice input fills composer without sending', (

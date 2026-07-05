@@ -84,6 +84,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final ScrollController _chatScrollController = ScrollController();
   bool _autoVoiceEnabled = true;
   bool _showLatestButton = false;
+  bool _showPhotoMenu = false;
 
   @override
   void initState() {
@@ -219,7 +220,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
 
-    final requestMessage = message.isEmpty ? '请分析这张图片' : message;
+    final requestMessage = message.isEmpty ? '请看这张图片' : message;
     final optimisticContent = message.isEmpty
         ? '图片 ${_attachedImages.length}'
         : message;
@@ -236,6 +237,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ),
       );
       _attachedImages.clear();
+      _showPhotoMenu = false;
     });
     _persistInteractionState();
     await _startRun(request);
@@ -248,8 +250,16 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted || image == null) return;
     setState(() {
       _attachedImages.add(image);
+      _showPhotoMenu = false;
     });
     _persistInteractionState();
+  }
+
+  void _togglePhotoMenu() {
+    if (widget.pickImage == null || _state.isActive) return;
+    setState(() {
+      _showPhotoMenu = !_showPhotoMenu;
+    });
   }
 
   Future<void> _startVoiceInput() async {
@@ -321,6 +331,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _state = const AgentStreamRunState();
       _historyMessages.clear();
       _attachedImages.clear();
+      _showPhotoMenu = false;
       _pendingActionIds.clear();
       _localActionStatuses.clear();
       _activeRequest = null;
@@ -561,6 +572,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
               canSend: _canSend,
               isRunning: _state.isActive,
               imageCount: _attachedImages.length,
+              showPhotoMenu: _showPhotoMenu,
               canAttachImage: widget.pickImage != null && !_state.isActive,
               canUseVoice:
                   (widget.voiceInputController != null ||
@@ -571,6 +583,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
               onChanged: (_) => setState(() {}),
               onSend: _sendMessage,
               onCancel: _cancelRun,
+              onTogglePhotoMenu: _togglePhotoMenu,
               onAttachImage: _attachImage,
               onRemoveImages: _removeAttachedImages,
               onVoiceInput: _startVoiceInput,
@@ -1488,12 +1501,14 @@ class AgentComposerBar extends StatelessWidget {
     required this.canSend,
     required this.isRunning,
     required this.imageCount,
+    required this.showPhotoMenu,
     required this.canAttachImage,
     required this.canUseVoice,
     required this.voicePhase,
     required this.onChanged,
     required this.onSend,
     required this.onCancel,
+    required this.onTogglePhotoMenu,
     required this.onAttachImage,
     required this.onRemoveImages,
     required this.onVoiceInput,
@@ -1503,12 +1518,14 @@ class AgentComposerBar extends StatelessWidget {
   final bool canSend;
   final bool isRunning;
   final int imageCount;
+  final bool showPhotoMenu;
   final bool canAttachImage;
   final bool canUseVoice;
   final AgentVoicePhase voicePhase;
   final ValueChanged<String> onChanged;
   final VoidCallback onSend;
   final VoidCallback onCancel;
+  final VoidCallback onTogglePhotoMenu;
   final VoidCallback onAttachImage;
   final VoidCallback onRemoveImages;
   final VoidCallback onVoiceInput;
@@ -1525,6 +1542,55 @@ class AgentComposerBar extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (showPhotoMenu) ...[
+              Padding(
+                key: const ValueKey('agent-photo-menu'),
+                padding: const EdgeInsets.only(bottom: 8),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.card.withValues(alpha: 0.92),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: MomCozyColors.border.withValues(alpha: 0.62),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xff754c5e).withValues(alpha: 0.12),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton.tonalIcon(
+                            key: const ValueKey('agent-photo-camera-button'),
+                            onPressed: canAttachImage ? onAttachImage : null,
+                            icon: const Icon(
+                              Icons.photo_camera_outlined,
+                              size: 18,
+                            ),
+                            label: const Text('拍照'),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            key: const ValueKey('agent-photo-upload-button'),
+                            onPressed: canAttachImage ? onAttachImage : null,
+                            icon: const Icon(Icons.upload_rounded, size: 18),
+                            label: const Text('上传'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
             if (imageCount > 0) ...[
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -1595,7 +1661,7 @@ class AgentComposerBar extends StatelessWidget {
                   children: [
                     IconButton(
                       key: const ValueKey('agent-image-button'),
-                      onPressed: canAttachImage ? onAttachImage : null,
+                      onPressed: canAttachImage ? onTogglePhotoMenu : null,
                       icon: const Icon(
                         Icons.add_photo_alternate_outlined,
                         size: 20,
