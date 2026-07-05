@@ -687,6 +687,8 @@ void main() {
     expect(client.requests, hasLength(2));
     expect(client.requests.first.message, 'Retry my request');
     expect(client.requests.last.message, 'Retry my request');
+    expect(client.requests.last.runId, 'run-first');
+    expect(client.requests.last.afterSequence, 2);
     expect(find.text('Retried answer'), findsOneWidget);
   });
 
@@ -1211,27 +1213,33 @@ class _RetryAgentStreamClient implements AgentStreamClient {
 
     if (requests.length == 1) {
       yield AgentStreamEvent(const {
+        'event_id': 'evt-retry-2',
         'type': 'message.delta',
         'thread_id': 'thread-demo',
         'run_id': 'run-first',
         'message_id': 'msg-first',
+        'sequence': 2,
         'payload': {'text': 'Partial answer'},
       });
       throw StateError('socket closed');
     }
 
     yield AgentStreamEvent(const {
-      'type': 'message.delta',
+      'event_id': 'evt-retry-3',
+      'type': 'message.completed',
       'thread_id': 'thread-demo',
-      'run_id': 'run-retry',
-      'message_id': 'msg-retry',
+      'run_id': 'run-first',
+      'message_id': 'msg-first',
+      'sequence': 3,
       'payload': {'text': 'Retried answer'},
     });
     yield AgentStreamEvent(const {
+      'event_id': 'evt-retry-4',
       'type': 'run.completed',
       'thread_id': 'thread-demo',
-      'run_id': 'run-retry',
-      'message_id': 'msg-retry',
+      'run_id': 'run-first',
+      'message_id': 'msg-first',
+      'sequence': 4,
     });
   }
 }

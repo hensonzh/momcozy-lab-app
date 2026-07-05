@@ -4,6 +4,8 @@ class AgentStreamRequest {
   const AgentStreamRequest({
     required this.message,
     this.threadId,
+    this.runId,
+    this.afterSequence = 0,
     this.locale = 'en-US',
     this.images = const <AgentStreamImageInput>[],
     this.metadata = const <String, Object?>{},
@@ -11,6 +13,8 @@ class AgentStreamRequest {
 
   final String message;
   final String? threadId;
+  final String? runId;
+  final int afterSequence;
   final String locale;
   final List<AgentStreamImageInput> images;
   final Map<String, Object?> metadata;
@@ -23,6 +27,22 @@ class AgentStreamRequest {
       'images': images.map((image) => image.toMap()).toList(growable: false),
     if (metadata.isNotEmpty) 'metadata': metadata,
   };
+
+  AgentStreamRequest resume({
+    required String runId,
+    required int afterSequence,
+    String? threadId,
+  }) {
+    return AgentStreamRequest(
+      message: message,
+      threadId: threadId ?? this.threadId,
+      runId: runId,
+      afterSequence: afterSequence < 0 ? 0 : afterSequence,
+      locale: locale,
+      images: images,
+      metadata: metadata,
+    );
+  }
 }
 
 class AgentStreamImageInput {

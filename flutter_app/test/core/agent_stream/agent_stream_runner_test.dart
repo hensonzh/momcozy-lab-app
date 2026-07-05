@@ -84,6 +84,66 @@ void main() {
       );
     });
 
+    test('continues from an existing state for replay resumes', () async {
+      final runner = AgentStreamRunner(
+        JsonlAgentStreamClient(
+          FixtureAgentStreamTransport([
+            jsonEncode({
+              'event_id': 'evt-resume-3',
+              'type': 'message.completed',
+              'thread_id': 'thread-fixture-001',
+              'run_id': 'run-fixture-001',
+              'message_id': 'msg-reply-001',
+              'sequence': 3,
+              'payload': {'text': 'Final answer'},
+            }),
+            jsonEncode({
+              'event_id': 'evt-resume-4',
+              'type': 'run.completed',
+              'thread_id': 'thread-fixture-001',
+              'run_id': 'run-fixture-001',
+              'message_id': 'msg-reply-001',
+              'sequence': 4,
+            }),
+          ]),
+        ),
+      );
+
+      final initialState = AgentStreamRunState(
+        phase: AgentStreamRunPhase.streaming,
+        threadId: 'thread-fixture-001',
+        runId: 'run-fixture-001',
+        messageId: 'msg-reply-001',
+        textContent: 'Partial',
+        lastSequence: 2,
+        events: [
+          AgentStreamEvent(const {
+            'event_id': 'evt-resume-2',
+            'type': 'message.delta',
+            'thread_id': 'thread-fixture-001',
+            'run_id': 'run-fixture-001',
+            'message_id': 'msg-reply-001',
+            'sequence': 2,
+            'payload': {'text': 'Partial'},
+          }),
+        ],
+      );
+
+      final states = await runner
+          .run(_request, initialState: initialState)
+          .toList();
+
+      expect(states.first.textContent, 'Partial');
+      expect(states.last.phase, AgentStreamRunPhase.finished);
+      expect(states.last.textContent, 'Final answer');
+      expect(states.last.lastSequence, 4);
+      expect(states.last.events.map((event) => event.eventId), [
+        'evt-resume-2',
+        'evt-resume-3',
+        'evt-resume-4',
+      ]);
+    });
+
     test('does not mark confirmation waits as disconnected', () async {
       final runner = AgentStreamRunner(
         JsonlAgentStreamClient(
