@@ -2,64 +2,62 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 
 import '../../support/fixture_reader.dart';
 
 void main() {
   group('Agent stream IO transports', () {
-    test(
-      'production SSE transport creates run and follows event stream',
-      () async {
-        final runConnector = _RecordingControlHttpConnector(
-          const AgentStreamControlHttpResponse(
-            statusCode: 201,
-            body:
-                '{"id":"run-production-001","thread_id":"thread-production-001","status":"running"}',
+    test('production SSE transport creates run and follows event stream', () async {
+      final runConnector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 201,
+          body:
+              '{"id":"run-production-001","thread_id":"thread-production-001","status":"running"}',
+        ),
+      );
+      final streamConnector = _RecordingSseGetConnector([
+        'data: {"event_id":"evt-1","thread_id":"thread-production-001","run_id":"run-production-001","sequence":1,"type":"message.delta","payload":{"text":"Hello"},"created_at":"2026-07-01T00:00:00Z"}\n\n',
+        'data: {"event_id":"evt-2","thread_id":"thread-production-001","run_id":"run-production-001","sequence":2,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:01Z"}\n\n',
+      ]);
+      final client = SseAgentStreamClient(
+        ProductionAgentSseTransport(
+          runsEndpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+            token: 'secret-token',
           ),
-        );
-        final streamConnector = _RecordingSseGetConnector([
-          'data: {"event_id":"evt-1","thread_id":"thread-production-001","run_id":"run-production-001","sequence":1,"type":"message.delta","payload":{"text":"Hello"},"created_at":"2026-07-01T00:00:00Z"}\n\n',
-          'data: {"event_id":"evt-2","thread_id":"thread-production-001","run_id":"run-production-001","sequence":2,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:01Z"}\n\n',
-        ]);
-        final client = SseAgentStreamClient(
-          ProductionAgentSseTransport(
-            runsEndpoint: AgentStreamEndpoint(
-              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
-              token: 'secret-token',
-            ),
-            payloadFactory: buildProductionAgentRunPayload,
-            runConnector: runConnector,
-            streamConnector: streamConnector,
-          ),
-        );
+          payloadFactory: buildProductionAgentRunPayload,
+          runConnector: runConnector,
+          streamConnector: streamConnector,
+        ),
+      );
 
-        final events = await client.stream(_request).toList();
-        final postedBody =
-            jsonDecode(runConnector.body!) as Map<String, Object?>;
+      final events = await client.stream(_request).toList();
+      final postedBody = jsonDecode(runConnector.body!) as Map<String, Object?>;
 
-        expect(events.map((event) => event.type), [
-          'message.delta',
-          'run.completed',
-        ]);
-        expect(runConnector.uri!.path, '/v1/agent/runs');
-        expect(streamConnector.uri!.path, '/v1/agent/runs/run-production-001/stream');
-        expect(streamConnector.uri!.queryParameters, {
-          'after_sequence': '0',
-          'follow': 'true',
-          'limit': '200',
-        });
-        expect(postedBody['message'], 'Review my pumping pattern.');
-        expect(postedBody['runtime_pattern'], 'langgraph_sdk');
-        expect(postedBody.containsKey('user_id'), isFalse);
-        expect(
-          runConnector.headers,
-          containsPair('Authorization', 'Bearer secret-token'),
-        );
-        expect(runConnector.headers?['Idempotency-Key'], isNotEmpty);
-      },
-    );
+      expect(events.map((event) => event.type), [
+        'message.delta',
+        'run.completed',
+      ]);
+      expect(runConnector.uri!.path, '/v1/agent/runs');
+      expect(
+        streamConnector.uri!.path,
+        '/v1/agent/runs/run-production-001/stream',
+      );
+      expect(streamConnector.uri!.queryParameters, {
+        'after_sequence': '0',
+        'follow': 'true',
+        'limit': '200',
+      });
+      expect(postedBody['message'], 'Review my pumping pattern.');
+      expect(postedBody['runtime_pattern'], 'langgraph_sdk');
+      expect(postedBody.containsKey('user_id'), isFalse);
+      expect(
+        runConnector.headers,
+        containsPair('Authorization', 'Bearer secret-token'),
+      );
+      expect(runConnector.headers?['Idempotency-Key'], isNotEmpty);
+    });
 
     test(
       'cancel client posts production run-scoped cancel and accepts 2xx or 404',
@@ -103,7 +101,10 @@ void main() {
           connector.headers,
           containsPair('Content-Type', 'application/json'),
         );
-        expect(connector.uri!.path, '/v1/agent/runs/run-fixture-tool-001/cancel');
+        expect(
+          connector.uri!.path,
+          '/v1/agent/runs/run-fixture-tool-001/cancel',
+        );
         expect(jsonDecode(connector.body!) as Map<String, Object?>, {
           'reason': 'user_cancelled',
         });

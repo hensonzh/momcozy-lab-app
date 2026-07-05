@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 
@@ -10,39 +9,34 @@ import '../../support/fixture_reader.dart';
 
 void main() {
   group('AgentStreamRunner', () {
-    test(
-      'produces the same final state for SSE and JSONL clients',
-      () async {
-        const request = AgentStreamRequest(
-          message: 'Review my pumping pattern.',
-        );
-        final sseRunner = AgentStreamRunner(
-          SseAgentStreamClient(
-            FixtureAgentStreamTransport([
-              readMigrationFixture('agent_events/text_stream_basic.eventstream'),
-            ]),
-          ),
-        );
-        final jsonlRunner = AgentStreamRunner(
-          JsonlAgentStreamClient(
-            FixtureAgentStreamTransport([
-              readMigrationFixture('agent_events/text_stream_basic.jsonl'),
-            ]),
-          ),
-        );
+    test('produces the same final state for SSE and JSONL clients', () async {
+      const request = AgentStreamRequest(message: 'Review my pumping pattern.');
+      final sseRunner = AgentStreamRunner(
+        SseAgentStreamClient(
+          FixtureAgentStreamTransport([
+            readMigrationFixture('agent_events/text_stream_basic.eventstream'),
+          ]),
+        ),
+      );
+      final jsonlRunner = AgentStreamRunner(
+        JsonlAgentStreamClient(
+          FixtureAgentStreamTransport([
+            readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+          ]),
+        ),
+      );
 
-        final sseStates = await sseRunner.run(request).toList();
-        final jsonlStates = await jsonlRunner.run(request).toList();
-        final sseFinal = sseStates.last;
-        final jsonlFinal = jsonlStates.last;
+      final sseStates = await sseRunner.run(request).toList();
+      final jsonlStates = await jsonlRunner.run(request).toList();
+      final sseFinal = sseStates.last;
+      final jsonlFinal = jsonlStates.last;
 
-        expect(sseStates.first.phase, AgentStreamRunPhase.streaming);
-        expect(sseFinal.phase, AgentStreamRunPhase.finished);
-        expect(jsonlFinal.phase, AgentStreamRunPhase.finished);
-        expect(jsonlFinal.textContent, sseFinal.textContent);
-        expect(jsonlFinal.runId, sseFinal.runId);
-      },
-    );
+      expect(sseStates.first.phase, AgentStreamRunPhase.streaming);
+      expect(sseFinal.phase, AgentStreamRunPhase.finished);
+      expect(jsonlFinal.phase, AgentStreamRunPhase.finished);
+      expect(jsonlFinal.textContent, sseFinal.textContent);
+      expect(jsonlFinal.runId, sseFinal.runId);
+    });
 
     test(
       'maps transport errors to disconnected state with partial text',
@@ -114,9 +108,7 @@ void main() {
   });
 }
 
-const _request = AgentStreamRequest(
-  message: 'Review my pumping pattern.',
-);
+const _request = AgentStreamRequest(message: 'Review my pumping pattern.');
 
 class _FailingTransport implements AgentStreamTransport {
   const _FailingTransport(this.seedFrames);

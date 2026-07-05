@@ -8859,11 +8859,7 @@ class _DeviceReminderActionSpec {
 
 const _deviceReminderActions = [
   _DeviceReminderActionSpec(key: 'task_reminder', label: '任务提醒'),
-  _DeviceReminderActionSpec(key: 'daily_summary', label: '每日奶量总结'),
-  _DeviceReminderActionSpec(key: 'mom_baby', label: '每日泌乳建议'),
   _DeviceReminderActionSpec(key: 'milk_analysis', label: '奶量分析'),
-  _DeviceReminderActionSpec(key: 'growth_update', label: '宝宝生长发育指标更新'),
-  _DeviceReminderActionSpec(key: 'health_issue', label: '健康问题通知'),
 ];
 
 class _DeviceSubpageHeader extends StatelessWidget {

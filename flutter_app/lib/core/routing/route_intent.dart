@@ -106,15 +106,6 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
     );
   }
 
-  if (cleanPath == '/status' && event == 'grown') {
-    return const RouteIntent(
-      type: 'OpenStatusGrowthHighlight',
-      path: '/status',
-      payload: {'source': 'native-notification', 'highlight': 'growth'},
-      consume: 'once',
-    );
-  }
-
   if (cleanPath == '/pump' && notify == null) {
     return const RouteIntent(
       type: 'OpenPumpSession',
@@ -147,20 +138,6 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
   }
 
   switch (event) {
-    case 'summary':
-    case 'mom_baby':
-      final card = _record(notify?['analysis_card']);
-      return RouteIntent(
-        type: 'OpenAgentHubWithAnalysisCard',
-        path: '/',
-        payload: {
-          'kind': _string(card?['kind']) ?? event,
-          'chatMessageId': _string(notify?['chatMessageId']),
-          'message': _string(notify?['body']) ?? '',
-          'notification': false,
-        },
-        consume: 'once',
-      );
     case 'milk_analysis':
       final card = _record(notify?['analysis_card']);
       return RouteIntent(
@@ -173,17 +150,6 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
           'notification': true,
           'requiresContextEvent': true,
           'requiresFollowupQueue': true,
-        },
-        consume: 'once',
-      );
-    case 'health_issue':
-      return RouteIntent(
-        type: 'OpenAgentHubWithHealthIssue',
-        path: '/',
-        payload: {
-          'kind': 'health_issue',
-          'chatMessageId': _string(notify?['chatMessageId']),
-          'message': _string(notify?['body']) ?? '',
         },
         consume: 'once',
       );

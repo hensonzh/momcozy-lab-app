@@ -18,10 +18,7 @@ void main() {
           tester,
         ) async {
           await _setViewport(tester, viewport.size);
-          await _pumpIbclc(
-            tester,
-            connector: _StaticControlHttpConnector(state.response),
-          );
+          await _pumpIbclc(tester, eventSent: state.eventSent);
           await state.drive(tester);
 
           await expectLater(
@@ -40,27 +37,18 @@ const _ibclcStates = [
   _IbclcGoldenState(
     label: 'queue state',
     fileName: 'queue_state_mobile.png',
-    response: AgentStreamControlHttpResponse(
-      statusCode: 200,
-      body: '{"status":"ok"}',
-    ),
+    eventSent: true,
   ),
   _IbclcGoldenState(
     label: 'chat ready synced state',
     fileName: 'chat_ready_synced_state_mobile.png',
-    response: AgentStreamControlHttpResponse(
-      statusCode: 200,
-      body: '{"status":"ok"}',
-    ),
+    eventSent: true,
     drive: _advanceToReadyChat,
   ),
   _IbclcGoldenState(
     label: 'local queue failed sync state',
     fileName: 'local_queue_failed_sync_state_mobile.png',
-    response: AgentStreamControlHttpResponse(
-      statusCode: 503,
-      body: '{"error":"unavailable"}',
-    ),
+    eventSent: false,
     drive: _advanceToReadyChat,
   ),
 ];
@@ -69,13 +57,13 @@ class _IbclcGoldenState {
   const _IbclcGoldenState({
     required this.label,
     required this.fileName,
-    required this.response,
+    required this.eventSent,
     this.drive = _noOpDrive,
   });
 
   final String label;
   final String fileName;
-  final AgentStreamControlHttpResponse response;
+  final bool eventSent;
   final Future<void> Function(WidgetTester tester) drive;
 }
 
@@ -120,20 +108,11 @@ Future<void> _setViewport(WidgetTester tester, Size size) async {
   addTearDown(tester.view.resetDevicePixelRatio);
 }
 
-Future<void> _pumpIbclc(
-  WidgetTester tester, {
-  required AgentStreamControlHttpConnector connector,
-}) async {
+Future<void> _pumpIbclc(WidgetTester tester, {required bool eventSent}) async {
   final route = momCozyRoutes.singleWhere(
     (route) => route.path == '/ibclc-chat.html',
   );
-  final client = AgentStreamClientEventClient(
-    endpoint: AgentStreamEndpoint(
-      uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-      token: 'test-token',
-    ),
-    connector: connector,
-  );
+  final client = AgentStreamClientEventClient(sent: eventSent);
 
   await tester.pumpWidget(
     RepaintBoundary(
@@ -172,19 +151,4 @@ Future<void> _advanceToReadyChat(WidgetTester tester) async {
   await tester.pump(const Duration(seconds: 8));
   await tester.pumpAndSettle();
   expect(find.textContaining('你好，我是 Emily Chen'), findsOneWidget);
-}
-
-class _StaticControlHttpConnector implements AgentStreamControlHttpConnector {
-  const _StaticControlHttpConnector(this.response);
-
-  final AgentStreamControlHttpResponse response;
-
-  @override
-  Future<AgentStreamControlHttpResponse> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) async {
-    return response;
-  }
 }

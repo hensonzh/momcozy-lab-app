@@ -1804,7 +1804,11 @@ void main() {
 
       expect(find.text('设备提醒'), findsOneWidget);
       expect(find.text('任务提醒'), findsOneWidget);
-      expect(find.text('健康问题通知'), findsOneWidget);
+      expect(find.text('奶量分析'), findsOneWidget);
+      expect(find.text('每日奶量总结'), findsNothing);
+      expect(find.text('每日泌乳建议'), findsNothing);
+      expect(find.text('宝宝生长发育指标更新'), findsNothing);
+      expect(find.text('健康问题通知'), findsNothing);
 
       await tester.tap(find.text('任务提醒'));
       await tester.pumpAndSettle();
