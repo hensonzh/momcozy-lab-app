@@ -1,7 +1,7 @@
 import type { MediaVoiceNarrationItem } from "@/lib/mediaVoiceNarration";
 
 /**
- * 与《API接口说明文档》V1.3 对齐的请求/响应类型（字段待补充处用可选字段兼容）。
+ * 旧 Agent API 请求/响应类型，字段待补充处用可选字段兼容。
  */
 
 /** 多数接口 data 内业务结果码：0 成功，-1 失败 */

@@ -60,8 +60,8 @@ type ApiEnvelope<T> = {
 
 | Contract | Transport | Method | Current source | Flutter owner | Phase 0 状态 |
 |---|---|---|---|---|---|
-| `/api/ag-ui` | SSE | POST/stream | `docs/api/web-api.md`; MomCozyAgent SSE upstream | `features/agent_hub/data` | 需要定义为首选或候选 transport。 |
-| `/api/ag-ui-ws` | WebSocket | WS first-frame payload | `src/lib/agentApi.ts`; `docs/api/web-api.md` | `features/agent_hub/data` | 当前兼容 transport。 |
+| `/api/ag-ui` | SSE | POST/stream | Legacy implementation: `legacy_web/src/lib/agentApi.ts`; production contract: `docs/backend-contract/` | `features/agent_hub/data` | 旧 Web API 文档已移除，不再作为当前合同来源。 |
+| `/api/ag-ui-ws` | WebSocket | WS first-frame payload | Legacy implementation: `legacy_web/src/lib/agentApi.ts`; production contract: `docs/backend-contract/` | `features/agent_hub/data` | 旧兼容 transport；Flutter 新实现应优先跟随 production contract。 |
 | `/api/ag-ui-cancel` | HTTP | POST | `src/lib/agentApi.ts` | `features/agent_hub/data` | 需要 cancel ack fixture。 |
 | `/api/ag-ui-prewarm` | HTTP | POST | `src/lib/agentApi.ts` | `features/agent_hub/data` | 需要确认 Flutter 是否保留。 |
 | `/api/ag-ui-timing-log` | HTTP | POST | `src/lib/agentApi.ts` | `features/agent_hub/data` | 需要决定是否仍采集。 |
@@ -377,7 +377,7 @@ type WorkflowStopData = {
 | `/v1/pump/workstate` | HTTP | POST | `src/lib/agentApi.ts`; Android `PumpAgentUploadPlugin` | `features/pump_session/data` | 后台上传也会调用。 |
 | `/v1/pump/process` | HTTP | POST | `src/lib/agentApi.ts`; Android `PumpAgentUploadPlugin` | `features/pump_session/data` | 需要 dedupe 和重试。 |
 | `/v1/pump/process/data` | HTTP | POST | `src/lib/agentApi.ts`; Android `PumpAgentUploadPlugin` | `features/pump_session/data` | 查询/回填 pump process。 |
-| `/v1/pump/session-summary` | WebSocket | WS | `src/lib/agentApi.ts`; `docs/api/websocket接口说明文档.md` | `features/pump_session/data` | 需确认 Flutter 是否继续 WS 或改 HTTP。 |
+| `/v1/pump/session-summary` | WebSocket | WS | Legacy implementation: `legacy_web/src/lib/agentApi.ts`; production contract: `docs/backend-contract/` | `features/pump_session/data` | 旧 Web WebSocket 文档已移除；Flutter 新实现应按 production contract 收敛。 |
 | `/v1/pump/info/get` | HTTP | GET | `src/lib/momPumpTwinAgentApi.ts` | `features/status/data` | Status breast/pump summary。 |
 | `/v1/device/info` | HTTP | POST | `src/lib/agentApi.ts`; `src/lib/deviceInfoReport.ts` | `features/device/data` | 左右设备状态上报。 |
 
