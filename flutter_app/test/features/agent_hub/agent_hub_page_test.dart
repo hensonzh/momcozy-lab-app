@@ -217,6 +217,10 @@ void main() {
     expect(client.requests.first.threadId, isNull);
     expect(client.requests.last.threadId, 'thread-fixture-001');
     expect(client.requests.last.message, 'Follow up');
+    expect(
+      find.text('I can help you review today\'s pumping pattern.'),
+      findsNWidgets(2),
+    );
   });
 
   testWidgets(

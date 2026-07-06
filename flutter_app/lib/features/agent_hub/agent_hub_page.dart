@@ -253,8 +253,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
       widget.requestBuilder(requestMessage),
       _attachedImages,
     );
+    final archivedAssistantMessage = _currentAssistantHistoryMessage();
     _composerController.clear();
     setState(() {
+      if (archivedAssistantMessage != null) {
+        _historyMessages.add(archivedAssistantMessage);
+      }
       _historyMessages.add(
         AgentHubHistoryMessage(
           role: AgentHubHistoryRole.user,
@@ -267,6 +271,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
     _scheduleScrollToLatest();
     await _startRun(request);
+  }
+
+  AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
+    if (_state.phase == AgentStreamRunPhase.idle || _state.blocksComposer) {
+      return null;
+    }
+    final text = _state.textContent.trim();
+    if (text.isEmpty && _state.events.isEmpty) return null;
+    return AgentHubHistoryMessage(
+      role: AgentHubHistoryRole.assistant,
+      content: text,
+      runState: _state,
+    );
   }
 
   Future<void> _attachImage() async {
@@ -580,7 +597,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             if (_historyMessages.isNotEmpty) ...[
-                              AgentHubHistoryPanel(messages: _historyMessages),
+                              AgentHubHistoryPanel(
+                                messages: _historyMessages,
+                                onArtifactAction: widget.onArtifactAction,
+                              ),
                               const SizedBox(height: 18),
                             ],
                             AgentRunTranscript(
@@ -779,10 +799,15 @@ AgentStreamRequest _requestWithThreadId(
 enum AgentHubHistoryRole { user, assistant }
 
 class AgentHubHistoryMessage {
-  const AgentHubHistoryMessage({required this.role, required this.content});
+  const AgentHubHistoryMessage({
+    required this.role,
+    required this.content,
+    this.runState,
+  });
 
   final AgentHubHistoryRole role;
   final String content;
+  final AgentStreamRunState? runState;
 
   String get roleLabel {
     return switch (role) {
@@ -793,9 +818,14 @@ class AgentHubHistoryMessage {
 }
 
 class AgentHubHistoryPanel extends StatelessWidget {
-  const AgentHubHistoryPanel({super.key, required this.messages});
+  const AgentHubHistoryPanel({
+    super.key,
+    required this.messages,
+    this.onArtifactAction,
+  });
 
   final List<AgentHubHistoryMessage> messages;
+  final AgentArtifactActionHandler? onArtifactAction;
 
   @override
   Widget build(BuildContext context) {
@@ -806,6 +836,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
           _AgentHistoryBubble(
             key: ValueKey('agent-history-$index'),
             message: messages[index],
+            onArtifactAction: onArtifactAction,
           ),
           if (index != messages.length - 1) const SizedBox(height: 20),
         ],
@@ -815,9 +846,14 @@ class AgentHubHistoryPanel extends StatelessWidget {
 }
 
 class _AgentHistoryBubble extends StatelessWidget {
-  const _AgentHistoryBubble({super.key, required this.message});
+  const _AgentHistoryBubble({
+    super.key,
+    required this.message,
+    this.onArtifactAction,
+  });
 
   final AgentHubHistoryMessage message;
+  final AgentArtifactActionHandler? onArtifactAction;
 
   @override
   Widget build(BuildContext context) {
@@ -829,6 +865,14 @@ class _AgentHistoryBubble extends StatelessWidget {
     );
 
     if (!isUser) {
+      final runState = message.runState;
+      if (runState != null) {
+        return AgentRunTranscript(
+          state: runState,
+          onArtifactAction: onArtifactAction,
+        );
+      }
+
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
