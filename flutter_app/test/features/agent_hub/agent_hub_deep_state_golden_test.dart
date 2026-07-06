@@ -89,6 +89,12 @@ final _agentStates = [
     build: () => AgentHubPage(voiceInput: _failingVoiceInput),
     drive: (tester) async {
       await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+      await tester.pump();
+      final holdGesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+      );
+      await tester.pump();
+      await holdGesture.up();
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('agent-voice-status')), findsOneWidget);
     },
