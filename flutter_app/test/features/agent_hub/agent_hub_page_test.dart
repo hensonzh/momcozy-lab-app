@@ -47,6 +47,7 @@ void main() {
     );
     expect(sendButton.onPressed, isNull);
     _expectComposerControlsInsideSurface(tester);
+    _expectComposerControlsVerticallyCentered(tester);
     _expectComposerSendButtonBreathesVertically(tester);
   });
 
@@ -159,6 +160,7 @@ void main() {
     );
     expect(sendButton.onPressed, isNotNull);
     _expectComposerControlsInsideSurface(tester);
+    _expectComposerControlsVerticallyCentered(tester);
     _expectComposerSendButtonBreathesVertically(tester);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -1408,6 +1410,27 @@ void _expectComposerSendButtonBreathesVertically(WidgetTester tester) {
 
   expect(sendRect.top - surfaceRect.top, greaterThanOrEqualTo(6));
   expect(surfaceRect.bottom - sendRect.bottom, greaterThanOrEqualTo(6));
+}
+
+void _expectComposerControlsVerticallyCentered(WidgetTester tester) {
+  final surfaceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-surface')),
+  );
+  final imageRect = tester.getRect(
+    find.byKey(const ValueKey('agent-image-button')),
+  );
+  final voiceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-voice-button')),
+  );
+  final sendRect = tester.getRect(
+    find.byKey(const ValueKey('agent-send-button')),
+  );
+
+  expect(imageRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
+  expect(voiceRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
+  expect(sendRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
+  expect(imageRect.center.dy, closeTo(voiceRect.center.dy, 0.5));
+  expect(sendRect.center.dy, closeTo(voiceRect.center.dy, 0.5));
 }
 
 void _expectComposerControlsUseDefaultInsets(WidgetTester tester) {
