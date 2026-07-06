@@ -185,4 +185,6 @@ Future<void> _noInteraction(WidgetTester tester) async {}
 
 Future<void> _addLocalTask(WidgetTester tester) async {
   await tester.tap(find.byKey(const ValueKey('schedule-add-task-button')));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const ValueKey('schedule-add-task-submit')));
 }

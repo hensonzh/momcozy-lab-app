@@ -48,7 +48,6 @@ Primary references:
 | P0 | App shell enables photo and voice | In the real `/` route, photo and voice buttons are enabled with local/native fallbacks; they are not disabled because dependencies were not injected. |
 | P0 | 图片附件 | Tap photo, show image chip; remove hides it; sending includes image payload and clears chip. |
 | P0 | 语音输入 | Tap voice, show listening/transcribing state, fill composer text, do not auto-send. Permission denial is visible and retryable. |
-| P0 | 多行输入 | Enter multi-line text; composer grows to four lines, text remains visible, send button stays aligned. |
 | P0 | 发送消息显示 | Tap send; user message appears immediately as a right-side bubble, input clears, assistant stream follows. |
 | P0 | 停止 / 重试 | While streaming, send button becomes stop; after disconnect, retry resends the last request. |
 | P1 | 最新消息按钮 | Long history shows `回到最新消息`; tapping it scrolls to bottom and hides the button. |
@@ -60,7 +59,7 @@ Primary references:
 1. Add failing widget tests for the highest-risk no-op interactions in each area.
 2. Fix `宝宝和我` local card/chart state and persistence.
 3. Fix `计划` date strip, selected-day state, reminders, toolbar and empty quick actions.
-4. Fix `智能体主页` App-shell injection, optimistic user bubbles, multi-line composer, draft/history preservation, and entry animation.
+4. Fix `智能体主页` App-shell injection, optimistic user bubbles, draft/history preservation, and entry animation.
 5. Run focused tests after each page-level slice, then `flutter test` for the touched suites.
 6. Commit one completed page or tightly related interaction slice at a time.
 

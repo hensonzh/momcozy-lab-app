@@ -225,7 +225,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _updateLatestButtonVisibility();
   }
 
-  bool get _isComposerLocked => _state.blocksComposer;
+  bool get _isComposerLocked =>
+      _state.phase == AgentStreamRunPhase.waitingForConfirmation ||
+      _state.phase == AgentStreamRunPhase.cancelRequested;
 
   bool get _canSend =>
       widget.runner != null &&
@@ -249,11 +251,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final optimisticContent = message.isEmpty
         ? '图片 ${_attachedImages.length}'
         : message;
+    final interruptedState = _state.isActive ? _state : null;
+    final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithImages(
       widget.requestBuilder(requestMessage),
       _attachedImages,
     );
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
+    if (interruptedState != null) {
+      _cancelRunSubscription();
+      _sendBestEffortServerCancel(interruptedState, interruptedRequest);
+    }
     _composerController.clear();
     setState(() {
       if (archivedAssistantMessage != null) {
@@ -274,9 +282,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
-    if (_state.phase == AgentStreamRunPhase.idle || _state.blocksComposer) {
-      return null;
-    }
+    if (_state.phase == AgentStreamRunPhase.idle) return null;
     final text = _state.textContent.trim();
     if (text.isEmpty && _state.events.isEmpty) return null;
     return AgentHubHistoryMessage(
@@ -491,7 +497,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _toggleAutoVoice() {
     setState(() {
-      _autoVoiceEnabled = !_autoVoiceEnabled;
+      final nextEnabled = !_autoVoiceEnabled;
+      if (!nextEnabled) {
+        widget.voicePlaybackCoordinator?.cancel();
+        if (_voiceState.isPlaybackActive) {
+          _voiceState = _voiceState.cancelPlayback();
+        }
+      }
+      _autoVoiceEnabled = nextEnabled;
     });
     _persistInteractionState();
   }
@@ -597,66 +610,84 @@ class _AgentHubPageState extends State<AgentHubPage> {
             onNewSession: _startNewSession,
           ),
           Expanded(
-            child: Stack(
-              children: [
-                CustomScrollView(
-                  key: const ValueKey('agent-chat-scroll-view'),
-                  controller: _chatScrollController,
-                  slivers: [
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
-                      sliver: SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (_historyMessages.isNotEmpty) ...[
-                              AgentHubHistoryPanel(
-                                messages: _historyMessages,
-                                onArtifactAction: widget.onArtifactAction,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                const verticalTranscriptPadding = 14.0 + 24.0;
+                final transcriptMinHeight =
+                    constraints.maxHeight > verticalTranscriptPadding
+                    ? constraints.maxHeight - verticalTranscriptPadding
+                    : 0.0;
+
+                return Stack(
+                  children: [
+                    CustomScrollView(
+                      key: const ValueKey('agent-chat-scroll-view'),
+                      controller: _chatScrollController,
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
+                          sliver: SliverToBoxAdapter(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: transcriptMinHeight,
                               ),
-                              const SizedBox(height: 18),
-                            ],
-                            AgentRunTranscript(
-                              state: _state,
-                              canRetry: _canRetry,
-                              onRetry: _retryRun,
-                              onArtifactAction: widget.onArtifactAction,
-                              pendingActionIds: _pendingActionIds,
-                              localActionStatuses: _localActionStatuses,
-                              onConfirmAction: widget.actionClient == null
-                                  ? null
-                                  : _confirmAction,
-                              onRejectAction: widget.actionClient == null
-                                  ? null
-                                  : _rejectAction,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  if (_historyMessages.isNotEmpty) ...[
+                                    AgentHubHistoryPanel(
+                                      messages: _historyMessages,
+                                      onArtifactAction: widget.onArtifactAction,
+                                    ),
+                                    const SizedBox(height: 18),
+                                  ],
+                                  AgentRunTranscript(
+                                    state: _state,
+                                    activeVoicePlaybackId:
+                                        _voiceState.isPlaybackActive
+                                        ? _voiceState.playbackId
+                                        : null,
+                                    canRetry: _canRetry,
+                                    onRetry: _retryRun,
+                                    onArtifactAction: widget.onArtifactAction,
+                                    pendingActionIds: _pendingActionIds,
+                                    localActionStatuses: _localActionStatuses,
+                                    onConfirmAction: widget.actionClient == null
+                                        ? null
+                                        : _confirmAction,
+                                    onRejectAction: widget.actionClient == null
+                                        ? null
+                                        : _rejectAction,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      height: 24,
+                      child: IgnorePointer(child: _AgentHubTopFade()),
+                    ),
+                    if (_showLatestButton)
+                      Positioned(
+                        right: 12,
+                        bottom: 12,
+                        child: FilledButton.tonalIcon(
+                          key: const ValueKey('agent-scroll-latest-button'),
+                          onPressed: _scrollToLatest,
+                          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                          label: const Text('回到最新消息'),
                         ),
                       ),
-                    ),
                   ],
-                ),
-                const Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  height: 24,
-                  child: IgnorePointer(child: _AgentHubTopFade()),
-                ),
-                if (_showLatestButton)
-                  Positioned(
-                    right: 12,
-                    bottom: 12,
-                    child: FilledButton.tonalIcon(
-                      key: const ValueKey('agent-scroll-latest-button'),
-                      onPressed: _scrollToLatest,
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                      label: const Text('回到最新消息'),
-                    ),
-                  ),
-              ],
+                );
+              },
             ),
           ),
           AgentComposerBar(
@@ -670,6 +701,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             canUseVoice:
                 (widget.voiceInputController != null ||
                     widget.voiceInput != null) &&
+                !_state.isActive &&
                 !_isComposerLocked &&
                 !_voiceState.isInputActive,
             voicePhase: _voiceState.phase,
@@ -1018,6 +1050,7 @@ class AgentRunTranscript extends StatelessWidget {
   const AgentRunTranscript({
     super.key,
     required this.state,
+    this.activeVoicePlaybackId,
     this.canRetry = false,
     this.onRetry,
     this.onArtifactAction,
@@ -1028,6 +1061,7 @@ class AgentRunTranscript extends StatelessWidget {
   });
 
   final AgentStreamRunState state;
+  final String? activeVoicePlaybackId;
   final bool canRetry;
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
@@ -1050,12 +1084,13 @@ class AgentRunTranscript extends StatelessWidget {
       state.events,
       localActionStatuses,
     );
+    final avatarMode = _avatarMode;
 
     return Row(
       key: const ValueKey('agent-run-transcript'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _AgentAssistantAvatar(),
+        _AgentAssistantAvatar(mode: avatarMode),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -1190,31 +1225,101 @@ class AgentRunTranscript extends StatelessWidget {
       _ => colorScheme.primary,
     };
   }
+
+  _AgentAssistantAvatarMode? get _avatarMode {
+    final playbackId = activeVoicePlaybackId?.trim();
+    final statePlaybackId = state.messageId?.trim().isNotEmpty == true
+        ? state.messageId!.trim()
+        : state.runId?.trim().isNotEmpty == true
+        ? state.runId!.trim()
+        : state.threadId?.trim();
+    if (playbackId != null &&
+        playbackId.isNotEmpty &&
+        statePlaybackId != null &&
+        statePlaybackId.isNotEmpty &&
+        playbackId == statePlaybackId) {
+      return _AgentAssistantAvatarMode.speaking;
+    }
+    if (state.isActive) return _AgentAssistantAvatarMode.thinking;
+    return null;
+  }
 }
 
+enum _AgentAssistantAvatarMode { thinking, speaking }
+
 class _AgentAssistantAvatar extends StatelessWidget {
-  const _AgentAssistantAvatar();
+  const _AgentAssistantAvatar({this.mode});
+
+  final _AgentAssistantAvatarMode? mode;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xff754c5e).withValues(alpha: 0.12),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+    final isSpeaking = mode == _AgentAssistantAvatarMode.speaking;
+    final isThinking = mode == _AgentAssistantAvatarMode.thinking;
+    final ringColor = isSpeaking
+        ? const Color(0xffaa647d)
+        : const Color(0xff8bbdb5);
+
+    return SizedBox.square(
+      key: const ValueKey('agent-assistant-avatar'),
+      dimension: 32,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          if (isThinking || isSpeaking)
+            Positioned(
+              left: -2,
+              right: -2,
+              top: -2,
+              bottom: -2,
+              child: DecoratedBox(
+                key: ValueKey(
+                  isSpeaking
+                      ? 'agent-assistant-avatar-speaking'
+                      : 'agent-assistant-avatar-thinking',
+                ),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: ringColor.withValues(alpha: 0.54),
+                    width: isSpeaking ? 3 : 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ringColor.withValues(
+                        alpha: isSpeaking ? 0.24 : 0.16,
+                      ),
+                      blurRadius: isSpeaking ? 14 : 10,
+                      spreadRadius: isSpeaking ? 2 : 1,
+                    ),
+                  ],
+                ),
+                child: const SizedBox.expand(),
+              ),
+            ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xff754c5e).withValues(alpha: 0.12),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                MomCozyAssets.agentAvatar,
+                key: const ValueKey('agent-assistant-avatar-static'),
+                width: 32,
+                height: 32,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ],
-      ),
-      child: ClipOval(
-        child: Image.asset(
-          MomCozyAssets.agentAvatar,
-          width: 32,
-          height: 32,
-          fit: BoxFit.cover,
-        ),
       ),
     );
   }
@@ -1705,6 +1810,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   static const double _expandedInputBottomInset =
       _surfaceVerticalInset + _controlSize + 18;
   static const double _lineWrapGuard = 10;
+  bool _voiceMode = false;
+  bool _voicePressed = false;
+  String? _textDraftBeforeVoice;
 
   @override
   void initState() {
@@ -1731,6 +1839,49 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     setState(() {});
   }
 
+  void _toggleVoiceMode() {
+    if (_voicePressed) return;
+    if (!_voiceMode && !widget.canUseVoice) return;
+    setState(() {
+      if (_voiceMode) {
+        if (widget.controller.text.trim().isEmpty &&
+            _textDraftBeforeVoice != null) {
+          widget.controller.text = _textDraftBeforeVoice!;
+          widget.controller.selection = TextSelection.collapsed(
+            offset: widget.controller.text.length,
+          );
+        }
+        _voiceMode = false;
+        _textDraftBeforeVoice = null;
+        return;
+      }
+
+      _textDraftBeforeVoice = widget.controller.text;
+      if (widget.controller.text.isNotEmpty) {
+        widget.controller.clear();
+        widget.onChanged('');
+      }
+      _voiceMode = true;
+    });
+  }
+
+  void _startVoiceHold() {
+    if (!_voiceMode || !widget.canUseVoice || _voicePressed) return;
+    setState(() {
+      _voicePressed = true;
+    });
+  }
+
+  void _finishVoiceHold({required bool submit}) {
+    if (!_voicePressed) return;
+    setState(() {
+      _voicePressed = false;
+      _voiceMode = false;
+      _textDraftBeforeVoice = null;
+    });
+    if (submit) widget.onVoiceInput();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -1749,7 +1900,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final onTogglePhotoMenu = widget.onTogglePhotoMenu;
     final onAttachImage = widget.onAttachImage;
     final onRemoveImages = widget.onRemoveImages;
-    final onVoiceInput = widget.onVoiceInput;
+    final sendIsStop = isRunning && !canSend;
+    final sendLooksActive = canSend || sendIsStop;
     const inputTextStyle = TextStyle(
       fontFamily: MomCozyTypography.fontFamily,
       fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
@@ -1915,37 +2067,77 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                   );
                 }
 
-                final composerInput = TextField(
-                  key: const ValueKey('agent-composer-input'),
-                  controller: controller,
-                  minLines: 1,
-                  maxLines: 5,
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.newline,
-                  enabled: !isInputLocked,
-                  style: inputTextStyle,
-                  onChanged: onChanged,
-                  scrollPadding: const EdgeInsets.only(bottom: 96),
-                  decoration: InputDecoration(
-                    hintText: '和 CozyMate 聊聊...',
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    filled: false,
-                    isDense: true,
-                    isCollapsed: true,
-                    contentPadding: EdgeInsets.zero,
-                    hintStyle: TextStyle(
-                      fontFamily: MomCozyTypography.fontFamily,
-                      fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-                      fontSize: 14,
-                      height: 1.6,
-                      color: MomCozyColors.mutedForeground.withValues(
-                        alpha: 0.82,
-                      ),
-                    ),
-                  ),
-                );
+                final composerInput = _voiceMode
+                    ? GestureDetector(
+                        key: const ValueKey('agent-voice-hold-button'),
+                        onTapDown: (_) => _startVoiceHold(),
+                        onTapUp: (_) => _finishVoiceHold(submit: true),
+                        onTapCancel: () => _finishVoiceHold(submit: false),
+                        child: Semantics(
+                          button: true,
+                          label: _voicePressed ? '松开填入语音输入' : '按住说话',
+                          child: Container(
+                            height: 32,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: _voicePressed
+                                  ? const Color(0xfff8eef3)
+                                  : colorScheme.primary.withValues(alpha: 0.06),
+                              borderRadius: BorderRadius.circular(
+                                MomCozyRadii.pill,
+                              ),
+                              border: Border.all(
+                                color: _voicePressed
+                                    ? const Color(0xffe5cdd8)
+                                    : Colors.transparent,
+                              ),
+                            ),
+                            child: Text(
+                              _voicePressed ? '我在听，松开后文字填入输入框' : '按住说话',
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
+                                    color: _voicePressed
+                                        ? const Color(0xff563544)
+                                        : MomCozyColors.foreground,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : TextField(
+                        key: const ValueKey('agent-composer-input'),
+                        controller: controller,
+                        minLines: 1,
+                        maxLines: 5,
+                        keyboardType: TextInputType.multiline,
+                        textInputAction: TextInputAction.newline,
+                        enabled: !isInputLocked,
+                        style: inputTextStyle,
+                        onChanged: onChanged,
+                        scrollPadding: const EdgeInsets.only(bottom: 96),
+                        decoration: InputDecoration(
+                          hintText: '和 CozyMate 聊聊...',
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          filled: false,
+                          isDense: true,
+                          isCollapsed: true,
+                          contentPadding: EdgeInsets.zero,
+                          hintStyle: TextStyle(
+                            fontFamily: MomCozyTypography.fontFamily,
+                            fontFamilyFallback:
+                                MomCozyTypography.fontFamilyFallback,
+                            fontSize: 14,
+                            height: 1.6,
+                            color: MomCozyColors.mutedForeground.withValues(
+                              alpha: 0.82,
+                            ),
+                          ),
+                        ),
+                      );
                 final inputFrame = Padding(
                   key: const ValueKey('agent-composer-input-frame'),
                   padding: inputPadding,
@@ -2013,7 +2205,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                               _controlGap,
                           child: IconButton(
                             key: const ValueKey('agent-voice-button'),
-                            onPressed: canUseVoice ? onVoiceInput : null,
+                            onPressed: canUseVoice || _voiceMode
+                                ? _toggleVoiceMode
+                                : null,
                             icon: Icon(_voiceIcon, size: 20),
                             tooltip: _voiceTooltip,
                             color: voicePhase == AgentVoicePhase.listening
@@ -2032,17 +2226,17 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                           right: _surfaceHorizontalInset,
                           child: IconButton(
                             key: ValueKey(
-                              isRunning
+                              sendIsStop
                                   ? 'agent-stop-button'
                                   : 'agent-send-button',
                             ),
-                            onPressed: isRunning
+                            onPressed: sendIsStop
                                 ? onCancel
                                 : (canSend ? onSend : null),
                             icon: DecoratedBox(
                               key: const ValueKey('agent-send-button-visual'),
                               decoration: BoxDecoration(
-                                color: isRunning || canSend
+                                color: sendLooksActive
                                     ? colorScheme.primary
                                     : MomCozyColors.muted,
                                 shape: BoxShape.circle,
@@ -2051,18 +2245,18 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                                 dimension: _controlSize,
                                 child: Center(
                                   child: Icon(
-                                    isRunning
+                                    sendIsStop
                                         ? Icons.stop_rounded
                                         : Icons.send_rounded,
-                                    size: isRunning ? 18 : 16,
-                                    color: isRunning || canSend
+                                    size: sendIsStop ? 18 : 16,
+                                    color: sendLooksActive
                                         ? colorScheme.onPrimary
                                         : MomCozyColors.mutedForeground,
                                   ),
                                 ),
                               ),
                             ),
-                            tooltip: isRunning ? '停止' : '发送',
+                            tooltip: sendIsStop ? '停止' : '发送',
                             visualDensity: VisualDensity.compact,
                             constraints: const BoxConstraints.tightFor(
                               width: _controlSize,
@@ -2147,6 +2341,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   }
 
   IconData get _voiceIcon {
+    if (_voiceMode) return Icons.keyboard_alt_outlined;
     return switch (widget.voicePhase) {
       AgentVoicePhase.listening => Icons.graphic_eq_rounded,
       AgentVoicePhase.transcribing => Icons.hourglass_bottom_rounded,
@@ -2158,6 +2353,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   }
 
   String get _voiceTooltip {
+    if (_voiceMode) return '切换到文字输入';
     return switch (widget.voicePhase) {
       AgentVoicePhase.listening => '正在听',
       AgentVoicePhase.transcribing => '正在转写',

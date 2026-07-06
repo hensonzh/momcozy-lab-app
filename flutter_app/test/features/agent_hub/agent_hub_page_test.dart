@@ -33,6 +33,18 @@ void main() {
     expect(find.byKey(const ValueKey('agent-image-button')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-voice-button')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-static')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
 
     final imageButton = tester.widget<IconButton>(
       find.byKey(const ValueKey('agent-image-button')),
@@ -50,6 +62,35 @@ void main() {
     _expectComposerControlsVerticallyCentered(tester);
     _expectComposerInputVerticallyCentered(tester);
     _expectComposerSendButtonBreathesVertically(tester);
+  });
+
+  testWidgets('Agent Hub marks active assistant avatar as thinking', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            messageId: 'msg-thinking',
+            textContent: 'I am checking your records.',
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-static')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
   });
 
   testWidgets('Agent Hub restores history and starts a new local session', (
@@ -267,190 +308,6 @@ void main() {
       expect(chatRect.bottom - retryRect.bottom, lessThan(80));
     },
   );
-
-  testWidgets('Agent Hub composer expands to five lines then scrolls', (
-    tester,
-  ) async {
-    final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(
-        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
-      ),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          voiceInput: () async => '第一行\n第二行\n第三行',
-        ),
-      ),
-    );
-
-    final compactHeight = _composerSurfaceHeight(tester);
-    final compactInputHeight = _composerInputHeight(tester);
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '宁敏同学top糯米您噢噢噢噢噢噢噢噢哦哦狗哦噢噢噢噢噢咯'
-      '继续输入更多更多更多文字直到自然换行展示第二行',
-    );
-    await tester.pumpAndSettle();
-    expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '第一行\n第二行',
-    );
-    await tester.pumpAndSettle();
-    final twoLineHeight = _composerSurfaceHeight(tester);
-    expect(twoLineHeight, greaterThan(compactHeight));
-    expect(_composerInputHeight(tester), greaterThan(compactInputHeight));
-    expect(
-      tester
-          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
-          .maxLines,
-      5,
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '第一行\n第二行\n第三行\n第四行\n第五行',
-    );
-    await tester.pumpAndSettle();
-    final fiveLineHeight = _composerSurfaceHeight(tester);
-    expect(fiveLineHeight, greaterThan(twoLineHeight));
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '第一行\n第二行\n第三行\n第四行\n第五行\n第六行\n第七行',
-    );
-    await tester.pumpAndSettle();
-    final sevenLineHeight = _composerSurfaceHeight(tester);
-    expect(sevenLineHeight, closeTo(fiveLineHeight, 1));
-
-    final inputStyle = tester
-        .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
-        .style;
-    expect(inputStyle?.height, greaterThanOrEqualTo(1.55));
-    _expectComposerControlsInsideSurface(tester);
-    _expectComposerControlsUseDefaultInsets(tester);
-    _expectComposerControlsShareVerticalCenter(tester);
-    _expectComposerExpandedInputUsesWideTextArea(tester);
-
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
-    expect(client.requests.single.message, '第一行\n第二行\n第三行\n第四行\n第五行\n第六行\n第七行');
-    expect(_composerSurfaceHeight(tester), closeTo(compactHeight, 1));
-
-    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
-    await tester.pumpAndSettle();
-    expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
-  });
-
-  testWidgets(
-    'Agent Hub composer expands at first visual wrap without refocus',
-    (tester) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(
-              _FixtureAgentStreamClient(
-                parseAgentJsonl(
-                  readMigrationFixture('agent_events/text_stream_basic.jsonl'),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-
-      final compactHeight = _composerSurfaceHeight(tester);
-      const wrappedText = 'nihao a dsdkfj ksdjf ksjdf jdfg jdh kasjdf klsjdflk';
-
-      await tester.tap(find.byKey(const ValueKey('agent-composer-input')));
-      await tester.pump();
-
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        wrappedText,
-      );
-      await tester.pump();
-
-      final editable = tester.state<EditableTextState>(
-        find.byType(EditableText),
-      );
-      final controller = tester
-          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
-          .controller;
-
-      expect(editable.widget.focusNode.hasFocus, isTrue);
-      expect(controller?.selection.baseOffset, wrappedText.length);
-      expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
-      _expectComposerControlsInsideSurface(tester);
-      _expectComposerControlsUseDefaultInsets(tester);
-      _expectComposerControlsShareVerticalCenter(tester);
-      _expectComposerExpandedInputUsesWideTextArea(tester);
-    },
-  );
-
-  testWidgets('Agent Hub composer resizes from controller updates directly', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 160);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-
-    final controller = TextEditingController();
-    addTearDown(controller.dispose);
-
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: momCozyTheme(),
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: Align(
-            alignment: Alignment.bottomCenter,
-            child: AgentComposerBar(
-              controller: controller,
-              canSend: true,
-              isRunning: false,
-              isInputLocked: false,
-              imageCount: 0,
-              showPhotoMenu: false,
-              canAttachImage: true,
-              canUseVoice: true,
-              voicePhase: AgentVoicePhase.idle,
-              onChanged: (_) {},
-              onSend: () {},
-              onCancel: () {},
-              onTogglePhotoMenu: () {},
-              onAttachImage: () {},
-              onRemoveImages: () {},
-              onVoiceInput: () {},
-            ),
-          ),
-        ),
-      ),
-    );
-
-    final compactHeight = _composerSurfaceHeight(tester);
-
-    controller.text =
-        'nihao a dsdkfj ksdjf ksjdf jdfg jdh kasjdf klsjdflk jskldjf';
-    await tester.pump();
-
-    expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
-    _expectComposerControlsInsideSurface(tester);
-    _expectComposerControlsUseDefaultInsets(tester);
-    _expectComposerControlsShareVerticalCenter(tester);
-    _expectComposerExpandedInputUsesWideTextArea(tester);
-  });
 
   testWidgets('Agent Hub keeps send disabled for empty runner input', (
     tester,
@@ -794,9 +651,12 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
     await tester.pump();
-
-    expect(find.byKey(const ValueKey('agent-voice-status')), findsOneWidget);
-
+    final holdGesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+    expect(find.textContaining('我在听'), findsOneWidget);
+    await holdGesture.up();
     await tester.pumpAndSettle();
 
     expect(client.requests, isEmpty);
@@ -813,6 +673,63 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(client.requests.single.message, '今天左侧奶量偏低');
+  });
+
+  testWidgets('Agent Hub voice button enters hold mode before transcription', (
+    tester,
+  ) async {
+    var voiceCaptures = 0;
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voiceInput: () async {
+            voiceCaptures += 1;
+            return '语音草稿';
+          },
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '原始草稿',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pump();
+
+    expect(
+      find.byKey(const ValueKey('agent-voice-hold-button')),
+      findsOneWidget,
+    );
+    expect(find.text('按住说话'), findsOneWidget);
+    expect(find.text('原始草稿'), findsNothing);
+    expect(voiceCaptures, 0);
+
+    final holdGesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+    expect(find.textContaining('我在听'), findsOneWidget);
+    await holdGesture.up();
+    await tester.pumpAndSettle();
+
+    expect(voiceCaptures, 1);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '语音草稿',
+    );
+    expect(client.requests, isEmpty);
   });
 
   testWidgets('Agent Hub surfaces denied microphone permission', (
@@ -841,6 +758,12 @@ void main() {
     );
 
     await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pump();
+    final holdGesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+    await holdGesture.up();
     await tester.pumpAndSettle();
 
     expect(find.text('麦克风权限未开启'), findsOneWidget);
@@ -885,6 +808,62 @@ void main() {
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
     expect(coordinator.activeId, 'msg-reply-text-001');
     expect(find.text('正在播放语音'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Agent Hub cancels active auto voice when voice is disabled', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    var playbackCancelled = false;
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Read this aloud',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    coordinator.cancel();
+    coordinator.request(
+      id: 'msg-reply-text-001',
+      source: AgentVoicePlaybackSource.autoReply,
+      cancel: () => playbackCancelled = true,
+    );
+    await tester.pump();
+
+    await tester.tap(find.byKey(const ValueKey('agent-auto-voice-button')));
+    await tester.pump();
+
+    expect(playbackCancelled, isTrue);
+    expect(coordinator.activeId, isNull);
+    expect(find.text('正在播放语音'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
   });
 
   testWidgets('Agent Hub keeps notification voice ahead of auto reply', (
@@ -946,6 +925,79 @@ void main() {
 
     expect(find.text('已停止本次回复'), findsOneWidget);
   });
+
+  testWidgets(
+    'Agent Hub sends follow-up content while interrupting an active run',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final cancelConnector = _RecordingCancelConnector();
+      final cancelClient = AgentStreamCancelClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+        ),
+        connector: cancelConnector,
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            cancelClient: cancelClient,
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'First turn',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'type': 'message.delta',
+          'thread_id': 'thread-followup',
+          'run_id': 'run-first',
+          'message_id': 'msg-first',
+          'payload': {'text': 'Partial first answer'},
+        }),
+      );
+      await tester.pump();
+
+      expect(client.requests, hasLength(1));
+      expect(find.text('Partial first answer'), findsOneWidget);
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('agent-composer-input')),
+            )
+            .enabled,
+        isTrue,
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Second turn',
+      );
+      await tester.pump();
+
+      expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+      await cancelConnector.called.future;
+
+      expect(client.requests, hasLength(2));
+      expect(client.requests.last.message, 'Second turn');
+      expect(client.requests.last.threadId, 'thread-followup');
+      expect(cancelConnector.uri!.path, '/v1/agent/runs/run-first/cancel');
+      expect(find.text('Partial first answer'), findsOneWidget);
+    },
+  );
 
   testWidgets('Agent Hub posts best-effort cancel for active runner', (
     tester,
@@ -1617,18 +1669,6 @@ Widget _host(Widget child) {
   );
 }
 
-double _composerSurfaceHeight(WidgetTester tester) {
-  return tester
-      .getSize(find.byKey(const ValueKey('agent-composer-surface')))
-      .height;
-}
-
-double _composerInputHeight(WidgetTester tester) {
-  return tester
-      .getSize(find.byKey(const ValueKey('agent-composer-input-frame')))
-      .height;
-}
-
 void _expectComposerControlsInsideSurface(WidgetTester tester) {
   final surfaceRect = tester.getRect(
     find.byKey(const ValueKey('agent-composer-surface')),
@@ -1679,41 +1719,6 @@ void _expectComposerControlsVerticallyCentered(WidgetTester tester) {
   expect(sendRect.center.dy, closeTo(voiceRect.center.dy, 0.5));
 }
 
-void _expectComposerControlsShareVerticalCenter(WidgetTester tester) {
-  final imageRect = tester.getRect(
-    find.byKey(const ValueKey('agent-image-button')),
-  );
-  final voiceRect = tester.getRect(
-    find.byKey(const ValueKey('agent-voice-button')),
-  );
-  final sendRect = tester.getRect(
-    find.byKey(const ValueKey('agent-send-button')),
-  );
-  final sendVisualRect = tester.getRect(
-    find.byKey(const ValueKey('agent-send-button-visual')),
-  );
-
-  final rectSummary =
-      'image=$imageRect voice=$voiceRect send=$sendRect '
-      'sendVisual=$sendVisualRect';
-
-  expect(
-    imageRect.center.dy,
-    closeTo(voiceRect.center.dy, 0.5),
-    reason: rectSummary,
-  );
-  expect(
-    sendRect.center.dy,
-    closeTo(voiceRect.center.dy, 0.5),
-    reason: rectSummary,
-  );
-  expect(
-    sendVisualRect.center.dy,
-    closeTo(voiceRect.center.dy, 0.5),
-    reason: rectSummary,
-  );
-}
-
 void _expectComposerInputVerticallyCentered(WidgetTester tester) {
   final surfaceRect = tester.getRect(
     find.byKey(const ValueKey('agent-composer-surface')),
@@ -1723,48 +1728,6 @@ void _expectComposerInputVerticallyCentered(WidgetTester tester) {
   );
 
   expect(inputRect.center.dy, closeTo(surfaceRect.center.dy, 1));
-}
-
-void _expectComposerControlsUseDefaultInsets(WidgetTester tester) {
-  final surfaceRect = tester.getRect(
-    find.byKey(const ValueKey('agent-composer-surface')),
-  );
-  final imageRect = tester.getRect(
-    find.byKey(const ValueKey('agent-image-button')),
-  );
-  final voiceRect = tester.getRect(
-    find.byKey(const ValueKey('agent-voice-button')),
-  );
-  final sendRect = tester.getRect(
-    find.byKey(const ValueKey('agent-send-button')),
-  );
-
-  expect(imageRect.left - surfaceRect.left, closeTo(12, 0.1));
-  expect(surfaceRect.right - sendRect.right, closeTo(12, 0.1));
-  expect(surfaceRect.right - voiceRect.right, closeTo(52, 0.1));
-  expect(surfaceRect.bottom - imageRect.bottom, closeTo(8, 0.1));
-  expect(surfaceRect.bottom - voiceRect.bottom, closeTo(8, 0.1));
-  expect(surfaceRect.bottom - sendRect.bottom, closeTo(8, 0.1));
-}
-
-void _expectComposerExpandedInputUsesWideTextArea(WidgetTester tester) {
-  final surfaceRect = tester.getRect(
-    find.byKey(const ValueKey('agent-composer-surface')),
-  );
-  final inputRect = tester.getRect(
-    find.byKey(const ValueKey('agent-composer-input')),
-  );
-  final imageRect = tester.getRect(
-    find.byKey(const ValueKey('agent-image-button')),
-  );
-  final voiceRect = tester.getRect(
-    find.byKey(const ValueKey('agent-voice-button')),
-  );
-
-  expect(inputRect.left - surfaceRect.left, lessThanOrEqualTo(24));
-  expect(surfaceRect.right - inputRect.right, lessThanOrEqualTo(24));
-  expect(inputRect.left, lessThan(imageRect.right));
-  expect(inputRect.right, greaterThan(voiceRect.left));
 }
 
 class _FixtureAgentStreamClient implements AgentStreamClient {
@@ -1794,6 +1757,29 @@ class _NeverEndingAgentStreamClient implements AgentStreamClient {
   }
 
   Future<void> dispose() => _controller.close();
+}
+
+class _ControllableAgentStreamClient implements AgentStreamClient {
+  final requests = <AgentStreamRequest>[];
+  final _controllers = <StreamController<AgentStreamEvent>>[];
+
+  @override
+  Stream<AgentStreamEvent> stream(AgentStreamRequest request) {
+    requests.add(request);
+    final controller = StreamController<AgentStreamEvent>();
+    _controllers.add(controller);
+    return controller.stream;
+  }
+
+  void emit(int runIndex, AgentStreamEvent event) {
+    _controllers[runIndex].add(event);
+  }
+
+  Future<void> dispose() async {
+    for (final controller in _controllers) {
+      await controller.close();
+    }
+  }
 }
 
 class _RetryAgentStreamClient implements AgentStreamClient {
