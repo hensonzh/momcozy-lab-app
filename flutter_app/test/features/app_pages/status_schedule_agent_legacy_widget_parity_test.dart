@@ -855,23 +855,11 @@ void main() {
         final imageButton = tester.widget<IconButton>(
           find.byKey(const ValueKey('agent-image-button')),
         );
-        expect(imageButton.onPressed, isNotNull);
+        expect(imageButton.onPressed, isNull);
         final voiceButton = tester.widget<IconButton>(
           find.byKey(const ValueKey('agent-voice-button')),
         );
-        expect(voiceButton.onPressed, isNotNull);
-
-        await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
-        await tester.pumpAndSettle();
-        expect(
-          tester
-              .widget<TextField>(
-                find.byKey(const ValueKey('agent-composer-input')),
-              )
-              .controller
-              ?.text,
-          '我想记录今天的泵奶和宝宝状态',
-        );
+        expect(voiceButton.onPressed, isNull);
 
         await tester.enterText(
           find.byKey(const ValueKey('agent-composer-input')),

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
@@ -1123,8 +1122,6 @@ class MomCozyRoutePage extends StatelessWidget {
         actionClient: createSessionAgentHubActionClient(runtime.session),
         requestBuilder: (message) =>
             buildSessionAgentHubRequest(message, session: runtime.session),
-        pickImage: _pickLocalAgentHubImage,
-        voiceInput: _captureLocalAgentVoiceDraft,
         onArtifactAction: (action) =>
             _handleAgentArtifactAction(context, action),
         initialComposerText: _agentPrefillFromRoute(uri, extra),
@@ -1307,24 +1304,6 @@ int _selectedTabIndex(String location) {
   if (location == '/community') return 3;
   if (location.startsWith('/device') || location == '/w1') return 4;
   return -1;
-}
-
-const _agentHubLocalImageDataUrl =
-    'data:image/png;base64,'
-    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8'
-    'z8BQDwAFgwJ/lR4nWQAAAABJRU5ErkJggg==';
-
-Future<AgentStreamImageInput?> _pickLocalAgentHubImage() async {
-  return const AgentStreamImageInput(
-    dataUrl: _agentHubLocalImageDataUrl,
-    mimeType: 'image/png',
-    name: 'momcozy-local-photo.png',
-    size: 68,
-  );
-}
-
-Future<String?> _captureLocalAgentVoiceDraft() async {
-  return '我想记录今天的泵奶和宝宝状态';
 }
 
 void _handleAgentArtifactAction(
