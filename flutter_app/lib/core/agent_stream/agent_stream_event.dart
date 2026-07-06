@@ -55,7 +55,11 @@ class AgentStreamEvent {
       type == 'run.cancelled';
 
   String get mergeKey {
-    final toolCallId = stringField(raw, 'tool_call_id');
+    final toolCallId =
+        stringField(raw, 'tool_call_id') ??
+        stringField(raw, 'toolCallId') ??
+        stringField(payload, 'tool_call_id') ??
+        stringField(payload, 'toolCallId');
     if (toolCallId != null && toolCallId.isNotEmpty) {
       return 'tool:$toolCallId';
     }

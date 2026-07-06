@@ -1099,6 +1099,45 @@ void main() {
     },
   );
 
+  testWidgets('Agent Hub merges tool progress by payload tool call id', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '已完成。',
+            events: [
+              AgentStreamEvent(const {
+                'type': 'tool.started',
+                'thread_id': 'thread-tool',
+                'run_id': 'run-tool',
+                'payload': {
+                  'tool_call_id': 'call-pump-summary',
+                  'tool_name': 'pump_session_summary_query',
+                },
+              }),
+              AgentStreamEvent(const {
+                'type': 'tool.completed',
+                'thread_id': 'thread-tool',
+                'run_id': 'run-tool',
+                'payload': {
+                  'tool_call_id': 'call-pump-summary',
+                  'tool_name': 'pump_session_summary_query',
+                },
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
+    expect(find.text('泵奶记录已读取'), findsOneWidget);
+    expect(find.text('正在读取泵奶记录'), findsNothing);
+  });
+
   testWidgets('Agent Hub renders and confirms production action cards', (
     tester,
   ) async {

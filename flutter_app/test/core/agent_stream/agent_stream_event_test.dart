@@ -87,6 +87,30 @@ void main() {
       expect(event.mergeKey, 'action:action-support-001');
     });
 
+    test('uses payload tool call ids as stable reducer keys', () {
+      final started = AgentStreamEvent(const {
+        'type': 'tool.started',
+        'thread_id': 'thread-tool-001',
+        'run_id': 'run-tool-001',
+        'payload': {
+          'tool_call_id': 'call-pump-001',
+          'tool_name': 'pump_session_summary_query',
+        },
+      });
+      final completed = AgentStreamEvent(const {
+        'type': 'tool.completed',
+        'thread_id': 'thread-tool-001',
+        'run_id': 'run-tool-001',
+        'payload': {
+          'tool_call_id': 'call-pump-001',
+          'tool_name': 'pump_session_summary_query',
+        },
+      });
+
+      expect(started.mergeKey, 'tool:call-pump-001');
+      expect(completed.mergeKey, started.mergeKey);
+    });
+
     test('extracts completed text from durable message payloads', () {
       final event = AgentStreamEvent(const {
         'type': 'message.completed',
