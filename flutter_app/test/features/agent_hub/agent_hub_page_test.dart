@@ -184,6 +184,51 @@ void main() {
     );
   });
 
+  testWidgets(
+    'Agent Hub anchors a failed sent turn at the chat tail without greeting fallback',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(
+              _FailingAgentStreamClient(
+                StateError(
+                  'SocketException: Failed host lookup: api.momcozy.test',
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'nihao',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('nihao'), findsOneWidget);
+      expect(find.textContaining('嗨，我是 CozyMate'), findsNothing);
+      expect(find.textContaining('这次没有拿到回复'), findsOneWidget);
+      expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
+
+      final chatRect = tester.getRect(
+        find.byKey(const ValueKey('agent-chat-scroll-view')),
+      );
+      final retryRect = tester.getRect(
+        find.byKey(const ValueKey('agent-retry-button')),
+      );
+      expect(chatRect.bottom - retryRect.bottom, lessThan(80));
+    },
+  );
+
   testWidgets('Agent Hub composer expands to five lines then scrolls', (
     tester,
   ) async {
