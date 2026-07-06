@@ -4,9 +4,8 @@ This directory contains the archived React/Vite/Capacitor implementation.
 
 It remains useful for:
 
-- visual parity references while Flutter is being rebuilt,
-- current Web/Capacitor rollback packaging,
-- historical API, storage, route, and native bridge behavior checks.
+- historical API, storage, route, and native bridge behavior checks,
+- manual archaeology when comparing old behavior with the Flutter implementation.
 
 Install and run the legacy Web toolchain from this directory:
 
@@ -18,7 +17,7 @@ npm run build
 npm test
 ```
 
-The repository root keeps forwarding scripts such as `npm run dev/build/test`, but the legacy Web Node dependencies and lockfile are owned by this directory.
+The repository root no longer forwards `dev`, `build`, or `test` to this directory. The legacy Web Node dependencies and lockfile are owned by this directory.
 
 Run legacy Capacitor sync from this directory after building:
 

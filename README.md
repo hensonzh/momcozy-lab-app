@@ -1,16 +1,16 @@
 # MomCozy App
 
-MomCozyApp 现在同时保留 Flutter 原生重构实现和旧 Web/Capacitor 实现，目录边界如下：
+MomCozyApp 当前以 Flutter 原生实现为主线，目录边界如下：
 
 ```text
-flutter_app/   新版 Flutter 移动原生实现
-legacy_web/    旧版 React/Vite/Capacitor 实现，作为 UI 对齐基线和回滚来源
-docs/          迁移、Flutter、API、旧 Web、UI parity 和后端合同文档
-scripts/       Flutter 迁移 gate、UI parity、回滚包和审计脚本
-test/          UI parity 截图与报告
+flutter_app/   Flutter 移动原生实现
+legacy_web/    旧版 React/Vite/Capacitor 实现归档，不进入 Flutter 主线脚本
+docs/          Flutter、后端合同和设备协议文档
+scripts/       Flutter toolchain、release gate、smoke 和合同校验脚本
+test/          根级测试 fixtures；Flutter 测试在 flutter_app/test/
 ```
 
-根目录 `package.json` 只保留 Flutter 迁移和 UI parity 的轻量脚本。旧 Web 的 React/Vite/Capacitor 依赖和 lockfile 已归入 `legacy_web/`。
+根目录 `package.json` 只保留 Flutter 主线相关脚本。旧 Web 的 React/Vite/Capacitor 依赖和 lockfile 保留在 `legacy_web/` 内，如需查看或手动运行旧版实现，请直接进入该目录。
 
 ## 新版 Flutter
 
@@ -31,52 +31,6 @@ npm run flutter:dev
 ```bash
 npm run flutter:release-gate
 ```
-
-## 旧版 Web
-
-旧版实现已归档到 `legacy_web/`，旧 Web 依赖需要在该目录安装：
-
-```bash
-cd legacy_web
-npm install
-npm run dev
-npm run build
-npm test
-```
-
-根目录仍保留转发命令，便于迁移 gate 和旧 UI 基线复用：
-
-```bash
-npm run dev
-npm run build
-npm test
-```
-
-这些命令会转发到 `legacy_web/` 下的对应脚本。
-
-如需同步旧 Capacitor Android 工程：
-
-```bash
-npm run build
-cd legacy_web
-npx cap sync android
-```
-
-## UI 对齐
-
-旧 Web 截图基线：
-
-```bash
-npm run ui:legacy-reference
-```
-
-Flutter 与旧 Web 的页面级视觉 diff：
-
-```bash
-npm run ui:parity-report
-```
-
-旧 Web 的 UI/UX 黄金标准见 `docs/ui-parity/legacy-web-ui-ux-golden-standard.md`；组件级重绘计划见 `docs/ui-parity/flutter-ui-component-parity-plan.md`。
 
 ## 文档目录
 
