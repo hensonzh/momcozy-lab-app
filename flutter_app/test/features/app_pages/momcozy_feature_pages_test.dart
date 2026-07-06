@@ -377,7 +377,6 @@ void main() {
           jsonTransport: FixtureApiJsonTransportByPath({
             statusProfileEndpoint: const {
               'user_id': 'demo-user-fixture',
-              'daily_summary': '哺乳期恢复阶段，需要同时关注睡眠、补水、泵奶舒适度和情绪波动',
               'delivery_date': '2026-02-24',
             },
             statusInfantsEndpoint: const {
@@ -397,7 +396,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('哺乳期恢复阶段'), findsWidgets);
+      expect(find.text('哺乳期'), findsWidgets);
       expect(find.text('母乳产出'), findsOneWidget);
       expect(tester.takeException(), isNull);
 
@@ -1965,7 +1964,6 @@ MomCozyApiRuntime _appRuntime({
         FixtureApiJsonTransportByPath({
           statusProfileEndpoint: const <String, Object?>{
             'user_id': 'demo-user-fixture',
-            'daily_summary': '哺乳期',
             'delivery_date': '2026-06-11',
           },
           statusInfantsEndpoint: const <String, Object?>{
