@@ -632,7 +632,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                 minHeight: transcriptMinHeight,
                               ),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   if (_historyMessages.isNotEmpty) ...[
