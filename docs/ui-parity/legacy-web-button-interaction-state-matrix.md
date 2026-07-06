@@ -81,7 +81,7 @@
 | Photo menu：拍照 | 菜单按钮。 | 触发 camera file input。 | 已覆盖拍照入口触发 picker。 | 无。 |
 | Photo menu：上传 | 菜单按钮。 | 触发 upload file input。 | 已覆盖上传入口触发 picker。 | 无。 |
 | 图片预览移除 | 每张预览右上角 X。 | 从 staged image 中删除；发送按钮是否可点随之变化。 | Agent 单测覆盖 remove before send。 | 需补 ready/uploading/failed 三态。 |
-| 输入框 Enter | 中文 composition 期间不发送；普通 Enter 发送。 | 清空输入、追加用户气泡、启动流。 | 部分覆盖发送。 | P1 补 composition 和多行高度。 |
+| 输入框 Enter | 中文 composition 期间不发送；普通 Enter 发送。 | 清空输入、追加用户气泡、启动流。 | 部分覆盖发送。 | P1 补 composition。 |
 | 发送按钮空态 | 无文字、无图片、非运行时置灰禁用。 | 点击无效。 | 已覆盖无 runner disabled 和有 runner 空内容禁用。 | 无。 |
 | 发送按钮有内容 | 主色可点。 | 停止语音听写、清 quick replies、追加用户气泡、启动流。 | 已覆盖 optimistic bubble 和图片-only 文案“请看这张图片”。 | 需补停止语音听写和 quick replies 清理。 |
 | 发送中空输入 | 按钮变 stop/square。 | 点击中断当前流；短时间重复 stop 被忽略。 | Agent 单测覆盖 stop。 | 需补 shell parity 与重复点击。 |

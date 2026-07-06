@@ -850,28 +850,16 @@ void main() {
         final agentAvatarDecoration = agentAvatar.decoration as BoxDecoration;
         final agentAvatarImage =
             agentAvatarDecoration.image?.image as AssetImage;
-        expect(agentAvatarImage.assetName, MomCozyAssets.agentAwakenAvatar);
+        expect(agentAvatarImage.assetName, MomCozyAssets.agentAvatar);
 
         final imageButton = tester.widget<IconButton>(
           find.byKey(const ValueKey('agent-image-button')),
         );
-        expect(imageButton.onPressed, isNotNull);
+        expect(imageButton.onPressed, isNull);
         final voiceButton = tester.widget<IconButton>(
           find.byKey(const ValueKey('agent-voice-button')),
         );
-        expect(voiceButton.onPressed, isNotNull);
-
-        await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
-        await tester.pumpAndSettle();
-        expect(
-          tester
-              .widget<TextField>(
-                find.byKey(const ValueKey('agent-composer-input')),
-              )
-              .controller
-              ?.text,
-          '我想记录今天的泵奶和宝宝状态',
-        );
+        expect(voiceButton.onPressed, isNull);
 
         await tester.enterText(
           find.byKey(const ValueKey('agent-composer-input')),
@@ -891,6 +879,67 @@ void main() {
               ?.text,
           '第一行\n第二行\n第三行',
         );
+      },
+    );
+
+    testWidgets(
+      'replays bottom nav avatar wake animation when entering from another module',
+      (tester) async {
+        await _setCompactViewport(tester);
+        final routeIntentPlatform = FakeRouteIntentPlatform();
+        addTearDown(routeIntentPlatform.dispose);
+
+        await tester.pumpWidget(
+          MomCozyFlutterApp(
+            router: createMomCozyRouter(initialLocation: '/schedule'),
+            routeIntentPlatform: routeIntentPlatform,
+            apiRuntime: _runtime(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const ValueKey('agent-hub-page')), findsNothing);
+        expect(_agentAvatarPresenceScale(tester), closeTo(1, 0.001));
+        expect(_agentAvatarWakeMedia(), findsNothing);
+
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
+        await _pumpUntilFinder(tester, _agentAvatarWakeMedia());
+        await tester.pump(const Duration(milliseconds: 760));
+
+        expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+        expect(_agentAvatarPresenceScale(tester), greaterThan(1.08));
+        expect(
+          _opacityForKey(tester, 'bottom-nav-agent-avatar-wake-halo'),
+          greaterThan(0.2),
+        );
+        expect(
+          _opacityForKey(tester, 'bottom-nav-agent-avatar-wake-ring-opacity'),
+          greaterThan(0.2),
+        );
+        expect(_agentAvatarWakeMedia(), findsOneWidget);
+        final firstWakeImage = tester.widget<Image>(_agentAvatarWakeMedia());
+        expect(firstWakeImage.image, isA<MemoryImage>());
+        final firstWakeKey = firstWakeImage.key;
+
+        await tester.pumpAndSettle();
+        expect(_agentAvatarPresenceScale(tester), closeTo(1, 0.001));
+        expect(
+          _opacityForKey(tester, 'bottom-nav-agent-avatar-wake-halo'),
+          closeTo(0, 0.001),
+        );
+        expect(_agentAvatarWakeMedia(), findsNothing);
+
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
+        await _pumpUntilFinder(tester, _agentAvatarWakeMedia());
+        await tester.pump(const Duration(milliseconds: 760));
+
+        expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+        expect(_agentAvatarPresenceScale(tester), greaterThan(1.08));
+        expect(_agentAvatarWakeMedia(), findsOneWidget);
+        final secondWakeImage = tester.widget<Image>(_agentAvatarWakeMedia());
+        expect(secondWakeImage.key, isNot(firstWakeKey));
       },
     );
 
@@ -1075,6 +1124,33 @@ Future<void> _scrollToFinder(WidgetTester tester, Finder finder) async {
     maxScrolls: 18,
   );
   await tester.pumpAndSettle();
+}
+
+Future<void> _pumpUntilFinder(WidgetTester tester, Finder finder) async {
+  for (var index = 0; index < 20; index += 1) {
+    await tester.pump(const Duration(milliseconds: 16));
+    if (finder.evaluate().isNotEmpty) return;
+  }
+  expect(finder, findsOneWidget);
+}
+
+double _agentAvatarPresenceScale(WidgetTester tester) {
+  final transform = tester.widget<Transform>(
+    find.byKey(const ValueKey('bottom-nav-agent-avatar-presence-scale')),
+  );
+  return transform.transform.storage[0];
+}
+
+double _opacityForKey(WidgetTester tester, String key) {
+  return tester.widget<Opacity>(find.byKey(ValueKey(key))).opacity;
+}
+
+Finder _agentAvatarWakeMedia() {
+  return find.byWidgetPredicate((widget) {
+    final key = widget.key;
+    return key is ValueKey<String> &&
+        key.value.startsWith('bottom-nav-agent-avatar-wake-media-');
+  });
 }
 
 int _checkboxesWithValue(WidgetTester tester, bool value) {

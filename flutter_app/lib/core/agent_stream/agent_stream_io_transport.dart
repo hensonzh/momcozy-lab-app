@@ -171,6 +171,12 @@ class AgentStreamActionResult {
     final rawStatus = body?['status'];
     return rawStatus is String ? rawStatus : null;
   }
+
+  List<AgentStreamEvent> get events {
+    final rawEvents =
+        body?['events'] ?? body?['run_events'] ?? body?['stream_events'];
+    return _decodeActionEvents(rawEvents);
+  }
 }
 
 abstract interface class AgentStreamControlHttpConnector {
@@ -255,8 +261,7 @@ class AgentStreamActionClient {
   Future<AgentStreamActionResult> confirm(
     AgentStreamActionConfirmRequest request,
   ) {
-    final idempotencyKey =
-        request.idempotencyKey?.trim().isNotEmpty == true
+    final idempotencyKey = request.idempotencyKey?.trim().isNotEmpty == true
         ? request.idempotencyKey!.trim()
         : 'agent-action-${request.actionId.trim()}';
     return _postAction(
@@ -405,10 +410,7 @@ class AgentStreamClientEventClient {
         );
       }
       recorder?.call(body);
-      return AgentStreamClientEventResult(
-        sent: true,
-        body: body,
-      );
+      return AgentStreamClientEventResult(sent: true, body: body);
     } catch (error) {
       return AgentStreamClientEventResult(sent: false, error: error);
     }
@@ -568,4 +570,17 @@ Map<String, Object?>? _decodeJsonObject(String body) {
   }
 
   return null;
+}
+
+List<AgentStreamEvent> _decodeActionEvents(Object? rawEvents) {
+  final values = switch (rawEvents) {
+    List value => value,
+    Map value => [value],
+    _ => const <Object?>[],
+  };
+  return List<AgentStreamEvent>.unmodifiable(
+    values.whereType<Map>().map(
+      (event) => AgentStreamEvent(Map<String, Object?>.from(event)),
+    ),
+  );
 }

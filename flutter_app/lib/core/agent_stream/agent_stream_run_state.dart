@@ -48,6 +48,9 @@ class AgentStreamRunState {
       phase == AgentStreamRunPhase.streaming ||
       phase == AgentStreamRunPhase.cancelRequested;
 
+  bool get blocksComposer =>
+      isActive || phase == AgentStreamRunPhase.waitingForConfirmation;
+
   bool get canRetry =>
       phase == AgentStreamRunPhase.error ||
       phase == AgentStreamRunPhase.disconnected;
@@ -184,7 +187,7 @@ class AgentStreamRunState {
       return '$textContent${event.textDelta ?? ''}';
     }
     if (type == 'message.completed' && event.role != 'user') {
-      return event.textDelta ?? textContent;
+      return event.completedText ?? textContent;
     }
     return textContent;
   }

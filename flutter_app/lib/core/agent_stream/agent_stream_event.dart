@@ -37,6 +37,14 @@ class AgentStreamEvent {
       stringField(raw, 'text') ??
       stringField(payload, 'delta') ??
       stringField(payload, 'text');
+  String? get completedText =>
+      textDelta ??
+      _messageText(raw['content']) ??
+      _messageText(payload['content']) ??
+      _messageText(raw['message']) ??
+      _messageText(payload['message']) ??
+      _messagesText(raw['messages']) ??
+      _messagesText(payload['messages']);
   String? get eventId =>
       stringField(raw, 'event_id') ?? stringField(raw, 'eventId');
   int? get sequence {
@@ -151,4 +159,47 @@ List<Map<String, Object?>> parseJsonlMaps(String input) {
 String? stringField(Map<String, Object?> map, String key) {
   final value = map[key];
   return value is String ? value : null;
+}
+
+String? _messagesText(Object? rawMessages) {
+  if (rawMessages is! List) return null;
+  final messages = rawMessages.whereType<Map>().map(
+    (message) => Map<String, Object?>.from(message),
+  );
+  final assistantMessages = messages.where(
+    (message) => stringField(message, 'role') == 'assistant',
+  );
+  for (final message in assistantMessages.followedBy(messages)) {
+    final text = _messageText(message);
+    if (text != null) return text;
+  }
+  return null;
+}
+
+String? _messageText(Object? rawMessage) {
+  if (rawMessage is String) return _nonEmpty(rawMessage);
+  if (rawMessage is List) {
+    final parts = rawMessage
+        .map(_messageText)
+        .whereType<String>()
+        .where((part) => part.trim().isNotEmpty)
+        .join();
+    return _nonEmpty(parts);
+  }
+  if (rawMessage is! Map) return null;
+
+  final message = Map<String, Object?>.from(rawMessage);
+  return _nonEmpty(
+        stringField(message, 'text') ??
+            stringField(message, 'value') ??
+            stringField(message, 'output_text'),
+      ) ??
+      _messageText(message['content']) ??
+      _messageText(message['parts']) ??
+      _messageText(message['text']);
+}
+
+String? _nonEmpty(String? value) {
+  if (value == null || value.trim().isEmpty) return null;
+  return value;
 }

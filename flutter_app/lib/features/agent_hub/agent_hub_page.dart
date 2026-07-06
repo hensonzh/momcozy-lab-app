@@ -20,6 +20,22 @@ typedef AgentHubNewSessionHandler = void Function();
 
 const _agentDefaultGreeting = '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
 
+String _agentAssistantTextForState(AgentStreamRunState state) {
+  final text = state.textContent.trim();
+  if (text.isNotEmpty) return text;
+
+  return switch (state.phase) {
+    AgentStreamRunPhase.idle => _agentDefaultGreeting,
+    AgentStreamRunPhase.streaming => '我已经收到你的消息啦～',
+    AgentStreamRunPhase.cancelRequested => '我正在停止这次回复。',
+    AgentStreamRunPhase.cancelled => '已停止本次回复。',
+    AgentStreamRunPhase.waitingForConfirmation => '需要你确认后继续。',
+    AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
+    AgentStreamRunPhase.error ||
+    AgentStreamRunPhase.disconnected => '这次没有拿到回复，可能是连接中断了。你再发一次就好。',
+  };
+}
+
 final _agentHubInteractionStates = Expando<_AgentHubInteractionState>(
   'momcozy-agent-hub-interaction-state',
 );
@@ -148,9 +164,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final interactionState = _agentHubInteractionStates[stateCacheKey] ??=
         _AgentHubInteractionState();
     _interactionState = interactionState;
-    _state = interactionState.historyMessages == null
+    final restoredRunState = interactionState.historyMessages == null
         ? widget.state
         : interactionState.runState;
+    _state = restoredRunState.isActive
+        ? restoredRunState.markDisconnected('连接中断，请重试')
+        : restoredRunState;
     _historyMessages = [
       ...(interactionState.historyMessages ?? widget.historyMessages),
     ];
@@ -161,6 +180,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _autoVoiceEnabled = interactionState.autoVoiceEnabled;
     _activeRequest = interactionState.activeRequest;
     _localActionStatuses.addAll(interactionState.localActionStatuses);
+    interactionState.runState = _state;
   }
 
   void _persistInteractionState() {
@@ -294,13 +314,32 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
   }
 
-  Future<void> _scrollToLatest() async {
+  bool _isNearLatest([double threshold = 80]) {
+    if (!_chatScrollController.hasClients) return true;
+    final position = _chatScrollController.position;
+    return position.maxScrollExtent - position.pixels <= threshold;
+  }
+
+  void _scheduleScrollToLatest({bool smooth = false}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_scrollToLatest(smooth: smooth));
+    });
+  }
+
+  Future<void> _scrollToLatest({bool smooth = true}) async {
     if (!_chatScrollController.hasClients) return;
-    await _chatScrollController.animateTo(
-      _chatScrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 220),
-      curve: Curves.easeOutCubic,
-    );
+    if (smooth) {
+      await _chatScrollController.animateTo(
+        _chatScrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+      );
+    } else {
+      _chatScrollController.jumpTo(
+        _chatScrollController.position.maxScrollExtent,
+      );
+    }
     if (!_chatScrollController.hasClients) return;
     final position = _chatScrollController.position;
     if (position.pixels > position.maxScrollExtent) {
@@ -309,9 +348,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _updateLatestButtonVisibility();
   }
 
+  bool get _isComposerLocked =>
+      _state.phase == AgentStreamRunPhase.waitingForConfirmation ||
+      _state.phase == AgentStreamRunPhase.cancelRequested;
+
   bool get _canSend =>
       widget.runner != null &&
-      !_state.isActive &&
+      !_isComposerLocked &&
       (_composerController.text.trim().isNotEmpty ||
           _attachedImages.isNotEmpty);
 
@@ -323,7 +366,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final message = _composerController.text.trim();
     if (runner == null ||
         (message.isEmpty && _attachedImages.isEmpty) ||
-        _state.isActive) {
+        _isComposerLocked) {
       return;
     }
 
@@ -331,12 +374,22 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final optimisticContent = message.isEmpty
         ? '图片 ${_attachedImages.length}'
         : message;
+    final interruptedState = _state.isActive ? _state : null;
+    final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithImages(
       widget.requestBuilder(requestMessage),
       _attachedImages,
     );
+    final archivedAssistantMessage = _currentAssistantHistoryMessage();
+    if (interruptedState != null) {
+      _cancelRunSubscription();
+      _sendBestEffortServerCancel(interruptedState, interruptedRequest);
+    }
     _composerController.clear();
     setState(() {
+      if (archivedAssistantMessage != null) {
+        _historyMessages.add(archivedAssistantMessage);
+      }
       _historyMessages.add(
         AgentHubHistoryMessage(
           role: AgentHubHistoryRole.user,
@@ -347,12 +400,23 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _showPhotoMenu = false;
     });
     _persistInteractionState();
+    _scheduleScrollToLatest();
     await _startRun(request);
+  }
+
+  AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
+    final text = _agentAssistantTextForState(_state).trim();
+    if (text.isEmpty) return null;
+    return AgentHubHistoryMessage(
+      role: AgentHubHistoryRole.assistant,
+      content: text,
+      runState: _state.phase == AgentStreamRunPhase.idle ? null : _state,
+    );
   }
 
   Future<void> _attachImage() async {
     final pickImage = widget.pickImage;
-    if (pickImage == null || _state.isActive) return;
+    if (pickImage == null || _isComposerLocked) return;
     final image = await pickImage();
     if (!mounted || image == null) return;
     setState(() {
@@ -363,7 +427,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _togglePhotoMenu() {
-    if (widget.pickImage == null || _state.isActive) return;
+    if (widget.pickImage == null || _isComposerLocked) return;
     setState(() {
       _showPhotoMenu = !_showPhotoMenu;
     });
@@ -371,7 +435,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<void> _startVoiceInput() async {
     if ((widget.voiceInputController == null && widget.voiceInput == null) ||
-        _state.isActive ||
+        _isComposerLocked ||
         _voiceState.isInputActive) {
       return;
     }
@@ -468,7 +532,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   Future<void> _resumeCurrentRun({bool preserveActionState = false}) async {
-    if (widget.runner == null || _state.isActive) return;
+    if (widget.runner == null) return;
     final runId = _state.runId?.trim();
     if (runId == null || runId.isEmpty) return;
     final baseRequest =
@@ -491,10 +555,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
     bool preserveActionState = false,
   }) async {
     final runner = widget.runner;
-    if (runner == null || _state.isActive) return;
+    if (runner == null || (initialState == null && _isComposerLocked)) return;
+    final requestWithThread = _requestWithConversationThread(request);
 
     _cancelRunSubscription();
-    _activeRequest = request;
+    _activeRequest = requestWithThread;
     setState(() {
       _state = initialState ?? const AgentStreamRunState().start();
       if (!preserveActionState) {
@@ -503,26 +568,47 @@ class _AgentHubPageState extends State<AgentHubPage> {
       }
     });
     _persistInteractionState();
+    _scheduleScrollToLatest();
 
     _runSubscription = runner
-        .run(request, initialState: initialState)
+        .run(requestWithThread, initialState: initialState)
         .listen(
           (nextState) {
             if (!mounted || !_state.isActive) return;
+            final shouldFollowLatest = _isNearLatest() || nextState.isActive;
+            final activeRequest = _activeRequest;
+            if (activeRequest != null) {
+              _activeRequest = _requestWithThreadId(
+                activeRequest,
+                nextState.threadId,
+              );
+            }
             setState(() {
               _state = nextState;
             });
             _persistInteractionState();
             _maybeStartAutoVoicePlayback(nextState);
+            if (shouldFollowLatest) _scheduleScrollToLatest();
           },
           onError: (Object error) {
             if (!mounted || !_state.isActive) return;
+            final shouldFollowLatest = _isNearLatest();
             setState(() {
               _state = _state.markDisconnected(error);
             });
             _persistInteractionState();
+            if (shouldFollowLatest) _scheduleScrollToLatest();
           },
         );
+  }
+
+  AgentStreamRequest _requestWithConversationThread(
+    AgentStreamRequest request,
+  ) {
+    return _requestWithThreadId(
+      request,
+      request.threadId ?? _state.threadId ?? _activeRequest?.threadId,
+    );
   }
 
   void _maybeStartAutoVoicePlayback(AgentStreamRunState nextState) {
@@ -570,7 +656,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _toggleAutoVoice() {
     setState(() {
-      _autoVoiceEnabled = !_autoVoiceEnabled;
+      final nextEnabled = !_autoVoiceEnabled;
+      if (!nextEnabled) {
+        widget.voicePlaybackCoordinator?.cancel();
+        if (_voiceState.isPlaybackActive) {
+          _voiceState = _voiceState.cancelPlayback();
+        }
+      }
+      _autoVoiceEnabled = nextEnabled;
     });
     _persistInteractionState();
   }
@@ -620,9 +713,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _localActionStatuses[action.id] = result.accepted
           ? _acceptedConfirmStatus(result.actionStatus)
           : 'failed';
+      _applyActionResultEvents(result.events);
     });
     _persistInteractionState();
-    if (result.accepted) {
+    if (result.accepted && _shouldResumeAfterActionResult()) {
       await _resumeCurrentRun(preserveActionState: true);
     }
   }
@@ -655,11 +749,32 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _localActionStatuses[action.id] = result.accepted
           ? result.actionStatus ?? 'rejected'
           : 'failed';
+      _applyActionResultEvents(result.events);
     });
     _persistInteractionState();
-    if (result.accepted) {
+    if (result.accepted && _shouldResumeAfterActionResult()) {
       await _resumeCurrentRun(preserveActionState: true);
     }
+  }
+
+  bool _shouldResumeAfterActionResult() {
+    return switch (_state.phase) {
+      AgentStreamRunPhase.finished ||
+      AgentStreamRunPhase.cancelled ||
+      AgentStreamRunPhase.error => false,
+      _ => true,
+    };
+  }
+
+  void _applyActionResultEvents(List<AgentStreamEvent> events) {
+    if (events.isEmpty) return;
+    var nextState = _state.phase == AgentStreamRunPhase.waitingForConfirmation
+        ? _state.copyWith(phase: AgentStreamRunPhase.streaming)
+        : _state;
+    for (final event in events) {
+      nextState = nextState.applyEvent(event);
+    }
+    _state = nextState;
   }
 
   @override
@@ -677,77 +792,108 @@ class _AgentHubPageState extends State<AgentHubPage> {
             onNewSession: _startNewSession,
           ),
           Expanded(
-            child: Stack(
-              children: [
-                ListView(
-                  key: const ValueKey('agent-chat-scroll-view'),
-                  controller: _chatScrollController,
-                  padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                const verticalTranscriptPadding = 14.0 + 24.0;
+                final transcriptMinHeight =
+                    constraints.maxHeight > verticalTranscriptPadding
+                    ? constraints.maxHeight - verticalTranscriptPadding
+                    : 0.0;
+
+                return Stack(
                   children: [
-                    if (_historyMessages.isNotEmpty) ...[
-                      AgentHubHistoryPanel(messages: _historyMessages),
-                      const SizedBox(height: 18),
-                    ],
-                    AgentRunTranscript(
-                      state: _state,
-                      canRetry: _canRetry,
-                      onRetry: _retryRun,
-                      onArtifactAction: widget.onArtifactAction,
-                      pendingActionIds: _pendingActionIds,
-                      localActionStatuses: _localActionStatuses,
-                      onConfirmAction: widget.actionClient == null
-                          ? null
-                          : _confirmAction,
-                      onRejectAction: widget.actionClient == null
-                          ? null
-                          : _rejectAction,
+                    CustomScrollView(
+                      key: const ValueKey('agent-chat-scroll-view'),
+                      controller: _chatScrollController,
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
+                          sliver: SliverToBoxAdapter(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: transcriptMinHeight,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  if (_historyMessages.isNotEmpty) ...[
+                                    AgentHubHistoryPanel(
+                                      messages: _historyMessages,
+                                      onArtifactAction: widget.onArtifactAction,
+                                    ),
+                                    const SizedBox(height: 18),
+                                  ],
+                                  AgentRunTranscript(
+                                    state: _state,
+                                    activeVoicePlaybackId:
+                                        _voiceState.isPlaybackActive
+                                        ? _voiceState.playbackId
+                                        : null,
+                                    canRetry: _canRetry,
+                                    onRetry: _retryRun,
+                                    onArtifactAction: widget.onArtifactAction,
+                                    pendingActionIds: _pendingActionIds,
+                                    localActionStatuses: _localActionStatuses,
+                                    onConfirmAction: widget.actionClient == null
+                                        ? null
+                                        : _confirmAction,
+                                    onRejectAction: widget.actionClient == null
+                                        ? null
+                                        : _rejectAction,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      height: 24,
+                      child: IgnorePointer(child: _AgentHubTopFade()),
+                    ),
+                    if (_showLatestButton)
+                      Positioned(
+                        right: 12,
+                        bottom: 12,
+                        child: FilledButton.tonalIcon(
+                          key: const ValueKey('agent-scroll-latest-button'),
+                          onPressed: _scrollToLatest,
+                          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                          label: const Text('回到最新消息'),
+                        ),
+                      ),
                   ],
-                ),
-                const Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  height: 24,
-                  child: IgnorePointer(child: _AgentHubTopFade()),
-                ),
-                if (_showLatestButton)
-                  Positioned(
-                    right: 12,
-                    bottom: 12,
-                    child: FilledButton.tonalIcon(
-                      key: const ValueKey('agent-scroll-latest-button'),
-                      onPressed: _scrollToLatest,
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                      label: const Text('回到最新消息'),
-                    ),
-                  ),
-              ],
+                );
+              },
             ),
           ),
-          Transform.translate(
-            offset: const Offset(0, 16),
-            child: AgentComposerBar(
-              controller: _composerController,
-              canSend: _canSend,
-              isRunning: _state.isActive,
-              imageCount: _attachedImages.length,
-              showPhotoMenu: _showPhotoMenu,
-              canAttachImage: widget.pickImage != null && !_state.isActive,
-              canUseVoice:
-                  (widget.voiceInputController != null ||
-                      widget.voiceInput != null) &&
-                  !_state.isActive &&
-                  !_voiceState.isInputActive,
-              voicePhase: _voiceState.phase,
-              onChanged: (_) => setState(() {}),
-              onSend: _sendMessage,
-              onCancel: _cancelRun,
-              onTogglePhotoMenu: _togglePhotoMenu,
-              onAttachImage: _attachImage,
-              onRemoveImages: _removeAttachedImages,
-              onVoiceInput: _startVoiceInput,
-            ),
+          AgentComposerBar(
+            controller: _composerController,
+            canSend: _canSend,
+            isRunning: _state.isActive,
+            isInputLocked: _isComposerLocked,
+            imageCount: _attachedImages.length,
+            showPhotoMenu: _showPhotoMenu,
+            canAttachImage: widget.pickImage != null && !_isComposerLocked,
+            canUseVoice:
+                (widget.voiceInputController != null ||
+                    widget.voiceInput != null) &&
+                !_state.isActive &&
+                !_isComposerLocked &&
+                !_voiceState.isInputActive,
+            voicePhase: _voiceState.phase,
+            onChanged: (_) => setState(() {}),
+            onSend: _sendMessage,
+            onCancel: _cancelRun,
+            onTogglePhotoMenu: _togglePhotoMenu,
+            onAttachImage: _attachImage,
+            onRemoveImages: _removeAttachedImages,
+            onVoiceInput: _startVoiceInput,
           ),
         ],
       ),
@@ -859,13 +1005,38 @@ AgentStreamRequest _requestWithImages(
   );
 }
 
+AgentStreamRequest _requestWithThreadId(
+  AgentStreamRequest request,
+  String? threadId,
+) {
+  final normalizedThreadId = threadId?.trim();
+  if (request.threadId?.trim().isNotEmpty == true ||
+      normalizedThreadId == null ||
+      normalizedThreadId.isEmpty) {
+    return request;
+  }
+
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: normalizedThreadId,
+    locale: request.locale,
+    images: request.images,
+    metadata: request.metadata,
+  );
+}
+
 enum AgentHubHistoryRole { user, assistant }
 
 class AgentHubHistoryMessage {
-  const AgentHubHistoryMessage({required this.role, required this.content});
+  const AgentHubHistoryMessage({
+    required this.role,
+    required this.content,
+    this.runState,
+  });
 
   final AgentHubHistoryRole role;
   final String content;
+  final AgentStreamRunState? runState;
 
   String get roleLabel {
     return switch (role) {
@@ -896,9 +1067,14 @@ AgentHubHistorySnapshot _historySnapshotFromMessage(
 }
 
 class AgentHubHistoryPanel extends StatelessWidget {
-  const AgentHubHistoryPanel({super.key, required this.messages});
+  const AgentHubHistoryPanel({
+    super.key,
+    required this.messages,
+    this.onArtifactAction,
+  });
 
   final List<AgentHubHistoryMessage> messages;
+  final AgentArtifactActionHandler? onArtifactAction;
 
   @override
   Widget build(BuildContext context) {
@@ -909,6 +1085,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
           _AgentHistoryBubble(
             key: ValueKey('agent-history-$index'),
             message: messages[index],
+            onArtifactAction: onArtifactAction,
           ),
           if (index != messages.length - 1) const SizedBox(height: 20),
         ],
@@ -918,9 +1095,14 @@ class AgentHubHistoryPanel extends StatelessWidget {
 }
 
 class _AgentHistoryBubble extends StatelessWidget {
-  const _AgentHistoryBubble({super.key, required this.message});
+  const _AgentHistoryBubble({
+    super.key,
+    required this.message,
+    this.onArtifactAction,
+  });
 
   final AgentHubHistoryMessage message;
+  final AgentArtifactActionHandler? onArtifactAction;
 
   @override
   Widget build(BuildContext context) {
@@ -932,6 +1114,14 @@ class _AgentHistoryBubble extends StatelessWidget {
     );
 
     if (!isUser) {
+      final runState = message.runState;
+      if (runState != null) {
+        return AgentRunTranscript(
+          state: runState,
+          onArtifactAction: onArtifactAction,
+        );
+      }
+
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1062,6 +1252,7 @@ class AgentRunTranscript extends StatelessWidget {
   const AgentRunTranscript({
     super.key,
     required this.state,
+    this.activeVoicePlaybackId,
     this.canRetry = false,
     this.onRetry,
     this.onArtifactAction,
@@ -1072,6 +1263,7 @@ class AgentRunTranscript extends StatelessWidget {
   });
 
   final AgentStreamRunState state;
+  final String? activeVoicePlaybackId;
   final bool canRetry;
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
@@ -1084,22 +1276,23 @@ class AgentRunTranscript extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final isDefaultGreeting = state.textContent.trim().isEmpty;
-    final text = isDefaultGreeting
-        ? _agentDefaultGreeting
-        : state.textContent.trim();
+    final isDefaultGreeting =
+        state.phase == AgentStreamRunPhase.idle &&
+        state.textContent.trim().isEmpty;
+    final text = _primaryText;
     final workSteps = _workStepsFromEvents(state.events);
     final artifactCards = _artifactCardsFromEvents(state.events);
     final actionCards = _actionCardsFromEvents(
       state.events,
       localActionStatuses,
     );
+    final avatarMode = _avatarMode;
 
     return Row(
       key: const ValueKey('agent-run-transcript'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _AgentAssistantAvatar(),
+        _AgentAssistantAvatar(mode: avatarMode),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -1184,6 +1377,10 @@ class AgentRunTranscript extends StatelessWidget {
     );
   }
 
+  String get _primaryText {
+    return _agentAssistantTextForState(state);
+  }
+
   String? get _supportingText {
     if (state.phase == AgentStreamRunPhase.streaming) return '正在生成回复';
     if (state.phase == AgentStreamRunPhase.waitingForConfirmation) {
@@ -1218,31 +1415,101 @@ class AgentRunTranscript extends StatelessWidget {
       _ => colorScheme.primary,
     };
   }
+
+  _AgentAssistantAvatarMode? get _avatarMode {
+    final playbackId = activeVoicePlaybackId?.trim();
+    final statePlaybackId = state.messageId?.trim().isNotEmpty == true
+        ? state.messageId!.trim()
+        : state.runId?.trim().isNotEmpty == true
+        ? state.runId!.trim()
+        : state.threadId?.trim();
+    if (playbackId != null &&
+        playbackId.isNotEmpty &&
+        statePlaybackId != null &&
+        statePlaybackId.isNotEmpty &&
+        playbackId == statePlaybackId) {
+      return _AgentAssistantAvatarMode.speaking;
+    }
+    if (state.isActive) return _AgentAssistantAvatarMode.thinking;
+    return null;
+  }
 }
 
+enum _AgentAssistantAvatarMode { thinking, speaking }
+
 class _AgentAssistantAvatar extends StatelessWidget {
-  const _AgentAssistantAvatar();
+  const _AgentAssistantAvatar({this.mode});
+
+  final _AgentAssistantAvatarMode? mode;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xff754c5e).withValues(alpha: 0.12),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+    final isSpeaking = mode == _AgentAssistantAvatarMode.speaking;
+    final isThinking = mode == _AgentAssistantAvatarMode.thinking;
+    final ringColor = isSpeaking
+        ? const Color(0xffaa647d)
+        : const Color(0xff8bbdb5);
+
+    return SizedBox.square(
+      key: const ValueKey('agent-assistant-avatar'),
+      dimension: 32,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          if (isThinking || isSpeaking)
+            Positioned(
+              left: -2,
+              right: -2,
+              top: -2,
+              bottom: -2,
+              child: DecoratedBox(
+                key: ValueKey(
+                  isSpeaking
+                      ? 'agent-assistant-avatar-speaking'
+                      : 'agent-assistant-avatar-thinking',
+                ),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: ringColor.withValues(alpha: 0.54),
+                    width: isSpeaking ? 3 : 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ringColor.withValues(
+                        alpha: isSpeaking ? 0.24 : 0.16,
+                      ),
+                      blurRadius: isSpeaking ? 14 : 10,
+                      spreadRadius: isSpeaking ? 2 : 1,
+                    ),
+                  ],
+                ),
+                child: const SizedBox.expand(),
+              ),
+            ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xff754c5e).withValues(alpha: 0.12),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                MomCozyAssets.agentAvatar,
+                key: const ValueKey('agent-assistant-avatar-static'),
+                width: 32,
+                height: 32,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ],
-      ),
-      child: ClipOval(
-        child: Image.asset(
-          MomCozyAssets.agentAvatar,
-          width: 32,
-          height: 32,
-          fit: BoxFit.cover,
-        ),
       ),
     );
   }
@@ -1491,6 +1758,7 @@ class AgentArtifactActionView {
     required this.kind,
     this.value,
     this.routePath,
+    this.routeExtra,
   });
 
   final String label;
@@ -1498,6 +1766,7 @@ class AgentArtifactActionView {
   final String kind;
   final String? value;
   final String? routePath;
+  final Object? routeExtra;
 }
 
 class AgentActionPanel extends StatelessWidget {
@@ -1674,12 +1943,13 @@ class AgentActionCardView {
   }
 }
 
-class AgentComposerBar extends StatelessWidget {
+class AgentComposerBar extends StatefulWidget {
   const AgentComposerBar({
     super.key,
     required this.controller,
     required this.canSend,
     required this.isRunning,
+    required this.isInputLocked,
     required this.imageCount,
     required this.showPhotoMenu,
     required this.canAttachImage,
@@ -1697,6 +1967,7 @@ class AgentComposerBar extends StatelessWidget {
   final TextEditingController controller;
   final bool canSend;
   final bool isRunning;
+  final bool isInputLocked;
   final int imageCount;
   final bool showPhotoMenu;
   final bool canAttachImage;
@@ -1711,8 +1982,122 @@ class AgentComposerBar extends StatelessWidget {
   final VoidCallback onVoiceInput;
 
   @override
+  State<AgentComposerBar> createState() => _AgentComposerBarState();
+}
+
+class _AgentComposerBarState extends State<AgentComposerBar> {
+  static const double _controlSize = 32;
+  static const double _surfaceMinHeight = 48;
+  static const double _surfaceHorizontalInset = 12;
+  static const double _surfaceVerticalInset = 8;
+  static const double _controlGap = 8;
+  static const double _inputLeftInset =
+      _surfaceHorizontalInset + _controlSize + _controlGap;
+  static const double _inputRightInset =
+      _surfaceHorizontalInset + (_controlSize * 2) + (_controlGap * 2);
+  static const double _expandedInputHorizontalInset = 20;
+  static const double _expandedInputTopInset = 14;
+  static const double _expandedInputBottomInset =
+      _surfaceVerticalInset + _controlSize + 18;
+  static const double _lineWrapGuard = 10;
+  bool _voiceMode = false;
+  bool _voicePressed = false;
+  String? _textDraftBeforeVoice;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_handleControllerChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant AgentComposerBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller == widget.controller) return;
+    oldWidget.controller.removeListener(_handleControllerChanged);
+    widget.controller.addListener(_handleControllerChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_handleControllerChanged);
+    super.dispose();
+  }
+
+  void _handleControllerChanged() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  void _toggleVoiceMode() {
+    if (_voicePressed) return;
+    if (!_voiceMode && !widget.canUseVoice) return;
+    setState(() {
+      if (_voiceMode) {
+        if (widget.controller.text.trim().isEmpty &&
+            _textDraftBeforeVoice != null) {
+          widget.controller.text = _textDraftBeforeVoice!;
+          widget.controller.selection = TextSelection.collapsed(
+            offset: widget.controller.text.length,
+          );
+        }
+        _voiceMode = false;
+        _textDraftBeforeVoice = null;
+        return;
+      }
+
+      _textDraftBeforeVoice = widget.controller.text;
+      if (widget.controller.text.isNotEmpty) {
+        widget.controller.clear();
+        widget.onChanged('');
+      }
+      _voiceMode = true;
+    });
+  }
+
+  void _startVoiceHold() {
+    if (!_voiceMode || !widget.canUseVoice || _voicePressed) return;
+    setState(() {
+      _voicePressed = true;
+    });
+  }
+
+  void _finishVoiceHold({required bool submit}) {
+    if (!_voicePressed) return;
+    setState(() {
+      _voicePressed = false;
+      _voiceMode = false;
+      _textDraftBeforeVoice = null;
+    });
+    if (submit) widget.onVoiceInput();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final controller = widget.controller;
+    final isRunning = widget.isRunning;
+    final isInputLocked = widget.isInputLocked;
+    final canSend = widget.canSend;
+    final imageCount = widget.imageCount;
+    final showPhotoMenu = widget.showPhotoMenu;
+    final canAttachImage = widget.canAttachImage;
+    final canUseVoice = widget.canUseVoice;
+    final voicePhase = widget.voicePhase;
+    final onChanged = widget.onChanged;
+    final onSend = widget.onSend;
+    final onCancel = widget.onCancel;
+    final onTogglePhotoMenu = widget.onTogglePhotoMenu;
+    final onAttachImage = widget.onAttachImage;
+    final onRemoveImages = widget.onRemoveImages;
+    final sendIsStop = isRunning && !canSend;
+    final sendLooksActive = canSend || sendIsStop;
+    const inputTextStyle = TextStyle(
+      fontFamily: MomCozyTypography.fontFamily,
+      fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+      fontSize: 14,
+      height: 1.6,
+    );
 
     return Padding(
       key: const ValueKey('agent-composer-bar'),
@@ -1811,7 +2196,7 @@ class AgentComposerBar extends StatelessWidget {
                       ),
                       IconButton(
                         key: const ValueKey('agent-remove-image-button'),
-                        onPressed: isRunning ? null : onRemoveImages,
+                        onPressed: isInputLocked ? null : onRemoveImages,
                         icon: const Icon(Icons.close_rounded, size: 18),
                         tooltip: '移除图片',
                       ),
@@ -1820,132 +2205,273 @@ class AgentComposerBar extends StatelessWidget {
                 ),
               ),
             ],
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: MomCozyColors.card.withValues(alpha: 0.88),
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(
-                  color: MomCozyColors.border.withValues(alpha: 0.64),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xff754c5e).withValues(alpha: 0.08),
-                    blurRadius: 18,
-                    offset: const Offset(0, 9),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  children: [
-                    IconButton(
-                      key: const ValueKey('agent-image-button'),
-                      onPressed: canAttachImage ? onTogglePhotoMenu : null,
-                      icon: const Icon(
-                        Icons.add_photo_alternate_outlined,
-                        size: 20,
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final expandedTextLayout = _shouldUseExpandedTextLayout(
+                  context,
+                  constraints.maxWidth,
+                  inputTextStyle,
+                );
+                final inputPadding = expandedTextLayout
+                    ? const EdgeInsets.fromLTRB(
+                        _expandedInputHorizontalInset,
+                        _expandedInputTopInset,
+                        _expandedInputHorizontalInset,
+                        _expandedInputBottomInset,
+                      )
+                    : const EdgeInsets.fromLTRB(
+                        _inputLeftInset,
+                        _surfaceVerticalInset,
+                        _inputRightInset,
+                        _surfaceVerticalInset,
+                      );
+                Widget positionControl({
+                  required Widget child,
+                  double? left,
+                  double? right,
+                }) {
+                  assert((left == null) != (right == null));
+
+                  if (expandedTextLayout) {
+                    return Positioned(
+                      left: left,
+                      right: right,
+                      bottom: _surfaceVerticalInset,
+                      child: child,
+                    );
+                  }
+
+                  return Positioned.fill(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: left ?? 0,
+                        right: right ?? 0,
                       ),
-                      tooltip: '添加图片',
-                      color: MomCozyColors.mutedForeground,
-                      visualDensity: VisualDensity.compact,
-                      constraints: const BoxConstraints.tightFor(
-                        width: 32,
-                        height: 32,
+                      child: Align(
+                        alignment: left == null
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: child,
                       ),
-                      padding: EdgeInsets.zero,
                     ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(
-                            MomCozyRadii.pill,
+                  );
+                }
+
+                final composerInput = _voiceMode
+                    ? GestureDetector(
+                        key: const ValueKey('agent-voice-hold-button'),
+                        onTapDown: (_) => _startVoiceHold(),
+                        onTapUp: (_) => _finishVoiceHold(submit: true),
+                        onTapCancel: () => _finishVoiceHold(submit: false),
+                        child: Semantics(
+                          button: true,
+                          label: _voicePressed ? '松开填入语音输入' : '按住说话',
+                          child: Container(
+                            height: 32,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: _voicePressed
+                                  ? const Color(0xfff8eef3)
+                                  : colorScheme.primary.withValues(alpha: 0.06),
+                              borderRadius: BorderRadius.circular(
+                                MomCozyRadii.pill,
+                              ),
+                              border: Border.all(
+                                color: _voicePressed
+                                    ? const Color(0xffe5cdd8)
+                                    : Colors.transparent,
+                              ),
+                            ),
+                            child: Text(
+                              _voicePressed ? '我在听，松开后文字填入输入框' : '按住说话',
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
+                                    color: _voicePressed
+                                        ? const Color(0xff563544)
+                                        : MomCozyColors.foreground,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
                           ),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: TextField(
-                            key: const ValueKey('agent-composer-input'),
-                            controller: controller,
-                            minLines: 1,
-                            maxLines: 4,
-                            enabled: !isRunning,
-                            style: const TextStyle(
-                              fontFamily: MomCozyTypography.fontFamily,
-                              fontFamilyFallback:
-                                  MomCozyTypography.fontFamilyFallback,
-                              fontSize: 14,
+                      )
+                    : TextField(
+                        key: const ValueKey('agent-composer-input'),
+                        controller: controller,
+                        minLines: 1,
+                        maxLines: 5,
+                        keyboardType: TextInputType.multiline,
+                        textInputAction: TextInputAction.newline,
+                        enabled: !isInputLocked,
+                        style: inputTextStyle,
+                        onChanged: onChanged,
+                        scrollPadding: const EdgeInsets.only(bottom: 96),
+                        decoration: InputDecoration(
+                          hintText: '和 CozyMate 聊聊...',
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          filled: false,
+                          isDense: true,
+                          isCollapsed: true,
+                          contentPadding: EdgeInsets.zero,
+                          hintStyle: TextStyle(
+                            fontFamily: MomCozyTypography.fontFamily,
+                            fontFamilyFallback:
+                                MomCozyTypography.fontFamilyFallback,
+                            fontSize: 14,
+                            height: 1.6,
+                            color: MomCozyColors.mutedForeground.withValues(
+                              alpha: 0.82,
                             ),
-                            onChanged: onChanged,
-                            onSubmitted: (_) {
-                              if (canSend) onSend();
-                            },
-                            decoration: InputDecoration(
-                              hintText: '和 CozyMate 聊聊...',
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              filled: false,
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                              hintStyle: TextStyle(
-                                fontFamily: MomCozyTypography.fontFamily,
-                                fontFamilyFallback:
-                                    MomCozyTypography.fontFamilyFallback,
-                                fontSize: 14,
-                                color: MomCozyColors.mutedForeground.withValues(
-                                  alpha: 0.82,
+                          ),
+                        ),
+                      );
+                final inputFrame = Padding(
+                  key: const ValueKey('agent-composer-input-frame'),
+                  padding: inputPadding,
+                  child: composerInput,
+                );
+                final controlButtonStyle = IconButton.styleFrom(
+                  fixedSize: const Size.square(_controlSize),
+                  minimumSize: const Size.square(_controlSize),
+                  maximumSize: const Size.square(_controlSize),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: EdgeInsets.zero,
+                );
+
+                return DecoratedBox(
+                  key: const ValueKey('agent-composer-surface'),
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.card.withValues(alpha: 0.88),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: MomCozyColors.border.withValues(alpha: 0.64),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xff754c5e).withValues(alpha: 0.08),
+                        blurRadius: 18,
+                        offset: const Offset(0, 9),
+                      ),
+                    ],
+                  ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minHeight: _surfaceMinHeight,
+                    ),
+                    child: Stack(
+                      alignment: Alignment.centerLeft,
+                      clipBehavior: Clip.none,
+                      children: [
+                        inputFrame,
+                        positionControl(
+                          left: _surfaceHorizontalInset,
+                          child: IconButton(
+                            key: const ValueKey('agent-image-button'),
+                            onPressed: canAttachImage
+                                ? onTogglePhotoMenu
+                                : null,
+                            icon: const Icon(
+                              Icons.add_photo_alternate_outlined,
+                              size: 20,
+                            ),
+                            tooltip: '添加图片',
+                            color: MomCozyColors.mutedForeground,
+                            visualDensity: VisualDensity.compact,
+                            constraints: const BoxConstraints.tightFor(
+                              width: _controlSize,
+                              height: _controlSize,
+                            ),
+                            padding: EdgeInsets.zero,
+                            style: controlButtonStyle,
+                          ),
+                        ),
+                        positionControl(
+                          right:
+                              _surfaceHorizontalInset +
+                              _controlSize +
+                              _controlGap,
+                          child: IconButton(
+                            key: const ValueKey('agent-voice-button'),
+                            onPressed: canUseVoice || _voiceMode
+                                ? _toggleVoiceMode
+                                : null,
+                            icon: Icon(_voiceIcon, size: 20),
+                            tooltip: _voiceTooltip,
+                            color: voicePhase == AgentVoicePhase.listening
+                                ? colorScheme.primary
+                                : MomCozyColors.mutedForeground,
+                            visualDensity: VisualDensity.compact,
+                            constraints: const BoxConstraints.tightFor(
+                              width: _controlSize,
+                              height: _controlSize,
+                            ),
+                            padding: EdgeInsets.zero,
+                            style: controlButtonStyle,
+                          ),
+                        ),
+                        positionControl(
+                          right: _surfaceHorizontalInset,
+                          child: IconButton(
+                            key: ValueKey(
+                              sendIsStop
+                                  ? 'agent-stop-button'
+                                  : 'agent-send-button',
+                            ),
+                            onPressed: sendIsStop
+                                ? onCancel
+                                : (canSend ? onSend : null),
+                            icon: DecoratedBox(
+                              key: const ValueKey('agent-send-button-visual'),
+                              decoration: BoxDecoration(
+                                color: sendLooksActive
+                                    ? colorScheme.primary
+                                    : MomCozyColors.muted,
+                                shape: BoxShape.circle,
+                              ),
+                              child: SizedBox.square(
+                                dimension: _controlSize,
+                                child: Center(
+                                  child: Icon(
+                                    sendIsStop
+                                        ? Icons.stop_rounded
+                                        : Icons.send_rounded,
+                                    size: sendIsStop ? 18 : 16,
+                                    color: sendLooksActive
+                                        ? colorScheme.onPrimary
+                                        : MomCozyColors.mutedForeground,
+                                  ),
                                 ),
                               ),
                             ),
+                            tooltip: sendIsStop ? '停止' : '发送',
+                            visualDensity: VisualDensity.compact,
+                            constraints: const BoxConstraints.tightFor(
+                              width: _controlSize,
+                              height: _controlSize,
+                            ),
+                            padding: EdgeInsets.zero,
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              disabledBackgroundColor: Colors.transparent,
+                              overlayColor: colorScheme.primary.withValues(
+                                alpha: 0.08,
+                              ),
+                              fixedSize: const Size.square(_controlSize),
+                              minimumSize: const Size.square(_controlSize),
+                              maximumSize: const Size.square(_controlSize),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              padding: EdgeInsets.zero,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                    const SizedBox(width: 4),
-                    IconButton(
-                      key: const ValueKey('agent-voice-button'),
-                      onPressed: canUseVoice ? onVoiceInput : null,
-                      icon: Icon(_voiceIcon, size: 20),
-                      tooltip: _voiceTooltip,
-                      color: voicePhase == AgentVoicePhase.listening
-                          ? colorScheme.primary
-                          : MomCozyColors.mutedForeground,
-                      visualDensity: VisualDensity.compact,
-                      constraints: const BoxConstraints.tightFor(
-                        width: 32,
-                        height: 32,
-                      ),
-                      padding: EdgeInsets.zero,
-                    ),
-                    const SizedBox(width: 4),
-                    IconButton.filled(
-                      key: ValueKey(
-                        isRunning ? 'agent-stop-button' : 'agent-send-button',
-                      ),
-                      onPressed: isRunning
-                          ? onCancel
-                          : (canSend ? onSend : null),
-                      icon: Icon(
-                        isRunning ? Icons.stop_rounded : Icons.send_rounded,
-                        size: isRunning ? 18 : 16,
-                      ),
-                      tooltip: isRunning ? '停止' : '发送',
-                      style: IconButton.styleFrom(
-                        backgroundColor: colorScheme.primary,
-                        foregroundColor: colorScheme.onPrimary,
-                        disabledBackgroundColor: MomCozyColors.muted,
-                        disabledForegroundColor: MomCozyColors.mutedForeground,
-                        fixedSize: const Size.square(32),
-                        minimumSize: const Size.square(32),
-                        padding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
             if (_voiceStatusLabel != null) ...[
               const SizedBox(height: 4),
@@ -1971,8 +2497,42 @@ class AgentComposerBar extends StatelessWidget {
     );
   }
 
+  bool _shouldUseExpandedTextLayout(
+    BuildContext context,
+    double surfaceWidth,
+    TextStyle style,
+  ) {
+    final text = widget.controller.text;
+    if (text.contains('\n')) return true;
+    return _visualLineCountForWidth(
+          context,
+          _compactInputTextWidth(surfaceWidth),
+          style,
+        ) >
+        1;
+  }
+
+  double _compactInputTextWidth(double surfaceWidth) {
+    return surfaceWidth - _inputLeftInset - _inputRightInset - _lineWrapGuard;
+  }
+
+  int _visualLineCountForWidth(
+    BuildContext context,
+    double maxWidth,
+    TextStyle style,
+  ) {
+    final text = widget.controller.text.isEmpty ? ' ' : widget.controller.text;
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: Directionality.of(context),
+      maxLines: 100,
+    )..layout(maxWidth: maxWidth.clamp(1.0, double.infinity));
+    return painter.computeLineMetrics().length.clamp(1, 100);
+  }
+
   IconData get _voiceIcon {
-    return switch (voicePhase) {
+    if (_voiceMode) return Icons.keyboard_alt_outlined;
+    return switch (widget.voicePhase) {
       AgentVoicePhase.listening => Icons.graphic_eq_rounded,
       AgentVoicePhase.transcribing => Icons.hourglass_bottom_rounded,
       AgentVoicePhase.playing => Icons.volume_up_outlined,
@@ -1983,7 +2543,8 @@ class AgentComposerBar extends StatelessWidget {
   }
 
   String get _voiceTooltip {
-    return switch (voicePhase) {
+    if (_voiceMode) return '切换到文字输入';
+    return switch (widget.voicePhase) {
       AgentVoicePhase.listening => '正在听',
       AgentVoicePhase.transcribing => '正在转写',
       AgentVoicePhase.playing => '正在播放语音',
@@ -1995,7 +2556,7 @@ class AgentComposerBar extends StatelessWidget {
   }
 
   String? get _voiceStatusLabel {
-    return switch (voicePhase) {
+    return switch (widget.voicePhase) {
       AgentVoicePhase.listening => '正在听',
       AgentVoicePhase.transcribing => '正在整理语音',
       AgentVoicePhase.playing => '正在播放语音',
@@ -2228,6 +2789,7 @@ List<AgentArtifactActionView> _buttonActions(Object? rawButtons) {
           kind: kind ?? 'button',
           value: value,
           routePath: _actionRoutePath(kind: kind, value: value),
+          routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
         );
       })
       .toList(growable: false);
@@ -2307,6 +2869,7 @@ List<AgentArtifactActionView> _semanticActions(
           kind: kind ?? 'action',
           value: value,
           routePath: _actionRoutePath(kind: kind, value: value),
+          routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
         );
       })
       .toList(growable: false);
@@ -2327,11 +2890,68 @@ String? _actionRoutePath({required String? kind, required String? value}) {
   return _safeSameOriginPath(value);
 }
 
+Map<String, Object?>? _actionRouteExtra({
+  required String? kind,
+  required String? value,
+  required String? title,
+}) {
+  if (!_isMediaActionKind(kind)) return null;
+  final url = value?.trim();
+  if (url == null || url.isEmpty) return null;
+  final mediaKind = _mediaViewerKind(kind: kind, url: url);
+  if (mediaKind == null) return null;
+  final normalizedTitle = title?.trim();
+  return {
+    'kind': mediaKind,
+    'url': url,
+    if (normalizedTitle != null && normalizedTitle.isNotEmpty)
+      'title': normalizedTitle,
+  };
+}
+
 bool _isMediaActionKind(String? kind) {
   return switch (kind) {
-    'doc' || 'document' || 'pdf' || 'media' || 'image' || 'video' => true,
+    'doc' ||
+    'document' ||
+    'pdf' ||
+    'media' ||
+    'image' ||
+    'photo' ||
+    'picture' ||
+    'video' => true,
     _ => false,
   };
+}
+
+String? _mediaViewerKind({required String? kind, required String url}) {
+  final normalizedKind = kind?.trim().toLowerCase();
+  if (normalizedKind == 'pdf' ||
+      normalizedKind == 'doc' ||
+      normalizedKind == 'document') {
+    return 'pdf';
+  }
+  if (normalizedKind == 'image' ||
+      normalizedKind == 'photo' ||
+      normalizedKind == 'picture') {
+    return 'image';
+  }
+  if (normalizedKind == 'video') return 'video';
+
+  final normalizedUrl = url.toLowerCase().split('?').first;
+  if (normalizedUrl.endsWith('.pdf')) return 'pdf';
+  if (normalizedUrl.endsWith('.png') ||
+      normalizedUrl.endsWith('.jpg') ||
+      normalizedUrl.endsWith('.jpeg') ||
+      normalizedUrl.endsWith('.webp') ||
+      normalizedUrl.endsWith('.gif')) {
+    return 'image';
+  }
+  if (normalizedUrl.endsWith('.mp4') ||
+      normalizedUrl.endsWith('.mov') ||
+      normalizedUrl.endsWith('.webm')) {
+    return 'video';
+  }
+  return null;
 }
 
 String? _safeSameOriginPath(String? value) {
