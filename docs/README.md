@@ -18,6 +18,7 @@
 - 迁移总蓝图：`migration/flutter-migration-blueprint.md`
 - App 端测试方案：`migration/flutter-app-test-plan.md`
 - Flutter 生产重构计划：`flutter/production-refactor-plan.md`
+- Flutter 正式取代旧 Web 推进计划：`flutter/flutter-web-cutover-plan.md`
 - 旧 Web 归档说明：`legacy-web/archive.md`
 - UI/UX 黄金标准：`ui-parity/legacy-web-ui-ux-golden-standard.md`
 - 组件级 parity 计划：`ui-parity/flutter-ui-component-parity-plan.md`
