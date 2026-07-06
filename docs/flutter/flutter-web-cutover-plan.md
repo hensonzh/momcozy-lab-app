@@ -1,7 +1,7 @@
 # Flutter 正式取代旧 Web 版推进计划
 
 > 目标：让 `flutter_app/` 成为 MomCozyApp 的正式移动端实现；`legacy_web/` 从主发布链路退为 rollback-only，最终在完成观察窗口后退役。  
-> 当前状态：Phase 0 准入冻结中。  
+> 当前状态：Phase 0 本地非真机 gate 已通过，等待 emulator smoke / Phase 1 外部凭证。
 > 结论规则：任何 P0 blocker 未关闭前，不允许正式替代旧 Web/Capacitor 版。
 
 ## 1. 范围和原则
@@ -35,7 +35,7 @@ Flutter 正式替代的用户可见范围包括：
 
 | Phase | 名称 | 当前状态 | 退出条件 |
 |---|---|---|---|
-| 0 | 准入冻结和合并 | In progress | `feat/test2` 合入目标分支，非真机 gate 全绿。 |
+| 0 | 准入冻结和合并 | In progress | `feat/test2` 已合入目标分支，非真机 gate 全绿，emulator smoke 待跑。 |
 | 1 | 生产形态补齐 | Pending | appId、release signing、生产/staging env、CI signing gate 明确并可产包。 |
 | 2 | 真机 P0 验收 | Blocked by device lab | Android 版本矩阵、BLE、真泵、后台、通知恢复和 Agent stream P0 通过。 |
 | 3 | 灰度发布 | Blocked by signed production candidate | internal/alpha/beta/staged rollout 观察指标达标。 |
@@ -46,12 +46,12 @@ Flutter 正式替代的用户可见范围包括：
 
 ### 3.1 准入项
 
-- [ ] `feat/test2` worktree 干净。
-- [ ] `feat/test2` 合入目标分支，冲突必须人工确认。
-- [ ] Flutter 非真机测试通过。
-- [ ] Flutter release gate 通过。
+- [x] `feat/test2` worktree 干净。
+- [x] `feat/test2` 合入目标分支，冲突必须人工确认。
+- [x] Flutter 非真机测试通过。
+- [x] Flutter release gate 通过。
 - [ ] Android emulator smoke 通过。
-- [ ] rollback manifest 生成。
+- [x] rollback manifest 生成。
 
 ### 3.2 执行命令
 
@@ -72,8 +72,8 @@ PATH="$HOME/.local/share/momcozy-toolchains/flutter/bin:$PATH" flutter test
 
 ### 3.3 退出标准
 
-- [ ] `flutter test` 全绿。
-- [ ] `npm run flutter:release-gate` 全绿。
+- [x] `flutter test` 全绿。
+- [x] `npm run flutter:release-gate` 全绿。
 - [ ] `npm run flutter:emulator-smoke` 全绿。
 - [ ] 无未提交变更。
 - [ ] 无 P0 文档缺口阻断 Phase 1。
@@ -84,9 +84,10 @@ PATH="$HOME/.local/share/momcozy-toolchains/flutter/bin:$PATH" flutter test
 |---|---|---|
 | Agent Hub parity | Passed | 已覆盖多轮历史、失败重试、头像状态、语音输入、自动播放、tool/artifact/action 等。 |
 | UI/UX parity | Passed for current scope | 已按当前 golden/widget 范围通过，后续真机仍需人工 spot check。 |
-| Non-device tests | Pending latest target branch run | 合并后重新跑。 |
-| Release gate | Pending latest target branch run | 合并后重新跑。 |
+| Non-device tests | Passed | `npm run flutter:check` 和 `npm run flutter:release-gate` 已在目标分支通过。 |
+| Release gate | Passed | 已产出 `app-local-debug.apk`、`app-staging-release.apk` 和 `legacy_web/dist/flutter-rollback-manifest.json`。 |
 | Emulator smoke | Pending latest target branch run | 合并后重新跑。 |
+| Android built-in Kotlin | Partially migrated | app 模块已移除显式 KGP；full built-in Kotlin 被 `flutter_secure_storage 10.3.1` 仍应用 `kotlin-android` 阻断，当前保留 `android.builtInKotlin=false` opt-out。 |
 
 ## 4. Phase 1：生产形态补齐
 
@@ -264,5 +265,7 @@ Rollback 触发条件：
 
 | Date | Phase | Action | Result | Commit / Artifact |
 |---|---|---|---|---|
-| 2026-07-06 | 0 | 创建 cutover 计划 | Pending execution | `docs/flutter/flutter-web-cutover-plan.md` |
-
+| 2026-07-06 | 0 | 创建 cutover 计划 | Done | `docs/flutter/flutter-web-cutover-plan.md` |
+| 2026-07-06 | 0 | 合入 `feat/test2` | Done | 无冲突，目标分支提交 `f6e0fa1`。 |
+| 2026-07-06 | 0 | Flutter 非真机 release gate | Done | `npm run flutter:release-gate` 通过，rollback manifest 已生成。 |
+| 2026-07-06 | 0 | Android KGP app 模块迁移 | Partial | app 模块 KGP 已移除；full built-in Kotlin 等待 `flutter_secure_storage` 支持。 |
