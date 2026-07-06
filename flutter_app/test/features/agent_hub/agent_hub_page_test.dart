@@ -416,6 +416,7 @@ void main() {
               controller: controller,
               canSend: true,
               isRunning: false,
+              isInputLocked: false,
               imageCount: 0,
               showPhotoMenu: false,
               canAttachImage: true,
@@ -1085,7 +1086,14 @@ void main() {
               }),
             ],
           ),
+          runner: AgentStreamRunner(_FixtureAgentStreamClient(const [])),
           actionClient: actionClient,
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'blocked-during-confirmation.png',
+          ),
+          voiceInput: () async => '待确认时不能覆盖输入框',
         ),
       ),
     );
@@ -1096,6 +1104,30 @@ void main() {
     expect(find.byKey(ValueKey('agent-action-card-$actionId')), findsOneWidget);
     expect(find.text('创建支持工单'), findsOneWidget);
     expect(find.text('将当前问题提交给人工支持团队'), findsOneWidget);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .enabled,
+      isFalse,
+    );
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-image-button')))
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-voice-button')))
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
+          .onPressed,
+      isNull,
+    );
 
     await tester.tap(find.byKey(ValueKey('agent-action-confirm-$actionId')));
     await connector.called.future;

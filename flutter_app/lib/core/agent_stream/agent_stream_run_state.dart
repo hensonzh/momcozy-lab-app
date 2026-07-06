@@ -38,6 +38,9 @@ class AgentStreamRunState {
       phase == AgentStreamRunPhase.streaming ||
       phase == AgentStreamRunPhase.cancelRequested;
 
+  bool get blocksComposer =>
+      isActive || phase == AgentStreamRunPhase.waitingForConfirmation;
+
   bool get canRetry =>
       phase == AgentStreamRunPhase.error ||
       phase == AgentStreamRunPhase.disconnected;

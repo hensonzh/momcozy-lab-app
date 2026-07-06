@@ -32,6 +32,7 @@ void main() {
                 controller: controller,
                 canSend: false,
                 isRunning: false,
+                isInputLocked: false,
                 imageCount: 0,
                 showPhotoMenu: false,
                 canAttachImage: true,
