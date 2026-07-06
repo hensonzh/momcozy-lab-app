@@ -64,6 +64,26 @@ void main() {
     _expectComposerSendButtonBreathesVertically(tester);
   });
 
+  testWidgets('Agent Hub keeps the idle greeting near the transcript top', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(_host(const AgentHubPage()));
+
+    final chatRect = tester.getRect(
+      find.byKey(const ValueKey('agent-chat-scroll-view')),
+    );
+    final greetingRect = tester.getRect(
+      find.textContaining('嗨，我是 CozyMate'),
+    );
+
+    expect(greetingRect.top - chatRect.top, lessThan(120));
+  });
+
   testWidgets('Agent Hub marks active assistant avatar as thinking', (
     tester,
   ) async {
@@ -265,7 +285,7 @@ void main() {
   });
 
   testWidgets(
-    'Agent Hub anchors a failed sent turn at the chat tail without greeting fallback',
+    'Agent Hub lays out a failed sent turn near the transcript top without greeting fallback',
     (tester) async {
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;
@@ -302,10 +322,12 @@ void main() {
       final chatRect = tester.getRect(
         find.byKey(const ValueKey('agent-chat-scroll-view')),
       );
+      final errorRect = tester.getRect(find.textContaining('这次没有拿到回复'));
       final retryRect = tester.getRect(
         find.byKey(const ValueKey('agent-retry-button')),
       );
-      expect(chatRect.bottom - retryRect.bottom, lessThan(80));
+      expect(errorRect.top - chatRect.top, lessThan(180));
+      expect(retryRect.top - chatRect.top, lessThan(260));
     },
   );
 
