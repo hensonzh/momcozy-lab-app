@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
@@ -152,10 +153,12 @@ class MomCozyApiRuntime {
       clientEventClient:
           clientEventClient ??
           AgentStreamClientEventClient(
-            endpoint: AgentStreamEndpoint(
-              uri: baseUri.replace(path: '/api/client-event'),
-              token: authToken,
-              headers: defaultHeaders,
+            recorder: (event) => runtimeObservability.recordFeatureEvent(
+              'client_event',
+              event['event_type'] is String
+                  ? event['event_type'] as String
+                  : 'unknown',
+              attributes: event,
             ),
           ),
       blePlatform: blePlatform,
@@ -256,9 +259,17 @@ class MomCozyApiRuntime {
     return _pumpProtocolPlatform ??= pumpNativeRuntimeCoordinator.protocol;
   }
 
+  MomCozyAuthApiRepository get authRepository {
+    return MomCozyAuthApiRepository(transport: jsonTransport);
+  }
+
   Future<void> startPumpNativeRuntime({
     bool subscribeConnectedDevices = true,
   }) async {
+    await pumpNativeRuntimeCoordinator.snapshotSync.upload.setConfig(
+      apiBaseUrl: _defaultApiBaseUrl,
+      bearerToken: session.accessToken ?? '',
+    );
     await pumpNativeRuntimeCoordinator.start(
       subscribeConnectedDevices: subscribeConnectedDevices,
     );
@@ -335,5 +346,28 @@ class MomCozyRuntimeScope extends InheritedWidget {
   @override
   bool updateShouldNotify(MomCozyRuntimeScope oldWidget) {
     return apiRuntime != oldWidget.apiRuntime;
+  }
+}
+
+class MomCozyRuntimeController extends ChangeNotifier {
+  MomCozyRuntimeController(this._runtime);
+
+  MomCozyApiRuntime _runtime;
+
+  MomCozyApiRuntime get runtime => _runtime;
+
+  void replaceRuntime(MomCozyApiRuntime runtime) {
+    if (identical(_runtime, runtime)) return;
+    _runtime = runtime;
+    notifyListeners();
+  }
+
+  void replaceSession(MomCozySession session) {
+    replaceRuntime(
+      MomCozyApiRuntime.fromSession(
+        session,
+        observability: _runtime.observability,
+      ),
+    );
   }
 }

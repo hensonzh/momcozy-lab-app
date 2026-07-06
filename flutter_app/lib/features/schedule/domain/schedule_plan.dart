@@ -1,8 +1,5 @@
 abstract interface class ScheduleRepository {
-  Future<ScheduleDayPlan> fetchDayPlan({
-    required String userId,
-    required DateTime day,
-  });
+  Future<ScheduleDayPlan> fetchDayPlan({required DateTime day});
 }
 
 class ScheduleDayPlan {

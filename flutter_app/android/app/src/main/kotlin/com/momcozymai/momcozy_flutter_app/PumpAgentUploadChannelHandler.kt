@@ -29,7 +29,6 @@ internal class PumpAgentUploadChannelHandler(
 
     private var apiBaseUrl = ""
     private var bearerToken = ""
-    private var configuredUserId = ""
     private var processL = 0
     private var processR = 0
     private var processAll = 0
@@ -44,7 +43,6 @@ internal class PumpAgentUploadChannelHandler(
                 val args = call.argumentsMap()
                 apiBaseUrl = args.stringValue("apiBaseUrl")
                 bearerToken = args.stringValue("bearerToken")
-                configuredUserId = args.stringValue("userId")
                 result.success(null)
             }
             "updateDeviceSnapshot" -> {
@@ -219,9 +217,16 @@ internal class PumpAgentUploadChannelHandler(
     }
 
     private fun postJson(path: String, body: Map<String, Any?>): Map<String, Any?> {
+        if (path.isBlank()) {
+            return mapOf("error" to 0, "skipped" to true, "reason" to "local_progress_projection")
+        }
         val base = apiBaseUrl.trim().trimEnd('/')
         if (base.isEmpty()) {
             return mapOf("error" to 0, "skipped" to true, "reason" to "missing_api_base_url")
+        }
+        val token = bearerToken.trim()
+        if (token.isEmpty()) {
+            return mapOf("error" to 0, "skipped" to true, "reason" to "missing_bearer_token")
         }
 
         val conn = URL(base + path).openConnection() as HttpURLConnection
@@ -231,9 +236,8 @@ internal class PumpAgentUploadChannelHandler(
             conn.readTimeout = HTTP_TIMEOUT_MS
             conn.setRequestProperty("Accept", "application/json")
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8")
-            if (bearerToken.trim().isNotEmpty()) {
-                conn.setRequestProperty("Authorization", "Bearer ${bearerToken.trim()}")
-            }
+            conn.setRequestProperty("Authorization", "Bearer $token")
+            conn.setRequestProperty("Idempotency-Key", uploadIdempotencyKey(path, body))
             conn.doOutput = true
             val payload = JSONObject(body.toJsonMap()).toString().toByteArray(StandardCharsets.UTF_8)
             conn.outputStream.use { output: OutputStream -> output.write(payload) }
@@ -262,34 +266,45 @@ internal class PumpAgentUploadChannelHandler(
     }
 
     private fun buildBody(method: String, args: Map<*, *> = emptyMap<String, Any?>()): Map<String, Any?> {
-        val userId = args.stringValue("userId", configuredUserId)
         if (method == "getProcessData") sampleCurrentSnapshot()
         val left = snapshotDevice("L")
         val right = snapshotDevice("R")
         return when (method) {
             "uploadWorkstate" -> mapOf(
-                "user_id" to userId,
-                "device_left" to workstateSide(left, leftState, processL),
-                "device_right" to workstateSide(right, rightState, processR)
+                "device_id" to telemetryDeviceId(left, right),
+                "event_type" to "workstate",
+                "occurred_at" to isoNow(),
+                "payload" to mapOf(
+                    "left" to workstateSide(left, leftState, processL),
+                    "right" to workstateSide(right, rightState, processR)
+                )
             )
             "getProcessData" -> mapOf(
-                "user_id" to userId,
                 "device_left" to processDataSide(left, leftState),
                 "device_right" to processDataSide(right, rightState)
             )
             "uploadProcess" -> mapOf(
-                "user_id" to userId,
-                "process_left" to processSide(left, leftState, processL),
-                "process_right" to processSide(right, rightState, processR)
+                "device_id" to telemetryDeviceId(left, right),
+                "event_type" to "process",
+                "occurred_at" to isoNow(),
+                "payload" to mapOf(
+                    "left" to processSide(left, leftState, processL),
+                    "right" to processSide(right, rightState, processR),
+                    "progress" to progressMap()
+                )
             )
             "uploadMilkRecord" -> {
                 val endedAtMs = args.longValue("endedAtMs", System.currentTimeMillis())
+                val durationSeconds = Math.max(0, elapsedSeconds)
+                val startedAtMs = endedAtMs - durationSeconds * 1000L
                 mapOf(
-                    "user_id" to userId,
-                    "pump_type" to 0,
-                    "pump_source" to 0,
-                    "pump_time" to pumpTime(endedAtMs),
-                    "pump_milk_volum" to roundedOneDecimal(displayedMilk(left) + displayedMilk(right))
+                    "pump_start_time" to isoAt(startedAtMs),
+                    "pump_end_time" to isoAt(endedAtMs),
+                    "milk_volume_ml" to roundedOneDecimal(displayedMilk(left) + displayedMilk(right)),
+                    "pump_type" to "wearable",
+                    "duration_seconds" to durationSeconds,
+                    "source" to "device",
+                    "title" to "Pump session"
                 )
             }
             else -> emptyMap()
@@ -681,10 +696,10 @@ internal class PumpAgentUploadChannelHandler(
 
     private fun pathForMethod(method: String): String {
         return when (method) {
-            "uploadWorkstate" -> "/v1/pump/workstate"
-            "getProcessData" -> "/v1/pump/process/data"
-            "uploadProcess" -> "/v1/pump/process"
-            "uploadMilkRecord" -> "/v1/pump-milk/upload"
+            "uploadWorkstate" -> "/v1/devices/pump-telemetry"
+            "getProcessData" -> ""
+            "uploadProcess" -> "/v1/devices/pump-telemetry"
+            "uploadMilkRecord" -> "/v1/records/pumping"
             else -> "/"
         }
     }
@@ -831,13 +846,29 @@ internal class PumpAgentUploadChannelHandler(
     }
 
     private fun isoNow(): String {
-        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
-        formatter.timeZone = TimeZone.getTimeZone("UTC")
-        return formatter.format(Date())
+        return isoAt(System.currentTimeMillis())
     }
 
-    private fun pumpTime(endedAtMs: Long): String {
-        return SimpleDateFormat("HH:mm", Locale.US).format(Date(endedAtMs))
+    private fun isoAt(epochMs: Long): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
+        return formatter.format(Date(epochMs))
+    }
+
+    private fun telemetryDeviceId(left: Map<*, *>?, right: Map<*, *>?): String {
+        val leftId = left?.stringValue("deviceId")
+        val rightId = right?.stringValue("deviceId")
+        return when {
+            !leftId.isNullOrBlank() && !rightId.isNullOrBlank() && leftId != rightId -> "$leftId+$rightId"
+            !leftId.isNullOrBlank() -> leftId
+            !rightId.isNullOrBlank() -> rightId
+            else -> "native-pump-session"
+        }.take(120)
+    }
+
+    private fun uploadIdempotencyKey(path: String, body: Map<String, Any?>): String {
+        val raw = "$path:${body.dedupeKey()}"
+        return "native-pump-${Math.abs(raw.hashCode())}"
     }
 
     private data class BackgroundUpload(

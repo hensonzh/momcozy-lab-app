@@ -13,7 +13,33 @@ abstract interface class ApiJsonTransport {
   Future<Map<String, Object?>> postJson(
     String path, {
     Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
   });
+}
+
+class ApiErrorEnvelope {
+  const ApiErrorEnvelope({
+    required this.code,
+    required this.message,
+    this.requestId,
+    this.details,
+  });
+
+  factory ApiErrorEnvelope.fromMap(Map<String, Object?> map) {
+    return ApiErrorEnvelope(
+      code: _stringOrEmpty(map['code']),
+      message: _stringOrEmpty(map['message']),
+      requestId: map['request_id'] is String
+          ? map['request_id']! as String
+          : null,
+      details: map['details'],
+    );
+  }
+
+  final String code;
+  final String message;
+  final String? requestId;
+  final Object? details;
 }
 
 class ApiHttpException implements Exception {
@@ -25,17 +51,16 @@ class ApiHttpException implements Exception {
   });
 
   factory ApiHttpException.fromBody(Map<String, Object?> body) {
+    final responseBody = body['body'] is Map
+        ? Map<String, Object?>.from(body['body']! as Map)
+        : null;
     return ApiHttpException(
       statusCode: body['http_status'] is int ? body['http_status']! as int : 0,
       statusText: body['status_text'] is String
           ? body['status_text']! as String
           : '',
-      requestId: body['request_id'] is String
-          ? body['request_id']! as String
-          : null,
-      body: body['body'] is Map
-          ? Map<String, Object?>.from(body['body']! as Map)
-          : null,
+      requestId: _requestIdFromErrorBody(responseBody),
+      body: responseBody,
     );
   }
 
@@ -43,6 +68,20 @@ class ApiHttpException implements Exception {
   final String statusText;
   final String? requestId;
   final Map<String, Object?>? body;
+
+  ApiErrorEnvelope? get error {
+    final errorBody = body?['error'];
+    if (errorBody is Map) {
+      return ApiErrorEnvelope.fromMap(Map<String, Object?>.from(errorBody));
+    }
+    return null;
+  }
+
+  String? get effectiveRequestId => requestId ?? error?.requestId;
+
+  String? get errorCode => error?.code;
+
+  String? get errorMessage => error?.message;
 
   @override
   String toString() => 'ApiHttpException($statusCode, $statusText)';
@@ -52,6 +91,7 @@ abstract interface class ApiMultipartTransport {
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
     Map<String, Object?> fields = const {},
+    Map<String, String> headers = const {},
     required ApiUploadFile file,
   });
 }
@@ -174,10 +214,14 @@ class IoApiJsonTransport implements ApiJsonTransport {
   Future<Map<String, Object?>> postJson(
     String path, {
     Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
   }) async {
     final response = await connector.post(
       _resolve(path),
-      headers: _requestHeaders(includeContentType: true),
+      headers: _requestHeaders(
+        includeContentType: true,
+        extraHeaders: headers,
+      ),
       body: jsonEncode(body),
     );
     return _decodeResponse(response);
@@ -199,7 +243,10 @@ class IoApiJsonTransport implements ApiJsonTransport {
     );
   }
 
-  Map<String, String> _requestHeaders({bool includeContentType = false}) {
+  Map<String, String> _requestHeaders({
+    bool includeContentType = false,
+    Map<String, String> extraHeaders = const {},
+  }) {
     final authToken = token?.trim();
     return {
       ...headers,
@@ -207,6 +254,7 @@ class IoApiJsonTransport implements ApiJsonTransport {
       if (includeContentType) 'Content-Type': 'application/json',
       if (authToken != null && authToken.isNotEmpty)
         'Authorization': 'Bearer $authToken',
+      ...extraHeaders,
     };
   }
 
@@ -217,9 +265,7 @@ class IoApiJsonTransport implements ApiJsonTransport {
         statusCode: response.statusCode,
         statusText: response.statusText,
         body: body,
-        requestId: body?['request_id'] is String
-            ? body!['request_id']! as String
-            : null,
+        requestId: _requestIdFromErrorBody(body),
       );
     }
     if (body == null) {
@@ -247,12 +293,15 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
     Map<String, Object?> fields = const {},
+    Map<String, String> headers = const {},
     required ApiUploadFile file,
   }) async {
     final boundary = '----momcozy-${DateTime.now().microsecondsSinceEpoch}';
     final body = _multipartBody(boundary, fields, file);
     final request = await _httpClient.postUrl(_resolve(path));
-    _requestHeaders(boundary).forEach(request.headers.set);
+    _requestHeaders(boundary, extraHeaders: headers).forEach(
+      request.headers.set,
+    );
     request.contentLength = body.length;
     request.add(body);
     final response = await request.close();
@@ -272,7 +321,10 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
     return baseUri.replace(path: '$basePath$nextPath');
   }
 
-  Map<String, String> _requestHeaders(String boundary) {
+  Map<String, String> _requestHeaders(
+    String boundary, {
+    Map<String, String> extraHeaders = const {},
+  }) {
     final authToken = token?.trim();
     return {
       ...headers,
@@ -280,6 +332,7 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
       'Content-Type': 'multipart/form-data; boundary=$boundary',
       if (authToken != null && authToken.isNotEmpty)
         'Authorization': 'Bearer $authToken',
+      ...extraHeaders,
     };
   }
 
@@ -294,9 +347,7 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
         statusCode: statusCode,
         statusText: statusText,
         body: decoded,
-        requestId: decoded?['request_id'] is String
-            ? decoded!['request_id']! as String
-            : null,
+        requestId: _requestIdFromErrorBody(decoded),
       );
     }
     if (decoded == null) {
@@ -337,9 +388,25 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
 
 Map<String, Object?>? _decodeJsonObject(String body) {
   if (body.trim().isEmpty) return null;
-  final decoded = jsonDecode(body);
-  return decoded is Map ? Map<String, Object?>.from(decoded) : null;
+  try {
+    final decoded = jsonDecode(body);
+    return decoded is Map ? Map<String, Object?>.from(decoded) : null;
+  } on FormatException {
+    return null;
+  }
 }
+
+String? _requestIdFromErrorBody(Map<String, Object?>? body) {
+  if (body == null) return null;
+  if (body['request_id'] is String) return body['request_id']! as String;
+  final error = body['error'];
+  if (error is Map && error['request_id'] is String) {
+    return error['request_id']! as String;
+  }
+  return null;
+}
+
+String _stringOrEmpty(Object? value) => value is String ? value : '';
 
 class _DefaultApiHttpConnector implements ApiHttpConnector {
   const _DefaultApiHttpConnector();

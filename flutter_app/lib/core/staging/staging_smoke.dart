@@ -18,7 +18,7 @@ class StagingSmokeConfig {
   const StagingSmokeConfig({
     required this.enabled,
     required this.apiBaseUri,
-    required this.agentSseUri,
+    required this.agentRunsUri,
     required this.session,
     this.includeMutating = false,
     this.includeAgentStream = false,
@@ -29,15 +29,15 @@ class StagingSmokeConfig {
     final apiBase = Uri.parse(
       _envOrDefault(env, 'MOMCOZY_API_BASE_URL', 'http://127.0.0.1:8769'),
     );
-    final agentSseUrl = _envOrNull(env, 'MOMCOZY_AGENT_SSE_URL');
+    final agentRunsUrl = _envOrNull(env, 'MOMCOZY_AGENT_RUNS_URL');
     return StagingSmokeConfig(
       enabled: _flag(env, 'MOMCOZY_STAGING_SMOKE'),
       includeMutating: _flag(env, 'MOMCOZY_STAGING_SMOKE_MUTATE'),
       includeAgentStream: _flag(env, 'MOMCOZY_STAGING_SMOKE_AGENT'),
       apiBaseUri: apiBase,
-      agentSseUri: agentSseUrl == null
-          ? apiBase.replace(path: '/api/ag-ui-ws')
-          : Uri.parse(agentSseUrl),
+      agentRunsUri: agentRunsUrl == null
+          ? apiBase.replace(path: '/v1/agent/runs')
+          : Uri.parse(agentRunsUrl),
       session: MomCozySession.fromEnvironment(
         accessToken: _envOrDefault(env, 'MOMCOZY_API_TOKEN', ''),
         refreshToken: _envOrDefault(env, 'MOMCOZY_REFRESH_TOKEN', ''),
@@ -52,7 +52,7 @@ class StagingSmokeConfig {
   final bool includeMutating;
   final bool includeAgentStream;
   final Uri apiBaseUri;
-  final Uri agentSseUri;
+  final Uri agentRunsUri;
   final MomCozySession session;
   final Duration timeout;
 }
@@ -189,13 +189,8 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
     token: token,
     headers: headers,
   );
-  final controlEndpoint = AgentStreamEndpoint(
-    uri: config.apiBaseUri.replace(path: '/api/client-event'),
-    token: token,
-    headers: headers,
-  );
   final agentEndpoint = AgentStreamEndpoint(
-    uri: config.agentSseUri,
+    uri: config.agentRunsUri,
     token: token,
     headers: headers,
   );
@@ -204,14 +199,7 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
     _StatusProbe(config, StatusApiRepository(transport: jsonTransport)),
     _ScheduleProbe(config, ScheduleApiRepository(transport: jsonTransport)),
     _RecordsProbe(config, RecordsApiRepository(transport: jsonTransport)),
-    _PumpWorkstateProbe(
-      config,
-      PumpWorkstateApiRepository(transport: jsonTransport),
-    ),
-    _ClientEventProbe(
-      config,
-      AgentStreamClientEventClient(endpoint: controlEndpoint),
-    ),
+    _PumpWorkstateProbe(PumpWorkstateApiRepository(transport: jsonTransport)),
     _HospitalBagProbe(
       config,
       HospitalBagCartApiRepository(transport: jsonTransport),
@@ -231,7 +219,7 @@ class _StatusProbe implements StagingSmokeProbe {
   final StatusApiRepository repository;
 
   @override
-  String get name => 'status /v1/mom-baby/info/query';
+  String get name => 'status /v1/profile/me + /v1/profile/infants';
 
   @override
   bool get requiresMutation => false;
@@ -241,7 +229,7 @@ class _StatusProbe implements StagingSmokeProbe {
 
   @override
   Future<void> run() async {
-    await repository.fetchOverview(userId: config.session.userId);
+    await repository.fetchOverview();
   }
 }
 
@@ -252,7 +240,7 @@ class _ScheduleProbe implements StagingSmokeProbe {
   final ScheduleApiRepository repository;
 
   @override
-  String get name => 'schedule /v1/plan/query-task';
+  String get name => 'schedule /v1/plans/tasks/list';
 
   @override
   bool get requiresMutation => false;
@@ -262,10 +250,7 @@ class _ScheduleProbe implements StagingSmokeProbe {
 
   @override
   Future<void> run() async {
-    await repository.fetchDayPlan(
-      userId: config.session.userId,
-      day: DateTime.now(),
-    );
+    await repository.fetchDayPlan(day: DateTime.now());
   }
 }
 
@@ -288,28 +273,24 @@ class _RecordsProbe implements StagingSmokeProbe {
   Future<void> run() async {
     final today = DateTime.now();
     await repository.fetchFeedingRecords(
-      userId: config.session.userId,
       date: today,
     );
     await repository.fetchPumpMilkRecords(
-      userId: config.session.userId,
       date: today,
     );
     await repository.fetchGrowthRecords(
-      userId: config.session.userId,
       babyId: config.session.babyId,
     );
   }
 }
 
 class _PumpWorkstateProbe implements StagingSmokeProbe {
-  const _PumpWorkstateProbe(this.config, this.repository);
+  const _PumpWorkstateProbe(this.repository);
 
-  final StagingSmokeConfig config;
   final PumpWorkstateApiRepository repository;
 
   @override
-  String get name => 'pump /v1/pump/workstate';
+  String get name => 'pump /v1/devices/pump-telemetry';
 
   @override
   bool get requiresMutation => true;
@@ -320,45 +301,8 @@ class _PumpWorkstateProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     await repository.uploadWorkstate(
-      userId: config.session.userId,
       left: const PumpSideWorkstate(state: 1, mode: 'staging_smoke', level: 1),
     );
-  }
-}
-
-class _ClientEventProbe implements StagingSmokeProbe {
-  const _ClientEventProbe(this.config, this.client);
-
-  final StagingSmokeConfig config;
-  final AgentStreamClientEventClient client;
-
-  @override
-  String get name => 'client-event /api/client-event';
-
-  @override
-  bool get requiresMutation => true;
-
-  @override
-  bool get requiresAgentStream => false;
-
-  @override
-  Future<void> run() async {
-    final result = await client.post(
-      AgentStreamClientEventRequest(
-        threadId: 'staging-smoke-${config.session.userId}',
-        userId: config.session.userId,
-        eventType: 'flutter_staging_smoke',
-        label: 'Flutter staging smoke',
-        locale: config.session.locale,
-        occurredAt: DateTime.now().toUtc().toIso8601String(),
-        metadata: const {'source': 'flutter_staging_smoke'},
-      ),
-    );
-    if (!result.sent) {
-      throw StateError(
-        'client event failed: ${result.statusCode ?? result.error}',
-      );
-    }
   }
 }
 
@@ -369,7 +313,7 @@ class _HospitalBagProbe implements StagingSmokeProbe {
   final HospitalBagCartApiRepository repository;
 
   @override
-  String get name => 'hospital-bag /api/hospital-bag/cart-update';
+  String get name => 'hospital-bag /v1/plans';
 
   @override
   bool get requiresMutation => true;
@@ -380,7 +324,6 @@ class _HospitalBagProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     await repository.syncCart(
-      userId: config.session.userId,
       items: const [
         HospitalBagPackedItem(
           id: 'flutter-staging-smoke',
@@ -410,7 +353,6 @@ class _MediaUploadProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     await repository.uploadFile(
-      userId: config.session.userId,
       file: const ApiUploadFile(
         name: 'flutter-staging-smoke.txt',
         mimeType: 'text/plain',
@@ -439,23 +381,14 @@ class _AgentSseProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     final client = SseAgentStreamClient(
-      AgentSseHttpTransport(
-        endpoint: endpoint,
-        payloadFactory: (request) {
-          final suffix = DateTime.now().microsecondsSinceEpoch;
-          return buildAgentRunPayload(
-            request,
-            runId: 'run-flutter-smoke-$suffix',
-            messageId: 'msg-flutter-smoke-$suffix',
-          );
-        },
+      ProductionAgentSseTransport(
+        runsEndpoint: endpoint,
+        payloadFactory: buildProductionAgentRunPayload,
       ),
     );
     final event = await client
         .stream(
           AgentStreamRequest(
-            userId: config.session.userId,
-            threadId: 'thread-flutter-smoke-${config.session.userId}',
             locale: config.session.locale,
             message: 'Reply with a short staging smoke acknowledgement.',
             metadata: const {'source': 'flutter_staging_smoke'},

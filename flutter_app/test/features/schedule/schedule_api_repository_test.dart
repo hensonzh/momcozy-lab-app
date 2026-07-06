@@ -1,90 +1,84 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 
 import '../../support/fixture_api_transport.dart';
-import '../../support/fixture_reader.dart';
 
 void main() {
   group('ScheduleApiRepository', () {
-    test('maps task success response and request contract', () async {
-      final transport = _transport('success');
+    test('maps production task list and request contract', () async {
+      final transport = FixtureApiJsonTransport(const {
+        'items': <Object?>[
+          {
+            'id': 'task-001',
+            'owner_user_id': 'user-001',
+            'task_date': '2026-06-29',
+            'task_time': '10:00',
+            'title': 'Hydration check',
+            'description': '',
+            'status': 'pending',
+            'payload': <String, Object?>{},
+          },
+        ],
+      });
       final repository = ScheduleApiRepository(transport: transport);
 
       final plan = await repository.fetchDayPlan(
-        userId: 'demo-user-fixture',
         day: DateTime.utc(2026, 6, 29),
       );
 
       expect(transport.lastPath, scheduleDayPlanEndpoint);
-      expect(transport.lastQuery, {
-        'user_id': 'demo-user-fixture',
-        'timestamp': '2026-06-29T00:00:00Z',
-      });
+      expect(transport.lastQuery, {'task_date': '2026-06-29', 'limit': 50});
+      expect(transport.lastQuery, isNot(containsPair('user_id', anything)));
       expect(plan.tasks, hasLength(1));
       expect(plan.tasks.single.id, 'task-001');
-      expect(plan.tasks.single.title, 'Hydration check');
+      expect(plan.tasks.single.title, '10:00 Hydration check');
       expect(plan.tasks.single.completed, isFalse);
       expect(
         plan.tasks.single.remindAt,
-        DateTime.parse('2026-06-29T10:00:00Z'),
+        DateTime(2026, 6, 29, 10),
       );
     });
 
-    test('accepts legacy aliases and partial empty data', () async {
-      final legacy =
-          await ScheduleApiRepository(
-            transport: _transport('legacy_alias'),
-          ).fetchDayPlan(
-            userId: 'demo-user-fixture',
-            day: DateTime.utc(2026, 6, 29),
-          );
-      final empty = await ScheduleApiRepository(transport: _transport('empty'))
-          .fetchDayPlan(
-            userId: 'demo-user-fixture',
-            day: DateTime.utc(2026, 6, 29),
-          );
-      final partial =
-          await ScheduleApiRepository(
-            transport: _transport('partial'),
-          ).fetchDayPlan(
-            userId: 'demo-user-fixture',
-            day: DateTime.utc(2026, 6, 29),
-          );
+    test('maps completed status and empty data', () async {
+      final completed = await ScheduleApiRepository(
+        transport: FixtureApiJsonTransport(const {
+          'items': <Object?>[
+            {
+              'id': 'task-001',
+              'owner_user_id': 'user-001',
+              'task_date': '2026-06-29',
+              'task_time': '10:00',
+              'title': 'Hydration check',
+              'description': '',
+              'status': 'completed',
+              'payload': <String, Object?>{},
+            },
+          ],
+        }),
+      ).fetchDayPlan(day: DateTime.utc(2026, 6, 29));
+      final empty = await ScheduleApiRepository(
+        transport: FixtureApiJsonTransport(const {'items': <Object?>[]}),
+      ).fetchDayPlan(day: DateTime.utc(2026, 6, 29));
 
-      expect(legacy.tasks.single.id, 'task-001');
-      expect(legacy.tasks.single.title, 'Hydration check');
+      expect(completed.tasks.single.id, 'task-001');
+      expect(completed.tasks.single.title, '10:00 Hydration check');
+      expect(completed.tasks.single.completed, isTrue);
       expect(empty.isEmpty, isTrue);
-      expect(partial.tasks.single.id, 'task-001');
-      expect(partial.tasks.single.completed, isFalse);
-      expect(partial.tasks.single.remindAt, isNull);
     });
 
-    test('keeps business and HTTP failures distinct', () async {
+    test('keeps HTTP failures typed', () async {
       await expectLater(
         ScheduleApiRepository(
-          transport: _transport('business_error'),
+          transport: FixtureApiJsonTransport(const {
+            'http_status': 503,
+            'status_text': 'Service Unavailable',
+          }),
         ).fetchDayPlan(
-          userId: 'demo-user-fixture',
-          day: DateTime.utc(2026, 6, 29),
-        ),
-        throwsA(isA<ApiBusinessException>()),
-      );
-      await expectLater(
-        ScheduleApiRepository(transport: _transport('http_error')).fetchDayPlan(
-          userId: 'demo-user-fixture',
           day: DateTime.utc(2026, 6, 29),
         ),
         throwsA(isA<ApiHttpException>()),
       );
     });
   });
-}
-
-FixtureApiJsonTransport _transport(String variant) {
-  final fixture = readFixtureMap('api/plan/$variant.json');
-  return FixtureApiJsonTransport(
-    Map<String, Object?>.from(fixture['response']! as Map),
-  );
 }

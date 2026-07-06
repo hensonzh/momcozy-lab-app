@@ -8,6 +8,7 @@ class FixtureApiJsonTransport implements ApiJsonTransport {
   String? lastPath;
   Map<String, Object?>? lastQuery;
   Map<String, Object?>? lastBody;
+  Map<String, String>? lastHeaders;
   final List<Map<String, Object?>> postedBodies = [];
 
   @override
@@ -25,9 +26,11 @@ class FixtureApiJsonTransport implements ApiJsonTransport {
   Future<Map<String, Object?>> postJson(
     String path, {
     Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
   }) async {
     lastPath = path;
     lastBody = Map<String, Object?>.from(body);
+    lastHeaders = Map<String, String>.from(headers);
     postedBodies.add(lastBody!);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
     return response;
@@ -41,6 +44,7 @@ class FixtureApiJsonTransportByPath implements ApiJsonTransport {
   String? lastPath;
   Map<String, Object?>? lastQuery;
   Map<String, Object?>? lastBody;
+  Map<String, String>? lastHeaders;
   final List<Map<String, Object?>> postedBodies = [];
 
   @override
@@ -59,9 +63,11 @@ class FixtureApiJsonTransportByPath implements ApiJsonTransport {
   Future<Map<String, Object?>> postJson(
     String path, {
     Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
   }) async {
     lastPath = path;
     lastBody = Map<String, Object?>.from(body);
+    lastHeaders = Map<String, String>.from(headers);
     postedBodies.add(lastBody!);
     final response = _response(path);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
@@ -81,16 +87,19 @@ class FixtureApiMultipartTransport implements ApiMultipartTransport {
   final Object? failure;
   String? lastPath;
   Map<String, Object?>? lastFields;
+  Map<String, String>? lastHeaders;
   ApiUploadFile? lastFile;
 
   @override
   Future<Map<String, Object?>> uploadMultipart(
     String path, {
     Map<String, Object?> fields = const {},
+    Map<String, String> headers = const {},
     required ApiUploadFile file,
   }) async {
     lastPath = path;
     lastFields = Map<String, Object?>.from(fields);
+    lastHeaders = Map<String, String>.from(headers);
     lastFile = file;
     final failure = this.failure;
     if (failure != null) throw failure;

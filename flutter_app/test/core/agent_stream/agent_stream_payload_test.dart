@@ -1,50 +1,29 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 
-import '../../support/fixture_reader.dart';
-
 void main() {
   group('Agent run payload', () {
-    test('builds the text-only AG-UI first frame contract', () {
-      final payload = buildAgentRunPayload(
+    test('builds the text-only production run create contract', () {
+      final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(
-          userId: 'demo-user-fixture',
           message: '  Please review today\'s pumping pattern.  ',
-          threadId: 'thread-fixture-001',
+          threadId: '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
           locale: 'en-US',
           metadata: {'source': 'flutter-migration-fixture'},
         ),
-        runId: 'run-fixture-text-001',
-        messageId: 'msg-user-text-001',
       );
 
-      expect(payload['threadId'], 'thread-fixture-001');
-      expect(payload['runId'], 'run-fixture-text-001');
-      expect(payload['state'], {
-        'locale': 'en-US',
-        'user_id': 'demo-user-fixture',
-      });
-      expect(payload['messages'], [
-        {
-          'id': 'msg-user-text-001',
-          'role': 'user',
-          'content': 'Please review today\'s pumping pattern.',
-        },
-      ]);
-      expect(payload['tools'], isEmpty);
-      expect(payload['context'], isEmpty);
-      expect(payload['forwardedProps'], {
-        'source': 'flutter-migration-fixture',
-      });
+      expect(payload['thread_id'], '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5');
+      expect(payload['message'], 'Please review today\'s pumping pattern.');
+      expect(payload['runtime_pattern'], 'langgraph_sdk');
+      expect(payload.containsKey('user_id'), isFalse);
     });
 
-    test('matches the frozen image upload AG-UI fixture', () {
-      final expected = readFixtureMap('ag_ui/image_upload_message.json');
-      final payload = buildAgentRunPayload(
+    test('adds image attachments to the production run create contract', () {
+      final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(
-          userId: 'demo-user-fixture',
           message: 'Please review this pump display photo.',
-          threadId: 'thread-fixture-001',
+          threadId: 'not-a-production-uuid',
           locale: 'en-US',
           metadata: {'source': 'flutter-migration-fixture'},
           images: [
@@ -58,25 +37,47 @@ void main() {
             ),
           ],
         ),
-        runId: 'run-fixture-image-001',
-        messageId: 'msg-user-image-001',
       );
+      final attachments = payload['attachments']! as List<Object?>;
+      final image = attachments.single! as Map<String, Object?>;
 
-      expect(payload, expected);
+      expect(payload.containsKey('thread_id'), isFalse);
+      expect(image['type'], 'image');
+      expect(image['data_url'], startsWith('data:image/png;base64,'));
+      expect(image['mime_type'], 'image/png');
+      expect(image['name'], 'pump-display-fixture.png');
     });
 
-    test('requires a thread id before sending to the AG-UI transport', () {
+    test('requires non-empty message before sending to the production runtime', () {
       expect(
-        () => buildAgentRunPayload(
+        () => buildProductionAgentRunPayload(
           const AgentStreamRequest(
-            userId: 'demo-user-fixture',
-            message: 'Hello',
+            message: '   ',
           ),
-          runId: 'run-fixture-001',
-          messageId: 'msg-user-001',
         ),
         throwsA(isA<AgentStreamPayloadException>()),
       );
+    });
+
+    test('builds resume requests without adding run ids to create payloads', () {
+      const request = AgentStreamRequest(
+        message: 'Retry the interrupted answer.',
+        threadId: '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+        locale: 'zh-CN',
+        metadata: {'source': 'resume-test'},
+      );
+
+      final resume = request.resume(
+        runId: '0d39da8a-6f31-4e23-b5ac-b81d9808fb8c',
+        afterSequence: 12,
+      );
+      final payload = buildProductionAgentRunPayload(resume);
+
+      expect(resume.runId, '0d39da8a-6f31-4e23-b5ac-b81d9808fb8c');
+      expect(resume.afterSequence, 12);
+      expect(payload.containsKey('run_id'), isFalse);
+      expect(payload.containsKey('after_sequence'), isFalse);
+      expect(payload['thread_id'], '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5');
     });
   });
 }

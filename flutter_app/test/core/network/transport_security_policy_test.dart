@@ -14,9 +14,9 @@ void main() {
       );
       expect(
         AgentStreamEndpoint(
-          uri: Uri.parse('wss://agent.example.test/api/ag-ui-ws'),
+          uri: Uri.parse('wss://agent.example.test/v1/agent/runs/run-1/stream'),
         ).uri,
-        Uri.parse('wss://agent.example.test/api/ag-ui-ws'),
+        Uri.parse('wss://agent.example.test/v1/agent/runs/run-1/stream'),
       );
     });
 
@@ -29,15 +29,25 @@ void main() {
       );
       expect(
         AgentStreamEndpoint(
-          uri: Uri.parse('ws://localhost:8769/api/ag-ui-ws'),
+          uri: Uri.parse('ws://localhost:8769/v1/agent/runs/run-1/stream'),
         ).uri,
-        Uri.parse('ws://localhost:8769/api/ag-ui-ws'),
+        Uri.parse('ws://localhost:8769/v1/agent/runs/run-1/stream'),
       );
       expect(
         TransportSecurityPolicy.isLocalDevelopmentUri(
           Uri.parse('http://[::1]:8769'),
         ),
         isTrue,
+      );
+      expect(
+        TransportSecurityPolicy.requireSecureHttp(
+          Uri.parse('http://10.0.2.2:8769'),
+        ),
+        Uri.parse('http://10.0.2.2:8769'),
+      );
+      expect(
+        AgentStreamEndpoint(uri: Uri.parse('ws://10.0.2.2:8768/api/ag-ui')).uri,
+        Uri.parse('ws://10.0.2.2:8768/api/ag-ui'),
       );
     });
 
@@ -54,7 +64,7 @@ void main() {
       );
       expect(
         () => AgentStreamEndpoint(
-          uri: Uri.parse('ws://agent.example.test/api/ag-ui-ws'),
+          uri: Uri.parse('ws://agent.example.test/v1/agent/runs/run-1/stream'),
         ),
         throwsArgumentError,
       );

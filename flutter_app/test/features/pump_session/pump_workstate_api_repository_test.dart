@@ -1,74 +1,54 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 
 import '../../support/fixture_api_transport.dart';
-import '../../support/fixture_reader.dart';
 
 void main() {
   group('PumpWorkstateApiRepository', () {
-    test('posts workstate body and maps reply contract', () async {
-      final transport = _transport('success');
+    test('posts production telemetry body and maps ack', () async {
+      final transport = FixtureApiJsonTransport(const {
+        'id': 'telemetry-001',
+        'owner_user_id': 'user-001',
+        'device_id': 'pump-device-001',
+        'event_type': 'workstate',
+        'occurred_at': '2026-07-01T10:00:00Z',
+        'payload': <String, Object?>{},
+      });
       final repository = PumpWorkstateApiRepository(transport: transport);
 
       final reply = await repository.uploadWorkstate(
-        userId: 'demo-user-fixture',
+        deviceId: 'pump-device-001',
         left: const PumpSideWorkstate(state: 1, mode: 'deep', level: 6),
         right: const PumpSideWorkstate(state: 0, mode: 'stimulate', level: 3),
       );
 
       expect(transport.lastPath, pumpWorkstateEndpoint);
-      expect(transport.lastBody, {
-        'user_id': 'demo-user-fixture',
-        'device_left': {'state': 1, 'mode': 'deep', 'level': 6},
-        'device_right': {'state': 0, 'mode': 'stimulate', 'level': 3},
+      expect(transport.lastBody?['user_id'], isNull);
+      expect(transport.lastBody?['device_id'], 'pump-device-001');
+      expect(transport.lastBody?['event_type'], 'workstate');
+      expect(transport.lastBody?['occurred_at'], isA<String>());
+      expect(transport.lastBody?['payload'], {
+        'left': {'state': 1, 'mode': 'deep', 'level': 6},
+        'right': {'state': 0, 'mode': 'stimulate', 'level': 3},
       });
-      expect(reply.needReply, isTrue);
-      expect(reply.output, 'Pump state received.');
-      expect(reply.replyCode, 'pump_state_changed');
-      expect(reply.replySide, 'left');
+      expect(reply.needReply, isFalse);
+      expect(reply.output, 'Pump telemetry accepted.');
+      expect(reply.replyCode, 'workstate');
+      expect(reply.replySide, isNull);
     });
 
-    test('accepts legacy aliases and partial empty data', () async {
-      final legacy = await PumpWorkstateApiRepository(
-        transport: _transport('legacy_alias'),
-      ).uploadWorkstate(userId: 'demo-user-fixture');
-      final empty = await PumpWorkstateApiRepository(
-        transport: _transport('empty'),
-      ).uploadWorkstate(userId: 'demo-user-fixture');
-      final partial = await PumpWorkstateApiRepository(
-        transport: _transport('partial'),
-      ).uploadWorkstate(userId: 'demo-user-fixture');
-
-      expect(legacy.needReply, isTrue);
-      expect(legacy.replyCode, 'pump_state_changed');
-      expect(legacy.replySide, 'left');
-      expect(empty.isEmpty, isTrue);
-      expect(partial.isEmpty, isTrue);
-    });
-
-    test('keeps business and HTTP failures distinct', () async {
+    test('keeps HTTP failures typed', () async {
       await expectLater(
         PumpWorkstateApiRepository(
-          transport: _transport('business_error'),
-        ).uploadWorkstate(userId: 'demo-user-fixture'),
-        throwsA(isA<ApiBusinessException>()),
-      );
-      await expectLater(
-        PumpWorkstateApiRepository(
-          transport: _transport('http_error'),
-        ).uploadWorkstate(userId: 'demo-user-fixture'),
+          transport: FixtureApiJsonTransport(const {
+            'http_status': 503,
+            'status_text': 'Service Unavailable',
+          }),
+        ).uploadWorkstate(),
         throwsA(isA<ApiHttpException>()),
       );
     });
   });
-}
-
-FixtureApiJsonTransport _transport(String variant) {
-  final fixture = readFixtureMap('api/pump/$variant.json');
-  return FixtureApiJsonTransport(
-    Map<String, Object?>.from(fixture['response']! as Map),
-  );
 }

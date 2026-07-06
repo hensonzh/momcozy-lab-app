@@ -6,8 +6,11 @@ class AgentStreamRunner {
 
   final AgentStreamClient client;
 
-  Stream<AgentStreamRunState> run(AgentStreamRequest request) async* {
-    var state = const AgentStreamRunState().start();
+  Stream<AgentStreamRunState> run(
+    AgentStreamRequest request, {
+    AgentStreamRunState? initialState,
+  }) async* {
+    var state = initialState ?? const AgentStreamRunState().start();
     yield state;
 
     try {

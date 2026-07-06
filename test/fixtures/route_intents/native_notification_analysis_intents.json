@@ -1,33 +1,13 @@
 {
   "id": "route-native-notification-analysis-intents",
-  "description": "Native notification payloads map to AgentHub or Status intents with analysis side effects.",
+  "description": "Supported native reminder payloads map to typed one-shot intents.",
   "input": {
     "source": "PumpNotificationNavigateSync.consumePumpNotificationPending",
     "pendingNavigatePayloads": [
       {
         "path": "/",
         "autoEndTeardown": false,
-        "notifyJson": "{\"event\":\"summary\",\"body\":\"今日奶量总结已生成。\",\"chatMessageId\":\"analysis-daily_summary-001\",\"analysis_card\":{\"kind\":\"daily_summary\",\"title\":\"每日总结\",\"status\":\"normal\"}}"
-      },
-      {
-        "path": "/",
-        "autoEndTeardown": false,
-        "notifyJson": "{\"event\":\"mom_baby\",\"body\":\"今日泌乳建议已生成。\",\"chatMessageId\":\"analysis-mom_baby-001\",\"analysis_card\":{\"kind\":\"mom_baby\",\"title\":\"泌乳建议\",\"status_label\":\"稳定\"}}"
-      },
-      {
-        "path": "/",
-        "autoEndTeardown": false,
         "notifyJson": "{\"event\":\"milk_analysis\",\"body\":\"奶量分析已生成。\",\"chatMessageId\":\"analysis-milk_analysis-001\",\"analysis_card\":{\"kind\":\"milk_analysis\",\"title\":\"奶量分析\",\"status\":\"attention\"},\"analysis_context\":{\"kind\":\"milk_analysis\",\"title\":\"奶量分析上下文\",\"status\":\"attention\"}}"
-      },
-      {
-        "path": "/status?mmcNotify=growth",
-        "autoEndTeardown": false,
-        "notifyJson": "{\"event\":\"grown\"}"
-      },
-      {
-        "path": "/",
-        "autoEndTeardown": false,
-        "notifyJson": "{\"event\":\"health_issue\",\"body\":\"乳汁电导率异常提醒\",\"chatMessageId\":\"notification-health_issue-001\"}"
       },
       {
         "path": "/schedule?mmcNotify=1",
@@ -38,28 +18,6 @@
   },
   "expectedIntents": [
     {
-      "type": "OpenAgentHubWithAnalysisCard",
-      "path": "/",
-      "payload": {
-        "kind": "daily_summary",
-        "chatMessageId": "analysis-daily_summary-001",
-        "message": "今日奶量总结已生成。",
-        "notification": false
-      },
-      "consume": "once"
-    },
-    {
-      "type": "OpenAgentHubWithAnalysisCard",
-      "path": "/",
-      "payload": {
-        "kind": "mom_baby",
-        "chatMessageId": "analysis-mom_baby-001",
-        "message": "今日泌乳建议已生成。",
-        "notification": false
-      },
-      "consume": "once"
-    },
-    {
       "type": "OpenAgentHubWithMilkAnalysis",
       "path": "/",
       "payload": {
@@ -69,25 +27,6 @@
         "notification": true,
         "requiresContextEvent": true,
         "requiresFollowupQueue": true
-      },
-      "consume": "once"
-    },
-    {
-      "type": "OpenStatusGrowthHighlight",
-      "path": "/status",
-      "payload": {
-        "source": "native-notification",
-        "highlight": "growth"
-      },
-      "consume": "once"
-    },
-    {
-      "type": "OpenAgentHubWithHealthIssue",
-      "path": "/",
-      "payload": {
-        "kind": "health_issue",
-        "chatMessageId": "notification-health_issue-001",
-        "message": "乳汁电导率异常提醒"
       },
       "consume": "once"
     },
@@ -103,25 +42,18 @@
   ],
   "sideEffects": {
     "agentMessages": [
-      "appendAgentHubAnalysisMessage(daily_summary)",
-      "appendAgentHubAnalysisMessage(mom_baby)",
-      "appendAgentHubAnalysisMessage(milk_analysis)",
-      "appendAgentHubNotificationMessage(health_issue)"
+      "appendAgentHubAnalysisMessage(milk_analysis)"
     ],
     "backgroundJobs": [
       "recordMilkAnalysisContextEvent",
       "queueMilkAnalysisReminderFollowup"
     ],
-    "sessionStorage": [
-      "mmc_status_growth_highlight_pending consumed by Status"
-    ]
+    "sessionStorage": []
   },
   "assertions": [
     "notifyJson parse failure is ignored without crashing navigation",
     "milk_analysis is personalized before chat insertion when personalization service is available",
     "milk_analysis uses analysis_context when present, otherwise analysis_card",
-    "growth notification strips query string into typed highlight payload",
-    "health_issue message is treated as sensitive notification copy",
     "schedule reminder strips query string into typed reminder payload"
   ]
 }

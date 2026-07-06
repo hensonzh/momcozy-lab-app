@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/network/transport_security_policy.dart';
 import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
@@ -14,17 +13,13 @@ const realtimeVoiceSessionEndpoint = '/v1/realtime-voice-session';
 
 abstract interface class AgentVoiceRepository {
   Future<String?> transcribeSpeechChunk({
-    required String userId,
     required ApiUploadFile file,
     String? language,
   });
 
-  Stream<List<int>> realtimeVoicePcmStream({
-    required String userId,
-    required String text,
-  });
+  Stream<List<int>> realtimeVoicePcmStream({required String text});
 
-  Stream<AgentVoiceSessionEvent> realtimeVoiceSession({required String userId});
+  Stream<AgentVoiceSessionEvent> realtimeVoiceSession();
 }
 
 class AgentVoiceApiRepository implements AgentVoiceRepository {
@@ -46,7 +41,6 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
 
   @override
   Future<String?> transcribeSpeechChunk({
-    required String userId,
     required ApiUploadFile file,
     String? language,
   }) async {
@@ -54,14 +48,13 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
       final response = await multipartTransport.uploadMultipart(
         speechTranscribeChunkEndpoint,
         fields: {
-          'user_id': userId,
           if (language != null && language.trim().isNotEmpty)
             'language': language.trim(),
         },
+        headers: _requestHeaders(accept: 'application/json'),
         file: file,
       );
-      final data = _mapOrEmpty(unwrapApiEnvelope(response));
-      final text = _string(data['text'] ?? data['transcript'])?.trim();
+      final text = _string(response['text'] ?? response['transcript'])?.trim();
       return text == null || text.isEmpty ? null : text;
     } on ApiRequestCancelledException {
       rethrow;
@@ -71,44 +64,32 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   }
 
   @override
-  Stream<List<int>> realtimeVoicePcmStream({
-    required String userId,
-    required String text,
-  }) {
+  Stream<List<int>> realtimeVoicePcmStream({required String text}) {
     return binaryConnector.get(
       _resolveHttp(
         realtimeVoiceStreamEndpoint,
-        query: {'user_id': userId, 'text': text},
+        query: {'text': text},
       ),
       headers: _requestHeaders(accept: 'audio/pcm'),
     );
   }
 
   Map<String, Object?> redactedRealtimeVoiceStreamLogContext({
-    required String userId,
     required String text,
   }) {
     return _redactedRequestContext(
       _resolveHttp(
         realtimeVoiceStreamEndpoint,
-        query: {'user_id': userId, 'text': text},
+        query: {'text': text},
       ),
       accept: 'audio/pcm',
     );
   }
 
   @override
-  Stream<AgentVoiceSessionEvent> realtimeVoiceSession({
-    required String userId,
-  }) async* {
+  Stream<AgentVoiceSessionEvent> realtimeVoiceSession() async* {
     final connection = await websocketConnector.connect(
-      _resolveWebSocket(
-        realtimeVoiceSessionEndpoint,
-        query: {
-          'user_id': userId,
-          if (token != null && token!.trim().isNotEmpty) 'token': token!.trim(),
-        },
-      ),
+      _resolveWebSocket(realtimeVoiceSessionEndpoint),
       headers: _requestHeaders(accept: 'application/json'),
     );
 
@@ -121,17 +102,9 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     }
   }
 
-  Map<String, Object?> redactedRealtimeVoiceSessionLogContext({
-    required String userId,
-  }) {
+  Map<String, Object?> redactedRealtimeVoiceSessionLogContext() {
     return _redactedRequestContext(
-      _resolveWebSocket(
-        realtimeVoiceSessionEndpoint,
-        query: {
-          'user_id': userId,
-          if (token != null && token!.trim().isNotEmpty) 'token': token!.trim(),
-        },
-      ),
+      _resolveWebSocket(realtimeVoiceSessionEndpoint),
       accept: 'application/json',
     );
   }
@@ -182,19 +155,16 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
 class AgentVoiceApiInputTranscriber implements AgentVoiceTranscriber {
   const AgentVoiceApiInputTranscriber({
     required this.repository,
-    required this.userId,
     this.language,
   });
 
   final AgentVoiceRepository repository;
-  final String userId;
   final String? language;
 
   @override
   Future<String?> transcribe(AgentVoiceRecording recording) {
     if (recording.bytes.isEmpty) return Future<String?>.value();
     return repository.transcribeSpeechChunk(
-      userId: userId,
       language: language,
       file: ApiUploadFile(
         name: recording.name,
@@ -300,10 +270,6 @@ class _DefaultAgentVoiceWebSocketConnector
       headers: headers,
     );
   }
-}
-
-Map<String, Object?> _mapOrEmpty(Object? value) {
-  return value is Map ? Map<String, Object?>.from(value) : const {};
 }
 
 String? _string(Object? value) => value is String ? value : null;

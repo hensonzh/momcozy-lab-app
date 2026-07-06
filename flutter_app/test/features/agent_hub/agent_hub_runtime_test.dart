@@ -5,42 +5,48 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 
 void main() {
-  test('default Agent Hub runner uses SSE transport and AG-UI payload', () {
+  test('default Agent Hub runner uses production run stream transport', () {
     final runner = createDefaultAgentHubRunner();
     final client = runner.client as SseAgentStreamClient;
-    final transport = client.transport as AgentSseHttpTransport;
+    final transport = client.transport as ProductionAgentSseTransport;
     final request = buildDefaultAgentHubRequest(' Review my pattern ');
     final payload = transport.payloadFactory(request);
-    final messages = payload['messages']! as List<Object?>;
-    final message = messages.single! as Map<String, Object?>;
 
     expect(
-      transport.endpoint.uri.toString(),
-      'http://127.0.0.1:8768/api/ag-ui',
+      transport.runsEndpoint.uri.toString(),
+      'http://127.0.0.1:8769/v1/agent/runs',
     );
-    expect(transport.endpoint.token, isNull);
+    expect(transport.runsEndpoint.token, isNull);
     expect(
-      transport.endpoint.headers,
+      transport.runsEndpoint.headers,
       containsPair('X-Momcozy-Client', 'flutter'),
     );
-    expect(request.userId, 'demo-user');
-    expect(request.threadId, 'thread-demo');
+    expect(request.threadId, isNull);
     expect(request.locale, 'zh-CN');
-    expect(payload['threadId'], 'thread-demo');
-    expect(payload['runId'], startsWith('run-flutter-'));
-    expect(message['id'], startsWith('msg-flutter-'));
-    expect(message['content'], 'Review my pattern');
+    expect(payload['message'], 'Review my pattern');
+    expect(payload['runtime_pattern'], 'langgraph_sdk');
+    expect(payload.containsKey('thread_id'), isFalse);
+    expect(payload.containsKey('user_id'), isFalse);
   });
 
   test('default Agent Hub cancel client uses unified API endpoint', () {
     final cancelClient = createDefaultAgentHubCancelClient();
+    final actionClient = createDefaultAgentHubActionClient();
 
     expect(
       cancelClient.endpoint.uri.toString(),
-      'http://127.0.0.1:8769/api/ag-ui-cancel',
+      'http://127.0.0.1:8769/v1/agent/runs',
     );
     expect(
       cancelClient.endpoint.headers,
+      containsPair('X-Momcozy-Client', 'flutter'),
+    );
+    expect(
+      actionClient.endpoint.uri.toString(),
+      'http://127.0.0.1:8769/v1/agent/actions',
+    );
+    expect(
+      actionClient.endpoint.headers,
       containsPair('X-Momcozy-Client', 'flutter'),
     );
   });
@@ -55,22 +61,41 @@ void main() {
     );
     final runner = createSessionAgentHubRunner(session);
     final client = runner.client as SseAgentStreamClient;
-    final transport = client.transport as AgentSseHttpTransport;
+    final transport = client.transport as ProductionAgentSseTransport;
     final cancelClient = createSessionAgentHubCancelClient(session);
+    final actionClient = createSessionAgentHubActionClient(session);
     final request = buildSessionAgentHubRequest(
       '  Help me plan today  ',
       session: session,
     );
     final payload = buildDefaultAgentHubPayload(request);
-    final messages = payload['messages']! as List<Object?>;
-    final message = messages.single! as Map<String, Object?>;
 
-    expect(transport.endpoint.token, 'secure-access');
+    expect(transport.runsEndpoint.token, 'secure-access');
     expect(cancelClient.endpoint.token, 'secure-access');
-    expect(request.userId, 'secure-user');
-    expect(request.threadId, 'thread-secure-user');
+    expect(actionClient.endpoint.token, 'secure-access');
+    expect(
+      actionClient.endpoint.uri.toString(),
+      'http://127.0.0.1:8769/v1/agent/actions',
+    );
+    expect(request.threadId, isNull);
     expect(request.locale, 'en-US');
     expect(request.message, '  Help me plan today  ');
-    expect(message['content'], 'Help me plan today');
+    expect(payload['message'], 'Help me plan today');
+    expect(payload.containsKey('user_id'), isFalse);
+  });
+
+  test('production payload preserves a valid backend thread id', () {
+    final payload = buildDefaultAgentHubPayload(
+      const AgentStreamRequest(
+        message: 'Follow up',
+        threadId: '123e4567-e89b-12d3-a456-426614174000',
+      ),
+    );
+
+    expect(
+      payload['thread_id'],
+      '123e4567-e89b-12d3-a456-426614174000',
+    );
+    expect(payload['message'], 'Follow up');
   });
 }

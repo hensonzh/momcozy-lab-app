@@ -9,6 +9,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
@@ -19,9 +20,12 @@ void main() {
     await tester.pumpWidget(_host(const AgentHubPage()));
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-run-phase-badge')), findsOneWidget);
-    expect(find.text('准备就绪'), findsOneWidget);
-    expect(find.text('我在。'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.textContaining('你希望我怎么称呼你？'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-auto-voice-button')),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const ValueKey('agent-new-session-button')),
       findsOneWidget,
@@ -29,19 +33,85 @@ void main() {
     expect(find.byKey(const ValueKey('agent-composer-input')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-image-button')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-voice-button')), findsOneWidget);
-
-    final sendButton = tester.widget<IconButton>(
-      find.byKey(const ValueKey('agent-send-button')),
+    expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-static')),
+      findsOneWidget,
     );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
+
     final imageButton = tester.widget<IconButton>(
       find.byKey(const ValueKey('agent-image-button')),
     );
+    expect(imageButton.onPressed, isNull);
     final voiceButton = tester.widget<IconButton>(
       find.byKey(const ValueKey('agent-voice-button')),
     );
-    expect(sendButton.onPressed, isNull);
-    expect(imageButton.onPressed, isNull);
     expect(voiceButton.onPressed, isNull);
+    final sendButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+    expect(sendButton.onPressed, isNull);
+    _expectComposerControlsInsideSurface(tester);
+    _expectComposerControlsVerticallyCentered(tester);
+    _expectComposerInputVerticallyCentered(tester);
+    _expectComposerSendButtonBreathesVertically(tester);
+  });
+
+  testWidgets('Agent Hub keeps the idle greeting near the transcript top', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(_host(const AgentHubPage()));
+
+    final chatRect = tester.getRect(
+      find.byKey(const ValueKey('agent-chat-scroll-view')),
+    );
+    final greetingRect = tester.getRect(
+      find.textContaining('嗨，我是 CozyMate'),
+    );
+
+    expect(greetingRect.top - chatRect.top, lessThan(120));
+  });
+
+  testWidgets('Agent Hub marks active assistant avatar as thinking', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            messageId: 'msg-thinking',
+            textContent: 'I am checking your records.',
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-static')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
   });
 
   testWidgets('Agent Hub restores history and starts a new local session', (
@@ -62,13 +132,18 @@ void main() {
               content: '我建议你先观察舒适度和间隔。',
             ),
           ],
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'staged-before-new-session.png',
+          ),
           onNewSession: () => newSessionStarted = true,
         ),
       ),
     );
 
     expect(find.byKey(const ValueKey('agent-history-panel')), findsOneWidget);
-    expect(find.text('历史会话'), findsOneWidget);
+    expect(find.text('历史会话'), findsNothing);
     expect(find.text('昨天晚上左侧奶量偏低'), findsOneWidget);
     expect(find.text('我建议你先观察舒适度和间隔。'), findsOneWidget);
 
@@ -77,13 +152,27 @@ void main() {
       '开始新的问题',
     );
     await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
     await tester.pump();
 
     expect(newSessionStarted, isTrue);
     expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
-    expect(find.text('我在。'), findsOneWidget);
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsNothing,
+    );
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
@@ -114,7 +203,9 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -131,13 +222,17 @@ void main() {
       find.byKey(const ValueKey('agent-send-button')),
     );
     expect(sendButton.onPressed, isNotNull);
+    _expectComposerControlsInsideSurface(tester);
+    _expectComposerControlsVerticallyCentered(tester);
+    _expectComposerInputVerticallyCentered(tester);
+    _expectComposerSendButtonBreathesVertically(tester);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
     expect(client.requests.single.message, 'Review my pumping pattern');
-    expect(client.requests.single.threadId, 'thread-demo');
-    expect(find.text('已完成'), findsOneWidget);
+    expect(client.requests.single.threadId, isNull);
+    expect(find.text('Review my pumping pattern'), findsOneWidget);
     expect(
       find.text('I can help you review today\'s pumping pattern.'),
       findsOneWidget,
@@ -151,11 +246,132 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub reuses backend thread id across follow-up turns', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'First turn',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Follow up',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests, hasLength(2));
+    expect(client.requests.first.threadId, isNull);
+    expect(client.requests.last.threadId, 'thread-fixture-001');
+    expect(client.requests.last.message, 'Follow up');
+    expect(
+      find.text('I can help you review today\'s pumping pattern.'),
+      findsNWidgets(2),
+    );
+  });
+
+  testWidgets(
+    'Agent Hub preserves the visible greeting before a failed sent turn',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(
+              _FailingAgentStreamClient(
+                StateError(
+                  'SocketException: Failed host lookup: api.momcozy.test',
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'nihao',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('nihao'), findsOneWidget);
+      expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+      expect(find.textContaining('这次没有拿到回复'), findsOneWidget);
+      expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
+
+      final chatRect = tester.getRect(
+        find.byKey(const ValueKey('agent-chat-scroll-view')),
+      );
+      final greetingRect = tester.getRect(
+        find.textContaining('嗨，我是 CozyMate'),
+      );
+      final userRect = tester.getRect(find.text('nihao'));
+      final errorRect = tester.getRect(find.textContaining('这次没有拿到回复'));
+      final retryRect = tester.getRect(
+        find.byKey(const ValueKey('agent-retry-button')),
+      );
+      expect(greetingRect.top - chatRect.top, lessThan(120));
+      expect(userRect.top, greaterThan(greetingRect.bottom));
+      expect(errorRect.top, greaterThan(userRect.bottom));
+      expect(retryRect.top - chatRect.top, lessThan(360));
+    },
+  );
+
+  testWidgets('Agent Hub keeps send disabled for empty runner input', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    final sendButton = tester.widget<IconButton>(
+      find.byKey(const ValueKey('agent-send-button')),
+    );
+    expect(sendButton.onPressed, isNull);
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-send-button')),
+      warnIfMissed: false,
+    );
+    await tester.pumpAndSettle();
+
+    expect(client.requests, isEmpty);
+  });
+
   testWidgets('Agent Hub attaches image input to the next request', (
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -175,6 +391,18 @@ void main() {
     );
 
     await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsOneWidget);
+    expect(find.text('拍照'), findsOneWidget);
+    expect(find.text('上传'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-photo-menu')), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
     await tester.pumpAndSettle();
 
     expect(
@@ -204,7 +432,9 @@ void main() {
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -221,6 +451,8 @@ void main() {
     );
 
     await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
     await tester.pumpAndSettle();
 
     expect(
@@ -260,11 +492,178 @@ void main() {
     expect(client.requests.single.images, isEmpty);
   });
 
+  testWidgets('Agent Hub restores draft and image attachment by cache key', (
+    tester,
+  ) async {
+    final cacheKey = Object();
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'retained-across-tab.png',
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '跨模块回来继续问',
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(_host(const SizedBox.shrink()));
+    await tester.pumpAndSettle();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'retained-across-tab.png',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '跨模块回来继续问',
+    );
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-chip')),
+      findsOneWidget,
+    );
+    expect(find.text('图片 1'), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub clears cached active runs when restored', (
+    tester,
+  ) async {
+    final cacheKey = Object();
+    final client = _NeverEndingAgentStreamClient();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '生成今日建议',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+    expect(find.text('正在生成回复'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-stop-button')), findsOneWidget);
+
+    await tester.pumpWidget(_host(const SizedBox.shrink()));
+    await tester.pump();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('正在生成回复'), findsNothing);
+    expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
+    expect(find.text('连接中断，请重试'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub sends image-only request with legacy prompt', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'only-image.png',
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-camera-button')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests.single.message, '请看这张图片');
+    expect(client.requests.single.images.single.name, 'only-image.png');
+  });
+
+  testWidgets('Agent Hub applies initial composer prefill', (tester) async {
+    await tester.pumpWidget(
+      _host(const AgentHubPage(initialComposerText: '我想调整今天的吸乳排期')),
+    );
+
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '我想调整今天的吸乳排期',
+    );
+  });
+
   testWidgets('Agent Hub voice input fills composer without sending', (
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -281,9 +680,12 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
     await tester.pump();
-
-    expect(find.byKey(const ValueKey('agent-voice-status')), findsOneWidget);
-
+    final holdGesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+    expect(find.textContaining('我在听'), findsOneWidget);
+    await holdGesture.up();
     await tester.pumpAndSettle();
 
     expect(client.requests, isEmpty);
@@ -302,11 +704,70 @@ void main() {
     expect(client.requests.single.message, '今天左侧奶量偏低');
   });
 
+  testWidgets('Agent Hub voice button enters hold mode before transcription', (
+    tester,
+  ) async {
+    var voiceCaptures = 0;
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voiceInput: () async {
+            voiceCaptures += 1;
+            return '语音草稿';
+          },
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '原始草稿',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pump();
+
+    expect(
+      find.byKey(const ValueKey('agent-voice-hold-button')),
+      findsOneWidget,
+    );
+    expect(find.text('按住说话'), findsOneWidget);
+    expect(find.text('原始草稿'), findsNothing);
+    expect(voiceCaptures, 0);
+
+    final holdGesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+    expect(find.textContaining('我在听'), findsOneWidget);
+    await holdGesture.up();
+    await tester.pumpAndSettle();
+
+    expect(voiceCaptures, 1);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '语音草稿',
+    );
+    expect(client.requests, isEmpty);
+  });
+
   testWidgets('Agent Hub surfaces denied microphone permission', (
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
     final recorder = _PageFakeVoiceRecorder(
       initialPermission: AgentVoiceInputPermissionState.unknown,
@@ -326,6 +787,12 @@ void main() {
     );
 
     await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pump();
+    final holdGesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+    await holdGesture.up();
     await tester.pumpAndSettle();
 
     expect(find.text('麦克风权限未开启'), findsOneWidget);
@@ -345,7 +812,9 @@ void main() {
   ) async {
     final coordinator = AgentVoicePlaybackCoordinator();
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -368,6 +837,62 @@ void main() {
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
     expect(coordinator.activeId, 'msg-reply-text-001');
     expect(find.text('正在播放语音'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Agent Hub cancels active auto voice when voice is disabled', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    var playbackCancelled = false;
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Read this aloud',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    coordinator.cancel();
+    coordinator.request(
+      id: 'msg-reply-text-001',
+      source: AgentVoicePlaybackSource.autoReply,
+      cancel: () => playbackCancelled = true,
+    );
+    await tester.pump();
+
+    await tester.tap(find.byKey(const ValueKey('agent-auto-voice-button')));
+    await tester.pump();
+
+    expect(playbackCancelled, isTrue);
+    expect(coordinator.activeId, isNull);
+    expect(find.text('正在播放语音'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
   });
 
   testWidgets('Agent Hub keeps notification voice ahead of auto reply', (
@@ -381,7 +906,9 @@ void main() {
       cancel: () => notificationCancelled = true,
     );
     final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(readMigrationFixture('ag_ui/text_stream_basic.jsonl')),
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
     );
 
     await tester.pumpWidget(
@@ -419,15 +946,87 @@ void main() {
       ),
     );
 
-    expect(find.text('正在回复'), findsOneWidget);
+    expect(find.text('正在生成回复'), findsOneWidget);
     expect(find.text('Partial answer'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
 
-    expect(find.text('已停止'), findsOneWidget);
     expect(find.text('已停止本次回复'), findsOneWidget);
   });
+
+  testWidgets(
+    'Agent Hub sends follow-up content while interrupting an active run',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final cancelConnector = _RecordingCancelConnector();
+      final cancelClient = AgentStreamCancelClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+        ),
+        connector: cancelConnector,
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            cancelClient: cancelClient,
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'First turn',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'type': 'message.delta',
+          'thread_id': 'thread-followup',
+          'run_id': 'run-first',
+          'message_id': 'msg-first',
+          'payload': {'text': 'Partial first answer'},
+        }),
+      );
+      await tester.pump();
+
+      expect(client.requests, hasLength(1));
+      expect(find.text('Partial first answer'), findsOneWidget);
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('agent-composer-input')),
+            )
+            .enabled,
+        isTrue,
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Second turn',
+      );
+      await tester.pump();
+
+      expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+      await cancelConnector.called.future;
+
+      expect(client.requests, hasLength(2));
+      expect(client.requests.last.message, 'Second turn');
+      expect(client.requests.last.threadId, 'thread-followup');
+      expect(cancelConnector.uri!.path, '/v1/agent/runs/run-first/cancel');
+      expect(find.text('Partial first answer'), findsOneWidget);
+    },
+  );
 
   testWidgets('Agent Hub posts best-effort cancel for active runner', (
     tester,
@@ -445,7 +1044,7 @@ void main() {
           ),
           cancelClient: AgentStreamCancelClient(
             endpoint: AgentStreamEndpoint(
-              uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-cancel'),
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
             ),
             connector: cancelConnector,
           ),
@@ -453,17 +1052,16 @@ void main() {
       ),
     );
 
-    expect(find.text('正在回复'), findsOneWidget);
+    expect(find.text('正在生成回复'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
     await cancelConnector.called.future;
 
     final body = jsonDecode(cancelConnector.body!) as Map<String, Object?>;
-    expect(find.text('已停止'), findsOneWidget);
-    expect(cancelConnector.uri!.path, '/api/ag-ui-cancel');
-    expect(body['threadId'], 'thread-demo');
-    expect(body['runId'], 'run-demo');
+    expect(find.text('已停止本次回复'), findsOneWidget);
+    expect(cancelConnector.uri!.path, '/v1/agent/runs/run-demo/cancel');
+    expect(body['reason'], 'user_cancelled');
     expect(body.containsKey('user_id'), isFalse);
   });
 
@@ -485,7 +1083,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.textContaining('socket closed'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
 
@@ -495,7 +1092,8 @@ void main() {
     expect(client.requests, hasLength(2));
     expect(client.requests.first.message, 'Retry my request');
     expect(client.requests.last.message, 'Retry my request');
-    expect(find.text('已完成'), findsOneWidget);
+    expect(client.requests.last.runId, 'run-first');
+    expect(client.requests.last.afterSequence, 2);
     expect(find.text('Retried answer'), findsOneWidget);
   });
 
@@ -518,7 +1116,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.text('请求超时，请稍后重试'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
     expect(find.textContaining('TimeoutException'), findsNothing);
@@ -544,7 +1141,6 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
     expect(find.textContaining('SocketException'), findsNothing);
@@ -556,7 +1152,7 @@ void main() {
     (tester) async {
       final client = _FixtureAgentStreamClient(
         parseAgentJsonl(
-          readMigrationFixture('ag_ui/tool_call_lifecycle.jsonl'),
+          readMigrationFixture('agent_events/tool_call_lifecycle.jsonl'),
         ),
       );
 
@@ -575,7 +1171,7 @@ void main() {
 
       expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
       expect(find.text('泵奶记录已读取'), findsOneWidget);
-      expect(find.text('已生成分析卡片'), findsOneWidget);
+      expect(find.text('已生成分析卡片'), findsWidgets);
       expect(find.text('需要确认后继续'), findsOneWidget);
       expect(
         find.text('I found two sessions today and prepared a draft analysis.'),
@@ -583,6 +1179,321 @@ void main() {
       );
       expect(find.textContaining('pump_session_summary_query'), findsNothing);
       expect(find.textContaining('{"ok"'), findsNothing);
+    },
+  );
+
+  testWidgets('Agent Hub merges tool progress by payload tool call id', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '已完成。',
+            events: [
+              AgentStreamEvent(const {
+                'type': 'tool.started',
+                'thread_id': 'thread-tool',
+                'run_id': 'run-tool',
+                'payload': {
+                  'tool_call_id': 'call-pump-summary',
+                  'tool_name': 'pump_session_summary_query',
+                },
+              }),
+              AgentStreamEvent(const {
+                'type': 'tool.completed',
+                'thread_id': 'thread-tool',
+                'run_id': 'run-tool',
+                'payload': {
+                  'tool_call_id': 'call-pump-summary',
+                  'tool_name': 'pump_session_summary_query',
+                },
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
+    expect(find.text('泵奶记录已读取'), findsOneWidget);
+    expect(find.text('正在读取泵奶记录'), findsNothing);
+  });
+
+  testWidgets('Agent Hub renders and confirms production action cards', (
+    tester,
+  ) async {
+    const actionId = '11111111-1111-1111-1111-111111111111';
+    final connector = _RecordingActionConnector(
+      response: AgentStreamControlHttpResponse(
+        statusCode: 200,
+        body: jsonEncode({
+          'id': actionId,
+          'run_id': 'run-action',
+          'status': 'queued',
+          'events': [
+            {
+              'type': 'action.queued',
+              'thread_id': 'thread-action',
+              'run_id': 'run-action',
+              'action_id': actionId,
+              'payload': {'status': 'queued'},
+            },
+            {
+              'type': 'run.completed',
+              'thread_id': 'thread-action',
+              'run_id': 'run-action',
+            },
+          ],
+        }),
+      ),
+    );
+    final actionClient = AgentStreamActionClient(
+      endpoint: AgentStreamEndpoint(
+        uri: Uri.parse('http://127.0.0.1:8769/v1/agent/actions'),
+        token: 'secret-token',
+      ),
+      connector: connector,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.waitingForConfirmation,
+            textContent: '请确认是否创建支持工单。',
+            events: [
+              AgentStreamEvent(const {
+                'type': 'action.confirmation_required',
+                'thread_id': 'thread-action',
+                'run_id': 'run-action',
+                'action_id': actionId,
+                'payload': {
+                  'action_type': 'support_ticket_create',
+                  'summary': '将当前问题提交给人工支持团队',
+                  'preview_payload': {'title': '创建支持工单'},
+                },
+              }),
+              AgentStreamEvent(const {
+                'type': 'run.waiting_for_confirmation',
+                'thread_id': 'thread-action',
+                'run_id': 'run-action',
+                'payload': {'pending_action_id': actionId},
+              }),
+            ],
+          ),
+          runner: AgentStreamRunner(_FixtureAgentStreamClient(const [])),
+          actionClient: actionClient,
+          pickImage: () async => const AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,fixture',
+            mimeType: 'image/png',
+            name: 'blocked-during-confirmation.png',
+          ),
+          voiceInput: () async => '待确认时不能覆盖输入框',
+        ),
+      ),
+    );
+
+    expect(find.text('待确认'), findsWidgets);
+    expect(find.text('等待确认后继续'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
+    expect(find.byKey(ValueKey('agent-action-card-$actionId')), findsOneWidget);
+    expect(find.text('创建支持工单'), findsOneWidget);
+    expect(find.text('将当前问题提交给人工支持团队'), findsOneWidget);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .enabled,
+      isFalse,
+    );
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-image-button')))
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-voice-button')))
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
+          .onPressed,
+      isNull,
+    );
+
+    await tester.tap(find.byKey(ValueKey('agent-action-confirm-$actionId')));
+    await connector.called.future;
+    await tester.pumpAndSettle();
+
+    expect(connector.uri!.path, '/v1/agent/actions/$actionId/confirm');
+    expect(
+      connector.uri!.queryParameters,
+      isNot(containsPair('token', anything)),
+    );
+    expect(
+      connector.headers,
+      containsPair('Authorization', 'Bearer secret-token'),
+    );
+    expect(
+      connector.headers,
+      containsPair('Idempotency-Key', 'agent-action-$actionId'),
+    );
+    expect(jsonDecode(connector.body!) as Map<String, Object?>, isEmpty);
+    expect(find.text('等待确认后继续'), findsNothing);
+    expect(find.text('已提交'), findsOneWidget);
+    expect(
+      find.byKey(ValueKey('agent-action-confirm-$actionId')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Agent Hub restores waiting action state from durable snapshot', (
+    tester,
+  ) async {
+    const actionId = '22222222-2222-2222-2222-222222222222';
+    final store = _MemoryAgentHubInteractionStateStore(
+      AgentHubInteractionSnapshot(
+        runState: AgentStreamRunState(
+          phase: AgentStreamRunPhase.waitingForConfirmation,
+          threadId: 'thread-restore',
+          runId: 'run-restore',
+          textContent: '请确认是否提交给人工支持。',
+          lastSequence: 4,
+          events: [
+            AgentStreamEvent(const {
+              'event_id': 'evt-action-restore',
+              'type': 'action.confirmation_required',
+              'thread_id': 'thread-restore',
+              'run_id': 'run-restore',
+              'action_id': actionId,
+              'sequence': 3,
+              'payload': {
+                'summary': '恢复后仍可确认',
+                'preview_payload': {'title': '提交人工支持'},
+              },
+            }),
+            AgentStreamEvent(const {
+              'event_id': 'evt-wait-restore',
+              'type': 'run.waiting_for_confirmation',
+              'thread_id': 'thread-restore',
+              'run_id': 'run-restore',
+              'sequence': 4,
+            }),
+          ],
+        ),
+        activeRequest: const AgentStreamRequest(
+          message: '我需要人工帮助',
+          locale: 'zh-CN',
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
+    await tester.pumpAndSettle();
+
+    expect(find.text('请确认是否提交给人工支持。'), findsOneWidget);
+    expect(find.text('等待确认后继续'), findsOneWidget);
+    expect(find.byKey(ValueKey('agent-action-card-$actionId')), findsOneWidget);
+    expect(find.text('提交人工支持'), findsOneWidget);
+  });
+
+  testWidgets(
+    'Agent Hub resumes stream after action confirmation and keeps backend terminal status',
+    (tester) async {
+      const actionId = '33333333-3333-3333-3333-333333333333';
+      final connector = _RecordingActionConnector();
+      final streamClient = _FixtureAgentStreamClient([
+        AgentStreamEvent(const {
+          'event_id': 'evt-action-applied',
+          'type': 'action.applied',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'action_id': actionId,
+          'sequence': 3,
+          'payload': {
+            'status': 'applied',
+            'summary': '已提交给人工支持团队',
+            'preview_payload': {'title': '创建支持工单'},
+          },
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-action-final',
+          'type': 'message.completed',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'message_id': 'msg-action-final',
+          'sequence': 4,
+          'payload': {'role': 'assistant', 'text': '工单已经创建。'},
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-action-run-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'message_id': 'msg-action-final',
+          'sequence': 5,
+        }),
+      ]);
+      final actionClient = AgentStreamActionClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/actions'),
+          token: 'secret-token',
+        ),
+        connector: connector,
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.waitingForConfirmation,
+              threadId: 'thread-action',
+              runId: 'run-action',
+              lastSequence: 2,
+              textContent: '请确认是否创建支持工单。',
+              events: [
+                AgentStreamEvent(const {
+                  'event_id': 'evt-action-required',
+                  'type': 'action.confirmation_required',
+                  'thread_id': 'thread-action',
+                  'run_id': 'run-action',
+                  'action_id': actionId,
+                  'sequence': 1,
+                  'payload': {
+                    'summary': '将当前问题提交给人工支持团队',
+                    'preview_payload': {'title': '创建支持工单'},
+                  },
+                }),
+                AgentStreamEvent(const {
+                  'event_id': 'evt-action-wait',
+                  'type': 'run.waiting_for_confirmation',
+                  'thread_id': 'thread-action',
+                  'run_id': 'run-action',
+                  'sequence': 2,
+                }),
+              ],
+            ),
+            runner: AgentStreamRunner(streamClient),
+            actionClient: actionClient,
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(ValueKey('agent-action-confirm-$actionId')));
+      await connector.called.future;
+      await tester.pumpAndSettle();
+
+      expect(streamClient.requests.single.runId, 'run-action');
+      expect(streamClient.requests.single.threadId, 'thread-action');
+      expect(streamClient.requests.single.afterSequence, 2);
+      expect(find.text('工单已经创建。'), findsOneWidget);
+      expect(find.text('已应用'), findsOneWidget);
+      expect(find.text('已提交'), findsNothing);
     },
   );
 
@@ -595,20 +1506,22 @@ void main() {
             textContent: '我会尽量继续整理。',
             events: [
               AgentStreamEvent(const {
-                'type': 'TOOL_CALL_START',
+                'type': 'tool.started',
                 'thread_id': 'thread-tool-fail',
                 'run_id': 'run-tool-fail',
                 'tool_call_id': 'call_growth_fail',
-                'tool_call_name': 'growth_record_query',
+                'payload': {'tool_name': 'growth_record_query'},
               }),
               AgentStreamEvent(const {
-                'type': 'TOOL_CALL_FAILED',
+                'type': 'tool.failed',
                 'thread_id': 'thread-tool-fail',
                 'run_id': 'run-tool-fail',
                 'tool_call_id': 'call_growth_fail',
-                'tool_call_name': 'growth_record_query',
-                'message': 'database timeout for child profile',
-                'content': '{"childId":"baby-secret","error":"timeout"}',
+                'payload': {
+                  'tool_name': 'growth_record_query',
+                  'message': 'database timeout for child profile',
+                  'details': '{"childId":"baby-secret","error":"timeout"}',
+                },
               }),
             ],
           ),
@@ -628,7 +1541,7 @@ void main() {
     tester,
   ) async {
     final artifactEvent = AgentStreamEvent(
-      readFixtureMap('ag_ui/rich_text_artifact.json'),
+      readFixtureMap('agent_events/rich_text_artifact.json'),
     );
 
     await tester.pumpWidget(
@@ -654,8 +1567,8 @@ void main() {
       find.text('Draft card generated from safe artifact payload.'),
       findsOneWidget,
     );
-    expect(find.text('Review flange comfort'), findsOneWidget);
-    expect(find.text('Track two more pumping sessions'), findsOneWidget);
+    expect(find.text('Review flange comfort'), findsWidgets);
+    expect(find.text('Track two more pumping sessions'), findsWidgets);
     expect(find.text('打开结果卡片'), findsOneWidget);
     expect(find.textContaining('milk_plan_preview_create'), findsNothing);
     expect(find.textContaining('{"'), findsNothing);
@@ -671,27 +1584,29 @@ void main() {
   ) async {
     final actions = <AgentArtifactActionView>[];
     final artifactEvent = AgentStreamEvent({
-      'type': 'ARTIFACT_CREATED',
+      'type': 'artifact.created',
       'thread_id': 'thread-resource',
       'run_id': 'run-resource',
       'message_id': 'msg-resource',
       'artifact_id': 'resource-card',
-      'artifact_type': 'rich_text',
-      'rich_text': {
-        'title': '资源',
-        'content': '可以打开这些资料。',
-        'button': [
-          {'text': '打开文档', 'type': 'doc', 'value': '/docs/a.pdf'},
-          {'text': '查看图片', 'type': 'media', 'value': '/media/a.png'},
-        ],
-        'card': [
-          {
-            'title': '参考',
-            'content': [
-              {'title': '指南', 'content': '泵奶姿势'},
-            ],
-          },
-        ],
+      'payload': {
+        'artifact_type': 'rich_text',
+        'rich_text': {
+          'title': '资源',
+          'content': '可以打开这些资料。',
+          'button': [
+            {'text': '打开文档', 'type': 'doc', 'value': '/docs/a.pdf'},
+            {'text': '查看图片', 'type': 'media', 'value': '/media/a.png'},
+          ],
+          'card': [
+            {
+              'title': '参考',
+              'content': [
+                {'title': '指南', 'content': '泵奶姿势'},
+              ],
+            },
+          ],
+        },
       },
     });
 
@@ -728,6 +1643,11 @@ void main() {
     expect(actions.single.kind, 'doc');
     expect(actions.single.value, '/docs/a.pdf');
     expect(actions.single.routePath, '/media-viewer');
+    expect(actions.single.routeExtra, {
+      'kind': 'pdf',
+      'url': '/docs/a.pdf',
+      'title': '打开文档',
+    });
 
     await tester.tap(
       find.byKey(const ValueKey('agent-artifact-action-resource-card-1')),
@@ -737,6 +1657,11 @@ void main() {
     expect(actions.last.kind, 'media');
     expect(actions.last.value, '/media/a.png');
     expect(actions.last.routePath, '/media-viewer');
+    expect(actions.last.routeExtra, {
+      'kind': 'image',
+      'url': '/media/a.png',
+      'title': '查看图片',
+    });
   });
 
   testWidgets('Agent Hub renders citation and reference links safely', (
@@ -744,23 +1669,25 @@ void main() {
   ) async {
     final actions = <AgentArtifactActionView>[];
     final artifactEvent = AgentStreamEvent({
-      'type': 'ARTIFACT_CREATED',
+      'type': 'artifact.created',
       'thread_id': 'thread-citation',
       'run_id': 'run-citation',
       'message_id': 'msg-citation',
       'artifact_id': 'citation-card',
-      'artifact_type': 'rich_text',
-      'rich_text': {
-        'title': '参考资料',
-        'content': '这些资料可以作为进一步阅读。',
-        'citations': [
-          {
-            'index': 1,
-            'title': 'CDC Breastfeeding',
-            'url': 'https://www.cdc.gov/breastfeeding/mastitis',
-          },
-          {'displayText': 'ABM Protocol', 'href': '/guides/abm.pdf'},
-        ],
+      'payload': {
+        'artifact_type': 'rich_text',
+        'rich_text': {
+          'title': '参考资料',
+          'content': '这些资料可以作为进一步阅读。',
+          'citations': [
+            {
+              'index': 1,
+              'title': 'CDC Breastfeeding',
+              'url': 'https://www.cdc.gov/breastfeeding/mastitis',
+            },
+            {'displayText': 'ABM Protocol', 'href': '/guides/abm.pdf'},
+          ],
+        },
       },
     });
 
@@ -805,26 +1732,28 @@ void main() {
       '今天的泵奶记录很多，我需要把左右侧奶量、舒适度、间隔和宝宝喂养情况一起整理给你。',
     ).join();
     final artifactEvent = AgentStreamEvent({
-      'type': 'ARTIFACT_CREATED',
+      'type': 'artifact.created',
       'thread_id': 'thread-long-copy',
       'run_id': 'run-long-copy',
       'message_id': 'msg-long-copy',
       'artifact_id': 'long-copy-card',
-      'artifact_type': 'rich_text',
-      'rich_text': {
-        'title': '长内容建议',
-        'content': longText,
-        'card': [
-          {
-            'title': '下一步',
-            'content': [
-              {
-                'title': '观察重点',
-                'content': '连续记录三次泵奶后的舒适度和奶量变化，尤其关注左侧是否仍然明显偏低。',
-              },
-            ],
-          },
-        ],
+      'payload': {
+        'artifact_type': 'rich_text',
+        'rich_text': {
+          'title': '长内容建议',
+          'content': longText,
+          'card': [
+            {
+              'title': '下一步',
+              'content': [
+                {
+                  'title': '观察重点',
+                  'content': '连续记录三次泵奶后的舒适度和奶量变化，尤其关注左侧是否仍然明显偏低。',
+                },
+              ],
+            },
+          ],
+        },
       },
     });
 
@@ -869,7 +1798,6 @@ void main() {
       ),
     );
 
-    expect(find.text('连接中断'), findsOneWidget);
     expect(find.text('Partial answer'), findsOneWidget);
     expect(find.text('socket closed'), findsOneWidget);
     expect(find.textContaining('WebSocket'), findsNothing);
@@ -890,7 +1818,6 @@ void main() {
         ),
       );
 
-      expect(find.text('正在回复'), findsOneWidget);
       expect(find.text('正在生成回复'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -904,7 +1831,6 @@ void main() {
         ),
       );
 
-      expect(find.text('已完成'), findsOneWidget);
       expect(find.text('I can help you review today.'), findsOneWidget);
       expect(find.text('正在生成回复'), findsNothing);
     },
@@ -917,6 +1843,67 @@ Widget _host(Widget child) {
     debugShowCheckedModeBanner: false,
     home: Scaffold(body: SafeArea(child: child)),
   );
+}
+
+void _expectComposerControlsInsideSurface(WidgetTester tester) {
+  final surfaceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-surface')),
+  );
+  for (final key in [
+    'agent-image-button',
+    'agent-voice-button',
+    'agent-send-button',
+  ]) {
+    final rect = tester.getRect(find.byKey(ValueKey(key)));
+    expect(rect.left, greaterThanOrEqualTo(surfaceRect.left));
+    expect(rect.right, lessThanOrEqualTo(surfaceRect.right));
+    expect(rect.top, greaterThanOrEqualTo(surfaceRect.top));
+    expect(rect.bottom, lessThanOrEqualTo(surfaceRect.bottom));
+  }
+}
+
+void _expectComposerSendButtonBreathesVertically(WidgetTester tester) {
+  final surfaceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-surface')),
+  );
+  final sendRect = tester.getRect(
+    find.byKey(const ValueKey('agent-send-button')),
+  );
+
+  expect(sendRect.top - surfaceRect.top, greaterThanOrEqualTo(6));
+  expect(surfaceRect.bottom - sendRect.bottom, greaterThanOrEqualTo(6));
+}
+
+void _expectComposerControlsVerticallyCentered(WidgetTester tester) {
+  final surfaceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-surface')),
+  );
+  final imageRect = tester.getRect(
+    find.byKey(const ValueKey('agent-image-button')),
+  );
+  final voiceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-voice-button')),
+  );
+  final sendRect = tester.getRect(
+    find.byKey(const ValueKey('agent-send-button')),
+  );
+
+  expect(imageRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
+  expect(voiceRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
+  expect(sendRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
+  expect(imageRect.center.dy, closeTo(voiceRect.center.dy, 0.5));
+  expect(sendRect.center.dy, closeTo(voiceRect.center.dy, 0.5));
+}
+
+void _expectComposerInputVerticallyCentered(WidgetTester tester) {
+  final surfaceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-surface')),
+  );
+  final inputRect = tester.getRect(
+    find.byKey(const ValueKey('agent-composer-input')),
+  );
+
+  expect(inputRect.center.dy, closeTo(surfaceRect.center.dy, 1));
 }
 
 class _FixtureAgentStreamClient implements AgentStreamClient {
@@ -935,6 +1922,62 @@ class _FixtureAgentStreamClient implements AgentStreamClient {
   }
 }
 
+class _MemoryAgentHubInteractionStateStore
+    implements AgentHubInteractionStateStore {
+  _MemoryAgentHubInteractionStateStore([this.snapshot]);
+
+  AgentHubInteractionSnapshot? snapshot;
+
+  @override
+  Future<AgentHubInteractionSnapshot?> read() async => snapshot;
+
+  @override
+  Future<void> write(AgentHubInteractionSnapshot snapshot) async {
+    this.snapshot = snapshot;
+  }
+
+  @override
+  Future<void> clear() async {
+    snapshot = null;
+  }
+}
+
+class _NeverEndingAgentStreamClient implements AgentStreamClient {
+  final requests = <AgentStreamRequest>[];
+  final _controller = StreamController<AgentStreamEvent>();
+
+  @override
+  Stream<AgentStreamEvent> stream(AgentStreamRequest request) {
+    requests.add(request);
+    return _controller.stream;
+  }
+
+  Future<void> dispose() => _controller.close();
+}
+
+class _ControllableAgentStreamClient implements AgentStreamClient {
+  final requests = <AgentStreamRequest>[];
+  final _controllers = <StreamController<AgentStreamEvent>>[];
+
+  @override
+  Stream<AgentStreamEvent> stream(AgentStreamRequest request) {
+    requests.add(request);
+    final controller = StreamController<AgentStreamEvent>();
+    _controllers.add(controller);
+    return controller.stream;
+  }
+
+  void emit(int runIndex, AgentStreamEvent event) {
+    _controllers[runIndex].add(event);
+  }
+
+  Future<void> dispose() async {
+    for (final controller in _controllers) {
+      await controller.close();
+    }
+  }
+}
+
 class _RetryAgentStreamClient implements AgentStreamClient {
   final requests = <AgentStreamRequest>[];
 
@@ -945,27 +1988,33 @@ class _RetryAgentStreamClient implements AgentStreamClient {
 
     if (requests.length == 1) {
       yield AgentStreamEvent(const {
-        'type': 'TEXT_MESSAGE_CONTENT',
+        'event_id': 'evt-retry-2',
+        'type': 'message.delta',
         'thread_id': 'thread-demo',
         'run_id': 'run-first',
         'message_id': 'msg-first',
-        'delta': 'Partial answer',
+        'sequence': 2,
+        'payload': {'text': 'Partial answer'},
       });
       throw StateError('socket closed');
     }
 
     yield AgentStreamEvent(const {
-      'type': 'TEXT_MESSAGE_CONTENT',
+      'event_id': 'evt-retry-3',
+      'type': 'message.completed',
       'thread_id': 'thread-demo',
-      'run_id': 'run-retry',
-      'message_id': 'msg-retry',
-      'delta': 'Retried answer',
+      'run_id': 'run-first',
+      'message_id': 'msg-first',
+      'sequence': 3,
+      'payload': {'text': 'Retried answer'},
     });
     yield AgentStreamEvent(const {
-      'type': 'RUN_FINISHED',
+      'event_id': 'evt-retry-4',
+      'type': 'run.completed',
       'thread_id': 'thread-demo',
-      'run_id': 'run-retry',
-      'message_id': 'msg-retry',
+      'run_id': 'run-first',
+      'message_id': 'msg-first',
+      'sequence': 4,
     });
   }
 }
@@ -1001,6 +2050,34 @@ class _RecordingCancelConnector implements AgentStreamControlHttpConnector {
     this.body = body;
     if (!called.isCompleted) called.complete();
     return const AgentStreamControlHttpResponse(statusCode: 200, body: '{}');
+  }
+}
+
+class _RecordingActionConnector implements AgentStreamControlHttpConnector {
+  _RecordingActionConnector({
+    this.response = const AgentStreamControlHttpResponse(
+      statusCode: 200,
+      body: '{}',
+    ),
+  });
+
+  final AgentStreamControlHttpResponse response;
+  final called = Completer<void>();
+  Uri? uri;
+  Map<String, String>? headers;
+  String? body;
+
+  @override
+  Future<AgentStreamControlHttpResponse> post(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) async {
+    this.uri = uri;
+    this.headers = headers;
+    this.body = body;
+    if (!called.isCompleted) called.complete();
+    return response;
   }
 }
 

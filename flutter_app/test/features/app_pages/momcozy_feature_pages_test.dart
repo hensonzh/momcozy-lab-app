@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -7,7 +5,6 @@ import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
-import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
@@ -29,7 +26,27 @@ void main() {
           find.byKey(ValueKey('route-page-${route.path}')),
           findsOneWidget,
         );
-        expect(find.text(route.title), findsWidgets);
+        if (route.path == '/status') {
+          expect(find.text('妈妈'), findsWidgets);
+        } else if (route.path == '/pump') {
+          expect(find.text('沉浸式吸乳'), findsWidgets);
+        } else if (route.path == '/device') {
+          expect(find.text('设备连接'), findsWidgets);
+        } else if (route.path == '/device/user') {
+          expect(find.text('用户参数配置'), findsWidgets);
+        } else if (route.path == '/community') {
+          expect(find.text('社区功能还在建设中哦～'), findsWidgets);
+        } else if (route.path == '/hospital-bag-cart') {
+          expect(find.text('待产包一键打包'), findsWidgets);
+        } else if (route.path == '/ibclc-chat.html') {
+          expect(find.text('IBCLC 在线咨询'), findsWidgets);
+        } else if (route.path == '/media-viewer') {
+          expect(find.text('媒体'), findsWidgets);
+        } else if (route.path == '/schedule') {
+          expect(find.text('稳奶计划执行中'), findsWidgets);
+        } else {
+          expect(find.text(route.title), findsWidgets);
+        }
         expect(find.text(route.path), findsNothing);
       }
     });
@@ -48,33 +65,145 @@ void main() {
 
         final page = find.byKey(ValueKey('route-page-${route.path}'));
         expect(page, findsOneWidget);
+        if (route.path == '/pump') {
+          await _dismissPumpCalibrationPrompt(tester);
+        }
         await tester.drag(page, const Offset(0, -360));
         await tester.pump();
       }
+    });
+
+    testWidgets('status page and bottom tabs fit compact mobile width', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final router = createMomCozyRouter(initialLocation: '/status');
+      await tester.pumpWidget(
+        MomCozyFlutterApp(router: router, apiRuntime: _appRuntime()),
+      );
+      await tester.pumpAndSettle();
+
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('status-care-stage-pregnancy')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('status-care-stage-postpartum')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('status-identity-tab-mom')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('status-identity-tab-baby')),
+      );
+
+      for (final label in const ['宝宝和我', '计划', '社区', '设备']) {
+        _expectFinderWithinViewport(tester, find.text(label));
+      }
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('bottom-nav-agent')),
+      );
+
+      router.go('/');
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('agent-composer-input')),
+      );
+    });
+
+    testWidgets('device and community content fit compact mobile width', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/device')));
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('device-quick-menu-button')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('device-start-pump-button')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('device-deck-card-L')),
+      );
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('device-deck-card-R')),
+      );
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/community')));
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(tester, find.text('社区功能还在建设中哦～'));
+      _expectFinderWithinViewport(
+        tester,
+        find.textContaining('我们将打造一个妈妈们一起交流分享的社区'),
+      );
+    });
+
+    testWidgets('legacy horizontal panels fit compact mobile width', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/w1')));
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(tester, find.text('续航'));
+      _expectFinderWithinViewport(tester, find.text('4h+'));
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
+      await tester.pumpAndSettle();
+      _expectFinderWithinViewport(
+        tester,
+        find.byKey(const ValueKey('pump-calibration-prompt-card')),
+      );
     });
 
     testWidgets('renders core status, schedule, device, and pump sections', (
       tester,
     ) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
-      await tester.pump();
-      expect(find.text('今日状态'), findsOneWidget);
-      expect(find.text('下一步'), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(find.text('母乳产出'), findsOneWidget);
+      expect(find.text('下一步'), findsNothing);
+      expect(find.text('补写孕期日记'), findsNothing);
+      expect(find.text('今日待办'), findsNothing);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pump();
-      expect(find.text('计划'), findsWidgets);
-      await _scrollToText(tester, '泵奶提醒');
-      expect(find.text('泵奶提醒'), findsOneWidget);
+      expect(find.text('稳奶计划执行中'), findsOneWidget);
+      expect(find.text('泵奶提醒'), findsNothing);
+      expect(find.text('每日摘要'), findsNothing);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/device')));
       await tester.pump();
-      expect(find.text('左右设备'), findsOneWidget);
-      expect(find.text('BLE 权限和扫描'), findsOneWidget);
+      expect(find.text('Momcozy W1 · 全新上市'), findsOneWidget);
+      expect(find.text('Air One'), findsOneWidget);
+      expect(find.text('RIGHT'), findsOneWidget);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pump();
-      expect(find.text('Session 控制'), findsOneWidget);
+      expect(find.text('设备控制'), findsOneWidget);
+      expect(find.text('个性化舒适档位'), findsOneWidget);
+      await _dismissPumpCalibrationPrompt(tester);
       await _scrollToText(tester, '上传状态');
       expect(find.text('上传状态'), findsOneWidget);
     });
@@ -84,12 +213,13 @@ void main() {
     ) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/calibration')));
       await tester.pump();
-      expect(find.text('舒适档位'), findsOneWidget);
+      expect(find.text('舒适负压调节'), findsOneWidget);
       expect(find.text('/calibration'), findsNothing);
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/media-viewer')));
       await tester.pump();
-      expect(find.text('预览'), findsOneWidget);
+      expect(find.text('媒体'), findsOneWidget);
+      expect(find.text('缺少资源参数，请从资料卡片进入。'), findsOneWidget);
       expect(find.text('/media-viewer'), findsNothing);
     });
 
@@ -98,8 +228,8 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const ValueKey('route-page-/404')), findsOneWidget);
-      expect(find.text('页面未找到'), findsOneWidget);
-      expect(find.text('返回主入口'), findsOneWidget);
+      expect(find.text('Oops! Page not found'), findsOneWidget);
+      expect(find.text('Return to Home'), findsOneWidget);
     });
 
     testWidgets('feature entry actions navigate through route workflows', (
@@ -116,8 +246,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(OutlinedButton, '管理'));
-      await tester.pumpAndSettle();
+      await _tapDeviceQuickMenuItem(tester, '设备提醒');
       expect(
         find.byKey(const ValueKey('route-page-/device/manage')),
         findsOneWidget,
@@ -125,23 +254,19 @@ void main() {
 
       router.go('/device');
       await tester.pumpAndSettle();
-      await Scrollable.ensureVisible(
-        tester.element(find.text('进入舒适校准')),
-        alignment: 0.35,
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('进入舒适校准'));
+      await _tapScrollableText(tester, '左侧 S12 Pro L');
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('route-page-/calibration')),
         findsOneWidget,
       );
-      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(MomCozyBottomNavigation), findsNothing);
 
+      await _acknowledgeCalibrationIntro(tester);
       await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('route-page-/pump')), findsOneWidget);
-      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(MomCozyBottomNavigation), findsNothing);
       expect(
         pumpProtocol.recordedCommands.map(
           (command) =>
@@ -150,64 +275,48 @@ void main() {
         ['adjustGearForSide:left:4', 'adjustGearForSide:right:4'],
       );
 
-      router.go('/status');
-      await tester.pumpAndSettle();
-      await _tapScrollableText(tester, '补写孕期日记');
-      await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('route-page-/records')), findsOneWidget);
-
-      router.go('/status');
-      await tester.pumpAndSettle();
-      await _tapScrollableText(tester, '今日待办');
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('route-page-/schedule')),
-        findsOneWidget,
-      );
-      expect(find.byType(NavigationBar), findsOneWidget);
-
       router.go('/w1');
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('使用教程'));
-      await tester.tap(find.text('使用教程'));
+      await _tapScrollableText(tester, '使用教程');
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('route-page-/media-viewer')),
         findsOneWidget,
       );
-      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(MomCozyBottomNavigation), findsNothing);
       await pumpProtocol.dispose();
     });
 
     testWidgets('local page controls update visible state', (tester) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
-      await tester.pump();
-      expect(_checkboxesWithValue(tester, true), 1);
+      await tester.pumpAndSettle();
+      await _scrollToText(tester, '14:00 喂养');
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -520));
+      await tester.pumpAndSettle();
+      final visibleCompletedCount = _checkboxesWithValue(tester, true);
 
-      await tester.tap(find.text('14:00 喂养'));
+      await tester.tap(find.byType(Checkbox).last);
       await tester.pump();
-      expect(_checkboxesWithValue(tester, true), 2);
+      expect(_checkboxesWithValue(tester, true), visibleCompletedCount + 1);
 
       await tester.pumpWidget(
         _FeaturePageHost(route: _route('/ibclc-chat.html')),
       );
       await tester.pump();
-      expect(
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
-        isNull,
-      );
+      expect(find.text('IBCLC 在线咨询'), findsOneWidget);
+      expect(find.text('连接中'), findsOneWidget);
+      expect(find.text('发送'), findsNothing);
 
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
+      await tester.pump(const Duration(seconds: 8));
+      await tester.pumpAndSettle();
+      expect(find.text('发送'), findsOneWidget);
+
       expect(
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        tester
+            .widget<FilledButton>(find.widgetWithText(FilledButton, '结束咨询'))
+            .onPressed,
         isNotNull,
       );
-
-      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
-      await tester.pump();
-      expect(find.text('咨询准备中'), findsWidgets);
-      expect(find.text('已进入咨询队列'), findsOneWidget);
     });
 
     testWidgets('status page loads overview from runtime repository', (
@@ -216,42 +325,42 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
       await tester.pumpAndSettle();
 
-      expect(find.text('哺乳期'), findsOneWidget);
-      expect(find.text('产后第 21 天'), findsOneWidget);
+      expect(find.text('哺乳期'), findsWidgets);
+      expect(find.text('妈妈档案待绑定'), findsOneWidget);
+      expect(find.text('母乳产出'), findsOneWidget);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Mia'), findsOneWidget);
-      expect(find.text('88 天'), findsOneWidget);
+      expect(find.text('成长发育'), findsOneWidget);
+      expect(find.text('Mia'), findsWidgets);
+      expect(find.text('待记录'), findsWidgets);
     });
 
-    testWidgets('status page switches care stage and records growth locally', (
-      tester,
-    ) async {
+    testWidgets('status page records growth locally', (tester) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
       await tester.pumpAndSettle();
 
-      expect(find.text('产后第 21 天'), findsOneWidget);
-
-      await tester.tap(find.text('孕期模式'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('孕期'), findsOneWidget);
-      expect(find.text('孕期重点：体征与日记'), findsOneWidget);
+      expect(find.text('母乳产出'), findsOneWidget);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
-      expect(find.text('待记录'), findsOneWidget);
+      expect(find.text('待记录'), findsNWidgets(3));
 
-      await _tapScrollableText(tester, '记录成长事件');
+      await _scrollToText(tester, '修改指标');
+      await tester.tap(find.text('修改指标').first);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-growth-editor-dialog')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('status-growth-save-button')));
       await tester.pumpAndSettle();
 
-      expect(find.text('成长记录已添加'), findsOneWidget);
-      expect(find.text('本地草稿已保存，同步恢复后会写入成长记录。'), findsOneWidget);
       expect(find.text('已添加'), findsOneWidget);
-      expect(find.text('本地草稿待同步'), findsOneWidget);
+      expect(find.text('待记录'), findsNWidgets(3));
+      expect(find.text('成长记录已添加'), findsNothing);
     });
 
     testWidgets('status page renders long text and runtime context', (
@@ -266,43 +375,41 @@ void main() {
         _FeaturePageHost(
           route: _route('/status'),
           jsonTransport: FixtureApiJsonTransportByPath({
-            statusOverviewEndpoint: const {
-              'status': 200,
-              'data': {
-                'mom': {
-                  'stage': '哺乳期恢复阶段，需要同时关注睡眠、补水、泵奶舒适度和情绪波动',
-                  'postpartum_day': 128,
+            statusProfileEndpoint: const {
+              'user_id': 'demo-user-fixture',
+              'delivery_date': '2026-02-24',
+            },
+            statusInfantsEndpoint: const {
+              'items': [
+                {
+                  'id': 'demo-baby-fixture',
+                  'owner_user_id': 'demo-user-fixture',
+                  'infant_name': 'Mia Sophia Long Profile Name',
+                  'birth_date': '2025-12-26',
+                  'sex': 'female',
+                  'status': 'active',
                 },
-                'baby': {
-                  'nickname': 'Mia Sophia Long Profile Name',
-                  'age_days': 188,
-                },
-              },
+              ],
             },
           }),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('哺乳期恢复阶段'), findsOneWidget);
-      expect(find.text('demo-user-fixture'), findsOneWidget);
+      expect(find.text('哺乳期'), findsWidgets);
+      expect(find.text('母乳产出'), findsOneWidget);
       expect(tester.takeException(), isNull);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Mia Sophia Long Profile Name'), findsOneWidget);
-      expect(find.text('demo-baby-fixture'), findsOneWidget);
+      expect(find.text('Mia Sophia Long Profile Name'), findsWidgets);
+      expect(find.text('成长发育'), findsOneWidget);
+      expect(find.text('待记录'), findsWidgets);
       expect(tester.takeException(), isNull);
 
-      await tester.drag(
-        find.byKey(const ValueKey('route-page-/status')),
-        const Offset(0, -360),
-      );
-      await tester.pump();
-
-      await _scrollToText(tester, '今日待办');
-      expect(find.text('今日待办'), findsOneWidget);
+      expect(find.text('下一步'), findsNothing);
+      expect(find.text('今日待办'), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -311,22 +418,24 @@ void main() {
         _FeaturePageHost(
           route: _route('/status'),
           jsonTransport: FixtureApiJsonTransportByPath({
-            statusOverviewEndpoint: const {
-              'status': 200,
-              'data': <String, Object?>{},
-            },
+            statusProfileEndpoint: const {'user_id': 'demo-user-fixture'},
+            statusInfantsEndpoint: const {'items': []},
           }),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('暂无状态数据'), findsOneWidget);
+      await _scrollToText(tester, '母乳产出');
+      expect(find.text('母乳产出'), findsOneWidget);
+      await _scrollToText(tester, '母乳趋势');
+      expect(find.text('母乳趋势'), findsOneWidget);
+      expect(find.text('暂无状态数据'), findsNothing);
 
       await tester.pumpWidget(
         _FeaturePageHost(
           route: _route('/status'),
           jsonTransport: FixtureApiJsonTransportByPath({
-            statusOverviewEndpoint: const {
+            statusProfileEndpoint: const {
               'http_status': 500,
               'status_text': 'Server Error',
             },
@@ -335,8 +444,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('状态同步失败'), findsOneWidget);
-      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
+      await _scrollToText(tester, '母乳产出');
+      expect(find.text('母乳产出'), findsOneWidget);
+      await _scrollToText(tester, '母乳趋势');
+      expect(find.text('母乳趋势'), findsOneWidget);
+      expect(find.text('状态同步失败'), findsNothing);
+      expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
+      expect(find.byTooltip('重试'), findsNothing);
     });
 
     testWidgets('schedule page loads day plan from runtime repository', (
@@ -345,14 +459,50 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pumpAndSettle();
 
-      expect(find.text('3 项计划'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-context-reminder-button')),
+        findsOneWidget,
+      );
+      expect(find.text('1/3'), findsOneWidget);
+      await _scrollToText(tester, '10:30 泵奶');
       expect(find.text('10:30 泵奶'), findsOneWidget);
-      expect(find.text('14:00 喂养'), findsOneWidget);
+      await _scrollToText(tester, '14:00 喂养');
+      expect(find.text('14:00 喂养'), findsWidgets);
       expect(_checkboxesWithValue(tester, true), 1);
 
-      await tester.tap(find.text('14:00 喂养'));
-      await tester.pump();
+      await tester.tap(find.text('14:00 喂养').last);
+      await tester.pumpAndSettle();
 
+      expect(
+        find.byKey(const ValueKey('schedule-task-edit-title-input')),
+        findsOneWidget,
+      );
+      expect(_checkboxesWithValue(tester, true), 1);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-task-edit-title-input')),
+        '下午喂养',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-task-edit-time-input')),
+        '14:15',
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('schedule-task-edit-save-button')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-task-edit-save-button')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('任务已更新'), findsOneWidget);
+      expect(find.text('14:15'), findsWidgets);
+      expect(find.text('下午喂养'), findsWidgets);
+      expect(_checkboxesWithValue(tester, true), 1);
+
+      await tester.tap(find.byType(Checkbox).last);
+      await tester.pump();
       expect(_checkboxesWithValue(tester, true), 2);
     });
 
@@ -361,23 +511,28 @@ void main() {
     ) async {
       final transport = FixtureApiJsonTransportByPath({
         scheduleDayPlanEndpoint: const {
-          'status': 200,
-          'data': {
-            'tasks': <Object?>[
-              {
-                'id': 'pump',
-                'title': '10:30 泵奶',
-                'completed': true,
-                'remind_at': '2026-07-01T02:30:00Z',
-              },
-              {
-                'id': 'feeding',
-                'title': '14:00 喂养',
-                'completed': false,
-                'remind_at': '2026-07-01T06:00:00Z',
-              },
-            ],
-          },
+          'items': <Object?>[
+            {
+              'id': 'pump',
+              'owner_user_id': 'demo-user-fixture',
+              'task_date': '2026-07-01',
+              'task_time': '10:30',
+              'title': '泵奶',
+              'description': '',
+              'status': 'completed',
+              'payload': <String, Object?>{},
+            },
+            {
+              'id': 'feeding',
+              'owner_user_id': 'demo-user-fixture',
+              'task_date': '2026-07-01',
+              'task_time': '14:00',
+              'title': '喂养',
+              'description': '',
+              'status': 'pending',
+              'payload': <String, Object?>{},
+            },
+          ],
         },
       });
 
@@ -386,31 +541,65 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(
-        transport.lastQuery,
-        containsPair('timestamp', _apiTimestamp(DateTime.utc(2026, 7))),
-      );
-      expect(find.text('2 项计划'), findsOneWidget);
-      expect(_checkboxesWithValue(tester, true), 1);
+      expect(transport.lastQuery, containsPair('task_date', '2026-07-01'));
+      expect(transport.lastQuery, isNot(containsPair('user_id', anything)));
+      expect(find.text('1/2'), findsOneWidget);
 
-      await tester.tap(find.text('03'));
+      await tester.tap(find.text('3').first);
+      await tester.pumpAndSettle();
+
+      expect(transport.lastQuery, containsPair('task_date', '2026-07-03'));
+
+      expect(find.text('7月3日 稳奶计划'), findsOneWidget);
+      expect(find.text('未来的计划'), findsOneWidget);
+      expect(find.text('10:30 泵奶'), findsNothing);
+
+      expect(find.text('泵奶提醒'), findsNothing);
+      expect(find.text('每日摘要'), findsNothing);
+      expect(find.byType(Switch), findsNothing);
+    });
+
+    testWidgets('schedule page does not edit tasks outside today', (
+      tester,
+    ) async {
+      final transport = FixtureApiJsonTransportByPath({
+        scheduleDayPlanEndpoint: const {
+          'items': <Object?>[
+            {
+              'id': 'future-feeding',
+              'owner_user_id': 'demo-user-fixture',
+              'task_date': '2026-07-03',
+              'task_time': '14:00',
+              'title': '喂养',
+              'description': '',
+              'status': 'pending',
+              'payload': <String, Object?>{},
+            },
+          ],
+        },
+      });
+
+      await tester.pumpWidget(
+        _FeaturePageHost(route: _route('/schedule'), jsonTransport: transport),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('3').first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('7月3日 稳奶计划'), findsOneWidget);
+      await _scrollToText(tester, '14:00 喂养');
+      await tester.tap(find.text('14:00 喂养').last);
       await tester.pumpAndSettle();
 
       expect(
-        transport.lastQuery,
-        containsPair('timestamp', _apiTimestamp(DateTime(2026, 7, 3))),
+        find.byKey(const ValueKey('schedule-task-edit-title-input')),
+        findsNothing,
       );
-
-      await tester.tap(find.text('14:00 喂养'));
-      await tester.pump();
-      expect(_checkboxesWithValue(tester, true), 2);
-
-      await _scrollToText(tester, '泵奶提醒');
-      final enabledReminderSwitches = _switchesWithValue(tester, true);
-      expect(enabledReminderSwitches, greaterThanOrEqualTo(1));
-      await tester.tap(find.byType(Switch).first);
-      await tester.pump();
-      expect(_switchesWithValue(tester, true), enabledReminderSwitches - 1);
+      expect(
+        find.byKey(const ValueKey('schedule-task-edit-time-input')),
+        findsNothing,
+      );
     });
 
     testWidgets('schedule page adds deletes local tasks and shows badge', (
@@ -419,15 +608,23 @@ void main() {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pumpAndSettle();
 
-      expect(find.text('3 项计划'), findsOneWidget);
-      expect(find.text('未完成 2'), findsOneWidget);
-      expect(find.text('下一项倒计时'), findsOneWidget);
+      expect(find.text('1/3'), findsOneWidget);
+      expect(find.text('待执行任务'), findsOneWidget);
 
-      await tester.tap(find.text('添加今日任务'));
+      final addTaskButton = find.byKey(
+        const ValueKey('schedule-add-task-button'),
+      );
+      await _scrollToFinder(tester, addTaskButton);
+      await tester.tap(addTaskButton);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-add-task-dialog')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('schedule-add-task-submit')));
       await tester.pumpAndSettle();
 
-      expect(find.text('4 项计划'), findsOneWidget);
-      expect(find.text('未完成 3'), findsOneWidget);
+      expect(find.text('1/4'), findsOneWidget);
       await _scrollToText(tester, '本地补充 1');
       expect(find.text('本地补充 1'), findsOneWidget);
 
@@ -437,8 +634,7 @@ void main() {
       await tester.drag(find.byType(Scrollable).first, const Offset(0, 600));
       await tester.pumpAndSettle();
 
-      expect(find.text('3 项计划'), findsOneWidget);
-      expect(find.text('未完成 2'), findsOneWidget);
+      expect(find.text('1/3'), findsOneWidget);
       expect(find.text('本地补充 1'), findsNothing);
     });
 
@@ -448,25 +644,25 @@ void main() {
           route: _route('/schedule'),
           jsonTransport: FixtureApiJsonTransportByPath({
             scheduleDayPlanEndpoint: const {
-              'status': 200,
-              'data': {
-                'tasks': <Object?>[
-                  {
-                    'id': 'prenatal-check',
-                    'title': '周五产检',
-                    'completed': false,
-                    'remind_at': '2026-07-03T06:00:00Z',
-                  },
-                ],
-              },
+              'items': <Object?>[
+                {
+                  'id': 'prenatal-check',
+                  'owner_user_id': 'demo-user-fixture',
+                  'task_date': '2026-07-03',
+                  'task_time': '14:00',
+                  'title': '周五产检',
+                  'description': '',
+                  'status': 'pending',
+                  'payload': <String, Object?>{},
+                },
+              ],
             },
           }),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('1 项计划'), findsOneWidget);
-      expect(find.text('未完成 1'), findsOneWidget);
+      expect(find.text('0/1'), findsOneWidget);
       expect(find.textContaining('周五产检 还有 2 天 6 小时'), findsOneWidget);
     });
 
@@ -477,17 +673,22 @@ void main() {
         _FeaturePageHost(
           route: _route('/schedule'),
           jsonTransport: FixtureApiJsonTransportByPath({
-            scheduleDayPlanEndpoint: const {
-              'status': 200,
-              'data': {'tasks': <Object?>[]},
-            },
+            scheduleDayPlanEndpoint: const {'items': <Object?>[]},
           }),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('暂无计划'), findsOneWidget);
-      expect(find.text('0 项计划'), findsOneWidget);
+      expect(find.text('0/0'), findsOneWidget);
+      expect(find.text('今天还没有计划任务'), findsOneWidget);
+      await _scrollToText(tester, '当天暂无执行内容');
+      expect(find.text('当天暂无执行内容'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-empty-quick-actions')),
+        findsOneWidget,
+      );
+      expect(find.text('吸奶补录'), findsOneWidget);
+      expect(find.text('喂养记录'), findsOneWidget);
 
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -502,159 +703,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('计划同步失败'), findsOneWidget);
-      expect(find.text('检查后端连接或 token 后重试。'), findsOneWidget);
-    });
-
-    testWidgets('records page loads pump feeding and growth repositories', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('200 mL'), findsOneWidget);
-      expect(find.textContaining('晨间泵奶'), findsOneWidget);
-      expect(find.textContaining('120 mL'), findsWidgets);
-
-      await tester.tap(find.text('喂养'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('breast_milk'), findsOneWidget);
-      expect(find.textContaining('80 mL'), findsWidgets);
-
-      await tester.tap(find.text('成长'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('6.2 kg'), findsOneWidget);
-      expect(find.textContaining('64.5 cm'), findsOneWidget);
-    });
-
-    testWidgets('records page switches mL and oz units', (tester) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('200 mL'), findsOneWidget);
-      expect(find.textContaining('120 mL'), findsWidgets);
-
-      await tester.tap(find.text('oz'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('6.8 oz'), findsOneWidget);
-      expect(find.textContaining('4.1 oz'), findsWidgets);
-
-      await tester.tap(find.text('喂养'));
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('2.7 oz'), findsWidgets);
-    });
-
-    testWidgets('records page adds edits and deletes manual pump records', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/records')));
-      await tester.pumpAndSettle();
-
-      await _scrollToText(tester, '手动补录');
-      await tester.tap(find.text('手动补录'));
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('手动补录 1'), findsOneWidget);
-      expect(find.text('90 mL · 来源 9'), findsOneWidget);
-
-      await tester.tap(find.byTooltip('编辑记录').first);
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('已编辑 手动补录 1'), findsOneWidget);
-      expect(find.text('100 mL · 来源 9'), findsOneWidget);
-
-      await tester.tap(find.byTooltip('删除记录').first);
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('已编辑 手动补录 1'), findsNothing);
-    });
-
-    testWidgets('records page marks cross-day pump records', (tester) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/records'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            pumpMilkRecordsEndpoint: const {
-              'status': 200,
-              'data': {
-                'pump_milk_list': <Object?>[
-                  {
-                    'pump_id': 8001,
-                    'pump_title': '夜间跨天泵奶',
-                    'pump_milk_volum': 95,
-                    'pump_time': '2026-06-30T23:30:00Z',
-                  },
-                ],
-              },
-            },
-            feedingRecordsEndpoint: const {
-              'status': 200,
-              'data': {'records': <Object?>[]},
-            },
-            growthRecordsEndpoint: const {
-              'status': 200,
-              'data': {'records': <Object?>[]},
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('夜间跨天泵奶'), findsOneWidget);
-      expect(find.textContaining('跨天记录'), findsOneWidget);
-    });
-
-    testWidgets('records page renders empty and failed states', (tester) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/records'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            pumpMilkRecordsEndpoint: const {
-              'status': 200,
-              'data': {'pump_milk_list': <Object?>[]},
-            },
-            feedingRecordsEndpoint: const {
-              'status': 200,
-              'data': {'records': <Object?>[]},
-            },
-            growthRecordsEndpoint: const {
-              'status': 200,
-              'data': {'records': <Object?>[]},
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('0 mL'), findsOneWidget);
-      expect(find.text('暂无奶量趋势'), findsOneWidget);
-      expect(find.text('暂无泵奶记录'), findsOneWidget);
-
-      await tester.tap(find.text('喂养'));
-      await tester.pumpAndSettle();
-      expect(find.text('暂无喂养记录'), findsOneWidget);
-
-      await tester.tap(find.text('成长'));
-      await tester.pumpAndSettle();
-      expect(find.text('暂无成长记录'), findsOneWidget);
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/records'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            pumpMilkRecordsEndpoint: const {
-              'http_status': 500,
-              'status_text': 'Server Error',
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('记录同步失败'), findsOneWidget);
-      expect(find.text('弱网/离线时保留本地筛选，可点击重试。'), findsOneWidget);
+      await _scrollToText(tester, '当天暂无执行内容');
+      expect(find.text('当天暂无执行内容'), findsOneWidget);
+      expect(find.text('吸奶补录'), findsOneWidget);
+      expect(find.text('喂养记录'), findsOneWidget);
+      expect(find.text('计划同步失败'), findsNothing);
+      expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
+      expect(find.byTooltip('重试'), findsNothing);
     });
 
     testWidgets('pump page uploads workstate through runtime repository', (
@@ -662,36 +717,41 @@ void main() {
     ) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
       await _scrollToText(tester, 'Workstate 已同步');
       expect(find.text('Workstate 已同步'), findsOneWidget);
-      expect(find.text('Workstate accepted'), findsOneWidget);
+      expect(find.text('Pump telemetry accepted.'), findsOneWidget);
     });
 
     testWidgets('pump page moves through local session states', (tester) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/pump')));
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
-      expect(find.text('待开始'), findsOneWidget);
+      expect(find.text('待开始'), findsWidgets);
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
-      expect(find.text('进行中'), findsOneWidget);
+      await _scrollToText(tester, '运行中');
+      expect(find.text('运行中'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(OutlinedButton, '暂停'));
+      await _tapScrollableText(tester, '暂停');
       await tester.pumpAndSettle();
+      await _scrollToText(tester, '已暂停');
       expect(find.text('已暂停'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, '恢复'));
+      await _tapScrollableText(tester, '恢复');
       await tester.pumpAndSettle();
-      expect(find.text('进行中'), findsOneWidget);
+      await _scrollToText(tester, '运行中');
+      expect(find.text('运行中'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(OutlinedButton, '结束'));
+      await _tapScrollableText(tester, '结束');
       await tester.pumpAndSettle();
-      expect(find.text('待开始'), findsOneWidget);
+      expect(find.text('待开始'), findsWidgets);
     });
 
     testWidgets('pump page tracks side progress and blocks duplicate finish', (
@@ -699,13 +759,12 @@ void main() {
     ) async {
       final transport = FixtureApiJsonTransportByPath({
         pumpWorkstateEndpoint: const {
-          'status': 200,
-          'data': {
-            'need_reply': true,
-            'output': 'Workstate accepted',
-            'reply_code': 'pump_state_changed',
-            'reply_side': 'left',
-          },
+          'id': 'telemetry-001',
+          'owner_user_id': 'demo-user-fixture',
+          'device_id': 'app-pump-session',
+          'event_type': 'workstate',
+          'occurred_at': '2026-07-01T10:00:00Z',
+          'payload': <String, Object?>{},
         },
       });
 
@@ -713,36 +772,52 @@ void main() {
         _FeaturePageHost(route: _route('/pump'), jsonTransport: transport),
       );
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
       expect(find.text('0 分钟'), findsOneWidget);
       expect(find.text('0 mL'), findsNWidgets(2));
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '2 分钟');
       expect(find.text('2 分钟'), findsOneWidget);
+      await _scrollToText(tester, '10 mL');
       expect(find.text('10 mL'), findsOneWidget);
+      await _scrollToText(tester, '8 mL');
       expect(find.text('8 mL'), findsOneWidget);
+      await _scrollToText(tester, '绑定 demo-user-fixture');
       expect(find.text('绑定 demo-user-fixture'), findsOneWidget);
       expect(transport.postedBodies, hasLength(1));
-      expect(transport.postedBodies.first['user_id'], 'demo-user-fixture');
-      expect(transport.postedBodies.first['device_left'], {
+      expect(transport.postedBodies.first['user_id'], isNull);
+      expect(transport.postedBodies.first['device_id'], 'app-pump-session');
+      expect(transport.postedBodies.first['event_type'], 'workstate');
+      expect(transport.postedBodies.first['occurred_at'], isA<String>());
+      final firstPayload =
+          transport.postedBodies.first['payload'] as Map<String, Object?>;
+      expect(firstPayload['left'], {
         'state': 1,
         'mode': 'massage_expression',
         'level': 5,
       });
-      expect(transport.postedBodies.first['device_right'], {
+      expect(firstPayload['right'], {
         'state': 1,
         'mode': 'expression',
         'level': 5,
       });
 
-      await tester.tap(find.widgetWithText(OutlinedButton, '结束'));
-      await tester.tap(find.widgetWithText(OutlinedButton, '结束'));
+      final endButton = find.widgetWithText(FilledButton, '结束');
+      await _scrollToFinder(tester, endButton);
+      await tester.ensureVisible(endButton);
+      await tester.pumpAndSettle();
+      await tester.tap(endButton);
+      await tester.tap(endButton);
       await tester.pumpAndSettle();
 
       expect(transport.postedBodies, hasLength(2));
-      expect(transport.postedBodies.last['device_left'], {
+      final lastPayload =
+          transport.postedBodies.last['payload'] as Map<String, Object?>;
+      expect(lastPayload['left'], {
         'state': 0,
         'mode': 'massage_expression',
         'level': 5,
@@ -758,8 +833,12 @@ void main() {
     ) async {
       final transport = FixtureApiJsonTransportByPath({
         pumpWorkstateEndpoint: const {
-          'status': 200,
-          'data': {'output': 'Workstate accepted'},
+          'id': 'telemetry-001',
+          'owner_user_id': 'demo-user-fixture',
+          'device_id': 'app-pump-session',
+          'event_type': 'workstate',
+          'occurred_at': '2026-07-01T10:00:00Z',
+          'payload': <String, Object?>{},
         },
       });
       final hostKey = GlobalKey<_RuntimeSwapFeaturePageHostState>();
@@ -773,18 +852,22 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '绑定 user-a');
       expect(find.text('绑定 user-a'), findsOneWidget);
-      expect(transport.postedBodies.last['user_id'], 'user-a');
+      expect(transport.postedBodies.last['user_id'], isNull);
 
       hostKey.currentState!.switchUser('user-b');
       await tester.pumpAndSettle();
 
-      expect(find.text('待开始'), findsOneWidget);
+      expect(find.text('待开始'), findsWidgets);
+      await _scrollToText(tester, '未绑定用户');
       expect(find.text('未绑定用户'), findsOneWidget);
+      await _scrollToText(tester, '0 分钟');
       expect(find.text('0 分钟'), findsOneWidget);
       await _scrollToText(tester, '检测到用户切换，已清空上一用户 session。');
       expect(find.text('检测到用户切换，已清空上一用户 session。'), findsOneWidget);
@@ -793,9 +876,10 @@ void main() {
       await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '绑定 user-b');
       expect(find.text('绑定 user-b'), findsOneWidget);
       expect(transport.postedBodies, hasLength(2));
-      expect(transport.postedBodies.last['user_id'], 'user-b');
+      expect(transport.postedBodies.last['user_id'], isNull);
     });
 
     testWidgets('pump page renders upload failure state', (tester) async {
@@ -811,8 +895,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      await _dismissPumpCalibrationPrompt(tester);
 
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
+      await _tapScrollableText(tester, '开始');
       await tester.pumpAndSettle();
 
       await _scrollToText(tester, 'Workstate 同步失败');
@@ -832,10 +917,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('左侧 S12 Pro L'), findsOneWidget);
-      expect(find.textContaining('已恢复 1 台已连接设备'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
 
       expect(find.text('正在扫描附近设备'), findsOneWidget);
       expect(find.text('停止扫描'), findsOneWidget);
@@ -885,8 +968,9 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(await ble.getConnectedDevices(), isEmpty);
-        expect(find.text('左侧 等待连接'), findsOneWidget);
-        expect(find.text('右侧 等待连接'), findsOneWidget);
+        expect(find.text('LEFT'), findsOneWidget);
+        expect(find.text('RIGHT'), findsOneWidget);
+        expect(find.text('连接设备'), findsNWidgets(2));
         expect(find.text('检测到用户切换，已隔离上一用户设备连接。'), findsOneWidget);
       },
     );
@@ -905,13 +989,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('左侧 等待连接'), findsOneWidget);
-      expect(find.text('右侧 等待连接'), findsOneWidget);
-      expect(find.textContaining('权限状态 未请求'), findsOneWidget);
+      expect(find.text('LEFT'), findsOneWidget);
+      expect(find.text('RIGHT'), findsOneWidget);
+      expect(find.text('连接设备'), findsNWidgets(2));
+      expect(find.textContaining('权限状态 未请求'), findsNothing);
       expect(find.text('内部调试参数'), findsNothing);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pumpAndSettle();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
 
       expect(find.text('BLE 权限未授权'), findsOneWidget);
       expect(find.byTooltip('打开蓝牙设置'), findsOneWidget);
@@ -932,11 +1016,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('权限状态 永久拒绝'), findsOneWidget);
+      expect(find.textContaining('权限状态 永久拒绝'), findsNothing);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pumpAndSettle();
-
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
       expect(find.text('BLE 权限已永久拒绝，请从系统设置重新开启。'), findsOneWidget);
 
       ble.setPermissionState(
@@ -947,10 +1029,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(ble.openedAppSettings, isTrue);
-      expect(find.textContaining('权限状态 已授权'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
 
       expect(find.text('正在扫描附近设备'), findsOneWidget);
     });
@@ -986,11 +1066,11 @@ void main() {
 
       expect(find.text('左侧 S12 Pro L'), findsOneWidget);
       expect(find.text('右侧 S12 Pro R'), findsOneWidget);
-      expect(find.textContaining('电量 87%'), findsOneWidget);
-      expect(find.textContaining('已恢复 2 台已连接设备'), findsOneWidget);
+      expect(find.text('已连接'), findsWidgets);
+      expect(find.text('87%'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
+      expect(find.text('停止扫描'), findsOneWidget);
 
       ble.addScanResult(
         const BleDeviceSnapshot(
@@ -1012,6 +1092,7 @@ void main() {
       );
       await tester.pump();
 
+      await _scrollToText(tester, 'Nearby Pump L');
       expect(find.text('Nearby Pump L'), findsOneWidget);
       expect(find.text('Nearby Pump R'), findsOneWidget);
       expect(find.textContaining('nearby-left'), findsOneWidget);
@@ -1037,8 +1118,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
 
       expect(find.text('暂无扫描结果'), findsOneWidget);
 
@@ -1053,12 +1133,13 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.text('Nearby Pump L'));
+      await _tapScrollableText(tester, 'Nearby Pump L');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, 'Nearby Pump L 已连接');
       expect(find.text('Nearby Pump L 已连接'), findsOneWidget);
       expect(find.text('左侧 Nearby Pump L'), findsOneWidget);
-      expect(find.textContaining('状态 已连接 · 电量 76%'), findsOneWidget);
+      expect(find.text('76%'), findsOneWidget);
 
       final failingBle = _ConnectFailingBlePlatform(
         initialPermission: BlePermissionState.granted,
@@ -1072,8 +1153,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(FilledButton, '扫描'));
-      await tester.pump();
+      await _tapDeviceQuickMenuItem(tester, '添加设备');
       failingBle.addScanResult(
         const BleDeviceSnapshot(
           side: 'R',
@@ -1083,9 +1163,10 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.text('Nearby Pump R'));
+      await _tapScrollableText(tester, 'Nearby Pump R');
       await tester.pumpAndSettle();
 
+      await _scrollToText(tester, '连接 Nearby Pump R 失败，请重试。');
       expect(find.text('连接 Nearby Pump R 失败，请重试。'), findsOneWidget);
     });
 
@@ -1103,6 +1184,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _acknowledgeCalibrationIntro(tester);
       await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
 
@@ -1131,6 +1213,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _acknowledgeCalibrationIntro(tester);
       await _tapScrollableText(tester, '保存并进入泵奶');
       await tester.pumpAndSettle();
 
@@ -1159,12 +1242,21 @@ void main() {
         );
         await tester.pumpAndSettle();
 
+        await _acknowledgeCalibrationIntro(tester);
         expect(find.text('左侧设备已连接'), findsOneWidget);
         expect(find.textContaining('Calibration L · 电量 83%'), findsOneWidget);
         expect(find.text('右侧设备未连接'), findsOneWidget);
 
-        tester.widget<Slider>(find.byType(Slider).first).onChanged!(7);
-        await tester.pump();
+        final leftGearUp = find.byTooltip('提高左侧档位');
+        await tester.drag(
+          find.byKey(const ValueKey('route-page-/calibration')),
+          const Offset(0, -260),
+        );
+        await tester.pumpAndSettle();
+        for (var i = 0; i < 3; i += 1) {
+          await tester.tap(leftGearUp);
+          await tester.pump();
+        }
 
         expect(find.text('左侧 舒适档位 7'), findsOneWidget);
 
@@ -1185,8 +1277,17 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      tester.widget<Slider>(find.byType(Slider).first).onChanged!(7);
-      await tester.pump();
+      await _acknowledgeCalibrationIntro(tester);
+      final leftGearUp = find.byTooltip('提高左侧档位');
+      await tester.drag(
+        find.byKey(const ValueKey('route-page-/calibration')),
+        const Offset(0, -260),
+      );
+      await tester.pumpAndSettle();
+      for (var i = 0; i < 3; i += 1) {
+        await tester.tap(leftGearUp);
+        await tester.pump();
+      }
 
       await _tapScrollableText(tester, '退出校准');
       await tester.pumpAndSettle();
@@ -1231,6 +1332,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _acknowledgeCalibrationIntro(tester);
       expect(find.text('左侧设备未连接'), findsOneWidget);
       expect(find.text('右侧设备已连接'), findsOneWidget);
       expect(find.textContaining('Calibration R · 电量 79%'), findsOneWidget);
@@ -1263,130 +1365,45 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await _acknowledgeCalibrationIntro(tester);
       expect(find.text('左侧设备已连接'), findsOneWidget);
       expect(find.textContaining('Dual L · 电量 84%'), findsOneWidget);
       expect(find.text('右侧设备已连接'), findsOneWidget);
       expect(find.textContaining('Dual R · 电量 81%'), findsOneWidget);
     });
 
-    testWidgets('media page uploads sample media through runtime repository', (
+    testWidgets('media viewer renders old Web missing-resource chrome', (
       tester,
     ) async {
-      final multipart = FixtureApiMultipartTransport({
-        'status': 200,
-        'data': {
-          'id': 'file-001',
-          'name': 'pump-display-fixture.png',
-          'size': 68,
-          'extension': 'png',
-          'mime_type': 'image/png',
-        },
-      });
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/media-viewer'),
-          multipartTransport: multipart,
-        ),
-      );
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/media-viewer')));
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.byTooltip('上传'));
-      await tester.tap(find.byTooltip('上传'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('已上传 pump-display-fixture.png'), findsOneWidget);
-      expect(find.textContaining('文件 ID file-001'), findsOneWidget);
-      expect(multipart.lastPath, mediaUploadEndpoint);
-      expect(multipart.lastFields, {'user_id': 'demo-user-fixture'});
-      expect(multipart.lastFile?.name, 'pump-display-fixture.png');
+      expect(find.text('媒体'), findsOneWidget);
+      expect(find.byKey(const ValueKey('media-return-button')), findsOneWidget);
+      expect(find.text('缺少资源参数，请从资料卡片进入。'), findsOneWidget);
+      expect(find.text('资料预览'), findsNothing);
+      expect(find.text('上传示例资料'), findsNothing);
     });
 
-    testWidgets(
-      'media page switches preview types and surfaces upload failure',
-      (tester) async {
-        final multipart = FixtureApiMultipartTransport(const {
-          'http_status': 503,
-          'status_text': 'Service Unavailable',
-        });
+    testWidgets('media viewer reads resource query and renders viewer state', (
+      tester,
+    ) async {
+      final router = createMomCozyRouter(
+        initialLocation:
+            '/media-viewer?kind=pdf&url=%2Fdemo%2Fw1.pdf&title=W1%20使用教程',
+      );
 
-        await tester.pumpWidget(
-          _FeaturePageHost(
-            route: _route('/media-viewer'),
-            multipartTransport: multipart,
-          ),
-        );
-        await tester.pumpAndSettle();
+      await tester.pumpWidget(MomCozyFlutterApp(router: router));
+      await tester.pumpAndSettle();
 
-        expect(find.text('PDF 预览'), findsOneWidget);
-
-        await tester.tap(find.text('图片'));
-        await tester.pumpAndSettle();
-        expect(find.text('图片预览'), findsOneWidget);
-
-        await tester.tap(find.text('视频'));
-        await tester.pumpAndSettle();
-        expect(find.text('视频预览'), findsOneWidget);
-
-        await tester.ensureVisible(find.byTooltip('上传'));
-        await tester.tap(find.byTooltip('上传'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('媒体服务暂不可用，请稍后重试。'), findsOneWidget);
-        expect(multipart.lastPath, mediaUploadEndpoint);
-      },
-    );
-
-    testWidgets(
-      'media page clears cache and keeps preview across size changes',
-      (tester) async {
-        final multipart = FixtureApiMultipartTransport({
-          'status': 200,
-          'data': {
-            'id': 'file-cache',
-            'name': 'cached-preview.png',
-            'size': 68,
-          },
-        });
-        tester.view.physicalSize = const Size(390, 844);
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-
-        await tester.pumpWidget(
-          _FeaturePageHost(
-            route: _route('/media-viewer'),
-            multipartTransport: multipart,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.text('图片'));
-        await tester.pumpAndSettle();
-        await tester.ensureVisible(find.byTooltip('上传'));
-        await tester.tap(find.byTooltip('上传'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('图片预览'), findsOneWidget);
-        expect(find.text('已上传 cached-preview.png'), findsOneWidget);
-
-        tester.view.physicalSize = const Size(844, 390);
-        await tester.pumpAndSettle();
-
-        expect(tester.takeException(), isNull);
-        expect(find.text('图片预览'), findsOneWidget);
-
-        await _scrollToText(tester, '离线缓存');
-        const clearCacheButton = ValueKey('media-clear-cache-button');
-        await tester.ensureVisible(find.byKey(clearCacheButton));
-        await tester.tap(find.byKey(clearCacheButton));
-        await tester.pumpAndSettle();
-
-        expect(find.text('已清理离线缓存和临时上传结果。'), findsOneWidget);
-        expect(find.text('上传示例资料'), findsOneWidget);
-        expect(find.text('已上传 cached-preview.png'), findsNothing);
-      },
-    );
+      expect(
+        find.byKey(const ValueKey('route-page-/media-viewer')),
+        findsOneWidget,
+      );
+      expect(find.text('W1 使用教程'), findsOneWidget);
+      expect(find.text('加载 PDF…'), findsOneWidget);
+      expect(find.text('缺少资源参数，请从资料卡片进入。'), findsNothing);
+    });
 
     testWidgets('media page returns to the previous route when pushed', (
       tester,
@@ -1404,9 +1421,7 @@ void main() {
         findsOneWidget,
       );
 
-      await _scrollToText(tester, '分享或返回');
       const returnButton = ValueKey('media-return-button');
-      await tester.ensureVisible(find.byKey(returnButton));
       await tester.tap(find.byKey(returnButton));
       await tester.pumpAndSettle();
 
@@ -1416,19 +1431,8 @@ void main() {
     testWidgets('IBCLC page posts client event through runtime client', (
       tester,
     ) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: '{"status":"ok"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      final recorded = <Map<String, Object?>>[];
+      final client = AgentStreamClientEventClient(recorder: recorded.add);
 
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -1438,21 +1442,22 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 
-      final body = jsonDecode(connector.body!) as Map<String, Object?>;
-      expect(find.text('咨询事件已同步。'), findsOneWidget);
-      expect(connector.uri!.path, '/api/client-event');
       expect(
-        connector.headers,
-        containsPair('Authorization', 'Bearer test-token'),
+        find.byKey(const ValueKey('ibclc-upload-image-button')),
+        findsOneWidget,
       );
+      expect(find.byKey(const ValueKey('ibclc-message-input')), findsOneWidget);
+      expect(find.byKey(const ValueKey('ibclc-voice-button')), findsOneWidget);
+      expect(find.byKey(const ValueKey('ibclc-send-button')), findsOneWidget);
+
+      final body = recorded.single;
+      expect(find.text('咨询事件已同步。'), findsOneWidget);
       expect(body['event_type'], 'ibclc_consult_started');
-      expect(body['user_id'], 'demo-user-fixture');
-      expect(body['thread_id'], 'thread-demo-user-fixture');
+      expect(body.containsKey('user_id'), isFalse);
+      expect(body.containsKey('thread_id'), isFalse);
       expect(body['locale'], 'zh-CN');
       expect(body['metadata'], containsPair('source', 'ibclc-chat'));
       expect(body['metadata'], containsPair('handoff', 'vendor_h5_native'));
@@ -1462,19 +1467,7 @@ void main() {
     testWidgets('IBCLC page enters local queue when event sync fails', (
       tester,
     ) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 503,
-          body: '{"error":"unavailable"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      const client = AgentStreamClientEventClient(sent: false);
 
       await tester.pumpWidget(
         _FeaturePageHost(
@@ -1484,32 +1477,16 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 
-      expect(find.text('已进入咨询队列'), findsOneWidget);
       expect(find.text('本地已进入队列，稍后重试同步。'), findsOneWidget);
-      expect(connector.uri!.path, '/api/client-event');
     });
 
     testWidgets('IBCLC page opens vendor handoff and returns to status route', (
       tester,
     ) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: '{"status":"ok"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      final client = AgentStreamClientEventClient();
       final router = createMomCozyRouter(initialLocation: '/ibclc-chat.html');
 
       await tester.pumpWidget(
@@ -1520,14 +1497,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, '进入 IBCLC 咨询'));
+      await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 
-      expect(find.text('顾问流程已打开'), findsOneWidget);
+      expect(find.textContaining('你好，我是 Emily Chen'), findsOneWidget);
 
-      await _scrollToText(tester, '顾问流程已打开');
       await tester.tap(
         find.byKey(const ValueKey('ibclc-return-status-button')),
       );
@@ -1539,33 +1513,10 @@ void main() {
     testWidgets('hospital bag page syncs cart changes through repository', (
       tester,
     ) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/hospital-bag-cart'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            hospitalBagCartUpdateEndpoint: const {
-              'status': 200,
-              'data': {'message': '购物车已同步', 'synced_count': 3},
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byType(Checkbox).at(1));
-      await tester.pumpAndSettle();
-
-      expect(find.text('2/3 已准备'), findsOneWidget);
-      expect(find.text('购物车已同步'), findsOneWidget);
-    });
-
-    testWidgets('hospital bag page deletes items and restores defaults', (
-      tester,
-    ) async {
       final transport = FixtureApiJsonTransportByPath({
         hospitalBagCartUpdateEndpoint: const {
           'status': 200,
-          'data': {'message': '清单已同步', 'synced_count': 2},
+          'data': {'message': '购物车已同步', 'synced_count': 17},
         },
       });
 
@@ -1577,32 +1528,91 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('删除宝宝衣物'));
+      expect(
+        find.byKey(const ValueKey('hospital-bag-item-count-chip')),
+        findsOneWidget,
+      );
+      expect(find.text('18 件'), findsOneWidget);
+      expect(find.textContaining('已含组合优惠'), findsOneWidget);
+      expect(find.text('产褥垫组合装'), findsOneWidget);
+
+      await tester.longPress(find.text('产褥垫组合装'));
       await tester.pumpAndSettle();
 
-      expect(find.text('宝宝衣物'), findsNothing);
-      expect(find.text('1/2 已准备'), findsOneWidget);
+      expect(find.text('购物车已同步'), findsOneWidget);
+      expect(find.text('17 件'), findsOneWidget);
+
+      final cartPayload =
+          transport.postedBodies.last['payload']! as Map<String, Object?>;
+      final items = List<Object?>.from(cartPayload['items']! as List);
+      expect(items, hasLength(17));
+      expect(
+        items.whereType<Map>().map((item) => item['id']),
+        isNot(contains('mom-pad')),
+      );
+    });
+
+    testWidgets('hospital bag page deletes items and restores defaults', (
+      tester,
+    ) async {
+      final transport = FixtureApiJsonTransportByPath({
+        hospitalBagCartUpdateEndpoint: const {
+          'id': 'cart-plan-001',
+          'owner_user_id': 'demo-user-fixture',
+          'plan_type': 'hospital_bag_cart',
+          'title': 'Hospital bag cart',
+          'summary': '清单已同步',
+          'status': 'active',
+          'source': 'flutter',
+          'payload': {
+            'items': <Object?>[
+              {'id': 'pump', 'title': '吸奶器和配件', 'packed': true},
+              {'id': 'pads', 'title': '产后护理用品', 'packed': false},
+            ],
+          },
+        },
+      });
+
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/hospital-bag-cart'),
+          jsonTransport: transport,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.longPress(find.text('产褥垫组合装'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('产褥垫组合装'), findsNothing);
       expect(find.text('清单已同步'), findsOneWidget);
 
-      final deletedCart =
-          transport.postedBodies.last['hospital_bag_cart']!
-              as Map<String, Object?>;
-      final deletedItems = List<Object?>.from(deletedCart['items']! as List);
-      expect(deletedItems.whereType<Map>().map((item) => item['id']), [
-        'pump',
-        'pads',
-      ]);
+      expect(transport.lastHeaders?['Idempotency-Key'], isNotEmpty);
+      expect(transport.postedBodies.last['user_id'], isNull);
+      expect(
+        transport.postedBodies.last,
+        containsPair('plan_type', 'hospital_bag_cart'),
+      );
+      final deletedPayload =
+          transport.postedBodies.last['payload']! as Map<String, Object?>;
+      final deletedItems = List<Object?>.from(deletedPayload['items']! as List);
+      expect(deletedItems, hasLength(17));
+      expect(
+        deletedItems.whereType<Map>().map((item) => item['id']),
+        isNot(contains('mom-pad')),
+      );
 
-      await tester.tap(find.text('恢复默认清单'));
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
       await tester.pumpAndSettle();
 
-      expect(find.text('宝宝衣物'), findsOneWidget);
-      expect(find.text('1/3 已准备'), findsOneWidget);
-      final restoredCart =
-          transport.postedBodies.last['hospital_bag_cart']!
-              as Map<String, Object?>;
-      final restoredItems = List<Object?>.from(restoredCart['items']! as List);
-      expect(restoredItems, hasLength(3));
+      await _scrollToText(tester, '产褥垫组合装');
+      expect(find.text('产褥垫组合装'), findsOneWidget);
+      final restoredPayload =
+          transport.postedBodies.last['payload']! as Map<String, Object?>;
+      final restoredItems = List<Object?>.from(
+        restoredPayload['items']! as List,
+      );
+      expect(restoredItems, hasLength(18));
     });
 
     testWidgets('hospital bag page handles sync failure and default restore', (
@@ -1621,10 +1631,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox).at(1));
+      await tester.longPress(find.text('产褥垫组合装'));
       await tester.pumpAndSettle();
 
-      expect(find.text('2/3 已准备'), findsOneWidget);
       expect(find.text('本地清单已更新，稍后重试同步。'), findsOneWidget);
 
       await tester.pumpWidget(const SizedBox.shrink());
@@ -1635,99 +1644,112 @@ void main() {
           route: _route('/hospital-bag-cart'),
           jsonTransport: FixtureApiJsonTransportByPath({
             hospitalBagCartUpdateEndpoint: const {
-              'status': 200,
-              'data': {'message': '默认清单已恢复', 'synced_count': 3},
+              'id': 'cart-plan-001',
+              'owner_user_id': 'demo-user-fixture',
+              'plan_type': 'hospital_bag_cart',
+              'title': 'Hospital bag cart',
+              'summary': '默认清单已恢复',
+              'status': 'active',
+              'source': 'flutter',
+              'payload': {
+                'items': <Object?>[
+                  {'id': 'pump', 'title': '吸奶器和配件', 'packed': true},
+                  {'id': 'pads', 'title': '产后护理用品', 'packed': true},
+                  {'id': 'baby', 'title': '宝宝衣物', 'packed': false},
+                ],
+              },
             },
           }),
         ),
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(Checkbox).at(1));
+      await tester.longPress(find.text('产褥垫组合装'));
       await tester.pumpAndSettle();
-      expect(find.text('2/3 已准备'), findsOneWidget);
+      expect(find.text('产褥垫组合装'), findsNothing);
 
-      await tester.tap(find.text('恢复默认清单'));
+      await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
       await tester.pumpAndSettle();
 
-      expect(find.text('1/3 已准备'), findsOneWidget);
       expect(find.text('默认清单已恢复'), findsOneWidget);
+      await _scrollToText(tester, '产褥垫组合装');
+      expect(find.text('产褥垫组合装'), findsOneWidget);
     });
 
-    testWidgets('device subpages read and update BLE runtime state', (
+    testWidgets('device subpages mirror reminder and user config routes', (
       tester,
     ) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(route: _route('/device/manage')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('L S12 Pro L'), findsOneWidget);
-      expect(find.text('已同步 1 台设备。'), findsOneWidget);
-
-      await tester.tap(find.text('解绑设备'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('已解绑 1 台设备。'), findsOneWidget);
-      expect(find.text('暂无已连接设备'), findsOneWidget);
-
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/device/user')));
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text('demo-user-fixture · baby demo-baby-fixture · zh-CN'),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('community page posts item open events', (tester) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: '{"status":"ok"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      final recorded = <Map<String, Object?>>[];
+      final client = AgentStreamClientEventClient(recorder: recorded.add);
 
       await tester.pumpWidget(
         _FeaturePageHost(
-          route: _route('/community'),
+          route: _route('/device/manage'),
           clientEventClient: client,
         ),
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('妈妈小组更新'));
+      expect(find.text('设备提醒'), findsOneWidget);
+      expect(find.text('任务提醒'), findsOneWidget);
+      expect(find.text('奶量分析'), findsOneWidget);
+      expect(find.text('每日奶量总结'), findsNothing);
+      expect(find.text('每日泌乳建议'), findsNothing);
+      expect(find.text('宝宝生长发育指标更新'), findsNothing);
+      expect(find.text('健康问题通知'), findsNothing);
+
+      await tester.tap(find.text('任务提醒'));
       await tester.pumpAndSettle();
 
-      final body = jsonDecode(connector.body!) as Map<String, Object?>;
-      expect(find.text('已记录 妈妈小组更新。'), findsOneWidget);
-      expect(body['event_type'], 'community_item_opened');
-      expect(body['metadata'], containsPair('item_key', 'group_updates'));
+      final body = recorded.single;
+      expect(find.text('任务提醒已发送到设备提醒通道。'), findsOneWidget);
+      expect(body['event_type'], 'device_reminder_action_triggered');
+      expect(body['metadata'], containsPair('action_key', 'task_reminder'));
+      expect(body.containsKey('user_id'), isFalse);
+      expect(body.containsKey('thread_id'), isFalse);
+
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/device/user')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('用户参数配置'), findsOneWidget);
+      expect(find.text('用户名'), findsOneWidget);
+      expect(find.text('用户类型'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('device-user-list-button')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('device-user-stage-menu-icon')),
+        findsOneWidget,
+      );
+      expect(find.text('删除用户'), findsOneWidget);
+      expect(find.text('切换用户'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('device-user-list-button')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('device-user-list-panel')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('community page renders construction empty state', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/community')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('社区功能还在建设中哦～'), findsOneWidget);
+      expect(find.textContaining('我们将打造一个妈妈们一起交流分享的社区'), findsOneWidget);
+      expect(find.text('妈妈小组更新'), findsNothing);
     });
 
     testWidgets('W1 page posts tutorial event before opening media viewer', (
       tester,
     ) async {
-      final connector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: '{"status":"ok"}',
-        ),
-      );
-      final client = AgentStreamClientEventClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          token: 'test-token',
-        ),
-        connector: connector,
-      );
+      final recorded = <Map<String, Object?>>[];
+      final client = AgentStreamClientEventClient(recorder: recorded.add);
       final router = createMomCozyRouter(initialLocation: '/w1');
 
       await tester.pumpWidget(
@@ -1738,17 +1760,17 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('使用教程'));
-      await tester.tap(find.text('使用教程'));
+      await _tapScrollableText(tester, '使用教程');
       await tester.pumpAndSettle();
 
-      final body = jsonDecode(connector.body!) as Map<String, Object?>;
+      final body = recorded.single;
       expect(
         find.byKey(const ValueKey('route-page-/media-viewer')),
         findsOneWidget,
       );
       expect(body['event_type'], 'w1_tutorial_opened');
       expect(body['metadata'], containsPair('target', 'media-viewer'));
+      expect(body.containsKey('user_id'), isFalse);
     });
   });
 }
@@ -1764,32 +1786,74 @@ int _checkboxesWithValue(WidgetTester tester, bool value) {
       .length;
 }
 
-int _switchesWithValue(WidgetTester tester, bool value) {
-  return tester
-      .widgetList<Switch>(find.byType(Switch))
-      .where((switchWidget) => switchWidget.value == value)
-      .length;
-}
-
-String _apiTimestamp(DateTime value) {
-  return value.toUtc().toIso8601String().replaceFirst('.000Z', 'Z');
-}
-
 Future<void> _tapScrollableText(WidgetTester tester, String text) async {
-  final finder = find.text(text, skipOffstage: false);
+  await _scrollToText(tester, text);
+  final finder = find.text(text);
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
   await tester.tap(finder);
 }
 
+Future<void> _tapScrollableWidgetWithText(
+  WidgetTester tester,
+  Type widgetType,
+  String text,
+) async {
+  final finder = find.widgetWithText(widgetType, text);
+  await _scrollToFinder(tester, finder);
+  await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
+  await tester.tap(finder);
+}
+
+Future<void> _tapDeviceQuickMenuItem(WidgetTester tester, String label) async {
+  await tester.tap(find.byTooltip('打开设备快捷菜单'));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(label));
+  await tester.pumpAndSettle();
+}
+
+Future<void> _acknowledgeCalibrationIntro(WidgetTester tester) async {
+  expect(find.text('请先正确穿戴吸奶器'), findsOneWidget);
+  await tester.tap(find.widgetWithText(FilledButton, '我已穿戴好'));
+  await tester.pumpAndSettle();
+}
+
 Future<void> _scrollToText(WidgetTester tester, String text) async {
   final finder = find.text(text);
-  for (var attempt = 0; attempt < 12; attempt += 1) {
-    if (finder.evaluate().isNotEmpty) return;
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -240));
-    await tester.pump();
+  await _scrollToFinder(tester, finder);
+}
+
+Future<void> _scrollToFinder(WidgetTester tester, Finder finder) async {
+  for (final offset in const [Offset(0, -240), Offset(0, 240)]) {
+    for (var attempt = 0; attempt < 12; attempt += 1) {
+      if (finder.evaluate().isNotEmpty) return;
+      await tester.drag(find.byType(Scrollable).first, offset);
+      await tester.pump();
+    }
   }
+  expect(finder, findsWidgets);
+}
+
+void _expectFinderWithinViewport(WidgetTester tester, Finder finder) {
   expect(finder, findsOneWidget);
+  final rect = tester.getRect(finder);
+  final viewportWidth =
+      tester.view.physicalSize.width / tester.view.devicePixelRatio;
+  final viewportHeight =
+      tester.view.physicalSize.height / tester.view.devicePixelRatio;
+
+  expect(rect.left, greaterThanOrEqualTo(0));
+  expect(rect.right, lessThanOrEqualTo(viewportWidth));
+  expect(rect.top, greaterThanOrEqualTo(0));
+  expect(rect.bottom, lessThanOrEqualTo(viewportHeight));
+}
+
+Future<void> _dismissPumpCalibrationPrompt(WidgetTester tester) async {
+  final skipButton = find.widgetWithText(OutlinedButton, '先跳过');
+  expect(skipButton, findsOneWidget);
+  await tester.tap(skipButton);
+  await tester.pumpAndSettle();
 }
 
 class _FeaturePageHost extends StatelessWidget {
@@ -1797,7 +1861,6 @@ class _FeaturePageHost extends StatelessWidget {
     required this.route,
     this.clientEventClient,
     this.jsonTransport,
-    this.multipartTransport,
     this.blePlatform,
     this.pumpProtocolPlatform,
   });
@@ -1805,7 +1868,6 @@ class _FeaturePageHost extends StatelessWidget {
   final MomCozyRouteConfig route;
   final AgentStreamClientEventClient? clientEventClient;
   final FixtureApiJsonTransportByPath? jsonTransport;
-  final FixtureApiMultipartTransport? multipartTransport;
   final BlePlatform? blePlatform;
   final PumpProtocolPlatform? pumpProtocolPlatform;
 
@@ -1815,7 +1877,6 @@ class _FeaturePageHost extends StatelessWidget {
       apiRuntime: _appRuntime(
         clientEventClient: clientEventClient,
         jsonTransport: jsonTransport,
-        multipartTransport: multipartTransport,
         blePlatform: blePlatform,
         pumpProtocolPlatform: pumpProtocolPlatform,
       ),
@@ -1894,7 +1955,6 @@ MomCozyApiRuntime _appRuntime({
   PumpProtocolPlatform? pumpProtocolPlatform,
   AgentStreamClientEventClient? clientEventClient,
   FixtureApiJsonTransportByPath? jsonTransport,
-  FixtureApiMultipartTransport? multipartTransport,
   BlePlatform? blePlatform,
   String userId = 'demo-user-fixture',
 }) {
@@ -1902,37 +1962,55 @@ MomCozyApiRuntime _appRuntime({
     jsonTransport:
         jsonTransport ??
         FixtureApiJsonTransportByPath({
-          statusOverviewEndpoint: const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'mom': <String, Object?>{'stage': '哺乳期', 'postpartum_day': 21},
-              'baby': <String, Object?>{'nickname': 'Mia', 'age_days': 88},
-            },
+          statusProfileEndpoint: const <String, Object?>{
+            'user_id': 'demo-user-fixture',
+            'delivery_date': '2026-06-11',
+          },
+          statusInfantsEndpoint: const <String, Object?>{
+            'items': <Object?>[
+              <String, Object?>{
+                'id': 'demo-baby-fixture',
+                'owner_user_id': 'demo-user-fixture',
+                'infant_name': 'Mia',
+                'birth_date': '2026-04-05',
+                'sex': 'female',
+                'status': 'active',
+              },
+            ],
           },
           scheduleDayPlanEndpoint: const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'tasks': <Object?>[
-                <String, Object?>{
-                  'id': 'pump',
-                  'title': '10:30 泵奶',
-                  'completed': true,
-                  'remind_at': '2026-07-01T02:30:00Z',
-                },
-                <String, Object?>{
-                  'id': 'feeding',
-                  'title': '14:00 喂养',
-                  'completed': false,
-                  'remind_at': '2026-07-01T06:00:00Z',
-                },
-                <String, Object?>{
-                  'id': 'summary',
-                  'title': '20:30 晚间复盘',
-                  'completed': false,
-                  'remind_at': '2026-07-01T12:30:00Z',
-                },
-              ],
-            },
+            'items': <Object?>[
+              <String, Object?>{
+                'id': 'pump',
+                'owner_user_id': 'demo-user-fixture',
+                'task_date': '2026-07-01',
+                'task_time': '10:30',
+                'title': '泵奶',
+                'description': '',
+                'status': 'completed',
+                'payload': <String, Object?>{},
+              },
+              <String, Object?>{
+                'id': 'feeding',
+                'owner_user_id': 'demo-user-fixture',
+                'task_date': '2026-07-01',
+                'task_time': '14:00',
+                'title': '喂养',
+                'description': '',
+                'status': 'pending',
+                'payload': <String, Object?>{},
+              },
+              <String, Object?>{
+                'id': 'summary',
+                'owner_user_id': 'demo-user-fixture',
+                'task_date': '2026-07-01',
+                'task_time': '20:30',
+                'title': '晚间复盘',
+                'description': '',
+                'status': 'pending',
+                'payload': <String, Object?>{},
+              },
+            ],
           },
           pumpMilkRecordsEndpoint: const <String, Object?>{
             'status': 200,
@@ -1976,17 +2054,15 @@ MomCozyApiRuntime _appRuntime({
             },
           },
           pumpWorkstateEndpoint: const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'need_reply': true,
-              'output': 'Workstate accepted',
-              'reply_code': 'pump_state_changed',
-              'reply_side': 'left',
-            },
+            'id': 'telemetry-001',
+            'owner_user_id': 'demo-user-fixture',
+            'device_id': 'app-pump-session',
+            'event_type': 'workstate',
+            'occurred_at': '2026-07-01T10:00:00Z',
+            'payload': <String, Object?>{},
           },
         }),
     clientEventClient: clientEventClient,
-    multipartTransport: multipartTransport,
     blePlatform:
         blePlatform ??
         FakeBlePlatform(
@@ -2073,27 +2149,5 @@ class _ConnectFailingBlePlatform extends FakeBlePlatform {
   @override
   Future<void> connect(String deviceId) async {
     throw StateError('connect failed');
-  }
-}
-
-class _RecordingControlHttpConnector
-    implements AgentStreamControlHttpConnector {
-  _RecordingControlHttpConnector(this.response);
-
-  final AgentStreamControlHttpResponse response;
-  Uri? uri;
-  Map<String, String>? headers;
-  String? body;
-
-  @override
-  Future<AgentStreamControlHttpResponse> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) async {
-    this.uri = uri;
-    this.headers = Map<String, String>.from(headers);
-    this.body = body;
-    return response;
   }
 }
