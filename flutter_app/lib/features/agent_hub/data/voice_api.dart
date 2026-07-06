@@ -66,10 +66,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   @override
   Stream<List<int>> realtimeVoicePcmStream({required String text}) {
     return binaryConnector.get(
-      _resolveHttp(
-        realtimeVoiceStreamEndpoint,
-        query: {'text': text},
-      ),
+      _resolveHttp(realtimeVoiceStreamEndpoint, query: {'text': text}),
       headers: _requestHeaders(accept: 'audio/pcm'),
     );
   }
@@ -78,10 +75,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     required String text,
   }) {
     return _redactedRequestContext(
-      _resolveHttp(
-        realtimeVoiceStreamEndpoint,
-        query: {'text': text},
-      ),
+      _resolveHttp(realtimeVoiceStreamEndpoint, query: {'text': text}),
       accept: 'audio/pcm',
     );
   }

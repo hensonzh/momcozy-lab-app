@@ -234,9 +234,10 @@ void main() {
     await tester.pumpWidget(
       MomCozyFlutterApp(
         apiRuntime: MomCozyApiRuntime(
-          jsonTransport: FixtureApiJsonTransport(
-            const {'status': 200, 'data': {}},
-          ),
+          jsonTransport: FixtureApiJsonTransport(const {
+            'status': 200,
+            'data': {},
+          }),
         ),
       ),
     );

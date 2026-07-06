@@ -88,10 +88,7 @@ class MomCozyAuthTokenResponse {
   final String tokenType;
   final MomCozyAuthUser user;
 
-  MomCozySession toSession({
-    required String babyId,
-    required String locale,
-  }) {
+  MomCozySession toSession({required String babyId, required String locale}) {
     return MomCozySession(
       status: MomCozySessionStatus.authenticated,
       userId: user.id,
@@ -104,10 +101,7 @@ class MomCozyAuthTokenResponse {
 }
 
 class MomCozyAuthUser {
-  const MomCozyAuthUser({
-    required this.id,
-    required this.displayName,
-  });
+  const MomCozyAuthUser({required this.id, required this.displayName});
 
   factory MomCozyAuthUser.fromMap(Map<String, Object?> map) {
     return MomCozyAuthUser(

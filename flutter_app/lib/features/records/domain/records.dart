@@ -1,19 +1,13 @@
 abstract interface class FeedingRecordsRepository {
-  Future<List<FeedingRecord>> fetchFeedingRecords({
-    required DateTime date,
-  });
+  Future<List<FeedingRecord>> fetchFeedingRecords({required DateTime date});
 }
 
 abstract interface class PumpMilkRecordsRepository {
-  Future<List<PumpMilkRecord>> fetchPumpMilkRecords({
-    required DateTime date,
-  });
+  Future<List<PumpMilkRecord>> fetchPumpMilkRecords({required DateTime date});
 }
 
 abstract interface class GrowthRecordsRepository {
-  Future<List<GrowthRecord>> fetchGrowthRecords({
-    required String babyId,
-  });
+  Future<List<GrowthRecord>> fetchGrowthRecords({required String babyId});
 }
 
 class FeedingRecord {

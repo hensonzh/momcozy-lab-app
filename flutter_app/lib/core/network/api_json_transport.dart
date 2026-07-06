@@ -218,10 +218,7 @@ class IoApiJsonTransport implements ApiJsonTransport {
   }) async {
     final response = await connector.post(
       _resolve(path),
-      headers: _requestHeaders(
-        includeContentType: true,
-        extraHeaders: headers,
-      ),
+      headers: _requestHeaders(includeContentType: true, extraHeaders: headers),
       body: jsonEncode(body),
     );
     return _decodeResponse(response);
@@ -299,9 +296,10 @@ class IoApiMultipartTransport implements ApiMultipartTransport {
     final boundary = '----momcozy-${DateTime.now().microsecondsSinceEpoch}';
     final body = _multipartBody(boundary, fields, file);
     final request = await _httpClient.postUrl(_resolve(path));
-    _requestHeaders(boundary, extraHeaders: headers).forEach(
-      request.headers.set,
-    );
+    _requestHeaders(
+      boundary,
+      extraHeaders: headers,
+    ).forEach(request.headers.set);
     request.contentLength = body.length;
     request.add(body);
     final response = await request.close();

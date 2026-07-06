@@ -59,58 +59,61 @@ void main() {
       expect(runConnector.headers?['Idempotency-Key'], isNotEmpty);
     });
 
-    test('production SSE transport resumes existing runs after sequence', () async {
-      final runConnector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 500,
-          body: '{"error":{"code":"should_not_create_run"}}',
-        ),
-      );
-      final streamConnector = _RecordingSseGetConnector([
-        'data: {"event_id":"evt-8","thread_id":"thread-production-001","run_id":"run-production-001","sequence":8,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:02Z"}\n\n',
-      ]);
-      final client = SseAgentStreamClient(
-        ProductionAgentSseTransport(
-          runsEndpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
-            token: 'secret-token',
+    test(
+      'production SSE transport resumes existing runs after sequence',
+      () async {
+        final runConnector = _RecordingControlHttpConnector(
+          const AgentStreamControlHttpResponse(
+            statusCode: 500,
+            body: '{"error":{"code":"should_not_create_run"}}',
           ),
-          payloadFactory: buildProductionAgentRunPayload,
-          runConnector: runConnector,
-          streamConnector: streamConnector,
-        ),
-      );
-
-      final events = await client
-          .stream(
-            _request.resume(
-              runId: 'run-production-001',
-              threadId: 'thread-production-001',
-              afterSequence: 7,
+        );
+        final streamConnector = _RecordingSseGetConnector([
+          'data: {"event_id":"evt-8","thread_id":"thread-production-001","run_id":"run-production-001","sequence":8,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:02Z"}\n\n',
+        ]);
+        final client = SseAgentStreamClient(
+          ProductionAgentSseTransport(
+            runsEndpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+              token: 'secret-token',
             ),
-          )
-          .toList();
+            payloadFactory: buildProductionAgentRunPayload,
+            runConnector: runConnector,
+            streamConnector: streamConnector,
+          ),
+        );
 
-      expect(events.map((event) => event.type), ['run.completed']);
-      expect(runConnector.uri, isNull);
-      expect(
-        streamConnector.uri!.path,
-        '/v1/agent/runs/run-production-001/stream',
-      );
-      expect(streamConnector.uri!.queryParameters, {
-        'after_sequence': '7',
-        'follow': 'true',
-        'limit': '200',
-      });
-      expect(
-        streamConnector.headers,
-        containsPair('Authorization', 'Bearer secret-token'),
-      );
-      expect(
-        streamConnector.uri!.queryParameters,
-        isNot(containsPair('token', anything)),
-      );
-    });
+        final events = await client
+            .stream(
+              _request.resume(
+                runId: 'run-production-001',
+                threadId: 'thread-production-001',
+                afterSequence: 7,
+              ),
+            )
+            .toList();
+
+        expect(events.map((event) => event.type), ['run.completed']);
+        expect(runConnector.uri, isNull);
+        expect(
+          streamConnector.uri!.path,
+          '/v1/agent/runs/run-production-001/stream',
+        );
+        expect(streamConnector.uri!.queryParameters, {
+          'after_sequence': '7',
+          'follow': 'true',
+          'limit': '200',
+        });
+        expect(
+          streamConnector.headers,
+          containsPair('Authorization', 'Bearer secret-token'),
+        );
+        expect(
+          streamConnector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
+      },
+    );
 
     test(
       'cancel client posts production run-scoped cancel and accepts 2xx or 404',

@@ -78,9 +78,7 @@ void main() {
     final chatRect = tester.getRect(
       find.byKey(const ValueKey('agent-chat-scroll-view')),
     );
-    final greetingRect = tester.getRect(
-      find.textContaining('嗨，我是 CozyMate'),
-    );
+    final greetingRect = tester.getRect(find.textContaining('嗨，我是 CozyMate'));
 
     expect(greetingRect.top - chatRect.top, lessThan(120));
   });
@@ -323,9 +321,7 @@ void main() {
       final chatRect = tester.getRect(
         find.byKey(const ValueKey('agent-chat-scroll-view')),
       );
-      final greetingRect = tester.getRect(
-        find.textContaining('嗨，我是 CozyMate'),
-      );
+      final greetingRect = tester.getRect(find.textContaining('嗨，我是 CozyMate'));
       final userRect = tester.getRect(find.text('nihao'));
       final errorRect = tester.getRect(find.textContaining('这次没有拿到回复'));
       final retryRect = tester.getRect(
