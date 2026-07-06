@@ -984,7 +984,6 @@ MomCozyApiRuntime _runtime({
     jsonTransport: FixtureApiJsonTransportByPath({
       statusProfileEndpoint: const {
         'user_id': 'demo-user-fixture',
-        'daily_summary': '哺乳期',
         'delivery_date': '2026-06-12',
       },
       statusInfantsEndpoint: const {

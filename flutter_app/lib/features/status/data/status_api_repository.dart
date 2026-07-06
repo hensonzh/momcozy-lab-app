@@ -32,10 +32,9 @@ MomStatus? _momStatus(
 }) {
   if (data == null || data.isEmpty) return null;
   final deliveryDate = _date(data['delivery_date']);
-  final summary = _string(data['daily_summary']);
-  if (deliveryDate == null && summary == null) return null;
+  if (deliveryDate == null) return null;
   return MomStatus(
-    stage: summary ?? _stageFromDeliveryDate(deliveryDate, now: now),
+    stage: _stageFromDeliveryDate(deliveryDate, now: now),
     postpartumDay: _ageDays(deliveryDate, now: now),
   );
 }
