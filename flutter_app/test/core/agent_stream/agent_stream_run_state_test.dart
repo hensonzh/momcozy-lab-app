@@ -135,6 +135,44 @@ void main() {
       expect(state.events.length, 2);
     });
 
+    test('uses durable completed message text when deltas are absent', () {
+      var state = const AgentStreamRunState().start();
+
+      for (final event in [
+        const {
+          'type': 'run.started',
+          'thread_id': 'thread-durable-001',
+          'run_id': 'run-durable-001',
+          'message_id': 'msg-durable-001',
+        },
+        const {
+          'type': 'message.completed',
+          'thread_id': 'thread-durable-001',
+          'run_id': 'run-durable-001',
+          'message_id': 'msg-durable-001',
+          'payload': {
+            'message': {
+              'role': 'assistant',
+              'content': [
+                {'type': 'text', 'text': 'Durable assistant reply.'},
+              ],
+            },
+          },
+        },
+        const {
+          'type': 'run.completed',
+          'thread_id': 'thread-durable-001',
+          'run_id': 'run-durable-001',
+          'message_id': 'msg-durable-001',
+        },
+      ].map(AgentStreamEvent.new)) {
+        state = state.applyEvent(event);
+      }
+
+      expect(state.phase, AgentStreamRunPhase.finished);
+      expect(state.textContent, 'Durable assistant reply.');
+    });
+
     test('maps run error events to retryable error state', () {
       var state = const AgentStreamRunState().start();
 
