@@ -37,27 +37,6 @@ const legacyAppId = "com.momcozymai.app";
 const flutterBaseAppId = "com.momcozymai.app.flutterpoc";
 
 contains(
-  "legacy_web/capacitor.config.ts",
-  `appId: '${legacyAppId}'`,
-  "Capacitor rollback appId remains unchanged",
-);
-contains(
-  "legacy_web/android/app/build.gradle",
-  `applicationId "${legacyAppId}"`,
-  "Capacitor Android applicationId remains unchanged",
-);
-contains(
-  "legacy_web/android/app/src/main/res/values/strings.xml",
-  `<string name="custom_url_scheme">${legacyAppId}</string>`,
-  "Capacitor custom URL scheme remains scoped to the legacy app",
-);
-contains(
-  "legacy_web/android/app/src/main/AndroidManifest.xml",
-  'android:authorities="${applicationId}.fileprovider"',
-  "Capacitor FileProvider authority remains applicationId-scoped",
-);
-
-contains(
   "flutter_app/android/app/build.gradle.kts",
   `namespace = "com.momcozymai.momcozy_flutter_app"`,
   "Flutter namespace remains isolated from the Capacitor package",

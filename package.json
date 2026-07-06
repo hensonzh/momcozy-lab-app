@@ -3,20 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Momcozy Flutter migration workspace",
+  "description": "Momcozy Flutter app workspace",
   "scripts": {
-    "dev": "npm --prefix legacy_web run dev",
-    "dev:force": "npm --prefix legacy_web run dev:force",
-    "build": "npm --prefix legacy_web run build",
-    "build:dev": "npm --prefix legacy_web run build:dev",
-    "lint": "npm --prefix legacy_web run lint",
-    "preview": "npm --prefix legacy_web run preview",
-    "test": "npm --prefix legacy_web run test",
-    "test:watch": "npm --prefix legacy_web run test:watch",
-    "ui:legacy-reference": "node scripts/capture-legacy-web-references.mjs",
-    "ui:parity-report": "node scripts/compare-ui-parity.mjs",
-    "ui:parity-refresh": "npm run ui:legacy-reference && cd flutter_app && PATH=\"$HOME/.local/share/momcozy-toolchains/flutter/bin:$PATH\" flutter test --update-goldens test/features/app_pages/momcozy_feature_golden_test.dart && cd .. && npm run ui:parity-report",
-    "ui:parity-gate": "MOMCOZY_UI_PARITY_FAIL=1 node scripts/compare-ui-parity.mjs",
     "flutter:check": "node scripts/check-flutter-toolchain.mjs",
     "flutter:init": "node scripts/init-flutter-shell.mjs",
     "flutter:dev": "cd flutter_app && PATH=\"$HOME/.local/share/momcozy-toolchains/flutter/bin:$PATH\" flutter run --flavor local --dart-define=MOMCOZY_API_BASE_URL=http://10.0.2.2:8769 --dart-define=MOMCOZY_API_TOKEN=APP_API_TEST --dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user --dart-define=MOMCOZY_DEFAULT_BABY_ID=demo-baby",
@@ -24,12 +12,7 @@
     "flutter:security-check": "node scripts/check-flutter-security-privacy.mjs",
     "flutter:p0:platform-smoke": "node scripts/run-flutter-platform-smoke.mjs",
     "flutter:emulator-smoke": "node scripts/run-flutter-emulator-smoke.mjs",
-    "flutter:rollback-check": "node scripts/write-flutter-rollback-manifest.mjs",
-    "flutter:release-gate": "node scripts/run-flutter-release-gate.mjs"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.61.1",
-    "pixelmatch": "^7.2.0",
-    "pngjs": "^7.0.0"
+    "flutter:release-gate": "node scripts/run-flutter-release-gate.mjs",
+    "backend:contract-validate": "python3 scripts/validate_backend_contract.py"
   }
 }
