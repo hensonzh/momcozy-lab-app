@@ -83,4 +83,19 @@ void main() {
     expect(payload['message'], 'Help me plan today');
     expect(payload.containsKey('user_id'), isFalse);
   });
+
+  test('production payload preserves a valid backend thread id', () {
+    final payload = buildDefaultAgentHubPayload(
+      const AgentStreamRequest(
+        message: 'Follow up',
+        threadId: '123e4567-e89b-12d3-a456-426614174000',
+      ),
+    );
+
+    expect(
+      payload['thread_id'],
+      '123e4567-e89b-12d3-a456-426614174000',
+    );
+    expect(payload['message'], 'Follow up');
+  });
 }
