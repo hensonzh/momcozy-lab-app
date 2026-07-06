@@ -184,6 +184,41 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub reuses backend thread id across follow-up turns', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'First turn',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Follow up',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests, hasLength(2));
+    expect(client.requests.first.threadId, isNull);
+    expect(client.requests.last.threadId, 'thread-fixture-001');
+    expect(client.requests.last.message, 'Follow up');
+  });
+
   testWidgets(
     'Agent Hub anchors a failed sent turn at the chat tail without greeting fallback',
     (tester) async {
