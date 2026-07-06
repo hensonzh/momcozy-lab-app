@@ -19,6 +19,22 @@ typedef AgentHubNewSessionHandler = void Function();
 
 const _agentDefaultGreeting = '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
 
+String _agentAssistantTextForState(AgentStreamRunState state) {
+  final text = state.textContent.trim();
+  if (text.isNotEmpty) return text;
+
+  return switch (state.phase) {
+    AgentStreamRunPhase.idle => _agentDefaultGreeting,
+    AgentStreamRunPhase.streaming => '我已经收到你的消息啦～',
+    AgentStreamRunPhase.cancelRequested => '我正在停止这次回复。',
+    AgentStreamRunPhase.cancelled => '已停止本次回复。',
+    AgentStreamRunPhase.waitingForConfirmation => '需要你确认后继续。',
+    AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
+    AgentStreamRunPhase.error ||
+    AgentStreamRunPhase.disconnected => '这次没有拿到回复，可能是连接中断了。你再发一次就好。',
+  };
+}
+
 final _agentHubInteractionStates = Expando<_AgentHubInteractionState>(
   'momcozy-agent-hub-interaction-state',
 );
@@ -282,13 +298,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
-    if (_state.phase == AgentStreamRunPhase.idle) return null;
-    final text = _state.textContent.trim();
-    if (text.isEmpty && _state.events.isEmpty) return null;
+    final text = _agentAssistantTextForState(_state).trim();
+    if (text.isEmpty) return null;
     return AgentHubHistoryMessage(
       role: AgentHubHistoryRole.assistant,
       content: text,
-      runState: _state,
+      runState: _state.phase == AgentStreamRunPhase.idle ? null : _state,
     );
   }
 
@@ -1176,19 +1191,7 @@ class AgentRunTranscript extends StatelessWidget {
   }
 
   String get _primaryText {
-    final text = state.textContent.trim();
-    if (text.isNotEmpty) return text;
-
-    return switch (state.phase) {
-      AgentStreamRunPhase.idle => _agentDefaultGreeting,
-      AgentStreamRunPhase.streaming => '我已经收到你的消息啦～',
-      AgentStreamRunPhase.cancelRequested => '我正在停止这次回复。',
-      AgentStreamRunPhase.cancelled => '已停止本次回复。',
-      AgentStreamRunPhase.waitingForConfirmation => '需要你确认后继续。',
-      AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
-      AgentStreamRunPhase.error ||
-      AgentStreamRunPhase.disconnected => '这次没有拿到回复，可能是连接中断了。你再发一次就好。',
-    };
+    return _agentAssistantTextForState(state);
   }
 
   String? get _supportingText {

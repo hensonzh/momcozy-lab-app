@@ -285,7 +285,7 @@ void main() {
   });
 
   testWidgets(
-    'Agent Hub lays out a failed sent turn near the transcript top without greeting fallback',
+    'Agent Hub preserves the visible greeting before a failed sent turn',
     (tester) async {
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;
@@ -315,19 +315,25 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('nihao'), findsOneWidget);
-      expect(find.textContaining('嗨，我是 CozyMate'), findsNothing);
+      expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
       expect(find.textContaining('这次没有拿到回复'), findsOneWidget);
       expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
 
       final chatRect = tester.getRect(
         find.byKey(const ValueKey('agent-chat-scroll-view')),
       );
+      final greetingRect = tester.getRect(
+        find.textContaining('嗨，我是 CozyMate'),
+      );
+      final userRect = tester.getRect(find.text('nihao'));
       final errorRect = tester.getRect(find.textContaining('这次没有拿到回复'));
       final retryRect = tester.getRect(
         find.byKey(const ValueKey('agent-retry-button')),
       );
-      expect(errorRect.top - chatRect.top, lessThan(180));
-      expect(retryRect.top - chatRect.top, lessThan(260));
+      expect(greetingRect.top - chatRect.top, lessThan(120));
+      expect(userRect.top, greaterThan(greetingRect.bottom));
+      expect(errorRect.top, greaterThan(userRect.bottom));
+      expect(retryRect.top - chatRect.top, lessThan(360));
     },
   );
 
