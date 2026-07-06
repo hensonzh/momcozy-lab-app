@@ -40,7 +40,7 @@ void main() {
         readMigrationFixture('agent_events/text_stream_basic.jsonl'),
       );
 
-      for (final event in events.take(3)) {
+      for (final event in events.take(2)) {
         state = state.applyEvent(event);
       }
 
@@ -150,34 +150,38 @@ void main() {
       );
     });
 
-    test('preserves waiting-for-confirmation state without retry affordance', () {
-      var state = const AgentStreamRunState().start();
+    test(
+      'preserves waiting-for-confirmation state without retry affordance',
+      () {
+        var state = const AgentStreamRunState().start();
 
-      state = state.applyEvent(
-        AgentStreamEvent(const {
-          'type': 'message.completed',
-          'thread_id': 'thread-action-001',
-          'run_id': 'run-action-001',
-          'message_id': 'msg-action-001',
-          'payload': {'text': '请确认是否创建支持工单。'},
-        }),
-      );
-      state = state.applyEvent(
-        AgentStreamEvent(const {
-          'type': 'run.waiting_for_confirmation',
-          'thread_id': 'thread-action-001',
-          'run_id': 'run-action-001',
-          'message_id': 'msg-action-001',
-          'payload': {'pending_action_id': 'action-support-001'},
-        }),
-      );
+        state = state.applyEvent(
+          AgentStreamEvent(const {
+            'type': 'message.completed',
+            'thread_id': 'thread-action-001',
+            'run_id': 'run-action-001',
+            'message_id': 'msg-action-001',
+            'payload': {'text': '请确认是否创建支持工单。'},
+          }),
+        );
+        state = state.applyEvent(
+          AgentStreamEvent(const {
+            'type': 'run.waiting_for_confirmation',
+            'thread_id': 'thread-action-001',
+            'run_id': 'run-action-001',
+            'message_id': 'msg-action-001',
+            'payload': {'pending_action_id': 'action-support-001'},
+          }),
+        );
 
-      expect(state.phase, AgentStreamRunPhase.waitingForConfirmation);
-      expect(state.isActive, isFalse);
-      expect(state.canRetry, isFalse);
-      expect(state.textContent, '请确认是否创建支持工单。');
-      expect(state.runId, 'run-action-001');
-    });
+        expect(state.phase, AgentStreamRunPhase.waitingForConfirmation);
+        expect(state.isActive, isFalse);
+        expect(state.blocksComposer, isTrue);
+        expect(state.canRetry, isFalse);
+        expect(state.textContent, '请确认是否创建支持工单。');
+        expect(state.runId, 'run-action-001');
+      },
+    );
 
     test('keeps local cancel state even when backend cancel fails', () {
       var state = const AgentStreamRunState().start().requestCancel();

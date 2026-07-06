@@ -221,9 +221,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _updateLatestButtonVisibility();
   }
 
+  bool get _isComposerLocked => _state.blocksComposer;
+
   bool get _canSend =>
       widget.runner != null &&
-      !_state.isActive &&
+      !_isComposerLocked &&
       (_composerController.text.trim().isNotEmpty ||
           _attachedImages.isNotEmpty);
 
@@ -235,7 +237,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final message = _composerController.text.trim();
     if (runner == null ||
         (message.isEmpty && _attachedImages.isEmpty) ||
-        _state.isActive) {
+        _isComposerLocked) {
       return;
     }
 
@@ -265,7 +267,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<void> _attachImage() async {
     final pickImage = widget.pickImage;
-    if (pickImage == null || _state.isActive) return;
+    if (pickImage == null || _isComposerLocked) return;
     final image = await pickImage();
     if (!mounted || image == null) return;
     setState(() {
@@ -276,7 +278,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _togglePhotoMenu() {
-    if (widget.pickImage == null || _state.isActive) return;
+    if (widget.pickImage == null || _isComposerLocked) return;
     setState(() {
       _showPhotoMenu = !_showPhotoMenu;
     });
@@ -284,7 +286,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<void> _startVoiceInput() async {
     if ((widget.voiceInputController == null && widget.voiceInput == null) ||
-        _state.isActive ||
+        _isComposerLocked ||
         _voiceState.isInputActive) {
       return;
     }
@@ -369,7 +371,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<void> _startRun(AgentStreamRequest request) async {
     final runner = widget.runner;
-    if (runner == null || _state.isActive) return;
+    if (runner == null || _isComposerLocked) return;
     final requestWithThread = _requestWithConversationThread(request);
 
     _cancelRunSubscription();
@@ -622,13 +624,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
             controller: _composerController,
             canSend: _canSend,
             isRunning: _state.isActive,
+            isInputLocked: _isComposerLocked,
             imageCount: _attachedImages.length,
             showPhotoMenu: _showPhotoMenu,
-            canAttachImage: widget.pickImage != null && !_state.isActive,
+            canAttachImage: widget.pickImage != null && !_isComposerLocked,
             canUseVoice:
                 (widget.voiceInputController != null ||
                     widget.voiceInput != null) &&
-                !_state.isActive &&
+                !_isComposerLocked &&
                 !_voiceState.isInputActive,
             voicePhase: _voiceState.phase,
             onChanged: (_) => setState(() {}),
@@ -1586,6 +1589,7 @@ class AgentComposerBar extends StatefulWidget {
     required this.controller,
     required this.canSend,
     required this.isRunning,
+    required this.isInputLocked,
     required this.imageCount,
     required this.showPhotoMenu,
     required this.canAttachImage,
@@ -1603,6 +1607,7 @@ class AgentComposerBar extends StatefulWidget {
   final TextEditingController controller;
   final bool canSend;
   final bool isRunning;
+  final bool isInputLocked;
   final int imageCount;
   final bool showPhotoMenu;
   final bool canAttachImage;
@@ -1666,6 +1671,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final colorScheme = Theme.of(context).colorScheme;
     final controller = widget.controller;
     final isRunning = widget.isRunning;
+    final isInputLocked = widget.isInputLocked;
     final canSend = widget.canSend;
     final imageCount = widget.imageCount;
     final showPhotoMenu = widget.showPhotoMenu;
@@ -1783,7 +1789,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                       ),
                       IconButton(
                         key: const ValueKey('agent-remove-image-button'),
-                        onPressed: isRunning ? null : onRemoveImages,
+                        onPressed: isInputLocked ? null : onRemoveImages,
                         icon: const Icon(Icons.close_rounded, size: 18),
                         tooltip: '移除图片',
                       ),
@@ -1851,7 +1857,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                   maxLines: 5,
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.newline,
-                  enabled: !isRunning,
+                  enabled: !isInputLocked,
                   style: inputTextStyle,
                   onChanged: onChanged,
                   scrollPadding: const EdgeInsets.only(bottom: 96),
