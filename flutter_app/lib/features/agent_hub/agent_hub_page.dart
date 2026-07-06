@@ -187,13 +187,32 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
   }
 
-  Future<void> _scrollToLatest() async {
+  bool _isNearLatest([double threshold = 80]) {
+    if (!_chatScrollController.hasClients) return true;
+    final position = _chatScrollController.position;
+    return position.maxScrollExtent - position.pixels <= threshold;
+  }
+
+  void _scheduleScrollToLatest({bool smooth = false}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_scrollToLatest(smooth: smooth));
+    });
+  }
+
+  Future<void> _scrollToLatest({bool smooth = true}) async {
     if (!_chatScrollController.hasClients) return;
-    await _chatScrollController.animateTo(
-      _chatScrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 220),
-      curve: Curves.easeOutCubic,
-    );
+    if (smooth) {
+      await _chatScrollController.animateTo(
+        _chatScrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+      );
+    } else {
+      _chatScrollController.jumpTo(
+        _chatScrollController.position.maxScrollExtent,
+      );
+    }
     if (!_chatScrollController.hasClients) return;
     final position = _chatScrollController.position;
     if (position.pixels > position.maxScrollExtent) {
@@ -240,6 +259,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _showPhotoMenu = false;
     });
     _persistInteractionState();
+    _scheduleScrollToLatest();
     await _startRun(request);
   }
 
@@ -359,24 +379,29 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _localActionStatuses.clear();
     });
     _persistInteractionState();
+    _scheduleScrollToLatest();
 
     _runSubscription = runner
         .run(request)
         .listen(
           (nextState) {
             if (!mounted || !_state.isActive) return;
+            final shouldFollowLatest = _isNearLatest() || nextState.isActive;
             setState(() {
               _state = nextState;
             });
             _persistInteractionState();
             _maybeStartAutoVoicePlayback(nextState);
+            if (shouldFollowLatest) _scheduleScrollToLatest();
           },
           onError: (Object error) {
             if (!mounted || !_state.isActive) return;
+            final shouldFollowLatest = _isNearLatest();
             setState(() {
               _state = _state.markDisconnected(error);
             });
             _persistInteractionState();
+            if (shouldFollowLatest) _scheduleScrollToLatest();
           },
         );
   }
@@ -519,28 +544,39 @@ class _AgentHubPageState extends State<AgentHubPage> {
           Expanded(
             child: Stack(
               children: [
-                ListView(
+                CustomScrollView(
                   key: const ValueKey('agent-chat-scroll-view'),
                   controller: _chatScrollController,
-                  padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
-                  children: [
-                    if (_historyMessages.isNotEmpty) ...[
-                      AgentHubHistoryPanel(messages: _historyMessages),
-                      const SizedBox(height: 18),
-                    ],
-                    AgentRunTranscript(
-                      state: _state,
-                      canRetry: _canRetry,
-                      onRetry: _retryRun,
-                      onArtifactAction: widget.onArtifactAction,
-                      pendingActionIds: _pendingActionIds,
-                      localActionStatuses: _localActionStatuses,
-                      onConfirmAction: widget.actionClient == null
-                          ? null
-                          : _confirmAction,
-                      onRejectAction: widget.actionClient == null
-                          ? null
-                          : _rejectAction,
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
+                      sliver: SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (_historyMessages.isNotEmpty) ...[
+                              AgentHubHistoryPanel(messages: _historyMessages),
+                              const SizedBox(height: 18),
+                            ],
+                            AgentRunTranscript(
+                              state: _state,
+                              canRetry: _canRetry,
+                              onRetry: _retryRun,
+                              onArtifactAction: widget.onArtifactAction,
+                              pendingActionIds: _pendingActionIds,
+                              localActionStatuses: _localActionStatuses,
+                              onConfirmAction: widget.actionClient == null
+                                  ? null
+                                  : _confirmAction,
+                              onRejectAction: widget.actionClient == null
+                                  ? null
+                                  : _rejectAction,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -901,10 +937,10 @@ class AgentRunTranscript extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final isDefaultGreeting = state.textContent.trim().isEmpty;
-    final text = isDefaultGreeting
-        ? _agentDefaultGreeting
-        : state.textContent.trim();
+    final isDefaultGreeting =
+        state.phase == AgentStreamRunPhase.idle &&
+        state.textContent.trim().isEmpty;
+    final text = _primaryText;
     final workSteps = _workStepsFromEvents(state.events);
     final artifactCards = _artifactCardsFromEvents(state.events);
     final actionCards = _actionCardsFromEvents(
@@ -999,6 +1035,22 @@ class AgentRunTranscript extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String get _primaryText {
+    final text = state.textContent.trim();
+    if (text.isNotEmpty) return text;
+
+    return switch (state.phase) {
+      AgentStreamRunPhase.idle => _agentDefaultGreeting,
+      AgentStreamRunPhase.streaming => '我已经收到你的消息啦～',
+      AgentStreamRunPhase.cancelRequested => '我正在停止这次回复。',
+      AgentStreamRunPhase.cancelled => '已停止本次回复。',
+      AgentStreamRunPhase.waitingForConfirmation => '需要你确认后继续。',
+      AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
+      AgentStreamRunPhase.error ||
+      AgentStreamRunPhase.disconnected => '这次没有拿到回复，可能是连接中断了。你再发一次就好。',
+    };
   }
 
   String? get _supportingText {
