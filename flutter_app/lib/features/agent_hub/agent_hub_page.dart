@@ -370,9 +370,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _startRun(AgentStreamRequest request) async {
     final runner = widget.runner;
     if (runner == null || _state.isActive) return;
+    final requestWithThread = _requestWithConversationThread(request);
 
     _cancelRunSubscription();
-    _activeRequest = request;
+    _activeRequest = requestWithThread;
     setState(() {
       _state = const AgentStreamRunState().start();
       _pendingActionIds.clear();
@@ -382,11 +383,18 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _scheduleScrollToLatest();
 
     _runSubscription = runner
-        .run(request)
+        .run(requestWithThread)
         .listen(
           (nextState) {
             if (!mounted || !_state.isActive) return;
             final shouldFollowLatest = _isNearLatest() || nextState.isActive;
+            final activeRequest = _activeRequest;
+            if (activeRequest != null) {
+              _activeRequest = _requestWithThreadId(
+                activeRequest,
+                nextState.threadId,
+              );
+            }
             setState(() {
               _state = nextState;
             });
@@ -404,6 +412,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
             if (shouldFollowLatest) _scheduleScrollToLatest();
           },
         );
+  }
+
+  AgentStreamRequest _requestWithConversationThread(
+    AgentStreamRequest request,
+  ) {
+    return _requestWithThreadId(
+      request,
+      request.threadId ?? _state.threadId ?? _activeRequest?.threadId,
+    );
   }
 
   void _maybeStartAutoVoicePlayback(AgentStreamRunState nextState) {
@@ -728,6 +745,26 @@ AgentStreamRequest _requestWithImages(
     threadId: request.threadId,
     locale: request.locale,
     images: [...request.images, ...images],
+    metadata: request.metadata,
+  );
+}
+
+AgentStreamRequest _requestWithThreadId(
+  AgentStreamRequest request,
+  String? threadId,
+) {
+  final normalizedThreadId = threadId?.trim();
+  if (request.threadId?.trim().isNotEmpty == true ||
+      normalizedThreadId == null ||
+      normalizedThreadId.isEmpty) {
+    return request;
+  }
+
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: normalizedThreadId,
+    locale: request.locale,
+    images: request.images,
     metadata: request.metadata,
   );
 }
