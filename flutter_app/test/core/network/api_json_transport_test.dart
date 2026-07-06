@@ -29,9 +29,7 @@ void main() {
       expect(response['status'], 200);
       expect(
         connector.uri,
-        Uri.parse(
-          'http://127.0.0.1:8769/v1/files?existing=1&limit=10',
-        ),
+        Uri.parse('http://127.0.0.1:8769/v1/files?existing=1&limit=10'),
       );
       expect(connector.headers, containsPair('Accept', 'application/json'));
       expect(
@@ -57,10 +55,7 @@ void main() {
 
       await transport.postJson(
         '/v1/records/feeding',
-        body: {
-          'feed_time': '2026-06-29T08:00:00Z',
-          'feed_type': 'bottle',
-        },
+        body: {'feed_time': '2026-06-29T08:00:00Z', 'feed_type': 'bottle'},
         headers: {'Idempotency-Key': 'idem-001'},
       );
 
@@ -151,11 +146,7 @@ void main() {
                 'effectiveRequestId',
                 'req-prod',
               )
-              .having(
-                (error) => error.errorCode,
-                'errorCode',
-                'rate_limited',
-              )
+              .having((error) => error.errorCode, 'errorCode', 'rate_limited')
               .having(
                 (error) => error.errorMessage,
                 'errorMessage',

@@ -111,9 +111,7 @@ void main() {
         );
 
         final chunks = await repository
-            .realtimeVoicePcmStream(
-              text: 'Short fixture text for playback.',
-            )
+            .realtimeVoicePcmStream(text: 'Short fixture text for playback.')
             .toList();
 
         expect(chunks, [
@@ -159,7 +157,8 @@ void main() {
       final streamContext = repository.redactedRealtimeVoiceStreamLogContext(
         text: 'private voice playback text',
       );
-      final sessionContext = repository.redactedRealtimeVoiceSessionLogContext();
+      final sessionContext = repository
+          .redactedRealtimeVoiceSessionLogContext();
 
       expect(
         streamContext['url'],
@@ -224,9 +223,7 @@ void main() {
           websocketConnector: connector,
         );
 
-        final events = await repository
-            .realtimeVoiceSession()
-            .toList();
+        final events = await repository.realtimeVoiceSession().toList();
 
         expect(connector.uri!.scheme, 'wss');
         expect(connector.uri!.path, '/base/v1/realtime-voice-session');

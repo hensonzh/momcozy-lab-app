@@ -272,15 +272,9 @@ class _RecordsProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     final today = DateTime.now();
-    await repository.fetchFeedingRecords(
-      date: today,
-    );
-    await repository.fetchPumpMilkRecords(
-      date: today,
-    );
-    await repository.fetchGrowthRecords(
-      babyId: config.session.babyId,
-    );
+    await repository.fetchFeedingRecords(date: today);
+    await repository.fetchPumpMilkRecords(date: today);
+    await repository.fetchGrowthRecords(babyId: config.session.babyId);
   }
 }
 

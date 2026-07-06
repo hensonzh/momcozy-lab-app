@@ -479,17 +479,14 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
         : await _createRun(request);
     final afterSequence = request.afterSequence < 0 ? 0 : request.afterSequence;
 
-    final streamUri = _runScopedUri(
-      runsEndpoint.requestUri,
-      runId,
-      'stream',
-    ).replace(
-      queryParameters: {
-        'after_sequence': afterSequence.toString(),
-        'follow': 'true',
-        'limit': '200',
-      },
-    );
+    final streamUri = _runScopedUri(runsEndpoint.requestUri, runId, 'stream')
+        .replace(
+          queryParameters: {
+            'after_sequence': afterSequence.toString(),
+            'follow': 'true',
+            'limit': '200',
+          },
+        );
 
     yield* streamConnector.get(
       streamUri,

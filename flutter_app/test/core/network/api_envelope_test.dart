@@ -95,10 +95,7 @@ void main() {
             .toList(growable: false)
             .toString();
 
-        expect(
-          aliasString(data, 'display_name', 'displayName'),
-          'Demo User',
-        );
+        expect(aliasString(data, 'display_name', 'displayName'), 'Demo User');
         expect(
           aliasString(data, 'current_care_stage', 'currentCareStage'),
           'postpartum',

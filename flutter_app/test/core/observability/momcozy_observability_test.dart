@@ -78,9 +78,7 @@ void main() {
         observability: observability,
       );
 
-      await successTransport.getJson(
-        '/v1/profile/me?token=secret',
-      );
+      await successTransport.getJson('/v1/profile/me?token=secret');
       await expectLater(
         failureTransport.postJson('/v1/devices/pump-telemetry'),
         throwsA(isA<ApiHttpException>()),
