@@ -6,7 +6,7 @@ Sources of truth:
 
 - `src/lib/bleProtocol.ts`
 - `android/app/src/main/java/com/momcozymai/app/MmcBleProtocol.java`
-- `doc/设备APP蓝牙通信协议.md`
+- `docs/device/设备APP蓝牙通信协议.md`
 
 The structured fixtures are:
 

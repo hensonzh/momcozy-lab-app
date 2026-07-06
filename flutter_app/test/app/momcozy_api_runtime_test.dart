@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
@@ -45,13 +47,20 @@ void main() {
     final runtime = await MomCozyApiRuntime.bootstrap(store: store);
     final observed = runtime.jsonTransport as ObservedApiJsonTransport;
     final transport = observed.inner as IoApiJsonTransport;
+    final eventResult = await runtime.clientEventClient.post(
+      const AgentStreamClientEventRequest(
+        eventType: 'runtime_bootstrap_test',
+        occurredAt: '2026-07-01T00:00:00Z',
+      ),
+    );
 
     expect(runtime.userId, 'secure-user');
     expect(runtime.babyId, 'secure-baby');
     expect(runtime.locale, 'en-US');
     expect(runtime.session.refreshToken, 'secure-refresh');
     expect(transport.token, 'secure-access');
-    expect(runtime.clientEventClient.endpoint.token, 'secure-access');
+    expect(eventResult.sent, isTrue);
+    expect(eventResult.body?['event_type'], 'runtime_bootstrap_test');
     expect(runtime.observability, same(observed.observability));
   });
 
@@ -101,10 +110,8 @@ void main() {
 
   test('runtime creates typed repositories over the injected transport', () {
     final transport = FixtureApiJsonTransport({
-      'status': 200,
-      'data': {
-        'mom': {'stage': 'postpartum', 'postpartum_day': 21},
-      },
+      'user_id': 'user-fixture',
+      'delivery_date': '2026-06-11',
     });
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,
@@ -118,6 +125,7 @@ void main() {
     );
 
     expect(runtime.statusRepository, isA<StatusApiRepository>());
+    expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
     expect(runtime.scheduleRepository.transport, same(transport));
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
@@ -131,14 +139,12 @@ void main() {
 
   test('runtime exposes an injected multipart transport lazily', () async {
     final multipart = FixtureApiMultipartTransport({
-      'status': 200,
-      'data': {
-        'id': 'file-runtime',
-        'name': 'runtime-fixture.png',
-        'size': 9,
-        'extension': 'png',
-        'mime_type': 'image/png',
-      },
+      'id': 'file-runtime',
+      'owner_user_id': 'user-fixture',
+      'original_filename': 'runtime-fixture.png',
+      'content_type': 'image/png',
+      'size_bytes': 9,
+      'status': 'ready',
     });
     final runtime = MomCozyApiRuntime(
       jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
@@ -149,7 +155,6 @@ void main() {
     );
 
     final uploaded = await runtime.mediaRepository.uploadFile(
-      userId: runtime.userId,
       file: const ApiUploadFile(
         name: 'runtime-fixture.png',
         mimeType: 'image/png',
@@ -158,16 +163,15 @@ void main() {
     );
 
     expect(runtime.multipartTransport, same(multipart));
-    expect(multipart.lastFields, {'user_id': 'user-fixture'});
+    expect(multipart.lastFields, isEmpty);
     expect(uploaded.id, 'file-runtime');
   });
 
   test(
     'runtime exposes voice repository over the session multipart transport',
     () async {
-      final multipart = FixtureApiMultipartTransport({
-        'status': 200,
-        'data': {'transcript': 'runtime voice text'},
+      final multipart = FixtureApiMultipartTransport(const {
+        'transcript': 'runtime voice text',
       });
       final runtime = MomCozyApiRuntime.fromSession(
         const MomCozySession(
@@ -182,7 +186,6 @@ void main() {
 
       final voiceText = await runtime.agentVoiceRepository
           .transcribeSpeechChunk(
-            userId: runtime.userId,
             file: const ApiUploadFile(
               name: 'voice.wav',
               mimeType: 'audio/wav',
@@ -195,7 +198,11 @@ void main() {
       expect(repository.multipartTransport, same(multipart));
       expect(voiceText, 'runtime voice text');
       expect(multipart.lastPath, speechTranscribeChunkEndpoint);
-      expect(multipart.lastFields, {'user_id': 'voice-user'});
+      expect(multipart.lastFields, isEmpty);
+      expect(
+        multipart.lastHeaders,
+        containsPair('Authorization', 'Bearer voice-access'),
+      );
     },
   );
 
@@ -307,6 +314,39 @@ void main() {
     );
 
     expect(resolved, same(runtime));
+  });
+
+  test('runtime controller replaces runtime and preserves observability', () {
+    final observability = MomCozyObservability();
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
+      userId: 'user-fixture',
+      babyId: 'baby-fixture',
+      locale: 'zh-CN',
+      observability: observability,
+    );
+    final controller = MomCozyRuntimeController(runtime);
+    var notifyCount = 0;
+    controller.addListener(() {
+      notifyCount += 1;
+    });
+
+    controller.replaceSession(
+      const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'session-user',
+        babyId: 'session-baby',
+        locale: 'en-US',
+        accessToken: 'session-access',
+        refreshToken: 'session-refresh',
+      ),
+    );
+
+    expect(notifyCount, 1);
+    expect(controller.runtime.userId, 'session-user');
+    expect(controller.runtime.session.accessToken, 'session-access');
+    expect(controller.runtime.observability, same(observability));
+    controller.dispose();
   });
 }
 

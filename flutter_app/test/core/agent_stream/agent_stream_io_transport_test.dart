@@ -2,102 +2,120 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
-import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
 
 import '../../support/fixture_reader.dart';
 
 void main() {
   group('Agent stream IO transports', () {
-    test(
-      'SSE transport posts AG-UI payload with shared auth injection',
-      () async {
-        final connector = _RecordingSseConnector([
-          readMigrationFixture('ag_ui/text_stream_basic.eventstream'),
-        ]);
-        final endpoint = AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8768/api/ag-ui?existing=1'),
-          token: 'secret-token',
-          headers: {'X-Client': 'flutter'},
-        );
-        final client = SseAgentStreamClient(
-          AgentSseHttpTransport(
-            endpoint: endpoint,
-            payloadFactory: _payload,
-            connector: connector,
+    test('production SSE transport creates run and follows event stream', () async {
+      final runConnector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 201,
+          body:
+              '{"id":"run-production-001","thread_id":"thread-production-001","status":"running"}',
+        ),
+      );
+      final streamConnector = _RecordingSseGetConnector([
+        'data: {"event_id":"evt-1","thread_id":"thread-production-001","run_id":"run-production-001","sequence":1,"type":"message.delta","payload":{"text":"Hello"},"created_at":"2026-07-01T00:00:00Z"}\n\n',
+        'data: {"event_id":"evt-2","thread_id":"thread-production-001","run_id":"run-production-001","sequence":2,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:01Z"}\n\n',
+      ]);
+      final client = SseAgentStreamClient(
+        ProductionAgentSseTransport(
+          runsEndpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+            token: 'secret-token',
           ),
-        );
+          payloadFactory: buildProductionAgentRunPayload,
+          runConnector: runConnector,
+          streamConnector: streamConnector,
+        ),
+      );
 
-        final events = await client.stream(_request).toList();
-        final postedBody = jsonDecode(connector.body!) as Map<String, Object?>;
+      final events = await client.stream(_request).toList();
+      final postedBody = jsonDecode(runConnector.body!) as Map<String, Object?>;
 
-        expect(events.last.type, 'RUN_FINISHED');
-        expect(connector.uri!.queryParameters, {
-          'existing': '1',
-          'token': 'secret-token',
-        });
-        expect(connector.headers, containsPair('Accept', 'text/event-stream'));
-        expect(
-          connector.headers,
-          containsPair('Content-Type', 'application/json'),
-        );
-        expect(
-          connector.headers,
-          containsPair('Authorization', 'Bearer secret-token'),
-        );
-        expect(connector.headers, containsPair('X-Client', 'flutter'));
-        expect(postedBody['threadId'], 'thread-fixture-001');
-        expect(postedBody['runId'], 'run-io-001');
-        expect(
-          endpoint.redactedLogContext().toString(),
-          isNot(contains('secret-token')),
-        );
-      },
-    );
+      expect(events.map((event) => event.type), [
+        'message.delta',
+        'run.completed',
+      ]);
+      expect(runConnector.uri!.path, '/v1/agent/runs');
+      expect(
+        streamConnector.uri!.path,
+        '/v1/agent/runs/run-production-001/stream',
+      );
+      expect(streamConnector.uri!.queryParameters, {
+        'after_sequence': '0',
+        'follow': 'true',
+        'limit': '200',
+      });
+      expect(postedBody['message'], 'Review my pumping pattern.');
+      expect(postedBody['runtime_pattern'], 'langgraph_sdk');
+      expect(postedBody.containsKey('user_id'), isFalse);
+      expect(
+        runConnector.headers,
+        containsPair('Authorization', 'Bearer secret-token'),
+      );
+      expect(runConnector.headers?['Idempotency-Key'], isNotEmpty);
+    });
 
-    test(
-      'WebSocket transport sends first-frame payload and closes on terminal event',
-      () async {
-        final websocketFrames =
-            parseJsonlMaps(
-                readMigrationFixture('ag_ui/text_stream_basic.websocket.jsonl'),
-              ).map((frame) => stringField(frame, 'frame') ?? '').toList()
-              ..add('{malformed-after-terminal');
-        final connection = _RecordingWebSocketConnection(websocketFrames);
-        final connector = _RecordingWebSocketConnector(connection);
-        final client = WebSocketAgentStreamClient(
-          AgentWebSocketTransport(
-            endpoint: AgentStreamEndpoint(
-              uri: Uri.parse('ws://127.0.0.1:8769/api/ag-ui-ws'),
-              token: 'secret-token',
+    test('production SSE transport resumes existing runs after sequence', () async {
+      final runConnector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 500,
+          body: '{"error":{"code":"should_not_create_run"}}',
+        ),
+      );
+      final streamConnector = _RecordingSseGetConnector([
+        'data: {"event_id":"evt-8","thread_id":"thread-production-001","run_id":"run-production-001","sequence":8,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:02Z"}\n\n',
+      ]);
+      final client = SseAgentStreamClient(
+        ProductionAgentSseTransport(
+          runsEndpoint: AgentStreamEndpoint(
+            uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+            token: 'secret-token',
+          ),
+          payloadFactory: buildProductionAgentRunPayload,
+          runConnector: runConnector,
+          streamConnector: streamConnector,
+        ),
+      );
+
+      final events = await client
+          .stream(
+            _request.resume(
+              runId: 'run-production-001',
+              threadId: 'thread-production-001',
+              afterSequence: 7,
             ),
-            payloadFactory: _payload,
-            connector: connector,
-          ),
-        );
+          )
+          .toList();
 
-        final events = await client.stream(_request).toList();
-        final sentPayload =
-            jsonDecode(connection.sent.single) as Map<String, Object?>;
-
-        expect(events.last.type, 'RUN_FINISHED');
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
-        expect(
-          connector.headers,
-          containsPair('Authorization', 'Bearer secret-token'),
-        );
-        expect(sentPayload['threadId'], 'thread-fixture-001');
-        expect(sentPayload['runId'], 'run-io-001');
-        expect(connection.closeCount, 1);
-      },
-    );
+      expect(events.map((event) => event.type), ['run.completed']);
+      expect(runConnector.uri, isNull);
+      expect(
+        streamConnector.uri!.path,
+        '/v1/agent/runs/run-production-001/stream',
+      );
+      expect(streamConnector.uri!.queryParameters, {
+        'after_sequence': '7',
+        'follow': 'true',
+        'limit': '200',
+      });
+      expect(
+        streamConnector.headers,
+        containsPair('Authorization', 'Bearer secret-token'),
+      );
+      expect(
+        streamConnector.uri!.queryParameters,
+        isNot(containsPair('token', anything)),
+      );
+    });
 
     test(
-      'cancel client posts AG-UI cancel body and accepts 2xx or 404',
+      'cancel client posts production run-scoped cancel and accepts 2xx or 404',
       () async {
-        final ack = readFixtureMap('ag_ui/cancel_ack.json');
+        final ack = readFixtureMap('agent_events/cancel_ack.json');
         final connector = _RecordingControlHttpConnector(
           AgentStreamControlHttpResponse(
             statusCode: 200,
@@ -106,7 +124,7 @@ void main() {
         );
         final client = AgentStreamCancelClient(
           endpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-cancel'),
+            uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
             token: 'secret-token',
           ),
           connector: connector,
@@ -116,14 +134,17 @@ void main() {
           const AgentStreamCancelRequest(
             threadId: 'thread-fixture-001',
             runId: 'run-fixture-tool-001',
-            userId: 'demo-user-fixture',
+            reason: 'user_cancelled',
           ),
         );
 
         expect(result.acknowledged, isTrue);
         expect(result.statusCode, 200);
         expect(result.body, ack);
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
+        expect(
+          connector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
         expect(
           connector.headers,
           containsPair('Authorization', 'Bearer secret-token'),
@@ -133,10 +154,12 @@ void main() {
           connector.headers,
           containsPair('Content-Type', 'application/json'),
         );
+        expect(
+          connector.uri!.path,
+          '/v1/agent/runs/run-fixture-tool-001/cancel',
+        );
         expect(jsonDecode(connector.body!) as Map<String, Object?>, {
-          'threadId': 'thread-fixture-001',
-          'runId': 'run-fixture-tool-001',
-          'user_id': 'demo-user-fixture',
+          'reason': 'user_cancelled',
         });
 
         connector.nextResponse = const AgentStreamControlHttpResponse(
@@ -145,7 +168,10 @@ void main() {
         );
 
         final alreadyClosed = await client.cancel(
-          const AgentStreamCancelRequest(threadId: 'thread-fixture-001'),
+          const AgentStreamCancelRequest(
+            threadId: 'thread-fixture-001',
+            runId: 'run-fixture-tool-001',
+          ),
         );
 
         expect(alreadyClosed.acknowledged, isTrue);
@@ -162,13 +188,16 @@ void main() {
       );
       final client = AgentStreamCancelClient(
         endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-cancel'),
+          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
         ),
         connector: connector,
       );
 
       final unavailable = await client.cancel(
-        const AgentStreamCancelRequest(threadId: 'thread-fixture-001'),
+        const AgentStreamCancelRequest(
+          threadId: 'thread-fixture-001',
+          runId: 'run-fixture-tool-001',
+        ),
       );
 
       expect(unavailable.acknowledged, isFalse);
@@ -178,7 +207,10 @@ void main() {
       connector.nextError = StateError('network down');
 
       final networkFailure = await client.cancel(
-        const AgentStreamCancelRequest(threadId: 'thread-fixture-001'),
+        const AgentStreamCancelRequest(
+          threadId: 'thread-fixture-001',
+          runId: 'run-fixture-tool-001',
+        ),
       );
 
       expect(networkFailure.acknowledged, isFalse);
@@ -186,212 +218,82 @@ void main() {
     });
 
     test(
-      'prewarm client posts hidden AG-UI payload and unwraps envelope responses',
+      'action client posts confirmation and rejection to action-scoped endpoints',
       () async {
         final connector = _RecordingControlHttpConnector(
-          AgentStreamControlHttpResponse(
+          const AgentStreamControlHttpResponse(
             statusCode: 200,
-            body: jsonEncode(_agentChatResponse('success')),
+            body:
+                '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"confirmed","side_effect_level":"medium","preview_payload":{},"idempotency_key":"agent-action-action-fixture-001","error_code":"","events":[{"type":"action.queued","action_id":"action-fixture-001","run_id":"run-fixture-001","payload":{"status":"queued"}}]}',
           ),
         );
-        final client = AgentStreamPrewarmClient(
+        final client = AgentStreamActionClient(
           endpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-prewarm'),
+            uri: Uri.parse('http://127.0.0.1:8769/v1/agent/actions'),
             token: 'secret-token',
           ),
           connector: connector,
         );
 
-        final result = await client.prewarm(
-          userId: 'demo-user-fixture',
-          threadId: 'thread-fixture-001',
-          runId: 'run-api-agent-001',
-          messageId: 'msg-user-001',
-          forwardedProps: {'source': 'runner-test'},
+        final confirmed = await client.confirm(
+          const AgentStreamActionConfirmRequest(
+            actionId: 'action-fixture-001',
+            editedApplyPayload: {'priority': 'normal'},
+          ),
         );
-        final postedBody = jsonDecode(connector.body!) as Map<String, Object?>;
-        final message = (postedBody['messages']! as List).single as Map;
-        final forwardedProps =
-            postedBody['forwardedProps']! as Map<String, Object?>;
 
-        expect(result.status, 'warmed');
-        expect(result.threadId, 'thread-fixture-001');
-        expect(result.runId, 'run-api-agent-001');
-        expect(result.responseId, 'resp-fixture-001');
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
+        expect(confirmed.accepted, isTrue);
+        expect(confirmed.actionStatus, 'confirmed');
+        expect(confirmed.events.single.type, 'action.queued');
+        expect(confirmed.events.single.mergeKey, 'action:action-fixture-001');
+        expect(
+          connector.uri!.path,
+          '/v1/agent/actions/action-fixture-001/confirm',
+        );
+        expect(
+          connector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
         expect(
           connector.headers,
           containsPair('Authorization', 'Bearer secret-token'),
         );
-        expect(message['content'], agentStreamPrewarmMessage);
-        expect(forwardedProps['prewarm'], isTrue);
-        expect(forwardedProps['source'], 'runner-test');
-      },
-    );
-
-    test(
-      'prewarm client accepts legacy aliases and root object responses',
-      () async {
-        final connector = _RecordingControlHttpConnector(
-          AgentStreamControlHttpResponse(
-            statusCode: 200,
-            body: jsonEncode(_agentChatResponse('legacy_alias')),
-          ),
+        expect(
+          connector.headers,
+          containsPair('Idempotency-Key', 'agent-action-action-fixture-001'),
         );
-        final client = AgentStreamPrewarmClient(
-          endpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-prewarm'),
-          ),
-          connector: connector,
-        );
-
-        final legacy = await client.prewarm(
-          userId: 'demo-user-fixture',
-          threadId: 'thread-fixture-001',
-          runId: 'run-api-agent-001',
-          messageId: 'msg-user-001',
-        );
-
-        expect(legacy.threadId, 'thread-fixture-001');
-        expect(legacy.runId, 'run-api-agent-001');
-        expect(legacy.responseId, 'resp-fixture-001');
+        expect(jsonDecode(connector.body!) as Map<String, Object?>, {
+          'edited_apply_payload': {'priority': 'normal'},
+        });
 
         connector.nextResponse = const AgentStreamControlHttpResponse(
           statusCode: 200,
-          body: '{"status":"already_warm","thread_id":"thread-fixture-001"}',
+          body:
+              '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"rejected","side_effect_level":"medium","preview_payload":{},"idempotency_key":"","error_code":"rejected_by_user"}',
         );
 
-        final root = await client.prewarm(
-          userId: 'demo-user-fixture',
-          threadId: 'thread-fixture-001',
-          runId: 'run-api-agent-002',
-          messageId: 'msg-user-002',
-        );
-
-        expect(root.status, 'already_warm');
-        expect(root.threadId, 'thread-fixture-001');
-      },
-    );
-
-    test('prewarm client preserves business and HTTP failures', () async {
-      final connector = _RecordingControlHttpConnector(
-        AgentStreamControlHttpResponse(
-          statusCode: 200,
-          body: jsonEncode(_agentChatResponse('business_error')),
-        ),
-      );
-      final client = AgentStreamPrewarmClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-prewarm'),
-        ),
-        connector: connector,
-      );
-
-      await expectLater(
-        client.prewarm(
-          userId: 'demo-user-fixture',
-          threadId: 'thread-fixture-001',
-          runId: 'run-api-agent-001',
-          messageId: 'msg-user-001',
-        ),
-        throwsA(isA<ApiBusinessException>()),
-      );
-
-      connector.nextResponse = AgentStreamControlHttpResponse(
-        statusCode: 502,
-        body: jsonEncode(_agentChatResponse('http_error')),
-      );
-
-      await expectLater(
-        client.prewarm(
-          userId: 'demo-user-fixture',
-          threadId: 'thread-fixture-001',
-          runId: 'run-api-agent-001',
-          messageId: 'msg-user-001',
-        ),
-        throwsA(isA<AgentStreamTransportException>()),
-      );
-    });
-
-    test(
-      'timing log client posts redaction-safe best-effort entries',
-      () async {
-        final connector = _RecordingControlHttpConnector(
-          const AgentStreamControlHttpResponse(statusCode: 204, body: ''),
-        );
-        final client = AgentStreamTimingLogClient(
-          endpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-timing-log'),
-            token: 'secret-token',
-          ),
-          connector: connector,
-        );
-
-        final result = await client.post(
-          const AgentStreamTimingLogEntry(
-            source: 'flutter',
-            stage: 'client.ws_open',
-            runId: 'run-fixture-001',
-            threadId: 'thread-fixture-001',
-            clientTimingId: 'timing-001',
-            userId: 'demo-user-fixture',
-            elapsedMs: 42,
-            clientTsMs: 1700000000000,
-            metadata: {'transport': 'websocket'},
+        final rejected = await client.reject(
+          const AgentStreamActionRejectRequest(
+            actionId: 'action-fixture-001',
+            reason: 'user_rejected',
           ),
         );
-        final body = jsonDecode(connector.body!) as Map<String, Object?>;
-        final redactedBody = redactLogMap(body).toString();
 
-        expect(result.sent, isTrue);
-        expect(result.statusCode, 204);
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
+        expect(rejected.accepted, isTrue);
+        expect(rejected.actionStatus, 'rejected');
         expect(
-          connector.headers,
-          containsPair('Authorization', 'Bearer secret-token'),
+          connector.uri!.path,
+          '/v1/agent/actions/action-fixture-001/reject',
         );
-        expect(body, containsPair('stage', 'client.ws_open'));
-        expect(body, containsPair('run_id', 'run-fixture-001'));
-        expect(body, containsPair('thread_id', 'thread-fixture-001'));
-        expect(body, containsPair('user_id', 'demo-user-fixture'));
-        expect(redactedBody, isNot(contains('thread-fixture-001')));
-        expect(redactedBody, isNot(contains('demo-user-fixture')));
+        expect(connector.headers?.containsKey('Idempotency-Key'), isFalse);
+        expect(jsonDecode(connector.body!) as Map<String, Object?>, {
+          'reason': 'user_rejected',
+        });
       },
     );
 
     test(
-      'timing log client never throws for HTTP or network failures',
-      () async {
-        final connector = _RecordingControlHttpConnector(
-          const AgentStreamControlHttpResponse(statusCode: 503, body: ''),
-        );
-        final client = AgentStreamTimingLogClient(
-          endpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/api/ag-ui-timing-log'),
-          ),
-          connector: connector,
-        );
-
-        final httpFailure = await client.post(
-          const AgentStreamTimingLogEntry(stage: 'client.ws_error'),
-        );
-
-        expect(httpFailure.sent, isFalse);
-        expect(httpFailure.statusCode, 503);
-
-        connector.nextError = StateError('network down');
-
-        final networkFailure = await client.post(
-          const AgentStreamTimingLogEntry(stage: 'client.ws_error'),
-        );
-
-        expect(networkFailure.sent, isFalse);
-        expect(networkFailure.error, isA<StateError>());
-      },
-    );
-
-    test(
-      'client event client posts IBCLC completion events best-effort',
+      'client event client records safe local events without user authority',
       () async {
         final fixture = readFixtureMap(
           'route_intents/media_viewer_and_ibclc_return_intents.json',
@@ -401,47 +303,28 @@ void main() {
         final completion = Map<String, Object?>.from(
           ibclc['completionPayload']! as Map,
         );
-        final connector = _RecordingControlHttpConnector(
-          const AgentStreamControlHttpResponse(
-            statusCode: 200,
-            body: '{"status":"ok"}',
-          ),
-        );
-        final client = AgentStreamClientEventClient(
-          endpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-            token: 'secret-token',
-          ),
-          connector: connector,
-        );
+        final recorded = <Map<String, Object?>>[];
+        final client = AgentStreamClientEventClient(recorder: recorded.add);
 
         final result = await client.post(
           AgentStreamClientEventRequest(
-            threadId: completion['conversation_id']! as String,
-            userId: 'demo-user-001',
             eventType: completion['event_type']! as String,
             label: '用户已完成一次 IBCLC 在线咨询',
             occurredAt: completion['completed_at']! as String,
             locale: 'zh-CN',
             timezone: 'Asia/Shanghai',
             metadata: {
-              'user_id': 'demo-user-001',
               'consult_id': completion['consult_id'],
               'source': 'ibclc-chat',
             },
           ),
         );
-        final body = jsonDecode(connector.body!) as Map<String, Object?>;
+        final body = recorded.single;
 
         expect(result.sent, isTrue);
-        expect(result.body, {'status': 'ok'});
-        expect(connector.uri!.queryParameters['token'], 'secret-token');
-        expect(
-          connector.headers,
-          containsPair('Authorization', 'Bearer secret-token'),
-        );
-        expect(body['thread_id'], 'thread-ibclc-001');
-        expect(body['user_id'], 'demo-user-001');
+        expect(result.body, body);
+        expect(body.containsKey('thread_id'), isFalse);
+        expect(body.containsKey('user_id'), isFalse);
         expect(body['event_type'], 'ibclc_consult_completed');
         expect(body['occurred_at'], '2026-06-29T10:00:00+08:00');
         expect(body['locale'], 'zh-CN');
@@ -451,35 +334,13 @@ void main() {
     );
 
     test(
-      'client event client reports guard, HTTP, and network failures',
+      'client event client reports guard and local recorder failures',
       () async {
-        final connector = _RecordingControlHttpConnector(
-          const AgentStreamControlHttpResponse(statusCode: 500, body: ''),
-        );
-        final client = AgentStreamClientEventClient(
-          endpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/api/client-event'),
-          ),
-          connector: connector,
-        );
-
-        final httpFailure = await client.post(
-          const AgentStreamClientEventRequest(
-            threadId: 'thread-fixture-001',
-            userId: 'demo-user-001',
-            eventType: 'milk_analysis_generated',
-            occurredAt: '2026-06-29T10:00:00+08:00',
-          ),
-        );
-
-        expect(httpFailure.sent, isFalse);
-        expect(httpFailure.statusCode, 500);
+        const client = AgentStreamClientEventClient(sent: false);
 
         final guardFailure = await client.post(
           const AgentStreamClientEventRequest(
-            threadId: '',
-            userId: 'demo-user-001',
-            eventType: 'milk_analysis_generated',
+            eventType: '',
             occurredAt: '2026-06-29T10:00:00+08:00',
           ),
         );
@@ -487,106 +348,45 @@ void main() {
         expect(guardFailure.sent, isFalse);
         expect(guardFailure.error, isA<AgentStreamPayloadException>());
 
-        connector.nextError = StateError('network down');
+        final failingClient = AgentStreamClientEventClient(
+          recorder: (_) => throw StateError('recorder down'),
+        );
 
-        final networkFailure = await client.post(
+        final recorderFailure = await failingClient.post(
           const AgentStreamClientEventRequest(
-            threadId: 'thread-fixture-001',
-            userId: 'demo-user-001',
             eventType: 'milk_analysis_generated',
             occurredAt: '2026-06-29T10:00:00+08:00',
           ),
         );
 
-        expect(networkFailure.sent, isFalse);
-        expect(networkFailure.error, isA<StateError>());
+        expect(recorderFailure.sent, isFalse);
+        expect(recorderFailure.error, isA<StateError>());
       },
     );
   });
 }
 
 const _request = AgentStreamRequest(
-  userId: 'demo-user-fixture',
   message: 'Review my pumping pattern.',
   threadId: 'thread-fixture-001',
   metadata: {'source': 'io-transport-test'},
 );
 
-Map<String, Object?> _payload(AgentStreamRequest request) {
-  return buildAgentRunPayload(
-    request,
-    runId: 'run-io-001',
-    messageId: 'msg-io-001',
-  );
-}
-
-Map<String, Object?> _agentChatResponse(String variant) {
-  final fixture = readFixtureMap('api/agent_chat/$variant.json');
-  return Map<String, Object?>.from(fixture['response']! as Map);
-}
-
-class _RecordingSseConnector implements AgentStreamSseConnector {
-  _RecordingSseConnector(this.seedFrames);
+class _RecordingSseGetConnector implements AgentStreamSseGetConnector {
+  _RecordingSseGetConnector(this.seedFrames);
 
   final Iterable<String> seedFrames;
   Uri? uri;
   Map<String, String>? headers;
-  String? body;
 
   @override
-  Stream<String> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) async* {
+  Stream<String> get(Uri uri, {required Map<String, String> headers}) async* {
     this.uri = uri;
     this.headers = headers;
-    this.body = body;
 
     for (final frame in seedFrames) {
       yield frame;
     }
-  }
-}
-
-class _RecordingWebSocketConnector implements AgentStreamWebSocketConnector {
-  _RecordingWebSocketConnector(this.connection);
-
-  final _RecordingWebSocketConnection connection;
-  Uri? uri;
-  Map<String, String>? headers;
-
-  @override
-  Future<AgentStreamWebSocketConnection> connect(
-    Uri uri, {
-    required Map<String, String> headers,
-  }) async {
-    this.uri = uri;
-    this.headers = headers;
-    return connection;
-  }
-}
-
-class _RecordingWebSocketConnection implements AgentStreamWebSocketConnection {
-  _RecordingWebSocketConnection(this.seedFrames);
-
-  final Iterable<String> seedFrames;
-  final sent = <String>[];
-  var closeCount = 0;
-
-  @override
-  Stream<String> get frames async* {
-    for (final frame in seedFrames) {
-      yield frame;
-    }
-  }
-
-  @override
-  void send(String text) => sent.add(text);
-
-  @override
-  Future<void> close() async {
-    closeCount += 1;
   }
 }
 

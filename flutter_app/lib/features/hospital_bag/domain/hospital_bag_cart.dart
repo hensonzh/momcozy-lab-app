@@ -1,6 +1,5 @@
 abstract interface class HospitalBagCartRepository {
   Future<HospitalBagCartSyncResult> syncCart({
-    required String userId,
     required List<HospitalBagPackedItem> items,
   });
 }

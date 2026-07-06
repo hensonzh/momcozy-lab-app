@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import '../network/api_envelope.dart';
 import '../network/transport_security_policy.dart';
 import '../privacy/log_redactor.dart';
 import 'agent_stream_client.dart';
@@ -10,9 +9,6 @@ import 'agent_stream_event.dart';
 
 typedef AgentStreamPayloadFactory =
     Map<String, Object?> Function(AgentStreamRequest request);
-
-const agentStreamPrewarmMessage =
-    '这是一次隐藏的新会话预热。请只回复“我在。”，不要调用工具，不要生成建议、表单、卡片或面向用户的内容。下一条用户消息才是真实对话。';
 
 class AgentStreamEndpoint {
   AgentStreamEndpoint({
@@ -25,16 +21,10 @@ class AgentStreamEndpoint {
   final String? token;
   final Map<String, String> headers;
 
-  Uri get uriWithToken {
-    final authToken = token?.trim();
-    if (authToken == null || authToken.isEmpty) return uri;
-    return uri.replace(
-      queryParameters: <String, String>{
-        ...uri.queryParameters,
-        'token': authToken,
-      },
-    );
-  }
+  Uri get requestUri => uri;
+
+  @Deprecated('Use requestUri. Tokens are sent in headers, never URLs.')
+  Uri get uriWithToken => requestUri;
 
   Map<String, String> requestHeaders({
     String accept = 'application/json',
@@ -51,7 +41,7 @@ class AgentStreamEndpoint {
   }
 
   Map<String, Object?> redactedLogContext() => redactLogMap({
-    'url': uriWithToken.toString(),
+    'url': requestUri.toString(),
     'headers': requestHeaders(includeContentType: true),
   });
 }
@@ -69,27 +59,23 @@ class AgentStreamCancelRequest {
   const AgentStreamCancelRequest({
     required this.threadId,
     this.runId,
-    this.userId,
+    this.reason,
   });
 
   final String threadId;
   final String? runId;
-  final String? userId;
+  final String? reason;
 
   Map<String, Object?> toMap() {
-    final normalizedThreadId = threadId.trim();
-    if (normalizedThreadId.isEmpty) {
-      throw const AgentStreamPayloadException('Missing threadId.');
+    final normalizedRunId = runId?.trim();
+    if (normalizedRunId == null || normalizedRunId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing runId.');
     }
 
-    final normalizedRunId = runId?.trim();
-    final normalizedUserId = userId?.trim();
+    final normalizedReason = reason?.trim();
     return {
-      'threadId': normalizedThreadId,
-      if (normalizedRunId != null && normalizedRunId.isNotEmpty)
-        'runId': normalizedRunId,
-      if (normalizedUserId != null && normalizedUserId.isNotEmpty)
-        'user_id': normalizedUserId,
+      if (normalizedReason != null && normalizedReason.isNotEmpty)
+        'reason': normalizedReason,
     };
   }
 }
@@ -118,6 +104,79 @@ class AgentStreamCancelResult {
   final int? statusCode;
   final Map<String, Object?>? body;
   final Object? error;
+}
+
+class AgentStreamActionConfirmRequest {
+  const AgentStreamActionConfirmRequest({
+    required this.actionId,
+    this.editedApplyPayload,
+    this.idempotencyKey,
+  });
+
+  final String actionId;
+  final Map<String, Object?>? editedApplyPayload;
+  final String? idempotencyKey;
+
+  Map<String, Object?> toMap() {
+    final normalizedActionId = actionId.trim();
+    if (normalizedActionId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing actionId.');
+    }
+
+    final normalizedIdempotencyKey = idempotencyKey?.trim();
+    return {
+      if (editedApplyPayload != null)
+        'edited_apply_payload': editedApplyPayload,
+      if (normalizedIdempotencyKey != null &&
+          normalizedIdempotencyKey.isNotEmpty)
+        'idempotency_key': normalizedIdempotencyKey,
+    };
+  }
+}
+
+class AgentStreamActionRejectRequest {
+  const AgentStreamActionRejectRequest({required this.actionId, this.reason});
+
+  final String actionId;
+  final String? reason;
+
+  Map<String, Object?> toMap() {
+    final normalizedActionId = actionId.trim();
+    if (normalizedActionId.isEmpty) {
+      throw const AgentStreamPayloadException('Missing actionId.');
+    }
+
+    final normalizedReason = reason?.trim();
+    return {
+      if (normalizedReason != null && normalizedReason.isNotEmpty)
+        'reason': normalizedReason,
+    };
+  }
+}
+
+class AgentStreamActionResult {
+  const AgentStreamActionResult({
+    required this.accepted,
+    this.statusCode,
+    this.body,
+    this.error,
+  });
+
+  final bool accepted;
+  final int? statusCode;
+  final Map<String, Object?>? body;
+  final Object? error;
+
+  String? get actionStatus {
+    final rawStatus = body?['status'];
+    return rawStatus is String ? rawStatus : null;
+  }
+
+  List<AgentStreamEvent> get events {
+    final rawEvents =
+        body?['events'] ?? body?['run_events'] ?? body?['stream_events'];
+    return _decodeActionEvents(rawEvents);
+  }
 }
 
 abstract interface class AgentStreamControlHttpConnector {
@@ -167,8 +226,12 @@ class AgentStreamCancelClient {
     AgentStreamCancelRequest request,
   ) async {
     try {
+      final runId = request.runId?.trim();
+      if (runId == null || runId.isEmpty) {
+        throw const AgentStreamPayloadException('Missing runId.');
+      }
       final response = await connector.post(
-        endpoint.uriWithToken,
+        _runScopedUri(endpoint.requestUri, runId, 'cancel'),
         headers: endpoint.requestHeaders(includeContentType: true),
         body: jsonEncode(request.toMap()),
       );
@@ -186,37 +249,8 @@ class AgentStreamCancelClient {
   }
 }
 
-class AgentStreamPrewarmResult {
-  const AgentStreamPrewarmResult({
-    required this.status,
-    required this.raw,
-    this.threadId,
-    this.runId,
-    this.responseId,
-    this.sessionState,
-  });
-
-  final String status;
-  final Map<String, Object?> raw;
-  final String? threadId;
-  final String? runId;
-  final String? responseId;
-  final Object? sessionState;
-
-  factory AgentStreamPrewarmResult.fromMap(Map<String, Object?> map) {
-    return AgentStreamPrewarmResult(
-      status: stringField(map, 'status') ?? '',
-      raw: map,
-      threadId: aliasString(map, 'thread_id', 'threadId'),
-      runId: aliasString(map, 'run_id', 'runId'),
-      responseId: aliasString(map, 'response_id', 'responseId'),
-      sessionState: map['session_state'] ?? map['sessionState'],
-    );
-  }
-}
-
-class AgentStreamPrewarmClient {
-  const AgentStreamPrewarmClient({
+class AgentStreamActionClient {
+  const AgentStreamActionClient({
     required this.endpoint,
     this.connector = const _DefaultControlHttpConnector(),
   });
@@ -224,143 +258,83 @@ class AgentStreamPrewarmClient {
   final AgentStreamEndpoint endpoint;
   final AgentStreamControlHttpConnector connector;
 
-  Future<AgentStreamPrewarmResult> prewarm({
-    required String userId,
-    required String threadId,
-    required String runId,
-    required String messageId,
-    String locale = 'en-US',
-    Map<String, Object?> forwardedProps = const <String, Object?>{},
+  Future<AgentStreamActionResult> confirm(
+    AgentStreamActionConfirmRequest request,
+  ) {
+    final idempotencyKey = request.idempotencyKey?.trim().isNotEmpty == true
+        ? request.idempotencyKey!.trim()
+        : 'agent-action-${request.actionId.trim()}';
+    return _postAction(
+      actionId: request.actionId,
+      suffix: 'confirm',
+      body: request.toMap(),
+      extraHeaders: {'Idempotency-Key': idempotencyKey},
+    );
+  }
+
+  Future<AgentStreamActionResult> reject(
+    AgentStreamActionRejectRequest request,
+  ) {
+    return _postAction(
+      actionId: request.actionId,
+      suffix: 'reject',
+      body: request.toMap(),
+    );
+  }
+
+  Future<AgentStreamActionResult> _postAction({
+    required String actionId,
+    required String suffix,
+    required Map<String, Object?> body,
+    Map<String, String> extraHeaders = const {},
   }) async {
-    final payload = buildAgentRunPayload(
-      AgentStreamRequest(
-        userId: userId,
-        message: agentStreamPrewarmMessage,
-        threadId: threadId,
-        locale: locale,
-        metadata: {...forwardedProps, 'prewarm': true},
-      ),
-      runId: runId,
-      messageId: messageId,
-    );
-    final response = await connector.post(
-      endpoint.uriWithToken,
-      headers: endpoint.requestHeaders(includeContentType: true),
-      body: jsonEncode(payload),
-    );
-
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw AgentStreamTransportException(
-        'prewarm failed: ${response.statusCode}',
-      );
-    }
-
-    final body = response.jsonBody;
-    if (body == null) {
-      throw const AgentStreamTransportException(
-        'prewarm response must be a JSON object',
-      );
-    }
-
-    final Object? data = isApiEnvelope(body) ? unwrapApiEnvelope(body) : body;
-    if (data is! Map) {
-      throw const AgentStreamTransportException(
-        'prewarm response data must be a JSON object',
-      );
-    }
-
-    return AgentStreamPrewarmResult.fromMap(Map<String, Object?>.from(data));
-  }
-}
-
-class AgentStreamTimingLogEntry {
-  const AgentStreamTimingLogEntry({
-    required this.stage,
-    this.source,
-    this.runId,
-    this.threadId,
-    this.clientTimingId,
-    this.userId,
-    this.elapsedMs,
-    this.clientTsMs,
-    this.metadata = const <String, Object?>{},
-  });
-
-  final String stage;
-  final String? source;
-  final String? runId;
-  final String? threadId;
-  final String? clientTimingId;
-  final String? userId;
-  final int? elapsedMs;
-  final int? clientTsMs;
-  final Map<String, Object?> metadata;
-
-  Map<String, Object?> toMap() {
-    final normalizedStage = stage.trim();
-    if (normalizedStage.isEmpty) {
-      throw const AgentStreamPayloadException('Missing timing stage.');
-    }
-
-    return {
-      if (source?.trim().isNotEmpty ?? false) 'source': source!.trim(),
-      'stage': normalizedStage,
-      if (runId?.trim().isNotEmpty ?? false) 'run_id': runId!.trim(),
-      if (threadId?.trim().isNotEmpty ?? false) 'thread_id': threadId!.trim(),
-      if (clientTimingId?.trim().isNotEmpty ?? false)
-        'client_timing_id': clientTimingId!.trim(),
-      if (userId?.trim().isNotEmpty ?? false) 'user_id': userId!.trim(),
-      if (elapsedMs != null) 'elapsed_ms': elapsedMs,
-      if (clientTsMs != null) 'client_ts_ms': clientTsMs,
-      if (metadata.isNotEmpty) 'metadata': metadata,
-    };
-  }
-}
-
-class AgentStreamTimingLogResult {
-  const AgentStreamTimingLogResult({
-    required this.sent,
-    this.statusCode,
-    this.error,
-  });
-
-  final bool sent;
-  final int? statusCode;
-  final Object? error;
-}
-
-class AgentStreamTimingLogClient {
-  const AgentStreamTimingLogClient({
-    required this.endpoint,
-    this.connector = const _DefaultControlHttpConnector(),
-  });
-
-  final AgentStreamEndpoint endpoint;
-  final AgentStreamControlHttpConnector connector;
-
-  Future<AgentStreamTimingLogResult> post(
-    AgentStreamTimingLogEntry entry,
-  ) async {
     try {
+      final normalizedActionId = actionId.trim();
+      if (normalizedActionId.isEmpty) {
+        throw const AgentStreamPayloadException('Missing actionId.');
+      }
       final response = await connector.post(
-        endpoint.uriWithToken,
-        headers: endpoint.requestHeaders(includeContentType: true),
-        body: jsonEncode(entry.toMap()),
+        _actionScopedUri(endpoint.requestUri, normalizedActionId, suffix),
+        headers: {
+          ...endpoint.requestHeaders(includeContentType: true),
+          ...extraHeaders,
+        },
+        body: jsonEncode(body),
       );
-      return AgentStreamTimingLogResult(
-        sent: response.statusCode >= 200 && response.statusCode < 300,
+      final accepted = response.statusCode >= 200 && response.statusCode < 300;
+      return AgentStreamActionResult(
+        accepted: accepted,
         statusCode: response.statusCode,
+        body: response.jsonBody,
       );
     } catch (error) {
-      return AgentStreamTimingLogResult(sent: false, error: error);
+      return AgentStreamActionResult(accepted: false, error: error);
     }
   }
+}
+
+Uri _runScopedUri(Uri runsUri, String runId, String suffix) {
+  final basePath = runsUri.path.endsWith('/')
+      ? runsUri.path.substring(0, runsUri.path.length - 1)
+      : runsUri.path;
+  return runsUri.replace(
+    path: '$basePath/$runId/$suffix',
+    queryParameters: null,
+  );
+}
+
+Uri _actionScopedUri(Uri actionsUri, String actionId, String suffix) {
+  final basePath = actionsUri.path.endsWith('/')
+      ? actionsUri.path.substring(0, actionsUri.path.length - 1)
+      : actionsUri.path;
+  return actionsUri.replace(
+    path: '$basePath/$actionId/$suffix',
+    queryParameters: null,
+  );
 }
 
 class AgentStreamClientEventRequest {
   const AgentStreamClientEventRequest({
-    required this.threadId,
-    required this.userId,
     required this.eventType,
     required this.occurredAt,
     this.label,
@@ -369,8 +343,6 @@ class AgentStreamClientEventRequest {
     this.metadata = const <String, Object?>{},
   });
 
-  final String threadId;
-  final String userId;
   final String eventType;
   final String occurredAt;
   final String? label;
@@ -379,16 +351,8 @@ class AgentStreamClientEventRequest {
   final Map<String, Object?> metadata;
 
   Map<String, Object?> toMap() {
-    final normalizedThreadId = threadId.trim();
-    final normalizedUserId = userId.trim();
     final normalizedEventType = eventType.trim();
     final normalizedOccurredAt = occurredAt.trim();
-    if (normalizedThreadId.isEmpty) {
-      throw const AgentStreamPayloadException('Missing threadId.');
-    }
-    if (normalizedUserId.isEmpty) {
-      throw const AgentStreamPayloadException('Missing userId.');
-    }
     if (normalizedEventType.isEmpty) {
       throw const AgentStreamPayloadException('Missing eventType.');
     }
@@ -397,8 +361,6 @@ class AgentStreamClientEventRequest {
     }
 
     return {
-      'thread_id': normalizedThreadId,
-      'user_id': normalizedUserId,
       'event_type': normalizedEventType,
       if (label?.trim().isNotEmpty ?? false) 'label': label!.trim(),
       'occurred_at': normalizedOccurredAt,
@@ -412,69 +374,63 @@ class AgentStreamClientEventRequest {
 class AgentStreamClientEventResult {
   const AgentStreamClientEventResult({
     required this.sent,
-    this.statusCode,
     this.body,
     this.error,
   });
 
   final bool sent;
-  final int? statusCode;
   final Map<String, Object?>? body;
   final Object? error;
 }
 
+typedef AgentStreamClientEventRecorder =
+    void Function(Map<String, Object?> event);
+
 class AgentStreamClientEventClient {
   const AgentStreamClientEventClient({
-    required this.endpoint,
-    this.connector = const _DefaultControlHttpConnector(),
+    this.recorder,
+    this.sent = true,
+    this.error,
   });
 
-  final AgentStreamEndpoint endpoint;
-  final AgentStreamControlHttpConnector connector;
+  final AgentStreamClientEventRecorder? recorder;
+  final bool sent;
+  final Object? error;
 
   Future<AgentStreamClientEventResult> post(
     AgentStreamClientEventRequest event,
   ) async {
     try {
-      final response = await connector.post(
-        endpoint.uriWithToken,
-        headers: endpoint.requestHeaders(includeContentType: true),
-        body: jsonEncode(event.toMap()),
-      );
-      return AgentStreamClientEventResult(
-        sent: response.statusCode >= 200 && response.statusCode < 300,
-        statusCode: response.statusCode,
-        body: response.jsonBody,
-      );
+      final body = event.toMap();
+      if (!sent) {
+        return AgentStreamClientEventResult(
+          sent: false,
+          body: body,
+          error: error,
+        );
+      }
+      recorder?.call(body);
+      return AgentStreamClientEventResult(sent: true, body: body);
     } catch (error) {
       return AgentStreamClientEventResult(sent: false, error: error);
     }
   }
 }
 
-abstract interface class AgentStreamSseConnector {
-  Stream<String> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  });
+abstract interface class AgentStreamSseGetConnector {
+  Stream<String> get(Uri uri, {required Map<String, String> headers});
 }
 
-class IoAgentStreamSseConnector implements AgentStreamSseConnector {
-  IoAgentStreamSseConnector({HttpClient? httpClient})
+class IoAgentStreamSseGetConnector implements AgentStreamSseGetConnector {
+  IoAgentStreamSseGetConnector({HttpClient? httpClient})
     : _httpClient = httpClient ?? HttpClient();
 
   final HttpClient _httpClient;
 
   @override
-  Stream<String> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) async* {
-    final request = await _httpClient.postUrl(uri);
+  Stream<String> get(Uri uri, {required Map<String, String> headers}) async* {
+    final request = await _httpClient.getUrl(uri);
     headers.forEach(request.headers.set);
-    request.write(body);
 
     final response = await request.close();
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -483,129 +439,105 @@ class IoAgentStreamSseConnector implements AgentStreamSseConnector {
       );
     }
 
-    var buffer = '';
-    await for (final chunk in response.transform(utf8.decoder)) {
-      buffer += chunk;
-      final blocks = buffer.split(RegExp(r'\r?\n\r?\n'));
-      buffer = blocks.removeLast();
-      for (final block in blocks) {
-        final trimmed = block.trim();
-        if (trimmed.isNotEmpty) yield '$trimmed\n\n';
-      }
+    yield* _decodeSseBlocks(response.transform(utf8.decoder));
+  }
+}
+
+Stream<String> _decodeSseBlocks(Stream<String> chunks) async* {
+  var buffer = '';
+  await for (final chunk in chunks) {
+    buffer += chunk;
+    final blocks = buffer.split(RegExp(r'\r?\n\r?\n'));
+    buffer = blocks.removeLast();
+    for (final block in blocks) {
+      final trimmed = block.trim();
+      if (trimmed.isNotEmpty) yield '$trimmed\n\n';
     }
-
-    if (buffer.trim().isNotEmpty) yield buffer;
   }
+
+  if (buffer.trim().isNotEmpty) yield buffer;
 }
 
-class AgentSseHttpTransport implements AgentStreamTransport {
-  const AgentSseHttpTransport({
-    required this.endpoint,
+class ProductionAgentSseTransport implements AgentStreamTransport {
+  const ProductionAgentSseTransport({
+    required this.runsEndpoint,
     required this.payloadFactory,
-    this.connector = const _DefaultSseConnector(),
+    this.runConnector = const _DefaultControlHttpConnector(),
+    this.streamConnector = const _DefaultSseGetConnector(),
   });
 
-  final AgentStreamEndpoint endpoint;
+  final AgentStreamEndpoint runsEndpoint;
   final AgentStreamPayloadFactory payloadFactory;
-  final AgentStreamSseConnector connector;
-
-  @override
-  Stream<String> frames(AgentStreamRequest request) {
-    return connector.post(
-      endpoint.uriWithToken,
-      headers: endpoint.requestHeaders(
-        accept: 'text/event-stream',
-        includeContentType: true,
-      ),
-      body: jsonEncode(payloadFactory(request)),
-    );
-  }
-}
-
-abstract interface class AgentStreamWebSocketConnection {
-  Stream<String> get frames;
-
-  void send(String text);
-
-  Future<void> close();
-}
-
-abstract interface class AgentStreamWebSocketConnector {
-  Future<AgentStreamWebSocketConnection> connect(
-    Uri uri, {
-    required Map<String, String> headers,
-  });
-}
-
-class IoAgentStreamWebSocketConnector implements AgentStreamWebSocketConnector {
-  const IoAgentStreamWebSocketConnector();
-
-  @override
-  Future<AgentStreamWebSocketConnection> connect(
-    Uri uri, {
-    required Map<String, String> headers,
-  }) async {
-    final socket = await WebSocket.connect(uri.toString(), headers: headers);
-    return _IoAgentStreamWebSocketConnection(socket);
-  }
-}
-
-class AgentWebSocketTransport implements AgentStreamTransport {
-  const AgentWebSocketTransport({
-    required this.endpoint,
-    required this.payloadFactory,
-    this.connector = const IoAgentStreamWebSocketConnector(),
-  });
-
-  final AgentStreamEndpoint endpoint;
-  final AgentStreamPayloadFactory payloadFactory;
-  final AgentStreamWebSocketConnector connector;
+  final AgentStreamControlHttpConnector runConnector;
+  final AgentStreamSseGetConnector streamConnector;
 
   @override
   Stream<String> frames(AgentStreamRequest request) async* {
-    final socket = await connector.connect(
-      endpoint.uriWithToken,
-      headers: endpoint.requestHeaders(),
+    final existingRunId = request.runId?.trim();
+    final runId = existingRunId != null && existingRunId.isNotEmpty
+        ? existingRunId
+        : await _createRun(request);
+    final afterSequence = request.afterSequence < 0 ? 0 : request.afterSequence;
+
+    final streamUri = _runScopedUri(
+      runsEndpoint.requestUri,
+      runId,
+      'stream',
+    ).replace(
+      queryParameters: {
+        'after_sequence': afterSequence.toString(),
+        'follow': 'true',
+        'limit': '200',
+      },
     );
 
-    try {
-      socket.send(jsonEncode(payloadFactory(request)));
-      await for (final frame in socket.frames) {
-        yield frame;
-      }
-    } finally {
-      await socket.close();
+    yield* streamConnector.get(
+      streamUri,
+      headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
+    );
+  }
+
+  Future<String> _createRun(AgentStreamRequest request) async {
+    final payload = Map<String, Object?>.from(payloadFactory(request));
+    final idempotencyKey =
+        stringField(payload, 'idempotency_key') ?? _agentRunIdempotencyKey();
+    payload['idempotency_key'] = idempotencyKey;
+
+    final response = await runConnector.post(
+      runsEndpoint.requestUri,
+      headers: {
+        ...runsEndpoint.requestHeaders(includeContentType: true),
+        'Idempotency-Key': idempotencyKey,
+      },
+      body: jsonEncode(payload),
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw AgentStreamTransportException(
+        'run create failed: ${response.statusCode}',
+      );
     }
+
+    final body = response.jsonBody;
+    final runId = body == null ? null : stringField(body, 'id');
+    if (runId == null || runId.isEmpty) {
+      throw const AgentStreamTransportException(
+        'run create response must include id',
+      );
+    }
+    return runId;
   }
 }
 
-class _IoAgentStreamWebSocketConnection
-    implements AgentStreamWebSocketConnection {
-  const _IoAgentStreamWebSocketConnection(this.socket);
-
-  final WebSocket socket;
-
-  @override
-  Stream<String> get frames =>
-      socket.where((event) => event is String).cast<String>();
-
-  @override
-  void send(String text) => socket.add(text);
-
-  @override
-  Future<void> close() => socket.close();
+String _agentRunIdempotencyKey() {
+  return 'agent-run-${DateTime.now().microsecondsSinceEpoch}';
 }
 
-class _DefaultSseConnector implements AgentStreamSseConnector {
-  const _DefaultSseConnector();
+class _DefaultSseGetConnector implements AgentStreamSseGetConnector {
+  const _DefaultSseGetConnector();
 
   @override
-  Stream<String> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-  }) {
-    return IoAgentStreamSseConnector().post(uri, headers: headers, body: body);
+  Stream<String> get(Uri uri, {required Map<String, String> headers}) {
+    return IoAgentStreamSseGetConnector().get(uri, headers: headers);
   }
 }
 
@@ -638,4 +570,17 @@ Map<String, Object?>? _decodeJsonObject(String body) {
   }
 
   return null;
+}
+
+List<AgentStreamEvent> _decodeActionEvents(Object? rawEvents) {
+  final values = switch (rawEvents) {
+    List value => value,
+    Map value => [value],
+    _ => const <Object?>[],
+  };
+  return List<AgentStreamEvent>.unmodifiable(
+    values.whereType<Map>().map(
+      (event) => AgentStreamEvent(Map<String, Object?>.from(event)),
+    ),
+  );
 }

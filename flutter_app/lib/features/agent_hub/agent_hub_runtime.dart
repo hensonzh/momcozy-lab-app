@@ -2,10 +2,10 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 
-const _defaultAgentHubSseUrl = String.fromEnvironment(
-  'MOMCOZY_AGENT_SSE_URL',
-  defaultValue: 'http://127.0.0.1:8768/api/ag-ui',
+const _defaultAgentHubRunsUrl = String.fromEnvironment(
+  'MOMCOZY_AGENT_RUNS_URL',
 );
 const _defaultAgentHubApiBaseUrl = String.fromEnvironment(
   'MOMCOZY_API_BASE_URL',
@@ -14,14 +14,12 @@ const _defaultAgentHubApiBaseUrl = String.fromEnvironment(
 const _defaultAgentHubCancelUrl = String.fromEnvironment(
   'MOMCOZY_AGENT_CANCEL_URL',
 );
-const _defaultAgentHubToken = String.fromEnvironment('MOMCOZY_API_TOKEN');
-const _defaultAgentHubUserId = String.fromEnvironment(
-  'MOMCOZY_DEFAULT_USER_ID',
-  defaultValue: 'demo-user',
+const _defaultAgentHubActionsUrl = String.fromEnvironment(
+  'MOMCOZY_AGENT_ACTIONS_URL',
 );
+const _defaultAgentHubToken = String.fromEnvironment('MOMCOZY_API_TOKEN');
 const _defaultAgentHubThreadId = String.fromEnvironment(
   'MOMCOZY_AGENT_THREAD_ID',
-  defaultValue: 'thread-demo',
 );
 const _defaultAgentHubLocale = String.fromEnvironment(
   'MOMCOZY_LOCALE',
@@ -30,8 +28,7 @@ const _defaultAgentHubLocale = String.fromEnvironment(
 
 AgentStreamRequest buildDefaultAgentHubRequest(String message) {
   return AgentStreamRequest(
-    userId: _defaultAgentHubUserId,
-    threadId: _defaultAgentHubThreadId,
+    threadId: _resolvedThreadId(_defaultAgentHubThreadId),
     message: message,
     locale: _defaultAgentHubLocale,
     metadata: const {'source': 'flutter-agent-hub'},
@@ -44,8 +41,7 @@ AgentStreamRequest buildSessionAgentHubRequest(
   String? threadId,
 }) {
   return AgentStreamRequest(
-    userId: session.userId,
-    threadId: _resolvedThreadId(session, threadId),
+    threadId: _resolvedThreadId(threadId),
     message: message,
     locale: session.locale,
     metadata: const {'source': 'flutter-agent-hub'},
@@ -55,8 +51,8 @@ AgentStreamRequest buildSessionAgentHubRequest(
 AgentStreamRunner createDefaultAgentHubRunner({AgentStreamEndpoint? endpoint}) {
   return AgentStreamRunner(
     SseAgentStreamClient(
-      AgentSseHttpTransport(
-        endpoint: endpoint ?? defaultAgentHubSseEndpoint(),
+      ProductionAgentSseTransport(
+        runsEndpoint: endpoint ?? defaultAgentHubSseEndpoint(),
         payloadFactory: buildDefaultAgentHubPayload,
       ),
     ),
@@ -69,8 +65,8 @@ AgentStreamRunner createSessionAgentHubRunner(
 }) {
   return AgentStreamRunner(
     SseAgentStreamClient(
-      AgentSseHttpTransport(
-        endpoint: endpoint ?? sessionAgentHubSseEndpoint(session),
+      ProductionAgentSseTransport(
+        runsEndpoint: endpoint ?? sessionAgentHubSseEndpoint(session),
         payloadFactory: buildDefaultAgentHubPayload,
       ),
     ),
@@ -94,22 +90,62 @@ AgentStreamCancelClient createSessionAgentHubCancelClient(
   );
 }
 
+AgentStreamActionClient createDefaultAgentHubActionClient({
+  AgentStreamEndpoint? endpoint,
+}) {
+  return AgentStreamActionClient(
+    endpoint: endpoint ?? defaultAgentHubActionEndpoint(),
+  );
+}
+
+AgentStreamActionClient createSessionAgentHubActionClient(
+  MomCozySession session, {
+  AgentStreamEndpoint? endpoint,
+}) {
+  return AgentStreamActionClient(
+    endpoint: endpoint ?? sessionAgentHubActionEndpoint(session),
+  );
+}
+
+AgentHubInteractionStateStore createSessionAgentHubInteractionStateStore(
+  MomCozySession session,
+) {
+  return FlutterSecureAgentHubInteractionStateStore(userId: session.userId);
+}
+
 AgentStreamEndpoint defaultAgentHubSseEndpoint() {
-  return _agentHubEndpoint(Uri.parse(_defaultAgentHubSseUrl));
+  final explicitRunsUrl = _defaultAgentHubRunsUrl.trim();
+  return _agentHubEndpoint(
+    explicitRunsUrl.isEmpty
+        ? _agentHubApiUri('/v1/agent/runs')
+        : Uri.parse(explicitRunsUrl),
+  );
 }
 
 AgentStreamEndpoint defaultAgentHubCancelEndpoint() {
   final explicitCancelUrl = _defaultAgentHubCancelUrl.trim();
   return _agentHubEndpoint(
     explicitCancelUrl.isEmpty
-        ? _agentHubApiUri('/api/ag-ui-cancel')
+        ? _agentHubApiUri('/v1/agent/runs')
         : Uri.parse(explicitCancelUrl),
   );
 }
 
-AgentStreamEndpoint sessionAgentHubSseEndpoint(MomCozySession session) {
+AgentStreamEndpoint defaultAgentHubActionEndpoint() {
+  final explicitActionsUrl = _defaultAgentHubActionsUrl.trim();
   return _agentHubEndpoint(
-    Uri.parse(_defaultAgentHubSseUrl),
+    explicitActionsUrl.isEmpty
+        ? _agentHubApiUri('/v1/agent/actions')
+        : Uri.parse(explicitActionsUrl),
+  );
+}
+
+AgentStreamEndpoint sessionAgentHubSseEndpoint(MomCozySession session) {
+  final explicitRunsUrl = _defaultAgentHubRunsUrl.trim();
+  return _agentHubEndpoint(
+    explicitRunsUrl.isEmpty
+        ? _agentHubApiUri('/v1/agent/runs')
+        : Uri.parse(explicitRunsUrl),
     token: session.accessToken,
   );
 }
@@ -118,8 +154,18 @@ AgentStreamEndpoint sessionAgentHubCancelEndpoint(MomCozySession session) {
   final explicitCancelUrl = _defaultAgentHubCancelUrl.trim();
   return _agentHubEndpoint(
     explicitCancelUrl.isEmpty
-        ? _agentHubApiUri('/api/ag-ui-cancel')
+        ? _agentHubApiUri('/v1/agent/runs')
         : Uri.parse(explicitCancelUrl),
+    token: session.accessToken,
+  );
+}
+
+AgentStreamEndpoint sessionAgentHubActionEndpoint(MomCozySession session) {
+  final explicitActionsUrl = _defaultAgentHubActionsUrl.trim();
+  return _agentHubEndpoint(
+    explicitActionsUrl.isEmpty
+        ? _agentHubApiUri('/v1/agent/actions')
+        : Uri.parse(explicitActionsUrl),
     token: session.accessToken,
   );
 }
@@ -139,18 +185,10 @@ Uri _agentHubApiUri(String path) {
 }
 
 Map<String, Object?> buildDefaultAgentHubPayload(AgentStreamRequest request) {
-  return buildAgentRunPayload(
-    request,
-    runId: _timestampedId('run-flutter'),
-    messageId: _timestampedId('msg-flutter'),
-  );
+  return buildProductionAgentRunPayload(request);
 }
 
-String _timestampedId(String prefix) {
-  return '$prefix-${DateTime.now().microsecondsSinceEpoch}';
-}
-
-String _resolvedThreadId(MomCozySession session, String? threadId) {
+String? _resolvedThreadId(String? threadId) {
   final explicitThreadId = threadId?.trim();
   if (explicitThreadId != null && explicitThreadId.isNotEmpty) {
     return explicitThreadId;
@@ -159,5 +197,5 @@ String _resolvedThreadId(MomCozySession session, String? threadId) {
   if (dartDefinedThreadId.isNotEmpty && dartDefinedThreadId != 'thread-demo') {
     return dartDefinedThreadId;
   }
-  return 'thread-${session.userId}';
+  return null;
 }

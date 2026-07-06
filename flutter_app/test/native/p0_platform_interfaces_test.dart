@@ -252,7 +252,6 @@ void main() {
         await upload.setConfig(
           apiBaseUrl: 'https://api.example.test',
           bearerToken: 'secret-token',
-          userId: 'demo-user',
         );
         await upload.updateDeviceSnapshot(
           const PumpDeviceSnapshot(
@@ -272,20 +271,14 @@ void main() {
           PumpAgentUploadSide.right,
           PumpAgentUploadSource.app,
         );
-        final firstWorkstate = await upload.uploadWorkstate(
-          userId: 'demo-user',
-        );
-        final duplicateWorkstate = await upload.uploadWorkstate(
-          userId: 'demo-user',
-        );
-        await upload.getProcessData(userId: 'demo-user');
-        await upload.uploadProcess(userId: 'demo-user');
+        final firstWorkstate = await upload.uploadWorkstate();
+        final duplicateWorkstate = await upload.uploadWorkstate();
+        await upload.getProcessData();
+        await upload.uploadProcess();
         final firstMilkRecord = await upload.uploadMilkRecord(
-          userId: 'demo-user',
           endedAtMs: 1782687600000,
         );
         final duplicateMilkRecord = await upload.uploadMilkRecord(
-          userId: 'demo-user',
           endedAtMs: 1782687600000,
         );
         upload.emitProgress(
@@ -317,7 +310,6 @@ void main() {
         expect(calls.first.payload, {
           'apiBaseUrl': 'https://api.example.test',
           'bearerToken': '***',
-          'userId': '***',
         });
         expect(calls[1].payload['snapshot'], {
           'L': {

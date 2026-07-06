@@ -41,7 +41,6 @@ const _documentedRoutePaths = {
   '/',
   '/calibration',
   '/pump',
-  '/records',
   '/schedule',
   '/status',
   '/community',

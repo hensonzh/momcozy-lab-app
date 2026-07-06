@@ -24,10 +24,34 @@ void main() {
 
         _expectIntentsMatchExpected(actual, expected);
         expect(actual.every((intent) => intent.payload.isNotEmpty), isTrue);
-        expect(actual[2].payload, containsPair('requiresContextEvent', true));
-        expect(actual[3].payload, containsPair('highlight', 'growth'));
+        expect(
+          actual.first.payload,
+          containsPair('requiresContextEvent', true),
+        );
       },
     );
+
+    test('retired reminder events no longer open dedicated flows', () {
+      const retiredEvents = ['summary', 'mom_baby', 'health_issue'];
+
+      for (final event in retiredEvents) {
+        final actual = routeIntentFromNativeNotification({
+          'path': '/',
+          'notifyJson': '{"event":"$event","body":"retired"}',
+        });
+
+        expect(actual?.type, 'OpenAgentHub', reason: event);
+        expect(actual?.path, '/', reason: event);
+        expect(actual?.payload, isEmpty, reason: event);
+      }
+
+      final growth = routeIntentFromNativeNotification({
+        'path': '/status?mmcNotify=growth',
+        'notifyJson': '{"event":"grown"}',
+      });
+
+      expect(growth?.type, isNot('OpenStatusGrowthHighlight'));
+    });
 
     test(
       'reject unsafe routes and keep unknown same-origin routes recoverable',

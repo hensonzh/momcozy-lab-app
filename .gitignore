@@ -29,5 +29,6 @@ test/
 !test/
 !test/fixtures/
 !test/fixtures/**
+test/reports/
 !src/test/
 !src/test/setup.ts

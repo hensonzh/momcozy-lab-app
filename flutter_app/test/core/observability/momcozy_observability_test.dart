@@ -79,11 +79,10 @@ void main() {
       );
 
       await successTransport.getJson(
-        '/v1/mom-baby/info/query?token=secret',
-        query: const {'user_id': 'demo-user'},
+        '/v1/profile/me?token=secret',
       );
       await expectLater(
-        failureTransport.postJson('/v1/pump/workstate'),
+        failureTransport.postJson('/v1/devices/pump-telemetry'),
         throwsA(isA<ApiHttpException>()),
       );
 
@@ -93,7 +92,7 @@ void main() {
       ]);
       expect(sink.events[0].attributes, {
         'method': 'GET',
-        'path': '/v1/mom-baby/info/query',
+        'path': '/v1/profile/me',
         'elapsedMs': sink.events[0].attributes['elapsedMs'],
         'statusCode': 200,
         'retryable': false,
@@ -101,7 +100,7 @@ void main() {
       expect(sink.events[0].attributes, containsPair('elapsedMs', isA<int>()));
       expect(sink.events[1].attributes, {
         'method': 'POST',
-        'path': '/v1/pump/workstate',
+        'path': '/v1/devices/pump-telemetry',
         'elapsedMs': sink.events[1].attributes['elapsedMs'],
         'statusCode': 503,
         'errorType': 'ApiHttpException',

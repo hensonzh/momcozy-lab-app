@@ -26,7 +26,10 @@ class TransportSecurityPolicy {
 
   static bool isLocalDevelopmentUri(Uri uri) {
     final host = uri.host.toLowerCase();
-    return host == 'localhost' || host == '127.0.0.1' || host == '::1';
+    return host == 'localhost' ||
+        host == '127.0.0.1' ||
+        host == '::1' ||
+        host == '10.0.2.2';
   }
 
   static Uri _requireSecureOrLocal(

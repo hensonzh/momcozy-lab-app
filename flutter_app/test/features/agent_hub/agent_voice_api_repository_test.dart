@@ -12,17 +12,16 @@ import '../../support/fixture_reader.dart';
 void main() {
   group('Agent voice API repository', () {
     test('transcribes a speech chunk through multipart contract', () async {
-      final multipart = FixtureApiMultipartTransport({
-        'status': 200,
-        'data': {'text': '  hello from voice  '},
+      final multipart = FixtureApiMultipartTransport(const {
+        'text': '  hello from voice  ',
       });
       final repository = AgentVoiceApiRepository(
         multipartTransport: multipart,
         baseUri: Uri.parse('http://127.0.0.1:8769'),
+        token: 'voice-token',
       );
 
       final text = await repository.transcribeSpeechChunk(
-        userId: 'demo-user-fixture',
         language: 'zh-CN',
         file: const ApiUploadFile(
           name: 'speech.wav',
@@ -34,10 +33,12 @@ void main() {
 
       expect(text, 'hello from voice');
       expect(multipart.lastPath, speechTranscribeChunkEndpoint);
-      expect(multipart.lastFields, {
-        'user_id': 'demo-user-fixture',
-        'language': 'zh-CN',
-      });
+      expect(multipart.lastFields, {'language': 'zh-CN'});
+      expect(multipart.lastHeaders, containsPair('Accept', 'application/json'));
+      expect(
+        multipart.lastHeaders,
+        containsPair('Authorization', 'Bearer voice-token'),
+      );
       expect(multipart.lastFile!.mimeType, 'audio/wav');
     });
 
@@ -56,7 +57,6 @@ void main() {
       );
 
       final text = await repository.transcribeSpeechChunk(
-        userId: 'demo-user-fixture',
         file: const ApiUploadFile(
           name: 'speech.webm',
           mimeType: 'audio/webm',
@@ -82,7 +82,6 @@ void main() {
 
       expect(
         repository.transcribeSpeechChunk(
-          userId: 'demo-user-fixture',
           file: const ApiUploadFile(
             name: 'speech.webm',
             mimeType: 'audio/webm',
@@ -113,7 +112,6 @@ void main() {
 
         final chunks = await repository
             .realtimeVoicePcmStream(
-              userId: 'demo-user-fixture',
               text: 'Short fixture text for playback.',
             )
             .toList();
@@ -124,7 +122,6 @@ void main() {
         ]);
         expect(connector.uri!.path, realtimeVoiceStreamEndpoint);
         expect(connector.uri!.queryParameters, {
-          'user_id': 'demo-user-fixture',
           'text': 'Short fixture text for playback.',
         });
         expect(connector.headers, containsPair('Accept', 'audio/pcm'));
@@ -160,22 +157,18 @@ void main() {
       );
 
       final streamContext = repository.redactedRealtimeVoiceStreamLogContext(
-        userId: 'demo-user-fixture',
         text: 'private voice playback text',
       );
-      final sessionContext = repository.redactedRealtimeVoiceSessionLogContext(
-        userId: 'demo-user-fixture',
-      );
+      final sessionContext = repository.redactedRealtimeVoiceSessionLogContext();
 
       expect(
         streamContext['url'],
         'https://voice.example.test/base/v1/realtime-voice-stream'
-        '?user_id=***&text=***',
+        '?text=***',
       );
       expect(
         sessionContext['url'],
-        'wss://voice.example.test/base/v1/realtime-voice-session'
-        '?user_id=***&token=***',
+        'wss://voice.example.test/base/v1/realtime-voice-session',
       );
       expect(streamContext['headers'], containsPair('Authorization', '***'));
       expect(sessionContext['headers'], containsPair('Authorization', '***'));
@@ -206,7 +199,6 @@ void main() {
       expect(behavior['show_error_toast'], isFalse);
       expect(
         repository.realtimeVoicePcmStream(
-          userId: 'demo-user-fixture',
           text: 'Short fixture text for playback.',
         ),
         emitsError(isA<ApiRequestCancelledException>()),
@@ -233,15 +225,16 @@ void main() {
         );
 
         final events = await repository
-            .realtimeVoiceSession(userId: 'demo-user-fixture')
+            .realtimeVoiceSession()
             .toList();
 
         expect(connector.uri!.scheme, 'wss');
         expect(connector.uri!.path, '/base/v1/realtime-voice-session');
-        expect(connector.uri!.queryParameters, {
-          'user_id': 'demo-user-fixture',
-          'token': 'voice-token',
-        });
+        expect(connector.uri!.queryParameters, isEmpty);
+        expect(
+          connector.headers,
+          containsPair('Authorization', 'Bearer voice-token'),
+        );
         expect(events.map((event) => event.type), [
           AgentVoiceSessionEventType.opened,
           AgentVoiceSessionEventType.audioChunk,
@@ -287,7 +280,7 @@ void main() {
         expect(textRunState.phase, AgentStreamRunPhase.streaming);
         expect(voiceState.phase, AgentVoicePhase.playing);
         await expectLater(
-          repository.realtimeVoiceSession(userId: 'demo-user-fixture'),
+          repository.realtimeVoiceSession(),
           emitsInOrder([
             isA<AgentVoiceSessionEvent>().having(
               (event) => event.type,

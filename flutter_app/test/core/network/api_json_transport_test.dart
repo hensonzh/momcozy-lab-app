@@ -22,15 +22,15 @@ void main() {
       );
 
       final response = await transport.getJson(
-        '/v1/mom-baby/info/query',
-        query: {'user_id': 'demo-user-fixture'},
+        '/v1/files',
+        query: {'limit': 10},
       );
 
       expect(response['status'], 200);
       expect(
         connector.uri,
         Uri.parse(
-          'http://127.0.0.1:8769/v1/mom-baby/info/query?existing=1&user_id=demo-user-fixture',
+          'http://127.0.0.1:8769/v1/files?existing=1&limit=10',
         ),
       );
       expect(connector.headers, containsPair('Accept', 'application/json'));
@@ -56,20 +56,26 @@ void main() {
       );
 
       await transport.postJson(
-        '/v1/pump/workstate',
-        body: {'user_id': 'demo-user-fixture'},
+        '/v1/records/feeding',
+        body: {
+          'feed_time': '2026-06-29T08:00:00Z',
+          'feed_type': 'bottle',
+        },
+        headers: {'Idempotency-Key': 'idem-001'},
       );
 
       expect(
         connector.uri,
-        Uri.parse('http://127.0.0.1:8769/v1/pump/workstate'),
+        Uri.parse('http://127.0.0.1:8769/v1/records/feeding'),
       );
       expect(
         connector.headers,
         containsPair('Content-Type', 'application/json'),
       );
+      expect(connector.headers, containsPair('Idempotency-Key', 'idem-001'));
       expect(jsonDecode(connector.body!) as Map<String, Object?>, {
-        'user_id': 'demo-user-fixture',
+        'feed_time': '2026-06-29T08:00:00Z',
+        'feed_type': 'bottle',
       });
     });
 
@@ -83,6 +89,21 @@ void main() {
       );
       final malformedConnector = _RecordingApiHttpConnector(
         const ApiHttpResponse(statusCode: 200, statusText: 'OK', body: '[]'),
+      );
+      final nonJsonHttpConnector = _RecordingApiHttpConnector(
+        const ApiHttpResponse(
+          statusCode: 503,
+          statusText: 'Service Unavailable',
+          body: '<html>temporarily unavailable</html>',
+        ),
+      );
+      final productionErrorConnector = _RecordingApiHttpConnector(
+        const ApiHttpResponse(
+          statusCode: 429,
+          statusText: 'Too Many Requests',
+          body:
+              '{"error":{"code":"rate_limited","message":"Slow down","request_id":"req-prod","details":{"retry_after_seconds":60}}}',
+        ),
       );
 
       await expectLater(
@@ -104,6 +125,43 @@ void main() {
           connector: malformedConnector,
         ).getJson('/v1/user/profile'),
         throwsA(isA<ApiEnvelopeFormatException>()),
+      );
+      await expectLater(
+        IoApiJsonTransport(
+          baseUri: Uri.parse('http://127.0.0.1:8769'),
+          connector: nonJsonHttpConnector,
+        ).getJson('/v1/user/profile'),
+        throwsA(
+          isA<ApiHttpException>()
+              .having((error) => error.statusCode, 'statusCode', 503)
+              .having((error) => error.body, 'body', isNull),
+        ),
+      );
+      await expectLater(
+        IoApiJsonTransport(
+          baseUri: Uri.parse('http://127.0.0.1:8769'),
+          connector: productionErrorConnector,
+        ).getJson('/v1/records/feeding'),
+        throwsA(
+          isA<ApiHttpException>()
+              .having((error) => error.statusCode, 'statusCode', 429)
+              .having((error) => error.requestId, 'requestId', 'req-prod')
+              .having(
+                (error) => error.effectiveRequestId,
+                'effectiveRequestId',
+                'req-prod',
+              )
+              .having(
+                (error) => error.errorCode,
+                'errorCode',
+                'rate_limited',
+              )
+              .having(
+                (error) => error.errorMessage,
+                'errorMessage',
+                'Slow down',
+              ),
+        ),
       );
     });
 
@@ -129,7 +187,7 @@ void main() {
           baseUri: Uri.parse('http://127.0.0.1:8769'),
           token: ' ',
           connector: missingTokenConnector,
-        ).getJson('/v1/mom-baby/info/query');
+        ).getJson('/v1/profile/me');
 
         expect(
           missingTokenConnector.headers,
@@ -140,7 +198,7 @@ void main() {
             baseUri: Uri.parse('http://127.0.0.1:8769'),
             token: 'expired-token',
             connector: expiredTokenConnector,
-          ).getJson('/v1/mom-baby/info/query'),
+          ).getJson('/v1/profile/me'),
           throwsA(
             isA<ApiHttpException>()
                 .having((error) => error.statusCode, 'statusCode', 401)
