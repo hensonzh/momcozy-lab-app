@@ -1103,7 +1103,30 @@ void main() {
     tester,
   ) async {
     const actionId = '11111111-1111-1111-1111-111111111111';
-    final connector = _RecordingActionConnector();
+    final connector = _RecordingActionConnector(
+      response: AgentStreamControlHttpResponse(
+        statusCode: 200,
+        body: jsonEncode({
+          'id': actionId,
+          'run_id': 'run-action',
+          'status': 'queued',
+          'events': [
+            {
+              'type': 'action.queued',
+              'thread_id': 'thread-action',
+              'run_id': 'run-action',
+              'action_id': actionId,
+              'payload': {'status': 'queued'},
+            },
+            {
+              'type': 'run.completed',
+              'thread_id': 'thread-action',
+              'run_id': 'run-action',
+            },
+          ],
+        }),
+      ),
+    );
     final actionClient = AgentStreamActionClient(
       endpoint: AgentStreamEndpoint(
         uri: Uri.parse('http://127.0.0.1:8769/v1/agent/actions'),
@@ -1199,7 +1222,12 @@ void main() {
       containsPair('Idempotency-Key', 'agent-action-$actionId'),
     );
     expect(jsonDecode(connector.body!) as Map<String, Object?>, isEmpty);
-    expect(find.text('已确认'), findsOneWidget);
+    expect(find.text('等待确认后继续'), findsNothing);
+    expect(find.text('已提交'), findsOneWidget);
+    expect(
+      find.byKey(ValueKey('agent-action-confirm-$actionId')),
+      findsNothing,
+    );
   });
 
   testWidgets('Agent Hub renders safe tool failure progress', (tester) async {
@@ -1789,6 +1817,14 @@ class _RecordingCancelConnector implements AgentStreamControlHttpConnector {
 }
 
 class _RecordingActionConnector implements AgentStreamControlHttpConnector {
+  _RecordingActionConnector({
+    this.response = const AgentStreamControlHttpResponse(
+      statusCode: 200,
+      body: '{}',
+    ),
+  });
+
+  final AgentStreamControlHttpResponse response;
   final called = Completer<void>();
   Uri? uri;
   Map<String, String>? headers;
@@ -1804,7 +1840,7 @@ class _RecordingActionConnector implements AgentStreamControlHttpConnector {
     this.headers = headers;
     this.body = body;
     if (!called.isCompleted) called.complete();
-    return const AgentStreamControlHttpResponse(statusCode: 200, body: '{}');
+    return response;
   }
 }
 

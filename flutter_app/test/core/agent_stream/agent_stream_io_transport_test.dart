@@ -171,7 +171,7 @@ void main() {
           const AgentStreamControlHttpResponse(
             statusCode: 200,
             body:
-                '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"confirmed","side_effect_level":"medium","preview_payload":{},"idempotency_key":"agent-action-action-fixture-001","error_code":""}',
+                '{"id":"action-fixture-001","run_id":"run-fixture-001","actor_user_id":"00000000-0000-0000-0000-000000000001","action_type":"support_ticket_create","target_type":"support_ticket","target_id":"","status":"confirmed","side_effect_level":"medium","preview_payload":{},"idempotency_key":"agent-action-action-fixture-001","error_code":"","events":[{"type":"action.queued","action_id":"action-fixture-001","run_id":"run-fixture-001","payload":{"status":"queued"}}]}',
           ),
         );
         final client = AgentStreamActionClient(
@@ -191,6 +191,8 @@ void main() {
 
         expect(confirmed.accepted, isTrue);
         expect(confirmed.actionStatus, 'confirmed');
+        expect(confirmed.events.single.type, 'action.queued');
+        expect(confirmed.events.single.mergeKey, 'action:action-fixture-001');
         expect(
           connector.uri!.path,
           '/v1/agent/actions/action-fixture-001/confirm',

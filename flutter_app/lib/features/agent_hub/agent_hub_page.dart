@@ -541,7 +541,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _localActionStatuses[action.id] = result.accepted
           ? result.actionStatus ?? 'confirmed'
           : 'failed';
+      _applyActionResultEvents(result.events);
     });
+    _persistInteractionState();
   }
 
   Future<void> _rejectAction(AgentActionCardView action) async {
@@ -564,7 +566,20 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _localActionStatuses[action.id] = result.accepted
           ? result.actionStatus ?? 'rejected'
           : 'failed';
+      _applyActionResultEvents(result.events);
     });
+    _persistInteractionState();
+  }
+
+  void _applyActionResultEvents(List<AgentStreamEvent> events) {
+    if (events.isEmpty) return;
+    var nextState = _state.phase == AgentStreamRunPhase.waitingForConfirmation
+        ? _state.copyWith(phase: AgentStreamRunPhase.streaming)
+        : _state;
+    for (final event in events) {
+      nextState = nextState.applyEvent(event);
+    }
+    _state = nextState;
   }
 
   @override
