@@ -140,9 +140,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final interactionState = _agentHubInteractionStates[stateCacheKey] ??=
         _AgentHubInteractionState();
     _interactionState = interactionState;
-    _state = interactionState.historyMessages == null
+    final restoredRunState = interactionState.historyMessages == null
         ? widget.state
         : interactionState.runState;
+    _state = restoredRunState.isActive
+        ? restoredRunState.markDisconnected('连接中断，请重试')
+        : restoredRunState;
     _historyMessages = [
       ...(interactionState.historyMessages ?? widget.historyMessages),
     ];
@@ -152,6 +155,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _attachedImages.addAll(interactionState.attachedImages);
     _autoVoiceEnabled = interactionState.autoVoiceEnabled;
     _activeRequest = interactionState.activeRequest;
+    interactionState.runState = _state;
   }
 
   void _persistInteractionState() {
