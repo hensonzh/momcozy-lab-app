@@ -204,6 +204,8 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 npm run flutter:release-gate
 
 ## 6. Phase 3：灰度发布
 
+当前状态：Blocked。进入本阶段前必须先完成 Phase 1 的 release signing/staging 配置、Phase 2 的真机 P0 验收，并产出可分发的签名 production/internal candidate。
+
 ### 6.1 渠道
 
 - [ ] Internal build：团队/QA。
@@ -234,6 +236,8 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 npm run flutter:release-gate
 
 ## 7. Phase 4：正式 Cutover
 
+当前状态：Blocked。rollback manifest 本地可生成，但正式 cutover 需要灰度指标达标、发布决策确认和 signed production 包。
+
 ### 7.1 执行项
 
 - [ ] 冻结旧 Web/Capacitor 发布。
@@ -248,7 +252,7 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 npm run flutter:release-gate
 必须保留：
 
 - [ ] 上一版旧 Web/Capacitor 发布包或 bundle。
-- [ ] `legacy_web/dist/flutter-rollback-manifest.json`。
+- [x] `legacy_web/dist/flutter-rollback-manifest.json`。
 - [ ] Flutter APK/AAB sha256。
 - [ ] 数据迁移幂等说明。
 - [ ] 不可逆迁移项清单。
@@ -261,6 +265,8 @@ Rollback 触发条件：
 - 后端兼容性导致核心页面不可用。
 
 ## 8. Phase 5：旧版退役
+
+当前状态：Blocked。旧版退役必须在 Phase 4 正式 cutover 后完成稳定观察窗口，当前不得删除 rollback 必需资源。
 
 ### 8.1 软退役
 
@@ -292,3 +298,4 @@ Rollback 触发条件：
 | 2026-07-06 | 0 | Android emulator smoke | Done | `npm run flutter:emulator-smoke` 通过，设备 `emulator-5554`。 |
 | 2026-07-06 | 1 | Phase 1 本地发布配置审计 | Blocked | packaging/security 通过；release signing/staging smoke/appId cutover 等待外部配置和决策。 |
 | 2026-07-06 | 2 | Phase 2 非真机平台 preflight | Done | `npm run flutter:p0:platform-smoke` 通过；真机/真泵矩阵仍阻塞。 |
+| 2026-07-06 | 4 | Rollback manifest precheck | Done | `npm run flutter:rollback-check` 通过；正式 rollback rehearsal 等待 signed candidate。 |
