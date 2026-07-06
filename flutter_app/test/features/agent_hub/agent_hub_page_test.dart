@@ -671,6 +671,54 @@ void main() {
     expect(find.text('图片 1'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub clears cached active runs when restored', (
+    tester,
+  ) async {
+    final cacheKey = Object();
+    final client = _NeverEndingAgentStreamClient();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '生成今日建议',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+    expect(find.text('正在生成回复'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-stop-button')), findsOneWidget);
+
+    await tester.pumpWidget(_host(const SizedBox.shrink()));
+    await tester.pump();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          stateCacheKey: cacheKey,
+          runner: AgentStreamRunner(client),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('正在生成回复'), findsNothing);
+    expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
+    expect(find.text('连接中断，请重试'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
+  });
+
   testWidgets('Agent Hub sends image-only request with legacy prompt', (
     tester,
   ) async {
@@ -1652,6 +1700,19 @@ class _FixtureAgentStreamClient implements AgentStreamClient {
       yield event;
     }
   }
+}
+
+class _NeverEndingAgentStreamClient implements AgentStreamClient {
+  final requests = <AgentStreamRequest>[];
+  final _controller = StreamController<AgentStreamEvent>();
+
+  @override
+  Stream<AgentStreamEvent> stream(AgentStreamRequest request) {
+    requests.add(request);
+    return _controller.stream;
+  }
+
+  Future<void> dispose() => _controller.close();
 }
 
 class _RetryAgentStreamClient implements AgentStreamClient {
