@@ -250,6 +250,7 @@ void main() {
     expect(inputStyle?.height, greaterThanOrEqualTo(1.55));
     _expectComposerControlsInsideSurface(tester);
     _expectComposerControlsUseDefaultInsets(tester);
+    _expectComposerControlsShareVerticalCenter(tester);
     _expectComposerExpandedInputUsesWideTextArea(tester);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -308,6 +309,7 @@ void main() {
       expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
       _expectComposerControlsInsideSurface(tester);
       _expectComposerControlsUseDefaultInsets(tester);
+      _expectComposerControlsShareVerticalCenter(tester);
       _expectComposerExpandedInputUsesWideTextArea(tester);
     },
   );
@@ -361,6 +363,7 @@ void main() {
     expect(_composerSurfaceHeight(tester), greaterThan(compactHeight));
     _expectComposerControlsInsideSurface(tester);
     _expectComposerControlsUseDefaultInsets(tester);
+    _expectComposerControlsShareVerticalCenter(tester);
     _expectComposerExpandedInputUsesWideTextArea(tester);
   });
 
@@ -1433,6 +1436,41 @@ void _expectComposerControlsVerticallyCentered(WidgetTester tester) {
   expect(sendRect.center.dy, closeTo(surfaceRect.center.dy, 0.5));
   expect(imageRect.center.dy, closeTo(voiceRect.center.dy, 0.5));
   expect(sendRect.center.dy, closeTo(voiceRect.center.dy, 0.5));
+}
+
+void _expectComposerControlsShareVerticalCenter(WidgetTester tester) {
+  final imageRect = tester.getRect(
+    find.byKey(const ValueKey('agent-image-button')),
+  );
+  final voiceRect = tester.getRect(
+    find.byKey(const ValueKey('agent-voice-button')),
+  );
+  final sendRect = tester.getRect(
+    find.byKey(const ValueKey('agent-send-button')),
+  );
+  final sendVisualRect = tester.getRect(
+    find.byKey(const ValueKey('agent-send-button-visual')),
+  );
+
+  final rectSummary =
+      'image=$imageRect voice=$voiceRect send=$sendRect '
+      'sendVisual=$sendVisualRect';
+
+  expect(
+    imageRect.center.dy,
+    closeTo(voiceRect.center.dy, 0.5),
+    reason: rectSummary,
+  );
+  expect(
+    sendRect.center.dy,
+    closeTo(voiceRect.center.dy, 0.5),
+    reason: rectSummary,
+  );
+  expect(
+    sendVisualRect.center.dy,
+    closeTo(voiceRect.center.dy, 0.5),
+    reason: rectSummary,
+  );
 }
 
 void _expectComposerInputVerticallyCentered(WidgetTester tester) {

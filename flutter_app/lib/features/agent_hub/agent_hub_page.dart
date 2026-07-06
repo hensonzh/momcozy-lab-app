@@ -1791,6 +1791,13 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                   padding: inputPadding,
                   child: composerInput,
                 );
+                final controlButtonStyle = IconButton.styleFrom(
+                  fixedSize: const Size.square(_controlSize),
+                  minimumSize: const Size.square(_controlSize),
+                  maximumSize: const Size.square(_controlSize),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: EdgeInsets.zero,
+                );
 
                 return DecoratedBox(
                   key: const ValueKey('agent-composer-surface'),
@@ -1836,6 +1843,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                               height: _controlSize,
                             ),
                             padding: EdgeInsets.zero,
+                            style: controlButtonStyle,
                           ),
                         ),
                         positionControl(
@@ -1857,6 +1865,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                               height: _controlSize,
                             ),
                             padding: EdgeInsets.zero,
+                            style: controlButtonStyle,
                           ),
                         ),
                         positionControl(
@@ -1894,6 +1903,12 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                               ),
                             ),
                             tooltip: isRunning ? '停止' : '发送',
+                            visualDensity: VisualDensity.compact,
+                            constraints: const BoxConstraints.tightFor(
+                              width: _controlSize,
+                              height: _controlSize,
+                            ),
+                            padding: EdgeInsets.zero,
                             style: IconButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               disabledBackgroundColor: Colors.transparent,
