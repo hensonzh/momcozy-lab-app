@@ -2,6 +2,8 @@
 
 本文以旧 Web 版 `AgentHub` 为基准，约束 Flutter 版智能体对话页的核心 UI/UX 逻辑。
 
+更细的可执行测试矩阵见 `docs/ui-parity/agent-hub-ui-ux-test-cases.md`。
+
 ## 核心布局
 
 - 顶部控制区固定在聊天 viewport 上方，包含语音模式和新建会话。
