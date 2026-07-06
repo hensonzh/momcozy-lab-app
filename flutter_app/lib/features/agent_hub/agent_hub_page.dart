@@ -1755,6 +1755,43 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                   );
                 }
 
+                final composerInput = TextField(
+                  key: const ValueKey('agent-composer-input'),
+                  controller: controller,
+                  minLines: 1,
+                  maxLines: 5,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  enabled: !isRunning,
+                  style: inputTextStyle,
+                  onChanged: onChanged,
+                  scrollPadding: const EdgeInsets.only(bottom: 96),
+                  decoration: InputDecoration(
+                    hintText: '和 CozyMate 聊聊...',
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    filled: false,
+                    isDense: true,
+                    isCollapsed: true,
+                    contentPadding: EdgeInsets.zero,
+                    hintStyle: TextStyle(
+                      fontFamily: MomCozyTypography.fontFamily,
+                      fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                      fontSize: 14,
+                      height: 1.6,
+                      color: MomCozyColors.mutedForeground.withValues(
+                        alpha: 0.82,
+                      ),
+                    ),
+                  ),
+                );
+                final inputFrame = Padding(
+                  key: const ValueKey('agent-composer-input-frame'),
+                  padding: inputPadding,
+                  child: composerInput,
+                );
+
                 return DecoratedBox(
                   key: const ValueKey('agent-composer-surface'),
                   decoration: BoxDecoration(
@@ -1776,44 +1813,10 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                       minHeight: _surfaceMinHeight,
                     ),
                     child: Stack(
+                      alignment: Alignment.centerLeft,
                       clipBehavior: Clip.none,
                       children: [
-                        Padding(
-                          key: const ValueKey('agent-composer-input-frame'),
-                          padding: inputPadding,
-                          child: TextField(
-                            key: const ValueKey('agent-composer-input'),
-                            controller: controller,
-                            minLines: 1,
-                            maxLines: 5,
-                            keyboardType: TextInputType.multiline,
-                            textInputAction: TextInputAction.newline,
-                            enabled: !isRunning,
-                            style: inputTextStyle,
-                            onChanged: onChanged,
-                            scrollPadding: const EdgeInsets.only(bottom: 96),
-                            decoration: InputDecoration(
-                              hintText: '和 CozyMate 聊聊...',
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              filled: false,
-                              isDense: true,
-                              isCollapsed: true,
-                              contentPadding: EdgeInsets.zero,
-                              hintStyle: TextStyle(
-                                fontFamily: MomCozyTypography.fontFamily,
-                                fontFamilyFallback:
-                                    MomCozyTypography.fontFamilyFallback,
-                                fontSize: 14,
-                                height: 1.6,
-                                color: MomCozyColors.mutedForeground.withValues(
-                                  alpha: 0.82,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        inputFrame,
                         positionControl(
                           left: _surfaceHorizontalInset,
                           child: IconButton(
