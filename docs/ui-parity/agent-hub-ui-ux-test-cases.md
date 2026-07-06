@@ -106,9 +106,6 @@ flutter_app/integration_test/agent_hub_keyboard_voice_test.dart
 | 编号 | 优先级 | 旧 Web 行为 | Flutter 验收断言 | 覆盖 |
 | --- | --- | --- | --- | --- |
 | AH-COMPOSER-01 | P0 | 单行输入时图片、文字、语音、发送按钮垂直居中。 | 三个按钮和首行文字 centerY 在误差范围内一致。 | 已覆盖 |
-| AH-COMPOSER-02 | P0 | 输入超过一行时 composer 立即向上扩展。 | 首次换行同一 pump 后高度增加，不需要二次点击。 | 已覆盖 |
-| AH-COMPOSER-03 | P0 | 输入最多扩展到 5 行，超过后内部滚动。 | 5 行后 surface 高度固定，TextField 内部 scroll offset 改变。 | 已覆盖 |
-| AH-COMPOSER-04 | P0 | 多行态下底部三个按钮共享同一中心线，不能超出边界。 | image/voice/send centerY 一致，按钮 rect 在 composer surface 内。 | 已覆盖 |
 | AH-COMPOSER-05 | P1 | 空输入 placeholder 与按钮视觉居中。 | placeholder baseline 不偏上，不和图片按钮重叠。 | 已覆盖或需 golden |
 | AH-COMPOSER-06 | P1 | 键盘弹出后 composer 避让键盘，列表 tail 仍可见。 | integration test 打开键盘后最后消息和输入栏不被遮挡。 | 需补 L3 |
 | AH-COMPOSER-07 | P1 | 中文 IME composition 期间不触发发送，composition end 后可继续输入。 | 拼音候选期间 Enter 不发送，确认文字后发送按钮状态正确。 | 需补 L3 |
@@ -217,7 +214,6 @@ flutter_app/integration_test/agent_hub_keyboard_voice_test.dart
 | AH-GOLDEN-01 | P0 | idle greeting + fixed composer | 首屏布局、输入栏、底部导航 |
 | AH-GOLDEN-02 | P0 | streaming + thinking avatar | pending 文案、thinking 动效 fallback、stop 按钮 |
 | AH-GOLDEN-03 | P0 | completed + speaking avatar | speaking 动效 fallback、assistant transcript |
-| AH-GOLDEN-04 | P0 | composer 多行 5 行内 | 高度、按钮底部中心线、文字行距 |
 | AH-GOLDEN-05 | P1 | photo menu + staged image | 菜单、chip、remove button |
 | AH-GOLDEN-06 | P1 | voice listening overlay | 波形、overlay 位置、composer readOnly 态 |
 | AH-GOLDEN-07 | P1 | action waiting confirmation | confirm/reject card、composer blocked |
@@ -243,7 +239,7 @@ flutter_app/integration_test/agent_hub_keyboard_voice_test.dart
 
 1. 先补 P0 failing tests：`AH-AVATAR-01` 到 `AH-AVATAR-04`、`AH-SEND-04`、`AH-SEND-08`、`AH-STT-03`、`AH-TTS-01`、`AH-AGUI-04`。
 2. 修实现直到 P0 widget tests 全绿。
-3. 补 P0/P1 golden：streaming thinking、speaking、composer 5 行、voice overlay、action confirmation。
+3. 补 P0/P1 golden：streaming thinking、speaking、voice overlay、action confirmation。
 4. 补 L3 integration：键盘避让、中文 IME、真实 picker、粘贴图片、语音权限。
 5. 将 `AH-EVAL-*` fixtures 纳入 nightly，避免后端 transport 或 stream event 变化造成 UI 回归。
 
