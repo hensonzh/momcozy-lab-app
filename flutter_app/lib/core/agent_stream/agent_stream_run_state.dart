@@ -58,7 +58,7 @@ class AgentStreamRunState {
     final nextText = type == 'message.delta'
         ? '$textContent${event.textDelta ?? ''}'
         : type == 'message.completed'
-        ? event.textDelta ?? textContent
+        ? event.completedText ?? textContent
         : textContent;
     final nextThreadId = event.threadId ?? threadId;
     final nextRunId = event.runId ?? runId;
