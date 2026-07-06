@@ -164,6 +164,15 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 npm run flutter:release-gate
 
 - `docs/flutter/p0-smoke-checklist.md`
 
+当前状态：
+
+| Item | Status | Notes |
+|---|---|---|
+| Non-device platform smoke | Passed | `npm run flutter:p0:platform-smoke` 通过，覆盖 BLE fake、泵协议 golden、native channel schema、pump snapshot/upload coordinator。 |
+| Real device matrix | Blocked by device lab | 需要 Android 11 或以下、Android 12、Android 13+、低端/厂商机。 |
+| Real pump matrix | Blocked by hardware | 需要左泵、右泵和双侧真泵。 |
+| Permission/background/notification recovery | Blocked by real OS/device | 模拟器 smoke 不能替代真机权限、Doze、电池优化、前台服务和通知恢复验证。 |
+
 ### 5.1 设备矩阵
 
 - [ ] Android 11 或以下权限模型。
@@ -282,3 +291,4 @@ Rollback 触发条件：
 | 2026-07-06 | 0 | Android KGP app 模块迁移 | Partial | app 模块 KGP 已移除；full built-in Kotlin 等待 `flutter_secure_storage` 支持。 |
 | 2026-07-06 | 0 | Android emulator smoke | Done | `npm run flutter:emulator-smoke` 通过，设备 `emulator-5554`。 |
 | 2026-07-06 | 1 | Phase 1 本地发布配置审计 | Blocked | packaging/security 通过；release signing/staging smoke/appId cutover 等待外部配置和决策。 |
+| 2026-07-06 | 2 | Phase 2 非真机平台 preflight | Done | `npm run flutter:p0:platform-smoke` 通过；真机/真泵矩阵仍阻塞。 |
