@@ -1463,6 +1463,7 @@ class AgentArtifactActionView {
     required this.kind,
     this.value,
     this.routePath,
+    this.routeExtra,
   });
 
   final String label;
@@ -1470,6 +1471,7 @@ class AgentArtifactActionView {
   final String kind;
   final String? value;
   final String? routePath;
+  final Object? routeExtra;
 }
 
 class AgentActionPanel extends StatelessWidget {
@@ -2396,6 +2398,7 @@ List<AgentArtifactActionView> _buttonActions(Object? rawButtons) {
           kind: kind ?? 'button',
           value: value,
           routePath: _actionRoutePath(kind: kind, value: value),
+          routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
         );
       })
       .toList(growable: false);
@@ -2475,6 +2478,7 @@ List<AgentArtifactActionView> _semanticActions(
           kind: kind ?? 'action',
           value: value,
           routePath: _actionRoutePath(kind: kind, value: value),
+          routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
         );
       })
       .toList(growable: false);
@@ -2495,11 +2499,68 @@ String? _actionRoutePath({required String? kind, required String? value}) {
   return _safeSameOriginPath(value);
 }
 
+Map<String, Object?>? _actionRouteExtra({
+  required String? kind,
+  required String? value,
+  required String? title,
+}) {
+  if (!_isMediaActionKind(kind)) return null;
+  final url = value?.trim();
+  if (url == null || url.isEmpty) return null;
+  final mediaKind = _mediaViewerKind(kind: kind, url: url);
+  if (mediaKind == null) return null;
+  final normalizedTitle = title?.trim();
+  return {
+    'kind': mediaKind,
+    'url': url,
+    if (normalizedTitle != null && normalizedTitle.isNotEmpty)
+      'title': normalizedTitle,
+  };
+}
+
 bool _isMediaActionKind(String? kind) {
   return switch (kind) {
-    'doc' || 'document' || 'pdf' || 'media' || 'image' || 'video' => true,
+    'doc' ||
+    'document' ||
+    'pdf' ||
+    'media' ||
+    'image' ||
+    'photo' ||
+    'picture' ||
+    'video' => true,
     _ => false,
   };
+}
+
+String? _mediaViewerKind({required String? kind, required String url}) {
+  final normalizedKind = kind?.trim().toLowerCase();
+  if (normalizedKind == 'pdf' ||
+      normalizedKind == 'doc' ||
+      normalizedKind == 'document') {
+    return 'pdf';
+  }
+  if (normalizedKind == 'image' ||
+      normalizedKind == 'photo' ||
+      normalizedKind == 'picture') {
+    return 'image';
+  }
+  if (normalizedKind == 'video') return 'video';
+
+  final normalizedUrl = url.toLowerCase().split('?').first;
+  if (normalizedUrl.endsWith('.pdf')) return 'pdf';
+  if (normalizedUrl.endsWith('.png') ||
+      normalizedUrl.endsWith('.jpg') ||
+      normalizedUrl.endsWith('.jpeg') ||
+      normalizedUrl.endsWith('.webp') ||
+      normalizedUrl.endsWith('.gif')) {
+    return 'image';
+  }
+  if (normalizedUrl.endsWith('.mp4') ||
+      normalizedUrl.endsWith('.mov') ||
+      normalizedUrl.endsWith('.webm')) {
+    return 'video';
+  }
+  return null;
 }
 
 String? _safeSameOriginPath(String? value) {
