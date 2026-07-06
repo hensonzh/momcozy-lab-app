@@ -1,7 +1,7 @@
 # Flutter 正式取代旧 Web 版推进计划
 
 > 目标：让 `flutter_app/` 成为 MomCozyApp 的正式移动端实现；`legacy_web/` 从主发布链路退为 rollback-only，最终在完成观察窗口后退役。  
-> 当前状态：Phase 0 已完成；Phase 1 等待生产包名、release signing 和 staging 凭证。
+> 当前状态：Phase 0 已完成；Phase 1 本地 gate 已验证，等待生产包名、release signing 和 staging 凭证。
 > 结论规则：任何 P0 blocker 未关闭前，不允许正式替代旧 Web/Capacitor 版。
 
 ## 1. 范围和原则
@@ -36,7 +36,7 @@ Flutter 正式替代的用户可见范围包括：
 | Phase | 名称 | 当前状态 | 退出条件 |
 |---|---|---|---|
 | 0 | 准入冻结和合并 | Done | `feat/test2` 已合入目标分支，非真机 gate 和 emulator smoke 全绿。 |
-| 1 | 生产形态补齐 | Pending | appId、release signing、生产/staging env、CI signing gate 明确并可产包。 |
+| 1 | 生产形态补齐 | Blocked by release config | appId、release signing、生产/staging env、CI signing gate 明确并可产包。 |
 | 2 | 真机 P0 验收 | Blocked by device lab | Android 版本矩阵、BLE、真泵、后台、通知恢复和 Agent stream P0 通过。 |
 | 3 | 灰度发布 | Blocked by signed production candidate | internal/alpha/beta/staged rollout 观察指标达标。 |
 | 4 | 正式 cutover | Blocked by rollout decision | Flutter 成为唯一正式 App 入口，旧 Web 冻结为 rollback-only。 |
@@ -146,6 +146,17 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 npm run flutter:release-gate
 - [ ] `MOMCOZY_STAGING_SMOKE=1 dart run tool/staging_smoke.dart` 通过。
 - [ ] Agent SSE、client event、media upload smoke 通过。
 - [ ] 业务错误、HTTP 错误和 token 过期不泄漏敏感信息。
+
+### 4.4 当前记录
+
+| Item | Status | Notes |
+|---|---|---|
+| Packaging check | Passed | `npm run flutter:packaging-check` 通过，Flutter 仍保持独立 appId，未声明 FileProvider/deep link。 |
+| Security privacy check | Passed | `npm run flutter:security-check` 通过。 |
+| Release signing required gate | Blocked as expected | `MOMCOZY_REQUIRE_RELEASE_SIGNING=1 npm run flutter:release-gate` 因 signing env 缺失失败，证明 gate 能阻止未签名发布。 |
+| Staging smoke harness | Safe default passed | 未设置 `MOMCOZY_STAGING_SMOKE=1` 时安全 skip；真实 staging smoke 等待后端 URL、token、用户和宝宝测试数据。 |
+| App ID cutover decision | Blocked by product/release decision | 当前仍保留 `com.momcozymai.app.flutterpoc*`，不覆盖旧 `com.momcozymai.app`。 |
+| Required external env | Missing locally | release keystore 四项、staging API/token/user/baby、Agent SSE/cancel URL 均未注入本机环境。 |
 
 ## 5. Phase 2：真机 P0 验收
 
@@ -270,3 +281,4 @@ Rollback 触发条件：
 | 2026-07-06 | 0 | Flutter 非真机 release gate | Done | `npm run flutter:release-gate` 通过，rollback manifest 已生成。 |
 | 2026-07-06 | 0 | Android KGP app 模块迁移 | Partial | app 模块 KGP 已移除；full built-in Kotlin 等待 `flutter_secure_storage` 支持。 |
 | 2026-07-06 | 0 | Android emulator smoke | Done | `npm run flutter:emulator-smoke` 通过，设备 `emulator-5554`。 |
+| 2026-07-06 | 1 | Phase 1 本地发布配置审计 | Blocked | packaging/security 通过；release signing/staging smoke/appId cutover 等待外部配置和决策。 |
