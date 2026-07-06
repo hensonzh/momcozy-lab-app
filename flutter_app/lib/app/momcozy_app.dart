@@ -1312,7 +1312,7 @@ void _handleAgentArtifactAction(
 ) {
   final path = action.routePath;
   if (path == null || !_knownFlutterRoutePaths.contains(path)) return;
-  context.go(path);
+  context.go(path, extra: action.routeExtra);
 }
 
 final _knownFlutterRoutePaths = momCozyRoutes

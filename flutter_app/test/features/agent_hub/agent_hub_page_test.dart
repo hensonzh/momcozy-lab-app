@@ -1376,6 +1376,11 @@ void main() {
     expect(actions.single.kind, 'doc');
     expect(actions.single.value, '/docs/a.pdf');
     expect(actions.single.routePath, '/media-viewer');
+    expect(actions.single.routeExtra, {
+      'kind': 'pdf',
+      'url': '/docs/a.pdf',
+      'title': '打开文档',
+    });
 
     await tester.tap(
       find.byKey(const ValueKey('agent-artifact-action-resource-card-1')),
@@ -1385,6 +1390,11 @@ void main() {
     expect(actions.last.kind, 'media');
     expect(actions.last.value, '/media/a.png');
     expect(actions.last.routePath, '/media-viewer');
+    expect(actions.last.routeExtra, {
+      'kind': 'image',
+      'url': '/media/a.png',
+      'title': '查看图片',
+    });
   });
 
   testWidgets('Agent Hub renders citation and reference links safely', (
