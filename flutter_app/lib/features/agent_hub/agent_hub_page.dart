@@ -1287,6 +1287,8 @@ class AgentRunTranscript extends StatelessWidget {
       localActionStatuses,
     );
     final avatarMode = _avatarMode;
+    final statusLineTitle = _statusLineTitle(workSteps);
+    final shouldRenderPrimaryText = _shouldRenderPrimaryText;
 
     return Row(
       key: const ValueKey('agent-run-transcript'),
@@ -1298,26 +1300,31 @@ class AgentRunTranscript extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: isDefaultGreeting ? 260 : double.infinity,
-                  ),
-                  child: Text(
-                    text,
-                    style: textTheme.bodyMedium?.copyWith(
-                      height: 1.40,
-                      color:
-                          state.phase == AgentStreamRunPhase.error ||
-                              state.phase == AgentStreamRunPhase.disconnected
-                          ? const Color(0xffb64b4b)
-                          : const Color(0xff3f3038),
-                      fontWeight: FontWeight.w400,
+              if (statusLineTitle != null) ...[
+                AgentRunStatusLine(title: statusLineTitle),
+                if (shouldRenderPrimaryText) const SizedBox(height: 8),
+              ],
+              if (shouldRenderPrimaryText)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: isDefaultGreeting ? 260 : double.infinity,
+                    ),
+                    child: Text(
+                      text,
+                      style: textTheme.bodyMedium?.copyWith(
+                        height: 1.40,
+                        color:
+                            state.phase == AgentStreamRunPhase.error ||
+                                state.phase == AgentStreamRunPhase.disconnected
+                            ? const Color(0xffb64b4b)
+                            : const Color(0xff3f3038),
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                 ),
-              ),
               if (_supportingText != null) ...[
                 const SizedBox(height: 14),
                 Row(
@@ -1381,8 +1388,30 @@ class AgentRunTranscript extends StatelessWidget {
     return _agentAssistantTextForState(state);
   }
 
+  bool get _shouldRenderPrimaryText {
+    if (state.phase == AgentStreamRunPhase.streaming &&
+        state.textContent.trim().isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  String? _statusLineTitle(List<AgentRunWorkStep> workSteps) {
+    if (state.phase != AgentStreamRunPhase.streaming ||
+        state.textContent.trim().isNotEmpty) {
+      return null;
+    }
+    for (final step in workSteps.reversed) {
+      if (step.status == AgentRunWorkStepStatus.running ||
+          step.status == AgentRunWorkStepStatus.waiting) {
+        final title = step.title.trim();
+        if (title.isNotEmpty) return title;
+      }
+    }
+    return '我已经收到你的消息啦～';
+  }
+
   String? get _supportingText {
-    if (state.phase == AgentStreamRunPhase.streaming) return '正在生成回复';
     if (state.phase == AgentStreamRunPhase.waitingForConfirmation) {
       return '等待确认后继续';
     }
@@ -1432,6 +1461,68 @@ class AgentRunTranscript extends StatelessWidget {
     }
     if (state.isActive) return _AgentAssistantAvatarMode.thinking;
     return null;
+  }
+}
+
+class AgentRunStatusLine extends StatelessWidget {
+  const AgentRunStatusLine({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Semantics(
+      label: title,
+      child: Container(
+        key: const ValueKey('agent-run-status-line'),
+        constraints: const BoxConstraints(maxWidth: double.infinity),
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox.square(
+              dimension: 14,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorScheme.primary.withValues(alpha: 0.18),
+                    ),
+                    child: const SizedBox.square(dimension: 12),
+                  ),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorScheme.primary.withValues(alpha: 0.86),
+                    ),
+                    child: const SizedBox.square(dimension: 6),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.labelMedium?.copyWith(
+                  height: 1.35,
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
