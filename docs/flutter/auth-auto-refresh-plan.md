@@ -39,22 +39,23 @@ feature repository
 
 ## 3. 覆盖范围
 
-第一阶段必须覆盖：
+本机制按“请求级 401 兜底 + session runtime 热替换”的方式覆盖：
 
 - `ApiJsonTransport`：业务 JSON API、登录后页面同步、records/status/schedule/device 等。
 - `ApiMultipartTransport`：文件上传、图片上传。
+- Agent SSE run create / stream / cancel / action 的 Authorization 头动态读取当前 session token。
+- voice/transcribe 相关 API：分片转写走 multipart 自动续期；实时语音 HTTP/WS 在建连时动态读取当前 session token。
+- native pump upload token provider：启动 native runtime 时使用当前 session token。
 
-第二阶段扩展：
-
-- Agent SSE run create / stream / cancel / action。
-- voice/transcribe 相关 API。
-- native pump upload token provider。
+已登录用户不会因为普通 access token 过期被打断；只有 refresh token 不存在、过期、被撤销或后端拒绝 refresh 时，才会更新为 expired session 并交给路由 guard 返回登录页。
 
 ## 4. 测试计划
 
 - Unit：refresh coordinator 并发、缺 token、refresh 成功写 store。
 - Unit：refresh-aware JSON transport 401 后 refresh 并重试，且 header 使用新 token。
 - Unit：并发 401 请求共享同一次 refresh。
+- Unit：refresh-aware multipart transport 401 后 refresh 并重试。
+- Unit：Agent endpoint 和 realtime voice header 懒读取最新 token。
 - Unit：refresh 失败后 session expired 并触发 runtime 更新。
 - Runtime：`MomCozyRuntimeController` session 更新后 router guard 可回登录页。
 - Regression：普通非 401 HTTP 错误不触发 refresh。
