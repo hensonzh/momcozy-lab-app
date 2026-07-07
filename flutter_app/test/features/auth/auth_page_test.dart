@@ -32,6 +32,10 @@ void main() {
       find.byKey(const ValueKey('auth-invite-login-button')),
       findsOneWidget,
     );
+    expect(
+      find.byKey(const ValueKey('auth-invite-code-field')),
+      findsOneWidget,
+    );
     expect(find.text('邀请码登录'), findsOneWidget);
     expect(find.byKey(const ValueKey('auth-email-field')), findsNothing);
     expect(find.byKey(const ValueKey('auth-password-field')), findsNothing);
@@ -39,6 +43,40 @@ void main() {
     expect(find.byKey(const ValueKey('auth-submit-button')), findsNothing);
     expect(find.text('注册'), findsNothing);
     expect(find.text('登录'), findsNothing);
+
+    controller.dispose();
+    router.dispose();
+  });
+
+  testWidgets('invite login requires a typed invite code before posting', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport(_tokenResponse());
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: transport,
+      userId: 'demo-user',
+      babyId: 'demo-baby',
+      locale: 'zh-CN',
+    );
+    final controller = MomCozyRuntimeController(runtime);
+    final store = MemoryMomCozySessionStore();
+    final router = _authRouter(
+      controller: controller,
+      store: store,
+      deviceId: 'flutter-device-001',
+    );
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+    await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
+    await tester.pump();
+
+    final errorText = tester.widget<Text>(
+      find.byKey(const ValueKey('auth-error-text')),
+    );
+    expect(errorText.data, '请输入邀请码');
+    expect(transport.lastPath, isNull);
+    expect(await store.readSession(), isNull);
 
     controller.dispose();
     router.dispose();
@@ -64,13 +102,17 @@ void main() {
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-invite-code-field')),
+      ' mcz-abcd-2345 ',
+    );
     await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
     await tester.pumpAndSettle();
 
     final session = await store.readSession();
     expect(transport.lastPath, authInviteLoginEndpoint);
     expect(transport.lastBody, {
-      'invite_code': 'MOMCOZY-BETA',
+      'invite_code': 'mcz-abcd-2345',
       'device_id': 'flutter-device-001',
     });
     expect(session?.status, MomCozySessionStatus.authenticated);
@@ -109,6 +151,10 @@ void main() {
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-invite-code-field')),
+      'MCZ-ABCD-2345',
+    );
     await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
     await tester.pumpAndSettle();
 
@@ -136,7 +182,6 @@ GoRouter _authRouter({
         builder: (context, state) => MomCozyAuthPage(
           runtimeController: controller,
           sessionStore: store,
-          inviteCode: 'MOMCOZY-BETA',
           authDeviceIdStore: _FixedAuthDeviceIdStore(deviceId),
         ),
       ),

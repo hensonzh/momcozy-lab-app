@@ -6,11 +6,6 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 
-const _defaultInviteCode = String.fromEnvironment(
-  'MOMCOZY_INVITE_CODE',
-  defaultValue: 'MOMCOZY-BETA',
-);
-
 class MomCozyAuthPage extends StatefulWidget {
   const MomCozyAuthPage({
     super.key,
@@ -18,22 +13,29 @@ class MomCozyAuthPage extends StatefulWidget {
     required this.sessionStore,
     this.redirectTo,
     this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
-    this.inviteCode = _defaultInviteCode,
   });
 
   final MomCozyRuntimeController runtimeController;
   final MomCozySessionStore sessionStore;
   final String? redirectTo;
   final MomCozyAuthDeviceIdStore authDeviceIdStore;
-  final String inviteCode;
 
   @override
   State<MomCozyAuthPage> createState() => _MomCozyAuthPageState();
 }
 
 class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
+  final TextEditingController _inviteCodeController = TextEditingController();
+  final FocusNode _inviteCodeFocusNode = FocusNode();
   bool _submitting = false;
   String? _errorText;
+
+  @override
+  void dispose() {
+    _inviteCodeController.dispose();
+    _inviteCodeFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +65,23 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                     ),
                   ],
                   const SizedBox(height: 20),
+                  TextField(
+                    key: const ValueKey('auth-invite-code-field'),
+                    controller: _inviteCodeController,
+                    focusNode: _inviteCodeFocusNode,
+                    enabled: !_submitting,
+                    textInputAction: TextInputAction.done,
+                    textCapitalization: TextCapitalization.characters,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    decoration: const InputDecoration(
+                      labelText: '邀请码',
+                      hintText: '请输入邀请码',
+                      prefixIcon: Icon(Icons.key_rounded),
+                    ),
+                    onSubmitted: (_) => _submitInvite(),
+                  ),
+                  const SizedBox(height: 20),
                   FilledButton.icon(
                     key: const ValueKey('auth-invite-login-button'),
                     onPressed: _submitting ? null : _submitInvite,
@@ -85,6 +104,14 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
 
   Future<void> _submitInvite() async {
     if (_submitting) return;
+    final inviteCode = _inviteCodeController.text.trim();
+    if (inviteCode.isEmpty) {
+      setState(() {
+        _errorText = '请输入邀请码';
+      });
+      _inviteCodeFocusNode.requestFocus();
+      return;
+    }
     setState(() {
       _submitting = true;
       _errorText = null;
@@ -94,7 +121,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
       final runtime = widget.runtimeController.runtime;
       final deviceId = await widget.authDeviceIdStore.readOrCreateDeviceId();
       final tokens = await runtime.authRepository.inviteLogin(
-        inviteCode: widget.inviteCode,
+        inviteCode: inviteCode,
         deviceId: deviceId,
       );
       await _completeAuth(tokens, runtime);

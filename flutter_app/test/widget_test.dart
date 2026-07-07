@@ -235,9 +235,10 @@ void main() {
     await tester.pumpWidget(
       MomCozyFlutterApp(
         apiRuntime: MomCozyApiRuntime(
-          jsonTransport: FixtureApiJsonTransport(
-            const {'status': 200, 'data': {}},
-          ),
+          jsonTransport: FixtureApiJsonTransport(const {
+            'status': 200,
+            'data': {},
+          }),
         ),
       ),
     );
@@ -245,6 +246,10 @@ void main() {
 
     expect(
       find.byKey(const ValueKey('auth-invite-login-button')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('auth-invite-code-field')),
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('agent-hub-page')), findsNothing);
@@ -280,6 +285,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-invite-code-field')),
+      'MCZ-ROUTE-0001',
+    );
     await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
     await tester.pumpAndSettle();
 
@@ -287,7 +296,7 @@ void main() {
     expect(controller.runtime.userId, 'login-user');
     expect((await store.readSession())?.accessToken, 'access-login');
     expect(transport.lastPath, '/v1/auth/invite-login');
-    expect(transport.lastBody?['invite_code'], 'MOMCOZY-BETA');
+    expect(transport.lastBody?['invite_code'], 'MCZ-ROUTE-0001');
     expect(transport.lastBody?['device_id'], 'widget-device-001');
     expect(
       find.byKey(const ValueKey('route-page-/media-viewer')),
