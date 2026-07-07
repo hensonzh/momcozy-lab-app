@@ -116,6 +116,26 @@ void main() {
       },
     );
 
+    test('endpoint request headers resolve auth token lazily', () {
+      var token = 'old-token';
+      final endpoint = AgentStreamEndpoint(
+        uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+        tokenProvider: () => token,
+      );
+
+      expect(
+        endpoint.requestHeaders(),
+        containsPair('Authorization', 'Bearer old-token'),
+      );
+
+      token = 'new-token';
+
+      expect(
+        endpoint.requestHeaders(),
+        containsPair('Authorization', 'Bearer new-token'),
+      );
+    });
+
     test('control connector sends non-ASCII JSON bodies as UTF-8', () async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
       addTearDown(() => server.close(force: true));

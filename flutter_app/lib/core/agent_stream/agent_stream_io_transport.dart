@@ -14,11 +14,13 @@ class AgentStreamEndpoint {
   AgentStreamEndpoint({
     required Uri uri,
     this.token,
+    this.tokenProvider,
     this.headers = const <String, String>{},
   }) : uri = TransportSecurityPolicy.requireSecureHttpOrWebSocket(uri);
 
   final Uri uri;
   final String? token;
+  final String? Function()? tokenProvider;
   final Map<String, String> headers;
 
   Uri get requestUri => uri;
@@ -30,7 +32,7 @@ class AgentStreamEndpoint {
     String accept = 'application/json',
     bool includeContentType = false,
   }) {
-    final authToken = token?.trim();
+    final authToken = (tokenProvider?.call() ?? token)?.trim();
     return <String, String>{
       ...headers,
       'Accept': accept,

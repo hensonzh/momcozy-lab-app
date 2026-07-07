@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
@@ -25,6 +26,7 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.apiRuntime,
     this.runtimeController,
     this.sessionStore = const FlutterSecureMomCozySessionStore(),
+    this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
   }) : assert(
          apiRuntime == null || runtimeController == null,
          'Pass either apiRuntime or runtimeController, not both.',
@@ -35,6 +37,7 @@ class MomCozyFlutterApp extends StatefulWidget {
   final MomCozyApiRuntime? apiRuntime;
   final MomCozyRuntimeController? runtimeController;
   final MomCozySessionStore sessionStore;
+  final MomCozyAuthDeviceIdStore authDeviceIdStore;
 
   @override
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
@@ -52,6 +55,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
       createMomCozyRouter(
         runtimeController: _runtimeController,
         sessionStore: widget.sessionStore,
+        authDeviceIdStore: widget.authDeviceIdStore,
       );
   late final bool _ownsRouter = widget.router == null;
   late final RouteIntentPlatform _routeIntentPlatform =
@@ -62,6 +66,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
   @override
   void initState() {
     super.initState();
+    _runtimeController.enableSessionAutoRefresh(widget.sessionStore);
     _activeRouteSub = _routeIntentPlatform.activeRoutes.listen(
       _handlePendingNativeRoute,
     );
@@ -328,6 +333,8 @@ GoRouter createMomCozyRouter({
   String initialLocation = '/',
   MomCozyRuntimeController? runtimeController,
   MomCozySessionStore sessionStore = const FlutterSecureMomCozySessionStore(),
+  MomCozyAuthDeviceIdStore authDeviceIdStore =
+      const FlutterSecureMomCozyAuthDeviceIdStore(),
 }) {
   return GoRouter(
     initialLocation: initialLocation,
@@ -343,6 +350,7 @@ GoRouter createMomCozyRouter({
             runtimeController: runtimeController,
             sessionStore: sessionStore,
             redirectTo: state.uri.queryParameters['from'],
+            authDeviceIdStore: authDeviceIdStore,
           ),
         ),
       ShellRoute(
@@ -1115,11 +1123,25 @@ class MomCozyRoutePage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (route.path == '/') {
       final runtime = MomCozyRuntimeScope.of(context);
+      String? currentAccessToken() {
+        return MomCozyRuntimeScope.read(context)?.session.accessToken ??
+            runtime.session.accessToken;
+      }
+
       return AgentHubPage(
         stateCacheKey: runtime,
-        runner: createSessionAgentHubRunner(runtime.session),
-        cancelClient: createSessionAgentHubCancelClient(runtime.session),
-        actionClient: createSessionAgentHubActionClient(runtime.session),
+        runner: createSessionAgentHubRunner(
+          runtime.session,
+          accessTokenProvider: currentAccessToken,
+        ),
+        cancelClient: createSessionAgentHubCancelClient(
+          runtime.session,
+          accessTokenProvider: currentAccessToken,
+        ),
+        actionClient: createSessionAgentHubActionClient(
+          runtime.session,
+          accessTokenProvider: currentAccessToken,
+        ),
         interactionStateStore: createSessionAgentHubInteractionStateStore(
           runtime.session,
         ),

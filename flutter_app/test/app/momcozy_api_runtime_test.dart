@@ -348,6 +348,58 @@ void main() {
     expect(controller.runtime.observability, same(observability));
     controller.dispose();
   });
+
+  test('runtime controller keeps auto-refresh transports across sessions', () {
+    final observability = MomCozyObservability();
+    const session = MomCozySession(
+      status: MomCozySessionStatus.authenticated,
+      userId: 'session-user',
+      babyId: 'session-baby',
+      locale: 'zh-CN',
+      accessToken: 'stale-access',
+      refreshToken: 'refresh-token',
+    );
+    final controller = MomCozyRuntimeController(
+      MomCozyApiRuntime.fromSession(session, observability: observability),
+    );
+    final store = MemoryMomCozySessionStore(session);
+    var notifyCount = 0;
+    controller.addListener(() {
+      notifyCount += 1;
+    });
+
+    controller.enableSessionAutoRefresh(store);
+
+    expect(notifyCount, 1);
+    expect(
+      controller.runtime.jsonTransport,
+      isA<AuthenticatedApiJsonTransport>(),
+    );
+    expect(
+      controller.runtime.multipartTransport,
+      isA<AuthenticatedApiMultipartTransport>(),
+    );
+
+    controller.replaceSession(
+      session.copyWith(
+        accessToken: 'fresh-access',
+        refreshToken: 'fresh-refresh',
+      ),
+    );
+
+    expect(notifyCount, 2);
+    expect(controller.runtime.currentSession.accessToken, 'fresh-access');
+    expect(
+      controller.runtime.jsonTransport,
+      isA<AuthenticatedApiJsonTransport>(),
+    );
+    expect(
+      controller.runtime.multipartTransport,
+      isA<AuthenticatedApiMultipartTransport>(),
+    );
+    expect(controller.runtime.observability, same(observability));
+    controller.dispose();
+  });
 }
 
 class _RuntimeMigrationStore implements StorageMigrationTargetStore {

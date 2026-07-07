@@ -3,6 +3,7 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 
 const authSignupEndpoint = '/v1/auth/signup';
 const authLoginEndpoint = '/v1/auth/login';
+const authInviteLoginEndpoint = '/v1/auth/invite-login';
 const authRefreshEndpoint = '/v1/auth/refresh';
 const authLogoutEndpoint = '/v1/auth/logout';
 
@@ -41,6 +42,17 @@ class MomCozyAuthApiRepository {
         'password': password,
         if (deviceId.trim().isNotEmpty) 'device_id': deviceId.trim(),
       },
+    );
+    return MomCozyAuthTokenResponse.fromMap(response);
+  }
+
+  Future<MomCozyAuthTokenResponse> inviteLogin({
+    required String inviteCode,
+    required String deviceId,
+  }) async {
+    final response = await transport.postJson(
+      authInviteLoginEndpoint,
+      body: {'invite_code': inviteCode.trim(), 'device_id': deviceId.trim()},
     );
     return MomCozyAuthTokenResponse.fromMap(response);
   }
@@ -88,10 +100,7 @@ class MomCozyAuthTokenResponse {
   final String tokenType;
   final MomCozyAuthUser user;
 
-  MomCozySession toSession({
-    required String babyId,
-    required String locale,
-  }) {
+  MomCozySession toSession({required String babyId, required String locale}) {
     return MomCozySession(
       status: MomCozySessionStatus.authenticated,
       userId: user.id,
@@ -104,10 +113,7 @@ class MomCozyAuthTokenResponse {
 }
 
 class MomCozyAuthUser {
-  const MomCozyAuthUser({
-    required this.id,
-    required this.displayName,
-  });
+  const MomCozyAuthUser({required this.id, required this.displayName});
 
   factory MomCozyAuthUser.fromMap(Map<String, Object?> map) {
     return MomCozyAuthUser(
@@ -143,16 +149,18 @@ class MomCozySessionRefreshCoordinator {
   Future<MomCozySession> _refresh(MomCozySession current) async {
     final refreshToken = trimmedSessionValue(current.refreshToken);
     if (refreshToken == null) {
-      final expired = current.copyWith(
-        status: MomCozySessionStatus.expired,
-        clearAccessToken: true,
-        clearRefreshToken: true,
-      );
-      await store.writeSession(expired);
-      return expired;
+      return _expire(current);
     }
 
-    final tokens = await authRepository.refresh(refreshToken: refreshToken);
+    late final MomCozyAuthTokenResponse tokens;
+    try {
+      tokens = await authRepository.refresh(refreshToken: refreshToken);
+    } catch (error) {
+      if (_isTerminalRefreshError(error)) {
+        return _expire(current);
+      }
+      rethrow;
+    }
     final refreshed = tokens.toSession(
       babyId: current.babyId,
       locale: current.locale,
@@ -160,6 +168,127 @@ class MomCozySessionRefreshCoordinator {
     await store.writeSession(refreshed);
     return refreshed;
   }
+
+  Future<MomCozySession> _expire(MomCozySession current) async {
+    final expired = current.copyWith(
+      status: MomCozySessionStatus.expired,
+      clearAccessToken: true,
+      clearRefreshToken: true,
+    );
+    await store.writeSession(expired);
+    return expired;
+  }
+}
+
+typedef AuthenticatedTransportFactory =
+    ApiJsonTransport Function(String? accessToken);
+
+typedef AuthenticatedMultipartTransportFactory =
+    ApiMultipartTransport Function(String? accessToken);
+
+typedef MomCozySessionProvider = MomCozySession Function();
+
+typedef MomCozySessionChanged = Future<void> Function(MomCozySession session);
+
+class AuthenticatedApiJsonTransport implements ApiJsonTransport {
+  const AuthenticatedApiJsonTransport({
+    required this.transportFactory,
+    required this.sessionProvider,
+    required this.refreshCoordinator,
+    required this.onSessionChanged,
+  });
+
+  final AuthenticatedTransportFactory transportFactory;
+  final MomCozySessionProvider sessionProvider;
+  final MomCozySessionRefreshCoordinator refreshCoordinator;
+  final MomCozySessionChanged onSessionChanged;
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) {
+    return _send((transport) => transport.getJson(path, query: query));
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    return _send(
+      (transport) => transport.postJson(path, body: body, headers: headers),
+    );
+  }
+
+  Future<Map<String, Object?>> _send(
+    Future<Map<String, Object?>> Function(ApiJsonTransport transport) send,
+  ) async {
+    final initialSession = sessionProvider();
+    try {
+      return await send(transportFactory(initialSession.accessToken));
+    } catch (error) {
+      if (!_shouldRefresh(error)) rethrow;
+      final refreshed = await refreshCoordinator.refresh(initialSession);
+      await onSessionChanged(refreshed);
+      if (!refreshed.isAuthenticated) {
+        rethrow;
+      }
+      return send(transportFactory(refreshed.accessToken));
+    }
+  }
+}
+
+class AuthenticatedApiMultipartTransport implements ApiMultipartTransport {
+  const AuthenticatedApiMultipartTransport({
+    required this.transportFactory,
+    required this.sessionProvider,
+    required this.refreshCoordinator,
+    required this.onSessionChanged,
+  });
+
+  final AuthenticatedMultipartTransportFactory transportFactory;
+  final MomCozySessionProvider sessionProvider;
+  final MomCozySessionRefreshCoordinator refreshCoordinator;
+  final MomCozySessionChanged onSessionChanged;
+
+  @override
+  Future<Map<String, Object?>> uploadMultipart(
+    String path, {
+    Map<String, Object?> fields = const {},
+    Map<String, String> headers = const {},
+    required ApiUploadFile file,
+  }) async {
+    final initialSession = sessionProvider();
+    try {
+      return await transportFactory(
+        initialSession.accessToken,
+      ).uploadMultipart(path, fields: fields, headers: headers, file: file);
+    } catch (error) {
+      if (!_shouldRefresh(error)) rethrow;
+      final refreshed = await refreshCoordinator.refresh(initialSession);
+      await onSessionChanged(refreshed);
+      if (!refreshed.isAuthenticated) {
+        rethrow;
+      }
+      return transportFactory(
+        refreshed.accessToken,
+      ).uploadMultipart(path, fields: fields, headers: headers, file: file);
+    }
+  }
+}
+
+bool _shouldRefresh(Object error) {
+  if (error is! ApiHttpException) return false;
+  return error.statusCode == 401 ||
+      error.errorCode == 'authentication_required' ||
+      error.errorCode == 'token_expired';
+}
+
+bool _isTerminalRefreshError(Object error) {
+  if (error is! ApiHttpException) return false;
+  return error.statusCode == 401 || error.statusCode == 403;
 }
 
 class MomCozyAuthResponseFormatException implements Exception {
