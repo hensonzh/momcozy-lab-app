@@ -30,7 +30,7 @@ Already present:
   `/v1/auth/invite-login`, `/signup`, `/login`, `/refresh`, and `/logout`.
 - App shell runtime controller can replace the active session/runtime after
   login, refresh, logout, or account switch.
-- Default router redirects anonymous sessions to `/login`; the invite/login/register
+- Default router redirects anonymous sessions to `/login`; the invite-only auth
   page writes authenticated sessions to secure storage, and successful auth
   replaces the runtime before returning to the requested route.
 - Network transport parses production error envelopes and supports per-request

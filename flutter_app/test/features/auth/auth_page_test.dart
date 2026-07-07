@@ -10,6 +10,40 @@ import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import '../../support/fixture_api_transport.dart';
 
 void main() {
+  testWidgets('auth page exposes only invite login entry', (tester) async {
+    final transport = FixtureApiJsonTransport(_tokenResponse());
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: transport,
+      userId: 'demo-user',
+      babyId: 'demo-baby',
+      locale: 'zh-CN',
+    );
+    final controller = MomCozyRuntimeController(runtime);
+    final store = MemoryMomCozySessionStore();
+    final router = _authRouter(
+      controller: controller,
+      store: store,
+      deviceId: 'flutter-device-001',
+    );
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+    expect(
+      find.byKey(const ValueKey('auth-invite-login-button')),
+      findsOneWidget,
+    );
+    expect(find.text('邀请码登录'), findsOneWidget);
+    expect(find.byKey(const ValueKey('auth-email-field')), findsNothing);
+    expect(find.byKey(const ValueKey('auth-password-field')), findsNothing);
+    expect(find.byKey(const ValueKey('auth-display-name-field')), findsNothing);
+    expect(find.byKey(const ValueKey('auth-submit-button')), findsNothing);
+    expect(find.text('注册'), findsNothing);
+    expect(find.text('登录'), findsNothing);
+
+    controller.dispose();
+    router.dispose();
+  });
+
   testWidgets('invite login writes the issued session and redirects', (
     tester,
   ) async {
@@ -22,25 +56,10 @@ void main() {
     );
     final controller = MomCozyRuntimeController(runtime);
     final store = MemoryMomCozySessionStore();
-    final router = GoRouter(
-      initialLocation: '/login',
-      routes: [
-        GoRoute(
-          path: '/login',
-          builder: (context, state) => MomCozyAuthPage(
-            runtimeController: controller,
-            sessionStore: store,
-            inviteCode: 'MOMCOZY-BETA',
-            authDeviceIdStore: const _FixedAuthDeviceIdStore(
-              'flutter-device-001',
-            ),
-          ),
-        ),
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const Scaffold(body: Text('home')),
-        ),
-      ],
+    final router = _authRouter(
+      controller: controller,
+      store: store,
+      deviceId: 'flutter-device-001',
     );
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
@@ -82,25 +101,10 @@ void main() {
     );
     final controller = MomCozyRuntimeController(runtime);
     final store = MemoryMomCozySessionStore();
-    final router = GoRouter(
-      initialLocation: '/login',
-      routes: [
-        GoRoute(
-          path: '/login',
-          builder: (context, state) => MomCozyAuthPage(
-            runtimeController: controller,
-            sessionStore: store,
-            inviteCode: 'MOMCOZY-BETA',
-            authDeviceIdStore: const _FixedAuthDeviceIdStore(
-              'flutter-device-002',
-            ),
-          ),
-        ),
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const Scaffold(body: Text('home')),
-        ),
-      ],
+    final router = _authRouter(
+      controller: controller,
+      store: store,
+      deviceId: 'flutter-device-002',
     );
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
@@ -117,6 +121,31 @@ void main() {
     controller.dispose();
     router.dispose();
   });
+}
+
+GoRouter _authRouter({
+  required MomCozyRuntimeController controller,
+  required MomCozySessionStore store,
+  required String deviceId,
+}) {
+  return GoRouter(
+    initialLocation: '/login',
+    routes: [
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => MomCozyAuthPage(
+          runtimeController: controller,
+          sessionStore: store,
+          inviteCode: 'MOMCOZY-BETA',
+          authDeviceIdStore: _FixedAuthDeviceIdStore(deviceId),
+        ),
+      ),
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const Scaffold(body: Text('home')),
+      ),
+    ],
+  );
 }
 
 Map<String, Object?> _tokenResponse() {
