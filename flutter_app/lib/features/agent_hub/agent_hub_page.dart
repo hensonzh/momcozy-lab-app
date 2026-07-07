@@ -1289,6 +1289,15 @@ class AgentRunTranscript extends StatelessWidget {
     final avatarMode = _avatarMode;
     final statusLineTitle = _statusLineTitle(workSteps);
     final shouldRenderPrimaryText = _shouldRenderPrimaryText;
+    final primaryTextStyle = textTheme.bodyMedium?.copyWith(
+      height: 1.40,
+      color:
+          state.phase == AgentStreamRunPhase.error ||
+              state.phase == AgentStreamRunPhase.disconnected
+          ? const Color(0xffb64b4b)
+          : const Color(0xff3f3038),
+      fontWeight: FontWeight.w400,
+    );
 
     return Row(
       key: const ValueKey('agent-run-transcript'),
@@ -1311,18 +1320,7 @@ class AgentRunTranscript extends StatelessWidget {
                     constraints: BoxConstraints(
                       maxWidth: isDefaultGreeting ? 260 : double.infinity,
                     ),
-                    child: Text(
-                      text,
-                      style: textTheme.bodyMedium?.copyWith(
-                        height: 1.40,
-                        color:
-                            state.phase == AgentStreamRunPhase.error ||
-                                state.phase == AgentStreamRunPhase.disconnected
-                            ? const Color(0xffb64b4b)
-                            : const Color(0xff3f3038),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    child: AgentMarkdownText(text, style: primaryTextStyle),
                   ),
                 ),
               if (_supportingText != null) ...[
@@ -1356,10 +1354,6 @@ class AgentRunTranscript extends StatelessWidget {
                   icon: const Icon(Icons.refresh_rounded),
                   label: const Text('重试'),
                 ),
-              ],
-              if (workSteps.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                AgentRunWorkPanel(steps: workSteps),
               ],
               if (artifactCards.isNotEmpty) ...[
                 const SizedBox(height: 16),
@@ -1461,6 +1455,150 @@ class AgentRunTranscript extends StatelessWidget {
     }
     if (state.isActive) return _AgentAssistantAvatarMode.thinking;
     return null;
+  }
+}
+
+class AgentMarkdownText extends StatelessWidget {
+  const AgentMarkdownText(this.text, {super.key, this.style});
+
+  final String text;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    final normalized = text.trim();
+    final baseStyle = style ?? Theme.of(context).textTheme.bodyMedium;
+    if (!_containsMarkdown(normalized)) {
+      return Text(normalized, style: baseStyle);
+    }
+
+    final children = _markdownBlocks(normalized, baseStyle).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children,
+    );
+  }
+
+  Iterable<Widget> _markdownBlocks(
+    String markdown,
+    TextStyle? baseStyle,
+  ) sync* {
+    final lines = markdown.split(RegExp(r'\r?\n'));
+    var emitted = 0;
+    for (final rawLine in lines) {
+      final line = rawLine.trimRight();
+      final trimmed = line.trim();
+      if (trimmed.isEmpty) {
+        if (emitted > 0) yield const SizedBox(height: 8);
+        continue;
+      }
+
+      final heading = RegExp(r'^(#{1,6})\s+(.+)$').firstMatch(trimmed);
+      if (heading != null) {
+        if (emitted > 0) yield const SizedBox(height: 8);
+        final level = heading.group(1)!.length;
+        final baseFontSize = baseStyle?.fontSize ?? 14;
+        yield Text(
+          _stripInlineMarkdown(heading.group(2)!),
+          style: baseStyle?.copyWith(
+            height: 1.32,
+            fontSize: switch (level) {
+              1 => baseFontSize + 6,
+              2 => baseFontSize + 4,
+              3 => baseFontSize + 2,
+              _ => baseFontSize + 1,
+            },
+            fontWeight: FontWeight.w900,
+            color: MomCozyColors.foreground,
+          ),
+        );
+        emitted += 1;
+        continue;
+      }
+
+      if (RegExp(r'^-{3,}$').hasMatch(trimmed)) {
+        if (emitted > 0) yield const SizedBox(height: 8);
+        yield Container(
+          height: 1,
+          width: double.infinity,
+          color: MomCozyColors.border.withValues(alpha: 0.8),
+        );
+        emitted += 1;
+        continue;
+      }
+
+      final bullet = RegExp(r'^\s*[-*]\s+(.+)$').firstMatch(line);
+      if (bullet != null) {
+        yield Padding(
+          padding: EdgeInsets.only(top: emitted == 0 ? 0 : 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('•', style: baseStyle),
+              const SizedBox(width: 7),
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    style: baseStyle,
+                    children: _inlineMarkdownSpans(bullet.group(1)!, baseStyle),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+        emitted += 1;
+        continue;
+      }
+
+      yield Padding(
+        padding: EdgeInsets.only(top: emitted == 0 ? 0 : 4),
+        child: RichText(
+          text: TextSpan(
+            style: baseStyle,
+            children: _inlineMarkdownSpans(trimmed, baseStyle),
+          ),
+        ),
+      );
+      emitted += 1;
+    }
+  }
+
+  static bool _containsMarkdown(String value) {
+    return RegExp(
+      r'(^|\n)\s{0,3}#{1,6}\s+|(^|\n)\s*[-*]\s+|\*\*.+?\*\*|(^|\n)---($|\n)',
+      multiLine: true,
+    ).hasMatch(value);
+  }
+
+  static List<TextSpan> _inlineMarkdownSpans(String value, TextStyle? style) {
+    final spans = <TextSpan>[];
+    final boldPattern = RegExp(r'\*\*(.+?)\*\*');
+    var cursor = 0;
+    for (final match in boldPattern.allMatches(value)) {
+      if (match.start > cursor) {
+        spans.add(TextSpan(text: value.substring(cursor, match.start)));
+      }
+      spans.add(
+        TextSpan(
+          text: match.group(1),
+          style: style?.copyWith(fontWeight: FontWeight.w900),
+        ),
+      );
+      cursor = match.end;
+    }
+    if (cursor < value.length) {
+      spans.add(TextSpan(text: value.substring(cursor)));
+    }
+    if (spans.isEmpty) return [TextSpan(text: value)];
+    return spans;
+  }
+
+  static String _stripInlineMarkdown(String value) {
+    return value.replaceAllMapped(
+      RegExp(r'\*\*(.+?)\*\*'),
+      (match) => match.group(1) ?? '',
+    );
   }
 }
 
@@ -1606,62 +1744,6 @@ class _AgentAssistantAvatar extends StatelessWidget {
   }
 }
 
-class AgentRunWorkPanel extends StatelessWidget {
-  const AgentRunWorkPanel({super.key, required this.steps});
-
-  final List<AgentRunWorkStep> steps;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      key: const ValueKey('agent-work-panel'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '处理进度',
-          style: textTheme.labelLarge?.copyWith(
-            color: MomCozyColors.foreground,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        const SizedBox(height: 8),
-        for (final step in steps) ...[
-          Row(
-            key: ValueKey('agent-work-step-${step.id}'),
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(step.icon, size: 18, color: step.color(colorScheme)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  step.title,
-                  style: textTheme.bodySmall?.copyWith(
-                    height: 1.35,
-                    color: MomCozyColors.mutedForeground,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                step.statusLabel,
-                style: textTheme.labelSmall?.copyWith(
-                  color: step.color(colorScheme),
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-          if (step != steps.last) const SizedBox(height: 8),
-        ],
-      ],
-    );
-  }
-}
-
 class AgentRunWorkStep {
   const AgentRunWorkStep({
     required this.id,
@@ -1672,32 +1754,6 @@ class AgentRunWorkStep {
   final String id;
   final String title;
   final AgentRunWorkStepStatus status;
-
-  String get statusLabel {
-    return switch (status) {
-      AgentRunWorkStepStatus.running => '进行中',
-      AgentRunWorkStepStatus.completed => '完成',
-      AgentRunWorkStepStatus.waiting => '待确认',
-      AgentRunWorkStepStatus.failed => '失败',
-    };
-  }
-
-  IconData get icon {
-    return switch (status) {
-      AgentRunWorkStepStatus.running => Icons.sync_rounded,
-      AgentRunWorkStepStatus.completed => Icons.check_circle_outline_rounded,
-      AgentRunWorkStepStatus.waiting => Icons.fact_check_outlined,
-      AgentRunWorkStepStatus.failed => Icons.error_outline_rounded,
-    };
-  }
-
-  Color color(ColorScheme colorScheme) {
-    return switch (status) {
-      AgentRunWorkStepStatus.failed => colorScheme.error,
-      AgentRunWorkStepStatus.waiting => colorScheme.tertiary,
-      _ => colorScheme.primary,
-    };
-  }
 }
 
 enum AgentRunWorkStepStatus { running, completed, waiting, failed }
