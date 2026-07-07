@@ -1144,40 +1144,38 @@ void main() {
     expect(find.textContaining('api.momcozy.test'), findsNothing);
   });
 
-  testWidgets(
-    'Agent Hub renders user-facing tool progress from stream events',
-    (tester) async {
-      final client = _FixtureAgentStreamClient(
-        parseAgentJsonl(
-          readMigrationFixture('agent_events/tool_call_lifecycle.jsonl'),
-        ),
-      );
+  testWidgets('Agent Hub hides tool progress internals from stream events', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/tool_call_lifecycle.jsonl'),
+      ),
+    );
 
-      await tester.pumpWidget(
-        _host(AgentHubPage(runner: AgentStreamRunner(client))),
-      );
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
 
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        'Review my pump sessions',
-      );
-      await tester.pump();
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Review my pump sessions',
+    );
+    await tester.pump();
 
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
-      expect(find.text('泵奶记录已读取'), findsOneWidget);
-      expect(find.text('已生成分析卡片'), findsWidgets);
-      expect(find.text('需要确认后继续'), findsOneWidget);
-      expect(
-        find.text('I found two sessions today and prepared a draft analysis.'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('pump_session_summary_query'), findsNothing);
-      expect(find.textContaining('{"ok"'), findsNothing);
-    },
-  );
+    expect(find.byKey(const ValueKey('agent-work-panel')), findsNothing);
+    expect(find.text('处理进度'), findsNothing);
+    expect(find.text('已生成分析卡片'), findsWidgets);
+    expect(
+      find.text('I found two sessions today and prepared a draft analysis.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('pump_session_summary_query'), findsNothing);
+    expect(find.textContaining('{"ok"'), findsNothing);
+  });
 
   testWidgets('Agent Hub merges tool progress by payload tool call id', (
     tester,
@@ -1213,8 +1211,9 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
-    expect(find.text('泵奶记录已读取'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-work-panel')), findsNothing);
+    expect(find.text('处理进度'), findsNothing);
+    expect(find.text('泵奶记录已读取'), findsNothing);
     expect(find.text('正在读取泵奶记录'), findsNothing);
   });
 
@@ -1526,9 +1525,10 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
-    expect(find.text('成长记录暂时无法读取'), findsOneWidget);
-    expect(find.text('失败'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-work-panel')), findsNothing);
+    expect(find.text('处理进度'), findsNothing);
+    expect(find.text('成长记录暂时无法读取'), findsNothing);
+    expect(find.text('失败'), findsNothing);
     expect(find.textContaining('growth_record_query'), findsNothing);
     expect(find.textContaining('database timeout'), findsNothing);
     expect(find.textContaining('baby-secret'), findsNothing);
@@ -1847,6 +1847,36 @@ void main() {
       expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     },
   );
+
+  testWidgets('Agent Hub renders assistant markdown without raw markers', (
+    tester,
+  ) async {
+    const markdown = '''
+## 产后恢复的几个关键方面
+
+### 1. 身体恢复
+- **恶露观察**：产后 4-6 周内会持续
+- **休息充足**：尽量在宝宝睡觉时一起休息
+''';
+
+    await tester.pumpWidget(
+      _host(
+        const AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: markdown,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.textContaining('##'), findsNothing);
+    expect(find.textContaining('**'), findsNothing);
+    expect(find.text('产后恢复的几个关键方面'), findsOneWidget);
+    expect(find.text('1. 身体恢复'), findsOneWidget);
+    expect(find.textContaining('恶露观察', findRichText: true), findsOneWidget);
+    expect(find.textContaining('休息充足', findRichText: true), findsOneWidget);
+  });
 
   testWidgets('Agent Hub status line uses progress events before final text', (
     tester,

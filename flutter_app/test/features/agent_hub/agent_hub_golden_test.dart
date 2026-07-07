@@ -62,7 +62,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('agent-history-panel')), findsOneWidget);
-      expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-work-panel')), findsNothing);
+      expect(find.text('处理进度'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-artifact-panel')),
         findsOneWidget,
