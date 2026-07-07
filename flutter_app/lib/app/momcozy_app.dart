@@ -62,6 +62,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
   @override
   void initState() {
     super.initState();
+    _runtimeController.enableSessionAutoRefresh(widget.sessionStore);
     _activeRouteSub = _routeIntentPlatform.activeRoutes.listen(
       _handlePendingNativeRoute,
     );
@@ -1115,11 +1116,25 @@ class MomCozyRoutePage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (route.path == '/') {
       final runtime = MomCozyRuntimeScope.of(context);
+      String? currentAccessToken() {
+        return MomCozyRuntimeScope.read(context)?.session.accessToken ??
+            runtime.session.accessToken;
+      }
+
       return AgentHubPage(
         stateCacheKey: runtime,
-        runner: createSessionAgentHubRunner(runtime.session),
-        cancelClient: createSessionAgentHubCancelClient(runtime.session),
-        actionClient: createSessionAgentHubActionClient(runtime.session),
+        runner: createSessionAgentHubRunner(
+          runtime.session,
+          accessTokenProvider: currentAccessToken,
+        ),
+        cancelClient: createSessionAgentHubCancelClient(
+          runtime.session,
+          accessTokenProvider: currentAccessToken,
+        ),
+        actionClient: createSessionAgentHubActionClient(
+          runtime.session,
+          accessTokenProvider: currentAccessToken,
+        ),
         interactionStateStore: createSessionAgentHubInteractionStateStore(
           runtime.session,
         ),

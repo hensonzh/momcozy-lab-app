@@ -27,6 +27,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     required this.multipartTransport,
     required Uri baseUri,
     this.token,
+    this.tokenProvider,
     this.headers = const <String, String>{},
     this.binaryConnector = const _DefaultAgentVoiceBinaryStreamConnector(),
     this.websocketConnector = const _DefaultAgentVoiceWebSocketConnector(),
@@ -35,6 +36,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   final ApiMultipartTransport multipartTransport;
   final Uri baseUri;
   final String? token;
+  final String? Function()? tokenProvider;
   final Map<String, String> headers;
   final AgentVoiceBinaryStreamConnector binaryConnector;
   final AgentVoiceWebSocketConnector websocketConnector;
@@ -66,10 +68,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   @override
   Stream<List<int>> realtimeVoicePcmStream({required String text}) {
     return binaryConnector.get(
-      _resolveHttp(
-        realtimeVoiceStreamEndpoint,
-        query: {'text': text},
-      ),
+      _resolveHttp(realtimeVoiceStreamEndpoint, query: {'text': text}),
       headers: _requestHeaders(accept: 'audio/pcm'),
     );
   }
@@ -78,10 +77,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     required String text,
   }) {
     return _redactedRequestContext(
-      _resolveHttp(
-        realtimeVoiceStreamEndpoint,
-        query: {'text': text},
-      ),
+      _resolveHttp(realtimeVoiceStreamEndpoint, query: {'text': text}),
       accept: 'audio/pcm',
     );
   }
@@ -132,7 +128,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   }
 
   Map<String, String> _requestHeaders({required String accept}) {
-    final authToken = token?.trim();
+    final authToken = (tokenProvider?.call() ?? token)?.trim();
     return {
       ...headers,
       'Accept': accept,

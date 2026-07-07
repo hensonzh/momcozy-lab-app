@@ -14,11 +14,13 @@ class AgentStreamEndpoint {
   AgentStreamEndpoint({
     required Uri uri,
     this.token,
+    this.tokenProvider,
     this.headers = const <String, String>{},
   }) : uri = TransportSecurityPolicy.requireSecureHttpOrWebSocket(uri);
 
   final Uri uri;
   final String? token;
+  final String? Function()? tokenProvider;
   final Map<String, String> headers;
 
   Uri get requestUri => uri;
@@ -30,7 +32,7 @@ class AgentStreamEndpoint {
     String accept = 'application/json',
     bool includeContentType = false,
   }) {
-    final authToken = token?.trim();
+    final authToken = (tokenProvider?.call() ?? token)?.trim();
     return <String, String>{
       ...headers,
       'Accept': accept,
@@ -479,17 +481,14 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
         : await _createRun(request);
     final afterSequence = request.afterSequence < 0 ? 0 : request.afterSequence;
 
-    final streamUri = _runScopedUri(
-      runsEndpoint.requestUri,
-      runId,
-      'stream',
-    ).replace(
-      queryParameters: {
-        'after_sequence': afterSequence.toString(),
-        'follow': 'true',
-        'limit': '200',
-      },
-    );
+    final streamUri = _runScopedUri(runsEndpoint.requestUri, runId, 'stream')
+        .replace(
+          queryParameters: {
+            'after_sequence': afterSequence.toString(),
+            'follow': 'true',
+            'limit': '200',
+          },
+        );
 
     yield* streamConnector.get(
       streamUri,

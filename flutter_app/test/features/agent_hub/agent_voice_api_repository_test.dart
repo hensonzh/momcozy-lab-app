@@ -111,9 +111,7 @@ void main() {
         );
 
         final chunks = await repository
-            .realtimeVoicePcmStream(
-              text: 'Short fixture text for playback.',
-            )
+            .realtimeVoicePcmStream(text: 'Short fixture text for playback.')
             .toList();
 
         expect(chunks, [
@@ -131,6 +129,39 @@ void main() {
         );
       },
     );
+
+    test('resolves realtime voice auth token lazily', () async {
+      var token = 'old-voice-token';
+      final connector = _RecordingBinaryConnector([
+        [1],
+      ]);
+      final repository = AgentVoiceApiRepository(
+        multipartTransport: FixtureApiMultipartTransport(const {
+          'status': 200,
+          'data': {},
+        }),
+        baseUri: Uri.parse('http://127.0.0.1:8769'),
+        tokenProvider: () => token,
+        binaryConnector: connector,
+      );
+
+      await repository.realtimeVoicePcmStream(text: 'first').toList();
+      expect(
+        connector.headers,
+        containsPair('Authorization', 'Bearer old-voice-token'),
+      );
+
+      token = 'new-voice-token';
+      connector.chunks = [
+        [2],
+      ];
+
+      await repository.realtimeVoicePcmStream(text: 'second').toList();
+      expect(
+        connector.headers,
+        containsPair('Authorization', 'Bearer new-voice-token'),
+      );
+    });
 
     test('rejects remote plaintext voice base URLs', () {
       expect(
@@ -159,7 +190,8 @@ void main() {
       final streamContext = repository.redactedRealtimeVoiceStreamLogContext(
         text: 'private voice playback text',
       );
-      final sessionContext = repository.redactedRealtimeVoiceSessionLogContext();
+      final sessionContext = repository
+          .redactedRealtimeVoiceSessionLogContext();
 
       expect(
         streamContext['url'],
@@ -224,9 +256,7 @@ void main() {
           websocketConnector: connector,
         );
 
-        final events = await repository
-            .realtimeVoiceSession()
-            .toList();
+        final events = await repository.realtimeVoiceSession().toList();
 
         expect(connector.uri!.scheme, 'wss');
         expect(connector.uri!.path, '/base/v1/realtime-voice-session');
@@ -304,7 +334,7 @@ void main() {
 class _RecordingBinaryConnector implements AgentVoiceBinaryStreamConnector {
   _RecordingBinaryConnector(this.chunks, {this.failure});
 
-  final List<List<int>> chunks;
+  List<List<int>> chunks;
   final Object? failure;
   Uri? uri;
   Map<String, String>? headers;
