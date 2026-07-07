@@ -28,6 +28,7 @@ From the parent `MomCozyApp/` directory:
 ```bash
 npm run flutter:check
 npm run flutter:init
+npm run flutter:invite-dev
 npm run flutter:release-gate
 npm run flutter:emulator-smoke
 ```
@@ -45,6 +46,22 @@ flutter analyze
 flutter test
 flutter build apk --debug --flavor local
 flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
+```
+
+邀请码登录本地联调用父目录命令：
+
+```bash
+npm run flutter:invite-dev
+```
+
+该命令默认连接 `http://10.0.2.2:8000`，不会传入 `MOMCOZY_API_TOKEN` 或
+`MOMCOZY_REFRESH_TOKEN`，并会先清理 local flavor 安装包，确保进入邀请码登录页。
+如需覆盖模拟器或后端地址：
+
+```bash
+MOMCOZY_FLUTTER_EMULATOR_DEVICE=emulator-5554 \
+MOMCOZY_API_BASE_URL=http://10.0.2.2:8000 \
+npm run flutter:invite-dev
 ```
 
 Agent Hub 默认使用 SSE transport，并可通过 dart-define 配置：
