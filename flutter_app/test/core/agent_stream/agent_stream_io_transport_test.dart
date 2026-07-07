@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -59,57 +60,87 @@ void main() {
       expect(runConnector.headers?['Idempotency-Key'], isNotEmpty);
     });
 
-    test('production SSE transport resumes existing runs after sequence', () async {
-      final runConnector = _RecordingControlHttpConnector(
-        const AgentStreamControlHttpResponse(
-          statusCode: 500,
-          body: '{"error":{"code":"should_not_create_run"}}',
-        ),
-      );
-      final streamConnector = _RecordingSseGetConnector([
-        'data: {"event_id":"evt-8","thread_id":"thread-production-001","run_id":"run-production-001","sequence":8,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:02Z"}\n\n',
-      ]);
-      final client = SseAgentStreamClient(
-        ProductionAgentSseTransport(
-          runsEndpoint: AgentStreamEndpoint(
-            uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
-            token: 'secret-token',
+    test(
+      'production SSE transport resumes existing runs after sequence',
+      () async {
+        final runConnector = _RecordingControlHttpConnector(
+          const AgentStreamControlHttpResponse(
+            statusCode: 500,
+            body: '{"error":{"code":"should_not_create_run"}}',
           ),
-          payloadFactory: buildProductionAgentRunPayload,
-          runConnector: runConnector,
-          streamConnector: streamConnector,
-        ),
-      );
-
-      final events = await client
-          .stream(
-            _request.resume(
-              runId: 'run-production-001',
-              threadId: 'thread-production-001',
-              afterSequence: 7,
+        );
+        final streamConnector = _RecordingSseGetConnector([
+          'data: {"event_id":"evt-8","thread_id":"thread-production-001","run_id":"run-production-001","sequence":8,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:02Z"}\n\n',
+        ]);
+        final client = SseAgentStreamClient(
+          ProductionAgentSseTransport(
+            runsEndpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+              token: 'secret-token',
             ),
-          )
-          .toList();
+            payloadFactory: buildProductionAgentRunPayload,
+            runConnector: runConnector,
+            streamConnector: streamConnector,
+          ),
+        );
 
-      expect(events.map((event) => event.type), ['run.completed']);
-      expect(runConnector.uri, isNull);
-      expect(
-        streamConnector.uri!.path,
-        '/v1/agent/runs/run-production-001/stream',
-      );
-      expect(streamConnector.uri!.queryParameters, {
-        'after_sequence': '7',
-        'follow': 'true',
-        'limit': '200',
+        final events = await client
+            .stream(
+              _request.resume(
+                runId: 'run-production-001',
+                threadId: 'thread-production-001',
+                afterSequence: 7,
+              ),
+            )
+            .toList();
+
+        expect(events.map((event) => event.type), ['run.completed']);
+        expect(runConnector.uri, isNull);
+        expect(
+          streamConnector.uri!.path,
+          '/v1/agent/runs/run-production-001/stream',
+        );
+        expect(streamConnector.uri!.queryParameters, {
+          'after_sequence': '7',
+          'follow': 'true',
+          'limit': '200',
+        });
+        expect(
+          streamConnector.headers,
+          containsPair('Authorization', 'Bearer secret-token'),
+        );
+        expect(
+          streamConnector.uri!.queryParameters,
+          isNot(containsPair('token', anything)),
+        );
+      },
+    );
+
+    test('control connector sends non-ASCII JSON bodies as UTF-8', () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      final receivedBody = server.first.then((request) async {
+        final body = await utf8.decoder.bind(request).join();
+        request.response
+          ..statusCode = 201
+          ..headers.contentType = ContentType.json
+          ..write('{"id":"run-utf8-001"}');
+        await request.response.close();
+        return body;
       });
-      expect(
-        streamConnector.headers,
-        containsPair('Authorization', 'Bearer secret-token'),
+      final connector = IoAgentStreamControlHttpConnector();
+
+      final response = await connector.post(
+        Uri.parse('http://${server.address.host}:${server.port}/v1/agent/runs'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'message': '你好', 'runtime_pattern': 'langgraph_sdk'}),
       );
-      expect(
-        streamConnector.uri!.queryParameters,
-        isNot(containsPair('token', anything)),
-      );
+
+      expect(response.statusCode, 201);
+      expect(jsonDecode(await receivedBody) as Map<String, Object?>, {
+        'message': '你好',
+        'runtime_pattern': 'langgraph_sdk',
+      });
     });
 
     test(

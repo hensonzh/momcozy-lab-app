@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/network/api_envelope.dart';
@@ -29,9 +30,7 @@ void main() {
       expect(response['status'], 200);
       expect(
         connector.uri,
-        Uri.parse(
-          'http://127.0.0.1:8769/v1/files?existing=1&limit=10',
-        ),
+        Uri.parse('http://127.0.0.1:8769/v1/files?existing=1&limit=10'),
       );
       expect(connector.headers, containsPair('Accept', 'application/json'));
       expect(
@@ -57,10 +56,7 @@ void main() {
 
       await transport.postJson(
         '/v1/records/feeding',
-        body: {
-          'feed_time': '2026-06-29T08:00:00Z',
-          'feed_type': 'bottle',
-        },
+        body: {'feed_time': '2026-06-29T08:00:00Z', 'feed_type': 'bottle'},
         headers: {'Idempotency-Key': 'idem-001'},
       );
 
@@ -76,6 +72,32 @@ void main() {
       expect(jsonDecode(connector.body!) as Map<String, Object?>, {
         'feed_time': '2026-06-29T08:00:00Z',
         'feed_type': 'bottle',
+      });
+    });
+
+    test('HTTP connector sends non-ASCII JSON bodies as UTF-8', () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      final receivedBody = server.first.then((request) async {
+        final body = await utf8.decoder.bind(request).join();
+        request.response
+          ..statusCode = 200
+          ..headers.contentType = ContentType.json
+          ..write('{"status":200,"data":{"accepted":true}}');
+        await request.response.close();
+        return body;
+      });
+      final connector = IoApiHttpConnector();
+
+      final response = await connector.post(
+        Uri.parse('http://${server.address.host}:${server.port}/v1/diary'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'content': '今天感觉不错'}),
+      );
+
+      expect(response.statusCode, 200);
+      expect(jsonDecode(await receivedBody) as Map<String, Object?>, {
+        'content': '今天感觉不错',
       });
     });
 
@@ -151,11 +173,7 @@ void main() {
                 'effectiveRequestId',
                 'req-prod',
               )
-              .having(
-                (error) => error.errorCode,
-                'errorCode',
-                'rate_limited',
-              )
+              .having((error) => error.errorCode, 'errorCode', 'rate_limited')
               .having(
                 (error) => error.errorMessage,
                 'errorMessage',
