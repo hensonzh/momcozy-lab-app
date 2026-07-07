@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
@@ -242,7 +243,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('auth-email-field')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('auth-invite-login-button')),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('agent-hub-page')), findsNothing);
   });
 
@@ -250,21 +254,21 @@ void main() {
     tester,
   ) async {
     final store = MemoryMomCozySessionStore();
+    final transport = FixtureApiJsonTransport(const {
+      'access_token': 'access-login',
+      'refresh_token': 'refresh-login',
+      'token_type': 'bearer',
+      'expires_in': 3600,
+      'user': {'id': 'login-user', 'display_name': 'Login User'},
+    });
     final controller = MomCozyRuntimeController(
-      MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransport(const {
-          'access_token': 'access-login',
-          'refresh_token': 'refresh-login',
-          'token_type': 'bearer',
-          'expires_in': 3600,
-          'user': {'id': 'login-user', 'display_name': 'Login User'},
-        }),
-      ),
+      MomCozyApiRuntime(jsonTransport: transport),
     );
     final router = createMomCozyRouter(
       initialLocation: '/media-viewer',
       runtimeController: controller,
       sessionStore: store,
+      authDeviceIdStore: const _FixedAuthDeviceIdStore('widget-device-001'),
     );
 
     await tester.pumpWidget(
@@ -276,20 +280,15 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.enterText(
-      find.byKey(const ValueKey('auth-email-field')),
-      'mom@example.test',
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey('auth-password-field')),
-      'secret123',
-    );
-    await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+    await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
     await tester.pumpAndSettle();
 
     expect(controller.runtime.session.isAuthenticated, isTrue);
     expect(controller.runtime.userId, 'login-user');
     expect((await store.readSession())?.accessToken, 'access-login');
+    expect(transport.lastPath, '/v1/auth/invite-login');
+    expect(transport.lastBody?['invite_code'], 'MOMCOZY-BETA');
+    expect(transport.lastBody?['device_id'], 'widget-device-001');
     expect(
       find.byKey(const ValueKey('route-page-/media-viewer')),
       findsOneWidget,
@@ -298,6 +297,15 @@ void main() {
     router.dispose();
     controller.dispose();
   });
+}
+
+class _FixedAuthDeviceIdStore implements MomCozyAuthDeviceIdStore {
+  const _FixedAuthDeviceIdStore(this.deviceId);
+
+  final String deviceId;
+
+  @override
+  Future<String> readOrCreateDeviceId() async => deviceId;
 }
 
 MomCozyApiRuntime _authenticatedRuntime({
