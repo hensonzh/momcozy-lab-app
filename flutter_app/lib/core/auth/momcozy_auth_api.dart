@@ -3,6 +3,7 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 
 const authSignupEndpoint = '/v1/auth/signup';
 const authLoginEndpoint = '/v1/auth/login';
+const authInviteLoginEndpoint = '/v1/auth/invite-login';
 const authRefreshEndpoint = '/v1/auth/refresh';
 const authLogoutEndpoint = '/v1/auth/logout';
 
@@ -41,6 +42,17 @@ class MomCozyAuthApiRepository {
         'password': password,
         if (deviceId.trim().isNotEmpty) 'device_id': deviceId.trim(),
       },
+    );
+    return MomCozyAuthTokenResponse.fromMap(response);
+  }
+
+  Future<MomCozyAuthTokenResponse> inviteLogin({
+    required String inviteCode,
+    required String deviceId,
+  }) async {
+    final response = await transport.postJson(
+      authInviteLoginEndpoint,
+      body: {'invite_code': inviteCode.trim(), 'device_id': deviceId.trim()},
     );
     return MomCozyAuthTokenResponse.fromMap(response);
   }

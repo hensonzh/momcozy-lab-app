@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 
 enum MomCozyAuthMode { login, signup }
+
+const _defaultInviteCode = String.fromEnvironment(
+  'MOMCOZY_INVITE_CODE',
+  defaultValue: 'MOMCOZY-BETA',
+);
 
 class MomCozyAuthPage extends StatefulWidget {
   const MomCozyAuthPage({
@@ -12,11 +19,15 @@ class MomCozyAuthPage extends StatefulWidget {
     required this.runtimeController,
     required this.sessionStore,
     this.redirectTo,
+    this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
+    this.inviteCode = _defaultInviteCode,
   });
 
   final MomCozyRuntimeController runtimeController;
   final MomCozySessionStore sessionStore;
   final String? redirectTo;
+  final MomCozyAuthDeviceIdStore authDeviceIdStore;
+  final String inviteCode;
 
   @override
   State<MomCozyAuthPage> createState() => _MomCozyAuthPageState();
@@ -152,6 +163,13 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                             ),
                       label: Text(_mode == MomCozyAuthMode.login ? '登录' : '注册'),
                     ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      key: const ValueKey('auth-invite-login-button'),
+                      onPressed: _submitting ? null : _submitInvite,
+                      icon: const Icon(Icons.key_rounded),
+                      label: const Text('邀请码体验'),
+                    ),
                   ],
                 ),
               ),
@@ -182,14 +200,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
               password: password,
               displayName: _displayNameController.text,
             );
-      final session = tokens.toSession(
-        babyId: runtime.babyId,
-        locale: runtime.locale,
-      );
-      await widget.sessionStore.writeSession(session);
-      widget.runtimeController.replaceSession(session);
-      if (!mounted) return;
-      context.go(_safeRedirect(widget.redirectTo) ?? '/');
+      await _completeAuth(tokens, runtime);
     } catch (error) {
       if (!mounted) return;
       setState(() {
@@ -197,6 +208,44 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
         _errorText = _authErrorText(error);
       });
     }
+  }
+
+  Future<void> _submitInvite() async {
+    if (_submitting) return;
+    setState(() {
+      _submitting = true;
+      _errorText = null;
+    });
+
+    try {
+      final runtime = widget.runtimeController.runtime;
+      final deviceId = await widget.authDeviceIdStore.readOrCreateDeviceId();
+      final tokens = await runtime.authRepository.inviteLogin(
+        inviteCode: widget.inviteCode,
+        deviceId: deviceId,
+      );
+      await _completeAuth(tokens, runtime);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _errorText = _authErrorText(error);
+      });
+    }
+  }
+
+  Future<void> _completeAuth(
+    MomCozyAuthTokenResponse tokens,
+    MomCozyApiRuntime runtime,
+  ) async {
+    final session = tokens.toSession(
+      babyId: runtime.babyId,
+      locale: runtime.locale,
+    );
+    await widget.sessionStore.writeSession(session);
+    widget.runtimeController.replaceSession(session);
+    if (!mounted) return;
+    context.go(_safeRedirect(widget.redirectTo) ?? '/');
   }
 
   String? _validateEmail(String? value) {
