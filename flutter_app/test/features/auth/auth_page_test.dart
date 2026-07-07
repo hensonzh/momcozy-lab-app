@@ -63,6 +63,60 @@ void main() {
     controller.dispose();
     router.dispose();
   });
+
+  testWidgets('invite login shows bound-device message on permission denied', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport(
+      _httpError(
+        403,
+        code: 'permission_denied',
+        message: 'Invite code is already bound to another device.',
+      ),
+    );
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: transport,
+      userId: 'demo-user',
+      babyId: 'demo-baby',
+      locale: 'zh-CN',
+    );
+    final controller = MomCozyRuntimeController(runtime);
+    final store = MemoryMomCozySessionStore();
+    final router = GoRouter(
+      initialLocation: '/login',
+      routes: [
+        GoRoute(
+          path: '/login',
+          builder: (context, state) => MomCozyAuthPage(
+            runtimeController: controller,
+            sessionStore: store,
+            inviteCode: 'MOMCOZY-BETA',
+            authDeviceIdStore: const _FixedAuthDeviceIdStore(
+              'flutter-device-002',
+            ),
+          ),
+        ),
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const Scaffold(body: Text('home')),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+    await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
+    await tester.pumpAndSettle();
+
+    expect(transport.lastPath, authInviteLoginEndpoint);
+    expect(find.byKey(const ValueKey('auth-error-text')), findsOneWidget);
+    expect(find.text('邀请码已在其他设备使用过'), findsOneWidget);
+    expect(find.text('home'), findsNothing);
+    expect(await store.readSession(), isNull);
+
+    controller.dispose();
+    router.dispose();
+  });
 }
 
 Map<String, Object?> _tokenResponse() {
@@ -72,6 +126,25 @@ Map<String, Object?> _tokenResponse() {
     'expires_in': 3600,
     'token_type': 'bearer',
     'user': {'id': 'invite-user-001', 'display_name': 'Invite User'},
+  };
+}
+
+Map<String, Object?> _httpError(
+  int statusCode, {
+  required String code,
+  required String message,
+}) {
+  return {
+    'http_status': statusCode,
+    'status_text': 'HTTP $statusCode',
+    'body': {
+      'error': {
+        'code': code,
+        'message': message,
+        'request_id': 'req-test',
+        'details': <String, Object?>{},
+      },
+    },
   };
 }
 
