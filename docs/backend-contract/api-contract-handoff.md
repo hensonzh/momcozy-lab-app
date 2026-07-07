@@ -28,6 +28,19 @@ code is rejected with `permission_denied`.
 Service-to-service callers use `X-Service-Key`; this is not a user token and
 must not be used by mobile clients.
 
+## Admin Invite Codes
+
+- Admin page: `GET /v1/admin/invite-codes/ui`
+- Create: `POST /v1/admin/invite-codes`
+- List: `GET /v1/admin/invite-codes`
+- Disable: `POST /v1/admin/invite-codes/{code}/disable`
+
+These routes are admin/ops-only. The Flutter app must not call them or store
+`X-Service-Key`. Operators use the lightweight admin page/API to create beta
+invite codes and disable a specific code when needed. Managed invite codes are
+stored in Postgres; the first successful app invite login binds a code to the
+stable local `device_id`.
+
 ## Idempotency
 
 Retryable writes accept `Idempotency-Key` as a header. The backend normalizes
