@@ -1563,6 +1563,28 @@
         "title": "InfantProfileRead",
         "type": "object"
       },
+      "InviteLoginRequest": {
+        "properties": {
+          "device_id": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Device Id",
+            "type": "string"
+          },
+          "invite_code": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Invite Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "invite_code",
+          "device_id"
+        ],
+        "title": "InviteLoginRequest",
+        "type": "object"
+      },
       "LoginRequest": {
         "properties": {
           "device_id": {
@@ -3236,90 +3258,6 @@
         "title": "SpeechTranscriptionResponse",
         "type": "object"
       },
-      "StatusPageTodayRead": {
-        "properties": {
-          "completed_task_count": {
-            "title": "Completed Task Count",
-            "type": "integer"
-          },
-          "date": {
-            "format": "date",
-            "title": "Date",
-            "type": "string"
-          },
-          "feeding_count": {
-            "title": "Feeding Count",
-            "type": "integer"
-          },
-          "infant_count": {
-            "title": "Infant Count",
-            "type": "integer"
-          },
-          "pending_task_count": {
-            "title": "Pending Task Count",
-            "type": "integer"
-          },
-          "profile": {
-            "$ref": "#/components/schemas/StatusProfileSummary"
-          },
-          "pumped_milk_volume_ml": {
-            "title": "Pumped Milk Volume Ml",
-            "type": "number"
-          },
-          "pumping_count": {
-            "title": "Pumping Count",
-            "type": "integer"
-          },
-          "task_count": {
-            "title": "Task Count",
-            "type": "integer"
-          },
-          "unread_notification_count": {
-            "title": "Unread Notification Count",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "date",
-          "profile",
-          "infant_count",
-          "feeding_count",
-          "pumping_count",
-          "pumped_milk_volume_ml",
-          "task_count",
-          "completed_task_count",
-          "pending_task_count",
-          "unread_notification_count"
-        ],
-        "title": "StatusPageTodayRead",
-        "type": "object"
-      },
-      "StatusProfileSummary": {
-        "properties": {
-          "daily_summary": {
-            "default": "",
-            "title": "Daily Summary",
-            "type": "string"
-          },
-          "display_name": {
-            "default": "",
-            "title": "Display Name",
-            "type": "string"
-          },
-          "feeding_advice": {
-            "default": "",
-            "title": "Feeding Advice",
-            "type": "string"
-          },
-          "lactation_advice": {
-            "default": "",
-            "title": "Lactation Advice",
-            "type": "string"
-          }
-        },
-        "title": "StatusProfileSummary",
-        "type": "object"
-      },
       "SupportTicketCreate": {
         "properties": {
           "issue_summary": {
@@ -3658,11 +3596,6 @@
             ],
             "title": "Age"
           },
-          "daily_summary": {
-            "default": "",
-            "title": "Daily Summary",
-            "type": "string"
-          },
           "delivery_date": {
             "anyOf": [
               {
@@ -3712,45 +3645,6 @@
         "title": "UserProfileRead",
         "type": "object"
       },
-      "UserProfileStatusSummaryUpdate": {
-        "properties": {
-          "daily_summary": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Daily Summary"
-          },
-          "feeding_advice": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Feeding Advice"
-          },
-          "lactation_advice": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Lactation Advice"
-          }
-        },
-        "title": "UserProfileStatusSummaryUpdate",
-        "type": "object"
-      },
       "UserProfileUpdate": {
         "properties": {
           "age": {
@@ -3765,17 +3659,6 @@
               }
             ],
             "title": "Age"
-          },
-          "daily_summary": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Daily Summary"
           },
           "delivery_date": {
             "anyOf": [
@@ -3950,7 +3833,13 @@
         "summary": "Get Action",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/actions/{action_id}/confirm": {
@@ -4024,7 +3913,13 @@
         "summary": "Confirm Action",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/actions/{action_id}/reject": {
@@ -4082,7 +3977,13 @@
         "summary": "Reject Action",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/admin/runs/{run_id}/eval-cases": {
@@ -4151,7 +4052,14 @@
         "summary": "Create Eval Case From Run",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "admin_ops_api",
+        "x-momcozy-client": [
+          "ops-console",
+          "eval-runner"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/admin/runs/{run_id}/replay": {
@@ -4220,7 +4128,14 @@
         "summary": "Export Run Replay Bundle",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "admin_ops_api",
+        "x-momcozy-client": [
+          "ops-console",
+          "eval-runner"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/artifacts/{artifact_id}": {
@@ -4261,7 +4176,13 @@
         "summary": "Delete Artifact",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/memories": {
@@ -4328,7 +4249,13 @@
         "summary": "List Memories",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/memories/settings": {
@@ -4354,7 +4281,13 @@
         "summary": "Get Memory Settings",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       },
       "put": {
         "operationId": "update_memory_settings_v1_agent_memories_settings_put",
@@ -4398,7 +4331,13 @@
         "summary": "Update Memory Settings",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/memories/{memory_id}": {
@@ -4439,7 +4378,13 @@
         "summary": "Delete Memory",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/runs": {
@@ -4503,7 +4448,13 @@
         "summary": "Create Run",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/runs/{run_id}": {
@@ -4551,7 +4502,13 @@
         "summary": "Get Run",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/runs/{run_id}/cancel": {
@@ -4609,7 +4566,13 @@
         "summary": "Cancel Run",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/runs/{run_id}/client-events": {
@@ -4667,7 +4630,13 @@
         "summary": "Record Client Event",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/runs/{run_id}/events": {
@@ -4738,7 +4707,13 @@
         "summary": "List Run Events",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/runs/{run_id}/stream": {
@@ -4841,7 +4816,13 @@
         "summary": "Stream Run Events",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "runtime_stream_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/threads": {
@@ -4891,7 +4872,13 @@
         "summary": "List Threads",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       },
       "post": {
         "operationId": "create_thread_v1_agent_threads_post",
@@ -4935,7 +4922,13 @@
         "summary": "Create Thread",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/agent/threads/{thread_id}": {
@@ -4983,7 +4976,13 @@
         "summary": "Get Thread",
         "tags": [
           "agent"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "agent-runtime",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/assets": {
@@ -5028,7 +5027,13 @@
         "summary": "List Product Assets",
         "tags": [
           "assets"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "product-assets",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/assets/{asset_id}": {
@@ -5068,7 +5073,60 @@
         "summary": "Get Product Asset",
         "tags": [
           "assets"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "product-assets",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/auth/invite-login": {
+      "post": {
+        "operationId": "invite_login_v1_auth_invite_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Invite Login",
+        "tags": [
+          "auth"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "auth",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/auth/login": {
@@ -5109,7 +5167,13 @@
         "summary": "Login",
         "tags": [
           "auth"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "auth",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/auth/logout": {
@@ -5135,7 +5199,13 @@
         "summary": "Logout",
         "tags": [
           "auth"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "auth",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/auth/refresh": {
@@ -5176,7 +5246,13 @@
         "summary": "Refresh",
         "tags": [
           "auth"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "auth",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/auth/signup": {
@@ -5217,7 +5293,13 @@
         "summary": "Signup",
         "tags": [
           "auth"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "auth",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pump-energy-target": {
@@ -5243,7 +5325,13 @@
         "summary": "Get Pump Energy Target",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pump-health": {
@@ -5307,7 +5395,13 @@
         "summary": "Create Pump Health",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pump-health/latest": {
@@ -5356,7 +5450,13 @@
         "summary": "Get Latest Pump Health",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pump-telemetry": {
@@ -5438,7 +5538,13 @@
         "summary": "List Pump Telemetry",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       },
       "post": {
         "operationId": "create_pump_telemetry_v1_devices_pump_telemetry_post",
@@ -5500,7 +5606,13 @@
         "summary": "Create Pump Telemetry",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pump-threshold": {
@@ -5564,7 +5676,13 @@
         "summary": "Create Pump Threshold",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pump-threshold/latest": {
@@ -5613,7 +5731,13 @@
         "summary": "Get Latest Pump Threshold",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pump-workstate": {
@@ -5677,7 +5801,13 @@
         "summary": "Create Pump Workstate",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pump-workstate/latest": {
@@ -5726,7 +5856,13 @@
         "summary": "Get Latest Pump Workstate",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pumps": {
@@ -5752,7 +5888,13 @@
         "summary": "List Pump Devices",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/devices/pumps/{device_id}": {
@@ -5809,7 +5951,13 @@
         "summary": "Upsert Pump Device",
         "tags": [
           "devices"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "devices",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/files": {
@@ -5859,7 +6007,13 @@
         "summary": "List Files",
         "tags": [
           "files"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "files",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/files/upload": {
@@ -5923,7 +6077,13 @@
         "summary": "Upload File",
         "tags": [
           "files"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "files",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/files/{file_id}": {
@@ -5980,7 +6140,13 @@
         "summary": "Delete File",
         "tags": [
           "files"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "files",
+        "x-momcozy-stability": "stable"
       },
       "get": {
         "operationId": "get_file_v1_files__file_id__get",
@@ -6026,7 +6192,13 @@
         "summary": "Get File",
         "tags": [
           "files"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "files",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/files/{file_id}/vision/events/stream": {
@@ -6072,7 +6244,13 @@
         "summary": "Stream File Vision Events",
         "tags": [
           "files"
-        ]
+        ],
+        "x-momcozy-api-surface": "runtime_stream_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "files",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/health/live": {
@@ -6094,7 +6272,14 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Live"
+        "summary": "Live",
+        "x-momcozy-api-surface": "infra_probe_api",
+        "x-momcozy-client": [
+          "load-balancer",
+          "monitoring"
+        ],
+        "x-momcozy-owner": "platform",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/health/metrics": {
@@ -6142,7 +6327,14 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Metrics"
+        "summary": "Metrics",
+        "x-momcozy-api-surface": "infra_probe_api",
+        "x-momcozy-client": [
+          "load-balancer",
+          "monitoring"
+        ],
+        "x-momcozy-owner": "platform",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/health/ready": {
@@ -6162,7 +6354,14 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Ready"
+        "summary": "Ready",
+        "x-momcozy-api-surface": "infra_probe_api",
+        "x-momcozy-client": [
+          "load-balancer",
+          "monitoring"
+        ],
+        "x-momcozy-owner": "platform",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/notifications": {
@@ -6244,7 +6443,13 @@
         "summary": "List Notifications",
         "tags": [
           "notifications"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "notifications",
+        "x-momcozy-stability": "stable"
       },
       "post": {
         "operationId": "create_notification_v1_notifications_post",
@@ -6317,7 +6522,14 @@
         "summary": "Create Notification",
         "tags": [
           "notifications"
-        ]
+        ],
+        "x-momcozy-api-surface": "internal_service_api",
+        "x-momcozy-client": [
+          "agent-worker",
+          "outbox-worker"
+        ],
+        "x-momcozy-owner": "notifications",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/notifications/{notification_id}": {
@@ -6358,7 +6570,13 @@
         "summary": "Archive Notification",
         "tags": [
           "notifications"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "notifications",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/notifications/{notification_id}/read": {
@@ -6416,7 +6634,13 @@
         "summary": "Set Notification Read State",
         "tags": [
           "notifications"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "notifications",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/plans": {
@@ -6476,7 +6700,13 @@
         "summary": "List Plans",
         "tags": [
           "plans"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
       },
       "post": {
         "operationId": "create_plan_v1_plans_post",
@@ -6538,7 +6768,13 @@
         "summary": "Create Plan",
         "tags": [
           "plans"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/plans/tasks": {
@@ -6602,7 +6838,13 @@
         "summary": "Create Task",
         "tags": [
           "plans"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/plans/tasks/list": {
@@ -6685,7 +6927,13 @@
         "summary": "List Tasks",
         "tags": [
           "plans"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/plans/tasks/{task_id}": {
@@ -6726,7 +6974,13 @@
         "summary": "Delete Task",
         "tags": [
           "plans"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
       },
       "patch": {
         "operationId": "update_task_v1_plans_tasks__task_id__patch",
@@ -6782,7 +7036,13 @@
         "summary": "Update Task",
         "tags": [
           "plans"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/plans/tasks/{task_id}/completion": {
@@ -6840,7 +7100,13 @@
         "summary": "Update Task Completion",
         "tags": [
           "plans"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/plans/{plan_id}": {
@@ -6881,7 +7147,13 @@
         "summary": "Delete Plan",
         "tags": [
           "plans"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
       },
       "get": {
         "operationId": "get_plan_v1_plans__plan_id__get",
@@ -6927,7 +7199,13 @@
         "summary": "Get Plan",
         "tags": [
           "plans"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "plans",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/pregnancy-diary/entries": {
@@ -7011,7 +7289,13 @@
         "summary": "List Entries",
         "tags": [
           "pregnancy-diary"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "pregnancy-diary",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/pregnancy-diary/entries/{entry_date}": {
@@ -7052,7 +7336,13 @@
         "summary": "Delete Entry",
         "tags": [
           "pregnancy-diary"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "pregnancy-diary",
+        "x-momcozy-stability": "stable"
       },
       "get": {
         "operationId": "get_entry_v1_pregnancy_diary_entries__entry_date__get",
@@ -7098,7 +7388,13 @@
         "summary": "Get Entry",
         "tags": [
           "pregnancy-diary"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "pregnancy-diary",
+        "x-momcozy-stability": "stable"
       },
       "put": {
         "operationId": "upsert_entry_v1_pregnancy_diary_entries__entry_date__put",
@@ -7154,7 +7450,13 @@
         "summary": "Upsert Entry",
         "tags": [
           "pregnancy-diary"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "pregnancy-diary",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/profile/infants": {
@@ -7180,7 +7482,13 @@
         "summary": "List My Infants",
         "tags": [
           "profile"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "profiles",
+        "x-momcozy-stability": "stable"
       },
       "post": {
         "operationId": "create_my_infant_v1_profile_infants_post",
@@ -7242,7 +7550,13 @@
         "summary": "Create My Infant",
         "tags": [
           "profile"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "profiles",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/profile/me": {
@@ -7268,7 +7582,13 @@
         "summary": "Get My Profile",
         "tags": [
           "profile"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "profiles",
+        "x-momcozy-stability": "stable"
       },
       "put": {
         "operationId": "update_my_profile_v1_profile_me_put",
@@ -7312,53 +7632,13 @@
         "summary": "Update My Profile",
         "tags": [
           "profile"
-        ]
-      }
-    },
-    "/v1/profile/status-summary": {
-      "put": {
-        "operationId": "update_my_status_summary_v1_profile_status_summary_put",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserProfileStatusSummaryUpdate"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserProfileRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "HTTPBearer": []
-          }
         ],
-        "summary": "Update My Status Summary",
-        "tags": [
-          "profile"
-        ]
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "profiles",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/realtime-voice-stream": {
@@ -7405,7 +7685,13 @@
         "summary": "Realtime Voice Stream",
         "tags": [
           "voice"
-        ]
+        ],
+        "x-momcozy-api-surface": "runtime_stream_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "voice",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/records/feeding": {
@@ -7489,7 +7775,13 @@
         "summary": "List Feedings",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       },
       "post": {
         "operationId": "create_feeding_v1_records_feeding_post",
@@ -7551,7 +7843,13 @@
         "summary": "Create Feeding",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/records/feeding/{record_id}": {
@@ -7592,7 +7890,13 @@
         "summary": "Delete Feeding",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/records/growth": {
@@ -7659,7 +7963,13 @@
         "summary": "List Growth",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       },
       "post": {
         "operationId": "create_growth_v1_records_growth_post",
@@ -7721,7 +8031,13 @@
         "summary": "Create Growth",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/records/growth/{record_id}": {
@@ -7762,7 +8078,13 @@
         "summary": "Delete Growth",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       },
       "patch": {
         "operationId": "update_growth_v1_records_growth__record_id__patch",
@@ -7818,7 +8140,13 @@
         "summary": "Update Growth",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/records/milk-trends": {
@@ -7895,7 +8223,13 @@
         "summary": "Get Milk Trends",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/records/pumping": {
@@ -7979,7 +8313,13 @@
         "summary": "List Pumpings",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       },
       "post": {
         "operationId": "create_pumping_v1_records_pumping_post",
@@ -8041,7 +8381,13 @@
         "summary": "Create Pumping",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/records/pumping/{record_id}": {
@@ -8082,7 +8428,13 @@
         "summary": "Delete Pumping",
         "tags": [
           "records"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/speech/transcribe-chunk": {
@@ -8128,62 +8480,13 @@
         "summary": "Transcribe Speech Chunk",
         "tags": [
           "voice"
-        ]
-      }
-    },
-    "/v1/status-page/today": {
-      "get": {
-        "operationId": "get_today_status_page_v1_status_page_today_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "day",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "format": "date",
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Day"
-            }
-          }
         ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatusPageTodayRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "HTTPBearer": []
-          }
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
         ],
-        "summary": "Get Today Status Page",
-        "tags": [
-          "status-page"
-        ]
+        "x-momcozy-owner": "voice",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/support/tickets": {
@@ -8249,7 +8552,13 @@
         "summary": "List Support Tickets",
         "tags": [
           "support"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "support",
+        "x-momcozy-stability": "stable"
       },
       "post": {
         "operationId": "create_support_ticket_v1_support_tickets_post",
@@ -8311,7 +8620,13 @@
         "summary": "Create Support Ticket",
         "tags": [
           "support"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "support",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/support/tickets/{ticket_id}": {
@@ -8359,7 +8674,13 @@
         "summary": "Get Support Ticket",
         "tags": [
           "support"
-        ]
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "support",
+        "x-momcozy-stability": "stable"
       }
     }
   }

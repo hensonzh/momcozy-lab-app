@@ -52,6 +52,23 @@ void main() {
       expect(transport.lastBody, isNot(containsPair('device_id', anything)));
     });
 
+    test('invite login posts invite code and device id', () async {
+      final transport = FixtureApiJsonTransport(_tokenResponse());
+      final repository = MomCozyAuthApiRepository(transport: transport);
+
+      await repository.inviteLogin(
+        inviteCode: ' MOMCOZY-BETA ',
+        deviceId: ' flutter-device-001 ',
+      );
+
+      expect(transport.lastPath, authInviteLoginEndpoint);
+      expect(transport.lastBody, {
+        'invite_code': 'MOMCOZY-BETA',
+        'device_id': 'flutter-device-001',
+      });
+      expect(transport.lastQuery, isNull);
+    });
+
     test('refresh sends refresh token in the body only', () async {
       final transport = FixtureApiJsonTransport(_tokenResponse());
       final repository = MomCozyAuthApiRepository(transport: transport);
