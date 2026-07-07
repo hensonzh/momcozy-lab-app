@@ -78,9 +78,7 @@ void main() {
     final chatRect = tester.getRect(
       find.byKey(const ValueKey('agent-chat-scroll-view')),
     );
-    final greetingRect = tester.getRect(
-      find.textContaining('嗨，我是 CozyMate'),
-    );
+    final greetingRect = tester.getRect(find.textContaining('嗨，我是 CozyMate'));
 
     expect(greetingRect.top - chatRect.top, lessThan(120));
   });
@@ -323,9 +321,7 @@ void main() {
       final chatRect = tester.getRect(
         find.byKey(const ValueKey('agent-chat-scroll-view')),
       );
-      final greetingRect = tester.getRect(
-        find.textContaining('嗨，我是 CozyMate'),
-      );
+      final greetingRect = tester.getRect(find.textContaining('嗨，我是 CozyMate'));
       final userRect = tester.getRect(find.text('nihao'));
       final errorRect = tester.getRect(find.textContaining('这次没有拿到回复'));
       final retryRect = tester.getRect(
@@ -587,7 +583,8 @@ void main() {
     await tester.pump();
 
     expect(client.requests, hasLength(1));
-    expect(find.text('正在生成回复'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-stop-button')), findsOneWidget);
 
     await tester.pumpWidget(_host(const SizedBox.shrink()));
@@ -603,7 +600,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('正在生成回复'), findsNothing);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
     expect(find.text('连接中断，请重试'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
@@ -946,7 +943,7 @@ void main() {
       ),
     );
 
-    expect(find.text('正在生成回复'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     expect(find.text('Partial answer'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
@@ -1052,7 +1049,7 @@ void main() {
       ),
     );
 
-    expect(find.text('正在生成回复'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
@@ -1818,7 +1815,22 @@ void main() {
         ),
       );
 
-      expect(find.text('正在生成回复'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+      expect(find.text('I can help'), findsOneWidget);
+
+      await tester.pumpWidget(
+        _host(
+          const AgentHubPage(
+            state: AgentStreamRunState(phase: AgentStreamRunPhase.streaming),
+          ),
+        ),
+      );
+
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
 
       await tester.pumpWidget(
         _host(
@@ -1832,9 +1844,34 @@ void main() {
       );
 
       expect(find.text('I can help you review today.'), findsOneWidget);
-      expect(find.text('正在生成回复'), findsNothing);
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     },
   );
+
+  testWidgets('Agent Hub status line uses progress events before final text', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({
+          'type': 'run.progress',
+          'payload': {'label': '我在帮你检查今天的记录～'},
+        }),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-run-status-line')),
+        matching: find.text('我在帮你检查今天的记录～'),
+      ),
+      findsOneWidget,
+    );
+  });
 }
 
 Widget _host(Widget child) {
