@@ -229,7 +229,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
       if (!mounted) return;
       setState(() {
         _submitting = false;
-        _errorText = _authErrorText(error);
+        _errorText = _authErrorText(error, inviteLogin: true);
       });
     }
   }
@@ -264,8 +264,11 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
   }
 }
 
-String _authErrorText(Object error) {
+String _authErrorText(Object error, {bool inviteLogin = false}) {
   if (error is ApiHttpException) {
+    if (inviteLogin && error.errorCode == 'permission_denied') {
+      return '邀请码已在其他设备使用过';
+    }
     return error.errorMessage?.isNotEmpty == true
         ? error.errorMessage!
         : '认证失败，请稍后重试。';
