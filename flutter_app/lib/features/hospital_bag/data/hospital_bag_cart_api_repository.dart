@@ -12,9 +12,9 @@ class HospitalBagCartApiRepository implements HospitalBagCartRepository {
   Future<HospitalBagCartSyncResult> syncCart({
     required List<HospitalBagPackedItem> items,
   }) async {
-    final serializedItems = items
-        .map((item) => item.toMap())
-        .toList(growable: false);
+    final serializedItems = items.map((item) => item.toMap()).toList(
+      growable: false,
+    );
     final response = await transport.postJson(
       hospitalBagCartUpdateEndpoint,
       headers: {'Idempotency-Key': _idempotencyKey(items)},

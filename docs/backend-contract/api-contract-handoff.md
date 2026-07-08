@@ -12,6 +12,7 @@ This handoff is the human-readable companion to
 
 ## Auth
 
+- `POST /v1/auth/invite-login`
 - `POST /v1/auth/signup`
 - `POST /v1/auth/login`
 - `POST /v1/auth/refresh`
@@ -19,8 +20,26 @@ This handoff is the human-readable companion to
 
 Clients use `Authorization: Bearer <access_token>` for user-facing APIs.
 Refresh tokens are opaque and only sent in request bodies to `/auth/refresh`.
+Invite-login is a beta-access path: the app sends a configured invite code plus
+its stable device id. The first successful login binds that invite code to the
+device id; later logins must use the same device id and receive the same token
+pair contract as signup/login. A different device using an already-bound invite
+code is rejected with `permission_denied`.
 Service-to-service callers use `X-Service-Key`; this is not a user token and
 must not be used by mobile clients.
+
+## Admin Invite Codes
+
+- Admin page: `GET /v1/admin/invite-codes/ui`
+- Create: `POST /v1/admin/invite-codes`
+- List: `GET /v1/admin/invite-codes`
+- Disable: `POST /v1/admin/invite-codes/{code}/disable`
+
+These routes are admin/ops-only. The Flutter app must not call them or store
+`X-Service-Key`. Operators use the lightweight admin page/API to create beta
+invite codes and disable a specific code when needed. Managed invite codes are
+stored in Postgres; the first successful app invite login binds a code to the
+stable local `device_id`.
 
 ## Idempotency
 

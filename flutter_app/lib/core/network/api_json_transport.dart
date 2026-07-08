@@ -170,7 +170,7 @@ class IoApiHttpConnector implements ApiHttpConnector {
   }) async {
     final request = await _httpClient.postUrl(uri);
     headers.forEach(request.headers.set);
-    request.write(body);
+    request.add(utf8.encode(body));
     return _close(request);
   }
 

@@ -16,6 +16,7 @@ SMOKE_FLOWS_PATH = CONTRACT_DIR / "flutter-smoke-flows.json"
 REQUIRED_OPENAPI_PATHS = {
     "/v1/auth/signup",
     "/v1/auth/login",
+    "/v1/auth/invite-login",
     "/v1/auth/refresh",
     "/v1/auth/logout",
     "/v1/files/upload",
@@ -51,6 +52,7 @@ FORBIDDEN_QUERY_KEYS = {
 AUTH_EXEMPT_PATHS = {
     ("/v1/auth/signup", "POST"),
     ("/v1/auth/login", "POST"),
+    ("/v1/auth/invite-login", "POST"),
     ("/v1/auth/refresh", "POST"),
 }
 

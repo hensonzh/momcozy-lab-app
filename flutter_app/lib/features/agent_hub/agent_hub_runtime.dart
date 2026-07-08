@@ -62,11 +62,17 @@ AgentStreamRunner createDefaultAgentHubRunner({AgentStreamEndpoint? endpoint}) {
 AgentStreamRunner createSessionAgentHubRunner(
   MomCozySession session, {
   AgentStreamEndpoint? endpoint,
+  String? Function()? accessTokenProvider,
 }) {
   return AgentStreamRunner(
     SseAgentStreamClient(
       ProductionAgentSseTransport(
-        runsEndpoint: endpoint ?? sessionAgentHubSseEndpoint(session),
+        runsEndpoint:
+            endpoint ??
+            sessionAgentHubSseEndpoint(
+              session,
+              accessTokenProvider: accessTokenProvider,
+            ),
         payloadFactory: buildDefaultAgentHubPayload,
       ),
     ),
@@ -84,9 +90,15 @@ AgentStreamCancelClient createDefaultAgentHubCancelClient({
 AgentStreamCancelClient createSessionAgentHubCancelClient(
   MomCozySession session, {
   AgentStreamEndpoint? endpoint,
+  String? Function()? accessTokenProvider,
 }) {
   return AgentStreamCancelClient(
-    endpoint: endpoint ?? sessionAgentHubCancelEndpoint(session),
+    endpoint:
+        endpoint ??
+        sessionAgentHubCancelEndpoint(
+          session,
+          accessTokenProvider: accessTokenProvider,
+        ),
   );
 }
 
@@ -101,9 +113,15 @@ AgentStreamActionClient createDefaultAgentHubActionClient({
 AgentStreamActionClient createSessionAgentHubActionClient(
   MomCozySession session, {
   AgentStreamEndpoint? endpoint,
+  String? Function()? accessTokenProvider,
 }) {
   return AgentStreamActionClient(
-    endpoint: endpoint ?? sessionAgentHubActionEndpoint(session),
+    endpoint:
+        endpoint ??
+        sessionAgentHubActionEndpoint(
+          session,
+          accessTokenProvider: accessTokenProvider,
+        ),
   );
 }
 
@@ -140,41 +158,58 @@ AgentStreamEndpoint defaultAgentHubActionEndpoint() {
   );
 }
 
-AgentStreamEndpoint sessionAgentHubSseEndpoint(MomCozySession session) {
+AgentStreamEndpoint sessionAgentHubSseEndpoint(
+  MomCozySession session, {
+  String? Function()? accessTokenProvider,
+}) {
   final explicitRunsUrl = _defaultAgentHubRunsUrl.trim();
   return _agentHubEndpoint(
     explicitRunsUrl.isEmpty
         ? _agentHubApiUri('/v1/agent/runs')
         : Uri.parse(explicitRunsUrl),
     token: session.accessToken,
+    tokenProvider: accessTokenProvider,
   );
 }
 
-AgentStreamEndpoint sessionAgentHubCancelEndpoint(MomCozySession session) {
+AgentStreamEndpoint sessionAgentHubCancelEndpoint(
+  MomCozySession session, {
+  String? Function()? accessTokenProvider,
+}) {
   final explicitCancelUrl = _defaultAgentHubCancelUrl.trim();
   return _agentHubEndpoint(
     explicitCancelUrl.isEmpty
         ? _agentHubApiUri('/v1/agent/runs')
         : Uri.parse(explicitCancelUrl),
     token: session.accessToken,
+    tokenProvider: accessTokenProvider,
   );
 }
 
-AgentStreamEndpoint sessionAgentHubActionEndpoint(MomCozySession session) {
+AgentStreamEndpoint sessionAgentHubActionEndpoint(
+  MomCozySession session, {
+  String? Function()? accessTokenProvider,
+}) {
   final explicitActionsUrl = _defaultAgentHubActionsUrl.trim();
   return _agentHubEndpoint(
     explicitActionsUrl.isEmpty
         ? _agentHubApiUri('/v1/agent/actions')
         : Uri.parse(explicitActionsUrl),
     token: session.accessToken,
+    tokenProvider: accessTokenProvider,
   );
 }
 
-AgentStreamEndpoint _agentHubEndpoint(Uri uri, {String? token}) {
+AgentStreamEndpoint _agentHubEndpoint(
+  Uri uri, {
+  String? token,
+  String? Function()? tokenProvider,
+}) {
   final authToken = (token ?? _defaultAgentHubToken).trim();
   return AgentStreamEndpoint(
     uri: uri,
     token: authToken.isEmpty ? null : authToken,
+    tokenProvider: tokenProvider,
     headers: const {'X-Momcozy-Client': 'flutter'},
   );
 }

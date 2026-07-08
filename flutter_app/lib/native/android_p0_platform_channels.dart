@@ -452,7 +452,9 @@ class AndroidPumpAgentUploadPlatform implements PumpAgentUploadPlatform {
   Future<PumpAgentUploadResult> uploadMilkRecord({
     required int endedAtMs,
   }) async {
-    return _invokeUploadResult('uploadMilkRecord', {'endedAtMs': endedAtMs});
+    return _invokeUploadResult('uploadMilkRecord', {
+      'endedAtMs': endedAtMs,
+    });
   }
 
   Future<void> dispose() async {

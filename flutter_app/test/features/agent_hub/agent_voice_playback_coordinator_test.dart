@@ -31,6 +31,36 @@ void main() {
       expect(coordinator.activeSource, isNull);
     });
 
+    test(
+      'reports blocked playback and notifies when playback becomes idle',
+      () {
+        final coordinator = AgentVoicePlaybackCoordinator();
+        var idleCount = 0;
+        final unsubscribe = coordinator.subscribeIdle(() {
+          idleCount += 1;
+        });
+
+        final notification = coordinator.request(
+          id: 'notification-1',
+          source: AgentVoicePlaybackSource.notification,
+        );
+        final auto = coordinator.request(
+          id: 'reply-1',
+          source: AgentVoicePlaybackSource.autoReply,
+        );
+
+        expect(notification.status, AgentVoicePlaybackRequestStatus.started);
+        expect(auto.status, AgentVoicePlaybackRequestStatus.blocked);
+        expect(idleCount, 0);
+
+        notification.handle?.finish();
+
+        expect(idleCount, 1);
+        expect(coordinator.activeSource, isNull);
+        unsubscribe();
+      },
+    );
+
     test('lets notification voice interrupt auto reply playback', () {
       final coordinator = AgentVoicePlaybackCoordinator();
       var autoCancelled = false;
@@ -49,6 +79,31 @@ void main() {
       expect(autoCancelled, isTrue);
       expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
       expect(coordinator.activeId, 'notification-1');
+    });
+
+    test('does not notify idle while a higher priority voice takes over', () {
+      final coordinator = AgentVoicePlaybackCoordinator();
+      var idleCount = 0;
+      final unsubscribe = coordinator.subscribeIdle(() {
+        idleCount += 1;
+      });
+
+      coordinator.request(
+        id: 'notification-1',
+        source: AgentVoicePlaybackSource.notification,
+      );
+      final manual = coordinator.request(
+        id: 'message-1',
+        source: AgentVoicePlaybackSource.manualBubble,
+      );
+
+      expect(manual.status, AgentVoicePlaybackRequestStatus.started);
+      expect(idleCount, 0);
+
+      manual.handle?.finish();
+
+      expect(idleCount, 1);
+      unsubscribe();
     });
 
     test('lets manual bubble playback interrupt notification voice', () {

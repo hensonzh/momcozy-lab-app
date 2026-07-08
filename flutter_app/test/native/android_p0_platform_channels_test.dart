@@ -385,11 +385,21 @@ void main() {
         PumpAgentUploadSide.right,
         PumpAgentUploadSource.agent,
       );
-      expect((await upload.uploadWorkstate()).response, {'error': 0});
-      expect((await upload.getProcessData()).progress.processAll, 42);
-      expect((await upload.uploadProcess()).deduped, isFalse);
+      expect((await upload.uploadWorkstate()).response, {
+        'error': 0,
+      });
       expect(
-        (await upload.uploadMilkRecord(endedAtMs: 1782687600000)).deduped,
+        (await upload.getProcessData()).progress.processAll,
+        42,
+      );
+      expect(
+        (await upload.uploadProcess()).deduped,
+        isFalse,
+      );
+      expect(
+        (await upload.uploadMilkRecord(
+          endedAtMs: 1782687600000,
+        )).deduped,
         isTrue,
       );
 
