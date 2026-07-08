@@ -20,6 +20,7 @@ typedef AgentArtifactActionHandler =
 typedef AgentHubNewSessionHandler = void Function();
 
 const _agentDefaultGreeting = '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
+const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
 
 String _agentAssistantTextForState(AgentStreamRunState state) {
   final text = state.textContent.trim();
@@ -510,7 +511,27 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _voiceState = const AgentVoiceState();
     });
     _persistInteractionState();
+    _maybeStartGreetingVoicePlayback();
     widget.onNewSession?.call();
+  }
+
+  void _maybeStartGreetingVoicePlayback() {
+    final coordinator = widget.voicePlaybackCoordinator;
+    if (coordinator == null || !_autoVoiceEnabled) return;
+
+    final result = coordinator.request(
+      id: _agentDefaultGreetingPlaybackId,
+      source: AgentVoicePlaybackSource.greeting,
+    );
+    final handle = result.handle;
+    if (!mounted ||
+        result.status != AgentVoicePlaybackRequestStatus.started ||
+        handle == null) {
+      return;
+    }
+    setState(() {
+      _voiceState = _voiceState.startPlayback(handle.id);
+    });
   }
 
   Future<void> _retryRun() async {
@@ -1442,6 +1463,12 @@ class AgentRunTranscript extends StatelessWidget {
 
   _AgentAssistantAvatarMode? get _avatarMode {
     final playbackId = activeVoicePlaybackId?.trim();
+    final isDefaultGreeting =
+        state.phase == AgentStreamRunPhase.idle &&
+        state.textContent.trim().isEmpty;
+    if (playbackId == _agentDefaultGreetingPlaybackId && isDefaultGreeting) {
+      return _AgentAssistantAvatarMode.speaking;
+    }
     final statePlaybackId = state.messageId?.trim().isNotEmpty == true
         ? state.messageId!.trim()
         : state.runId?.trim().isNotEmpty == true

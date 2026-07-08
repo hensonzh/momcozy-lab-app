@@ -181,6 +181,69 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub plays greeting voice for a manual new session', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '上一轮建议。',
+            ),
+          ],
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
+    expect(coordinator.activeId, 'agent-default-greeting');
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Agent Hub does not play greeting voice when auto voice is off', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '上一轮建议。',
+            ),
+          ],
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-auto-voice-button')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(coordinator.activeId, isNull);
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
+  });
+
   testWidgets('Agent Hub disables new session while a run is active', (
     tester,
   ) async {
