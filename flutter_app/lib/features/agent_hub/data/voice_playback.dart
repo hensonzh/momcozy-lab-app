@@ -6,8 +6,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 
 const defaultAgentVoicePcmPlayerChannelName =
     'com.momcozymai.flutter/voice_pcm_player';
-const defaultAgentVoiceTextPlayerChannelName =
-    'com.momcozymai.flutter/voice_tts_player';
 
 abstract interface class AgentVoicePcmPlayer {
   Future<void> start({int sampleRate, int channels});
@@ -15,39 +13,6 @@ abstract interface class AgentVoicePcmPlayer {
   Future<void> write(List<int> bytes);
 
   Future<void> stop();
-}
-
-class MethodChannelAgentVoiceTextPlayer implements AgentVoicePlaybackPlayer {
-  MethodChannelAgentVoiceTextPlayer({
-    MethodChannel? channel,
-    this.language = 'zh-CN',
-  }) : _channel =
-           channel ??
-           const MethodChannel(defaultAgentVoiceTextPlayerChannelName);
-
-  final MethodChannel _channel;
-  final String language;
-  int _playToken = 0;
-
-  @override
-  Future<void> playText(String text) async {
-    final normalized = text.trim();
-    if (normalized.isEmpty) return;
-    final token = ++_playToken;
-    await _channel.invokeMethod<void>('speak', {
-      'text': normalized,
-      'language': language,
-    });
-    if (token != _playToken) {
-      await _channel.invokeMethod<void>('stop');
-    }
-  }
-
-  @override
-  Future<void> stop() async {
-    _playToken += 1;
-    await _channel.invokeMethod<void>('stop');
-  }
 }
 
 class MethodChannelAgentVoicePcmPlayer implements AgentVoicePcmPlayer {

@@ -8,6 +8,7 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -131,6 +132,7 @@ void main() {
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
     expect(runtime.agentVoiceRepository, isA<AgentVoiceApiRepository>());
+    expect(runtime.agentVoicePlaybackPlayer, isA<AgentVoiceApiPlaybackPlayer>());
     expect(
       runtime.hospitalBagCartRepository,
       isA<HospitalBagCartApiRepository>(),
