@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
@@ -19,6 +20,7 @@ typedef AgentArtifactActionHandler =
 typedef AgentHubNewSessionHandler = void Function();
 
 const _agentDefaultGreeting = '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
+const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
 
 String _agentAssistantTextForState(AgentStreamRunState state) {
   final text = state.textContent.trim();
@@ -34,6 +36,17 @@ String _agentAssistantTextForState(AgentStreamRunState state) {
     AgentStreamRunPhase.error ||
     AgentStreamRunPhase.disconnected => '这次没有拿到回复，可能是连接中断了。你再发一次就好。',
   };
+}
+
+class _PendingAutoVoiceReplay {
+  const _PendingAutoVoiceReplay({required this.state, this.attempts = 0});
+
+  final AgentStreamRunState state;
+  final int attempts;
+
+  _PendingAutoVoiceReplay incrementAttempts() {
+    return _PendingAutoVoiceReplay(state: state, attempts: attempts + 1);
+  }
 }
 
 final _agentHubInteractionStates = Expando<_AgentHubInteractionState>(
@@ -68,6 +81,7 @@ class AgentHubPage extends StatefulWidget {
     this.onArtifactAction,
     this.onNewSession,
     this.initialComposerText,
+    this.initialAutoSend = false,
   });
 
   final Object? stateCacheKey;
@@ -85,6 +99,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
+  final bool initialAutoSend;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
@@ -107,6 +122,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _showPhotoMenu = false;
   Timer? _persistentWriteTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
+  _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
+  VoidCallback? _unsubscribeVoicePlaybackIdle;
+  bool _consumedInitialAutoSend = false;
 
   @override
   void initState() {
@@ -114,8 +132,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _restoreCachedInteractionState();
     _restorePersistedInteractionState();
     _applyInitialComposerText();
+    _scheduleInitialAutoSendIfNeeded();
     _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_updateLatestButtonVisibility);
+    _syncVoicePlaybackIdleSubscription();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _updateLatestButtonVisibility();
     });
@@ -136,13 +156,21 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _persistInteractionState();
     }
     if (oldWidget.initialComposerText != widget.initialComposerText) {
+      _consumedInitialAutoSend = false;
       _applyInitialComposerText();
+      _scheduleInitialAutoSendIfNeeded();
+    } else if (oldWidget.initialAutoSend != widget.initialAutoSend) {
+      _scheduleInitialAutoSendIfNeeded();
+    }
+    if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
+      _syncVoicePlaybackIdleSubscription();
     }
   }
 
   @override
   void dispose() {
     _cancelRunSubscription();
+    _unsubscribeVoicePlaybackIdle?.call();
     _flushPersistentInteractionState();
     _composerController.removeListener(_persistInteractionState);
     _chatScrollController
@@ -150,6 +178,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ..dispose();
     _composerController.dispose();
     super.dispose();
+  }
+
+  void _syncVoicePlaybackIdleSubscription() {
+    _unsubscribeVoicePlaybackIdle?.call();
+    _unsubscribeVoicePlaybackIdle = null;
+
+    final coordinator = widget.voicePlaybackCoordinator;
+    if (coordinator == null) return;
+    _unsubscribeVoicePlaybackIdle = coordinator.subscribeIdle(() {
+      scheduleMicrotask(_tryRunPendingAutoVoiceReplay);
+    });
   }
 
   void _restoreCachedInteractionState() {
@@ -302,6 +341,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
   }
 
+  void _scheduleInitialAutoSendIfNeeded() {
+    if (_consumedInitialAutoSend ||
+        !widget.initialAutoSend ||
+        widget.runner == null ||
+        _state.isActive ||
+        widget.initialComposerText?.trim().isNotEmpty != true) {
+      return;
+    }
+    _consumedInitialAutoSend = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _isComposerLocked ||
+          _composerController.text.trim().isEmpty) {
+        return;
+      }
+      unawaited(_sendMessage());
+    });
+  }
+
   void _updateLatestButtonVisibility() {
     if (!_chatScrollController.hasClients) return;
     final position = _chatScrollController.position;
@@ -370,6 +428,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
 
+    _cancelCurrentBubblePlaybackForNewTurn();
+
     final requestMessage = message.isEmpty ? '请看这张图片' : message;
     final optimisticContent = message.isEmpty
         ? '图片 ${_attachedImages.length}'
@@ -398,6 +458,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       );
       _attachedImages.clear();
       _showPhotoMenu = false;
+      _pendingAutoVoiceReplay = null;
     });
     _persistInteractionState();
     _scheduleScrollToLatest();
@@ -507,9 +568,49 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _localActionStatuses.clear();
       _activeRequest = null;
       _voiceState = const AgentVoiceState();
+      _pendingAutoVoiceReplay = null;
     });
     _persistInteractionState();
+    _maybeStartGreetingVoicePlayback();
     widget.onNewSession?.call();
+  }
+
+  void _cancelCurrentBubblePlaybackForNewTurn() {
+    const preservedSources = <AgentVoicePlaybackSource>{
+      AgentVoicePlaybackSource.notification,
+    };
+    final coordinator = widget.voicePlaybackCoordinator;
+    final activeSource = coordinator?.activeSource;
+    final isPreservedPlayback =
+        activeSource != null && preservedSources.contains(activeSource);
+    final didCancel =
+        coordinator?.cancel(preserveSources: preservedSources) ?? false;
+
+    if (!_voiceState.isPlaybackActive) return;
+    if (coordinator != null && isPreservedPlayback && !didCancel) return;
+
+    setState(() {
+      _voiceState = _voiceState.cancelPlayback();
+    });
+  }
+
+  void _maybeStartGreetingVoicePlayback() {
+    final coordinator = widget.voicePlaybackCoordinator;
+    if (coordinator == null || !_autoVoiceEnabled) return;
+
+    final result = coordinator.request(
+      id: _agentDefaultGreetingPlaybackId,
+      source: AgentVoicePlaybackSource.greeting,
+    );
+    final handle = result.handle;
+    if (!mounted ||
+        result.status != AgentVoicePlaybackRequestStatus.started ||
+        handle == null) {
+      return;
+    }
+    setState(() {
+      _voiceState = _voiceState.startPlayback(handle.id);
+    });
   }
 
   Future<void> _retryRun() async {
@@ -562,6 +663,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _activeRequest = requestWithThread;
     setState(() {
       _state = initialState ?? const AgentStreamRunState().start();
+      if (initialState == null) {
+        _pendingAutoVoiceReplay = null;
+      }
       if (!preserveActionState) {
         _pendingActionIds.clear();
         _localActionStatuses.clear();
@@ -621,12 +725,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
 
-    final playbackId =
-        nextState.messageId ?? nextState.runId ?? nextState.threadId ?? '';
+    final playbackId = _autoVoicePlaybackId(nextState);
     final result = coordinator.request(
       id: playbackId,
       source: AgentVoicePlaybackSource.autoReply,
     );
+    if (result.status == AgentVoicePlaybackRequestStatus.blocked) {
+      _queueBlockedAutoVoiceReplay(nextState);
+      return;
+    }
     final handle = result.handle;
     if (!mounted ||
         result.status != AgentVoicePlaybackRequestStatus.started ||
@@ -634,8 +741,38 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
     setState(() {
+      _pendingAutoVoiceReplay = null;
       _voiceState = _voiceState.startPlayback(handle.id);
     });
+  }
+
+  String _autoVoicePlaybackId(AgentStreamRunState state) {
+    return state.messageId ?? state.runId ?? state.threadId ?? '';
+  }
+
+  void _queueBlockedAutoVoiceReplay(AgentStreamRunState state) {
+    final current = _pendingAutoVoiceReplay;
+    final currentId = current == null
+        ? null
+        : _autoVoicePlaybackId(current.state);
+    final nextId = _autoVoicePlaybackId(state);
+    _pendingAutoVoiceReplay = _PendingAutoVoiceReplay(
+      state: state,
+      attempts: current != null && currentId == nextId ? current.attempts : 0,
+    );
+  }
+
+  void _tryRunPendingAutoVoiceReplay() {
+    if (!mounted || !_autoVoiceEnabled) return;
+    final pending = _pendingAutoVoiceReplay;
+    if (pending == null) return;
+    if (pending.attempts >= 3 || pending.state.textContent.trim().isEmpty) {
+      _pendingAutoVoiceReplay = null;
+      return;
+    }
+
+    _pendingAutoVoiceReplay = pending.incrementAttempts();
+    _maybeStartAutoVoicePlayback(pending.state);
   }
 
   void _cancelRun() {
@@ -659,6 +796,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       final nextEnabled = !_autoVoiceEnabled;
       if (!nextEnabled) {
         widget.voicePlaybackCoordinator?.cancel();
+        _pendingAutoVoiceReplay = null;
         if (_voiceState.isPlaybackActive) {
           _voiceState = _voiceState.cancelPlayback();
         }
@@ -1289,6 +1427,15 @@ class AgentRunTranscript extends StatelessWidget {
     final avatarMode = _avatarMode;
     final statusLineTitle = _statusLineTitle(workSteps);
     final shouldRenderPrimaryText = _shouldRenderPrimaryText;
+    final primaryTextStyle = textTheme.bodyMedium?.copyWith(
+      height: 1.40,
+      color:
+          state.phase == AgentStreamRunPhase.error ||
+              state.phase == AgentStreamRunPhase.disconnected
+          ? const Color(0xffb64b4b)
+          : const Color(0xff3f3038),
+      fontWeight: FontWeight.w400,
+    );
 
     return Row(
       key: const ValueKey('agent-run-transcript'),
@@ -1311,18 +1458,7 @@ class AgentRunTranscript extends StatelessWidget {
                     constraints: BoxConstraints(
                       maxWidth: isDefaultGreeting ? 260 : double.infinity,
                     ),
-                    child: Text(
-                      text,
-                      style: textTheme.bodyMedium?.copyWith(
-                        height: 1.40,
-                        color:
-                            state.phase == AgentStreamRunPhase.error ||
-                                state.phase == AgentStreamRunPhase.disconnected
-                            ? const Color(0xffb64b4b)
-                            : const Color(0xff3f3038),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    child: AgentMarkdownText(text, style: primaryTextStyle),
                   ),
                 ),
               if (_supportingText != null) ...[
@@ -1356,10 +1492,6 @@ class AgentRunTranscript extends StatelessWidget {
                   icon: const Icon(Icons.refresh_rounded),
                   label: const Text('重试'),
                 ),
-              ],
-              if (workSteps.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                AgentRunWorkPanel(steps: workSteps),
               ],
               if (artifactCards.isNotEmpty) ...[
                 const SizedBox(height: 16),
@@ -1447,6 +1579,12 @@ class AgentRunTranscript extends StatelessWidget {
 
   _AgentAssistantAvatarMode? get _avatarMode {
     final playbackId = activeVoicePlaybackId?.trim();
+    final isDefaultGreeting =
+        state.phase == AgentStreamRunPhase.idle &&
+        state.textContent.trim().isEmpty;
+    if (playbackId == _agentDefaultGreetingPlaybackId && isDefaultGreeting) {
+      return _AgentAssistantAvatarMode.speaking;
+    }
     final statePlaybackId = state.messageId?.trim().isNotEmpty == true
         ? state.messageId!.trim()
         : state.runId?.trim().isNotEmpty == true
@@ -1461,6 +1599,125 @@ class AgentRunTranscript extends StatelessWidget {
     }
     if (state.isActive) return _AgentAssistantAvatarMode.thinking;
     return null;
+  }
+}
+
+class AgentMarkdownText extends StatelessWidget {
+  const AgentMarkdownText(this.text, {super.key, this.style});
+
+  final String text;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    final normalized = text.trim();
+    final baseStyle = style ?? Theme.of(context).textTheme.bodyMedium;
+    if (!_containsMarkdown(normalized)) {
+      return Text(normalized, style: baseStyle);
+    }
+
+    return MarkdownBody(
+      data: normalized,
+      fitContent: true,
+      shrinkWrap: true,
+      softLineBreak: true,
+      styleSheet: _momcozyMarkdownStyleSheet(context, baseStyle),
+    );
+  }
+
+  MarkdownStyleSheet _momcozyMarkdownStyleSheet(
+    BuildContext context,
+    TextStyle? baseStyle,
+  ) {
+    final theme = Theme.of(context);
+    final baseFontSize = baseStyle?.fontSize ?? 14;
+    final paragraphStyle = theme.textTheme.bodyMedium
+        ?.merge(baseStyle)
+        .copyWith(height: 1.42);
+    final mutedStyle = paragraphStyle?.copyWith(
+      color: MomCozyColors.mutedForeground,
+    );
+    final headingBase = paragraphStyle?.copyWith(
+      height: 1.28,
+      color: MomCozyColors.foreground,
+      fontWeight: FontWeight.w900,
+    );
+    final codeStyle = paragraphStyle?.copyWith(
+      color: MomCozyColors.foreground,
+      backgroundColor: MomCozyColors.muted.withValues(alpha: 0.52),
+      fontFamily: 'monospace',
+      fontSize: baseFontSize * 0.92,
+      height: 1.36,
+    );
+
+    return MarkdownStyleSheet.fromTheme(theme).copyWith(
+      p: paragraphStyle,
+      pPadding: EdgeInsets.zero,
+      a: paragraphStyle?.copyWith(
+        color: MomCozyColors.primary,
+        fontWeight: FontWeight.w800,
+        decoration: TextDecoration.none,
+      ),
+      strong: paragraphStyle?.copyWith(
+        color: MomCozyColors.foreground,
+        fontWeight: FontWeight.w900,
+      ),
+      em: paragraphStyle?.copyWith(fontStyle: FontStyle.italic),
+      del: mutedStyle?.copyWith(decoration: TextDecoration.lineThrough),
+      h1: headingBase?.copyWith(fontSize: baseFontSize + 6),
+      h2: headingBase?.copyWith(fontSize: baseFontSize + 4),
+      h3: headingBase?.copyWith(fontSize: baseFontSize + 2),
+      h4: headingBase?.copyWith(fontSize: baseFontSize + 1),
+      h5: headingBase,
+      h6: headingBase,
+      h1Padding: const EdgeInsets.only(bottom: 6),
+      h2Padding: const EdgeInsets.only(bottom: 6),
+      h3Padding: const EdgeInsets.only(bottom: 4),
+      h4Padding: const EdgeInsets.only(bottom: 4),
+      h5Padding: const EdgeInsets.only(bottom: 4),
+      h6Padding: const EdgeInsets.only(bottom: 4),
+      code: codeStyle,
+      codeblockPadding: const EdgeInsets.all(10),
+      codeblockDecoration: BoxDecoration(
+        color: MomCozyColors.muted.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: MomCozyColors.border),
+      ),
+      blockSpacing: 10,
+      listIndent: 20,
+      listBullet: mutedStyle,
+      listBulletPadding: const EdgeInsets.only(right: 6),
+      blockquote: mutedStyle,
+      blockquotePadding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
+      blockquoteDecoration: BoxDecoration(
+        color: MomCozyColors.secondary.withValues(alpha: 0.28),
+        borderRadius: BorderRadius.circular(8),
+        border: const Border(
+          left: BorderSide(color: MomCozyColors.primary, width: 3),
+        ),
+      ),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(top: BorderSide(color: MomCozyColors.border, width: 1)),
+      ),
+      tableHead: paragraphStyle?.copyWith(
+        color: MomCozyColors.foreground,
+        fontWeight: FontWeight.w900,
+      ),
+      tableBody: paragraphStyle,
+      tableBorder: TableBorder.all(color: MomCozyColors.border),
+      tableCellsPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      tableHeadAlign: TextAlign.left,
+      tableCellsDecoration: BoxDecoration(
+        color: MomCozyColors.card.withValues(alpha: 0.75),
+      ),
+    );
+  }
+
+  static bool _containsMarkdown(String value) {
+    return RegExp(
+      r'(^|\n)\s{0,3}#{1,6}\s+|(^|\n)\s*[-*]\s+|(^|\n)\s*\d+\.\s+|\*\*.+?\*\*|`{1,3}|(^|\n)\s{0,3}>\s+|\[[^\]]+\]\([^)]+\)|(^|\n)\|.+\|($|\n)|(^|\n)---($|\n)',
+      multiLine: true,
+    ).hasMatch(value);
   }
 }
 
@@ -1606,62 +1863,6 @@ class _AgentAssistantAvatar extends StatelessWidget {
   }
 }
 
-class AgentRunWorkPanel extends StatelessWidget {
-  const AgentRunWorkPanel({super.key, required this.steps});
-
-  final List<AgentRunWorkStep> steps;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      key: const ValueKey('agent-work-panel'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '处理进度',
-          style: textTheme.labelLarge?.copyWith(
-            color: MomCozyColors.foreground,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        const SizedBox(height: 8),
-        for (final step in steps) ...[
-          Row(
-            key: ValueKey('agent-work-step-${step.id}'),
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(step.icon, size: 18, color: step.color(colorScheme)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  step.title,
-                  style: textTheme.bodySmall?.copyWith(
-                    height: 1.35,
-                    color: MomCozyColors.mutedForeground,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                step.statusLabel,
-                style: textTheme.labelSmall?.copyWith(
-                  color: step.color(colorScheme),
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-          if (step != steps.last) const SizedBox(height: 8),
-        ],
-      ],
-    );
-  }
-}
-
 class AgentRunWorkStep {
   const AgentRunWorkStep({
     required this.id,
@@ -1672,32 +1873,6 @@ class AgentRunWorkStep {
   final String id;
   final String title;
   final AgentRunWorkStepStatus status;
-
-  String get statusLabel {
-    return switch (status) {
-      AgentRunWorkStepStatus.running => '进行中',
-      AgentRunWorkStepStatus.completed => '完成',
-      AgentRunWorkStepStatus.waiting => '待确认',
-      AgentRunWorkStepStatus.failed => '失败',
-    };
-  }
-
-  IconData get icon {
-    return switch (status) {
-      AgentRunWorkStepStatus.running => Icons.sync_rounded,
-      AgentRunWorkStepStatus.completed => Icons.check_circle_outline_rounded,
-      AgentRunWorkStepStatus.waiting => Icons.fact_check_outlined,
-      AgentRunWorkStepStatus.failed => Icons.error_outline_rounded,
-    };
-  }
-
-  Color color(ColorScheme colorScheme) {
-    return switch (status) {
-      AgentRunWorkStepStatus.failed => colorScheme.error,
-      AgentRunWorkStepStatus.waiting => colorScheme.tertiary,
-      _ => colorScheme.primary,
-    };
-  }
 }
 
 enum AgentRunWorkStepStatus { running, completed, waiting, failed }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -177,6 +178,116 @@ void main() {
           .controller
           ?.text,
       '',
+    );
+  });
+
+  testWidgets('Agent Hub plays greeting voice for a manual new session', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '上一轮建议。',
+            ),
+          ],
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
+    expect(coordinator.activeId, 'agent-default-greeting');
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Agent Hub does not play greeting voice when auto voice is off', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '上一轮建议。',
+            ),
+          ],
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-auto-voice-button')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(coordinator.activeId, isNull);
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Agent Hub cancels greeting voice when the user sends a turn', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    final client = _ControllableAgentStreamClient();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '上一轮建议。',
+            ),
+          ],
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsOneWidget,
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '开始正式对话',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+    expect(client.requests.single.message, '开始正式对话');
+    expect(coordinator.activeId, isNull);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
     );
   });
 
@@ -654,6 +765,47 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub can auto-send an initial composer prefill once', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          initialComposerText: '我想调整今天的吸乳排期',
+          initialAutoSend: true,
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+    expect(client.requests.single.message, '我想调整今天的吸乳排期');
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      isEmpty,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          initialComposerText: '我想调整今天的吸乳排期',
+          initialAutoSend: true,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+  });
+
   testWidgets('Agent Hub voice input fills composer without sending', (
     tester,
   ) async {
@@ -931,6 +1083,55 @@ void main() {
     expect(find.text('正在播放语音'), findsNothing);
   });
 
+  testWidgets(
+    'Agent Hub retries auto voice after notification voice becomes idle',
+    (tester) async {
+      final coordinator = AgentVoicePlaybackCoordinator();
+      final notification = coordinator.request(
+        id: 'notification-1',
+        source: AgentVoicePlaybackSource.notification,
+      );
+      final client = _FixtureAgentStreamClient(
+        parseAgentJsonl(
+          readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+        ),
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: coordinator,
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Replay after notification',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pumpAndSettle();
+
+      expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
+      expect(coordinator.activeId, 'notification-1');
+      expect(find.text('正在播放语音'), findsNothing);
+
+      notification.handle?.finish();
+      await tester.pump();
+      await tester.pump();
+
+      expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
+      expect(coordinator.activeId, 'msg-reply-text-001');
+      expect(find.text('正在播放语音'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+        findsOneWidget,
+      );
+    },
+  );
+
   testWidgets('Agent Hub can locally stop an active run', (tester) async {
     await tester.pumpWidget(
       _host(
@@ -1144,40 +1345,38 @@ void main() {
     expect(find.textContaining('api.momcozy.test'), findsNothing);
   });
 
-  testWidgets(
-    'Agent Hub renders user-facing tool progress from stream events',
-    (tester) async {
-      final client = _FixtureAgentStreamClient(
-        parseAgentJsonl(
-          readMigrationFixture('agent_events/tool_call_lifecycle.jsonl'),
-        ),
-      );
+  testWidgets('Agent Hub hides tool progress internals from stream events', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/tool_call_lifecycle.jsonl'),
+      ),
+    );
 
-      await tester.pumpWidget(
-        _host(AgentHubPage(runner: AgentStreamRunner(client))),
-      );
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
 
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        'Review my pump sessions',
-      );
-      await tester.pump();
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Review my pump sessions',
+    );
+    await tester.pump();
 
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
-      expect(find.text('泵奶记录已读取'), findsOneWidget);
-      expect(find.text('已生成分析卡片'), findsWidgets);
-      expect(find.text('需要确认后继续'), findsOneWidget);
-      expect(
-        find.text('I found two sessions today and prepared a draft analysis.'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('pump_session_summary_query'), findsNothing);
-      expect(find.textContaining('{"ok"'), findsNothing);
-    },
-  );
+    expect(find.byKey(const ValueKey('agent-work-panel')), findsNothing);
+    expect(find.text('处理进度'), findsNothing);
+    expect(find.text('已生成分析卡片'), findsWidgets);
+    expect(
+      find.text('I found two sessions today and prepared a draft analysis.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('pump_session_summary_query'), findsNothing);
+    expect(find.textContaining('{"ok"'), findsNothing);
+  });
 
   testWidgets('Agent Hub merges tool progress by payload tool call id', (
     tester,
@@ -1213,8 +1412,9 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
-    expect(find.text('泵奶记录已读取'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-work-panel')), findsNothing);
+    expect(find.text('处理进度'), findsNothing);
+    expect(find.text('泵奶记录已读取'), findsNothing);
     expect(find.text('正在读取泵奶记录'), findsNothing);
   });
 
@@ -1526,9 +1726,10 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-work-panel')), findsOneWidget);
-    expect(find.text('成长记录暂时无法读取'), findsOneWidget);
-    expect(find.text('失败'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-work-panel')), findsNothing);
+    expect(find.text('处理进度'), findsNothing);
+    expect(find.text('成长记录暂时无法读取'), findsNothing);
+    expect(find.text('失败'), findsNothing);
     expect(find.textContaining('growth_record_query'), findsNothing);
     expect(find.textContaining('database timeout'), findsNothing);
     expect(find.textContaining('baby-secret'), findsNothing);
@@ -1847,6 +2048,59 @@ void main() {
       expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     },
   );
+
+  testWidgets('Agent Hub renders assistant markdown without raw markers', (
+    tester,
+  ) async {
+    const markdown = '''
+## 产后恢复的几个关键方面
+
+### 1. 身体恢复
+- **恶露观察**：产后 4-6 周内会持续
+- **休息充足**：尽量在宝宝睡觉时一起休息
+
+1. 先记录今天的状态
+2. 再查看[护理建议](https://example.com/care)
+
+> 记录几天后，我可以帮你回顾变化。
+
+`体温` 也可以一起记录。
+
+```text
+milk_total: 120ml
+```
+
+| 项目 | 状态 |
+| --- | --- |
+| 睡眠 | 待记录 |
+''';
+
+    await tester.pumpWidget(
+      _host(
+        const AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: markdown,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.textContaining('##'), findsNothing);
+    expect(find.textContaining('**'), findsNothing);
+    expect(find.byType(MarkdownBody), findsOneWidget);
+    expect(find.text('产后恢复的几个关键方面', findRichText: true), findsOneWidget);
+    expect(find.text('1. 身体恢复', findRichText: true), findsOneWidget);
+    expect(find.textContaining('恶露观察', findRichText: true), findsOneWidget);
+    expect(find.textContaining('休息充足', findRichText: true), findsOneWidget);
+    expect(find.textContaining('先记录今天的状态', findRichText: true), findsOneWidget);
+    expect(find.textContaining('护理建议', findRichText: true), findsOneWidget);
+    expect(find.textContaining('记录几天后', findRichText: true), findsOneWidget);
+    expect(find.textContaining('体温', findRichText: true), findsOneWidget);
+    expect(find.textContaining('milk_total: 120ml'), findsOneWidget);
+    expect(find.text('项目'), findsOneWidget);
+    expect(find.text('睡眠'), findsOneWidget);
+  });
 
   testWidgets('Agent Hub status line uses progress events before final text', (
     tester,
