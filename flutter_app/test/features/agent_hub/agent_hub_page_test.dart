@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -1857,6 +1858,21 @@ void main() {
 ### 1. 身体恢复
 - **恶露观察**：产后 4-6 周内会持续
 - **休息充足**：尽量在宝宝睡觉时一起休息
+
+1. 先记录今天的状态
+2. 再查看[护理建议](https://example.com/care)
+
+> 记录几天后，我可以帮你回顾变化。
+
+`体温` 也可以一起记录。
+
+```text
+milk_total: 120ml
+```
+
+| 项目 | 状态 |
+| --- | --- |
+| 睡眠 | 待记录 |
 ''';
 
     await tester.pumpWidget(
@@ -1872,10 +1888,18 @@ void main() {
 
     expect(find.textContaining('##'), findsNothing);
     expect(find.textContaining('**'), findsNothing);
-    expect(find.text('产后恢复的几个关键方面'), findsOneWidget);
-    expect(find.text('1. 身体恢复'), findsOneWidget);
+    expect(find.byType(MarkdownBody), findsOneWidget);
+    expect(find.text('产后恢复的几个关键方面', findRichText: true), findsOneWidget);
+    expect(find.text('1. 身体恢复', findRichText: true), findsOneWidget);
     expect(find.textContaining('恶露观察', findRichText: true), findsOneWidget);
     expect(find.textContaining('休息充足', findRichText: true), findsOneWidget);
+    expect(find.textContaining('先记录今天的状态', findRichText: true), findsOneWidget);
+    expect(find.textContaining('护理建议', findRichText: true), findsOneWidget);
+    expect(find.textContaining('记录几天后', findRichText: true), findsOneWidget);
+    expect(find.textContaining('体温', findRichText: true), findsOneWidget);
+    expect(find.textContaining('milk_total: 120ml'), findsOneWidget);
+    expect(find.text('项目'), findsOneWidget);
+    expect(find.text('睡眠'), findsOneWidget);
   });
 
   testWidgets('Agent Hub status line uses progress events before final text', (

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
@@ -1472,133 +1473,108 @@ class AgentMarkdownText extends StatelessWidget {
       return Text(normalized, style: baseStyle);
     }
 
-    final children = _markdownBlocks(normalized, baseStyle).toList();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children,
+    return MarkdownBody(
+      data: normalized,
+      fitContent: true,
+      shrinkWrap: true,
+      softLineBreak: true,
+      styleSheet: _momcozyMarkdownStyleSheet(context, baseStyle),
     );
   }
 
-  Iterable<Widget> _markdownBlocks(
-    String markdown,
+  MarkdownStyleSheet _momcozyMarkdownStyleSheet(
+    BuildContext context,
     TextStyle? baseStyle,
-  ) sync* {
-    final lines = markdown.split(RegExp(r'\r?\n'));
-    var emitted = 0;
-    for (final rawLine in lines) {
-      final line = rawLine.trimRight();
-      final trimmed = line.trim();
-      if (trimmed.isEmpty) {
-        if (emitted > 0) yield const SizedBox(height: 8);
-        continue;
-      }
+  ) {
+    final theme = Theme.of(context);
+    final baseFontSize = baseStyle?.fontSize ?? 14;
+    final paragraphStyle = theme.textTheme.bodyMedium
+        ?.merge(baseStyle)
+        .copyWith(height: 1.42);
+    final mutedStyle = paragraphStyle?.copyWith(
+      color: MomCozyColors.mutedForeground,
+    );
+    final headingBase = paragraphStyle?.copyWith(
+      height: 1.28,
+      color: MomCozyColors.foreground,
+      fontWeight: FontWeight.w900,
+    );
+    final codeStyle = paragraphStyle?.copyWith(
+      color: MomCozyColors.foreground,
+      backgroundColor: MomCozyColors.muted.withValues(alpha: 0.52),
+      fontFamily: 'monospace',
+      fontSize: baseFontSize * 0.92,
+      height: 1.36,
+    );
 
-      final heading = RegExp(r'^(#{1,6})\s+(.+)$').firstMatch(trimmed);
-      if (heading != null) {
-        if (emitted > 0) yield const SizedBox(height: 8);
-        final level = heading.group(1)!.length;
-        final baseFontSize = baseStyle?.fontSize ?? 14;
-        yield Text(
-          _stripInlineMarkdown(heading.group(2)!),
-          style: baseStyle?.copyWith(
-            height: 1.32,
-            fontSize: switch (level) {
-              1 => baseFontSize + 6,
-              2 => baseFontSize + 4,
-              3 => baseFontSize + 2,
-              _ => baseFontSize + 1,
-            },
-            fontWeight: FontWeight.w900,
-            color: MomCozyColors.foreground,
-          ),
-        );
-        emitted += 1;
-        continue;
-      }
-
-      if (RegExp(r'^-{3,}$').hasMatch(trimmed)) {
-        if (emitted > 0) yield const SizedBox(height: 8);
-        yield Container(
-          height: 1,
-          width: double.infinity,
-          color: MomCozyColors.border.withValues(alpha: 0.8),
-        );
-        emitted += 1;
-        continue;
-      }
-
-      final bullet = RegExp(r'^\s*[-*]\s+(.+)$').firstMatch(line);
-      if (bullet != null) {
-        yield Padding(
-          padding: EdgeInsets.only(top: emitted == 0 ? 0 : 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('•', style: baseStyle),
-              const SizedBox(width: 7),
-              Expanded(
-                child: RichText(
-                  text: TextSpan(
-                    style: baseStyle,
-                    children: _inlineMarkdownSpans(bullet.group(1)!, baseStyle),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-        emitted += 1;
-        continue;
-      }
-
-      yield Padding(
-        padding: EdgeInsets.only(top: emitted == 0 ? 0 : 4),
-        child: RichText(
-          text: TextSpan(
-            style: baseStyle,
-            children: _inlineMarkdownSpans(trimmed, baseStyle),
-          ),
+    return MarkdownStyleSheet.fromTheme(theme).copyWith(
+      p: paragraphStyle,
+      pPadding: EdgeInsets.zero,
+      a: paragraphStyle?.copyWith(
+        color: MomCozyColors.primary,
+        fontWeight: FontWeight.w800,
+        decoration: TextDecoration.none,
+      ),
+      strong: paragraphStyle?.copyWith(
+        color: MomCozyColors.foreground,
+        fontWeight: FontWeight.w900,
+      ),
+      em: paragraphStyle?.copyWith(fontStyle: FontStyle.italic),
+      del: mutedStyle?.copyWith(decoration: TextDecoration.lineThrough),
+      h1: headingBase?.copyWith(fontSize: baseFontSize + 6),
+      h2: headingBase?.copyWith(fontSize: baseFontSize + 4),
+      h3: headingBase?.copyWith(fontSize: baseFontSize + 2),
+      h4: headingBase?.copyWith(fontSize: baseFontSize + 1),
+      h5: headingBase,
+      h6: headingBase,
+      h1Padding: const EdgeInsets.only(bottom: 6),
+      h2Padding: const EdgeInsets.only(bottom: 6),
+      h3Padding: const EdgeInsets.only(bottom: 4),
+      h4Padding: const EdgeInsets.only(bottom: 4),
+      h5Padding: const EdgeInsets.only(bottom: 4),
+      h6Padding: const EdgeInsets.only(bottom: 4),
+      code: codeStyle,
+      codeblockPadding: const EdgeInsets.all(10),
+      codeblockDecoration: BoxDecoration(
+        color: MomCozyColors.muted.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: MomCozyColors.border),
+      ),
+      blockSpacing: 10,
+      listIndent: 20,
+      listBullet: mutedStyle,
+      listBulletPadding: const EdgeInsets.only(right: 6),
+      blockquote: mutedStyle,
+      blockquotePadding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
+      blockquoteDecoration: BoxDecoration(
+        color: MomCozyColors.secondary.withValues(alpha: 0.28),
+        borderRadius: BorderRadius.circular(8),
+        border: const Border(
+          left: BorderSide(color: MomCozyColors.primary, width: 3),
         ),
-      );
-      emitted += 1;
-    }
+      ),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(top: BorderSide(color: MomCozyColors.border, width: 1)),
+      ),
+      tableHead: paragraphStyle?.copyWith(
+        color: MomCozyColors.foreground,
+        fontWeight: FontWeight.w900,
+      ),
+      tableBody: paragraphStyle,
+      tableBorder: TableBorder.all(color: MomCozyColors.border),
+      tableCellsPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      tableHeadAlign: TextAlign.left,
+      tableCellsDecoration: BoxDecoration(
+        color: MomCozyColors.card.withValues(alpha: 0.75),
+      ),
+    );
   }
 
   static bool _containsMarkdown(String value) {
     return RegExp(
-      r'(^|\n)\s{0,3}#{1,6}\s+|(^|\n)\s*[-*]\s+|\*\*.+?\*\*|(^|\n)---($|\n)',
+      r'(^|\n)\s{0,3}#{1,6}\s+|(^|\n)\s*[-*]\s+|(^|\n)\s*\d+\.\s+|\*\*.+?\*\*|`{1,3}|(^|\n)\s{0,3}>\s+|\[[^\]]+\]\([^)]+\)|(^|\n)\|.+\|($|\n)|(^|\n)---($|\n)',
       multiLine: true,
     ).hasMatch(value);
-  }
-
-  static List<TextSpan> _inlineMarkdownSpans(String value, TextStyle? style) {
-    final spans = <TextSpan>[];
-    final boldPattern = RegExp(r'\*\*(.+?)\*\*');
-    var cursor = 0;
-    for (final match in boldPattern.allMatches(value)) {
-      if (match.start > cursor) {
-        spans.add(TextSpan(text: value.substring(cursor, match.start)));
-      }
-      spans.add(
-        TextSpan(
-          text: match.group(1),
-          style: style?.copyWith(fontWeight: FontWeight.w900),
-        ),
-      );
-      cursor = match.end;
-    }
-    if (cursor < value.length) {
-      spans.add(TextSpan(text: value.substring(cursor)));
-    }
-    if (spans.isEmpty) return [TextSpan(text: value)];
-    return spans;
-  }
-
-  static String _stripInlineMarkdown(String value) {
-    return value.replaceAllMapped(
-      RegExp(r'\*\*(.+?)\*\*'),
-      (match) => match.group(1) ?? '',
-    );
   }
 }
 
