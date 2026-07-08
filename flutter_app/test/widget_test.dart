@@ -27,6 +27,12 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
     expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(
+      tester
+          .widget<AgentHubPage>(find.byType(AgentHubPage))
+          .interactionStateStore,
+      isNull,
+    );
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),

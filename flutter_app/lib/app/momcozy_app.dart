@@ -1241,9 +1241,6 @@ Widget _buildDefaultAgentHubPage(
       runtime.session,
       accessTokenProvider: currentAccessToken,
     ),
-    interactionStateStore: createSessionAgentHubInteractionStateStore(
-      runtime.session,
-    ),
     requestBuilder: (message) =>
         buildSessionAgentHubRequest(message, session: runtime.session),
     voicePlaybackCoordinator: voicePlaybackCoordinator,
