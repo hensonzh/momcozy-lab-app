@@ -21,7 +21,7 @@ Flutter App 需要保留同样的用户可感知契约：用户切换底部 tab 
 6. 通知语音阻塞自动回复语音后，通知结束必须触发一次待播报自动回复重试。
 7. 手动新建会话的 greeting voice 只属于问候语；用户发起真实 turn 后要立即丢弃并停止。
 8. 冷启动进入 Agent Hub 必须是新会话，不从 secure/local 持久层恢复旧 transcript；站内 tab 切换使用内存 keep-alive 保留当前会话。
-9. 通过路由带入的 Agent 输入预填仍然生效，同时不能生成重复的 Agent Hub 实例。
+9. 通过路由带入的 Agent 输入预填仍然生效；`agentAutoSend/autoSend` 为 true 时只自动发送一次，同时不能生成重复的 Agent Hub 实例。
 10. 隐藏的 Agent Hub 不能出现在非 Agent 页面，也不能影响底栏隐藏规则。
 
 ## Flutter 测试矩阵
@@ -31,10 +31,12 @@ Flutter App 需要保留同样的用户可感知契约：用户切换底部 tab 
 | 路由 Shell widget | 启动 Agent stream，切到 `/schedule`，继续注入事件，再回到 `/` | 最终 assistant 文本可见，不出现“连接中断”兜底文案。 |
 | 路由 Shell widget | Agent 完成后触发自动语音，切 tab 后再返回 | 智能体头像仍反映正在播放状态。 |
 | 路由 Shell widget | 冷启动默认进入 Agent Hub | 默认路由不启用 durable transcript store，只显示 fresh greeting。 |
+| 路由 Shell widget | 从状态/计划等模块带 route prefill 进入 Agent Hub | 预填文本进入输入框；带 auto-send 标记时提交一次，重复 rebuild 不重复发送。 |
 | 路由 Shell widget | 切换到 `/pump` 等专注流程页面 | 隐藏 Agent Hub 不可见，底栏隐藏规则保持不变。 |
 | Agent Hub 页面 | 用户在 active run 中显式停止 | 取消 stream subscription，并调用后端 cancel 路径。 |
 | Agent Hub 页面 | 手动新建会话 | 自动语音开启时开始 greeting voice，关闭时只显示 greeting。 |
 | Agent Hub 页面 | greeting voice 播放中发送真实消息 | greeting voice 被取消，新用户消息正常进入 run。 |
+| Agent Hub 页面 | 初始 composer prefill 携带 auto-send | 首帧后发送该 prefill，composer 清空，后续 rebuild 不重复发送。 |
 | Agent Hub 页面 | 通知语音阻塞自动回复语音后结束 | 自动回复语音重试，头像切换到 speaking。 |
 | Agent 语音单元 | 通知语音播放时自动回复语音尝试开始 | 通知语音保持 active，自动回复被等待或拒绝。 |
 | Agent 语音单元 | active playback 结束 | idle listener 收到通知，且高优先级语音接管时不误发 idle。 |

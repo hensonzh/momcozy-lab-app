@@ -32,6 +32,7 @@
 - 顶部只有自动语音和新会话入口；正文区域包含历史消息、当前回复、顶部 fade、最新消息按钮。
 - 底部输入区包含图片入口、文本输入、语音入口和发送按钮；没有注入真实图片/语音 provider 时，相应按钮保持不可用。
 - 输入草稿、图片附件和可见历史窗口在站内切换后保留。
+- 从计划等模块进入智能体主页时，route prefill 只填入输入框；从状态页同步类动作进入时，route prefill 可携带 auto-send，并且同一个 route prefill 只能自动发送一次。
 - 从其它模块进入智能体主页时，底栏智能体头像要重播 wake 动效。
 - Assistant 当前回复时使用 thinking 动效；自动语音播放时使用 speaking 动效；无动画或 reduced motion 时要有静态头像兜底。
 - 发送 follow-up 不能丢失上一轮 assistant 回复；active run 时发送/停止/取消状态要和旧 Web 一致。
@@ -50,7 +51,7 @@
 | 计划 | `flutter_app/test/features/app_pages/status_schedule_agent_legacy_widget_parity_test.dart` | 日期切换、提醒确认、Agent 建议卡、任务 toolbar、checkbox、编辑、调整日程、添加任务、空态快捷入口、跨 tab 状态保留。 |
 | 智能体主页 | `flutter_app/test/features/app_pages/status_schedule_agent_legacy_widget_parity_test.dart` | shell nav、顶部控制、transcript、fade、composer、草稿保留、底栏 wake 动效、历史窗口、图片附件、最新按钮。 |
 | 智能体运行时 | `flutter_app/test/widget_test.dart` | Agent Hub lazy keep-alive、切 tab 后 stream/voice 保活、冷启动新会话、focused route 底栏隐藏规则、artifact route action。 |
-| 智能体深状态 | `flutter_app/test/features/agent_hub/agent_hub_page_test.dart` | 发送、线程复用、断线重试、图片/语音输入、新会话 greeting voice、真实 turn 打断 greeting、自动语音、通知语音优先级和释放后重试、取消、action confirmation、markdown、状态条。 |
+| 智能体深状态 | `flutter_app/test/features/agent_hub/agent_hub_page_test.dart` | 发送、线程复用、断线重试、route prefill、route auto-send once、图片/语音输入、新会话 greeting voice、真实 turn 打断 greeting、自动语音、通知语音优先级和释放后重试、取消、action confirmation、markdown、状态条。 |
 | Golden | `flutter_app/test/features/app_pages/*golden_test.dart` 和 `flutter_app/test/features/agent_hub/*golden_test.dart` | 三个移动 viewport 下的页面级、组件级和深状态视觉基线。 |
 
 ## 准入命令
