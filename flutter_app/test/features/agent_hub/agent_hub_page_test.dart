@@ -100,7 +100,7 @@ void main() {
     );
 
     expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-static')),
+      find.byKey(const ValueKey('agent-assistant-avatar-thinking-media')),
       findsOneWidget,
     );
     expect(
@@ -374,7 +374,8 @@ void main() {
     );
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
@@ -382,7 +383,8 @@ void main() {
     );
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
 
     expect(client.requests, hasLength(2));
     expect(client.requests.first.threadId, isNull);
@@ -524,7 +526,8 @@ void main() {
     );
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
 
     expect(client.requests.single.message, 'Review this display');
     expect(client.requests.single.images, hasLength(1));
@@ -593,7 +596,8 @@ void main() {
     );
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
 
     expect(client.requests.single.message, 'Send text only');
     expect(client.requests.single.images, isEmpty);
@@ -992,6 +996,10 @@ void main() {
       findsOneWidget,
     );
     expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking-media')),
+      findsOneWidget,
+    );
+    expect(
       find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
       findsNothing,
     );
@@ -1026,10 +1034,13 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(player.playedTexts, ["I can help you review today's pumping pattern."]);
+    expect(player.playedTexts, [
+      "I can help you review today's pumping pattern.",
+    ]);
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
 
     player.complete();
+    await tester.pump();
     await tester.pump();
 
     expect(coordinator.activeSource, isNull);
@@ -1945,7 +1956,9 @@ void main() {
       '38 周',
     );
     await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-form-submit-hospital-bag-form')),
+      find.byKey(
+        const ValueKey('agent-artifact-form-submit-hospital-bag-form'),
+      ),
     );
     await tester.pump();
 
@@ -1954,9 +1967,12 @@ void main() {
     expect(client.requests.single.message, contains('due_date_or_week'));
     expect(find.text('已提交信息采集表单'), findsOneWidget);
 
-    await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-action-hospital-bag-cart-0')),
+    final cartActionFinder = find.byKey(
+      const ValueKey('agent-artifact-action-hospital-bag-cart-0'),
     );
+    await tester.ensureVisible(cartActionFinder);
+    await tester.pump();
+    await tester.tap(cartActionFinder);
     await tester.pump();
 
     expect(actions.single.routePath, '/hospital-bag-cart');
@@ -2312,6 +2328,28 @@ milk_total: 120ml
     );
   });
 
+  testWidgets('Agent Hub status line prefers backend semantic labels', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({
+          'type': 'run.progress',
+          'payload': {
+            'label': '正在处理请求。',
+            'semantic': {'label': '我想一下', 'visibility': 'status'},
+          },
+        }),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(find.text('我想一下'), findsOneWidget);
+    expect(find.text('正在处理请求。'), findsNothing);
+  });
+
   testWidgets('Agent Hub keeps backend progress visible until first token', (
     tester,
   ) async {
@@ -2359,6 +2397,7 @@ milk_total: 120ml
       }),
     );
     await tester.pump();
+    await tester.pump();
 
     expect(find.text('好的'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
@@ -2384,7 +2423,7 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('CozyMate 正在进入对话'),
+        matching: find.text('我已经收到你的消息啦～'),
       ),
       findsOneWidget,
     );
@@ -2392,10 +2431,13 @@ milk_total: 120ml
 }
 
 Widget _host(Widget child) {
-  return MaterialApp(
-    theme: momCozyTheme(),
-    debugShowCheckedModeBanner: false,
-    home: Scaffold(body: SafeArea(child: child)),
+  return TickerMode(
+    enabled: false,
+    child: MaterialApp(
+      theme: momCozyTheme(),
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(body: SafeArea(child: child)),
+    ),
   );
 }
 

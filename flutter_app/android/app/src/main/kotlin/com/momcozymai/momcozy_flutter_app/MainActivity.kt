@@ -20,6 +20,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodCall
@@ -31,6 +33,7 @@ class MainActivity : FlutterActivity() {
     private lateinit var mmcBleChannel: MethodChannel
     private lateinit var pumpNotificationChannel: MethodChannel
     private lateinit var voicePcmPlayerChannel: MethodChannel
+    private lateinit var voiceTtsPlayerChannel: MethodChannel
     private lateinit var pumpAgentUploadHandler: PumpAgentUploadChannelHandler
     private lateinit var pumpAgentBackgroundRunner: PumpAgentBackgroundRunner
     private var scanCallback: ScanCallback? = null
@@ -43,6 +46,11 @@ class MainActivity : FlutterActivity() {
     private var pendingBlePermissionResult: MethodChannel.Result? = null
     private var pendingNotificationPermissionResult: MethodChannel.Result? = null
     private var voiceAudioTrack: AudioTrack? = null
+    private var voiceTextToSpeech: TextToSpeech? = null
+    private var voiceTextToSpeechReady = false
+    private var pendingVoiceTextRequest: PendingVoiceTextRequest? = null
+    private var activeVoiceTextResult: MethodChannel.Result? = null
+    private var activeVoiceTextUtteranceId: String? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -61,6 +69,11 @@ class MainActivity : FlutterActivity() {
             VOICE_PCM_PLAYER_CHANNEL
         )
         voicePcmPlayerChannel.setMethodCallHandler(::handleVoicePcmPlayerCall)
+        voiceTtsPlayerChannel = MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            VOICE_TTS_PLAYER_CHANNEL
+        )
+        voiceTtsPlayerChannel.setMethodCallHandler(::handleVoiceTtsPlayerCall)
         val pumpAgentUploadChannel = MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             PUMP_AGENT_UPLOAD_CHANNEL
@@ -127,6 +140,17 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    private fun handleVoiceTtsPlayerCall(call: MethodCall, result: MethodChannel.Result) {
+        when (call.method) {
+            "speak" -> speakVoiceText(call, result)
+            "stop" -> {
+                stopVoiceTextPlayback()
+                result.success(null)
+            }
+            else -> result.notImplemented()
+        }
+    }
+
     override fun onDestroy() {
         if (::pumpAgentBackgroundRunner.isInitialized) {
             pumpAgentBackgroundRunner.stop()
@@ -144,6 +168,7 @@ class MainActivity : FlutterActivity() {
         )
         pendingNotificationPermissionResult = null
         stopVoicePcmPlayback()
+        shutdownVoiceTextPlayback()
         stopBleScan()
         gatts.keys.toList().forEach(::closeGatt)
         super.onDestroy()
@@ -631,6 +656,12 @@ class MainActivity : FlutterActivity() {
         val characteristic: BluetoothGattCharacteristic
     )
 
+    private data class PendingVoiceTextRequest(
+        val text: String,
+        val language: String,
+        val result: MethodChannel.Result
+    )
+
     private inner class GattCallback(private val deviceId: String) : BluetoothGattCallback() {
         @SuppressLint("MissingPermission")
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
@@ -852,6 +883,168 @@ class MainActivity : FlutterActivity() {
         track.release()
     }
 
+    private fun speakVoiceText(call: MethodCall, result: MethodChannel.Result) {
+        val args = call.argumentsMap()
+        val text = args.stringValue("text")
+        val language = args.stringValue("language", "zh-CN")
+        if (text.isBlank()) {
+            result.success(null)
+            return
+        }
+
+        pendingVoiceTextRequest?.result?.success(null)
+        pendingVoiceTextRequest = null
+
+        val tts = voiceTextToSpeech
+        if (tts == null) {
+            pendingVoiceTextRequest = PendingVoiceTextRequest(text, language, result)
+            voiceTextToSpeechReady = false
+            voiceTextToSpeech = TextToSpeech(this) { status ->
+                runOnUiThread {
+                    if (status != TextToSpeech.SUCCESS) {
+                        voiceTextToSpeechReady = false
+                        val pending = pendingVoiceTextRequest
+                        pendingVoiceTextRequest = null
+                        pending?.result?.error(
+                            "voice_tts_unavailable",
+                            "Text to speech is unavailable",
+                            null
+                        )
+                        return@runOnUiThread
+                    }
+                    voiceTextToSpeechReady = true
+                    val pending = pendingVoiceTextRequest
+                    pendingVoiceTextRequest = null
+                    if (pending != null) {
+                        startVoiceTextPlayback(
+                            pending.text,
+                            pending.language,
+                            pending.result
+                        )
+                    }
+                }
+            }
+            return
+        }
+
+        if (!voiceTextToSpeechReady) {
+            pendingVoiceTextRequest = PendingVoiceTextRequest(text, language, result)
+            return
+        }
+        startVoiceTextPlayback(text, language, result)
+    }
+
+    private fun startVoiceTextPlayback(
+        text: String,
+        language: String,
+        result: MethodChannel.Result
+    ) {
+        val tts = voiceTextToSpeech
+        if (tts == null || !voiceTextToSpeechReady) {
+            result.error("voice_tts_unavailable", "Text to speech is unavailable", null)
+            return
+        }
+
+        stopVoicePcmPlayback()
+        completeActiveVoiceText()
+        try {
+            tts.stop()
+        } catch (_: RuntimeException) {
+        }
+
+        val requestedLocale = Locale.forLanguageTag(language.ifBlank { "zh-CN" })
+        var languageResult = tts.setLanguage(requestedLocale)
+        if (
+            languageResult == TextToSpeech.LANG_MISSING_DATA ||
+            languageResult == TextToSpeech.LANG_NOT_SUPPORTED
+        ) {
+            languageResult = tts.setLanguage(Locale.CHINESE)
+        }
+        if (
+            languageResult == TextToSpeech.LANG_MISSING_DATA ||
+            languageResult == TextToSpeech.LANG_NOT_SUPPORTED
+        ) {
+            result.error("voice_tts_language_unsupported", "Text to speech language is unsupported", null)
+            return
+        }
+
+        val utteranceId = "momcozy-tts-${System.currentTimeMillis()}"
+        activeVoiceTextResult = result
+        activeVoiceTextUtteranceId = utteranceId
+        tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) = Unit
+
+            override fun onDone(utteranceId: String?) {
+                runOnUiThread {
+                    if (utteranceId == activeVoiceTextUtteranceId) {
+                        completeActiveVoiceText()
+                    }
+                }
+            }
+
+            @Deprecated("Deprecated in Java")
+            override fun onError(utteranceId: String?) {
+                runOnUiThread {
+                    if (utteranceId == activeVoiceTextUtteranceId) {
+                        failActiveVoiceText("voice_tts_failed", "Text to speech failed")
+                    }
+                }
+            }
+
+            override fun onError(utteranceId: String?, errorCode: Int) {
+                runOnUiThread {
+                    if (utteranceId == activeVoiceTextUtteranceId) {
+                        failActiveVoiceText("voice_tts_failed", "Text to speech failed")
+                    }
+                }
+            }
+
+            override fun onStop(utteranceId: String?, interrupted: Boolean) {
+                runOnUiThread {
+                    if (utteranceId == activeVoiceTextUtteranceId) {
+                        completeActiveVoiceText()
+                    }
+                }
+            }
+        })
+
+        val status = tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId)
+        if (status == TextToSpeech.ERROR) {
+            failActiveVoiceText("voice_tts_failed", "Text to speech failed")
+        }
+    }
+
+    private fun stopVoiceTextPlayback() {
+        pendingVoiceTextRequest?.result?.success(null)
+        pendingVoiceTextRequest = null
+        completeActiveVoiceText()
+        try {
+            voiceTextToSpeech?.stop()
+        } catch (_: RuntimeException) {
+        }
+    }
+
+    private fun shutdownVoiceTextPlayback() {
+        stopVoiceTextPlayback()
+        voiceTextToSpeech?.shutdown()
+        voiceTextToSpeech = null
+        voiceTextToSpeechReady = false
+    }
+
+    private fun completeActiveVoiceText() {
+        val result = activeVoiceTextResult ?: return
+        activeVoiceTextResult = null
+        activeVoiceTextUtteranceId = null
+        result.success(null)
+    }
+
+    private fun failActiveVoiceText(code: String, message: String) {
+        val result = activeVoiceTextResult ?: return
+        activeVoiceTextResult = null
+        activeVoiceTextUtteranceId = null
+        result.error(code, message, null)
+    }
+
     private fun MethodCall.argumentsMap(): Map<*, *> {
         return arguments as? Map<*, *> ?: emptyMap<String, Any?>()
     }
@@ -889,6 +1082,8 @@ class MainActivity : FlutterActivity() {
             "com.momcozymai.flutter/pump_agent_upload"
         private const val VOICE_PCM_PLAYER_CHANNEL =
             "com.momcozymai.flutter/voice_pcm_player"
+        private const val VOICE_TTS_PLAYER_CHANNEL =
+            "com.momcozymai.flutter/voice_tts_player"
         private const val REQUEST_BLE_PERMISSIONS = 4101
         private const val REQUEST_NOTIFICATION_PERMISSION = 4102
         const val EXTRA_NAV_PATH = "momcozy.flutter.extra.NAV_PATH"

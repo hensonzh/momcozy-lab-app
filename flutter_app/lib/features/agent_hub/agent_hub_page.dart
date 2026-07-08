@@ -1638,11 +1638,13 @@ class AgentRunTranscript extends StatelessWidget {
         state.textContent.trim().isNotEmpty) {
       return null;
     }
+    final backendStatusTitle = _latestBackendStatusTitle(state.events);
+    if (backendStatusTitle != null) return backendStatusTitle;
     for (final step in workSteps.reversed) {
       if (step.status == AgentRunWorkStepStatus.running ||
           step.status == AgentRunWorkStepStatus.waiting) {
-        final title = step.title.trim();
-        if (title.isNotEmpty) return title;
+        final title = _visibleAgentStatusTitle(step.title);
+        if (title != null && title.isNotEmpty) return title;
       }
     }
     return '我已经收到你的消息啦～';
@@ -1826,15 +1828,39 @@ class AgentMarkdownText extends StatelessWidget {
   }
 }
 
-class AgentRunStatusLine extends StatelessWidget {
+class AgentRunStatusLine extends StatefulWidget {
   const AgentRunStatusLine({super.key, required this.title});
 
   final String title;
 
   @override
+  State<AgentRunStatusLine> createState() => _AgentRunStatusLineState();
+}
+
+class _AgentRunStatusLineState extends State<AgentRunStatusLine>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1080),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final title = widget.title;
 
     return Semantics(
       label: title,
@@ -1848,21 +1874,22 @@ class AgentRunStatusLine extends StatelessWidget {
           children: [
             SizedBox.square(
               dimension: 14,
-              child: TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0, end: 1),
-                duration: const Duration(milliseconds: 880),
-                curve: Curves.easeOutCubic,
-                builder: (context, pulse, child) {
+              child: AnimatedBuilder(
+                animation: _pulseController,
+                builder: (context, child) {
+                  final value = Curves.easeOutCubic.transform(
+                    _pulseController.value,
+                  );
                   return Stack(
                     alignment: Alignment.center,
                     children: [
                       Transform.scale(
-                        scale: 0.88 + pulse * 0.24,
+                        scale: 0.88 + value * 0.24,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: colorScheme.primary.withValues(
-                              alpha: 0.12 + pulse * 0.12,
+                              alpha: 0.24 - value * 0.16,
                             ),
                           ),
                           child: const SizedBox.square(dimension: 12),
@@ -1897,11 +1924,10 @@ class AgentRunStatusLine extends StatelessWidget {
                       ),
                     ),
                   ),
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 0, end: 1),
-                    duration: const Duration(milliseconds: 880),
-                    builder: (context, value, child) {
-                      final dotCount = (value * 3).floor() + 1;
+                  AnimatedBuilder(
+                    animation: _pulseController,
+                    builder: (context, child) {
+                      final dotCount = (_pulseController.value * 3).floor() + 1;
                       final dots = List.filled(dotCount, '.').join();
                       return Text(
                         dots,
@@ -1925,18 +1951,52 @@ class AgentRunStatusLine extends StatelessWidget {
 
 enum _AgentAssistantAvatarMode { thinking, speaking }
 
-class _AgentAssistantAvatar extends StatelessWidget {
+class _AgentAssistantAvatar extends StatefulWidget {
   const _AgentAssistantAvatar({this.mode});
 
   final _AgentAssistantAvatarMode? mode;
 
   @override
+  State<_AgentAssistantAvatar> createState() => _AgentAssistantAvatarState();
+}
+
+class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1180),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final mode = widget.mode;
     final isSpeaking = mode == _AgentAssistantAvatarMode.speaking;
     final isThinking = mode == _AgentAssistantAvatarMode.thinking;
     final ringColor = isSpeaking
         ? const Color(0xffaa647d)
         : const Color(0xff8bbdb5);
+    final avatarAsset = isSpeaking
+        ? MomCozyAssets.agentSpeakingAvatar
+        : isThinking
+        ? MomCozyAssets.agentThinkingAvatar
+        : MomCozyAssets.agentAvatar;
+    final avatarKey = isSpeaking
+        ? 'agent-assistant-avatar-speaking-media'
+        : isThinking
+        ? 'agent-assistant-avatar-thinking-media'
+        : 'agent-assistant-avatar-static';
 
     return SizedBox.square(
       key: const ValueKey('agent-assistant-avatar'),
@@ -1951,12 +2011,13 @@ class _AgentAssistantAvatar extends StatelessWidget {
               right: -2,
               top: -2,
               bottom: -2,
-              child: TweenAnimationBuilder<double>(
+              child: AnimatedBuilder(
                 key: ValueKey('agent-avatar-pulse-$mode'),
-                tween: Tween<double>(begin: 0, end: 1),
-                duration: const Duration(milliseconds: 980),
-                curve: Curves.easeOutCubic,
-                builder: (context, pulse, child) {
+                animation: _pulseController,
+                builder: (context, child) {
+                  final pulse = Curves.easeOutCubic.transform(
+                    _pulseController.value,
+                  );
                   return Transform.scale(
                     scale: 1 + pulse * (isSpeaking ? 0.12 : 0.08),
                     child: DecoratedBox(
@@ -1976,8 +2037,7 @@ class _AgentAssistantAvatar extends StatelessWidget {
                         boxShadow: [
                           BoxShadow(
                             color: ringColor.withValues(
-                              alpha:
-                                  (isSpeaking ? 0.18 : 0.12) + pulse * 0.12,
+                              alpha: (isSpeaking ? 0.18 : 0.12) + pulse * 0.12,
                             ),
                             blurRadius: (isSpeaking ? 12 : 9) + pulse * 6,
                             spreadRadius: (isSpeaking ? 1.4 : 0.8) + pulse,
@@ -2003,8 +2063,8 @@ class _AgentAssistantAvatar extends StatelessWidget {
             ),
             child: ClipOval(
               child: Image.asset(
-                MomCozyAssets.agentAvatar,
-                key: const ValueKey('agent-assistant-avatar-static'),
+                avatarAsset,
+                key: ValueKey(avatarKey),
                 width: 32,
                 height: 32,
                 fit: BoxFit.cover,
@@ -2402,9 +2462,7 @@ class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
     );
   }
 
-  Map<String, Object?> _initialValues(
-    List<AgentArtifactFormFieldView> fields,
-  ) {
+  Map<String, Object?> _initialValues(List<AgentArtifactFormFieldView> fields) {
     return {
       for (final field in fields)
         if (field.defaultValue != null) field.id: field.defaultValue,
@@ -3331,26 +3389,6 @@ Map<String, Object?> _firstMap(List<Map<String, Object?>> values) {
   return const {};
 }
 
-List<String> _formRows(Map<String, Object?> form) {
-  if (form.isEmpty) return const <String>[];
-  final fields = form['fields'];
-  if (fields is! List) return const <String>[];
-  final rows = <String>[];
-  for (final rawField in fields.take(12)) {
-    if (rawField is! Map) continue;
-    final field = Map<String, Object?>.from(rawField);
-    final label = _stringField(field, 'label') ?? _stringField(field, 'id');
-    if (label == null) continue;
-    final options = _stringList(field['options']);
-    final required = field['required'] == true ? '必填' : '可选';
-    final suffix = options.isEmpty
-        ? required
-        : '$required｜${options.take(4).join(' / ')}';
-    rows.add('$label：$suffix');
-  }
-  return rows;
-}
-
 List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
   if (form.isEmpty) return const <AgentArtifactFormFieldView>[];
   final fields = form['fields'];
@@ -3371,7 +3409,10 @@ List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
         required: field['required'] == true,
         options: _stringList(field['options']),
         placeholder: _stringField(field, 'placeholder'),
-        defaultValue: field['default_value'] ?? field['defaultValue'] ?? defaultValues[id],
+        defaultValue:
+            field['default_value'] ??
+            field['defaultValue'] ??
+            defaultValues[id],
       ),
     );
   }
@@ -3921,6 +3962,95 @@ String? _safeAgentErrorText(String? errorMessage) {
   return normalized;
 }
 
+String? _latestBackendStatusTitle(List<AgentStreamEvent> events) {
+  for (final event in events.reversed) {
+    final semanticTitle = _semanticStatusTitle(event);
+    if (semanticTitle != null) return semanticTitle;
+
+    switch (event.type) {
+      case 'run.queued':
+      case 'run.started':
+        return '我已经收到你的消息啦～';
+      case 'run.progress':
+        final title = _visibleAgentStatusTitle(
+          _firstNonEmpty([
+            _stringField(event.payload, 'label'),
+            _stringField(event.payload, 'message'),
+            _phaseStatusTitle(event),
+          ]),
+        );
+        if (title != null) return title;
+        continue;
+      case 'tool.started':
+      case 'tool.progress':
+        return _visibleAgentStatusTitle(_toolStep(event).title);
+      case 'tool.completed':
+        return '我接着处理下一步';
+      case 'artifact.created':
+      case 'artifact.updated':
+        return '我接着处理下一步';
+      case 'message.delta':
+      case 'message.completed':
+      case 'run.completed':
+      case 'run.failed':
+      case 'run.cancelled':
+        break;
+    }
+  }
+  return null;
+}
+
+String? _semanticStatusTitle(AgentStreamEvent event) {
+  final payloadSemantic = _mapField(event.payload, 'semantic');
+  final rawSemantic = _mapField(event.raw, 'semantic');
+  for (final semantic in [payloadSemantic, rawSemantic]) {
+    if (semantic.isEmpty) continue;
+    final visibility = _stringField(semantic, 'visibility')?.trim();
+    if (visibility == 'hidden') continue;
+    final title = _visibleAgentStatusTitle(
+      _firstNonEmpty([
+        _stringField(semantic, 'label'),
+        _stringField(semantic, 'title'),
+      ]),
+    );
+    if (title != null) return title;
+  }
+  return null;
+}
+
+String? _phaseStatusTitle(AgentStreamEvent event) {
+  final phase = _stringField(event.payload, 'phase')?.trim();
+  return switch (phase) {
+    'context_loading' => '我已经收到你的消息啦～',
+    'context_ready' => '我看一下你的信息',
+    'model_reasoning' => '我想一下',
+    'response_finalizing' => '我在组织回复～',
+    _ => null,
+  };
+}
+
+String? _visibleAgentStatusTitle(String? value) {
+  final normalized = value?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  const hidden = {
+    '开始处理请求。',
+    '正在处理请求。',
+    '正在处理请求',
+    'Agent loop started.',
+    'Requesting model response.',
+    'Requesting model response with tool outputs.',
+  };
+  if (hidden.contains(normalized)) return null;
+  return switch (normalized) {
+    'CozyMate 正在进入对话' => '我已经收到你的消息啦～',
+    '正在整理对话上下文' => '我已经收到你的消息啦～',
+    '已整理好相关信息' => '我看一下你的信息',
+    'CozyMate 正在思考怎么帮你' => '我想一下',
+    '正在整理回复' => '我在组织回复～',
+    _ => normalized,
+  };
+}
+
 List<AgentRunWorkStep> _workStepsFromEvents(List<AgentStreamEvent> events) {
   final steps = <String, AgentRunWorkStep>{};
 
@@ -3964,7 +4094,7 @@ AgentRunWorkStep? _progressStep(AgentStreamEvent event) {
       ]) ??
       switch (event.type) {
         'run.queued' => '正在排队准备',
-        'run.started' => 'CozyMate 正在进入对话',
+        'run.started' => '我已经收到你的消息啦～',
         _ => '正在处理',
       };
   return AgentRunWorkStep(

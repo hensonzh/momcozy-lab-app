@@ -361,7 +361,7 @@ class MomCozyApiRuntime {
   }
 
   AgentVoicePlaybackPlayer get agentVoicePlaybackPlayer {
-    return AgentVoiceApiPlaybackPlayer(repository: agentVoiceRepository);
+    return MethodChannelAgentVoiceTextPlayer(language: currentSession.locale);
   }
 
   HospitalBagCartApiRepository get hospitalBagCartRepository {
