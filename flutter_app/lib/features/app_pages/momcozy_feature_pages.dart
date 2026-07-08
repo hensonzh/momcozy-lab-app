@@ -533,6 +533,7 @@ class _StatusInteractionState {
   String view = 'mom';
   String careStage = 'postpartum';
   bool growthRecordAdded = false;
+  bool pregnancyDiarySaved = false;
   String milkTrendMode = '周';
   String babyGrowthMetric = '体重';
   String? activeDetail;
@@ -561,6 +562,7 @@ class _StatusPageState extends State<_StatusPage> {
   String _view = 'mom';
   String _careStage = 'postpartum';
   bool _growthRecordAdded = false;
+  bool _pregnancyDiarySaved = false;
   String _milkTrendMode = '周';
   String _babyGrowthMetric = '体重';
   String? _activeDetail;
@@ -579,6 +581,7 @@ class _StatusPageState extends State<_StatusPage> {
       _view = _interactionState.view;
       _careStage = _interactionState.careStage;
       _growthRecordAdded = _interactionState.growthRecordAdded;
+      _pregnancyDiarySaved = _interactionState.pregnancyDiarySaved;
       _milkTrendMode = _interactionState.milkTrendMode;
       _babyGrowthMetric = _interactionState.babyGrowthMetric;
       _activeDetail = _interactionState.activeDetail;
@@ -600,6 +603,7 @@ class _StatusPageState extends State<_StatusPage> {
       ..view = _view
       ..careStage = _careStage
       ..growthRecordAdded = _growthRecordAdded
+      ..pregnancyDiarySaved = _pregnancyDiarySaved
       ..milkTrendMode = _milkTrendMode
       ..babyGrowthMetric = _babyGrowthMetric
       ..activeDetail = _activeDetail;
@@ -665,6 +669,46 @@ class _StatusPageState extends State<_StatusPage> {
       },
     );
     if (saved == true) _recordGrowth();
+  }
+
+  Future<void> _showPregnancyDiaryEditor() async {
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          key: const ValueKey('status-pregnancy-diary-editor-dialog'),
+          title: const Text('记录今天的孕期日记'),
+          content: TextField(
+            key: const ValueKey('status-pregnancy-diary-note-input'),
+            autofocus: true,
+            minLines: 3,
+            maxLines: 5,
+            decoration: const InputDecoration(
+              labelText: '今日记录',
+              hintText: '写下心情、身体感受、胎动或想问医生的问题',
+            ),
+          ),
+          actions: [
+            TextButton(
+              key: const ValueKey('status-pregnancy-diary-cancel-button'),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('status-pregnancy-diary-save-button'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('保存日记'),
+            ),
+          ],
+        );
+      },
+    );
+    if (saved != true || !mounted) return;
+    setState(() {
+      _pregnancyDiarySaved = true;
+      _activeDetail = 'pregnancy-diary';
+      _persistInteractionState();
+    });
   }
 
   @override
@@ -746,10 +790,33 @@ class _StatusPageState extends State<_StatusPage> {
               : '产后第 ${mom!.postpartumDay} 天');
 
     if (isPregnancy) {
-      return const [
-        _StatusPregnancyDiaryPreview(),
-        SizedBox(height: 18),
+      return [
+        _StatusPregnancyDiaryPreview(
+          diarySaved: _pregnancyDiarySaved,
+          onViewDiary: () => _showDetail('pregnancy-diary'),
+          onRecordToday: () => unawaited(_showPregnancyDiaryEditor()),
+        ),
+        const SizedBox(height: 18),
         _StatusPregnancyPlanPreview(),
+        const SizedBox(height: 8),
+        if (_activeDetail == 'pregnancy-diary') ...[
+          _StatusDetailPanel(
+            key: const ValueKey('status-detail-pregnancy-diary'),
+            title: '孕期日记',
+            subtitle: _pregnancyDiarySaved ? '今天的记录已保存' : '最近 7 天记录',
+            rows: _pregnancyDiarySaved
+                ? const [
+                    ('今天', '已保存', '已记录今日心情、身体感受和待咨询问题。'),
+                    ('Agent 建议', '可继续追问', '我可以帮你整理产检问题或回顾最近几天的状态变化。'),
+                  ]
+                : const [
+                    ('最近 7 天', '暂无记录', '记录几天后会展示睡眠、情绪、胎动和身体感受变化。'),
+                    ('产检问题', '暂无', '可以先写下想问医生的问题。'),
+                  ],
+            onClose: _closeDetail,
+          ),
+          const SizedBox(height: 8),
+        ],
       ];
     }
 
@@ -1398,7 +1465,15 @@ class _StatusModuleActionPill extends StatelessWidget {
 }
 
 class _StatusPregnancyDiaryPreview extends StatelessWidget {
-  const _StatusPregnancyDiaryPreview();
+  const _StatusPregnancyDiaryPreview({
+    required this.diarySaved,
+    required this.onViewDiary,
+    required this.onRecordToday,
+  });
+
+  final bool diarySaved;
+  final VoidCallback onViewDiary;
+  final VoidCallback onRecordToday;
 
   @override
   Widget build(BuildContext context) {
@@ -1428,9 +1503,11 @@ class _StatusPregnancyDiaryPreview extends StatelessWidget {
               children: [
                 Expanded(child: Text('孕期日记', style: titleStyle)),
                 _StatusOutlinedPill(
+                  key: const ValueKey('status-pregnancy-diary-view-button'),
                   label: '查看日记',
                   icon: null,
                   accent: const Color(0xffa0603a),
+                  onTap: onViewDiary,
                 ),
               ],
             ),
@@ -1490,9 +1567,13 @@ class _StatusPregnancyDiaryPreview extends StatelessWidget {
                     ),
                     const Spacer(),
                     _StatusFilledPill(
+                      key: const ValueKey(
+                        'status-pregnancy-diary-record-button',
+                      ),
                       label: '记录今天',
                       icon: Icons.edit_outlined,
                       color: const Color(0xffb06f45),
+                      onTap: onRecordToday,
                     ),
                   ],
                 ),
@@ -1512,7 +1593,9 @@ class _StatusPregnancyDiaryPreview extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。',
+                        diarySaved
+                            ? '今天的记录已保存，我可以继续帮你整理产检问题或回顾最近几天的状态变化。'
+                            : '今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。',
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
                           color: MomCozyColors.foreground,
                           fontWeight: FontWeight.w900,
@@ -1621,10 +1704,13 @@ class _StatusPregnancyPlanPreview extends StatelessWidget {
             ),
           ),
           _StatusFilledPill(
+            key: const ValueKey('status-pregnancy-plan-agent-button'),
             label: '制定孕期计划',
             icon: null,
             color: const Color(0xff5f978b),
             avatar: true,
+            onTap: () =>
+                context.go('/', extra: const {'agentPrefill': '帮我制定孕期计划'}),
           ),
         ],
       ),
@@ -1841,20 +1927,23 @@ class _StatusDetailPanel extends StatelessWidget {
 
 class _StatusFilledPill extends StatelessWidget {
   const _StatusFilledPill({
+    super.key,
     required this.label,
     required this.icon,
     required this.color,
     this.avatar = false,
+    this.onTap,
   });
 
   final String label;
   final IconData? icon;
   final Color color;
   final bool avatar;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final content = Container(
       padding: EdgeInsets.fromLTRB(avatar ? 6 : 12, 8, 14, 8),
       decoration: BoxDecoration(
         color: color,
@@ -1884,23 +1973,35 @@ class _StatusFilledPill extends StatelessWidget {
         ],
       ),
     );
+    if (onTap == null) return content;
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: content,
+      ),
+    );
   }
 }
 
 class _StatusOutlinedPill extends StatelessWidget {
   const _StatusOutlinedPill({
+    super.key,
     required this.label,
     required this.icon,
     required this.accent,
+    this.onTap,
   });
 
   final String label;
   final IconData? icon;
   final Color accent;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final content = Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.72),
@@ -1923,6 +2024,15 @@ class _StatusOutlinedPill extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+    if (onTap == null) return content;
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: content,
       ),
     );
   }

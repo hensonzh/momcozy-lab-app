@@ -13,10 +13,19 @@ import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dar
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+
+typedef MomCozyAgentHubBuilder =
+    Widget Function(
+      BuildContext context,
+      Uri? uri,
+      Object? extra,
+      AgentVoicePlaybackCoordinator voicePlaybackCoordinator,
+    );
 
 class MomCozyFlutterApp extends StatefulWidget {
   const MomCozyFlutterApp({
@@ -27,6 +36,7 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.runtimeController,
     this.sessionStore = const FlutterSecureMomCozySessionStore(),
     this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
+    this.agentHubBuilder,
   }) : assert(
          apiRuntime == null || runtimeController == null,
          'Pass either apiRuntime or runtimeController, not both.',
@@ -38,6 +48,7 @@ class MomCozyFlutterApp extends StatefulWidget {
   final MomCozyRuntimeController? runtimeController;
   final MomCozySessionStore sessionStore;
   final MomCozyAuthDeviceIdStore authDeviceIdStore;
+  final MomCozyAgentHubBuilder? agentHubBuilder;
 
   @override
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
@@ -56,6 +67,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
         runtimeController: _runtimeController,
         sessionStore: widget.sessionStore,
         authDeviceIdStore: widget.authDeviceIdStore,
+        agentHubBuilder: widget.agentHubBuilder,
       );
   late final bool _ownsRouter = widget.router == null;
   late final RouteIntentPlatform _routeIntentPlatform =
@@ -335,7 +347,9 @@ GoRouter createMomCozyRouter({
   MomCozySessionStore sessionStore = const FlutterSecureMomCozySessionStore(),
   MomCozyAuthDeviceIdStore authDeviceIdStore =
       const FlutterSecureMomCozyAuthDeviceIdStore(),
+  MomCozyAgentHubBuilder? agentHubBuilder,
 }) {
+  final resolvedAgentHubBuilder = agentHubBuilder ?? _buildDefaultAgentHubPage;
   return GoRouter(
     initialLocation: initialLocation,
     refreshListenable: runtimeController,
@@ -359,7 +373,13 @@ GoRouter createMomCozyRouter({
           return MomCozyRouteTelemetry(
             location: state.uri.path,
             observability: runtime.observability,
-            child: MomCozyRouteShell(location: state.uri.path, child: child),
+            child: MomCozyRouteShell(
+              location: state.uri.path,
+              uri: state.uri,
+              extra: state.extra,
+              agentHubBuilder: resolvedAgentHubBuilder,
+              child: child,
+            ),
           );
         },
         routes: [
@@ -412,19 +432,44 @@ String? _safeAuthRedirect(String? value) {
   return uri.toString();
 }
 
-class MomCozyRouteShell extends StatelessWidget {
+class MomCozyRouteShell extends StatefulWidget {
   const MomCozyRouteShell({
     super.key,
     required this.location,
     required this.child,
+    this.uri,
+    this.extra,
+    this.agentHubBuilder,
   });
 
   final String location;
   final Widget child;
+  final Uri? uri;
+  final Object? extra;
+  final MomCozyAgentHubBuilder? agentHubBuilder;
+
+  @override
+  State<MomCozyRouteShell> createState() => _MomCozyRouteShellState();
+}
+
+class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
+  final AgentVoicePlaybackCoordinator _voicePlaybackCoordinator =
+      AgentVoicePlaybackCoordinator();
+  late bool _hasBuiltAgentHub = widget.location == '/';
+
+  @override
+  void didUpdateWidget(covariant MomCozyRouteShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.location == '/') {
+      _hasBuiltAgentHub = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final location = widget.location;
     final hideNavigation = _routesWithoutBottomNavigation.contains(location);
+    final content = _buildContent(context);
 
     return Scaffold(
       backgroundColor: MomCozyColors.background,
@@ -436,13 +481,40 @@ class MomCozyRouteShell extends StatelessWidget {
             constraints: const BoxConstraints(
               maxWidth: MomCozyLayout.maxAppWidth,
             ),
-            child: child,
+            child: content,
           ),
         ),
       ),
       bottomNavigationBar: hideNavigation
           ? null
           : MomCozyBottomNavigation(location: location),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    final agentHubBuilder = widget.agentHubBuilder;
+    if (agentHubBuilder == null) return widget.child;
+
+    final location = widget.location;
+    final isAgentRoute = location == '/';
+    if (!_hasBuiltAgentHub) return widget.child;
+
+    final agentHub = agentHubBuilder(
+      context,
+      isAgentRoute ? widget.uri : null,
+      isAgentRoute ? widget.extra : null,
+      _voicePlaybackCoordinator,
+    );
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Offstage(
+          offstage: !isAgentRoute,
+          child: TickerMode(enabled: isAgentRoute, child: agentHub),
+        ),
+        if (!isAgentRoute) Positioned.fill(child: widget.child),
+      ],
     );
   }
 }
@@ -1122,34 +1194,11 @@ class MomCozyRoutePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (route.path == '/') {
-      final runtime = MomCozyRuntimeScope.of(context);
-      String? currentAccessToken() {
-        return MomCozyRuntimeScope.read(context)?.session.accessToken ??
-            runtime.session.accessToken;
-      }
-
-      return AgentHubPage(
-        stateCacheKey: runtime,
-        runner: createSessionAgentHubRunner(
-          runtime.session,
-          accessTokenProvider: currentAccessToken,
-        ),
-        cancelClient: createSessionAgentHubCancelClient(
-          runtime.session,
-          accessTokenProvider: currentAccessToken,
-        ),
-        actionClient: createSessionAgentHubActionClient(
-          runtime.session,
-          accessTokenProvider: currentAccessToken,
-        ),
-        interactionStateStore: createSessionAgentHubInteractionStateStore(
-          runtime.session,
-        ),
-        requestBuilder: (message) =>
-            buildSessionAgentHubRequest(message, session: runtime.session),
-        onArtifactAction: (action) =>
-            _handleAgentArtifactAction(context, action),
-        initialComposerText: _agentPrefillFromRoute(uri, extra),
+      return _buildDefaultAgentHubPage(
+        context,
+        uri,
+        extra,
+        AgentVoicePlaybackCoordinator(),
       );
     }
 
@@ -1166,6 +1215,41 @@ class MomCozyRoutePage extends StatelessWidget {
   }
 }
 
+Widget _buildDefaultAgentHubPage(
+  BuildContext context,
+  Uri? uri,
+  Object? extra,
+  AgentVoicePlaybackCoordinator voicePlaybackCoordinator,
+) {
+  final runtime = MomCozyRuntimeScope.of(context);
+  String? currentAccessToken() {
+    return MomCozyRuntimeScope.read(context)?.session.accessToken ??
+        runtime.session.accessToken;
+  }
+
+  return AgentHubPage(
+    stateCacheKey: runtime,
+    runner: createSessionAgentHubRunner(
+      runtime.session,
+      accessTokenProvider: currentAccessToken,
+    ),
+    cancelClient: createSessionAgentHubCancelClient(
+      runtime.session,
+      accessTokenProvider: currentAccessToken,
+    ),
+    actionClient: createSessionAgentHubActionClient(
+      runtime.session,
+      accessTokenProvider: currentAccessToken,
+    ),
+    requestBuilder: (message) =>
+        buildSessionAgentHubRequest(message, session: runtime.session),
+    voicePlaybackCoordinator: voicePlaybackCoordinator,
+    onArtifactAction: (action) => _handleAgentArtifactAction(context, action),
+    initialComposerText: _agentPrefillFromRoute(uri, extra),
+    initialAutoSend: _agentAutoSendFromRoute(uri, extra),
+  );
+}
+
 String? _agentPrefillFromRoute(Uri? uri, Object? extra) {
   final extraMap = extra is Map ? extra : null;
   final extraPrefill = extraMap?['agentPrefill'];
@@ -1177,6 +1261,15 @@ String? _agentPrefillFromRoute(Uri? uri, Object? extra) {
     return queryPrefill.trim();
   }
   return null;
+}
+
+bool _agentAutoSendFromRoute(Uri? uri, Object? extra) {
+  final extraMap = extra is Map ? extra : null;
+  final extraAutoSend = extraMap?['autoSend'] ?? extraMap?['agentAutoSend'];
+  if (extraAutoSend == true) return true;
+  final queryAutoSend =
+      uri?.queryParameters['autoSend'] ?? uri?.queryParameters['agentAutoSend'];
+  return queryAutoSend == 'true' || queryAutoSend == '1';
 }
 
 class MomCozyRouteConfig {
