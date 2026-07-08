@@ -985,13 +985,56 @@ void main() {
 
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
     expect(coordinator.activeId, 'msg-reply-text-001');
-    expect(find.text('正在播放语音'), findsOneWidget);
+    expect(find.text('正在播放语音'), findsNothing);
+    expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsOneWidget,
     );
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Agent Hub sends finished replies to the voice playback player', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    final player = _PageFakeVoicePlaybackPlayer();
+    final client = _FixtureAgentStreamClient(
+      parseAgentJsonl(
+        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voicePlaybackCoordinator: coordinator,
+          voicePlaybackPlayer: player,
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Read this aloud',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(player.playedTexts, ["I can help you review today's pumping pattern."]);
+    expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
+
+    player.complete();
+    await tester.pump();
+
+    expect(coordinator.activeSource, isNull);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsNothing,
     );
   });
@@ -1124,7 +1167,7 @@ void main() {
 
       expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
       expect(coordinator.activeId, 'msg-reply-text-001');
-      expect(find.text('正在播放语音'), findsOneWidget);
+      expect(find.text('正在播放语音'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
         findsOneWidget,
@@ -1781,6 +1824,8 @@ void main() {
     tester,
   ) async {
     final actions = <AgentArtifactActionView>[];
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
     final formEvent = AgentStreamEvent({
       'type': 'artifact.created',
       'thread_id': 'thread-legacy-artifact',
@@ -1797,6 +1842,14 @@ void main() {
               'label': '基本信息｜预产期或当前孕周',
               'type': 'text',
               'required': true,
+              'placeholder': '例如：38 周',
+            },
+            {
+              'id': 'birth_path',
+              'label': '生产信息｜分娩方式',
+              'type': 'select',
+              'required': true,
+              'options': ['顺产', '剖宫产', '还不确定'],
             },
           ],
         },
@@ -1860,6 +1913,7 @@ void main() {
     await tester.pumpWidget(
       _host(
         AgentHubPage(
+          runner: AgentStreamRunner(client),
           state: AgentStreamRunState(
             phase: AgentStreamRunPhase.finished,
             textContent: '我整理好了。',
@@ -1871,13 +1925,34 @@ void main() {
     );
 
     expect(find.text('信息采集'), findsOneWidget);
-    expect(find.text('基本信息｜预产期或当前孕周：必填'), findsOneWidget);
+    final formFinder = find.byKey(
+      const ValueKey('agent-artifact-form-hospital-bag-form'),
+    );
+    expect(formFinder, findsOneWidget);
+    expect(find.text('基本信息｜预产期或当前孕周'), findsOneWidget);
+    expect(find.text('生产信息｜分娩方式'), findsOneWidget);
+    expect(find.text('必填'), findsWidgets);
+    expect(find.text('顺产'), findsOneWidget);
     expect(find.text('孕期计划'), findsOneWidget);
     expect(find.text('当前阶段：整理下次产检要问的问题、开始整理待产包'), findsOneWidget);
     expect(find.text('已经帮你把待产包购物车恢复到默认清单了。'), findsWidgets);
     expect(find.text('妈妈护理：产褥垫组合装、一次性内裤'), findsOneWidget);
     expect(find.text('购物车合计：2 件｜101.02'), findsOneWidget);
     expect(find.text('打开待产包购物车'), findsOneWidget);
+
+    await tester.enterText(
+      find.descendant(of: formFinder, matching: find.byType(TextFormField)),
+      '38 周',
+    );
+    await tester.tap(
+      find.byKey(const ValueKey('agent-artifact-form-submit-hospital-bag-form')),
+    );
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+    expect(client.requests.single.message, contains('confirmed_form_data'));
+    expect(client.requests.single.message, contains('due_date_or_week'));
+    expect(find.text('已提交信息采集表单'), findsOneWidget);
 
     await tester.tap(
       find.byKey(const ValueKey('agent-artifact-action-hospital-bag-cart-0')),
@@ -2237,6 +2312,58 @@ milk_total: 120ml
     );
   });
 
+  testWidgets('Agent Hub keeps backend progress visible until first token', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '帮我生成待产包',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    client.emit(
+      0,
+      AgentStreamEvent({
+        'event_id': 'evt-progress-before-token',
+        'type': 'run.progress',
+        'thread_id': 'thread-progress',
+        'run_id': 'run-progress',
+        'sequence': 1,
+        'payload': {'label': '正在生成待产包信息采集表单'},
+      }),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(find.text('正在生成待产包信息采集表单'), findsOneWidget);
+
+    client.emit(
+      0,
+      AgentStreamEvent({
+        'event_id': 'evt-first-token',
+        'type': 'message.delta',
+        'thread_id': 'thread-progress',
+        'run_id': 'run-progress',
+        'message_id': 'msg-progress',
+        'sequence': 2,
+        'payload': {'text': '好的'},
+      }),
+    );
+    await tester.pump();
+
+    expect(find.text('好的'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+  });
+
   testWidgets('Agent Hub status line uses queued and started events', (
     tester,
   ) async {
@@ -2558,4 +2685,30 @@ class _PageFakeVoiceTranscriber implements AgentVoiceTranscriber {
 
   @override
   Future<String?> transcribe(AgentVoiceRecording recording) async => text;
+}
+
+class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
+  final playedTexts = <String>[];
+  var stopCount = 0;
+  Completer<void>? _active;
+
+  @override
+  Future<void> playText(String text) {
+    playedTexts.add(text);
+    _active = Completer<void>();
+    return _active!.future;
+  }
+
+  @override
+  Future<void> stop() async {
+    stopCount += 1;
+    complete();
+  }
+
+  void complete() {
+    final active = _active;
+    if (active != null && !active.isCompleted) {
+      active.complete();
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -36,6 +37,23 @@ String _agentAssistantTextForState(AgentStreamRunState state) {
     AgentStreamRunPhase.error ||
     AgentStreamRunPhase.disconnected => '这次没有拿到回复，可能是连接中断了。你再发一次就好。',
   };
+}
+
+String _formSubmitRequestMessage(AgentArtifactActionView action) {
+  final extra = action.routeExtra;
+  final extraMap = extra is Map ? Map<String, Object?>.from(extra) : const {};
+  final formId = extraMap['formId']?.toString().trim();
+  final values = extraMap['values'];
+  final valuesJson = values is Map
+      ? jsonEncode(values)
+      : (action.value?.trim().isNotEmpty ?? false)
+      ? action.value!.trim()
+      : '{}';
+  return [
+    '我已提交信息采集表单，请基于确认后的表单数据继续完成对应服务。',
+    if (formId != null && formId.isNotEmpty) 'form_id: $formId',
+    'confirmed_form_data: $valuesJson',
+  ].join('\n');
 }
 
 class _PendingAutoVoiceReplay {
@@ -78,6 +96,7 @@ class AgentHubPage extends StatefulWidget {
     this.voiceInput,
     this.voiceInputController,
     this.voicePlaybackCoordinator,
+    this.voicePlaybackPlayer,
     this.onArtifactAction,
     this.onNewSession,
     this.initialComposerText,
@@ -96,6 +115,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubVoiceInput? voiceInput;
   final AgentVoiceInputController? voiceInputController;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
+  final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
@@ -465,6 +485,57 @@ class _AgentHubPageState extends State<AgentHubPage> {
     await _startRun(request);
   }
 
+  Future<void> _sendSyntheticUserMessage({
+    required String requestMessage,
+    required String optimisticContent,
+  }) async {
+    final runner = widget.runner;
+    if (runner == null || requestMessage.trim().isEmpty || _isComposerLocked) {
+      return;
+    }
+
+    _cancelCurrentBubblePlaybackForNewTurn();
+    final interruptedState = _state.isActive ? _state : null;
+    final interruptedRequest = _state.isActive ? _activeRequest : null;
+    final request = widget.requestBuilder(requestMessage.trim());
+    final archivedAssistantMessage = _currentAssistantHistoryMessage();
+    if (interruptedState != null) {
+      _cancelRunSubscription();
+      _sendBestEffortServerCancel(interruptedState, interruptedRequest);
+    }
+    _composerController.clear();
+    setState(() {
+      if (archivedAssistantMessage != null) {
+        _historyMessages.add(archivedAssistantMessage);
+      }
+      _historyMessages.add(
+        AgentHubHistoryMessage(
+          role: AgentHubHistoryRole.user,
+          content: optimisticContent,
+        ),
+      );
+      _attachedImages.clear();
+      _showPhotoMenu = false;
+      _pendingAutoVoiceReplay = null;
+    });
+    _persistInteractionState();
+    _scheduleScrollToLatest();
+    await _startRun(request);
+  }
+
+  void _handleArtifactAction(AgentArtifactActionView action) {
+    if (action.kind == 'form.submit') {
+      unawaited(
+        _sendSyntheticUserMessage(
+          requestMessage: _formSubmitRequestMessage(action),
+          optimisticContent: '已提交信息采集表单',
+        ),
+      );
+      return;
+    }
+    widget.onArtifactAction?.call(action);
+  }
+
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
     final text = _agentAssistantTextForState(_state).trim();
     if (text.isEmpty) return null;
@@ -596,11 +667,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _maybeStartGreetingVoicePlayback() {
     final coordinator = widget.voicePlaybackCoordinator;
+    final player = widget.voicePlaybackPlayer;
     if (coordinator == null || !_autoVoiceEnabled) return;
 
     final result = coordinator.request(
       id: _agentDefaultGreetingPlaybackId,
       source: AgentVoicePlaybackSource.greeting,
+      cancel: player == null
+          ? null
+          : () => unawaited(player.stop().catchError((Object _) {})),
     );
     final handle = result.handle;
     if (!mounted ||
@@ -608,9 +683,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         handle == null) {
       return;
     }
-    setState(() {
-      _voiceState = _voiceState.startPlayback(handle.id);
-    });
+    _startVoicePlayback(handle: handle, text: _agentDefaultGreeting);
   }
 
   Future<void> _retryRun() async {
@@ -717,6 +790,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _maybeStartAutoVoicePlayback(AgentStreamRunState nextState) {
     final coordinator = widget.voicePlaybackCoordinator;
+    final player = widget.voicePlaybackPlayer;
     final text = nextState.textContent.trim();
     if (coordinator == null ||
         !_autoVoiceEnabled ||
@@ -729,6 +803,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final result = coordinator.request(
       id: playbackId,
       source: AgentVoicePlaybackSource.autoReply,
+      cancel: player == null
+          ? null
+          : () => unawaited(player.stop().catchError((Object _) {})),
     );
     if (result.status == AgentVoicePlaybackRequestStatus.blocked) {
       _queueBlockedAutoVoiceReplay(nextState);
@@ -740,10 +817,38 @@ class _AgentHubPageState extends State<AgentHubPage> {
         handle == null) {
       return;
     }
+    _pendingAutoVoiceReplay = null;
+    _startVoicePlayback(handle: handle, text: text);
+  }
+
+  void _startVoicePlayback({
+    required AgentVoicePlaybackHandle handle,
+    required String text,
+  }) {
     setState(() {
-      _pendingAutoVoiceReplay = null;
       _voiceState = _voiceState.startPlayback(handle.id);
     });
+    final player = widget.voicePlaybackPlayer;
+    if (player == null) return;
+
+    unawaited(
+      player
+          .playText(text)
+          .then((_) {
+            if (!mounted || !handle.isCurrent) return;
+            handle.finish();
+            setState(() {
+              _voiceState = const AgentVoiceState();
+            });
+          })
+          .catchError((Object error) {
+            if (!mounted || !handle.isCurrent) return;
+            handle.finish();
+            setState(() {
+              _voiceState = _voiceState.fail(error);
+            });
+          }),
+    );
   }
 
   String _autoVoicePlaybackId(AgentStreamRunState state) {
@@ -958,7 +1063,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                   if (_historyMessages.isNotEmpty) ...[
                                     AgentHubHistoryPanel(
                                       messages: _historyMessages,
-                                      onArtifactAction: widget.onArtifactAction,
+                                      onArtifactAction: _handleArtifactAction,
                                     ),
                                     const SizedBox(height: 18),
                                   ],
@@ -970,7 +1075,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                         : null,
                                     canRetry: _canRetry,
                                     onRetry: _retryRun,
-                                    onArtifactAction: widget.onArtifactAction,
+                                    onArtifactAction: _handleArtifactAction,
                                     pendingActionIds: _pendingActionIds,
                                     localActionStatuses: _localActionStatuses,
                                     onConfirmAction: widget.actionClient == null
@@ -1743,37 +1848,72 @@ class AgentRunStatusLine extends StatelessWidget {
           children: [
             SizedBox.square(
               dimension: 14,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: colorScheme.primary.withValues(alpha: 0.18),
-                    ),
-                    child: const SizedBox.square(dimension: 12),
-                  ),
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: colorScheme.primary.withValues(alpha: 0.86),
-                    ),
-                    child: const SizedBox.square(dimension: 6),
-                  ),
-                ],
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0, end: 1),
+                duration: const Duration(milliseconds: 880),
+                curve: Curves.easeOutCubic,
+                builder: (context, pulse, child) {
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Transform.scale(
+                        scale: 0.88 + pulse * 0.24,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: colorScheme.primary.withValues(
+                              alpha: 0.12 + pulse * 0.12,
+                            ),
+                          ),
+                          child: const SizedBox.square(dimension: 12),
+                        ),
+                      ),
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorScheme.primary.withValues(alpha: 0.86),
+                        ),
+                        child: const SizedBox.square(dimension: 6),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             const SizedBox(width: 6),
             Flexible(
-              child: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: textTheme.labelMedium?.copyWith(
-                  height: 1.35,
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.w800,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.labelMedium?.copyWith(
+                        height: 1.35,
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: 0, end: 1),
+                    duration: const Duration(milliseconds: 880),
+                    builder: (context, value, child) {
+                      final dotCount = (value * 3).floor() + 1;
+                      final dots = List.filled(dotCount, '.').join();
+                      return Text(
+                        dots,
+                        style: textTheme.labelMedium?.copyWith(
+                          height: 1.35,
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ],
@@ -1811,29 +1951,43 @@ class _AgentAssistantAvatar extends StatelessWidget {
               right: -2,
               top: -2,
               bottom: -2,
-              child: DecoratedBox(
-                key: ValueKey(
-                  isSpeaking
-                      ? 'agent-assistant-avatar-speaking'
-                      : 'agent-assistant-avatar-thinking',
-                ),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: ringColor.withValues(alpha: 0.54),
-                    width: isSpeaking ? 3 : 2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ringColor.withValues(
-                        alpha: isSpeaking ? 0.24 : 0.16,
+              child: TweenAnimationBuilder<double>(
+                key: ValueKey('agent-avatar-pulse-$mode'),
+                tween: Tween<double>(begin: 0, end: 1),
+                duration: const Duration(milliseconds: 980),
+                curve: Curves.easeOutCubic,
+                builder: (context, pulse, child) {
+                  return Transform.scale(
+                    scale: 1 + pulse * (isSpeaking ? 0.12 : 0.08),
+                    child: DecoratedBox(
+                      key: ValueKey(
+                        isSpeaking
+                            ? 'agent-assistant-avatar-speaking'
+                            : 'agent-assistant-avatar-thinking',
                       ),
-                      blurRadius: isSpeaking ? 14 : 10,
-                      spreadRadius: isSpeaking ? 2 : 1,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: ringColor.withValues(
+                            alpha: 0.42 + pulse * 0.18,
+                          ),
+                          width: isSpeaking ? 3 : 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: ringColor.withValues(
+                              alpha:
+                                  (isSpeaking ? 0.18 : 0.12) + pulse * 0.12,
+                            ),
+                            blurRadius: (isSpeaking ? 12 : 9) + pulse * 6,
+                            spreadRadius: (isSpeaking ? 1.4 : 0.8) + pulse,
+                          ),
+                        ],
+                      ),
+                      child: const SizedBox.expand(),
                     ),
-                  ],
-                ),
-                child: const SizedBox.expand(),
+                  );
+                },
               ),
             ),
           DecoratedBox(
@@ -1965,6 +2119,10 @@ class AgentArtifactPanel extends StatelessWidget {
                       ),
                     ),
                   ],
+                  if (card.formFields.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    _AgentArtifactFormView(card: card, onAction: onAction),
+                  ],
                   if (card.actions.isNotEmpty) ...[
                     const SizedBox(height: 10),
                     Wrap(
@@ -2006,6 +2164,9 @@ class AgentArtifactCardView {
     this.content,
     this.statusLabel,
     this.rows = const <String>[],
+    this.formId,
+    this.formSubmitLabel,
+    this.formFields = const <AgentArtifactFormFieldView>[],
     this.actions = const <AgentArtifactActionView>[],
   });
 
@@ -2014,7 +2175,34 @@ class AgentArtifactCardView {
   final String? content;
   final String? statusLabel;
   final List<String> rows;
+  final String? formId;
+  final String? formSubmitLabel;
+  final List<AgentArtifactFormFieldView> formFields;
   final List<AgentArtifactActionView> actions;
+}
+
+class AgentArtifactFormFieldView {
+  const AgentArtifactFormFieldView({
+    required this.id,
+    required this.label,
+    required this.type,
+    this.required = false,
+    this.options = const <String>[],
+    this.placeholder,
+    this.defaultValue,
+  });
+
+  final String id;
+  final String label;
+  final String type;
+  final bool required;
+  final List<String> options;
+  final String? placeholder;
+  final Object? defaultValue;
+
+  bool get isMultiSelect => type == 'multi_select' || type == 'checkboxes';
+
+  bool get isChoice => isMultiSelect || type == 'select' || type == 'radio';
 }
 
 class AgentArtifactActionView {
@@ -2033,6 +2221,195 @@ class AgentArtifactActionView {
   final String? value;
   final String? routePath;
   final Object? routeExtra;
+}
+
+class _AgentArtifactFormView extends StatefulWidget {
+  const _AgentArtifactFormView({required this.card, this.onAction});
+
+  final AgentArtifactCardView card;
+  final AgentArtifactActionHandler? onAction;
+
+  @override
+  State<_AgentArtifactFormView> createState() => _AgentArtifactFormViewState();
+}
+
+class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
+  late Map<String, Object?> _values;
+
+  @override
+  void initState() {
+    super.initState();
+    _values = _initialValues(widget.card.formFields);
+  }
+
+  @override
+  void didUpdateWidget(covariant _AgentArtifactFormView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.card.id != widget.card.id ||
+        oldWidget.card.formFields.length != widget.card.formFields.length) {
+      _values = _initialValues(widget.card.formFields);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      key: ValueKey('agent-artifact-form-${widget.card.id}'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final field in widget.card.formFields) ...[
+          _buildField(context, field),
+          const SizedBox(height: 10),
+        ],
+        Align(
+          alignment: Alignment.centerLeft,
+          child: FilledButton.icon(
+            key: ValueKey('agent-artifact-form-submit-${widget.card.id}'),
+            onPressed: widget.onAction == null ? null : _submit,
+            icon: const Icon(Icons.check_rounded, size: 18),
+            label: Text(widget.card.formSubmitLabel ?? '提交'),
+            style: FilledButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+              textStyle: textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildField(BuildContext context, AgentArtifactFormFieldView field) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      key: ValueKey('agent-artifact-form-field-${widget.card.id}-${field.id}'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                field.label,
+                style: textTheme.labelMedium?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            if (field.required)
+              Text(
+                '必填',
+                style: textTheme.labelSmall?.copyWith(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        if (field.isChoice && field.options.isNotEmpty)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final option in field.options)
+                ChoiceChip(
+                  key: ValueKey(
+                    'agent-artifact-form-option-${widget.card.id}-${field.id}-$option',
+                  ),
+                  selected: _isOptionSelected(field, option),
+                  label: Text(option),
+                  onSelected: (_) => _toggleOption(field, option),
+                ),
+            ],
+          )
+        else
+          TextFormField(
+            initialValue: _textValue(field),
+            minLines: field.type == 'textarea' ? 3 : 1,
+            maxLines: field.type == 'textarea' ? 5 : 1,
+            decoration: InputDecoration(
+              hintText: field.placeholder ?? '请填写',
+              isDense: true,
+              filled: true,
+              fillColor: MomCozyColors.card.withValues(alpha: 0.72),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(MomCozyRadii.control),
+              ),
+            ),
+            onChanged: (value) {
+              _values = {..._values, field.id: value.trim()};
+            },
+          ),
+      ],
+    );
+  }
+
+  bool _isOptionSelected(AgentArtifactFormFieldView field, String option) {
+    final value = _values[field.id];
+    if (field.isMultiSelect) {
+      return value is List && value.contains(option);
+    }
+    return value == option;
+  }
+
+  String _textValue(AgentArtifactFormFieldView field) {
+    final value = _values[field.id];
+    return value == null ? '' : value.toString();
+  }
+
+  void _toggleOption(AgentArtifactFormFieldView field, String option) {
+    setState(() {
+      if (field.isMultiSelect) {
+        final current = List<String>.from(
+          (_values[field.id] as List?)?.whereType<String>() ?? const <String>[],
+        );
+        current.contains(option) ? current.remove(option) : current.add(option);
+        _values = {..._values, field.id: current};
+      } else {
+        _values = {..._values, field.id: option};
+      }
+    });
+  }
+
+  void _submit() {
+    final values = Map<String, Object?>.from(_values)
+      ..removeWhere((_, value) {
+        if (value == null) return true;
+        if (value is String) return value.trim().isEmpty;
+        if (value is List) return value.isEmpty;
+        return false;
+      });
+    widget.onAction?.call(
+      AgentArtifactActionView(
+        label: widget.card.formSubmitLabel ?? '提交',
+        icon: Icons.check_rounded,
+        kind: 'form.submit',
+        value: jsonEncode(values),
+        routeExtra: {
+          'artifactId': widget.card.id,
+          if (widget.card.formId != null) 'formId': widget.card.formId,
+          'values': values,
+        },
+      ),
+    );
+  }
+
+  Map<String, Object?> _initialValues(
+    List<AgentArtifactFormFieldView> fields,
+  ) {
+    return {
+      for (final field in fields)
+        if (field.defaultValue != null) field.id: field.defaultValue,
+    };
+  }
 }
 
 class AgentActionPanel extends StatelessWidget {
@@ -2825,7 +3202,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     return switch (widget.voicePhase) {
       AgentVoicePhase.listening => '正在听',
       AgentVoicePhase.transcribing => '正在整理语音',
-      AgentVoicePhase.playing => '正在播放语音',
+      AgentVoicePhase.playing => null,
       AgentVoicePhase.cancelled => null,
       AgentVoicePhase.permissionDenied => '麦克风权限未开启',
       AgentVoicePhase.error => '语音输入失败',
@@ -2911,8 +3288,8 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
     _stringField(cardJson, 'status_label', 'statusLabel'),
     _stringField(payload, 'status_label', 'statusLabel'),
   ]);
+  final formFields = _formFields(form);
   final rows = <String>[
-    ..._formRows(form),
     ..._cardJsonRows(cardJson),
     ..._cartUpdateRows(cartUpdate),
     ..._stringList(cardJson['steps']),
@@ -2940,6 +3317,9 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
     content: content,
     statusLabel: status,
     rows: rows,
+    formId: _stringField(form, 'id'),
+    formSubmitLabel: _stringField(form, 'submit_label', 'submitLabel'),
+    formFields: formFields,
     actions: actions,
   );
 }
@@ -2969,6 +3349,33 @@ List<String> _formRows(Map<String, Object?> form) {
     rows.add('$label：$suffix');
   }
   return rows;
+}
+
+List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
+  if (form.isEmpty) return const <AgentArtifactFormFieldView>[];
+  final fields = form['fields'];
+  if (fields is! List) return const <AgentArtifactFormFieldView>[];
+  final defaultValues = _mapField(form, 'default_values', 'defaultValues');
+  final views = <AgentArtifactFormFieldView>[];
+  for (final rawField in fields.take(24)) {
+    if (rawField is! Map) continue;
+    final field = Map<String, Object?>.from(rawField);
+    final id = _stringField(field, 'id')?.trim();
+    final label = _stringField(field, 'label')?.trim();
+    if (id == null || id.isEmpty || label == null || label.isEmpty) continue;
+    views.add(
+      AgentArtifactFormFieldView(
+        id: id,
+        label: label,
+        type: _stringField(field, 'type') ?? 'text',
+        required: field['required'] == true,
+        options: _stringList(field['options']),
+        placeholder: _stringField(field, 'placeholder'),
+        defaultValue: field['default_value'] ?? field['defaultValue'] ?? defaultValues[id],
+      ),
+    );
+  }
+  return List<AgentArtifactFormFieldView>.unmodifiable(views);
 }
 
 List<String> _cardJsonRows(Map<String, Object?> cardJson) {

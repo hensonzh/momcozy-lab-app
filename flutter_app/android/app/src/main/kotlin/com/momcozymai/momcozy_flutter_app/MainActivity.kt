@@ -2,6 +2,9 @@ package com.momcozymai.momcozy_flutter_app
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.media.AudioFormat
+import android.media.AudioManager
+import android.media.AudioTrack
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
@@ -27,6 +30,7 @@ import java.util.UUID
 class MainActivity : FlutterActivity() {
     private lateinit var mmcBleChannel: MethodChannel
     private lateinit var pumpNotificationChannel: MethodChannel
+    private lateinit var voicePcmPlayerChannel: MethodChannel
     private lateinit var pumpAgentUploadHandler: PumpAgentUploadChannelHandler
     private lateinit var pumpAgentBackgroundRunner: PumpAgentBackgroundRunner
     private var scanCallback: ScanCallback? = null
@@ -38,6 +42,7 @@ class MainActivity : FlutterActivity() {
     private val notifyKeys = mutableSetOf<String>()
     private var pendingBlePermissionResult: MethodChannel.Result? = null
     private var pendingNotificationPermissionResult: MethodChannel.Result? = null
+    private var voiceAudioTrack: AudioTrack? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -51,6 +56,11 @@ class MainActivity : FlutterActivity() {
             PUMP_NOTIFICATION_CHANNEL
         )
         pumpNotificationChannel.setMethodCallHandler(::handlePumpNotificationCall)
+        voicePcmPlayerChannel = MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            VOICE_PCM_PLAYER_CHANNEL
+        )
+        voicePcmPlayerChannel.setMethodCallHandler(::handleVoicePcmPlayerCall)
         val pumpAgentUploadChannel = MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             PUMP_AGENT_UPLOAD_CHANNEL
@@ -105,6 +115,18 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    private fun handleVoicePcmPlayerCall(call: MethodCall, result: MethodChannel.Result) {
+        when (call.method) {
+            "start" -> startVoicePcmPlayback(call, result)
+            "write" -> writeVoicePcmChunk(call, result)
+            "stop" -> {
+                stopVoicePcmPlayback()
+                result.success(null)
+            }
+            else -> result.notImplemented()
+        }
+    }
+
     override fun onDestroy() {
         if (::pumpAgentBackgroundRunner.isInitialized) {
             pumpAgentBackgroundRunner.stop()
@@ -121,6 +143,7 @@ class MainActivity : FlutterActivity() {
             null
         )
         pendingNotificationPermissionResult = null
+        stopVoicePcmPlayback()
         stopBleScan()
         gatts.keys.toList().forEach(::closeGatt)
         super.onDestroy()
@@ -776,6 +799,59 @@ class MainActivity : FlutterActivity() {
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 
+    private fun startVoicePcmPlayback(call: MethodCall, result: MethodChannel.Result) {
+        val args = call.argumentsMap()
+        val sampleRate = (args["sampleRate"] as? Number)?.toInt() ?: 24000
+        val channels = (args["channels"] as? Number)?.toInt() ?: 1
+        val channelConfig = if (channels == 2) {
+            AudioFormat.CHANNEL_OUT_STEREO
+        } else {
+            AudioFormat.CHANNEL_OUT_MONO
+        }
+        val minBuffer = AudioTrack.getMinBufferSize(
+            sampleRate,
+            channelConfig,
+            AudioFormat.ENCODING_PCM_16BIT
+        )
+        if (minBuffer <= 0) {
+            result.error("voice_pcm_unavailable", "Unable to initialize PCM audio output", null)
+            return
+        }
+        stopVoicePcmPlayback()
+        voiceAudioTrack = AudioTrack(
+            AudioManager.STREAM_MUSIC,
+            sampleRate,
+            channelConfig,
+            AudioFormat.ENCODING_PCM_16BIT,
+            minBuffer.coerceAtLeast(sampleRate),
+            AudioTrack.MODE_STREAM
+        ).also { it.play() }
+        result.success(null)
+    }
+
+    private fun writeVoicePcmChunk(call: MethodCall, result: MethodChannel.Result) {
+        val track = voiceAudioTrack
+        if (track == null) {
+            result.error("voice_pcm_not_started", "PCM audio output is not started", null)
+            return
+        }
+        val bytes = call.argumentsMap()["bytes"] as? ByteArray ?: ByteArray(0)
+        if (bytes.isNotEmpty()) {
+            track.write(bytes, 0, bytes.size)
+        }
+        result.success(null)
+    }
+
+    private fun stopVoicePcmPlayback() {
+        val track = voiceAudioTrack ?: return
+        voiceAudioTrack = null
+        try {
+            track.stop()
+        } catch (_: IllegalStateException) {
+        }
+        track.release()
+    }
+
     private fun MethodCall.argumentsMap(): Map<*, *> {
         return arguments as? Map<*, *> ?: emptyMap<String, Any?>()
     }
@@ -811,6 +887,8 @@ class MainActivity : FlutterActivity() {
             "com.momcozymai.flutter/pump_session_notification"
         private const val PUMP_AGENT_UPLOAD_CHANNEL =
             "com.momcozymai.flutter/pump_agent_upload"
+        private const val VOICE_PCM_PLAYER_CHANNEL =
+            "com.momcozymai.flutter/voice_pcm_player"
         private const val REQUEST_BLE_PERMISSIONS = 4101
         private const val REQUEST_NOTIFICATION_PERMISSION = 4102
         const val EXTRA_NAV_PATH = "momcozy.flutter.extra.NAV_PATH"
