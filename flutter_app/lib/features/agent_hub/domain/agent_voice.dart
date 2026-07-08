@@ -288,6 +288,7 @@ class AgentVoicePlaybackCoordinator {
 
   _ActiveAgentVoicePlayback? _active;
   int _nextToken = 0;
+  final Set<void Function()> _idleListeners = <void Function()>{};
 
   AgentVoicePlaybackSource? get activeSource => _active?.source;
 
@@ -313,7 +314,7 @@ class AgentVoicePlaybackCoordinator {
           activeSource: current.source,
         );
       }
-      _finishActive(runCancel: true);
+      _finishActive(runCancel: true, notifyIdle: false);
     }
 
     _nextToken += 1;
@@ -346,11 +347,23 @@ class AgentVoicePlaybackCoordinator {
     return true;
   }
 
-  void _finishActive({required bool runCancel}) {
+  void Function() subscribeIdle(void Function() listener) {
+    _idleListeners.add(listener);
+    return () {
+      _idleListeners.remove(listener);
+    };
+  }
+
+  void _finishActive({required bool runCancel, bool notifyIdle = true}) {
     final current = _active;
     if (current == null) return;
     _active = null;
     if (runCancel) current.cancel?.call();
+    if (notifyIdle) {
+      for (final listener in [..._idleListeners]) {
+        listener();
+      }
+    }
   }
 }
 
