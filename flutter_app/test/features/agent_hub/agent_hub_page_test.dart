@@ -1042,6 +1042,55 @@ void main() {
     expect(find.text('正在播放语音'), findsNothing);
   });
 
+  testWidgets(
+    'Agent Hub retries auto voice after notification voice becomes idle',
+    (tester) async {
+      final coordinator = AgentVoicePlaybackCoordinator();
+      final notification = coordinator.request(
+        id: 'notification-1',
+        source: AgentVoicePlaybackSource.notification,
+      );
+      final client = _FixtureAgentStreamClient(
+        parseAgentJsonl(
+          readMigrationFixture('agent_events/text_stream_basic.jsonl'),
+        ),
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: coordinator,
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Replay after notification',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pumpAndSettle();
+
+      expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
+      expect(coordinator.activeId, 'notification-1');
+      expect(find.text('正在播放语音'), findsNothing);
+
+      notification.handle?.finish();
+      await tester.pump();
+      await tester.pump();
+
+      expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
+      expect(coordinator.activeId, 'msg-reply-text-001');
+      expect(find.text('正在播放语音'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+        findsOneWidget,
+      );
+    },
+  );
+
   testWidgets('Agent Hub can locally stop an active run', (tester) async {
     await tester.pumpWidget(
       _host(
