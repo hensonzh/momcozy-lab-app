@@ -15,7 +15,6 @@ export PATH := $(TOOLCHAIN_PATH)
 .PHONY: \
 	flutter-check \
 	flutter-init \
-	flutter-dev \
 	flutter-invite-dev \
 	flutter-packaging-check \
 	flutter-security-check \
@@ -30,13 +29,6 @@ flutter-check:
 
 flutter-init:
 	node scripts/init-flutter-shell.mjs
-
-flutter-dev:
-	cd flutter_app && flutter run --flavor local \
-		--dart-define=MOMCOZY_API_BASE_URL=http://10.0.2.2:8769 \
-		--dart-define=MOMCOZY_API_TOKEN=APP_API_TEST \
-		--dart-define=MOMCOZY_DEFAULT_USER_ID=demo-user \
-		--dart-define=MOMCOZY_DEFAULT_BABY_ID=demo-baby
 
 flutter-invite-dev:
 	node scripts/run-flutter-invite-dev.mjs

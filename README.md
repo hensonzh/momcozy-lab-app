@@ -20,10 +20,10 @@ test/          根级测试 fixtures；Flutter 测试在 flutter_app/test/
 make flutter-check
 ```
 
-启动 Flutter App：
+启动邀请码登录 Flutter App：
 
 ```bash
-make flutter-dev
+make flutter-invite-dev
 ```
 
 非真机构建和测试 gate：
