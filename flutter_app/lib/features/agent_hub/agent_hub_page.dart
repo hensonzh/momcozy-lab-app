@@ -2826,7 +2826,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       AgentVoicePhase.listening => '正在听',
       AgentVoicePhase.transcribing => '正在整理语音',
       AgentVoicePhase.playing => '正在播放语音',
-      AgentVoicePhase.cancelled => '语音播放已停止',
+      AgentVoicePhase.cancelled => null,
       AgentVoicePhase.permissionDenied => '麦克风权限未开启',
       AgentVoicePhase.error => '语音输入失败',
       _ => null,
@@ -2857,7 +2857,31 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
   final rawArtifact = _mapField(event.raw, 'artifact');
   final payloadArtifact = _mapField(payload, 'artifact');
   final artifact = rawArtifact.isNotEmpty ? rawArtifact : payloadArtifact;
-  final rawCardJson = _mapField(artifact, 'card_json', 'cardJson');
+  final artifactPayload = _mapField(artifact, 'payload');
+  final cardEnvelope = _firstMap([
+    _mapField(artifactPayload, 'card'),
+    _mapField(payload, 'card'),
+    _mapField(artifact, 'card'),
+  ]);
+  final form = _firstMap([
+    _mapField(artifactPayload, 'form'),
+    _mapField(payload, 'form'),
+    _mapField(artifact, 'form'),
+  ]);
+  final cartUpdate = _firstMap([
+    _mapField(artifactPayload, 'cart_update', 'cartUpdate'),
+    _mapField(payload, 'cart_update', 'cartUpdate'),
+  ]);
+  final assistantFollowup = _firstMap([
+    _mapField(artifactPayload, 'assistant_followup', 'assistantFollowup'),
+    _mapField(payload, 'assistant_followup', 'assistantFollowup'),
+  ]);
+  final rawCardJson = _firstMap([
+    _mapField(artifact, 'card_json', 'cardJson'),
+    _mapField(artifactPayload, 'card_json', 'cardJson'),
+    _mapField(payload, 'card_json', 'cardJson'),
+    _mapField(cardEnvelope, 'card_json', 'cardJson'),
+  ]);
   final cardJson = rawCardJson.isNotEmpty ? rawCardJson : payload;
   final artifactId =
       stringField(event.raw, 'artifact_id') ??
@@ -2869,7 +2893,9 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
   final title =
       _firstNonEmpty([
         _stringField(richText, 'title'),
+        _stringField(form, 'title'),
         _stringField(cardJson, 'title'),
+        _stringField(cartUpdate, 'message'),
         _stringField(payload, 'title'),
         _artifactSubject(event),
       ]) ??
@@ -2878,12 +2904,17 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
     _stringField(richText, 'content'),
     _stringField(payload, 'content'),
     _stringField(payload, 'summary'),
+    _stringField(artifactPayload, 'summary'),
+    _stringField(assistantFollowup, 'message'),
   ]);
   final status = _firstNonEmpty([
     _stringField(cardJson, 'status_label', 'statusLabel'),
     _stringField(payload, 'status_label', 'statusLabel'),
   ]);
   final rows = <String>[
+    ..._formRows(form),
+    ..._cardJsonRows(cardJson),
+    ..._cartUpdateRows(cartUpdate),
     ..._stringList(cardJson['steps']),
     ..._stringList(payload['steps']),
     ..._richTextCardRows(richText['card']),
@@ -2893,6 +2924,7 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
     ..._referenceActionsFromRichText(richText),
     ..._semanticActions(richText['action'], event),
     ..._semanticActions(payload['actions'], event),
+    ..._assistantFollowupActions(assistantFollowup),
   ];
 
   if (title.trim().isEmpty &&
@@ -2910,6 +2942,168 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
     rows: rows,
     actions: actions,
   );
+}
+
+Map<String, Object?> _firstMap(List<Map<String, Object?>> values) {
+  for (final value in values) {
+    if (value.isNotEmpty) return value;
+  }
+  return const {};
+}
+
+List<String> _formRows(Map<String, Object?> form) {
+  if (form.isEmpty) return const <String>[];
+  final fields = form['fields'];
+  if (fields is! List) return const <String>[];
+  final rows = <String>[];
+  for (final rawField in fields.take(12)) {
+    if (rawField is! Map) continue;
+    final field = Map<String, Object?>.from(rawField);
+    final label = _stringField(field, 'label') ?? _stringField(field, 'id');
+    if (label == null) continue;
+    final options = _stringList(field['options']);
+    final required = field['required'] == true ? '必填' : '可选';
+    final suffix = options.isEmpty
+        ? required
+        : '$required｜${options.take(4).join(' / ')}';
+    rows.add('$label：$suffix');
+  }
+  return rows;
+}
+
+List<String> _cardJsonRows(Map<String, Object?> cardJson) {
+  if (cardJson.isEmpty) return const <String>[];
+  final rows = <String>[];
+  final owner = _mapField(cardJson, 'owner');
+  if (owner.isNotEmpty) {
+    final ownerValues = owner.entries
+        .where(
+          (entry) =>
+              entry.value != null && entry.value.toString().trim().isNotEmpty,
+        )
+        .take(5)
+        .map((entry) => '${entry.key}: ${entry.value}')
+        .join('｜');
+    if (ownerValues.isNotEmpty) rows.add(ownerValues);
+  }
+  rows.addAll(_packingGroupRows(cardJson['packing_groups']));
+  rows.addAll(_todoPlanRows(cardJson['todo_plan']));
+  rows.addAll(_stringList(cardJson['timeline']).take(4));
+  rows.addAll(_stringList(cardJson['personalized_notes']).take(4));
+  return rows;
+}
+
+List<String> _packingGroupRows(Object? rawGroups) {
+  if (rawGroups is! List) return const <String>[];
+  final rows = <String>[];
+  for (final rawGroup in rawGroups.take(6)) {
+    if (rawGroup is! Map) continue;
+    final group = Map<String, Object?>.from(rawGroup);
+    final title = _stringField(group, 'title');
+    final items = group['items'];
+    if (title == null || items is! List) continue;
+    final labels = items
+        .whereType<Map>()
+        .map((rawItem) => Map<String, Object?>.from(rawItem))
+        .map(
+          (item) => _stringField(item, 'label') ?? _stringField(item, 'name'),
+        )
+        .whereType<String>()
+        .take(5)
+        .join('、');
+    rows.add(labels.isEmpty ? title : '$title：$labels');
+  }
+  return rows;
+}
+
+List<String> _todoPlanRows(Object? rawTodoPlan) {
+  if (rawTodoPlan is! Map) return const <String>[];
+  final todoPlan = Map<String, Object?>.from(rawTodoPlan);
+  final periods = todoPlan['periods'];
+  if (periods is! List) return const <String>[];
+  final rows = <String>[];
+  for (final rawPeriod in periods.take(4)) {
+    if (rawPeriod is! Map) continue;
+    final period = Map<String, Object?>.from(rawPeriod);
+    final title = _stringField(period, 'title') ?? '阶段';
+    final items = period['items'];
+    if (items is List) {
+      final itemTitles = items
+          .whereType<Map>()
+          .map((rawItem) => Map<String, Object?>.from(rawItem))
+          .map((item) => _stringField(item, 'title'))
+          .whereType<String>()
+          .take(4)
+          .join('、');
+      rows.add(itemTitles.isEmpty ? title : '$title：$itemTitles');
+    } else {
+      rows.add(title);
+    }
+  }
+  return rows;
+}
+
+List<String> _cartUpdateRows(Map<String, Object?> cartUpdate) {
+  if (cartUpdate.isEmpty) return const <String>[];
+  final rows = <String>[];
+  final message = _stringField(cartUpdate, 'message');
+  if (message != null) rows.add(message);
+  rows.addAll(_cartGroupRows(cartUpdate['groups']));
+  final totals = _mapField(cartUpdate, 'totals');
+  if (totals.isNotEmpty) {
+    final itemCount = totals['item_count'] ?? totals['itemCount'];
+    final total = totals['total'] ?? totals['subtotal'];
+    if (itemCount != null || total != null) {
+      rows.add('购物车合计：${itemCount ?? '-'} 件｜${total ?? '-'}');
+    }
+  }
+  return rows;
+}
+
+List<AgentArtifactActionView> _assistantFollowupActions(
+  Map<String, Object?> assistantFollowup,
+) {
+  if (assistantFollowup.isEmpty) return const <AgentArtifactActionView>[];
+  final kind = _stringField(assistantFollowup, 'kind');
+  final message = _stringField(assistantFollowup, 'message');
+  final route = _markdownLinkPath(message);
+  if (kind == 'hospital_bag_cart' || route == '/hospital-bag-cart') {
+    return [
+      AgentArtifactActionView(
+        label: '打开待产包购物车',
+        icon: _actionIcon('artifact'),
+        kind: 'artifact',
+        value: route ?? '/hospital-bag-cart',
+        routePath: route ?? '/hospital-bag-cart',
+      ),
+    ];
+  }
+  return const <AgentArtifactActionView>[];
+}
+
+List<String> _cartGroupRows(Object? rawGroups) {
+  if (rawGroups is! List) return const <String>[];
+  return rawGroups
+      .whereType<Map>()
+      .map((rawGroup) => Map<String, Object?>.from(rawGroup))
+      .take(5)
+      .map((group) {
+        final title = _stringField(group, 'title') ?? '待产包';
+        final items = group['items'];
+        if (items is! List) return title;
+        final names = items
+            .whereType<Map>()
+            .map((rawItem) => Map<String, Object?>.from(rawItem))
+            .map(
+              (item) =>
+                  _stringField(item, 'name') ?? _stringField(item, 'label'),
+            )
+            .whereType<String>()
+            .take(4)
+            .join('、');
+        return names.isEmpty ? title : '$title：$names';
+      })
+      .toList(growable: false);
 }
 
 List<AgentActionCardView> _actionCardsFromEvents(
@@ -3230,6 +3424,14 @@ String? _safeSameOriginPath(String? value) {
   return path;
 }
 
+String? _markdownLinkPath(String? value) {
+  final normalized = value?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  final match = RegExp(r'\[[^\]]+\]\(([^)]+)\)').firstMatch(normalized);
+  if (match == null) return null;
+  return _safeSameOriginPath(match.group(1));
+}
+
 String _citationLabel(Object? rawIndex, String title) {
   final index = switch (rawIndex) {
     int value => value.toString(),
@@ -3325,6 +3527,7 @@ List<AgentRunWorkStep> _workStepsFromEvents(List<AgentStreamEvent> events) {
 
 AgentRunWorkStep? _workStepFromEvent(AgentStreamEvent event) {
   return switch (event.type) {
+    'run.queued' || 'run.started' => _progressStep(event),
     'run.progress' => _progressStep(event),
     'tool.started' ||
     'tool.progress' ||
@@ -3352,7 +3555,11 @@ AgentRunWorkStep? _progressStep(AgentStreamEvent event) {
         _stringField(event.payload, 'label'),
         _stringField(event.payload, 'message'),
       ]) ??
-      '正在处理';
+      switch (event.type) {
+        'run.queued' => '正在排队准备',
+        'run.started' => 'CozyMate 正在进入对话',
+        _ => '正在处理',
+      };
   return AgentRunWorkStep(
     id: event.mergeKey,
     title: title,

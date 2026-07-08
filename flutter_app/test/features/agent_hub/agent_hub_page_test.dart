@@ -1777,6 +1777,116 @@ void main() {
     await tester.pump();
   });
 
+  testWidgets('Agent Hub renders legacy service artifact envelopes', (
+    tester,
+  ) async {
+    final actions = <AgentArtifactActionView>[];
+    final formEvent = AgentStreamEvent({
+      'type': 'artifact.created',
+      'thread_id': 'thread-legacy-artifact',
+      'run_id': 'run-legacy-artifact',
+      'artifact_id': 'hospital-bag-form',
+      'payload': {
+        'artifact_type': 'form',
+        'form': {
+          'id': 'hospital_bag_intake',
+          'title': '信息采集',
+          'fields': [
+            {
+              'id': 'due_date_or_week',
+              'label': '基本信息｜预产期或当前孕周',
+              'type': 'text',
+              'required': true,
+            },
+          ],
+        },
+      },
+    });
+    final planEvent = AgentStreamEvent({
+      'type': 'artifact.created',
+      'thread_id': 'thread-legacy-artifact',
+      'run_id': 'run-legacy-artifact',
+      'artifact_id': 'birth-plan-card',
+      'payload': {
+        'artifact_type': 'birth_journey_plan_card',
+        'card': {
+          'card_type': 'birth_journey_plan_card',
+          'schema_version': '1.0',
+          'card_json': {
+            'title': '孕期计划',
+            'todo_plan': {
+              'periods': [
+                {
+                  'title': '当前阶段',
+                  'items': [
+                    {'title': '整理下次产检要问的问题'},
+                    {'title': '开始整理待产包'},
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    });
+    final cartEvent = AgentStreamEvent({
+      'type': 'artifact.created',
+      'thread_id': 'thread-legacy-artifact',
+      'run_id': 'run-legacy-artifact',
+      'artifact_id': 'hospital-bag-cart',
+      'payload': {
+        'artifact_type': 'hospital_bag_card',
+        'assistant_followup': {
+          'kind': 'hospital_bag_cart',
+          'message': '**[打开待产包购物车](/hospital-bag-cart)**',
+        },
+        'cart_update': {
+          'action': 'reset_cart',
+          'message': '已经帮你把待产包购物车恢复到默认清单了。',
+          'groups': [
+            {
+              'title': '妈妈护理',
+              'items': [
+                {'name': '产褥垫组合装'},
+                {'name': '一次性内裤'},
+              ],
+            },
+          ],
+          'totals': {'itemCount': 2, 'total': 101.02},
+        },
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '我整理好了。',
+            events: [formEvent, planEvent, cartEvent],
+          ),
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+
+    expect(find.text('信息采集'), findsOneWidget);
+    expect(find.text('基本信息｜预产期或当前孕周：必填'), findsOneWidget);
+    expect(find.text('孕期计划'), findsOneWidget);
+    expect(find.text('当前阶段：整理下次产检要问的问题、开始整理待产包'), findsOneWidget);
+    expect(find.text('已经帮你把待产包购物车恢复到默认清单了。'), findsWidgets);
+    expect(find.text('妈妈护理：产褥垫组合装、一次性内裤'), findsOneWidget);
+    expect(find.text('购物车合计：2 件｜101.02'), findsOneWidget);
+    expect(find.text('打开待产包购物车'), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-artifact-action-hospital-bag-cart-0')),
+    );
+    await tester.pump();
+
+    expect(actions.single.routePath, '/hospital-bag-cart');
+  });
+
   testWidgets('Agent Hub renders rich text card rows and button actions', (
     tester,
   ) async {
@@ -2122,6 +2232,32 @@ milk_total: 120ml
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
         matching: find.text('我在帮你检查今天的记录～'),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Agent Hub status line uses queued and started events', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({
+          'type': 'run.queued',
+          'payload': {'label': '正在排队准备'},
+        }),
+        AgentStreamEvent({'type': 'run.started'}),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-run-status-line')),
+        matching: find.text('CozyMate 正在进入对话'),
       ),
       findsOneWidget,
     );
