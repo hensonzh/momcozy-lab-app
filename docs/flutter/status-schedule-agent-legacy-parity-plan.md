@@ -35,6 +35,10 @@
 - 从其它模块进入智能体主页时，底栏智能体头像要重播 wake 动效。
 - Assistant 当前回复时使用 thinking 动效；自动语音播放时使用 speaking 动效；无动画或 reduced motion 时要有静态头像兜底。
 - 发送 follow-up 不能丢失上一轮 assistant 回复；active run 时发送/停止/取消状态要和旧 Web 一致。
+- 手动新建会话会立即展示默认问候语，并在自动语音开启时触发 greeting voice 和 speaking 头像态。
+- 用户开始真实对话时，旧的 greeting voice 必须被取消，避免问候语和新回复抢占播放状态。
+- 通知语音优先级高于自动回复语音；自动回复被通知挡住后，通知释放播放通道时要重试一次自动回复播报。
+- App 冷启动进入智能体主页时应是新会话，不恢复本地持久 transcript；站内 tab 切换仍然保留当前内存会话。
 - 状态条只展示用户可理解的处理状态，不暴露底层 tool progress 内部细节。
 - Agent Hub 的对话流和语音状态属于页面外运行时；切走页面不能静默取消 stream 或语音。
 
@@ -45,8 +49,8 @@
 | 宝宝和我 | `flutter_app/test/features/app_pages/status_schedule_agent_legacy_widget_parity_test.dart` | care stage、妈妈/宝宝 tab、模块卡、趋势图周/月、详情按钮、宝宝成长交互、跨 tab 状态保留、旧首屏残留移除。 |
 | 计划 | `flutter_app/test/features/app_pages/status_schedule_agent_legacy_widget_parity_test.dart` | 日期切换、提醒确认、Agent 建议卡、任务 toolbar、checkbox、编辑、调整日程、添加任务、空态快捷入口、跨 tab 状态保留。 |
 | 智能体主页 | `flutter_app/test/features/app_pages/status_schedule_agent_legacy_widget_parity_test.dart` | shell nav、顶部控制、transcript、fade、composer、草稿保留、底栏 wake 动效、历史窗口、图片附件、最新按钮。 |
-| 智能体运行时 | `flutter_app/test/widget_test.dart` | Agent Hub lazy keep-alive、切 tab 后 stream/voice 保活、focused route 底栏隐藏规则、artifact route action。 |
-| 智能体深状态 | `flutter_app/test/features/agent_hub/agent_hub_page_test.dart` | 发送、线程复用、断线重试、图片/语音输入、自动语音、通知语音优先级、取消、action confirmation、markdown、状态条。 |
+| 智能体运行时 | `flutter_app/test/widget_test.dart` | Agent Hub lazy keep-alive、切 tab 后 stream/voice 保活、冷启动新会话、focused route 底栏隐藏规则、artifact route action。 |
+| 智能体深状态 | `flutter_app/test/features/agent_hub/agent_hub_page_test.dart` | 发送、线程复用、断线重试、图片/语音输入、新会话 greeting voice、真实 turn 打断 greeting、自动语音、通知语音优先级和释放后重试、取消、action confirmation、markdown、状态条。 |
 | Golden | `flutter_app/test/features/app_pages/*golden_test.dart` 和 `flutter_app/test/features/agent_hub/*golden_test.dart` | 三个移动 viewport 下的页面级、组件级和深状态视觉基线。 |
 
 ## 准入命令
