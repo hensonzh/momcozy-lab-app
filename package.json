@@ -13,7 +13,11 @@
     "flutter:security-check": "node scripts/check-flutter-security-privacy.mjs",
     "flutter:p0:platform-smoke": "node scripts/run-flutter-platform-smoke.mjs",
     "flutter:emulator-smoke": "node scripts/run-flutter-emulator-smoke.mjs",
+    "flutter:apk-download-site": "node scripts/build-flutter-apk-download-site.mjs",
     "flutter:release-gate": "node scripts/run-flutter-release-gate.mjs",
     "backend:contract-validate": "python3 scripts/validate_backend_contract.py"
+  },
+  "devDependencies": {
+    "qrcode": "^1.5.4"
   }
 }
