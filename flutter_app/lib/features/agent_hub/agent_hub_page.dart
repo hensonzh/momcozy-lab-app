@@ -81,6 +81,7 @@ class AgentHubPage extends StatefulWidget {
     this.onArtifactAction,
     this.onNewSession,
     this.initialComposerText,
+    this.initialAutoSend = false,
   });
 
   final Object? stateCacheKey;
@@ -98,6 +99,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
+  final bool initialAutoSend;
 
   @override
   State<AgentHubPage> createState() => _AgentHubPageState();
@@ -122,6 +124,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
   VoidCallback? _unsubscribeVoicePlaybackIdle;
+  bool _consumedInitialAutoSend = false;
 
   @override
   void initState() {
@@ -129,6 +132,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _restoreCachedInteractionState();
     _restorePersistedInteractionState();
     _applyInitialComposerText();
+    _scheduleInitialAutoSendIfNeeded();
     _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_updateLatestButtonVisibility);
     _syncVoicePlaybackIdleSubscription();
@@ -152,7 +156,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _persistInteractionState();
     }
     if (oldWidget.initialComposerText != widget.initialComposerText) {
+      _consumedInitialAutoSend = false;
       _applyInitialComposerText();
+      _scheduleInitialAutoSendIfNeeded();
+    } else if (oldWidget.initialAutoSend != widget.initialAutoSend) {
+      _scheduleInitialAutoSendIfNeeded();
     }
     if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
       _syncVoicePlaybackIdleSubscription();
@@ -331,6 +339,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ..text = text
       ..selection = TextSelection.collapsed(offset: text.length);
     _persistInteractionState();
+  }
+
+  void _scheduleInitialAutoSendIfNeeded() {
+    if (_consumedInitialAutoSend ||
+        !widget.initialAutoSend ||
+        widget.runner == null ||
+        _state.isActive ||
+        widget.initialComposerText?.trim().isNotEmpty != true) {
+      return;
+    }
+    _consumedInitialAutoSend = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _isComposerLocked ||
+          _composerController.text.trim().isEmpty) {
+        return;
+      }
+      unawaited(_sendMessage());
+    });
   }
 
   void _updateLatestButtonVisibility() {

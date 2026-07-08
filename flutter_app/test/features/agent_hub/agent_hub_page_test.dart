@@ -765,6 +765,47 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub can auto-send an initial composer prefill once', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          initialComposerText: '我想调整今天的吸乳排期',
+          initialAutoSend: true,
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+    expect(client.requests.single.message, '我想调整今天的吸乳排期');
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      isEmpty,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          initialComposerText: '我想调整今天的吸乳排期',
+          initialAutoSend: true,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+  });
+
   testWidgets('Agent Hub voice input fills composer without sending', (
     tester,
   ) async {

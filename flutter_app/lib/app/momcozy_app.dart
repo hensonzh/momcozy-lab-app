@@ -1246,6 +1246,7 @@ Widget _buildDefaultAgentHubPage(
     voicePlaybackCoordinator: voicePlaybackCoordinator,
     onArtifactAction: (action) => _handleAgentArtifactAction(context, action),
     initialComposerText: _agentPrefillFromRoute(uri, extra),
+    initialAutoSend: _agentAutoSendFromRoute(uri, extra),
   );
 }
 
@@ -1260,6 +1261,15 @@ String? _agentPrefillFromRoute(Uri? uri, Object? extra) {
     return queryPrefill.trim();
   }
   return null;
+}
+
+bool _agentAutoSendFromRoute(Uri? uri, Object? extra) {
+  final extraMap = extra is Map ? extra : null;
+  final extraAutoSend = extraMap?['autoSend'] ?? extraMap?['agentAutoSend'];
+  if (extraAutoSend == true) return true;
+  final queryAutoSend =
+      uri?.queryParameters['autoSend'] ?? uri?.queryParameters['agentAutoSend'];
+  return queryAutoSend == 'true' || queryAutoSend == '1';
 }
 
 class MomCozyRouteConfig {
