@@ -46,6 +46,8 @@ class MomCozyAssets {
 
   static const agentAvatar = 'assets/images/momcozy-agent.png';
   static const agentAwakenAvatar = 'assets/images/momcozy-agent-awaken.gif';
+  static const agentThinkingAvatar = agentAwakenAvatar;
+  static const agentSpeakingAvatar = agentAwakenAvatar;
   static const momAvatar = 'assets/images/mom-avatar-felt.png';
   static const babyAvatar = 'assets/images/baby-avatar-felt.png';
   static const pumpM9 = 'assets/images/M9.png';
