@@ -134,6 +134,12 @@ abstract interface class AgentVoiceTranscriber {
   Future<String?> transcribe(AgentVoiceRecording recording);
 }
 
+abstract interface class AgentVoicePlaybackPlayer {
+  Future<void> playText(String text);
+
+  Future<void> stop();
+}
+
 class AgentVoiceInputResult {
   const AgentVoiceInputResult._({
     required this.status,
