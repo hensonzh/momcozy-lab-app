@@ -118,7 +118,10 @@ void main() {
         'run_id': 'run-stream-001',
         'transient': true,
         'cursor': '1720000000-0',
-        'payload': {'delta': '正在生成', 'message_stream_id': 'assistant'},
+        'payload': {
+          'delta': '正在生成',
+          'message_stream_id': 'assistant',
+        },
       });
 
       expect(event.isTransient, isTrue);

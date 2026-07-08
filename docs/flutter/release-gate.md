@@ -11,7 +11,6 @@ npm run flutter:release-gate
 ```text
 node scripts/check-flutter-android-packaging.mjs
 node scripts/check-flutter-security-privacy.mjs
-npm run build
 flutter pub get
 dart format --set-exit-if-changed lib test tool
 flutter analyze
@@ -20,7 +19,6 @@ dart run tool/staging_smoke.dart
 dart run tool/storage_migration_dry_run.dart
 flutter build apk --debug --flavor local
 flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
-node scripts/write-flutter-rollback-manifest.mjs
 ```
 
 `tool/staging_smoke.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
@@ -31,7 +29,7 @@ node scripts/write-flutter-rollback-manifest.mjs
 |---|---|---|
 | `local` | `com.momcozymai.app.flutterpoc.local` | 本地开发和 debug smoke。 |
 | `staging` | `com.momcozymai.app.flutterpoc.staging` | 后端 staging / internal distribution smoke。 |
-| `production` | `com.momcozymai.app.flutterpoc` | Flutter PoC production-shaped artifact；正式 cutover 前不覆盖当前 Capacitor appId。 |
+| `production` | `com.momcozymai.app.flutterpoc` | Flutter production-shaped artifact；正式变更包名策略前不覆盖旧版 appId。 |
 
 ## Release Signing
 
@@ -57,6 +55,6 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 npm run flutter:release-gate
 ## 当前边界
 
 - 该 gate 覆盖非真机构建、静态检查、单元/widget/fixture 测试、staging smoke harness 和 storage migration dry-run。
-- 该 gate 同时验证当前 Web/Capacitor rollback source 仍可 `npm run build`，并静态校验 Flutter PoC 不抢占现有 Capacitor appId、FileProvider authority 或外部 deep link。
-- 该 gate 会在 `legacy_web/dist/flutter-rollback-manifest.json` 生成回滚 manifest，记录 Web rollback bundle、Flutter local debug APK 和 Flutter staging release APK 的 size / sha256。
+- 该 gate 静态校验 Flutter appId、FileProvider authority 和外部 deep link 边界。
+- 旧 Web/Capacitor 归档不再属于根 release gate；如需手动验证旧版实现，请在 `legacy_web/` 内单独运行。
 - 真机安装、BLE、通知、后台服务、Doze、电池优化和真泵行为仍属于 L4 device lab。

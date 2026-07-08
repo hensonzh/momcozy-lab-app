@@ -108,7 +108,8 @@ Map<String, Object?> buildProductionAgentRunPayload(
     'message': text,
     if (attachments.isNotEmpty) 'attachments': attachments,
     'runtime_pattern': 'langgraph_sdk',
-    if (normalizedIdempotencyKey != null && normalizedIdempotencyKey.isNotEmpty)
+    if (normalizedIdempotencyKey != null &&
+        normalizedIdempotencyKey.isNotEmpty)
       'idempotency_key': normalizedIdempotencyKey,
   };
 }

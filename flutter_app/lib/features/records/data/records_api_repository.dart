@@ -87,7 +87,8 @@ FeedingRecord _feedingRecord(Map<String, Object?> data) {
   return FeedingRecord(
     id: _string(data['id'] ?? data['recordId']) ?? '',
     type:
-        _string(data['feed_type'] ?? data['type'] ?? data['feedingType']) ?? '',
+        _string(data['feed_type'] ?? data['type'] ?? data['feedingType']) ??
+        '',
     amountMl: _int(data['volume_ml'] ?? data['amount_ml'] ?? data['amountMl']),
     occurredAt: _dateTime(
       data['feed_time'] ?? data['occurred_at'] ?? data['occurredAt'],

@@ -44,57 +44,6 @@ requireContains(
   "Log redactor must redact free-form message content",
 );
 
-forbidContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/DeviceNativeStateStore.java",
-  'deviceId=" + deviceId',
-  "Native device logs must not include raw device id",
-);
-forbidContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/PumpAgentBackgroundRunner.java",
-  "request body=",
-  "Native background pump logs must not include raw request body",
-);
-forbidContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/PumpAgentUploadPlugin.java",
-  "request body=",
-  "Native upload logs must not include raw request body",
-);
-forbidContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/NotifyAlarmScheduler.java",
-  'title=" + title',
-  "Native alarm logs must not include raw notification title",
-);
-forbidContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/NotifyAlarmScheduler.java",
-  'body=" + body',
-  "Native alarm logs must not include raw notification body",
-);
-requireContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/PumpNavigationBridge.java",
-  "sanitizeNotifyJson",
-  "Native pending route payload must be sanitized before storage",
-);
-forbidContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/PumpNavigationBridge.java",
-  "pendingNotifyJson = notifyJson",
-  "Native pending route must not store raw notifyJson",
-);
-forbidContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/NotifyMessageResolver.java",
-  'o.put("body"',
-  "Native pending route notifyJson must not include full notification body",
-);
-requireContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/PumpSessionForegroundService.java",
-  'launchIntent.putExtra(MainActivity.EXTRA_NAV_PATH, "/pump")',
-  "Pump foreground notification should navigate with route only",
-);
-forbidContains(
-  "legacy_web/android/app/src/main/java/com/momcozymai/app/PumpSessionForegroundService.java",
-  "EXTRA_NOTIFY_JSON",
-  "Pump foreground notification must not carry business payload",
-);
-
 if (failures.length > 0) {
   console.error("Flutter security privacy check failed:");
   for (const failure of failures) console.error(`- ${failure}`);

@@ -55,6 +55,8 @@ class MomCozyApiRuntime {
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
+    this.supportsSessionAutoRefresh = false,
+    this._currentSessionProvider,
   }) : session =
            session ??
            MomCozySession.fromEnvironment(
@@ -124,32 +126,70 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     StorageMigrationApplyResult? storageMigrationResult,
     MomCozyObservability? observability,
+    MomCozySessionStore? sessionStore,
+    MomCozySession Function()? sessionProvider,
+    Future<void> Function(MomCozySession session)? onSessionChanged,
   }) {
     final baseUri = Uri.parse(_defaultApiBaseUrl);
     final authToken = session.accessToken;
     const defaultHeaders = {'X-Momcozy-Client': 'flutter'};
     final runtimeObservability = observability ?? MomCozyObservability();
+    ApiJsonTransport jsonTransportForToken(String? token) {
+      return ObservedApiJsonTransport(
+        inner: IoApiJsonTransport(
+          baseUri: baseUri,
+          token: token,
+          headers: defaultHeaders,
+        ),
+        observability: runtimeObservability,
+      );
+    }
+
+    ApiMultipartTransport multipartTransportForToken(String? token) {
+      return ObservedApiMultipartTransport(
+        inner: IoApiMultipartTransport(
+          baseUri: baseUri,
+          token: token,
+          headers: defaultHeaders,
+        ),
+        observability: runtimeObservability,
+      );
+    }
+
+    final canAutoRefresh =
+        jsonTransport == null &&
+        sessionStore != null &&
+        sessionProvider != null &&
+        onSessionChanged != null;
+    final refreshCoordinator = canAutoRefresh
+        ? MomCozySessionRefreshCoordinator(
+            authRepository: MomCozyAuthApiRepository(
+              transport: jsonTransportForToken(null),
+            ),
+            store: sessionStore,
+          )
+        : null;
     return MomCozyApiRuntime(
       jsonTransport:
           jsonTransport ??
-          ObservedApiJsonTransport(
-            inner: IoApiJsonTransport(
-              baseUri: baseUri,
-              token: authToken,
-              headers: defaultHeaders,
-            ),
-            observability: runtimeObservability,
-          ),
+          (canAutoRefresh
+              ? AuthenticatedApiJsonTransport(
+                  transportFactory: jsonTransportForToken,
+                  sessionProvider: sessionProvider,
+                  refreshCoordinator: refreshCoordinator!,
+                  onSessionChanged: onSessionChanged,
+                )
+              : jsonTransportForToken(authToken)),
       multipartTransport:
           multipartTransport ??
-          ObservedApiMultipartTransport(
-            inner: IoApiMultipartTransport(
-              baseUri: baseUri,
-              token: authToken,
-              headers: defaultHeaders,
-            ),
-            observability: runtimeObservability,
-          ),
+          (canAutoRefresh
+              ? AuthenticatedApiMultipartTransport(
+                  transportFactory: multipartTransportForToken,
+                  sessionProvider: sessionProvider,
+                  refreshCoordinator: refreshCoordinator!,
+                  onSessionChanged: onSessionChanged,
+                )
+              : multipartTransportForToken(authToken)),
       clientEventClient:
           clientEventClient ??
           AgentStreamClientEventClient(
@@ -166,6 +206,9 @@ class MomCozyApiRuntime {
       session: session,
       storageMigrationResult: storageMigrationResult,
       observability: runtimeObservability,
+      currentSessionProvider: sessionProvider,
+      supportsSessionAutoRefresh:
+          jsonTransport == null && multipartTransport == null,
     );
   }
 
@@ -220,6 +263,8 @@ class MomCozyApiRuntime {
   final StorageMigrationApplyResult? storageMigrationResult;
   final MomCozyObservability observability;
   final DateTime Function() now;
+  final bool supportsSessionAutoRefresh;
+  final MomCozySession Function()? _currentSessionProvider;
   final AgentStreamClientEventClient Function() _clientEventClientFactory;
   final ApiMultipartTransport Function() _multipartTransportFactory;
   final BlePlatform Function() _blePlatformFactory;
@@ -237,6 +282,9 @@ class MomCozyApiRuntime {
   String get babyId => session.babyId;
 
   String get locale => session.locale;
+
+  MomCozySession get currentSession =>
+      _currentSessionProvider?.call() ?? session;
 
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();
@@ -268,7 +316,7 @@ class MomCozyApiRuntime {
   }) async {
     await pumpNativeRuntimeCoordinator.snapshotSync.upload.setConfig(
       apiBaseUrl: _defaultApiBaseUrl,
-      bearerToken: session.accessToken ?? '',
+      bearerToken: currentSession.accessToken ?? '',
     );
     await pumpNativeRuntimeCoordinator.start(
       subscribeConnectedDevices: subscribeConnectedDevices,
@@ -305,6 +353,7 @@ class MomCozyApiRuntime {
       multipartTransport: multipartTransport,
       baseUri: Uri.parse(_defaultApiBaseUrl),
       token: session.accessToken,
+      tokenProvider: () => currentSession.accessToken,
       headers: const {'X-Momcozy-Client': 'flutter'},
     );
   }
@@ -343,6 +392,13 @@ class MomCozyRuntimeScope extends InheritedWidget {
         ?.apiRuntime;
   }
 
+  static MomCozyApiRuntime? read(BuildContext context) {
+    final widget = context
+        .getElementForInheritedWidgetOfExactType<MomCozyRuntimeScope>()
+        ?.widget;
+    return widget is MomCozyRuntimeScope ? widget.apiRuntime : null;
+  }
+
   @override
   bool updateShouldNotify(MomCozyRuntimeScope oldWidget) {
     return apiRuntime != oldWidget.apiRuntime;
@@ -353,6 +409,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
   MomCozyRuntimeController(this._runtime);
 
   MomCozyApiRuntime _runtime;
+  MomCozySessionStore? _autoRefreshStore;
 
   MomCozyApiRuntime get runtime => _runtime;
 
@@ -363,11 +420,31 @@ class MomCozyRuntimeController extends ChangeNotifier {
   }
 
   void replaceSession(MomCozySession session) {
-    replaceRuntime(
-      MomCozyApiRuntime.fromSession(
+    replaceRuntime(_runtimeForSession(session));
+  }
+
+  void enableSessionAutoRefresh(MomCozySessionStore store) {
+    if (!_runtime.supportsSessionAutoRefresh) return;
+    _autoRefreshStore = store;
+    replaceRuntime(_runtimeForSession(_runtime.session));
+  }
+
+  MomCozyApiRuntime _runtimeForSession(MomCozySession session) {
+    final store = _autoRefreshStore;
+    if (store == null) {
+      return MomCozyApiRuntime.fromSession(
         session,
         observability: _runtime.observability,
-      ),
+      );
+    }
+    return MomCozyApiRuntime.fromSession(
+      session,
+      observability: _runtime.observability,
+      sessionStore: store,
+      sessionProvider: () => _runtime.session,
+      onSessionChanged: (next) async {
+        replaceSession(next);
+      },
     );
   }
 }

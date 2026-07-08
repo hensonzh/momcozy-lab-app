@@ -27,6 +27,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     required this.multipartTransport,
     required Uri baseUri,
     this.token,
+    this.tokenProvider,
     this.headers = const <String, String>{},
     this.binaryConnector = const _DefaultAgentVoiceBinaryStreamConnector(),
     this.websocketConnector = const _DefaultAgentVoiceWebSocketConnector(),
@@ -35,6 +36,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   final ApiMultipartTransport multipartTransport;
   final Uri baseUri;
   final String? token;
+  final String? Function()? tokenProvider;
   final Map<String, String> headers;
   final AgentVoiceBinaryStreamConnector binaryConnector;
   final AgentVoiceWebSocketConnector websocketConnector;
@@ -126,7 +128,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   }
 
   Map<String, String> _requestHeaders({required String accept}) {
-    final authToken = token?.trim();
+    final authToken = (tokenProvider?.call() ?? token)?.trim();
     return {
       ...headers,
       'Accept': accept,

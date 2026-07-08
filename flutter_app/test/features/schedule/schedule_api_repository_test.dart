@@ -34,7 +34,10 @@ void main() {
       expect(plan.tasks.single.id, 'task-001');
       expect(plan.tasks.single.title, '10:00 Hydration check');
       expect(plan.tasks.single.completed, isFalse);
-      expect(plan.tasks.single.remindAt, DateTime(2026, 6, 29, 10));
+      expect(
+        plan.tasks.single.remindAt,
+        DateTime(2026, 6, 29, 10),
+      );
     });
 
     test('maps completed status and empty data', () async {
@@ -71,7 +74,9 @@ void main() {
             'http_status': 503,
             'status_text': 'Service Unavailable',
           }),
-        ).fetchDayPlan(day: DateTime.utc(2026, 6, 29)),
+        ).fetchDayPlan(
+          day: DateTime.utc(2026, 6, 29),
+        ),
         throwsA(isA<ApiHttpException>()),
       );
     });

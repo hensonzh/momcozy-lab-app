@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -114,6 +115,53 @@ void main() {
         );
       },
     );
+
+    test('endpoint request headers resolve auth token lazily', () {
+      var token = 'old-token';
+      final endpoint = AgentStreamEndpoint(
+        uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+        tokenProvider: () => token,
+      );
+
+      expect(
+        endpoint.requestHeaders(),
+        containsPair('Authorization', 'Bearer old-token'),
+      );
+
+      token = 'new-token';
+
+      expect(
+        endpoint.requestHeaders(),
+        containsPair('Authorization', 'Bearer new-token'),
+      );
+    });
+
+    test('control connector sends non-ASCII JSON bodies as UTF-8', () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      final receivedBody = server.first.then((request) async {
+        final body = await utf8.decoder.bind(request).join();
+        request.response
+          ..statusCode = 201
+          ..headers.contentType = ContentType.json
+          ..write('{"id":"run-utf8-001"}');
+        await request.response.close();
+        return body;
+      });
+      final connector = IoAgentStreamControlHttpConnector();
+
+      final response = await connector.post(
+        Uri.parse('http://${server.address.host}:${server.port}/v1/agent/runs'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'message': '你好', 'runtime_pattern': 'langgraph_sdk'}),
+      );
+
+      expect(response.statusCode, 201);
+      expect(jsonDecode(await receivedBody) as Map<String, Object?>, {
+        'message': '你好',
+        'runtime_pattern': 'langgraph_sdk',
+      });
+    });
 
     test(
       'cancel client posts production run-scoped cancel and accepts 2xx or 404',

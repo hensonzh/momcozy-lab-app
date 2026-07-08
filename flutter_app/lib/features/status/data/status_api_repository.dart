@@ -26,7 +26,10 @@ class StatusApiRepository implements StatusRepository {
   }
 }
 
-MomStatus? _momStatus(Map<String, Object?>? data, {DateTime Function()? now}) {
+MomStatus? _momStatus(
+  Map<String, Object?>? data, {
+  DateTime Function()? now,
+}) {
   if (data == null || data.isEmpty) return null;
   final deliveryDate = _date(data['delivery_date']);
   if (deliveryDate == null) return null;

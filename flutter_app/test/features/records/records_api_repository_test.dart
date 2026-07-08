@@ -132,7 +132,9 @@ void main() {
       );
 
       await expectLater(
-        repository.fetchFeedingRecords(date: DateTime.utc(2026, 6, 29)),
+        repository.fetchFeedingRecords(
+          date: DateTime.utc(2026, 6, 29),
+        ),
         throwsA(
           isA<ApiHttpException>().having(
             (error) => error.errorCode,
