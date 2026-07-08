@@ -63,6 +63,7 @@ AgentStreamRunner createSessionAgentHubRunner(
   MomCozySession session, {
   AgentStreamEndpoint? endpoint,
   String? Function()? accessTokenProvider,
+  AgentStreamUnauthorizedHandler? onUnauthorized,
 }) {
   return AgentStreamRunner(
     SseAgentStreamClient(
@@ -74,6 +75,7 @@ AgentStreamRunner createSessionAgentHubRunner(
               accessTokenProvider: accessTokenProvider,
             ),
         payloadFactory: buildDefaultAgentHubPayload,
+        onUnauthorized: onUnauthorized,
       ),
     ),
   );

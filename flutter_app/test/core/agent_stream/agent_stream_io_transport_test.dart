@@ -136,6 +136,130 @@ void main() {
       );
     });
 
+    test(
+      'production SSE transport refreshes token once after run create 401',
+      () async {
+        var token = 'old-token';
+        var refreshCount = 0;
+        final runConnector =
+            _RecordingControlHttpConnector(
+                const AgentStreamControlHttpResponse(
+                  statusCode: 401,
+                  body:
+                      '{"error":{"code":"authentication_required","message":"Access token expired."}}',
+                ),
+              )
+              ..queuedResponses.add(
+                const AgentStreamControlHttpResponse(
+                  statusCode: 201,
+                  body:
+                      '{"id":"run-production-002","thread_id":"thread-production-002","status":"running"}',
+                ),
+              );
+        final streamConnector = _RecordingSseGetConnector([
+          'data: {"event_id":"evt-refresh-1","thread_id":"thread-production-002","run_id":"run-production-002","sequence":1,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:01Z"}\n\n',
+        ]);
+        final client = SseAgentStreamClient(
+          ProductionAgentSseTransport(
+            runsEndpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+              tokenProvider: () => token,
+            ),
+            payloadFactory: buildProductionAgentRunPayload,
+            onUnauthorized: () async {
+              refreshCount += 1;
+              token = 'new-token';
+              return true;
+            },
+            runConnector: runConnector,
+            streamConnector: streamConnector,
+          ),
+        );
+
+        final events = await client.stream(_request).toList();
+
+        expect(events.map((event) => event.type), ['run.completed']);
+        expect(refreshCount, 1);
+        expect(runConnector.requests, hasLength(2));
+        expect(
+          runConnector.requests.first.headers,
+          containsPair('Authorization', 'Bearer old-token'),
+        );
+        expect(
+          runConnector.requests.last.headers,
+          containsPair('Authorization', 'Bearer new-token'),
+        );
+        expect(
+          runConnector.requests.last.headers['Idempotency-Key'],
+          runConnector.requests.first.headers['Idempotency-Key'],
+        );
+        expect(
+          streamConnector.headers,
+          containsPair('Authorization', 'Bearer new-token'),
+        );
+      },
+    );
+
+    test(
+      'production SSE transport refreshes token once after stream 401',
+      () async {
+        var token = 'old-token';
+        var refreshCount = 0;
+        final runConnector = _RecordingControlHttpConnector(
+          const AgentStreamControlHttpResponse(
+            statusCode: 500,
+            body: '{"error":{"code":"should_not_create_run"}}',
+          ),
+        );
+        final streamConnector =
+            _RecordingSseGetConnector([
+                'data: {"event_id":"evt-refresh-stream","thread_id":"thread-production-001","run_id":"run-production-001","sequence":8,"type":"run.completed","payload":{},"created_at":"2026-07-01T00:00:02Z"}\n\n',
+              ])
+              ..nextError = const AgentStreamTransportException(
+                'SSE request failed: 401',
+              );
+        final client = SseAgentStreamClient(
+          ProductionAgentSseTransport(
+            runsEndpoint: AgentStreamEndpoint(
+              uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+              tokenProvider: () => token,
+            ),
+            payloadFactory: buildProductionAgentRunPayload,
+            onUnauthorized: () async {
+              refreshCount += 1;
+              token = 'new-token';
+              return true;
+            },
+            runConnector: runConnector,
+            streamConnector: streamConnector,
+          ),
+        );
+
+        final events = await client
+            .stream(
+              _request.resume(
+                runId: 'run-production-001',
+                threadId: 'thread-production-001',
+                afterSequence: 7,
+              ),
+            )
+            .toList();
+
+        expect(events.map((event) => event.type), ['run.completed']);
+        expect(refreshCount, 1);
+        expect(runConnector.uri, isNull);
+        expect(streamConnector.requests, hasLength(2));
+        expect(
+          streamConnector.requests.first.headers,
+          containsPair('Authorization', 'Bearer old-token'),
+        );
+        expect(
+          streamConnector.requests.last.headers,
+          containsPair('Authorization', 'Bearer new-token'),
+        );
+      },
+    );
+
     test('control connector sends non-ASCII JSON bodies as UTF-8', () async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
       addTearDown(() => server.close(force: true));
@@ -427,6 +551,8 @@ class _RecordingSseGetConnector implements AgentStreamSseGetConnector {
   _RecordingSseGetConnector(this.seedFrames);
 
   final Iterable<String> seedFrames;
+  final requests = <_RecordedSseRequest>[];
+  Object? nextError;
   Uri? uri;
   Map<String, String>? headers;
 
@@ -434,6 +560,13 @@ class _RecordingSseGetConnector implements AgentStreamSseGetConnector {
   Stream<String> get(Uri uri, {required Map<String, String> headers}) async* {
     this.uri = uri;
     this.headers = headers;
+    requests.add(_RecordedSseRequest(uri: uri, headers: headers));
+
+    final error = nextError;
+    if (error != null) {
+      nextError = null;
+      throw error;
+    }
 
     for (final frame in seedFrames) {
       yield frame;
@@ -441,11 +574,20 @@ class _RecordingSseGetConnector implements AgentStreamSseGetConnector {
   }
 }
 
+class _RecordedSseRequest {
+  const _RecordedSseRequest({required this.uri, required this.headers});
+
+  final Uri uri;
+  final Map<String, String> headers;
+}
+
 class _RecordingControlHttpConnector
     implements AgentStreamControlHttpConnector {
   _RecordingControlHttpConnector(this.nextResponse);
 
   AgentStreamControlHttpResponse nextResponse;
+  final queuedResponses = <AgentStreamControlHttpResponse>[];
+  final requests = <_RecordedControlRequest>[];
   Object? nextError;
   Uri? uri;
   Map<String, String>? headers;
@@ -460,6 +602,9 @@ class _RecordingControlHttpConnector
     this.uri = uri;
     this.headers = headers;
     this.body = body;
+    requests.add(
+      _RecordedControlRequest(uri: uri, headers: headers, body: body),
+    );
 
     final error = nextError;
     if (error != null) {
@@ -467,6 +612,22 @@ class _RecordingControlHttpConnector
       throw error;
     }
 
-    return nextResponse;
+    final response = nextResponse;
+    if (queuedResponses.isNotEmpty) {
+      nextResponse = queuedResponses.removeAt(0);
+    }
+    return response;
   }
+}
+
+class _RecordedControlRequest {
+  const _RecordedControlRequest({
+    required this.uri,
+    required this.headers,
+    required this.body,
+  });
+
+  final Uri uri;
+  final Map<String, String> headers;
+  final String body;
 }
