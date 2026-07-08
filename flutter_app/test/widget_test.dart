@@ -192,6 +192,52 @@ void main() {
     expect(buildCount, greaterThanOrEqualTo(2));
   });
 
+  testWidgets('route shell forwards Agent prefill extra and auto-sends once', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    final router = createMomCozyRouter(
+      initialLocation: '/schedule',
+      agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) {
+        final extraMap = extra is Map ? extra : null;
+        final prefill = extraMap?['agentPrefill'];
+        final autoSend =
+            extraMap?['agentAutoSend'] == true || extraMap?['autoSend'] == true;
+        return AgentHubPage(
+          runner: AgentStreamRunner(client),
+          requestBuilder: (message) => AgentStreamRequest(message: message),
+          voicePlaybackCoordinator: voicePlaybackCoordinator,
+          initialComposerText: prefill is String ? prefill : null,
+          initialAutoSend: autoSend,
+        );
+      },
+    );
+
+    await tester.pumpWidget(
+      MomCozyFlutterApp(router: router, apiRuntime: _authenticatedRuntime()),
+    );
+    await tester.pumpAndSettle();
+
+    router.go(
+      '/',
+      extra: const {
+        'agentPrefill': '我已完成孕期计划事项，请继续同步孕期日记',
+        'agentAutoSend': true,
+      },
+    );
+    await tester.pumpAndSettle();
+
+    expect(client.requests, hasLength(1));
+    expect(client.requests.single.message, '我已完成孕期计划事项，请继续同步孕期日记');
+
+    await tester.pump();
+    await tester.pump();
+    expect(client.requests, hasLength(1));
+
+    router.dispose();
+    await client.dispose();
+  });
+
   testWidgets('route shell hides bottom navigation on focused flows', (
     tester,
   ) async {
