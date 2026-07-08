@@ -12,7 +12,7 @@ MomCozy App 会处理妈妈、宝宝、泵奶、喂养、成长、健康问题�
 [x] Flutter 侧提供统一日志脱敏工具：`core/privacy/log_redactor.dart`
 [x] Flutter 测试覆盖 token/user/conversation/session/device id 脱敏
 [x] Native fake failure stream 使用统一脱敏工具
-[x] HTTP/SSE/WS/voice client 接入统一脱敏工具后才能输出请求日志；release gate 已加入 `flutter:security-check`
+[x] HTTP/SSE/WS/voice client 接入统一脱敏工具后才能输出请求日志；release gate 已加入 `make flutter-security-check`
 [x] Android platform channel event/failure log 不输出原始 device id、pump request body 或通知正文；release gate 已加入静态检查
 [x] token/secret 不落普通 preferences；Flutter session bootstrap 已接入 secure storage，dart-define 仅作为 dev/staging fallback
 [x] crash/perf report 接入前必须有敏感字段 denylist；`redactCrashReport()`/`redactCrashContext()` 已覆盖 free-form message、用户、会话、设备、健康容器
@@ -100,12 +100,12 @@ isSensitiveLogKey(key)
 cd flutter_app
 flutter test test/core/privacy/log_redactor_test.dart
 flutter test test/native/p0_platform_interfaces_test.dart
-npm run flutter:security-check
+make flutter-security-check
 ```
 
 进入核心迁移前，完整 gate 至少执行：
 
 ```bash
-npm run flutter:check
-npm run flutter:release-gate
+make flutter-check
+make flutter-release-gate
 ```

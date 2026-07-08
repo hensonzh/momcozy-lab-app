@@ -98,7 +98,7 @@
 [ ] summary、milk record、Agent context 均只上传一次
 [ ] 后台 runner 的 workstate、process data、process upload 和 progress/reply 事件通过
 [ ] Agent text stream、tool stream、artifact、取消、断线通过
-[x] Storage migration dry-run 通过：`npm run flutter:release-gate` 已覆盖
+[x] Storage migration dry-run 通过：`make flutter-release-gate` 已覆盖
 [ ] 无 P0 crash
 [x] fixtures / golden 无真实用户数据或 token：`fixture_privacy_test.dart` 已纳入 Flutter test gate
 [ ] 真机日志和截图无真实用户数据或 token

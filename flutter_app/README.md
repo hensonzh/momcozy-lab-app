@@ -26,17 +26,17 @@ CMake: 3.22.1
 From the parent `MomCozyApp/` directory:
 
 ```bash
-npm run flutter:check
-npm run flutter:init
-npm run flutter:invite-dev
-npm run flutter:release-gate
-npm run flutter:emulator-smoke
+make flutter-check
+make flutter-init
+make flutter-invite-dev
+make flutter-release-gate
+make flutter-emulator-smoke
 ```
 
 Pinned versions live in [`flutter-toolchain.json`](../flutter-toolchain.json);
-`npm run flutter:check` validates the local SDK/JDK/Android directories and versions against that file.
-`npm run flutter:release-gate` runs the non-device release gate: format, analyze, tests, staging smoke harness, storage migration dry-run, local debug APK, and staging release APK.
-`npm run flutter:emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `flutter_app/build/emulator-smoke/`, and checks the process/window/crash log.
+`make flutter-check` validates the local SDK/JDK/Android directories and versions against that file.
+`make flutter-release-gate` runs the non-device release gate: format, analyze, tests, staging smoke harness, storage migration dry-run, local debug APK, and staging release APK.
+`make flutter-emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `flutter_app/build/emulator-smoke/`, and checks the process/window/crash log.
 
 From this `flutter_app/` directory:
 
@@ -51,7 +51,7 @@ flutter build apk --release --flavor staging --dart-define=MOMCOZY_ENV=staging
 邀请码登录本地联调用父目录命令：
 
 ```bash
-npm run flutter:invite-dev
+make flutter-invite-dev
 ```
 
 该命令默认连接 `http://10.0.2.2:8000`，不会传入 `MOMCOZY_API_TOKEN` 或
@@ -61,7 +61,7 @@ npm run flutter:invite-dev
 ```bash
 MOMCOZY_FLUTTER_EMULATOR_DEVICE=emulator-5554 \
 MOMCOZY_API_BASE_URL=http://10.0.2.2:8000 \
-npm run flutter:invite-dev
+make flutter-invite-dev
 ```
 
 Agent Hub 默认使用 SSE transport，并可通过 dart-define 配置：
