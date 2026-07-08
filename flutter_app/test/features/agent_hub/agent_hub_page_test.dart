@@ -244,6 +244,53 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub cancels greeting voice when the user sends a turn', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    final client = _ControllableAgentStreamClient();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '上一轮建议。',
+            ),
+          ],
+          voicePlaybackCoordinator: coordinator,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsOneWidget,
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '开始正式对话',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    expect(client.requests, hasLength(1));
+    expect(client.requests.single.message, '开始正式对话');
+    expect(coordinator.activeId, isNull);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
+  });
+
   testWidgets('Agent Hub disables new session while a run is active', (
     tester,
   ) async {
