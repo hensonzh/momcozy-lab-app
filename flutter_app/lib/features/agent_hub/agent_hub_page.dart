@@ -372,6 +372,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
 
+    _cancelCurrentBubblePlaybackForNewTurn();
+
     final requestMessage = message.isEmpty ? '请看这张图片' : message;
     final optimisticContent = message.isEmpty
         ? '图片 ${_attachedImages.length}'
@@ -513,6 +515,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
     _maybeStartGreetingVoicePlayback();
     widget.onNewSession?.call();
+  }
+
+  void _cancelCurrentBubblePlaybackForNewTurn() {
+    const preservedSources = <AgentVoicePlaybackSource>{
+      AgentVoicePlaybackSource.notification,
+    };
+    final coordinator = widget.voicePlaybackCoordinator;
+    final activeSource = coordinator?.activeSource;
+    final isPreservedPlayback =
+        activeSource != null && preservedSources.contains(activeSource);
+    final didCancel =
+        coordinator?.cancel(preserveSources: preservedSources) ?? false;
+
+    if (!_voiceState.isPlaybackActive) return;
+    if (coordinator != null && isPreservedPlayback && !didCancel) return;
+
+    setState(() {
+      _voiceState = _voiceState.cancelPlayback();
+    });
   }
 
   void _maybeStartGreetingVoicePlayback() {
