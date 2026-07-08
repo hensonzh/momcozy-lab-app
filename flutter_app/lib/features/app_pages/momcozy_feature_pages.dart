@@ -1621,10 +1621,13 @@ class _StatusPregnancyPlanPreview extends StatelessWidget {
             ),
           ),
           _StatusFilledPill(
+            key: const ValueKey('status-pregnancy-plan-agent-button'),
             label: '制定孕期计划',
             icon: null,
             color: const Color(0xff5f978b),
             avatar: true,
+            onTap: () =>
+                context.go('/', extra: const {'agentPrefill': '帮我制定孕期计划'}),
           ),
         ],
       ),
@@ -1841,20 +1844,23 @@ class _StatusDetailPanel extends StatelessWidget {
 
 class _StatusFilledPill extends StatelessWidget {
   const _StatusFilledPill({
+    super.key,
     required this.label,
     required this.icon,
     required this.color,
     this.avatar = false,
+    this.onTap,
   });
 
   final String label;
   final IconData? icon;
   final Color color;
   final bool avatar;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final content = Container(
       padding: EdgeInsets.fromLTRB(avatar ? 6 : 12, 8, 14, 8),
       decoration: BoxDecoration(
         color: color,
@@ -1882,6 +1888,15 @@ class _StatusFilledPill extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+    if (onTap == null) return content;
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: content,
       ),
     );
   }
