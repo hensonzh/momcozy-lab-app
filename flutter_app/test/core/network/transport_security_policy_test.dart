@@ -49,6 +49,18 @@ void main() {
         AgentStreamEndpoint(uri: Uri.parse('ws://10.0.2.2:8768/api/ag-ui')).uri,
         Uri.parse('ws://10.0.2.2:8768/api/ag-ui'),
       );
+      expect(
+        TransportSecurityPolicy.requireSecureHttp(
+          Uri.parse('http://192.168.59.35:8000'),
+        ),
+        Uri.parse('http://192.168.59.35:8000'),
+      );
+      expect(
+        TransportSecurityPolicy.requireSecureHttp(
+          Uri.parse('http://172.16.0.10:8000'),
+        ),
+        Uri.parse('http://172.16.0.10:8000'),
+      );
     });
 
     test('rejects remote plaintext HTTP and WebSocket endpoints', () {
