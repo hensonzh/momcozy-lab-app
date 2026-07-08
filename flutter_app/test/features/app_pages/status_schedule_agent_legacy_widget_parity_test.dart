@@ -130,6 +130,25 @@ void main() {
         expect(find.text('孕期日记'), findsOneWidget);
         expect(find.text('宝宝成长曲线'), findsNothing);
 
+        await _scrollToFinder(
+          tester,
+          find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
+        );
+        await tester.tap(
+          find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+        expect(
+          tester
+              .widget<TextField>(
+                find.byKey(const ValueKey('agent-composer-input')),
+              )
+              .controller
+              ?.text,
+          '帮我制定孕期计划',
+        );
+
         final failingRouteIntentPlatform = FakeRouteIntentPlatform();
         addTearDown(failingRouteIntentPlatform.dispose);
 
