@@ -53,7 +53,7 @@ const requiresReleaseSigning =
   String(env.MOMCOZY_REQUIRE_RELEASE_SIGNING || "").trim() === "1";
 
 if (!existsSync(path.join(flutterAppDir, "pubspec.yaml"))) {
-  console.error("Missing flutter_app/pubspec.yaml. Run npm run flutter:init first.");
+  console.error("Missing flutter_app/pubspec.yaml. Run make flutter-init first.");
   process.exit(1);
 }
 

@@ -18,7 +18,7 @@
 在 `MomCozyApp/` 下执行：
 
 ```bash
-npm run flutter:check
+make flutter-check
 ```
 
 这个命令只检查环境，不写文件。它会确认：
@@ -70,10 +70,10 @@ flutter-toolchain.json
 
 ## 3. 初始化 Flutter shell
 
-当 `npm run flutter:check` 通过后，执行：
+当 `make flutter-check` 通过后，执行：
 
 ```bash
-npm run flutter:init
+make flutter-init
 ```
 
 它会执行：
@@ -142,14 +142,14 @@ flutter build apk --debug --flavor local
 当前本机验证：
 
 ```text
-[x] npm run flutter:check
-[x] npm run flutter:init
+[x] make flutter-check
+[x] make flutter-init
 [x] cd flutter_app && flutter test
 [x] cd flutter_app && flutter build apk --debug --flavor local
-[x] npm run flutter:release-gate
+[x] make flutter-release-gate
 ```
 
-`flutter doctor -v` 直接运行时会读取当前 shell 环境；若没有注入 `ANDROID_SDK_ROOT`，可能提示找不到 Android SDK。`npm run flutter:check` 和 `npm run flutter:release-gate` 会按 `flutter-toolchain.json` 自动注入用户目录工具链，且 `flutter_app/android/local.properties` 已指向同一 Android SDK，所以以这两个脚本作为 Android P0 gate。
+`flutter doctor -v` 直接运行时会读取当前 shell 环境；若没有注入 `ANDROID_SDK_ROOT`，可能提示找不到 Android SDK。`make flutter-check` 和 `make flutter-release-gate` 会按 `flutter-toolchain.json` 自动注入用户目录工具链，且 `flutter_app/android/local.properties` 已指向同一 Android SDK，所以以这两个脚本作为 Android P0 gate。
 
 2026-07-02 的 standalone `flutter doctor -v` 仍有以下非 P0 告警：
 
@@ -159,7 +159,7 @@ flutter build apk --debug --flavor local
 [x] Android P0 脚本 gate 已自动注入用户目录 Android SDK；standalone doctor 若未注入 shell 环境的告警不作为迁移阻塞
 ```
 
-P0 为 Android-first；只要 `npm run flutter:check`、`npm run flutter:release-gate` 和 flavored APK build 通过，上述告警不阻塞 Android shell 和 APK 构建。iOS/Xcode/CocoaPods 在进入 iOS scope 前单独补齐。
+P0 为 Android-first；只要 `make flutter-check`、`make flutter-release-gate` 和 flavored APK build 通过，上述告警不阻塞 Android shell 和 APK 构建。iOS/Xcode/CocoaPods 在进入 iOS scope 前单独补齐。
 
 然后把现有 fixtures 拷贝或链接到 Flutter 测试目录：
 

@@ -54,7 +54,7 @@ production: production-shaped artifact；正式变更包名策略前仍不覆盖
 静态校验命令：
 
 ```bash
-npm run flutter:packaging-check
+make flutter-packaging-check
 ```
 
 该命令会校验 Flutter flavor appId 保持独立，且 Flutter 当前不声明 FileProvider authority 或外部 deep link。
@@ -79,7 +79,7 @@ CI / internal distribution 可用 `MOMCOZY_REQUIRE_RELEASE_SIGNING=1` 强制缺�
 ## 当前构建命令
 
 ```bash
-npm run flutter:release-gate
+make flutter-release-gate
 ```
 
 或在 `flutter_app/` 下单独构建：

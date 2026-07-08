@@ -6,7 +6,6 @@ import crypto from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import QRCode from "qrcode";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
@@ -16,7 +15,7 @@ const defaultBaseUrl = "https://download.momcozy.ai/app";
 
 if (process.argv.includes("--help")) {
   console.log(`Usage:
-  MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app npm run flutter:apk-download-site
+  MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app make flutter-apk-download-site
 
 Environment:
   MOMCOZY_DOWNLOAD_BASE_URL     Public HTTPS URL of the uploaded dist/android-apk directory.
@@ -78,16 +77,6 @@ const sha256 = crypto.createHash("sha256").update(apkBytes).digest("hex");
 const generatedAt = new Date().toISOString();
 const gitCommit = gitShortHead();
 const apkUrl = `releases/${artifactName}`;
-const qrSvg = await QRCode.toString(pageUrl, {
-  type: "svg",
-  errorCorrectionLevel: "M",
-  margin: 2,
-  color: {
-    dark: "#6f2a4b",
-    light: "#ffffff",
-  },
-});
-
 const manifest = {
   app: "Momcozy",
   platform: "android",
@@ -106,7 +95,6 @@ const manifest = {
 
 await writeFile(path.join(releaseDir, `${artifactName}.sha256`), `${sha256}  ${artifactName}\n`);
 await writeFile(path.join(distDir, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
-await writeFile(path.join(distDir, "qr.svg"), qrSvg);
 await writeFile(path.join(distDir, "index.html"), renderDownloadPage(manifest));
 
 console.log("");
@@ -236,9 +224,15 @@ function renderDownloadPage(manifest) {
     .brand { width: 190px; height: auto; display: block; margin-bottom: 24px; }
     h1 { margin: 0 0 10px; font-size: clamp(28px, 5vw, 40px); line-height: 1.15; }
     p { margin: 0; color: var(--muted); line-height: 1.7; }
-    .layout { display: grid; grid-template-columns: 1fr 220px; gap: 28px; align-items: start; margin-top: 26px; }
-    .qr { width: 220px; padding: 12px; border: 1px solid var(--border); border-radius: 18px; background: #fff; }
-    .qr img { width: 100%; height: auto; display: block; }
+    .layout { display: grid; grid-template-columns: 1fr 240px; gap: 28px; align-items: start; margin-top: 26px; }
+    .share {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #fff;
+      overflow-wrap: anywhere;
+    }
+    .share strong { display: block; margin-bottom: 10px; }
     .button {
       display: inline-flex;
       justify-content: center;
@@ -268,7 +262,6 @@ function renderDownloadPage(manifest) {
     @media (max-width: 700px) {
       main { padding: 22px; }
       .layout { grid-template-columns: 1fr; }
-      .qr { width: 180px; }
     }
   </style>
 </head>
@@ -276,7 +269,7 @@ function renderDownloadPage(manifest) {
   <main>
     <img class="brand" src="assets/momcozy_logo.png" alt="Momcozy" />
     <h1>Momcozy Android 内测包</h1>
-    <p>请使用 Android 手机扫码打开本页，或点击按钮下载 APK。下载后根据系统提示允许安装未知来源应用。</p>
+    <p>请使用 Android 手机打开本页，或点击按钮下载 APK。下载后根据系统提示允许安装未知来源应用。</p>
     <div class="layout">
       <section>
         <a class="button" href="${escapeHtml(manifest.apkUrl)}" download>下载 APK</a>
@@ -294,8 +287,9 @@ function renderDownloadPage(manifest) {
           <li>如已安装旧包，遇到签名冲突时请先卸载旧包再安装。</li>
         </ol>
       </section>
-      <aside class="qr">
-        <img src="qr.svg" alt="APK 下载二维码" />
+      <aside class="share">
+        <strong>下载页地址</strong>
+        <code>${escapeHtml(manifest.pageUrl)}</code>
       </aside>
     </div>
   </main>

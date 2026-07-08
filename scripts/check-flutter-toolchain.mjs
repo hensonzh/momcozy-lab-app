@@ -264,10 +264,10 @@ const failedRequired = checks.filter((check) => check.required && !check.ok);
 
 if (failedRequired.length > 0) {
   console.error("");
-  console.error("Toolchain is not ready. Do not run npm run flutter:init yet.");
-  console.error("After installing the missing required tools, rerun npm run flutter:check.");
+  console.error("Toolchain is not ready. Do not run make flutter-init yet.");
+  console.error("After installing the missing required tools, rerun make flutter-check.");
   process.exit(1);
 }
 
 console.log("");
-console.log("Toolchain is ready for npm run flutter:init.");
+console.log("Toolchain is ready for make flutter-init.");

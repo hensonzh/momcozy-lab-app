@@ -1,6 +1,6 @@
 # Android APK 自建下载页
 
-目标：把 Flutter 构建出的 APK 发布到一个 HTTPS 静态地址，用户扫码进入下载页安装。
+目标：把 Flutter 构建出的 APK 发布到一个 HTTPS 静态地址，用户打开下载页安装。
 
 ## 生成下载包
 
@@ -8,7 +8,7 @@
 
 ```bash
 MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app \
-npm run flutter:apk-download-site
+make flutter-apk-download-site
 ```
 
 输出目录结构：
@@ -16,20 +16,19 @@ npm run flutter:apk-download-site
 ```text
 dist/android-apk/
   index.html
-  qr.svg
   manifest.json
   assets/momcozy_logo.png
   releases/momcozy-android-staging-1.0.0-1.apk
   releases/momcozy-android-staging-1.0.0-1.apk.sha256
 ```
 
-二维码内容是 `MOMCOZY_DOWNLOAD_BASE_URL`，建议长期固定为：
+下载页地址是 `MOMCOZY_DOWNLOAD_BASE_URL`，建议长期固定为：
 
 ```text
 https://download.momcozy.ai/app
 ```
 
-后续每次发布只覆盖 `dist/android-apk/` 的静态内容，二维码可以不变。
+后续每次发布只覆盖 `dist/android-apk/` 的静态内容，下载页地址可以不变。
 
 ## 常用参数
 
@@ -37,17 +36,17 @@ https://download.momcozy.ai/app
 # 生成 production release 下载页
 MOMCOZY_APK_FLAVOR=production \
 MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app \
-npm run flutter:apk-download-site
+make flutter-apk-download-site
 
 # 用已有 APK 生成下载页，不重新构建
 MOMCOZY_APK_INPUT=flutter_app/build/app/outputs/flutter-apk/app-staging-release.apk \
 MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app \
-npm run flutter:apk-download-site
+make flutter-apk-download-site
 
 # 强制要求 release 签名环境完整，否则失败
 MOMCOZY_REQUIRE_RELEASE_SIGNING=1 \
 MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app \
-npm run flutter:apk-download-site
+make flutter-apk-download-site
 ```
 
 额外 Dart define 可以用逗号传入：
@@ -55,7 +54,7 @@ npm run flutter:apk-download-site
 ```bash
 MOMCOZY_APK_DART_DEFINES='MOMCOZY_API_BASE_URL=https://api.example.com,MOMCOZY_FEATURE_X=1' \
 MOMCOZY_DOWNLOAD_BASE_URL=https://download.momcozy.ai/app \
-npm run flutter:apk-download-site
+make flutter-apk-download-site
 ```
 
 ## 上传到服务器
@@ -91,7 +90,6 @@ rsync -av --delete dist/android-apk/ deploy@download.momcozy.ai:/var/www/momcozy
 
 - `index.html` 的 Content-Type：`text/html; charset=utf-8`
 - `.apk` 的 Content-Type：`application/vnd.android.package-archive`
-- `qr.svg` 的 Content-Type：`image/svg+xml`
 - 下载域名必须是 HTTPS
 
 ## 验证
@@ -105,7 +103,7 @@ shasum -a 256 dist/android-apk/releases/*.apk
 打开下载页后确认：
 
 - 页面显示版本号、渠道、大小、SHA256。
-- 手机扫码进入同一个页面。
+- 手机打开同一个页面。
 - 点击下载按钮可以下载 APK。
 - Android 安装时允许来自该浏览器的未知来源安装。
 

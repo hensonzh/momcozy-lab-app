@@ -58,7 +58,7 @@ function hasCommand(command, args) {
 }
 
 if (!hasCommand("flutter", ["--version"])) {
-  console.error("Flutter SDK is not available. Run npm run flutter:check first.");
+  console.error("Flutter SDK is not available. Run make flutter-check first.");
   process.exit(1);
 }
 
