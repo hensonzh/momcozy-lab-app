@@ -54,6 +54,15 @@
 | 智能体深状态 | `flutter_app/test/features/agent_hub/agent_hub_page_test.dart` | 发送、线程复用、断线重试、route prefill、route auto-send once、图片/语音输入、新会话 greeting voice、真实 turn 打断 greeting、自动语音、通知语音优先级和释放后重试、取消、action confirmation、markdown、状态条。 |
 | Golden | `flutter_app/test/features/app_pages/*golden_test.dart` 和 `flutter_app/test/features/agent_hub/*golden_test.dart` | 三个移动 viewport 下的页面级、组件级和深状态视觉基线。 |
 
+## 旧 Web 源码证据
+
+| 旧 Web 文件 | 提炼出的契约 | Flutter 验收位置 |
+| --- | --- | --- |
+| `legacy_web/src/pages/status/StatusOverviewBody.tsx` | care stage、妈妈/宝宝身份、孕期日记详情/记录、孕期计划 Agent 预填、宝宝成长和妈妈恢复模块。 | `status_schedule_agent_legacy_widget_parity_test.dart` 的“宝宝和我”分组。 |
+| `legacy_web/src/pages/Schedule.tsx` | 周日期条、只有当天显示“今”、提醒确认、Agent 建议卡、任务工具栏、空态快捷入口。 | `status_schedule_agent_legacy_widget_parity_test.dart` 的“计划”分组。 |
+| `legacy_web/src/pages/AgentHub.tsx` | 顶部控制、输入区、历史窗口、route prefill、auto-send once、动效状态、运行中发送/取消状态。 | `status_schedule_agent_legacy_widget_parity_test.dart` 的“智能体主页”分组和 `agent_hub_page_test.dart`。 |
+| `legacy_web/src/pages/agentHub/AgentHubArtifactOrdering.test.ts` | 旧 Web 已锁定的 Agent 深状态契约：greeting voice、通知语音优先级、route state 消费、状态条、artifact 顺序。 | `agent_hub_page_test.dart`、`agent_voice_playback_coordinator_test.dart`、`agent_stream_*_test.dart`。 |
+
 ## 准入命令
 
 ```bash
