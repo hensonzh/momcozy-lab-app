@@ -130,6 +130,42 @@ void main() {
         expect(find.text('孕期日记'), findsOneWidget);
         expect(find.text('宝宝成长曲线'), findsNothing);
 
+        await tester.tap(
+          find.byKey(const ValueKey('status-pregnancy-diary-view-button')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('status-detail-pregnancy-diary')),
+          findsOneWidget,
+        );
+        expect(find.text('最近 7 天记录'), findsOneWidget);
+        await tester.tap(find.byTooltip('关闭详情'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.byKey(const ValueKey('status-pregnancy-diary-record-button')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('status-pregnancy-diary-editor-dialog')),
+          findsOneWidget,
+        );
+        await tester.enterText(
+          find.byKey(const ValueKey('status-pregnancy-diary-note-input')),
+          '今天胎动规律，想问医生睡眠问题。',
+        );
+        await tester.tap(
+          find.byKey(const ValueKey('status-pregnancy-diary-save-button')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('今天的记录已保存'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('status-detail-pregnancy-diary')),
+          findsOneWidget,
+        );
+        await tester.tap(find.byTooltip('关闭详情'));
+        await tester.pumpAndSettle();
+
         await _scrollToFinder(
           tester,
           find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
