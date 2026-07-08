@@ -629,8 +629,27 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('7月4日 稳奶计划'), findsOneWidget);
       expect(find.text('未来的计划'), findsOneWidget);
-      expect(find.text('今'), findsOneWidget);
-      expect(find.text('六'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('schedule-date-2026-07-03')),
+          matching: find.text('今'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('schedule-date-2026-07-04')),
+          matching: find.text('六'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('schedule-date-2026-07-04')),
+          matching: find.text('今'),
+        ),
+        findsNothing,
+      );
       expect(
         find.byKey(const ValueKey('schedule-back-to-today-button')),
         findsOneWidget,
