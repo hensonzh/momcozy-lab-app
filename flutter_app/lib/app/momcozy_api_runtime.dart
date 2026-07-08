@@ -59,6 +59,7 @@ class MomCozyApiRuntime {
     DateTime Function()? now,
     this.supportsSessionAutoRefresh = false,
     this._currentSessionProvider,
+    this.agentStreamUnauthorizedHandler,
   }) : session =
            session ??
            MomCozySession.fromEnvironment(
@@ -211,6 +212,16 @@ class MomCozyApiRuntime {
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
+      agentStreamUnauthorizedHandler: canAutoRefresh
+          ? () async {
+              final initialSession = sessionProvider();
+              final refreshed = await refreshCoordinator!.refresh(
+                initialSession,
+              );
+              await onSessionChanged(refreshed);
+              return refreshed.isAuthenticated;
+            }
+          : null,
     );
   }
 
@@ -266,6 +277,7 @@ class MomCozyApiRuntime {
   final MomCozyObservability observability;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
+  final Future<bool> Function()? agentStreamUnauthorizedHandler;
   final MomCozySession Function()? _currentSessionProvider;
   final AgentStreamClientEventClient Function() _clientEventClientFactory;
   final ApiMultipartTransport Function() _multipartTransportFactory;

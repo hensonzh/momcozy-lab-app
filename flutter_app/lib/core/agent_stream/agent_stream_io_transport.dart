@@ -9,6 +9,7 @@ import 'agent_stream_event.dart';
 
 typedef AgentStreamPayloadFactory =
     Map<String, Object?> Function(AgentStreamRequest request);
+typedef AgentStreamUnauthorizedHandler = FutureOr<bool> Function();
 
 class AgentStreamEndpoint {
   AgentStreamEndpoint({
@@ -464,12 +465,14 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
   const ProductionAgentSseTransport({
     required this.runsEndpoint,
     required this.payloadFactory,
+    this.onUnauthorized,
     this.runConnector = const _DefaultControlHttpConnector(),
     this.streamConnector = const _DefaultSseGetConnector(),
   });
 
   final AgentStreamEndpoint runsEndpoint;
   final AgentStreamPayloadFactory payloadFactory;
+  final AgentStreamUnauthorizedHandler? onUnauthorized;
   final AgentStreamControlHttpConnector runConnector;
   final AgentStreamSseGetConnector streamConnector;
 
@@ -490,10 +493,25 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
           },
         );
 
-    yield* streamConnector.get(
-      streamUri,
-      headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
-    );
+    try {
+      await for (final frame in streamConnector.get(
+        streamUri,
+        headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
+      )) {
+        yield frame;
+      }
+    } on AgentStreamTransportException catch (error) {
+      if (!_isUnauthorizedStreamError(error) ||
+          !await _refreshAfterUnauthorized()) {
+        rethrow;
+      }
+      await for (final frame in streamConnector.get(
+        streamUri,
+        headers: runsEndpoint.requestHeaders(accept: 'text/event-stream'),
+      )) {
+        yield frame;
+      }
+    }
   }
 
   Future<String> _createRun(AgentStreamRequest request) async {
@@ -502,14 +520,17 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
         stringField(payload, 'idempotency_key') ?? _agentRunIdempotencyKey();
     payload['idempotency_key'] = idempotencyKey;
 
-    final response = await runConnector.post(
-      runsEndpoint.requestUri,
-      headers: {
-        ...runsEndpoint.requestHeaders(includeContentType: true),
-        'Idempotency-Key': idempotencyKey,
-      },
-      body: jsonEncode(payload),
+    var response = await _postCreateRun(
+      payload: payload,
+      idempotencyKey: idempotencyKey,
     );
+    if (response.statusCode == HttpStatus.unauthorized &&
+        await _refreshAfterUnauthorized()) {
+      response = await _postCreateRun(
+        payload: payload,
+        idempotencyKey: idempotencyKey,
+      );
+    }
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw AgentStreamTransportException(
         'run create failed: ${response.statusCode}',
@@ -525,10 +546,34 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
     }
     return runId;
   }
+
+  Future<AgentStreamControlHttpResponse> _postCreateRun({
+    required Map<String, Object?> payload,
+    required String idempotencyKey,
+  }) {
+    return runConnector.post(
+      runsEndpoint.requestUri,
+      headers: {
+        ...runsEndpoint.requestHeaders(includeContentType: true),
+        'Idempotency-Key': idempotencyKey,
+      },
+      body: jsonEncode(payload),
+    );
+  }
+
+  Future<bool> _refreshAfterUnauthorized() async {
+    final handler = onUnauthorized;
+    if (handler == null) return false;
+    return await handler();
+  }
 }
 
 String _agentRunIdempotencyKey() {
   return 'agent-run-${DateTime.now().microsecondsSinceEpoch}';
+}
+
+bool _isUnauthorizedStreamError(AgentStreamTransportException error) {
+  return error.message.contains('401');
 }
 
 class _DefaultSseGetConnector implements AgentStreamSseGetConnector {

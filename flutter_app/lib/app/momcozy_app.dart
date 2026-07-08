@@ -1232,6 +1232,7 @@ Widget _buildDefaultAgentHubPage(
     runner: createSessionAgentHubRunner(
       runtime.session,
       accessTokenProvider: currentAccessToken,
+      onUnauthorized: runtime.agentStreamUnauthorizedHandler,
     ),
     cancelClient: createSessionAgentHubCancelClient(
       runtime.session,
