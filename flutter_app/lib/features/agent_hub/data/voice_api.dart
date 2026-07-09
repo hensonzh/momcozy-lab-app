@@ -11,6 +11,8 @@ const speechTranscribeChunkEndpoint = '/v1/speech/transcribe-chunk';
 const realtimeVoiceStreamEndpoint = '/v1/realtime-voice-stream';
 const realtimeVoiceSessionEndpoint = '/v1/realtime-voice-session';
 
+typedef AgentVoiceUnauthorizedHandler = FutureOr<bool> Function();
+
 abstract interface class AgentVoiceRepository {
   Future<String?> transcribeSpeechChunk({
     required ApiUploadFile file,
@@ -28,6 +30,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
     required Uri baseUri,
     this.token,
     this.tokenProvider,
+    this.onUnauthorized,
     this.headers = const <String, String>{},
     this.binaryConnector = const _DefaultAgentVoiceBinaryStreamConnector(),
     this.websocketConnector = const _DefaultAgentVoiceWebSocketConnector(),
@@ -37,6 +40,7 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   final Uri baseUri;
   final String? token;
   final String? Function()? tokenProvider;
+  final AgentVoiceUnauthorizedHandler? onUnauthorized;
   final Map<String, String> headers;
   final AgentVoiceBinaryStreamConnector binaryConnector;
   final AgentVoiceWebSocketConnector websocketConnector;
@@ -66,11 +70,24 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
   }
 
   @override
-  Stream<List<int>> realtimeVoicePcmStream({required String text}) {
-    return binaryConnector.get(
-      _resolveHttp(realtimeVoiceStreamEndpoint, query: {'text': text}),
-      headers: _requestHeaders(accept: 'audio/pcm'),
+  Stream<List<int>> realtimeVoicePcmStream({required String text}) async* {
+    final uri = _resolveHttp(
+      realtimeVoiceStreamEndpoint,
+      query: {'text': text},
     );
+    try {
+      await for (final chunk in _openRealtimeVoicePcmStream(uri)) {
+        yield chunk;
+      }
+    } on ApiHttpException catch (error) {
+      if (error.statusCode != HttpStatus.unauthorized ||
+          !await _refreshAfterUnauthorized()) {
+        rethrow;
+      }
+      await for (final chunk in _openRealtimeVoicePcmStream(uri)) {
+        yield chunk;
+      }
+    }
   }
 
   Map<String, Object?> redactedRealtimeVoiceStreamLogContext({
@@ -135,6 +152,19 @@ class AgentVoiceApiRepository implements AgentVoiceRepository {
       if (authToken != null && authToken.isNotEmpty)
         'Authorization': 'Bearer $authToken',
     };
+  }
+
+  Future<bool> _refreshAfterUnauthorized() async {
+    final handler = onUnauthorized;
+    if (handler == null) return false;
+    return await handler();
+  }
+
+  Stream<List<int>> _openRealtimeVoicePcmStream(Uri uri) {
+    return binaryConnector.get(
+      uri,
+      headers: _requestHeaders(accept: 'audio/pcm'),
+    );
   }
 
   Map<String, Object?> _redactedRequestContext(

@@ -63,5 +63,47 @@ void main() {
         ),
       );
     });
+
+    testWidgets('composer labels playback failures separately from input', (
+      tester,
+    ) async {
+      final controller = TextEditingController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: momCozyTheme(),
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            backgroundColor: MomCozyColors.background,
+            body: Align(
+              alignment: Alignment.bottomCenter,
+              child: AgentComposerBar(
+                controller: controller,
+                canSend: false,
+                isRunning: false,
+                isInputLocked: false,
+                imageCount: 0,
+                showPhotoMenu: false,
+                canAttachImage: true,
+                canUseVoice: true,
+                voicePhase: AgentVoicePhase.error,
+                voicePlaybackFailed: true,
+                onChanged: (_) {},
+                onSend: () {},
+                onCancel: () {},
+                onTogglePhotoMenu: () {},
+                onAttachImage: () {},
+                onRemoveImages: () {},
+                onVoiceInput: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('语音播放失败'), findsOneWidget);
+      expect(find.text('语音输入失败'), findsNothing);
+    });
   });
 }

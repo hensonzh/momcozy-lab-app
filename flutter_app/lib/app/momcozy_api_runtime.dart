@@ -368,6 +368,7 @@ class MomCozyApiRuntime {
       baseUri: Uri.parse(_defaultApiBaseUrl),
       token: session.accessToken,
       tokenProvider: () => currentSession.accessToken,
+      onUnauthorized: agentStreamUnauthorizedHandler,
       headers: const {'X-Momcozy-Client': 'flutter'},
     );
   }

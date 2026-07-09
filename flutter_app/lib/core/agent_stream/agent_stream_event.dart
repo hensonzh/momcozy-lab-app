@@ -5,7 +5,7 @@ class AgentStreamEvent {
 
   final Map<String, Object?> raw;
 
-  String get type => stringField(raw, 'type') ?? 'CUSTOM';
+  String get type => _normalizedEventType(raw);
   String? get threadId =>
       stringField(raw, 'thread_id') ?? stringField(raw, 'threadId');
   String? get runId => stringField(raw, 'run_id') ?? stringField(raw, 'runId');
@@ -29,7 +29,12 @@ class AgentStreamEvent {
   String? get role => stringField(raw, 'role') ?? stringField(payload, 'role');
   Map<String, Object?> get payload {
     final value = raw['payload'];
-    return value is Map ? Map<String, Object?>.from(value) : const {};
+    if (value is Map) return Map<String, Object?>.from(value);
+    if (type == 'run.progress') {
+      final customValue = raw['value'];
+      if (customValue is Map) return Map<String, Object?>.from(customValue);
+    }
+    return const {};
   }
 
   String? get textDelta =>
@@ -121,13 +126,32 @@ List<AgentStreamEvent> parseAgentEventStream(String input) {
   final events = <AgentStreamEvent>[];
 
   for (final block in blocks) {
-    final data = block
-        .split(RegExp(r'\r?\n'))
+    final lines = block.split(RegExp(r'\r?\n'));
+    String? id;
+    for (final line in lines) {
+      if (!line.startsWith('id:')) continue;
+      final candidate = line.substring(3).trim();
+      if (candidate.isEmpty) continue;
+      id = candidate;
+      break;
+    }
+    final data = lines
         .where((line) => line.startsWith('data:'))
         .map((line) => line.substring(5).trim())
         .join('\n')
         .trim();
-    if (data.isNotEmpty) events.add(parseAgentJson(data));
+    if (data.isEmpty) continue;
+    final event = parseAgentJson(data);
+    if (id == null) {
+      events.add(event);
+      continue;
+    }
+    final eventId = id;
+    final raw = Map<String, Object?>.from(event.raw);
+    raw.putIfAbsent('event_id', () => _sseReplayId(eventId, raw));
+    final sequence = int.tryParse(eventId);
+    if (sequence != null) raw.putIfAbsent('sequence', () => sequence);
+    events.add(AgentStreamEvent(raw));
   }
 
   return events;
@@ -159,6 +183,46 @@ List<Map<String, Object?>> parseJsonlMaps(String input) {
 String? stringField(Map<String, Object?> map, String key) {
   final value = map[key];
   return value is String ? value : null;
+}
+
+String _normalizedEventType(Map<String, Object?> raw) {
+  final type = stringField(raw, 'type') ?? 'CUSTOM';
+  return switch (type) {
+    'RUN_STARTED' => 'run.started',
+    'RUN_FINISHED' => 'run.completed',
+    'RUN_ERROR' => 'run.failed',
+    'TEXT_MESSAGE_START' => 'message.started',
+    'TEXT_MESSAGE_CONTENT' => 'message.delta',
+    'TEXT_MESSAGE_END' => 'message.completed',
+    'TOOL_CALL_START' => 'tool.started',
+    'TOOL_CALL_ARGS' => 'tool.progress',
+    'TOOL_CALL_END' => 'tool.progress',
+    'TOOL_CALL_RESULT' => 'tool.completed',
+    'ARTIFACT_CREATED' => 'artifact.created',
+    'CONFIRMATION_REQUIRED' => 'action.confirmation_required',
+    'CUSTOM' when _isMomCozyStatusEvent(raw) => 'run.progress',
+    _ => type,
+  };
+}
+
+bool _isMomCozyStatusEvent(Map<String, Object?> raw) {
+  return stringField(raw, 'name') == 'momcozy.agent.status';
+}
+
+String _sseReplayId(String id, Map<String, Object?> raw) {
+  final parts = [
+    'sse',
+    id,
+    stringField(raw, 'type') ?? 'CUSTOM',
+    stringField(raw, 'message_id') ?? stringField(raw, 'messageId'),
+    stringField(raw, 'tool_call_id') ?? stringField(raw, 'toolCallId'),
+    stringField(raw, 'artifact_id') ?? stringField(raw, 'artifactId'),
+    stringField(raw, 'action_id') ??
+        stringField(raw, 'confirmation_id') ??
+        stringField(raw, 'actionId'),
+    stringField(raw, 'name'),
+  ].whereType<String>().where((part) => part.trim().isNotEmpty);
+  return parts.join(':');
 }
 
 String? _messagesText(Object? rawMessages) {

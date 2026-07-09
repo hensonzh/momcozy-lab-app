@@ -221,6 +221,45 @@ void main() {
       expect(state.textContent, 'Durable assistant reply.');
     });
 
+    test('normalizes AG-UI text and terminal events from SSE', () {
+      var state = const AgentStreamRunState().start();
+      final events = parseAgentEventStream('''
+id: 3
+data: {"type":"RUN_STARTED","thread_id":"thread-ag-ui-001","run_id":"run-ag-ui-001"}
+
+id: 4
+data: {"type":"TEXT_MESSAGE_START","message_id":"msg-ag-ui-001","role":"assistant"}
+
+id: 4
+data: {"type":"TEXT_MESSAGE_CONTENT","message_id":"msg-ag-ui-001","delta":"你好呀～"}
+
+id: 4
+data: {"type":"TEXT_MESSAGE_END","message_id":"msg-ag-ui-001","role":"assistant"}
+
+id: 5
+data: {"type":"RUN_FINISHED","thread_id":"thread-ag-ui-001","run_id":"run-ag-ui-001"}
+
+''');
+
+      for (final event in events) {
+        state = state.applyEvent(event);
+      }
+
+      expect(state.phase, AgentStreamRunPhase.finished);
+      expect(state.textContent, '你好呀～');
+      expect(state.threadId, 'thread-ag-ui-001');
+      expect(state.runId, 'run-ag-ui-001');
+      expect(state.messageId, 'msg-ag-ui-001');
+      expect(state.lastSequence, 5);
+      expect(events.map((event) => event.type), [
+        'run.started',
+        'message.started',
+        'message.delta',
+        'message.completed',
+        'run.completed',
+      ]);
+    });
+
     test('maps run error events to retryable error state', () {
       var state = const AgentStreamRunState().start();
 

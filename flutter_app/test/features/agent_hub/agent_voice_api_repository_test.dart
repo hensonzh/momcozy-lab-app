@@ -163,6 +163,53 @@ void main() {
       );
     });
 
+    test('retries realtime PCM stream after unauthorized refresh', () async {
+      var token = 'stale-voice-token';
+      var refreshCount = 0;
+      final connector = _SequenceBinaryConnector([
+        const ApiHttpException(
+          statusCode: 401,
+          statusText: 'Unauthorized',
+          body: null,
+        ),
+        [
+          [9, 8],
+        ],
+      ]);
+      final repository = AgentVoiceApiRepository(
+        multipartTransport: FixtureApiMultipartTransport(const {
+          'status': 200,
+          'data': {},
+        }),
+        baseUri: Uri.parse('http://127.0.0.1:8769'),
+        tokenProvider: () => token,
+        onUnauthorized: () {
+          refreshCount += 1;
+          token = 'fresh-voice-token';
+          return true;
+        },
+        binaryConnector: connector,
+      );
+
+      final chunks = await repository
+          .realtimeVoicePcmStream(text: 'retry me')
+          .toList();
+
+      expect(chunks, [
+        [9, 8],
+      ]);
+      expect(refreshCount, 1);
+      expect(connector.headersByAttempt, hasLength(2));
+      expect(
+        connector.headersByAttempt.first,
+        containsPair('Authorization', 'Bearer stale-voice-token'),
+      );
+      expect(
+        connector.headersByAttempt.last,
+        containsPair('Authorization', 'Bearer fresh-voice-token'),
+      );
+    });
+
     test('rejects remote plaintext voice base URLs', () {
       expect(
         () => AgentVoiceApiRepository(
@@ -350,6 +397,30 @@ class _RecordingBinaryConnector implements AgentVoiceBinaryStreamConnector {
     if (failure != null) throw failure;
     for (final chunk in chunks) {
       yield chunk;
+    }
+  }
+}
+
+class _SequenceBinaryConnector implements AgentVoiceBinaryStreamConnector {
+  _SequenceBinaryConnector(this.outcomes);
+
+  final List<Object?> outcomes;
+  final headersByAttempt = <Map<String, String>>[];
+  int _attempt = 0;
+
+  @override
+  Stream<List<int>> get(
+    Uri uri, {
+    required Map<String, String> headers,
+  }) async* {
+    headersByAttempt.add(headers);
+    final outcome = outcomes[_attempt++];
+    if (outcome is Exception) throw outcome;
+    if (outcome is Error) throw outcome;
+    if (outcome is List<List<int>>) {
+      for (final chunk in outcome) {
+        yield chunk;
+      }
     }
   }
 }
