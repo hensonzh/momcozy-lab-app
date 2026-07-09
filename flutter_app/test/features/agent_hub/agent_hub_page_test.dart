@@ -3465,12 +3465,22 @@ milk_total: 120ml
     expect(thinkingPadding.padding, const EdgeInsets.only(left: 16));
   });
 
-  testWidgets('Agent thinking note is a short-lived hint', (tester) async {
+  testWidgets('Agent thinking note stays event-driven until cleared', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _host(
-        const AgentThinkingNote(
-          key: ValueKey('thinking-note-one'),
-          title: '我想一下',
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            events: [
+              AgentStreamEvent({'type': 'run.started'}),
+              AgentStreamEvent({
+                'type': 'run.progress',
+                'payload': {'phase': 'model_reasoning', 'label': '我想一下'},
+              }),
+            ],
+          ),
         ),
       ),
     );
@@ -3479,18 +3489,89 @@ milk_total: 120ml
 
     await tester.pump(const Duration(milliseconds: 2201));
 
-    expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-thinking-note')), findsOneWidget);
+  });
 
-    await tester.pumpWidget(
-      _host(
-        const AgentThinkingNote(
-          key: ValueKey('thinking-note-two'),
-          title: '我想一下',
+  testWidgets(
+    'Agent Hub ignores non-semantic tool and artifact status fallbacks',
+    (tester) async {
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.streaming,
+              events: [
+                AgentStreamEvent({'type': 'run.started'}),
+                AgentStreamEvent({
+                  'type': 'tool.completed',
+                  'payload': {
+                    'tool_call_id': 'tool-read-001',
+                    'tool_name': 'pump_session_summary_query',
+                  },
+                }),
+                AgentStreamEvent({
+                  'type': 'artifact.created',
+                  'payload': {
+                    'artifact_id': 'artifact-plan-001',
+                    'artifact_type': 'milk_plan_card',
+                  },
+                }),
+              ],
+            ),
+          ),
         ),
-      ),
+      );
+
+      expect(find.text('我接着处理下一步'), findsNothing);
+      expect(find.text('正在读取泵奶记录'), findsNothing);
+      expect(find.text('泵奶记录已读取'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('agent-run-status-line')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('agent-run-status-line')),
+          matching: find.text('我已经收到你的消息啦～'),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets('Agent Hub renders after-tool reasoning as thinking note', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({'type': 'run.started'}),
+        AgentStreamEvent({
+          'type': 'run.progress',
+          'payload': {
+            'phase': 'model_reasoning_after_tool',
+            'label': '我接着处理下一步',
+          },
+        }),
+      ],
     );
 
-    expect(find.byKey(const ValueKey('agent-thinking-note')), findsOneWidget);
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-run-status-line')),
+        matching: find.text('我已经收到你的消息啦～'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-thinking-note')),
+        matching: find.text('我接着处理下一步'),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Agent Hub clears thinking note on later labeled progress', (
