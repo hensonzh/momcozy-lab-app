@@ -50,6 +50,12 @@ class AgentStreamRunState {
       phase == AgentStreamRunPhase.streaming ||
       phase == AgentStreamRunPhase.cancelRequested;
 
+  bool get hasCompletedAssistantMessage => events.any(
+    (event) => event.type == 'message.completed' && event.role != 'user',
+  );
+
+  bool get isAwaitingVisibleReply => isActive && !hasCompletedAssistantMessage;
+
   bool get blocksComposer =>
       isActive || phase == AgentStreamRunPhase.waitingForConfirmation;
 
@@ -59,6 +65,11 @@ class AgentStreamRunState {
 
   AgentStreamRunState start() {
     return const AgentStreamRunState(phase: AgentStreamRunPhase.streaming);
+  }
+
+  AgentStreamRunState finishVisibleReply() {
+    if (!isActive || !hasCompletedAssistantMessage) return this;
+    return copyWith(phase: AgentStreamRunPhase.finished);
   }
 
   AgentStreamRunState applyEvent(AgentStreamEvent event) {
