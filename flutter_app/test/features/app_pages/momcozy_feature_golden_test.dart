@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -301,6 +302,7 @@ MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
         'mime_type': 'image/png',
       },
     }),
+    clientEventClient: const AgentStreamClientEventClient(sent: false),
     blePlatform: FakeBlePlatform(initialPermission: BlePermissionState.granted),
     userId: 'demo-user-golden',
     babyId: 'demo-baby-golden',

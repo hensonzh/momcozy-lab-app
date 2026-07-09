@@ -13,6 +13,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:video_player/video_player.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 typedef AgentHubImagePicker = Future<AgentStreamImageInput?> Function();
@@ -714,14 +715,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void _maybeStartGreetingVoicePlayback() {
     final coordinator = widget.voicePlaybackCoordinator;
     final player = widget.voicePlaybackPlayer;
-    if (coordinator == null || !_autoVoiceEnabled) return;
+    if (coordinator == null || player == null || !_autoVoiceEnabled) return;
 
     final result = coordinator.request(
       id: _agentDefaultGreetingPlaybackId,
       source: AgentVoicePlaybackSource.greeting,
-      cancel: player == null
-          ? null
-          : () => unawaited(player.stop().catchError((Object _) {})),
+      cancel: () => unawaited(player.stop().catchError((Object _) {})),
     );
     final handle = result.handle;
     if (!mounted ||
@@ -840,6 +839,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final player = widget.voicePlaybackPlayer;
     final text = nextState.textContent.trim();
     if (coordinator == null ||
+        player == null ||
         !_autoVoiceEnabled ||
         !_canAutoVoicePlayback(nextState.phase) ||
         text.isEmpty) {
@@ -861,9 +861,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final result = coordinator.request(
       id: playbackId,
       source: AgentVoicePlaybackSource.autoReply,
-      cancel: player == null
-          ? null
-          : () => unawaited(player.stop().catchError((Object _) {})),
+      cancel: () => unawaited(player.stop().catchError((Object _) {})),
     );
     if (result.status == AgentVoicePlaybackRequestStatus.blocked) {
       _queueBlockedAutoVoiceReplay(nextState);
@@ -2695,6 +2693,9 @@ class _AgentAssistantAvatar extends StatefulWidget {
 class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pulseController;
+  VideoPlayerController? _videoController;
+  String? _videoAsset;
+  bool _videoReady = false;
 
   @override
   void initState() {
@@ -2702,33 +2703,118 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1180),
-    )..repeat();
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncPulseController();
+    _syncVideoController();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AgentAssistantAvatar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.mode != widget.mode) {
+      _syncPulseController();
+      _syncVideoController();
+    }
   }
 
   @override
   void dispose() {
+    _disposeVideoController();
     _pulseController.dispose();
     super.dispose();
+  }
+
+  void _syncPulseController() {
+    if (_activeAvatarAsset() == null) {
+      _pulseController.stop();
+      _pulseController.value = 0;
+      return;
+    }
+    if (!_pulseController.isAnimating) _pulseController.repeat();
+  }
+
+  void _syncVideoController() {
+    final asset = _activeAvatarAsset();
+    if (asset == null) {
+      _disposeVideoController();
+      return;
+    }
+    if (_videoController != null && _videoAsset == asset) return;
+
+    _disposeVideoController();
+    _videoAsset = asset;
+    _videoReady = false;
+    final controller = VideoPlayerController.asset(asset);
+    _videoController = controller;
+
+    unawaited(
+      controller
+          .initialize()
+          .then((_) async {
+            if (!mounted || _videoController != controller) return;
+            await controller.setLooping(true);
+            await controller.setVolume(0);
+            await controller.play();
+            if (!mounted || _videoController != controller) return;
+            setState(() {
+              _videoReady = true;
+            });
+          })
+          .catchError((Object _) {
+            if (!mounted || _videoController != controller) return;
+            setState(() {
+              _videoReady = false;
+            });
+          }),
+    );
+  }
+
+  void _disposeVideoController() {
+    final controller = _videoController;
+    _videoController = null;
+    _videoAsset = null;
+    _videoReady = false;
+    if (controller != null) unawaited(controller.dispose());
+  }
+
+  String? _activeAvatarAsset() {
+    if (!_shouldAnimateAvatar()) return null;
+    return switch (widget.mode) {
+      _AgentAssistantAvatarMode.speaking => MomCozyAssets.agentSpeakingAvatar,
+      _AgentAssistantAvatarMode.thinking => MomCozyAssets.agentThinkingAvatar,
+      null => null,
+    };
+  }
+
+  bool _shouldAnimateAvatar() {
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    return TickerMode.valuesOf(context).enabled && !disableAnimations;
   }
 
   @override
   Widget build(BuildContext context) {
     final mode = widget.mode;
-    final isSpeaking = mode == _AgentAssistantAvatarMode.speaking;
-    final isThinking = mode == _AgentAssistantAvatarMode.thinking;
-    final ringColor = isSpeaking
+    final shouldAnimate = _shouldAnimateAvatar();
+    final isSpeakingMode = mode == _AgentAssistantAvatarMode.speaking;
+    final isThinkingMode = mode == _AgentAssistantAvatarMode.thinking;
+    final isActiveMode = isSpeakingMode || isThinkingMode;
+    final showSpeakingVideo = shouldAnimate && isSpeakingMode;
+    final showThinkingVideo = shouldAnimate && isThinkingMode;
+    final ringColor = isSpeakingMode
         ? const Color(0xffaa647d)
         : const Color(0xff8bbdb5);
-    final avatarAsset = isSpeaking
-        ? MomCozyAssets.agentSpeakingAvatar
-        : isThinking
-        ? MomCozyAssets.agentThinkingAvatar
-        : MomCozyAssets.agentAvatar;
-    final avatarKey = isSpeaking
+    final activeAvatarKey = showSpeakingVideo
         ? 'agent-assistant-avatar-speaking-media'
-        : isThinking
+        : showThinkingVideo
         ? 'agent-assistant-avatar-thinking-media'
-        : 'agent-assistant-avatar-static';
+        : null;
+    final videoController = _videoController;
 
     return SizedBox.square(
       key: const ValueKey('agent-assistant-avatar'),
@@ -2737,7 +2823,7 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
         clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
-          if (isThinking || isSpeaking)
+          if (isActiveMode)
             Positioned(
               left: -2,
               right: -2,
@@ -2751,10 +2837,10 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
                     _pulseController.value,
                   );
                   return Transform.scale(
-                    scale: 1 + pulse * (isSpeaking ? 0.12 : 0.08),
+                    scale: 1 + pulse * (isSpeakingMode ? 0.12 : 0.08),
                     child: DecoratedBox(
                       key: ValueKey(
-                        isSpeaking
+                        isSpeakingMode
                             ? 'agent-assistant-avatar-speaking'
                             : 'agent-assistant-avatar-thinking',
                       ),
@@ -2764,15 +2850,16 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
                           color: ringColor.withValues(
                             alpha: 0.42 + pulse * 0.18,
                           ),
-                          width: isSpeaking ? 3 : 2,
+                          width: isSpeakingMode ? 3 : 2,
                         ),
                         boxShadow: [
                           BoxShadow(
                             color: ringColor.withValues(
-                              alpha: (isSpeaking ? 0.18 : 0.12) + pulse * 0.12,
+                              alpha:
+                                  (isSpeakingMode ? 0.18 : 0.12) + pulse * 0.12,
                             ),
-                            blurRadius: (isSpeaking ? 12 : 9) + pulse * 6,
-                            spreadRadius: (isSpeaking ? 1.4 : 0.8) + pulse,
+                            blurRadius: (isSpeakingMode ? 12 : 9) + pulse * 6,
+                            spreadRadius: (isSpeakingMode ? 1.4 : 0.8) + pulse,
                           ),
                         ],
                       ),
@@ -2794,12 +2881,33 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
               ],
             ),
             child: ClipOval(
-              child: Image.asset(
-                avatarAsset,
-                key: ValueKey(avatarKey),
-                width: 32,
-                height: 32,
-                fit: BoxFit.cover,
+              child: Stack(
+                fit: StackFit.passthrough,
+                children: [
+                  Image.asset(
+                    MomCozyAssets.agentAvatar,
+                    key: const ValueKey('agent-assistant-avatar-static'),
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.cover,
+                  ),
+                  if (_videoReady &&
+                      videoController != null &&
+                      activeAvatarKey != null)
+                    Positioned.fill(
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: videoController.value.size.width,
+                          height: videoController.value.size.height,
+                          child: VideoPlayer(
+                            videoController,
+                            key: ValueKey(activeAvatarKey),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
