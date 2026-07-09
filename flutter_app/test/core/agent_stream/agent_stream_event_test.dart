@@ -151,17 +151,20 @@ void main() {
       expect(completed.mergeKey, started.mergeKey);
     });
 
-    test('does not expose AG-UI tool payloads as assistant text', () {
+    test('does not expose canonical tool payloads as assistant text', () {
       final args = AgentStreamEvent(const {
-        'type': 'TOOL_CALL_ARGS',
-        'tool_call_id': 'call-profile',
-        'delta': '{"display_name":"henson"}',
+        'type': 'tool.progress',
+        'payload': {
+          'tool_call_id': 'call-profile',
+          'safe_args': {'display_name': 'henson'},
+        },
       });
       final result = AgentStreamEvent(const {
-        'type': 'TOOL_CALL_RESULT',
-        'tool_call_id': 'call-skill',
-        'role': 'tool',
-        'content': '{"service_skill_id":"birth-prep"}',
+        'type': 'tool.completed',
+        'payload': {
+          'tool_call_id': 'call-skill',
+          'safe_output': {'service_skill_id': 'birth-prep'},
+        },
       });
 
       expect(args.type, 'tool.progress');
@@ -172,16 +175,7 @@ void main() {
       expect(result.completedText, isNull);
     });
 
-    test('normalizes quick replies from AG-UI and durable events', () {
-      final agUi = AgentStreamEvent(const {
-        'type': 'QUICK_REPLIES',
-        'message_id': 'msg-quick',
-        'replies': [
-          {'text': '看今日安排'},
-          {'text': '先不保存'},
-          {'text': '换简单版'},
-        ],
-      });
+    test('extracts quick replies from durable assistant messages', () {
       final durable = AgentStreamEvent(const {
         'type': 'message.completed',
         'payload': {
@@ -194,8 +188,6 @@ void main() {
         },
       });
 
-      expect(agUi.type, 'quick_replies.created');
-      expect(agUi.quickReplies, ['看今日安排', '先不保存', '换简单版']);
       expect(durable.quickReplies, ['继续聊这个', '给我更多细节']);
     });
 

@@ -10,7 +10,10 @@ class AgentStreamEvent {
       stringField(raw, 'thread_id') ?? stringField(raw, 'threadId');
   String? get runId => stringField(raw, 'run_id') ?? stringField(raw, 'runId');
   String? get messageId =>
-      stringField(raw, 'message_id') ?? stringField(raw, 'messageId');
+      stringField(raw, 'message_id') ??
+      stringField(raw, 'messageId') ??
+      stringField(payload, 'message_stream_id') ??
+      stringField(payload, 'messageStreamId');
   String? get toolCallId =>
       stringField(raw, 'tool_call_id') ??
       stringField(raw, 'toolCallId') ??
@@ -59,7 +62,6 @@ class AgentStreamEvent {
 
   List<String> get quickReplies {
     for (final source in [
-      raw['replies'],
       raw['quick_replies'],
       raw['quickReplies'],
       payload['replies'],
@@ -210,35 +212,14 @@ String? stringField(Map<String, Object?> map, String key) {
 }
 
 String _normalizedEventType(Map<String, Object?> raw) {
-  final type = stringField(raw, 'type') ?? 'CUSTOM';
-  return switch (type) {
-    'RUN_STARTED' => 'run.started',
-    'RUN_FINISHED' => 'run.completed',
-    'RUN_ERROR' => 'run.failed',
-    'TEXT_MESSAGE_START' => 'message.started',
-    'TEXT_MESSAGE_CONTENT' => 'message.delta',
-    'TEXT_MESSAGE_END' => 'message.completed',
-    'TOOL_CALL_START' => 'tool.started',
-    'TOOL_CALL_ARGS' => 'tool.progress',
-    'TOOL_CALL_END' => 'tool.progress',
-    'TOOL_CALL_RESULT' => 'tool.completed',
-    'QUICK_REPLIES' => 'quick_replies.created',
-    'ARTIFACT_CREATED' => 'artifact.created',
-    'CONFIRMATION_REQUIRED' => 'action.confirmation_required',
-    'CUSTOM' when _isMomCozyStatusEvent(raw) => 'run.progress',
-    _ => type,
-  };
-}
-
-bool _isMomCozyStatusEvent(Map<String, Object?> raw) {
-  return stringField(raw, 'name') == 'momcozy.agent.status';
+  return stringField(raw, 'type') ?? 'unknown';
 }
 
 String _sseReplayId(String id, Map<String, Object?> raw) {
   final parts = [
     'sse',
     id,
-    stringField(raw, 'type') ?? 'CUSTOM',
+    stringField(raw, 'type') ?? 'unknown',
     stringField(raw, 'message_id') ?? stringField(raw, 'messageId'),
     stringField(raw, 'tool_call_id') ?? stringField(raw, 'toolCallId'),
     stringField(raw, 'artifact_id') ?? stringField(raw, 'artifactId'),

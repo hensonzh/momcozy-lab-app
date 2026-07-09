@@ -221,23 +221,20 @@ void main() {
       expect(state.textContent, 'Durable assistant reply.');
     });
 
-    test('normalizes AG-UI text and terminal events from SSE', () {
+    test('applies canonical text and terminal events from SSE', () {
       var state = const AgentStreamRunState().start();
       final events = parseAgentEventStream('''
 id: 3
-data: {"type":"RUN_STARTED","thread_id":"thread-ag-ui-001","run_id":"run-ag-ui-001"}
+data: {"type":"run.started","thread_id":"thread-canonical-001","run_id":"run-canonical-001"}
 
 id: 4
-data: {"type":"TEXT_MESSAGE_START","message_id":"msg-ag-ui-001","role":"assistant"}
-
-id: 4
-data: {"type":"TEXT_MESSAGE_CONTENT","message_id":"msg-ag-ui-001","delta":"你好呀～"}
-
-id: 4
-data: {"type":"TEXT_MESSAGE_END","message_id":"msg-ag-ui-001","role":"assistant"}
+data: {"type":"message.delta","thread_id":"thread-canonical-001","run_id":"run-canonical-001","payload":{"message_stream_id":"msg-canonical-001","delta":"你好呀～"}}
 
 id: 5
-data: {"type":"RUN_FINISHED","thread_id":"thread-ag-ui-001","run_id":"run-ag-ui-001"}
+data: {"type":"message.completed","thread_id":"thread-canonical-001","run_id":"run-canonical-001","message_id":"msg-canonical-001","payload":{"role":"assistant","text":"你好呀～"}}
+
+id: 6
+data: {"type":"run.completed","thread_id":"thread-canonical-001","run_id":"run-canonical-001"}
 
 ''');
 
@@ -247,45 +244,38 @@ data: {"type":"RUN_FINISHED","thread_id":"thread-ag-ui-001","run_id":"run-ag-ui-
 
       expect(state.phase, AgentStreamRunPhase.finished);
       expect(state.textContent, '你好呀～');
-      expect(state.threadId, 'thread-ag-ui-001');
-      expect(state.runId, 'run-ag-ui-001');
-      expect(state.messageId, 'msg-ag-ui-001');
-      expect(state.lastSequence, 5);
+      expect(state.threadId, 'thread-canonical-001');
+      expect(state.runId, 'run-canonical-001');
+      expect(state.messageId, 'msg-canonical-001');
+      expect(state.lastSequence, 6);
       expect(events.map((event) => event.type), [
         'run.started',
-        'message.started',
         'message.delta',
         'message.completed',
         'run.completed',
       ]);
     });
 
-    test('keeps AG-UI tool JSON out of text and stores quick replies', () {
+    test('keeps canonical tool JSON out of text and stores quick replies', () {
       var state = const AgentStreamRunState().start();
       final events = parseAgentEventStream('''
 id: 1
-data: {"type":"RUN_STARTED","thread_id":"thread-ag-ui-tools","run_id":"run-ag-ui-tools"}
+data: {"type":"run.started","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools"}
 
 id: 2
-data: {"type":"TOOL_CALL_ARGS","tool_call_id":"call-profile","delta":"{\\"display_name\\":\\"henson\\"}"}
+data: {"type":"tool.progress","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"tool_call_id":"call-profile","safe_args":{"display_name":"henson"}}}
 
 id: 3
-data: {"type":"TOOL_CALL_RESULT","tool_call_id":"call-skill","role":"tool","content":"{\\"service_skill_id\\":\\"birth-prep\\"}"}
+data: {"type":"tool.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"tool_call_id":"call-skill","safe_output":{"service_skill_id":"birth-prep"}}}
 
 id: 4
-data: {"type":"TEXT_MESSAGE_START","message_id":"msg-ag-ui-tools","role":"assistant"}
+data: {"type":"message.delta","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"message_stream_id":"msg-canonical-tools","delta":"你好 henson"}}
 
 id: 5
-data: {"type":"TEXT_MESSAGE_CONTENT","message_id":"msg-ag-ui-tools","delta":"你好 henson"}
+data: {"type":"message.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","message_id":"msg-canonical-tools","payload":{"role":"assistant","text":"你好 henson","quick_replies":[{"text":"继续聊这个"},{"text":"给我更多细节"},{"text":"换个方向"}]}}
 
 id: 6
-data: {"type":"TEXT_MESSAGE_END","message_id":"msg-ag-ui-tools","role":"assistant"}
-
-id: 7
-data: {"type":"QUICK_REPLIES","message_id":"msg-ag-ui-tools","replies":[{"text":"继续聊这个"},{"text":"给我更多细节"},{"text":"换个方向"}]}
-
-id: 8
-data: {"type":"RUN_FINISHED","thread_id":"thread-ag-ui-tools","run_id":"run-ag-ui-tools"}
+data: {"type":"run.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools"}
 
 ''');
 

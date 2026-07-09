@@ -572,6 +572,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       clientEventClient.post(
         AgentStreamClientEventRequest(
           eventType: 'ui.quick_reply.clicked',
+          runId: _state.runId,
           label: text,
           occurredAt: DateTime.now().toUtc().toIso8601String(),
           locale: _activeRequest?.locale,
@@ -5260,14 +5261,9 @@ List<AgentArtifactCardView> _artifactCardsFromEvent(AgentStreamEvent event) {
   final rawRichText = _mapField(event.raw, 'rich_text', 'richText');
   final payloadRichText = _mapField(payload, 'rich_text', 'richText');
   final richText = rawRichText.isNotEmpty ? rawRichText : payloadRichText;
-  final agUiCards = <AgentArtifactCardView>[
-    ..._agUiArtifactCardsFromActions(richText['action'], event),
-    ..._agUiArtifactCardsFromActions(payload['action'], event),
-    ..._agUiArtifactCardsFromActions(payload['actions'], event),
-  ];
 
   if (event.type != 'artifact.created' && event.type != 'artifact.updated') {
-    return List<AgentArtifactCardView>.unmodifiable(agUiCards);
+    return const <AgentArtifactCardView>[];
   }
 
   final rawArtifact = _mapField(event.raw, 'artifact');
@@ -5316,10 +5312,7 @@ List<AgentArtifactCardView> _artifactCardsFromEvent(AgentStreamEvent event) {
     ]),
   );
 
-  return List<AgentArtifactCardView>.unmodifiable([
-    ?envelopeCard,
-    ...agUiCards,
-  ]);
+  return List<AgentArtifactCardView>.unmodifiable([?envelopeCard]);
 }
 
 AgentArtifactCardView? _artifactCardFromEnvelope({
@@ -5399,50 +5392,6 @@ AgentArtifactCardView? _artifactCardFromEnvelope({
     formFields: formFields,
     actions: actions,
   );
-}
-
-List<AgentArtifactCardView> _agUiArtifactCardsFromActions(
-  Object? rawActions,
-  AgentStreamEvent event,
-) {
-  if (rawActions is! List) return const <AgentArtifactCardView>[];
-  final cards = <AgentArtifactCardView>[];
-  for (var index = 0; index < rawActions.length; index++) {
-    final rawAction = rawActions[index];
-    if (rawAction is! Map) continue;
-    final action = Map<String, Object?>.from(rawAction);
-    if (_stringField(action, 'kind') != 'ag_ui_artifact') continue;
-    final artifactType = _stringField(action, 'artifact_type', 'artifactType');
-    final artifactId =
-        _stringField(action, 'artifact_id', 'artifactId') ??
-        '${event.mergeKey}:ag-ui:$index';
-
-    final form = _mapField(action, 'form');
-    final card = _mapField(action, 'card');
-    final ticket = _mapField(action, 'ticket');
-    final cardEnvelope = card.isNotEmpty
-        ? card
-        : ticket.isNotEmpty
-        ? ticket
-        : const <String, Object?>{};
-    final effectiveForm = form.isNotEmpty ? form : const <String, Object?>{};
-
-    final parsed = _artifactCardFromEnvelope(
-      event: event,
-      payload: action,
-      richText: const <String, Object?>{},
-      artifact: const <String, Object?>{},
-      artifactPayload: const <String, Object?>{},
-      cardEnvelope: cardEnvelope,
-      form: effectiveForm,
-      cartUpdate: const <String, Object?>{},
-      assistantFollowup: const <String, Object?>{},
-      artifactId: artifactId,
-      artifactType: artifactType,
-    );
-    if (parsed != null) cards.add(parsed);
-  }
-  return List<AgentArtifactCardView>.unmodifiable(cards);
 }
 
 Map<String, Object?> _firstMap(List<Map<String, Object?>> values) {
@@ -6180,10 +6129,6 @@ String? _latestBackendStatusTitle(
     if (semanticTitle != null && semanticTitle != suppressedTitle) {
       return semanticTitle;
     }
-    final legacyTitle = _legacyStatusLineTitle(event);
-    if (legacyTitle != null && legacyTitle != suppressedTitle) {
-      return legacyTitle;
-    }
 
     switch (event.type) {
       case 'run.queued':
@@ -6222,12 +6167,6 @@ String? _latestBackendStatusTitle(
 
 String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
   for (final event in events.reversed) {
-    final customTitle = _customAgentThinkingTitle(event);
-    if (customTitle != null) return customTitle;
-    if (_customAgentThinkingClears(event)) return null;
-    final legacyTitle = _legacyThinkingTitle(event);
-    if (legacyTitle != null) return legacyTitle;
-
     if (event.type == 'run.progress') {
       final phase = _stringField(event.payload, 'phase')?.trim();
       if (phase == 'model_reasoning') return '我想一下';
@@ -6257,53 +6196,6 @@ bool _runProgressClearsAgentThinking(AgentStreamEvent event, String? phase) {
   );
 }
 
-bool _customAgentThinkingClears(AgentStreamEvent event) {
-  final candidates = [
-    event.payload,
-    event.raw,
-    _mapField(event.payload, 'data'),
-    _mapField(event.raw, 'data'),
-  ];
-  for (final data in candidates) {
-    if (_stringField(data, 'name') != 'momcozy.agent.thinking') continue;
-    final value = _mapField(data, 'value');
-    final status = _stringField(value, 'status')?.trim().toLowerCase();
-    if (status == 'completed' || status == 'failed') return true;
-  }
-  return false;
-}
-
-String? _legacyThinkingTitle(AgentStreamEvent event) {
-  return _visibleAgentStatusTitle(
-    _firstNonEmpty([
-      _stringField(event.payload, 'agentThinkingTitle', 'agent_thinking_title'),
-      _stringField(event.payload, 'thinkingTitle', 'thinking_title'),
-      _stringField(event.raw, 'agentThinkingTitle', 'agent_thinking_title'),
-      _stringField(event.raw, 'thinkingTitle', 'thinking_title'),
-    ]),
-  );
-}
-
-String? _customAgentThinkingTitle(AgentStreamEvent event) {
-  final candidates = [
-    event.payload,
-    event.raw,
-    _mapField(event.payload, 'data'),
-    _mapField(event.raw, 'data'),
-  ];
-  for (final data in candidates) {
-    if (_stringField(data, 'name') != 'momcozy.agent.thinking') continue;
-    final value = _mapField(data, 'value');
-    final status = _stringField(value, 'status')?.trim().toLowerCase();
-    if (status == 'completed' || status == 'failed') return null;
-    if (status != 'started' && status != 'running') continue;
-    final metadata = _mapField(value, 'metadata');
-    final afterOutputText = metadata['after_output_text'] == true;
-    return afterOutputText ? '我接着处理下一步' : '我想一下';
-  }
-  return null;
-}
-
 String? _semanticStatusTitle(AgentStreamEvent event) {
   final payloadSemantic = _mapField(event.payload, 'semantic');
   final rawSemantic = _mapField(event.raw, 'semantic');
@@ -6317,64 +6209,6 @@ String? _semanticStatusTitle(AgentStreamEvent event) {
         _stringField(semantic, 'title'),
       ]),
     );
-    if (title != null) return title;
-  }
-  return null;
-}
-
-String? _legacyStatusLineTitle(AgentStreamEvent event) {
-  return _visibleAgentStatusTitle(
-    _firstNonEmpty([
-      _stringField(event.payload, 'agentStatusLine', 'agent_status_line'),
-      _stringField(event.payload, 'statusLine', 'status_line'),
-      _stringField(event.raw, 'agentStatusLine', 'agent_status_line'),
-      _stringField(event.raw, 'statusLine', 'status_line'),
-      _customAgentStatusLine(event),
-      _metadataStatusLine(event),
-    ]),
-  );
-}
-
-String? _customAgentStatusLine(AgentStreamEvent event) {
-  final candidates = [
-    event.payload,
-    event.raw,
-    _mapField(event.payload, 'data'),
-    _mapField(event.raw, 'data'),
-  ];
-  for (final data in candidates) {
-    if (_stringField(data, 'name') != 'momcozy.agent.status') continue;
-    final value = data['value'];
-    if (value is String && value.trim().isNotEmpty) return value.trim();
-    if (value is Map) {
-      final map = Map<String, Object?>.from(value);
-      final title = _firstNonEmpty([
-        _stringField(map, 'label'),
-        _stringField(map, 'text'),
-        _stringField(map, 'message'),
-        _stringField(map, 'status'),
-        _stringField(map, 'phase'),
-      ]);
-      if (title != null) return title;
-    }
-  }
-  return null;
-}
-
-String? _metadataStatusLine(AgentStreamEvent event) {
-  final candidates = [
-    _mapField(event.payload, 'metadata'),
-    _mapField(event.raw, 'metadata'),
-    _mapField(_mapField(event.payload, 'content'), 'metadata'),
-    _mapField(_mapField(event.raw, 'content'), 'metadata'),
-  ];
-  for (final metadata in candidates) {
-    final title = _firstNonEmpty([
-      _stringField(metadata, 'status_label', 'statusLabel'),
-      _stringField(metadata, 'status'),
-      _stringField(metadata, 'phase'),
-      _stringField(metadata, 'message'),
-    ]);
     if (title != null) return title;
   }
   return null;
