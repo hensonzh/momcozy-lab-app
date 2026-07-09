@@ -2527,7 +2527,7 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
         padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox.square(
               dimension: 10,
@@ -2666,14 +2666,21 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
     final textTheme = Theme.of(context).textTheme;
     return Semantics(
       label: widget.title,
-      child: _AgentSweepText(
-        widget.title,
-        sweepKey: const ValueKey('agent-thinking-note'),
-        animation: _sweepController,
-        colors: const [Color(0xff98a3af), Color(0xff2d3745), Color(0xff98a3af)],
-        style: textTheme.labelSmall?.copyWith(
-          height: 1.45,
-          fontWeight: FontWeight.w800,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16),
+        child: _AgentSweepText(
+          widget.title,
+          sweepKey: const ValueKey('agent-thinking-note'),
+          animation: _sweepController,
+          colors: const [
+            Color(0xff98a3af),
+            Color(0xff2d3745),
+            Color(0xff98a3af),
+          ],
+          style: textTheme.labelSmall?.copyWith(
+            height: 1.45,
+            fontWeight: FontWeight.w800,
+          ),
         ),
       ),
     );
