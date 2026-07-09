@@ -64,14 +64,7 @@ class AgentStreamEvent {
 
   String? get completedText {
     if (type != 'message.completed') return null;
-    return stringField(raw, 'text') ??
-        stringField(payload, 'text') ??
-        _messageText(raw['content']) ??
-        _messageText(payload['content']) ??
-        _messageText(raw['message']) ??
-        _messageText(payload['message']) ??
-        _messagesText(raw['messages']) ??
-        _messagesText(payload['messages']);
+    return cleanAgentAssistantText(_rawCompletedText);
   }
 
   List<String> get quickReplies {
@@ -83,11 +76,24 @@ class AgentStreamEvent {
       payload['quickReplies'],
       _messageQuickReplies(raw['message']),
       _messageQuickReplies(payload['message']),
+      _quickRepliesFromText(_rawCompletedText),
     ]) {
       final replies = _quickReplyTexts(source);
       if (replies.isNotEmpty) return replies;
     }
     return const <String>[];
+  }
+
+  String? get _rawCompletedText {
+    if (type != 'message.completed') return null;
+    return stringField(raw, 'text') ??
+        stringField(payload, 'text') ??
+        _messageText(raw['content']) ??
+        _messageText(payload['content']) ??
+        _messageText(raw['message']) ??
+        _messageText(payload['message']) ??
+        _messagesText(raw['messages']) ??
+        _messagesText(payload['messages']);
   }
 
   String? get eventId =>
@@ -311,4 +317,172 @@ List<String> _quickReplyTexts(Object? rawReplies) {
 String? _nonEmpty(String? value) {
   if (value == null || value.trim().isEmpty) return null;
   return value;
+}
+
+String? cleanAgentAssistantText(String? value) {
+  final text = value?.trim();
+  if (text == null || text.isEmpty) return null;
+  final cleaned = _removeStructuredJsonChunks(text)
+      .replaceAll(RegExp(r'```(?:json)?\s*```', caseSensitive: false), '')
+      .replaceAll(
+        RegExp(
+          r'^\s*(快捷回复|推荐回复|quick replies|quick_replies|replies)\s*[:：]\s*$',
+          multiLine: true,
+          caseSensitive: false,
+        ),
+        '',
+      )
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+      .trim();
+  return cleaned.isEmpty ? null : cleaned;
+}
+
+Object? _quickRepliesFromText(String? value) {
+  final text = value?.trim();
+  if (text == null || text.isEmpty) return null;
+  var index = 0;
+  while (index < text.length) {
+    final char = text[index];
+    if (char == '{' || char == '[') {
+      final end = _balancedJsonEnd(text, index);
+      if (end != null) {
+        final decoded = _tryDecodeJson(text.substring(index, end));
+        final replies = _quickReplyTextsFromJsonValue(decoded);
+        if (replies != null && replies.isNotEmpty) return replies;
+        index = end;
+        continue;
+      }
+    }
+    index += 1;
+  }
+  return null;
+}
+
+String _removeStructuredJsonChunks(String text) {
+  final output = StringBuffer();
+  var index = 0;
+  while (index < text.length) {
+    final char = text[index];
+    if (char == '{' || char == '[') {
+      final end = _balancedJsonEnd(text, index);
+      if (end != null) {
+        final chunk = text.substring(index, end);
+        final decoded = _tryDecodeJson(chunk);
+        if (_looksLikeStructuredAgentJson(decoded)) {
+          final replacement = _textFromStructuredJson(decoded);
+          if (replacement != null && replacement.isNotEmpty) {
+            output.write(replacement);
+          }
+          index = end;
+          continue;
+        }
+      }
+    }
+    output.write(char);
+    index += 1;
+  }
+  return output.toString();
+}
+
+int? _balancedJsonEnd(String text, int start) {
+  final opening = text[start];
+  final stack = <String>[opening == '{' ? '}' : ']'];
+  var inString = false;
+  var escaped = false;
+  for (var index = start + 1; index < text.length; index += 1) {
+    final char = text[index];
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (char == '\\') {
+        escaped = true;
+      } else if (char == '"') {
+        inString = false;
+      }
+      continue;
+    }
+    if (char == '"') {
+      inString = true;
+    } else if (char == '{' || char == '[') {
+      stack.add(char == '{' ? '}' : ']');
+    } else if (stack.isNotEmpty && char == stack.last) {
+      stack.removeLast();
+      if (stack.isEmpty) return index + 1;
+    }
+  }
+  return null;
+}
+
+Object? _tryDecodeJson(String raw) {
+  try {
+    return jsonDecode(raw);
+  } on FormatException {
+    return null;
+  }
+}
+
+bool _looksLikeStructuredAgentJson(Object? value) {
+  if (value is List) {
+    return value.isNotEmpty &&
+        value.whereType<Object>().every(_looksLikeStructuredAgentJson);
+  }
+  if (value is! Map) return false;
+  final keys = value.keys.map((key) => key.toString()).toSet();
+  const structuredKeys = {
+    'tool_call_id',
+    'tool_name',
+    'safe_args',
+    'safe_output',
+    'service_skill_id',
+    'skill_version',
+    'tool_scope',
+    'business_facts',
+    'display_name',
+    'profile',
+    'quick_replies',
+    'quickReplies',
+    'replies',
+  };
+  if (keys.intersection(structuredKeys).isNotEmpty) return true;
+  final status = value['status']?.toString() ?? '';
+  return status == 'service_skill_loaded' ||
+      status == 'quick_replies_ready' ||
+      status.startsWith('needs_');
+}
+
+String? _textFromStructuredJson(Object? value) {
+  if (value is! Map) return null;
+  for (final key in [
+    'text',
+    'message',
+    'final_text',
+    'finalText',
+    'assistant_response',
+    'assistantResponse',
+    'response',
+  ]) {
+    final raw = value[key];
+    if (raw is String && raw.trim().isNotEmpty) return raw.trim();
+  }
+  return null;
+}
+
+List<String>? _quickReplyTextsFromJsonValue(Object? value) {
+  if (value is Map) {
+    for (final key in ['quick_replies', 'quickReplies', 'replies']) {
+      final replies = _quickReplyTexts(value[key]);
+      if (replies.isNotEmpty) return replies;
+    }
+    for (final item in value.values) {
+      final replies = _quickReplyTextsFromJsonValue(item);
+      if (replies != null) return replies;
+    }
+  }
+  if (value is List) {
+    for (final item in value) {
+      final replies = _quickReplyTextsFromJsonValue(item);
+      if (replies != null) return replies;
+    }
+  }
+  return null;
 }

@@ -3432,6 +3432,39 @@ milk_total: 120ml
     expect(find.text('正在读取奶量状态'), findsNothing);
   });
 
+  testWidgets('Agent loop status copy is vertically and horizontally aligned', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const Column(
+          children: [
+            AgentRunStatusLine(title: '我已经收到你的消息啦～'),
+            AgentThinkingNote(title: '我想一下'),
+          ],
+        ),
+      ),
+    );
+
+    final statusRow = tester.widget<Row>(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-run-status-line')),
+        matching: find.byType(Row),
+      ),
+    );
+    final thinkingPadding = tester.widget<Padding>(
+      find
+          .ancestor(
+            of: find.byKey(const ValueKey('agent-thinking-note')),
+            matching: find.byType(Padding),
+          )
+          .first,
+    );
+
+    expect(statusRow.crossAxisAlignment, CrossAxisAlignment.center);
+    expect(thinkingPadding.padding, const EdgeInsets.only(left: 16));
+  });
+
   testWidgets('Agent Hub clears thinking note on later labeled progress', (
     tester,
   ) async {

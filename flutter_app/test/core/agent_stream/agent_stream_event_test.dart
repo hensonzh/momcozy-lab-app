@@ -205,6 +205,34 @@ void main() {
       expect(result.completedText, isNull);
     });
 
+    test('strips structured tool JSON from assistant completed text', () {
+      final event = AgentStreamEvent(const {
+        'type': 'message.completed',
+        'payload': {
+          'role': 'assistant',
+          'text':
+              '我先帮你看一下。\n{"service_skill_id":"milk-management","status":"service_skill_loaded"}',
+        },
+      });
+
+      expect(event.completedText, '我先帮你看一下。');
+      expect(event.completedText, isNot(contains('service_skill_id')));
+    });
+
+    test('extracts quick replies from assistant text JSON fallback', () {
+      final event = AgentStreamEvent(const {
+        'type': 'message.completed',
+        'payload': {
+          'role': 'assistant',
+          'text':
+              '已经整理好了。\n{"quick_replies":[{"text":"继续聊这个"},{"text":"给我更多细节"},{"text":"换个方向"}]}',
+        },
+      });
+
+      expect(event.completedText, '已经整理好了。');
+      expect(event.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
+    });
+
     test('extracts quick replies from durable assistant messages', () {
       final durable = AgentStreamEvent(const {
         'type': 'message.completed',
