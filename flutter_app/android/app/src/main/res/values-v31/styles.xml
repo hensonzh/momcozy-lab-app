@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ always creates a system starting screen. Keep it visually
+         neutral so it does not look like a branded launch page. -->
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">#fbf6f4</item>
+        <item name="android:windowSplashScreenBackground">#fbf6f4</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/transparent_splash_icon</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#fbf6f4</item>
+    </style>
+</resources>

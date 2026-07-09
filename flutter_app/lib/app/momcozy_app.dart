@@ -460,6 +460,9 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   @override
   void didUpdateWidget(covariant MomCozyRouteShell oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.location == '/' && widget.location != '/') {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
     if (widget.location == '/') {
       _hasBuiltAgentHub = true;
     }
@@ -511,7 +514,10 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
       children: [
         Offstage(
           offstage: !isAgentRoute,
-          child: TickerMode(enabled: isAgentRoute, child: agentHub),
+          child: ExcludeFocus(
+            excluding: !isAgentRoute,
+            child: TickerMode(enabled: isAgentRoute, child: agentHub),
+          ),
         ),
         if (!isAgentRoute) Positioned.fill(child: widget.child),
       ],
