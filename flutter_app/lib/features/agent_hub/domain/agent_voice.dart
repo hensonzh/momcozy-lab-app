@@ -95,6 +95,7 @@ class AgentVoiceState {
     return AgentVoiceState(
       phase: AgentVoicePhase.error,
       transcriptDraft: transcriptDraft,
+      playbackId: playbackId,
       errorMessage: error.toString(),
     );
   }
