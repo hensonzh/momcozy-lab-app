@@ -40,6 +40,20 @@ class AgentStreamEvent {
     return const {};
   }
 
+  Map<String, Object?> get semantic {
+    for (final value in [payload['semantic'], raw['semantic']]) {
+      if (value is Map) return Map<String, Object?>.from(value);
+    }
+    return const {};
+  }
+
+  String? get semanticLabel =>
+      stringField(semantic, 'label') ?? stringField(semantic, 'title');
+  String? get semanticSurface => stringField(semantic, 'surface');
+  String? get semanticVisibility => stringField(semantic, 'visibility');
+  String? get semanticLifecycle => stringField(semantic, 'lifecycle');
+  String? get semanticMergeKey => stringField(semantic, 'merge_key');
+
   String? get textDelta {
     if (type != 'message.delta') return null;
     return stringField(raw, 'delta') ??

@@ -3191,7 +3191,11 @@ milk_total: 120ml
           'type': 'run.progress',
           'payload': {
             'label': '正在处理请求。',
-            'semantic': {'label': '我想一下', 'visibility': 'status'},
+            'semantic': {
+              'label': '我在组织回复～',
+              'surface': 'status_bar',
+              'visibility': 'status',
+            },
           },
         }),
       ],
@@ -3199,8 +3203,47 @@ milk_total: 120ml
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-    expect(find.text('我想一下'), findsOneWidget);
+    expect(find.text('我在组织回复～'), findsOneWidget);
     expect(find.text('正在处理请求。'), findsNothing);
+  });
+
+  testWidgets('Agent Hub keeps thinking note semantic out of status line', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({'type': 'run.started'}),
+        AgentStreamEvent({
+          'type': 'run.progress',
+          'payload': {
+            'label': '我想一下',
+            'semantic': {
+              'label': '我想一下',
+              'surface': 'thinking_note',
+              'visibility': 'hidden',
+            },
+          },
+        }),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-run-status-line')),
+        matching: find.text('我已经收到你的消息啦～'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-thinking-note')),
+        matching: find.text('我想一下'),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Agent Hub renders model reasoning as a thinking note', (
@@ -3266,6 +3309,41 @@ milk_total: 120ml
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('Agent Hub uses tool semantic labels for loop status', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({
+          'type': 'tool.started',
+          'payload': {
+            'tool_call_id': 'tool-milk-status',
+            'tool_name': 'records.milk_status.read',
+            'label': '奶量状态',
+            'semantic': {
+              'label': '我先看看今天的奶量状态～',
+              'surface': 'status_bar',
+              'lifecycle': 'running',
+            },
+          },
+        }),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-run-status-line')),
+        matching: find.text('我先看看今天的奶量状态～'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('正在读取奶量状态'), findsNothing);
   });
 
   testWidgets('Agent Hub clears thinking note on later labeled progress', (

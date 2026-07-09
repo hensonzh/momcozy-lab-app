@@ -6135,6 +6135,7 @@ String? _latestBackendStatusTitle(
       case 'run.started':
         return '我已经收到你的消息啦～';
       case 'run.progress':
+        if (event.semanticSurface == 'thinking_note') continue;
         final title = _visibleAgentStatusTitle(
           _firstNonEmpty([
             _stringField(event.payload, 'label'),
@@ -6167,6 +6168,10 @@ String? _latestBackendStatusTitle(
 
 String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
   for (final event in events.reversed) {
+    final semanticThinkingTitle = _semanticThinkingTitle(event);
+    if (semanticThinkingTitle != null) return semanticThinkingTitle;
+    if (_semanticClearsAgentThinking(event)) return null;
+
     if (event.type == 'run.progress') {
       final phase = _stringField(event.payload, 'phase')?.trim();
       if (phase == 'model_reasoning') return '我想一下';
@@ -6196,22 +6201,46 @@ bool _runProgressClearsAgentThinking(AgentStreamEvent event, String? phase) {
   );
 }
 
+bool _semanticClearsAgentThinking(AgentStreamEvent event) {
+  final semantic = event.semantic;
+  if (semantic.isEmpty) return false;
+  final surface = _stringField(semantic, 'surface')?.trim();
+  final visibility = _stringField(semantic, 'visibility')?.trim();
+  if (surface == 'thinking_note') return false;
+  if (surface == 'status_bar' || visibility == 'status') {
+    return _semanticDisplayTitle(semantic) != null;
+  }
+  final lifecycle = _stringField(semantic, 'lifecycle')?.trim();
+  return lifecycle == 'completed' || lifecycle == 'failed';
+}
+
 String? _semanticStatusTitle(AgentStreamEvent event) {
-  final payloadSemantic = _mapField(event.payload, 'semantic');
-  final rawSemantic = _mapField(event.raw, 'semantic');
-  for (final semantic in [payloadSemantic, rawSemantic]) {
-    if (semantic.isEmpty) continue;
-    final visibility = _stringField(semantic, 'visibility')?.trim();
-    if (visibility == 'hidden') continue;
-    final title = _visibleAgentStatusTitle(
-      _firstNonEmpty([
-        _stringField(semantic, 'label'),
-        _stringField(semantic, 'title'),
-      ]),
-    );
-    if (title != null) return title;
+  final semantic = event.semantic;
+  if (semantic.isEmpty) return null;
+  final surface = _stringField(semantic, 'surface')?.trim();
+  final visibility = _stringField(semantic, 'visibility')?.trim();
+  if (surface == 'thinking_note' || surface == 'hidden') return null;
+  if (surface == 'status_bar' || visibility == 'status') {
+    return _semanticDisplayTitle(semantic);
   }
   return null;
+}
+
+String? _semanticThinkingTitle(AgentStreamEvent event) {
+  final semantic = event.semantic;
+  if (semantic.isEmpty) return null;
+  final surface = _stringField(semantic, 'surface')?.trim();
+  if (surface != 'thinking_note') return null;
+  return _semanticDisplayTitle(semantic);
+}
+
+String? _semanticDisplayTitle(Map<String, Object?> semantic) {
+  return _visibleAgentStatusTitle(
+    _firstNonEmpty([
+      _stringField(semantic, 'label'),
+      _stringField(semantic, 'title'),
+    ]),
+  );
 }
 
 String? _phaseStatusTitle(AgentStreamEvent event) {
@@ -6284,6 +6313,7 @@ AgentRunWorkStep? _workStepFromEvent(AgentStreamEvent event) {
 
 AgentRunWorkStep? _progressStep(AgentStreamEvent event) {
   final title =
+      _semanticDisplayTitle(event.semantic) ??
       _firstNonEmpty([
         _stringField(event.payload, 'label'),
         _stringField(event.payload, 'message'),
@@ -6301,16 +6331,22 @@ AgentRunWorkStep? _progressStep(AgentStreamEvent event) {
 }
 
 AgentRunWorkStep _toolStep(AgentStreamEvent event) {
+  final semanticTitle = _semanticDisplayTitle(event.semantic);
+  final semanticLifecycle = event.semanticLifecycle?.trim();
   final subject = _toolSubject(event);
   final failed = _toolFailed(event);
-  final completed = event.type == 'tool.completed' && !failed;
+  final completed =
+      (semanticLifecycle == 'completed' || event.type == 'tool.completed') &&
+      !failed;
   return AgentRunWorkStep(
     id: event.mergeKey,
-    title: failed
-        ? '$subject暂时无法读取'
-        : completed
-        ? '$subject已读取'
-        : '正在读取$subject',
+    title:
+        semanticTitle ??
+        (failed
+            ? '$subject暂时无法读取'
+            : completed
+            ? '$subject已读取'
+            : '正在读取$subject'),
     status: completed
         ? AgentRunWorkStepStatus.completed
         : failed
