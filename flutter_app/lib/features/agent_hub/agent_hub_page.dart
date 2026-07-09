@@ -5317,11 +5317,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       AgentVoicePhase.listening => Icons.graphic_eq_rounded,
       AgentVoicePhase.transcribing => Icons.hourglass_bottom_rounded,
       AgentVoicePhase.playing => Icons.volume_up_outlined,
-      AgentVoicePhase.permissionDenied => Icons.mic_off_outlined,
-      AgentVoicePhase.error =>
-        widget.voicePlaybackFailed
-            ? Icons.volume_off_outlined
-            : Icons.mic_off_outlined,
       _ => Icons.mic_none_rounded,
     };
   }
@@ -5333,8 +5328,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       AgentVoicePhase.transcribing => '正在转写',
       AgentVoicePhase.playing => '正在播放语音',
       AgentVoicePhase.cancelled => '语音播放已停止',
-      AgentVoicePhase.permissionDenied => '麦克风权限未开启',
-      AgentVoicePhase.error => widget.voicePlaybackFailed ? '语音播放失败' : '语音输入失败',
       _ => '语音输入',
     };
   }
@@ -5345,8 +5338,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       AgentVoicePhase.transcribing => '正在整理语音',
       AgentVoicePhase.playing => null,
       AgentVoicePhase.cancelled => null,
-      AgentVoicePhase.permissionDenied => '麦克风权限未开启',
-      AgentVoicePhase.error => widget.voicePlaybackFailed ? '语音播放失败' : null,
       _ => null,
     };
   }
