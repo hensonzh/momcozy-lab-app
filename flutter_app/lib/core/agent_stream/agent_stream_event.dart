@@ -37,19 +37,43 @@ class AgentStreamEvent {
     return const {};
   }
 
-  String? get textDelta =>
-      stringField(raw, 'delta') ??
-      stringField(raw, 'text') ??
-      stringField(payload, 'delta') ??
-      stringField(payload, 'text');
-  String? get completedText =>
-      textDelta ??
-      _messageText(raw['content']) ??
-      _messageText(payload['content']) ??
-      _messageText(raw['message']) ??
-      _messageText(payload['message']) ??
-      _messagesText(raw['messages']) ??
-      _messagesText(payload['messages']);
+  String? get textDelta {
+    if (type != 'message.delta') return null;
+    return stringField(raw, 'delta') ??
+        stringField(raw, 'text') ??
+        stringField(payload, 'delta') ??
+        stringField(payload, 'text');
+  }
+
+  String? get completedText {
+    if (type != 'message.completed') return null;
+    return stringField(raw, 'text') ??
+        stringField(payload, 'text') ??
+        _messageText(raw['content']) ??
+        _messageText(payload['content']) ??
+        _messageText(raw['message']) ??
+        _messageText(payload['message']) ??
+        _messagesText(raw['messages']) ??
+        _messagesText(payload['messages']);
+  }
+
+  List<String> get quickReplies {
+    for (final source in [
+      raw['replies'],
+      raw['quick_replies'],
+      raw['quickReplies'],
+      payload['replies'],
+      payload['quick_replies'],
+      payload['quickReplies'],
+      _messageQuickReplies(raw['message']),
+      _messageQuickReplies(payload['message']),
+    ]) {
+      final replies = _quickReplyTexts(source);
+      if (replies.isNotEmpty) return replies;
+    }
+    return const <String>[];
+  }
+
   String? get eventId =>
       stringField(raw, 'event_id') ?? stringField(raw, 'eventId');
   int? get sequence {
@@ -198,6 +222,7 @@ String _normalizedEventType(Map<String, Object?> raw) {
     'TOOL_CALL_ARGS' => 'tool.progress',
     'TOOL_CALL_END' => 'tool.progress',
     'TOOL_CALL_RESULT' => 'tool.completed',
+    'QUICK_REPLIES' => 'quick_replies.created',
     'ARTIFACT_CREATED' => 'artifact.created',
     'CONFIRMATION_REQUIRED' => 'action.confirmation_required',
     'CUSTOM' when _isMomCozyStatusEvent(raw) => 'run.progress',
@@ -261,6 +286,31 @@ String? _messageText(Object? rawMessage) {
       _messageText(message['content']) ??
       _messageText(message['parts']) ??
       _messageText(message['text']);
+}
+
+Object? _messageQuickReplies(Object? rawMessage) {
+  if (rawMessage is! Map) return null;
+  final message = Map<String, Object?>.from(rawMessage);
+  return message['quick_replies'] ??
+      message['quickReplies'] ??
+      message['replies'];
+}
+
+List<String> _quickReplyTexts(Object? rawReplies) {
+  if (rawReplies is! List) return const <String>[];
+  final replies = <String>[];
+  final seen = <String>{};
+  for (final item in rawReplies) {
+    final text = switch (item) {
+      String value => value.trim(),
+      Map value => (value['text']?.toString() ?? '').trim(),
+      _ => '',
+    };
+    if (text.isEmpty || seen.contains(text)) continue;
+    seen.add(text);
+    replies.add(text);
+  }
+  return List<String>.unmodifiable(replies);
 }
 
 String? _nonEmpty(String? value) {

@@ -118,10 +118,7 @@ void main() {
         'run_id': 'run-stream-001',
         'transient': true,
         'cursor': '1720000000-0',
-        'payload': {
-          'delta': '正在生成',
-          'message_stream_id': 'assistant',
-        },
+        'payload': {'delta': '正在生成', 'message_stream_id': 'assistant'},
       });
 
       expect(event.isTransient, isTrue);
@@ -152,6 +149,54 @@ void main() {
 
       expect(started.mergeKey, 'tool:call-pump-001');
       expect(completed.mergeKey, started.mergeKey);
+    });
+
+    test('does not expose AG-UI tool payloads as assistant text', () {
+      final args = AgentStreamEvent(const {
+        'type': 'TOOL_CALL_ARGS',
+        'tool_call_id': 'call-profile',
+        'delta': '{"display_name":"henson"}',
+      });
+      final result = AgentStreamEvent(const {
+        'type': 'TOOL_CALL_RESULT',
+        'tool_call_id': 'call-skill',
+        'role': 'tool',
+        'content': '{"service_skill_id":"birth-prep"}',
+      });
+
+      expect(args.type, 'tool.progress');
+      expect(args.textDelta, isNull);
+      expect(args.completedText, isNull);
+      expect(result.type, 'tool.completed');
+      expect(result.textDelta, isNull);
+      expect(result.completedText, isNull);
+    });
+
+    test('normalizes quick replies from AG-UI and durable events', () {
+      final agUi = AgentStreamEvent(const {
+        'type': 'QUICK_REPLIES',
+        'message_id': 'msg-quick',
+        'replies': [
+          {'text': '看今日安排'},
+          {'text': '先不保存'},
+          {'text': '换简单版'},
+        ],
+      });
+      final durable = AgentStreamEvent(const {
+        'type': 'message.completed',
+        'payload': {
+          'role': 'assistant',
+          'text': '我整理好了。',
+          'quick_replies': [
+            {'text': '继续聊这个'},
+            {'text': '给我更多细节'},
+          ],
+        },
+      });
+
+      expect(agUi.type, 'quick_replies.created');
+      expect(agUi.quickReplies, ['看今日安排', '先不保存', '换简单版']);
+      expect(durable.quickReplies, ['继续聊这个', '给我更多细节']);
     });
 
     test('extracts completed text from durable message payloads', () {

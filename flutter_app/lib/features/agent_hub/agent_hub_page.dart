@@ -95,6 +95,7 @@ class AgentHubPage extends StatefulWidget {
     this.runner,
     this.cancelClient,
     this.actionClient,
+    this.clientEventClient,
     this.interactionStateStore,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
@@ -114,6 +115,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentStreamRunner? runner;
   final AgentStreamCancelClient? cancelClient;
   final AgentStreamActionClient? actionClient;
+  final AgentStreamClientEventClient? clientEventClient;
   final AgentHubInteractionStateStore? interactionStateStore;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
@@ -541,6 +543,42 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
     widget.onArtifactAction?.call(action);
+  }
+
+  void _handleQuickReplySelected(String text) {
+    final normalizedText = text.trim();
+    if (normalizedText.isEmpty || _state.isActive || _isComposerLocked) return;
+    _recordQuickReplyClicked(normalizedText);
+    unawaited(
+      _sendSyntheticUserMessage(
+        requestMessage: normalizedText,
+        optimisticContent: normalizedText,
+      ),
+    );
+  }
+
+  void _recordQuickReplyClicked(String text) {
+    final clientEventClient = widget.clientEventClient;
+    if (clientEventClient == null) return;
+    final metadata = <String, Object?>{
+      'quick_reply_text': text,
+      if (_state.threadId?.trim().isNotEmpty == true)
+        'thread_id': _state.threadId,
+      if (_state.runId?.trim().isNotEmpty == true) 'run_id': _state.runId,
+      if (_state.messageId?.trim().isNotEmpty == true)
+        'message_id': _state.messageId,
+    };
+    unawaited(
+      clientEventClient.post(
+        AgentStreamClientEventRequest(
+          eventType: 'ui.quick_reply.clicked',
+          label: text,
+          occurredAt: DateTime.now().toUtc().toIso8601String(),
+          locale: _activeRequest?.locale,
+          metadata: metadata,
+        ),
+      ),
+    );
   }
 
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
@@ -1154,6 +1192,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                         canRetry: _canRetry,
                                         onRetry: _retryRun,
                                         onArtifactAction: _handleArtifactAction,
+                                        onQuickReplySelected:
+                                            _handleQuickReplySelected,
                                         pendingActionIds: _pendingActionIds,
                                         localActionStatuses:
                                             _localActionStatuses,
@@ -1782,6 +1822,7 @@ class AgentRunTranscript extends StatelessWidget {
     this.canRetry = false,
     this.onRetry,
     this.onArtifactAction,
+    this.onQuickReplySelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
     this.onConfirmAction,
@@ -1793,6 +1834,7 @@ class AgentRunTranscript extends StatelessWidget {
   final bool canRetry;
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
+  final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
@@ -1812,6 +1854,11 @@ class AgentRunTranscript extends StatelessWidget {
       state.events,
       localActionStatuses,
     );
+    final quickReplies = state.quickReplies;
+    final shouldRenderQuickReplies =
+        quickReplies.isNotEmpty &&
+        !state.isActive &&
+        onQuickReplySelected != null;
     final avatarMode = _avatarMode;
     final thinkingNoteTitle = _thinkingNoteTitle;
     final statusLineTitle = _statusLineTitle(
@@ -1908,6 +1955,13 @@ class AgentRunTranscript extends StatelessWidget {
                   pendingActionIds: pendingActionIds,
                   onConfirm: onConfirmAction,
                   onReject: onRejectAction,
+                ),
+              ],
+              if (shouldRenderQuickReplies) ...[
+                const SizedBox(height: 12),
+                AgentQuickRepliesBar(
+                  replies: quickReplies,
+                  onSelected: onQuickReplySelected!,
                 ),
               ],
             ],
@@ -2016,6 +2070,58 @@ class AgentRunTranscript extends StatelessWidget {
     }
     if (state.isActive) return _AgentAssistantAvatarMode.thinking;
     return null;
+  }
+}
+
+class AgentQuickRepliesBar extends StatelessWidget {
+  const AgentQuickRepliesBar({
+    super.key,
+    required this.replies,
+    required this.onSelected,
+  });
+
+  final List<String> replies;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
+      color: const Color(0xff62434e),
+      fontWeight: FontWeight.w700,
+      height: 1.15,
+    );
+    return Wrap(
+      key: const ValueKey('agent-quick-replies'),
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (var index = 0; index < replies.length; index++)
+          ActionChip(
+            key: ValueKey('agent-quick-reply-$index'),
+            onPressed: () => onSelected(replies[index]),
+            visualDensity: VisualDensity.compact,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            backgroundColor: const Color(0xfffff7f8),
+            side: BorderSide(
+              color: colorScheme.primary.withValues(alpha: 0.18),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+            ),
+            labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+            label: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 180),
+              child: Text(
+                replies[index],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: textStyle,
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
 

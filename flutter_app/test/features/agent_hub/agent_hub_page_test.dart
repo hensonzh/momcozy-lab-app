@@ -444,6 +444,76 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub renders quick replies as selectable chips', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient([
+      AgentStreamEvent(const {
+        'event_id': 'evt-quick-message',
+        'type': 'message.completed',
+        'thread_id': 'thread-quick',
+        'run_id': 'run-quick',
+        'message_id': 'msg-quick',
+        'sequence': 1,
+        'payload': {
+          'role': 'assistant',
+          'text': '我整理好了。',
+          'quick_replies': [
+            {'text': '继续聊这个'},
+            {'text': '给我更多细节'},
+            {'text': '换个方向'},
+          ],
+        },
+      }),
+      AgentStreamEvent(const {
+        'event_id': 'evt-quick-completed',
+        'type': 'run.completed',
+        'thread_id': 'thread-quick',
+        'run_id': 'run-quick',
+        'message_id': 'msg-quick',
+        'sequence': 2,
+      }),
+    ]);
+    final recordedClientEvents = <Map<String, Object?>>[];
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          clientEventClient: AgentStreamClientEventClient(
+            recorder: recordedClientEvents.add,
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '给我一些建议',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('我整理好了。'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-quick-replies')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-quick-reply-0')), findsOneWidget);
+    expect(find.text('继续聊这个'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-quick-reply-0')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests, hasLength(2));
+    expect(client.requests.last.message, '继续聊这个');
+    expect(recordedClientEvents, hasLength(1));
+    expect(recordedClientEvents.single['event_type'], 'ui.quick_reply.clicked');
+    expect(recordedClientEvents.single['label'], '继续聊这个');
+    expect(
+      recordedClientEvents.single['metadata'],
+      containsPair('quick_reply_text', '继续聊这个'),
+    );
+  });
+
   testWidgets('Agent Hub reuses backend thread id across follow-up turns', (
     tester,
   ) async {
