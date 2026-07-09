@@ -127,7 +127,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
         );
       },
       child: MaterialApp.router(
-        title: 'Momcozy',
+        title: 'Momcozy Lab',
         theme: momCozyTheme(),
         routerConfig: _router,
         debugShowCheckedModeBanner: false,

@@ -2062,7 +2062,15 @@ MomCozyApiRuntime _appRuntime({
             'payload': <String, Object?>{},
           },
         }),
-    clientEventClient: clientEventClient,
+    clientEventClient:
+        clientEventClient ?? const AgentStreamClientEventClient(sent: false),
+    multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
+      'status': 200,
+      'data': <String, Object?>{
+        'text': '',
+        'audio_url': '/audio/test-voice.mp3',
+      },
+    }),
     blePlatform:
         blePlatform ??
         FakeBlePlatform(

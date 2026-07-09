@@ -56,6 +56,7 @@ void main() {
     'route shell keeps Agent Hub stream and voice alive across bottom tabs',
     (tester) async {
       final client = _ControllableAgentStreamClient();
+      final voicePlayer = _WidgetFakeVoicePlaybackPlayer();
       AgentVoicePlaybackCoordinator? shellCoordinator;
 
       await tester.pumpWidget(
@@ -68,6 +69,7 @@ void main() {
               stateCacheKey: runtime,
               runner: AgentStreamRunner(client),
               voicePlaybackCoordinator: voicePlaybackCoordinator,
+              voicePlaybackPlayer: voicePlayer,
               requestBuilder: (message) => AgentStreamRequest(message: message),
             );
           },
@@ -128,7 +130,8 @@ void main() {
           0,
           _agentEvent(id: 'evt-keep-4', type: 'run.completed', sequence: 4),
         );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump();
 
       expect(
         shellCoordinator?.activeSource,
@@ -137,7 +140,8 @@ void main() {
       expect(shellCoordinator?.activeId, 'msg-keep-alive');
 
       await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
       expect(
@@ -150,6 +154,9 @@ void main() {
         findsOneWidget,
       );
 
+      voicePlayer.complete();
+      await tester.pump();
+      await tester.pump();
       await client.dispose();
     },
   );
@@ -225,7 +232,8 @@ void main() {
         'agentAutoSend': true,
       },
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(client.requests, hasLength(1));
     expect(client.requests.single.message, '我已完成孕期计划事项，请继续同步孕期日记');
@@ -539,6 +547,28 @@ class _ControllableAgentStreamClient implements AgentStreamClient {
   Future<void> dispose() async {
     for (final controller in _controllers) {
       await controller.close();
+    }
+  }
+}
+
+class _WidgetFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
+  Completer<void>? _active;
+
+  @override
+  Future<void> playText(String text) {
+    _active = Completer<void>();
+    return _active!.future;
+  }
+
+  @override
+  Future<void> stop() async {
+    complete();
+  }
+
+  void complete() {
+    final active = _active;
+    if (active != null && !active.isCompleted) {
+      active.complete();
     }
   }
 }
