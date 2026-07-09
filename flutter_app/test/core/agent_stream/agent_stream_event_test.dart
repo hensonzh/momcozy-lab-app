@@ -127,6 +127,36 @@ void main() {
       expect(event.replayKey, 'event:delta:1720000000-0');
     });
 
+    test('exposes backend semantic metadata from payload or raw fields', () {
+      final payloadSemantic = AgentStreamEvent(const {
+        'type': 'run.progress',
+        'payload': {
+          'semantic': {
+            'label': '我在组织回复～',
+            'surface': 'status_bar',
+            'lifecycle': 'running',
+            'merge_key': 'progress:response_finalizing',
+          },
+        },
+      });
+      final rawSemantic = AgentStreamEvent(const {
+        'type': 'run.progress',
+        'semantic': {
+          'label': '我想一下',
+          'surface': 'thinking_note',
+          'visibility': 'hidden',
+        },
+      });
+
+      expect(payloadSemantic.semanticLabel, '我在组织回复～');
+      expect(payloadSemantic.semanticSurface, 'status_bar');
+      expect(payloadSemantic.semanticLifecycle, 'running');
+      expect(payloadSemantic.semanticMergeKey, 'progress:response_finalizing');
+      expect(rawSemantic.semanticLabel, '我想一下');
+      expect(rawSemantic.semanticSurface, 'thinking_note');
+      expect(rawSemantic.semanticVisibility, 'hidden');
+    });
+
     test('uses payload tool call ids as stable reducer keys', () {
       final started = AgentStreamEvent(const {
         'type': 'tool.started',
