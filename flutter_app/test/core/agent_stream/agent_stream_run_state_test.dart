@@ -260,6 +260,46 @@ data: {"type":"RUN_FINISHED","thread_id":"thread-ag-ui-001","run_id":"run-ag-ui-
       ]);
     });
 
+    test('keeps AG-UI tool JSON out of text and stores quick replies', () {
+      var state = const AgentStreamRunState().start();
+      final events = parseAgentEventStream('''
+id: 1
+data: {"type":"RUN_STARTED","thread_id":"thread-ag-ui-tools","run_id":"run-ag-ui-tools"}
+
+id: 2
+data: {"type":"TOOL_CALL_ARGS","tool_call_id":"call-profile","delta":"{\\"display_name\\":\\"henson\\"}"}
+
+id: 3
+data: {"type":"TOOL_CALL_RESULT","tool_call_id":"call-skill","role":"tool","content":"{\\"service_skill_id\\":\\"birth-prep\\"}"}
+
+id: 4
+data: {"type":"TEXT_MESSAGE_START","message_id":"msg-ag-ui-tools","role":"assistant"}
+
+id: 5
+data: {"type":"TEXT_MESSAGE_CONTENT","message_id":"msg-ag-ui-tools","delta":"你好 henson"}
+
+id: 6
+data: {"type":"TEXT_MESSAGE_END","message_id":"msg-ag-ui-tools","role":"assistant"}
+
+id: 7
+data: {"type":"QUICK_REPLIES","message_id":"msg-ag-ui-tools","replies":[{"text":"继续聊这个"},{"text":"给我更多细节"},{"text":"换个方向"}]}
+
+id: 8
+data: {"type":"RUN_FINISHED","thread_id":"thread-ag-ui-tools","run_id":"run-ag-ui-tools"}
+
+''');
+
+      for (final event in events) {
+        state = state.applyEvent(event);
+      }
+
+      expect(state.phase, AgentStreamRunPhase.finished);
+      expect(state.textContent, '你好 henson');
+      expect(state.textContent, isNot(contains('display_name')));
+      expect(state.textContent, isNot(contains('service_skill_id')));
+      expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
+    });
+
     test('maps run error events to retryable error state', () {
       var state = const AgentStreamRunState().start();
 

@@ -23,6 +23,7 @@ class AgentStreamRunState {
     this.toolEvents = const <String, AgentStreamEvent>{},
     this.artifactEvents = const <String, AgentStreamEvent>{},
     this.actionEvents = const <String, AgentStreamEvent>{},
+    this.quickReplies = const <String>[],
     this.lastSequence,
     this.errorMessage,
     this.cancelAcknowledged = false,
@@ -39,6 +40,7 @@ class AgentStreamRunState {
   final Map<String, AgentStreamEvent> toolEvents;
   final Map<String, AgentStreamEvent> artifactEvents;
   final Map<String, AgentStreamEvent> actionEvents;
+  final List<String> quickReplies;
   final int? lastSequence;
   final String? errorMessage;
   final bool cancelAcknowledged;
@@ -67,6 +69,7 @@ class AgentStreamRunState {
     final nextEvents = List<AgentStreamEvent>.unmodifiable([...events, event]);
     final nextText = _nextTextContent(event);
     final nextProvisionalText = _nextProvisionalTextContent(event);
+    final nextQuickReplies = _nextQuickReplies(event);
     final nextThreadId = event.threadId ?? threadId;
     final nextRunId = event.runId ?? runId;
     final nextMessageId = event.messageId ?? messageId;
@@ -97,6 +100,7 @@ class AgentStreamRunState {
         toolEvents: nextToolEvents,
         artifactEvents: nextArtifactEvents,
         actionEvents: nextActionEvents,
+        quickReplies: nextQuickReplies,
         lastSequence: nextSequence,
       );
     }
@@ -113,6 +117,7 @@ class AgentStreamRunState {
         toolEvents: nextToolEvents,
         artifactEvents: nextArtifactEvents,
         actionEvents: nextActionEvents,
+        quickReplies: nextQuickReplies,
         lastSequence: nextSequence,
         cancelAcknowledged: true,
       );
@@ -130,6 +135,7 @@ class AgentStreamRunState {
         toolEvents: nextToolEvents,
         artifactEvents: nextArtifactEvents,
         actionEvents: nextActionEvents,
+        quickReplies: nextQuickReplies,
         lastSequence: nextSequence,
       );
     }
@@ -146,6 +152,7 @@ class AgentStreamRunState {
         toolEvents: nextToolEvents,
         artifactEvents: nextArtifactEvents,
         actionEvents: nextActionEvents,
+        quickReplies: nextQuickReplies,
         lastSequence: nextSequence,
         errorMessage:
             stringField(event.raw, 'message') ??
@@ -167,6 +174,7 @@ class AgentStreamRunState {
       toolEvents: nextToolEvents,
       artifactEvents: nextArtifactEvents,
       actionEvents: nextActionEvents,
+      quickReplies: nextQuickReplies,
       lastSequence: nextSequence,
     );
   }
@@ -200,6 +208,16 @@ class AgentStreamRunState {
       return '';
     }
     return provisionalTextContent;
+  }
+
+  List<String> _nextQuickReplies(AgentStreamEvent event) {
+    final replies = event.quickReplies;
+    if (replies.isEmpty) return quickReplies;
+    if (event.type == 'quick_replies.created') return replies;
+    if (event.type == 'message.completed' && event.role != 'user') {
+      return replies;
+    }
+    return quickReplies;
   }
 
   bool _hasSeenReplayKey(AgentStreamEvent event) {
@@ -246,6 +264,7 @@ class AgentStreamRunState {
     Map<String, AgentStreamEvent>? toolEvents,
     Map<String, AgentStreamEvent>? artifactEvents,
     Map<String, AgentStreamEvent>? actionEvents,
+    List<String>? quickReplies,
     int? lastSequence,
     String? errorMessage,
     bool? cancelAcknowledged,
@@ -263,6 +282,7 @@ class AgentStreamRunState {
       toolEvents: toolEvents ?? this.toolEvents,
       artifactEvents: artifactEvents ?? this.artifactEvents,
       actionEvents: actionEvents ?? this.actionEvents,
+      quickReplies: quickReplies ?? this.quickReplies,
       lastSequence: lastSequence ?? this.lastSequence,
       errorMessage: errorMessage ?? this.errorMessage,
       cancelAcknowledged: cancelAcknowledged ?? this.cancelAcknowledged,
@@ -280,6 +300,7 @@ class AgentStreamRunState {
     if (textContent.isNotEmpty) 'textContent': textContent,
     if (provisionalTextContent.isNotEmpty)
       'provisionalTextContent': provisionalTextContent,
+    if (quickReplies.isNotEmpty) 'quickReplies': quickReplies,
     if (lastSequence != null) 'lastSequence': lastSequence,
     if (_hasValue(errorMessage)) 'errorMessage': errorMessage,
     if (cancelAcknowledged) 'cancelAcknowledged': cancelAcknowledged,
@@ -288,6 +309,9 @@ class AgentStreamRunState {
 
   static AgentStreamRunState fromMap(Map<String, Object?> map) {
     final events = _eventsFromRawList(map['events']);
+    final mappedQuickReplies = _strings(
+      map['quickReplies'] ?? map['quick_replies'],
+    );
     return AgentStreamRunState(
       phase: _phaseFromName(_string(map['phase'])),
       events: events,
@@ -299,6 +323,9 @@ class AgentStreamRunState {
       toolEvents: _indexedEvents(events, (event) => event.toolCallId),
       artifactEvents: _indexedEvents(events, (event) => event.artifactId),
       actionEvents: _indexedEvents(events, (event) => event.actionId),
+      quickReplies: mappedQuickReplies.isNotEmpty
+          ? mappedQuickReplies
+          : _latestQuickReplies(events),
       lastSequence: _int(map['lastSequence']) ?? _int(map['last_sequence']),
       errorMessage: _string(map['errorMessage']) ?? _string(map['error']),
       cancelAcknowledged: map['cancelAcknowledged'] == true,
@@ -341,6 +368,27 @@ int? _int(Object? value) {
   if (value is int) return value;
   if (value is String) return int.tryParse(value.trim());
   return null;
+}
+
+List<String> _strings(Object? value) {
+  if (value is! List) return const <String>[];
+  final strings = <String>[];
+  final seen = <String>{};
+  for (final item in value) {
+    final text = item?.toString().trim() ?? '';
+    if (text.isEmpty || seen.contains(text)) continue;
+    seen.add(text);
+    strings.add(text);
+  }
+  return List<String>.unmodifiable(strings);
+}
+
+List<String> _latestQuickReplies(List<AgentStreamEvent> events) {
+  for (final event in events.reversed) {
+    final replies = event.quickReplies;
+    if (replies.isNotEmpty) return replies;
+  }
+  return const <String>[];
 }
 
 AgentStreamRunPhase _phaseFromName(String? value) {
