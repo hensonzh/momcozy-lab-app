@@ -1223,7 +1223,8 @@ Widget _buildDefaultAgentHubPage(
 ) {
   final runtime = MomCozyRuntimeScope.of(context);
   String? currentAccessToken() {
-    return MomCozyRuntimeScope.read(context)?.session.accessToken ??
+    return runtime.currentSession.accessToken ??
+        MomCozyRuntimeScope.read(context)?.currentSession.accessToken ??
         runtime.session.accessToken;
   }
 
