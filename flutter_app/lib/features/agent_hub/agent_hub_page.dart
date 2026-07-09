@@ -5346,7 +5346,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       AgentVoicePhase.playing => null,
       AgentVoicePhase.cancelled => null,
       AgentVoicePhase.permissionDenied => '麦克风权限未开启',
-      AgentVoicePhase.error => widget.voicePlaybackFailed ? '语音播放失败' : '语音输入失败',
+      AgentVoicePhase.error => widget.voicePlaybackFailed ? '语音播放失败' : null,
       _ => null,
     };
   }
