@@ -15,18 +15,32 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_reader.dart';
 
 void main() {
-  test('Agent Hub animated avatar assets exist in the bundled asset tree', () {
+  late _FakeVideoPlayerPlatform videoPlayerPlatform;
+
+  setUp(() {
+    videoPlayerPlatform = _FakeVideoPlayerPlatform();
+    VideoPlayerPlatform.instance = videoPlayerPlatform;
+  });
+
+  test('Agent Hub animated avatar videos exist in the bundled asset tree', () {
     for (final asset in [
       MomCozyAssets.agentThinkingAvatar,
       MomCozyAssets.agentSpeakingAvatar,
     ]) {
+      expect(asset.endsWith('.mp4'), isTrue, reason: '$asset should use MP4');
       final file = File(asset);
       expect(file.existsSync(), isTrue, reason: '$asset should be committed');
       expect(file.lengthSync(), greaterThan(0));
+      expect(
+        File(asset.replaceFirst('.mp4', '.gif')).existsSync(),
+        isFalse,
+        reason: '$asset should replace the old GIF avatar asset',
+      );
     }
   });
 
@@ -127,6 +141,7 @@ void main() {
             textContent: '我整理好了，先看这个方案。',
           ),
         ),
+        tickersEnabled: true,
       ),
     );
 
@@ -174,20 +189,21 @@ void main() {
             textContent: 'I am checking your records.',
           ),
         ),
+        tickersEnabled: true,
       ),
     );
+    await tester.pump();
+    await tester.pump();
 
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-thinking-media')),
       findsOneWidget,
     );
-    final thinkingImage = tester.widget<Image>(
-      find.byKey(const ValueKey('agent-assistant-avatar-thinking-media')),
-    );
-    expect(
-      (thinkingImage.image as AssetImage).assetName,
+    expect(videoPlayerPlatform.createdAssets, [
       MomCozyAssets.agentThinkingAvatar,
-    );
+    ]);
+    expect(videoPlayerPlatform.loopingById.values, contains(true));
+    expect(videoPlayerPlatform.volumeById.values, contains(0));
     expect(
       MomCozyAssets.agentThinkingAvatar,
       isNot(MomCozyAssets.agentAwakenAvatar),
@@ -274,6 +290,53 @@ void main() {
     tester,
   ) async {
     final coordinator = AgentVoicePlaybackCoordinator();
+    final player = _PageFakeVoicePlaybackPlayer();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '上一轮建议。',
+            ),
+          ],
+          voicePlaybackCoordinator: coordinator,
+          voicePlaybackPlayer: player,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
+    expect(coordinator.activeId, 'agent-default-greeting');
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsOneWidget,
+    );
+
+    player.complete();
+    await tester.pump();
+    await tester.pump();
+
+    expect(coordinator.activeId, isNull);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-static')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Agent Hub keeps greeting avatar static without a voice player', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
 
     await tester.pumpWidget(
       _host(
@@ -292,12 +355,15 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
     await tester.pump();
 
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
-    expect(coordinator.activeId, 'agent-default-greeting');
+    expect(coordinator.activeId, isNull);
     expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      find.byKey(const ValueKey('agent-assistant-avatar-static')),
       findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsNothing,
     );
   });
 
@@ -337,6 +403,7 @@ void main() {
     tester,
   ) async {
     final coordinator = AgentVoicePlaybackCoordinator();
+    final player = _PageFakeVoicePlaybackPlayer();
     final client = _ControllableAgentStreamClient();
 
     await tester.pumpWidget(
@@ -350,6 +417,7 @@ void main() {
             ),
           ],
           voicePlaybackCoordinator: coordinator,
+          voicePlaybackPlayer: player,
         ),
       ),
     );
@@ -374,6 +442,7 @@ void main() {
     expect(client.requests, hasLength(1));
     expect(client.requests.single.message, '开始正式对话');
     expect(coordinator.activeId, isNull);
+    expect(player.stopCount, 1);
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsNothing,
@@ -1123,6 +1192,7 @@ void main() {
     tester,
   ) async {
     final coordinator = AgentVoicePlaybackCoordinator();
+    final player = _PageFakeVoicePlaybackPlayer();
     final client = _FixtureAgentStreamClient(
       parseAgentJsonl(
         readMigrationFixture('agent_events/text_stream_basic.jsonl'),
@@ -1134,7 +1204,9 @@ void main() {
         AgentHubPage(
           runner: AgentStreamRunner(client),
           voicePlaybackCoordinator: coordinator,
+          voicePlaybackPlayer: player,
         ),
+        tickersEnabled: true,
       ),
     );
 
@@ -1144,7 +1216,11 @@ void main() {
     );
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
+    await _pumpUntil(
+      tester,
+      () => coordinator.activeSource == AgentVoicePlaybackSource.autoReply,
+    );
+    await _pumpFrames(tester, 3);
 
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
     expect(coordinator.activeId, 'msg-reply-text-001');
@@ -1158,12 +1234,9 @@ void main() {
       find.byKey(const ValueKey('agent-assistant-avatar-speaking-media')),
       findsOneWidget,
     );
-    final speakingImage = tester.widget<Image>(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking-media')),
-    );
     expect(
-      (speakingImage.image as AssetImage).assetName,
-      MomCozyAssets.agentSpeakingAvatar,
+      videoPlayerPlatform.createdAssets,
+      contains(MomCozyAssets.agentSpeakingAvatar),
     );
     expect(
       MomCozyAssets.agentSpeakingAvatar,
@@ -1225,6 +1298,14 @@ void main() {
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking-media')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-static')),
+      findsWidgets,
     );
   });
 
@@ -1491,6 +1572,7 @@ void main() {
     'Agent Hub retries auto voice after notification voice becomes idle',
     (tester) async {
       final coordinator = AgentVoicePlaybackCoordinator();
+      final player = _PageFakeVoicePlaybackPlayer();
       final notification = coordinator.request(
         id: 'notification-1',
         source: AgentVoicePlaybackSource.notification,
@@ -1506,6 +1588,7 @@ void main() {
           AgentHubPage(
             runner: AgentStreamRunner(client),
             voicePlaybackCoordinator: coordinator,
+            voicePlaybackPlayer: player,
           ),
         ),
       );
@@ -1528,6 +1611,9 @@ void main() {
 
       expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
       expect(coordinator.activeId, 'msg-reply-text-001');
+      expect(player.playedTexts, [
+        "I can help you review today's pumping pattern.",
+      ]);
       expect(find.text('正在播放语音'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
@@ -3479,15 +3565,35 @@ milk_total: 120ml
   });
 }
 
-Widget _host(Widget child) {
+Widget _host(Widget child, {bool tickersEnabled = false}) {
   return TickerMode(
-    enabled: false,
+    enabled: tickersEnabled,
     child: MaterialApp(
       theme: momCozyTheme(),
       debugShowCheckedModeBanner: false,
       home: Scaffold(body: SafeArea(child: child)),
     ),
   );
+}
+
+Future<void> _pumpFrames(WidgetTester tester, int count) async {
+  for (var i = 0; i < count; i += 1) {
+    await tester.pump();
+  }
+}
+
+Future<void> _pumpUntil(
+  WidgetTester tester,
+  bool Function() condition, {
+  int maxFrames = 80,
+}) async {
+  for (var i = 0; i < maxFrames; i += 1) {
+    if (condition()) return;
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  if (!condition()) {
+    fail('Condition was not met after $maxFrames pumped frames.');
+  }
 }
 
 void _expectComposerControlsInsideSurface(WidgetTester tester) {
@@ -3801,5 +3907,115 @@ class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
     if (active != null && !active.isCompleted) {
       active.complete();
     }
+  }
+}
+
+class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
+  var _nextPlayerId = 1;
+  final createdAssets = <String>[];
+  final playedIds = <int>[];
+  final disposedIds = <int>[];
+  final loopingById = <int, bool>{};
+  final volumeById = <int, double>{};
+  final _eventsById = <int, StreamController<VideoEvent>>{};
+
+  @override
+  Future<void> init() async {}
+
+  @override
+  Future<int?> create(DataSource dataSource) async {
+    return _create(dataSource);
+  }
+
+  @override
+  Future<int?> createWithOptions(VideoCreationOptions options) async {
+    return _create(options.dataSource);
+  }
+
+  Future<int> _create(DataSource dataSource) async {
+    final playerId = _nextPlayerId++;
+    createdAssets.add(dataSource.asset ?? dataSource.uri ?? '');
+    late final StreamController<VideoEvent> events;
+    events = StreamController<VideoEvent>.broadcast(
+      onListen: () {
+        scheduleMicrotask(() {
+          if (!events.isClosed) {
+            events.add(
+              VideoEvent(
+                eventType: VideoEventType.initialized,
+                duration: const Duration(seconds: 1),
+                size: const Size(32, 32),
+              ),
+            );
+          }
+        });
+      },
+    );
+    _eventsById[playerId] = events;
+    return playerId;
+  }
+
+  @override
+  Stream<VideoEvent> videoEventsFor(int playerId) {
+    return _eventsById[playerId]?.stream ?? const Stream<VideoEvent>.empty();
+  }
+
+  @override
+  Widget buildView(int playerId) {
+    return SizedBox.expand(key: ValueKey('fake-video-player-view-$playerId'));
+  }
+
+  @override
+  Widget buildViewWithOptions(VideoViewOptions options) {
+    return buildView(options.playerId);
+  }
+
+  @override
+  Future<void> setLooping(int playerId, bool looping) async {
+    loopingById[playerId] = looping;
+  }
+
+  @override
+  Future<void> setVolume(int playerId, double volume) async {
+    volumeById[playerId] = volume;
+  }
+
+  @override
+  Future<void> play(int playerId) async {
+    playedIds.add(playerId);
+    _eventsById[playerId]?.add(
+      VideoEvent(
+        eventType: VideoEventType.isPlayingStateUpdate,
+        isPlaying: true,
+      ),
+    );
+  }
+
+  @override
+  Future<void> pause(int playerId) async {
+    _eventsById[playerId]?.add(
+      VideoEvent(
+        eventType: VideoEventType.isPlayingStateUpdate,
+        isPlaying: false,
+      ),
+    );
+  }
+
+  @override
+  Future<void> seekTo(int playerId, Duration position) async {}
+
+  @override
+  Future<void> setPlaybackSpeed(int playerId, double speed) async {}
+
+  @override
+  Future<Duration> getPosition(int playerId) async => Duration.zero;
+
+  @override
+  Future<void> setMixWithOthers(bool mixWithOthers) async {}
+
+  @override
+  Future<void> dispose(int playerId) async {
+    disposedIds.add(playerId);
+    await _eventsById.remove(playerId)?.close();
   }
 }
