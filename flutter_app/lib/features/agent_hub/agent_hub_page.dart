@@ -1847,7 +1847,6 @@ class AgentRunTranscript extends StatelessWidget {
         state.phase == AgentStreamRunPhase.idle &&
         state.textContent.trim().isEmpty;
     final text = _primaryText;
-    final workSteps = _workStepsFromEvents(state.events);
     final artifactCards = _artifactCardsFromEvents(state.events);
     final actionCards = _actionCardsFromEvents(
       state.events,
@@ -1859,11 +1858,9 @@ class AgentRunTranscript extends StatelessWidget {
         !state.isActive &&
         onQuickReplySelected != null;
     final avatarMode = _avatarMode;
-    final thinkingNoteTitle = _thinkingNoteTitle;
-    final statusLineTitle = _statusLineTitle(
-      workSteps,
-      suppressedTitle: thinkingNoteTitle,
-    );
+    final loopDecor = _loopDecorState;
+    final thinkingNoteTitle = loopDecor.thinkingTitle;
+    final statusLineTitle = loopDecor.statusTitle;
     final shouldRenderPrimaryText = _shouldRenderPrimaryText;
     final primaryTextStyle = textTheme.bodyMedium?.copyWith(
       height: 1.40,
@@ -1891,12 +1888,7 @@ class AgentRunTranscript extends StatelessWidget {
                   const SizedBox(height: 5),
               ],
               if (thinkingNoteTitle != null) ...[
-                AgentThinkingNote(
-                  key: ValueKey(
-                    _agentThinkingNoteWidgetKey(state, thinkingNoteTitle),
-                  ),
-                  title: thinkingNoteTitle,
-                ),
+                AgentThinkingNote(title: thinkingNoteTitle),
                 if (shouldRenderPrimaryText) const SizedBox(height: 8),
               ],
               if (shouldRenderPrimaryText)
@@ -1987,37 +1979,12 @@ class AgentRunTranscript extends StatelessWidget {
     return true;
   }
 
-  String? get _thinkingNoteTitle {
+  _AgentLoopDecorState get _loopDecorState {
     if (state.phase != AgentStreamRunPhase.streaming ||
         state.textContent.trim().isNotEmpty) {
-      return null;
+      return const _AgentLoopDecorState();
     }
-    return _activeAgentThinkingTitle(state.events);
-  }
-
-  String? _statusLineTitle(
-    List<AgentRunWorkStep> workSteps, {
-    String? suppressedTitle,
-  }) {
-    if (state.phase != AgentStreamRunPhase.streaming ||
-        state.textContent.trim().isNotEmpty) {
-      return null;
-    }
-    final backendStatusTitle = _latestBackendStatusTitle(
-      state.events,
-      suppressedTitle: suppressedTitle,
-    );
-    if (backendStatusTitle != null) return backendStatusTitle;
-    for (final step in workSteps.reversed) {
-      if (step.status == AgentRunWorkStepStatus.running ||
-          step.status == AgentRunWorkStepStatus.waiting) {
-        final title = _visibleAgentStatusTitle(step.title);
-        if (title != null && title.isNotEmpty && title != suppressedTitle) {
-          return title;
-        }
-      }
-    }
-    return '我已经收到你的消息啦～';
+    return _agentLoopDecorStateFromEvents(state.events);
   }
 
   String? get _supportingText {
@@ -2650,11 +2617,8 @@ class AgentThinkingNote extends StatefulWidget {
 class _AgentThinkingNoteState extends State<AgentThinkingNote>
     with SingleTickerProviderStateMixin {
   static const _sweepDuration = Duration(milliseconds: 760);
-  static const _visibleDuration = Duration(milliseconds: 2200);
 
   late final AnimationController _sweepController;
-  Timer? _hideTimer;
-  bool _visible = true;
 
   @override
   void initState() {
@@ -2663,38 +2627,16 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
       vsync: this,
       duration: _sweepDuration,
     )..repeat();
-    _scheduleHide();
-  }
-
-  @override
-  void didUpdateWidget(covariant AgentThinkingNote oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.title == widget.title) return;
-    _visible = true;
-    _scheduleHide();
-  }
-
-  void _scheduleHide() {
-    _hideTimer?.cancel();
-    _hideTimer = Timer(_visibleDuration, () {
-      if (!mounted) return;
-      setState(() {
-        _visible = false;
-      });
-    });
   }
 
   @override
   void dispose() {
-    _hideTimer?.cancel();
     _sweepController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_visible) return const SizedBox.shrink();
-
     final textTheme = Theme.of(context).textTheme;
     return Semantics(
       label: widget.title,
@@ -2956,20 +2898,6 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
     );
   }
 }
-
-class AgentRunWorkStep {
-  const AgentRunWorkStep({
-    required this.id,
-    required this.title,
-    required this.status,
-  });
-
-  final String id;
-  final String title;
-  final AgentRunWorkStepStatus status;
-}
-
-enum AgentRunWorkStepStatus { running, completed, waiting, failed }
 
 class AgentArtifactPanel extends StatelessWidget {
   const AgentArtifactPanel({super.key, required this.cards, this.onAction});
@@ -6267,50 +6195,49 @@ String? _safeAgentErrorText(String? errorMessage) {
   return normalized;
 }
 
-String? _latestBackendStatusTitle(
-  List<AgentStreamEvent> events, {
-  String? suppressedTitle,
-}) {
+class _AgentLoopDecorState {
+  const _AgentLoopDecorState({this.statusTitle, this.thinkingTitle});
+
+  final String? statusTitle;
+  final String? thinkingTitle;
+}
+
+_AgentLoopDecorState _agentLoopDecorStateFromEvents(
+  List<AgentStreamEvent> events,
+) {
+  return _AgentLoopDecorState(
+    statusTitle: _activeAgentStatusTitle(events),
+    thinkingTitle: _activeAgentThinkingTitle(events),
+  );
+}
+
+String? _activeAgentStatusTitle(List<AgentStreamEvent> events) {
   for (final event in events.reversed) {
+    if (_eventStopsAgentLoopDecor(event)) return null;
+
     final semanticTitle = _semanticStatusTitle(event);
-    if (semanticTitle != null && semanticTitle != suppressedTitle) {
-      return semanticTitle;
-    }
+    if (semanticTitle != null) return semanticTitle;
 
     switch (event.type) {
       case 'run.queued':
       case 'run.started':
         return '我已经收到你的消息啦～';
       case 'run.progress':
-        if (event.semanticSurface == 'thinking_note') continue;
+        if (_isThinkingProgressEvent(event)) continue;
         final title = _visibleAgentStatusTitle(
           _firstNonEmpty([
             _stringField(event.payload, 'label'),
             _stringField(event.payload, 'message'),
-            _phaseStatusTitle(event),
+            _runProgressStatusTitle(event),
           ]),
         );
-        if (title != null && title != suppressedTitle) return title;
+        if (title != null) return title;
         continue;
-      case 'tool.started':
-      case 'tool.progress':
-        final title = _visibleAgentStatusTitle(_toolStep(event).title);
-        if (title != null && title != suppressedTitle) return title;
+      default:
         continue;
-      case 'tool.completed':
-        return '我接着处理下一步';
-      case 'artifact.created':
-      case 'artifact.updated':
-        return '我接着处理下一步';
-      case 'message.delta':
-      case 'message.completed':
-      case 'run.completed':
-      case 'run.failed':
-      case 'run.cancelled':
-        break;
     }
   }
-  return null;
+  return '我已经收到你的消息啦～';
 }
 
 String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
@@ -6321,75 +6248,51 @@ String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
 
     if (event.type == 'run.progress') {
       final phase = _stringField(event.payload, 'phase')?.trim();
-      if (phase == 'model_reasoning') return '我想一下';
-      if (_runProgressClearsAgentThinking(event, phase)) return null;
-    }
-
-    if (event.type == 'message.delta' ||
-        event.type == 'message.completed' ||
-        event.type == 'run.completed' ||
-        event.type == 'run.failed' ||
-        event.type == 'run.cancelled') {
-      return null;
-    }
-  }
-  return null;
-}
-
-String _agentThinkingNoteWidgetKey(
-  AgentStreamRunState state,
-  String thinkingNoteTitle,
-) {
-  final runScope = _firstNonEmpty([
-    state.messageId,
-    state.runId,
-    state.threadId,
-  ]);
-  final eventScope =
-      _activeAgentThinkingEventToken(state.events) ??
-      'events:${state.events.length}';
-  return [runScope ?? 'local', eventScope, thinkingNoteTitle].join('|');
-}
-
-String? _activeAgentThinkingEventToken(List<AgentStreamEvent> events) {
-  for (var index = events.length - 1; index >= 0; index -= 1) {
-    final event = events[index];
-    if (_semanticThinkingTitle(event) != null) {
-      return _agentStreamEventToken(event, index);
-    }
-    if (_semanticClearsAgentThinking(event)) return null;
-
-    if (event.type == 'run.progress') {
-      final phase = _stringField(event.payload, 'phase')?.trim();
       if (phase == 'model_reasoning') {
-        return _agentStreamEventToken(event, index);
+        return _visibleAgentStatusTitle(
+              _firstNonEmpty([
+                _stringField(event.payload, 'label'),
+                _stringField(event.payload, 'message'),
+              ]),
+            ) ??
+            '我想一下';
+      }
+      if (phase == 'model_reasoning_after_tool') {
+        return _visibleAgentStatusTitle(
+              _firstNonEmpty([
+                _stringField(event.payload, 'label'),
+                _stringField(event.payload, 'message'),
+              ]),
+            ) ??
+            '我接着处理下一步';
       }
       if (_runProgressClearsAgentThinking(event, phase)) return null;
     }
 
-    if (event.type == 'message.delta' ||
-        event.type == 'message.completed' ||
-        event.type == 'run.completed' ||
-        event.type == 'run.failed' ||
-        event.type == 'run.cancelled') {
-      return null;
-    }
+    if (_eventStopsAgentLoopDecor(event)) return null;
   }
   return null;
 }
 
-String _agentStreamEventToken(AgentStreamEvent event, int index) {
-  final replayKey = event.replayKey;
-  if (replayKey != null && replayKey.isNotEmpty) return replayKey;
-  final eventId = event.eventId;
-  if (eventId != null && eventId.isNotEmpty) return 'event:$eventId';
-  final sequence = event.sequence;
-  if (sequence != null) return 'sequence:$sequence';
-  return 'index:$index';
+bool _eventStopsAgentLoopDecor(AgentStreamEvent event) {
+  return event.type == 'message.delta' ||
+      event.type == 'message.completed' ||
+      event.type == 'run.completed' ||
+      event.type == 'run.failed' ||
+      event.type == 'run.cancelled';
+}
+
+bool _isThinkingProgressEvent(AgentStreamEvent event) {
+  if (event.semanticSurface == 'thinking_note') return true;
+  if (event.type != 'run.progress') return false;
+  final phase = _stringField(event.payload, 'phase')?.trim();
+  return phase == 'model_reasoning' || phase == 'model_reasoning_after_tool';
 }
 
 bool _runProgressClearsAgentThinking(AgentStreamEvent event, String? phase) {
-  if (phase != null && phase.isNotEmpty) return true;
+  if (phase != null && phase.isNotEmpty) {
+    return phase != 'model_reasoning' && phase != 'model_reasoning_after_tool';
+  }
   final statusCandidates = [
     _semanticStatusTitle(event),
     _stringField(event.payload, 'label'),
@@ -6442,12 +6345,11 @@ String? _semanticDisplayTitle(Map<String, Object?> semantic) {
   );
 }
 
-String? _phaseStatusTitle(AgentStreamEvent event) {
+String? _runProgressStatusTitle(AgentStreamEvent event) {
   final phase = _stringField(event.payload, 'phase')?.trim();
   return switch (phase) {
     'context_loading' => '我已经收到你的消息啦～',
     'context_ready' => '我看一下你的信息',
-    'model_reasoning' => '我想一下',
     'response_finalizing' => '我在组织回复～',
     _ => null,
   };
@@ -6472,152 +6374,6 @@ String? _visibleAgentStatusTitle(String? value) {
     'CozyMate 正在思考怎么帮你' => '我想一下',
     '正在整理回复' => '我在组织回复～',
     _ => normalized,
-  };
-}
-
-List<AgentRunWorkStep> _workStepsFromEvents(List<AgentStreamEvent> events) {
-  final steps = <String, AgentRunWorkStep>{};
-
-  for (final event in events) {
-    final step = _workStepFromEvent(event);
-    if (step != null) steps[step.id] = step;
-  }
-
-  return List<AgentRunWorkStep>.unmodifiable(steps.values);
-}
-
-AgentRunWorkStep? _workStepFromEvent(AgentStreamEvent event) {
-  return switch (event.type) {
-    'run.queued' || 'run.started' => _progressStep(event),
-    'run.progress' => _progressStep(event),
-    'tool.started' ||
-    'tool.progress' ||
-    'tool.completed' ||
-    'tool.failed' => _toolStep(event),
-    'artifact.created' || 'artifact.updated' => _artifactStep(event),
-    'action.proposed' ||
-    'action.confirmation_required' ||
-    'action.queued' ||
-    'action.applied' ||
-    'action.failed' ||
-    'action.rejected' => _actionStep(event),
-    'run.failed' || 'error' => AgentRunWorkStep(
-      id: event.mergeKey,
-      title: '处理遇到问题',
-      status: AgentRunWorkStepStatus.failed,
-    ),
-    _ => null,
-  };
-}
-
-AgentRunWorkStep? _progressStep(AgentStreamEvent event) {
-  final title =
-      _semanticDisplayTitle(event.semantic) ??
-      _firstNonEmpty([
-        _stringField(event.payload, 'label'),
-        _stringField(event.payload, 'message'),
-      ]) ??
-      switch (event.type) {
-        'run.queued' => '正在排队准备',
-        'run.started' => '我已经收到你的消息啦～',
-        _ => '正在处理',
-      };
-  return AgentRunWorkStep(
-    id: event.mergeKey,
-    title: title,
-    status: AgentRunWorkStepStatus.running,
-  );
-}
-
-AgentRunWorkStep _toolStep(AgentStreamEvent event) {
-  final semanticTitle = _semanticDisplayTitle(event.semantic);
-  final semanticLifecycle = event.semanticLifecycle?.trim();
-  final subject = _toolSubject(event);
-  final failed = _toolFailed(event);
-  final completed =
-      (semanticLifecycle == 'completed' || event.type == 'tool.completed') &&
-      !failed;
-  return AgentRunWorkStep(
-    id: event.mergeKey,
-    title:
-        semanticTitle ??
-        (failed
-            ? '$subject暂时无法读取'
-            : completed
-            ? '$subject已读取'
-            : '正在读取$subject'),
-    status: completed
-        ? AgentRunWorkStepStatus.completed
-        : failed
-        ? AgentRunWorkStepStatus.failed
-        : AgentRunWorkStepStatus.running,
-  );
-}
-
-bool _toolFailed(AgentStreamEvent event) {
-  if (event.type == 'tool.failed') {
-    return true;
-  }
-  if (event.raw['is_error'] == true || event.raw['error'] is Map) return true;
-  final status =
-      stringField(event.raw, 'status')?.toLowerCase() ??
-      stringField(event.payload, 'status')?.toLowerCase();
-  return status == 'error' || status == 'failed';
-}
-
-AgentRunWorkStep _artifactStep(AgentStreamEvent event) {
-  final artifactId =
-      stringField(event.raw, 'artifact_id') ??
-      stringField(event.payload, 'artifact_id') ??
-      stringField(event.raw, 'artifactId');
-  return AgentRunWorkStep(
-    id: artifactId == null || artifactId.isEmpty
-        ? event.mergeKey
-        : 'artifact:$artifactId',
-    title: '已生成${_artifactSubject(event)}',
-    status: AgentRunWorkStepStatus.completed,
-  );
-}
-
-AgentRunWorkStep _actionStep(AgentStreamEvent event) {
-  final actionId =
-      stringField(event.raw, 'action_id') ??
-      stringField(event.payload, 'action_id') ??
-      stringField(event.raw, 'confirmation_id');
-  final status = _actionStatus(event);
-  return AgentRunWorkStep(
-    id: actionId == null || actionId.isEmpty
-        ? event.mergeKey
-        : 'action:$actionId',
-    title: switch (status) {
-      'queued' => '动作已提交',
-      'applied' => '动作已应用',
-      'rejected' => '动作已拒绝',
-      'failed' => '动作处理失败',
-      _ => '需要确认后继续',
-    },
-    status: switch (status) {
-      'queued' || 'applied' => AgentRunWorkStepStatus.completed,
-      'rejected' => AgentRunWorkStepStatus.completed,
-      'failed' => AgentRunWorkStepStatus.failed,
-      _ => AgentRunWorkStepStatus.waiting,
-    },
-  );
-}
-
-String _toolSubject(AgentStreamEvent event) {
-  final label = _stringField(event.payload, 'label');
-  if (label != null && label.trim().isNotEmpty) return label.trim();
-  return switch (_firstNonEmpty([
-    stringField(event.raw, 'tool_name'),
-    stringField(event.payload, 'tool_name'),
-    stringField(event.raw, 'tool_call_name'),
-  ])) {
-    'pump_session_summary_query' => '泵奶记录',
-    'growth_record_query' => '成长记录',
-    'feeding_record_query' => '喂养记录',
-    'schedule_query' => '计划信息',
-    _ => '相关信息',
   };
 }
 
