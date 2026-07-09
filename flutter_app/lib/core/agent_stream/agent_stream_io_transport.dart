@@ -533,6 +533,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
             'after_sequence': afterSequence.toString(),
             'follow': 'true',
             'limit': '200',
+            'poll_interval_seconds': '0.01',
           },
         );
 
