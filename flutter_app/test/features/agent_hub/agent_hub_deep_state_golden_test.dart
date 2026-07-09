@@ -165,7 +165,7 @@ Future<void> _pumpAgentHub(WidgetTester tester, Widget child) async {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           backgroundColor: MomCozyColors.background,
-          body: SafeArea(child: child),
+          body: SafeArea(child: TickerMode(enabled: false, child: child)),
         ),
       ),
     ),
