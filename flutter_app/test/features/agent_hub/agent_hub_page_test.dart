@@ -3465,6 +3465,34 @@ milk_total: 120ml
     expect(thinkingPadding.padding, const EdgeInsets.only(left: 16));
   });
 
+  testWidgets('Agent thinking note is a short-lived hint', (tester) async {
+    await tester.pumpWidget(
+      _host(
+        const AgentThinkingNote(
+          key: ValueKey('thinking-note-one'),
+          title: '我想一下',
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-thinking-note')), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 2201));
+
+    expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
+
+    await tester.pumpWidget(
+      _host(
+        const AgentThinkingNote(
+          key: ValueKey('thinking-note-two'),
+          title: '我想一下',
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-thinking-note')), findsOneWidget);
+  });
+
   testWidgets('Agent Hub clears thinking note on later labeled progress', (
     tester,
   ) async {

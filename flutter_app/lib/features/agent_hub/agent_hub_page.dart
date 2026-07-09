@@ -1891,7 +1891,12 @@ class AgentRunTranscript extends StatelessWidget {
                   const SizedBox(height: 5),
               ],
               if (thinkingNoteTitle != null) ...[
-                AgentThinkingNote(title: thinkingNoteTitle),
+                AgentThinkingNote(
+                  key: ValueKey(
+                    _agentThinkingNoteWidgetKey(state, thinkingNoteTitle),
+                  ),
+                  title: thinkingNoteTitle,
+                ),
                 if (shouldRenderPrimaryText) const SizedBox(height: 8),
               ],
               if (shouldRenderPrimaryText)
@@ -2644,25 +2649,52 @@ class AgentThinkingNote extends StatefulWidget {
 
 class _AgentThinkingNoteState extends State<AgentThinkingNote>
     with SingleTickerProviderStateMixin {
+  static const _sweepDuration = Duration(milliseconds: 760);
+  static const _visibleDuration = Duration(milliseconds: 2200);
+
   late final AnimationController _sweepController;
+  Timer? _hideTimer;
+  bool _visible = true;
 
   @override
   void initState() {
     super.initState();
     _sweepController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1350),
+      duration: _sweepDuration,
     )..repeat();
+    _scheduleHide();
+  }
+
+  @override
+  void didUpdateWidget(covariant AgentThinkingNote oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.title == widget.title) return;
+    _visible = true;
+    _scheduleHide();
+  }
+
+  void _scheduleHide() {
+    _hideTimer?.cancel();
+    _hideTimer = Timer(_visibleDuration, () {
+      if (!mounted) return;
+      setState(() {
+        _visible = false;
+      });
+    });
   }
 
   @override
   void dispose() {
+    _hideTimer?.cancel();
     _sweepController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_visible) return const SizedBox.shrink();
+
     final textTheme = Theme.of(context).textTheme;
     return Semantics(
       label: widget.title,
@@ -6302,6 +6334,58 @@ String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
     }
   }
   return null;
+}
+
+String _agentThinkingNoteWidgetKey(
+  AgentStreamRunState state,
+  String thinkingNoteTitle,
+) {
+  final runScope = _firstNonEmpty([
+    state.messageId,
+    state.runId,
+    state.threadId,
+  ]);
+  final eventScope =
+      _activeAgentThinkingEventToken(state.events) ??
+      'events:${state.events.length}';
+  return [runScope ?? 'local', eventScope, thinkingNoteTitle].join('|');
+}
+
+String? _activeAgentThinkingEventToken(List<AgentStreamEvent> events) {
+  for (var index = events.length - 1; index >= 0; index -= 1) {
+    final event = events[index];
+    if (_semanticThinkingTitle(event) != null) {
+      return _agentStreamEventToken(event, index);
+    }
+    if (_semanticClearsAgentThinking(event)) return null;
+
+    if (event.type == 'run.progress') {
+      final phase = _stringField(event.payload, 'phase')?.trim();
+      if (phase == 'model_reasoning') {
+        return _agentStreamEventToken(event, index);
+      }
+      if (_runProgressClearsAgentThinking(event, phase)) return null;
+    }
+
+    if (event.type == 'message.delta' ||
+        event.type == 'message.completed' ||
+        event.type == 'run.completed' ||
+        event.type == 'run.failed' ||
+        event.type == 'run.cancelled') {
+      return null;
+    }
+  }
+  return null;
+}
+
+String _agentStreamEventToken(AgentStreamEvent event, int index) {
+  final replayKey = event.replayKey;
+  if (replayKey != null && replayKey.isNotEmpty) return replayKey;
+  final eventId = event.eventId;
+  if (eventId != null && eventId.isNotEmpty) return 'event:$eventId';
+  final sequence = event.sequence;
+  if (sequence != null) return 'sequence:$sequence';
+  return 'index:$index';
 }
 
 bool _runProgressClearsAgentThinking(AgentStreamEvent event, String? phase) {
