@@ -85,6 +85,32 @@ void main() {
       );
     });
 
+    test(
+      'finishes visible replies when streams end after message completion',
+      () async {
+        final runner = AgentStreamRunner(
+          JsonlAgentStreamClient(
+            FixtureAgentStreamTransport([
+              jsonEncode(readFixtureMap('agent_events/run_started.json')),
+              jsonEncode({
+                'type': 'message.completed',
+                'thread_id': 'thread-fixture-001',
+                'run_id': 'run-fixture-001',
+                'message_id': 'msg-reply-001',
+                'payload': {'role': 'assistant', 'text': 'Final answer'},
+              }),
+            ]),
+          ),
+        );
+
+        final states = await runner.run(_request).toList();
+
+        expect(states.last.phase, AgentStreamRunPhase.finished);
+        expect(states.last.textContent, 'Final answer');
+        expect(states.last.errorMessage, isNull);
+      },
+    );
+
     test('continues from an existing state for replay resumes', () async {
       final runner = AgentStreamRunner(
         JsonlAgentStreamClient(
