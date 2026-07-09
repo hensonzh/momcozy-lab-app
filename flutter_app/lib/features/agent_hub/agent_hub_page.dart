@@ -1872,7 +1872,7 @@ class AgentRunTranscript extends StatelessWidget {
     );
     final quickReplies = state.quickReplies;
     final shouldRenderQuickReplies =
-        quickReplies.isNotEmpty &&
+        quickReplies.length == 3 &&
         !state.isAwaitingVisibleReply &&
         onQuickReplySelected != null;
     final avatarMode = _avatarMode;
@@ -1972,7 +1972,7 @@ class AgentRunTranscript extends StatelessWidget {
                 ),
               ],
               if (shouldRenderQuickReplies) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 AgentQuickRepliesBar(
                   replies: quickReplies,
                   onSelected: onQuickReplySelected!,
@@ -2076,42 +2076,119 @@ class AgentQuickRepliesBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
-      color: const Color(0xff62434e),
-      fontWeight: FontWeight.w700,
-      height: 1.15,
+    if (replies.length != 3) return const SizedBox.shrink();
+
+    final textTheme = Theme.of(context).textTheme;
+    final labelStyle = textTheme.labelSmall?.copyWith(
+      color: const Color(0xff9b7a84),
+      fontWeight: FontWeight.w600,
+      height: 1,
     );
-    return Wrap(
+    final replyStyle = textTheme.bodySmall?.copyWith(
+      color: const Color(0xff4a3a40),
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      height: 1.22,
+    );
+
+    return Column(
       key: const ValueKey('agent-quick-replies'),
-      spacing: 8,
-      runSpacing: 8,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (var index = 0; index < replies.length; index++)
-          ActionChip(
-            key: ValueKey('agent-quick-reply-$index'),
-            onPressed: () => onSelected(replies[index]),
-            visualDensity: VisualDensity.compact,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            backgroundColor: const Color(0xfffff7f8),
-            side: BorderSide(
-              color: colorScheme.primary.withValues(alpha: 0.18),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-            ),
-            labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-            label: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 180),
-              child: Text(
-                replies[index],
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: textStyle,
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                key: const ValueKey('agent-quick-replies-title-line'),
+                width: 16,
+                height: 1,
+                decoration: BoxDecoration(
+                  color: const Color(0xffdbc3cb),
+                  borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                ),
               ),
+              const SizedBox(width: 6),
+              Text(
+                '猜你想说',
+                key: const ValueKey('agent-quick-replies-title'),
+                style: labelStyle,
+              ),
+            ],
+          ),
+        ),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (var index = 0; index < replies.length; index++)
+              _AgentQuickReplyPill(
+                key: ValueKey('agent-quick-reply-$index'),
+                text: replies[index],
+                textStyle: replyStyle,
+                onSelected: onSelected,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _AgentQuickReplyPill extends StatelessWidget {
+  const _AgentQuickReplyPill({
+    super.key,
+    required this.text,
+    required this.textStyle,
+    required this.onSelected,
+  });
+
+  final String text;
+  final TextStyle? textStyle;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => onSelected(text),
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        splashColor: const Color(0xfff8edf2),
+        highlightColor: const Color(0xfff8edf2).withValues(alpha: 0.58),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 34, maxWidth: 260),
+          child: Ink(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            decoration: BoxDecoration(
+              color: const Color(0x9effffff),
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              border: Border.all(color: const Color(0xffeadde2)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: textStyle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  key: ValueKey('agent-quick-reply-chevron'),
+                  size: 16,
+                  color: Color(0xffb78294),
+                ),
+              ],
             ),
           ),
-      ],
+        ),
+      ),
     );
   }
 }
