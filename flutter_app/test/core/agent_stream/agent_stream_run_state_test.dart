@@ -157,6 +157,9 @@ void main() {
       expect(state.textContent, '这是最终回复。');
       expect(state.provisionalTextContent, '');
       expect(state.lastSequence, 4);
+      expect(state.phase, AgentStreamRunPhase.streaming);
+      expect(state.hasCompletedAssistantMessage, isTrue);
+      expect(state.isAwaitingVisibleReply, isFalse);
     });
 
     test('keeps repeated text deltas when no replay key is present', () {

@@ -236,9 +236,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final restoredRunState = interactionState.historyMessages == null
         ? widget.state
         : interactionState.runState;
-    _state = restoredRunState.isActive
-        ? restoredRunState.markDisconnected('连接中断，请重试')
-        : restoredRunState;
+    _state = _restoreInterruptedRunState(
+      restoredRunState,
+      disconnectedMessage: '连接中断，请重试',
+    );
     _historyMessages = [
       ...(interactionState.historyMessages ?? widget.historyMessages),
     ];
@@ -293,10 +294,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _applyInteractionSnapshot(AgentHubInteractionSnapshot snapshot) {
-    final restoredState = snapshot.runState.isActive
-        ? snapshot.runState.markDisconnected('连接已中断，可继续接收。')
-        : snapshot.runState;
-    _state = restoredState;
+    _state = _restoreInterruptedRunState(
+      snapshot.runState,
+      disconnectedMessage: '连接已中断，可继续接收。',
+    );
     _historyMessages = snapshot.historyMessages
         .map(_historyMessageFromSnapshot)
         .toList(growable: false);
@@ -313,6 +314,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _localActionStatuses
       ..clear()
       ..addAll(snapshot.localActionStatuses);
+  }
+
+  AgentStreamRunState _restoreInterruptedRunState(
+    AgentStreamRunState state, {
+    required String disconnectedMessage,
+  }) {
+    if (!state.isActive) return state;
+    if (state.hasCompletedAssistantMessage) return state.finishVisibleReply();
+    return state.markDisconnected(disconnectedMessage);
   }
 
   AgentHubInteractionSnapshot _buildInteractionSnapshot() {
@@ -364,7 +374,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _applyInitialComposerText() {
     final text = widget.initialComposerText?.trim();
-    if (text == null || text.isEmpty || _state.isActive) return;
+    if (text == null || text.isEmpty || _isVisibleReplyRunning) return;
     _composerController
       ..text = text
       ..selection = TextSelection.collapsed(offset: text.length);
@@ -375,7 +385,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (_consumedInitialAutoSend ||
         !widget.initialAutoSend ||
         widget.runner == null ||
-        _state.isActive ||
+        _isVisibleReplyRunning ||
         widget.initialComposerText?.trim().isNotEmpty != true) {
       return;
     }
@@ -439,6 +449,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool get _isComposerLocked =>
       _state.phase == AgentStreamRunPhase.waitingForConfirmation ||
       _state.phase == AgentStreamRunPhase.cancelRequested;
+
+  bool get _isVisibleReplyRunning => _state.isAwaitingVisibleReply;
 
   bool get _canSend =>
       widget.runner != null &&
@@ -548,7 +560,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _handleQuickReplySelected(String text) {
     final normalizedText = text.trim();
-    if (normalizedText.isEmpty || _state.isActive || _isComposerLocked) return;
+    if (normalizedText.isEmpty || _isVisibleReplyRunning || _isComposerLocked) {
+      return;
+    }
     _recordQuickReplyClicked(normalizedText);
     unawaited(
       _sendSyntheticUserMessage(
@@ -674,7 +688,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _startNewSession() {
-    if (_state.isActive) return;
+    if (_isVisibleReplyRunning) return;
+    if (_state.isActive) {
+      _sendBestEffortServerCancel(_state, _activeRequest);
+    }
     _cancelRunSubscription();
     _composerController.clear();
     setState(() {
@@ -1124,6 +1141,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   @override
   Widget build(BuildContext context) {
     final responseLightRailMode = _agentResponseLightRailModeForState(_state);
+    final isVisibleReplyRunning = _isVisibleReplyRunning;
     return ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
@@ -1138,7 +1156,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
               AgentHubTopBar(
                 showControls: true,
                 autoVoiceEnabled: _autoVoiceEnabled,
-                isRunning: _state.isActive,
+                isRunning: isVisibleReplyRunning,
                 onToggleAutoVoice: _toggleAutoVoice,
                 onNewSession: _startNewSession,
               ),
@@ -1240,7 +1258,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
               AgentComposerBar(
                 controller: _composerController,
                 canSend: _canSend,
-                isRunning: _state.isActive,
+                isRunning: isVisibleReplyRunning,
                 isInputLocked: _isComposerLocked,
                 imageCount: _attachedImages.length,
                 showPhotoMenu: _showPhotoMenu,
@@ -1248,7 +1266,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                 canUseVoice:
                     (widget.voiceInputController != null ||
                         widget.voiceInput != null) &&
-                    !_state.isActive &&
+                    !isVisibleReplyRunning &&
                     !_isComposerLocked &&
                     !_voiceState.isInputActive,
                 voicePhase: _voiceState.phase,
@@ -1348,7 +1366,7 @@ enum _AgentResponseLightRailMode { idle, loop, replying }
 _AgentResponseLightRailMode _agentResponseLightRailModeForState(
   AgentStreamRunState state,
 ) {
-  if (!state.isActive) return _AgentResponseLightRailMode.idle;
+  if (!state.isAwaitingVisibleReply) return _AgentResponseLightRailMode.idle;
   final hasReplyText =
       state.textContent.trim().isNotEmpty ||
       state.provisionalTextContent.trim().isNotEmpty;
@@ -1855,7 +1873,7 @@ class AgentRunTranscript extends StatelessWidget {
     final quickReplies = state.quickReplies;
     final shouldRenderQuickReplies =
         quickReplies.isNotEmpty &&
-        !state.isActive &&
+        !state.isAwaitingVisibleReply &&
         onQuickReplySelected != null;
     final avatarMode = _avatarMode;
     final loopDecor = _loopDecorState;
@@ -2039,7 +2057,9 @@ class AgentRunTranscript extends StatelessWidget {
         statePlaybackIds.contains(playbackId)) {
       return _AgentAssistantAvatarMode.speaking;
     }
-    if (state.isActive) return _AgentAssistantAvatarMode.thinking;
+    if (state.isAwaitingVisibleReply) {
+      return _AgentAssistantAvatarMode.thinking;
+    }
     return null;
   }
 }
@@ -5284,11 +5304,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       AgentVoicePhase.listening => Icons.graphic_eq_rounded,
       AgentVoicePhase.transcribing => Icons.hourglass_bottom_rounded,
       AgentVoicePhase.playing => Icons.volume_up_outlined,
-      AgentVoicePhase.permissionDenied => Icons.mic_off_outlined,
-      AgentVoicePhase.error =>
-        widget.voicePlaybackFailed
-            ? Icons.volume_off_outlined
-            : Icons.mic_off_outlined,
       _ => Icons.mic_none_rounded,
     };
   }
@@ -5300,8 +5315,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       AgentVoicePhase.transcribing => '正在转写',
       AgentVoicePhase.playing => '正在播放语音',
       AgentVoicePhase.cancelled => '语音播放已停止',
-      AgentVoicePhase.permissionDenied => '麦克风权限未开启',
-      AgentVoicePhase.error => widget.voicePlaybackFailed ? '语音播放失败' : '语音输入失败',
       _ => '语音输入',
     };
   }
@@ -5312,8 +5325,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       AgentVoicePhase.transcribing => '正在整理语音',
       AgentVoicePhase.playing => null,
       AgentVoicePhase.cancelled => null,
-      AgentVoicePhase.permissionDenied => '麦克风权限未开启',
-      AgentVoicePhase.error => widget.voicePlaybackFailed ? '语音播放失败' : '语音输入失败',
       _ => null,
     };
   }

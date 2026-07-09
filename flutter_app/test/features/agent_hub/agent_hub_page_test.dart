@@ -1142,7 +1142,7 @@ void main() {
     expect(client.requests, isEmpty);
   });
 
-  testWidgets('Agent Hub surfaces denied microphone permission', (
+  testWidgets('Agent Hub keeps denied microphone permission internal', (
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
@@ -1176,7 +1176,8 @@ void main() {
     await holdGesture.up();
     await tester.pumpAndSettle();
 
-    expect(find.text('麦克风权限未开启'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
+    expect(find.text('麦克风权限未开启'), findsNothing);
     expect(recorder.calls, ['permissionState', 'requestPermission']);
     expect(client.requests, isEmpty);
     expect(
@@ -1713,6 +1714,80 @@ void main() {
       expect(client.requests.last.threadId, 'thread-followup');
       expect(cancelConnector.uri!.path, '/v1/agent/runs/run-first/cancel');
       expect(find.text('Partial first answer'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub releases visible running UI after completed assistant message',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'First turn',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      expect(find.byKey(const ValueKey('agent-stop-button')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-response-light-rail')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+        findsOneWidget,
+      );
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'type': 'message.completed',
+          'thread_id': 'thread-visible-complete',
+          'run_id': 'run-visible-complete',
+          'message_id': 'msg-visible-complete',
+          'payload': {
+            'role': 'assistant',
+            'text': 'Final answer',
+            'quick_replies': [
+              {'text': '继续聊这个'},
+            ],
+          },
+        }),
+      );
+      await tester.pump();
+
+      expect(find.text('Final answer'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
+      expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-response-light-rail')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('agent-assistant-avatar-static')),
+        findsWidgets,
+      );
+      expect(find.byKey(const ValueKey('agent-quick-replies')), findsOneWidget);
+      expect(find.text('继续聊这个'), findsOneWidget);
+      expect(
+        tester
+            .widget<IconButton>(
+              find.byKey(const ValueKey('agent-new-session-button')),
+            )
+            .onPressed,
+        isNotNull,
+      );
     },
   );
 

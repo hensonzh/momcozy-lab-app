@@ -26,7 +26,7 @@ void main() {
     },
   );
 
-  test('Android main activity does not use an explicit launch screen', () {
+  test('Android main activity uses a neutral starting window', () {
     final manifest = File(
       'android/app/src/main/AndroidManifest.xml',
     ).readAsStringSync();
@@ -54,6 +54,25 @@ void main() {
         'android/app/src/main/res/drawable-v21/launch_background.xml',
       ).existsSync(),
       isFalse,
+    );
+
+    final android12Styles = File(
+      'android/app/src/main/res/values-v31/styles.xml',
+    ).readAsStringSync();
+    expect(android12Styles, isNot(contains('LaunchTheme')));
+    expect(android12Styles, isNot(contains('Theme.SplashScreen')));
+    expect(android12Styles, contains('android:windowSplashScreenBackground'));
+    expect(
+      android12Styles,
+      contains(
+        'android:windowSplashScreenAnimatedIcon">@drawable/transparent_splash_icon',
+      ),
+    );
+    expect(
+      File(
+        'android/app/src/main/res/drawable/transparent_splash_icon.xml',
+      ).existsSync(),
+      isTrue,
     );
   });
 
