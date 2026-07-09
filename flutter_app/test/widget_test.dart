@@ -161,6 +161,40 @@ void main() {
     },
   );
 
+  testWidgets('route shell clears Agent composer focus across bottom tabs', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MomCozyFlutterApp(apiRuntime: _authenticatedRuntime()),
+    );
+    await tester.pumpAndSettle();
+
+    final composer = find.byKey(const ValueKey('agent-composer-input'));
+    await tester.showKeyboard(composer);
+    await tester.enterText(composer, 'Draft stays, keyboard should not');
+    await tester.pump();
+    expect(tester.testTextInput.isVisible, isTrue);
+
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('route-page-/schedule')), findsOneWidget);
+    expect(tester.testTextInput.isVisible, isFalse);
+
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      'Draft stays, keyboard should not',
+    );
+    expect(tester.testTextInput.isVisible, isFalse);
+  });
+
   testWidgets('route shell lazily mounts the Agent Hub keep-alive slot', (
     tester,
   ) async {
