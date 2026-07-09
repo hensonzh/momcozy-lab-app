@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -22,6 +23,10 @@ typedef AgentHubNewSessionHandler = void Function();
 
 const _agentDefaultGreeting = '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
 const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
+const _agentSkillAssetBaseUrl = String.fromEnvironment(
+  'MOMCOZY_API_BASE_URL',
+  defaultValue: 'http://127.0.0.1:8769',
+);
 
 String _agentAssistantTextForState(AgentStreamRunState state) {
   final text = state.textContent.trim();
@@ -143,6 +148,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Timer? _persistentWriteTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
+  String? _activeAutoVoicePlaybackId;
+  String _autoVoiceSubmittedText = '';
   VoidCallback? _unsubscribeVoicePlaybackIdle;
   bool _consumedInitialAutoSend = false;
 
@@ -640,6 +647,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _activeRequest = null;
       _voiceState = const AgentVoiceState();
       _pendingAutoVoiceReplay = null;
+      _resetAutoVoiceProgress();
     });
     _persistInteractionState();
     _maybeStartGreetingVoicePlayback();
@@ -738,6 +746,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _state = initialState ?? const AgentStreamRunState().start();
       if (initialState == null) {
         _pendingAutoVoiceReplay = null;
+        _resetAutoVoiceProgress();
       }
       if (!preserveActionState) {
         _pendingActionIds.clear();
@@ -794,12 +803,23 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final text = nextState.textContent.trim();
     if (coordinator == null ||
         !_autoVoiceEnabled ||
-        nextState.phase != AgentStreamRunPhase.finished ||
+        !_canAutoVoicePlayback(nextState.phase) ||
         text.isEmpty) {
       return;
     }
 
     final playbackId = _autoVoicePlaybackId(nextState);
+    if (_activeAutoVoicePlaybackId != playbackId) {
+      _activeAutoVoicePlaybackId = playbackId;
+      _autoVoiceSubmittedText = '';
+    }
+    if (coordinator.activeSource == AgentVoicePlaybackSource.autoReply &&
+        coordinator.activeId == playbackId) {
+      return;
+    }
+    final textToPlay = _nextAutoVoiceTextToPlay(text);
+    if (textToPlay.trim().isEmpty) return;
+
     final result = coordinator.request(
       id: playbackId,
       source: AgentVoicePlaybackSource.autoReply,
@@ -818,12 +838,18 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
     _pendingAutoVoiceReplay = null;
-    _startVoicePlayback(handle: handle, text: text);
+    _autoVoiceSubmittedText = text;
+    _startVoicePlayback(
+      handle: handle,
+      text: textToPlay,
+      onFinished: _tryContinueAutoVoicePlayback,
+    );
   }
 
   void _startVoicePlayback({
     required AgentVoicePlaybackHandle handle,
     required String text,
+    VoidCallback? onFinished,
   }) {
     setState(() {
       _voiceState = _voiceState.startPlayback(handle.id);
@@ -840,6 +866,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
             setState(() {
               _voiceState = const AgentVoiceState();
             });
+            onFinished?.call();
           })
           .catchError((Object error) {
             if (!mounted || !handle.isCurrent) return;
@@ -852,7 +879,43 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   String _autoVoicePlaybackId(AgentStreamRunState state) {
-    return state.messageId ?? state.runId ?? state.threadId ?? '';
+    final activePlaybackId = _activeAutoVoicePlaybackId?.trim();
+    if (activePlaybackId != null &&
+        activePlaybackId.isNotEmpty &&
+        (state.isActive ||
+            _pendingAutoVoiceReplay != null ||
+            _autoVoiceSubmittedText.isNotEmpty)) {
+      return activePlaybackId;
+    }
+    return _firstNonEmpty([state.messageId, state.runId, state.threadId]) ?? '';
+  }
+
+  bool _canAutoVoicePlayback(AgentStreamRunPhase phase) {
+    return phase == AgentStreamRunPhase.streaming ||
+        phase == AgentStreamRunPhase.waitingForConfirmation ||
+        phase == AgentStreamRunPhase.finished;
+  }
+
+  String _nextAutoVoiceTextToPlay(String text) {
+    if (_autoVoiceSubmittedText.isEmpty) return text;
+    if (text.startsWith(_autoVoiceSubmittedText)) {
+      return text.substring(_autoVoiceSubmittedText.length);
+    }
+    if (_autoVoiceSubmittedText.length >= text.length) return '';
+    return text.substring(_autoVoiceSubmittedText.length);
+  }
+
+  void _tryContinueAutoVoicePlayback() {
+    if (!mounted || !_autoVoiceEnabled) return;
+    scheduleMicrotask(() {
+      if (!mounted || !_autoVoiceEnabled) return;
+      _maybeStartAutoVoicePlayback(_state);
+    });
+  }
+
+  void _resetAutoVoiceProgress() {
+    _activeAutoVoicePlaybackId = null;
+    _autoVoiceSubmittedText = '';
   }
 
   void _queueBlockedAutoVoiceReplay(AgentStreamRunState state) {
@@ -902,6 +965,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       if (!nextEnabled) {
         widget.voicePlaybackCoordinator?.cancel();
         _pendingAutoVoiceReplay = null;
+        _resetAutoVoiceProgress();
         if (_voiceState.isPlaybackActive) {
           _voiceState = _voiceState.cancelPlayback();
         }
@@ -1022,121 +1086,142 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   Widget build(BuildContext context) {
+    final responseLightRailMode = _agentResponseLightRailModeForState(_state);
     return ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
-      child: Column(
+      child: Stack(
         children: [
-          AgentHubTopBar(
-            showControls: true,
-            autoVoiceEnabled: _autoVoiceEnabled,
-            isRunning: _state.isActive,
-            onToggleAutoVoice: _toggleAutoVoice,
-            onNewSession: _startNewSession,
-          ),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                const verticalTranscriptPadding = 14.0 + 24.0;
-                final transcriptMinHeight =
-                    constraints.maxHeight > verticalTranscriptPadding
-                    ? constraints.maxHeight - verticalTranscriptPadding
-                    : 0.0;
+          if (responseLightRailMode != _AgentResponseLightRailMode.idle)
+            Positioned.fill(
+              child: _AgentResponseLightRail(mode: responseLightRailMode),
+            ),
+          Column(
+            children: [
+              AgentHubTopBar(
+                showControls: true,
+                autoVoiceEnabled: _autoVoiceEnabled,
+                isRunning: _state.isActive,
+                onToggleAutoVoice: _toggleAutoVoice,
+                onNewSession: _startNewSession,
+              ),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    const verticalTranscriptPadding = 14.0 + 24.0;
+                    final transcriptMinHeight =
+                        constraints.maxHeight > verticalTranscriptPadding
+                        ? constraints.maxHeight - verticalTranscriptPadding
+                        : 0.0;
 
-                return Stack(
-                  children: [
-                    CustomScrollView(
-                      key: const ValueKey('agent-chat-scroll-view'),
-                      controller: _chatScrollController,
-                      slivers: [
-                        SliverPadding(
-                          padding: const EdgeInsets.fromLTRB(12, 14, 12, 24),
-                          sliver: SliverToBoxAdapter(
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minHeight: transcriptMinHeight,
+                    return Stack(
+                      children: [
+                        CustomScrollView(
+                          key: const ValueKey('agent-chat-scroll-view'),
+                          controller: _chatScrollController,
+                          slivers: [
+                            SliverPadding(
+                              padding: const EdgeInsets.fromLTRB(
+                                12,
+                                14,
+                                12,
+                                24,
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  if (_historyMessages.isNotEmpty) ...[
-                                    AgentHubHistoryPanel(
-                                      messages: _historyMessages,
-                                      onArtifactAction: _handleArtifactAction,
-                                    ),
-                                    const SizedBox(height: 18),
-                                  ],
-                                  AgentRunTranscript(
-                                    state: _state,
-                                    activeVoicePlaybackId:
-                                        _voiceState.isPlaybackActive
-                                        ? _voiceState.playbackId
-                                        : null,
-                                    canRetry: _canRetry,
-                                    onRetry: _retryRun,
-                                    onArtifactAction: _handleArtifactAction,
-                                    pendingActionIds: _pendingActionIds,
-                                    localActionStatuses: _localActionStatuses,
-                                    onConfirmAction: widget.actionClient == null
-                                        ? null
-                                        : _confirmAction,
-                                    onRejectAction: widget.actionClient == null
-                                        ? null
-                                        : _rejectAction,
+                              sliver: SliverToBoxAdapter(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minHeight: transcriptMinHeight,
                                   ),
-                                ],
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      if (_historyMessages.isNotEmpty) ...[
+                                        AgentHubHistoryPanel(
+                                          messages: _historyMessages,
+                                          onArtifactAction:
+                                              _handleArtifactAction,
+                                        ),
+                                        const SizedBox(height: 18),
+                                      ],
+                                      AgentRunTranscript(
+                                        state: _state,
+                                        activeVoicePlaybackId:
+                                            _voiceState.isPlaybackActive
+                                            ? _voiceState.playbackId
+                                            : null,
+                                        canRetry: _canRetry,
+                                        onRetry: _retryRun,
+                                        onArtifactAction: _handleArtifactAction,
+                                        pendingActionIds: _pendingActionIds,
+                                        localActionStatuses:
+                                            _localActionStatuses,
+                                        onConfirmAction:
+                                            widget.actionClient == null
+                                            ? null
+                                            : _confirmAction,
+                                        onRejectAction:
+                                            widget.actionClient == null
+                                            ? null
+                                            : _rejectAction,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
+                          ],
+                        ),
+                        const Positioned(
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          height: 24,
+                          child: IgnorePointer(child: _AgentHubTopFade()),
+                        ),
+                        if (_showLatestButton)
+                          Positioned(
+                            right: 12,
+                            bottom: 12,
+                            child: FilledButton.tonalIcon(
+                              key: const ValueKey('agent-scroll-latest-button'),
+                              onPressed: _scrollToLatest,
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                              ),
+                              label: const Text('回到最新消息'),
+                            ),
                           ),
-                        ),
                       ],
-                    ),
-                    const Positioned(
-                      left: 0,
-                      right: 0,
-                      top: 0,
-                      height: 24,
-                      child: IgnorePointer(child: _AgentHubTopFade()),
-                    ),
-                    if (_showLatestButton)
-                      Positioned(
-                        right: 12,
-                        bottom: 12,
-                        child: FilledButton.tonalIcon(
-                          key: const ValueKey('agent-scroll-latest-button'),
-                          onPressed: _scrollToLatest,
-                          icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                          label: const Text('回到最新消息'),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
-          ),
-          AgentComposerBar(
-            controller: _composerController,
-            canSend: _canSend,
-            isRunning: _state.isActive,
-            isInputLocked: _isComposerLocked,
-            imageCount: _attachedImages.length,
-            showPhotoMenu: _showPhotoMenu,
-            canAttachImage: widget.pickImage != null && !_isComposerLocked,
-            canUseVoice:
-                (widget.voiceInputController != null ||
-                    widget.voiceInput != null) &&
-                !_state.isActive &&
-                !_isComposerLocked &&
-                !_voiceState.isInputActive,
-            voicePhase: _voiceState.phase,
-            onChanged: (_) => setState(() {}),
-            onSend: _sendMessage,
-            onCancel: _cancelRun,
-            onTogglePhotoMenu: _togglePhotoMenu,
-            onAttachImage: _attachImage,
-            onRemoveImages: _removeAttachedImages,
-            onVoiceInput: _startVoiceInput,
+                    );
+                  },
+                ),
+              ),
+              AgentComposerBar(
+                controller: _composerController,
+                canSend: _canSend,
+                isRunning: _state.isActive,
+                isInputLocked: _isComposerLocked,
+                imageCount: _attachedImages.length,
+                showPhotoMenu: _showPhotoMenu,
+                canAttachImage: widget.pickImage != null && !_isComposerLocked,
+                canUseVoice:
+                    (widget.voiceInputController != null ||
+                        widget.voiceInput != null) &&
+                    !_state.isActive &&
+                    !_isComposerLocked &&
+                    !_voiceState.isInputActive,
+                voicePhase: _voiceState.phase,
+                onChanged: (_) => setState(() {}),
+                onSend: _sendMessage,
+                onCancel: _cancelRun,
+                onTogglePhotoMenu: _togglePhotoMenu,
+                onAttachImage: _attachImage,
+                onRemoveImages: _removeAttachedImages,
+                onVoiceInput: _startVoiceInput,
+              ),
+            ],
           ),
         ],
       ),
@@ -1213,6 +1298,201 @@ class AgentHubTopBar extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+enum _AgentResponseLightRailMode { idle, loop, replying }
+
+_AgentResponseLightRailMode _agentResponseLightRailModeForState(
+  AgentStreamRunState state,
+) {
+  if (!state.isActive) return _AgentResponseLightRailMode.idle;
+  final hasReplyText =
+      state.textContent.trim().isNotEmpty ||
+      state.provisionalTextContent.trim().isNotEmpty;
+  if (!hasReplyText) return _AgentResponseLightRailMode.loop;
+  if (_hasRunningToolWork(state.events)) {
+    return _AgentResponseLightRailMode.loop;
+  }
+  return _AgentResponseLightRailMode.replying;
+}
+
+bool _hasRunningToolWork(List<AgentStreamEvent> events) {
+  final latestToolEvents = <String, AgentStreamEvent>{};
+  for (final event in events) {
+    if (!event.type.startsWith('tool.')) continue;
+    latestToolEvents[event.toolCallId ?? event.mergeKey] = event;
+  }
+  return latestToolEvents.values.any(
+    (event) => event.type == 'tool.started' || event.type == 'tool.progress',
+  );
+}
+
+class _AgentResponseLightRail extends StatefulWidget {
+  const _AgentResponseLightRail({required this.mode});
+
+  final _AgentResponseLightRailMode mode;
+
+  @override
+  State<_AgentResponseLightRail> createState() =>
+      _AgentResponseLightRailState();
+}
+
+class _AgentResponseLightRailState extends State<_AgentResponseLightRail>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: _durationForMode(widget.mode),
+    )..repeat();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AgentResponseLightRail oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.mode == oldWidget.mode) return;
+    _controller.duration = _durationForMode(widget.mode);
+    _controller.repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      key: const ValueKey('agent-response-light-rail'),
+      child: RepaintBoundary(
+        child: CustomPaint(
+          key: ValueKey('agent-response-light-rail-${widget.mode.name}'),
+          painter: _AgentResponseLightRailPainter(
+            mode: widget.mode,
+            animation: _controller,
+          ),
+          child: const SizedBox.expand(),
+        ),
+      ),
+    );
+  }
+
+  Duration _durationForMode(_AgentResponseLightRailMode mode) {
+    return switch (mode) {
+      _AgentResponseLightRailMode.loop => const Duration(milliseconds: 1050),
+      _AgentResponseLightRailMode.replying => const Duration(
+        milliseconds: 3200,
+      ),
+      _AgentResponseLightRailMode.idle => const Duration(milliseconds: 1600),
+    };
+  }
+}
+
+class _AgentResponseLightRailPainter extends CustomPainter {
+  const _AgentResponseLightRailPainter({
+    required this.mode,
+    required Animation<double> animation,
+  }) : _animation = animation,
+       super(repaint: animation);
+
+  final _AgentResponseLightRailMode mode;
+  final Animation<double> _animation;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.isEmpty) return;
+    final railWidth = math.min(size.width, MomCozyLayout.maxAppWidth);
+    final railRect = Rect.fromLTWH(
+      (size.width - railWidth) / 2,
+      0,
+      railWidth,
+      size.height,
+    );
+    final progress = _animation.value;
+    final modeStrength = mode == _AgentResponseLightRailMode.loop ? 1.0 : 0.62;
+
+    _paintPageGlow(canvas, railRect, progress, modeStrength);
+    _paintRailBorder(canvas, railRect, progress, modeStrength);
+  }
+
+  void _paintPageGlow(
+    Canvas canvas,
+    Rect rect,
+    double progress,
+    double modeStrength,
+  ) {
+    final breath = (math.sin(progress * math.pi * 2) + 1) / 2;
+    final opacity = (0.15 + breath * 0.12) * modeStrength;
+    final paint = Paint()
+      ..shader = RadialGradient(
+        center: const Alignment(0, -0.82),
+        radius: 1.15,
+        colors: [
+          const Color(0xffffeef5).withValues(alpha: opacity * 1.10),
+          const Color(0xffecacc3).withValues(alpha: opacity * 0.44),
+          Colors.transparent,
+        ],
+        stops: const [0, 0.34, 1],
+      ).createShader(rect);
+    canvas.drawRect(rect, paint);
+
+    final lowerPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Colors.transparent,
+          const Color(0xffffe8f0).withValues(alpha: opacity * 0.42),
+        ],
+      ).createShader(rect);
+    canvas.drawRect(rect, lowerPaint);
+  }
+
+  void _paintRailBorder(
+    Canvas canvas,
+    Rect rect,
+    double progress,
+    double modeStrength,
+  ) {
+    final borderWidth = mode == _AgentResponseLightRailMode.loop ? 2.5 : 2.0;
+    final outer = Path()..addRect(rect);
+    final inner = Path()..addRect(rect.deflate(borderWidth));
+    final border = Path.combine(PathOperation.difference, outer, inner);
+    final shader = SweepGradient(
+      transform: GradientRotation(progress * math.pi * 2),
+      colors: [
+        Colors.transparent,
+        const Color(0xfff6d2de).withValues(alpha: 0.34 * modeStrength),
+        const Color(0xffdc7897).withValues(alpha: 0.82 * modeStrength),
+        Colors.white.withValues(alpha: 0.92 * modeStrength),
+        const Color(0xffe4a060).withValues(alpha: 0.54 * modeStrength),
+        Colors.transparent,
+        const Color(0xff7dbcb1).withValues(alpha: 0.42 * modeStrength),
+        Colors.white.withValues(alpha: 0.60 * modeStrength),
+        Colors.transparent,
+      ],
+      stops: const [0, 0.08, 0.13, 0.17, 0.23, 0.40, 0.55, 0.62, 1],
+    ).createShader(rect);
+    canvas.drawPath(border, Paint()..shader = shader);
+
+    final sideGlowPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = mode == _AgentResponseLightRailMode.loop ? 9 : 7
+      ..color = const Color(0xffd67697).withValues(
+        alpha: (mode == _AgentResponseLightRailMode.loop ? 0.14 : 0.08),
+      )
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    canvas.drawRect(rect.deflate(4), sideGlowPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _AgentResponseLightRailPainter oldDelegate) {
+    return oldDelegate.mode != mode || oldDelegate._animation != _animation;
   }
 }
 
@@ -1530,7 +1810,11 @@ class AgentRunTranscript extends StatelessWidget {
       localActionStatuses,
     );
     final avatarMode = _avatarMode;
-    final statusLineTitle = _statusLineTitle(workSteps);
+    final thinkingNoteTitle = _thinkingNoteTitle;
+    final statusLineTitle = _statusLineTitle(
+      workSteps,
+      suppressedTitle: thinkingNoteTitle,
+    );
     final shouldRenderPrimaryText = _shouldRenderPrimaryText;
     final primaryTextStyle = textTheme.bodyMedium?.copyWith(
       height: 1.40,
@@ -1554,6 +1838,11 @@ class AgentRunTranscript extends StatelessWidget {
             children: [
               if (statusLineTitle != null) ...[
                 AgentRunStatusLine(title: statusLineTitle),
+                if (thinkingNoteTitle != null || shouldRenderPrimaryText)
+                  const SizedBox(height: 5),
+              ],
+              if (thinkingNoteTitle != null) ...[
+                AgentThinkingNote(title: thinkingNoteTitle),
                 if (shouldRenderPrimaryText) const SizedBox(height: 8),
               ],
               if (shouldRenderPrimaryText)
@@ -1563,7 +1852,11 @@ class AgentRunTranscript extends StatelessWidget {
                     constraints: BoxConstraints(
                       maxWidth: isDefaultGreeting ? 260 : double.infinity,
                     ),
-                    child: AgentMarkdownText(text, style: primaryTextStyle),
+                    child: AgentMarkdownText(
+                      text,
+                      style: primaryTextStyle,
+                      onArtifactAction: onArtifactAction,
+                    ),
                   ),
                 ),
               if (_supportingText != null) ...[
@@ -1633,18 +1926,34 @@ class AgentRunTranscript extends StatelessWidget {
     return true;
   }
 
-  String? _statusLineTitle(List<AgentRunWorkStep> workSteps) {
+  String? get _thinkingNoteTitle {
     if (state.phase != AgentStreamRunPhase.streaming ||
         state.textContent.trim().isNotEmpty) {
       return null;
     }
-    final backendStatusTitle = _latestBackendStatusTitle(state.events);
+    return _activeAgentThinkingTitle(state.events);
+  }
+
+  String? _statusLineTitle(
+    List<AgentRunWorkStep> workSteps, {
+    String? suppressedTitle,
+  }) {
+    if (state.phase != AgentStreamRunPhase.streaming ||
+        state.textContent.trim().isNotEmpty) {
+      return null;
+    }
+    final backendStatusTitle = _latestBackendStatusTitle(
+      state.events,
+      suppressedTitle: suppressedTitle,
+    );
     if (backendStatusTitle != null) return backendStatusTitle;
     for (final step in workSteps.reversed) {
       if (step.status == AgentRunWorkStepStatus.running ||
           step.status == AgentRunWorkStepStatus.waiting) {
         final title = _visibleAgentStatusTitle(step.title);
-        if (title != null && title.isNotEmpty) return title;
+        if (title != null && title.isNotEmpty && title != suppressedTitle) {
+          return title;
+        }
       }
     }
     return '我已经收到你的消息啦～';
@@ -1692,16 +2001,14 @@ class AgentRunTranscript extends StatelessWidget {
     if (playbackId == _agentDefaultGreetingPlaybackId && isDefaultGreeting) {
       return _AgentAssistantAvatarMode.speaking;
     }
-    final statePlaybackId = state.messageId?.trim().isNotEmpty == true
-        ? state.messageId!.trim()
-        : state.runId?.trim().isNotEmpty == true
-        ? state.runId!.trim()
-        : state.threadId?.trim();
+    final statePlaybackIds = [
+      state.messageId,
+      state.runId,
+      state.threadId,
+    ].map((id) => id?.trim()).whereType<String>().where((id) => id.isNotEmpty);
     if (playbackId != null &&
         playbackId.isNotEmpty &&
-        statePlaybackId != null &&
-        statePlaybackId.isNotEmpty &&
-        playbackId == statePlaybackId) {
+        statePlaybackIds.contains(playbackId)) {
       return _AgentAssistantAvatarMode.speaking;
     }
     if (state.isActive) return _AgentAssistantAvatarMode.thinking;
@@ -1710,25 +2017,69 @@ class AgentRunTranscript extends StatelessWidget {
 }
 
 class AgentMarkdownText extends StatelessWidget {
-  const AgentMarkdownText(this.text, {super.key, this.style});
+  const AgentMarkdownText(
+    this.text, {
+    super.key,
+    this.style,
+    this.onArtifactAction,
+  });
 
   final String text;
   final TextStyle? style;
+  final AgentArtifactActionHandler? onArtifactAction;
 
   @override
   Widget build(BuildContext context) {
     final normalized = text.trim();
     final baseStyle = style ?? Theme.of(context).textTheme.bodyMedium;
-    if (!_containsMarkdown(normalized)) {
+    final markdown = _prepareAgentMarkdown(normalized);
+    if (!_containsMarkdown(markdown)) {
       return Text(normalized, style: baseStyle);
     }
 
     return MarkdownBody(
-      data: normalized,
+      data: markdown,
       fitContent: true,
       shrinkWrap: true,
       softLineBreak: true,
       styleSheet: _momcozyMarkdownStyleSheet(context, baseStyle),
+      imageBuilder: (uri, title, alt) {
+        final url = uri.toString();
+        return _AgentMarkdownImage(
+          url: url,
+          title: alt?.trim().isNotEmpty == true ? alt!.trim() : title,
+          onTap: () => _openMarkdownMedia(url: url, title: alt ?? title),
+        );
+      },
+      onTapLink: (label, href, title) {
+        final url = href?.trim();
+        if (url == null || url.isEmpty) return;
+        if (_isHospitalBagCartPath(url)) {
+          onArtifactAction?.call(_hospitalBagCartAction());
+          return;
+        }
+        _openMarkdownMedia(url: url, title: label.trim());
+      },
+    );
+  }
+
+  void _openMarkdownMedia({required String url, String? title}) {
+    final kind = _viewerKindForUrl(url);
+    if (kind == null) return;
+    final normalizedTitle = title?.trim();
+    onArtifactAction?.call(
+      AgentArtifactActionView(
+        label: normalizedTitle?.isNotEmpty == true ? normalizedTitle! : '打开资源',
+        icon: _mediaIconForKind(kind),
+        kind: 'media',
+        value: url,
+        routePath: '/media-viewer',
+        routeExtra: {
+          'kind': kind,
+          'url': url,
+          if (normalizedTitle?.isNotEmpty == true) 'title': normalizedTitle!,
+        },
+      ),
     );
   }
 
@@ -1828,6 +2179,204 @@ class AgentMarkdownText extends StatelessWidget {
   }
 }
 
+class _AgentMarkdownImage extends StatelessWidget {
+  const _AgentMarkdownImage({required this.url, this.title, this.onTap});
+
+  final String url;
+  final String? title;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = title?.trim().isNotEmpty == true ? title!.trim() : '查看图片';
+    final displayUrl = _displayableHttpUrl(url);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: InkWell(
+        key: ValueKey('agent-markdown-image-$url'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: 112,
+              maxHeight: 220,
+              minWidth: 180,
+              maxWidth: 360,
+            ),
+            child: displayUrl == null
+                ? _AgentMarkdownImagePlaceholder(label: label)
+                : Image.network(
+                    displayUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _AgentMarkdownImagePlaceholder(label: label);
+                    },
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentMarkdownImagePlaceholder extends StatelessWidget {
+  const _AgentMarkdownImagePlaceholder({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.muted.withValues(alpha: 0.72),
+        border: Border.all(color: MomCozyColors.border),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.image_outlined,
+              color: MomCozyColors.mutedForeground,
+              size: 28,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: textTheme.labelMedium?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '点开查看',
+              style: textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+String _prepareAgentMarkdown(String markdown) {
+  return _promoteImageLinksToMarkdownImages(
+    _linkifyBareSkillAssetUrlsForMarkdown(markdown),
+  );
+}
+
+String _linkifyBareSkillAssetUrlsForMarkdown(String markdown) {
+  var inFence = false;
+  return markdown
+      .split('\n')
+      .map((line) {
+        if (RegExp(r'^\s*```').hasMatch(line)) {
+          inFence = !inFence;
+          return line;
+        }
+        if (inFence) return line;
+        return line.replaceAllMapped(_bareSkillAssetUrlPattern, (match) {
+          final prefix = match.group(1) ?? '';
+          final url = match.group(2) ?? '';
+          return '$prefix[${_skillAssetLinkLabel(url)}]($url)';
+        });
+      })
+      .join('\n');
+}
+
+String _promoteImageLinksToMarkdownImages(String markdown) {
+  var inFence = false;
+  return markdown
+      .split('\n')
+      .map((line) {
+        if (RegExp(r'^\s*```').hasMatch(line)) {
+          inFence = !inFence;
+          return line;
+        }
+        if (inFence) return line;
+        return line.replaceAllMapped(_markdownLinkPattern, (match) {
+          final prefix = match.group(1) ?? '';
+          final label = match.group(2) ?? '';
+          final destination = match.group(3) ?? '';
+          final url = _markdownDestinationUrl(destination);
+          if (!_isImageUrl(url)) return match.group(0) ?? '';
+          return '$prefix![$label]($destination)';
+        });
+      })
+      .join('\n');
+}
+
+String _skillAssetLinkLabel(String url) {
+  final kind = _viewerKindForUrl(url);
+  return switch (kind) {
+    'pdf' => '打开 PDF',
+    'video' => '打开视频',
+    'image' => '查看图片',
+    _ => '打开资源',
+  };
+}
+
+String _markdownDestinationUrl(String destination) {
+  return destination.trim().split(RegExp(r'\s+')).first;
+}
+
+String? _viewerKindForUrl(String url) {
+  final path = url.split(RegExp(r'[?#]')).first.toLowerCase();
+  if (path.endsWith('.pdf')) return 'pdf';
+  if (RegExp(r'\.(mp4|webm|ogv|m4v|mov)$').hasMatch(path)) return 'video';
+  if (RegExp(r'\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)$').hasMatch(path)) {
+    return 'image';
+  }
+  return null;
+}
+
+bool _isImageUrl(String url) => _viewerKindForUrl(url) == 'image';
+
+IconData _mediaIconForKind(String kind) {
+  return switch (kind) {
+    'pdf' => Icons.picture_as_pdf_outlined,
+    'video' => Icons.play_circle_outline_rounded,
+    _ => Icons.image_outlined,
+  };
+}
+
+bool _isHospitalBagCartPath(String url) {
+  final uri = Uri.tryParse(url.trim());
+  if (uri == null) return false;
+  return uri.path == '/hospital-bag-cart';
+}
+
+String? _displayableHttpUrl(String url) {
+  final normalized = url.trim();
+  if (normalized.startsWith('/skill-assets/')) {
+    return Uri.tryParse(
+      _agentSkillAssetBaseUrl,
+    )?.resolve(normalized).toString();
+  }
+  final uri = Uri.tryParse(normalized);
+  if (uri == null) return null;
+  if (uri.scheme == 'http' || uri.scheme == 'https') return uri.toString();
+  return null;
+}
+
+final _bareSkillAssetUrlPattern = RegExp(
+  r'(^|[\s:：])((?:/skill-assets/)[^\s<>)\]}，。；;、]+(?:\.(?:pdf|mp4|mov|m4v|webm|png|jpe?g|gif|webp|svg))(?:[?#][^\s<>)\]}，。；;、]*)?)',
+  caseSensitive: false,
+);
+
+final _markdownLinkPattern = RegExp(r'(^|[^!])\[([^\]\n]+)\]\(([^)\n]+)\)');
+
 class AgentRunStatusLine extends StatefulWidget {
   const AgentRunStatusLine({super.key, required this.title});
 
@@ -1873,7 +2422,7 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox.square(
-              dimension: 14,
+              dimension: 10,
               child: AnimatedBuilder(
                 animation: _pulseController,
                 builder: (context, child) {
@@ -1884,15 +2433,15 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
                     alignment: Alignment.center,
                     children: [
                       Transform.scale(
-                        scale: 0.88 + value * 0.24,
+                        scale: 0.9 + value * 0.45,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: colorScheme.primary.withValues(
-                              alpha: 0.24 - value * 0.16,
+                              alpha: 0.28 - value * 0.18,
                             ),
                           ),
-                          child: const SizedBox.square(dimension: 12),
+                          child: const SizedBox.square(dimension: 8),
                         ),
                       ),
                       DecoratedBox(
@@ -1900,7 +2449,7 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
                           shape: BoxShape.circle,
                           color: colorScheme.primary.withValues(alpha: 0.86),
                         ),
-                        child: const SizedBox.square(dimension: 6),
+                        child: const SizedBox.square(dimension: 5),
                       ),
                     ],
                   );
@@ -1909,40 +2458,114 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
             ),
             const SizedBox(width: 6),
             Flexible(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.labelMedium?.copyWith(
-                        height: 1.35,
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  AnimatedBuilder(
-                    animation: _pulseController,
-                    builder: (context, child) {
-                      final dotCount = (_pulseController.value * 3).floor() + 1;
-                      final dots = List.filled(dotCount, '.').join();
-                      return Text(
-                        dots,
-                        style: textTheme.labelMedium?.copyWith(
-                          height: 1.35,
-                          color: colorScheme.primary,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      );
-                    },
-                  ),
+              child: _AgentSweepText(
+                title,
+                sweepKey: const ValueKey('agent-run-status-title-sweep'),
+                animation: _pulseController,
+                colors: const [
+                  Color(0xff9a7a86),
+                  Color(0xff5d3f4d),
+                  Color(0xff9a7a86),
                 ],
+                style: textTheme.labelSmall?.copyWith(
+                  height: 1.45,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentSweepText extends StatelessWidget {
+  const _AgentSweepText(
+    this.text, {
+    required this.sweepKey,
+    required this.animation,
+    required this.colors,
+    this.style,
+  });
+
+  final String text;
+  final Key sweepKey;
+  final Animation<double> animation;
+  final List<Color> colors;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        final value = animation.value;
+        return ShaderMask(
+          key: sweepKey,
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              begin: Alignment(-1.2 + value * 2.4, 0),
+              end: Alignment(-0.2 + value * 2.4, 0),
+              colors: colors,
+              stops: const [0, 0.5, 1],
+            ).createShader(bounds);
+          },
+          child: child,
+        );
+      },
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: style,
+      ),
+    );
+  }
+}
+
+class AgentThinkingNote extends StatefulWidget {
+  const AgentThinkingNote({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<AgentThinkingNote> createState() => _AgentThinkingNoteState();
+}
+
+class _AgentThinkingNoteState extends State<AgentThinkingNote>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _sweepController;
+
+  @override
+  void initState() {
+    super.initState();
+    _sweepController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1350),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _sweepController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Semantics(
+      label: widget.title,
+      child: _AgentSweepText(
+        widget.title,
+        sweepKey: const ValueKey('agent-thinking-note'),
+        animation: _sweepController,
+        colors: const [Color(0xff98a3af), Color(0xff2d3745), Color(0xff98a3af)],
+        style: textTheme.labelSmall?.copyWith(
+          height: 1.45,
+          fontWeight: FontWeight.w800,
         ),
       ),
     );
@@ -2099,7 +2722,6 @@ class AgentArtifactPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -2115,102 +2737,1055 @@ class AgentArtifactPanel extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         for (final card in cards) ...[
-          DecoratedBox(
-            key: ValueKey('agent-artifact-card-${card.id}'),
-            decoration: BoxDecoration(
-              color: MomCozyColors.roseSoft.withValues(alpha: 0.54),
-              borderRadius: BorderRadius.circular(MomCozyRadii.control),
-              border: Border.all(
-                color: MomCozyColors.border.withValues(alpha: 0.74),
-              ),
+          _specializedArtifactCard(card: card, onAction: onAction) ??
+              _AgentArtifactGenericCard(card: card, onAction: onAction),
+          if (card != cards.last) const SizedBox(height: 10),
+        ],
+      ],
+    );
+  }
+}
+
+class _AgentArtifactGenericCard extends StatelessWidget {
+  const _AgentArtifactGenericCard({required this.card, this.onAction});
+
+  final AgentArtifactCardView card;
+  final AgentArtifactActionHandler? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return DecoratedBox(
+      key: ValueKey('agent-artifact-card-${card.id}'),
+      decoration: BoxDecoration(
+        color: MomCozyColors.roseSoft.withValues(alpha: 0.54),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.74)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.dashboard_customize_outlined,
+                  size: 18,
+                  color: colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    card.title,
+                    style: textTheme.titleSmall?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                if (card.statusLabel != null) ...[
+                  const SizedBox(width: 8),
+                  Text(
+                    card.statusLabel!,
+                    style: textTheme.labelSmall?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            if (card.content != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                card.content!,
+                style: textTheme.bodySmall?.copyWith(
+                  height: 1.35,
+                  color: MomCozyColors.mutedForeground,
+                ),
+              ),
+            ],
+            for (final row in card.rows) ...[
+              const SizedBox(height: 8),
+              Text(
+                row,
+                style: textTheme.bodySmall?.copyWith(
+                  height: 1.35,
+                  color: MomCozyColors.mutedForeground,
+                ),
+              ),
+            ],
+            if (card.formFields.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              _AgentArtifactFormView(card: card, onAction: onAction),
+            ],
+            if (card.actions.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
-                  Row(
+                  for (var index = 0; index < card.actions.length; index++)
+                    OutlinedButton.icon(
+                      key: ValueKey('agent-artifact-action-${card.id}-$index'),
+                      onPressed: () => onAction?.call(card.actions[index]),
+                      icon: Icon(card.actions[index].icon),
+                      label: Text(card.actions[index].label),
+                    ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Widget? _specializedArtifactCard({
+  required AgentArtifactCardView card,
+  AgentArtifactActionHandler? onAction,
+}) {
+  final cardType = _artifactCardType(card);
+  return switch (cardType) {
+    'milk_analysis_card' || 'milk_plan_card' => _AgentMilkManagementCard(
+      card: card,
+      cardType: cardType!,
+    ),
+    'birth_journey_plan_card' => _AgentBirthJourneyPlanCard(card: card),
+    'birth_plan_card' => _AgentBirthPlanCard(card: card),
+    'hospital_bag_card' => _AgentHospitalBagCard(
+      card: card,
+      onAction: onAction,
+    ),
+    _ => null,
+  };
+}
+
+class _AgentArtifactSpecializedShell extends StatelessWidget {
+  const _AgentArtifactSpecializedShell({
+    required this.card,
+    required this.icon,
+    required this.children,
+    this.subtitle,
+    this.statusLabel,
+    this.accentColor = MomCozyColors.primary,
+  });
+
+  final AgentArtifactCardView card;
+  final IconData icon;
+  final List<Widget> children;
+  final String? subtitle;
+  final String? statusLabel;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return DecoratedBox(
+      key: ValueKey('agent-artifact-${card.id}'),
+      decoration: BoxDecoration(
+        color: MomCozyColors.raised,
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        border: Border.all(color: MomCozyColors.border),
+        boxShadow: MomCozyShadows.soft,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(MomCozyRadii.control),
+                  ),
+                  child: SizedBox.square(
+                    dimension: 40,
+                    child: Icon(icon, color: accentColor, size: 20),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.dashboard_customize_outlined,
-                        size: 18,
-                        color: colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          card.title,
-                          style: textTheme.titleSmall?.copyWith(
-                            color: MomCozyColors.foreground,
-                            fontWeight: FontWeight.w800,
-                          ),
+                      Text(
+                        card.title,
+                        style: textTheme.titleSmall?.copyWith(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
-                      if (card.statusLabel != null) ...[
-                        const SizedBox(width: 8),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 3),
                         Text(
-                          card.statusLabel!,
-                          style: textTheme.labelSmall?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w800,
+                          subtitle!,
+                          style: textTheme.bodySmall?.copyWith(
+                            height: 1.3,
+                            color: MomCozyColors.mutedForeground,
                           ),
                         ),
                       ],
                     ],
                   ),
-                  if (card.content != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      card.content!,
-                      style: textTheme.bodySmall?.copyWith(
-                        height: 1.35,
-                        color: MomCozyColors.mutedForeground,
-                      ),
-                    ),
-                  ],
-                  for (final row in card.rows) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      row,
-                      style: textTheme.bodySmall?.copyWith(
-                        height: 1.35,
-                        color: MomCozyColors.mutedForeground,
-                      ),
-                    ),
-                  ],
-                  if (card.formFields.isNotEmpty) ...[
-                    const SizedBox(height: 10),
-                    _AgentArtifactFormView(card: card, onAction: onAction),
-                  ],
-                  if (card.actions.isNotEmpty) ...[
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (
-                          var index = 0;
-                          index < card.actions.length;
-                          index++
-                        )
-                          OutlinedButton.icon(
-                            key: ValueKey(
-                              'agent-artifact-action-${card.id}-$index',
-                            ),
-                            onPressed: () =>
-                                onAction?.call(card.actions[index]),
-                            icon: Icon(card.actions[index].icon),
-                            label: Text(card.actions[index].label),
-                          ),
-                      ],
-                    ),
-                  ],
+                ),
+                if (statusLabel != null) ...[
+                  const SizedBox(width: 8),
+                  _AgentArtifactPill(label: statusLabel!, color: accentColor),
                 ],
+              ],
+            ),
+            if (children.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              ...children,
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentMilkManagementCard extends StatelessWidget {
+  const _AgentMilkManagementCard({required this.card, required this.cardType});
+
+  final AgentArtifactCardView card;
+  final String cardType;
+
+  @override
+  Widget build(BuildContext context) {
+    final cardJson = _effectiveCardJson(card);
+    final isPlan = cardType == 'milk_plan_card';
+    final subtitle = _displayString(cardJson['subtitle']);
+    final headline = _displayString(cardJson['headline']);
+    final statusLabel = isPlan
+        ? null
+        : _displayStringField(cardJson, 'status_label', 'statusLabel');
+    final sections = _objectList(cardJson['sections']);
+
+    return _AgentArtifactSpecializedShell(
+      card: card,
+      icon: isPlan ? Icons.route_rounded : Icons.water_drop_outlined,
+      accentColor: isPlan ? MomCozyColors.care : MomCozyColors.violet,
+      subtitle: subtitle,
+      statusLabel: statusLabel,
+      children: [
+        if (headline != null)
+          _AgentArtifactBodyText(headline, weight: FontWeight.w700),
+        for (final section in sections) ...[
+          if (headline != null || section != sections.first)
+            const SizedBox(height: 10),
+          _AgentMilkSection(section: section),
+        ],
+      ],
+    );
+  }
+}
+
+class _AgentMilkSection extends StatelessWidget {
+  const _AgentMilkSection({required this.section});
+
+  final Map<String, Object?> section;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = _displayString(section['title']);
+    final metrics = _objectList(section['metrics']);
+    final items = _displayStringList(section['items']);
+
+    return _AgentArtifactSection(
+      title: title,
+      children: [
+        if (metrics.isNotEmpty)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final metric in metrics)
+                _AgentMetricTile(
+                  label: _displayString(metric['label']) ?? '指标',
+                  value: _displayString(metric['value']) ?? '-',
+                  detail: _displayString(metric['detail']),
+                ),
+            ],
+          ),
+        if (items.isNotEmpty) ...[
+          if (metrics.isNotEmpty) const SizedBox(height: 8),
+          _AgentArtifactBulletList(items: items),
+        ],
+      ],
+    );
+  }
+}
+
+class _AgentBirthJourneyPlanCard extends StatelessWidget {
+  const _AgentBirthJourneyPlanCard({required this.card});
+
+  final AgentArtifactCardView card;
+
+  @override
+  Widget build(BuildContext context) {
+    final cardJson = _effectiveCardJson(card);
+    final owner = _mapField(cardJson, 'owner');
+    final ownerChips = <({String label, String value})>[
+      for (final entry in [
+        (
+          '孕期',
+          _fieldValue(owner, 'current_week', 'currentWeek') ??
+              _fieldValue(owner, 'due_date_or_week', 'dueDateOrWeek'),
+        ),
+        ('预产期预计', _fieldValue(owner, 'estimated_due_date', 'estimatedDueDate')),
+        ('方式', _fieldValue(owner, 'birth_path', 'birthPath')),
+        ('支持', _fieldValue(owner, 'support_person', 'supportPerson')),
+        ('喂养', _fieldValue(owner, 'feeding_intention', 'feedingIntention')),
+      ])
+        if (_displayString(entry.$2) case final value?)
+          (label: entry.$1, value: value),
+    ].take(4).toList(growable: false);
+    final todoPlan = _mapField(cardJson, 'todo_plan', 'todoPlan');
+    final periods = _objectList(todoPlan['periods']);
+
+    return _AgentArtifactSpecializedShell(
+      card: card,
+      icon: Icons.calendar_month_outlined,
+      accentColor: MomCozyColors.primary,
+      children: [
+        if (ownerChips.isNotEmpty)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final chip in ownerChips)
+                _AgentOwnerChip(label: chip.label, value: chip.value),
+            ],
+          ),
+        if (periods.isNotEmpty) ...[
+          if (ownerChips.isNotEmpty) const SizedBox(height: 10),
+          _AgentArtifactSection(
+            children: [
+              for (final period in periods) ...[
+                _AgentBirthJourneyPeriod(period: period),
+                if (period != periods.last) const SizedBox(height: 8),
+              ],
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _AgentBirthJourneyPeriod extends StatelessWidget {
+  const _AgentBirthJourneyPeriod({required this.period});
+
+  final Map<String, Object?> period;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final title = _displayString(period['title']) ?? '阶段';
+    final subtitle = _displayString(period['subtitle']);
+    final items = _objectList(period['items']);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.roseSoft.withValues(alpha: 0.34),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.72)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: textTheme.labelLarge?.copyWith(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 3),
+                        _AgentArtifactBodyText(subtitle),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _AgentArtifactPill(
+                  label: '${items.length} 个事项',
+                  color: MomCozyColors.primary,
+                ),
+              ],
+            ),
+            if (items.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              for (var index = 0; index < items.length; index++) ...[
+                _AgentBirthJourneyItem(index: index + 1, item: items[index]),
+                if (index != items.length - 1) const SizedBox(height: 8),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentBirthJourneyItem extends StatelessWidget {
+  const _AgentBirthJourneyItem({required this.index, required this.item});
+
+  final int index;
+  final Map<String, Object?> item;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final title = _displayString(item['title']) ?? '事项';
+    final priorityLabel = _displayStringField(
+      item,
+      'priority_label',
+      'priorityLabel',
+    );
+    final reason = _displayString(item['reason']);
+    final steps = _displayStringList(item['steps']);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DecoratedBox(
+          decoration: const BoxDecoration(
+            color: MomCozyColors.raised,
+            shape: BoxShape.circle,
+          ),
+          child: SizedBox.square(
+            dimension: 24,
+            child: Center(
+              child: Text(
+                '$index',
+                style: textTheme.labelSmall?.copyWith(
+                  color: MomCozyColors.primary,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
           ),
-          if (card != cards.last) const SizedBox(height: 10),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (priorityLabel != null)
+                    _AgentArtifactPill(
+                      label: priorityLabel,
+                      color: priorityLabel == '建议'
+                          ? MomCozyColors.care
+                          : MomCozyColors.primary,
+                    ),
+                  Text(
+                    title,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+              if (reason != null) ...[
+                const SizedBox(height: 4),
+                _AgentArtifactBodyText(reason),
+              ],
+              if (steps.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                _AgentArtifactBulletList(items: steps),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AgentBirthPlanCard extends StatelessWidget {
+  const _AgentBirthPlanCard({required this.card});
+
+  final AgentArtifactCardView card;
+
+  @override
+  Widget build(BuildContext context) {
+    final cardJson = _effectiveCardJson(card);
+    final groups = <({String title, List<String> values, IconData icon})>[
+      (
+        title: '沟通方式',
+        values: _displayStringList(cardJson['communication']),
+        icon: Icons.headphones_outlined,
+      ),
+      (
+        title: '生产时偏好',
+        values: _displayStringListField(
+          cardJson,
+          'labor_preferences',
+          'laborPreferences',
+        ),
+        icon: Icons.directions_walk_rounded,
+      ),
+      (
+        title: '需要先沟通的操作',
+        values: _displayStringListField(
+          cardJson,
+          'intervention_preferences',
+          'interventionPreferences',
+        ),
+        icon: Icons.health_and_safety_outlined,
+      ),
+      (
+        title: '疼痛缓解',
+        values: _displayStringListField(cardJson, 'pain_relief', 'painRelief'),
+        icon: Icons.favorite_border_rounded,
+      ),
+      (
+        title: '宝宝出生后',
+        values: _displayStringListField(
+          cardJson,
+          'baby_after_birth',
+          'babyAfterBirth',
+        ),
+        icon: Icons.child_care_rounded,
+      ),
+      (
+        title: '计划变化时',
+        values: _displayStringListField(
+          cardJson,
+          'if_plans_change',
+          'ifPlansChange',
+        ),
+        icon: Icons.medical_services_outlined,
+      ),
+      (
+        title: '紧急情况',
+        values: _displayStringListField(
+          cardJson,
+          'emergency_authorization',
+          'emergencyAuthorization',
+        ),
+        icon: Icons.monitor_heart_outlined,
+      ),
+      (
+        title: '提前问医院',
+        values: _displayStringListField(
+          cardJson,
+          'questions_for_hospital',
+          'questionsForHospital',
+        ),
+        icon: Icons.help_outline_rounded,
+      ),
+    ].where((group) => group.values.isNotEmpty).toList(growable: false);
+    final medicalNotes = _displayStringListField(
+      cardJson,
+      'medical_notes',
+      'medicalNotes',
+    );
+    final disclaimer = _displayString(cardJson['disclaimer']);
+
+    return _AgentArtifactSpecializedShell(
+      card: card,
+      icon: Icons.fact_check_outlined,
+      accentColor: MomCozyColors.violet,
+      children: [
+        if (groups.isNotEmpty)
+          _AgentArtifactSection(
+            title: '沟通卡片内容',
+            children: [
+              for (final group in groups) ...[
+                _AgentBirthPlanGroup(group: group),
+                if (group != groups.last) const SizedBox(height: 8),
+              ],
+            ],
+          ),
+        if (medicalNotes.isNotEmpty) ...[
+          if (groups.isNotEmpty) const SizedBox(height: 10),
+          _AgentArtifactSection(
+            title: '医疗或安全信息',
+            children: [_AgentArtifactBulletList(items: medicalNotes)],
+          ),
+        ],
+        if (disclaimer != null) ...[
+          const SizedBox(height: 10),
+          _AgentArtifactBodyText(disclaimer),
+        ],
+      ],
+    );
+  }
+}
+
+class _AgentBirthPlanGroup extends StatelessWidget {
+  const _AgentBirthPlanGroup({required this.group});
+
+  final ({String title, List<String> values, IconData icon}) group;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.muted.withValues(alpha: 0.64),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(group.icon, size: 17, color: MomCozyColors.primary),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    group.title,
+                    style: textTheme.labelLarge?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            _AgentArtifactBulletList(items: group.values),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentHospitalBagCard extends StatelessWidget {
+  const _AgentHospitalBagCard({required this.card, this.onAction});
+
+  final AgentArtifactCardView card;
+  final AgentArtifactActionHandler? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final cardJson = _effectiveCardJson(card);
+    final packingGroups = _objectListField(
+      cardJson,
+      'packing_groups',
+      'packingGroups',
+    );
+    final disclaimer = _displayString(cardJson['disclaimer']);
+
+    return _AgentArtifactSpecializedShell(
+      card: card,
+      icon: Icons.shopping_bag_outlined,
+      accentColor: MomCozyColors.care,
+      subtitle: '住院母婴必备用品 · 32～34周准备 · 36周完成',
+      children: [
+        if (packingGroups.isNotEmpty)
+          _AgentArtifactSection(
+            title: '物品清单',
+            children: [
+              for (final group in packingGroups) ...[
+                _AgentPackingGroup(group: group),
+                if (group != packingGroups.last) const SizedBox(height: 8),
+              ],
+            ],
+          ),
+        if (disclaimer != null) ...[
+          const SizedBox(height: 10),
+          _AgentArtifactBodyText(disclaimer),
+        ],
+        const SizedBox(height: 12),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: FilledButton.icon(
+            onPressed: onAction == null
+                ? null
+                : () => onAction?.call(_hospitalBagCartAction()),
+            icon: const Icon(Icons.shopping_cart_outlined, size: 18),
+            label: const Text('打开购物车'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AgentPackingGroup extends StatelessWidget {
+  const _AgentPackingGroup({required this.group});
+
+  final Map<String, Object?> group;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final title =
+        _displayString(group['title']) ??
+        _displayStringField(group, 'group_id', 'groupId') ??
+        '待产包';
+    final items = _objectList(group['items']);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.careSoft.withValues(alpha: 0.58),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        border: Border.all(color: MomCozyColors.care.withValues(alpha: 0.18)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: textTheme.labelLarge?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                _AgentArtifactPill(
+                  label: '${items.length}项',
+                  color: MomCozyColors.care,
+                ),
+              ],
+            ),
+            if (items.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              for (var index = 0; index < items.length; index++) ...[
+                _AgentPackingItem(item: items[index]),
+                if (index != items.length - 1) const SizedBox(height: 8),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentPackingItem extends StatelessWidget {
+  const _AgentPackingItem({required this.item});
+
+  final Map<String, Object?> item;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final label =
+        _displayString(item['label']) ??
+        _displayString(item['name']) ??
+        _displayString(item['title']) ??
+        '物品';
+    final quantity =
+        _displayString(item['quantity']) ??
+        _displayString(item['amount']) ??
+        _displayString(item['count']);
+    final priority = _displayString(item['priority']);
+    final priorityLabel = _packingPriorityLabel(priority);
+    final description =
+        _displayString(item['reason']) ??
+        _displayString(item['description']) ??
+        _displayString(item['note']);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: MomCozyColors.raised,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const SizedBox.square(
+            dimension: 28,
+            child: Icon(
+              Icons.checkroom_outlined,
+              size: 16,
+              color: MomCozyColors.care,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    label,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  if (quantity != null)
+                    Text(
+                      quantity,
+                      style: textTheme.labelMedium?.copyWith(
+                        color: MomCozyColors.foreground,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  if (priorityLabel != null)
+                    _AgentArtifactPill(
+                      label: priorityLabel,
+                      color: MomCozyColors.care,
+                    ),
+                ],
+              ),
+              if (description != null) ...[
+                const SizedBox(height: 4),
+                _AgentArtifactBodyText(description),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AgentArtifactSection extends StatelessWidget {
+  const _AgentArtifactSection({this.title, required this.children});
+
+  final String? title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (title != null) ...[
+          Text(
+            title!,
+            style: textTheme.labelLarge?.copyWith(
+              color: MomCozyColors.foreground,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+        ...children,
+      ],
+    );
+  }
+}
+
+class _AgentMetricTile extends StatelessWidget {
+  const _AgentMetricTile({
+    required this.label,
+    required this.value,
+    this.detail,
+  });
+
+  final String label;
+  final String value;
+  final String? detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 96),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: MomCozyColors.muted.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: textTheme.labelSmall?.copyWith(
+                  color: MomCozyColors.mutedForeground,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: textTheme.titleSmall?.copyWith(
+                  color: MomCozyColors.foreground,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              if (detail != null) ...[
+                const SizedBox(height: 2),
+                Text(
+                  detail!,
+                  style: textTheme.labelSmall?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentOwnerChip extends StatelessWidget {
+  const _AgentOwnerChip({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.roseSoft.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.72)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: textTheme.labelMedium?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentArtifactPill extends StatelessWidget {
+  const _AgentArtifactPill({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        border: Border.all(color: color.withValues(alpha: 0.22)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentArtifactBodyText extends StatelessWidget {
+  const _AgentArtifactBodyText(this.text, {this.weight});
+
+  final String text;
+  final FontWeight? weight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        height: 1.35,
+        color: MomCozyColors.mutedForeground,
+        fontWeight: weight,
+      ),
+    );
+  }
+}
+
+class _AgentArtifactBulletList extends StatelessWidget {
+  const _AgentArtifactBulletList({required this.items});
+
+  final List<String> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final item in items) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '•',
+                style: textTheme.bodySmall?.copyWith(
+                  color: MomCozyColors.primary,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(child: _AgentArtifactBodyText(item)),
+            ],
+          ),
+          if (item != items.last) const SizedBox(height: 4),
         ],
       ],
     );
@@ -2221,6 +3796,10 @@ class AgentArtifactCardView {
   const AgentArtifactCardView({
     required this.id,
     required this.title,
+    this.artifactType,
+    this.cardType,
+    this.cardJson = const <String, Object?>{},
+    this.rawCard = const <String, Object?>{},
     this.content,
     this.statusLabel,
     this.rows = const <String>[],
@@ -2232,6 +3811,10 @@ class AgentArtifactCardView {
 
   final String id;
   final String title;
+  final String? artifactType;
+  final String? cardType;
+  final Map<String, Object?> cardJson;
+  final Map<String, Object?> rawCard;
   final String? content;
   final String? statusLabel;
   final List<String> rows;
@@ -2250,6 +3833,9 @@ class AgentArtifactFormFieldView {
     this.options = const <String>[],
     this.placeholder,
     this.defaultValue,
+    this.allowOtherInput = false,
+    this.otherPlaceholder,
+    this.helpText,
   });
 
   final String id;
@@ -2259,8 +3845,19 @@ class AgentArtifactFormFieldView {
   final List<String> options;
   final String? placeholder;
   final Object? defaultValue;
+  final bool allowOtherInput;
+  final String? otherPlaceholder;
+  final String? helpText;
 
-  bool get isMultiSelect => type == 'multi_select' || type == 'checkboxes';
+  String get groupTitle => _splitFormFieldLabel(label).groupTitle;
+
+  String get fieldLabel => _splitFormFieldLabel(label).fieldLabel;
+
+  bool get isMultiSelect {
+    return type == 'multi_select' ||
+        type == 'checkboxes' ||
+        type == 'checkbox_group';
+  }
 
   bool get isChoice => isMultiSelect || type == 'select' || type == 'radio';
 }
@@ -2295,11 +3892,15 @@ class _AgentArtifactFormView extends StatefulWidget {
 
 class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
   late Map<String, Object?> _values;
+  late Map<String, String> _otherValues;
+  String? _submitError;
+  bool _submitted = false;
 
   @override
   void initState() {
     super.initState();
     _values = _initialValues(widget.card.formFields);
+    _otherValues = const <String, String>{};
   }
 
   @override
@@ -2308,6 +3909,9 @@ class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
     if (oldWidget.card.id != widget.card.id ||
         oldWidget.card.formFields.length != widget.card.formFields.length) {
       _values = _initialValues(widget.card.formFields);
+      _otherValues = const <String, String>{};
+      _submitError = null;
+      _submitted = false;
     }
   }
 
@@ -2316,24 +3920,62 @@ class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
+    final groups = _formFieldGroups(widget.card);
+
     return Column(
       key: ValueKey('agent-artifact-form-${widget.card.id}'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (final field in widget.card.formFields) ...[
-          _buildField(context, field),
+        for (final group in groups) ...[
+          if (group.title.isNotEmpty)
+            _AgentArtifactFormGroup(
+              title: group.title,
+              children: [
+                for (final field in group.fields) ...[
+                  _buildField(context, field),
+                  if (field != group.fields.last) const SizedBox(height: 10),
+                ],
+              ],
+            )
+          else
+            for (final field in group.fields) ...[
+              _buildField(context, field),
+              if (field != group.fields.last) const SizedBox(height: 10),
+            ],
+          if (group != groups.last) const SizedBox(height: 10),
+        ],
+        if (_submitError != null) ...[
+          if (groups.isNotEmpty) const SizedBox(height: 10),
+          Text(
+            _submitError!,
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.error,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           const SizedBox(height: 10),
         ],
         Align(
           alignment: Alignment.centerLeft,
           child: FilledButton.icon(
             key: ValueKey('agent-artifact-form-submit-${widget.card.id}'),
-            onPressed: widget.onAction == null ? null : _submit,
-            icon: const Icon(Icons.check_rounded, size: 18),
-            label: Text(widget.card.formSubmitLabel ?? '提交'),
+            onPressed: widget.onAction == null || _submitted ? null : _submit,
+            icon: Icon(
+              _submitted
+                  ? Icons.check_circle_outline_rounded
+                  : Icons.check_rounded,
+              size: 18,
+            ),
+            label: Text(
+              _submitted ? '已提交' : widget.card.formSubmitLabel ?? '提交',
+            ),
             style: FilledButton.styleFrom(
-              backgroundColor: colorScheme.primary,
-              foregroundColor: colorScheme.onPrimary,
+              backgroundColor: _submitted
+                  ? MomCozyColors.careSoft
+                  : colorScheme.primary,
+              foregroundColor: _submitted
+                  ? MomCozyColors.care
+                  : colorScheme.onPrimary,
               textStyle: textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w800,
               ),
@@ -2356,7 +3998,7 @@ class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
           children: [
             Expanded(
               child: Text(
-                field.label,
+                field.fieldLabel,
                 style: textTheme.labelMedium?.copyWith(
                   color: MomCozyColors.foreground,
                   fontWeight: FontWeight.w800,
@@ -2375,24 +4017,54 @@ class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
         ),
         const SizedBox(height: 6),
         if (field.isChoice && field.options.isNotEmpty)
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final option in field.options)
-                ChoiceChip(
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final option in field.options)
+                    ChoiceChip(
+                      key: ValueKey(
+                        'agent-artifact-form-option-${widget.card.id}-${field.id}-$option',
+                      ),
+                      selected: _isOptionSelected(field, option),
+                      label: Text(option),
+                      onSelected: _submitted
+                          ? null
+                          : (_) => _toggleOption(field, option),
+                    ),
+                ],
+              ),
+              if (field.allowOtherInput && _isOtherSelected(field)) ...[
+                const SizedBox(height: 8),
+                TextFormField(
                   key: ValueKey(
-                    'agent-artifact-form-option-${widget.card.id}-${field.id}-$option',
+                    'agent-artifact-form-other-${widget.card.id}-${field.id}',
                   ),
-                  selected: _isOptionSelected(field, option),
-                  label: Text(option),
-                  onSelected: (_) => _toggleOption(field, option),
+                  initialValue: _otherValues[field.id] ?? '',
+                  readOnly: _submitted,
+                  decoration: InputDecoration(
+                    hintText: field.otherPlaceholder ?? '请补充说明',
+                    isDense: true,
+                    filled: true,
+                    fillColor: MomCozyColors.card.withValues(alpha: 0.72),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(MomCozyRadii.control),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    _setOtherFieldValue(field.id, value.trim());
+                  },
                 ),
+              ],
             ],
           )
         else
           TextFormField(
             initialValue: _textValue(field),
+            readOnly: _submitted,
             minLines: field.type == 'textarea' ? 3 : 1,
             maxLines: field.type == 'textarea' ? 5 : 1,
             decoration: InputDecoration(
@@ -2405,9 +4077,18 @@ class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
               ),
             ),
             onChanged: (value) {
-              _values = {..._values, field.id: value.trim()};
+              _setFieldValue(field.id, value.trim());
             },
           ),
+        if (field.helpText != null) ...[
+          const SizedBox(height: 6),
+          Text(
+            field.helpText!,
+            style: textTheme.labelSmall?.copyWith(
+              color: MomCozyColors.mutedForeground,
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -2425,6 +4106,14 @@ class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
     return value == null ? '' : value.toString();
   }
 
+  bool _isOtherSelected(AgentArtifactFormFieldView field) {
+    final value = _values[field.id];
+    if (field.isMultiSelect) {
+      return value is List && value.whereType<String>().any(_isOtherFormOption);
+    }
+    return value is String && _isOtherFormOption(value);
+  }
+
   void _toggleOption(AgentArtifactFormFieldView field, String option) {
     setState(() {
       if (field.isMultiSelect) {
@@ -2436,17 +4125,34 @@ class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
       } else {
         _values = {..._values, field.id: option};
       }
+      _submitError = null;
     });
   }
 
   void _submit() {
-    final values = Map<String, Object?>.from(_values)
-      ..removeWhere((_, value) {
-        if (value == null) return true;
-        if (value is String) return value.trim().isEmpty;
-        if (value is List) return value.isEmpty;
-        return false;
+    for (final field in widget.card.formFields) {
+      if (!field.allowOtherInput || !_isOtherSelected(field)) continue;
+      final otherValue = _otherValues[field.id]?.trim() ?? '';
+      if (otherValue.isEmpty) {
+        setState(() {
+          _submitError = '请填写：${field.fieldLabel}的其它内容';
+        });
+        return;
+      }
+    }
+
+    final values = _submittedValues();
+    final missingFields = widget.card.formFields
+        .where((field) => field.required && !_hasFieldValue(values[field.id]))
+        .map((field) => field.fieldLabel)
+        .toList();
+    if (missingFields.isNotEmpty) {
+      setState(() {
+        _submitError = '请补充：${missingFields.join('、')}';
       });
+      return;
+    }
+
     widget.onAction?.call(
       AgentArtifactActionView(
         label: widget.card.formSubmitLabel ?? '提交',
@@ -2460,14 +4166,168 @@ class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
         },
       ),
     );
+    setState(() {
+      _submitted = true;
+      _submitError = null;
+    });
+  }
+
+  void _setFieldValue(String id, Object? value) {
+    if (_submitted) return;
+    setState(() {
+      _values = {..._values, id: value};
+      _submitError = null;
+    });
+  }
+
+  void _setOtherFieldValue(String id, String value) {
+    if (_submitted) return;
+    setState(() {
+      _otherValues = {..._otherValues, id: value};
+      _submitError = null;
+    });
+  }
+
+  bool _hasFieldValue(Object? value) {
+    if (value == null) return false;
+    if (value is String) return value.trim().isNotEmpty;
+    if (value is List) return value.isNotEmpty;
+    return true;
   }
 
   Map<String, Object?> _initialValues(List<AgentArtifactFormFieldView> fields) {
     return {
       for (final field in fields)
-        if (field.defaultValue != null) field.id: field.defaultValue,
+        if (field.defaultValue != null)
+          field.id: field.isMultiSelect
+              ? _defaultMultiSelectValues(field.defaultValue)
+              : field.defaultValue,
     };
   }
+
+  Map<String, Object?> _submittedValues() {
+    final values = <String, Object?>{};
+    for (final field in widget.card.formFields) {
+      final rawValue = _values[field.id];
+      Object? value = rawValue;
+      if (field.isMultiSelect && rawValue is List) {
+        final otherValue = _otherValues[field.id]?.trim();
+        value = rawValue
+            .whereType<String>()
+            .map((item) {
+              if (field.allowOtherInput &&
+                  otherValue != null &&
+                  otherValue.isNotEmpty &&
+                  _isOtherFormOption(item)) {
+                return '其它：$otherValue';
+              }
+              return item.trim();
+            })
+            .where((item) => item.isNotEmpty)
+            .toList(growable: false);
+      } else if (rawValue is String) {
+        final otherValue = _otherValues[field.id]?.trim();
+        value =
+            field.allowOtherInput &&
+                otherValue != null &&
+                otherValue.isNotEmpty &&
+                _isOtherFormOption(rawValue)
+            ? '其它：$otherValue'
+            : rawValue.trim();
+      }
+      if (_hasFieldValue(value)) values[field.id] = value;
+    }
+    return values;
+  }
+}
+
+class _AgentArtifactFormFieldGroup {
+  const _AgentArtifactFormFieldGroup({
+    required this.title,
+    required this.fields,
+  });
+
+  final String title;
+  final List<AgentArtifactFormFieldView> fields;
+}
+
+class _AgentArtifactFormGroup extends StatelessWidget {
+  const _AgentArtifactFormGroup({required this.title, required this.children});
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.raised.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.72)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: textTheme.labelLarge?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 10),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+List<_AgentArtifactFormFieldGroup> _formFieldGroups(
+  AgentArtifactCardView card,
+) {
+  if (card.formFields.isEmpty) return const <_AgentArtifactFormFieldGroup>[];
+  final forceBasicInfoGroup = card.formId == 'birth_journey_basic_info_intake';
+  final orderedTitles = <({String key, String title})>[];
+  final fieldsByTitle = <String, List<AgentArtifactFormFieldView>>{};
+
+  for (final field in card.formFields) {
+    final groupTitle = forceBasicInfoGroup ? '基本信息' : field.groupTitle;
+    final key = groupTitle.isEmpty ? '__ungrouped' : groupTitle;
+    if (!fieldsByTitle.containsKey(key)) {
+      orderedTitles.add((key: key, title: groupTitle));
+      fieldsByTitle[key] = <AgentArtifactFormFieldView>[];
+    }
+    fieldsByTitle[key]!.add(field);
+  }
+
+  return [
+    for (final group in orderedTitles)
+      _AgentArtifactFormFieldGroup(
+        title: group.title,
+        fields: List<AgentArtifactFormFieldView>.unmodifiable(
+          fieldsByTitle[group.key] ?? const <AgentArtifactFormFieldView>[],
+        ),
+      ),
+  ];
+}
+
+List<String> _defaultMultiSelectValues(Object? value) {
+  if (value is List) return _displayStringList(value);
+  if (value is String) {
+    return value
+        .split(',')
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
+  }
+  final displayValue = _displayString(value);
+  return displayValue == null ? const <String>[] : <String>[displayValue];
 }
 
 class AgentActionPanel extends StatelessWidget {
@@ -3274,21 +5134,28 @@ List<AgentArtifactCardView> _artifactCardsFromEvents(
 ) {
   final cards = <String, AgentArtifactCardView>{};
   for (final event in events) {
-    final card = _artifactCardFromEvent(event);
-    if (card != null) cards[card.id] = card;
+    for (final card in _artifactCardsFromEvent(event)) {
+      cards[card.id] = card;
+    }
   }
   return List<AgentArtifactCardView>.unmodifiable(cards.values);
 }
 
-AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
-  if (event.type != 'artifact.created' && event.type != 'artifact.updated') {
-    return null;
-  }
-
+List<AgentArtifactCardView> _artifactCardsFromEvent(AgentStreamEvent event) {
   final payload = event.payload;
   final rawRichText = _mapField(event.raw, 'rich_text', 'richText');
   final payloadRichText = _mapField(payload, 'rich_text', 'richText');
   final richText = rawRichText.isNotEmpty ? rawRichText : payloadRichText;
+  final agUiCards = <AgentArtifactCardView>[
+    ..._agUiArtifactCardsFromActions(richText['action'], event),
+    ..._agUiArtifactCardsFromActions(payload['action'], event),
+    ..._agUiArtifactCardsFromActions(payload['actions'], event),
+  ];
+
+  if (event.type != 'artifact.created' && event.type != 'artifact.updated') {
+    return List<AgentArtifactCardView>.unmodifiable(agUiCards);
+  }
+
   final rawArtifact = _mapField(event.raw, 'artifact');
   final payloadArtifact = _mapField(payload, 'artifact');
   final artifact = rawArtifact.isNotEmpty ? rawArtifact : payloadArtifact;
@@ -3311,13 +5178,6 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
     _mapField(artifactPayload, 'assistant_followup', 'assistantFollowup'),
     _mapField(payload, 'assistant_followup', 'assistantFollowup'),
   ]);
-  final rawCardJson = _firstMap([
-    _mapField(artifact, 'card_json', 'cardJson'),
-    _mapField(artifactPayload, 'card_json', 'cardJson'),
-    _mapField(payload, 'card_json', 'cardJson'),
-    _mapField(cardEnvelope, 'card_json', 'cardJson'),
-  ]);
-  final cardJson = rawCardJson.isNotEmpty ? rawCardJson : payload;
   final artifactId =
       stringField(event.raw, 'artifact_id') ??
       stringField(payload, 'artifact_id') ??
@@ -3325,16 +5185,56 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
       stringField(artifact, 'id') ??
       event.mergeKey;
 
-  final title =
-      _firstNonEmpty([
-        _stringField(richText, 'title'),
-        _stringField(form, 'title'),
-        _stringField(cardJson, 'title'),
-        _stringField(cartUpdate, 'message'),
-        _stringField(payload, 'title'),
-        _artifactSubject(event),
-      ]) ??
-      '结果卡片';
+  final envelopeCard = _artifactCardFromEnvelope(
+    event: event,
+    payload: payload,
+    richText: richText,
+    artifact: artifact,
+    artifactPayload: artifactPayload,
+    cardEnvelope: cardEnvelope,
+    form: form,
+    cartUpdate: cartUpdate,
+    assistantFollowup: assistantFollowup,
+    artifactId: artifactId,
+    artifactType: _firstNonEmpty([
+      _stringField(payload, 'artifact_type', 'artifactType'),
+      _stringField(artifact, 'artifact_type', 'artifactType'),
+    ]),
+  );
+
+  return List<AgentArtifactCardView>.unmodifiable([
+    ?envelopeCard,
+    ...agUiCards,
+  ]);
+}
+
+AgentArtifactCardView? _artifactCardFromEnvelope({
+  required AgentStreamEvent event,
+  required Map<String, Object?> payload,
+  required Map<String, Object?> richText,
+  required Map<String, Object?> artifact,
+  required Map<String, Object?> artifactPayload,
+  required Map<String, Object?> cardEnvelope,
+  required Map<String, Object?> form,
+  required Map<String, Object?> cartUpdate,
+  required Map<String, Object?> assistantFollowup,
+  required String artifactId,
+  String? artifactType,
+}) {
+  final rawCardJson = _firstMap([
+    _mapField(artifact, 'card_json', 'cardJson'),
+    _mapField(artifactPayload, 'card_json', 'cardJson'),
+    _mapField(payload, 'card_json', 'cardJson'),
+    _mapField(cardEnvelope, 'card_json', 'cardJson'),
+  ]);
+  final cardJson = rawCardJson.isNotEmpty ? rawCardJson : payload;
+  final explicitTitle = _firstNonEmpty([
+    _stringField(richText, 'title'),
+    _stringField(form, 'title'),
+    _stringField(cardJson, 'title'),
+    _stringField(cartUpdate, 'message'),
+    _stringField(payload, 'title'),
+  ]);
   final content = _firstNonEmpty([
     _stringField(richText, 'content'),
     _stringField(payload, 'content'),
@@ -3362,7 +5262,8 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
     ..._assistantFollowupActions(assistantFollowup),
   ];
 
-  if (title.trim().isEmpty &&
+  if (explicitTitle == null &&
+      formFields.isEmpty &&
       (content == null || content.trim().isEmpty) &&
       rows.isEmpty &&
       actions.isEmpty) {
@@ -3371,7 +5272,11 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
 
   return AgentArtifactCardView(
     id: artifactId,
-    title: title,
+    title: explicitTitle ?? _artifactSubject(event),
+    artifactType: artifactType,
+    cardType: _stringField(cardEnvelope, 'card_type', 'cardType'),
+    cardJson: cardJson,
+    rawCard: cardEnvelope,
     content: content,
     statusLabel: status,
     rows: rows,
@@ -3382,11 +5287,191 @@ AgentArtifactCardView? _artifactCardFromEvent(AgentStreamEvent event) {
   );
 }
 
+List<AgentArtifactCardView> _agUiArtifactCardsFromActions(
+  Object? rawActions,
+  AgentStreamEvent event,
+) {
+  if (rawActions is! List) return const <AgentArtifactCardView>[];
+  final cards = <AgentArtifactCardView>[];
+  for (var index = 0; index < rawActions.length; index++) {
+    final rawAction = rawActions[index];
+    if (rawAction is! Map) continue;
+    final action = Map<String, Object?>.from(rawAction);
+    if (_stringField(action, 'kind') != 'ag_ui_artifact') continue;
+    final artifactType = _stringField(action, 'artifact_type', 'artifactType');
+    final artifactId =
+        _stringField(action, 'artifact_id', 'artifactId') ??
+        '${event.mergeKey}:ag-ui:$index';
+
+    final form = _mapField(action, 'form');
+    final card = _mapField(action, 'card');
+    final ticket = _mapField(action, 'ticket');
+    final cardEnvelope = card.isNotEmpty
+        ? card
+        : ticket.isNotEmpty
+        ? ticket
+        : const <String, Object?>{};
+    final effectiveForm = form.isNotEmpty ? form : const <String, Object?>{};
+
+    final parsed = _artifactCardFromEnvelope(
+      event: event,
+      payload: action,
+      richText: const <String, Object?>{},
+      artifact: const <String, Object?>{},
+      artifactPayload: const <String, Object?>{},
+      cardEnvelope: cardEnvelope,
+      form: effectiveForm,
+      cartUpdate: const <String, Object?>{},
+      assistantFollowup: const <String, Object?>{},
+      artifactId: artifactId,
+      artifactType: artifactType,
+    );
+    if (parsed != null) cards.add(parsed);
+  }
+  return List<AgentArtifactCardView>.unmodifiable(cards);
+}
+
 Map<String, Object?> _firstMap(List<Map<String, Object?>> values) {
   for (final value in values) {
     if (value.isNotEmpty) return value;
   }
   return const {};
+}
+
+String? _artifactCardType(AgentArtifactCardView card) {
+  final explicitCardType = _firstNonEmpty([
+    card.cardType,
+    _stringField(card.rawCard, 'card_type', 'cardType'),
+    _stringField(card.cardJson, 'card_type', 'cardType'),
+  ]);
+  if (explicitCardType != null) return explicitCardType;
+
+  final artifactType = card.artifactType;
+  final cardJson = _effectiveCardJson(card);
+  return switch (artifactType) {
+    'milk_analysis_card' || 'milk_plan_card'
+        when cardJson.containsKey('sections') ||
+            cardJson.containsKey('headline') =>
+      artifactType,
+    'birth_journey_plan_card'
+        when cardJson.containsKey('todo_plan') ||
+            cardJson.containsKey('todoPlan') ||
+            cardJson.containsKey('owner') =>
+      artifactType,
+    'birth_plan_card'
+        when cardJson.containsKey('communication') ||
+            cardJson.containsKey('pain_relief') ||
+            cardJson.containsKey('painRelief') ||
+            cardJson.containsKey('medical_notes') ||
+            cardJson.containsKey('medicalNotes') =>
+      artifactType,
+    'hospital_bag_card'
+        when cardJson.containsKey('packing_groups') ||
+            cardJson.containsKey('packingGroups') =>
+      artifactType,
+    _ => null,
+  };
+}
+
+Map<String, Object?> _effectiveCardJson(AgentArtifactCardView card) {
+  if (card.cardJson.isNotEmpty) return card.cardJson;
+  final rawCardJson = _mapField(card.rawCard, 'card_json', 'cardJson');
+  if (rawCardJson.isNotEmpty) return rawCardJson;
+  return card.rawCard;
+}
+
+Object? _fieldValue(Map<String, Object?> map, String key, [String? alias]) {
+  return map[key] ?? (alias == null ? null : map[alias]);
+}
+
+String? _displayStringField(
+  Map<String, Object?> map,
+  String key, [
+  String? alias,
+]) {
+  return _displayString(_fieldValue(map, key, alias));
+}
+
+List<String> _displayStringListField(
+  Map<String, Object?> map,
+  String key, [
+  String? alias,
+]) {
+  return _displayStringList(_fieldValue(map, key, alias));
+}
+
+List<Map<String, Object?>> _objectListField(
+  Map<String, Object?> map,
+  String key, [
+  String? alias,
+]) {
+  return _objectList(_fieldValue(map, key, alias));
+}
+
+List<Map<String, Object?>> _objectList(Object? value) {
+  if (value is! List) return const <Map<String, Object?>>[];
+  return value
+      .whereType<Map>()
+      .map((item) => Map<String, Object?>.from(item))
+      .toList(growable: false);
+}
+
+String? _displayString(Object? value) {
+  if (value == null) return null;
+  if (value is String) {
+    final normalized = value.trim();
+    return normalized.isEmpty ? null : normalized;
+  }
+  if (value is num || value is bool) return value.toString();
+  if (value is List) {
+    final values = _displayStringList(value);
+    return values.isEmpty ? null : values.join('、');
+  }
+  return null;
+}
+
+List<String> _displayStringList(Object? value) {
+  if (value is! List) return const <String>[];
+  return value.map(_displayString).whereType<String>().toList(growable: false);
+}
+
+String? _packingPriorityLabel(String? priority) {
+  return switch (priority) {
+    'must' || 'required' => '必备',
+    'recommended' || 'recommend' => '推荐',
+    'optional' => '可选',
+    final value? when value.trim().isNotEmpty => value,
+    _ => null,
+  };
+}
+
+AgentArtifactActionView _hospitalBagCartAction() {
+  return const AgentArtifactActionView(
+    label: '打开待产包购物车',
+    icon: Icons.shopping_cart_outlined,
+    kind: 'artifact',
+    value: '/hospital-bag-cart',
+    routePath: '/hospital-bag-cart',
+  );
+}
+
+({String groupTitle, String fieldLabel}) _splitFormFieldLabel(String label) {
+  final normalized = label.trim();
+  final separatorIndex = normalized.indexOf('｜');
+  if (separatorIndex <= 0) {
+    return (groupTitle: '', fieldLabel: normalized);
+  }
+  final groupTitle = normalized.substring(0, separatorIndex).trim();
+  final fieldLabel = normalized.substring(separatorIndex + 1).trim();
+  if (groupTitle.isEmpty || fieldLabel.isEmpty) {
+    return (groupTitle: '', fieldLabel: normalized);
+  }
+  return (groupTitle: groupTitle, fieldLabel: fieldLabel);
+}
+
+bool _isOtherFormOption(String option) {
+  final normalized = option.trim();
+  return normalized == '其它' || normalized == '其他';
 }
 
 List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
@@ -3413,6 +5498,15 @@ List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
             field['default_value'] ??
             field['defaultValue'] ??
             defaultValues[id],
+        allowOtherInput:
+            field['allow_other_input'] == true ||
+            field['allowOtherInput'] == true,
+        otherPlaceholder: _stringField(
+          field,
+          'other_placeholder',
+          'otherPlaceholder',
+        ),
+        helpText: _stringField(field, 'help_text', 'helpText'),
       ),
     );
   }
@@ -3756,6 +5850,7 @@ List<AgentArtifactActionView> _semanticActions(
   return rawActions
       .whereType<Map>()
       .map((rawAction) => Map<String, Object?>.from(rawAction))
+      .where((action) => _stringField(action, 'kind') != 'ag_ui_artifact')
       .map((action) {
         final kind = _stringField(action, 'kind', 'type');
         final value = _firstNonEmpty([
@@ -3962,10 +6057,19 @@ String? _safeAgentErrorText(String? errorMessage) {
   return normalized;
 }
 
-String? _latestBackendStatusTitle(List<AgentStreamEvent> events) {
+String? _latestBackendStatusTitle(
+  List<AgentStreamEvent> events, {
+  String? suppressedTitle,
+}) {
   for (final event in events.reversed) {
     final semanticTitle = _semanticStatusTitle(event);
-    if (semanticTitle != null) return semanticTitle;
+    if (semanticTitle != null && semanticTitle != suppressedTitle) {
+      return semanticTitle;
+    }
+    final legacyTitle = _legacyStatusLineTitle(event);
+    if (legacyTitle != null && legacyTitle != suppressedTitle) {
+      return legacyTitle;
+    }
 
     switch (event.type) {
       case 'run.queued':
@@ -3979,11 +6083,13 @@ String? _latestBackendStatusTitle(List<AgentStreamEvent> events) {
             _phaseStatusTitle(event),
           ]),
         );
-        if (title != null) return title;
+        if (title != null && title != suppressedTitle) return title;
         continue;
       case 'tool.started':
       case 'tool.progress':
-        return _visibleAgentStatusTitle(_toolStep(event).title);
+        final title = _visibleAgentStatusTitle(_toolStep(event).title);
+        if (title != null && title != suppressedTitle) return title;
+        continue;
       case 'tool.completed':
         return '我接着处理下一步';
       case 'artifact.created':
@@ -3996,6 +6102,90 @@ String? _latestBackendStatusTitle(List<AgentStreamEvent> events) {
       case 'run.cancelled':
         break;
     }
+  }
+  return null;
+}
+
+String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
+  for (final event in events.reversed) {
+    final customTitle = _customAgentThinkingTitle(event);
+    if (customTitle != null) return customTitle;
+    if (_customAgentThinkingClears(event)) return null;
+    final legacyTitle = _legacyThinkingTitle(event);
+    if (legacyTitle != null) return legacyTitle;
+
+    if (event.type == 'run.progress') {
+      final phase = _stringField(event.payload, 'phase')?.trim();
+      if (phase == 'model_reasoning') return '我想一下';
+      if (_runProgressClearsAgentThinking(event, phase)) return null;
+    }
+
+    if (event.type == 'message.delta' ||
+        event.type == 'message.completed' ||
+        event.type == 'run.completed' ||
+        event.type == 'run.failed' ||
+        event.type == 'run.cancelled') {
+      return null;
+    }
+  }
+  return null;
+}
+
+bool _runProgressClearsAgentThinking(AgentStreamEvent event, String? phase) {
+  if (phase != null && phase.isNotEmpty) return true;
+  final statusCandidates = [
+    _semanticStatusTitle(event),
+    _stringField(event.payload, 'label'),
+    _stringField(event.payload, 'message'),
+  ];
+  return statusCandidates.any(
+    (candidate) => _visibleAgentStatusTitle(candidate) != null,
+  );
+}
+
+bool _customAgentThinkingClears(AgentStreamEvent event) {
+  final candidates = [
+    event.payload,
+    event.raw,
+    _mapField(event.payload, 'data'),
+    _mapField(event.raw, 'data'),
+  ];
+  for (final data in candidates) {
+    if (_stringField(data, 'name') != 'momcozy.agent.thinking') continue;
+    final value = _mapField(data, 'value');
+    final status = _stringField(value, 'status')?.trim().toLowerCase();
+    if (status == 'completed' || status == 'failed') return true;
+  }
+  return false;
+}
+
+String? _legacyThinkingTitle(AgentStreamEvent event) {
+  return _visibleAgentStatusTitle(
+    _firstNonEmpty([
+      _stringField(event.payload, 'agentThinkingTitle', 'agent_thinking_title'),
+      _stringField(event.payload, 'thinkingTitle', 'thinking_title'),
+      _stringField(event.raw, 'agentThinkingTitle', 'agent_thinking_title'),
+      _stringField(event.raw, 'thinkingTitle', 'thinking_title'),
+    ]),
+  );
+}
+
+String? _customAgentThinkingTitle(AgentStreamEvent event) {
+  final candidates = [
+    event.payload,
+    event.raw,
+    _mapField(event.payload, 'data'),
+    _mapField(event.raw, 'data'),
+  ];
+  for (final data in candidates) {
+    if (_stringField(data, 'name') != 'momcozy.agent.thinking') continue;
+    final value = _mapField(data, 'value');
+    final status = _stringField(value, 'status')?.trim().toLowerCase();
+    if (status == 'completed' || status == 'failed') return null;
+    if (status != 'started' && status != 'running') continue;
+    final metadata = _mapField(value, 'metadata');
+    final afterOutputText = metadata['after_output_text'] == true;
+    return afterOutputText ? '我接着处理下一步' : '我想一下';
   }
   return null;
 }
@@ -4013,6 +6203,64 @@ String? _semanticStatusTitle(AgentStreamEvent event) {
         _stringField(semantic, 'title'),
       ]),
     );
+    if (title != null) return title;
+  }
+  return null;
+}
+
+String? _legacyStatusLineTitle(AgentStreamEvent event) {
+  return _visibleAgentStatusTitle(
+    _firstNonEmpty([
+      _stringField(event.payload, 'agentStatusLine', 'agent_status_line'),
+      _stringField(event.payload, 'statusLine', 'status_line'),
+      _stringField(event.raw, 'agentStatusLine', 'agent_status_line'),
+      _stringField(event.raw, 'statusLine', 'status_line'),
+      _customAgentStatusLine(event),
+      _metadataStatusLine(event),
+    ]),
+  );
+}
+
+String? _customAgentStatusLine(AgentStreamEvent event) {
+  final candidates = [
+    event.payload,
+    event.raw,
+    _mapField(event.payload, 'data'),
+    _mapField(event.raw, 'data'),
+  ];
+  for (final data in candidates) {
+    if (_stringField(data, 'name') != 'momcozy.agent.status') continue;
+    final value = data['value'];
+    if (value is String && value.trim().isNotEmpty) return value.trim();
+    if (value is Map) {
+      final map = Map<String, Object?>.from(value);
+      final title = _firstNonEmpty([
+        _stringField(map, 'label'),
+        _stringField(map, 'text'),
+        _stringField(map, 'message'),
+        _stringField(map, 'status'),
+        _stringField(map, 'phase'),
+      ]);
+      if (title != null) return title;
+    }
+  }
+  return null;
+}
+
+String? _metadataStatusLine(AgentStreamEvent event) {
+  final candidates = [
+    _mapField(event.payload, 'metadata'),
+    _mapField(event.raw, 'metadata'),
+    _mapField(_mapField(event.payload, 'content'), 'metadata'),
+    _mapField(_mapField(event.raw, 'content'), 'metadata'),
+  ];
+  for (final metadata in candidates) {
+    final title = _firstNonEmpty([
+      _stringField(metadata, 'status_label', 'statusLabel'),
+      _stringField(metadata, 'status'),
+      _stringField(metadata, 'phase'),
+      _stringField(metadata, 'message'),
+    ]);
     if (title != null) return title;
   }
   return null;

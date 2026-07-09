@@ -132,7 +132,7 @@ Widget _host(Widget child) {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: MomCozyColors.background,
-        body: SafeArea(child: child),
+        body: SafeArea(child: TickerMode(enabled: false, child: child)),
       ),
     ),
   );
