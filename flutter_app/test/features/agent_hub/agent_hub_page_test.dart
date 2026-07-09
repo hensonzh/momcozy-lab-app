@@ -513,7 +513,58 @@ void main() {
     );
   });
 
-  testWidgets('Agent Hub renders quick replies as selectable chips', (
+  testWidgets('Agent quick replies match legacy web chrome', (tester) async {
+    final selected = <String>[];
+
+    await tester.pumpWidget(
+      _host(
+        AgentQuickRepliesBar(
+          replies: const ['继续聊这个', '给我更多细节', '换个方向'],
+          onSelected: selected.add,
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-quick-replies')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-quick-replies-title-line')),
+      findsOneWidget,
+    );
+    expect(
+      tester.getSize(
+        find.byKey(const ValueKey('agent-quick-replies-title-line')),
+      ),
+      const Size(16, 1),
+    );
+    expect(find.text('猜你想说'), findsOneWidget);
+    expect(find.byIcon(Icons.chevron_right_rounded), findsNWidgets(3));
+    expect(find.byType(InkWell), findsNWidgets(3));
+
+    await tester.tap(find.byKey(const ValueKey('agent-quick-reply-1')));
+    await tester.pump();
+
+    expect(selected, ['给我更多细节']);
+  });
+
+  testWidgets(
+    'Agent quick replies render only for legacy three item payloads',
+    (tester) async {
+      await tester.pumpWidget(
+        _host(
+          AgentQuickRepliesBar(
+            replies: const ['继续聊这个', '给我更多细节'],
+            onSelected: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
+      expect(find.text('猜你想说'), findsNothing);
+      expect(find.byIcon(Icons.chevron_right_rounded), findsNothing);
+    },
+  );
+
+  testWidgets('Agent Hub renders quick replies as selectable legacy pills', (
     tester,
   ) async {
     final client = _FixtureAgentStreamClient([
@@ -1757,6 +1808,8 @@ void main() {
             'text': 'Final answer',
             'quick_replies': [
               {'text': '继续聊这个'},
+              {'text': '给我更多细节'},
+              {'text': '换个方向'},
             ],
           },
         }),
