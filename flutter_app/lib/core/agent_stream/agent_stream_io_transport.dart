@@ -340,18 +340,22 @@ class AgentStreamClientEventRequest {
   const AgentStreamClientEventRequest({
     required this.eventType,
     required this.occurredAt,
+    this.runId,
     this.label,
     this.locale,
     this.timezone,
     this.metadata = const <String, Object?>{},
+    this.clientSequence,
   });
 
   final String eventType;
   final String occurredAt;
+  final String? runId;
   final String? label;
   final String? locale;
   final String? timezone;
   final Map<String, Object?> metadata;
+  final int? clientSequence;
 
   Map<String, Object?> toMap() {
     final normalizedEventType = eventType.trim();
@@ -370,6 +374,22 @@ class AgentStreamClientEventRequest {
       if (locale?.trim().isNotEmpty ?? false) 'locale': locale!.trim(),
       if (timezone?.trim().isNotEmpty ?? false) 'timezone': timezone!.trim(),
       if (metadata.isNotEmpty) 'metadata': metadata,
+    };
+  }
+
+  Map<String, Object?> toAgentRunClientEventMap() {
+    final localBody = toMap();
+    final payload = <String, Object?>{
+      if (localBody['label'] is String) 'label': localBody['label'],
+      'occurred_at': localBody['occurred_at'],
+      if (localBody['locale'] is String) 'locale': localBody['locale'],
+      if (localBody['timezone'] is String) 'timezone': localBody['timezone'],
+      if (localBody['metadata'] is Map) 'metadata': localBody['metadata'],
+    };
+    return {
+      'type': localBody['event_type'],
+      'payload': payload,
+      if (clientSequence != null) 'client_sequence': clientSequence,
     };
   }
 }
@@ -391,11 +411,15 @@ typedef AgentStreamClientEventRecorder =
 
 class AgentStreamClientEventClient {
   const AgentStreamClientEventClient({
+    this.endpoint,
+    this.connector = const _DefaultControlHttpConnector(),
     this.recorder,
     this.sent = true,
     this.error,
   });
 
+  final AgentStreamEndpoint? endpoint;
+  final AgentStreamControlHttpConnector connector;
   final AgentStreamClientEventRecorder? recorder;
   final bool sent;
   final Object? error;
@@ -412,6 +436,25 @@ class AgentStreamClientEventClient {
           error: error,
         );
       }
+
+      final runId = event.runId?.trim();
+      final endpoint = this.endpoint;
+      if (endpoint != null && runId != null && runId.isNotEmpty) {
+        final response = await connector.post(
+          _runScopedUri(endpoint.requestUri, runId, 'client-events'),
+          headers: endpoint.requestHeaders(includeContentType: true),
+          body: jsonEncode(event.toAgentRunClientEventMap()),
+        );
+        final accepted =
+            response.statusCode >= 200 && response.statusCode < 300;
+        if (accepted) recorder?.call(body);
+        return AgentStreamClientEventResult(
+          sent: accepted,
+          body: response.jsonBody ?? body,
+          error: accepted ? null : response.body,
+        );
+      }
+
       recorder?.call(body);
       return AgentStreamClientEventResult(sent: true, body: body);
     } catch (error) {

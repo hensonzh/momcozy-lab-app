@@ -127,6 +127,21 @@ AgentStreamActionClient createSessionAgentHubActionClient(
   );
 }
 
+AgentStreamClientEventClient createSessionAgentHubClientEventClient(
+  MomCozySession session, {
+  AgentStreamEndpoint? endpoint,
+  String? Function()? accessTokenProvider,
+}) {
+  return AgentStreamClientEventClient(
+    endpoint:
+        endpoint ??
+        sessionAgentHubSseEndpoint(
+          session,
+          accessTokenProvider: accessTokenProvider,
+        ),
+  );
+}
+
 AgentHubInteractionStateStore createSessionAgentHubInteractionStateStore(
   MomCozySession session,
 ) {

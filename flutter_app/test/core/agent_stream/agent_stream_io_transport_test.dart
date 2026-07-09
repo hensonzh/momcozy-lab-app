@@ -508,6 +508,59 @@ void main() {
       },
     );
 
+    test('client event client posts run-scoped events to backend', () async {
+      final recorded = <Map<String, Object?>>[];
+      final connector = _RecordingControlHttpConnector(
+        const AgentStreamControlHttpResponse(
+          statusCode: 201,
+          body:
+              '{"event_id":"event-client-001","type":"client.event","payload":{"client_event_type":"ui.quick_reply.clicked"}}',
+        ),
+      );
+      final client = AgentStreamClientEventClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+          token: 'secret-token',
+        ),
+        connector: connector,
+        recorder: recorded.add,
+      );
+
+      final result = await client.post(
+        const AgentStreamClientEventRequest(
+          eventType: 'ui.quick_reply.clicked',
+          runId: 'run-client-event-001',
+          label: '继续聊这个',
+          occurredAt: '2026-06-29T10:00:00+08:00',
+          locale: 'zh-CN',
+          metadata: {'message_id': 'msg-quick-001'},
+          clientSequence: 11,
+        ),
+      );
+
+      expect(result.sent, isTrue);
+      expect(result.body?['type'], 'client.event');
+      expect(recorded.single['event_type'], 'ui.quick_reply.clicked');
+      expect(
+        connector.uri!.path,
+        '/v1/agent/runs/run-client-event-001/client-events',
+      );
+      expect(
+        connector.headers,
+        containsPair('Authorization', 'Bearer secret-token'),
+      );
+      expect(jsonDecode(connector.body!) as Map<String, Object?>, {
+        'type': 'ui.quick_reply.clicked',
+        'payload': {
+          'label': '继续聊这个',
+          'occurred_at': '2026-06-29T10:00:00+08:00',
+          'locale': 'zh-CN',
+          'metadata': {'message_id': 'msg-quick-001'},
+        },
+        'client_sequence': 11,
+      });
+    });
+
     test(
       'client event client reports guard and local recorder failures',
       () async {

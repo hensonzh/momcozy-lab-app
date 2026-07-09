@@ -213,7 +213,6 @@ class AgentStreamRunState {
   List<String> _nextQuickReplies(AgentStreamEvent event) {
     final replies = event.quickReplies;
     if (replies.isEmpty) return quickReplies;
-    if (event.type == 'quick_replies.created') return replies;
     if (event.type == 'message.completed' && event.role != 'user') {
       return replies;
     }

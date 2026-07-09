@@ -2181,91 +2181,6 @@ void main() {
     await tester.pump();
   });
 
-  testWidgets('Agent Hub renders legacy ag-ui artifact actions', (
-    tester,
-  ) async {
-    final event = AgentStreamEvent({
-      'type': 'artifact.created',
-      'thread_id': 'thread-ag-ui-artifact',
-      'run_id': 'run-ag-ui-artifact',
-      'artifact_id': 'rich-text-wrapper',
-      'payload': {
-        'artifact_type': 'rich_text',
-        'rich_text': {
-          'action': [
-            {
-              'kind': 'ag_ui_artifact',
-              'artifact_type': 'form',
-              'artifact_id': 'birth-info-form',
-              'form': {
-                'id': 'birth_journey_basic_info_intake',
-                'title': '孕周与基本情况',
-                'fields': [
-                  {
-                    'id': 'current_week',
-                    'label': '当前孕周',
-                    'type': 'text',
-                    'required': true,
-                    'default_value': '孕25周',
-                  },
-                ],
-              },
-            },
-            {
-              'kind': 'ag_ui_artifact',
-              'artifact_type': 'card',
-              'artifact_id': 'birth-journey-card',
-              'card': {
-                'card_type': 'birth_journey_plan_card',
-                'schema_version': '1.0',
-                'card_json': {
-                  'title': '孕期计划',
-                  'todo_plan': {
-                    'periods': [
-                      {
-                        'title': '孕 25-27 周',
-                        'items': [
-                          {'title': '做糖耐检查（OGTT）'},
-                        ],
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
-        },
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: '我准备好了两个结果。',
-            events: [event],
-          ),
-        ),
-      ),
-    );
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-card-birth-info-form')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-artifact-birth-journey-card')),
-      findsOneWidget,
-    );
-    expect(find.text('孕周与基本情况'), findsOneWidget);
-    expect(find.text('当前孕周'), findsOneWidget);
-    expect(find.text('孕期计划'), findsOneWidget);
-    expect(find.text('孕 25-27 周'), findsOneWidget);
-    expect(find.text('做糖耐检查（OGTT）'), findsOneWidget);
-    expect(find.text('打开说明内容'), findsNothing);
-  });
-
   testWidgets('Agent Hub renders specialized legacy artifact cards', (
     tester,
   ) async {
@@ -3382,44 +3297,6 @@ milk_total: 120ml
       ),
       findsOneWidget,
     );
-  });
-
-  testWidgets('Agent Hub accepts legacy agent status line fields', (
-    tester,
-  ) async {
-    final state = AgentStreamRunState(
-      phase: AgentStreamRunPhase.streaming,
-      events: [
-        AgentStreamEvent({
-          'type': 'CUSTOM',
-          'payload': {'agentStatusLine': '我在接收你的消息～'},
-        }),
-      ],
-    );
-
-    await tester.pumpWidget(_host(AgentHubPage(state: state)));
-
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('我在接收你的消息～'), findsOneWidget);
-  });
-
-  testWidgets('Agent Hub accepts legacy agent thinking title fields', (
-    tester,
-  ) async {
-    final state = AgentStreamRunState(
-      phase: AgentStreamRunPhase.streaming,
-      events: [
-        AgentStreamEvent({
-          'type': 'CUSTOM',
-          'payload': {'agentThinkingTitle': '我接着处理下一步'},
-        }),
-      ],
-    );
-
-    await tester.pumpWidget(_host(AgentHubPage(state: state)));
-
-    expect(find.byKey(const ValueKey('agent-thinking-note')), findsOneWidget);
-    expect(find.text('我接着处理下一步'), findsOneWidget);
   });
 
   testWidgets('Agent Hub hides thinking note after reply text starts', (

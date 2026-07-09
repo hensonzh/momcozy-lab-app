@@ -1243,7 +1243,10 @@ Widget _buildDefaultAgentHubPage(
       runtime.session,
       accessTokenProvider: currentAccessToken,
     ),
-    clientEventClient: runtime.clientEventClient,
+    clientEventClient: createSessionAgentHubClientEventClient(
+      runtime.session,
+      accessTokenProvider: currentAccessToken,
+    ),
     requestBuilder: (message) =>
         buildSessionAgentHubRequest(message, session: runtime.session),
     voicePlaybackCoordinator: voicePlaybackCoordinator,
