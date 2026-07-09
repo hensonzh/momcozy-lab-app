@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
@@ -1156,6 +1157,14 @@ MomCozyApiRuntime _runtime({
         ],
       },
       ...?responsesByPath,
+    }),
+    clientEventClient: const AgentStreamClientEventClient(sent: false),
+    multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
+      'status': 200,
+      'data': <String, Object?>{
+        'text': '',
+        'audio_url': '/audio/test-voice.mp3',
+      },
     }),
     blePlatform: FakeBlePlatform(initialPermission: BlePermissionState.granted),
     userId: 'demo-user-widget-parity',
