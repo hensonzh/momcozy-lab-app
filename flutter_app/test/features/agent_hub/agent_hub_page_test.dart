@@ -1142,7 +1142,7 @@ void main() {
     expect(client.requests, isEmpty);
   });
 
-  testWidgets('Agent Hub surfaces denied microphone permission', (
+  testWidgets('Agent Hub keeps denied microphone permission internal', (
     tester,
   ) async {
     final client = _FixtureAgentStreamClient(
@@ -1176,7 +1176,8 @@ void main() {
     await holdGesture.up();
     await tester.pumpAndSettle();
 
-    expect(find.text('麦克风权限未开启'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
+    expect(find.text('麦克风权限未开启'), findsNothing);
     expect(recorder.calls, ['permissionState', 'requestPermission']);
     expect(client.requests, isEmpty);
     expect(
