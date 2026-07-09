@@ -96,7 +96,8 @@ final _agentStates = [
       await tester.pump();
       await holdGesture.up();
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('agent-voice-status')), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
+      expect(find.text('语音输入失败'), findsNothing);
     },
   ),
 ];
