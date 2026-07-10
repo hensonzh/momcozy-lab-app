@@ -558,6 +558,63 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub dismisses the keyboard after the run is accepted', (
+    tester,
+  ) async {
+    final client = _FixtureAgentStreamClient([
+      AgentStreamEvent(const {
+        'event_id': 'evt-keyboard-started',
+        'thread_id': 'thread-keyboard',
+        'run_id': 'run-keyboard',
+        'message_id': 'message-keyboard',
+        'sequence': 1,
+        'type': 'run.started',
+      }),
+    ]);
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    final input = find.byKey(const ValueKey('agent-composer-input'));
+    await tester.tap(input);
+    await tester.enterText(input, '帮我看看今天的记录');
+    await tester.pump();
+
+    expect(_composerHasFocus(tester), isTrue);
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests, hasLength(1));
+    expect(_composerHasFocus(tester), isFalse);
+  });
+
+  testWidgets('Agent Hub keeps the keyboard open when send is not accepted', (
+    tester,
+  ) async {
+    final client = _FailingAgentStreamClient(
+      StateError('SocketException: connection refused'),
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    final input = find.byKey(const ValueKey('agent-composer-input'));
+    await tester.tap(input);
+    await tester.enterText(input, '网络失败时继续编辑');
+    await tester.pump();
+
+    expect(_composerHasFocus(tester), isTrue);
+
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(client.requests, hasLength(1));
+    expect(_composerHasFocus(tester), isTrue);
+  });
+
   testWidgets('Agent quick replies match legacy web chrome', (tester) async {
     final selected = <String>[];
 
@@ -4250,6 +4307,13 @@ void _expectComposerInputVerticallyCentered(WidgetTester tester) {
   );
 
   expect(inputRect.center.dy, closeTo(surfaceRect.center.dy, 1));
+}
+
+bool _composerHasFocus(WidgetTester tester) {
+  return tester
+      .widget<EditableText>(find.byType(EditableText))
+      .focusNode
+      .hasFocus;
 }
 
 class _FixtureAgentStreamClient implements AgentStreamClient {

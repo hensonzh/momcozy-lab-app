@@ -139,6 +139,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   late AgentStreamRunState _state;
   late List<AgentHubHistoryMessage> _historyMessages;
   late final TextEditingController _composerController;
+  final FocusNode _composerFocusNode = FocusNode();
   _AgentHubInteractionState? _interactionState;
   StreamSubscription<AgentStreamRunState>? _runSubscription;
   AgentStreamRequest? _activeRequest;
@@ -177,6 +178,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _autoVoiceSessionFinished = false;
   VoidCallback? _unsubscribeVoicePlaybackIdle;
   bool _consumedInitialAutoSend = false;
+  bool _dismissComposerKeyboardOnRunAccepted = false;
 
   @override
   void initState() {
@@ -233,6 +235,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ..removeListener(_updateLatestButtonVisibility)
       ..dispose();
     _composerController.dispose();
+    _composerFocusNode.dispose();
     _runStateNotifier.dispose();
     _visibleReplyRunningNotifier.dispose();
     _composerLockedNotifier.dispose();
@@ -627,6 +630,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
     _persistInteractionState();
     _scheduleScrollToLatest();
+    _dismissComposerKeyboardOnRunAccepted = true;
     await _startRun(request);
   }
 
@@ -819,6 +823,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _sendBestEffortServerCancel(_state, _activeRequest);
     }
     widget.voicePlaybackCoordinator?.cancel();
+    _dismissComposerKeyboardOnRunAccepted = false;
     _cancelRunSubscription();
     _composerController.clear();
     setState(() {
@@ -914,12 +919,34 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _handleRunStateUpdate(AgentStreamRunState nextState) {
     if (!mounted || !_state.isActive) return;
+    _updateComposerFocusForRun(nextState);
     final shouldFollowLatest = _isNearLatest() || nextState.isActive;
     final activeRequest = _activeRequest;
     if (activeRequest != null) {
       _activeRequest = _requestWithThreadId(activeRequest, nextState.threadId);
     }
     _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
+  }
+
+  void _updateComposerFocusForRun(AgentStreamRunState nextState) {
+    if (!_dismissComposerKeyboardOnRunAccepted) return;
+    if (nextState.phase == AgentStreamRunPhase.error ||
+        nextState.phase == AgentStreamRunPhase.disconnected ||
+        nextState.phase == AgentStreamRunPhase.cancelled) {
+      _dismissComposerKeyboardOnRunAccepted = false;
+      return;
+    }
+
+    final hasServerRunSignal =
+        nextState.runId?.trim().isNotEmpty == true ||
+        nextState.lastSequence != null ||
+        nextState.events.isNotEmpty ||
+        nextState.textContent.isNotEmpty ||
+        nextState.provisionalTextContent.isNotEmpty;
+    if (!hasServerRunSignal) return;
+
+    _dismissComposerKeyboardOnRunAccepted = false;
+    if (_composerFocusNode.hasFocus) _composerFocusNode.unfocus();
   }
 
   void _applyRunStateUpdate(
@@ -969,6 +996,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           _handleRunStateUpdate,
           onError: (Object error) {
             if (!mounted || !_state.isActive) return;
+            _dismissComposerKeyboardOnRunAccepted = false;
             final shouldFollowLatest = _isNearLatest();
             _setRunState(_state.markDisconnected(error));
             _persistInteractionState();
@@ -1186,6 +1214,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final activeState = _state;
     final activeRequest = _activeRequest;
     widget.voicePlaybackCoordinator?.cancel();
+    _dismissComposerKeyboardOnRunAccepted = false;
     _pendingAutoVoiceReplay = null;
     _resetAutoVoiceProgress();
     _setRunState(activeState.requestCancel());
@@ -1457,6 +1486,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                   final isComposerLocked = _composerLockedNotifier.value;
                   return AgentComposerBar(
                     controller: _composerController,
+                    focusNode: _composerFocusNode,
                     canSend: widget.runner != null && !isComposerLocked,
                     isRunning: isVisibleReplyRunning,
                     isInputLocked: isComposerLocked,
@@ -5106,6 +5136,7 @@ class AgentComposerBar extends StatefulWidget {
   const AgentComposerBar({
     super.key,
     required this.controller,
+    this.focusNode,
     required this.canSend,
     required this.isRunning,
     required this.isInputLocked,
@@ -5125,6 +5156,7 @@ class AgentComposerBar extends StatefulWidget {
   });
 
   final TextEditingController controller;
+  final FocusNode? focusNode;
   final bool canSend;
   final bool isRunning;
   final bool isInputLocked;
@@ -5461,6 +5493,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                     : TextField(
                         key: const ValueKey('agent-composer-input'),
                         controller: controller,
+                        focusNode: widget.focusNode,
                         minLines: 1,
                         maxLines: 5,
                         keyboardType: TextInputType.multiline,
