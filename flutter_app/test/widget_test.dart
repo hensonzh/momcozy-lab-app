@@ -53,6 +53,34 @@ void main() {
     expect(find.text('计划'), findsWidgets);
   });
 
+  testWidgets('default Agent Hub reads the profile greeting from runtime', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport({
+      'user_id': 'profile-user',
+      'display_name': '小美',
+      'age': 29,
+    });
+    final runtime = MomCozyApiRuntime.fromSession(
+      const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'profile-user',
+        babyId: 'profile-baby',
+        locale: 'zh-CN',
+        accessToken: 'profile-access-token',
+      ),
+      jsonTransport: transport,
+      agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
+    );
+
+    await tester.pumpWidget(MomCozyFlutterApp(apiRuntime: runtime));
+    await tester.pumpAndSettle();
+
+    expect(transport.lastPath, '/v1/profile/me');
+    expect(find.textContaining('嗨 小美'), findsOneWidget);
+    expect(find.textContaining('你希望我怎么称呼你？'), findsNothing);
+  });
+
   testWidgets(
     'route shell keeps Agent Hub stream and voice alive across bottom tabs',
     (tester) async {
