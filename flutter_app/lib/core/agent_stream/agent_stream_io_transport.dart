@@ -7,6 +7,8 @@ import '../privacy/log_redactor.dart';
 import 'agent_stream_client.dart';
 import 'agent_stream_event.dart';
 
+const _agentStreamFollowPollIntervalSeconds = '0.05';
+
 typedef AgentStreamPayloadFactory =
     Map<String, Object?> Function(AgentStreamRequest request);
 typedef AgentStreamUnauthorizedHandler = FutureOr<bool> Function();
@@ -533,7 +535,7 @@ class ProductionAgentSseTransport implements AgentStreamTransport {
             'after_sequence': afterSequence.toString(),
             'follow': 'true',
             'limit': '200',
-            'poll_interval_seconds': '0.01',
+            'poll_interval_seconds': _agentStreamFollowPollIntervalSeconds,
           },
         );
 

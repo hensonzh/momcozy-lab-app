@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
@@ -28,6 +29,7 @@ const _agentSkillAssetBaseUrl = String.fromEnvironment(
   'MOMCOZY_API_BASE_URL',
   defaultValue: 'http://127.0.0.1:8769',
 );
+const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
 
 String _agentAssistantTextForState(AgentStreamRunState state) {
   final text = state.textContent.trim();
@@ -145,11 +147,29 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
   final ScrollController _chatScrollController = ScrollController();
+  final ValueNotifier<AgentStreamRunState> _runStateNotifier =
+      ValueNotifier<AgentStreamRunState>(const AgentStreamRunState());
+  final ValueNotifier<bool> _visibleReplyRunningNotifier = ValueNotifier<bool>(
+    false,
+  );
+  final ValueNotifier<bool> _composerLockedNotifier = ValueNotifier<bool>(
+    false,
+  );
+  final ValueNotifier<_AgentResponseLightRailMode>
+  _responseLightRailModeNotifier = ValueNotifier<_AgentResponseLightRailMode>(
+    _AgentResponseLightRailMode.idle,
+  );
+  final ValueNotifier<String?> _activeVoicePlaybackIdNotifier =
+      ValueNotifier<String?>(null);
+  final ValueNotifier<int> _actionStateRevisionNotifier = ValueNotifier<int>(0);
   bool _autoVoiceEnabled = true;
   bool _showLatestButton = false;
   bool _showPhotoMenu = false;
   Timer? _persistentWriteTimer;
+  Timer? _activeRunPersistentWriteTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
+  bool _scrollToLatestFrameScheduled = false;
+  bool _scheduledScrollToLatestSmooth = false;
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
   String? _activeAutoVoicePlaybackId;
   String _autoVoiceSubmittedText = '';
@@ -160,6 +180,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void initState() {
     super.initState();
     _restoreCachedInteractionState();
+    _publishRunState(_state);
     _restorePersistedInteractionState();
     _applyInitialComposerText();
     _scheduleInitialAutoSendIfNeeded();
@@ -177,7 +198,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (_interactionState == null &&
         oldWidget.state != widget.state &&
         (widget.runner == null || !_state.isActive)) {
-      _state = widget.state;
+      _setRunState(widget.state);
     }
     if (_interactionState == null &&
         oldWidget.historyMessages != widget.historyMessages &&
@@ -201,12 +222,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void dispose() {
     _cancelRunSubscription();
     _unsubscribeVoicePlaybackIdle?.call();
+    _persistInteractionState();
     _flushPersistentInteractionState();
     _composerController.removeListener(_persistInteractionState);
     _chatScrollController
       ..removeListener(_updateLatestButtonVisibility)
       ..dispose();
     _composerController.dispose();
+    _runStateNotifier.dispose();
+    _visibleReplyRunningNotifier.dispose();
+    _composerLockedNotifier.dispose();
+    _responseLightRailModeNotifier.dispose();
+    _activeVoicePlaybackIdNotifier.dispose();
+    _actionStateRevisionNotifier.dispose();
     super.dispose();
   }
 
@@ -219,6 +247,44 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _unsubscribeVoicePlaybackIdle = coordinator.subscribeIdle(() {
       scheduleMicrotask(_tryRunPendingAutoVoiceReplay);
     });
+  }
+
+  void _setRunState(AgentStreamRunState nextState) {
+    _state = nextState;
+    _publishRunState(nextState);
+  }
+
+  void _publishRunState(AgentStreamRunState state) {
+    _runStateNotifier.value = state;
+    _setNotifierValue(
+      _visibleReplyRunningNotifier,
+      _isVisibleReplyRunningForState(state),
+    );
+    _setNotifierValue(
+      _composerLockedNotifier,
+      _isComposerLockedForState(state),
+    );
+    _setNotifierValue(
+      _responseLightRailModeNotifier,
+      _agentResponseLightRailModeForState(state),
+    );
+  }
+
+  void _setVoiceState(AgentVoiceState nextState) {
+    _voiceState = nextState;
+    _setNotifierValue(
+      _activeVoicePlaybackIdNotifier,
+      nextState.isPlaybackActive ? nextState.playbackId : null,
+    );
+  }
+
+  void _notifyActionStateChanged() {
+    _actionStateRevisionNotifier.value += 1;
+  }
+
+  void _setNotifierValue<T>(ValueNotifier<T> notifier, T value) {
+    if (notifier.value == value) return;
+    notifier.value = value;
   }
 
   void _restoreCachedInteractionState() {
@@ -254,6 +320,29 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _persistInteractionState() {
+    _updateCachedInteractionState();
+    _activeRunPersistentWriteTimer?.cancel();
+    _activeRunPersistentWriteTimer = null;
+    _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
+  }
+
+  void _persistActiveInteractionStateThrottled() {
+    _updateCachedActiveRunState();
+    if (widget.interactionStateStore == null ||
+        _activeRunPersistentWriteTimer != null) {
+      return;
+    }
+    _activeRunPersistentWriteTimer = Timer(
+      _agentActiveRunPersistentWriteInterval,
+      () {
+        _activeRunPersistentWriteTimer = null;
+        _updateCachedInteractionState();
+        _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
+      },
+    );
+  }
+
+  void _updateCachedInteractionState() {
     final interactionState = _interactionState;
     if (interactionState != null) {
       interactionState
@@ -265,7 +354,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ..activeRequest = _activeRequest
         ..localActionStatuses = {..._localActionStatuses};
     }
-    _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
+  }
+
+  void _updateCachedActiveRunState() {
+    final interactionState = _interactionState;
+    if (interactionState == null) return;
+    interactionState
+      ..runState = _state
+      ..autoVoiceEnabled = _autoVoiceEnabled
+      ..activeRequest = _activeRequest;
   }
 
   Future<void> _restorePersistedInteractionState() async {
@@ -294,9 +391,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _applyInteractionSnapshot(AgentHubInteractionSnapshot snapshot) {
-    _state = _restoreInterruptedRunState(
-      snapshot.runState,
-      disconnectedMessage: '连接已中断，可继续接收。',
+    _setRunState(
+      _restoreInterruptedRunState(
+        snapshot.runState,
+        disconnectedMessage: '连接已中断，可继续接收。',
+      ),
     );
     _historyMessages = snapshot.historyMessages
         .map(_historyMessageFromSnapshot)
@@ -419,9 +518,30 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _scheduleScrollToLatest({bool smooth = false}) {
+    _scheduledScrollToLatestSmooth = _scheduledScrollToLatestSmooth || smooth;
+    if (_scrollToLatestFrameScheduled) return;
+    _scrollToLatestFrameScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final shouldSmooth = _scheduledScrollToLatestSmooth;
+      _scrollToLatestFrameScheduled = false;
+      _scheduledScrollToLatestSmooth = false;
       if (!mounted) return;
-      unawaited(_scrollToLatest(smooth: smooth));
+      unawaited(
+        _scrollToLatest(smooth: shouldSmooth).then((_) {
+          if (!shouldSmooth) _scheduleScrollToLatestCorrection();
+        }),
+      );
+    });
+  }
+
+  void _scheduleScrollToLatestCorrection() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_chatScrollController.hasClients) return;
+      final position = _chatScrollController.position;
+      if (position.maxScrollExtent - position.pixels > 1) {
+        _chatScrollController.jumpTo(position.maxScrollExtent);
+      }
+      _updateLatestButtonVisibility();
     });
   }
 
@@ -446,20 +566,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _updateLatestButtonVisibility();
   }
 
-  bool get _isComposerLocked =>
-      _state.phase == AgentStreamRunPhase.waitingForConfirmation ||
-      _state.phase == AgentStreamRunPhase.cancelRequested;
+  bool _isComposerLockedForState(AgentStreamRunState state) =>
+      state.phase == AgentStreamRunPhase.waitingForConfirmation ||
+      state.phase == AgentStreamRunPhase.cancelRequested;
 
-  bool get _isVisibleReplyRunning => _state.isAwaitingVisibleReply;
+  bool _isVisibleReplyRunningForState(AgentStreamRunState state) =>
+      state.isAwaitingVisibleReply;
 
-  bool get _canSend =>
-      widget.runner != null &&
-      !_isComposerLocked &&
-      (_composerController.text.trim().isNotEmpty ||
-          _attachedImages.isNotEmpty);
+  bool _canRetryForState(AgentStreamRunState state) =>
+      widget.runner != null && state.canRetry && _activeRequest != null;
 
-  bool get _canRetry =>
-      widget.runner != null && _state.canRetry && _activeRequest != null;
+  bool get _isComposerLocked => _isComposerLockedForState(_state);
+
+  bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
 
   Future<void> _sendMessage() async {
     final runner = widget.runner;
@@ -598,12 +717,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
-    final text = _agentAssistantTextForState(_state).trim();
+    final state = _state;
+    final text = _agentAssistantTextForState(state).trim();
     if (text.isEmpty) return null;
     return AgentHubHistoryMessage(
       role: AgentHubHistoryRole.assistant,
       content: text,
-      runState: _state.phase == AgentStreamRunPhase.idle ? null : _state,
+      runState: state.phase == AgentStreamRunPhase.idle ? null : state,
     );
   }
 
@@ -634,21 +754,23 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
 
     setState(() {
-      _voiceState = _voiceState.startListening();
+      _setVoiceState(_voiceState.startListening());
     });
 
     try {
       setState(() {
-        _voiceState = _voiceState.startTranscribing(
-          draft: _composerController.text,
+        _setVoiceState(
+          _voiceState.startTranscribing(draft: _composerController.text),
         );
       });
       final result = await _captureVoiceInput();
       if (!mounted) return;
       setState(() {
         if (result.status == AgentVoiceInputResultStatus.permissionDenied) {
-          _voiceState = _voiceState.markPermissionDenied(
-            result.permissionState ?? AgentVoiceInputPermissionState.denied,
+          _setVoiceState(
+            _voiceState.markPermissionDenied(
+              result.permissionState ?? AgentVoiceInputPermissionState.denied,
+            ),
           );
           return;
         }
@@ -660,13 +782,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
             offset: _composerController.text.length,
           );
         }
-        _voiceState = _voiceState.applyTranscription(text ?? '');
+        _setVoiceState(_voiceState.applyTranscription(text ?? ''));
       });
       _persistInteractionState();
     } catch (error) {
       if (!mounted) return;
       setState(() {
-        _voiceState = _voiceState.fail(error);
+        _setVoiceState(_voiceState.fail(error));
       });
     }
   }
@@ -695,17 +817,18 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelRunSubscription();
     _composerController.clear();
     setState(() {
-      _state = const AgentStreamRunState();
+      _setRunState(const AgentStreamRunState());
       _historyMessages.clear();
       _attachedImages.clear();
       _showPhotoMenu = false;
       _pendingActionIds.clear();
       _localActionStatuses.clear();
       _activeRequest = null;
-      _voiceState = const AgentVoiceState();
+      _setVoiceState(const AgentVoiceState());
       _pendingAutoVoiceReplay = null;
       _resetAutoVoiceProgress();
     });
+    _notifyActionStateChanged();
     _persistInteractionState();
     _maybeStartGreetingVoicePlayback();
     widget.onNewSession?.call();
@@ -725,9 +848,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!_voiceState.isPlaybackActive) return;
     if (coordinator != null && isPreservedPlayback && !didCancel) return;
 
-    setState(() {
-      _voiceState = _voiceState.cancelPlayback();
-    });
+    _setVoiceState(_voiceState.cancelPlayback());
   }
 
   void _maybeStartGreetingVoicePlayback() {
@@ -786,6 +907,31 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
   }
 
+  void _handleRunStateUpdate(AgentStreamRunState nextState) {
+    if (!mounted || !_state.isActive) return;
+    final shouldFollowLatest = _isNearLatest() || nextState.isActive;
+    final activeRequest = _activeRequest;
+    if (activeRequest != null) {
+      _activeRequest = _requestWithThreadId(activeRequest, nextState.threadId);
+    }
+    _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
+  }
+
+  void _applyRunStateUpdate(
+    AgentStreamRunState nextState, {
+    required bool shouldFollowLatest,
+  }) {
+    if (!mounted) return;
+    _setRunState(nextState);
+    if (nextState.isActive) {
+      _persistActiveInteractionStateThrottled();
+    } else {
+      _persistInteractionState();
+    }
+    _maybeStartAutoVoicePlayback(nextState);
+    if (shouldFollowLatest) _scheduleScrollToLatest();
+  }
+
   Future<void> _startRun(
     AgentStreamRequest request, {
     AgentStreamRunState? initialState,
@@ -798,7 +944,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelRunSubscription();
     _activeRequest = requestWithThread;
     setState(() {
-      _state = initialState ?? const AgentStreamRunState().start();
+      _setRunState(initialState ?? const AgentStreamRunState().start());
       if (initialState == null) {
         _pendingAutoVoiceReplay = null;
         _resetAutoVoiceProgress();
@@ -808,35 +954,18 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _localActionStatuses.clear();
       }
     });
+    if (!preserveActionState) _notifyActionStateChanged();
     _persistInteractionState();
     _scheduleScrollToLatest();
 
     _runSubscription = runner
         .run(requestWithThread, initialState: initialState)
         .listen(
-          (nextState) {
-            if (!mounted || !_state.isActive) return;
-            final shouldFollowLatest = _isNearLatest() || nextState.isActive;
-            final activeRequest = _activeRequest;
-            if (activeRequest != null) {
-              _activeRequest = _requestWithThreadId(
-                activeRequest,
-                nextState.threadId,
-              );
-            }
-            setState(() {
-              _state = nextState;
-            });
-            _persistInteractionState();
-            _maybeStartAutoVoicePlayback(nextState);
-            if (shouldFollowLatest) _scheduleScrollToLatest();
-          },
+          _handleRunStateUpdate,
           onError: (Object error) {
             if (!mounted || !_state.isActive) return;
             final shouldFollowLatest = _isNearLatest();
-            setState(() {
-              _state = _state.markDisconnected(error);
-            });
+            _setRunState(_state.markDisconnected(error));
             _persistInteractionState();
             if (shouldFollowLatest) _scheduleScrollToLatest();
           },
@@ -905,9 +1034,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     required String text,
     VoidCallback? onFinished,
   }) {
-    setState(() {
-      _voiceState = _voiceState.startPlayback(handle.id);
-    });
+    _setVoiceState(_voiceState.startPlayback(handle.id));
     final player = widget.voicePlaybackPlayer;
     if (player == null) return;
 
@@ -917,17 +1044,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
           .then((_) {
             if (!mounted || !handle.isCurrent) return;
             handle.finish();
-            setState(() {
-              _voiceState = const AgentVoiceState();
-            });
+            _setVoiceState(const AgentVoiceState());
             onFinished?.call();
           })
           .catchError((Object error) {
             if (!mounted || !handle.isCurrent) return;
             handle.finish();
-            setState(() {
-              _voiceState = _voiceState.fail(error);
-            });
+            _setVoiceState(_voiceState.fail(error));
           }),
     );
   }
@@ -1001,14 +1124,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!_state.isActive) return;
     final activeState = _state;
     final activeRequest = _activeRequest;
-    setState(() {
-      _state = _state.requestCancel();
-    });
+    _setRunState(activeState.requestCancel());
     _persistInteractionState();
     _cancelRunSubscription();
-    setState(() {
-      _state = _state.applyCancelResult(acknowledged: true);
-    });
+    _setRunState(_state.applyCancelResult(acknowledged: true));
     _persistInteractionState();
     _sendBestEffortServerCancel(activeState, activeRequest);
   }
@@ -1021,7 +1140,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _pendingAutoVoiceReplay = null;
         _resetAutoVoiceProgress();
         if (_voiceState.isPlaybackActive) {
-          _voiceState = _voiceState.cancelPlayback();
+          _setVoiceState(_voiceState.cancelPlayback());
         }
       }
       _autoVoiceEnabled = nextEnabled;
@@ -1060,22 +1179,20 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _confirmAction(AgentActionCardView action) async {
     final actionClient = widget.actionClient;
     if (actionClient == null || _pendingActionIds.contains(action.id)) return;
-    setState(() {
-      _pendingActionIds.add(action.id);
-      _localActionStatuses[action.id] = 'confirming';
-    });
+    _pendingActionIds.add(action.id);
+    _localActionStatuses[action.id] = 'confirming';
+    _notifyActionStateChanged();
 
     final result = await actionClient.confirm(
       AgentStreamActionConfirmRequest(actionId: action.id),
     );
     if (!mounted) return;
-    setState(() {
-      _pendingActionIds.remove(action.id);
-      _localActionStatuses[action.id] = result.accepted
-          ? _acceptedConfirmStatus(result.actionStatus)
-          : 'failed';
-      _applyActionResultEvents(result.events);
-    });
+    _pendingActionIds.remove(action.id);
+    _localActionStatuses[action.id] = result.accepted
+        ? _acceptedConfirmStatus(result.actionStatus)
+        : 'failed';
+    _applyActionResultEvents(result.events);
+    _notifyActionStateChanged();
     _persistInteractionState();
     if (result.accepted && _shouldResumeAfterActionResult()) {
       await _resumeCurrentRun(preserveActionState: true);
@@ -1093,10 +1210,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _rejectAction(AgentActionCardView action) async {
     final actionClient = widget.actionClient;
     if (actionClient == null || _pendingActionIds.contains(action.id)) return;
-    setState(() {
-      _pendingActionIds.add(action.id);
-      _localActionStatuses[action.id] = 'rejecting';
-    });
+    _pendingActionIds.add(action.id);
+    _localActionStatuses[action.id] = 'rejecting';
+    _notifyActionStateChanged();
 
     final result = await actionClient.reject(
       AgentStreamActionRejectRequest(
@@ -1105,13 +1221,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ),
     );
     if (!mounted) return;
-    setState(() {
-      _pendingActionIds.remove(action.id);
-      _localActionStatuses[action.id] = result.accepted
-          ? result.actionStatus ?? 'rejected'
-          : 'failed';
-      _applyActionResultEvents(result.events);
-    });
+    _pendingActionIds.remove(action.id);
+    _localActionStatuses[action.id] = result.accepted
+        ? result.actionStatus ?? 'rejected'
+        : 'failed';
+    _applyActionResultEvents(result.events);
+    _notifyActionStateChanged();
     _persistInteractionState();
     if (result.accepted && _shouldResumeAfterActionResult()) {
       await _resumeCurrentRun(preserveActionState: true);
@@ -1135,30 +1250,40 @@ class _AgentHubPageState extends State<AgentHubPage> {
     for (final event in events) {
       nextState = nextState.applyEvent(event);
     }
-    _state = nextState;
+    _setRunState(nextState);
   }
 
   @override
   Widget build(BuildContext context) {
-    final responseLightRailMode = _agentResponseLightRailModeForState(_state);
-    final isVisibleReplyRunning = _isVisibleReplyRunning;
     return ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
       child: Stack(
         children: [
-          if (responseLightRailMode != _AgentResponseLightRailMode.idle)
-            Positioned.fill(
-              child: _AgentResponseLightRail(mode: responseLightRailMode),
-            ),
+          ValueListenableBuilder<_AgentResponseLightRailMode>(
+            valueListenable: _responseLightRailModeNotifier,
+            builder: (context, mode, child) {
+              if (mode == _AgentResponseLightRailMode.idle) {
+                return const SizedBox.shrink();
+              }
+              return Positioned.fill(
+                child: _AgentResponseLightRail(mode: mode),
+              );
+            },
+          ),
           Column(
             children: [
-              AgentHubTopBar(
-                showControls: true,
-                autoVoiceEnabled: _autoVoiceEnabled,
-                isRunning: isVisibleReplyRunning,
-                onToggleAutoVoice: _toggleAutoVoice,
-                onNewSession: _startNewSession,
+              ValueListenableBuilder<bool>(
+                valueListenable: _visibleReplyRunningNotifier,
+                builder: (context, isVisibleReplyRunning, child) {
+                  return AgentHubTopBar(
+                    showControls: true,
+                    autoVoiceEnabled: _autoVoiceEnabled,
+                    isRunning: isVisibleReplyRunning,
+                    onToggleAutoVoice: _toggleAutoVoice,
+                    onNewSession: _startNewSession,
+                  );
+                },
               ),
               Expanded(
                 child: LayoutBuilder(
@@ -1175,55 +1300,56 @@ class _AgentHubPageState extends State<AgentHubPage> {
                           key: const ValueKey('agent-chat-scroll-view'),
                           controller: _chatScrollController,
                           slivers: [
+                            if (_historyMessages.isNotEmpty)
+                              SliverPadding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  12,
+                                  14,
+                                  12,
+                                  0,
+                                ),
+                                sliver: AgentHubHistorySliver(
+                                  messages: _historyMessages,
+                                  onArtifactAction: _handleArtifactAction,
+                                ),
+                              ),
+                            if (_historyMessages.isNotEmpty)
+                              const SliverToBoxAdapter(
+                                child: SizedBox(height: 18),
+                              ),
                             SliverPadding(
-                              padding: const EdgeInsets.fromLTRB(
+                              padding: EdgeInsets.fromLTRB(
                                 12,
-                                14,
+                                _historyMessages.isEmpty ? 14 : 0,
                                 12,
                                 24,
                               ),
                               sliver: SliverToBoxAdapter(
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(
-                                    minHeight: transcriptMinHeight,
+                                    minHeight: _historyMessages.isEmpty
+                                        ? transcriptMinHeight
+                                        : 0,
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      if (_historyMessages.isNotEmpty) ...[
-                                        AgentHubHistoryPanel(
-                                          messages: _historyMessages,
-                                          onArtifactAction:
-                                              _handleArtifactAction,
-                                        ),
-                                        const SizedBox(height: 18),
-                                      ],
-                                      AgentRunTranscript(
-                                        state: _state,
-                                        activeVoicePlaybackId:
-                                            _voiceState.isPlaybackActive
-                                            ? _voiceState.playbackId
-                                            : null,
-                                        canRetry: _canRetry,
-                                        onRetry: _retryRun,
-                                        onArtifactAction: _handleArtifactAction,
-                                        onQuickReplySelected:
-                                            _handleQuickReplySelected,
-                                        pendingActionIds: _pendingActionIds,
-                                        localActionStatuses:
-                                            _localActionStatuses,
-                                        onConfirmAction:
-                                            widget.actionClient == null
-                                            ? null
-                                            : _confirmAction,
-                                        onRejectAction:
-                                            widget.actionClient == null
-                                            ? null
-                                            : _rejectAction,
-                                      ),
-                                    ],
+                                  child: _AgentRunTranscriptListenable(
+                                    stateListenable: _runStateNotifier,
+                                    activeVoicePlaybackIdListenable:
+                                        _activeVoicePlaybackIdNotifier,
+                                    actionStateRevisionListenable:
+                                        _actionStateRevisionNotifier,
+                                    canRetryForState: _canRetryForState,
+                                    onRetry: _retryRun,
+                                    onArtifactAction: _handleArtifactAction,
+                                    onQuickReplySelected:
+                                        _handleQuickReplySelected,
+                                    pendingActionIds: _pendingActionIds,
+                                    localActionStatuses: _localActionStatuses,
+                                    onConfirmAction: widget.actionClient == null
+                                        ? null
+                                        : _confirmAction,
+                                    onRejectAction: widget.actionClient == null
+                                        ? null
+                                        : _rejectAction,
                                   ),
                                 ),
                               ),
@@ -1255,31 +1381,44 @@ class _AgentHubPageState extends State<AgentHubPage> {
                   },
                 ),
               ),
-              AgentComposerBar(
-                controller: _composerController,
-                canSend: _canSend,
-                isRunning: isVisibleReplyRunning,
-                isInputLocked: _isComposerLocked,
-                imageCount: _attachedImages.length,
-                showPhotoMenu: _showPhotoMenu,
-                canAttachImage: widget.pickImage != null && !_isComposerLocked,
-                canUseVoice:
-                    (widget.voiceInputController != null ||
-                        widget.voiceInput != null) &&
-                    !isVisibleReplyRunning &&
-                    !_isComposerLocked &&
-                    !_voiceState.isInputActive,
-                voicePhase: _voiceState.phase,
-                voicePlaybackFailed:
-                    _voiceState.phase == AgentVoicePhase.error &&
-                    _voiceState.playbackId != null,
-                onChanged: (_) => setState(() {}),
-                onSend: _sendMessage,
-                onCancel: _cancelRun,
-                onTogglePhotoMenu: _togglePhotoMenu,
-                onAttachImage: _attachImage,
-                onRemoveImages: _removeAttachedImages,
-                onVoiceInput: _startVoiceInput,
+              AnimatedBuilder(
+                animation: Listenable.merge([
+                  _visibleReplyRunningNotifier,
+                  _composerLockedNotifier,
+                ]),
+                builder: (context, child) {
+                  final runState = _runStateNotifier.value;
+                  final isVisibleReplyRunning =
+                      _visibleReplyRunningNotifier.value;
+                  final isComposerLocked = _composerLockedNotifier.value;
+                  return AgentComposerBar(
+                    controller: _composerController,
+                    canSend: widget.runner != null && !isComposerLocked,
+                    isRunning: isVisibleReplyRunning,
+                    isInputLocked: isComposerLocked,
+                    imageCount: _attachedImages.length,
+                    showPhotoMenu: _showPhotoMenu,
+                    canAttachImage:
+                        widget.pickImage != null && !isComposerLocked,
+                    canUseVoice:
+                        (widget.voiceInputController != null ||
+                            widget.voiceInput != null) &&
+                        !_isVisibleReplyRunningForState(runState) &&
+                        !isComposerLocked &&
+                        !_voiceState.isInputActive,
+                    voicePhase: _voiceState.phase,
+                    voicePlaybackFailed:
+                        _voiceState.phase == AgentVoicePhase.error &&
+                        _voiceState.playbackId != null,
+                    onChanged: (_) {},
+                    onSend: _sendMessage,
+                    onCancel: _cancelRun,
+                    onTogglePhotoMenu: _togglePhotoMenu,
+                    onAttachImage: _attachImage,
+                    onRemoveImages: _removeAttachedImages,
+                    onVoiceInput: _startVoiceInput,
+                  );
+                },
               ),
             ],
           ),
@@ -1371,21 +1510,30 @@ _AgentResponseLightRailMode _agentResponseLightRailModeForState(
       state.textContent.trim().isNotEmpty ||
       state.provisionalTextContent.trim().isNotEmpty;
   if (!hasReplyText) return _AgentResponseLightRailMode.loop;
-  if (_hasRunningToolWork(state.events)) {
+  if (_hasRunningToolWork(state)) {
     return _AgentResponseLightRailMode.loop;
   }
   return _AgentResponseLightRailMode.replying;
 }
 
-bool _hasRunningToolWork(List<AgentStreamEvent> events) {
+bool _hasRunningToolWork(AgentStreamRunState state) {
+  final toolEvents = state.toolEvents.isNotEmpty
+      ? state.toolEvents.values
+      : _latestToolEventsFromLegacyEvents(state.events).values;
+  return toolEvents.any(
+    (event) => event.type == 'tool.started' || event.type == 'tool.progress',
+  );
+}
+
+Map<String, AgentStreamEvent> _latestToolEventsFromLegacyEvents(
+  List<AgentStreamEvent> events,
+) {
   final latestToolEvents = <String, AgentStreamEvent>{};
   for (final event in events) {
     if (!event.type.startsWith('tool.')) continue;
     latestToolEvents[event.toolCallId ?? event.mergeKey] = event;
   }
-  return latestToolEvents.values.any(
-    (event) => event.type == 'tool.started' || event.type == 'tool.progress',
-  );
+  return latestToolEvents;
 }
 
 class _AgentResponseLightRail extends StatefulWidget {
@@ -1677,6 +1825,34 @@ class AgentHubHistoryPanel extends StatelessWidget {
   }
 }
 
+class AgentHubHistorySliver extends StatelessWidget {
+  const AgentHubHistorySliver({
+    super.key,
+    required this.messages,
+    this.onArtifactAction,
+  });
+
+  final List<AgentHubHistoryMessage> messages;
+  final AgentArtifactActionHandler? onArtifactAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final itemCount = messages.isEmpty ? 0 : messages.length * 2 - 1;
+    return SliverList(
+      key: const ValueKey('agent-history-panel'),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        if (index.isOdd) return const SizedBox(height: 20);
+        final messageIndex = index ~/ 2;
+        return _AgentHistoryBubble(
+          key: ValueKey('agent-history-$messageIndex'),
+          message: messages[messageIndex],
+          onArtifactAction: onArtifactAction,
+        );
+      }, childCount: itemCount),
+    );
+  }
+}
+
 class _AgentHistoryBubble extends StatelessWidget {
   const _AgentHistoryBubble({
     super.key,
@@ -1831,6 +2007,107 @@ class AgentRunPhaseBadge extends StatelessWidget {
   }
 }
 
+class _AgentRunTranscriptListenable extends StatefulWidget {
+  const _AgentRunTranscriptListenable({
+    required this.stateListenable,
+    required this.activeVoicePlaybackIdListenable,
+    required this.actionStateRevisionListenable,
+    required this.canRetryForState,
+    this.onRetry,
+    this.onArtifactAction,
+    this.onQuickReplySelected,
+    required this.pendingActionIds,
+    required this.localActionStatuses,
+    this.onConfirmAction,
+    this.onRejectAction,
+  });
+
+  final ValueListenable<AgentStreamRunState> stateListenable;
+  final ValueListenable<String?> activeVoicePlaybackIdListenable;
+  final ValueListenable<int> actionStateRevisionListenable;
+  final bool Function(AgentStreamRunState state) canRetryForState;
+  final VoidCallback? onRetry;
+  final AgentArtifactActionHandler? onArtifactAction;
+  final ValueChanged<String>? onQuickReplySelected;
+  final Set<String> pendingActionIds;
+  final Map<String, String> localActionStatuses;
+  final ValueChanged<AgentActionCardView>? onConfirmAction;
+  final ValueChanged<AgentActionCardView>? onRejectAction;
+
+  @override
+  State<_AgentRunTranscriptListenable> createState() =>
+      _AgentRunTranscriptListenableState();
+}
+
+class _AgentRunTranscriptListenableState
+    extends State<_AgentRunTranscriptListenable> {
+  Object? _artifactSourceIdentity;
+  List<AgentArtifactCardView> _artifactCards = const <AgentArtifactCardView>[];
+  Object? _actionSourceIdentity;
+  int? _actionRevision;
+  List<AgentActionCardView> _actionCards = const <AgentActionCardView>[];
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        widget.stateListenable,
+        widget.activeVoicePlaybackIdListenable,
+        widget.actionStateRevisionListenable,
+      ]),
+      builder: (context, child) {
+        final state = widget.stateListenable.value;
+        final actionRevision = widget.actionStateRevisionListenable.value;
+        return AgentRunTranscript(
+          state: state,
+          activeVoicePlaybackId: widget.activeVoicePlaybackIdListenable.value,
+          canRetry: widget.canRetryForState(state),
+          onRetry: widget.onRetry,
+          onArtifactAction: widget.onArtifactAction,
+          onQuickReplySelected: widget.onQuickReplySelected,
+          pendingActionIds: widget.pendingActionIds,
+          artifactCards: _artifactCardsForState(state),
+          actionCards: _actionCardsForState(state, actionRevision),
+          onConfirmAction: widget.onConfirmAction,
+          onRejectAction: widget.onRejectAction,
+        );
+      },
+    );
+  }
+
+  List<AgentArtifactCardView> _artifactCardsForState(
+    AgentStreamRunState state,
+  ) {
+    final identity = state.artifactEvents.isNotEmpty
+        ? state.artifactEvents
+        : state.events;
+    if (identical(identity, _artifactSourceIdentity)) return _artifactCards;
+    _artifactSourceIdentity = identity;
+    _artifactCards = _artifactCardsFromEvents(_artifactEventsForState(state));
+    return _artifactCards;
+  }
+
+  List<AgentActionCardView> _actionCardsForState(
+    AgentStreamRunState state,
+    int actionRevision,
+  ) {
+    final identity = state.actionEvents.isNotEmpty
+        ? state.actionEvents
+        : state.events;
+    if (identical(identity, _actionSourceIdentity) &&
+        actionRevision == _actionRevision) {
+      return _actionCards;
+    }
+    _actionSourceIdentity = identity;
+    _actionRevision = actionRevision;
+    _actionCards = _actionCardsFromEvents(
+      _actionEventsForState(state),
+      widget.localActionStatuses,
+    );
+    return _actionCards;
+  }
+}
+
 class AgentRunTranscript extends StatelessWidget {
   const AgentRunTranscript({
     super.key,
@@ -1842,6 +2119,8 @@ class AgentRunTranscript extends StatelessWidget {
     this.onQuickReplySelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
+    this.artifactCards,
+    this.actionCards,
     this.onConfirmAction,
     this.onRejectAction,
   });
@@ -1854,6 +2133,8 @@ class AgentRunTranscript extends StatelessWidget {
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
+  final List<AgentArtifactCardView>? artifactCards;
+  final List<AgentActionCardView>? actionCards;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
   final ValueChanged<AgentActionCardView>? onRejectAction;
 
@@ -1865,14 +2146,18 @@ class AgentRunTranscript extends StatelessWidget {
         state.phase == AgentStreamRunPhase.idle &&
         state.textContent.trim().isEmpty;
     final text = _primaryText;
-    final artifactCards = _artifactCardsFromEvents(state.events);
-    final actionCards = _actionCardsFromEvents(
-      state.events,
-      localActionStatuses,
-    );
+    final artifactCards =
+        this.artifactCards ??
+        _artifactCardsFromEvents(_artifactEventsForState(state));
+    final actionCards =
+        this.actionCards ??
+        _actionCardsFromEvents(
+          _actionEventsForState(state),
+          localActionStatuses,
+        );
     final quickReplies = state.quickReplies;
     final shouldRenderQuickReplies =
-        quickReplies.isNotEmpty &&
+        quickReplies.length == 3 &&
         !state.isAwaitingVisibleReply &&
         onQuickReplySelected != null;
     final avatarMode = _avatarMode;
@@ -1920,6 +2205,7 @@ class AgentRunTranscript extends StatelessWidget {
                       text,
                       style: primaryTextStyle,
                       onArtifactAction: onArtifactAction,
+                      parseMarkdown: _shouldParsePrimaryTextMarkdown,
                     ),
                   ),
                 ),
@@ -1972,7 +2258,7 @@ class AgentRunTranscript extends StatelessWidget {
                 ),
               ],
               if (shouldRenderQuickReplies) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 AgentQuickRepliesBar(
                   replies: quickReplies,
                   onSelected: onQuickReplySelected!,
@@ -1995,6 +2281,10 @@ class AgentRunTranscript extends StatelessWidget {
       return false;
     }
     return true;
+  }
+
+  bool get _shouldParsePrimaryTextMarkdown {
+    return !state.isActive || state.hasCompletedAssistantMessage;
   }
 
   _AgentLoopDecorState get _loopDecorState {
@@ -2076,42 +2366,119 @@ class AgentQuickRepliesBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
-      color: const Color(0xff62434e),
-      fontWeight: FontWeight.w700,
-      height: 1.15,
+    if (replies.length != 3) return const SizedBox.shrink();
+
+    final textTheme = Theme.of(context).textTheme;
+    final labelStyle = textTheme.labelSmall?.copyWith(
+      color: const Color(0xff9b7a84),
+      fontWeight: FontWeight.w600,
+      height: 1,
     );
-    return Wrap(
+    final replyStyle = textTheme.bodySmall?.copyWith(
+      color: const Color(0xff4a3a40),
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      height: 1.22,
+    );
+
+    return Column(
       key: const ValueKey('agent-quick-replies'),
-      spacing: 8,
-      runSpacing: 8,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (var index = 0; index < replies.length; index++)
-          ActionChip(
-            key: ValueKey('agent-quick-reply-$index'),
-            onPressed: () => onSelected(replies[index]),
-            visualDensity: VisualDensity.compact,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            backgroundColor: const Color(0xfffff7f8),
-            side: BorderSide(
-              color: colorScheme.primary.withValues(alpha: 0.18),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-            ),
-            labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-            label: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 180),
-              child: Text(
-                replies[index],
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: textStyle,
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                key: const ValueKey('agent-quick-replies-title-line'),
+                width: 16,
+                height: 1,
+                decoration: BoxDecoration(
+                  color: const Color(0xffdbc3cb),
+                  borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                ),
               ),
+              const SizedBox(width: 6),
+              Text(
+                '猜你想说',
+                key: const ValueKey('agent-quick-replies-title'),
+                style: labelStyle,
+              ),
+            ],
+          ),
+        ),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (var index = 0; index < replies.length; index++)
+              _AgentQuickReplyPill(
+                key: ValueKey('agent-quick-reply-$index'),
+                text: replies[index],
+                textStyle: replyStyle,
+                onSelected: onSelected,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _AgentQuickReplyPill extends StatelessWidget {
+  const _AgentQuickReplyPill({
+    super.key,
+    required this.text,
+    required this.textStyle,
+    required this.onSelected,
+  });
+
+  final String text;
+  final TextStyle? textStyle;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => onSelected(text),
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        splashColor: const Color(0xfff8edf2),
+        highlightColor: const Color(0xfff8edf2).withValues(alpha: 0.58),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 34, maxWidth: 260),
+          child: Ink(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            decoration: BoxDecoration(
+              color: const Color(0x9effffff),
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              border: Border.all(color: const Color(0xffeadde2)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: textStyle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  key: ValueKey('agent-quick-reply-chevron'),
+                  size: 16,
+                  color: Color(0xffb78294),
+                ),
+              ],
             ),
           ),
-      ],
+        ),
+      ),
     );
   }
 }
@@ -2122,16 +2489,21 @@ class AgentMarkdownText extends StatelessWidget {
     super.key,
     this.style,
     this.onArtifactAction,
+    this.parseMarkdown = true,
   });
 
   final String text;
   final TextStyle? style;
   final AgentArtifactActionHandler? onArtifactAction;
+  final bool parseMarkdown;
 
   @override
   Widget build(BuildContext context) {
     final normalized = text.trim();
     final baseStyle = style ?? Theme.of(context).textTheme.bodyMedium;
+    if (!parseMarkdown) {
+      return Text(normalized, style: baseStyle);
+    }
     final markdown = _prepareAgentMarkdown(normalized);
     if (!_containsMarkdown(markdown)) {
       return Text(normalized, style: baseStyle);
@@ -4846,8 +5218,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final controller = widget.controller;
     final isRunning = widget.isRunning;
     final isInputLocked = widget.isInputLocked;
-    final canSend = widget.canSend;
     final imageCount = widget.imageCount;
+    final canSend =
+        widget.canSend && (controller.text.trim().isNotEmpty || imageCount > 0);
     final showPhotoMenu = widget.showPhotoMenu;
     final canAttachImage = widget.canAttachImage;
     final canUseVoice = widget.canUseVoice;
@@ -5330,8 +5703,20 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   }
 }
 
+Iterable<AgentStreamEvent> _artifactEventsForState(AgentStreamRunState state) {
+  return state.artifactEvents.isNotEmpty
+      ? state.artifactEvents.values
+      : state.events;
+}
+
+Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {
+  return state.actionEvents.isNotEmpty
+      ? state.actionEvents.values
+      : state.events;
+}
+
 List<AgentArtifactCardView> _artifactCardsFromEvents(
-  List<AgentStreamEvent> events,
+  Iterable<AgentStreamEvent> events,
 ) {
   final cards = <String, AgentArtifactCardView>{};
   for (final event in events) {
@@ -5798,7 +6183,7 @@ List<String> _cartGroupRows(Object? rawGroups) {
 }
 
 List<AgentActionCardView> _actionCardsFromEvents(
-  List<AgentStreamEvent> events,
+  Iterable<AgentStreamEvent> events,
   Map<String, String> localStatuses,
 ) {
   final cards = <String, AgentActionCardView>{};

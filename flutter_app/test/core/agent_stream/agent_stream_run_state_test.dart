@@ -25,14 +25,14 @@ void main() {
         'I can help you review today\'s pumping pattern.',
       );
       expect(state.canRetry, isFalse);
-      expect(state.events.length, 5);
+      expect(state.events.length, 3);
 
       final afterTerminal = state.applyEvent(
         AgentStreamEvent(readFixtureMap('agent_events/run_failed.json')),
       );
 
       expect(afterTerminal.phase, AgentStreamRunPhase.finished);
-      expect(afterTerminal.events.length, 5);
+      expect(afterTerminal.events.length, 3);
     });
 
     test('preserves partial text and marks disconnect as retryable', () {
@@ -109,7 +109,7 @@ void main() {
 
       expect(state.phase, AgentStreamRunPhase.finished);
       expect(state.textContent, 'Already streamed only once.');
-      expect(state.events.length, 4);
+      expect(state.events.length, 2);
     });
 
     test('keeps streamed text stable when assistant completed arrives', () {
@@ -141,6 +141,7 @@ void main() {
       expect(state.textContent, '正在生成');
       expect(state.provisionalTextContent, '正在生成');
       expect(state.lastSequence, isNull);
+      expect(state.events, isEmpty);
 
       state = state.applyEvent(
         AgentStreamEvent(const {
@@ -280,7 +281,39 @@ void main() {
       }
 
       expect(state.textContent, 'ha ha ');
-      expect(state.events.length, 2);
+      expect(state.events, isEmpty);
+    });
+
+    test('keeps transient delta replay keys without growing event history', () {
+      var state = const AgentStreamRunState().start();
+
+      for (var index = 0; index < 120; index++) {
+        state = state.applyEvent(
+          AgentStreamEvent({
+            'event_id': 'delta:stream-$index',
+            'type': 'message.delta',
+            'thread_id': 'thread-heavy-delta',
+            'run_id': 'run-heavy-delta',
+            'transient': true,
+            'payload': {'delta': '字'},
+          }),
+        );
+      }
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'event_id': 'delta:stream-42',
+          'type': 'message.delta',
+          'thread_id': 'thread-heavy-delta',
+          'run_id': 'run-heavy-delta',
+          'transient': true,
+          'payload': {'delta': '重复'},
+        }),
+      );
+
+      expect(state.textContent.length, 120);
+      expect(state.events, isEmpty);
+      expect(state.seenReplayKeys.length, 120);
     });
 
     test('uses durable completed message text when deltas are absent', () {
@@ -623,6 +656,27 @@ data: {"type":"run.completed","thread_id":"thread-canonical-tools","run_id":"run
       expect(restored.events.length, 2);
       expect(restored.actionEvents, contains('action-1'));
       expect(restored.applyEvent(events.last).events.length, 2);
+    });
+
+    test('serializes transient delta replay keys without raw delta events', () {
+      var state = const AgentStreamRunState().start();
+      final delta = AgentStreamEvent(const {
+        'event_id': 'delta:restore-1',
+        'type': 'message.delta',
+        'thread_id': 'thread-restore-delta',
+        'run_id': 'run-restore-delta',
+        'transient': true,
+        'payload': {'delta': '恢复'},
+      });
+
+      state = state.applyEvent(delta);
+      final restored = AgentStreamRunState.fromMap(state.toMap());
+      final afterReplay = restored.applyEvent(delta);
+
+      expect(restored.textContent, '恢复');
+      expect(restored.events, isEmpty);
+      expect(afterReplay.textContent, '恢复');
+      expect(afterReplay.events, isEmpty);
     });
   });
 }
