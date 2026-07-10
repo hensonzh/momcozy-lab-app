@@ -206,7 +206,11 @@ class AgentStreamRunState {
       return '$textContent${event.textDelta ?? ''}';
     }
     if (type == 'message.completed' && event.role != 'user') {
-      return event.completedText ?? textContent;
+      return _finalizedTextContent(
+        textContent,
+        event.completedText,
+        hasLiveProvisionalText: provisionalTextContent.isNotEmpty,
+      );
     }
     return textContent;
   }
@@ -356,6 +360,21 @@ Map<String, AgentStreamEvent> _nextIndexedEvents(
     ...current,
     normalizedId: event,
   });
+}
+
+String _finalizedTextContent(
+  String currentText,
+  String? completedText, {
+  required bool hasLiveProvisionalText,
+}) {
+  final completed = completedText ?? '';
+  if (completed.isEmpty) return currentText;
+  if (currentText.isEmpty) return completed;
+  if (completed.startsWith(currentText)) {
+    return '$currentText${completed.substring(currentText.length)}';
+  }
+  if (!hasLiveProvisionalText) return completed;
+  return currentText;
 }
 
 int? _maxSequence(int? current, int? next) {
