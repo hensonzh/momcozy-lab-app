@@ -49,7 +49,7 @@ void main() {
         'after_sequence': '0',
         'follow': 'true',
         'limit': '200',
-        'poll_interval_seconds': '0.01',
+        'poll_interval_seconds': '0.05',
       });
       expect(postedBody['message'], 'Review my pumping pattern.');
       expect(postedBody['runtime_pattern'], 'langgraph_sdk');
@@ -105,7 +105,7 @@ void main() {
           'after_sequence': '7',
           'follow': 'true',
           'limit': '200',
-          'poll_interval_seconds': '0.01',
+          'poll_interval_seconds': '0.05',
         });
         expect(
           streamConnector.headers,

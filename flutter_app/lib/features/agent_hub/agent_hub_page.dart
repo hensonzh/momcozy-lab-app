@@ -28,6 +28,8 @@ const _agentSkillAssetBaseUrl = String.fromEnvironment(
   'MOMCOZY_API_BASE_URL',
   defaultValue: 'http://127.0.0.1:8769',
 );
+const _agentStreamUiCoalesceInterval = Duration(milliseconds: 33);
+const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
 
 String _agentAssistantTextForState(AgentStreamRunState state) {
   final text = state.textContent.trim();
@@ -149,12 +151,16 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _showLatestButton = false;
   bool _showPhotoMenu = false;
   Timer? _persistentWriteTimer;
+  Timer? _activeRunPersistentWriteTimer;
+  Timer? _streamRunStateTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
+  AgentStreamRunState? _pendingStreamRunState;
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
   String? _activeAutoVoicePlaybackId;
   String _autoVoiceSubmittedText = '';
   VoidCallback? _unsubscribeVoicePlaybackIdle;
   bool _consumedInitialAutoSend = false;
+  bool _pendingStreamRunShouldFollowLatest = false;
 
   @override
   void initState() {
@@ -199,8 +205,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   void dispose() {
+    _applyPendingRunStateForTeardown();
     _cancelRunSubscription();
     _unsubscribeVoicePlaybackIdle?.call();
+    _persistInteractionState();
     _flushPersistentInteractionState();
     _composerController.removeListener(_persistInteractionState);
     _chatScrollController
@@ -254,6 +262,28 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _persistInteractionState() {
+    _updateCachedInteractionState();
+    _activeRunPersistentWriteTimer?.cancel();
+    _activeRunPersistentWriteTimer = null;
+    _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
+  }
+
+  void _persistActiveInteractionStateThrottled() {
+    _updateCachedInteractionState();
+    if (widget.interactionStateStore == null ||
+        _activeRunPersistentWriteTimer != null) {
+      return;
+    }
+    _activeRunPersistentWriteTimer = Timer(
+      _agentActiveRunPersistentWriteInterval,
+      () {
+        _activeRunPersistentWriteTimer = null;
+        _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
+      },
+    );
+  }
+
+  void _updateCachedInteractionState() {
     final interactionState = _interactionState;
     if (interactionState != null) {
       interactionState
@@ -265,7 +295,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ..activeRequest = _activeRequest
         ..localActionStatuses = {..._localActionStatuses};
     }
-    _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
   }
 
   Future<void> _restorePersistedInteractionState() async {
@@ -598,12 +627,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
-    final text = _agentAssistantTextForState(_state).trim();
+    final state = _pendingStreamRunState ?? _state;
+    final text = _agentAssistantTextForState(state).trim();
     if (text.isEmpty) return null;
     return AgentHubHistoryMessage(
       role: AgentHubHistoryRole.assistant,
       content: text,
-      runState: _state.phase == AgentStreamRunPhase.idle ? null : _state,
+      runState: state.phase == AgentStreamRunPhase.idle ? null : state,
     );
   }
 
@@ -786,6 +816,91 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
   }
 
+  void _handleRunStateUpdate(AgentStreamRunState nextState) {
+    if (!mounted || !_state.isActive) return;
+    final shouldFollowLatest = _isNearLatest() || nextState.isActive;
+    final activeRequest = _activeRequest;
+    if (activeRequest != null) {
+      _activeRequest = _requestWithThreadId(activeRequest, nextState.threadId);
+    }
+
+    if (_shouldApplyRunStateImmediately(nextState)) {
+      _cancelPendingRunStateUpdate();
+      _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
+      return;
+    }
+
+    _pendingStreamRunState = nextState;
+    _pendingStreamRunShouldFollowLatest =
+        _pendingStreamRunShouldFollowLatest || shouldFollowLatest;
+    _streamRunStateTimer ??= Timer(
+      _agentStreamUiCoalesceInterval,
+      _flushPendingRunStateUpdate,
+    );
+  }
+
+  bool _shouldApplyRunStateImmediately(AgentStreamRunState nextState) {
+    if (!nextState.isActive) return true;
+    if (_state.phase != nextState.phase) return true;
+    if (_isBlank(_state.runId) && !_isBlank(nextState.runId)) return true;
+    if (_isBlank(_state.threadId) && !_isBlank(nextState.threadId)) {
+      return true;
+    }
+
+    final lastEventType = nextState.events.isEmpty
+        ? null
+        : nextState.events.last.type;
+    if (lastEventType != 'message.delta') return true;
+    return _state.textContent.trim().isEmpty &&
+        nextState.textContent.trim().isNotEmpty;
+  }
+
+  void _applyRunStateUpdate(
+    AgentStreamRunState nextState, {
+    required bool shouldFollowLatest,
+  }) {
+    if (!mounted) return;
+    setState(() {
+      _state = nextState;
+    });
+    if (nextState.isActive) {
+      _persistActiveInteractionStateThrottled();
+    } else {
+      _persistInteractionState();
+    }
+    _maybeStartAutoVoicePlayback(nextState);
+    if (shouldFollowLatest) _scheduleScrollToLatest();
+  }
+
+  void _flushPendingRunStateUpdate() {
+    final nextState = _pendingStreamRunState;
+    final shouldFollowLatest = _pendingStreamRunShouldFollowLatest;
+    _streamRunStateTimer?.cancel();
+    _streamRunStateTimer = null;
+    _pendingStreamRunState = null;
+    _pendingStreamRunShouldFollowLatest = false;
+    if (nextState == null || !mounted || !_state.isActive) return;
+    _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
+  }
+
+  void _cancelPendingRunStateUpdate() {
+    _streamRunStateTimer?.cancel();
+    _streamRunStateTimer = null;
+    _pendingStreamRunState = null;
+    _pendingStreamRunShouldFollowLatest = false;
+  }
+
+  void _applyPendingRunStateForTeardown() {
+    final nextState = _pendingStreamRunState;
+    _cancelPendingRunStateUpdate();
+    if (nextState == null) return;
+    _state = nextState;
+    _updateCachedInteractionState();
+    _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
+  }
+
+  bool _isBlank(String? value) => value == null || value.trim().isEmpty;
+
   Future<void> _startRun(
     AgentStreamRequest request, {
     AgentStreamRunState? initialState,
@@ -814,28 +929,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _runSubscription = runner
         .run(requestWithThread, initialState: initialState)
         .listen(
-          (nextState) {
-            if (!mounted || !_state.isActive) return;
-            final shouldFollowLatest = _isNearLatest() || nextState.isActive;
-            final activeRequest = _activeRequest;
-            if (activeRequest != null) {
-              _activeRequest = _requestWithThreadId(
-                activeRequest,
-                nextState.threadId,
-              );
-            }
-            setState(() {
-              _state = nextState;
-            });
-            _persistInteractionState();
-            _maybeStartAutoVoicePlayback(nextState);
-            if (shouldFollowLatest) _scheduleScrollToLatest();
-          },
+          _handleRunStateUpdate,
           onError: (Object error) {
             if (!mounted || !_state.isActive) return;
             final shouldFollowLatest = _isNearLatest();
+            final baseState = _pendingStreamRunState ?? _state;
+            _cancelPendingRunStateUpdate();
             setState(() {
-              _state = _state.markDisconnected(error);
+              _state = baseState.markDisconnected(error);
             });
             _persistInteractionState();
             if (shouldFollowLatest) _scheduleScrollToLatest();
@@ -999,10 +1100,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _cancelRun() {
     if (!_state.isActive) return;
-    final activeState = _state;
+    final activeState = _pendingStreamRunState ?? _state;
     final activeRequest = _activeRequest;
+    _cancelPendingRunStateUpdate();
     setState(() {
-      _state = _state.requestCancel();
+      _state = activeState.requestCancel();
     });
     _persistInteractionState();
     _cancelRunSubscription();
@@ -1030,6 +1132,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _cancelRunSubscription() {
+    _cancelPendingRunStateUpdate();
     final subscription = _runSubscription;
     _runSubscription = null;
     if (subscription == null) return;

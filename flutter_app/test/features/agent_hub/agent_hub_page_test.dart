@@ -1844,6 +1844,58 @@ void main() {
     },
   );
 
+  testWidgets('Agent Hub coalesces repeated streaming text deltas', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Stream slowly',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'type': 'message.delta',
+        'thread_id': 'thread-coalesce',
+        'run_id': 'run-coalesce',
+        'message_id': 'msg-coalesce',
+        'payload': {'text': 'Hel'},
+      }),
+    );
+    await tester.pump();
+
+    expect(find.text('Hel'), findsOneWidget);
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'type': 'message.delta',
+        'thread_id': 'thread-coalesce',
+        'run_id': 'run-coalesce',
+        'message_id': 'msg-coalesce',
+        'payload': {'text': 'lo'},
+      }),
+    );
+    await tester.pump();
+
+    expect(find.text('Hel'), findsOneWidget);
+    expect(find.text('Hello'), findsNothing);
+
+    await tester.pump(const Duration(milliseconds: 34));
+
+    expect(find.text('Hello'), findsOneWidget);
+  });
+
   testWidgets('Agent Hub posts best-effort cancel for active runner', (
     tester,
   ) async {
