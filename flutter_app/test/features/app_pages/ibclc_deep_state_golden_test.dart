@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 
 import '../../support/fixture_api_transport.dart';
+import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -121,6 +122,7 @@ Future<void> _pumpIbclc(WidgetTester tester, {required bool eventSent}) async {
         apiRuntime: MomCozyApiRuntime(
           jsonTransport: FixtureApiJsonTransportByPath(const {}),
           clientEventClient: client,
+          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
           userId: 'demo-user-fixture',
           babyId: 'demo-baby-fixture',
           locale: 'zh-CN',

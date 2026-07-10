@@ -19,6 +19,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.android.FlutterActivity
@@ -43,6 +45,9 @@ class MainActivity : FlutterActivity() {
     private var pendingBlePermissionResult: MethodChannel.Result? = null
     private var pendingNotificationPermissionResult: MethodChannel.Result? = null
     private var voiceAudioTrack: AudioTrack? = null
+    private var voiceAudioTrackSampleRate = 24000
+    private var voiceAudioTrackChannels = 1
+    private var voiceAudioTrackWrittenFrames = 0L
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -119,6 +124,7 @@ class MainActivity : FlutterActivity() {
         when (call.method) {
             "start" -> startVoicePcmPlayback(call, result)
             "write" -> writeVoicePcmChunk(call, result)
+            "finish" -> finishVoicePcmPlayback(result)
             "stop" -> {
                 stopVoicePcmPlayback()
                 result.success(null)
@@ -818,6 +824,9 @@ class MainActivity : FlutterActivity() {
             return
         }
         stopVoicePcmPlayback()
+        voiceAudioTrackSampleRate = sampleRate
+        voiceAudioTrackChannels = channels
+        voiceAudioTrackWrittenFrames = 0L
         voiceAudioTrack = AudioTrack(
             AudioManager.STREAM_MUSIC,
             sampleRate,
@@ -837,14 +846,37 @@ class MainActivity : FlutterActivity() {
         }
         val bytes = call.argumentsMap()["bytes"] as? ByteArray ?: ByteArray(0)
         if (bytes.isNotEmpty()) {
-            track.write(bytes, 0, bytes.size)
+            val writtenBytes = track.write(bytes, 0, bytes.size)
+            if (writtenBytes > 0) {
+                voiceAudioTrackWrittenFrames +=
+                    writtenBytes.toLong() / (2L * voiceAudioTrackChannels.coerceAtLeast(1))
+            }
         }
         result.success(null)
+    }
+
+    private fun finishVoicePcmPlayback(result: MethodChannel.Result) {
+        val track = voiceAudioTrack
+        if (track == null) {
+            result.success(null)
+            return
+        }
+        val playedFrames = track.playbackHeadPosition.toLong()
+        val remainingFrames = (voiceAudioTrackWrittenFrames - playedFrames).coerceAtLeast(0L)
+        val drainMs =
+            ((remainingFrames * 1000L) / voiceAudioTrackSampleRate.coerceAtLeast(1)).coerceAtMost(1200L) + 80L
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (voiceAudioTrack === track) {
+                stopVoicePcmPlayback()
+            }
+            result.success(null)
+        }, drainMs)
     }
 
     private fun stopVoicePcmPlayback() {
         val track = voiceAudioTrack ?: return
         voiceAudioTrack = null
+        voiceAudioTrackWrittenFrames = 0L
         try {
             track.stop()
         } catch (_: IllegalStateException) {
