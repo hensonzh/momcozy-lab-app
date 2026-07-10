@@ -14,6 +14,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dar
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
@@ -331,6 +332,33 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub personalizes greeting text and voice from profile', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    final player = _PageFakeVoicePlaybackPlayer();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          greetingProfileLoader: () async =>
+              const AgentHubGreetingProfile(displayName: '小美'),
+          voicePlaybackCoordinator: coordinator,
+          voicePlaybackPlayer: player,
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.textContaining('嗨 小美'), findsOneWidget);
+    expect(find.textContaining('你希望我怎么称呼你？'), findsNothing);
+    expect(player.playedTexts, hasLength(1));
+    expect(player.playedTexts.single, contains('嗨 小美'));
+
+    player.complete();
+  });
+
   testWidgets('Agent Hub plays greeting voice for a manual new session', (
     tester,
   ) async {
@@ -376,6 +404,47 @@ void main() {
       find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsNothing,
     );
+  });
+
+  testWidgets('Agent Hub refreshes the profile for a manual new session', (
+    tester,
+  ) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    final player = _PageFakeVoicePlaybackPlayer();
+    var displayName = '小美';
+    var loadCount = 0;
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          greetingProfileLoader: () async {
+            loadCount += 1;
+            return AgentHubGreetingProfile(displayName: displayName);
+          },
+          voicePlaybackCoordinator: coordinator,
+          voicePlaybackPlayer: player,
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.textContaining('嗨 小美'), findsOneWidget);
+    player.complete();
+    await tester.pump();
+    await tester.pump();
+
+    displayName = '安安';
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(loadCount, 2);
+    expect(find.textContaining('嗨 安安'), findsOneWidget);
+    expect(find.textContaining('嗨 小美'), findsNothing);
+    expect(player.playedTexts.last, contains('嗨 安安'));
+
+    player.complete();
   });
 
   testWidgets('Agent Hub keeps greeting avatar static without a voice player', (
