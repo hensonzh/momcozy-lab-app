@@ -71,13 +71,9 @@ class AgentStreamEvent {
 
   List<String> get quickReplies {
     for (final source in [
-      raw['quick_replies'],
-      raw['quickReplies'],
       payload['replies'],
       payload['quick_replies'],
       payload['quickReplies'],
-      _messageQuickReplies(raw['message']),
-      _messageQuickReplies(payload['message']),
     ]) {
       final replies = _quickReplyTexts(source);
       if (replies.isNotEmpty) return replies;
@@ -290,14 +286,6 @@ String? _messageText(Object? rawMessage) {
       _messageText(message['text']);
 }
 
-Object? _messageQuickReplies(Object? rawMessage) {
-  if (rawMessage is! Map) return null;
-  final message = Map<String, Object?>.from(rawMessage);
-  return message['quick_replies'] ??
-      message['quickReplies'] ??
-      message['replies'];
-}
-
 List<String> _quickReplyTexts(Object? rawReplies) {
   if (rawReplies is! List) return const <String>[];
   final replies = <String>[];
@@ -312,7 +300,7 @@ List<String> _quickReplyTexts(Object? rawReplies) {
     seen.add(text);
     replies.add(text);
   }
-  return List<String>.unmodifiable(replies);
+  return replies.length == 3 ? List<String>.unmodifiable(replies) : const <String>[];
 }
 
 String? _nonEmpty(String? value) {
@@ -425,9 +413,7 @@ bool _looksLikeStructuredAgentJson(Object? value) {
   };
   if (keys.intersection(structuredKeys).isNotEmpty) return true;
   final status = value['status']?.toString() ?? '';
-  return status == 'service_skill_loaded' ||
-      status == 'quick_replies_ready' ||
-      status.startsWith('needs_');
+  return status == 'service_skill_loaded' || status.startsWith('needs_');
 }
 
 String? _textFromStructuredJson(Object? value) {

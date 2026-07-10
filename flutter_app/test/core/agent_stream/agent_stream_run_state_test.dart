@@ -228,14 +228,11 @@ void main() {
       expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
     });
 
-    test('updates quick replies from transient quick replies event', () {
+    test('updates quick replies from transient completed message payload', () {
       var state = const AgentStreamRunState().start();
       final events = parseAgentEventStream('''
 id: 1
-data: {"type":"message.completed","thread_id":"thread-quick-001","run_id":"run-quick-001","message_id":"msg-quick-001","payload":{"role":"assistant","text":"已经整理好了。"}}
-
-id: transient:2-0
-data: {"type":"quick_replies.updated","thread_id":"thread-quick-001","run_id":"run-quick-001","transient":true,"cursor":"2-0","payload":{"message_id":"msg-quick-001","replies":[{"id":"qr_1","text":"继续聊这个"},{"id":"qr_2","text":"给我更多细节"}]}}
+data: {"type":"message.completed","thread_id":"thread-quick-001","run_id":"run-quick-001","message_id":"msg-quick-001","payload":{"role":"assistant","text":"已经整理好了。","quick_replies":[{"id":"qr_1","text":"继续聊这个"},{"id":"qr_2","text":"给我更多细节"},{"id":"qr_3","text":"换个方向"}]}}
 
 id: 3
 data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick-001"}
@@ -249,7 +246,7 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
       expect(state.phase, AgentStreamRunPhase.finished);
       expect(state.messageId, 'msg-quick-001');
       expect(state.textContent, '已经整理好了。');
-      expect(state.quickReplies, ['继续聊这个', '给我更多细节']);
+      expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
     });
 
     test(
@@ -429,10 +426,7 @@ id: 4
 data: {"type":"message.delta","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"message_stream_id":"msg-canonical-tools","delta":"你好 henson"}}
 
 id: 5
-data: {"type":"message.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","message_id":"msg-canonical-tools","payload":{"role":"assistant","text":"你好 henson"}}
-
-id: 6
-data: {"type":"quick_replies.updated","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","payload":{"message_id":"msg-canonical-tools","replies":[{"id":"qr_1","text":"继续聊这个"},{"id":"qr_2","text":"给我更多细节"},{"id":"qr_3","text":"换个方向"}]}}
+data: {"type":"message.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools","message_id":"msg-canonical-tools","payload":{"role":"assistant","text":"你好 henson","quick_replies":[{"id":"qr_1","text":"继续聊这个"},{"id":"qr_2","text":"给我更多细节"},{"id":"qr_3","text":"换个方向"}]}}
 
 id: 7
 data: {"type":"run.completed","thread_id":"thread-canonical-tools","run_id":"run-canonical-tools"}
