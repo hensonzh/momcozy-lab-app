@@ -286,6 +286,28 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub virtualizes long history messages', (tester) async {
+    tester.view.physicalSize = const Size(390, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final history = List<AgentHubHistoryMessage>.generate(200, (index) {
+      return AgentHubHistoryMessage(
+        role: index.isEven
+            ? AgentHubHistoryRole.user
+            : AgentHubHistoryRole.assistant,
+        content: '历史消息 $index：这是一段用于验证长历史懒构建的内容，需要足够长来占据一点垂直空间。',
+      );
+    });
+
+    await tester.pumpWidget(_host(AgentHubPage(historyMessages: history)));
+
+    expect(find.byKey(const ValueKey('agent-history-panel')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-history-0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-history-199')), findsNothing);
+  });
+
   testWidgets('Agent Hub plays greeting voice for a manual new session', (
     tester,
   ) async {
@@ -513,7 +535,58 @@ void main() {
     );
   });
 
-  testWidgets('Agent Hub renders quick replies as selectable chips', (
+  testWidgets('Agent quick replies match legacy web chrome', (tester) async {
+    final selected = <String>[];
+
+    await tester.pumpWidget(
+      _host(
+        AgentQuickRepliesBar(
+          replies: const ['继续聊这个', '给我更多细节', '换个方向'],
+          onSelected: selected.add,
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-quick-replies')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-quick-replies-title-line')),
+      findsOneWidget,
+    );
+    expect(
+      tester.getSize(
+        find.byKey(const ValueKey('agent-quick-replies-title-line')),
+      ),
+      const Size(16, 1),
+    );
+    expect(find.text('猜你想说'), findsOneWidget);
+    expect(find.byIcon(Icons.chevron_right_rounded), findsNWidgets(3));
+    expect(find.byType(InkWell), findsNWidgets(3));
+
+    await tester.tap(find.byKey(const ValueKey('agent-quick-reply-1')));
+    await tester.pump();
+
+    expect(selected, ['给我更多细节']);
+  });
+
+  testWidgets(
+    'Agent quick replies render only for legacy three item payloads',
+    (tester) async {
+      await tester.pumpWidget(
+        _host(
+          AgentQuickRepliesBar(
+            replies: const ['继续聊这个', '给我更多细节'],
+            onSelected: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
+      expect(find.text('猜你想说'), findsNothing);
+      expect(find.byIcon(Icons.chevron_right_rounded), findsNothing);
+    },
+  );
+
+  testWidgets('Agent Hub renders quick replies as selectable legacy pills', (
     tester,
   ) async {
     final client = _FixtureAgentStreamClient([
@@ -1013,6 +1086,7 @@ void main() {
     );
     await tester.pump();
     await tester.pump();
+    await tester.pump();
 
     expect(client.requests, hasLength(1));
     expect(client.requests.single.message, '我想调整今天的吸乳排期');
@@ -1033,6 +1107,7 @@ void main() {
         ),
       ),
     );
+    await tester.pump();
     await tester.pump();
 
     expect(client.requests, hasLength(1));
@@ -1757,6 +1832,8 @@ void main() {
             'text': 'Final answer',
             'quick_replies': [
               {'text': '继续聊这个'},
+              {'text': '给我更多细节'},
+              {'text': '换个方向'},
             ],
           },
         }),
@@ -1790,6 +1867,120 @@ void main() {
       );
     },
   );
+
+  testWidgets('Agent Hub renders repeated streaming text deltas immediately', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Stream slowly',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'type': 'message.delta',
+        'thread_id': 'thread-coalesce',
+        'run_id': 'run-coalesce',
+        'message_id': 'msg-coalesce',
+        'payload': {'text': 'Hel'},
+      }),
+    );
+    await tester.pump();
+
+    expect(find.text('Hel'), findsOneWidget);
+    final pageShellBeforeSecondDelta = tester.widget<ColoredBox>(
+      find.byKey(const ValueKey('agent-hub-page')),
+    );
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'type': 'message.delta',
+        'thread_id': 'thread-coalesce',
+        'run_id': 'run-coalesce',
+        'message_id': 'msg-coalesce',
+        'payload': {'text': 'lo'},
+      }),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Hello'), findsOneWidget);
+    final pageShellAfterSecondDelta = tester.widget<ColoredBox>(
+      find.byKey(const ValueKey('agent-hub-page')),
+    );
+    expect(
+      identical(pageShellBeforeSecondDelta, pageShellAfterSecondDelta),
+      isTrue,
+    );
+  });
+
+  testWidgets('Agent Hub throttles active run snapshot writes during deltas', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    final store = _MemoryAgentHubInteractionStateStore();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          interactionStateStore: store,
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      'Stream persistently',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1500));
+    store.writeCount = 0;
+
+    for (final text in ['Hel', 'lo', '!']) {
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'delta:persist-$text',
+          'type': 'message.delta',
+          'thread_id': 'thread-persist',
+          'run_id': 'run-persist',
+          'message_id': 'msg-persist',
+          'payload': {'text': text},
+        }),
+      );
+    }
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Hello!'), findsOneWidget);
+    expect(store.writeCount, 0);
+
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(store.writeCount, 0);
+
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(store.writeCount, 0);
+
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(store.writeCount, 1);
+    expect(store.snapshot?.runState.textContent, 'Hello!');
+  });
 
   testWidgets('Agent Hub posts best-effort cancel for active runner', (
     tester,
@@ -2342,6 +2533,44 @@ void main() {
     await tester.pump();
   });
 
+  testWidgets('Agent Hub renders cards from indexed reducer events', (
+    tester,
+  ) async {
+    final artifactEvent = AgentStreamEvent(
+      readFixtureMap('agent_events/rich_text_artifact.json'),
+    );
+    final actionEvent = AgentStreamEvent(const {
+      'type': 'action.confirmation_required',
+      'action_id': 'action-indexed-001',
+      'payload': {
+        'action_id': 'action-indexed-001',
+        'action_status': 'confirmation_required',
+        'preview_payload': {'title': '确认索引动作'},
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: 'I prepared indexed cards.',
+            artifactEvents: {'milk-plan-001': artifactEvent},
+            actionEvents: {'action-indexed-001': actionEvent},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-artifact-card-milk-plan-001')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
+    expect(find.text('确认索引动作'), findsOneWidget);
+  });
+
   testWidgets('Agent Hub renders specialized legacy artifact cards', (
     tester,
   ) async {
@@ -2754,6 +2983,11 @@ void main() {
     expect(client.requests, hasLength(1));
     expect(client.requests.single.message, contains('confirmed_form_data'));
     expect(client.requests.single.message, contains('due_date_or_week'));
+    await tester.scrollUntilVisible(
+      find.text('已提交信息采集表单'),
+      -220,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('已提交信息采集表单'), findsOneWidget);
 
     final cartActionFinder = find.byKey(
@@ -3235,6 +3469,27 @@ milk_total: 120ml
     expect(find.textContaining('milk_total: 120ml'), findsOneWidget);
     expect(find.text('项目'), findsOneWidget);
     expect(find.text('睡眠'), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub renders streaming markdown text without parsing', (
+    tester,
+  ) async {
+    const markdown = '## 正在整理\n- **重点**：先等我写完';
+
+    await tester.pumpWidget(
+      _host(
+        const AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            textContent: markdown,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(MarkdownBody), findsNothing);
+    expect(find.textContaining('## 正在整理'), findsOneWidget);
+    expect(find.textContaining('**重点**'), findsOneWidget);
   });
 
   testWidgets(
@@ -3895,17 +4150,21 @@ class _MemoryAgentHubInteractionStateStore
   _MemoryAgentHubInteractionStateStore([this.snapshot]);
 
   AgentHubInteractionSnapshot? snapshot;
+  int writeCount = 0;
+  int clearCount = 0;
 
   @override
   Future<AgentHubInteractionSnapshot?> read() async => snapshot;
 
   @override
   Future<void> write(AgentHubInteractionSnapshot snapshot) async {
+    writeCount += 1;
     this.snapshot = snapshot;
   }
 
   @override
   Future<void> clear() async {
+    clearCount += 1;
     snapshot = null;
   }
 }
