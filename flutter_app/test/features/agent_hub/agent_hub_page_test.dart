@@ -3686,6 +3686,32 @@ milk_total: 120ml
     );
   });
 
+  testWidgets('Agent Hub aligns context-ready fallback with legacy web copy', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({'type': 'run.started'}),
+        AgentStreamEvent({
+          'type': 'run.progress',
+          'payload': {'phase': 'context_ready'},
+        }),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-run-status-line')),
+        matching: find.text('我先理解一下你的需求～'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('我看一下你的信息'), findsNothing);
+  });
+
   testWidgets('Agent Hub status line prefers backend semantic labels', (
     tester,
   ) async {
@@ -3857,6 +3883,7 @@ milk_total: 120ml
     await tester.pumpWidget(
       _host(
         const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AgentRunStatusLine(title: '我已经收到你的消息啦～'),
             AgentThinkingNote(title: '我想一下'),
@@ -3865,11 +3892,8 @@ milk_total: 120ml
       ),
     );
 
-    final statusRow = tester.widget<Row>(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.byType(Row),
-      ),
+    final statusLine = tester.widget<Container>(
+      find.byKey(const ValueKey('agent-run-status-line')),
     );
     final thinkingPadding = tester.widget<Padding>(
       find
@@ -3879,9 +3903,19 @@ milk_total: 120ml
           )
           .first,
     );
+    final statusTextLeft = tester.getTopLeft(find.text('我已经收到你的消息啦～')).dx;
+    final thinkingTextLeft = tester.getTopLeft(find.text('我想一下')).dx;
 
-    expect(statusRow.crossAxisAlignment, CrossAxisAlignment.center);
-    expect(thinkingPadding.padding, const EdgeInsets.only(left: 16));
+    expect(statusLine.padding, const EdgeInsets.symmetric(vertical: 4));
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-run-status-line')),
+        matching: find.byType(Row),
+      ),
+      findsNothing,
+    );
+    expect(thinkingPadding.padding, EdgeInsets.zero);
+    expect(statusTextLeft, closeTo(thinkingTextLeft, 0.1));
   });
 
   testWidgets('Agent thinking note stays event-driven until cleared', (
