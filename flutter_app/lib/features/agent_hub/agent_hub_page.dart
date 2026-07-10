@@ -2924,26 +2924,27 @@ class AgentRunStatusLine extends StatefulWidget {
 
 class _AgentRunStatusLineState extends State<AgentRunStatusLine>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _pulseController;
+  static const _sweepDuration = Duration(milliseconds: 640);
+
+  late final AnimationController _sweepController;
 
   @override
   void initState() {
     super.initState();
-    _pulseController = AnimationController(
+    _sweepController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1080),
+      duration: _sweepDuration,
     )..repeat();
   }
 
   @override
   void dispose() {
-    _pulseController.dispose();
+    _sweepController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final title = widget.title;
 
@@ -2952,64 +2953,20 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
       child: Container(
         key: const ValueKey('agent-run-status-line'),
         constraints: const BoxConstraints(maxWidth: double.infinity),
-        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox.square(
-              dimension: 10,
-              child: AnimatedBuilder(
-                animation: _pulseController,
-                builder: (context, child) {
-                  final value = Curves.easeOutCubic.transform(
-                    _pulseController.value,
-                  );
-                  return Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Transform.scale(
-                        scale: 0.9 + value * 0.45,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: colorScheme.primary.withValues(
-                              alpha: 0.28 - value * 0.18,
-                            ),
-                          ),
-                          child: const SizedBox.square(dimension: 8),
-                        ),
-                      ),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: colorScheme.primary.withValues(alpha: 0.86),
-                        ),
-                        child: const SizedBox.square(dimension: 5),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 6),
-            Flexible(
-              child: _AgentSweepText(
-                title,
-                sweepKey: const ValueKey('agent-run-status-title-sweep'),
-                animation: _pulseController,
-                colors: const [
-                  Color(0xff9a7a86),
-                  Color(0xff5d3f4d),
-                  Color(0xff9a7a86),
-                ],
-                style: textTheme.labelSmall?.copyWith(
-                  height: 1.45,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: _AgentSweepText(
+          title,
+          sweepKey: const ValueKey('agent-run-status-title-sweep'),
+          animation: _sweepController,
+          colors: const [
+            Color(0xff9a7a86),
+            Color(0xff5d3f4d),
+            Color(0xff9a7a86),
           ],
+          style: textTheme.labelSmall?.copyWith(
+            height: 1.45,
+            fontWeight: FontWeight.w800,
+          ),
         ),
       ),
     );
@@ -3072,7 +3029,7 @@ class AgentThinkingNote extends StatefulWidget {
 
 class _AgentThinkingNoteState extends State<AgentThinkingNote>
     with SingleTickerProviderStateMixin {
-  static const _sweepDuration = Duration(milliseconds: 760);
+  static const _sweepDuration = Duration(milliseconds: 640);
 
   late final AnimationController _sweepController;
 
@@ -3097,7 +3054,7 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
     return Semantics(
       label: widget.title,
       child: Padding(
-        padding: const EdgeInsets.only(left: 16),
+        padding: EdgeInsets.zero,
         child: _AgentSweepText(
           widget.title,
           sweepKey: const ValueKey('agent-thinking-note'),
