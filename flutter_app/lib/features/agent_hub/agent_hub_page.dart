@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
@@ -28,7 +29,6 @@ const _agentSkillAssetBaseUrl = String.fromEnvironment(
   'MOMCOZY_API_BASE_URL',
   defaultValue: 'http://127.0.0.1:8769',
 );
-const _agentStreamUiCoalesceInterval = Duration(milliseconds: 33);
 const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
 
 String _agentAssistantTextForState(AgentStreamRunState state) {
@@ -147,25 +147,38 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
   final ScrollController _chatScrollController = ScrollController();
+  final ValueNotifier<AgentStreamRunState> _runStateNotifier =
+      ValueNotifier<AgentStreamRunState>(const AgentStreamRunState());
+  final ValueNotifier<bool> _visibleReplyRunningNotifier = ValueNotifier<bool>(
+    false,
+  );
+  final ValueNotifier<bool> _composerLockedNotifier = ValueNotifier<bool>(
+    false,
+  );
+  final ValueNotifier<_AgentResponseLightRailMode>
+  _responseLightRailModeNotifier = ValueNotifier<_AgentResponseLightRailMode>(
+    _AgentResponseLightRailMode.idle,
+  );
+  final ValueNotifier<String?> _activeVoicePlaybackIdNotifier =
+      ValueNotifier<String?>(null);
+  final ValueNotifier<int> _actionStateRevisionNotifier = ValueNotifier<int>(0);
   bool _autoVoiceEnabled = true;
   bool _showLatestButton = false;
   bool _showPhotoMenu = false;
   Timer? _persistentWriteTimer;
   Timer? _activeRunPersistentWriteTimer;
-  Timer? _streamRunStateTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
-  AgentStreamRunState? _pendingStreamRunState;
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
   String? _activeAutoVoicePlaybackId;
   String _autoVoiceSubmittedText = '';
   VoidCallback? _unsubscribeVoicePlaybackIdle;
   bool _consumedInitialAutoSend = false;
-  bool _pendingStreamRunShouldFollowLatest = false;
 
   @override
   void initState() {
     super.initState();
     _restoreCachedInteractionState();
+    _publishRunState(_state);
     _restorePersistedInteractionState();
     _applyInitialComposerText();
     _scheduleInitialAutoSendIfNeeded();
@@ -183,7 +196,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (_interactionState == null &&
         oldWidget.state != widget.state &&
         (widget.runner == null || !_state.isActive)) {
-      _state = widget.state;
+      _setRunState(widget.state);
     }
     if (_interactionState == null &&
         oldWidget.historyMessages != widget.historyMessages &&
@@ -205,7 +218,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   void dispose() {
-    _applyPendingRunStateForTeardown();
     _cancelRunSubscription();
     _unsubscribeVoicePlaybackIdle?.call();
     _persistInteractionState();
@@ -215,6 +227,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ..removeListener(_updateLatestButtonVisibility)
       ..dispose();
     _composerController.dispose();
+    _runStateNotifier.dispose();
+    _visibleReplyRunningNotifier.dispose();
+    _composerLockedNotifier.dispose();
+    _responseLightRailModeNotifier.dispose();
+    _activeVoicePlaybackIdNotifier.dispose();
+    _actionStateRevisionNotifier.dispose();
     super.dispose();
   }
 
@@ -227,6 +245,44 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _unsubscribeVoicePlaybackIdle = coordinator.subscribeIdle(() {
       scheduleMicrotask(_tryRunPendingAutoVoiceReplay);
     });
+  }
+
+  void _setRunState(AgentStreamRunState nextState) {
+    _state = nextState;
+    _publishRunState(nextState);
+  }
+
+  void _publishRunState(AgentStreamRunState state) {
+    _runStateNotifier.value = state;
+    _setNotifierValue(
+      _visibleReplyRunningNotifier,
+      _isVisibleReplyRunningForState(state),
+    );
+    _setNotifierValue(
+      _composerLockedNotifier,
+      _isComposerLockedForState(state),
+    );
+    _setNotifierValue(
+      _responseLightRailModeNotifier,
+      _agentResponseLightRailModeForState(state),
+    );
+  }
+
+  void _setVoiceState(AgentVoiceState nextState) {
+    _voiceState = nextState;
+    _setNotifierValue(
+      _activeVoicePlaybackIdNotifier,
+      nextState.isPlaybackActive ? nextState.playbackId : null,
+    );
+  }
+
+  void _notifyActionStateChanged() {
+    _actionStateRevisionNotifier.value += 1;
+  }
+
+  void _setNotifierValue<T>(ValueNotifier<T> notifier, T value) {
+    if (notifier.value == value) return;
+    notifier.value = value;
   }
 
   void _restoreCachedInteractionState() {
@@ -323,9 +379,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _applyInteractionSnapshot(AgentHubInteractionSnapshot snapshot) {
-    _state = _restoreInterruptedRunState(
-      snapshot.runState,
-      disconnectedMessage: '连接已中断，可继续接收。',
+    _setRunState(
+      _restoreInterruptedRunState(
+        snapshot.runState,
+        disconnectedMessage: '连接已中断，可继续接收。',
+      ),
     );
     _historyMessages = snapshot.historyMessages
         .map(_historyMessageFromSnapshot)
@@ -475,20 +533,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _updateLatestButtonVisibility();
   }
 
-  bool get _isComposerLocked =>
-      _state.phase == AgentStreamRunPhase.waitingForConfirmation ||
-      _state.phase == AgentStreamRunPhase.cancelRequested;
+  bool _isComposerLockedForState(AgentStreamRunState state) =>
+      state.phase == AgentStreamRunPhase.waitingForConfirmation ||
+      state.phase == AgentStreamRunPhase.cancelRequested;
 
-  bool get _isVisibleReplyRunning => _state.isAwaitingVisibleReply;
+  bool _isVisibleReplyRunningForState(AgentStreamRunState state) =>
+      state.isAwaitingVisibleReply;
 
-  bool get _canSend =>
-      widget.runner != null &&
-      !_isComposerLocked &&
-      (_composerController.text.trim().isNotEmpty ||
-          _attachedImages.isNotEmpty);
+  bool _canRetryForState(AgentStreamRunState state) =>
+      widget.runner != null && state.canRetry && _activeRequest != null;
 
-  bool get _canRetry =>
-      widget.runner != null && _state.canRetry && _activeRequest != null;
+  bool get _isComposerLocked => _isComposerLockedForState(_state);
+
+  bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
 
   Future<void> _sendMessage() async {
     final runner = widget.runner;
@@ -627,7 +684,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
-    final state = _pendingStreamRunState ?? _state;
+    final state = _state;
     final text = _agentAssistantTextForState(state).trim();
     if (text.isEmpty) return null;
     return AgentHubHistoryMessage(
@@ -664,21 +721,23 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
 
     setState(() {
-      _voiceState = _voiceState.startListening();
+      _setVoiceState(_voiceState.startListening());
     });
 
     try {
       setState(() {
-        _voiceState = _voiceState.startTranscribing(
-          draft: _composerController.text,
+        _setVoiceState(
+          _voiceState.startTranscribing(draft: _composerController.text),
         );
       });
       final result = await _captureVoiceInput();
       if (!mounted) return;
       setState(() {
         if (result.status == AgentVoiceInputResultStatus.permissionDenied) {
-          _voiceState = _voiceState.markPermissionDenied(
-            result.permissionState ?? AgentVoiceInputPermissionState.denied,
+          _setVoiceState(
+            _voiceState.markPermissionDenied(
+              result.permissionState ?? AgentVoiceInputPermissionState.denied,
+            ),
           );
           return;
         }
@@ -690,13 +749,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
             offset: _composerController.text.length,
           );
         }
-        _voiceState = _voiceState.applyTranscription(text ?? '');
+        _setVoiceState(_voiceState.applyTranscription(text ?? ''));
       });
       _persistInteractionState();
     } catch (error) {
       if (!mounted) return;
       setState(() {
-        _voiceState = _voiceState.fail(error);
+        _setVoiceState(_voiceState.fail(error));
       });
     }
   }
@@ -725,17 +784,18 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelRunSubscription();
     _composerController.clear();
     setState(() {
-      _state = const AgentStreamRunState();
+      _setRunState(const AgentStreamRunState());
       _historyMessages.clear();
       _attachedImages.clear();
       _showPhotoMenu = false;
       _pendingActionIds.clear();
       _localActionStatuses.clear();
       _activeRequest = null;
-      _voiceState = const AgentVoiceState();
+      _setVoiceState(const AgentVoiceState());
       _pendingAutoVoiceReplay = null;
       _resetAutoVoiceProgress();
     });
+    _notifyActionStateChanged();
     _persistInteractionState();
     _maybeStartGreetingVoicePlayback();
     widget.onNewSession?.call();
@@ -755,9 +815,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!_voiceState.isPlaybackActive) return;
     if (coordinator != null && isPreservedPlayback && !didCancel) return;
 
-    setState(() {
-      _voiceState = _voiceState.cancelPlayback();
-    });
+    _setVoiceState(_voiceState.cancelPlayback());
   }
 
   void _maybeStartGreetingVoicePlayback() {
@@ -823,36 +881,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (activeRequest != null) {
       _activeRequest = _requestWithThreadId(activeRequest, nextState.threadId);
     }
-
-    if (_shouldApplyRunStateImmediately(nextState)) {
-      _cancelPendingRunStateUpdate();
-      _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
-      return;
-    }
-
-    _pendingStreamRunState = nextState;
-    _pendingStreamRunShouldFollowLatest =
-        _pendingStreamRunShouldFollowLatest || shouldFollowLatest;
-    _streamRunStateTimer ??= Timer(
-      _agentStreamUiCoalesceInterval,
-      _flushPendingRunStateUpdate,
-    );
-  }
-
-  bool _shouldApplyRunStateImmediately(AgentStreamRunState nextState) {
-    if (!nextState.isActive) return true;
-    if (_state.phase != nextState.phase) return true;
-    if (_isBlank(_state.runId) && !_isBlank(nextState.runId)) return true;
-    if (_isBlank(_state.threadId) && !_isBlank(nextState.threadId)) {
-      return true;
-    }
-
-    final lastEventType = nextState.events.isEmpty
-        ? null
-        : nextState.events.last.type;
-    if (lastEventType != 'message.delta') return true;
-    return _state.textContent.trim().isEmpty &&
-        nextState.textContent.trim().isNotEmpty;
+    _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
   }
 
   void _applyRunStateUpdate(
@@ -860,9 +889,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     required bool shouldFollowLatest,
   }) {
     if (!mounted) return;
-    setState(() {
-      _state = nextState;
-    });
+    _setRunState(nextState);
     if (nextState.isActive) {
       _persistActiveInteractionStateThrottled();
     } else {
@@ -871,35 +898,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _maybeStartAutoVoicePlayback(nextState);
     if (shouldFollowLatest) _scheduleScrollToLatest();
   }
-
-  void _flushPendingRunStateUpdate() {
-    final nextState = _pendingStreamRunState;
-    final shouldFollowLatest = _pendingStreamRunShouldFollowLatest;
-    _streamRunStateTimer?.cancel();
-    _streamRunStateTimer = null;
-    _pendingStreamRunState = null;
-    _pendingStreamRunShouldFollowLatest = false;
-    if (nextState == null || !mounted || !_state.isActive) return;
-    _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
-  }
-
-  void _cancelPendingRunStateUpdate() {
-    _streamRunStateTimer?.cancel();
-    _streamRunStateTimer = null;
-    _pendingStreamRunState = null;
-    _pendingStreamRunShouldFollowLatest = false;
-  }
-
-  void _applyPendingRunStateForTeardown() {
-    final nextState = _pendingStreamRunState;
-    _cancelPendingRunStateUpdate();
-    if (nextState == null) return;
-    _state = nextState;
-    _updateCachedInteractionState();
-    _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
-  }
-
-  bool _isBlank(String? value) => value == null || value.trim().isEmpty;
 
   Future<void> _startRun(
     AgentStreamRequest request, {
@@ -913,7 +911,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelRunSubscription();
     _activeRequest = requestWithThread;
     setState(() {
-      _state = initialState ?? const AgentStreamRunState().start();
+      _setRunState(initialState ?? const AgentStreamRunState().start());
       if (initialState == null) {
         _pendingAutoVoiceReplay = null;
         _resetAutoVoiceProgress();
@@ -923,6 +921,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _localActionStatuses.clear();
       }
     });
+    if (!preserveActionState) _notifyActionStateChanged();
     _persistInteractionState();
     _scheduleScrollToLatest();
 
@@ -933,11 +932,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           onError: (Object error) {
             if (!mounted || !_state.isActive) return;
             final shouldFollowLatest = _isNearLatest();
-            final baseState = _pendingStreamRunState ?? _state;
-            _cancelPendingRunStateUpdate();
-            setState(() {
-              _state = baseState.markDisconnected(error);
-            });
+            _setRunState(_state.markDisconnected(error));
             _persistInteractionState();
             if (shouldFollowLatest) _scheduleScrollToLatest();
           },
@@ -1006,9 +1001,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     required String text,
     VoidCallback? onFinished,
   }) {
-    setState(() {
-      _voiceState = _voiceState.startPlayback(handle.id);
-    });
+    _setVoiceState(_voiceState.startPlayback(handle.id));
     final player = widget.voicePlaybackPlayer;
     if (player == null) return;
 
@@ -1018,17 +1011,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
           .then((_) {
             if (!mounted || !handle.isCurrent) return;
             handle.finish();
-            setState(() {
-              _voiceState = const AgentVoiceState();
-            });
+            _setVoiceState(const AgentVoiceState());
             onFinished?.call();
           })
           .catchError((Object error) {
             if (!mounted || !handle.isCurrent) return;
             handle.finish();
-            setState(() {
-              _voiceState = _voiceState.fail(error);
-            });
+            _setVoiceState(_voiceState.fail(error));
           }),
     );
   }
@@ -1100,17 +1089,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _cancelRun() {
     if (!_state.isActive) return;
-    final activeState = _pendingStreamRunState ?? _state;
+    final activeState = _state;
     final activeRequest = _activeRequest;
-    _cancelPendingRunStateUpdate();
-    setState(() {
-      _state = activeState.requestCancel();
-    });
+    _setRunState(activeState.requestCancel());
     _persistInteractionState();
     _cancelRunSubscription();
-    setState(() {
-      _state = _state.applyCancelResult(acknowledged: true);
-    });
+    _setRunState(_state.applyCancelResult(acknowledged: true));
     _persistInteractionState();
     _sendBestEffortServerCancel(activeState, activeRequest);
   }
@@ -1123,7 +1107,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _pendingAutoVoiceReplay = null;
         _resetAutoVoiceProgress();
         if (_voiceState.isPlaybackActive) {
-          _voiceState = _voiceState.cancelPlayback();
+          _setVoiceState(_voiceState.cancelPlayback());
         }
       }
       _autoVoiceEnabled = nextEnabled;
@@ -1132,7 +1116,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _cancelRunSubscription() {
-    _cancelPendingRunStateUpdate();
     final subscription = _runSubscription;
     _runSubscription = null;
     if (subscription == null) return;
@@ -1163,22 +1146,20 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _confirmAction(AgentActionCardView action) async {
     final actionClient = widget.actionClient;
     if (actionClient == null || _pendingActionIds.contains(action.id)) return;
-    setState(() {
-      _pendingActionIds.add(action.id);
-      _localActionStatuses[action.id] = 'confirming';
-    });
+    _pendingActionIds.add(action.id);
+    _localActionStatuses[action.id] = 'confirming';
+    _notifyActionStateChanged();
 
     final result = await actionClient.confirm(
       AgentStreamActionConfirmRequest(actionId: action.id),
     );
     if (!mounted) return;
-    setState(() {
-      _pendingActionIds.remove(action.id);
-      _localActionStatuses[action.id] = result.accepted
-          ? _acceptedConfirmStatus(result.actionStatus)
-          : 'failed';
-      _applyActionResultEvents(result.events);
-    });
+    _pendingActionIds.remove(action.id);
+    _localActionStatuses[action.id] = result.accepted
+        ? _acceptedConfirmStatus(result.actionStatus)
+        : 'failed';
+    _applyActionResultEvents(result.events);
+    _notifyActionStateChanged();
     _persistInteractionState();
     if (result.accepted && _shouldResumeAfterActionResult()) {
       await _resumeCurrentRun(preserveActionState: true);
@@ -1196,10 +1177,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _rejectAction(AgentActionCardView action) async {
     final actionClient = widget.actionClient;
     if (actionClient == null || _pendingActionIds.contains(action.id)) return;
-    setState(() {
-      _pendingActionIds.add(action.id);
-      _localActionStatuses[action.id] = 'rejecting';
-    });
+    _pendingActionIds.add(action.id);
+    _localActionStatuses[action.id] = 'rejecting';
+    _notifyActionStateChanged();
 
     final result = await actionClient.reject(
       AgentStreamActionRejectRequest(
@@ -1208,13 +1188,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ),
     );
     if (!mounted) return;
-    setState(() {
-      _pendingActionIds.remove(action.id);
-      _localActionStatuses[action.id] = result.accepted
-          ? result.actionStatus ?? 'rejected'
-          : 'failed';
-      _applyActionResultEvents(result.events);
-    });
+    _pendingActionIds.remove(action.id);
+    _localActionStatuses[action.id] = result.accepted
+        ? result.actionStatus ?? 'rejected'
+        : 'failed';
+    _applyActionResultEvents(result.events);
+    _notifyActionStateChanged();
     _persistInteractionState();
     if (result.accepted && _shouldResumeAfterActionResult()) {
       await _resumeCurrentRun(preserveActionState: true);
@@ -1238,30 +1217,40 @@ class _AgentHubPageState extends State<AgentHubPage> {
     for (final event in events) {
       nextState = nextState.applyEvent(event);
     }
-    _state = nextState;
+    _setRunState(nextState);
   }
 
   @override
   Widget build(BuildContext context) {
-    final responseLightRailMode = _agentResponseLightRailModeForState(_state);
-    final isVisibleReplyRunning = _isVisibleReplyRunning;
     return ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
       child: Stack(
         children: [
-          if (responseLightRailMode != _AgentResponseLightRailMode.idle)
-            Positioned.fill(
-              child: _AgentResponseLightRail(mode: responseLightRailMode),
-            ),
+          ValueListenableBuilder<_AgentResponseLightRailMode>(
+            valueListenable: _responseLightRailModeNotifier,
+            builder: (context, mode, child) {
+              if (mode == _AgentResponseLightRailMode.idle) {
+                return const SizedBox.shrink();
+              }
+              return Positioned.fill(
+                child: _AgentResponseLightRail(mode: mode),
+              );
+            },
+          ),
           Column(
             children: [
-              AgentHubTopBar(
-                showControls: true,
-                autoVoiceEnabled: _autoVoiceEnabled,
-                isRunning: isVisibleReplyRunning,
-                onToggleAutoVoice: _toggleAutoVoice,
-                onNewSession: _startNewSession,
+              ValueListenableBuilder<bool>(
+                valueListenable: _visibleReplyRunningNotifier,
+                builder: (context, isVisibleReplyRunning, child) {
+                  return AgentHubTopBar(
+                    showControls: true,
+                    autoVoiceEnabled: _autoVoiceEnabled,
+                    isRunning: isVisibleReplyRunning,
+                    onToggleAutoVoice: _toggleAutoVoice,
+                    onNewSession: _startNewSession,
+                  );
+                },
               ),
               Expanded(
                 child: LayoutBuilder(
@@ -1303,13 +1292,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                         ),
                                         const SizedBox(height: 18),
                                       ],
-                                      AgentRunTranscript(
-                                        state: _state,
-                                        activeVoicePlaybackId:
-                                            _voiceState.isPlaybackActive
-                                            ? _voiceState.playbackId
-                                            : null,
-                                        canRetry: _canRetry,
+                                      _AgentRunTranscriptListenable(
+                                        stateListenable: _runStateNotifier,
+                                        activeVoicePlaybackIdListenable:
+                                            _activeVoicePlaybackIdNotifier,
+                                        actionStateRevisionListenable:
+                                            _actionStateRevisionNotifier,
+                                        canRetryForState: _canRetryForState,
                                         onRetry: _retryRun,
                                         onArtifactAction: _handleArtifactAction,
                                         onQuickReplySelected:
@@ -1358,31 +1347,44 @@ class _AgentHubPageState extends State<AgentHubPage> {
                   },
                 ),
               ),
-              AgentComposerBar(
-                controller: _composerController,
-                canSend: _canSend,
-                isRunning: isVisibleReplyRunning,
-                isInputLocked: _isComposerLocked,
-                imageCount: _attachedImages.length,
-                showPhotoMenu: _showPhotoMenu,
-                canAttachImage: widget.pickImage != null && !_isComposerLocked,
-                canUseVoice:
-                    (widget.voiceInputController != null ||
-                        widget.voiceInput != null) &&
-                    !isVisibleReplyRunning &&
-                    !_isComposerLocked &&
-                    !_voiceState.isInputActive,
-                voicePhase: _voiceState.phase,
-                voicePlaybackFailed:
-                    _voiceState.phase == AgentVoicePhase.error &&
-                    _voiceState.playbackId != null,
-                onChanged: (_) => setState(() {}),
-                onSend: _sendMessage,
-                onCancel: _cancelRun,
-                onTogglePhotoMenu: _togglePhotoMenu,
-                onAttachImage: _attachImage,
-                onRemoveImages: _removeAttachedImages,
-                onVoiceInput: _startVoiceInput,
+              AnimatedBuilder(
+                animation: Listenable.merge([
+                  _visibleReplyRunningNotifier,
+                  _composerLockedNotifier,
+                ]),
+                builder: (context, child) {
+                  final runState = _runStateNotifier.value;
+                  final isVisibleReplyRunning =
+                      _visibleReplyRunningNotifier.value;
+                  final isComposerLocked = _composerLockedNotifier.value;
+                  return AgentComposerBar(
+                    controller: _composerController,
+                    canSend: widget.runner != null && !isComposerLocked,
+                    isRunning: isVisibleReplyRunning,
+                    isInputLocked: isComposerLocked,
+                    imageCount: _attachedImages.length,
+                    showPhotoMenu: _showPhotoMenu,
+                    canAttachImage:
+                        widget.pickImage != null && !isComposerLocked,
+                    canUseVoice:
+                        (widget.voiceInputController != null ||
+                            widget.voiceInput != null) &&
+                        !_isVisibleReplyRunningForState(runState) &&
+                        !isComposerLocked &&
+                        !_voiceState.isInputActive,
+                    voicePhase: _voiceState.phase,
+                    voicePlaybackFailed:
+                        _voiceState.phase == AgentVoicePhase.error &&
+                        _voiceState.playbackId != null,
+                    onChanged: (_) {},
+                    onSend: _sendMessage,
+                    onCancel: _cancelRun,
+                    onTogglePhotoMenu: _togglePhotoMenu,
+                    onAttachImage: _attachImage,
+                    onRemoveImages: _removeAttachedImages,
+                    onVoiceInput: _startVoiceInput,
+                  );
+                },
               ),
             ],
           ),
@@ -1931,6 +1933,60 @@ class AgentRunPhaseBadge extends StatelessWidget {
       AgentStreamRunPhase.cancelled => MomCozyColors.muted,
       _ => MomCozyColors.roseSoft.withValues(alpha: 0.86),
     };
+  }
+}
+
+class _AgentRunTranscriptListenable extends StatelessWidget {
+  const _AgentRunTranscriptListenable({
+    required this.stateListenable,
+    required this.activeVoicePlaybackIdListenable,
+    required this.actionStateRevisionListenable,
+    required this.canRetryForState,
+    this.onRetry,
+    this.onArtifactAction,
+    this.onQuickReplySelected,
+    required this.pendingActionIds,
+    required this.localActionStatuses,
+    this.onConfirmAction,
+    this.onRejectAction,
+  });
+
+  final ValueListenable<AgentStreamRunState> stateListenable;
+  final ValueListenable<String?> activeVoicePlaybackIdListenable;
+  final ValueListenable<int> actionStateRevisionListenable;
+  final bool Function(AgentStreamRunState state) canRetryForState;
+  final VoidCallback? onRetry;
+  final AgentArtifactActionHandler? onArtifactAction;
+  final ValueChanged<String>? onQuickReplySelected;
+  final Set<String> pendingActionIds;
+  final Map<String, String> localActionStatuses;
+  final ValueChanged<AgentActionCardView>? onConfirmAction;
+  final ValueChanged<AgentActionCardView>? onRejectAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        stateListenable,
+        activeVoicePlaybackIdListenable,
+        actionStateRevisionListenable,
+      ]),
+      builder: (context, child) {
+        final state = stateListenable.value;
+        return AgentRunTranscript(
+          state: state,
+          activeVoicePlaybackId: activeVoicePlaybackIdListenable.value,
+          canRetry: canRetryForState(state),
+          onRetry: onRetry,
+          onArtifactAction: onArtifactAction,
+          onQuickReplySelected: onQuickReplySelected,
+          pendingActionIds: pendingActionIds,
+          localActionStatuses: localActionStatuses,
+          onConfirmAction: onConfirmAction,
+          onRejectAction: onRejectAction,
+        );
+      },
+    );
   }
 }
 
@@ -5026,8 +5082,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final controller = widget.controller;
     final isRunning = widget.isRunning;
     final isInputLocked = widget.isInputLocked;
-    final canSend = widget.canSend;
     final imageCount = widget.imageCount;
+    final canSend =
+        widget.canSend && (controller.text.trim().isNotEmpty || imageCount > 0);
     final showPhotoMenu = widget.showPhotoMenu;
     final canAttachImage = widget.canAttachImage;
     final canUseVoice = widget.canUseVoice;
