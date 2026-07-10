@@ -6809,7 +6809,7 @@ String? _runProgressStatusTitle(AgentStreamEvent event) {
   final phase = _stringField(event.payload, 'phase')?.trim();
   return switch (phase) {
     'context_loading' => '我已经收到你的消息啦～',
-    'context_ready' => '我看一下你的信息',
+    'context_ready' => '我先理解一下你的需求～',
     'response_finalizing' => '我在组织回复～',
     _ => null,
   };
@@ -6830,7 +6830,7 @@ String? _visibleAgentStatusTitle(String? value) {
   return switch (normalized) {
     'CozyMate 正在进入对话' => '我已经收到你的消息啦～',
     '正在整理对话上下文' => '我已经收到你的消息啦～',
-    '已整理好相关信息' => '我看一下你的信息',
+    '已整理好相关信息' => '我先理解一下你的需求～',
     'CozyMate 正在思考怎么帮你' => '我想一下',
     '正在整理回复' => '我在组织回复～',
     _ => normalized,
