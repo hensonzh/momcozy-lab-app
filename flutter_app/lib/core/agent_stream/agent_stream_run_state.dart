@@ -24,6 +24,8 @@ class AgentStreamRunState {
     this.artifactEvents = const <String, AgentStreamEvent>{},
     this.actionEvents = const <String, AgentStreamEvent>{},
     this.quickReplies = const <String>[],
+    this.completedAssistantMessageReceived = false,
+    this._seenReplayKeys = const <String>{},
     this.lastSequence,
     this.errorMessage,
     this.cancelAcknowledged = false,
@@ -41,6 +43,8 @@ class AgentStreamRunState {
   final Map<String, AgentStreamEvent> artifactEvents;
   final Map<String, AgentStreamEvent> actionEvents;
   final List<String> quickReplies;
+  final bool completedAssistantMessageReceived;
+  final Set<String> _seenReplayKeys;
   final int? lastSequence;
   final String? errorMessage;
   final bool cancelAcknowledged;
@@ -50,9 +54,11 @@ class AgentStreamRunState {
       phase == AgentStreamRunPhase.streaming ||
       phase == AgentStreamRunPhase.cancelRequested;
 
-  bool get hasCompletedAssistantMessage => events.any(
-    (event) => event.type == 'message.completed' && event.role != 'user',
-  );
+  bool get hasCompletedAssistantMessage =>
+      completedAssistantMessageReceived ||
+      events.any(_isAssistantCompletedMessage);
+
+  Set<String> get seenReplayKeys => Set<String>.unmodifiable(_seenReplayKeys);
 
   bool get isAwaitingVisibleReply => isActive && !hasCompletedAssistantMessage;
 
@@ -77,10 +83,15 @@ class AgentStreamRunState {
     if (_hasSeenReplayKey(event)) return this;
 
     final type = event.type;
-    final nextEvents = List<AgentStreamEvent>.unmodifiable([...events, event]);
+    final nextEvents = _shouldRetainEvent(event)
+        ? List<AgentStreamEvent>.unmodifiable([...events, event])
+        : events;
     final nextText = _nextTextContent(event);
     final nextProvisionalText = _nextProvisionalTextContent(event);
     final nextQuickReplies = _nextQuickReplies(event);
+    final nextCompletedAssistantMessage =
+        hasCompletedAssistantMessage || _isAssistantCompletedMessage(event);
+    final nextSeenReplayKeys = _recordReplayKey(event);
     final nextThreadId = event.threadId ?? threadId;
     final nextRunId = event.runId ?? runId;
     final nextMessageId = event.messageId ?? messageId;
@@ -112,6 +123,8 @@ class AgentStreamRunState {
         artifactEvents: nextArtifactEvents,
         actionEvents: nextActionEvents,
         quickReplies: nextQuickReplies,
+        completedAssistantMessageReceived: nextCompletedAssistantMessage,
+        seenReplayKeys: nextSeenReplayKeys,
         lastSequence: nextSequence,
       );
     }
@@ -129,6 +142,8 @@ class AgentStreamRunState {
         artifactEvents: nextArtifactEvents,
         actionEvents: nextActionEvents,
         quickReplies: nextQuickReplies,
+        completedAssistantMessageReceived: nextCompletedAssistantMessage,
+        seenReplayKeys: nextSeenReplayKeys,
         lastSequence: nextSequence,
         cancelAcknowledged: true,
       );
@@ -147,6 +162,8 @@ class AgentStreamRunState {
         artifactEvents: nextArtifactEvents,
         actionEvents: nextActionEvents,
         quickReplies: nextQuickReplies,
+        completedAssistantMessageReceived: nextCompletedAssistantMessage,
+        seenReplayKeys: nextSeenReplayKeys,
         lastSequence: nextSequence,
       );
     }
@@ -164,6 +181,8 @@ class AgentStreamRunState {
         artifactEvents: nextArtifactEvents,
         actionEvents: nextActionEvents,
         quickReplies: nextQuickReplies,
+        completedAssistantMessageReceived: nextCompletedAssistantMessage,
+        seenReplayKeys: nextSeenReplayKeys,
         lastSequence: nextSequence,
         errorMessage:
             stringField(event.raw, 'message') ??
@@ -186,6 +205,8 @@ class AgentStreamRunState {
       artifactEvents: nextArtifactEvents,
       actionEvents: nextActionEvents,
       quickReplies: nextQuickReplies,
+      completedAssistantMessageReceived: nextCompletedAssistantMessage,
+      seenReplayKeys: nextSeenReplayKeys,
       lastSequence: nextSequence,
     );
   }
@@ -233,7 +254,22 @@ class AgentStreamRunState {
   bool _hasSeenReplayKey(AgentStreamEvent event) {
     final replayKey = event.replayKey;
     if (replayKey == null || replayKey.isEmpty) return false;
-    return events.any((seen) => seen.replayKey == replayKey);
+    if (_seenReplayKeys.contains(replayKey)) return true;
+    return _seenReplayKeys.isEmpty &&
+        events.any((seen) => seen.replayKey == replayKey);
+  }
+
+  Set<String> _recordReplayKey(AgentStreamEvent event) {
+    final replayKey = event.replayKey;
+    if (replayKey == null || replayKey.isEmpty) return _seenReplayKeys;
+    if (_seenReplayKeys.contains(replayKey)) return _seenReplayKeys;
+
+    if (_seenReplayKeys.isEmpty) {
+      return _replayKeysFromEvents(events)..add(replayKey);
+    }
+
+    _seenReplayKeys.add(replayKey);
+    return _seenReplayKeys;
   }
 
   AgentStreamRunState requestCancel() {
@@ -275,6 +311,8 @@ class AgentStreamRunState {
     Map<String, AgentStreamEvent>? artifactEvents,
     Map<String, AgentStreamEvent>? actionEvents,
     List<String>? quickReplies,
+    bool? completedAssistantMessageReceived,
+    Set<String>? seenReplayKeys,
     int? lastSequence,
     String? errorMessage,
     bool? cancelAcknowledged,
@@ -293,6 +331,10 @@ class AgentStreamRunState {
       artifactEvents: artifactEvents ?? this.artifactEvents,
       actionEvents: actionEvents ?? this.actionEvents,
       quickReplies: quickReplies ?? this.quickReplies,
+      completedAssistantMessageReceived:
+          completedAssistantMessageReceived ??
+          this.completedAssistantMessageReceived,
+      seenReplayKeys: seenReplayKeys ?? _seenReplayKeys,
       lastSequence: lastSequence ?? this.lastSequence,
       errorMessage: errorMessage ?? this.errorMessage,
       cancelAcknowledged: cancelAcknowledged ?? this.cancelAcknowledged,
@@ -311,6 +353,9 @@ class AgentStreamRunState {
     if (provisionalTextContent.isNotEmpty)
       'provisionalTextContent': provisionalTextContent,
     if (quickReplies.isNotEmpty) 'quickReplies': quickReplies,
+    if (hasCompletedAssistantMessage) 'completedAssistantMessageReceived': true,
+    if (_seenReplayKeys.isNotEmpty)
+      'seenReplayKeys': _seenReplayKeys.toList(growable: false),
     if (lastSequence != null) 'lastSequence': lastSequence,
     if (_hasValue(errorMessage)) 'errorMessage': errorMessage,
     if (cancelAcknowledged) 'cancelAcknowledged': cancelAcknowledged,
@@ -322,6 +367,10 @@ class AgentStreamRunState {
     final mappedQuickReplies = _strings(
       map['quickReplies'] ?? map['quick_replies'],
     );
+    final seenReplayKeys = {
+      ..._strings(map['seenReplayKeys'] ?? map['seen_replay_keys']),
+      ..._replayKeysFromEvents(events),
+    };
     return AgentStreamRunState(
       phase: _phaseFromName(_string(map['phase'])),
       events: events,
@@ -336,6 +385,11 @@ class AgentStreamRunState {
       quickReplies: mappedQuickReplies.isNotEmpty
           ? mappedQuickReplies
           : _latestQuickReplies(events),
+      completedAssistantMessageReceived:
+          map['completedAssistantMessageReceived'] == true ||
+          map['completed_assistant_message_received'] == true ||
+          events.any(_isAssistantCompletedMessage),
+      seenReplayKeys: seenReplayKeys,
       lastSequence: _int(map['lastSequence']) ?? _int(map['last_sequence']),
       errorMessage: _string(map['errorMessage']) ?? _string(map['error']),
       cancelAcknowledged: map['cancelAcknowledged'] == true,
@@ -356,6 +410,23 @@ Map<String, AgentStreamEvent> _nextIndexedEvents(
     ...current,
     normalizedId: event,
   });
+}
+
+bool _shouldRetainEvent(AgentStreamEvent event) {
+  return event.type != 'message.delta';
+}
+
+bool _isAssistantCompletedMessage(AgentStreamEvent event) {
+  return event.type == 'message.completed' && event.role != 'user';
+}
+
+Set<String> _replayKeysFromEvents(List<AgentStreamEvent> events) {
+  final replayKeys = <String>{};
+  for (final event in events) {
+    final replayKey = event.replayKey;
+    if (replayKey != null && replayKey.isNotEmpty) replayKeys.add(replayKey);
+  }
+  return replayKeys;
 }
 
 int? _maxSequence(int? current, int? next) {
