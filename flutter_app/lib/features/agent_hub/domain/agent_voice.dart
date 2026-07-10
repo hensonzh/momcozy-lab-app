@@ -466,6 +466,7 @@ AgentVoiceSessionEvent parseAgentVoiceSessionFrame(String frame) {
   return switch (type) {
     'open' ||
     'opened' ||
+    'ready' ||
     'session.open' ||
     'voice.session.opened' => AgentVoiceSessionEvent(
       type: AgentVoiceSessionEventType.opened,
