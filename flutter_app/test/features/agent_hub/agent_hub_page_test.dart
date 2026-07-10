@@ -2875,7 +2875,7 @@ void main() {
     expect(find.text('妈妈住院包'), findsOneWidget);
     expect(find.text('1项'), findsOneWidget);
     expect(find.text('1包'), findsOneWidget);
-    expect(find.text('必备'), findsOneWidget);
+    expect(find.text('必带'), findsOneWidget);
     expect(find.text('产后前几天更换频繁'), findsOneWidget);
     expect(find.text('打开购物车'), findsOneWidget);
   });
@@ -2974,7 +2974,205 @@ void main() {
     expect(find.text('妈妈住院包'), findsOneWidget);
     expect(find.text('产褥垫组合装'), findsOneWidget);
     expect(find.text('1包'), findsOneWidget);
-    expect(find.text('必备'), findsOneWidget);
+    expect(find.text('必带'), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub renders every current production artifact family', (
+    tester,
+  ) async {
+    final actions = <AgentArtifactActionView>[];
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.finished,
+      textContent: '我整理好了。',
+      events: [
+        _productionArtifactEvent(
+          id: 'ibclc-current',
+          type: 'ibclc_consult_card',
+          payload: {
+            'title': 'IBCLC 咨询入口',
+            'reason': '含乳疼痛',
+            'feeding_context': '左侧喂养后持续疼痛。',
+            'urgency': 'soon',
+          },
+        ),
+        _productionArtifactEvent(
+          id: 'milk-preview-current',
+          type: 'milk_plan_preview',
+          payload: {
+            'title': '三天泵奶计划',
+            'summary': '将晚间泵奶提前，先观察三天。',
+            'direction': 'maintain',
+            'days': 3,
+            'tasks': [
+              {'title': '20:00 泵奶', 'detail': '保持舒适档位'},
+            ],
+            'reminders': [
+              {'title': '及时补水'},
+            ],
+          },
+        ),
+        _productionArtifactEvent(
+          id: 'cart-current',
+          type: 'hospital_bag_cart',
+          payload: {
+            'cart_update': {
+              'message': '已经更新待产包购物车。',
+              'groups': [
+                {
+                  'title': '妈妈护理',
+                  'items': [
+                    {'name': '产褥垫组合装'},
+                    {'name': '一次性内裤'},
+                  ],
+                },
+              ],
+              'totals': {'item_count': 2, 'total': 101.02},
+            },
+          },
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      _host(AgentHubPage(state: state, onArtifactAction: actions.add)),
+    );
+
+    expect(
+      find.byKey(const ValueKey('agent-artifact-ibclc-ibclc-current')),
+      findsOneWidget,
+    );
+    expect(find.text('含乳疼痛'), findsOneWidget);
+    expect(find.text('左侧喂养后持续疼痛。'), findsOneWidget);
+    expect(find.text('建议尽快咨询'), findsOneWidget);
+    expect(find.text('Emily Chen'), findsOneWidget);
+    expect(find.textContaining('隐私政策'), findsOneWidget);
+
+    expect(
+      find.byKey(
+        const ValueKey('agent-artifact-milk-preview-milk-preview-current'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('将晚间泵奶提前，先观察三天。'), findsOneWidget);
+    expect(find.text('维持当前节奏'), findsOneWidget);
+    expect(find.textContaining('20:00 泵奶'), findsOneWidget);
+    expect(find.text('及时补水'), findsOneWidget);
+
+    expect(
+      find.byKey(const ValueKey('agent-artifact-cart-cart-current')),
+      findsOneWidget,
+    );
+    expect(find.text('已经更新待产包购物车。'), findsOneWidget);
+    expect(find.text('妈妈护理'), findsOneWidget);
+    expect(find.text('产褥垫组合装'), findsOneWidget);
+    expect(find.text('共 2 件'), findsOneWidget);
+
+    final agreementFinder = find.byKey(
+      const ValueKey('agent-ibclc-agreement-ibclc-current'),
+    );
+    await tester.scrollUntilVisible(
+      agreementFinder,
+      -240,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(agreementFinder);
+    await tester.pump();
+    final consultFinder = find.byKey(
+      const ValueKey('agent-ibclc-open-ibclc-current'),
+    );
+    await tester.tap(consultFinder);
+    await tester.pump();
+
+    expect(actions.single.routePath, '/ibclc-chat.html');
+  });
+
+  testWidgets('Agent Hub keeps long journey and packing sections collapsible', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.finished,
+      textContent: '计划已经整理好。',
+      events: [
+        AgentStreamEvent({
+          'type': 'artifact.created',
+          'artifact_id': 'journey-collapse',
+          'payload': {
+            'artifact_type': 'birth_journey_plan_card',
+            'card': {
+              'card_type': 'birth_journey_plan_card',
+              'schema_version': '1.0',
+              'card_json': {
+                'title': '孕期计划',
+                'todo_plan': {
+                  'periods': [
+                    {
+                      'title': '当前阶段',
+                      'items': [
+                        {'title': '完成糖耐检查'},
+                      ],
+                    },
+                    {
+                      'title': '下一阶段',
+                      'items': [
+                        {'title': '整理待产包'},
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        }),
+        AgentStreamEvent({
+          'type': 'artifact.created',
+          'artifact_id': 'bag-collapse',
+          'payload': {
+            'artifact_type': 'hospital_bag_card',
+            'card': {
+              'card_type': 'hospital_bag_card',
+              'schema_version': '1.0',
+              'card_json': {
+                'title': '待产包',
+                'packing_groups': [
+                  {
+                    'title': '妈妈住院包',
+                    'items': [
+                      {'label': '产褥垫'},
+                    ],
+                  },
+                  {
+                    'title': '宝宝用品',
+                    'items': [
+                      {'label': '婴儿连体衣'},
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        }),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(find.text('完成糖耐检查'), findsOneWidget);
+    expect(find.text('整理待产包'), findsNothing);
+    await tester.tap(find.text('下一阶段'));
+    await tester.pump();
+    expect(find.text('整理待产包'), findsOneWidget);
+
+    expect(find.text('产褥垫'), findsOneWidget);
+    expect(find.text('婴儿连体衣'), findsNothing);
+    final babyGroupFinder = find.text('宝宝用品');
+    await tester.drag(
+      find.byType(Scrollable).first,
+      const Offset(0, -240),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(babyGroupFinder);
+    await tester.pump();
+    expect(find.text('婴儿连体衣'), findsOneWidget);
   });
 
   testWidgets('Agent Hub renders legacy service artifact envelopes', (
@@ -3099,9 +3297,12 @@ void main() {
     expect(find.text('整理下次产检要问的问题'), findsOneWidget);
     expect(find.text('开始整理待产包'), findsOneWidget);
     expect(find.text('已经帮你把待产包购物车恢复到默认清单了。'), findsWidgets);
-    expect(find.text('妈妈护理：产褥垫组合装、一次性内裤'), findsOneWidget);
-    expect(find.text('购物车合计：2 件｜101.02'), findsOneWidget);
-    expect(find.text('打开待产包购物车'), findsOneWidget);
+    expect(find.text('妈妈护理'), findsOneWidget);
+    expect(find.text('产褥垫组合装'), findsOneWidget);
+    expect(find.text('一次性内裤'), findsOneWidget);
+    expect(find.text('共 2 件'), findsOneWidget);
+    expect(find.text('合计 101.02'), findsOneWidget);
+    expect(find.text('打开购物车'), findsOneWidget);
 
     await tester.tap(
       find.byKey(
@@ -3140,7 +3341,7 @@ void main() {
     expect(find.text('已提交信息采集表单'), findsOneWidget);
 
     final cartActionFinder = find.byKey(
-      const ValueKey('agent-artifact-action-hospital-bag-cart-0'),
+      const ValueKey('agent-artifact-cart-open-hospital-bag-cart'),
     );
     await tester.scrollUntilVisible(
       cartActionFinder,
@@ -4279,6 +4480,28 @@ milk_total: 120ml
       ),
       findsOneWidget,
     );
+  });
+}
+
+AgentStreamEvent _productionArtifactEvent({
+  required String id,
+  required String type,
+  required Map<String, Object?> payload,
+}) {
+  return AgentStreamEvent({
+    'type': 'artifact.created',
+    'artifact_id': id,
+    'payload': {
+      'artifact_id': id,
+      'artifact_type': type,
+      'schema_version': 'v1',
+      'artifact': {
+        'id': id,
+        'artifact_type': type,
+        'schema_version': 'v1',
+        'payload': payload,
+      },
+    },
   });
 }
 
