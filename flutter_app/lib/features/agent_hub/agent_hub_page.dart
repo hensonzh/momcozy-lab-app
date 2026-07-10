@@ -15,6 +15,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_sto
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:video_player/video_player.dart';
 
@@ -638,13 +639,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
     await _startRun(request);
   }
 
-  Future<void> _sendSyntheticUserMessage({
+  Future<bool> _sendSyntheticUserMessage({
     required String requestMessage,
     required String optimisticContent,
   }) async {
     final runner = widget.runner;
     if (runner == null || requestMessage.trim().isEmpty || _isComposerLocked) {
-      return;
+      return false;
     }
 
     _cancelCurrentBubblePlaybackForNewTurn();
@@ -674,6 +675,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
     _scheduleScrollToLatest();
     await _startRun(request);
+    return true;
   }
 
   void _handleArtifactAction(AgentArtifactActionView action) {
@@ -682,11 +684,18 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _sendSyntheticUserMessage(
           requestMessage: _formSubmitRequestMessage(action),
           optimisticContent: '已提交信息采集表单',
-        ),
+        ).then<void>((_) {}),
       );
       return;
     }
     widget.onArtifactAction?.call(action);
+  }
+
+  Future<bool> _handleArtifactFormSubmit(AgentArtifactActionView action) {
+    return _sendSyntheticUserMessage(
+      requestMessage: _formSubmitRequestMessage(action),
+      optimisticContent: '已提交信息采集表单',
+    );
   }
 
   void _handleQuickReplySelected(String text) {
@@ -699,7 +708,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _sendSyntheticUserMessage(
         requestMessage: normalizedText,
         optimisticContent: normalizedText,
-      ),
+      ).then<void>((_) {}),
     );
   }
 
@@ -1408,6 +1417,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                 sliver: AgentHubHistorySliver(
                                   messages: _historyMessages,
                                   onArtifactAction: _handleArtifactAction,
+                                  onFormSubmit: _handleArtifactFormSubmit,
                                 ),
                               ),
                             if (_historyMessages.isNotEmpty)
@@ -1437,6 +1447,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                     canRetryForState: _canRetryForState,
                                     onRetry: _retryRun,
                                     onArtifactAction: _handleArtifactAction,
+                                    onFormSubmit: _handleArtifactFormSubmit,
                                     onQuickReplySelected:
                                         _handleQuickReplySelected,
                                     pendingActionIds: _pendingActionIds,
@@ -1900,10 +1911,12 @@ class AgentHubHistoryPanel extends StatelessWidget {
     super.key,
     required this.messages,
     this.onArtifactAction,
+    this.onFormSubmit,
   });
 
   final List<AgentHubHistoryMessage> messages;
   final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -1915,6 +1928,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
             key: ValueKey('agent-history-$index'),
             message: messages[index],
             onArtifactAction: onArtifactAction,
+            onFormSubmit: onFormSubmit,
           ),
           if (index != messages.length - 1) const SizedBox(height: 20),
         ],
@@ -1928,10 +1942,12 @@ class AgentHubHistorySliver extends StatelessWidget {
     super.key,
     required this.messages,
     this.onArtifactAction,
+    this.onFormSubmit,
   });
 
   final List<AgentHubHistoryMessage> messages;
   final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -1945,6 +1961,7 @@ class AgentHubHistorySliver extends StatelessWidget {
           key: ValueKey('agent-history-$messageIndex'),
           message: messages[messageIndex],
           onArtifactAction: onArtifactAction,
+          onFormSubmit: onFormSubmit,
         );
       }, childCount: itemCount),
     );
@@ -1956,10 +1973,12 @@ class _AgentHistoryBubble extends StatelessWidget {
     super.key,
     required this.message,
     this.onArtifactAction,
+    this.onFormSubmit,
   });
 
   final AgentHubHistoryMessage message;
   final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -1976,6 +1995,7 @@ class _AgentHistoryBubble extends StatelessWidget {
         return AgentRunTranscript(
           state: runState,
           onArtifactAction: onArtifactAction,
+          onFormSubmit: onFormSubmit,
         );
       }
 
@@ -2113,6 +2133,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     required this.canRetryForState,
     this.onRetry,
     this.onArtifactAction,
+    this.onFormSubmit,
     this.onQuickReplySelected,
     required this.pendingActionIds,
     required this.localActionStatuses,
@@ -2126,6 +2147,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   final bool Function(AgentStreamRunState state) canRetryForState;
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
@@ -2162,6 +2184,7 @@ class _AgentRunTranscriptListenableState
           canRetry: widget.canRetryForState(state),
           onRetry: widget.onRetry,
           onArtifactAction: widget.onArtifactAction,
+          onFormSubmit: widget.onFormSubmit,
           onQuickReplySelected: widget.onQuickReplySelected,
           pendingActionIds: widget.pendingActionIds,
           artifactCards: _artifactCardsForState(state),
@@ -2214,6 +2237,7 @@ class AgentRunTranscript extends StatelessWidget {
     this.canRetry = false,
     this.onRetry,
     this.onArtifactAction,
+    this.onFormSubmit,
     this.onQuickReplySelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
@@ -2228,6 +2252,7 @@ class AgentRunTranscript extends StatelessWidget {
   final bool canRetry;
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
@@ -2344,6 +2369,7 @@ class AgentRunTranscript extends StatelessWidget {
                 AgentArtifactPanel(
                   cards: artifactCards,
                   onAction: onArtifactAction,
+                  onFormSubmit: onFormSubmit,
                 ),
               ],
               if (actionCards.isNotEmpty) ...[
@@ -3347,30 +3373,33 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
 }
 
 class AgentArtifactPanel extends StatelessWidget {
-  const AgentArtifactPanel({super.key, required this.cards, this.onAction});
+  const AgentArtifactPanel({
+    super.key,
+    required this.cards,
+    this.onAction,
+    this.onFormSubmit,
+  });
 
   final List<AgentArtifactCardView> cards;
   final AgentArtifactActionHandler? onAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Column(
       key: const ValueKey('agent-artifact-panel'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '结果卡片',
-          style: textTheme.labelLarge?.copyWith(
-            color: MomCozyColors.foreground,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        const SizedBox(height: 8),
         for (final card in cards) ...[
-          _specializedArtifactCard(card: card, onAction: onAction) ??
-              _AgentArtifactGenericCard(card: card, onAction: onAction),
+          if (card.isForm)
+            AgentArtifactForm(
+              card: card,
+              onAction: onAction,
+              onSubmit: onFormSubmit,
+            )
+          else
+            _specializedArtifactCard(card: card, onAction: onAction) ??
+                _AgentArtifactGenericCard(card: card, onAction: onAction),
           if (card != cards.last) const SizedBox(height: 10),
         ],
       ],
@@ -3450,10 +3479,6 @@ class _AgentArtifactGenericCard extends StatelessWidget {
                   color: MomCozyColors.mutedForeground,
                 ),
               ),
-            ],
-            if (card.formFields.isNotEmpty) ...[
-              const SizedBox(height: 10),
-              _AgentArtifactFormView(card: card, onAction: onAction),
             ],
             if (card.actions.isNotEmpty) ...[
               const SizedBox(height: 10),
@@ -4484,456 +4509,6 @@ class _AgentArtifactBulletList extends StatelessWidget {
   }
 }
 
-class _AgentArtifactFormView extends StatefulWidget {
-  const _AgentArtifactFormView({required this.card, this.onAction});
-
-  final AgentArtifactCardView card;
-  final AgentArtifactActionHandler? onAction;
-
-  @override
-  State<_AgentArtifactFormView> createState() => _AgentArtifactFormViewState();
-}
-
-class _AgentArtifactFormViewState extends State<_AgentArtifactFormView> {
-  late Map<String, Object?> _values;
-  late Map<String, String> _otherValues;
-  String? _submitError;
-  bool _submitted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _values = _initialValues(widget.card.formFields);
-    _otherValues = const <String, String>{};
-  }
-
-  @override
-  void didUpdateWidget(covariant _AgentArtifactFormView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.card.id != widget.card.id ||
-        oldWidget.card.formFields.length != widget.card.formFields.length) {
-      _values = _initialValues(widget.card.formFields);
-      _otherValues = const <String, String>{};
-      _submitError = null;
-      _submitted = false;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    final groups = _formFieldGroups(widget.card);
-
-    return Column(
-      key: ValueKey('agent-artifact-form-${widget.card.id}'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (final group in groups) ...[
-          if (group.title.isNotEmpty)
-            _AgentArtifactFormGroup(
-              title: group.title,
-              children: [
-                for (final field in group.fields) ...[
-                  _buildField(context, field),
-                  if (field != group.fields.last) const SizedBox(height: 10),
-                ],
-              ],
-            )
-          else
-            for (final field in group.fields) ...[
-              _buildField(context, field),
-              if (field != group.fields.last) const SizedBox(height: 10),
-            ],
-          if (group != groups.last) const SizedBox(height: 10),
-        ],
-        if (_submitError != null) ...[
-          if (groups.isNotEmpty) const SizedBox(height: 10),
-          Text(
-            _submitError!,
-            style: textTheme.bodySmall?.copyWith(
-              color: colorScheme.error,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 10),
-        ],
-        Align(
-          alignment: Alignment.centerLeft,
-          child: FilledButton.icon(
-            key: ValueKey('agent-artifact-form-submit-${widget.card.id}'),
-            onPressed: widget.onAction == null || _submitted ? null : _submit,
-            icon: Icon(
-              _submitted
-                  ? Icons.check_circle_outline_rounded
-                  : Icons.check_rounded,
-              size: 18,
-            ),
-            label: Text(
-              _submitted ? '已提交' : widget.card.formSubmitLabel ?? '提交',
-            ),
-            style: FilledButton.styleFrom(
-              backgroundColor: _submitted
-                  ? MomCozyColors.careSoft
-                  : colorScheme.primary,
-              foregroundColor: _submitted
-                  ? MomCozyColors.care
-                  : colorScheme.onPrimary,
-              textStyle: textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildField(BuildContext context, AgentArtifactFormFieldView field) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Column(
-      key: ValueKey('agent-artifact-form-field-${widget.card.id}-${field.id}'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                field.fieldLabel,
-                style: textTheme.labelMedium?.copyWith(
-                  color: MomCozyColors.foreground,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
-            if (field.required)
-              Text(
-                '必填',
-                style: textTheme.labelSmall?.copyWith(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        if (field.isChoice && field.options.isNotEmpty)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final option in field.options)
-                    ChoiceChip(
-                      key: ValueKey(
-                        'agent-artifact-form-option-${widget.card.id}-${field.id}-$option',
-                      ),
-                      selected: _isOptionSelected(field, option),
-                      label: Text(option),
-                      onSelected: _submitted
-                          ? null
-                          : (_) => _toggleOption(field, option),
-                    ),
-                ],
-              ),
-              if (field.allowOtherInput && _isOtherSelected(field)) ...[
-                const SizedBox(height: 8),
-                TextFormField(
-                  key: ValueKey(
-                    'agent-artifact-form-other-${widget.card.id}-${field.id}',
-                  ),
-                  initialValue: _otherValues[field.id] ?? '',
-                  readOnly: _submitted,
-                  decoration: InputDecoration(
-                    hintText: field.otherPlaceholder ?? '请补充说明',
-                    isDense: true,
-                    filled: true,
-                    fillColor: MomCozyColors.card.withValues(alpha: 0.72),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(MomCozyRadii.control),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    _setOtherFieldValue(field.id, value.trim());
-                  },
-                ),
-              ],
-            ],
-          )
-        else
-          TextFormField(
-            initialValue: _textValue(field),
-            readOnly: _submitted,
-            minLines: field.type == 'textarea' ? 3 : 1,
-            maxLines: field.type == 'textarea' ? 5 : 1,
-            decoration: InputDecoration(
-              hintText: field.placeholder ?? '请填写',
-              isDense: true,
-              filled: true,
-              fillColor: MomCozyColors.card.withValues(alpha: 0.72),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(MomCozyRadii.control),
-              ),
-            ),
-            onChanged: (value) {
-              _setFieldValue(field.id, value.trim());
-            },
-          ),
-        if (field.helpText != null) ...[
-          const SizedBox(height: 6),
-          Text(
-            field.helpText!,
-            style: textTheme.labelSmall?.copyWith(
-              color: MomCozyColors.mutedForeground,
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  bool _isOptionSelected(AgentArtifactFormFieldView field, String option) {
-    final value = _values[field.id];
-    if (field.isMultiSelect) {
-      return value is List && value.contains(option);
-    }
-    return value == option;
-  }
-
-  String _textValue(AgentArtifactFormFieldView field) {
-    final value = _values[field.id];
-    return value == null ? '' : value.toString();
-  }
-
-  bool _isOtherSelected(AgentArtifactFormFieldView field) {
-    final value = _values[field.id];
-    if (field.isMultiSelect) {
-      return value is List && value.whereType<String>().any(_isOtherFormOption);
-    }
-    return value is String && _isOtherFormOption(value);
-  }
-
-  void _toggleOption(AgentArtifactFormFieldView field, String option) {
-    setState(() {
-      if (field.isMultiSelect) {
-        final current = List<String>.from(
-          (_values[field.id] as List?)?.whereType<String>() ?? const <String>[],
-        );
-        current.contains(option) ? current.remove(option) : current.add(option);
-        _values = {..._values, field.id: current};
-      } else {
-        _values = {..._values, field.id: option};
-      }
-      _submitError = null;
-    });
-  }
-
-  void _submit() {
-    for (final field in widget.card.formFields) {
-      if (!field.allowOtherInput || !_isOtherSelected(field)) continue;
-      final otherValue = _otherValues[field.id]?.trim() ?? '';
-      if (otherValue.isEmpty) {
-        setState(() {
-          _submitError = '请填写：${field.fieldLabel}的其它内容';
-        });
-        return;
-      }
-    }
-
-    final values = _submittedValues();
-    final missingFields = widget.card.formFields
-        .where((field) => field.required && !_hasFieldValue(values[field.id]))
-        .map((field) => field.fieldLabel)
-        .toList();
-    if (missingFields.isNotEmpty) {
-      setState(() {
-        _submitError = '请补充：${missingFields.join('、')}';
-      });
-      return;
-    }
-
-    widget.onAction?.call(
-      AgentArtifactActionView(
-        label: widget.card.formSubmitLabel ?? '提交',
-        icon: Icons.check_rounded,
-        kind: 'form.submit',
-        value: jsonEncode(values),
-        routeExtra: {
-          'artifactId': widget.card.id,
-          if (widget.card.formId != null) 'formId': widget.card.formId,
-          'values': values,
-        },
-      ),
-    );
-    setState(() {
-      _submitted = true;
-      _submitError = null;
-    });
-  }
-
-  void _setFieldValue(String id, Object? value) {
-    if (_submitted) return;
-    setState(() {
-      _values = {..._values, id: value};
-      _submitError = null;
-    });
-  }
-
-  void _setOtherFieldValue(String id, String value) {
-    if (_submitted) return;
-    setState(() {
-      _otherValues = {..._otherValues, id: value};
-      _submitError = null;
-    });
-  }
-
-  bool _hasFieldValue(Object? value) {
-    if (value == null) return false;
-    if (value is String) return value.trim().isNotEmpty;
-    if (value is List) return value.isNotEmpty;
-    return true;
-  }
-
-  Map<String, Object?> _initialValues(List<AgentArtifactFormFieldView> fields) {
-    return {
-      for (final field in fields)
-        if (field.defaultValue != null)
-          field.id: field.isMultiSelect
-              ? _defaultMultiSelectValues(field.defaultValue)
-              : field.defaultValue,
-    };
-  }
-
-  Map<String, Object?> _submittedValues() {
-    final values = <String, Object?>{};
-    for (final field in widget.card.formFields) {
-      final rawValue = _values[field.id];
-      Object? value = rawValue;
-      if (field.isMultiSelect && rawValue is List) {
-        final otherValue = _otherValues[field.id]?.trim();
-        value = rawValue
-            .whereType<String>()
-            .map((item) {
-              if (field.allowOtherInput &&
-                  otherValue != null &&
-                  otherValue.isNotEmpty &&
-                  _isOtherFormOption(item)) {
-                return '其它：$otherValue';
-              }
-              return item.trim();
-            })
-            .where((item) => item.isNotEmpty)
-            .toList(growable: false);
-      } else if (rawValue is String) {
-        final otherValue = _otherValues[field.id]?.trim();
-        value =
-            field.allowOtherInput &&
-                otherValue != null &&
-                otherValue.isNotEmpty &&
-                _isOtherFormOption(rawValue)
-            ? '其它：$otherValue'
-            : rawValue.trim();
-      }
-      if (_hasFieldValue(value)) values[field.id] = value;
-    }
-    return values;
-  }
-}
-
-class _AgentArtifactFormFieldGroup {
-  const _AgentArtifactFormFieldGroup({
-    required this.title,
-    required this.fields,
-  });
-
-  final String title;
-  final List<AgentArtifactFormFieldView> fields;
-}
-
-class _AgentArtifactFormGroup extends StatelessWidget {
-  const _AgentArtifactFormGroup({required this.title, required this.children});
-
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: MomCozyColors.raised.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(MomCozyRadii.control),
-        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.72)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: textTheme.labelLarge?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 10),
-            ...children,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-List<_AgentArtifactFormFieldGroup> _formFieldGroups(
-  AgentArtifactCardView card,
-) {
-  if (card.formFields.isEmpty) return const <_AgentArtifactFormFieldGroup>[];
-  final forceBasicInfoGroup = card.formId == 'birth_journey_basic_info_intake';
-  final orderedTitles = <({String key, String title})>[];
-  final fieldsByTitle = <String, List<AgentArtifactFormFieldView>>{};
-
-  for (final field in card.formFields) {
-    final groupTitle = forceBasicInfoGroup ? '基本信息' : field.groupTitle;
-    final key = groupTitle.isEmpty ? '__ungrouped' : groupTitle;
-    if (!fieldsByTitle.containsKey(key)) {
-      orderedTitles.add((key: key, title: groupTitle));
-      fieldsByTitle[key] = <AgentArtifactFormFieldView>[];
-    }
-    fieldsByTitle[key]!.add(field);
-  }
-
-  return [
-    for (final group in orderedTitles)
-      _AgentArtifactFormFieldGroup(
-        title: group.title,
-        fields: List<AgentArtifactFormFieldView>.unmodifiable(
-          fieldsByTitle[group.key] ?? const <AgentArtifactFormFieldView>[],
-        ),
-      ),
-  ];
-}
-
-List<String> _defaultMultiSelectValues(Object? value) {
-  if (value is List) return _displayStringList(value);
-  if (value is String) {
-    return value
-        .split(',')
-        .map((item) => item.trim())
-        .where((item) => item.isNotEmpty)
-        .toList(growable: false);
-  }
-  final displayValue = _displayString(value);
-  return displayValue == null ? const <String>[] : <String>[displayValue];
-}
-
 class AgentActionPanel extends StatelessWidget {
   const AgentActionPanel({
     super.key,
@@ -5831,11 +5406,6 @@ AgentArtifactActionView _hospitalBagCartAction() {
     value: '/hospital-bag-cart',
     routePath: '/hospital-bag-cart',
   );
-}
-
-bool _isOtherFormOption(String option) {
-  final normalized = option.trim();
-  return normalized == '其它' || normalized == '其他';
 }
 
 List<AgentActionCardView> _actionCardsFromEvents(
