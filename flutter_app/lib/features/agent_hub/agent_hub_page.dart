@@ -2157,7 +2157,7 @@ class AgentRunTranscript extends StatelessWidget {
         );
     final quickReplies = state.quickReplies;
     final shouldRenderQuickReplies =
-        quickReplies.length == 3 &&
+        quickReplies.isNotEmpty &&
         !state.isAwaitingVisibleReply &&
         onQuickReplySelected != null;
     final avatarMode = _avatarMode;

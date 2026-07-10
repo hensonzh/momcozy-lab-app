@@ -216,6 +216,7 @@ class AgentStreamRunState {
     if (phase != AgentStreamRunPhase.waitingForConfirmation) return false;
     return event.type.startsWith('action.') ||
         event.type == 'message.completed' ||
+        event.type == 'quick_replies.updated' ||
         event.type == 'run.completed' ||
         event.type == 'run.failed' ||
         event.type == 'run.cancelled';
@@ -249,6 +250,9 @@ class AgentStreamRunState {
   List<String> _nextQuickReplies(AgentStreamEvent event) {
     final replies = event.quickReplies;
     if (replies.isEmpty) return quickReplies;
+    if (event.type == 'quick_replies.updated') {
+      return replies;
+    }
     if (event.type == 'message.completed' && event.role != 'user') {
       return replies;
     }

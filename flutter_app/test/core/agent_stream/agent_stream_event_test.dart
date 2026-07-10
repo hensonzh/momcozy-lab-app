@@ -219,7 +219,7 @@ void main() {
       expect(event.completedText, isNot(contains('service_skill_id')));
     });
 
-    test('extracts quick replies from assistant text JSON fallback', () {
+    test('does not extract quick replies from assistant text JSON fallback', () {
       final event = AgentStreamEvent(const {
         'type': 'message.completed',
         'payload': {
@@ -230,7 +230,23 @@ void main() {
       });
 
       expect(event.completedText, '已经整理好了。');
-      expect(event.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
+      expect(event.quickReplies, isEmpty);
+    });
+
+    test('extracts quick replies from transient quick replies event', () {
+      final event = AgentStreamEvent(const {
+        'type': 'quick_replies.updated',
+        'payload': {
+          'message_id': 'msg-quick-001',
+          'replies': [
+            {'id': 'qr_1', 'text': '继续聊这个'},
+            {'id': 'qr_2', 'text': '给我更多细节'},
+          ],
+        },
+      });
+
+      expect(event.messageId, 'msg-quick-001');
+      expect(event.quickReplies, ['继续聊这个', '给我更多细节']);
     });
 
     test('extracts quick replies from durable assistant messages', () {
