@@ -308,6 +308,29 @@ void main() {
     expect(find.byKey(const ValueKey('agent-history-199')), findsNothing);
   });
 
+  testWidgets('Agent Hub plays greeting voice on first open', (tester) async {
+    final coordinator = AgentVoicePlaybackCoordinator();
+    final player = _PageFakeVoicePlaybackPlayer();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          voicePlaybackCoordinator: coordinator,
+          voicePlaybackPlayer: player,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
+    expect(coordinator.activeId, 'agent-default-greeting');
+    expect(player.playedTexts, isNotEmpty);
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('Agent Hub plays greeting voice for a manual new session', (
     tester,
   ) async {
@@ -464,7 +487,7 @@ void main() {
     expect(client.requests, hasLength(1));
     expect(client.requests.single.message, '开始正式对话');
     expect(coordinator.activeId, isNull);
-    expect(player.stopCount, 1);
+    expect(player.stopCount, 2);
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsNothing,
@@ -1324,7 +1347,7 @@ void main() {
     );
   });
 
-  testWidgets('Agent Hub sends generated reply chunks to the voice player', (
+  testWidgets('Agent Hub appends generated reply chunks to realtime voice', (
     tester,
   ) async {
     final coordinator = AgentVoicePlaybackCoordinator();
@@ -1353,20 +1376,16 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(player.playedTexts, ['I can help']);
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
-
-    player.complete();
-    await tester.pump();
-    await tester.pump();
-
-    expect(player.playedTexts, [
+    expect(player.realtimeSessions, hasLength(1));
+    final session = player.realtimeSessions.single;
+    expect(session.appendedTexts, [
       'I can help',
       " you review today's pumping pattern.",
     ]);
+    expect(session.finishCount, 1);
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
 
-    player.complete();
+    session.complete();
     await tester.pump();
     await tester.pump();
 
@@ -1426,7 +1445,8 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(player.playedTexts, ['Draft answer']);
+    expect(player.realtimeSessions, hasLength(1));
+    expect(player.realtimeSessions.single.appendedTexts, ['Draft answer']);
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
     expect(find.text('Draft answer', findRichText: true), findsOneWidget);
 
@@ -1445,19 +1465,17 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(player.playedTexts, ['Draft answer']);
+    expect(player.realtimeSessions, hasLength(1));
+    expect(player.realtimeSessions.single.appendedTexts, [
+      'Draft answer',
+      ' ready.',
+    ]);
+    expect(player.realtimeSessions.single.finishCount, 1);
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
     expect(
       find.text('Draft answer ready.', findRichText: true),
       findsOneWidget,
     );
-
-    player.complete();
-    await tester.pump();
-    await tester.pump();
-
-    expect(player.playedTexts, ['Draft answer', ' ready.']);
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
 
     client.emit(
       0,
@@ -1474,7 +1492,11 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(player.playedTexts, ['Draft answer', ' ready.']);
+    expect(player.realtimeSessions.single.appendedTexts, [
+      'Draft answer',
+      ' ready.',
+    ]);
+    expect(player.realtimeSessions.single.finishCount, 1);
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
     expect(coordinator.activeId, 'msg-voice-order');
   });
@@ -1519,8 +1541,9 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(player.playedTexts, ['Draft answer']);
-      expect(player.stopCount, 0);
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, ['Draft answer']);
+      expect(player.stopCount, 1);
       expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
       expect(coordinator.activeId, 'run-voice-late-id');
 
@@ -1539,20 +1562,21 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(player.playedTexts, ['Draft answer']);
-      expect(player.stopCount, 0);
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
+        'Draft answer',
+        ' ready.',
+      ]);
+      expect(player.realtimeSessions.single.finishCount, 1);
+      expect(player.stopCount, 1);
       expect(coordinator.activeId, 'run-voice-late-id');
       expect(
         find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
         findsOneWidget,
       );
 
-      player.complete();
-      await tester.pump();
-      await tester.pump();
-
-      expect(player.playedTexts, ['Draft answer', ' ready.']);
-      expect(player.stopCount, 0);
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.stopCount, 1);
       expect(coordinator.activeId, 'run-voice-late-id');
     },
   );
@@ -1645,6 +1669,69 @@ void main() {
   });
 
   testWidgets(
+    'Agent Hub clears speaking avatar when notification interrupts auto voice',
+    (tester) async {
+      final coordinator = AgentVoicePlaybackCoordinator();
+      final player = _PageFakeVoicePlaybackPlayer();
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: coordinator,
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Start auto voice',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-notification-interrupt-delta',
+          'type': 'message.delta',
+          'thread_id': 'thread-notification-interrupt',
+          'run_id': 'run-notification-interrupt',
+          'message_id': 'msg-notification-interrupt',
+          'sequence': 1,
+          'payload': {'text': 'Draft answer'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
+      expect(
+        find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+        findsOneWidget,
+      );
+
+      coordinator.request(
+        id: 'notification-1',
+        source: AgentVoicePlaybackSource.notification,
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
+      expect(player.realtimeSessions.single.cancelCount, 1);
+      expect(
+        find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets(
     'Agent Hub retries auto voice after notification voice becomes idle',
     (tester) async {
       final coordinator = AgentVoicePlaybackCoordinator();
@@ -1687,9 +1774,11 @@ void main() {
 
       expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
       expect(coordinator.activeId, 'msg-reply-text-001');
-      expect(player.playedTexts, [
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
         "I can help you review today's pumping pattern.",
       ]);
+      expect(player.realtimeSessions.single.finishCount, 1);
       expect(find.text('正在播放语音'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
@@ -4362,6 +4451,7 @@ class _PageFakeVoiceTranscriber implements AgentVoiceTranscriber {
 
 class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
   final playedTexts = <String>[];
+  final realtimeSessions = <_PageFakeVoiceRealtimePlaybackSession>[];
   var stopCount = 0;
   Completer<void>? _active;
 
@@ -4373,9 +4463,21 @@ class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
   }
 
   @override
+  AgentVoiceRealtimePlaybackSession startRealtimeSession() {
+    final session = _PageFakeVoiceRealtimePlaybackSession();
+    realtimeSessions.add(session);
+    return session;
+  }
+
+  @override
   Future<void> stop() async {
     stopCount += 1;
     complete();
+    for (final session in realtimeSessions.where(
+      (session) => !session.isDone,
+    )) {
+      await session.cancel();
+    }
   }
 
   void complete() {
@@ -4383,6 +4485,49 @@ class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
     if (active != null && !active.isCompleted) {
       active.complete();
     }
+  }
+}
+
+class _PageFakeVoiceRealtimePlaybackSession
+    implements AgentVoiceRealtimePlaybackSession {
+  final appendedTexts = <String>[];
+  var flushCount = 0;
+  var finishCount = 0;
+  var cancelCount = 0;
+  final Completer<void> _done = Completer<void>();
+
+  bool get isDone => _done.isCompleted;
+
+  @override
+  Future<void> get done => _done.future;
+
+  @override
+  void append(String delta) {
+    appendedTexts.add(delta);
+  }
+
+  @override
+  void flush() {
+    flushCount += 1;
+  }
+
+  @override
+  void finish() {
+    finishCount += 1;
+  }
+
+  @override
+  Future<void> cancel() async {
+    cancelCount += 1;
+    complete();
+  }
+
+  void complete() {
+    if (!_done.isCompleted) _done.complete();
+  }
+
+  void fail(Object error) {
+    if (!_done.isCompleted) _done.completeError(error);
   }
 }
 

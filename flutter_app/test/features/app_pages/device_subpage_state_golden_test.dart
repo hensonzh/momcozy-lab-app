@@ -8,6 +8,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
+import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -183,6 +184,7 @@ MomCozyApiRuntime _deviceRuntime(
       },
     }),
     clientEventClient: clientEventClient,
+    agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
     blePlatform: FakeBlePlatform(initialPermission: BlePermissionState.granted),
     userId: 'demo-user-golden',
     babyId: 'demo-baby-golden',

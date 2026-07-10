@@ -16,6 +16,7 @@ import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
 import '../../support/fixture_reader.dart';
+import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -1158,6 +1159,7 @@ MomCozyApiRuntime _runtime({
       },
       ...?responsesByPath,
     }),
+    agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
     clientEventClient: const AgentStreamClientEventClient(sent: false),
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
       'status': 200,

@@ -8,6 +8,8 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 const defaultAgentVoicePcmPlayerChannelName =
     'com.momcozymai.flutter/voice_pcm_player';
 const agentVoicePlaybackMaxChunkChars = 900;
+const agentVoiceRealtimeMaxSegmentChars = 64;
+const agentVoiceRealtimeMinSegmentChars = 12;
 
 final _voiceBareUrlPattern = RegExp(
   r'''\b(?:(?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、]+''',
@@ -41,6 +43,8 @@ abstract interface class AgentVoicePcmPlayer {
 
   Future<void> write(List<int> bytes);
 
+  Future<void> finish();
+
   Future<void> stop();
 }
 
@@ -65,6 +69,11 @@ class MethodChannelAgentVoicePcmPlayer implements AgentVoicePcmPlayer {
     await _channel.invokeMethod<void>('write', {
       'bytes': Uint8List.fromList(bytes),
     });
+  }
+
+  @override
+  Future<void> finish() async {
+    await _channel.invokeMethod<void>('finish');
   }
 
   @override
@@ -105,15 +114,215 @@ class AgentVoiceApiPlaybackPlayer implements AgentVoicePlaybackPlayer {
       }
     } finally {
       if (token == _playToken) {
-        await pcmPlayer.stop();
+        await pcmPlayer.finish();
       }
     }
+  }
+
+  @override
+  AgentVoiceRealtimePlaybackSession startRealtimeSession() {
+    final token = ++_playToken;
+    return AgentVoiceApiRealtimePlaybackSession(
+      repository: repository,
+      pcmPlayer: pcmPlayer,
+      sampleRate: sampleRate,
+      channels: channels,
+      isCurrent: () => token == _playToken,
+    );
   }
 
   @override
   Future<void> stop() async {
     _playToken += 1;
     await pcmPlayer.stop();
+  }
+}
+
+class AgentVoiceApiRealtimePlaybackSession
+    implements AgentVoiceRealtimePlaybackSession {
+  AgentVoiceApiRealtimePlaybackSession({
+    required this.repository,
+    required this.pcmPlayer,
+    required this.sampleRate,
+    required this.channels,
+    required this.isCurrent,
+    this.maxSegmentChars = agentVoiceRealtimeMaxSegmentChars,
+    this.minSegmentChars = agentVoiceRealtimeMinSegmentChars,
+    this.eagerSegmenting = true,
+  }) {
+    unawaited(_run());
+  }
+
+  final AgentVoiceRepository repository;
+  final AgentVoicePcmPlayer pcmPlayer;
+  final int sampleRate;
+  final int channels;
+  final bool Function() isCurrent;
+  final int maxSegmentChars;
+  final int minSegmentChars;
+  final bool eagerSegmenting;
+
+  final Completer<void> _done = Completer<void>();
+  final List<String> _pendingSegments = <String>[];
+  AgentVoiceRealtimeSessionConnection? _connection;
+  Future<void> _sendQueue = Future<void>.value();
+  String _buffer = '';
+  bool _cancelled = false;
+  bool _finished = false;
+  bool _finishSent = false;
+  bool _pcmStarted = false;
+  bool _pcmStopped = false;
+
+  @override
+  Future<void> get done => _done.future;
+
+  @override
+  void append(String delta) {
+    if (_cancelled || _finished || delta.isEmpty || !isCurrent()) return;
+    _buffer += delta;
+    _drainBuffer(force: false);
+    _flushPendingSegments();
+  }
+
+  @override
+  void flush() {
+    if (_cancelled || !isCurrent()) return;
+    _drainBuffer(force: true);
+    _flushPendingSegments();
+  }
+
+  @override
+  void finish() {
+    if (_cancelled || _finished || !isCurrent()) return;
+    _drainBuffer(force: true);
+    _finished = true;
+    _flushPendingSegments();
+  }
+
+  @override
+  Future<void> cancel() async {
+    if (_cancelled) return _done.future;
+    _cancelled = true;
+    _buffer = '';
+    _pendingSegments.clear();
+    final connection = _connection;
+    if (connection != null) {
+      try {
+        await connection.cancel();
+      } catch (_) {
+        // Best-effort cancellation; close/stop below still releases resources.
+      }
+      await _closeConnection();
+    }
+    await _stopPcm(immediate: true);
+    if (!_done.isCompleted) _done.complete();
+    return _done.future;
+  }
+
+  Future<void> _run() async {
+    Object? failure;
+    try {
+      final connection = await repository.openRealtimeVoiceSession();
+      if (_cancelled || !isCurrent()) {
+        await connection.close();
+        return;
+      }
+      _connection = connection;
+      await pcmPlayer.start(sampleRate: sampleRate, channels: channels);
+      _pcmStarted = true;
+      _flushPendingSegments();
+
+      await for (final event in connection.events) {
+        if (_cancelled || !isCurrent()) break;
+        switch (event.type) {
+          case AgentVoiceSessionEventType.opened:
+            _flushPendingSegments();
+            break;
+          case AgentVoiceSessionEventType.audioChunk:
+            if (event.audioBytes.isNotEmpty) {
+              await pcmPlayer.write(event.audioBytes);
+            }
+            break;
+          case AgentVoiceSessionEventType.completed:
+            return;
+          case AgentVoiceSessionEventType.failed:
+            throw StateError(event.message ?? '实时语音播报失败');
+        }
+      }
+    } catch (error) {
+      failure = error;
+    } finally {
+      await _sendQueue.catchError((Object error) {
+        failure ??= error;
+      });
+      await _closeConnection();
+      await _stopPcm(immediate: _cancelled || failure != null || !isCurrent());
+      if (!_done.isCompleted) {
+        if (_cancelled || failure == null) {
+          _done.complete();
+        } else {
+          _done.completeError(failure!);
+        }
+      }
+    }
+  }
+
+  void _drainBuffer({required bool force}) {
+    while (_buffer.trim().isNotEmpty) {
+      _buffer = _buffer.trimLeft();
+      final splitAt = _voiceRealtimeSegmentBoundary(
+        _buffer,
+        maxSegmentChars: maxSegmentChars,
+        minSegmentChars: minSegmentChars,
+        force: force,
+        eager: eagerSegmenting,
+      );
+      if (splitAt <= 0) return;
+      final segment = sanitizeAgentVoicePlaybackText(
+        _buffer.substring(0, splitAt),
+      );
+      _buffer = _buffer.substring(splitAt).trimLeft();
+      if (_hasVoiceSpeakableText(segment)) {
+        _pendingSegments.add(segment);
+      }
+    }
+  }
+
+  void _flushPendingSegments() {
+    final connection = _connection;
+    if (connection == null || _cancelled || !isCurrent()) return;
+    while (_pendingSegments.isNotEmpty) {
+      final segment = _pendingSegments.removeAt(0);
+      _enqueueSend(() => connection.append(segment));
+    }
+    if (_finished && !_finishSent && _pendingSegments.isEmpty) {
+      _finishSent = true;
+      _enqueueSend(connection.finish);
+    }
+  }
+
+  void _enqueueSend(Future<void> Function() send) {
+    _sendQueue = _sendQueue.then((_) async {
+      if (_cancelled || !isCurrent()) return;
+      await send();
+    });
+  }
+
+  Future<void> _closeConnection() async {
+    final connection = _connection;
+    _connection = null;
+    if (connection == null) return;
+    await connection.close();
+  }
+
+  Future<void> _stopPcm({required bool immediate}) async {
+    if (!_pcmStarted || _pcmStopped) return;
+    _pcmStopped = true;
+    if (immediate) {
+      await pcmPlayer.stop();
+    } else {
+      await pcmPlayer.finish();
+    }
   }
 }
 
@@ -325,4 +534,55 @@ int _voiceChunkBoundary(String text, int maxChars) {
   final spaceBoundary = window.lastIndexOf(' ');
   if (spaceBoundary > limit * 0.5) return spaceBoundary;
   return limit;
+}
+
+int _voiceRealtimeSegmentBoundary(
+  String text, {
+  required int maxSegmentChars,
+  required int minSegmentChars,
+  required bool force,
+  required bool eager,
+}) {
+  if (text.isEmpty) return 0;
+  final requestedMax = maxSegmentChars <= 0 ? text.length : maxSegmentChars;
+  final maxChars = text.length < 24
+      ? text.length
+      : requestedMax.clamp(24, text.length).toInt();
+  final requestedMin = minSegmentChars <= 0 ? 6 : minSegmentChars;
+  final minChars = maxChars < 6
+      ? maxChars
+      : requestedMin.clamp(6, maxChars).toInt();
+  final scanLimit = text.length < maxChars ? text.length : maxChars;
+
+  for (var index = 0; index < scanLimit; index += 1) {
+    final char = text[index];
+    final cut = index + 1;
+    if (_voiceRealtimeStrongBreakPattern.hasMatch(char) ||
+        char == '…' ||
+        char == '.') {
+      if (cut >= minChars || force) return cut;
+    }
+    if (cut >= minChars && _voiceRealtimeSoftBreakPattern.hasMatch(char)) {
+      return cut;
+    }
+  }
+
+  if (text.length >= maxChars) {
+    for (var index = minChars; index <= maxChars; index += 1) {
+      if (_voiceRealtimeSoftBreakPattern.hasMatch(text[index - 1])) {
+        return index;
+      }
+    }
+    return maxChars;
+  }
+
+  if (eager && text.length >= minChars) return minChars;
+  return force ? text.length : 0;
+}
+
+final _voiceRealtimeStrongBreakPattern = RegExp(r'[。！？；!?]');
+final _voiceRealtimeSoftBreakPattern = RegExp(r'[，,、：:\s]');
+
+bool _hasVoiceSpeakableText(String text) {
+  return RegExp(r'[0-9A-Za-z\u3400-\u9fff]').hasMatch(text);
 }

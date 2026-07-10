@@ -19,12 +19,7 @@ enum AgentVoiceInputPermissionState {
 
 enum AgentVoiceInputResultStatus { transcribed, empty, permissionDenied }
 
-enum AgentVoicePlaybackSource {
-  autoReply,
-  greeting,
-  notification,
-  manualBubble,
-}
+enum AgentVoicePlaybackSource { autoReply, greeting, notification }
 
 enum AgentVoicePlaybackRequestStatus { started, blocked, rejected }
 
@@ -138,7 +133,21 @@ abstract interface class AgentVoiceTranscriber {
 abstract interface class AgentVoicePlaybackPlayer {
   Future<void> playText(String text);
 
+  AgentVoiceRealtimePlaybackSession startRealtimeSession();
+
   Future<void> stop();
+}
+
+abstract interface class AgentVoiceRealtimePlaybackSession {
+  void append(String delta);
+
+  void flush();
+
+  void finish();
+
+  Future<void> cancel();
+
+  Future<void> get done;
 }
 
 class AgentVoiceInputResult {
@@ -395,7 +404,6 @@ int _sourcePriority(AgentVoicePlaybackSource source) {
     AgentVoicePlaybackSource.autoReply => 50,
     AgentVoicePlaybackSource.greeting => 70,
     AgentVoicePlaybackSource.notification => 90,
-    AgentVoicePlaybackSource.manualBubble => 100,
   };
 }
 
