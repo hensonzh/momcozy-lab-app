@@ -122,7 +122,7 @@ void main() {
               'run_id': 'run-fixture-001',
               'message_id': 'msg-reply-001',
               'sequence': 3,
-              'payload': {'text': 'Final answer'},
+              'payload': {'text': 'Partial answer'},
             }),
             jsonEncode({
               'event_id': 'evt-resume-4',
@@ -162,7 +162,7 @@ void main() {
 
       expect(states.first.textContent, 'Partial');
       expect(states.last.phase, AgentStreamRunPhase.finished);
-      expect(states.last.textContent, 'Final answer');
+      expect(states.last.textContent, 'Partial answer');
       expect(states.last.lastSequence, 4);
       expect(states.last.events.map((event) => event.eventId), [
         'evt-resume-2',

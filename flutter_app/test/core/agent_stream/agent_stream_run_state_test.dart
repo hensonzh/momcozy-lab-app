@@ -112,7 +112,7 @@ void main() {
       expect(state.events.length, 4);
     });
 
-    test('tracks transient deltas until assistant completed replaces text', () {
+    test('keeps streamed text stable when assistant completed arrives', () {
       var state = const AgentStreamRunState().start();
 
       state = state.applyEvent(
@@ -154,13 +154,110 @@ void main() {
         }),
       );
 
-      expect(state.textContent, '这是最终回复。');
+      expect(state.textContent, '正在生成');
       expect(state.provisionalTextContent, '');
       expect(state.lastSequence, 4);
       expect(state.phase, AgentStreamRunPhase.streaming);
       expect(state.hasCompletedAssistantMessage, isTrue);
       expect(state.isAwaitingVisibleReply, isFalse);
     });
+
+    test('only appends missing completed suffix to streamed text', () {
+      var state = const AgentStreamRunState().start();
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'message.delta',
+          'thread_id': 'thread-suffix-001',
+          'run_id': 'run-suffix-001',
+          'message_id': 'msg-suffix-001',
+          'payload': {'delta': '这是最终'},
+        }),
+      );
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'message.completed',
+          'thread_id': 'thread-suffix-001',
+          'run_id': 'run-suffix-001',
+          'message_id': 'msg-suffix-001',
+          'payload': {'role': 'assistant', 'text': '这是最终回复。'},
+        }),
+      );
+
+      expect(state.textContent, '这是最终回复。');
+      expect(state.provisionalTextContent, '');
+    });
+
+    test('does not replace streamed text on completed mismatch', () {
+      var state = const AgentStreamRunState().start();
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'event_id': 'delta:mismatch-001',
+          'type': 'message.delta',
+          'thread_id': 'thread-mismatch-001',
+          'run_id': 'run-mismatch-001',
+          'message_id': 'msg-mismatch-001',
+          'transient': true,
+          'payload': {'delta': '用户已经看到的回复'},
+        }),
+      );
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'message.completed',
+          'thread_id': 'thread-mismatch-001',
+          'run_id': 'run-mismatch-001',
+          'message_id': 'msg-mismatch-001',
+          'payload': {
+            'role': 'assistant',
+            'text': '后端最终清洗后的不同回复',
+            'quick_replies': [
+              {'text': '继续聊这个'},
+              {'text': '给我更多细节'},
+              {'text': '换个方向'},
+            ],
+          },
+        }),
+      );
+
+      expect(state.textContent, '用户已经看到的回复');
+      expect(state.provisionalTextContent, '');
+      expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
+    });
+
+    test(
+      'uses completed mismatch when current text is not live provisional',
+      () {
+        var state = const AgentStreamRunState().start();
+
+        state = state.applyEvent(
+          AgentStreamEvent(const {
+            'type': 'message.delta',
+            'thread_id': 'thread-stale-001',
+            'run_id': 'run-stale-001',
+            'message_id': 'msg-stale-001',
+            'sequence': 2,
+            'payload': {'delta': '旧的 partial'},
+          }),
+        );
+
+        state = state.applyEvent(
+          AgentStreamEvent(const {
+            'type': 'message.completed',
+            'thread_id': 'thread-stale-001',
+            'run_id': 'run-stale-001',
+            'message_id': 'msg-stale-001',
+            'sequence': 3,
+            'payload': {'role': 'assistant', 'text': '重试后的完整回复'},
+          }),
+        );
+
+        expect(state.textContent, '重试后的完整回复');
+        expect(state.provisionalTextContent, '');
+      },
+    );
 
     test('keeps repeated text deltas when no replay key is present', () {
       var state = const AgentStreamRunState().start();
