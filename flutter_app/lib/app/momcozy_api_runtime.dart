@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
@@ -357,6 +358,10 @@ class MomCozyApiRuntime {
 
   StatusApiRepository get statusRepository {
     return StatusApiRepository(transport: jsonTransport);
+  }
+
+  AgentHubProfileRepository get agentHubProfileRepository {
+    return AgentHubProfileRepository(transport: jsonTransport);
   }
 
   ScheduleApiRepository get scheduleRepository {
