@@ -3686,6 +3686,32 @@ milk_total: 120ml
     );
   });
 
+  testWidgets('Agent Hub aligns context-ready fallback with legacy web copy', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({'type': 'run.started'}),
+        AgentStreamEvent({
+          'type': 'run.progress',
+          'payload': {'phase': 'context_ready'},
+        }),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-run-status-line')),
+        matching: find.text('我先理解一下你的需求～'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('我看一下你的信息'), findsNothing);
+  });
+
   testWidgets('Agent Hub status line prefers backend semantic labels', (
     tester,
   ) async {
