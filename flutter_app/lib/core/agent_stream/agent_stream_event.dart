@@ -12,6 +12,8 @@ class AgentStreamEvent {
   String? get messageId =>
       stringField(raw, 'message_id') ??
       stringField(raw, 'messageId') ??
+      stringField(payload, 'message_id') ??
+      stringField(payload, 'messageId') ??
       stringField(payload, 'message_stream_id') ??
       stringField(payload, 'messageStreamId');
   String? get toolCallId =>
@@ -76,7 +78,6 @@ class AgentStreamEvent {
       payload['quickReplies'],
       _messageQuickReplies(raw['message']),
       _messageQuickReplies(payload['message']),
-      _quickRepliesFromText(_rawCompletedText),
     ]) {
       final replies = _quickReplyTexts(source);
       if (replies.isNotEmpty) return replies;
@@ -337,27 +338,6 @@ String? cleanAgentAssistantText(String? value) {
   return cleaned.isEmpty ? null : cleaned;
 }
 
-Object? _quickRepliesFromText(String? value) {
-  final text = value?.trim();
-  if (text == null || text.isEmpty) return null;
-  var index = 0;
-  while (index < text.length) {
-    final char = text[index];
-    if (char == '{' || char == '[') {
-      final end = _balancedJsonEnd(text, index);
-      if (end != null) {
-        final decoded = _tryDecodeJson(text.substring(index, end));
-        final replies = _quickReplyTextsFromJsonValue(decoded);
-        if (replies != null && replies.isNotEmpty) return replies;
-        index = end;
-        continue;
-      }
-    }
-    index += 1;
-  }
-  return null;
-}
-
 String _removeStructuredJsonChunks(String text) {
   final output = StringBuffer();
   var index = 0;
@@ -463,26 +443,6 @@ String? _textFromStructuredJson(Object? value) {
   ]) {
     final raw = value[key];
     if (raw is String && raw.trim().isNotEmpty) return raw.trim();
-  }
-  return null;
-}
-
-List<String>? _quickReplyTextsFromJsonValue(Object? value) {
-  if (value is Map) {
-    for (final key in ['quick_replies', 'quickReplies', 'replies']) {
-      final replies = _quickReplyTexts(value[key]);
-      if (replies.isNotEmpty) return replies;
-    }
-    for (final item in value.values) {
-      final replies = _quickReplyTextsFromJsonValue(item);
-      if (replies != null) return replies;
-    }
-  }
-  if (value is List) {
-    for (final item in value) {
-      final replies = _quickReplyTextsFromJsonValue(item);
-      if (replies != null) return replies;
-    }
   }
   return null;
 }
