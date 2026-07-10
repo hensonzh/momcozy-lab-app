@@ -100,7 +100,6 @@ class AgentArtifactMapper {
       _stringField(form, 'title'),
       _stringField(cardJson, 'title'),
       _stringField(effectivePayload, 'title'),
-      _stringField(cartUpdate, 'message'),
       _stringField(payload, 'title'),
     ]);
     final content = _firstNonEmpty([

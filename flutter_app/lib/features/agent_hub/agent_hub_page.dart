@@ -15,6 +15,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_sto
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:video_player/video_player.dart';
@@ -3507,6 +3508,12 @@ Widget? _specializedArtifactCard({
   required AgentArtifactCardView card,
   AgentArtifactActionHandler? onAction,
 }) {
+  final registeredCard = AgentArtifactCardRegistry.build(
+    card: card,
+    onAction: onAction,
+  );
+  if (registeredCard != null) return registeredCard;
+
   return switch (card.presentationKind) {
     AgentArtifactPresentationKind.unsupported => _AgentUnsupportedArtifactCard(
       card: card,
@@ -3591,6 +3598,7 @@ class _AgentArtifactSpecializedShell extends StatelessWidget {
     this.subtitle,
     this.statusLabel,
     this.accentColor = MomCozyColors.primary,
+    this.showLogo = true,
   });
 
   final AgentArtifactCardView card;
@@ -3599,6 +3607,7 @@ class _AgentArtifactSpecializedShell extends StatelessWidget {
   final String? subtitle;
   final String? statusLabel;
   final Color accentColor;
+  final bool showLogo;
 
   @override
   Widget build(BuildContext context) {
@@ -3607,13 +3616,19 @@ class _AgentArtifactSpecializedShell extends StatelessWidget {
     return DecoratedBox(
       key: ValueKey('agent-artifact-${card.id}'),
       decoration: BoxDecoration(
-        color: MomCozyColors.raised,
-        borderRadius: BorderRadius.circular(MomCozyRadii.control),
-        border: Border.all(color: MomCozyColors.border),
-        boxShadow: MomCozyShadows.soft,
+        color: const Color(0xfffffdfc),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: const Color(0xffeadfe5)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x12412a34),
+            blurRadius: 30,
+            offset: Offset(0, 12),
+          ),
+        ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -3623,23 +3638,24 @@ class _AgentArtifactSpecializedShell extends StatelessWidget {
                 DecoratedBox(
                   decoration: BoxDecoration(
                     color: accentColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(MomCozyRadii.control),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: SizedBox.square(
-                    dimension: 40,
-                    child: Icon(icon, color: accentColor, size: 20),
+                    dimension: 44,
+                    child: Icon(icon, color: accentColor, size: 22),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         card.title,
-                        style: textTheme.titleSmall?.copyWith(
-                          color: MomCozyColors.foreground,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: const Color(0xff2f1f29),
                           fontWeight: FontWeight.w900,
+                          height: 1.2,
                         ),
                       ),
                       if (subtitle != null) ...[
@@ -3658,6 +3674,14 @@ class _AgentArtifactSpecializedShell extends StatelessWidget {
                 if (statusLabel != null) ...[
                   const SizedBox(width: 8),
                   _AgentArtifactPill(label: statusLabel!, color: accentColor),
+                ] else if (showLogo) ...[
+                  const SizedBox(width: 8),
+                  Image.asset(
+                    MomCozyAssets.momcozyLogo,
+                    width: 68,
+                    height: 40,
+                    fit: BoxFit.contain,
+                  ),
                 ],
               ],
             ),
@@ -3695,6 +3719,7 @@ class _AgentMilkManagementCard extends StatelessWidget {
       accentColor: isPlan ? MomCozyColors.care : MomCozyColors.violet,
       subtitle: subtitle,
       statusLabel: statusLabel,
+      showLogo: false,
       children: [
         if (headline != null)
           _AgentArtifactBodyText(headline, weight: FontWeight.w700),
@@ -3790,7 +3815,21 @@ class _AgentBirthJourneyPlanCard extends StatelessWidget {
           _AgentArtifactSection(
             children: [
               for (final period in periods) ...[
-                _AgentBirthJourneyPeriod(period: period),
+                _AgentBirthJourneyPeriod(
+                  key: ValueKey(
+                    'journey-period:${_displayString(period['id']) ?? _displayString(period['title']) ?? periods.indexOf(period)}',
+                  ),
+                  period: period,
+                  initiallyExpanded:
+                      period == periods.first ||
+                      _displayString(period['status']) == 'current' ||
+                      _displayStringField(
+                            period,
+                            'display_mode',
+                            'displayMode',
+                          ) ==
+                          'expanded',
+                ),
                 if (period != periods.last) const SizedBox(height: 8),
               ],
             ],
@@ -3801,17 +3840,36 @@ class _AgentBirthJourneyPlanCard extends StatelessWidget {
   }
 }
 
-class _AgentBirthJourneyPeriod extends StatelessWidget {
-  const _AgentBirthJourneyPeriod({required this.period});
+class _AgentBirthJourneyPeriod extends StatefulWidget {
+  const _AgentBirthJourneyPeriod({
+    super.key,
+    required this.period,
+    required this.initiallyExpanded,
+  });
 
   final Map<String, Object?> period;
+  final bool initiallyExpanded;
+
+  @override
+  State<_AgentBirthJourneyPeriod> createState() =>
+      _AgentBirthJourneyPeriodState();
+}
+
+class _AgentBirthJourneyPeriodState extends State<_AgentBirthJourneyPeriod> {
+  late bool _expanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _expanded = widget.initiallyExpanded;
+  }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final title = _displayString(period['title']) ?? '阶段';
-    final subtitle = _displayString(period['subtitle']);
-    final items = _objectList(period['items']);
+    final title = _displayString(widget.period['title']) ?? '阶段';
+    final subtitle = _displayString(widget.period['subtitle']);
+    final items = _objectList(widget.period['items']);
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -3824,35 +3882,49 @@ class _AgentBirthJourneyPeriod extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: textTheme.labelLarge?.copyWith(
-                          color: MomCozyColors.foreground,
-                          fontWeight: FontWeight.w900,
-                        ),
+            InkWell(
+              onTap: () => setState(() => _expanded = !_expanded),
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: textTheme.labelLarge?.copyWith(
+                              color: MomCozyColors.foreground,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          if (subtitle != null) ...[
+                            const SizedBox(height: 3),
+                            _AgentArtifactBodyText(subtitle),
+                          ],
+                        ],
                       ),
-                      if (subtitle != null) ...[
-                        const SizedBox(height: 3),
-                        _AgentArtifactBodyText(subtitle),
-                      ],
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 8),
+                    _AgentArtifactPill(
+                      label: '${items.length} 个事项',
+                      color: MomCozyColors.primary,
+                    ),
+                    const SizedBox(width: 2),
+                    Icon(
+                      _expanded
+                          ? Icons.expand_less_rounded
+                          : Icons.expand_more_rounded,
+                      color: MomCozyColors.mutedForeground,
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                _AgentArtifactPill(
-                  label: '${items.length} 个事项',
-                  color: MomCozyColors.primary,
-                ),
-              ],
+              ),
             ),
-            if (items.isNotEmpty) ...[
+            if (_expanded && items.isNotEmpty) ...[
               const SizedBox(height: 10),
               for (var index = 0; index < items.length; index++) ...[
                 _AgentBirthJourneyItem(index: index + 1, item: items[index]),
@@ -4129,7 +4201,13 @@ class _AgentHospitalBagCard extends StatelessWidget {
             title: '物品清单',
             children: [
               for (final group in packingGroups) ...[
-                _AgentPackingGroup(group: group),
+                _AgentPackingGroup(
+                  key: ValueKey(
+                    'packing-group:${_displayStringField(group, 'group_id', 'groupId') ?? _displayString(group['title']) ?? packingGroups.indexOf(group)}',
+                  ),
+                  group: group,
+                  initiallyExpanded: group == packingGroups.first,
+                ),
                 if (group != packingGroups.last) const SizedBox(height: 8),
               ],
             ],
@@ -4139,14 +4217,21 @@ class _AgentHospitalBagCard extends StatelessWidget {
           _AgentArtifactBodyText(disclaimer),
         ],
         const SizedBox(height: 12),
-        Align(
-          alignment: Alignment.centerLeft,
+        SizedBox(
+          width: double.infinity,
+          height: 44,
           child: FilledButton.icon(
             onPressed: onAction == null
                 ? null
                 : () => onAction?.call(_hospitalBagCartAction()),
             icon: const Icon(Icons.shopping_cart_outlined, size: 18),
             label: const Text('打开购物车'),
+            style: FilledButton.styleFrom(
+              backgroundColor: MomCozyColors.care,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
           ),
         ),
       ],
@@ -4154,19 +4239,37 @@ class _AgentHospitalBagCard extends StatelessWidget {
   }
 }
 
-class _AgentPackingGroup extends StatelessWidget {
-  const _AgentPackingGroup({required this.group});
+class _AgentPackingGroup extends StatefulWidget {
+  const _AgentPackingGroup({
+    super.key,
+    required this.group,
+    required this.initiallyExpanded,
+  });
 
   final Map<String, Object?> group;
+  final bool initiallyExpanded;
+
+  @override
+  State<_AgentPackingGroup> createState() => _AgentPackingGroupState();
+}
+
+class _AgentPackingGroupState extends State<_AgentPackingGroup> {
+  late bool _expanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _expanded = widget.initiallyExpanded;
+  }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final title =
-        _displayString(group['title']) ??
-        _displayStringField(group, 'group_id', 'groupId') ??
+        _displayString(widget.group['title']) ??
+        _displayStringField(widget.group, 'group_id', 'groupId') ??
         '待产包';
-    final items = _objectList(group['items']);
+    final items = _objectList(widget.group['items']);
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -4179,24 +4282,38 @@ class _AgentPackingGroup extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: textTheme.labelLarge?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w900,
+            InkWell(
+              onTap: () => setState(() => _expanded = !_expanded),
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: textTheme.labelLarge?.copyWith(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
                     ),
-                  ),
+                    _AgentArtifactPill(
+                      label: '${items.length}项',
+                      color: MomCozyColors.care,
+                    ),
+                    const SizedBox(width: 2),
+                    Icon(
+                      _expanded
+                          ? Icons.expand_less_rounded
+                          : Icons.expand_more_rounded,
+                      color: MomCozyColors.mutedForeground,
+                    ),
+                  ],
                 ),
-                _AgentArtifactPill(
-                  label: '${items.length}项',
-                  color: MomCozyColors.care,
-                ),
-              ],
+              ),
             ),
-            if (items.isNotEmpty) ...[
+            if (_expanded && items.isNotEmpty) ...[
               const SizedBox(height: 8),
               for (var index = 0; index < items.length; index++) ...[
                 _AgentPackingItem(item: items[index]),
@@ -5390,8 +5507,9 @@ List<String> _displayStringList(Object? value) {
 
 String? _packingPriorityLabel(String? priority) {
   return switch (priority) {
-    'must' || 'required' => '必备',
-    'recommended' || 'recommend' => '推荐',
+    'must' || 'required' => '必带',
+    'recommended' || 'recommend' || 'nice_to_have' => '建议',
+    'confirm_first' || '先确认' => '和医院确认',
     'optional' => '可选',
     final value? when value.trim().isNotEmpty => value,
     _ => null,
