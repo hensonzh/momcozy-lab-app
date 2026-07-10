@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -154,6 +155,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
   final ScrollController _chatScrollController = ScrollController();
+  final GlobalKey _activeArtifactPanelKey = GlobalKey();
   final ValueNotifier<AgentStreamRunState> _runStateNotifier =
       ValueNotifier<AgentStreamRunState>(const AgentStreamRunState());
   final ValueNotifier<bool> _visibleReplyRunningNotifier = ValueNotifier<bool>(
@@ -177,6 +179,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
   bool _scrollToLatestFrameScheduled = false;
   bool _scheduledScrollToLatestSmooth = false;
+  int _scheduledScrollToLatestIntentVersion = 0;
+  bool _artifactFocusFrameScheduled = false;
+  bool _preserveArtifactFocus = false;
+  int _scrollIntentVersion = 0;
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
   String? _activeAutoVoicePlaybackId;
   String _autoVoiceAppendedText = '';
@@ -515,6 +521,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void _updateLatestButtonVisibility() {
     if (!_chatScrollController.hasClients) return;
     final position = _chatScrollController.position;
+    if (_preserveArtifactFocus &&
+        position.maxScrollExtent - position.pixels <= 20) {
+      _preserveArtifactFocus = false;
+    }
     final shouldShow =
         position.maxScrollExtent > 160 &&
         position.pixels < position.maxScrollExtent - 40;
@@ -531,25 +541,36 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _scheduleScrollToLatest({bool smooth = false}) {
+    final intentVersion = ++_scrollIntentVersion;
+    _scheduledScrollToLatestIntentVersion = intentVersion;
     _scheduledScrollToLatestSmooth = _scheduledScrollToLatestSmooth || smooth;
     if (_scrollToLatestFrameScheduled) return;
     _scrollToLatestFrameScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final shouldSmooth = _scheduledScrollToLatestSmooth;
+      final intentVersion = _scheduledScrollToLatestIntentVersion;
       _scrollToLatestFrameScheduled = false;
       _scheduledScrollToLatestSmooth = false;
+      _scheduledScrollToLatestIntentVersion = 0;
       if (!mounted) return;
+      if (intentVersion != _scrollIntentVersion) return;
       unawaited(
         _scrollToLatest(smooth: shouldSmooth).then((_) {
-          if (!shouldSmooth) _scheduleScrollToLatestCorrection();
+          if (!shouldSmooth) {
+            _scheduleScrollToLatestCorrection(intentVersion);
+          }
         }),
       );
     });
   }
 
-  void _scheduleScrollToLatestCorrection() {
+  void _scheduleScrollToLatestCorrection(int intentVersion) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_chatScrollController.hasClients) return;
+      if (!mounted ||
+          intentVersion != _scrollIntentVersion ||
+          !_chatScrollController.hasClients) {
+        return;
+      }
       final position = _chatScrollController.position;
       if (position.maxScrollExtent - position.pixels > 1) {
         _chatScrollController.jumpTo(position.maxScrollExtent);
@@ -577,6 +598,63 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _chatScrollController.jumpTo(position.maxScrollExtent);
     }
     _updateLatestButtonVisibility();
+  }
+
+  Future<void> _scrollToLatestFromUser() {
+    _preserveArtifactFocus = false;
+    _scrollIntentVersion += 1;
+    return _scrollToLatest();
+  }
+
+  void _scheduleArtifactFocus({int attempt = 0, int? intentVersion}) {
+    if (_artifactFocusFrameScheduled) return;
+    final focusIntentVersion = intentVersion ?? ++_scrollIntentVersion;
+    _artifactFocusFrameScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _artifactFocusFrameScheduled = false;
+      if (!mounted || focusIntentVersion != _scrollIntentVersion) return;
+      final artifactContext = _activeArtifactPanelKey.currentContext;
+      if (artifactContext == null) {
+        if (attempt < 2) {
+          _scheduleArtifactFocus(
+            attempt: attempt + 1,
+            intentVersion: focusIntentVersion,
+          );
+        }
+        return;
+      }
+      final renderObject = artifactContext.findRenderObject();
+      final viewport = RenderAbstractViewport.maybeOf(renderObject);
+      if (renderObject == null ||
+          viewport == null ||
+          !_chatScrollController.hasClients) {
+        if (attempt < 2) {
+          _scheduleArtifactFocus(
+            attempt: attempt + 1,
+            intentVersion: focusIntentVersion,
+          );
+        }
+        return;
+      }
+      final position = _chatScrollController.position;
+      final artifactLeadingOffset = viewport
+          .getOffsetToReveal(renderObject, 0)
+          .offset;
+      final targetOffset =
+          (artifactLeadingOffset - position.viewportDimension * 0.25).clamp(
+            position.minScrollExtent,
+            position.maxScrollExtent,
+          );
+      unawaited(
+        _chatScrollController
+            .animateTo(
+              targetOffset,
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOutCubic,
+            )
+            .then((_) => _updateLatestButtonVisibility()),
+      );
+    });
   }
 
   bool _isComposerLockedForState(AgentStreamRunState state) =>
@@ -935,11 +1013,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted || !_state.isActive) return;
     _updateComposerFocusForRun(nextState);
     final shouldFollowLatest = _isNearLatest() || nextState.isActive;
+    final previousArtifactId = _latestArtifactId(_state);
+    final nextArtifactId = _latestArtifactId(nextState);
+    final shouldFocusArtifact =
+        nextArtifactId != null && nextArtifactId != previousArtifactId;
     final activeRequest = _activeRequest;
     if (activeRequest != null) {
       _activeRequest = _requestWithThreadId(activeRequest, nextState.threadId);
     }
-    _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
+    _applyRunStateUpdate(
+      nextState,
+      shouldFollowLatest: shouldFollowLatest,
+      shouldFocusArtifact: shouldFocusArtifact,
+    );
   }
 
   void _updateComposerFocusForRun(AgentStreamRunState nextState) {
@@ -966,6 +1052,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void _applyRunStateUpdate(
     AgentStreamRunState nextState, {
     required bool shouldFollowLatest,
+    bool shouldFocusArtifact = false,
   }) {
     if (!mounted) return;
     _setRunState(nextState);
@@ -975,7 +1062,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _persistInteractionState();
     }
     _maybeStartAutoVoicePlayback(nextState);
-    if (shouldFollowLatest) _scheduleScrollToLatest();
+    if (shouldFocusArtifact) {
+      _preserveArtifactFocus = true;
+      _scheduleArtifactFocus();
+    } else if (shouldFollowLatest && !_preserveArtifactFocus) {
+      _scheduleScrollToLatest();
+    }
   }
 
   Future<void> _startRun(
@@ -988,6 +1080,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final requestWithThread = _requestWithConversationThread(request);
 
     _cancelRunSubscription();
+    _preserveArtifactFocus = false;
     _activeRequest = requestWithThread;
     setState(() {
       _setRunState(initialState ?? const AgentStreamRunState().start());
@@ -1445,6 +1538,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                         _activeVoicePlaybackIdNotifier,
                                     actionStateRevisionListenable:
                                         _actionStateRevisionNotifier,
+                                    artifactPanelKey: _activeArtifactPanelKey,
                                     canRetryForState: _canRetryForState,
                                     onRetry: _retryRun,
                                     onArtifactAction: _handleArtifactAction,
@@ -1478,7 +1572,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                             bottom: 12,
                             child: FilledButton.tonalIcon(
                               key: const ValueKey('agent-scroll-latest-button'),
-                              onPressed: _scrollToLatest,
+                              onPressed: _scrollToLatestFromUser,
                               icon: const Icon(
                                 Icons.keyboard_arrow_down_rounded,
                               ),
@@ -1895,6 +1989,7 @@ AgentHubHistoryMessage _historyMessageFromSnapshot(
         ? AgentHubHistoryRole.user
         : AgentHubHistoryRole.assistant,
     content: snapshot.content,
+    runState: snapshot.runState,
   );
 }
 
@@ -1904,6 +1999,51 @@ AgentHubHistorySnapshot _historySnapshotFromMessage(
   return AgentHubHistorySnapshot(
     role: message.role == AgentHubHistoryRole.user ? 'user' : 'assistant',
     content: message.content,
+    runState: _historyRunStateForPersistence(message),
+  );
+}
+
+AgentStreamRunState? _historyRunStateForPersistence(
+  AgentHubHistoryMessage message,
+) {
+  final state = message.runState;
+  if (message.role != AgentHubHistoryRole.assistant || state == null) {
+    return null;
+  }
+
+  final structuredEvents = <String, AgentStreamEvent>{};
+  final artifactEvents = state.artifactEvents.isNotEmpty
+      ? state.artifactEvents.values
+      : state.events.where((event) => event.type.startsWith('artifact.'));
+  for (final event in artifactEvents) {
+    final key = event.artifactId ?? event.eventId ?? event.mergeKey;
+    structuredEvents['artifact:$key'] = event;
+  }
+  final finalActionEvents = state.actionEvents.isNotEmpty
+      ? state.actionEvents.values
+      : state.events.where((event) => event.type.startsWith('action.'));
+  for (final event in finalActionEvents.where(
+    (event) =>
+        event.type == 'action.applied' ||
+        event.type == 'action.failed' ||
+        event.type == 'action.rejected',
+  )) {
+    final key = event.actionId ?? event.eventId ?? event.mergeKey;
+    structuredEvents['action:$key'] = event;
+  }
+  if (structuredEvents.isEmpty) return null;
+
+  final events = List<AgentStreamEvent>.unmodifiable(structuredEvents.values);
+  return AgentStreamRunState(
+    phase: AgentStreamRunPhase.finished,
+    events: events,
+    threadId: state.threadId,
+    runId: state.runId,
+    messageId: state.messageId,
+    textContent: message.content,
+    artifactEvents: {for (final event in events) ?event.artifactId: event},
+    actionEvents: {for (final event in events) ?event.actionId: event},
+    completedAssistantMessageReceived: true,
   );
 }
 
@@ -2131,6 +2271,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     required this.stateListenable,
     required this.activeVoicePlaybackIdListenable,
     required this.actionStateRevisionListenable,
+    this.artifactPanelKey,
     required this.canRetryForState,
     this.onRetry,
     this.onArtifactAction,
@@ -2145,6 +2286,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   final ValueListenable<AgentStreamRunState> stateListenable;
   final ValueListenable<String?> activeVoicePlaybackIdListenable;
   final ValueListenable<int> actionStateRevisionListenable;
+  final Key? artifactPanelKey;
   final bool Function(AgentStreamRunState state) canRetryForState;
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
@@ -2186,6 +2328,7 @@ class _AgentRunTranscriptListenableState
           onRetry: widget.onRetry,
           onArtifactAction: widget.onArtifactAction,
           onFormSubmit: widget.onFormSubmit,
+          artifactPanelKey: widget.artifactPanelKey,
           onQuickReplySelected: widget.onQuickReplySelected,
           pendingActionIds: widget.pendingActionIds,
           artifactCards: _artifactCardsForState(state),
@@ -2239,6 +2382,7 @@ class AgentRunTranscript extends StatelessWidget {
     this.onRetry,
     this.onArtifactAction,
     this.onFormSubmit,
+    this.artifactPanelKey,
     this.onQuickReplySelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
@@ -2254,6 +2398,7 @@ class AgentRunTranscript extends StatelessWidget {
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final Key? artifactPanelKey;
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
@@ -2283,6 +2428,7 @@ class AgentRunTranscript extends StatelessWidget {
     final shouldRenderQuickReplies =
         quickReplies.length == 3 &&
         !state.isAwaitingVisibleReply &&
+        !artifactCards.any((card) => card.isForm) &&
         onQuickReplySelected != null;
     final avatarMode = _avatarMode;
     final loopDecor = _loopDecorState;
@@ -2368,6 +2514,7 @@ class AgentRunTranscript extends StatelessWidget {
               if (artifactCards.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 AgentArtifactPanel(
+                  key: artifactPanelKey,
                   cards: artifactCards,
                   onAction: onArtifactAction,
                   onFormSubmit: onFormSubmit,
@@ -5429,6 +5576,18 @@ Iterable<AgentStreamEvent> _artifactEventsForState(AgentStreamRunState state) {
   return state.artifactEvents.isNotEmpty
       ? state.artifactEvents.values
       : state.events;
+}
+
+String? _latestArtifactId(AgentStreamRunState state) {
+  if (state.artifactEvents.isNotEmpty) {
+    return state.artifactEvents.keys.last;
+  }
+  for (final event in state.events.reversed) {
+    if (!event.type.startsWith('artifact.')) continue;
+    final artifactId = event.artifactId?.trim();
+    if (artifactId != null && artifactId.isNotEmpty) return artifactId;
+  }
+  return null;
 }
 
 Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {

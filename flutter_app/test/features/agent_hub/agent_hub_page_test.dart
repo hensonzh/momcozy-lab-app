@@ -177,6 +177,84 @@ void main() {
     expect(greetingRect.top - chatRect.top, lessThan(120));
   });
 
+  testWidgets('Agent Hub focuses a newly arrived artifact near viewport top', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    final history = List<AgentHubHistoryMessage>.generate(
+      12,
+      (index) => AgentHubHistoryMessage(
+        role: index.isEven
+            ? AgentHubHistoryRole.user
+            : AgentHubHistoryRole.assistant,
+        content: '历史消息 $index：用于形成足够长的对话。',
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          historyMessages: history,
+        ),
+        tickersEnabled: true,
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '帮我准备待产包',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    client.emit(
+      0,
+      AgentStreamEvent({
+        'event_id': 'artifact-focus-event',
+        'type': 'artifact.created',
+        'thread_id': 'thread-artifact-focus',
+        'run_id': 'run-artifact-focus',
+        'artifact_id': 'artifact-focus-form',
+        'sequence': 1,
+        'payload': {
+          'artifact_type': 'form',
+          'schema_version': '1.0',
+          'form': {
+            'id': 'hospital_bag_intake',
+            'title': '信息采集',
+            'fields': [
+              for (var index = 0; index < 6; index++)
+                {
+                  'id': 'field_$index',
+                  'label': '基本信息｜字段 ${index + 1}',
+                  'type': 'text',
+                  'required': true,
+                },
+            ],
+          },
+        },
+      }),
+    );
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final chatRect = tester.getRect(
+      find.byKey(const ValueKey('agent-chat-scroll-view')),
+    );
+    final artifactRect = tester.getRect(
+      find.byKey(const ValueKey('agent-artifact-panel')),
+    );
+    expect(artifactRect.top, greaterThan(chatRect.top + 70));
+    expect(artifactRect.top, lessThan(chatRect.top + chatRect.height * 0.55));
+  });
+
   testWidgets('Agent Hub marks active assistant avatar as thinking', (
     tester,
   ) async {
@@ -665,6 +743,49 @@ void main() {
       expect(find.byIcon(Icons.chevron_right_rounded), findsNothing);
     },
   );
+
+  testWidgets('Agent Hub suppresses quick replies while a form is actionable', (
+    tester,
+  ) async {
+    final formEvent = AgentStreamEvent({
+      'type': 'artifact.created',
+      'artifact_id': 'quick-reply-form',
+      'payload': {
+        'artifact_type': 'form',
+        'schema_version': '1.0',
+        'form': {
+          'id': 'hospital_bag_intake',
+          'title': '信息采集',
+          'fields': [
+            {
+              'id': 'due_date_or_week',
+              'label': '基本信息｜预产期或当前孕周',
+              'type': 'text',
+            },
+          ],
+        },
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentRunTranscript(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '请先补充信息。',
+            quickReplies: const ['快捷一', '快捷二', '快捷三'],
+            events: [formEvent],
+          ),
+          onArtifactAction: (_) {},
+          onQuickReplySelected: (_) {},
+        ),
+      ),
+    );
+
+    expect(find.text('信息采集'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
+    expect(find.text('快捷一'), findsNothing);
+  });
 
   testWidgets('Agent Hub renders quick replies as selectable legacy pills', (
     tester,
@@ -2501,6 +2622,53 @@ void main() {
     expect(find.text('提交人工支持'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub restores historical artifacts from durable snapshot', (
+    tester,
+  ) async {
+    final artifactEvent = _productionArtifactEvent(
+      id: 'restored-history-preview',
+      type: 'milk_plan_preview',
+      payload: {
+        'title': '历史奶量计划',
+        'summary': '这张卡片来自上一次会话。',
+        'direction': 'maintain',
+        'tasks': [
+          {'title': '20:00 泵奶'},
+        ],
+      },
+    );
+    final historicalRunState =
+        const AgentStreamRunState(phase: AgentStreamRunPhase.streaming)
+            .applyEvent(artifactEvent)
+            .copyWith(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '这是上一次的计划。',
+            );
+    final store = _MemoryAgentHubInteractionStateStore(
+      AgentHubInteractionSnapshot(
+        historyMessages: [
+          AgentHubHistorySnapshot(
+            role: 'assistant',
+            content: '这是上一次的计划。',
+            runState: historicalRunState,
+          ),
+        ],
+      ),
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
+    await tester.pumpAndSettle();
+
+    expect(find.text('这是上一次的计划。'), findsOneWidget);
+    expect(
+      find.byKey(
+        const ValueKey('agent-artifact-milk-preview-restored-history-preview'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('20:00 泵奶'), findsOneWidget);
+  });
+
   testWidgets(
     'Agent Hub resumes stream after action confirmation and keeps backend terminal status',
     (tester) async {
@@ -3165,10 +3333,7 @@ void main() {
     expect(find.text('产褥垫'), findsOneWidget);
     expect(find.text('婴儿连体衣'), findsNothing);
     final babyGroupFinder = find.text('宝宝用品');
-    await tester.drag(
-      find.byType(Scrollable).first,
-      const Offset(0, -240),
-    );
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -240));
     await tester.pumpAndSettle();
     await tester.tap(babyGroupFinder);
     await tester.pump();
