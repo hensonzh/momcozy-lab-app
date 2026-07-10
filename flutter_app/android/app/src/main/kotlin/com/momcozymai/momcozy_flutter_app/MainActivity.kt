@@ -21,6 +21,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.provider.Settings
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.android.FlutterActivity
@@ -861,16 +862,47 @@ class MainActivity : FlutterActivity() {
             result.success(null)
             return
         }
-        val playedFrames = track.playbackHeadPosition.toLong()
+        val targetFrames = voiceAudioTrackWrittenFrames
+        val sampleRate = voiceAudioTrackSampleRate.coerceAtLeast(1)
+        val startedAtMs = SystemClock.uptimeMillis()
+        val playedFrames = playbackHeadFrames(track)
         val remainingFrames = (voiceAudioTrackWrittenFrames - playedFrames).coerceAtLeast(0L)
-        val drainMs =
-            ((remainingFrames * 1000L) / voiceAudioTrackSampleRate.coerceAtLeast(1)).coerceAtMost(1200L) + 80L
-        Handler(Looper.getMainLooper()).postDelayed({
+        val expectedRemainingMs = (remainingFrames * 1000L) / sampleRate
+        val maxDrainMs = (expectedRemainingMs + VOICE_PCM_FINISH_DRAIN_SLACK_MS)
+            .coerceIn(VOICE_PCM_FINISH_MIN_DRAIN_MS, VOICE_PCM_FINISH_MAX_DRAIN_MS)
+        val handler = Handler(Looper.getMainLooper())
+
+        fun completeFinish() {
             if (voiceAudioTrack === track) {
                 stopVoicePcmPlayback()
             }
             result.success(null)
-        }, drainMs)
+        }
+
+        fun pollPlaybackTail() {
+            if (voiceAudioTrack !== track) {
+                result.success(null)
+                return
+            }
+            val elapsedMs = SystemClock.uptimeMillis() - startedAtMs
+            val playedNow = playbackHeadFrames(track)
+            if (
+                targetFrames <= 0L ||
+                playedNow >= targetFrames ||
+                elapsedMs >= maxDrainMs ||
+                track.playState != AudioTrack.PLAYSTATE_PLAYING
+            ) {
+                completeFinish()
+                return
+            }
+            handler.postDelayed(::pollPlaybackTail, VOICE_PCM_FINISH_POLL_MS)
+        }
+
+        handler.postDelayed(::pollPlaybackTail, VOICE_PCM_FINISH_POLL_MS)
+    }
+
+    private fun playbackHeadFrames(track: AudioTrack): Long {
+        return track.playbackHeadPosition.toLong() and 0xffffffffL
     }
 
     private fun stopVoicePcmPlayback() {
@@ -921,6 +953,10 @@ class MainActivity : FlutterActivity() {
             "com.momcozymai.flutter/pump_agent_upload"
         private const val VOICE_PCM_PLAYER_CHANNEL =
             "com.momcozymai.flutter/voice_pcm_player"
+        private const val VOICE_PCM_FINISH_POLL_MS = 40L
+        private const val VOICE_PCM_FINISH_MIN_DRAIN_MS = 160L
+        private const val VOICE_PCM_FINISH_DRAIN_SLACK_MS = 1200L
+        private const val VOICE_PCM_FINISH_MAX_DRAIN_MS = 30000L
         private const val REQUEST_BLE_PERMISSIONS = 4101
         private const val REQUEST_NOTIFICATION_PERMISSION = 4102
         const val EXTRA_NAV_PATH = "momcozy.flutter.extra.NAV_PATH"
