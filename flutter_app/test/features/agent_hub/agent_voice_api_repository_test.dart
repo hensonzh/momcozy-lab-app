@@ -448,18 +448,24 @@ class _RecordingVoiceWebSocketConnection
     implements AgentVoiceWebSocketConnection {
   _RecordingVoiceWebSocketConnection(this.rawFrames, {this.failure});
 
-  final List<String> rawFrames;
+  final List<Object?> rawFrames;
   final Object? failure;
+  final sentTexts = <String>[];
   int closeCount = 0;
 
   @override
-  Stream<String> get frames async* {
+  Stream<Object?> get frames async* {
     for (final frame in rawFrames) {
       await Future<void>.delayed(Duration.zero);
       yield frame;
     }
     final failure = this.failure;
     if (failure != null) throw failure;
+  }
+
+  @override
+  Future<void> send(String text) async {
+    sentTexts.add(text);
   }
 
   @override

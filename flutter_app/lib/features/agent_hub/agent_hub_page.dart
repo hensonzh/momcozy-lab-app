@@ -172,7 +172,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _scheduledScrollToLatestSmooth = false;
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
   String? _activeAutoVoicePlaybackId;
-  String _autoVoiceSubmittedText = '';
+  String _autoVoiceAppendedText = '';
+  AgentVoiceRealtimePlaybackSession? _autoVoiceSession;
+  bool _autoVoiceSessionFinished = false;
   VoidCallback? _unsubscribeVoicePlaybackIdle;
   bool _consumedInitialAutoSend = false;
 
@@ -188,7 +190,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _chatScrollController.addListener(_updateLatestButtonVisibility);
     _syncVoicePlaybackIdleSubscription();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _updateLatestButtonVisibility();
+      if (!mounted) return;
+      _updateLatestButtonVisibility();
+      _maybeStartGreetingVoicePlayback();
     });
   }
 
@@ -814,6 +818,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (_state.isActive) {
       _sendBestEffortServerCancel(_state, _activeRequest);
     }
+    widget.voicePlaybackCoordinator?.cancel();
     _cancelRunSubscription();
     _composerController.clear();
     setState(() {
@@ -994,39 +999,76 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
 
     final playbackId = _autoVoicePlaybackId(nextState);
-    if (_activeAutoVoicePlaybackId != playbackId) {
+    final isNewPlayback = _activeAutoVoicePlaybackId != playbackId;
+    if (isNewPlayback) {
+      _cancelActiveAutoVoiceSession();
       _activeAutoVoicePlaybackId = playbackId;
-      _autoVoiceSubmittedText = '';
+      _autoVoiceAppendedText = '';
+      _autoVoiceSessionFinished = false;
     }
-    if (coordinator.activeSource == AgentVoicePlaybackSource.autoReply &&
-        coordinator.activeId == playbackId) {
+
+    final session = _autoVoiceSession ?? _startAutoVoiceSession(playbackId);
+    if (session == null) {
+      if (coordinator.activeSource != AgentVoicePlaybackSource.autoReply ||
+          coordinator.activeId != playbackId) {
+        _queueBlockedAutoVoiceReplay(nextState);
+      }
       return;
     }
-    final textToPlay = _nextAutoVoiceTextToPlay(text);
-    if (textToPlay.trim().isEmpty) return;
+
+    _pendingAutoVoiceReplay = null;
+    final textToAppend = _nextAutoVoiceTextToAppend(text);
+    if (textToAppend.trim().isNotEmpty) {
+      session.append(textToAppend);
+      _autoVoiceAppendedText = text;
+    }
+    if (_shouldFinishAutoVoicePlayback(nextState)) {
+      _finishActiveAutoVoiceSession();
+    }
+  }
+
+  AgentVoiceRealtimePlaybackSession? _startAutoVoiceSession(String playbackId) {
+    final coordinator = widget.voicePlaybackCoordinator;
+    final player = widget.voicePlaybackPlayer;
+    if (coordinator == null || player == null) return null;
 
     final result = coordinator.request(
       id: playbackId,
       source: AgentVoicePlaybackSource.autoReply,
-      cancel: () => unawaited(player.stop().catchError((Object _) {})),
+      cancel: _cancelActiveAutoVoiceSession,
     );
-    if (result.status == AgentVoicePlaybackRequestStatus.blocked) {
-      _queueBlockedAutoVoiceReplay(nextState);
-      return;
-    }
+    if (result.status == AgentVoicePlaybackRequestStatus.blocked) return null;
     final handle = result.handle;
     if (!mounted ||
         result.status != AgentVoicePlaybackRequestStatus.started ||
         handle == null) {
-      return;
+      return null;
     }
-    _pendingAutoVoiceReplay = null;
-    _autoVoiceSubmittedText = text;
-    _startVoicePlayback(
-      handle: handle,
-      text: textToPlay,
-      onFinished: _tryContinueAutoVoicePlayback,
+
+    final session = player.startRealtimeSession();
+    _autoVoiceSession = session;
+    _autoVoiceSessionFinished = false;
+    _setVoiceState(_voiceState.startPlayback(handle.id));
+    unawaited(
+      session.done
+          .then((_) {
+            if (!mounted || !handle.isCurrent || _autoVoiceSession != session) {
+              return;
+            }
+            _autoVoiceSession = null;
+            handle.finish();
+            _setVoiceState(const AgentVoiceState());
+          })
+          .catchError((Object error) {
+            if (!mounted || !handle.isCurrent || _autoVoiceSession != session) {
+              return;
+            }
+            _autoVoiceSession = null;
+            handle.finish();
+            _setVoiceState(_voiceState.fail(error));
+          }),
     );
+    return session;
   }
 
   void _startVoicePlayback({
@@ -1061,7 +1103,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         activePlaybackId.isNotEmpty &&
         (state.isActive ||
             _pendingAutoVoiceReplay != null ||
-            _autoVoiceSubmittedText.isNotEmpty)) {
+            _autoVoiceAppendedText.isNotEmpty)) {
       return activePlaybackId;
     }
     return _firstNonEmpty([state.messageId, state.runId, state.threadId]) ?? '';
@@ -1073,26 +1115,45 @@ class _AgentHubPageState extends State<AgentHubPage> {
         phase == AgentStreamRunPhase.finished;
   }
 
-  String _nextAutoVoiceTextToPlay(String text) {
-    if (_autoVoiceSubmittedText.isEmpty) return text;
-    if (text.startsWith(_autoVoiceSubmittedText)) {
-      return text.substring(_autoVoiceSubmittedText.length);
+  String _nextAutoVoiceTextToAppend(String text) {
+    if (_autoVoiceAppendedText.isEmpty) return text;
+    if (text.startsWith(_autoVoiceAppendedText)) {
+      return text.substring(_autoVoiceAppendedText.length);
     }
-    if (_autoVoiceSubmittedText.length >= text.length) return '';
-    return text.substring(_autoVoiceSubmittedText.length);
+    if (_autoVoiceAppendedText.length >= text.length) return '';
+    return text.substring(_autoVoiceAppendedText.length);
   }
 
-  void _tryContinueAutoVoicePlayback() {
-    if (!mounted || !_autoVoiceEnabled) return;
-    scheduleMicrotask(() {
-      if (!mounted || !_autoVoiceEnabled) return;
-      _maybeStartAutoVoicePlayback(_state);
-    });
+  bool _shouldFinishAutoVoicePlayback(AgentStreamRunState state) {
+    return state.hasCompletedAssistantMessage ||
+        state.phase == AgentStreamRunPhase.finished ||
+        state.phase == AgentStreamRunPhase.waitingForConfirmation;
+  }
+
+  void _finishActiveAutoVoiceSession() {
+    if (_autoVoiceSessionFinished) return;
+    _autoVoiceSessionFinished = true;
+    _autoVoiceSession?.finish();
+  }
+
+  void _cancelActiveAutoVoiceSession() {
+    final session = _autoVoiceSession;
+    _autoVoiceSession = null;
+    _autoVoiceSessionFinished = false;
+    if (session != null) {
+      unawaited(session.cancel().catchError((Object _) {}));
+    }
+    if (mounted &&
+        _voiceState.isPlaybackActive &&
+        _voiceState.playbackId == _activeAutoVoicePlaybackId) {
+      _setVoiceState(_voiceState.cancelPlayback());
+    }
   }
 
   void _resetAutoVoiceProgress() {
+    _cancelActiveAutoVoiceSession();
     _activeAutoVoicePlaybackId = null;
-    _autoVoiceSubmittedText = '';
+    _autoVoiceAppendedText = '';
   }
 
   void _queueBlockedAutoVoiceReplay(AgentStreamRunState state) {
@@ -1124,6 +1185,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!_state.isActive) return;
     final activeState = _state;
     final activeRequest = _activeRequest;
+    widget.voicePlaybackCoordinator?.cancel();
+    _pendingAutoVoiceReplay = null;
+    _resetAutoVoiceProgress();
     _setRunState(activeState.requestCancel());
     _persistInteractionState();
     _cancelRunSubscription();

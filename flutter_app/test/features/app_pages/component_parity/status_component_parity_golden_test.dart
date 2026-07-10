@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/features/status/data/status_api_repository.d
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../../support/fixture_api_transport.dart';
+import '../../../support/fake_agent_voice.dart';
 import '../../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -132,6 +133,7 @@ Future<void> _pumpStatusComponentApp(WidgetTester tester) async {
               'status_text': 'Service Unavailable',
             },
           }),
+          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
           blePlatform: FakeBlePlatform(
             initialPermission: BlePermissionState.granted,
           ),
