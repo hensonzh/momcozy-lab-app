@@ -219,6 +219,91 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub reuses avatar video across TickerMode changes', (
+    tester,
+  ) async {
+    const state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      messageId: 'msg-ticker-reuse',
+      textContent: 'Still responding.',
+    );
+
+    await tester.pumpWidget(
+      _host(const AgentHubPage(state: state), tickersEnabled: true),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(videoPlayerPlatform.createdAssets, [
+      MomCozyAssets.agentThinkingAvatar,
+    ]);
+
+    await tester.pumpWidget(
+      _host(const AgentHubPage(state: state), tickersEnabled: false),
+    );
+    await tester.pump();
+
+    expect(videoPlayerPlatform.disposedIds, isEmpty);
+    expect(videoPlayerPlatform.pausedIds, isNotEmpty);
+
+    await tester.pumpWidget(
+      _host(const AgentHubPage(state: state), tickersEnabled: true),
+    );
+    await tester.pump();
+
+    expect(videoPlayerPlatform.createdAssets, [
+      MomCozyAssets.agentThinkingAvatar,
+    ]);
+    expect(videoPlayerPlatform.playedIds.length, greaterThanOrEqualTo(2));
+  });
+
+  testWidgets('Agent Hub caches thinking and speaking avatar videos', (
+    tester,
+  ) async {
+    const state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      messageId: 'msg-mode-reuse',
+      textContent: 'Switch avatar mode.',
+    );
+
+    await tester.pumpWidget(
+      _host(const AgentRunTranscript(state: state), tickersEnabled: true),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-thinking-media')),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        const AgentRunTranscript(
+          state: state,
+          activeVoicePlaybackId: 'msg-mode-reuse',
+        ),
+        tickersEnabled: true,
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('agent-assistant-avatar-speaking-media')),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(
+      _host(const AgentRunTranscript(state: state), tickersEnabled: true),
+    );
+    await tester.pump();
+
+    expect(videoPlayerPlatform.createdAssets, [
+      MomCozyAssets.agentThinkingAvatar,
+      MomCozyAssets.agentSpeakingAvatar,
+    ]);
+    expect(videoPlayerPlatform.disposedIds, isEmpty);
+  });
+
   testWidgets('Agent Hub restores history and starts a new local session', (
     tester,
   ) async {
@@ -4702,6 +4787,7 @@ class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   var _nextPlayerId = 1;
   final createdAssets = <String>[];
   final playedIds = <int>[];
+  final pausedIds = <int>[];
   final disposedIds = <int>[];
   final loopingById = <int, bool>{};
   final volumeById = <int, double>{};
@@ -4781,6 +4867,7 @@ class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
 
   @override
   Future<void> pause(int playerId) async {
+    pausedIds.add(playerId);
     _eventsById[playerId]?.add(
       VideoEvent(
         eventType: VideoEventType.isPlayingStateUpdate,
