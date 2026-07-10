@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
@@ -105,18 +107,60 @@ void main() {
         [1, 2],
         [1, 2],
       ]);
-      expect(pcmPlayer.stops, 1);
+      expect(pcmPlayer.finishes, 1);
+      expect(pcmPlayer.stops, 0);
     },
   );
+
+  test('AgentVoiceApiPlaybackPlayer streams realtime appended text', () async {
+    final connection = _RecordingRealtimeSessionConnection();
+    final repository = _RecordingVoiceRepository(connection: connection);
+    final pcmPlayer = _RecordingPcmPlayer();
+    final player = AgentVoiceApiPlaybackPlayer(
+      repository: repository,
+      pcmPlayer: pcmPlayer,
+    );
+
+    final session = player.startRealtimeSession();
+    await Future<void>.delayed(Duration.zero);
+
+    session.append('第一段内容，第二段内容');
+    session.finish();
+    connection.emitOpened();
+    await Future<void>.delayed(Duration.zero);
+    connection.emitAudio([3, 4]);
+    connection.emitCompleted();
+    await session.done;
+
+    expect(repository.openRealtimeSessionCount, 1);
+    expect(pcmPlayer.starts, 1);
+    expect(pcmPlayer.writes, [
+      [3, 4],
+    ]);
+    expect(pcmPlayer.finishes, 1);
+    expect(pcmPlayer.stops, 0);
+    expect(connection.appendedTexts.join(), contains('第一段内容'));
+    expect(connection.finishCount, 1);
+  });
 }
 
 class _RecordingVoiceRepository implements AgentVoiceRepository {
+  _RecordingVoiceRepository({this.connection});
+
   final texts = <String>[];
+  final _RecordingRealtimeSessionConnection? connection;
+  var openRealtimeSessionCount = 0;
 
   @override
   Stream<List<int>> realtimeVoicePcmStream({required String text}) async* {
     texts.add(text);
     yield [1, 2];
+  }
+
+  @override
+  Future<AgentVoiceRealtimeSessionConnection> openRealtimeVoiceSession() async {
+    openRealtimeSessionCount += 1;
+    return connection ?? _RecordingRealtimeSessionConnection();
   }
 
   @override
@@ -135,12 +179,18 @@ class _RecordingVoiceRepository implements AgentVoiceRepository {
 
 class _RecordingPcmPlayer implements AgentVoicePcmPlayer {
   var starts = 0;
+  var finishes = 0;
   var stops = 0;
   final writes = <List<int>>[];
 
   @override
   Future<void> start({int sampleRate = 24000, int channels = 1}) async {
     starts += 1;
+  }
+
+  @override
+  Future<void> finish() async {
+    finishes += 1;
   }
 
   @override
@@ -151,5 +201,59 @@ class _RecordingPcmPlayer implements AgentVoicePcmPlayer {
   @override
   Future<void> write(List<int> bytes) async {
     writes.add(bytes);
+  }
+}
+
+class _RecordingRealtimeSessionConnection
+    implements AgentVoiceRealtimeSessionConnection {
+  final _controller = StreamController<AgentVoiceSessionEvent>();
+  final appendedTexts = <String>[];
+  var finishCount = 0;
+  var cancelCount = 0;
+  var closeCount = 0;
+
+  @override
+  Stream<AgentVoiceSessionEvent> get events => _controller.stream;
+
+  @override
+  Future<void> append(String text) async {
+    appendedTexts.add(text);
+  }
+
+  @override
+  Future<void> finish() async {
+    finishCount += 1;
+  }
+
+  @override
+  Future<void> cancel() async {
+    cancelCount += 1;
+  }
+
+  @override
+  Future<void> close() async {
+    closeCount += 1;
+    await _controller.close();
+  }
+
+  void emitOpened() {
+    _controller.add(
+      const AgentVoiceSessionEvent(type: AgentVoiceSessionEventType.opened),
+    );
+  }
+
+  void emitAudio(List<int> bytes) {
+    _controller.add(
+      AgentVoiceSessionEvent(
+        type: AgentVoiceSessionEventType.audioChunk,
+        audioBytes: bytes,
+      ),
+    );
+  }
+
+  void emitCompleted() {
+    _controller.add(
+      const AgentVoiceSessionEvent(type: AgentVoiceSessionEventType.completed),
+    );
   }
 }

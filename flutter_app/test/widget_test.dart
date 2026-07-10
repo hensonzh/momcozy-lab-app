@@ -15,6 +15,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import 'support/fixture_api_transport.dart';
+import 'support/fake_agent_voice.dart';
 
 void main() {
   testWidgets('route shell starts at Agent Hub and navigates bottom tabs', (
@@ -586,24 +587,83 @@ class _ControllableAgentStreamClient implements AgentStreamClient {
 }
 
 class _WidgetFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
+  final realtimeSessions = <_WidgetFakeVoiceRealtimePlaybackSession>[];
   Completer<void>? _active;
 
   @override
   Future<void> playText(String text) {
     _active = Completer<void>();
+    scheduleMicrotask(_completeActiveText);
     return _active!.future;
+  }
+
+  @override
+  AgentVoiceRealtimePlaybackSession startRealtimeSession() {
+    final session = _WidgetFakeVoiceRealtimePlaybackSession();
+    realtimeSessions.add(session);
+    return session;
   }
 
   @override
   Future<void> stop() async {
     complete();
+    for (final session in realtimeSessions.where(
+      (session) => !session.isDone,
+    )) {
+      await session.cancel();
+    }
   }
 
   void complete() {
+    _completeActiveText();
+    for (final session in realtimeSessions.where(
+      (session) => !session.isDone,
+    )) {
+      session.complete();
+    }
+  }
+
+  void _completeActiveText() {
     final active = _active;
     if (active != null && !active.isCompleted) {
       active.complete();
     }
+  }
+}
+
+class _WidgetFakeVoiceRealtimePlaybackSession
+    implements AgentVoiceRealtimePlaybackSession {
+  final appendedTexts = <String>[];
+  var finishCount = 0;
+  var cancelCount = 0;
+  final Completer<void> _done = Completer<void>();
+
+  bool get isDone => _done.isCompleted;
+
+  @override
+  Future<void> get done => _done.future;
+
+  @override
+  void append(String delta) {
+    appendedTexts.add(delta);
+  }
+
+  @override
+  void flush() {}
+
+  @override
+  void finish() {
+    finishCount += 1;
+  }
+
+  void complete() {
+    if (!_done.isCompleted) _done.complete();
+  }
+
+  @override
+  Future<void> cancel() async {
+    cancelCount += 1;
+    complete();
   }
 }
 
@@ -649,5 +709,6 @@ MomCozyApiRuntime _authenticatedRuntime({
     ),
     jsonTransport: FixtureApiJsonTransport(const {'status': 200, 'data': {}}),
     observability: observability,
+    agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
   );
 }

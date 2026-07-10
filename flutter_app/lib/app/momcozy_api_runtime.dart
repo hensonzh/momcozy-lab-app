@@ -54,6 +54,7 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
+    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
@@ -86,6 +87,7 @@ class MomCozyApiRuntime {
        now = now ?? DateTime.now {
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
+    _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
     _hasInjectedPumpProtocolPlatform = pumpProtocolPlatform != null;
@@ -98,6 +100,7 @@ class MomCozyApiRuntime {
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
+    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     String? userId,
     String? babyId,
     String? locale,
@@ -117,6 +120,7 @@ class MomCozyApiRuntime {
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
       observability: observability,
+      agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
     );
   }
 
@@ -129,6 +133,7 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     StorageMigrationApplyResult? storageMigrationResult,
     MomCozyObservability? observability,
+    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -209,6 +214,7 @@ class MomCozyApiRuntime {
       session: session,
       storageMigrationResult: storageMigrationResult,
       observability: runtimeObservability,
+      agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
@@ -234,6 +240,7 @@ class MomCozyApiRuntime {
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
+    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     Map<String, Object?>? legacyStorageSnapshot,
     StorageMigrationTargetStore? storageMigrationTargetStore,
   }) async {
@@ -268,6 +275,7 @@ class MomCozyApiRuntime {
       pumpProtocolPlatform: pumpProtocolPlatform,
       storageMigrationResult: storageMigrationResult,
       observability: observability,
+      agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
     );
   }
 
@@ -286,6 +294,7 @@ class MomCozyApiRuntime {
   _pumpNativeRuntimeCoordinatorFactory;
   AgentStreamClientEventClient? _clientEventClient;
   ApiMultipartTransport? _multipartTransport;
+  AgentVoicePlaybackPlayer? _agentVoicePlaybackPlayer;
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
   PumpNativeRuntimeCoordinator? _pumpNativeRuntimeCoordinator;
@@ -374,7 +383,8 @@ class MomCozyApiRuntime {
   }
 
   AgentVoicePlaybackPlayer get agentVoicePlaybackPlayer {
-    return AgentVoiceApiPlaybackPlayer(repository: agentVoiceRepository);
+    return _agentVoicePlaybackPlayer ??
+        AgentVoiceApiPlaybackPlayer(repository: agentVoiceRepository);
   }
 
   HospitalBagCartApiRepository get hospitalBagCartRepository {
@@ -454,11 +464,13 @@ class MomCozyRuntimeController extends ChangeNotifier {
       return MomCozyApiRuntime.fromSession(
         session,
         observability: _runtime.observability,
+        agentVoicePlaybackPlayer: _runtime._agentVoicePlaybackPlayer,
       );
     }
     return MomCozyApiRuntime.fromSession(
       session,
       observability: _runtime.observability,
+      agentVoicePlaybackPlayer: _runtime._agentVoicePlaybackPlayer,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {

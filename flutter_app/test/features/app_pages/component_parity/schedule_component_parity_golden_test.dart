@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_reposito
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../../support/fixture_api_transport.dart';
+import '../../../support/fake_agent_voice.dart';
 import '../../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -100,6 +101,7 @@ Future<void> _pumpScheduleComponentApp(WidgetTester tester) async {
               'data': <String, Object?>{'tasks': <Object?>[]},
             },
           }),
+          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
           blePlatform: FakeBlePlatform(
             initialPermission: BlePermissionState.granted,
           ),

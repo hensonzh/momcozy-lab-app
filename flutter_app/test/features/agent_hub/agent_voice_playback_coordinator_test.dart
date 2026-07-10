@@ -81,7 +81,7 @@ void main() {
       expect(coordinator.activeId, 'notification-1');
     });
 
-    test('does not notify idle while a higher priority voice takes over', () {
+    test('does not notify idle while a greeting voice takes over', () {
       final coordinator = AgentVoicePlaybackCoordinator();
       var idleCount = 0;
       final unsubscribe = coordinator.subscribeIdle(() {
@@ -89,47 +89,21 @@ void main() {
       });
 
       coordinator.request(
-        id: 'notification-1',
-        source: AgentVoicePlaybackSource.notification,
+        id: 'reply-1',
+        source: AgentVoicePlaybackSource.autoReply,
       );
-      final manual = coordinator.request(
-        id: 'message-1',
-        source: AgentVoicePlaybackSource.manualBubble,
+      final greeting = coordinator.request(
+        id: 'greeting-1',
+        source: AgentVoicePlaybackSource.greeting,
       );
 
-      expect(manual.status, AgentVoicePlaybackRequestStatus.started);
+      expect(greeting.status, AgentVoicePlaybackRequestStatus.started);
       expect(idleCount, 0);
 
-      manual.handle?.finish();
+      greeting.handle?.finish();
 
       expect(idleCount, 1);
       unsubscribe();
-    });
-
-    test('lets manual bubble playback interrupt notification voice', () {
-      final coordinator = AgentVoicePlaybackCoordinator();
-      var notificationCancelled = false;
-      var manualCancelled = false;
-
-      coordinator.request(
-        id: 'notification-1',
-        source: AgentVoicePlaybackSource.notification,
-        cancel: () => notificationCancelled = true,
-      );
-      final manual = coordinator.request(
-        id: 'message-1',
-        source: AgentVoicePlaybackSource.manualBubble,
-        cancel: () => manualCancelled = true,
-      );
-
-      expect(manual.status, AgentVoicePlaybackRequestStatus.started);
-      expect(notificationCancelled, isTrue);
-      expect(manualCancelled, isFalse);
-      expect(coordinator.activeSource, AgentVoicePlaybackSource.manualBubble);
-
-      expect(manual.handle?.cancel(), isTrue);
-      expect(manualCancelled, isTrue);
-      expect(coordinator.activeSource, isNull);
     });
 
     test('preserves notification voice for hidden followup work', () {
