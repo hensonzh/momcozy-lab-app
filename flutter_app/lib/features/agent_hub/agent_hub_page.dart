@@ -3346,9 +3346,11 @@ class _AgentAssistantAvatar extends StatefulWidget {
 class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pulseController;
-  VideoPlayerController? _videoController;
-  String? _videoAsset;
-  bool _videoReady = false;
+  final Map<_AgentAssistantAvatarMode, VideoPlayerController>
+  _videoControllers = <_AgentAssistantAvatarMode, VideoPlayerController>{};
+  final Set<_AgentAssistantAvatarMode> _videoReadyModes =
+      <_AgentAssistantAvatarMode>{};
+  _AgentAssistantAvatarMode? _playingVideoMode;
 
   @override
   void initState() {
@@ -3363,7 +3365,7 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _syncPulseController();
-    _syncVideoController();
+    _syncVideoPlayback();
   }
 
   @override
@@ -3371,19 +3373,19 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.mode != widget.mode) {
       _syncPulseController();
-      _syncVideoController();
+      _syncVideoPlayback();
     }
   }
 
   @override
   void dispose() {
-    _disposeVideoController();
+    _disposeVideoControllers();
     _pulseController.dispose();
     super.dispose();
   }
 
   void _syncPulseController() {
-    if (_activeAvatarAsset() == null) {
+    if (_activeAnimationMode() == null) {
       _pulseController.stop();
       _pulseController.value = 0;
       return;
@@ -3391,56 +3393,88 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
     if (!_pulseController.isAnimating) _pulseController.repeat();
   }
 
-  void _syncVideoController() {
-    final asset = _activeAvatarAsset();
-    if (asset == null) {
-      _disposeVideoController();
+  void _syncVideoPlayback() {
+    final activeMode = _activeAnimationMode();
+    final previousMode = _playingVideoMode;
+    if (previousMode != null && previousMode != activeMode) {
+      final previousController = _videoControllers[previousMode];
+      if (previousController != null &&
+          _videoReadyModes.contains(previousMode)) {
+        unawaited(_runVideoCommand(previousController.pause));
+      }
+      _playingVideoMode = null;
+    }
+
+    if (activeMode == null) return;
+    final controller = _ensureVideoController(activeMode);
+    if (!_videoReadyModes.contains(activeMode) ||
+        _playingVideoMode == activeMode) {
       return;
     }
-    if (_videoController != null && _videoAsset == asset) return;
-
-    _disposeVideoController();
-    _videoAsset = asset;
-    _videoReady = false;
-    final controller = VideoPlayerController.asset(asset);
-    _videoController = controller;
-
-    unawaited(
-      controller
-          .initialize()
-          .then((_) async {
-            if (!mounted || _videoController != controller) return;
-            await controller.setLooping(true);
-            await controller.setVolume(0);
-            await controller.play();
-            if (!mounted || _videoController != controller) return;
-            setState(() {
-              _videoReady = true;
-            });
-          })
-          .catchError((Object _) {
-            if (!mounted || _videoController != controller) return;
-            setState(() {
-              _videoReady = false;
-            });
-          }),
-    );
+    _playingVideoMode = activeMode;
+    unawaited(_runVideoCommand(controller.play));
   }
 
-  void _disposeVideoController() {
-    final controller = _videoController;
-    _videoController = null;
-    _videoAsset = null;
-    _videoReady = false;
-    if (controller != null) unawaited(controller.dispose());
+  VideoPlayerController _ensureVideoController(_AgentAssistantAvatarMode mode) {
+    final existing = _videoControllers[mode];
+    if (existing != null) return existing;
+
+    final controller = VideoPlayerController.asset(_videoAssetForMode(mode));
+    _videoControllers[mode] = controller;
+    unawaited(_initializeVideoController(mode, controller));
+    return controller;
   }
 
-  String? _activeAvatarAsset() {
+  Future<void> _initializeVideoController(
+    _AgentAssistantAvatarMode mode,
+    VideoPlayerController controller,
+  ) async {
+    try {
+      await controller.initialize();
+      if (!mounted || _videoControllers[mode] != controller) return;
+      await controller.setLooping(true);
+      await controller.setVolume(0);
+      if (!mounted || _videoControllers[mode] != controller) return;
+      _videoReadyModes.add(mode);
+      _syncVideoPlayback();
+      setState(() {});
+    } catch (_) {
+      if (!mounted || _videoControllers[mode] != controller) return;
+      _videoControllers.remove(mode);
+      _videoReadyModes.remove(mode);
+      if (_playingVideoMode == mode) _playingVideoMode = null;
+      unawaited(_runVideoCommand(controller.dispose));
+      setState(() {});
+    }
+  }
+
+  Future<void> _runVideoCommand(Future<void> Function() command) async {
+    try {
+      await command();
+    } catch (_) {
+      // The static avatar remains visible when the platform player rejects.
+    }
+  }
+
+  void _disposeVideoControllers() {
+    final controllers = _videoControllers.values.toList(growable: false);
+    _videoControllers.clear();
+    _videoReadyModes.clear();
+    _playingVideoMode = null;
+    for (final controller in controllers) {
+      unawaited(_runVideoCommand(controller.dispose));
+    }
+  }
+
+  _AgentAssistantAvatarMode? _activeAnimationMode() {
     if (!_shouldAnimateAvatar()) return null;
-    return switch (widget.mode) {
+    return widget.mode;
+  }
+
+  String _videoAssetForMode(_AgentAssistantAvatarMode mode) {
+    return switch (mode) {
       _AgentAssistantAvatarMode.speaking => MomCozyAssets.agentSpeakingAvatar,
       _AgentAssistantAvatarMode.thinking => MomCozyAssets.agentThinkingAvatar,
-      null => null,
     };
   }
 
@@ -3467,7 +3501,8 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
         : showThinkingVideo
         ? 'agent-assistant-avatar-thinking-media'
         : null;
-    final videoController = _videoController;
+    final videoController = mode == null ? null : _videoControllers[mode];
+    final videoReady = mode != null && _videoReadyModes.contains(mode);
 
     return SizedBox.square(
       key: const ValueKey('agent-assistant-avatar'),
@@ -3544,7 +3579,7 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
                     height: 32,
                     fit: BoxFit.cover,
                   ),
-                  if (_videoReady &&
+                  if (videoReady &&
                       videoController != null &&
                       activeAvatarKey != null)
                     Positioned.fill(
