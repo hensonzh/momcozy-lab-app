@@ -168,6 +168,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Timer? _persistentWriteTimer;
   Timer? _activeRunPersistentWriteTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
+  bool _scrollToLatestFrameScheduled = false;
+  bool _scheduledScrollToLatestSmooth = false;
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
   String? _activeAutoVoicePlaybackId;
   String _autoVoiceSubmittedText = '';
@@ -325,7 +327,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _persistActiveInteractionStateThrottled() {
-    _updateCachedInteractionState();
+    _updateCachedActiveRunState();
     if (widget.interactionStateStore == null ||
         _activeRunPersistentWriteTimer != null) {
       return;
@@ -334,6 +336,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _agentActiveRunPersistentWriteInterval,
       () {
         _activeRunPersistentWriteTimer = null;
+        _updateCachedInteractionState();
         _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
       },
     );
@@ -351,6 +354,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ..activeRequest = _activeRequest
         ..localActionStatuses = {..._localActionStatuses};
     }
+  }
+
+  void _updateCachedActiveRunState() {
+    final interactionState = _interactionState;
+    if (interactionState == null) return;
+    interactionState
+      ..runState = _state
+      ..autoVoiceEnabled = _autoVoiceEnabled
+      ..activeRequest = _activeRequest;
   }
 
   Future<void> _restorePersistedInteractionState() async {
@@ -506,9 +518,30 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _scheduleScrollToLatest({bool smooth = false}) {
+    _scheduledScrollToLatestSmooth = _scheduledScrollToLatestSmooth || smooth;
+    if (_scrollToLatestFrameScheduled) return;
+    _scrollToLatestFrameScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final shouldSmooth = _scheduledScrollToLatestSmooth;
+      _scrollToLatestFrameScheduled = false;
+      _scheduledScrollToLatestSmooth = false;
       if (!mounted) return;
-      unawaited(_scrollToLatest(smooth: smooth));
+      unawaited(
+        _scrollToLatest(smooth: shouldSmooth).then((_) {
+          if (!shouldSmooth) _scheduleScrollToLatestCorrection();
+        }),
+      );
+    });
+  }
+
+  void _scheduleScrollToLatestCorrection() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_chatScrollController.hasClients) return;
+      final position = _chatScrollController.position;
+      if (position.maxScrollExtent - position.pixels > 1) {
+        _chatScrollController.jumpTo(position.maxScrollExtent);
+      }
+      _updateLatestButtonVisibility();
     });
   }
 
@@ -1267,55 +1300,56 @@ class _AgentHubPageState extends State<AgentHubPage> {
                           key: const ValueKey('agent-chat-scroll-view'),
                           controller: _chatScrollController,
                           slivers: [
+                            if (_historyMessages.isNotEmpty)
+                              SliverPadding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  12,
+                                  14,
+                                  12,
+                                  0,
+                                ),
+                                sliver: AgentHubHistorySliver(
+                                  messages: _historyMessages,
+                                  onArtifactAction: _handleArtifactAction,
+                                ),
+                              ),
+                            if (_historyMessages.isNotEmpty)
+                              const SliverToBoxAdapter(
+                                child: SizedBox(height: 18),
+                              ),
                             SliverPadding(
-                              padding: const EdgeInsets.fromLTRB(
+                              padding: EdgeInsets.fromLTRB(
                                 12,
-                                14,
+                                _historyMessages.isEmpty ? 14 : 0,
                                 12,
                                 24,
                               ),
                               sliver: SliverToBoxAdapter(
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(
-                                    minHeight: transcriptMinHeight,
+                                    minHeight: _historyMessages.isEmpty
+                                        ? transcriptMinHeight
+                                        : 0,
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      if (_historyMessages.isNotEmpty) ...[
-                                        AgentHubHistoryPanel(
-                                          messages: _historyMessages,
-                                          onArtifactAction:
-                                              _handleArtifactAction,
-                                        ),
-                                        const SizedBox(height: 18),
-                                      ],
-                                      _AgentRunTranscriptListenable(
-                                        stateListenable: _runStateNotifier,
-                                        activeVoicePlaybackIdListenable:
-                                            _activeVoicePlaybackIdNotifier,
-                                        actionStateRevisionListenable:
-                                            _actionStateRevisionNotifier,
-                                        canRetryForState: _canRetryForState,
-                                        onRetry: _retryRun,
-                                        onArtifactAction: _handleArtifactAction,
-                                        onQuickReplySelected:
-                                            _handleQuickReplySelected,
-                                        pendingActionIds: _pendingActionIds,
-                                        localActionStatuses:
-                                            _localActionStatuses,
-                                        onConfirmAction:
-                                            widget.actionClient == null
-                                            ? null
-                                            : _confirmAction,
-                                        onRejectAction:
-                                            widget.actionClient == null
-                                            ? null
-                                            : _rejectAction,
-                                      ),
-                                    ],
+                                  child: _AgentRunTranscriptListenable(
+                                    stateListenable: _runStateNotifier,
+                                    activeVoicePlaybackIdListenable:
+                                        _activeVoicePlaybackIdNotifier,
+                                    actionStateRevisionListenable:
+                                        _actionStateRevisionNotifier,
+                                    canRetryForState: _canRetryForState,
+                                    onRetry: _retryRun,
+                                    onArtifactAction: _handleArtifactAction,
+                                    onQuickReplySelected:
+                                        _handleQuickReplySelected,
+                                    pendingActionIds: _pendingActionIds,
+                                    localActionStatuses: _localActionStatuses,
+                                    onConfirmAction: widget.actionClient == null
+                                        ? null
+                                        : _confirmAction,
+                                    onRejectAction: widget.actionClient == null
+                                        ? null
+                                        : _rejectAction,
                                   ),
                                 ),
                               ),
@@ -1476,21 +1510,30 @@ _AgentResponseLightRailMode _agentResponseLightRailModeForState(
       state.textContent.trim().isNotEmpty ||
       state.provisionalTextContent.trim().isNotEmpty;
   if (!hasReplyText) return _AgentResponseLightRailMode.loop;
-  if (_hasRunningToolWork(state.events)) {
+  if (_hasRunningToolWork(state)) {
     return _AgentResponseLightRailMode.loop;
   }
   return _AgentResponseLightRailMode.replying;
 }
 
-bool _hasRunningToolWork(List<AgentStreamEvent> events) {
+bool _hasRunningToolWork(AgentStreamRunState state) {
+  final toolEvents = state.toolEvents.isNotEmpty
+      ? state.toolEvents.values
+      : _latestToolEventsFromLegacyEvents(state.events).values;
+  return toolEvents.any(
+    (event) => event.type == 'tool.started' || event.type == 'tool.progress',
+  );
+}
+
+Map<String, AgentStreamEvent> _latestToolEventsFromLegacyEvents(
+  List<AgentStreamEvent> events,
+) {
   final latestToolEvents = <String, AgentStreamEvent>{};
   for (final event in events) {
     if (!event.type.startsWith('tool.')) continue;
     latestToolEvents[event.toolCallId ?? event.mergeKey] = event;
   }
-  return latestToolEvents.values.any(
-    (event) => event.type == 'tool.started' || event.type == 'tool.progress',
-  );
+  return latestToolEvents;
 }
 
 class _AgentResponseLightRail extends StatefulWidget {
@@ -1782,6 +1825,34 @@ class AgentHubHistoryPanel extends StatelessWidget {
   }
 }
 
+class AgentHubHistorySliver extends StatelessWidget {
+  const AgentHubHistorySliver({
+    super.key,
+    required this.messages,
+    this.onArtifactAction,
+  });
+
+  final List<AgentHubHistoryMessage> messages;
+  final AgentArtifactActionHandler? onArtifactAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final itemCount = messages.isEmpty ? 0 : messages.length * 2 - 1;
+    return SliverList(
+      key: const ValueKey('agent-history-panel'),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        if (index.isOdd) return const SizedBox(height: 20);
+        final messageIndex = index ~/ 2;
+        return _AgentHistoryBubble(
+          key: ValueKey('agent-history-$messageIndex'),
+          message: messages[messageIndex],
+          onArtifactAction: onArtifactAction,
+        );
+      }, childCount: itemCount),
+    );
+  }
+}
+
 class _AgentHistoryBubble extends StatelessWidget {
   const _AgentHistoryBubble({
     super.key,
@@ -1936,7 +2007,7 @@ class AgentRunPhaseBadge extends StatelessWidget {
   }
 }
 
-class _AgentRunTranscriptListenable extends StatelessWidget {
+class _AgentRunTranscriptListenable extends StatefulWidget {
   const _AgentRunTranscriptListenable({
     required this.stateListenable,
     required this.activeVoicePlaybackIdListenable,
@@ -1964,29 +2035,76 @@ class _AgentRunTranscriptListenable extends StatelessWidget {
   final ValueChanged<AgentActionCardView>? onRejectAction;
 
   @override
+  State<_AgentRunTranscriptListenable> createState() =>
+      _AgentRunTranscriptListenableState();
+}
+
+class _AgentRunTranscriptListenableState
+    extends State<_AgentRunTranscriptListenable> {
+  Object? _artifactSourceIdentity;
+  List<AgentArtifactCardView> _artifactCards = const <AgentArtifactCardView>[];
+  Object? _actionSourceIdentity;
+  int? _actionRevision;
+  List<AgentActionCardView> _actionCards = const <AgentActionCardView>[];
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: Listenable.merge([
-        stateListenable,
-        activeVoicePlaybackIdListenable,
-        actionStateRevisionListenable,
+        widget.stateListenable,
+        widget.activeVoicePlaybackIdListenable,
+        widget.actionStateRevisionListenable,
       ]),
       builder: (context, child) {
-        final state = stateListenable.value;
+        final state = widget.stateListenable.value;
+        final actionRevision = widget.actionStateRevisionListenable.value;
         return AgentRunTranscript(
           state: state,
-          activeVoicePlaybackId: activeVoicePlaybackIdListenable.value,
-          canRetry: canRetryForState(state),
-          onRetry: onRetry,
-          onArtifactAction: onArtifactAction,
-          onQuickReplySelected: onQuickReplySelected,
-          pendingActionIds: pendingActionIds,
-          localActionStatuses: localActionStatuses,
-          onConfirmAction: onConfirmAction,
-          onRejectAction: onRejectAction,
+          activeVoicePlaybackId: widget.activeVoicePlaybackIdListenable.value,
+          canRetry: widget.canRetryForState(state),
+          onRetry: widget.onRetry,
+          onArtifactAction: widget.onArtifactAction,
+          onQuickReplySelected: widget.onQuickReplySelected,
+          pendingActionIds: widget.pendingActionIds,
+          artifactCards: _artifactCardsForState(state),
+          actionCards: _actionCardsForState(state, actionRevision),
+          onConfirmAction: widget.onConfirmAction,
+          onRejectAction: widget.onRejectAction,
         );
       },
     );
+  }
+
+  List<AgentArtifactCardView> _artifactCardsForState(
+    AgentStreamRunState state,
+  ) {
+    final identity = state.artifactEvents.isNotEmpty
+        ? state.artifactEvents
+        : state.events;
+    if (identical(identity, _artifactSourceIdentity)) return _artifactCards;
+    _artifactSourceIdentity = identity;
+    _artifactCards = _artifactCardsFromEvents(_artifactEventsForState(state));
+    return _artifactCards;
+  }
+
+  List<AgentActionCardView> _actionCardsForState(
+    AgentStreamRunState state,
+    int actionRevision,
+  ) {
+    final identity = state.actionEvents.isNotEmpty
+        ? state.actionEvents
+        : state.events;
+    if (identical(identity, _actionSourceIdentity) &&
+        actionRevision == _actionRevision) {
+      return _actionCards;
+    }
+    _actionSourceIdentity = identity;
+    _actionRevision = actionRevision;
+    _actionCards = _actionCardsFromEvents(
+      _actionEventsForState(state),
+      widget.localActionStatuses,
+    );
+    return _actionCards;
   }
 }
 
@@ -2001,6 +2119,8 @@ class AgentRunTranscript extends StatelessWidget {
     this.onQuickReplySelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
+    this.artifactCards,
+    this.actionCards,
     this.onConfirmAction,
     this.onRejectAction,
   });
@@ -2013,6 +2133,8 @@ class AgentRunTranscript extends StatelessWidget {
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
+  final List<AgentArtifactCardView>? artifactCards;
+  final List<AgentActionCardView>? actionCards;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
   final ValueChanged<AgentActionCardView>? onRejectAction;
 
@@ -2024,11 +2146,15 @@ class AgentRunTranscript extends StatelessWidget {
         state.phase == AgentStreamRunPhase.idle &&
         state.textContent.trim().isEmpty;
     final text = _primaryText;
-    final artifactCards = _artifactCardsFromEvents(state.events);
-    final actionCards = _actionCardsFromEvents(
-      state.events,
-      localActionStatuses,
-    );
+    final artifactCards =
+        this.artifactCards ??
+        _artifactCardsFromEvents(_artifactEventsForState(state));
+    final actionCards =
+        this.actionCards ??
+        _actionCardsFromEvents(
+          _actionEventsForState(state),
+          localActionStatuses,
+        );
     final quickReplies = state.quickReplies;
     final shouldRenderQuickReplies =
         quickReplies.length == 3 &&
@@ -2079,6 +2205,7 @@ class AgentRunTranscript extends StatelessWidget {
                       text,
                       style: primaryTextStyle,
                       onArtifactAction: onArtifactAction,
+                      parseMarkdown: _shouldParsePrimaryTextMarkdown,
                     ),
                   ),
                 ),
@@ -2154,6 +2281,10 @@ class AgentRunTranscript extends StatelessWidget {
       return false;
     }
     return true;
+  }
+
+  bool get _shouldParsePrimaryTextMarkdown {
+    return !state.isActive || state.hasCompletedAssistantMessage;
   }
 
   _AgentLoopDecorState get _loopDecorState {
@@ -2358,16 +2489,21 @@ class AgentMarkdownText extends StatelessWidget {
     super.key,
     this.style,
     this.onArtifactAction,
+    this.parseMarkdown = true,
   });
 
   final String text;
   final TextStyle? style;
   final AgentArtifactActionHandler? onArtifactAction;
+  final bool parseMarkdown;
 
   @override
   Widget build(BuildContext context) {
     final normalized = text.trim();
     final baseStyle = style ?? Theme.of(context).textTheme.bodyMedium;
+    if (!parseMarkdown) {
+      return Text(normalized, style: baseStyle);
+    }
     final markdown = _prepareAgentMarkdown(normalized);
     if (!_containsMarkdown(markdown)) {
       return Text(normalized, style: baseStyle);
@@ -5567,8 +5703,20 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   }
 }
 
+Iterable<AgentStreamEvent> _artifactEventsForState(AgentStreamRunState state) {
+  return state.artifactEvents.isNotEmpty
+      ? state.artifactEvents.values
+      : state.events;
+}
+
+Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {
+  return state.actionEvents.isNotEmpty
+      ? state.actionEvents.values
+      : state.events;
+}
+
 List<AgentArtifactCardView> _artifactCardsFromEvents(
-  List<AgentStreamEvent> events,
+  Iterable<AgentStreamEvent> events,
 ) {
   final cards = <String, AgentArtifactCardView>{};
   for (final event in events) {
@@ -6035,7 +6183,7 @@ List<String> _cartGroupRows(Object? rawGroups) {
 }
 
 List<AgentActionCardView> _actionCardsFromEvents(
-  List<AgentStreamEvent> events,
+  Iterable<AgentStreamEvent> events,
   Map<String, String> localStatuses,
 ) {
   final cards = <String, AgentActionCardView>{};
