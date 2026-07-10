@@ -13,6 +13,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dar
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:video_player/video_player.dart';
 
@@ -23,7 +24,6 @@ typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
 typedef AgentHubNewSessionHandler = void Function();
 
-const _agentDefaultGreeting = '嗨，我是 CozyMate，来自 Momcozy团队。\n\n你希望我怎么称呼你？今年多大啦？';
 const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
 const _agentSkillAssetBaseUrl = String.fromEnvironment(
   'MOMCOZY_API_BASE_URL',
@@ -31,12 +31,15 @@ const _agentSkillAssetBaseUrl = String.fromEnvironment(
 );
 const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
 
-String _agentAssistantTextForState(AgentStreamRunState state) {
+String _agentAssistantTextForState(
+  AgentStreamRunState state, {
+  required String greeting,
+}) {
   final text = state.textContent.trim();
   if (text.isNotEmpty) return text;
 
   return switch (state.phase) {
-    AgentStreamRunPhase.idle => _agentDefaultGreeting,
+    AgentStreamRunPhase.idle => greeting,
     AgentStreamRunPhase.streaming => '我已经收到你的消息啦～',
     AgentStreamRunPhase.cancelRequested => '我正在停止这次回复。',
     AgentStreamRunPhase.cancelled => '已停止本次回复。',
@@ -100,6 +103,7 @@ class AgentHubPage extends StatefulWidget {
     this.actionClient,
     this.clientEventClient,
     this.interactionStateStore,
+    this.greetingProfileLoader,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
     this.voiceInput,
@@ -120,6 +124,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentStreamActionClient? actionClient;
   final AgentStreamClientEventClient? clientEventClient;
   final AgentHubInteractionStateStore? interactionStateStore;
+  final AgentHubGreetingProfileLoader? greetingProfileLoader;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
   final AgentHubVoiceInput? voiceInput;
@@ -179,6 +184,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   VoidCallback? _unsubscribeVoicePlaybackIdle;
   bool _consumedInitialAutoSend = false;
   bool _dismissComposerKeyboardOnRunAccepted = false;
+  String _greeting = agentHubDefaultGreeting;
+  int _greetingRefreshGeneration = 0;
 
   @override
   void initState() {
@@ -194,7 +201,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _updateLatestButtonVisibility();
-      _maybeStartGreetingVoicePlayback();
+      unawaited(_refreshGreetingAndMaybePlayVoice());
     });
   }
 
@@ -726,7 +733,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
     final state = _state;
-    final text = _agentAssistantTextForState(state).trim();
+    final text = _agentAssistantTextForState(state, greeting: _greeting).trim();
     if (text.isEmpty) return null;
     return AgentHubHistoryMessage(
       role: AgentHubHistoryRole.assistant,
@@ -840,7 +847,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
     _notifyActionStateChanged();
     _persistInteractionState();
-    _maybeStartGreetingVoicePlayback();
+    unawaited(_refreshGreetingAndMaybePlayVoice());
     widget.onNewSession?.call();
   }
 
@@ -861,6 +868,43 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _setVoiceState(_voiceState.cancelPlayback());
   }
 
+  Future<void> _refreshGreetingAndMaybePlayVoice() async {
+    final loader = widget.greetingProfileLoader;
+    if (loader == null) {
+      _maybeStartGreetingVoicePlayback();
+      return;
+    }
+
+    final generation = ++_greetingRefreshGeneration;
+    AgentHubGreetingProfile? profile;
+    var loaded = false;
+    try {
+      profile = await loader();
+      loaded = true;
+    } catch (_) {
+      // Greeting personalization is best effort; the default stays available.
+    }
+    if (!mounted || generation != _greetingRefreshGeneration) return;
+    if (!_isShowingFreshGreeting) return;
+
+    if (loaded) {
+      final nextGreeting = agentHubGreetingForProfile(profile);
+      if (nextGreeting != _greeting) {
+        setState(() {
+          _greeting = nextGreeting;
+        });
+      }
+    }
+    _maybeStartGreetingVoicePlayback();
+  }
+
+  bool get _isShowingFreshGreeting =>
+      _state.phase == AgentStreamRunPhase.idle &&
+      _state.textContent.trim().isEmpty &&
+      _state.provisionalTextContent.trim().isEmpty &&
+      _historyMessages.isEmpty &&
+      _activeRequest == null;
+
   void _maybeStartGreetingVoicePlayback() {
     final coordinator = widget.voicePlaybackCoordinator;
     final player = widget.voicePlaybackPlayer;
@@ -877,7 +921,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         handle == null) {
       return;
     }
-    _startVoicePlayback(handle: handle, text: _agentDefaultGreeting);
+    _startVoicePlayback(handle: handle, text: _greeting);
   }
 
   Future<void> _retryRun() async {
@@ -1425,6 +1469,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                         : 0,
                                   ),
                                   child: _AgentRunTranscriptListenable(
+                                    greeting: _greeting,
                                     stateListenable: _runStateNotifier,
                                     activeVoicePlaybackIdListenable:
                                         _activeVoicePlaybackIdNotifier,
@@ -2103,6 +2148,7 @@ class AgentRunPhaseBadge extends StatelessWidget {
 
 class _AgentRunTranscriptListenable extends StatefulWidget {
   const _AgentRunTranscriptListenable({
+    required this.greeting,
     required this.stateListenable,
     required this.activeVoicePlaybackIdListenable,
     required this.actionStateRevisionListenable,
@@ -2116,6 +2162,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     this.onRejectAction,
   });
 
+  final String greeting;
   final ValueListenable<AgentStreamRunState> stateListenable;
   final ValueListenable<String?> activeVoicePlaybackIdListenable;
   final ValueListenable<int> actionStateRevisionListenable;
@@ -2154,6 +2201,7 @@ class _AgentRunTranscriptListenableState
         final actionRevision = widget.actionStateRevisionListenable.value;
         return AgentRunTranscript(
           state: state,
+          greeting: widget.greeting,
           activeVoicePlaybackId: widget.activeVoicePlaybackIdListenable.value,
           canRetry: widget.canRetryForState(state),
           onRetry: widget.onRetry,
@@ -2206,6 +2254,7 @@ class AgentRunTranscript extends StatelessWidget {
   const AgentRunTranscript({
     super.key,
     required this.state,
+    this.greeting = agentHubDefaultGreeting,
     this.activeVoicePlaybackId,
     this.canRetry = false,
     this.onRetry,
@@ -2220,6 +2269,7 @@ class AgentRunTranscript extends StatelessWidget {
   });
 
   final AgentStreamRunState state;
+  final String greeting;
   final String? activeVoicePlaybackId;
   final bool canRetry;
   final VoidCallback? onRetry;
@@ -2366,7 +2416,7 @@ class AgentRunTranscript extends StatelessWidget {
   }
 
   String get _primaryText {
-    return _agentAssistantTextForState(state);
+    return _agentAssistantTextForState(state, greeting: greeting);
   }
 
   bool get _shouldRenderPrimaryText {

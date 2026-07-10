@@ -1253,6 +1253,8 @@ Widget _buildDefaultAgentHubPage(
       runtime.session,
       accessTokenProvider: currentAccessToken,
     ),
+    greetingProfileLoader:
+        runtime.agentHubProfileRepository.fetchGreetingProfile,
     requestBuilder: (message) =>
         buildSessionAgentHubRequest(message, session: runtime.session),
     voicePlaybackCoordinator: voicePlaybackCoordinator,
