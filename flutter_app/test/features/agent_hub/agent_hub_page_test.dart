@@ -1844,7 +1844,7 @@ void main() {
     },
   );
 
-  testWidgets('Agent Hub coalesces repeated streaming text deltas', (
+  testWidgets('Agent Hub renders repeated streaming text deltas immediately', (
     tester,
   ) async {
     final client = _ControllableAgentStreamClient();
@@ -1875,6 +1875,9 @@ void main() {
     await tester.pump();
 
     expect(find.text('Hel'), findsOneWidget);
+    final pageShellBeforeSecondDelta = tester.widget<ColoredBox>(
+      find.byKey(const ValueKey('agent-hub-page')),
+    );
 
     client.emit(
       0,
@@ -1887,13 +1890,16 @@ void main() {
       }),
     );
     await tester.pump();
-
-    expect(find.text('Hel'), findsOneWidget);
-    expect(find.text('Hello'), findsNothing);
-
-    await tester.pump(const Duration(milliseconds: 34));
+    await tester.pump();
 
     expect(find.text('Hello'), findsOneWidget);
+    final pageShellAfterSecondDelta = tester.widget<ColoredBox>(
+      find.byKey(const ValueKey('agent-hub-page')),
+    );
+    expect(
+      identical(pageShellBeforeSecondDelta, pageShellAfterSecondDelta),
+      isTrue,
+    );
   });
 
   testWidgets('Agent Hub posts best-effort cancel for active runner', (
