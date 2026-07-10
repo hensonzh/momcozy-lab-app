@@ -13,8 +13,12 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dar
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:video_player/video_player.dart';
+
+export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 typedef AgentHubImagePicker = Future<AgentStreamImageInput?> Function();
@@ -3478,20 +3482,80 @@ Widget? _specializedArtifactCard({
   required AgentArtifactCardView card,
   AgentArtifactActionHandler? onAction,
 }) {
-  final cardType = _artifactCardType(card);
-  return switch (cardType) {
-    'milk_analysis_card' || 'milk_plan_card' => _AgentMilkManagementCard(
+  return switch (card.presentationKind) {
+    AgentArtifactPresentationKind.unsupported => _AgentUnsupportedArtifactCard(
       card: card,
-      cardType: cardType!,
     ),
-    'birth_journey_plan_card' => _AgentBirthJourneyPlanCard(card: card),
-    'birth_plan_card' => _AgentBirthPlanCard(card: card),
-    'hospital_bag_card' => _AgentHospitalBagCard(
+    AgentArtifactPresentationKind.milkAnalysisCard ||
+    AgentArtifactPresentationKind.milkPlanCard => _AgentMilkManagementCard(
+      card: card,
+      cardType: card.artifactType ?? card.cardType ?? 'milk_plan_card',
+    ),
+    AgentArtifactPresentationKind.birthJourneyPlanCard =>
+      _AgentBirthJourneyPlanCard(card: card),
+    AgentArtifactPresentationKind.birthPlanCard => _AgentBirthPlanCard(
+      card: card,
+    ),
+    AgentArtifactPresentationKind.hospitalBagCard => _AgentHospitalBagCard(
       card: card,
       onAction: onAction,
     ),
     _ => null,
   };
+}
+
+class _AgentUnsupportedArtifactCard extends StatelessWidget {
+  const _AgentUnsupportedArtifactCard({required this.card});
+
+  final AgentArtifactCardView card;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return DecoratedBox(
+      key: ValueKey('agent-artifact-unsupported-${card.id}'),
+      decoration: BoxDecoration(
+        color: MomCozyColors.raised,
+        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        border: Border.all(color: MomCozyColors.border),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.info_outline_rounded,
+              size: 20,
+              color: MomCozyColors.mutedForeground,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    card.title,
+                    style: textTheme.titleSmall?.copyWith(
+                      color: MomCozyColors.foreground,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '当前 App 暂不支持此内容版本（${card.schemaVersion}）。',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _AgentArtifactSpecializedShell extends StatelessWidget {
@@ -4418,94 +4482,6 @@ class _AgentArtifactBulletList extends StatelessWidget {
       ],
     );
   }
-}
-
-class AgentArtifactCardView {
-  const AgentArtifactCardView({
-    required this.id,
-    required this.title,
-    this.artifactType,
-    this.cardType,
-    this.cardJson = const <String, Object?>{},
-    this.rawCard = const <String, Object?>{},
-    this.content,
-    this.statusLabel,
-    this.rows = const <String>[],
-    this.formId,
-    this.formSubmitLabel,
-    this.formFields = const <AgentArtifactFormFieldView>[],
-    this.actions = const <AgentArtifactActionView>[],
-  });
-
-  final String id;
-  final String title;
-  final String? artifactType;
-  final String? cardType;
-  final Map<String, Object?> cardJson;
-  final Map<String, Object?> rawCard;
-  final String? content;
-  final String? statusLabel;
-  final List<String> rows;
-  final String? formId;
-  final String? formSubmitLabel;
-  final List<AgentArtifactFormFieldView> formFields;
-  final List<AgentArtifactActionView> actions;
-}
-
-class AgentArtifactFormFieldView {
-  const AgentArtifactFormFieldView({
-    required this.id,
-    required this.label,
-    required this.type,
-    this.required = false,
-    this.options = const <String>[],
-    this.placeholder,
-    this.defaultValue,
-    this.allowOtherInput = false,
-    this.otherPlaceholder,
-    this.helpText,
-  });
-
-  final String id;
-  final String label;
-  final String type;
-  final bool required;
-  final List<String> options;
-  final String? placeholder;
-  final Object? defaultValue;
-  final bool allowOtherInput;
-  final String? otherPlaceholder;
-  final String? helpText;
-
-  String get groupTitle => _splitFormFieldLabel(label).groupTitle;
-
-  String get fieldLabel => _splitFormFieldLabel(label).fieldLabel;
-
-  bool get isMultiSelect {
-    return type == 'multi_select' ||
-        type == 'checkboxes' ||
-        type == 'checkbox_group';
-  }
-
-  bool get isChoice => isMultiSelect || type == 'select' || type == 'radio';
-}
-
-class AgentArtifactActionView {
-  const AgentArtifactActionView({
-    required this.label,
-    required this.icon,
-    required this.kind,
-    this.value,
-    this.routePath,
-    this.routeExtra,
-  });
-
-  final String label;
-  final IconData icon;
-  final String kind;
-  final String? value;
-  final String? routePath;
-  final Object? routeExtra;
 }
 
 class _AgentArtifactFormView extends StatefulWidget {
@@ -5772,193 +5748,7 @@ Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {
 List<AgentArtifactCardView> _artifactCardsFromEvents(
   Iterable<AgentStreamEvent> events,
 ) {
-  final cards = <String, AgentArtifactCardView>{};
-  for (final event in events) {
-    for (final card in _artifactCardsFromEvent(event)) {
-      cards[card.id] = card;
-    }
-  }
-  return List<AgentArtifactCardView>.unmodifiable(cards.values);
-}
-
-List<AgentArtifactCardView> _artifactCardsFromEvent(AgentStreamEvent event) {
-  final payload = event.payload;
-  final rawRichText = _mapField(event.raw, 'rich_text', 'richText');
-  final payloadRichText = _mapField(payload, 'rich_text', 'richText');
-  final richText = rawRichText.isNotEmpty ? rawRichText : payloadRichText;
-
-  if (event.type != 'artifact.created' && event.type != 'artifact.updated') {
-    return const <AgentArtifactCardView>[];
-  }
-
-  final rawArtifact = _mapField(event.raw, 'artifact');
-  final payloadArtifact = _mapField(payload, 'artifact');
-  final artifact = rawArtifact.isNotEmpty ? rawArtifact : payloadArtifact;
-  final artifactPayload = _mapField(artifact, 'payload');
-  final cardEnvelope = _firstMap([
-    _mapField(artifactPayload, 'card'),
-    _mapField(payload, 'card'),
-    _mapField(artifact, 'card'),
-  ]);
-  final form = _firstMap([
-    _mapField(artifactPayload, 'form'),
-    _mapField(payload, 'form'),
-    _mapField(artifact, 'form'),
-  ]);
-  final cartUpdate = _firstMap([
-    _mapField(artifactPayload, 'cart_update', 'cartUpdate'),
-    _mapField(payload, 'cart_update', 'cartUpdate'),
-  ]);
-  final assistantFollowup = _firstMap([
-    _mapField(artifactPayload, 'assistant_followup', 'assistantFollowup'),
-    _mapField(payload, 'assistant_followup', 'assistantFollowup'),
-  ]);
-  final artifactId =
-      stringField(event.raw, 'artifact_id') ??
-      stringField(payload, 'artifact_id') ??
-      stringField(event.raw, 'artifactId') ??
-      stringField(artifact, 'id') ??
-      event.mergeKey;
-
-  final envelopeCard = _artifactCardFromEnvelope(
-    event: event,
-    payload: payload,
-    richText: richText,
-    artifact: artifact,
-    artifactPayload: artifactPayload,
-    cardEnvelope: cardEnvelope,
-    form: form,
-    cartUpdate: cartUpdate,
-    assistantFollowup: assistantFollowup,
-    artifactId: artifactId,
-    artifactType: _firstNonEmpty([
-      _stringField(payload, 'artifact_type', 'artifactType'),
-      _stringField(artifact, 'artifact_type', 'artifactType'),
-    ]),
-  );
-
-  return List<AgentArtifactCardView>.unmodifiable([?envelopeCard]);
-}
-
-AgentArtifactCardView? _artifactCardFromEnvelope({
-  required AgentStreamEvent event,
-  required Map<String, Object?> payload,
-  required Map<String, Object?> richText,
-  required Map<String, Object?> artifact,
-  required Map<String, Object?> artifactPayload,
-  required Map<String, Object?> cardEnvelope,
-  required Map<String, Object?> form,
-  required Map<String, Object?> cartUpdate,
-  required Map<String, Object?> assistantFollowup,
-  required String artifactId,
-  String? artifactType,
-}) {
-  final rawCardJson = _firstMap([
-    _mapField(artifact, 'card_json', 'cardJson'),
-    _mapField(artifactPayload, 'card_json', 'cardJson'),
-    _mapField(payload, 'card_json', 'cardJson'),
-    _mapField(cardEnvelope, 'card_json', 'cardJson'),
-  ]);
-  final cardJson = rawCardJson.isNotEmpty ? rawCardJson : payload;
-  final explicitTitle = _firstNonEmpty([
-    _stringField(richText, 'title'),
-    _stringField(form, 'title'),
-    _stringField(cardJson, 'title'),
-    _stringField(cartUpdate, 'message'),
-    _stringField(payload, 'title'),
-  ]);
-  final content = _firstNonEmpty([
-    _stringField(richText, 'content'),
-    _stringField(payload, 'content'),
-    _stringField(payload, 'summary'),
-    _stringField(artifactPayload, 'summary'),
-    _stringField(assistantFollowup, 'message'),
-  ]);
-  final status = _firstNonEmpty([
-    _stringField(cardJson, 'status_label', 'statusLabel'),
-    _stringField(payload, 'status_label', 'statusLabel'),
-  ]);
-  final formFields = _formFields(form);
-  final rows = <String>[
-    ..._cardJsonRows(cardJson),
-    ..._cartUpdateRows(cartUpdate),
-    ..._stringList(cardJson['steps']),
-    ..._stringList(payload['steps']),
-    ..._richTextCardRows(richText['card']),
-  ];
-  final actions = <AgentArtifactActionView>[
-    ..._buttonActions(richText['button']),
-    ..._referenceActionsFromRichText(richText),
-    ..._semanticActions(richText['action'], event),
-    ..._semanticActions(payload['actions'], event),
-    ..._assistantFollowupActions(assistantFollowup),
-  ];
-
-  if (explicitTitle == null &&
-      formFields.isEmpty &&
-      (content == null || content.trim().isEmpty) &&
-      rows.isEmpty &&
-      actions.isEmpty) {
-    return null;
-  }
-
-  return AgentArtifactCardView(
-    id: artifactId,
-    title: explicitTitle ?? _artifactSubject(event),
-    artifactType: artifactType,
-    cardType: _stringField(cardEnvelope, 'card_type', 'cardType'),
-    cardJson: cardJson,
-    rawCard: cardEnvelope,
-    content: content,
-    statusLabel: status,
-    rows: rows,
-    formId: _stringField(form, 'id'),
-    formSubmitLabel: _stringField(form, 'submit_label', 'submitLabel'),
-    formFields: formFields,
-    actions: actions,
-  );
-}
-
-Map<String, Object?> _firstMap(List<Map<String, Object?>> values) {
-  for (final value in values) {
-    if (value.isNotEmpty) return value;
-  }
-  return const {};
-}
-
-String? _artifactCardType(AgentArtifactCardView card) {
-  final explicitCardType = _firstNonEmpty([
-    card.cardType,
-    _stringField(card.rawCard, 'card_type', 'cardType'),
-    _stringField(card.cardJson, 'card_type', 'cardType'),
-  ]);
-  if (explicitCardType != null) return explicitCardType;
-
-  final artifactType = card.artifactType;
-  final cardJson = _effectiveCardJson(card);
-  return switch (artifactType) {
-    'milk_analysis_card' || 'milk_plan_card'
-        when cardJson.containsKey('sections') ||
-            cardJson.containsKey('headline') =>
-      artifactType,
-    'birth_journey_plan_card'
-        when cardJson.containsKey('todo_plan') ||
-            cardJson.containsKey('todoPlan') ||
-            cardJson.containsKey('owner') =>
-      artifactType,
-    'birth_plan_card'
-        when cardJson.containsKey('communication') ||
-            cardJson.containsKey('pain_relief') ||
-            cardJson.containsKey('painRelief') ||
-            cardJson.containsKey('medical_notes') ||
-            cardJson.containsKey('medicalNotes') =>
-      artifactType,
-    'hospital_bag_card'
-        when cardJson.containsKey('packing_groups') ||
-            cardJson.containsKey('packingGroups') =>
-      artifactType,
-    _ => null,
-  };
+  return AgentArtifactMapper.cardsFromEvents(events);
 }
 
 Map<String, Object?> _effectiveCardJson(AgentArtifactCardView card) {
@@ -6043,197 +5833,9 @@ AgentArtifactActionView _hospitalBagCartAction() {
   );
 }
 
-({String groupTitle, String fieldLabel}) _splitFormFieldLabel(String label) {
-  final normalized = label.trim();
-  final separatorIndex = normalized.indexOf('｜');
-  if (separatorIndex <= 0) {
-    return (groupTitle: '', fieldLabel: normalized);
-  }
-  final groupTitle = normalized.substring(0, separatorIndex).trim();
-  final fieldLabel = normalized.substring(separatorIndex + 1).trim();
-  if (groupTitle.isEmpty || fieldLabel.isEmpty) {
-    return (groupTitle: '', fieldLabel: normalized);
-  }
-  return (groupTitle: groupTitle, fieldLabel: fieldLabel);
-}
-
 bool _isOtherFormOption(String option) {
   final normalized = option.trim();
   return normalized == '其它' || normalized == '其他';
-}
-
-List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
-  if (form.isEmpty) return const <AgentArtifactFormFieldView>[];
-  final fields = form['fields'];
-  if (fields is! List) return const <AgentArtifactFormFieldView>[];
-  final defaultValues = _mapField(form, 'default_values', 'defaultValues');
-  final views = <AgentArtifactFormFieldView>[];
-  for (final rawField in fields.take(24)) {
-    if (rawField is! Map) continue;
-    final field = Map<String, Object?>.from(rawField);
-    final id = _stringField(field, 'id')?.trim();
-    final label = _stringField(field, 'label')?.trim();
-    if (id == null || id.isEmpty || label == null || label.isEmpty) continue;
-    views.add(
-      AgentArtifactFormFieldView(
-        id: id,
-        label: label,
-        type: _stringField(field, 'type') ?? 'text',
-        required: field['required'] == true,
-        options: _stringList(field['options']),
-        placeholder: _stringField(field, 'placeholder'),
-        defaultValue:
-            field['default_value'] ??
-            field['defaultValue'] ??
-            defaultValues[id],
-        allowOtherInput:
-            field['allow_other_input'] == true ||
-            field['allowOtherInput'] == true,
-        otherPlaceholder: _stringField(
-          field,
-          'other_placeholder',
-          'otherPlaceholder',
-        ),
-        helpText: _stringField(field, 'help_text', 'helpText'),
-      ),
-    );
-  }
-  return List<AgentArtifactFormFieldView>.unmodifiable(views);
-}
-
-List<String> _cardJsonRows(Map<String, Object?> cardJson) {
-  if (cardJson.isEmpty) return const <String>[];
-  final rows = <String>[];
-  final owner = _mapField(cardJson, 'owner');
-  if (owner.isNotEmpty) {
-    final ownerValues = owner.entries
-        .where(
-          (entry) =>
-              entry.value != null && entry.value.toString().trim().isNotEmpty,
-        )
-        .take(5)
-        .map((entry) => '${entry.key}: ${entry.value}')
-        .join('｜');
-    if (ownerValues.isNotEmpty) rows.add(ownerValues);
-  }
-  rows.addAll(_packingGroupRows(cardJson['packing_groups']));
-  rows.addAll(_todoPlanRows(cardJson['todo_plan']));
-  rows.addAll(_stringList(cardJson['timeline']).take(4));
-  rows.addAll(_stringList(cardJson['personalized_notes']).take(4));
-  return rows;
-}
-
-List<String> _packingGroupRows(Object? rawGroups) {
-  if (rawGroups is! List) return const <String>[];
-  final rows = <String>[];
-  for (final rawGroup in rawGroups.take(6)) {
-    if (rawGroup is! Map) continue;
-    final group = Map<String, Object?>.from(rawGroup);
-    final title = _stringField(group, 'title');
-    final items = group['items'];
-    if (title == null || items is! List) continue;
-    final labels = items
-        .whereType<Map>()
-        .map((rawItem) => Map<String, Object?>.from(rawItem))
-        .map(
-          (item) => _stringField(item, 'label') ?? _stringField(item, 'name'),
-        )
-        .whereType<String>()
-        .take(5)
-        .join('、');
-    rows.add(labels.isEmpty ? title : '$title：$labels');
-  }
-  return rows;
-}
-
-List<String> _todoPlanRows(Object? rawTodoPlan) {
-  if (rawTodoPlan is! Map) return const <String>[];
-  final todoPlan = Map<String, Object?>.from(rawTodoPlan);
-  final periods = todoPlan['periods'];
-  if (periods is! List) return const <String>[];
-  final rows = <String>[];
-  for (final rawPeriod in periods.take(4)) {
-    if (rawPeriod is! Map) continue;
-    final period = Map<String, Object?>.from(rawPeriod);
-    final title = _stringField(period, 'title') ?? '阶段';
-    final items = period['items'];
-    if (items is List) {
-      final itemTitles = items
-          .whereType<Map>()
-          .map((rawItem) => Map<String, Object?>.from(rawItem))
-          .map((item) => _stringField(item, 'title'))
-          .whereType<String>()
-          .take(4)
-          .join('、');
-      rows.add(itemTitles.isEmpty ? title : '$title：$itemTitles');
-    } else {
-      rows.add(title);
-    }
-  }
-  return rows;
-}
-
-List<String> _cartUpdateRows(Map<String, Object?> cartUpdate) {
-  if (cartUpdate.isEmpty) return const <String>[];
-  final rows = <String>[];
-  final message = _stringField(cartUpdate, 'message');
-  if (message != null) rows.add(message);
-  rows.addAll(_cartGroupRows(cartUpdate['groups']));
-  final totals = _mapField(cartUpdate, 'totals');
-  if (totals.isNotEmpty) {
-    final itemCount = totals['item_count'] ?? totals['itemCount'];
-    final total = totals['total'] ?? totals['subtotal'];
-    if (itemCount != null || total != null) {
-      rows.add('购物车合计：${itemCount ?? '-'} 件｜${total ?? '-'}');
-    }
-  }
-  return rows;
-}
-
-List<AgentArtifactActionView> _assistantFollowupActions(
-  Map<String, Object?> assistantFollowup,
-) {
-  if (assistantFollowup.isEmpty) return const <AgentArtifactActionView>[];
-  final kind = _stringField(assistantFollowup, 'kind');
-  final message = _stringField(assistantFollowup, 'message');
-  final route = _markdownLinkPath(message);
-  if (kind == 'hospital_bag_cart' || route == '/hospital-bag-cart') {
-    return [
-      AgentArtifactActionView(
-        label: '打开待产包购物车',
-        icon: _actionIcon('artifact'),
-        kind: 'artifact',
-        value: route ?? '/hospital-bag-cart',
-        routePath: route ?? '/hospital-bag-cart',
-      ),
-    ];
-  }
-  return const <AgentArtifactActionView>[];
-}
-
-List<String> _cartGroupRows(Object? rawGroups) {
-  if (rawGroups is! List) return const <String>[];
-  return rawGroups
-      .whereType<Map>()
-      .map((rawGroup) => Map<String, Object?>.from(rawGroup))
-      .take(5)
-      .map((group) {
-        final title = _stringField(group, 'title') ?? '待产包';
-        final items = group['items'];
-        if (items is! List) return title;
-        final names = items
-            .whereType<Map>()
-            .map((rawItem) => Map<String, Object?>.from(rawItem))
-            .map(
-              (item) =>
-                  _stringField(item, 'name') ?? _stringField(item, 'label'),
-            )
-            .whereType<String>()
-            .take(4)
-            .join('、');
-        return names.isEmpty ? title : '$title：$names';
-      })
-      .toList(growable: false);
 }
 
 List<AgentActionCardView> _actionCardsFromEvents(
@@ -6324,262 +5926,6 @@ String _actionStatus(AgentStreamEvent event) {
   return 'proposed';
 }
 
-List<String> _richTextCardRows(Object? rawCards) {
-  if (rawCards is! List) return const <String>[];
-  final rows = <String>[];
-  for (final rawCard in rawCards) {
-    if (rawCard is! Map) continue;
-    final card = Map<String, Object?>.from(rawCard);
-    final title = _firstNonEmpty([
-      _stringField(card, 'title'),
-      _stringField(card, 'label'),
-    ]);
-    if (title != null) rows.add(title);
-    final content = card['content'];
-    if (content is List) {
-      for (final rawRow in content) {
-        if (rawRow is! Map) continue;
-        final row = Map<String, Object?>.from(rawRow);
-        final rowTitle = _stringField(row, 'title');
-        final rowContent = _stringField(row, 'content', 'value');
-        final combined = _combineLabelValue(rowTitle, rowContent);
-        if (combined != null) rows.add(combined);
-      }
-    }
-  }
-  return rows;
-}
-
-List<AgentArtifactActionView> _buttonActions(Object? rawButtons) {
-  if (rawButtons is! List) return const <AgentArtifactActionView>[];
-  return rawButtons
-      .whereType<Map>()
-      .map((rawButton) => Map<String, Object?>.from(rawButton))
-      .map((button) {
-        final kind = _firstNonEmpty([
-          _stringField(button, 'type', 'kind'),
-          _stringField(button, 'action'),
-        ]);
-        final value = _firstNonEmpty([
-          _stringField(button, 'value'),
-          _stringField(button, 'url'),
-          _stringField(button, 'href'),
-          _stringField(button, 'route'),
-          _stringField(button, 'path'),
-        ]);
-        final label = _firstNonEmpty([
-          _stringField(button, 'text'),
-          _stringField(button, 'label'),
-          _stringField(button, 'title'),
-          '打开',
-        ]);
-        return AgentArtifactActionView(
-          label: label ?? '打开',
-          icon: _actionIcon(kind),
-          kind: kind ?? 'button',
-          value: value,
-          routePath: _actionRoutePath(kind: kind, value: value),
-          routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
-        );
-      })
-      .toList(growable: false);
-}
-
-List<AgentArtifactActionView> _referenceActionsFromRichText(
-  Map<String, Object?> richText,
-) {
-  return <AgentArtifactActionView>[
-    ..._referenceActions(richText['citation']),
-    ..._referenceActions(richText['citations']),
-    ..._referenceActions(richText['reference']),
-    ..._referenceActions(richText['references']),
-  ];
-}
-
-List<AgentArtifactActionView> _referenceActions(Object? rawReferences) {
-  final references = switch (rawReferences) {
-    List value => value,
-    Map value => [value],
-    _ => const <Object?>[],
-  };
-
-  return references
-      .whereType<Map>()
-      .map((rawReference) => Map<String, Object?>.from(rawReference))
-      .map((reference) {
-        final value = _firstNonEmpty([
-          _stringField(reference, 'url'),
-          _stringField(reference, 'href'),
-          _stringField(reference, 'value'),
-        ]);
-        final title =
-            _firstNonEmpty([
-              _stringField(reference, 'title'),
-              _stringField(reference, 'label'),
-              _stringField(reference, 'displayText'),
-              _hostFromUrl(value),
-            ]) ??
-            '参考来源';
-        return AgentArtifactActionView(
-          label: _citationLabel(reference['index'], title),
-          icon: _actionIcon('citation'),
-          kind: 'citation',
-          value: value,
-        );
-      })
-      .toList(growable: false);
-}
-
-List<AgentArtifactActionView> _semanticActions(
-  Object? rawActions,
-  AgentStreamEvent event,
-) {
-  if (rawActions is! List) return const <AgentArtifactActionView>[];
-  return rawActions
-      .whereType<Map>()
-      .map((rawAction) => Map<String, Object?>.from(rawAction))
-      .where((action) => _stringField(action, 'kind') != 'ag_ui_artifact')
-      .map((action) {
-        final kind = _stringField(action, 'kind', 'type');
-        final value = _firstNonEmpty([
-          _stringField(action, 'value'),
-          _stringField(action, 'url'),
-          _stringField(action, 'href'),
-          _stringField(action, 'route'),
-          _stringField(action, 'path'),
-        ]);
-        final label = _firstNonEmpty([
-          _stringField(action, 'label'),
-          _stringField(action, 'text'),
-          kind == 'artifact' ? '打开${_artifactSubject(event)}' : null,
-          '打开',
-        ]);
-        return AgentArtifactActionView(
-          label: label ?? '打开',
-          icon: _actionIcon(kind),
-          kind: kind ?? 'action',
-          value: value,
-          routePath: _actionRoutePath(kind: kind, value: value),
-          routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
-        );
-      })
-      .toList(growable: false);
-}
-
-IconData _actionIcon(String? kind) {
-  return switch (kind) {
-    'doc' || 'document' || 'pdf' => Icons.description_outlined,
-    'media' || 'image' || 'video' || 'open' => Icons.open_in_new_rounded,
-    'citation' || 'reference' => Icons.link_rounded,
-    'artifact' => Icons.fact_check_outlined,
-    _ => Icons.touch_app_outlined,
-  };
-}
-
-String? _actionRoutePath({required String? kind, required String? value}) {
-  if (_isMediaActionKind(kind)) return '/media-viewer';
-  return _safeSameOriginPath(value);
-}
-
-Map<String, Object?>? _actionRouteExtra({
-  required String? kind,
-  required String? value,
-  required String? title,
-}) {
-  if (!_isMediaActionKind(kind)) return null;
-  final url = value?.trim();
-  if (url == null || url.isEmpty) return null;
-  final mediaKind = _mediaViewerKind(kind: kind, url: url);
-  if (mediaKind == null) return null;
-  final normalizedTitle = title?.trim();
-  return {
-    'kind': mediaKind,
-    'url': url,
-    if (normalizedTitle != null && normalizedTitle.isNotEmpty)
-      'title': normalizedTitle,
-  };
-}
-
-bool _isMediaActionKind(String? kind) {
-  return switch (kind) {
-    'doc' ||
-    'document' ||
-    'pdf' ||
-    'media' ||
-    'image' ||
-    'photo' ||
-    'picture' ||
-    'video' => true,
-    _ => false,
-  };
-}
-
-String? _mediaViewerKind({required String? kind, required String url}) {
-  final normalizedKind = kind?.trim().toLowerCase();
-  if (normalizedKind == 'pdf' ||
-      normalizedKind == 'doc' ||
-      normalizedKind == 'document') {
-    return 'pdf';
-  }
-  if (normalizedKind == 'image' ||
-      normalizedKind == 'photo' ||
-      normalizedKind == 'picture') {
-    return 'image';
-  }
-  if (normalizedKind == 'video') return 'video';
-
-  final normalizedUrl = url.toLowerCase().split('?').first;
-  if (normalizedUrl.endsWith('.pdf')) return 'pdf';
-  if (normalizedUrl.endsWith('.png') ||
-      normalizedUrl.endsWith('.jpg') ||
-      normalizedUrl.endsWith('.jpeg') ||
-      normalizedUrl.endsWith('.webp') ||
-      normalizedUrl.endsWith('.gif')) {
-    return 'image';
-  }
-  if (normalizedUrl.endsWith('.mp4') ||
-      normalizedUrl.endsWith('.mov') ||
-      normalizedUrl.endsWith('.webm')) {
-    return 'video';
-  }
-  return null;
-}
-
-String? _safeSameOriginPath(String? value) {
-  final normalized = value?.trim();
-  if (normalized == null || normalized.isEmpty) return null;
-  final uri = Uri.tryParse(normalized);
-  if (uri == null || uri.hasScheme || uri.hasAuthority) return null;
-  final path = uri.path.isEmpty ? normalized : uri.path;
-  if (!path.startsWith('/')) return null;
-  return path;
-}
-
-String? _markdownLinkPath(String? value) {
-  final normalized = value?.trim();
-  if (normalized == null || normalized.isEmpty) return null;
-  final match = RegExp(r'\[[^\]]+\]\(([^)]+)\)').firstMatch(normalized);
-  if (match == null) return null;
-  return _safeSameOriginPath(match.group(1));
-}
-
-String _citationLabel(Object? rawIndex, String title) {
-  final index = switch (rawIndex) {
-    int value => value.toString(),
-    String value => value.trim(),
-    _ => '',
-  };
-  return index.isEmpty ? title : '[$index] $title';
-}
-
-String? _hostFromUrl(String? value) {
-  final normalized = value?.trim();
-  if (normalized == null || normalized.isEmpty) return null;
-  final uri = Uri.tryParse(normalized);
-  final host = uri?.host.replaceFirst(RegExp(r'^www\.'), '');
-  return host == null || host.isEmpty ? null : host;
-}
-
 Map<String, Object?> _mapField(
   Map<String, Object?> map,
   String key, [
@@ -6592,33 +5938,6 @@ Map<String, Object?> _mapField(
 String? _stringField(Map<String, Object?> map, String key, [String? alias]) {
   return stringField(map, key) ??
       (alias == null ? null : stringField(map, alias));
-}
-
-List<String> _stringList(Object? value) {
-  if (value is! List) return const <String>[];
-  return value
-      .whereType<String>()
-      .map((item) => item.trim())
-      .where((item) => item.isNotEmpty)
-      .toList(growable: false);
-}
-
-String? _combineLabelValue(String? label, String? value) {
-  final normalizedLabel = label?.trim();
-  final normalizedValue = value?.trim();
-  if (normalizedLabel != null &&
-      normalizedLabel.isNotEmpty &&
-      normalizedValue != null &&
-      normalizedValue.isNotEmpty) {
-    return '$normalizedLabel: $normalizedValue';
-  }
-  if (normalizedLabel != null && normalizedLabel.isNotEmpty) {
-    return normalizedLabel;
-  }
-  if (normalizedValue != null && normalizedValue.isNotEmpty) {
-    return normalizedValue;
-  }
-  return null;
 }
 
 String? _firstNonEmpty(List<String?> values) {
@@ -6824,17 +6143,5 @@ String? _visibleAgentStatusTitle(String? value) {
     'CozyMate 正在思考怎么帮你' => '我想一下',
     '正在整理回复' => '我在组织回复～',
     _ => normalized,
-  };
-}
-
-String _artifactSubject(AgentStreamEvent event) {
-  return switch (_firstNonEmpty([
-    stringField(event.raw, 'artifact_type'),
-    stringField(event.payload, 'artifact_type'),
-  ])) {
-    'milk_analysis_card' => '分析卡片',
-    'milk_plan_card' => '结果卡片',
-    'rich_text' || 'rich_text_card' => '说明内容',
-    _ => '结果卡片',
   };
 }
