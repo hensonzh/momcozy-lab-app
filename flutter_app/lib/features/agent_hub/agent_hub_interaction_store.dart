@@ -66,12 +66,21 @@ class AgentHubInteractionSnapshot {
 }
 
 class AgentHubHistorySnapshot {
-  const AgentHubHistorySnapshot({required this.role, required this.content});
+  const AgentHubHistorySnapshot({
+    required this.role,
+    required this.content,
+    this.runState,
+  });
 
   final String role;
   final String content;
+  final AgentStreamRunState? runState;
 
-  Map<String, Object?> toMap() => {'role': role, 'content': content};
+  Map<String, Object?> toMap() => {
+    'role': role,
+    'content': content,
+    if (runState != null) 'runState': runState!.toMap(),
+  };
 
   static AgentHubHistorySnapshot? fromMap(Object? value) {
     if (value is! Map) return null;
@@ -79,7 +88,16 @@ class AgentHubHistorySnapshot {
     final content = _string(map['content'])?.trim();
     if (content == null || content.isEmpty) return null;
     final role = _string(map['role']) == 'user' ? 'user' : 'assistant';
-    return AgentHubHistorySnapshot(role: role, content: content);
+    final runStateValue = map['runState'] ?? map['run_state'];
+    return AgentHubHistorySnapshot(
+      role: role,
+      content: content,
+      runState: runStateValue is Map
+          ? AgentStreamRunState.fromMap(
+              Map<String, Object?>.from(runStateValue),
+            )
+          : null,
+    );
   }
 }
 
