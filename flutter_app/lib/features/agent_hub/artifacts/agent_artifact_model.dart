@@ -121,6 +121,16 @@ class AgentArtifactActionView {
   final Object? routeExtra;
 }
 
+abstract final class AgentArtifactActions {
+  static const hospitalBagCart = AgentArtifactActionView(
+    label: '打开待产包购物车',
+    icon: Icons.shopping_cart_outlined,
+    kind: 'artifact',
+    value: '/hospital-bag-cart',
+    routePath: '/hospital-bag-cart',
+  );
+}
+
 ({String groupTitle, String fieldLabel}) _splitFormFieldLabel(String label) {
   final normalized = label.trim();
   final separatorIndex = normalized.indexOf('｜');
