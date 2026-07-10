@@ -233,24 +233,27 @@ void main() {
       expect(event.quickReplies, isEmpty);
     });
 
-    test('extracts quick replies from transient quick replies event', () {
+    test('extracts exactly three quick replies from completed message payload', () {
       final event = AgentStreamEvent(const {
-        'type': 'quick_replies.updated',
+        'type': 'message.completed',
         'payload': {
+          'role': 'assistant',
           'message_id': 'msg-quick-001',
-          'replies': [
+          'text': '已经整理好了。',
+          'quick_replies': [
             {'id': 'qr_1', 'text': '继续聊这个'},
             {'id': 'qr_2', 'text': '给我更多细节'},
+            {'id': 'qr_3', 'text': '换个方向'},
           ],
         },
       });
 
       expect(event.messageId, 'msg-quick-001');
-      expect(event.quickReplies, ['继续聊这个', '给我更多细节']);
+      expect(event.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
     });
 
-    test('extracts quick replies from durable assistant messages', () {
-      final durable = AgentStreamEvent(const {
+    test('ignores incomplete quick reply sets', () {
+      final event = AgentStreamEvent(const {
         'type': 'message.completed',
         'payload': {
           'role': 'assistant',
@@ -262,7 +265,7 @@ void main() {
         },
       });
 
-      expect(durable.quickReplies, ['继续聊这个', '给我更多细节']);
+      expect(event.quickReplies, isEmpty);
     });
 
     test('extracts completed text from durable message payloads', () {
