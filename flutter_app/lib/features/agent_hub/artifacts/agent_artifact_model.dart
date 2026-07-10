@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+typedef AgentArtifactFormSubmitHandler =
+    Future<bool> Function(AgentArtifactActionView action);
+
 enum AgentArtifactPresentationKind {
   form,
   milkAnalysisCard,
@@ -54,7 +57,9 @@ class AgentArtifactCardView {
   final List<AgentArtifactFormFieldView> formFields;
   final List<AgentArtifactActionView> actions;
 
-  bool get isForm => presentationKind == AgentArtifactPresentationKind.form;
+  bool get isForm =>
+      presentationKind == AgentArtifactPresentationKind.form ||
+      formFields.isNotEmpty;
 
   bool get isUnsupported =>
       presentationKind == AgentArtifactPresentationKind.unsupported;

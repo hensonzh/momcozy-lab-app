@@ -3090,8 +3090,9 @@ void main() {
     expect(find.text('预产期或当前孕周'), findsOneWidget);
     expect(find.text('生产信息'), findsOneWidget);
     expect(find.text('分娩方式'), findsOneWidget);
-    expect(find.text('必填'), findsWidgets);
-    expect(find.text('顺产'), findsOneWidget);
+    expect(find.text('必填'), findsNothing);
+    expect(find.text('*'), findsWidgets);
+    expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
     expect(find.text('孕期计划'), findsOneWidget);
     expect(find.text('当前阶段'), findsOneWidget);
     expect(find.text('2 个事项'), findsOneWidget);
@@ -3117,8 +3118,10 @@ void main() {
       '38 周',
     );
     await tester.pump();
-    await tester.tap(find.text('顺产'));
-    await tester.pump();
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('顺产').last);
+    await tester.pumpAndSettle();
     await tester.tap(
       find.byKey(
         const ValueKey('agent-artifact-form-submit-hospital-bag-form'),
@@ -3139,7 +3142,11 @@ void main() {
     final cartActionFinder = find.byKey(
       const ValueKey('agent-artifact-action-hospital-bag-cart-0'),
     );
-    await tester.ensureVisible(cartActionFinder);
+    await tester.scrollUntilVisible(
+      cartActionFinder,
+      260,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.pump();
     await tester.tap(cartActionFinder);
     await tester.pump();
@@ -3192,6 +3199,7 @@ void main() {
       expect(find.text('基本信息｜预产期或当前孕周'), findsNothing);
       expect(find.text('38 周'), findsOneWidget);
       expect(find.text('可以填写日期或孕周。'), findsOneWidget);
+      expect(find.text('结果卡片'), findsNothing);
       final otherFinder = find.byKey(
         const ValueKey(
           'agent-artifact-form-other-form-alignment-pregnancy_history',
@@ -3199,9 +3207,12 @@ void main() {
       );
       expect(otherFinder, findsOneWidget);
 
-      await tester.tap(
-        find.byKey(const ValueKey('agent-artifact-form-submit-form-alignment')),
+      final submitFinder = find.byKey(
+        const ValueKey('agent-artifact-form-submit-form-alignment'),
       );
+      await tester.ensureVisible(submitFinder);
+      await tester.pump();
+      await tester.tap(submitFinder);
       await tester.pump();
 
       expect(actions, isEmpty);
@@ -3209,9 +3220,9 @@ void main() {
 
       await tester.enterText(otherFinder, '第一胎剖宫产');
       await tester.pump();
-      await tester.tap(
-        find.byKey(const ValueKey('agent-artifact-form-submit-form-alignment')),
-      );
+      await tester.ensureVisible(submitFinder);
+      await tester.pump();
+      await tester.tap(submitFinder);
       await tester.pump();
 
       expect(actions, hasLength(1));
@@ -3222,12 +3233,65 @@ void main() {
       );
       expect(find.text('已提交'), findsOneWidget);
 
-      await tester.tap(
-        find.byKey(const ValueKey('agent-artifact-form-submit-form-alignment')),
-      );
+      await tester.tap(submitFinder);
       await tester.pump();
 
       expect(actions, hasLength(1));
+    },
+  );
+
+  testWidgets(
+    'Agent artifact form stays editable when submission is rejected',
+    (tester) async {
+      var attempts = 0;
+      const card = AgentArtifactCardView(
+        id: 'retryable-form',
+        title: '信息采集',
+        formId: 'hospital_bag_intake',
+        presentationKind: AgentArtifactPresentationKind.form,
+        formFields: [
+          AgentArtifactFormFieldView(
+            id: 'due_date_or_week',
+            label: '基本信息｜预产期或当前孕周',
+            type: 'text',
+            required: true,
+            defaultValue: '38 周',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _host(
+          SizedBox(
+            width: 360,
+            child: AgentArtifactPanel(
+              cards: const [card],
+              onFormSubmit: (_) async {
+                attempts += 1;
+                return attempts > 1;
+              },
+            ),
+          ),
+        ),
+      );
+
+      final submitFinder = find.byKey(
+        const ValueKey('agent-artifact-form-submit-retryable-form'),
+      );
+      expect(tester.getSize(submitFinder).width, greaterThan(300));
+
+      await tester.tap(submitFinder);
+      await tester.pumpAndSettle();
+
+      expect(attempts, 1);
+      expect(find.text('提交失败，请重试'), findsOneWidget);
+      expect(find.text('已提交'), findsNothing);
+
+      await tester.tap(submitFinder);
+      await tester.pumpAndSettle();
+
+      expect(attempts, 2);
+      expect(find.text('已提交'), findsOneWidget);
     },
   );
 
@@ -3274,7 +3338,8 @@ void main() {
 
     expect(find.text('奶瓶'), findsOneWidget);
     expect(find.text('尿布'), findsOneWidget);
-    expect(find.byType(ChoiceChip), findsNWidgets(3));
+    expect(find.byType(ChoiceChip), findsNothing);
+    expect(find.byType(Checkbox), findsNWidgets(3));
 
     await tester.tap(find.text('奶瓶'));
     await tester.pump();
