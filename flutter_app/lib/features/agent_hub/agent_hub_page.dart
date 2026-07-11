@@ -2525,7 +2525,6 @@ class AgentRunTranscript extends StatelessWidget {
                       text,
                       style: primaryTextStyle,
                       onArtifactAction: onArtifactAction,
-                      parseMarkdown: _shouldParsePrimaryTextMarkdown,
                     ),
                   ),
                 ),
@@ -2603,10 +2602,6 @@ class AgentRunTranscript extends StatelessWidget {
       return false;
     }
     return true;
-  }
-
-  bool get _shouldParsePrimaryTextMarkdown {
-    return !state.isActive || state.hasCompletedAssistantMessage;
   }
 
   _AgentLoopDecorState get _loopDecorState {
