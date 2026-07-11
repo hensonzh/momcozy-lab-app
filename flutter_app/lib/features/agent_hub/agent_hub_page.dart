@@ -19,6 +19,9 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
+import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:video_player/video_player.dart';
 
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -117,6 +120,7 @@ class AgentHubPage extends StatefulWidget {
     this.voiceInputController,
     this.voicePlaybackCoordinator,
     this.voicePlaybackPlayer,
+    this.productAssetRepository,
     this.onArtifactAction,
     this.onNewSession,
     this.initialComposerText,
@@ -138,6 +142,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentVoiceInputController? voiceInputController;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
+  final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
@@ -1554,6 +1559,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                 ),
                                 sliver: AgentHubHistorySliver(
                                   messages: _historyMessages,
+                                  productAssetRepository:
+                                      widget.productAssetRepository,
                                   onArtifactAction: _handleArtifactAction,
                                   onFormSubmit: _handleArtifactFormSubmit,
                                 ),
@@ -1592,6 +1599,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                         _handleQuickReplySelected,
                                     pendingActionIds: _pendingActionIds,
                                     localActionStatuses: _localActionStatuses,
+                                    productAssetRepository:
+                                        widget.productAssetRepository,
                                     onConfirmAction: widget.actionClient == null
                                         ? null
                                         : _confirmAction,
@@ -2096,11 +2105,13 @@ class AgentHubHistoryPanel extends StatelessWidget {
   const AgentHubHistoryPanel({
     super.key,
     required this.messages,
+    this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
   });
 
   final List<AgentHubHistoryMessage> messages;
+  final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
 
@@ -2113,6 +2124,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
           _AgentHistoryBubble(
             key: ValueKey('agent-history-$index'),
             message: messages[index],
+            productAssetRepository: productAssetRepository,
             onArtifactAction: onArtifactAction,
             onFormSubmit: onFormSubmit,
           ),
@@ -2127,11 +2139,13 @@ class AgentHubHistorySliver extends StatelessWidget {
   const AgentHubHistorySliver({
     super.key,
     required this.messages,
+    this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
   });
 
   final List<AgentHubHistoryMessage> messages;
+  final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
 
@@ -2146,6 +2160,7 @@ class AgentHubHistorySliver extends StatelessWidget {
         return _AgentHistoryBubble(
           key: ValueKey('agent-history-$messageIndex'),
           message: messages[messageIndex],
+          productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
         );
@@ -2158,11 +2173,13 @@ class _AgentHistoryBubble extends StatelessWidget {
   const _AgentHistoryBubble({
     super.key,
     required this.message,
+    this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
   });
 
   final AgentHubHistoryMessage message;
+  final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
 
@@ -2180,6 +2197,7 @@ class _AgentHistoryBubble extends StatelessWidget {
       if (runState != null) {
         return AgentRunTranscript(
           state: runState,
+          productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
         );
@@ -2325,6 +2343,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     this.onQuickReplySelected,
     required this.pendingActionIds,
     required this.localActionStatuses,
+    this.productAssetRepository,
     this.onConfirmAction,
     this.onRejectAction,
   });
@@ -2341,6 +2360,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
+  final ProductAssetRepository? productAssetRepository;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
   final ValueChanged<AgentActionCardView>? onRejectAction;
 
@@ -2379,6 +2399,7 @@ class _AgentRunTranscriptListenableState
           artifactPanelKey: widget.artifactPanelKey,
           onQuickReplySelected: widget.onQuickReplySelected,
           pendingActionIds: widget.pendingActionIds,
+          productAssetRepository: widget.productAssetRepository,
           artifactCards: _artifactCardsForState(state),
           actionCards: _actionCardsForState(state, actionRevision),
           onConfirmAction: widget.onConfirmAction,
@@ -2435,6 +2456,7 @@ class AgentRunTranscript extends StatelessWidget {
     this.onQuickReplySelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
+    this.productAssetRepository,
     this.artifactCards,
     this.actionCards,
     this.onConfirmAction,
@@ -2452,6 +2474,7 @@ class AgentRunTranscript extends StatelessWidget {
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
+  final ProductAssetRepository? productAssetRepository;
   final List<AgentArtifactCardView>? artifactCards;
   final List<AgentActionCardView>? actionCards;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
@@ -2525,6 +2548,7 @@ class AgentRunTranscript extends StatelessWidget {
                       text,
                       style: primaryTextStyle,
                       onArtifactAction: onArtifactAction,
+                      productAssetRepository: productAssetRepository,
                     ),
                   ),
                 ),
@@ -2806,12 +2830,14 @@ class AgentMarkdownText extends StatelessWidget {
     super.key,
     this.style,
     this.onArtifactAction,
+    this.productAssetRepository,
     this.parseMarkdown = true,
   });
 
   final String text;
   final TextStyle? style;
   final AgentArtifactActionHandler? onArtifactAction;
+  final ProductAssetRepository? productAssetRepository;
   final bool parseMarkdown;
 
   @override
@@ -2837,6 +2863,7 @@ class AgentMarkdownText extends StatelessWidget {
         return _AgentMarkdownImage(
           url: url,
           title: alt?.trim().isNotEmpty == true ? alt!.trim() : title,
+          repository: productAssetRepository,
           onTap: () => _openMarkdownMedia(url: url, title: alt ?? title),
         );
       },
@@ -2969,15 +2996,26 @@ class AgentMarkdownText extends StatelessWidget {
 }
 
 class _AgentMarkdownImage extends StatelessWidget {
-  const _AgentMarkdownImage({required this.url, this.title, this.onTap});
+  const _AgentMarkdownImage({
+    required this.url,
+    this.title,
+    this.repository,
+    this.onTap,
+  });
 
   final String url;
   final String? title;
+  final ProductAssetRepository? repository;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final label = title?.trim().isNotEmpty == true ? title!.trim() : '查看图片';
+    final productAsset = ProductAssetReference.tryParse(
+      url,
+      kind: ProductAssetKind.image.routeValue,
+      title: label,
+    );
     final displayUrl = _displayableHttpUrl(url);
 
     return Padding(
@@ -2995,7 +3033,26 @@ class _AgentMarkdownImage extends StatelessWidget {
               minWidth: 180,
               maxWidth: 360,
             ),
-            child: displayUrl == null
+            child: productAsset != null
+                ? ProductAssetImage(
+                    reference: productAsset,
+                    repository: repository,
+                    fit: BoxFit.contain,
+                    semanticLabel: label,
+                    loadingBuilder: (context) {
+                      return _AgentMarkdownImagePlaceholder(
+                        label: label,
+                        loading: true,
+                      );
+                    },
+                    errorBuilder: (context, error, retry) {
+                      return _AgentMarkdownImagePlaceholder(
+                        label: label,
+                        onRetry: retry,
+                      );
+                    },
+                  )
+                : displayUrl == null
                 ? _AgentMarkdownImagePlaceholder(label: label)
                 : Image.network(
                     displayUrl,
@@ -3012,9 +3069,15 @@ class _AgentMarkdownImage extends StatelessWidget {
 }
 
 class _AgentMarkdownImagePlaceholder extends StatelessWidget {
-  const _AgentMarkdownImagePlaceholder({required this.label});
+  const _AgentMarkdownImagePlaceholder({
+    required this.label,
+    this.loading = false,
+    this.onRetry,
+  });
 
   final String label;
+  final bool loading;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -3045,13 +3108,21 @@ class _AgentMarkdownImagePlaceholder extends StatelessWidget {
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 2),
-            Text(
-              '点开查看',
-              style: textTheme.labelSmall?.copyWith(
+            const SizedBox(height: 6),
+            if (loading)
+              const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else if (onRetry != null)
+              IconButton(
+                key: ValueKey('agent-markdown-image-retry-$label'),
+                tooltip: '重新加载',
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded, size: 20),
                 color: MomCozyColors.mutedForeground,
+                visualDensity: VisualDensity.compact,
               ),
-            ),
           ],
         ),
       ),
@@ -3121,6 +3192,8 @@ String _markdownDestinationUrl(String destination) {
 }
 
 String? _viewerKindForUrl(String url) {
+  final productAsset = ProductAssetReference.tryParse(url);
+  if (productAsset != null) return productAsset.kind.routeValue;
   final path = url.split(RegExp(r'[?#]')).first.toLowerCase();
   if (path.endsWith('.pdf')) return 'pdf';
   if (RegExp(r'\.(mp4|webm|ogv|m4v|mov)$').hasMatch(path)) return 'video';

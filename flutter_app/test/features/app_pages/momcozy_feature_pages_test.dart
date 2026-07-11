@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -5,6 +8,7 @@ import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
@@ -1429,6 +1433,93 @@ void main() {
       expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
     });
 
+    testWidgets('media viewer loads an authenticated product image with zoom', (
+      tester,
+    ) async {
+      final repository = _productAssetRepository([
+        _assetResponse(statusCode: 200, body: _onePixelPng),
+      ]);
+      final location = Uri(
+        path: '/media-viewer',
+        queryParameters: const {
+          'kind': 'image',
+          'url': '/v1/assets/asset-image?kind=image',
+          'title': 'Air1 核心部件',
+        },
+      ).toString();
+      final router = createMomCozyRouter(initialLocation: location);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Air1 核心部件'), findsOneWidget);
+      expect(find.byKey(const ValueKey('media-image-viewer')), findsOneWidget);
+      expect(find.byKey(const ValueKey('product-asset-image')), findsOneWidget);
+      final viewer = tester.widget<InteractiveViewer>(
+        find.byKey(const ValueKey('media-image-interactive-viewer')),
+      );
+      expect(viewer.minScale, 1);
+      expect(viewer.maxScale, 5);
+      expect(viewer.panEnabled, isTrue);
+
+      final imageViewer = find.byKey(const ValueKey('media-image-viewer'));
+      final center = tester.getCenter(imageViewer);
+      await tester.tapAt(center);
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tapAt(center);
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(
+        viewer.transformationController!.value.getMaxScaleOnAxis(),
+        closeTo(2.5, 0.01),
+      );
+    });
+
+    testWidgets('media image failure can be retried without leaving the page', (
+      tester,
+    ) async {
+      final connector = _FakeProductAssetConnector([
+        _assetResponse(statusCode: 503, contentType: 'application/json'),
+        _assetResponse(statusCode: 200, body: _onePixelPng),
+      ]);
+      final repository = ProductAssetRepository(
+        baseUri: Uri.parse('https://api.example.test'),
+        connector: connector,
+      );
+      final router = createMomCozyRouter(
+        initialLocation: Uri(
+          path: '/media-viewer',
+          queryParameters: const {
+            'kind': 'image',
+            'url': '/v1/assets/asset-image?kind=image',
+          },
+        ).toString(),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('media-viewer-load-error')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('media-viewer-retry')));
+      await tester.pumpAndSettle();
+
+      expect(connector.calls, 2);
+      expect(find.byKey(const ValueKey('product-asset-image')), findsOneWidget);
+    });
+
     testWidgets('IBCLC page posts client event through runtime client', (
       tester,
     ) async {
@@ -1957,6 +2048,7 @@ MomCozyApiRuntime _appRuntime({
   AgentStreamClientEventClient? clientEventClient,
   FixtureApiJsonTransportByPath? jsonTransport,
   BlePlatform? blePlatform,
+  ProductAssetRepository? productAssetRepository,
   String userId = 'demo-user-fixture',
 }) {
   return MomCozyApiRuntime(
@@ -2066,6 +2158,7 @@ MomCozyApiRuntime _appRuntime({
     clientEventClient:
         clientEventClient ?? const AgentStreamClientEventClient(sent: false),
     agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
+    productAssetRepository: productAssetRepository,
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
       'status': 200,
       'data': <String, Object?>{
@@ -2092,6 +2185,50 @@ MomCozyApiRuntime _appRuntime({
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7),
   );
+}
+
+final _onePixelPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+);
+
+ProductAssetRepository _productAssetRepository(
+  List<ProductAssetHttpResponse> responses,
+) {
+  return ProductAssetRepository(
+    baseUri: Uri.parse('https://api.example.test'),
+    connector: _FakeProductAssetConnector(responses),
+  );
+}
+
+ProductAssetHttpResponse _assetResponse({
+  required int statusCode,
+  String contentType = 'image/png',
+  Uint8List? body,
+}) {
+  return ProductAssetHttpResponse(
+    statusCode: statusCode,
+    statusText: statusCode == 200 ? 'OK' : 'Unavailable',
+    contentType: contentType,
+    body: body ?? Uint8List(0),
+  );
+}
+
+class _FakeProductAssetConnector implements ProductAssetHttpConnector {
+  _FakeProductAssetConnector(List<ProductAssetHttpResponse> responses)
+    : _responses = List.of(responses);
+
+  final List<ProductAssetHttpResponse> _responses;
+  int calls = 0;
+
+  @override
+  Future<ProductAssetHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+    required int maxBytes,
+  }) async {
+    calls += 1;
+    return _responses.removeAt(0);
+  }
 }
 
 class _ThrowingPumpProtocolPlatform implements PumpProtocolPlatform {
