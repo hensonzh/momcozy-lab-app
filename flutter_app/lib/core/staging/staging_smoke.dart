@@ -324,13 +324,21 @@ class _HospitalBagProbe implements StagingSmokeProbe {
   @override
   Future<void> run() async {
     await repository.syncCart(
-      items: const [
-        HospitalBagPackedItem(
-          id: 'flutter-staging-smoke',
-          title: 'Flutter staging smoke',
-          packed: false,
+      cart: HospitalBagCartSnapshot.fromGroups(const [
+        HospitalBagCartGroup(
+          title: 'Staging smoke',
+          tone: HospitalBagCartTone.sky,
+          items: [
+            HospitalBagCartItem(
+              id: 'flutter-staging-smoke',
+              name: 'Flutter staging smoke',
+              desc: 'Production cart contract probe',
+              qty: 1,
+              price: 0,
+            ),
+          ],
         ),
-      ],
+      ]),
     );
   }
 }

@@ -18,6 +18,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_reader.dart';
@@ -3755,10 +3756,33 @@ void main() {
     expect(find.text('婴儿连体衣'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub activates cart context from a final reply link', (
+    tester,
+  ) async {
+    var activationCount = 0;
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: const AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '已经整理好了。\n\n**[打开待产包购物车](/hospital-bag-cart)**',
+          ),
+          onHospitalBagCartContextRequired: () => activationCount += 1,
+        ),
+      ),
+    );
+
+    expect(activationCount, 1);
+    await tester.pump();
+    expect(activationCount, 1);
+  });
+
   testWidgets('Agent Hub renders legacy service artifact envelopes', (
     tester,
   ) async {
     final actions = <AgentArtifactActionView>[];
+    final cartUpdates = <HospitalBagCartArtifactSeed>[];
     final client = _ControllableAgentStreamClient();
     addTearDown(client.dispose);
     final formEvent = AgentStreamEvent({
@@ -3855,6 +3879,7 @@ void main() {
             events: [formEvent, planEvent, cartEvent],
           ),
           onArtifactAction: actions.add,
+          onHospitalBagCartUpdate: cartUpdates.add,
         ),
       ),
     );
@@ -3883,6 +3908,8 @@ void main() {
     expect(find.text('共 2 件'), findsOneWidget);
     expect(find.text('合计 101.02'), findsOneWidget);
     expect(find.text('打开购物车'), findsOneWidget);
+    expect(cartUpdates, hasLength(1));
+    expect(cartUpdates.single.snapshot.groups.single.items, hasLength(2));
 
     await tester.tap(
       find.byKey(
@@ -3933,6 +3960,12 @@ void main() {
     await tester.pump();
 
     expect(actions.single.routePath, '/hospital-bag-cart');
+    expect(actions.single.routeExtra, isNull);
+    expect(actions.single.hospitalBagCartSeed, isNotNull);
+    expect(
+      actions.single.hospitalBagCartSeed!.snapshot.groups.single.items,
+      hasLength(2),
+    );
   });
 
   testWidgets(

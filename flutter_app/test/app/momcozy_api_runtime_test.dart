@@ -11,6 +11,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -340,6 +341,8 @@ void main() {
       productAssetRepository: productAssetRepository,
     );
     final controller = MomCozyRuntimeController(runtime);
+    final previousCartStore = runtime.hospitalBagCartStore;
+    previousCartStore.ingestArtifact(_cartSeed('previous-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -361,6 +364,11 @@ void main() {
     expect(controller.runtime.session.accessToken, 'session-access');
     expect(controller.runtime.observability, same(observability));
     expect(
+      controller.runtime.hospitalBagCartStore,
+      isNot(same(previousCartStore)),
+    );
+    expect(controller.runtime.hospitalBagCartStore.agentClientContext, isNull);
+    expect(
       controller.runtime.productAssetRepository,
       same(productAssetRepository),
     );
@@ -381,6 +389,8 @@ void main() {
       MomCozyApiRuntime.fromSession(session, observability: observability),
     );
     final store = MemoryMomCozySessionStore(session);
+    final cartStore = controller.runtime.hospitalBagCartStore;
+    cartStore.ingestArtifact(_cartSeed('same-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -389,6 +399,11 @@ void main() {
     controller.enableSessionAutoRefresh(store);
 
     expect(notifyCount, 1);
+    expect(controller.runtime.hospitalBagCartStore, same(cartStore));
+    expect(
+      controller.runtime.hospitalBagCartStore.agentClientContext,
+      isNotNull,
+    );
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),
@@ -407,6 +422,7 @@ void main() {
 
     expect(notifyCount, 2);
     expect(controller.runtime.currentSession.accessToken, 'fresh-access');
+    expect(controller.runtime.hospitalBagCartStore, same(cartStore));
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),
@@ -418,6 +434,23 @@ void main() {
     expect(controller.runtime.observability, same(observability));
     controller.dispose();
   });
+}
+
+HospitalBagCartArtifactSeed _cartSeed(String artifactId) {
+  return HospitalBagCartArtifactSeed.tryFromCartUpdate(
+    artifactId: artifactId,
+    cartUpdate: {
+      'groups': [
+        {
+          'title': '我的清单',
+          'tone': 'sky',
+          'items': [
+            {'id': 'custom', 'name': '个性化用品', 'qty': 1, 'price': 10},
+          ],
+        },
+      ],
+    },
+  )!;
 }
 
 class _NeverProductAssetConnector implements ProductAssetHttpConnector {

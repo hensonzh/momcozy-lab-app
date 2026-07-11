@@ -9,6 +9,8 @@ import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
@@ -1919,6 +1921,93 @@ void main() {
       expect(find.text('产褥垫组合装'), findsOneWidget);
     });
 
+    testWidgets(
+      'hospital bag page owns the artifact cart without default overwrite',
+      (tester) async {
+        final store = HospitalBagCartStore();
+        final cartId = store.ingestArtifact(
+          HospitalBagCartArtifactSeed.tryFromCartUpdate(
+            artifactId: 'personalized-page-cart',
+            cartUpdate: {
+              'groups': [
+                {
+                  'title': '我的清单',
+                  'tone': 'mint',
+                  'items': [
+                    {
+                      'id': 'custom-one',
+                      'name': '个性化用品 A',
+                      'desc': '准备删除',
+                      'qty': 1,
+                      'price': 88.0,
+                    },
+                    {
+                      'id': 'custom-two',
+                      'name': '个性化用品 B',
+                      'desc': '继续保留',
+                      'qty': 2,
+                      'price': 66.0,
+                    },
+                  ],
+                },
+              ],
+            },
+          )!,
+        );
+        final transport = FixtureApiJsonTransportByPath({
+          hospitalBagCartUpdateEndpoint: const {
+            'id': 'cart-plan-personalized',
+            'owner_user_id': 'demo-user-fixture',
+            'plan_type': 'hospital_bag_cart',
+            'title': 'Hospital bag cart',
+            'summary': '个性化清单已同步',
+            'status': 'active',
+            'source': 'flutter',
+            'payload': {'items': <Object?>[]},
+          },
+        });
+
+        await tester.pumpWidget(
+          _FeaturePageHost(
+            route: _route('/hospital-bag-cart'),
+            routeExtra: HospitalBagCartRouteState(cartId: cartId),
+            hospitalBagCartStore: store,
+            jsonTransport: transport,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('个性化用品 A'), findsOneWidget);
+        expect(find.text('个性化用品 B'), findsOneWidget);
+        expect(find.text('产褥垫组合装'), findsNothing);
+        expect(find.text('3 件'), findsOneWidget);
+
+        await tester.longPress(find.text('个性化用品 A'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('个性化用品 A'), findsNothing);
+        expect(find.text('个性化用品 B'), findsOneWidget);
+        expect(
+          store.snapshot(cartId).groups.single.items.single.id,
+          'custom-two',
+        );
+        final payload =
+            transport.postedBodies.last['payload']! as Map<String, Object?>;
+        final groups = payload['groups']! as List;
+        final items = (groups.single as Map)['items']! as List;
+        expect(items, hasLength(1));
+        expect((items.single as Map)['id'], 'custom-two');
+        expect((payload['totals'] as Map)['itemCount'], 2);
+
+        await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
+        await tester.pumpAndSettle();
+
+        expect(store.snapshot(cartId).totals.itemCount, 18);
+        await _scrollToText(tester, '产褥垫组合装');
+        expect(find.text('产褥垫组合装'), findsOneWidget);
+      },
+    );
+
     testWidgets('device subpages mirror reminder and user config routes', (
       tester,
     ) async {
@@ -2106,6 +2195,8 @@ class _FeaturePageHost extends StatelessWidget {
     this.jsonTransport,
     this.blePlatform,
     this.pumpProtocolPlatform,
+    this.routeExtra,
+    this.hospitalBagCartStore,
   });
 
   final MomCozyRouteConfig route;
@@ -2113,6 +2204,8 @@ class _FeaturePageHost extends StatelessWidget {
   final FixtureApiJsonTransportByPath? jsonTransport;
   final BlePlatform? blePlatform;
   final PumpProtocolPlatform? pumpProtocolPlatform;
+  final Object? routeExtra;
+  final HospitalBagCartStore? hospitalBagCartStore;
 
   @override
   Widget build(BuildContext context) {
@@ -2122,6 +2215,7 @@ class _FeaturePageHost extends StatelessWidget {
         jsonTransport: jsonTransport,
         blePlatform: blePlatform,
         pumpProtocolPlatform: pumpProtocolPlatform,
+        hospitalBagCartStore: hospitalBagCartStore,
       ),
       child: MaterialApp(
         theme: momCozyTheme(),
@@ -2133,6 +2227,7 @@ class _FeaturePageHost extends StatelessWidget {
             icon: route.icon,
             accent: route.accent,
             priority: route.priority,
+            routeExtra: routeExtra,
           ),
         ),
       ),
@@ -2200,6 +2295,7 @@ MomCozyApiRuntime _appRuntime({
   FixtureApiJsonTransportByPath? jsonTransport,
   BlePlatform? blePlatform,
   ProductAssetRepository? productAssetRepository,
+  HospitalBagCartStore? hospitalBagCartStore,
   String userId = 'demo-user-fixture',
 }) {
   return MomCozyApiRuntime(
@@ -2310,6 +2406,7 @@ MomCozyApiRuntime _appRuntime({
         clientEventClient ?? const AgentStreamClientEventClient(sent: false),
     agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
     productAssetRepository: productAssetRepository,
+    hospitalBagCartStore: hospitalBagCartStore,
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
       'status': 200,
       'data': <String, Object?>{

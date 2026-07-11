@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 class AgentArtifactMapper {
   const AgentArtifactMapper._();
@@ -128,7 +129,11 @@ class AgentArtifactMapper {
       ..._referenceActionsFromRichText(richText),
       ..._semanticActions(richText['action'], event),
       ..._semanticActions(payload['actions'], event),
-      ..._assistantFollowupActions(assistantFollowup),
+      ..._assistantFollowupActions(
+        assistantFollowup,
+        artifactId: artifactId,
+        cartUpdate: cartUpdate,
+      ),
     ];
 
     if (explicitTitle == null &&
@@ -505,8 +510,10 @@ List<AgentArtifactActionView> _semanticActions(
 }
 
 List<AgentArtifactActionView> _assistantFollowupActions(
-  Map<String, Object?> assistantFollowup,
-) {
+  Map<String, Object?> assistantFollowup, {
+  required String artifactId,
+  required Map<String, Object?> cartUpdate,
+}) {
   final kind = _stringField(assistantFollowup, 'kind');
   final route = _markdownLinkPath(_stringField(assistantFollowup, 'message'));
   if (kind != 'hospital_bag_cart' && route != '/hospital-bag-cart') {
@@ -519,6 +526,10 @@ List<AgentArtifactActionView> _assistantFollowupActions(
       kind: 'artifact',
       value: route ?? '/hospital-bag-cart',
       routePath: route ?? '/hospital-bag-cart',
+      hospitalBagCartSeed: HospitalBagCartArtifactSeed.tryFromCartUpdate(
+        artifactId: artifactId,
+        cartUpdate: cartUpdate,
+      ),
     ),
   ];
 }

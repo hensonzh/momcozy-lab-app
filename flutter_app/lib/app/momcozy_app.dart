@@ -16,6 +16,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -1255,13 +1256,24 @@ Widget _buildDefaultAgentHubPage(
     ),
     greetingProfileLoader:
         runtime.agentHubProfileRepository.fetchGreetingProfile,
-    requestBuilder: (message) =>
-        buildSessionAgentHubRequest(message, session: runtime.session),
+    requestBuilder: (message) => buildSessionAgentHubRequest(
+      message,
+      session: runtime.session,
+      clientContext: runtime.hospitalBagCartStore.agentClientContext,
+    ),
     voicePlaybackCoordinator: voicePlaybackCoordinator,
     voicePlaybackPlayer: runtime.agentVoicePlaybackPlayer,
     pickImage: runtime.agentHubImagePicker,
     voiceInputController: runtime.agentVoiceInputController,
     productAssetRepository: runtime.productAssetRepository,
+    onHospitalBagCartUpdate: (seed) {
+      runtime.hospitalBagCartStore.ingestArtifact(seed);
+    },
+    onHospitalBagCartContextRequired: () {
+      final store = runtime.hospitalBagCartStore;
+      store.activate(store.activeCartId);
+    },
+    onNewSession: runtime.hospitalBagCartStore.clearForNewSession,
     onArtifactAction: (action) => _handleAgentArtifactAction(context, action),
     initialComposerText: _agentPrefillFromRoute(uri, extra),
     initialAutoSend: _agentAutoSendFromRoute(uri, extra),
@@ -1449,7 +1461,16 @@ void _handleAgentArtifactAction(
 ) {
   final path = action.routePath;
   if (path == null || !_knownFlutterRoutePaths.contains(path)) return;
-  context.go(path, extra: action.routeExtra);
+  Object? routeExtra = action.routeExtra;
+  if (path == '/hospital-bag-cart') {
+    final store = MomCozyRuntimeScope.of(context).hospitalBagCartStore;
+    final seed = action.hospitalBagCartSeed;
+    final cartId = seed == null
+        ? store.activate(store.activeCartId)
+        : store.ingestArtifact(seed);
+    routeExtra = HospitalBagCartRouteState(cartId: cartId);
+  }
+  context.go(path, extra: routeExtra);
 }
 
 final _knownFlutterRoutePaths = momCozyRoutes
