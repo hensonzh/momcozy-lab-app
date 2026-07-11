@@ -58,7 +58,7 @@ class StatusDashboardController {
   StatusDashboardController({
     required this.statusRepository,
     required this.feedingRepository,
-    required this.pumpRepository,
+    required this.milkTrendRepository,
     required this.growthRepository,
     required this.pregnancyDiaryRepository,
     required this.birthJourneyPlanRepository,
@@ -78,7 +78,7 @@ class StatusDashboardController {
 
   final StatusRepository statusRepository;
   final FeedingRecordsRepository feedingRepository;
-  final PumpMilkRecordsRepository pumpRepository;
+  final MilkTrendRepository milkTrendRepository;
   final GrowthRecordsRepository growthRepository;
   final PregnancyDiaryRepository pregnancyDiaryRepository;
   final BirthJourneyPlanRepository birthJourneyPlanRepository;
@@ -96,7 +96,7 @@ class StatusDashboardController {
   final feedingRecords = ValueNotifier<StatusResource<List<FeedingRecord>>>(
     const StatusResource.initial(),
   );
-  final pumpRecords = ValueNotifier<StatusResource<List<PumpMilkRecord>>>(
+  final milkTrends = ValueNotifier<StatusResource<List<MilkTrendDay>>>(
     const StatusResource.initial(),
   );
   final growthRecords = ValueNotifier<StatusResource<List<GrowthRecord>>>(
@@ -176,12 +176,11 @@ class StatusDashboardController {
     final generation = ++_generation;
     final current = now();
     final today = DateTime(current.year, current.month, current.day);
-    final trendStart = today.subtract(const Duration(days: 29));
-    final trendEnd = today.add(const Duration(days: 1));
+    final trendStart = today.subtract(const Duration(days: 30));
 
     _markLoading(overview);
     _markLoading(feedingRecords);
-    _markLoading(pumpRecords);
+    _markLoading(milkTrends);
     _markLoading(growthRecords);
     _markLoading(pregnancyDiaryEntries);
     _markLoading(birthJourneyPlan);
@@ -194,11 +193,8 @@ class StatusDashboardController {
         generation,
       ),
       _resolve(
-        pumpRecords,
-        pumpRepository.fetchPumpMilkRecordsRange(
-          start: trendStart,
-          end: trendEnd,
-        ),
+        milkTrends,
+        milkTrendRepository.fetchMilkTrends(startDate: trendStart, days: 31),
         generation,
       ),
       _resolve(
@@ -380,7 +376,7 @@ class StatusDashboardController {
     selectionReady.dispose();
     overview.dispose();
     feedingRecords.dispose();
-    pumpRecords.dispose();
+    milkTrends.dispose();
     growthRecords.dispose();
     pregnancyDiaryEntries.dispose();
     birthJourneyPlan.dispose();

@@ -11,6 +11,14 @@ abstract interface class PumpMilkRecordsRepository {
   });
 }
 
+abstract interface class MilkTrendRepository {
+  Future<List<MilkTrendDay>> fetchMilkTrends({
+    required DateTime startDate,
+    required int days,
+    bool includeToday = true,
+  });
+}
+
 abstract interface class GrowthRecordsRepository {
   Future<List<GrowthRecord>> fetchGrowthRecords({required String babyId});
 
@@ -61,6 +69,26 @@ class PumpMilkRecord {
   final int? pumpSource;
   final int? amountMl;
   final DateTime? occurredAt;
+}
+
+class MilkTrendDay {
+  const MilkTrendDay({
+    required this.date,
+    required this.pumpedMilkVolumeMl,
+    required this.pumpingCount,
+    this.measuredOnly = true,
+    this.estimatedMilkVolumeMl,
+    this.referenceLowerMl,
+    this.referenceUpperMl,
+  });
+
+  final DateTime date;
+  final double pumpedMilkVolumeMl;
+  final int pumpingCount;
+  final bool measuredOnly;
+  final double? estimatedMilkVolumeMl;
+  final double? referenceLowerMl;
+  final double? referenceUpperMl;
 }
 
 class GrowthRecord {

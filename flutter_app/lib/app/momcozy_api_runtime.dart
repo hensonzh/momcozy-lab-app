@@ -447,7 +447,7 @@ class MomCozyApiRuntime {
     return StatusDashboardController(
       statusRepository: statusRepository,
       feedingRepository: records,
-      pumpRepository: records,
+      milkTrendRepository: records,
       growthRepository: records,
       pregnancyDiaryRepository: pregnancyDiaryRepository,
       birthJourneyPlanRepository: birthJourneyPlanRepository,
