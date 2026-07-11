@@ -3650,8 +3650,16 @@ void main() {
     await tester.pump();
 
     expect(client.requests, hasLength(1));
-    expect(client.requests.single.message, contains('confirmed_form_data'));
-    expect(client.requests.single.message, contains('due_date_or_week'));
+    expect(
+      client.requests.single.message,
+      isNot(contains('confirmed_form_data')),
+    );
+    expect(client.requests.single.message, isNot(contains('due_date_or_week')));
+    expect(client.requests.single.metadata['form_submission'], {
+      'artifact_id': 'hospital-bag-form',
+      'form_id': 'hospital_bag_intake',
+      'values': {'due_date_or_week': '38 周', 'birth_path': '顺产'},
+    });
     await tester.scrollUntilVisible(
       find.text('已提交信息采集表单'),
       -220,
@@ -3871,10 +3879,12 @@ void main() {
     await tester.pump();
 
     expect(client.requests, hasLength(1));
-    expect(
-      client.requests.single.message,
-      contains('"packing_items":["奶瓶","尿布"]'),
-    );
+    final submission =
+        client.requests.single.metadata['form_submission']!
+            as Map<String, Object?>;
+    expect(submission['values'], {
+      'packing_items': ['奶瓶', '尿布'],
+    });
   });
 
   testWidgets('Agent Hub renders rich text card rows and button actions', (

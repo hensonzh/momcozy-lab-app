@@ -99,7 +99,9 @@ Map<String, Object?> buildProductionAgentRunPayload(
   final threadId = request.threadId?.trim();
   final attachments = request.images
       .map((image) => image.toProductionAttachment())
-      .toList(growable: false);
+      .toList(growable: true);
+  final formSubmission = _productionFormSubmissionAttachment(request.metadata);
+  if (formSubmission != null) attachments.add(formSubmission);
   final normalizedIdempotencyKey = idempotencyKey?.trim();
 
   return {
@@ -108,9 +110,31 @@ Map<String, Object?> buildProductionAgentRunPayload(
     'message': text,
     if (attachments.isNotEmpty) 'attachments': attachments,
     'runtime_pattern': 'langgraph_sdk',
-    if (normalizedIdempotencyKey != null &&
-        normalizedIdempotencyKey.isNotEmpty)
+    if (normalizedIdempotencyKey != null && normalizedIdempotencyKey.isNotEmpty)
       'idempotency_key': normalizedIdempotencyKey,
+  };
+}
+
+Map<String, Object?>? _productionFormSubmissionAttachment(
+  Map<String, Object?> metadata,
+) {
+  final rawSubmission = metadata['form_submission'];
+  if (rawSubmission == null) return null;
+  if (rawSubmission is! Map) {
+    throw const AgentStreamPayloadException('Invalid form submission.');
+  }
+  final submission = Map<String, Object?>.from(rawSubmission);
+  final artifactId = submission['artifact_id']?.toString().trim() ?? '';
+  final formId = submission['form_id']?.toString().trim() ?? '';
+  final values = submission['values'];
+  if (artifactId.isEmpty || formId.isEmpty || values is! Map) {
+    throw const AgentStreamPayloadException('Invalid form submission.');
+  }
+  return {
+    'type': 'form_submission',
+    'artifact_id': artifactId,
+    'form_id': formId,
+    'values': Map<String, Object?>.from(values),
   };
 }
 
