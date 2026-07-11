@@ -599,9 +599,21 @@ class _StatusPageState extends State<_StatusPage> {
   Timer? _pregnancyDiaryNoticeTimer;
   Timer? _birthJourneyNoticeTimer;
   String? _consumedStatusIntentToken;
+  late final AppLifecycleListener _appLifecycleListener;
 
   String get _view => _controller.identity.value.value;
   String get _careStage => _controller.careStage.value.storageValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _appLifecycleListener = AppLifecycleListener(onResume: _handleAppResume);
+  }
+
+  void _handleAppResume() {
+    if (_runtime == null) return;
+    unawaited(_controller.refresh());
+  }
 
   @override
   void didChangeDependencies() {
@@ -671,6 +683,7 @@ class _StatusPageState extends State<_StatusPage> {
 
   void _showPregnancyDiaryNotice() {
     _showPregnancyView();
+    unawaited(_controller.refresh());
     _pregnancyDiaryNoticeTimer?.cancel();
     _pregnancyDiaryNotice.value = true;
     _pregnancyDiaryNoticeTimer = Timer(const Duration(seconds: 3), () {
@@ -683,6 +696,7 @@ class _StatusPageState extends State<_StatusPage> {
 
   void _showBirthJourneyNotice() {
     _showPregnancyView();
+    unawaited(_controller.refresh());
     _birthJourneyNoticeTimer?.cancel();
     _birthJourneyNotice.value = true;
     _birthJourneyNoticeTimer = Timer(const Duration(seconds: 3), () {
@@ -718,6 +732,7 @@ class _StatusPageState extends State<_StatusPage> {
     unawaited(_controller.changeCareStage(StatusCareStage.postpartum));
     _controller.selectIdentity(StatusIdentity.baby);
     _persistInteractionState();
+    unawaited(_controller.refresh());
     _startGrowthHighlightAnimation();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final targetContext = _growthCurveAnchorKey.currentContext;
@@ -780,6 +795,7 @@ class _StatusPageState extends State<_StatusPage> {
 
   @override
   void dispose() {
+    _appLifecycleListener.dispose();
     _growthHighlightTimer?.cancel();
     _pregnancyDiaryNoticeTimer?.cancel();
     _birthJourneyNoticeTimer?.cancel();
@@ -809,57 +825,63 @@ class _StatusPageState extends State<_StatusPage> {
           isPregnancy: isPregnancy,
         );
 
-        return CustomScrollView(
-          key: ValueKey('route-page-${widget.path}'),
-          slivers: [
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _StatusPinnedHeaderDelegate(
-                child: RepaintBoundary(
-                  key: const ValueKey('status-profile-selector'),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                    child: Column(
-                      children: [
-                        _CareStageSelector(
-                          selectedStage: _careStage,
-                          accent: widget.accent,
-                          onChanged: _changeCareStage,
-                        ),
-                        const SizedBox(height: 8),
-                        Expanded(
-                          child: _StatusIdentityTabs(
-                            selected: _view,
-                            momSubtitle: subtitles.mom,
-                            babySubtitle: subtitles.baby,
-                            babyDisabled: isPregnancy,
-                            onChanged: (next) {
-                              if (!_controller.selectIdentity(
-                                StatusIdentity.fromValue(next),
-                              )) {
-                                return;
-                              }
-                              setState(() {
-                                _persistInteractionState();
-                              });
-                            },
+        return RefreshIndicator(
+          key: const ValueKey('status-refresh-indicator'),
+          color: MomCozyColors.primary,
+          onRefresh: _controller.refresh,
+          child: CustomScrollView(
+            key: ValueKey('route-page-${widget.path}'),
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StatusPinnedHeaderDelegate(
+                  child: RepaintBoundary(
+                    key: const ValueKey('status-profile-selector'),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                      child: Column(
+                        children: [
+                          _CareStageSelector(
+                            selectedStage: _careStage,
+                            accent: widget.accent,
+                            onChanged: _changeCareStage,
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          Expanded(
+                            child: _StatusIdentityTabs(
+                              selected: _view,
+                              momSubtitle: subtitles.mom,
+                              babySubtitle: subtitles.baby,
+                              babyDisabled: isPregnancy,
+                              onChanged: (next) {
+                                if (!_controller.selectIdentity(
+                                  StatusIdentity.fromValue(next),
+                                )) {
+                                  return;
+                                }
+                                setState(() {
+                                  _persistInteractionState();
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  _statusOverviewChildren(overview, isMom),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate(
+                    _statusOverviewChildren(overview, isMom),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
