@@ -21,6 +21,7 @@ import 'package:momcozy_flutter_app/features/status/domain/pregnancy_diary.dart'
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/pregnancy_diary_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:pdfrx/pdfrx.dart';
@@ -547,7 +548,6 @@ class _StatusInteractionState {
   String view = 'mom';
   String careStage = 'postpartum';
   bool growthRecordAdded = false;
-  bool pregnancyDiarySaved = false;
   String milkTrendMode = '周';
   String babyGrowthMetric = '体重';
   String? activeDetail;
@@ -574,7 +574,6 @@ class _StatusPage extends StatefulWidget {
 
 class _StatusPageState extends State<_StatusPage> {
   bool _growthRecordAdded = false;
-  bool _pregnancyDiarySaved = false;
   String _milkTrendMode = '周';
   String _babyGrowthMetric = '体重';
   String? _activeDetail;
@@ -600,7 +599,6 @@ class _StatusPageState extends State<_StatusPage> {
       _interactionState = _statusInteractionStates[runtime] ??=
           _StatusInteractionState();
       _growthRecordAdded = _interactionState.growthRecordAdded;
-      _pregnancyDiarySaved = _interactionState.pregnancyDiarySaved;
       _milkTrendMode = _interactionState.milkTrendMode;
       _babyGrowthMetric = _interactionState.babyGrowthMetric;
       _activeDetail = _interactionState.activeDetail;
@@ -639,12 +637,7 @@ class _StatusPageState extends State<_StatusPage> {
       ..view = _view
       ..careStage = _careStage;
     if (!mounted) return;
-    final pregnancyOnlyDetail = _activeDetail == 'pregnancy-diary';
-    final shouldClose =
-        (_careStage == 'pregnancy' &&
-            _activeDetail != null &&
-            !pregnancyOnlyDetail) ||
-        (_careStage == 'postpartum' && pregnancyOnlyDetail);
+    final shouldClose = _careStage == 'pregnancy' && _activeDetail != null;
     if (shouldClose) {
       setState(() {
         _activeDetail = null;
@@ -658,7 +651,6 @@ class _StatusPageState extends State<_StatusPage> {
       ..view = _view
       ..careStage = _careStage
       ..growthRecordAdded = _growthRecordAdded
-      ..pregnancyDiarySaved = _pregnancyDiarySaved
       ..milkTrendMode = _milkTrendMode
       ..babyGrowthMetric = _babyGrowthMetric
       ..activeDetail = _activeDetail;
@@ -724,46 +716,6 @@ class _StatusPageState extends State<_StatusPage> {
       },
     );
     if (saved == true) _recordGrowth();
-  }
-
-  Future<void> _showPregnancyDiaryEditor() async {
-    final saved = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('status-pregnancy-diary-editor-dialog'),
-          title: const Text('记录今天的孕期日记'),
-          content: TextField(
-            key: const ValueKey('status-pregnancy-diary-note-input'),
-            autofocus: true,
-            minLines: 3,
-            maxLines: 5,
-            decoration: const InputDecoration(
-              labelText: '今日记录',
-              hintText: '写下心情、身体感受、胎动或想问医生的问题',
-            ),
-          ),
-          actions: [
-            TextButton(
-              key: const ValueKey('status-pregnancy-diary-cancel-button'),
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              key: const ValueKey('status-pregnancy-diary-save-button'),
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('保存日记'),
-            ),
-          ],
-        );
-      },
-    );
-    if (saved != true || !mounted) return;
-    setState(() {
-      _pregnancyDiarySaved = true;
-      _activeDetail = 'pregnancy-diary';
-      _persistInteractionState();
-    });
   }
 
   @override
@@ -861,32 +813,19 @@ class _StatusPageState extends State<_StatusPage> {
 
     if (isPregnancy) {
       return [
-        _StatusPregnancyDiaryPreview(
-          diarySaved: _pregnancyDiarySaved,
-          onViewDiary: () => _showDetail('pregnancy-diary'),
-          onRecordToday: () => unawaited(_showPregnancyDiaryEditor()),
+        PregnancyDiaryDashboard(
+          key: const ValueKey('status-pregnancy-diary-dashboard'),
+          entries: _controller.pregnancyDiaryEntries,
+          mutation: _controller.diaryMutation,
+          now: _controller.now,
+          onSave: (entryDate, draft) =>
+              _controller.saveDiary(entryDate: entryDate, draft: draft),
+          onAgentPrompt: (prompt) {
+            context.go('/', extra: {'agentPrefill': prompt});
+          },
         ),
         const SizedBox(height: 18),
         _StatusPregnancyPlanPreview(),
-        const SizedBox(height: 8),
-        if (_activeDetail == 'pregnancy-diary') ...[
-          _StatusDetailPanel(
-            key: const ValueKey('status-detail-pregnancy-diary'),
-            title: '孕期日记',
-            subtitle: _pregnancyDiarySaved ? '今天的记录已保存' : '最近 7 天记录',
-            rows: _pregnancyDiarySaved
-                ? const [
-                    ('今天', '已保存', '已记录今日心情、身体感受和待咨询问题。'),
-                    ('Agent 建议', '可继续追问', '我可以帮你整理产检问题或回顾最近几天的状态变化。'),
-                  ]
-                : const [
-                    ('最近 7 天', '暂无记录', '记录几天后会展示睡眠、情绪、胎动和身体感受变化。'),
-                    ('产检问题', '暂无', '可以先写下想问医生的问题。'),
-                  ],
-            onClose: _closeDetail,
-          ),
-          const SizedBox(height: 8),
-        ],
       ];
     }
 
@@ -1381,222 +1320,6 @@ class _StatusModuleActionPill extends StatelessWidget {
   }
 }
 
-class _StatusPregnancyDiaryPreview extends StatelessWidget {
-  const _StatusPregnancyDiaryPreview({
-    required this.diarySaved,
-    required this.onViewDiary,
-    required this.onRecordToday,
-  });
-
-  final bool diarySaved;
-  final VoidCallback onViewDiary;
-  final VoidCallback onRecordToday;
-
-  @override
-  Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
-      color: MomCozyColors.foreground,
-      fontWeight: FontWeight.w900,
-    );
-    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: MomCozyColors.mutedForeground,
-      fontWeight: FontWeight.w800,
-      height: 1.35,
-    );
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xffeadfd8)),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-            child: Row(
-              children: [
-                Expanded(child: Text('孕期日记', style: titleStyle)),
-                _StatusOutlinedPill(
-                  key: const ValueKey('status-pregnancy-diary-view-button'),
-                  label: '查看日记',
-                  icon: null,
-                  accent: const Color(0xffa0603a),
-                  onTap: onViewDiary,
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xffeadfd8)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            child: Row(
-              children: const [
-                Expanded(
-                  child: _StatusPregnancyStat(value: '0', label: '近7天记录'),
-                ),
-                _StatusVerticalDivider(),
-                Expanded(
-                  child: _StatusPregnancyStat(value: '0', label: '健康咨询'),
-                ),
-                _StatusVerticalDivider(),
-                Expanded(
-                  child: _StatusPregnancyStat(value: '0', label: '产检问题'),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xffeadfd8)),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundImage: AssetImage(MomCozyAssets.agentAvatar),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    '记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。',
-                    style: helperStyle,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xffeadfd8)),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '今日日记',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const Spacer(),
-                    _StatusFilledPill(
-                      key: const ValueKey(
-                        'status-pregnancy-diary-record-button',
-                      ),
-                      label: '记录今天',
-                      icon: Icons.edit_outlined,
-                      color: const Color(0xffb06f45),
-                      onTap: onRecordToday,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.35),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: const Color(0xffead2c3),
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        diarySaved
-                            ? '今天的记录已保存，我可以继续帮你整理产检问题或回顾最近几天的状态变化。'
-                            : '今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: MomCozyColors.foreground,
-                          fontWeight: FontWeight.w900,
-                          height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            radius: 15,
-                            backgroundImage: AssetImage(
-                              MomCozyAssets.agentAvatar,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              '和我聊天时，我会自动记录你的今日情况和健康信息。',
-                              style: helperStyle,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusPregnancyStat extends StatelessWidget {
-  const _StatusPregnancyStat({required this.value, required this.label});
-
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          value,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: const Color(0xff985f3b),
-            fontWeight: FontWeight.w900,
-            height: 1,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: MomCozyColors.mutedForeground,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatusVerticalDivider extends StatelessWidget {
-  const _StatusVerticalDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 44,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      color: const Color(0xffeadfd8),
-    );
-  }
-}
-
 class _StatusPregnancyPlanPreview extends StatelessWidget {
   const _StatusPregnancyPlanPreview();
 
@@ -1968,59 +1691,6 @@ class _StatusFilledPill extends StatelessWidget {
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-    if (onTap == null) return content;
-    return Semantics(
-      button: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: content,
-      ),
-    );
-  }
-}
-
-class _StatusOutlinedPill extends StatelessWidget {
-  const _StatusOutlinedPill({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.accent,
-    this.onTap,
-  });
-
-  final String label;
-  final IconData? icon;
-  final Color accent;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final content = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        border: Border.all(color: const Color(0xffeadfd8)),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: 15, color: accent),
-            const SizedBox(width: 6),
-          ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: accent,
               fontWeight: FontWeight.w900,
             ),
           ),
