@@ -22,6 +22,8 @@ import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_change_persistence.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -68,6 +70,7 @@ class MomCozyApiRuntime {
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
+    PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
@@ -108,6 +111,14 @@ class MomCozyApiRuntime {
           now: this.now,
         );
     unawaited(this.ibclcConsultStore.restore());
+    this.pregnancyDiaryChangeStore =
+        pregnancyDiaryChangeStore ??
+        PregnancyDiaryChangeStore(
+          persistence: FlutterSecurePregnancyDiaryChangePersistence(
+            userId: this.session.userId,
+          ),
+        );
+    unawaited(this.pregnancyDiaryChangeStore.restore());
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
@@ -169,6 +180,7 @@ class MomCozyApiRuntime {
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
+    PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -253,6 +265,7 @@ class MomCozyApiRuntime {
       productAssetRepository: productAssetRepository,
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
+      pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
@@ -325,6 +338,7 @@ class MomCozyApiRuntime {
   final MomCozyObservability observability;
   final HospitalBagCartStore hospitalBagCartStore;
   late final IbclcConsultStore ibclcConsultStore;
+  late final PregnancyDiaryChangeStore pregnancyDiaryChangeStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
@@ -545,6 +559,9 @@ class MomCozyRuntimeController extends ChangeNotifier {
     final ibclcConsultStore = session.userId == _runtime.session.userId
         ? _runtime.ibclcConsultStore
         : null;
+    final pregnancyDiaryChangeStore = session.userId == _runtime.session.userId
+        ? _runtime.pregnancyDiaryChangeStore
+        : null;
     if (store == null) {
       return MomCozyApiRuntime.fromSession(
         session,
@@ -557,6 +574,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
             : null,
         hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
+        pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
       );
     }
     return MomCozyApiRuntime.fromSession(
@@ -570,6 +588,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
           : null,
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
+      pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {
