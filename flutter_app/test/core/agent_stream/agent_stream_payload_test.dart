@@ -48,36 +48,68 @@ void main() {
       expect(image['name'], 'pump-display-fixture.png');
     });
 
-    test('requires non-empty message before sending to the production runtime', () {
-      expect(
-        () => buildProductionAgentRunPayload(
+    test(
+      'maps trusted form submission metadata to a structured attachment',
+      () {
+        final payload = buildProductionAgentRunPayload(
           const AgentStreamRequest(
-            message: '   ',
+            message: '我已提交待产包信息采集表单。',
+            metadata: {
+              'form_submission': {
+                'artifact_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+                'form_id': 'hospital_bag_intake',
+                'values': {'due_date_or_week': '38 周', 'birth_path': '顺产'},
+              },
+            },
           ),
-        ),
-        throwsA(isA<AgentStreamPayloadException>()),
-      );
-    });
+        );
+        final attachments = payload['attachments']! as List<Object?>;
+        final submission = attachments.single! as Map<String, Object?>;
 
-    test('builds resume requests without adding run ids to create payloads', () {
-      const request = AgentStreamRequest(
-        message: 'Retry the interrupted answer.',
-        threadId: '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
-        locale: 'zh-CN',
-        metadata: {'source': 'resume-test'},
-      );
+        expect(submission, {
+          'type': 'form_submission',
+          'artifact_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+          'form_id': 'hospital_bag_intake',
+          'values': {'due_date_or_week': '38 周', 'birth_path': '顺产'},
+        });
+        expect(payload['message'], '我已提交待产包信息采集表单。');
+      },
+    );
 
-      final resume = request.resume(
-        runId: '0d39da8a-6f31-4e23-b5ac-b81d9808fb8c',
-        afterSequence: 12,
-      );
-      final payload = buildProductionAgentRunPayload(resume);
+    test(
+      'requires non-empty message before sending to the production runtime',
+      () {
+        expect(
+          () => buildProductionAgentRunPayload(
+            const AgentStreamRequest(message: '   '),
+          ),
+          throwsA(isA<AgentStreamPayloadException>()),
+        );
+      },
+    );
 
-      expect(resume.runId, '0d39da8a-6f31-4e23-b5ac-b81d9808fb8c');
-      expect(resume.afterSequence, 12);
-      expect(payload.containsKey('run_id'), isFalse);
-      expect(payload.containsKey('after_sequence'), isFalse);
-      expect(payload['thread_id'], '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5');
-    });
+    test(
+      'builds resume requests without adding run ids to create payloads',
+      () {
+        const request = AgentStreamRequest(
+          message: 'Retry the interrupted answer.',
+          threadId: '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+          locale: 'zh-CN',
+          metadata: {'source': 'resume-test'},
+        );
+
+        final resume = request.resume(
+          runId: '0d39da8a-6f31-4e23-b5ac-b81d9808fb8c',
+          afterSequence: 12,
+        );
+        final payload = buildProductionAgentRunPayload(resume);
+
+        expect(resume.runId, '0d39da8a-6f31-4e23-b5ac-b81d9808fb8c');
+        expect(resume.afterSequence, 12);
+        expect(payload.containsKey('run_id'), isFalse);
+        expect(payload.containsKey('after_sequence'), isFalse);
+        expect(payload['thread_id'], '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5');
+      },
+    );
   });
 }

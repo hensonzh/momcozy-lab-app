@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -61,17 +60,27 @@ String _formSubmitRequestMessage(AgentArtifactActionView action) {
   final extra = action.routeExtra;
   final extraMap = extra is Map ? Map<String, Object?>.from(extra) : const {};
   final formId = extraMap['formId']?.toString().trim();
-  final values = extraMap['values'];
-  final valuesJson = values is Map
-      ? jsonEncode(values)
-      : (action.value?.trim().isNotEmpty ?? false)
-      ? action.value!.trim()
-      : '{}';
   return [
-    '我已提交信息采集表单，请基于确认后的表单数据继续完成对应服务。',
+    '我已提交信息采集表单，请继续完成对应服务。',
     if (formId != null && formId.isNotEmpty) 'form_id: $formId',
-    'confirmed_form_data: $valuesJson',
   ].join('\n');
+}
+
+Map<String, Object?> _formSubmissionMetadata(AgentArtifactActionView action) {
+  final extra = action.routeExtra;
+  if (extra is! Map) return const {};
+  final extraMap = Map<String, Object?>.from(extra);
+  final artifactId = extraMap['artifactId']?.toString().trim() ?? '';
+  final formId = extraMap['formId']?.toString().trim() ?? '';
+  final values = extraMap['values'];
+  if (artifactId.isEmpty || formId.isEmpty || values is! Map) return const {};
+  return {
+    'form_submission': {
+      'artifact_id': artifactId,
+      'form_id': formId,
+      'values': Map<String, Object?>.from(values),
+    },
+  };
 }
 
 class _PendingAutoVoiceReplay {
@@ -728,6 +737,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<bool> _sendSyntheticUserMessage({
     required String requestMessage,
     required String optimisticContent,
+    Map<String, Object?> metadata = const {},
   }) async {
     final runner = widget.runner;
     if (runner == null || requestMessage.trim().isEmpty || _isComposerLocked) {
@@ -737,7 +747,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelCurrentBubblePlaybackForNewTurn();
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
-    final request = widget.requestBuilder(requestMessage.trim());
+    final request = _requestWithMetadata(
+      widget.requestBuilder(requestMessage.trim()),
+      metadata,
+    );
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
     if (interruptedState != null) {
       _cancelRunSubscription();
@@ -770,6 +783,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _sendSyntheticUserMessage(
           requestMessage: _formSubmitRequestMessage(action),
           optimisticContent: '已提交信息采集表单',
+          metadata: _formSubmissionMetadata(action),
         ).then<void>((_) {}),
       );
       return;
@@ -781,6 +795,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     return _sendSyntheticUserMessage(
       requestMessage: _formSubmitRequestMessage(action),
       optimisticContent: '已提交信息采集表单',
+      metadata: _formSubmissionMetadata(action),
     );
   }
 
@@ -1982,6 +1997,20 @@ AgentStreamRequest _requestWithImages(
     locale: request.locale,
     images: [...request.images, ...images],
     metadata: request.metadata,
+  );
+}
+
+AgentStreamRequest _requestWithMetadata(
+  AgentStreamRequest request,
+  Map<String, Object?> metadata,
+) {
+  if (metadata.isEmpty) return request;
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    locale: request.locale,
+    images: request.images,
+    metadata: {...request.metadata, ...metadata},
   );
 }
 
