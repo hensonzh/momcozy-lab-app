@@ -345,6 +345,8 @@ void main() {
       expect(find.text('产后第 3 周'), findsOneWidget);
       expect(find.text('宝宝已出生 20 天'), findsOneWidget);
       expect(find.text('母乳产出'), findsOneWidget);
+      expect(find.text('120mL'), findsOneWidget);
+      expect(find.text('1次'), findsOneWidget);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
@@ -2485,6 +2487,24 @@ MomCozyApiRuntime _appRuntime({
                 },
               ],
             },
+          },
+          milkTrendsEndpoint: const <String, Object?>{
+            'items': <Object?>[
+              <String, Object?>{
+                'date': '2026-06-30',
+                'pumped_milk_volume_ml': 110,
+                'pumping_count': 2,
+                'measured_only': true,
+              },
+              <String, Object?>{
+                'date': '2026-07-01',
+                'pumped_milk_volume_ml': 120,
+                'pumping_count': 1,
+                'measured_only': true,
+              },
+            ],
+            'days': 31,
+            'include_today': true,
           },
           feedingRecordsEndpoint: const <String, Object?>{
             'status': 200,

@@ -66,6 +66,12 @@ void main() {
         now: DateTime(2026, 7, 11),
         days: [
           MilkTrendDay(
+            date: DateTime(2026, 7, 9),
+            pumpedMilkVolumeMl: 120,
+            pumpingCount: 1,
+            referenceLowerMl: 100,
+          ),
+          MilkTrendDay(
             date: DateTime(2026, 7, 10),
             pumpedMilkVolumeMl: -20,
             pumpingCount: -1,
@@ -85,6 +91,8 @@ void main() {
       expect(point.referenceLowerMl, 320);
       expect(point.referenceUpperMl, 320);
       expect(point.hasMeasurement, isTrue);
+      expect(projection.window(7).points[5].referenceLowerMl, isNull);
+      expect(projection.window(7).points[5].referenceUpperMl, isNull);
     });
   });
 }

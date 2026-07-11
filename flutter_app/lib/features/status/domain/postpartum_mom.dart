@@ -40,12 +40,12 @@ class PostpartumMilkProjection {
       final estimate = source?.estimatedMilkVolumeMl;
       final referenceLower = source?.referenceLowerMl;
       final referenceUpper = source?.referenceUpperMl;
-      final safeLower = referenceLower == null
-          ? null
-          : math.max(0, referenceLower).toDouble();
-      final safeUpper = referenceUpper == null
-          ? null
-          : math.max(safeLower ?? 0, math.max(0, referenceUpper)).toDouble();
+      double? safeLower;
+      double? safeUpper;
+      if (referenceLower != null && referenceUpper != null) {
+        safeLower = math.max(0, referenceLower).toDouble();
+        safeUpper = math.max(safeLower, math.max(0, referenceUpper)).toDouble();
+      }
       points.add(
         MilkTrendPoint(
           date: date,
