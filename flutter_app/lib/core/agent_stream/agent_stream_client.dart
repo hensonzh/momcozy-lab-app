@@ -101,12 +101,18 @@ Map<String, Object?> buildProductionAgentRunPayload(
       .map((image) => image.toProductionAttachment())
       .toList(growable: false);
   final normalizedIdempotencyKey = idempotencyKey?.trim();
+  final normalizedLocale = request.locale.trim();
+  final clientContext = <String, Object?>{
+    ...request.metadata,
+    if (normalizedLocale.isNotEmpty) 'locale': normalizedLocale,
+  };
 
   return {
     if (threadId != null && threadId.isNotEmpty && _looksLikeUuid(threadId))
       'thread_id': threadId,
     'message': text,
     if (attachments.isNotEmpty) 'attachments': attachments,
+    if (clientContext.isNotEmpty) 'client_context': clientContext,
     'runtime_pattern': 'langgraph_sdk',
     if (normalizedIdempotencyKey != null &&
         normalizedIdempotencyKey.isNotEmpty)
