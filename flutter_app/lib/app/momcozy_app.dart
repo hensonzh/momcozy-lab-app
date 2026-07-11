@@ -549,7 +549,29 @@ class MomCozyBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final changeStore = MomCozyRuntimeScope.maybeOf(
+      context,
+    )?.pregnancyDiaryChangeStore;
+    if (changeStore == null) {
+      return _buildNavigation(context, showPregnancyDiaryBadge: false);
+    }
+    return ListenableBuilder(
+      listenable: changeStore,
+      builder: (context, child) => _buildNavigation(
+        context,
+        showPregnancyDiaryBadge: changeStore.hasUnread,
+      ),
+    );
+  }
+
+  Widget _buildNavigation(
+    BuildContext context, {
+    required bool showPregnancyDiaryBadge,
+  }) {
     final selectedIndex = _selectedTabIndex(location);
+    final changeStore = MomCozyRuntimeScope.maybeOf(
+      context,
+    )?.pregnancyDiaryChangeStore;
 
     return DecoratedBox(
       decoration: const BoxDecoration(color: Color(0xfffcf7f5)),
@@ -599,11 +621,19 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                   navKey: const ValueKey('bottom-nav-status'),
                                   label: '宝宝和我',
                                   selected: selectedIndex == 0,
-                                  icon: const _MomBabyNavIcon(),
-                                  selectedIcon: const _MomBabyNavIcon(
-                                    filled: true,
+                                  icon: _StatusNavIcon(
+                                    showBadge: showPregnancyDiaryBadge,
+                                    child: const _MomBabyNavIcon(),
                                   ),
-                                  onTap: () => context.go(_tabPaths[0]),
+                                  selectedIcon: _StatusNavIcon(
+                                    showBadge: showPregnancyDiaryBadge,
+                                    child: const _MomBabyNavIcon(filled: true),
+                                  ),
+                                  onTap: () {
+                                    changeStore
+                                        ?.transferNavigationNoticeToCard();
+                                    context.go(_tabPaths[0]);
+                                  },
                                 ),
                               ),
                               Expanded(
@@ -664,6 +694,40 @@ class MomCozyBottomNavigation extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _StatusNavIcon extends StatelessWidget {
+  const _StatusNavIcon({required this.showBadge, required this.child});
+
+  final bool showBadge;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        child,
+        if (showBadge)
+          Positioned(
+            key: const ValueKey('bottom-nav-status-diary-badge'),
+            top: -2,
+            right: -3,
+            child: Semantics(
+              label: '孕期日记有更新',
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  color: MomCozyColors.badge,
+                  shape: BoxShape.circle,
+                ),
+                child: SizedBox.square(dimension: 8),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -1290,6 +1354,9 @@ Widget _buildDefaultAgentHubPage(
     onHospitalBagCartContextRequired: () {
       final store = runtime.hospitalBagCartStore;
       store.activate(store.activeCartId);
+    },
+    onPregnancyDiaryChange: (change) {
+      runtime.pregnancyDiaryChangeStore.record(change);
     },
     onNewSession: runtime.hospitalBagCartStore.clearForNewSession,
     onArtifactAction: (action) => unawaited(

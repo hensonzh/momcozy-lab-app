@@ -16,6 +16,7 @@ import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
@@ -587,6 +588,8 @@ class _StatusPageState extends State<_StatusPage> {
   String? _activeDetail;
   late _StatusInteractionState _interactionState = _StatusInteractionState();
   MomCozyApiRuntime? _runtime;
+  PregnancyDiaryChangeStore? _pregnancyDiaryChangeStore;
+  int _handledPregnancyDiaryRevision = 0;
   late Future<StatusOverview> _overviewFuture;
   Future<_PregnancyDiaryLoadResult>? _pregnancyDiaryFuture;
 
@@ -595,7 +598,14 @@ class _StatusPageState extends State<_StatusPage> {
     super.didChangeDependencies();
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
+      _pregnancyDiaryChangeStore?.removeListener(
+        _handlePregnancyDiaryChangeStore,
+      );
       _runtime = runtime;
+      final changeStore = runtime.pregnancyDiaryChangeStore;
+      _pregnancyDiaryChangeStore = changeStore;
+      _handledPregnancyDiaryRevision = changeStore.revision;
+      changeStore.addListener(_handlePregnancyDiaryChangeStore);
       _interactionState = _statusInteractionStates[runtime] ??=
           _StatusInteractionState();
       _view = _interactionState.view;
@@ -604,11 +614,51 @@ class _StatusPageState extends State<_StatusPage> {
       _milkTrendMode = _interactionState.milkTrendMode;
       _babyGrowthMetric = _interactionState.babyGrowthMetric;
       _activeDetail = _interactionState.activeDetail;
+      final hasDiaryNotice = changeStore.hasUnread || changeStore.highlightCard;
+      if (hasDiaryNotice) {
+        _view = 'mom';
+        _careStage = 'pregnancy';
+        _activeDetail = null;
+        _persistInteractionState();
+      }
       _overviewFuture = runtime.statusRepository.fetchOverview();
       _pregnancyDiaryFuture = _careStage == 'pregnancy'
-          ? _loadPregnancyDiary(runtime)
+          ? _loadPregnancyDiary(
+              runtime,
+              changeRevision: hasDiaryNotice ? changeStore.revision : null,
+            )
           : null;
     }
+  }
+
+  @override
+  void dispose() {
+    _pregnancyDiaryChangeStore?.removeListener(
+      _handlePregnancyDiaryChangeStore,
+    );
+    super.dispose();
+  }
+
+  void _handlePregnancyDiaryChangeStore() {
+    if (!mounted) return;
+    final runtime = _runtime;
+    final changeStore = _pregnancyDiaryChangeStore;
+    if (runtime == null || changeStore == null) return;
+    final revision = changeStore.revision;
+    if (revision <= _handledPregnancyDiaryRevision) {
+      setState(() {});
+      return;
+    }
+
+    _handledPregnancyDiaryRevision = revision;
+    final future = _loadPregnancyDiary(runtime, changeRevision: revision);
+    setState(() {
+      _view = 'mom';
+      _careStage = 'pregnancy';
+      _activeDetail = null;
+      _pregnancyDiaryFuture = future;
+      _persistInteractionState();
+    });
   }
 
   void _changeCareStage(String stage) {
@@ -655,8 +705,9 @@ class _StatusPageState extends State<_StatusPage> {
   }
 
   Future<_PregnancyDiaryLoadResult> _loadPregnancyDiary(
-    MomCozyApiRuntime runtime,
-  ) async {
+    MomCozyApiRuntime runtime, {
+    int? changeRevision,
+  }) async {
     final now = runtime.now();
     final endDate = DateTime(now.year, now.month, now.day);
     final startDate = endDate.subtract(const Duration(days: 6));
@@ -666,8 +717,20 @@ class _StatusPageState extends State<_StatusPage> {
         endDate: endDate,
         limit: 7,
       );
+      final changeStore = runtime.pregnancyDiaryChangeStore;
+      if (changeRevision != null &&
+          changeStore.revision == changeRevision &&
+          changeStore.hasUnread) {
+        changeStore.transferNavigationNoticeToCard();
+      }
       return _PregnancyDiaryLoadResult(entries: entries, failed: false);
     } catch (_) {
+      final changeStore = runtime.pregnancyDiaryChangeStore;
+      if (changeRevision != null &&
+          changeStore.revision == changeRevision &&
+          changeStore.highlightCard) {
+        changeStore.restoreNavigationNotice();
+      }
       return const _PregnancyDiaryLoadResult(entries: [], failed: true);
     }
   }
@@ -1055,7 +1118,11 @@ class _StatusPageState extends State<_StatusPage> {
       _StatusPregnancyDiaryPreview(
         entries: entries,
         todayEntry: todayEntry,
-        onViewDiary: () => _showDetail('pregnancy-diary'),
+        highlighted: _pregnancyDiaryChangeStore?.highlightCard ?? false,
+        onViewDiary: () {
+          _pregnancyDiaryChangeStore?.clearCardNotice();
+          _showDetail('pregnancy-diary');
+        },
         onRecordToday: () => unawaited(_showPregnancyDiaryEditor()),
       ),
       const SizedBox(height: 18),
@@ -1632,12 +1699,14 @@ class _StatusPregnancyDiaryPreview extends StatelessWidget {
   const _StatusPregnancyDiaryPreview({
     required this.entries,
     required this.todayEntry,
+    required this.highlighted,
     required this.onViewDiary,
     required this.onRecordToday,
   });
 
   final List<PregnancyDiaryEntry> entries;
   final PregnancyDiaryEntry? todayEntry;
+  final bool highlighted;
   final VoidCallback onViewDiary;
   final VoidCallback onRecordToday;
 
@@ -1654,10 +1723,16 @@ class _StatusPregnancyDiaryPreview extends StatelessWidget {
     );
 
     return DecoratedBox(
+      key: const ValueKey('status-pregnancy-diary-change-highlight'),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xffeadfd8)),
+        border: Border.all(
+          color: highlighted
+              ? MomCozyColors.badge.withValues(alpha: 0.62)
+              : const Color(0xffeadfd8),
+          width: highlighted ? 2 : 1,
+        ),
         boxShadow: MomCozyShadows.soft,
       ),
       child: Column(

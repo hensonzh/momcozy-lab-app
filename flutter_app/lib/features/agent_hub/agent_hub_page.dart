@@ -34,6 +34,7 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_repository
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:video_player/video_player.dart';
 
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -206,6 +207,7 @@ class AgentHubPage extends StatefulWidget {
     this.onArtifactAction,
     this.onHospitalBagCartUpdate,
     this.onHospitalBagCartContextRequired,
+    this.onPregnancyDiaryChange,
     this.onNewSession,
     this.initialComposerText,
     this.initialAutoSend = false,
@@ -231,6 +233,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentArtifactActionHandler? onArtifactAction;
   final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
   final VoidCallback? onHospitalBagCartContextRequired;
+  final ValueChanged<PregnancyDiaryChange>? onPregnancyDiaryChange;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
   final bool initialAutoSend;
@@ -255,6 +258,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
   final Set<String> _appliedHospitalBagCartUpdates = <String>{};
+  final Set<String> _appliedPregnancyDiaryChangeEventIds = <String>{};
   bool _hospitalBagCartLinkContextApplied = false;
   final ScrollController _chatScrollController = ScrollController();
   final GlobalKey _activeArtifactPanelKey = GlobalKey();
@@ -314,6 +318,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     super.initState();
     _restoreCachedInteractionState();
     _applyHospitalBagCartUpdates(_state);
+    _applyPregnancyDiaryChanges(_state);
     _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
     _restorePersistedInteractionState();
@@ -359,6 +364,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
         oldWidget.ibclcConsultStore,
         widget.ibclcConsultStore,
       );
+    }
+    if (oldWidget.onPregnancyDiaryChange != widget.onPregnancyDiaryChange) {
+      _applyPregnancyDiaryChanges(_state);
     }
   }
 
@@ -558,6 +566,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _applyInteractionSnapshot(snapshot);
     });
     _applyHospitalBagCartUpdates(_state);
+    _applyPregnancyDiaryChanges(_state);
     _applyHospitalBagCartLinkContext(_state);
     _persistInteractionState();
   }
@@ -1423,6 +1432,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (artifactProjectionChanged) {
       _applyHospitalBagCartUpdates(nextState);
     }
+    _applyPregnancyDiaryChanges(nextState);
     _applyHospitalBagCartLinkContext(
       nextState,
       checkArtifacts: artifactProjectionChanged,
@@ -1499,6 +1509,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
           '${seed.artifactId}:${jsonEncode(seed.snapshot.toAgentContext())}';
       if (!_appliedHospitalBagCartUpdates.add(signature)) continue;
       onUpdate(seed);
+    }
+  }
+
+  void _applyPregnancyDiaryChanges(AgentStreamRunState state) {
+    final onChange = widget.onPregnancyDiaryChange;
+    if (onChange == null) return;
+    for (final event in state.events) {
+      final change = PregnancyDiaryChange.tryFromEvent(event);
+      if (change == null ||
+          !_appliedPregnancyDiaryChangeEventIds.add(change.eventId)) {
+        continue;
+      }
+      onChange(change);
     }
   }
 
@@ -2032,6 +2055,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     for (final event in events) {
       nextState = nextState.applyEvent(event);
     }
+    _applyPregnancyDiaryChanges(nextState);
     _setRunState(nextState);
   }
 
