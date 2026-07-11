@@ -47,19 +47,28 @@ class AgentHubInteractionSnapshot {
     if (attachedImages.isNotEmpty)
       'attachedImages': attachedImages.map(_imageToMap).toList(growable: false),
     'autoVoiceEnabled': autoVoiceEnabled,
-    if (activeRequest != null) 'activeRequest': _requestToMap(activeRequest!),
+    if (activeRequest != null)
+      'activeRequest': _requestToPersistenceMap(
+        activeRequest!,
+        historyMessages,
+      ),
     if (localActionStatuses.isNotEmpty)
       'localActionStatuses': localActionStatuses,
   };
 
   static AgentHubInteractionSnapshot fromMap(Map<String, Object?> map) {
+    final historyMessages = _historyFromList(map['historyMessages']);
+    final activeRequest = _requestFromPersistenceMap(
+      map['activeRequest'],
+      historyMessages,
+    );
     return AgentHubInteractionSnapshot(
       runState: _runStateFromMap(map['runState']),
-      historyMessages: _historyFromList(map['historyMessages']),
+      historyMessages: historyMessages,
       composerText: _string(map['composerText']) ?? '',
       attachedImages: _imagesFromList(map['attachedImages']),
       autoVoiceEnabled: map['autoVoiceEnabled'] != false,
-      activeRequest: _requestFromMap(map['activeRequest']),
+      activeRequest: activeRequest,
       localActionStatuses: _stringMap(map['localActionStatuses']),
     );
   }
@@ -70,28 +79,34 @@ class AgentHubHistorySnapshot {
     required this.role,
     required this.content,
     this.runState,
+    this.images = const <AgentStreamImageInput>[],
   });
 
   final String role;
   final String content;
   final AgentStreamRunState? runState;
+  final List<AgentStreamImageInput> images;
 
   Map<String, Object?> toMap() => {
     'role': role,
     'content': content,
     if (runState != null) 'runState': runState!.toMap(),
+    if (images.isNotEmpty)
+      'images': images.map(_imageToMap).toList(growable: false),
   };
 
   static AgentHubHistorySnapshot? fromMap(Object? value) {
     if (value is! Map) return null;
     final map = Map<String, Object?>.from(value);
-    final content = _string(map['content'])?.trim();
-    if (content == null || content.isEmpty) return null;
+    final content = _string(map['content'])?.trim() ?? '';
+    final images = _imagesFromList(map['images']);
+    if (content.isEmpty && images.isEmpty) return null;
     final role = _string(map['role']) == 'user' ? 'user' : 'assistant';
     final runStateValue = map['runState'] ?? map['run_state'];
     return AgentHubHistorySnapshot(
       role: role,
       content: content,
+      images: images,
       runState: runStateValue is Map
           ? AgentStreamRunState.fromMap(
               Map<String, Object?>.from(runStateValue),
@@ -205,6 +220,72 @@ Map<String, Object?> _requestToMap(AgentStreamRequest request) => {
     'images': request.images.map(_imageToMap).toList(growable: false),
   if (request.metadata.isNotEmpty) 'metadata': request.metadata,
 };
+
+Map<String, Object?> _requestToPersistenceMap(
+  AgentStreamRequest request,
+  List<AgentHubHistorySnapshot> historyMessages,
+) {
+  if (request.images.isEmpty) return _requestToMap(request);
+  for (final message in historyMessages.reversed) {
+    if (message.role != 'user') continue;
+    if (!_sameImages(message.images, request.images)) break;
+    return {
+      ..._requestToMap(_requestWithImages(request, const [])),
+      'imagesFromHistory': true,
+    };
+  }
+  return _requestToMap(request);
+}
+
+AgentStreamRequest? _requestFromPersistenceMap(
+  Object? value,
+  List<AgentHubHistorySnapshot> historyMessages,
+) {
+  final request = _requestFromMap(value);
+  if (request == null || value is! Map || value['imagesFromHistory'] != true) {
+    return request;
+  }
+  for (final message in historyMessages.reversed) {
+    if (message.role == 'user') {
+      return _requestWithImages(request, message.images);
+    }
+  }
+  return request;
+}
+
+AgentStreamRequest _requestWithImages(
+  AgentStreamRequest request,
+  List<AgentStreamImageInput> images,
+) {
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    runId: request.runId,
+    afterSequence: request.afterSequence,
+    locale: request.locale,
+    images: images,
+    metadata: request.metadata,
+  );
+}
+
+bool _sameImages(
+  List<AgentStreamImageInput> left,
+  List<AgentStreamImageInput> right,
+) {
+  if (left.length != right.length) return false;
+  for (var index = 0; index < left.length; index++) {
+    final a = left[index];
+    final b = right[index];
+    if (a.dataUrl != b.dataUrl ||
+        a.mimeType != b.mimeType ||
+        a.name != b.name ||
+        a.size != b.size ||
+        a.detail != b.detail) {
+      return false;
+    }
+  }
+  return true;
+}
 
 AgentStreamRequest? _requestFromMap(Object? value) {
   if (value is! Map) return null;

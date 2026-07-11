@@ -26,7 +26,7 @@
 | --- | --- | --- | --- | --- |
 | R01 | P1 | 流式正文与持久化最终正文未同源 | 已完成 | 结束、重连或历史恢复时正文可能分叉 |
 | R02 | P1 | 媒体资源和全屏查看链路不可用 | 已完成 | 开箱图片、PDF、视频无法可靠查看 |
-| R03 | P1 | 正式 App 未接通图片和语音输入 | 待处理 | 旧 Web 的多模态输入入口不可用 |
+| R03 | P1 | 正式 App 未接通图片和语音输入 | 已完成 | 旧 Web 的多模态输入入口不可用 |
 | R04 | P1 | 待产包购物车丢失 artifact 个性化数据 | 待处理 | 默认清单可能覆盖用户定制清单 |
 | R05 | P2 | 已提交表单在历史消息中可能恢复可编辑 | 待处理 | 用户可能重复提交或重复生成服务结果 |
 | R06 | P2 | 售后工单草稿 artifact 未实现 | 待处理 | 工单确认表单可能完全不显示 |
@@ -162,10 +162,12 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### R03 正式 App 未接通图片和语音输入
 
-- `_buildDefaultAgentHubPage` 没有注入图片 picker、录音器和 voice input controller。
-- 拍照与上传共用同一回调，附件只显示数量，发送后历史气泡不保留缩略图。
-- 当前按住说话只在松手后触发一次 `captureAndTranscribe()`，而 controller 会立即开始并停止录音。
-- 修复目标：区分相机/相册来源、独立附件状态、按下开始/松开结束/取消丢弃、权限状态和发送后缩略图。
+- 正式 runtime 已注入 `image_picker` 相机/相册适配器、`record` WAV 录音器、麦克风权限和现有在线 STT repository。
+- 相机与相册使用 typed source，采集端限制 `2048px` 和 `10 MB`；附件独立预览/删除，发送后保留在用户历史气泡并可全屏查看。
+- 语音输入已拆成按下 `startCapture`、松开 `finishCapture`、指针取消 `cancelCapture`；权限等待期间提前松手也会在获权后正确停止并转写。
+- 权限拒绝、选择器取消和转写失败仍只保留内部状态，不恢复已明确取消的前端错误文案。
+- 图片解码在缩略图组件生命周期内只执行一次；active request 与历史气泡持久化共用一份 payload，避免流式期间重复序列化 base64。
+- 验收：相机/相册映射、Android lost-data 恢复、语音时序/竞态、持久化和三档 Golden 均通过；Android 实机录制产出有效 `RIFF/WAV`。
 
 ### R04 待产包购物车丢失个性化数据
 
@@ -233,10 +235,10 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 ## 当前验证基线
 
 - `flutter analyze`：通过。
-- Flutter 全量单元、Widget 和 Golden 测试：592 项通过。
+- Flutter 全量单元、Widget 和 Golden 测试：601 项通过。
 - Flutter Agent Hub、reducer、feature page 相关测试：197 项通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
-- 现有测试通过不代表剩余风险已关闭；R03-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
+- 现有测试通过不代表剩余风险已关闭；R04-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
 
 ## 变更记录
 
@@ -248,3 +250,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 完成 R01 append-only canonical stream | 后端投影、Flutter reducer、完整性元数据和语音消费统一通过回归测试 |
 | 2026-07-11 | 完成 R02 图片与 PDF 子项 | 鉴权资源、图片缩放、多页 PDF、三档 viewport、Android PDFium 和 release 打包门禁通过 |
 | 2026-07-11 | 完成 R02 视频与 Range 子项 | Local/S3 分段读取、鉴权原生播放、控制栏、沉浸式、Android 真解码和三档 viewport 通过 |
+| 2026-07-11 | 完成 R03 图片与语音输入 | 正式 runtime 注入、独立图片来源/缩略图、按压录音状态机、权限竞态、Android WAV 真机和 601 项全量回归通过 |

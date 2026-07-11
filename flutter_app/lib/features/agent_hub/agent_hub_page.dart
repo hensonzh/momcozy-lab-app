@@ -18,7 +18,9 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
@@ -28,7 +30,6 @@ export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
-typedef AgentHubImagePicker = Future<AgentStreamImageInput?> Function();
 typedef AgentHubVoiceInput = Future<String?> Function();
 typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
@@ -161,6 +162,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   StreamSubscription<AgentStreamRunState>? _runSubscription;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
+  Future<AgentVoiceInputPermissionState>? _voiceCaptureStart;
+  int _voiceCaptureGeneration = 0;
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
@@ -250,6 +253,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   void dispose() {
+    _voiceCaptureGeneration += 1;
+    unawaited(widget.voiceInputController?.cancelCapture());
     _cancelRunSubscription();
     _unsubscribeVoicePlaybackIdle?.call();
     _persistInteractionState();
@@ -695,9 +700,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelCurrentBubblePlaybackForNewTurn();
 
     final requestMessage = message.isEmpty ? '请看这张图片' : message;
-    final optimisticContent = message.isEmpty
-        ? '图片 ${_attachedImages.length}'
-        : message;
+    final sentImages = List<AgentStreamImageInput>.unmodifiable(
+      _attachedImages,
+    );
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithImages(
@@ -717,7 +722,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _historyMessages.add(
         AgentHubHistoryMessage(
           role: AgentHubHistoryRole.user,
-          content: optimisticContent,
+          content: message,
+          images: sentImages,
         ),
       );
       _attachedImages.clear();
@@ -839,13 +845,23 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
   }
 
-  Future<void> _attachImage() async {
+  Future<void> _attachImage(AgentImageInputSource source) async {
     final pickImage = widget.pickImage;
     if (pickImage == null || _isComposerLocked) return;
-    final image = await pickImage();
+    AgentStreamImageInput? image;
+    try {
+      image = await pickImage(source);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _showPhotoMenu = false;
+      });
+      return;
+    }
     if (!mounted || image == null) return;
+    final selectedImage = image;
     setState(() {
-      _attachedImages.add(image);
+      _attachedImages.add(selectedImage);
       _showPhotoMenu = false;
     });
     _persistInteractionState();
@@ -858,7 +874,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
   }
 
-  Future<void> _startVoiceInput() async {
+  void _startVoiceInput() {
     if ((widget.voiceInputController == null && widget.voiceInput == null) ||
         _isComposerLocked ||
         _voiceState.isInputActive) {
@@ -869,34 +885,78 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _setVoiceState(_voiceState.startListening());
     });
 
+    final controller = widget.voiceInputController;
+    if (controller == null) return;
+    final generation = ++_voiceCaptureGeneration;
+    final start = _beginVoiceCapture(controller, generation);
+    _voiceCaptureStart = start;
+  }
+
+  Future<AgentVoiceInputPermissionState> _beginVoiceCapture(
+    AgentVoiceInputController controller,
+    int generation,
+  ) async {
     try {
+      final permission = await controller.startCapture();
+      if (mounted &&
+          generation == _voiceCaptureGeneration &&
+          permission != AgentVoiceInputPermissionState.granted) {
+        setState(() {
+          _setVoiceState(_voiceState.markPermissionDenied(permission));
+        });
+      }
+      return permission;
+    } catch (error) {
+      if (mounted && generation == _voiceCaptureGeneration) {
+        setState(() {
+          _setVoiceState(_voiceState.fail(error));
+        });
+      }
+      return AgentVoiceInputPermissionState.unknown;
+    }
+  }
+
+  Future<void> _finishVoiceInput({required bool submit}) async {
+    final controller = widget.voiceInputController;
+    final start = _voiceCaptureStart;
+    _voiceCaptureStart = null;
+
+    if (controller == null) {
+      if (!submit) {
+        if (mounted) setState(() => _setVoiceState(const AgentVoiceState()));
+        return;
+      }
+      await _transcribeLegacyVoiceInput();
+      return;
+    }
+
+    final permission = start == null
+        ? AgentVoiceInputPermissionState.unknown
+        : await start;
+    if (!submit) {
+      try {
+        await controller.cancelCapture();
+      } catch (error) {
+        if (mounted) setState(() => _setVoiceState(_voiceState.fail(error)));
+        return;
+      }
+      if (mounted) setState(() => _setVoiceState(const AgentVoiceState()));
+      return;
+    }
+    if (permission != AgentVoiceInputPermissionState.granted) return;
+
+    if (mounted) {
       setState(() {
         _setVoiceState(
           _voiceState.startTranscribing(draft: _composerController.text),
         );
       });
-      final result = await _captureVoiceInput();
-      if (!mounted) return;
-      setState(() {
-        if (result.status == AgentVoiceInputResultStatus.permissionDenied) {
-          _setVoiceState(
-            _voiceState.markPermissionDenied(
-              result.permissionState ?? AgentVoiceInputPermissionState.denied,
-            ),
-          );
-          return;
-        }
+    }
 
-        final text = result.text;
-        if (text != null && text.isNotEmpty) {
-          _composerController.text = text;
-          _composerController.selection = TextSelection.collapsed(
-            offset: _composerController.text.length,
-          );
-        }
-        _setVoiceState(_voiceState.applyTranscription(text ?? ''));
-      });
-      _persistInteractionState();
+    try {
+      final result = await controller.finishCapture();
+      if (!mounted) return;
+      _applyVoiceInputResult(result);
     } catch (error) {
       if (!mounted) return;
       setState(() {
@@ -905,18 +965,56 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
   }
 
-  Future<AgentVoiceInputResult> _captureVoiceInput() async {
-    final controller = widget.voiceInputController;
-    if (controller != null) {
-      return controller.captureAndTranscribe();
+  Future<void> _transcribeLegacyVoiceInput() async {
+    if (mounted) {
+      setState(() {
+        _setVoiceState(
+          _voiceState.startTranscribing(draft: _composerController.text),
+        );
+      });
     }
 
-    return AgentVoiceInputResult.fromText(await widget.voiceInput?.call());
+    try {
+      final result = AgentVoiceInputResult.fromText(
+        await widget.voiceInput?.call(),
+      );
+      if (!mounted) return;
+      _applyVoiceInputResult(result);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _setVoiceState(_voiceState.fail(error));
+      });
+    }
   }
 
-  void _removeAttachedImages() {
+  void _applyVoiceInputResult(AgentVoiceInputResult result) {
     setState(() {
-      _attachedImages.clear();
+      if (result.status == AgentVoiceInputResultStatus.permissionDenied) {
+        _setVoiceState(
+          _voiceState.markPermissionDenied(
+            result.permissionState ?? AgentVoiceInputPermissionState.denied,
+          ),
+        );
+        return;
+      }
+
+      final text = result.text;
+      if (text != null && text.isNotEmpty) {
+        _composerController.text = text;
+        _composerController.selection = TextSelection.collapsed(
+          offset: _composerController.text.length,
+        );
+      }
+      _setVoiceState(_voiceState.applyTranscription(text ?? ''));
+    });
+    _persistInteractionState();
+  }
+
+  void _removeAttachedImage(int index) {
+    if (index < 0 || index >= _attachedImages.length) return;
+    setState(() {
+      _attachedImages.removeAt(index);
     });
     _persistInteractionState();
   }
@@ -1654,7 +1752,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     canSend: widget.runner != null && !isComposerLocked,
                     isRunning: isVisibleReplyRunning,
                     isInputLocked: isComposerLocked,
-                    imageCount: _attachedImages.length,
+                    images: List<AgentStreamImageInput>.unmodifiable(
+                      _attachedImages,
+                    ),
                     showPhotoMenu: _showPhotoMenu,
                     canAttachImage:
                         widget.pickImage != null && !isComposerLocked,
@@ -1663,7 +1763,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                             widget.voiceInput != null) &&
                         !_isVisibleReplyRunningForState(runState) &&
                         !isComposerLocked &&
-                        !_voiceState.isInputActive,
+                        _voiceState.phase != AgentVoicePhase.transcribing,
                     voicePhase: _voiceState.phase,
                     voicePlaybackFailed:
                         _voiceState.phase == AgentVoicePhase.error &&
@@ -1672,9 +1772,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     onSend: _sendMessage,
                     onCancel: _cancelRun,
                     onTogglePhotoMenu: _togglePhotoMenu,
-                    onAttachImage: _attachImage,
-                    onRemoveImages: _removeAttachedImages,
-                    onVoiceInput: _startVoiceInput,
+                    onTakePhoto: () =>
+                        unawaited(_attachImage(AgentImageInputSource.camera)),
+                    onUploadImage: () =>
+                        unawaited(_attachImage(AgentImageInputSource.gallery)),
+                    onRemoveImage: _removeAttachedImage,
+                    onVoiceStart: _startVoiceInput,
+                    onVoiceEnd: (submit) =>
+                        unawaited(_finishVoiceInput(submit: submit)),
                   );
                 },
               ),
@@ -2021,11 +2126,13 @@ class AgentHubHistoryMessage {
     required this.role,
     required this.content,
     this.runState,
+    this.images = const <AgentStreamImageInput>[],
   });
 
   final AgentHubHistoryRole role;
   final String content;
   final AgentStreamRunState? runState;
+  final List<AgentStreamImageInput> images;
 
   String get roleLabel {
     return switch (role) {
@@ -2044,6 +2151,7 @@ AgentHubHistoryMessage _historyMessageFromSnapshot(
         : AgentHubHistoryRole.assistant,
     content: snapshot.content,
     runState: snapshot.runState,
+    images: snapshot.images,
   );
 }
 
@@ -2054,6 +2162,7 @@ AgentHubHistorySnapshot _historySnapshotFromMessage(
     role: message.role == AgentHubHistoryRole.user ? 'user' : 'assistant',
     content: message.content,
     runState: _historyRunStateForPersistence(message),
+    images: message.images,
   );
 }
 
@@ -2231,7 +2340,17 @@ class _AgentHistoryBubble extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Text(message.content, style: textStyle),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (message.images.isNotEmpty)
+                    AgentSentImages(images: message.images),
+                  if (message.images.isNotEmpty && message.content.isNotEmpty)
+                    const SizedBox(height: 8),
+                  if (message.content.isNotEmpty)
+                    Text(message.content, style: textStyle),
+                ],
+              ),
             ),
           ),
         ),
@@ -3855,7 +3974,7 @@ class AgentComposerBar extends StatefulWidget {
     required this.canSend,
     required this.isRunning,
     required this.isInputLocked,
-    required this.imageCount,
+    required this.images,
     required this.showPhotoMenu,
     required this.canAttachImage,
     required this.canUseVoice,
@@ -3865,9 +3984,11 @@ class AgentComposerBar extends StatefulWidget {
     required this.onSend,
     required this.onCancel,
     required this.onTogglePhotoMenu,
-    required this.onAttachImage,
-    required this.onRemoveImages,
-    required this.onVoiceInput,
+    required this.onTakePhoto,
+    required this.onUploadImage,
+    required this.onRemoveImage,
+    required this.onVoiceStart,
+    required this.onVoiceEnd,
   });
 
   final TextEditingController controller;
@@ -3875,7 +3996,7 @@ class AgentComposerBar extends StatefulWidget {
   final bool canSend;
   final bool isRunning;
   final bool isInputLocked;
-  final int imageCount;
+  final List<AgentStreamImageInput> images;
   final bool showPhotoMenu;
   final bool canAttachImage;
   final bool canUseVoice;
@@ -3885,9 +4006,11 @@ class AgentComposerBar extends StatefulWidget {
   final VoidCallback onSend;
   final VoidCallback onCancel;
   final VoidCallback onTogglePhotoMenu;
-  final VoidCallback onAttachImage;
-  final VoidCallback onRemoveImages;
-  final VoidCallback onVoiceInput;
+  final VoidCallback onTakePhoto;
+  final VoidCallback onUploadImage;
+  final ValueChanged<int> onRemoveImage;
+  final VoidCallback onVoiceStart;
+  final ValueChanged<bool> onVoiceEnd;
 
   @override
   State<AgentComposerBar> createState() => _AgentComposerBarState();
@@ -3968,6 +4091,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     setState(() {
       _voicePressed = true;
     });
+    widget.onVoiceStart();
   }
 
   void _finishVoiceHold({required bool submit}) {
@@ -3977,7 +4101,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       _voiceMode = false;
       _textDraftBeforeVoice = null;
     });
-    if (submit) widget.onVoiceInput();
+    widget.onVoiceEnd(submit);
   }
 
   @override
@@ -3986,7 +4110,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final controller = widget.controller;
     final isRunning = widget.isRunning;
     final isInputLocked = widget.isInputLocked;
-    final imageCount = widget.imageCount;
+    final images = widget.images;
+    final imageCount = images.length;
     final canSend =
         widget.canSend && (controller.text.trim().isNotEmpty || imageCount > 0);
     final showPhotoMenu = widget.showPhotoMenu;
@@ -3997,8 +4122,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final onSend = widget.onSend;
     final onCancel = widget.onCancel;
     final onTogglePhotoMenu = widget.onTogglePhotoMenu;
-    final onAttachImage = widget.onAttachImage;
-    final onRemoveImages = widget.onRemoveImages;
     final sendIsStop = isRunning && !canSend;
     final sendLooksActive = canSend || sendIsStop;
     const inputTextStyle = TextStyle(
@@ -4042,7 +4165,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         Expanded(
                           child: FilledButton.tonalIcon(
                             key: const ValueKey('agent-photo-camera-button'),
-                            onPressed: canAttachImage ? onAttachImage : null,
+                            onPressed: canAttachImage
+                                ? widget.onTakePhoto
+                                : null,
                             icon: const Icon(
                               Icons.photo_camera_outlined,
                               size: 18,
@@ -4054,7 +4179,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         Expanded(
                           child: OutlinedButton.icon(
                             key: const ValueKey('agent-photo-upload-button'),
-                            onPressed: canAttachImage ? onAttachImage : null,
+                            onPressed: canAttachImage
+                                ? widget.onUploadImage
+                                : null,
                             icon: const Icon(Icons.upload_rounded, size: 18),
                             label: const Text('上传'),
                           ),
@@ -4066,53 +4193,47 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
               ),
             ],
             if (imageCount > 0) ...[
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: MomCozyColors.card.withValues(alpha: 0.86),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: MomCozyColors.border.withValues(alpha: 0.6),
+              SizedBox(
+                key: const ValueKey('agent-image-attachment-chip'),
+                height: 78,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Text(
+                        '图片 $imageCount',
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: MomCozyColors.mutedForeground,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xff754c5e).withValues(alpha: 0.08),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
+                    Expanded(
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: imageCount,
+                        separatorBuilder: (_, _) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          return AgentComposerImageAttachment(
+                            key: ValueKey('agent-image-attachment-$index'),
+                            image: images[index],
+                            removeButtonKey: ValueKey(
+                              index == 0
+                                  ? 'agent-remove-image-button'
+                                  : 'agent-remove-image-$index',
+                            ),
+                            onRemove: isInputLocked
+                                ? null
+                                : () => widget.onRemoveImage(index),
+                          );
+                        },
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    key: const ValueKey('agent-image-attachment-chip'),
-                    children: [
-                      const SizedBox(width: 10),
-                      Icon(
-                        Icons.image_outlined,
-                        size: 18,
-                        color: colorScheme.primary,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          '图片 $imageCount',
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                color: MomCozyColors.mutedForeground,
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                      ),
-                      IconButton(
-                        key: const ValueKey('agent-remove-image-button'),
-                        onPressed: isInputLocked ? null : onRemoveImages,
-                        icon: const Icon(Icons.close_rounded, size: 18),
-                        tooltip: '移除图片',
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(height: 8),
             ],
             LayoutBuilder(
               builder: (context, constraints) {

@@ -8,7 +8,10 @@ import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dar
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/platform_voice_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
@@ -306,6 +309,8 @@ class MomCozyApiRuntime {
   AgentStreamClientEventClient? _clientEventClient;
   ApiMultipartTransport? _multipartTransport;
   AgentVoicePlaybackPlayer? _agentVoicePlaybackPlayer;
+  AgentVoiceInputController? _agentVoiceInputController;
+  AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
   ProductAssetRepository? _productAssetRepository;
   late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
@@ -410,6 +415,21 @@ class MomCozyApiRuntime {
   AgentVoicePlaybackPlayer get agentVoicePlaybackPlayer {
     return _agentVoicePlaybackPlayer ??
         AgentVoiceApiPlaybackPlayer(repository: agentVoiceRepository);
+  }
+
+  AgentHubImagePicker get agentHubImagePicker {
+    return (_agentHubPlatformImagePicker ??= AgentHubPlatformImagePicker())
+        .pick;
+  }
+
+  AgentVoiceInputController get agentVoiceInputController {
+    return _agentVoiceInputController ??= AgentVoiceInputController(
+      recorder: AgentHubPlatformVoiceRecorder(),
+      transcriber: AgentVoiceApiInputTranscriber(
+        repository: agentVoiceRepository,
+        language: locale,
+      ),
+    );
   }
 
   HospitalBagCartApiRepository get hospitalBagCartRepository {

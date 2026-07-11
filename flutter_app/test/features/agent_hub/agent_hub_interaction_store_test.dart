@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
@@ -57,4 +60,53 @@ void main() {
     expect(restored!.content, '旧历史消息');
     expect(restored.runState, isNull);
   });
+
+  test('user history snapshots preserve sent image previews', () {
+    const snapshot = AgentHubHistorySnapshot(
+      role: 'user',
+      content: '',
+      images: [
+        AgentStreamImageInput(
+          dataUrl: 'data:image/png;base64,preview',
+          mimeType: 'image/png',
+          name: 'sent.png',
+          size: 7,
+        ),
+      ],
+    );
+
+    final restored = AgentHubHistorySnapshot.fromMap(snapshot.toMap());
+
+    expect(restored, isNotNull);
+    expect(restored!.content, isEmpty);
+    expect(restored.images, hasLength(1));
+    expect(restored.images.single.name, 'sent.png');
+  });
+
+  test(
+    'active image request persists one payload and restores retry images',
+    () {
+      const image = AgentStreamImageInput(
+        dataUrl: 'data:image/png;base64,one-copy-only',
+        mimeType: 'image/png',
+        name: 'sent.png',
+        size: 13,
+      );
+      const snapshot = AgentHubInteractionSnapshot(
+        historyMessages: [
+          AgentHubHistorySnapshot(role: 'user', content: '看看', images: [image]),
+        ],
+        activeRequest: AgentStreamRequest(message: '看看', images: [image]),
+      );
+
+      final encoded = jsonEncode(snapshot.toMap());
+      final restored = AgentHubInteractionSnapshot.fromMap(
+        Map<String, Object?>.from(jsonDecode(encoded) as Map),
+      );
+
+      expect('one-copy-only'.allMatches(encoded), hasLength(1));
+      expect(restored.activeRequest?.images, hasLength(1));
+      expect(restored.activeRequest?.images.single.name, 'sent.png');
+    },
+  );
 }
