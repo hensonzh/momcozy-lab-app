@@ -1,9 +1,14 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/card_export.dart';
 
 class AgentArtifactPanel extends StatelessWidget {
   const AgentArtifactPanel({
@@ -12,6 +17,7 @@ class AgentArtifactPanel extends StatelessWidget {
     this.onAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
+    this.cardExportService = const PlatformAgentCardExportService(),
   });
 
   final List<AgentArtifactCardView> cards;
@@ -19,6 +25,7 @@ class AgentArtifactPanel extends StatelessWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
+  final AgentCardExportService cardExportService;
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +34,31 @@ class AgentArtifactPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final card in cards) ...[
-          if (card.isForm)
-            _buildForm(card)
-          else
-            _specializedArtifactCard(card: card, onAction: onAction) ??
-                _AgentArtifactGenericCard(card: card, onAction: onAction),
+          _buildCard(card),
           if (card != cards.last) const SizedBox(height: 10),
         ],
       ],
     );
+  }
+
+  Widget _buildCard(AgentArtifactCardView card) {
+    if (card.isForm) return _buildForm(card);
+    if (_isExportableSpecializedCard(card)) {
+      return _AgentExportableArtifactCard(
+        key: ValueKey('agent-card-export-wrapper-${card.id}'),
+        card: card,
+        exportService: cardExportService,
+        builder: (exportControl) =>
+            _specializedArtifactCard(
+              card: card,
+              onAction: onAction,
+              exportControl: exportControl,
+            ) ??
+            _AgentArtifactGenericCard(card: card, onAction: onAction),
+      );
+    }
+    return _specializedArtifactCard(card: card, onAction: onAction) ??
+        _AgentArtifactGenericCard(card: card, onAction: onAction);
   }
 
   Widget _buildForm(AgentArtifactCardView card) {
@@ -160,6 +183,7 @@ class _AgentArtifactGenericCard extends StatelessWidget {
 Widget? _specializedArtifactCard({
   required AgentArtifactCardView card,
   ValueChanged<AgentArtifactActionView>? onAction,
+  Widget? exportControl,
 }) {
   final registeredCard = AgentArtifactCardRegistry.build(
     card: card,
@@ -177,12 +201,13 @@ Widget? _specializedArtifactCard({
       cardType: card.artifactType ?? card.cardType ?? 'milk_plan_card',
     ),
     AgentArtifactPresentationKind.birthJourneyPlanCard =>
-      _AgentBirthJourneyPlanCard(card: card),
+      _AgentBirthJourneyPlanCard(card: card, exportControl: exportControl),
     AgentArtifactPresentationKind.birthPlanCard =>
       card.specializedView is AgentBirthPlanCardView
           ? _AgentBirthPlanCard(
               card: card,
               data: card.specializedView! as AgentBirthPlanCardView,
+              exportControl: exportControl,
             )
           : null,
     AgentArtifactPresentationKind.hospitalBagCard =>
@@ -191,10 +216,121 @@ Widget? _specializedArtifactCard({
               card: card,
               data: card.specializedView! as AgentHospitalBagCardView,
               onAction: onAction,
+              exportControl: exportControl,
             )
           : null,
     _ => null,
   };
+}
+
+bool _isExportableSpecializedCard(AgentArtifactCardView card) {
+  return switch (card.presentationKind) {
+    AgentArtifactPresentationKind.birthJourneyPlanCard => true,
+    AgentArtifactPresentationKind.birthPlanCard =>
+      card.specializedView is AgentBirthPlanCardView,
+    AgentArtifactPresentationKind.hospitalBagCard =>
+      card.specializedView is AgentHospitalBagCardView,
+    _ => false,
+  };
+}
+
+typedef _ExportableArtifactCardBuilder = Widget Function(Widget? exportControl);
+
+class _AgentExportableArtifactCard extends StatefulWidget {
+  const _AgentExportableArtifactCard({
+    super.key,
+    required this.card,
+    required this.exportService,
+    required this.builder,
+  });
+
+  final AgentArtifactCardView card;
+  final AgentCardExportService exportService;
+  final _ExportableArtifactCardBuilder builder;
+
+  @override
+  State<_AgentExportableArtifactCard> createState() =>
+      _AgentExportableArtifactCardState();
+}
+
+class _AgentExportableArtifactCardState
+    extends State<_AgentExportableArtifactCard> {
+  final GlobalKey _captureBoundaryKey = GlobalKey();
+  bool _busy = false;
+  bool _hideExportControl = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final exportControl = _hideExportControl
+        ? null
+        : OutlinedButton.icon(
+            key: ValueKey('agent-card-export-${widget.card.id}'),
+            onPressed: _busy ? null : _export,
+            icon: _busy
+                ? const SizedBox.square(
+                    dimension: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.download_rounded, size: 18),
+            label: Text(_busy ? '保存中' : '保存图片'),
+          );
+
+    return RepaintBoundary(
+      key: _captureBoundaryKey,
+      child: ColoredBox(
+        color: Colors.white,
+        child: widget.builder(exportControl),
+      ),
+    );
+  }
+
+  Future<void> _export() async {
+    if (_busy) return;
+    setState(() {
+      _busy = true;
+      _hideExportControl = true;
+    });
+    try {
+      await precacheImage(const AssetImage(MomCozyAssets.momcozyLogo), context);
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+      final boundary = _captureBoundaryKey.currentContext?.findRenderObject();
+      if (boundary is! RenderRepaintBoundary) return;
+      final pixelRatio = MediaQuery.devicePixelRatioOf(
+        context,
+      ).clamp(2.0, 3.0).toDouble();
+      final image = await boundary.toImage(pixelRatio: pixelRatio);
+      try {
+        final data = await image.toByteData(format: ui.ImageByteFormat.png);
+        if (data == null) return;
+        if (mounted) {
+          setState(() => _hideExportControl = false);
+        }
+        await widget.exportService.sharePng(
+          bytes: data.buffer.asUint8List(
+            data.offsetInBytes,
+            data.lengthInBytes,
+          ),
+          filename: buildAgentCardExportFilename(
+            cardType:
+                widget.card.cardType ?? widget.card.artifactType ?? 'card',
+            now: DateTime.now(),
+          ),
+        );
+      } finally {
+        image.dispose();
+      }
+    } catch (_) {
+      // Export failures stay internal so the conversation remains uninterrupted.
+    } finally {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _hideExportControl = false;
+        });
+      }
+    }
+  }
 }
 
 class _AgentUnsupportedArtifactCard extends StatelessWidget {
@@ -431,9 +567,10 @@ class _AgentMilkSection extends StatelessWidget {
 }
 
 class _AgentBirthJourneyPlanCard extends StatelessWidget {
-  const _AgentBirthJourneyPlanCard({required this.card});
+  const _AgentBirthJourneyPlanCard({required this.card, this.exportControl});
 
   final AgentArtifactCardView card;
+  final Widget? exportControl;
 
   @override
   Widget build(BuildContext context) {
@@ -495,6 +632,10 @@ class _AgentBirthJourneyPlanCard extends StatelessWidget {
               ],
             ],
           ),
+        ],
+        if (exportControl != null) ...[
+          const SizedBox(height: 12),
+          Align(alignment: Alignment.centerRight, child: exportControl!),
         ],
       ],
     );
@@ -681,10 +822,15 @@ class _AgentBirthJourneyItem extends StatelessWidget {
 }
 
 class _AgentBirthPlanCard extends StatelessWidget {
-  const _AgentBirthPlanCard({required this.card, required this.data});
+  const _AgentBirthPlanCard({
+    required this.card,
+    required this.data,
+    this.exportControl,
+  });
 
   final AgentArtifactCardView card;
   final AgentBirthPlanCardView data;
+  final Widget? exportControl;
 
   @override
   Widget build(BuildContext context) {
@@ -715,6 +861,10 @@ class _AgentBirthPlanCard extends StatelessWidget {
         ],
         const SizedBox(height: 10),
         _AgentArtifactBodyText(data.disclaimer),
+        if (exportControl != null) ...[
+          const SizedBox(height: 12),
+          Align(alignment: Alignment.centerRight, child: exportControl!),
+        ],
       ],
     );
   }
@@ -783,11 +933,13 @@ class _AgentHospitalBagCard extends StatelessWidget {
     required this.card,
     required this.data,
     this.onAction,
+    this.exportControl,
   });
 
   final AgentArtifactCardView card;
   final AgentHospitalBagCardView data;
   final ValueChanged<AgentArtifactActionView>? onAction;
+  final Widget? exportControl;
 
   @override
   Widget build(BuildContext context) {
@@ -816,22 +968,20 @@ class _AgentHospitalBagCard extends StatelessWidget {
           _AgentArtifactBodyText(data.disclaimer!),
         ],
         const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          height: 44,
-          child: FilledButton.icon(
-            onPressed: onAction == null
-                ? null
-                : () => onAction?.call(AgentArtifactActions.hospitalBagCart),
-            icon: const Icon(Icons.shopping_cart_outlined, size: 18),
-            label: const Text('打开购物车'),
-            style: FilledButton.styleFrom(
-              backgroundColor: MomCozyColors.care,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+        Wrap(
+          alignment: WrapAlignment.end,
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            OutlinedButton.icon(
+              onPressed: onAction == null
+                  ? null
+                  : () => onAction?.call(AgentArtifactActions.hospitalBagCart),
+              icon: const Icon(Icons.shopping_bag_outlined, size: 18),
+              label: const Text('打开购物车'),
             ),
-          ),
+            ?exportControl,
+          ],
         ),
       ],
     );
