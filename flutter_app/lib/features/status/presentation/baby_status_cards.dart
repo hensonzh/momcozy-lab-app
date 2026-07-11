@@ -185,6 +185,62 @@ class _BabyGrowthSummaryCardState extends State<BabyGrowthSummaryCard> {
   }
 }
 
+class BabyHealthCard extends StatelessWidget {
+  const BabyHealthCard({super.key, required this.onOpen});
+
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    return _StatusCardShell(
+      key: const ValueKey('status-baby-health-card'),
+      title: '宝宝健康',
+      icon: Icons.monitor_heart_outlined,
+      accent: const Color(0xff3b8a90),
+      background: const Color(0xfff1fffe),
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: _CardAction(
+          key: const ValueKey('status-baby-health-action'),
+          label: '查看健康信息',
+          accent: const Color(0xff31828b),
+          onTap: onOpen,
+        ),
+      ),
+    );
+  }
+}
+
+class BabySleepCard extends StatelessWidget {
+  const BabySleepCard({super.key, required this.onOpen});
+
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    return _StatusCardShell(
+      key: const ValueKey('status-baby-sleep-card'),
+      title: '宝宝睡眠',
+      icon: Icons.bedtime_outlined,
+      accent: const Color(0xff7d64aa),
+      background: const Color(0xfffbf7ff),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _Metric(label: '今日睡眠', value: '4h 57min'),
+          const Spacer(),
+          _CardAction(
+            key: const ValueKey('status-baby-sleep-action'),
+            label: '查看报告',
+            accent: const Color(0xff7560a0),
+            onTap: onOpen,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _GrowthMetricDivider extends StatelessWidget {
   const _GrowthMetricDivider();
 
