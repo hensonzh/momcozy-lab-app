@@ -35,7 +35,7 @@
 | R09 | P2 | 专项卡片数据语义未完全对齐 | 已完成 | 分娩沟通卡和待产包卡丢失部分有效内容 |
 | R10 | P2 | IBCLC 上下文和咨询完成状态丢失 | 已完成 | 咨询身份、返回位置和完成状态不连续 |
 | R11 | P2 | Artifact 出现时机早于旧 Web | 已完成 | 卡片可能先于解释文字出现并抢占滚动位置 |
-| R12 | P2/P3 | 媒体语义播报和卡片导出缺失 | 待处理 | 步骤图片说明不播报，计划卡无法保存图片 |
+| R12 | P2/P3 | 媒体语义播报和卡片导出缺失 | 已完成 | 步骤图片说明不播报，计划卡无法保存图片 |
 
 ## R01 流式正文与持久化最终正文未同源
 
@@ -182,6 +182,8 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 - 已提交状态和值写入现有用户级加密交互快照；`submitting` 仅保留在内存，异常退出后不会永久锁表单。
 - 表单 run 使用由 thread、artifact、form 和规范化提交值生成的 SHA-256 稳定幂等键；重复点击由同步提交锁拦截，网络不确定后的重试由后端 run 幂等保护。
 - 状态通过独立 `ValueNotifier` 局部更新；提交被拒绝时恢复编辑并保留填写值，新建会话统一清空。
+- R12 Android 验收发现，客户端确认消息虽已正确持久化，但 runtime 仍把模型的空参数直接交给卡片工具，导致工具返回 `needs_confirmed_form_data`。后端现只从当前 run 的 `current_message` 解析严格确认信封，按 `hospital_bag_intake -> hospital_bag_card_create`、`birth_plan_card_intake -> labor_communication_card_create` 精确注入；历史、错配和畸形信封均不会生效。
+- 两个受保护卡片工具会丢弃模型提供的 `confirmed_form_data` / `form_data` / `payload` 兼容字段，以应用侧本轮确认值为准；工具调用表和事件中的表单参数统一记录为 `[redacted]`，不重复保存健康表单明文。
 - 验收：归档只读、值恢复、提交失败、重复提交、幂等键透传、加密快照恢复和 pending 不落盘测试通过。
 
 ### R06 售后工单草稿未实现
@@ -236,9 +238,11 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### R12 媒体语义播报和卡片导出缺失
 
-- Flutter 语音清洗会删除图片 Markdown，未消费 `media_voice` 的 spoken label/detail。
-- 孕期计划、分娩沟通卡和待产包卡没有 PNG 导出入口。
-- 修复目标：媒体 narration resolver、语音去重，以及卡片导出/系统分享能力。
+- 设备指导工具现在为最多两张关键步骤图片输出 typed `media_voice` 元数据；Flutter 从 artifact/event 中解析 spoken label/detail，解析实际媒体 URL 后加入同一自动语音队列，不朗读 Markdown、URL 或重复说明。
+- 媒体说明与文本 delta 共用当前回复的语音协调器和去重状态；切页不取消播报，历史气泡不补播，run/会话切换仍按既有生命周期隔离。
+- 孕期计划、分娩沟通单和待产包三类专项卡支持“保存图片”；其他 artifact 不误显示导出入口。卡片使用白底 `RepaintBoundary`、预加载 Logo 和受控 DPR 生成完整 PNG，捕获时隐藏保存按钮并保留卡片内有效操作视觉。
+- 导出文件按旧 Web 规则命名为 `comate-<card_type>-YYYY-MM-DD.png`，写入临时目录并清理 24 小时前文件，再通过系统分享面板交付；忙碌态阻止重复捕获，失败保持静默且按钮恢复。
+- 自动化验收覆盖三种卡片类型、360/390/430 宽度、真实 PNG 文件头、单次分享、忙碌态和失败恢复。Android 真机流程已从待产包表单提交生成真实卡片，打开系统 `ChooserActivity` 并显示非空预览；实际文件 `907x1421`、约 143 KB，返回 App 后“保存图片”恢复可点击。
 
 ## 建议推进顺序
 
@@ -246,17 +250,18 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 2. **阶段 B：核心能力断点。** 完成 R02、R03、R04，恢复媒体、多模态输入和个性化购物车闭环。
 3. **阶段 C：可执行组件。** 完成 R05、R06、R07，保证表单、工单和链接动作可靠且幂等。
 4. **阶段 D：数据语义对齐。** 完成 R08、R09、R10、R11，统一 profile、card mapper、consult context 和 artifact 时序。
-5. **阶段 E：体验补齐。** 完成 R12，并做旧 Web/Flutter 真机并排验收。
+5. **阶段 E：体验补齐。** R12 已完成，并通过旧 Web 自动化基线、Flutter 自动化和 Android 真机验收。
 
 每个阶段都遵循：先补失败测试和 fixture，再实现，运行专项测试与全量静态分析，最后做三个 viewport 的 Golden/真机检查。上一阶段验收通过后再进入下一阶段。
 
 ## 当前验证基线
 
 - `flutter analyze`：通过。
-- Flutter 全量单元、Widget 和 Golden 测试：650 项通过。
-- Flutter Agent Hub、reducer、IBCLC store 和 feature page 相关测试：专项回归通过。
-- 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
-- 现有测试通过不代表剩余风险已关闭；R12 仍需按合同补齐媒体语义、真实平台导出分享能力和真机验收。
+- Flutter 全量单元、Widget 和 Golden 测试：663 项通过；Agent Hub 页面 118 项、artifact 专项 30 项通过。
+- Flutter `localDebug` APK 构建通过；Android 真机完成待产包表单提交、卡片生成、系统分享预览、PNG 文件校验和返回态验收。
+- 旧 Web 媒体播报、气泡 TTS、AG-UI side effect 和 RichText 专项 77 项通过；旧 Web 全量 364 项和生产构建通过。
+- 后端 Agent runtime、工具、handler、架构和 eval 专项 169 项通过；后端全量 830 项通过、1 项既有边界测试失败。失败项仅因仓库缺少测试预期的 `agent_runtime/routing/` 目录，在本次变更及其父提交中均已存在，与表单注入、媒体播报和卡片导出无关。
+- R01-R12 均已完成当前合同范围内的自动化验收；真实外部分享目标 App 的接收行为仍由 Android 系统与目标 App 负责，不属于 Agent Hub 内部合同。
 
 ## 变更记录
 
@@ -277,3 +282,5 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 完成 R09 专项卡片数据语义 | 分娩沟通卡与待产包卡改用 typed 归一化模型，旧字段、个性化原因及复印规则对齐；639 项全量回归和 Android APK 构建通过 |
 | 2026-07-11 | 完成 R10 IBCLC 咨询上下文闭环 | 稳定咨询 ID、历史 run/thread、顾问信息、完成事件、加密完成态和返回滚动位置对齐；645 项全量回归和 Android APK 构建通过 |
 | 2026-07-11 | 完成 R11 Artifact 发布时序 | 原始事件和业务摄取即时保留，卡片随首段正文或成功终态发布；失败历史不泄漏，650 项全量回归和 Android APK 构建通过 |
+| 2026-07-11 | 完成 R12 媒体语义播报与卡片导出 | typed `media_voice`、自动语音去重、三类专项卡 PNG 捕获和系统分享对齐；663 项 Flutter、364 项旧 Web、Android 非空分享预览通过 |
+| 2026-07-11 | 修复 R05 当前轮确认表单工具注入 | 当前消息严格解析、表单/工具精确匹配、模型伪造字段隔离和审计脱敏完成；真实待产包卡生成及后端 169 项专项回归通过 |
