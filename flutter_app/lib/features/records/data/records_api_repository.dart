@@ -253,9 +253,13 @@ GrowthRecord _growthRecord(Map<String, Object?> data) {
 }
 
 ({DateTime start, DateTime end}) _dayRange(DateTime date) {
-  final utc = date.toUtc();
-  final start = DateTime.utc(utc.year, utc.month, utc.day);
-  return (start: start, end: start.add(const Duration(days: 1)));
+  if (date.isUtc) {
+    final start = DateTime.utc(date.year, date.month, date.day);
+    return (start: start, end: start.add(const Duration(days: 1)));
+  }
+  final localStart = DateTime(date.year, date.month, date.day);
+  final localEnd = DateTime(date.year, date.month, date.day + 1);
+  return (start: localStart.toUtc(), end: localEnd.toUtc());
 }
 
 String _id(Object? value) {
