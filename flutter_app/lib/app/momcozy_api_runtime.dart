@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
@@ -8,10 +10,16 @@ import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dar
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/platform_voice_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
@@ -56,6 +64,9 @@ class MomCozyApiRuntime {
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
+    IbclcConsultStore? ibclcConsultStore,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
@@ -85,10 +96,23 @@ class MomCozyApiRuntime {
              upload: AndroidPumpAgentUploadPlatform(),
            )),
        observability = observability ?? MomCozyObservability(),
+       hospitalBagCartStore = hospitalBagCartStore ?? HospitalBagCartStore(),
        now = now ?? DateTime.now {
+    this.ibclcConsultStore =
+        ibclcConsultStore ??
+        IbclcConsultStore(
+          persistence: FlutterSecureIbclcConsultPersistence(
+            userId: this.session.userId,
+          ),
+          now: this.now,
+        );
+    unawaited(this.ibclcConsultStore.restore());
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
+    _hasInjectedAgentVoicePlaybackPlayer = agentVoicePlaybackPlayer != null;
+    _productAssetRepository = productAssetRepository;
+    _hasInjectedProductAssetRepository = productAssetRepository != null;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
     _hasInjectedPumpProtocolPlatform = pumpProtocolPlatform != null;
@@ -102,6 +126,9 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
+    IbclcConsultStore? ibclcConsultStore,
     String? userId,
     String? babyId,
     String? locale,
@@ -122,6 +149,9 @@ class MomCozyApiRuntime {
       pumpProtocolPlatform: pumpProtocolPlatform,
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+      productAssetRepository: productAssetRepository,
+      hospitalBagCartStore: hospitalBagCartStore,
+      ibclcConsultStore: ibclcConsultStore,
     );
   }
 
@@ -135,6 +165,9 @@ class MomCozyApiRuntime {
     StorageMigrationApplyResult? storageMigrationResult,
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
+    IbclcConsultStore? ibclcConsultStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -216,6 +249,9 @@ class MomCozyApiRuntime {
       storageMigrationResult: storageMigrationResult,
       observability: runtimeObservability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+      productAssetRepository: productAssetRepository,
+      hospitalBagCartStore: hospitalBagCartStore,
+      ibclcConsultStore: ibclcConsultStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
@@ -242,6 +278,7 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
     Map<String, Object?>? legacyStorageSnapshot,
     StorageMigrationTargetStore? storageMigrationTargetStore,
   }) async {
@@ -277,6 +314,7 @@ class MomCozyApiRuntime {
       storageMigrationResult: storageMigrationResult,
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+      productAssetRepository: productAssetRepository,
     );
   }
 
@@ -284,6 +322,8 @@ class MomCozyApiRuntime {
   final MomCozySession session;
   final StorageMigrationApplyResult? storageMigrationResult;
   final MomCozyObservability observability;
+  final HospitalBagCartStore hospitalBagCartStore;
+  late final IbclcConsultStore ibclcConsultStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
@@ -296,6 +336,11 @@ class MomCozyApiRuntime {
   AgentStreamClientEventClient? _clientEventClient;
   ApiMultipartTransport? _multipartTransport;
   AgentVoicePlaybackPlayer? _agentVoicePlaybackPlayer;
+  late final bool _hasInjectedAgentVoicePlaybackPlayer;
+  AgentVoiceInputController? _agentVoiceInputController;
+  AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
+  ProductAssetRepository? _productAssetRepository;
+  late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
   PumpNativeRuntimeCoordinator? _pumpNativeRuntimeCoordinator;
@@ -376,6 +421,14 @@ class MomCozyApiRuntime {
     return MediaApiRepository(transport: multipartTransport);
   }
 
+  ProductAssetRepository get productAssetRepository {
+    return _productAssetRepository ??= ProductAssetRepository(
+      baseUri: Uri.parse(_defaultApiBaseUrl),
+      tokenProvider: () => currentSession.accessToken,
+      onUnauthorized: agentStreamUnauthorizedHandler,
+    );
+  }
+
   AgentVoiceApiRepository get agentVoiceRepository {
     return AgentVoiceApiRepository(
       multipartTransport: multipartTransport,
@@ -388,8 +441,24 @@ class MomCozyApiRuntime {
   }
 
   AgentVoicePlaybackPlayer get agentVoicePlaybackPlayer {
-    return _agentVoicePlaybackPlayer ??
-        AgentVoiceApiPlaybackPlayer(repository: agentVoiceRepository);
+    return _agentVoicePlaybackPlayer ??= AgentVoiceApiPlaybackPlayer(
+      repository: agentVoiceRepository,
+    );
+  }
+
+  AgentHubImagePicker get agentHubImagePicker {
+    return (_agentHubPlatformImagePicker ??= AgentHubPlatformImagePicker())
+        .pick;
+  }
+
+  AgentVoiceInputController get agentVoiceInputController {
+    return _agentVoiceInputController ??= AgentVoiceInputController(
+      recorder: AgentHubPlatformVoiceRecorder(),
+      transcriber: AgentVoiceApiInputTranscriber(
+        repository: agentVoiceRepository,
+        language: locale,
+      ),
+    );
   }
 
   HospitalBagCartApiRepository get hospitalBagCartRepository {
@@ -465,17 +534,37 @@ class MomCozyRuntimeController extends ChangeNotifier {
 
   MomCozyApiRuntime _runtimeForSession(MomCozySession session) {
     final store = _autoRefreshStore;
+    final hospitalBagCartStore = session.userId == _runtime.session.userId
+        ? _runtime.hospitalBagCartStore
+        : HospitalBagCartStore();
+    final ibclcConsultStore = session.userId == _runtime.session.userId
+        ? _runtime.ibclcConsultStore
+        : null;
     if (store == null) {
       return MomCozyApiRuntime.fromSession(
         session,
         observability: _runtime.observability,
-        agentVoicePlaybackPlayer: _runtime._agentVoicePlaybackPlayer,
+        agentVoicePlaybackPlayer: _runtime._hasInjectedAgentVoicePlaybackPlayer
+            ? _runtime._agentVoicePlaybackPlayer
+            : null,
+        productAssetRepository: _runtime._hasInjectedProductAssetRepository
+            ? _runtime._productAssetRepository
+            : null,
+        hospitalBagCartStore: hospitalBagCartStore,
+        ibclcConsultStore: ibclcConsultStore,
       );
     }
     return MomCozyApiRuntime.fromSession(
       session,
       observability: _runtime.observability,
-      agentVoicePlaybackPlayer: _runtime._agentVoicePlaybackPlayer,
+      agentVoicePlaybackPlayer: _runtime._hasInjectedAgentVoicePlaybackPlayer
+          ? _runtime._agentVoicePlaybackPlayer
+          : null,
+      productAssetRepository: _runtime._hasInjectedProductAssetRepository
+          ? _runtime._productAssetRepository
+          : null,
+      hospitalBagCartStore: hospitalBagCartStore,
+      ibclcConsultStore: ibclcConsultStore,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {

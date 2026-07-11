@@ -10,20 +10,29 @@ class HospitalBagCartApiRepository implements HospitalBagCartRepository {
 
   @override
   Future<HospitalBagCartSyncResult> syncCart({
-    required List<HospitalBagPackedItem> items,
+    required HospitalBagCartSnapshot cart,
   }) async {
-    final serializedItems = items.map((item) => item.toMap()).toList(
-      growable: false,
-    );
+    final items = cart.items
+        .map(
+          (item) => HospitalBagPackedItem(
+            id: item.id,
+            title: item.name,
+            packed: true,
+          ),
+        )
+        .toList(growable: false);
+    final serializedItems = items
+        .map((item) => item.toMap())
+        .toList(growable: false);
     final response = await transport.postJson(
       hospitalBagCartUpdateEndpoint,
-      headers: {'Idempotency-Key': _idempotencyKey(items)},
+      headers: {'Idempotency-Key': _idempotencyKey(cart)},
       body: {
         'title': 'Hospital bag cart',
         'plan_type': 'hospital_bag_cart',
         'source': 'flutter',
         'summary': _summary(items),
-        'payload': {'items': serializedItems},
+        'payload': {'items': serializedItems, ...cart.toAgentContext()},
       },
     );
     final payload = _mapOrEmpty(response['payload']);
@@ -40,10 +49,13 @@ String _summary(List<HospitalBagPackedItem> items) {
   return '购物车已同步：$packedCount/${items.length} 已打包';
 }
 
-String _idempotencyKey(List<HospitalBagPackedItem> items) {
-  final stableItems = [...items]..sort((a, b) => a.id.compareTo(b.id));
+String _idempotencyKey(HospitalBagCartSnapshot cart) {
+  final stableItems = [...cart.items]..sort((a, b) => a.id.compareTo(b.id));
   final encoded = stableItems
-      .map((item) => '${_keyPart(item.id)}:${item.packed ? '1' : '0'}')
+      .map(
+        (item) =>
+            '${_keyPart(item.id)}:${item.qty}:${item.price}:${_keyPart(item.currency)}',
+      )
       .join('|');
   return 'hospital-bag-cart:$encoded';
 }

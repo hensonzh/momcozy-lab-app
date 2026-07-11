@@ -3,6 +3,8 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 void main() {
   test('default Agent Hub runner uses production run stream transport', () {
@@ -92,10 +94,54 @@ void main() {
       ),
     );
 
-    expect(
-      payload['thread_id'],
-      '123e4567-e89b-12d3-a456-426614174000',
-    );
+    expect(payload['thread_id'], '123e4567-e89b-12d3-a456-426614174000');
     expect(payload['message'], 'Follow up');
   });
+
+  test(
+    'session request includes the active runtime cart only after activation',
+    () {
+      const session = MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'secure-user',
+        babyId: 'secure-baby',
+        locale: 'zh-CN',
+        accessToken: 'secure-access',
+      );
+      final store = HospitalBagCartStore();
+      final withoutCart = buildSessionAgentHubRequest(
+        '先聊聊',
+        session: session,
+        clientContext: store.agentClientContext,
+      );
+
+      expect(withoutCart.metadata.containsKey('hospital_bag_cart'), isFalse);
+
+      store.ingestArtifact(
+        HospitalBagCartArtifactSeed.tryFromCartUpdate(
+          artifactId: 'cart-context',
+          cartUpdate: {
+            'groups': [
+              {
+                'title': '我的清单',
+                'tone': 'rose',
+                'items': [
+                  {'id': 'custom', 'name': '个性化用品', 'qty': 1, 'price': 10},
+                ],
+              },
+            ],
+          },
+        )!,
+      );
+      final withCart = buildSessionAgentHubRequest(
+        '删掉个性化用品',
+        session: session,
+        clientContext: store.agentClientContext,
+      );
+      final cart = withCart.metadata['hospital_bag_cart']! as Map;
+      final groups = cart['groups']! as List;
+
+      expect((groups.single as Map)['title'], '我的清单');
+    },
+  );
 }

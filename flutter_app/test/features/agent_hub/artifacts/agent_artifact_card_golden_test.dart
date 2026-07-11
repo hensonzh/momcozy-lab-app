@@ -144,6 +144,28 @@ const _cardCases = [
         'baby_after_birth': ['情况允许时尽早肌肤接触'],
         'medical_notes': ['妊娠糖尿病史'],
       },
+      specializedView: AgentBirthPlanCardView(
+        title: '分娩沟通单',
+        sections: [
+          AgentBirthPlanSectionView(
+            id: 'communication',
+            title: '沟通方式',
+            values: ['希望每一步操作前先解释'],
+          ),
+          AgentBirthPlanSectionView(
+            id: 'pain_relief',
+            title: '疼痛缓解',
+            values: ['优先尝试非药物缓解方式'],
+          ),
+          AgentBirthPlanSectionView(
+            id: 'baby_after_birth',
+            title: '宝宝出生后',
+            values: ['情况允许时尽早肌肤接触'],
+          ),
+        ],
+        medicalNotes: ['妊娠糖尿病史'],
+        disclaimer: '这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。',
+      ),
     ),
   ),
   _CardGoldenCase(
@@ -177,6 +199,37 @@ const _cardCases = [
         ],
         'disclaimer': '最终请以医院实际要求为准。',
       },
+      specializedView: AgentHospitalBagCardView(
+        title: '待产包',
+        subtitle: '住院母婴必备用品 · 32～34周准备 · 36周完成',
+        groups: [
+          AgentHospitalBagGroupView(
+            id: 'mom_hospital_bag',
+            title: '妈妈住院包',
+            items: [
+              AgentHospitalBagItemView(
+                label: '产褥垫组合装',
+                meta: '1 包',
+                priority: 'must',
+                priorityLabel: '必带',
+                description: '产后恶露量较多，用来垫床或替代普通卫生巾。',
+              ),
+            ],
+          ),
+          AgentHospitalBagGroupView(
+            id: 'custom_1',
+            title: '先和医院确认',
+            items: [
+              AgentHospitalBagItemView(
+                label: '宝宝配方奶',
+                priority: 'confirm_first',
+                priorityLabel: '和医院确认',
+              ),
+            ],
+          ),
+        ],
+        disclaimer: '最终请以医院实际要求为准。',
+      ),
     ),
   ),
   _CardGoldenCase(
@@ -215,6 +268,18 @@ const _cardCases = [
         'feeding_context': '左侧喂养后持续疼痛。',
         'urgency': 'soon',
       },
+      specializedView: AgentIbclcConsultCardView(
+        title: 'IBCLC 咨询入口',
+        consultId: 'ibclc-golden',
+        sourceArtifactId: 'ibclc-golden',
+        consultantName: 'Emily Chen',
+        consultantCredentials: 'IBCLC 国际认证哺乳顾问',
+        chatLabel: '咨询 IBCLC',
+        chatNote: '启动咨询后，会自动将你的问题同步给顾问',
+        reason: '含乳疼痛',
+        feedingContext: '左侧喂养后持续疼痛。',
+        urgency: 'soon',
+      ),
     ),
   ),
   _CardGoldenCase(

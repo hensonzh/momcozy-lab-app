@@ -1,11 +1,36 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+
+import '../../support/fake_video_player_platform.dart';
 import '../../support/momcozy_test_fonts.dart';
+import '../../support/test_pdf_fixture.dart';
 
 void main() {
-  setUpAll(loadMomCozyTestFonts);
+  setUpAll(() async {
+    await loadMomCozyTestFonts();
+    _goldenImageBytes = await File('assets/images/M9.png').readAsBytes();
+  });
+
+  late VideoPlayerPlatform previousVideoPlatform;
+
+  setUp(() {
+    _installPathProviderMock();
+    previousVideoPlatform = VideoPlayerPlatform.instance;
+    VideoPlayerPlatform.instance = FakeVideoPlayerPlatform();
+  });
+
+  tearDown(() async {
+    VideoPlayerPlatform.instance = previousVideoPlatform;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_pathProviderChannel, null);
+  });
 
   group('Media Viewer state goldens', () {
     for (final viewport in _goldenViewports) {
@@ -19,11 +44,17 @@ void main() {
             RepaintBoundary(
               key: _goldenSurfaceKey,
               child: MomCozyFlutterApp(
+                apiRuntime: MomCozyApiRuntime.fromEnvironment(
+                  productAssetRepository: ProductAssetRepository(
+                    baseUri: Uri.parse('https://api.example.test'),
+                    connector: _GoldenProductAssetConnector(),
+                  ),
+                ),
                 router: createMomCozyRouter(initialLocation: state.location),
               ),
             ),
           );
-          await tester.pumpAndSettle();
+          await _pumpMediaState(tester, state);
 
           expect(
             find.byKey(const ValueKey('route-page-/media-viewer')),
@@ -41,30 +72,83 @@ void main() {
   });
 }
 
+Future<void> _pumpMediaState(
+  WidgetTester tester,
+  _MediaGoldenState state,
+) async {
+  for (var frame = 0; frame < 80; frame += 1) {
+    await tester.pump(const Duration(milliseconds: 16));
+    final routeReady = find
+        .byKey(const ValueKey('route-page-/media-viewer'))
+        .evaluate()
+        .isNotEmpty;
+    final mediaReady = switch (state.kind) {
+      _MediaGoldenKind.image =>
+        find.byKey(const ValueKey('product-asset-image')).evaluate().isNotEmpty,
+      _MediaGoldenKind.pdf =>
+        find.byKey(const ValueKey('media-pdf-viewer')).evaluate().isNotEmpty,
+      _MediaGoldenKind.video =>
+        find
+            .byKey(const ValueKey('product-asset-video-player'))
+            .evaluate()
+            .isNotEmpty,
+    };
+    if (routeReady && mediaReady) {
+      if (state.kind == _MediaGoldenKind.image ||
+          state.kind == _MediaGoldenKind.video) {
+        await tester.runAsync(
+          () => Future<void>.delayed(
+            state.kind == _MediaGoldenKind.image
+                ? const Duration(milliseconds: 80)
+                : Duration.zero,
+          ),
+        );
+      }
+      await tester.pump(const Duration(milliseconds: 32));
+      return;
+    }
+    if (find
+        .byKey(const ValueKey('media-viewer-load-error'))
+        .evaluate()
+        .isNotEmpty) {
+      fail('Media viewer entered an error state.');
+    }
+  }
+  fail('Media viewer did not reach a stable golden state.');
+}
+
 const _goldenSurfaceKey = ValueKey('media-viewer-state-golden-surface');
+const _pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
+late Uint8List _goldenImageBytes;
 
 const _mediaStates = [
   _MediaGoldenState(
     label: 'PDF resource',
     fileName: 'pdf_resource_mobile.png',
-    location: '/media-viewer?kind=pdf&url=%2Fdemo%2Fw1.pdf&title=W1%20使用教程',
+    location:
+        '/media-viewer?kind=pdf&url=%2Fv1%2Fassets%2Fasset-pdf%3Fkind%3Dpdf&title=W1%20使用教程',
     title: 'W1 使用教程',
+    kind: _MediaGoldenKind.pdf,
   ),
   _MediaGoldenState(
     label: 'image resource',
     fileName: 'image_resource_mobile.png',
     location:
-        '/media-viewer?kind=image&url=%2Fdemo%2Fpump-display.png&title=泵奶记录截图',
-    title: '泵奶记录截图',
+        '/media-viewer?kind=image&url=%2Fv1%2Fassets%2Fasset-image%3Fkind%3Dimage&title=Air1%20核心部件',
+    title: 'Air1 核心部件',
+    kind: _MediaGoldenKind.image,
   ),
   _MediaGoldenState(
     label: 'video resource',
     fileName: 'video_resource_mobile.png',
     location:
-        '/media-viewer?kind=video&url=%2Fdemo%2Fw1-guide.mp4&title=W1%20视频教程',
+        '/media-viewer?kind=video&url=%2Fv1%2Fassets%2Fasset-video%3Fkind%3Dvideo&title=W1%20视频教程',
     title: 'W1 视频教程',
+    kind: _MediaGoldenKind.video,
   ),
 ];
+
+enum _MediaGoldenKind { image, pdf, video }
 
 class _MediaGoldenState {
   const _MediaGoldenState({
@@ -72,12 +156,45 @@ class _MediaGoldenState {
     required this.fileName,
     required this.location,
     required this.title,
+    required this.kind,
   });
 
   final String label;
   final String fileName;
   final String location;
   final String title;
+  final _MediaGoldenKind kind;
+}
+
+class _GoldenProductAssetConnector implements ProductAssetHttpConnector {
+  @override
+  Future<ProductAssetHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+    required int maxBytes,
+  }) async {
+    if (headers['Accept']?.contains('application/pdf') ?? false) {
+      return ProductAssetHttpResponse(
+        statusCode: 200,
+        statusText: 'OK',
+        contentType: 'application/pdf',
+        body: buildTwoPageTestPdf(),
+      );
+    }
+    return ProductAssetHttpResponse(
+      statusCode: 200,
+      statusText: 'OK',
+      contentType: 'image/png',
+      body: _goldenImageBytes,
+    );
+  }
+}
+
+void _installPathProviderMock() {
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(_pathProviderChannel, (call) async {
+        return Directory.systemTemp.path;
+      });
 }
 
 const _goldenViewports = [

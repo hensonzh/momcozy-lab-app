@@ -1,4 +1,12 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
+
 import 'agent_stream_event.dart';
+
+const _appendOnlyTextStreamSchemaVersion = 'append-only.v1';
+const _maxPendingTextSegments = 64;
+const _unsetCopyValue = Object();
 
 enum AgentStreamRunPhase {
   idle,
@@ -25,6 +33,10 @@ class AgentStreamRunState {
     this.actionEvents = const <String, AgentStreamEvent>{},
     this.quickReplies = const <String>[],
     this.completedAssistantMessageReceived = false,
+    this.textStreamId,
+    this.nextTextSegmentIndex = 0,
+    this.pendingTextSegments = const <int, AgentStreamEvent>{},
+    this.textIntegrityErrorCode,
     this._seenReplayKeys = const <String>{},
     this.lastSequence,
     this.errorMessage,
@@ -44,6 +56,10 @@ class AgentStreamRunState {
   final Map<String, AgentStreamEvent> actionEvents;
   final List<String> quickReplies;
   final bool completedAssistantMessageReceived;
+  final String? textStreamId;
+  final int nextTextSegmentIndex;
+  final Map<int, AgentStreamEvent> pendingTextSegments;
+  final String? textIntegrityErrorCode;
   final Set<String> _seenReplayKeys;
   final int? lastSequence;
   final String? errorMessage;
@@ -58,6 +74,14 @@ class AgentStreamRunState {
       completedAssistantMessageReceived ||
       events.any(_isAssistantCompletedMessage);
 
+  bool get canPublishArtifactEvents {
+    if (textContent.trim().isNotEmpty || hasCompletedAssistantMessage) {
+      return true;
+    }
+    return phase == AgentStreamRunPhase.finished ||
+        phase == AgentStreamRunPhase.waitingForConfirmation;
+  }
+
   Set<String> get seenReplayKeys => Set<String>.unmodifiable(_seenReplayKeys);
 
   bool get isAwaitingVisibleReply => isActive && !hasCompletedAssistantMessage;
@@ -68,6 +92,8 @@ class AgentStreamRunState {
   bool get canRetry =>
       phase == AgentStreamRunPhase.error ||
       phase == AgentStreamRunPhase.disconnected;
+
+  bool get hasTextSegmentGap => pendingTextSegments.isNotEmpty;
 
   AgentStreamRunState start() {
     return const AgentStreamRunState(phase: AgentStreamRunPhase.streaming);
@@ -86,8 +112,7 @@ class AgentStreamRunState {
     final nextEvents = _shouldRetainEvent(event)
         ? List<AgentStreamEvent>.unmodifiable([...events, event])
         : events;
-    final nextText = _nextTextContent(event);
-    final nextProvisionalText = _nextProvisionalTextContent(event);
+    final textUpdate = _nextTextStream(event);
     final nextQuickReplies = _nextQuickReplies(event);
     final nextCompletedAssistantMessage =
         hasCompletedAssistantMessage || _isAssistantCompletedMessage(event);
@@ -110,97 +135,18 @@ class AgentStreamRunState {
     );
     final nextSequence = _maxSequence(lastSequence, event.sequence);
 
-    if (type == 'run.completed') {
-      return copyWith(
-        phase: AgentStreamRunPhase.finished,
-        events: nextEvents,
-        threadId: nextThreadId,
-        runId: nextRunId,
-        messageId: nextMessageId,
-        textContent: nextText,
-        provisionalTextContent: nextProvisionalText,
-        toolEvents: nextToolEvents,
-        artifactEvents: nextArtifactEvents,
-        actionEvents: nextActionEvents,
-        quickReplies: nextQuickReplies,
-        completedAssistantMessageReceived: nextCompletedAssistantMessage,
-        seenReplayKeys: nextSeenReplayKeys,
-        lastSequence: nextSequence,
-      );
-    }
-
-    if (type == 'run.cancelled') {
-      return copyWith(
-        phase: AgentStreamRunPhase.cancelled,
-        events: nextEvents,
-        threadId: nextThreadId,
-        runId: nextRunId,
-        messageId: nextMessageId,
-        textContent: nextText,
-        provisionalTextContent: nextProvisionalText,
-        toolEvents: nextToolEvents,
-        artifactEvents: nextArtifactEvents,
-        actionEvents: nextActionEvents,
-        quickReplies: nextQuickReplies,
-        completedAssistantMessageReceived: nextCompletedAssistantMessage,
-        seenReplayKeys: nextSeenReplayKeys,
-        lastSequence: nextSequence,
-        cancelAcknowledged: true,
-      );
-    }
-
-    if (type == 'run.waiting_for_confirmation') {
-      return copyWith(
-        phase: AgentStreamRunPhase.waitingForConfirmation,
-        events: nextEvents,
-        threadId: nextThreadId,
-        runId: nextRunId,
-        messageId: nextMessageId,
-        textContent: nextText,
-        provisionalTextContent: nextProvisionalText,
-        toolEvents: nextToolEvents,
-        artifactEvents: nextArtifactEvents,
-        actionEvents: nextActionEvents,
-        quickReplies: nextQuickReplies,
-        completedAssistantMessageReceived: nextCompletedAssistantMessage,
-        seenReplayKeys: nextSeenReplayKeys,
-        lastSequence: nextSequence,
-      );
-    }
-
-    if (type == 'run.failed' || type == 'error') {
-      return copyWith(
-        phase: AgentStreamRunPhase.error,
-        events: nextEvents,
-        threadId: nextThreadId,
-        runId: nextRunId,
-        messageId: nextMessageId,
-        textContent: nextText,
-        provisionalTextContent: nextProvisionalText,
-        toolEvents: nextToolEvents,
-        artifactEvents: nextArtifactEvents,
-        actionEvents: nextActionEvents,
-        quickReplies: nextQuickReplies,
-        completedAssistantMessageReceived: nextCompletedAssistantMessage,
-        seenReplayKeys: nextSeenReplayKeys,
-        lastSequence: nextSequence,
-        errorMessage:
-            stringField(event.raw, 'message') ??
-            stringField(event.payload, 'message') ??
-            stringField(event.raw, 'code') ??
-            stringField(event.payload, 'code') ??
-            'Agent stream error.',
-      );
-    }
-
-    return copyWith(
+    final nextState = copyWith(
       phase: AgentStreamRunPhase.streaming,
       events: nextEvents,
       threadId: nextThreadId,
       runId: nextRunId,
       messageId: nextMessageId,
-      textContent: nextText,
-      provisionalTextContent: nextProvisionalText,
+      textContent: textUpdate.textContent,
+      provisionalTextContent: textUpdate.provisionalTextContent,
+      textStreamId: textUpdate.textStreamId,
+      nextTextSegmentIndex: textUpdate.nextSegmentIndex,
+      pendingTextSegments: textUpdate.pendingSegments,
+      textIntegrityErrorCode: textUpdate.integrityErrorCode,
       toolEvents: nextToolEvents,
       artifactEvents: nextArtifactEvents,
       actionEvents: nextActionEvents,
@@ -209,6 +155,33 @@ class AgentStreamRunState {
       seenReplayKeys: nextSeenReplayKeys,
       lastSequence: nextSequence,
     );
+
+    if (type == 'run.completed') {
+      return nextState.copyWith(phase: AgentStreamRunPhase.finished);
+    }
+    if (type == 'run.cancelled') {
+      return nextState.copyWith(
+        phase: AgentStreamRunPhase.cancelled,
+        cancelAcknowledged: true,
+      );
+    }
+    if (type == 'run.waiting_for_confirmation') {
+      return nextState.copyWith(
+        phase: AgentStreamRunPhase.waitingForConfirmation,
+      );
+    }
+    if (type == 'run.failed' || type == 'error') {
+      return nextState.copyWith(
+        phase: AgentStreamRunPhase.error,
+        errorMessage:
+            stringField(event.raw, 'message') ??
+            stringField(event.payload, 'message') ??
+            stringField(event.raw, 'code') ??
+            stringField(event.payload, 'code') ??
+            'Agent stream error.',
+      );
+    }
+    return nextState;
   }
 
   bool _canApplyEvent(AgentStreamEvent event) {
@@ -221,29 +194,129 @@ class AgentStreamRunState {
         event.type == 'run.cancelled';
   }
 
-  String _nextTextContent(AgentStreamEvent event) {
-    final type = event.type;
-    if (type == 'message.delta') {
-      return '$textContent${event.textDelta ?? ''}';
-    }
-    if (type == 'message.completed' && event.role != 'user') {
-      return _finalizedTextContent(
-        textContent,
-        event.completedText,
-        hasLiveProvisionalText: provisionalTextContent.isNotEmpty,
+  _TextStreamUpdate _nextTextStream(AgentStreamEvent event) {
+    if (event.type == 'message.delta') {
+      if (event.streamSchemaVersion == _appendOnlyTextStreamSchemaVersion) {
+        return _applyIndexedTextDelta(event);
+      }
+      final delta = event.textDelta ?? '';
+      return _TextStreamUpdate(
+        textContent: '$textContent$delta',
+        provisionalTextContent: event.isTransient
+            ? '$provisionalTextContent$delta'
+            : provisionalTextContent,
+        textStreamId: textStreamId,
+        nextSegmentIndex: nextTextSegmentIndex,
+        pendingSegments: pendingTextSegments,
+        integrityErrorCode: textIntegrityErrorCode,
       );
     }
-    return textContent;
+    if (event.type == 'message.completed' && event.role != 'user') {
+      final completedText = event.completedText ?? '';
+      final completedStreamId = event.messageStreamId;
+      final hasConflict =
+          textContent.isNotEmpty &&
+          completedText.isNotEmpty &&
+          !completedText.startsWith(textContent);
+      final hasStreamIdConflict =
+          textStreamId != null &&
+          completedStreamId != null &&
+          textStreamId != completedStreamId;
+      final nextText = _finalizedTextContent(textContent, completedText);
+      final integrityError = hasConflict
+          ? 'completed_text_mismatch'
+          : hasStreamIdConflict
+          ? 'message_stream_id_mismatch'
+          : _completedIntegrityError(event, nextText, nextTextSegmentIndex);
+      final completedSegmentCount = event.segmentCount;
+      return _TextStreamUpdate(
+        textContent: nextText,
+        provisionalTextContent: '',
+        textStreamId: textStreamId ?? completedStreamId,
+        nextSegmentIndex:
+            completedSegmentCount != null &&
+                completedSegmentCount > nextTextSegmentIndex
+            ? completedSegmentCount
+            : nextTextSegmentIndex,
+        pendingSegments: const <int, AgentStreamEvent>{},
+        integrityErrorCode: integrityError,
+      );
+    }
+    return _TextStreamUpdate(
+      textContent: textContent,
+      provisionalTextContent: provisionalTextContent,
+      textStreamId: textStreamId,
+      nextSegmentIndex: nextTextSegmentIndex,
+      pendingSegments: pendingTextSegments,
+      integrityErrorCode: textIntegrityErrorCode,
+    );
   }
 
-  String _nextProvisionalTextContent(AgentStreamEvent event) {
-    if (event.type == 'message.delta' && event.isTransient) {
-      return '$provisionalTextContent${event.textDelta ?? ''}';
+  _TextStreamUpdate _applyIndexedTextDelta(AgentStreamEvent event) {
+    final segmentIndex = event.segmentIndex;
+    final incomingStreamId = event.messageStreamId;
+    if (segmentIndex == null || segmentIndex < 0 || incomingStreamId == null) {
+      return _currentTextUpdate('segment_metadata_missing');
     }
-    if (event.type == 'message.completed' && event.role != 'user') {
-      return '';
+    if (textStreamId != null && textStreamId != incomingStreamId) {
+      return _currentTextUpdate('message_stream_id_mismatch');
     }
-    return provisionalTextContent;
+    if (segmentIndex < nextTextSegmentIndex) {
+      return _currentTextUpdate(textIntegrityErrorCode);
+    }
+
+    final pending = Map<int, AgentStreamEvent>.from(pendingTextSegments);
+    if (!pending.containsKey(segmentIndex)) {
+      if (pending.length >= _maxPendingTextSegments) {
+        return _currentTextUpdate('segment_buffer_overflow');
+      }
+      pending[segmentIndex] = event;
+    }
+
+    var nextText = textContent;
+    var nextProvisionalText = provisionalTextContent;
+    var expectedIndex = nextTextSegmentIndex;
+    String? integrityError;
+    while (true) {
+      final nextEvent = pending[expectedIndex];
+      if (nextEvent == null) break;
+      final delta = nextEvent.textDelta ?? '';
+      final candidate = '$nextText$delta';
+      integrityError = _segmentIntegrityError(nextEvent, candidate);
+      if (integrityError != null) {
+        pending.remove(expectedIndex);
+        break;
+      }
+      pending.remove(expectedIndex);
+      nextText = candidate;
+      if (nextEvent.isTransient) {
+        nextProvisionalText = '$nextProvisionalText$delta';
+      }
+      expectedIndex += 1;
+    }
+    if (integrityError == null && pending.isNotEmpty) {
+      integrityError = 'segment_gap';
+    }
+
+    return _TextStreamUpdate(
+      textContent: nextText,
+      provisionalTextContent: nextProvisionalText,
+      textStreamId: textStreamId ?? incomingStreamId,
+      nextSegmentIndex: expectedIndex,
+      pendingSegments: Map<int, AgentStreamEvent>.unmodifiable(pending),
+      integrityErrorCode: integrityError,
+    );
+  }
+
+  _TextStreamUpdate _currentTextUpdate(String? integrityErrorCode) {
+    return _TextStreamUpdate(
+      textContent: textContent,
+      provisionalTextContent: provisionalTextContent,
+      textStreamId: textStreamId,
+      nextSegmentIndex: nextTextSegmentIndex,
+      pendingSegments: pendingTextSegments,
+      integrityErrorCode: integrityErrorCode,
+    );
   }
 
   List<String> _nextQuickReplies(AgentStreamEvent event) {
@@ -311,6 +384,10 @@ class AgentStreamRunState {
     String? messageId,
     String? textContent,
     String? provisionalTextContent,
+    Object? textStreamId = _unsetCopyValue,
+    int? nextTextSegmentIndex,
+    Map<int, AgentStreamEvent>? pendingTextSegments,
+    Object? textIntegrityErrorCode = _unsetCopyValue,
     Map<String, AgentStreamEvent>? toolEvents,
     Map<String, AgentStreamEvent>? artifactEvents,
     Map<String, AgentStreamEvent>? actionEvents,
@@ -331,6 +408,14 @@ class AgentStreamRunState {
       textContent: textContent ?? this.textContent,
       provisionalTextContent:
           provisionalTextContent ?? this.provisionalTextContent,
+      textStreamId: identical(textStreamId, _unsetCopyValue)
+          ? this.textStreamId
+          : textStreamId as String?,
+      nextTextSegmentIndex: nextTextSegmentIndex ?? this.nextTextSegmentIndex,
+      pendingTextSegments: pendingTextSegments ?? this.pendingTextSegments,
+      textIntegrityErrorCode: identical(textIntegrityErrorCode, _unsetCopyValue)
+          ? this.textIntegrityErrorCode
+          : textIntegrityErrorCode as String?,
       toolEvents: toolEvents ?? this.toolEvents,
       artifactEvents: artifactEvents ?? this.artifactEvents,
       actionEvents: actionEvents ?? this.actionEvents,
@@ -356,6 +441,14 @@ class AgentStreamRunState {
     if (textContent.isNotEmpty) 'textContent': textContent,
     if (provisionalTextContent.isNotEmpty)
       'provisionalTextContent': provisionalTextContent,
+    if (_hasValue(textStreamId)) 'textStreamId': textStreamId,
+    if (nextTextSegmentIndex > 0) 'nextTextSegmentIndex': nextTextSegmentIndex,
+    if (pendingTextSegments.isNotEmpty)
+      'pendingTextSegments': pendingTextSegments.map(
+        (index, event) => MapEntry(index.toString(), event.raw),
+      ),
+    if (_hasValue(textIntegrityErrorCode))
+      'textIntegrityErrorCode': textIntegrityErrorCode,
     if (quickReplies.isNotEmpty) 'quickReplies': quickReplies,
     if (hasCompletedAssistantMessage) 'completedAssistantMessageReceived': true,
     if (_seenReplayKeys.isNotEmpty)
@@ -383,6 +476,17 @@ class AgentStreamRunState {
       messageId: _string(map['messageId']) ?? _string(map['message_id']),
       textContent: _string(map['textContent']) ?? '',
       provisionalTextContent: _string(map['provisionalTextContent']) ?? '',
+      textStreamId:
+          _string(map['textStreamId']) ?? _string(map['text_stream_id']),
+      nextTextSegmentIndex: _nonNegativeInt(
+        map['nextTextSegmentIndex'] ?? map['next_text_segment_index'],
+      ),
+      pendingTextSegments: _pendingTextSegmentsFromMap(
+        map['pendingTextSegments'] ?? map['pending_text_segments'],
+      ),
+      textIntegrityErrorCode:
+          _string(map['textIntegrityErrorCode']) ??
+          _string(map['text_integrity_error_code']),
       toolEvents: _indexedEvents(events, (event) => event.toolCallId),
       artifactEvents: _indexedEvents(events, (event) => event.artifactId),
       actionEvents: _indexedEvents(events, (event) => event.actionId),
@@ -416,19 +520,92 @@ Map<String, AgentStreamEvent> _nextIndexedEvents(
   });
 }
 
-String _finalizedTextContent(
-  String currentText,
-  String? completedText, {
-  required bool hasLiveProvisionalText,
-}) {
+class _TextStreamUpdate {
+  const _TextStreamUpdate({
+    required this.textContent,
+    required this.provisionalTextContent,
+    required this.textStreamId,
+    required this.nextSegmentIndex,
+    required this.pendingSegments,
+    required this.integrityErrorCode,
+  });
+
+  final String textContent;
+  final String provisionalTextContent;
+  final String? textStreamId;
+  final int nextSegmentIndex;
+  final Map<int, AgentStreamEvent> pendingSegments;
+  final String? integrityErrorCode;
+}
+
+String _finalizedTextContent(String currentText, String? completedText) {
   final completed = completedText ?? '';
   if (completed.isEmpty) return currentText;
   if (currentText.isEmpty) return completed;
   if (completed.startsWith(currentText)) {
     return '$currentText${completed.substring(currentText.length)}';
   }
-  if (!hasLiveProvisionalText) return completed;
   return currentText;
+}
+
+String? _segmentIntegrityError(AgentStreamEvent event, String candidateText) {
+  final expectedBytes = event.prefixUtf8Bytes;
+  final expectedHash = event.prefixSha256?.trim().toLowerCase();
+  if (expectedBytes == null || expectedHash == null || expectedHash.isEmpty) {
+    return 'segment_integrity_metadata_missing';
+  }
+  final encodedText = utf8.encode(candidateText);
+  if (encodedText.length != expectedBytes) {
+    return 'prefix_length_mismatch';
+  }
+  if (_bytesSha256(encodedText) != expectedHash) {
+    return 'prefix_hash_mismatch';
+  }
+  return null;
+}
+
+String? _completedIntegrityError(
+  AgentStreamEvent event,
+  String completedText,
+  int receivedSegmentCount,
+) {
+  if (event.streamSchemaVersion != _appendOnlyTextStreamSchemaVersion) {
+    return null;
+  }
+  final expectedSegments = event.segmentCount;
+  final expectedBytes = event.contentUtf8Bytes;
+  final expectedHash = event.contentSha256?.trim().toLowerCase();
+  if (expectedSegments == null ||
+      expectedBytes == null ||
+      expectedHash == null ||
+      expectedHash.isEmpty) {
+    return 'completed_integrity_metadata_missing';
+  }
+  if (expectedSegments < receivedSegmentCount) {
+    return 'completed_segment_count_mismatch';
+  }
+  final encodedText = utf8.encode(completedText);
+  if (encodedText.length != expectedBytes) {
+    return 'completed_length_mismatch';
+  }
+  if (_bytesSha256(encodedText) != expectedHash) {
+    return 'completed_hash_mismatch';
+  }
+  return null;
+}
+
+String _bytesSha256(List<int> bytes) => sha256.convert(bytes).toString();
+
+Map<int, AgentStreamEvent> _pendingTextSegmentsFromMap(Object? value) {
+  if (value is! Map) return const <int, AgentStreamEvent>{};
+  final pending = <int, AgentStreamEvent>{};
+  for (final entry in value.entries) {
+    final index = int.tryParse(entry.key.toString());
+    final raw = entry.value;
+    if (index == null || raw is! Map) continue;
+    pending[index] = AgentStreamEvent(Map<String, Object?>.from(raw));
+  }
+  return Map<int, AgentStreamEvent>.unmodifiable(pending);
 }
 
 bool _shouldRetainEvent(AgentStreamEvent event) {
@@ -468,6 +645,11 @@ int? _int(Object? value) {
   if (value is int) return value;
   if (value is String) return int.tryParse(value.trim());
   return null;
+}
+
+int _nonNegativeInt(Object? value) {
+  final parsed = _int(value) ?? 0;
+  return parsed < 0 ? 0 : parsed;
 }
 
 List<String> _strings(Object? value) {

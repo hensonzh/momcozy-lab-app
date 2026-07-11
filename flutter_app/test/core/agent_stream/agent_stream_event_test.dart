@@ -118,12 +118,24 @@ void main() {
         'run_id': 'run-stream-001',
         'transient': true,
         'cursor': '1720000000-0',
-        'payload': {'delta': '正在生成', 'message_stream_id': 'assistant'},
+        'payload': {
+          'delta': '正在生成',
+          'message_stream_id': 'assistant',
+          'stream_schema_version': 'append-only.v1',
+          'segment_index': 2,
+          'prefix_utf8_bytes': 12,
+          'prefix_sha256': 'prefix-hash',
+        },
       });
 
       expect(event.isTransient, isTrue);
       expect(event.sequence, isNull);
       expect(event.textDelta, '正在生成');
+      expect(event.messageStreamId, 'assistant');
+      expect(event.streamSchemaVersion, 'append-only.v1');
+      expect(event.segmentIndex, 2);
+      expect(event.prefixUtf8Bytes, 12);
+      expect(event.prefixSha256, 'prefix-hash');
       expect(event.replayKey, 'event:delta:1720000000-0');
     });
 
@@ -233,24 +245,27 @@ void main() {
       expect(event.quickReplies, isEmpty);
     });
 
-    test('extracts exactly three quick replies from completed message payload', () {
-      final event = AgentStreamEvent(const {
-        'type': 'message.completed',
-        'payload': {
-          'role': 'assistant',
-          'message_id': 'msg-quick-001',
-          'text': '已经整理好了。',
-          'quick_replies': [
-            {'id': 'qr_1', 'text': '继续聊这个'},
-            {'id': 'qr_2', 'text': '给我更多细节'},
-            {'id': 'qr_3', 'text': '换个方向'},
-          ],
-        },
-      });
+    test(
+      'extracts exactly three quick replies from completed message payload',
+      () {
+        final event = AgentStreamEvent(const {
+          'type': 'message.completed',
+          'payload': {
+            'role': 'assistant',
+            'message_id': 'msg-quick-001',
+            'text': '已经整理好了。',
+            'quick_replies': [
+              {'id': 'qr_1', 'text': '继续聊这个'},
+              {'id': 'qr_2', 'text': '给我更多细节'},
+              {'id': 'qr_3', 'text': '换个方向'},
+            ],
+          },
+        });
 
-      expect(event.messageId, 'msg-quick-001');
-      expect(event.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
-    });
+        expect(event.messageId, 'msg-quick-001');
+        expect(event.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
+      },
+    );
 
     test('ignores incomplete quick reply sets', () {
       final event = AgentStreamEvent(const {

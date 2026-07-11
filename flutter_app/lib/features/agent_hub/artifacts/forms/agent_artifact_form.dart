@@ -10,11 +10,13 @@ class AgentArtifactForm extends StatefulWidget {
     required this.card,
     this.onAction,
     this.onSubmit,
+    this.submission,
   });
 
   final AgentArtifactCardView card;
   final ValueChanged<AgentArtifactActionView>? onAction;
   final AgentArtifactFormSubmitHandler? onSubmit;
+  final AgentArtifactFormSubmission? submission;
 
   @override
   State<AgentArtifactForm> createState() => _AgentArtifactFormState();
@@ -25,12 +27,29 @@ enum _AgentArtifactFormPhase { editing, submitting, submitted }
 class _AgentArtifactFormState extends State<AgentArtifactForm> {
   late Map<String, Object?> _values;
   late Map<String, String> _otherValues;
+  final Set<String> _dirtyFieldIds = <String>{};
+  int _defaultRevision = 0;
   String? _submitError;
   _AgentArtifactFormPhase _phase = _AgentArtifactFormPhase.editing;
 
-  bool get _isLocked => _phase != _AgentArtifactFormPhase.editing;
+  _AgentArtifactFormPhase get _effectivePhase {
+    return switch (widget.submission?.phase) {
+      AgentArtifactFormSubmissionPhase.submitting =>
+        _AgentArtifactFormPhase.submitting,
+      AgentArtifactFormSubmissionPhase.submitted =>
+        _AgentArtifactFormPhase.submitted,
+      null => _phase,
+    };
+  }
+
+  bool get _isLocked => _effectivePhase != _AgentArtifactFormPhase.editing;
 
   bool get _canSubmit => widget.onSubmit != null || widget.onAction != null;
+
+  bool get _isSupportTicket {
+    return widget.card.presentationKind ==
+        AgentArtifactPresentationKind.supportTicketDraft;
+  }
 
   @override
   void initState() {
@@ -44,6 +63,11 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
     if (oldWidget.card.id != widget.card.id ||
         oldWidget.card.formFields.length != widget.card.formFields.length) {
       _resetValues();
+    } else {
+      _mergeUpdatedDefaults();
+      if (!identical(oldWidget.submission, widget.submission)) {
+        _applySubmission(widget.submission);
+      }
     }
   }
 
@@ -155,16 +179,16 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xff207d93),
                   disabledBackgroundColor:
-                      _phase == _AgentArtifactFormPhase.submitted
+                      _effectivePhase == _AgentArtifactFormPhase.submitted
                       ? Colors.white
                       : const Color(0xffd4d4d4),
                   disabledForegroundColor:
-                      _phase == _AgentArtifactFormPhase.submitted
+                      _effectivePhase == _AgentArtifactFormPhase.submitted
                       ? const Color(0xff55727a)
                       : const Color(0xff737373),
                   foregroundColor: Colors.white,
                   side: BorderSide(
-                    color: _phase == _AgentArtifactFormPhase.submitted
+                    color: _effectivePhase == _AgentArtifactFormPhase.submitted
                         ? const Color(0xff9db7bd)
                         : const Color(0xff207d93),
                   ),
@@ -196,6 +220,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
   ) {
     final isTextarea = field.type == 'textarea';
     final isDate = field.type == 'date';
+    final isNumber = field.type == 'number';
     return Column(
       key: ValueKey('agent-artifact-form-field-${widget.card.id}-${field.id}'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,13 +229,17 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
         const SizedBox(height: 6),
         TextFormField(
           key: ValueKey(
-            'agent-artifact-form-input-${widget.card.id}-${field.id}-${isDate ? _textValue(field) : ''}',
+            'agent-artifact-form-input-${widget.card.id}-${field.id}-${isDate ? _textValue(field) : ''}-$_defaultRevision',
           ),
           initialValue: _textValue(field),
           readOnly: _isLocked || isDate,
           minLines: isTextarea ? 3 : 1,
           maxLines: isTextarea ? 5 : 1,
-          keyboardType: isDate ? TextInputType.datetime : TextInputType.text,
+          keyboardType: isDate
+              ? TextInputType.datetime
+              : isNumber
+              ? TextInputType.number
+              : TextInputType.text,
           decoration: _inputDecoration(
             hintText: field.placeholder ?? (isDate ? '请选择日期' : '请填写'),
             suffixIcon: isDate
@@ -238,7 +267,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
         const SizedBox(height: 6),
         DropdownButtonFormField<String>(
           key: ValueKey(
-            'agent-artifact-form-select-${widget.card.id}-${field.id}',
+            'agent-artifact-form-select-${widget.card.id}-${field.id}-$_defaultRevision',
           ),
           initialValue: selectedValue,
           isExpanded: true,
@@ -454,7 +483,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
   }
 
   Widget _submitIcon() {
-    return switch (_phase) {
+    return switch (_effectivePhase) {
       _AgentArtifactFormPhase.submitting => const SizedBox.square(
         dimension: 16,
         child: CircularProgressIndicator(strokeWidth: 2),
@@ -468,9 +497,9 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
   }
 
   String _submitLabel() {
-    return switch (_phase) {
-      _AgentArtifactFormPhase.submitting => '提交中',
-      _AgentArtifactFormPhase.submitted => '已提交',
+    return switch (_effectivePhase) {
+      _AgentArtifactFormPhase.submitting => _isSupportTicket ? '确认中' : '提交中',
+      _AgentArtifactFormPhase.submitted => _isSupportTicket ? '信息已确认' : '已提交',
       _ => widget.card.formSubmitLabel ?? '提交',
     };
   }
@@ -501,6 +530,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
       );
       current.contains(option) ? current.remove(option) : current.add(option);
       _values = {..._values, field.id: current};
+      _dirtyFieldIds.add(field.id);
       _submitError = null;
     });
   }
@@ -509,6 +539,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
     if (_isLocked) return;
     setState(() {
       _values = {..._values, id: value};
+      _dirtyFieldIds.add(id);
       _submitError = null;
     });
   }
@@ -517,6 +548,7 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
     if (_isLocked) return;
     setState(() {
       _otherValues = {..._otherValues, id: value};
+      _dirtyFieldIds.add(id);
       _submitError = null;
     });
   }
@@ -530,8 +562,82 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
               : field.defaultValue,
     };
     _otherValues = const <String, String>{};
+    _dirtyFieldIds.clear();
+    _defaultRevision += 1;
     _submitError = null;
     _phase = _AgentArtifactFormPhase.editing;
+    _applySubmission(widget.submission);
+  }
+
+  void _applySubmission(AgentArtifactFormSubmission? submission) {
+    if (submission == null) {
+      _phase = _AgentArtifactFormPhase.editing;
+      return;
+    }
+
+    final values = Map<String, Object?>.from(_values);
+    final otherValues = Map<String, String>.from(_otherValues);
+    for (final field in widget.card.formFields) {
+      if (!submission.values.containsKey(field.id)) continue;
+      final rawValue = submission.values[field.id];
+      if (!field.allowOtherInput) {
+        values[field.id] = rawValue;
+        continue;
+      }
+
+      if (field.isMultiSelect && rawValue is List) {
+        final selected = <String>[];
+        for (final item in rawValue.whereType<String>()) {
+          final detail = _otherDetail(item);
+          if (detail == null) {
+            selected.add(item);
+            continue;
+          }
+          final otherOption = _otherOption(field);
+          if (otherOption != null) selected.add(otherOption);
+          otherValues[field.id] = detail;
+        }
+        values[field.id] = selected;
+        continue;
+      }
+
+      if (rawValue is String) {
+        final detail = _otherDetail(rawValue);
+        final otherOption = _otherOption(field);
+        if (detail != null && otherOption != null) {
+          values[field.id] = otherOption;
+          otherValues[field.id] = detail;
+          continue;
+        }
+      }
+      values[field.id] = rawValue;
+    }
+    _values = values;
+    _otherValues = otherValues;
+    _defaultRevision += 1;
+    _phase = submission.isSubmitted
+        ? _AgentArtifactFormPhase.submitted
+        : _AgentArtifactFormPhase.submitting;
+    _submitError = null;
+  }
+
+  void _mergeUpdatedDefaults() {
+    final values = Map<String, Object?>.from(_values);
+    var changed = false;
+    for (final field in widget.card.formFields) {
+      if (_dirtyFieldIds.contains(field.id) ||
+          _hasFieldValue(values[field.id]) ||
+          !_hasFieldValue(field.defaultValue)) {
+        continue;
+      }
+      values[field.id] = field.isMultiSelect
+          ? _defaultMultiSelectValues(field.defaultValue)
+          : field.defaultValue;
+      changed = true;
+    }
+    if (!changed) return;
+    _values = values;
+    _defaultRevision += 1;
   }
 
   Map<String, Object?> _submittedValues() {
@@ -575,6 +681,23 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
     if (value is List) return value.isNotEmpty;
     return true;
   }
+}
+
+String? _otherOption(AgentArtifactFormFieldView field) {
+  for (final option in field.options) {
+    if (_isOtherOption(option)) return option;
+  }
+  return null;
+}
+
+String? _otherDetail(String value) {
+  final normalized = value.trim();
+  for (final prefix in const ['其它：', '其他：']) {
+    if (!normalized.startsWith(prefix)) continue;
+    final detail = normalized.substring(prefix.length).trim();
+    return detail.isEmpty ? null : detail;
+  }
+  return null;
 }
 
 class _ArtifactFormFieldLabel extends StatelessWidget {

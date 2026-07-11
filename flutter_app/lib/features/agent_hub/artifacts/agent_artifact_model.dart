@@ -1,10 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+
+export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_model.dart';
 
 typedef AgentArtifactFormSubmitHandler =
     Future<bool> Function(AgentArtifactActionView action);
 
+enum AgentArtifactFormSubmissionPhase { submitting, submitted }
+
+class AgentArtifactFormSubmission {
+  AgentArtifactFormSubmission._({required this.phase, required this.values});
+
+  factory AgentArtifactFormSubmission.submitting({
+    required Map<String, Object?> values,
+  }) {
+    return AgentArtifactFormSubmission._(
+      phase: AgentArtifactFormSubmissionPhase.submitting,
+      values: Map<String, Object?>.unmodifiable(_canonicalFormValues(values)),
+    );
+  }
+
+  factory AgentArtifactFormSubmission.submitted({
+    required Map<String, Object?> values,
+  }) {
+    return AgentArtifactFormSubmission._(
+      phase: AgentArtifactFormSubmissionPhase.submitted,
+      values: Map<String, Object?>.unmodifiable(_canonicalFormValues(values)),
+    );
+  }
+
+  final AgentArtifactFormSubmissionPhase phase;
+  final Map<String, Object?> values;
+
+  bool get isSubmitting => phase == AgentArtifactFormSubmissionPhase.submitting;
+
+  bool get isSubmitted => phase == AgentArtifactFormSubmissionPhase.submitted;
+
+  Map<String, Object?> toMap() => {'phase': phase.name, 'values': values};
+
+  static AgentArtifactFormSubmission? tryFromMap(Object? value) {
+    if (value is! Map) return null;
+    final map = Map<String, Object?>.from(value);
+    final rawValues = map['values'];
+    if (rawValues is! Map) return null;
+    final values = <String, Object?>{};
+    for (final entry in rawValues.entries) {
+      final key = entry.key;
+      if (key is String && key.trim().isNotEmpty) {
+        values[canonicalAgentFormFieldId(key)] = entry.value;
+      }
+    }
+    return switch (map['phase']) {
+      'submitting' => AgentArtifactFormSubmission.submitting(values: values),
+      'submitted' => AgentArtifactFormSubmission.submitted(values: values),
+      _ => null,
+    };
+  }
+}
+
+Map<String, Object?> _canonicalFormValues(Map<String, Object?> values) {
+  return {
+    for (final entry in values.entries)
+      if (entry.key.trim().isNotEmpty)
+        canonicalAgentFormFieldId(entry.key): entry.value,
+  };
+}
+
 enum AgentArtifactPresentationKind {
   form,
+  supportTicketDraft,
   milkAnalysisCard,
   milkPlanCard,
   milkPlanPreview,
@@ -37,6 +103,7 @@ class AgentArtifactCardView {
     this.formSubmitLabel,
     this.formFields = const <AgentArtifactFormFieldView>[],
     this.actions = const <AgentArtifactActionView>[],
+    this.specializedView,
   });
 
   final String id;
@@ -56,6 +123,7 @@ class AgentArtifactCardView {
   final String? formSubmitLabel;
   final List<AgentArtifactFormFieldView> formFields;
   final List<AgentArtifactActionView> actions;
+  final AgentSpecializedArtifactView? specializedView;
 
   bool get isForm =>
       presentationKind == AgentArtifactPresentationKind.form ||
@@ -111,6 +179,8 @@ class AgentArtifactActionView {
     this.value,
     this.routePath,
     this.routeExtra,
+    this.externalUri,
+    this.hospitalBagCartSeed,
   });
 
   final String label;
@@ -119,6 +189,8 @@ class AgentArtifactActionView {
   final String? value;
   final String? routePath;
   final Object? routeExtra;
+  final Uri? externalUri;
+  final HospitalBagCartArtifactSeed? hospitalBagCartSeed;
 }
 
 abstract final class AgentArtifactActions {

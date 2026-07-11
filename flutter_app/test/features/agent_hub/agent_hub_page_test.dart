@@ -14,8 +14,15 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dar
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_reader.dart';
@@ -246,6 +253,24 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'artifact-focus-text-event',
+        'type': 'message.delta',
+        'thread_id': 'thread-artifact-focus',
+        'run_id': 'run-artifact-focus',
+        'message_id': 'message-artifact-focus',
+        'sequence': 2,
+        'payload': {'text': '我先说明一下，再请你补充这些信息。'},
+      }),
+    );
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
     final chatRect = tester.getRect(
       find.byKey(const ValueKey('agent-chat-scroll-view')),
     );
@@ -254,6 +279,125 @@ void main() {
     );
     expect(artifactRect.top, greaterThan(chatRect.top + 70));
     expect(artifactRect.top, lessThan(chatRect.top + chatRect.height * 0.55));
+  });
+
+  testWidgets('Agent Hub publishes a pure artifact on assistant completion', (
+    tester,
+  ) async {
+    final artifactEvent = AgentStreamEvent(
+      readFixtureMap('agent_events/rich_text_artifact.json'),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            artifactEvents: {'milk-plan-001': artifactEvent},
+            completedAssistantMessageReceived: true,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub ingests a cart artifact before publishing its card', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    final cartUpdates = <HospitalBagCartArtifactSeed>[];
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          onHospitalBagCartUpdate: cartUpdates.add,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '帮我整理待产包',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'evt-pending-cart-artifact',
+        'type': 'artifact.created',
+        'thread_id': 'thread-pending-cart',
+        'run_id': 'run-pending-cart',
+        'artifact_id': 'pending-cart-artifact',
+        'sequence': 1,
+        'payload': {
+          'artifact_type': 'hospital_bag_card',
+          'assistant_followup': {
+            'kind': 'hospital_bag_cart',
+            'message': '已经为你整理好待产包购物车。',
+          },
+          'cart_update': {
+            'action': 'reset_cart',
+            'groups': [
+              {
+                'title': '妈妈护理',
+                'items': [
+                  {'name': '产褥垫组合装'},
+                ],
+              },
+            ],
+          },
+        },
+      }),
+    );
+    await tester.pump();
+
+    expect(cartUpdates, hasLength(1));
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'evt-pending-cart-text',
+        'type': 'message.delta',
+        'thread_id': 'thread-pending-cart',
+        'run_id': 'run-pending-cart',
+        'message_id': 'message-pending-cart',
+        'sequence': 2,
+        'payload': {'text': '我已经根据你的情况整理好了。'},
+      }),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
+    expect(cartUpdates, hasLength(1));
+  });
+
+  testWidgets('Agent Hub keeps a textless failed artifact unpublished', (
+    tester,
+  ) async {
+    final artifactEvent = AgentStreamEvent(
+      readFixtureMap('agent_events/rich_text_artifact.json'),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.error,
+            artifactEvents: {'milk-plan-001': artifactEvent},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
   });
 
   testWidgets('Agent Hub marks active assistant avatar as thinking', (
@@ -400,7 +544,7 @@ void main() {
               content: '我建议你先观察舒适度和间隔。',
             ),
           ],
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'staged-before-new-session.png',
@@ -472,6 +616,33 @@ void main() {
     expect(find.byKey(const ValueKey('agent-history-199')), findsNothing);
   });
 
+  testWidgets('Agent Hub keeps links clickable in restored plain history', (
+    tester,
+  ) async {
+    final actions = <AgentArtifactActionView>[];
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '[查看专业资料](https://example.com/reference)',
+            ),
+          ],
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('查看专业资料', findRichText: true));
+    await tester.pump();
+
+    expect(
+      actions.single.externalUri,
+      Uri.parse('https://example.com/reference'),
+    );
+  });
+
   testWidgets('Agent Hub plays greeting voice on first open', (tester) async {
     final coordinator = AgentVoicePlaybackCoordinator();
     final player = _PageFakeVoicePlaybackPlayer();
@@ -505,7 +676,7 @@ void main() {
       _host(
         AgentHubPage(
           greetingProfileLoader: () async =>
-              const AgentHubGreetingProfile(displayName: '小美'),
+              const AgentHubGreetingProfile(displayName: '小美', age: 29),
           voicePlaybackCoordinator: coordinator,
           voicePlaybackPlayer: player,
         ),
@@ -521,6 +692,66 @@ void main() {
 
     player.complete();
   });
+
+  testWidgets(
+    'Agent Hub injects late profile defaults without replacing user edits',
+    (tester) async {
+      final profileCompleter = Completer<AgentHubGreetingProfile>();
+      final formEvent = _formArtifactEvent(
+        id: 'profile-default-form',
+        form: {
+          'id': 'birth_journey_basic_info_intake',
+          'title': '孕周与基本情况',
+          'fields': [
+            {'id': 'age', 'label': '年龄', 'type': 'number', 'required': false},
+            {'id': 'birth_hospital', 'label': '建档/生产医院', 'type': 'text'},
+          ],
+        },
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            greetingProfileLoader: () => profileCompleter.future,
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请确认基本信息。',
+              events: [formEvent],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final inputs = find.byType(TextFormField);
+      expect(inputs, findsNWidgets(2));
+      await tester.enterText(inputs.at(1), '我手动填的医院');
+      await tester.pump();
+
+      profileCompleter.complete(
+        const AgentHubGreetingProfile(
+          displayName: '小美',
+          age: 31,
+          birthPrepDefaults: BirthPrepProfileDefaults(
+            age: 31,
+            birthHospital: '资料中的医院',
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final textFields = tester.widgetList<TextFormField>(inputs).toList();
+      expect(
+        textFields[0].controller?.text ?? textFields[0].initialValue,
+        '31',
+      );
+      expect(
+        textFields[1].controller?.text ?? textFields[1].initialValue,
+        '我手动填的医院',
+      );
+    },
+  );
 
   testWidgets('Agent Hub plays greeting voice for a manual new session', (
     tester,
@@ -582,7 +813,7 @@ void main() {
         AgentHubPage(
           greetingProfileLoader: () async {
             loadCount += 1;
-            return AgentHubGreetingProfile(displayName: displayName);
+            return AgentHubGreetingProfile(displayName: displayName, age: 29);
           },
           voicePlaybackCoordinator: coordinator,
           voicePlaybackPlayer: player,
@@ -1143,7 +1374,7 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl:
                 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
             mimeType: 'image/png',
@@ -1174,6 +1405,10 @@ void main() {
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsOneWidget,
     );
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-0')),
+      findsOneWidget,
+    );
     expect(find.text('图片 1'), findsOneWidget);
 
     await tester.enterText(
@@ -1192,6 +1427,75 @@ void main() {
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsNothing,
     );
+    expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('agent-sent-image-close')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-sent-image-close')));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('Agent Hub keeps camera and gallery image sources distinct', (
+    tester,
+  ) async {
+    final sources = <AgentImageInputSource>[];
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(_NeverEndingAgentStreamClient()),
+          pickImage: (source) async {
+            sources.add(source);
+            return AgentStreamImageInput(
+              dataUrl:
+                  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+              mimeType: 'image/png',
+              name: '${source.name}.png',
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-camera-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
+
+    expect(sources, [
+      AgentImageInputSource.camera,
+      AgentImageInputSource.gallery,
+    ]);
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-0')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-1')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
+    await tester.pump();
+
+    expect(find.text('图片 1'), findsOneWidget);
+    expect(find.byType(AgentComposerImageAttachment), findsOneWidget);
+    expect(
+      tester
+          .widget<AgentComposerImageAttachment>(
+            find.byType(AgentComposerImageAttachment),
+          )
+          .image
+          .name,
+      'gallery.png',
+    );
   });
 
   testWidgets('Agent Hub removes image attachment before sending', (
@@ -1207,7 +1511,7 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'before-send.png',
@@ -1274,7 +1578,7 @@ void main() {
         AgentHubPage(
           stateCacheKey: cacheKey,
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'retained-across-tab.png',
@@ -1304,7 +1608,7 @@ void main() {
         AgentHubPage(
           stateCacheKey: cacheKey,
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'retained-across-tab.png',
@@ -1390,7 +1694,7 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'only-image.png',
@@ -1619,6 +1923,118 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub starts voice capture on press and stops on release', (
+    tester,
+  ) async {
+    final recorder = _PageFakeVoiceRecorder();
+    final transcriber = _PageFakeVoiceTranscriber('按住期间录到的语音');
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          voiceInputController: AgentVoiceInputController(
+            recorder: recorder,
+            transcriber: transcriber,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pump();
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+
+    expect(recorder.calls, ['permissionState', 'start']);
+    expect(transcriber.recordings, isEmpty);
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(recorder.calls, ['permissionState', 'start', 'stop']);
+    expect(transcriber.recordings, hasLength(1));
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '按住期间录到的语音',
+    );
+  });
+
+  testWidgets(
+    'Agent Hub honors release while microphone permission is pending',
+    (tester) async {
+      final permission = Completer<AgentVoiceInputPermissionState>();
+      final recorder = _PageFakeVoiceRecorder(
+        initialPermission: AgentVoiceInputPermissionState.unknown,
+        permissionRequest: permission.future,
+      );
+      final transcriber = _PageFakeVoiceTranscriber('权限后完成的语音');
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            voiceInputController: AgentVoiceInputController(
+              recorder: recorder,
+              transcriber: transcriber,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+      await tester.pump();
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+      );
+      await tester.pump();
+      await gesture.up();
+      await tester.pump();
+
+      expect(recorder.calls, ['permissionState', 'requestPermission']);
+      permission.complete(AgentVoiceInputPermissionState.granted);
+      await tester.pumpAndSettle();
+
+      expect(recorder.calls, [
+        'permissionState',
+        'requestPermission',
+        'start',
+        'stop',
+      ]);
+      expect(transcriber.recordings, hasLength(1));
+    },
+  );
+
+  testWidgets('Agent Hub cancels voice capture on pointer cancellation', (
+    tester,
+  ) async {
+    final recorder = _PageFakeVoiceRecorder();
+    final transcriber = _PageFakeVoiceTranscriber('must not be used');
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          voiceInputController: AgentVoiceInputController(
+            recorder: recorder,
+            transcriber: transcriber,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pump();
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+    await gesture.cancel();
+    await tester.pumpAndSettle();
+
+    expect(recorder.calls, ['permissionState', 'start', 'cancel']);
+    expect(transcriber.recordings, isEmpty);
+  });
+
   testWidgets('Agent Hub starts auto voice playback after finished reply', (
     tester,
   ) async {
@@ -1832,6 +2248,485 @@ void main() {
     expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
     expect(coordinator.activeId, 'msg-voice-order');
   });
+
+  testWidgets('Agent Hub forwards media voice metadata to realtime playback', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    final player = _PageFakeVoicePlaybackPlayer();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+          voicePlaybackPlayer: player,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '怎么安装阀门',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'evt-media-voice-tool',
+        'type': 'tool.completed',
+        'thread_id': 'thread-media-voice',
+        'run_id': 'run-media-voice',
+        'tool_call_id': 'tool-media-voice',
+        'sequence': 1,
+        'payload': {
+          'safe_output': {
+            'media_voice': [
+              {
+                'media_id': '/v1/assets/asset-image?kind=image',
+                'voice_policy': 'announce',
+                'spoken_label': '我放了一张阀门安装方向图。',
+              },
+            ],
+          },
+        },
+      }),
+    );
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'evt-media-voice-text',
+        'type': 'message.delta',
+        'thread_id': 'thread-media-voice',
+        'run_id': 'run-media-voice',
+        'message_id': 'message-media-voice',
+        'sequence': 2,
+        'payload': {'text': '请看 ![阀门安装方向](/v1/assets/asset-image?kind=image)。'},
+      }),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(player.realtimeSessions, hasLength(1));
+    final resolver = player.realtimeSessions.single.mediaNarrationResolver;
+    expect(resolver, isNotNull);
+    expect(
+      resolver!(url: '/v1/assets/asset-image?kind=image', alt: '阀门安装方向'),
+      '我放了一张阀门安装方向图。',
+    );
+  });
+
+  testWidgets(
+    'Agent Hub appends standalone media narration after a textless reply',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final player = _PageFakeVoicePlaybackPlayer();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '给我看安装示意图',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-standalone-media-voice',
+          'type': 'tool.completed',
+          'thread_id': 'thread-standalone-media-voice',
+          'run_id': 'run-standalone-media-voice',
+          'tool_call_id': 'tool-standalone-media-voice',
+          'sequence': 1,
+          'payload': {
+            'safe_output': {
+              'media_voice': [
+                {
+                  'media_id': '/v1/assets/instructional-image',
+                  'voice_policy': 'announce',
+                  'spoken_label': '我放了一张安装方向图，你可以对照检查。',
+                },
+                {
+                  'media_id': '/v1/assets/decorative-image',
+                  'voice_policy': 'silent',
+                  'spoken_label': '这句不应该播报。',
+                },
+              ],
+            },
+          },
+        }),
+      );
+      await tester.pump();
+
+      expect(player.realtimeSessions, isEmpty);
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-standalone-media-voice-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-standalone-media-voice',
+          'run_id': 'run-standalone-media-voice',
+          'sequence': 2,
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
+        '我放了一张安装方向图，你可以对照检查。',
+      ]);
+      expect(player.realtimeSessions.single.finishCount, 1);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub does not replay media narration already resolved from a URL',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final player = _PageFakeVoicePlaybackPlayer();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '怎么安装阀门',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-deduped-media-voice-tool',
+          'type': 'tool.completed',
+          'thread_id': 'thread-deduped-media-voice',
+          'run_id': 'run-deduped-media-voice',
+          'tool_call_id': 'tool-deduped-media-voice',
+          'sequence': 1,
+          'payload': {
+            'safe_output': {
+              'media_voice': [
+                {
+                  'media_id': '/v1/assets/valve-image',
+                  'voice_policy': 'announce',
+                  'spoken_label': '我放了一张阀门安装方向图。',
+                },
+              ],
+            },
+          },
+        }),
+      );
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-deduped-media-voice-delta',
+          'type': 'message.delta',
+          'thread_id': 'thread-deduped-media-voice',
+          'run_id': 'run-deduped-media-voice',
+          'message_id': 'message-deduped-media-voice',
+          'sequence': 2,
+          'payload': {'text': '请看 /v1/assets/valve-image'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final session = player.realtimeSessions.single;
+      final resolver = session.mediaNarrationResolver!;
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-deduped-media-voice-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-deduped-media-voice',
+          'run_id': 'run-deduped-media-voice',
+          'message_id': 'message-deduped-media-voice',
+          'sequence': 3,
+          'payload': {'text': '请看 /v1/assets/valve-image'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(session.appendedTexts, ['请看 /v1/assets/valve-image']);
+      expect(session.flushCount, 1);
+      expect(
+        RegExp('我放了一张阀门安装方向图。').allMatches(session.filteredTexts.join(' ')),
+        hasLength(1),
+      );
+
+      final filter = AgentVoiceTextStreamFilter(
+        mediaNarrationResolver: resolver,
+      );
+      final firstFiltered = filter.push('请看 [阀门安装方向](/v1/assets/valve-image)。');
+      final repeatedFiltered = filter.push(
+        '再看 [阀门安装方向](/v1/assets/valve-image)。',
+      );
+      expect(firstFiltered, contains('我放了一张阀门安装方向图。'));
+      expect(repeatedFiltered, isNot(contains('阀门安装方向')));
+      expect(
+        resolver(url: '/v1/assets/valve-image', alt: '阀门安装方向'),
+        '我放了一张阀门安装方向图。',
+      );
+      expect(session.finishCount, 1);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub speaks safe pure artifact copy without artifact actions',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final player = _PageFakeVoicePlaybackPlayer();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '帮我整理待产包',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-voice',
+          'type': 'artifact.created',
+          'thread_id': 'thread-artifact-voice',
+          'run_id': 'run-artifact-voice',
+          'artifact_id': 'artifact-voice',
+          'sequence': 1,
+          'payload': {
+            'artifact_type': 'rich_text',
+            'rich_text': {
+              'title': '待产包清单',
+              'content': '我已经帮你整理好了。',
+              'button': [
+                {
+                  'label': '打开待产包购物车',
+                  'action': 'navigate',
+                  'value': '/hospital-bag-cart',
+                },
+              ],
+            },
+          },
+        }),
+      );
+      await tester.pump();
+
+      expect(player.realtimeSessions, isEmpty);
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-voice-message-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-artifact-voice',
+          'run_id': 'run-artifact-voice',
+          'sequence': 2,
+          'payload': {'text': ''},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
+        '待产包清单 我已经帮你整理好了。',
+      ]);
+      expect(
+        player.realtimeSessions.single.appendedTexts.single,
+        isNot(contains('打开待产包购物车')),
+      );
+      expect(
+        player.realtimeSessions.single.appendedTexts.single,
+        isNot(contains('/hospital-bag-cart')),
+      );
+      expect(player.realtimeSessions.single.finishCount, 1);
+
+      player.realtimeSessions.single.complete();
+      await tester.pump();
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-voice-run-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-artifact-voice',
+          'run_id': 'run-artifact-voice',
+          'message_id': 'message-artifact-voice',
+          'sequence': 3,
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
+        '待产包清单 我已经帮你整理好了。',
+      ]);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub does not repeat artifact copy when reply text is present',
+    (tester) async {
+      final player = _PageFakeVoicePlaybackPlayer();
+      final client = _FixtureAgentStreamClient([
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-with-text',
+          'type': 'artifact.created',
+          'thread_id': 'thread-artifact-with-text',
+          'run_id': 'run-artifact-with-text',
+          'artifact_id': 'artifact-with-text',
+          'sequence': 1,
+          'payload': {
+            'artifact_type': 'rich_text',
+            'rich_text': {'title': '待产包清单', 'content': '我已经帮你整理好了。'},
+          },
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-with-text-delta',
+          'type': 'message.delta',
+          'thread_id': 'thread-artifact-with-text',
+          'run_id': 'run-artifact-with-text',
+          'message_id': 'message-artifact-with-text',
+          'sequence': 2,
+          'payload': {'text': '我已经根据你的情况整理好了。'},
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-with-text-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-artifact-with-text',
+          'run_id': 'run-artifact-with-text',
+          'message_id': 'message-artifact-with-text',
+          'sequence': 3,
+          'payload': {'text': '我已经根据你的情况整理好了。'},
+        }),
+      ]);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '帮我整理待产包',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pumpAndSettle();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, ['我已经根据你的情况整理好了。']);
+      expect(player.realtimeSessions.single.finishCount, 1);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub never replaces or replays spoken text on completed mismatch',
+    (tester) async {
+      final coordinator = AgentVoicePlaybackCoordinator();
+      final player = _PageFakeVoicePlaybackPlayer();
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: coordinator,
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Keep the streamed reply',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-voice-mismatch-delta',
+          'type': 'message.delta',
+          'thread_id': 'thread-voice-mismatch',
+          'run_id': 'run-voice-mismatch',
+          'message_id': 'msg-voice-mismatch',
+          'payload': {'text': 'Keep this reply.'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-voice-mismatch-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-voice-mismatch',
+          'run_id': 'run-voice-mismatch',
+          'message_id': 'msg-voice-mismatch',
+          'payload': {'role': 'assistant', 'text': 'Replacement reply.'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
+        'Keep this reply.',
+      ]);
+      expect(player.realtimeSessions.single.finishCount, 1);
+      expect(find.text('Keep this reply.', findRichText: true), findsOneWidget);
+      expect(find.text('Replacement reply.', findRichText: true), findsNothing);
+    },
+  );
 
   testWidgets(
     'Agent Hub keeps auto voice stable when message id arrives late',
@@ -2469,7 +3364,7 @@ void main() {
     expect(client.requests.last.message, 'Retry my request');
     expect(client.requests.last.runId, 'run-first');
     expect(client.requests.last.afterSequence, 2);
-    expect(find.text('Retried answer'), findsOneWidget);
+    expect(find.text('Partial answer completed.'), findsOneWidget);
   });
 
   testWidgets('Agent Hub maps backend timeout to retryable copy', (
@@ -2659,7 +3554,7 @@ void main() {
           ),
           runner: AgentStreamRunner(_FixtureAgentStreamClient(const [])),
           actionClient: actionClient,
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'blocked-during-confirmation.png',
@@ -2823,6 +3718,185 @@ void main() {
     expect(find.text('20:00 泵奶'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub does not archive an unpublished failed artifact', (
+    tester,
+  ) async {
+    final artifactEvent = AgentStreamEvent(
+      readFixtureMap('agent_events/rich_text_artifact.json'),
+    );
+    final store = _MemoryAgentHubInteractionStateStore();
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          interactionStateStore: store,
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.error,
+            artifactEvents: {'milk-plan-001': artifactEvent},
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '继续',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final archivedAssistant = store.snapshot!.historyMessages.firstWhere(
+      (message) => message.role == 'assistant',
+    );
+    expect(
+      archivedAssistant.runState?.artifactEvents ??
+          const <String, AgentStreamEvent>{},
+      isEmpty,
+    );
+    expect(
+      (archivedAssistant.runState?.events ?? const <AgentStreamEvent>[]).where(
+        (event) => event.type.startsWith('artifact.'),
+      ),
+      isEmpty,
+    );
+  });
+
+  testWidgets('Agent Hub persists citations when archiving a reply', (
+    tester,
+  ) async {
+    final store = _MemoryAgentHubInteractionStateStore();
+    final client = _FixtureAgentStreamClient([
+      AgentStreamEvent({
+        'type': 'message.completed',
+        'role': 'assistant',
+        'message_id': 'assistant-next',
+        'payload': {'text': '新的回复'},
+      }),
+      AgentStreamEvent({'type': 'run.completed', 'run_id': 'run-next'}),
+    ]);
+    final citationEvent = AgentStreamEvent({
+      'type': 'CUSTOM',
+      'name': 'momcozy.web_search.citations',
+      'message_id': 'assistant-history-citation',
+      'value': {
+        'citations': [
+          {
+            'url': 'https://www.who.int/health-topics/breastfeeding',
+            'title': 'WHO',
+          },
+        ],
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          interactionStateStore: store,
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            messageId: 'assistant-history-citation',
+            textContent: '这是带专业来源的回复。',
+            events: [citationEvent],
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '继续',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final history = store.snapshot?.historyMessages ?? const [];
+    expect(history, hasLength(2));
+    final archivedAssistant = history.first;
+    expect(archivedAssistant.role, 'assistant');
+    expect(
+      archivedAssistant.runState?.events.any(
+        (event) => event.raw['name'] == 'momcozy.web_search.citations',
+      ),
+      isTrue,
+    );
+  });
+
+  testWidgets('Agent Hub restores submitted historical forms as read-only', (
+    tester,
+  ) async {
+    final formEvent = AgentStreamEvent({
+      'event_id': 'restored-form-event',
+      'type': 'artifact.created',
+      'artifact_id': 'restored-form',
+      'payload': {
+        'artifact_type': 'form',
+        'form': {
+          'id': 'hospital_bag_intake',
+          'title': '历史信息采集',
+          'submit_label': '确认',
+          'fields': [
+            {
+              'id': 'due_date_or_week',
+              'label': '预产期或当前孕周',
+              'type': 'text',
+              'required': true,
+            },
+          ],
+        },
+      },
+    });
+    final historicalRunState =
+        const AgentStreamRunState(phase: AgentStreamRunPhase.streaming)
+            .applyEvent(formEvent)
+            .copyWith(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请确认信息。',
+            );
+    final store = _MemoryAgentHubInteractionStateStore(
+      AgentHubInteractionSnapshot(
+        historyMessages: [
+          AgentHubHistorySnapshot(
+            role: 'assistant',
+            content: '请确认信息。',
+            runState: historicalRunState,
+          ),
+        ],
+        formSubmissions: {
+          'restored-form': AgentArtifactFormSubmission.submitted(
+            values: const {'due_date_or_week': '38 周'},
+          ),
+        },
+      ),
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
+    await tester.pumpAndSettle();
+
+    expect(find.text('38 周'), findsOneWidget);
+    expect(find.text('已提交'), findsOneWidget);
+    final button = tester.widget<FilledButton>(
+      find.byKey(const ValueKey('agent-artifact-form-submit-restored-form')),
+    );
+    expect(button.onPressed, isNull);
+    final input = tester.widget<TextField>(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-artifact-form-restored-form')),
+        matching: find.byType(TextField),
+      ),
+    );
+    expect(input.readOnly, isTrue);
+  });
+
   testWidgets(
     'Agent Hub resumes stream after action confirmation and keeps backend terminal status',
     (tester) async {
@@ -2844,12 +3918,21 @@ void main() {
         }),
         AgentStreamEvent(const {
           'event_id': 'evt-action-final',
-          'type': 'message.completed',
+          'type': 'message.delta',
           'thread_id': 'thread-action',
           'run_id': 'run-action',
           'message_id': 'msg-action-final',
           'sequence': 4,
-          'payload': {'role': 'assistant', 'text': '工单已经创建。'},
+          'payload': {'text': '\n\n工单已经创建。'},
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-action-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'message_id': 'msg-action-final',
+          'sequence': 5,
+          'payload': {'role': 'assistant', 'text': '请确认是否创建支持工单。\n\n工单已经创建。'},
         }),
         AgentStreamEvent(const {
           'event_id': 'evt-action-run-completed',
@@ -2857,7 +3940,7 @@ void main() {
           'thread_id': 'thread-action',
           'run_id': 'run-action',
           'message_id': 'msg-action-final',
-          'sequence': 5,
+          'sequence': 6,
         }),
       ]);
       final actionClient = AgentStreamActionClient(
@@ -2912,7 +3995,8 @@ void main() {
       expect(streamClient.requests.single.runId, 'run-action');
       expect(streamClient.requests.single.threadId, 'thread-action');
       expect(streamClient.requests.single.afterSequence, 2);
-      expect(find.text('工单已经创建。'), findsOneWidget);
+      expect(find.textContaining('请确认是否创建支持工单。'), findsOneWidget);
+      expect(find.textContaining('工单已经创建。'), findsOneWidget);
       expect(find.text('已应用'), findsOneWidget);
       expect(find.text('已提交'), findsNothing);
     },
@@ -3198,7 +4282,7 @@ void main() {
     expect(find.text('1项'), findsOneWidget);
     expect(find.text('1包'), findsOneWidget);
     expect(find.text('必带'), findsOneWidget);
-    expect(find.text('产后前几天更换频繁'), findsOneWidget);
+    expect(find.text('产后恶露量较多，用来垫床或替代普通卫生巾。'), findsOneWidget);
     expect(find.text('打开购物车'), findsOneWidget);
   });
 
@@ -3299,22 +4383,83 @@ void main() {
     expect(find.text('必带'), findsOneWidget);
   });
 
+  testWidgets(
+    'Agent Hub renders normalized legacy specialized card semantics',
+    (tester) async {
+      final fixture = readFixtureMap(
+        'agent_artifacts/legacy_specialized_cards.json',
+      );
+      final events = (fixture['events'] as List<Object?>)
+          .whereType<Map>()
+          .map((event) => AgentStreamEvent(Map<String, Object?>.from(event)))
+          .toList(growable: false);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '我整理好了。',
+              events: events,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('分娩沟通单'), findsOneWidget);
+      expect(find.text('希望医护先解释每一步'), findsOneWidget);
+      expect(find.text('出生后尽早肌肤接触'), findsOneWidget);
+      expect(
+        find.text('这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。'),
+        findsOneWidget,
+      );
+      expect(find.text('待产包'), findsOneWidget);
+      expect(find.text('证件文件包'), findsOneWidget);
+      expect(find.text('妈妈住院包'), findsOneWidget);
+      expect(find.text('产后回家第一周用品'), findsOneWidget);
+      expect(find.text('身份证'), findsOneWidget);
+      expect(find.text('身份证及复印件'), findsNothing);
+      expect(find.text('原件+复印件'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('妈妈住院包'));
+      await tester.pump();
+      await tester.tap(find.text('妈妈住院包'));
+      await tester.pump();
+
+      expect(find.text('根据住院天数准备，产后更换会更方便。'), findsOneWidget);
+      expect(find.text('你是第一胎加上希望母乳喂养，数量已按这个情况调整'), findsOneWidget);
+    },
+  );
+
   testWidgets('Agent Hub renders every current production artifact family', (
     tester,
   ) async {
     final actions = <AgentArtifactActionView>[];
+    final consultStore = IbclcConsultStore.inMemory(
+      now: () => DateTime.utc(2026, 7, 11),
+    );
     final state = AgentStreamRunState(
       phase: AgentStreamRunPhase.finished,
       textContent: '我整理好了。',
+      threadId: 'thread-current',
+      runId: 'run-current',
       events: [
         _productionArtifactEvent(
           id: 'ibclc-current',
           type: 'ibclc_consult_card',
           payload: {
             'title': 'IBCLC 咨询入口',
+            'consult_id': 'consult-current',
             'reason': '含乳疼痛',
             'feeding_context': '左侧喂养后持续疼痛。',
             'urgency': 'soon',
+            'consultant': {
+              'name': 'Lin Zhao',
+              'credentials': 'IBCLC, RN',
+              'experience': '12 年经验',
+              'bio': 'IBCLC 国际认证哺乳顾问，擅长含乳支持。',
+            },
+            'chat': {'label': '开始咨询', 'note': '将同步本轮哺乳背景'},
           },
         ),
         _productionArtifactEvent(
@@ -3356,7 +4501,13 @@ void main() {
     );
 
     await tester.pumpWidget(
-      _host(AgentHubPage(state: state, onArtifactAction: actions.add)),
+      _host(
+        AgentHubPage(
+          state: state,
+          ibclcConsultStore: consultStore,
+          onArtifactAction: actions.add,
+        ),
+      ),
     );
 
     expect(
@@ -3366,7 +4517,10 @@ void main() {
     expect(find.text('含乳疼痛'), findsOneWidget);
     expect(find.text('左侧喂养后持续疼痛。'), findsOneWidget);
     expect(find.text('建议尽快咨询'), findsOneWidget);
-    expect(find.text('Emily Chen'), findsOneWidget);
+    expect(find.text('Lin Zhao'), findsOneWidget);
+    expect(find.text('IBCLC, RN'), findsOneWidget);
+    expect(find.text('12 年经验'), findsOneWidget);
+    expect(find.text('擅长含乳支持。'), findsOneWidget);
     expect(find.textContaining('隐私政策'), findsOneWidget);
 
     expect(
@@ -3406,6 +4560,130 @@ void main() {
     await tester.pump();
 
     expect(actions.single.routePath, '/ibclc-chat.html');
+    final routeState = actions.single.routeExtra as IbclcConsultRouteState;
+    expect(routeState.consultId, 'consult-current');
+    expect(routeState.sourceArtifactId, 'ibclc-current');
+    expect(routeState.threadId, 'thread-current');
+    expect(routeState.runId, 'run-current');
+    expect(routeState.returnPath, '/');
+    expect(routeState.reason, '含乳疼痛');
+    expect(routeState.feedingContext, '左侧喂养后持续疼痛。');
+
+    await consultStore.markCompleted(routeState);
+    await tester.pump();
+
+    expect(find.text('咨询结束'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-ibclc-agreement-ibclc-current')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Agent Hub restores the IBCLC return scroll offset', (
+    tester,
+  ) async {
+    final consultStore = IbclcConsultStore.inMemory(
+      now: () => DateTime.utc(2026, 7, 11),
+    );
+    final history = List<AgentHubHistoryMessage>.generate(
+      32,
+      (index) => AgentHubHistoryMessage(
+        role: index.isEven
+            ? AgentHubHistoryRole.user
+            : AgentHubHistoryRole.assistant,
+        content: '第 $index 条历史消息，用于验证咨询返回后的滚动锚点。',
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(historyMessages: history, ibclcConsultStore: consultStore),
+      ),
+    );
+    await tester.pump();
+
+    final scrollable = tester.state<ScrollableState>(
+      find.byType(Scrollable).first,
+    );
+    final position = scrollable.position;
+    expect(position.maxScrollExtent, greaterThan(240));
+    position.jumpTo(240);
+    await tester.pump();
+    const routeState = IbclcConsultRouteState(
+      consultId: 'consult-scroll',
+      sourceArtifactId: 'artifact-scroll',
+      returnPath: '/',
+      returnScrollOffset: 240,
+    );
+    consultStore.beginConsult(routeState);
+    position.jumpTo(0);
+
+    await consultStore.markCompleted(routeState);
+    await tester.pump();
+    await tester.pump();
+
+    expect(position.pixels, closeTo(240, 0.1));
+  });
+
+  testWidgets('Agent Hub keeps the historical IBCLC run context', (
+    tester,
+  ) async {
+    final actions = <AgentArtifactActionView>[];
+    final historicalState = AgentStreamRunState(
+      phase: AgentStreamRunPhase.finished,
+      textContent: '可以开始咨询。',
+      threadId: 'thread-history',
+      runId: 'run-history',
+      events: [
+        _productionArtifactEvent(
+          id: 'ibclc-history',
+          type: 'ibclc_consult_card',
+          payload: {
+            'title': 'IBCLC 咨询入口',
+            'consult_id': 'consult-history',
+            'reason': '含乳疼痛',
+          },
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: const AgentStreamRunState(
+            phase: AgentStreamRunPhase.idle,
+            threadId: 'thread-current',
+            runId: 'run-current',
+          ),
+          historyMessages: [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '可以开始咨询。',
+              runState: historicalState,
+            ),
+          ],
+          ibclcConsultStore: IbclcConsultStore.inMemory(),
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final agreement = find.byKey(
+      const ValueKey('agent-ibclc-agreement-ibclc-history'),
+    );
+    await tester.ensureVisible(agreement);
+    await tester.tap(agreement);
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-ibclc-open-ibclc-history')),
+    );
+    await tester.pump();
+
+    final routeState = actions.single.routeExtra as IbclcConsultRouteState;
+    expect(routeState.consultId, 'consult-history');
+    expect(routeState.threadId, 'thread-history');
+    expect(routeState.runId, 'run-history');
   });
 
   testWidgets('Agent Hub keeps long journey and packing sections collapsible', (
@@ -3486,7 +4764,7 @@ void main() {
 
     expect(find.text('产褥垫'), findsOneWidget);
     expect(find.text('婴儿连体衣'), findsNothing);
-    final babyGroupFinder = find.text('宝宝用品');
+    final babyGroupFinder = find.text('宝宝出院包');
     await tester.drag(find.byType(Scrollable).first, const Offset(0, -240));
     await tester.pumpAndSettle();
     await tester.tap(babyGroupFinder);
@@ -3494,10 +4772,120 @@ void main() {
     expect(find.text('婴儿连体衣'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub activates cart context from a final reply link', (
+    tester,
+  ) async {
+    var activationCount = 0;
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: const AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '已经整理好了。\n\n**[打开待产包购物车](/hospital-bag-cart)**',
+          ),
+          onHospitalBagCartContextRequired: () => activationCount += 1,
+        ),
+      ),
+    );
+
+    expect(activationCount, 1);
+    await tester.pump();
+    expect(activationCount, 1);
+  });
+
+  testWidgets(
+    'Agent Hub confirms support ticket details without claiming ticket creation',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+      final ticketEvent = AgentStreamEvent({
+        'type': 'artifact.created',
+        'artifact_id': 'support-ticket-1',
+        'artifact_type': 'support_ticket_draft',
+        'submit_label': '确认并提交',
+        'ticket': {
+          'issue_type': 'malfunction',
+          'issue_summary': '吸奶器无法启动',
+          'product_model': 'Air1',
+          'order_number': 'MC123',
+          'purchase_channel': '官网',
+          'urgency': 'normal',
+        },
+      });
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请确认售后信息。',
+              events: [ticketEvent],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('售后工单'), findsOneWidget);
+      expect(find.text('问题类型'), findsOneWidget);
+      expect(find.text('问题描述'), findsOneWidget);
+      expect(find.text('产品型号'), findsOneWidget);
+      expect(find.text('订单号'), findsOneWidget);
+      expect(find.text('购买渠道'), findsOneWidget);
+      expect(find.text('紧急程度'), findsOneWidget);
+
+      final submit = find.byKey(
+        const ValueKey('agent-artifact-form-submit-support-ticket-1'),
+      );
+      await tester.ensureVisible(submit);
+      await tester.pumpAndSettle();
+      await tester.tap(submit);
+      await tester.pump();
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'support-ticket-run-queued',
+          'type': 'run.queued',
+          'thread_id': 'thread-support-ticket',
+          'run_id': 'run-support-ticket',
+          'sequence': 1,
+        }),
+      );
+      await tester.pump();
+
+      expect(client.requests, hasLength(1));
+      expect(client.requests.single.message, startsWith('我已确认售后信息'));
+      expect(client.requests.single.message, contains('发起正式工单创建动作'));
+      expect(
+        client.requests.single.message,
+        isNot(contains('confirmed_form_data')),
+      );
+      final submission =
+          client.requests.single.metadata['form_submission']!
+              as Map<String, Object?>;
+      expect(submission['artifact_id'], 'support-ticket-1');
+      expect(submission['form_id'], 'support_ticket');
+      expect(
+        (submission['values']! as Map<String, Object?>)['issue_summary'],
+        '吸奶器无法启动',
+      );
+      expect(
+        client.requests.single.idempotencyKey,
+        startsWith('agent-form-submit-'),
+      );
+      expect(find.text('已确认售后信息'), findsOneWidget);
+      expect(find.text('信息已确认'), findsOneWidget);
+      expect(find.text('已提交售后工单'), findsNothing);
+      expect(find.textContaining('人工客服团队会在 24 小时内'), findsNothing);
+    },
+  );
+
   testWidgets('Agent Hub renders legacy service artifact envelopes', (
     tester,
   ) async {
     final actions = <AgentArtifactActionView>[];
+    final cartUpdates = <HospitalBagCartArtifactSeed>[];
     final client = _ControllableAgentStreamClient();
     addTearDown(client.dispose);
     final formEvent = AgentStreamEvent({
@@ -3594,6 +4982,7 @@ void main() {
             events: [formEvent, planEvent, cartEvent],
           ),
           onArtifactAction: actions.add,
+          onHospitalBagCartUpdate: cartUpdates.add,
         ),
       ),
     );
@@ -3622,6 +5011,8 @@ void main() {
     expect(find.text('共 2 件'), findsOneWidget);
     expect(find.text('合计 101.02'), findsOneWidget);
     expect(find.text('打开购物车'), findsOneWidget);
+    expect(cartUpdates, hasLength(1));
+    expect(cartUpdates.single.snapshot.groups.single.items, hasLength(2));
 
     await tester.tap(
       find.byKey(
@@ -3660,12 +5051,40 @@ void main() {
       'form_id': 'hospital_bag_intake',
       'values': {'due_date_or_week': '38 周', 'birth_path': '顺产'},
     });
+    expect(
+      client.requests.single.idempotencyKey,
+      startsWith('agent-form-submit-'),
+    );
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'hospital-bag-form-run-queued',
+        'type': 'run.queued',
+        'thread_id': 'thread-legacy-artifact',
+        'run_id': 'run-hospital-bag-form',
+        'sequence': 1,
+      }),
+    );
+    await _pumpFrames(tester, 3);
     await tester.scrollUntilVisible(
       find.text('已提交信息采集表单'),
       -220,
       scrollable: find.byType(Scrollable).first,
     );
     expect(find.text('已提交信息采集表单'), findsOneWidget);
+    expect(find.text('38 周'), findsOneWidget);
+    expect(find.text('已提交'), findsOneWidget);
+    expect(
+      tester
+          .widget<FilledButton>(
+            find.byKey(
+              const ValueKey('agent-artifact-form-submit-hospital-bag-form'),
+            ),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(client.requests, hasLength(1));
 
     final cartActionFinder = find.byKey(
       const ValueKey('agent-artifact-cart-open-hospital-bag-cart'),
@@ -3680,6 +5099,12 @@ void main() {
     await tester.pump();
 
     expect(actions.single.routePath, '/hospital-bag-cart');
+    expect(actions.single.routeExtra, isNull);
+    expect(actions.single.hospitalBagCartSeed, isNotNull);
+    expect(
+      actions.single.hospitalBagCartSeed!.snapshot.groups.single.items,
+      hasLength(2),
+    );
   });
 
   testWidgets(
@@ -3822,6 +5247,65 @@ void main() {
       expect(find.text('已提交'), findsOneWidget);
     },
   );
+
+  testWidgets('Agent Hub restores form editing when run creation fails', (
+    tester,
+  ) async {
+    final client = _FailingAgentStreamClient(StateError('run rejected'));
+    final formEvent = AgentStreamEvent({
+      'type': 'artifact.created',
+      'artifact_id': 'retryable-run-form',
+      'payload': {
+        'artifact_type': 'form',
+        'form': {
+          'id': 'hospital_bag_intake',
+          'title': '信息采集',
+          'fields': [
+            {
+              'id': 'due_date_or_week',
+              'label': '预产期或当前孕周',
+              'type': 'text',
+              'required': true,
+              'default': '38 周',
+            },
+          ],
+        },
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '请确认信息。',
+            events: [formEvent],
+          ),
+        ),
+      ),
+    );
+
+    final submitFinder = find.byKey(
+      const ValueKey('agent-artifact-form-submit-retryable-run-form'),
+    );
+    await tester.enterText(
+      find.descendant(
+        of: find.byKey(
+          const ValueKey('agent-artifact-form-retryable-run-form'),
+        ),
+        matching: find.byType(TextFormField),
+      ),
+      '38 周',
+    );
+    await tester.ensureVisible(submitFinder);
+    await tester.tap(submitFinder);
+    await tester.pumpAndSettle();
+
+    expect(client.requests, hasLength(1));
+    expect(find.text('已提交'), findsNothing);
+    expect(tester.widget<FilledButton>(submitFinder).onPressed, isNotNull);
+  });
 
   testWidgets('Agent Hub treats legacy checkbox_group fields as multi-select', (
     tester,
@@ -3994,6 +5478,7 @@ void main() {
               'url': 'https://www.cdc.gov/breastfeeding/mastitis',
             },
             {'displayText': 'ABM Protocol', 'href': '/guides/abm.pdf'},
+            {'title': '危险来源', 'url': 'javascript:alert(1)'},
           ],
         },
       },
@@ -4016,6 +5501,7 @@ void main() {
     expect(find.text('ABM Protocol'), findsOneWidget);
     expect(find.textContaining('https://www.cdc.gov'), findsNothing);
     expect(find.textContaining('/guides/abm.pdf'), findsNothing);
+    expect(find.text('危险来源'), findsNothing);
 
     await tester.tap(
       find.byKey(const ValueKey('agent-artifact-action-citation-card-0')),
@@ -4025,6 +5511,144 @@ void main() {
     expect(actions.single.kind, 'citation');
     expect(actions.single.value, 'https://www.cdc.gov/breastfeeding/mastitis');
     expect(actions.single.routePath, isNull);
+    expect(
+      actions.single.externalUri,
+      Uri.parse('https://www.cdc.gov/breastfeeding/mastitis'),
+    );
+  });
+
+  testWidgets('Agent Hub renders web search citations like legacy web', (
+    tester,
+  ) async {
+    final actions = <AgentArtifactActionView>[];
+    final citationEvent = AgentStreamEvent({
+      'type': 'CUSTOM',
+      'name': 'momcozy.web_search.citations',
+      'message_id': 'assistant-citations',
+      'value': {
+        'citations': [
+          {
+            'url': 'https://www.cdc.gov/breastfeeding',
+            'title': 'CDC Breastfeeding',
+            'displayText': 'CDC 健康指南：cdc.gov/breastfeeding',
+          },
+          {
+            'url': 'https://www.who.int/health-topics/breastfeeding',
+            'title': 'WHO',
+          },
+        ],
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            messageId: 'assistant-citations',
+            textContent:
+                '参考 [CDC](https://www.cdc.gov/breastfeeding)。\ncite turn1search5',
+            events: [citationEvent],
+          ),
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+
+    expect(find.text('专业信息源'), findsOneWidget);
+    expect(find.text('CDC', findRichText: true), findsNothing);
+    expect(find.textContaining('turn1search5'), findsNothing);
+    expect(find.text('[1]', findRichText: true), findsWidgets);
+    expect(find.text('CDC 健康指南：cdc.gov/breastfeeding'), findsOneWidget);
+    expect(find.text('WHO 健康指南：who.int/health-topics/...'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-citation-link-1')));
+    await tester.pump();
+
+    expect(actions, hasLength(1));
+    expect(actions.single.kind, 'citation');
+    expect(
+      actions.single.externalUri,
+      Uri.parse('https://www.cdc.gov/breastfeeding'),
+    );
+  });
+
+  testWidgets('Agent Hub dispatches safe markdown links only', (tester) async {
+    final actions = <AgentArtifactActionView>[];
+    const markdown = '''
+[查看护理资料](https://example.com/care)
+
+[打开状态页](/status?day=today)
+
+[危险链接](javascript:alert(1))
+''';
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: const AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: markdown,
+          ),
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('查看护理资料', findRichText: true));
+    await tester.pump();
+    expect(actions.single.externalUri, Uri.parse('https://example.com/care'));
+    expect(actions.single.routePath, isNull);
+
+    await tester.tap(find.text('打开状态页', findRichText: true));
+    await tester.pump();
+    expect(actions.last.routePath, '/status');
+    expect(actions.last.value, '/status?day=today');
+    expect(actions.last.externalUri, isNull);
+
+    await tester.tap(find.text('危险链接', findRichText: true));
+    await tester.pump();
+    expect(actions, hasLength(2));
+  });
+
+  testWidgets('Agent Hub wraps long citations on narrow mobile', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final citationEvent = AgentStreamEvent({
+      'type': 'CUSTOM',
+      'name': 'momcozy.web_search.citations',
+      'value': {
+        'citations': [
+          {
+            'url':
+                'https://www.ncbi.nlm.nih.gov/books/NBK501922/long-reference-path',
+            'title': 'NCBI',
+            'displayText':
+                '这是一条需要在窄屏上自然换行的专业医学资料：ncbi.nlm.nih.gov/books/NBK501922/long-reference-path',
+          },
+        ],
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '我整理好了参考来源。',
+            events: [citationEvent],
+          ),
+          onArtifactAction: (_) {},
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-citation-list')), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('Agent Hub wraps long content on compact mobile viewport', (
@@ -4212,7 +5836,7 @@ milk_total: 120ml
     expect(find.text('睡眠'), findsOneWidget);
   });
 
-  testWidgets('Agent Hub renders streaming markdown text without parsing', (
+  testWidgets('Agent Hub keeps markdown rendering stable while streaming', (
     tester,
   ) async {
     const markdown = '## 正在整理\n- **重点**：先等我写完';
@@ -4228,24 +5852,23 @@ milk_total: 120ml
       ),
     );
 
-    expect(find.byType(MarkdownBody), findsNothing);
-    expect(find.textContaining('## 正在整理'), findsOneWidget);
-    expect(find.textContaining('**重点**'), findsOneWidget);
+    expect(find.byType(MarkdownBody), findsOneWidget);
+    expect(find.textContaining('##'), findsNothing);
+    expect(find.textContaining('**'), findsNothing);
+    expect(find.text('正在整理', findRichText: true), findsOneWidget);
+    expect(find.textContaining('重点', findRichText: true), findsOneWidget);
   });
 
   testWidgets(
-    'Agent Hub renders skill asset media links and opens viewer actions',
+    'Agent Hub renders product asset media links and opens viewer actions',
     (tester) async {
       final actions = <AgentArtifactActionView>[];
-      const imageUrl =
-          '/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png';
-      const pdfUrl =
-          '/skill-assets/device-guidance/air1/quick-start/momcozy-air1-quick-start-guidance.pdf';
-      const videoUrl =
-          '/skill-assets/device-guidance/air1/videos/air1-operation-zh.mp4';
+      const imageUrl = '/v1/assets/asset-image?kind=image';
+      const pdfUrl = '/v1/assets/asset-pdf?kind=pdf';
+      const videoUrl = '/v1/assets/asset-video?kind=video';
       const markdown =
           '''
-先看 $imageUrl
+先看 ![查看图片]($imageUrl)
 
 [打开 PDF]($pdfUrl)
 
@@ -4812,6 +6435,17 @@ milk_total: 120ml
   });
 }
 
+AgentStreamEvent _formArtifactEvent({
+  required String id,
+  required Map<String, Object?> form,
+}) {
+  return AgentStreamEvent({
+    'type': 'artifact.created',
+    'artifact_id': id,
+    'payload': {'artifact_type': 'form', 'form': form},
+  });
+}
+
 AgentStreamEvent _productionArtifactEvent({
   required String id,
   required String type,
@@ -5032,20 +6666,29 @@ class _RetryAgentStreamClient implements AgentStreamClient {
 
     yield AgentStreamEvent(const {
       'event_id': 'evt-retry-3',
-      'type': 'message.completed',
+      'type': 'message.delta',
       'thread_id': 'thread-demo',
       'run_id': 'run-first',
       'message_id': 'msg-first',
       'sequence': 3,
-      'payload': {'text': 'Retried answer'},
+      'payload': {'text': ' completed.'},
     });
     yield AgentStreamEvent(const {
       'event_id': 'evt-retry-4',
-      'type': 'run.completed',
+      'type': 'message.completed',
       'thread_id': 'thread-demo',
       'run_id': 'run-first',
       'message_id': 'msg-first',
       'sequence': 4,
+      'payload': {'text': 'Partial answer completed.'},
+    });
+    yield AgentStreamEvent(const {
+      'event_id': 'evt-retry-5',
+      'type': 'run.completed',
+      'thread_id': 'thread-demo',
+      'run_id': 'run-first',
+      'message_id': 'msg-first',
+      'sequence': 5,
     });
   }
 }
@@ -5116,10 +6759,12 @@ class _PageFakeVoiceRecorder implements AgentVoiceRecorder {
   _PageFakeVoiceRecorder({
     this.initialPermission = AgentVoiceInputPermissionState.granted,
     this.requestResult = AgentVoiceInputPermissionState.granted,
+    this.permissionRequest,
   });
 
   final AgentVoiceInputPermissionState initialPermission;
   final AgentVoiceInputPermissionState requestResult;
+  final Future<AgentVoiceInputPermissionState>? permissionRequest;
   final List<String> calls = [];
 
   @override
@@ -5131,7 +6776,7 @@ class _PageFakeVoiceRecorder implements AgentVoiceRecorder {
   @override
   Future<AgentVoiceInputPermissionState> requestPermission() async {
     calls.add('requestPermission');
-    return requestResult;
+    return await permissionRequest ?? requestResult;
   }
 
   @override
@@ -5156,12 +6801,16 @@ class _PageFakeVoiceRecorder implements AgentVoiceRecorder {
 }
 
 class _PageFakeVoiceTranscriber implements AgentVoiceTranscriber {
-  const _PageFakeVoiceTranscriber(this.text);
+  _PageFakeVoiceTranscriber(this.text);
 
   final String? text;
+  final List<AgentVoiceRecording> recordings = <AgentVoiceRecording>[];
 
   @override
-  Future<String?> transcribe(AgentVoiceRecording recording) async => text;
+  Future<String?> transcribe(AgentVoiceRecording recording) async {
+    recordings.add(recording);
+    return text;
+  }
 }
 
 class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
@@ -5178,8 +6827,12 @@ class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
   }
 
   @override
-  AgentVoiceRealtimePlaybackSession startRealtimeSession() {
-    final session = _PageFakeVoiceRealtimePlaybackSession();
+  AgentVoiceRealtimePlaybackSession startRealtimeSession({
+    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  }) {
+    final session = _PageFakeVoiceRealtimePlaybackSession(
+      mediaNarrationResolver: mediaNarrationResolver,
+    );
     realtimeSessions.add(session);
     return session;
   }
@@ -5205,7 +6858,15 @@ class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
 
 class _PageFakeVoiceRealtimePlaybackSession
     implements AgentVoiceRealtimePlaybackSession {
+  _PageFakeVoiceRealtimePlaybackSession({this.mediaNarrationResolver})
+    : _textFilter = AgentVoiceTextStreamFilter(
+        mediaNarrationResolver: mediaNarrationResolver,
+      );
+
+  final AgentVoiceMediaNarrationResolver? mediaNarrationResolver;
+  final AgentVoiceTextStreamFilter _textFilter;
   final appendedTexts = <String>[];
+  final filteredTexts = <String>[];
   var flushCount = 0;
   var finishCount = 0;
   var cancelCount = 0;
@@ -5219,16 +6880,19 @@ class _PageFakeVoiceRealtimePlaybackSession
   @override
   void append(String delta) {
     appendedTexts.add(delta);
+    _recordFiltered(_textFilter.push(delta));
   }
 
   @override
   void flush() {
     flushCount += 1;
+    _recordFiltered(_textFilter.flush());
   }
 
   @override
   void finish() {
     finishCount += 1;
+    _recordFiltered(_textFilter.flush());
   }
 
   @override
@@ -5243,6 +6907,10 @@ class _PageFakeVoiceRealtimePlaybackSession
 
   void fail(Object error) {
     if (!_done.isCompleted) _done.completeError(error);
+  }
+
+  void _recordFiltered(String text) {
+    if (text.isNotEmpty) filteredTexts.add(text);
   }
 }
 

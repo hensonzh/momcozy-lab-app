@@ -13,6 +13,7 @@
 ## 常用入口
 
 - Flutter 生产重构计划：`flutter/production-refactor-plan.md`
+- Agent Hub 旧 Web 体验对齐风险台账：`flutter/agent-hub-legacy-web-parity-risk-register.md`
 - Flutter 发布 gate：`flutter/release-gate.md`
 - Flutter 安全隐私 gate：`flutter/security-privacy-gates.md`
 - Flutter staging smoke：`flutter/staging-smoke.md`

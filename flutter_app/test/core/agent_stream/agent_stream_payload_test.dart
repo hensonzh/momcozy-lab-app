@@ -16,7 +16,61 @@ void main() {
       expect(payload['thread_id'], '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5');
       expect(payload['message'], 'Please review today\'s pumping pattern.');
       expect(payload['runtime_pattern'], 'langgraph_sdk');
+      expect(payload['client_context'], {
+        'source': 'flutter-migration-fixture',
+        'locale': 'en-US',
+      });
       expect(payload.containsKey('user_id'), isFalse);
+    });
+
+    test('forwards the active hospital bag cart as client context', () {
+      final payload = buildProductionAgentRunPayload(
+        const AgentStreamRequest(
+          message: '把吸奶器删掉',
+          locale: 'zh-CN',
+          metadata: {
+            'source': 'flutter-agent-hub',
+            'hospital_bag_cart': {
+              'groups': [
+                {
+                  'title': '母乳喂养',
+                  'tone': 'sky',
+                  'items': [
+                    {
+                      'id': 'pump-custom',
+                      'name': '个性化吸奶器',
+                      'desc': '当前购物车商品',
+                      'qty': 1,
+                      'price': 999.0,
+                    },
+                  ],
+                },
+              ],
+              'totals': {'itemCount': 1, 'total': 919.08},
+            },
+          },
+        ),
+      );
+
+      final context = payload['client_context']! as Map<String, Object?>;
+      final cart = context['hospital_bag_cart']! as Map<String, Object?>;
+      final groups = cart['groups']! as List<Object?>;
+      final group = groups.single! as Map<String, Object?>;
+      final items = group['items']! as List<Object?>;
+
+      expect(context['locale'], 'zh-CN');
+      expect((items.single! as Map<String, Object?>)['id'], 'pump-custom');
+    });
+
+    test('forwards a stable caller-provided run idempotency key', () {
+      final payload = buildProductionAgentRunPayload(
+        const AgentStreamRequest(
+          message: '提交表单',
+          idempotencyKey: 'agent-form-submit-fixture',
+        ),
+      );
+
+      expect(payload['idempotency_key'], 'agent-form-submit-fixture');
     });
 
     test('adds image attachments to the production run create contract', () {
@@ -73,6 +127,10 @@ void main() {
           'values': {'due_date_or_week': '38 周', 'birth_path': '顺产'},
         });
         expect(payload['message'], '我已提交待产包信息采集表单。');
+        final clientContext =
+            payload['client_context']! as Map<String, Object?>;
+        expect(clientContext['locale'], 'en-US');
+        expect(clientContext.containsKey('form_submission'), isFalse);
       },
     );
 
