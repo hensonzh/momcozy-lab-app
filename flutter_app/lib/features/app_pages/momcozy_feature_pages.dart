@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:go_router/go_router.dart';
@@ -26,6 +27,7 @@ import 'package:momcozy_flutter_app/features/status/presentation/baby_status_she
 import 'package:momcozy_flutter_app/features/status/presentation/birth_journey_plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/pregnancy_diary_dashboard.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_entry_intent.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:pdfrx/pdfrx.dart';
@@ -82,6 +84,8 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        routeUri: routeUri,
+        routeExtra: routeExtra,
       ),
       '/community' => _CommunityPage(
         path: path,
@@ -562,6 +566,8 @@ class _StatusPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.routeUri,
+    this.routeExtra,
   });
 
   final String path;
@@ -569,6 +575,8 @@ class _StatusPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Uri? routeUri;
+  final Object? routeExtra;
 
   @override
   State<_StatusPage> createState() => _StatusPageState();
@@ -581,6 +589,10 @@ class _StatusPageState extends State<_StatusPage> {
   MomCozyApiRuntime? _runtime;
   late StatusDashboardController _controller;
   late Listenable _dashboardListenable;
+  final _growthCurveAnchorKey = GlobalKey();
+  final _growthHighlight = ValueNotifier<bool>(false);
+  Timer? _growthHighlightTimer;
+  String? _consumedStatusIntentToken;
 
   String get _view => _controller.identity.value.value;
   String get _careStage => _controller.careStage.value.storageValue;
@@ -615,7 +627,76 @@ class _StatusPageState extends State<_StatusPage> {
         _controller.pregnancyDiaryEntries,
       ]);
       unawaited(_controller.initialize());
+      _scheduleStatusEntryIntent();
     }
+  }
+
+  @override
+  void didUpdateWidget(covariant _StatusPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.routeUri != widget.routeUri ||
+        !identical(oldWidget.routeExtra, widget.routeExtra)) {
+      _scheduleStatusEntryIntent();
+    }
+  }
+
+  void _scheduleStatusEntryIntent() {
+    final intent = statusEntryIntentFromRoute(
+      widget.routeUri,
+      widget.routeExtra,
+    );
+    if (intent == null || intent.token == _consumedStatusIntentToken) return;
+    _consumedStatusIntentToken = intent.token;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      switch (intent.kind) {
+        case StatusEntryIntentKind.growth:
+          _showGrowthHighlight();
+          break;
+        case StatusEntryIntentKind.pregnancyDiary:
+        case StatusEntryIntentKind.birthJourney:
+          break;
+      }
+    });
+  }
+
+  void _showGrowthHighlight() {
+    unawaited(_controller.changeCareStage(StatusCareStage.postpartum));
+    _controller.selectIdentity(StatusIdentity.baby);
+    _persistInteractionState();
+    _startGrowthHighlightAnimation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final targetContext = _growthCurveAnchorKey.currentContext;
+      if (!mounted || targetContext == null) return;
+      unawaited(
+        Scrollable.ensureVisible(
+          targetContext,
+          alignment: 0.5,
+          duration: const Duration(milliseconds: 420),
+          curve: Curves.easeOutCubic,
+        ),
+      );
+    });
+  }
+
+  void _startGrowthHighlightAnimation() {
+    _growthHighlightTimer?.cancel();
+    _growthHighlight.value = true;
+    var toggleCount = 0;
+    _growthHighlightTimer = Timer.periodic(const Duration(milliseconds: 500), (
+      timer,
+    ) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      toggleCount += 1;
+      _growthHighlight.value = !_growthHighlight.value;
+      if (toggleCount < 5) return;
+      timer.cancel();
+      _growthHighlightTimer = null;
+      _growthHighlight.value = false;
+    });
   }
 
   void _changeCareStage(String stage) {
@@ -645,6 +726,8 @@ class _StatusPageState extends State<_StatusPage> {
 
   @override
   void dispose() {
+    _growthHighlightTimer?.cancel();
+    _growthHighlight.dispose();
     if (_runtime != null) {
       _controller.careStage.removeListener(_handleSelectionChanged);
       _controller.identity.removeListener(_handleSelectionChanged);
@@ -824,19 +907,71 @@ class _StatusPageState extends State<_StatusPage> {
         ],
       ),
       const SizedBox(height: 12),
-      BabyGrowthChart(
-        key: const ValueKey('status-baby-growth-curve-preview'),
-        records: _controller.growthRecords,
-        birthDate: overview.baby?.birthDate,
-        selectedMetric: _babyGrowthMetric,
-        onMetricChanged: (metric) {
-          setState(() {
-            _babyGrowthMetric = metric;
-            _persistInteractionState();
-          });
-        },
+      Container(
+        key: _growthCurveAnchorKey,
+        child: _StatusIntentHighlight(
+          surfaceKey: const ValueKey('status-baby-growth-highlight'),
+          active: _growthHighlight,
+          child: BabyGrowthChart(
+            key: const ValueKey('status-baby-growth-curve-preview'),
+            records: _controller.growthRecords,
+            birthDate: overview.baby?.birthDate,
+            selectedMetric: _babyGrowthMetric,
+            onMetricChanged: (metric) {
+              setState(() {
+                _babyGrowthMetric = metric;
+                _persistInteractionState();
+              });
+            },
+          ),
+        ),
       ),
     ];
+  }
+}
+
+class _StatusIntentHighlight extends StatelessWidget {
+  const _StatusIntentHighlight({
+    required this.surfaceKey,
+    required this.active,
+    required this.child,
+  });
+
+  final Key surfaceKey;
+  final ValueListenable<bool> active;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: active,
+      child: child,
+      builder: (context, isActive, child) {
+        return AnimatedContainer(
+          key: surfaceKey,
+          duration: const Duration(milliseconds: 180),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isActive
+                  ? const Color(0xff6ee7b7).withValues(alpha: 0.8)
+                  : Colors.transparent,
+              width: 2,
+            ),
+            boxShadow: isActive
+                ? const [
+                    BoxShadow(
+                      color: Color(0x386ee7b7),
+                      blurRadius: 0,
+                      spreadRadius: 4,
+                    ),
+                  ]
+                : const [],
+          ),
+          child: child,
+        );
+      },
+    );
   }
 }
 
