@@ -4,6 +4,8 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 
+import '../../../support/fixture_reader.dart';
+
 void main() {
   group('AgentArtifactMapper', () {
     test('preserves the production collection-form contract', () {
@@ -441,6 +443,103 @@ void main() {
         'due_date_or_week': '孕38周',
         'birth_path': '顺产',
       });
+    });
+
+    test('normalizes legacy specialized cards into stable view models', () {
+      final fixture = readFixtureMap(
+        'agent_artifacts/legacy_specialized_cards.json',
+      );
+      final events = (fixture['events'] as List<Object?>).whereType<Map>().map(
+        (event) => AgentStreamEvent(Map<String, Object?>.from(event)),
+      );
+
+      final cards = AgentArtifactMapper.cardsFromEvents(events);
+
+      final birthPlan = cards[0].specializedView as AgentBirthPlanCardView;
+      expect(cards[0].title, '分娩沟通单');
+      expect(
+        birthPlan.sections
+            .firstWhere((section) => section.id == 'communication')
+            .values,
+        ['希望医护先解释每一步', '希望医护团队在关键步骤前先解释，并给我一点时间确认。'],
+      );
+      expect(
+        birthPlan.sections
+            .firstWhere((section) => section.id == 'labor_preferences')
+            .values,
+        ['自由走动'],
+      );
+      expect(
+        birthPlan.sections
+            .firstWhere((section) => section.id == 'baby_after_birth')
+            .values,
+        ['出生后尽早肌肤接触'],
+      );
+      expect(
+        birthPlan.sections
+            .firstWhere((section) => section.id == 'if_plans_change')
+            .values,
+        ['先说明原因', '让我和家人确认'],
+      );
+      expect(birthPlan.medicalNotes, ['妊娠糖尿病史']);
+      expect(birthPlan.disclaimer, '这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。');
+
+      final hospitalBag = cards[1].specializedView as AgentHospitalBagCardView;
+      expect(cards[1].title, '待产包');
+      expect(hospitalBag.groups.map((group) => group.id), [
+        'documents',
+        'mom_hospital_bag',
+        'postpartum_home_first_week',
+      ]);
+      expect(hospitalBag.groups[1].items, hasLength(3));
+      expect(hospitalBag.groups[0].items[0].label, '身份证');
+      expect(hospitalBag.groups[0].items[0].meta, '原件+复印件');
+      expect(hospitalBag.groups[0].items[1].priorityLabel, '和医院确认');
+      expect(hospitalBag.groups[0].items[1].meta, isNull);
+      expect(hospitalBag.groups[1].items[0].description, '根据住院天数准备，产后更换会更方便。');
+      expect(
+        hospitalBag.groups[1].items[1].personalization,
+        '你是第一胎加上希望母乳喂养，数量已按这个情况调整',
+      );
+      expect(hospitalBag.groups[1].items[2].description, '按住院天数增减。');
+    });
+
+    test('keeps malformed specialized card values renderable', () {
+      final cards = AgentArtifactMapper.cardsFromEvents([
+        _artifactEvent(
+          id: 'sparse-birth-plan',
+          type: 'birth_plan_card',
+          payload: {
+            'title': '',
+            'communication': [null, '', '待确认', <String, Object?>{}],
+          },
+        ),
+        _artifactEvent(
+          id: 'sparse-hospital-bag',
+          type: 'hospital_bag_card',
+          payload: {
+            'packing_groups': [
+              null,
+              'invalid',
+              {
+                'title': '自定义分组',
+                'items': [null, 'invalid', <String, Object?>{}],
+              },
+            ],
+          },
+        ),
+      ]);
+
+      final birthPlan = cards[0].specializedView as AgentBirthPlanCardView;
+      expect(cards[0].title, '分娩沟通单');
+      expect(birthPlan.sections, isEmpty);
+      expect(birthPlan.disclaimer, isNotEmpty);
+
+      final hospitalBag = cards[1].specializedView as AgentHospitalBagCardView;
+      expect(cards[1].title, '待产包');
+      expect(hospitalBag.groups, hasLength(1));
+      expect(hospitalBag.groups.single.title, '自定义分组');
+      expect(hospitalBag.groups.single.items.single.label, '物品');
     });
   });
 }

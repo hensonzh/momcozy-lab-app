@@ -3,6 +3,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_form_normalizer.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_mapper.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
@@ -136,6 +137,10 @@ class AgentArtifactMapper {
       hasForm: form.isNotEmpty,
       hasCartUpdate: cartUpdate.isNotEmpty,
     );
+    final specializedView = mapAgentSpecializedCard(
+      presentationKind: presentationKind,
+      cardJson: cardJson,
+    );
     final explicitTitle = _firstNonEmpty([
       _stringField(richText, 'title'),
       _stringField(form, 'title'),
@@ -176,7 +181,8 @@ class AgentArtifactMapper {
       ),
     ];
 
-    if (explicitTitle == null &&
+    if (specializedView == null &&
+        explicitTitle == null &&
         formFields.isEmpty &&
         (content == null || content.trim().isEmpty) &&
         rows.isEmpty &&
@@ -186,7 +192,10 @@ class AgentArtifactMapper {
 
     return AgentArtifactCardView(
       id: artifactId,
-      title: explicitTitle ?? _artifactSubject(artifactType),
+      title:
+          specializedView?.title ??
+          explicitTitle ??
+          _artifactSubject(artifactType),
       artifactType: artifactType,
       schemaVersion: schemaVersion,
       presentationKind: presentationKind,
@@ -202,6 +211,7 @@ class AgentArtifactMapper {
       formSubmitLabel: _stringField(form, 'submit_label', 'submitLabel'),
       formFields: formFields,
       actions: List<AgentArtifactActionView>.unmodifiable(actions),
+      specializedView: specializedView,
     );
   }
 }

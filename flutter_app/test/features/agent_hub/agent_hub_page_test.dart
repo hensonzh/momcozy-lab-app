@@ -3677,7 +3677,7 @@ void main() {
     expect(find.text('1项'), findsOneWidget);
     expect(find.text('1包'), findsOneWidget);
     expect(find.text('必带'), findsOneWidget);
-    expect(find.text('产后前几天更换频繁'), findsOneWidget);
+    expect(find.text('产后恶露量较多，用来垫床或替代普通卫生巾。'), findsOneWidget);
     expect(find.text('打开购物车'), findsOneWidget);
   });
 
@@ -3777,6 +3777,54 @@ void main() {
     expect(find.text('1包'), findsOneWidget);
     expect(find.text('必带'), findsOneWidget);
   });
+
+  testWidgets(
+    'Agent Hub renders normalized legacy specialized card semantics',
+    (tester) async {
+      final fixture = readFixtureMap(
+        'agent_artifacts/legacy_specialized_cards.json',
+      );
+      final events = (fixture['events'] as List<Object?>)
+          .whereType<Map>()
+          .map((event) => AgentStreamEvent(Map<String, Object?>.from(event)))
+          .toList(growable: false);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '我整理好了。',
+              events: events,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('分娩沟通单'), findsOneWidget);
+      expect(find.text('希望医护先解释每一步'), findsOneWidget);
+      expect(find.text('出生后尽早肌肤接触'), findsOneWidget);
+      expect(
+        find.text('这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。'),
+        findsOneWidget,
+      );
+      expect(find.text('待产包'), findsOneWidget);
+      expect(find.text('证件文件包'), findsOneWidget);
+      expect(find.text('妈妈住院包'), findsOneWidget);
+      expect(find.text('产后回家第一周用品'), findsOneWidget);
+      expect(find.text('身份证'), findsOneWidget);
+      expect(find.text('身份证及复印件'), findsNothing);
+      expect(find.text('原件+复印件'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('妈妈住院包'));
+      await tester.pump();
+      await tester.tap(find.text('妈妈住院包'));
+      await tester.pump();
+
+      expect(find.text('根据住院天数准备，产后更换会更方便。'), findsOneWidget);
+      expect(find.text('你是第一胎加上希望母乳喂养，数量已按这个情况调整'), findsOneWidget);
+    },
+  );
 
   testWidgets('Agent Hub renders every current production artifact family', (
     tester,
@@ -3965,7 +4013,7 @@ void main() {
 
     expect(find.text('产褥垫'), findsOneWidget);
     expect(find.text('婴儿连体衣'), findsNothing);
-    final babyGroupFinder = find.text('宝宝用品');
+    final babyGroupFinder = find.text('宝宝出院包');
     await tester.drag(find.byType(Scrollable).first, const Offset(0, -240));
     await tester.pumpAndSettle();
     await tester.tap(babyGroupFinder);

@@ -32,7 +32,7 @@
 | R06 | P2 | 售后工单草稿 artifact 未实现 | 已完成 | 工单确认表单可能完全不显示 |
 | R07 | P2 | 普通链接和专业引用点击无效 | 已完成 | 用户无法打开来源和非媒体链接 |
 | R08 | P2 | 用户资料复用和信息采集表单归一化不完整 | 已完成 | 重复询问、默认值缺失、必填规则不一致 |
-| R09 | P2 | 专项卡片数据语义未完全对齐 | 待处理 | 分娩沟通卡和待产包卡丢失部分有效内容 |
+| R09 | P2 | 专项卡片数据语义未完全对齐 | 已完成 | 分娩沟通卡和待产包卡丢失部分有效内容 |
 | R10 | P2 | IBCLC 上下文和咨询完成状态丢失 | 待处理 | 咨询身份、返回位置和完成状态不连续 |
 | R11 | P2 | Artifact 出现时机早于旧 Web | 待处理 | 卡片可能先于解释文字出现并抢占滚动位置 |
 | R12 | P2/P3 | 媒体语义播报和卡片导出缺失 | 待处理 | 步骤图片说明不播报，计划卡无法保存图片 |
@@ -212,9 +212,11 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### R09 专项卡片数据语义未完全对齐
 
-- 分娩沟通卡没有完整兼容旧字段别名、嵌套值和显示值归一化。
-- 待产包卡没有展示 `explain`、`personalized_by`、证件复印要求等个性化原因。
-- 修复目标：先建立 schema fixture 和 golden，再统一 mapper normalization，renderer 只消费稳定 view model。
+- 已建立共享旧版专项卡 fixture 和 typed `AgentBirthPlanCardView` / `AgentHospitalBagCardView`；原始 `cardJson` 继续保留用于诊断，renderer 只消费 mapper 产出的稳定模型。
+- 分娩沟通卡已兼容 snake/camel 字段、嵌套数组和对象，统一编号清理、去重、占位值过滤、生产方式/肌肤接触文案、默认标题及默认医疗安全声明。
+- 待产包卡已按旧 Web 规则归并和排序场景分组，统一分组标题、物品标签、优先级、数量隐藏、`explain`、用途推断、`note`、兼容 `reason/description`、`personalized_by` 和证件复印要求。
+- 空或畸形专项 payload 不再被通用空卡过滤误删，也不会让 renderer 直接解释不稳定 Map；未知 schema 仍保持 unsupported 语义。
+- 验收：mapper fixture、畸形边界、页面语义、折叠交互、两张 Golden、Agent Hub 整页 111 项、`flutter analyze`、639 项 Flutter 全量测试和 Android APK 构建通过。
 
 ### R10 IBCLC 上下文和完成状态丢失
 
@@ -247,10 +249,10 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 ## 当前验证基线
 
 - `flutter analyze`：通过。
-- Flutter 全量单元、Widget 和 Golden 测试：636 项通过。
+- Flutter 全量单元、Widget 和 Golden 测试：639 项通过。
 - Flutter Agent Hub、reducer、feature page 相关测试：197 项通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
-- 现有测试通过不代表剩余风险已关闭；R09-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
+- 现有测试通过不代表剩余风险已关闭；R10-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
 
 ## 变更记录
 
@@ -268,3 +270,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 完成 R06 售后工单草稿 | 旧 Web 字段与 envelope 完整归一化；表单确认与生产 action 写入语义分离；618 项全量回归通过 |
 | 2026-07-11 | 完成 R07 链接与专业引用 | 安全内外链分发、系统浏览器、旧 Web citation 列表/索引及历史恢复对齐；630 项全量回归和 Android APK 构建通过 |
 | 2026-07-11 | 完成 R08 用户资料与表单归一化 | 姓名/年龄问候、孕期资料默认值、旧版表单识别和异步无覆盖回填对齐；636 项 Flutter 全量回归通过 |
+| 2026-07-11 | 完成 R09 专项卡片数据语义 | 分娩沟通卡与待产包卡改用 typed 归一化模型，旧字段、个性化原因及复印规则对齐；639 项全量回归和 Android APK 构建通过 |
