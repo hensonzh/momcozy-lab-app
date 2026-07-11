@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
@@ -122,6 +123,7 @@ void main() {
       'delivery_date': '2026-06-11',
     });
     final statusPreferences = _MemoryStatusPreferenceStore();
+    final volumePreferences = _MemoryVolumeUnitPreferenceStore();
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,
       multipartTransport: FixtureApiMultipartTransport({
@@ -132,6 +134,7 @@ void main() {
       babyId: 'baby-fixture',
       locale: 'zh-CN',
       statusPreferenceStore: statusPreferences,
+      volumeUnitPreferenceStore: volumePreferences,
     );
 
     expect(runtime.statusRepository, isA<StatusApiRepository>());
@@ -142,6 +145,7 @@ void main() {
     expect(runtime.pregnancyDiaryRepository.transport, same(transport));
     expect(runtime.birthJourneyPlanRepository.transport, same(transport));
     expect(runtime.statusPreferenceStore, same(statusPreferences));
+    expect(runtime.volumeUnitPreferenceStore, same(volumePreferences));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
     expect(runtime.productAssetRepository, isA<ProductAssetRepository>());
@@ -161,6 +165,7 @@ void main() {
     final statusController = runtime.createStatusDashboardController();
     expect(statusController.babyId, 'baby-fixture');
     expect(statusController.preferenceStore, same(statusPreferences));
+    expect(statusController.volumeUnitPreferenceStore, same(volumePreferences));
     expect(
       statusController.pregnancyDiaryRepository,
       isA<PregnancyDiaryApiRepository>(),
@@ -511,6 +516,18 @@ class _MemoryStatusPreferenceStore implements StatusPreferenceStore {
   @override
   Future<void> writeCareStage(StatusCareStage stage) async {
     value = stage;
+  }
+}
+
+class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
+  MomCozyVolumeUnit? value;
+
+  @override
+  Future<MomCozyVolumeUnit?> read() async => value;
+
+  @override
+  Future<void> write(MomCozyVolumeUnit unit) async {
+    value = unit;
   }
 }
 

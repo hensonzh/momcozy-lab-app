@@ -894,6 +894,7 @@ class _StatusPageState extends State<_StatusPage> {
       PostpartumMomDashboard(
         key: const ValueKey('status-postpartum-mom-dashboard'),
         milkTrends: _controller.milkTrends,
+        volumeUnit: _controller.volumeUnit,
         now: _controller.now,
         windowDays: _milkTrendMode == '月' ? 30 : 7,
         onWindowDaysChanged: (days) {
