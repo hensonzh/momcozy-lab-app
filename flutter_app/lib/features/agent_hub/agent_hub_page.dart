@@ -1406,8 +1406,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       nextState,
       checkArtifacts: artifactProjectionChanged,
     );
-    final previousArtifactId = _latestArtifactId(_state);
-    final nextArtifactId = _latestArtifactId(nextState);
+    final previousArtifactId = _latestPublishedArtifactId(_state);
+    final nextArtifactId = _latestPublishedArtifactId(nextState);
     final shouldFocusArtifact =
         nextArtifactId != null && nextArtifactId != previousArtifactId;
     final activeRequest = _activeRequest;
@@ -2505,9 +2505,11 @@ AgentStreamRunState? _historyRunStateForPersistence(
   }
 
   final structuredEvents = <String, AgentStreamEvent>{};
-  final artifactEvents = state.artifactEvents.isNotEmpty
-      ? state.artifactEvents.values
-      : state.events.where((event) => event.type.startsWith('artifact.'));
+  final artifactEvents = state.canPublishArtifactEvents
+      ? _artifactEventsForState(
+          state,
+        ).where((event) => event.type.startsWith('artifact.'))
+      : const <AgentStreamEvent>[];
   for (final event in artifactEvents) {
     final key = event.artifactId ?? event.eventId ?? event.mergeKey;
     structuredEvents['artifact:$key'] = event;
@@ -2905,6 +2907,7 @@ class _AgentRunTranscriptListenableState
   List<AgentArtifactCardView> _artifactCardsForState(
     AgentStreamRunState state,
   ) {
+    if (!state.canPublishArtifactEvents) return const [];
     final identity = state.artifactEvents.isNotEmpty
         ? state.artifactEvents
         : state.events;
@@ -3009,12 +3012,13 @@ class AgentRunTranscript extends StatelessWidget {
         state.phase == AgentStreamRunPhase.idle &&
         state.textContent.trim().isEmpty;
     final text = _primaryText;
-    final artifactCards =
-        this.artifactCards ??
-        _artifactCardsFromEvents(
-          _artifactEventsForState(state),
-          profileDefaults: profileDefaults,
-        );
+    final artifactCards = state.canPublishArtifactEvents
+        ? this.artifactCards ??
+              _artifactCardsFromEvents(
+                _artifactEventsForState(state),
+                profileDefaults: profileDefaults,
+              )
+        : const <AgentArtifactCardView>[];
     final actionCards =
         this.actionCards ??
         _actionCardsFromEvents(
@@ -5177,7 +5181,8 @@ Iterable<AgentStreamEvent> _artifactEventsForState(AgentStreamRunState state) {
       : state.events;
 }
 
-String? _latestArtifactId(AgentStreamRunState state) {
+String? _latestPublishedArtifactId(AgentStreamRunState state) {
+  if (!state.canPublishArtifactEvents) return null;
   if (state.artifactEvents.isNotEmpty) {
     return state.artifactEvents.keys.last;
   }

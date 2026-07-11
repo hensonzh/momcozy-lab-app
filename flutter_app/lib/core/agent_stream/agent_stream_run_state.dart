@@ -74,6 +74,14 @@ class AgentStreamRunState {
       completedAssistantMessageReceived ||
       events.any(_isAssistantCompletedMessage);
 
+  bool get canPublishArtifactEvents {
+    if (textContent.trim().isNotEmpty || hasCompletedAssistantMessage) {
+      return true;
+    }
+    return phase == AgentStreamRunPhase.finished ||
+        phase == AgentStreamRunPhase.waitingForConfirmation;
+  }
+
   Set<String> get seenReplayKeys => Set<String>.unmodifiable(_seenReplayKeys);
 
   bool get isAwaitingVisibleReply => isActive && !hasCompletedAssistantMessage;

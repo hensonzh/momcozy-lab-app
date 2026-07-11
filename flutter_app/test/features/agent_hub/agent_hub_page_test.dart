@@ -252,6 +252,24 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'artifact-focus-text-event',
+        'type': 'message.delta',
+        'thread_id': 'thread-artifact-focus',
+        'run_id': 'run-artifact-focus',
+        'message_id': 'message-artifact-focus',
+        'sequence': 2,
+        'payload': {'text': '我先说明一下，再请你补充这些信息。'},
+      }),
+    );
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
     final chatRect = tester.getRect(
       find.byKey(const ValueKey('agent-chat-scroll-view')),
     );
@@ -260,6 +278,125 @@ void main() {
     );
     expect(artifactRect.top, greaterThan(chatRect.top + 70));
     expect(artifactRect.top, lessThan(chatRect.top + chatRect.height * 0.55));
+  });
+
+  testWidgets('Agent Hub publishes a pure artifact on assistant completion', (
+    tester,
+  ) async {
+    final artifactEvent = AgentStreamEvent(
+      readFixtureMap('agent_events/rich_text_artifact.json'),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            artifactEvents: {'milk-plan-001': artifactEvent},
+            completedAssistantMessageReceived: true,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub ingests a cart artifact before publishing its card', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    final cartUpdates = <HospitalBagCartArtifactSeed>[];
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          onHospitalBagCartUpdate: cartUpdates.add,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '帮我整理待产包',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'evt-pending-cart-artifact',
+        'type': 'artifact.created',
+        'thread_id': 'thread-pending-cart',
+        'run_id': 'run-pending-cart',
+        'artifact_id': 'pending-cart-artifact',
+        'sequence': 1,
+        'payload': {
+          'artifact_type': 'hospital_bag_card',
+          'assistant_followup': {
+            'kind': 'hospital_bag_cart',
+            'message': '已经为你整理好待产包购物车。',
+          },
+          'cart_update': {
+            'action': 'reset_cart',
+            'groups': [
+              {
+                'title': '妈妈护理',
+                'items': [
+                  {'name': '产褥垫组合装'},
+                ],
+              },
+            ],
+          },
+        },
+      }),
+    );
+    await tester.pump();
+
+    expect(cartUpdates, hasLength(1));
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'evt-pending-cart-text',
+        'type': 'message.delta',
+        'thread_id': 'thread-pending-cart',
+        'run_id': 'run-pending-cart',
+        'message_id': 'message-pending-cart',
+        'sequence': 2,
+        'payload': {'text': '我已经根据你的情况整理好了。'},
+      }),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
+    expect(cartUpdates, hasLength(1));
+  });
+
+  testWidgets('Agent Hub keeps a textless failed artifact unpublished', (
+    tester,
+  ) async {
+    final artifactEvent = AgentStreamEvent(
+      readFixtureMap('agent_events/rich_text_artifact.json'),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.error,
+            artifactEvents: {'milk-plan-001': artifactEvent},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
   });
 
   testWidgets('Agent Hub marks active assistant avatar as thinking', (
@@ -3163,6 +3300,56 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('20:00 泵奶'), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub does not archive an unpublished failed artifact', (
+    tester,
+  ) async {
+    final artifactEvent = AgentStreamEvent(
+      readFixtureMap('agent_events/rich_text_artifact.json'),
+    );
+    final store = _MemoryAgentHubInteractionStateStore();
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          interactionStateStore: store,
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.error,
+            artifactEvents: {'milk-plan-001': artifactEvent},
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '继续',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final archivedAssistant = store.snapshot!.historyMessages.firstWhere(
+      (message) => message.role == 'assistant',
+    );
+    expect(
+      archivedAssistant.runState?.artifactEvents ??
+          const <String, AgentStreamEvent>{},
+      isEmpty,
+    );
+    expect(
+      (archivedAssistant.runState?.events ?? const <AgentStreamEvent>[]).where(
+        (event) => event.type.startsWith('artifact.'),
+      ),
+      isEmpty,
+    );
   });
 
   testWidgets('Agent Hub persists citations when archiving a reply', (
