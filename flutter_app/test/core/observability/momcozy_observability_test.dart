@@ -78,9 +78,7 @@ void main() {
         observability: observability,
       );
 
-      await successTransport.getJson(
-        '/v1/profile/me?token=secret',
-      );
+      await successTransport.getJson('/v1/profile/me?token=secret');
       await expectLater(
         failureTransport.postJson('/v1/devices/pump-telemetry'),
         throwsA(isA<ApiHttpException>()),
@@ -107,6 +105,25 @@ void main() {
         'retryable': false,
       });
       expect(sink.events[1].attributes, containsPair('elapsedMs', isA<int>()));
+    });
+
+    test('observed JSON transport records mutation methods', () async {
+      final sink = MemoryMomCozyTelemetrySink();
+      final transport = ObservedApiJsonTransport(
+        inner: FixtureApiJsonTransport(const {'id': 'record-001'}),
+        observability: MomCozyObservability(sink: sink),
+      );
+
+      await transport.putJson('/v1/pregnancy-diary/entries/2026-07-11');
+      await transport.patchJson('/v1/records/growth/record-001');
+      await transport.deleteJson('/v1/plans/plan-001');
+
+      expect(sink.events.map((event) => event.attributes['method']), [
+        'PUT',
+        'PATCH',
+        'DELETE',
+      ]);
+      expect(sink.events.every((event) => event.name == 'api.request'), isTrue);
     });
 
     test(
