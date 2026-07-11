@@ -20,6 +20,8 @@ import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart'
 import 'package:momcozy_flutter_app/features/status/domain/pregnancy_diary.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/baby_growth_chart.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/baby_status_cards.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/birth_journey_plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/pregnancy_diary_dashboard.dart';
@@ -548,7 +550,6 @@ final _statusInteractionStates = Expando<_StatusInteractionState>(
 class _StatusInteractionState {
   String view = 'mom';
   String careStage = 'postpartum';
-  bool growthRecordAdded = false;
   String milkTrendMode = '周';
   String babyGrowthMetric = '体重';
   String? activeDetail;
@@ -574,7 +575,6 @@ class _StatusPage extends StatefulWidget {
 }
 
 class _StatusPageState extends State<_StatusPage> {
-  bool _growthRecordAdded = false;
   String _milkTrendMode = '周';
   String _babyGrowthMetric = '体重';
   String? _activeDetail;
@@ -599,7 +599,6 @@ class _StatusPageState extends State<_StatusPage> {
       _runtime = runtime;
       _interactionState = _statusInteractionStates[runtime] ??=
           _StatusInteractionState();
-      _growthRecordAdded = _interactionState.growthRecordAdded;
       _milkTrendMode = _interactionState.milkTrendMode;
       _babyGrowthMetric = _interactionState.babyGrowthMetric;
       _activeDetail = _interactionState.activeDetail;
@@ -651,7 +650,6 @@ class _StatusPageState extends State<_StatusPage> {
     _interactionState
       ..view = _view
       ..careStage = _careStage
-      ..growthRecordAdded = _growthRecordAdded
       ..milkTrendMode = _milkTrendMode
       ..babyGrowthMetric = _babyGrowthMetric
       ..activeDetail = _activeDetail;
@@ -669,54 +667,6 @@ class _StatusPageState extends State<_StatusPage> {
       _activeDetail = null;
       _persistInteractionState();
     });
-  }
-
-  void _recordGrowth() {
-    setState(() {
-      _growthRecordAdded = true;
-      _persistInteractionState();
-    });
-  }
-
-  Future<void> _showGrowthEditor() async {
-    final saved = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('status-growth-editor-dialog'),
-          title: const Text('修改成长指标'),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                key: ValueKey('status-growth-weight-input'),
-                decoration: InputDecoration(labelText: '体重'),
-              ),
-              TextField(
-                key: ValueKey('status-growth-height-input'),
-                decoration: InputDecoration(labelText: '身高'),
-              ),
-              TextField(
-                key: ValueKey('status-growth-head-input'),
-                decoration: InputDecoration(labelText: '头围'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              key: const ValueKey('status-growth-save-button'),
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('保存指标'),
-            ),
-          ],
-        );
-      },
-    );
-    if (saved == true) _recordGrowth();
   }
 
   @override
@@ -870,43 +820,21 @@ class _StatusPageState extends State<_StatusPage> {
     return [
       _StatusModuleGrid(
         children: [
-          _StatusModuleCard(
-            title: '奶量摄入',
-            icon: Icons.restaurant_outlined,
-            accent: const Color(0xff4f84a6),
-            background: const Color(0xfff4fbff),
-            metrics: [
-              _StatusModuleMetric(label: '今日摄入', value: '待同步'),
-              _StatusModuleMetric(
-                label: '今日喂奶',
-                value: '待同步',
-                helpKey: const ValueKey('status-baby-feed-info-button'),
-                onHelpTap: () => _showDetail('baby-feed-info'),
-              ),
-            ],
+          BabyFeedingCard(
+            records: _controller.feedingRecords,
+            volumeUnit: _controller.volumeUnit,
+            onInfoTap: () => _showDetail('baby-feed-info'),
           ),
-          _StatusModuleCard(
-            title: '成长发育',
-            icon: Icons.straighten_outlined,
-            accent: const Color(0xff388b72),
-            background: const Color(0xfff2fffb),
-            metrics: const [
-              _StatusModuleMetric(label: '体重', value: '待记录'),
-              _StatusModuleMetric(label: '身高', value: '待记录'),
-              _StatusModuleMetric(label: '头围', value: '待记录'),
-            ],
-            actions: [
-              _StatusModuleAction(
-                key: const ValueKey('status-growth-record-action'),
-                label: _growthRecordAdded ? '已添加' : '修改指标',
-                onTap: _showGrowthEditor,
-              ),
-              _StatusModuleAction(
-                key: const ValueKey('status-growth-milestone-action'),
-                label: '成长milestone',
-                onTap: () => _showDetail('growth-milestone'),
-              ),
-            ],
+          BabyGrowthSummaryCard(
+            records: _controller.growthRecords,
+            mutation: _controller.growthMutation,
+            onSave: ({required weightKg, required heightCm, required headCm}) =>
+                _controller.saveGrowth(
+                  weightKg: weightKg,
+                  heightCm: heightCm,
+                  headCm: headCm,
+                ),
+            onMilestoneTap: () => _showDetail('growth-milestone'),
           ),
           _StatusModuleCard(
             title: '宝宝健康',
@@ -978,8 +906,10 @@ class _StatusPageState extends State<_StatusPage> {
         ),
         const SizedBox(height: 12),
       ],
-      _StatusBabyGrowthCurvePreview(
+      BabyGrowthChart(
         key: const ValueKey('status-baby-growth-curve-preview'),
+        records: _controller.growthRecords,
+        birthDate: overview.baby?.birthDate,
         selectedMetric: _babyGrowthMetric,
         onMetricChanged: (metric) {
           setState(() {
@@ -990,28 +920,6 @@ class _StatusPageState extends State<_StatusPage> {
       ),
     ];
   }
-}
-
-class _StatusModuleMetric {
-  const _StatusModuleMetric({
-    required this.label,
-    required this.value,
-    this.helpKey,
-    this.onHelpTap,
-  });
-
-  final String label;
-  final String value;
-  final Key? helpKey;
-  final VoidCallback? onHelpTap;
-}
-
-class _StatusModuleAction {
-  const _StatusModuleAction({required this.label, this.key, this.onTap});
-
-  final Key? key;
-  final String label;
-  final VoidCallback? onTap;
 }
 
 class _StatusModuleGrid extends StatelessWidget {
@@ -1051,30 +959,20 @@ class _StatusModuleCard extends StatelessWidget {
     required this.accent,
     required this.background,
     this.bodyText,
-    this.metrics = const [],
     this.action,
     this.onAction,
-    this.actions = const [],
   });
 
   final String title;
   final String? bodyText;
-  final List<_StatusModuleMetric> metrics;
   final String? action;
   final VoidCallback? onAction;
-  final List<_StatusModuleAction> actions;
   final IconData icon;
   final Color accent;
   final Color background;
 
   @override
   Widget build(BuildContext context) {
-    final effectiveActions = actions.isNotEmpty
-        ? actions
-        : [
-            if (action != null)
-              _StatusModuleAction(label: action!, onTap: onAction),
-          ];
     final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
       color: const Color(0xff35212c),
       fontSize: 14,
@@ -1153,32 +1051,22 @@ class _StatusModuleCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: metrics.isNotEmpty ? 20 : 14),
-                    if (metrics.isNotEmpty)
-                      _StatusModuleMetricRows(metrics: metrics)
-                    else if (bodyText != null)
+                    const SizedBox(height: 14),
+                    if (bodyText != null)
                       Text(
                         bodyText!,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: helperStyle,
                       ),
-                    if (effectiveActions.isNotEmpty) ...[
+                    if (action != null) ...[
                       const SizedBox(height: 4),
                       Transform.translate(
                         offset: const Offset(-10, 0),
-                        child: Wrap(
-                          spacing: 5,
-                          runSpacing: 4,
-                          children: [
-                            for (final action in effectiveActions)
-                              _StatusModuleActionPill(
-                                key: action.key,
-                                label: action.label,
-                                accent: accent,
-                                onTap: action.onTap,
-                              ),
-                          ],
+                        child: _StatusModuleActionPill(
+                          label: action!,
+                          accent: accent,
+                          onTap: onAction,
                         ),
                       ),
                     ],
@@ -1193,112 +1081,8 @@ class _StatusModuleCard extends StatelessWidget {
   }
 }
 
-class _StatusModuleMetricRows extends StatelessWidget {
-  const _StatusModuleMetricRows({required this.metrics});
-
-  final List<_StatusModuleMetric> metrics;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        for (final metric in metrics)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          metric.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: const Color(0xff7a5b68),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ),
-                      if (metric.onHelpTap != null)
-                        _StatusHelpDot(
-                          key: metric.helpKey,
-                          size: 14,
-                          onTap: metric.onHelpTap,
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    metric.value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: const Color(0xff35212c),
-                      fontSize: metrics.length >= 3 ? 14 : 16,
-                      fontWeight: FontWeight.w700,
-                      height: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _StatusHelpDot extends StatelessWidget {
-  const _StatusHelpDot({super.key, this.size = 16, this.onTap});
-
-  final double size;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 5),
-      child: Semantics(
-        button: onTap != null,
-        label: '说明',
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: size,
-            height: size,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.72),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: MomCozyColors.mutedForeground.withValues(alpha: 0.46),
-              ),
-            ),
-            child: Text(
-              '?',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontSize: size <= 14 ? 8 : 10,
-                height: 1,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _StatusModuleActionPill extends StatelessWidget {
   const _StatusModuleActionPill({
-    super.key,
     required this.label,
     required this.accent,
     this.onTap,
@@ -1334,202 +1118,6 @@ class _StatusModuleActionPill extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _StatusBabyGrowthCurvePreview extends StatelessWidget {
-  const _StatusBabyGrowthCurvePreview({
-    super.key,
-    required this.selectedMetric,
-    required this.onMetricChanged,
-  });
-
-  final String selectedMetric;
-  final ValueChanged<String> onMetricChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 246,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xfffbf7ff),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xffe6d9fb)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: const Color(0xffe5d9ff),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Icon(
-                  Icons.child_care_rounded,
-                  size: 16,
-                  color: Color(0xff7d64aa),
-                ),
-              ),
-              const SizedBox(width: 9),
-              Expanded(
-                child: Text(
-                  '宝宝成长曲线',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.keyboard_arrow_up_rounded,
-                color: MomCozyColors.mutedForeground,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _StatusTrendLegendItem(
-                label: '实际测量',
-                color: const Color(0xff7d64aa),
-                dashed: false,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: const Color(0xff7d64aa),
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(width: 10),
-              _StatusTrendLegendItem(
-                label: '同龄参考区间',
-                color: const Color(0xffeee8ff),
-                band: true,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: const Color(0xff7d64aa),
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const Spacer(),
-              _StatusSegmentedPills(
-                selected: selectedMetric,
-                options: const ['体重', '身高'],
-                color: const Color(0xff7d64aa),
-                keyPrefix: 'status-baby-growth',
-                onChanged: onMetricChanged,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '当前查看：$selectedMetric',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: const Color(0xff7d64aa),
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const Spacer(),
-          Center(
-            child: Text(
-              '暂无成长曲线数据，录入多项测量后与同龄参考一同展示。',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          const Spacer(),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusTrendLegendItem extends StatelessWidget {
-  const _StatusTrendLegendItem({
-    required this.label,
-    required this.color,
-    this.dashed = false,
-    this.band = false,
-    this.style,
-  });
-
-  final String label;
-  final Color color;
-  final bool dashed;
-  final bool band;
-  final TextStyle? style;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CustomPaint(
-          size: Size(12, band ? 8 : 2),
-          painter: _StatusLegendMarkPainter(
-            color: color,
-            dashed: dashed,
-            band: band,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(label, style: style),
-      ],
-    );
-  }
-}
-
-class _StatusLegendMarkPainter extends CustomPainter {
-  const _StatusLegendMarkPainter({
-    required this.color,
-    required this.dashed,
-    required this.band,
-  });
-
-  final Color color;
-  final bool dashed;
-  final bool band;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (band) {
-      canvas.drawRect(Offset.zero & size, Paint()..color = color);
-      return;
-    }
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    if (!dashed) {
-      canvas.drawLine(
-        Offset(0, size.height / 2),
-        Offset(size.width, size.height / 2),
-        paint,
-      );
-      return;
-    }
-    canvas.drawLine(
-      Offset(0, size.height / 2),
-      Offset(4, size.height / 2),
-      paint,
-    );
-    canvas.drawLine(
-      Offset(7, size.height / 2),
-      Offset(size.width, size.height / 2),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _StatusLegendMarkPainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.dashed != dashed ||
-        oldDelegate.band != band;
   }
 }
 
@@ -1623,68 +1211,6 @@ class _StatusDetailPanel extends StatelessWidget {
             ],
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _StatusSegmentedPills extends StatelessWidget {
-  const _StatusSegmentedPills({
-    required this.selected,
-    required this.options,
-    required this.color,
-    this.keyPrefix,
-    this.onChanged,
-  });
-
-  final String selected;
-  final List<String> options;
-  final Color color;
-  final String? keyPrefix;
-  final ValueChanged<String>? onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final option in options)
-            Semantics(
-              selected: option == selected,
-              button: onChanged != null,
-              label: option,
-              child: GestureDetector(
-                key: keyPrefix == null
-                    ? null
-                    : ValueKey('$keyPrefix-segment-$option'),
-                onTap: onChanged == null ? null : () => onChanged!(option),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: option == selected ? color : Colors.transparent,
-                    borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                  ),
-                  child: Text(
-                    option,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: option == selected ? Colors.white : color,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
       ),
     );
   }

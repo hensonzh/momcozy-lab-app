@@ -437,9 +437,25 @@ void main() {
         find.byKey(const ValueKey('status-growth-editor-dialog')),
         findsOneWidget,
       );
+      await tester.enterText(
+        find.byKey(const ValueKey('status-growth-weight-input')),
+        '6.2',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('status-growth-height-input')),
+        '64.5',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('status-growth-head-input')),
+        '42',
+      );
+      tester.testTextInput.hide();
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey('status-growth-save-button')));
       await tester.pumpAndSettle();
-      expect(find.text('已添加'), findsOneWidget);
+      expect(find.text('6.2kg'), findsOneWidget);
+      expect(find.text('64.5cm'), findsOneWidget);
+      expect(find.text('42cm'), findsOneWidget);
 
       await tester.tap(
         find.byKey(const ValueKey('status-growth-milestone-action')),
@@ -503,7 +519,7 @@ void main() {
 
       expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
       expect(find.text('宝宝成长曲线'), findsOneWidget);
-      expect(find.text('已添加'), findsOneWidget);
+      expect(find.text('6.2kg'), findsOneWidget);
       expect(find.text('当前查看：身高'), findsOneWidget);
     });
   });
@@ -1316,6 +1332,45 @@ MomCozyApiRuntime _runtime({
         ],
         'days': 31,
         'include_today': true,
+      },
+      feedingRecordsEndpoint: const {
+        'items': [
+          {
+            'id': 'feeding-widget-1',
+            'feed_type': 'bottle',
+            'volume_ml': 80,
+            'feed_time': '2026-07-03T06:00:00Z',
+          },
+          {
+            'id': 'feeding-widget-2',
+            'feed_type': 'bottle',
+            'volume_ml': 40,
+            'feed_time': '2026-07-03T10:00:00Z',
+          },
+        ],
+      },
+      growthRecordsEndpoint: const {
+        'items': [
+          {
+            'id': 'growth-widget-saved',
+            'weight_kg': 6.2,
+            'height_cm': 64.5,
+            'head_cm': 42,
+            'measured_at': '2026-07-03T12:00:00Z',
+          },
+        ],
+        'id': 'growth-widget-saved',
+        'weight_kg': 6.2,
+        'height_cm': 64.5,
+        'head_cm': 42,
+        'measured_at': '2026-07-03T12:00:00Z',
+      },
+      '$growthRecordsEndpoint/growth-widget-saved': const {
+        'id': 'growth-widget-saved',
+        'weight_kg': 6.2,
+        'height_cm': 64.5,
+        'head_cm': 42,
+        'measured_at': '2026-07-03T12:00:00Z',
       },
       pregnancyDiaryEntriesEndpoint: const {'items': <Object?>[]},
       '$pregnancyDiaryEntriesEndpoint/2026-07-03': const {
