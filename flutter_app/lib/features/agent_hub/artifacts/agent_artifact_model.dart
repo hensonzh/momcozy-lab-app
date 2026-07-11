@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+
+export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_model.dart';
 
 typedef AgentArtifactFormSubmitHandler =
     Future<bool> Function(AgentArtifactActionView action);
@@ -100,6 +103,7 @@ class AgentArtifactCardView {
     this.formSubmitLabel,
     this.formFields = const <AgentArtifactFormFieldView>[],
     this.actions = const <AgentArtifactActionView>[],
+    this.specializedView,
   });
 
   final String id;
@@ -119,6 +123,7 @@ class AgentArtifactCardView {
   final String? formSubmitLabel;
   final List<AgentArtifactFormFieldView> formFields;
   final List<AgentArtifactActionView> actions;
+  final AgentSpecializedArtifactView? specializedView;
 
   bool get isForm =>
       presentationKind == AgentArtifactPresentationKind.form ||

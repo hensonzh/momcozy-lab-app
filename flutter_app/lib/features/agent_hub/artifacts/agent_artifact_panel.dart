@@ -178,13 +178,21 @@ Widget? _specializedArtifactCard({
     ),
     AgentArtifactPresentationKind.birthJourneyPlanCard =>
       _AgentBirthJourneyPlanCard(card: card),
-    AgentArtifactPresentationKind.birthPlanCard => _AgentBirthPlanCard(
-      card: card,
-    ),
-    AgentArtifactPresentationKind.hospitalBagCard => _AgentHospitalBagCard(
-      card: card,
-      onAction: onAction,
-    ),
+    AgentArtifactPresentationKind.birthPlanCard =>
+      card.specializedView is AgentBirthPlanCardView
+          ? _AgentBirthPlanCard(
+              card: card,
+              data: card.specializedView! as AgentBirthPlanCardView,
+            )
+          : null,
+    AgentArtifactPresentationKind.hospitalBagCard =>
+      card.specializedView is AgentHospitalBagCardView
+          ? _AgentHospitalBagCard(
+              card: card,
+              data: card.specializedView! as AgentHospitalBagCardView,
+              onAction: onAction,
+            )
+          : null,
     _ => null,
   };
 }
@@ -673,121 +681,50 @@ class _AgentBirthJourneyItem extends StatelessWidget {
 }
 
 class _AgentBirthPlanCard extends StatelessWidget {
-  const _AgentBirthPlanCard({required this.card});
+  const _AgentBirthPlanCard({required this.card, required this.data});
 
   final AgentArtifactCardView card;
+  final AgentBirthPlanCardView data;
 
   @override
   Widget build(BuildContext context) {
-    final cardJson = _effectiveCardJson(card);
-    final groups = <({String title, List<String> values, IconData icon})>[
-      (
-        title: '沟通方式',
-        values: _displayStringList(cardJson['communication']),
-        icon: Icons.headphones_outlined,
-      ),
-      (
-        title: '生产时偏好',
-        values: _displayStringListField(
-          cardJson,
-          'labor_preferences',
-          'laborPreferences',
-        ),
-        icon: Icons.directions_walk_rounded,
-      ),
-      (
-        title: '需要先沟通的操作',
-        values: _displayStringListField(
-          cardJson,
-          'intervention_preferences',
-          'interventionPreferences',
-        ),
-        icon: Icons.health_and_safety_outlined,
-      ),
-      (
-        title: '疼痛缓解',
-        values: _displayStringListField(cardJson, 'pain_relief', 'painRelief'),
-        icon: Icons.favorite_border_rounded,
-      ),
-      (
-        title: '宝宝出生后',
-        values: _displayStringListField(
-          cardJson,
-          'baby_after_birth',
-          'babyAfterBirth',
-        ),
-        icon: Icons.child_care_rounded,
-      ),
-      (
-        title: '计划变化时',
-        values: _displayStringListField(
-          cardJson,
-          'if_plans_change',
-          'ifPlansChange',
-        ),
-        icon: Icons.medical_services_outlined,
-      ),
-      (
-        title: '紧急情况',
-        values: _displayStringListField(
-          cardJson,
-          'emergency_authorization',
-          'emergencyAuthorization',
-        ),
-        icon: Icons.monitor_heart_outlined,
-      ),
-      (
-        title: '提前问医院',
-        values: _displayStringListField(
-          cardJson,
-          'questions_for_hospital',
-          'questionsForHospital',
-        ),
-        icon: Icons.help_outline_rounded,
-      ),
-    ].where((group) => group.values.isNotEmpty).toList(growable: false);
-    final medicalNotes = _displayStringListField(
-      cardJson,
-      'medical_notes',
-      'medicalNotes',
-    );
-    final disclaimer = _displayString(cardJson['disclaimer']);
-
     return _AgentArtifactSpecializedShell(
       card: card,
       icon: Icons.fact_check_outlined,
       accentColor: MomCozyColors.violet,
       children: [
-        if (groups.isNotEmpty)
+        if (data.sections.isNotEmpty)
           _AgentArtifactSection(
             title: '沟通卡片内容',
             children: [
-              for (final group in groups) ...[
-                _AgentBirthPlanGroup(group: group),
-                if (group != groups.last) const SizedBox(height: 8),
+              for (final section in data.sections) ...[
+                _AgentBirthPlanGroup(
+                  section: section,
+                  icon: _birthPlanSectionIcon(section.id),
+                ),
+                if (section != data.sections.last) const SizedBox(height: 8),
               ],
             ],
           ),
-        if (medicalNotes.isNotEmpty) ...[
-          if (groups.isNotEmpty) const SizedBox(height: 10),
+        if (data.medicalNotes.isNotEmpty) ...[
+          if (data.sections.isNotEmpty) const SizedBox(height: 10),
           _AgentArtifactSection(
             title: '医疗或安全信息',
-            children: [_AgentArtifactBulletList(items: medicalNotes)],
+            children: [_AgentArtifactBulletList(items: data.medicalNotes)],
           ),
         ],
-        if (disclaimer != null) ...[
-          const SizedBox(height: 10),
-          _AgentArtifactBodyText(disclaimer),
-        ],
+        const SizedBox(height: 10),
+        _AgentArtifactBodyText(data.disclaimer),
       ],
     );
   }
 }
 
 class _AgentBirthPlanGroup extends StatelessWidget {
-  const _AgentBirthPlanGroup({required this.group});
+  const _AgentBirthPlanGroup({required this.section, required this.icon});
 
-  final ({String title, List<String> values, IconData icon}) group;
+  final AgentBirthPlanSectionView section;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -805,11 +742,11 @@ class _AgentBirthPlanGroup extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(group.icon, size: 17, color: MomCozyColors.primary),
+                Icon(icon, size: 17, color: MomCozyColors.primary),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    group.title,
+                    section.title,
                     style: textTheme.labelLarge?.copyWith(
                       color: MomCozyColors.foreground,
                       fontWeight: FontWeight.w900,
@@ -819,7 +756,7 @@ class _AgentBirthPlanGroup extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 6),
-            _AgentArtifactBulletList(items: group.values),
+            _AgentArtifactBulletList(items: section.values),
           ],
         ),
       ),
@@ -827,47 +764,56 @@ class _AgentBirthPlanGroup extends StatelessWidget {
   }
 }
 
+IconData _birthPlanSectionIcon(String id) {
+  return switch (id) {
+    'communication' => Icons.headphones_outlined,
+    'labor_preferences' => Icons.directions_walk_rounded,
+    'intervention_preferences' => Icons.health_and_safety_outlined,
+    'pain_relief' => Icons.favorite_border_rounded,
+    'baby_after_birth' => Icons.child_care_rounded,
+    'if_plans_change' => Icons.medical_services_outlined,
+    'emergency_authorization' => Icons.monitor_heart_outlined,
+    'questions_for_hospital' => Icons.help_outline_rounded,
+    _ => Icons.check_circle_outline_rounded,
+  };
+}
+
 class _AgentHospitalBagCard extends StatelessWidget {
-  const _AgentHospitalBagCard({required this.card, this.onAction});
+  const _AgentHospitalBagCard({
+    required this.card,
+    required this.data,
+    this.onAction,
+  });
 
   final AgentArtifactCardView card;
+  final AgentHospitalBagCardView data;
   final ValueChanged<AgentArtifactActionView>? onAction;
 
   @override
   Widget build(BuildContext context) {
-    final cardJson = _effectiveCardJson(card);
-    final packingGroups = _objectListField(
-      cardJson,
-      'packing_groups',
-      'packingGroups',
-    );
-    final disclaimer = _displayString(cardJson['disclaimer']);
-
     return _AgentArtifactSpecializedShell(
       card: card,
       icon: Icons.shopping_bag_outlined,
       accentColor: MomCozyColors.care,
-      subtitle: '住院母婴必备用品 · 32～34周准备 · 36周完成',
+      subtitle: data.subtitle,
       children: [
-        if (packingGroups.isNotEmpty)
+        if (data.groups.isNotEmpty)
           _AgentArtifactSection(
             title: '物品清单',
             children: [
-              for (final group in packingGroups) ...[
+              for (final group in data.groups) ...[
                 _AgentPackingGroup(
-                  key: ValueKey(
-                    'packing-group:${_displayStringField(group, 'group_id', 'groupId') ?? _displayString(group['title']) ?? packingGroups.indexOf(group)}',
-                  ),
+                  key: ValueKey('packing-group:${group.id}'),
                   group: group,
-                  initiallyExpanded: group == packingGroups.first,
+                  initiallyExpanded: group == data.groups.first,
                 ),
-                if (group != packingGroups.last) const SizedBox(height: 8),
+                if (group != data.groups.last) const SizedBox(height: 8),
               ],
             ],
           ),
-        if (disclaimer != null) ...[
+        if (data.disclaimer != null) ...[
           const SizedBox(height: 10),
-          _AgentArtifactBodyText(disclaimer),
+          _AgentArtifactBodyText(data.disclaimer!),
         ],
         const SizedBox(height: 12),
         SizedBox(
@@ -899,7 +845,7 @@ class _AgentPackingGroup extends StatefulWidget {
     required this.initiallyExpanded,
   });
 
-  final Map<String, Object?> group;
+  final AgentHospitalBagGroupView group;
   final bool initiallyExpanded;
 
   @override
@@ -918,11 +864,7 @@ class _AgentPackingGroupState extends State<_AgentPackingGroup> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final title =
-        _displayString(widget.group['title']) ??
-        _displayStringField(widget.group, 'group_id', 'groupId') ??
-        '待产包';
-    final items = _objectList(widget.group['items']);
+    final items = widget.group.items;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -944,7 +886,7 @@ class _AgentPackingGroupState extends State<_AgentPackingGroup> {
                   children: [
                     Expanded(
                       child: Text(
-                        title,
+                        widget.group.title,
                         style: textTheme.labelLarge?.copyWith(
                           color: MomCozyColors.foreground,
                           fontWeight: FontWeight.w900,
@@ -983,27 +925,11 @@ class _AgentPackingGroupState extends State<_AgentPackingGroup> {
 class _AgentPackingItem extends StatelessWidget {
   const _AgentPackingItem({required this.item});
 
-  final Map<String, Object?> item;
+  final AgentHospitalBagItemView item;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final label =
-        _displayString(item['label']) ??
-        _displayString(item['name']) ??
-        _displayString(item['title']) ??
-        '物品';
-    final quantity =
-        _displayString(item['quantity']) ??
-        _displayString(item['amount']) ??
-        _displayString(item['count']);
-    final priority = _displayString(item['priority']);
-    final priorityLabel = _packingPriorityLabel(priority);
-    final description =
-        _displayString(item['reason']) ??
-        _displayString(item['description']) ??
-        _displayString(item['note']);
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1032,30 +958,39 @@ class _AgentPackingItem extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
-                    label,
+                    item.label,
                     style: textTheme.bodyMedium?.copyWith(
                       color: MomCozyColors.foreground,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  if (quantity != null)
+                  if (item.meta != null)
                     Text(
-                      quantity,
+                      item.meta!,
                       style: textTheme.labelMedium?.copyWith(
                         color: MomCozyColors.foreground,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                  if (priorityLabel != null)
+                  if (item.priorityLabel != null)
                     _AgentArtifactPill(
-                      label: priorityLabel,
-                      color: MomCozyColors.care,
+                      label: item.priorityLabel!,
+                      color: item.priorityLabel == '和医院确认'
+                          ? MomCozyColors.primary
+                          : MomCozyColors.care,
                     ),
                 ],
               ),
-              if (description != null) ...[
+              if (item.description != null) ...[
                 const SizedBox(height: 4),
-                _AgentArtifactBodyText(description),
+                _AgentArtifactBodyText(item.description!),
+              ],
+              if (item.personalization != null) ...[
+                const SizedBox(height: 4),
+                _AgentArtifactBodyText(
+                  item.personalization!,
+                  weight: FontWeight.w700,
+                ),
               ],
             ],
           ),
@@ -1298,22 +1233,6 @@ String? _displayStringField(
   return _displayString(_fieldValue(map, key, alias));
 }
 
-List<String> _displayStringListField(
-  Map<String, Object?> map,
-  String key, [
-  String? alias,
-]) {
-  return _displayStringList(_fieldValue(map, key, alias));
-}
-
-List<Map<String, Object?>> _objectListField(
-  Map<String, Object?> map,
-  String key, [
-  String? alias,
-]) {
-  return _objectList(_fieldValue(map, key, alias));
-}
-
 List<Map<String, Object?>> _objectList(Object? value) {
   if (value is! List) return const <Map<String, Object?>>[];
   return value
@@ -1339,17 +1258,6 @@ String? _displayString(Object? value) {
 List<String> _displayStringList(Object? value) {
   if (value is! List) return const <String>[];
   return value.map(_displayString).whereType<String>().toList(growable: false);
-}
-
-String? _packingPriorityLabel(String? priority) {
-  return switch (priority) {
-    'must' || 'required' => '必带',
-    'recommended' || 'recommend' || 'nice_to_have' => '建议',
-    'confirm_first' || '先确认' => '和医院确认',
-    'optional' => '可选',
-    final value? when value.trim().isNotEmpty => value,
-    _ => null,
-  };
 }
 
 Map<String, Object?> _mapField(
