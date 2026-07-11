@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
@@ -21,6 +22,24 @@ import '../../support/momcozy_test_fonts.dart';
 
 void main() {
   setUpAll(loadMomCozyTestFonts);
+
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, (call) async {
+          return switch (call.method) {
+            'read' => null,
+            'readAll' => <String, String>{},
+            'containsKey' => false,
+            'write' || 'delete' || 'deleteAll' => null,
+            _ => null,
+          };
+        });
+  });
+
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, null);
+  });
 
   group('Legacy Web widget parity: 宝宝和我', () {
     testWidgets('covers postpartum mom widgets, trend card, and bottom nav', (
@@ -1094,6 +1113,10 @@ void main() {
     });
   });
 }
+
+const _secureStorageChannel = MethodChannel(
+  'plugins.it_nomads.com/flutter_secure_storage',
+);
 
 Future<void> _setCompactViewport(WidgetTester tester) async {
   tester.view.physicalSize = const Size(390, 844);

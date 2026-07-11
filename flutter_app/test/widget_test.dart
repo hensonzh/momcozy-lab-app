@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
@@ -11,6 +12,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
@@ -21,6 +23,24 @@ import 'support/fixture_api_transport.dart';
 import 'support/fake_agent_voice.dart';
 
 void main() {
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, (call) async {
+          return switch (call.method) {
+            'read' => null,
+            'readAll' => <String, String>{},
+            'containsKey' => false,
+            'write' || 'delete' || 'deleteAll' => null,
+            _ => null,
+          };
+        });
+  });
+
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, null);
+  });
+
   testWidgets('external Agent links open safely and report launcher failure', (
     tester,
   ) async {
@@ -87,7 +107,7 @@ void main() {
       tester
           .widget<AgentHubPage>(find.byType(AgentHubPage))
           .interactionStateStore,
-      isNull,
+      isNotNull,
     );
 
     await tester.enterText(
@@ -622,8 +642,22 @@ void main() {
     await tester.pumpAndSettle();
 
     var page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
+    final initialPageKey = page.key;
+    final initialStateCacheKey = page.stateCacheKey;
+    expect(
+      (page.interactionStateStore!
+              as FlutterSecureAgentHubInteractionStateStore)
+          .userId,
+      'initial-user',
+    );
     expect(page.requestBuilder('hello').locale, 'zh-CN');
     expect(page.requestBuilder('hello').threadId, isNull);
+    expect(identical(initialStateCacheKey, controller.runtime), isTrue);
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '仅属于 initial-user 的草稿',
+    );
+    await tester.pump();
 
     controller.replaceSession(
       const MomCozySession(
@@ -634,11 +668,27 @@ void main() {
         accessToken: 'secure-access',
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
+    expect(page.key, isNot(initialPageKey));
+    expect(
+      (page.interactionStateStore!
+              as FlutterSecureAgentHubInteractionStateStore)
+          .userId,
+      'secure-user',
+    );
     expect(page.requestBuilder('hello').locale, 'en-US');
     expect(page.requestBuilder('hello').threadId, isNull);
+    expect(identical(page.stateCacheKey, initialStateCacheKey), isFalse);
+    expect(identical(page.stateCacheKey, controller.runtime), isTrue);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      isEmpty,
+    );
 
     await tester.pumpWidget(const SizedBox.shrink());
     controller.dispose();
@@ -853,6 +903,10 @@ class _WidgetFakeVoiceRealtimePlaybackSession
     complete();
   }
 }
+
+const _secureStorageChannel = MethodChannel(
+  'plugins.it_nomads.com/flutter_secure_storage',
+);
 
 AgentStreamEvent _agentEvent({
   required String id,
