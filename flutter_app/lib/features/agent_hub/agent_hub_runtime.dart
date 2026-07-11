@@ -39,12 +39,13 @@ AgentStreamRequest buildSessionAgentHubRequest(
   String message, {
   required MomCozySession session,
   String? threadId,
+  Map<String, Object?>? clientContext,
 }) {
   return AgentStreamRequest(
     threadId: _resolvedThreadId(threadId),
     message: message,
     locale: session.locale,
-    metadata: const {'source': 'flutter-agent-hub'},
+    metadata: {'source': 'flutter-agent-hub', ...?clientContext},
   );
 }
 

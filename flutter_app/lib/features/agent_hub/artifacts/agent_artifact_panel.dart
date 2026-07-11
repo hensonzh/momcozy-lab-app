@@ -1,8 +1,14 @@
+import 'dart:ui' as ui;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/card_export.dart';
 
 class AgentArtifactPanel extends StatelessWidget {
   const AgentArtifactPanel({
@@ -10,11 +16,16 @@ class AgentArtifactPanel extends StatelessWidget {
     required this.cards,
     this.onAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
+    this.cardExportService = const PlatformAgentCardExportService(),
   });
 
   final List<AgentArtifactCardView> cards;
   final ValueChanged<AgentArtifactActionView>? onAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
+  final AgentCardExportService cardExportService;
 
   @override
   Widget build(BuildContext context) {
@@ -23,18 +34,52 @@ class AgentArtifactPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final card in cards) ...[
-          if (card.isForm)
-            AgentArtifactForm(
-              card: card,
-              onAction: onAction,
-              onSubmit: onFormSubmit,
-            )
-          else
-            _specializedArtifactCard(card: card, onAction: onAction) ??
-                _AgentArtifactGenericCard(card: card, onAction: onAction),
+          _buildCard(card),
           if (card != cards.last) const SizedBox(height: 10),
         ],
       ],
+    );
+  }
+
+  Widget _buildCard(AgentArtifactCardView card) {
+    if (card.isForm) return _buildForm(card);
+    if (_isExportableSpecializedCard(card)) {
+      return _AgentExportableArtifactCard(
+        key: ValueKey('agent-card-export-wrapper-${card.id}'),
+        card: card,
+        exportService: cardExportService,
+        builder: (exportControl) =>
+            _specializedArtifactCard(
+              card: card,
+              onAction: onAction,
+              exportControl: exportControl,
+            ) ??
+            _AgentArtifactGenericCard(card: card, onAction: onAction),
+      );
+    }
+    return _specializedArtifactCard(card: card, onAction: onAction) ??
+        _AgentArtifactGenericCard(card: card, onAction: onAction);
+  }
+
+  Widget _buildForm(AgentArtifactCardView card) {
+    final submissions = formSubmissionsListenable;
+    if (submissions == null) {
+      return AgentArtifactForm(
+        card: card,
+        onAction: onAction,
+        onSubmit: onFormSubmit,
+      );
+    }
+    return ValueListenableBuilder<Map<String, AgentArtifactFormSubmission>>(
+      valueListenable: submissions,
+      builder: (context, values, child) {
+        return AgentArtifactForm(
+          card: card,
+          onAction: onAction,
+          onSubmit: onFormSubmit,
+          submission: values[card.id],
+        );
+      },
     );
   }
 }
@@ -138,6 +183,7 @@ class _AgentArtifactGenericCard extends StatelessWidget {
 Widget? _specializedArtifactCard({
   required AgentArtifactCardView card,
   ValueChanged<AgentArtifactActionView>? onAction,
+  Widget? exportControl,
 }) {
   final registeredCard = AgentArtifactCardRegistry.build(
     card: card,
@@ -155,16 +201,136 @@ Widget? _specializedArtifactCard({
       cardType: card.artifactType ?? card.cardType ?? 'milk_plan_card',
     ),
     AgentArtifactPresentationKind.birthJourneyPlanCard =>
-      _AgentBirthJourneyPlanCard(card: card),
-    AgentArtifactPresentationKind.birthPlanCard => _AgentBirthPlanCard(
-      card: card,
-    ),
-    AgentArtifactPresentationKind.hospitalBagCard => _AgentHospitalBagCard(
-      card: card,
-      onAction: onAction,
-    ),
+      _AgentBirthJourneyPlanCard(card: card, exportControl: exportControl),
+    AgentArtifactPresentationKind.birthPlanCard =>
+      card.specializedView is AgentBirthPlanCardView
+          ? _AgentBirthPlanCard(
+              card: card,
+              data: card.specializedView! as AgentBirthPlanCardView,
+              exportControl: exportControl,
+            )
+          : null,
+    AgentArtifactPresentationKind.hospitalBagCard =>
+      card.specializedView is AgentHospitalBagCardView
+          ? _AgentHospitalBagCard(
+              card: card,
+              data: card.specializedView! as AgentHospitalBagCardView,
+              onAction: onAction,
+              exportControl: exportControl,
+            )
+          : null,
     _ => null,
   };
+}
+
+bool _isExportableSpecializedCard(AgentArtifactCardView card) {
+  return switch (card.presentationKind) {
+    AgentArtifactPresentationKind.birthJourneyPlanCard => true,
+    AgentArtifactPresentationKind.birthPlanCard =>
+      card.specializedView is AgentBirthPlanCardView,
+    AgentArtifactPresentationKind.hospitalBagCard =>
+      card.specializedView is AgentHospitalBagCardView,
+    _ => false,
+  };
+}
+
+typedef _ExportableArtifactCardBuilder = Widget Function(Widget? exportControl);
+
+class _AgentExportableArtifactCard extends StatefulWidget {
+  const _AgentExportableArtifactCard({
+    super.key,
+    required this.card,
+    required this.exportService,
+    required this.builder,
+  });
+
+  final AgentArtifactCardView card;
+  final AgentCardExportService exportService;
+  final _ExportableArtifactCardBuilder builder;
+
+  @override
+  State<_AgentExportableArtifactCard> createState() =>
+      _AgentExportableArtifactCardState();
+}
+
+class _AgentExportableArtifactCardState
+    extends State<_AgentExportableArtifactCard> {
+  final GlobalKey _captureBoundaryKey = GlobalKey();
+  bool _busy = false;
+  bool _hideExportControl = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final exportControl = _hideExportControl
+        ? null
+        : OutlinedButton.icon(
+            key: ValueKey('agent-card-export-${widget.card.id}'),
+            onPressed: _busy ? null : _export,
+            icon: _busy
+                ? const SizedBox.square(
+                    dimension: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.download_rounded, size: 18),
+            label: Text(_busy ? '保存中' : '保存图片'),
+          );
+
+    return RepaintBoundary(
+      key: _captureBoundaryKey,
+      child: ColoredBox(
+        color: Colors.white,
+        child: widget.builder(exportControl),
+      ),
+    );
+  }
+
+  Future<void> _export() async {
+    if (_busy) return;
+    setState(() {
+      _busy = true;
+      _hideExportControl = true;
+    });
+    try {
+      await precacheImage(const AssetImage(MomCozyAssets.momcozyLogo), context);
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+      final boundary = _captureBoundaryKey.currentContext?.findRenderObject();
+      if (boundary is! RenderRepaintBoundary) return;
+      final pixelRatio = MediaQuery.devicePixelRatioOf(
+        context,
+      ).clamp(2.0, 3.0).toDouble();
+      final image = await boundary.toImage(pixelRatio: pixelRatio);
+      try {
+        final data = await image.toByteData(format: ui.ImageByteFormat.png);
+        if (data == null) return;
+        if (mounted) {
+          setState(() => _hideExportControl = false);
+        }
+        await widget.exportService.sharePng(
+          bytes: data.buffer.asUint8List(
+            data.offsetInBytes,
+            data.lengthInBytes,
+          ),
+          filename: buildAgentCardExportFilename(
+            cardType:
+                widget.card.cardType ?? widget.card.artifactType ?? 'card',
+            now: DateTime.now(),
+          ),
+        );
+      } finally {
+        image.dispose();
+      }
+    } catch (_) {
+      // Export failures stay internal so the conversation remains uninterrupted.
+    } finally {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _hideExportControl = false;
+        });
+      }
+    }
+  }
 }
 
 class _AgentUnsupportedArtifactCard extends StatelessWidget {
@@ -401,9 +567,10 @@ class _AgentMilkSection extends StatelessWidget {
 }
 
 class _AgentBirthJourneyPlanCard extends StatelessWidget {
-  const _AgentBirthJourneyPlanCard({required this.card});
+  const _AgentBirthJourneyPlanCard({required this.card, this.exportControl});
 
   final AgentArtifactCardView card;
+  final Widget? exportControl;
 
   @override
   Widget build(BuildContext context) {
@@ -465,6 +632,10 @@ class _AgentBirthJourneyPlanCard extends StatelessWidget {
               ],
             ],
           ),
+        ],
+        if (exportControl != null) ...[
+          const SizedBox(height: 12),
+          Align(alignment: Alignment.centerRight, child: exportControl!),
         ],
       ],
     );
@@ -651,111 +822,48 @@ class _AgentBirthJourneyItem extends StatelessWidget {
 }
 
 class _AgentBirthPlanCard extends StatelessWidget {
-  const _AgentBirthPlanCard({required this.card});
+  const _AgentBirthPlanCard({
+    required this.card,
+    required this.data,
+    this.exportControl,
+  });
 
   final AgentArtifactCardView card;
+  final AgentBirthPlanCardView data;
+  final Widget? exportControl;
 
   @override
   Widget build(BuildContext context) {
-    final cardJson = _effectiveCardJson(card);
-    final groups = <({String title, List<String> values, IconData icon})>[
-      (
-        title: '沟通方式',
-        values: _displayStringList(cardJson['communication']),
-        icon: Icons.headphones_outlined,
-      ),
-      (
-        title: '生产时偏好',
-        values: _displayStringListField(
-          cardJson,
-          'labor_preferences',
-          'laborPreferences',
-        ),
-        icon: Icons.directions_walk_rounded,
-      ),
-      (
-        title: '需要先沟通的操作',
-        values: _displayStringListField(
-          cardJson,
-          'intervention_preferences',
-          'interventionPreferences',
-        ),
-        icon: Icons.health_and_safety_outlined,
-      ),
-      (
-        title: '疼痛缓解',
-        values: _displayStringListField(cardJson, 'pain_relief', 'painRelief'),
-        icon: Icons.favorite_border_rounded,
-      ),
-      (
-        title: '宝宝出生后',
-        values: _displayStringListField(
-          cardJson,
-          'baby_after_birth',
-          'babyAfterBirth',
-        ),
-        icon: Icons.child_care_rounded,
-      ),
-      (
-        title: '计划变化时',
-        values: _displayStringListField(
-          cardJson,
-          'if_plans_change',
-          'ifPlansChange',
-        ),
-        icon: Icons.medical_services_outlined,
-      ),
-      (
-        title: '紧急情况',
-        values: _displayStringListField(
-          cardJson,
-          'emergency_authorization',
-          'emergencyAuthorization',
-        ),
-        icon: Icons.monitor_heart_outlined,
-      ),
-      (
-        title: '提前问医院',
-        values: _displayStringListField(
-          cardJson,
-          'questions_for_hospital',
-          'questionsForHospital',
-        ),
-        icon: Icons.help_outline_rounded,
-      ),
-    ].where((group) => group.values.isNotEmpty).toList(growable: false);
-    final medicalNotes = _displayStringListField(
-      cardJson,
-      'medical_notes',
-      'medicalNotes',
-    );
-    final disclaimer = _displayString(cardJson['disclaimer']);
-
     return _AgentArtifactSpecializedShell(
       card: card,
       icon: Icons.fact_check_outlined,
       accentColor: MomCozyColors.violet,
       children: [
-        if (groups.isNotEmpty)
+        if (data.sections.isNotEmpty)
           _AgentArtifactSection(
             title: '沟通卡片内容',
             children: [
-              for (final group in groups) ...[
-                _AgentBirthPlanGroup(group: group),
-                if (group != groups.last) const SizedBox(height: 8),
+              for (final section in data.sections) ...[
+                _AgentBirthPlanGroup(
+                  section: section,
+                  icon: _birthPlanSectionIcon(section.id),
+                ),
+                if (section != data.sections.last) const SizedBox(height: 8),
               ],
             ],
           ),
-        if (medicalNotes.isNotEmpty) ...[
-          if (groups.isNotEmpty) const SizedBox(height: 10),
+        if (data.medicalNotes.isNotEmpty) ...[
+          if (data.sections.isNotEmpty) const SizedBox(height: 10),
           _AgentArtifactSection(
             title: '医疗或安全信息',
-            children: [_AgentArtifactBulletList(items: medicalNotes)],
+            children: [_AgentArtifactBulletList(items: data.medicalNotes)],
           ),
         ],
-        if (disclaimer != null) ...[
-          const SizedBox(height: 10),
-          _AgentArtifactBodyText(disclaimer),
+        const SizedBox(height: 10),
+        _AgentArtifactBodyText(data.disclaimer),
+        if (exportControl != null) ...[
+          const SizedBox(height: 12),
+          Align(alignment: Alignment.centerRight, child: exportControl!),
         ],
       ],
     );
@@ -763,9 +871,10 @@ class _AgentBirthPlanCard extends StatelessWidget {
 }
 
 class _AgentBirthPlanGroup extends StatelessWidget {
-  const _AgentBirthPlanGroup({required this.group});
+  const _AgentBirthPlanGroup({required this.section, required this.icon});
 
-  final ({String title, List<String> values, IconData icon}) group;
+  final AgentBirthPlanSectionView section;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -783,11 +892,11 @@ class _AgentBirthPlanGroup extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(group.icon, size: 17, color: MomCozyColors.primary),
+                Icon(icon, size: 17, color: MomCozyColors.primary),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    group.title,
+                    section.title,
                     style: textTheme.labelLarge?.copyWith(
                       color: MomCozyColors.foreground,
                       fontWeight: FontWeight.w900,
@@ -797,7 +906,7 @@ class _AgentBirthPlanGroup extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 6),
-            _AgentArtifactBulletList(items: group.values),
+            _AgentArtifactBulletList(items: section.values),
           ],
         ),
       ),
@@ -805,65 +914,74 @@ class _AgentBirthPlanGroup extends StatelessWidget {
   }
 }
 
+IconData _birthPlanSectionIcon(String id) {
+  return switch (id) {
+    'communication' => Icons.headphones_outlined,
+    'labor_preferences' => Icons.directions_walk_rounded,
+    'intervention_preferences' => Icons.health_and_safety_outlined,
+    'pain_relief' => Icons.favorite_border_rounded,
+    'baby_after_birth' => Icons.child_care_rounded,
+    'if_plans_change' => Icons.medical_services_outlined,
+    'emergency_authorization' => Icons.monitor_heart_outlined,
+    'questions_for_hospital' => Icons.help_outline_rounded,
+    _ => Icons.check_circle_outline_rounded,
+  };
+}
+
 class _AgentHospitalBagCard extends StatelessWidget {
-  const _AgentHospitalBagCard({required this.card, this.onAction});
+  const _AgentHospitalBagCard({
+    required this.card,
+    required this.data,
+    this.onAction,
+    this.exportControl,
+  });
 
   final AgentArtifactCardView card;
+  final AgentHospitalBagCardView data;
   final ValueChanged<AgentArtifactActionView>? onAction;
+  final Widget? exportControl;
 
   @override
   Widget build(BuildContext context) {
-    final cardJson = _effectiveCardJson(card);
-    final packingGroups = _objectListField(
-      cardJson,
-      'packing_groups',
-      'packingGroups',
-    );
-    final disclaimer = _displayString(cardJson['disclaimer']);
-
     return _AgentArtifactSpecializedShell(
       card: card,
       icon: Icons.shopping_bag_outlined,
       accentColor: MomCozyColors.care,
-      subtitle: '住院母婴必备用品 · 32～34周准备 · 36周完成',
+      subtitle: data.subtitle,
       children: [
-        if (packingGroups.isNotEmpty)
+        if (data.groups.isNotEmpty)
           _AgentArtifactSection(
             title: '物品清单',
             children: [
-              for (final group in packingGroups) ...[
+              for (final group in data.groups) ...[
                 _AgentPackingGroup(
-                  key: ValueKey(
-                    'packing-group:${_displayStringField(group, 'group_id', 'groupId') ?? _displayString(group['title']) ?? packingGroups.indexOf(group)}',
-                  ),
+                  key: ValueKey('packing-group:${group.id}'),
                   group: group,
-                  initiallyExpanded: group == packingGroups.first,
+                  initiallyExpanded: group == data.groups.first,
                 ),
-                if (group != packingGroups.last) const SizedBox(height: 8),
+                if (group != data.groups.last) const SizedBox(height: 8),
               ],
             ],
           ),
-        if (disclaimer != null) ...[
+        if (data.disclaimer != null) ...[
           const SizedBox(height: 10),
-          _AgentArtifactBodyText(disclaimer),
+          _AgentArtifactBodyText(data.disclaimer!),
         ],
         const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          height: 44,
-          child: FilledButton.icon(
-            onPressed: onAction == null
-                ? null
-                : () => onAction?.call(AgentArtifactActions.hospitalBagCart),
-            icon: const Icon(Icons.shopping_cart_outlined, size: 18),
-            label: const Text('打开购物车'),
-            style: FilledButton.styleFrom(
-              backgroundColor: MomCozyColors.care,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+        Wrap(
+          alignment: WrapAlignment.end,
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            OutlinedButton.icon(
+              onPressed: onAction == null
+                  ? null
+                  : () => onAction?.call(AgentArtifactActions.hospitalBagCart),
+              icon: const Icon(Icons.shopping_bag_outlined, size: 18),
+              label: const Text('打开购物车'),
             ),
-          ),
+            ?exportControl,
+          ],
         ),
       ],
     );
@@ -877,7 +995,7 @@ class _AgentPackingGroup extends StatefulWidget {
     required this.initiallyExpanded,
   });
 
-  final Map<String, Object?> group;
+  final AgentHospitalBagGroupView group;
   final bool initiallyExpanded;
 
   @override
@@ -896,11 +1014,7 @@ class _AgentPackingGroupState extends State<_AgentPackingGroup> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final title =
-        _displayString(widget.group['title']) ??
-        _displayStringField(widget.group, 'group_id', 'groupId') ??
-        '待产包';
-    final items = _objectList(widget.group['items']);
+    final items = widget.group.items;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -922,7 +1036,7 @@ class _AgentPackingGroupState extends State<_AgentPackingGroup> {
                   children: [
                     Expanded(
                       child: Text(
-                        title,
+                        widget.group.title,
                         style: textTheme.labelLarge?.copyWith(
                           color: MomCozyColors.foreground,
                           fontWeight: FontWeight.w900,
@@ -961,27 +1075,11 @@ class _AgentPackingGroupState extends State<_AgentPackingGroup> {
 class _AgentPackingItem extends StatelessWidget {
   const _AgentPackingItem({required this.item});
 
-  final Map<String, Object?> item;
+  final AgentHospitalBagItemView item;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final label =
-        _displayString(item['label']) ??
-        _displayString(item['name']) ??
-        _displayString(item['title']) ??
-        '物品';
-    final quantity =
-        _displayString(item['quantity']) ??
-        _displayString(item['amount']) ??
-        _displayString(item['count']);
-    final priority = _displayString(item['priority']);
-    final priorityLabel = _packingPriorityLabel(priority);
-    final description =
-        _displayString(item['reason']) ??
-        _displayString(item['description']) ??
-        _displayString(item['note']);
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1010,30 +1108,39 @@ class _AgentPackingItem extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
-                    label,
+                    item.label,
                     style: textTheme.bodyMedium?.copyWith(
                       color: MomCozyColors.foreground,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  if (quantity != null)
+                  if (item.meta != null)
                     Text(
-                      quantity,
+                      item.meta!,
                       style: textTheme.labelMedium?.copyWith(
                         color: MomCozyColors.foreground,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                  if (priorityLabel != null)
+                  if (item.priorityLabel != null)
                     _AgentArtifactPill(
-                      label: priorityLabel,
-                      color: MomCozyColors.care,
+                      label: item.priorityLabel!,
+                      color: item.priorityLabel == '和医院确认'
+                          ? MomCozyColors.primary
+                          : MomCozyColors.care,
                     ),
                 ],
               ),
-              if (description != null) ...[
+              if (item.description != null) ...[
                 const SizedBox(height: 4),
-                _AgentArtifactBodyText(description),
+                _AgentArtifactBodyText(item.description!),
+              ],
+              if (item.personalization != null) ...[
+                const SizedBox(height: 4),
+                _AgentArtifactBodyText(
+                  item.personalization!,
+                  weight: FontWeight.w700,
+                ),
               ],
             ],
           ),
@@ -1276,22 +1383,6 @@ String? _displayStringField(
   return _displayString(_fieldValue(map, key, alias));
 }
 
-List<String> _displayStringListField(
-  Map<String, Object?> map,
-  String key, [
-  String? alias,
-]) {
-  return _displayStringList(_fieldValue(map, key, alias));
-}
-
-List<Map<String, Object?>> _objectListField(
-  Map<String, Object?> map,
-  String key, [
-  String? alias,
-]) {
-  return _objectList(_fieldValue(map, key, alias));
-}
-
 List<Map<String, Object?>> _objectList(Object? value) {
   if (value is! List) return const <Map<String, Object?>>[];
   return value
@@ -1317,17 +1408,6 @@ String? _displayString(Object? value) {
 List<String> _displayStringList(Object? value) {
   if (value is! List) return const <String>[];
   return value.map(_displayString).whereType<String>().toList(growable: false);
-}
-
-String? _packingPriorityLabel(String? priority) {
-  return switch (priority) {
-    'must' || 'required' => '必带',
-    'recommended' || 'recommend' || 'nice_to_have' => '建议',
-    'confirm_first' || '先确认' => '和医院确认',
-    'optional' => '可选',
-    final value? when value.trim().isNotEmpty => value,
-    _ => null,
-  };
 }
 
 Map<String, Object?> _mapField(

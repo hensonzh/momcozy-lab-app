@@ -16,6 +16,11 @@ class AgentStreamEvent {
       stringField(payload, 'messageId') ??
       stringField(payload, 'message_stream_id') ??
       stringField(payload, 'messageStreamId');
+  String? get messageStreamId =>
+      stringField(payload, 'message_stream_id') ??
+      stringField(payload, 'messageStreamId') ??
+      stringField(raw, 'message_stream_id') ??
+      stringField(raw, 'messageStreamId');
   String? get toolCallId =>
       stringField(raw, 'tool_call_id') ??
       stringField(raw, 'toolCallId') ??
@@ -68,6 +73,26 @@ class AgentStreamEvent {
     if (type != 'message.completed') return null;
     return cleanAgentAssistantText(_rawCompletedText);
   }
+
+  String? get streamSchemaVersion =>
+      stringField(payload, 'stream_schema_version') ??
+      stringField(payload, 'streamSchemaVersion');
+  int? get segmentIndex =>
+      _intField(payload, 'segment_index') ?? _intField(payload, 'segmentIndex');
+  int? get prefixUtf8Bytes =>
+      _intField(payload, 'prefix_utf8_bytes') ??
+      _intField(payload, 'prefixUtf8Bytes');
+  String? get prefixSha256 =>
+      stringField(payload, 'prefix_sha256') ??
+      stringField(payload, 'prefixSha256');
+  int? get segmentCount =>
+      _intField(payload, 'segment_count') ?? _intField(payload, 'segmentCount');
+  int? get contentUtf8Bytes =>
+      _intField(payload, 'content_utf8_bytes') ??
+      _intField(payload, 'contentUtf8Bytes');
+  String? get contentSha256 =>
+      stringField(payload, 'content_sha256') ??
+      stringField(payload, 'contentSha256');
 
   List<String> get quickReplies {
     for (final source in [
@@ -228,6 +253,13 @@ String? stringField(Map<String, Object?> map, String key) {
   return value is String ? value : null;
 }
 
+int? _intField(Map<String, Object?> map, String key) {
+  final value = map[key];
+  if (value is int) return value;
+  if (value is String) return int.tryParse(value.trim());
+  return null;
+}
+
 String _normalizedEventType(Map<String, Object?> raw) {
   return stringField(raw, 'type') ?? 'unknown';
 }
@@ -300,7 +332,9 @@ List<String> _quickReplyTexts(Object? rawReplies) {
     seen.add(text);
     replies.add(text);
   }
-  return replies.length == 3 ? List<String>.unmodifiable(replies) : const <String>[];
+  return replies.length == 3
+      ? List<String>.unmodifiable(replies)
+      : const <String>[];
 }
 
 String? _nonEmpty(String? value) {

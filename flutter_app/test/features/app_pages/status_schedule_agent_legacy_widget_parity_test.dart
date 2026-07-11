@@ -931,11 +931,11 @@ void main() {
         final imageButton = tester.widget<IconButton>(
           find.byKey(const ValueKey('agent-image-button')),
         );
-        expect(imageButton.onPressed, isNull);
+        expect(imageButton.onPressed, isNotNull);
         final voiceButton = tester.widget<IconButton>(
           find.byKey(const ValueKey('agent-voice-button')),
         );
-        expect(voiceButton.onPressed, isNull);
+        expect(voiceButton.onPressed, isNotNull);
 
         await tester.enterText(
           find.byKey(const ValueKey('agent-composer-input')),
@@ -1043,7 +1043,7 @@ void main() {
           AgentHubPage(
             runner: AgentStreamRunner(client),
             historyMessages: history,
-            pickImage: () async => const AgentStreamImageInput(
+            pickImage: (_) async => const AgentStreamImageInput(
               dataUrl: 'data:image/png;base64,fixture',
               mimeType: 'image/png',
               name: 'legacy-widget.png',

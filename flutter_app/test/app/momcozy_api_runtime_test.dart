@@ -11,7 +11,9 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
@@ -133,10 +135,15 @@ void main() {
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
+    expect(runtime.productAssetRepository, isA<ProductAssetRepository>());
     expect(runtime.agentVoiceRepository, isA<AgentVoiceApiRepository>());
     expect(
       runtime.agentVoicePlaybackPlayer,
       isA<AgentVoiceApiPlaybackPlayer>(),
+    );
+    expect(
+      runtime.agentVoicePlaybackPlayer,
+      same(runtime.agentVoicePlaybackPlayer),
     );
     expect(
       runtime.hospitalBagCartRepository,
@@ -325,14 +332,22 @@ void main() {
 
   test('runtime controller replaces runtime and preserves observability', () {
     final observability = MomCozyObservability();
+    final productAssetRepository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      connector: const _NeverProductAssetConnector(),
+    );
     final runtime = MomCozyApiRuntime(
       jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
       userId: 'user-fixture',
       babyId: 'baby-fixture',
       locale: 'zh-CN',
       observability: observability,
+      productAssetRepository: productAssetRepository,
     );
     final controller = MomCozyRuntimeController(runtime);
+    final previousCartStore = runtime.hospitalBagCartStore;
+    final previousConsultStore = runtime.ibclcConsultStore;
+    previousCartStore.ingestArtifact(_cartSeed('previous-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -353,8 +368,54 @@ void main() {
     expect(controller.runtime.userId, 'session-user');
     expect(controller.runtime.session.accessToken, 'session-access');
     expect(controller.runtime.observability, same(observability));
+    expect(
+      controller.runtime.hospitalBagCartStore,
+      isNot(same(previousCartStore)),
+    );
+    expect(controller.runtime.hospitalBagCartStore.agentClientContext, isNull);
+    expect(
+      controller.runtime.ibclcConsultStore,
+      isNot(same(previousConsultStore)),
+    );
+    expect(
+      controller.runtime.productAssetRepository,
+      same(productAssetRepository),
+    );
     controller.dispose();
   });
+
+  test(
+    'runtime controller does not carry an internal voice player to another user',
+    () {
+      final runtime = MomCozyApiRuntime.fromSession(
+        const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'first-user',
+          babyId: 'first-baby',
+          locale: 'zh-CN',
+          accessToken: 'first-access',
+        ),
+      );
+      final firstPlayer = runtime.agentVoicePlaybackPlayer;
+      final controller = MomCozyRuntimeController(runtime);
+
+      controller.replaceSession(
+        const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'second-user',
+          babyId: 'second-baby',
+          locale: 'zh-CN',
+          accessToken: 'second-access',
+        ),
+      );
+
+      expect(
+        controller.runtime.agentVoicePlaybackPlayer,
+        isNot(same(firstPlayer)),
+      );
+      controller.dispose();
+    },
+  );
 
   test('runtime controller keeps auto-refresh transports across sessions', () {
     final observability = MomCozyObservability();
@@ -370,6 +431,9 @@ void main() {
       MomCozyApiRuntime.fromSession(session, observability: observability),
     );
     final store = MemoryMomCozySessionStore(session);
+    final cartStore = controller.runtime.hospitalBagCartStore;
+    final consultStore = controller.runtime.ibclcConsultStore;
+    cartStore.ingestArtifact(_cartSeed('same-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
       notifyCount += 1;
@@ -378,6 +442,12 @@ void main() {
     controller.enableSessionAutoRefresh(store);
 
     expect(notifyCount, 1);
+    expect(controller.runtime.hospitalBagCartStore, same(cartStore));
+    expect(controller.runtime.ibclcConsultStore, same(consultStore));
+    expect(
+      controller.runtime.hospitalBagCartStore.agentClientContext,
+      isNotNull,
+    );
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),
@@ -396,6 +466,8 @@ void main() {
 
     expect(notifyCount, 2);
     expect(controller.runtime.currentSession.accessToken, 'fresh-access');
+    expect(controller.runtime.hospitalBagCartStore, same(cartStore));
+    expect(controller.runtime.ibclcConsultStore, same(consultStore));
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),
@@ -407,6 +479,36 @@ void main() {
     expect(controller.runtime.observability, same(observability));
     controller.dispose();
   });
+}
+
+HospitalBagCartArtifactSeed _cartSeed(String artifactId) {
+  return HospitalBagCartArtifactSeed.tryFromCartUpdate(
+    artifactId: artifactId,
+    cartUpdate: {
+      'groups': [
+        {
+          'title': '我的清单',
+          'tone': 'sky',
+          'items': [
+            {'id': 'custom', 'name': '个性化用品', 'qty': 1, 'price': 10},
+          ],
+        },
+      ],
+    },
+  )!;
+}
+
+class _NeverProductAssetConnector implements ProductAssetHttpConnector {
+  const _NeverProductAssetConnector();
+
+  @override
+  Future<ProductAssetHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+    required int maxBytes,
+  }) {
+    throw UnsupportedError('No product asset request expected.');
+  }
 }
 
 class _RuntimeMigrationStore implements StorageMigrationTargetStore {

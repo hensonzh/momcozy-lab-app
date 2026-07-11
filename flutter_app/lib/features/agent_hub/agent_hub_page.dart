@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -11,24 +13,39 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
+import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:video_player/video_player.dart';
 
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
-typedef AgentHubImagePicker = Future<AgentStreamImageInput?> Function();
 typedef AgentHubVoiceInput = Future<String?> Function();
 typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
 typedef AgentHubNewSessionHandler = void Function();
+typedef HospitalBagCartUpdateHandler =
+    void Function(HospitalBagCartArtifactSeed seed);
 
 const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
 const _agentSkillAssetBaseUrl = String.fromEnvironment(
@@ -61,26 +78,82 @@ String _formSubmitRequestMessage(AgentArtifactActionView action) {
   final extraMap = extra is Map ? Map<String, Object?>.from(extra) : const {};
   final formId = extraMap['formId']?.toString().trim();
   return [
-    '我已提交信息采集表单，请继续完成对应服务。',
+    if (formId == 'support_ticket')
+      '我已确认售后信息，请基于确认后的表单数据发起正式工单创建动作。'
+    else
+      '我已提交信息采集表单，请基于确认后的表单数据继续完成对应服务。',
     if (formId != null && formId.isNotEmpty) 'form_id: $formId',
   ].join('\n');
 }
 
-Map<String, Object?> _formSubmissionMetadata(AgentArtifactActionView action) {
+({String artifactId, String? formId, Map<String, Object?> values})?
+_formSubmissionFromAction(AgentArtifactActionView action) {
   final extra = action.routeExtra;
-  if (extra is! Map) return const {};
-  final extraMap = Map<String, Object?>.from(extra);
-  final artifactId = extraMap['artifactId']?.toString().trim() ?? '';
-  final formId = extraMap['formId']?.toString().trim() ?? '';
-  final values = extraMap['values'];
-  if (artifactId.isEmpty || formId.isEmpty || values is! Map) return const {};
+  if (extra is! Map) return null;
+  final artifactId = extra['artifactId']?.toString().trim();
+  final rawValues = extra['values'];
+  if (artifactId == null || artifactId.isEmpty || rawValues is! Map) {
+    return null;
+  }
+  final values = <String, Object?>{};
+  for (final entry in rawValues.entries) {
+    final key = entry.key;
+    if (key is String && key.trim().isNotEmpty) values[key] = entry.value;
+  }
+  final rawFormId = extra['formId']?.toString().trim();
+  return (
+    artifactId: artifactId,
+    formId: rawFormId == null || rawFormId.isEmpty ? null : rawFormId,
+    values: Map<String, Object?>.unmodifiable(values),
+  );
+}
+
+Map<String, Object?> _formSubmissionMetadata(AgentArtifactActionView action) {
+  final submission = _formSubmissionFromAction(action);
+  final formId = submission?.formId;
+  if (submission == null || formId == null) return const {};
   return {
     'form_submission': {
-      'artifact_id': artifactId,
+      'artifact_id': submission.artifactId,
       'form_id': formId,
-      'values': Map<String, Object?>.from(values),
+      'values': submission.values,
     },
   };
+}
+
+String _formSubmissionIdempotencyKey({
+  required String artifactId,
+  required String? formId,
+  required String? threadId,
+  required Map<String, Object?> values,
+}) {
+  final canonicalPayload = jsonEncode(
+    _canonicalJsonValue({
+      'artifact_id': artifactId,
+      'form_id': formId ?? '',
+      'thread_id': threadId?.trim() ?? '',
+      'values': values,
+    }),
+  );
+  return 'agent-form-submit-${sha256.convert(utf8.encode(canonicalPayload))}';
+}
+
+Object? _canonicalJsonValue(Object? value) {
+  if (value is Map) {
+    final entries =
+        value.entries
+            .where((entry) => entry.key is String)
+            .map((entry) => MapEntry(entry.key as String, entry.value))
+            .toList(growable: false)
+          ..sort((left, right) => left.key.compareTo(right.key));
+    return {
+      for (final entry in entries) entry.key: _canonicalJsonValue(entry.value),
+    };
+  }
+  if (value is List) {
+    return value.map(_canonicalJsonValue).toList(growable: false);
+  }
+  return value;
 }
 
 class _PendingAutoVoiceReplay {
@@ -106,6 +179,8 @@ class _AgentHubInteractionState {
   bool autoVoiceEnabled = true;
   AgentStreamRequest? activeRequest;
   Map<String, String> localActionStatuses = const <String, String>{};
+  Map<String, AgentArtifactFormSubmission> formSubmissions =
+      const <String, AgentArtifactFormSubmission>{};
 }
 
 class AgentHubPage extends StatefulWidget {
@@ -126,7 +201,11 @@ class AgentHubPage extends StatefulWidget {
     this.voiceInputController,
     this.voicePlaybackCoordinator,
     this.voicePlaybackPlayer,
+    this.productAssetRepository,
+    this.ibclcConsultStore,
     this.onArtifactAction,
+    this.onHospitalBagCartUpdate,
+    this.onHospitalBagCartContextRequired,
     this.onNewSession,
     this.initialComposerText,
     this.initialAutoSend = false,
@@ -147,7 +226,11 @@ class AgentHubPage extends StatefulWidget {
   final AgentVoiceInputController? voiceInputController;
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
+  final ProductAssetRepository? productAssetRepository;
+  final IbclcConsultStore? ibclcConsultStore;
   final AgentArtifactActionHandler? onArtifactAction;
+  final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
+  final VoidCallback? onHospitalBagCartContextRequired;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
   final bool initialAutoSend;
@@ -163,11 +246,16 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final FocusNode _composerFocusNode = FocusNode();
   _AgentHubInteractionState? _interactionState;
   StreamSubscription<AgentStreamRunState>? _runSubscription;
+  Completer<bool>? _runAcceptanceCompleter;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
+  Future<AgentVoiceInputPermissionState>? _voiceCaptureStart;
+  int _voiceCaptureGeneration = 0;
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
+  final Set<String> _appliedHospitalBagCartUpdates = <String>{};
+  bool _hospitalBagCartLinkContextApplied = false;
   final ScrollController _chatScrollController = ScrollController();
   final GlobalKey _activeArtifactPanelKey = GlobalKey();
   final ValueNotifier<AgentStreamRunState> _runStateNotifier =
@@ -185,6 +273,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final ValueNotifier<String?> _activeVoicePlaybackIdNotifier =
       ValueNotifier<String?>(null);
   final ValueNotifier<int> _actionStateRevisionNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<Map<String, AgentArtifactFormSubmission>>
+  _formSubmissionsNotifier =
+      ValueNotifier<Map<String, AgentArtifactFormSubmission>>(
+        const <String, AgentArtifactFormSubmission>{},
+      );
   bool _autoVoiceEnabled = true;
   bool _showLatestButton = false;
   bool _showPhotoMenu = false;
@@ -200,18 +293,28 @@ class _AgentHubPageState extends State<AgentHubPage> {
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
   String? _activeAutoVoicePlaybackId;
   String _autoVoiceAppendedText = '';
+  bool _autoVoiceHasSubmittedContent = false;
   AgentVoiceRealtimePlaybackSession? _autoVoiceSession;
   bool _autoVoiceSessionFinished = false;
+  final Set<String> _autoVoiceSubmittedArtifactTexts = <String>{};
+  final Set<String> _autoVoiceSubmittedMediaNarrations = <String>{};
+  Object? _mediaVoiceEventIdentity;
+  AgentMediaVoiceNarrationIndex _mediaVoiceNarrationIndex =
+      AgentMediaVoiceNarrationIndex.fromEvents(const []);
   VoidCallback? _unsubscribeVoicePlaybackIdle;
   bool _consumedInitialAutoSend = false;
   bool _dismissComposerKeyboardOnRunAccepted = false;
   String _greeting = agentHubDefaultGreeting;
+  AgentHubGreetingProfile? _profile;
   int _greetingRefreshGeneration = 0;
+  int _lastHandledIbclcCompletionRevision = 0;
 
   @override
   void initState() {
     super.initState();
     _restoreCachedInteractionState();
+    _applyHospitalBagCartUpdates(_state);
+    _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
     _restorePersistedInteractionState();
     _applyInitialComposerText();
@@ -219,6 +322,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_updateLatestButtonVisibility);
     _syncVoicePlaybackIdleSubscription();
+    _syncIbclcConsultStore(null, widget.ibclcConsultStore);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _updateLatestButtonVisibility();
@@ -250,12 +354,21 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
       _syncVoicePlaybackIdleSubscription();
     }
+    if (oldWidget.ibclcConsultStore != widget.ibclcConsultStore) {
+      _syncIbclcConsultStore(
+        oldWidget.ibclcConsultStore,
+        widget.ibclcConsultStore,
+      );
+    }
   }
 
   @override
   void dispose() {
+    _voiceCaptureGeneration += 1;
+    unawaited(widget.voiceInputController?.cancelCapture());
     _cancelRunSubscription();
     _unsubscribeVoicePlaybackIdle?.call();
+    widget.ibclcConsultStore?.removeListener(_handleIbclcConsultStoreChanged);
     _persistInteractionState();
     _flushPersistentInteractionState();
     _composerController.removeListener(_persistInteractionState);
@@ -270,6 +383,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _responseLightRailModeNotifier.dispose();
     _activeVoicePlaybackIdNotifier.dispose();
     _actionStateRevisionNotifier.dispose();
+    _formSubmissionsNotifier.dispose();
     super.dispose();
   }
 
@@ -281,6 +395,35 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (coordinator == null) return;
     _unsubscribeVoicePlaybackIdle = coordinator.subscribeIdle(() {
       scheduleMicrotask(_tryRunPendingAutoVoiceReplay);
+    });
+  }
+
+  void _syncIbclcConsultStore(
+    IbclcConsultStore? oldStore,
+    IbclcConsultStore? newStore,
+  ) {
+    oldStore?.removeListener(_handleIbclcConsultStoreChanged);
+    _lastHandledIbclcCompletionRevision = newStore?.completionRevision ?? 0;
+    newStore?.addListener(_handleIbclcConsultStoreChanged);
+  }
+
+  void _handleIbclcConsultStoreChanged() {
+    final store = widget.ibclcConsultStore;
+    if (store == null ||
+        store.completionRevision <= _lastHandledIbclcCompletionRevision) {
+      return;
+    }
+    _lastHandledIbclcCompletionRevision = store.completionRevision;
+    final routeState = store.lastCompletedRouteState;
+    if (routeState == null || routeState.returnPath != '/') return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_chatScrollController.hasClients) return;
+      final position = _chatScrollController.position;
+      final offset = routeState.returnScrollOffset
+          .clamp(0.0, position.maxScrollExtent)
+          .toDouble();
+      position.jumpTo(offset);
+      _updateLatestButtonVisibility();
     });
   }
 
@@ -351,6 +494,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _autoVoiceEnabled = interactionState.autoVoiceEnabled;
     _activeRequest = interactionState.activeRequest;
     _localActionStatuses.addAll(interactionState.localActionStatuses);
+    _formSubmissionsNotifier.value =
+        Map<String, AgentArtifactFormSubmission>.of(
+          interactionState.formSubmissions,
+        );
     interactionState.runState = _state;
   }
 
@@ -387,7 +534,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ..attachedImages = [..._attachedImages]
         ..autoVoiceEnabled = _autoVoiceEnabled
         ..activeRequest = _activeRequest
-        ..localActionStatuses = {..._localActionStatuses};
+        ..localActionStatuses = {..._localActionStatuses}
+        ..formSubmissions = _completedFormSubmissions();
     }
   }
 
@@ -409,6 +557,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _applyInteractionSnapshot(snapshot);
     });
+    _applyHospitalBagCartUpdates(_state);
+    _applyHospitalBagCartLinkContext(_state);
     _persistInteractionState();
   }
 
@@ -422,7 +572,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _composerController.text.trim().isNotEmpty ||
         _attachedImages.isNotEmpty ||
         _activeRequest != null ||
-        _localActionStatuses.isNotEmpty;
+        _localActionStatuses.isNotEmpty ||
+        _formSubmissionsNotifier.value.isNotEmpty;
   }
 
   void _applyInteractionSnapshot(AgentHubInteractionSnapshot snapshot) {
@@ -448,6 +599,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _localActionStatuses
       ..clear()
       ..addAll(snapshot.localActionStatuses);
+    _formSubmissionsNotifier.value =
+        Map<String, AgentArtifactFormSubmission>.of(snapshot.formSubmissions);
   }
 
   AgentStreamRunState _restoreInterruptedRunState(
@@ -470,7 +623,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
       autoVoiceEnabled: _autoVoiceEnabled,
       activeRequest: _activeRequest,
       localActionStatuses: {..._localActionStatuses},
+      formSubmissions: _completedFormSubmissions(),
     );
+  }
+
+  Map<String, AgentArtifactFormSubmission> _completedFormSubmissions() {
+    return {
+      for (final entry in _formSubmissionsNotifier.value.entries)
+        if (entry.value.isSubmitted) entry.key: entry.value,
+    };
   }
 
   void _schedulePersistentInteractionStateWrite(
@@ -699,9 +860,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelCurrentBubblePlaybackForNewTurn();
 
     final requestMessage = message.isEmpty ? '请看这张图片' : message;
-    final optimisticContent = message.isEmpty
-        ? '图片 ${_attachedImages.length}'
-        : message;
+    final sentImages = List<AgentStreamImageInput>.unmodifiable(
+      _attachedImages,
+    );
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithImages(
@@ -721,7 +882,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _historyMessages.add(
         AgentHubHistoryMessage(
           role: AgentHubHistoryRole.user,
-          content: optimisticContent,
+          content: message,
+          images: sentImages,
         ),
       );
       _attachedImages.clear();
@@ -738,6 +900,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     required String requestMessage,
     required String optimisticContent,
     Map<String, Object?> metadata = const {},
+    String? idempotencyKey,
+    bool awaitServerRunSignal = false,
   }) async {
     final runner = widget.runner;
     if (runner == null || requestMessage.trim().isEmpty || _isComposerLocked) {
@@ -747,9 +911,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelCurrentBubblePlaybackForNewTurn();
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
-    final request = _requestWithMetadata(
-      widget.requestBuilder(requestMessage.trim()),
-      metadata,
+    final request = _requestWithIdempotencyKey(
+      _requestWithMetadata(
+        widget.requestBuilder(requestMessage.trim()),
+        metadata,
+      ),
+      idempotencyKey,
     );
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
     if (interruptedState != null) {
@@ -773,30 +940,112 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
     _persistInteractionState();
     _scheduleScrollToLatest();
-    await _startRun(request);
-    return true;
+    return _startRun(request, awaitServerRunSignal: awaitServerRunSignal);
   }
 
   void _handleArtifactAction(AgentArtifactActionView action) {
     if (action.kind == 'form.submit') {
-      unawaited(
-        _sendSyntheticUserMessage(
-          requestMessage: _formSubmitRequestMessage(action),
-          optimisticContent: '已提交信息采集表单',
-          metadata: _formSubmissionMetadata(action),
-        ).then<void>((_) {}),
-      );
+      unawaited(_handleArtifactFormSubmit(action));
       return;
     }
-    widget.onArtifactAction?.call(action);
+    var resolvedAction = action;
+    if (action.routePath == '/ibclc-chat.html') {
+      final rawExtra = action.routeExtra;
+      final fallbackState = rawExtra is IbclcConsultRouteDraft
+          ? rawExtra.resolve(
+              threadId: _state.threadId ?? _activeRequest?.threadId ?? '',
+              runId: _state.runId ?? _activeRequest?.runId ?? '',
+            )
+          : rawExtra is IbclcConsultRouteState
+          ? rawExtra
+          : null;
+      final routeState = fallbackState?.withReturnContext(
+        returnPath: '/',
+        returnScrollOffset: _chatScrollController.hasClients
+            ? _chatScrollController.offset
+            : 0,
+      );
+      if (routeState == null) {
+        widget.onArtifactAction?.call(action);
+        return;
+      }
+      resolvedAction = AgentArtifactActionView(
+        label: action.label,
+        icon: action.icon,
+        kind: action.kind,
+        value: action.value,
+        routePath: action.routePath,
+        routeExtra: routeState,
+        externalUri: action.externalUri,
+        hospitalBagCartSeed: action.hospitalBagCartSeed,
+      );
+    }
+    widget.onArtifactAction?.call(resolvedAction);
   }
 
-  Future<bool> _handleArtifactFormSubmit(AgentArtifactActionView action) {
-    return _sendSyntheticUserMessage(
-      requestMessage: _formSubmitRequestMessage(action),
-      optimisticContent: '已提交信息采集表单',
-      metadata: _formSubmissionMetadata(action),
+  Future<bool> _handleArtifactFormSubmit(AgentArtifactActionView action) async {
+    final submission = _formSubmissionFromAction(action);
+    if (submission == null) return false;
+    final artifactId = submission.artifactId;
+    final existing = _formSubmissionsNotifier.value[artifactId];
+    if (existing?.isSubmitted == true) return true;
+    if (existing?.isSubmitting == true) return false;
+
+    _setFormSubmission(
+      artifactId,
+      AgentArtifactFormSubmission.submitting(values: submission.values),
     );
+    final idempotencyKey = _formSubmissionIdempotencyKey(
+      artifactId: artifactId,
+      formId: submission.formId,
+      threadId: _state.threadId ?? _activeRequest?.threadId,
+      values: submission.values,
+    );
+
+    var accepted = false;
+    try {
+      accepted = await _sendSyntheticUserMessage(
+        requestMessage: _formSubmitRequestMessage(action),
+        optimisticContent: submission.formId == 'support_ticket'
+            ? '已确认售后信息'
+            : '已提交信息采集表单',
+        metadata: _formSubmissionMetadata(action),
+        idempotencyKey: idempotencyKey,
+        awaitServerRunSignal: true,
+      );
+    } catch (_) {
+      accepted = false;
+    }
+    if (!mounted) return accepted;
+
+    if (accepted) {
+      _setFormSubmission(
+        artifactId,
+        AgentArtifactFormSubmission.submitted(values: submission.values),
+      );
+    } else {
+      _removeFormSubmission(artifactId);
+    }
+    _persistInteractionState();
+    return accepted;
+  }
+
+  void _setFormSubmission(
+    String artifactId,
+    AgentArtifactFormSubmission submission,
+  ) {
+    _formSubmissionsNotifier.value = {
+      ..._formSubmissionsNotifier.value,
+      artifactId: submission,
+    };
+  }
+
+  void _removeFormSubmission(String artifactId) {
+    if (!_formSubmissionsNotifier.value.containsKey(artifactId)) return;
+    final next = Map<String, AgentArtifactFormSubmission>.of(
+      _formSubmissionsNotifier.value,
+    )..remove(artifactId);
+    _formSubmissionsNotifier.value = next;
   }
 
   void _handleQuickReplySelected(String text) {
@@ -849,13 +1098,23 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
   }
 
-  Future<void> _attachImage() async {
+  Future<void> _attachImage(AgentImageInputSource source) async {
     final pickImage = widget.pickImage;
     if (pickImage == null || _isComposerLocked) return;
-    final image = await pickImage();
+    AgentStreamImageInput? image;
+    try {
+      image = await pickImage(source);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _showPhotoMenu = false;
+      });
+      return;
+    }
     if (!mounted || image == null) return;
+    final selectedImage = image;
     setState(() {
-      _attachedImages.add(image);
+      _attachedImages.add(selectedImage);
       _showPhotoMenu = false;
     });
     _persistInteractionState();
@@ -868,7 +1127,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
   }
 
-  Future<void> _startVoiceInput() async {
+  void _startVoiceInput() {
     if ((widget.voiceInputController == null && widget.voiceInput == null) ||
         _isComposerLocked ||
         _voiceState.isInputActive) {
@@ -879,34 +1138,78 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _setVoiceState(_voiceState.startListening());
     });
 
+    final controller = widget.voiceInputController;
+    if (controller == null) return;
+    final generation = ++_voiceCaptureGeneration;
+    final start = _beginVoiceCapture(controller, generation);
+    _voiceCaptureStart = start;
+  }
+
+  Future<AgentVoiceInputPermissionState> _beginVoiceCapture(
+    AgentVoiceInputController controller,
+    int generation,
+  ) async {
     try {
+      final permission = await controller.startCapture();
+      if (mounted &&
+          generation == _voiceCaptureGeneration &&
+          permission != AgentVoiceInputPermissionState.granted) {
+        setState(() {
+          _setVoiceState(_voiceState.markPermissionDenied(permission));
+        });
+      }
+      return permission;
+    } catch (error) {
+      if (mounted && generation == _voiceCaptureGeneration) {
+        setState(() {
+          _setVoiceState(_voiceState.fail(error));
+        });
+      }
+      return AgentVoiceInputPermissionState.unknown;
+    }
+  }
+
+  Future<void> _finishVoiceInput({required bool submit}) async {
+    final controller = widget.voiceInputController;
+    final start = _voiceCaptureStart;
+    _voiceCaptureStart = null;
+
+    if (controller == null) {
+      if (!submit) {
+        if (mounted) setState(() => _setVoiceState(const AgentVoiceState()));
+        return;
+      }
+      await _transcribeLegacyVoiceInput();
+      return;
+    }
+
+    final permission = start == null
+        ? AgentVoiceInputPermissionState.unknown
+        : await start;
+    if (!submit) {
+      try {
+        await controller.cancelCapture();
+      } catch (error) {
+        if (mounted) setState(() => _setVoiceState(_voiceState.fail(error)));
+        return;
+      }
+      if (mounted) setState(() => _setVoiceState(const AgentVoiceState()));
+      return;
+    }
+    if (permission != AgentVoiceInputPermissionState.granted) return;
+
+    if (mounted) {
       setState(() {
         _setVoiceState(
           _voiceState.startTranscribing(draft: _composerController.text),
         );
       });
-      final result = await _captureVoiceInput();
-      if (!mounted) return;
-      setState(() {
-        if (result.status == AgentVoiceInputResultStatus.permissionDenied) {
-          _setVoiceState(
-            _voiceState.markPermissionDenied(
-              result.permissionState ?? AgentVoiceInputPermissionState.denied,
-            ),
-          );
-          return;
-        }
+    }
 
-        final text = result.text;
-        if (text != null && text.isNotEmpty) {
-          _composerController.text = text;
-          _composerController.selection = TextSelection.collapsed(
-            offset: _composerController.text.length,
-          );
-        }
-        _setVoiceState(_voiceState.applyTranscription(text ?? ''));
-      });
-      _persistInteractionState();
+    try {
+      final result = await controller.finishCapture();
+      if (!mounted) return;
+      _applyVoiceInputResult(result);
     } catch (error) {
       if (!mounted) return;
       setState(() {
@@ -915,18 +1218,56 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
   }
 
-  Future<AgentVoiceInputResult> _captureVoiceInput() async {
-    final controller = widget.voiceInputController;
-    if (controller != null) {
-      return controller.captureAndTranscribe();
+  Future<void> _transcribeLegacyVoiceInput() async {
+    if (mounted) {
+      setState(() {
+        _setVoiceState(
+          _voiceState.startTranscribing(draft: _composerController.text),
+        );
+      });
     }
 
-    return AgentVoiceInputResult.fromText(await widget.voiceInput?.call());
+    try {
+      final result = AgentVoiceInputResult.fromText(
+        await widget.voiceInput?.call(),
+      );
+      if (!mounted) return;
+      _applyVoiceInputResult(result);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _setVoiceState(_voiceState.fail(error));
+      });
+    }
   }
 
-  void _removeAttachedImages() {
+  void _applyVoiceInputResult(AgentVoiceInputResult result) {
     setState(() {
-      _attachedImages.clear();
+      if (result.status == AgentVoiceInputResultStatus.permissionDenied) {
+        _setVoiceState(
+          _voiceState.markPermissionDenied(
+            result.permissionState ?? AgentVoiceInputPermissionState.denied,
+          ),
+        );
+        return;
+      }
+
+      final text = result.text;
+      if (text != null && text.isNotEmpty) {
+        _composerController.text = text;
+        _composerController.selection = TextSelection.collapsed(
+          offset: _composerController.text.length,
+        );
+      }
+      _setVoiceState(_voiceState.applyTranscription(text ?? ''));
+    });
+    _persistInteractionState();
+  }
+
+  void _removeAttachedImage(int index) {
+    if (index < 0 || index >= _attachedImages.length) return;
+    setState(() {
+      _attachedImages.removeAt(index);
     });
     _persistInteractionState();
   }
@@ -940,6 +1281,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _dismissComposerKeyboardOnRunAccepted = false;
     _cancelRunSubscription();
     _composerController.clear();
+    _formSubmissionsNotifier.value =
+        const <String, AgentArtifactFormSubmission>{};
     setState(() {
       _setRunState(const AgentStreamRunState());
       _historyMessages.clear();
@@ -950,6 +1293,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _activeRequest = null;
       _setVoiceState(const AgentVoiceState());
       _pendingAutoVoiceReplay = null;
+      _appliedHospitalBagCartUpdates.clear();
+      _hospitalBagCartLinkContextApplied = false;
       _resetAutoVoiceProgress();
     });
     _notifyActionStateChanged();
@@ -992,16 +1337,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
       // Greeting personalization is best effort; the default stays available.
     }
     if (!mounted || generation != _greetingRefreshGeneration) return;
-    if (!_isShowingFreshGreeting) return;
-
+    final isShowingFreshGreeting = _isShowingFreshGreeting;
     if (loaded) {
       final nextGreeting = agentHubGreetingForProfile(profile);
-      if (nextGreeting != _greeting) {
-        setState(() {
-          _greeting = nextGreeting;
-        });
-      }
+      setState(() {
+        _profile = profile;
+        if (isShowingFreshGreeting) _greeting = nextGreeting;
+      });
     }
+    if (!isShowingFreshGreeting) return;
     _maybeStartGreetingVoicePlayback();
   }
 
@@ -1072,8 +1416,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted || !_state.isActive) return;
     _updateComposerFocusForRun(nextState);
     final shouldFollowLatest = _isNearLatest() || nextState.isActive;
-    final previousArtifactId = _latestArtifactId(_state);
-    final nextArtifactId = _latestArtifactId(nextState);
+    final artifactProjectionChanged = _artifactProjectionChanged(
+      _state,
+      nextState,
+    );
+    if (artifactProjectionChanged) {
+      _applyHospitalBagCartUpdates(nextState);
+    }
+    _applyHospitalBagCartLinkContext(
+      nextState,
+      checkArtifacts: artifactProjectionChanged,
+    );
+    final previousArtifactId = _latestPublishedArtifactId(_state);
+    final nextArtifactId = _latestPublishedArtifactId(nextState);
     final shouldFocusArtifact =
         nextArtifactId != null && nextArtifactId != previousArtifactId;
     final activeRequest = _activeRequest;
@@ -1096,13 +1451,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
 
-    final hasServerRunSignal =
-        nextState.runId?.trim().isNotEmpty == true ||
-        nextState.lastSequence != null ||
-        nextState.events.isNotEmpty ||
-        nextState.textContent.isNotEmpty ||
-        nextState.provisionalTextContent.isNotEmpty;
-    if (!hasServerRunSignal) return;
+    if (!_hasServerRunSignal(nextState)) return;
 
     _dismissComposerKeyboardOnRunAccepted = false;
     if (_composerFocusNode.hasFocus) _composerFocusNode.unfocus();
@@ -1129,16 +1478,70 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
   }
 
-  Future<void> _startRun(
+  void _applyHospitalBagCartUpdates(AgentStreamRunState state) {
+    final onUpdate = widget.onHospitalBagCartUpdate;
+    if (onUpdate == null) return;
+    for (final card in _artifactCardsFromEvents(
+      _artifactEventsForState(state),
+    )) {
+      if (card.presentationKind !=
+          AgentArtifactPresentationKind.hospitalBagCart) {
+        continue;
+      }
+      final cartUpdate =
+          card.payload['cart_update'] ?? card.payload['cartUpdate'];
+      final seed = HospitalBagCartArtifactSeed.tryFromCartUpdate(
+        artifactId: card.id,
+        cartUpdate: cartUpdate,
+      );
+      if (seed == null) continue;
+      final signature =
+          '${seed.artifactId}:${jsonEncode(seed.snapshot.toAgentContext())}';
+      if (!_appliedHospitalBagCartUpdates.add(signature)) continue;
+      onUpdate(seed);
+    }
+  }
+
+  void _applyHospitalBagCartLinkContext(
+    AgentStreamRunState state, {
+    bool checkArtifacts = true,
+  }) {
+    if (_hospitalBagCartLinkContextApplied ||
+        widget.onHospitalBagCartContextRequired == null) {
+      return;
+    }
+    const cartPath = '/hospital-bag-cart';
+    final text = state.textContent;
+    final tailStart = math.max(0, text.length - cartPath.length - 16);
+    final hasTextLink = checkArtifacts
+        ? text.contains(cartPath)
+        : text.indexOf(cartPath, tailStart) >= 0;
+    final hasArtifactLink =
+        checkArtifacts &&
+        _artifactCardsFromEvents(_artifactEventsForState(state)).any(
+          (card) => card.actions.any((action) => action.routePath == cartPath),
+        );
+    final hasCartLink = hasTextLink || hasArtifactLink;
+    if (!hasCartLink) return;
+    _hospitalBagCartLinkContextApplied = true;
+    widget.onHospitalBagCartContextRequired!.call();
+  }
+
+  Future<bool> _startRun(
     AgentStreamRequest request, {
     AgentStreamRunState? initialState,
     bool preserveActionState = false,
+    bool awaitServerRunSignal = false,
   }) async {
     final runner = widget.runner;
-    if (runner == null || (initialState == null && _isComposerLocked)) return;
+    if (runner == null || (initialState == null && _isComposerLocked)) {
+      return false;
+    }
     final requestWithThread = _requestWithConversationThread(request);
 
     _cancelRunSubscription();
+    final acceptance = awaitServerRunSignal ? Completer<bool>() : null;
+    _runAcceptanceCompleter = acceptance;
     _preserveArtifactFocus = false;
     _activeRequest = requestWithThread;
     setState(() {
@@ -1159,8 +1562,16 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _runSubscription = runner
         .run(requestWithThread, initialState: initialState)
         .listen(
-          _handleRunStateUpdate,
+          (nextState) {
+            _handleRunStateUpdate(nextState);
+            if (_hasServerRunSignal(nextState)) {
+              _completeRunAcceptance(acceptance, true);
+            } else if (!nextState.isActive) {
+              _completeRunAcceptance(acceptance, false);
+            }
+          },
           onError: (Object error) {
+            _completeRunAcceptance(acceptance, false);
             if (!mounted || !_state.isActive) return;
             _dismissComposerKeyboardOnRunAccepted = false;
             final shouldFollowLatest = _isNearLatest();
@@ -1168,7 +1579,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
             _persistInteractionState();
             if (shouldFollowLatest) _scheduleScrollToLatest();
           },
+          onDone: () => _completeRunAcceptance(acceptance, false),
         );
+    return acceptance == null ? true : acceptance.future;
+  }
+
+  void _completeRunAcceptance(Completer<bool>? completer, bool accepted) {
+    if (completer == null || completer.isCompleted) return;
+    if (identical(_runAcceptanceCompleter, completer)) {
+      _runAcceptanceCompleter = null;
+    }
+    completer.complete(accepted);
   }
 
   AgentStreamRequest _requestWithConversationThread(
@@ -1184,11 +1605,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final coordinator = widget.voicePlaybackCoordinator;
     final player = widget.voicePlaybackPlayer;
     final text = nextState.textContent.trim();
+    final artifactText = _autoVoiceArtifactTextForState(nextState);
+    final mediaNarrations = _autoVoiceMediaNarrationsForState(nextState);
     if (coordinator == null ||
         player == null ||
         !_autoVoiceEnabled ||
         !_canAutoVoicePlayback(nextState.phase) ||
-        text.isEmpty) {
+        (text.isEmpty && artifactText == null && mediaNarrations.isEmpty)) {
       return;
     }
 
@@ -1198,7 +1621,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _cancelActiveAutoVoiceSession();
       _activeAutoVoicePlaybackId = playbackId;
       _autoVoiceAppendedText = '';
+      _autoVoiceHasSubmittedContent = false;
       _autoVoiceSessionFinished = false;
+      _autoVoiceSubmittedArtifactTexts.clear();
+      _autoVoiceSubmittedMediaNarrations.clear();
+    }
+
+    final textToAppend = _nextAutoVoiceTextToAppend(text);
+    final hasUnsubmittedArtifact =
+        artifactText != null &&
+        !_autoVoiceSubmittedArtifactTexts.contains(artifactText);
+    final hasUnsubmittedMedia = mediaNarrations.any(
+      (narration) =>
+          !_autoVoiceSubmittedMediaNarrations.contains(narration.trim()),
+    );
+    if (_autoVoiceSession == null &&
+        textToAppend.trim().isEmpty &&
+        !hasUnsubmittedArtifact &&
+        !hasUnsubmittedMedia) {
+      return;
     }
 
     final session = _autoVoiceSession ?? _startAutoVoiceSession(playbackId);
@@ -1211,10 +1652,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
 
     _pendingAutoVoiceReplay = null;
-    final textToAppend = _nextAutoVoiceTextToAppend(text);
     if (textToAppend.trim().isNotEmpty) {
       session.append(textToAppend);
       _autoVoiceAppendedText = text;
+      _autoVoiceHasSubmittedContent = true;
+    }
+    if (mediaNarrations.isNotEmpty &&
+        _shouldFinishAutoVoicePlayback(nextState)) {
+      session.flush();
+    }
+    final supplementalTexts = <String>[
+      if (artifactText != null &&
+          _autoVoiceSubmittedArtifactTexts.add(artifactText))
+        artifactText,
+      ...mediaNarrations.map(_claimAutoVoiceMediaNarration).whereType<String>(),
+    ];
+    if (supplementalTexts.isNotEmpty) {
+      final separator = _autoVoiceAppendedText.isEmpty ? '' : '\n';
+      session.append('$separator${supplementalTexts.join(' ')}');
+      _autoVoiceHasSubmittedContent = true;
     }
     if (_shouldFinishAutoVoicePlayback(nextState)) {
       _finishActiveAutoVoiceSession();
@@ -1239,7 +1695,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return null;
     }
 
-    final session = player.startRealtimeSession();
+    final session = player.startRealtimeSession(
+      mediaNarrationResolver: ({required url, required alt}) =>
+          _resolveMediaVoiceNarration(url: url),
+    );
     _autoVoiceSession = session;
     _autoVoiceSessionFinished = false;
     _setVoiceState(_voiceState.startPlayback(handle.id));
@@ -1263,6 +1722,58 @@ class _AgentHubPageState extends State<AgentHubPage> {
           }),
     );
     return session;
+  }
+
+  String? _resolveMediaVoiceNarration({required String url}) {
+    final narration = _mediaVoiceNarrationIndexForState(
+      _state,
+    ).resolve(url)?.trim();
+    if (narration == null || narration.isEmpty) return null;
+    _autoVoiceSubmittedMediaNarrations.add(narration);
+    return narration;
+  }
+
+  AgentMediaVoiceNarrationIndex _mediaVoiceNarrationIndexForState(
+    AgentStreamRunState state,
+  ) {
+    final identity = state.events;
+    if (!identical(identity, _mediaVoiceEventIdentity)) {
+      _mediaVoiceEventIdentity = identity;
+      _mediaVoiceNarrationIndex = AgentMediaVoiceNarrationIndex.fromEvents(
+        state.events,
+      );
+    }
+    return _mediaVoiceNarrationIndex;
+  }
+
+  List<String> _autoVoiceMediaNarrationsForState(AgentStreamRunState state) {
+    if (!_shouldFinishAutoVoicePlayback(state)) return const <String>[];
+    return _mediaVoiceNarrationIndexForState(state).autoSpeakableTexts;
+  }
+
+  String? _autoVoiceArtifactTextForState(AgentStreamRunState state) {
+    if (state.textContent.trim().isNotEmpty ||
+        !_shouldFinishAutoVoicePlayback(state) ||
+        !state.canPublishArtifactEvents) {
+      return null;
+    }
+    return agentArtifactVoiceFallbackText(
+      _artifactCardsFromEvents(
+        _artifactEventsForState(state),
+        profileDefaults:
+            _profile?.birthPrepDefaults ?? const BirthPrepProfileDefaults(),
+      ),
+    );
+  }
+
+  String? _claimAutoVoiceMediaNarration(String? narration) {
+    final text = narration?.trim();
+    if (text == null ||
+        text.isEmpty ||
+        !_autoVoiceSubmittedMediaNarrations.add(text)) {
+      return null;
+    }
+    return text;
   }
 
   void _startVoicePlayback({
@@ -1297,7 +1808,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         activePlaybackId.isNotEmpty &&
         (state.isActive ||
             _pendingAutoVoiceReplay != null ||
-            _autoVoiceAppendedText.isNotEmpty)) {
+            _autoVoiceHasSubmittedContent)) {
       return activePlaybackId;
     }
     return _firstNonEmpty([state.messageId, state.runId, state.threadId]) ?? '';
@@ -1348,6 +1859,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelActiveAutoVoiceSession();
     _activeAutoVoicePlaybackId = null;
     _autoVoiceAppendedText = '';
+    _autoVoiceHasSubmittedContent = false;
+    _autoVoiceSubmittedArtifactTexts.clear();
+    _autoVoiceSubmittedMediaNarrations.clear();
   }
 
   void _queueBlockedAutoVoiceReplay(AgentStreamRunState state) {
@@ -1366,13 +1880,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted || !_autoVoiceEnabled) return;
     final pending = _pendingAutoVoiceReplay;
     if (pending == null) return;
-    if (pending.attempts >= 3 || pending.state.textContent.trim().isEmpty) {
+    if (pending.attempts >= 3 || !_hasAutoVoicePlaybackContent(pending.state)) {
       _pendingAutoVoiceReplay = null;
       return;
     }
 
     _pendingAutoVoiceReplay = pending.incrementAttempts();
     _maybeStartAutoVoicePlayback(pending.state);
+  }
+
+  bool _hasAutoVoicePlaybackContent(AgentStreamRunState state) {
+    return state.textContent.trim().isNotEmpty ||
+        _autoVoiceArtifactTextForState(state) != null ||
+        _autoVoiceMediaNarrationsForState(state).isNotEmpty;
   }
 
   void _cancelRun() {
@@ -1408,6 +1928,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _cancelRunSubscription() {
+    final acceptance = _runAcceptanceCompleter;
+    _runAcceptanceCompleter = null;
+    _completeRunAcceptance(acceptance, false);
     final subscription = _runSubscription;
     _runSubscription = null;
     if (subscription == null) return;
@@ -1514,7 +2037,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
+    final profileDefaults =
+        _profile?.birthPrepDefaults ?? const BirthPrepProfileDefaults();
+    final page = ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
       child: Stack(
@@ -1569,8 +2094,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                 ),
                                 sliver: AgentHubHistorySliver(
                                   messages: _historyMessages,
+                                  productAssetRepository:
+                                      widget.productAssetRepository,
                                   onArtifactAction: _handleArtifactAction,
                                   onFormSubmit: _handleArtifactFormSubmit,
+                                  formSubmissionsListenable:
+                                      _formSubmissionsNotifier,
+                                  profileDefaults: profileDefaults,
                                 ),
                               ),
                             if (_historyMessages.isNotEmpty)
@@ -1603,10 +2133,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                     onRetry: _retryRun,
                                     onArtifactAction: _handleArtifactAction,
                                     onFormSubmit: _handleArtifactFormSubmit,
+                                    formSubmissionsListenable:
+                                        _formSubmissionsNotifier,
                                     onQuickReplySelected:
                                         _handleQuickReplySelected,
                                     pendingActionIds: _pendingActionIds,
                                     localActionStatuses: _localActionStatuses,
+                                    productAssetRepository:
+                                        widget.productAssetRepository,
+                                    profileDefaults: profileDefaults,
                                     onConfirmAction: widget.actionClient == null
                                         ? null
                                         : _confirmAction,
@@ -1660,7 +2195,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     canSend: widget.runner != null && !isComposerLocked,
                     isRunning: isVisibleReplyRunning,
                     isInputLocked: isComposerLocked,
-                    imageCount: _attachedImages.length,
+                    images: List<AgentStreamImageInput>.unmodifiable(
+                      _attachedImages,
+                    ),
                     showPhotoMenu: _showPhotoMenu,
                     canAttachImage:
                         widget.pickImage != null && !isComposerLocked,
@@ -1669,7 +2206,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                             widget.voiceInput != null) &&
                         !_isVisibleReplyRunningForState(runState) &&
                         !isComposerLocked &&
-                        !_voiceState.isInputActive,
+                        _voiceState.phase != AgentVoicePhase.transcribing,
                     voicePhase: _voiceState.phase,
                     voicePlaybackFailed:
                         _voiceState.phase == AgentVoicePhase.error &&
@@ -1678,9 +2215,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     onSend: _sendMessage,
                     onCancel: _cancelRun,
                     onTogglePhotoMenu: _togglePhotoMenu,
-                    onAttachImage: _attachImage,
-                    onRemoveImages: _removeAttachedImages,
-                    onVoiceInput: _startVoiceInput,
+                    onTakePhoto: () =>
+                        unawaited(_attachImage(AgentImageInputSource.camera)),
+                    onUploadImage: () =>
+                        unawaited(_attachImage(AgentImageInputSource.gallery)),
+                    onRemoveImage: _removeAttachedImage,
+                    onVoiceStart: _startVoiceInput,
+                    onVoiceEnd: (submit) =>
+                        unawaited(_finishVoiceInput(submit: submit)),
                   );
                 },
               ),
@@ -1689,6 +2231,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ],
       ),
     );
+    final consultStore = widget.ibclcConsultStore;
+    return consultStore == null
+        ? page
+        : IbclcConsultStoreScope(store: consultStore, child: page);
   }
 }
 
@@ -1997,6 +2543,25 @@ AgentStreamRequest _requestWithImages(
     locale: request.locale,
     images: [...request.images, ...images],
     metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
+  );
+}
+
+AgentStreamRequest _requestWithIdempotencyKey(
+  AgentStreamRequest request,
+  String? idempotencyKey,
+) {
+  final normalized = idempotencyKey?.trim();
+  if (normalized == null || normalized.isEmpty) return request;
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    runId: request.runId,
+    afterSequence: request.afterSequence,
+    locale: request.locale,
+    images: request.images,
+    metadata: request.metadata,
+    idempotencyKey: normalized,
   );
 }
 
@@ -2031,6 +2596,7 @@ AgentStreamRequest _requestWithThreadId(
     locale: request.locale,
     images: request.images,
     metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
   );
 }
 
@@ -2041,11 +2607,13 @@ class AgentHubHistoryMessage {
     required this.role,
     required this.content,
     this.runState,
+    this.images = const <AgentStreamImageInput>[],
   });
 
   final AgentHubHistoryRole role;
   final String content;
   final AgentStreamRunState? runState;
+  final List<AgentStreamImageInput> images;
 
   String get roleLabel {
     return switch (role) {
@@ -2064,6 +2632,7 @@ AgentHubHistoryMessage _historyMessageFromSnapshot(
         : AgentHubHistoryRole.assistant,
     content: snapshot.content,
     runState: snapshot.runState,
+    images: snapshot.images,
   );
 }
 
@@ -2074,6 +2643,7 @@ AgentHubHistorySnapshot _historySnapshotFromMessage(
     role: message.role == AgentHubHistoryRole.user ? 'user' : 'assistant',
     content: message.content,
     runState: _historyRunStateForPersistence(message),
+    images: message.images,
   );
 }
 
@@ -2086,9 +2656,11 @@ AgentStreamRunState? _historyRunStateForPersistence(
   }
 
   final structuredEvents = <String, AgentStreamEvent>{};
-  final artifactEvents = state.artifactEvents.isNotEmpty
-      ? state.artifactEvents.values
-      : state.events.where((event) => event.type.startsWith('artifact.'));
+  final artifactEvents = state.canPublishArtifactEvents
+      ? _artifactEventsForState(
+          state,
+        ).where((event) => event.type.startsWith('artifact.'))
+      : const <AgentStreamEvent>[];
   for (final event in artifactEvents) {
     final key = event.artifactId ?? event.eventId ?? event.mergeKey;
     structuredEvents['artifact:$key'] = event;
@@ -2104,6 +2676,10 @@ AgentStreamRunState? _historyRunStateForPersistence(
   )) {
     final key = event.actionId ?? event.eventId ?? event.mergeKey;
     structuredEvents['action:$key'] = event;
+  }
+  for (final event in state.events.where(AgentCitationMapper.isCitationEvent)) {
+    final key = event.messageId ?? event.eventId ?? event.mergeKey;
+    structuredEvents['citation:$key'] = event;
   }
   if (structuredEvents.isEmpty) return null;
 
@@ -2125,13 +2701,20 @@ class AgentHubHistoryPanel extends StatelessWidget {
   const AgentHubHistoryPanel({
     super.key,
     required this.messages,
+    this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
   final List<AgentHubHistoryMessage> messages;
+  final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
+  final BirthPrepProfileDefaults profileDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -2142,8 +2725,11 @@ class AgentHubHistoryPanel extends StatelessWidget {
           _AgentHistoryBubble(
             key: ValueKey('agent-history-$index'),
             message: messages[index],
+            productAssetRepository: productAssetRepository,
             onArtifactAction: onArtifactAction,
             onFormSubmit: onFormSubmit,
+            formSubmissionsListenable: formSubmissionsListenable,
+            profileDefaults: profileDefaults,
           ),
           if (index != messages.length - 1) const SizedBox(height: 20),
         ],
@@ -2156,13 +2742,20 @@ class AgentHubHistorySliver extends StatelessWidget {
   const AgentHubHistorySliver({
     super.key,
     required this.messages,
+    this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
   final List<AgentHubHistoryMessage> messages;
+  final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
+  final BirthPrepProfileDefaults profileDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -2175,8 +2768,11 @@ class AgentHubHistorySliver extends StatelessWidget {
         return _AgentHistoryBubble(
           key: ValueKey('agent-history-$messageIndex'),
           message: messages[messageIndex],
+          productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
+          formSubmissionsListenable: formSubmissionsListenable,
+          profileDefaults: profileDefaults,
         );
       }, childCount: itemCount),
     );
@@ -2187,13 +2783,20 @@ class _AgentHistoryBubble extends StatelessWidget {
   const _AgentHistoryBubble({
     super.key,
     required this.message,
+    this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
   final AgentHubHistoryMessage message;
+  final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
+  final BirthPrepProfileDefaults profileDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -2209,8 +2812,11 @@ class _AgentHistoryBubble extends StatelessWidget {
       if (runState != null) {
         return AgentRunTranscript(
           state: runState,
+          productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
+          formSubmissionsListenable: formSubmissionsListenable,
+          profileDefaults: profileDefaults,
         );
       }
 
@@ -2219,7 +2825,14 @@ class _AgentHistoryBubble extends StatelessWidget {
         children: [
           const _AgentAssistantAvatar(),
           const SizedBox(width: 10),
-          Expanded(child: Text(message.content, style: textStyle)),
+          Expanded(
+            child: AgentMarkdownText(
+              message.content,
+              style: textStyle,
+              onArtifactAction: onArtifactAction,
+              productAssetRepository: productAssetRepository,
+            ),
+          ),
         ],
       );
     }
@@ -2242,7 +2855,17 @@ class _AgentHistoryBubble extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Text(message.content, style: textStyle),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (message.images.isNotEmpty)
+                    AgentSentImages(images: message.images),
+                  if (message.images.isNotEmpty && message.content.isNotEmpty)
+                    const SizedBox(height: 8),
+                  if (message.content.isNotEmpty)
+                    Text(message.content, style: textStyle),
+                ],
+              ),
             ),
           ),
         ),
@@ -2351,9 +2974,12 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     this.onRetry,
     this.onArtifactAction,
     this.onFormSubmit,
+    required this.formSubmissionsListenable,
     this.onQuickReplySelected,
     required this.pendingActionIds,
     required this.localActionStatuses,
+    this.productAssetRepository,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
     this.onConfirmAction,
     this.onRejectAction,
   });
@@ -2367,9 +2993,13 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>
+  formSubmissionsListenable;
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
+  final ProductAssetRepository? productAssetRepository;
+  final BirthPrepProfileDefaults profileDefaults;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
   final ValueChanged<AgentActionCardView>? onRejectAction;
 
@@ -2381,10 +3011,14 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
 class _AgentRunTranscriptListenableState
     extends State<_AgentRunTranscriptListenable> {
   Object? _artifactSourceIdentity;
+  Object? _artifactProfileDefaultsIdentity;
   List<AgentArtifactCardView> _artifactCards = const <AgentArtifactCardView>[];
   Object? _actionSourceIdentity;
   int? _actionRevision;
   List<AgentActionCardView> _actionCards = const <AgentActionCardView>[];
+  Object? _citationSourceIdentity;
+  String? _citationMessageId;
+  List<AgentCitationView> _citations = const <AgentCitationView>[];
 
   @override
   Widget build(BuildContext context) {
@@ -2405,11 +3039,15 @@ class _AgentRunTranscriptListenableState
           onRetry: widget.onRetry,
           onArtifactAction: widget.onArtifactAction,
           onFormSubmit: widget.onFormSubmit,
+          formSubmissionsListenable: widget.formSubmissionsListenable,
           artifactPanelKey: widget.artifactPanelKey,
           onQuickReplySelected: widget.onQuickReplySelected,
           pendingActionIds: widget.pendingActionIds,
+          productAssetRepository: widget.productAssetRepository,
+          profileDefaults: widget.profileDefaults,
           artifactCards: _artifactCardsForState(state),
           actionCards: _actionCardsForState(state, actionRevision),
+          citations: _citationsForState(state),
           onConfirmAction: widget.onConfirmAction,
           onRejectAction: widget.onRejectAction,
         );
@@ -2420,12 +3058,20 @@ class _AgentRunTranscriptListenableState
   List<AgentArtifactCardView> _artifactCardsForState(
     AgentStreamRunState state,
   ) {
+    if (!state.canPublishArtifactEvents) return const [];
     final identity = state.artifactEvents.isNotEmpty
         ? state.artifactEvents
         : state.events;
-    if (identical(identity, _artifactSourceIdentity)) return _artifactCards;
+    if (identical(identity, _artifactSourceIdentity) &&
+        identical(widget.profileDefaults, _artifactProfileDefaultsIdentity)) {
+      return _artifactCards;
+    }
     _artifactSourceIdentity = identity;
-    _artifactCards = _artifactCardsFromEvents(_artifactEventsForState(state));
+    _artifactProfileDefaultsIdentity = widget.profileDefaults;
+    _artifactCards = _artifactCardsFromEvents(
+      _artifactEventsForState(state),
+      profileDefaults: widget.profileDefaults,
+    );
     return _artifactCards;
   }
 
@@ -2448,6 +3094,20 @@ class _AgentRunTranscriptListenableState
     );
     return _actionCards;
   }
+
+  List<AgentCitationView> _citationsForState(AgentStreamRunState state) {
+    if (identical(state.events, _citationSourceIdentity) &&
+        state.messageId == _citationMessageId) {
+      return _citations;
+    }
+    _citationSourceIdentity = state.events;
+    _citationMessageId = state.messageId;
+    _citations = AgentCitationMapper.citationsFromEvents(
+      state.events,
+      messageId: state.messageId,
+    );
+    return _citations;
+  }
 }
 
 class AgentRunTranscript extends StatelessWidget {
@@ -2460,12 +3120,16 @@ class AgentRunTranscript extends StatelessWidget {
     this.onRetry,
     this.onArtifactAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
     this.artifactPanelKey,
     this.onQuickReplySelected,
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
+    this.productAssetRepository,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
     this.artifactCards,
     this.actionCards,
+    this.citations,
     this.onConfirmAction,
     this.onRejectAction,
   });
@@ -2477,12 +3141,17 @@ class AgentRunTranscript extends StatelessWidget {
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
   final Key? artifactPanelKey;
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
+  final ProductAssetRepository? productAssetRepository;
+  final BirthPrepProfileDefaults profileDefaults;
   final List<AgentArtifactCardView>? artifactCards;
   final List<AgentActionCardView>? actionCards;
+  final List<AgentCitationView>? citations;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
   final ValueChanged<AgentActionCardView>? onRejectAction;
 
@@ -2494,16 +3163,51 @@ class AgentRunTranscript extends StatelessWidget {
         state.phase == AgentStreamRunPhase.idle &&
         state.textContent.trim().isEmpty;
     final text = _primaryText;
-    final artifactCards =
-        this.artifactCards ??
-        _artifactCardsFromEvents(_artifactEventsForState(state));
+    final artifactCards = state.canPublishArtifactEvents
+        ? this.artifactCards ??
+              _artifactCardsFromEvents(
+                _artifactEventsForState(state),
+                profileDefaults: profileDefaults,
+              )
+        : const <AgentArtifactCardView>[];
     final actionCards =
         this.actionCards ??
         _actionCardsFromEvents(
           _actionEventsForState(state),
           localActionStatuses,
         );
+    final citations =
+        this.citations ??
+        AgentCitationMapper.citationsFromEvents(
+          state.events,
+          messageId: state.messageId,
+        );
     final quickReplies = state.quickReplies;
+    final artifactActionForState = onArtifactAction == null
+        ? null
+        : (AgentArtifactActionView action) {
+            if (action.routePath == '/ibclc-chat.html' &&
+                action.routeExtra is IbclcConsultRouteDraft) {
+              final draft = action.routeExtra! as IbclcConsultRouteDraft;
+              onArtifactAction!(
+                AgentArtifactActionView(
+                  label: action.label,
+                  icon: action.icon,
+                  kind: action.kind,
+                  value: action.value,
+                  routePath: action.routePath,
+                  routeExtra: draft.resolve(
+                    threadId: state.threadId ?? '',
+                    runId: state.runId ?? '',
+                  ),
+                  externalUri: action.externalUri,
+                  hospitalBagCartSeed: action.hospitalBagCartSeed,
+                ),
+              );
+              return;
+            }
+            onArtifactAction!(action);
+          };
     final shouldRenderQuickReplies =
         quickReplies.length == 3 &&
         !state.isAwaitingVisibleReply &&
@@ -2554,7 +3258,8 @@ class AgentRunTranscript extends StatelessWidget {
                       text,
                       style: primaryTextStyle,
                       onArtifactAction: onArtifactAction,
-                      parseMarkdown: _shouldParsePrimaryTextMarkdown,
+                      productAssetRepository: productAssetRepository,
+                      citations: citations,
                     ),
                   ),
                 ),
@@ -2595,8 +3300,9 @@ class AgentRunTranscript extends StatelessWidget {
                 AgentArtifactPanel(
                   key: artifactPanelKey,
                   cards: artifactCards,
-                  onAction: onArtifactAction,
+                  onAction: artifactActionForState,
                   onFormSubmit: onFormSubmit,
+                  formSubmissionsListenable: formSubmissionsListenable,
                 ),
               ],
               if (actionCards.isNotEmpty) ...[
@@ -2608,8 +3314,15 @@ class AgentRunTranscript extends StatelessWidget {
                   onReject: onRejectAction,
                 ),
               ],
-              if (shouldRenderQuickReplies) ...[
+              if (citations.isNotEmpty) ...[
                 const SizedBox(height: 16),
+                AgentCitationList(
+                  citations: citations,
+                  onAction: onArtifactAction,
+                ),
+              ],
+              if (shouldRenderQuickReplies) ...[
+                SizedBox(height: citations.isNotEmpty ? 20 : 16),
                 AgentQuickRepliesBar(
                   replies: quickReplies,
                   onSelected: onQuickReplySelected!,
@@ -2632,10 +3345,6 @@ class AgentRunTranscript extends StatelessWidget {
       return false;
     }
     return true;
-  }
-
-  bool get _shouldParsePrimaryTextMarkdown {
-    return !state.isActive || state.hasCompletedAssistantMessage;
   }
 
   _AgentLoopDecorState get _loopDecorState {
@@ -2834,18 +3543,124 @@ class _AgentQuickReplyPill extends StatelessWidget {
   }
 }
 
+class AgentCitationList extends StatelessWidget {
+  const AgentCitationList({super.key, required this.citations, this.onAction});
+
+  final List<AgentCitationView> citations;
+  final AgentArtifactActionHandler? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      key: const ValueKey('agent-citation-list'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const SizedBox(
+              width: 16,
+              child: Divider(height: 1, color: Color(0xffdbc3cb)),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '专业信息源',
+              style: textTheme.labelSmall?.copyWith(
+                color: const Color(0xff8f7a84),
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        for (var index = 0; index < citations.length; index++) ...[
+          _AgentCitationLink(
+            citation: citations[index],
+            onTap: onAction == null
+                ? null
+                : () => onAction!(
+                    AgentArtifactActionView(
+                      label: citations[index].title,
+                      icon: Icons.open_in_new_rounded,
+                      kind: 'citation',
+                      value: citations[index].url.toString(),
+                      externalUri: citations[index].url,
+                    ),
+                  ),
+          ),
+          if (index < citations.length - 1) const SizedBox(height: 4),
+        ],
+      ],
+    );
+  }
+}
+
+class _AgentCitationLink extends StatelessWidget {
+  const _AgentCitationLink({required this.citation, this.onTap});
+
+  final AgentCitationView citation;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            '[${citation.index}]',
+            style: textTheme.labelSmall?.copyWith(
+              color: const Color(0xffaa929f),
+              fontSize: 11,
+              height: 1.35,
+            ),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: InkWell(
+            key: ValueKey('agent-citation-link-${citation.index}'),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                citation.displayText,
+                overflow: TextOverflow.visible,
+                style: textTheme.labelSmall?.copyWith(
+                  color: const Color(0xff3d7d85),
+                  fontSize: 11,
+                  height: 1.35,
+                  decoration: TextDecoration.underline,
+                  decorationColor: const Color(0xffb8d7d4),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class AgentMarkdownText extends StatelessWidget {
   const AgentMarkdownText(
     this.text, {
     super.key,
     this.style,
     this.onArtifactAction,
+    this.productAssetRepository,
+    this.citations = const <AgentCitationView>[],
     this.parseMarkdown = true,
   });
 
   final String text;
   final TextStyle? style;
   final AgentArtifactActionHandler? onArtifactAction;
+  final ProductAssetRepository? productAssetRepository;
+  final List<AgentCitationView> citations;
   final bool parseMarkdown;
 
   @override
@@ -2855,9 +3670,11 @@ class AgentMarkdownText extends StatelessWidget {
     if (!parseMarkdown) {
       return Text(normalized, style: baseStyle);
     }
-    final markdown = _prepareAgentMarkdown(normalized);
+    final markdown = _prepareAgentMarkdown(
+      replaceCitationLinksWithIndexes(normalized, citations),
+    );
     if (!_containsMarkdown(markdown)) {
-      return Text(normalized, style: baseStyle);
+      return Text(markdown, style: baseStyle);
     }
 
     return MarkdownBody(
@@ -2871,6 +3688,7 @@ class AgentMarkdownText extends StatelessWidget {
         return _AgentMarkdownImage(
           url: url,
           title: alt?.trim().isNotEmpty == true ? alt!.trim() : title,
+          repository: productAssetRepository,
           onTap: () => _openMarkdownMedia(url: url, title: alt ?? title),
         );
       },
@@ -2881,14 +3699,26 @@ class AgentMarkdownText extends StatelessWidget {
           onArtifactAction?.call(AgentArtifactActions.hospitalBagCart);
           return;
         }
-        _openMarkdownMedia(url: url, title: label.trim());
+        if (_openMarkdownMedia(url: url, title: label.trim())) return;
+        final target = SafeLinkTarget.tryParse(url);
+        if (target == null) return;
+        onArtifactAction?.call(
+          AgentArtifactActionView(
+            label: label.trim().isEmpty ? '打开链接' : label.trim(),
+            icon: Icons.open_in_new_rounded,
+            kind: 'link',
+            value: url,
+            routePath: target.internalPath,
+            externalUri: target.externalUri,
+          ),
+        );
       },
     );
   }
 
-  void _openMarkdownMedia({required String url, String? title}) {
+  bool _openMarkdownMedia({required String url, String? title}) {
     final kind = _viewerKindForUrl(url);
-    if (kind == null) return;
+    if (kind == null) return false;
     final normalizedTitle = title?.trim();
     onArtifactAction?.call(
       AgentArtifactActionView(
@@ -2904,6 +3734,7 @@ class AgentMarkdownText extends StatelessWidget {
         },
       ),
     );
+    return true;
   }
 
   MarkdownStyleSheet _momcozyMarkdownStyleSheet(
@@ -3003,15 +3834,26 @@ class AgentMarkdownText extends StatelessWidget {
 }
 
 class _AgentMarkdownImage extends StatelessWidget {
-  const _AgentMarkdownImage({required this.url, this.title, this.onTap});
+  const _AgentMarkdownImage({
+    required this.url,
+    this.title,
+    this.repository,
+    this.onTap,
+  });
 
   final String url;
   final String? title;
+  final ProductAssetRepository? repository;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final label = title?.trim().isNotEmpty == true ? title!.trim() : '查看图片';
+    final productAsset = ProductAssetReference.tryParse(
+      url,
+      kind: ProductAssetKind.image.routeValue,
+      title: label,
+    );
     final displayUrl = _displayableHttpUrl(url);
 
     return Padding(
@@ -3029,7 +3871,26 @@ class _AgentMarkdownImage extends StatelessWidget {
               minWidth: 180,
               maxWidth: 360,
             ),
-            child: displayUrl == null
+            child: productAsset != null
+                ? ProductAssetImage(
+                    reference: productAsset,
+                    repository: repository,
+                    fit: BoxFit.contain,
+                    semanticLabel: label,
+                    loadingBuilder: (context) {
+                      return _AgentMarkdownImagePlaceholder(
+                        label: label,
+                        loading: true,
+                      );
+                    },
+                    errorBuilder: (context, error, retry) {
+                      return _AgentMarkdownImagePlaceholder(
+                        label: label,
+                        onRetry: retry,
+                      );
+                    },
+                  )
+                : displayUrl == null
                 ? _AgentMarkdownImagePlaceholder(label: label)
                 : Image.network(
                     displayUrl,
@@ -3046,9 +3907,15 @@ class _AgentMarkdownImage extends StatelessWidget {
 }
 
 class _AgentMarkdownImagePlaceholder extends StatelessWidget {
-  const _AgentMarkdownImagePlaceholder({required this.label});
+  const _AgentMarkdownImagePlaceholder({
+    required this.label,
+    this.loading = false,
+    this.onRetry,
+  });
 
   final String label;
+  final bool loading;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -3079,13 +3946,21 @@ class _AgentMarkdownImagePlaceholder extends StatelessWidget {
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 2),
-            Text(
-              '点开查看',
-              style: textTheme.labelSmall?.copyWith(
+            const SizedBox(height: 6),
+            if (loading)
+              const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else if (onRetry != null)
+              IconButton(
+                key: ValueKey('agent-markdown-image-retry-$label'),
+                tooltip: '重新加载',
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded, size: 20),
                 color: MomCozyColors.mutedForeground,
+                visualDensity: VisualDensity.compact,
               ),
-            ),
           ],
         ),
       ),
@@ -3155,6 +4030,8 @@ String _markdownDestinationUrl(String destination) {
 }
 
 String? _viewerKindForUrl(String url) {
+  final productAsset = ProductAssetReference.tryParse(url);
+  if (productAsset != null) return productAsset.kind.routeValue;
   final path = url.split(RegExp(r'[?#]')).first.toLowerCase();
   if (path.endsWith('.pdf')) return 'pdf';
   if (RegExp(r'\.(mp4|webm|ogv|m4v|mov)$').hasMatch(path)) return 'video';
@@ -3816,7 +4693,7 @@ class AgentComposerBar extends StatefulWidget {
     required this.canSend,
     required this.isRunning,
     required this.isInputLocked,
-    required this.imageCount,
+    required this.images,
     required this.showPhotoMenu,
     required this.canAttachImage,
     required this.canUseVoice,
@@ -3826,9 +4703,11 @@ class AgentComposerBar extends StatefulWidget {
     required this.onSend,
     required this.onCancel,
     required this.onTogglePhotoMenu,
-    required this.onAttachImage,
-    required this.onRemoveImages,
-    required this.onVoiceInput,
+    required this.onTakePhoto,
+    required this.onUploadImage,
+    required this.onRemoveImage,
+    required this.onVoiceStart,
+    required this.onVoiceEnd,
   });
 
   final TextEditingController controller;
@@ -3836,7 +4715,7 @@ class AgentComposerBar extends StatefulWidget {
   final bool canSend;
   final bool isRunning;
   final bool isInputLocked;
-  final int imageCount;
+  final List<AgentStreamImageInput> images;
   final bool showPhotoMenu;
   final bool canAttachImage;
   final bool canUseVoice;
@@ -3846,9 +4725,11 @@ class AgentComposerBar extends StatefulWidget {
   final VoidCallback onSend;
   final VoidCallback onCancel;
   final VoidCallback onTogglePhotoMenu;
-  final VoidCallback onAttachImage;
-  final VoidCallback onRemoveImages;
-  final VoidCallback onVoiceInput;
+  final VoidCallback onTakePhoto;
+  final VoidCallback onUploadImage;
+  final ValueChanged<int> onRemoveImage;
+  final VoidCallback onVoiceStart;
+  final ValueChanged<bool> onVoiceEnd;
 
   @override
   State<AgentComposerBar> createState() => _AgentComposerBarState();
@@ -3929,6 +4810,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     setState(() {
       _voicePressed = true;
     });
+    widget.onVoiceStart();
   }
 
   void _finishVoiceHold({required bool submit}) {
@@ -3938,7 +4820,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       _voiceMode = false;
       _textDraftBeforeVoice = null;
     });
-    if (submit) widget.onVoiceInput();
+    widget.onVoiceEnd(submit);
   }
 
   @override
@@ -3947,7 +4829,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final controller = widget.controller;
     final isRunning = widget.isRunning;
     final isInputLocked = widget.isInputLocked;
-    final imageCount = widget.imageCount;
+    final images = widget.images;
+    final imageCount = images.length;
     final canSend =
         widget.canSend && (controller.text.trim().isNotEmpty || imageCount > 0);
     final showPhotoMenu = widget.showPhotoMenu;
@@ -3958,8 +4841,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final onSend = widget.onSend;
     final onCancel = widget.onCancel;
     final onTogglePhotoMenu = widget.onTogglePhotoMenu;
-    final onAttachImage = widget.onAttachImage;
-    final onRemoveImages = widget.onRemoveImages;
     final sendIsStop = isRunning && !canSend;
     final sendLooksActive = canSend || sendIsStop;
     const inputTextStyle = TextStyle(
@@ -4003,7 +4884,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         Expanded(
                           child: FilledButton.tonalIcon(
                             key: const ValueKey('agent-photo-camera-button'),
-                            onPressed: canAttachImage ? onAttachImage : null,
+                            onPressed: canAttachImage
+                                ? widget.onTakePhoto
+                                : null,
                             icon: const Icon(
                               Icons.photo_camera_outlined,
                               size: 18,
@@ -4015,7 +4898,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                         Expanded(
                           child: OutlinedButton.icon(
                             key: const ValueKey('agent-photo-upload-button'),
-                            onPressed: canAttachImage ? onAttachImage : null,
+                            onPressed: canAttachImage
+                                ? widget.onUploadImage
+                                : null,
                             icon: const Icon(Icons.upload_rounded, size: 18),
                             label: const Text('上传'),
                           ),
@@ -4027,53 +4912,47 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
               ),
             ],
             if (imageCount > 0) ...[
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: MomCozyColors.card.withValues(alpha: 0.86),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: MomCozyColors.border.withValues(alpha: 0.6),
+              SizedBox(
+                key: const ValueKey('agent-image-attachment-chip'),
+                height: 78,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Text(
+                        '图片 $imageCount',
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: MomCozyColors.mutedForeground,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xff754c5e).withValues(alpha: 0.08),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
+                    Expanded(
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: imageCount,
+                        separatorBuilder: (_, _) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          return AgentComposerImageAttachment(
+                            key: ValueKey('agent-image-attachment-$index'),
+                            image: images[index],
+                            removeButtonKey: ValueKey(
+                              index == 0
+                                  ? 'agent-remove-image-button'
+                                  : 'agent-remove-image-$index',
+                            ),
+                            onRemove: isInputLocked
+                                ? null
+                                : () => widget.onRemoveImage(index),
+                          );
+                        },
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    key: const ValueKey('agent-image-attachment-chip'),
-                    children: [
-                      const SizedBox(width: 10),
-                      Icon(
-                        Icons.image_outlined,
-                        size: 18,
-                        color: colorScheme.primary,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          '图片 $imageCount',
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                color: MomCozyColors.mutedForeground,
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                      ),
-                      IconButton(
-                        key: const ValueKey('agent-remove-image-button'),
-                        onPressed: isInputLocked ? null : onRemoveImages,
-                        icon: const Icon(Icons.close_rounded, size: 18),
-                        tooltip: '移除图片',
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(height: 8),
             ],
             LayoutBuilder(
               builder: (context, constraints) {
@@ -4433,13 +5312,36 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   }
 }
 
+bool _artifactProjectionChanged(
+  AgentStreamRunState previous,
+  AgentStreamRunState next,
+) {
+  if (!identical(previous.artifactEvents, next.artifactEvents)) return true;
+  if (!identical(previous.events, next.events) &&
+      next.events.length > previous.events.length) {
+    return next.events
+        .skip(previous.events.length)
+        .any((event) => event.type.startsWith('artifact.'));
+  }
+  return false;
+}
+
+bool _hasServerRunSignal(AgentStreamRunState state) {
+  return state.runId?.trim().isNotEmpty == true ||
+      state.lastSequence != null ||
+      state.events.isNotEmpty ||
+      state.textContent.isNotEmpty ||
+      state.provisionalTextContent.isNotEmpty;
+}
+
 Iterable<AgentStreamEvent> _artifactEventsForState(AgentStreamRunState state) {
   return state.artifactEvents.isNotEmpty
       ? state.artifactEvents.values
       : state.events;
 }
 
-String? _latestArtifactId(AgentStreamRunState state) {
+String? _latestPublishedArtifactId(AgentStreamRunState state) {
+  if (!state.canPublishArtifactEvents) return null;
   if (state.artifactEvents.isNotEmpty) {
     return state.artifactEvents.keys.last;
   }
@@ -4458,9 +5360,13 @@ Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {
 }
 
 List<AgentArtifactCardView> _artifactCardsFromEvents(
-  Iterable<AgentStreamEvent> events,
-) {
-  return AgentArtifactMapper.cardsFromEvents(events);
+  Iterable<AgentStreamEvent> events, {
+  BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
+}) {
+  return AgentArtifactMapper.cardsFromEvents(
+    events,
+    profileDefaults: profileDefaults,
+  );
 }
 
 List<AgentActionCardView> _actionCardsFromEvents(

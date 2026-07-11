@@ -36,6 +36,10 @@ final _voiceBareDomainLikePattern = RegExp(
   r'^(?:(?:https?|ftp):\/\/|www\.|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/|$))',
   caseSensitive: false,
 );
+final _voiceStreamTrailingUrlLikePattern = RegExp(
+  r'''(^|[\s(（\[])((?:(?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、)]*|\/[A-Za-z][^\s<>"'，。！？；、)]*|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、)]*)?)$''',
+  caseSensitive: false,
+);
 const _hospitalBagCartVoicePath = '/hospital-bag-cart';
 
 abstract interface class AgentVoicePcmPlayer {
@@ -120,7 +124,9 @@ class AgentVoiceApiPlaybackPlayer implements AgentVoicePlaybackPlayer {
   }
 
   @override
-  AgentVoiceRealtimePlaybackSession startRealtimeSession() {
+  AgentVoiceRealtimePlaybackSession startRealtimeSession({
+    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  }) {
     final token = ++_playToken;
     return AgentVoiceApiRealtimePlaybackSession(
       repository: repository,
@@ -128,6 +134,7 @@ class AgentVoiceApiPlaybackPlayer implements AgentVoicePlaybackPlayer {
       sampleRate: sampleRate,
       channels: channels,
       isCurrent: () => token == _playToken,
+      mediaNarrationResolver: mediaNarrationResolver,
     );
   }
 
@@ -146,10 +153,13 @@ class AgentVoiceApiRealtimePlaybackSession
     required this.sampleRate,
     required this.channels,
     required this.isCurrent,
+    this.mediaNarrationResolver,
     this.maxSegmentChars = agentVoiceRealtimeMaxSegmentChars,
     this.minSegmentChars = agentVoiceRealtimeMinSegmentChars,
     this.eagerSegmenting = true,
-  }) {
+  }) : _textFilter = AgentVoiceTextStreamFilter(
+         mediaNarrationResolver: mediaNarrationResolver,
+       ) {
     unawaited(_run());
   }
 
@@ -158,9 +168,11 @@ class AgentVoiceApiRealtimePlaybackSession
   final int sampleRate;
   final int channels;
   final bool Function() isCurrent;
+  final AgentVoiceMediaNarrationResolver? mediaNarrationResolver;
   final int maxSegmentChars;
   final int minSegmentChars;
   final bool eagerSegmenting;
+  final AgentVoiceTextStreamFilter _textFilter;
 
   final Completer<void> _done = Completer<void>();
   final List<String> _pendingSegments = <String>[];
@@ -179,7 +191,7 @@ class AgentVoiceApiRealtimePlaybackSession
   @override
   void append(String delta) {
     if (_cancelled || _finished || delta.isEmpty || !isCurrent()) return;
-    _buffer += delta;
+    _buffer += _textFilter.push(delta);
     _drainBuffer(force: false);
     _flushPendingSegments();
   }
@@ -187,6 +199,7 @@ class AgentVoiceApiRealtimePlaybackSession
   @override
   void flush() {
     if (_cancelled || !isCurrent()) return;
+    _buffer += _textFilter.flush();
     _drainBuffer(force: true);
     _flushPendingSegments();
   }
@@ -194,6 +207,7 @@ class AgentVoiceApiRealtimePlaybackSession
   @override
   void finish() {
     if (_cancelled || _finished || !isCurrent()) return;
+    _buffer += _textFilter.flush();
     _drainBuffer(force: true);
     _finished = true;
     _flushPendingSegments();
@@ -204,6 +218,7 @@ class AgentVoiceApiRealtimePlaybackSession
     if (_cancelled) return _done.future;
     _cancelled = true;
     _buffer = '';
+    _textFilter.clear();
     _pendingSegments.clear();
     final connection = _connection;
     if (connection != null) {
@@ -327,7 +342,65 @@ class AgentVoiceApiRealtimePlaybackSession
 }
 
 @visibleForTesting
-String sanitizeAgentVoicePlaybackText(String text) {
+class AgentVoiceTextStreamFilter {
+  AgentVoiceTextStreamFilter({this.mediaNarrationResolver});
+
+  final AgentVoiceMediaNarrationResolver? mediaNarrationResolver;
+  final Set<String> _spokenMediaNarrations = {};
+  String _pending = '';
+
+  String push(String delta) {
+    if (delta.isEmpty) return '';
+    _pending += delta;
+    return _drain(force: false);
+  }
+
+  String flush() => _drain(force: true);
+
+  void clear() {
+    _pending = '';
+    _spokenMediaNarrations.clear();
+  }
+
+  String _drain({required bool force}) {
+    if (_pending.isEmpty) return '';
+    if (force) {
+      final ready = _pending;
+      _pending = '';
+      return _stripVoiceLinks(
+        ready,
+        mediaNarrationResolver: mediaNarrationResolver,
+        spokenMediaNarrations: _spokenMediaNarrations,
+      );
+    }
+
+    final holdStart = _voiceStreamHoldStart(_pending);
+    if (holdStart < 0) {
+      final ready = _pending;
+      _pending = '';
+      return _stripVoiceLinks(
+        ready,
+        mediaNarrationResolver: mediaNarrationResolver,
+        spokenMediaNarrations: _spokenMediaNarrations,
+      );
+    }
+    if (holdStart == 0) return '';
+
+    final ready = _pending.substring(0, holdStart);
+    _pending = _pending.substring(holdStart);
+    return _stripVoiceLinks(
+      ready,
+      mediaNarrationResolver: mediaNarrationResolver,
+      spokenMediaNarrations: _spokenMediaNarrations,
+    );
+  }
+}
+
+@visibleForTesting
+String sanitizeAgentVoicePlaybackText(
+  String text, {
+  AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+}) {
   if (text.isEmpty) return '';
   var normalized = text;
   normalized = normalized.replaceAll(
@@ -346,7 +419,10 @@ String sanitizeAgentVoicePlaybackText(String text) {
   normalized = normalized.replaceAll(RegExp(r'<[^>]+>'), ' ');
   normalized = normalized.replaceAll(RegExp(r'```[\s\S]*?```'), ' ');
   normalized = normalized.replaceAll(RegExp(r'`{1,3}[^`]*`{1,3}'), ' ');
-  normalized = _stripVoiceLinks(normalized);
+  normalized = _stripVoiceLinks(
+    normalized,
+    mediaNarrationResolver: mediaNarrationResolver,
+  );
   normalized = _normalizeVoiceSlashes(normalized);
   normalized = normalized.replaceAll(
     RegExp(r'^#{1,6}\s+', multiLine: true),
@@ -375,8 +451,12 @@ String sanitizeAgentVoicePlaybackText(String text) {
 List<String> buildAgentVoicePlaybackTextChunks(
   String text, {
   int maxChars = agentVoicePlaybackMaxChunkChars,
+  AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
 }) {
-  final sanitized = sanitizeAgentVoicePlaybackText(text);
+  final sanitized = sanitizeAgentVoicePlaybackText(
+    text,
+    mediaNarrationResolver: mediaNarrationResolver,
+  );
   if (sanitized.isEmpty) return const <String>[];
   final chunkLimit = _voiceChunkLimit(maxChars, sanitized.length);
   if (sanitized.length <= chunkLimit) {
@@ -396,12 +476,26 @@ List<String> buildAgentVoicePlaybackTextChunks(
   return chunks;
 }
 
-String _stripVoiceLinks(String text) {
+String _stripVoiceLinks(
+  String text, {
+  AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  Set<String>? spokenMediaNarrations,
+}) {
+  final spoken = spokenMediaNarrations ?? <String>{};
   var normalized = text;
-  normalized = normalized.replaceAllMapped(
-    RegExp(r'!\[([^\]]*)]\(([^)]*)\)'),
-    (_) => ' ',
-  );
+  normalized = normalized.replaceAllMapped(RegExp(r'!\[([^\]]*)]\(([^)]*)\)'), (
+    match,
+  ) {
+    final alt = (match.group(1) ?? '').trim();
+    final destination = _voiceLinkDestination(match.group(2));
+    final narration = _resolveMediaVoiceNarration(
+      destination,
+      alt: alt,
+      resolver: mediaNarrationResolver,
+      spoken: spoken,
+    );
+    return narration.text == null ? ' ' : ' ${narration.text} ';
+  });
   normalized = normalized.replaceAll(RegExp(r'!\[[^\]]*]\s*\[[^\]]*]'), ' ');
   normalized = normalized.replaceAll(RegExp(r'!\[[^\]]*]\([^)]*$'), ' ');
   normalized = normalized.replaceAll(RegExp(r'!\[[^\]]*]?\s*$'), ' ');
@@ -409,10 +503,16 @@ String _stripVoiceLinks(String text) {
     match,
   ) {
     final label = (match.group(1) ?? '').trim();
-    final destination = (match.group(2) ?? '')
-        .trim()
-        .split(RegExp(r'\s+'))
-        .first;
+    final destination = _voiceLinkDestination(match.group(2));
+    final narration = _resolveMediaVoiceNarration(
+      destination,
+      alt: label,
+      resolver: mediaNarrationResolver,
+      spoken: spoken,
+    );
+    if (narration.matched) {
+      return narration.text == null ? ' ' : ' ${narration.text} ';
+    }
     if (label.isEmpty || _isVoiceUrlLike(label)) return ' ';
     if (_isHospitalBagCartVoiceUrl(destination)) return ' ';
     return ' $label ';
@@ -424,29 +524,116 @@ String _stripVoiceLinks(String text) {
     if (label.isEmpty || _isVoiceUrlLike(label)) return ' ';
     return ' $label ';
   });
-  normalized = normalized.replaceAllMapped(
-    _voiceMediaPathPattern,
-    (match) => '${match.group(1) ?? ''} ',
-  );
+  normalized = normalized.replaceAllMapped(_voiceMediaPathPattern, (match) {
+    final prefix = match.group(1) ?? '';
+    final mediaId = (match.group(0) ?? '').substring(prefix.length).trim();
+    final narration = _resolveMediaVoiceNarration(
+      mediaId,
+      resolver: mediaNarrationResolver,
+      spoken: spoken,
+    );
+    return narration.text == null ? '$prefix ' : '$prefix${narration.text} ';
+  });
   normalized = normalized.replaceAll(
     RegExp(r'<(?:https?|ftp):\/\/[^>\s]+>', caseSensitive: false),
     ' ',
   );
-  normalized = normalized.replaceAll(_voiceBareUrlPattern, ' ');
-  normalized = normalized.replaceAllMapped(
-    _voiceAppRoutePattern,
-    (match) => '${match.group(1) ?? ''} ',
-  );
+  normalized = normalized.replaceAllMapped(_voiceBareUrlPattern, (match) {
+    final mediaId = match.group(0) ?? '';
+    final narration = _resolveMediaVoiceNarration(
+      mediaId,
+      resolver: mediaNarrationResolver,
+      spoken: spoken,
+    );
+    return narration.text == null ? ' ' : ' ${narration.text} ';
+  });
+  normalized = normalized.replaceAllMapped(_voiceAppRoutePattern, (match) {
+    final prefix = match.group(1) ?? '';
+    final mediaId = (match.group(0) ?? '').substring(prefix.length).trim();
+    final narration = _resolveMediaVoiceNarration(
+      mediaId,
+      resolver: mediaNarrationResolver,
+      spoken: spoken,
+    );
+    return narration.text == null ? '$prefix ' : '$prefix${narration.text} ';
+  });
   normalized = normalized.replaceAllMapped(
     _voiceHashOrQueryUrlPattern,
     (match) => '${match.group(1) ?? ''} ',
   );
-  normalized = normalized.replaceAll(_voiceBareDomainPattern, ' ');
+  normalized = normalized.replaceAllMapped(_voiceBareDomainPattern, (match) {
+    final mediaId = match.group(0) ?? '';
+    final narration = _resolveMediaVoiceNarration(
+      mediaId,
+      resolver: mediaNarrationResolver,
+      spoken: spoken,
+    );
+    return narration.text == null ? ' ' : ' ${narration.text} ';
+  });
   normalized = normalized.replaceAllMapped(
     RegExp(r'(^|[\s(（\[])[)\]](?=($|[\s，。！？；、,.!?;:]))', multiLine: true),
     (match) => '${match.group(1) ?? ''} ',
   );
   return normalized;
+}
+
+String _voiceLinkDestination(String? value) {
+  final text = value?.trim() ?? '';
+  if (text.isEmpty) return '';
+  return text.split(RegExp(r'\s+')).first;
+}
+
+({bool matched, String? text}) _resolveMediaVoiceNarration(
+  String mediaId, {
+  String alt = '',
+  required AgentVoiceMediaNarrationResolver? resolver,
+  required Set<String> spoken,
+}) {
+  if (mediaId.trim().isEmpty || resolver == null) {
+    return (matched: false, text: null);
+  }
+  final narration = resolver(url: mediaId.trim(), alt: alt.trim())?.trim();
+  if (narration == null || narration.isEmpty) {
+    return (matched: false, text: null);
+  }
+  if (!spoken.add(narration)) return (matched: true, text: null);
+  return (matched: true, text: narration);
+}
+
+int _voiceStreamHoldStart(String text) {
+  final starts = <int>[
+    _incompleteMarkdownVoiceImageStart(text),
+    _incompleteMarkdownVoiceLinkStart(text),
+    _trailingVoiceUrlLikeStart(text),
+  ].where((start) => start >= 0).toList(growable: false);
+  if (starts.isEmpty) return -1;
+  return starts.reduce((left, right) => left < right ? left : right);
+}
+
+int _incompleteMarkdownVoiceLinkStart(String text) {
+  final openLabel = text.lastIndexOf('[');
+  if (openLabel < 0) return -1;
+  final closeLabel = text.indexOf(']', openLabel + 1);
+  if (closeLabel < 0) return openLabel;
+  if (closeLabel == text.length - 1) return openLabel;
+  if (text[closeLabel + 1] != '(') return -1;
+  return text.indexOf(')', closeLabel + 2) >= 0 ? -1 : openLabel;
+}
+
+int _incompleteMarkdownVoiceImageStart(String text) {
+  final openImage = text.lastIndexOf('![');
+  if (openImage < 0) return text.endsWith('!') ? text.length - 1 : -1;
+  final closeLabel = text.indexOf(']', openImage + 2);
+  if (closeLabel < 0) return openImage;
+  if (closeLabel == text.length - 1) return openImage;
+  if (text[closeLabel + 1] != '(') return -1;
+  return text.indexOf(')', closeLabel + 2) >= 0 ? -1 : openImage;
+}
+
+int _trailingVoiceUrlLikeStart(String text) {
+  final match = _voiceStreamTrailingUrlLikePattern.firstMatch(text);
+  if (match == null || match.end != text.length) return -1;
+  return match.start + (match.group(1)?.length ?? 0);
 }
 
 String _normalizeVoiceSlashes(String text) {

@@ -10,14 +10,69 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import 'support/fixture_api_transport.dart';
 import 'support/fake_agent_voice.dart';
 
 void main() {
+  testWidgets('external Agent links open safely and report launcher failure', (
+    tester,
+  ) async {
+    final launcher = _FakeExternalUrlLauncher(result: false);
+    late BuildContext actionContext;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) {
+              actionContext = context;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    await dispatchAgentArtifactAction(
+      actionContext,
+      AgentArtifactActionView(
+        label: '专业信息源',
+        icon: Icons.open_in_new_rounded,
+        kind: 'citation',
+        value: 'https://www.who.int/health-topics/breastfeeding',
+        externalUri: Uri.parse(
+          'https://www.who.int/health-topics/breastfeeding',
+        ),
+      ),
+      externalUrlLauncher: launcher,
+    );
+    await tester.pump();
+
+    expect(launcher.opened, [
+      Uri.parse('https://www.who.int/health-topics/breastfeeding'),
+    ]);
+    expect(find.text('无法打开链接，请稍后重试'), findsOneWidget);
+
+    await dispatchAgentArtifactAction(
+      actionContext,
+      AgentArtifactActionView(
+        label: '危险链接',
+        icon: Icons.open_in_new_rounded,
+        kind: 'link',
+        externalUri: Uri.parse('javascript:alert(1)'),
+      ),
+      externalUrlLauncher: launcher,
+    );
+
+    expect(launcher.opened, hasLength(1));
+  });
+
   testWidgets('route shell starts at Agent Hub and navigates bottom tabs', (
     tester,
   ) async {
@@ -373,6 +428,95 @@ void main() {
     expect(find.byType(MomCozyBottomNavigation), findsNothing);
   });
 
+  testWidgets('route shell ingests cart artifacts before id-only navigation', (
+    tester,
+  ) async {
+    final runtime = _authenticatedRuntime();
+    await tester.pumpWidget(MomCozyFlutterApp(apiRuntime: runtime));
+    await tester.pumpAndSettle();
+
+    final page = tester.widget<AgentHubPage>(find.byType(AgentHubPage));
+    page.onArtifactAction?.call(
+      AgentArtifactActionView(
+        label: '打开购物车',
+        icon: Icons.shopping_cart_outlined,
+        kind: 'artifact',
+        value: '/hospital-bag-cart',
+        routePath: '/hospital-bag-cart',
+        hospitalBagCartSeed: HospitalBagCartArtifactSeed.tryFromCartUpdate(
+          artifactId: 'shell-personalized',
+          cartUpdate: {
+            'groups': [
+              {
+                'title': '我的清单',
+                'tone': 'sky',
+                'items': [
+                  {
+                    'id': 'shell-custom',
+                    'name': '壳层个性化用品',
+                    'desc': '来自 artifact',
+                    'qty': 1,
+                    'price': 20,
+                  },
+                ],
+              },
+            ],
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('route-page-/hospital-bag-cart')),
+      findsOneWidget,
+    );
+    final featurePage = tester.widget<MomCozyFeaturePage>(
+      find.byType(MomCozyFeaturePage),
+    );
+    expect(featurePage.routeExtra, isA<HospitalBagCartRouteState>());
+    expect(
+      (featurePage.routeExtra! as HospitalBagCartRouteState).cartId,
+      'artifact:shell-personalized',
+    );
+    expect(find.text('壳层个性化用品'), findsOneWidget);
+    expect(find.text('产褥垫组合装'), findsNothing);
+    expect(
+      runtime.hospitalBagCartStore.activeCartId,
+      'artifact:shell-personalized',
+    );
+  });
+
+  testWidgets('route shell clears cart context for a manual new session', (
+    tester,
+  ) async {
+    final runtime = _authenticatedRuntime();
+    runtime.hospitalBagCartStore.ingestArtifact(
+      HospitalBagCartArtifactSeed.tryFromCartUpdate(
+        artifactId: 'previous-session-cart',
+        cartUpdate: {
+          'groups': [
+            {
+              'title': '旧会话清单',
+              'tone': 'rose',
+              'items': [
+                {'id': 'old-item', 'name': '旧会话用品', 'qty': 1, 'price': 10},
+              ],
+            },
+          ],
+        },
+      )!,
+    );
+    await tester.pumpWidget(MomCozyFlutterApp(apiRuntime: runtime));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+    await tester.pump();
+
+    expect(runtime.hospitalBagCartStore.activeCartId, isNull);
+    expect(runtime.hospitalBagCartStore.agentClientContext, isNull);
+  });
+
   testWidgets('route shell consumes pending native route on startup', (
     tester,
   ) async {
@@ -577,6 +721,19 @@ void main() {
   });
 }
 
+class _FakeExternalUrlLauncher implements ExternalUrlLauncher {
+  _FakeExternalUrlLauncher({required this.result});
+
+  final bool result;
+  final opened = <Uri>[];
+
+  @override
+  Future<bool> open(Uri uri) async {
+    opened.add(uri);
+    return result;
+  }
+}
+
 class _FixedAuthDeviceIdStore implements MomCozyAuthDeviceIdStore {
   const _FixedAuthDeviceIdStore(this.deviceId);
 
@@ -626,7 +783,9 @@ class _WidgetFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
   }
 
   @override
-  AgentVoiceRealtimePlaybackSession startRealtimeSession() {
+  AgentVoiceRealtimePlaybackSession startRealtimeSession({
+    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  }) {
     final session = _WidgetFakeVoiceRealtimePlaybackSession();
     realtimeSessions.add(session);
     return session;

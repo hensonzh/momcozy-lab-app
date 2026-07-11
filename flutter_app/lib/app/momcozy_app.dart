@@ -9,13 +9,17 @@ import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_sto
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
+import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
+import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -37,6 +41,7 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.sessionStore = const FlutterSecureMomCozySessionStore(),
     this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
     this.agentHubBuilder,
+    this.externalUrlLauncher = const PlatformExternalUrlLauncher(),
   }) : assert(
          apiRuntime == null || runtimeController == null,
          'Pass either apiRuntime or runtimeController, not both.',
@@ -49,6 +54,7 @@ class MomCozyFlutterApp extends StatefulWidget {
   final MomCozySessionStore sessionStore;
   final MomCozyAuthDeviceIdStore authDeviceIdStore;
   final MomCozyAgentHubBuilder? agentHubBuilder;
+  final ExternalUrlLauncher externalUrlLauncher;
 
   @override
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
@@ -68,6 +74,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
         sessionStore: widget.sessionStore,
         authDeviceIdStore: widget.authDeviceIdStore,
         agentHubBuilder: widget.agentHubBuilder,
+        externalUrlLauncher: widget.externalUrlLauncher,
       );
   late final bool _ownsRouter = widget.router == null;
   late final RouteIntentPlatform _routeIntentPlatform =
@@ -348,8 +355,18 @@ GoRouter createMomCozyRouter({
   MomCozyAuthDeviceIdStore authDeviceIdStore =
       const FlutterSecureMomCozyAuthDeviceIdStore(),
   MomCozyAgentHubBuilder? agentHubBuilder,
+  ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
 }) {
-  final resolvedAgentHubBuilder = agentHubBuilder ?? _buildDefaultAgentHubPage;
+  final resolvedAgentHubBuilder =
+      agentHubBuilder ??
+      (context, uri, extra, voicePlaybackCoordinator) =>
+          _buildDefaultAgentHubPage(
+            context,
+            uri,
+            extra,
+            voicePlaybackCoordinator,
+            externalUrlLauncher: externalUrlLauncher,
+          );
   return GoRouter(
     initialLocation: initialLocation,
     refreshListenable: runtimeController,
@@ -1225,8 +1242,9 @@ Widget _buildDefaultAgentHubPage(
   BuildContext context,
   Uri? uri,
   Object? extra,
-  AgentVoicePlaybackCoordinator voicePlaybackCoordinator,
-) {
+  AgentVoicePlaybackCoordinator voicePlaybackCoordinator, {
+  ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
+}) {
   final runtime = MomCozyRuntimeScope.of(context);
   String? currentAccessToken() {
     return runtime.currentSession.accessToken ??
@@ -1255,11 +1273,32 @@ Widget _buildDefaultAgentHubPage(
     ),
     greetingProfileLoader:
         runtime.agentHubProfileRepository.fetchGreetingProfile,
-    requestBuilder: (message) =>
-        buildSessionAgentHubRequest(message, session: runtime.session),
+    requestBuilder: (message) => buildSessionAgentHubRequest(
+      message,
+      session: runtime.session,
+      clientContext: runtime.hospitalBagCartStore.agentClientContext,
+    ),
     voicePlaybackCoordinator: voicePlaybackCoordinator,
     voicePlaybackPlayer: runtime.agentVoicePlaybackPlayer,
-    onArtifactAction: (action) => _handleAgentArtifactAction(context, action),
+    pickImage: runtime.agentHubImagePicker,
+    voiceInputController: runtime.agentVoiceInputController,
+    productAssetRepository: runtime.productAssetRepository,
+    ibclcConsultStore: runtime.ibclcConsultStore,
+    onHospitalBagCartUpdate: (seed) {
+      runtime.hospitalBagCartStore.ingestArtifact(seed);
+    },
+    onHospitalBagCartContextRequired: () {
+      final store = runtime.hospitalBagCartStore;
+      store.activate(store.activeCartId);
+    },
+    onNewSession: runtime.hospitalBagCartStore.clearForNewSession,
+    onArtifactAction: (action) => unawaited(
+      dispatchAgentArtifactAction(
+        context,
+        action,
+        externalUrlLauncher: externalUrlLauncher,
+      ),
+    ),
     initialComposerText: _agentPrefillFromRoute(uri, extra),
     initialAutoSend: _agentAutoSendFromRoute(uri, extra),
   );
@@ -1440,13 +1479,49 @@ int _selectedTabIndex(String location) {
   return -1;
 }
 
-void _handleAgentArtifactAction(
+Future<void> dispatchAgentArtifactAction(
   BuildContext context,
-  AgentArtifactActionView action,
-) {
+  AgentArtifactActionView action, {
+  ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
+}) async {
   final path = action.routePath;
-  if (path == null || !_knownFlutterRoutePaths.contains(path)) return;
-  context.go(path, extra: action.routeExtra);
+  if (path != null && _knownFlutterRoutePaths.contains(path)) {
+    Object? routeExtra = action.routeExtra;
+    if (path == '/hospital-bag-cart') {
+      final store = MomCozyRuntimeScope.of(context).hospitalBagCartStore;
+      final seed = action.hospitalBagCartSeed;
+      final cartId = seed == null
+          ? store.activate(store.activeCartId)
+          : store.ingestArtifact(seed);
+      routeExtra = HospitalBagCartRouteState(cartId: cartId);
+    }
+    if (path == '/ibclc-chat.html' && routeExtra is IbclcConsultRouteState) {
+      MomCozyRuntimeScope.of(
+        context,
+      ).ibclcConsultStore.beginConsult(routeExtra);
+    }
+    final target = SafeLinkTarget.tryParse(action.value);
+    final location = routeExtra == null && target?.internalPath == path
+        ? target!.internalLocation!
+        : path;
+    context.go(location, extra: routeExtra);
+    return;
+  }
+
+  final externalUri = SafeLinkTarget.tryParse(
+    action.externalUri?.toString(),
+  )?.externalUri;
+  if (externalUri == null) return;
+  var opened = false;
+  try {
+    opened = await externalUrlLauncher.open(externalUri);
+  } catch (_) {
+    opened = false;
+  }
+  if (opened || !context.mounted) return;
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  messenger?.hideCurrentSnackBar();
+  messenger?.showSnackBar(const SnackBar(content: Text('无法打开链接，请稍后重试')));
 }
 
 final _knownFlutterRoutePaths = momCozyRoutes

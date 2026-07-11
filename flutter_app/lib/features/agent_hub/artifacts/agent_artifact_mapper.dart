@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_form_normalizer.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_specialized_card_mapper.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 class AgentArtifactMapper {
   const AgentArtifactMapper._();
 
   static List<AgentArtifactCardView> cardsFromEvents(
-    Iterable<AgentStreamEvent> events,
-  ) {
+    Iterable<AgentStreamEvent> events, {
+    BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
+  }) {
     final cards = <String, AgentArtifactCardView>{};
     for (final event in events) {
-      final card = cardFromEvent(event);
+      final card = cardFromEvent(event, profileDefaults: profileDefaults);
       if (card != null) cards[card.id] = card;
     }
     return List<AgentArtifactCardView>.unmodifiable(cards.values);
   }
 
-  static AgentArtifactCardView? cardFromEvent(AgentStreamEvent event) {
+  static AgentArtifactCardView? cardFromEvent(
+    AgentStreamEvent event, {
+    BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
+  }) {
     if (event.type != 'artifact.created' && event.type != 'artifact.updated') {
       return null;
     }
@@ -27,7 +36,37 @@ class AgentArtifactMapper {
       _mapField(payload, 'artifact'),
     ]);
     final artifactPayload = _mapField(artifact, 'payload');
-    final effectivePayload = artifactPayload.isNotEmpty
+    final artifactType = _firstNonEmpty([
+      _stringField(event.raw, 'artifact_type', 'artifactType'),
+      _stringField(payload, 'artifact_type', 'artifactType'),
+      _stringField(artifact, 'artifact_type', 'artifactType'),
+    ]);
+    final isSupportTicket = _isSupportTicketType(artifactType);
+    final supportTicket = isSupportTicket
+        ? _firstMap([
+            _mapField(event.raw, 'ticket'),
+            _mapField(payload, 'ticket'),
+            _mapField(artifactPayload, 'ticket'),
+            _mapField(artifact, 'ticket'),
+            artifactPayload,
+            artifact,
+            payload,
+          ])
+        : const <String, Object?>{};
+    final supportTicketForm = isSupportTicket
+        ? _supportTicketForm(
+            supportTicket,
+            submitLabel: _firstNonEmpty([
+              _stringField(event.raw, 'submit_label', 'submitLabel'),
+              _stringField(payload, 'submit_label', 'submitLabel'),
+              _stringField(artifactPayload, 'submit_label', 'submitLabel'),
+              _stringField(artifact, 'submit_label', 'submitLabel'),
+            ]),
+          )
+        : const <String, Object?>{};
+    final effectivePayload = supportTicket.isNotEmpty
+        ? supportTicket
+        : artifactPayload.isNotEmpty
         ? artifactPayload
         : payload;
     final richText = _firstMap([
@@ -40,11 +79,17 @@ class AgentArtifactMapper {
       _mapField(payload, 'card'),
       _mapField(artifact, 'card'),
     ]);
-    final form = _firstMap([
-      _mapField(artifactPayload, 'form'),
-      _mapField(payload, 'form'),
-      _mapField(artifact, 'form'),
-    ]);
+    final rawForm = supportTicketForm.isNotEmpty
+        ? supportTicketForm
+        : _firstMap([
+            _mapField(artifactPayload, 'form'),
+            _mapField(payload, 'form'),
+            _mapField(artifact, 'form'),
+          ]);
+    final form = normalizeAgentArtifactForm(
+      rawForm,
+      profileDefaults: profileDefaults,
+    );
     final cartUpdate = _firstMap([
       _mapField(artifactPayload, 'cart_update', 'cartUpdate'),
       _mapField(payload, 'cart_update', 'cartUpdate'),
@@ -53,18 +98,15 @@ class AgentArtifactMapper {
       _mapField(artifactPayload, 'assistant_followup', 'assistantFollowup'),
       _mapField(payload, 'assistant_followup', 'assistantFollowup'),
     ]);
-    final artifactId = _firstNonEmpty([
+    final explicitArtifactId = _firstNonEmpty([
       _stringField(event.raw, 'artifact_id', 'artifactId'),
       _stringField(payload, 'artifact_id', 'artifactId'),
       _stringField(artifact, 'id'),
+      _stringField(supportTicket, 'draft_id', 'draftId'),
+      _stringField(supportTicket, 'id'),
       event.artifactId,
-      event.mergeKey,
-    ])!;
-    final artifactType = _firstNonEmpty([
-      _stringField(event.raw, 'artifact_type', 'artifactType'),
-      _stringField(payload, 'artifact_type', 'artifactType'),
-      _stringField(artifact, 'artifact_type', 'artifactType'),
     ]);
+    final artifactId = explicitArtifactId ?? event.mergeKey;
     final schemaVersion =
         _firstNonEmpty([
           _stringField(event.raw, 'schema_version', 'schemaVersion'),
@@ -82,6 +124,8 @@ class AgentArtifactMapper {
     ]);
     final cardJson = rawCardJson.isNotEmpty
         ? rawCardJson
+        : _isIbclcConsultType(artifactType) && cardEnvelope.isNotEmpty
+        ? cardEnvelope
         : _directCardPayload(artifactType, effectivePayload);
     final cardType = _firstNonEmpty([
       _stringField(cardEnvelope, 'card_type', 'cardType'),
@@ -94,6 +138,13 @@ class AgentArtifactMapper {
       cardJson: cardJson,
       hasForm: form.isNotEmpty,
       hasCartUpdate: cartUpdate.isNotEmpty,
+    );
+    final specializedView = mapAgentSpecializedCard(
+      presentationKind: presentationKind,
+      cardJson: cardJson,
+      payload: effectivePayload,
+      artifactId: artifactId,
+      consultIdFallbackArtifactId: explicitArtifactId ?? '',
     );
     final explicitTitle = _firstNonEmpty([
       _stringField(richText, 'title'),
@@ -128,10 +179,15 @@ class AgentArtifactMapper {
       ..._referenceActionsFromRichText(richText),
       ..._semanticActions(richText['action'], event),
       ..._semanticActions(payload['actions'], event),
-      ..._assistantFollowupActions(assistantFollowup),
+      ..._assistantFollowupActions(
+        assistantFollowup,
+        artifactId: artifactId,
+        cartUpdate: cartUpdate,
+      ),
     ];
 
-    if (explicitTitle == null &&
+    if (specializedView == null &&
+        explicitTitle == null &&
         formFields.isEmpty &&
         (content == null || content.trim().isEmpty) &&
         rows.isEmpty &&
@@ -141,7 +197,10 @@ class AgentArtifactMapper {
 
     return AgentArtifactCardView(
       id: artifactId,
-      title: explicitTitle ?? _artifactSubject(artifactType),
+      title:
+          specializedView?.title ??
+          explicitTitle ??
+          _artifactSubject(artifactType),
       artifactType: artifactType,
       schemaVersion: schemaVersion,
       presentationKind: presentationKind,
@@ -157,6 +216,7 @@ class AgentArtifactMapper {
       formSubmitLabel: _stringField(form, 'submit_label', 'submitLabel'),
       formFields: formFields,
       actions: List<AgentArtifactActionView>.unmodifiable(actions),
+      specializedView: specializedView,
     );
   }
 }
@@ -171,6 +231,9 @@ AgentArtifactPresentationKind _presentationKind({
 }) {
   if (!_isSupportedSchemaVersion(schemaVersion)) {
     return AgentArtifactPresentationKind.unsupported;
+  }
+  if (_isSupportTicketType(artifactType)) {
+    return AgentArtifactPresentationKind.supportTicketDraft;
   }
   if (hasForm || artifactType == 'form') {
     return AgentArtifactPresentationKind.form;
@@ -204,6 +267,7 @@ AgentArtifactPresentationKind _presentationKind({
         when cardJson.containsKey('packing_groups') ||
             cardJson.containsKey('packingGroups') =>
       AgentArtifactPresentationKind.hospitalBagCard,
+    'ibclc_consult' ||
     'ibclc_consult_card' => AgentArtifactPresentationKind.ibclcConsultCard,
     'rich_text' => AgentArtifactPresentationKind.richText,
     _ => AgentArtifactPresentationKind.generic,
@@ -227,9 +291,16 @@ Map<String, Object?> _directCardPayload(
     'milk_plan_card' ||
     'birth_journey_plan_card' ||
     'birth_plan_card' ||
-    'hospital_bag_card' => payload,
+    'hospital_bag_card' ||
+    'ibclc_consult' ||
+    'ibclc_consult_card' => payload,
     _ => const <String, Object?>{},
   };
+}
+
+bool _isIbclcConsultType(String? artifactType) {
+  return artifactType == 'ibclc_consult' ||
+      artifactType == 'ibclc_consult_card';
 }
 
 List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
@@ -268,6 +339,114 @@ List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
     );
   }
   return List<AgentArtifactFormFieldView>.unmodifiable(views);
+}
+
+Map<String, Object?> _supportTicketForm(
+  Map<String, Object?> ticket, {
+  required String? submitLabel,
+}) {
+  return {
+    'id': 'support_ticket',
+    'title': '售后工单',
+    'submit_label': submitLabel ?? '确认并提交',
+    'fields': [
+      {
+        'id': 'issue_type',
+        'label': '问题类型',
+        'type': 'select',
+        'required': true,
+        'default_value': _supportTicketIssueLabel(
+          ticket['issue_type'] ?? ticket['issueType'],
+        ),
+        'options': const [
+          '设备故障',
+          '缺少配件',
+          '疑似质量问题',
+          '保修',
+          '退换货/退款',
+          '订单/物流',
+          '使用帮助',
+          '安全问题',
+          '其他',
+        ],
+      },
+      {
+        'id': 'issue_summary',
+        'label': '问题描述',
+        'type': 'textarea',
+        'required': true,
+        'default_value':
+            _stringField(ticket, 'issue_summary', 'issueSummary') ?? '',
+        'placeholder': '简单描述你遇到的问题',
+      },
+      {
+        'id': 'product_model',
+        'label': '产品型号',
+        'type': 'text',
+        'required': true,
+        'default_value':
+            _stringField(ticket, 'product_model', 'productModel') ?? '',
+        'placeholder': '例如：M5、S12 Pro，或暂不确定',
+      },
+      {
+        'id': 'order_number',
+        'label': '订单号',
+        'type': 'text',
+        'default_value':
+            _stringField(ticket, 'order_number', 'orderNumber') ?? '',
+        'placeholder': '没有或暂时找不到可以先留空',
+      },
+      {
+        'id': 'purchase_channel',
+        'label': '购买渠道',
+        'type': 'text',
+        'default_value':
+            _stringField(ticket, 'purchase_channel', 'purchaseChannel') ?? '',
+        'placeholder': '例如：官网、Amazon、TikTok、线下门店',
+      },
+      {
+        'id': 'urgency',
+        'label': '紧急程度',
+        'type': 'select',
+        'required': true,
+        'default_value': _supportTicketUrgencyLabel(ticket['urgency']),
+        'options': const ['普通', '较急', '安全相关'],
+      },
+    ],
+  };
+}
+
+String _supportTicketIssueLabel(Object? value) {
+  const labels = <String, String>{
+    'malfunction': '设备故障',
+    'missing_parts': '缺少配件',
+    'defect': '疑似质量问题',
+    'warranty': '保修',
+    'return_or_refund': '退换货/退款',
+    'order_or_shipping': '订单/物流',
+    'usage_help': '使用帮助',
+    'safety_concern': '安全问题',
+    'other': '其他',
+  };
+  final normalized = value?.toString().trim() ?? '';
+  return labels[normalized] ??
+      (labels.containsValue(normalized) ? normalized : '其他');
+}
+
+String _supportTicketUrgencyLabel(Object? value) {
+  const labels = <String, String>{
+    'normal': '普通',
+    'high': '较急',
+    'safety': '安全相关',
+  };
+  final normalized = value?.toString().trim() ?? '';
+  return labels[normalized] ??
+      (labels.containsValue(normalized) ? normalized : '普通');
+}
+
+bool _isSupportTicketType(String? artifactType) {
+  return artifactType == 'support_ticket' ||
+      artifactType == 'support_ticket_draft';
 }
 
 List<String> _cardJsonRows(Map<String, Object?> cardJson) {
@@ -409,13 +588,15 @@ List<AgentArtifactActionView> _buttonActions(Object? rawButtons) {
               _stringField(button, 'title'),
             ]) ??
             '打开';
+        final routePath = _actionRoutePath(kind: kind, value: value);
         return AgentArtifactActionView(
           label: label,
           icon: _actionIcon(kind),
           kind: kind ?? 'button',
           value: value,
-          routePath: _actionRoutePath(kind: kind, value: value),
+          routePath: routePath,
           routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
+          externalUri: _actionExternalUri(value: value, routePath: routePath),
         );
       })
       .toList(growable: false);
@@ -447,6 +628,8 @@ List<AgentArtifactActionView> _referenceActions(Object? rawReferences) {
           _stringField(reference, 'href'),
           _stringField(reference, 'value'),
         ]);
+        final target = SafeLinkTarget.tryParse(value);
+        if (target == null || value == null) return null;
         final title =
             _firstNonEmpty([
               _stringField(reference, 'title'),
@@ -455,13 +638,25 @@ List<AgentArtifactActionView> _referenceActions(Object? rawReferences) {
               _hostFromUrl(value),
             ]) ??
             '参考来源';
+        final mediaKind = target.isInternal
+            ? _mediaViewerKind(kind: null, url: value)
+            : null;
+        final routePath = mediaKind == null
+            ? target.internalPath
+            : '/media-viewer';
         return AgentArtifactActionView(
           label: _citationLabel(reference['index'], title),
           icon: _actionIcon('citation'),
           kind: 'citation',
           value: value,
+          routePath: routePath,
+          routeExtra: mediaKind == null
+              ? null
+              : {'kind': mediaKind, 'url': value, 'title': title},
+          externalUri: routePath == null ? target.externalUri : null,
         );
       })
+      .whereType<AgentArtifactActionView>()
       .toList(growable: false);
 }
 
@@ -492,21 +687,25 @@ List<AgentArtifactActionView> _semanticActions(
                   : null,
             ]) ??
             '打开';
+        final routePath = _actionRoutePath(kind: kind, value: value);
         return AgentArtifactActionView(
           label: label,
           icon: _actionIcon(kind),
           kind: kind ?? 'action',
           value: value,
-          routePath: _actionRoutePath(kind: kind, value: value),
+          routePath: routePath,
           routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
+          externalUri: _actionExternalUri(value: value, routePath: routePath),
         );
       })
       .toList(growable: false);
 }
 
 List<AgentArtifactActionView> _assistantFollowupActions(
-  Map<String, Object?> assistantFollowup,
-) {
+  Map<String, Object?> assistantFollowup, {
+  required String artifactId,
+  required Map<String, Object?> cartUpdate,
+}) {
   final kind = _stringField(assistantFollowup, 'kind');
   final route = _markdownLinkPath(_stringField(assistantFollowup, 'message'));
   if (kind != 'hospital_bag_cart' && route != '/hospital-bag-cart') {
@@ -519,6 +718,10 @@ List<AgentArtifactActionView> _assistantFollowupActions(
       kind: 'artifact',
       value: route ?? '/hospital-bag-cart',
       routePath: route ?? '/hospital-bag-cart',
+      hospitalBagCartSeed: HospitalBagCartArtifactSeed.tryFromCartUpdate(
+        artifactId: artifactId,
+        cartUpdate: cartUpdate,
+      ),
     ),
   ];
 }
@@ -535,7 +738,12 @@ IconData _actionIcon(String? kind) {
 
 String? _actionRoutePath({required String? kind, required String? value}) {
   if (_isMediaActionKind(kind)) return '/media-viewer';
-  return _safeSameOriginPath(value);
+  return SafeLinkTarget.tryParse(value)?.internalPath;
+}
+
+Uri? _actionExternalUri({required String? value, required String? routePath}) {
+  if (routePath != null) return null;
+  return SafeLinkTarget.tryParse(value)?.externalUri;
 }
 
 Map<String, Object?>? _actionRouteExtra({
@@ -585,12 +793,7 @@ String? _mediaViewerKind({required String? kind, required String url}) {
 }
 
 String? _safeSameOriginPath(String? value) {
-  final normalized = value?.trim();
-  if (normalized == null || normalized.isEmpty) return null;
-  final uri = Uri.tryParse(normalized);
-  if (uri == null || uri.hasScheme || uri.hasAuthority) return null;
-  final path = uri.path.isEmpty ? normalized : uri.path;
-  return path.startsWith('/') ? path : null;
+  return SafeLinkTarget.tryParse(value)?.internalPath;
 }
 
 String? _markdownLinkPath(String? value) {
@@ -618,6 +821,7 @@ String? _hostFromUrl(String? value) {
 String _artifactSubject(String? type) {
   return switch (type) {
     'form' => '信息采集',
+    'support_ticket' || 'support_ticket_draft' => '售后工单',
     'milk_analysis_card' => '奶量分析',
     'milk_plan_card' || 'milk_plan_preview' => '奶量计划',
     'birth_journey_plan_card' => '孕期计划',

@@ -9,6 +9,7 @@ class AgentStreamRequest {
     this.locale = 'en-US',
     this.images = const <AgentStreamImageInput>[],
     this.metadata = const <String, Object?>{},
+    this.idempotencyKey,
   });
 
   final String message;
@@ -18,6 +19,7 @@ class AgentStreamRequest {
   final String locale;
   final List<AgentStreamImageInput> images;
   final Map<String, Object?> metadata;
+  final String? idempotencyKey;
 
   Map<String, Object?> toMap() => {
     'message': message,
@@ -26,6 +28,7 @@ class AgentStreamRequest {
     if (images.isNotEmpty)
       'images': images.map((image) => image.toMap()).toList(growable: false),
     if (metadata.isNotEmpty) 'metadata': metadata,
+    if (idempotencyKey != null) 'idempotencyKey': idempotencyKey,
   };
 
   AgentStreamRequest resume({
@@ -41,6 +44,7 @@ class AgentStreamRequest {
       locale: locale,
       images: images,
       metadata: metadata,
+      idempotencyKey: idempotencyKey,
     );
   }
 }
@@ -102,13 +106,20 @@ Map<String, Object?> buildProductionAgentRunPayload(
       .toList(growable: true);
   final formSubmission = _productionFormSubmissionAttachment(request.metadata);
   if (formSubmission != null) attachments.add(formSubmission);
-  final normalizedIdempotencyKey = idempotencyKey?.trim();
+  final normalizedIdempotencyKey = (idempotencyKey ?? request.idempotencyKey)
+      ?.trim();
+  final normalizedLocale = request.locale.trim();
+  final clientContext = <String, Object?>{
+    ...request.metadata,
+    if (normalizedLocale.isNotEmpty) 'locale': normalizedLocale,
+  }..remove('form_submission');
 
   return {
     if (threadId != null && threadId.isNotEmpty && _looksLikeUuid(threadId))
       'thread_id': threadId,
     'message': text,
     if (attachments.isNotEmpty) 'attachments': attachments,
+    if (clientContext.isNotEmpty) 'client_context': clientContext,
     'runtime_pattern': 'langgraph_sdk',
     if (normalizedIdempotencyKey != null && normalizedIdempotencyKey.isNotEmpty)
       'idempotency_key': normalizedIdempotencyKey,

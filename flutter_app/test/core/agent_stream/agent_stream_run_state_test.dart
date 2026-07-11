@@ -53,6 +53,118 @@ void main() {
       expect(state.errorMessage, contains('socket closed'));
     });
 
+    test(
+      'releases received artifacts after text or a successful terminal signal',
+      () {
+        final artifact = AgentStreamEvent(const {
+          'event_id': 'evt-artifact-pending',
+          'type': 'artifact.created',
+          'thread_id': 'thread-artifact-pending',
+          'run_id': 'run-artifact-pending',
+          'artifact_id': 'artifact-pending',
+          'sequence': 1,
+          'payload': {
+            'artifact_type': 'card',
+            'card': {'title': '待发布卡片'},
+          },
+        });
+        final pending = const AgentStreamRunState().start().applyEvent(
+          artifact,
+        );
+
+        expect(pending.artifactEvents, isNotEmpty);
+        expect(pending.canPublishArtifactEvents, isFalse);
+
+        final withText = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-text',
+            'type': 'message.delta',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'message_id': 'message-artifact-pending',
+            'sequence': 2,
+            'payload': {'text': '我已经整理好了。'},
+          }),
+        );
+        expect(withText.canPublishArtifactEvents, isTrue);
+
+        final withWhitespace = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-whitespace',
+            'type': 'message.delta',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'message_id': 'message-artifact-pending',
+            'sequence': 2,
+            'payload': {'text': ' \n'},
+          }),
+        );
+        expect(withWhitespace.canPublishArtifactEvents, isFalse);
+
+        final withCompletedMessage = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-message-completed',
+            'type': 'message.completed',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'message_id': 'message-artifact-pending',
+            'sequence': 2,
+            'payload': {'role': 'assistant', 'text': ''},
+          }),
+        );
+        expect(withCompletedMessage.canPublishArtifactEvents, isTrue);
+
+        final withCompletedRun = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-run-completed',
+            'type': 'run.completed',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'sequence': 2,
+          }),
+        );
+        expect(withCompletedRun.canPublishArtifactEvents, isTrue);
+
+        final waitingForConfirmation = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-waiting',
+            'type': 'run.waiting_for_confirmation',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'sequence': 2,
+          }),
+        );
+        expect(waitingForConfirmation.canPublishArtifactEvents, isTrue);
+
+        final failed = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-run-failed',
+            'type': 'run.failed',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'sequence': 2,
+          }),
+        );
+        expect(failed.canPublishArtifactEvents, isFalse);
+        expect(
+          pending
+              .markDisconnected(StateError('socket closed'))
+              .canPublishArtifactEvents,
+          isFalse,
+        );
+        final cancelled = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-cancelled',
+            'type': 'run.cancelled',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'sequence': 2,
+          }),
+        );
+        expect(cancelled.canPublishArtifactEvents, isFalse);
+      },
+    );
+
     test('deduplicates replayed events by event id or sequence', () {
       var state = const AgentStreamRunState().start();
       final replayedEvents = [
@@ -249,37 +361,95 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
       expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
     });
 
-    test(
-      'uses completed mismatch when current text is not live provisional',
-      () {
-        var state = const AgentStreamRunState().start();
+    test('does not replace indexed streamed text on completed mismatch', () {
+      var state = const AgentStreamRunState().start();
 
-        state = state.applyEvent(
-          AgentStreamEvent(const {
-            'type': 'message.delta',
-            'thread_id': 'thread-stale-001',
-            'run_id': 'run-stale-001',
-            'message_id': 'msg-stale-001',
-            'sequence': 2,
-            'payload': {'delta': '旧的 partial'},
-          }),
-        );
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'message.delta',
+          'thread_id': 'thread-stale-001',
+          'run_id': 'run-stale-001',
+          'message_id': 'msg-stale-001',
+          'sequence': 2,
+          'payload': {'delta': '旧的 partial'},
+        }),
+      );
 
-        state = state.applyEvent(
-          AgentStreamEvent(const {
-            'type': 'message.completed',
-            'thread_id': 'thread-stale-001',
-            'run_id': 'run-stale-001',
-            'message_id': 'msg-stale-001',
-            'sequence': 3,
-            'payload': {'role': 'assistant', 'text': '重试后的完整回复'},
-          }),
-        );
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'message.completed',
+          'thread_id': 'thread-stale-001',
+          'run_id': 'run-stale-001',
+          'message_id': 'msg-stale-001',
+          'sequence': 3,
+          'payload': {'role': 'assistant', 'text': '重试后的完整回复'},
+        }),
+      );
 
-        expect(state.textContent, '重试后的完整回复');
-        expect(state.provisionalTextContent, '');
-      },
-    );
+      expect(state.textContent, '旧的 partial');
+      expect(state.provisionalTextContent, '');
+    });
+
+    test('buffers indexed segment gaps and drains them in order', () {
+      var state = const AgentStreamRunState().start();
+
+      state = state.applyEvent(
+        _indexedDelta(index: 0, delta: 'A', prefixHash: _sha256A),
+      );
+      state = state.applyEvent(
+        _indexedDelta(index: 2, delta: 'C', prefixHash: _sha256Abc),
+      );
+
+      expect(state.textContent, 'A');
+      expect(state.nextTextSegmentIndex, 1);
+      expect(state.hasTextSegmentGap, isTrue);
+
+      state = state.applyEvent(
+        _indexedDelta(index: 1, delta: 'B', prefixHash: _sha256Ab),
+      );
+
+      expect(state.textContent, 'ABC');
+      expect(state.nextTextSegmentIndex, 3);
+      expect(state.hasTextSegmentGap, isFalse);
+      expect(state.textIntegrityErrorCode, isNull);
+    });
+
+    test('rejects an indexed segment with invalid prefix integrity', () {
+      final state = const AgentStreamRunState().start().applyEvent(
+        _indexedDelta(index: 0, delta: 'A', prefixHash: 'invalid'),
+      );
+
+      expect(state.textContent, isEmpty);
+      expect(state.nextTextSegmentIndex, 0);
+      expect(state.textIntegrityErrorCode, 'prefix_hash_mismatch');
+    });
+
+    test('completed text only appends a missing indexed suffix', () {
+      var state = const AgentStreamRunState().start().applyEvent(
+        _indexedDelta(index: 0, delta: 'A', prefixHash: _sha256A),
+      );
+
+      state = state.applyEvent(
+        AgentStreamEvent(const {
+          'type': 'message.completed',
+          'run_id': 'run-indexed-001',
+          'message_id': 'msg-indexed-001',
+          'payload': {
+            'role': 'assistant',
+            'text': 'ABC',
+            'stream_schema_version': 'append-only.v1',
+            'segment_count': 3,
+            'content_utf8_bytes': 3,
+            'content_sha256': _sha256Abc,
+          },
+        }),
+      );
+
+      expect(state.textContent, 'ABC');
+      expect(state.nextTextSegmentIndex, 3);
+      expect(state.hasTextSegmentGap, isFalse);
+      expect(state.textIntegrityErrorCode, isNull);
+    });
 
     test('keeps repeated text deltas when no replay key is present', () {
       var state = const AgentStreamRunState().start();
@@ -699,5 +869,55 @@ data: {"type":"run.completed","thread_id":"thread-canonical-tools","run_id":"run
       expect(afterReplay.textContent, '恢复');
       expect(afterReplay.events, isEmpty);
     });
+
+    test('restores pending indexed segments and drains a recovered gap', () {
+      var state = const AgentStreamRunState().start();
+      state = state.applyEvent(
+        _indexedDelta(index: 0, delta: 'A', prefixHash: _sha256A),
+      );
+      state = state.applyEvent(
+        _indexedDelta(index: 2, delta: 'C', prefixHash: _sha256Abc),
+      );
+
+      final restored = AgentStreamRunState.fromMap(state.toMap());
+      final recovered = restored.applyEvent(
+        _indexedDelta(index: 1, delta: 'B', prefixHash: _sha256Ab),
+      );
+
+      expect(restored.textContent, 'A');
+      expect(restored.hasTextSegmentGap, isTrue);
+      expect(recovered.textContent, 'ABC');
+      expect(recovered.hasTextSegmentGap, isFalse);
+      expect(recovered.nextTextSegmentIndex, 3);
+    });
+  });
+}
+
+const _sha256A =
+    '559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd';
+const _sha256Ab =
+    '38164fbd17603d73f696b8b4d72664d735bb6a7c88577687fd2ae33fd6964153';
+const _sha256Abc =
+    'b5d4045c3f466fa91fe2cc6abe79232a1a57cdf104f7a26e716e0a1e2789df78';
+
+AgentStreamEvent _indexedDelta({
+  required int index,
+  required String delta,
+  required String prefixHash,
+}) {
+  return AgentStreamEvent({
+    'event_id': 'delta:indexed-$index',
+    'type': 'message.delta',
+    'thread_id': 'thread-indexed-001',
+    'run_id': 'run-indexed-001',
+    'transient': true,
+    'payload': {
+      'delta': delta,
+      'message_stream_id': 'msg-indexed-001',
+      'stream_schema_version': 'append-only.v1',
+      'segment_index': index,
+      'prefix_utf8_bytes': index + 1,
+      'prefix_sha256': prefixHash,
+    },
   });
 }

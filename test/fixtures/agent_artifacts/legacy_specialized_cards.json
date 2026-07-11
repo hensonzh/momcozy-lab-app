@@ -1,0 +1,117 @@
+{
+  "events": [
+    {
+      "type": "artifact.created",
+      "artifact_id": "legacy-birth-plan-card",
+      "payload": {
+        "artifact_type": "card",
+        "card": {
+          "card_type": "birth_plan_card",
+          "schema_version": "1.0",
+          "card_json": {
+            "title": "Birth Plan Card",
+            "communicationPreferences": [
+              "1. 希望医护先解释每一步",
+              {"backup": "我还没想好，请帮我整理成温和版本"},
+              "待确认"
+            ],
+            "labor_preferences": {"movement": ["自由走动", "自由走动"]},
+            "painReliefPreferences": {"first": "优先尝试非药物缓解"},
+            "babyAfterBirthPreferences": ["skin-to-skin"],
+            "ifPlansChange": {
+              "whatMattersMost": ["先说明原因", "2、让我和家人确认"]
+            },
+            "medicalNotes": ["妊娠糖尿病史", "还不确定"]
+          }
+        }
+      }
+    },
+    {
+      "type": "artifact.created",
+      "artifact_id": "legacy-hospital-bag-card",
+      "payload": {
+        "artifact_type": "card",
+        "card": {
+          "card_type": "hospital_bag_card",
+          "schema_version": "1.0",
+          "card_json": {
+            "title": "Hospital Bag Card",
+            "packingGroups": [
+              {
+                "groupId": "feeding_backup",
+                "title": "母乳喂养备用",
+                "items": [
+                  {
+                    "label": "储奶袋",
+                    "quantity": "5个",
+                    "priority": "recommended"
+                  }
+                ]
+              },
+              {
+                "groupId": "documents",
+                "title": "入院资料",
+                "items": [
+                  {
+                    "label": "身份证及复印件",
+                    "quantity": "2份",
+                    "priority": "must"
+                  },
+                  {
+                    "label": "医院预登记信息",
+                    "priority": "confirm_first"
+                  }
+                ]
+              },
+              {
+                "groupId": "mom_clothing",
+                "title": "妈妈衣物",
+                "items": [
+                  {
+                    "label": "产褥垫",
+                    "priority": "must",
+                    "explain": "根据住院天数准备，产后更换会更方便。"
+                  },
+                  {
+                    "label": "防溢乳垫",
+                    "priority": "must",
+                    "personalizedBy": [
+                      {
+                        "field": "first_birth",
+                        "fieldLabel": "是否第一胎",
+                        "condition": "是",
+                        "effect": "数量调整"
+                      },
+                      {
+                        "field": "feeding_intention",
+                        "fieldLabel": "喂养意向",
+                        "condition": "亲喂母乳"
+                      },
+                      {
+                        "field": "feeding_intention",
+                        "condition": "亲喂母乳"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "group_id": "hospital_cleaning",
+                "title": "住院清洁",
+                "items": [
+                  {
+                    "label": "一次性内裤",
+                    "quantity": "6条",
+                    "priority": "nice_to_have",
+                    "note": "按住院天数增减。"
+                  }
+                ]
+              }
+            ],
+            "disclaimer": "最终请以医院实际要求为准。"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,18 +1,31 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:pdfrx/pdfrx.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_api_transport.dart';
 import '../../support/fake_agent_voice.dart';
+import '../../support/fake_video_player_platform.dart';
+import '../../support/test_pdf_fixture.dart';
 
 void main() {
   group('MomCozy feature pages', () {
@@ -1386,9 +1399,7 @@ void main() {
       expect(find.text('上传示例资料'), findsNothing);
     });
 
-    testWidgets('media viewer reads resource query and renders viewer state', (
-      tester,
-    ) async {
+    testWidgets('media viewer rejects retired demo PDF URLs', (tester) async {
       final router = createMomCozyRouter(
         initialLocation:
             '/media-viewer?kind=pdf&url=%2Fdemo%2Fw1.pdf&title=W1%20使用教程',
@@ -1402,7 +1413,11 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('W1 使用教程'), findsOneWidget);
-      expect(find.text('加载 PDF…'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('media-viewer-load-error')),
+        findsOneWidget,
+      );
+      expect(find.text('PDF 加载失败'), findsOneWidget);
       expect(find.text('缺少资源参数，请从资料卡片进入。'), findsNothing);
     });
 
@@ -1429,16 +1444,262 @@ void main() {
       expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
     });
 
+    testWidgets('media viewer loads an authenticated product image with zoom', (
+      tester,
+    ) async {
+      final repository = _productAssetRepository([
+        _assetResponse(statusCode: 200, body: _onePixelPng),
+      ]);
+      final location = Uri(
+        path: '/media-viewer',
+        queryParameters: const {
+          'kind': 'image',
+          'url': '/v1/assets/asset-image?kind=image',
+          'title': 'Air1 核心部件',
+        },
+      ).toString();
+      final router = createMomCozyRouter(initialLocation: location);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Air1 核心部件'), findsOneWidget);
+      expect(find.byKey(const ValueKey('media-image-viewer')), findsOneWidget);
+      expect(find.byKey(const ValueKey('product-asset-image')), findsOneWidget);
+      final viewer = tester.widget<InteractiveViewer>(
+        find.byKey(const ValueKey('media-image-interactive-viewer')),
+      );
+      expect(viewer.minScale, 1);
+      expect(viewer.maxScale, 5);
+      expect(viewer.panEnabled, isTrue);
+
+      final imageViewer = find.byKey(const ValueKey('media-image-viewer'));
+      final center = tester.getCenter(imageViewer);
+      await tester.tapAt(center);
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tapAt(center);
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(
+        viewer.transformationController!.value.getMaxScaleOnAxis(),
+        closeTo(2.5, 0.01),
+      );
+    });
+
+    testWidgets('media image failure can be retried without leaving the page', (
+      tester,
+    ) async {
+      final connector = _FakeProductAssetConnector([
+        _assetResponse(statusCode: 503, contentType: 'application/json'),
+        _assetResponse(statusCode: 200, body: _onePixelPng),
+      ]);
+      final repository = ProductAssetRepository(
+        baseUri: Uri.parse('https://api.example.test'),
+        connector: connector,
+      );
+      final router = createMomCozyRouter(
+        initialLocation: Uri(
+          path: '/media-viewer',
+          queryParameters: const {
+            'kind': 'image',
+            'url': '/v1/assets/asset-image?kind=image',
+          },
+        ).toString(),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('media-viewer-load-error')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('media-viewer-retry')));
+      await tester.pumpAndSettle();
+
+      expect(connector.calls, 2);
+      expect(find.byKey(const ValueKey('product-asset-image')), findsOneWidget);
+    });
+
+    testWidgets('media viewer loads an authenticated multi-page PDF', (
+      tester,
+    ) async {
+      _installPathProviderMock();
+      final connector = _FakeProductAssetConnector([
+        _assetResponse(
+          statusCode: 200,
+          contentType: 'application/pdf',
+          body: buildTwoPageTestPdf(),
+        ),
+      ]);
+      final repository = ProductAssetRepository(
+        baseUri: Uri.parse('https://api.example.test'),
+        connector: connector,
+      );
+      final router = createMomCozyRouter(
+        initialLocation: Uri(
+          path: '/media-viewer',
+          queryParameters: const {
+            'kind': 'pdf',
+            'url': '/v1/assets/asset-pdf?kind=pdf',
+            'title': 'Air1 快速上手指南',
+          },
+        ).toString(),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await _pumpUntilFound(
+        tester,
+        find.byKey(const ValueKey('media-pdf-viewer')),
+      );
+
+      expect(connector.calls, 1);
+      expect(find.text('Air1 快速上手指南'), findsOneWidget);
+      final viewer = tester.widget<PdfViewer>(find.byType(PdfViewer));
+      expect(viewer.params.minScale, 0.1);
+      expect(viewer.params.maxScale, 4);
+      expect(viewer.params.panAxis, PanAxis.free);
+      expect(viewer.controller, isNotNull);
+      expect(viewer.key, const ValueKey('media-pdf-document-1'));
+      final documentRef = viewer.documentRef as PdfDocumentRefData;
+      expect(latin1.decode(documentRef.data), contains('/Count 2'));
+    });
+
+    testWidgets('media PDF failure can be retried without leaving the page', (
+      tester,
+    ) async {
+      _installPathProviderMock();
+      final connector = _FakeProductAssetConnector([
+        _assetResponse(statusCode: 503, contentType: 'application/json'),
+        _assetResponse(
+          statusCode: 200,
+          contentType: 'application/pdf',
+          body: buildTwoPageTestPdf(),
+        ),
+      ]);
+      final repository = ProductAssetRepository(
+        baseUri: Uri.parse('https://api.example.test'),
+        connector: connector,
+      );
+      final router = createMomCozyRouter(
+        initialLocation: Uri(
+          path: '/media-viewer',
+          queryParameters: const {
+            'kind': 'pdf',
+            'url': '/v1/assets/asset-pdf?kind=pdf',
+          },
+        ).toString(),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await _pumpUntilFound(
+        tester,
+        find.byKey(const ValueKey('media-viewer-load-error')),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('media-viewer-retry')));
+      await _pumpUntilFound(
+        tester,
+        find.byKey(const ValueKey('media-pdf-viewer')),
+      );
+
+      expect(connector.calls, 2);
+      expect(find.byType(PdfViewer), findsOneWidget);
+      expect(
+        tester.widget<PdfViewer>(find.byType(PdfViewer)).key,
+        const ValueKey('media-pdf-document-2'),
+      );
+    });
+
+    testWidgets('media viewer streams an authenticated video request', (
+      tester,
+    ) async {
+      final previousPlatform = VideoPlayerPlatform.instance;
+      final videoPlatform = FakeVideoPlayerPlatform();
+      VideoPlayerPlatform.instance = videoPlatform;
+      addTearDown(() {
+        VideoPlayerPlatform.instance = previousPlatform;
+      });
+      final repository = ProductAssetRepository(
+        baseUri: Uri.parse('https://api.example.test'),
+        tokenProvider: () => 'route-video-token',
+        connector: _FakeProductAssetConnector(const []),
+      );
+      final router = createMomCozyRouter(
+        initialLocation: Uri(
+          path: '/media-viewer',
+          queryParameters: const {
+            'kind': 'video',
+            'url': '/v1/assets/asset-video?kind=video',
+            'title': 'Air1 操作视频',
+          },
+        ).toString(),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await _pumpUntilFoundWithPlatformEvents(
+        tester,
+        find.byKey(const ValueKey('product-asset-video-player')),
+      );
+
+      expect(find.text('Air1 操作视频'), findsOneWidget);
+      expect(videoPlatform.createdSources, hasLength(1));
+      final source = videoPlatform.createdSources.single;
+      expect(source.uri, 'https://api.example.test/v1/assets/asset-video');
+      expect(source.httpHeaders['Authorization'], 'Bearer route-video-token');
+      expect(source.httpHeaders['Accept'], 'video/*');
+    });
+
     testWidgets('IBCLC page posts client event through runtime client', (
       tester,
     ) async {
       final recorded = <Map<String, Object?>>[];
       final client = AgentStreamClientEventClient(recorder: recorded.add);
+      final consultStore = IbclcConsultStore.inMemory(
+        now: () => DateTime.utc(2026, 7, 11),
+      );
+      const routeState = IbclcConsultRouteState(
+        consultId: 'consult-feature',
+        sourceArtifactId: 'artifact-feature',
+        threadId: 'thread-feature',
+        runId: 'run-feature',
+        returnPath: '/',
+        consultantName: 'Lin Zhao',
+        reason: '含乳疼痛',
+        feedingContext: '左侧喂养后疼痛',
+      );
 
       await tester.pumpWidget(
         _FeaturePageHost(
           route: _route('/ibclc-chat.html'),
           clientEventClient: client,
+          ibclcConsultStore: consultStore,
+          routeExtra: routeState,
         ),
       );
       await tester.pumpAndSettle();
@@ -1462,7 +1723,10 @@ void main() {
       expect(body['locale'], 'zh-CN');
       expect(body['metadata'], containsPair('source', 'ibclc-chat'));
       expect(body['metadata'], containsPair('handoff', 'vendor_h5_native'));
-      expect(body['metadata'], containsPair('return_to', '/status'));
+      expect(body['metadata'], containsPair('consult_id', 'consult-feature'));
+      expect(body['metadata'], containsPair('thread_id', 'thread-feature'));
+      expect(body['metadata'], containsPair('return_to', '/'));
+      expect(body['metadata'], containsPair('reason', '含乳疼痛'));
     });
 
     testWidgets('IBCLC page enters local queue when event sync fails', (
@@ -1484,31 +1748,64 @@ void main() {
       expect(find.text('本地已进入队列，稍后重试同步。'), findsOneWidget);
     });
 
-    testWidgets('IBCLC page opens vendor handoff and returns to status route', (
+    testWidgets('IBCLC page completes the consult and returns to Agent Hub', (
       tester,
     ) async {
-      final client = AgentStreamClientEventClient();
-      final router = createMomCozyRouter(initialLocation: '/ibclc-chat.html');
+      final recorded = <Map<String, Object?>>[];
+      final client = AgentStreamClientEventClient(recorder: recorded.add);
+      final consultStore = IbclcConsultStore.inMemory(
+        now: () => DateTime.utc(2026, 7, 11),
+      );
+      const routeState = IbclcConsultRouteState(
+        consultId: 'consult-route',
+        sourceArtifactId: 'artifact-route',
+        threadId: 'thread-route',
+        runId: 'run-route',
+        returnPath: '/',
+        consultantName: 'Lin Zhao',
+        reason: '含乳疼痛',
+      );
+      final router = createMomCozyRouter();
 
       await tester.pumpWidget(
         MomCozyFlutterApp(
           router: router,
-          apiRuntime: _appRuntime(clientEventClient: client),
+          apiRuntime: _appRuntime(
+            clientEventClient: client,
+            ibclcConsultStore: consultStore,
+          ),
         ),
       );
+      await tester.pumpAndSettle();
+
+      router.go('/ibclc-chat.html', extra: routeState);
       await tester.pumpAndSettle();
 
       await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('你好，我是 Emily Chen'), findsOneWidget);
+      expect(find.textContaining('你好，我是 Lin Zhao'), findsOneWidget);
 
       await tester.tap(
         find.byKey(const ValueKey('ibclc-return-status-button')),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+      expect(consultStore.isCompleted('consult-route'), isTrue);
+      expect(
+        recorded.map((event) => event['event_type']),
+        containsAllInOrder([
+          'ibclc_consult_started',
+          'ibclc_consult_completed',
+        ]),
+      );
+      final completed = recorded.last;
+      expect(
+        completed['metadata'],
+        containsPair('consult_id', 'consult-route'),
+      );
+      expect(completed['metadata'], containsPair('thread_id', 'thread-route'));
     });
 
     testWidgets('hospital bag page syncs cart changes through repository', (
@@ -1676,6 +1973,93 @@ void main() {
       await _scrollToText(tester, '产褥垫组合装');
       expect(find.text('产褥垫组合装'), findsOneWidget);
     });
+
+    testWidgets(
+      'hospital bag page owns the artifact cart without default overwrite',
+      (tester) async {
+        final store = HospitalBagCartStore();
+        final cartId = store.ingestArtifact(
+          HospitalBagCartArtifactSeed.tryFromCartUpdate(
+            artifactId: 'personalized-page-cart',
+            cartUpdate: {
+              'groups': [
+                {
+                  'title': '我的清单',
+                  'tone': 'mint',
+                  'items': [
+                    {
+                      'id': 'custom-one',
+                      'name': '个性化用品 A',
+                      'desc': '准备删除',
+                      'qty': 1,
+                      'price': 88.0,
+                    },
+                    {
+                      'id': 'custom-two',
+                      'name': '个性化用品 B',
+                      'desc': '继续保留',
+                      'qty': 2,
+                      'price': 66.0,
+                    },
+                  ],
+                },
+              ],
+            },
+          )!,
+        );
+        final transport = FixtureApiJsonTransportByPath({
+          hospitalBagCartUpdateEndpoint: const {
+            'id': 'cart-plan-personalized',
+            'owner_user_id': 'demo-user-fixture',
+            'plan_type': 'hospital_bag_cart',
+            'title': 'Hospital bag cart',
+            'summary': '个性化清单已同步',
+            'status': 'active',
+            'source': 'flutter',
+            'payload': {'items': <Object?>[]},
+          },
+        });
+
+        await tester.pumpWidget(
+          _FeaturePageHost(
+            route: _route('/hospital-bag-cart'),
+            routeExtra: HospitalBagCartRouteState(cartId: cartId),
+            hospitalBagCartStore: store,
+            jsonTransport: transport,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('个性化用品 A'), findsOneWidget);
+        expect(find.text('个性化用品 B'), findsOneWidget);
+        expect(find.text('产褥垫组合装'), findsNothing);
+        expect(find.text('3 件'), findsOneWidget);
+
+        await tester.longPress(find.text('个性化用品 A'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('个性化用品 A'), findsNothing);
+        expect(find.text('个性化用品 B'), findsOneWidget);
+        expect(
+          store.snapshot(cartId).groups.single.items.single.id,
+          'custom-two',
+        );
+        final payload =
+            transport.postedBodies.last['payload']! as Map<String, Object?>;
+        final groups = payload['groups']! as List;
+        final items = (groups.single as Map)['items']! as List;
+        expect(items, hasLength(1));
+        expect((items.single as Map)['id'], 'custom-two');
+        expect((payload['totals'] as Map)['itemCount'], 2);
+
+        await _tapScrollableWidgetWithText(tester, OutlinedButton, '恢复默认清单');
+        await tester.pumpAndSettle();
+
+        expect(store.snapshot(cartId).totals.itemCount, 18);
+        await _scrollToText(tester, '产褥垫组合装');
+        expect(find.text('产褥垫组合装'), findsOneWidget);
+      },
+    );
 
     testWidgets('device subpages mirror reminder and user config routes', (
       tester,
@@ -1864,6 +2248,9 @@ class _FeaturePageHost extends StatelessWidget {
     this.jsonTransport,
     this.blePlatform,
     this.pumpProtocolPlatform,
+    this.routeExtra,
+    this.hospitalBagCartStore,
+    this.ibclcConsultStore,
   });
 
   final MomCozyRouteConfig route;
@@ -1871,6 +2258,9 @@ class _FeaturePageHost extends StatelessWidget {
   final FixtureApiJsonTransportByPath? jsonTransport;
   final BlePlatform? blePlatform;
   final PumpProtocolPlatform? pumpProtocolPlatform;
+  final Object? routeExtra;
+  final HospitalBagCartStore? hospitalBagCartStore;
+  final IbclcConsultStore? ibclcConsultStore;
 
   @override
   Widget build(BuildContext context) {
@@ -1880,6 +2270,8 @@ class _FeaturePageHost extends StatelessWidget {
         jsonTransport: jsonTransport,
         blePlatform: blePlatform,
         pumpProtocolPlatform: pumpProtocolPlatform,
+        hospitalBagCartStore: hospitalBagCartStore,
+        ibclcConsultStore: ibclcConsultStore,
       ),
       child: MaterialApp(
         theme: momCozyTheme(),
@@ -1891,6 +2283,7 @@ class _FeaturePageHost extends StatelessWidget {
             icon: route.icon,
             accent: route.accent,
             priority: route.priority,
+            routeExtra: routeExtra,
           ),
         ),
       ),
@@ -1957,6 +2350,9 @@ MomCozyApiRuntime _appRuntime({
   AgentStreamClientEventClient? clientEventClient,
   FixtureApiJsonTransportByPath? jsonTransport,
   BlePlatform? blePlatform,
+  ProductAssetRepository? productAssetRepository,
+  HospitalBagCartStore? hospitalBagCartStore,
+  IbclcConsultStore? ibclcConsultStore,
   String userId = 'demo-user-fixture',
 }) {
   return MomCozyApiRuntime(
@@ -2066,6 +2462,9 @@ MomCozyApiRuntime _appRuntime({
     clientEventClient:
         clientEventClient ?? const AgentStreamClientEventClient(sent: false),
     agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
+    productAssetRepository: productAssetRepository,
+    hospitalBagCartStore: hospitalBagCartStore,
+    ibclcConsultStore: ibclcConsultStore,
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
       'status': 200,
       'data': <String, Object?>{
@@ -2092,6 +2491,90 @@ MomCozyApiRuntime _appRuntime({
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7),
   );
+}
+
+final _onePixelPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+);
+
+ProductAssetRepository _productAssetRepository(
+  List<ProductAssetHttpResponse> responses,
+) {
+  return ProductAssetRepository(
+    baseUri: Uri.parse('https://api.example.test'),
+    connector: _FakeProductAssetConnector(responses),
+  );
+}
+
+ProductAssetHttpResponse _assetResponse({
+  required int statusCode,
+  String contentType = 'image/png',
+  Uint8List? body,
+}) {
+  return ProductAssetHttpResponse(
+    statusCode: statusCode,
+    statusText: statusCode == 200 ? 'OK' : 'Unavailable',
+    contentType: contentType,
+    body: body ?? Uint8List(0),
+  );
+}
+
+class _FakeProductAssetConnector implements ProductAssetHttpConnector {
+  _FakeProductAssetConnector(List<ProductAssetHttpResponse> responses)
+    : _responses = List.of(responses);
+
+  final List<ProductAssetHttpResponse> _responses;
+  int calls = 0;
+
+  @override
+  Future<ProductAssetHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+    required int maxBytes,
+  }) async {
+    calls += 1;
+    return _responses.removeAt(0);
+  }
+}
+
+Future<void> _pumpUntilFound(WidgetTester tester, Finder finder) async {
+  for (var frame = 0; frame < 80; frame += 1) {
+    await tester.pump(const Duration(milliseconds: 16));
+    if (finder.evaluate().isNotEmpty) return;
+  }
+  fail(
+    'Expected widget did not appear '
+    '(pdfViewer=${find.byType(PdfViewer).evaluate().length}, '
+    'loadError=${find.byKey(const ValueKey('media-viewer-load-error')).evaluate().length}, '
+    'loading=${find.byKey(const ValueKey('media-viewer-loading')).evaluate().length}).',
+  );
+}
+
+Future<void> _pumpUntilFoundWithPlatformEvents(
+  WidgetTester tester,
+  Finder finder,
+) async {
+  for (var frame = 0; frame < 80; frame += 1) {
+    await tester.pump(const Duration(milliseconds: 16));
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    if (finder.evaluate().isNotEmpty) return;
+  }
+  fail('Expected platform-backed widget did not appear.');
+}
+
+void _installPathProviderMock() {
+  const channel = MethodChannel('plugins.flutter.io/path_provider');
+  final directory = Directory.systemTemp.createTempSync('momcozy-pdf-test-');
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(channel, (call) async {
+        if (call.method == 'getTemporaryDirectory') return directory.path;
+        return null;
+      });
+  addTearDown(() async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
+    if (directory.existsSync()) directory.deleteSync(recursive: true);
+  });
 }
 
 class _ThrowingPumpProtocolPlatform implements PumpProtocolPlatform {
