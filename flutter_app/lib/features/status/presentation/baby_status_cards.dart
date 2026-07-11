@@ -131,6 +131,7 @@ class _BabyGrowthSummaryCardState extends State<BabyGrowthSummaryCard> {
                   Expanded(
                     child: _Metric(
                       label: '体重',
+                      compact: true,
                       value: _growthLabel(
                         resource,
                         latest?.weightKg,
@@ -139,15 +140,19 @@ class _BabyGrowthSummaryCardState extends State<BabyGrowthSummaryCard> {
                       ),
                     ),
                   ),
+                  const _GrowthMetricDivider(),
                   Expanded(
                     child: _Metric(
                       label: '身高',
+                      compact: true,
                       value: _growthLabel(resource, latest?.heightCm, 'cm'),
                     ),
                   ),
+                  const _GrowthMetricDivider(),
                   Expanded(
                     child: _Metric(
                       label: '头围',
+                      compact: true,
                       value: _growthLabel(resource, latest?.headCm, 'cm'),
                     ),
                   ),
@@ -176,6 +181,20 @@ class _BabyGrowthSummaryCardState extends State<BabyGrowthSummaryCard> {
           ),
         );
       },
+    );
+  }
+}
+
+class _GrowthMetricDivider extends StatelessWidget {
+  const _GrowthMetricDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: 30,
+      margin: const EdgeInsets.symmetric(horizontal: 3),
+      color: const Color(0x26388b72),
     );
   }
 }
@@ -494,12 +513,14 @@ class _Metric extends StatelessWidget {
   const _Metric({
     required this.label,
     required this.value,
+    this.compact = false,
     this.helpKey,
     this.onHelpTap,
   });
 
   final String label;
   final String value;
+  final bool compact;
   final Key? helpKey;
   final VoidCallback? onHelpTap;
 
@@ -559,7 +580,7 @@ class _Metric extends StatelessWidget {
             maxLines: 1,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: const Color(0xff35212c),
-              fontSize: 15,
+              fontSize: compact ? 12 : 15,
               fontWeight: FontWeight.w700,
               height: 1,
             ),

@@ -354,7 +354,9 @@ void main() {
 
       expect(find.text('成长发育'), findsOneWidget);
       expect(find.text('宝宝已出生 20 天'), findsOneWidget);
-      expect(find.text('待记录'), findsWidgets);
+      expect(find.text('6.2kg'), findsOneWidget);
+      expect(find.text('64.5cm'), findsOneWidget);
+      expect(find.text('42cm'), findsOneWidget);
     });
 
     testWidgets('status profile selector stays pinned while content scrolls', (
@@ -435,7 +437,9 @@ void main() {
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
-      expect(find.text('待记录'), findsNWidgets(3));
+      expect(find.text('6.2kg'), findsOneWidget);
+      expect(find.text('64.5cm'), findsOneWidget);
+      expect(find.text('42cm'), findsOneWidget);
 
       await _scrollToText(tester, '修改指标');
       await tester.tap(find.text('修改指标').first);
@@ -444,11 +448,26 @@ void main() {
         find.byKey(const ValueKey('status-growth-editor-dialog')),
         findsOneWidget,
       );
+      await tester.enterText(
+        find.byKey(const ValueKey('status-growth-weight-input')),
+        '6.2',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('status-growth-height-input')),
+        '64.5',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('status-growth-head-input')),
+        '42',
+      );
+      tester.testTextInput.hide();
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey('status-growth-save-button')));
       await tester.pumpAndSettle();
 
-      expect(find.text('已添加'), findsOneWidget);
-      expect(find.text('待记录'), findsNWidgets(3));
+      expect(find.text('6.2kg'), findsOneWidget);
+      expect(find.text('64.5cm'), findsOneWidget);
+      expect(find.text('42cm'), findsOneWidget);
       expect(find.text('成长记录已添加'), findsNothing);
     });
 
@@ -2527,30 +2546,37 @@ MomCozyApiRuntime _appRuntime({
             'include_today': true,
           },
           feedingRecordsEndpoint: const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'records': <Object?>[
-                <String, Object?>{
-                  'id': 'feeding-1001',
-                  'type': 'breast_milk',
-                  'amount_ml': 80,
-                  'occurred_at': '2026-07-01T06:00:00Z',
-                },
-              ],
-            },
+            'items': <Object?>[
+              <String, Object?>{
+                'id': 'feeding-1001',
+                'feed_type': 'breast_milk',
+                'volume_ml': 80,
+                'feed_time': '2026-07-01T06:00:00Z',
+              },
+            ],
           },
           growthRecordsEndpoint: const <String, Object?>{
-            'status': 200,
-            'data': <String, Object?>{
-              'records': <Object?>[
-                <String, Object?>{
-                  'id': 'growth-1001',
-                  'weight_g': 6200,
-                  'height_cm': 64.5,
-                  'measured_at': '2026-07-01',
-                },
-              ],
-            },
+            'items': <Object?>[
+              <String, Object?>{
+                'id': 'growth-1001',
+                'weight_kg': 6.2,
+                'height_cm': 64.5,
+                'head_cm': 42,
+                'measured_at': '2026-07-01T12:00:00Z',
+              },
+            ],
+            'id': 'growth-1001',
+            'weight_kg': 6.2,
+            'height_cm': 64.5,
+            'head_cm': 42,
+            'measured_at': '2026-07-01T12:00:00Z',
+          },
+          '$growthRecordsEndpoint/growth-1001': const <String, Object?>{
+            'id': 'growth-1001',
+            'weight_kg': 6.2,
+            'height_cm': 64.5,
+            'head_cm': 42,
+            'measured_at': '2026-07-01T12:00:00Z',
           },
           pumpWorkstateEndpoint: const <String, Object?>{
             'id': 'telemetry-001',
