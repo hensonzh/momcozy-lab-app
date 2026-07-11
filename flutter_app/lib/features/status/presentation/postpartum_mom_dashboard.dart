@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/status/domain/postpartum_mom.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
@@ -12,6 +13,7 @@ class PostpartumMomDashboard extends StatefulWidget {
   const PostpartumMomDashboard({
     super.key,
     required this.milkTrends,
+    required this.volumeUnit,
     required this.now,
     required this.windowDays,
     required this.onWindowDaysChanged,
@@ -19,6 +21,7 @@ class PostpartumMomDashboard extends StatefulWidget {
   });
 
   final ValueListenable<StatusResource<List<MilkTrendDay>>> milkTrends;
+  final ValueListenable<MomCozyVolumeUnit> volumeUnit;
   final DateTime Function() now;
   final int windowDays;
   final ValueChanged<int> onWindowDaysChanged;
@@ -33,109 +36,123 @@ class _PostpartumMomDashboardState extends State<PostpartumMomDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<StatusResource<List<MilkTrendDay>>>(
-      valueListenable: widget.milkTrends,
-      builder: (context, resource, _) {
-        final projection = PostpartumMilkProjection.fromTrendDays(
-          days: resource.data ?? const <MilkTrendDay>[],
-          now: widget.now(),
-        );
-        return Column(
-          children: [
-            _MomModuleGrid(
+    return ValueListenableBuilder<MomCozyVolumeUnit>(
+      valueListenable: widget.volumeUnit,
+      builder: (context, unit, _) {
+        return ValueListenableBuilder<StatusResource<List<MilkTrendDay>>>(
+          valueListenable: widget.milkTrends,
+          builder: (context, resource, _) {
+            final projection = PostpartumMilkProjection.fromTrendDays(
+              days: resource.data ?? const <MilkTrendDay>[],
+              now: widget.now(),
+            );
+            return Column(
               children: [
-                _DashboardModuleCard(
-                  key: const ValueKey('status-module-milk-output'),
-                  title: '母乳产出',
-                  tone: _ModuleTone.rose,
-                  icon: const Icon(Icons.water_drop_outlined, size: 17),
-                  metrics: [
-                    _ModuleMetric(
-                      label: '今日产出',
-                      value: _todayVolumeLabel(resource, projection.today),
-                      helpKey: const ValueKey('status-milk-output-info-button'),
-                      onHelp: () => _showInfo(
-                        id: 'milk-info',
-                        title: '今日产出说明',
-                        text: '使用吸奶器产出的奶量，不含亲喂',
-                      ),
+                _MomModuleGrid(
+                  children: [
+                    _DashboardModuleCard(
+                      key: const ValueKey('status-module-milk-output'),
+                      title: '母乳产出',
+                      tone: _ModuleTone.rose,
+                      icon: const Icon(Icons.water_drop_outlined, size: 17),
+                      metrics: [
+                        _ModuleMetric(
+                          label: '今日产出',
+                          value: _todayVolumeLabel(
+                            resource,
+                            projection.today,
+                            unit,
+                          ),
+                          helpKey: const ValueKey(
+                            'status-milk-output-info-button',
+                          ),
+                          onHelp: () => _showInfo(
+                            id: 'milk-info',
+                            title: '今日产出说明',
+                            text: '使用吸奶器产出的奶量，不含亲喂',
+                          ),
+                        ),
+                        _ModuleMetric(
+                          label: '今日吸奶',
+                          value: _todayCountLabel(resource, projection.today),
+                        ),
+                      ],
                     ),
-                    _ModuleMetric(
-                      label: '今日吸奶',
-                      value: _todayCountLabel(resource, projection.today),
+                    _DashboardModuleCard(
+                      key: const ValueKey('status-module-breast-health'),
+                      title: '乳房健康',
+                      tone: _ModuleTone.peach,
+                      icon: const Icon(Icons.favorite_border_rounded, size: 17),
+                      body: const TextSpan(text: '最近出现涨奶和硬块，伴随按压疼痛'),
+                      action: '查看《乳房健康日记》',
+                      helpKey: const ValueKey(
+                        'status-breast-health-info-button',
+                      ),
+                      onHelp: () => _showInfo(
+                        id: 'breast-info',
+                        title: '乳房健康说明',
+                        text: '通过您和智能体的日常对话采集的乳房健康记录',
+                      ),
+                      onTap: _showBreastHealthSheet,
+                    ),
+                    _DashboardModuleCard(
+                      key: const ValueKey('status-module-postpartum-recovery'),
+                      title: '产后恢复',
+                      tone: _ModuleTone.mint,
+                      icon: Image.asset(
+                        MomCozyAssets.postpartumRecoveryIcon,
+                        width: 19,
+                        height: 19,
+                        fit: BoxFit.contain,
+                      ),
+                      body: const TextSpan(text: '正在执行盆底肌康复训练'),
+                      action: '查看计划',
+                      onTap: _showPostpartumRecoverySheet,
+                    ),
+                    _DashboardModuleCard(
+                      key: const ValueKey('status-module-rest-nutrition'),
+                      title: '补能与休息',
+                      tone: _ModuleTone.amber,
+                      icon: const Icon(Icons.local_cafe_outlined, size: 17),
+                      body: const TextSpan(
+                        children: [
+                          TextSpan(text: '待开通 '),
+                          TextSpan(
+                            text: '睡眠',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          TextSpan(text: ' 与 '),
+                          TextSpan(
+                            text: '营养',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          TextSpan(text: ' 功能'),
+                        ],
+                      ),
+                      helpKey: const ValueKey('status-rest-info-button'),
+                      onHelp: () => _showInfo(
+                        id: 'rest-info',
+                        title: '补能与休息说明',
+                        text: '所有信息来自智能体的收集。',
+                      ),
                     ),
                   ],
                 ),
-                _DashboardModuleCard(
-                  key: const ValueKey('status-module-breast-health'),
-                  title: '乳房健康',
-                  tone: _ModuleTone.peach,
-                  icon: const Icon(Icons.favorite_border_rounded, size: 17),
-                  body: const TextSpan(text: '最近出现涨奶和硬块，伴随按压疼痛'),
-                  action: '查看《乳房健康日记》',
-                  helpKey: const ValueKey('status-breast-health-info-button'),
-                  onHelp: () => _showInfo(
-                    id: 'breast-info',
-                    title: '乳房健康说明',
-                    text: '通过您和智能体的日常对话采集的乳房健康记录',
-                  ),
-                  onTap: _showBreastHealthSheet,
-                ),
-                _DashboardModuleCard(
-                  key: const ValueKey('status-module-postpartum-recovery'),
-                  title: '产后恢复',
-                  tone: _ModuleTone.mint,
-                  icon: Image.asset(
-                    MomCozyAssets.postpartumRecoveryIcon,
-                    width: 19,
-                    height: 19,
-                    fit: BoxFit.contain,
-                  ),
-                  body: const TextSpan(text: '正在执行盆底肌康复训练'),
-                  action: '查看计划',
-                  onTap: _showPostpartumRecoverySheet,
-                ),
-                _DashboardModuleCard(
-                  key: const ValueKey('status-module-rest-nutrition'),
-                  title: '补能与休息',
-                  tone: _ModuleTone.amber,
-                  icon: const Icon(Icons.local_cafe_outlined, size: 17),
-                  body: const TextSpan(
-                    children: [
-                      TextSpan(text: '待开通 '),
-                      TextSpan(
-                        text: '睡眠',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      TextSpan(text: ' 与 '),
-                      TextSpan(
-                        text: '营养',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      TextSpan(text: ' 功能'),
-                    ],
-                  ),
-                  helpKey: const ValueKey('status-rest-info-button'),
-                  onHelp: () => _showInfo(
-                    id: 'rest-info',
-                    title: '补能与休息说明',
-                    text: '所有信息来自智能体的收集。',
-                  ),
+                const SizedBox(height: 12),
+                _MilkTrendPanel(
+                  resource: resource,
+                  projection: projection,
+                  unit: unit,
+                  windowDays: widget.windowDays,
+                  expanded: _trendExpanded,
+                  onToggle: () {
+                    setState(() => _trendExpanded = !_trendExpanded);
+                  },
+                  onWindowDaysChanged: widget.onWindowDaysChanged,
                 ),
               ],
-            ),
-            const SizedBox(height: 12),
-            _MilkTrendPanel(
-              resource: resource,
-              projection: projection,
-              windowDays: widget.windowDays,
-              expanded: _trendExpanded,
-              onToggle: () {
-                setState(() => _trendExpanded = !_trendExpanded);
-              },
-              onWindowDaysChanged: widget.onWindowDaysChanged,
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -300,12 +317,13 @@ class _PostpartumMomDashboardState extends State<PostpartumMomDashboard> {
 String _todayVolumeLabel(
   StatusResource<List<MilkTrendDay>> resource,
   MilkTrendDay? today,
+  MomCozyVolumeUnit unit,
 ) {
   if (resource.isLoading || resource.phase == StatusResourcePhase.initial) {
     return '加载中';
   }
   if (today == null) return '待记录';
-  return '${_formatVolume(today.pumpedMilkVolumeMl)}mL';
+  return '${unit.formatMilliliters(today.pumpedMilkVolumeMl)}${unit.storageValue}';
 }
 
 String _todayCountLabel(
@@ -317,13 +335,6 @@ String _todayCountLabel(
   }
   if (today == null) return '待同步';
   return '${math.max(0, today.pumpingCount)}次';
-}
-
-String _formatVolume(double value) {
-  final safe = math.max(0, value);
-  return safe == safe.roundToDouble()
-      ? safe.round().toString()
-      : safe.toStringAsFixed(1);
 }
 
 class _MomModuleGrid extends StatelessWidget {
@@ -642,6 +653,7 @@ class _MilkTrendPanel extends StatelessWidget {
   const _MilkTrendPanel({
     required this.resource,
     required this.projection,
+    required this.unit,
     required this.windowDays,
     required this.expanded,
     required this.onToggle,
@@ -650,6 +662,7 @@ class _MilkTrendPanel extends StatelessWidget {
 
   final StatusResource<List<MilkTrendDay>> resource;
   final PostpartumMilkProjection projection;
+  final MomCozyVolumeUnit unit;
   final int windowDays;
   final bool expanded;
   final VoidCallback onToggle;
@@ -765,7 +778,7 @@ class _MilkTrendPanel extends StatelessWidget {
     if (!window.hasMeasurements) {
       return const _ChartMessage(text: '暂无母乳趋势数据，可多日记录产量后在本页查看。');
     }
-    return MilkTrendChart(window: window, weekly: windowDays == 7);
+    return MilkTrendChart(window: window, weekly: windowDays == 7, unit: unit);
   }
 }
 
@@ -983,10 +996,16 @@ class _TrendWindowOption extends StatelessWidget {
 }
 
 class MilkTrendChart extends StatefulWidget {
-  const MilkTrendChart({super.key, required this.window, required this.weekly});
+  const MilkTrendChart({
+    super.key,
+    required this.window,
+    required this.weekly,
+    required this.unit,
+  });
 
   final MilkTrendWindow window;
   final bool weekly;
+  final MomCozyVolumeUnit unit;
 
   @override
   State<MilkTrendChart> createState() => _MilkTrendChartState();
@@ -1027,6 +1046,7 @@ class _MilkTrendChartState extends State<MilkTrendChart> {
                       painter: _MilkTrendChartPainter(
                         points: widget.window.points,
                         weekly: widget.weekly,
+                        unit: widget.unit,
                         selectedIndex: _selectedIndex,
                       ),
                     ),
@@ -1034,6 +1054,7 @@ class _MilkTrendChartState extends State<MilkTrendChart> {
                   if (_selectedIndex case final index?)
                     _TrendTooltip(
                       point: widget.window.points[index],
+                      unit: widget.unit,
                       x: geometry.xFor(index),
                       maxWidth: size.width,
                     ),
@@ -1058,6 +1079,7 @@ class _MilkTrendChartState extends State<MilkTrendChart> {
 class _TrendTooltip extends StatelessWidget {
   const _TrendTooltip({
     required this.point,
+    required this.unit,
     required this.x,
     required this.maxWidth,
   });
@@ -1065,6 +1087,7 @@ class _TrendTooltip extends StatelessWidget {
   static const width = 174.0;
 
   final MilkTrendPoint point;
+  final MomCozyVolumeUnit unit;
   final double x;
   final double maxWidth;
 
@@ -1104,18 +1127,18 @@ class _TrendTooltip extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '吸乳总量：${_formatVolume(point.actualMl)}mL',
+                    '吸乳总量：${unit.formatMilliliters(point.actualMl)}${unit.storageValue}',
                     style: const TextStyle(color: Color(0xffb9792a)),
                   ),
                   if (point.estimatedMl case final estimate?)
                     Text(
-                      '含亲喂估算：${_formatVolume(estimate)}mL',
+                      '含亲喂估算：${unit.formatMilliliters(estimate)}${unit.storageValue}',
                       style: const TextStyle(color: Color(0xff8a5f7d)),
                     ),
                   if (point.referenceLowerMl case final lower?)
                     if (point.referenceUpperMl case final upper?)
                       Text(
-                        '参考区间：${_formatVolume(lower)}mL - ${_formatVolume(upper)}mL',
+                        '参考区间：${unit.formatMilliliters(lower)}${unit.storageValue} - ${unit.formatMilliliters(upper)}${unit.storageValue}',
                         style: const TextStyle(
                           color: MomCozyColors.mutedForeground,
                         ),
@@ -1162,11 +1185,13 @@ class _MilkTrendChartPainter extends CustomPainter {
   const _MilkTrendChartPainter({
     required this.points,
     required this.weekly,
+    required this.unit,
     required this.selectedIndex,
   });
 
   final List<MilkTrendPoint> points;
   final bool weekly;
+  final MomCozyVolumeUnit unit;
   final int? selectedIndex;
 
   @override
@@ -1192,7 +1217,7 @@ class _MilkTrendChartPainter extends CustomPainter {
       );
       _paintText(
         canvas,
-        '${_formatAxis(maxValue * (4 - index) / 4)} mL',
+        '${unit.formatMilliliters(maxValue * (4 - index) / 4)} ${unit.storageValue}',
         Offset(0, y - 6),
         width: 40,
         align: TextAlign.right,
@@ -1334,6 +1359,7 @@ class _MilkTrendChartPainter extends CustomPainter {
   bool shouldRepaint(covariant _MilkTrendChartPainter oldDelegate) {
     return oldDelegate.points != points ||
         oldDelegate.weekly != weekly ||
+        oldDelegate.unit != unit ||
         oldDelegate.selectedIndex != selectedIndex;
   }
 }
@@ -1450,10 +1476,6 @@ void _paintText(
     textAlign: align,
   )..layout(maxWidth: width);
   painter.paint(canvas, offset);
-}
-
-String _formatAxis(double value) {
-  return value.round().toString();
 }
 
 String _shortDate(DateTime date) {

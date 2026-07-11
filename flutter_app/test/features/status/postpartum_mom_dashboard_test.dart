@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
@@ -41,6 +42,13 @@ void main() {
         find.byKey(const ValueKey('status-milk-trend-tooltip')),
         findsOneWidget,
       );
+      expect(find.textContaining('吸乳总量：'), findsOneWidget);
+
+      tester
+          .state<_DashboardHostState>(find.byType(_DashboardHost))
+          .setVolumeUnit(MomCozyVolumeUnit.ounces);
+      await tester.pump();
+      expect(find.text('8.1oz'), findsOneWidget);
       expect(find.textContaining('吸乳总量：'), findsOneWidget);
 
       await tester.tap(
@@ -165,6 +173,19 @@ class _DashboardHost extends StatefulWidget {
 
 class _DashboardHostState extends State<_DashboardHost> {
   var _windowDays = 7;
+  final _volumeUnit = ValueNotifier<MomCozyVolumeUnit>(
+    MomCozyVolumeUnit.milliliters,
+  );
+
+  void setVolumeUnit(MomCozyVolumeUnit unit) {
+    _volumeUnit.value = unit;
+  }
+
+  @override
+  void dispose() {
+    _volumeUnit.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +196,7 @@ class _DashboardHostState extends State<_DashboardHost> {
           padding: const EdgeInsets.all(16),
           child: PostpartumMomDashboard(
             milkTrends: widget.trends,
+            volumeUnit: _volumeUnit,
             now: () => DateTime(2026, 7, 11, 10),
             windowDays: _windowDays,
             onWindowDaysChanged: (days) {

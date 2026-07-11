@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
 import 'package:momcozy_flutter_app/features/status/domain/birth_journey_plan.dart';
@@ -63,6 +64,7 @@ class StatusDashboardController {
     required this.pregnancyDiaryRepository,
     required this.birthJourneyPlanRepository,
     required this.preferenceStore,
+    required this.volumeUnitPreferenceStore,
     required this.babyId,
     StatusCareStage initialCareStage = StatusCareStage.postpartum,
     StatusIdentity initialIdentity = StatusIdentity.mom,
@@ -83,12 +85,16 @@ class StatusDashboardController {
   final PregnancyDiaryRepository pregnancyDiaryRepository;
   final BirthJourneyPlanRepository birthJourneyPlanRepository;
   final StatusPreferenceStore preferenceStore;
+  final VolumeUnitPreferenceStore volumeUnitPreferenceStore;
   final String babyId;
   final DateTime Function() now;
 
   late final ValueNotifier<StatusCareStage> careStage;
   late final ValueNotifier<StatusIdentity> identity;
   final selectionReady = ValueNotifier<bool>(false);
+  final volumeUnit = ValueNotifier<MomCozyVolumeUnit>(
+    MomCozyVolumeUnit.milliliters,
+  );
 
   final overview = ValueNotifier<StatusResource<StatusOverview>>(
     const StatusResource.initial(),
@@ -122,11 +128,13 @@ class StatusDashboardController {
 
   var _generation = 0;
   var _selectionRevision = 0;
+  var _volumeUnitRevision = 0;
   var _disposed = false;
   Future<void> _preferenceWrites = Future<void>.value();
+  Future<void> _volumeUnitWrites = Future<void>.value();
 
   Future<void> initialize() async {
-    await Future.wait<void>([restoreSelection(), load()]);
+    await Future.wait<void>([restoreSelection(), restoreVolumeUnit(), load()]);
   }
 
   Future<void> restoreSelection() async {
@@ -169,6 +177,30 @@ class StatusDashboardController {
     }
     identity.value = next;
     return true;
+  }
+
+  Future<void> restoreVolumeUnit() async {
+    if (_disposed) return;
+    final revision = _volumeUnitRevision;
+    try {
+      final stored = await volumeUnitPreferenceStore.read();
+      if (_disposed || revision != _volumeUnitRevision || stored == null) {
+        return;
+      }
+      volumeUnit.value = stored;
+    } catch (_) {
+      // Unit persistence is best effort, matching the legacy behavior.
+    }
+  }
+
+  Future<void> changeVolumeUnit(MomCozyVolumeUnit unit) {
+    if (_disposed) return Future<void>.value();
+    _volumeUnitRevision += 1;
+    volumeUnit.value = unit;
+    _volumeUnitWrites = _volumeUnitWrites
+        .then<void>((_) => volumeUnitPreferenceStore.write(unit))
+        .catchError((Object _) {});
+    return _volumeUnitWrites;
   }
 
   Future<void> load() async {
@@ -371,9 +403,11 @@ class StatusDashboardController {
     _disposed = true;
     _generation += 1;
     _selectionRevision += 1;
+    _volumeUnitRevision += 1;
     careStage.dispose();
     identity.dispose();
     selectionReady.dispose();
+    volumeUnit.dispose();
     overview.dispose();
     feedingRecords.dispose();
     milkTrends.dispose();

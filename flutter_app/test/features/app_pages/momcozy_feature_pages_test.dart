@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
@@ -375,6 +376,21 @@ void main() {
       expect(tester.getTopLeft(header).dy, closeTo(initialTop, 0.5));
       expect(find.text('妈妈'), findsWidgets);
       expect(find.text('宝宝'), findsOneWidget);
+    });
+
+    testWidgets('status page restores the account volume unit', (tester) async {
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/status'),
+          volumeUnitPreferenceStore: _TestVolumeUnitPreferenceStore(
+            MomCozyVolumeUnit.ounces,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('4.1oz'), findsOneWidget);
+      expect(find.text('120mL'), findsNothing);
     });
 
     testWidgets(
@@ -2315,6 +2331,7 @@ class _FeaturePageHost extends StatelessWidget {
     this.routeExtra,
     this.hospitalBagCartStore,
     this.ibclcConsultStore,
+    this.volumeUnitPreferenceStore,
   });
 
   final MomCozyRouteConfig route;
@@ -2325,6 +2342,7 @@ class _FeaturePageHost extends StatelessWidget {
   final Object? routeExtra;
   final HospitalBagCartStore? hospitalBagCartStore;
   final IbclcConsultStore? ibclcConsultStore;
+  final VolumeUnitPreferenceStore? volumeUnitPreferenceStore;
 
   @override
   Widget build(BuildContext context) {
@@ -2336,6 +2354,7 @@ class _FeaturePageHost extends StatelessWidget {
         pumpProtocolPlatform: pumpProtocolPlatform,
         hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
+        volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       ),
       child: MaterialApp(
         theme: momCozyTheme(),
@@ -2417,6 +2436,7 @@ MomCozyApiRuntime _appRuntime({
   ProductAssetRepository? productAssetRepository,
   HospitalBagCartStore? hospitalBagCartStore,
   IbclcConsultStore? ibclcConsultStore,
+  VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
   String userId = 'demo-user-fixture',
 }) {
   return MomCozyApiRuntime(
@@ -2547,6 +2567,7 @@ MomCozyApiRuntime _appRuntime({
     productAssetRepository: productAssetRepository,
     hospitalBagCartStore: hospitalBagCartStore,
     ibclcConsultStore: ibclcConsultStore,
+    volumeUnitPreferenceStore: volumeUnitPreferenceStore,
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
       'status': 200,
       'data': <String, Object?>{
@@ -2573,6 +2594,20 @@ MomCozyApiRuntime _appRuntime({
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7),
   );
+}
+
+class _TestVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
+  _TestVolumeUnitPreferenceStore(this.value);
+
+  MomCozyVolumeUnit value;
+
+  @override
+  Future<MomCozyVolumeUnit?> read() async => value;
+
+  @override
+  Future<void> write(MomCozyVolumeUnit unit) async {
+    value = unit;
+  }
 }
 
 final _onePixelPng = base64Decode(

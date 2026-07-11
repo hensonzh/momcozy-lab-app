@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
 import 'package:momcozy_flutter_app/features/status/domain/birth_journey_plan.dart';
@@ -275,6 +276,21 @@ void main() {
       await Future.wait<void>([first, second]);
       expect(preferences.storedStage, StatusCareStage.postpartum);
     });
+
+    test('restores and persists the global volume unit', () async {
+      final volumePreferences = _FakeVolumeUnitPreferenceStore(
+        stored: MomCozyVolumeUnit.ounces,
+      );
+      final controller = _controller(volumePreferences: volumePreferences);
+      addTearDown(controller.dispose);
+
+      await controller.restoreVolumeUnit();
+      expect(controller.volumeUnit.value, MomCozyVolumeUnit.ounces);
+
+      await controller.changeVolumeUnit(MomCozyVolumeUnit.milliliters);
+      expect(controller.volumeUnit.value, MomCozyVolumeUnit.milliliters);
+      expect(volumePreferences.writes, [MomCozyVolumeUnit.milliliters]);
+    });
   });
 }
 
@@ -283,6 +299,7 @@ StatusDashboardController _controller({
   _FakePregnancyDiaryRepository? diary,
   _FakeBirthJourneyPlanRepository? plans,
   _FakeStatusPreferenceStore? preferences,
+  _FakeVolumeUnitPreferenceStore? volumePreferences,
   StatusIdentity initialIdentity = StatusIdentity.mom,
 }) {
   final effectiveRecords = records ?? _FakeRecordsRepository();
@@ -295,10 +312,28 @@ StatusDashboardController _controller({
     birthJourneyPlanRepository:
         plans ?? _FakeBirthJourneyPlanRepository(plan: null),
     preferenceStore: preferences ?? _FakeStatusPreferenceStore(),
+    volumeUnitPreferenceStore:
+        volumePreferences ?? _FakeVolumeUnitPreferenceStore(),
     initialIdentity: initialIdentity,
     babyId: 'baby-001',
     now: () => DateTime(2026, 7, 11, 10),
   );
+}
+
+class _FakeVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
+  _FakeVolumeUnitPreferenceStore({this.stored});
+
+  MomCozyVolumeUnit? stored;
+  final writes = <MomCozyVolumeUnit>[];
+
+  @override
+  Future<MomCozyVolumeUnit?> read() async => stored;
+
+  @override
+  Future<void> write(MomCozyVolumeUnit unit) async {
+    writes.add(unit);
+    stored = unit;
+  }
 }
 
 class _FakeStatusPreferenceStore implements StatusPreferenceStore {

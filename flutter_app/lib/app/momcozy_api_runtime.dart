@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
@@ -73,6 +74,7 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     StatusPreferenceStore? statusPreferenceStore,
+    VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
@@ -120,6 +122,7 @@ class MomCozyApiRuntime {
     _productAssetRepository = productAssetRepository;
     _hasInjectedProductAssetRepository = productAssetRepository != null;
     _statusPreferenceStore = statusPreferenceStore;
+    _volumeUnitPreferenceStore = volumeUnitPreferenceStore;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
     _hasInjectedPumpProtocolPlatform = pumpProtocolPlatform != null;
@@ -348,6 +351,7 @@ class MomCozyApiRuntime {
   AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
   ProductAssetRepository? _productAssetRepository;
   StatusPreferenceStore? _statusPreferenceStore;
+  VolumeUnitPreferenceStore? _volumeUnitPreferenceStore;
   late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
@@ -439,6 +443,11 @@ class MomCozyApiRuntime {
     );
   }
 
+  VolumeUnitPreferenceStore get volumeUnitPreferenceStore {
+    return _volumeUnitPreferenceStore ??=
+        FlutterSecureVolumeUnitPreferenceStore(userId: currentSession.userId);
+  }
+
   StatusDashboardController createStatusDashboardController({
     StatusCareStage initialCareStage = StatusCareStage.postpartum,
     StatusIdentity initialIdentity = StatusIdentity.mom,
@@ -452,6 +461,7 @@ class MomCozyApiRuntime {
       pregnancyDiaryRepository: pregnancyDiaryRepository,
       birthJourneyPlanRepository: birthJourneyPlanRepository,
       preferenceStore: statusPreferenceStore,
+      volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       babyId: currentSession.babyId,
       initialCareStage: initialCareStage,
       initialIdentity: initialIdentity,
