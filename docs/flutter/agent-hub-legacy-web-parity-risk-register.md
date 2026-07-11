@@ -55,37 +55,37 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### 用户体验判断
 
-用户对“不一致”的担忧成立。若直接在结束时把整段回复替换成不同文本，会产生闪变、跳行和阅读位置漂移；若像当前实现一样保留临时文本，又会让错误、未清洗或不可恢复的内容成为最终消息。两种极端方案都不可接受。
+用户对“不一致”的担忧成立。产品最终选择优先保证低延迟和阅读连续性：completed 不得覆盖已经展示的正文；相应地，已发布 delta 不能再被定义为可推翻的临时草稿，而必须由后端纳入最终 canonical message。错误或未清洗内容应在发布前治理，不能依赖完成事件事后改写。
 
 ### 已确认产品不变量
 
-1. 最终回答一旦产生稳定文本，就立即以 delta 交付并展示；不能等待整段回答生成完或等待 `message.completed`。
-2. 已经进入回答气泡的正文只能追加，不能撤回、替换或在完成时重写；用户最终看到的正文必须与流式过程中看到的正文连续一致。
+1. 模型一旦产生经过必要安全清洗的稳定文本，就立即以 delta 交付并展示；不能等待工具/回答模式判断、整段生成完成或 `message.completed`。
+2. 已经进入回答气泡的正文就是 canonical 内容，只能追加，不能撤回、替换或在完成时重写；用户最终看到的正文必须与流式过程中看到的正文连续一致。
 3. `message.completed` 只负责确认完整性和终态，正常链路不能触发正文跳变。
 4. 不采用固定时间窗口聚合 delta；只允许为识别未闭合控制结构保留最小的语义尾部。
 5. 屏幕正文与实时语音消费同一条已提交文本流，不能各自清洗出不同结果。
 
 ### 推荐方案
 
-采用五层治理，把“低延迟”和“不可变正文”同时写入 runtime 事件合同，而不是只修改 Flutter 的一个条件分支。
+采用五层治理，把“有文本立即输出”和“已展示正文不可撤销”同时写入 runtime 事件合同，而不是只修改 Flutter 的一个条件分支。
 
 这会收紧现有 transient delta 的语义，必须由后端先完成 append-only 保证和增量字段，再切换 Flutter reducer；不能先让客户端假设旧事件已经满足新不变量。
 
-#### 1. Runtime 明确区分工具模式和回答模式
+#### 1. Runtime 不在热路径判断工具文本和最终文本
 
-- 一个模型 turn 必须二选一：调用工具，或者生成用户可见回答；工具 turn 不得产生 `message.delta`。
-- 工具执行过程只通过受控的 `run.progress`、`tool.*` 和 artifact/action 事件表达，不能把模型自由生成的工具前话术塞进回答气泡。
-- Provider 的 output item 类型是模式信号：出现 function call 时进入工具模式；出现 assistant message 时锁定回答模式，并从第一个稳定文本 delta 开始立即发布。
-- 回答模式一旦开始，本 turn 不再接受后置工具调用。模型提示负责预防混合输出，runtime 负责校验；若发布正文前发现违规可静默重试，若正文已经提交则不得删除正文，应终止该次违规执行并提供重试状态。
-- 这里不等待整个模型 turn，更不等待最终回答生成完成；只是在事件源处阻止“不确定是不是正文”的内容进入 `message.delta`。
+- 所有模型 turn 共用同一个 run-scoped canonical message builder；经过 projector 提交的文本立即追加到 builder 并发布 `message.delta`，无论之后是否发生工具调用。
+- 工具调用、进度和 artifact/action 事件照常独立发布，但不能撤回已经显示的工具前话术。
+- 工具调用后的回答继续追加到同一个气泡。工具前文本、工具后文本和最终结论共同构成最终持久化消息。
+- Provider 每个 turn 的 completed text 只用于补发该 turn 没有流出的尾部和完整性诊断，不能覆盖已经提交的片段。
+- Prompt 应尽量让工具前话术保持简短、中性，不在工具结果返回前陈述未经验证的事实；这是内容质量约束，不作为延迟正文的运行时门禁。
 
 #### 2. 后端建立同源、只追加的文本投影器
 
-- 回答模式下的 raw model delta 先进入同一个 response accumulator，再由一个有提交边界的 stateful text projector 生成 canonical 正文。
+- 所有 user-visible raw model delta 先进入同一个 response accumulator，再由一个有提交边界的 stateful text projector 生成 canonical 正文。
 - projector 只发布已经稳定、后续不会被改写的前缀；未闭合的 `<think>`、JSON、Markdown fence/link 和待归一化空白暂存在未提交尾部，结构闭合或 finalize 时再决定保留、替换或丢弃。
 - 不再对累计全文反复调用非单调 sanitizer 后用字符串前缀推算增量；`strip`、结构化 JSON 提取等变换会回改已经发送的文本，正是当前不一致的来源之一。
 - projector 每提交一个片段，就同时追加到 live delta 和 canonical message builder；已经提交的前缀永远不可修改。
-- 最终持久化文本必须直接取自同一个 builder 的 `finalize()` 结果，不能再经过另一套全文清洗或格式化。Provider completed output 只用于完整性检查，不能覆盖已经提交的正文。
+- 最终持久化文本必须直接取自同一个 builder 的 `finalize()` 结果，不能再经过另一套全文清洗或格式化。若 Provider final 与 builder 冲突，保留 builder、记录 `stream_final_mismatch`，不能用 Provider final 改写正文。
 - 正常完成时应满足：按顺序合并且去重后的 delta 文本等于 `message.completed.payload.text`。
 - 后端记录 `delta_char_count`、`final_char_count`、最终 delta cursor 和不可逆内容摘要，监控 `stream_final_mismatch`；目标是正常链路零不一致。
 
@@ -106,39 +106,47 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 - 流式阶段 UI 优先展示 live buffer；没有 live 内容时展示 canonical buffer。
 - 收到 `message.completed` 后，若正文完全一致，只切换数据来源并结束 run，不重建正文 Widget。
 - 若 completed 正文是 live buffer 的扩展，只追加因断流缺失的尾部，再切换数据来源。
-- 若二者发生非前缀冲突，将其视为事件合同或数据完整性错误：先按 segment replay/resync，禁止直接替换已展示正文；仍无法恢复时进入可重试错误态并上报诊断。
+- 若二者发生非前缀冲突，继续保留已经展示的 live buffer，不允许 completed 覆盖；同时上报事件合同错误。后端完成 append-only builder 后，该兼容分支不应再被正常链路触发。
+- 若本轮完全没有收到 delta，允许使用 completed 正文作为整个回复，这是非流式 Provider、断线或恢复场景的兜底。
 - 断线重连和历史恢复只认 canonical buffer，不能把 transient 文本持久化为最终回复。
 - 正文组件保持稳定 identity 和滚动锚点，完成事件不能触发整段 Markdown 重新入场或逐字动画。
 
 #### 5. 实时语音消费同一 committed segment
 
-- 实时语音直接消费通过 projector 提交的 segment，不能另行读取 raw/provider final 文本，也不能为了等待 `message.completed` 延迟首段播报。
+- 实时语音直接消费通过 projector 提交的 segment，包括工具调用前已经显示的文本；不能另行读取 raw/provider final 文本，也不能为了等待 `message.completed` 延迟首段播报。
 - 以稳定 segment ID 和 grapheme range 分别记录已提交给 TTS、已进入待播队列和已实际播放的文本游标，不能只用一个字符串长度推断进度。
 - completed 事件只补交尚未消费的连续 segment，不重播已经提交或播放的内容。
 - 安全过滤必须发生在 projector 提交前；不能先把正文展示或播出，再依赖最终事件删除敏感内容。
 
+### 已接受的取舍
+
+- 工具调用前已经输出的“我先帮你查一下”等文字会保留在最终气泡、历史消息和语音中。
+- 如果模型在工具结果返回前输出了错误事实，系统不会在完成时静默改写；应通过 prompt/eval 限制工具前内容为中性过程话术。
+- 未闭合 think/JSON/Markdown 或尚未通过安全检查的片段不属于“稳定文本”，可以保留最小语义尾部；除此之外不增加分类等待或时间窗口。
+- 文本自然增长造成的换行属于正常流式排版；禁止的是字符被删除、替换或整段重新入场。
+
 ### 不采用的方案
 
-- 不让 Flutter 在 completed 冲突时自行选择保留 live 文本或覆盖 canonical 文本：冲突必须在事件源和 replay 层解决。
+- 不允许 Flutter 在 completed 冲突时覆盖已经展示的 live 文本；兼容期保留 live 并上报，根因由后端 canonical builder 消除。
 - 不关闭流式输出等待最终消息：首字延迟和实时感明显退化。
-- 不等待整个模型 turn 才判断是否展示最终回答：回答模式确认后，稳定 delta 必须立即交付。
-- 不把工具 turn 的自由文本先当正文展示、完成时再删除：这在逻辑上无法同时满足低延迟和无跳变。
+- 不通过 output item 或结构化事件锁定工具/回答模式后再输出：模式判断会增加首段等待，且不是本方案的产品取舍。
+- 不把工具 turn 的自由文本先展示、完成时再删除：一旦展示，它就属于最终 canonical 正文。
 - 不按固定时间节流 delta：继续保持“有 delta 就交付前端”的产品要求。
 - 不在 completed 时做最长公共前缀替换、淡化或整段 Markdown 重建：这些只能掩饰合同错误，仍会造成用户所反感的内容变化。
 
 ### R01 验收标准
 
-1. 回答模式首个稳定文本 delta 无需等待本轮生成完成或 `message.completed` 即可到达 Flutter。
+1. 任意模型 turn 的首个稳定文本 delta 无需等待工具/回答分类、本轮生成完成或 `message.completed` 即可到达 Flutter。
 2. 每次页面更新都只是追加正文；完成时不存在字符撤回、后缀替换、整段闪烁、滚动跳变或逐字动画重播。
 3. 按 `segment_index` 合并后的 delta 与 `message.completed.payload.text` 逐字符一致，内容摘要一致。
-4. 工具 turn 不产生 `message.delta`，工具状态通过语义事件展示；回答模式开始后不再执行后置工具调用。
+4. 工具调用前后的正文 delta 按原顺序保留并持久化，completed 不删除工具前文本。
 5. transient delta 只更新 live buffer，不自行进入持久化历史；completed 无差异切换到 canonical buffer。
 6. 丢失、重复、乱序和重连场景只能导致暂停追加或补齐尾部，不能产生非前缀正文。
 7. 重连后没有 delta 也能仅凭 `message.completed` 恢复完整回复。
-8. TTS 与屏幕消费相同 segment，只补播缺失尾部，不从头重复，也不播出工具轮草稿。
+8. TTS 与屏幕消费相同 segment，只补播缺失尾部，不从头重复；工具前文本的播报结果与屏幕一致。
 9. 快捷回复、artifact、action card 和回复完成状态不受正文完整性校验影响。
-10. 后端覆盖工具混合输出、未闭合 think/JSON/Markdown、尾部空白、断流和 finalize 测试，证明正文 append-only 且合并 delta 与最终文本一致。
-11. 新增 reducer、widget、重连和实时语音回归测试，并删除“completed mismatch 保留临时文本”的错误测试预期。
+10. 后端覆盖工具前/后文本、未闭合 think/JSON/Markdown、尾部空白、断流和 finalize 测试，证明正文 append-only 且合并 delta 与最终文本一致。
+11. 新增 reducer、widget、重连和实时语音回归测试，明确固化“completed mismatch 不覆盖已展示文本”，同时用后端测试保证正常链路不再产生 mismatch。
 
 ## 其他风险详情
 
@@ -231,4 +239,5 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 日期 | 变更 | 结果 |
 | --- | --- | --- |
 | 2026-07-11 | 建立首次专项审查风险台账 | 记录 R01-R12；R01 进入设计中 |
-| 2026-07-11 | 确认 R01 低延迟与正文不可变要求 | 将方案收敛为回答模式即时流式、正文 append-only、completed 无差异确认 |
+| 2026-07-11 | 阶段性评估回答模式锁定方案 | 该方案随后被“所有稳定文本立即输出”的最终决策取代 |
+| 2026-07-11 | 确认不等待工具/回答模式判断 | 所有稳定文本立即追加；工具前文本进入最终消息，completed 永不覆盖已展示正文 |
