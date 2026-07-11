@@ -39,7 +39,6 @@ final _voiceBareDomainLikePattern = RegExp(
 final _voiceStreamTrailingUrlLikePattern = RegExp(
   r'''(^|[\s(（\[])((?:(?:https?|ftp):\/\/|www\.)[^\s<>"'，。！？；、)]*|\/[A-Za-z][^\s<>"'，。！？；、)]*|(?:[a-z0-9-]+\.)+(?:com|net|org|io|ai|cn|co|app|dev|me|us|uk|jp|edu|gov)(?:\/[^\s<>"'，。！？；、)]*)?)$''',
   caseSensitive: false,
-  multiLine: true,
 );
 const _hospitalBagCartVoicePath = '/hospital-bag-cart';
 
@@ -633,7 +632,7 @@ int _incompleteMarkdownVoiceImageStart(String text) {
 
 int _trailingVoiceUrlLikeStart(String text) {
   final match = _voiceStreamTrailingUrlLikePattern.firstMatch(text);
-  if (match == null) return -1;
+  if (match == null || match.end != text.length) return -1;
   return match.start + (match.group(1)?.length ?? 0);
 }
 
