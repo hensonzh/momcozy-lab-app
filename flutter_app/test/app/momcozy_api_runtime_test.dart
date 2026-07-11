@@ -14,6 +14,8 @@ import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/birth_journey_plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
@@ -133,6 +135,8 @@ void main() {
     expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
     expect(runtime.scheduleRepository.transport, same(transport));
     expect(runtime.recordsRepository.transport, same(transport));
+    expect(runtime.pregnancyDiaryRepository.transport, same(transport));
+    expect(runtime.birthJourneyPlanRepository.transport, same(transport));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
     expect(runtime.productAssetRepository, isA<ProductAssetRepository>());
@@ -149,6 +153,17 @@ void main() {
       runtime.hospitalBagCartRepository,
       isA<HospitalBagCartApiRepository>(),
     );
+    final statusController = runtime.createStatusDashboardController();
+    expect(statusController.babyId, 'baby-fixture');
+    expect(
+      statusController.pregnancyDiaryRepository,
+      isA<PregnancyDiaryApiRepository>(),
+    );
+    expect(
+      statusController.birthJourneyPlanRepository,
+      isA<BirthJourneyPlanApiRepository>(),
+    );
+    statusController.dispose();
   });
 
   test('runtime exposes an injected multipart transport lazily', () async {

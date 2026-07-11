@@ -70,6 +70,22 @@ void main() {
       expect(records.single.occurredAt, DateTime.parse('2026-06-29T08:40:00Z'));
     });
 
+    test('queries pumping records across a bounded trend range', () async {
+      final transport = FixtureApiJsonTransport({'items': []});
+      final repository = RecordsApiRepository(transport: transport);
+
+      await repository.fetchPumpMilkRecordsRange(
+        start: DateTime.utc(2026, 6, 1),
+        end: DateTime.utc(2026, 7, 1),
+      );
+
+      expect(transport.lastQuery, {
+        'start_at': '2026-06-01T00:00:00.000Z',
+        'end_at': '2026-07-01T00:00:00.000Z',
+        'limit': 100,
+      });
+    });
+
     test('maps production growth records and owner-scoped query', () async {
       final transport = FixtureApiJsonTransport({
         'items': [
@@ -77,6 +93,7 @@ void main() {
             'id': 'growth-001',
             'weight_kg': 4.2,
             'height_cm': 54.5,
+            'head_cm': 36.2,
             'measured_at': '2026-06-29T00:00:00Z',
           },
         ],
@@ -93,7 +110,58 @@ void main() {
       expect(records.single.id, 'growth-001');
       expect(records.single.weightGram, 4200);
       expect(records.single.heightCm, 54.5);
+      expect(records.single.headCm, 36.2);
       expect(records.single.measuredAt, DateTime.parse('2026-06-29T00:00:00Z'));
+    });
+
+    test('creates and updates production growth records', () async {
+      final transport = FixtureApiJsonTransport({
+        'id': 'growth-001',
+        'infant_id': 'infant-fixture',
+        'weight_kg': 4.3,
+        'height_cm': 55.0,
+        'head_cm': 36.5,
+        'measured_at': '2026-07-11T08:00:00Z',
+        'status': 'active',
+      });
+      final repository = RecordsApiRepository(transport: transport);
+
+      final created = await repository.createGrowthRecord(
+        babyId: 'infant-fixture',
+        measuredAt: DateTime.parse('2026-07-11T08:00:00Z'),
+        weightKg: 4.3,
+        heightCm: 55,
+        headCm: 36.5,
+        idempotencyKey: 'growth-create-001',
+      );
+
+      expect(transport.lastMethod, 'POST');
+      expect(transport.lastPath, growthRecordsEndpoint);
+      expect(transport.lastHeaders, {'Idempotency-Key': 'growth-create-001'});
+      expect(transport.lastBody, {
+        'infant_id': 'infant-fixture',
+        'measured_at': '2026-07-11T08:00:00.000Z',
+        'weight_kg': 4.3,
+        'height_cm': 55.0,
+        'head_cm': 36.5,
+      });
+      expect(created.headCm, 36.5);
+
+      final updated = await repository.updateGrowthRecord(
+        recordId: 'growth-001',
+        weightKg: 4.3,
+        heightCm: 55,
+        headCm: 36.5,
+      );
+
+      expect(transport.lastMethod, 'PATCH');
+      expect(transport.lastPath, '$growthRecordsEndpoint/growth-001');
+      expect(transport.lastBody, {
+        'weight_kg': 4.3,
+        'height_cm': 55.0,
+        'head_cm': 36.5,
+      });
+      expect(updated.weightKg, 4.3);
     });
 
     test('maps empty production lists', () async {
@@ -132,9 +200,7 @@ void main() {
       );
 
       await expectLater(
-        repository.fetchFeedingRecords(
-          date: DateTime.utc(2026, 6, 29),
-        ),
+        repository.fetchFeedingRecords(date: DateTime.utc(2026, 6, 29)),
         throwsA(
           isA<ApiHttpException>().having(
             (error) => error.errorCode,
