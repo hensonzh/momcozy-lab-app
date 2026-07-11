@@ -8,6 +8,52 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_sto
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 void main() {
+  group('restorable conversation detection', () {
+    test('ignores settings and unsent local state without history', () {
+      const snapshot = AgentHubInteractionSnapshot(
+        composerText: '还没有发送的草稿',
+        attachedImages: [
+          AgentStreamImageInput(
+            dataUrl: 'data:image/png;base64,draft',
+            mimeType: 'image/png',
+            name: 'draft.png',
+          ),
+        ],
+        autoVoiceEnabled: false,
+        activeRequest: AgentStreamRequest(message: '尚未形成历史'),
+        runState: AgentStreamRunState(threadId: 'empty-thread'),
+      );
+
+      expect(snapshot.hasContent, isTrue);
+      expect(snapshot.hasConversationHistory, isFalse);
+    });
+
+    test('accepts persisted history and current streamed replies', () {
+      const historical = AgentHubInteractionSnapshot(
+        historyMessages: [
+          AgentHubHistorySnapshot(role: 'user', content: '上一条问题'),
+        ],
+      );
+      const streamed = AgentHubInteractionSnapshot(
+        runState: AgentStreamRunState(textContent: '上一条回复'),
+      );
+      final eventBacked = AgentHubInteractionSnapshot(
+        runState: AgentStreamRunState(
+          events: [
+            AgentStreamEvent(const {
+              'type': 'run.started',
+              'run_id': 'run-with-history',
+            }),
+          ],
+        ),
+      );
+
+      expect(historical.hasConversationHistory, isTrue);
+      expect(streamed.hasConversationHistory, isTrue);
+      expect(eventBacked.hasConversationHistory, isTrue);
+    });
+  });
+
   test('history snapshot round-trips structured artifact state', () {
     final artifactEvent = AgentStreamEvent({
       'event_id': 'history-artifact-event',
