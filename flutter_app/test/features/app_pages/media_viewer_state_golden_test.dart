@@ -1,18 +1,26 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 
 import '../../support/momcozy_test_fonts.dart';
+import '../../support/test_pdf_fixture.dart';
 
 void main() {
   setUpAll(() async {
     await loadMomCozyTestFonts();
     _goldenImageBytes = await File('assets/images/M9.png').readAsBytes();
+  });
+
+  setUp(_installPathProviderMock);
+
+  tearDown(() async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_pathProviderChannel, null);
   });
 
   group('Media Viewer state goldens', () {
@@ -65,11 +73,15 @@ Future<void> _pumpMediaState(
         .byKey(const ValueKey('route-page-/media-viewer'))
         .evaluate()
         .isNotEmpty;
-    final mediaReady =
-        !state.location.contains('kind=image') ||
-        find.byKey(const ValueKey('product-asset-image')).evaluate().isNotEmpty;
+    final mediaReady = switch (state.kind) {
+      _MediaGoldenKind.image =>
+        find.byKey(const ValueKey('product-asset-image')).evaluate().isNotEmpty,
+      _MediaGoldenKind.pdf =>
+        find.byKey(const ValueKey('media-pdf-viewer')).evaluate().isNotEmpty,
+      _MediaGoldenKind.video => true,
+    };
     if (routeReady && mediaReady) {
-      if (state.location.contains('kind=image')) {
+      if (state.kind == _MediaGoldenKind.image) {
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 80)),
         );
@@ -88,14 +100,17 @@ Future<void> _pumpMediaState(
 }
 
 const _goldenSurfaceKey = ValueKey('media-viewer-state-golden-surface');
+const _pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
 late Uint8List _goldenImageBytes;
 
 const _mediaStates = [
   _MediaGoldenState(
     label: 'PDF resource',
     fileName: 'pdf_resource_mobile.png',
-    location: '/media-viewer?kind=pdf&url=%2Fdemo%2Fw1.pdf&title=W1%20使用教程',
+    location:
+        '/media-viewer?kind=pdf&url=%2Fv1%2Fassets%2Fasset-pdf%3Fkind%3Dpdf&title=W1%20使用教程',
     title: 'W1 使用教程',
+    kind: _MediaGoldenKind.pdf,
   ),
   _MediaGoldenState(
     label: 'image resource',
@@ -103,6 +118,7 @@ const _mediaStates = [
     location:
         '/media-viewer?kind=image&url=%2Fv1%2Fassets%2Fasset-image%3Fkind%3Dimage&title=Air1%20核心部件',
     title: 'Air1 核心部件',
+    kind: _MediaGoldenKind.image,
   ),
   _MediaGoldenState(
     label: 'video resource',
@@ -110,8 +126,11 @@ const _mediaStates = [
     location:
         '/media-viewer?kind=video&url=%2Fdemo%2Fw1-guide.mp4&title=W1%20视频教程',
     title: 'W1 视频教程',
+    kind: _MediaGoldenKind.video,
   ),
 ];
+
+enum _MediaGoldenKind { image, pdf, video }
 
 class _MediaGoldenState {
   const _MediaGoldenState({
@@ -119,12 +138,14 @@ class _MediaGoldenState {
     required this.fileName,
     required this.location,
     required this.title,
+    required this.kind,
   });
 
   final String label;
   final String fileName;
   final String location;
   final String title;
+  final _MediaGoldenKind kind;
 }
 
 class _GoldenProductAssetConnector implements ProductAssetHttpConnector {
@@ -134,6 +155,14 @@ class _GoldenProductAssetConnector implements ProductAssetHttpConnector {
     required Map<String, String> headers,
     required int maxBytes,
   }) async {
+    if (headers['Accept']?.contains('application/pdf') ?? false) {
+      return ProductAssetHttpResponse(
+        statusCode: 200,
+        statusText: 'OK',
+        contentType: 'application/pdf',
+        body: buildTwoPageTestPdf(),
+      );
+    }
     return ProductAssetHttpResponse(
       statusCode: 200,
       statusText: 'OK',
@@ -141,6 +170,13 @@ class _GoldenProductAssetConnector implements ProductAssetHttpConnector {
       body: _goldenImageBytes,
     );
   }
+}
+
+void _installPathProviderMock() {
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(_pathProviderChannel, (call) async {
+        return Directory.systemTemp.path;
+      });
 }
 
 const _goldenViewports = [

@@ -111,15 +111,15 @@ function buildApk({ flavor, mode }) {
     ...parseDartDefines(envText("MOMCOZY_APK_DART_DEFINES", "")),
   ];
   const args = [
-    "build",
-    "apk",
-    `--${mode}`,
+    "scripts/build-flutter-android-apk.mjs",
+    "--mode",
+    mode,
     "--flavor",
     flavor,
     ...dartDefines.map((define) => `--dart-define=${define}`),
   ];
   run("node", ["scripts/check-flutter-android-packaging.mjs"], projectRoot, env);
-  run("flutter", args, flutterAppDir, env);
+  run("node", args, projectRoot, env);
 }
 
 function buildToolchainEnv() {
