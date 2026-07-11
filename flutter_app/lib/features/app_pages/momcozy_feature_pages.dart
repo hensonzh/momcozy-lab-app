@@ -20,6 +20,7 @@ import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart'
 import 'package:momcozy_flutter_app/features/status/domain/pregnancy_diary.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/birth_journey_plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/pregnancy_diary_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
@@ -824,8 +825,24 @@ class _StatusPageState extends State<_StatusPage> {
             context.go('/', extra: {'agentPrefill': prompt});
           },
         ),
-        const SizedBox(height: 18),
-        _StatusPregnancyPlanPreview(),
+        const SizedBox(height: 24),
+        BirthJourneyPlanDashboard(
+          key: const ValueKey('status-birth-journey-dashboard'),
+          plan: _controller.birthJourneyPlan,
+          mutation: _controller.planMutation,
+          onToggleTodo: (taskId, completed) =>
+              _controller.togglePlanTodo(taskId: taskId, completed: completed),
+          onDeletePlan: _controller.deleteBirthJourneyPlan,
+          onAgentPrompt: (prompt, {autoSend = false}) {
+            context.go(
+              '/',
+              extra: {
+                'agentPrefill': prompt,
+                if (autoSend) 'agentAutoSend': true,
+              },
+            );
+          },
+        ),
       ];
     }
 
@@ -1320,44 +1337,6 @@ class _StatusModuleActionPill extends StatelessWidget {
   }
 }
 
-class _StatusPregnancyPlanPreview extends StatelessWidget {
-  const _StatusPregnancyPlanPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xfffbfefd),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xffcae6e0)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              '孕期计划',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          _StatusFilledPill(
-            key: const ValueKey('status-pregnancy-plan-agent-button'),
-            label: '制定孕期计划',
-            icon: null,
-            color: const Color(0xff5f978b),
-            avatar: true,
-            onTap: () =>
-                context.go('/', extra: const {'agentPrefill': '帮我制定孕期计划'}),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _StatusBabyGrowthCurvePreview extends StatelessWidget {
   const _StatusBabyGrowthCurvePreview({
     super.key,
@@ -1644,66 +1623,6 @@ class _StatusDetailPanel extends StatelessWidget {
             ],
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _StatusFilledPill extends StatelessWidget {
-  const _StatusFilledPill({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.color,
-    this.avatar = false,
-    this.onTap,
-  });
-
-  final String label;
-  final IconData? icon;
-  final Color color;
-  final bool avatar;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final content = Container(
-      padding: EdgeInsets.fromLTRB(avatar ? 6 : 12, 8, 14, 8),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (avatar) ...[
-            const CircleAvatar(
-              radius: 13,
-              backgroundImage: AssetImage(MomCozyAssets.agentAvatar),
-            ),
-            const SizedBox(width: 6),
-          ] else if (icon != null) ...[
-            Icon(icon, size: 15, color: Colors.white),
-            const SizedBox(width: 6),
-          ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-    if (onTap == null) return content;
-    return Semantics(
-      button: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: content,
       ),
     );
   }
