@@ -38,6 +38,22 @@ void main() {
       );
     });
 
+    test('replaces media markdown with explicit narration once', () {
+      final spoken = sanitizeAgentVoicePlaybackText(
+        '先看 ![Air1 核心部件](/v1/assets/asset-image?kind=image)，'
+        '再看 [同一张图](/v1/assets/asset-image?kind=image)。',
+        mediaNarrationResolver: ({required url, required alt}) {
+          return url == '/v1/assets/asset-image?kind=image'
+              ? '我放了一张当前步骤的对照图。'
+              : null;
+        },
+      );
+
+      expect(spoken, '先看 我放了一张当前步骤的对照图。 ，再看 。');
+      expect(spoken, isNot(contains('Air1 核心部件')));
+      expect(spoken, isNot(contains('/v1/assets')));
+    });
+
     test('removes markdown decorations and normalizes slash text', () {
       expect(
         sanitizeAgentVoicePlaybackText(
@@ -142,6 +158,42 @@ void main() {
     expect(connection.appendedTexts.join(), contains('第一段内容'));
     expect(connection.finishCount, 1);
   });
+
+  test(
+    'realtime voice holds split media markdown and narrates it once',
+    () async {
+      final connection = _RecordingRealtimeSessionConnection();
+      final repository = _RecordingVoiceRepository(connection: connection);
+      final player = AgentVoiceApiPlaybackPlayer(
+        repository: repository,
+        pcmPlayer: _RecordingPcmPlayer(),
+      );
+      const narration = '我放了一张当前步骤的对照图，你可以边看图边完成这一步。';
+
+      final session = player.startRealtimeSession(
+        mediaNarrationResolver: ({required url, required alt}) {
+          return url == '/v1/assets/asset-image?kind=image' ? narration : null;
+        },
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      session.append('先看这张图：!');
+      session.append('[Air1 核心部件](');
+      session.append('/v1/assets/asset-image?kind=image');
+      session.append(')，再看 ![重复](/v1/assets/asset-image?kind=image)。');
+      session.finish();
+      connection.emitOpened();
+      await Future<void>.delayed(Duration.zero);
+      connection.emitCompleted();
+      await session.done;
+
+      final submitted = connection.appendedTexts.join();
+      expect(narration.allMatches(submitted), hasLength(1));
+      expect(submitted, isNot(contains('Air1 核心部件')));
+      expect(submitted, isNot(contains('/v1/assets')));
+      expect(connection.finishCount, 1);
+    },
+  );
 }
 
 class _RecordingVoiceRepository implements AgentVoiceRepository {

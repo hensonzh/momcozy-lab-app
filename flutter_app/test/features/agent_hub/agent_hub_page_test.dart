@@ -2248,6 +2248,76 @@ void main() {
     expect(coordinator.activeId, 'msg-voice-order');
   });
 
+  testWidgets('Agent Hub forwards media voice metadata to realtime playback', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    final player = _PageFakeVoicePlaybackPlayer();
+    addTearDown(client.dispose);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+          voicePlaybackPlayer: player,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '怎么安装阀门',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'evt-media-voice-tool',
+        'type': 'tool.completed',
+        'thread_id': 'thread-media-voice',
+        'run_id': 'run-media-voice',
+        'tool_call_id': 'tool-media-voice',
+        'sequence': 1,
+        'payload': {
+          'safe_output': {
+            'media_voice': [
+              {
+                'media_id': '/v1/assets/asset-image?kind=image',
+                'voice_policy': 'announce',
+                'spoken_label': '我放了一张阀门安装方向图。',
+              },
+            ],
+          },
+        },
+      }),
+    );
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'evt-media-voice-text',
+        'type': 'message.delta',
+        'thread_id': 'thread-media-voice',
+        'run_id': 'run-media-voice',
+        'message_id': 'message-media-voice',
+        'sequence': 2,
+        'payload': {'text': '请看 ![阀门安装方向](/v1/assets/asset-image?kind=image)。'},
+      }),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(player.realtimeSessions, hasLength(1));
+    final resolver = player.realtimeSessions.single.mediaNarrationResolver;
+    expect(resolver, isNotNull);
+    expect(
+      resolver!(url: '/v1/assets/asset-image?kind=image', alt: '阀门安装方向'),
+      '我放了一张阀门安装方向图。',
+    );
+  });
+
   testWidgets(
     'Agent Hub never replaces or replays spoken text on completed mismatch',
     (tester) async {
@@ -6309,8 +6379,12 @@ class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
   }
 
   @override
-  AgentVoiceRealtimePlaybackSession startRealtimeSession() {
-    final session = _PageFakeVoiceRealtimePlaybackSession();
+  AgentVoiceRealtimePlaybackSession startRealtimeSession({
+    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  }) {
+    final session = _PageFakeVoiceRealtimePlaybackSession(
+      mediaNarrationResolver: mediaNarrationResolver,
+    );
     realtimeSessions.add(session);
     return session;
   }
@@ -6336,6 +6410,9 @@ class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
 
 class _PageFakeVoiceRealtimePlaybackSession
     implements AgentVoiceRealtimePlaybackSession {
+  _PageFakeVoiceRealtimePlaybackSession({this.mediaNarrationResolver});
+
+  final AgentVoiceMediaNarrationResolver? mediaNarrationResolver;
   final appendedTexts = <String>[];
   var flushCount = 0;
   var finishCount = 0;

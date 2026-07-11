@@ -23,6 +23,9 @@ enum AgentVoicePlaybackSource { autoReply, greeting, notification }
 
 enum AgentVoicePlaybackRequestStatus { started, blocked, rejected }
 
+typedef AgentVoiceMediaNarrationResolver =
+    String? Function({required String url, required String alt});
+
 class AgentVoiceState {
   const AgentVoiceState({
     this.phase = AgentVoicePhase.idle,
@@ -133,7 +136,9 @@ abstract interface class AgentVoiceTranscriber {
 abstract interface class AgentVoicePlaybackPlayer {
   Future<void> playText(String text);
 
-  AgentVoiceRealtimePlaybackSession startRealtimeSession();
+  AgentVoiceRealtimePlaybackSession startRealtimeSession({
+    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  });
 
   Future<void> stop();
 }

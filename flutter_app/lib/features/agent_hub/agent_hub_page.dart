@@ -22,6 +22,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
@@ -286,6 +287,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   String _autoVoiceAppendedText = '';
   AgentVoiceRealtimePlaybackSession? _autoVoiceSession;
   bool _autoVoiceSessionFinished = false;
+  Object? _mediaVoiceEventIdentity;
+  AgentMediaVoiceNarrationIndex _mediaVoiceNarrationIndex =
+      AgentMediaVoiceNarrationIndex.fromEvents(const []);
   VoidCallback? _unsubscribeVoicePlaybackIdle;
   bool _consumedInitialAutoSend = false;
   bool _dismissComposerKeyboardOnRunAccepted = false;
@@ -1625,7 +1629,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return null;
     }
 
-    final session = player.startRealtimeSession();
+    final session = player.startRealtimeSession(
+      mediaNarrationResolver: ({required url, required alt}) =>
+          _resolveMediaVoiceNarration(url: url),
+    );
     _autoVoiceSession = session;
     _autoVoiceSessionFinished = false;
     _setVoiceState(_voiceState.startPlayback(handle.id));
@@ -1649,6 +1656,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
           }),
     );
     return session;
+  }
+
+  String? _resolveMediaVoiceNarration({required String url}) {
+    final identity = _state.events;
+    if (!identical(identity, _mediaVoiceEventIdentity)) {
+      _mediaVoiceEventIdentity = identity;
+      _mediaVoiceNarrationIndex = AgentMediaVoiceNarrationIndex.fromEvents(
+        _state.events,
+      );
+    }
+    return _mediaVoiceNarrationIndex.resolve(url);
   }
 
   void _startVoicePlayback({

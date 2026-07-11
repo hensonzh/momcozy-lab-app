@@ -7,7 +7,9 @@ class ImmediateAgentVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
   Future<void> playText(String text) async {}
 
   @override
-  AgentVoiceRealtimePlaybackSession startRealtimeSession() {
+  AgentVoiceRealtimePlaybackSession startRealtimeSession({
+    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  }) {
     return const ImmediateAgentVoiceRealtimePlaybackSession();
   }
 

@@ -783,7 +783,9 @@ class _WidgetFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
   }
 
   @override
-  AgentVoiceRealtimePlaybackSession startRealtimeSession() {
+  AgentVoiceRealtimePlaybackSession startRealtimeSession({
+    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  }) {
     final session = _WidgetFakeVoiceRealtimePlaybackSession();
     realtimeSessions.add(session);
     return session;
