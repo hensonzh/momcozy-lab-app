@@ -31,7 +31,7 @@
 | R05 | P2 | 已提交表单在历史消息中可能恢复可编辑 | 已完成 | 用户可能重复提交或重复生成服务结果 |
 | R06 | P2 | 售后工单草稿 artifact 未实现 | 已完成 | 工单确认表单可能完全不显示 |
 | R07 | P2 | 普通链接和专业引用点击无效 | 已完成 | 用户无法打开来源和非媒体链接 |
-| R08 | P2 | 用户资料复用和信息采集表单归一化不完整 | 待处理 | 重复询问、默认值缺失、必填规则不一致 |
+| R08 | P2 | 用户资料复用和信息采集表单归一化不完整 | 已完成 | 重复询问、默认值缺失、必填规则不一致 |
 | R09 | P2 | 专项卡片数据语义未完全对齐 | 待处理 | 分娩沟通卡和待产包卡丢失部分有效内容 |
 | R10 | P2 | IBCLC 上下文和咨询完成状态丢失 | 待处理 | 咨询身份、返回位置和完成状态不连续 |
 | R11 | P2 | Artifact 出现时机早于旧 Web | 待处理 | 卡片可能先于解释文字出现并抢占滚动位置 |
@@ -204,9 +204,11 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### R08 用户资料和表单归一化不完整
 
-- Flutter greeting profile 只读取姓名，旧 Web 以姓名和年龄共同判断 onboarding 是否完成。
-- 表单没有合并孕期资料默认值，也缺少旧表单识别、历史值归一化和部分强制必填规则。
-- 修复目标：定义 typed `BirthPrepProfileDefaults`，由页面 controller 注入表单 mapper，避免 UI 层重复请求资料。
+- 已建立 typed `BirthPrepProfileDefaults`，一次 profile 请求同时提供姓名、年龄、预产期和旧版孕期资料别名；姓名与年龄均有效时才使用个性化问候语。
+- 页面 controller 将同一份资料注入当前及历史 artifact mapper；资料晚于表单到达时只补充未填写字段，不覆盖用户输入，也不在流式 delta 热路径重复请求或归一化。
+- 已按旧 Web 合同识别待产包、分娩沟通和孕期基础信息表单，统一 snake/camel ID、默认值优先级、占位值过滤、字段移除、分娩方式归一化和强制必填规则；普通表单保持原语义。
+- 生产边界：当前 profile schema 仅持久化姓名、年龄、预产期和 onboarding 标记；Flutter 兼容读取旧版 `birth_prep_*` 字段，但不新增一套重复数据库列。后续 profile 扩展可直接复用现有 typed mapper。
+- 验收：profile/mapper 专项、异步回填、Agent Hub 整页 110 项、`flutter analyze` 和 636 项 Flutter 全量测试通过。
 
 ### R09 专项卡片数据语义未完全对齐
 
@@ -245,10 +247,10 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 ## 当前验证基线
 
 - `flutter analyze`：通过。
-- Flutter 全量单元、Widget 和 Golden 测试：630 项通过。
+- Flutter 全量单元、Widget 和 Golden 测试：636 项通过。
 - Flutter Agent Hub、reducer、feature page 相关测试：197 项通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
-- 现有测试通过不代表剩余风险已关闭；R06-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
+- 现有测试通过不代表剩余风险已关闭；R09-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
 
 ## 变更记录
 
@@ -265,3 +267,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 完成 R05 表单提交生命周期 | 已提交值随 artifact 持久化、历史表单只读、pending 不落盘且稳定 run 幂等键生效；615 项全量回归通过 |
 | 2026-07-11 | 完成 R06 售后工单草稿 | 旧 Web 字段与 envelope 完整归一化；表单确认与生产 action 写入语义分离；618 项全量回归通过 |
 | 2026-07-11 | 完成 R07 链接与专业引用 | 安全内外链分发、系统浏览器、旧 Web citation 列表/索引及历史恢复对齐；630 项全量回归和 Android APK 构建通过 |
+| 2026-07-11 | 完成 R08 用户资料与表单归一化 | 姓名/年龄问候、孕期资料默认值、旧版表单识别和异步无覆盖回填对齐；636 项 Flutter 全量回归通过 |

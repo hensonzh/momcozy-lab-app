@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 
 void main() {
   group('AgentArtifactMapper', () {
@@ -57,7 +58,7 @@ void main() {
       expect(card.schemaVersion, '1.0');
       expect(card.formId, 'hospital_bag_intake');
       expect(card.title, '信息采集');
-      expect(card.description, '这些信息将用于生成个性化待产包。');
+      expect(card.description, '');
       expect(card.formFields, hasLength(3));
       expect(card.formFields[1].type, 'select');
       expect(card.formFields[2].isMultiSelect, isTrue);
@@ -241,6 +242,217 @@ void main() {
       expect(card.formFields[4].defaultValue, 'Amazon');
       expect(card.formFields[5].defaultValue, '安全相关');
     });
+
+    test('detects and normalizes legacy hospital bag intake forms', () {
+      final card = AgentArtifactMapper.cardFromEvent(
+        AgentStreamEvent({
+          'type': 'artifact.created',
+          'artifact_id': 'legacy-hospital-form',
+          'payload': {
+            'artifact_type': 'form',
+            'form': {
+              'id': 'legacy_intake',
+              'title': '旧待产包表单',
+              'description': '旧版描述',
+              'fields': [
+                {
+                  'id': 'dueDateOrWeek',
+                  'label': '',
+                  'type': 'date',
+                  'defaultValue': '待确认',
+                },
+                {
+                  'id': 'birthPath',
+                  'label': '生产信息｜计划分娩方式',
+                  'type': 'select',
+                  'defaultValue': 'planned_c_section',
+                  'helpText': '旧版帮助文案',
+                  'options': ['顺产', '剖宫产', '还不确定'],
+                },
+                {
+                  'id': 'fetusCount',
+                  'label': '基本信息｜这次是单胎、双胎，还是三胎及以上？',
+                  'type': 'select',
+                  'defaultValue': '未确定',
+                  'options': ['单胎', '双胎', '三胎及以上'],
+                },
+                {
+                  'id': 'hospitalRulesOrNotes',
+                  'label': '医院要求',
+                  'type': 'textarea',
+                },
+              ],
+            },
+          },
+        }),
+        profileDefaults: const BirthPrepProfileDefaults(
+          dueDateOrWeek: '孕25周',
+          fetusCount: '单胎',
+        ),
+      );
+
+      expect(card, isNotNull);
+      expect(card!.formId, 'hospital_bag_intake');
+      expect(card.title, '信息采集');
+      expect(card.description, '');
+      expect(card.formFields.map((field) => field.id), [
+        'due_date_or_week',
+        'birth_path',
+        'fetus_count',
+      ]);
+      expect(card.formFields[0].label, '基本信息｜预产期或当前孕周');
+      expect(card.formFields[0].type, 'text');
+      expect(card.formFields[0].defaultValue, '孕25周');
+      expect(card.formFields[1].label, '生产信息｜分娩方式');
+      expect(card.formFields[1].defaultValue, '剖宫产');
+      expect(card.formFields[1].helpText, '');
+      expect(card.formFields[2].defaultValue, '单胎');
+    });
+
+    test('leaves unrelated collection forms unchanged', () {
+      final card = AgentArtifactMapper.cardFromEvent(
+        _formEvent(
+          id: 'generic-form',
+          form: {
+            'id': 'feedback_intake',
+            'title': '体验反馈',
+            'description': '请补充你的使用感受。',
+            'fields': [
+              {'id': 'topWorries', 'label': '最关注的问题', 'type': 'textarea'},
+              {'id': 'details', 'label': '详细说明', 'type': 'textarea'},
+            ],
+          },
+        ),
+      );
+
+      expect(card, isNotNull);
+      expect(card!.formId, 'feedback_intake');
+      expect(card.title, '体验反馈');
+      expect(card.description, '请补充你的使用感受。');
+      expect(card.formFields.map((field) => field.id), [
+        'top_worries',
+        'details',
+      ]);
+    });
+
+    test('normalizes birth plan and basic-info form contracts', () {
+      final cards = AgentArtifactMapper.cardsFromEvents(
+        [
+          _formEvent(
+            id: 'birth-plan-form',
+            form: {
+              'id': 'birthPlanCardIntake',
+              'title': '旧分娩表单',
+              'description': '会被清理',
+              'fields': [
+                {
+                  'id': 'birthPath',
+                  'label': '基本信息｜生产方式',
+                  'type': 'select',
+                  'defaultValue': 'cesarean',
+                  'options': ['顺产', '计划剖宫产'],
+                  'helpText': '帮助',
+                },
+              ],
+            },
+          ),
+          _formEvent(
+            id: 'basic-info-form',
+            form: {
+              'id': 'birthJourneyBasicInfoIntake',
+              'title': '孕周与基本情况',
+              'defaultValues': {'fetusCount': '双胎'},
+              'fields': [
+                for (final entry in const [
+                  ('currentWeek', '当前孕周', 'text'),
+                  ('ivf', '是否 IVF（体外受精）', 'select'),
+                  ('fetusCount', '单胎/双胎', 'select'),
+                  ('age', '年龄', 'number'),
+                  ('firstBirth', '是否第一胎', 'select'),
+                  ('birthPath', '计划分娩方式', 'select'),
+                  ('birthHospital', '建档/生产医院', 'text'),
+                ])
+                  {
+                    'id': entry.$1,
+                    'label': entry.$2,
+                    'type': entry.$3,
+                    'required': false,
+                  },
+              ],
+            },
+          ),
+        ],
+        profileDefaults: const BirthPrepProfileDefaults(
+          age: 31,
+          fetusCount: '单胎',
+          birthHospital: '深圳市妇幼',
+        ),
+      );
+
+      final birthPlan = cards[0];
+      expect(birthPlan.formId, 'birth_plan_card_intake');
+      expect(birthPlan.title, '信息采集');
+      expect(birthPlan.description, '');
+      expect(birthPlan.formFields.single.label, '基本信息｜医生目前建议的生产方式');
+      expect(birthPlan.formFields.single.options, ['顺产', '剖宫产', '还没确定']);
+      expect(birthPlan.formFields.single.defaultValue, '剖宫产');
+      expect(birthPlan.formFields.single.helpText, '');
+
+      final basic = cards[1];
+      expect(basic.formId, 'birth_journey_basic_info_intake');
+      expect(
+        basic.formFields
+            .where((field) => field.required)
+            .map((field) => field.id),
+        [
+          'current_week',
+          'ivf',
+          'fetus_count',
+          'age',
+          'first_birth',
+          'birth_path',
+        ],
+      );
+      expect(
+        basic.formFields.firstWhere((field) => field.id == 'age').defaultValue,
+        31,
+      );
+      expect(
+        basic.formFields
+            .firstWhere((field) => field.id == 'fetus_count')
+            .defaultValue,
+        '双胎',
+      );
+      expect(
+        basic.formFields
+            .firstWhere((field) => field.id == 'birth_hospital')
+            .defaultValue,
+        '深圳市妇幼',
+      );
+    });
+
+    test('normalizes restored camelCase submission value keys', () {
+      final submission = AgentArtifactFormSubmission.tryFromMap({
+        'phase': 'submitted',
+        'values': {'dueDateOrWeek': '孕38周', 'birthPath': '顺产'},
+      });
+
+      expect(submission?.values, {
+        'due_date_or_week': '孕38周',
+        'birth_path': '顺产',
+      });
+    });
+  });
+}
+
+AgentStreamEvent _formEvent({
+  required String id,
+  required Map<String, Object?> form,
+}) {
+  return AgentStreamEvent({
+    'type': 'artifact.created',
+    'artifact_id': id,
+    'payload': {'artifact_type': 'form', 'form': form},
   });
 }
 
