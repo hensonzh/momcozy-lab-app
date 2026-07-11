@@ -39,16 +39,34 @@ class RecordsApiRepository
   }
 
   @override
-  Future<List<PumpMilkRecord>> fetchPumpMilkRecords({
-    required DateTime date,
-  }) async {
+  Future<List<PumpMilkRecord>> fetchPumpMilkRecords({required DateTime date}) {
     final range = _dayRange(date);
+    return _fetchPumpMilkRecordsRange(
+      start: range.start,
+      end: range.end,
+      limit: 50,
+    );
+  }
+
+  @override
+  Future<List<PumpMilkRecord>> fetchPumpMilkRecordsRange({
+    required DateTime start,
+    required DateTime end,
+  }) {
+    return _fetchPumpMilkRecordsRange(start: start, end: end, limit: 100);
+  }
+
+  Future<List<PumpMilkRecord>> _fetchPumpMilkRecordsRange({
+    required DateTime start,
+    required DateTime end,
+    required int limit,
+  }) async {
     final response = await transport.getJson(
       pumpMilkRecordsEndpoint,
       query: {
-        'start_at': range.start.toIso8601String(),
-        'end_at': range.end.toIso8601String(),
-        'limit': 50,
+        'start_at': start.toUtc().toIso8601String(),
+        'end_at': end.toUtc().toIso8601String(),
+        'limit': limit,
       },
     );
     final records = response['items'];
@@ -81,14 +99,63 @@ class RecordsApiRepository
               .toList(growable: false)
         : const <GrowthRecord>[];
   }
+
+  @override
+  Future<GrowthRecord> createGrowthRecord({
+    required String babyId,
+    required DateTime measuredAt,
+    double? weightKg,
+    double? heightCm,
+    double? headCm,
+    String? idempotencyKey,
+  }) async {
+    final body = <String, Object?>{
+      if (babyId.trim().isNotEmpty) 'infant_id': babyId.trim(),
+      'measured_at': measuredAt.toUtc().toIso8601String(),
+      'weight_kg': weightKg,
+      'height_cm': heightCm,
+      'head_cm': headCm,
+    }..removeWhere((_, value) => value == null);
+    final response = await transport.postJson(
+      growthRecordsEndpoint,
+      body: body,
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    return _growthRecord(response);
+  }
+
+  @override
+  Future<GrowthRecord> updateGrowthRecord({
+    required String recordId,
+    double? weightKg,
+    double? heightCm,
+    double? headCm,
+  }) async {
+    final mutations = transport;
+    if (mutations is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Growth updates require JSON mutation support.');
+    }
+    final body = <String, Object?>{
+      'weight_kg': weightKg,
+      'height_cm': heightCm,
+      'head_cm': headCm,
+    }..removeWhere((_, value) => value == null);
+    final response = await (mutations as ApiJsonMutationTransport).patchJson(
+      '$growthRecordsEndpoint/${Uri.encodeComponent(recordId.trim())}',
+      body: body,
+    );
+    return _growthRecord(response);
+  }
 }
 
 FeedingRecord _feedingRecord(Map<String, Object?> data) {
   return FeedingRecord(
     id: _string(data['id'] ?? data['recordId']) ?? '',
     type:
-        _string(data['feed_type'] ?? data['type'] ?? data['feedingType']) ??
-        '',
+        _string(data['feed_type'] ?? data['type'] ?? data['feedingType']) ?? '',
     amountMl: _int(data['volume_ml'] ?? data['amount_ml'] ?? data['amountMl']),
     occurredAt: _dateTime(
       data['feed_time'] ?? data['occurred_at'] ?? data['occurredAt'],
@@ -127,6 +194,7 @@ GrowthRecord _growthRecord(Map<String, Object?> data) {
         _int(data['weight_g'] ?? data['weightGram']) ??
         _kgToGram(data['weight_kg']),
     heightCm: _double(data['height_cm'] ?? data['heightCm']),
+    headCm: _double(data['head_cm'] ?? data['headCm']),
     measuredAt: _dateTime(data['measured_at'] ?? data['measuredAt']),
   );
 }

@@ -26,16 +26,20 @@ class StatusApiRepository implements StatusRepository {
   }
 }
 
-MomStatus? _momStatus(
-  Map<String, Object?>? data, {
-  DateTime Function()? now,
-}) {
+MomStatus? _momStatus(Map<String, Object?>? data, {DateTime Function()? now}) {
   if (data == null || data.isEmpty) return null;
   final deliveryDate = _date(data['delivery_date']);
-  if (deliveryDate == null) return null;
+  final dueDateOrWeek = _string(
+    data['birth_prep_due_date_or_week'] ?? data['birthPrepDueDateOrWeek'],
+  );
+  if (deliveryDate == null && dueDateOrWeek?.trim().isNotEmpty != true) {
+    return null;
+  }
   return MomStatus(
     stage: _stageFromDeliveryDate(deliveryDate, now: now),
     postpartumDay: _ageDays(deliveryDate, now: now),
+    deliveryDate: deliveryDate,
+    dueDateOrWeek: dueDateOrWeek,
   );
 }
 
@@ -46,10 +50,12 @@ BabyStatus? _babyStatus(
   if (data == null || data.isEmpty) return null;
   final birthDate = _date(data['birth_date']);
   return BabyStatus(
+    id: _string(data['id'] ?? data['infant_id'] ?? data['infantId']),
     nickname: _string(
       data['infant_name'] ?? data['nickname'] ?? data['nickName'],
     ),
     ageDays: _ageDays(birthDate, now: now),
+    birthDate: birthDate,
   );
 }
 

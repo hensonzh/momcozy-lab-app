@@ -23,7 +23,10 @@ import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/birth_journey_plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
@@ -415,6 +418,28 @@ class MomCozyApiRuntime {
 
   RecordsApiRepository get recordsRepository {
     return RecordsApiRepository(transport: jsonTransport);
+  }
+
+  PregnancyDiaryApiRepository get pregnancyDiaryRepository {
+    return PregnancyDiaryApiRepository(transport: jsonTransport);
+  }
+
+  BirthJourneyPlanApiRepository get birthJourneyPlanRepository {
+    return BirthJourneyPlanApiRepository(transport: jsonTransport);
+  }
+
+  StatusDashboardController createStatusDashboardController() {
+    final records = recordsRepository;
+    return StatusDashboardController(
+      statusRepository: statusRepository,
+      feedingRepository: records,
+      pumpRepository: records,
+      growthRepository: records,
+      pregnancyDiaryRepository: pregnancyDiaryRepository,
+      birthJourneyPlanRepository: birthJourneyPlanRepository,
+      babyId: currentSession.babyId,
+      now: now,
+    );
   }
 
   MediaApiRepository get mediaRepository {
