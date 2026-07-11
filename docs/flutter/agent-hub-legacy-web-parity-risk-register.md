@@ -25,7 +25,7 @@
 | ID | 优先级 | 风险 | 当前状态 | 主要影响 |
 | --- | --- | --- | --- | --- |
 | R01 | P1 | 流式正文与持久化最终正文未同源 | 已完成 | 结束、重连或历史恢复时正文可能分叉 |
-| R02 | P1 | 媒体资源和全屏查看链路不可用 | 进行中（图片/PDF 已完成） | 开箱图片、PDF、视频无法可靠查看 |
+| R02 | P1 | 媒体资源和全屏查看链路不可用 | 已完成 | 开箱图片、PDF、视频无法可靠查看 |
 | R03 | P1 | 正式 App 未接通图片和语音输入 | 待处理 | 旧 Web 的多模态输入入口不可用 |
 | R04 | P1 | 待产包购物车丢失 artifact 个性化数据 | 待处理 | 默认清单可能覆盖用户定制清单 |
 | R05 | P2 | 已提交表单在历史消息中可能恢复可编辑 | 待处理 | 用户可能重复提交或重复生成服务结果 |
@@ -155,7 +155,8 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 - 已建立 typed asset model，并通过统一仓库鉴权加载 `/v1/assets/{asset_id}`；退役的 `/skill-assets/...` 和 `/demo/...` 不再作为有效媒体源。
 - 图片已支持内存解码、加载/失败/重试、全屏 contain、双击和手势缩放；PDF 已支持多页解析、滚动、`0.1-4x` 缩放和解析级重试。
 - Android PDF 查看器锁定 `pdfrx 2.2.24`，避开 2.3+ 在 flavor integration APK 中遗漏 PDFium 的上游问题；统一构建入口会验证 PDFium，并从 release APK 移除无用 WASM 资源。
-- 视频仍为占位 UI，是 R02 当前唯一未完成的媒体类型。
+- 视频已支持带鉴权 header 的原生流式播放、一次 token 刷新、加载/运行中失败重试、播放/静音/进度控制、应用内沉浸式和竖屏横向片源旋转。
+- 后端 `/v1/assets/{asset_id}` 已支持单区间 `206/416`；Local 使用 seek/read，S3/OSS 直接发送 Range，不再为视频拖动整包读取对象。
 - 修复目标：统一 typed asset model、鉴权资源加载、图片缩放、PDF 分页、视频播放和加载/失败/重试状态。
 - 验收重点：开箱步骤图片、远程 PDF、视频、返回导航和三个移动 viewport。
 
@@ -232,9 +233,10 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 ## 当前验证基线
 
 - `flutter analyze`：通过。
+- Flutter 全量单元、Widget 和 Golden 测试：592 项通过。
 - Flutter Agent Hub、reducer、feature page 相关测试：197 项通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
-- 现有测试通过不代表风险已关闭；部分测试当前使用 fake provider、只验证占位页面存在，且尚未覆盖 R01 的后端同源 builder、segment 缺口恢复和跨端一致性。
+- 现有测试通过不代表剩余风险已关闭；R03-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
 
 ## 变更记录
 
@@ -245,3 +247,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 确认不等待工具/回答模式判断 | 所有稳定文本立即追加；工具前文本进入最终消息，completed 永不覆盖已展示正文 |
 | 2026-07-11 | 完成 R01 append-only canonical stream | 后端投影、Flutter reducer、完整性元数据和语音消费统一通过回归测试 |
 | 2026-07-11 | 完成 R02 图片与 PDF 子项 | 鉴权资源、图片缩放、多页 PDF、三档 viewport、Android PDFium 和 release 打包门禁通过 |
+| 2026-07-11 | 完成 R02 视频与 Range 子项 | Local/S3 分段读取、鉴权原生播放、控制栏、沉浸式、Android 真解码和三档 viewport 通过 |

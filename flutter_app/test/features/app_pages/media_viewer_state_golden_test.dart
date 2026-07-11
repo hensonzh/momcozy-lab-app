@@ -6,7 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
+import '../../support/fake_video_player_platform.dart';
 import '../../support/momcozy_test_fonts.dart';
 import '../../support/test_pdf_fixture.dart';
 
@@ -16,9 +18,16 @@ void main() {
     _goldenImageBytes = await File('assets/images/M9.png').readAsBytes();
   });
 
-  setUp(_installPathProviderMock);
+  late VideoPlayerPlatform previousVideoPlatform;
+
+  setUp(() {
+    _installPathProviderMock();
+    previousVideoPlatform = VideoPlayerPlatform.instance;
+    VideoPlayerPlatform.instance = FakeVideoPlayerPlatform();
+  });
 
   tearDown(() async {
+    VideoPlayerPlatform.instance = previousVideoPlatform;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(_pathProviderChannel, null);
   });
@@ -78,12 +87,21 @@ Future<void> _pumpMediaState(
         find.byKey(const ValueKey('product-asset-image')).evaluate().isNotEmpty,
       _MediaGoldenKind.pdf =>
         find.byKey(const ValueKey('media-pdf-viewer')).evaluate().isNotEmpty,
-      _MediaGoldenKind.video => true,
+      _MediaGoldenKind.video =>
+        find
+            .byKey(const ValueKey('product-asset-video-player'))
+            .evaluate()
+            .isNotEmpty,
     };
     if (routeReady && mediaReady) {
-      if (state.kind == _MediaGoldenKind.image) {
+      if (state.kind == _MediaGoldenKind.image ||
+          state.kind == _MediaGoldenKind.video) {
         await tester.runAsync(
-          () => Future<void>.delayed(const Duration(milliseconds: 80)),
+          () => Future<void>.delayed(
+            state.kind == _MediaGoldenKind.image
+                ? const Duration(milliseconds: 80)
+                : Duration.zero,
+          ),
         );
       }
       await tester.pump(const Duration(milliseconds: 32));
@@ -124,7 +142,7 @@ const _mediaStates = [
     label: 'video resource',
     fileName: 'video_resource_mobile.png',
     location:
-        '/media-viewer?kind=video&url=%2Fdemo%2Fw1-guide.mp4&title=W1%20视频教程',
+        '/media-viewer?kind=video&url=%2Fv1%2Fassets%2Fasset-video%3Fkind%3Dvideo&title=W1%20视频教程',
     title: 'W1 视频教程',
     kind: _MediaGoldenKind.video,
   ),
