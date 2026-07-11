@@ -21,6 +21,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
@@ -284,6 +285,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _consumedInitialAutoSend = false;
   bool _dismissComposerKeyboardOnRunAccepted = false;
   String _greeting = agentHubDefaultGreeting;
+  AgentHubGreetingProfile? _profile;
   int _greetingRefreshGeneration = 0;
 
   @override
@@ -1239,16 +1241,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
       // Greeting personalization is best effort; the default stays available.
     }
     if (!mounted || generation != _greetingRefreshGeneration) return;
-    if (!_isShowingFreshGreeting) return;
-
+    final isShowingFreshGreeting = _isShowingFreshGreeting;
     if (loaded) {
       final nextGreeting = agentHubGreetingForProfile(profile);
-      if (nextGreeting != _greeting) {
-        setState(() {
-          _greeting = nextGreeting;
-        });
-      }
+      setState(() {
+        _profile = profile;
+        if (isShowingFreshGreeting) _greeting = nextGreeting;
+      });
     }
+    if (!isShowingFreshGreeting) return;
     _maybeStartGreetingVoicePlayback();
   }
 
@@ -1824,6 +1825,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   @override
   Widget build(BuildContext context) {
+    final profileDefaults =
+        _profile?.birthPrepDefaults ?? const BirthPrepProfileDefaults();
     return ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
@@ -1885,6 +1888,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                   onFormSubmit: _handleArtifactFormSubmit,
                                   formSubmissionsListenable:
                                       _formSubmissionsNotifier,
+                                  profileDefaults: profileDefaults,
                                 ),
                               ),
                             if (_historyMessages.isNotEmpty)
@@ -1925,6 +1929,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                     localActionStatuses: _localActionStatuses,
                                     productAssetRepository:
                                         widget.productAssetRepository,
+                                    profileDefaults: profileDefaults,
                                     onConfirmAction: widget.actionClient == null
                                         ? null
                                         : _confirmAction,
@@ -2468,6 +2473,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
   final List<AgentHubHistoryMessage> messages;
@@ -2476,6 +2482,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
+  final BirthPrepProfileDefaults profileDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -2490,6 +2497,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
             onArtifactAction: onArtifactAction,
             onFormSubmit: onFormSubmit,
             formSubmissionsListenable: formSubmissionsListenable,
+            profileDefaults: profileDefaults,
           ),
           if (index != messages.length - 1) const SizedBox(height: 20),
         ],
@@ -2506,6 +2514,7 @@ class AgentHubHistorySliver extends StatelessWidget {
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
   final List<AgentHubHistoryMessage> messages;
@@ -2514,6 +2523,7 @@ class AgentHubHistorySliver extends StatelessWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
+  final BirthPrepProfileDefaults profileDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -2530,6 +2540,7 @@ class AgentHubHistorySliver extends StatelessWidget {
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
           formSubmissionsListenable: formSubmissionsListenable,
+          profileDefaults: profileDefaults,
         );
       }, childCount: itemCount),
     );
@@ -2544,6 +2555,7 @@ class _AgentHistoryBubble extends StatelessWidget {
     this.onArtifactAction,
     this.onFormSubmit,
     this.formSubmissionsListenable,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
   });
 
   final AgentHubHistoryMessage message;
@@ -2552,6 +2564,7 @@ class _AgentHistoryBubble extends StatelessWidget {
   final AgentArtifactFormSubmitHandler? onFormSubmit;
   final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
   formSubmissionsListenable;
+  final BirthPrepProfileDefaults profileDefaults;
 
   @override
   Widget build(BuildContext context) {
@@ -2571,6 +2584,7 @@ class _AgentHistoryBubble extends StatelessWidget {
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
           formSubmissionsListenable: formSubmissionsListenable,
+          profileDefaults: profileDefaults,
         );
       }
 
@@ -2733,6 +2747,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     required this.pendingActionIds,
     required this.localActionStatuses,
     this.productAssetRepository,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
     this.onConfirmAction,
     this.onRejectAction,
   });
@@ -2752,6 +2767,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
+  final BirthPrepProfileDefaults profileDefaults;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
   final ValueChanged<AgentActionCardView>? onRejectAction;
 
@@ -2763,6 +2779,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
 class _AgentRunTranscriptListenableState
     extends State<_AgentRunTranscriptListenable> {
   Object? _artifactSourceIdentity;
+  Object? _artifactProfileDefaultsIdentity;
   List<AgentArtifactCardView> _artifactCards = const <AgentArtifactCardView>[];
   Object? _actionSourceIdentity;
   int? _actionRevision;
@@ -2795,6 +2812,7 @@ class _AgentRunTranscriptListenableState
           onQuickReplySelected: widget.onQuickReplySelected,
           pendingActionIds: widget.pendingActionIds,
           productAssetRepository: widget.productAssetRepository,
+          profileDefaults: widget.profileDefaults,
           artifactCards: _artifactCardsForState(state),
           actionCards: _actionCardsForState(state, actionRevision),
           citations: _citationsForState(state),
@@ -2811,9 +2829,16 @@ class _AgentRunTranscriptListenableState
     final identity = state.artifactEvents.isNotEmpty
         ? state.artifactEvents
         : state.events;
-    if (identical(identity, _artifactSourceIdentity)) return _artifactCards;
+    if (identical(identity, _artifactSourceIdentity) &&
+        identical(widget.profileDefaults, _artifactProfileDefaultsIdentity)) {
+      return _artifactCards;
+    }
     _artifactSourceIdentity = identity;
-    _artifactCards = _artifactCardsFromEvents(_artifactEventsForState(state));
+    _artifactProfileDefaultsIdentity = widget.profileDefaults;
+    _artifactCards = _artifactCardsFromEvents(
+      _artifactEventsForState(state),
+      profileDefaults: widget.profileDefaults,
+    );
     return _artifactCards;
   }
 
@@ -2868,6 +2893,7 @@ class AgentRunTranscript extends StatelessWidget {
     this.pendingActionIds = const <String>{},
     this.localActionStatuses = const <String, String>{},
     this.productAssetRepository,
+    this.profileDefaults = const BirthPrepProfileDefaults(),
     this.artifactCards,
     this.actionCards,
     this.citations,
@@ -2889,6 +2915,7 @@ class AgentRunTranscript extends StatelessWidget {
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
   final ProductAssetRepository? productAssetRepository;
+  final BirthPrepProfileDefaults profileDefaults;
   final List<AgentArtifactCardView>? artifactCards;
   final List<AgentActionCardView>? actionCards;
   final List<AgentCitationView>? citations;
@@ -2905,7 +2932,10 @@ class AgentRunTranscript extends StatelessWidget {
     final text = _primaryText;
     final artifactCards =
         this.artifactCards ??
-        _artifactCardsFromEvents(_artifactEventsForState(state));
+        _artifactCardsFromEvents(
+          _artifactEventsForState(state),
+          profileDefaults: profileDefaults,
+        );
     final actionCards =
         this.actionCards ??
         _actionCardsFromEvents(
@@ -5062,9 +5092,13 @@ Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {
 }
 
 List<AgentArtifactCardView> _artifactCardsFromEvents(
-  Iterable<AgentStreamEvent> events,
-) {
-  return AgentArtifactMapper.cardsFromEvents(events);
+  Iterable<AgentStreamEvent> events, {
+  BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
+}) {
+  return AgentArtifactMapper.cardsFromEvents(
+    events,
+    profileDefaults: profileDefaults,
+  );
 }
 
 List<AgentActionCardView> _actionCardsFromEvents(

@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_form_normalizer.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 class AgentArtifactMapper {
   const AgentArtifactMapper._();
 
   static List<AgentArtifactCardView> cardsFromEvents(
-    Iterable<AgentStreamEvent> events,
-  ) {
+    Iterable<AgentStreamEvent> events, {
+    BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
+  }) {
     final cards = <String, AgentArtifactCardView>{};
     for (final event in events) {
-      final card = cardFromEvent(event);
+      final card = cardFromEvent(event, profileDefaults: profileDefaults);
       if (card != null) cards[card.id] = card;
     }
     return List<AgentArtifactCardView>.unmodifiable(cards.values);
   }
 
-  static AgentArtifactCardView? cardFromEvent(AgentStreamEvent event) {
+  static AgentArtifactCardView? cardFromEvent(
+    AgentStreamEvent event, {
+    BirthPrepProfileDefaults profileDefaults = const BirthPrepProfileDefaults(),
+  }) {
     if (event.type != 'artifact.created' && event.type != 'artifact.updated') {
       return null;
     }
@@ -72,13 +78,17 @@ class AgentArtifactMapper {
       _mapField(payload, 'card'),
       _mapField(artifact, 'card'),
     ]);
-    final form = supportTicketForm.isNotEmpty
+    final rawForm = supportTicketForm.isNotEmpty
         ? supportTicketForm
         : _firstMap([
             _mapField(artifactPayload, 'form'),
             _mapField(payload, 'form'),
             _mapField(artifact, 'form'),
           ]);
+    final form = normalizeAgentArtifactForm(
+      rawForm,
+      profileDefaults: profileDefaults,
+    );
     final cartUpdate = _firstMap([
       _mapField(artifactPayload, 'cart_update', 'cartUpdate'),
       _mapField(payload, 'cart_update', 'cartUpdate'),

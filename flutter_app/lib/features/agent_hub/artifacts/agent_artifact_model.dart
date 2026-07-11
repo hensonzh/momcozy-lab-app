@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 typedef AgentArtifactFormSubmitHandler =
@@ -14,7 +15,7 @@ class AgentArtifactFormSubmission {
   }) {
     return AgentArtifactFormSubmission._(
       phase: AgentArtifactFormSubmissionPhase.submitting,
-      values: Map<String, Object?>.unmodifiable(values),
+      values: Map<String, Object?>.unmodifiable(_canonicalFormValues(values)),
     );
   }
 
@@ -23,7 +24,7 @@ class AgentArtifactFormSubmission {
   }) {
     return AgentArtifactFormSubmission._(
       phase: AgentArtifactFormSubmissionPhase.submitted,
-      values: Map<String, Object?>.unmodifiable(values),
+      values: Map<String, Object?>.unmodifiable(_canonicalFormValues(values)),
     );
   }
 
@@ -45,7 +46,7 @@ class AgentArtifactFormSubmission {
     for (final entry in rawValues.entries) {
       final key = entry.key;
       if (key is String && key.trim().isNotEmpty) {
-        values[key] = entry.value;
+        values[canonicalAgentFormFieldId(key)] = entry.value;
       }
     }
     return switch (map['phase']) {
@@ -54,6 +55,14 @@ class AgentArtifactFormSubmission {
       _ => null,
     };
   }
+}
+
+Map<String, Object?> _canonicalFormValues(Map<String, Object?> values) {
+  return {
+    for (final entry in values.entries)
+      if (entry.key.trim().isNotEmpty)
+        canonicalAgentFormFieldId(entry.key): entry.value,
+  };
 }
 
 enum AgentArtifactPresentationKind {

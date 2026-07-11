@@ -15,6 +15,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
@@ -535,7 +536,7 @@ void main() {
       _host(
         AgentHubPage(
           greetingProfileLoader: () async =>
-              const AgentHubGreetingProfile(displayName: '小美'),
+              const AgentHubGreetingProfile(displayName: '小美', age: 29),
           voicePlaybackCoordinator: coordinator,
           voicePlaybackPlayer: player,
         ),
@@ -551,6 +552,66 @@ void main() {
 
     player.complete();
   });
+
+  testWidgets(
+    'Agent Hub injects late profile defaults without replacing user edits',
+    (tester) async {
+      final profileCompleter = Completer<AgentHubGreetingProfile>();
+      final formEvent = _formArtifactEvent(
+        id: 'profile-default-form',
+        form: {
+          'id': 'birth_journey_basic_info_intake',
+          'title': '孕周与基本情况',
+          'fields': [
+            {'id': 'age', 'label': '年龄', 'type': 'number', 'required': false},
+            {'id': 'birth_hospital', 'label': '建档/生产医院', 'type': 'text'},
+          ],
+        },
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            greetingProfileLoader: () => profileCompleter.future,
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请确认基本信息。',
+              events: [formEvent],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final inputs = find.byType(TextFormField);
+      expect(inputs, findsNWidgets(2));
+      await tester.enterText(inputs.at(1), '我手动填的医院');
+      await tester.pump();
+
+      profileCompleter.complete(
+        const AgentHubGreetingProfile(
+          displayName: '小美',
+          age: 31,
+          birthPrepDefaults: BirthPrepProfileDefaults(
+            age: 31,
+            birthHospital: '资料中的医院',
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final textFields = tester.widgetList<TextFormField>(inputs).toList();
+      expect(
+        textFields[0].controller?.text ?? textFields[0].initialValue,
+        '31',
+      );
+      expect(
+        textFields[1].controller?.text ?? textFields[1].initialValue,
+        '我手动填的医院',
+      );
+    },
+  );
 
   testWidgets('Agent Hub plays greeting voice for a manual new session', (
     tester,
@@ -612,7 +673,7 @@ void main() {
         AgentHubPage(
           greetingProfileLoader: () async {
             loadCount += 1;
-            return AgentHubGreetingProfile(displayName: displayName);
+            return AgentHubGreetingProfile(displayName: displayName, age: 29);
           },
           voicePlaybackCoordinator: coordinator,
           voicePlaybackPlayer: player,
@@ -5470,6 +5531,17 @@ milk_total: 120ml
       ),
       findsOneWidget,
     );
+  });
+}
+
+AgentStreamEvent _formArtifactEvent({
+  required String id,
+  required Map<String, Object?> form,
+}) {
+  return AgentStreamEvent({
+    'type': 'artifact.created',
+    'artifact_id': id,
+    'payload': {'artifact_type': 'form', 'form': form},
   });
 }
 
