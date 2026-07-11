@@ -34,8 +34,9 @@ void main() {
                 content: '我会结合泵奶记录、舒适度和宝宝喂养情况一起看。',
               ),
             ],
-            pickImage: () async => const AgentStreamImageInput(
-              dataUrl: 'data:image/png;base64,fixture',
+            pickImage: (_) async => const AgentStreamImageInput(
+              dataUrl:
+                  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
               mimeType: 'image/png',
               name: 'pump-display.png',
               size: 68,

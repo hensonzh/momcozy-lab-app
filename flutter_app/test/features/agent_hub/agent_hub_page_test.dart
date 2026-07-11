@@ -15,7 +15,9 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_reader.dart';
@@ -400,7 +402,7 @@ void main() {
               content: '我建议你先观察舒适度和间隔。',
             ),
           ],
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'staged-before-new-session.png',
@@ -1143,7 +1145,7 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl:
                 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
             mimeType: 'image/png',
@@ -1174,6 +1176,10 @@ void main() {
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsOneWidget,
     );
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-0')),
+      findsOneWidget,
+    );
     expect(find.text('图片 1'), findsOneWidget);
 
     await tester.enterText(
@@ -1192,6 +1198,75 @@ void main() {
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsNothing,
     );
+    expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('agent-sent-image-close')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-sent-image-close')));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('Agent Hub keeps camera and gallery image sources distinct', (
+    tester,
+  ) async {
+    final sources = <AgentImageInputSource>[];
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(_NeverEndingAgentStreamClient()),
+          pickImage: (source) async {
+            sources.add(source);
+            return AgentStreamImageInput(
+              dataUrl:
+                  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+              mimeType: 'image/png',
+              name: '${source.name}.png',
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-camera-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-image-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('agent-photo-upload-button')));
+    await tester.pumpAndSettle();
+
+    expect(sources, [
+      AgentImageInputSource.camera,
+      AgentImageInputSource.gallery,
+    ]);
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-0')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-image-attachment-1')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
+    await tester.pump();
+
+    expect(find.text('图片 1'), findsOneWidget);
+    expect(find.byType(AgentComposerImageAttachment), findsOneWidget);
+    expect(
+      tester
+          .widget<AgentComposerImageAttachment>(
+            find.byType(AgentComposerImageAttachment),
+          )
+          .image
+          .name,
+      'gallery.png',
+    );
   });
 
   testWidgets('Agent Hub removes image attachment before sending', (
@@ -1207,7 +1282,7 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'before-send.png',
@@ -1274,7 +1349,7 @@ void main() {
         AgentHubPage(
           stateCacheKey: cacheKey,
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'retained-across-tab.png',
@@ -1304,7 +1379,7 @@ void main() {
         AgentHubPage(
           stateCacheKey: cacheKey,
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'retained-across-tab.png',
@@ -1390,7 +1465,7 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'only-image.png',
@@ -1617,6 +1692,118 @@ void main() {
           ?.text,
       '',
     );
+  });
+
+  testWidgets('Agent Hub starts voice capture on press and stops on release', (
+    tester,
+  ) async {
+    final recorder = _PageFakeVoiceRecorder();
+    final transcriber = _PageFakeVoiceTranscriber('按住期间录到的语音');
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          voiceInputController: AgentVoiceInputController(
+            recorder: recorder,
+            transcriber: transcriber,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pump();
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+
+    expect(recorder.calls, ['permissionState', 'start']);
+    expect(transcriber.recordings, isEmpty);
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(recorder.calls, ['permissionState', 'start', 'stop']);
+    expect(transcriber.recordings, hasLength(1));
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller
+          ?.text,
+      '按住期间录到的语音',
+    );
+  });
+
+  testWidgets(
+    'Agent Hub honors release while microphone permission is pending',
+    (tester) async {
+      final permission = Completer<AgentVoiceInputPermissionState>();
+      final recorder = _PageFakeVoiceRecorder(
+        initialPermission: AgentVoiceInputPermissionState.unknown,
+        permissionRequest: permission.future,
+      );
+      final transcriber = _PageFakeVoiceTranscriber('权限后完成的语音');
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            voiceInputController: AgentVoiceInputController(
+              recorder: recorder,
+              transcriber: transcriber,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+      await tester.pump();
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+      );
+      await tester.pump();
+      await gesture.up();
+      await tester.pump();
+
+      expect(recorder.calls, ['permissionState', 'requestPermission']);
+      permission.complete(AgentVoiceInputPermissionState.granted);
+      await tester.pumpAndSettle();
+
+      expect(recorder.calls, [
+        'permissionState',
+        'requestPermission',
+        'start',
+        'stop',
+      ]);
+      expect(transcriber.recordings, hasLength(1));
+    },
+  );
+
+  testWidgets('Agent Hub cancels voice capture on pointer cancellation', (
+    tester,
+  ) async {
+    final recorder = _PageFakeVoiceRecorder();
+    final transcriber = _PageFakeVoiceTranscriber('must not be used');
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          voiceInputController: AgentVoiceInputController(
+            recorder: recorder,
+            transcriber: transcriber,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('agent-voice-button')));
+    await tester.pump();
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('agent-voice-hold-button'))),
+    );
+    await tester.pump();
+    await gesture.cancel();
+    await tester.pumpAndSettle();
+
+    expect(recorder.calls, ['permissionState', 'start', 'cancel']);
+    expect(transcriber.recordings, isEmpty);
   });
 
   testWidgets('Agent Hub starts auto voice playback after finished reply', (
@@ -2723,7 +2910,7 @@ void main() {
           ),
           runner: AgentStreamRunner(_FixtureAgentStreamClient(const [])),
           actionClient: actionClient,
-          pickImage: () async => const AgentStreamImageInput(
+          pickImage: (_) async => const AgentStreamImageInput(
             dataUrl: 'data:image/png;base64,fixture',
             mimeType: 'image/png',
             name: 'blocked-during-confirmation.png',
@@ -5188,10 +5375,12 @@ class _PageFakeVoiceRecorder implements AgentVoiceRecorder {
   _PageFakeVoiceRecorder({
     this.initialPermission = AgentVoiceInputPermissionState.granted,
     this.requestResult = AgentVoiceInputPermissionState.granted,
+    this.permissionRequest,
   });
 
   final AgentVoiceInputPermissionState initialPermission;
   final AgentVoiceInputPermissionState requestResult;
+  final Future<AgentVoiceInputPermissionState>? permissionRequest;
   final List<String> calls = [];
 
   @override
@@ -5203,7 +5392,7 @@ class _PageFakeVoiceRecorder implements AgentVoiceRecorder {
   @override
   Future<AgentVoiceInputPermissionState> requestPermission() async {
     calls.add('requestPermission');
-    return requestResult;
+    return await permissionRequest ?? requestResult;
   }
 
   @override
@@ -5228,12 +5417,16 @@ class _PageFakeVoiceRecorder implements AgentVoiceRecorder {
 }
 
 class _PageFakeVoiceTranscriber implements AgentVoiceTranscriber {
-  const _PageFakeVoiceTranscriber(this.text);
+  _PageFakeVoiceTranscriber(this.text);
 
   final String? text;
+  final List<AgentVoiceRecording> recordings = <AgentVoiceRecording>[];
 
   @override
-  Future<String?> transcribe(AgentVoiceRecording recording) async => text;
+  Future<String?> transcribe(AgentVoiceRecording recording) async {
+    recordings.add(recording);
+    return text;
+  }
 }
 
 class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {

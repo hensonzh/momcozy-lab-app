@@ -1259,6 +1259,8 @@ Widget _buildDefaultAgentHubPage(
         buildSessionAgentHubRequest(message, session: runtime.session),
     voicePlaybackCoordinator: voicePlaybackCoordinator,
     voicePlaybackPlayer: runtime.agentVoicePlaybackPlayer,
+    pickImage: runtime.agentHubImagePicker,
+    voiceInputController: runtime.agentVoiceInputController,
     productAssetRepository: runtime.productAssetRepository,
     onArtifactAction: (action) => _handleAgentArtifactAction(context, action),
     initialComposerText: _agentPrefillFromRoute(uri, extra),
