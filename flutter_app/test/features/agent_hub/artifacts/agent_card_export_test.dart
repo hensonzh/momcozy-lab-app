@@ -1,0 +1,253 @@
+import 'dart:async';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
+
+void main() {
+  test('builds the same sanitized UTC card filename as legacy web', () {
+    expect(
+      buildAgentCardExportFilename(
+        cardType: 'birth plan/card',
+        now: DateTime.parse('2026-07-11T23:30:00-08:00'),
+      ),
+      'comate-birth-plan-card-2026-07-12.png',
+    );
+  });
+
+  testWidgets('only legacy-exportable specialized cards show save controls', (
+    tester,
+  ) async {
+    await _pumpPanel(
+      tester,
+      cards: _exportScopeCards,
+      exportService: _RecordingCardExportService(),
+    );
+
+    expect(find.text('保存图片'), findsNWidgets(3));
+    expect(find.byKey(const ValueKey('agent-card-export-journey')), findsOne);
+    expect(
+      find.byKey(const ValueKey('agent-card-export-birth-plan')),
+      findsOne,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-card-export-hospital-bag')),
+      findsOne,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-card-export-milk-plan')),
+      findsNothing,
+    );
+  });
+
+  for (final width in [360.0, 390.0, 430.0]) {
+    testWidgets('export controls fit the $width px card viewport', (
+      tester,
+    ) async {
+      await _pumpPanel(
+        tester,
+        cards: _exportScopeCards,
+        exportService: _RecordingCardExportService(),
+        width: width,
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('保存图片'), findsNWidgets(3));
+    });
+  }
+
+  testWidgets('captures a PNG once and restores the control after sharing', (
+    tester,
+  ) async {
+    final service = _RecordingCardExportService(block: true);
+    await _pumpPanel(
+      tester,
+      cards: const [_birthPlanCard],
+      exportService: service,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-card-export-birth-plan')),
+    );
+    await _pumpUntilExportStarts(tester, service);
+    await tester.pump();
+
+    expect(service.calls, 1);
+    expect(
+      service.filename,
+      matches(r'^comate-birth_plan_card-\d{4}-\d{2}-\d{2}\.png$'),
+    );
+    expect(
+      service.bytes!.take(8),
+      orderedEquals(const [137, 80, 78, 71, 13, 10, 26, 10]),
+    );
+    expect(find.text('保存中'), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-card-export-birth-plan')),
+    );
+    await tester.pump();
+    expect(service.calls, 1);
+
+    service.release();
+    await tester.pumpAndSettle();
+    expect(find.text('保存图片'), findsOneWidget);
+  });
+
+  testWidgets('share failures stay internal and restore the save control', (
+    tester,
+  ) async {
+    final service = _RecordingCardExportService(throwOnShare: true);
+    await _pumpPanel(
+      tester,
+      cards: const [_birthPlanCard],
+      exportService: service,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('agent-card-export-birth-plan')),
+    );
+    await _pumpUntilExportStarts(tester, service);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('保存图片'), findsOneWidget);
+    expect(find.textContaining('失败'), findsNothing);
+  });
+}
+
+Future<void> _pumpUntilExportStarts(
+  WidgetTester tester,
+  _RecordingCardExportService service,
+) async {
+  for (
+    var attempt = 0;
+    attempt < 20 && !service.started.isCompleted;
+    attempt++
+  ) {
+    await tester.pump(const Duration(milliseconds: 16));
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+  }
+  expect(service.started.isCompleted, isTrue);
+}
+
+Future<void> _pumpPanel(
+  WidgetTester tester, {
+  required List<AgentArtifactCardView> cards,
+  required AgentCardExportService exportService,
+  double width = 390,
+}) async {
+  tester.view.physicalSize = Size(width, 1800);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: momCozyTheme(),
+      home: Scaffold(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(12),
+          child: AgentArtifactPanel(
+            cards: cards,
+            onAction: (_) {},
+            cardExportService: exportService,
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+class _RecordingCardExportService implements AgentCardExportService {
+  _RecordingCardExportService({this.block = false, this.throwOnShare = false});
+
+  final bool block;
+  final bool throwOnShare;
+  final Completer<void> started = Completer<void>();
+  final Completer<void> _release = Completer<void>();
+  Uint8List? bytes;
+  String? filename;
+  int calls = 0;
+
+  @override
+  Future<void> sharePng({
+    required Uint8List bytes,
+    required String filename,
+  }) async {
+    calls += 1;
+    this.bytes = bytes;
+    this.filename = filename;
+    if (!started.isCompleted) started.complete();
+    if (throwOnShare) throw StateError('share unavailable');
+    if (block) await _release.future;
+  }
+
+  void release() {
+    if (!_release.isCompleted) _release.complete();
+  }
+}
+
+const _exportScopeCards = [
+  _journeyCard,
+  _birthPlanCard,
+  _hospitalBagCard,
+  _milkPlanCard,
+];
+
+const _journeyCard = AgentArtifactCardView(
+  id: 'journey',
+  title: '孕期计划',
+  artifactType: 'birth_journey_plan_card',
+  schemaVersion: '1.0',
+  presentationKind: AgentArtifactPresentationKind.birthJourneyPlanCard,
+  cardJson: {
+    'owner': {'current_week': '孕 25 周'},
+  },
+);
+
+const _birthPlanCard = AgentArtifactCardView(
+  id: 'birth-plan',
+  title: '分娩沟通单',
+  artifactType: 'birth_plan_card',
+  schemaVersion: '1.0',
+  presentationKind: AgentArtifactPresentationKind.birthPlanCard,
+  specializedView: AgentBirthPlanCardView(
+    title: '分娩沟通单',
+    sections: [
+      AgentBirthPlanSectionView(
+        id: 'communication',
+        title: '沟通方式',
+        values: ['每一步操作前先解释'],
+      ),
+    ],
+    medicalNotes: [],
+    disclaimer: '请优先遵循医生和医院建议。',
+  ),
+);
+
+const _hospitalBagCard = AgentArtifactCardView(
+  id: 'hospital-bag',
+  title: '待产包',
+  artifactType: 'hospital_bag_card',
+  schemaVersion: '1.0',
+  presentationKind: AgentArtifactPresentationKind.hospitalBagCard,
+  specializedView: AgentHospitalBagCardView(
+    title: '待产包',
+    subtitle: '住院母婴必备用品',
+    groups: [],
+  ),
+);
+
+const _milkPlanCard = AgentArtifactCardView(
+  id: 'milk-plan',
+  title: '奶量计划',
+  artifactType: 'milk_plan_card',
+  schemaVersion: '1.0',
+  presentationKind: AgentArtifactPresentationKind.milkPlanCard,
+);
