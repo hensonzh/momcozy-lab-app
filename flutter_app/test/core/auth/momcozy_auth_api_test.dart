@@ -449,6 +449,21 @@ class _TokenTransport implements ApiJsonTransport {
   }) async {
     return onRequest(path);
   }
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async => onRequest(path);
+
+  @override
+  Future<void> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) async {
+    onRequest(path);
+  }
 }
 
 class _SequenceMultipartTokenTransport {
@@ -521,5 +536,22 @@ class _DeferredRefreshTransport implements ApiJsonTransport {
     refreshCallCount += 1;
     await _completer.future;
     return response;
+  }
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) {
+    throw UnimplementedError();
   }
 }

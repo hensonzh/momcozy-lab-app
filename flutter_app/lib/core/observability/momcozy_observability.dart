@@ -144,6 +144,31 @@ class ObservedApiJsonTransport implements ApiJsonTransport {
     );
   }
 
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    return _record(
+      method: 'PATCH',
+      path: path,
+      action: () => inner.patchJson(path, body: body, headers: headers),
+    );
+  }
+
+  @override
+  Future<void> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) {
+    return _recordVoid(
+      method: 'DELETE',
+      path: path,
+      action: () => inner.deleteJson(path, headers: headers),
+    );
+  }
+
   Future<Map<String, Object?>> _record({
     required String method,
     required String path,
@@ -160,6 +185,34 @@ class ObservedApiJsonTransport implements ApiJsonTransport {
         statusCode: _statusCodeFromResponse(response),
       );
       return response;
+    } catch (error) {
+      watch.stop();
+      observability.recordApiRequest(
+        method: method,
+        path: path,
+        elapsed: watch.elapsed,
+        statusCode: _statusCodeFromError(error),
+        error: error,
+      );
+      rethrow;
+    }
+  }
+
+  Future<void> _recordVoid({
+    required String method,
+    required String path,
+    required Future<void> Function() action,
+  }) async {
+    final watch = Stopwatch()..start();
+    try {
+      await action();
+      watch.stop();
+      observability.recordApiRequest(
+        method: method,
+        path: path,
+        elapsed: watch.elapsed,
+        statusCode: 204,
+      );
     } catch (error) {
       watch.stop();
       observability.recordApiRequest(

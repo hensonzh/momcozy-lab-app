@@ -21,6 +21,7 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_repository
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -467,6 +468,10 @@ class MomCozyApiRuntime {
 
   PumpWorkstateApiRepository get pumpWorkstateRepository {
     return PumpWorkstateApiRepository(transport: jsonTransport);
+  }
+
+  PregnancyDiaryApiRepository get pregnancyDiaryRepository {
+    return PregnancyDiaryApiRepository(transport: jsonTransport);
   }
 }
 

@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -210,6 +211,91 @@ void main() {
         expect(find.text('状态同步失败'), findsNothing);
         expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
         expect(find.byTooltip('重试'), findsNothing);
+      },
+    );
+
+    testWidgets('reads pregnancy diary entries from the backend repository', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: createMomCozyRouter(initialLocation: '/status'),
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(
+            responsesByPath: {
+              pregnancyDiaryEntriesEndpoint: const {
+                'items': [
+                  {
+                    'id': 'diary-1',
+                    'entry_date': '2026-07-03',
+                    'content': '今天胎动规律，心情很安心。',
+                    'mood': '安心',
+                    'symptom_tags': <Object?>[],
+                    'attachments': <Object?>[],
+                    'status': 'active',
+                  },
+                ],
+              },
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('status-care-stage-pregnancy')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('今天胎动规律，心情很安心。'), findsOneWidget);
+      expect(find.text('今天的记录已保存'), findsNothing);
+      await tester.tap(
+        find.byKey(const ValueKey('status-pregnancy-diary-view-button')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('今天的记录已保存'), findsOneWidget);
+      expect(find.text('安心'), findsOneWidget);
+    });
+
+    testWidgets(
+      'does not create a diary entry when the current diary state is unknown',
+      (tester) async {
+        await _setCompactViewport(tester);
+        final routeIntentPlatform = FakeRouteIntentPlatform();
+        addTearDown(routeIntentPlatform.dispose);
+
+        await tester.pumpWidget(
+          MomCozyFlutterApp(
+            router: createMomCozyRouter(initialLocation: '/status'),
+            routeIntentPlatform: routeIntentPlatform,
+            apiRuntime: _runtime(
+              responsesByPath: {
+                pregnancyDiaryEntriesEndpoint: const {
+                  'http_status': 503,
+                  'status_text': 'Service Unavailable',
+                },
+              },
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.byKey(const ValueKey('status-care-stage-pregnancy')),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.byKey(const ValueKey('status-pregnancy-diary-record-button')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('日记加载失败，请稍后重试'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('status-pregnancy-diary-editor-dialog')),
+          findsNothing,
+        );
       },
     );
 
@@ -1106,59 +1192,72 @@ MomCozyApiRuntime _runtime({
   Map<String, Map<String, Object?>>? responsesByPath,
 }) {
   return MomCozyApiRuntime(
-    jsonTransport: FixtureApiJsonTransportByPath({
-      statusProfileEndpoint: const {
-        'user_id': 'demo-user-fixture',
-        'delivery_date': '2026-06-12',
+    jsonTransport: FixtureApiJsonTransportByPath(
+      {
+        statusProfileEndpoint: const {
+          'user_id': 'demo-user-fixture',
+          'delivery_date': '2026-06-12',
+        },
+        statusInfantsEndpoint: const {
+          'items': [
+            {
+              'id': 'demo-baby-fixture',
+              'owner_user_id': 'demo-user-fixture',
+              'infant_name': 'Mia',
+              'birth_date': '2026-04-06',
+              'sex': 'female',
+              'status': 'active',
+            },
+          ],
+        },
+        scheduleDayPlanEndpoint: const {
+          'items': <Object?>[
+            {
+              'id': 'pump-morning',
+              'owner_user_id': 'demo-user-fixture',
+              'task_date': '2026-07-03',
+              'task_time': '10:30',
+              'title': '泵奶',
+              'description': '',
+              'status': 'completed',
+              'payload': <String, Object?>{},
+            },
+            {
+              'id': 'feeding-afternoon',
+              'owner_user_id': 'demo-user-fixture',
+              'task_date': '2026-07-03',
+              'task_time': '14:00',
+              'title': '喂养',
+              'description': '',
+              'status': 'pending',
+              'payload': <String, Object?>{},
+            },
+            {
+              'id': 'summary-evening',
+              'owner_user_id': 'demo-user-fixture',
+              'task_date': '2026-07-03',
+              'task_time': '20:30',
+              'title': '晚间复盘',
+              'description': '',
+              'status': 'pending',
+              'payload': <String, Object?>{},
+            },
+          ],
+        },
+        ...?responsesByPath,
       },
-      statusInfantsEndpoint: const {
-        'items': [
-          {
-            'id': 'demo-baby-fixture',
-            'owner_user_id': 'demo-user-fixture',
-            'infant_name': 'Mia',
-            'birth_date': '2026-04-06',
-            'sex': 'female',
-            'status': 'active',
-          },
-        ],
+      writeResponsesByPath: const {
+        pregnancyDiaryEntriesEndpoint: {
+          'id': 'diary-created',
+          'entry_date': '2026-07-03',
+          'content': '今天胎动规律，想问医生睡眠问题。',
+          'mood': '',
+          'symptom_tags': <Object?>[],
+          'attachments': <Object?>[],
+          'status': 'active',
+        },
       },
-      scheduleDayPlanEndpoint: const {
-        'items': <Object?>[
-          {
-            'id': 'pump-morning',
-            'owner_user_id': 'demo-user-fixture',
-            'task_date': '2026-07-03',
-            'task_time': '10:30',
-            'title': '泵奶',
-            'description': '',
-            'status': 'completed',
-            'payload': <String, Object?>{},
-          },
-          {
-            'id': 'feeding-afternoon',
-            'owner_user_id': 'demo-user-fixture',
-            'task_date': '2026-07-03',
-            'task_time': '14:00',
-            'title': '喂养',
-            'description': '',
-            'status': 'pending',
-            'payload': <String, Object?>{},
-          },
-          {
-            'id': 'summary-evening',
-            'owner_user_id': 'demo-user-fixture',
-            'task_date': '2026-07-03',
-            'task_time': '20:30',
-            'title': '晚间复盘',
-            'description': '',
-            'status': 'pending',
-            'payload': <String, Object?>{},
-          },
-        ],
-      },
-      ...?responsesByPath,
-    }),
+    ),
     agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
     clientEventClient: const AgentStreamClientEventClient(sent: false),
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{

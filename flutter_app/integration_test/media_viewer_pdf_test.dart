@@ -118,4 +118,17 @@ class _NoopJsonTransport implements ApiJsonTransport {
     Map<String, Object?> body = const {},
     Map<String, String> headers = const {},
   }) => throw UnsupportedError('No JSON request expected.');
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) => throw UnsupportedError('No JSON request expected.');
+
+  @override
+  Future<void> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) => throw UnsupportedError('No JSON request expected.');
 }
