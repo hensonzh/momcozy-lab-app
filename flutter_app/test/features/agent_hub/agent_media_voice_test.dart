@@ -38,6 +38,7 @@ void main() {
     final index = AgentMediaVoiceNarrationIndex.fromEvents([event]);
 
     expect(index.items, hasLength(2));
+    expect(index.autoSpeakableTexts, ['我放了一张当前步骤的对照图。']);
     expect(
       index.resolve('/v1/assets/asset-image?kind=image'),
       '我放了一张当前步骤的对照图。',
@@ -71,6 +72,8 @@ void main() {
     });
 
     final index = AgentMediaVoiceNarrationIndex.fromEvents([event]);
+
+    expect(index.autoSpeakableTexts, ['请确认阀门方向与图中一致。']);
 
     expect(
       index.resolve('/skill-assets/device-guidance/air1/images/step.png'),
