@@ -1834,6 +1834,70 @@ void main() {
   });
 
   testWidgets(
+    'Agent Hub never replaces or replays spoken text on completed mismatch',
+    (tester) async {
+      final coordinator = AgentVoicePlaybackCoordinator();
+      final player = _PageFakeVoicePlaybackPlayer();
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: coordinator,
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Keep the streamed reply',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-voice-mismatch-delta',
+          'type': 'message.delta',
+          'thread_id': 'thread-voice-mismatch',
+          'run_id': 'run-voice-mismatch',
+          'message_id': 'msg-voice-mismatch',
+          'payload': {'text': 'Keep this reply.'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-voice-mismatch-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-voice-mismatch',
+          'run_id': 'run-voice-mismatch',
+          'message_id': 'msg-voice-mismatch',
+          'payload': {'role': 'assistant', 'text': 'Replacement reply.'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
+        'Keep this reply.',
+      ]);
+      expect(player.realtimeSessions.single.finishCount, 1);
+      expect(find.text('Keep this reply.', findRichText: true), findsOneWidget);
+      expect(find.text('Replacement reply.', findRichText: true), findsNothing);
+    },
+  );
+
+  testWidgets(
     'Agent Hub keeps auto voice stable when message id arrives late',
     (tester) async {
       final coordinator = AgentVoicePlaybackCoordinator();
@@ -2469,7 +2533,7 @@ void main() {
     expect(client.requests.last.message, 'Retry my request');
     expect(client.requests.last.runId, 'run-first');
     expect(client.requests.last.afterSequence, 2);
-    expect(find.text('Retried answer'), findsOneWidget);
+    expect(find.text('Partial answer completed.'), findsOneWidget);
   });
 
   testWidgets('Agent Hub maps backend timeout to retryable copy', (
@@ -2844,12 +2908,21 @@ void main() {
         }),
         AgentStreamEvent(const {
           'event_id': 'evt-action-final',
-          'type': 'message.completed',
+          'type': 'message.delta',
           'thread_id': 'thread-action',
           'run_id': 'run-action',
           'message_id': 'msg-action-final',
           'sequence': 4,
-          'payload': {'role': 'assistant', 'text': '工单已经创建。'},
+          'payload': {'text': '\n\n工单已经创建。'},
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-action-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-action',
+          'run_id': 'run-action',
+          'message_id': 'msg-action-final',
+          'sequence': 5,
+          'payload': {'role': 'assistant', 'text': '请确认是否创建支持工单。\n\n工单已经创建。'},
         }),
         AgentStreamEvent(const {
           'event_id': 'evt-action-run-completed',
@@ -2857,7 +2930,7 @@ void main() {
           'thread_id': 'thread-action',
           'run_id': 'run-action',
           'message_id': 'msg-action-final',
-          'sequence': 5,
+          'sequence': 6,
         }),
       ]);
       final actionClient = AgentStreamActionClient(
@@ -2912,7 +2985,8 @@ void main() {
       expect(streamClient.requests.single.runId, 'run-action');
       expect(streamClient.requests.single.threadId, 'thread-action');
       expect(streamClient.requests.single.afterSequence, 2);
-      expect(find.text('工单已经创建。'), findsOneWidget);
+      expect(find.textContaining('请确认是否创建支持工单。'), findsOneWidget);
+      expect(find.textContaining('工单已经创建。'), findsOneWidget);
       expect(find.text('已应用'), findsOneWidget);
       expect(find.text('已提交'), findsNothing);
     },
@@ -4202,7 +4276,7 @@ milk_total: 120ml
     expect(find.text('睡眠'), findsOneWidget);
   });
 
-  testWidgets('Agent Hub renders streaming markdown text without parsing', (
+  testWidgets('Agent Hub keeps markdown rendering stable while streaming', (
     tester,
   ) async {
     const markdown = '## 正在整理\n- **重点**：先等我写完';
@@ -4218,9 +4292,11 @@ milk_total: 120ml
       ),
     );
 
-    expect(find.byType(MarkdownBody), findsNothing);
-    expect(find.textContaining('## 正在整理'), findsOneWidget);
-    expect(find.textContaining('**重点**'), findsOneWidget);
+    expect(find.byType(MarkdownBody), findsOneWidget);
+    expect(find.textContaining('##'), findsNothing);
+    expect(find.textContaining('**'), findsNothing);
+    expect(find.text('正在整理', findRichText: true), findsOneWidget);
+    expect(find.textContaining('重点', findRichText: true), findsOneWidget);
   });
 
   testWidgets(
@@ -5022,20 +5098,29 @@ class _RetryAgentStreamClient implements AgentStreamClient {
 
     yield AgentStreamEvent(const {
       'event_id': 'evt-retry-3',
-      'type': 'message.completed',
+      'type': 'message.delta',
       'thread_id': 'thread-demo',
       'run_id': 'run-first',
       'message_id': 'msg-first',
       'sequence': 3,
-      'payload': {'text': 'Retried answer'},
+      'payload': {'text': ' completed.'},
     });
     yield AgentStreamEvent(const {
       'event_id': 'evt-retry-4',
-      'type': 'run.completed',
+      'type': 'message.completed',
       'thread_id': 'thread-demo',
       'run_id': 'run-first',
       'message_id': 'msg-first',
       'sequence': 4,
+      'payload': {'text': 'Partial answer completed.'},
+    });
+    yield AgentStreamEvent(const {
+      'event_id': 'evt-retry-5',
+      'type': 'run.completed',
+      'thread_id': 'thread-demo',
+      'run_id': 'run-first',
+      'message_id': 'msg-first',
+      'sequence': 5,
     });
   }
 }
