@@ -666,6 +666,174 @@ void main() {
     );
   });
 
+  testWidgets(
+    'Agent Hub waits for cold-start restore before showing or playing greeting',
+    (tester) async {
+      final store = _DeferredAgentHubInteractionStateStore();
+      final player = _PageFakeVoicePlaybackPlayer();
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            interactionStateStore: store,
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.textContaining('嗨，我是 CozyMate'), findsNothing);
+      expect(player.playedTexts, isEmpty);
+
+      store.completeRead(
+        const AgentHubInteractionSnapshot(
+          runState: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            threadId: 'thread-cold-restore',
+            textContent: '这是上一次的回复。',
+          ),
+          historyMessages: [
+            AgentHubHistorySnapshot(role: 'user', content: '上一次的问题'),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('上一次的问题'), findsOneWidget);
+      expect(find.text('这是上一次的回复。', findRichText: true), findsOneWidget);
+      expect(find.textContaining('嗨，我是 CozyMate'), findsNothing);
+      expect(player.playedTexts, isEmpty);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub ignores persisted local state without conversation history',
+    (tester) async {
+      final player = _PageFakeVoicePlaybackPlayer();
+      final store = _MemoryAgentHubInteractionStateStore(
+        const AgentHubInteractionSnapshot(
+          composerText: '不应恢复的草稿',
+          autoVoiceEnabled: false,
+          activeRequest: AgentStreamRequest(message: '不应恢复的请求'),
+        ),
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            interactionStateStore: store,
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final composer = tester.widget<TextField>(
+        find.byKey(const ValueKey('agent-composer-input')),
+      );
+      expect(composer.controller?.text, isEmpty);
+      expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+      expect(player.playedTexts, hasLength(1));
+      expect(player.playedTexts.single, contains('嗨，我是 CozyMate'));
+    },
+  );
+
+  testWidgets(
+    'Agent Hub applies cold-start auto-send after restoring the thread',
+    (tester) async {
+      final client = _FixtureAgentStreamClient(const []);
+      final store = _MemoryAgentHubInteractionStateStore(
+        const AgentHubInteractionSnapshot(
+          runState: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            threadId: 'thread-restored-before-prefill',
+            textContent: '上一轮回复',
+          ),
+          historyMessages: [
+            AgentHubHistorySnapshot(role: 'user', content: '上一轮问题'),
+          ],
+        ),
+      );
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            interactionStateStore: store,
+            initialComposerText: '继续分析',
+            initialAutoSend: true,
+          ),
+        ),
+      );
+      await _pumpUntil(tester, () => client.requests.isNotEmpty);
+
+      expect(client.requests, hasLength(1));
+      expect(client.requests.single.message, '继续分析');
+      expect(client.requests.single.threadId, 'thread-restored-before-prefill');
+    },
+  );
+
+  testWidgets(
+    'Agent Hub restores an interrupted durable run without restarting it',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final player = _PageFakeVoicePlaybackPlayer();
+      final store = _MemoryAgentHubInteractionStateStore(
+        const AgentHubInteractionSnapshot(
+          runState: AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+            threadId: 'thread-interrupted',
+            runId: 'run-interrupted',
+            textContent: '上一轮尚未完成的回复',
+          ),
+          activeRequest: AgentStreamRequest(message: '继续生成建议'),
+        ),
+      );
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            interactionStateStore: store,
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(client.requests, isEmpty);
+      expect(find.text('上一轮尚未完成的回复'), findsOneWidget);
+      expect(find.text('连接已中断，可继续接收。'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
+      expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
+      expect(player.playedTexts, isEmpty);
+    },
+  );
+
+  testWidgets('Agent Hub falls back to a fresh greeting when restore fails', (
+    tester,
+  ) async {
+    final player = _PageFakeVoicePlaybackPlayer();
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          interactionStateStore: _ThrowingAgentHubInteractionStateStore(),
+          voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+          voicePlaybackPlayer: player,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    expect(player.playedTexts, hasLength(1));
+  });
+
   testWidgets('Agent Hub personalizes greeting text and voice from profile', (
     tester,
   ) async {
@@ -798,6 +966,63 @@ void main() {
       find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsNothing,
     );
+  });
+
+  testWidgets(
+    'Agent Hub clears durable history immediately for a new session',
+    (tester) async {
+      final store = _MemoryAgentHubInteractionStateStore(
+        const AgentHubInteractionSnapshot(
+          runState: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            threadId: 'thread-to-clear',
+            textContent: '旧会话回复',
+          ),
+          historyMessages: [
+            AgentHubHistorySnapshot(role: 'user', content: '旧会话问题'),
+          ],
+        ),
+      );
+
+      await tester.pumpWidget(
+        _host(AgentHubPage(interactionStateStore: store)),
+      );
+      await tester.pumpAndSettle();
+      store
+        ..writeCount = 0
+        ..clearCount = 0;
+
+      await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+      await tester.pump();
+
+      expect(store.clearCount, 1);
+      expect(store.writeCount, 0);
+      expect(store.snapshot, isNull);
+      expect(find.textContaining('嗨，我是 CozyMate'), findsOneWidget);
+    },
+  );
+
+  testWidgets('Agent Hub does not overwrite history while restore is pending', (
+    tester,
+  ) async {
+    final store = _DeferredAgentHubInteractionStateStore();
+
+    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
+    await tester.pump();
+    await tester.pumpWidget(_host(const SizedBox.shrink()));
+    await tester.pump();
+
+    expect(store.writeCount, 0);
+    expect(store.clearCount, 0);
+
+    store.completeRead(
+      const AgentHubInteractionSnapshot(
+        historyMessages: [
+          AgentHubHistorySnapshot(role: 'user', content: '仍应保留'),
+        ],
+      ),
+    );
+    await tester.pump();
   });
 
   testWidgets('Agent Hub refreshes the profile for a manual new session', (
@@ -950,7 +1175,7 @@ void main() {
     expect(client.requests, hasLength(1));
     expect(client.requests.single.message, '开始正式对话');
     expect(coordinator.activeId, isNull);
-    expect(player.stopCount, 2);
+    expect(player.stopCount, 1);
     expect(
       find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
       findsNothing,
@@ -1214,7 +1439,6 @@ void main() {
         ),
       ),
     );
-
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
       '给我一些建议',
@@ -3257,6 +3481,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
@@ -6605,6 +6830,46 @@ class _MemoryAgentHubInteractionStateStore
     clearCount += 1;
     snapshot = null;
   }
+}
+
+class _DeferredAgentHubInteractionStateStore
+    implements AgentHubInteractionStateStore {
+  final Completer<AgentHubInteractionSnapshot?> _read = Completer();
+  int writeCount = 0;
+  int clearCount = 0;
+
+  @override
+  Future<AgentHubInteractionSnapshot?> read() => _read.future;
+
+  void completeRead(AgentHubInteractionSnapshot? snapshot) {
+    if (!_read.isCompleted) _read.complete(snapshot);
+  }
+
+  @override
+  Future<void> write(AgentHubInteractionSnapshot snapshot) async {
+    writeCount += 1;
+  }
+
+  @override
+  Future<void> clear() async {
+    clearCount += 1;
+  }
+}
+
+class _ThrowingAgentHubInteractionStateStore
+    implements AgentHubInteractionStateStore {
+  @override
+  Future<AgentHubInteractionSnapshot?> read() {
+    return Future<AgentHubInteractionSnapshot?>.error(
+      StateError('restore unavailable'),
+    );
+  }
+
+  @override
+  Future<void> write(AgentHubInteractionSnapshot snapshot) async {}
+
+  @override
+  Future<void> clear() async {}
 }
 
 class _NeverEndingAgentStreamClient implements AgentStreamClient {

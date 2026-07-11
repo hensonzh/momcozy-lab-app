@@ -1253,7 +1253,11 @@ Widget _buildDefaultAgentHubPage(
   }
 
   return AgentHubPage(
+    key: ValueKey('agent-hub-${runtime.currentSession.userId}'),
     stateCacheKey: runtime,
+    interactionStateStore: createSessionAgentHubInteractionStateStore(
+      runtime.currentSession,
+    ),
     runner: createSessionAgentHubRunner(
       runtime.session,
       accessTokenProvider: currentAccessToken,
