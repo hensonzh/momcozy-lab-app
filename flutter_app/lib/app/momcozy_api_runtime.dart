@@ -11,6 +11,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_re
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
@@ -56,6 +57,7 @@ class MomCozyApiRuntime {
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
@@ -89,6 +91,7 @@ class MomCozyApiRuntime {
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
+    _productAssetRepository = productAssetRepository;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
     _hasInjectedPumpProtocolPlatform = pumpProtocolPlatform != null;
@@ -102,6 +105,7 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
     String? userId,
     String? babyId,
     String? locale,
@@ -122,6 +126,7 @@ class MomCozyApiRuntime {
       pumpProtocolPlatform: pumpProtocolPlatform,
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+      productAssetRepository: productAssetRepository,
     );
   }
 
@@ -135,6 +140,7 @@ class MomCozyApiRuntime {
     StorageMigrationApplyResult? storageMigrationResult,
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -216,6 +222,7 @@ class MomCozyApiRuntime {
       storageMigrationResult: storageMigrationResult,
       observability: runtimeObservability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+      productAssetRepository: productAssetRepository,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
@@ -242,6 +249,7 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
     Map<String, Object?>? legacyStorageSnapshot,
     StorageMigrationTargetStore? storageMigrationTargetStore,
   }) async {
@@ -277,6 +285,7 @@ class MomCozyApiRuntime {
       storageMigrationResult: storageMigrationResult,
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+      productAssetRepository: productAssetRepository,
     );
   }
 
@@ -296,6 +305,7 @@ class MomCozyApiRuntime {
   AgentStreamClientEventClient? _clientEventClient;
   ApiMultipartTransport? _multipartTransport;
   AgentVoicePlaybackPlayer? _agentVoicePlaybackPlayer;
+  ProductAssetRepository? _productAssetRepository;
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
   PumpNativeRuntimeCoordinator? _pumpNativeRuntimeCoordinator;
@@ -374,6 +384,14 @@ class MomCozyApiRuntime {
 
   MediaApiRepository get mediaRepository {
     return MediaApiRepository(transport: multipartTransport);
+  }
+
+  ProductAssetRepository get productAssetRepository {
+    return _productAssetRepository ??= ProductAssetRepository(
+      baseUri: Uri.parse(_defaultApiBaseUrl),
+      tokenProvider: () => currentSession.accessToken,
+      onUnauthorized: agentStreamUnauthorizedHandler,
+    );
   }
 
   AgentVoiceApiRepository get agentVoiceRepository {
