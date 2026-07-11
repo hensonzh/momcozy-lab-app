@@ -58,6 +58,7 @@ class AgentArtifactFormSubmission {
 
 enum AgentArtifactPresentationKind {
   form,
+  supportTicketDraft,
   milkAnalysisCard,
   milkPlanCard,
   milkPlanPreview,

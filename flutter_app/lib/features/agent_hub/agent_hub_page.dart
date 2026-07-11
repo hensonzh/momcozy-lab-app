@@ -76,7 +76,10 @@ String _formSubmitRequestMessage(AgentArtifactActionView action) {
       ? action.value!.trim()
       : '{}';
   return [
-    '我已提交信息采集表单，请基于确认后的表单数据继续完成对应服务。',
+    if (formId == 'support_ticket')
+      '我已确认售后信息，请基于确认后的表单数据发起正式工单创建动作。'
+    else
+      '我已提交信息采集表单，请基于确认后的表单数据继续完成对应服务。',
     if (formId != null && formId.isNotEmpty) 'form_id: $formId',
     'confirmed_form_data: $valuesJson',
   ].join('\n');
@@ -905,7 +908,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     try {
       accepted = await _sendSyntheticUserMessage(
         requestMessage: _formSubmitRequestMessage(action),
-        optimisticContent: '已提交信息采集表单',
+        optimisticContent: submission.formId == 'support_ticket'
+            ? '已确认售后信息'
+            : '已提交信息采集表单',
         idempotencyKey: idempotencyKey,
       );
     } catch (_) {

@@ -29,7 +29,7 @@
 | R03 | P1 | 正式 App 未接通图片和语音输入 | 已完成 | 旧 Web 的多模态输入入口不可用 |
 | R04 | P1 | 待产包购物车丢失 artifact 个性化数据 | 已完成 | 默认清单可能覆盖用户定制清单 |
 | R05 | P2 | 已提交表单在历史消息中可能恢复可编辑 | 已完成 | 用户可能重复提交或重复生成服务结果 |
-| R06 | P2 | 售后工单草稿 artifact 未实现 | 待处理 | 工单确认表单可能完全不显示 |
+| R06 | P2 | 售后工单草稿 artifact 未实现 | 已完成 | 工单确认表单可能完全不显示 |
 | R07 | P2 | 普通链接和专业引用点击无效 | 待处理 | 用户无法打开来源和非媒体链接 |
 | R08 | P2 | 用户资料复用和信息采集表单归一化不完整 | 待处理 | 重复询问、默认值缺失、必填规则不一致 |
 | R09 | P2 | 专项卡片数据语义未完全对齐 | 待处理 | 分娩沟通卡和待产包卡丢失部分有效内容 |
@@ -186,8 +186,11 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### R06 售后工单草稿未实现
 
-- Mapper 不读取 `ticket` envelope，presentation kind 中没有 support ticket。
-- 修复目标：支持旧 Web 的工单字段、校验、确认文案、提交完成态，并与生产 action contract 明确边界。
+- 已新增 typed `supportTicketDraft` presentation，同时支持 `support_ticket` / `support_ticket_draft`、顶层 `ticket` envelope、直接 `artifact` ticket 以及 snake/camel 字段别名。
+- 已对齐旧 Web 六个字段、选项、默认值归一化、占位文案和四个必填规则；空必填项继续由共享表单校验阻止。
+- 工单信息确认复用 R05 的持久化 lifecycle 和稳定幂等键；当前消息归档或 App 恢复后仍保留已确认值和只读态。
+- 生产语义边界已明确：表单按钮只表示“售后信息已确认”，并请求 Agent 发起 `support.ticket.propose`；只有 `action.applied` 才表示真实工单已创建。不复制旧 Web 在实际写入前直接宣称“工单已提交”的不安全行为。
+- 验收：两种历史 envelope、camelCase、字段合同、页面提交语义、通用表单回归、`flutter analyze` 和 618 项 Flutter 全量测试通过。
 
 ### R07 链接和引用点击无效
 
@@ -238,7 +241,7 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 ## 当前验证基线
 
 - `flutter analyze`：通过。
-- Flutter 全量单元、Widget 和 Golden 测试：615 项通过。
+- Flutter 全量单元、Widget 和 Golden 测试：618 项通过。
 - Flutter Agent Hub、reducer、feature page 相关测试：197 项通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
 - 现有测试通过不代表剩余风险已关闭；R06-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
@@ -256,3 +259,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 完成 R03 图片与语音输入 | 正式 runtime 注入、独立图片来源/缩略图、按压录音状态机、权限竞态、Android WAV 真机和 601 项全量回归通过 |
 | 2026-07-11 | 完成 R04 待产包购物车共享状态 | Artifact 个性化数据、页面编辑、下一轮 Agent 上下文和后端同步同源；会话/账号隔离及 612 项全量回归通过 |
 | 2026-07-11 | 完成 R05 表单提交生命周期 | 已提交值随 artifact 持久化、历史表单只读、pending 不落盘且稳定 run 幂等键生效；615 项全量回归通过 |
+| 2026-07-11 | 完成 R06 售后工单草稿 | 旧 Web 字段与 envelope 完整归一化；表单确认与生产 action 写入语义分离；618 项全量回归通过 |

@@ -3844,6 +3844,71 @@ void main() {
     expect(activationCount, 1);
   });
 
+  testWidgets(
+    'Agent Hub confirms support ticket details without claiming ticket creation',
+    (tester) async {
+      final client = _FixtureAgentStreamClient(const []);
+      final ticketEvent = AgentStreamEvent({
+        'type': 'artifact.created',
+        'artifact_id': 'support-ticket-1',
+        'artifact_type': 'support_ticket_draft',
+        'submit_label': '确认并提交',
+        'ticket': {
+          'issue_type': 'malfunction',
+          'issue_summary': '吸奶器无法启动',
+          'product_model': 'Air1',
+          'order_number': 'MC123',
+          'purchase_channel': '官网',
+          'urgency': 'normal',
+        },
+      });
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请确认售后信息。',
+              events: [ticketEvent],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('售后工单'), findsOneWidget);
+      expect(find.text('问题类型'), findsOneWidget);
+      expect(find.text('问题描述'), findsOneWidget);
+      expect(find.text('产品型号'), findsOneWidget);
+      expect(find.text('订单号'), findsOneWidget);
+      expect(find.text('购买渠道'), findsOneWidget);
+      expect(find.text('紧急程度'), findsOneWidget);
+
+      final submit = find.byKey(
+        const ValueKey('agent-artifact-form-submit-support-ticket-1'),
+      );
+      await tester.ensureVisible(submit);
+      await tester.pumpAndSettle();
+      await tester.tap(submit);
+      await tester.pump();
+      await tester.pump();
+
+      expect(client.requests, hasLength(1));
+      expect(client.requests.single.message, startsWith('我已确认售后信息'));
+      expect(client.requests.single.message, contains('发起正式工单创建动作'));
+      expect(client.requests.single.message, contains('confirmed_form_data'));
+      expect(client.requests.single.message, contains('issue_summary'));
+      expect(
+        client.requests.single.idempotencyKey,
+        startsWith('agent-form-submit-'),
+      );
+      expect(find.text('已确认售后信息'), findsOneWidget);
+      expect(find.text('信息已确认'), findsOneWidget);
+      expect(find.text('已提交售后工单'), findsNothing);
+      expect(find.textContaining('人工客服团队会在 24 小时内'), findsNothing);
+    },
+  );
+
   testWidgets('Agent Hub renders legacy service artifact envelopes', (
     tester,
   ) async {
