@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 typedef AgentArtifactFormSubmitHandler =
     Future<bool> Function(AgentArtifactActionView action);
@@ -111,6 +112,7 @@ class AgentArtifactActionView {
     this.value,
     this.routePath,
     this.routeExtra,
+    this.hospitalBagCartSeed,
   });
 
   final String label;
@@ -119,6 +121,7 @@ class AgentArtifactActionView {
   final String? value;
   final String? routePath;
   final Object? routeExtra;
+  final HospitalBagCartArtifactSeed? hospitalBagCartSeed;
 }
 
 abstract final class AgentArtifactActions {

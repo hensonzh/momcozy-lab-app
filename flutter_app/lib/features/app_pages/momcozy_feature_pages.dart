@@ -9,6 +9,7 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
@@ -113,6 +114,7 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        routeExtra: routeExtra,
       ),
       '/ibclc-chat.html' => _IbclcPage(
         path: path,
@@ -9461,6 +9463,10 @@ Future<bool> _postFeatureClientEvent(
   }
 }
 
+String? _requestedCartId(Object? routeExtra) {
+  return routeExtra is HospitalBagCartRouteState ? routeExtra.cartId : null;
+}
+
 class _HospitalBagCartPage extends StatefulWidget {
   const _HospitalBagCartPage({
     required this.path,
@@ -9468,6 +9474,7 @@ class _HospitalBagCartPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.routeExtra,
   });
 
   final String path;
@@ -9475,6 +9482,7 @@ class _HospitalBagCartPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Object? routeExtra;
 
   @override
   State<_HospitalBagCartPage> createState() => _HospitalBagCartPageState();
@@ -9483,23 +9491,56 @@ class _HospitalBagCartPage extends StatefulWidget {
 class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
   bool _isSyncing = false;
   String? _syncStatus;
-  final Set<String> _removedItemIds = {};
+  HospitalBagCartStore? _cartStore;
+  String _cartId = HospitalBagCartStore.defaultCartId;
+  int _syncGeneration = 0;
+
+  HospitalBagCartSnapshot get _cart =>
+      _cartStore?.snapshot(_cartId) ?? defaultHospitalBagCartSnapshot;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final nextStore = MomCozyRuntimeScope.of(context).hospitalBagCartStore;
+    if (identical(_cartStore, nextStore)) return;
+    _cartStore?.removeListener(_handleCartChanged);
+    _cartStore = nextStore;
+    _cartId = nextStore.activate(_requestedCartId(widget.routeExtra));
+    nextStore.addListener(_handleCartChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant _HospitalBagCartPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.routeExtra == widget.routeExtra) return;
+    final store = _cartStore;
+    if (store != null) {
+      _cartId = store.activate(_requestedCartId(widget.routeExtra));
+    }
+  }
+
+  @override
+  void dispose() {
+    _cartStore?.removeListener(_handleCartChanged);
+    super.dispose();
+  }
+
+  void _handleCartChanged() {
+    if (mounted) setState(() {});
+  }
 
   void _resetCart() {
-    setState(() {
-      _removedItemIds.clear();
-    });
-    unawaited(_syncCart());
+    _cartStore?.reset(_cartId);
+    unawaited(_syncCart(_cart));
   }
 
   void _deleteItem(String id) {
-    setState(() {
-      _removedItemIds.add(id);
-    });
-    unawaited(_syncCart());
+    if (_cartStore?.removeItem(cartId: _cartId, itemId: id) != true) return;
+    unawaited(_syncCart(_cart));
   }
 
-  Future<void> _syncCart() async {
+  Future<void> _syncCart(HospitalBagCartSnapshot cart) async {
+    final generation = ++_syncGeneration;
     setState(() {
       _isSyncing = true;
       _syncStatus = null;
@@ -9508,15 +9549,15 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
     try {
       final runtime = MomCozyRuntimeScope.of(context);
       final result = await runtime.hospitalBagCartRepository.syncCart(
-        items: _hospitalBagItems(),
+        cart: cart,
       );
-      if (!mounted) return;
+      if (!mounted || generation != _syncGeneration) return;
       setState(() {
         _isSyncing = false;
         _syncStatus = result.message;
       });
     } catch (_) {
-      if (!mounted) return;
+      if (!mounted || generation != _syncGeneration) return;
       setState(() {
         _isSyncing = false;
         _syncStatus = '本地清单已更新，稍后重试同步。';
@@ -9524,34 +9565,19 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
     }
   }
 
-  List<HospitalBagPackedItem> _hospitalBagItems() {
-    return _visibleCartItems
-        .map(
-          (item) => HospitalBagPackedItem(
-            id: item.id,
-            title: item.name,
-            packed: true,
-          ),
-        )
-        .toList(growable: false);
-  }
-
-  List<_HospitalBagCartItemSpec> get _visibleCartItems => _hospitalBagCartGroups
-      .expand((group) => group.items)
-      .where((item) => !_removedItemIds.contains(item.id))
-      .toList(growable: false);
+  List<HospitalBagCartItem> get _visibleCartItems =>
+      _cart.items.toList(growable: false);
 
   int get _itemCount =>
       _visibleCartItems.fold(0, (sum, item) => sum + item.qty);
 
-  double get _subtotal =>
-      _visibleCartItems.fold(0.0, (sum, item) => sum + item.price * item.qty);
+  double get _subtotal => _cart.totals.subtotal;
 
-  double get _discount => _itemCount > 0 ? _subtotal * 0.08 : 0;
+  double get _discount => _cart.totals.discount;
 
-  double get _total => _subtotal - _discount;
+  double get _total => _cart.totals.total;
 
-  String _money(double amount) => '¥${amount.toStringAsFixed(2)}';
+  String _money(double amount) => formatHospitalBagCartMoney(amount);
 
   void _handleBack() {
     if (context.canPop()) {
@@ -9563,14 +9589,7 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
 
   @override
   Widget build(BuildContext context) {
-    final visibleGroups = _hospitalBagCartGroups
-        .map(
-          (group) => group.copyWith(
-            items: group.items
-                .where((item) => !_removedItemIds.contains(item.id))
-                .toList(growable: false),
-          ),
-        )
+    final visibleGroups = _cart.groups
         .where((group) => group.items.isNotEmpty)
         .toList(growable: false);
 
@@ -9604,7 +9623,7 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
                       total: _total,
                       syncStatus: _syncStatus,
                       isSyncing: _isSyncing,
-                      canReset: _removedItemIds.isNotEmpty,
+                      canReset: _cartStore?.canReset(_cartId) == true,
                       onResetCart: _resetCart,
                       money: _money,
                     ),
@@ -9764,7 +9783,7 @@ class _HospitalBagSyncStatusBanner extends StatelessWidget {
 class _HospitalBagGroupSection extends StatelessWidget {
   const _HospitalBagGroupSection({required this.group, required this.onDelete});
 
-  final _HospitalBagCartGroupSpec group;
+  final HospitalBagCartGroup group;
   final ValueChanged<String> onDelete;
 
   @override
@@ -9839,8 +9858,8 @@ class _HospitalBagCartItemTile extends StatelessWidget {
     required this.onDelete,
   });
 
-  final _HospitalBagCartItemSpec item;
-  final _HospitalBagTone tone;
+  final HospitalBagCartItem item;
+  final HospitalBagCartTone tone;
   final double bottomGap;
   final VoidCallback onDelete;
 
@@ -9951,7 +9970,7 @@ class _HospitalBagCartItemTile extends StatelessWidget {
 class _HospitalBagItemActions extends StatelessWidget {
   const _HospitalBagItemActions({required this.item, required this.onDelete});
 
-  final _HospitalBagCartItemSpec item;
+  final HospitalBagCartItem item;
   final VoidCallback onDelete;
 
   @override
@@ -9960,7 +9979,7 @@ class _HospitalBagItemActions extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          _hospitalBagMoney(item.price),
+          item.formattedPrice,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: const Color(0xff372330),
             fontSize: 13,
@@ -10013,13 +10032,36 @@ class _HospitalBagItemActions extends StatelessWidget {
 class _HospitalBagItemImage extends StatelessWidget {
   const _HospitalBagItemImage({required this.item, required this.tone});
 
-  final _HospitalBagCartItemSpec item;
-  final _HospitalBagTone tone;
+  final HospitalBagCartItem item;
+  final HospitalBagCartTone tone;
 
   @override
   Widget build(BuildContext context) {
+    final remoteUrl = _hospitalBagRemoteImageUrl(item.imageUrl);
     final assetPath = _hospitalBagItemImageAssets[item.id];
-    if (assetPath == null) return _HospitalBagItemIcon(tone: tone);
+    final fallback = _HospitalBagItemIcon(tone: tone);
+    final image = remoteUrl != null
+        ? Image.network(
+            remoteUrl,
+            width: 56,
+            height: 56,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.high,
+            semanticLabel: item.imageAlt ?? item.name,
+            errorBuilder: (context, error, stackTrace) => fallback,
+          )
+        : assetPath != null
+        ? Image.asset(
+            assetPath,
+            width: 56,
+            height: 56,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.high,
+            semanticLabel: item.imageAlt ?? item.name,
+            errorBuilder: (context, error, stackTrace) => fallback,
+          )
+        : null;
+    if (image == null) return fallback;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
@@ -10030,19 +10072,19 @@ class _HospitalBagItemImage extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(color: const Color(0xfff0e1e7)),
           ),
-          child: Image.asset(
-            assetPath,
-            width: 56,
-            height: 56,
-            fit: BoxFit.cover,
-            filterQuality: FilterQuality.high,
-            errorBuilder: (context, error, stackTrace) =>
-                _HospitalBagItemIcon(tone: tone),
-          ),
+          child: image,
         ),
       ),
     );
   }
+}
+
+String? _hospitalBagRemoteImageUrl(String? value) {
+  final normalized = value?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  final uri = Uri.tryParse(normalized);
+  if (uri == null || !uri.hasAuthority) return null;
+  return uri.scheme == 'https' || uri.scheme == 'http' ? normalized : null;
 }
 
 const _hospitalBagItemImageAssets = {
@@ -10069,15 +10111,15 @@ const _hospitalBagItemImageAssets = {
 class _HospitalBagItemIcon extends StatelessWidget {
   const _HospitalBagItemIcon({required this.tone});
 
-  final _HospitalBagTone tone;
+  final HospitalBagCartTone tone;
 
   @override
   Widget build(BuildContext context) {
     final colors = _hospitalBagToneColors(tone);
     final icon = switch (tone) {
-      _HospitalBagTone.mint => Icons.child_care_rounded,
-      _HospitalBagTone.sky => Icons.favorite_border_rounded,
-      _HospitalBagTone.rose => Icons.inventory_2_outlined,
+      HospitalBagCartTone.mint => Icons.child_care_rounded,
+      HospitalBagCartTone.sky => Icons.favorite_border_rounded,
+      HospitalBagCartTone.rose => Icons.inventory_2_outlined,
     };
     return Container(
       width: 56,
@@ -10396,8 +10438,6 @@ class _HospitalBagFooter extends StatelessWidget {
   }
 }
 
-enum _HospitalBagTone { rose, mint, sky }
-
 class _HospitalBagToneColors {
   const _HospitalBagToneColors({
     required this.background,
@@ -10412,21 +10452,21 @@ class _HospitalBagToneColors {
   final Color border;
 }
 
-_HospitalBagToneColors _hospitalBagToneColors(_HospitalBagTone tone) {
+_HospitalBagToneColors _hospitalBagToneColors(HospitalBagCartTone tone) {
   return switch (tone) {
-    _HospitalBagTone.rose => const _HospitalBagToneColors(
+    HospitalBagCartTone.rose => const _HospitalBagToneColors(
       background: Color(0xfffff0f5),
       iconBackground: Color(0xfff9d9e4),
       foreground: Color(0xffb84d73),
       border: Color(0xfff5cfdb),
     ),
-    _HospitalBagTone.mint => const _HospitalBagToneColors(
+    HospitalBagCartTone.mint => const _HospitalBagToneColors(
       background: Color(0xffedf9f5),
       iconBackground: Color(0xffd4f0e7),
       foreground: Color(0xff267c68),
       border: Color(0xffccebe2),
     ),
-    _HospitalBagTone.sky => const _HospitalBagToneColors(
+    HospitalBagCartTone.sky => const _HospitalBagToneColors(
       background: Color(0xffedf6ff),
       iconBackground: Color(0xffd8ebfb),
       foreground: Color(0xff2f6fa8),
@@ -10434,172 +10474,6 @@ _HospitalBagToneColors _hospitalBagToneColors(_HospitalBagTone tone) {
     ),
   };
 }
-
-class _HospitalBagCartGroupSpec {
-  const _HospitalBagCartGroupSpec({
-    required this.title,
-    required this.tone,
-    required this.items,
-  });
-
-  final String title;
-  final _HospitalBagTone tone;
-  final List<_HospitalBagCartItemSpec> items;
-
-  _HospitalBagCartGroupSpec copyWith({List<_HospitalBagCartItemSpec>? items}) {
-    return _HospitalBagCartGroupSpec(
-      title: title,
-      tone: tone,
-      items: items ?? this.items,
-    );
-  }
-}
-
-class _HospitalBagCartItemSpec {
-  const _HospitalBagCartItemSpec({
-    required this.id,
-    required this.name,
-    required this.desc,
-    required this.price,
-  });
-
-  final String id;
-  final String name;
-  final String desc;
-  final double price;
-  int get qty => 1;
-}
-
-String _hospitalBagMoney(double amount) => '¥${amount.toStringAsFixed(2)}';
-
-const _hospitalBagCartGroups = [
-  _HospitalBagCartGroupSpec(
-    title: '妈妈护理',
-    tone: _HospitalBagTone.rose,
-    items: [
-      _HospitalBagCartItemSpec(
-        id: 'mom-pad',
-        name: '产褥垫组合装',
-        desc: '入院与产后前几天使用',
-        price: 59.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-sanitary',
-        name: '产妇卫生巾',
-        desc: '夜用加长款，按住院天数准备',
-        price: 39.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-underwear',
-        name: '一次性内裤',
-        desc: '高腰柔软，产后更方便更换',
-        price: 49.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-wipes',
-        name: '产后护理湿巾',
-        desc: '温和清洁，适合住院随身包',
-        price: 29.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-bottle',
-        name: '产后冲洗瓶',
-        desc: '产后清洁更方便，是否带去医院按医院建议',
-        price: 39.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'mom-briefs',
-        name: '高腰收腹内裤',
-        desc: '不压腹，更适合产后恢复期穿着',
-        price: 69.9,
-      ),
-    ],
-  ),
-  _HospitalBagCartGroupSpec(
-    title: '宝宝出院',
-    tone: _HospitalBagTone.mint,
-    items: [
-      _HospitalBagCartItemSpec(
-        id: 'baby-diaper',
-        name: '新生儿纸尿裤',
-        desc: 'NB 码小包装，避免带太多',
-        price: 59.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-wipes',
-        name: '婴儿柔湿巾',
-        desc: '无香精，适合换尿裤场景',
-        price: 29.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-towel',
-        name: '棉柔巾',
-        desc: '洗脸、擦手、护理都可用',
-        price: 29.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-blanket',
-        name: '宝宝出院包被',
-        desc: '柔软包裹，按季节搭配外层',
-        price: 129,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-clothes',
-        name: '新生儿连体衣礼盒',
-        desc: '出院和回家第一周可替换穿',
-        price: 159,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'baby-bath-towel',
-        name: '婴儿浴巾',
-        desc: '洗澡、包裹和保暖都可用',
-        price: 59.9,
-      ),
-    ],
-  ),
-  _HospitalBagCartGroupSpec(
-    title: '母乳喂养',
-    tone: _HospitalBagTone.sky,
-    items: [
-      _HospitalBagCartItemSpec(
-        id: 'milk-pad',
-        name: '防溢乳垫',
-        desc: '母乳或混合喂养可先备小包装',
-        price: 39.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'milk-cream',
-        name: '乳头护理霜',
-        desc: '哺乳初期不适时可咨询后使用',
-        price: 49.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'milk-storage',
-        name: '储奶袋',
-        desc: '返家后储奶备用，住院可少量准备',
-        price: 49.9,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'pump-m9',
-        name: 'Momcozy M9 吸奶器',
-        desc: '便携穿戴式双边吸乳，返家后排奶/储奶备用',
-        price: 1087.93,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'milk-bra',
-        name: '哺乳文胸',
-        desc: '产后和哺乳初期更舒适',
-        price: 159,
-      ),
-      _HospitalBagCartItemSpec(
-        id: 'milk-bottle',
-        name: '宽口径奶瓶',
-        desc: '混合喂养或返家后备用',
-        price: 89.9,
-      ),
-    ],
-  ),
-];
 
 class _IbclcPage extends StatefulWidget {
   const _IbclcPage({

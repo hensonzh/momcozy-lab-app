@@ -27,7 +27,7 @@
 | R01 | P1 | 流式正文与持久化最终正文未同源 | 已完成 | 结束、重连或历史恢复时正文可能分叉 |
 | R02 | P1 | 媒体资源和全屏查看链路不可用 | 已完成 | 开箱图片、PDF、视频无法可靠查看 |
 | R03 | P1 | 正式 App 未接通图片和语音输入 | 已完成 | 旧 Web 的多模态输入入口不可用 |
-| R04 | P1 | 待产包购物车丢失 artifact 个性化数据 | 待处理 | 默认清单可能覆盖用户定制清单 |
+| R04 | P1 | 待产包购物车丢失 artifact 个性化数据 | 已完成 | 默认清单可能覆盖用户定制清单 |
 | R05 | P2 | 已提交表单在历史消息中可能恢复可编辑 | 待处理 | 用户可能重复提交或重复生成服务结果 |
 | R06 | P2 | 售后工单草稿 artifact 未实现 | 待处理 | 工单确认表单可能完全不显示 |
 | R07 | P2 | 普通链接和专业引用点击无效 | 待处理 | 用户无法打开来源和非媒体链接 |
@@ -171,9 +171,10 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### R04 待产包购物车丢失个性化数据
 
-- Artifact 卡片跳转没有携带 `groups/totals`，购物车页面固定读取 `_hospitalBagCartGroups`。
-- 页面可能把默认数据同步到后端，覆盖本轮 Agent 生成的个性化清单。
-- 修复目标：建立共享 cart repository/state，以 artifact cart update 为输入，路由只传稳定 cart/session ID。
+- 已建立按稳定 `cartId` 索引的共享 `HospitalBagCartStore`，artifact 更新在事件到达时写入，路由只携带 ID，不再复制 `groups/totals`。
+- 购物车页面、Agent 下一轮 `client_context` 和同步 API 共用同一份 typed snapshot；空清单、删除、重置和 USD/CNY 金额均按旧 Web 规则计算。
+- 新建会话清空购物车上下文；同用户 token 刷新保留状态，账号切换创建隔离 store，避免跨用户或旧会话数据串用。
+- 验收：完整字段/别名、畸形 payload、120 项上限、空清单、事件重放、路由、同步、会话及账号隔离测试通过。
 
 ### R05 表单提交状态不持久
 
@@ -235,10 +236,10 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 ## 当前验证基线
 
 - `flutter analyze`：通过。
-- Flutter 全量单元、Widget 和 Golden 测试：601 项通过。
+- Flutter 全量单元、Widget 和 Golden 测试：612 项通过。
 - Flutter Agent Hub、reducer、feature page 相关测试：197 项通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
-- 现有测试通过不代表剩余风险已关闭；R04-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
+- 现有测试通过不代表剩余风险已关闭；R05-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
 
 ## 变更记录
 
@@ -251,3 +252,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 完成 R02 图片与 PDF 子项 | 鉴权资源、图片缩放、多页 PDF、三档 viewport、Android PDFium 和 release 打包门禁通过 |
 | 2026-07-11 | 完成 R02 视频与 Range 子项 | Local/S3 分段读取、鉴权原生播放、控制栏、沉浸式、Android 真解码和三档 viewport 通过 |
 | 2026-07-11 | 完成 R03 图片与语音输入 | 正式 runtime 注入、独立图片来源/缩略图、按压录音状态机、权限竞态、Android WAV 真机和 601 项全量回归通过 |
+| 2026-07-11 | 完成 R04 待产包购物车共享状态 | Artifact 个性化数据、页面编辑、下一轮 Agent 上下文和后端同步同源；会话/账号隔离及 612 项全量回归通过 |

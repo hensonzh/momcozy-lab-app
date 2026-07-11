@@ -16,6 +16,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
@@ -61,6 +62,7 @@ class MomCozyApiRuntime {
     pumpNativeRuntimeCoordinatorFactory,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
@@ -90,6 +92,7 @@ class MomCozyApiRuntime {
              upload: AndroidPumpAgentUploadPlatform(),
            )),
        observability = observability ?? MomCozyObservability(),
+       hospitalBagCartStore = hospitalBagCartStore ?? HospitalBagCartStore(),
        now = now ?? DateTime.now {
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
@@ -110,6 +113,7 @@ class MomCozyApiRuntime {
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
     String? userId,
     String? babyId,
     String? locale,
@@ -131,6 +135,7 @@ class MomCozyApiRuntime {
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
+      hospitalBagCartStore: hospitalBagCartStore,
     );
   }
 
@@ -145,6 +150,7 @@ class MomCozyApiRuntime {
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -227,6 +233,7 @@ class MomCozyApiRuntime {
       observability: runtimeObservability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
+      hospitalBagCartStore: hospitalBagCartStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
@@ -297,6 +304,7 @@ class MomCozyApiRuntime {
   final MomCozySession session;
   final StorageMigrationApplyResult? storageMigrationResult;
   final MomCozyObservability observability;
+  final HospitalBagCartStore hospitalBagCartStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
@@ -505,6 +513,9 @@ class MomCozyRuntimeController extends ChangeNotifier {
 
   MomCozyApiRuntime _runtimeForSession(MomCozySession session) {
     final store = _autoRefreshStore;
+    final hospitalBagCartStore = session.userId == _runtime.session.userId
+        ? _runtime.hospitalBagCartStore
+        : HospitalBagCartStore();
     if (store == null) {
       return MomCozyApiRuntime.fromSession(
         session,
@@ -513,6 +524,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
         productAssetRepository: _runtime._hasInjectedProductAssetRepository
             ? _runtime._productAssetRepository
             : null,
+        hospitalBagCartStore: hospitalBagCartStore,
       );
     }
     return MomCozyApiRuntime.fromSession(
@@ -522,6 +534,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
       productAssetRepository: _runtime._hasInjectedProductAssetRepository
           ? _runtime._productAssetRepository
           : null,
+      hospitalBagCartStore: hospitalBagCartStore,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {

@@ -24,6 +24,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:video_player/video_player.dart';
 
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -34,6 +35,8 @@ typedef AgentHubVoiceInput = Future<String?> Function();
 typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
 typedef AgentHubNewSessionHandler = void Function();
+typedef HospitalBagCartUpdateHandler =
+    void Function(HospitalBagCartArtifactSeed seed);
 
 const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
 const _agentSkillAssetBaseUrl = String.fromEnvironment(
@@ -123,6 +126,8 @@ class AgentHubPage extends StatefulWidget {
     this.voicePlaybackPlayer,
     this.productAssetRepository,
     this.onArtifactAction,
+    this.onHospitalBagCartUpdate,
+    this.onHospitalBagCartContextRequired,
     this.onNewSession,
     this.initialComposerText,
     this.initialAutoSend = false,
@@ -145,6 +150,8 @@ class AgentHubPage extends StatefulWidget {
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
   final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
+  final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
+  final VoidCallback? onHospitalBagCartContextRequired;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
   final bool initialAutoSend;
@@ -167,6 +174,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
   final Set<String> _pendingActionIds = <String>{};
   final Map<String, String> _localActionStatuses = <String, String>{};
+  final Set<String> _appliedHospitalBagCartUpdates = <String>{};
+  bool _hospitalBagCartLinkContextApplied = false;
   final ScrollController _chatScrollController = ScrollController();
   final GlobalKey _activeArtifactPanelKey = GlobalKey();
   final ValueNotifier<AgentStreamRunState> _runStateNotifier =
@@ -211,6 +220,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void initState() {
     super.initState();
     _restoreCachedInteractionState();
+    _applyHospitalBagCartUpdates(_state);
+    _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
     _restorePersistedInteractionState();
     _applyInitialComposerText();
@@ -410,6 +421,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     setState(() {
       _applyInteractionSnapshot(snapshot);
     });
+    _applyHospitalBagCartUpdates(_state);
+    _applyHospitalBagCartLinkContext(_state);
     _persistInteractionState();
   }
 
@@ -1038,6 +1051,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _activeRequest = null;
       _setVoiceState(const AgentVoiceState());
       _pendingAutoVoiceReplay = null;
+      _appliedHospitalBagCartUpdates.clear();
+      _hospitalBagCartLinkContextApplied = false;
       _resetAutoVoiceProgress();
     });
     _notifyActionStateChanged();
@@ -1160,6 +1175,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted || !_state.isActive) return;
     _updateComposerFocusForRun(nextState);
     final shouldFollowLatest = _isNearLatest() || nextState.isActive;
+    final artifactProjectionChanged = _artifactProjectionChanged(
+      _state,
+      nextState,
+    );
+    if (artifactProjectionChanged) {
+      _applyHospitalBagCartUpdates(nextState);
+    }
+    _applyHospitalBagCartLinkContext(
+      nextState,
+      checkArtifacts: artifactProjectionChanged,
+    );
     final previousArtifactId = _latestArtifactId(_state);
     final nextArtifactId = _latestArtifactId(nextState);
     final shouldFocusArtifact =
@@ -1215,6 +1241,58 @@ class _AgentHubPageState extends State<AgentHubPage> {
     } else if (shouldFollowLatest && !_preserveArtifactFocus) {
       _scheduleScrollToLatest();
     }
+  }
+
+  void _applyHospitalBagCartUpdates(AgentStreamRunState state) {
+    final onUpdate = widget.onHospitalBagCartUpdate;
+    if (onUpdate == null) return;
+    for (final card in _artifactCardsFromEvents(
+      _artifactEventsForState(state),
+    )) {
+      if (card.presentationKind !=
+          AgentArtifactPresentationKind.hospitalBagCart) {
+        continue;
+      }
+      final cartUpdate =
+          card.payload['cart_update'] ?? card.payload['cartUpdate'];
+      final seed = HospitalBagCartArtifactSeed.tryFromCartUpdate(
+        artifactId: card.id,
+        cartUpdate: cartUpdate,
+      );
+      if (seed == null) continue;
+      final signature =
+          '${seed.artifactId}:${jsonEncode(seed.snapshot.toAgentContext())}';
+      if (!_appliedHospitalBagCartUpdates.add(signature)) continue;
+      onUpdate(seed);
+    }
+  }
+
+  void _applyHospitalBagCartLinkContext(
+    AgentStreamRunState state, {
+    bool checkArtifacts = true,
+  }) {
+    if (_hospitalBagCartLinkContextApplied ||
+        widget.onHospitalBagCartContextRequired == null) {
+      return;
+    }
+    const cartPath = '/hospital-bag-cart';
+    final text = state.textContent;
+    final tailStart = math.max(0, text.length - cartPath.length - 16);
+    final hasTextLink = checkArtifacts
+        ? text.contains(cartPath)
+        : text.indexOf(cartPath, tailStart) >= 0;
+    final hasArtifactLink = checkArtifacts &&
+        _artifactCardsFromEvents(
+          _artifactEventsForState(state),
+        ).any(
+          (card) => card.actions.any(
+            (action) => action.routePath == cartPath,
+          ),
+        );
+    final hasCartLink = hasTextLink || hasArtifactLink;
+    if (!hasCartLink) return;
+    _hospitalBagCartLinkContextApplied = true;
+    widget.onHospitalBagCartContextRequired!.call();
   }
 
   Future<void> _startRun(
@@ -4591,6 +4669,20 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
       _ => null,
     };
   }
+}
+
+bool _artifactProjectionChanged(
+  AgentStreamRunState previous,
+  AgentStreamRunState next,
+) {
+  if (!identical(previous.artifactEvents, next.artifactEvents)) return true;
+  if (!identical(previous.events, next.events) &&
+      next.events.length > previous.events.length) {
+    return next.events
+        .skip(previous.events.length)
+        .any((event) => event.type.startsWith('artifact.'));
+  }
+  return false;
 }
 
 Iterable<AgentStreamEvent> _artifactEventsForState(AgentStreamRunState state) {

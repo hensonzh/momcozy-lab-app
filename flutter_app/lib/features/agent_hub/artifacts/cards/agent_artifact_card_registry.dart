@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 class AgentArtifactCardRegistry {
   const AgentArtifactCardRegistry._();
@@ -478,13 +479,20 @@ class _HospitalBagCartCard extends StatelessWidget {
   }
 
   void _openCart() {
+    final cartUpdate = _map(
+      card.payload['cart_update'] ?? card.payload['cartUpdate'],
+    );
     onAction?.call(
-      const AgentArtifactActionView(
+      AgentArtifactActionView(
         label: '打开购物车',
         icon: Icons.shopping_cart_outlined,
         kind: 'artifact',
         value: '/hospital-bag-cart',
         routePath: '/hospital-bag-cart',
+        hospitalBagCartSeed: HospitalBagCartArtifactSeed.tryFromCartUpdate(
+          artifactId: card.id,
+          cartUpdate: cartUpdate,
+        ),
       ),
     );
   }
