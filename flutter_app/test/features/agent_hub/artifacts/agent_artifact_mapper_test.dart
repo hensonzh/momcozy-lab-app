@@ -154,6 +154,93 @@ void main() {
       expect(cards, hasLength(1));
       expect(cards.single.title, '更新版');
     });
+
+    test('maps a direct legacy support ticket artifact to a form', () {
+      final card = AgentArtifactMapper.cardFromEvent(
+        AgentStreamEvent({
+          'type': 'artifact.created',
+          'artifact_id': 'ticket-1',
+          'artifact_type': 'support_ticket',
+          'submit_label': '确认并提交',
+          'artifact': {
+            'draft_id': 'draft-1',
+            'issue_type': 'malfunction',
+            'issue_summary': '吸奶器无法启动',
+            'product_model': 'Air1',
+            'order_number': 'MC123',
+            'purchase_channel': '官网',
+            'urgency': 'normal',
+          },
+        }),
+      );
+
+      expect(card, isNotNull);
+      expect(
+        card!.presentationKind,
+        AgentArtifactPresentationKind.supportTicketDraft,
+      );
+      expect(card.id, 'ticket-1');
+      expect(card.title, '售后工单');
+      expect(card.formId, 'support_ticket');
+      expect(card.formSubmitLabel, '确认并提交');
+      expect(card.formFields, hasLength(6));
+      expect(
+        card.formFields.map((field) => field.id),
+        orderedEquals(const [
+          'issue_type',
+          'issue_summary',
+          'product_model',
+          'order_number',
+          'purchase_channel',
+          'urgency',
+        ]),
+      );
+      expect(card.formFields[0].defaultValue, '设备故障');
+      expect(card.formFields[1].defaultValue, '吸奶器无法启动');
+      expect(card.formFields[2].defaultValue, 'Air1');
+      expect(card.formFields[5].defaultValue, '普通');
+      expect(
+        card.formFields
+            .where((field) => field.required)
+            .map((field) => field.id),
+        orderedEquals(const [
+          'issue_type',
+          'issue_summary',
+          'product_model',
+          'urgency',
+        ]),
+      );
+    });
+
+    test('normalizes a nested camelCase support ticket draft', () {
+      final card = AgentArtifactMapper.cardFromEvent(
+        AgentStreamEvent({
+          'type': 'artifact.created',
+          'payload': {
+            'artifact_type': 'support_ticket_draft',
+            'ticket': {
+              'id': 'ticket-camel',
+              'issueType': '保修',
+              'issueSummary': '电机有异响',
+              'productModel': 'M5',
+              'orderNumber': 'ORDER-2',
+              'purchaseChannel': 'Amazon',
+              'urgency': 'safety',
+            },
+          },
+        }),
+      );
+
+      expect(card, isNotNull);
+      expect(card!.id, 'ticket-camel');
+      expect(card.formSubmitLabel, '确认并提交');
+      expect(card.formFields[0].defaultValue, '保修');
+      expect(card.formFields[1].defaultValue, '电机有异响');
+      expect(card.formFields[2].defaultValue, 'M5');
+      expect(card.formFields[3].defaultValue, 'ORDER-2');
+      expect(card.formFields[4].defaultValue, 'Amazon');
+      expect(card.formFields[5].defaultValue, '安全相关');
+    });
   });
 }
 

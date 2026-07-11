@@ -28,7 +28,37 @@ class AgentArtifactMapper {
       _mapField(payload, 'artifact'),
     ]);
     final artifactPayload = _mapField(artifact, 'payload');
-    final effectivePayload = artifactPayload.isNotEmpty
+    final artifactType = _firstNonEmpty([
+      _stringField(event.raw, 'artifact_type', 'artifactType'),
+      _stringField(payload, 'artifact_type', 'artifactType'),
+      _stringField(artifact, 'artifact_type', 'artifactType'),
+    ]);
+    final isSupportTicket = _isSupportTicketType(artifactType);
+    final supportTicket = isSupportTicket
+        ? _firstMap([
+            _mapField(event.raw, 'ticket'),
+            _mapField(payload, 'ticket'),
+            _mapField(artifactPayload, 'ticket'),
+            _mapField(artifact, 'ticket'),
+            artifactPayload,
+            artifact,
+            payload,
+          ])
+        : const <String, Object?>{};
+    final supportTicketForm = isSupportTicket
+        ? _supportTicketForm(
+            supportTicket,
+            submitLabel: _firstNonEmpty([
+              _stringField(event.raw, 'submit_label', 'submitLabel'),
+              _stringField(payload, 'submit_label', 'submitLabel'),
+              _stringField(artifactPayload, 'submit_label', 'submitLabel'),
+              _stringField(artifact, 'submit_label', 'submitLabel'),
+            ]),
+          )
+        : const <String, Object?>{};
+    final effectivePayload = supportTicket.isNotEmpty
+        ? supportTicket
+        : artifactPayload.isNotEmpty
         ? artifactPayload
         : payload;
     final richText = _firstMap([
@@ -41,11 +71,13 @@ class AgentArtifactMapper {
       _mapField(payload, 'card'),
       _mapField(artifact, 'card'),
     ]);
-    final form = _firstMap([
-      _mapField(artifactPayload, 'form'),
-      _mapField(payload, 'form'),
-      _mapField(artifact, 'form'),
-    ]);
+    final form = supportTicketForm.isNotEmpty
+        ? supportTicketForm
+        : _firstMap([
+            _mapField(artifactPayload, 'form'),
+            _mapField(payload, 'form'),
+            _mapField(artifact, 'form'),
+          ]);
     final cartUpdate = _firstMap([
       _mapField(artifactPayload, 'cart_update', 'cartUpdate'),
       _mapField(payload, 'cart_update', 'cartUpdate'),
@@ -58,14 +90,11 @@ class AgentArtifactMapper {
       _stringField(event.raw, 'artifact_id', 'artifactId'),
       _stringField(payload, 'artifact_id', 'artifactId'),
       _stringField(artifact, 'id'),
+      _stringField(supportTicket, 'draft_id', 'draftId'),
+      _stringField(supportTicket, 'id'),
       event.artifactId,
       event.mergeKey,
     ])!;
-    final artifactType = _firstNonEmpty([
-      _stringField(event.raw, 'artifact_type', 'artifactType'),
-      _stringField(payload, 'artifact_type', 'artifactType'),
-      _stringField(artifact, 'artifact_type', 'artifactType'),
-    ]);
     final schemaVersion =
         _firstNonEmpty([
           _stringField(event.raw, 'schema_version', 'schemaVersion'),
@@ -177,6 +206,9 @@ AgentArtifactPresentationKind _presentationKind({
   if (!_isSupportedSchemaVersion(schemaVersion)) {
     return AgentArtifactPresentationKind.unsupported;
   }
+  if (_isSupportTicketType(artifactType)) {
+    return AgentArtifactPresentationKind.supportTicketDraft;
+  }
   if (hasForm || artifactType == 'form') {
     return AgentArtifactPresentationKind.form;
   }
@@ -273,6 +305,114 @@ List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {
     );
   }
   return List<AgentArtifactFormFieldView>.unmodifiable(views);
+}
+
+Map<String, Object?> _supportTicketForm(
+  Map<String, Object?> ticket, {
+  required String? submitLabel,
+}) {
+  return {
+    'id': 'support_ticket',
+    'title': '售后工单',
+    'submit_label': submitLabel ?? '确认并提交',
+    'fields': [
+      {
+        'id': 'issue_type',
+        'label': '问题类型',
+        'type': 'select',
+        'required': true,
+        'default_value': _supportTicketIssueLabel(
+          ticket['issue_type'] ?? ticket['issueType'],
+        ),
+        'options': const [
+          '设备故障',
+          '缺少配件',
+          '疑似质量问题',
+          '保修',
+          '退换货/退款',
+          '订单/物流',
+          '使用帮助',
+          '安全问题',
+          '其他',
+        ],
+      },
+      {
+        'id': 'issue_summary',
+        'label': '问题描述',
+        'type': 'textarea',
+        'required': true,
+        'default_value':
+            _stringField(ticket, 'issue_summary', 'issueSummary') ?? '',
+        'placeholder': '简单描述你遇到的问题',
+      },
+      {
+        'id': 'product_model',
+        'label': '产品型号',
+        'type': 'text',
+        'required': true,
+        'default_value':
+            _stringField(ticket, 'product_model', 'productModel') ?? '',
+        'placeholder': '例如：M5、S12 Pro，或暂不确定',
+      },
+      {
+        'id': 'order_number',
+        'label': '订单号',
+        'type': 'text',
+        'default_value':
+            _stringField(ticket, 'order_number', 'orderNumber') ?? '',
+        'placeholder': '没有或暂时找不到可以先留空',
+      },
+      {
+        'id': 'purchase_channel',
+        'label': '购买渠道',
+        'type': 'text',
+        'default_value':
+            _stringField(ticket, 'purchase_channel', 'purchaseChannel') ?? '',
+        'placeholder': '例如：官网、Amazon、TikTok、线下门店',
+      },
+      {
+        'id': 'urgency',
+        'label': '紧急程度',
+        'type': 'select',
+        'required': true,
+        'default_value': _supportTicketUrgencyLabel(ticket['urgency']),
+        'options': const ['普通', '较急', '安全相关'],
+      },
+    ],
+  };
+}
+
+String _supportTicketIssueLabel(Object? value) {
+  const labels = <String, String>{
+    'malfunction': '设备故障',
+    'missing_parts': '缺少配件',
+    'defect': '疑似质量问题',
+    'warranty': '保修',
+    'return_or_refund': '退换货/退款',
+    'order_or_shipping': '订单/物流',
+    'usage_help': '使用帮助',
+    'safety_concern': '安全问题',
+    'other': '其他',
+  };
+  final normalized = value?.toString().trim() ?? '';
+  return labels[normalized] ??
+      (labels.containsValue(normalized) ? normalized : '其他');
+}
+
+String _supportTicketUrgencyLabel(Object? value) {
+  const labels = <String, String>{
+    'normal': '普通',
+    'high': '较急',
+    'safety': '安全相关',
+  };
+  final normalized = value?.toString().trim() ?? '';
+  return labels[normalized] ??
+      (labels.containsValue(normalized) ? normalized : '普通');
+}
+
+bool _isSupportTicketType(String? artifactType) {
+  return artifactType == 'support_ticket' ||
+      artifactType == 'support_ticket_draft';
 }
 
 List<String> _cardJsonRows(Map<String, Object?> cardJson) {
@@ -629,6 +769,7 @@ String? _hostFromUrl(String? value) {
 String _artifactSubject(String? type) {
   return switch (type) {
     'form' => '信息采集',
+    'support_ticket' || 'support_ticket_draft' => '售后工单',
     'milk_analysis_card' => '奶量分析',
     'milk_plan_card' || 'milk_plan_preview' => '奶量计划',
     'birth_journey_plan_card' => '孕期计划',
