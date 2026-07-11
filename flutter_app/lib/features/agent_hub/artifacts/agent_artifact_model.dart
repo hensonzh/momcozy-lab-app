@@ -165,6 +165,7 @@ class AgentArtifactActionView {
     this.value,
     this.routePath,
     this.routeExtra,
+    this.externalUri,
     this.hospitalBagCartSeed,
   });
 
@@ -174,6 +175,7 @@ class AgentArtifactActionView {
   final String? value;
   final String? routePath;
   final Object? routeExtra;
+  final Uri? externalUri;
   final HospitalBagCartArtifactSeed? hospitalBagCartSeed;
 }
 

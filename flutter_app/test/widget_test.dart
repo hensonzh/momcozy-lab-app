@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
@@ -20,6 +21,58 @@ import 'support/fixture_api_transport.dart';
 import 'support/fake_agent_voice.dart';
 
 void main() {
+  testWidgets('external Agent links open safely and report launcher failure', (
+    tester,
+  ) async {
+    final launcher = _FakeExternalUrlLauncher(result: false);
+    late BuildContext actionContext;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) {
+              actionContext = context;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    await dispatchAgentArtifactAction(
+      actionContext,
+      AgentArtifactActionView(
+        label: '专业信息源',
+        icon: Icons.open_in_new_rounded,
+        kind: 'citation',
+        value: 'https://www.who.int/health-topics/breastfeeding',
+        externalUri: Uri.parse(
+          'https://www.who.int/health-topics/breastfeeding',
+        ),
+      ),
+      externalUrlLauncher: launcher,
+    );
+    await tester.pump();
+
+    expect(launcher.opened, [
+      Uri.parse('https://www.who.int/health-topics/breastfeeding'),
+    ]);
+    expect(find.text('无法打开链接，请稍后重试'), findsOneWidget);
+
+    await dispatchAgentArtifactAction(
+      actionContext,
+      AgentArtifactActionView(
+        label: '危险链接',
+        icon: Icons.open_in_new_rounded,
+        kind: 'link',
+        externalUri: Uri.parse('javascript:alert(1)'),
+      ),
+      externalUrlLauncher: launcher,
+    );
+
+    expect(launcher.opened, hasLength(1));
+  });
+
   testWidgets('route shell starts at Agent Hub and navigates bottom tabs', (
     tester,
   ) async {
@@ -666,6 +719,19 @@ void main() {
     router.dispose();
     controller.dispose();
   });
+}
+
+class _FakeExternalUrlLauncher implements ExternalUrlLauncher {
+  _FakeExternalUrlLauncher({required this.result});
+
+  final bool result;
+  final opened = <Uri>[];
+
+  @override
+  Future<bool> open(Uri uri) async {
+    opened.add(uri);
+    return result;
+  }
 }
 
 class _FixedAuthDeviceIdStore implements MomCozyAuthDeviceIdStore {
