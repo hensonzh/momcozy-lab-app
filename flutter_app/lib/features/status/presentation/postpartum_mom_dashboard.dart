@@ -344,18 +344,20 @@ class _MomModuleGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return RepaintBoundary(
       key: const ValueKey('status-postpartum-mom-module-grid'),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: children.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        mainAxisExtent: 144,
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: children.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          mainAxisExtent: 144,
+        ),
+        itemBuilder: (context, index) => children[index],
       ),
-      itemBuilder: (context, index) => children[index],
     );
   }
 }
@@ -671,99 +673,102 @@ class _MilkTrendPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final window = projection.window(windowDays);
-    return Container(
+    return RepaintBoundary(
       key: const ValueKey('status-milk-trend-preview'),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xfffffaf0), Colors.white, Color(0xfffff1d6)],
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xfffffaf0), Colors.white, Color(0xfffff1d6)],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xfff0dfc4)),
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xfff0dfc4)),
-      ),
-      child: Column(
-        children: [
-          Semantics(
-            button: true,
-            toggled: expanded,
-            child: InkWell(
-              key: const ValueKey('status-milk-trend-toggle'),
-              onTap: onToggle,
-              borderRadius: BorderRadius.circular(16),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 12, 12, 10),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        color: Color(0xffffe4b8),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.gps_fixed_rounded,
-                        size: 14,
-                        color: Color(0xffb9792a),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        '母乳趋势',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
+        child: Column(
+          children: [
+            Semantics(
+              button: true,
+              toggled: expanded,
+              child: InkWell(
+                key: const ValueKey('status-milk-trend-toggle'),
+                onTap: onToggle,
+                borderRadius: BorderRadius.circular(16),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 12, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: Color(0xffffe4b8),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.gps_fixed_rounded,
+                          size: 14,
+                          color: Color(0xffb9792a),
                         ),
                       ),
-                    ),
-                    AnimatedRotation(
-                      turns: expanded ? 0 : 0.5,
-                      duration: const Duration(milliseconds: 180),
-                      child: const Icon(
-                        Icons.keyboard_arrow_up_rounded,
-                        size: 18,
-                        color: MomCozyColors.mutedForeground,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '母乳趋势',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
                       ),
-                    ),
-                  ],
+                      AnimatedRotation(
+                        turns: expanded ? 0 : 0.5,
+                        duration: const Duration(milliseconds: 180),
+                        child: const Icon(
+                          Icons.keyboard_arrow_up_rounded,
+                          size: 18,
+                          color: MomCozyColors.mutedForeground,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            child: expanded
-                ? Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _MilkTrendLegend(
-                                supportsEstimate: window.supportsEstimate,
-                                supportsReference: window.supportsReference,
+            AnimatedSize(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              child: expanded
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _MilkTrendLegend(
+                                  supportsEstimate: window.supportsEstimate,
+                                  supportsReference: window.supportsReference,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            _TrendWindowControl(
-                              selectedDays: windowDays,
-                              onChanged: onWindowDaysChanged,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        _trendBody(context, window),
-                      ],
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
+                              const SizedBox(width: 6),
+                              _TrendWindowControl(
+                                selectedDays: windowDays,
+                                onChanged: onWindowDaysChanged,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          _trendBody(context, window),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ],
+        ),
       ),
     );
   }
