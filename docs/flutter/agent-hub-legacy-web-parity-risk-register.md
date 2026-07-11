@@ -34,7 +34,7 @@
 | R08 | P2 | 用户资料复用和信息采集表单归一化不完整 | 已完成 | 重复询问、默认值缺失、必填规则不一致 |
 | R09 | P2 | 专项卡片数据语义未完全对齐 | 已完成 | 分娩沟通卡和待产包卡丢失部分有效内容 |
 | R10 | P2 | IBCLC 上下文和咨询完成状态丢失 | 已完成 | 咨询身份、返回位置和完成状态不连续 |
-| R11 | P2 | Artifact 出现时机早于旧 Web | 待处理 | 卡片可能先于解释文字出现并抢占滚动位置 |
+| R11 | P2 | Artifact 出现时机早于旧 Web | 已完成 | 卡片可能先于解释文字出现并抢占滚动位置 |
 | R12 | P2/P3 | 媒体语义播报和卡片导出缺失 | 待处理 | 步骤图片说明不播报，计划卡无法保存图片 |
 
 ## R01 流式正文与持久化最终正文未同源
@@ -228,9 +228,11 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### R11 Artifact 出现时机偏早
 
-- Flutter 收到 artifact 事件后立即渲染并触发 focus。
-- 旧 Web 先暂存 artifact，正文开始输出后才追加。
-- 修复目标：在 transcript controller 中维护 pending artifacts；首段可见正文出现后再发布，纯 artifact 回复则在 `message.completed` 或终态时兜底发布。
+- Artifact 事件仍立即进入 reducer、重放状态和业务数据摄取；待产包购物车等共享状态不会因 UI 暂存而延迟。
+- Transcript 只在首段非空正文、assistant `message.completed`、`run.completed` 或等待确认时发布卡片；纯空白不会触发释放，无正文的失败、断线和取消不会暴露未完成卡片。
+- 卡片 mapper 延迟到发布时执行；artifact 聚焦使用同一发布谓词，因此卡片不会先于解释文字出现或提前抢占滚动位置。
+- 未发布 artifact 在历史归档时被过滤，避免失败轮次重启恢复后重新出现；已经随正文发布的 artifact 和成功纯 artifact 仍正常持久化恢复。
+- 验收：动态 artifact→正文顺序、纯 artifact 完成兜底、等待确认、空白、失败/断线/取消、购物车即时摄取且不重复、历史归档与恢复、`flutter analyze`、650 项 Flutter 全量测试和 Android APK 构建通过。
 
 ### R12 媒体语义播报和卡片导出缺失
 
@@ -251,10 +253,10 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 ## 当前验证基线
 
 - `flutter analyze`：通过。
-- Flutter 全量单元、Widget 和 Golden 测试：645 项通过。
+- Flutter 全量单元、Widget 和 Golden 测试：650 项通过。
 - Flutter Agent Hub、reducer、IBCLC store 和 feature page 相关测试：专项回归通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
-- 现有测试通过不代表剩余风险已关闭；R11-R12 仍需按各自合同补齐跨端 fixture、真实平台能力和真机验收。
+- 现有测试通过不代表剩余风险已关闭；R12 仍需按合同补齐媒体语义、真实平台导出分享能力和真机验收。
 
 ## 变更记录
 
@@ -274,3 +276,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 完成 R08 用户资料与表单归一化 | 姓名/年龄问候、孕期资料默认值、旧版表单识别和异步无覆盖回填对齐；636 项 Flutter 全量回归通过 |
 | 2026-07-11 | 完成 R09 专项卡片数据语义 | 分娩沟通卡与待产包卡改用 typed 归一化模型，旧字段、个性化原因及复印规则对齐；639 项全量回归和 Android APK 构建通过 |
 | 2026-07-11 | 完成 R10 IBCLC 咨询上下文闭环 | 稳定咨询 ID、历史 run/thread、顾问信息、完成事件、加密完成态和返回滚动位置对齐；645 项全量回归和 Android APK 构建通过 |
+| 2026-07-11 | 完成 R11 Artifact 发布时序 | 原始事件和业务摄取即时保留，卡片随首段正文或成功终态发布；失败历史不泄漏，650 项全量回归和 Android APK 构建通过 |

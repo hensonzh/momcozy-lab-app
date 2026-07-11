@@ -53,6 +53,118 @@ void main() {
       expect(state.errorMessage, contains('socket closed'));
     });
 
+    test(
+      'releases received artifacts after text or a successful terminal signal',
+      () {
+        final artifact = AgentStreamEvent(const {
+          'event_id': 'evt-artifact-pending',
+          'type': 'artifact.created',
+          'thread_id': 'thread-artifact-pending',
+          'run_id': 'run-artifact-pending',
+          'artifact_id': 'artifact-pending',
+          'sequence': 1,
+          'payload': {
+            'artifact_type': 'card',
+            'card': {'title': '待发布卡片'},
+          },
+        });
+        final pending = const AgentStreamRunState().start().applyEvent(
+          artifact,
+        );
+
+        expect(pending.artifactEvents, isNotEmpty);
+        expect(pending.canPublishArtifactEvents, isFalse);
+
+        final withText = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-text',
+            'type': 'message.delta',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'message_id': 'message-artifact-pending',
+            'sequence': 2,
+            'payload': {'text': '我已经整理好了。'},
+          }),
+        );
+        expect(withText.canPublishArtifactEvents, isTrue);
+
+        final withWhitespace = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-whitespace',
+            'type': 'message.delta',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'message_id': 'message-artifact-pending',
+            'sequence': 2,
+            'payload': {'text': ' \n'},
+          }),
+        );
+        expect(withWhitespace.canPublishArtifactEvents, isFalse);
+
+        final withCompletedMessage = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-message-completed',
+            'type': 'message.completed',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'message_id': 'message-artifact-pending',
+            'sequence': 2,
+            'payload': {'role': 'assistant', 'text': ''},
+          }),
+        );
+        expect(withCompletedMessage.canPublishArtifactEvents, isTrue);
+
+        final withCompletedRun = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-run-completed',
+            'type': 'run.completed',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'sequence': 2,
+          }),
+        );
+        expect(withCompletedRun.canPublishArtifactEvents, isTrue);
+
+        final waitingForConfirmation = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-waiting',
+            'type': 'run.waiting_for_confirmation',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'sequence': 2,
+          }),
+        );
+        expect(waitingForConfirmation.canPublishArtifactEvents, isTrue);
+
+        final failed = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-run-failed',
+            'type': 'run.failed',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'sequence': 2,
+          }),
+        );
+        expect(failed.canPublishArtifactEvents, isFalse);
+        expect(
+          pending
+              .markDisconnected(StateError('socket closed'))
+              .canPublishArtifactEvents,
+          isFalse,
+        );
+        final cancelled = pending.applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-artifact-cancelled',
+            'type': 'run.cancelled',
+            'thread_id': 'thread-artifact-pending',
+            'run_id': 'run-artifact-pending',
+            'sequence': 2,
+          }),
+        );
+        expect(cancelled.canPublishArtifactEvents, isFalse);
+      },
+    );
+
     test('deduplicates replayed events by event id or sequence', () {
       var state = const AgentStreamRunState().start();
       final replayedEvents = [
