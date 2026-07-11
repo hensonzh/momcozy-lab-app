@@ -36,6 +36,20 @@ void main() {
       expect(records.single.occurredAt, DateTime.parse('2026-06-29T08:00:00Z'));
     });
 
+    test('uses local calendar boundaries for a feeding day', () async {
+      final transport = FixtureApiJsonTransport({'items': []});
+      final repository = RecordsApiRepository(transport: transport);
+      final localDay = DateTime(2026, 7, 11);
+
+      await repository.fetchFeedingRecords(date: localDay);
+
+      expect(transport.lastQuery, {
+        'start_at': DateTime(2026, 7, 11).toUtc().toIso8601String(),
+        'end_at': DateTime(2026, 7, 12).toUtc().toIso8601String(),
+        'limit': 50,
+      });
+    });
+
     test('maps production pumping records and request contract', () async {
       final transport = FixtureApiJsonTransport({
         'items': [
