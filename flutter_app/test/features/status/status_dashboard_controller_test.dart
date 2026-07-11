@@ -49,6 +49,29 @@ void main() {
     );
 
     test(
+      'coalesces concurrent loads and keeps silent refresh data visible',
+      () async {
+        final status = _FakeStatusRepository(deferFetch: true);
+        final controller = _controller(status: status);
+        addTearDown(controller.dispose);
+
+        final first = controller.load();
+        final duplicate = controller.load();
+        expect(status.fetchCount, 1);
+        expect(controller.overview.value.isLoading, isTrue);
+        status.completeFetch();
+        await Future.wait([first, duplicate]);
+
+        status.deferFetch = true;
+        final refresh = controller.refresh();
+        expect(status.fetchCount, 2);
+        expect(controller.overview.value.phase, StatusResourcePhase.data);
+        status.completeFetch();
+        await refresh;
+      },
+    );
+
+    test(
       'validates and saves a diary entry into the local projection',
       () async {
         final diary = _FakePregnancyDiaryRepository();
@@ -295,6 +318,7 @@ void main() {
 }
 
 StatusDashboardController _controller({
+  _FakeStatusRepository? status,
   _FakeRecordsRepository? records,
   _FakePregnancyDiaryRepository? diary,
   _FakeBirthJourneyPlanRepository? plans,
@@ -304,7 +328,7 @@ StatusDashboardController _controller({
 }) {
   final effectiveRecords = records ?? _FakeRecordsRepository();
   return StatusDashboardController(
-    statusRepository: _FakeStatusRepository(),
+    statusRepository: status ?? _FakeStatusRepository(),
     feedingRepository: effectiveRecords,
     milkTrendRepository: effectiveRecords,
     growthRepository: effectiveRecords,
@@ -378,8 +402,25 @@ class _FakeStatusPreferenceStore implements StatusPreferenceStore {
 }
 
 class _FakeStatusRepository implements StatusRepository {
+  _FakeStatusRepository({this.deferFetch = false});
+
+  bool deferFetch;
+  var fetchCount = 0;
+  Completer<void>? _fetchCompleter;
+
+  void completeFetch() {
+    _fetchCompleter?.complete();
+    _fetchCompleter = null;
+  }
+
   @override
   Future<StatusOverview> fetchOverview() async {
+    fetchCount += 1;
+    if (deferFetch) {
+      deferFetch = false;
+      _fetchCompleter = Completer<void>();
+      await _fetchCompleter!.future;
+    }
     return const StatusOverview(
       mom: MomStatus(stage: '哺乳期', postpartumDay: 42),
       baby: BabyStatus(id: 'baby-001', nickname: '宝宝', ageDays: 42),

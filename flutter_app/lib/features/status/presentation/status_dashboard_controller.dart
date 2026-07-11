@@ -132,6 +132,7 @@ class StatusDashboardController {
   var _disposed = false;
   Future<void> _preferenceWrites = Future<void>.value();
   Future<void> _volumeUnitWrites = Future<void>.value();
+  Future<void>? _activeLoad;
 
   Future<void> initialize() async {
     await Future.wait<void>([restoreSelection(), restoreVolumeUnit(), load()]);
@@ -203,19 +204,36 @@ class StatusDashboardController {
     return _volumeUnitWrites;
   }
 
-  Future<void> load() async {
+  Future<void> load({bool showLoading = true}) {
+    if (_disposed) return Future<void>.value();
+    final active = _activeLoad;
+    if (active != null) return active;
+
+    late final Future<void> operation;
+    operation = _loadOnce(showLoading: showLoading).whenComplete(() {
+      if (identical(_activeLoad, operation)) _activeLoad = null;
+    });
+    _activeLoad = operation;
+    return operation;
+  }
+
+  Future<void> refresh() => load(showLoading: false);
+
+  Future<void> _loadOnce({required bool showLoading}) async {
     if (_disposed) return;
     final generation = ++_generation;
     final current = now();
     final today = DateTime(current.year, current.month, current.day);
     final trendStart = today.subtract(const Duration(days: 30));
 
-    _markLoading(overview);
-    _markLoading(feedingRecords);
-    _markLoading(milkTrends);
-    _markLoading(growthRecords);
-    _markLoading(pregnancyDiaryEntries);
-    _markLoading(birthJourneyPlan);
+    if (showLoading) {
+      _markLoading(overview);
+      _markLoading(feedingRecords);
+      _markLoading(milkTrends);
+      _markLoading(growthRecords);
+      _markLoading(pregnancyDiaryEntries);
+      _markLoading(birthJourneyPlan);
+    }
 
     await Future.wait<void>([
       _resolve(overview, statusRepository.fetchOverview(), generation),

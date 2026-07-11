@@ -11,6 +11,7 @@ class FixtureApiJsonTransport
   Map<String, Object?>? lastBody;
   Map<String, String>? lastHeaders;
   final List<Map<String, Object?>> postedBodies = [];
+  final List<String> getPaths = [];
   String? lastMethod;
 
   @override
@@ -20,6 +21,7 @@ class FixtureApiJsonTransport
   }) async {
     lastMethod = 'GET';
     lastPath = path;
+    getPaths.add(path);
     lastQuery = Map<String, Object?>.from(query);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
     return response;
@@ -86,6 +88,7 @@ class FixtureApiJsonTransportByPath
   Map<String, Object?>? lastBody;
   Map<String, String>? lastHeaders;
   final List<Map<String, Object?>> postedBodies = [];
+  final List<String> getPaths = [];
   String? lastMethod;
 
   @override
@@ -95,6 +98,7 @@ class FixtureApiJsonTransportByPath
   }) async {
     lastMethod = 'GET';
     lastPath = path;
+    getPaths.add(path);
     lastQuery = Map<String, Object?>.from(query);
     final response = _response(path);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
