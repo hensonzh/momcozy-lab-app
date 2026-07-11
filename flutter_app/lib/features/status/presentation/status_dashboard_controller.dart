@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
 import 'package:momcozy_flutter_app/features/status/domain/birth_journey_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/pregnancy_diary.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 
 enum StatusResourcePhase { initial, loading, data, error }
 
@@ -58,9 +62,19 @@ class StatusDashboardController {
     required this.growthRepository,
     required this.pregnancyDiaryRepository,
     required this.birthJourneyPlanRepository,
+    required this.preferenceStore,
     required this.babyId,
+    StatusCareStage initialCareStage = StatusCareStage.postpartum,
+    StatusIdentity initialIdentity = StatusIdentity.mom,
     DateTime Function()? now,
-  }) : now = now ?? DateTime.now;
+  }) : now = now ?? DateTime.now {
+    careStage = ValueNotifier<StatusCareStage>(initialCareStage);
+    identity = ValueNotifier<StatusIdentity>(
+      initialCareStage == StatusCareStage.pregnancy
+          ? StatusIdentity.mom
+          : initialIdentity,
+    );
+  }
 
   final StatusRepository statusRepository;
   final FeedingRecordsRepository feedingRepository;
@@ -68,8 +82,13 @@ class StatusDashboardController {
   final GrowthRecordsRepository growthRepository;
   final PregnancyDiaryRepository pregnancyDiaryRepository;
   final BirthJourneyPlanRepository birthJourneyPlanRepository;
+  final StatusPreferenceStore preferenceStore;
   final String babyId;
   final DateTime Function() now;
+
+  late final ValueNotifier<StatusCareStage> careStage;
+  late final ValueNotifier<StatusIdentity> identity;
+  final selectionReady = ValueNotifier<bool>(false);
 
   final overview = ValueNotifier<StatusResource<StatusOverview>>(
     const StatusResource.initial(),
@@ -102,7 +121,55 @@ class StatusDashboardController {
   );
 
   var _generation = 0;
+  var _selectionRevision = 0;
   var _disposed = false;
+  Future<void> _preferenceWrites = Future<void>.value();
+
+  Future<void> initialize() async {
+    await Future.wait<void>([restoreSelection(), load()]);
+  }
+
+  Future<void> restoreSelection() async {
+    if (_disposed) return;
+    final revision = _selectionRevision;
+    try {
+      final stored = await preferenceStore.readCareStage();
+      if (_disposed || revision != _selectionRevision) return;
+      if (stored != null) {
+        careStage.value = stored;
+        if (stored == StatusCareStage.pregnancy) {
+          identity.value = StatusIdentity.mom;
+        }
+      }
+    } catch (_) {
+      // Preference persistence is best effort, matching the legacy behavior.
+    } finally {
+      if (!_disposed) selectionReady.value = true;
+    }
+  }
+
+  Future<void> changeCareStage(StatusCareStage stage) {
+    if (_disposed) return Future<void>.value();
+    _selectionRevision += 1;
+    careStage.value = stage;
+    if (stage == StatusCareStage.pregnancy) {
+      identity.value = StatusIdentity.mom;
+    }
+    _preferenceWrites = _preferenceWrites
+        .then<void>((_) => preferenceStore.writeCareStage(stage))
+        .catchError((Object _) {});
+    return _preferenceWrites;
+  }
+
+  bool selectIdentity(StatusIdentity next) {
+    if (_disposed ||
+        (careStage.value == StatusCareStage.pregnancy &&
+            next == StatusIdentity.baby)) {
+      return false;
+    }
+    identity.value = next;
+    return true;
+  }
 
   Future<void> load() async {
     if (_disposed) return;
@@ -307,6 +374,10 @@ class StatusDashboardController {
     if (_disposed) return;
     _disposed = true;
     _generation += 1;
+    _selectionRevision += 1;
+    careStage.dispose();
+    identity.dispose();
+    selectionReady.dispose();
     overview.dispose();
     feedingRecords.dispose();
     pumpRecords.dispose();

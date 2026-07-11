@@ -17,6 +17,8 @@ import 'package:momcozy_flutter_app/features/media/data/product_asset_repository
 import 'package:momcozy_flutter_app/features/status/data/birth_journey_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
 
@@ -119,6 +121,7 @@ void main() {
       'user_id': 'user-fixture',
       'delivery_date': '2026-06-11',
     });
+    final statusPreferences = _MemoryStatusPreferenceStore();
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,
       multipartTransport: FixtureApiMultipartTransport({
@@ -128,6 +131,7 @@ void main() {
       userId: 'user-fixture',
       babyId: 'baby-fixture',
       locale: 'zh-CN',
+      statusPreferenceStore: statusPreferences,
     );
 
     expect(runtime.statusRepository, isA<StatusApiRepository>());
@@ -137,6 +141,7 @@ void main() {
     expect(runtime.recordsRepository.transport, same(transport));
     expect(runtime.pregnancyDiaryRepository.transport, same(transport));
     expect(runtime.birthJourneyPlanRepository.transport, same(transport));
+    expect(runtime.statusPreferenceStore, same(statusPreferences));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
     expect(runtime.productAssetRepository, isA<ProductAssetRepository>());
@@ -155,6 +160,7 @@ void main() {
     );
     final statusController = runtime.createStatusDashboardController();
     expect(statusController.babyId, 'baby-fixture');
+    expect(statusController.preferenceStore, same(statusPreferences));
     expect(
       statusController.pregnancyDiaryRepository,
       isA<PregnancyDiaryApiRepository>(),
@@ -494,6 +500,18 @@ void main() {
     expect(controller.runtime.observability, same(observability));
     controller.dispose();
   });
+}
+
+class _MemoryStatusPreferenceStore implements StatusPreferenceStore {
+  StatusCareStage? value;
+
+  @override
+  Future<StatusCareStage?> readCareStage() async => value;
+
+  @override
+  Future<void> writeCareStage(StatusCareStage stage) async {
+    value = stage;
+  }
 }
 
 HospitalBagCartArtifactSeed _cartSeed(String artifactId) {

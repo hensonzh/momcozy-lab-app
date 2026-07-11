@@ -90,5 +90,30 @@ void main() {
         ),
       );
     });
+
+    test(
+      'uses the device calendar day instead of a UTC date boundary',
+      () async {
+        final repository = StatusApiRepository(
+          transport: FixtureApiJsonTransportByPath({
+            statusProfileEndpoint: const {
+              'user_id': 'user-local-day',
+              'delivery_date': '2026-06-30',
+            },
+            statusInfantsEndpoint: const {
+              'items': [
+                {'id': 'baby-local-day', 'birth_date': '2026-06-30'},
+              ],
+            },
+          }),
+          now: () => DateTime(2026, 7, 1, 0, 15),
+        );
+
+        final overview = await repository.fetchOverview();
+
+        expect(overview.mom?.postpartumDay, 1);
+        expect(overview.baby?.ageDays, 1);
+      },
+    );
   });
 }

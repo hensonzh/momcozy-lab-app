@@ -337,19 +337,76 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
+      expect(find.text('正在加载妈妈信息…'), findsOneWidget);
+      expect(find.text('正在加载宝宝信息…'), findsOneWidget);
       await tester.pumpAndSettle();
 
       expect(find.text('哺乳期'), findsWidgets);
-      expect(find.text('妈妈档案待绑定'), findsOneWidget);
+      expect(find.text('产后第 3 周'), findsOneWidget);
+      expect(find.text('宝宝已出生 20 天'), findsOneWidget);
       expect(find.text('母乳产出'), findsOneWidget);
 
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
       expect(find.text('成长发育'), findsOneWidget);
-      expect(find.text('Mia'), findsWidgets);
+      expect(find.text('宝宝已出生 20 天'), findsOneWidget);
       expect(find.text('待记录'), findsWidgets);
     });
+
+    testWidgets('status profile selector stays pinned while content scrolls', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
+      await tester.pumpAndSettle();
+
+      final header = find.byKey(const ValueKey('status-pinned-header'));
+      expect(header, findsOneWidget);
+      final initialTop = tester.getTopLeft(header).dy;
+
+      await tester.drag(
+        find.byKey(const ValueKey('route-page-/status')),
+        const Offset(0, -520),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.getTopLeft(header).dy, closeTo(initialTop, 0.5));
+      expect(find.text('妈妈'), findsWidgets);
+      expect(find.text('宝宝'), findsOneWidget);
+    });
+
+    testWidgets(
+      'status pregnancy header matches legacy subtitle and disables baby',
+      (tester) async {
+        await tester.pumpWidget(
+          _FeaturePageHost(
+            route: _route('/status'),
+            jsonTransport: FixtureApiJsonTransportByPath({
+              statusProfileEndpoint: const {
+                'user_id': 'demo-user-fixture',
+                'delivery_date': '2026-10-01',
+                'birth_prep_due_date_or_week': '孕周 28 周',
+              },
+              statusInfantsEndpoint: const {'items': <Object?>[]},
+            }),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.byKey(const ValueKey('status-care-stage-pregnancy')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('孕期 28 周'), findsOneWidget);
+        expect(find.text('宝宝孕育中'), findsOneWidget);
+        final babyTab = tester.widget<InkWell>(
+          find.byKey(const ValueKey('status-identity-tab-baby')),
+        );
+        expect(babyTab.onTap, isNull);
+        expect(find.text('孕期日记'), findsOneWidget);
+      },
+    );
 
     testWidgets('status page records growth locally', (tester) async {
       await tester.pumpWidget(_FeaturePageHost(route: _route('/status')));
@@ -417,7 +474,9 @@ void main() {
       await tester.tap(find.text('宝宝'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Mia Sophia Long Profile Name'), findsWidgets);
+      expect(find.text('产后第 19 周'), findsOneWidget);
+      expect(find.text('宝宝已出生 127 天'), findsOneWidget);
+      expect(find.text('Mia Sophia Long Profile Name'), findsNothing);
       expect(find.text('成长发育'), findsOneWidget);
       expect(find.text('待记录'), findsWidgets);
       expect(tester.takeException(), isNull);
@@ -439,6 +498,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      expect(find.text('暂无有效分娩日期'), findsNWidgets(2));
       await _scrollToText(tester, '母乳产出');
       expect(find.text('母乳产出'), findsOneWidget);
       await _scrollToText(tester, '母乳趋势');
@@ -458,6 +518,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      expect(find.text('妈妈档案待绑定'), findsOneWidget);
+      expect(find.text('宝宝档案待绑定'), findsOneWidget);
       await _scrollToText(tester, '母乳产出');
       expect(find.text('母乳产出'), findsOneWidget);
       await _scrollToText(tester, '母乳趋势');
