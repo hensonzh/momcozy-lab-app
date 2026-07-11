@@ -610,15 +610,84 @@ void main() {
         expect(activeBorder.top.color, isNot(Colors.transparent));
 
         await tester.pump(const Duration(milliseconds: 2800));
-        final finishedHighlight = tester.widget<AnimatedContainer>(
-          find.byKey(const ValueKey('status-baby-growth-highlight')),
+        expect(
+          tester.widget(
+            find.byKey(const ValueKey('status-baby-growth-highlight')),
+          ),
+          isA<KeyedSubtree>(),
         );
-        final finishedBorder =
-            (finishedHighlight.decoration! as BoxDecoration).border! as Border;
-        expect(finishedBorder.top.color, Colors.transparent);
         expect(tester.takeException(), isNull);
       },
     );
+
+    testWidgets('shows finite diary and birth journey notification notices', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+      final router = createMomCozyRouter(initialLocation: '/schedule');
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      routeIntentPlatform.dispatchActiveRoute(
+        const PendingNativeRoute(path: '/status?statusIntent=pregnancy-diary'),
+      );
+      await tester.pumpAndSettle();
+      routeIntentPlatform.dispatchActiveRoute(
+        const PendingNativeRoute(path: '/status?statusIntent=pregnancy-diary'),
+      );
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+
+      expect(find.text('孕期日记'), findsOneWidget);
+      expect(find.text('成长发育'), findsNothing);
+      expect(
+        _highlightBorderColor(
+          tester,
+          const ValueKey('status-pregnancy-diary-notice'),
+        ),
+        isNot(Colors.transparent),
+      );
+
+      router.go(
+        '/status?statusIntent=birth-journey&statusIntentId=manual-plan-1',
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+      expect(
+        _highlightBorderColor(
+          tester,
+          const ValueKey('status-birth-journey-notice'),
+        ),
+        isNot(Colors.transparent),
+      );
+
+      await tester.pump(const Duration(milliseconds: 3200));
+      expect(
+        _highlightBorderColor(
+          tester,
+          const ValueKey('status-pregnancy-diary-notice'),
+        ),
+        Colors.transparent,
+      );
+      expect(
+        _highlightBorderColor(
+          tester,
+          const ValueKey('status-birth-journey-notice'),
+        ),
+        Colors.transparent,
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('Legacy Web widget parity: 计划', () {
@@ -1563,6 +1632,14 @@ Future<void> _scrollToFinder(WidgetTester tester, Finder finder) async {
     maxScrolls: 18,
   );
   await tester.pumpAndSettle();
+}
+
+Color _highlightBorderColor(WidgetTester tester, Key key) {
+  final widget = tester.widget(find.byKey(key));
+  if (widget is! AnimatedContainer) return Colors.transparent;
+  final container = widget;
+  final border = (container.decoration! as BoxDecoration).border! as Border;
+  return border.top.color;
 }
 
 Future<void> _pumpUntilFinder(WidgetTester tester, Finder finder) async {

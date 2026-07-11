@@ -57,6 +57,18 @@ void main() {
         'source': 'native-notification',
       });
       expect(growth?.consume, 'once');
+
+      final diary = routeIntentFromNativeNotification({
+        'path': '/status?statusIntent=pregnancy-diary',
+      });
+      expect(diary?.type, 'OpenStatusPregnancyDiaryBadge');
+      expect(diary?.payload['statusIntent'], 'pregnancy-diary');
+
+      final plan = routeIntentFromNativeNotification({
+        'path': '/status?statusIntent=birth-journey',
+      });
+      expect(plan?.type, 'OpenStatusBirthJourneyBadge');
+      expect(plan?.payload['statusIntent'], 'birth-journey');
     });
 
     test(

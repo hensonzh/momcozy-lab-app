@@ -592,6 +592,12 @@ class _StatusPageState extends State<_StatusPage> {
   final _growthCurveAnchorKey = GlobalKey();
   final _growthHighlight = ValueNotifier<bool>(false);
   Timer? _growthHighlightTimer;
+  final _pregnancyDiaryAnchorKey = GlobalKey();
+  final _birthJourneyAnchorKey = GlobalKey();
+  final _pregnancyDiaryNotice = ValueNotifier<bool>(false);
+  final _birthJourneyNotice = ValueNotifier<bool>(false);
+  Timer? _pregnancyDiaryNoticeTimer;
+  Timer? _birthJourneyNoticeTimer;
   String? _consumedStatusIntentToken;
 
   String get _view => _controller.identity.value.value;
@@ -654,9 +660,57 @@ class _StatusPageState extends State<_StatusPage> {
           _showGrowthHighlight();
           break;
         case StatusEntryIntentKind.pregnancyDiary:
+          _showPregnancyDiaryNotice();
+          break;
         case StatusEntryIntentKind.birthJourney:
+          _showBirthJourneyNotice();
           break;
       }
+    });
+  }
+
+  void _showPregnancyDiaryNotice() {
+    _showPregnancyView();
+    _pregnancyDiaryNoticeTimer?.cancel();
+    _pregnancyDiaryNotice.value = true;
+    _pregnancyDiaryNoticeTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      _pregnancyDiaryNotice.value = false;
+      _pregnancyDiaryNoticeTimer = null;
+    });
+    _scrollToStatusTarget(_pregnancyDiaryAnchorKey);
+  }
+
+  void _showBirthJourneyNotice() {
+    _showPregnancyView();
+    _birthJourneyNoticeTimer?.cancel();
+    _birthJourneyNotice.value = true;
+    _birthJourneyNoticeTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      _birthJourneyNotice.value = false;
+      _birthJourneyNoticeTimer = null;
+    });
+    _scrollToStatusTarget(_birthJourneyAnchorKey);
+  }
+
+  void _showPregnancyView() {
+    unawaited(_controller.changeCareStage(StatusCareStage.pregnancy));
+    _controller.selectIdentity(StatusIdentity.mom);
+    _persistInteractionState();
+  }
+
+  void _scrollToStatusTarget(GlobalKey targetKey) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final targetContext = targetKey.currentContext;
+      if (!mounted || targetContext == null) return;
+      unawaited(
+        Scrollable.ensureVisible(
+          targetContext,
+          alignment: 0.35,
+          duration: const Duration(milliseconds: 420),
+          curve: Curves.easeOutCubic,
+        ),
+      );
     });
   }
 
@@ -727,7 +781,11 @@ class _StatusPageState extends State<_StatusPage> {
   @override
   void dispose() {
     _growthHighlightTimer?.cancel();
+    _pregnancyDiaryNoticeTimer?.cancel();
+    _birthJourneyNoticeTimer?.cancel();
     _growthHighlight.dispose();
+    _pregnancyDiaryNotice.dispose();
+    _birthJourneyNotice.dispose();
     if (_runtime != null) {
       _controller.careStage.removeListener(_handleSelectionChanged);
       _controller.identity.removeListener(_handleSelectionChanged);
@@ -820,34 +878,50 @@ class _StatusPageState extends State<_StatusPage> {
 
     if (isPregnancy) {
       return [
-        PregnancyDiaryDashboard(
-          key: const ValueKey('status-pregnancy-diary-dashboard'),
-          entries: _controller.pregnancyDiaryEntries,
-          mutation: _controller.diaryMutation,
-          now: _controller.now,
-          onSave: (entryDate, draft) =>
-              _controller.saveDiary(entryDate: entryDate, draft: draft),
-          onAgentPrompt: (prompt) {
-            context.go('/', extra: {'agentPrefill': prompt});
-          },
+        Container(
+          key: _pregnancyDiaryAnchorKey,
+          child: _StatusNoticeHighlight(
+            surfaceKey: const ValueKey('status-pregnancy-diary-notice'),
+            active: _pregnancyDiaryNotice,
+            child: PregnancyDiaryDashboard(
+              key: const ValueKey('status-pregnancy-diary-dashboard'),
+              entries: _controller.pregnancyDiaryEntries,
+              mutation: _controller.diaryMutation,
+              now: _controller.now,
+              onSave: (entryDate, draft) =>
+                  _controller.saveDiary(entryDate: entryDate, draft: draft),
+              onAgentPrompt: (prompt) {
+                context.go('/', extra: {'agentPrefill': prompt});
+              },
+            ),
+          ),
         ),
         const SizedBox(height: 24),
-        BirthJourneyPlanDashboard(
-          key: const ValueKey('status-birth-journey-dashboard'),
-          plan: _controller.birthJourneyPlan,
-          mutation: _controller.planMutation,
-          onToggleTodo: (taskId, completed) =>
-              _controller.togglePlanTodo(taskId: taskId, completed: completed),
-          onDeletePlan: _controller.deleteBirthJourneyPlan,
-          onAgentPrompt: (prompt, {autoSend = false}) {
-            context.go(
-              '/',
-              extra: {
-                'agentPrefill': prompt,
-                if (autoSend) 'agentAutoSend': true,
+        Container(
+          key: _birthJourneyAnchorKey,
+          child: _StatusNoticeHighlight(
+            surfaceKey: const ValueKey('status-birth-journey-notice'),
+            active: _birthJourneyNotice,
+            child: BirthJourneyPlanDashboard(
+              key: const ValueKey('status-birth-journey-dashboard'),
+              plan: _controller.birthJourneyPlan,
+              mutation: _controller.planMutation,
+              onToggleTodo: (taskId, completed) => _controller.togglePlanTodo(
+                taskId: taskId,
+                completed: completed,
+              ),
+              onDeletePlan: _controller.deleteBirthJourneyPlan,
+              onAgentPrompt: (prompt, {autoSend = false}) {
+                context.go(
+                  '/',
+                  extra: {
+                    'agentPrefill': prompt,
+                    if (autoSend) 'agentAutoSend': true,
+                  },
+                );
               },
-            );
-          },
+            ),
+          ),
         ),
       ];
     }
@@ -947,6 +1021,9 @@ class _StatusIntentHighlight extends StatelessWidget {
       valueListenable: active,
       child: child,
       builder: (context, isActive, child) {
+        if (!isActive) {
+          return KeyedSubtree(key: surfaceKey, child: child!);
+        }
         return AnimatedContainer(
           key: surfaceKey,
           duration: const Duration(milliseconds: 180),
@@ -969,6 +1046,124 @@ class _StatusIntentHighlight extends StatelessWidget {
                 : const [],
           ),
           child: child,
+        );
+      },
+    );
+  }
+}
+
+class _StatusNoticeHighlight extends StatefulWidget {
+  const _StatusNoticeHighlight({
+    required this.surfaceKey,
+    required this.active,
+    required this.child,
+  });
+
+  final Key surfaceKey;
+  final ValueListenable<bool> active;
+  final Widget child;
+
+  @override
+  State<_StatusNoticeHighlight> createState() => _StatusNoticeHighlightState();
+}
+
+class _StatusNoticeHighlightState extends State<_StatusNoticeHighlight>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1850),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    widget.active.addListener(_syncAnimation);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncAnimation();
+  }
+
+  @override
+  void didUpdateWidget(covariant _StatusNoticeHighlight oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.active, widget.active)) {
+      oldWidget.active.removeListener(_syncAnimation);
+      widget.active.addListener(_syncAnimation);
+    }
+    _syncAnimation();
+  }
+
+  void _syncAnimation() {
+    if (!mounted) return;
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (widget.active.value && !disableAnimations) {
+      if (!_controller.isAnimating) _controller.repeat();
+      return;
+    }
+    _controller.stop();
+    _controller.value = 0;
+  }
+
+  @override
+  void dispose() {
+    widget.active.removeListener(_syncAnimation);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: widget.active,
+      child: widget.child,
+      builder: (context, isActive, child) {
+        if (!isActive) {
+          return KeyedSubtree(key: widget.surfaceKey, child: child!);
+        }
+        return AnimatedBuilder(
+          animation: _controller,
+          child: child,
+          builder: (context, child) {
+            final wave = isActive
+                ? (1 - math.cos(_controller.value * math.pi * 2)) / 2
+                : 0.0;
+            return Transform.translate(
+              offset: Offset(0, -2 * wave),
+              child: Transform.scale(
+                scale: 1 + 0.025 * wave,
+                child: AnimatedContainer(
+                  key: widget.surfaceKey,
+                  duration: const Duration(milliseconds: 140),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: isActive
+                          ? MomCozyColors.badge.withValues(alpha: 0.48)
+                          : Colors.transparent,
+                      width: 2,
+                    ),
+                    boxShadow: isActive
+                        ? [
+                            BoxShadow(
+                              color: MomCozyColors.badge.withValues(
+                                alpha: 0.3 * wave,
+                              ),
+                              blurRadius: 34,
+                              spreadRadius: -20,
+                              offset: const Offset(0, 18),
+                            ),
+                          ]
+                        : const [],
+                  ),
+                  child: child,
+                ),
+              ),
+            );
+          },
         );
       },
     );
