@@ -268,6 +268,18 @@ const _cardCases = [
         'feeding_context': '左侧喂养后持续疼痛。',
         'urgency': 'soon',
       },
+      specializedView: AgentIbclcConsultCardView(
+        title: 'IBCLC 咨询入口',
+        consultId: 'ibclc-golden',
+        sourceArtifactId: 'ibclc-golden',
+        consultantName: 'Emily Chen',
+        consultantCredentials: 'IBCLC 国际认证哺乳顾问',
+        chatLabel: '咨询 IBCLC',
+        chatNote: '启动咨询后，会自动将你的问题同步给顾问',
+        reason: '含乳疼痛',
+        feedingContext: '左侧喂养后持续疼痛。',
+        urgency: 'soon',
+      ),
     ),
   ),
   _CardGoldenCase(

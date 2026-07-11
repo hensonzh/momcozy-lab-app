@@ -14,8 +14,10 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dar
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
@@ -3830,18 +3832,31 @@ void main() {
     tester,
   ) async {
     final actions = <AgentArtifactActionView>[];
+    final consultStore = IbclcConsultStore.inMemory(
+      now: () => DateTime.utc(2026, 7, 11),
+    );
     final state = AgentStreamRunState(
       phase: AgentStreamRunPhase.finished,
       textContent: '我整理好了。',
+      threadId: 'thread-current',
+      runId: 'run-current',
       events: [
         _productionArtifactEvent(
           id: 'ibclc-current',
           type: 'ibclc_consult_card',
           payload: {
             'title': 'IBCLC 咨询入口',
+            'consult_id': 'consult-current',
             'reason': '含乳疼痛',
             'feeding_context': '左侧喂养后持续疼痛。',
             'urgency': 'soon',
+            'consultant': {
+              'name': 'Lin Zhao',
+              'credentials': 'IBCLC, RN',
+              'experience': '12 年经验',
+              'bio': 'IBCLC 国际认证哺乳顾问，擅长含乳支持。',
+            },
+            'chat': {'label': '开始咨询', 'note': '将同步本轮哺乳背景'},
           },
         ),
         _productionArtifactEvent(
@@ -3883,7 +3898,13 @@ void main() {
     );
 
     await tester.pumpWidget(
-      _host(AgentHubPage(state: state, onArtifactAction: actions.add)),
+      _host(
+        AgentHubPage(
+          state: state,
+          ibclcConsultStore: consultStore,
+          onArtifactAction: actions.add,
+        ),
+      ),
     );
 
     expect(
@@ -3893,7 +3914,10 @@ void main() {
     expect(find.text('含乳疼痛'), findsOneWidget);
     expect(find.text('左侧喂养后持续疼痛。'), findsOneWidget);
     expect(find.text('建议尽快咨询'), findsOneWidget);
-    expect(find.text('Emily Chen'), findsOneWidget);
+    expect(find.text('Lin Zhao'), findsOneWidget);
+    expect(find.text('IBCLC, RN'), findsOneWidget);
+    expect(find.text('12 年经验'), findsOneWidget);
+    expect(find.text('擅长含乳支持。'), findsOneWidget);
     expect(find.textContaining('隐私政策'), findsOneWidget);
 
     expect(
@@ -3933,6 +3957,130 @@ void main() {
     await tester.pump();
 
     expect(actions.single.routePath, '/ibclc-chat.html');
+    final routeState = actions.single.routeExtra as IbclcConsultRouteState;
+    expect(routeState.consultId, 'consult-current');
+    expect(routeState.sourceArtifactId, 'ibclc-current');
+    expect(routeState.threadId, 'thread-current');
+    expect(routeState.runId, 'run-current');
+    expect(routeState.returnPath, '/');
+    expect(routeState.reason, '含乳疼痛');
+    expect(routeState.feedingContext, '左侧喂养后持续疼痛。');
+
+    await consultStore.markCompleted(routeState);
+    await tester.pump();
+
+    expect(find.text('咨询结束'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-ibclc-agreement-ibclc-current')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Agent Hub restores the IBCLC return scroll offset', (
+    tester,
+  ) async {
+    final consultStore = IbclcConsultStore.inMemory(
+      now: () => DateTime.utc(2026, 7, 11),
+    );
+    final history = List<AgentHubHistoryMessage>.generate(
+      32,
+      (index) => AgentHubHistoryMessage(
+        role: index.isEven
+            ? AgentHubHistoryRole.user
+            : AgentHubHistoryRole.assistant,
+        content: '第 $index 条历史消息，用于验证咨询返回后的滚动锚点。',
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(historyMessages: history, ibclcConsultStore: consultStore),
+      ),
+    );
+    await tester.pump();
+
+    final scrollable = tester.state<ScrollableState>(
+      find.byType(Scrollable).first,
+    );
+    final position = scrollable.position;
+    expect(position.maxScrollExtent, greaterThan(240));
+    position.jumpTo(240);
+    await tester.pump();
+    const routeState = IbclcConsultRouteState(
+      consultId: 'consult-scroll',
+      sourceArtifactId: 'artifact-scroll',
+      returnPath: '/',
+      returnScrollOffset: 240,
+    );
+    consultStore.beginConsult(routeState);
+    position.jumpTo(0);
+
+    await consultStore.markCompleted(routeState);
+    await tester.pump();
+    await tester.pump();
+
+    expect(position.pixels, closeTo(240, 0.1));
+  });
+
+  testWidgets('Agent Hub keeps the historical IBCLC run context', (
+    tester,
+  ) async {
+    final actions = <AgentArtifactActionView>[];
+    final historicalState = AgentStreamRunState(
+      phase: AgentStreamRunPhase.finished,
+      textContent: '可以开始咨询。',
+      threadId: 'thread-history',
+      runId: 'run-history',
+      events: [
+        _productionArtifactEvent(
+          id: 'ibclc-history',
+          type: 'ibclc_consult_card',
+          payload: {
+            'title': 'IBCLC 咨询入口',
+            'consult_id': 'consult-history',
+            'reason': '含乳疼痛',
+          },
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: const AgentStreamRunState(
+            phase: AgentStreamRunPhase.idle,
+            threadId: 'thread-current',
+            runId: 'run-current',
+          ),
+          historyMessages: [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '可以开始咨询。',
+              runState: historicalState,
+            ),
+          ],
+          ibclcConsultStore: IbclcConsultStore.inMemory(),
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final agreement = find.byKey(
+      const ValueKey('agent-ibclc-agreement-ibclc-history'),
+    );
+    await tester.ensureVisible(agreement);
+    await tester.tap(agreement);
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-ibclc-open-ibclc-history')),
+    );
+    await tester.pump();
+
+    final routeState = actions.single.routeExtra as IbclcConsultRouteState;
+    expect(routeState.consultId, 'consult-history');
+    expect(routeState.threadId, 'thread-history');
+    expect(routeState.runId, 'run-history');
   });
 
   testWidgets('Agent Hub keeps long journey and packing sections collapsible', (

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 
 const _birthPlanDisclaimer = '这份沟通单只用于沟通。请优先遵循医生和医院建议，尤其是因安全原因需要调整计划时。';
 const _hospitalBagSubtitle = '住院母婴必备用品 · 32～34周准备 · 36周完成';
@@ -20,12 +21,73 @@ const _suppressedPersonalizationGroupIds = <String>{'support_person_bag'};
 AgentSpecializedArtifactView? mapAgentSpecializedCard({
   required AgentArtifactPresentationKind presentationKind,
   required Map<String, Object?> cardJson,
+  Map<String, Object?> payload = const <String, Object?>{},
+  String artifactId = '',
+  String consultIdFallbackArtifactId = '',
 }) {
   return switch (presentationKind) {
     AgentArtifactPresentationKind.birthPlanCard => _birthPlanCard(cardJson),
     AgentArtifactPresentationKind.hospitalBagCard => _hospitalBagCard(cardJson),
+    AgentArtifactPresentationKind.ibclcConsultCard => _ibclcConsultCard(
+      cardJson.isNotEmpty ? cardJson : payload,
+      artifactId,
+      consultIdFallbackArtifactId,
+    ),
     _ => null,
   };
+}
+
+AgentIbclcConsultCardView _ibclcConsultCard(
+  Map<String, Object?> raw,
+  String artifactId,
+  String consultIdFallbackArtifactId,
+) {
+  final nestedPayload = _map(raw['payload']);
+  final source = <String, Object?>{...nestedPayload, ...raw};
+  final consultant = _map(source['consultant']);
+  final chat = _map(source['chat']);
+  final explicitConsultId = _firstText(source, const [
+    'consult_id',
+    'consultId',
+  ]);
+  final consultId = explicitConsultId.isNotEmpty
+      ? explicitConsultId
+      : consultIdFallbackArtifactId.trim().isNotEmpty
+      ? consultIdFallbackArtifactId.trim()
+      : stableIbclcConsultId(jsonEncode(source));
+  final rawBio = _text(consultant['bio']);
+  final consultantBio = rawBio
+      .replaceFirst(RegExp(r'^(?:IBCLC\s*)?国际认证[哺泌]乳顾问[，,、。\s]*'), '')
+      .trim();
+  return AgentIbclcConsultCardView(
+    title: _text(source['title']).isEmpty
+        ? 'IBCLC 在线咨询'
+        : _text(source['title']),
+    consultId: consultId,
+    sourceArtifactId: artifactId,
+    consultantName: _text(consultant['name']).isEmpty
+        ? 'IBCLC 顾问'
+        : _text(consultant['name']),
+    consultantCredentials: _text(consultant['credentials']).isEmpty
+        ? 'IBCLC 国际认证哺乳顾问'
+        : _text(consultant['credentials']),
+    consultantExperience: _nonEmptyText(consultant['experience']),
+    consultantBio: _nullIfEmpty(consultantBio),
+    chatLabel: _text(chat['label']).isEmpty ? '咨询 IBCLC' : _text(chat['label']),
+    chatNote: _text(chat['note']).isEmpty
+        ? '启动咨询后，会自动将你的问题同步给顾问'
+        : _text(chat['note']),
+    reason: _nonEmptyText(source['reason']),
+    feedingContext: _nonEmptyText(
+      source['feeding_context'] ?? source['feedingContext'],
+    ),
+    urgency: _text(source['urgency']).isEmpty
+        ? 'routine'
+        : _text(source['urgency']),
+    preferredLanguage: _nonEmptyText(
+      source['preferred_language'] ?? source['preferredLanguage'],
+    ),
+  );
 }
 
 AgentBirthPlanCardView _birthPlanCard(Map<String, Object?> cardJson) {
@@ -540,6 +602,12 @@ List<Map<String, Object?>> _objectList(Object? value) {
     for (final item in value)
       if (item is Map) Map<String, Object?>.from(item),
   ];
+}
+
+Map<String, Object?> _map(Object? value) {
+  return value is Map
+      ? Map<String, Object?>.from(value)
+      : const <String, Object?>{};
 }
 
 String _firstText(Map<String, Object?> map, List<String> keys) {

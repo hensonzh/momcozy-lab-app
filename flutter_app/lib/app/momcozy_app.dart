@@ -16,6 +16,7 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
@@ -1282,6 +1283,7 @@ Widget _buildDefaultAgentHubPage(
     pickImage: runtime.agentHubImagePicker,
     voiceInputController: runtime.agentVoiceInputController,
     productAssetRepository: runtime.productAssetRepository,
+    ibclcConsultStore: runtime.ibclcConsultStore,
     onHospitalBagCartUpdate: (seed) {
       runtime.hospitalBagCartStore.ingestArtifact(seed);
     },
@@ -1492,6 +1494,11 @@ Future<void> dispatchAgentArtifactAction(
           ? store.activate(store.activeCartId)
           : store.ingestArtifact(seed);
       routeExtra = HospitalBagCartRouteState(cartId: cartId);
+    }
+    if (path == '/ibclc-chat.html' && routeExtra is IbclcConsultRouteState) {
+      MomCozyRuntimeScope.of(
+        context,
+      ).ibclcConsultStore.beginConsult(routeExtra);
     }
     final target = SafeLinkTarget.tryParse(action.value);
     final location = routeExtra == null && target?.internalPath == path

@@ -73,9 +73,17 @@ void main() {
           type: 'ibclc_consult_card',
           payload: {
             'title': 'IBCLC 咨询入口',
+            'consultId': 'consult-explicit',
             'reason': '含乳疼痛',
             'feeding_context': '左侧喂养后疼痛',
             'urgency': 'soon',
+            'consultant': {
+              'name': 'Lin Zhao',
+              'credentials': 'IBCLC, RN',
+              'experience': '12 年经验',
+              'bio': 'IBCLC 国际认证哺乳顾问，擅长含乳与乳房疼痛支持。',
+            },
+            'chat': {'label': '开始咨询', 'note': '将同步本轮哺乳背景'},
           },
         ),
         _artifactEvent(
@@ -102,12 +110,55 @@ void main() {
       );
       expect(cards[0].title, 'IBCLC 咨询入口');
       expect(cards[0].payload['reason'], '含乳疼痛');
+      final consult = cards[0].specializedView as AgentIbclcConsultCardView;
+      expect(consult.consultId, 'consult-explicit');
+      expect(consult.consultantName, 'Lin Zhao');
+      expect(consult.consultantCredentials, 'IBCLC, RN');
+      expect(consult.consultantExperience, '12 年经验');
+      expect(consult.consultantBio, '擅长含乳与乳房疼痛支持。');
+      expect(consult.chatLabel, '开始咨询');
+      expect(consult.chatNote, '将同步本轮哺乳背景');
       expect(
         cards[1].presentationKind,
         AgentArtifactPresentationKind.milkPlanPreview,
       );
       expect(cards[1].payload['tasks'], isA<List<Object?>>());
       expect(cards[1].payload['reminders'], isA<List<Object?>>());
+    });
+
+    test('maps the legacy IBCLC card envelope and explicit consult id', () {
+      final card = AgentArtifactMapper.cardFromEvent(
+        AgentStreamEvent({
+          'type': 'artifact.created',
+          'artifact_id': 'ibclc-artifact-legacy',
+          'payload': {
+            'artifact_type': 'ibclc_consult',
+            'card': {
+              'title': 'IBCLC 在线咨询',
+              'consult_id': 'ibclc-legacy',
+              'consultant': {
+                'name': 'Emily Chen',
+                'credentials': 'IBCLC 国际认证哺乳顾问',
+                'experience': '8 年产后哺乳支持经验',
+                'bio': '擅长含乳评估、吸吮观察和排乳计划。',
+              },
+              'chat': {'label': '咨询 IBCLC', 'url': '/ibclc-chat.html'},
+            },
+          },
+        }),
+      );
+
+      expect(card, isNotNull);
+      expect(
+        card!.presentationKind,
+        AgentArtifactPresentationKind.ibclcConsultCard,
+      );
+      final consult = card.specializedView as AgentIbclcConsultCardView;
+      expect(consult.consultId, 'ibclc-legacy');
+      expect(consult.sourceArtifactId, 'ibclc-artifact-legacy');
+      expect(consult.consultantName, 'Emily Chen');
+      expect(consult.consultantExperience, '8 年产后哺乳支持经验');
+      expect(consult.consultantBio, '擅长含乳评估、吸吮观察和排乳计划。');
     });
 
     test('marks unsupported schema versions instead of misrendering them', () {

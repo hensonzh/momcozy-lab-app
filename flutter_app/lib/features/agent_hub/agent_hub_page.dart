@@ -20,11 +20,14 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
@@ -191,6 +194,7 @@ class AgentHubPage extends StatefulWidget {
     this.voicePlaybackCoordinator,
     this.voicePlaybackPlayer,
     this.productAssetRepository,
+    this.ibclcConsultStore,
     this.onArtifactAction,
     this.onHospitalBagCartUpdate,
     this.onHospitalBagCartContextRequired,
@@ -215,6 +219,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
   final ProductAssetRepository? productAssetRepository;
+  final IbclcConsultStore? ibclcConsultStore;
   final AgentArtifactActionHandler? onArtifactAction;
   final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
   final VoidCallback? onHospitalBagCartContextRequired;
@@ -287,6 +292,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   String _greeting = agentHubDefaultGreeting;
   AgentHubGreetingProfile? _profile;
   int _greetingRefreshGeneration = 0;
+  int _lastHandledIbclcCompletionRevision = 0;
 
   @override
   void initState() {
@@ -301,6 +307,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_updateLatestButtonVisibility);
     _syncVoicePlaybackIdleSubscription();
+    _syncIbclcConsultStore(null, widget.ibclcConsultStore);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _updateLatestButtonVisibility();
@@ -332,6 +339,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
       _syncVoicePlaybackIdleSubscription();
     }
+    if (oldWidget.ibclcConsultStore != widget.ibclcConsultStore) {
+      _syncIbclcConsultStore(
+        oldWidget.ibclcConsultStore,
+        widget.ibclcConsultStore,
+      );
+    }
   }
 
   @override
@@ -340,6 +353,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     unawaited(widget.voiceInputController?.cancelCapture());
     _cancelRunSubscription();
     _unsubscribeVoicePlaybackIdle?.call();
+    widget.ibclcConsultStore?.removeListener(_handleIbclcConsultStoreChanged);
     _persistInteractionState();
     _flushPersistentInteractionState();
     _composerController.removeListener(_persistInteractionState);
@@ -366,6 +380,35 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (coordinator == null) return;
     _unsubscribeVoicePlaybackIdle = coordinator.subscribeIdle(() {
       scheduleMicrotask(_tryRunPendingAutoVoiceReplay);
+    });
+  }
+
+  void _syncIbclcConsultStore(
+    IbclcConsultStore? oldStore,
+    IbclcConsultStore? newStore,
+  ) {
+    oldStore?.removeListener(_handleIbclcConsultStoreChanged);
+    _lastHandledIbclcCompletionRevision = newStore?.completionRevision ?? 0;
+    newStore?.addListener(_handleIbclcConsultStoreChanged);
+  }
+
+  void _handleIbclcConsultStoreChanged() {
+    final store = widget.ibclcConsultStore;
+    if (store == null ||
+        store.completionRevision <= _lastHandledIbclcCompletionRevision) {
+      return;
+    }
+    _lastHandledIbclcCompletionRevision = store.completionRevision;
+    final routeState = store.lastCompletedRouteState;
+    if (routeState == null || routeState.returnPath != '/') return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_chatScrollController.hasClients) return;
+      final position = _chatScrollController.position;
+      final offset = routeState.returnScrollOffset
+          .clamp(0.0, position.maxScrollExtent)
+          .toDouble();
+      position.jumpTo(offset);
+      _updateLatestButtonVisibility();
     });
   }
 
@@ -886,7 +929,39 @@ class _AgentHubPageState extends State<AgentHubPage> {
       unawaited(_handleArtifactFormSubmit(action));
       return;
     }
-    widget.onArtifactAction?.call(action);
+    var resolvedAction = action;
+    if (action.routePath == '/ibclc-chat.html') {
+      final rawExtra = action.routeExtra;
+      final fallbackState = rawExtra is IbclcConsultRouteDraft
+          ? rawExtra.resolve(
+              threadId: _state.threadId ?? _activeRequest?.threadId ?? '',
+              runId: _state.runId ?? _activeRequest?.runId ?? '',
+            )
+          : rawExtra is IbclcConsultRouteState
+          ? rawExtra
+          : null;
+      final routeState = fallbackState?.withReturnContext(
+        returnPath: '/',
+        returnScrollOffset: _chatScrollController.hasClients
+            ? _chatScrollController.offset
+            : 0,
+      );
+      if (routeState == null) {
+        widget.onArtifactAction?.call(action);
+        return;
+      }
+      resolvedAction = AgentArtifactActionView(
+        label: action.label,
+        icon: action.icon,
+        kind: action.kind,
+        value: action.value,
+        routePath: action.routePath,
+        routeExtra: routeState,
+        externalUri: action.externalUri,
+        hospitalBagCartSeed: action.hospitalBagCartSeed,
+      );
+    }
+    widget.onArtifactAction?.call(resolvedAction);
   }
 
   Future<bool> _handleArtifactFormSubmit(AgentArtifactActionView action) async {
@@ -1827,7 +1902,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Widget build(BuildContext context) {
     final profileDefaults =
         _profile?.birthPrepDefaults ?? const BirthPrepProfileDefaults();
-    return ColoredBox(
+    final page = ColoredBox(
       key: const ValueKey('agent-hub-page'),
       color: MomCozyColors.background,
       child: Stack(
@@ -2019,6 +2094,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ],
       ),
     );
+    final consultStore = widget.ibclcConsultStore;
+    return consultStore == null
+        ? page
+        : IbclcConsultStoreScope(store: consultStore, child: page);
   }
 }
 
@@ -2949,6 +3028,31 @@ class AgentRunTranscript extends StatelessWidget {
           messageId: state.messageId,
         );
     final quickReplies = state.quickReplies;
+    final artifactActionForState = onArtifactAction == null
+        ? null
+        : (AgentArtifactActionView action) {
+            if (action.routePath == '/ibclc-chat.html' &&
+                action.routeExtra is IbclcConsultRouteDraft) {
+              final draft = action.routeExtra! as IbclcConsultRouteDraft;
+              onArtifactAction!(
+                AgentArtifactActionView(
+                  label: action.label,
+                  icon: action.icon,
+                  kind: action.kind,
+                  value: action.value,
+                  routePath: action.routePath,
+                  routeExtra: draft.resolve(
+                    threadId: state.threadId ?? '',
+                    runId: state.runId ?? '',
+                  ),
+                  externalUri: action.externalUri,
+                  hospitalBagCartSeed: action.hospitalBagCartSeed,
+                ),
+              );
+              return;
+            }
+            onArtifactAction!(action);
+          };
     final shouldRenderQuickReplies =
         quickReplies.length == 3 &&
         !state.isAwaitingVisibleReply &&
@@ -3041,7 +3145,7 @@ class AgentRunTranscript extends StatelessWidget {
                 AgentArtifactPanel(
                   key: artifactPanelKey,
                   cards: artifactCards,
-                  onAction: onArtifactAction,
+                  onAction: artifactActionForState,
                   onFormSubmit: onFormSubmit,
                   formSubmissionsListenable: formSubmissionsListenable,
                 ),

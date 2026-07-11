@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/ibclc_consult_store_scope.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
 class AgentArtifactCardRegistry {
@@ -11,11 +13,15 @@ class AgentArtifactCardRegistry {
     ValueChanged<AgentArtifactActionView>? onAction,
   }) {
     return switch (card.presentationKind) {
-      AgentArtifactPresentationKind.ibclcConsultCard => _IbclcConsultCard(
-        key: ValueKey('ibclc:${card.id}'),
-        card: card,
-        onAction: onAction,
-      ),
+      AgentArtifactPresentationKind.ibclcConsultCard =>
+        card.specializedView is AgentIbclcConsultCardView
+            ? _IbclcConsultCard(
+                key: ValueKey('ibclc:${card.id}'),
+                card: card,
+                data: card.specializedView! as AgentIbclcConsultCardView,
+                onAction: onAction,
+              )
+            : null,
       AgentArtifactPresentationKind.milkPlanPreview => _MilkPlanPreviewCard(
         card: card,
       ),
@@ -133,9 +139,15 @@ class _ArtifactCardSurface extends StatelessWidget {
 }
 
 class _IbclcConsultCard extends StatefulWidget {
-  const _IbclcConsultCard({super.key, required this.card, this.onAction});
+  const _IbclcConsultCard({
+    super.key,
+    required this.card,
+    required this.data,
+    this.onAction,
+  });
 
   final AgentArtifactCardView card;
+  final AgentIbclcConsultCardView data;
   final ValueChanged<AgentArtifactActionView>? onAction;
 
   @override
@@ -146,16 +158,20 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
   bool _agreementAccepted = false;
 
   @override
+  void didUpdateWidget(covariant _IbclcConsultCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.data.consultId != widget.data.consultId) {
+      _agreementAccepted = false;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final payload = widget.card.payload;
-    final reason = _text(payload['reason']);
-    final feedingContext = _text(
-      payload['feeding_context'] ?? payload['feedingContext'],
-    );
-    final urgency = _urgencyLabel(_text(payload['urgency']));
-    final language = _text(
-      payload['preferred_language'] ?? payload['preferredLanguage'],
-    );
+    final data = widget.data;
+    final completed =
+        IbclcConsultStoreScope.maybeOf(context)?.isCompleted(data.consultId) ??
+        false;
+    final urgency = _urgencyLabel(data.urgency);
 
     return KeyedSubtree(
       key: ValueKey('agent-artifact-ibclc-${widget.card.id}'),
@@ -182,32 +198,55 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Emily Chen',
+                      data.consultantName,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: const Color(0xff182b2a),
                         fontWeight: FontWeight.w900,
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const _ArtifactTag(
-                      label: 'IBCLC 国际认证哺乳顾问',
-                      color: Color(0xff1a6863),
-                      background: Color(0xffe9f3f1),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        _ArtifactTag(
+                          label: data.consultantCredentials,
+                          color: const Color(0xff1a6863),
+                          background: const Color(0xffe9f3f1),
+                        ),
+                        if (data.consultantExperience != null)
+                          _ArtifactTag(
+                            label: data.consultantExperience!,
+                            color: const Color(0xff7a4260),
+                            background: const Color(0xfff4edf1),
+                          ),
+                      ],
                     ),
+                    if (data.consultantBio != null) ...[
+                      const SizedBox(height: 7),
+                      Text(
+                        data.consultantBio!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: const Color(0xff60706e),
+                          height: 1.45,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
             ],
           ),
-          if (reason != null || feedingContext != null) ...[
+          if (data.reason != null || data.feedingContext != null) ...[
             const SizedBox(height: 14),
             const Divider(height: 1, color: Color(0xffd6dde5)),
             const SizedBox(height: 12),
-            if (reason != null) _LabelValueRow(label: '咨询原因', value: reason),
-            if (reason != null && feedingContext != null)
+            if (data.reason != null)
+              _LabelValueRow(label: '咨询原因', value: data.reason!),
+            if (data.reason != null && data.feedingContext != null)
               const SizedBox(height: 8),
-            if (feedingContext != null)
-              _LabelValueRow(label: '当前情况', value: feedingContext),
+            if (data.feedingContext != null)
+              _LabelValueRow(label: '当前情况', value: data.feedingContext!),
           ],
           const SizedBox(height: 12),
           Wrap(
@@ -219,87 +258,90 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
                 color: const Color(0xff177a89),
                 background: const Color(0xffe9f3f1),
               ),
-              if (language != null)
+              if (data.preferredLanguage != null)
                 _ArtifactTag(
-                  label: language,
+                  label: data.preferredLanguage!,
                   color: const Color(0xff7a4260),
                   background: const Color(0xfff4edf1),
                 ),
             ],
           ),
-          const SizedBox(height: 14),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: const Color(0xfff6fbfa),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xffdbe7e4)),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: () => setState(() {
-                      _agreementAccepted = !_agreementAccepted;
-                    }),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Checkbox(
-                          key: ValueKey(
-                            'agent-ibclc-agreement-${widget.card.id}',
+          if (!completed) ...[
+            const SizedBox(height: 14),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0xfff6fbfa),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xffdbe7e4)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () => setState(() {
+                        _agreementAccepted = !_agreementAccepted;
+                      }),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                            key: ValueKey(
+                              'agent-ibclc-agreement-${widget.card.id}',
+                            ),
+                            value: _agreementAccepted,
+                            onChanged: (value) => setState(() {
+                              _agreementAccepted = value ?? false;
+                            }),
+                            visualDensity: VisualDensity.compact,
                           ),
-                          value: _agreementAccepted,
-                          onChanged: (value) => setState(() {
-                            _agreementAccepted = value ?? false;
-                          }),
-                          visualDensity: VisualDensity.compact,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 9),
-                            child: Text(
-                              '我已阅读并同意《隐私政策》和《服务协议》',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: const Color(0xff586967),
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.45,
-                                  ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 9),
+                              child: Text(
+                                '我已阅读并同意《隐私政策》和《服务协议》',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: const Color(0xff586967),
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.45,
+                                    ),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 44, top: 2),
-                    child: Text(
-                      '启动咨询后，会将本轮相关问题带入咨询页面。',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: const Color(0xff71807d),
-                        height: 1.45,
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 44, top: 2),
+                      child: Text(
+                        data.chatNote,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: const Color(0xff71807d),
+                          height: 1.45,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             height: 46,
             child: FilledButton.icon(
               key: ValueKey('agent-ibclc-open-${widget.card.id}'),
-              onPressed: _agreementAccepted && widget.onAction != null
+              onPressed:
+                  !completed && _agreementAccepted && widget.onAction != null
                   ? _openConsult
                   : null,
               icon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
-              label: const Text('咨询 IBCLC'),
+              label: Text(completed ? '咨询结束' : data.chatLabel),
               style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xff177a89),
                 disabledBackgroundColor: const Color(0xffd7dfdd),
@@ -323,13 +365,20 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
         kind: 'artifact',
         value: '/ibclc-chat.html',
         routePath: '/ibclc-chat.html',
-        routeExtra: {
-          'consultId': widget.card.id,
-          'reason': widget.card.payload['reason'],
-          'feedingContext':
-              widget.card.payload['feeding_context'] ??
-              widget.card.payload['feedingContext'],
-        },
+        routeExtra: IbclcConsultRouteDraft(
+          consultId: widget.data.consultId,
+          sourceArtifactId: widget.data.sourceArtifactId,
+          consultantName: widget.data.consultantName,
+          consultantCredentials: widget.data.consultantCredentials,
+          consultantExperience: widget.data.consultantExperience ?? '',
+          consultantBio: widget.data.consultantBio ?? '',
+          chatLabel: widget.data.chatLabel,
+          chatNote: widget.data.chatNote,
+          reason: widget.data.reason ?? '',
+          feedingContext: widget.data.feedingContext ?? '',
+          urgency: widget.data.urgency,
+          preferredLanguage: widget.data.preferredLanguage ?? '',
+        ),
       ),
     );
   }

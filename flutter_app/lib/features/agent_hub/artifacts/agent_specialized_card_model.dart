@@ -75,3 +75,36 @@ class AgentHospitalBagItemView {
   final String? description;
   final String? personalization;
 }
+
+class AgentIbclcConsultCardView extends AgentSpecializedArtifactView {
+  const AgentIbclcConsultCardView({
+    required this.title,
+    required this.consultId,
+    required this.sourceArtifactId,
+    required this.consultantName,
+    required this.consultantCredentials,
+    required this.chatLabel,
+    required this.chatNote,
+    this.consultantExperience,
+    this.consultantBio,
+    this.reason,
+    this.feedingContext,
+    this.urgency = 'routine',
+    this.preferredLanguage,
+  });
+
+  @override
+  final String title;
+  final String consultId;
+  final String sourceArtifactId;
+  final String consultantName;
+  final String consultantCredentials;
+  final String? consultantExperience;
+  final String? consultantBio;
+  final String chatLabel;
+  final String chatNote;
+  final String? reason;
+  final String? feedingContext;
+  final String urgency;
+  final String? preferredLanguage;
+}

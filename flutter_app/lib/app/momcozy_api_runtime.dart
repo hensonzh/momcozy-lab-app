@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
@@ -8,6 +10,7 @@ import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dar
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_voice_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
@@ -63,6 +66,7 @@ class MomCozyApiRuntime {
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
+    IbclcConsultStore? ibclcConsultStore,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
@@ -94,6 +98,15 @@ class MomCozyApiRuntime {
        observability = observability ?? MomCozyObservability(),
        hospitalBagCartStore = hospitalBagCartStore ?? HospitalBagCartStore(),
        now = now ?? DateTime.now {
+    this.ibclcConsultStore =
+        ibclcConsultStore ??
+        IbclcConsultStore(
+          persistence: FlutterSecureIbclcConsultPersistence(
+            userId: this.session.userId,
+          ),
+          now: this.now,
+        );
+    unawaited(this.ibclcConsultStore.restore());
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
@@ -114,6 +127,7 @@ class MomCozyApiRuntime {
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
+    IbclcConsultStore? ibclcConsultStore,
     String? userId,
     String? babyId,
     String? locale,
@@ -136,6 +150,7 @@ class MomCozyApiRuntime {
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
       hospitalBagCartStore: hospitalBagCartStore,
+      ibclcConsultStore: ibclcConsultStore,
     );
   }
 
@@ -151,6 +166,7 @@ class MomCozyApiRuntime {
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
+    IbclcConsultStore? ibclcConsultStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -234,6 +250,7 @@ class MomCozyApiRuntime {
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
       hospitalBagCartStore: hospitalBagCartStore,
+      ibclcConsultStore: ibclcConsultStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
@@ -305,6 +322,7 @@ class MomCozyApiRuntime {
   final StorageMigrationApplyResult? storageMigrationResult;
   final MomCozyObservability observability;
   final HospitalBagCartStore hospitalBagCartStore;
+  late final IbclcConsultStore ibclcConsultStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
@@ -516,6 +534,9 @@ class MomCozyRuntimeController extends ChangeNotifier {
     final hospitalBagCartStore = session.userId == _runtime.session.userId
         ? _runtime.hospitalBagCartStore
         : HospitalBagCartStore();
+    final ibclcConsultStore = session.userId == _runtime.session.userId
+        ? _runtime.ibclcConsultStore
+        : null;
     if (store == null) {
       return MomCozyApiRuntime.fromSession(
         session,
@@ -525,6 +546,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
             ? _runtime._productAssetRepository
             : null,
         hospitalBagCartStore: hospitalBagCartStore,
+        ibclcConsultStore: ibclcConsultStore,
       );
     }
     return MomCozyApiRuntime.fromSession(
@@ -535,6 +557,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
           ? _runtime._productAssetRepository
           : null,
       hospitalBagCartStore: hospitalBagCartStore,
+      ibclcConsultStore: ibclcConsultStore,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {
