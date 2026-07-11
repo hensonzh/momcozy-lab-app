@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 class AgentHubInteractionSnapshot {
   const AgentHubInteractionSnapshot({
@@ -13,6 +14,7 @@ class AgentHubInteractionSnapshot {
     this.autoVoiceEnabled = true,
     this.activeRequest,
     this.localActionStatuses = const <String, String>{},
+    this.formSubmissions = const <String, AgentArtifactFormSubmission>{},
   });
 
   final AgentStreamRunState runState;
@@ -22,6 +24,7 @@ class AgentHubInteractionSnapshot {
   final bool autoVoiceEnabled;
   final AgentStreamRequest? activeRequest;
   final Map<String, String> localActionStatuses;
+  final Map<String, AgentArtifactFormSubmission> formSubmissions;
 
   bool get hasContent {
     return runState.events.isNotEmpty ||
@@ -34,6 +37,7 @@ class AgentHubInteractionSnapshot {
         attachedImages.isNotEmpty ||
         activeRequest != null ||
         localActionStatuses.isNotEmpty ||
+        formSubmissions.isNotEmpty ||
         !autoVoiceEnabled;
   }
 
@@ -54,6 +58,11 @@ class AgentHubInteractionSnapshot {
       ),
     if (localActionStatuses.isNotEmpty)
       'localActionStatuses': localActionStatuses,
+    if (formSubmissions.values.any((submission) => submission.isSubmitted))
+      'formSubmissions': {
+        for (final entry in formSubmissions.entries)
+          if (entry.value.isSubmitted) entry.key: entry.value.toMap(),
+      },
   };
 
   static AgentHubInteractionSnapshot fromMap(Map<String, Object?> map) {
@@ -70,6 +79,7 @@ class AgentHubInteractionSnapshot {
       autoVoiceEnabled: map['autoVoiceEnabled'] != false,
       activeRequest: activeRequest,
       localActionStatuses: _stringMap(map['localActionStatuses']),
+      formSubmissions: _formSubmissionsFromMap(map['formSubmissions']),
     );
   }
 }
@@ -202,6 +212,25 @@ Map<String, String> _stringMap(Object? value) {
   return Map<String, String>.unmodifiable(result);
 }
 
+Map<String, AgentArtifactFormSubmission> _formSubmissionsFromMap(
+  Object? value,
+) {
+  if (value is! Map) {
+    return const <String, AgentArtifactFormSubmission>{};
+  }
+  final result = <String, AgentArtifactFormSubmission>{};
+  for (final entry in value.entries) {
+    final key = entry.key;
+    final submission = AgentArtifactFormSubmission.tryFromMap(entry.value);
+    if (key is String &&
+        key.trim().isNotEmpty &&
+        submission?.isSubmitted == true) {
+      result[key] = submission!;
+    }
+  }
+  return Map<String, AgentArtifactFormSubmission>.unmodifiable(result);
+}
+
 String? _string(Object? value) => value is String ? value : null;
 
 int _int(Object? value, {int fallback = 0}) {
@@ -219,6 +248,7 @@ Map<String, Object?> _requestToMap(AgentStreamRequest request) => {
   if (request.images.isNotEmpty)
     'images': request.images.map(_imageToMap).toList(growable: false),
   if (request.metadata.isNotEmpty) 'metadata': request.metadata,
+  if (request.idempotencyKey != null) 'idempotencyKey': request.idempotencyKey,
 };
 
 Map<String, Object?> _requestToPersistenceMap(
@@ -265,6 +295,7 @@ AgentStreamRequest _requestWithImages(
     locale: request.locale,
     images: images,
     metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
   );
 }
 
@@ -304,6 +335,8 @@ AgentStreamRequest? _requestFromMap(Object? value) {
     metadata: metadata is Map
         ? Map<String, Object?>.from(metadata)
         : const <String, Object?>{},
+    idempotencyKey:
+        _string(map['idempotencyKey']) ?? _string(map['idempotency_key']),
   );
 }
 

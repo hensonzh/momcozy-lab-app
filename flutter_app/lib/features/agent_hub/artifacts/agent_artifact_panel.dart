@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -10,11 +11,14 @@ class AgentArtifactPanel extends StatelessWidget {
     required this.cards,
     this.onAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
   });
 
   final List<AgentArtifactCardView> cards;
   final ValueChanged<AgentArtifactActionView>? onAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +28,35 @@ class AgentArtifactPanel extends StatelessWidget {
       children: [
         for (final card in cards) ...[
           if (card.isForm)
-            AgentArtifactForm(
-              card: card,
-              onAction: onAction,
-              onSubmit: onFormSubmit,
-            )
+            _buildForm(card)
           else
             _specializedArtifactCard(card: card, onAction: onAction) ??
                 _AgentArtifactGenericCard(card: card, onAction: onAction),
           if (card != cards.last) const SizedBox(height: 10),
         ],
       ],
+    );
+  }
+
+  Widget _buildForm(AgentArtifactCardView card) {
+    final submissions = formSubmissionsListenable;
+    if (submissions == null) {
+      return AgentArtifactForm(
+        card: card,
+        onAction: onAction,
+        onSubmit: onFormSubmit,
+      );
+    }
+    return ValueListenableBuilder<Map<String, AgentArtifactFormSubmission>>(
+      valueListenable: submissions,
+      builder: (context, values, child) {
+        return AgentArtifactForm(
+          card: card,
+          onAction: onAction,
+          onSubmit: onFormSubmit,
+          submission: values[card.id],
+        );
+      },
     );
   }
 }

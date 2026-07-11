@@ -62,6 +62,17 @@ void main() {
       expect((items.single! as Map<String, Object?>)['id'], 'pump-custom');
     });
 
+    test('forwards a stable caller-provided run idempotency key', () {
+      final payload = buildProductionAgentRunPayload(
+        const AgentStreamRequest(
+          message: '提交表单',
+          idempotencyKey: 'agent-form-submit-fixture',
+        ),
+      );
+
+      expect(payload['idempotency_key'], 'agent-form-submit-fixture');
+    });
+
     test('adds image attachments to the production run create contract', () {
       final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(

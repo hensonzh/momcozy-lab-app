@@ -5,6 +5,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 void main() {
   test('history snapshot round-trips structured artifact state', () {
@@ -109,4 +110,42 @@ void main() {
       expect(restored.activeRequest?.images.single.name, 'sent.png');
     },
   );
+
+  test('submitted artifact forms and request idempotency round-trip', () {
+    final snapshot = AgentHubInteractionSnapshot(
+      activeRequest: const AgentStreamRequest(
+        message: '提交表单',
+        idempotencyKey: 'agent-form-submit-stable',
+      ),
+      formSubmissions: {
+        'form-artifact-1': AgentArtifactFormSubmission.submitted(
+          values: const {
+            'due_date_or_week': '38 周',
+            'pregnancy_history': ['其它：第一胎剖宫产'],
+          },
+        ),
+        'form-artifact-pending': AgentArtifactFormSubmission.submitting(
+          values: const {'due_date_or_week': '39 周'},
+        ),
+      },
+    );
+
+    final restored = AgentHubInteractionSnapshot.fromMap(
+      Map<String, Object?>.from(
+        jsonDecode(jsonEncode(snapshot.toMap())) as Map,
+      ),
+    );
+
+    expect(restored.activeRequest?.idempotencyKey, 'agent-form-submit-stable');
+    expect(restored.formSubmissions, hasLength(1));
+    expect(restored.formSubmissions['form-artifact-1']?.isSubmitted, isTrue);
+    expect(
+      restored.formSubmissions['form-artifact-1']?.values['due_date_or_week'],
+      '38 周',
+    );
+    expect(
+      restored.formSubmissions.containsKey('form-artifact-pending'),
+      isFalse,
+    );
+  });
 }

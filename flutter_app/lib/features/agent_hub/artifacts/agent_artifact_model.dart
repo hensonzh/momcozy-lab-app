@@ -4,6 +4,58 @@ import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_ca
 typedef AgentArtifactFormSubmitHandler =
     Future<bool> Function(AgentArtifactActionView action);
 
+enum AgentArtifactFormSubmissionPhase { submitting, submitted }
+
+class AgentArtifactFormSubmission {
+  AgentArtifactFormSubmission._({required this.phase, required this.values});
+
+  factory AgentArtifactFormSubmission.submitting({
+    required Map<String, Object?> values,
+  }) {
+    return AgentArtifactFormSubmission._(
+      phase: AgentArtifactFormSubmissionPhase.submitting,
+      values: Map<String, Object?>.unmodifiable(values),
+    );
+  }
+
+  factory AgentArtifactFormSubmission.submitted({
+    required Map<String, Object?> values,
+  }) {
+    return AgentArtifactFormSubmission._(
+      phase: AgentArtifactFormSubmissionPhase.submitted,
+      values: Map<String, Object?>.unmodifiable(values),
+    );
+  }
+
+  final AgentArtifactFormSubmissionPhase phase;
+  final Map<String, Object?> values;
+
+  bool get isSubmitting => phase == AgentArtifactFormSubmissionPhase.submitting;
+
+  bool get isSubmitted => phase == AgentArtifactFormSubmissionPhase.submitted;
+
+  Map<String, Object?> toMap() => {'phase': phase.name, 'values': values};
+
+  static AgentArtifactFormSubmission? tryFromMap(Object? value) {
+    if (value is! Map) return null;
+    final map = Map<String, Object?>.from(value);
+    final rawValues = map['values'];
+    if (rawValues is! Map) return null;
+    final values = <String, Object?>{};
+    for (final entry in rawValues.entries) {
+      final key = entry.key;
+      if (key is String && key.trim().isNotEmpty) {
+        values[key] = entry.value;
+      }
+    }
+    return switch (map['phase']) {
+      'submitting' => AgentArtifactFormSubmission.submitting(values: values),
+      'submitted' => AgentArtifactFormSubmission.submitted(values: values),
+      _ => null,
+    };
+  }
+}
+
 enum AgentArtifactPresentationKind {
   form,
   milkAnalysisCard,

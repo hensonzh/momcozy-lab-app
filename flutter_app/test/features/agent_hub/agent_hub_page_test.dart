@@ -3075,6 +3075,72 @@ void main() {
     expect(find.text('20:00 泵奶'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub restores submitted historical forms as read-only', (
+    tester,
+  ) async {
+    final formEvent = AgentStreamEvent({
+      'event_id': 'restored-form-event',
+      'type': 'artifact.created',
+      'artifact_id': 'restored-form',
+      'payload': {
+        'artifact_type': 'form',
+        'form': {
+          'id': 'hospital_bag_intake',
+          'title': '历史信息采集',
+          'submit_label': '确认',
+          'fields': [
+            {
+              'id': 'due_date_or_week',
+              'label': '预产期或当前孕周',
+              'type': 'text',
+              'required': true,
+            },
+          ],
+        },
+      },
+    });
+    final historicalRunState =
+        const AgentStreamRunState(phase: AgentStreamRunPhase.streaming)
+            .applyEvent(formEvent)
+            .copyWith(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请确认信息。',
+            );
+    final store = _MemoryAgentHubInteractionStateStore(
+      AgentHubInteractionSnapshot(
+        historyMessages: [
+          AgentHubHistorySnapshot(
+            role: 'assistant',
+            content: '请确认信息。',
+            runState: historicalRunState,
+          ),
+        ],
+        formSubmissions: {
+          'restored-form': AgentArtifactFormSubmission.submitted(
+            values: const {'due_date_or_week': '38 周'},
+          ),
+        },
+      ),
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
+    await tester.pumpAndSettle();
+
+    expect(find.text('38 周'), findsOneWidget);
+    expect(find.text('已提交'), findsOneWidget);
+    final button = tester.widget<FilledButton>(
+      find.byKey(const ValueKey('agent-artifact-form-submit-restored-form')),
+    );
+    expect(button.onPressed, isNull);
+    final input = tester.widget<TextField>(
+      find.descendant(
+        of: find.byKey(const ValueKey('agent-artifact-form-restored-form')),
+        matching: find.byType(TextField),
+      ),
+    );
+    expect(input.readOnly, isTrue);
+  });
+
   testWidgets(
     'Agent Hub resumes stream after action confirmation and keeps backend terminal status',
     (tester) async {
@@ -3940,12 +4006,29 @@ void main() {
     expect(client.requests, hasLength(1));
     expect(client.requests.single.message, contains('confirmed_form_data'));
     expect(client.requests.single.message, contains('due_date_or_week'));
+    expect(
+      client.requests.single.idempotencyKey,
+      startsWith('agent-form-submit-'),
+    );
     await tester.scrollUntilVisible(
       find.text('已提交信息采集表单'),
       -220,
       scrollable: find.byType(Scrollable).first,
     );
     expect(find.text('已提交信息采集表单'), findsOneWidget);
+    expect(find.text('38 周'), findsOneWidget);
+    expect(find.text('已提交'), findsOneWidget);
+    expect(
+      tester
+          .widget<FilledButton>(
+            find.byKey(
+              const ValueKey('agent-artifact-form-submit-hospital-bag-form'),
+            ),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(client.requests, hasLength(1));
 
     final cartActionFinder = find.byKey(
       const ValueKey('agent-artifact-cart-open-hospital-bag-cart'),
