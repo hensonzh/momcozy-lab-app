@@ -57,65 +57,88 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 用户对“不一致”的担忧成立。若直接在结束时把整段回复替换成不同文本，会产生闪变、跳行和阅读位置漂移；若像当前实现一样保留临时文本，又会让错误、未清洗或不可恢复的内容成为最终消息。两种极端方案都不可接受。
 
+### 已确认产品不变量
+
+1. 最终回答一旦产生稳定文本，就立即以 delta 交付并展示；不能等待整段回答生成完或等待 `message.completed`。
+2. 已经进入回答气泡的正文只能追加，不能撤回、替换或在完成时重写；用户最终看到的正文必须与流式过程中看到的正文连续一致。
+3. `message.completed` 只负责确认完整性和终态，正常链路不能触发正文跳变。
+4. 不采用固定时间窗口聚合 delta；只允许为识别未闭合控制结构保留最小的语义尾部。
+5. 屏幕正文与实时语音消费同一条已提交文本流，不能各自清洗出不同结果。
+
 ### 推荐方案
 
-采用四层治理，而不是只修改 Flutter 的一个条件分支。
+采用五层治理，把“低延迟”和“不可变正文”同时写入 runtime 事件合同，而不是只修改 Flutter 的一个条件分支。
 
-#### 1. 后端建立同源文本不变量
+这会收紧现有 transient delta 的语义，必须由后端先完成 append-only 保证和增量字段，再切换 Flutter reducer；不能先让客户端假设旧事件已经满足新不变量。
 
-- raw model delta 先进入同一个 response accumulator，再由一个有提交边界的 stateful text projector 生成 canonical 正文。
+#### 1. Runtime 明确区分工具模式和回答模式
+
+- 一个模型 turn 必须二选一：调用工具，或者生成用户可见回答；工具 turn 不得产生 `message.delta`。
+- 工具执行过程只通过受控的 `run.progress`、`tool.*` 和 artifact/action 事件表达，不能把模型自由生成的工具前话术塞进回答气泡。
+- Provider 的 output item 类型是模式信号：出现 function call 时进入工具模式；出现 assistant message 时锁定回答模式，并从第一个稳定文本 delta 开始立即发布。
+- 回答模式一旦开始，本 turn 不再接受后置工具调用。模型提示负责预防混合输出，runtime 负责校验；若发布正文前发现违规可静默重试，若正文已经提交则不得删除正文，应终止该次违规执行并提供重试状态。
+- 这里不等待整个模型 turn，更不等待最终回答生成完成；只是在事件源处阻止“不确定是不是正文”的内容进入 `message.delta`。
+
+#### 2. 后端建立同源、只追加的文本投影器
+
+- 回答模式下的 raw model delta 先进入同一个 response accumulator，再由一个有提交边界的 stateful text projector 生成 canonical 正文。
 - projector 只发布已经稳定、后续不会被改写的前缀；未闭合的 `<think>`、JSON、Markdown fence/link 和待归一化空白暂存在未提交尾部，结构闭合或 finalize 时再决定保留、替换或丢弃。
 - 不再对累计全文反复调用非单调 sanitizer 后用字符串前缀推算增量；`strip`、结构化 JSON 提取等变换会回改已经发送的文本，正是当前不一致的来源之一。
-- 最终持久化文本必须直接取自同一个 projector 的 `finalize()` 结果，不能再经过另一套全文清洗或格式化。
+- projector 每提交一个片段，就同时追加到 live delta 和 canonical message builder；已经提交的前缀永远不可修改。
+- 最终持久化文本必须直接取自同一个 builder 的 `finalize()` 结果，不能再经过另一套全文清洗或格式化。Provider completed output 只用于完整性检查，不能覆盖已经提交的正文。
 - 正常完成时应满足：按顺序合并且去重后的 delta 文本等于 `message.completed.payload.text`。
 - 后端记录 `delta_char_count`、`final_char_count`、最终 delta cursor 和不可逆内容摘要，监控 `stream_final_mismatch`；目标是正常链路零不一致。
 
 这是根治用户可见闪变的核心。客户端无法在最终事件到达前猜出后端之后会怎样重写文本。
 
-#### 2. Flutter reducer 使用真正的双缓冲
+#### 3. Delta 合同支持缺口检测
 
-- `provisionalTextContent` 只接收 transient delta。
+- transient 表示事件载体没有持久化，不表示正文内容可以被撤回；已发布 delta 的内容语义是 committed、append-only。
+- 每个 `message.delta` 携带稳定的 `message_stream_id`、连续 `segment_index` 和累计摘要；`message.completed` 携带最终 `segment_count`、内容摘要和完整正文。
+- 客户端只追加连续 segment。遇到重复则去重，遇到缺口则暂存后续 segment 并请求 Redis replay 或 canonical snapshot，不能把缺失中段后的文本直接拼到页面上。
+- 这样即使发生丢包或重连，页面已展示内容仍然始终是最终正文的前缀，恢复过程只会继续追加。
+- 新字段保持 schema additive；后端先上线并验证 delta/final 一致率，再由 Flutter 启用严格完整性 reducer，避免新旧版本交叉期产生错误假设。
+
+#### 4. Flutter reducer 使用 live/canonical 双缓冲
+
+- live buffer 只接收按 segment 连续验证过的 committed delta。
 - `textContent` 只保存持久化、可恢复的权威文本。
-- 流式阶段 UI 优先展示 provisional buffer；没有 provisional 时展示 canonical buffer。
-- 收到 `message.completed` 后，无条件把 `payload.text` 写入 `textContent` 并清空 provisional buffer。
+- 流式阶段 UI 优先展示 live buffer；没有 live 内容时展示 canonical buffer。
+- 收到 `message.completed` 后，若正文完全一致，只切换数据来源并结束 run，不重建正文 Widget。
+- 若 completed 正文是 live buffer 的扩展，只追加因断流缺失的尾部，再切换数据来源。
+- 若二者发生非前缀冲突，将其视为事件合同或数据完整性错误：先按 segment replay/resync，禁止直接替换已展示正文；仍无法恢复时进入可重试错误态并上报诊断。
 - 断线重连和历史恢复只认 canonical buffer，不能把 transient 文本持久化为最终回复。
+- 正文组件保持稳定 identity 和滚动锚点，完成事件不能触发整段 Markdown 重新入场或逐字动画。
 
-#### 3. 对异常差异做局部平滑校正
+#### 5. 实时语音消费同一 committed segment
 
-即使后端已修复，客户端仍需防御丢帧、重放和版本兼容：
-
-- 完全一致：只切换数据来源，不触发可见动画。
-- 最终文本以临时文本开头：仅补齐缺失尾部，不重播、不重建整段气泡。
-- 仅尾部不同：按 grapheme cluster 计算最长公共前缀，并回退到安全的 Markdown block 边界，在同一个正文组件中原位替换变化后缀，保持气泡 identity 和滚动锚点稳定。是否增加 120-180ms 的后缀淡入，应通过真机对拍决定，默认不增加整段动画。
-- 大范围不同：最终文本仍必须覆盖临时文本，并保持当前滚动锚点；禁止重新执行逐字动画。只有验证确实更平滑时，才对正文层启用一次短交叉淡化。
-- 发生任何不一致都上报诊断事件，包含长度和公共前缀比例，不记录原始正文。
-
-#### 4. 实时语音维护独立播放游标
-
-- 实时语音继续消费 provisional delta，不能为了等待 canonical 文本而延迟首段播报。
+- 实时语音直接消费通过 projector 提交的 segment，不能另行读取 raw/provider final 文本，也不能为了等待 `message.completed` 延迟首段播报。
 - 以稳定 segment ID 和 grapheme range 分别记录已提交给 TTS、已进入待播队列和已实际播放的文本游标，不能只用一个字符串长度推断进度。
-- 最终文本只是补齐临时文本尾部时，仅把缺失尾部送入 TTS，不重播已提交内容。
-- 最终文本在尚未播放的尾部发生变化时，丢弃分歧点之后的待播分段，并按 canonical 后缀重建队列。
-- 如果分歧已经落在播放完成的音频中，普通文本差异不从头重播；最终可见文本以 canonical 为准并记录异常。涉及安全删除或敏感信息修正时，应立即停止剩余播放。
+- completed 事件只补交尚未消费的连续 segment，不重播已经提交或播放的内容。
+- 安全过滤必须发生在 projector 提交前；不能先把正文展示或播出，再依赖最终事件删除敏感内容。
 
 ### 不采用的方案
 
-- 不保留临时文本作为最终结果：违反合同，重连后还会与历史消息不一致。
+- 不让 Flutter 在 completed 冲突时自行选择保留 live 文本或覆盖 canonical 文本：冲突必须在事件源和 replay 层解决。
 - 不关闭流式输出等待最终消息：首字延迟和实时感明显退化。
+- 不等待整个模型 turn 才判断是否展示最终回答：回答模式确认后，稳定 delta 必须立即交付。
+- 不把工具 turn 的自由文本先当正文展示、完成时再删除：这在逻辑上无法同时满足低延迟和无跳变。
 - 不按固定时间节流 delta：继续保持“有 delta 就交付前端”的产品要求。
-- 不在每次完成时无条件重建整个 Markdown 气泡：会造成明显闪动和滚动跳变。
+- 不在 completed 时做最长公共前缀替换、淡化或整段 Markdown 重建：这些只能掩饰合同错误，仍会造成用户所反感的内容变化。
 
 ### R01 验收标准
 
-1. 最终可见纯文本语义与 `message.completed.payload.text` 一致。
-2. transient delta 只更新 provisional buffer，不进入持久化历史。
-3. 完全一致和仅补尾场景不发生整段闪烁、滚动跳变或语音重播。
-4. 尾部差异只替换变化后缀；大范围差异最终仍以 canonical 文本为准。
-5. 重连后没有 delta 也能仅凭 `message.completed` 恢复完整回复。
-6. TTS 仅补播 canonical 缺失尾部，不从头重复；未播放的分歧尾部可以被替换。
-7. 快捷回复、artifact、action card 和回复完成状态不受 reconciliation 影响。
-8. 后端覆盖未闭合 think/JSON/Markdown、尾部空白、断流和 finalize 的 projector 测试，证明合并 delta 与最终文本一致。
-9. 新增 reducer、widget、重连和实时语音回归测试，并删除“completed mismatch 保留临时文本”的错误测试预期。
+1. 回答模式首个稳定文本 delta 无需等待本轮生成完成或 `message.completed` 即可到达 Flutter。
+2. 每次页面更新都只是追加正文；完成时不存在字符撤回、后缀替换、整段闪烁、滚动跳变或逐字动画重播。
+3. 按 `segment_index` 合并后的 delta 与 `message.completed.payload.text` 逐字符一致，内容摘要一致。
+4. 工具 turn 不产生 `message.delta`，工具状态通过语义事件展示；回答模式开始后不再执行后置工具调用。
+5. transient delta 只更新 live buffer，不自行进入持久化历史；completed 无差异切换到 canonical buffer。
+6. 丢失、重复、乱序和重连场景只能导致暂停追加或补齐尾部，不能产生非前缀正文。
+7. 重连后没有 delta 也能仅凭 `message.completed` 恢复完整回复。
+8. TTS 与屏幕消费相同 segment，只补播缺失尾部，不从头重复，也不播出工具轮草稿。
+9. 快捷回复、artifact、action card 和回复完成状态不受正文完整性校验影响。
+10. 后端覆盖工具混合输出、未闭合 think/JSON/Markdown、尾部空白、断流和 finalize 测试，证明正文 append-only 且合并 delta 与最终文本一致。
+11. 新增 reducer、widget、重连和实时语音回归测试，并删除“completed mismatch 保留临时文本”的错误测试预期。
 
 ## 其他风险详情
 
@@ -208,3 +231,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 日期 | 变更 | 结果 |
 | --- | --- | --- |
 | 2026-07-11 | 建立首次专项审查风险台账 | 记录 R01-R12；R01 进入设计中 |
+| 2026-07-11 | 确认 R01 低延迟与正文不可变要求 | 将方案收敛为回答模式即时流式、正文 append-only、completed 无差异确认 |
