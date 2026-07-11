@@ -22,7 +22,7 @@ void main() {
             GrowthRecord(id: 'growth-old', measuredAt: DateTime(2026, 7, 1)),
             GrowthRecord(id: 'growth-new', measuredAt: DateTime(2026, 7, 10)),
           ],
-          pumpError: StateError('pump unavailable'),
+          milkTrendError: StateError('trend unavailable'),
         );
         final controller = _controller(records: records);
         addTearDown(controller.dispose);
@@ -31,7 +31,7 @@ void main() {
 
         expect(controller.overview.value.phase, StatusResourcePhase.data);
         expect(controller.feedingRecords.value.data?.single.amountMl, 80);
-        expect(controller.pumpRecords.value.hasError, isTrue);
+        expect(controller.milkTrends.value.hasError, isTrue);
         expect(controller.growthRecords.value.data?.first.id, 'growth-new');
         expect(
           controller.pregnancyDiaryEntries.value.phase,
@@ -41,8 +41,9 @@ void main() {
           controller.birthJourneyPlan.value.phase,
           StatusResourcePhase.data,
         );
-        expect(records.pumpRangeStart, DateTime(2026, 6, 12));
-        expect(records.pumpRangeEnd, DateTime(2026, 7, 12));
+        expect(records.milkTrendStart, DateTime(2026, 6, 11));
+        expect(records.milkTrendDays, 31);
+        expect(records.milkTrendIncludeToday, isTrue);
       },
     );
 
@@ -81,6 +82,13 @@ void main() {
 
     test('updates same-day growth and creates a new-day record', () async {
       final records = _FakeRecordsRepository(
+        milkTrends: [
+          MilkTrendDay(
+            date: DateTime(2026, 7, 10),
+            pumpedMilkVolumeMl: 180,
+            pumpingCount: 2,
+          ),
+        ],
         growth: [
           GrowthRecord(
             id: 'growth-today',
@@ -91,6 +99,8 @@ void main() {
       final controller = _controller(records: records);
       addTearDown(controller.dispose);
       await controller.load();
+
+      expect(controller.milkTrends.value.data?.single.pumpingCount, 2);
 
       expect(
         await controller.saveGrowth(weightKg: 4.3, heightCm: 55, headCm: 36.5),
@@ -279,7 +289,7 @@ StatusDashboardController _controller({
   return StatusDashboardController(
     statusRepository: _FakeStatusRepository(),
     feedingRepository: effectiveRecords,
-    pumpRepository: effectiveRecords,
+    milkTrendRepository: effectiveRecords,
     growthRepository: effectiveRecords,
     pregnancyDiaryRepository: diary ?? _FakePregnancyDiaryRepository(),
     birthJourneyPlanRepository:
@@ -345,20 +355,22 @@ class _FakeStatusRepository implements StatusRepository {
 class _FakeRecordsRepository
     implements
         FeedingRecordsRepository,
-        PumpMilkRecordsRepository,
+        MilkTrendRepository,
         GrowthRecordsRepository {
   _FakeRecordsRepository({
     this.feeding = const <FeedingRecord>[],
+    this.milkTrends = const <MilkTrendDay>[],
     this.growth = const <GrowthRecord>[],
-    this.pumpError,
+    this.milkTrendError,
   });
 
   final List<FeedingRecord> feeding;
-  final List<PumpMilkRecord> pumping = const <PumpMilkRecord>[];
+  final List<MilkTrendDay> milkTrends;
   final List<GrowthRecord> growth;
-  final Object? pumpError;
-  DateTime? pumpRangeStart;
-  DateTime? pumpRangeEnd;
+  final Object? milkTrendError;
+  DateTime? milkTrendStart;
+  int? milkTrendDays;
+  bool? milkTrendIncludeToday;
   final List<String> updatedIds = [];
   var createdCount = 0;
 
@@ -370,21 +382,16 @@ class _FakeRecordsRepository
   }
 
   @override
-  Future<List<PumpMilkRecord>> fetchPumpMilkRecords({
-    required DateTime date,
+  Future<List<MilkTrendDay>> fetchMilkTrends({
+    required DateTime startDate,
+    required int days,
+    bool includeToday = true,
   }) async {
-    return pumping;
-  }
-
-  @override
-  Future<List<PumpMilkRecord>> fetchPumpMilkRecordsRange({
-    required DateTime start,
-    required DateTime end,
-  }) async {
-    pumpRangeStart = start;
-    pumpRangeEnd = end;
-    if (pumpError != null) throw pumpError!;
-    return pumping;
+    milkTrendStart = startDate;
+    milkTrendDays = days;
+    milkTrendIncludeToday = includeToday;
+    if (milkTrendError != null) throw milkTrendError!;
+    return milkTrends;
   }
 
   @override

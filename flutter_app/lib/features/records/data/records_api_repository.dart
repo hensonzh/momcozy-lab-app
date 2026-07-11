@@ -3,12 +3,14 @@ import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 
 const feedingRecordsEndpoint = '/v1/records/feeding';
 const pumpMilkRecordsEndpoint = '/v1/records/pumping';
+const milkTrendsEndpoint = '/v1/records/milk-trends';
 const growthRecordsEndpoint = '/v1/records/growth';
 
 class RecordsApiRepository
     implements
         FeedingRecordsRepository,
         PumpMilkRecordsRepository,
+        MilkTrendRepository,
         GrowthRecordsRepository {
   const RecordsApiRepository({required this.transport});
 
@@ -78,6 +80,29 @@ class RecordsApiRepository
               )
               .toList(growable: false)
         : const <PumpMilkRecord>[];
+  }
+
+  @override
+  Future<List<MilkTrendDay>> fetchMilkTrends({
+    required DateTime startDate,
+    required int days,
+    bool includeToday = true,
+  }) async {
+    final response = await transport.getJson(
+      milkTrendsEndpoint,
+      query: {
+        'start_date': _dateKey(startDate),
+        'days': days,
+        'include_today': includeToday,
+      },
+    );
+    final records = response['items'];
+    if (records is! List) return const <MilkTrendDay>[];
+    return records
+        .whereType<Map>()
+        .map((record) => _milkTrendDay(Map<String, Object?>.from(record)))
+        .whereType<MilkTrendDay>()
+        .toList(growable: false);
   }
 
   @override
@@ -187,6 +212,34 @@ PumpMilkRecord _pumpMilkRecord(Map<String, Object?> data) {
   );
 }
 
+MilkTrendDay? _milkTrendDay(Map<String, Object?> data) {
+  final date = _dateTime(data['date'] ?? data['delivery_date']);
+  if (date == null) return null;
+  return MilkTrendDay(
+    date: DateTime(date.year, date.month, date.day),
+    pumpedMilkVolumeMl:
+        _double(
+          data['pumped_milk_volume_ml'] ??
+              data['total_milk'] ??
+              data['actual_ml'],
+        ) ??
+        0,
+    pumpingCount: _int(data['pumping_count'] ?? data['pump_count']) ?? 0,
+    measuredOnly: data['measured_only'] != false,
+    estimatedMilkVolumeMl: _double(
+      data['estimated_milk_volume_ml'] ??
+          data['total_milk_estimate'] ??
+          data['totol_milk_estimate'],
+    ),
+    referenceLowerMl: _double(
+      data['reference_lower_ml'] ?? data['reference_lower'],
+    ),
+    referenceUpperMl: _double(
+      data['reference_upper_ml'] ?? data['reference_upper'],
+    ),
+  );
+}
+
 GrowthRecord _growthRecord(Map<String, Object?> data) {
   return GrowthRecord(
     id: _string(data['id'] ?? data['recordId']) ?? '',
@@ -215,6 +268,7 @@ String? _string(Object? value) => value is String ? value : null;
 int? _int(Object? value) {
   if (value is int) return value;
   if (value is double) return value.round();
+  if (value is String) return double.tryParse(value)?.round();
   return null;
 }
 
@@ -227,10 +281,17 @@ int? _kgToGram(Object? value) {
 double? _double(Object? value) {
   if (value is double) return value;
   if (value is int) return value.toDouble();
+  if (value is String) return double.tryParse(value);
   return null;
 }
 
 DateTime? _dateTime(Object? value) {
   if (value is! String || value.isEmpty) return null;
   return DateTime.tryParse(value);
+}
+
+String _dateKey(DateTime value) {
+  final month = value.month.toString().padLeft(2, '0');
+  final day = value.day.toString().padLeft(2, '0');
+  return '${value.year}-$month-$day';
 }

@@ -86,6 +86,50 @@ void main() {
       });
     });
 
+    test('maps measured milk trends and optional legacy analytics', () async {
+      final transport = FixtureApiJsonTransport({
+        'items': [
+          {
+            'date': '2026-07-01',
+            'pumped_milk_volume_ml': 180.5,
+            'pumping_count': 2,
+            'measured_only': true,
+          },
+          {
+            'delivery_date': '2026-07-02',
+            'total_milk': '210',
+            'pump_count': '3',
+            'total_milk_estimate': '260',
+            'reference_lower': '200',
+            'reference_upper': 320,
+            'measured_only': false,
+          },
+        ],
+      });
+      final repository = RecordsApiRepository(transport: transport);
+
+      final trends = await repository.fetchMilkTrends(
+        startDate: DateTime(2026, 6, 2),
+        days: 31,
+      );
+
+      expect(transport.lastPath, milkTrendsEndpoint);
+      expect(transport.lastQuery, {
+        'start_date': '2026-06-02',
+        'days': 31,
+        'include_today': true,
+      });
+      expect(trends.first.pumpedMilkVolumeMl, 180.5);
+      expect(trends.first.pumpingCount, 2);
+      expect(trends.first.measuredOnly, isTrue);
+      expect(trends.last.pumpedMilkVolumeMl, 210);
+      expect(trends.last.pumpingCount, 3);
+      expect(trends.last.estimatedMilkVolumeMl, 260);
+      expect(trends.last.referenceLowerMl, 200);
+      expect(trends.last.referenceUpperMl, 320);
+      expect(trends.last.measuredOnly, isFalse);
+    });
+
     test('maps production growth records and owner-scoped query', () async {
       final transport = FixtureApiJsonTransport({
         'items': [
