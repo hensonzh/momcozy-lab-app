@@ -1366,9 +1366,15 @@ class _OutlineAction extends StatelessWidget {
           backgroundColor: const Color(0xfffff7f1),
           side: const BorderSide(color: Color(0xffead8ce)),
           shape: const StadiumBorder(),
-          textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
         ),
-        child: Text(label),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: const Color(0xff9b552f),
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
       ),
     );
   }
@@ -1397,10 +1403,16 @@ class _FilledAction extends StatelessWidget {
           backgroundColor: const Color(0xffb66a3c),
           foregroundColor: Colors.white,
           shape: const StadiumBorder(),
-          textStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
         ),
         icon: Icon(icon, size: 14),
-        label: Text(label),
+        label: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: Colors.white,
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
       ),
     );
   }

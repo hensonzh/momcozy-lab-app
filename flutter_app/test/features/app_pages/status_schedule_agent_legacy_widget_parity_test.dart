@@ -13,6 +13,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -162,7 +163,7 @@ void main() {
           find.byKey(const ValueKey('status-detail-pregnancy-diary')),
           findsOneWidget,
         );
-        expect(find.text('最近 7 天记录'), findsOneWidget);
+        expect(find.text('还没有孕期日记'), findsOneWidget);
         await tester.tap(find.byTooltip('关闭详情'));
         await tester.pumpAndSettle();
 
@@ -182,7 +183,7 @@ void main() {
           find.byKey(const ValueKey('status-pregnancy-diary-save-button')),
         );
         await tester.pumpAndSettle();
-        expect(find.text('今天的记录已保存'), findsOneWidget);
+        expect(find.textContaining('今天的记录已保存'), findsOneWidget);
         expect(
           find.byKey(const ValueKey('status-detail-pregnancy-diary')),
           findsOneWidget,
@@ -1172,6 +1173,14 @@ MomCozyApiRuntime _runtime({
         ],
         'days': 31,
         'include_today': true,
+      },
+      pregnancyDiaryEntriesEndpoint: const {'items': <Object?>[]},
+      '$pregnancyDiaryEntriesEndpoint/2026-07-03': const {
+        'id': 'diary-widget-parity',
+        'entry_date': '2026-07-03',
+        'content': '今天胎动规律，想问医生睡眠问题。',
+        'symptom_tags': <String>[],
+        'health_notes': <Object?>[],
       },
       scheduleDayPlanEndpoint: const {
         'items': <Object?>[
