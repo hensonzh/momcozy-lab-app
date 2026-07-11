@@ -24,7 +24,7 @@
 
 | ID | 优先级 | 风险 | 当前状态 | 主要影响 |
 | --- | --- | --- | --- | --- |
-| R01 | P1 | 最终文本未覆盖 transient delta | 设计中 | 最终可见回复可能不是后端权威消息 |
+| R01 | P1 | 流式正文与持久化最终正文未同源 | 设计中 | 结束、重连或历史恢复时正文可能分叉 |
 | R02 | P1 | 媒体资源和全屏查看链路不可用 | 待处理 | 开箱图片、PDF、视频无法可靠查看 |
 | R03 | P1 | 正式 App 未接通图片和语音输入 | 待处理 | 旧 Web 的多模态输入入口不可用 |
 | R04 | P1 | 待产包购物车丢失 artifact 个性化数据 | 待处理 | 默认清单可能覆盖用户定制清单 |
@@ -37,7 +37,7 @@
 | R11 | P2 | Artifact 出现时机早于旧 Web | 待处理 | 卡片可能先于解释文字出现并抢占滚动位置 |
 | R12 | P2/P3 | 媒体语义播报和卡片导出缺失 | 待处理 | 步骤图片说明不播报，计划卡无法保存图片 |
 
-## R01 最终文本与 transient delta 不一致
+## R01 流式正文与持久化最终正文未同源
 
 ### 现状
 
@@ -219,7 +219,7 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ## 建议推进顺序
 
-1. **阶段 A：消息正确性。** 先完成 R01 的后端 stateful text projector、同源不变量、Flutter 双缓冲和回归测试。
+1. **阶段 A：消息正确性。** 先完成 R01 的后端 canonical builder、stateful text projector、append-only segment 合同、Flutter live/canonical 双缓冲和回归测试。
 2. **阶段 B：核心能力断点。** 完成 R02、R03、R04，恢复媒体、多模态输入和个性化购物车闭环。
 3. **阶段 C：可执行组件。** 完成 R05、R06、R07，保证表单、工单和链接动作可靠且幂等。
 4. **阶段 D：数据语义对齐。** 完成 R08、R09、R10、R11，统一 profile、card mapper、consult context 和 artifact 时序。
@@ -232,7 +232,7 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 - `flutter analyze`：通过。
 - Flutter Agent Hub、reducer、feature page 相关测试：197 项通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
-- 现有测试通过不代表风险已关闭；部分测试当前使用 fake provider、只验证占位页面存在，或固化了 R01 的错误 reducer 行为。
+- 现有测试通过不代表风险已关闭；部分测试当前使用 fake provider、只验证占位页面存在，且尚未覆盖 R01 的后端同源 builder、segment 缺口恢复和跨端一致性。
 
 ## 变更记录
 
