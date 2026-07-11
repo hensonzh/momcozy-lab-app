@@ -417,6 +417,9 @@ void main() {
       expect(find.text('身高'), findsWidgets);
       expect(find.text('头围'), findsOneWidget);
       expect(find.text('成长milestone'), findsOneWidget);
+      expect(find.text('查看健康信息'), findsOneWidget);
+      expect(find.text('今日睡眠'), findsOneWidget);
+      expect(find.text('4h 57min'), findsOneWidget);
 
       await tester.tap(
         find.byKey(const ValueKey('status-baby-feed-info-button')),
@@ -426,6 +429,8 @@ void main() {
         find.byKey(const ValueKey('status-detail-baby-feed-info')),
         findsOneWidget,
       );
+      expect(find.text('今日摄入说明'), findsOneWidget);
+      expect(find.text('妈妈实际记录的喂养数据，不包含亲喂'), findsOneWidget);
       await tester.tap(find.byTooltip('关闭详情'));
       await tester.pumpAndSettle();
 
@@ -465,15 +470,22 @@ void main() {
         find.byKey(const ValueKey('status-detail-growth-milestone')),
         findsOneWidget,
       );
+      expect(find.text('成长 milestone'), findsOneWidget);
+      expect(find.text('说出完整主谓短句'), findsOneWidget);
+      expect(find.text('2026.05.28'), findsOneWidget);
+      expect(find.text('能说出带主语和动作的短句，语言组织能力继续发展。'), findsOneWidget);
       await tester.tap(find.byTooltip('关闭详情'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('查看筛查'));
+      await tester.tap(find.text('查看健康信息'));
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('status-detail-baby-health')),
         findsOneWidget,
       );
+      expect(find.text('自闭症风险筛查'), findsOneWidget);
+      expect(find.text('宝宝情绪跟踪'), findsOneWidget);
+      expect(find.text('待开通'), findsNWidgets(6));
       await tester.tap(find.byTooltip('关闭详情'));
       await tester.pumpAndSettle();
 
@@ -482,6 +494,31 @@ void main() {
       expect(
         find.byKey(const ValueKey('status-detail-baby-sleep')),
         findsOneWidget,
+      );
+      expect(find.text('宝宝睡眠报告'), findsOneWidget);
+      expect(find.text('最长睡眠'), findsOneWidget);
+      expect(find.text('3h 08min'), findsOneWidget);
+      expect(find.text('哭闹'), findsWidgets);
+      expect(find.text('活动'), findsWidgets);
+      expect(find.text('宝宝睡眠记录'), findsOneWidget);
+      expect(find.text('按时段看睡眠、活动和哭闹时长'), findsOneWidget);
+      expect(find.text('00:00'), findsOneWidget);
+      expect(find.text('10:00'), findsOneWidget);
+      expect(
+        tester
+            .widget<TextButton>(
+              find.byKey(const ValueKey('status-baby-sleep-previous-day')),
+            )
+            .onPressed,
+        isNull,
+      );
+      expect(
+        tester
+            .widget<TextButton>(
+              find.byKey(const ValueKey('status-baby-sleep-next-day')),
+            )
+            .onPressed,
+        isNull,
       );
       await tester.tap(find.byTooltip('关闭详情'));
       await tester.pumpAndSettle();

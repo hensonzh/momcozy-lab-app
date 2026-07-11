@@ -22,6 +22,7 @@ import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart'
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/baby_growth_chart.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/baby_status_cards.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/baby_status_sheets.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/birth_journey_plan_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/pregnancy_diary_dashboard.dart';
@@ -552,7 +553,6 @@ class _StatusInteractionState {
   String careStage = 'postpartum';
   String milkTrendMode = '周';
   String babyGrowthMetric = '体重';
-  String? activeDetail;
 }
 
 class _StatusPage extends StatefulWidget {
@@ -577,7 +577,6 @@ class _StatusPage extends StatefulWidget {
 class _StatusPageState extends State<_StatusPage> {
   String _milkTrendMode = '周';
   String _babyGrowthMetric = '体重';
-  String? _activeDetail;
   late _StatusInteractionState _interactionState = _StatusInteractionState();
   MomCozyApiRuntime? _runtime;
   late StatusDashboardController _controller;
@@ -601,7 +600,6 @@ class _StatusPageState extends State<_StatusPage> {
           _StatusInteractionState();
       _milkTrendMode = _interactionState.milkTrendMode;
       _babyGrowthMetric = _interactionState.babyGrowthMetric;
-      _activeDetail = _interactionState.activeDetail;
       _controller = runtime.createStatusDashboardController(
         initialCareStage:
             StatusCareStage.fromStorage(_interactionState.careStage) ??
@@ -622,7 +620,6 @@ class _StatusPageState extends State<_StatusPage> {
 
   void _changeCareStage(String stage) {
     setState(() {
-      _activeDetail = null;
       unawaited(
         _controller.changeCareStage(
           StatusCareStage.fromStorage(stage) ?? StatusCareStage.postpartum,
@@ -636,14 +633,6 @@ class _StatusPageState extends State<_StatusPage> {
     _interactionState
       ..view = _view
       ..careStage = _careStage;
-    if (!mounted) return;
-    final shouldClose = _careStage == 'pregnancy' && _activeDetail != null;
-    if (shouldClose) {
-      setState(() {
-        _activeDetail = null;
-        _interactionState.activeDetail = null;
-      });
-    }
   }
 
   void _persistInteractionState() {
@@ -651,22 +640,7 @@ class _StatusPageState extends State<_StatusPage> {
       ..view = _view
       ..careStage = _careStage
       ..milkTrendMode = _milkTrendMode
-      ..babyGrowthMetric = _babyGrowthMetric
-      ..activeDetail = _activeDetail;
-  }
-
-  void _showDetail(String detail) {
-    setState(() {
-      _activeDetail = detail;
-      _persistInteractionState();
-    });
-  }
-
-  void _closeDetail() {
-    setState(() {
-      _activeDetail = null;
-      _persistInteractionState();
-    });
+      ..babyGrowthMetric = _babyGrowthMetric;
   }
 
   @override
@@ -725,7 +699,6 @@ class _StatusPageState extends State<_StatusPage> {
                                 return;
                               }
                               setState(() {
-                                _activeDetail = null;
                                 _persistInteractionState();
                               });
                             },
@@ -823,7 +796,7 @@ class _StatusPageState extends State<_StatusPage> {
           BabyFeedingCard(
             records: _controller.feedingRecords,
             volumeUnit: _controller.volumeUnit,
-            onInfoTap: () => _showDetail('baby-feed-info'),
+            onInfoTap: () => unawaited(showBabyFeedingInfoDialog(context)),
           ),
           BabyGrowthSummaryCard(
             records: _controller.growthRecords,
@@ -834,78 +807,23 @@ class _StatusPageState extends State<_StatusPage> {
                   heightCm: heightCm,
                   headCm: headCm,
                 ),
-            onMilestoneTap: () => _showDetail('growth-milestone'),
+            onMilestoneTap: () => unawaited(
+              showBabyStatusPanel(context, panel: BabyStatusPanel.milestone),
+            ),
           ),
-          _StatusModuleCard(
-            title: '宝宝健康',
-            bodyText: '筛查、消化、皮肤和情绪跟踪',
-            icon: Icons.health_and_safety_outlined,
-            accent: const Color(0xff7d64aa),
-            background: const Color(0xfffbf7ff),
-            action: '查看筛查',
-            onAction: () => _showDetail('baby-health'),
+          BabyHealthCard(
+            onOpen: () => unawaited(
+              showBabyStatusPanel(context, panel: BabyStatusPanel.health),
+            ),
           ),
-          _StatusModuleCard(
-            title: '宝宝睡眠',
-            bodyText: '总睡眠、最长睡眠、活动和哭闹',
-            icon: Icons.nightlight_outlined,
-            accent: const Color(0xffff9677),
-            background: const Color(0xfffff8f1),
-            action: '查看报告',
-            onAction: () => _showDetail('baby-sleep'),
+          BabySleepCard(
+            onOpen: () => unawaited(
+              showBabyStatusPanel(context, panel: BabyStatusPanel.sleep),
+            ),
           ),
         ],
       ),
       const SizedBox(height: 12),
-      if (_activeDetail == 'baby-feed-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-baby-feed-info'),
-          title: '奶量摄入说明',
-          subtitle: '亲喂、瓶喂与辅食记录',
-          rows: const [
-            ('今日摄入', '待同步', '会汇总瓶喂奶量、亲喂估算和辅食。'),
-            ('今日喂奶', '待同步', '同步后展示次数和时间分布。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ] else if (_activeDetail == 'growth-milestone') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-growth-milestone'),
-          title: '成长 milestone',
-          subtitle: '最近成长事件',
-          rows: const [
-            ('2026.05.28', '说出完整主谓短句', '语言组织能力继续发展。'),
-            ('2026.05.12', '独立上下低矮台阶', '动作计划能力更成熟。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ] else if (_activeDetail == 'baby-health') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-baby-health'),
-          title: '宝宝健康',
-          subtitle: '健康筛查入口',
-          rows: const [
-            ('筛查', '自闭症风险筛查', '待接入后台结果。'),
-            ('消化', '消化系统风险筛查', '待接入后台结果。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ] else if (_activeDetail == 'baby-sleep') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-baby-sleep'),
-          title: '宝宝睡眠',
-          subtitle: '睡眠报告入口',
-          rows: const [
-            ('今日睡眠', '4h 57min', '夜间睡眠和白天小睡汇总。'),
-            ('报告', '待同步', '同步后展示趋势和建议。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ],
       BabyGrowthChart(
         key: const ValueKey('status-baby-growth-curve-preview'),
         records: _controller.growthRecords,
@@ -948,270 +866,6 @@ class _StatusModuleGrid extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _StatusModuleCard extends StatelessWidget {
-  const _StatusModuleCard({
-    required this.title,
-    required this.icon,
-    required this.accent,
-    required this.background,
-    this.bodyText,
-    this.action,
-    this.onAction,
-  });
-
-  final String title;
-  final String? bodyText;
-  final String? action;
-  final VoidCallback? onAction;
-  final IconData icon;
-  final Color accent;
-  final Color background;
-
-  @override
-  Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-      color: const Color(0xff35212c),
-      fontSize: 14,
-      fontWeight: FontWeight.w700,
-      height: 1.05,
-    );
-    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: const Color(0xff7a6870),
-      fontSize: 10.5,
-      fontWeight: FontWeight.w500,
-      height: 1.24,
-    );
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.86)),
-        boxShadow: const [],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onAction,
-          child: Stack(
-            children: [
-              Positioned(
-                right: -24,
-                bottom: -32,
-                child: ImageFiltered(
-                  imageFilter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                  child: Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: accent.withValues(alpha: 0.12),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: titleStyle,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: accent.withValues(alpha: 0.16),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(icon, size: 16, color: accent),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    if (bodyText != null)
-                      Text(
-                        bodyText!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: helperStyle,
-                      ),
-                    if (action != null) ...[
-                      const SizedBox(height: 4),
-                      Transform.translate(
-                        offset: const Offset(-10, 0),
-                        child: _StatusModuleActionPill(
-                          label: action!,
-                          accent: accent,
-                          onTap: onAction,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusModuleActionPill extends StatelessWidget {
-  const _StatusModuleActionPill({
-    required this.label,
-    required this.accent,
-    this.onTap,
-  });
-
-  final String label;
-  final Color accent;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: onTap != null,
-      label: label,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.80),
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-          ),
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: accent,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusDetailPanel extends StatelessWidget {
-  const _StatusDetailPanel({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.rows,
-    required this.onClose,
-  });
-
-  final String title;
-  final String subtitle;
-  final List<(String, String, String)> rows;
-  final VoidCallback onClose;
-
-  @override
-  Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-      color: MomCozyColors.foreground,
-      fontWeight: FontWeight.w900,
-    );
-    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: MomCozyColors.mutedForeground,
-      fontWeight: FontWeight.w700,
-      height: 1.35,
-    );
-
-    return DecoratedBox(
-      decoration: MomCozyDecorations.card(
-        color: MomCozyColors.card.withValues(alpha: 0.72),
-        borderColor: MomCozyColors.border.withValues(alpha: 0.72),
-        radius: 18,
-        shadows: MomCozyShadows.soft,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 12, 10, 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, style: titleStyle),
-                      const SizedBox(height: 3),
-                      Text(subtitle, style: helperStyle),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  tooltip: '关闭详情',
-                  onPressed: onClose,
-                  icon: const Icon(Icons.close_rounded, size: 18),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            for (final row in rows) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 78,
-                      child: Text(
-                        row.$1,
-                        style: helperStyle?.copyWith(
-                          color: const Color(0xff9c6b7f),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(row.$2, style: titleStyle),
-                          const SizedBox(height: 2),
-                          Text(row.$3, style: helperStyle),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
     );
   }
 }

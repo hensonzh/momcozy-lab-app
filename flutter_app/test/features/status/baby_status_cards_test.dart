@@ -155,6 +155,45 @@ void main() {
       );
       expect(find.widgetWithText(FilledButton, '保存修改'), findsOneWidget);
     });
+
+    testWidgets('renders aligned health and sleep cards with local actions', (
+      tester,
+    ) async {
+      await _setViewport(tester);
+      var healthTaps = 0;
+      var sleepTaps = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: momCozyTheme(),
+          home: Scaffold(
+            body: SizedBox(
+              height: 180,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: BabyHealthCard(onOpen: () => healthTaps += 1),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(child: BabySleepCard(onOpen: () => sleepTaps += 1)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('查看健康信息'), findsOneWidget);
+      expect(find.text('今日睡眠'), findsOneWidget);
+      expect(find.text('4h 57min'), findsOneWidget);
+      expect(find.text('查看报告'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('status-baby-health-action')));
+      await tester.tap(find.byKey(const ValueKey('status-baby-sleep-action')));
+      expect(healthTaps, 1);
+      expect(sleepTaps, 1);
+      expect(tester.takeException(), isNull);
+    });
   });
 }
 
