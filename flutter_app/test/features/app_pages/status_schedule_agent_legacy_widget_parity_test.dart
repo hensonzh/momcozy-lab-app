@@ -12,6 +12,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -96,6 +97,8 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('母乳产出'), findsOneWidget);
+      expect(find.text('210mL'), findsOneWidget);
+      expect(find.text('3次'), findsOneWidget);
       expect(find.text('乳房健康'), findsOneWidget);
       expect(find.text('产后恢复'), findsOneWidget);
       expect(find.text('补能与休息'), findsOneWidget);
@@ -252,12 +255,12 @@ void main() {
         tester,
         find.byKey(const ValueKey('status-milk-trend-preview')),
       );
-      expect(find.text('近7日趋势'), findsOneWidget);
+      expect(find.bySemanticsLabel('母乳趋势图，共 7 天'), findsOneWidget);
       await tester.tap(
         find.byKey(const ValueKey('status-milk-trend-segment-月')),
       );
       await tester.pumpAndSettle();
-      expect(find.text('近30日趋势'), findsOneWidget);
+      expect(find.bySemanticsLabel('母乳趋势图，共 30 天'), findsOneWidget);
 
       await _scrollToText(tester, '母乳产出');
       await tester.tap(
@@ -1145,6 +1148,30 @@ MomCozyApiRuntime _runtime({
             'status': 'active',
           },
         ],
+      },
+      milkTrendsEndpoint: const {
+        'items': [
+          {
+            'date': '2026-07-01',
+            'pumped_milk_volume_ml': 150,
+            'pumping_count': 2,
+            'measured_only': true,
+          },
+          {
+            'date': '2026-07-02',
+            'pumped_milk_volume_ml': 180,
+            'pumping_count': 2,
+            'measured_only': true,
+          },
+          {
+            'date': '2026-07-03',
+            'pumped_milk_volume_ml': 210,
+            'pumping_count': 3,
+            'measured_only': true,
+          },
+        ],
+        'days': 31,
+        'include_today': true,
       },
       scheduleDayPlanEndpoint: const {
         'items': <Object?>[

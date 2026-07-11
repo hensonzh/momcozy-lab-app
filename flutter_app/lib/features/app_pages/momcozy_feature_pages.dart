@@ -20,6 +20,7 @@ import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart'
 import 'package:momcozy_flutter_app/features/status/domain/pregnancy_diary.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:pdfrx/pdfrx.dart';
@@ -890,149 +891,19 @@ class _StatusPageState extends State<_StatusPage> {
     }
 
     return [
-      Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Transform.translate(
-          offset: const Offset(3, -1),
-          child: _StatusModuleGrid(
-            key: const ValueKey('status-postpartum-mom-module-grid'),
-            children: [
-              Transform.translate(
-                offset: const Offset(0, 4),
-                child: _StatusModuleCard(
-                  key: const ValueKey('status-module-milk-output'),
-                  title: '母乳产出',
-                  icon: Icons.water_drop_outlined,
-                  accent: MomCozyColors.primary,
-                  background: const Color(0xfffff7fb),
-                  metrics: [
-                    _StatusModuleMetric(
-                      label: '今日产出',
-                      value: '待记录',
-                      showHelp: true,
-                      helpKey: ValueKey('status-milk-output-info-button'),
-                      onHelpTap: () => _showDetail('milk-info'),
-                    ),
-                    const _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
-                  ],
-                ),
-              ),
-              Transform.translate(
-                offset: const Offset(0, 4),
-                child: _StatusModuleCard(
-                  key: ValueKey('status-module-breast-health'),
-                  title: '乳房健康',
-                  showHelp: true,
-                  helpKey: ValueKey('status-breast-health-info-button'),
-                  onHelpTap: () => _showDetail('breast-info'),
-                  bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
-                  action: '查看《乳房健康日记》',
-                  icon: Icons.favorite_border_rounded,
-                  accent: const Color(0xffb96f55),
-                  background: const Color(0xfffff8f1),
-                  onAction: () => _showDetail('breast-health'),
-                ),
-              ),
-              Transform.translate(
-                offset: const Offset(0, 1),
-                child: _StatusModuleCard(
-                  key: ValueKey('status-module-postpartum-recovery'),
-                  title: '产后恢复',
-                  bodyText: '正在执行盆底肌康复训练',
-                  action: '查看计划',
-                  icon: Icons.self_improvement_rounded,
-                  accent: const Color(0xff388b72),
-                  background: const Color(0xfff2fffb),
-                  onAction: () => _showDetail('postpartum-recovery'),
-                ),
-              ),
-              _StatusModuleCard(
-                key: const ValueKey('status-module-rest-nutrition'),
-                title: '补能与休息',
-                showHelp: true,
-                helpKey: const ValueKey('status-rest-info-button'),
-                onHelpTap: () => _showDetail('rest-info'),
-                bodyText: '待开通睡眠与营养功能',
-                icon: Icons.local_cafe_outlined,
-                accent: const Color(0xffb9792a),
-                background: const Color(0xfffffaf0),
-              ),
-            ],
-          ),
-        ),
-      ),
-      const SizedBox(height: 8),
-      if (_activeDetail == 'milk-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-milk-info'),
-          title: '今日产出说明',
-          subtitle: '母乳产出统计',
-          rows: const [
-            ('今日产出', '待记录', '会汇总吸乳记录与亲喂估算。'),
-            ('今日吸奶', '待同步', '同步后展示次数、时长和左右侧数据。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'breast-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-breast-info'),
-          title: '乳房健康说明',
-          subtitle: '涨奶、硬块和疼痛追踪',
-          rows: const [
-            ('记录内容', '不适位置和疼痛等级', '帮助后续分析风险与护理建议。'),
-            ('异常提醒', '持续疼痛需咨询专业人士', '必要时联系 IBCLC 或医生。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'breast-health') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-breast-health'),
-          title: '乳房健康日记',
-          subtitle: '最近 3 天记录',
-          rows: const [
-            ('三天前 晚间', '轻微涨奶', '右侧乳房有胀感，吸奶后明显缓解。'),
-            ('昨天 上午', '发现硬块', '左侧外上区域摸到硬块，按压时有疼痛感。'),
-            ('今天', '涨奶硬块', '最近出现涨奶和硬块，伴随按压疼痛。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'postpartum-recovery') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-postpartum-recovery'),
-          title: '盆底肌康复训练',
-          subtitle: '产后恢复计划',
-          rows: const [
-            ('第 1-2 天', '已完成', '盆底肌唤醒练习'),
-            ('第 3-5 天', '进行中', '骨盆稳定训练'),
-            ('第 6-7 天', '待开始', '腰背与肩颈放松'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'rest-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-rest-info'),
-          title: '补能与休息说明',
-          subtitle: '睡眠与营养能力建设中',
-          rows: const [
-            ('睡眠', '待开通', '后续会汇总夜间睡眠和白天休息。'),
-            ('营养', '待开通', '后续会记录补水、热量和重点营养。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ],
-      _StatusTrendPreview(
-        key: const ValueKey('status-milk-trend-preview'),
-        selectedMode: _milkTrendMode,
-        onModeChanged: (mode) {
+      PostpartumMomDashboard(
+        key: const ValueKey('status-postpartum-mom-dashboard'),
+        milkTrends: _controller.milkTrends,
+        now: _controller.now,
+        windowDays: _milkTrendMode == '月' ? 30 : 7,
+        onWindowDaysChanged: (days) {
           setState(() {
-            _milkTrendMode = mode;
+            _milkTrendMode = days == 30 ? '月' : '周';
             _persistInteractionState();
           });
+        },
+        onAgentPrompt: (prompt) {
+          context.go('/', extra: {'agentPrefill': prompt});
         },
       ),
     ];
@@ -1168,14 +1039,12 @@ class _StatusModuleMetric {
   const _StatusModuleMetric({
     required this.label,
     required this.value,
-    this.showHelp = false,
     this.helpKey,
     this.onHelpTap,
   });
 
   final String label;
   final String value;
-  final bool showHelp;
   final Key? helpKey;
   final VoidCallback? onHelpTap;
 }
@@ -1189,7 +1058,7 @@ class _StatusModuleAction {
 }
 
 class _StatusModuleGrid extends StatelessWidget {
-  const _StatusModuleGrid({super.key, required this.children});
+  const _StatusModuleGrid({required this.children});
 
   final List<Widget> children;
 
@@ -1220,7 +1089,6 @@ class _StatusModuleGrid extends StatelessWidget {
 
 class _StatusModuleCard extends StatelessWidget {
   const _StatusModuleCard({
-    super.key,
     required this.title,
     required this.icon,
     required this.accent,
@@ -1230,9 +1098,6 @@ class _StatusModuleCard extends StatelessWidget {
     this.action,
     this.onAction,
     this.actions = const [],
-    this.showHelp = false,
-    this.helpKey,
-    this.onHelpTap,
   });
 
   final String title;
@@ -1241,9 +1106,6 @@ class _StatusModuleCard extends StatelessWidget {
   final String? action;
   final VoidCallback? onAction;
   final List<_StatusModuleAction> actions;
-  final bool showHelp;
-  final Key? helpKey;
-  final VoidCallback? onHelpTap;
   final IconData icon;
   final Color accent;
   final Color background;
@@ -1319,8 +1181,6 @@ class _StatusModuleCard extends StatelessWidget {
                                   style: titleStyle,
                                 ),
                               ),
-                              if (showHelp || onHelpTap != null)
-                                _StatusHelpDot(key: helpKey, onTap: onHelpTap),
                             ],
                           ),
                         ),
@@ -1408,7 +1268,7 @@ class _StatusModuleMetricRows extends StatelessWidget {
                               ),
                         ),
                       ),
-                      if (metric.showHelp || metric.onHelpTap != null)
+                      if (metric.onHelpTap != null)
                         _StatusHelpDot(
                           key: metric.helpKey,
                           size: 14,
@@ -1886,6 +1746,90 @@ class _StatusBabyGrowthCurvePreview extends StatelessWidget {
   }
 }
 
+class _StatusTrendLegendItem extends StatelessWidget {
+  const _StatusTrendLegendItem({
+    required this.label,
+    required this.color,
+    this.dashed = false,
+    this.band = false,
+    this.style,
+  });
+
+  final String label;
+  final Color color;
+  final bool dashed;
+  final bool band;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CustomPaint(
+          size: Size(12, band ? 8 : 2),
+          painter: _StatusLegendMarkPainter(
+            color: color,
+            dashed: dashed,
+            band: band,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(label, style: style),
+      ],
+    );
+  }
+}
+
+class _StatusLegendMarkPainter extends CustomPainter {
+  const _StatusLegendMarkPainter({
+    required this.color,
+    required this.dashed,
+    required this.band,
+  });
+
+  final Color color;
+  final bool dashed;
+  final bool band;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (band) {
+      canvas.drawRect(Offset.zero & size, Paint()..color = color);
+      return;
+    }
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+    if (!dashed) {
+      canvas.drawLine(
+        Offset(0, size.height / 2),
+        Offset(size.width, size.height / 2),
+        paint,
+      );
+      return;
+    }
+    canvas.drawLine(
+      Offset(0, size.height / 2),
+      Offset(4, size.height / 2),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(7, size.height / 2),
+      Offset(size.width, size.height / 2),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _StatusLegendMarkPainter oldDelegate) {
+    return oldDelegate.color != color ||
+        oldDelegate.dashed != dashed ||
+        oldDelegate.band != band;
+  }
+}
+
 class _StatusDetailPanel extends StatelessWidget {
   const _StatusDetailPanel({
     super.key,
@@ -2153,383 +2097,6 @@ class _StatusSegmentedPills extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class _StatusTrendPreview extends StatelessWidget {
-  const _StatusTrendPreview({
-    super.key,
-    required this.selectedMode,
-    required this.onModeChanged,
-  });
-
-  final String selectedMode;
-  final ValueChanged<String> onModeChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final modeLabel = selectedMode == '月' ? '近30日趋势' : '近7日趋势';
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xfffffaf0),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xfff0dfc4)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Transform.translate(
-            offset: const Offset(0, -3),
-            child: Row(
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: const Color(0xffffe4b8),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.gps_fixed_rounded,
-                    size: 14,
-                    color: Color(0xffb9792a),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '母乳趋势',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const Icon(
-                  Icons.keyboard_arrow_up_rounded,
-                  size: 16,
-                  color: MomCozyColors.mutedForeground,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Transform.translate(
-            offset: const Offset(1, -1),
-            child: Row(
-              children: [
-                const Expanded(child: _StatusTrendLegend()),
-                _StatusSegmentedPills(
-                  selected: selectedMode,
-                  options: const ['周', '月'],
-                  color: const Color(0xffb9792a),
-                  keyPrefix: 'status-milk-trend',
-                  onChanged: onModeChanged,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            modeLabel,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: const Color(0xff9c7651),
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 188,
-            child: CustomPaint(
-              painter: _StatusTrendPreviewPainter(mode: selectedMode),
-              child: const SizedBox.expand(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusTrendPreviewPainter extends CustomPainter {
-  const _StatusTrendPreviewPainter({required this.mode});
-
-  final String mode;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final labels = mode == '月'
-        ? const ['第1周', '第2周', '第3周', '第4周']
-        : const ['06/26', '06/27', '06/28', '06/29', '06/30', '07/01', '07/02'];
-    final segmentCount = labels.length - 1;
-    final chartRect = Rect.fromLTWH(44, 1, size.width - 58, size.height - 44);
-    final axisPaint = Paint()
-      ..color = const Color(0xffb9792a)
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-    final linePaint = Paint()
-      ..color = const Color(0xffb9792a)
-      ..strokeWidth = 2.5
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    final gridPaint = Paint()
-      ..color = const Color(0xffcfe8d8)
-      ..strokeWidth = 1;
-    for (var index = 0; index <= 4; index += 1) {
-      final y = chartRect.top + chartRect.height * index / 4;
-      _drawDashedLine(
-        canvas,
-        Offset(chartRect.left, y),
-        Offset(chartRect.right, y),
-        gridPaint,
-      );
-      _drawChartText(
-        canvas,
-        '${4 - index} mL',
-        Offset(5, y - 7),
-        width: 34,
-        color: const Color(0xff9c7651),
-        fontSize: 8,
-        textAlign: TextAlign.right,
-      );
-    }
-
-    for (var index = 0; index <= segmentCount; index += 1) {
-      final x = chartRect.left + chartRect.width * index / segmentCount;
-      _drawDashedLine(
-        canvas,
-        Offset(x, chartRect.top),
-        Offset(x, chartRect.bottom),
-        gridPaint,
-      );
-    }
-
-    canvas.drawLine(chartRect.topLeft, chartRect.bottomLeft, axisPaint);
-    canvas.drawLine(chartRect.bottomLeft, chartRect.bottomRight, axisPaint);
-    final actual = Path()..moveTo(chartRect.left, chartRect.bottom);
-    final points = <Offset>[
-      for (var index = 0; index <= segmentCount; index += 1)
-        Offset(
-          chartRect.left + chartRect.width * index / segmentCount,
-          chartRect.bottom,
-        ),
-    ];
-    for (final point in points.skip(1)) {
-      actual.lineTo(point.dx, point.dy);
-    }
-    canvas.drawPath(actual, linePaint);
-
-    final dotPaint = Paint()
-      ..color = const Color(0xfffffaf0)
-      ..style = PaintingStyle.fill;
-    final dotBorderPaint = Paint()
-      ..color = const Color(0xffb9792a)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-    for (final point in points) {
-      canvas.drawCircle(point, 3, dotPaint);
-      canvas.drawCircle(point, 3, dotBorderPaint);
-    }
-
-    for (var index = 0; index < labels.length; index += 1) {
-      _drawChartText(
-        canvas,
-        labels[index],
-        Offset(points[index].dx - 16, chartRect.bottom + 10),
-        width: 36,
-        color: const Color(0xff9c7651),
-        fontSize: 8,
-        textAlign: TextAlign.center,
-      );
-    }
-  }
-
-  void _drawDashedLine(Canvas canvas, Offset start, Offset end, Paint paint) {
-    const dashWidth = 3.0;
-    const dashGap = 4.0;
-    if ((start.dx - end.dx).abs() < 0.1) {
-      var y = start.dy;
-      while (y < end.dy) {
-        final next = math.min(y + dashWidth, end.dy);
-        canvas.drawLine(Offset(start.dx, y), Offset(end.dx, next), paint);
-        y += dashWidth + dashGap;
-      }
-      return;
-    }
-    var x = start.dx;
-    while (x < end.dx) {
-      final next = math.min(x + dashWidth, end.dx);
-      canvas.drawLine(Offset(x, start.dy), Offset(next, end.dy), paint);
-      x += dashWidth + dashGap;
-    }
-  }
-
-  void _drawChartText(
-    Canvas canvas,
-    String text,
-    Offset offset, {
-    required double width,
-    required Color color,
-    required double fontSize,
-    TextAlign textAlign = TextAlign.left,
-  }) {
-    final painter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: FontWeight.w400,
-          fontFamily: MomCozyTypography.fontFamily,
-          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-        ),
-      ),
-      textAlign: textAlign,
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: width);
-    painter.paint(canvas, offset);
-  }
-
-  @override
-  bool shouldRepaint(covariant _StatusTrendPreviewPainter oldDelegate) {
-    return oldDelegate.mode != mode;
-  }
-}
-
-class _StatusTrendLegend extends StatelessWidget {
-  const _StatusTrendLegend();
-
-  @override
-  Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: const Color(0xff8a6742),
-      fontSize: 9,
-      fontWeight: FontWeight.w400,
-    );
-    return Wrap(
-      spacing: 9,
-      runSpacing: 6,
-      children: const [
-        _StatusTrendLegendItem(
-          label: '吸乳总量',
-          color: Color(0xffb9792a),
-          dashed: false,
-        ),
-        _StatusTrendLegendItem(
-          label: '含亲喂估算',
-          color: Color(0xff8a5f7d),
-          dashed: true,
-        ),
-        _StatusTrendLegendItem(
-          label: '目标参考区间',
-          color: Color(0xffdff4e8),
-          band: true,
-        ),
-      ].map((item) => item.withStyle(style)).toList(growable: false),
-    );
-  }
-}
-
-class _StatusTrendLegendItem extends StatelessWidget {
-  const _StatusTrendLegendItem({
-    required this.label,
-    required this.color,
-    this.dashed = false,
-    this.band = false,
-    this.style,
-  });
-
-  final String label;
-  final Color color;
-  final bool dashed;
-  final bool band;
-  final TextStyle? style;
-
-  _StatusTrendLegendItem withStyle(TextStyle? nextStyle) {
-    return _StatusTrendLegendItem(
-      label: label,
-      color: color,
-      dashed: dashed,
-      band: band,
-      style: nextStyle,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CustomPaint(
-          size: Size(12, band ? 8 : 2),
-          painter: _StatusTrendLegendMarkPainter(
-            color: color,
-            dashed: dashed,
-            band: band,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(label, style: style),
-      ],
-    );
-  }
-}
-
-class _StatusTrendLegendMarkPainter extends CustomPainter {
-  const _StatusTrendLegendMarkPainter({
-    required this.color,
-    required this.dashed,
-    required this.band,
-  });
-
-  final Color color;
-  final bool dashed;
-  final bool band;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (band) {
-      canvas.drawRect(
-        Offset.zero & size,
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.fill,
-      );
-      return;
-    }
-
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    if (!dashed) {
-      canvas.drawLine(
-        Offset(0, size.height / 2),
-        Offset(size.width, size.height / 2),
-        paint,
-      );
-      return;
-    }
-    var x = 0.0;
-    while (x < size.width) {
-      final next = (x + 4 > size.width) ? size.width : x + 4;
-      canvas.drawLine(
-        Offset(x, size.height / 2),
-        Offset(next, size.height / 2),
-        paint,
-      );
-      x += 7;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _StatusTrendLegendMarkPainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.dashed != dashed ||
-        oldDelegate.band != band;
   }
 }
 
