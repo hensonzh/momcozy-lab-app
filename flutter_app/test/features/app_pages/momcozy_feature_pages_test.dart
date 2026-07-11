@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
@@ -14,9 +15,11 @@ import 'package:momcozy_flutter_app/features/records/data/records_api_repository
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
+import 'package:pdfrx/pdfrx.dart';
 
 import '../../support/fixture_api_transport.dart';
 import '../../support/fake_agent_voice.dart';
+import '../../support/test_pdf_fixture.dart';
 
 void main() {
   group('MomCozy feature pages', () {
@@ -1390,9 +1393,7 @@ void main() {
       expect(find.text('上传示例资料'), findsNothing);
     });
 
-    testWidgets('media viewer reads resource query and renders viewer state', (
-      tester,
-    ) async {
+    testWidgets('media viewer rejects retired demo PDF URLs', (tester) async {
       final router = createMomCozyRouter(
         initialLocation:
             '/media-viewer?kind=pdf&url=%2Fdemo%2Fw1.pdf&title=W1%20使用教程',
@@ -1406,7 +1407,11 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('W1 使用教程'), findsOneWidget);
-      expect(find.text('加载 PDF…'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('media-viewer-load-error')),
+        findsOneWidget,
+      );
+      expect(find.text('PDF 加载失败'), findsOneWidget);
       expect(find.text('缺少资源参数，请从资料卡片进入。'), findsNothing);
     });
 
@@ -1518,6 +1523,106 @@ void main() {
 
       expect(connector.calls, 2);
       expect(find.byKey(const ValueKey('product-asset-image')), findsOneWidget);
+    });
+
+    testWidgets('media viewer loads an authenticated multi-page PDF', (
+      tester,
+    ) async {
+      _installPathProviderMock();
+      final connector = _FakeProductAssetConnector([
+        _assetResponse(
+          statusCode: 200,
+          contentType: 'application/pdf',
+          body: buildTwoPageTestPdf(),
+        ),
+      ]);
+      final repository = ProductAssetRepository(
+        baseUri: Uri.parse('https://api.example.test'),
+        connector: connector,
+      );
+      final router = createMomCozyRouter(
+        initialLocation: Uri(
+          path: '/media-viewer',
+          queryParameters: const {
+            'kind': 'pdf',
+            'url': '/v1/assets/asset-pdf?kind=pdf',
+            'title': 'Air1 快速上手指南',
+          },
+        ).toString(),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await _pumpUntilFound(
+        tester,
+        find.byKey(const ValueKey('media-pdf-viewer')),
+      );
+
+      expect(connector.calls, 1);
+      expect(find.text('Air1 快速上手指南'), findsOneWidget);
+      final viewer = tester.widget<PdfViewer>(find.byType(PdfViewer));
+      expect(viewer.params.minScale, 0.1);
+      expect(viewer.params.maxScale, 4);
+      expect(viewer.params.panAxis, PanAxis.free);
+      expect(viewer.controller, isNotNull);
+      expect(viewer.key, const ValueKey('media-pdf-document-1'));
+      final documentRef = viewer.documentRef as PdfDocumentRefData;
+      expect(latin1.decode(documentRef.data), contains('/Count 2'));
+    });
+
+    testWidgets('media PDF failure can be retried without leaving the page', (
+      tester,
+    ) async {
+      _installPathProviderMock();
+      final connector = _FakeProductAssetConnector([
+        _assetResponse(statusCode: 503, contentType: 'application/json'),
+        _assetResponse(
+          statusCode: 200,
+          contentType: 'application/pdf',
+          body: buildTwoPageTestPdf(),
+        ),
+      ]);
+      final repository = ProductAssetRepository(
+        baseUri: Uri.parse('https://api.example.test'),
+        connector: connector,
+      );
+      final router = createMomCozyRouter(
+        initialLocation: Uri(
+          path: '/media-viewer',
+          queryParameters: const {
+            'kind': 'pdf',
+            'url': '/v1/assets/asset-pdf?kind=pdf',
+          },
+        ).toString(),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await _pumpUntilFound(
+        tester,
+        find.byKey(const ValueKey('media-viewer-load-error')),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('media-viewer-retry')));
+      await _pumpUntilFound(
+        tester,
+        find.byKey(const ValueKey('media-pdf-viewer')),
+      );
+
+      expect(connector.calls, 2);
+      expect(find.byType(PdfViewer), findsOneWidget);
+      expect(
+        tester.widget<PdfViewer>(find.byType(PdfViewer)).key,
+        const ValueKey('media-pdf-document-2'),
+      );
     });
 
     testWidgets('IBCLC page posts client event through runtime client', (
@@ -2229,6 +2334,34 @@ class _FakeProductAssetConnector implements ProductAssetHttpConnector {
     calls += 1;
     return _responses.removeAt(0);
   }
+}
+
+Future<void> _pumpUntilFound(WidgetTester tester, Finder finder) async {
+  for (var frame = 0; frame < 80; frame += 1) {
+    await tester.pump(const Duration(milliseconds: 16));
+    if (finder.evaluate().isNotEmpty) return;
+  }
+  fail(
+    'Expected widget did not appear '
+    '(pdfViewer=${find.byType(PdfViewer).evaluate().length}, '
+    'loadError=${find.byKey(const ValueKey('media-viewer-load-error')).evaluate().length}, '
+    'loading=${find.byKey(const ValueKey('media-viewer-loading')).evaluate().length}).',
+  );
+}
+
+void _installPathProviderMock() {
+  const channel = MethodChannel('plugins.flutter.io/path_provider');
+  final directory = Directory.systemTemp.createTempSync('momcozy-pdf-test-');
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(channel, (call) async {
+        if (call.method == 'getTemporaryDirectory') return directory.path;
+        return null;
+      });
+  addTearDown(() async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
+    if (directory.existsSync()) directory.deleteSync(recursive: true);
+  });
 }
 
 class _ThrowingPumpProtocolPlatform implements PumpProtocolPlatform {
