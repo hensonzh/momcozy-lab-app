@@ -327,12 +327,17 @@ void main() {
 
   test('runtime controller replaces runtime and preserves observability', () {
     final observability = MomCozyObservability();
+    final productAssetRepository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      connector: const _NeverProductAssetConnector(),
+    );
     final runtime = MomCozyApiRuntime(
       jsonTransport: FixtureApiJsonTransport({'status': 200, 'data': {}}),
       userId: 'user-fixture',
       babyId: 'baby-fixture',
       locale: 'zh-CN',
       observability: observability,
+      productAssetRepository: productAssetRepository,
     );
     final controller = MomCozyRuntimeController(runtime);
     var notifyCount = 0;
@@ -355,6 +360,10 @@ void main() {
     expect(controller.runtime.userId, 'session-user');
     expect(controller.runtime.session.accessToken, 'session-access');
     expect(controller.runtime.observability, same(observability));
+    expect(
+      controller.runtime.productAssetRepository,
+      same(productAssetRepository),
+    );
     controller.dispose();
   });
 
@@ -409,6 +418,19 @@ void main() {
     expect(controller.runtime.observability, same(observability));
     controller.dispose();
   });
+}
+
+class _NeverProductAssetConnector implements ProductAssetHttpConnector {
+  const _NeverProductAssetConnector();
+
+  @override
+  Future<ProductAssetHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+    required int maxBytes,
+  }) {
+    throw UnsupportedError('No product asset request expected.');
+  }
 }
 
 class _RuntimeMigrationStore implements StorageMigrationTargetStore {

@@ -9,6 +9,8 @@ import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
+import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
+import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
@@ -11233,7 +11235,7 @@ class _MediaViewerContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (media.kind) {
-      'image' => const _ImageViewerStage(),
+      'image' => _ImageViewerStage(media: media),
       'video' => const _VideoViewerStage(),
       _ => const _PdfViewerStage(),
     };
@@ -11261,21 +11263,176 @@ class _PdfViewerStage extends StatelessWidget {
   }
 }
 
-class _ImageViewerStage extends StatelessWidget {
-  const _ImageViewerStage();
+class _ImageViewerStage extends StatefulWidget {
+  const _ImageViewerStage({required this.media});
+
+  final _MediaViewerRouteState media;
+
+  @override
+  State<_ImageViewerStage> createState() => _ImageViewerStageState();
+}
+
+class _ImageViewerStageState extends State<_ImageViewerStage> {
+  static const _doubleTapScale = 2.5;
+
+  final _transformationController = TransformationController();
+  Offset? _doubleTapPosition;
+
+  @override
+  void didUpdateWidget(_ImageViewerStage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.media.url != widget.media.url) {
+      _transformationController.value = Matrix4.identity();
+    }
+  }
+
+  @override
+  void dispose() {
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  void _handleDoubleTap() {
+    if (_transformationController.value.getMaxScaleOnAxis() > 1.01) {
+      _transformationController.value = Matrix4.identity();
+      return;
+    }
+    final position = _doubleTapPosition ?? Offset.zero;
+    _transformationController.value =
+        Matrix4.diagonal3Values(_doubleTapScale, _doubleTapScale, 1)
+          ..setTranslationRaw(
+            -position.dx * (_doubleTapScale - 1),
+            -position.dy * (_doubleTapScale - 1),
+            0,
+          );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const ColoredBox(
+    final reference = ProductAssetReference.tryParse(
+      widget.media.url,
+      kind: widget.media.kind,
+      title: widget.media.title,
+    );
+    if (reference == null) {
+      return const _MediaViewerLoadError(message: '图片加载失败');
+    }
+    final repository = MomCozyRuntimeScope.maybeOf(
+      context,
+    )?.productAssetRepository;
+
+    return ColoredBox(
+      color: Colors.black,
+      child: ProductAssetImage(
+        reference: reference,
+        repository: repository,
+        fit: BoxFit.contain,
+        semanticLabel: widget.media.title,
+        loadingBuilder: (context) {
+          return const _MediaViewerLoading(label: '加载图片…');
+        },
+        errorBuilder: (context, error, retry) {
+          return _MediaViewerLoadError(message: '图片加载失败', onRetry: retry);
+        },
+        loadedBuilder: (context, content, image) {
+          return GestureDetector(
+            key: const ValueKey('media-image-viewer'),
+            behavior: HitTestBehavior.opaque,
+            onDoubleTapDown: (details) {
+              _doubleTapPosition = details.localPosition;
+            },
+            onDoubleTap: _handleDoubleTap,
+            child: InteractiveViewer(
+              key: const ValueKey('media-image-interactive-viewer'),
+              transformationController: _transformationController,
+              minScale: 1,
+              maxScale: 5,
+              panEnabled: true,
+              scaleEnabled: true,
+              clipBehavior: Clip.hardEdge,
+              child: SizedBox.expand(child: image),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _MediaViewerLoading extends StatelessWidget {
+  const _MediaViewerLoading({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      key: const ValueKey('media-viewer-loading'),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox.square(
+            dimension: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Color(0xb3ffffff),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xb3ffffff),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MediaViewerLoadError extends StatelessWidget {
+  const _MediaViewerLoadError({required this.message, this.onRetry});
+
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
       color: Colors.black,
       child: Center(
-        child: Text(
-          '加载图片…',
-          style: TextStyle(
-            color: Color(0xb3ffffff),
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
+        key: const ValueKey('media-viewer-load-error'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.broken_image_outlined,
+              color: Color(0xb3ffffff),
+              size: 32,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: const TextStyle(
+                color: Color(0xb3ffffff),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 8),
+              IconButton(
+                key: const ValueKey('media-viewer-retry'),
+                tooltip: '重新加载',
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded),
+                color: Colors.white,
+              ),
+            ],
+          ],
         ),
       ),
     );

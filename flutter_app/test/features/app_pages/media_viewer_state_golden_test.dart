@@ -1,11 +1,19 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
-  setUpAll(loadMomCozyTestFonts);
+  setUpAll(() async {
+    await loadMomCozyTestFonts();
+    _goldenImageBytes = await File('assets/images/M9.png').readAsBytes();
+  });
 
   group('Media Viewer state goldens', () {
     for (final viewport in _goldenViewports) {
@@ -19,11 +27,17 @@ void main() {
             RepaintBoundary(
               key: _goldenSurfaceKey,
               child: MomCozyFlutterApp(
+                apiRuntime: MomCozyApiRuntime.fromEnvironment(
+                  productAssetRepository: ProductAssetRepository(
+                    baseUri: Uri.parse('https://api.example.test'),
+                    connector: _GoldenProductAssetConnector(),
+                  ),
+                ),
                 router: createMomCozyRouter(initialLocation: state.location),
               ),
             ),
           );
-          await tester.pumpAndSettle();
+          await _pumpMediaState(tester, state);
 
           expect(
             find.byKey(const ValueKey('route-page-/media-viewer')),
@@ -41,7 +55,40 @@ void main() {
   });
 }
 
+Future<void> _pumpMediaState(
+  WidgetTester tester,
+  _MediaGoldenState state,
+) async {
+  for (var frame = 0; frame < 80; frame += 1) {
+    await tester.pump(const Duration(milliseconds: 16));
+    final routeReady = find
+        .byKey(const ValueKey('route-page-/media-viewer'))
+        .evaluate()
+        .isNotEmpty;
+    final mediaReady =
+        !state.location.contains('kind=image') ||
+        find.byKey(const ValueKey('product-asset-image')).evaluate().isNotEmpty;
+    if (routeReady && mediaReady) {
+      if (state.location.contains('kind=image')) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 80)),
+        );
+      }
+      await tester.pump(const Duration(milliseconds: 32));
+      return;
+    }
+    if (find
+        .byKey(const ValueKey('media-viewer-load-error'))
+        .evaluate()
+        .isNotEmpty) {
+      fail('Media viewer entered an error state.');
+    }
+  }
+  fail('Media viewer did not reach a stable golden state.');
+}
+
 const _goldenSurfaceKey = ValueKey('media-viewer-state-golden-surface');
+late Uint8List _goldenImageBytes;
 
 const _mediaStates = [
   _MediaGoldenState(
@@ -54,8 +101,8 @@ const _mediaStates = [
     label: 'image resource',
     fileName: 'image_resource_mobile.png',
     location:
-        '/media-viewer?kind=image&url=%2Fdemo%2Fpump-display.png&title=泵奶记录截图',
-    title: '泵奶记录截图',
+        '/media-viewer?kind=image&url=%2Fv1%2Fassets%2Fasset-image%3Fkind%3Dimage&title=Air1%20核心部件',
+    title: 'Air1 核心部件',
   ),
   _MediaGoldenState(
     label: 'video resource',
@@ -78,6 +125,22 @@ class _MediaGoldenState {
   final String fileName;
   final String location;
   final String title;
+}
+
+class _GoldenProductAssetConnector implements ProductAssetHttpConnector {
+  @override
+  Future<ProductAssetHttpResponse> get(
+    Uri uri, {
+    required Map<String, String> headers,
+    required int maxBytes,
+  }) async {
+    return ProductAssetHttpResponse(
+      statusCode: 200,
+      statusText: 'OK',
+      contentType: 'image/png',
+      body: _goldenImageBytes,
+    );
+  }
 }
 
 const _goldenViewports = [

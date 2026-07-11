@@ -4300,18 +4300,15 @@ milk_total: 120ml
   });
 
   testWidgets(
-    'Agent Hub renders skill asset media links and opens viewer actions',
+    'Agent Hub renders product asset media links and opens viewer actions',
     (tester) async {
       final actions = <AgentArtifactActionView>[];
-      const imageUrl =
-          '/skill-assets/device-guidance/air1/images/air1_guide_parts_components.png';
-      const pdfUrl =
-          '/skill-assets/device-guidance/air1/quick-start/momcozy-air1-quick-start-guidance.pdf';
-      const videoUrl =
-          '/skill-assets/device-guidance/air1/videos/air1-operation-zh.mp4';
+      const imageUrl = '/v1/assets/asset-image?kind=image';
+      const pdfUrl = '/v1/assets/asset-pdf?kind=pdf';
+      const videoUrl = '/v1/assets/asset-video?kind=video';
       const markdown =
           '''
-先看 $imageUrl
+先看 ![查看图片]($imageUrl)
 
 [打开 PDF]($pdfUrl)
 

@@ -92,6 +92,7 @@ class MomCozyApiRuntime {
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
     _productAssetRepository = productAssetRepository;
+    _hasInjectedProductAssetRepository = productAssetRepository != null;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
     _hasInjectedPumpProtocolPlatform = pumpProtocolPlatform != null;
@@ -306,6 +307,7 @@ class MomCozyApiRuntime {
   ApiMultipartTransport? _multipartTransport;
   AgentVoicePlaybackPlayer? _agentVoicePlaybackPlayer;
   ProductAssetRepository? _productAssetRepository;
+  late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
   PumpNativeRuntimeCoordinator? _pumpNativeRuntimeCoordinator;
@@ -488,12 +490,18 @@ class MomCozyRuntimeController extends ChangeNotifier {
         session,
         observability: _runtime.observability,
         agentVoicePlaybackPlayer: _runtime._agentVoicePlaybackPlayer,
+        productAssetRepository: _runtime._hasInjectedProductAssetRepository
+            ? _runtime._productAssetRepository
+            : null,
       );
     }
     return MomCozyApiRuntime.fromSession(
       session,
       observability: _runtime.observability,
       agentVoicePlaybackPlayer: _runtime._agentVoicePlaybackPlayer,
+      productAssetRepository: _runtime._hasInjectedProductAssetRepository
+          ? _runtime._productAssetRepository
+          : null,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {
