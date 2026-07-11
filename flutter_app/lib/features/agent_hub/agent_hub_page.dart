@@ -19,6 +19,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
@@ -285,8 +286,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
   _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
   String? _activeAutoVoicePlaybackId;
   String _autoVoiceAppendedText = '';
+  bool _autoVoiceHasSubmittedContent = false;
   AgentVoiceRealtimePlaybackSession? _autoVoiceSession;
   bool _autoVoiceSessionFinished = false;
+  final Set<String> _autoVoiceSubmittedArtifactTexts = <String>{};
+  final Set<String> _autoVoiceSubmittedMediaNarrations = <String>{};
   Object? _mediaVoiceEventIdentity;
   AgentMediaVoiceNarrationIndex _mediaVoiceNarrationIndex =
       AgentMediaVoiceNarrationIndex.fromEvents(const []);
@@ -1574,11 +1578,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final coordinator = widget.voicePlaybackCoordinator;
     final player = widget.voicePlaybackPlayer;
     final text = nextState.textContent.trim();
+    final artifactText = _autoVoiceArtifactTextForState(nextState);
+    final mediaNarrations = _autoVoiceMediaNarrationsForState(nextState);
     if (coordinator == null ||
         player == null ||
         !_autoVoiceEnabled ||
         !_canAutoVoicePlayback(nextState.phase) ||
-        text.isEmpty) {
+        (text.isEmpty && artifactText == null && mediaNarrations.isEmpty)) {
       return;
     }
 
@@ -1588,7 +1594,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _cancelActiveAutoVoiceSession();
       _activeAutoVoicePlaybackId = playbackId;
       _autoVoiceAppendedText = '';
+      _autoVoiceHasSubmittedContent = false;
       _autoVoiceSessionFinished = false;
+      _autoVoiceSubmittedArtifactTexts.clear();
+      _autoVoiceSubmittedMediaNarrations.clear();
+    }
+
+    final textToAppend = _nextAutoVoiceTextToAppend(text);
+    final hasUnsubmittedArtifact =
+        artifactText != null &&
+        !_autoVoiceSubmittedArtifactTexts.contains(artifactText);
+    final hasUnsubmittedMedia = mediaNarrations.any(
+      (narration) =>
+          !_autoVoiceSubmittedMediaNarrations.contains(narration.trim()),
+    );
+    if (_autoVoiceSession == null &&
+        textToAppend.trim().isEmpty &&
+        !hasUnsubmittedArtifact &&
+        !hasUnsubmittedMedia) {
+      return;
     }
 
     final session = _autoVoiceSession ?? _startAutoVoiceSession(playbackId);
@@ -1601,10 +1625,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
 
     _pendingAutoVoiceReplay = null;
-    final textToAppend = _nextAutoVoiceTextToAppend(text);
     if (textToAppend.trim().isNotEmpty) {
       session.append(textToAppend);
       _autoVoiceAppendedText = text;
+      _autoVoiceHasSubmittedContent = true;
+    }
+    if (mediaNarrations.isNotEmpty &&
+        _shouldFinishAutoVoicePlayback(nextState)) {
+      session.flush();
+    }
+    final supplementalTexts = <String>[
+      if (artifactText != null &&
+          _autoVoiceSubmittedArtifactTexts.add(artifactText))
+        artifactText,
+      ...mediaNarrations.map(_claimAutoVoiceMediaNarration).whereType<String>(),
+    ];
+    if (supplementalTexts.isNotEmpty) {
+      final separator = _autoVoiceAppendedText.isEmpty ? '' : '\n';
+      session.append('$separator${supplementalTexts.join(' ')}');
+      _autoVoiceHasSubmittedContent = true;
     }
     if (_shouldFinishAutoVoicePlayback(nextState)) {
       _finishActiveAutoVoiceSession();
@@ -1659,14 +1698,55 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   String? _resolveMediaVoiceNarration({required String url}) {
-    final identity = _state.events;
+    final narration = _mediaVoiceNarrationIndexForState(
+      _state,
+    ).resolve(url)?.trim();
+    if (narration == null || narration.isEmpty) return null;
+    _autoVoiceSubmittedMediaNarrations.add(narration);
+    return narration;
+  }
+
+  AgentMediaVoiceNarrationIndex _mediaVoiceNarrationIndexForState(
+    AgentStreamRunState state,
+  ) {
+    final identity = state.events;
     if (!identical(identity, _mediaVoiceEventIdentity)) {
       _mediaVoiceEventIdentity = identity;
       _mediaVoiceNarrationIndex = AgentMediaVoiceNarrationIndex.fromEvents(
-        _state.events,
+        state.events,
       );
     }
-    return _mediaVoiceNarrationIndex.resolve(url);
+    return _mediaVoiceNarrationIndex;
+  }
+
+  List<String> _autoVoiceMediaNarrationsForState(AgentStreamRunState state) {
+    if (!_shouldFinishAutoVoicePlayback(state)) return const <String>[];
+    return _mediaVoiceNarrationIndexForState(state).autoSpeakableTexts;
+  }
+
+  String? _autoVoiceArtifactTextForState(AgentStreamRunState state) {
+    if (state.textContent.trim().isNotEmpty ||
+        !_shouldFinishAutoVoicePlayback(state) ||
+        !state.canPublishArtifactEvents) {
+      return null;
+    }
+    return agentArtifactVoiceFallbackText(
+      _artifactCardsFromEvents(
+        _artifactEventsForState(state),
+        profileDefaults:
+            _profile?.birthPrepDefaults ?? const BirthPrepProfileDefaults(),
+      ),
+    );
+  }
+
+  String? _claimAutoVoiceMediaNarration(String? narration) {
+    final text = narration?.trim();
+    if (text == null ||
+        text.isEmpty ||
+        !_autoVoiceSubmittedMediaNarrations.add(text)) {
+      return null;
+    }
+    return text;
   }
 
   void _startVoicePlayback({
@@ -1701,7 +1781,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         activePlaybackId.isNotEmpty &&
         (state.isActive ||
             _pendingAutoVoiceReplay != null ||
-            _autoVoiceAppendedText.isNotEmpty)) {
+            _autoVoiceHasSubmittedContent)) {
       return activePlaybackId;
     }
     return _firstNonEmpty([state.messageId, state.runId, state.threadId]) ?? '';
@@ -1752,6 +1832,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelActiveAutoVoiceSession();
     _activeAutoVoicePlaybackId = null;
     _autoVoiceAppendedText = '';
+    _autoVoiceHasSubmittedContent = false;
+    _autoVoiceSubmittedArtifactTexts.clear();
+    _autoVoiceSubmittedMediaNarrations.clear();
   }
 
   void _queueBlockedAutoVoiceReplay(AgentStreamRunState state) {
@@ -1770,13 +1853,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted || !_autoVoiceEnabled) return;
     final pending = _pendingAutoVoiceReplay;
     if (pending == null) return;
-    if (pending.attempts >= 3 || pending.state.textContent.trim().isEmpty) {
+    if (pending.attempts >= 3 || !_hasAutoVoicePlaybackContent(pending.state)) {
       _pendingAutoVoiceReplay = null;
       return;
     }
 
     _pendingAutoVoiceReplay = pending.incrementAttempts();
     _maybeStartAutoVoicePlayback(pending.state);
+  }
+
+  bool _hasAutoVoicePlaybackContent(AgentStreamRunState state) {
+    return state.textContent.trim().isNotEmpty ||
+        _autoVoiceArtifactTextForState(state) != null ||
+        _autoVoiceMediaNarrationsForState(state).isNotEmpty;
   }
 
   void _cancelRun() {

@@ -107,6 +107,18 @@ class AgentMediaVoiceNarrationIndex {
   final Map<String, String> _spokenByMediaKey = {};
   final Set<String> _knownMediaKeys = {};
 
+  List<String> get autoSpeakableTexts {
+    final texts = <String>[];
+    final seen = <String>{};
+    for (final item in items) {
+      if (!item.isAutoSpeakable) continue;
+      final text = item.spokenText?.trim();
+      if (text == null || text.isEmpty || !seen.add(text)) continue;
+      texts.add(text);
+    }
+    return List<String>.unmodifiable(texts);
+  }
+
   String? resolve(String mediaId) {
     final keys = agentMediaVoiceLookupKeys(mediaId);
     for (final key in keys) {

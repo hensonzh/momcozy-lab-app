@@ -15,6 +15,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
@@ -2317,6 +2318,351 @@ void main() {
       '我放了一张阀门安装方向图。',
     );
   });
+
+  testWidgets(
+    'Agent Hub appends standalone media narration after a textless reply',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final player = _PageFakeVoicePlaybackPlayer();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '给我看安装示意图',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-standalone-media-voice',
+          'type': 'tool.completed',
+          'thread_id': 'thread-standalone-media-voice',
+          'run_id': 'run-standalone-media-voice',
+          'tool_call_id': 'tool-standalone-media-voice',
+          'sequence': 1,
+          'payload': {
+            'safe_output': {
+              'media_voice': [
+                {
+                  'media_id': '/v1/assets/instructional-image',
+                  'voice_policy': 'announce',
+                  'spoken_label': '我放了一张安装方向图，你可以对照检查。',
+                },
+                {
+                  'media_id': '/v1/assets/decorative-image',
+                  'voice_policy': 'silent',
+                  'spoken_label': '这句不应该播报。',
+                },
+              ],
+            },
+          },
+        }),
+      );
+      await tester.pump();
+
+      expect(player.realtimeSessions, isEmpty);
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-standalone-media-voice-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-standalone-media-voice',
+          'run_id': 'run-standalone-media-voice',
+          'sequence': 2,
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
+        '我放了一张安装方向图，你可以对照检查。',
+      ]);
+      expect(player.realtimeSessions.single.finishCount, 1);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub does not replay media narration already resolved from a URL',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final player = _PageFakeVoicePlaybackPlayer();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '怎么安装阀门',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-deduped-media-voice-tool',
+          'type': 'tool.completed',
+          'thread_id': 'thread-deduped-media-voice',
+          'run_id': 'run-deduped-media-voice',
+          'tool_call_id': 'tool-deduped-media-voice',
+          'sequence': 1,
+          'payload': {
+            'safe_output': {
+              'media_voice': [
+                {
+                  'media_id': '/v1/assets/valve-image',
+                  'voice_policy': 'announce',
+                  'spoken_label': '我放了一张阀门安装方向图。',
+                },
+              ],
+            },
+          },
+        }),
+      );
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-deduped-media-voice-delta',
+          'type': 'message.delta',
+          'thread_id': 'thread-deduped-media-voice',
+          'run_id': 'run-deduped-media-voice',
+          'message_id': 'message-deduped-media-voice',
+          'sequence': 2,
+          'payload': {'text': '请看 /v1/assets/valve-image'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final session = player.realtimeSessions.single;
+      final resolver = session.mediaNarrationResolver!;
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-deduped-media-voice-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-deduped-media-voice',
+          'run_id': 'run-deduped-media-voice',
+          'message_id': 'message-deduped-media-voice',
+          'sequence': 3,
+          'payload': {'text': '请看 /v1/assets/valve-image'},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(session.appendedTexts, ['请看 /v1/assets/valve-image']);
+      expect(session.flushCount, 1);
+      expect(
+        RegExp('我放了一张阀门安装方向图。').allMatches(session.filteredTexts.join(' ')),
+        hasLength(1),
+      );
+
+      final filter = AgentVoiceTextStreamFilter(
+        mediaNarrationResolver: resolver,
+      );
+      final firstFiltered = filter.push('请看 [阀门安装方向](/v1/assets/valve-image)。');
+      final repeatedFiltered = filter.push(
+        '再看 [阀门安装方向](/v1/assets/valve-image)。',
+      );
+      expect(firstFiltered, contains('我放了一张阀门安装方向图。'));
+      expect(repeatedFiltered, isNot(contains('阀门安装方向')));
+      expect(
+        resolver(url: '/v1/assets/valve-image', alt: '阀门安装方向'),
+        '我放了一张阀门安装方向图。',
+      );
+      expect(session.finishCount, 1);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub speaks safe pure artifact copy without artifact actions',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final player = _PageFakeVoicePlaybackPlayer();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '帮我整理待产包',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-voice',
+          'type': 'artifact.created',
+          'thread_id': 'thread-artifact-voice',
+          'run_id': 'run-artifact-voice',
+          'artifact_id': 'artifact-voice',
+          'sequence': 1,
+          'payload': {
+            'artifact_type': 'rich_text',
+            'rich_text': {
+              'title': '待产包清单',
+              'content': '我已经帮你整理好了。',
+              'button': [
+                {
+                  'label': '打开待产包购物车',
+                  'action': 'navigate',
+                  'value': '/hospital-bag-cart',
+                },
+              ],
+            },
+          },
+        }),
+      );
+      await tester.pump();
+
+      expect(player.realtimeSessions, isEmpty);
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-voice-message-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-artifact-voice',
+          'run_id': 'run-artifact-voice',
+          'sequence': 2,
+          'payload': {'text': ''},
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
+        '待产包清单 我已经帮你整理好了。',
+      ]);
+      expect(
+        player.realtimeSessions.single.appendedTexts.single,
+        isNot(contains('打开待产包购物车')),
+      );
+      expect(
+        player.realtimeSessions.single.appendedTexts.single,
+        isNot(contains('/hospital-bag-cart')),
+      );
+      expect(player.realtimeSessions.single.finishCount, 1);
+
+      player.realtimeSessions.single.complete();
+      await tester.pump();
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-voice-run-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-artifact-voice',
+          'run_id': 'run-artifact-voice',
+          'message_id': 'message-artifact-voice',
+          'sequence': 3,
+        }),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, [
+        '待产包清单 我已经帮你整理好了。',
+      ]);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub does not repeat artifact copy when reply text is present',
+    (tester) async {
+      final player = _PageFakeVoicePlaybackPlayer();
+      final client = _FixtureAgentStreamClient([
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-with-text',
+          'type': 'artifact.created',
+          'thread_id': 'thread-artifact-with-text',
+          'run_id': 'run-artifact-with-text',
+          'artifact_id': 'artifact-with-text',
+          'sequence': 1,
+          'payload': {
+            'artifact_type': 'rich_text',
+            'rich_text': {'title': '待产包清单', 'content': '我已经帮你整理好了。'},
+          },
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-with-text-delta',
+          'type': 'message.delta',
+          'thread_id': 'thread-artifact-with-text',
+          'run_id': 'run-artifact-with-text',
+          'message_id': 'message-artifact-with-text',
+          'sequence': 2,
+          'payload': {'text': '我已经根据你的情况整理好了。'},
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-artifact-with-text-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-artifact-with-text',
+          'run_id': 'run-artifact-with-text',
+          'message_id': 'message-artifact-with-text',
+          'sequence': 3,
+          'payload': {'text': '我已经根据你的情况整理好了。'},
+        }),
+      ]);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
+            voicePlaybackPlayer: player,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '帮我整理待产包',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pumpAndSettle();
+
+      expect(player.realtimeSessions, hasLength(1));
+      expect(player.realtimeSessions.single.appendedTexts, ['我已经根据你的情况整理好了。']);
+      expect(player.realtimeSessions.single.finishCount, 1);
+    },
+  );
 
   testWidgets(
     'Agent Hub never replaces or replays spoken text on completed mismatch',
@@ -6410,10 +6756,15 @@ class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
 
 class _PageFakeVoiceRealtimePlaybackSession
     implements AgentVoiceRealtimePlaybackSession {
-  _PageFakeVoiceRealtimePlaybackSession({this.mediaNarrationResolver});
+  _PageFakeVoiceRealtimePlaybackSession({this.mediaNarrationResolver})
+    : _textFilter = AgentVoiceTextStreamFilter(
+        mediaNarrationResolver: mediaNarrationResolver,
+      );
 
   final AgentVoiceMediaNarrationResolver? mediaNarrationResolver;
+  final AgentVoiceTextStreamFilter _textFilter;
   final appendedTexts = <String>[];
+  final filteredTexts = <String>[];
   var flushCount = 0;
   var finishCount = 0;
   var cancelCount = 0;
@@ -6427,16 +6778,19 @@ class _PageFakeVoiceRealtimePlaybackSession
   @override
   void append(String delta) {
     appendedTexts.add(delta);
+    _recordFiltered(_textFilter.push(delta));
   }
 
   @override
   void flush() {
     flushCount += 1;
+    _recordFiltered(_textFilter.flush());
   }
 
   @override
   void finish() {
     finishCount += 1;
+    _recordFiltered(_textFilter.flush());
   }
 
   @override
@@ -6451,6 +6805,10 @@ class _PageFakeVoiceRealtimePlaybackSession
 
   void fail(Object error) {
     if (!_done.isCompleted) _done.completeError(error);
+  }
+
+  void _recordFiltered(String text) {
+    if (text.isNotEmpty) filteredTexts.add(text);
   }
 }
 
