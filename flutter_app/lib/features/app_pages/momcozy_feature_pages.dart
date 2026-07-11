@@ -12,6 +12,7 @@ import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_ca
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
+import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
@@ -11238,7 +11239,7 @@ class _MediaViewerContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (media.kind) {
       'image' => _ImageViewerStage(media: media),
-      'video' => const _VideoViewerStage(),
+      'video' => _VideoViewerStage(media: media),
       _ => _PdfViewerStage(media: media),
     };
   }
@@ -11565,51 +11566,29 @@ class _MediaViewerLoadError extends StatelessWidget {
 }
 
 class _VideoViewerStage extends StatelessWidget {
-  const _VideoViewerStage();
+  const _VideoViewerStage({required this.media});
+
+  final _MediaViewerRouteState media;
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: MomCozyColors.background,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          children: [
-            OutlinedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.open_in_full_rounded, size: 18),
-              label: const Text('全屏播放'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: MomCozyColors.foreground,
-                backgroundColor: MomCozyColors.secondary,
-                side: BorderSide.none,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                textStyle: Theme.of(
-                  context,
-                ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w800),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: const ColoredBox(
-                  color: Colors.black,
-                  child: Center(
-                    child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: Color(0xb3ffffff),
-                      size: 54,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    final reference = ProductAssetReference.tryParse(
+      media.url,
+      kind: media.kind,
+      title: media.title,
+    );
+    final repository = MomCozyRuntimeScope.maybeOf(
+      context,
+    )?.productAssetRepository;
+    if (reference == null || repository == null) {
+      return const _MediaViewerLoadError(
+        message: '视频加载失败',
+        icon: Icons.videocam_off_outlined,
+      );
+    }
+    return ProductAssetVideoPlayer(
+      reference: reference,
+      repository: repository,
     );
   }
 }

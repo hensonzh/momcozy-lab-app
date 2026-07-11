@@ -16,9 +16,11 @@ import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_reposito
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:pdfrx/pdfrx.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_api_transport.dart';
 import '../../support/fake_agent_voice.dart';
+import '../../support/fake_video_player_platform.dart';
 import '../../support/test_pdf_fixture.dart';
 
 void main() {
@@ -1625,6 +1627,50 @@ void main() {
       );
     });
 
+    testWidgets('media viewer streams an authenticated video request', (
+      tester,
+    ) async {
+      final previousPlatform = VideoPlayerPlatform.instance;
+      final videoPlatform = FakeVideoPlayerPlatform();
+      VideoPlayerPlatform.instance = videoPlatform;
+      addTearDown(() {
+        VideoPlayerPlatform.instance = previousPlatform;
+      });
+      final repository = ProductAssetRepository(
+        baseUri: Uri.parse('https://api.example.test'),
+        tokenProvider: () => 'route-video-token',
+        connector: _FakeProductAssetConnector(const []),
+      );
+      final router = createMomCozyRouter(
+        initialLocation: Uri(
+          path: '/media-viewer',
+          queryParameters: const {
+            'kind': 'video',
+            'url': '/v1/assets/asset-video?kind=video',
+            'title': 'Air1 操作视频',
+          },
+        ).toString(),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          apiRuntime: _appRuntime(productAssetRepository: repository),
+          router: router,
+        ),
+      );
+      await _pumpUntilFoundWithPlatformEvents(
+        tester,
+        find.byKey(const ValueKey('product-asset-video-player')),
+      );
+
+      expect(find.text('Air1 操作视频'), findsOneWidget);
+      expect(videoPlatform.createdSources, hasLength(1));
+      final source = videoPlatform.createdSources.single;
+      expect(source.uri, 'https://api.example.test/v1/assets/asset-video');
+      expect(source.httpHeaders['Authorization'], 'Bearer route-video-token');
+      expect(source.httpHeaders['Accept'], 'video/*');
+    });
+
     testWidgets('IBCLC page posts client event through runtime client', (
       tester,
     ) async {
@@ -2347,6 +2393,18 @@ Future<void> _pumpUntilFound(WidgetTester tester, Finder finder) async {
     'loadError=${find.byKey(const ValueKey('media-viewer-load-error')).evaluate().length}, '
     'loading=${find.byKey(const ValueKey('media-viewer-loading')).evaluate().length}).',
   );
+}
+
+Future<void> _pumpUntilFoundWithPlatformEvents(
+  WidgetTester tester,
+  Finder finder,
+) async {
+  for (var frame = 0; frame < 80; frame += 1) {
+    await tester.pump(const Duration(milliseconds: 16));
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    if (finder.evaluate().isNotEmpty) return;
+  }
+  fail('Expected platform-backed widget did not appear.');
 }
 
 void _installPathProviderMock() {

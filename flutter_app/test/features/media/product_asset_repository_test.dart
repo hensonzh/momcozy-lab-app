@@ -153,6 +153,30 @@ void main() {
     expect(request.headers['Authorization'], 'Bearer video-token');
     expect(request.headers['Accept'], 'video/*');
   });
+
+  test('rebuilds a video request after refreshing authorization', () async {
+    var token = 'expired-token';
+    var refreshCalls = 0;
+    final repository = ProductAssetRepository(
+      baseUri: Uri.parse('https://api.example.test'),
+      tokenProvider: () => token,
+      onUnauthorized: () async {
+        refreshCalls += 1;
+        token = 'fresh-token';
+        return true;
+      },
+      connector: _FakeProductAssetConnector(const []),
+    );
+    final video = ProductAssetReference.tryParse(
+      '/v1/assets/asset-video?kind=video',
+    )!;
+
+    final request = await repository.refreshNetworkRequest(video);
+
+    expect(refreshCalls, 1);
+    expect(request?.headers['Authorization'], 'Bearer fresh-token');
+    expect(request?.headers['Accept'], 'video/*');
+  });
 }
 
 class _FakeProductAssetConnector implements ProductAssetHttpConnector {

@@ -160,6 +160,13 @@ class ProductAssetRepository {
     );
   }
 
+  Future<ProductAssetNetworkRequest?> refreshNetworkRequest(
+    ProductAssetReference reference,
+  ) async {
+    if (!await _refreshSession()) return null;
+    return networkRequest(reference);
+  }
+
   Future<ProductAssetHttpResponse> _get(
     ProductAssetReference reference, {
     required int maxBytes,
