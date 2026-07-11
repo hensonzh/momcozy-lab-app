@@ -13,6 +13,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/birth_journey_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -235,6 +236,79 @@ void main() {
         expect(find.byTooltip('重试'), findsNothing);
       },
     );
+
+    testWidgets('loads, blocks, details, and deletes a birth journey plan', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: createMomCozyRouter(initialLocation: '/status'),
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(
+            responsesByPath: {statusPlansEndpoint: _birthJourneyPlanResponse()},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('status-care-stage-pregnancy')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('当前阶段'), findsOneWidget);
+      expect(find.text('准备产检资料'), findsOneWidget);
+      await _scrollToFinder(
+        tester,
+        find.byKey(const ValueKey('status-birth-journey-period-upcoming')),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('status-birth-journey-period-upcoming')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('status-birth-journey-todo-todo-upcoming')),
+      );
+      await tester.pump();
+      expect(find.text('当前还未到该阶段，暂不适合进行该事项'), findsOneWidget);
+
+      await _scrollToFinder(
+        tester,
+        find.byKey(const ValueKey('status-birth-journey-detail-button')),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('status-birth-journey-detail-button')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-birth-journey')),
+        findsOneWidget,
+      );
+      final deleteButton = find.byKey(
+        const ValueKey('status-birth-journey-delete-button'),
+      );
+      await tester.ensureVisible(deleteButton);
+      await tester.tap(deleteButton);
+      await tester.pump();
+      await tester.tap(
+        find.byKey(
+          const ValueKey('status-birth-journey-delete-confirm-button'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('status-detail-birth-journey')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
+        findsOneWidget,
+      );
+    });
 
     testWidgets('covers postpartum mom chart and module actions', (
       tester,
@@ -1127,6 +1201,75 @@ Future<void> _setCompactViewport(WidgetTester tester) async {
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
+}
+
+Map<String, Object?> _birthJourneyPlanResponse() {
+  return const {
+    'items': [
+      {
+        'id': 'birth-plan-widget',
+        'plan_type': 'birth_journey',
+        'title': '孕期计划',
+        'status': 'active',
+        'payload': {
+          'todo_plan': {
+            'periods': [
+              {
+                'id': 'current',
+                'title': '当前阶段',
+                'subtitle': '孕 32-34 周',
+                'display_mode': 'expanded',
+                'status': 'current',
+                'items': [
+                  {
+                    'id': 'todo-current',
+                    'title': '准备产检资料',
+                    'priority_label': '重要',
+                    'reason': '下次产检时集中确认',
+                    'steps': ['整理检查报告'],
+                    'completed': false,
+                  },
+                ],
+              },
+              {
+                'id': 'upcoming',
+                'title': '后续阶段',
+                'subtitle': '孕 35-37 周',
+                'display_mode': 'collapsed',
+                'status': 'upcoming',
+                'items': [
+                  {
+                    'id': 'todo-upcoming',
+                    'title': '整理待产包',
+                    'priority_label': '建议',
+                    'reason': '提前确认住院物品',
+                    'steps': <String>[],
+                    'completed': false,
+                  },
+                ],
+              },
+              {
+                'id': 'terminal',
+                'title': '临产住院',
+                'subtitle': '出现临产信号时',
+                'display_mode': 'terminal',
+                'status': 'terminal',
+                'items': [
+                  {
+                    'id': 'todo-terminal',
+                    'title': '联系医院',
+                    'priority_label': '重要',
+                    'steps': <String>[],
+                    'completed': false,
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  };
 }
 
 MomCozyApiRuntime _runtime({
