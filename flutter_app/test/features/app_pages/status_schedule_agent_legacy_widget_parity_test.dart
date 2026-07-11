@@ -310,6 +310,65 @@ void main() {
       );
     });
 
+    testWidgets('hands completed birth journey todo to Agent with auto-send', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+      Object? routedExtra;
+      final router = createMomCozyRouter(
+        initialLocation: '/status',
+        agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) {
+          if (uri?.path == '/') routedExtra = extra;
+          return const SizedBox(key: ValueKey('captured-agent-route'));
+        },
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(
+            responsesByPath: {statusPlansEndpoint: _birthJourneyPlanResponse()},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('status-care-stage-pregnancy')),
+      );
+      await tester.pumpAndSettle();
+
+      final currentTodo = find.byKey(
+        const ValueKey('status-birth-journey-todo-todo-current'),
+      );
+      await _scrollToFinder(tester, currentTodo);
+      await tester.tap(currentTodo);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1050));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('status-birth-journey-sync-dialog')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('status-birth-journey-sync-confirm')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('captured-agent-route')),
+        findsOneWidget,
+      );
+      expect(routedExtra, {
+        'agentPrefill': '我已完成【准备产检资料】，请基于这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记',
+        'agentAutoSend': true,
+      });
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('covers postpartum mom chart and module actions', (
       tester,
     ) async {
