@@ -559,6 +559,66 @@ void main() {
       expect(find.text('6.2kg'), findsOneWidget);
       expect(find.text('当前查看：身高'), findsOneWidget);
     });
+
+    testWidgets(
+      'consumes a native growth notice once and highlights the curve',
+      (tester) async {
+        await _setCompactViewport(tester);
+        final routeIntentPlatform = FakeRouteIntentPlatform();
+        addTearDown(routeIntentPlatform.dispose);
+        final router = createMomCozyRouter(initialLocation: '/schedule');
+
+        await tester.pumpWidget(
+          MomCozyFlutterApp(
+            router: router,
+            routeIntentPlatform: routeIntentPlatform,
+            apiRuntime: _runtime(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        routeIntentPlatform.dispatchActiveRoute(
+          const PendingNativeRoute(
+            path: '/status?mmcNotify=growth',
+            notifyJson: {'event': 'grown'},
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(router.routeInformationProvider.value.uri.path, '/status');
+
+        routeIntentPlatform.dispatchActiveRoute(
+          const PendingNativeRoute(
+            path: '/status?mmcNotify=growth',
+            notifyJson: {'event': 'grown'},
+          ),
+        );
+        await tester.pump();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 120));
+
+        expect(
+          find.byKey(const ValueKey('route-page-/status')),
+          findsOneWidget,
+        );
+        expect(find.text('成长发育'), findsOneWidget);
+        expect(find.text('母乳产出'), findsNothing);
+        final activeHighlight = tester.widget<AnimatedContainer>(
+          find.byKey(const ValueKey('status-baby-growth-highlight')),
+        );
+        final activeBorder =
+            (activeHighlight.decoration! as BoxDecoration).border! as Border;
+        expect(activeBorder.top.color, isNot(Colors.transparent));
+
+        await tester.pump(const Duration(milliseconds: 2800));
+        final finishedHighlight = tester.widget<AnimatedContainer>(
+          find.byKey(const ValueKey('status-baby-growth-highlight')),
+        );
+        final finishedBorder =
+            (finishedHighlight.decoration! as BoxDecoration).border! as Border;
+        expect(finishedBorder.top.color, Colors.transparent);
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 
   group('Legacy Web widget parity: 计划', () {

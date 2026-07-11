@@ -129,6 +129,19 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
     );
   }
 
+  final statusIntent = query['statusIntent'] ?? query['mmcNotify'];
+  if (cleanPath == '/status' &&
+      (event == 'grown' ||
+          statusIntent == 'growth' ||
+          statusIntent == 'growth-highlight')) {
+    return const RouteIntent(
+      type: 'OpenStatusGrowthHighlight',
+      path: '/status',
+      payload: {'statusIntent': 'growth', 'source': 'native-notification'},
+      consume: 'once',
+    );
+  }
+
   if (cleanPath != '/') {
     return RouteIntent(
       type: 'NotFoundIntent',

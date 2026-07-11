@@ -31,7 +31,7 @@ void main() {
       },
     );
 
-    test('retired reminder events no longer open dedicated flows', () {
+    test('keeps retired events generic and maps growth to status', () {
       const retiredEvents = ['summary', 'mom_baby', 'health_issue'];
 
       for (final event in retiredEvents) {
@@ -50,7 +50,13 @@ void main() {
         'notifyJson': '{"event":"grown"}',
       });
 
-      expect(growth?.type, isNot('OpenStatusGrowthHighlight'));
+      expect(growth?.type, 'OpenStatusGrowthHighlight');
+      expect(growth?.path, '/status');
+      expect(growth?.payload, const {
+        'statusIntent': 'growth',
+        'source': 'native-notification',
+      });
+      expect(growth?.consume, 'once');
     });
 
     test(
