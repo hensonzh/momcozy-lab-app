@@ -75,6 +75,41 @@ void main() {
       });
     });
 
+    test('sends PATCH JSON and accepts empty DELETE responses', () async {
+      final patchConnector = _RecordingApiHttpConnector(
+        const ApiHttpResponse(
+          statusCode: 200,
+          statusText: 'OK',
+          body: '{"id":"entry-1"}',
+        ),
+      );
+      final deleteConnector = _RecordingApiHttpConnector(
+        const ApiHttpResponse(
+          statusCode: 204,
+          statusText: 'No Content',
+          body: '',
+        ),
+      );
+
+      await IoApiJsonTransport(
+        baseUri: Uri.parse('http://127.0.0.1:8769'),
+        connector: patchConnector,
+      ).patchJson(
+        '/v1/pregnancy-diary/entries/2026-07-11',
+        body: {'content': 'updated'},
+      );
+      await IoApiJsonTransport(
+        baseUri: Uri.parse('http://127.0.0.1:8769'),
+        connector: deleteConnector,
+      ).deleteJson('/v1/pregnancy-diary/entries/2026-07-11');
+
+      expect(patchConnector.method, 'PATCH');
+      expect(jsonDecode(patchConnector.body!) as Map<String, Object?>, {
+        'content': 'updated',
+      });
+      expect(deleteConnector.method, 'DELETE');
+    });
+
     test('HTTP connector sends non-ASCII JSON bodies as UTF-8', () async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
       addTearDown(() => server.close(force: true));
@@ -239,6 +274,7 @@ class _RecordingApiHttpConnector implements ApiHttpConnector {
   Uri? uri;
   Map<String, String>? headers;
   String? body;
+  String? method;
 
   @override
   Future<ApiHttpResponse> get(
@@ -246,6 +282,7 @@ class _RecordingApiHttpConnector implements ApiHttpConnector {
     required Map<String, String> headers,
   }) async {
     this.uri = uri;
+    method = 'GET';
     this.headers = Map<String, String>.from(headers);
     body = null;
     return response;
@@ -258,8 +295,34 @@ class _RecordingApiHttpConnector implements ApiHttpConnector {
     required String body,
   }) async {
     this.uri = uri;
+    method = 'POST';
     this.headers = Map<String, String>.from(headers);
     this.body = body;
+    return response;
+  }
+
+  @override
+  Future<ApiHttpResponse> patch(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) async {
+    this.uri = uri;
+    method = 'PATCH';
+    this.headers = Map<String, String>.from(headers);
+    this.body = body;
+    return response;
+  }
+
+  @override
+  Future<ApiHttpResponse> delete(
+    Uri uri, {
+    required Map<String, String> headers,
+  }) async {
+    this.uri = uri;
+    method = 'DELETE';
+    this.headers = Map<String, String>.from(headers);
+    body = null;
     return response;
   }
 }

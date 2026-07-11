@@ -222,6 +222,27 @@ class AuthenticatedApiJsonTransport implements ApiJsonTransport {
     );
   }
 
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    return _send(
+      (transport) => transport.patchJson(path, body: body, headers: headers),
+    );
+  }
+
+  @override
+  Future<void> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) {
+    return _sendVoid(
+      (transport) => transport.deleteJson(path, headers: headers),
+    );
+  }
+
   Future<Map<String, Object?>> _send(
     Future<Map<String, Object?>> Function(ApiJsonTransport transport) send,
   ) async {
@@ -236,6 +257,21 @@ class AuthenticatedApiJsonTransport implements ApiJsonTransport {
         rethrow;
       }
       return send(transportFactory(refreshed.accessToken));
+    }
+  }
+
+  Future<void> _sendVoid(
+    Future<void> Function(ApiJsonTransport transport) send,
+  ) async {
+    final initialSession = sessionProvider();
+    try {
+      await send(transportFactory(initialSession.accessToken));
+    } catch (error) {
+      if (!_shouldRefresh(error)) rethrow;
+      final refreshed = await refreshCoordinator.refresh(initialSession);
+      await onSessionChanged(refreshed);
+      if (!refreshed.isAuthenticated) rethrow;
+      await send(transportFactory(refreshed.accessToken));
     }
   }
 }

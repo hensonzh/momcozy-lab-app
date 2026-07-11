@@ -16,6 +16,7 @@ import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -543,10 +544,19 @@ class _StatusInteractionState {
   String view = 'mom';
   String careStage = 'postpartum';
   bool growthRecordAdded = false;
-  bool pregnancyDiarySaved = false;
   String milkTrendMode = '周';
   String babyGrowthMetric = '体重';
   String? activeDetail;
+}
+
+class _PregnancyDiaryLoadResult {
+  const _PregnancyDiaryLoadResult({
+    required this.entries,
+    required this.failed,
+  });
+
+  final List<PregnancyDiaryEntry> entries;
+  final bool failed;
 }
 
 class _StatusPage extends StatefulWidget {
@@ -572,13 +582,13 @@ class _StatusPageState extends State<_StatusPage> {
   String _view = 'mom';
   String _careStage = 'postpartum';
   bool _growthRecordAdded = false;
-  bool _pregnancyDiarySaved = false;
   String _milkTrendMode = '周';
   String _babyGrowthMetric = '体重';
   String? _activeDetail;
   late _StatusInteractionState _interactionState = _StatusInteractionState();
   MomCozyApiRuntime? _runtime;
   late Future<StatusOverview> _overviewFuture;
+  Future<_PregnancyDiaryLoadResult>? _pregnancyDiaryFuture;
 
   @override
   void didChangeDependencies() {
@@ -591,11 +601,13 @@ class _StatusPageState extends State<_StatusPage> {
       _view = _interactionState.view;
       _careStage = _interactionState.careStage;
       _growthRecordAdded = _interactionState.growthRecordAdded;
-      _pregnancyDiarySaved = _interactionState.pregnancyDiarySaved;
       _milkTrendMode = _interactionState.milkTrendMode;
       _babyGrowthMetric = _interactionState.babyGrowthMetric;
       _activeDetail = _interactionState.activeDetail;
       _overviewFuture = runtime.statusRepository.fetchOverview();
+      _pregnancyDiaryFuture = _careStage == 'pregnancy'
+          ? _loadPregnancyDiary(runtime)
+          : null;
     }
   }
 
@@ -603,6 +615,9 @@ class _StatusPageState extends State<_StatusPage> {
     setState(() {
       _careStage = stage;
       if (stage == 'pregnancy') _view = 'mom';
+      if (stage == 'pregnancy' && _runtime != null) {
+        _pregnancyDiaryFuture ??= _loadPregnancyDiary(_runtime!);
+      }
       _activeDetail = null;
       _persistInteractionState();
     });
@@ -613,7 +628,6 @@ class _StatusPageState extends State<_StatusPage> {
       ..view = _view
       ..careStage = _careStage
       ..growthRecordAdded = _growthRecordAdded
-      ..pregnancyDiarySaved = _pregnancyDiarySaved
       ..milkTrendMode = _milkTrendMode
       ..babyGrowthMetric = _babyGrowthMetric
       ..activeDetail = _activeDetail;
@@ -638,6 +652,24 @@ class _StatusPageState extends State<_StatusPage> {
       _growthRecordAdded = true;
       _persistInteractionState();
     });
+  }
+
+  Future<_PregnancyDiaryLoadResult> _loadPregnancyDiary(
+    MomCozyApiRuntime runtime,
+  ) async {
+    final now = runtime.now();
+    final endDate = DateTime(now.year, now.month, now.day);
+    final startDate = endDate.subtract(const Duration(days: 6));
+    try {
+      final entries = await runtime.pregnancyDiaryRepository.fetchEntries(
+        startDate: startDate,
+        endDate: endDate,
+        limit: 7,
+      );
+      return _PregnancyDiaryLoadResult(entries: entries, failed: false);
+    } catch (_) {
+      return const _PregnancyDiaryLoadResult(entries: [], failed: true);
+    }
   }
 
   Future<void> _showGrowthEditor() async {
@@ -682,14 +714,37 @@ class _StatusPageState extends State<_StatusPage> {
   }
 
   Future<void> _showPregnancyDiaryEditor() async {
-    final saved = await showDialog<bool>(
+    final runtime = _runtime;
+    if (runtime == null) return;
+    var loadResult = await (_pregnancyDiaryFuture ??= _loadPregnancyDiary(
+      runtime,
+    ));
+    if (loadResult.failed) {
+      loadResult = await (_pregnancyDiaryFuture = _loadPregnancyDiary(runtime));
+      if (loadResult.failed && mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('日记加载失败，请稍后重试')));
+      }
+    }
+    if (loadResult.failed || !mounted) {
+      return;
+    }
+    final entries = loadResult.entries;
+    final now = runtime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final existing = _entryForDate(entries, today);
+    var draft = existing?.content ?? '';
+    final content = await showDialog<String>(
       context: context,
       builder: (context) {
         return AlertDialog(
           key: const ValueKey('status-pregnancy-diary-editor-dialog'),
           title: const Text('记录今天的孕期日记'),
-          content: TextField(
+          content: TextFormField(
             key: const ValueKey('status-pregnancy-diary-note-input'),
+            initialValue: draft,
+            onChanged: (value) => draft = value,
             autofocus: true,
             minLines: 3,
             maxLines: 5,
@@ -701,24 +756,53 @@ class _StatusPageState extends State<_StatusPage> {
           actions: [
             TextButton(
               key: const ValueKey('status-pregnancy-diary-cancel-button'),
-              onPressed: () => Navigator.of(context).pop(false),
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('取消'),
             ),
             FilledButton(
               key: const ValueKey('status-pregnancy-diary-save-button'),
-              onPressed: () => Navigator.of(context).pop(true),
+              onPressed: () => Navigator.of(context).pop(draft.trim()),
               child: const Text('保存日记'),
             ),
           ],
         );
       },
     );
-    if (saved != true || !mounted) return;
-    setState(() {
-      _pregnancyDiarySaved = true;
-      _activeDetail = 'pregnancy-diary';
-      _persistInteractionState();
-    });
+    if (content == null || content.isEmpty || !mounted) return;
+    try {
+      final PregnancyDiaryEntry savedEntry;
+      if (existing == null) {
+        savedEntry = await runtime.pregnancyDiaryRepository.createEntry(
+          entryDate: today,
+          content: content,
+        );
+      } else {
+        savedEntry = await runtime.pregnancyDiaryRepository.updateEntry(
+          entryDate: today,
+          content: content,
+        );
+      }
+      if (!mounted) return;
+      final refreshedEntries = [
+        savedEntry,
+        ...entries.where((entry) => !_sameDate(entry.entryDate, today)),
+      ];
+      setState(() {
+        _pregnancyDiaryFuture = Future.value(
+          _PregnancyDiaryLoadResult(
+            entries: refreshedEntries.take(7).toList(growable: false),
+            failed: false,
+          ),
+        );
+        _activeDetail = 'pregnancy-diary';
+        _persistInteractionState();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('日记保存失败，请稍后重试')));
+    }
   }
 
   @override
@@ -801,32 +885,14 @@ class _StatusPageState extends State<_StatusPage> {
 
     if (isPregnancy) {
       return [
-        _StatusPregnancyDiaryPreview(
-          diarySaved: _pregnancyDiarySaved,
-          onViewDiary: () => _showDetail('pregnancy-diary'),
-          onRecordToday: () => unawaited(_showPregnancyDiaryEditor()),
+        FutureBuilder<_PregnancyDiaryLoadResult>(
+          future: _pregnancyDiaryFuture ??= _loadPregnancyDiary(_runtime!),
+          builder: (context, diarySnapshot) {
+            final entries =
+                diarySnapshot.data?.entries ?? const <PregnancyDiaryEntry>[];
+            return Column(children: _pregnancyStatusChildren(entries));
+          },
         ),
-        const SizedBox(height: 18),
-        _StatusPregnancyPlanPreview(),
-        const SizedBox(height: 8),
-        if (_activeDetail == 'pregnancy-diary') ...[
-          _StatusDetailPanel(
-            key: const ValueKey('status-detail-pregnancy-diary'),
-            title: '孕期日记',
-            subtitle: _pregnancyDiarySaved ? '今天的记录已保存' : '最近 7 天记录',
-            rows: _pregnancyDiarySaved
-                ? const [
-                    ('今天', '已保存', '已记录今日心情、身体感受和待咨询问题。'),
-                    ('Agent 建议', '可继续追问', '我可以帮你整理产检问题或回顾最近几天的状态变化。'),
-                  ]
-                : const [
-                    ('最近 7 天', '暂无记录', '记录几天后会展示睡眠、情绪、胎动和身体感受变化。'),
-                    ('产检问题', '暂无', '可以先写下想问医生的问题。'),
-                  ],
-            onClose: _closeDetail,
-          ),
-          const SizedBox(height: 8),
-        ],
       ];
     }
 
@@ -977,6 +1043,34 @@ class _StatusPageState extends State<_StatusPage> {
           });
         },
       ),
+    ];
+  }
+
+  List<Widget> _pregnancyStatusChildren(List<PregnancyDiaryEntry> entries) {
+    final runtime = _runtime;
+    final now = runtime?.now() ?? DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final todayEntry = _entryForDate(entries, today);
+    return [
+      _StatusPregnancyDiaryPreview(
+        entries: entries,
+        todayEntry: todayEntry,
+        onViewDiary: () => _showDetail('pregnancy-diary'),
+        onRecordToday: () => unawaited(_showPregnancyDiaryEditor()),
+      ),
+      const SizedBox(height: 18),
+      _StatusPregnancyPlanPreview(),
+      const SizedBox(height: 8),
+      if (_activeDetail == 'pregnancy-diary') ...[
+        _StatusDetailPanel(
+          key: const ValueKey('status-detail-pregnancy-diary'),
+          title: '孕期日记',
+          subtitle: todayEntry == null ? '最近 7 天记录' : '今天的记录已保存',
+          rows: _pregnancyDiaryRows(entries, today: today),
+          onClose: _closeDetail,
+        ),
+        const SizedBox(height: 8),
+      ],
     ];
   }
 
@@ -1474,14 +1568,76 @@ class _StatusModuleActionPill extends StatelessWidget {
   }
 }
 
+PregnancyDiaryEntry? _entryForDate(
+  List<PregnancyDiaryEntry> entries,
+  DateTime date,
+) {
+  for (final entry in entries) {
+    if (_sameDate(entry.entryDate, date)) {
+      return entry;
+    }
+  }
+  return null;
+}
+
+bool _sameDate(DateTime left, DateTime right) {
+  return left.year == right.year &&
+      left.month == right.month &&
+      left.day == right.day;
+}
+
+List<(String, String, String)> _pregnancyDiaryRows(
+  List<PregnancyDiaryEntry> entries, {
+  required DateTime today,
+}) {
+  if (entries.isEmpty) {
+    return const [
+      ('最近 7 天', '暂无记录', '记录几天后会展示睡眠、情绪、胎动和身体感受变化。'),
+      ('产检问题', '暂无', '可以先写下想问医生的问题。'),
+    ];
+  }
+  return entries
+      .map((entry) {
+        final isToday = _sameDate(entry.entryDate, today);
+        final dateLabel = isToday
+            ? '今天'
+            : '${entry.entryDate.month.toString().padLeft(2, '0')}-'
+                  '${entry.entryDate.day.toString().padLeft(2, '0')}';
+        final status = entry.mood.isNotEmpty
+            ? entry.mood
+            : (entry.gestationalWeek.isNotEmpty
+                  ? entry.gestationalWeek
+                  : '已记录');
+        final summary = entry.content.isNotEmpty
+            ? entry.content
+            : [
+                entry.sleepSummary,
+                entry.fetalMovement,
+                entry.appointmentNote,
+              ].where((value) => value.isNotEmpty).join('；');
+        return (dateLabel, status, summary.isEmpty ? '已保存一条孕期记录。' : summary);
+      })
+      .toList(growable: false);
+}
+
+bool _hasBodyRecord(PregnancyDiaryEntry entry) {
+  return entry.mood.isNotEmpty ||
+      entry.energyLevel.isNotEmpty ||
+      entry.sleepSummary.isNotEmpty ||
+      entry.fetalMovement.isNotEmpty ||
+      entry.symptomTags.isNotEmpty;
+}
+
 class _StatusPregnancyDiaryPreview extends StatelessWidget {
   const _StatusPregnancyDiaryPreview({
-    required this.diarySaved,
+    required this.entries,
+    required this.todayEntry,
     required this.onViewDiary,
     required this.onRecordToday,
   });
 
-  final bool diarySaved;
+  final List<PregnancyDiaryEntry> entries;
+  final PregnancyDiaryEntry? todayEntry;
   final VoidCallback onViewDiary;
   final VoidCallback onRecordToday;
 
@@ -1526,17 +1682,27 @@ class _StatusPregnancyDiaryPreview extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
             child: Row(
-              children: const [
+              children: [
                 Expanded(
-                  child: _StatusPregnancyStat(value: '0', label: '近7天记录'),
+                  child: _StatusPregnancyStat(
+                    value: '${entries.length}',
+                    label: '近7天记录',
+                  ),
                 ),
-                _StatusVerticalDivider(),
+                const _StatusVerticalDivider(),
                 Expanded(
-                  child: _StatusPregnancyStat(value: '0', label: '健康咨询'),
+                  child: _StatusPregnancyStat(
+                    value: '${entries.where(_hasBodyRecord).length}',
+                    label: '身体记录',
+                  ),
                 ),
-                _StatusVerticalDivider(),
+                const _StatusVerticalDivider(),
                 Expanded(
-                  child: _StatusPregnancyStat(value: '0', label: '产检问题'),
+                  child: _StatusPregnancyStat(
+                    value:
+                        '${entries.where((entry) => entry.appointmentNote.isNotEmpty).length}',
+                    label: '产检问题',
+                  ),
                 ),
               ],
             ),
@@ -1603,8 +1769,10 @@ class _StatusPregnancyDiaryPreview extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        diarySaved
-                            ? '今天的记录已保存，我可以继续帮你整理产检问题或回顾最近几天的状态变化。'
+                        todayEntry != null
+                            ? (todayEntry!.content.isNotEmpty
+                                  ? todayEntry!.content
+                                  : '今天的记录已保存。')
                             : '今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。',
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
                           color: MomCozyColors.foreground,
@@ -1624,7 +1792,7 @@ class _StatusPregnancyDiaryPreview extends StatelessWidget {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              '和我聊天时，我会自动记录你的今日情况和健康信息。',
+                              '你也可以在聊天中让我记录、查看或修改孕期日记。',
                               style: helperStyle,
                             ),
                           ),

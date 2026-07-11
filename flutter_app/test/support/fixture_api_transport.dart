@@ -35,12 +35,33 @@ class FixtureApiJsonTransport implements ApiJsonTransport {
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
     return response;
   }
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) => postJson(path, body: body, headers: headers);
+
+  @override
+  Future<void> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) async {
+    lastPath = path;
+    lastHeaders = Map<String, String>.from(headers);
+    if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
+  }
 }
 
 class FixtureApiJsonTransportByPath implements ApiJsonTransport {
-  FixtureApiJsonTransportByPath(this.responsesByPath);
+  FixtureApiJsonTransportByPath(
+    this.responsesByPath, {
+    this.writeResponsesByPath = const {},
+  });
 
   final Map<String, Map<String, Object?>> responsesByPath;
+  final Map<String, Map<String, Object?>> writeResponsesByPath;
   String? lastPath;
   Map<String, Object?>? lastQuery;
   Map<String, Object?>? lastBody;
@@ -69,9 +90,35 @@ class FixtureApiJsonTransportByPath implements ApiJsonTransport {
     lastBody = Map<String, Object?>.from(body);
     lastHeaders = Map<String, String>.from(headers);
     postedBodies.add(lastBody!);
-    final response = _response(path);
+    final response = writeResponsesByPath[path] ?? _response(path);
     if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
     return response;
+  }
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    lastPath = path;
+    lastBody = Map<String, Object?>.from(body);
+    lastHeaders = Map<String, String>.from(headers);
+    postedBodies.add(lastBody!);
+    final response = writeResponsesByPath[path] ?? _response(path);
+    if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
+    return response;
+  }
+
+  @override
+  Future<void> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) async {
+    lastPath = path;
+    lastHeaders = Map<String, String>.from(headers);
+    final response = _response(path);
+    if (isHttpErrorBody(response)) throw ApiHttpException.fromBody(response);
   }
 
   Map<String, Object?> _response(String path) {
