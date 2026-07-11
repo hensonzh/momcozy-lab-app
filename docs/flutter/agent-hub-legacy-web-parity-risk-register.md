@@ -30,7 +30,7 @@
 | R04 | P1 | 待产包购物车丢失 artifact 个性化数据 | 已完成 | 默认清单可能覆盖用户定制清单 |
 | R05 | P2 | 已提交表单在历史消息中可能恢复可编辑 | 已完成 | 用户可能重复提交或重复生成服务结果 |
 | R06 | P2 | 售后工单草稿 artifact 未实现 | 已完成 | 工单确认表单可能完全不显示 |
-| R07 | P2 | 普通链接和专业引用点击无效 | 待处理 | 用户无法打开来源和非媒体链接 |
+| R07 | P2 | 普通链接和专业引用点击无效 | 已完成 | 用户无法打开来源和非媒体链接 |
 | R08 | P2 | 用户资料复用和信息采集表单归一化不完整 | 待处理 | 重复询问、默认值缺失、必填规则不一致 |
 | R09 | P2 | 专项卡片数据语义未完全对齐 | 待处理 | 分娩沟通卡和待产包卡丢失部分有效内容 |
 | R10 | P2 | IBCLC 上下文和咨询完成状态丢失 | 待处理 | 咨询身份、返回位置和完成状态不连续 |
@@ -194,9 +194,13 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### R07 链接和引用点击无效
 
-- Citation action 没有可执行 route，生产 action handler 会直接忽略。
-- 普通 Markdown 链接只识别媒体扩展名和待产包路径。
-- 修复目标：受控外链打开器、同源路由分发、`momcozy.web_search.citations` 展示、URL 安全校验和失败反馈。
+- 已建立统一 `SafeLinkTarget`：仅接受 App 内绝对路径和无 credential 的 `http/https` URL，拒绝 `javascript:`、`data:`、`file:`、`intent:`、scheme-relative、路径穿越、控制字符和畸形地址。
+- Markdown 正文、历史气泡、rich-text button、citation/reference artifact 现在共用 typed action；同源路由保留 query，产品媒体继续进入内置 viewer，普通外链进入系统浏览器。
+- 外链使用可注入的 `url_launcher` adapter，直接尝试 `LaunchMode.externalApplication`；失败或平台异常显示“无法打开链接，请稍后重试”，真正调用前再次校验 URL。
+- 已完整消费 `momcozy.web_search.citations` 的 `CUSTOM/custom` 事件和字段别名：过滤、去重、最多四条、专业主题归一化、“专业信息源”列表、正文 `[n]` 替换和 raw search marker 清理均与旧 Web 对齐。
+- Citation custom event 会随助手消息归档并恢复；实时页面以 retained-event identity 做缓存，文本 delta 不会反复重算引用。
+- 边界：本项完成事件消费和打开链路，不为 production runtime 新增联网搜索工具；当前 production backend 未生成该 custom event，后续若启用搜索只需遵循已验证的事件合同。
+- 验收：URL policy、citation mapper、当前/历史 Markdown、artifact reference、存储恢复、320px 窄屏、launcher 失败/绕过防御、`flutter analyze`、630 项 Flutter 全量测试和 Android `localDebug` APK 构建通过。
 
 ### R08 用户资料和表单归一化不完整
 
@@ -241,7 +245,7 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 ## 当前验证基线
 
 - `flutter analyze`：通过。
-- Flutter 全量单元、Widget 和 Golden 测试：618 项通过。
+- Flutter 全量单元、Widget 和 Golden 测试：630 项通过。
 - Flutter Agent Hub、reducer、feature page 相关测试：197 项通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
 - 现有测试通过不代表剩余风险已关闭；R06-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
@@ -260,3 +264,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 完成 R04 待产包购物车共享状态 | Artifact 个性化数据、页面编辑、下一轮 Agent 上下文和后端同步同源；会话/账号隔离及 612 项全量回归通过 |
 | 2026-07-11 | 完成 R05 表单提交生命周期 | 已提交值随 artifact 持久化、历史表单只读、pending 不落盘且稳定 run 幂等键生效；615 项全量回归通过 |
 | 2026-07-11 | 完成 R06 售后工单草稿 | 旧 Web 字段与 envelope 完整归一化；表单确认与生产 action 写入语义分离；618 项全量回归通过 |
+| 2026-07-11 | 完成 R07 链接与专业引用 | 安全内外链分发、系统浏览器、旧 Web citation 列表/索引及历史恢复对齐；630 项全量回归和 Android APK 构建通过 |

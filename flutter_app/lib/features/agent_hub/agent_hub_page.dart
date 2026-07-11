@@ -13,11 +13,13 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
@@ -2438,6 +2440,10 @@ AgentStreamRunState? _historyRunStateForPersistence(
     final key = event.actionId ?? event.eventId ?? event.mergeKey;
     structuredEvents['action:$key'] = event;
   }
+  for (final event in state.events.where(AgentCitationMapper.isCitationEvent)) {
+    final key = event.messageId ?? event.eventId ?? event.mergeKey;
+    structuredEvents['citation:$key'] = event;
+  }
   if (structuredEvents.isEmpty) return null;
 
   final events = List<AgentStreamEvent>.unmodifiable(structuredEvents.values);
@@ -2573,7 +2579,14 @@ class _AgentHistoryBubble extends StatelessWidget {
         children: [
           const _AgentAssistantAvatar(),
           const SizedBox(width: 10),
-          Expanded(child: Text(message.content, style: textStyle)),
+          Expanded(
+            child: AgentMarkdownText(
+              message.content,
+              style: textStyle,
+              onArtifactAction: onArtifactAction,
+              productAssetRepository: productAssetRepository,
+            ),
+          ),
         ],
       );
     }
@@ -2754,6 +2767,9 @@ class _AgentRunTranscriptListenableState
   Object? _actionSourceIdentity;
   int? _actionRevision;
   List<AgentActionCardView> _actionCards = const <AgentActionCardView>[];
+  Object? _citationSourceIdentity;
+  String? _citationMessageId;
+  List<AgentCitationView> _citations = const <AgentCitationView>[];
 
   @override
   Widget build(BuildContext context) {
@@ -2781,6 +2797,7 @@ class _AgentRunTranscriptListenableState
           productAssetRepository: widget.productAssetRepository,
           artifactCards: _artifactCardsForState(state),
           actionCards: _actionCardsForState(state, actionRevision),
+          citations: _citationsForState(state),
           onConfirmAction: widget.onConfirmAction,
           onRejectAction: widget.onRejectAction,
         );
@@ -2819,6 +2836,20 @@ class _AgentRunTranscriptListenableState
     );
     return _actionCards;
   }
+
+  List<AgentCitationView> _citationsForState(AgentStreamRunState state) {
+    if (identical(state.events, _citationSourceIdentity) &&
+        state.messageId == _citationMessageId) {
+      return _citations;
+    }
+    _citationSourceIdentity = state.events;
+    _citationMessageId = state.messageId;
+    _citations = AgentCitationMapper.citationsFromEvents(
+      state.events,
+      messageId: state.messageId,
+    );
+    return _citations;
+  }
 }
 
 class AgentRunTranscript extends StatelessWidget {
@@ -2839,6 +2870,7 @@ class AgentRunTranscript extends StatelessWidget {
     this.productAssetRepository,
     this.artifactCards,
     this.actionCards,
+    this.citations,
     this.onConfirmAction,
     this.onRejectAction,
   });
@@ -2859,6 +2891,7 @@ class AgentRunTranscript extends StatelessWidget {
   final ProductAssetRepository? productAssetRepository;
   final List<AgentArtifactCardView>? artifactCards;
   final List<AgentActionCardView>? actionCards;
+  final List<AgentCitationView>? citations;
   final ValueChanged<AgentActionCardView>? onConfirmAction;
   final ValueChanged<AgentActionCardView>? onRejectAction;
 
@@ -2878,6 +2911,12 @@ class AgentRunTranscript extends StatelessWidget {
         _actionCardsFromEvents(
           _actionEventsForState(state),
           localActionStatuses,
+        );
+    final citations =
+        this.citations ??
+        AgentCitationMapper.citationsFromEvents(
+          state.events,
+          messageId: state.messageId,
         );
     final quickReplies = state.quickReplies;
     final shouldRenderQuickReplies =
@@ -2931,6 +2970,7 @@ class AgentRunTranscript extends StatelessWidget {
                       style: primaryTextStyle,
                       onArtifactAction: onArtifactAction,
                       productAssetRepository: productAssetRepository,
+                      citations: citations,
                     ),
                   ),
                 ),
@@ -2985,8 +3025,15 @@ class AgentRunTranscript extends StatelessWidget {
                   onReject: onRejectAction,
                 ),
               ],
-              if (shouldRenderQuickReplies) ...[
+              if (citations.isNotEmpty) ...[
                 const SizedBox(height: 16),
+                AgentCitationList(
+                  citations: citations,
+                  onAction: onArtifactAction,
+                ),
+              ],
+              if (shouldRenderQuickReplies) ...[
+                SizedBox(height: citations.isNotEmpty ? 20 : 16),
                 AgentQuickRepliesBar(
                   replies: quickReplies,
                   onSelected: onQuickReplySelected!,
@@ -3207,6 +3254,108 @@ class _AgentQuickReplyPill extends StatelessWidget {
   }
 }
 
+class AgentCitationList extends StatelessWidget {
+  const AgentCitationList({super.key, required this.citations, this.onAction});
+
+  final List<AgentCitationView> citations;
+  final AgentArtifactActionHandler? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      key: const ValueKey('agent-citation-list'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const SizedBox(
+              width: 16,
+              child: Divider(height: 1, color: Color(0xffdbc3cb)),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '专业信息源',
+              style: textTheme.labelSmall?.copyWith(
+                color: const Color(0xff8f7a84),
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        for (var index = 0; index < citations.length; index++) ...[
+          _AgentCitationLink(
+            citation: citations[index],
+            onTap: onAction == null
+                ? null
+                : () => onAction!(
+                    AgentArtifactActionView(
+                      label: citations[index].title,
+                      icon: Icons.open_in_new_rounded,
+                      kind: 'citation',
+                      value: citations[index].url.toString(),
+                      externalUri: citations[index].url,
+                    ),
+                  ),
+          ),
+          if (index < citations.length - 1) const SizedBox(height: 4),
+        ],
+      ],
+    );
+  }
+}
+
+class _AgentCitationLink extends StatelessWidget {
+  const _AgentCitationLink({required this.citation, this.onTap});
+
+  final AgentCitationView citation;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            '[${citation.index}]',
+            style: textTheme.labelSmall?.copyWith(
+              color: const Color(0xffaa929f),
+              fontSize: 11,
+              height: 1.35,
+            ),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: InkWell(
+            key: ValueKey('agent-citation-link-${citation.index}'),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                citation.displayText,
+                overflow: TextOverflow.visible,
+                style: textTheme.labelSmall?.copyWith(
+                  color: const Color(0xff3d7d85),
+                  fontSize: 11,
+                  height: 1.35,
+                  decoration: TextDecoration.underline,
+                  decorationColor: const Color(0xffb8d7d4),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class AgentMarkdownText extends StatelessWidget {
   const AgentMarkdownText(
     this.text, {
@@ -3214,6 +3363,7 @@ class AgentMarkdownText extends StatelessWidget {
     this.style,
     this.onArtifactAction,
     this.productAssetRepository,
+    this.citations = const <AgentCitationView>[],
     this.parseMarkdown = true,
   });
 
@@ -3221,6 +3371,7 @@ class AgentMarkdownText extends StatelessWidget {
   final TextStyle? style;
   final AgentArtifactActionHandler? onArtifactAction;
   final ProductAssetRepository? productAssetRepository;
+  final List<AgentCitationView> citations;
   final bool parseMarkdown;
 
   @override
@@ -3230,9 +3381,11 @@ class AgentMarkdownText extends StatelessWidget {
     if (!parseMarkdown) {
       return Text(normalized, style: baseStyle);
     }
-    final markdown = _prepareAgentMarkdown(normalized);
+    final markdown = _prepareAgentMarkdown(
+      replaceCitationLinksWithIndexes(normalized, citations),
+    );
     if (!_containsMarkdown(markdown)) {
-      return Text(normalized, style: baseStyle);
+      return Text(markdown, style: baseStyle);
     }
 
     return MarkdownBody(
@@ -3257,14 +3410,26 @@ class AgentMarkdownText extends StatelessWidget {
           onArtifactAction?.call(AgentArtifactActions.hospitalBagCart);
           return;
         }
-        _openMarkdownMedia(url: url, title: label.trim());
+        if (_openMarkdownMedia(url: url, title: label.trim())) return;
+        final target = SafeLinkTarget.tryParse(url);
+        if (target == null) return;
+        onArtifactAction?.call(
+          AgentArtifactActionView(
+            label: label.trim().isEmpty ? '打开链接' : label.trim(),
+            icon: Icons.open_in_new_rounded,
+            kind: 'link',
+            value: url,
+            routePath: target.internalPath,
+            externalUri: target.externalUri,
+          ),
+        );
       },
     );
   }
 
-  void _openMarkdownMedia({required String url, String? title}) {
+  bool _openMarkdownMedia({required String url, String? title}) {
     final kind = _viewerKindForUrl(url);
-    if (kind == null) return;
+    if (kind == null) return false;
     final normalizedTitle = title?.trim();
     onArtifactAction?.call(
       AgentArtifactActionView(
@@ -3280,6 +3445,7 @@ class AgentMarkdownText extends StatelessWidget {
         },
       ),
     );
+    return true;
   }
 
   MarkdownStyleSheet _momcozyMarkdownStyleSheet(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
@@ -554,13 +555,15 @@ List<AgentArtifactActionView> _buttonActions(Object? rawButtons) {
               _stringField(button, 'title'),
             ]) ??
             '打开';
+        final routePath = _actionRoutePath(kind: kind, value: value);
         return AgentArtifactActionView(
           label: label,
           icon: _actionIcon(kind),
           kind: kind ?? 'button',
           value: value,
-          routePath: _actionRoutePath(kind: kind, value: value),
+          routePath: routePath,
           routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
+          externalUri: _actionExternalUri(value: value, routePath: routePath),
         );
       })
       .toList(growable: false);
@@ -592,6 +595,8 @@ List<AgentArtifactActionView> _referenceActions(Object? rawReferences) {
           _stringField(reference, 'href'),
           _stringField(reference, 'value'),
         ]);
+        final target = SafeLinkTarget.tryParse(value);
+        if (target == null || value == null) return null;
         final title =
             _firstNonEmpty([
               _stringField(reference, 'title'),
@@ -600,13 +605,25 @@ List<AgentArtifactActionView> _referenceActions(Object? rawReferences) {
               _hostFromUrl(value),
             ]) ??
             '参考来源';
+        final mediaKind = target.isInternal
+            ? _mediaViewerKind(kind: null, url: value)
+            : null;
+        final routePath = mediaKind == null
+            ? target.internalPath
+            : '/media-viewer';
         return AgentArtifactActionView(
           label: _citationLabel(reference['index'], title),
           icon: _actionIcon('citation'),
           kind: 'citation',
           value: value,
+          routePath: routePath,
+          routeExtra: mediaKind == null
+              ? null
+              : {'kind': mediaKind, 'url': value, 'title': title},
+          externalUri: routePath == null ? target.externalUri : null,
         );
       })
+      .whereType<AgentArtifactActionView>()
       .toList(growable: false);
 }
 
@@ -637,13 +654,15 @@ List<AgentArtifactActionView> _semanticActions(
                   : null,
             ]) ??
             '打开';
+        final routePath = _actionRoutePath(kind: kind, value: value);
         return AgentArtifactActionView(
           label: label,
           icon: _actionIcon(kind),
           kind: kind ?? 'action',
           value: value,
-          routePath: _actionRoutePath(kind: kind, value: value),
+          routePath: routePath,
           routeExtra: _actionRouteExtra(kind: kind, value: value, title: label),
+          externalUri: _actionExternalUri(value: value, routePath: routePath),
         );
       })
       .toList(growable: false);
@@ -686,7 +705,12 @@ IconData _actionIcon(String? kind) {
 
 String? _actionRoutePath({required String? kind, required String? value}) {
   if (_isMediaActionKind(kind)) return '/media-viewer';
-  return _safeSameOriginPath(value);
+  return SafeLinkTarget.tryParse(value)?.internalPath;
+}
+
+Uri? _actionExternalUri({required String? value, required String? routePath}) {
+  if (routePath != null) return null;
+  return SafeLinkTarget.tryParse(value)?.externalUri;
 }
 
 Map<String, Object?>? _actionRouteExtra({
@@ -736,12 +760,7 @@ String? _mediaViewerKind({required String? kind, required String url}) {
 }
 
 String? _safeSameOriginPath(String? value) {
-  final normalized = value?.trim();
-  if (normalized == null || normalized.isEmpty) return null;
-  final uri = Uri.tryParse(normalized);
-  if (uri == null || uri.hasScheme || uri.hasAuthority) return null;
-  final path = uri.path.isEmpty ? normalized : uri.path;
-  return path.startsWith('/') ? path : null;
+  return SafeLinkTarget.tryParse(value)?.internalPath;
 }
 
 String? _markdownLinkPath(String? value) {

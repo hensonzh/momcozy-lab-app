@@ -475,6 +475,33 @@ void main() {
     expect(find.byKey(const ValueKey('agent-history-199')), findsNothing);
   });
 
+  testWidgets('Agent Hub keeps links clickable in restored plain history', (
+    tester,
+  ) async {
+    final actions = <AgentArtifactActionView>[];
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          historyMessages: const [
+            AgentHubHistoryMessage(
+              role: AgentHubHistoryRole.assistant,
+              content: '[查看专业资料](https://example.com/reference)',
+            ),
+          ],
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('查看专业资料', findRichText: true));
+    await tester.pump();
+
+    expect(
+      actions.single.externalUri,
+      Uri.parse('https://example.com/reference'),
+    );
+  });
+
   testWidgets('Agent Hub plays greeting voice on first open', (tester) async {
     final coordinator = AgentVoicePlaybackCoordinator();
     final player = _PageFakeVoicePlaybackPlayer();
@@ -3075,6 +3102,69 @@ void main() {
     expect(find.text('20:00 泵奶'), findsOneWidget);
   });
 
+  testWidgets('Agent Hub persists citations when archiving a reply', (
+    tester,
+  ) async {
+    final store = _MemoryAgentHubInteractionStateStore();
+    final client = _FixtureAgentStreamClient([
+      AgentStreamEvent({
+        'type': 'message.completed',
+        'role': 'assistant',
+        'message_id': 'assistant-next',
+        'payload': {'text': '新的回复'},
+      }),
+      AgentStreamEvent({'type': 'run.completed', 'run_id': 'run-next'}),
+    ]);
+    final citationEvent = AgentStreamEvent({
+      'type': 'CUSTOM',
+      'name': 'momcozy.web_search.citations',
+      'message_id': 'assistant-history-citation',
+      'value': {
+        'citations': [
+          {
+            'url': 'https://www.who.int/health-topics/breastfeeding',
+            'title': 'WHO',
+          },
+        ],
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          interactionStateStore: store,
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            messageId: 'assistant-history-citation',
+            textContent: '这是带专业来源的回复。',
+            events: [citationEvent],
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '继续',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final history = store.snapshot?.historyMessages ?? const [];
+    expect(history, hasLength(2));
+    final archivedAssistant = history.first;
+    expect(archivedAssistant.role, 'assistant');
+    expect(
+      archivedAssistant.runState?.events.any(
+        (event) => event.raw['name'] == 'momcozy.web_search.citations',
+      ),
+      isTrue,
+    );
+  });
+
   testWidgets('Agent Hub restores submitted historical forms as read-only', (
     tester,
   ) async {
@@ -4426,6 +4516,7 @@ void main() {
               'url': 'https://www.cdc.gov/breastfeeding/mastitis',
             },
             {'displayText': 'ABM Protocol', 'href': '/guides/abm.pdf'},
+            {'title': '危险来源', 'url': 'javascript:alert(1)'},
           ],
         },
       },
@@ -4448,6 +4539,7 @@ void main() {
     expect(find.text('ABM Protocol'), findsOneWidget);
     expect(find.textContaining('https://www.cdc.gov'), findsNothing);
     expect(find.textContaining('/guides/abm.pdf'), findsNothing);
+    expect(find.text('危险来源'), findsNothing);
 
     await tester.tap(
       find.byKey(const ValueKey('agent-artifact-action-citation-card-0')),
@@ -4457,6 +4549,144 @@ void main() {
     expect(actions.single.kind, 'citation');
     expect(actions.single.value, 'https://www.cdc.gov/breastfeeding/mastitis');
     expect(actions.single.routePath, isNull);
+    expect(
+      actions.single.externalUri,
+      Uri.parse('https://www.cdc.gov/breastfeeding/mastitis'),
+    );
+  });
+
+  testWidgets('Agent Hub renders web search citations like legacy web', (
+    tester,
+  ) async {
+    final actions = <AgentArtifactActionView>[];
+    final citationEvent = AgentStreamEvent({
+      'type': 'CUSTOM',
+      'name': 'momcozy.web_search.citations',
+      'message_id': 'assistant-citations',
+      'value': {
+        'citations': [
+          {
+            'url': 'https://www.cdc.gov/breastfeeding',
+            'title': 'CDC Breastfeeding',
+            'displayText': 'CDC 健康指南：cdc.gov/breastfeeding',
+          },
+          {
+            'url': 'https://www.who.int/health-topics/breastfeeding',
+            'title': 'WHO',
+          },
+        ],
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            messageId: 'assistant-citations',
+            textContent:
+                '参考 [CDC](https://www.cdc.gov/breastfeeding)。\ncite turn1search5',
+            events: [citationEvent],
+          ),
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+
+    expect(find.text('专业信息源'), findsOneWidget);
+    expect(find.text('CDC', findRichText: true), findsNothing);
+    expect(find.textContaining('turn1search5'), findsNothing);
+    expect(find.text('[1]', findRichText: true), findsWidgets);
+    expect(find.text('CDC 健康指南：cdc.gov/breastfeeding'), findsOneWidget);
+    expect(find.text('WHO 健康指南：who.int/health-topics/...'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('agent-citation-link-1')));
+    await tester.pump();
+
+    expect(actions, hasLength(1));
+    expect(actions.single.kind, 'citation');
+    expect(
+      actions.single.externalUri,
+      Uri.parse('https://www.cdc.gov/breastfeeding'),
+    );
+  });
+
+  testWidgets('Agent Hub dispatches safe markdown links only', (tester) async {
+    final actions = <AgentArtifactActionView>[];
+    const markdown = '''
+[查看护理资料](https://example.com/care)
+
+[打开状态页](/status?day=today)
+
+[危险链接](javascript:alert(1))
+''';
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: const AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: markdown,
+          ),
+          onArtifactAction: actions.add,
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('查看护理资料', findRichText: true));
+    await tester.pump();
+    expect(actions.single.externalUri, Uri.parse('https://example.com/care'));
+    expect(actions.single.routePath, isNull);
+
+    await tester.tap(find.text('打开状态页', findRichText: true));
+    await tester.pump();
+    expect(actions.last.routePath, '/status');
+    expect(actions.last.value, '/status?day=today');
+    expect(actions.last.externalUri, isNull);
+
+    await tester.tap(find.text('危险链接', findRichText: true));
+    await tester.pump();
+    expect(actions, hasLength(2));
+  });
+
+  testWidgets('Agent Hub wraps long citations on narrow mobile', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final citationEvent = AgentStreamEvent({
+      'type': 'CUSTOM',
+      'name': 'momcozy.web_search.citations',
+      'value': {
+        'citations': [
+          {
+            'url':
+                'https://www.ncbi.nlm.nih.gov/books/NBK501922/long-reference-path',
+            'title': 'NCBI',
+            'displayText':
+                '这是一条需要在窄屏上自然换行的专业医学资料：ncbi.nlm.nih.gov/books/NBK501922/long-reference-path',
+          },
+        ],
+      },
+    });
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '我整理好了参考来源。',
+            events: [citationEvent],
+          ),
+          onArtifactAction: (_) {},
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-citation-list')), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('Agent Hub wraps long content on compact mobile viewport', (
