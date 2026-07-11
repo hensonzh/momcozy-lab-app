@@ -71,8 +71,8 @@ DateTime? _date(Object? value) {
 }
 
 DateTime _today(DateTime Function()? now) {
-  final value = (now ?? DateTime.now)().toUtc();
-  return DateTime.utc(value.year, value.month, value.day);
+  final value = (now ?? DateTime.now)();
+  return DateTime(value.year, value.month, value.day);
 }
 
 String? _stageFromDeliveryDate(
@@ -85,6 +85,6 @@ String? _stageFromDeliveryDate(
 
 int? _ageDays(DateTime? date, {DateTime Function()? now}) {
   if (date == null) return null;
-  final start = DateTime.utc(date.year, date.month, date.day);
+  final start = DateTime(date.year, date.month, date.day);
   return _today(now).difference(start).inDays;
 }

@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
 import 'package:momcozy_flutter_app/features/status/domain/birth_journey_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/pregnancy_diary.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
 
 void main() {
@@ -193,6 +195,76 @@ void main() {
 
       expect(await operation, isFalse);
     });
+
+    test(
+      'restores care stage and enforces the pregnancy identity constraint',
+      () async {
+        final preferences = _FakeStatusPreferenceStore(
+          storedStage: StatusCareStage.pregnancy,
+        );
+        final controller = _controller(
+          preferences: preferences,
+          initialIdentity: StatusIdentity.baby,
+        );
+        addTearDown(controller.dispose);
+
+        await controller.restoreSelection();
+
+        expect(controller.careStage.value, StatusCareStage.pregnancy);
+        expect(controller.identity.value, StatusIdentity.mom);
+        expect(controller.selectionReady.value, isTrue);
+        expect(controller.selectIdentity(StatusIdentity.baby), isFalse);
+
+        await controller.changeCareStage(StatusCareStage.postpartum);
+        expect(controller.selectIdentity(StatusIdentity.baby), isTrue);
+        await controller.changeCareStage(StatusCareStage.pregnancy);
+
+        expect(controller.identity.value, StatusIdentity.mom);
+        expect(preferences.writes, [
+          StatusCareStage.postpartum,
+          StatusCareStage.pregnancy,
+        ]);
+      },
+    );
+
+    test(
+      'does not let a late preference read overwrite a user selection',
+      () async {
+        final preferences = _FakeStatusPreferenceStore(deferRead: true);
+        final controller = _controller(preferences: preferences);
+        addTearDown(controller.dispose);
+
+        final restore = controller.restoreSelection();
+        await controller.changeCareStage(StatusCareStage.pregnancy);
+        preferences.completeRead(StatusCareStage.postpartum);
+        await restore;
+
+        expect(controller.careStage.value, StatusCareStage.pregnancy);
+        expect(controller.selectionReady.value, isTrue);
+      },
+    );
+
+    test('serializes rapid care stage preference writes', () async {
+      final preferences = _FakeStatusPreferenceStore(deferWrites: true);
+      final controller = _controller(preferences: preferences);
+      addTearDown(controller.dispose);
+
+      final first = controller.changeCareStage(StatusCareStage.pregnancy);
+      final second = controller.changeCareStage(StatusCareStage.postpartum);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(preferences.writes, [StatusCareStage.pregnancy]);
+      preferences.completeNextWrite();
+      await Future<void>.delayed(Duration.zero);
+      expect(preferences.writes, [
+        StatusCareStage.pregnancy,
+        StatusCareStage.postpartum,
+      ]);
+      preferences.completeNextWrite();
+
+      await Future.wait<void>([first, second]);
+      expect(preferences.storedStage, StatusCareStage.postpartum);
+    });
   });
 }
 
@@ -200,6 +272,8 @@ StatusDashboardController _controller({
   _FakeRecordsRepository? records,
   _FakePregnancyDiaryRepository? diary,
   _FakeBirthJourneyPlanRepository? plans,
+  _FakeStatusPreferenceStore? preferences,
+  StatusIdentity initialIdentity = StatusIdentity.mom,
 }) {
   final effectiveRecords = records ?? _FakeRecordsRepository();
   return StatusDashboardController(
@@ -210,9 +284,52 @@ StatusDashboardController _controller({
     pregnancyDiaryRepository: diary ?? _FakePregnancyDiaryRepository(),
     birthJourneyPlanRepository:
         plans ?? _FakeBirthJourneyPlanRepository(plan: null),
+    preferenceStore: preferences ?? _FakeStatusPreferenceStore(),
+    initialIdentity: initialIdentity,
     babyId: 'baby-001',
     now: () => DateTime(2026, 7, 11, 10),
   );
+}
+
+class _FakeStatusPreferenceStore implements StatusPreferenceStore {
+  _FakeStatusPreferenceStore({
+    this.storedStage,
+    this.deferRead = false,
+    this.deferWrites = false,
+  });
+
+  StatusCareStage? storedStage;
+  final bool deferRead;
+  final bool deferWrites;
+  final writes = <StatusCareStage>[];
+  Completer<StatusCareStage?>? _readCompleter;
+  final _writeCompleters = <Completer<void>>[];
+
+  void completeRead(StatusCareStage? stage) {
+    _readCompleter?.complete(stage);
+  }
+
+  void completeNextWrite() {
+    _writeCompleters.removeAt(0).complete();
+  }
+
+  @override
+  Future<StatusCareStage?> readCareStage() async {
+    if (!deferRead) return storedStage;
+    _readCompleter = Completer<StatusCareStage?>();
+    return _readCompleter!.future;
+  }
+
+  @override
+  Future<void> writeCareStage(StatusCareStage stage) async {
+    writes.add(stage);
+    if (deferWrites) {
+      final completer = Completer<void>();
+      _writeCompleters.add(completer);
+      await completer.future;
+    }
+    storedStage = stage;
+  }
 }
 
 class _FakeStatusRepository implements StatusRepository {
