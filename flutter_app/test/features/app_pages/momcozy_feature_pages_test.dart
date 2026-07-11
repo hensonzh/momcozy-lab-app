@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
@@ -1678,11 +1680,26 @@ void main() {
     ) async {
       final recorded = <Map<String, Object?>>[];
       final client = AgentStreamClientEventClient(recorder: recorded.add);
+      final consultStore = IbclcConsultStore.inMemory(
+        now: () => DateTime.utc(2026, 7, 11),
+      );
+      const routeState = IbclcConsultRouteState(
+        consultId: 'consult-feature',
+        sourceArtifactId: 'artifact-feature',
+        threadId: 'thread-feature',
+        runId: 'run-feature',
+        returnPath: '/',
+        consultantName: 'Lin Zhao',
+        reason: '含乳疼痛',
+        feedingContext: '左侧喂养后疼痛',
+      );
 
       await tester.pumpWidget(
         _FeaturePageHost(
           route: _route('/ibclc-chat.html'),
           clientEventClient: client,
+          ibclcConsultStore: consultStore,
+          routeExtra: routeState,
         ),
       );
       await tester.pumpAndSettle();
@@ -1706,7 +1723,10 @@ void main() {
       expect(body['locale'], 'zh-CN');
       expect(body['metadata'], containsPair('source', 'ibclc-chat'));
       expect(body['metadata'], containsPair('handoff', 'vendor_h5_native'));
-      expect(body['metadata'], containsPair('return_to', '/status'));
+      expect(body['metadata'], containsPair('consult_id', 'consult-feature'));
+      expect(body['metadata'], containsPair('thread_id', 'thread-feature'));
+      expect(body['metadata'], containsPair('return_to', '/'));
+      expect(body['metadata'], containsPair('reason', '含乳疼痛'));
     });
 
     testWidgets('IBCLC page enters local queue when event sync fails', (
@@ -1728,31 +1748,64 @@ void main() {
       expect(find.text('本地已进入队列，稍后重试同步。'), findsOneWidget);
     });
 
-    testWidgets('IBCLC page opens vendor handoff and returns to status route', (
+    testWidgets('IBCLC page completes the consult and returns to Agent Hub', (
       tester,
     ) async {
-      final client = AgentStreamClientEventClient();
-      final router = createMomCozyRouter(initialLocation: '/ibclc-chat.html');
+      final recorded = <Map<String, Object?>>[];
+      final client = AgentStreamClientEventClient(recorder: recorded.add);
+      final consultStore = IbclcConsultStore.inMemory(
+        now: () => DateTime.utc(2026, 7, 11),
+      );
+      const routeState = IbclcConsultRouteState(
+        consultId: 'consult-route',
+        sourceArtifactId: 'artifact-route',
+        threadId: 'thread-route',
+        runId: 'run-route',
+        returnPath: '/',
+        consultantName: 'Lin Zhao',
+        reason: '含乳疼痛',
+      );
+      final router = createMomCozyRouter();
 
       await tester.pumpWidget(
         MomCozyFlutterApp(
           router: router,
-          apiRuntime: _appRuntime(clientEventClient: client),
+          apiRuntime: _appRuntime(
+            clientEventClient: client,
+            ibclcConsultStore: consultStore,
+          ),
         ),
       );
+      await tester.pumpAndSettle();
+
+      router.go('/ibclc-chat.html', extra: routeState);
       await tester.pumpAndSettle();
 
       await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('你好，我是 Emily Chen'), findsOneWidget);
+      expect(find.textContaining('你好，我是 Lin Zhao'), findsOneWidget);
 
       await tester.tap(
         find.byKey(const ValueKey('ibclc-return-status-button')),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+      expect(consultStore.isCompleted('consult-route'), isTrue);
+      expect(
+        recorded.map((event) => event['event_type']),
+        containsAllInOrder([
+          'ibclc_consult_started',
+          'ibclc_consult_completed',
+        ]),
+      );
+      final completed = recorded.last;
+      expect(
+        completed['metadata'],
+        containsPair('consult_id', 'consult-route'),
+      );
+      expect(completed['metadata'], containsPair('thread_id', 'thread-route'));
     });
 
     testWidgets('hospital bag page syncs cart changes through repository', (
@@ -2197,6 +2250,7 @@ class _FeaturePageHost extends StatelessWidget {
     this.pumpProtocolPlatform,
     this.routeExtra,
     this.hospitalBagCartStore,
+    this.ibclcConsultStore,
   });
 
   final MomCozyRouteConfig route;
@@ -2206,6 +2260,7 @@ class _FeaturePageHost extends StatelessWidget {
   final PumpProtocolPlatform? pumpProtocolPlatform;
   final Object? routeExtra;
   final HospitalBagCartStore? hospitalBagCartStore;
+  final IbclcConsultStore? ibclcConsultStore;
 
   @override
   Widget build(BuildContext context) {
@@ -2216,6 +2271,7 @@ class _FeaturePageHost extends StatelessWidget {
         blePlatform: blePlatform,
         pumpProtocolPlatform: pumpProtocolPlatform,
         hospitalBagCartStore: hospitalBagCartStore,
+        ibclcConsultStore: ibclcConsultStore,
       ),
       child: MaterialApp(
         theme: momCozyTheme(),
@@ -2296,6 +2352,7 @@ MomCozyApiRuntime _appRuntime({
   BlePlatform? blePlatform,
   ProductAssetRepository? productAssetRepository,
   HospitalBagCartStore? hospitalBagCartStore,
+  IbclcConsultStore? ibclcConsultStore,
   String userId = 'demo-user-fixture',
 }) {
   return MomCozyApiRuntime(
@@ -2407,6 +2464,7 @@ MomCozyApiRuntime _appRuntime({
     agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
     productAssetRepository: productAssetRepository,
     hospitalBagCartStore: hospitalBagCartStore,
+    ibclcConsultStore: ibclcConsultStore,
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{
       'status': 200,
       'data': <String, Object?>{

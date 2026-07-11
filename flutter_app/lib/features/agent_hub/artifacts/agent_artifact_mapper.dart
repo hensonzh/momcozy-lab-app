@@ -98,15 +98,15 @@ class AgentArtifactMapper {
       _mapField(artifactPayload, 'assistant_followup', 'assistantFollowup'),
       _mapField(payload, 'assistant_followup', 'assistantFollowup'),
     ]);
-    final artifactId = _firstNonEmpty([
+    final explicitArtifactId = _firstNonEmpty([
       _stringField(event.raw, 'artifact_id', 'artifactId'),
       _stringField(payload, 'artifact_id', 'artifactId'),
       _stringField(artifact, 'id'),
       _stringField(supportTicket, 'draft_id', 'draftId'),
       _stringField(supportTicket, 'id'),
       event.artifactId,
-      event.mergeKey,
-    ])!;
+    ]);
+    final artifactId = explicitArtifactId ?? event.mergeKey;
     final schemaVersion =
         _firstNonEmpty([
           _stringField(event.raw, 'schema_version', 'schemaVersion'),
@@ -124,6 +124,8 @@ class AgentArtifactMapper {
     ]);
     final cardJson = rawCardJson.isNotEmpty
         ? rawCardJson
+        : _isIbclcConsultType(artifactType) && cardEnvelope.isNotEmpty
+        ? cardEnvelope
         : _directCardPayload(artifactType, effectivePayload);
     final cardType = _firstNonEmpty([
       _stringField(cardEnvelope, 'card_type', 'cardType'),
@@ -140,6 +142,9 @@ class AgentArtifactMapper {
     final specializedView = mapAgentSpecializedCard(
       presentationKind: presentationKind,
       cardJson: cardJson,
+      payload: effectivePayload,
+      artifactId: artifactId,
+      consultIdFallbackArtifactId: explicitArtifactId ?? '',
     );
     final explicitTitle = _firstNonEmpty([
       _stringField(richText, 'title'),
@@ -262,6 +267,7 @@ AgentArtifactPresentationKind _presentationKind({
         when cardJson.containsKey('packing_groups') ||
             cardJson.containsKey('packingGroups') =>
       AgentArtifactPresentationKind.hospitalBagCard,
+    'ibclc_consult' ||
     'ibclc_consult_card' => AgentArtifactPresentationKind.ibclcConsultCard,
     'rich_text' => AgentArtifactPresentationKind.richText,
     _ => AgentArtifactPresentationKind.generic,
@@ -285,9 +291,16 @@ Map<String, Object?> _directCardPayload(
     'milk_plan_card' ||
     'birth_journey_plan_card' ||
     'birth_plan_card' ||
-    'hospital_bag_card' => payload,
+    'hospital_bag_card' ||
+    'ibclc_consult' ||
+    'ibclc_consult_card' => payload,
     _ => const <String, Object?>{},
   };
+}
+
+bool _isIbclcConsultType(String? artifactType) {
+  return artifactType == 'ibclc_consult' ||
+      artifactType == 'ibclc_consult_card';
 }
 
 List<AgentArtifactFormFieldView> _formFields(Map<String, Object?> form) {

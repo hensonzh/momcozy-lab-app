@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
@@ -122,6 +123,8 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        routeUri: routeUri,
+        routeExtra: routeExtra,
       ),
       '/media-viewer' => _MediaViewerPage(
         path: path,
@@ -10482,6 +10485,8 @@ class _IbclcPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.routeUri,
+    this.routeExtra,
   });
 
   final String path;
@@ -10489,6 +10494,8 @@ class _IbclcPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Uri? routeUri;
+  final Object? routeExtra;
 
   @override
   State<_IbclcPage> createState() => _IbclcPageState();
@@ -10502,12 +10509,16 @@ class _IbclcPageState extends State<_IbclcPage> {
   int _connectionStepIndex = 1;
   String? _syncStatus;
   final List<Timer> _connectionTimers = [];
-  static const String _returnToPath = '/status';
   static const _connectionSteps = ['健康信息整理中', '连接中', '连接成功', '对方正在读取背景中'];
+  late final IbclcConsultRouteState _routeState;
 
   @override
   void initState() {
     super.initState();
+    _routeState = IbclcConsultRouteState.fromRoute(
+      extra: widget.routeExtra,
+      uri: widget.routeUri,
+    );
     _scheduleConnectionFlow();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) unawaited(_startConsult());
@@ -10557,15 +10568,11 @@ class _IbclcPageState extends State<_IbclcPage> {
       final result = await runtime.clientEventClient.post(
         AgentStreamClientEventRequest(
           eventType: 'ibclc_consult_started',
+          runId: _routeState.runId,
           label: '用户进入 IBCLC 在线咨询队列',
           occurredAt: runtime.now().toIso8601String(),
           locale: runtime.locale,
-          metadata: const {
-            'consult_id': 'ibclc-flutter-default',
-            'source': 'ibclc-chat',
-            'handoff': 'vendor_h5_native',
-            'return_to': _returnToPath,
-          },
+          metadata: _routeState.eventMetadata(),
         ),
       );
       if (!mounted) return;
@@ -10584,14 +10591,28 @@ class _IbclcPageState extends State<_IbclcPage> {
     }
   }
 
-  void _returnToStatus() {
-    context.go(_returnToPath);
+  void _returnToAgentHub() {
+    context.go(_routeState.returnPath);
   }
 
   void _endConsult() {
     if (_isEnding) return;
     setState(() => _isEnding = true);
-    _returnToStatus();
+    final runtime = MomCozyRuntimeScope.of(context);
+    unawaited(runtime.ibclcConsultStore.markCompleted(_routeState));
+    unawaited(
+      runtime.clientEventClient.post(
+        AgentStreamClientEventRequest(
+          eventType: 'ibclc_consult_completed',
+          runId: _routeState.runId,
+          label: '用户已完成一次 IBCLC 在线咨询',
+          occurredAt: runtime.now().toIso8601String(),
+          locale: runtime.locale,
+          metadata: _routeState.eventMetadata(),
+        ),
+      ),
+    );
+    _returnToAgentHub();
   }
 
   @override
@@ -10607,6 +10628,7 @@ class _IbclcPageState extends State<_IbclcPage> {
               chatReady: _chatReady,
               connectionText: _connectionSteps[_connectionStepIndex],
               syncStatus: _syncStatus,
+              routeState: _routeState,
             ),
           ),
           if (_chatReady) const _IbclcChatComposer(),
@@ -10677,11 +10699,13 @@ class _IbclcChatBody extends StatelessWidget {
     required this.chatReady,
     required this.connectionText,
     required this.syncStatus,
+    required this.routeState,
   });
 
   final bool chatReady;
   final String connectionText;
   final String? syncStatus;
+  final IbclcConsultRouteState routeState;
 
   @override
   Widget build(BuildContext context) {
@@ -10787,7 +10811,7 @@ class _IbclcChatBody extends StatelessWidget {
                     vertical: 12,
                   ),
                   child: Text(
-                    '你好，我是 Emily Chen，IBCLC。我已经看到你从 CoMate 带过来的背景了，你可以先告诉我现在最困扰你的哺乳问题。',
+                    _openingMessage,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: const Color(0xff233c39),
                       height: 1.45,
@@ -10827,6 +10851,18 @@ class _IbclcChatBody extends StatelessWidget {
         ],
       ],
     );
+  }
+
+  String get _openingMessage {
+    final contextParts = <String>[
+      if (routeState.reason.isNotEmpty) '咨询原因：${routeState.reason}',
+      if (routeState.feedingContext.isNotEmpty)
+        '当前情况：${routeState.feedingContext}',
+    ];
+    final contextText = contextParts.isEmpty
+        ? ''
+        : '（${contextParts.join('；')}）';
+    return '你好，我是 ${routeState.consultantName}，IBCLC。我已经看到你从 CoMate 带过来的背景了$contextText，你可以先告诉我现在最困扰你的哺乳问题。';
   }
 }
 

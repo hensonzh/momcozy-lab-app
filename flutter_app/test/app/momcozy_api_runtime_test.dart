@@ -342,6 +342,7 @@ void main() {
     );
     final controller = MomCozyRuntimeController(runtime);
     final previousCartStore = runtime.hospitalBagCartStore;
+    final previousConsultStore = runtime.ibclcConsultStore;
     previousCartStore.ingestArtifact(_cartSeed('previous-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
@@ -369,6 +370,10 @@ void main() {
     );
     expect(controller.runtime.hospitalBagCartStore.agentClientContext, isNull);
     expect(
+      controller.runtime.ibclcConsultStore,
+      isNot(same(previousConsultStore)),
+    );
+    expect(
       controller.runtime.productAssetRepository,
       same(productAssetRepository),
     );
@@ -390,6 +395,7 @@ void main() {
     );
     final store = MemoryMomCozySessionStore(session);
     final cartStore = controller.runtime.hospitalBagCartStore;
+    final consultStore = controller.runtime.ibclcConsultStore;
     cartStore.ingestArtifact(_cartSeed('same-user-cart'));
     var notifyCount = 0;
     controller.addListener(() {
@@ -400,6 +406,7 @@ void main() {
 
     expect(notifyCount, 1);
     expect(controller.runtime.hospitalBagCartStore, same(cartStore));
+    expect(controller.runtime.ibclcConsultStore, same(consultStore));
     expect(
       controller.runtime.hospitalBagCartStore.agentClientContext,
       isNotNull,
@@ -423,6 +430,7 @@ void main() {
     expect(notifyCount, 2);
     expect(controller.runtime.currentSession.accessToken, 'fresh-access');
     expect(controller.runtime.hospitalBagCartStore, same(cartStore));
+    expect(controller.runtime.ibclcConsultStore, same(consultStore));
     expect(
       controller.runtime.jsonTransport,
       isA<AuthenticatedApiJsonTransport>(),

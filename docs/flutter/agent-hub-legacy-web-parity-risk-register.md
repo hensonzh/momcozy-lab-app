@@ -33,7 +33,7 @@
 | R07 | P2 | 普通链接和专业引用点击无效 | 已完成 | 用户无法打开来源和非媒体链接 |
 | R08 | P2 | 用户资料复用和信息采集表单归一化不完整 | 已完成 | 重复询问、默认值缺失、必填规则不一致 |
 | R09 | P2 | 专项卡片数据语义未完全对齐 | 已完成 | 分娩沟通卡和待产包卡丢失部分有效内容 |
-| R10 | P2 | IBCLC 上下文和咨询完成状态丢失 | 待处理 | 咨询身份、返回位置和完成状态不连续 |
+| R10 | P2 | IBCLC 上下文和咨询完成状态丢失 | 已完成 | 咨询身份、返回位置和完成状态不连续 |
 | R11 | P2 | Artifact 出现时机早于旧 Web | 待处理 | 卡片可能先于解释文字出现并抢占滚动位置 |
 | R12 | P2/P3 | 媒体语义播报和卡片导出缺失 | 待处理 | 步骤图片说明不播报，计划卡无法保存图片 |
 
@@ -220,9 +220,11 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 
 ### R10 IBCLC 上下文和完成状态丢失
 
-- 卡片硬编码顾问信息；页面丢弃 `consultId`、问题背景和 return-to 上下文。
-- 咨询结束没有回写卡片完成态。
-- 修复目标：typed consult route state、稳定 consult ID、完成事件回写和原滚动位置恢复。
+- 已建立 typed IBCLC card view、route draft 和 route state；卡片不再硬编码顾问信息，并完整携带 `consultId`、artifact、run/thread、问题背景、顾问资料和安全 return-to 上下文。
+- 显式咨询 ID、artifact ID 和旧 Web FNV-1a fallback 的优先级已对齐；历史消息中的卡片使用所属轮次的 run/thread，不会误绑定当前 run。
+- 咨询 start/completed 事件均携带原始运行上下文；完成态按用户加密持久化、最多保留 50 条，并在账号切换时隔离。
+- 咨询结束后原卡片立即切换为只读“咨询结束”，返回 Agent Hub 后恢复原滚动位置；直接打开咨询页仍使用旧 Web 默认文案和安全回退。
+- 验收：稳定 ID、持久化恢复、账号隔离、旧/新 artifact envelope、当前与历史轮次、路由 start/end、同步失败降级、滚动恢复、三档咨询页 Golden、卡片 Golden、`flutter analyze`、645 项 Flutter 全量测试和 Android APK 构建通过。
 
 ### R11 Artifact 出现时机偏早
 
@@ -249,10 +251,10 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 ## 当前验证基线
 
 - `flutter analyze`：通过。
-- Flutter 全量单元、Widget 和 Golden 测试：639 项通过。
-- Flutter Agent Hub、reducer、feature page 相关测试：197 项通过。
+- Flutter 全量单元、Widget 和 Golden 测试：645 项通过。
+- Flutter Agent Hub、reducer、IBCLC store 和 feature page 相关测试：专项回归通过。
 - 旧 Web 输入栏、artifact、事件语义和顺序专项测试：91 项通过。
-- 现有测试通过不代表剩余风险已关闭；R10-R12 仍需按各自合同补齐真实平台能力、跨端 fixture 和真机验收。
+- 现有测试通过不代表剩余风险已关闭；R11-R12 仍需按各自合同补齐跨端 fixture、真实平台能力和真机验收。
 
 ## 变更记录
 
@@ -271,3 +273,4 @@ Flutter 在收到 transient `message.delta` 时，同时累加 `textContent` 和
 | 2026-07-11 | 完成 R07 链接与专业引用 | 安全内外链分发、系统浏览器、旧 Web citation 列表/索引及历史恢复对齐；630 项全量回归和 Android APK 构建通过 |
 | 2026-07-11 | 完成 R08 用户资料与表单归一化 | 姓名/年龄问候、孕期资料默认值、旧版表单识别和异步无覆盖回填对齐；636 项 Flutter 全量回归通过 |
 | 2026-07-11 | 完成 R09 专项卡片数据语义 | 分娩沟通卡与待产包卡改用 typed 归一化模型，旧字段、个性化原因及复印规则对齐；639 项全量回归和 Android APK 构建通过 |
+| 2026-07-11 | 完成 R10 IBCLC 咨询上下文闭环 | 稳定咨询 ID、历史 run/thread、顾问信息、完成事件、加密完成态和返回滚动位置对齐；645 项全量回归和 Android APK 构建通过 |
