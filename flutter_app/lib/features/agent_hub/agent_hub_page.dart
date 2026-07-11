@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -81,6 +82,63 @@ String _formSubmitRequestMessage(AgentArtifactActionView action) {
   ].join('\n');
 }
 
+({String artifactId, String? formId, Map<String, Object?> values})?
+_formSubmissionFromAction(AgentArtifactActionView action) {
+  final extra = action.routeExtra;
+  if (extra is! Map) return null;
+  final artifactId = extra['artifactId']?.toString().trim();
+  final rawValues = extra['values'];
+  if (artifactId == null || artifactId.isEmpty || rawValues is! Map) {
+    return null;
+  }
+  final values = <String, Object?>{};
+  for (final entry in rawValues.entries) {
+    final key = entry.key;
+    if (key is String && key.trim().isNotEmpty) values[key] = entry.value;
+  }
+  final rawFormId = extra['formId']?.toString().trim();
+  return (
+    artifactId: artifactId,
+    formId: rawFormId == null || rawFormId.isEmpty ? null : rawFormId,
+    values: Map<String, Object?>.unmodifiable(values),
+  );
+}
+
+String _formSubmissionIdempotencyKey({
+  required String artifactId,
+  required String? formId,
+  required String? threadId,
+  required Map<String, Object?> values,
+}) {
+  final canonicalPayload = jsonEncode(
+    _canonicalJsonValue({
+      'artifact_id': artifactId,
+      'form_id': formId ?? '',
+      'thread_id': threadId?.trim() ?? '',
+      'values': values,
+    }),
+  );
+  return 'agent-form-submit-${sha256.convert(utf8.encode(canonicalPayload))}';
+}
+
+Object? _canonicalJsonValue(Object? value) {
+  if (value is Map) {
+    final entries =
+        value.entries
+            .where((entry) => entry.key is String)
+            .map((entry) => MapEntry(entry.key as String, entry.value))
+            .toList(growable: false)
+          ..sort((left, right) => left.key.compareTo(right.key));
+    return {
+      for (final entry in entries) entry.key: _canonicalJsonValue(entry.value),
+    };
+  }
+  if (value is List) {
+    return value.map(_canonicalJsonValue).toList(growable: false);
+  }
+  return value;
+}
+
 class _PendingAutoVoiceReplay {
   const _PendingAutoVoiceReplay({required this.state, this.attempts = 0});
 
@@ -104,6 +162,8 @@ class _AgentHubInteractionState {
   bool autoVoiceEnabled = true;
   AgentStreamRequest? activeRequest;
   Map<String, String> localActionStatuses = const <String, String>{};
+  Map<String, AgentArtifactFormSubmission> formSubmissions =
+      const <String, AgentArtifactFormSubmission>{};
 }
 
 class AgentHubPage extends StatefulWidget {
@@ -193,6 +253,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final ValueNotifier<String?> _activeVoicePlaybackIdNotifier =
       ValueNotifier<String?>(null);
   final ValueNotifier<int> _actionStateRevisionNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<Map<String, AgentArtifactFormSubmission>>
+  _formSubmissionsNotifier =
+      ValueNotifier<Map<String, AgentArtifactFormSubmission>>(
+        const <String, AgentArtifactFormSubmission>{},
+      );
   bool _autoVoiceEnabled = true;
   bool _showLatestButton = false;
   bool _showPhotoMenu = false;
@@ -282,6 +347,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _responseLightRailModeNotifier.dispose();
     _activeVoicePlaybackIdNotifier.dispose();
     _actionStateRevisionNotifier.dispose();
+    _formSubmissionsNotifier.dispose();
     super.dispose();
   }
 
@@ -363,6 +429,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _autoVoiceEnabled = interactionState.autoVoiceEnabled;
     _activeRequest = interactionState.activeRequest;
     _localActionStatuses.addAll(interactionState.localActionStatuses);
+    _formSubmissionsNotifier.value =
+        Map<String, AgentArtifactFormSubmission>.of(
+          interactionState.formSubmissions,
+        );
     interactionState.runState = _state;
   }
 
@@ -399,7 +469,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ..attachedImages = [..._attachedImages]
         ..autoVoiceEnabled = _autoVoiceEnabled
         ..activeRequest = _activeRequest
-        ..localActionStatuses = {..._localActionStatuses};
+        ..localActionStatuses = {..._localActionStatuses}
+        ..formSubmissions = _completedFormSubmissions();
     }
   }
 
@@ -436,7 +507,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _composerController.text.trim().isNotEmpty ||
         _attachedImages.isNotEmpty ||
         _activeRequest != null ||
-        _localActionStatuses.isNotEmpty;
+        _localActionStatuses.isNotEmpty ||
+        _formSubmissionsNotifier.value.isNotEmpty;
   }
 
   void _applyInteractionSnapshot(AgentHubInteractionSnapshot snapshot) {
@@ -462,6 +534,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _localActionStatuses
       ..clear()
       ..addAll(snapshot.localActionStatuses);
+    _formSubmissionsNotifier.value =
+        Map<String, AgentArtifactFormSubmission>.of(snapshot.formSubmissions);
   }
 
   AgentStreamRunState _restoreInterruptedRunState(
@@ -484,7 +558,15 @@ class _AgentHubPageState extends State<AgentHubPage> {
       autoVoiceEnabled: _autoVoiceEnabled,
       activeRequest: _activeRequest,
       localActionStatuses: {..._localActionStatuses},
+      formSubmissions: _completedFormSubmissions(),
     );
+  }
+
+  Map<String, AgentArtifactFormSubmission> _completedFormSubmissions() {
+    return {
+      for (final entry in _formSubmissionsNotifier.value.entries)
+        if (entry.value.isSubmitted) entry.key: entry.value,
+    };
   }
 
   void _schedulePersistentInteractionStateWrite(
@@ -752,6 +834,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<bool> _sendSyntheticUserMessage({
     required String requestMessage,
     required String optimisticContent,
+    String? idempotencyKey,
   }) async {
     final runner = widget.runner;
     if (runner == null || requestMessage.trim().isEmpty || _isComposerLocked) {
@@ -761,7 +844,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _cancelCurrentBubblePlaybackForNewTurn();
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
-    final request = widget.requestBuilder(requestMessage.trim());
+    final request = _requestWithIdempotencyKey(
+      widget.requestBuilder(requestMessage.trim()),
+      idempotencyKey,
+    );
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
     if (interruptedState != null) {
       _cancelRunSubscription();
@@ -790,22 +876,71 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _handleArtifactAction(AgentArtifactActionView action) {
     if (action.kind == 'form.submit') {
-      unawaited(
-        _sendSyntheticUserMessage(
-          requestMessage: _formSubmitRequestMessage(action),
-          optimisticContent: '已提交信息采集表单',
-        ).then<void>((_) {}),
-      );
+      unawaited(_handleArtifactFormSubmit(action));
       return;
     }
     widget.onArtifactAction?.call(action);
   }
 
-  Future<bool> _handleArtifactFormSubmit(AgentArtifactActionView action) {
-    return _sendSyntheticUserMessage(
-      requestMessage: _formSubmitRequestMessage(action),
-      optimisticContent: '已提交信息采集表单',
+  Future<bool> _handleArtifactFormSubmit(AgentArtifactActionView action) async {
+    final submission = _formSubmissionFromAction(action);
+    if (submission == null) return false;
+    final artifactId = submission.artifactId;
+    final existing = _formSubmissionsNotifier.value[artifactId];
+    if (existing?.isSubmitted == true) return true;
+    if (existing?.isSubmitting == true) return false;
+
+    _setFormSubmission(
+      artifactId,
+      AgentArtifactFormSubmission.submitting(values: submission.values),
     );
+    final idempotencyKey = _formSubmissionIdempotencyKey(
+      artifactId: artifactId,
+      formId: submission.formId,
+      threadId: _state.threadId ?? _activeRequest?.threadId,
+      values: submission.values,
+    );
+
+    var accepted = false;
+    try {
+      accepted = await _sendSyntheticUserMessage(
+        requestMessage: _formSubmitRequestMessage(action),
+        optimisticContent: '已提交信息采集表单',
+        idempotencyKey: idempotencyKey,
+      );
+    } catch (_) {
+      accepted = false;
+    }
+    if (!mounted) return accepted;
+
+    if (accepted) {
+      _setFormSubmission(
+        artifactId,
+        AgentArtifactFormSubmission.submitted(values: submission.values),
+      );
+    } else {
+      _removeFormSubmission(artifactId);
+    }
+    _persistInteractionState();
+    return accepted;
+  }
+
+  void _setFormSubmission(
+    String artifactId,
+    AgentArtifactFormSubmission submission,
+  ) {
+    _formSubmissionsNotifier.value = {
+      ..._formSubmissionsNotifier.value,
+      artifactId: submission,
+    };
+  }
+
+  void _removeFormSubmission(String artifactId) {
+    if (!_formSubmissionsNotifier.value.containsKey(artifactId)) return;
+    final next = Map<String, AgentArtifactFormSubmission>.of(
+      _formSubmissionsNotifier.value,
+    )..remove(artifactId);
+    _formSubmissionsNotifier.value = next;
   }
 
   void _handleQuickReplySelected(String text) {
@@ -1041,6 +1176,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _dismissComposerKeyboardOnRunAccepted = false;
     _cancelRunSubscription();
     _composerController.clear();
+    _formSubmissionsNotifier.value =
+        const <String, AgentArtifactFormSubmission>{};
     setState(() {
       _setRunState(const AgentStreamRunState());
       _historyMessages.clear();
@@ -1739,6 +1876,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                       widget.productAssetRepository,
                                   onArtifactAction: _handleArtifactAction,
                                   onFormSubmit: _handleArtifactFormSubmit,
+                                  formSubmissionsListenable:
+                                      _formSubmissionsNotifier,
                                 ),
                               ),
                             if (_historyMessages.isNotEmpty)
@@ -1771,6 +1910,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                     onRetry: _retryRun,
                                     onArtifactAction: _handleArtifactAction,
                                     onFormSubmit: _handleArtifactFormSubmit,
+                                    formSubmissionsListenable:
+                                        _formSubmissionsNotifier,
                                     onQuickReplySelected:
                                         _handleQuickReplySelected,
                                     pendingActionIds: _pendingActionIds,
@@ -2174,6 +2315,25 @@ AgentStreamRequest _requestWithImages(
     locale: request.locale,
     images: [...request.images, ...images],
     metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
+  );
+}
+
+AgentStreamRequest _requestWithIdempotencyKey(
+  AgentStreamRequest request,
+  String? idempotencyKey,
+) {
+  final normalized = idempotencyKey?.trim();
+  if (normalized == null || normalized.isEmpty) return request;
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    runId: request.runId,
+    afterSequence: request.afterSequence,
+    locale: request.locale,
+    images: request.images,
+    metadata: request.metadata,
+    idempotencyKey: normalized,
   );
 }
 
@@ -2194,6 +2354,7 @@ AgentStreamRequest _requestWithThreadId(
     locale: request.locale,
     images: request.images,
     metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
   );
 }
 
@@ -2295,12 +2456,15 @@ class AgentHubHistoryPanel extends StatelessWidget {
     this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
   });
 
   final List<AgentHubHistoryMessage> messages;
   final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
 
   @override
   Widget build(BuildContext context) {
@@ -2314,6 +2478,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
             productAssetRepository: productAssetRepository,
             onArtifactAction: onArtifactAction,
             onFormSubmit: onFormSubmit,
+            formSubmissionsListenable: formSubmissionsListenable,
           ),
           if (index != messages.length - 1) const SizedBox(height: 20),
         ],
@@ -2329,12 +2494,15 @@ class AgentHubHistorySliver extends StatelessWidget {
     this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
   });
 
   final List<AgentHubHistoryMessage> messages;
   final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
 
   @override
   Widget build(BuildContext context) {
@@ -2350,6 +2518,7 @@ class AgentHubHistorySliver extends StatelessWidget {
           productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
+          formSubmissionsListenable: formSubmissionsListenable,
         );
       }, childCount: itemCount),
     );
@@ -2363,12 +2532,15 @@ class _AgentHistoryBubble extends StatelessWidget {
     this.productAssetRepository,
     this.onArtifactAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
   });
 
   final AgentHubHistoryMessage message;
   final ProductAssetRepository? productAssetRepository;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
 
   @override
   Widget build(BuildContext context) {
@@ -2387,6 +2559,7 @@ class _AgentHistoryBubble extends StatelessWidget {
           productAssetRepository: productAssetRepository,
           onArtifactAction: onArtifactAction,
           onFormSubmit: onFormSubmit,
+          formSubmissionsListenable: formSubmissionsListenable,
         );
       }
 
@@ -2537,6 +2710,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
     this.onRetry,
     this.onArtifactAction,
     this.onFormSubmit,
+    required this.formSubmissionsListenable,
     this.onQuickReplySelected,
     required this.pendingActionIds,
     required this.localActionStatuses,
@@ -2554,6 +2728,8 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>
+  formSubmissionsListenable;
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
   final Map<String, String> localActionStatuses;
@@ -2593,6 +2769,7 @@ class _AgentRunTranscriptListenableState
           onRetry: widget.onRetry,
           onArtifactAction: widget.onArtifactAction,
           onFormSubmit: widget.onFormSubmit,
+          formSubmissionsListenable: widget.formSubmissionsListenable,
           artifactPanelKey: widget.artifactPanelKey,
           onQuickReplySelected: widget.onQuickReplySelected,
           pendingActionIds: widget.pendingActionIds,
@@ -2649,6 +2826,7 @@ class AgentRunTranscript extends StatelessWidget {
     this.onRetry,
     this.onArtifactAction,
     this.onFormSubmit,
+    this.formSubmissionsListenable,
     this.artifactPanelKey,
     this.onQuickReplySelected,
     this.pendingActionIds = const <String>{},
@@ -2667,6 +2845,8 @@ class AgentRunTranscript extends StatelessWidget {
   final VoidCallback? onRetry;
   final AgentArtifactActionHandler? onArtifactAction;
   final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
   final Key? artifactPanelKey;
   final ValueChanged<String>? onQuickReplySelected;
   final Set<String> pendingActionIds;
@@ -2788,6 +2968,7 @@ class AgentRunTranscript extends StatelessWidget {
                   cards: artifactCards,
                   onAction: onArtifactAction,
                   onFormSubmit: onFormSubmit,
+                  formSubmissionsListenable: formSubmissionsListenable,
                 ),
               ],
               if (actionCards.isNotEmpty) ...[
