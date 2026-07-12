@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_image_recognition.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
 import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dashboard_page.dart';
 
@@ -1293,6 +1294,138 @@ void main() {
     );
     expect(find.text('未找到通知关联的任务，已定位到对应日期'), findsOneWidget);
   });
+
+  testWidgets(
+    'screenshot button opens editable preview and writes only on save',
+    (tester) async {
+      final transport = _RecognizedCreateTransport();
+      final gateway = _FakeImageRecognitionGateway(
+        ScheduleImageRecognitionResult.preview(const [
+          ScheduleImageTaskPreview(
+            time: '08:30',
+            title: '识别吸奶',
+            kind: ScheduleImageTaskKind.pumping,
+          ),
+          ScheduleImageTaskPreview(
+            time: '11:45',
+            title: '识别散步',
+            kind: ScheduleImageTaskKind.other,
+          ),
+        ]),
+      );
+      await _pumpPage(tester, transport, imageRecognitionGateway: gateway);
+
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('schedule-adjust-button')),
+        250,
+        scrollable: _scheduleScrollable(),
+      );
+      await tester.tap(find.byKey(const ValueKey('schedule-adjust-button')));
+      await tester.pumpAndSettle();
+
+      expect(gateway.calls, 1);
+      expect(
+        find.byKey(const ValueKey('schedule-adjust-upload-dialog')),
+        findsNothing,
+      );
+      expect(find.text('确认识别结果'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-recognition-preview-notice')),
+        findsOneWidget,
+      );
+      expect(transport.createdBodies, isEmpty);
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('schedule-add-task-title-input')),
+            )
+            .controller
+            ?.text,
+        '识别吸奶',
+      );
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('schedule-task-time-input-1')),
+            )
+            .controller
+            ?.text,
+        '11:45',
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-add-task-title-input')),
+        '核对后的吸奶',
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-remove-task-row-1')),
+      );
+      await tester.tap(find.byKey(const ValueKey('schedule-add-task-submit')));
+      await tester.pumpAndSettle();
+
+      expect(transport.createdBodies, hasLength(1));
+      expect(transport.createdBodies.single['task_time'], '08:30');
+      expect(transport.createdBodies.single['title'], '核对后的吸奶');
+      expect(transport.createdBodies.single['payload'], {
+        'task_type': 'pumping',
+      });
+      expect(find.text('任务已添加'), findsOneWidget);
+    },
+  );
+
+  testWidgets('screenshot cancellation and empty result never create tasks', (
+    tester,
+  ) async {
+    final transport = _RecognizedCreateTransport();
+    final gateway = _SequenceImageRecognitionGateway([
+      const ScheduleImageRecognitionResult.cancelled(),
+      ScheduleImageRecognitionResult.preview(const []),
+    ]);
+    await _pumpPage(tester, transport, imageRecognitionGateway: gateway);
+    final button = find.byKey(const ValueKey('schedule-adjust-button'));
+    await tester.scrollUntilVisible(
+      button,
+      250,
+      scrollable: _scheduleScrollable(),
+    );
+    await tester.drag(_scheduleScrollable(), const Offset(0, -80));
+    await tester.pumpAndSettle();
+
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    expect(find.text('已取消选择截图'), findsOneWidget);
+    expect(transport.createdBodies, isEmpty);
+
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    expect(find.text('未识别到带有明确时间的日程任务'), findsOneWidget);
+    expect(transport.createdBodies, isEmpty);
+  });
+
+  testWidgets(
+    'screenshot recognition failure is shown as an honest live error',
+    (tester) async {
+      final gateway = _FailingImageRecognitionGateway();
+      await _pumpPage(tester, _transport(), imageRecognitionGateway: gateway);
+      final button = find.byKey(const ValueKey('schedule-adjust-button'));
+      await tester.scrollUntilVisible(
+        button,
+        250,
+        scrollable: _scheduleScrollable(),
+      );
+      await tester.drag(_scheduleScrollable(), const Offset(0, -80));
+      await tester.pumpAndSettle();
+
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+
+      expect(find.text('识别服务正在维护，请稍后重试'), findsOneWidget);
+      final feedback = tester.widget<Semantics>(
+        find.byKey(const ValueKey('schedule-feedback-banner')),
+      );
+      expect(feedback.properties.liveRegion, isTrue);
+    },
+  );
 }
 
 FixtureApiJsonTransportByPath _transport({
@@ -1385,6 +1518,7 @@ Future<void> _pumpPage(
   bool disableAnimations = false,
   MilkPlanChangeStore? milkPlanChangeStore,
   VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
+  ScheduleImageRecognitionGateway? imageRecognitionGateway,
   DateTime? now,
   Future<DateTime?> Function()? deliveryDateLoader,
 }) async {
@@ -1410,11 +1544,80 @@ Future<void> _pumpPage(
           milkPlanChangeStore: milkPlanChangeStore,
           deliveryDateLoader: deliveryDateLoader,
           volumeUnitPreferenceStore: volumeUnitPreferenceStore,
+          imageRecognitionGateway: imageRecognitionGateway,
         ),
       ),
     ),
   );
   await tester.pumpAndSettle();
+}
+
+class _FakeImageRecognitionGateway implements ScheduleImageRecognitionGateway {
+  _FakeImageRecognitionGateway(this.result);
+
+  final ScheduleImageRecognitionResult result;
+  int calls = 0;
+
+  @override
+  Future<ScheduleImageRecognitionResult> pickAndRecognize() async {
+    calls += 1;
+    return result;
+  }
+}
+
+class _SequenceImageRecognitionGateway
+    implements ScheduleImageRecognitionGateway {
+  _SequenceImageRecognitionGateway(this.results);
+
+  final List<ScheduleImageRecognitionResult> results;
+  int _index = 0;
+
+  @override
+  Future<ScheduleImageRecognitionResult> pickAndRecognize() async {
+    return results[_index++];
+  }
+}
+
+class _FailingImageRecognitionGateway
+    implements ScheduleImageRecognitionGateway {
+  @override
+  Future<ScheduleImageRecognitionResult> pickAndRecognize() {
+    throw const ScheduleImageRecognitionException(
+      'maintenance',
+      '识别服务正在维护，请稍后重试',
+    );
+  }
+}
+
+class _RecognizedCreateTransport extends FixtureApiJsonTransportByPath {
+  _RecognizedCreateTransport()
+    : super({
+        scheduleDayPlanEndpoint: const {'items': <Object?>[]},
+        schedulePlansEndpoint: const {'items': <Object?>[]},
+        scheduleFeedingRecordsEndpoint: const {'items': <Object?>[]},
+        schedulePumpingRecordsEndpoint: const {'items': <Object?>[]},
+      });
+
+  final List<Map<String, Object?>> createdBodies = [];
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    createdBodies.add(Map<String, Object?>.from(body));
+    return {
+      'id': 'recognized-${createdBodies.length}',
+      'plan_id': body['plan_id'],
+      'task_date': body['task_date'],
+      'task_time': body['task_time'],
+      'title': body['title'],
+      'description': body['description'],
+      'status': 'pending',
+      'payload': body['payload'],
+    };
+  }
 }
 
 class _SuccessfulReminderGateway implements ScheduleReminderGateway {

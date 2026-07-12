@@ -17,6 +17,7 @@ import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dar
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/schedule_image_recognition_gateway.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
@@ -39,6 +40,7 @@ void main() {
     expect(transport.token, isNull);
     expect(transport.headers, containsPair('X-Momcozy-Client', 'flutter'));
     expect(runtime.observability, same(observed.observability));
+    expect(runtime.scheduleImageRecognitionGateway, isNull);
   });
 
   test('runtime can be bootstrapped from secure session store', () async {
@@ -71,6 +73,10 @@ void main() {
     expect(eventResult.sent, isTrue);
     expect(eventResult.body?['event_type'], 'runtime_bootstrap_test');
     expect(runtime.observability, same(observed.observability));
+    expect(
+      runtime.scheduleImageRecognitionGateway,
+      isA<ApiScheduleImageRecognitionGateway>(),
+    );
   });
 
   test('runtime bootstrap can apply a legacy storage snapshot', () async {

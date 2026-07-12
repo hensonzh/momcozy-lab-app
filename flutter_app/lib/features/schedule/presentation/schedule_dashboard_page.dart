@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_image_recognition.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_postpartum_stage.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
@@ -20,8 +21,8 @@ class ScheduleDashboardPage extends StatefulWidget {
     this.routeUri,
     this.routeExtra,
     this.onOpenAgent,
-    this.onRecognizeScheduleImage,
     this.deliveryDateLoader,
+    this.imageRecognitionGateway,
     this.reminderGateway = const UnsupportedScheduleReminderGateway(),
     this.reminderPreferenceStore =
         const DisabledScheduleReminderPreferenceStore(),
@@ -36,8 +37,8 @@ class ScheduleDashboardPage extends StatefulWidget {
   final Uri? routeUri;
   final Object? routeExtra;
   final VoidCallback? onOpenAgent;
-  final Future<bool> Function()? onRecognizeScheduleImage;
   final Future<DateTime?> Function()? deliveryDateLoader;
+  final ScheduleImageRecognitionGateway? imageRecognitionGateway;
   final ScheduleReminderGateway reminderGateway;
   final ScheduleReminderPreferenceStore reminderPreferenceStore;
   final MilkPlanChangeStore? milkPlanChangeStore;
@@ -63,6 +64,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   bool _reminderSyncInFlight = false;
   bool _reminderSyncQueued = false;
   MomCozyVolumeUnit _volumeUnit = MomCozyVolumeUnit.milliliters;
+  bool _recognitionInFlight = false;
   String? _lastReminderFingerprint;
   int _volumeUnitLoadRevision = 0;
   int _requestSequence = 0;
@@ -282,7 +284,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     if (isToday) {
       children.add(
         _ScheduleToolbar(
-          busy: state.isMutating,
+          busy: state.isMutating || _recognitionInFlight,
           explanation: _taskExplanation(resolved),
           onAdd: () => unawaited(_showTaskEditor()),
           onRecognize: () => unawaited(_showScheduleRecognition()),
@@ -791,42 +793,58 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   }
 
   Future<void> _showScheduleRecognition() async {
-    final proceed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        key: const ValueKey('schedule-adjust-upload-dialog'),
-        title: const Text('识别日程截图'),
-        content: Text(
-          widget.onRecognizeScheduleImage == null
-              ? '当前版本尚未接入日程截图识别。你可以前往智能体对话发送截图。'
-              : '选择日程截图后，识别结果会先展示给你确认，再写入计划。',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            key: const ValueKey('schedule-adjust-submit'),
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              widget.onRecognizeScheduleImage == null ? '前往对话' : '选择截图',
-            ),
-          ),
-        ],
-      ),
-    );
-    if (proceed != true || !mounted) return;
-    final recognize = widget.onRecognizeScheduleImage;
-    if (recognize == null) {
-      _openAgent();
+    if (_recognitionInFlight) return;
+    final gateway = widget.imageRecognitionGateway;
+    if (gateway == null) {
+      setState(() => _feedback = '登录后可选择截图并识别日程');
       return;
     }
-    final accepted = await recognize();
-    if (!mounted) return;
     setState(() {
-      _feedback = accepted ? '截图日程已确认同步' : '未同步截图日程';
+      _recognitionInFlight = true;
+      _feedback = '正在识别截图，结果不会自动写入计划…';
     });
+    ScheduleImageRecognitionResult result;
+    try {
+      result = await gateway.pickAndRecognize();
+    } on ScheduleImageRecognitionException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _recognitionInFlight = false;
+        _feedback = error.userMessage;
+      });
+      return;
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _recognitionInFlight = false;
+        _feedback = '截图识别暂时不可用，请稍后重试';
+      });
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _recognitionInFlight = false);
+    if (result.cancelled) {
+      setState(() => _feedback = '已取消选择截图');
+      return;
+    }
+    if (result.tasks.isEmpty) {
+      setState(() => _feedback = '未识别到带有明确时间的日程任务');
+      return;
+    }
+    final drafts = await showDialog<List<_TaskDraft>>(
+      context: context,
+      builder: (context) => _ScheduleTaskDialog(
+        initialTasks: result.tasks,
+        dialogTitle: '确认识别结果',
+        submitLabel: '确认添加',
+      ),
+    );
+    if (!mounted) return;
+    if (drafts == null || drafts.isEmpty) {
+      setState(() => _feedback = '识别结果未保存');
+      return;
+    }
+    await _createTasks(drafts);
   }
 
   Future<void> _showTaskEditor({ScheduleTask? task}) async {
@@ -849,6 +867,11 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       return;
     }
 
+    await _createTasks(drafts);
+  }
+
+  Future<void> _createTasks(List<_TaskDraft> drafts) async {
+    _controller.clearMutationError();
     var created = 0;
     final intentKeys = <String>[];
     for (var index = 0; index < drafts.length; index += 1) {
@@ -881,7 +904,13 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       }
     }
     if (!mounted || created == 0) return;
-    setState(() => _feedback = created == 1 ? '任务已添加' : '已添加 $created 个任务');
+    setState(() {
+      _feedback = created == drafts.length
+          ? created == 1
+                ? '任务已添加'
+                : '已添加 $created 个任务'
+          : '已添加 $created/${drafts.length} 个任务，其余未保存，请检查后重试';
+    });
   }
 
   Future<void> _showTaskCompletion(ScheduleTask task) async {
@@ -2312,24 +2341,65 @@ class _ScheduleErrorCard extends StatelessWidget {
 }
 
 class _ScheduleTaskDialog extends StatefulWidget {
-  const _ScheduleTaskDialog({this.task});
+  const _ScheduleTaskDialog({
+    this.task,
+    this.initialTasks = const <ScheduleImageTaskPreview>[],
+    this.dialogTitle,
+    this.submitLabel,
+  });
 
   final ScheduleTask? task;
+  final List<ScheduleImageTaskPreview> initialTasks;
+  final String? dialogTitle;
+  final String? submitLabel;
 
   @override
   State<_ScheduleTaskDialog> createState() => _ScheduleTaskDialogState();
 }
 
 class _ScheduleTaskDialogState extends State<_ScheduleTaskDialog> {
-  late final List<_TaskDraftEditor> _rows = [
-    _TaskDraftEditor(
-      title: widget.task?.title ?? _defaultTaskTitle(ScheduleTaskKind.pumping),
-      time: _timeText(widget.task?.remindAt),
-      description: widget.task?.description ?? '',
-      kind: widget.task?.kind ?? ScheduleTaskKind.pumping,
-    ),
-  ];
+  late final List<_TaskDraftEditor> _rows;
   String? _error;
+
+  int get _maxRows => widget.initialTasks.isEmpty ? 6 : 32;
+
+  @override
+  void initState() {
+    super.initState();
+    final task = widget.task;
+    if (task != null) {
+      _rows = [
+        _TaskDraftEditor(
+          title: task.title,
+          time: _timeText(task.remindAt),
+          description: task.description,
+          kind: task.kind,
+        ),
+      ];
+      return;
+    }
+    if (widget.initialTasks.isNotEmpty) {
+      _rows = widget.initialTasks
+          .map(
+            (preview) => _TaskDraftEditor(
+              title: preview.title,
+              time: preview.time,
+              description: '',
+              kind: _scheduleTaskKind(preview.kind),
+            ),
+          )
+          .toList(growable: true);
+      return;
+    }
+    _rows = [
+      _TaskDraftEditor(
+        title: _defaultTaskTitle(ScheduleTaskKind.pumping),
+        time: _timeText(null),
+        description: '',
+        kind: ScheduleTaskKind.pumping,
+      ),
+    ];
+  }
 
   @override
   void dispose() {
@@ -2343,16 +2413,25 @@ class _ScheduleTaskDialogState extends State<_ScheduleTaskDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       key: const ValueKey('schedule-add-task-dialog'),
-      title: Text(widget.task == null ? '添加任务' : '编辑任务'),
+      title: Text(
+        widget.dialogTitle ?? (widget.task == null ? '添加任务' : '编辑任务'),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (widget.initialTasks.isNotEmpty) ...[
+              const Text(
+                '以下内容仅为识别预览，请核对时间和任务名称；确认后才会写入计划。',
+                key: ValueKey('schedule-recognition-preview-notice'),
+              ),
+              const SizedBox(height: 12),
+            ],
             for (var index = 0; index < _rows.length; index += 1) ...[
               if (index > 0) const Divider(height: 24),
               _buildTaskRow(index),
             ],
-            if (widget.task == null && _rows.length < 6) ...[
+            if (widget.task == null && _rows.length < _maxRows) ...[
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 key: const ValueKey('schedule-add-task-row-button'),
@@ -2379,7 +2458,9 @@ class _ScheduleTaskDialogState extends State<_ScheduleTaskDialog> {
               ? const ValueKey('schedule-add-task-submit')
               : const ValueKey('schedule-task-edit-save-button'),
           onPressed: _submit,
-          child: Text(widget.task == null ? '添加' : '保存'),
+          child: Text(
+            widget.submitLabel ?? (widget.task == null ? '添加' : '保存'),
+          ),
         ),
       ],
     );
@@ -2763,6 +2844,13 @@ class _RecordDraft {
 }
 
 enum _CompletionAction { pumping, feeding }
+
+ScheduleTaskKind _scheduleTaskKind(ScheduleImageTaskKind kind) =>
+    switch (kind) {
+      ScheduleImageTaskKind.pumping => ScheduleTaskKind.pumping,
+      ScheduleImageTaskKind.feeding => ScheduleTaskKind.feeding,
+      ScheduleImageTaskKind.other => ScheduleTaskKind.other,
+    };
 
 IconData _taskIcon(ScheduleTaskKind kind) => switch (kind) {
   ScheduleTaskKind.pumping => Icons.water_drop_outlined,
