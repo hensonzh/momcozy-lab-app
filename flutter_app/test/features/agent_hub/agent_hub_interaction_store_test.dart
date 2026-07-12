@@ -108,6 +108,51 @@ void main() {
     expect(restored.runState, isNull);
   });
 
+  test(
+    'replay filters applied-only action cards but keeps legacy confirmation',
+    () {
+      final restored = AgentHubHistorySnapshot.fromMap({
+        'role': 'assistant',
+        'content': '历史动作回复',
+        'runState': {
+          'phase': 'finished',
+          'textContent': '历史动作回复',
+          'events': [
+            {
+              'event_id': 'evt-old-applied',
+              'type': 'action.applied',
+              'action_id': 'action-old-applied',
+              'payload': {
+                'action_id': 'action-old-applied',
+                'action_status': 'applied',
+              },
+            },
+            {
+              'event_id': 'evt-old-confirmation',
+              'type': 'action.confirmation_required',
+              'action_id': 'action-old-confirmation',
+              'payload': {
+                'action_id': 'action-old-confirmation',
+                'action_status': 'confirmation_required',
+              },
+            },
+          ],
+        },
+      });
+
+      expect(restored, isNotNull);
+      expect(restored!.runState!.actionEvents.keys, [
+        'action-old-confirmation',
+      ]);
+      final replayEvents =
+          restored.runState!.toMap()['events']! as List<Object?>;
+      expect(
+        replayEvents.whereType<Map>().map((event) => event['action_id']),
+        isNot(contains('action-old-applied')),
+      );
+    },
+  );
+
   test('user history snapshots preserve sent image previews', () {
     const snapshot = AgentHubHistorySnapshot(
       role: 'user',

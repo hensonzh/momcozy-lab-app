@@ -2766,17 +2766,21 @@ AgentStreamRunState? _historyRunStateForPersistence(
     final key = event.artifactId ?? event.eventId ?? event.mergeKey;
     structuredEvents['artifact:$key'] = event;
   }
-  final finalActionEvents = state.actionEvents.isNotEmpty
-      ? state.actionEvents.values
-      : state.events.where((event) => event.type.startsWith('action.'));
-  for (final event in finalActionEvents.where(
-    (event) =>
-        event.type == 'action.applied' ||
-        event.type == 'action.failed' ||
-        event.type == 'action.rejected',
-  )) {
-    final key = event.actionId ?? event.eventId ?? event.mergeKey;
-    structuredEvents['action:$key'] = event;
+  final visibleActionTimeline = _actionEventsForState(
+    state,
+  ).toList(growable: false);
+  final finalActionIds = visibleActionTimeline
+      .where((event) => _isFinalActionStatus(_actionStatus(event)))
+      .map((event) => event.actionId?.trim())
+      .whereType<String>()
+      .where((actionId) => actionId.isNotEmpty)
+      .toSet();
+  for (var index = 0; index < visibleActionTimeline.length; index += 1) {
+    final event = visibleActionTimeline[index];
+    final actionId = event.actionId?.trim();
+    if (actionId == null || !finalActionIds.contains(actionId)) continue;
+    final eventKey = event.eventId ?? '$index:${event.type}';
+    structuredEvents['action:$actionId:$eventKey'] = event;
   }
   for (final event in state.events.where(AgentCitationMapper.isCitationEvent)) {
     final key = event.messageId ?? event.eventId ?? event.mergeKey;
@@ -5455,9 +5459,12 @@ String? _latestPublishedArtifactId(AgentStreamRunState state) {
 }
 
 Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {
-  return state.actionEvents.isNotEmpty
-      ? state.actionEvents.values
-      : state.events;
+  final timeline = state.events
+      .where((event) => event.type.startsWith('action.'))
+      .toList(growable: false);
+  return userVisibleAgentActionEvents(
+    timeline.isNotEmpty ? timeline : state.actionEvents.values,
+  );
 }
 
 List<AgentArtifactCardView> _artifactCardsFromEvents(
@@ -5475,7 +5482,7 @@ List<AgentActionCardView> _actionCardsFromEvents(
   Map<String, String> localStatuses,
 ) {
   final cards = <String, AgentActionCardView>{};
-  for (final event in events) {
+  for (final event in userVisibleAgentActionEvents(events)) {
     final card = _actionCardFromEvent(event);
     if (card != null) cards[card.id] = card;
   }
