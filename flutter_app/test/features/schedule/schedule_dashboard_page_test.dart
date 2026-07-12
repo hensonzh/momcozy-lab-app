@@ -840,6 +840,70 @@ void main() {
     );
   });
 
+  testWidgets('mutation in flight disables every schedule write entry point', (
+    tester,
+  ) async {
+    final transport = _DeferredTaskMutationTransport();
+    await _pumpPage(tester, transport);
+    final completeButton = find.byKey(
+      const ValueKey('schedule-next-complete-button'),
+    );
+    await tester.scrollUntilVisible(
+      completeButton,
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+    await tester.tap(completeButton);
+    await tester.pump();
+
+    expect(transport.mutationStarted, isTrue);
+    expect(tester.widget<FilledButton>(completeButton).onPressed, isNull);
+    expect(
+      tester
+          .widget<OutlinedButton>(
+            find.byKey(const ValueKey('schedule-add-task-button')),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<OutlinedButton>(
+            find.byKey(const ValueKey('schedule-quick-pumping-button')),
+          )
+          .onPressed,
+      isNull,
+    );
+    await tester.tap(
+      find.byKey(const ValueKey('schedule-timeline-task-deferred-task')),
+    );
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('schedule-inline-task-title-deferred-task')),
+      findsNothing,
+    );
+
+    transport.completeMutation();
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .getSemantics(
+            find.byKey(const ValueKey('schedule-timeline-task-deferred-task')),
+          )
+          .label,
+      contains('已完成'),
+    );
+    expect(
+      tester
+          .widget<OutlinedButton>(
+            find.byKey(const ValueKey('schedule-quick-pumping-button')),
+          )
+          .onPressed,
+      isNotNull,
+    );
+  });
+
   testWidgets('feeding retry keys are stable until feed type changes', (
     tester,
   ) async {
@@ -1634,6 +1698,77 @@ void main() {
     expect(find.byTooltip('关闭计划提醒'), findsOneWidget);
   });
 
+  testWidgets(
+    'reminder synchronization is single-flight in both card entry points',
+    (tester) async {
+      final store = _FakeReminderStore(enabled: false);
+      final gateway = _DeferredReminderGateway();
+      await _pumpPage(
+        tester,
+        _transport(),
+        reminderGateway: gateway,
+        reminderPreferenceStore: store,
+      );
+
+      final contextButton = find.byKey(
+        const ValueKey('schedule-context-reminder-button'),
+      );
+      await tester.tap(contextButton);
+      for (var index = 0; index < 30 && gateway.calls == 0; index += 1) {
+        await tester.pump();
+      }
+
+      expect(gateway.calls, 1);
+      expect(tester.widget<IconButton>(contextButton).onPressed, isNull);
+      expect(
+        tester
+            .widget<OutlinedButton>(
+              find.byKey(const ValueKey('schedule-agent-reminder-button')),
+            )
+            .onPressed,
+        isNull,
+      );
+      await tester.tap(contextButton);
+      await tester.pump();
+      expect(gateway.calls, 1);
+
+      gateway.complete(true);
+      await tester.pumpAndSettle();
+
+      expect(store.enabled, isTrue);
+      expect(tester.widget<IconButton>(contextButton).onPressed, isNotNull);
+      expect(find.byTooltip('关闭计划提醒'), findsOneWidget);
+    },
+  );
+
+  testWidgets('reminder gateway failures restore enabled controls honestly', (
+    tester,
+  ) async {
+    final store = _FakeReminderStore(enabled: false);
+    await _pumpPage(
+      tester,
+      _transport(),
+      reminderGateway: _ThrowingReminderGateway(),
+      reminderPreferenceStore: store,
+    );
+
+    final contextButton = find.byKey(
+      const ValueKey('schedule-context-reminder-button'),
+    );
+    await tester.tap(contextButton);
+    await tester.pumpAndSettle();
+
+    expect(store.enabled, isFalse);
+    expect(tester.widget<IconButton>(contextButton).onPressed, isNotNull);
+    expect(find.byTooltip('开启计划提醒'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('系统提醒同步失败，未修改提醒状态'),
+      250,
+      scrollable: _scheduleScrollable(),
+    );
+    expect(find.text('系统提醒同步失败，未修改提醒状态'), findsOneWidget);
+  });
+
   testWidgets('task explanation uses the lightweight legacy dialog', (
     tester,
   ) async {
@@ -2418,6 +2553,72 @@ class _GateableScheduleTransport extends FixtureApiJsonTransportByPath {
   }
 }
 
+class _DeferredTaskMutationTransport extends FixtureApiJsonTransportByPath {
+  _DeferredTaskMutationTransport()
+    : super({
+        scheduleDayPlanEndpoint: const {
+          'items': [
+            {
+              'id': 'deferred-task',
+              'plan_id': 'plan-1',
+              'task_date': '2026-07-03',
+              'task_time': '14:00',
+              'title': '补充维生素',
+              'status': 'pending',
+              'payload': {'task_type': 'other'},
+            },
+          ],
+        },
+        schedulePlansEndpoint: const {
+          'items': [
+            {
+              'id': 'plan-1',
+              'plan_type': 'milk_management',
+              'title': '稳奶计划',
+              'summary': '按当前阶段稳步执行',
+              'status': 'active',
+              'version': 1,
+              'payload': {'postpartum_week': 29, 'phase': '离乳期'},
+            },
+          ],
+        },
+        scheduleFeedingRecordsEndpoint: const {'items': <Object?>[]},
+        schedulePumpingRecordsEndpoint: const {'items': <Object?>[]},
+      });
+
+  final Completer<Map<String, Object?>> _mutation =
+      Completer<Map<String, Object?>>();
+  bool mutationStarted = false;
+
+  void completeMutation() {
+    if (_mutation.isCompleted) return;
+    _mutation.complete(const {
+      'id': 'deferred-task',
+      'plan_id': 'plan-1',
+      'task_date': '2026-07-03',
+      'task_time': '14:00',
+      'title': '补充维生素',
+      'status': 'completed',
+      'payload': {'task_type': 'other'},
+    });
+  }
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    mutationStarted = true;
+    lastMethod = 'PATCH';
+    lastPath = path;
+    lastBody = Map<String, Object?>.from(body);
+    lastHeaders = Map<String, String>.from(headers);
+    postedBodies.add(lastBody!);
+    return _mutation.future;
+  }
+}
+
 class _FakeImageRecognitionGateway implements ScheduleImageRecognitionGateway {
   _FakeImageRecognitionGateway(this.result);
 
@@ -2495,6 +2696,40 @@ class _SuccessfulReminderGateway implements ScheduleReminderGateway {
     required bool enabled,
     required List<ScheduleTask> tasks,
   }) async => true;
+}
+
+class _DeferredReminderGateway implements ScheduleReminderGateway {
+  final Completer<bool> _result = Completer<bool>();
+  int calls = 0;
+
+  @override
+  bool get isSupported => true;
+
+  void complete(bool value) {
+    if (!_result.isCompleted) _result.complete(value);
+  }
+
+  @override
+  Future<bool> setEnabled({
+    required bool enabled,
+    required List<ScheduleTask> tasks,
+  }) {
+    calls += 1;
+    return _result.future;
+  }
+}
+
+class _ThrowingReminderGateway implements ScheduleReminderGateway {
+  @override
+  bool get isSupported => true;
+
+  @override
+  Future<bool> setEnabled({
+    required bool enabled,
+    required List<ScheduleTask> tasks,
+  }) {
+    throw StateError('reminder gateway unavailable');
+  }
 }
 
 class _FakeReminderStore implements ScheduleReminderPreferenceStore {

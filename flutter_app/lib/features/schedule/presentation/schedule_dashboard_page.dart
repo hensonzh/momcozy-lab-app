@@ -63,6 +63,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   bool _warmingReminderWindow = false;
   bool _reminderSyncInFlight = false;
   bool _reminderSyncQueued = false;
+  bool _reminderToggleInFlight = false;
   MomCozyVolumeUnit _volumeUnit = MomCozyVolumeUnit.milliliters;
   bool _recognitionInFlight = false;
   String? _lastReminderFingerprint;
@@ -235,6 +236,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   List<Widget> _content(ScheduleDashboardState state) {
     final snapshot = state.snapshot;
     final isToday = _sameDay(state.selectedDay, _controller.today);
+    final canMutate = isToday && !state.isMutating;
     final children = <Widget>[];
 
     if (state.phase == ScheduleLoadPhase.loading && snapshot == null) {
@@ -277,6 +279,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
           completed: resolved.completedTaskCount,
           total: resolved.tasks.length,
           reminderEnabled: _reminderEnabled,
+          reminderBusy: _reminderControlsBusy,
           onReminder: () => unawaited(_toggleReminder(resolved.tasks)),
         ),
       );
@@ -285,6 +288,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
           const SizedBox(height: 16),
           _ScheduleAgentCard(
             reminderEnabled: _reminderEnabled,
+            reminderBusy: _reminderControlsBusy,
             onReminder: () => unawaited(_toggleReminder(resolved.tasks)),
             onOpenAgent: _openAgent,
           ),
@@ -314,13 +318,13 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
         snapshot: resolved,
         now: _clock,
         volumeUnit: _volumeUnit,
-        onComplete: isToday && state.nextPendingTask != null
+        onComplete: canMutate && state.nextPendingTask != null
             ? () => unawaited(_showTaskCompletion(state.nextPendingTask!))
             : null,
-        onDelay: isToday && state.nextPendingTask != null
+        onDelay: canMutate && state.nextPendingTask != null
             ? () => unawaited(_delayTask(state.nextPendingTask!))
             : null,
-        onSkip: isToday && state.nextPendingTask != null
+        onSkip: canMutate && state.nextPendingTask != null
             ? () => unawaited(
                 _setTaskState(
                   state.nextPendingTask!,
@@ -395,7 +399,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
                     : null,
                 editTime: task.id == _editingTaskId ? _editingTaskTime : null,
                 editSaving: task.id == _editingTaskId && _savingTaskEdit,
-                onEdit: task.state == ScheduleTaskState.pending && isToday
+                onEdit: task.state == ScheduleTaskState.pending && canMutate
                     ? () => _startInlineTaskEdit(task)
                     : null,
                 onEditTime: () => unawaited(_pickInlineTaskTime()),
@@ -424,6 +428,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       children.add(const SizedBox(height: 12));
       children.add(
         _ScheduleQuickActions(
+          busy: state.isMutating,
           onPumping: () =>
               unawaited(_showRecordEditor(ScheduleRecordKind.pumping)),
           onFeeding: () =>
@@ -788,53 +793,86 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     context.go('/', extra: const {'agentPrefill': '我想调整今天的吸乳排期'});
   }
 
+  bool get _reminderControlsBusy =>
+      _reminderToggleInFlight ||
+      _warmingReminderWindow ||
+      _reminderSyncInFlight;
+
   Future<void> _toggleReminder(List<ScheduleTask> tasks) async {
-    final next = !_reminderEnabled;
-    if (!next) {
-      final confirmed = await showDialog<bool>(
-        context: context,
-        barrierColor: MomCozyColors.foreground.withValues(alpha: 0.3),
-        builder: (context) => const _ScheduleReminderWarningDialog(),
-      );
-      if (confirmed != true) return;
-    }
-    var reminderTasks = tasks;
-    var warmed = true;
-    if (next) {
-      _warmingReminderWindow = true;
-      warmed = await _controller.warmReminderWindow();
-      _warmingReminderWindow = false;
-      reminderTasks = _controller.reminderTasks;
-    }
-    final synced = await widget.reminderGateway.setEnabled(
-      enabled: next,
-      tasks: reminderTasks,
-    );
-    if (!mounted) return;
-    if (!synced) {
-      setState(() => _feedback = '当前设备尚未接入系统计划提醒，未修改提醒状态');
-      return;
-    }
+    if (_reminderControlsBusy) return;
+    setState(() => _reminderToggleInFlight = true);
     try {
-      await widget.reminderPreferenceStore.writeEnabled(next);
-    } catch (_) {
-      await widget.reminderGateway.setEnabled(
-        enabled: _reminderEnabled,
-        tasks: tasks,
-      );
+      final next = !_reminderEnabled;
+      if (!next) {
+        final confirmed = await showDialog<bool>(
+          context: context,
+          barrierColor: MomCozyColors.foreground.withValues(alpha: 0.3),
+          builder: (context) => const _ScheduleReminderWarningDialog(),
+        );
+        if (confirmed != true) return;
+      }
+      var reminderTasks = tasks;
+      var warmed = true;
+      if (next) {
+        _warmingReminderWindow = true;
+        warmed = await _controller.warmReminderWindow();
+        _warmingReminderWindow = false;
+        reminderTasks = _controller.reminderTasks;
+      }
+      var syncThrew = false;
+      bool synced;
+      try {
+        synced = await widget.reminderGateway.setEnabled(
+          enabled: next,
+          tasks: reminderTasks,
+        );
+      } catch (_) {
+        syncThrew = true;
+        synced = false;
+      }
       if (!mounted) return;
-      setState(() => _feedback = '提醒偏好保存失败，未修改提醒状态');
-      return;
+      if (!synced) {
+        setState(() {
+          _feedback = syncThrew || widget.reminderGateway.isSupported
+              ? '系统提醒同步失败，未修改提醒状态'
+              : '当前设备尚未接入系统计划提醒，未修改提醒状态';
+        });
+        return;
+      }
+      try {
+        await widget.reminderPreferenceStore.writeEnabled(next);
+      } catch (_) {
+        try {
+          await widget.reminderGateway.setEnabled(
+            enabled: _reminderEnabled,
+            tasks: _reminderEnabled
+                ? _controller.reminderTasks
+                : const <ScheduleTask>[],
+          );
+        } catch (_) {
+          // The visible preference remains unchanged even if rollback fails.
+        }
+        if (!mounted) return;
+        setState(() => _feedback = '提醒偏好保存失败，未修改提醒状态');
+        return;
+      }
+      setState(() {
+        _reminderEnabled = next;
+        _lastReminderFingerprint = _reminderFingerprint(next, reminderTasks);
+        _feedback = next
+            ? warmed
+                  ? '系统提醒已同步'
+                  : '部分未来日程暂未加载，已同步当前可用提醒'
+            : '系统提醒已关闭';
+      });
+    } finally {
+      _warmingReminderWindow = false;
+      if (mounted) {
+        setState(() => _reminderToggleInFlight = false);
+      } else {
+        _reminderToggleInFlight = false;
+      }
     }
-    setState(() {
-      _reminderEnabled = next;
-      _lastReminderFingerprint = _reminderFingerprint(next, reminderTasks);
-      _feedback = next
-          ? warmed
-                ? '系统提醒已同步'
-                : '部分未来日程暂未加载，已同步当前可用提醒'
-          : '系统提醒已关闭';
-    });
   }
 
   Future<void> _loadReminderPreference() async {
@@ -905,7 +943,11 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       _reminderSyncQueued = true;
       return true;
     }
-    _reminderSyncInFlight = true;
+    if (mounted) {
+      setState(() => _reminderSyncInFlight = true);
+    } else {
+      _reminderSyncInFlight = true;
+    }
     var synced = false;
     try {
       synced = await widget.reminderGateway.setEnabled(
@@ -924,7 +966,11 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       }
       return false;
     } finally {
-      _reminderSyncInFlight = false;
+      if (mounted) {
+        setState(() => _reminderSyncInFlight = false);
+      } else {
+        _reminderSyncInFlight = false;
+      }
       if (_reminderSyncQueued) {
         _reminderSyncQueued = false;
         _queueReminderSync();
@@ -1460,6 +1506,7 @@ class _ScheduleContextCard extends StatelessWidget {
     required this.completed,
     required this.total,
     required this.reminderEnabled,
+    required this.reminderBusy,
     required this.onReminder,
   });
 
@@ -1468,6 +1515,7 @@ class _ScheduleContextCard extends StatelessWidget {
   final int completed;
   final int total;
   final bool reminderEnabled;
+  final bool reminderBusy;
   final VoidCallback onReminder;
 
   @override
@@ -1499,8 +1547,12 @@ class _ScheduleContextCard extends StatelessWidget {
               height: 40,
               child: IconButton(
                 key: const ValueKey('schedule-context-reminder-button'),
-                tooltip: reminderEnabled ? '关闭计划提醒' : '开启计划提醒',
-                onPressed: onReminder,
+                tooltip: reminderBusy
+                    ? '正在同步计划提醒'
+                    : reminderEnabled
+                    ? '关闭计划提醒'
+                    : '开启计划提醒',
+                onPressed: reminderBusy ? null : onReminder,
                 padding: EdgeInsets.zero,
                 style: IconButton.styleFrom(
                   backgroundColor: MomCozyColors.card.withValues(alpha: 0.9),
@@ -1508,12 +1560,20 @@ class _ScheduleContextCard extends StatelessWidget {
                     color: MomCozyColors.border.withValues(alpha: 0.5),
                   ),
                 ),
-                icon: Icon(
-                  reminderEnabled
-                      ? Icons.notifications_none_rounded
-                      : Icons.notifications_off_outlined,
-                  size: 18,
-                ),
+                icon: reminderBusy
+                    ? const SizedBox.square(
+                        dimension: 17,
+                        child: CircularProgressIndicator(
+                          value: 0.72,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Icon(
+                        reminderEnabled
+                            ? Icons.notifications_none_rounded
+                            : Icons.notifications_off_outlined,
+                        size: 18,
+                      ),
               ),
             ),
           ),
@@ -1638,11 +1698,13 @@ class _ScheduleContextPlaceholder extends StatelessWidget {
 class _ScheduleAgentCard extends StatelessWidget {
   const _ScheduleAgentCard({
     required this.reminderEnabled,
+    required this.reminderBusy,
     required this.onReminder,
     required this.onOpenAgent,
   });
 
   final bool reminderEnabled;
+  final bool reminderBusy;
   final VoidCallback onReminder;
   final VoidCallback onOpenAgent;
 
@@ -1693,19 +1755,27 @@ class _ScheduleAgentCard extends StatelessWidget {
                   children: [
                     OutlinedButton.icon(
                       key: const ValueKey('schedule-agent-reminder-button'),
-                      onPressed: onReminder,
+                      onPressed: reminderBusy ? null : onReminder,
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(0, 40),
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         visualDensity: VisualDensity.compact,
                         foregroundColor: MomCozyColors.foreground,
                       ),
-                      icon: Icon(
-                        reminderEnabled
-                            ? Icons.notifications_none_rounded
-                            : Icons.notifications_off_outlined,
-                        size: 16,
-                      ),
+                      icon: reminderBusy
+                          ? const SizedBox.square(
+                              dimension: 15,
+                              child: CircularProgressIndicator(
+                                value: 0.72,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Icon(
+                              reminderEnabled
+                                  ? Icons.notifications_none_rounded
+                                  : Icons.notifications_off_outlined,
+                              size: 16,
+                            ),
                       label: const Text('提醒开关', style: TextStyle(fontSize: 12)),
                     ),
                     FilledButton.icon(
@@ -2925,10 +2995,12 @@ class _TaskSourceBadge extends StatelessWidget {
 
 class _ScheduleQuickActions extends StatelessWidget {
   const _ScheduleQuickActions({
+    required this.busy,
     required this.onPumping,
     required this.onFeeding,
   });
 
+  final bool busy;
   final VoidCallback onPumping;
   final VoidCallback onFeeding;
 
@@ -2941,7 +3013,8 @@ class _ScheduleQuickActions extends StatelessWidget {
         children: [
           Expanded(
             child: OutlinedButton.icon(
-              onPressed: onPumping,
+              key: const ValueKey('schedule-quick-pumping-button'),
+              onPressed: busy ? null : onPumping,
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(40),
                 backgroundColor: MomCozyColors.raised,
@@ -2960,7 +3033,8 @@ class _ScheduleQuickActions extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: OutlinedButton.icon(
-              onPressed: onFeeding,
+              key: const ValueKey('schedule-quick-feeding-button'),
+              onPressed: busy ? null : onFeeding,
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(40),
                 backgroundColor: MomCozyColors.raised,
