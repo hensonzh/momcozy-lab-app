@@ -74,9 +74,7 @@ class StatusDashboardController {
     StatusIdentity initialIdentity = StatusIdentity.mom,
     DateTime Function()? now,
   }) : now = now ?? DateTime.now,
-       cache =
-           cache ??
-           StatusDashboardCache(ownerUserId: '', babyId: babyId) {
+       cache = cache ?? StatusDashboardCache(ownerUserId: '', babyId: babyId) {
     careStage = ValueNotifier<StatusCareStage>(initialCareStage);
     identity = ValueNotifier<StatusIdentity>(
       initialCareStage == StatusCareStage.pregnancy
@@ -107,9 +105,7 @@ class StatusDashboardController {
         ValueNotifier<StatusResource<List<PregnancyDiaryEntry>>>(
           this.cache.pregnancyDiaryEntries == null
               ? const StatusResource.initial()
-              : StatusResource.data(
-                  this.cache.pregnancyDiaryEntries!.value,
-                ),
+              : StatusResource.data(this.cache.pregnancyDiaryEntries!.value),
         );
     birthJourneyPlan = ValueNotifier<StatusResource<BirthJourneyPlan?>>(
       this.cache.pregnancyPlan == null
@@ -345,11 +341,8 @@ class StatusDashboardController {
     if (_disposed) return;
     await Future.wait<void>(
       resources.map(
-        (resource) => _requestResource(
-          resource,
-          showLoading: showLoading,
-          force: force,
-        ),
+        (resource) =>
+            _requestResource(resource, showLoading: showLoading, force: force),
       ),
     );
   }
@@ -406,10 +399,8 @@ class StatusDashboardController {
         await _resolve(
           overview,
           statusRepository.fetchOverview(),
-          onData: (value) => cache.overview = StatusCacheEntry(
-            value: value,
-            fetchedAt: now(),
-          ),
+          onData: (value) =>
+              cache.overview = StatusCacheEntry(value: value, fetchedAt: now()),
           showLoading: showLoading,
         );
         break;
@@ -427,10 +418,7 @@ class StatusDashboardController {
       case StatusDashboardResource.milkTrends:
         await _resolve(
           milkTrends,
-          milkTrendRepository.fetchMilkTrends(
-            startDate: trendStart,
-            days: 31,
-          ),
+          milkTrendRepository.fetchMilkTrends(startDate: trendStart, days: 31),
           onData: (value) => cache.milkTrends = StatusCacheEntry(
             value: value,
             fetchedAt: now(),
@@ -738,8 +726,7 @@ class StatusDashboardController {
 
   Future<void> _resolve<T>(
     ValueNotifier<StatusResource<T>> notifier,
-    Future<T> operation,
-    {
+    Future<T> operation, {
     T Function(T value)? normalize,
     required void Function(T value) onData,
     required bool showLoading,

@@ -142,8 +142,7 @@ void main() {
         reason: 'all initially visible pregnancy resources should be active',
       );
       final countsBeforeChange = {
-        for (final path in _statusGetEndpoints)
-          path: transport.getCount(path),
+        for (final path in _statusGetEndpoints) path: transport.getCount(path),
       };
 
       runtime.pregnancyPlanChangeStore.record(

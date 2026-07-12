@@ -119,9 +119,7 @@ void main() {
     final controller = MomCozyRuntimeController(initial);
     addTearDown(controller.dispose);
 
-    controller.replaceSession(
-      initial.session.copyWith(clearAccessToken: true),
-    );
+    controller.replaceSession(initial.session.copyWith(clearAccessToken: true));
 
     expect(
       controller.runtime.statusDashboardCache,

@@ -39,10 +39,7 @@ void main() {
       final transport = FixtureApiMultipartTransport({'id': 'file-001'});
       final uploaded = await MediaApiRepository(
         transport: transport,
-      ).uploadFile(
-        idempotencyKey: ' ',
-        file: _file,
-      );
+      ).uploadFile(idempotencyKey: ' ', file: _file);
 
       expect(transport.lastFields, isEmpty);
       expect(transport.lastHeaders, isEmpty);
@@ -52,45 +49,42 @@ void main() {
       expect(uploaded.mimeType, isEmpty);
     });
 
-    test(
-      'keeps HTTP, cancel, and timeout failures distinct',
-      () async {
-        await expectLater(
-          MediaApiRepository(
-            transport: FixtureApiMultipartTransport({
-              'http_status': 413,
-              'status_text': 'Payload Too Large',
-              'body': {
-                'error': {
-                  'code': 'payload_too_large',
-                  'message': 'File is too large',
-                  'request_id': 'req-file-001',
-                },
+    test('keeps HTTP, cancel, and timeout failures distinct', () async {
+      await expectLater(
+        MediaApiRepository(
+          transport: FixtureApiMultipartTransport({
+            'http_status': 413,
+            'status_text': 'Payload Too Large',
+            'body': {
+              'error': {
+                'code': 'payload_too_large',
+                'message': 'File is too large',
+                'request_id': 'req-file-001',
               },
-            }),
-          ).uploadFile(file: _file),
-          throwsA(
-            isA<ApiHttpException>().having(
-              (error) => error.errorCode,
-              'errorCode',
-              'payload_too_large',
-            ),
+            },
+          }),
+        ).uploadFile(file: _file),
+        throwsA(
+          isA<ApiHttpException>().having(
+            (error) => error.errorCode,
+            'errorCode',
+            'payload_too_large',
           ),
-        );
-        await expectLater(
-          MediaApiRepository(
-            transport: _failureTransport(const ApiRequestCancelledException()),
-          ).uploadFile(file: _file),
-          throwsA(isA<ApiRequestCancelledException>()),
-        );
-        await expectLater(
-          MediaApiRepository(
-            transport: _failureTransport(const ApiRequestTimeoutException()),
-          ).uploadFile(file: _file),
-          throwsA(isA<ApiRequestTimeoutException>()),
-        );
-      },
-    );
+        ),
+      );
+      await expectLater(
+        MediaApiRepository(
+          transport: _failureTransport(const ApiRequestCancelledException()),
+        ).uploadFile(file: _file),
+        throwsA(isA<ApiRequestCancelledException>()),
+      );
+      await expectLater(
+        MediaApiRepository(
+          transport: _failureTransport(const ApiRequestTimeoutException()),
+        ).uploadFile(file: _file),
+        throwsA(isA<ApiRequestTimeoutException>()),
+      );
+    });
   });
 }
 

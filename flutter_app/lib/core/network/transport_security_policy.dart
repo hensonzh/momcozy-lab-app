@@ -62,7 +62,7 @@ class TransportSecurityPolicy {
       uri,
       'uri',
       'Insecure transport is only allowed for localhost or private LAN '
-      'development.',
+          'development.',
     );
   }
 }

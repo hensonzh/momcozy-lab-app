@@ -254,9 +254,7 @@ abstract interface class PumpAgentUploadPlatform {
   Future<PumpAgentUploadResult> uploadWorkstate();
   Future<PumpAgentUploadResult> getProcessData();
   Future<PumpAgentUploadResult> uploadProcess();
-  Future<PumpAgentUploadResult> uploadMilkRecord({
-    required int endedAtMs,
-  });
+  Future<PumpAgentUploadResult> uploadMilkRecord({required int endedAtMs});
 }
 
 class PendingNativeRoute {
@@ -671,10 +669,7 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
   }) async {
     _recordCall(
       'setConfig',
-      payload: {
-        'apiBaseUrl': apiBaseUrl,
-        'bearerToken': bearerToken,
-      },
+      payload: {'apiBaseUrl': apiBaseUrl, 'bearerToken': bearerToken},
       redactPayload: true,
     );
   }
@@ -750,9 +745,7 @@ class FakePumpAgentUploadPlatform implements PumpAgentUploadPlatform {
   Future<PumpAgentUploadResult> uploadMilkRecord({
     required int endedAtMs,
   }) async {
-    return _recordUpload('uploadMilkRecord', {
-      'endedAtMs': endedAtMs,
-    });
+    return _recordUpload('uploadMilkRecord', {'endedAtMs': endedAtMs});
   }
 
   void emitFailure({

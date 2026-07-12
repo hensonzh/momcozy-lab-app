@@ -163,9 +163,7 @@ void main() {
           findsOneWidget,
         );
         expect(
-          find.byKey(
-            const ValueKey('status-birth-journey-completion-sparks'),
-          ),
+          find.byKey(const ValueKey('status-birth-journey-completion-sparks')),
           findsOneWidget,
         );
 
@@ -233,9 +231,7 @@ void main() {
         findsNothing,
       );
       expect(
-        find.byKey(
-          const ValueKey('status-birth-journey-completion-sparks'),
-        ),
+        find.byKey(const ValueKey('status-birth-journey-completion-sparks')),
         findsNothing,
       );
       expect(hostKey.currentState!.prompts, isEmpty);
@@ -276,9 +272,7 @@ void main() {
         findsNothing,
       );
       expect(
-        find.byKey(
-          const ValueKey('status-birth-journey-completion-sparks'),
-        ),
+        find.byKey(const ValueKey('status-birth-journey-completion-sparks')),
         findsNothing,
       );
       expect(tester.takeException(), isNull);
@@ -447,9 +441,7 @@ class _PlanHostState extends State<_PlanHost> {
   Future<bool> toggle(String itemId, bool completed) async {
     toggleCalls.add((itemId: itemId, completed: completed));
     if (!widget.toggleSucceeds) {
-      mutation.value = const StatusMutationState.error(
-        '同步计划完成状态失败，已恢复最新计划',
-      );
+      mutation.value = const StatusMutationState.error('同步计划完成状态失败，已恢复最新计划');
       return false;
     }
     final current = plan.value.data;
@@ -507,8 +499,7 @@ class _PlanHostState extends State<_PlanHost> {
   }
 }
 
-const _longCurrentTodoTitle =
-    '准备下一次高危产检需要携带的全部报告并提前记录所有想咨询医生的问题';
+const _longCurrentTodoTitle = '准备下一次高危产检需要携带的全部报告并提前记录所有想咨询医生的问题';
 
 BirthJourneyPlan _plan({
   bool legacyCurrentTodo = false,

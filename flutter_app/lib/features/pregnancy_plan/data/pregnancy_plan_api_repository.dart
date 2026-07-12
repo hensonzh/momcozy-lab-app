@@ -63,10 +63,7 @@ class PregnancyPlanApiRepository implements PregnancyPlanRepository {
     final response = await (value as ApiJsonMutationTransport).patchJson(
       '$pregnancyPlansEndpoint/${Uri.encodeComponent(normalizedPlanId)}/todos/'
       '${Uri.encodeComponent(normalizedItemId)}/completion',
-      body: {
-        'completed': completed,
-        'expected_version': expectedVersion,
-      },
+      body: {'completed': completed, 'expected_version': expectedVersion},
       headers: {
         if (idempotencyKey?.trim().isNotEmpty == true)
           'Idempotency-Key': idempotencyKey!.trim(),
