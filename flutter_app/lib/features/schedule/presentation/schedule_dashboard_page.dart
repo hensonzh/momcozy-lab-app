@@ -53,6 +53,10 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   String? _highlightedTaskId;
   DateTime? _highlightedDay;
   bool _reminderEnabled = false;
+  bool _warmingReminderWindow = false;
+  bool _reminderSyncInFlight = false;
+  bool _reminderSyncQueued = false;
+  String? _lastReminderFingerprint;
   int _requestSequence = 0;
   int _intentRevision = 0;
   String? _pendingFocusTaskId;
@@ -71,6 +75,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       initialDay: widget.initialDay ?? intentDay ?? _clock,
       now: widget.now,
     );
+    _controller.addListener(_onControllerReminderChange);
     _applyRouteIntent(intentDay: intentDay, notify: false, selectDay: false);
     widget.milkPlanChangeStore?.addListener(_onMilkPlanChangeStore);
     unawaited(_loadReminderPreference());
@@ -113,6 +118,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     _highlightTimer?.cancel();
     _planChangeHighlightTimer?.cancel();
     widget.milkPlanChangeStore?.removeListener(_onMilkPlanChangeStore);
+    _controller.removeListener(_onControllerReminderChange);
     _scrollController.dispose();
     _controller.dispose();
     super.dispose();
@@ -513,6 +519,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       return;
     }
     store.clearPageNotice();
+    _queueReminderSync();
     setState(() => _feedback = '稳奶计划已按最新权威数据刷新');
   }
 
@@ -595,9 +602,17 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       );
       if (confirmed != true) return;
     }
+    var reminderTasks = tasks;
+    var warmed = true;
+    if (next) {
+      _warmingReminderWindow = true;
+      warmed = await _controller.warmReminderWindow();
+      _warmingReminderWindow = false;
+      reminderTasks = _controller.reminderTasks;
+    }
     final synced = await widget.reminderGateway.setEnabled(
       enabled: next,
-      tasks: tasks,
+      tasks: reminderTasks,
     );
     if (!mounted) return;
     if (!synced) {
@@ -617,7 +632,12 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     }
     setState(() {
       _reminderEnabled = next;
-      _feedback = next ? '系统提醒已同步' : '系统提醒已关闭';
+      _lastReminderFingerprint = _reminderFingerprint(next, reminderTasks);
+      _feedback = next
+          ? warmed
+                ? '系统提醒已同步'
+                : '部分未来日程暂未加载，已同步当前可用提醒'
+          : '系统提醒已关闭';
     });
   }
 
@@ -628,9 +648,79 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     }
     try {
       final enabled = await widget.reminderPreferenceStore.readEnabled();
-      if (mounted) setState(() => _reminderEnabled = enabled);
+      if (!mounted) return;
+      setState(() => _reminderEnabled = enabled);
+      if (!enabled) return;
+      _warmingReminderWindow = true;
+      final warmed = await _controller.warmReminderWindow();
+      _warmingReminderWindow = false;
+      final synced = await _syncReminderTasks(force: true);
+      if (!mounted) return;
+      if (!synced) {
+        setState(() {
+          _reminderEnabled = false;
+          _feedback = '系统提醒恢复失败，已保持关闭';
+        });
+        try {
+          await widget.reminderPreferenceStore.writeEnabled(false);
+        } catch (_) {
+          // The visible state remains honest even if preference repair fails.
+        }
+      } else if (!warmed) {
+        setState(() => _feedback = '部分未来日程暂未加载，已同步当前可用提醒');
+      }
     } catch (_) {
       if (mounted) setState(() => _reminderEnabled = false);
+    }
+  }
+
+  void _onControllerReminderChange() {
+    if (!_reminderEnabled || _warmingReminderWindow) return;
+    _queueReminderSync();
+  }
+
+  void _queueReminderSync() {
+    if (!_reminderEnabled || !widget.reminderGateway.isSupported) return;
+    if (_reminderSyncInFlight) {
+      _reminderSyncQueued = true;
+      return;
+    }
+    unawaited(_syncReminderTasks());
+  }
+
+  Future<bool> _syncReminderTasks({bool force = false}) async {
+    if (!_reminderEnabled || !widget.reminderGateway.isSupported) return false;
+    final tasks = _controller.reminderTasks;
+    final fingerprint = _reminderFingerprint(true, tasks);
+    if (!force && fingerprint == _lastReminderFingerprint) return true;
+    if (_reminderSyncInFlight) {
+      _reminderSyncQueued = true;
+      return true;
+    }
+    _reminderSyncInFlight = true;
+    var synced = false;
+    try {
+      synced = await widget.reminderGateway.setEnabled(
+        enabled: true,
+        tasks: tasks,
+      );
+      if (synced) {
+        _lastReminderFingerprint = fingerprint;
+      } else if (mounted) {
+        setState(() => _feedback = '日程已更新，但系统提醒重同步失败');
+      }
+      return synced;
+    } catch (_) {
+      if (mounted) {
+        setState(() => _feedback = '日程已更新，但系统提醒重同步失败');
+      }
+      return false;
+    } finally {
+      _reminderSyncInFlight = false;
+      if (_reminderSyncQueued) {
+        _reminderSyncQueued = false;
+        _queueReminderSync();
+      }
     }
   }
 
@@ -2536,6 +2626,18 @@ String _taskStateLabel(ScheduleTaskState state) => switch (state) {
 String _linkedRecordSummary(ScheduleRecord record) {
   final amount = record.amountMl == null ? '' : '${record.amountMl} ml · ';
   return '$amount${_time(record.occurredAt)} 完成';
+}
+
+String _reminderFingerprint(bool enabled, List<ScheduleTask> tasks) {
+  final entries =
+      tasks
+          .map(
+            (task) =>
+                '${task.id}:${task.state.name}:${task.remindAt?.millisecondsSinceEpoch ?? 0}',
+          )
+          .toList(growable: false)
+        ..sort();
+  return '${enabled ? 1 : 0}|${entries.join('|')}';
 }
 
 String _countdown(DateTime? at, DateTime now) {

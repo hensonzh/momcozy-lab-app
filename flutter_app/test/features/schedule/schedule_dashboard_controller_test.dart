@@ -252,6 +252,31 @@ void main() {
       );
     },
   );
+
+  test(
+    'warms a bounded reminder window and exposes future pending tasks',
+    () async {
+      final repository = _ReminderWindowScheduleRepository();
+      final controller = ScheduleDashboardController(
+        repository: repository,
+        initialDay: DateTime.utc(2026, 7, 3),
+        now: () => DateTime.utc(2026, 7, 3, 10),
+      );
+
+      expect(await controller.warmReminderWindow(days: 3), isTrue);
+
+      expect(repository.fetchedDays, [
+        DateTime.utc(2026, 7, 3),
+        DateTime.utc(2026, 7, 4),
+        DateTime.utc(2026, 7, 5),
+      ]);
+      expect(controller.reminderTasks.map((task) => task.id), [
+        'task-3',
+        'task-4',
+        'task-5',
+      ]);
+    },
+  );
 }
 
 ScheduleDayPlan _snapshot() {
@@ -471,5 +496,29 @@ class _LostResponseScheduleRepository extends _FakeScheduleRepository {
       throw StateError('response lost');
     }
     return _createdTask;
+  }
+}
+
+class _ReminderWindowScheduleRepository extends _FakeScheduleRepository {
+  _ReminderWindowScheduleRepository()
+    : super(snapshot: const ScheduleDayPlan());
+
+  final List<DateTime> fetchedDays = [];
+
+  @override
+  Future<ScheduleDayPlan> fetchDayPlan({required DateTime day}) async {
+    fetchedDays.add(day);
+    return ScheduleDayPlan(
+      day: day,
+      tasks: [
+        ScheduleTask(
+          id: 'task-${day.day}',
+          title: '吸奶',
+          kind: ScheduleTaskKind.pumping,
+          state: ScheduleTaskState.pending,
+          remindAt: DateTime.utc(day.year, day.month, day.day, 12),
+        ),
+      ],
+    );
   }
 }

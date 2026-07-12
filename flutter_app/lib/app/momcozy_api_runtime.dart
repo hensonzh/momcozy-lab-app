@@ -29,10 +29,12 @@ import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_
 import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_change_persistence.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/android_schedule_reminder_gateway.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/milk_plan_change_persistence.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_reminder_preference_store.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
@@ -244,6 +246,9 @@ class MomCozyApiRuntime {
     PregnancyPlanChangeStore? pregnancyPlanChangeStore,
     StatusDashboardCache? statusDashboardCache,
     MilkPlanChangeStore? milkPlanChangeStore,
+    ScheduleReminderPreferenceStore? scheduleReminderPreferenceStore,
+    ScheduleReminderGateway? scheduleReminderGateway,
+    VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -332,6 +337,9 @@ class MomCozyApiRuntime {
       pregnancyPlanChangeStore: pregnancyPlanChangeStore,
       statusDashboardCache: statusDashboardCache,
       milkPlanChangeStore: milkPlanChangeStore,
+      scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
+      scheduleReminderGateway: scheduleReminderGateway,
+      volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
@@ -520,15 +528,22 @@ class MomCozyApiRuntime {
   }
 
   ScheduleReminderPreferenceStore get scheduleReminderPreferenceStore {
-    return _scheduleReminderPreferenceStore ??
+    return _scheduleReminderPreferenceStore ??=
         FlutterSecureScheduleReminderPreferenceStore(
           userId: currentSession.userId,
         );
   }
 
   ScheduleReminderGateway get scheduleReminderGateway {
-    return _scheduleReminderGateway ??
-        const UnsupportedScheduleReminderGateway();
+    final configured = _scheduleReminderGateway;
+    if (configured != null) return configured;
+    if (!currentSession.isAuthenticated) {
+      return const UnsupportedScheduleReminderGateway();
+    }
+    return _scheduleReminderGateway = AndroidScheduleReminderGateway(
+      ownerScope: currentSession.userId,
+      now: now,
+    );
   }
 
   VolumeUnitPreferenceStore get volumeUnitPreferenceStore {
@@ -659,6 +674,22 @@ class MomCozyRuntimeController extends ChangeNotifier {
 
   void replaceRuntime(MomCozyApiRuntime runtime) {
     if (identical(_runtime, runtime)) return;
+    final previous = _runtime;
+    final sameAuthenticatedAccount =
+        previous.session.isAuthenticated &&
+        runtime.session.isAuthenticated &&
+        previous.session.userId == runtime.session.userId;
+    final previousReminderGateway = previous._scheduleReminderGateway;
+    if (previous.session.isAuthenticated &&
+        !sameAuthenticatedAccount &&
+        previousReminderGateway != null) {
+      unawaited(
+        previousReminderGateway.setEnabled(
+          enabled: false,
+          tasks: const <ScheduleTask>[],
+        ),
+      );
+    }
     _runtime = runtime;
     notifyListeners();
   }
@@ -702,6 +733,15 @@ class MomCozyRuntimeController extends ChangeNotifier {
             session.userId == _runtime.session.userId
         ? _runtime.milkPlanChangeStore
         : null;
+    final scheduleReminderGateway = sameAuthenticatedPlanAccount
+        ? _runtime.scheduleReminderGateway
+        : null;
+    final scheduleReminderPreferenceStore = sameAuthenticatedPlanAccount
+        ? _runtime.scheduleReminderPreferenceStore
+        : null;
+    final volumeUnitPreferenceStore = sameAuthenticatedPlanAccount
+        ? _runtime.volumeUnitPreferenceStore
+        : null;
     if (store == null) {
       return MomCozyApiRuntime.fromSession(
         session,
@@ -718,6 +758,9 @@ class MomCozyRuntimeController extends ChangeNotifier {
         pregnancyPlanChangeStore: pregnancyPlanChangeStore,
         statusDashboardCache: statusDashboardCache,
         milkPlanChangeStore: milkPlanChangeStore,
+        scheduleReminderGateway: scheduleReminderGateway,
+        scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
+        volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       );
     }
     return MomCozyApiRuntime.fromSession(
@@ -735,6 +778,9 @@ class MomCozyRuntimeController extends ChangeNotifier {
       pregnancyPlanChangeStore: pregnancyPlanChangeStore,
       statusDashboardCache: statusDashboardCache,
       milkPlanChangeStore: milkPlanChangeStore,
+      scheduleReminderGateway: scheduleReminderGateway,
+      scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
+      volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {
