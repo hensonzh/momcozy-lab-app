@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
@@ -1021,7 +1023,84 @@ void main() {
 
     expect(find.text('计划同步失败'), findsOneWidget);
     expect(find.byKey(const ValueKey('schedule-retry-button')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('schedule-context-placeholder')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('schedule-unavailable-timeline')),
+      findsOneWidget,
+    );
+    expect(find.text('执行内容暂不可用'), findsOneWidget);
     expect(find.text('当天暂无执行内容'), findsNothing);
+  });
+
+  testWidgets('initial loading preserves the legacy page hierarchy', (
+    tester,
+  ) async {
+    final transport = _DeferredScheduleTransport();
+    await _pumpPage(tester, transport, settle: false);
+    await tester.pump();
+
+    expect(
+      find.byKey(const ValueKey('schedule-fixed-date-area')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('schedule-loading-state')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('schedule-loading-context-skeleton')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('schedule-loading-hero-skeleton')),
+      findsOneWidget,
+    );
+    expect(find.text('任务加载中…'), findsOneWidget);
+    expect(find.text('记录加载中…'), findsOneWidget);
+    expect(find.text('计划同步失败'), findsNothing);
+
+    transport.complete();
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('schedule-loading-state')), findsNothing);
+    expect(find.text('今天还没有计划任务'), findsOneWidget);
+  });
+
+  testWidgets('cached refresh keeps useful content visible while syncing', (
+    tester,
+  ) async {
+    final transport = _GateableScheduleTransport();
+    await _pumpPage(tester, transport);
+    expect(find.text('稳奶计划执行中'), findsOneWidget);
+    expect(find.text('待执行任务'), findsOneWidget);
+
+    transport.deferRequests();
+    final refresh = tester.widget<RefreshIndicator>(
+      find.byType(RefreshIndicator),
+    );
+    final refreshFuture = refresh.onRefresh();
+    await tester.pump();
+
+    expect(
+      find.byKey(const ValueKey('schedule-inline-loading-notice')),
+      findsOneWidget,
+    );
+    expect(find.text('稳奶计划执行中'), findsOneWidget);
+    expect(find.text('待执行任务'), findsOneWidget);
+    expect(find.byKey(const ValueKey('schedule-loading-state')), findsNothing);
+
+    transport.completeRequests();
+    await refreshFuture;
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('schedule-inline-loading-notice')),
+      findsNothing,
+    );
+    expect(find.text('稳奶计划执行中'), findsOneWidget);
   });
 
   testWidgets(
@@ -2222,6 +2301,7 @@ Future<void> _pumpPage(
   ScheduleImageRecognitionGateway? imageRecognitionGateway,
   DateTime? now,
   Future<DateTime?> Function()? deliveryDateLoader,
+  bool settle = true,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -2250,7 +2330,92 @@ Future<void> _pumpPage(
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+  }
+}
+
+class _DeferredScheduleTransport extends FixtureApiJsonTransportByPath {
+  _DeferredScheduleTransport() : super(const <String, Map<String, Object?>>{});
+
+  final Completer<Map<String, Object?>> _response =
+      Completer<Map<String, Object?>>();
+
+  void complete() {
+    if (!_response.isCompleted) {
+      _response.complete(const {'items': <Object?>[]});
+    }
+  }
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) {
+    lastMethod = 'GET';
+    lastPath = path;
+    lastQuery = Map<String, Object?>.from(query);
+    getPaths.add(path);
+    return _response.future;
+  }
+}
+
+class _GateableScheduleTransport extends FixtureApiJsonTransportByPath {
+  _GateableScheduleTransport()
+    : super({
+        scheduleDayPlanEndpoint: const {
+          'items': [
+            {
+              'id': 'refresh-task',
+              'plan_id': 'plan-1',
+              'task_date': '2026-07-03',
+              'task_time': '14:00',
+              'title': '下午吸奶',
+              'status': 'pending',
+              'payload': {'task_type': 'pumping'},
+            },
+          ],
+        },
+        schedulePlansEndpoint: const {
+          'items': [
+            {
+              'id': 'plan-1',
+              'plan_type': 'milk_management',
+              'title': '稳奶计划',
+              'summary': '按当前阶段稳步执行',
+              'status': 'active',
+              'version': 1,
+              'payload': {'postpartum_week': 29, 'phase': '离乳期'},
+            },
+          ],
+        },
+        scheduleFeedingRecordsEndpoint: const {'items': <Object?>[]},
+        schedulePumpingRecordsEndpoint: const {'items': <Object?>[]},
+      });
+
+  Completer<void>? _gate;
+
+  void deferRequests() {
+    _gate = Completer<void>();
+  }
+
+  void completeRequests() {
+    final gate = _gate;
+    _gate = null;
+    if (gate != null && !gate.isCompleted) gate.complete();
+  }
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) async {
+    final gate = _gate;
+    if (gate != null) await gate.future;
+    return super.getJson(path, query: query);
+  }
 }
 
 class _FakeImageRecognitionGateway implements ScheduleImageRecognitionGateway {
