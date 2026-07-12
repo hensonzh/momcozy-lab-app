@@ -14,6 +14,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -737,6 +738,149 @@ void main() {
           const ValueKey('status-birth-journey-notice'),
         ),
         Colors.transparent,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('Legacy Web widget parity: 计划', () {
+    testWidgets(
+      'transfers an Agent plan update into refreshed highlighted schedule UI',
+      (tester) async {
+        await _setCompactViewport(tester);
+        final routeIntentPlatform = FakeRouteIntentPlatform();
+        addTearDown(routeIntentPlatform.dispose);
+        final runtime = _runtime(
+          responsesByPath: {
+            schedulePlansEndpoint: const {
+              'items': [
+                {
+                  'id': 'milk-plan-widget',
+                  'plan_type': 'milk_management',
+                  'title': '稳奶计划',
+                  'summary': '按当前阶段稳步执行',
+                  'status': 'active',
+                  'version': 3,
+                  'payload': {'postpartum_week': 29, 'phase': '离乳期'},
+                },
+              ],
+            },
+            schedulePumpingRecordsEndpoint: const {'items': <Object?>[]},
+          },
+        );
+
+        await tester.pumpWidget(
+          MomCozyFlutterApp(
+            router: createMomCozyRouter(initialLocation: '/status'),
+            routeIntentPlatform: routeIntentPlatform,
+            apiRuntime: runtime,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        runtime.milkPlanChangeStore.record(
+          const MilkPlanChange(
+            eventId: 'schedule-parity-plan-update',
+            affectedDateKeys: ['2026-07-05'],
+          ),
+        );
+        await tester.pump();
+        expect(
+          find.byKey(const ValueKey('bottom-nav-schedule-plan-badge')),
+          findsOneWidget,
+        );
+
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const ValueKey('route-page-/schedule')),
+          findsOneWidget,
+        );
+        expect(find.text('稳奶计划执行中'), findsOneWidget);
+        expect(
+          find.text('已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我'),
+          findsOneWidget,
+        );
+        expect(find.text('待执行任务'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('schedule-highlighted-date-2026-07-05')),
+          findsOneWidget,
+        );
+        expect(runtime.milkPlanChangeStore.hasUnread, isFalse);
+        expect(runtime.milkPlanChangeStore.hasPageNotice, isFalse);
+        expect(
+          find.byKey(const ValueKey('bottom-nav-schedule-plan-badge')),
+          findsNothing,
+        );
+
+        await _scrollToText(tester, '稳奶计划已按最新权威数据刷新');
+        await _scrollToFinder(
+          tester,
+          find.byKey(const ValueKey('schedule-quick-actions')),
+        );
+        final quickActions = find.byKey(
+          const ValueKey('schedule-quick-actions'),
+        );
+        expect(
+          find.descendant(of: quickActions, matching: find.text('吸奶补录')),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(of: quickActions, matching: find.text('喂养记录')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('native schedule intent selects and focuses its linked task', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+      final router = createMomCozyRouter(initialLocation: '/status');
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(
+            responsesByPath: {
+              schedulePlansEndpoint: const {
+                'items': [
+                  {
+                    'id': 'milk-plan-widget',
+                    'plan_type': 'milk_management',
+                    'title': '稳奶计划',
+                    'summary': '按当前阶段稳步执行',
+                    'status': 'active',
+                    'version': 3,
+                  },
+                ],
+              },
+              schedulePumpingRecordsEndpoint: const {'items': <Object?>[]},
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      routeIntentPlatform.dispatchActiveRoute(
+        const PendingNativeRoute(
+          path: '/schedule?date=2026-07-04&task_id=feeding-afternoon',
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(router.routeInformationProvider.value.uri.path, '/schedule');
+      expect(
+        find.byKey(const ValueKey('schedule-highlighted-date-2026-07-04')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('schedule-timeline-task-feeding-afternoon')),
+        findsOneWidget,
       );
       expect(tester.takeException(), isNull);
     });
