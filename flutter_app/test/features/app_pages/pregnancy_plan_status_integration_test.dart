@@ -186,6 +186,91 @@ void main() {
     },
   );
 
+  testWidgets(
+    'Agent deletion removes a cached pregnancy plan when Status is reopened',
+    (tester) async {
+      await _setCompactViewport(tester);
+      final transport = _PlanTransport(
+        planResponses: {
+          1: _planResponse(),
+          2: const {'items': <Object?>[]},
+        },
+      );
+      final client = _ControllableAgentStreamClient();
+      final runtime = _runtime(
+        transport,
+        storedCareStage: StatusCareStage.pregnancy,
+      );
+      final router = createMomCozyRouter(
+        initialLocation: '/status',
+        agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) {
+          return AgentHubPage(
+            runner: AgentStreamRunner(client),
+            requestBuilder: (message) => AgentStreamRequest(message: message),
+            voicePlaybackCoordinator: voicePlaybackCoordinator,
+            onPregnancyPlanChange: runtime.pregnancyPlanChangeStore.record,
+          );
+        },
+      );
+      await _pumpApp(
+        tester,
+        runtime: runtime,
+        router: router,
+        initialLocation: '/status',
+      );
+      addTearDown(client.dispose);
+      await _scrollToBirthJourney(tester);
+
+      expect(transport.planGetCount, 1);
+      expect(find.text('和产科确认个性化复查节奏'), findsOneWidget);
+      final countsBeforeDeletion = {
+        for (final path in _statusGetEndpoints) path: transport.getCount(path),
+      };
+
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-agent')));
+      await tester.pumpAndSettle();
+      await _startAgentRun(tester);
+      client.emit(_runStartedEvent());
+      client.emit(
+        _planChangedEvent(eventId: 'evt-plan-deleted', operation: 'deleted'),
+      );
+      await tester.pump();
+
+      expect(runtime.pregnancyPlanChangeStore.revision, 1);
+      expect(runtime.pregnancyPlanChangeStore.hasUnread, isFalse);
+      expect(
+        find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
+        findsNothing,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+      await _pumpUntil(
+        tester,
+        () => transport.planGetCount == 2,
+        reason: 'Status should revalidate the cached plan on re-entry',
+      );
+      await _pumpFrames(tester, 4);
+      await _scrollToBirthJourney(tester);
+
+      for (final path in _statusGetEndpoints) {
+        expect(
+          transport.getCount(path),
+          countsBeforeDeletion[path]! +
+              (path == pregnancyPlansEndpoint ? 1 : 0),
+          reason: 're-entry should only revalidate the cached pregnancy plan',
+        );
+      }
+      expect(find.text('和产科确认个性化复查节奏'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
+        findsOneWidget,
+      );
+      expect(runtime.pregnancyPlanChangeStore.hasUnread, isFalse);
+      expect(runtime.pregnancyPlanChangeStore.highlightCard, isFalse);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('failed plan synchronization restores the unread badge', (
     tester,
   ) async {
@@ -720,6 +805,7 @@ AgentStreamEvent _runStartedEvent() => AgentStreamEvent(const {
 AgentStreamEvent _planChangedEvent({
   String eventId = 'evt-plan-changed',
   int sequence = 2,
+  String operation = 'created',
 }) {
   return AgentStreamEvent({
     'event_id': eventId,
@@ -727,8 +813,8 @@ AgentStreamEvent _planChangedEvent({
     'type': 'pregnancy_plan.changed',
     'thread_id': 'thread-plan',
     'run_id': 'run-plan',
-    'payload': const {
-      'operation': 'created',
+    'payload': {
+      'operation': operation,
       'plan_id': 'plan-pregnancy-1',
       'plan_type': 'pregnancy',
       'source': 'agent_action',

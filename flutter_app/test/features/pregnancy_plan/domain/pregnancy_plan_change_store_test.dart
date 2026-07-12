@@ -19,6 +19,18 @@ void main() {
       expect(change.eventId, 'evt-plan-created');
     });
 
+    test('projects deletion as a privacy-safe invalidation event', () {
+      final change = PregnancyPlanChange.tryFromEvent(
+        _changedEvent(eventId: 'evt-plan-deleted', operation: 'deleted'),
+      );
+
+      expect(change, isNotNull);
+      expect(change!.operation, 'deleted');
+      expect(change.planId, 'plan-pregnancy-1');
+      expect(change.planType, 'pregnancy');
+      expect(change.source, 'agent_action');
+    });
+
     test('rejects transient, unrelated, and malformed events', () {
       expect(
         PregnancyPlanChange.tryFromEvent(
@@ -125,6 +137,29 @@ void main() {
       expect(store.revision, 1);
     });
 
+    test('deletion invalidates data without showing a new-plan notice', () {
+      final store = PregnancyPlanChangeStore();
+      store.record(
+        PregnancyPlanChange.tryFromEvent(
+          _changedEvent(eventId: 'evt-plan-created'),
+        )!,
+      );
+      store.transferNavigationNoticeToCard();
+
+      expect(
+        store.record(
+          PregnancyPlanChange.tryFromEvent(
+            _changedEvent(eventId: 'evt-plan-deleted', operation: 'deleted'),
+          )!,
+        ),
+        isTrue,
+      );
+
+      expect(store.revision, 2);
+      expect(store.hasUnread, isFalse);
+      expect(store.highlightCard, isFalse);
+    });
+
     test('persists and restores privacy-safe notice state only', () async {
       final persistence = _FakePersistence();
       final first = PregnancyPlanChangeStore(persistence: persistence);
@@ -228,7 +263,10 @@ void main() {
   });
 }
 
-AgentStreamEvent _changedEvent({required String eventId}) {
+AgentStreamEvent _changedEvent({
+  required String eventId,
+  String operation = 'created',
+}) {
   return AgentStreamEvent({
     'event_id': eventId,
     'sequence': 7,
@@ -236,7 +274,7 @@ AgentStreamEvent _changedEvent({required String eventId}) {
     'thread_id': 'thread-plan',
     'run_id': 'run-plan',
     'payload': {
-      'operation': 'created',
+      'operation': operation,
       'plan_id': 'plan-pregnancy-1',
       'plan_type': 'pregnancy',
       'source': 'agent_action',
