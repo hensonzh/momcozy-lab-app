@@ -5108,6 +5108,258 @@ void main() {
   });
 
   testWidgets(
+    'Agent Hub keeps pregnancy plan form analysis and proposal in one trusted multi-turn flow',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+      final formEvent = AgentStreamEvent({
+        'type': 'artifact.created',
+        'thread_id': 'thread-pregnancy-flow',
+        'run_id': 'run-pregnancy-form',
+        'artifact_id': 'pregnancy-intake-form',
+        'payload': {
+          'artifact_type': 'form',
+          'form': {
+            'id': 'birth_journey_basic_info_intake',
+            'title': '孕周与基本情况',
+            'description': '先填写几项基础信息，后面我会按你的情况整理孕期计划。',
+            'fields': [
+              {
+                'id': 'current_week',
+                'label': '当前孕周或预产期',
+                'type': 'text',
+                'required': true,
+                'default_value': '32周',
+              },
+              {
+                'id': 'ivf',
+                'label': '是否 IVF（体外受精）',
+                'type': 'select',
+                'required': true,
+                'options': ['是', '否', '不确定/暂不说'],
+                'default_value': '是',
+              },
+              {
+                'id': 'fetus_count',
+                'label': '单胎/双胎',
+                'type': 'select',
+                'required': true,
+                'options': ['单胎', '双胎', '多胎', '不确定/暂不说'],
+                'default_value': '双胎',
+              },
+              {
+                'id': 'age',
+                'label': '年龄',
+                'type': 'number',
+                'required': true,
+                'default_value': 36,
+              },
+              {
+                'id': 'first_birth',
+                'label': '是否第一胎',
+                'type': 'select',
+                'required': true,
+                'options': ['是', '否', '不确定/暂不说'],
+                'default_value': '是',
+              },
+              {
+                'id': 'birth_path',
+                'label': '计划分娩方式',
+                'type': 'select',
+                'required': true,
+                'options': ['顺产', '剖宫产', '还没确定'],
+                'default_value': '顺产',
+              },
+            ],
+          },
+        },
+      });
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请先完成孕周与基本情况表单。',
+              threadId: 'thread-pregnancy-flow',
+              runId: 'run-pregnancy-form',
+              events: [formEvent],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final submit = find.byKey(
+        const ValueKey('agent-artifact-form-submit-pregnancy-intake-form'),
+      );
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pump();
+
+      expect(client.requests, hasLength(1));
+      final firstRequest = client.requests.single;
+      expect(firstRequest.threadId, 'thread-pregnancy-flow');
+      expect(firstRequest.message, isNot(contains('32周')));
+      expect(firstRequest.message, isNot(contains('confirmed_form_data')));
+      expect(firstRequest.metadata['form_submission'], {
+        'artifact_id': 'pregnancy-intake-form',
+        'form_id': 'birth_journey_basic_info_intake',
+        'values': {
+          'current_week': '32周',
+          'ivf': '是',
+          'fetus_count': '双胎',
+          'age': 36,
+          'first_birth': '是',
+          'birth_path': '顺产',
+        },
+      });
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'pregnancy-analysis-queued',
+          'type': 'run.queued',
+          'thread_id': 'thread-pregnancy-flow',
+          'run_id': 'run-pregnancy-analysis',
+          'sequence': 1,
+        }),
+      );
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'pregnancy-analysis-message',
+          'type': 'message.completed',
+          'thread_id': 'thread-pregnancy-flow',
+          'run_id': 'run-pregnancy-analysis',
+          'message_id': 'message-pregnancy-analysis',
+          'sequence': 2,
+          'payload': {
+            'role': 'assistant',
+            'text':
+                '双胎和 IVF 会影响复查节奏，我会把胎儿生长观察、孕周口径和入院准备适当前置。还有其他需要补充的信息吗？如果没有，我就基于目前的信息开始为你制定孕期计划啦。',
+            'quick_replies': [
+              {'text': '没有了，开始制定'},
+              {'text': '我想补充一点'},
+              {'text': '稍等我再看看'},
+            ],
+          },
+        }),
+      );
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'pregnancy-analysis-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-pregnancy-flow',
+          'run_id': 'run-pregnancy-analysis',
+          'sequence': 3,
+        }),
+      );
+      await _pumpFrames(tester, 4);
+
+      expect(find.textContaining('双胎和 IVF 会影响复查节奏'), findsOneWidget);
+      expect(find.text('已提交'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-quick-replies')), findsOneWidget);
+      final noMore = find.byKey(const ValueKey('agent-quick-reply-0'));
+      await tester.scrollUntilVisible(
+        noMore,
+        -220,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(noMore);
+      await tester.pump();
+
+      expect(client.requests, hasLength(2));
+      expect(client.requests.last.message, '没有了，开始制定');
+      expect(client.requests.last.threadId, 'thread-pregnancy-flow');
+
+      const pregnancyActionId = 'action-pregnancy-plan';
+      client.emit(
+        1,
+        AgentStreamEvent(const {
+          'event_id': 'pregnancy-plan-action',
+          'type': 'action.confirmation_required',
+          'thread_id': 'thread-pregnancy-flow',
+          'run_id': 'run-pregnancy-plan',
+          'sequence': 1,
+          'action_id': pregnancyActionId,
+          'payload': {
+            'action_type': 'pregnancy.plan.create',
+            'action_status': 'confirmation_required',
+            'target_type': 'plan',
+            'side_effect_level': 'medium',
+            'preview_payload': {'title': '孕期计划', 'summary': '从现在到生产前后的阶段计划与待办'},
+          },
+        }),
+      );
+      client.emit(
+        1,
+        AgentStreamEvent({
+          'event_id': 'pregnancy-plan-artifact',
+          'type': 'artifact.created',
+          'thread_id': 'thread-pregnancy-flow',
+          'run_id': 'run-pregnancy-plan',
+          'sequence': 2,
+          'artifact_id': 'pregnancy-plan-card',
+          'payload': {
+            'artifact_type': 'birth_journey_plan_card',
+            'card': {
+              'card_type': 'birth_journey_plan_card',
+              'schema_version': '1.0',
+              'card_json': {
+                'title': '孕期计划',
+                'todo_plan': {
+                  'periods': [
+                    {
+                      'title': '当前阶段｜孕 32 周起',
+                      'items': [
+                        {
+                          'title': '和产科确认个性化复查节奏',
+                          'steps': ['确认孕周口径', '安排胎儿生长复查'],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        }),
+      );
+      client.emit(
+        1,
+        AgentStreamEvent(const {
+          'event_id': 'pregnancy-plan-waiting',
+          'type': 'run.waiting_for_confirmation',
+          'thread_id': 'thread-pregnancy-flow',
+          'run_id': 'run-pregnancy-plan',
+          'sequence': 3,
+          'payload': {'pending_action_id': pregnancyActionId},
+        }),
+      );
+      await _pumpFrames(tester, 4);
+
+      expect(find.text('孕期计划'), findsWidgets);
+      expect(find.text('当前阶段｜孕 32 周起'), findsOneWidget);
+      expect(find.text('和产科确认个性化复查节奏'), findsOneWidget);
+      expect(find.text('确认孕周口径'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-action-card-$pregnancyActionId')),
+        findsOneWidget,
+      );
+      expect(find.text('等待确认后继续'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
     'Agent Hub aligns grouped artifact form defaults other input and submit lock',
     (tester) async {
       final actions = <AgentArtifactActionView>[];
