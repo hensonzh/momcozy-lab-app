@@ -582,16 +582,23 @@ class MomCozyBottomNavigation extends StatelessWidget {
         context,
         showPregnancyDiaryBadge: false,
         showPregnancyPlanBadge: false,
+        showMilkPlanBadge: false,
       );
     }
     final diaryChangeStore = runtime.pregnancyDiaryChangeStore;
     final planChangeStore = runtime.pregnancyPlanChangeStore;
+    final milkPlanChangeStore = runtime.milkPlanChangeStore;
     return ListenableBuilder(
-      listenable: Listenable.merge([diaryChangeStore, planChangeStore]),
+      listenable: Listenable.merge([
+        diaryChangeStore,
+        planChangeStore,
+        milkPlanChangeStore,
+      ]),
       builder: (context, child) => _buildNavigation(
         context,
         showPregnancyDiaryBadge: diaryChangeStore.hasUnread,
         showPregnancyPlanBadge: planChangeStore.hasUnread,
+        showMilkPlanBadge: milkPlanChangeStore.hasUnread,
       ),
     );
   }
@@ -600,6 +607,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
     BuildContext context, {
     required bool showPregnancyDiaryBadge,
     required bool showPregnancyPlanBadge,
+    required bool showMilkPlanBadge,
   }) {
     final selectedIndex = _selectedTabIndex(location);
     final runtime = MomCozyRuntimeScope.maybeOf(context);
@@ -680,11 +688,21 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                   navKey: const ValueKey('bottom-nav-schedule'),
                                   label: '计划',
                                   selected: selectedIndex == 1,
-                                  icon: const Icon(Icons.event_note_outlined),
-                                  selectedIcon: const Icon(
-                                    Icons.event_note_rounded,
+                                  icon: _ScheduleNavIcon(
+                                    showBadge: showMilkPlanBadge,
+                                    child: const Icon(
+                                      Icons.event_note_outlined,
+                                    ),
                                   ),
-                                  onTap: () => context.go(_tabPaths[1]),
+                                  selectedIcon: _ScheduleNavIcon(
+                                    showBadge: showMilkPlanBadge,
+                                    child: const Icon(Icons.event_note_rounded),
+                                  ),
+                                  onTap: () {
+                                    runtime?.milkPlanChangeStore
+                                        .transferNavigationNoticeToPage();
+                                    context.go(_tabPaths[1]);
+                                  },
                                 ),
                               ),
                               Expanded(
@@ -789,6 +807,40 @@ class _StatusNavIcon extends StatelessWidget {
             top: -2,
             right: -3,
             child: badge,
+          ),
+      ],
+    );
+  }
+}
+
+class _ScheduleNavIcon extends StatelessWidget {
+  const _ScheduleNavIcon({required this.showBadge, required this.child});
+
+  final bool showBadge;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        child,
+        if (showBadge)
+          Positioned(
+            key: const ValueKey('bottom-nav-schedule-plan-badge'),
+            top: -2,
+            right: -3,
+            child: Semantics(
+              label: '稳奶计划有更新',
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  color: MomCozyColors.badge,
+                  shape: BoxShape.circle,
+                ),
+                child: SizedBox.square(dimension: 8),
+              ),
+            ),
           ),
       ],
     );
@@ -1427,6 +1479,9 @@ Widget _buildDefaultAgentHubPage(
     },
     onPregnancyPlanChange: (change) {
       runtime.pregnancyPlanChangeStore.record(change);
+    },
+    onMilkPlanChange: (change) {
+      runtime.milkPlanChangeStore.record(change);
     },
     onNewSession: runtime.hospitalBagCartStore.clearForNewSession,
     onArtifactAction: (action) => unawaited(

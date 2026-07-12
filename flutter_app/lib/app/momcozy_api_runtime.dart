@@ -30,6 +30,10 @@ import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_
 import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/milk_plan_change_persistence.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/schedule_reminder_preference_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
@@ -81,7 +85,10 @@ class MomCozyApiRuntime {
     PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
     PregnancyPlanChangeStore? pregnancyPlanChangeStore,
     StatusDashboardCache? statusDashboardCache,
+    MilkPlanChangeStore? milkPlanChangeStore,
     StatusPreferenceStore? statusPreferenceStore,
+    ScheduleReminderPreferenceStore? scheduleReminderPreferenceStore,
+    ScheduleReminderGateway? scheduleReminderGateway,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
     this.storageMigrationResult,
@@ -152,6 +159,16 @@ class MomCozyApiRuntime {
             ownerUserId: this.session.userId,
             babyId: this.session.babyId,
           );
+    this.milkPlanChangeStore =
+        milkPlanChangeStore ??
+        MilkPlanChangeStore(
+          persistence: FlutterSecureMilkPlanChangePersistence(
+            userId: this.session.status == MomCozySessionStatus.authenticated
+                ? this.session.userId
+                : '',
+          ),
+        );
+    unawaited(this.milkPlanChangeStore.restore());
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
@@ -159,6 +176,8 @@ class MomCozyApiRuntime {
     _productAssetRepository = productAssetRepository;
     _hasInjectedProductAssetRepository = productAssetRepository != null;
     _statusPreferenceStore = statusPreferenceStore;
+    _scheduleReminderPreferenceStore = scheduleReminderPreferenceStore;
+    _scheduleReminderGateway = scheduleReminderGateway;
     _volumeUnitPreferenceStore = volumeUnitPreferenceStore;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
@@ -178,6 +197,7 @@ class MomCozyApiRuntime {
     IbclcConsultStore? ibclcConsultStore,
     PregnancyPlanChangeStore? pregnancyPlanChangeStore,
     StatusDashboardCache? statusDashboardCache,
+    MilkPlanChangeStore? milkPlanChangeStore,
     String? userId,
     String? babyId,
     String? locale,
@@ -203,6 +223,7 @@ class MomCozyApiRuntime {
       ibclcConsultStore: ibclcConsultStore,
       pregnancyPlanChangeStore: pregnancyPlanChangeStore,
       statusDashboardCache: statusDashboardCache,
+      milkPlanChangeStore: milkPlanChangeStore,
     );
   }
 
@@ -222,6 +243,7 @@ class MomCozyApiRuntime {
     PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
     PregnancyPlanChangeStore? pregnancyPlanChangeStore,
     StatusDashboardCache? statusDashboardCache,
+    MilkPlanChangeStore? milkPlanChangeStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -309,6 +331,7 @@ class MomCozyApiRuntime {
       pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
       pregnancyPlanChangeStore: pregnancyPlanChangeStore,
       statusDashboardCache: statusDashboardCache,
+      milkPlanChangeStore: milkPlanChangeStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
@@ -384,6 +407,7 @@ class MomCozyApiRuntime {
   late final PregnancyDiaryChangeStore pregnancyDiaryChangeStore;
   late final PregnancyPlanChangeStore pregnancyPlanChangeStore;
   late final StatusDashboardCache statusDashboardCache;
+  late final MilkPlanChangeStore milkPlanChangeStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
@@ -401,6 +425,8 @@ class MomCozyApiRuntime {
   AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
   ProductAssetRepository? _productAssetRepository;
   StatusPreferenceStore? _statusPreferenceStore;
+  ScheduleReminderPreferenceStore? _scheduleReminderPreferenceStore;
+  ScheduleReminderGateway? _scheduleReminderGateway;
   VolumeUnitPreferenceStore? _volumeUnitPreferenceStore;
   late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
@@ -491,6 +517,18 @@ class MomCozyApiRuntime {
     return _statusPreferenceStore ??= FlutterSecureStatusPreferenceStore(
       userId: currentSession.userId,
     );
+  }
+
+  ScheduleReminderPreferenceStore get scheduleReminderPreferenceStore {
+    return _scheduleReminderPreferenceStore ??
+        FlutterSecureScheduleReminderPreferenceStore(
+          userId: currentSession.userId,
+        );
+  }
+
+  ScheduleReminderGateway get scheduleReminderGateway {
+    return _scheduleReminderGateway ??
+        const UnsupportedScheduleReminderGateway();
   }
 
   VolumeUnitPreferenceStore get volumeUnitPreferenceStore {
@@ -653,9 +691,16 @@ class MomCozyRuntimeController extends ChangeNotifier {
     final pregnancyPlanChangeStore = sameAuthenticatedPlanAccount
         ? _runtime.pregnancyPlanChangeStore
         : null;
-    final statusDashboardCache = sameAuthenticatedPlanAccount &&
+    final statusDashboardCache =
+        sameAuthenticatedPlanAccount &&
             session.babyId == _runtime.session.babyId
         ? _runtime.statusDashboardCache
+        : null;
+    final milkPlanChangeStore =
+        session.status == MomCozySessionStatus.authenticated &&
+            _runtime.session.status == MomCozySessionStatus.authenticated &&
+            session.userId == _runtime.session.userId
+        ? _runtime.milkPlanChangeStore
         : null;
     if (store == null) {
       return MomCozyApiRuntime.fromSession(
@@ -672,6 +717,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
         pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
         pregnancyPlanChangeStore: pregnancyPlanChangeStore,
         statusDashboardCache: statusDashboardCache,
+        milkPlanChangeStore: milkPlanChangeStore,
       );
     }
     return MomCozyApiRuntime.fromSession(
@@ -688,6 +734,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
       pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
       pregnancyPlanChangeStore: pregnancyPlanChangeStore,
       statusDashboardCache: statusDashboardCache,
+      milkPlanChangeStore: milkPlanChangeStore,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {

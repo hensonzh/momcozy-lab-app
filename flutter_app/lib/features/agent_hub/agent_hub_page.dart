@@ -36,6 +36,7 @@ import 'package:momcozy_flutter_app/features/media/presentation/product_asset_im
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
 import 'package:video_player/video_player.dart';
 
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -210,6 +211,7 @@ class AgentHubPage extends StatefulWidget {
     this.onHospitalBagCartContextRequired,
     this.onPregnancyDiaryChange,
     this.onPregnancyPlanChange,
+    this.onMilkPlanChange,
     this.onNewSession,
     this.initialComposerText,
     this.initialAutoSend = false,
@@ -237,6 +239,7 @@ class AgentHubPage extends StatefulWidget {
   final VoidCallback? onHospitalBagCartContextRequired;
   final ValueChanged<PregnancyDiaryChange>? onPregnancyDiaryChange;
   final ValueChanged<PregnancyPlanChange>? onPregnancyPlanChange;
+  final ValueChanged<MilkPlanChange>? onMilkPlanChange;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
   final bool initialAutoSend;
@@ -263,6 +266,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final Set<String> _appliedHospitalBagCartUpdates = <String>{};
   final Set<String> _appliedPregnancyDiaryChangeEventIds = <String>{};
   final Set<String> _appliedPregnancyPlanChangeEventIds = <String>{};
+  final Set<String> _appliedMilkPlanChangeEventIds = <String>{};
   bool _hospitalBagCartLinkContextApplied = false;
   final ScrollController _chatScrollController = ScrollController();
   final GlobalKey _activeArtifactPanelKey = GlobalKey();
@@ -325,6 +329,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _applyHospitalBagCartUpdates(_state);
     _applyPregnancyDiaryChanges(_state);
     _applyPregnancyPlanChanges(_state);
+    _applyMilkPlanChanges(_state);
     _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
     _composerController.addListener(_persistInteractionState);
@@ -372,6 +377,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     if (oldWidget.onPregnancyPlanChange != widget.onPregnancyPlanChange) {
       _applyPregnancyPlanChanges(_state);
+    }
+    if (oldWidget.onMilkPlanChange != widget.onMilkPlanChange) {
+      _applyMilkPlanChanges(_state);
     }
   }
 
@@ -593,6 +601,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _applyHospitalBagCartUpdates(_state);
       _applyPregnancyDiaryChanges(_state);
       _applyPregnancyPlanChanges(_state);
+      _applyMilkPlanChanges(_state);
       _applyHospitalBagCartLinkContext(_state);
     }
     _applyInitialComposerText();
@@ -1482,6 +1491,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     _applyPregnancyDiaryChanges(nextState);
     _applyPregnancyPlanChanges(nextState);
+    _applyMilkPlanChanges(nextState);
     _applyHospitalBagCartLinkContext(
       nextState,
       checkArtifacts: artifactProjectionChanged,
@@ -1581,6 +1591,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
       final change = PregnancyPlanChange.tryFromEvent(event);
       if (change == null ||
           !_appliedPregnancyPlanChangeEventIds.add(change.eventId)) {
+        continue;
+      }
+      onChange(change);
+    }
+  }
+
+  void _applyMilkPlanChanges(AgentStreamRunState state) {
+    final onChange = widget.onMilkPlanChange;
+    if (onChange == null) return;
+    for (final event in state.events) {
+      final change = MilkPlanChange.tryFromEvent(event);
+      if (change == null ||
+          !_appliedMilkPlanChangeEventIds.add(change.eventId)) {
         continue;
       }
       onChange(change);
@@ -2119,6 +2142,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     _applyPregnancyDiaryChanges(nextState);
     _applyPregnancyPlanChanges(nextState);
+    _applyMilkPlanChanges(nextState);
     _setRunState(nextState);
   }
 
