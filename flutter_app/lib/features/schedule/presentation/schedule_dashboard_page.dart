@@ -1069,40 +1069,11 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       );
       return;
     }
-    final action = await showDialog<_CompletionAction>(
-      context: context,
-      builder: (context) => AlertDialog(
-        key: const ValueKey('schedule-record-entry-dialog'),
-        title: const Text('记录执行数据'),
-        content: Text('${task.title}完成后，可同时保存本次执行数据。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
-          ),
-          if (task.kind == ScheduleTaskKind.pumping)
-            TextButton(
-              onPressed: () =>
-                  Navigator.pop(context, _CompletionAction.pumping),
-              child: const Text('吸奶补录'),
-            ),
-          if (task.kind == ScheduleTaskKind.feeding)
-            TextButton(
-              onPressed: () =>
-                  Navigator.pop(context, _CompletionAction.feeding),
-              child: const Text('喂养记录'),
-            ),
-        ],
-      ),
-    );
-    switch (action) {
-      case _CompletionAction.pumping:
-        await _showRecordEditor(ScheduleRecordKind.pumping, linkedTask: task);
-      case _CompletionAction.feeding:
-        await _showRecordEditor(ScheduleRecordKind.feeding, linkedTask: task);
-      case null:
-        return;
+    if (task.kind == ScheduleTaskKind.pumping) {
+      await _showRecordEditor(ScheduleRecordKind.pumping, linkedTask: task);
+      return;
     }
+    await _showRecordEditor(ScheduleRecordKind.feeding, linkedTask: task);
   }
 
   Future<void> _showRecordEditor(
@@ -4013,8 +3984,6 @@ class _RecordDraft {
   final String time;
   final String feedType;
 }
-
-enum _CompletionAction { pumping, feeding }
 
 class _ScheduleTaskProvenance {
   const _ScheduleTaskProvenance({
