@@ -267,8 +267,6 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
           stageLabel: _stageLabel(planContext, state.selectedDay),
           completed: resolved.completedTaskCount,
           total: resolved.tasks.length,
-          skipped: resolved.skippedTaskCount,
-          showReminder: isToday,
           reminderEnabled: _reminderEnabled,
           onReminder: () => unawaited(_toggleReminder(resolved.tasks)),
         ),
@@ -277,10 +275,6 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
         children.addAll([
           const SizedBox(height: 16),
           _ScheduleAgentCard(
-            planTitle: planContext.title,
-            stageLabel: _stageLabel(planContext, state.selectedDay),
-            taskCount: resolved.tasks.length,
-            nextTask: state.nextPendingTask,
             reminderEnabled: _reminderEnabled,
             onReminder: () => unawaited(_toggleReminder(resolved.tasks)),
             onOpenAgent: _openAgent,
@@ -332,14 +326,6 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
         ),
       );
       children.add(const SizedBox(height: 10));
-      children.add(
-        _ScheduleQuickActions(
-          onPumping: () =>
-              unawaited(_showRecordEditor(ScheduleRecordKind.pumping)),
-          onFeeding: () =>
-              unawaited(_showRecordEditor(ScheduleRecordKind.feeding)),
-        ),
-      );
     } else {
       children.add(
         Text(
@@ -409,6 +395,17 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
         }
       }
       children.add(Column(children: timelineRows));
+    }
+    if (isToday) {
+      children.add(const SizedBox(height: 12));
+      children.add(
+        _ScheduleQuickActions(
+          onPumping: () =>
+              unawaited(_showRecordEditor(ScheduleRecordKind.pumping)),
+          onFeeding: () =>
+              unawaited(_showRecordEditor(ScheduleRecordKind.feeding)),
+        ),
+      );
     }
     _scheduleRouteFocus(state, resolved);
     return children;
@@ -1369,8 +1366,6 @@ class _ScheduleContextCard extends StatelessWidget {
     required this.stageLabel,
     required this.completed,
     required this.total,
-    required this.skipped,
-    required this.showReminder,
     required this.reminderEnabled,
     required this.onReminder,
   });
@@ -1379,8 +1374,6 @@ class _ScheduleContextCard extends StatelessWidget {
   final String stageLabel;
   final int completed;
   final int total;
-  final int skipped;
-  final bool showReminder;
   final bool reminderEnabled;
   final VoidCallback onReminder;
 
@@ -1388,99 +1381,97 @@ class _ScheduleContextCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = total == 0 ? 0.0 : completed / total;
     return Container(
-      padding: const EdgeInsets.all(18),
+      key: const ValueKey('schedule-context-card'),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
           colors: [
-            MomCozyColors.card,
-            MomCozyColors.roseSoft.withValues(alpha: 0.72),
+            MomCozyColors.primary.withValues(alpha: 0.05),
+            MomCozyColors.card.withValues(alpha: 0.42),
           ],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: MomCozyColors.primary.withValues(alpha: 0.16),
-        ),
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.4)),
         boxShadow: MomCozyShadows.soft,
       ),
       child: Stack(
         children: [
-          if (showReminder)
-            Positioned(
-              right: 0,
-              top: 0,
-              child: IconButton.filledTonal(
+          Positioned(
+            right: 0,
+            top: 0,
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: IconButton(
                 key: const ValueKey('schedule-context-reminder-button'),
                 tooltip: reminderEnabled ? '关闭计划提醒' : '开启计划提醒',
                 onPressed: onReminder,
+                padding: EdgeInsets.zero,
+                style: IconButton.styleFrom(
+                  backgroundColor: MomCozyColors.card.withValues(alpha: 0.9),
+                  side: BorderSide(
+                    color: MomCozyColors.border.withValues(alpha: 0.5),
+                  ),
+                ),
                 icon: Icon(
                   reminderEnabled
-                      ? Icons.notifications_active_rounded
-                      : Icons.notifications_none_rounded,
+                      ? Icons.notifications_none_rounded
+                      : Icons.notifications_off_outlined,
+                  size: 18,
                 ),
               ),
             ),
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 1),
               Padding(
-                padding: EdgeInsets.only(right: showReminder ? 56 : 0),
+                padding: const EdgeInsets.only(right: 48),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      style: const TextStyle(
                         color: MomCozyColors.foreground,
+                        fontSize: 16,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 4),
                     Text(
                       stageLabel,
                       style: const TextStyle(
                         color: MomCozyColors.mutedForeground,
+                        fontSize: 11,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    if (showReminder) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        reminderEnabled ? '系统提醒已开启' : '系统提醒未开启',
-                        style: TextStyle(
-                          color: reminderEnabled
-                              ? MomCozyColors.primary
-                              : MomCozyColors.mutedForeground,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
               ),
               const SizedBox(height: 20),
               Row(
                 children: [
-                  Text(
-                    showReminder ? '今日任务' : '当天任务',
-                    style: const TextStyle(fontWeight: FontWeight.w900),
-                  ),
-                  if (skipped > 0) ...[
-                    const SizedBox(width: 8),
-                    Text(
-                      '已跳过 $skipped',
-                      style: const TextStyle(
-                        color: MomCozyColors.mutedForeground,
-                        fontSize: 12,
-                      ),
+                  const Text(
+                    '今日任务',
+                    style: TextStyle(
+                      color: MomCozyColors.foreground,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
                     ),
-                  ],
+                  ),
                   const Spacer(),
                   Text(
                     '$completed/$total',
-                    style: const TextStyle(fontWeight: FontWeight.w900),
+                    style: const TextStyle(
+                      color: MomCozyColors.foreground,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ],
               ),
@@ -1553,29 +1544,17 @@ class _ScheduleContextPlaceholder extends StatelessWidget {
 
 class _ScheduleAgentCard extends StatelessWidget {
   const _ScheduleAgentCard({
-    required this.planTitle,
-    required this.stageLabel,
-    required this.taskCount,
-    required this.nextTask,
     required this.reminderEnabled,
     required this.onReminder,
     required this.onOpenAgent,
   });
 
-  final String planTitle;
-  final String stageLabel;
-  final int taskCount;
-  final ScheduleTask? nextTask;
   final bool reminderEnabled;
   final VoidCallback onReminder;
   final VoidCallback onOpenAgent;
 
   @override
   Widget build(BuildContext context) {
-    final task = nextTask;
-    final contextMessage = task == null
-        ? '$planTitle · $stageLabel。今天已同步 $taskCount 项任务，可以继续和我调整执行节奏。'
-        : '$planTitle · $stageLabel。下一项是 ${_time(task.remindAt)} ${task.title}，可以调整提醒或继续和我讨论。';
     return Container(
       key: const ValueKey('schedule-agent-card'),
       padding: const EdgeInsets.all(14),
@@ -1591,8 +1570,8 @@ class _ScheduleAgentCard extends StatelessWidget {
           ClipOval(
             child: Image.asset(
               MomCozyAssets.agentAvatar,
-              width: 40,
-              height: 40,
+              width: 36,
+              height: 36,
               fit: BoxFit.cover,
               errorBuilder: (_, _, _) => const CircleAvatar(
                 backgroundColor: MomCozyColors.primary,
@@ -1605,42 +1584,50 @@ class _ScheduleAgentCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  contextMessage,
-                  style: const TextStyle(
+                const Text(
+                  '已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我',
+                  style: TextStyle(
                     color: MomCozyColors.foreground,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     height: 1.45,
                   ),
                 ),
-                const SizedBox(height: 12),
-                Row(
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
                   children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        key: const ValueKey('schedule-agent-reminder-button'),
-                        onPressed: onReminder,
-                        icon: Icon(
-                          reminderEnabled
-                              ? Icons.notifications_active_rounded
-                              : Icons.notifications_none_rounded,
-                          size: 16,
-                        ),
-                        label: const Text('提醒'),
+                    OutlinedButton.icon(
+                      key: const ValueKey('schedule-agent-reminder-button'),
+                      onPressed: onReminder,
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        visualDensity: VisualDensity.compact,
+                        foregroundColor: MomCozyColors.foreground,
                       ),
+                      icon: Icon(
+                        reminderEnabled
+                            ? Icons.notifications_none_rounded
+                            : Icons.notifications_off_outlined,
+                        size: 16,
+                      ),
+                      label: const Text('提醒开关', style: TextStyle(fontSize: 12)),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: FilledButton.icon(
-                        key: const ValueKey('schedule-agent-chat-button'),
-                        onPressed: onOpenAgent,
-                        icon: const Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          size: 16,
-                        ),
-                        label: const Text('对话'),
+                    FilledButton.icon(
+                      key: const ValueKey('schedule-agent-chat-button'),
+                      onPressed: onOpenAgent,
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(0, 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        visualDensity: VisualDensity.compact,
                       ),
+                      icon: const Icon(
+                        Icons.chat_bubble_outline_rounded,
+                        size: 16,
+                      ),
+                      label: const Text('对话', style: TextStyle(fontSize: 12)),
                     ),
                   ],
                 ),
@@ -1688,12 +1675,6 @@ class _ScheduleHeroCard extends StatelessWidget {
             return left.remindAt!.compareTo(right.remindAt!);
           });
     final next = pending.isEmpty ? null : pending.first;
-    final allCompleted =
-        snapshot.tasks.isNotEmpty &&
-        snapshot.completedTaskCount == snapshot.tasks.length;
-    final allSkipped =
-        snapshot.tasks.isNotEmpty &&
-        snapshot.skippedTaskCount == snapshot.tasks.length;
     final pumpingAmountMl = snapshot.records
         .where((record) => record.kind == ScheduleRecordKind.pumping)
         .map((record) => record.amountMl ?? 0)
@@ -1704,90 +1685,90 @@ class _ScheduleHeroCard extends StatelessWidget {
               ? '这天没有计划任务'
               : '这天的计划已结束'
         : !isToday
-        ? '未来的计划'
+        ? snapshot.tasks.isEmpty
+              ? '这天还没有计划'
+              : '未来的计划'
         : next != null
         ? '待执行任务'
         : snapshot.tasks.isEmpty
         ? '今天还没有计划任务'
-        : allSkipped
-        ? '今天的任务均已跳过'
-        : allCompleted
-        ? '今天任务已完成'
-        : '今天的计划尚未全部完成哦';
+        : snapshot.skippedTaskCount > 0
+        ? '今天的计划尚未全部完成哦'
+        : '今天的计划已全部完成';
     final detail = isPast
         ? snapshot.tasks.isEmpty
-              ? pumpingAmountMl > 0
-                    ? '当天母乳产出 $pumpingAmount。'
-                    : '当天没有可执行的计划任务。'
-              : '共完成 ${snapshot.completedTaskCount} 项，母乳产出 $pumpingAmount。'
+              ? '没有看到当天的计划任务。'
+              : '共完成 ${snapshot.completedTaskCount} 项任务，母乳产出 $pumpingAmount'
         : !isToday
-        ? next == null
-              ? snapshot.tasks.isNotEmpty
-                    ? '当天任务已全部标记处理。'
-                    : snapshot.records.isNotEmpty
-                    ? '当天已有 ${snapshot.records.length} 条执行记录。'
-                    : '当天暂无任务或执行记录。'
-              : '首项 ${_time(next.remindAt)} ${next.title}'
+        ? snapshot.tasks.isEmpty
+              ? null
+              : '系统已为你提前规划了当天的吸乳和喂养日程'
         : next != null
         ? '${_time(next.remindAt)} ${next.title} · ${_countdown(next.remindAt, now)}'
         : snapshot.tasks.isEmpty
-        ? '你可以新增任务，或补录吸奶和喂养数据。'
-        : '完成 ${snapshot.completedTaskCount} 项，跳过 ${snapshot.skippedTaskCount} 项。';
+        ? '可以先从对话里生成计划并同步到日历，或手动添加任务。'
+        : snapshot.skippedTaskCount > 0
+        ? '顺利完成${snapshot.completedTaskCount}个任务，有${snapshot.skippedTaskCount}个任务被跳过'
+        : '任务很棒地完成了，继续保持节奏就好。';
 
-    if (next == null) {
+    if (!isToday || next == null) {
       return Container(
         key: const ValueKey('schedule-empty-task-card'),
-        padding: const EdgeInsets.fromLTRB(18, 22, 18, 20),
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
         decoration: MomCozyDecorations.card(
           color: MomCozyColors.secondary.withValues(alpha: 0.32),
           borderColor: MomCozyColors.border,
-          radius: 24,
+          radius: 28,
           shadows: const [],
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 58,
-              height: 58,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
                 color: MomCozyColors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.schedule_rounded,
-                size: 30,
+              child: Icon(
+                isPast || (isToday && snapshot.tasks.isNotEmpty)
+                    ? Icons.check_circle_outline_rounded
+                    : Icons.schedule_rounded,
+                size: 32,
                 color: MomCozyColors.primary,
               ),
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    detail,
-                    style: const TextStyle(
-                      color: MomCozyColors.mutedForeground,
-                      height: 1.35,
-                    ),
-                  ),
-                ],
+            const SizedBox(height: 12),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
               ),
             ),
+            if (detail != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                detail,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: MomCozyColors.mutedForeground,
+                  fontSize: 13,
+                  height: 1.35,
+                ),
+              ),
+            ],
           ],
         ),
       );
     }
 
     final overdue = next.remindAt != null && !next.remindAt!.isAfter(now);
+    final severelyOverdue =
+        overdue && now.difference(next.remindAt!).inMinutes > 90;
     return Container(
       key: const ValueKey('schedule-next-task-card'),
       padding: const EdgeInsets.all(16),
@@ -1795,13 +1776,23 @@ class _ScheduleHeroCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            MomCozyColors.primary.withValues(alpha: 0.16),
-            MomCozyColors.card,
-          ],
+          colors: severelyOverdue
+              ? [
+                  MomCozyColors.secondary.withValues(alpha: 0.5),
+                  MomCozyColors.secondary.withValues(alpha: 0.3),
+                ]
+              : [
+                  MomCozyColors.primary.withValues(alpha: 0.15),
+                  MomCozyColors.primary.withValues(alpha: 0.05),
+                  MomCozyColors.card,
+                ],
         ),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: MomCozyColors.primary.withValues(alpha: 0.2)),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: severelyOverdue
+              ? MomCozyColors.border.withValues(alpha: 0.6)
+              : MomCozyColors.primary.withValues(alpha: 0.3),
+        ),
         boxShadow: MomCozyShadows.soft,
       ),
       child: Column(
@@ -1811,26 +1802,14 @@ class _ScheduleHeroCard extends StatelessWidget {
             title,
             style: const TextStyle(
               color: MomCozyColors.primary,
+              fontSize: 11,
               fontWeight: FontWeight.w900,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: MomCozyColors.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Icon(
-                  _taskIcon(next.kind),
-                  color: MomCozyColors.primary,
-                  size: 25,
-                ),
-              ),
-              const SizedBox(width: 11),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1845,15 +1824,28 @@ class _ScheduleHeroCard extends StatelessWidget {
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    Text(
-                      next.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(
+                          _taskIcon(next.kind),
+                          color: MomCozyColors.primary,
+                          size: 17,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            next.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: MomCozyColors.foreground,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -1878,41 +1870,80 @@ class _ScheduleHeroCard extends StatelessWidget {
                           : MomCozyColors.amber.withValues(alpha: 0.3),
                     ),
                   ),
-                  child: Text(
-                    _countdown(next.remindAt, now),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: overdue
-                          ? Colors.red.shade700
-                          : const Color(0xff7d5730),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w900,
-                      height: 1.2,
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        overdue ? '已超时' : '距离开始还剩',
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: overdue
+                              ? Colors.red.shade700
+                              : const Color(0xff7d5730),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          height: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        height: 18,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            _countdownValue(next.remindAt, now),
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: overdue
+                                  ? Colors.red.shade700
+                                  : const Color(0xff7d5730),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
-          if (isToday) ...[
-            const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                key: const ValueKey('schedule-next-complete-button'),
-                onPressed: onComplete,
-                icon: const Icon(Icons.check_rounded),
-                label: const Text('手动完成并记录数据'),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: FilledButton.icon(
+              key: const ValueKey('schedule-next-complete-button'),
+              onPressed: onComplete,
+              icon: const Icon(Icons.check_rounded, size: 18),
+              label: const Text(
+                '手动完成并记录数据',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
               ),
             ),
-            const SizedBox(height: 8),
-            Row(
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 40,
+            child: Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: OutlinedButton.icon(
                     key: const ValueKey('schedule-next-delay-button'),
                     onPressed: onDelay,
-                    child: const Text('顺延半小时'),
+                    icon: const Icon(
+                      Icons.schedule_rounded,
+                      size: 16,
+                      color: MomCozyColors.mutedForeground,
+                    ),
+                    label: const Text('顺延半小时', style: TextStyle(fontSize: 12)),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(40),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      foregroundColor: MomCozyColors.foreground,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -1920,12 +1951,17 @@ class _ScheduleHeroCard extends StatelessWidget {
                   child: OutlinedButton(
                     key: const ValueKey('schedule-next-skip-button'),
                     onPressed: onSkip,
-                    child: const Text('跳过这次任务'),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(40),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      foregroundColor: MomCozyColors.mutedForeground,
+                    ),
+                    child: const Text('跳过这次任务', style: TextStyle(fontSize: 12)),
                   ),
                 ),
               ],
             ),
-          ],
+          ),
         ],
       ),
     );
@@ -1947,60 +1983,66 @@ class _ScheduleToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final compactButtonStyle = OutlinedButton.styleFrom(
+      minimumSize: const Size(0, 36),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      visualDensity: VisualDensity.compact,
+      foregroundColor: MomCozyColors.foreground,
+    );
+    return Row(
       key: const ValueKey('schedule-list-toolbar'),
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              '今日任务',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
-            ),
-            IconButton(
-              key: const ValueKey('schedule-task-help-button'),
-              tooltip: '今日任务说明',
-              onPressed: () => showDialog<void>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  key: const ValueKey('schedule-task-explanation-dialog'),
-                  title: const Text('今日任务说明'),
-                  content: Text(explanation),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('知道了'),
-                    ),
-                  ],
-                ),
-              ),
-              icon: const Icon(Icons.help_outline_rounded, size: 18),
-            ),
-          ],
+        Text(
+          '今日任务',
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
         ),
-        const SizedBox(height: 6),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                key: const ValueKey('schedule-adjust-button'),
-                onPressed: busy ? null : onRecognize,
-                icon: const Icon(Icons.image_outlined, size: 16),
-                label: const Text('调整日程'),
+        SizedBox(
+          width: 48,
+          height: 48,
+          child: IconButton(
+            key: const ValueKey('schedule-task-help-button'),
+            tooltip: '今日任务说明',
+            padding: EdgeInsets.zero,
+            onPressed: () => showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                key: const ValueKey('schedule-task-explanation-dialog'),
+                title: const Text('今日任务说明'),
+                content: Text(explanation),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('知道了'),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton.icon(
-                key: const ValueKey('schedule-add-task-button'),
-                onPressed: busy ? null : onAdd,
-                icon: const Icon(Icons.add_rounded, size: 16),
-                label: const Text('添加任务'),
-              ),
-            ),
-          ],
+            icon: const Icon(Icons.help_outline_rounded, size: 18),
+          ),
+        ),
+        const Spacer(),
+        OutlinedButton.icon(
+          key: const ValueKey('schedule-adjust-button'),
+          onPressed: busy ? null : onRecognize,
+          style: compactButtonStyle,
+          icon: const Icon(Icons.image_outlined, size: 15),
+          label: const Text(
+            '调整日程',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+          ),
+        ),
+        const SizedBox(width: 6),
+        OutlinedButton.icon(
+          key: const ValueKey('schedule-add-task-button'),
+          onPressed: busy ? null : onAdd,
+          style: compactButtonStyle,
+          icon: const Icon(Icons.add_rounded, size: 15),
+          label: const Text(
+            '添加任务',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+          ),
         ),
       ],
     );
@@ -2338,23 +2380,50 @@ class _ScheduleQuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return SizedBox(
       key: const ValueKey('schedule-quick-actions'),
-      children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: onPumping,
-            child: const Text('吸奶补录'),
+      height: 40,
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: onPumping,
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(40),
+                backgroundColor: MomCozyColors.raised,
+                foregroundColor: MomCozyColors.foreground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              icon: const Icon(Icons.add_rounded, size: 16),
+              label: const Text(
+                '吸奶补录',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+              ),
+            ),
           ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: OutlinedButton(
-            onPressed: onFeeding,
-            child: const Text('喂养记录'),
+          const SizedBox(width: 10),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: onFeeding,
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(40),
+                backgroundColor: MomCozyColors.raised,
+                foregroundColor: MomCozyColors.foreground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              icon: const Icon(Icons.add_rounded, size: 16),
+              label: const Text(
+                '喂养记录',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -3072,23 +3141,27 @@ String _reminderFingerprint(bool enabled, List<ScheduleTask> tasks) {
 String _countdown(DateTime? at, DateTime now) {
   if (at == null) return '未设置时间';
   final difference = at.difference(now);
-  if (difference.isNegative || difference == Duration.zero) {
-    final overdue = now.difference(at);
-    final hours = overdue.inHours;
-    final minutes = overdue.inMinutes.remainder(60);
-    final seconds = overdue.inSeconds.remainder(60);
-    if (hours > 0) return '超时 $hours小时$minutes分$seconds秒';
-    return '超时 $minutes分$seconds秒';
+  final prefix = difference.isNegative || difference == Duration.zero
+      ? '超时'
+      : '还有';
+  return '$prefix ${_countdownValue(at, now)}';
+}
+
+String _countdownValue(DateTime? at, DateTime now) {
+  if (at == null) return '--';
+  final difference = at.difference(now);
+  final absolute = difference.isNegative || difference == Duration.zero
+      ? now.difference(at)
+      : difference;
+  final days = absolute.inDays;
+  final hours = absolute.inHours.remainder(24);
+  final minutes = absolute.inMinutes.remainder(60);
+  final seconds = absolute.inSeconds.remainder(60);
+  if (days > 0) return '$days天$hours小时$minutes分$seconds秒';
+  if (absolute.inHours > 0) {
+    return '${absolute.inHours}小时$minutes分$seconds秒';
   }
-  final days = difference.inDays;
-  final hours = difference.inHours.remainder(24);
-  final minutes = difference.inMinutes.remainder(60);
-  final seconds = difference.inSeconds.remainder(60);
-  if (days > 0) return '还有 $days天$hours小时$minutes分$seconds秒';
-  if (difference.inHours > 0) {
-    return '还有 ${difference.inHours}小时$minutes分$seconds秒';
-  }
-  return '还有 $minutes 分 $seconds 秒';
+  return '$minutes分$seconds秒';
 }
 
 String _time(DateTime? value) {
