@@ -56,6 +56,8 @@ const _agentSkillAssetBaseUrl = String.fromEnvironment(
   defaultValue: 'http://127.0.0.1:8769',
 );
 const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
+const _completedReplyRunSettlementTimeout = Duration(seconds: 2);
+const _completedReplyCancelTimeout = Duration(seconds: 2);
 
 String _agentAssistantTextForState(
   AgentStreamRunState state, {
@@ -256,6 +258,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
   _AgentHubInteractionState? _interactionState;
   StreamSubscription<AgentStreamRunState>? _runSubscription;
   Completer<bool>? _runAcceptanceCompleter;
+  Completer<void>? _runSettlementCompleter;
+  bool _followUpStartPending = false;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
   Future<AgentVoiceInputPermissionState>? _voiceCaptureStart;
@@ -459,10 +463,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _visibleReplyRunningNotifier,
       _isVisibleReplyRunningForState(state),
     );
-    _setNotifierValue(
-      _composerLockedNotifier,
-      _isComposerLockedForState(state),
-    );
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
     _setNotifierValue(
       _responseLightRailModeNotifier,
       _agentResponseLightRailModeForState(state),
@@ -903,9 +904,57 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _canRetryForState(AgentStreamRunState state) =>
       widget.runner != null && state.canRetry && _activeRequest != null;
 
-  bool get _isComposerLocked => _isComposerLockedForState(_state);
+  bool get _isComposerLocked =>
+      _followUpStartPending || _isComposerLockedForState(_state);
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
+
+  Future<void> _waitForCompletedReplyRunSettlement() async {
+    final settlement = _runSettlementCompleter;
+    final waitingState = _state;
+    if (!waitingState.isActive ||
+        !waitingState.hasCompletedAssistantMessage ||
+        settlement == null ||
+        settlement.isCompleted) {
+      return;
+    }
+
+    _setFollowUpStartPending(true);
+    try {
+      await settlement.future.timeout(_completedReplyRunSettlementTimeout);
+    } on TimeoutException {
+      if (!mounted ||
+          !identical(_runSettlementCompleter, settlement) ||
+          !_state.isActive ||
+          !_state.hasCompletedAssistantMessage ||
+          _state.runId != waitingState.runId) {
+        return;
+      }
+      final activeRequest = _activeRequest;
+      _cancelRunSubscription();
+      await _cancelServerRun(
+        waitingState,
+        activeRequest,
+      ).timeout(_completedReplyCancelTimeout, onTimeout: () {});
+      if (!mounted || !_state.isActive || _state.runId != waitingState.runId) {
+        return;
+      }
+      _setRunState(_state.finishVisibleReply());
+      _persistInteractionState();
+    } finally {
+      if (mounted) {
+        _setFollowUpStartPending(false);
+      } else {
+        _followUpStartPending = false;
+      }
+    }
+  }
+
+  void _setFollowUpStartPending(bool value) {
+    if (_followUpStartPending == value) return;
+    _followUpStartPending = value;
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+  }
 
   Future<void> _sendMessage() async {
     final runner = widget.runner;
@@ -917,6 +966,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
 
     _cancelCurrentBubblePlaybackForNewTurn();
+    await _waitForCompletedReplyRunSettlement();
+    if (!mounted || _isComposerLocked) return;
 
     final requestMessage = message.isEmpty ? '请看这张图片' : message;
     final sentImages = List<AgentStreamImageInput>.unmodifiable(
@@ -968,6 +1019,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
 
     _cancelCurrentBubblePlaybackForNewTurn();
+    await _waitForCompletedReplyRunSettlement();
+    if (!mounted || _isComposerLocked) return false;
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithIdempotencyKey(
@@ -1649,7 +1702,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
     _cancelRunSubscription();
     final acceptance = awaitServerRunSignal ? Completer<bool>() : null;
+    final settlement = Completer<void>();
     _runAcceptanceCompleter = acceptance;
+    _runSettlementCompleter = settlement;
     _preserveArtifactFocus = false;
     _activeRequest = requestWithThread;
     setState(() {
@@ -1672,6 +1727,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
         .listen(
           (nextState) {
             _handleRunStateUpdate(nextState);
+            if (!nextState.isActive) {
+              _completeRunSettlement(settlement);
+            }
             if (_hasServerRunSignal(nextState)) {
               _completeRunAcceptance(acceptance, true);
             } else if (!nextState.isActive) {
@@ -1680,6 +1738,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           },
           onError: (Object error) {
             _completeRunAcceptance(acceptance, false);
+            _completeRunSettlement(settlement);
             if (!mounted || !_state.isActive) return;
             _dismissComposerKeyboardOnRunAccepted = false;
             final shouldFollowLatest = _isNearLatest();
@@ -1687,7 +1746,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
             _persistInteractionState();
             if (shouldFollowLatest) _scheduleScrollToLatest();
           },
-          onDone: () => _completeRunAcceptance(acceptance, false),
+          onDone: () {
+            _completeRunAcceptance(acceptance, false);
+            _completeRunSettlement(settlement);
+          },
         );
     return acceptance == null ? true : acceptance.future;
   }
@@ -1698,6 +1760,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _runAcceptanceCompleter = null;
     }
     completer.complete(accepted);
+  }
+
+  void _completeRunSettlement(Completer<void>? completer) {
+    if (completer == null || completer.isCompleted) return;
+    if (identical(_runSettlementCompleter, completer)) {
+      _runSettlementCompleter = null;
+    }
+    completer.complete();
   }
 
   AgentStreamRequest _requestWithConversationThread(
@@ -2039,6 +2109,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final acceptance = _runAcceptanceCompleter;
     _runAcceptanceCompleter = null;
     _completeRunAcceptance(acceptance, false);
+    final settlement = _runSettlementCompleter;
+    _runSettlementCompleter = null;
+    _completeRunSettlement(settlement);
     final subscription = _runSubscription;
     _runSubscription = null;
     if (subscription == null) return;
@@ -2049,19 +2122,24 @@ class _AgentHubPageState extends State<AgentHubPage> {
     AgentStreamRunState activeState,
     AgentStreamRequest? activeRequest,
   ) {
+    unawaited(_cancelServerRun(activeState, activeRequest));
+  }
+
+  Future<void> _cancelServerRun(
+    AgentStreamRunState activeState,
+    AgentStreamRequest? activeRequest,
+  ) async {
     final cancelClient = widget.cancelClient;
     if (cancelClient == null) return;
 
     final runId = activeState.runId;
     if (runId == null || runId.trim().isEmpty) return;
 
-    unawaited(
-      cancelClient.cancel(
-        AgentStreamCancelRequest(
-          threadId: activeState.threadId ?? activeRequest?.threadId ?? '',
-          runId: runId,
-          reason: 'user_cancelled',
-        ),
+    await cancelClient.cancel(
+      AgentStreamCancelRequest(
+        threadId: activeState.threadId ?? activeRequest?.threadId ?? '',
+        runId: runId,
+        reason: 'user_cancelled',
       ),
     );
   }
