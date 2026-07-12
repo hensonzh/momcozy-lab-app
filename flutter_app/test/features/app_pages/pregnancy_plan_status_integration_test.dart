@@ -10,206 +10,20 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
 
 void main() {
   testWidgets(
-    'Status distinguishes loading and empty before offering Agent CTA',
-    (tester) async {
-      await _setCompactViewport(tester);
-      final planResponse = Completer<Map<String, Object?>>();
-      final transport = _PlanTransport(deferredPlanRequests: {1: planResponse});
-      final harness = await _pumpApp(
-        tester,
-        transport: transport,
-        initialLocation: '/status',
-      );
-
-      await tester.tap(
-        find.byKey(const ValueKey('status-care-stage-pregnancy')),
-      );
-      await tester.pump();
-
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-loading')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
-        findsNothing,
-      );
-
-      planResponse.complete(const {'items': <Object?>[]});
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-empty')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
-        findsOneWidget,
-      );
-      expect(find.text('制定孕期计划'), findsOneWidget);
-
-      await _scrollTo(
-        tester,
-        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
-      );
-      await tester.tap(
-        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
-      );
-      await _pumpFrames(tester, 12);
-
-      expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-      expect(
-        tester
-            .widget<TextField>(
-              find.byKey(const ValueKey('agent-composer-input')),
-            )
-            .controller
-            ?.text,
-        '帮我生成孕期计划',
-      );
-      expect(transport.planQueries.single, {
-        'plan_type': 'pregnancy',
-        'status': 'active',
-        'limit': 1,
-      });
-
-      harness.dispose();
-    },
-  );
-
-  testWidgets(
-    'Status retries errors and renders persisted plan card without CTA',
-    (tester) async {
-      await _setCompactViewport(tester);
-      final transport = _PlanTransport(
-        failingPlanRequests: const {1},
-        planResponses: {2: _planResponse(title: '重试后的孕期计划')},
-      );
-      final harness = await _pumpApp(
-        tester,
-        transport: transport,
-        initialLocation: '/status',
-      );
-
-      await tester.tap(
-        find.byKey(const ValueKey('status-care-stage-pregnancy')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-error')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
-        findsNothing,
-      );
-
-      await _scrollTo(
-        tester,
-        find.byKey(const ValueKey('status-pregnancy-plan-retry-button')),
-      );
-      await tester.tap(
-        find.byKey(const ValueKey('status-pregnancy-plan-retry-button')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-card')),
-        findsOneWidget,
-      );
-      expect(find.text('重试后的孕期计划'), findsOneWidget);
-      expect(find.text('当前阶段｜孕 32 周起'), findsOneWidget);
-      expect(find.text('和产科确认个性化复查节奏'), findsOneWidget);
-      expect(find.text('因为是双胎，需要更密切观察生长'), findsOneWidget);
-      expect(find.text('确认孕周口径'), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
-        findsNothing,
-      );
-
-      harness.dispose();
-    },
-  );
-
-  testWidgets(
-    'malformed plan after a created event restores badge and never shows CTA',
-    (tester) async {
-      await _setCompactViewport(tester);
-      final transport = _PlanTransport(
-        planResponses: {
-          1: {
-            'items': [
-              {
-                'id': 'plan-pregnancy-malformed',
-                'plan_type': 'pregnancy',
-                'title': '孕期计划',
-                'status': 'active',
-                'source': 'agent_action',
-                'payload': {
-                  'card': {
-                    'card_type': 'birth_journey_plan_card',
-                    'schema_version': '1.0',
-                    'card_json': {
-                      'title': '缺少阶段的损坏计划',
-                      'owner': {'current_week': '孕 32 周'},
-                    },
-                  },
-                },
-              },
-            ],
-          },
-        },
-      );
-      final runtime = _runtime(transport);
-      runtime.pregnancyPlanChangeStore.record(
-        PregnancyPlanChange.tryFromEvent(
-          _planChangedEvent(eventId: 'evt-plan-malformed'),
-        )!,
-      );
-      final harness = await _pumpApp(
-        tester,
-        transport: transport,
-        runtime: runtime,
-        initialLocation: '/schedule',
-      );
-
-      expect(
-        find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-        findsOneWidget,
-      );
-      await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
-      await tester.pumpAndSettle();
-
-      expect(runtime.pregnancyPlanChangeStore.hasUnread, isTrue);
-      expect(runtime.pregnancyPlanChangeStore.highlightCard, isFalse);
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-error')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
-        findsNothing,
-      );
-
-      harness.dispose();
-    },
-  );
-
-  testWidgets(
-    'Agent plan event deduplicates replay and hands combined nav notices to cards',
+    'Agent plan change deduplicates replay and resolves the nav badge to the Birth Journey notice',
     (tester) async {
       await _setCompactViewport(tester);
       final transport = _PlanTransport(planResponses: {1: _planResponse()});
@@ -226,51 +40,26 @@ void main() {
           );
         },
       );
-      final routePlatform = FakeRouteIntentPlatform();
+      await _pumpApp(
+        tester,
+        runtime: runtime,
+        router: router,
+        initialLocation: '/',
+      );
       addTearDown(client.dispose);
-      addTearDown(router.dispose);
-      addTearDown(routePlatform.dispose);
 
-      await tester.pumpWidget(
-        MomCozyFlutterApp(
-          router: router,
-          routeIntentPlatform: routePlatform,
-          apiRuntime: runtime,
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '生成孕期计划',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-      expect(client.requests, hasLength(1));
+      await _startAgentRun(tester);
       client.emit(_runStartedEvent());
       await tester.pump();
-
-      router.go('/schedule');
-      await tester.pumpAndSettle();
-      runtime.pregnancyDiaryChangeStore.record(
-        PregnancyDiaryChange.tryFromEvent(_diaryChangedEvent())!,
-      );
-      final planChanged = _planChangedEvent();
-      client.emit(planChanged);
-      client.emit(planChanged);
+      final changed = _planChangedEvent();
+      client.emit(changed);
+      client.emit(changed);
       await tester.pump();
 
       expect(runtime.pregnancyPlanChangeStore.revision, 1);
-      expect(
-        find.byKey(const ValueKey('bottom-nav-status-diary-badge')),
-        findsOneWidget,
-      );
+      expect(runtime.pregnancyPlanChangeStore.hasUnread, isTrue);
       expect(
         find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('bottom-nav-status-badge')),
         findsOneWidget,
       );
       expect(
@@ -278,294 +67,159 @@ void main() {
           of: find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
           matching: find.byWidgetPredicate(
             (widget) =>
-                widget is Semantics &&
-                widget.properties.label == '孕期日记和孕期计划有更新',
+                widget is Semantics && widget.properties.label == '孕期计划有更新',
           ),
         ),
         findsOneWidget,
       );
 
       await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
-      await _pumpFrames(tester, 8);
+      await _pumpFrames(tester, 30);
+      await _scrollToBirthJourney(tester);
 
       expect(transport.planGetCount, 1);
-      expect(runtime.pregnancyDiaryChangeStore.hasUnread, isFalse);
-      expect(runtime.pregnancyDiaryChangeStore.highlightCard, isTrue);
+      expect(transport.planQueries.single, {
+        'plan_type': 'pregnancy',
+        'status': 'active',
+        'limit': 1,
+      });
       expect(runtime.pregnancyPlanChangeStore.hasUnread, isFalse);
       expect(runtime.pregnancyPlanChangeStore.highlightCard, isTrue);
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-change-highlight')),
-        findsOneWidget,
-      );
       expect(
         find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
         findsNothing,
       );
-
-      final upcomingPeriod = find.byKey(
-        const ValueKey('journey-period:upcoming'),
+      expect(
+        find.byKey(const ValueKey('status-birth-journey-dashboard')),
+        findsOneWidget,
       );
-      await _scrollTo(tester, upcomingPeriod);
-      await tester.tap(upcomingPeriod);
-      await tester.pump();
-      expect(find.text('确认入院路线'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('status-birth-journey-card')),
+        findsOneWidget,
+      );
+      _expectBirthJourneyNotice();
+      expect(find.text('和产科确认个性化复查节奏'), findsOneWidget);
 
-      await tester.pump(const Duration(seconds: 3));
-      expect(runtime.pregnancyPlanChangeStore.highlightCard, isFalse);
-      expect(find.text('确认入院路线'), findsOneWidget);
+      await _letBirthJourneyNoticeExpire(tester);
     },
   );
 
-  testWidgets('empty plan after a created event restores the unread badge', (
+  testWidgets(
+    'Agent change during the active Status load schedules one trailing refresh',
+    (tester) async {
+      await _setCompactViewport(tester);
+      final initialPlan = Completer<Map<String, Object?>>();
+      final transport = _PlanTransport(
+        deferredPlanRequests: {1: initialPlan},
+        planResponses: {2: _planResponse(title: '刷新后的孕期计划')},
+      );
+      final runtime = _runtime(transport);
+      await _pumpApp(
+        tester,
+        runtime: runtime,
+        initialLocation: '/status',
+        settle: false,
+      );
+      await _pumpUntil(
+        tester,
+        () => transport.planGetCount == 1,
+        reason: 'the initial Status load should request the active plan',
+      );
+
+      runtime.pregnancyPlanChangeStore.record(
+        PregnancyPlanChange.tryFromEvent(
+          _planChangedEvent(eventId: 'evt-plan-during-load'),
+        )!,
+      );
+      await tester.pump();
+      expect(
+        find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
+        findsOneWidget,
+      );
+
+      initialPlan.complete(const {'items': <Object?>[]});
+      await _pumpUntil(
+        tester,
+        () => transport.planGetCount == 2,
+        reason: 'the external change should run after the active load',
+      );
+      await _pumpFrames(tester, 30);
+      await _scrollToBirthJourney(tester);
+
+      expect(transport.planGetCount, 2);
+      expect(find.text('和产科确认个性化复查节奏'), findsOneWidget);
+      expect(runtime.pregnancyPlanChangeStore.hasUnread, isFalse);
+      expect(runtime.pregnancyPlanChangeStore.highlightCard, isTrue);
+      expect(
+        find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
+        findsNothing,
+      );
+      _expectBirthJourneyNotice();
+
+      await _letBirthJourneyNoticeExpire(tester);
+    },
+  );
+
+  testWidgets('failed plan synchronization restores the unread badge', (
+    tester,
+  ) async {
+    await _setCompactViewport(tester);
+    final transport = _PlanTransport(failingPlanRequests: const {1});
+    final runtime = _runtimeWithUnreadPlan(transport, 'evt-plan-failure');
+    await _pumpApp(tester, runtime: runtime, initialLocation: '/schedule');
+
+    await _openStatusAndSettle(tester, runtime);
+
+    expect(transport.planGetCount, 1);
+    _expectUnreadPlanBadge(runtime);
+    expect(
+      find.byKey(const ValueKey('status-birth-journey-card')),
+      findsOneWidget,
+    );
+    expect(find.text('孕期计划暂时无法同步，请稍后重试'), findsOneWidget);
+    expect(find.text('制定孕期计划'), findsNothing);
+  });
+
+  testWidgets('empty plan synchronization restores the unread badge', (
     tester,
   ) async {
     await _setCompactViewport(tester);
     final transport = _PlanTransport();
-    final runtime = _runtime(transport);
-    runtime.pregnancyPlanChangeStore.record(
-      PregnancyPlanChange.tryFromEvent(_planChangedEvent())!,
-    );
-    final harness = await _pumpApp(
-      tester,
-      transport: transport,
-      runtime: runtime,
-      initialLocation: '/schedule',
-    );
+    final runtime = _runtimeWithUnreadPlan(transport, 'evt-plan-empty');
+    await _pumpApp(tester, runtime: runtime, initialLocation: '/schedule');
 
-    expect(
-      find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-      findsOneWidget,
-    );
-    await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
-    await tester.pumpAndSettle();
+    await _openStatusAndSettle(tester, runtime);
 
     expect(transport.planGetCount, 1);
-    expect(runtime.pregnancyPlanChangeStore.hasUnread, isTrue);
-    expect(runtime.pregnancyPlanChangeStore.highlightCard, isFalse);
+    _expectUnreadPlanBadge(runtime);
     expect(
-      find.byKey(const ValueKey('status-pregnancy-plan-error')),
+      find.byKey(const ValueKey('status-birth-journey-card')),
       findsOneWidget,
     );
-    expect(
-      find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-      findsOneWidget,
-    );
-
-    harness.dispose();
+    expect(find.text('制定孕期计划'), findsOneWidget);
   });
 
-  testWidgets('stale failed reload cannot undo a newer plan success', (
+  testWidgets('malformed plan synchronization restores the unread badge', (
     tester,
   ) async {
     await _setCompactViewport(tester);
-    final second = Completer<Map<String, Object?>>();
-    final third = Completer<Map<String, Object?>>();
     final transport = _PlanTransport(
-      planResponses: {
-        1: const {'items': <Object?>[]},
-      },
-      deferredPlanRequests: {2: second, 3: third},
+      planResponses: {1: _malformedPlanResponse()},
     );
-    final runtime = _runtime(transport);
-    final harness = await _pumpApp(
-      tester,
-      transport: transport,
-      runtime: runtime,
-      initialLocation: '/status',
-    );
-    await tester.tap(find.byKey(const ValueKey('status-care-stage-pregnancy')));
-    await tester.pumpAndSettle();
+    final runtime = _runtimeWithUnreadPlan(transport, 'evt-plan-malformed');
+    await _pumpApp(tester, runtime: runtime, initialLocation: '/schedule');
+
+    await _openStatusAndSettle(tester, runtime);
+
     expect(transport.planGetCount, 1);
-
-    runtime.pregnancyPlanChangeStore.record(
-      PregnancyPlanChange.tryFromEvent(
-        _planChangedEvent(eventId: 'evt-plan-2'),
-      )!,
-    );
-    await tester.pump();
-    runtime.pregnancyPlanChangeStore.record(
-      PregnancyPlanChange.tryFromEvent(
-        _planChangedEvent(eventId: 'evt-plan-3', sequence: 3),
-      )!,
-    );
-    await tester.pump();
-
-    third.complete(_planResponse(title: '最新孕期计划'));
-    await _pumpFrames(tester, 4);
-    second.completeError(StateError('stale plan GET failed'));
-    await _pumpFrames(tester, 4);
-
-    expect(transport.planGetCount, 3);
-    expect(runtime.pregnancyPlanChangeStore.revision, 2);
-    expect(runtime.pregnancyPlanChangeStore.hasUnread, isFalse);
-    expect(runtime.pregnancyPlanChangeStore.highlightCard, isTrue);
-    expect(find.text('最新孕期计划'), findsOneWidget);
+    _expectUnreadPlanBadge(runtime);
     expect(
-      find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-      findsNothing,
-    );
-
-    harness.dispose();
-  });
-
-  testWidgets(
-    'same-revision stale success cannot override a refreshed runtime failure',
-    (tester) async {
-      await _setCompactViewport(tester);
-      final staleResponse = Completer<Map<String, Object?>>();
-      final sharedStore = PregnancyPlanChangeStore();
-      sharedStore.record(
-        PregnancyPlanChange.tryFromEvent(
-          _planChangedEvent(eventId: 'evt-same-revision-refresh'),
-        )!,
-      );
-      final firstTransport = _PlanTransport(
-        deferredPlanRequests: {1: staleResponse},
-      );
-      final secondTransport = _PlanTransport(failingPlanRequests: const {1});
-      final firstRuntime = _runtime(
-        firstTransport,
-        planChangeStore: sharedStore,
-      );
-      final controller = MomCozyRuntimeController(firstRuntime);
-      final router = createMomCozyRouter(
-        initialLocation: '/status',
-        runtimeController: controller,
-      );
-      final routePlatform = FakeRouteIntentPlatform();
-      addTearDown(controller.dispose);
-      addTearDown(router.dispose);
-      addTearDown(routePlatform.dispose);
-
-      await tester.pumpWidget(
-        MomCozyFlutterApp(
-          router: router,
-          routeIntentPlatform: routePlatform,
-          runtimeController: controller,
-        ),
-      );
-      await _pumpFrames(tester, 4);
-      expect(firstTransport.planGetCount, 1);
-
-      controller.replaceRuntime(
-        _runtime(secondTransport, planChangeStore: sharedStore),
-      );
-      await tester.pumpAndSettle();
-      expect(secondTransport.planGetCount, 1);
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-error')),
-        findsOneWidget,
-      );
-      expect(sharedStore.hasUnread, isTrue);
-
-      staleResponse.complete(_planResponse(title: '过期计划'));
-      await _pumpFrames(tester, 4);
-
-      expect(sharedStore.hasUnread, isTrue);
-      expect(sharedStore.highlightCard, isFalse);
-      expect(
-        find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-error')),
-        findsOneWidget,
-      );
-    },
-  );
-
-  testWidgets('successful reload keeps unread when its card is not rendered', (
-    tester,
-  ) async {
-    await _setCompactViewport(tester);
-    final changedResponse = Completer<Map<String, Object?>>();
-    final transport = _PlanTransport(
-      planResponses: {
-        1: const {'items': <Object?>[]},
-      },
-      deferredPlanRequests: {2: changedResponse},
-    );
-    final runtime = _runtime(transport);
-    final harness = await _pumpApp(
-      tester,
-      transport: transport,
-      runtime: runtime,
-      initialLocation: '/status',
-    );
-    await tester.tap(find.byKey(const ValueKey('status-care-stage-pregnancy')));
-    await tester.pumpAndSettle();
-
-    runtime.pregnancyPlanChangeStore.record(
-      PregnancyPlanChange.tryFromEvent(
-        _planChangedEvent(eventId: 'evt-hidden-plan-card'),
-      )!,
-    );
-    await tester.pump();
-    await tester.tap(
-      find.byKey(const ValueKey('status-care-stage-postpartum')),
-    );
-    await tester.pump();
-
-    changedResponse.complete(_planResponse(title: '未渲染的计划'));
-    await _pumpFrames(tester, 4);
-
-    expect(runtime.pregnancyPlanChangeStore.hasUnread, isTrue);
-    expect(runtime.pregnancyPlanChangeStore.highlightCard, isFalse);
-    expect(
-      find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
+      find.byKey(const ValueKey('status-birth-journey-card')),
       findsOneWidget,
     );
-
-    harness.dispose();
+    expect(find.text('孕期计划暂时无法同步，请稍后重试'), findsOneWidget);
+    expect(find.text('制定孕期计划'), findsNothing);
   });
-
-  testWidgets(
-    'acknowledged restore does not switch postpartum Status or fetch a plan',
-    (tester) async {
-      await _setCompactViewport(tester);
-      final persistence = _BlockingPlanPersistence(
-        const PregnancyPlanPendingState(
-          hasUnread: false,
-          highlightCard: false,
-          revision: 3,
-          lastEventId: 'evt-acknowledged-plan',
-          seenEventIds: ['evt-acknowledged-plan'],
-        ),
-      );
-      final store = PregnancyPlanChangeStore(persistence: persistence);
-      final transport = _PlanTransport();
-      final harness = await _pumpApp(
-        tester,
-        transport: transport,
-        runtime: _runtime(transport, planChangeStore: store),
-        initialLocation: '/status',
-      );
-
-      expect(transport.planGetCount, 0);
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-loading')),
-        findsNothing,
-      );
-
-      persistence.release();
-      await _pumpFrames(tester, 4);
-
-      expect(store.revision, 3);
-      expect(store.hasUnread, isFalse);
-      expect(store.highlightCard, isFalse);
-      expect(transport.planGetCount, 0);
-      expect(
-        find.byKey(const ValueKey('status-pregnancy-plan-loading')),
-        findsNothing,
-      );
-
-      harness.dispose();
-    },
-  );
 
   testWidgets(
     'account switch disposes the active Agent stream before late plan events',
@@ -601,28 +255,16 @@ void main() {
           );
         },
       );
-      final routePlatform = FakeRouteIntentPlatform();
+      await _pumpApp(
+        tester,
+        runtimeController: controller,
+        router: router,
+        initialLocation: '/',
+      );
       addTearDown(firstClient.dispose);
       addTearDown(secondClient.dispose);
-      addTearDown(controller.dispose);
-      addTearDown(router.dispose);
-      addTearDown(routePlatform.dispose);
 
-      await tester.pumpWidget(
-        MomCozyFlutterApp(
-          router: router,
-          routeIntentPlatform: routePlatform,
-          runtimeController: controller,
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '生成孕期计划',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
+      await _startAgentRun(tester);
       expect(firstClient.requests, hasLength(1));
 
       controller.replaceRuntime(secondRuntime);
@@ -670,28 +312,17 @@ void main() {
         );
       },
     );
-    final routePlatform = FakeRouteIntentPlatform();
+    await _pumpApp(
+      tester,
+      runtimeController: controller,
+      router: router,
+      initialLocation: '/',
+    );
     addTearDown(firstClient.dispose);
     addTearDown(refreshedClient.dispose);
-    addTearDown(controller.dispose);
-    addTearDown(router.dispose);
-    addTearDown(routePlatform.dispose);
 
-    await tester.pumpWidget(
-      MomCozyFlutterApp(
-        router: router,
-        routeIntentPlatform: routePlatform,
-        runtimeController: controller,
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '生成孕期计划',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pump();
+    await _startAgentRun(tester);
+    expect(firstClient.requests, hasLength(1));
 
     controller.replaceRuntime(refreshedRuntime);
     await _pumpFrames(tester, 4);
@@ -703,112 +334,102 @@ void main() {
     expect(sharedStore.revision, 1);
     expect(sharedStore.hasUnread, isTrue);
   });
-
-  testWidgets(
-    'logout disposes the active Agent stream despite retained user id',
-    (tester) async {
-      await _setCompactViewport(tester);
-      final authenticatedClient = _ControllableAgentStreamClient();
-      final loggedOutClient = _ControllableAgentStreamClient();
-      final sharedStore = PregnancyPlanChangeStore();
-      final authenticatedRuntime = _runtime(
-        _PlanTransport(),
-        planChangeStore: sharedStore,
-        userId: 'logout-plan-user',
-      );
-      sharedStore.record(
-        PregnancyPlanChange.tryFromEvent(
-          _planChangedEvent(eventId: 'evt-before-logout'),
-        )!,
-      );
-      final controller = MomCozyRuntimeController(authenticatedRuntime);
-      final router = createMomCozyRouter(
-        initialLocation: '/',
-        agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) {
-          final runtime = MomCozyRuntimeScope.of(context);
-          final client =
-              runtime.session.status == MomCozySessionStatus.authenticated
-              ? authenticatedClient
-              : loggedOutClient;
-          return AgentHubPage(
-            runner: AgentStreamRunner(client),
-            voicePlaybackCoordinator: voicePlaybackCoordinator,
-            onPregnancyPlanChange: runtime.pregnancyPlanChangeStore.record,
-          );
-        },
-      );
-      final routePlatform = FakeRouteIntentPlatform();
-      addTearDown(authenticatedClient.dispose);
-      addTearDown(loggedOutClient.dispose);
-      addTearDown(controller.dispose);
-      addTearDown(router.dispose);
-      addTearDown(routePlatform.dispose);
-
-      await tester.pumpWidget(
-        MomCozyFlutterApp(
-          router: router,
-          routeIntentPlatform: routePlatform,
-          runtimeController: controller,
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '生成孕期计划',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      controller.replaceSession(authenticatedRuntime.session.loggedOut());
-      await _pumpFrames(tester, 4);
-      final loggedOutStore = controller.runtime.pregnancyPlanChangeStore;
-      authenticatedClient.emit(
-        _planChangedEvent(eventId: 'evt-late-after-logout'),
-      );
-      await tester.pump();
-
-      expect(authenticatedClient.cancelCount, 1);
-      expect(loggedOutStore, isNot(same(sharedStore)));
-      expect(loggedOutStore.revision, 0);
-      expect(loggedOutStore.hasUnread, isFalse);
-      expect(sharedStore.revision, 1);
-      expect(sharedStore.hasUnread, isTrue);
-      expect(loggedOutClient.requests, isEmpty);
-    },
-  );
 }
 
-Future<_AppHarness> _pumpApp(
+Future<void> _pumpApp(
   WidgetTester tester, {
-  required _PlanTransport transport,
-  MomCozyApiRuntime? runtime,
   required String initialLocation,
+  MomCozyApiRuntime? runtime,
+  MomCozyRuntimeController? runtimeController,
+  GoRouter? router,
+  bool settle = true,
 }) async {
-  final resolvedRuntime = runtime ?? _runtime(transport);
-  final router = createMomCozyRouter(initialLocation: initialLocation);
+  assert(runtime != null || runtimeController != null);
+  final effectiveRouter =
+      router ??
+      createMomCozyRouter(
+        initialLocation: initialLocation,
+        runtimeController: runtimeController,
+      );
   final routePlatform = FakeRouteIntentPlatform();
+  addTearDown(effectiveRouter.dispose);
+  addTearDown(routePlatform.dispose);
+  if (runtimeController != null) addTearDown(runtimeController.dispose);
   await tester.pumpWidget(
     MomCozyFlutterApp(
-      router: router,
+      router: effectiveRouter,
       routeIntentPlatform: routePlatform,
-      apiRuntime: resolvedRuntime,
+      apiRuntime: runtime,
+      runtimeController: runtimeController,
     ),
   );
-  await tester.pumpAndSettle();
-  return _AppHarness(router: router, routePlatform: routePlatform);
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await _pumpFrames(tester, 4);
+  }
 }
 
-class _AppHarness {
-  const _AppHarness({required this.router, required this.routePlatform});
+Future<void> _startAgentRun(WidgetTester tester) async {
+  await tester.enterText(
+    find.byKey(const ValueKey('agent-composer-input')),
+    '生成孕期计划',
+  );
+  await tester.pump();
+  await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+  await tester.pump();
+}
 
-  final GoRouter router;
-  final FakeRouteIntentPlatform routePlatform;
+Future<void> _openStatusAndSettle(
+  WidgetTester tester,
+  MomCozyApiRuntime runtime,
+) async {
+  expect(
+    find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
+    findsOneWidget,
+  );
+  await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+  await tester.pumpAndSettle();
+  await _pumpUntil(
+    tester,
+    () => runtime.pregnancyPlanChangeStore.hasUnread,
+    reason: 'an unusable plan response should restore the navigation badge',
+  );
+  await _scrollToBirthJourney(tester);
+}
 
-  void dispose() {
-    router.dispose();
-    routePlatform.dispose();
+Future<void> _scrollToBirthJourney(WidgetTester tester) async {
+  final card = find.byKey(const ValueKey('status-birth-journey-card'));
+  final statusScrollView = find.byKey(const ValueKey('route-page-/status'));
+  for (var index = 0; index < 8 && card.evaluate().isEmpty; index += 1) {
+    await tester.drag(statusScrollView, const Offset(0, -260));
+    await tester.pump(const Duration(milliseconds: 16));
   }
+}
+
+void _expectUnreadPlanBadge(MomCozyApiRuntime runtime) {
+  expect(runtime.pregnancyPlanChangeStore.hasUnread, isTrue);
+  expect(runtime.pregnancyPlanChangeStore.highlightCard, isFalse);
+  expect(
+    find.byKey(const ValueKey('bottom-nav-status-plan-badge')),
+    findsOneWidget,
+  );
+  expect(
+    find.byKey(const ValueKey('status-birth-journey-notice')),
+    findsOneWidget,
+  );
+}
+
+void _expectBirthJourneyNotice() {
+  expect(
+    find.byKey(const ValueKey('status-birth-journey-notice')),
+    findsOneWidget,
+  );
+}
+
+Future<void> _letBirthJourneyNoticeExpire(WidgetTester tester) async {
+  await tester.pump(const Duration(seconds: 3));
+  await tester.pumpAndSettle();
 }
 
 Future<void> _setCompactViewport(WidgetTester tester) async {
@@ -818,19 +439,32 @@ Future<void> _setCompactViewport(WidgetTester tester) async {
   addTearDown(tester.view.resetDevicePixelRatio);
 }
 
-Future<void> _scrollTo(WidgetTester tester, Finder finder) async {
-  await tester.scrollUntilVisible(
-    finder,
-    260,
-    scrollable: find.byType(Scrollable).first,
-  );
-  await tester.pumpAndSettle();
-}
-
 Future<void> _pumpFrames(WidgetTester tester, int count) async {
-  for (var index = 0; index < count; index++) {
+  for (var index = 0; index < count; index += 1) {
     await tester.pump(const Duration(milliseconds: 16));
   }
+}
+
+Future<void> _pumpUntil(
+  WidgetTester tester,
+  bool Function() condition, {
+  required String reason,
+}) async {
+  for (var index = 0; index < 40 && !condition(); index += 1) {
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  expect(condition(), isTrue, reason: reason);
+}
+
+MomCozyApiRuntime _runtimeWithUnreadPlan(
+  _PlanTransport transport,
+  String eventId,
+) {
+  final runtime = _runtime(transport);
+  runtime.pregnancyPlanChangeStore.record(
+    PregnancyPlanChange.tryFromEvent(_planChangedEvent(eventId: eventId))!,
+  );
+  return runtime;
 }
 
 MomCozyApiRuntime _runtime(
@@ -841,6 +475,8 @@ MomCozyApiRuntime _runtime(
   return MomCozyApiRuntime(
     jsonTransport: transport,
     pregnancyPlanChangeStore: planChangeStore ?? PregnancyPlanChangeStore(),
+    statusPreferenceStore: _MemoryStatusPreferenceStore(),
+    volumeUnitPreferenceStore: _MemoryVolumeUnitPreferenceStore(),
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{}),
     session: MomCozySession(
       status: MomCozySessionStatus.authenticated,
@@ -852,6 +488,30 @@ MomCozyApiRuntime _runtime(
     ),
     now: () => DateTime.utc(2026, 7, 12),
   );
+}
+
+class _MemoryStatusPreferenceStore implements StatusPreferenceStore {
+  StatusCareStage? value;
+
+  @override
+  Future<StatusCareStage?> readCareStage() async => value;
+
+  @override
+  Future<void> writeCareStage(StatusCareStage stage) async {
+    value = stage;
+  }
+}
+
+class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
+  MomCozyVolumeUnit? value;
+
+  @override
+  Future<MomCozyVolumeUnit?> read() async => value;
+
+  @override
+  Future<void> write(MomCozyVolumeUnit unit) async {
+    value = unit;
+  }
 }
 
 class _ControllableAgentStreamClient implements AgentStreamClient {
@@ -907,9 +567,6 @@ class _PlanTransport implements ApiJsonTransport {
     if (path == statusInfantsEndpoint) {
       return const {'items': <Object?>[]};
     }
-    if (path == pregnancyDiaryEntriesEndpoint) {
-      return const {'items': <Object?>[]};
-    }
     if (path == pregnancyPlansEndpoint) {
       planGetCount += 1;
       planQueries.add(Map<String, Object?>.from(query));
@@ -920,7 +577,7 @@ class _PlanTransport implements ApiJsonTransport {
       if (deferred != null) return deferred.future;
       return planResponses[planGetCount] ?? const {'items': <Object?>[]};
     }
-    return const <String, Object?>{};
+    return const {'items': <Object?>[]};
   }
 
   @override
@@ -929,43 +586,8 @@ class _PlanTransport implements ApiJsonTransport {
     Map<String, Object?> body = const {},
     Map<String, String> headers = const {},
   }) {
-    throw UnsupportedError('POST is not used by this test.');
+    throw UnsupportedError('POST is not used by this read-only integration.');
   }
-
-  @override
-  Future<Map<String, Object?>> patchJson(
-    String path, {
-    Map<String, Object?> body = const {},
-    Map<String, String> headers = const {},
-  }) {
-    throw UnsupportedError('PATCH is not used by this test.');
-  }
-
-  @override
-  Future<void> deleteJson(
-    String path, {
-    Map<String, String> headers = const {},
-  }) {
-    throw UnsupportedError('DELETE is not used by this test.');
-  }
-}
-
-class _BlockingPlanPersistence implements PregnancyPlanChangePersistence {
-  _BlockingPlanPersistence(this.value);
-
-  final PregnancyPlanPendingState value;
-  final Completer<void> _release = Completer<void>();
-
-  void release() => _release.complete();
-
-  @override
-  Future<PregnancyPlanPendingState?> read() async {
-    await _release.future;
-    return value;
-  }
-
-  @override
-  Future<void> write(PregnancyPlanPendingState state) async {}
 }
 
 Map<String, Object?> _planResponse({String title = '我的孕期计划'}) {
@@ -975,7 +597,7 @@ Map<String, Object?> _planResponse({String title = '我的孕期计划'}) {
         'id': 'plan-pregnancy-1',
         'owner_user_id': 'plan-widget-user',
         'plan_type': 'pregnancy',
-        'title': '孕期计划',
+        'title': title,
         'summary': '从现在到生产前后的阶段计划与待办',
         'status': 'active',
         'source': 'agent_action',
@@ -993,6 +615,7 @@ Map<String, Object?> _planResponse({String title = '我的孕期计划'}) {
                     'status': 'current',
                     'items': [
                       {
+                        'id': 'todo-current',
                         'title': '和产科确认个性化复查节奏',
                         'reason': '因为是双胎，需要更密切观察生长',
                         'steps': ['确认孕周口径', '安排胎儿生长复查'],
@@ -1004,12 +627,34 @@ Map<String, Object?> _planResponse({String title = '我的孕期计划'}) {
                     'title': '后续阶段｜临产准备',
                     'status': 'upcoming',
                     'items': [
-                      {'title': '确认入院路线'},
+                      {'id': 'todo-upcoming', 'title': '确认入院路线'},
                     ],
                   },
                 ],
               },
             },
+          },
+        },
+      },
+    ],
+  };
+}
+
+Map<String, Object?> _malformedPlanResponse() {
+  return {
+    'items': [
+      {
+        'id': 'plan-pregnancy-malformed',
+        'owner_user_id': 'plan-widget-user',
+        'plan_type': 'pregnancy',
+        'title': '缺少阶段的损坏计划',
+        'status': 'active',
+        'source': 'agent_action',
+        'payload': {
+          'card': {
+            'card_type': 'birth_journey_plan_card',
+            'schema_version': '1.0',
+            'card_json': {'title': '缺少 todo_plan 的损坏计划'},
           },
         },
       },
@@ -1045,16 +690,3 @@ AgentStreamEvent _planChangedEvent({
     },
   });
 }
-
-AgentStreamEvent _diaryChangedEvent() => AgentStreamEvent(const {
-  'event_id': 'evt-diary-changed',
-  'sequence': 2,
-  'type': 'pregnancy_diary.changed',
-  'payload': {
-    'operation': 'created',
-    'entry_id': 'diary-2026-07-12',
-    'entry_date': '2026-07-12',
-    'updated_at': '2026-07-12T08:30:00Z',
-    'source': 'agent',
-  },
-});

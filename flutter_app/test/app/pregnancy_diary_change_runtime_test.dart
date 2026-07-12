@@ -65,6 +65,7 @@ void main() {
 MomCozyApiRuntime _runtime({required String userId}) {
   return MomCozyApiRuntime(
     jsonTransport: FixtureApiJsonTransport(const {}),
+    pregnancyDiaryChangeStore: PregnancyDiaryChangeStore(),
     session: MomCozySession(
       status: MomCozySessionStatus.authenticated,
       userId: userId,

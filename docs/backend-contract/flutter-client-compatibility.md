@@ -6,9 +6,9 @@ targets.
 
 ## Source Of Truth
 
-- Schema: `docs/backend-contract/openapi.generated.json`
-- Handoff: `docs/backend-contract/api-contract-handoff.md`
-- Smoke flows: `docs/backend-contract/flutter-smoke-flows.json`
+- Schema: `production_backend/docs/openapi.generated.json`
+- Handoff: `production_backend/docs/api-contract-handoff.md`
+- Smoke flows: `production_backend/docs/flutter-smoke-flows.json`
 
 ## Regeneration Rule
 
@@ -70,6 +70,11 @@ versioning plan.
   `/v1/agent/runs/{run_id}/stream?after_sequence=<last_sequence>&follow=true`
   so `action.applied`, `action.failed`, `action.rejected`, and final message
   events replace local pending states.
+- Treat durable `pregnancy_plan.changed` as a privacy-safe notification and
+  cache-invalidation signal only. Deduplicate it by `event_id`, then load the
+  current user's authoritative Plan from
+  `/v1/plans?plan_type=pregnancy&status=active`; do not derive or cache the
+  personalized plan from the event payload.
 - Treat `voice_provider_disabled` as a stable unavailable-state response for
   voice UI; do not fall back to legacy realtime voice endpoints.
 

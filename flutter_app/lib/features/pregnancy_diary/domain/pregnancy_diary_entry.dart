@@ -2,47 +2,121 @@ class PregnancyDiaryEntry {
   const PregnancyDiaryEntry({
     required this.id,
     required this.entryDate,
-    required this.content,
     this.gestationalWeek = '',
     this.mood = '',
     this.energyLevel = '',
     this.sleepSummary = '',
     this.fetalMovement = '',
-    this.symptomTags = const [],
+    this.symptomTags = const <String>[],
     this.appointmentNote = '',
     this.nutritionNote = '',
-    this.attachments = const [],
+    this.content = '',
+    this.attachments = const <Object?>[],
+    this.status = '',
+    this.healthNotes = const <PregnancyDiaryHealthNote>[],
   });
 
   final String id;
   final DateTime entryDate;
-  final String content;
   final String gestationalWeek;
   final String mood;
   final String energyLevel;
   final String sleepSummary;
   final String fetalMovement;
-  final List<Object?> symptomTags;
+  final List<String> symptomTags;
   final String appointmentNote;
   final String nutritionNote;
+  final String content;
   final List<Object?> attachments;
+  final String status;
+
+  // Kept as a read-only compatibility projection for older Status payloads.
+  // The current pregnancy-diary API does not persist health_notes.
+  final List<PregnancyDiaryHealthNote> healthNotes;
+
+  bool get hasAppointmentQuestion => appointmentNote.trim().isNotEmpty;
+}
+
+class PregnancyDiaryHealthNote {
+  const PregnancyDiaryHealthNote({
+    required this.id,
+    required this.topic,
+    this.userReport = '',
+    this.followUp = '',
+  });
+
+  final String id;
+  final String topic;
+  final String userReport;
+  final String followUp;
+}
+
+class PregnancyDiaryDraft {
+  const PregnancyDiaryDraft({
+    this.gestationalWeek = '',
+    this.mood = '',
+    this.energyLevel = '',
+    this.sleepSummary = '',
+    this.fetalMovement = '',
+    this.symptomTags = const <String>[],
+    this.appointmentNote = '',
+    this.nutritionNote = '',
+    this.content = '',
+  });
+
+  factory PregnancyDiaryDraft.fromEntry(PregnancyDiaryEntry? entry) {
+    if (entry == null) return const PregnancyDiaryDraft();
+    return PregnancyDiaryDraft(
+      gestationalWeek: entry.gestationalWeek,
+      mood: entry.mood,
+      energyLevel: entry.energyLevel,
+      sleepSummary: entry.sleepSummary,
+      fetalMovement: entry.fetalMovement,
+      symptomTags: entry.symptomTags,
+      appointmentNote: entry.appointmentNote,
+      nutritionNote: entry.nutritionNote,
+      content: entry.content,
+    );
+  }
+
+  final String gestationalWeek;
+  final String mood;
+  final String energyLevel;
+  final String sleepSummary;
+  final String fetalMovement;
+  final List<String> symptomTags;
+  final String appointmentNote;
+  final String nutritionNote;
+  final String content;
+
+  bool get hasContent {
+    return gestationalWeek.trim().isNotEmpty ||
+        mood.trim().isNotEmpty ||
+        energyLevel.trim().isNotEmpty ||
+        sleepSummary.trim().isNotEmpty ||
+        fetalMovement.trim().isNotEmpty ||
+        symptomTags.any((tag) => tag.trim().isNotEmpty) ||
+        appointmentNote.trim().isNotEmpty ||
+        nutritionNote.trim().isNotEmpty ||
+        content.trim().isNotEmpty;
+  }
 }
 
 abstract interface class PregnancyDiaryRepository {
   Future<List<PregnancyDiaryEntry>> fetchEntries({
     DateTime? startDate,
     DateTime? endDate,
-    int limit = 7,
+    int limit = 30,
   });
 
   Future<PregnancyDiaryEntry> createEntry({
     required DateTime entryDate,
-    required String content,
+    required PregnancyDiaryDraft draft,
   });
 
   Future<PregnancyDiaryEntry> updateEntry({
     required DateTime entryDate,
-    required String content,
+    required PregnancyDiaryDraft draft,
   });
 
   Future<void> deleteEntry({required DateTime entryDate});

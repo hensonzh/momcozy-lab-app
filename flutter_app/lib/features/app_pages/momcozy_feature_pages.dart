@@ -2,16 +2,13 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
@@ -22,10 +19,18 @@ import 'package:momcozy_flutter_app/features/media/presentation/product_asset_vi
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
-import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/baby_growth_chart.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/baby_status_cards.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/baby_status_sheets.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/birth_journey_plan_dashboard.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/postpartum_mom_dashboard.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/pregnancy_diary_dashboard.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_entry_intent.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:pdfrx/pdfrx.dart';
 
@@ -81,6 +86,8 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        routeUri: routeUri,
+        routeExtra: routeExtra,
       ),
       '/community' => _CommunityPage(
         path: path,
@@ -550,34 +557,8 @@ final _statusInteractionStates = Expando<_StatusInteractionState>(
 class _StatusInteractionState {
   String view = 'mom';
   String careStage = 'postpartum';
-  bool growthRecordAdded = false;
   String milkTrendMode = '周';
   String babyGrowthMetric = '体重';
-  String? activeDetail;
-}
-
-class _PregnancyDiaryLoadResult {
-  const _PregnancyDiaryLoadResult({
-    required this.entries,
-    required this.failed,
-  });
-
-  final List<PregnancyDiaryEntry> entries;
-  final bool failed;
-}
-
-class _PregnancyPlanLoadResult {
-  const _PregnancyPlanLoadResult({
-    required this.plan,
-    required this.failed,
-    required this.requestGeneration,
-    required this.changeRevision,
-  });
-
-  final PregnancyPlan? plan;
-  final bool failed;
-  final int requestGeneration;
-  final int? changeRevision;
 }
 
 class _StatusPage extends StatefulWidget {
@@ -587,6 +568,8 @@ class _StatusPage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.routeUri,
+    this.routeExtra,
   });
 
   final String path;
@@ -594,566 +577,507 @@ class _StatusPage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Uri? routeUri;
+  final Object? routeExtra;
 
   @override
   State<_StatusPage> createState() => _StatusPageState();
 }
 
 class _StatusPageState extends State<_StatusPage> {
-  String _view = 'mom';
-  String _careStage = 'postpartum';
-  bool _growthRecordAdded = false;
   String _milkTrendMode = '周';
   String _babyGrowthMetric = '体重';
-  String? _activeDetail;
   late _StatusInteractionState _interactionState = _StatusInteractionState();
   MomCozyApiRuntime? _runtime;
   PregnancyDiaryChangeStore? _pregnancyDiaryChangeStore;
   PregnancyPlanChangeStore? _pregnancyPlanChangeStore;
   int _handledPregnancyDiaryRevision = 0;
   int _handledPregnancyPlanRevision = 0;
-  late Future<StatusOverview> _overviewFuture;
-  Future<_PregnancyDiaryLoadResult>? _pregnancyDiaryFuture;
-  Future<_PregnancyPlanLoadResult>? _pregnancyPlanFuture;
-  Timer? _pregnancyPlanNoticeTimer;
-  int _pregnancyPlanRequestGeneration = 0;
-  int? _scheduledPregnancyPlanRenderGeneration;
-  int? _renderedPregnancyPlanRequestGeneration;
+  Future<void> _pregnancyDiaryChangeTail = Future<void>.value();
+  Future<void> _pregnancyPlanChangeTail = Future<void>.value();
+  late StatusDashboardController _controller;
+  late Listenable _dashboardListenable;
+  final _growthCurveAnchorKey = GlobalKey();
+  final _growthHighlight = ValueNotifier<bool>(false);
+  Timer? _growthHighlightTimer;
+  final _pregnancyDiaryAnchorKey = GlobalKey();
+  final _birthJourneyAnchorKey = GlobalKey();
+  final _pregnancyDiaryNotice = ValueNotifier<bool>(false);
+  final _birthJourneyNotice = ValueNotifier<bool>(false);
+  Timer? _pregnancyDiaryNoticeTimer;
+  Timer? _birthJourneyNoticeTimer;
+  String? _consumedStatusIntentToken;
+  late final AppLifecycleListener _appLifecycleListener;
+
+  String get _view => _controller.identity.value.value;
+  String get _careStage => _controller.careStage.value.storageValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _appLifecycleListener = AppLifecycleListener(onResume: _handleAppResume);
+  }
+
+  void _handleAppResume() {
+    if (_runtime == null) return;
+    unawaited(_controller.refresh());
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final runtime = MomCozyRuntimeScope.of(context);
     if (!identical(runtime, _runtime)) {
-      _pregnancyDiaryChangeStore?.removeListener(
-        _handlePregnancyDiaryChangeStore,
-      );
-      _pregnancyPlanChangeStore?.removeListener(
-        _handlePregnancyPlanChangeStore,
-      );
-      _pregnancyPlanNoticeTimer?.cancel();
-      _pregnancyPlanRequestGeneration += 1;
-      _scheduledPregnancyPlanRenderGeneration = null;
-      _renderedPregnancyPlanRequestGeneration = null;
+      if (_runtime != null) {
+        _pregnancyDiaryChangeStore?.removeListener(
+          _handlePregnancyDiaryChangeStore,
+        );
+        _pregnancyPlanChangeStore?.removeListener(
+          _handlePregnancyPlanChangeStore,
+        );
+        _controller.careStage.removeListener(_handleSelectionChanged);
+        _controller.identity.removeListener(_handleSelectionChanged);
+        _controller.dispose();
+      }
       _runtime = runtime;
       final diaryChangeStore = runtime.pregnancyDiaryChangeStore;
       final planChangeStore = runtime.pregnancyPlanChangeStore;
       _pregnancyDiaryChangeStore = diaryChangeStore;
       _pregnancyPlanChangeStore = planChangeStore;
-      _handledPregnancyDiaryRevision = diaryChangeStore.revision;
-      _handledPregnancyPlanRevision = planChangeStore.revision;
+      _handledPregnancyDiaryRevision =
+          diaryChangeStore.hasUnread || diaryChangeStore.highlightCard
+          ? diaryChangeStore.revision - 1
+          : diaryChangeStore.revision;
+      _handledPregnancyPlanRevision =
+          planChangeStore.hasUnread || planChangeStore.highlightCard
+          ? planChangeStore.revision - 1
+          : planChangeStore.revision;
       diaryChangeStore.addListener(_handlePregnancyDiaryChangeStore);
       planChangeStore.addListener(_handlePregnancyPlanChangeStore);
       _interactionState = _statusInteractionStates[runtime] ??=
           _StatusInteractionState();
-      _view = _interactionState.view;
-      _careStage = _interactionState.careStage;
-      _growthRecordAdded = _interactionState.growthRecordAdded;
+      if (diaryChangeStore.hasUnread ||
+          diaryChangeStore.highlightCard ||
+          planChangeStore.hasUnread ||
+          planChangeStore.highlightCard) {
+        _interactionState
+          ..view = 'mom'
+          ..careStage = 'pregnancy';
+      }
       _milkTrendMode = _interactionState.milkTrendMode;
       _babyGrowthMetric = _interactionState.babyGrowthMetric;
-      _activeDetail = _interactionState.activeDetail;
-      final hasDiaryNotice =
-          diaryChangeStore.hasUnread || diaryChangeStore.highlightCard;
-      final hasPlanNotice =
-          planChangeStore.hasUnread || planChangeStore.highlightCard;
-      if (hasDiaryNotice || hasPlanNotice) {
-        _view = 'mom';
-        _careStage = 'pregnancy';
-        _activeDetail = null;
-        _persistInteractionState();
-      }
-      _overviewFuture = runtime.statusRepository.fetchOverview();
-      _pregnancyDiaryFuture = _careStage == 'pregnancy'
-          ? _loadPregnancyDiary(
-              runtime,
-              changeRevision: hasDiaryNotice ? diaryChangeStore.revision : null,
-            )
-          : null;
-      _pregnancyPlanFuture = _careStage == 'pregnancy'
-          ? _startPregnancyPlanLoad(
-              runtime,
-              changeRevision: hasPlanNotice ? planChangeStore.revision : null,
-            )
-          : null;
+      _controller = runtime.createStatusDashboardController(
+        initialCareStage:
+            StatusCareStage.fromStorage(_interactionState.careStage) ??
+            StatusCareStage.postpartum,
+        initialIdentity: StatusIdentity.fromValue(_interactionState.view),
+      );
+      _controller.careStage.addListener(_handleSelectionChanged);
+      _controller.identity.addListener(_handleSelectionChanged);
+      _dashboardListenable = Listenable.merge([
+        _controller.careStage,
+        _controller.identity,
+        _controller.overview,
+        _controller.pregnancyDiaryEntries,
+      ]);
+      unawaited(_initializeStatusController(runtime));
+      _scheduleStatusEntryIntent();
+    }
+  }
+
+  Future<void> _initializeStatusController(MomCozyApiRuntime runtime) async {
+    try {
+      await _controller.initialize();
+    } catch (_) {
+      // Individual resources expose their own error state below.
+    }
+    if (!mounted || !identical(runtime, _runtime)) return;
+    _schedulePregnancyDiaryChangeRefresh(refresh: false);
+    _schedulePregnancyPlanChangeRefresh(refresh: false);
+  }
+
+  void _handlePregnancyDiaryChangeStore() {
+    _schedulePregnancyDiaryChangeRefresh(refresh: true);
+  }
+
+  void _schedulePregnancyDiaryChangeRefresh({required bool refresh}) {
+    final store = _pregnancyDiaryChangeStore;
+    if (store == null || store.revision <= _handledPregnancyDiaryRevision) {
+      return;
+    }
+    final revision = store.revision;
+    final controller = _controller;
+    _handledPregnancyDiaryRevision = revision;
+    _pregnancyDiaryChangeTail = _pregnancyDiaryChangeTail.then(
+      (_) => _refreshAfterPregnancyDiaryChange(
+        store,
+        controller,
+        revision,
+        refresh: refresh,
+      ),
+    );
+  }
+
+  Future<void> _refreshAfterPregnancyDiaryChange(
+    PregnancyDiaryChangeStore store,
+    StatusDashboardController controller,
+    int revision, {
+    required bool refresh,
+  }) async {
+    if (!mounted ||
+        !identical(store, _pregnancyDiaryChangeStore) ||
+        !identical(controller, _controller)) {
+      return;
+    }
+    final shouldShowNotice = store.hasUnread || store.highlightCard;
+    if (shouldShowNotice) _showPregnancyView();
+    if (refresh) await controller.refreshAfterExternalChange();
+    if (!mounted ||
+        !identical(store, _pregnancyDiaryChangeStore) ||
+        !identical(controller, _controller) ||
+        store.revision != revision) {
+      return;
+    }
+    if (controller.pregnancyDiaryEntries.value.phase !=
+        StatusResourcePhase.data) {
+      if (store.highlightCard) store.restoreNavigationNotice();
+      return;
+    }
+    if (!shouldShowNotice) return;
+    if (store.hasUnread) store.transferNavigationNoticeToCard();
+    if (store.highlightCard) {
+      _showPregnancyDiaryNotice(
+        refresh: false,
+        changeStore: store,
+        revision: revision,
+      );
+    }
+  }
+
+  void _handlePregnancyPlanChangeStore() {
+    _schedulePregnancyPlanChangeRefresh(refresh: true);
+  }
+
+  void _schedulePregnancyPlanChangeRefresh({required bool refresh}) {
+    final store = _pregnancyPlanChangeStore;
+    if (store == null || store.revision <= _handledPregnancyPlanRevision) {
+      return;
+    }
+    final revision = store.revision;
+    final controller = _controller;
+    _handledPregnancyPlanRevision = revision;
+    _pregnancyPlanChangeTail = _pregnancyPlanChangeTail.then(
+      (_) => _refreshAfterPregnancyPlanChange(
+        store,
+        controller,
+        revision,
+        refresh: refresh,
+      ),
+    );
+  }
+
+  Future<void> _refreshAfterPregnancyPlanChange(
+    PregnancyPlanChangeStore store,
+    StatusDashboardController controller,
+    int revision, {
+    required bool refresh,
+  }) async {
+    if (!mounted ||
+        !identical(store, _pregnancyPlanChangeStore) ||
+        !identical(controller, _controller)) {
+      return;
+    }
+    final shouldShowNotice = store.hasUnread || store.highlightCard;
+    if (shouldShowNotice) _showPregnancyView();
+    if (refresh) await controller.refreshAfterExternalChange();
+    if (!mounted ||
+        !identical(store, _pregnancyPlanChangeStore) ||
+        !identical(controller, _controller) ||
+        store.revision != revision) {
+      return;
+    }
+    final planResource = controller.birthJourneyPlan.value;
+    final plan = planResource.data;
+    if (planResource.phase != StatusResourcePhase.data ||
+        plan == null ||
+        !plan.hasStructuredContent) {
+      if (store.highlightCard) store.restoreNavigationNotice();
+      return;
+    }
+    if (!shouldShowNotice) return;
+    if (store.hasUnread) store.transferNavigationNoticeToCard();
+    if (store.highlightCard) {
+      _showBirthJourneyNotice(
+        refresh: false,
+        changeStore: store,
+        revision: revision,
+      );
     }
   }
 
   @override
-  void dispose() {
-    _pregnancyDiaryChangeStore?.removeListener(
-      _handlePregnancyDiaryChangeStore,
-    );
-    _pregnancyPlanChangeStore?.removeListener(_handlePregnancyPlanChangeStore);
-    _pregnancyPlanNoticeTimer?.cancel();
-    super.dispose();
+  void didUpdateWidget(covariant _StatusPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.routeUri != widget.routeUri ||
+        !identical(oldWidget.routeExtra, widget.routeExtra)) {
+      _scheduleStatusEntryIntent();
+    }
   }
 
-  void _handlePregnancyDiaryChangeStore() {
-    if (!mounted) return;
-    final runtime = _runtime;
-    final changeStore = _pregnancyDiaryChangeStore;
-    if (runtime == null || changeStore == null) return;
-    final revision = changeStore.revision;
-    if (revision <= _handledPregnancyDiaryRevision) {
-      setState(() {});
-      return;
-    }
-
-    _handledPregnancyDiaryRevision = revision;
-    final future = _loadPregnancyDiary(runtime, changeRevision: revision);
-    setState(() {
-      _view = 'mom';
-      _careStage = 'pregnancy';
-      _activeDetail = null;
-      _pregnancyDiaryFuture = future;
-      _persistInteractionState();
+  void _scheduleStatusEntryIntent() {
+    final intent = statusEntryIntentFromRoute(
+      widget.routeUri,
+      widget.routeExtra,
+    );
+    if (intent == null || intent.token == _consumedStatusIntentToken) return;
+    _consumedStatusIntentToken = intent.token;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      switch (intent.kind) {
+        case StatusEntryIntentKind.growth:
+          _showGrowthHighlight();
+          break;
+        case StatusEntryIntentKind.pregnancyDiary:
+          _showPregnancyDiaryNotice();
+          break;
+        case StatusEntryIntentKind.birthJourney:
+          _showBirthJourneyNotice();
+          break;
+      }
     });
   }
 
-  void _handlePregnancyPlanChangeStore() {
-    if (!mounted) return;
-    final runtime = _runtime;
-    final changeStore = _pregnancyPlanChangeStore;
-    if (runtime == null || changeStore == null) return;
-    final revision = changeStore.revision;
-    if (revision <= _handledPregnancyPlanRevision) {
-      setState(() {});
-      return;
-    }
+  void _showPregnancyDiaryNotice({
+    bool refresh = true,
+    PregnancyDiaryChangeStore? changeStore,
+    int? revision,
+  }) {
+    _showPregnancyView();
+    if (refresh) unawaited(_controller.refresh());
+    _pregnancyDiaryNoticeTimer?.cancel();
+    _pregnancyDiaryNotice.value = true;
+    _pregnancyDiaryNoticeTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      _pregnancyDiaryNotice.value = false;
+      _pregnancyDiaryNoticeTimer = null;
+      if (changeStore != null &&
+          changeStore.revision == revision &&
+          changeStore.highlightCard) {
+        changeStore.clearCardNotice();
+      }
+    });
+    _scrollToStatusTarget(_pregnancyDiaryAnchorKey);
+  }
 
-    _handledPregnancyPlanRevision = revision;
-    if (!changeStore.hasUnread && !changeStore.highlightCard) {
-      setState(() {});
-      return;
-    }
-    final future = _startPregnancyPlanLoad(runtime, changeRevision: revision);
-    setState(() {
-      _view = 'mom';
-      _careStage = 'pregnancy';
-      _activeDetail = null;
-      _pregnancyPlanFuture = future;
-      _persistInteractionState();
+  void _showBirthJourneyNotice({
+    bool refresh = true,
+    PregnancyPlanChangeStore? changeStore,
+    int? revision,
+  }) {
+    _showPregnancyView();
+    if (refresh) unawaited(_controller.refresh());
+    _birthJourneyNoticeTimer?.cancel();
+    _birthJourneyNotice.value = true;
+    _birthJourneyNoticeTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      _birthJourneyNotice.value = false;
+      _birthJourneyNoticeTimer = null;
+      if (changeStore != null &&
+          changeStore.revision == revision &&
+          changeStore.highlightCard) {
+        changeStore.clearCardNotice();
+      }
+    });
+    _scrollToStatusTarget(_birthJourneyAnchorKey);
+  }
+
+  void _showPregnancyView() {
+    unawaited(_controller.changeCareStage(StatusCareStage.pregnancy));
+    _controller.selectIdentity(StatusIdentity.mom);
+    _persistInteractionState();
+  }
+
+  void _scrollToStatusTarget(GlobalKey targetKey) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final targetContext = targetKey.currentContext;
+      if (!mounted || targetContext == null) return;
+      unawaited(
+        Scrollable.ensureVisible(
+          targetContext,
+          alignment: 0.35,
+          duration: const Duration(milliseconds: 420),
+          curve: Curves.easeOutCubic,
+        ),
+      );
+    });
+  }
+
+  void _showGrowthHighlight() {
+    unawaited(_controller.changeCareStage(StatusCareStage.postpartum));
+    _controller.selectIdentity(StatusIdentity.baby);
+    _persistInteractionState();
+    unawaited(_controller.refresh());
+    _startGrowthHighlightAnimation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final targetContext = _growthCurveAnchorKey.currentContext;
+      if (!mounted || targetContext == null) return;
+      unawaited(
+        Scrollable.ensureVisible(
+          targetContext,
+          alignment: 0.5,
+          duration: const Duration(milliseconds: 420),
+          curve: Curves.easeOutCubic,
+        ),
+      );
+    });
+  }
+
+  void _startGrowthHighlightAnimation() {
+    _growthHighlightTimer?.cancel();
+    _growthHighlight.value = true;
+    var toggleCount = 0;
+    _growthHighlightTimer = Timer.periodic(const Duration(milliseconds: 500), (
+      timer,
+    ) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      toggleCount += 1;
+      _growthHighlight.value = !_growthHighlight.value;
+      if (toggleCount < 5) return;
+      timer.cancel();
+      _growthHighlightTimer = null;
+      _growthHighlight.value = false;
     });
   }
 
   void _changeCareStage(String stage) {
     setState(() {
-      _careStage = stage;
-      if (stage == 'pregnancy') _view = 'mom';
-      if (stage == 'pregnancy' && _runtime != null) {
-        _pregnancyDiaryFuture ??= _loadPregnancyDiary(_runtime!);
-        _pregnancyPlanFuture ??= _startPregnancyPlanLoad(_runtime!);
-      }
-      _activeDetail = null;
+      unawaited(
+        _controller.changeCareStage(
+          StatusCareStage.fromStorage(stage) ?? StatusCareStage.postpartum,
+        ),
+      );
       _persistInteractionState();
     });
+  }
+
+  void _handleSelectionChanged() {
+    _interactionState
+      ..view = _view
+      ..careStage = _careStage;
   }
 
   void _persistInteractionState() {
     _interactionState
       ..view = _view
       ..careStage = _careStage
-      ..growthRecordAdded = _growthRecordAdded
       ..milkTrendMode = _milkTrendMode
-      ..babyGrowthMetric = _babyGrowthMetric
-      ..activeDetail = _activeDetail;
+      ..babyGrowthMetric = _babyGrowthMetric;
   }
 
-  void _showDetail(String detail) {
-    setState(() {
-      _activeDetail = detail;
-      _persistInteractionState();
-    });
-  }
-
-  void _closeDetail() {
-    setState(() {
-      _activeDetail = null;
-      _persistInteractionState();
-    });
-  }
-
-  void _recordGrowth() {
-    setState(() {
-      _growthRecordAdded = true;
-      _persistInteractionState();
-    });
-  }
-
-  Future<_PregnancyDiaryLoadResult> _loadPregnancyDiary(
-    MomCozyApiRuntime runtime, {
-    int? changeRevision,
-  }) async {
-    final now = runtime.now();
-    final endDate = DateTime(now.year, now.month, now.day);
-    final startDate = endDate.subtract(const Duration(days: 6));
-    try {
-      final entries = await runtime.pregnancyDiaryRepository.fetchEntries(
-        startDate: startDate,
-        endDate: endDate,
-        limit: 7,
+  @override
+  void dispose() {
+    _appLifecycleListener.dispose();
+    _growthHighlightTimer?.cancel();
+    _pregnancyDiaryNoticeTimer?.cancel();
+    _birthJourneyNoticeTimer?.cancel();
+    _growthHighlight.dispose();
+    _pregnancyDiaryNotice.dispose();
+    _birthJourneyNotice.dispose();
+    if (_runtime != null) {
+      _pregnancyDiaryChangeStore?.removeListener(
+        _handlePregnancyDiaryChangeStore,
       );
-      final changeStore = runtime.pregnancyDiaryChangeStore;
-      if (changeRevision != null &&
-          changeStore.revision == changeRevision &&
-          changeStore.hasUnread) {
-        changeStore.transferNavigationNoticeToCard();
-      }
-      return _PregnancyDiaryLoadResult(entries: entries, failed: false);
-    } catch (_) {
-      final changeStore = runtime.pregnancyDiaryChangeStore;
-      if (changeRevision != null &&
-          changeStore.revision == changeRevision &&
-          changeStore.highlightCard) {
-        changeStore.restoreNavigationNotice();
-      }
-      return const _PregnancyDiaryLoadResult(entries: [], failed: true);
-    }
-  }
-
-  Future<_PregnancyPlanLoadResult> _startPregnancyPlanLoad(
-    MomCozyApiRuntime runtime, {
-    int? changeRevision,
-  }) {
-    _pregnancyPlanNoticeTimer?.cancel();
-    _scheduledPregnancyPlanRenderGeneration = null;
-    _renderedPregnancyPlanRequestGeneration = null;
-    final requestGeneration = ++_pregnancyPlanRequestGeneration;
-    return _loadPregnancyPlan(
-      runtime,
-      requestGeneration: requestGeneration,
-      changeRevision: changeRevision,
-    );
-  }
-
-  Future<_PregnancyPlanLoadResult> _loadPregnancyPlan(
-    MomCozyApiRuntime runtime, {
-    required int requestGeneration,
-    required int? changeRevision,
-  }) async {
-    final changeStore = runtime.pregnancyPlanChangeStore;
-    try {
-      final plan = await runtime.pregnancyPlanRepository.fetchActivePlan();
-      final isCurrentChange =
-          _isCurrentPregnancyPlanRequest(runtime, requestGeneration) &&
-          changeRevision != null &&
-          changeStore.revision == changeRevision;
-      if (plan != null &&
-          (!plan.hasRenderableCard ||
-              _persistedPregnancyPlanCard(plan) == null)) {
-        if (isCurrentChange && changeStore.highlightCard) {
-          changeStore.restoreNavigationNotice();
-        }
-        return _PregnancyPlanLoadResult(
-          plan: plan,
-          failed: true,
-          requestGeneration: requestGeneration,
-          changeRevision: changeRevision,
-        );
-      }
-      if (plan == null && isCurrentChange) {
-        if (changeStore.highlightCard) {
-          changeStore.restoreNavigationNotice();
-        }
-        return _PregnancyPlanLoadResult(
-          plan: null,
-          failed: true,
-          requestGeneration: requestGeneration,
-          changeRevision: changeRevision,
-        );
-      }
-      return _PregnancyPlanLoadResult(
-        plan: plan,
-        failed: false,
-        requestGeneration: requestGeneration,
-        changeRevision: changeRevision,
+      _pregnancyPlanChangeStore?.removeListener(
+        _handlePregnancyPlanChangeStore,
       );
-    } catch (_) {
-      if (_isCurrentPregnancyPlanRequest(runtime, requestGeneration) &&
-          changeRevision != null &&
-          changeStore.revision == changeRevision &&
-          changeStore.highlightCard) {
-        changeStore.restoreNavigationNotice();
-      }
-      return _PregnancyPlanLoadResult(
-        plan: null,
-        failed: true,
-        requestGeneration: requestGeneration,
-        changeRevision: changeRevision,
-      );
+      _controller.careStage.removeListener(_handleSelectionChanged);
+      _controller.identity.removeListener(_handleSelectionChanged);
+      _controller.dispose();
     }
-  }
-
-  bool _isCurrentPregnancyPlanRequest(
-    MomCozyApiRuntime runtime,
-    int requestGeneration,
-  ) {
-    return mounted &&
-        identical(runtime, _runtime) &&
-        requestGeneration == _pregnancyPlanRequestGeneration;
-  }
-
-  void _schedulePregnancyPlanRendered(_PregnancyPlanLoadResult result) {
-    final generation = result.requestGeneration;
-    if (result.failed ||
-        result.plan == null ||
-        _scheduledPregnancyPlanRenderGeneration == generation ||
-        _renderedPregnancyPlanRequestGeneration == generation) {
-      return;
-    }
-    _scheduledPregnancyPlanRenderGeneration = generation;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scheduledPregnancyPlanRenderGeneration == generation) {
-        _scheduledPregnancyPlanRenderGeneration = null;
-      }
-      final runtime = _runtime;
-      if (runtime == null ||
-          !_isCurrentPregnancyPlanRequest(runtime, generation) ||
-          _view != 'mom' ||
-          _careStage != 'pregnancy') {
-        return;
-      }
-      _renderedPregnancyPlanRequestGeneration = generation;
-      final revision = result.changeRevision;
-      if (revision == null) return;
-      final store = runtime.pregnancyPlanChangeStore;
-      if (store.revision != revision) return;
-      if (store.hasUnread) store.transferNavigationNoticeToCard();
-      if (store.highlightCard) {
-        _schedulePregnancyPlanNoticeClear(
-          store: store,
-          revision: revision,
-          requestGeneration: generation,
-        );
-      }
-    });
-  }
-
-  void _retryPregnancyPlan() {
-    final runtime = _runtime;
-    final changeStore = _pregnancyPlanChangeStore;
-    if (runtime == null || changeStore == null) return;
-    final hasNotice = changeStore.hasUnread || changeStore.highlightCard;
-    setState(() {
-      _pregnancyPlanFuture = _startPregnancyPlanLoad(
-        runtime,
-        changeRevision: hasNotice ? changeStore.revision : null,
-      );
-    });
-  }
-
-  void _schedulePregnancyPlanNoticeClear({
-    required PregnancyPlanChangeStore store,
-    required int revision,
-    required int requestGeneration,
-  }) {
-    _pregnancyPlanNoticeTimer?.cancel();
-    _pregnancyPlanNoticeTimer = Timer(const Duration(seconds: 3), () {
-      if (!mounted ||
-          !identical(store, _pregnancyPlanChangeStore) ||
-          requestGeneration != _pregnancyPlanRequestGeneration ||
-          store.revision != revision ||
-          !store.highlightCard) {
-        return;
-      }
-      store.clearCardNotice();
-    });
-  }
-
-  Future<void> _showGrowthEditor() async {
-    final saved = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('status-growth-editor-dialog'),
-          title: const Text('修改成长指标'),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                key: ValueKey('status-growth-weight-input'),
-                decoration: InputDecoration(labelText: '体重'),
-              ),
-              TextField(
-                key: ValueKey('status-growth-height-input'),
-                decoration: InputDecoration(labelText: '身高'),
-              ),
-              TextField(
-                key: ValueKey('status-growth-head-input'),
-                decoration: InputDecoration(labelText: '头围'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              key: const ValueKey('status-growth-save-button'),
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('保存指标'),
-            ),
-          ],
-        );
-      },
-    );
-    if (saved == true) _recordGrowth();
-  }
-
-  Future<void> _showPregnancyDiaryEditor() async {
-    final runtime = _runtime;
-    if (runtime == null) return;
-    var loadResult = await (_pregnancyDiaryFuture ??= _loadPregnancyDiary(
-      runtime,
-    ));
-    if (loadResult.failed) {
-      loadResult = await (_pregnancyDiaryFuture = _loadPregnancyDiary(runtime));
-      if (loadResult.failed && mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('日记加载失败，请稍后重试')));
-      }
-    }
-    if (loadResult.failed || !mounted) {
-      return;
-    }
-    final entries = loadResult.entries;
-    final now = runtime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final existing = _entryForDate(entries, today);
-    var draft = existing?.content ?? '';
-    final content = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          key: const ValueKey('status-pregnancy-diary-editor-dialog'),
-          title: const Text('记录今天的孕期日记'),
-          content: TextFormField(
-            key: const ValueKey('status-pregnancy-diary-note-input'),
-            initialValue: draft,
-            onChanged: (value) => draft = value,
-            autofocus: true,
-            minLines: 3,
-            maxLines: 5,
-            decoration: const InputDecoration(
-              labelText: '今日记录',
-              hintText: '写下心情、身体感受、胎动或想问医生的问题',
-            ),
-          ),
-          actions: [
-            TextButton(
-              key: const ValueKey('status-pregnancy-diary-cancel-button'),
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              key: const ValueKey('status-pregnancy-diary-save-button'),
-              onPressed: () => Navigator.of(context).pop(draft.trim()),
-              child: const Text('保存日记'),
-            ),
-          ],
-        );
-      },
-    );
-    if (content == null || content.isEmpty || !mounted) return;
-    try {
-      final PregnancyDiaryEntry savedEntry;
-      if (existing == null) {
-        savedEntry = await runtime.pregnancyDiaryRepository.createEntry(
-          entryDate: today,
-          content: content,
-        );
-      } else {
-        savedEntry = await runtime.pregnancyDiaryRepository.updateEntry(
-          entryDate: today,
-          content: content,
-        );
-      }
-      if (!mounted) return;
-      final refreshedEntries = [
-        savedEntry,
-        ...entries.where((entry) => !_sameDate(entry.entryDate, today)),
-      ];
-      setState(() {
-        _pregnancyDiaryFuture = Future.value(
-          _PregnancyDiaryLoadResult(
-            entries: refreshedEntries.take(7).toList(growable: false),
-            failed: false,
-          ),
-        );
-        _activeDetail = 'pregnancy-diary';
-        _persistInteractionState();
-      });
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('日记保存失败，请稍后重试')));
-    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isMom = _view == 'mom';
-
-    return FutureBuilder<StatusOverview>(
-      future: _overviewFuture,
-      builder: (context, snapshot) {
+    return AnimatedBuilder(
+      animation: _dashboardListenable,
+      builder: (context, _) {
+        final isMom = _view == 'mom';
         final isPregnancy = _careStage == 'pregnancy';
-        const momSubtitle = '妈妈档案待绑定';
-        const babySubtitle = '宝宝档案待绑定';
+        final overviewResource = _controller.overview.value;
+        final overview = overviewResource.data ?? const StatusOverview();
+        final subtitles = _statusIdentitySubtitles(
+          overviewResource: overviewResource,
+          diaryEntries: _controller.pregnancyDiaryEntries.value.data,
+          isPregnancy: isPregnancy,
+        );
 
-        return ListView(
-          key: ValueKey('route-page-${widget.path}'),
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-          children: [
-            RepaintBoundary(
-              key: const ValueKey('status-profile-selector'),
-              child: Column(
-                children: [
-                  Transform.translate(
-                    offset: const Offset(1, 11),
-                    child: _CareStageSelector(
-                      selectedStage: _careStage,
-                      accent: widget.accent,
-                      onChanged: _changeCareStage,
+        return RefreshIndicator(
+          key: const ValueKey('status-refresh-indicator'),
+          color: MomCozyColors.primary,
+          onRefresh: _controller.refresh,
+          child: CustomScrollView(
+            key: ValueKey('route-page-${widget.path}'),
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StatusPinnedHeaderDelegate(
+                  child: RepaintBoundary(
+                    key: const ValueKey('status-profile-selector'),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                      child: Column(
+                        children: [
+                          _CareStageSelector(
+                            selectedStage: _careStage,
+                            accent: widget.accent,
+                            onChanged: _changeCareStage,
+                          ),
+                          const SizedBox(height: 8),
+                          Expanded(
+                            child: _StatusIdentityTabs(
+                              selected: _view,
+                              momSubtitle: subtitles.mom,
+                              babySubtitle: subtitles.baby,
+                              babyDisabled: isPregnancy,
+                              onChanged: (next) {
+                                if (!_controller.selectIdentity(
+                                  StatusIdentity.fromValue(next),
+                                )) {
+                                  return;
+                                }
+                                setState(() {
+                                  _persistInteractionState();
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 18),
-                  Transform.translate(
-                    offset: const Offset(0, 5),
-                    child: _StatusIdentityTabs(
-                      selected: _view,
-                      momSubtitle: momSubtitle,
-                      babySubtitle: babySubtitle,
-                      babyDisabled: isPregnancy,
-                      onChanged: (next) {
-                        if (next == 'baby' && isPregnancy) return;
-                        setState(() {
-                          _view = next;
-                          _activeDetail = null;
-                          _persistInteractionState();
-                        });
-                      },
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-            ..._statusOverviewChildren(snapshot, isMom),
-          ],
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate(
+                    _statusOverviewChildren(overview, isMom),
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
   }
 
-  List<Widget> _statusOverviewChildren(
-    AsyncSnapshot<StatusOverview> snapshot,
-    bool isMom,
-  ) {
-    final overview = snapshot.data ?? const StatusOverview();
+  List<Widget> _statusOverviewChildren(StatusOverview overview, bool isMom) {
     final content = isMom
         ? _momStatusChildren(overview)
         : _babyStatusChildren(overview);
@@ -1163,379 +1087,299 @@ class _StatusPageState extends State<_StatusPage> {
 
   List<Widget> _momStatusChildren(StatusOverview overview) {
     final isPregnancy = _careStage == 'pregnancy';
-    final mom = overview.mom;
-    final stage = isPregnancy ? '孕期' : _textOr(mom?.stage, '哺乳期');
-    final stageNote = isPregnancy
-        ? '孕期重点：体征与日记'
-        : (mom?.postpartumDay == null
-              ? '产后恢复期'
-              : '产后第 ${mom!.postpartumDay} 天');
 
     if (isPregnancy) {
       return [
-        FutureBuilder<_PregnancyDiaryLoadResult>(
-          future: _pregnancyDiaryFuture ??= _loadPregnancyDiary(_runtime!),
-          builder: (context, diarySnapshot) {
-            final entries =
-                diarySnapshot.data?.entries ?? const <PregnancyDiaryEntry>[];
-            return Column(children: _pregnancyStatusChildren(entries));
-          },
+        Container(
+          key: _pregnancyDiaryAnchorKey,
+          child: _StatusNoticeHighlight(
+            surfaceKey: const ValueKey('status-pregnancy-diary-notice'),
+            active: _pregnancyDiaryNotice,
+            child: PregnancyDiaryDashboard(
+              key: const ValueKey('status-pregnancy-diary-dashboard'),
+              entries: _controller.pregnancyDiaryEntries,
+              mutation: _controller.diaryMutation,
+              now: _controller.now,
+              onSave: (entryDate, draft) =>
+                  _controller.saveDiary(entryDate: entryDate, draft: draft),
+              onAgentPrompt: (prompt) {
+                context.go('/', extra: {'agentPrefill': prompt});
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          key: _birthJourneyAnchorKey,
+          child: _StatusNoticeHighlight(
+            surfaceKey: const ValueKey('status-birth-journey-notice'),
+            active: _birthJourneyNotice,
+            child: BirthJourneyPlanDashboard(
+              key: const ValueKey('status-birth-journey-dashboard'),
+              plan: _controller.birthJourneyPlan,
+              mutation: _controller.planMutation,
+              onDeletePlan: _controller.deleteBirthJourneyPlan,
+              onAgentPrompt: (prompt, {autoSend = false}) {
+                context.go(
+                  '/',
+                  extra: {
+                    'agentPrefill': prompt,
+                    if (autoSend) 'agentAutoSend': true,
+                  },
+                );
+              },
+            ),
+          ),
         ),
       ];
     }
 
     return [
-      Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Transform.translate(
-          offset: const Offset(3, -1),
-          child: _StatusModuleGrid(
-            key: const ValueKey('status-postpartum-mom-module-grid'),
-            children: [
-              Transform.translate(
-                offset: const Offset(0, 4),
-                child: _StatusModuleCard(
-                  key: const ValueKey('status-module-milk-output'),
-                  title: '母乳产出',
-                  icon: Icons.water_drop_outlined,
-                  accent: MomCozyColors.primary,
-                  background: const Color(0xfffff7fb),
-                  hiddenTexts: [stage, stageNote],
-                  metrics: [
-                    _StatusModuleMetric(
-                      label: '今日产出',
-                      value: '待记录',
-                      showHelp: true,
-                      helpKey: ValueKey('status-milk-output-info-button'),
-                      onHelpTap: () => _showDetail('milk-info'),
-                    ),
-                    const _StatusModuleMetric(label: '今日吸奶', value: '待同步'),
-                  ],
-                ),
-              ),
-              Transform.translate(
-                offset: const Offset(0, 4),
-                child: _StatusModuleCard(
-                  key: ValueKey('status-module-breast-health'),
-                  title: '乳房健康',
-                  showHelp: true,
-                  helpKey: ValueKey('status-breast-health-info-button'),
-                  onHelpTap: () => _showDetail('breast-info'),
-                  bodyText: '最近出现涨奶和硬块，伴随按压疼痛',
-                  action: '查看《乳房健康日记》',
-                  icon: Icons.favorite_border_rounded,
-                  accent: const Color(0xffb96f55),
-                  background: const Color(0xfffff8f1),
-                  onAction: () => _showDetail('breast-health'),
-                ),
-              ),
-              Transform.translate(
-                offset: const Offset(0, 1),
-                child: _StatusModuleCard(
-                  key: ValueKey('status-module-postpartum-recovery'),
-                  title: '产后恢复',
-                  bodyText: '正在执行盆底肌康复训练',
-                  action: '查看计划',
-                  icon: Icons.self_improvement_rounded,
-                  accent: const Color(0xff388b72),
-                  background: const Color(0xfff2fffb),
-                  onAction: () => _showDetail('postpartum-recovery'),
-                ),
-              ),
-              _StatusModuleCard(
-                key: const ValueKey('status-module-rest-nutrition'),
-                title: '补能与休息',
-                showHelp: true,
-                helpKey: const ValueKey('status-rest-info-button'),
-                onHelpTap: () => _showDetail('rest-info'),
-                bodyText: '待开通睡眠与营养功能',
-                icon: Icons.local_cafe_outlined,
-                accent: const Color(0xffb9792a),
-                background: const Color(0xfffffaf0),
-              ),
-            ],
-          ),
-        ),
-      ),
-      const SizedBox(height: 8),
-      if (_activeDetail == 'milk-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-milk-info'),
-          title: '今日产出说明',
-          subtitle: '母乳产出统计',
-          rows: const [
-            ('今日产出', '待记录', '会汇总吸乳记录与亲喂估算。'),
-            ('今日吸奶', '待同步', '同步后展示次数、时长和左右侧数据。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'breast-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-breast-info'),
-          title: '乳房健康说明',
-          subtitle: '涨奶、硬块和疼痛追踪',
-          rows: const [
-            ('记录内容', '不适位置和疼痛等级', '帮助后续分析风险与护理建议。'),
-            ('异常提醒', '持续疼痛需咨询专业人士', '必要时联系 IBCLC 或医生。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'breast-health') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-breast-health'),
-          title: '乳房健康日记',
-          subtitle: '最近 3 天记录',
-          rows: const [
-            ('三天前 晚间', '轻微涨奶', '右侧乳房有胀感，吸奶后明显缓解。'),
-            ('昨天 上午', '发现硬块', '左侧外上区域摸到硬块，按压时有疼痛感。'),
-            ('今天', '涨奶硬块', '最近出现涨奶和硬块，伴随按压疼痛。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'postpartum-recovery') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-postpartum-recovery'),
-          title: '盆底肌康复训练',
-          subtitle: '产后恢复计划',
-          rows: const [
-            ('第 1-2 天', '已完成', '盆底肌唤醒练习'),
-            ('第 3-5 天', '进行中', '骨盆稳定训练'),
-            ('第 6-7 天', '待开始', '腰背与肩颈放松'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ] else if (_activeDetail == 'rest-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-rest-info'),
-          title: '补能与休息说明',
-          subtitle: '睡眠与营养能力建设中',
-          rows: const [
-            ('睡眠', '待开通', '后续会汇总夜间睡眠和白天休息。'),
-            ('营养', '待开通', '后续会记录补水、热量和重点营养。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ],
-      _StatusTrendPreview(
-        key: const ValueKey('status-milk-trend-preview'),
-        selectedMode: _milkTrendMode,
-        onModeChanged: (mode) {
+      PostpartumMomDashboard(
+        key: const ValueKey('status-postpartum-mom-dashboard'),
+        milkTrends: _controller.milkTrends,
+        volumeUnit: _controller.volumeUnit,
+        now: _controller.now,
+        windowDays: _milkTrendMode == '月' ? 30 : 7,
+        onWindowDaysChanged: (days) {
           setState(() {
-            _milkTrendMode = mode;
+            _milkTrendMode = days == 30 ? '月' : '周';
             _persistInteractionState();
           });
         },
-      ),
-    ];
-  }
-
-  List<Widget> _pregnancyStatusChildren(List<PregnancyDiaryEntry> entries) {
-    final runtime = _runtime;
-    final now = runtime?.now() ?? DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final todayEntry = _entryForDate(entries, today);
-    return [
-      _StatusPregnancyDiaryPreview(
-        entries: entries,
-        todayEntry: todayEntry,
-        highlighted: _pregnancyDiaryChangeStore?.highlightCard ?? false,
-        onViewDiary: () {
-          _pregnancyDiaryChangeStore?.clearCardNotice();
-          _showDetail('pregnancy-diary');
-        },
-        onRecordToday: () => unawaited(_showPregnancyDiaryEditor()),
-      ),
-      const SizedBox(height: 18),
-      FutureBuilder<_PregnancyPlanLoadResult>(
-        future: _pregnancyPlanFuture ??= _startPregnancyPlanLoad(_runtime!),
-        builder: (context, snapshot) {
-          final result = snapshot.data;
-          if (snapshot.connectionState == ConnectionState.done &&
-              result != null) {
-            _schedulePregnancyPlanRendered(result);
-          }
-          return _StatusPregnancyPlanPreview(
-            snapshot: snapshot,
-            highlighted: _pregnancyPlanChangeStore?.highlightCard ?? false,
-            onRetry: _retryPregnancyPlan,
-          );
+        onAgentPrompt: (prompt) {
+          context.go('/', extra: {'agentPrefill': prompt});
         },
       ),
-      const SizedBox(height: 8),
-      if (_activeDetail == 'pregnancy-diary') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-pregnancy-diary'),
-          title: '孕期日记',
-          subtitle: todayEntry == null ? '最近 7 天记录' : '今天的记录已保存',
-          rows: _pregnancyDiaryRows(entries, today: today),
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 8),
-      ],
     ];
   }
 
   List<Widget> _babyStatusChildren(StatusOverview overview) {
-    final baby = overview.baby;
-    final ageLabel = baby?.ageDays == null ? '待同步' : '${baby!.ageDays} 天';
-
     return [
       _StatusModuleGrid(
         children: [
-          _StatusModuleCard(
-            title: '奶量摄入',
-            icon: Icons.restaurant_outlined,
-            accent: const Color(0xff4f84a6),
-            background: const Color(0xfff4fbff),
-            metrics: [
-              _StatusModuleMetric(label: '今日摄入', value: '待同步'),
-              _StatusModuleMetric(
-                label: '今日喂奶',
-                value: '待同步',
-                helpKey: const ValueKey('status-baby-feed-info-button'),
-                onHelpTap: () => _showDetail('baby-feed-info'),
-              ),
-            ],
+          BabyFeedingCard(
+            records: _controller.feedingRecords,
+            volumeUnit: _controller.volumeUnit,
+            onInfoTap: () => unawaited(showBabyFeedingInfoDialog(context)),
           ),
-          _StatusModuleCard(
-            title: '成长发育',
-            icon: Icons.straighten_outlined,
-            accent: const Color(0xff388b72),
-            background: const Color(0xfff2fffb),
-            hiddenTexts: [_textOr(baby?.nickname, '未设置'), ageLabel],
-            metrics: const [
-              _StatusModuleMetric(label: '体重', value: '待记录'),
-              _StatusModuleMetric(label: '身高', value: '待记录'),
-              _StatusModuleMetric(label: '头围', value: '待记录'),
-            ],
-            actions: [
-              _StatusModuleAction(
-                key: const ValueKey('status-growth-record-action'),
-                label: _growthRecordAdded ? '已添加' : '修改指标',
-                onTap: _showGrowthEditor,
-              ),
-              _StatusModuleAction(
-                key: const ValueKey('status-growth-milestone-action'),
-                label: '成长milestone',
-                onTap: () => _showDetail('growth-milestone'),
-              ),
-            ],
+          BabyGrowthSummaryCard(
+            records: _controller.growthRecords,
+            mutation: _controller.growthMutation,
+            onSave: ({required weightKg, required heightCm, required headCm}) =>
+                _controller.saveGrowth(
+                  weightKg: weightKg,
+                  heightCm: heightCm,
+                  headCm: headCm,
+                ),
+            onMilestoneTap: () => unawaited(
+              showBabyStatusPanel(context, panel: BabyStatusPanel.milestone),
+            ),
           ),
-          _StatusModuleCard(
-            title: '宝宝健康',
-            bodyText: '筛查、消化、皮肤和情绪跟踪',
-            icon: Icons.health_and_safety_outlined,
-            accent: const Color(0xff7d64aa),
-            background: const Color(0xfffbf7ff),
-            action: '查看筛查',
-            onAction: () => _showDetail('baby-health'),
+          BabyHealthCard(
+            onOpen: () => unawaited(
+              showBabyStatusPanel(context, panel: BabyStatusPanel.health),
+            ),
           ),
-          _StatusModuleCard(
-            title: '宝宝睡眠',
-            bodyText: '总睡眠、最长睡眠、活动和哭闹',
-            icon: Icons.nightlight_outlined,
-            accent: const Color(0xffff9677),
-            background: const Color(0xfffff8f1),
-            action: '查看报告',
-            onAction: () => _showDetail('baby-sleep'),
+          BabySleepCard(
+            onOpen: () => unawaited(
+              showBabyStatusPanel(context, panel: BabyStatusPanel.sleep),
+            ),
           ),
         ],
       ),
       const SizedBox(height: 12),
-      if (_activeDetail == 'baby-feed-info') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-baby-feed-info'),
-          title: '奶量摄入说明',
-          subtitle: '亲喂、瓶喂与辅食记录',
-          rows: const [
-            ('今日摄入', '待同步', '会汇总瓶喂奶量、亲喂估算和辅食。'),
-            ('今日喂奶', '待同步', '同步后展示次数和时间分布。'),
-          ],
-          onClose: _closeDetail,
+      Container(
+        key: _growthCurveAnchorKey,
+        child: _StatusIntentHighlight(
+          surfaceKey: const ValueKey('status-baby-growth-highlight'),
+          active: _growthHighlight,
+          child: BabyGrowthChart(
+            key: const ValueKey('status-baby-growth-curve-preview'),
+            records: _controller.growthRecords,
+            birthDate: overview.baby?.birthDate,
+            selectedMetric: _babyGrowthMetric,
+            onMetricChanged: (metric) {
+              setState(() {
+                _babyGrowthMetric = metric;
+                _persistInteractionState();
+              });
+            },
+          ),
         ),
-        const SizedBox(height: 12),
-      ] else if (_activeDetail == 'growth-milestone') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-growth-milestone'),
-          title: '成长 milestone',
-          subtitle: '最近成长事件',
-          rows: const [
-            ('2026.05.28', '说出完整主谓短句', '语言组织能力继续发展。'),
-            ('2026.05.12', '独立上下低矮台阶', '动作计划能力更成熟。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ] else if (_activeDetail == 'baby-health') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-baby-health'),
-          title: '宝宝健康',
-          subtitle: '健康筛查入口',
-          rows: const [
-            ('筛查', '自闭症风险筛查', '待接入后台结果。'),
-            ('消化', '消化系统风险筛查', '待接入后台结果。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ] else if (_activeDetail == 'baby-sleep') ...[
-        _StatusDetailPanel(
-          key: const ValueKey('status-detail-baby-sleep'),
-          title: '宝宝睡眠',
-          subtitle: '睡眠报告入口',
-          rows: const [
-            ('今日睡眠', '4h 57min', '夜间睡眠和白天小睡汇总。'),
-            ('报告', '待同步', '同步后展示趋势和建议。'),
-          ],
-          onClose: _closeDetail,
-        ),
-        const SizedBox(height: 12),
-      ],
-      _StatusBabyGrowthCurvePreview(
-        key: const ValueKey('status-baby-growth-curve-preview'),
-        selectedMetric: _babyGrowthMetric,
-        onMetricChanged: (metric) {
-          setState(() {
-            _babyGrowthMetric = metric;
-            _persistInteractionState();
-          });
-        },
       ),
     ];
   }
 }
 
-class _StatusModuleMetric {
-  const _StatusModuleMetric({
-    required this.label,
-    required this.value,
-    this.showHelp = false,
-    this.helpKey,
-    this.onHelpTap,
+class _StatusIntentHighlight extends StatelessWidget {
+  const _StatusIntentHighlight({
+    required this.surfaceKey,
+    required this.active,
+    required this.child,
   });
 
-  final String label;
-  final String value;
-  final bool showHelp;
-  final Key? helpKey;
-  final VoidCallback? onHelpTap;
+  final Key surfaceKey;
+  final ValueListenable<bool> active;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: active,
+      child: child,
+      builder: (context, isActive, child) {
+        if (!isActive) {
+          return KeyedSubtree(key: surfaceKey, child: child!);
+        }
+        return AnimatedContainer(
+          key: surfaceKey,
+          duration: const Duration(milliseconds: 180),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isActive
+                  ? const Color(0xff6ee7b7).withValues(alpha: 0.8)
+                  : Colors.transparent,
+              width: 2,
+            ),
+            boxShadow: isActive
+                ? const [
+                    BoxShadow(
+                      color: Color(0x386ee7b7),
+                      blurRadius: 0,
+                      spreadRadius: 4,
+                    ),
+                  ]
+                : const [],
+          ),
+          child: child,
+        );
+      },
+    );
+  }
 }
 
-class _StatusModuleAction {
-  const _StatusModuleAction({required this.label, this.key, this.onTap});
+class _StatusNoticeHighlight extends StatefulWidget {
+  const _StatusNoticeHighlight({
+    required this.surfaceKey,
+    required this.active,
+    required this.child,
+  });
 
-  final Key? key;
-  final String label;
-  final VoidCallback? onTap;
+  final Key surfaceKey;
+  final ValueListenable<bool> active;
+  final Widget child;
+
+  @override
+  State<_StatusNoticeHighlight> createState() => _StatusNoticeHighlightState();
+}
+
+class _StatusNoticeHighlightState extends State<_StatusNoticeHighlight>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1850),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    widget.active.addListener(_syncAnimation);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncAnimation();
+  }
+
+  @override
+  void didUpdateWidget(covariant _StatusNoticeHighlight oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.active, widget.active)) {
+      oldWidget.active.removeListener(_syncAnimation);
+      widget.active.addListener(_syncAnimation);
+    }
+    _syncAnimation();
+  }
+
+  void _syncAnimation() {
+    if (!mounted) return;
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (widget.active.value && !disableAnimations) {
+      if (!_controller.isAnimating) _controller.repeat();
+      return;
+    }
+    _controller.stop();
+    _controller.value = 0;
+  }
+
+  @override
+  void dispose() {
+    widget.active.removeListener(_syncAnimation);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: widget.active,
+      child: widget.child,
+      builder: (context, isActive, child) {
+        if (!isActive) {
+          return KeyedSubtree(key: widget.surfaceKey, child: child!);
+        }
+        return AnimatedBuilder(
+          animation: _controller,
+          child: child,
+          builder: (context, child) {
+            final wave = isActive
+                ? (1 - math.cos(_controller.value * math.pi * 2)) / 2
+                : 0.0;
+            return Transform.translate(
+              offset: Offset(0, -2 * wave),
+              child: Transform.scale(
+                scale: 1 + 0.025 * wave,
+                child: AnimatedContainer(
+                  key: widget.surfaceKey,
+                  duration: const Duration(milliseconds: 140),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: isActive
+                          ? MomCozyColors.badge.withValues(alpha: 0.48)
+                          : Colors.transparent,
+                      width: 2,
+                    ),
+                    boxShadow: isActive
+                        ? [
+                            BoxShadow(
+                              color: MomCozyColors.badge.withValues(
+                                alpha: 0.3 * wave,
+                              ),
+                              blurRadius: 34,
+                              spreadRadius: -20,
+                              offset: const Offset(0, 18),
+                            ),
+                          ]
+                        : const [],
+                  ),
+                  child: child,
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
 class _StatusModuleGrid extends StatelessWidget {
-  const _StatusModuleGrid({super.key, required this.children});
+  const _StatusModuleGrid({required this.children});
 
   final List<Widget> children;
 
@@ -1564,1557 +1408,95 @@ class _StatusModuleGrid extends StatelessWidget {
   }
 }
 
-class _StatusModuleCard extends StatelessWidget {
-  const _StatusModuleCard({
-    super.key,
-    required this.title,
-    required this.icon,
-    required this.accent,
-    required this.background,
-    this.bodyText,
-    this.metrics = const [],
-    this.hiddenTexts = const [],
-    this.action,
-    this.onAction,
-    this.actions = const [],
-    this.showHelp = false,
-    this.helpKey,
-    this.onHelpTap,
-  });
-
-  final String title;
-  final String? bodyText;
-  final List<_StatusModuleMetric> metrics;
-  final List<String> hiddenTexts;
-  final String? action;
-  final VoidCallback? onAction;
-  final List<_StatusModuleAction> actions;
-  final bool showHelp;
-  final Key? helpKey;
-  final VoidCallback? onHelpTap;
-  final IconData icon;
-  final Color accent;
-  final Color background;
-
-  @override
-  Widget build(BuildContext context) {
-    final effectiveActions = actions.isNotEmpty
-        ? actions
-        : [
-            if (action != null)
-              _StatusModuleAction(label: action!, onTap: onAction),
-          ];
-    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-      color: const Color(0xff35212c),
-      fontSize: 14,
-      fontWeight: FontWeight.w700,
-      height: 1.05,
-    );
-    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: const Color(0xff7a6870),
-      fontSize: 10.5,
-      fontWeight: FontWeight.w500,
-      height: 1.24,
-    );
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.86)),
-        boxShadow: const [],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onAction,
-          child: Stack(
-            children: [
-              Positioned(
-                right: -24,
-                bottom: -32,
-                child: ImageFiltered(
-                  imageFilter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                  child: Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: accent.withValues(alpha: 0.12),
-                    ),
-                  ),
-                ),
-              ),
-              for (final hiddenText in hiddenTexts)
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Opacity(opacity: 0, child: Text(hiddenText)),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: titleStyle,
-                                ),
-                              ),
-                              if (showHelp || onHelpTap != null)
-                                _StatusHelpDot(key: helpKey, onTap: onHelpTap),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: accent.withValues(alpha: 0.16),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(icon, size: 16, color: accent),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: metrics.isNotEmpty ? 20 : 14),
-                    if (metrics.isNotEmpty)
-                      _StatusModuleMetricRows(metrics: metrics)
-                    else if (bodyText != null)
-                      Text(
-                        bodyText!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: helperStyle,
-                      ),
-                    if (effectiveActions.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Transform.translate(
-                        offset: const Offset(-10, 0),
-                        child: Wrap(
-                          spacing: 5,
-                          runSpacing: 4,
-                          children: [
-                            for (final action in effectiveActions)
-                              _StatusModuleActionPill(
-                                key: action.key,
-                                label: action.label,
-                                accent: accent,
-                                onTap: action.onTap,
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusModuleMetricRows extends StatelessWidget {
-  const _StatusModuleMetricRows({required this.metrics});
-
-  final List<_StatusModuleMetric> metrics;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        for (final metric in metrics)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          metric.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: const Color(0xff7a5b68),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ),
-                      if (metric.showHelp || metric.onHelpTap != null)
-                        _StatusHelpDot(
-                          key: metric.helpKey,
-                          size: 14,
-                          onTap: metric.onHelpTap,
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    metric.value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: const Color(0xff35212c),
-                      fontSize: metrics.length >= 3 ? 14 : 16,
-                      fontWeight: FontWeight.w700,
-                      height: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _StatusHelpDot extends StatelessWidget {
-  const _StatusHelpDot({super.key, this.size = 16, this.onTap});
-
-  final double size;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 5),
-      child: Semantics(
-        button: onTap != null,
-        label: '说明',
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: size,
-            height: size,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.72),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: MomCozyColors.mutedForeground.withValues(alpha: 0.46),
-              ),
-            ),
-            child: Text(
-              '?',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontSize: size <= 14 ? 8 : 10,
-                height: 1,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusModuleActionPill extends StatelessWidget {
-  const _StatusModuleActionPill({
-    super.key,
-    required this.label,
-    required this.accent,
-    this.onTap,
-  });
-
-  final String label;
-  final Color accent;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: onTap != null,
-      label: label,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.80),
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-          ),
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: accent,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-PregnancyDiaryEntry? _entryForDate(
-  List<PregnancyDiaryEntry> entries,
-  DateTime date,
-) {
-  for (final entry in entries) {
-    if (_sameDate(entry.entryDate, date)) {
-      return entry;
-    }
-  }
-  return null;
-}
-
-bool _sameDate(DateTime left, DateTime right) {
-  return left.year == right.year &&
-      left.month == right.month &&
-      left.day == right.day;
-}
-
-List<(String, String, String)> _pregnancyDiaryRows(
-  List<PregnancyDiaryEntry> entries, {
-  required DateTime today,
+({String mom, String baby}) _statusIdentitySubtitles({
+  required StatusResource<StatusOverview> overviewResource,
+  required List<PregnancyDiaryEntry>? diaryEntries,
+  required bool isPregnancy,
 }) {
-  if (entries.isEmpty) {
-    return const [
-      ('最近 7 天', '暂无记录', '记录几天后会展示睡眠、情绪、胎动和身体感受变化。'),
-      ('产检问题', '暂无', '可以先写下想问医生的问题。'),
-    ];
-  }
-  return entries
-      .map((entry) {
-        final isToday = _sameDate(entry.entryDate, today);
-        final dateLabel = isToday
-            ? '今天'
-            : '${entry.entryDate.month.toString().padLeft(2, '0')}-'
-                  '${entry.entryDate.day.toString().padLeft(2, '0')}';
-        final status = entry.mood.isNotEmpty
-            ? entry.mood
-            : (entry.gestationalWeek.isNotEmpty
-                  ? entry.gestationalWeek
-                  : '已记录');
-        final summary = entry.content.isNotEmpty
-            ? entry.content
-            : [
-                entry.sleepSummary,
-                entry.fetalMovement,
-                entry.appointmentNote,
-              ].where((value) => value.isNotEmpty).join('；');
-        return (dateLabel, status, summary.isEmpty ? '已保存一条孕期记录。' : summary);
-      })
-      .toList(growable: false);
-}
-
-bool _hasBodyRecord(PregnancyDiaryEntry entry) {
-  return entry.mood.isNotEmpty ||
-      entry.energyLevel.isNotEmpty ||
-      entry.sleepSummary.isNotEmpty ||
-      entry.fetalMovement.isNotEmpty ||
-      entry.symptomTags.isNotEmpty;
-}
-
-class _StatusPregnancyDiaryPreview extends StatelessWidget {
-  const _StatusPregnancyDiaryPreview({
-    required this.entries,
-    required this.todayEntry,
-    required this.highlighted,
-    required this.onViewDiary,
-    required this.onRecordToday,
-  });
-
-  final List<PregnancyDiaryEntry> entries;
-  final PregnancyDiaryEntry? todayEntry;
-  final bool highlighted;
-  final VoidCallback onViewDiary;
-  final VoidCallback onRecordToday;
-
-  @override
-  Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
-      color: MomCozyColors.foreground,
-      fontWeight: FontWeight.w900,
-    );
-    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: MomCozyColors.mutedForeground,
-      fontWeight: FontWeight.w800,
-      height: 1.35,
-    );
-
-    return DecoratedBox(
-      key: const ValueKey('status-pregnancy-diary-change-highlight'),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: highlighted
-              ? MomCozyColors.badge.withValues(alpha: 0.62)
-              : const Color(0xffeadfd8),
-          width: highlighted ? 2 : 1,
-        ),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-            child: Row(
-              children: [
-                Expanded(child: Text('孕期日记', style: titleStyle)),
-                _StatusOutlinedPill(
-                  key: const ValueKey('status-pregnancy-diary-view-button'),
-                  label: '查看日记',
-                  icon: null,
-                  accent: const Color(0xffa0603a),
-                  onTap: onViewDiary,
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xffeadfd8)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _StatusPregnancyStat(
-                    value: '${entries.length}',
-                    label: '近7天记录',
-                  ),
-                ),
-                const _StatusVerticalDivider(),
-                Expanded(
-                  child: _StatusPregnancyStat(
-                    value: '${entries.where(_hasBodyRecord).length}',
-                    label: '身体记录',
-                  ),
-                ),
-                const _StatusVerticalDivider(),
-                Expanded(
-                  child: _StatusPregnancyStat(
-                    value:
-                        '${entries.where((entry) => entry.appointmentNote.isNotEmpty).length}',
-                    label: '产检问题',
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xffeadfd8)),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundImage: AssetImage(MomCozyAssets.agentAvatar),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    '记录几天后，我可以帮你回顾睡眠、情绪、胎动和身体感受的变化。',
-                    style: helperStyle,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xffeadfd8)),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '今日日记',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const Spacer(),
-                    _StatusFilledPill(
-                      key: const ValueKey(
-                        'status-pregnancy-diary-record-button',
-                      ),
-                      label: '记录今天',
-                      icon: Icons.edit_outlined,
-                      color: const Color(0xffb06f45),
-                      onTap: onRecordToday,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.35),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: const Color(0xffead2c3),
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        todayEntry != null
-                            ? (todayEntry!.content.isNotEmpty
-                                  ? todayEntry!.content
-                                  : '今天的记录已保存。')
-                            : '今天还没有记录哦。可以先写下心情、身体感受、胎动或想问医生的问题。',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: MomCozyColors.foreground,
-                          fontWeight: FontWeight.w900,
-                          height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            radius: 15,
-                            backgroundImage: AssetImage(
-                              MomCozyAssets.agentAvatar,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              '你也可以在聊天中让我记录、查看或修改孕期日记。',
-                              style: helperStyle,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusPregnancyStat extends StatelessWidget {
-  const _StatusPregnancyStat({required this.value, required this.label});
-
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          value,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: const Color(0xff985f3b),
-            fontWeight: FontWeight.w900,
-            height: 1,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: MomCozyColors.mutedForeground,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatusVerticalDivider extends StatelessWidget {
-  const _StatusVerticalDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 44,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      color: const Color(0xffeadfd8),
-    );
-  }
-}
-
-class _StatusPregnancyPlanPreview extends StatelessWidget {
-  const _StatusPregnancyPlanPreview({
-    required this.snapshot,
-    required this.highlighted,
-    required this.onRetry,
-  });
-
-  final AsyncSnapshot<_PregnancyPlanLoadResult> snapshot;
-  final bool highlighted;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    if (snapshot.connectionState == ConnectionState.waiting ||
-        (!snapshot.hasData && !snapshot.hasError)) {
-      return _surface(
-        key: const ValueKey('status-pregnancy-plan-loading'),
-        context: context,
-        child: const Row(
-          children: [
-            SizedBox.square(
-              dimension: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-            SizedBox(width: 12),
-            Expanded(child: Text('正在加载孕期计划…')),
-          ],
-        ),
-      );
-    }
-
-    final result = snapshot.data;
-    if (snapshot.hasError || result?.failed == true) {
-      return _surface(
-        key: const ValueKey('status-pregnancy-plan-error'),
-        context: context,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('孕期计划', style: _titleStyle(context)),
-            const SizedBox(height: 8),
-            const Text('计划内容暂不可用，请稍后重试。'),
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              key: const ValueKey('status-pregnancy-plan-retry-button'),
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('重新加载'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final plan = result?.plan;
-    if (plan == null) {
-      return _surface(
-        key: const ValueKey('status-pregnancy-plan-empty'),
-        context: context,
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('孕期计划', style: _titleStyle(context)),
-                  const SizedBox(height: 5),
-                  Text(
-                    '还没有计划，可以让 Momcozy Agent 按你的情况生成。',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: MomCozyColors.mutedForeground,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            _StatusFilledPill(
-              key: const ValueKey('status-pregnancy-plan-agent-button'),
-              label: '制定孕期计划',
-              icon: null,
-              color: const Color(0xff5f978b),
-              avatar: true,
-              onTap: () =>
-                  context.go('/', extra: const {'agentPrefill': '帮我生成孕期计划'}),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final card = _persistedPregnancyPlanCard(plan);
-    if (card == null) {
-      return _surface(
-        key: const ValueKey('status-pregnancy-plan-error'),
-        context: context,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('孕期计划', style: _titleStyle(context)),
-            const SizedBox(height: 8),
-            const Text('计划内容暂不可用，请稍后重试。'),
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              key: const ValueKey('status-pregnancy-plan-retry-button'),
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('重新加载'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final surface = _surface(
-      key: const ValueKey('status-pregnancy-plan-card'),
-      context: context,
-      child: AgentArtifactPanel(cards: [card]),
-    );
-    return AnimatedContainer(
-      key: const ValueKey('status-pregnancy-plan-card-wrapper'),
-      duration: const Duration(milliseconds: 180),
-      padding: highlighted ? const EdgeInsets.all(2) : EdgeInsets.zero,
-      decoration: BoxDecoration(
-        color: highlighted
-            ? MomCozyColors.badge.withValues(alpha: 0.06)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: highlighted
-              ? MomCozyColors.badge.withValues(alpha: 0.62)
-              : Colors.transparent,
-          width: 2,
-        ),
-      ),
-      child: Stack(
-        children: [
-          if (highlighted)
-            const Positioned.fill(
-              key: ValueKey('status-pregnancy-plan-change-highlight'),
-              child: IgnorePointer(child: SizedBox.expand()),
-            ),
-          surface,
-        ],
-      ),
-    );
+  if (overviewResource.phase == StatusResourcePhase.initial ||
+      overviewResource.phase == StatusResourcePhase.loading) {
+    return (mom: '正在加载妈妈信息…', baby: '正在加载宝宝信息…');
   }
 
-  Widget _surface({
-    required Key key,
-    required BuildContext context,
-    required Widget child,
-  }) {
-    return Container(
-      key: key,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xfffbfefd),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xffcae6e0)),
-      ),
-      child: child,
-    );
-  }
-
-  TextStyle? _titleStyle(BuildContext context) => Theme.of(context)
-      .textTheme
-      .titleLarge
-      ?.copyWith(color: MomCozyColors.foreground, fontWeight: FontWeight.w900);
-}
-
-AgentArtifactCardView? _persistedPregnancyPlanCard(PregnancyPlan plan) {
-  final card = plan.card;
-  final mapped = AgentArtifactMapper.cardFromEvent(
-    AgentStreamEvent({
-      'event_id': 'persisted-pregnancy-plan:${plan.id}',
-      'type': 'artifact.created',
-      'artifact_id': plan.id,
-      'payload': {'artifact_type': 'birth_journey_plan_card', 'card': card},
-    }),
-  );
-  return mapped?.presentationKind ==
-          AgentArtifactPresentationKind.birthJourneyPlanCard
-      ? mapped
-      : null;
-}
-
-class _StatusBabyGrowthCurvePreview extends StatelessWidget {
-  const _StatusBabyGrowthCurvePreview({
-    super.key,
-    required this.selectedMetric,
-    required this.onMetricChanged,
-  });
-
-  final String selectedMetric;
-  final ValueChanged<String> onMetricChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 246,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xfffbf7ff),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xffe6d9fb)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: const Color(0xffe5d9ff),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Icon(
-                  Icons.child_care_rounded,
-                  size: 16,
-                  color: Color(0xff7d64aa),
-                ),
-              ),
-              const SizedBox(width: 9),
-              Expanded(
-                child: Text(
-                  '宝宝成长曲线',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: MomCozyColors.foreground,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.keyboard_arrow_up_rounded,
-                color: MomCozyColors.mutedForeground,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _StatusTrendLegendItem(
-                label: '实际测量',
-                color: const Color(0xff7d64aa),
-                dashed: false,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: const Color(0xff7d64aa),
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(width: 10),
-              _StatusTrendLegendItem(
-                label: '同龄参考区间',
-                color: const Color(0xffeee8ff),
-                band: true,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: const Color(0xff7d64aa),
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const Spacer(),
-              _StatusSegmentedPills(
-                selected: selectedMetric,
-                options: const ['体重', '身高'],
-                color: const Color(0xff7d64aa),
-                keyPrefix: 'status-baby-growth',
-                onChanged: onMetricChanged,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '当前查看：$selectedMetric',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: const Color(0xff7d64aa),
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const Spacer(),
-          Center(
-            child: Text(
-              '暂无成长曲线数据，录入多项测量后与同龄参考一同展示。',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          const Spacer(),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusDetailPanel extends StatelessWidget {
-  const _StatusDetailPanel({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.rows,
-    required this.onClose,
-  });
-
-  final String title;
-  final String subtitle;
-  final List<(String, String, String)> rows;
-  final VoidCallback onClose;
-
-  @override
-  Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-      color: MomCozyColors.foreground,
-      fontWeight: FontWeight.w900,
-    );
-    final helperStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: MomCozyColors.mutedForeground,
-      fontWeight: FontWeight.w700,
-      height: 1.35,
-    );
-
-    return DecoratedBox(
-      decoration: MomCozyDecorations.card(
-        color: MomCozyColors.card.withValues(alpha: 0.72),
-        borderColor: MomCozyColors.border.withValues(alpha: 0.72),
-        radius: 18,
-        shadows: MomCozyShadows.soft,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 12, 10, 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, style: titleStyle),
-                      const SizedBox(height: 3),
-                      Text(subtitle, style: helperStyle),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  tooltip: '关闭详情',
-                  onPressed: onClose,
-                  icon: const Icon(Icons.close_rounded, size: 18),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            for (final row in rows) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 78,
-                      child: Text(
-                        row.$1,
-                        style: helperStyle?.copyWith(
-                          color: const Color(0xff9c6b7f),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(row.$2, style: titleStyle),
-                          const SizedBox(height: 2),
-                          Text(row.$3, style: helperStyle),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusFilledPill extends StatelessWidget {
-  const _StatusFilledPill({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.color,
-    this.avatar = false,
-    this.onTap,
-  });
-
-  final String label;
-  final IconData? icon;
-  final Color color;
-  final bool avatar;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final content = Container(
-      padding: EdgeInsets.fromLTRB(avatar ? 6 : 12, 8, 14, 8),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (avatar) ...[
-            const CircleAvatar(
-              radius: 13,
-              backgroundImage: AssetImage(MomCozyAssets.agentAvatar),
-            ),
-            const SizedBox(width: 6),
-          ] else if (icon != null) ...[
-            Icon(icon, size: 15, color: Colors.white),
-            const SizedBox(width: 6),
-          ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-    if (onTap == null) return content;
-    return Semantics(
-      button: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: content,
-      ),
-    );
-  }
-}
-
-class _StatusOutlinedPill extends StatelessWidget {
-  const _StatusOutlinedPill({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.accent,
-    this.onTap,
-  });
-
-  final String label;
-  final IconData? icon;
-  final Color accent;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final content = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        border: Border.all(color: const Color(0xffeadfd8)),
-        boxShadow: MomCozyShadows.soft,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: 15, color: accent),
-            const SizedBox(width: 6),
-          ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: accent,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-    if (onTap == null) return content;
-    return Semantics(
-      button: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: content,
-      ),
-    );
-  }
-}
-
-class _StatusSegmentedPills extends StatelessWidget {
-  const _StatusSegmentedPills({
-    required this.selected,
-    required this.options,
-    required this.color,
-    this.keyPrefix,
-    this.onChanged,
-  });
-
-  final String selected;
-  final List<String> options;
-  final Color color;
-  final String? keyPrefix;
-  final ValueChanged<String>? onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final option in options)
-            Semantics(
-              selected: option == selected,
-              button: onChanged != null,
-              label: option,
-              child: GestureDetector(
-                key: keyPrefix == null
-                    ? null
-                    : ValueKey('$keyPrefix-segment-$option'),
-                onTap: onChanged == null ? null : () => onChanged!(option),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: option == selected ? color : Colors.transparent,
-                    borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-                  ),
-                  child: Text(
-                    option,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: option == selected ? Colors.white : color,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusTrendPreview extends StatelessWidget {
-  const _StatusTrendPreview({
-    super.key,
-    required this.selectedMode,
-    required this.onModeChanged,
-  });
-
-  final String selectedMode;
-  final ValueChanged<String> onModeChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final modeLabel = selectedMode == '月' ? '近30日趋势' : '近7日趋势';
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xfffffaf0),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xfff0dfc4)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Transform.translate(
-            offset: const Offset(0, -3),
-            child: Row(
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: const Color(0xffffe4b8),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.gps_fixed_rounded,
-                    size: 14,
-                    color: Color(0xffb9792a),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '母乳趋势',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const Icon(
-                  Icons.keyboard_arrow_up_rounded,
-                  size: 16,
-                  color: MomCozyColors.mutedForeground,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Transform.translate(
-            offset: const Offset(1, -1),
-            child: Row(
-              children: [
-                const Expanded(child: _StatusTrendLegend()),
-                _StatusSegmentedPills(
-                  selected: selectedMode,
-                  options: const ['周', '月'],
-                  color: const Color(0xffb9792a),
-                  keyPrefix: 'status-milk-trend',
-                  onChanged: onModeChanged,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            modeLabel,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: const Color(0xff9c7651),
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 188,
-            child: CustomPaint(
-              painter: _StatusTrendPreviewPainter(mode: selectedMode),
-              child: const SizedBox.expand(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusTrendPreviewPainter extends CustomPainter {
-  const _StatusTrendPreviewPainter({required this.mode});
-
-  final String mode;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final labels = mode == '月'
-        ? const ['第1周', '第2周', '第3周', '第4周']
-        : const ['06/26', '06/27', '06/28', '06/29', '06/30', '07/01', '07/02'];
-    final segmentCount = labels.length - 1;
-    final chartRect = Rect.fromLTWH(44, 1, size.width - 58, size.height - 44);
-    final axisPaint = Paint()
-      ..color = const Color(0xffb9792a)
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-    final linePaint = Paint()
-      ..color = const Color(0xffb9792a)
-      ..strokeWidth = 2.5
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    final gridPaint = Paint()
-      ..color = const Color(0xffcfe8d8)
-      ..strokeWidth = 1;
-    for (var index = 0; index <= 4; index += 1) {
-      final y = chartRect.top + chartRect.height * index / 4;
-      _drawDashedLine(
-        canvas,
-        Offset(chartRect.left, y),
-        Offset(chartRect.right, y),
-        gridPaint,
-      );
-      _drawChartText(
-        canvas,
-        '${4 - index} mL',
-        Offset(5, y - 7),
-        width: 34,
-        color: const Color(0xff9c7651),
-        fontSize: 8,
-        textAlign: TextAlign.right,
-      );
-    }
-
-    for (var index = 0; index <= segmentCount; index += 1) {
-      final x = chartRect.left + chartRect.width * index / segmentCount;
-      _drawDashedLine(
-        canvas,
-        Offset(x, chartRect.top),
-        Offset(x, chartRect.bottom),
-        gridPaint,
-      );
-    }
-
-    canvas.drawLine(chartRect.topLeft, chartRect.bottomLeft, axisPaint);
-    canvas.drawLine(chartRect.bottomLeft, chartRect.bottomRight, axisPaint);
-    final actual = Path()..moveTo(chartRect.left, chartRect.bottom);
-    final points = <Offset>[
-      for (var index = 0; index <= segmentCount; index += 1)
-        Offset(
-          chartRect.left + chartRect.width * index / segmentCount,
-          chartRect.bottom,
-        ),
-    ];
-    for (final point in points.skip(1)) {
-      actual.lineTo(point.dx, point.dy);
-    }
-    canvas.drawPath(actual, linePaint);
-
-    final dotPaint = Paint()
-      ..color = const Color(0xfffffaf0)
-      ..style = PaintingStyle.fill;
-    final dotBorderPaint = Paint()
-      ..color = const Color(0xffb9792a)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-    for (final point in points) {
-      canvas.drawCircle(point, 3, dotPaint);
-      canvas.drawCircle(point, 3, dotBorderPaint);
-    }
-
-    for (var index = 0; index < labels.length; index += 1) {
-      _drawChartText(
-        canvas,
-        labels[index],
-        Offset(points[index].dx - 16, chartRect.bottom + 10),
-        width: 36,
-        color: const Color(0xff9c7651),
-        fontSize: 8,
-        textAlign: TextAlign.center,
-      );
-    }
-  }
-
-  void _drawDashedLine(Canvas canvas, Offset start, Offset end, Paint paint) {
-    const dashWidth = 3.0;
-    const dashGap = 4.0;
-    if ((start.dx - end.dx).abs() < 0.1) {
-      var y = start.dy;
-      while (y < end.dy) {
-        final next = math.min(y + dashWidth, end.dy);
-        canvas.drawLine(Offset(start.dx, y), Offset(end.dx, next), paint);
-        y += dashWidth + dashGap;
+  final overview = overviewResource.data ?? const StatusOverview();
+  if (isPregnancy) {
+    final profileStage = overview.mom?.dueDateOrWeek?.trim() ?? '';
+    String? diaryStage;
+    for (final entry in diaryEntries ?? const <PregnancyDiaryEntry>[]) {
+      final value = entry.gestationalWeek.trim();
+      if (value.isNotEmpty) {
+        diaryStage = value;
+        break;
       }
-      return;
     }
-    var x = start.dx;
-    while (x < end.dx) {
-      final next = math.min(x + dashWidth, end.dx);
-      canvas.drawLine(Offset(x, start.dy), Offset(next, end.dy), paint);
-      x += dashWidth + dashGap;
-    }
+    return (
+      mom: _formatPregnancyStageSubtitle(
+        profileStage.isNotEmpty ? profileStage : diaryStage,
+      ),
+      baby: '宝宝孕育中',
+    );
   }
 
-  void _drawChartText(
-    Canvas canvas,
-    String text,
-    Offset offset, {
-    required double width,
-    required Color color,
-    required double fontSize,
-    TextAlign textAlign = TextAlign.left,
-  }) {
-    final painter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: FontWeight.w400,
-          fontFamily: MomCozyTypography.fontFamily,
-          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+  if (overviewResource.hasError) {
+    return (mom: '妈妈档案待绑定', baby: '宝宝档案待绑定');
+  }
+
+  final postpartumDay = overview.mom?.postpartumDay;
+  final babyAgeDay = postpartumDay ?? overview.baby?.ageDays;
+  return (
+    mom: postpartumDay == null
+        ? '暂无有效分娩日期'
+        : '产后第 ${(math.max(0, postpartumDay) ~/ 7) + 1} 周',
+    baby: babyAgeDay == null
+        ? '暂无有效分娩日期'
+        : '宝宝已出生 ${math.max(0, babyAgeDay)} 天',
+  );
+}
+
+String _formatPregnancyStageSubtitle(String? value) {
+  final match = RegExp(
+    r'(?:孕期|孕周|怀孕|孕)?\s*(\d{1,2})\s*(?:周|w|W)',
+  ).firstMatch(value?.trim() ?? '');
+  final week = match?.group(1);
+  return week == null ? '处于孕期' : '孕期 $week 周';
+}
+
+class _StatusPinnedHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const _StatusPinnedHeaderDelegate({required this.child});
+
+  static const extent = 120.0;
+
+  final Widget child;
+
+  @override
+  double get minExtent => extent;
+
+  @override
+  double get maxExtent => extent;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: ColoredBox(
+          key: const ValueKey('status-pinned-header'),
+          color: Theme.of(
+            context,
+          ).scaffoldBackgroundColor.withValues(alpha: 0.92),
+          child: child,
         ),
       ),
-      textAlign: textAlign,
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: width);
-    painter.paint(canvas, offset);
-  }
-
-  @override
-  bool shouldRepaint(covariant _StatusTrendPreviewPainter oldDelegate) {
-    return oldDelegate.mode != mode;
-  }
-}
-
-class _StatusTrendLegend extends StatelessWidget {
-  const _StatusTrendLegend();
-
-  @override
-  Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: const Color(0xff8a6742),
-      fontSize: 9,
-      fontWeight: FontWeight.w400,
-    );
-    return Wrap(
-      spacing: 9,
-      runSpacing: 6,
-      children: const [
-        _StatusTrendLegendItem(
-          label: '吸乳总量',
-          color: Color(0xffb9792a),
-          dashed: false,
-        ),
-        _StatusTrendLegendItem(
-          label: '含亲喂估算',
-          color: Color(0xff8a5f7d),
-          dashed: true,
-        ),
-        _StatusTrendLegendItem(
-          label: '目标参考区间',
-          color: Color(0xffdff4e8),
-          band: true,
-        ),
-      ].map((item) => item.withStyle(style)).toList(growable: false),
-    );
-  }
-}
-
-class _StatusTrendLegendItem extends StatelessWidget {
-  const _StatusTrendLegendItem({
-    required this.label,
-    required this.color,
-    this.dashed = false,
-    this.band = false,
-    this.style,
-  });
-
-  final String label;
-  final Color color;
-  final bool dashed;
-  final bool band;
-  final TextStyle? style;
-
-  _StatusTrendLegendItem withStyle(TextStyle? nextStyle) {
-    return _StatusTrendLegendItem(
-      label: label,
-      color: color,
-      dashed: dashed,
-      band: band,
-      style: nextStyle,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CustomPaint(
-          size: Size(12, band ? 8 : 2),
-          painter: _StatusTrendLegendMarkPainter(
-            color: color,
-            dashed: dashed,
-            band: band,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(label, style: style),
-      ],
-    );
-  }
-}
-
-class _StatusTrendLegendMarkPainter extends CustomPainter {
-  const _StatusTrendLegendMarkPainter({
-    required this.color,
-    required this.dashed,
-    required this.band,
-  });
-
-  final Color color;
-  final bool dashed;
-  final bool band;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (band) {
-      canvas.drawRect(
-        Offset.zero & size,
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.fill,
-      );
-      return;
-    }
-
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    if (!dashed) {
-      canvas.drawLine(
-        Offset(0, size.height / 2),
-        Offset(size.width, size.height / 2),
-        paint,
-      );
-      return;
-    }
-    var x = 0.0;
-    while (x < size.width) {
-      final next = (x + 4 > size.width) ? size.width : x + 4;
-      canvas.drawLine(
-        Offset(x, size.height / 2),
-        Offset(next, size.height / 2),
-        paint,
-      );
-      x += 7;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _StatusTrendLegendMarkPainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.dashed != dashed ||
-        oldDelegate.band != band;
+  bool shouldRebuild(covariant _StatusPinnedHeaderDelegate oldDelegate) {
+    return oldDelegate.child != child;
   }
 }
 
@@ -3180,35 +1562,41 @@ class _CareStageOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: selected
-          ? Colors.white.withValues(alpha: 0.7)
-          : Colors.transparent,
-      borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-      child: InkWell(
+    return Semantics(
+      button: true,
+      selected: selected,
+      inMutuallyExclusiveGroup: true,
+      label: label,
+      child: Material(
+        color: selected
+            ? Colors.white.withValues(alpha: 0.7)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-        onTap: onTap,
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 24, minWidth: 42),
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-            border: selected
-                ? Border.all(
-                    color: const Color(0xffeadfd8).withValues(alpha: 0.7),
-                  )
-                : null,
-          ),
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: selected
-                  ? const Color(0xff6f5964)
-                  : const Color(0xffaa98a1),
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-              height: 1,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+          onTap: onTap,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 24, minWidth: 42),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              border: selected
+                  ? Border.all(
+                      color: const Color(0xffeadfd8).withValues(alpha: 0.7),
+                    )
+                  : null,
+            ),
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: selected
+                    ? const Color(0xff6f5964)
+                    : const Color(0xffaa98a1),
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                height: 1,
+              ),
             ),
           ),
         ),
@@ -3236,23 +1624,20 @@ class _StatusIdentityTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const gap = 7.0;
+        const gap = 8.0;
         final tabWidth = (constraints.maxWidth - gap) / 2;
 
         return Row(
           children: [
             SizedBox(
               width: tabWidth,
-              child: Transform.translate(
-                offset: selected == 'mom' ? const Offset(0, -5) : Offset.zero,
-                child: _StatusIdentityTab(
-                  value: 'mom',
-                  title: '妈妈',
-                  subtitle: momSubtitle,
-                  asset: MomCozyAssets.momAvatar,
-                  selected: selected == 'mom',
-                  onTap: () => onChanged('mom'),
-                ),
+              child: _StatusIdentityTab(
+                value: 'mom',
+                title: '妈妈',
+                subtitle: momSubtitle,
+                asset: MomCozyAssets.momAvatar,
+                selected: selected == 'mom',
+                onTap: () => onChanged('mom'),
               ),
             ),
             const SizedBox(width: gap),
@@ -3296,73 +1681,75 @@ class _StatusIdentityTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = selected
-        ? MomCozyColors.primary.withValues(alpha: 0.42)
-        : Colors.white.withValues(alpha: 0.70);
     return Semantics(
       selected: selected,
       button: true,
       label: title,
       enabled: !disabled,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: disabled
-              ? MomCozyColors.raised.withValues(alpha: 0.24)
-              : selected
-              ? const Color(0xfffff7fb)
-              : MomCozyColors.raised.withValues(alpha: 0.44),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor, width: selected ? 1.4 : 1),
-        ),
-        child: Material(
-          type: MaterialType.transparency,
-          borderRadius: BorderRadius.circular(16),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            key: ValueKey('status-identity-tab-$value'),
-            onTap: disabled ? null : onTap,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 72),
-              child: Stack(
-                children: [
-                  AnimatedOpacity(
-                    duration: const Duration(milliseconds: 160),
-                    opacity: selected ? 1 : 0,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        width: 4,
-                        height: 44,
-                        decoration: const BoxDecoration(
-                          color: Color(0xffb46f91),
-                          borderRadius: BorderRadius.horizontal(
-                            right: Radius.circular(MomCozyRadii.pill),
+      inMutuallyExclusiveGroup: true,
+      child: Opacity(
+        opacity: disabled
+            ? 0.45
+            : selected
+            ? 1
+            : 0.72,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: disabled
+                ? Colors.white.withValues(alpha: 0.35)
+                : selected
+                ? const Color(0xfffff7fb)
+                : Colors.white.withValues(alpha: 0.45),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: selected
+                  ? const Color(0xffd8adc2)
+                  : Colors.white.withValues(alpha: disabled ? 0.60 : 0.70),
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: Material(
+            type: MaterialType.transparency,
+            borderRadius: BorderRadius.circular(16),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              key: ValueKey('status-identity-tab-$value'),
+              onTap: disabled ? null : onTap,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 68),
+                child: Stack(
+                  children: [
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 160),
+                      opacity: selected ? 1 : 0,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          width: 4,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: Color(0xffb46f91),
+                            borderRadius: BorderRadius.horizontal(
+                              right: Radius.circular(MomCozyRadii.pill),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Row(
-                      children: [
-                        Opacity(
-                          opacity: disabled
-                              ? 0.45
-                              : selected
-                              ? 1
-                              : 0.75,
-                          child: Container(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: disabled
-                                    ? MomCozyColors.border.withValues(
-                                        alpha: 0.35,
-                                      )
-                                    : selected
+                                color: selected
                                     ? const Color(
                                         0xffb46f91,
                                       ).withValues(alpha: 0.45)
@@ -3377,56 +1764,49 @@ class _StatusIdentityTab extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.labelLarge
-                                    ?.copyWith(
-                                      color: disabled
-                                          ? MomCozyColors.mutedForeground
-                                                .withValues(alpha: 0.6)
-                                          : selected
-                                          ? MomCozyColors.foreground
-                                          : MomCozyColors.mutedForeground,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.15,
-                                    ),
-                              ),
-                              const SizedBox(height: 3),
-                              Text(
-                                subtitle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: disabled
-                                          ? MomCozyColors.mutedForeground
-                                                .withValues(alpha: 0.52)
-                                          : selected
-                                          ? MomCozyColors.mutedForeground
-                                          : MomCozyColors.mutedForeground
-                                                .withValues(alpha: 0.75),
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.15,
-                                    ),
-                              ),
-                            ],
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.labelLarge
+                                      ?.copyWith(
+                                        color: selected
+                                            ? const Color(0xff35212c)
+                                            : MomCozyColors.mutedForeground,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.15,
+                                      ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  subtitle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: selected
+                                            ? const Color(0xff806171)
+                                            : MomCozyColors.mutedForeground,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.15,
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

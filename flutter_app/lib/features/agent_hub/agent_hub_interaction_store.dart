@@ -41,6 +41,13 @@ class AgentHubInteractionSnapshot {
         !autoVoiceEnabled;
   }
 
+  bool get hasConversationHistory {
+    return historyMessages.isNotEmpty ||
+        runState.events.isNotEmpty ||
+        runState.textContent.trim().isNotEmpty ||
+        runState.provisionalTextContent.trim().isNotEmpty;
+  }
+
   Map<String, Object?> toMap({bool includeImageData = true}) => {
     'runState': runState.toMap(),
     if (historyMessages.any(

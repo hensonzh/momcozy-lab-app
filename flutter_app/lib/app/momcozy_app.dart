@@ -81,6 +81,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
       widget.routeIntentPlatform ?? AndroidRouteIntentPlatform();
   late final bool _ownsRouteIntentPlatform = widget.routeIntentPlatform == null;
   StreamSubscription<PendingNativeRoute>? _activeRouteSub;
+  var _nativeRouteSequence = 0;
 
   @override
   void initState() {
@@ -120,7 +121,12 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
     if (intent == null || intent.type == 'RejectUnsafeRoute') return;
     final path = intent.path;
     if (path == null || path.isEmpty) return;
-    _router.go(path);
+    _nativeRouteSequence += 1;
+    final location = _nativeIntentLocation(
+      intent,
+      sequence: _nativeRouteSequence,
+    );
+    _router.go(location, extra: intent.payload.isEmpty ? null : intent.payload);
   }
 
   @override
@@ -141,6 +147,21 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
       ),
     );
   }
+}
+
+String _nativeIntentLocation(RouteIntent intent, {required int sequence}) {
+  final path = intent.path!;
+  final statusIntent = intent.payload['statusIntent']?.toString().trim();
+  if (path != '/status' || statusIntent == null || statusIntent.isEmpty) {
+    return path;
+  }
+  return Uri(
+    path: path,
+    queryParameters: {
+      'statusIntent': statusIntent,
+      'statusIntentId': sequence.toString(),
+    },
+  ).toString();
 }
 
 Map<String, Object?> _nativeRoutePayload(PendingNativeRoute route) {
@@ -1359,7 +1380,11 @@ Widget _buildDefaultAgentHubPage(
   }
 
   return AgentHubPage(
+    key: ValueKey('agent-hub-${runtime.currentSession.userId}'),
     stateCacheKey: runtime,
+    interactionStateStore: createSessionAgentHubInteractionStateStore(
+      runtime.currentSession,
+    ),
     runner: createSessionAgentHubRunner(
       runtime.session,
       accessTokenProvider: currentAccessToken,

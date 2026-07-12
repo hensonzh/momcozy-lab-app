@@ -190,7 +190,8 @@ typedef MomCozySessionProvider = MomCozySession Function();
 
 typedef MomCozySessionChanged = Future<void> Function(MomCozySession session);
 
-class AuthenticatedApiJsonTransport implements ApiJsonTransport {
+class AuthenticatedApiJsonTransport
+    implements ApiJsonTransport, ApiJsonMutationTransport {
   const AuthenticatedApiJsonTransport({
     required this.transportFactory,
     required this.sessionProvider,
@@ -223,22 +224,33 @@ class AuthenticatedApiJsonTransport implements ApiJsonTransport {
   }
 
   @override
+  Future<Map<String, Object?>> putJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    return _sendMutation(
+      (transport) => transport.putJson(path, body: body, headers: headers),
+    );
+  }
+
+  @override
   Future<Map<String, Object?>> patchJson(
     String path, {
     Map<String, Object?> body = const {},
     Map<String, String> headers = const {},
   }) {
-    return _send(
+    return _sendMutation(
       (transport) => transport.patchJson(path, body: body, headers: headers),
     );
   }
 
   @override
-  Future<void> deleteJson(
+  Future<Map<String, Object?>> deleteJson(
     String path, {
     Map<String, String> headers = const {},
   }) {
-    return _sendVoid(
+    return _sendMutation(
       (transport) => transport.deleteJson(path, headers: headers),
     );
   }
@@ -260,19 +272,16 @@ class AuthenticatedApiJsonTransport implements ApiJsonTransport {
     }
   }
 
-  Future<void> _sendVoid(
-    Future<void> Function(ApiJsonTransport transport) send,
-  ) async {
-    final initialSession = sessionProvider();
-    try {
-      await send(transportFactory(initialSession.accessToken));
-    } catch (error) {
-      if (!_shouldRefresh(error)) rethrow;
-      final refreshed = await refreshCoordinator.refresh(initialSession);
-      await onSessionChanged(refreshed);
-      if (!refreshed.isAuthenticated) rethrow;
-      await send(transportFactory(refreshed.accessToken));
-    }
+  Future<Map<String, Object?>> _sendMutation(
+    Future<Map<String, Object?>> Function(ApiJsonMutationTransport transport)
+    send,
+  ) {
+    return _send((transport) {
+      if (transport is! ApiJsonMutationTransport) {
+        throw UnsupportedError('JSON mutation transport is not available.');
+      }
+      return send(transport as ApiJsonMutationTransport);
+    });
   }
 }
 

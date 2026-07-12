@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
@@ -13,6 +14,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -23,6 +25,24 @@ import '../../support/momcozy_test_fonts.dart';
 
 void main() {
   setUpAll(loadMomCozyTestFonts);
+
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, (call) async {
+          return switch (call.method) {
+            'read' => null,
+            'readAll' => <String, String>{},
+            'containsKey' => false,
+            'write' || 'delete' || 'deleteAll' => null,
+            _ => null,
+          };
+        });
+  });
+
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, null);
+  });
 
   group('Legacy Web widget parity: 宝宝和我', () {
     testWidgets('covers postpartum mom widgets, trend card, and bottom nav', (
@@ -79,6 +99,8 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('母乳产出'), findsOneWidget);
+      expect(find.text('210mL'), findsOneWidget);
+      expect(find.text('3次'), findsOneWidget);
       expect(find.text('乳房健康'), findsOneWidget);
       expect(find.text('产后恢复'), findsOneWidget);
       expect(find.text('补能与休息'), findsOneWidget);
@@ -142,7 +164,7 @@ void main() {
           find.byKey(const ValueKey('status-detail-pregnancy-diary')),
           findsOneWidget,
         );
-        expect(find.text('最近 7 天记录'), findsOneWidget);
+        expect(find.text('还没有孕期日记'), findsOneWidget);
         await tester.tap(find.byTooltip('关闭详情'));
         await tester.pumpAndSettle();
 
@@ -162,7 +184,7 @@ void main() {
           find.byKey(const ValueKey('status-pregnancy-diary-save-button')),
         );
         await tester.pumpAndSettle();
-        expect(find.text('今天的记录已保存'), findsOneWidget);
+        expect(find.textContaining('今天的记录已保存'), findsOneWidget);
         expect(
           find.byKey(const ValueKey('status-detail-pregnancy-diary')),
           findsOneWidget,
@@ -186,7 +208,7 @@ void main() {
               )
               .controller
               ?.text,
-          '帮我生成孕期计划',
+          '帮我制定孕期计划',
         );
 
         final failingRouteIntentPlatform = FakeRouteIntentPlatform();
@@ -215,7 +237,7 @@ void main() {
       },
     );
 
-    testWidgets('reads pregnancy diary entries from the backend repository', (
+    testWidgets('loads, blocks, details, and deletes a birth journey plan', (
       tester,
     ) async {
       await _setCompactViewport(tester);
@@ -228,19 +250,7 @@ void main() {
           routeIntentPlatform: routeIntentPlatform,
           apiRuntime: _runtime(
             responsesByPath: {
-              pregnancyDiaryEntriesEndpoint: const {
-                'items': [
-                  {
-                    'id': 'diary-1',
-                    'entry_date': '2026-07-03',
-                    'content': '今天胎动规律，心情很安心。',
-                    'mood': '安心',
-                    'symptom_tags': <Object?>[],
-                    'attachments': <Object?>[],
-                    'status': 'active',
-                  },
-                ],
-              },
+              pregnancyPlansEndpoint: _birthJourneyPlanResponse(),
             },
           ),
         ),
@@ -251,54 +261,106 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('今天胎动规律，心情很安心。'), findsOneWidget);
-      expect(find.text('今天的记录已保存'), findsNothing);
+      expect(find.text('当前阶段'), findsOneWidget);
+      expect(find.text('准备产检资料'), findsOneWidget);
+      await _scrollToFinder(
+        tester,
+        find.byKey(const ValueKey('status-birth-journey-period-upcoming')),
+      );
       await tester.tap(
-        find.byKey(const ValueKey('status-pregnancy-diary-view-button')),
+        find.byKey(const ValueKey('status-birth-journey-period-upcoming')),
       );
       await tester.pumpAndSettle();
-      expect(find.text('今天的记录已保存'), findsOneWidget);
-      expect(find.text('安心'), findsOneWidget);
+      await tester.tap(
+        find.byKey(const ValueKey('status-birth-journey-todo-todo-upcoming')),
+      );
+      await tester.pump();
+      expect(find.text('当前还未到该阶段，暂不适合进行该事项'), findsOneWidget);
+
+      await _scrollToFinder(
+        tester,
+        find.byKey(const ValueKey('status-birth-journey-detail-button')),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('status-birth-journey-detail-button')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('status-detail-birth-journey')),
+        findsOneWidget,
+      );
+      final deleteButton = find.byKey(
+        const ValueKey('status-birth-journey-delete-button'),
+      );
+      await tester.ensureVisible(deleteButton);
+      await tester.tap(deleteButton);
+      await tester.pump();
+      await tester.tap(
+        find.byKey(
+          const ValueKey('status-birth-journey-delete-confirm-button'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('status-detail-birth-journey')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('status-pregnancy-plan-agent-button')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets(
-      'does not create a diary entry when the current diary state is unknown',
-      (tester) async {
-        await _setCompactViewport(tester);
-        final routeIntentPlatform = FakeRouteIntentPlatform();
-        addTearDown(routeIntentPlatform.dispose);
+    testWidgets('hands birth journey todo to Agent with auto-send', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+      Object? routedExtra;
+      final router = createMomCozyRouter(
+        initialLocation: '/status',
+        agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) {
+          if (uri?.path == '/') routedExtra = extra;
+          return const SizedBox(key: ValueKey('captured-agent-route'));
+        },
+      );
 
-        await tester.pumpWidget(
-          MomCozyFlutterApp(
-            router: createMomCozyRouter(initialLocation: '/status'),
-            routeIntentPlatform: routeIntentPlatform,
-            apiRuntime: _runtime(
-              responsesByPath: {
-                pregnancyDiaryEntriesEndpoint: const {
-                  'http_status': 503,
-                  'status_text': 'Service Unavailable',
-                },
-              },
-            ),
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(
+            responsesByPath: {
+              pregnancyPlansEndpoint: _birthJourneyPlanResponse(),
+            },
           ),
-        );
-        await tester.pumpAndSettle();
-        await tester.tap(
-          find.byKey(const ValueKey('status-care-stage-pregnancy')),
-        );
-        await tester.pumpAndSettle();
-        await tester.tap(
-          find.byKey(const ValueKey('status-pregnancy-diary-record-button')),
-        );
-        await tester.pumpAndSettle();
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('status-care-stage-pregnancy')),
+      );
+      await tester.pumpAndSettle();
 
-        expect(find.text('日记加载失败，请稍后重试'), findsOneWidget);
-        expect(
-          find.byKey(const ValueKey('status-pregnancy-diary-editor-dialog')),
-          findsNothing,
-        );
-      },
-    );
+      final currentTodo = find.byKey(
+        const ValueKey('status-birth-journey-todo-todo-current'),
+      );
+      await _scrollToFinder(tester, currentTodo);
+      await tester.tap(currentTodo);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('captured-agent-route')),
+        findsOneWidget,
+      );
+      expect(routedExtra, {
+        'agentPrefill': '我已完成【准备产检资料】，请基于这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记',
+        'agentAutoSend': true,
+      });
+      expect(tester.takeException(), isNull);
+    });
 
     testWidgets('covers postpartum mom chart and module actions', (
       tester,
@@ -320,12 +382,12 @@ void main() {
         tester,
         find.byKey(const ValueKey('status-milk-trend-preview')),
       );
-      expect(find.text('近7日趋势'), findsOneWidget);
+      expect(find.bySemanticsLabel('母乳趋势图，共 7 天'), findsOneWidget);
       await tester.tap(
         find.byKey(const ValueKey('status-milk-trend-segment-月')),
       );
       await tester.pumpAndSettle();
-      expect(find.text('近30日趋势'), findsOneWidget);
+      expect(find.bySemanticsLabel('母乳趋势图，共 30 天'), findsOneWidget);
 
       await _scrollToText(tester, '母乳产出');
       await tester.tap(
@@ -407,6 +469,9 @@ void main() {
       expect(find.text('身高'), findsWidgets);
       expect(find.text('头围'), findsOneWidget);
       expect(find.text('成长milestone'), findsOneWidget);
+      expect(find.text('查看健康信息'), findsOneWidget);
+      expect(find.text('今日睡眠'), findsOneWidget);
+      expect(find.text('4h 57min'), findsOneWidget);
 
       await tester.tap(
         find.byKey(const ValueKey('status-baby-feed-info-button')),
@@ -416,6 +481,8 @@ void main() {
         find.byKey(const ValueKey('status-detail-baby-feed-info')),
         findsOneWidget,
       );
+      expect(find.text('今日摄入说明'), findsOneWidget);
+      expect(find.text('妈妈实际记录的喂养数据，不包含亲喂'), findsOneWidget);
       await tester.tap(find.byTooltip('关闭详情'));
       await tester.pumpAndSettle();
 
@@ -427,9 +494,25 @@ void main() {
         find.byKey(const ValueKey('status-growth-editor-dialog')),
         findsOneWidget,
       );
+      await tester.enterText(
+        find.byKey(const ValueKey('status-growth-weight-input')),
+        '6.2',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('status-growth-height-input')),
+        '64.5',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('status-growth-head-input')),
+        '42',
+      );
+      tester.testTextInput.hide();
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey('status-growth-save-button')));
       await tester.pumpAndSettle();
-      expect(find.text('已添加'), findsOneWidget);
+      expect(find.text('6.2kg'), findsOneWidget);
+      expect(find.text('64.5cm'), findsOneWidget);
+      expect(find.text('42cm'), findsOneWidget);
 
       await tester.tap(
         find.byKey(const ValueKey('status-growth-milestone-action')),
@@ -439,15 +522,22 @@ void main() {
         find.byKey(const ValueKey('status-detail-growth-milestone')),
         findsOneWidget,
       );
+      expect(find.text('成长 milestone'), findsOneWidget);
+      expect(find.text('说出完整主谓短句'), findsOneWidget);
+      expect(find.text('2026.05.28'), findsOneWidget);
+      expect(find.text('能说出带主语和动作的短句，语言组织能力继续发展。'), findsOneWidget);
       await tester.tap(find.byTooltip('关闭详情'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('查看筛查'));
+      await tester.tap(find.text('查看健康信息'));
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('status-detail-baby-health')),
         findsOneWidget,
       );
+      expect(find.text('自闭症风险筛查'), findsOneWidget);
+      expect(find.text('宝宝情绪跟踪'), findsOneWidget);
+      expect(find.text('待开通'), findsNWidgets(6));
       await tester.tap(find.byTooltip('关闭详情'));
       await tester.pumpAndSettle();
 
@@ -456,6 +546,31 @@ void main() {
       expect(
         find.byKey(const ValueKey('status-detail-baby-sleep')),
         findsOneWidget,
+      );
+      expect(find.text('宝宝睡眠报告'), findsOneWidget);
+      expect(find.text('最长睡眠'), findsOneWidget);
+      expect(find.text('3h 08min'), findsOneWidget);
+      expect(find.text('哭闹'), findsWidgets);
+      expect(find.text('活动'), findsWidgets);
+      expect(find.text('宝宝睡眠记录'), findsOneWidget);
+      expect(find.text('按时段看睡眠、活动和哭闹时长'), findsOneWidget);
+      expect(find.text('00:00'), findsOneWidget);
+      expect(find.text('10:00'), findsOneWidget);
+      expect(
+        tester
+            .widget<TextButton>(
+              find.byKey(const ValueKey('status-baby-sleep-previous-day')),
+            )
+            .onPressed,
+        isNull,
+      );
+      expect(
+        tester
+            .widget<TextButton>(
+              find.byKey(const ValueKey('status-baby-sleep-next-day')),
+            )
+            .onPressed,
+        isNull,
       );
       await tester.tap(find.byTooltip('关闭详情'));
       await tester.pumpAndSettle();
@@ -493,8 +608,137 @@ void main() {
 
       expect(find.byKey(const ValueKey('route-page-/status')), findsOneWidget);
       expect(find.text('宝宝成长曲线'), findsOneWidget);
-      expect(find.text('已添加'), findsOneWidget);
+      expect(find.text('6.2kg'), findsOneWidget);
       expect(find.text('当前查看：身高'), findsOneWidget);
+    });
+
+    testWidgets(
+      'consumes a native growth notice once and highlights the curve',
+      (tester) async {
+        await _setCompactViewport(tester);
+        final routeIntentPlatform = FakeRouteIntentPlatform();
+        addTearDown(routeIntentPlatform.dispose);
+        final router = createMomCozyRouter(initialLocation: '/schedule');
+
+        await tester.pumpWidget(
+          MomCozyFlutterApp(
+            router: router,
+            routeIntentPlatform: routeIntentPlatform,
+            apiRuntime: _runtime(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        routeIntentPlatform.dispatchActiveRoute(
+          const PendingNativeRoute(
+            path: '/status?mmcNotify=growth',
+            notifyJson: {'event': 'grown'},
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(router.routeInformationProvider.value.uri.path, '/status');
+
+        routeIntentPlatform.dispatchActiveRoute(
+          const PendingNativeRoute(
+            path: '/status?mmcNotify=growth',
+            notifyJson: {'event': 'grown'},
+          ),
+        );
+        await tester.pump();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 120));
+
+        expect(
+          find.byKey(const ValueKey('route-page-/status')),
+          findsOneWidget,
+        );
+        expect(find.text('成长发育'), findsOneWidget);
+        expect(find.text('母乳产出'), findsNothing);
+        final activeHighlight = tester.widget<AnimatedContainer>(
+          find.byKey(const ValueKey('status-baby-growth-highlight')),
+        );
+        final activeBorder =
+            (activeHighlight.decoration! as BoxDecoration).border! as Border;
+        expect(activeBorder.top.color, isNot(Colors.transparent));
+
+        await tester.pump(const Duration(milliseconds: 2800));
+        expect(
+          tester.widget(
+            find.byKey(const ValueKey('status-baby-growth-highlight')),
+          ),
+          isA<KeyedSubtree>(),
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets('shows finite diary and birth journey notification notices', (
+      tester,
+    ) async {
+      await _setCompactViewport(tester);
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(routeIntentPlatform.dispose);
+      final router = createMomCozyRouter(initialLocation: '/schedule');
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: _runtime(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      routeIntentPlatform.dispatchActiveRoute(
+        const PendingNativeRoute(path: '/status?statusIntent=pregnancy-diary'),
+      );
+      await tester.pumpAndSettle();
+      routeIntentPlatform.dispatchActiveRoute(
+        const PendingNativeRoute(path: '/status?statusIntent=pregnancy-diary'),
+      );
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+
+      expect(find.text('孕期日记'), findsOneWidget);
+      expect(find.text('成长发育'), findsNothing);
+      expect(
+        _highlightBorderColor(
+          tester,
+          const ValueKey('status-pregnancy-diary-notice'),
+        ),
+        isNot(Colors.transparent),
+      );
+
+      router.go(
+        '/status?statusIntent=birth-journey&statusIntentId=manual-plan-1',
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+      expect(
+        _highlightBorderColor(
+          tester,
+          const ValueKey('status-birth-journey-notice'),
+        ),
+        isNot(Colors.transparent),
+      );
+
+      await tester.pump(const Duration(milliseconds: 3200));
+      expect(
+        _highlightBorderColor(
+          tester,
+          const ValueKey('status-pregnancy-diary-notice'),
+        ),
+        Colors.transparent,
+      );
+      expect(
+        _highlightBorderColor(
+          tester,
+          const ValueKey('status-birth-journey-notice'),
+        ),
+        Colors.transparent,
+      );
+      expect(tester.takeException(), isNull);
     });
   });
 
@@ -1182,11 +1426,90 @@ void main() {
   });
 }
 
+const _secureStorageChannel = MethodChannel(
+  'plugins.it_nomads.com/flutter_secure_storage',
+);
+
 Future<void> _setCompactViewport(WidgetTester tester) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
+}
+
+Map<String, Object?> _birthJourneyPlanResponse() {
+  return const {
+    'items': [
+      {
+        'id': 'birth-plan-widget',
+        'plan_type': 'pregnancy',
+        'title': '孕期计划',
+        'status': 'active',
+        'payload': {
+          'card': {
+            'card_type': 'birth_journey_plan_card',
+            'schema_version': '1.0',
+            'card_json': {
+              'todo_plan': {
+                'periods': [
+                  {
+                    'id': 'current',
+                    'title': '当前阶段',
+                    'subtitle': '孕 32-34 周',
+                    'display_mode': 'expanded',
+                    'status': 'current',
+                    'items': [
+                      {
+                        'id': 'todo-current',
+                        'title': '准备产检资料',
+                        'priority_label': '重要',
+                        'reason': '下次产检时集中确认',
+                        'steps': ['整理检查报告'],
+                        'completed': false,
+                      },
+                    ],
+                  },
+                  {
+                    'id': 'upcoming',
+                    'title': '后续阶段',
+                    'subtitle': '孕 35-37 周',
+                    'display_mode': 'collapsed',
+                    'status': 'upcoming',
+                    'items': [
+                      {
+                        'id': 'todo-upcoming',
+                        'title': '整理待产包',
+                        'priority_label': '建议',
+                        'reason': '提前确认住院物品',
+                        'steps': <String>[],
+                        'completed': false,
+                      },
+                    ],
+                  },
+                  {
+                    'id': 'terminal',
+                    'title': '临产住院',
+                    'subtitle': '出现临产信号时',
+                    'display_mode': 'terminal',
+                    'status': 'terminal',
+                    'items': [
+                      {
+                        'id': 'todo-terminal',
+                        'title': '联系医院',
+                        'priority_label': '重要',
+                        'steps': <String>[],
+                        'completed': false,
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+    ],
+  };
 }
 
 MomCozyApiRuntime _runtime({
@@ -1211,7 +1534,78 @@ MomCozyApiRuntime _runtime({
             },
           ],
         },
+        milkTrendsEndpoint: const {
+          'items': [
+            {
+              'date': '2026-07-01',
+              'pumped_milk_volume_ml': 150,
+              'pumping_count': 2,
+              'measured_only': true,
+            },
+            {
+              'date': '2026-07-02',
+              'pumped_milk_volume_ml': 180,
+              'pumping_count': 2,
+              'measured_only': true,
+            },
+            {
+              'date': '2026-07-03',
+              'pumped_milk_volume_ml': 210,
+              'pumping_count': 3,
+              'measured_only': true,
+            },
+          ],
+          'days': 31,
+          'include_today': true,
+        },
+        feedingRecordsEndpoint: const {
+          'items': [
+            {
+              'id': 'feeding-widget-1',
+              'feed_type': 'bottle',
+              'volume_ml': 80,
+              'feed_time': '2026-07-03T06:00:00Z',
+            },
+            {
+              'id': 'feeding-widget-2',
+              'feed_type': 'bottle',
+              'volume_ml': 40,
+              'feed_time': '2026-07-03T10:00:00Z',
+            },
+          ],
+        },
+        growthRecordsEndpoint: const {
+          'items': [
+            {
+              'id': 'growth-widget-saved',
+              'weight_kg': 6.2,
+              'height_cm': 64.5,
+              'head_cm': 42,
+              'measured_at': '2026-07-03T12:00:00Z',
+            },
+          ],
+          'id': 'growth-widget-saved',
+          'weight_kg': 6.2,
+          'height_cm': 64.5,
+          'head_cm': 42,
+          'measured_at': '2026-07-03T12:00:00Z',
+        },
+        '$growthRecordsEndpoint/growth-widget-saved': const {
+          'id': 'growth-widget-saved',
+          'weight_kg': 6.2,
+          'height_cm': 64.5,
+          'head_cm': 42,
+          'measured_at': '2026-07-03T12:00:00Z',
+        },
+        pregnancyDiaryEntriesEndpoint: const {'items': <Object?>[]},
         pregnancyPlansEndpoint: const {'items': <Object?>[]},
+        '$pregnancyDiaryEntriesEndpoint/2026-07-03': const {
+          'id': 'diary-widget-parity',
+          'entry_date': '2026-07-03',
+          'content': '今天胎动规律，想问医生睡眠问题。',
+          'symptom_tags': <String>[],
+          'health_notes': <Object?>[],
+        },
         scheduleDayPlanEndpoint: const {
           'items': <Object?>[
             {
@@ -1250,11 +1644,18 @@ MomCozyApiRuntime _runtime({
       },
       writeResponsesByPath: const {
         pregnancyDiaryEntriesEndpoint: {
-          'id': 'diary-created',
+          'id': 'diary-widget-parity',
           'entry_date': '2026-07-03',
           'content': '今天胎动规律，想问医生睡眠问题。',
-          'mood': '',
-          'symptom_tags': <Object?>[],
+          'symptom_tags': <String>[],
+          'attachments': <Object?>[],
+          'status': 'active',
+        },
+        '$pregnancyDiaryEntriesEndpoint/2026-07-03': {
+          'id': 'diary-widget-parity',
+          'entry_date': '2026-07-03',
+          'content': '今天胎动规律，想问医生睡眠问题。',
+          'symptom_tags': <String>[],
           'attachments': <Object?>[],
           'status': 'active',
         },
@@ -1310,6 +1711,14 @@ Future<void> _scrollToFinder(WidgetTester tester, Finder finder) async {
     maxScrolls: 18,
   );
   await tester.pumpAndSettle();
+}
+
+Color _highlightBorderColor(WidgetTester tester, Key key) {
+  final widget = tester.widget(find.byKey(key));
+  if (widget is! AnimatedContainer) return Colors.transparent;
+  final container = widget;
+  final border = (container.decoration! as BoxDecoration).border! as Border;
+  return border.top.color;
 }
 
 Future<void> _pumpUntilFinder(WidgetTester tester, Finder finder) async {

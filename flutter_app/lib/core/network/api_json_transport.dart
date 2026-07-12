@@ -15,6 +15,14 @@ abstract interface class ApiJsonTransport {
     Map<String, Object?> body = const {},
     Map<String, String> headers = const {},
   });
+}
+
+abstract interface class ApiJsonMutationTransport {
+  Future<Map<String, Object?>> putJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  });
 
   Future<Map<String, Object?>> patchJson(
     String path, {
@@ -22,7 +30,7 @@ abstract interface class ApiJsonTransport {
     Map<String, String> headers = const {},
   });
 
-  Future<void> deleteJson(
+  Future<Map<String, Object?>> deleteJson(
     String path, {
     Map<String, String> headers = const {},
   });
@@ -156,6 +164,12 @@ abstract interface class ApiHttpConnector {
     required String body,
   });
 
+  Future<ApiHttpResponse> put(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  });
+
   Future<ApiHttpResponse> patch(
     Uri uri, {
     required Map<String, String> headers,
@@ -190,10 +204,16 @@ class IoApiHttpConnector implements ApiHttpConnector {
     required Map<String, String> headers,
     required String body,
   }) async {
-    final request = await _httpClient.postUrl(uri);
-    headers.forEach(request.headers.set);
-    request.add(utf8.encode(body));
-    return _close(request);
+    return _sendJson('POST', uri, headers: headers, body: body);
+  }
+
+  @override
+  Future<ApiHttpResponse> put(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) {
+    return _sendJson('PUT', uri, headers: headers, body: body);
   }
 
   @override
@@ -201,11 +221,8 @@ class IoApiHttpConnector implements ApiHttpConnector {
     Uri uri, {
     required Map<String, String> headers,
     required String body,
-  }) async {
-    final request = await _httpClient.patchUrl(uri);
-    headers.forEach(request.headers.set);
-    request.add(utf8.encode(body));
-    return _close(request);
+  }) {
+    return _sendJson('PATCH', uri, headers: headers, body: body);
   }
 
   @override
@@ -213,8 +230,20 @@ class IoApiHttpConnector implements ApiHttpConnector {
     Uri uri, {
     required Map<String, String> headers,
   }) async {
-    final request = await _httpClient.deleteUrl(uri);
+    final request = await _httpClient.openUrl('DELETE', uri);
     headers.forEach(request.headers.set);
+    return _close(request);
+  }
+
+  Future<ApiHttpResponse> _sendJson(
+    String method,
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) async {
+    final request = await _httpClient.openUrl(method, uri);
+    headers.forEach(request.headers.set);
+    request.add(utf8.encode(body));
     return _close(request);
   }
 
@@ -229,7 +258,7 @@ class IoApiHttpConnector implements ApiHttpConnector {
   }
 }
 
-class IoApiJsonTransport implements ApiJsonTransport {
+class IoApiJsonTransport implements ApiJsonTransport, ApiJsonMutationTransport {
   IoApiJsonTransport({
     required Uri baseUri,
     this.token,
@@ -269,6 +298,20 @@ class IoApiJsonTransport implements ApiJsonTransport {
   }
 
   @override
+  Future<Map<String, Object?>> putJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    final response = await connector.put(
+      _resolve(path),
+      headers: _requestHeaders(includeContentType: true, extraHeaders: headers),
+      body: jsonEncode(body),
+    );
+    return _decodeResponse(response);
+  }
+
+  @override
   Future<Map<String, Object?>> patchJson(
     String path, {
     Map<String, Object?> body = const {},
@@ -283,7 +326,7 @@ class IoApiJsonTransport implements ApiJsonTransport {
   }
 
   @override
-  Future<void> deleteJson(
+  Future<Map<String, Object?>> deleteJson(
     String path, {
     Map<String, String> headers = const {},
   }) async {
@@ -291,15 +334,7 @@ class IoApiJsonTransport implements ApiJsonTransport {
       _resolve(path),
       headers: _requestHeaders(extraHeaders: headers),
     );
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      final body = _decodeJsonObject(response.body);
-      throw ApiHttpException(
-        statusCode: response.statusCode,
-        statusText: response.statusText,
-        body: body,
-        requestId: _requestIdFromErrorBody(body),
-      );
-    }
+    return _decodeResponse(response, allowEmpty: true);
   }
 
   Uri _resolve(String path, {Map<String, Object?> query = const {}}) {
@@ -333,7 +368,10 @@ class IoApiJsonTransport implements ApiJsonTransport {
     };
   }
 
-  Map<String, Object?> _decodeResponse(ApiHttpResponse response) {
+  Map<String, Object?> _decodeResponse(
+    ApiHttpResponse response, {
+    bool allowEmpty = false,
+  }) {
     final body = _decodeJsonObject(response.body);
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw ApiHttpException(
@@ -342,6 +380,9 @@ class IoApiJsonTransport implements ApiJsonTransport {
         body: body,
         requestId: _requestIdFromErrorBody(body),
       );
+    }
+    if (body == null && allowEmpty && response.body.trim().isEmpty) {
+      return const <String, Object?>{};
     }
     if (body == null) {
       throw const ApiEnvelopeFormatException('Response body is not an object.');
@@ -499,6 +540,15 @@ class _DefaultApiHttpConnector implements ApiHttpConnector {
     required String body,
   }) {
     return IoApiHttpConnector().post(uri, headers: headers, body: body);
+  }
+
+  @override
+  Future<ApiHttpResponse> put(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) {
+    return IoApiHttpConnector().put(uri, headers: headers, body: body);
   }
 
   @override

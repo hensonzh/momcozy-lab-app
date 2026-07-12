@@ -87,7 +87,7 @@
           "path": "/v1/plans",
           "headers": ["${auth_header}", "${idempotency_header}"],
           "body": {
-            "plan_type": "birth_journey",
+            "plan_type": "pregnancy",
             "title": "Smoke plan",
             "source": "smoke"
           }
