@@ -338,8 +338,23 @@ MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
         'payload': <String, Object?>{},
       },
       scheduleDayPlanEndpoint: const <String, Object?>{
-        'status': 200,
-        'data': <String, Object?>{'tasks': <Object?>[]},
+        'items': <Object?>[
+          <String, Object?>{
+            'id': 'schedule-golden-task',
+            'task_date': '2026-07-03',
+            'task_time': '14:00',
+            'title': '喂养',
+            'description': '记录本次奶量',
+            'status': 'pending',
+            'payload': <String, Object?>{'task_type': 'feeding'},
+          },
+        ],
+      },
+      scheduleFeedingRecordsEndpoint: const <String, Object?>{
+        'items': <Object?>[],
+      },
+      schedulePumpingRecordsEndpoint: const <String, Object?>{
+        'items': <Object?>[],
       },
     }),
     agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),

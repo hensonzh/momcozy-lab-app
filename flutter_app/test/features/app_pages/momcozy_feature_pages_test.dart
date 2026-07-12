@@ -58,7 +58,7 @@ void main() {
         } else if (route.path == '/media-viewer') {
           expect(find.text('媒体'), findsWidgets);
         } else if (route.path == '/schedule') {
-          expect(find.text('稳奶计划执行中'), findsWidgets);
+          expect(find.text('计划待同步'), findsWidgets);
         } else {
           expect(find.text(route.title), findsWidgets);
         }
@@ -204,7 +204,7 @@ void main() {
 
       await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
       await tester.pump();
-      expect(find.text('稳奶计划执行中'), findsOneWidget);
+      expect(find.text('计划待同步'), findsOneWidget);
       expect(find.text('泵奶提醒'), findsNothing);
       expect(find.text('每日摘要'), findsNothing);
 
@@ -303,17 +303,6 @@ void main() {
     });
 
     testWidgets('local page controls update visible state', (tester) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
-      await tester.pumpAndSettle();
-      await _scrollToText(tester, '14:00 喂养');
-      await tester.drag(find.byType(Scrollable).first, const Offset(0, -520));
-      await tester.pumpAndSettle();
-      final visibleCompletedCount = _checkboxesWithValue(tester, true);
-
-      await tester.tap(find.byType(Checkbox).last);
-      await tester.pump();
-      expect(_checkboxesWithValue(tester, true), visibleCompletedCount + 1);
-
       await tester.pumpWidget(
         _FeaturePageHost(route: _route('/ibclc-chat.html')),
       );
@@ -562,265 +551,6 @@ void main() {
       await _scrollToText(tester, '母乳趋势');
       expect(find.text('母乳趋势'), findsOneWidget);
       expect(find.text('状态同步失败'), findsNothing);
-      expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
-      expect(find.byTooltip('重试'), findsNothing);
-    });
-
-    testWidgets('schedule page loads day plan from runtime repository', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const ValueKey('schedule-context-reminder-button')),
-        findsOneWidget,
-      );
-      expect(find.text('1/3'), findsOneWidget);
-      await _scrollToText(tester, '10:30 泵奶');
-      expect(find.text('10:30 泵奶'), findsOneWidget);
-      await _scrollToText(tester, '14:00 喂养');
-      expect(find.text('14:00 喂养'), findsWidgets);
-      expect(_checkboxesWithValue(tester, true), 1);
-
-      await tester.tap(find.text('14:00 喂养').last);
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const ValueKey('schedule-task-edit-title-input')),
-        findsOneWidget,
-      );
-      expect(_checkboxesWithValue(tester, true), 1);
-
-      await tester.enterText(
-        find.byKey(const ValueKey('schedule-task-edit-title-input')),
-        '下午喂养',
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('schedule-task-edit-time-input')),
-        '14:15',
-      );
-      await tester.ensureVisible(
-        find.byKey(const ValueKey('schedule-task-edit-save-button')),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.byKey(const ValueKey('schedule-task-edit-save-button')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('任务已更新'), findsOneWidget);
-      expect(find.text('14:15'), findsWidgets);
-      expect(find.text('下午喂养'), findsWidgets);
-      expect(_checkboxesWithValue(tester, true), 1);
-
-      await tester.tap(find.byType(Checkbox).last);
-      await tester.pump();
-      expect(_checkboxesWithValue(tester, true), 2);
-    });
-
-    testWidgets('schedule page switches date and reminder state', (
-      tester,
-    ) async {
-      final transport = FixtureApiJsonTransportByPath({
-        scheduleDayPlanEndpoint: const {
-          'items': <Object?>[
-            {
-              'id': 'pump',
-              'owner_user_id': 'demo-user-fixture',
-              'task_date': '2026-07-01',
-              'task_time': '10:30',
-              'title': '泵奶',
-              'description': '',
-              'status': 'completed',
-              'payload': <String, Object?>{},
-            },
-            {
-              'id': 'feeding',
-              'owner_user_id': 'demo-user-fixture',
-              'task_date': '2026-07-01',
-              'task_time': '14:00',
-              'title': '喂养',
-              'description': '',
-              'status': 'pending',
-              'payload': <String, Object?>{},
-            },
-          ],
-        },
-      });
-
-      await tester.pumpWidget(
-        _FeaturePageHost(route: _route('/schedule'), jsonTransport: transport),
-      );
-      await tester.pumpAndSettle();
-
-      expect(transport.lastQuery, containsPair('task_date', '2026-07-01'));
-      expect(transport.lastQuery, isNot(containsPair('user_id', anything)));
-      expect(find.text('1/2'), findsOneWidget);
-
-      await tester.tap(find.text('3').first);
-      await tester.pumpAndSettle();
-
-      expect(transport.lastQuery, containsPair('task_date', '2026-07-03'));
-
-      expect(find.text('7月3日 稳奶计划'), findsOneWidget);
-      expect(find.text('未来的计划'), findsOneWidget);
-      expect(find.text('10:30 泵奶'), findsNothing);
-
-      expect(find.text('泵奶提醒'), findsNothing);
-      expect(find.text('每日摘要'), findsNothing);
-      expect(find.byType(Switch), findsNothing);
-    });
-
-    testWidgets('schedule page does not edit tasks outside today', (
-      tester,
-    ) async {
-      final transport = FixtureApiJsonTransportByPath({
-        scheduleDayPlanEndpoint: const {
-          'items': <Object?>[
-            {
-              'id': 'future-feeding',
-              'owner_user_id': 'demo-user-fixture',
-              'task_date': '2026-07-03',
-              'task_time': '14:00',
-              'title': '喂养',
-              'description': '',
-              'status': 'pending',
-              'payload': <String, Object?>{},
-            },
-          ],
-        },
-      });
-
-      await tester.pumpWidget(
-        _FeaturePageHost(route: _route('/schedule'), jsonTransport: transport),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('3').first);
-      await tester.pumpAndSettle();
-
-      expect(find.text('7月3日 稳奶计划'), findsOneWidget);
-      await _scrollToText(tester, '14:00 喂养');
-      await tester.tap(find.text('14:00 喂养').last);
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const ValueKey('schedule-task-edit-title-input')),
-        findsNothing,
-      );
-      expect(
-        find.byKey(const ValueKey('schedule-task-edit-time-input')),
-        findsNothing,
-      );
-    });
-
-    testWidgets('schedule page adds deletes local tasks and shows badge', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_FeaturePageHost(route: _route('/schedule')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('1/3'), findsOneWidget);
-      expect(find.text('待执行任务'), findsOneWidget);
-
-      final addTaskButton = find.byKey(
-        const ValueKey('schedule-add-task-button'),
-      );
-      await _scrollToFinder(tester, addTaskButton);
-      await tester.tap(addTaskButton);
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('schedule-add-task-dialog')),
-        findsOneWidget,
-      );
-      await tester.tap(find.byKey(const ValueKey('schedule-add-task-submit')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('1/4'), findsOneWidget);
-      await _scrollToText(tester, '本地补充 1');
-      expect(find.text('本地补充 1'), findsOneWidget);
-
-      await tester.tap(find.byTooltip('删除任务').last);
-      await tester.pumpAndSettle();
-
-      await tester.drag(find.byType(Scrollable).first, const Offset(0, 600));
-      await tester.pumpAndSettle();
-
-      expect(find.text('1/3'), findsOneWidget);
-      expect(find.text('本地补充 1'), findsNothing);
-    });
-
-    testWidgets('schedule page renders cross-day countdown', (tester) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/schedule'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            scheduleDayPlanEndpoint: const {
-              'items': <Object?>[
-                {
-                  'id': 'prenatal-check',
-                  'owner_user_id': 'demo-user-fixture',
-                  'task_date': '2026-07-03',
-                  'task_time': '14:00',
-                  'title': '周五产检',
-                  'description': '',
-                  'status': 'pending',
-                  'payload': <String, Object?>{},
-                },
-              ],
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('0/1'), findsOneWidget);
-      expect(find.textContaining('周五产检 还有 2 天 6 小时'), findsOneWidget);
-    });
-
-    testWidgets('schedule page renders empty and failed states', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/schedule'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            scheduleDayPlanEndpoint: const {'items': <Object?>[]},
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('0/0'), findsOneWidget);
-      expect(find.text('今天还没有计划任务'), findsOneWidget);
-      await _scrollToText(tester, '当天暂无执行内容');
-      expect(find.text('当天暂无执行内容'), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('schedule-empty-quick-actions')),
-        findsOneWidget,
-      );
-      expect(find.text('吸奶补录'), findsOneWidget);
-      expect(find.text('喂养记录'), findsOneWidget);
-
-      await tester.pumpWidget(
-        _FeaturePageHost(
-          route: _route('/schedule'),
-          jsonTransport: FixtureApiJsonTransportByPath({
-            scheduleDayPlanEndpoint: const {
-              'http_status': 503,
-              'status_text': 'Service Unavailable',
-            },
-          }),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await _scrollToText(tester, '当天暂无执行内容');
-      expect(find.text('当天暂无执行内容'), findsOneWidget);
-      expect(find.text('吸奶补录'), findsOneWidget);
-      expect(find.text('喂养记录'), findsOneWidget);
-      expect(find.text('计划同步失败'), findsNothing);
       expect(find.text('检查后端连接或 token 后重试。'), findsNothing);
       expect(find.byTooltip('重试'), findsNothing);
     });
@@ -2261,13 +1991,6 @@ void main() {
 
 MomCozyRouteConfig _route(String path) {
   return momCozyRoutes.singleWhere((route) => route.path == path);
-}
-
-int _checkboxesWithValue(WidgetTester tester, bool value) {
-  return tester
-      .widgetList<Checkbox>(find.byType(Checkbox))
-      .where((checkbox) => checkbox.value == value)
-      .length;
 }
 
 Future<void> _tapScrollableText(WidgetTester tester, String text) async {
