@@ -208,7 +208,7 @@ void main() {
               )
               .controller
               ?.text,
-          '帮我制定孕期计划',
+          '帮我生成孕期计划',
         );
 
         final failingRouteIntentPlatform = FakeRouteIntentPlatform();

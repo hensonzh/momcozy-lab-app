@@ -959,6 +959,7 @@ class _StatusPageState extends State<_StatusPage> {
           StatusCareStage.fromStorage(stage) ?? StatusCareStage.postpartum,
         ),
       );
+      unawaited(_controller.loadVisible());
       _persistInteractionState();
     });
   }
@@ -1050,6 +1051,7 @@ class _StatusPageState extends State<_StatusPage> {
                                 )) {
                                   return;
                                 }
+                                unawaited(_controller.loadVisible());
                                 setState(() {
                                   _persistInteractionState();
                                 });
@@ -1119,6 +1121,11 @@ class _StatusPageState extends State<_StatusPage> {
               plan: _controller.birthJourneyPlan,
               mutation: _controller.planMutation,
               onDeletePlan: _controller.deleteBirthJourneyPlan,
+              onToggleTodo: (itemId, completed) => _controller.togglePlanTodo(
+                taskId: itemId,
+                completed: completed,
+              ),
+              onRetryPlan: _controller.refreshPregnancyPlan,
               onAgentPrompt: (prompt, {autoSend = false}) {
                 context.go(
                   '/',
