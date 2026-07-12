@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_postpartum_stage.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
 import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dashboard_controller.dart';
 
@@ -19,6 +20,7 @@ class ScheduleDashboardPage extends StatefulWidget {
     this.routeExtra,
     this.onOpenAgent,
     this.onRecognizeScheduleImage,
+    this.deliveryDateLoader,
     this.reminderGateway = const UnsupportedScheduleReminderGateway(),
     this.reminderPreferenceStore =
         const DisabledScheduleReminderPreferenceStore(),
@@ -33,6 +35,7 @@ class ScheduleDashboardPage extends StatefulWidget {
   final Object? routeExtra;
   final VoidCallback? onOpenAgent;
   final Future<bool> Function()? onRecognizeScheduleImage;
+  final Future<DateTime?> Function()? deliveryDateLoader;
   final ScheduleReminderGateway reminderGateway;
   final ScheduleReminderPreferenceStore reminderPreferenceStore;
   final MilkPlanChangeStore? milkPlanChangeStore;
@@ -62,6 +65,8 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   String? _pendingFocusTaskId;
   bool _focusScheduled = false;
   int? _consumedMilkPlanRevision;
+  DateTime? _deliveryDate;
+  int _deliveryDateLoadGeneration = 0;
   final Set<String> _changedDayKeys = <String>{};
   final Map<String, String> _idempotencyKeysByIntent = <String, String>{};
 
@@ -79,6 +84,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     _applyRouteIntent(intentDay: intentDay, notify: false, selectDay: false);
     widget.milkPlanChangeStore?.addListener(_onMilkPlanChangeStore);
     unawaited(_loadReminderPreference());
+    unawaited(_loadDeliveryDate());
     _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() => _clock = widget.now());
     });
@@ -109,6 +115,9 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _onMilkPlanChangeStore();
       });
+    }
+    if (!identical(oldWidget.deliveryDateLoader, widget.deliveryDateLoader)) {
+      unawaited(_loadDeliveryDate());
     }
   }
 
@@ -533,6 +542,13 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   }
 
   String _stageLabel(SchedulePlanContext context, [DateTime? selectedDay]) {
+    final deliveryDate = _deliveryDate;
+    if (deliveryDate != null && selectedDay != null) {
+      return schedulePostpartumStageLabel(
+        deliveryDate: deliveryDate,
+        selectedDay: selectedDay,
+      );
+    }
     final explicit =
         context.payload['stage_label'] ?? context.payload['stageLabel'];
     if (explicit is String && explicit.trim().isNotEmpty) {
@@ -556,6 +572,28 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     }
     final value = context.stageLabel.trim();
     return value.isEmpty ? '计划阶段待同步' : value;
+  }
+
+  Future<void> _loadDeliveryDate() async {
+    final generation = ++_deliveryDateLoadGeneration;
+    final loader = widget.deliveryDateLoader;
+    if (loader == null) {
+      if (mounted && _deliveryDate != null) {
+        setState(() => _deliveryDate = null);
+      }
+      return;
+    }
+    try {
+      final value = await loader();
+      if (!mounted || generation != _deliveryDateLoadGeneration) return;
+      final normalized = value == null
+          ? null
+          : _calendarDay(value.isUtc ? value.toLocal() : value);
+      if (_deliveryDate == normalized) return;
+      setState(() => _deliveryDate = normalized);
+    } catch (_) {
+      // Keep the last known date and fall back to the plan payload on first load.
+    }
   }
 
   String _taskExplanation(ScheduleDayPlan snapshot) {

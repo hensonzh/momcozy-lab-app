@@ -62,6 +62,33 @@ void main() {
     expect(find.byTooltip('已有执行记录，请先删除关联记录'), findsOneWidget);
   });
 
+  testWidgets(
+    'uses the actual delivery date and selected day instead of stale plan stage',
+    (tester) async {
+      await _pumpPage(
+        tester,
+        _transport(),
+        deliveryDateLoader: () async => DateTime(2026, 6, 30),
+      );
+
+      expect(find.text('产后第1周（初乳期）'), findsOneWidget);
+      expect(find.text('产后第29周（离乳期）'), findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey('schedule-date-2026-07-04')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('产后第1周（建立期）'), findsOneWidget);
+    },
+  );
+
+  testWidgets('keeps the plan payload stage when no actual date exists', (
+    tester,
+  ) async {
+    await _pumpPage(tester, _transport(), deliveryDateLoader: () async => null);
+
+    expect(find.text('产后第29周（离乳期）'), findsOneWidget);
+  });
+
   testWidgets('keeps the usable timeline when one resource returns 503', (
     tester,
   ) async {
@@ -1232,6 +1259,7 @@ Future<void> _pumpPage(
   bool disableAnimations = false,
   MilkPlanChangeStore? milkPlanChangeStore,
   DateTime? now,
+  Future<DateTime?> Function()? deliveryDateLoader,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -1253,6 +1281,7 @@ Future<void> _pumpPage(
           reminderGateway: reminderGateway,
           reminderPreferenceStore: reminderPreferenceStore,
           milkPlanChangeStore: milkPlanChangeStore,
+          deliveryDateLoader: deliveryDateLoader,
         ),
       ),
     ),
