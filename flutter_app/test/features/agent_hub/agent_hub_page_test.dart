@@ -3411,6 +3411,200 @@ void main() {
   );
 
   testWidgets(
+    'Agent Hub queues a follow-up after completed text until run terminal',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final cancelConnector = _RecordingCancelConnector();
+      final cancelClient = AgentStreamCancelClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+        ),
+        connector: cancelConnector,
+      );
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            cancelClient: cancelClient,
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'First turn',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'followup-message-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-followup-completed',
+          'run_id': 'run-followup-completed',
+          'message_id': 'msg-followup-completed',
+          'sequence': 1,
+          'payload': {'role': 'assistant', 'text': 'Analysis is ready.'},
+        }),
+      );
+      await tester.pump();
+
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Second turn',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      expect(client.requests, hasLength(1));
+      expect(cancelConnector.called.isCompleted, isFalse);
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'followup-run-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-followup-completed',
+          'run_id': 'run-followup-completed',
+          'sequence': 2,
+        }),
+      );
+      await _pumpFrames(tester, 4);
+
+      expect(client.requests, hasLength(2));
+      expect(client.requests.last.message, 'Second turn');
+      expect(client.requests.last.threadId, 'thread-followup-completed');
+      expect(cancelConnector.called.isCompleted, isFalse);
+      expect(find.text('Analysis is ready.'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub bounds follow-up handoff when the terminal event is missing',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final cancelConnector = _RecordingCancelConnector();
+      final cancelClient = AgentStreamCancelClient(
+        endpoint: AgentStreamEndpoint(
+          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/runs'),
+        ),
+        connector: cancelConnector,
+      );
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            cancelClient: cancelClient,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'First turn',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'missing-terminal-message',
+          'type': 'message.completed',
+          'thread_id': 'thread-missing-terminal',
+          'run_id': 'run-missing-terminal',
+          'message_id': 'msg-missing-terminal',
+          'sequence': 1,
+          'payload': {'role': 'assistant', 'text': 'Analysis is ready.'},
+        }),
+      );
+      await tester.pump();
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        'Continue after timeout',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      expect(client.requests, hasLength(1));
+      await tester.pump(const Duration(seconds: 2));
+      await _pumpFrames(tester, 4);
+
+      expect(cancelConnector.called.isCompleted, isTrue);
+      expect(
+        cancelConnector.uri?.path,
+        '/v1/agent/runs/run-missing-terminal/cancel',
+      );
+      expect(client.requests, hasLength(2));
+      expect(client.requests.last.message, 'Continue after timeout');
+      expect(client.requests.last.threadId, 'thread-missing-terminal');
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub keeps queued text when the run starts awaiting confirmation',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+      );
+      final composer = find.byKey(const ValueKey('agent-composer-input'));
+      await tester.enterText(composer, 'First turn');
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'confirmation-handoff-message',
+          'type': 'message.completed',
+          'thread_id': 'thread-confirmation-handoff',
+          'run_id': 'run-confirmation-handoff',
+          'message_id': 'msg-confirmation-handoff',
+          'sequence': 1,
+          'payload': {'role': 'assistant', 'text': 'Please confirm next.'},
+        }),
+      );
+      await tester.pump();
+      await tester.enterText(composer, 'Keep this draft');
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'confirmation-handoff-waiting',
+          'type': 'run.waiting_for_confirmation',
+          'thread_id': 'thread-confirmation-handoff',
+          'run_id': 'run-confirmation-handoff',
+          'sequence': 2,
+        }),
+      );
+      await _pumpFrames(tester, 4);
+
+      expect(client.requests, hasLength(1));
+      expect(
+        tester.widget<TextField>(composer).controller?.text,
+        'Keep this draft',
+      );
+      expect(tester.widget<TextField>(composer).enabled, isFalse);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'Agent Hub releases visible running UI after completed assistant message',
     (tester) async {
       final client = _ControllableAgentStreamClient();
@@ -5657,14 +5851,15 @@ void main() {
       client.emit(
         0,
         AgentStreamEvent(const {
-          'event_id': 'pregnancy-analysis-completed',
-          'type': 'run.completed',
+          'event_id': 'pregnancy-analysis-progress',
+          'type': 'run.progress',
           'thread_id': 'thread-pregnancy-flow',
           'run_id': 'run-pregnancy-analysis',
           'sequence': 3,
+          'payload': {'phase': 'response_finalizing'},
         }),
       );
-      await _pumpFrames(tester, 4);
+      await _pumpFrames(tester, 2);
 
       expect(find.textContaining('双胎和 IVF 会影响复查节奏'), findsOneWidget);
       expect(find.text('已提交'), findsOneWidget);
@@ -5678,6 +5873,20 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(noMore);
       await tester.pump();
+
+      expect(client.requests, hasLength(1));
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'pregnancy-analysis-completed',
+          'type': 'run.completed',
+          'thread_id': 'thread-pregnancy-flow',
+          'run_id': 'run-pregnancy-analysis',
+          'sequence': 4,
+        }),
+      );
+      await _pumpFrames(tester, 4);
 
       expect(client.requests, hasLength(2));
       expect(client.requests.last.message, '没有了，开始制定');
