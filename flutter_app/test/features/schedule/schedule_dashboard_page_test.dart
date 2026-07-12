@@ -275,8 +275,11 @@ void main() {
     });
     await _pumpPage(tester, transport);
 
-    await tester.drag(_scheduleScrollable(), const Offset(0, -350));
-    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('schedule-feedback-banner')),
+      200,
+      scrollable: _scheduleScrollable(),
+    );
     expect(find.text('喂养记录同步暂时不可用'), findsOneWidget);
     final banner = tester.widget<Semantics>(
       find.byKey(const ValueKey('schedule-feedback-banner')),
@@ -328,7 +331,10 @@ void main() {
       find.byKey(const ValueKey('schedule-agent-chat-button')),
       findsOneWidget,
     );
-    expect(find.textContaining('稳奶计划 · 产后第29周（离乳期）'), findsOneWidget);
+    expect(find.text('已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我'), findsOneWidget);
+    expect(find.text('提醒开关'), findsOneWidget);
+    expect(find.text('系统提醒已开启'), findsNothing);
+    expect(find.text('系统提醒未开启'), findsNothing);
     await tester.scrollUntilVisible(
       find.byKey(const ValueKey('schedule-next-countdown-badge')),
       200,
@@ -365,7 +371,94 @@ void main() {
       find.byKey(const ValueKey('schedule-next-task-badge-next-pump')),
       findsOneWidget,
     );
+
+    final toolbar = find.byKey(const ValueKey('schedule-list-toolbar'));
+    await tester.scrollUntilVisible(
+      toolbar,
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+    final toolbarTitle = find.descendant(
+      of: toolbar,
+      matching: find.text('今日任务'),
+    );
+    final adjustButton = find.byKey(const ValueKey('schedule-adjust-button'));
+    expect(
+      (tester.getCenter(toolbarTitle).dy - tester.getCenter(adjustButton).dy)
+          .abs(),
+      lessThan(12),
+    );
   });
+
+  testWidgets('places quick records after the timeline like legacy web', (
+    tester,
+  ) async {
+    await _pumpPage(
+      tester,
+      _transport(
+        tasks: const [],
+        feedingRecords: const [],
+        pumpingRecords: const [],
+      ),
+    );
+
+    final emptyNotice = find.byKey(
+      const ValueKey('schedule-empty-timeline-notice'),
+    );
+    final quickActions = find.byKey(const ValueKey('schedule-quick-actions'));
+    await tester.scrollUntilVisible(
+      quickActions,
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+
+    expect(emptyNotice, findsOneWidget);
+    expect(
+      tester.getTopLeft(quickActions).dy,
+      greaterThan(tester.getTopLeft(emptyNotice).dy),
+    );
+  });
+
+  testWidgets(
+    'planned future days use the legacy summary instead of next task',
+    (tester) async {
+      await _pumpPage(
+        tester,
+        _transport(
+          tasks: const [
+            {
+              'id': 'future-pump',
+              'plan_id': 'plan-1',
+              'task_date': '2026-07-10',
+              'task_time': '14:00',
+              'title': '下午吸奶',
+              'description': '',
+              'status': 'pending',
+              'payload': {'task_type': 'pumping'},
+            },
+          ],
+          feedingRecords: const [],
+          pumpingRecords: const [],
+        ),
+        initialDay: DateTime.utc(2026, 7, 10),
+      );
+
+      expect(find.text('未来的计划'), findsOneWidget);
+      expect(find.text('系统已为你提前规划了当天的吸乳和喂养日程'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-empty-task-card')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('schedule-next-task-card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('schedule-context-reminder-button')),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets(
     'linked feeding completion prefills time and supports breastfeed',
@@ -1030,13 +1123,13 @@ void main() {
     );
     await _pumpPage(tester, handled);
     expect(find.text('今天的计划尚未全部完成哦'), findsOneWidget);
-    expect(find.text('完成 1 项，跳过 1 项。'), findsOneWidget);
+    expect(find.text('顺利完成1个任务，有1个任务被跳过'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await _pumpPage(tester, _transport(), initialDay: DateTime.utc(2026, 7, 2));
     expect(find.text('这天的计划已结束'), findsOneWidget);
     expect(find.text('执行记录'), findsOneWidget);
-    expect(find.textContaining('共完成 2 项，母乳产出 120 mL'), findsOneWidget);
+    expect(find.textContaining('共完成 2 项任务，母乳产出 120 mL'), findsOneWidget);
     expect(find.textContaining('还有'), findsNothing);
   });
 
@@ -1154,7 +1247,7 @@ void main() {
       find.byKey(const ValueKey('schedule-context-progress')),
       findsNothing,
     );
-    expect(find.text('当天暂无任务或执行记录。'), findsOneWidget);
+    expect(find.text('这天还没有计划'), findsOneWidget);
     expect(find.textContaining('按时提醒'), findsNothing);
   });
 

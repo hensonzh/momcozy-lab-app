@@ -26,13 +26,18 @@ void main() {
       );
     });
 
-    testWidgets('agent card uses live plan context', (tester) async {
+    testWidgets('agent card matches the legacy guidance hierarchy', (
+      tester,
+    ) async {
       await _pumpScheduleComponentApp(tester);
 
       final card = find.byKey(const ValueKey('schedule-agent-card'));
       expect(card, findsOneWidget);
-      expect(find.textContaining('稳奶计划 · 产后第29周（离乳期）'), findsOneWidget);
-      expect(find.text('提醒'), findsOneWidget);
+      expect(
+        find.text('已经根据你今天的会议日程，对吸乳排期做了调整哦，记得按时吸奶，有问题随时找我'),
+        findsOneWidget,
+      );
+      expect(find.text('提醒开关'), findsOneWidget);
       expect(find.text('对话'), findsOneWidget);
       await expectLater(
         card,
