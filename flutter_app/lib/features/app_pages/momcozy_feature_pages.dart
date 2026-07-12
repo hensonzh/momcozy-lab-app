@@ -86,6 +86,9 @@ class MomCozyFeaturePage extends StatelessWidget {
         reminderPreferenceStore: MomCozyRuntimeScope.of(
           context,
         ).scheduleReminderPreferenceStore,
+        volumeUnitPreferenceStore: MomCozyRuntimeScope.of(
+          context,
+        ).volumeUnitPreferenceStore,
         milkPlanChangeStore: MomCozyRuntimeScope.of(
           context,
         ).milkPlanChangeStore,

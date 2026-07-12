@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
@@ -43,7 +44,7 @@ void main() {
       250,
       scrollable: _scheduleScrollable(),
     );
-    expect(find.text('80 ml · 22:00 完成'), findsOneWidget);
+    expect(find.text('80 mL · 22:00 完成'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('schedule-timeline-task-task-feed')),
       findsOneWidget,
@@ -88,6 +89,130 @@ void main() {
 
     expect(find.text('产后第29周（离乳期）'), findsOneWidget);
   });
+
+  testWidgets('displays schedule quantities in the account volume unit', (
+    tester,
+  ) async {
+    await _pumpPage(
+      tester,
+      _transport(),
+      volumeUnitPreferenceStore: _FakeVolumeUnitPreferenceStore(
+        MomCozyVolumeUnit.ounces,
+      ),
+    );
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('schedule-timeline-task-task-feed')),
+      250,
+      scrollable: _scheduleScrollable(),
+    );
+    expect(find.text('2.7 oz · 22:00 完成'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('schedule-timeline-record-pump-1')),
+      250,
+      scrollable: _scheduleScrollable(),
+    );
+    expect(find.textContaining('4.1 oz'), findsOneWidget);
+    expect(
+      tester
+          .getSemantics(
+            find.byKey(const ValueKey('schedule-timeline-record-pump-1')),
+          )
+          .label,
+      contains('4.1 oz'),
+    );
+  });
+
+  testWidgets(
+    'ounce record inputs send canonical mL for pumping sides and feeding',
+    (tester) async {
+      final transport = _transport(
+        tasks: const [],
+        feedingRecords: const [],
+        pumpingRecords: const [],
+        writeResponsesByPath: const {
+          schedulePumpingRecordsEndpoint: {
+            'id': 'pump-created',
+            'plan_task_id': null,
+            'pump_start_time': '2026-07-03T10:00:00Z',
+            'milk_volume_ml': 98,
+            'title': '吸奶补录',
+          },
+          scheduleFeedingRecordsEndpoint: {
+            'id': 'feed-created',
+            'plan_task_id': null,
+            'feed_time': '2026-07-03T10:00:00Z',
+            'feed_type': 'bottle',
+            'volume_ml': 80,
+            'title': '喂养记录',
+          },
+        },
+      );
+      await _pumpPage(
+        tester,
+        transport,
+        volumeUnitPreferenceStore: _FakeVolumeUnitPreferenceStore(
+          MomCozyVolumeUnit.ounces,
+        ),
+      );
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('schedule-quick-actions')),
+        200,
+        scrollable: _scheduleScrollable(),
+      );
+
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const ValueKey('schedule-quick-actions')),
+          matching: find.text('吸奶补录'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('吸奶量（左侧）'), findsOneWidget);
+      expect(find.text('吸奶量（右侧）'), findsOneWidget);
+      expect(find.text('oz'), findsNWidgets(2));
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-record-left-amount-input')),
+        '1.1',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-record-right-amount-input')),
+        '2.2',
+      );
+      await tester.pump();
+      expect(find.text('总奶量：3.3 oz'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('schedule-record-submit')));
+      await tester.pumpAndSettle();
+
+      expect(transport.lastPath, schedulePumpingRecordsEndpoint);
+      expect(transport.lastBody?['milk_volume_ml'], 98);
+
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('schedule-quick-actions')),
+        200,
+        scrollable: _scheduleScrollable(),
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const ValueKey('schedule-quick-actions')),
+          matching: find.text('喂养记录'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('奶量'), findsOneWidget);
+      expect(find.text('oz'), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-record-amount-input')),
+        '2.7',
+      );
+      await tester.tap(find.byKey(const ValueKey('schedule-record-submit')));
+      await tester.pumpAndSettle();
+
+      expect(transport.lastPath, scheduleFeedingRecordsEndpoint);
+      expect(transport.lastBody?['volume_ml'], 80);
+    },
+  );
 
   testWidgets('keeps the usable timeline when one resource returns 503', (
     tester,
@@ -761,7 +886,8 @@ void main() {
     String fieldText(String key) =>
         tester.widget<TextField>(find.byKey(ValueKey(key))).controller!.text;
     expect(fieldText('schedule-record-time-input'), '10:37');
-    expect(fieldText('schedule-record-amount-input'), isEmpty);
+    expect(fieldText('schedule-record-left-amount-input'), isEmpty);
+    expect(fieldText('schedule-record-right-amount-input'), isEmpty);
     expect(fieldText('schedule-record-duration-input'), isEmpty);
 
     await tester.tap(find.byKey(const ValueKey('schedule-record-submit')));
@@ -828,7 +954,7 @@ void main() {
     await _pumpPage(tester, _transport(), initialDay: DateTime.utc(2026, 7, 2));
     expect(find.text('这天的计划已结束'), findsOneWidget);
     expect(find.text('执行记录'), findsOneWidget);
-    expect(find.textContaining('共完成 2 项，母乳产出 120 ml'), findsOneWidget);
+    expect(find.textContaining('共完成 2 项，母乳产出 120 mL'), findsOneWidget);
     expect(find.textContaining('还有'), findsNothing);
   });
 
@@ -919,7 +1045,7 @@ void main() {
     );
     expect(
       linkedTaskSemantics.label,
-      contains('14:00 喂养，已完成，80 ml · 22:00 完成'),
+      contains('14:00 喂养，已完成，80 mL · 22:00 完成'),
     );
 
     final datePill = find.byKey(const ValueKey('schedule-date-2026-07-03'));
@@ -1258,6 +1384,7 @@ Future<void> _pumpPage(
   Object? routeExtra,
   bool disableAnimations = false,
   MilkPlanChangeStore? milkPlanChangeStore,
+  VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
   DateTime? now,
   Future<DateTime?> Function()? deliveryDateLoader,
 }) async {
@@ -1282,6 +1409,7 @@ Future<void> _pumpPage(
           reminderPreferenceStore: reminderPreferenceStore,
           milkPlanChangeStore: milkPlanChangeStore,
           deliveryDateLoader: deliveryDateLoader,
+          volumeUnitPreferenceStore: volumeUnitPreferenceStore,
         ),
       ),
     ),
@@ -1312,6 +1440,18 @@ class _FakeReminderStore implements ScheduleReminderPreferenceStore {
   Future<void> writeEnabled(bool enabled) async {
     this.enabled = enabled;
   }
+}
+
+class _FakeVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
+  _FakeVolumeUnitPreferenceStore(this.unit);
+
+  final MomCozyVolumeUnit unit;
+
+  @override
+  Future<MomCozyVolumeUnit?> read() async => unit;
+
+  @override
+  Future<void> write(MomCozyVolumeUnit unit) async {}
 }
 
 class _LostResponseCreateTransport extends FixtureApiJsonTransportByPath {
