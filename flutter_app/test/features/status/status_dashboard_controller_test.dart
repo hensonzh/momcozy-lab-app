@@ -8,6 +8,7 @@ import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_cache.dart';
 import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
 
 void main() {
@@ -88,6 +89,134 @@ void main() {
         expect(status.fetchCount, 2);
       },
     );
+
+    test('reuses a fresh owner-scoped snapshot without repository reads', () async {
+      var clock = DateTime(2026, 7, 11, 10);
+      final cache = StatusDashboardCache(
+        ownerUserId: 'user-001',
+        babyId: 'baby-001',
+      );
+      final status = _FakeStatusRepository();
+      final records = _FakeRecordsRepository();
+      final diary = _FakePregnancyDiaryRepository();
+      final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
+      final first = _controller(
+        status: status,
+        records: records,
+        diary: diary,
+        plans: plans,
+        cache: cache,
+        now: () => clock,
+      );
+      await first.load();
+      first.dispose();
+
+      final countsAfterFirstLoad = (
+        status: status.fetchCount,
+        feeding: records.feedingFetchCount,
+        milk: records.milkTrendFetchCount,
+        growth: records.growthFetchCount,
+        diary: diary.fetchCount,
+        plan: plans.fetchCount,
+      );
+      clock = clock.add(const Duration(seconds: 30));
+      final second = _controller(
+        status: status,
+        records: records,
+        diary: diary,
+        plans: plans,
+        cache: cache,
+        now: () => clock,
+      );
+      addTearDown(second.dispose);
+
+      expect(second.birthJourneyPlan.value.phase, StatusResourcePhase.data);
+      expect(second.birthJourneyPlan.value.data?.id, 'plan-001');
+      await second.load();
+
+      expect(
+        (
+          status: status.fetchCount,
+          feeding: records.feedingFetchCount,
+          milk: records.milkTrendFetchCount,
+          growth: records.growthFetchCount,
+          diary: diary.fetchCount,
+          plan: plans.fetchCount,
+        ),
+        countsAfterFirstLoad,
+      );
+    });
+
+    test('renders stale data first and refreshes each expired resource', () async {
+      var clock = DateTime(2026, 7, 11, 10);
+      final cache = StatusDashboardCache(
+        ownerUserId: 'user-001',
+        babyId: 'baby-001',
+      );
+      final status = _FakeStatusRepository();
+      final records = _FakeRecordsRepository();
+      final diary = _FakePregnancyDiaryRepository();
+      final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
+      final first = _controller(
+        status: status,
+        records: records,
+        diary: diary,
+        plans: plans,
+        cache: cache,
+        now: () => clock,
+      );
+      await first.load();
+      first.dispose();
+
+      clock = clock.add(const Duration(minutes: 6));
+      final second = _controller(
+        status: status,
+        records: records,
+        diary: diary,
+        plans: plans,
+        cache: cache,
+        now: () => clock,
+      );
+      addTearDown(second.dispose);
+      expect(second.birthJourneyPlan.value.data?.id, 'plan-001');
+      expect(second.birthJourneyPlan.value.isLoading, isFalse);
+
+      await second.load();
+
+      expect(status.fetchCount, 2);
+      expect(records.feedingFetchCount, 2);
+      expect(records.milkTrendFetchCount, 2);
+      expect(records.growthFetchCount, 2);
+      expect(diary.fetchCount, 2);
+      expect(plans.fetchCount, 2);
+    });
+
+    test('refreshes plan and diary changes without fetching unrelated resources', () async {
+      final status = _FakeStatusRepository();
+      final records = _FakeRecordsRepository();
+      final diary = _FakePregnancyDiaryRepository();
+      final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
+      final controller = _controller(
+        status: status,
+        records: records,
+        diary: diary,
+        plans: plans,
+      );
+      addTearDown(controller.dispose);
+      await controller.load();
+
+      await controller.refreshPregnancyPlan();
+      expect(plans.fetchCount, 2);
+      expect(diary.fetchCount, 1);
+      expect(status.fetchCount, 1);
+      expect(records.totalFetchCount, 3);
+
+      await controller.refreshPregnancyDiary();
+      expect(plans.fetchCount, 2);
+      expect(diary.fetchCount, 2);
+      expect(status.fetchCount, 1);
+      expect(records.totalFetchCount, 3);
+    });
 
     test(
       'validates and saves a diary entry into the local projection',
@@ -342,6 +471,8 @@ StatusDashboardController _controller({
   _FakePregnancyPlanRepository? plans,
   _FakeStatusPreferenceStore? preferences,
   _FakeVolumeUnitPreferenceStore? volumePreferences,
+  StatusDashboardCache? cache,
+  DateTime Function()? now,
   StatusIdentity initialIdentity = StatusIdentity.mom,
 }) {
   final effectiveRecords = records ?? _FakeRecordsRepository();
@@ -357,7 +488,8 @@ StatusDashboardController _controller({
         volumePreferences ?? _FakeVolumeUnitPreferenceStore(),
     initialIdentity: initialIdentity,
     babyId: 'baby-001',
-    now: () => DateTime(2026, 7, 11, 10),
+    cache: cache,
+    now: now ?? () => DateTime(2026, 7, 11, 10),
   );
 }
 
@@ -466,11 +598,18 @@ class _FakeRecordsRepository
   bool? milkTrendIncludeToday;
   final List<String> updatedIds = [];
   var createdCount = 0;
+  var feedingFetchCount = 0;
+  var milkTrendFetchCount = 0;
+  var growthFetchCount = 0;
+
+  int get totalFetchCount =>
+      feedingFetchCount + milkTrendFetchCount + growthFetchCount;
 
   @override
   Future<List<FeedingRecord>> fetchFeedingRecords({
     required DateTime date,
   }) async {
+    feedingFetchCount += 1;
     return feeding;
   }
 
@@ -480,6 +619,7 @@ class _FakeRecordsRepository
     required int days,
     bool includeToday = true,
   }) async {
+    milkTrendFetchCount += 1;
     milkTrendStart = startDate;
     milkTrendDays = days;
     milkTrendIncludeToday = includeToday;
@@ -491,6 +631,7 @@ class _FakeRecordsRepository
   Future<List<GrowthRecord>> fetchGrowthRecords({
     required String babyId,
   }) async {
+    growthFetchCount += 1;
     return growth;
   }
 
@@ -539,6 +680,7 @@ class _FakePregnancyDiaryRepository implements PregnancyDiaryRepository {
   Completer<void>? _upsertCompleter;
   var createCount = 0;
   var updateCount = 0;
+  var fetchCount = 0;
 
   void completeDeferredUpsert() {
     _upsertCompleter?.complete();
@@ -550,6 +692,7 @@ class _FakePregnancyDiaryRepository implements PregnancyDiaryRepository {
     DateTime? endDate,
     int limit = 30,
   }) async {
+    fetchCount += 1;
     return const <PregnancyDiaryEntry>[];
   }
 
@@ -594,9 +737,13 @@ class _FakePregnancyPlanRepository implements PregnancyPlanRepository {
 
   PregnancyPlan? plan;
   final deleteIds = <String>[];
+  var fetchCount = 0;
 
   @override
-  Future<PregnancyPlan?> fetchActivePlan() async => plan;
+  Future<PregnancyPlan?> fetchActivePlan() async {
+    fetchCount += 1;
+    return plan;
+  }
 
   @override
   Future<void> deletePlan({required String planId}) async {

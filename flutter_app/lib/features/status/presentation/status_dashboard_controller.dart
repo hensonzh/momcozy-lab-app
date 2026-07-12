@@ -9,6 +9,7 @@ import 'package:momcozy_flutter_app/features/status/data/status_preference_store
 import 'package:momcozy_flutter_app/features/status/domain/birth_journey_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_cache.dart';
 
 enum StatusResourcePhase { initial, loading, data, error }
 
@@ -67,15 +68,53 @@ class StatusDashboardController {
     required this.preferenceStore,
     required this.volumeUnitPreferenceStore,
     required this.babyId,
+    StatusDashboardCache? cache,
+    this.cachePolicy = const StatusDashboardCachePolicy(),
     StatusCareStage initialCareStage = StatusCareStage.postpartum,
     StatusIdentity initialIdentity = StatusIdentity.mom,
     DateTime Function()? now,
-  }) : now = now ?? DateTime.now {
+  }) : now = now ?? DateTime.now,
+       cache =
+           cache ??
+           StatusDashboardCache(ownerUserId: '', babyId: babyId) {
     careStage = ValueNotifier<StatusCareStage>(initialCareStage);
     identity = ValueNotifier<StatusIdentity>(
       initialCareStage == StatusCareStage.pregnancy
           ? StatusIdentity.mom
           : initialIdentity,
+    );
+    overview = ValueNotifier<StatusResource<StatusOverview>>(
+      this.cache.overview == null
+          ? const StatusResource.initial()
+          : StatusResource.data(this.cache.overview!.value),
+    );
+    feedingRecords = ValueNotifier<StatusResource<List<FeedingRecord>>>(
+      this.cache.feedingRecords == null
+          ? const StatusResource.initial()
+          : StatusResource.data(this.cache.feedingRecords!.value),
+    );
+    milkTrends = ValueNotifier<StatusResource<List<MilkTrendDay>>>(
+      this.cache.milkTrends == null
+          ? const StatusResource.initial()
+          : StatusResource.data(this.cache.milkTrends!.value),
+    );
+    growthRecords = ValueNotifier<StatusResource<List<GrowthRecord>>>(
+      this.cache.growthRecords == null
+          ? const StatusResource.initial()
+          : StatusResource.data(this.cache.growthRecords!.value),
+    );
+    pregnancyDiaryEntries =
+        ValueNotifier<StatusResource<List<PregnancyDiaryEntry>>>(
+          this.cache.pregnancyDiaryEntries == null
+              ? const StatusResource.initial()
+              : StatusResource.data(
+                  this.cache.pregnancyDiaryEntries!.value,
+                ),
+        );
+    birthJourneyPlan = ValueNotifier<StatusResource<BirthJourneyPlan?>>(
+      this.cache.pregnancyPlan == null
+          ? const StatusResource.initial()
+          : StatusResource.data(this.cache.pregnancyPlan!.value),
     );
   }
 
@@ -89,6 +128,8 @@ class StatusDashboardController {
   final VolumeUnitPreferenceStore volumeUnitPreferenceStore;
   final String babyId;
   final DateTime Function() now;
+  final StatusDashboardCache cache;
+  final StatusDashboardCachePolicy cachePolicy;
 
   late final ValueNotifier<StatusCareStage> careStage;
   late final ValueNotifier<StatusIdentity> identity;
@@ -97,25 +138,13 @@ class StatusDashboardController {
     MomCozyVolumeUnit.milliliters,
   );
 
-  final overview = ValueNotifier<StatusResource<StatusOverview>>(
-    const StatusResource.initial(),
-  );
-  final feedingRecords = ValueNotifier<StatusResource<List<FeedingRecord>>>(
-    const StatusResource.initial(),
-  );
-  final milkTrends = ValueNotifier<StatusResource<List<MilkTrendDay>>>(
-    const StatusResource.initial(),
-  );
-  final growthRecords = ValueNotifier<StatusResource<List<GrowthRecord>>>(
-    const StatusResource.initial(),
-  );
-  final pregnancyDiaryEntries =
-      ValueNotifier<StatusResource<List<PregnancyDiaryEntry>>>(
-        const StatusResource.initial(),
-      );
-  final birthJourneyPlan = ValueNotifier<StatusResource<BirthJourneyPlan?>>(
-    const StatusResource.initial(),
-  );
+  late final ValueNotifier<StatusResource<StatusOverview>> overview;
+  late final ValueNotifier<StatusResource<List<FeedingRecord>>> feedingRecords;
+  late final ValueNotifier<StatusResource<List<MilkTrendDay>>> milkTrends;
+  late final ValueNotifier<StatusResource<List<GrowthRecord>>> growthRecords;
+  late final ValueNotifier<StatusResource<List<PregnancyDiaryEntry>>>
+  pregnancyDiaryEntries;
+  late final ValueNotifier<StatusResource<BirthJourneyPlan?>> birthJourneyPlan;
 
   final diaryMutation = ValueNotifier<StatusMutationState>(
     const StatusMutationState.idle(),
@@ -127,16 +156,15 @@ class StatusDashboardController {
     const StatusMutationState.idle(),
   );
 
-  var _generation = 0;
   var _selectionRevision = 0;
   var _volumeUnitRevision = 0;
   var _disposed = false;
   Future<void> _preferenceWrites = Future<void>.value();
   Future<void> _volumeUnitWrites = Future<void>.value();
-  Future<void>? _activeLoad;
-  Future<void>? _externalRefreshDrain;
-  var _externalRefreshRequests = 0;
-  var _externalRefreshServiced = 0;
+  final Map<StatusDashboardResource, Future<void>> _activeResourceLoads = {};
+  final Map<StatusDashboardResource, int> _resourceRequests = {};
+  final Map<StatusDashboardResource, int> _resourceServiced = {};
+  final Set<StatusDashboardResource> _showLoadingOnNextFetch = {};
 
   Future<void> initialize() async {
     await Future.wait<void>([restoreSelection(), restoreVolumeUnit(), load()]);
@@ -209,89 +237,204 @@ class StatusDashboardController {
   }
 
   Future<void> load({bool showLoading = true}) {
-    if (_disposed) return Future<void>.value();
-    final active = _activeLoad;
-    if (active != null) return active;
-
-    late final Future<void> operation;
-    operation = _loadOnce(showLoading: showLoading).whenComplete(() {
-      if (identical(_activeLoad, operation)) _activeLoad = null;
-    });
-    _activeLoad = operation;
-    return operation;
+    return _requestResources(
+      StatusDashboardResource.values,
+      showLoading: showLoading,
+      force: false,
+    );
   }
 
-  Future<void> refresh() => load(showLoading: false);
+  Future<void> refresh() {
+    return _requestResources(
+      StatusDashboardResource.values,
+      showLoading: false,
+      force: true,
+    );
+  }
 
-  Future<void> refreshAfterExternalChange() {
+  Future<void> refreshStale() => load(showLoading: false);
+
+  Future<void> refreshAfterExternalChange() => refresh();
+
+  Future<void> refreshPregnancyPlan() {
+    return _requestResource(
+      StatusDashboardResource.pregnancyPlan,
+      showLoading: false,
+      force: true,
+    );
+  }
+
+  Future<void> refreshPregnancyDiary() {
+    return _requestResource(
+      StatusDashboardResource.pregnancyDiary,
+      showLoading: false,
+      force: true,
+    );
+  }
+
+  Future<void> _requestResources(
+    Iterable<StatusDashboardResource> resources, {
+    required bool showLoading,
+    required bool force,
+  }) async {
+    if (_disposed) return;
+    await Future.wait<void>(
+      resources.map(
+        (resource) => _requestResource(
+          resource,
+          showLoading: showLoading,
+          force: force,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _requestResource(
+    StatusDashboardResource resource, {
+    required bool showLoading,
+    required bool force,
+  }) {
     if (_disposed) return Future<void>.value();
-    _externalRefreshRequests += 1;
-    final active = _externalRefreshDrain;
-    if (active != null) return active;
+    final active = _activeResourceLoads[resource];
+    if (active != null) {
+      if (force) {
+        _resourceRequests[resource] = (_resourceRequests[resource] ?? 0) + 1;
+      }
+      return active;
+    }
+    if (!force && _resourceIsFresh(resource)) return Future<void>.value();
 
+    _resourceRequests[resource] = (_resourceRequests[resource] ?? 0) + 1;
+    if (showLoading && !_resourceHasCache(resource)) {
+      _showLoadingOnNextFetch.add(resource);
+    }
     late final Future<void> operation;
-    operation = _drainExternalRefreshes().whenComplete(() {
-      if (identical(_externalRefreshDrain, operation)) {
-        _externalRefreshDrain = null;
+    operation = _drainResource(resource).whenComplete(() {
+      if (identical(_activeResourceLoads[resource], operation)) {
+        _activeResourceLoads.remove(resource);
       }
     });
-    _externalRefreshDrain = operation;
+    _activeResourceLoads[resource] = operation;
     return operation;
   }
 
-  Future<void> _drainExternalRefreshes() async {
-    while (!_disposed && _externalRefreshServiced < _externalRefreshRequests) {
-      final active = _activeLoad;
-      if (active != null) await active;
-      if (_disposed) return;
-      final targetRevision = _externalRefreshRequests;
-      await load(showLoading: false);
-      _externalRefreshServiced = targetRevision;
+  Future<void> _drainResource(StatusDashboardResource resource) async {
+    while (!_disposed &&
+        (_resourceServiced[resource] ?? 0) <
+            (_resourceRequests[resource] ?? 0)) {
+      final targetRevision = _resourceRequests[resource] ?? 0;
+      final showLoading = _showLoadingOnNextFetch.remove(resource);
+      await _fetchResource(resource, showLoading: showLoading);
+      _resourceServiced[resource] = targetRevision;
     }
   }
 
-  Future<void> _loadOnce({required bool showLoading}) async {
-    if (_disposed) return;
-    final generation = ++_generation;
+  Future<void> _fetchResource(
+    StatusDashboardResource resource, {
+    required bool showLoading,
+  }) async {
     final current = now();
     final today = DateTime(current.year, current.month, current.day);
     final trendStart = today.subtract(const Duration(days: 30));
-
-    if (showLoading) {
-      _markLoading(overview);
-      _markLoading(feedingRecords);
-      _markLoading(milkTrends);
-      _markLoading(growthRecords);
-      _markLoading(pregnancyDiaryEntries);
-      _markLoading(birthJourneyPlan);
+    switch (resource) {
+      case StatusDashboardResource.overview:
+        await _resolve(
+          overview,
+          statusRepository.fetchOverview(),
+          onData: (value) => cache.overview = StatusCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+          showLoading: showLoading,
+        );
+        break;
+      case StatusDashboardResource.feeding:
+        await _resolve(
+          feedingRecords,
+          feedingRepository.fetchFeedingRecords(date: today),
+          onData: (value) => cache.feedingRecords = StatusCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+          showLoading: showLoading,
+        );
+        break;
+      case StatusDashboardResource.milkTrends:
+        await _resolve(
+          milkTrends,
+          milkTrendRepository.fetchMilkTrends(
+            startDate: trendStart,
+            days: 31,
+          ),
+          onData: (value) => cache.milkTrends = StatusCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+          showLoading: showLoading,
+        );
+        break;
+      case StatusDashboardResource.growth:
+        await _resolve(
+          growthRecords,
+          growthRepository.fetchGrowthRecords(babyId: babyId),
+          normalize: _sortGrowthRecords,
+          onData: (value) => cache.growthRecords = StatusCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+          showLoading: showLoading,
+        );
+        break;
+      case StatusDashboardResource.pregnancyDiary:
+        await _resolve(
+          pregnancyDiaryEntries,
+          pregnancyDiaryRepository.fetchEntries(limit: 12),
+          normalize: _sortDiaryEntries,
+          onData: (value) => cache.pregnancyDiaryEntries = StatusCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+          showLoading: showLoading,
+        );
+        break;
+      case StatusDashboardResource.pregnancyPlan:
+        await _resolve(
+          birthJourneyPlan,
+          _fetchBirthJourneyPlan(),
+          onData: (value) => cache.pregnancyPlan = StatusCacheEntry(
+            value: value,
+            fetchedAt: now(),
+          ),
+          showLoading: showLoading,
+        );
+        break;
     }
+  }
 
-    await Future.wait<void>([
-      _resolve(overview, statusRepository.fetchOverview(), generation),
-      _resolve(
-        feedingRecords,
-        feedingRepository.fetchFeedingRecords(date: today),
-        generation,
-      ),
-      _resolve(
-        milkTrends,
-        milkTrendRepository.fetchMilkTrends(startDate: trendStart, days: 31),
-        generation,
-      ),
-      _resolve(
-        growthRecords,
-        growthRepository.fetchGrowthRecords(babyId: babyId),
-        generation,
-        normalize: _sortGrowthRecords,
-      ),
-      _resolve(
-        pregnancyDiaryEntries,
-        pregnancyDiaryRepository.fetchEntries(limit: 12),
-        generation,
-        normalize: _sortDiaryEntries,
-      ),
-      _resolve(birthJourneyPlan, _fetchBirthJourneyPlan(), generation),
-    ]);
+  bool _resourceIsFresh(StatusDashboardResource resource) {
+    final fetchedAt = switch (resource) {
+      StatusDashboardResource.overview => cache.overview?.fetchedAt,
+      StatusDashboardResource.feeding => cache.feedingRecords?.fetchedAt,
+      StatusDashboardResource.milkTrends => cache.milkTrends?.fetchedAt,
+      StatusDashboardResource.growth => cache.growthRecords?.fetchedAt,
+      StatusDashboardResource.pregnancyDiary =>
+        cache.pregnancyDiaryEntries?.fetchedAt,
+      StatusDashboardResource.pregnancyPlan => cache.pregnancyPlan?.fetchedAt,
+    };
+    if (fetchedAt == null) return false;
+    return now().difference(fetchedAt) <= cachePolicy.ttlFor(resource);
+  }
+
+  bool _resourceHasCache(StatusDashboardResource resource) {
+    return switch (resource) {
+      StatusDashboardResource.overview => cache.overview != null,
+      StatusDashboardResource.feeding => cache.feedingRecords != null,
+      StatusDashboardResource.milkTrends => cache.milkTrends != null,
+      StatusDashboardResource.growth => cache.growthRecords != null,
+      StatusDashboardResource.pregnancyDiary =>
+        cache.pregnancyDiaryEntries != null,
+      StatusDashboardResource.pregnancyPlan => cache.pregnancyPlan != null,
+    };
   }
 
   Future<BirthJourneyPlan?> _fetchBirthJourneyPlan() async {
@@ -335,6 +478,10 @@ class StatusDashboardController {
       ];
       pregnancyDiaryEntries.value = StatusResource.data(
         _sortDiaryEntries(next),
+      );
+      cache.pregnancyDiaryEntries = StatusCacheEntry(
+        value: pregnancyDiaryEntries.value.data!,
+        fetchedAt: now(),
       );
       diaryMutation.value = const StatusMutationState.success('今天的记录已保存');
       return true;
@@ -382,6 +529,10 @@ class StatusDashboardController {
         ...current.where((record) => record.id != saved.id),
       ];
       growthRecords.value = StatusResource.data(_sortGrowthRecords(next));
+      cache.growthRecords = StatusCacheEntry(
+        value: growthRecords.value.data!,
+        fetchedAt: now(),
+      );
       growthMutation.value = const StatusMutationState.success('成长指标已保存');
       return true;
     } catch (_) {
@@ -427,6 +578,7 @@ class StatusDashboardController {
       await pregnancyPlanRepository.deletePlan(planId: plan.id);
       if (_disposed) return false;
       birthJourneyPlan.value = const StatusResource.data(null);
+      cache.pregnancyPlan = StatusCacheEntry(value: null, fetchedAt: now());
       planMutation.value = const StatusMutationState.success('孕期计划已删除');
       return true;
     } catch (_) {
@@ -446,7 +598,6 @@ class StatusDashboardController {
   void dispose() {
     if (_disposed) return;
     _disposed = true;
-    _generation += 1;
     _selectionRevision += 1;
     _volumeUnitRevision += 1;
     careStage.dispose();
@@ -471,25 +622,26 @@ class StatusDashboardController {
   Future<void> _resolve<T>(
     ValueNotifier<StatusResource<T>> notifier,
     Future<T> operation,
-    int generation, {
+    {
     T Function(T value)? normalize,
+    required void Function(T value) onData,
+    required bool showLoading,
   }) async {
+    if (showLoading) _markLoading(notifier);
     try {
       final value = await operation;
-      if (!_accept(generation)) return;
-      notifier.value = StatusResource.data(
-        normalize == null ? value : normalize(value),
-      );
+      if (_disposed) return;
+      final normalized = normalize == null ? value : normalize(value);
+      notifier.value = StatusResource.data(normalized);
+      onData(normalized);
     } catch (error) {
-      if (!_accept(generation)) return;
+      if (_disposed) return;
       notifier.value = StatusResource.error(
         error,
         previous: notifier.value.data,
       );
     }
   }
-
-  bool _accept(int generation) => !_disposed && generation == _generation;
 }
 
 List<GrowthRecord> _sortGrowthRecords(List<GrowthRecord> records) {

@@ -32,11 +32,12 @@ void main() {
       pregnancyDiaryEntriesEndpoint: const {'items': <Object?>[]},
       pregnancyPlansEndpoint: const {'items': <Object?>[]},
     });
+    var clock = DateTime(2026, 7, 11, 10);
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,
       userId: 'refresh-user',
       babyId: 'refresh-baby',
-      now: () => DateTime(2026, 7, 11, 10),
+      now: () => clock,
     );
 
     await tester.pumpWidget(
@@ -57,6 +58,13 @@ void main() {
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pumpAndSettle();
+    expect(_requestCount(transport, statusProfileEndpoint), 1);
+    expect(find.text('母乳产出'), findsOneWidget);
+
+    clock = clock.add(const Duration(minutes: 6));
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
     expect(_requestCount(transport, statusProfileEndpoint), 2);
     expect(find.text('母乳产出'), findsOneWidget);
 
@@ -68,6 +76,67 @@ void main() {
     expect(_requestCount(transport, statusProfileEndpoint), 3);
     expect(find.text('母乳产出'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('fresh tab return renders cached Status without new GETs', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final routes = FakeRouteIntentPlatform();
+    addTearDown(routes.dispose);
+    final transport = FixtureApiJsonTransportByPath({
+      statusProfileEndpoint: const {
+        'user_id': 'cache-user',
+        'delivery_date': '2026-06-20',
+      },
+      statusInfantsEndpoint: const {'items': <Object?>[]},
+      feedingRecordsEndpoint: const {'items': <Object?>[]},
+      milkTrendsEndpoint: const {'items': <Object?>[]},
+      growthRecordsEndpoint: const {'items': <Object?>[]},
+      pregnancyDiaryEntriesEndpoint: const {'items': <Object?>[]},
+      pregnancyPlansEndpoint: const {'items': <Object?>[]},
+    });
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: transport,
+      userId: 'cache-user',
+      babyId: 'cache-baby',
+      now: () => DateTime(2026, 7, 11, 10),
+    );
+    await tester.pumpWidget(
+      MomCozyFlutterApp(
+        router: createMomCozyRouter(initialLocation: '/status'),
+        routeIntentPlatform: routes,
+        apiRuntime: runtime,
+      ),
+    );
+    await tester.pumpAndSettle();
+    final counts = Map<String, int>.fromEntries(
+      [
+        statusProfileEndpoint,
+        statusInfantsEndpoint,
+        feedingRecordsEndpoint,
+        milkTrendsEndpoint,
+        growthRecordsEndpoint,
+        pregnancyDiaryEntriesEndpoint,
+        pregnancyPlansEndpoint,
+      ].map((path) => MapEntry(path, _requestCount(transport, path))),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('母乳产出'), findsOneWidget);
+    expect(find.text('正在加载孕期计划'), findsNothing);
+    await tester.pumpAndSettle();
+    for (final entry in counts.entries) {
+      expect(_requestCount(transport, entry.key), entry.value);
+    }
   });
 }
 
