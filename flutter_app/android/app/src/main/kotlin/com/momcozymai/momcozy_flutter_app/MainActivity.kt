@@ -220,6 +220,49 @@ class MainActivity : FlutterActivity() {
                     result.success(mapOf("granted" to hasNotificationPermission()))
                 }
             }
+            "scheduleReminderSupport" -> {
+                result.success(mapOf("supported" to true))
+            }
+            "scheduleReminderState" -> {
+                result.success(
+                    mapOf(
+                        "supported" to true,
+                        "enabled" to ScheduleReminderScheduler.isEnabled(applicationContext),
+                        "permissionGranted" to hasNotificationPermission(),
+                    )
+                )
+            }
+            "setScheduleReminders" -> {
+                val args = call.argumentsMap()
+                val requestedEnabled = args.boolValue("enabled")
+                val ownerScope = args.stringValue("ownerScope")
+                if (requestedEnabled && !hasNotificationPermission()) {
+                    result.success(
+                        mapOf(
+                            "supported" to true,
+                            "enabled" to false,
+                            "permissionGranted" to false,
+                            "scheduledCount" to 0,
+                        )
+                    )
+                    return
+                }
+                val scheduledCount = ScheduleReminderScheduler.setEnabled(
+                    context = applicationContext,
+                    ownerScope = ownerScope,
+                    enabled = requestedEnabled,
+                    reminders = scheduleReminderSpecs(args["reminders"]),
+                )
+                val enabled = requestedEnabled && ownerScope.isNotBlank()
+                result.success(
+                    mapOf(
+                        "supported" to true,
+                        "enabled" to enabled,
+                        "permissionGranted" to hasNotificationPermission(),
+                        "scheduledCount" to scheduledCount,
+                    )
+                )
+            }
             "start",
             "update" -> {
                 val active = call.argument<Boolean>("active") ?: true
@@ -292,6 +335,28 @@ class MainActivity : FlutterActivity() {
                 route.notifyJson
             )
             emitActiveRoute(route)
+        }
+    }
+
+    private fun scheduleReminderSpecs(value: Any?): List<ScheduleReminderSpec> {
+        val reminders = value as? List<*> ?: return emptyList()
+        return reminders.mapNotNull { raw ->
+            val item = raw as? Map<*, *> ?: return@mapNotNull null
+            val taskId = item.stringValue("taskId").take(120)
+            val date = item.stringValue("date")
+            val triggerAtMillis = item.longValue("triggerAtMillis")
+            if (
+                taskId.isBlank() ||
+                !date.matches(Regex("^\\d{4}-\\d{2}-\\d{2}$")) ||
+                triggerAtMillis <= 0L
+            ) {
+                return@mapNotNull null
+            }
+            ScheduleReminderSpec(
+                taskId = taskId,
+                date = date,
+                triggerAtMillis = triggerAtMillis,
+            )
         }
     }
 
@@ -1029,6 +1094,14 @@ class MainActivity : FlutterActivity() {
             is Boolean -> value
             is Number -> value.toInt() != 0
             is String -> value.equals("true", ignoreCase = true) || value == "1"
+            else -> fallback
+        }
+    }
+
+    private fun Map<*, *>.longValue(key: String, fallback: Long = 0L): Long {
+        return when (val value = this[key]) {
+            is Number -> value.toLong()
+            is String -> value.toLongOrNull() ?: fallback
             else -> fallback
         }
     }
