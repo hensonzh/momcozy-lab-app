@@ -9,8 +9,11 @@ import 'package:momcozy_flutter_app/features/status/presentation/status_dashboar
 
 typedef BirthJourneyDelete = Future<bool> Function();
 typedef BirthJourneyAgentPrompt = void Function(String prompt, {bool autoSend});
+typedef BirthJourneyTodoToggle =
+    Future<bool> Function(String itemId, bool completed);
+typedef BirthJourneyRefresh = Future<void> Function();
 
-enum _TodoFeedback { blocked }
+enum _TodoFeedback { completed, blocked }
 
 class BirthJourneyPlanDashboard extends StatefulWidget {
   const BirthJourneyPlanDashboard({
@@ -19,12 +22,16 @@ class BirthJourneyPlanDashboard extends StatefulWidget {
     required this.mutation,
     required this.onDeletePlan,
     required this.onAgentPrompt,
+    this.onToggleTodo,
+    this.onRetryPlan,
   });
 
   final ValueListenable<StatusResource<BirthJourneyPlan?>> plan;
   final ValueListenable<StatusMutationState> mutation;
   final BirthJourneyDelete onDeletePlan;
   final BirthJourneyAgentPrompt onAgentPrompt;
+  final BirthJourneyTodoToggle? onToggleTodo;
+  final BirthJourneyRefresh? onRetryPlan;
 
   @override
   State<BirthJourneyPlanDashboard> createState() =>
@@ -35,7 +42,9 @@ class _BirthJourneyPlanDashboardState extends State<BirthJourneyPlanDashboard> {
   final _feedback = <String, _TodoFeedback>{};
   final _feedbackTimers = <String, Timer>{};
   String? _error;
+  String? _updatingId;
   Timer? _blockedErrorTimer;
+  Timer? _completionPromptTimer;
 
   @override
   void dispose() {
@@ -43,17 +52,21 @@ class _BirthJourneyPlanDashboardState extends State<BirthJourneyPlanDashboard> {
       timer.cancel();
     }
     _blockedErrorTimer?.cancel();
+    _completionPromptTimer?.cancel();
     super.dispose();
   }
 
   void _setFeedback(String key, _TodoFeedback feedback) {
     _feedbackTimers.remove(key)?.cancel();
     setState(() => _feedback[key] = feedback);
-    _feedbackTimers[key] = Timer(const Duration(milliseconds: 1400), () {
-      if (!mounted) return;
-      setState(() => _feedback.remove(key));
-      _feedbackTimers.remove(key);
-    });
+    _feedbackTimers[key] = Timer(
+      Duration(milliseconds: feedback == _TodoFeedback.blocked ? 1400 : 900),
+      () {
+        if (!mounted) return;
+        setState(() => _feedback.remove(key));
+        _feedbackTimers.remove(key);
+      },
+    );
   }
 
   void _showBlocked(String itemId) {
@@ -74,6 +87,59 @@ class _BirthJourneyPlanDashboardState extends State<BirthJourneyPlanDashboard> {
         ? item.agentCompletionPrompt
         : '请把孕期计划事项【${item.title}】恢复为未完成，并继续帮我确认下一步。';
     widget.onAgentPrompt(prompt, autoSend: true);
+  }
+
+  Future<void> _toggleTodo(BirthJourneyTodo item, bool completed) async {
+    if (!item.canMutate || widget.onToggleTodo == null) {
+      _handoffTodo(item, completed);
+      return;
+    }
+    if (_updatingId != null) return;
+    setState(() {
+      _error = null;
+      _updatingId = item.id;
+    });
+    final succeeded = await widget.onToggleTodo!(
+      item.authoritativeItemId,
+      completed,
+    );
+    if (!mounted) return;
+    setState(() {
+      _updatingId = null;
+      if (!succeeded) {
+        _error = widget.mutation.value.message ?? '同步计划完成状态失败，已恢复最新计划';
+      }
+    });
+    if (!succeeded || !completed) return;
+    _setFeedback(item.id, _TodoFeedback.completed);
+    _completionPromptTimer?.cancel();
+    _completionPromptTimer = Timer(const Duration(milliseconds: 1050), () {
+      _completionPromptTimer = null;
+      if (!mounted) return;
+      unawaited(_showCompletionPrompt(item));
+    });
+  }
+
+  Future<void> _showCompletionPrompt(BirthJourneyTodo item) async {
+    final shouldNotify = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        key: const ValueKey('status-birth-journey-sync-dialog'),
+        title: const Text('要不要将完成的消息立刻告诉 CozyMate？'),
+        actions: [
+          OutlinedButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('好的'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || shouldNotify != true) return;
+    widget.onAgentPrompt(item.agentCompletionPrompt, autoSend: true);
   }
 
   Future<void> _openDetails() {
@@ -127,9 +193,9 @@ class _BirthJourneyPlanDashboardState extends State<BirthJourneyPlanDashboard> {
                       plan == null)
                     _CreatePlanButton(
                       onPressed: () =>
-                          widget.onAgentPrompt('帮我制定孕期计划', autoSend: false),
+                          widget.onAgentPrompt('帮我生成孕期计划', autoSend: false),
                     )
-                  else
+                  else if (plan != null)
                     IconButton(
                       key: const ValueKey('status-birth-journey-detail-button'),
                       tooltip: '查看计划详情',
@@ -143,30 +209,32 @@ class _BirthJourneyPlanDashboardState extends State<BirthJourneyPlanDashboard> {
               if (resource.isLoading ||
                   resource.phase == StatusResourcePhase.initial) ...[
                 const SizedBox(height: 8),
-                Text(
-                  '正在加载孕期计划',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: const Color(0xff385f5b),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                const _PlanSkeleton(),
               ],
               if (resource.hasError && resource.data == null) ...[
                 const SizedBox(height: 10),
-                const _PlanErrorMessage(text: '孕期计划暂时无法同步，请稍后重试'),
+                _PlanLoadError(
+                  text: '孕期计划暂时无法同步，请稍后重试',
+                  onRetry: widget.onRetryPlan,
+                ),
               ],
               if (plan != null) ...[
                 const SizedBox(height: 12),
                 if (plan.hasStructuredContent)
                   _PlanTimeline(
                     plan: plan,
-                    updatingId: null,
+                    updatingId: _updatingId,
                     feedback: _feedback,
-                    onToggle: _handoffTodo,
+                    onToggle: (item, completed) =>
+                        unawaited(_toggleTodo(item, completed)),
                     onBlocked: _showBlocked,
                   )
                 else
                   const _MissingPlanStructure(),
+              ],
+              if (resource.hasError && resource.data != null) ...[
+                const SizedBox(height: 8),
+                _PlanLoadError(text: '计划可能不是最新内容', onRetry: widget.onRetryPlan),
               ],
               if (_error != null) ...[
                 const SizedBox(height: 8),
@@ -281,7 +349,7 @@ class _PlanPeriodSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = _periodColors(period);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
         children: [
           InkWell(
@@ -418,15 +486,17 @@ class _PlanTodoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final content = AnimatedContainer(
       duration: const Duration(milliseconds: 260),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: item.completed
             ? Colors.white.withValues(alpha: 0.75)
             : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: feedback == null
-            ? null
-            : Border.all(color: const Color(0xffe48a8a)),
+        border: switch (feedback) {
+          _TodoFeedback.blocked => Border.all(color: const Color(0xffe48a8a)),
+          _TodoFeedback.completed => Border.all(color: const Color(0xfff2d37a)),
+          null => null,
+        },
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -539,7 +609,34 @@ class _PlanTodoRow extends StatelessWidget {
         ],
       ),
     );
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (feedback == _TodoFeedback.completed) {
+      if (disableAnimations) return content;
+      final celebratedContent = Stack(
+        clipBehavior: Clip.none,
+        children: [
+          content,
+          const Positioned(
+            left: 2,
+            top: -10,
+            child: IgnorePointer(child: _CompletionSparks()),
+          ),
+        ],
+      );
+      return TweenAnimationBuilder<double>(
+        key: ValueKey('completed-${item.id}'),
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 580),
+        builder: (context, value, child) {
+          final scale = 1 + math.sin(value * math.pi) * 0.025;
+          return Transform.scale(scale: scale, child: child);
+        },
+        child: celebratedContent,
+      );
+    }
     if (feedback != _TodoFeedback.blocked) return content;
+    if (disableAnimations) return content;
     return TweenAnimationBuilder<double>(
       key: ValueKey('blocked-${item.id}'),
       tween: Tween(begin: 0, end: 1),
@@ -549,6 +646,46 @@ class _PlanTodoRow extends StatelessWidget {
         return Transform.translate(offset: Offset(offset, 0), child: child);
       },
       child: content,
+    );
+  }
+}
+
+class _CompletionSparks extends StatelessWidget {
+  const _CompletionSparks();
+
+  @override
+  Widget build(BuildContext context) {
+    const sparks = [
+      (Offset(2, 13), Color(0xfff5b447), 0.1),
+      (Offset(13, 2), Color(0xffdd7a86), -0.25),
+      (Offset(27, 6), Color(0xff71b8a8), 0.2),
+      (Offset(37, 16), Color(0xff8e79c8), -0.1),
+      (Offset(25, 25), Color(0xfff0a35f), 0.35),
+      (Offset(8, 27), Color(0xffdf6f8c), -0.3),
+    ];
+    return SizedBox(
+      key: const ValueKey('status-birth-journey-completion-sparks'),
+      width: 46,
+      height: 34,
+      child: Stack(
+        children: [
+          for (final spark in sparks)
+            Positioned(
+              left: spark.$1.dx,
+              top: spark.$1.dy,
+              child: Transform.rotate(
+                angle: spark.$3,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: spark.$2,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  child: const SizedBox(width: 5, height: 8),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -664,7 +801,7 @@ class _BirthJourneyDetailSheetState extends State<_BirthJourneyDetailSheet> {
                           _PlanEmptyDetail(
                             onCreate: () {
                               widget.onClose();
-                              widget.onAgentPrompt('帮我制定孕期计划', autoSend: false);
+                              widget.onAgentPrompt('帮我生成孕期计划', autoSend: false);
                             },
                           )
                         else ...[
@@ -982,6 +1119,220 @@ class _PlanLoadingMessage extends StatelessWidget {
           context,
         ).copyWith(color: MomCozyColors.mutedForeground),
       ),
+    );
+  }
+}
+
+class _PlanSkeleton extends StatelessWidget {
+  const _PlanSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final color = const Color(0xffdbece8).withValues(alpha: 0.78);
+    return Semantics(
+      key: const ValueKey('status-birth-journey-skeleton'),
+      label: '正在加载孕期计划',
+      liveRegion: true,
+      child: ExcludeSemantics(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '正在加载孕期计划',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: const Color(0xff385f5b),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: 132,
+              height: 12,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _PlanSkeletonPeriod(color: color, widthFactor: 0.82, expanded: true),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 14),
+              child: Divider(height: 1, color: Color(0xffdbece8)),
+            ),
+            _PlanSkeletonPeriod(color: color, widthFactor: 0.68),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 14),
+              child: Divider(height: 1, color: Color(0xffdbece8)),
+            ),
+            _PlanSkeletonPeriod(color: color, widthFactor: 0.58),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PlanSkeletonPeriod extends StatelessWidget {
+  const _PlanSkeletonPeriod({
+    required this.color,
+    required this.widthFactor,
+    this.expanded = false,
+  });
+
+  final Color color;
+  final double widthFactor;
+  final bool expanded;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _PlanSkeletonBar(
+                    color: color,
+                    widthFactor: widthFactor,
+                    height: 11,
+                  ),
+                  const SizedBox(height: 7),
+                  _PlanSkeletonBar(
+                    color: color,
+                    widthFactor: widthFactor * 0.58,
+                    height: 8,
+                  ),
+                  const SizedBox(height: 7),
+                  _PlanSkeletonBar(
+                    color: color,
+                    widthFactor: widthFactor * 0.34,
+                    height: 8,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        if (expanded) ...[
+          const SizedBox(height: 14),
+          Padding(
+            padding: const EdgeInsets.only(left: 36),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.72),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: color, width: 2),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _PlanSkeletonBar(
+                          color: color,
+                          widthFactor: 0.72,
+                          height: 10,
+                        ),
+                        const SizedBox(height: 9),
+                        _PlanSkeletonBar(
+                          color: color,
+                          widthFactor: 0.9,
+                          height: 8,
+                        ),
+                        const SizedBox(height: 10),
+                        _PlanSkeletonBar(
+                          color: color,
+                          widthFactor: 0.62,
+                          height: 8,
+                        ),
+                        const SizedBox(height: 8),
+                        _PlanSkeletonBar(
+                          color: color,
+                          widthFactor: 0.76,
+                          height: 8,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _PlanSkeletonBar extends StatelessWidget {
+  const _PlanSkeletonBar({
+    required this.color,
+    required this.widthFactor,
+    required this.height,
+  });
+
+  final Color color;
+  final double widthFactor;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return FractionallySizedBox(
+      alignment: Alignment.centerLeft,
+      widthFactor: widthFactor,
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(99),
+        ),
+      ),
+    );
+  }
+}
+
+class _PlanLoadError extends StatelessWidget {
+  const _PlanLoadError({required this.text, this.onRetry});
+
+  final String text;
+  final BirthJourneyRefresh? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(child: _PlanErrorMessage(text: text)),
+        if (onRetry != null) ...[
+          const SizedBox(width: 8),
+          TextButton(
+            key: const ValueKey('status-birth-journey-retry-button'),
+            onPressed: () => unawaited(onRetry!()),
+            child: const Text('重新加载'),
+          ),
+        ],
+      ],
     );
   }
 }
