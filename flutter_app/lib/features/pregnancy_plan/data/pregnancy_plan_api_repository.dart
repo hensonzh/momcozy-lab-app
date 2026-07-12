@@ -29,6 +29,17 @@ class PregnancyPlanApiRepository implements PregnancyPlanRepository {
       'Pregnancy plans response has no valid active pregnancy plan.',
     );
   }
+
+  @override
+  Future<void> deletePlan({required String planId}) async {
+    final value = transport;
+    if (value is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Pregnancy plans require mutation support.');
+    }
+    await (value as ApiJsonMutationTransport).deleteJson(
+      '$pregnancyPlansEndpoint/${Uri.encodeComponent(planId.trim())}',
+    );
+  }
 }
 
 PregnancyPlan? _pregnancyPlan(Map<String, Object?> data) {

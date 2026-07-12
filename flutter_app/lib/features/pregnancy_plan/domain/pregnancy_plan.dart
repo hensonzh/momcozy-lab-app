@@ -1,5 +1,7 @@
 abstract interface class PregnancyPlanRepository {
   Future<PregnancyPlan?> fetchActivePlan();
+
+  Future<void> deletePlan({required String planId});
 }
 
 class PregnancyPlan {

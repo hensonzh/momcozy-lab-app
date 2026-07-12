@@ -38,7 +38,13 @@ REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS = {
     ("POST", "/v1/agent/runs"),
     ("POST", "/v1/agent/actions/{action_id}/confirm"),
 }
-REQUIRED_STREAM_QUERY_KEYS = {
+REQUIRED_OPENAPI_OPERATIONS = {
+    ("POST", "/v1/pregnancy-diary/entries"),
+    ("PATCH", "/v1/pregnancy-diary/entries/{entry_date}"),
+    ("DELETE", "/v1/pregnancy-diary/entries/{entry_date}"),
+}
+REQUIRED_QUERY_KEYS = {
+    "/v1/plans": {"plan_type", "status"},
     "/v1/agent/runs/{run_id}/stream": {"after_sequence", "follow"},
 }
 FORBIDDEN_QUERY_KEYS = {
@@ -77,10 +83,14 @@ def main() -> int:
         elif not _requires_idempotency(operation):
             errors.append(f"{method} {path} must declare Idempotency-Key.")
 
-    for path, required_query_keys in sorted(REQUIRED_STREAM_QUERY_KEYS.items()):
+    for method, path in sorted(REQUIRED_OPENAPI_OPERATIONS):
+        if _operation(paths, path, method) is None:
+            errors.append(f"Missing required OpenAPI operation: {method} {path}")
+
+    for path, required_query_keys in sorted(REQUIRED_QUERY_KEYS.items()):
         operation = _operation(paths, path, "GET")
         if operation is None:
-            errors.append(f"Missing required stream operation: GET {path}")
+            errors.append(f"Missing required query operation: GET {path}")
             continue
         query_keys = {
             parameter.get("name")

@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -129,6 +131,8 @@ Future<void> _pumpStatusStateApp(WidgetTester tester) async {
               'http_status': 503,
               'status_text': 'Service Unavailable',
             },
+            pregnancyDiaryEntriesEndpoint: const {'items': <Object?>[]},
+            pregnancyPlansEndpoint: const {'items': <Object?>[]},
           }),
           agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
           blePlatform: FakeBlePlatform(

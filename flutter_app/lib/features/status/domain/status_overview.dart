@@ -12,15 +12,24 @@ class StatusOverview {
 }
 
 class MomStatus {
-  const MomStatus({this.stage, this.postpartumDay});
+  const MomStatus({
+    this.stage,
+    this.postpartumDay,
+    this.deliveryDate,
+    this.dueDateOrWeek,
+  });
 
   final String? stage;
   final int? postpartumDay;
+  final DateTime? deliveryDate;
+  final String? dueDateOrWeek;
 }
 
 class BabyStatus {
-  const BabyStatus({this.nickname, this.ageDays});
+  const BabyStatus({this.id, this.nickname, this.ageDays, this.birthDate});
 
+  final String? id;
   final String? nickname;
   final int? ageDays;
+  final DateTime? birthDate;
 }

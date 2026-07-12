@@ -12,32 +12,43 @@ class PregnancyDiaryApiRepository implements PregnancyDiaryRepository {
   Future<List<PregnancyDiaryEntry>> fetchEntries({
     DateTime? startDate,
     DateTime? endDate,
-    int limit = 7,
+    int limit = 30,
   }) async {
     final response = await transport.getJson(
       pregnancyDiaryEntriesEndpoint,
       query: {
         if (startDate != null) 'start_date': _apiDate(startDate),
         if (endDate != null) 'end_date': _apiDate(endDate),
-        'limit': limit,
+        'limit': limit.clamp(1, 100),
       },
     );
     final items = response['items'];
-    if (items is! List) return const [];
-    return items
-        .whereType<Map>()
-        .map((item) => _entry(Map<String, Object?>.from(item)))
-        .toList(growable: false);
+    if (items is! List) {
+      throw const FormatException(
+        'Pregnancy diary response has no items list.',
+      );
+    }
+    return List<PregnancyDiaryEntry>.unmodifiable(
+      items.map((raw) {
+        if (raw is! Map) {
+          throw const FormatException('Pregnancy diary entry is invalid.');
+        }
+        return _entry(Map<String, Object?>.from(raw));
+      }),
+    );
   }
 
   @override
   Future<PregnancyDiaryEntry> createEntry({
     required DateTime entryDate,
-    required String content,
+    required PregnancyDiaryDraft draft,
   }) async {
     final response = await transport.postJson(
       pregnancyDiaryEntriesEndpoint,
-      body: {'entry_date': _apiDate(entryDate), 'content': content},
+      body: <String, Object?>{
+        'entry_date': _apiDate(entryDate),
+        ..._draftBody(draft),
+      },
     );
     return _entry(response);
   }
@@ -45,30 +56,58 @@ class PregnancyDiaryApiRepository implements PregnancyDiaryRepository {
   @override
   Future<PregnancyDiaryEntry> updateEntry({
     required DateTime entryDate,
-    required String content,
+    required PregnancyDiaryDraft draft,
   }) async {
-    final response = await transport.patchJson(
+    final response = await _mutations().patchJson(
       '$pregnancyDiaryEntriesEndpoint/${_apiDate(entryDate)}',
-      body: {'content': content},
+      body: _draftBody(draft),
     );
     return _entry(response);
   }
 
   @override
-  Future<void> deleteEntry({required DateTime entryDate}) {
-    return transport.deleteJson(
+  Future<void> deleteEntry({required DateTime entryDate}) async {
+    await _mutations().deleteJson(
       '$pregnancyDiaryEntriesEndpoint/${_apiDate(entryDate)}',
     );
   }
+
+  ApiJsonMutationTransport _mutations() {
+    final value = transport;
+    if (value is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Pregnancy diary requires mutation support.');
+    }
+    return value as ApiJsonMutationTransport;
+  }
+}
+
+Map<String, Object?> _draftBody(PregnancyDiaryDraft draft) {
+  return <String, Object?>{
+    'gestational_week': draft.gestationalWeek.trim(),
+    'mood': draft.mood.trim(),
+    'energy_level': draft.energyLevel.trim(),
+    'sleep_summary': draft.sleepSummary.trim(),
+    'fetal_movement': draft.fetalMovement.trim(),
+    'symptom_tags': draft.symptomTags
+        .map((tag) => tag.trim())
+        .where((tag) => tag.isNotEmpty)
+        .toSet()
+        .toList(growable: false),
+    'appointment_note': draft.appointmentNote.trim(),
+    'nutrition_note': draft.nutritionNote.trim(),
+    'content': draft.content.trim(),
+  };
 }
 
 PregnancyDiaryEntry _entry(Map<String, Object?> data) {
-  final entryDate = DateTime.tryParse(_string(data['entry_date']));
-  if (entryDate == null) {
-    throw const FormatException('Pregnancy diary entry_date is invalid.');
+  final id = _string(data['id']);
+  final parsedDate = DateTime.tryParse(_string(data['entry_date']));
+  if (id.isEmpty || parsedDate == null) {
+    throw const FormatException('Pregnancy diary entry is invalid.');
   }
+  final entryDate = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
   return PregnancyDiaryEntry(
-    id: _string(data['id']),
+    id: id,
     entryDate: entryDate,
     content: _string(data['content']),
     gestationalWeek: _string(data['gestational_week']),
@@ -76,10 +115,27 @@ PregnancyDiaryEntry _entry(Map<String, Object?> data) {
     energyLevel: _string(data['energy_level']),
     sleepSummary: _string(data['sleep_summary']),
     fetalMovement: _string(data['fetal_movement']),
-    symptomTags: _list(data['symptom_tags']),
+    symptomTags: _strings(data['symptom_tags']),
     appointmentNote: _string(data['appointment_note']),
     nutritionNote: _string(data['nutrition_note']),
     attachments: _list(data['attachments']),
+    status: _string(data['status']),
+    healthNotes: _healthNotes(data['health_notes']),
+  );
+}
+
+List<PregnancyDiaryHealthNote> _healthNotes(Object? value) {
+  if (value is! List) return const <PregnancyDiaryHealthNote>[];
+  return List<PregnancyDiaryHealthNote>.unmodifiable(
+    value.whereType<Map>().map((raw) {
+      final map = Map<String, Object?>.from(raw);
+      return PregnancyDiaryHealthNote(
+        id: _string(map['id'] ?? map['note_id']),
+        topic: _string(map['topic']),
+        userReport: _string(map['user_report']),
+        followUp: _string(map['follow_up']),
+      );
+    }),
   );
 }
 
@@ -91,5 +147,11 @@ String _apiDate(DateTime value) {
 
 String _string(Object? value) => value is String ? value : '';
 
-List<Object?> _list(Object? value) =>
-    value is List ? List<Object?>.from(value) : const [];
+List<String> _strings(Object? value) {
+  if (value is! List) return const <String>[];
+  return List<String>.unmodifiable(value.whereType<String>());
+}
+
+List<Object?> _list(Object? value) {
+  return value is List ? List<Object?>.unmodifiable(value) : const <Object?>[];
+}

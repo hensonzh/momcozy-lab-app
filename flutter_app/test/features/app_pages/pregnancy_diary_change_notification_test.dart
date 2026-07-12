@@ -8,10 +8,13 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 void main() {
@@ -48,7 +51,7 @@ void main() {
   });
 
   testWidgets(
-    'opening Status transfers the badge to the card until diary is viewed',
+    'opening Status transfers the badge to a bounded card highlight',
     (tester) async {
       await _setCompactViewport(tester);
       final runtime = _runtime(_SequencedDiaryTransport());
@@ -78,25 +81,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(runtime.pregnancyDiaryChangeStore.hasUnread, isFalse);
-      expect(runtime.pregnancyDiaryChangeStore.highlightCard, isTrue);
+      expect(runtime.pregnancyDiaryChangeStore.highlightCard, isFalse);
       expect(
-        find.byKey(const ValueKey('status-pregnancy-diary-change-highlight')),
+        find.byKey(const ValueKey('status-pregnancy-diary-notice')),
         findsOneWidget,
       );
       expect(
         find.byKey(const ValueKey('bottom-nav-status-diary-badge')),
         findsNothing,
-      );
-
-      await tester.tap(
-        find.byKey(const ValueKey('status-pregnancy-diary-view-button')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(runtime.pregnancyDiaryChangeStore.highlightCard, isFalse);
-      expect(
-        find.byKey(const ValueKey('status-detail-pregnancy-diary')),
-        findsOneWidget,
       );
     },
   );
@@ -242,7 +234,8 @@ void main() {
     expect(transport.diaryGetCount, 3);
     expect(harness.runtime.pregnancyDiaryChangeStore.revision, 2);
     expect(harness.runtime.pregnancyDiaryChangeStore.hasUnread, isFalse);
-    expect(harness.runtime.pregnancyDiaryChangeStore.highlightCard, isTrue);
+    expect(harness.runtime.pregnancyDiaryChangeStore.highlightCard, isFalse);
+    expect(find.text('最新的 Agent 日记'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('bottom-nav-status-diary-badge')),
       findsNothing,
@@ -320,11 +313,34 @@ Future<void> _setCompactViewport(WidgetTester tester) async {
 MomCozyApiRuntime _runtime(_SequencedDiaryTransport transport) {
   return MomCozyApiRuntime(
     jsonTransport: transport,
+    pregnancyDiaryChangeStore: PregnancyDiaryChangeStore(),
+    statusPreferenceStore: const _MemoryStatusPreferenceStore(),
+    volumeUnitPreferenceStore: const _MemoryVolumeUnitPreferenceStore(),
     userId: 'diary-widget-user',
     babyId: 'diary-widget-baby',
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7, 12),
   );
+}
+
+class _MemoryStatusPreferenceStore implements StatusPreferenceStore {
+  const _MemoryStatusPreferenceStore();
+
+  @override
+  Future<StatusCareStage?> readCareStage() async => null;
+
+  @override
+  Future<void> writeCareStage(StatusCareStage stage) async {}
+}
+
+class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
+  const _MemoryVolumeUnitPreferenceStore();
+
+  @override
+  Future<MomCozyVolumeUnit?> read() async => null;
+
+  @override
+  Future<void> write(MomCozyVolumeUnit unit) async {}
 }
 
 AgentStreamEvent _runStartedEvent() {
@@ -458,23 +474,6 @@ class _SequencedDiaryTransport implements ApiJsonTransport {
     Map<String, String> headers = const {},
   }) {
     throw UnsupportedError('POST is not used by this test.');
-  }
-
-  @override
-  Future<Map<String, Object?>> patchJson(
-    String path, {
-    Map<String, Object?> body = const {},
-    Map<String, String> headers = const {},
-  }) {
-    throw UnsupportedError('PATCH is not used by this test.');
-  }
-
-  @override
-  Future<void> deleteJson(
-    String path, {
-    Map<String, String> headers = const {},
-  }) {
-    throw UnsupportedError('DELETE is not used by this test.');
   }
 }
 

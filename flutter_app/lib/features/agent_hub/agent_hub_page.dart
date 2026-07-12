@@ -287,6 +287,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         const <String, AgentArtifactFormSubmission>{},
       );
   bool _autoVoiceEnabled = true;
+  bool _interactionRestoreResolved = false;
   bool _showLatestButton = false;
   bool _showPhotoMenu = false;
   Timer? _persistentWriteTimer;
@@ -326,18 +327,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _applyPregnancyPlanChanges(_state);
     _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
-    _restorePersistedInteractionState();
-    _applyInitialComposerText();
-    _scheduleInitialAutoSendIfNeeded();
     _composerController.addListener(_persistInteractionState);
     _chatScrollController.addListener(_updateLatestButtonVisibility);
     _syncVoicePlaybackIdleSubscription();
     _syncIbclcConsultStore(null, widget.ibclcConsultStore);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _updateLatestButtonVisibility();
-      unawaited(_refreshGreetingAndMaybePlayVoice());
-    });
+    _initializeInteractionState();
   }
 
   @override
@@ -356,9 +350,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     if (oldWidget.initialComposerText != widget.initialComposerText) {
       _consumedInitialAutoSend = false;
-      _applyInitialComposerText();
-      _scheduleInitialAutoSendIfNeeded();
-    } else if (oldWidget.initialAutoSend != widget.initialAutoSend) {
+      if (_interactionRestoreResolved) {
+        _applyInitialComposerText();
+        _scheduleInitialAutoSendIfNeeded();
+      }
+    } else if (oldWidget.initialAutoSend != widget.initialAutoSend &&
+        _interactionRestoreResolved) {
       _scheduleInitialAutoSendIfNeeded();
     }
     if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
@@ -518,6 +515,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _persistInteractionState() {
+    if (!_interactionRestoreResolved) return;
     _updateCachedInteractionState();
     _activeRunPersistentWriteTimer?.cancel();
     _activeRunPersistentWriteTimer = null;
@@ -525,6 +523,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _persistActiveInteractionStateThrottled() {
+    if (!_interactionRestoreResolved) return;
     _updateCachedActiveRunState();
     if (widget.interactionStateStore == null ||
         _activeRunPersistentWriteTimer != null) {
@@ -564,20 +563,53 @@ class _AgentHubPageState extends State<AgentHubPage> {
       ..activeRequest = _activeRequest;
   }
 
+  void _initializeInteractionState() {
+    if (widget.interactionStateStore == null || _hasLocalInteraction()) {
+      _interactionRestoreResolved = true;
+      _applyInitialComposerText();
+      _scheduleInitialAutoSendIfNeeded();
+      _scheduleInitialInteractionPostFrame();
+      return;
+    }
+    unawaited(_restorePersistedInteractionState());
+  }
+
   Future<void> _restorePersistedInteractionState() async {
     final store = widget.interactionStateStore;
-    if (store == null) return;
-    final snapshot = await store.read();
-    if (!mounted || snapshot == null || !snapshot.hasContent) return;
-    if (_hasLocalInteraction()) return;
+    AgentHubInteractionSnapshot? snapshot;
+    try {
+      snapshot = await store?.read();
+    } catch (_) {
+      snapshot = null;
+    }
+    if (!mounted) return;
+    final shouldRestore =
+        snapshot?.hasConversationHistory == true && !_hasLocalInteraction();
     setState(() {
-      _applyInteractionSnapshot(snapshot);
+      if (shouldRestore) _applyInteractionSnapshot(snapshot!);
+      _interactionRestoreResolved = true;
     });
-    _applyHospitalBagCartUpdates(_state);
-    _applyPregnancyDiaryChanges(_state);
-    _applyPregnancyPlanChanges(_state);
-    _applyHospitalBagCartLinkContext(_state);
-    _persistInteractionState();
+    if (shouldRestore) {
+      _applyHospitalBagCartUpdates(_state);
+      _applyPregnancyDiaryChanges(_state);
+      _applyPregnancyPlanChanges(_state);
+      _applyHospitalBagCartLinkContext(_state);
+    }
+    _applyInitialComposerText();
+    _scheduleInitialAutoSendIfNeeded();
+    if (shouldRestore) _persistInteractionState();
+    _scheduleInitialInteractionPostFrame(scrollToLatest: shouldRestore);
+  }
+
+  void _scheduleInitialInteractionPostFrame({bool scrollToLatest = false}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_interactionRestoreResolved) return;
+      _updateLatestButtonVisibility();
+      if (scrollToLatest) {
+        _scheduleScrollToLatest();
+      }
+      unawaited(_refreshGreetingAndMaybePlayVoice());
+    });
   }
 
   bool _hasLocalInteraction() {
@@ -603,7 +635,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
     _historyMessages = snapshot.historyMessages
         .map(_historyMessageFromSnapshot)
-        .toList(growable: false);
+        .toList();
     _composerController
       ..text = snapshot.composerText
       ..selection = TextSelection.collapsed(
@@ -1317,6 +1349,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
     _notifyActionStateChanged();
     _persistInteractionState();
+    _flushPersistentInteractionState();
     unawaited(_refreshGreetingAndMaybePlayVoice());
     widget.onNewSession?.call();
   }
@@ -1377,7 +1410,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void _maybeStartGreetingVoicePlayback() {
     final coordinator = widget.voicePlaybackCoordinator;
     final player = widget.voicePlaybackPlayer;
-    if (coordinator == null || player == null || !_autoVoiceEnabled) return;
+    if (!_interactionRestoreResolved ||
+        !_isShowingFreshGreeting ||
+        coordinator == null ||
+        player == null ||
+        !_autoVoiceEnabled) {
+      return;
+    }
 
     final result = coordinator.request(
       id: _agentDefaultGreetingPlaybackId,
@@ -2109,7 +2148,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                 valueListenable: _visibleReplyRunningNotifier,
                 builder: (context, isVisibleReplyRunning, child) {
                   return AgentHubTopBar(
-                    showControls: true,
+                    showControls: _interactionRestoreResolved,
                     autoVoiceEnabled: _autoVoiceEnabled,
                     isRunning: isVisibleReplyRunning,
                     onToggleAutoVoice: _toggleAutoVoice,
@@ -2155,51 +2194,58 @@ class _AgentHubPageState extends State<AgentHubPage> {
                               const SliverToBoxAdapter(
                                 child: SizedBox(height: 18),
                               ),
-                            SliverPadding(
-                              padding: EdgeInsets.fromLTRB(
-                                12,
-                                _historyMessages.isEmpty ? 14 : 0,
-                                12,
-                                24,
-                              ),
-                              sliver: SliverToBoxAdapter(
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minHeight: _historyMessages.isEmpty
-                                        ? transcriptMinHeight
-                                        : 0,
-                                  ),
-                                  child: _AgentRunTranscriptListenable(
-                                    greeting: _greeting,
-                                    stateListenable: _runStateNotifier,
-                                    activeVoicePlaybackIdListenable:
-                                        _activeVoicePlaybackIdNotifier,
-                                    actionStateRevisionListenable:
-                                        _actionStateRevisionNotifier,
-                                    artifactPanelKey: _activeArtifactPanelKey,
-                                    canRetryForState: _canRetryForState,
-                                    onRetry: _retryRun,
-                                    onArtifactAction: _handleArtifactAction,
-                                    onFormSubmit: _handleArtifactFormSubmit,
-                                    formSubmissionsListenable:
-                                        _formSubmissionsNotifier,
-                                    onQuickReplySelected:
-                                        _handleQuickReplySelected,
-                                    pendingActionIds: _pendingActionIds,
-                                    localActionStatuses: _localActionStatuses,
-                                    productAssetRepository:
-                                        widget.productAssetRepository,
-                                    profileDefaults: profileDefaults,
-                                    onConfirmAction: widget.actionClient == null
-                                        ? null
-                                        : _confirmAction,
-                                    onRejectAction: widget.actionClient == null
-                                        ? null
-                                        : _rejectAction,
+                            if (_interactionRestoreResolved)
+                              SliverPadding(
+                                padding: EdgeInsets.fromLTRB(
+                                  12,
+                                  _historyMessages.isEmpty ? 14 : 0,
+                                  12,
+                                  24,
+                                ),
+                                sliver: SliverToBoxAdapter(
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minHeight: _historyMessages.isEmpty
+                                          ? transcriptMinHeight
+                                          : 0,
+                                    ),
+                                    child: _AgentRunTranscriptListenable(
+                                      greeting: _greeting,
+                                      stateListenable: _runStateNotifier,
+                                      activeVoicePlaybackIdListenable:
+                                          _activeVoicePlaybackIdNotifier,
+                                      actionStateRevisionListenable:
+                                          _actionStateRevisionNotifier,
+                                      artifactPanelKey: _activeArtifactPanelKey,
+                                      canRetryForState: _canRetryForState,
+                                      onRetry: _retryRun,
+                                      onArtifactAction: _handleArtifactAction,
+                                      onFormSubmit: _handleArtifactFormSubmit,
+                                      formSubmissionsListenable:
+                                          _formSubmissionsNotifier,
+                                      onQuickReplySelected:
+                                          _handleQuickReplySelected,
+                                      pendingActionIds: _pendingActionIds,
+                                      localActionStatuses: _localActionStatuses,
+                                      productAssetRepository:
+                                          widget.productAssetRepository,
+                                      profileDefaults: profileDefaults,
+                                      onConfirmAction:
+                                          widget.actionClient == null
+                                          ? null
+                                          : _confirmAction,
+                                      onRejectAction:
+                                          widget.actionClient == null
+                                          ? null
+                                          : _rejectAction,
+                                    ),
                                   ),
                                 ),
+                              )
+                            else
+                              SliverToBoxAdapter(
+                                child: SizedBox(height: transcriptMinHeight),
                               ),
-                            ),
                           ],
                         ),
                         const Positioned(
@@ -2237,19 +2283,26 @@ class _AgentHubPageState extends State<AgentHubPage> {
                   final isVisibleReplyRunning =
                       _visibleReplyRunningNotifier.value;
                   final isComposerLocked = _composerLockedNotifier.value;
+                  final isRestoring = !_interactionRestoreResolved;
                   return AgentComposerBar(
                     controller: _composerController,
                     focusNode: _composerFocusNode,
-                    canSend: widget.runner != null && !isComposerLocked,
+                    canSend:
+                        widget.runner != null &&
+                        !isComposerLocked &&
+                        !isRestoring,
                     isRunning: isVisibleReplyRunning,
-                    isInputLocked: isComposerLocked,
+                    isInputLocked: isComposerLocked || isRestoring,
                     images: List<AgentStreamImageInput>.unmodifiable(
                       _attachedImages,
                     ),
                     showPhotoMenu: _showPhotoMenu,
                     canAttachImage:
-                        widget.pickImage != null && !isComposerLocked,
+                        widget.pickImage != null &&
+                        !isComposerLocked &&
+                        !isRestoring,
                     canUseVoice:
+                        !isRestoring &&
                         (widget.voiceInputController != null ||
                             widget.voiceInput != null) &&
                         !_isVisibleReplyRunningForState(runState) &&

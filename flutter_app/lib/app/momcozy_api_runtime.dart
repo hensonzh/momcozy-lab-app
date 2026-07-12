@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
@@ -30,6 +31,9 @@ import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_pla
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
@@ -75,6 +79,8 @@ class MomCozyApiRuntime {
     IbclcConsultStore? ibclcConsultStore,
     PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
     PregnancyPlanChangeStore? pregnancyPlanChangeStore,
+    StatusPreferenceStore? statusPreferenceStore,
+    VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
@@ -139,6 +145,8 @@ class MomCozyApiRuntime {
     _hasInjectedAgentVoicePlaybackPlayer = agentVoicePlaybackPlayer != null;
     _productAssetRepository = productAssetRepository;
     _hasInjectedProductAssetRepository = productAssetRepository != null;
+    _statusPreferenceStore = statusPreferenceStore;
+    _volumeUnitPreferenceStore = volumeUnitPreferenceStore;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
     _hasInjectedPumpProtocolPlatform = pumpProtocolPlatform != null;
@@ -374,6 +382,8 @@ class MomCozyApiRuntime {
   AgentVoiceInputController? _agentVoiceInputController;
   AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
   ProductAssetRepository? _productAssetRepository;
+  StatusPreferenceStore? _statusPreferenceStore;
+  VolumeUnitPreferenceStore? _volumeUnitPreferenceStore;
   late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
@@ -436,7 +446,7 @@ class MomCozyApiRuntime {
   }
 
   StatusApiRepository get statusRepository {
-    return StatusApiRepository(transport: jsonTransport);
+    return StatusApiRepository(transport: jsonTransport, now: now);
   }
 
   AgentHubProfileRepository get agentHubProfileRepository {
@@ -449,6 +459,46 @@ class MomCozyApiRuntime {
 
   RecordsApiRepository get recordsRepository {
     return RecordsApiRepository(transport: jsonTransport);
+  }
+
+  PregnancyDiaryApiRepository get pregnancyDiaryRepository {
+    return PregnancyDiaryApiRepository(transport: jsonTransport);
+  }
+
+  PregnancyPlanApiRepository get pregnancyPlanRepository {
+    return PregnancyPlanApiRepository(transport: jsonTransport);
+  }
+
+  StatusPreferenceStore get statusPreferenceStore {
+    return _statusPreferenceStore ??= FlutterSecureStatusPreferenceStore(
+      userId: currentSession.userId,
+    );
+  }
+
+  VolumeUnitPreferenceStore get volumeUnitPreferenceStore {
+    return _volumeUnitPreferenceStore ??=
+        FlutterSecureVolumeUnitPreferenceStore(userId: currentSession.userId);
+  }
+
+  StatusDashboardController createStatusDashboardController({
+    StatusCareStage initialCareStage = StatusCareStage.postpartum,
+    StatusIdentity initialIdentity = StatusIdentity.mom,
+  }) {
+    final records = recordsRepository;
+    return StatusDashboardController(
+      statusRepository: statusRepository,
+      feedingRepository: records,
+      milkTrendRepository: records,
+      growthRepository: records,
+      pregnancyDiaryRepository: pregnancyDiaryRepository,
+      pregnancyPlanRepository: pregnancyPlanRepository,
+      preferenceStore: statusPreferenceStore,
+      volumeUnitPreferenceStore: volumeUnitPreferenceStore,
+      babyId: currentSession.babyId,
+      initialCareStage: initialCareStage,
+      initialIdentity: initialIdentity,
+      now: now,
+    );
   }
 
   MediaApiRepository get mediaRepository {
@@ -501,14 +551,6 @@ class MomCozyApiRuntime {
 
   PumpWorkstateApiRepository get pumpWorkstateRepository {
     return PumpWorkstateApiRepository(transport: jsonTransport);
-  }
-
-  PregnancyDiaryApiRepository get pregnancyDiaryRepository {
-    return PregnancyDiaryApiRepository(transport: jsonTransport);
-  }
-
-  PregnancyPlanApiRepository get pregnancyPlanRepository {
-    return PregnancyPlanApiRepository(transport: jsonTransport);
   }
 }
 

@@ -195,7 +195,7 @@ void main() {
       },
     );
 
-    test('late restore never overwrites a newer in-memory event', () async {
+    test('queues a newer event on top of the restored revision', () async {
       final persistence = _BlockingPersistence(
         const PregnancyDiaryPendingState(
           hasUnread: false,
@@ -215,8 +215,56 @@ void main() {
 
       expect(store.hasUnread, isTrue);
       expect(store.lastEventId, 'evt-new');
-      expect(store.revision, greaterThanOrEqualTo(1));
+      expect(store.revision, 5);
     });
+
+    test(
+      'restore deduplicates the same event arriving before read completes',
+      () async {
+        final persistence = _BlockingPersistence(
+          const PregnancyDiaryPendingState(
+            hasUnread: false,
+            highlightCard: false,
+            revision: 1,
+            lastEventId: 'evt-same',
+            seenEventIds: ['evt-same'],
+          ),
+        );
+        final store = PregnancyDiaryChangeStore(persistence: persistence);
+        final restore = store.restore();
+
+        expect(
+          store.record(
+            PregnancyDiaryChange.tryFromEvent(
+              _changedEvent(eventId: 'evt-same'),
+            )!,
+          ),
+          isTrue,
+        );
+        expect(
+          store.record(
+            PregnancyDiaryChange.tryFromEvent(
+              _changedEvent(eventId: 'evt-same'),
+            )!,
+          ),
+          isFalse,
+        );
+        persistence.release();
+        await restore;
+
+        expect(store.hasUnread, isFalse);
+        expect(store.highlightCard, isFalse);
+        expect(store.revision, 1);
+        expect(
+          store.record(
+            PregnancyDiaryChange.tryFromEvent(
+              _changedEvent(eventId: 'evt-same'),
+            )!,
+          ),
+          isFalse,
+        );
+      },
+    );
   });
 }
 

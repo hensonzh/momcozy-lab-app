@@ -129,6 +129,34 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
     );
   }
 
+  final statusIntent = event == 'grown'
+      ? 'growth'
+      : query['statusIntent'] ?? query['mmcNotify'];
+  if (cleanPath == '/status') {
+    final normalizedStatusIntent = switch (statusIntent) {
+      'growth' || 'growth-highlight' => 'growth',
+      'pregnancy-diary' => 'pregnancy-diary',
+      'birth-journey' => 'birth-journey',
+      _ => null,
+    };
+    if (normalizedStatusIntent != null) {
+      final type = switch (normalizedStatusIntent) {
+        'growth' => 'OpenStatusGrowthHighlight',
+        'pregnancy-diary' => 'OpenStatusPregnancyDiaryBadge',
+        _ => 'OpenStatusBirthJourneyBadge',
+      };
+      return RouteIntent(
+        type: type,
+        path: '/status',
+        payload: {
+          'statusIntent': normalizedStatusIntent,
+          'source': 'native-notification',
+        },
+        consume: 'once',
+      );
+    }
+  }
+
   if (cleanPath != '/') {
     return RouteIntent(
       type: 'NotFoundIntent',

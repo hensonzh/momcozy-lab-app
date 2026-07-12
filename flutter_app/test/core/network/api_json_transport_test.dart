@@ -75,39 +75,62 @@ void main() {
       });
     });
 
-    test('sends PATCH JSON and accepts empty DELETE responses', () async {
-      final patchConnector = _RecordingApiHttpConnector(
+    test('sends PUT, PATCH, and DELETE mutations', () async {
+      final connector = _RecordingApiHttpConnector(
         const ApiHttpResponse(
           statusCode: 200,
           statusText: 'OK',
-          body: '{"id":"entry-1"}',
+          body: '{"id":"record-001"}',
         ),
       );
-      final deleteConnector = _RecordingApiHttpConnector(
+      final transport = IoApiJsonTransport(
+        baseUri: Uri.parse('http://127.0.0.1:8769'),
+        connector: connector,
+      );
+
+      final putResponse = await transport.putJson(
+        '/v1/pregnancy-diary/entries/2026-07-11',
+        body: {'mood': '平稳'},
+      );
+      expect(putResponse, {'id': 'record-001'});
+      expect(connector.method, 'PUT');
+      expect(jsonDecode(connector.body!) as Map<String, Object?>, {
+        'mood': '平稳',
+      });
+
+      final patchResponse = await transport.patchJson(
+        '/v1/plans/tasks/task-001/completion',
+        body: {'completed': true},
+      );
+      expect(patchResponse, {'id': 'record-001'});
+      expect(connector.method, 'PATCH');
+      expect(jsonDecode(connector.body!) as Map<String, Object?>, {
+        'completed': true,
+      });
+
+      final deleteResponse = await transport.deleteJson('/v1/plans/plan-001');
+      expect(deleteResponse, {'id': 'record-001'});
+      expect(connector.method, 'DELETE');
+      expect(connector.body, isNull);
+    });
+
+    test('accepts an empty successful DELETE response', () async {
+      final connector = _RecordingApiHttpConnector(
         const ApiHttpResponse(
           statusCode: 204,
           statusText: 'No Content',
           body: '',
         ),
       );
-
-      await IoApiJsonTransport(
+      final transport = IoApiJsonTransport(
         baseUri: Uri.parse('http://127.0.0.1:8769'),
-        connector: patchConnector,
-      ).patchJson(
-        '/v1/pregnancy-diary/entries/2026-07-11',
-        body: {'content': 'updated'},
+        connector: connector,
       );
-      await IoApiJsonTransport(
-        baseUri: Uri.parse('http://127.0.0.1:8769'),
-        connector: deleteConnector,
-      ).deleteJson('/v1/pregnancy-diary/entries/2026-07-11');
 
-      expect(patchConnector.method, 'PATCH');
-      expect(jsonDecode(patchConnector.body!) as Map<String, Object?>, {
-        'content': 'updated',
-      });
-      expect(deleteConnector.method, 'DELETE');
+      final response = await transport.deleteJson('/v1/plans/plan-001');
+
+      expect(response, isEmpty);
+      expect(connector.method, 'DELETE');
     });
 
     test('HTTP connector sends non-ASCII JSON bodies as UTF-8', () async {
@@ -281,8 +304,8 @@ class _RecordingApiHttpConnector implements ApiHttpConnector {
     Uri uri, {
     required Map<String, String> headers,
   }) async {
-    this.uri = uri;
     method = 'GET';
+    this.uri = uri;
     this.headers = Map<String, String>.from(headers);
     body = null;
     return response;
@@ -294,8 +317,21 @@ class _RecordingApiHttpConnector implements ApiHttpConnector {
     required Map<String, String> headers,
     required String body,
   }) async {
-    this.uri = uri;
     method = 'POST';
+    this.uri = uri;
+    this.headers = Map<String, String>.from(headers);
+    this.body = body;
+    return response;
+  }
+
+  @override
+  Future<ApiHttpResponse> put(
+    Uri uri, {
+    required Map<String, String> headers,
+    required String body,
+  }) async {
+    method = 'PUT';
+    this.uri = uri;
     this.headers = Map<String, String>.from(headers);
     this.body = body;
     return response;
@@ -307,8 +343,8 @@ class _RecordingApiHttpConnector implements ApiHttpConnector {
     required Map<String, String> headers,
     required String body,
   }) async {
-    this.uri = uri;
     method = 'PATCH';
+    this.uri = uri;
     this.headers = Map<String, String>.from(headers);
     this.body = body;
     return response;
@@ -319,8 +355,8 @@ class _RecordingApiHttpConnector implements ApiHttpConnector {
     Uri uri, {
     required Map<String, String> headers,
   }) async {
-    this.uri = uri;
     method = 'DELETE';
+    this.uri = uri;
     this.headers = Map<String, String>.from(headers);
     body = null;
     return response;

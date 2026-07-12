@@ -135,15 +135,19 @@ abstract interface class PregnancyDiaryChangePersistence {
 }
 
 class PregnancyDiaryChangeStore extends ChangeNotifier {
-  PregnancyDiaryChangeStore({this.persistence});
+  PregnancyDiaryChangeStore({this.persistence})
+    : _restoreCompleted = persistence == null;
 
   final PregnancyDiaryChangePersistence? persistence;
   final LinkedHashSet<String> _seenEventIds = LinkedHashSet<String>();
+  final List<PregnancyDiaryChange> _pendingRestoreChanges =
+      <PregnancyDiaryChange>[];
+  final Set<String> _pendingRestoreEventIds = <String>{};
   bool _hasUnread = false;
   bool _highlightCard = false;
   int _revision = 0;
   String? _lastEventId;
-  int _mutationGeneration = 0;
+  bool _restoreCompleted;
   Future<void>? _restoreFuture;
   Future<void> _persistenceTail = Future<void>.value();
 
@@ -153,42 +157,76 @@ class PregnancyDiaryChangeStore extends ChangeNotifier {
   String? get lastEventId => _lastEventId;
 
   Future<void> restore() {
+    if (_restoreCompleted) return Future<void>.value();
     return _restoreFuture ??= _restore();
   }
 
   Future<void> _restore() async {
     final persistence = this.persistence;
-    if (persistence == null) return;
-    final generationAtStart = _mutationGeneration;
+    if (persistence == null) {
+      _restoreCompleted = true;
+      return;
+    }
+    final previousHasUnread = _hasUnread;
+    final previousHighlightCard = _highlightCard;
+    final previousRevision = _revision;
+    final previousLastEventId = _lastEventId;
     PregnancyDiaryPendingState? restored;
     try {
       restored = await persistence.read();
     } catch (_) {
-      return;
+      // Continue with queued in-memory events when local persistence fails.
     }
-    if (restored == null) return;
-    _mergeSeenEventIds(restored.seenEventIds);
-    final restoredLastEventId = restored.lastEventId;
-    if (restoredLastEventId != null) {
-      _rememberEventId(restoredLastEventId);
+    if (restored != null) {
+      _mergeSeenEventIds(restored.seenEventIds);
+      final restoredLastEventId = restored.lastEventId;
+      if (restoredLastEventId != null) {
+        _rememberEventId(restoredLastEventId);
+      }
+      _hasUnread = restored.hasUnread;
+      _highlightCard = restored.highlightCard;
+      _revision = restored.revision;
+      _lastEventId = restored.lastEventId;
     }
-    if (_mutationGeneration != generationAtStart || generationAtStart != 0) {
-      return;
+    _restoreCompleted = true;
+
+    var appliedQueuedChange = false;
+    final queuedChanges = List<PregnancyDiaryChange>.of(_pendingRestoreChanges);
+    _pendingRestoreChanges.clear();
+    _pendingRestoreEventIds.clear();
+    for (final change in queuedChanges) {
+      if (_seenEventIds.contains(change.eventId)) continue;
+      _recordNow(change, notify: false, persist: false);
+      appliedQueuedChange = true;
     }
     final changed =
-        _hasUnread != restored.hasUnread ||
-        _highlightCard != restored.highlightCard ||
-        _revision != restored.revision ||
-        _lastEventId != restored.lastEventId;
-    _hasUnread = restored.hasUnread;
-    _highlightCard = restored.highlightCard;
-    _revision = restored.revision;
-    _lastEventId = restored.lastEventId;
+        _hasUnread != previousHasUnread ||
+        _highlightCard != previousHighlightCard ||
+        _revision != previousRevision ||
+        _lastEventId != previousLastEventId;
     if (changed) notifyListeners();
+    if (appliedQueuedChange) _schedulePersistence();
   }
 
   bool record(PregnancyDiaryChange change) {
-    if (_seenEventIds.contains(change.eventId)) return false;
+    if (_seenEventIds.contains(change.eventId) ||
+        _pendingRestoreEventIds.contains(change.eventId)) {
+      return false;
+    }
+    if (!_restoreCompleted) {
+      _pendingRestoreChanges.add(change);
+      _pendingRestoreEventIds.add(change.eventId);
+      unawaited(restore());
+      return true;
+    }
+    return _recordNow(change);
+  }
+
+  bool _recordNow(
+    PregnancyDiaryChange change, {
+    bool notify = true,
+    bool persist = true,
+  }) {
     _rememberEventId(change.eventId);
 
     _revision += 1;
@@ -200,9 +238,8 @@ class PregnancyDiaryChangeStore extends ChangeNotifier {
       _hasUnread = true;
       _highlightCard = false;
     }
-    _mutationGeneration += 1;
-    notifyListeners();
-    _schedulePersistence();
+    if (notify) notifyListeners();
+    if (persist) _schedulePersistence();
     return true;
   }
 
@@ -210,7 +247,6 @@ class PregnancyDiaryChangeStore extends ChangeNotifier {
     if (!_hasUnread) return;
     _hasUnread = false;
     _highlightCard = true;
-    _mutationGeneration += 1;
     notifyListeners();
     _schedulePersistence();
   }
@@ -218,7 +254,6 @@ class PregnancyDiaryChangeStore extends ChangeNotifier {
   void clearCardNotice() {
     if (!_highlightCard) return;
     _highlightCard = false;
-    _mutationGeneration += 1;
     notifyListeners();
     _schedulePersistence();
   }
@@ -227,22 +262,23 @@ class PregnancyDiaryChangeStore extends ChangeNotifier {
     if (!_highlightCard) return;
     _highlightCard = false;
     _hasUnread = true;
-    _mutationGeneration += 1;
     notifyListeners();
     _schedulePersistence();
   }
 
-  Future<void> flushPersistence() => _persistenceTail;
+  Future<void> flushPersistence() async {
+    await restore();
+    await _persistenceTail;
+  }
 
   void _schedulePersistence() {
     final persistence = this.persistence;
     if (persistence == null) return;
     _persistenceTail = _persistenceTail.then((_) async {
-      await restore();
       try {
         await persistence.write(_snapshot());
       } catch (_) {
-        // The in-memory notice remains authoritative when local storage fails.
+        // In-memory notice state remains usable when local persistence fails.
       }
     });
   }

@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
+import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -279,6 +280,54 @@ MomCozyApiRuntime _goldenRuntime({DateTime Function()? now}) {
             'status': 'active',
           },
         ],
+      },
+      milkTrendsEndpoint: const <String, Object?>{
+        'items': <Object?>[
+          <String, Object?>{
+            'date': '2026-06-27',
+            'pumped_milk_volume_ml': 120,
+            'pumping_count': 2,
+            'measured_only': true,
+          },
+          <String, Object?>{
+            'date': '2026-06-28',
+            'pumped_milk_volume_ml': 160,
+            'pumping_count': 2,
+            'measured_only': true,
+          },
+          <String, Object?>{
+            'date': '2026-06-29',
+            'pumped_milk_volume_ml': 190,
+            'pumping_count': 3,
+            'measured_only': true,
+          },
+          <String, Object?>{
+            'date': '2026-06-30',
+            'pumped_milk_volume_ml': 170,
+            'pumping_count': 2,
+            'measured_only': true,
+          },
+          <String, Object?>{
+            'date': '2026-07-01',
+            'pumped_milk_volume_ml': 220,
+            'pumping_count': 3,
+            'measured_only': true,
+          },
+          <String, Object?>{
+            'date': '2026-07-02',
+            'pumped_milk_volume_ml': 240,
+            'pumping_count': 3,
+            'measured_only': true,
+          },
+          <String, Object?>{
+            'date': '2026-07-03',
+            'pumped_milk_volume_ml': 90,
+            'pumping_count': 1,
+            'measured_only': true,
+          },
+        ],
+        'days': 31,
+        'include_today': true,
       },
       pumpWorkstateEndpoint: const <String, Object?>{
         'id': 'telemetry-001',

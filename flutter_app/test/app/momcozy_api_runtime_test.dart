@@ -6,6 +6,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
@@ -14,7 +15,11 @@ import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
 
@@ -117,6 +122,8 @@ void main() {
       'user_id': 'user-fixture',
       'delivery_date': '2026-06-11',
     });
+    final statusPreferences = _MemoryStatusPreferenceStore();
+    final volumePreferences = _MemoryVolumeUnitPreferenceStore();
     final runtime = MomCozyApiRuntime(
       jsonTransport: transport,
       multipartTransport: FixtureApiMultipartTransport({
@@ -126,6 +133,8 @@ void main() {
       userId: 'user-fixture',
       babyId: 'baby-fixture',
       locale: 'zh-CN',
+      statusPreferenceStore: statusPreferences,
+      volumeUnitPreferenceStore: volumePreferences,
     );
 
     expect(runtime.statusRepository, isA<StatusApiRepository>());
@@ -133,6 +142,10 @@ void main() {
     expect(runtime.authRepository, isA<MomCozyAuthApiRepository>());
     expect(runtime.scheduleRepository.transport, same(transport));
     expect(runtime.recordsRepository.transport, same(transport));
+    expect(runtime.pregnancyDiaryRepository.transport, same(transport));
+    expect(runtime.pregnancyPlanRepository.transport, same(transport));
+    expect(runtime.statusPreferenceStore, same(statusPreferences));
+    expect(runtime.volumeUnitPreferenceStore, same(volumePreferences));
     expect(runtime.pumpWorkstateRepository.transport, same(transport));
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
     expect(runtime.productAssetRepository, isA<ProductAssetRepository>());
@@ -149,6 +162,19 @@ void main() {
       runtime.hospitalBagCartRepository,
       isA<HospitalBagCartApiRepository>(),
     );
+    final statusController = runtime.createStatusDashboardController();
+    expect(statusController.babyId, 'baby-fixture');
+    expect(statusController.preferenceStore, same(statusPreferences));
+    expect(statusController.volumeUnitPreferenceStore, same(volumePreferences));
+    expect(
+      statusController.pregnancyDiaryRepository,
+      isA<PregnancyDiaryApiRepository>(),
+    );
+    expect(
+      statusController.pregnancyPlanRepository,
+      isA<PregnancyPlanApiRepository>(),
+    );
+    statusController.dispose();
   });
 
   test('runtime exposes an injected multipart transport lazily', () async {
@@ -479,6 +505,30 @@ void main() {
     expect(controller.runtime.observability, same(observability));
     controller.dispose();
   });
+}
+
+class _MemoryStatusPreferenceStore implements StatusPreferenceStore {
+  StatusCareStage? value;
+
+  @override
+  Future<StatusCareStage?> readCareStage() async => value;
+
+  @override
+  Future<void> writeCareStage(StatusCareStage stage) async {
+    value = stage;
+  }
+}
+
+class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
+  MomCozyVolumeUnit? value;
+
+  @override
+  Future<MomCozyVolumeUnit?> read() async => value;
+
+  @override
+  Future<void> write(MomCozyVolumeUnit unit) async {
+    value = unit;
+  }
 }
 
 HospitalBagCartArtifactSeed _cartSeed(String artifactId) {

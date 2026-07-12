@@ -68,6 +68,16 @@ void main() {
       expect(plan, isNull);
     });
 
+    test('deletes the canonical pregnancy plan by plan id', () async {
+      final transport = FixtureApiJsonTransport(const <String, Object?>{});
+      final repository = PregnancyPlanApiRepository(transport: transport);
+
+      await repository.deletePlan(planId: 'plan-pregnancy-1');
+
+      expect(transport.lastMethod, 'DELETE');
+      expect(transport.lastPath, '$pregnancyPlansEndpoint/plan-pregnancy-1');
+    });
+
     test('rejects non-empty responses without a valid active plan', () async {
       final transport = FixtureApiJsonTransport({
         'items': [
