@@ -519,11 +519,17 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
     final isAgentRoute = location == '/';
     if (!_hasBuiltAgentHub) return widget.child;
 
-    final agentHub = agentHubBuilder(
-      context,
-      isAgentRoute ? widget.uri : null,
-      isAgentRoute ? widget.extra : null,
-      _voicePlaybackCoordinator,
+    final runtime = MomCozyRuntimeScope.of(context);
+    final agentHub = KeyedSubtree(
+      key: ValueKey<String>(
+        'agent-hub-session:${runtime.session.status.name}:${runtime.session.userId}',
+      ),
+      child: agentHubBuilder(
+        context,
+        isAgentRoute ? widget.uri : null,
+        isAgentRoute ? widget.extra : null,
+        _voicePlaybackCoordinator,
+      ),
     );
 
     return Stack(
@@ -549,17 +555,22 @@ class MomCozyBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final changeStore = MomCozyRuntimeScope.maybeOf(
-      context,
-    )?.pregnancyDiaryChangeStore;
-    if (changeStore == null) {
-      return _buildNavigation(context, showPregnancyDiaryBadge: false);
+    final runtime = MomCozyRuntimeScope.maybeOf(context);
+    if (runtime == null) {
+      return _buildNavigation(
+        context,
+        showPregnancyDiaryBadge: false,
+        showPregnancyPlanBadge: false,
+      );
     }
+    final diaryChangeStore = runtime.pregnancyDiaryChangeStore;
+    final planChangeStore = runtime.pregnancyPlanChangeStore;
     return ListenableBuilder(
-      listenable: changeStore,
+      listenable: Listenable.merge([diaryChangeStore, planChangeStore]),
       builder: (context, child) => _buildNavigation(
         context,
-        showPregnancyDiaryBadge: changeStore.hasUnread,
+        showPregnancyDiaryBadge: diaryChangeStore.hasUnread,
+        showPregnancyPlanBadge: planChangeStore.hasUnread,
       ),
     );
   }
@@ -567,11 +578,10 @@ class MomCozyBottomNavigation extends StatelessWidget {
   Widget _buildNavigation(
     BuildContext context, {
     required bool showPregnancyDiaryBadge,
+    required bool showPregnancyPlanBadge,
   }) {
     final selectedIndex = _selectedTabIndex(location);
-    final changeStore = MomCozyRuntimeScope.maybeOf(
-      context,
-    )?.pregnancyDiaryChangeStore;
+    final runtime = MomCozyRuntimeScope.maybeOf(context);
 
     return DecoratedBox(
       decoration: const BoxDecoration(color: Color(0xfffcf7f5)),
@@ -622,16 +632,24 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                   label: '宝宝和我',
                                   selected: selectedIndex == 0,
                                   icon: _StatusNavIcon(
-                                    showBadge: showPregnancyDiaryBadge,
+                                    showPregnancyDiaryBadge:
+                                        showPregnancyDiaryBadge,
+                                    showPregnancyPlanBadge:
+                                        showPregnancyPlanBadge,
                                     child: const _MomBabyNavIcon(),
                                   ),
                                   selectedIcon: _StatusNavIcon(
-                                    showBadge: showPregnancyDiaryBadge,
+                                    showPregnancyDiaryBadge:
+                                        showPregnancyDiaryBadge,
+                                    showPregnancyPlanBadge:
+                                        showPregnancyPlanBadge,
                                     child: const _MomBabyNavIcon(filled: true),
                                   ),
                                   onTap: () {
-                                    changeStore
-                                        ?.transferNavigationNoticeToCard();
+                                    runtime?.pregnancyDiaryChangeStore
+                                        .transferNavigationNoticeToCard();
+                                    runtime?.pregnancyPlanChangeStore
+                                        .transferNavigationNoticeToCard();
                                     context.go(_tabPaths[0]);
                                   },
                                 ),
@@ -699,13 +717,46 @@ class MomCozyBottomNavigation extends StatelessWidget {
 }
 
 class _StatusNavIcon extends StatelessWidget {
-  const _StatusNavIcon({required this.showBadge, required this.child});
+  const _StatusNavIcon({
+    required this.showPregnancyDiaryBadge,
+    required this.showPregnancyPlanBadge,
+    required this.child,
+  });
 
-  final bool showBadge;
+  final bool showPregnancyDiaryBadge;
+  final bool showPregnancyPlanBadge;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    final showBadge = showPregnancyDiaryBadge || showPregnancyPlanBadge;
+    final semanticsLabel = showPregnancyDiaryBadge && showPregnancyPlanBadge
+        ? '孕期日记和孕期计划有更新'
+        : showPregnancyPlanBadge
+        ? '孕期计划有更新'
+        : '孕期日记有更新';
+    Widget badge = Semantics(
+      label: semanticsLabel,
+      child: const DecoratedBox(
+        decoration: BoxDecoration(
+          color: MomCozyColors.badge,
+          shape: BoxShape.circle,
+        ),
+        child: SizedBox.square(dimension: 8),
+      ),
+    );
+    if (showPregnancyPlanBadge) {
+      badge = KeyedSubtree(
+        key: const ValueKey('bottom-nav-status-plan-badge'),
+        child: badge,
+      );
+    }
+    if (showPregnancyDiaryBadge) {
+      badge = KeyedSubtree(
+        key: const ValueKey('bottom-nav-status-diary-badge'),
+        child: badge,
+      );
+    }
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.center,
@@ -713,19 +764,10 @@ class _StatusNavIcon extends StatelessWidget {
         child,
         if (showBadge)
           Positioned(
-            key: const ValueKey('bottom-nav-status-diary-badge'),
+            key: const ValueKey('bottom-nav-status-badge'),
             top: -2,
             right: -3,
-            child: Semantics(
-              label: '孕期日记有更新',
-              child: const DecoratedBox(
-                decoration: BoxDecoration(
-                  color: MomCozyColors.badge,
-                  shape: BoxShape.circle,
-                ),
-                child: SizedBox.square(dimension: 8),
-              ),
-            ),
+            child: badge,
           ),
       ],
     );
@@ -1357,6 +1399,9 @@ Widget _buildDefaultAgentHubPage(
     },
     onPregnancyDiaryChange: (change) {
       runtime.pregnancyDiaryChangeStore.record(change);
+    },
+    onPregnancyPlanChange: (change) {
+      runtime.pregnancyPlanChangeStore.record(change);
     },
     onNewSession: runtime.hospitalBagCartStore.clearForNewSession,
     onArtifactAction: (action) => unawaited(
