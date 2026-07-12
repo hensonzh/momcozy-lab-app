@@ -2079,7 +2079,7 @@ class _ScheduleTaskRow extends StatelessWidget {
     final completed = task.state == ScheduleTaskState.completed;
     final skipped = task.state == ScheduleTaskState.skipped;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 9),
+      padding: const EdgeInsets.only(top: 4, bottom: 5),
       child: Semantics(
         label:
             '${_time(task.remindAt)} ${task.title}，${_taskStateLabel(task.state)}'
@@ -2087,135 +2087,126 @@ class _ScheduleTaskRow extends StatelessWidget {
             '${isNext ? '，下一项' : ''}'
             '${linkedRecords.isEmpty ? '' : '，${linkedRecords.map((record) => _linkedRecordSummary(record, volumeUnit)).join('，')}'}',
         button: onEdit != null,
-        child: DecoratedBox(
-          key: ValueKey('schedule-timeline-task-${task.id}'),
-          decoration: MomCozyDecorations.card(
-            color: completed ? const Color(0xfff0f7ee) : MomCozyColors.card,
-            borderColor: highlighted
-                ? MomCozyColors.primary
-                : isNext
-                ? MomCozyColors.care
-                : MomCozyColors.border,
-            radius: 16,
-            shadows: highlighted || isNext ? MomCozyShadows.soft : const [],
-          ),
-          child: InkWell(
-            onTap: onEdit,
-            borderRadius: BorderRadius.circular(16),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 50,
-                    child: Text(
-                      _time(task.remindAt),
-                      style: const TextStyle(
-                        color: MomCozyColors.primary,
-                        fontWeight: FontWeight.w900,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            DecoratedBox(
+              key: ValueKey('schedule-timeline-task-${task.id}'),
+              decoration: BoxDecoration(
+                color: skipped
+                    ? const Color(0xffefedec)
+                    : completed
+                    ? const Color(0xfff0f7ee)
+                    : MomCozyColors.card,
+                borderRadius: BorderRadius.circular(16),
+                border: skipped
+                    ? null
+                    : Border.all(
+                        color: highlighted
+                            ? MomCozyColors.primary.withValues(alpha: 0.72)
+                            : isNext
+                            ? MomCozyColors.primary.withValues(alpha: 0.5)
+                            : completed
+                            ? const Color(0xffd4e3d1)
+                            : MomCozyColors.border.withValues(alpha: 0.6),
+                        width: highlighted ? 2 : 1,
                       ),
-                    ),
-                  ),
-                  Icon(
-                    _taskIcon(task.kind),
-                    size: 18,
-                    color: MomCozyColors.mutedForeground,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                boxShadow: highlighted || isNext
+                    ? MomCozyShadows.soft
+                    : const [],
+              ),
+              child: InkWell(
+                onTap: onEdit,
+                borderRadius: BorderRadius.circular(16),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 4),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 48),
+                    child: Row(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                task.title,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  decoration: skipped
-                                      ? TextDecoration.lineThrough
-                                      : null,
-                                ),
-                              ),
-                            ),
-                            if (isNext)
-                              Container(
-                                key: ValueKey(
-                                  'schedule-next-task-badge-${task.id}',
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 7,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: MomCozyColors.careSoft,
-                                  borderRadius: BorderRadius.circular(999),
-                                  border: Border.all(color: MomCozyColors.care),
-                                ),
-                                child: const Text(
-                                  '下一项',
-                                  style: TextStyle(
-                                    color: MomCozyColors.foreground,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                        if (task.description.isNotEmpty)
-                          Text(
-                            task.description,
-                            style: const TextStyle(
-                              color: MomCozyColors.mutedForeground,
-                              fontSize: 12,
+                        SizedBox(
+                          width: 50,
+                          child: Text(
+                            _time(task.remindAt),
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: skipped
+                                  ? MomCozyColors.mutedForeground
+                                  : completed
+                                  ? MomCozyColors.primary.withValues(alpha: 0.7)
+                                  : MomCozyColors.mutedForeground,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w900,
+                              decoration: skipped
+                                  ? TextDecoration.lineThrough
+                                  : null,
                             ),
                           ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            task.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: skipped
+                                  ? MomCozyColors.mutedForeground
+                                  : MomCozyColors.foreground.withValues(
+                                      alpha: completed ? 0.8 : 0.9,
+                                    ),
+                              fontSize: 15,
+                              fontWeight: completed || skipped
+                                  ? FontWeight.w800
+                                  : FontWeight.w900,
+                              decoration: skipped
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                            ),
+                          ),
+                        ),
                         if (linkedRecords.isNotEmpty) ...[
-                          const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 4,
-                            children: [
-                              for (final record in linkedRecords)
-                                InputChip(
-                                  key: ValueKey(
-                                    'schedule-linked-record-${record.id}',
-                                  ),
-                                  label: Text(
-                                    _linkedRecordSummary(record, volumeUnit),
-                                    style: const TextStyle(fontSize: 11),
-                                  ),
-                                  avatar: const Icon(
-                                    Icons.check_circle_outline_rounded,
-                                    size: 16,
-                                  ),
-                                  onDeleted: busy
-                                      ? null
-                                      : () => onDeleteLinkedRecord(record),
-                                  deleteButtonTooltipMessage: '删除关联记录',
-                                ),
-                            ],
+                          const SizedBox(width: 4),
+                          _CompactLinkedRecordBadge(
+                            record: linkedRecords.first,
+                            volumeUnit: volumeUnit,
+                            extraCount: linkedRecords.length - 1,
+                            onDeleted: busy
+                                ? null
+                                : () =>
+                                      onDeleteLinkedRecord(linkedRecords.first),
                           ),
                         ],
+                        if (skipped) const _StatusBadge(label: '已跳过'),
+                        if (completed) const _StatusBadge(label: '已完成'),
+                        SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: IconButton(
+                            tooltip: linkedRecords.isEmpty
+                                ? '删除任务'
+                                : '已有执行记录，请先删除关联记录',
+                            padding: EdgeInsets.zero,
+                            onPressed: busy || linkedRecords.isNotEmpty
+                                ? null
+                                : onDelete,
+                            icon: const Icon(
+                              Icons.delete_outline_rounded,
+                              size: 18,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  _TaskSourceBadge(taskId: task.id, provenance: provenance),
-                  if (skipped) const _StatusBadge(label: '已跳过'),
-                  if (completed) const _StatusBadge(label: '已完成'),
-                  IconButton(
-                    tooltip: linkedRecords.isEmpty ? '删除任务' : '已有执行记录，请先删除关联记录',
-                    onPressed: busy || linkedRecords.isNotEmpty
-                        ? null
-                        : onDelete,
-                    icon: const Icon(Icons.delete_outline_rounded),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+            Positioned(
+              left: 0,
+              top: -4,
+              child: _TaskSourceBadge(taskId: task.id, provenance: provenance),
+            ),
+          ],
         ),
       ),
     );
@@ -2237,73 +2228,217 @@ class _ScheduleRecordRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pumping = record.kind == ScheduleRecordKind.pumping;
+    final value = record.amountMl != null
+        ? _formatVolume(volumeUnit, record.amountMl!)
+        : record.durationSeconds != null
+        ? '${(record.durationSeconds! / 60).round()} min'
+        : null;
+    final manualSupplement = record.displayTitle.contains('补录');
     return Padding(
-      padding: const EdgeInsets.only(bottom: 9),
+      padding: const EdgeInsets.only(top: 4, bottom: 5),
       child: Semantics(
         label:
             '${_time(record.occurredAt)} ${record.displayTitle}'
             '${record.amountMl == null ? '' : '，${_formatVolume(volumeUnit, record.amountMl!)}'}'
-            '${record.linkedTaskId == null ? '' : '，已关联任务'}',
-        child: DecoratedBox(
-          key: ValueKey('schedule-timeline-record-${record.id}'),
-          decoration: MomCozyDecorations.card(
-            color: pumping ? MomCozyColors.careSoft : MomCozyColors.amberSoft,
-            borderColor: pumping ? MomCozyColors.care : MomCozyColors.amber,
-            radius: 16,
-            shadows: const [],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 50,
-                  child: Text(
-                    _time(record.occurredAt),
-                    style: const TextStyle(fontWeight: FontWeight.w900),
-                  ),
-                ),
-                Icon(
-                  pumping
-                      ? Icons.water_drop_outlined
-                      : Icons.child_care_rounded,
-                  size: 18,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            '${record.linkedTaskId == null ? '' : '，已关联任务'}，已完成',
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            DecoratedBox(
+              key: ValueKey('schedule-timeline-record-${record.id}'),
+              decoration: BoxDecoration(
+                color: const Color(0xfff0f7ee),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xffd4e3d1)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12, right: 4),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Row(
                     children: [
-                      Text(
-                        record.displayTitle,
-                        style: const TextStyle(fontWeight: FontWeight.w900),
+                      SizedBox(
+                        width: 50,
+                        child: Text(
+                          _time(record.occurredAt),
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: MomCozyColors.primary.withValues(alpha: 0.7),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                       ),
-                      Text(
-                        [
-                          if (record.amountMl != null)
-                            _formatVolume(volumeUnit, record.amountMl!),
-                          if (record.durationSeconds != null)
-                            '${(record.durationSeconds! / 60).round()} 分钟',
-                        ].join(' · '),
-                        style: const TextStyle(
-                          color: MomCozyColors.mutedForeground,
-                          fontSize: 12,
+                      Expanded(
+                        child: Text(
+                          record.displayTitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: MomCozyColors.foreground,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      if (value != null) _TimelineValueBadge(label: value),
+                      _StatusBadge(label: _time(record.occurredAt)),
+                      const _StatusBadge(label: '已完成'),
+                      SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: IconButton(
+                          tooltip: '删除记录',
+                          padding: EdgeInsets.zero,
+                          onPressed: busy ? null : onDelete,
+                          icon: const Icon(
+                            Icons.delete_outline_rounded,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                if (record.linkedTaskId != null)
-                  const _StatusBadge(label: '已关联任务'),
-                IconButton(
-                  tooltip: '删除记录',
-                  onPressed: busy ? null : onDelete,
-                  icon: const Icon(Icons.delete_outline_rounded),
-                ),
-              ],
+              ),
+            ),
+            if (manualSupplement)
+              const Positioned(
+                left: 0,
+                top: -4,
+                child: _TimelineCornerBadge(label: '手动添加'),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CompactLinkedRecordBadge extends StatelessWidget {
+  const _CompactLinkedRecordBadge({
+    required this.record,
+    required this.volumeUnit,
+    required this.extraCount,
+    required this.onDeleted,
+  });
+
+  final ScheduleRecord record;
+  final MomCozyVolumeUnit volumeUnit;
+  final int extraCount;
+  final VoidCallback? onDeleted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: ValueKey('schedule-linked-record-${record.id}'),
+      height: 24,
+      constraints: const BoxConstraints(maxWidth: 130),
+      padding: const EdgeInsets.only(left: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0xffc7dbc4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              _linkedRecordSummary(record, volumeUnit),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: MomCozyColors.foreground,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
+          if (extraCount > 0)
+            Text(
+              ' +$extraCount',
+              style: const TextStyle(
+                color: MomCozyColors.mutedForeground,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          if (onDeleted != null)
+            Tooltip(
+              message: '删除关联记录',
+              child: Semantics(
+                button: true,
+                label: '删除关联记录',
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onDeleted,
+                    borderRadius: BorderRadius.circular(6),
+                    child: const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Icon(Icons.close_rounded, size: 14),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TimelineValueBadge extends StatelessWidget {
+  const _TimelineValueBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 20,
+      constraints: const BoxConstraints(maxWidth: 88),
+      margin: const EdgeInsets.only(left: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.5)),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800),
+      ),
+    );
+  }
+}
+
+class _TimelineCornerBadge extends StatelessWidget {
+  const _TimelineCornerBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: MomCozyColors.muted,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: MomCozyColors.border),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: MomCozyColors.mutedForeground,
+          fontSize: 9,
+          fontWeight: FontWeight.w900,
+          height: 1,
         ),
       ),
     );
@@ -2319,13 +2454,16 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(left: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      height: 20,
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(6),
       ),
+      alignment: Alignment.center,
       child: Text(
         label,
+        maxLines: 1,
         style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800),
       ),
     );
@@ -2342,13 +2480,12 @@ class _TaskSourceBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       key: ValueKey('schedule-task-source-$taskId'),
-      margin: const EdgeInsets.only(left: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: provenance.agentGenerated
             ? MomCozyColors.roseSoft
             : MomCozyColors.muted,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(
           color: provenance.agentGenerated
               ? MomCozyColors.primary.withValues(alpha: 0.35)
@@ -2361,8 +2498,9 @@ class _TaskSourceBadge extends StatelessWidget {
           color: provenance.agentGenerated
               ? MomCozyColors.primary
               : MomCozyColors.mutedForeground,
-          fontSize: 10,
+          fontSize: 9,
           fontWeight: FontWeight.w900,
+          height: 1,
         ),
       ),
     );
