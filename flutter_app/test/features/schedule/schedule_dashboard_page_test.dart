@@ -541,13 +541,14 @@ void main() {
         find.byKey(const ValueKey('schedule-next-complete-button')),
       );
       await tester.pumpAndSettle();
-      await tester.tap(
-        find.descendant(
-          of: find.byKey(const ValueKey('schedule-record-entry-dialog')),
-          matching: find.text('喂养记录'),
-        ),
+      expect(
+        find.byKey(const ValueKey('schedule-record-entry-dialog')),
+        findsNothing,
       );
-      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-feeding-record-dialog')),
+        findsOneWidget,
+      );
 
       expect(
         tester
@@ -625,9 +626,17 @@ void main() {
       findsNothing,
     );
     expect(find.text('仅标记完成'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('schedule-record-entry-dialog')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('schedule-pumping-record-dialog')),
+      findsOneWidget,
+    );
     await tester.tap(
       find.descendant(
-        of: find.byKey(const ValueKey('schedule-record-entry-dialog')),
+        of: find.byKey(const ValueKey('schedule-pumping-record-dialog')),
         matching: find.text('取消'),
       ),
     );
