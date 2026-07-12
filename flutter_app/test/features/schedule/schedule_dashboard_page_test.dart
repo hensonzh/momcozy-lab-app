@@ -1137,6 +1137,113 @@ void main() {
     );
   });
 
+  testWidgets(
+    'pending today tasks edit inline and only patch after explicit save',
+    (tester) async {
+      const taskId = 'editable-task';
+      final transport = _transport(
+        tasks: const [
+          {
+            'id': taskId,
+            'plan_id': 'plan-1',
+            'task_date': '2026-07-03',
+            'task_time': '14:00',
+            'title': '下午吸奶',
+            'description': '原任务说明',
+            'status': 'pending',
+            'payload': {'task_type': 'pumping'},
+          },
+        ],
+        feedingRecords: const [],
+        pumpingRecords: const [],
+        writeResponsesByPath: const {
+          '$scheduleTasksEndpoint/$taskId': {
+            'id': taskId,
+            'plan_id': 'plan-1',
+            'task_date': '2026-07-03',
+            'task_time': '14:00',
+            'title': '调整后的吸奶',
+            'description': '原任务说明',
+            'status': 'pending',
+            'payload': {'task_type': 'pumping'},
+          },
+        },
+      );
+      await _pumpPage(tester, transport);
+
+      final taskRow = find.byKey(
+        const ValueKey('schedule-timeline-task-$taskId'),
+      );
+      await tester.scrollUntilVisible(
+        taskRow,
+        200,
+        scrollable: _scheduleScrollable(),
+      );
+      await tester.tap(taskRow);
+      await tester.pumpAndSettle();
+
+      final titleInput = find.byKey(
+        const ValueKey('schedule-inline-task-title-$taskId'),
+      );
+      final timeButton = find.byKey(
+        const ValueKey('schedule-inline-task-time-$taskId'),
+      );
+      expect(titleInput, findsOneWidget);
+      expect(timeButton, findsOneWidget);
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(
+        find.byKey(const ValueKey('schedule-add-task-sheet')),
+        findsNothing,
+      );
+
+      await tester.enterText(titleInput, '未保存的吸奶');
+      await tester.tap(timeButton);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-time-picker-sheet')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-time-picker-confirm')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-inline-task-cancel-$taskId')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(titleInput, findsNothing);
+      expect(transport.lastBody, isNull);
+      expect(
+        find.descendant(of: taskRow, matching: find.text('下午吸奶')),
+        findsOneWidget,
+      );
+
+      await tester.tap(taskRow);
+      await tester.pumpAndSettle();
+      await tester.enterText(titleInput, '调整后的吸奶');
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-inline-task-save-$taskId')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(transport.lastMethod, 'PATCH');
+      expect(transport.lastPath, '$scheduleTasksEndpoint/$taskId');
+      expect(transport.lastBody, {
+        'task_date': '2026-07-03',
+        'task_time': '14:00',
+        'title': '调整后的吸奶',
+        'description': '原任务说明',
+      });
+      expect(titleInput, findsNothing);
+      expect(
+        find.descendant(of: taskRow, matching: find.text('调整后的吸奶')),
+        findsOneWidget,
+      );
+      expect(find.text('任务已更新'), findsOneWidget);
+    },
+  );
+
   testWidgets('quick records use current time and never invent measurements', (
     tester,
   ) async {
@@ -1374,6 +1481,15 @@ void main() {
       routeUri: Uri.parse('/schedule?date=2026-07-03&taskId=long-task-0'),
     );
     await tester.pump(const Duration(seconds: 1));
+    final initialTask = find.byKey(
+      const ValueKey('schedule-timeline-task-long-task-0'),
+    );
+    await tester.tap(initialTask);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('schedule-inline-task-title-long-task-0')),
+      findsOneWidget,
+    );
 
     await _pumpPage(
       tester,
@@ -1381,6 +1497,11 @@ void main() {
       routeUri: Uri.parse('/schedule?date=2026-07-04&taskId=long-task-17'),
     );
 
+    expect(
+      find.byKey(const ValueKey('schedule-inline-task-title-long-task-0')),
+      findsNothing,
+    );
+    expect(transport.lastBody, isNull);
     expect(
       find.byKey(const ValueKey('schedule-highlighted-date-2026-07-04')),
       findsOneWidget,

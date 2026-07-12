@@ -113,6 +113,45 @@ void main() {
       );
     });
 
+    testWidgets('inline task editor matches the compact legacy baseline', (
+      tester,
+    ) async {
+      await _pumpScheduleComponentApp(
+        tester,
+        tasks: const [
+          {
+            'id': 'golden-edit-task',
+            'plan_id': 'plan-1',
+            'task_date': '2026-07-03',
+            'task_time': '14:00',
+            'title': '下午吸奶',
+            'status': 'pending',
+            'payload': {'task_type': 'pumping', 'source': 'agent_action'},
+          },
+        ],
+      );
+
+      final row = find.byKey(
+        const ValueKey('schedule-timeline-task-golden-edit-task'),
+      );
+      await tester.scrollUntilVisible(row, 200);
+      await tester.tap(row);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(
+          const ValueKey('schedule-inline-task-title-golden-edit-task'),
+        ),
+        findsOneWidget,
+      );
+      await expectLater(
+        row,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_inline_task_editor.png',
+        ),
+      );
+    });
+
     testWidgets('record row matches the compact legacy timeline baseline', (
       tester,
     ) async {
