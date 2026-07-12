@@ -50,6 +50,27 @@ void main() {
     },
   );
 
+  test(
+    'returning to the already selected day only resets the week window',
+    () async {
+      final repository = _FakeScheduleRepository(snapshot: _snapshot());
+      final controller = ScheduleDashboardController(
+        repository: repository,
+        initialDay: DateTime.utc(2026, 7, 3),
+        now: () => DateTime.utc(2026, 7, 3),
+      );
+      await controller.load();
+      controller.browseWeek(1);
+
+      await controller.selectDay(DateTime.utc(2026, 7, 3));
+
+      expect(controller.state.selectedDay, DateTime.utc(2026, 7, 3));
+      expect(controller.state.displayAnchor, DateTime.utc(2026, 7, 3));
+      expect(controller.state.snapshot?.day, DateTime.utc(2026, 7, 3));
+      expect(repository.fetchCount, 1);
+    },
+  );
+
   test('background day refresh preserves the selected day and week', () async {
     final repository = _FakeScheduleRepository(snapshot: _snapshot());
     final controller = ScheduleDashboardController(
