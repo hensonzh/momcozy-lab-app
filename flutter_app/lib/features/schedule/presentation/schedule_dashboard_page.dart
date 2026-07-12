@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_postpartum_stage.dart';
@@ -25,6 +26,7 @@ class ScheduleDashboardPage extends StatefulWidget {
     this.reminderPreferenceStore =
         const DisabledScheduleReminderPreferenceStore(),
     this.milkPlanChangeStore,
+    this.volumeUnitPreferenceStore,
   });
 
   final ScheduleRepository repository;
@@ -39,6 +41,7 @@ class ScheduleDashboardPage extends StatefulWidget {
   final ScheduleReminderGateway reminderGateway;
   final ScheduleReminderPreferenceStore reminderPreferenceStore;
   final MilkPlanChangeStore? milkPlanChangeStore;
+  final VolumeUnitPreferenceStore? volumeUnitPreferenceStore;
 
   @override
   State<ScheduleDashboardPage> createState() => _ScheduleDashboardPageState();
@@ -59,7 +62,9 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   bool _warmingReminderWindow = false;
   bool _reminderSyncInFlight = false;
   bool _reminderSyncQueued = false;
+  MomCozyVolumeUnit _volumeUnit = MomCozyVolumeUnit.milliliters;
   String? _lastReminderFingerprint;
+  int _volumeUnitLoadRevision = 0;
   int _requestSequence = 0;
   int _intentRevision = 0;
   String? _pendingFocusTaskId;
@@ -83,6 +88,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     _controller.addListener(_onControllerReminderChange);
     _applyRouteIntent(intentDay: intentDay, notify: false, selectDay: false);
     widget.milkPlanChangeStore?.addListener(_onMilkPlanChangeStore);
+    unawaited(_loadVolumeUnitPreference());
     unawaited(_loadReminderPreference());
     unawaited(_loadDeliveryDate());
     _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -119,10 +125,17 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     if (!identical(oldWidget.deliveryDateLoader, widget.deliveryDateLoader)) {
       unawaited(_loadDeliveryDate());
     }
+    if (!identical(
+      oldWidget.volumeUnitPreferenceStore,
+      widget.volumeUnitPreferenceStore,
+    )) {
+      unawaited(_loadVolumeUnitPreference());
+    }
   }
 
   @override
   void dispose() {
+    _volumeUnitLoadRevision += 1;
     _clockTimer?.cancel();
     _highlightTimer?.cancel();
     _planChangeHighlightTimer?.cancel();
@@ -248,6 +261,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
         today: _controller.today,
         snapshot: resolved,
         now: _clock,
+        volumeUnit: _volumeUnit,
         onComplete: isToday && state.nextPendingTask != null
             ? () => unawaited(_showTaskCompletion(state.nextPendingTask!))
             : null,
@@ -326,6 +340,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
               child: _ScheduleTaskRow(
                 task: task,
                 linkedRecords: entry.linkedRecords,
+                volumeUnit: _volumeUnit,
                 busy: state.isMutating,
                 highlighted: task.id == _highlightedTaskId,
                 isNext: isToday && task.id == state.nextPendingTask?.id,
@@ -342,6 +357,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
           timelineRows.add(
             _ScheduleRecordRow(
               record: record,
+              volumeUnit: _volumeUnit,
               busy: state.isMutating,
               onDelete: () => unawaited(_deleteRecord(record)),
             ),
@@ -712,6 +728,18 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     }
   }
 
+  Future<void> _loadVolumeUnitPreference() async {
+    final revision = ++_volumeUnitLoadRevision;
+    var unit = MomCozyVolumeUnit.milliliters;
+    try {
+      unit = await widget.volumeUnitPreferenceStore?.read() ?? unit;
+    } catch (_) {
+      // The default mL unit keeps this non-sensitive display preference usable.
+    }
+    if (!mounted || revision != _volumeUnitLoadRevision) return;
+    setState(() => _volumeUnit = unit);
+  }
+
   void _onControllerReminderChange() {
     if (!_reminderEnabled || _warmingReminderWindow) return;
     _queueReminderSync();
@@ -909,6 +937,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       context: context,
       builder: (context) => _ScheduleRecordDialog(
         kind: kind,
+        volumeUnit: _volumeUnit,
         initialTime: linkedTask?.remindAt == null
             ? _time(_clock)
             : _time(linkedTask!.remindAt),
@@ -1514,6 +1543,7 @@ class _ScheduleHeroCard extends StatelessWidget {
     required this.today,
     required this.snapshot,
     required this.now,
+    required this.volumeUnit,
     required this.onComplete,
     required this.onDelay,
     required this.onSkip,
@@ -1523,6 +1553,7 @@ class _ScheduleHeroCard extends StatelessWidget {
   final DateTime today;
   final ScheduleDayPlan snapshot;
   final DateTime now;
+  final MomCozyVolumeUnit volumeUnit;
   final VoidCallback? onComplete;
   final VoidCallback? onDelay;
   final VoidCallback? onSkip;
@@ -1551,6 +1582,7 @@ class _ScheduleHeroCard extends StatelessWidget {
         .where((record) => record.kind == ScheduleRecordKind.pumping)
         .map((record) => record.amountMl ?? 0)
         .fold<int>(0, (total, amount) => total + amount);
+    final pumpingAmount = _formatVolume(volumeUnit, pumpingAmountMl);
     final title = isPast
         ? snapshot.tasks.isEmpty
               ? '这天没有计划任务'
@@ -1569,9 +1601,9 @@ class _ScheduleHeroCard extends StatelessWidget {
     final detail = isPast
         ? snapshot.tasks.isEmpty
               ? pumpingAmountMl > 0
-                    ? '当天母乳产出 $pumpingAmountMl ml。'
+                    ? '当天母乳产出 $pumpingAmount。'
                     : '当天没有可执行的计划任务。'
-              : '共完成 ${snapshot.completedTaskCount} 项，母乳产出 $pumpingAmountMl ml。'
+              : '共完成 ${snapshot.completedTaskCount} 项，母乳产出 $pumpingAmount。'
         : !isToday
         ? next == null
               ? snapshot.tasks.isNotEmpty
@@ -1863,6 +1895,7 @@ class _ScheduleTaskRow extends StatelessWidget {
   const _ScheduleTaskRow({
     required this.task,
     required this.linkedRecords,
+    required this.volumeUnit,
     required this.busy,
     required this.highlighted,
     required this.isNext,
@@ -1873,6 +1906,7 @@ class _ScheduleTaskRow extends StatelessWidget {
 
   final ScheduleTask task;
   final List<ScheduleRecord> linkedRecords;
+  final MomCozyVolumeUnit volumeUnit;
   final bool busy;
   final bool highlighted;
   final bool isNext;
@@ -1890,7 +1924,7 @@ class _ScheduleTaskRow extends StatelessWidget {
         label:
             '${_time(task.remindAt)} ${task.title}，${_taskStateLabel(task.state)}'
             '${isNext ? '，下一项' : ''}'
-            '${linkedRecords.isEmpty ? '' : '，${linkedRecords.map(_linkedRecordSummary).join('，')}'}',
+            '${linkedRecords.isEmpty ? '' : '，${linkedRecords.map((record) => _linkedRecordSummary(record, volumeUnit)).join('，')}'}',
         button: onEdit != null,
         child: DecoratedBox(
           key: ValueKey('schedule-timeline-task-${task.id}'),
@@ -1989,7 +2023,7 @@ class _ScheduleTaskRow extends StatelessWidget {
                                     'schedule-linked-record-${record.id}',
                                   ),
                                   label: Text(
-                                    _linkedRecordSummary(record),
+                                    _linkedRecordSummary(record, volumeUnit),
                                     style: const TextStyle(fontSize: 11),
                                   ),
                                   avatar: const Icon(
@@ -2029,11 +2063,13 @@ class _ScheduleTaskRow extends StatelessWidget {
 class _ScheduleRecordRow extends StatelessWidget {
   const _ScheduleRecordRow({
     required this.record,
+    required this.volumeUnit,
     required this.busy,
     required this.onDelete,
   });
 
   final ScheduleRecord record;
+  final MomCozyVolumeUnit volumeUnit;
   final bool busy;
   final VoidCallback onDelete;
 
@@ -2045,7 +2081,7 @@ class _ScheduleRecordRow extends StatelessWidget {
       child: Semantics(
         label:
             '${_time(record.occurredAt)} ${record.displayTitle}'
-            '${record.amountMl == null ? '' : '，${record.amountMl}毫升'}'
+            '${record.amountMl == null ? '' : '，${_formatVolume(volumeUnit, record.amountMl!)}'}'
             '${record.linkedTaskId == null ? '' : '，已关联任务'}',
         child: DecoratedBox(
           key: ValueKey('schedule-timeline-record-${record.id}'),
@@ -2083,7 +2119,8 @@ class _ScheduleRecordRow extends StatelessWidget {
                       ),
                       Text(
                         [
-                          if (record.amountMl != null) '${record.amountMl} ml',
+                          if (record.amountMl != null)
+                            _formatVolume(volumeUnit, record.amountMl!),
                           if (record.durationSeconds != null)
                             '${(record.durationSeconds! / 60).round()} 分钟',
                         ].join(' · '),
@@ -2489,9 +2526,14 @@ class _TaskDraftEditor {
 }
 
 class _ScheduleRecordDialog extends StatefulWidget {
-  const _ScheduleRecordDialog({required this.kind, this.initialTime});
+  const _ScheduleRecordDialog({
+    required this.kind,
+    required this.volumeUnit,
+    this.initialTime,
+  });
 
   final ScheduleRecordKind kind;
+  final MomCozyVolumeUnit volumeUnit;
   final String? initialTime;
 
   @override
@@ -2500,6 +2542,8 @@ class _ScheduleRecordDialog extends StatefulWidget {
 
 class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
   final TextEditingController _amount = TextEditingController();
+  final TextEditingController _leftAmount = TextEditingController();
+  final TextEditingController _rightAmount = TextEditingController();
   final TextEditingController _duration = TextEditingController();
   late final TextEditingController _time = TextEditingController(
     text: widget.initialTime ?? '14:00',
@@ -2510,6 +2554,8 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
   @override
   void dispose() {
     _amount.dispose();
+    _leftAmount.dispose();
+    _rightAmount.dispose();
     _duration.dispose();
     _time.dispose();
     super.dispose();
@@ -2518,6 +2564,7 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
   @override
   Widget build(BuildContext context) {
     final pumping = widget.kind == ScheduleRecordKind.pumping;
+    final pumpingTotalMl = pumping ? _pumpingTotalMilliliters() : null;
     return AlertDialog(
       key: ValueKey(
         pumping
@@ -2549,15 +2596,67 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
             keyboardType: TextInputType.datetime,
             decoration: const InputDecoration(labelText: '时间'),
           ),
-          TextField(
-            key: const ValueKey('schedule-record-amount-input'),
-            controller: _amount,
-            keyboardType: TextInputType.number,
-            enabled: pumping || _feedType != 'breast',
-            decoration: InputDecoration(
-              labelText: _feedType == 'breast' ? '亲喂无需填写奶量' : '奶量（ml）',
+          if (pumping) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    key: const ValueKey('schedule-record-left-amount-input'),
+                    controller: _leftAmount,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    onChanged: (_) => setState(() => _error = null),
+                    decoration: InputDecoration(
+                      labelText: '吸奶量（左侧）',
+                      suffixText: widget.volumeUnit.storageValue,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    key: const ValueKey('schedule-record-right-amount-input'),
+                    controller: _rightAmount,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    onChanged: (_) => setState(() => _error = null),
+                    decoration: InputDecoration(
+                      labelText: '吸奶量（右侧）',
+                      suffixText: widget.volumeUnit.storageValue,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
+            if (pumpingTotalMl != null && pumpingTotalMl > 0) ...[
+              const SizedBox(height: 8),
+              Text(
+                '总奶量：${_formatVolume(widget.volumeUnit, pumpingTotalMl)}',
+                key: const ValueKey('schedule-record-pumping-total'),
+                style: const TextStyle(
+                  color: MomCozyColors.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ] else
+            TextField(
+              key: const ValueKey('schedule-record-amount-input'),
+              controller: _amount,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              enabled: _feedType != 'breast',
+              decoration: InputDecoration(
+                labelText: _feedType == 'breast' ? '亲喂无需填写奶量' : '奶量',
+                suffixText: _feedType == 'breast'
+                    ? null
+                    : widget.volumeUnit.storageValue,
+              ),
+            ),
           TextField(
             key: const ValueKey('schedule-record-duration-input'),
             controller: _duration,
@@ -2590,12 +2689,16 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
   }
 
   void _submit() {
-    final amount = int.tryParse(_amount.text.trim());
     final durationMinutes = int.tryParse(_duration.text.trim());
     final time = _normalizedTime(_time.text);
     final pumping = widget.kind == ScheduleRecordKind.pumping;
+    final amountMl = pumping
+        ? _pumpingTotalMilliliters()
+        : _feedType == 'breast'
+        ? null
+        : _canonicalRequiredVolume(_amount.text);
     final requiresAmount = pumping || _feedType != 'breast';
-    final validAmount = amount != null && amount > 0;
+    final validAmount = amountMl != null && amountMl > 0;
     final validDuration = durationMinutes != null && durationMinutes > 0;
     if (time == null || (requiresAmount && !validAmount)) {
       setState(() => _error = requiresAmount ? '请填写有效的时间和奶量' : '请填写有效的时间');
@@ -2604,12 +2707,30 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
     Navigator.pop(
       context,
       _RecordDraft(
-        amountMl: validAmount ? amount : null,
+        amountMl: validAmount ? amountMl : null,
         durationSeconds: validDuration ? durationMinutes * 60 : null,
         time: time,
         feedType: _feedType,
       ),
     );
+  }
+
+  int? _pumpingTotalMilliliters() {
+    final left = _canonicalOptionalVolume(_leftAmount.text);
+    final right = _canonicalOptionalVolume(_rightAmount.text);
+    if (left == null || right == null) return null;
+    return left + right;
+  }
+
+  int? _canonicalOptionalVolume(String raw) {
+    if (raw.trim().isEmpty) return 0;
+    return _canonicalRequiredVolume(raw);
+  }
+
+  int? _canonicalRequiredVolume(String raw) {
+    final value = double.tryParse(raw.trim());
+    if (value == null) return null;
+    return widget.volumeUnit.toCanonicalMilliliters(value);
   }
 }
 
@@ -2661,9 +2782,18 @@ String _taskStateLabel(ScheduleTaskState state) => switch (state) {
   ScheduleTaskState.skipped => '已跳过',
 };
 
-String _linkedRecordSummary(ScheduleRecord record) {
-  final amount = record.amountMl == null ? '' : '${record.amountMl} ml · ';
+String _linkedRecordSummary(
+  ScheduleRecord record,
+  MomCozyVolumeUnit volumeUnit,
+) {
+  final amount = record.amountMl == null
+      ? ''
+      : '${_formatVolume(volumeUnit, record.amountMl!)} · ';
   return '$amount${_time(record.occurredAt)} 完成';
+}
+
+String _formatVolume(MomCozyVolumeUnit unit, int milliliters) {
+  return '${unit.formatMilliliters(milliliters.toDouble())} ${unit.storageValue}';
 }
 
 String _reminderFingerprint(bool enabled, List<ScheduleTask> tasks) {
