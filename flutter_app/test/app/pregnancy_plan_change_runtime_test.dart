@@ -40,6 +40,10 @@ void main() {
       same(initial.pregnancyPlanChangeStore),
     );
     expect(controller.runtime.pregnancyPlanChangeStore.hasUnread, isTrue);
+    expect(
+      controller.runtime.statusDashboardCache,
+      same(initial.statusDashboardCache),
+    );
   });
 
   test('switching users does not carry pregnancy plan unread state', () {
@@ -60,6 +64,10 @@ void main() {
       isNot(same(initial.pregnancyPlanChangeStore)),
     );
     expect(controller.runtime.pregnancyPlanChangeStore.hasUnread, isFalse);
+    expect(
+      controller.runtime.statusDashboardCache,
+      isNot(same(initial.statusDashboardCache)),
+    );
   });
 
   test(
@@ -75,6 +83,10 @@ void main() {
       final loggedOutStore = controller.runtime.pregnancyPlanChangeStore;
       expect(loggedOutStore, isNot(same(initial.pregnancyPlanChangeStore)));
       expect(loggedOutStore.hasUnread, isFalse);
+      expect(
+        controller.runtime.statusDashboardCache,
+        isNot(same(initial.statusDashboardCache)),
+      );
       final persistence = loggedOutStore.persistence;
       expect(persistence, isA<FlutterSecurePregnancyPlanChangePersistence>());
       expect(

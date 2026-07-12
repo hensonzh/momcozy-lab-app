@@ -620,7 +620,7 @@ class _StatusPageState extends State<_StatusPage> {
 
   void _handleAppResume() {
     if (_runtime == null) return;
-    unawaited(_controller.refresh());
+    unawaited(_controller.refreshStale());
   }
 
   @override
@@ -731,7 +731,7 @@ class _StatusPageState extends State<_StatusPage> {
     }
     final shouldShowNotice = store.hasUnread || store.highlightCard;
     if (shouldShowNotice) _showPregnancyView();
-    if (refresh) await controller.refreshAfterExternalChange();
+    if (refresh) await controller.refreshPregnancyDiary();
     if (!mounted ||
         !identical(store, _pregnancyDiaryChangeStore) ||
         !identical(controller, _controller) ||
@@ -789,7 +789,7 @@ class _StatusPageState extends State<_StatusPage> {
     }
     final shouldShowNotice = store.hasUnread || store.highlightCard;
     if (shouldShowNotice) _showPregnancyView();
-    if (refresh) await controller.refreshAfterExternalChange();
+    if (refresh) await controller.refreshPregnancyPlan();
     if (!mounted ||
         !identical(store, _pregnancyPlanChangeStore) ||
         !identical(controller, _controller) ||
@@ -853,7 +853,7 @@ class _StatusPageState extends State<_StatusPage> {
     int? revision,
   }) {
     _showPregnancyView();
-    if (refresh) unawaited(_controller.refresh());
+    if (refresh) unawaited(_controller.refreshPregnancyDiary());
     _pregnancyDiaryNoticeTimer?.cancel();
     _pregnancyDiaryNotice.value = true;
     _pregnancyDiaryNoticeTimer = Timer(const Duration(seconds: 3), () {
@@ -875,7 +875,7 @@ class _StatusPageState extends State<_StatusPage> {
     int? revision,
   }) {
     _showPregnancyView();
-    if (refresh) unawaited(_controller.refresh());
+    if (refresh) unawaited(_controller.refreshPregnancyPlan());
     _birthJourneyNoticeTimer?.cancel();
     _birthJourneyNotice.value = true;
     _birthJourneyNoticeTimer = Timer(const Duration(seconds: 3), () {
