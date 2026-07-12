@@ -362,14 +362,9 @@ void main() {
       find.byKey(const ValueKey('schedule-quick-actions')),
       findsOneWidget,
     );
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('schedule-next-task-badge-next-pump')),
-      200,
-      scrollable: _scheduleScrollable(),
-    );
     expect(
       find.byKey(const ValueKey('schedule-next-task-badge-next-pump')),
-      findsOneWidget,
+      findsNothing,
     );
 
     final toolbar = find.byKey(const ValueKey('schedule-list-toolbar'));
@@ -388,6 +383,52 @@ void main() {
           .abs(),
       lessThan(12),
     );
+  });
+
+  testWidgets('timeline rows keep the legacy compact single-line hierarchy', (
+    tester,
+  ) async {
+    await _pumpPage(tester, _transport());
+    final taskRow = find.byKey(
+      const ValueKey('schedule-timeline-task-task-pump'),
+    );
+    await tester.scrollUntilVisible(
+      taskRow,
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+    final sourceBadge = find.byKey(
+      const ValueKey('schedule-task-source-task-pump'),
+    );
+
+    expect(tester.getSize(taskRow).height, lessThanOrEqualTo(58));
+    expect(
+      tester.getTopLeft(sourceBadge).dy,
+      lessThanOrEqualTo(tester.getTopLeft(taskRow).dy + 6),
+    );
+
+    final recordRow = find.byKey(
+      const ValueKey('schedule-timeline-record-pump-1'),
+    );
+    await tester.scrollUntilVisible(
+      recordRow,
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+    expect(tester.getSize(recordRow).height, lessThanOrEqualTo(58));
+    expect(find.text('120 mL'), findsOneWidget);
+
+    final linkedRecord = find.byKey(
+      const ValueKey('schedule-linked-record-feed-1'),
+    );
+    await tester.scrollUntilVisible(
+      linkedRecord,
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+    expect(linkedRecord, findsOneWidget);
+    expect(find.text('80 mL · 22:00 完成'), findsOneWidget);
+    expect(find.byTooltip('删除关联记录'), findsOneWidget);
   });
 
   testWidgets('places quick records after the timeline like legacy web', (

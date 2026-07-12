@@ -80,16 +80,83 @@ void main() {
         ),
       );
     });
+
+    testWidgets('task row matches the compact legacy timeline baseline', (
+      tester,
+    ) async {
+      await _pumpScheduleComponentApp(
+        tester,
+        tasks: const [
+          {
+            'id': 'golden-task',
+            'plan_id': 'plan-1',
+            'task_date': '2026-07-03',
+            'task_time': '14:00',
+            'title': '下午吸奶',
+            'status': 'pending',
+            'payload': {'task_type': 'pumping', 'source': 'agent_action'},
+          },
+        ],
+      );
+
+      final row = find.byKey(
+        const ValueKey('schedule-timeline-task-golden-task'),
+      );
+      await tester.scrollUntilVisible(row, 200);
+      await tester.pumpAndSettle();
+      expect(row, findsOneWidget);
+      await expectLater(
+        row,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_task_row.png',
+        ),
+      );
+    });
+
+    testWidgets('record row matches the compact legacy timeline baseline', (
+      tester,
+    ) async {
+      await _pumpScheduleComponentApp(
+        tester,
+        pumpingRecords: const [
+          {
+            'id': 'golden-record',
+            'plan_task_id': null,
+            'pump_start_time': '2026-07-03T08:00:00Z',
+            'milk_volume_ml': 120,
+            'duration_seconds': 900,
+            'title': '吸奶补录',
+          },
+        ],
+      );
+
+      final row = find.byKey(
+        const ValueKey('schedule-timeline-record-golden-record'),
+      );
+      await tester.scrollUntilVisible(row, 200);
+      await tester.pumpAndSettle();
+      expect(row, findsOneWidget);
+      await expectLater(
+        row,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_record_row.png',
+        ),
+      );
+    });
   });
 }
 
-Future<void> _pumpScheduleComponentApp(WidgetTester tester) async {
+Future<void> _pumpScheduleComponentApp(
+  WidgetTester tester, {
+  List<Map<String, Object?>> tasks = const [],
+  List<Map<String, Object?>> pumpingRecords = const [],
+}) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
   final transport = FixtureApiJsonTransportByPath({
-    scheduleDayPlanEndpoint: const {'items': <Object?>[]},
+    scheduleDayPlanEndpoint: {'items': tasks},
     schedulePlansEndpoint: const {
       'items': [
         {
@@ -104,7 +171,7 @@ Future<void> _pumpScheduleComponentApp(WidgetTester tester) async {
       ],
     },
     scheduleFeedingRecordsEndpoint: const {'items': <Object?>[]},
-    schedulePumpingRecordsEndpoint: const {'items': <Object?>[]},
+    schedulePumpingRecordsEndpoint: {'items': pumpingRecords},
   });
 
   await tester.pumpWidget(
