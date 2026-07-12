@@ -167,7 +167,30 @@ class StatusDashboardController {
   final Set<StatusDashboardResource> _showLoadingOnNextFetch = {};
 
   Future<void> initialize() async {
-    await Future.wait<void>([restoreSelection(), restoreVolumeUnit(), load()]);
+    final selection = restoreSelection();
+    unawaited(restoreVolumeUnit());
+    await Future.wait<void>([
+      Future.any<void>([selection, Future<void>.delayed(Duration.zero)]),
+      _requestResource(
+        StatusDashboardResource.overview,
+        showLoading: true,
+        force: false,
+      ),
+    ]);
+    await _requestResources(
+      _visibleBranchResources(),
+      showLoading: true,
+      force: false,
+    );
+    unawaited(
+      selection.then((_) {
+        return _requestResources(
+          _visibleBranchResources(),
+          showLoading: true,
+          force: false,
+        );
+      }),
+    );
   }
 
   Future<void> restoreSelection() async {
@@ -244,17 +267,23 @@ class StatusDashboardController {
     );
   }
 
+  Future<void> loadVisible({bool showLoading = true}) {
+    return _requestResources(
+      _visibleResources(),
+      showLoading: showLoading,
+      force: false,
+    );
+  }
+
   Future<void> refresh() {
     return _requestResources(
-      StatusDashboardResource.values,
+      _visibleResources(),
       showLoading: false,
       force: true,
     );
   }
 
-  Future<void> refreshStale() => load(showLoading: false);
-
-  Future<void> refreshAfterExternalChange() => refresh();
+  Future<void> refreshStale() => loadVisible(showLoading: false);
 
   Future<void> refreshPregnancyPlan() {
     return _requestResource(
@@ -270,6 +299,28 @@ class StatusDashboardController {
       showLoading: false,
       force: true,
     );
+  }
+
+  Set<StatusDashboardResource> _visibleResources() {
+    final resources = <StatusDashboardResource>{
+      StatusDashboardResource.overview,
+    }..addAll(_visibleBranchResources());
+    return resources;
+  }
+
+  Set<StatusDashboardResource> _visibleBranchResources() {
+    final resources = <StatusDashboardResource>{};
+    if (careStage.value == StatusCareStage.pregnancy) {
+      return resources
+        ..add(StatusDashboardResource.pregnancyDiary)
+        ..add(StatusDashboardResource.pregnancyPlan);
+    }
+    if (identity.value == StatusIdentity.baby) {
+      return resources
+        ..add(StatusDashboardResource.feeding)
+        ..add(StatusDashboardResource.growth);
+    }
+    return resources..add(StatusDashboardResource.milkTrends);
   }
 
   Future<void> _requestResources(
@@ -550,23 +601,75 @@ class StatusDashboardController {
     final plan = birthJourneyPlan.value.data;
     if (plan == null) return false;
     BirthJourneyPeriod? ownerPeriod;
+    BirthJourneyTodo? item;
     for (final period in plan.periods) {
-      if (period.items.any((item) => item.id == taskId)) {
+      for (final candidate in period.items) {
+        if (candidate.authoritativeItemId == taskId) {
+          item = candidate;
+          break;
+        }
+      }
+      if (item != null) {
         ownerPeriod = period;
         break;
       }
     }
-    if (ownerPeriod == null || !ownerPeriod.isCurrent) {
+    if (ownerPeriod == null || item == null || !ownerPeriod.isCurrent) {
       planMutation.value = const StatusMutationState.error(
         '当前还未到该阶段，暂不适合进行该事项',
       );
       return false;
     }
+    if (!item.canMutate || plan.version < 1) {
+      planMutation.value = const StatusMutationState.error(
+        '这份旧版计划暂不支持直接更新，请交给 CozyMate 继续处理',
+      );
+      return false;
+    }
 
-    planMutation.value = StatusMutationState.success(
-      completed ? '请通过 CozyMate 同步该事项的完成状态' : '请通过 CozyMate 同步该事项的状态',
+    planMutation.value = const StatusMutationState.saving();
+    birthJourneyPlan.value = StatusResource.data(
+      plan.withTodoCompletion(item.id, completed),
     );
-    return true;
+    cache.pregnancyPlan = StatusCacheEntry(
+      value: plan,
+      fetchedAt: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+    try {
+      final updated = await pregnancyPlanRepository.updateTodoCompletion(
+        planId: plan.id,
+        itemId: item.authoritativeItemId,
+        completed: completed,
+        expectedVersion: plan.version,
+        idempotencyKey:
+            'pregnancy-todo-${plan.id}-${item.authoritativeItemId}-'
+            'v${plan.version}-${completed ? 1 : 0}',
+      );
+      if (_disposed) return false;
+      final authoritative = projectBirthJourneyPlan(updated);
+      birthJourneyPlan.value = StatusResource.data(authoritative);
+      cache.pregnancyPlan = StatusCacheEntry(
+        value: authoritative,
+        fetchedAt: now(),
+      );
+      planMutation.value = StatusMutationState.success(
+        completed ? '事项已完成' : '事项已恢复为未完成',
+      );
+      return true;
+    } catch (_) {
+      if (_disposed) return false;
+      birthJourneyPlan.value = StatusResource.data(plan);
+      cache.pregnancyPlan = StatusCacheEntry(
+        value: plan,
+        fetchedAt: DateTime.fromMillisecondsSinceEpoch(0),
+      );
+      await refreshPregnancyPlan();
+      if (_disposed) return false;
+      planMutation.value = const StatusMutationState.error(
+        '同步计划完成状态失败，已恢复最新计划',
+      );
+      return false;
+    }
   }
 
   Future<bool> deleteBirthJourneyPlan() async {

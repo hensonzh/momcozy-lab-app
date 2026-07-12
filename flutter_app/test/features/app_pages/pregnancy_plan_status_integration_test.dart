@@ -12,8 +12,10 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
@@ -28,7 +30,10 @@ void main() {
       await _setCompactViewport(tester);
       final transport = _PlanTransport(planResponses: {1: _planResponse()});
       final client = _ControllableAgentStreamClient();
-      final runtime = _runtime(transport);
+      final runtime = _runtime(
+        transport,
+        storedCareStage: StatusCareStage.pregnancy,
+      );
       final router = createMomCozyRouter(
         initialLocation: '/',
         agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) {
@@ -113,7 +118,10 @@ void main() {
         deferredPlanRequests: {1: initialPlan},
         planResponses: {2: _planResponse(title: '刷新后的孕期计划')},
       );
-      final runtime = _runtime(transport);
+      final runtime = _runtime(
+        transport,
+        storedCareStage: StatusCareStage.pregnancy,
+      );
       await _pumpApp(
         tester,
         runtime: runtime,
@@ -125,6 +133,18 @@ void main() {
         () => transport.planGetCount == 1,
         reason: 'the initial Status load should request the active plan',
       );
+      await _pumpUntil(
+        tester,
+        () =>
+            transport.getCount(statusProfileEndpoint) == 1 &&
+            transport.getCount(statusInfantsEndpoint) == 1 &&
+            transport.getCount(pregnancyDiaryEntriesEndpoint) == 1,
+        reason: 'all initially visible pregnancy resources should be active',
+      );
+      final countsBeforeChange = {
+        for (final path in _statusGetEndpoints)
+          path: transport.getCount(path),
+      };
 
       runtime.pregnancyPlanChangeStore.record(
         PregnancyPlanChange.tryFromEvent(
@@ -147,6 +167,13 @@ void main() {
       await _scrollToBirthJourney(tester);
 
       expect(transport.planGetCount, 2);
+      for (final path in _statusGetEndpoints) {
+        expect(
+          transport.getCount(path),
+          countsBeforeChange[path]! + (path == pregnancyPlansEndpoint ? 1 : 0),
+          reason: 'a pregnancy_plan.changed event must only refetch plans',
+        );
+      }
       expect(find.text('和产科确认个性化复查节奏'), findsOneWidget);
       expect(runtime.pregnancyPlanChangeStore.hasUnread, isFalse);
       expect(runtime.pregnancyPlanChangeStore.highlightCard, isTrue);
@@ -471,11 +498,12 @@ MomCozyApiRuntime _runtime(
   _PlanTransport transport, {
   PregnancyPlanChangeStore? planChangeStore,
   String userId = 'plan-widget-user',
+  StatusCareStage? storedCareStage,
 }) {
   return MomCozyApiRuntime(
     jsonTransport: transport,
     pregnancyPlanChangeStore: planChangeStore ?? PregnancyPlanChangeStore(),
-    statusPreferenceStore: _MemoryStatusPreferenceStore(),
+    statusPreferenceStore: _MemoryStatusPreferenceStore(storedCareStage),
     volumeUnitPreferenceStore: _MemoryVolumeUnitPreferenceStore(),
     multipartTransport: FixtureApiMultipartTransport(const <String, Object?>{}),
     session: MomCozySession(
@@ -491,6 +519,8 @@ MomCozyApiRuntime _runtime(
 }
 
 class _MemoryStatusPreferenceStore implements StatusPreferenceStore {
+  _MemoryStatusPreferenceStore([this.value]);
+
   StatusCareStage? value;
 
   @override
@@ -551,13 +581,17 @@ class _PlanTransport implements ApiJsonTransport {
   final Map<int, Map<String, Object?>> planResponses;
   final Map<int, Completer<Map<String, Object?>>> deferredPlanRequests;
   int planGetCount = 0;
+  final Map<String, int> getCounts = {};
   final List<Map<String, Object?>> planQueries = [];
+
+  int getCount(String path) => getCounts[path] ?? 0;
 
   @override
   Future<Map<String, Object?>> getJson(
     String path, {
     Map<String, Object?> query = const {},
   }) async {
+    getCounts.update(path, (count) => count + 1, ifAbsent: () => 1);
     if (path == statusProfileEndpoint) {
       return const {
         'user_id': 'plan-widget-user',
@@ -589,6 +623,16 @@ class _PlanTransport implements ApiJsonTransport {
     throw UnsupportedError('POST is not used by this read-only integration.');
   }
 }
+
+const _statusGetEndpoints = [
+  statusProfileEndpoint,
+  statusInfantsEndpoint,
+  feedingRecordsEndpoint,
+  milkTrendsEndpoint,
+  growthRecordsEndpoint,
+  pregnancyDiaryEntriesEndpoint,
+  pregnancyPlansEndpoint,
+];
 
 Map<String, Object?> _planResponse({String title = '我的孕期计划'}) {
   return {

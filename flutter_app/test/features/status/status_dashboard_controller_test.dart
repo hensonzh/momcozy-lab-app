@@ -72,24 +72,6 @@ void main() {
       },
     );
 
-    test(
-      'runs a trailing refresh after an external change during load',
-      () async {
-        final status = _FakeStatusRepository(deferFetch: true);
-        final controller = _controller(status: status);
-        addTearDown(controller.dispose);
-
-        final initial = controller.load();
-        final externalRefresh = controller.refreshAfterExternalChange();
-        expect(status.fetchCount, 1);
-
-        status.completeFetch();
-        await Future.wait([initial, externalRefresh]);
-
-        expect(status.fetchCount, 2);
-      },
-    );
-
     test('reuses a fresh owner-scoped snapshot without repository reads', () async {
       var clock = DateTime(2026, 7, 11, 10);
       final cache = StatusDashboardCache(
@@ -189,6 +171,77 @@ void main() {
       expect(records.growthFetchCount, 2);
       expect(diary.fetchCount, 2);
       expect(plans.fetchCount, 2);
+    });
+
+    test('initializes only the restored visible pregnancy branch', () async {
+      final status = _FakeStatusRepository();
+      final records = _FakeRecordsRepository();
+      final diary = _FakePregnancyDiaryRepository();
+      final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
+      final controller = _controller(
+        status: status,
+        records: records,
+        diary: diary,
+        plans: plans,
+        preferences: _FakeStatusPreferenceStore(
+          storedStage: StatusCareStage.pregnancy,
+        ),
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      expect(status.fetchCount, 1);
+      expect(diary.fetchCount, 1);
+      expect(plans.fetchCount, 1);
+      expect(records.totalFetchCount, 0);
+    });
+
+    test('does not block the visible cold branch on a delayed preference read', () async {
+      final preferences = _FakeStatusPreferenceStore(deferRead: true);
+      final status = _FakeStatusRepository();
+      final records = _FakeRecordsRepository();
+      final diary = _FakePregnancyDiaryRepository();
+      final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
+      final controller = _controller(
+        status: status,
+        records: records,
+        diary: diary,
+        plans: plans,
+        preferences: preferences,
+      );
+
+      await controller.initialize();
+
+      expect(status.fetchCount, 1);
+      expect(records.milkTrendFetchCount, 1);
+      expect(records.feedingFetchCount, 0);
+      expect(records.growthFetchCount, 0);
+      expect(diary.fetchCount, 0);
+      expect(plans.fetchCount, 0);
+      expect(controller.selectionReady.value, isFalse);
+
+      controller.dispose();
+      preferences.completeRead(StatusCareStage.pregnancy);
+    });
+
+    test('rejects a disposed account request before it can populate cache', () async {
+      final cache = StatusDashboardCache(
+        ownerUserId: 'old-owner',
+        babyId: 'baby-001',
+      );
+      final status = _FakeStatusRepository(deferFetch: true);
+      final controller = _controller(status: status, cache: cache);
+
+      final load = controller.load();
+      expect(status.fetchCount, 1);
+      expect(cache.overview, isNull);
+
+      controller.dispose();
+      status.completeFetch();
+      await load;
+
+      expect(cache.overview, isNull);
     });
 
     test('refreshes plan and diary changes without fetching unrelated resources', () async {
@@ -316,49 +369,73 @@ void main() {
       expect(nextDayRecords.updatedIds, isEmpty);
     });
 
-    test(
-      'hands current todo completion to the Agent without an API write',
-      () async {
-        final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
-        final controller = _controller(plans: plans);
-        addTearDown(controller.dispose);
-        await controller.load();
+    test('optimistically updates a stable todo and publishes authoritative data', () async {
+      final plans = _FakePregnancyPlanRepository(
+        plan: _pregnancyPlan(),
+        deferTodoMutation: true,
+      );
+      final controller = _controller(plans: plans);
+      addTearDown(controller.dispose);
+      await controller.load();
 
-        expect(
-          await controller.togglePlanTodo(
-            taskId: 'task-current',
-            completed: true,
-          ),
-          isTrue,
-        );
-        expect(
-          controller
-              .birthJourneyPlan
-              .value
-              .data
-              ?.periods
-              .first
-              .items
-              .first
-              .completed,
-          isFalse,
-        );
-        expect(plans.deleteIds, isEmpty);
-        expect(
-          controller.planMutation.value.message,
-          '请通过 CozyMate 同步该事项的完成状态',
-        );
+      final operation = controller.togglePlanTodo(
+        taskId: 'task-current',
+        completed: true,
+      );
+      expect(
+        controller
+            .birthJourneyPlan
+            .value
+            .data
+            ?.periods
+            .first
+            .items
+            .first
+            .completed,
+        isTrue,
+      );
+      expect(plans.todoMutations.single.expectedVersion, 1);
+      plans.completeTodoMutation(
+        _pregnancyPlan(version: 2, currentCompleted: true),
+      );
 
-        expect(
-          await controller.togglePlanTodo(
-            taskId: 'task-future',
-            completed: true,
-          ),
-          isFalse,
-        );
-        expect(controller.planMutation.value.message, '当前还未到该阶段，暂不适合进行该事项');
-      },
-    );
+      expect(await operation, isTrue);
+      expect(controller.birthJourneyPlan.value.data?.version, 2);
+      expect(controller.planMutation.value.phase, StatusMutationPhase.success);
+    });
+
+    test('rolls back a failed todo write and refetches authoritative data', () async {
+      final plans = _FakePregnancyPlanRepository(
+        plan: _pregnancyPlan(),
+        todoMutationError: StateError('write failed'),
+      );
+      final controller = _controller(plans: plans);
+      addTearDown(controller.dispose);
+      await controller.load();
+
+      expect(
+        await controller.togglePlanTodo(
+          taskId: 'task-current',
+          completed: true,
+        ),
+        isFalse,
+      );
+
+      expect(
+        controller
+            .birthJourneyPlan
+            .value
+            .data
+            ?.periods
+            .first
+            .items
+            .first
+            .completed,
+        isFalse,
+      );
+      expect(plans.fetchCount, 2);
+      expect(controller.planMutation.value.phase, StatusMutationPhase.error);
+    });
 
     test('does not publish mutation results after disposal', () async {
       final diary = _FakePregnancyDiaryRepository(deferUpsert: true);
@@ -733,11 +810,25 @@ class _FakePregnancyDiaryRepository implements PregnancyDiaryRepository {
 }
 
 class _FakePregnancyPlanRepository implements PregnancyPlanRepository {
-  _FakePregnancyPlanRepository({required this.plan});
+  _FakePregnancyPlanRepository({
+    required this.plan,
+    this.deferTodoMutation = false,
+    this.todoMutationError,
+  });
 
   PregnancyPlan? plan;
+  final bool deferTodoMutation;
+  final Object? todoMutationError;
   final deleteIds = <String>[];
   var fetchCount = 0;
+  final todoMutations =
+      <({String planId, String itemId, bool completed, int expectedVersion})>[];
+  Completer<PregnancyPlan>? _todoMutationCompleter;
+
+  void completeTodoMutation(PregnancyPlan value) {
+    plan = value;
+    _todoMutationCompleter?.complete(value);
+  }
 
   @override
   Future<PregnancyPlan?> fetchActivePlan() async {
@@ -750,11 +841,35 @@ class _FakePregnancyPlanRepository implements PregnancyPlanRepository {
     deleteIds.add(planId);
     plan = null;
   }
+
+  @override
+  Future<PregnancyPlan> updateTodoCompletion({
+    required String planId,
+    required String itemId,
+    required bool completed,
+    required int expectedVersion,
+    String? idempotencyKey,
+  }) async {
+    todoMutations.add((
+      planId: planId,
+      itemId: itemId,
+      completed: completed,
+      expectedVersion: expectedVersion,
+    ));
+    final error = todoMutationError;
+    if (error != null) throw error;
+    if (deferTodoMutation) {
+      _todoMutationCompleter = Completer<PregnancyPlan>();
+      return _todoMutationCompleter!.future;
+    }
+    return plan!;
+  }
 }
 
-PregnancyPlan _pregnancyPlan() {
-  return const PregnancyPlan(
+PregnancyPlan _pregnancyPlan({int version = 1, bool currentCompleted = false}) {
+  return PregnancyPlan(
     id: 'plan-001',
+    version: version,
     planType: 'pregnancy',
     title: '孕期计划',
     summary: '',
@@ -772,7 +887,11 @@ PregnancyPlan _pregnancyPlan() {
                 'display_mode': 'expanded',
                 'status': 'current',
                 'items': [
-                  {'id': 'task-current', 'title': '当前事项'},
+                  {
+                    'item_id': 'task-current',
+                    'title': '当前事项',
+                    'completed': currentCompleted,
+                  },
                 ],
               },
               {

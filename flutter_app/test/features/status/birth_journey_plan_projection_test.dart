@@ -39,9 +39,11 @@ void main() {
       );
 
       expect(projected.id, 'plan-pregnancy-1');
+      expect(projected.version, 3);
       expect(projected.periods, hasLength(2));
       expect(projected.periods.first.isCurrent, isTrue);
       expect(projected.periods.first.items.single.id, 'confirm_ogtt');
+      expect(projected.periods.first.items.single.canMutate, isFalse);
       expect(projected.periods.first.items.single.priorityLabel, '重要');
       expect(projected.periods.first.items.single.reason, '这几周是关键检查窗口。');
       expect(projected.periods.first.items.single.steps, ['提前预约', '按要求禁食']);
@@ -55,12 +57,47 @@ void main() {
         throwsFormatException,
       );
     });
+
+    test('keeps valid periods when adjacent legacy payload entries are invalid', () {
+      final projected = projectBirthJourneyPlan(
+        _plan(
+          cardJson: {
+            'todo_plan': {
+              'periods': [
+                {
+                  'title': '损坏阶段',
+                  'items': <Object?>[],
+                },
+                {
+                  'id': 'current',
+                  'title': '当前阶段',
+                  'status': 'current',
+                  'items': [
+                    {'title': ''},
+                    {
+                      'item_id': 'stable-item-1',
+                      'title': '有效事项',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ),
+      );
+
+      expect(projected.periods, hasLength(1));
+      expect(projected.periods.single.items, hasLength(1));
+      expect(projected.periods.single.items.single.id, 'stable-item-1');
+      expect(projected.periods.single.items.single.canMutate, isTrue);
+    });
   });
 }
 
 PregnancyPlan _plan({required Map<String, Object?> cardJson}) {
   return PregnancyPlan(
     id: 'plan-pregnancy-1',
+    version: 3,
     planType: 'pregnancy',
     title: '孕期计划',
     summary: '当前阶段重点',

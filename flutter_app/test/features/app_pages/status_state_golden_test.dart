@@ -156,6 +156,16 @@ Future<void> _pumpStatusStateApp(WidgetTester tester) async {
     ]).timeout(const Duration(seconds: 5));
   });
   await tester.pumpAndSettle();
+  await _settleVisibleStatusResources(tester);
+}
+
+Future<void> _settleVisibleStatusResources(WidgetTester tester) async {
+  const loadingCopy = '正在加载最近一个月泌乳数据…';
+  for (var frame = 0; frame < 30; frame += 1) {
+    if (find.text(loadingCopy).evaluate().isEmpty) return;
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  expect(find.text(loadingCopy), findsNothing);
 }
 
 Future<void> _noInteraction(WidgetTester tester) async {}

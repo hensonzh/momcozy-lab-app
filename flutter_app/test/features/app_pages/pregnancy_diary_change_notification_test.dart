@@ -12,6 +12,8 @@ import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
@@ -135,6 +137,10 @@ void main() {
 
       expect(harness.transport.diaryGetCount, 1);
       expect(find.text('事件前的日记'), findsOneWidget);
+      final countsBeforeChange = {
+        for (final path in _statusGetEndpoints)
+          path: harness.transport.getCount(path),
+      };
 
       final changed = _changedEvent();
       harness.client.emit(changed);
@@ -142,6 +148,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(harness.transport.diaryGetCount, 2);
+      for (final path in _statusGetEndpoints) {
+        expect(
+          harness.transport.getCount(path),
+          countsBeforeChange[path]! +
+              (path == pregnancyDiaryEntriesEndpoint ? 1 : 0),
+          reason: 'a pregnancy_diary.changed event must only refetch diaries',
+        );
+      }
       expect(find.text('Agent 写入后的日记'), findsOneWidget);
       expect(harness.runtime.pregnancyDiaryChangeStore.revision, 1);
     },
@@ -439,12 +453,16 @@ class _SequencedDiaryTransport implements ApiJsonTransport {
   final Set<int> failingDiaryRequests;
   final Map<int, Completer<Map<String, Object?>>> deferredDiaryRequests;
   int diaryGetCount = 0;
+  final Map<String, int> getCounts = {};
+
+  int getCount(String path) => getCounts[path] ?? 0;
 
   @override
   Future<Map<String, Object?>> getJson(
     String path, {
     Map<String, Object?> query = const {},
   }) async {
+    getCounts.update(path, (count) => count + 1, ifAbsent: () => 1);
     if (path == statusProfileEndpoint) {
       return const {
         'user_id': 'diary-widget-user',
@@ -476,6 +494,16 @@ class _SequencedDiaryTransport implements ApiJsonTransport {
     throw UnsupportedError('POST is not used by this test.');
   }
 }
+
+const _statusGetEndpoints = [
+  statusProfileEndpoint,
+  statusInfantsEndpoint,
+  feedingRecordsEndpoint,
+  milkTrendsEndpoint,
+  growthRecordsEndpoint,
+  pregnancyDiaryEntriesEndpoint,
+  pregnancyPlansEndpoint,
+];
 
 Map<String, Object?> _diaryResponse(String content) {
   return {

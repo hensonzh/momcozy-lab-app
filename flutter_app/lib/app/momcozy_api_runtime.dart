@@ -647,8 +647,8 @@ class MomCozyRuntimeController extends ChangeNotifier {
         ? _runtime.pregnancyDiaryChangeStore
         : null;
     final sameAuthenticatedPlanAccount =
-        session.status == MomCozySessionStatus.authenticated &&
-        _runtime.session.status == MomCozySessionStatus.authenticated &&
+        session.isAuthenticated &&
+        _runtime.session.isAuthenticated &&
         session.userId == _runtime.session.userId;
     final pregnancyPlanChangeStore = sameAuthenticatedPlanAccount
         ? _runtime.pregnancyPlanChangeStore
