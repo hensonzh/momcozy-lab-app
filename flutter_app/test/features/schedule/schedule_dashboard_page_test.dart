@@ -155,7 +155,7 @@ void main() {
             'id': 'feed-created',
             'plan_task_id': null,
             'feed_time': '2026-07-03T10:00:00Z',
-            'feed_type': 'bottle',
+            'feed_type': 'formula',
             'volume_ml': 80,
             'title': '喂养记录',
           },
@@ -181,6 +181,11 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-pumping-record-sheet')),
+        findsOneWidget,
+      );
+      expect(find.byType(AlertDialog), findsNothing);
       expect(find.text('吸奶量（左侧）'), findsOneWidget);
       expect(find.text('吸奶量（右侧）'), findsOneWidget);
       expect(find.text('oz'), findsNWidgets(2));
@@ -192,6 +197,10 @@ void main() {
         find.byKey(const ValueKey('schedule-record-right-amount-input')),
         '2.2',
       );
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-record-duration-input')),
+        '15',
+      );
       await tester.pump();
       expect(find.text('总奶量：3.3 oz'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('schedule-record-submit')));
@@ -199,6 +208,7 @@ void main() {
 
       expect(transport.lastPath, schedulePumpingRecordsEndpoint);
       expect(transport.lastBody?['milk_volume_ml'], 98);
+      expect(transport.lastBody?['duration_seconds'], 900);
 
       await tester.scrollUntilVisible(
         find.byKey(const ValueKey('schedule-quick-actions')),
@@ -212,11 +222,23 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('奶量'), findsOneWidget);
-      expect(find.text('oz'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-feeding-record-sheet')),
+        findsOneWidget,
+      );
+      expect(find.text('配方奶量 (oz)'), findsOneWidget);
       await tester.enterText(
         find.byKey(const ValueKey('schedule-record-amount-input')),
         '2.7',
+      );
+      await tester.pump();
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.byKey(const ValueKey('schedule-record-submit')),
+            )
+            .onPressed,
+        isNotNull,
       );
       await tester.tap(find.byKey(const ValueKey('schedule-record-submit')));
       await tester.pumpAndSettle();
@@ -225,6 +247,117 @@ void main() {
       expect(transport.lastBody?['volume_ml'], 80);
     },
   );
+
+  testWidgets('feeding sheet exposes all three legacy recording modes', (
+    tester,
+  ) async {
+    final transport = _transport(
+      tasks: const [],
+      feedingRecords: const [],
+      pumpingRecords: const [],
+      writeResponsesByPath: const {
+        scheduleFeedingRecordsEndpoint: {
+          'id': 'bottle-created',
+          'plan_task_id': null,
+          'feed_time': '2026-07-03T10:00:00Z',
+          'feed_type': 'bottle',
+          'volume_ml': 90,
+          'title': '喂养记录',
+        },
+      },
+    );
+    await _pumpPage(tester, transport);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('schedule-quick-actions')),
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('schedule-quick-actions')),
+        matching: find.text('喂养记录'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('🧪 配方奶'), findsOneWidget);
+    expect(find.text('🤱 亲喂'), findsOneWidget);
+    expect(find.text('🍼 瓶喂母乳'), findsOneWidget);
+    expect(find.text('配方奶量 (mL)'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('schedule-feed-type-breast')));
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('schedule-record-amount-input')),
+      findsNothing,
+    );
+    expect(find.textContaining('不作为精确依据'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('schedule-feed-type-bottle')));
+    await tester.pump();
+    expect(find.text('瓶喂奶量 (mL)'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('schedule-record-duration-input')),
+      findsNothing,
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('schedule-record-amount-input')),
+      '90',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('schedule-record-submit')));
+    await tester.pumpAndSettle();
+
+    expect(transport.lastPath, scheduleFeedingRecordsEndpoint);
+    expect(transport.lastBody?['feed_type'], 'bottle');
+    expect(transport.lastBody?['volume_ml'], 90);
+    expect(transport.lastBody, isNot(contains('duration_seconds')));
+  });
+
+  testWidgets('breastfeeding converts fractional minutes to whole seconds', (
+    tester,
+  ) async {
+    final transport = _transport(
+      tasks: const [],
+      feedingRecords: const [],
+      pumpingRecords: const [],
+      writeResponsesByPath: const {
+        scheduleFeedingRecordsEndpoint: {
+          'id': 'breast-created',
+          'plan_task_id': null,
+          'feed_time': '2026-07-03T10:00:00Z',
+          'feed_type': 'breast',
+          'volume_ml': null,
+          'duration_seconds': 750,
+          'title': '喂养记录',
+        },
+      },
+    );
+    await _pumpPage(tester, transport);
+    final quickActions = find.byKey(const ValueKey('schedule-quick-actions'));
+    await tester.scrollUntilVisible(
+      quickActions,
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+    await tester.tap(
+      find.descendant(of: quickActions, matching: find.text('喂养记录')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('schedule-feed-type-breast')));
+    await tester.pump();
+    await tester.enterText(
+      find.byKey(const ValueKey('schedule-record-duration-input')),
+      '12.5',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('schedule-record-submit')));
+    await tester.pumpAndSettle();
+
+    expect(transport.lastBody?['feed_type'], 'breast');
+    expect(transport.lastBody?['duration_seconds'], 750);
+    expect(transport.lastBody, isNot(contains('volume_ml')));
+  });
 
   testWidgets('keeps the usable timeline when one resource returns 503', (
     tester,
@@ -546,7 +679,7 @@ void main() {
         findsNothing,
       );
       expect(
-        find.byKey(const ValueKey('schedule-feeding-record-dialog')),
+        find.byKey(const ValueKey('schedule-feeding-record-sheet')),
         findsOneWidget,
       );
 
@@ -559,15 +692,15 @@ void main() {
             ?.text,
         '14:00',
       );
-      await tester.tap(find.text('亲喂'));
+      await tester.tap(find.byKey(const ValueKey('schedule-feed-type-breast')));
       await tester.pump();
       expect(
-        tester
-            .widget<TextField>(
-              find.byKey(const ValueKey('schedule-record-amount-input')),
-            )
-            .enabled,
-        isFalse,
+        find.byKey(const ValueKey('schedule-record-amount-input')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('schedule-record-duration-input')),
+        findsOneWidget,
       );
       await tester.enterText(
         find.byKey(const ValueKey('schedule-record-duration-input')),
@@ -631,15 +764,10 @@ void main() {
       findsNothing,
     );
     expect(
-      find.byKey(const ValueKey('schedule-pumping-record-dialog')),
+      find.byKey(const ValueKey('schedule-pumping-record-sheet')),
       findsOneWidget,
     );
-    await tester.tap(
-      find.descendant(
-        of: find.byKey(const ValueKey('schedule-pumping-record-dialog')),
-        matching: find.text('取消'),
-      ),
-    );
+    await tester.tap(find.byKey(const ValueKey('schedule-record-sheet-close')));
     await tester.pumpAndSettle();
 
     expect(transport.lastBody, isNull);
@@ -730,16 +858,33 @@ void main() {
       );
       await tester.pumpAndSettle();
       if (breast) {
-        await tester.tap(find.text('亲喂'));
+        await tester.tap(
+          find.byKey(const ValueKey('schedule-feed-type-breast')),
+        );
         await tester.pump();
       } else {
         await tester.enterText(
           find.byKey(const ValueKey('schedule-record-amount-input')),
           '80',
         );
+        await tester.pump();
       }
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.byKey(const ValueKey('schedule-record-submit')),
+            )
+            .onPressed,
+        isNotNull,
+      );
       await tester.tap(find.byKey(const ValueKey('schedule-record-submit')));
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('schedule-feeding-record-sheet')),
+        findsNothing,
+      );
+      tester.testTextInput.hide();
+      await tester.pump();
     }
 
     await submitFeeding(breast: false);
@@ -749,7 +894,7 @@ void main() {
     expect(transport.idempotencyKeys, hasLength(3));
     expect(transport.idempotencyKeys[1], transport.idempotencyKeys[0]);
     expect(transport.idempotencyKeys[2], isNot(transport.idempotencyKeys[0]));
-    expect(transport.feedTypes, ['bottle', 'bottle', 'breast']);
+    expect(transport.feedTypes, ['formula', 'formula', 'breast']);
   });
 
   testWidgets('week arrows only browse while date pills select and refetch', (
@@ -1253,14 +1398,11 @@ void main() {
     },
   );
 
-  testWidgets('quick records use current time and never invent measurements', (
+  testWidgets('quick records use current time and disable empty submissions', (
     tester,
   ) async {
-    await _pumpPage(
-      tester,
-      _transport(),
-      now: DateTime.utc(2026, 7, 3, 10, 37),
-    );
+    final transport = _transport();
+    await _pumpPage(tester, transport, now: DateTime.utc(2026, 7, 3, 10, 37));
     await tester.scrollUntilVisible(
       find.byKey(const ValueKey('schedule-quick-actions')),
       200,
@@ -1281,13 +1423,11 @@ void main() {
     expect(fieldText('schedule-record-right-amount-input'), isEmpty);
     expect(fieldText('schedule-record-duration-input'), isEmpty);
 
-    await tester.tap(find.byKey(const ValueKey('schedule-record-submit')));
-    await tester.pump();
-    final error = tester.widget<Semantics>(
-      find.byKey(const ValueKey('schedule-form-error')),
+    final submit = tester.widget<FilledButton>(
+      find.byKey(const ValueKey('schedule-record-submit')),
     );
-    expect(error.properties.liveRegion, isTrue);
-    expect(find.text('请填写有效的时间和奶量'), findsOneWidget);
+    expect(submit.onPressed, isNull);
+    expect(transport.lastBody, isNull);
   });
 
   testWidgets('uses a neutral context while no milk plan is confirmed', (

@@ -1080,9 +1080,13 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     ScheduleRecordKind kind, {
     ScheduleTask? linkedTask,
   }) async {
-    final draft = await showDialog<_RecordDraft>(
+    final draft = await showModalBottomSheet<_RecordDraft>(
       context: context,
-      builder: (context) => _ScheduleRecordDialog(
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: MomCozyColors.foreground.withValues(alpha: 0.2),
+      builder: (context) => _ScheduleRecordSheet(
         kind: kind,
         volumeUnit: _volumeUnit,
         initialTime: linkedTask?.remindAt == null
@@ -3748,8 +3752,8 @@ class _TaskDraftEditor {
   }
 }
 
-class _ScheduleRecordDialog extends StatefulWidget {
-  const _ScheduleRecordDialog({
+class _ScheduleRecordSheet extends StatefulWidget {
+  const _ScheduleRecordSheet({
     required this.kind,
     required this.volumeUnit,
     this.initialTime,
@@ -3760,10 +3764,10 @@ class _ScheduleRecordDialog extends StatefulWidget {
   final String? initialTime;
 
   @override
-  State<_ScheduleRecordDialog> createState() => _ScheduleRecordDialogState();
+  State<_ScheduleRecordSheet> createState() => _ScheduleRecordSheetState();
 }
 
-class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
+class _ScheduleRecordSheetState extends State<_ScheduleRecordSheet> {
   final TextEditingController _amount = TextEditingController();
   final TextEditingController _leftAmount = TextEditingController();
   final TextEditingController _rightAmount = TextEditingController();
@@ -3771,7 +3775,7 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
   late final TextEditingController _time = TextEditingController(
     text: widget.initialTime ?? '14:00',
   );
-  String _feedType = 'bottle';
+  String _feedType = 'formula';
   String? _error;
 
   @override
@@ -3788,133 +3792,472 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
   Widget build(BuildContext context) {
     final pumping = widget.kind == ScheduleRecordKind.pumping;
     final pumpingTotalMl = pumping ? _pumpingTotalMilliliters() : null;
-    return AlertDialog(
-      key: ValueKey(
-        pumping
-            ? 'schedule-pumping-record-dialog'
-            : 'schedule-feeding-record-dialog',
-      ),
-      title: Text(pumping ? '吸奶补录' : '喂养记录'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!pumping)
-            SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(value: 'bottle', label: Text('瓶喂')),
-                ButtonSegment(value: 'breast', label: Text('亲喂')),
-                ButtonSegment(value: 'formula', label: Text('配方')),
-              ],
-              selected: {_feedType},
-              onSelectionChanged: (selection) {
-                setState(() {
-                  _feedType = selection.single;
-                  if (_feedType == 'breast') _amount.clear();
-                });
-              },
-            ),
-          TextField(
-            key: const ValueKey('schedule-record-time-input'),
-            controller: _time,
-            keyboardType: TextInputType.datetime,
-            decoration: const InputDecoration(labelText: '时间'),
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    return AnimatedPadding(
+      duration: reduceMotion
+          ? Duration.zero
+          : const Duration(milliseconds: 160),
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+        ),
+        child: RepaintBoundary(
+          key: ValueKey(
+            pumping
+                ? 'schedule-pumping-record-sheet'
+                : 'schedule-feeding-record-sheet',
           ),
-          if (pumping) ...[
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    key: const ValueKey('schedule-record-left-amount-input'),
-                    controller: _leftAmount,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    onChanged: (_) => setState(() => _error = null),
-                    decoration: InputDecoration(
-                      labelText: '吸奶量（左侧）',
-                      suffixText: widget.volumeUnit.storageValue,
+          child: Material(
+            color: MomCozyColors.card,
+            clipBehavior: Clip.antiAlias,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 10, 6),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            pumping ? '🤱 吸奶补录' : '+ 喂养记录',
+                            style: const TextStyle(
+                              color: MomCozyColors.foreground,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          key: const ValueKey('schedule-record-sheet-close'),
+                          tooltip: '关闭',
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close_rounded, size: 20),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    key: const ValueKey('schedule-record-right-amount-input'),
-                    controller: _rightAmount,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    onChanged: (_) => setState(() => _error = null),
-                    decoration: InputDecoration(
-                      labelText: '吸奶量（右侧）',
-                      suffixText: widget.volumeUnit.storageValue,
+                  Flexible(
+                    child: ListView(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.fromLTRB(20, 2, 20, 16),
+                      children: [
+                        if (pumping)
+                          ..._buildPumpingFields(pumpingTotalMl)
+                        else
+                          ..._buildFeedingFields(),
+                        if (_error != null) ...[
+                          const SizedBox(height: 8),
+                          Semantics(
+                            key: const ValueKey('schedule-form-error'),
+                            liveRegion: true,
+                            child: Text(
+                              _error!,
+                              style: const TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                    decoration: const BoxDecoration(
+                      color: MomCozyColors.card,
+                      border: Border(
+                        top: BorderSide(color: MomCozyColors.border),
+                      ),
+                    ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: FilledButton(
+                        key: const ValueKey('schedule-record-submit'),
+                        onPressed: _canSubmit ? _submit : null,
+                        style: FilledButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          '添加记录',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            if (pumpingTotalMl != null && pumpingTotalMl > 0) ...[
-              const SizedBox(height: 8),
-              Text(
-                '总奶量：${_formatVolume(widget.volumeUnit, pumpingTotalMl)}',
-                key: const ValueKey('schedule-record-pumping-total'),
-                style: const TextStyle(
-                  color: MomCozyColors.primary,
-                  fontWeight: FontWeight.w800,
-                ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildPumpingFields(int? pumpingTotalMl) => [
+    Container(
+      key: const ValueKey('schedule-pumping-record-description'),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      decoration: BoxDecoration(
+        color: MomCozyColors.secondary.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text.rich(
+        const TextSpan(
+          children: [
+            TextSpan(text: '📝 吸奶补录是指'),
+            TextSpan(
+              text: '吸奶器未连接APP时或者通过其他方式',
+              style: TextStyle(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            TextSpan(text: '获取的母乳，通过手动录入的方式计入可用母乳库存。'),
+          ],
+        ),
+        style: const TextStyle(
+          color: MomCozyColors.mutedForeground,
+          fontSize: 11,
+          height: 1.45,
+        ),
+      ),
+    ),
+    const SizedBox(height: 14),
+    const _ScheduleRecordFieldLabel('开始吸奶时间'),
+    const SizedBox(height: 5),
+    TextField(
+      key: const ValueKey('schedule-record-time-input'),
+      controller: _time,
+      keyboardType: TextInputType.datetime,
+      onChanged: (_) => setState(() => _error = null),
+      decoration: _fieldDecoration(hintText: '14:00'),
+    ),
+    const SizedBox(height: 12),
+    Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _ScheduleRecordFieldLabel('吸奶量（左侧）'),
+              const SizedBox(height: 5),
+              _measurementInput(
+                key: const ValueKey('schedule-record-left-amount-input'),
+                controller: _leftAmount,
+                autofocus: true,
+                hintText: '0',
+                unit: widget.volumeUnit.storageValue,
               ),
             ],
-          ] else
-            TextField(
-              key: const ValueKey('schedule-record-amount-input'),
-              controller: _amount,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              enabled: _feedType != 'breast',
-              decoration: InputDecoration(
-                labelText: _feedType == 'breast' ? '亲喂无需填写奶量' : '奶量',
-                suffixText: _feedType == 'breast'
-                    ? null
-                    : widget.volumeUnit.storageValue,
-              ),
-            ),
-          TextField(
-            key: const ValueKey('schedule-record-duration-input'),
-            controller: _duration,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: '时长（分钟）'),
           ),
-          if (_error != null)
-            Semantics(
-              key: const ValueKey('schedule-form-error'),
-              liveRegion: true,
-              child: Text(
-                _error!,
-                style: const TextStyle(color: Colors.redAccent),
-              ),
-            ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
         ),
-        FilledButton(
-          key: const ValueKey('schedule-record-submit'),
-          onPressed: _submit,
-          child: const Text('保存'),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _ScheduleRecordFieldLabel('吸奶量（右侧）'),
+              const SizedBox(height: 5),
+              _measurementInput(
+                key: const ValueKey('schedule-record-right-amount-input'),
+                controller: _rightAmount,
+                hintText: '0',
+                unit: widget.volumeUnit.storageValue,
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    AnimatedSwitcher(
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : const Duration(milliseconds: 160),
+      child: pumpingTotalMl != null && pumpingTotalMl > 0
+          ? Container(
+              key: const ValueKey('schedule-record-pumping-total'),
+              width: double.infinity,
+              margin: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.symmetric(vertical: 7),
+              decoration: BoxDecoration(
+                color: MomCozyColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: MomCozyColors.primary.withValues(alpha: 0.15),
+                ),
+              ),
+              child: Text(
+                '总奶量：${_formatVolume(widget.volumeUnit, pumpingTotalMl)}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: MomCozyColors.primary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            )
+          : const SizedBox.shrink(),
+    ),
+    const SizedBox(height: 12),
+    const _ScheduleRecordFieldLabel('吸奶时长（选填）'),
+    const SizedBox(height: 5),
+    Align(
+      alignment: Alignment.centerLeft,
+      child: SizedBox(
+        width: 170,
+        child: _measurementInput(
+          key: const ValueKey('schedule-record-duration-input'),
+          controller: _duration,
+          hintText: '例如 15',
+          unit: 'min',
+          decimal: false,
+        ),
+      ),
+    ),
+  ];
+
+  List<Widget> _buildFeedingFields() => [
+    Row(
+      children: [
+        _feedTypeButton(
+          value: 'formula',
+          label: '🧪 配方奶',
+          accent: MomCozyColors.warm,
+        ),
+        const SizedBox(width: 8),
+        _feedTypeButton(
+          value: 'breast',
+          label: '🤱 亲喂',
+          accent: MomCozyColors.care,
+        ),
+        const SizedBox(width: 8),
+        _feedTypeButton(
+          value: 'bottle',
+          label: '🍼 瓶喂母乳',
+          accent: MomCozyColors.primary,
+        ),
+      ],
+    ),
+    const SizedBox(height: 14),
+    Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _ScheduleRecordFieldLabel('喂养时间', compact: true),
+              const SizedBox(height: 4),
+              TextField(
+                key: const ValueKey('schedule-record-time-input'),
+                controller: _time,
+                keyboardType: TextInputType.datetime,
+                onChanged: (_) => setState(() => _error = null),
+                decoration: _fieldDecoration(hintText: '14:00', compact: true),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _ScheduleRecordFieldLabel(
+                _feedType == 'breast'
+                    ? '时长 (选填)'
+                    : '${_feedType == 'formula' ? '配方奶量' : '瓶喂奶量'} (${widget.volumeUnit.storageValue})',
+                compact: true,
+              ),
+              const SizedBox(height: 4),
+              if (_feedType == 'breast')
+                _measurementInput(
+                  key: const ValueKey('schedule-record-duration-input'),
+                  controller: _duration,
+                  hintText: '15',
+                  unit: 'min',
+                  compact: true,
+                )
+              else
+                TextField(
+                  key: const ValueKey('schedule-record-amount-input'),
+                  controller: _amount,
+                  textAlign: TextAlign.center,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  onChanged: (_) => setState(() => _error = null),
+                  decoration: _fieldDecoration(
+                    hintText: widget.volumeUnit == MomCozyVolumeUnit.ounces
+                        ? '3.5'
+                        : '100',
+                    compact: true,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    if (_feedType == 'breast') ...[
+      const SizedBox(height: 8),
+      const Text(
+        '🤱 亲喂时长可用于粗略估算奶量，不作为精确依据',
+        style: TextStyle(
+          color: MomCozyColors.mutedForeground,
+          fontSize: 10,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
+    ],
+  ];
+
+  Widget _feedTypeButton({
+    required String value,
+    required String label,
+    required Color accent,
+  }) {
+    final selected = _feedType == value;
+    return Expanded(
+      child: SizedBox(
+        height: 42,
+        child: OutlinedButton(
+          key: ValueKey('schedule-feed-type-$value'),
+          onPressed: () {
+            if (selected) return;
+            setState(() {
+              _feedType = value;
+              _amount.clear();
+              _duration.clear();
+              _error = null;
+            });
+          },
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            foregroundColor: selected
+                ? MomCozyColors.foreground
+                : MomCozyColors.mutedForeground,
+            backgroundColor: selected
+                ? accent.withValues(alpha: 0.14)
+                : MomCozyColors.muted.withValues(alpha: 0.5),
+            side: BorderSide(
+              color: selected
+                  ? accent.withValues(alpha: 0.35)
+                  : MomCozyColors.border,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          child: FittedBox(fit: BoxFit.scaleDown, child: Text(label)),
+        ),
+      ),
+    );
+  }
+
+  Widget _measurementInput({
+    required Key key,
+    required TextEditingController controller,
+    required String hintText,
+    required String unit,
+    bool autofocus = false,
+    bool decimal = true,
+    bool compact = false,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            key: key,
+            controller: controller,
+            autofocus: autofocus,
+            textAlign: TextAlign.center,
+            keyboardType: TextInputType.numberWithOptions(decimal: decimal),
+            onChanged: (_) => setState(() => _error = null),
+            decoration: _fieldDecoration(hintText: hintText, compact: compact),
+          ),
+        ),
+        const SizedBox(width: 5),
+        SizedBox(
+          width: 24,
+          child: Text(
+            unit,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: MomCozyColors.mutedForeground,
+              fontSize: compact ? 10 : 11,
+            ),
+          ),
         ),
       ],
     );
   }
 
+  InputDecoration _fieldDecoration({
+    required String hintText,
+    bool compact = false,
+  }) => InputDecoration(
+    isDense: true,
+    hintText: hintText,
+    filled: true,
+    fillColor: MomCozyColors.muted.withValues(alpha: 0.6),
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: compact ? 10 : 12,
+      vertical: compact ? 10 : 12,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(
+        color: MomCozyColors.border.withValues(alpha: 0.5),
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(
+        color: MomCozyColors.primary.withValues(alpha: 0.5),
+      ),
+    ),
+  );
+
+  bool get _canSubmit {
+    if (_normalizedTime(_time.text) == null) return false;
+    if (widget.kind == ScheduleRecordKind.pumping) {
+      final amountMl = _pumpingTotalMilliliters();
+      return amountMl != null && amountMl > 0;
+    }
+    if (_feedType == 'breast') return true;
+    final amountMl = _canonicalRequiredVolume(_amount.text);
+    return amountMl != null && amountMl > 0;
+  }
+
   void _submit() {
-    final durationMinutes = int.tryParse(_duration.text.trim());
     final time = _normalizedTime(_time.text);
     final pumping = widget.kind == ScheduleRecordKind.pumping;
+    final durationSeconds = pumping
+        ? switch (int.tryParse(_duration.text.trim())) {
+            final minutes? when minutes > 0 => minutes * 60,
+            _ => null,
+          }
+        : switch (double.tryParse(_duration.text.trim())) {
+            final minutes? when minutes > 0 => (minutes * 60).round(),
+            _ => null,
+          };
     final amountMl = pumping
         ? _pumpingTotalMilliliters()
         : _feedType == 'breast'
@@ -3922,7 +4265,6 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
         : _canonicalRequiredVolume(_amount.text);
     final requiresAmount = pumping || _feedType != 'breast';
     final validAmount = amountMl != null && amountMl > 0;
-    final validDuration = durationMinutes != null && durationMinutes > 0;
     if (time == null || (requiresAmount && !validAmount)) {
       setState(() => _error = requiresAmount ? '请填写有效的时间和奶量' : '请填写有效的时间');
       return;
@@ -3931,7 +4273,7 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
       context,
       _RecordDraft(
         amountMl: validAmount ? amountMl : null,
-        durationSeconds: validDuration ? durationMinutes * 60 : null,
+        durationSeconds: durationSeconds,
         time: time,
         feedType: _feedType,
       ),
@@ -3954,6 +4296,26 @@ class _ScheduleRecordDialogState extends State<_ScheduleRecordDialog> {
     final value = double.tryParse(raw.trim());
     if (value == null) return null;
     return widget.volumeUnit.toCanonicalMilliliters(value);
+  }
+}
+
+class _ScheduleRecordFieldLabel extends StatelessWidget {
+  const _ScheduleRecordFieldLabel(this.label, {this.compact = false});
+
+  final String label;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      maxLines: compact ? 2 : 1,
+      style: TextStyle(
+        color: MomCozyColors.mutedForeground,
+        fontSize: compact ? 11 : 12,
+        fontWeight: FontWeight.w700,
+      ),
+    );
   }
 }
 
