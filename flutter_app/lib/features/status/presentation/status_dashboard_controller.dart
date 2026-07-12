@@ -167,7 +167,10 @@ class StatusDashboardController {
   final Set<StatusDashboardResource> _showLoadingOnNextFetch = {};
 
   Future<void> initialize() async {
-    final selection = restoreSelection();
+    var selectionResolved = false;
+    final selection = restoreSelection().whenComplete(() {
+      selectionResolved = true;
+    });
     unawaited(restoreVolumeUnit());
     await Future.wait<void>([
       Future.any<void>([selection, Future<void>.delayed(Duration.zero)]),
@@ -177,20 +180,31 @@ class StatusDashboardController {
         force: false,
       ),
     ]);
+    final requestedCareStage = careStage.value;
+    final requestedIdentity = identity.value;
     await _requestResources(
       _visibleBranchResources(),
       showLoading: true,
       force: false,
     );
-    unawaited(
-      selection.then((_) {
-        return _requestResources(
-          _visibleBranchResources(),
-          showLoading: true,
-          force: false,
-        );
-      }),
-    );
+    Future<void> loadRestoredBranchIfChanged() {
+      if (_disposed ||
+          (careStage.value == requestedCareStage &&
+              identity.value == requestedIdentity)) {
+        return Future<void>.value();
+      }
+      return _requestResources(
+        _visibleBranchResources(),
+        showLoading: true,
+        force: false,
+      );
+    }
+
+    if (selectionResolved) {
+      await loadRestoredBranchIfChanged();
+    } else {
+      unawaited(selection.then((_) => loadRestoredBranchIfChanged()));
+    }
   }
 
   Future<void> restoreSelection() async {
