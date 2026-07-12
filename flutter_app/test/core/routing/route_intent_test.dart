@@ -71,6 +71,21 @@ void main() {
       expect(plan?.payload['statusIntent'], 'birth-journey');
     });
 
+    test('preserves Android schedule reminder date and task query context', () {
+      final intent = routeIntentFromNativeNotification({
+        'path': '/schedule?date=2026-07-04&task_id=feeding-afternoon',
+      });
+
+      expect(intent?.type, 'OpenScheduleReminder');
+      expect(intent?.path, '/schedule');
+      expect(intent?.payload, const {
+        'source': 'native-notification',
+        'taskId': 'feeding-afternoon',
+        'date': '2026-07-04',
+      });
+      expect(intent?.consume, 'once');
+    });
+
     test(
       'reject unsafe routes and keep unknown same-origin routes recoverable',
       () {
