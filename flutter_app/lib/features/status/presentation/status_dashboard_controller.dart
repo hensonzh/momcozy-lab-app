@@ -173,7 +173,7 @@ class StatusDashboardController {
     });
     unawaited(restoreVolumeUnit());
     await Future.wait<void>([
-      Future.any<void>([selection, Future<void>.delayed(Duration.zero)]),
+      Future.any<void>([selection, Future<void>.microtask(() {})]),
       _requestResource(
         StatusDashboardResource.overview,
         showLoading: true,
