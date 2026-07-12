@@ -341,6 +341,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
               ),
               child: _ScheduleTaskRow(
                 task: task,
+                provenance: _taskProvenance(task, resolved.context),
                 linkedRecords: entry.linkedRecords,
                 volumeUnit: _volumeUnit,
                 busy: state.isMutating,
@@ -1923,6 +1924,7 @@ class _ScheduleToolbar extends StatelessWidget {
 class _ScheduleTaskRow extends StatelessWidget {
   const _ScheduleTaskRow({
     required this.task,
+    required this.provenance,
     required this.linkedRecords,
     required this.volumeUnit,
     required this.busy,
@@ -1934,6 +1936,7 @@ class _ScheduleTaskRow extends StatelessWidget {
   });
 
   final ScheduleTask task;
+  final _ScheduleTaskProvenance provenance;
   final List<ScheduleRecord> linkedRecords;
   final MomCozyVolumeUnit volumeUnit;
   final bool busy;
@@ -1952,6 +1955,7 @@ class _ScheduleTaskRow extends StatelessWidget {
       child: Semantics(
         label:
             '${_time(task.remindAt)} ${task.title}，${_taskStateLabel(task.state)}'
+            '，${provenance.label}'
             '${isNext ? '，下一项' : ''}'
             '${linkedRecords.isEmpty ? '' : '，${linkedRecords.map((record) => _linkedRecordSummary(record, volumeUnit)).join('，')}'}',
         button: onEdit != null,
@@ -2070,6 +2074,7 @@ class _ScheduleTaskRow extends StatelessWidget {
                       ],
                     ),
                   ),
+                  _TaskSourceBadge(taskId: task.id, provenance: provenance),
                   if (skipped) const _StatusBadge(label: '已跳过'),
                   if (completed) const _StatusBadge(label: '已完成'),
                   IconButton(
@@ -2194,6 +2199,43 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         label,
         style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800),
+      ),
+    );
+  }
+}
+
+class _TaskSourceBadge extends StatelessWidget {
+  const _TaskSourceBadge({required this.taskId, required this.provenance});
+
+  final String taskId;
+  final _ScheduleTaskProvenance provenance;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: ValueKey('schedule-task-source-$taskId'),
+      margin: const EdgeInsets.only(left: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        color: provenance.agentGenerated
+            ? MomCozyColors.roseSoft
+            : MomCozyColors.muted,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: provenance.agentGenerated
+              ? MomCozyColors.primary.withValues(alpha: 0.35)
+              : MomCozyColors.border,
+        ),
+      ),
+      child: Text(
+        provenance.label,
+        style: TextStyle(
+          color: provenance.agentGenerated
+              ? MomCozyColors.primary
+              : MomCozyColors.mutedForeground,
+          fontSize: 10,
+          fontWeight: FontWeight.w900,
+        ),
       ),
     );
   }
@@ -2844,6 +2886,51 @@ class _RecordDraft {
 }
 
 enum _CompletionAction { pumping, feeding }
+
+class _ScheduleTaskProvenance {
+  const _ScheduleTaskProvenance({
+    required this.label,
+    required this.agentGenerated,
+  });
+
+  final String label;
+  final bool agentGenerated;
+}
+
+_ScheduleTaskProvenance _taskProvenance(
+  ScheduleTask task,
+  SchedulePlanContext? context,
+) {
+  final source = (task.payload['source']?.toString() ?? '')
+      .trim()
+      .toLowerCase();
+  final actionId = (task.payload['agent_action_id']?.toString() ?? '').trim();
+  final agentGenerated =
+      actionId.isNotEmpty ||
+      source == 'agent_action' ||
+      source == 'agent' ||
+      source == 'mai' ||
+      source == 'system';
+  if (!agentGenerated) {
+    return const _ScheduleTaskProvenance(label: '手动添加', agentGenerated: false);
+  }
+  final label = _normalizedPlanBadgeLabel(context?.title ?? '');
+  return _ScheduleTaskProvenance(
+    label: label.isEmpty ? '智能计划' : label,
+    agentGenerated: true,
+  );
+}
+
+String _normalizedPlanBadgeLabel(String value) {
+  final label = value.trim();
+  if (label.isEmpty) return '';
+  if (label.contains('追奶')) return '追奶计划';
+  if (label.contains('减奶') || label.contains('离乳')) return '减奶计划';
+  if (label.contains('稳奶') || label.contains('维持')) return '稳奶计划';
+  if (label.contains('待产')) return '待产计划';
+  if (label.contains('返工')) return '返工计划';
+  return label.endsWith('计划') ? label : '$label计划';
+}
 
 ScheduleTaskKind _scheduleTaskKind(ScheduleImageTaskKind kind) =>
     switch (kind) {
