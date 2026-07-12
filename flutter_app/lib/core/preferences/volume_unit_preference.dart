@@ -21,6 +21,20 @@ enum MomCozyVolumeUnit {
     return safe.round().toString();
   }
 
+  /// Converts a UI value in this unit to the canonical whole-milliliter value.
+  ///
+  /// Valid values are rounded to the nearest mL; because negative input is
+  /// rejected, an exact half-mL rounds up. Invalid or overflowing input returns
+  /// `null` so callers cannot accidentally persist it as zero.
+  int? toCanonicalMilliliters(double value) {
+    if (!value.isFinite || value < 0) return null;
+    final milliliters = this == MomCozyVolumeUnit.ounces
+        ? value / _millilitersToOunces
+        : value;
+    if (!milliliters.isFinite) return null;
+    return milliliters.round();
+  }
+
   static MomCozyVolumeUnit? fromStorage(Object? value) {
     return switch (value) {
       'mL' => MomCozyVolumeUnit.milliliters,

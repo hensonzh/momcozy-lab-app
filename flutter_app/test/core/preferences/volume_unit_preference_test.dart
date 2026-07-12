@@ -48,4 +48,41 @@ void main() {
     expect(MomCozyVolumeUnit.ounces.formatMilliliters(240), '8.1');
     expect(MomCozyVolumeUnit.ounces.formatMilliliters(-1), '0.0');
   });
+
+  group('canonical milliliter input conversion', () {
+    test('rounds mL input to the nearest whole mL with half values up', () {
+      expect(MomCozyVolumeUnit.milliliters.toCanonicalMilliliters(120.49), 120);
+      expect(MomCozyVolumeUnit.milliliters.toCanonicalMilliliters(120.5), 121);
+      expect(MomCozyVolumeUnit.milliliters.toCanonicalMilliliters(-0.0), 0);
+    });
+
+    test('converts ounce input and preserves displayed tenth-ounce values', () {
+      for (final ounces in <double>[0, 0.1, 1, 8.1, 16.9]) {
+        final milliliters = MomCozyVolumeUnit.ounces.toCanonicalMilliliters(
+          ounces,
+        );
+
+        expect(milliliters, isNotNull, reason: '$ounces oz must convert');
+        expect(
+          MomCozyVolumeUnit.ounces.formatMilliliters(milliliters!.toDouble()),
+          ounces.toStringAsFixed(1),
+        );
+      }
+      expect(MomCozyVolumeUnit.ounces.toCanonicalMilliliters(1), 30);
+      expect(MomCozyVolumeUnit.ounces.toCanonicalMilliliters(8.1), 240);
+    });
+
+    test('rejects negative, non-finite, and overflowing input', () {
+      for (final unit in MomCozyVolumeUnit.values) {
+        expect(unit.toCanonicalMilliliters(-0.01), isNull);
+        expect(unit.toCanonicalMilliliters(double.nan), isNull);
+        expect(unit.toCanonicalMilliliters(double.infinity), isNull);
+        expect(unit.toCanonicalMilliliters(double.negativeInfinity), isNull);
+      }
+      expect(
+        MomCozyVolumeUnit.ounces.toCanonicalMilliliters(double.maxFinite),
+        isNull,
+      );
+    });
+  });
 }
