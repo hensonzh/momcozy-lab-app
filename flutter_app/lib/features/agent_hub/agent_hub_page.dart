@@ -35,6 +35,7 @@ import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:video_player/video_player.dart';
 
 export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
@@ -208,6 +209,7 @@ class AgentHubPage extends StatefulWidget {
     this.onHospitalBagCartUpdate,
     this.onHospitalBagCartContextRequired,
     this.onPregnancyDiaryChange,
+    this.onPregnancyPlanChange,
     this.onNewSession,
     this.initialComposerText,
     this.initialAutoSend = false,
@@ -234,6 +236,7 @@ class AgentHubPage extends StatefulWidget {
   final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
   final VoidCallback? onHospitalBagCartContextRequired;
   final ValueChanged<PregnancyDiaryChange>? onPregnancyDiaryChange;
+  final ValueChanged<PregnancyPlanChange>? onPregnancyPlanChange;
   final AgentHubNewSessionHandler? onNewSession;
   final String? initialComposerText;
   final bool initialAutoSend;
@@ -259,6 +262,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final Map<String, String> _localActionStatuses = <String, String>{};
   final Set<String> _appliedHospitalBagCartUpdates = <String>{};
   final Set<String> _appliedPregnancyDiaryChangeEventIds = <String>{};
+  final Set<String> _appliedPregnancyPlanChangeEventIds = <String>{};
   bool _hospitalBagCartLinkContextApplied = false;
   final ScrollController _chatScrollController = ScrollController();
   final GlobalKey _activeArtifactPanelKey = GlobalKey();
@@ -319,6 +323,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _restoreCachedInteractionState();
     _applyHospitalBagCartUpdates(_state);
     _applyPregnancyDiaryChanges(_state);
+    _applyPregnancyPlanChanges(_state);
     _applyHospitalBagCartLinkContext(_state);
     _publishRunState(_state);
     _restorePersistedInteractionState();
@@ -367,6 +372,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     if (oldWidget.onPregnancyDiaryChange != widget.onPregnancyDiaryChange) {
       _applyPregnancyDiaryChanges(_state);
+    }
+    if (oldWidget.onPregnancyPlanChange != widget.onPregnancyPlanChange) {
+      _applyPregnancyPlanChanges(_state);
     }
   }
 
@@ -567,6 +575,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
     _applyHospitalBagCartUpdates(_state);
     _applyPregnancyDiaryChanges(_state);
+    _applyPregnancyPlanChanges(_state);
     _applyHospitalBagCartLinkContext(_state);
     _persistInteractionState();
   }
@@ -1433,6 +1442,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _applyHospitalBagCartUpdates(nextState);
     }
     _applyPregnancyDiaryChanges(nextState);
+    _applyPregnancyPlanChanges(nextState);
     _applyHospitalBagCartLinkContext(
       nextState,
       checkArtifacts: artifactProjectionChanged,
@@ -1519,6 +1529,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
       final change = PregnancyDiaryChange.tryFromEvent(event);
       if (change == null ||
           !_appliedPregnancyDiaryChangeEventIds.add(change.eventId)) {
+        continue;
+      }
+      onChange(change);
+    }
+  }
+
+  void _applyPregnancyPlanChanges(AgentStreamRunState state) {
+    final onChange = widget.onPregnancyPlanChange;
+    if (onChange == null) return;
+    for (final event in state.events) {
+      final change = PregnancyPlanChange.tryFromEvent(event);
+      if (change == null ||
+          !_appliedPregnancyPlanChangeEventIds.add(change.eventId)) {
         continue;
       }
       onChange(change);
@@ -2056,6 +2079,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       nextState = nextState.applyEvent(event);
     }
     _applyPregnancyDiaryChanges(nextState);
+    _applyPregnancyPlanChanges(nextState);
     _setRunState(nextState);
   }
 

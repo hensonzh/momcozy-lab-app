@@ -7,7 +7,11 @@ import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
@@ -18,6 +22,8 @@ import 'package:momcozy_flutter_app/features/media/presentation/product_asset_vi
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/status/domain/status_overview.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -560,6 +566,20 @@ class _PregnancyDiaryLoadResult {
   final bool failed;
 }
 
+class _PregnancyPlanLoadResult {
+  const _PregnancyPlanLoadResult({
+    required this.plan,
+    required this.failed,
+    required this.requestGeneration,
+    required this.changeRevision,
+  });
+
+  final PregnancyPlan? plan;
+  final bool failed;
+  final int requestGeneration;
+  final int? changeRevision;
+}
+
 class _StatusPage extends StatefulWidget {
   const _StatusPage({
     required this.path,
@@ -589,9 +609,16 @@ class _StatusPageState extends State<_StatusPage> {
   late _StatusInteractionState _interactionState = _StatusInteractionState();
   MomCozyApiRuntime? _runtime;
   PregnancyDiaryChangeStore? _pregnancyDiaryChangeStore;
+  PregnancyPlanChangeStore? _pregnancyPlanChangeStore;
   int _handledPregnancyDiaryRevision = 0;
+  int _handledPregnancyPlanRevision = 0;
   late Future<StatusOverview> _overviewFuture;
   Future<_PregnancyDiaryLoadResult>? _pregnancyDiaryFuture;
+  Future<_PregnancyPlanLoadResult>? _pregnancyPlanFuture;
+  Timer? _pregnancyPlanNoticeTimer;
+  int _pregnancyPlanRequestGeneration = 0;
+  int? _scheduledPregnancyPlanRenderGeneration;
+  int? _renderedPregnancyPlanRequestGeneration;
 
   @override
   void didChangeDependencies() {
@@ -601,11 +628,22 @@ class _StatusPageState extends State<_StatusPage> {
       _pregnancyDiaryChangeStore?.removeListener(
         _handlePregnancyDiaryChangeStore,
       );
+      _pregnancyPlanChangeStore?.removeListener(
+        _handlePregnancyPlanChangeStore,
+      );
+      _pregnancyPlanNoticeTimer?.cancel();
+      _pregnancyPlanRequestGeneration += 1;
+      _scheduledPregnancyPlanRenderGeneration = null;
+      _renderedPregnancyPlanRequestGeneration = null;
       _runtime = runtime;
-      final changeStore = runtime.pregnancyDiaryChangeStore;
-      _pregnancyDiaryChangeStore = changeStore;
-      _handledPregnancyDiaryRevision = changeStore.revision;
-      changeStore.addListener(_handlePregnancyDiaryChangeStore);
+      final diaryChangeStore = runtime.pregnancyDiaryChangeStore;
+      final planChangeStore = runtime.pregnancyPlanChangeStore;
+      _pregnancyDiaryChangeStore = diaryChangeStore;
+      _pregnancyPlanChangeStore = planChangeStore;
+      _handledPregnancyDiaryRevision = diaryChangeStore.revision;
+      _handledPregnancyPlanRevision = planChangeStore.revision;
+      diaryChangeStore.addListener(_handlePregnancyDiaryChangeStore);
+      planChangeStore.addListener(_handlePregnancyPlanChangeStore);
       _interactionState = _statusInteractionStates[runtime] ??=
           _StatusInteractionState();
       _view = _interactionState.view;
@@ -614,8 +652,11 @@ class _StatusPageState extends State<_StatusPage> {
       _milkTrendMode = _interactionState.milkTrendMode;
       _babyGrowthMetric = _interactionState.babyGrowthMetric;
       _activeDetail = _interactionState.activeDetail;
-      final hasDiaryNotice = changeStore.hasUnread || changeStore.highlightCard;
-      if (hasDiaryNotice) {
+      final hasDiaryNotice =
+          diaryChangeStore.hasUnread || diaryChangeStore.highlightCard;
+      final hasPlanNotice =
+          planChangeStore.hasUnread || planChangeStore.highlightCard;
+      if (hasDiaryNotice || hasPlanNotice) {
         _view = 'mom';
         _careStage = 'pregnancy';
         _activeDetail = null;
@@ -625,7 +666,13 @@ class _StatusPageState extends State<_StatusPage> {
       _pregnancyDiaryFuture = _careStage == 'pregnancy'
           ? _loadPregnancyDiary(
               runtime,
-              changeRevision: hasDiaryNotice ? changeStore.revision : null,
+              changeRevision: hasDiaryNotice ? diaryChangeStore.revision : null,
+            )
+          : null;
+      _pregnancyPlanFuture = _careStage == 'pregnancy'
+          ? _startPregnancyPlanLoad(
+              runtime,
+              changeRevision: hasPlanNotice ? planChangeStore.revision : null,
             )
           : null;
     }
@@ -636,6 +683,8 @@ class _StatusPageState extends State<_StatusPage> {
     _pregnancyDiaryChangeStore?.removeListener(
       _handlePregnancyDiaryChangeStore,
     );
+    _pregnancyPlanChangeStore?.removeListener(_handlePregnancyPlanChangeStore);
+    _pregnancyPlanNoticeTimer?.cancel();
     super.dispose();
   }
 
@@ -661,12 +710,39 @@ class _StatusPageState extends State<_StatusPage> {
     });
   }
 
+  void _handlePregnancyPlanChangeStore() {
+    if (!mounted) return;
+    final runtime = _runtime;
+    final changeStore = _pregnancyPlanChangeStore;
+    if (runtime == null || changeStore == null) return;
+    final revision = changeStore.revision;
+    if (revision <= _handledPregnancyPlanRevision) {
+      setState(() {});
+      return;
+    }
+
+    _handledPregnancyPlanRevision = revision;
+    if (!changeStore.hasUnread && !changeStore.highlightCard) {
+      setState(() {});
+      return;
+    }
+    final future = _startPregnancyPlanLoad(runtime, changeRevision: revision);
+    setState(() {
+      _view = 'mom';
+      _careStage = 'pregnancy';
+      _activeDetail = null;
+      _pregnancyPlanFuture = future;
+      _persistInteractionState();
+    });
+  }
+
   void _changeCareStage(String stage) {
     setState(() {
       _careStage = stage;
       if (stage == 'pregnancy') _view = 'mom';
       if (stage == 'pregnancy' && _runtime != null) {
         _pregnancyDiaryFuture ??= _loadPregnancyDiary(_runtime!);
+        _pregnancyPlanFuture ??= _startPregnancyPlanLoad(_runtime!);
       }
       _activeDetail = null;
       _persistInteractionState();
@@ -733,6 +809,155 @@ class _StatusPageState extends State<_StatusPage> {
       }
       return const _PregnancyDiaryLoadResult(entries: [], failed: true);
     }
+  }
+
+  Future<_PregnancyPlanLoadResult> _startPregnancyPlanLoad(
+    MomCozyApiRuntime runtime, {
+    int? changeRevision,
+  }) {
+    _pregnancyPlanNoticeTimer?.cancel();
+    _scheduledPregnancyPlanRenderGeneration = null;
+    _renderedPregnancyPlanRequestGeneration = null;
+    final requestGeneration = ++_pregnancyPlanRequestGeneration;
+    return _loadPregnancyPlan(
+      runtime,
+      requestGeneration: requestGeneration,
+      changeRevision: changeRevision,
+    );
+  }
+
+  Future<_PregnancyPlanLoadResult> _loadPregnancyPlan(
+    MomCozyApiRuntime runtime, {
+    required int requestGeneration,
+    required int? changeRevision,
+  }) async {
+    final changeStore = runtime.pregnancyPlanChangeStore;
+    try {
+      final plan = await runtime.pregnancyPlanRepository.fetchActivePlan();
+      final isCurrentChange =
+          _isCurrentPregnancyPlanRequest(runtime, requestGeneration) &&
+          changeRevision != null &&
+          changeStore.revision == changeRevision;
+      if (plan != null &&
+          (!plan.hasRenderableCard ||
+              _persistedPregnancyPlanCard(plan) == null)) {
+        if (isCurrentChange && changeStore.highlightCard) {
+          changeStore.restoreNavigationNotice();
+        }
+        return _PregnancyPlanLoadResult(
+          plan: plan,
+          failed: true,
+          requestGeneration: requestGeneration,
+          changeRevision: changeRevision,
+        );
+      }
+      if (plan == null && isCurrentChange) {
+        if (changeStore.highlightCard) {
+          changeStore.restoreNavigationNotice();
+        }
+        return _PregnancyPlanLoadResult(
+          plan: null,
+          failed: true,
+          requestGeneration: requestGeneration,
+          changeRevision: changeRevision,
+        );
+      }
+      return _PregnancyPlanLoadResult(
+        plan: plan,
+        failed: false,
+        requestGeneration: requestGeneration,
+        changeRevision: changeRevision,
+      );
+    } catch (_) {
+      if (_isCurrentPregnancyPlanRequest(runtime, requestGeneration) &&
+          changeRevision != null &&
+          changeStore.revision == changeRevision &&
+          changeStore.highlightCard) {
+        changeStore.restoreNavigationNotice();
+      }
+      return _PregnancyPlanLoadResult(
+        plan: null,
+        failed: true,
+        requestGeneration: requestGeneration,
+        changeRevision: changeRevision,
+      );
+    }
+  }
+
+  bool _isCurrentPregnancyPlanRequest(
+    MomCozyApiRuntime runtime,
+    int requestGeneration,
+  ) {
+    return mounted &&
+        identical(runtime, _runtime) &&
+        requestGeneration == _pregnancyPlanRequestGeneration;
+  }
+
+  void _schedulePregnancyPlanRendered(_PregnancyPlanLoadResult result) {
+    final generation = result.requestGeneration;
+    if (result.failed ||
+        result.plan == null ||
+        _scheduledPregnancyPlanRenderGeneration == generation ||
+        _renderedPregnancyPlanRequestGeneration == generation) {
+      return;
+    }
+    _scheduledPregnancyPlanRenderGeneration = generation;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scheduledPregnancyPlanRenderGeneration == generation) {
+        _scheduledPregnancyPlanRenderGeneration = null;
+      }
+      final runtime = _runtime;
+      if (runtime == null ||
+          !_isCurrentPregnancyPlanRequest(runtime, generation) ||
+          _view != 'mom' ||
+          _careStage != 'pregnancy') {
+        return;
+      }
+      _renderedPregnancyPlanRequestGeneration = generation;
+      final revision = result.changeRevision;
+      if (revision == null) return;
+      final store = runtime.pregnancyPlanChangeStore;
+      if (store.revision != revision) return;
+      if (store.hasUnread) store.transferNavigationNoticeToCard();
+      if (store.highlightCard) {
+        _schedulePregnancyPlanNoticeClear(
+          store: store,
+          revision: revision,
+          requestGeneration: generation,
+        );
+      }
+    });
+  }
+
+  void _retryPregnancyPlan() {
+    final runtime = _runtime;
+    final changeStore = _pregnancyPlanChangeStore;
+    if (runtime == null || changeStore == null) return;
+    final hasNotice = changeStore.hasUnread || changeStore.highlightCard;
+    setState(() {
+      _pregnancyPlanFuture = _startPregnancyPlanLoad(
+        runtime,
+        changeRevision: hasNotice ? changeStore.revision : null,
+      );
+    });
+  }
+
+  void _schedulePregnancyPlanNoticeClear({
+    required PregnancyPlanChangeStore store,
+    required int revision,
+    required int requestGeneration,
+  }) {
+    _pregnancyPlanNoticeTimer?.cancel();
+    _pregnancyPlanNoticeTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted ||
+          !identical(store, _pregnancyPlanChangeStore) ||
+          requestGeneration != _pregnancyPlanRequestGeneration ||
+          store.revision != revision ||
+          !store.highlightCard) {
+        return;
+      }
+      store.clearCardNotice();
+    });
   }
 
   Future<void> _showGrowthEditor() async {
@@ -1126,7 +1351,21 @@ class _StatusPageState extends State<_StatusPage> {
         onRecordToday: () => unawaited(_showPregnancyDiaryEditor()),
       ),
       const SizedBox(height: 18),
-      _StatusPregnancyPlanPreview(),
+      FutureBuilder<_PregnancyPlanLoadResult>(
+        future: _pregnancyPlanFuture ??= _startPregnancyPlanLoad(_runtime!),
+        builder: (context, snapshot) {
+          final result = snapshot.data;
+          if (snapshot.connectionState == ConnectionState.done &&
+              result != null) {
+            _schedulePregnancyPlanRendered(result);
+          }
+          return _StatusPregnancyPlanPreview(
+            snapshot: snapshot,
+            highlighted: _pregnancyPlanChangeStore?.highlightCard ?? false,
+            onRetry: _retryPregnancyPlan,
+          );
+        },
+      ),
       const SizedBox(height: 8),
       if (_activeDetail == 'pregnancy-diary') ...[
         _StatusDetailPanel(
@@ -1934,41 +2173,190 @@ class _StatusVerticalDivider extends StatelessWidget {
 }
 
 class _StatusPregnancyPlanPreview extends StatelessWidget {
-  const _StatusPregnancyPlanPreview();
+  const _StatusPregnancyPlanPreview({
+    required this.snapshot,
+    required this.highlighted,
+    required this.onRetry,
+  });
+
+  final AsyncSnapshot<_PregnancyPlanLoadResult> snapshot;
+  final bool highlighted;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
+    if (snapshot.connectionState == ConnectionState.waiting ||
+        (!snapshot.hasData && !snapshot.hasError)) {
+      return _surface(
+        key: const ValueKey('status-pregnancy-plan-loading'),
+        context: context,
+        child: const Row(
+          children: [
+            SizedBox.square(
+              dimension: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            SizedBox(width: 12),
+            Expanded(child: Text('正在加载孕期计划…')),
+          ],
+        ),
+      );
+    }
+
+    final result = snapshot.data;
+    if (snapshot.hasError || result?.failed == true) {
+      return _surface(
+        key: const ValueKey('status-pregnancy-plan-error'),
+        context: context,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('孕期计划', style: _titleStyle(context)),
+            const SizedBox(height: 8),
+            const Text('计划内容暂不可用，请稍后重试。'),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              key: const ValueKey('status-pregnancy-plan-retry-button'),
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('重新加载'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final plan = result?.plan;
+    if (plan == null) {
+      return _surface(
+        key: const ValueKey('status-pregnancy-plan-empty'),
+        context: context,
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('孕期计划', style: _titleStyle(context)),
+                  const SizedBox(height: 5),
+                  Text(
+                    '还没有计划，可以让 Momcozy Agent 按你的情况生成。',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: MomCozyColors.mutedForeground,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            _StatusFilledPill(
+              key: const ValueKey('status-pregnancy-plan-agent-button'),
+              label: '制定孕期计划',
+              icon: null,
+              color: const Color(0xff5f978b),
+              avatar: true,
+              onTap: () =>
+                  context.go('/', extra: const {'agentPrefill': '帮我生成孕期计划'}),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final card = _persistedPregnancyPlanCard(plan);
+    if (card == null) {
+      return _surface(
+        key: const ValueKey('status-pregnancy-plan-error'),
+        context: context,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('孕期计划', style: _titleStyle(context)),
+            const SizedBox(height: 8),
+            const Text('计划内容暂不可用，请稍后重试。'),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              key: const ValueKey('status-pregnancy-plan-retry-button'),
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('重新加载'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final surface = _surface(
+      key: const ValueKey('status-pregnancy-plan-card'),
+      context: context,
+      child: AgentArtifactPanel(cards: [card]),
+    );
+    return AnimatedContainer(
+      key: const ValueKey('status-pregnancy-plan-card-wrapper'),
+      duration: const Duration(milliseconds: 180),
+      padding: highlighted ? const EdgeInsets.all(2) : EdgeInsets.zero,
+      decoration: BoxDecoration(
+        color: highlighted
+            ? MomCozyColors.badge.withValues(alpha: 0.06)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: highlighted
+              ? MomCozyColors.badge.withValues(alpha: 0.62)
+              : Colors.transparent,
+          width: 2,
+        ),
+      ),
+      child: Stack(
+        children: [
+          if (highlighted)
+            const Positioned.fill(
+              key: ValueKey('status-pregnancy-plan-change-highlight'),
+              child: IgnorePointer(child: SizedBox.expand()),
+            ),
+          surface,
+        ],
+      ),
+    );
+  }
+
+  Widget _surface({
+    required Key key,
+    required BuildContext context,
+    required Widget child,
+  }) {
     return Container(
+      key: key,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: const Color(0xfffbfefd),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: const Color(0xffcae6e0)),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              '孕期计划',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          _StatusFilledPill(
-            key: const ValueKey('status-pregnancy-plan-agent-button'),
-            label: '制定孕期计划',
-            icon: null,
-            color: const Color(0xff5f978b),
-            avatar: true,
-            onTap: () =>
-                context.go('/', extra: const {'agentPrefill': '帮我制定孕期计划'}),
-          ),
-        ],
-      ),
+      child: child,
     );
   }
+
+  TextStyle? _titleStyle(BuildContext context) => Theme.of(context)
+      .textTheme
+      .titleLarge
+      ?.copyWith(color: MomCozyColors.foreground, fontWeight: FontWeight.w900);
+}
+
+AgentArtifactCardView? _persistedPregnancyPlanCard(PregnancyPlan plan) {
+  final card = plan.card;
+  final mapped = AgentArtifactMapper.cardFromEvent(
+    AgentStreamEvent({
+      'event_id': 'persisted-pregnancy-plan:${plan.id}',
+      'type': 'artifact.created',
+      'artifact_id': plan.id,
+      'payload': {'artifact_type': 'birth_journey_plan_card', 'card': card},
+    }),
+  );
+  return mapped?.presentationKind ==
+          AgentArtifactPresentationKind.birthJourneyPlanCard
+      ? mapped
+      : null;
 }
 
 class _StatusBabyGrowthCurvePreview extends StatelessWidget {

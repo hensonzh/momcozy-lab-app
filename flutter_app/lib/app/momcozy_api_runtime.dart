@@ -24,6 +24,9 @@ import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_ap
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_change_persistence.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_change_persistence.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -71,6 +74,7 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
+    PregnancyPlanChangeStore? pregnancyPlanChangeStore,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
@@ -119,6 +123,16 @@ class MomCozyApiRuntime {
           ),
         );
     unawaited(this.pregnancyDiaryChangeStore.restore());
+    this.pregnancyPlanChangeStore =
+        pregnancyPlanChangeStore ??
+        PregnancyPlanChangeStore(
+          persistence: FlutterSecurePregnancyPlanChangePersistence(
+            userId: this.session.status == MomCozySessionStatus.authenticated
+                ? this.session.userId
+                : '',
+          ),
+        );
+    unawaited(this.pregnancyPlanChangeStore.restore());
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
     _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
@@ -141,6 +155,7 @@ class MomCozyApiRuntime {
     ProductAssetRepository? productAssetRepository,
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
+    PregnancyPlanChangeStore? pregnancyPlanChangeStore,
     String? userId,
     String? babyId,
     String? locale,
@@ -164,6 +179,7 @@ class MomCozyApiRuntime {
       productAssetRepository: productAssetRepository,
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
+      pregnancyPlanChangeStore: pregnancyPlanChangeStore,
     );
   }
 
@@ -181,6 +197,7 @@ class MomCozyApiRuntime {
     HospitalBagCartStore? hospitalBagCartStore,
     IbclcConsultStore? ibclcConsultStore,
     PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
+    PregnancyPlanChangeStore? pregnancyPlanChangeStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -266,6 +283,7 @@ class MomCozyApiRuntime {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
+      pregnancyPlanChangeStore: pregnancyPlanChangeStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
@@ -339,6 +357,7 @@ class MomCozyApiRuntime {
   final HospitalBagCartStore hospitalBagCartStore;
   late final IbclcConsultStore ibclcConsultStore;
   late final PregnancyDiaryChangeStore pregnancyDiaryChangeStore;
+  late final PregnancyPlanChangeStore pregnancyPlanChangeStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
   final Future<bool> Function()? agentStreamUnauthorizedHandler;
@@ -487,6 +506,10 @@ class MomCozyApiRuntime {
   PregnancyDiaryApiRepository get pregnancyDiaryRepository {
     return PregnancyDiaryApiRepository(transport: jsonTransport);
   }
+
+  PregnancyPlanApiRepository get pregnancyPlanRepository {
+    return PregnancyPlanApiRepository(transport: jsonTransport);
+  }
 }
 
 class MomCozyRuntimeScope extends InheritedWidget {
@@ -562,6 +585,13 @@ class MomCozyRuntimeController extends ChangeNotifier {
     final pregnancyDiaryChangeStore = session.userId == _runtime.session.userId
         ? _runtime.pregnancyDiaryChangeStore
         : null;
+    final sameAuthenticatedPlanAccount =
+        session.status == MomCozySessionStatus.authenticated &&
+        _runtime.session.status == MomCozySessionStatus.authenticated &&
+        session.userId == _runtime.session.userId;
+    final pregnancyPlanChangeStore = sameAuthenticatedPlanAccount
+        ? _runtime.pregnancyPlanChangeStore
+        : null;
     if (store == null) {
       return MomCozyApiRuntime.fromSession(
         session,
@@ -575,6 +605,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
         hospitalBagCartStore: hospitalBagCartStore,
         ibclcConsultStore: ibclcConsultStore,
         pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
+        pregnancyPlanChangeStore: pregnancyPlanChangeStore,
       );
     }
     return MomCozyApiRuntime.fromSession(
@@ -589,6 +620,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
       hospitalBagCartStore: hospitalBagCartStore,
       ibclcConsultStore: ibclcConsultStore,
       pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
+      pregnancyPlanChangeStore: pregnancyPlanChangeStore,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {

@@ -11,6 +11,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
@@ -185,7 +186,7 @@ void main() {
               )
               .controller
               ?.text,
-          '帮我制定孕期计划',
+          '帮我生成孕期计划',
         );
 
         final failingRouteIntentPlatform = FakeRouteIntentPlatform();
@@ -1210,6 +1211,7 @@ MomCozyApiRuntime _runtime({
             },
           ],
         },
+        pregnancyPlansEndpoint: const {'items': <Object?>[]},
         scheduleDayPlanEndpoint: const {
           'items': <Object?>[
             {
