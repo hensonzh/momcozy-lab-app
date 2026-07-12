@@ -501,6 +501,11 @@ class MomCozyApiRuntime {
     return StatusApiRepository(transport: jsonTransport, now: now);
   }
 
+  Future<DateTime?> loadSchedulePostpartumAnchorDate() async {
+    final overview = await statusRepository.fetchOverview();
+    return overview.mom?.deliveryDate ?? overview.baby?.birthDate;
+  }
+
   AgentHubProfileRepository get agentHubProfileRepository {
     return AgentHubProfileRepository(transport: jsonTransport);
   }

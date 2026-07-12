@@ -89,6 +89,9 @@ class MomCozyFeaturePage extends StatelessWidget {
         milkPlanChangeStore: MomCozyRuntimeScope.of(
           context,
         ).milkPlanChangeStore,
+        deliveryDateLoader: MomCozyRuntimeScope.of(
+          context,
+        ).loadSchedulePostpartumAnchorDate,
         routeUri: routeUri,
         routeExtra: routeExtra,
         onOpenAgent: () =>
