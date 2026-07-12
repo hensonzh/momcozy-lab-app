@@ -242,12 +242,16 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       return children;
     }
     if (state.phase == ScheduleLoadPhase.error && snapshot == null) {
-      children.add(
-        _ScheduleErrorCard(
-          message: state.loadError ?? '计划数据暂时不可用。',
-          onRetry: () => unawaited(_controller.load()),
+      children.addAll([
+        const _ScheduleContextPlaceholder(
+          title: '计划暂时未同步',
+          message: '暂时无法读取当天计划，日期浏览仍然可用。',
         ),
-      );
+        const SizedBox(height: 14),
+        _ScheduleErrorCard(onRetry: () => unawaited(_controller.load())),
+        const SizedBox(height: 22),
+        const _ScheduleUnavailableTimelineNotice(),
+      ]);
       return children;
     }
 
@@ -288,6 +292,12 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       }
     }
     children.add(const SizedBox(height: 16));
+    if (state.phase == ScheduleLoadPhase.loading) {
+      children.addAll([
+        const _ScheduleInlineLoadingNotice(),
+        const SizedBox(height: 8),
+      ]);
+    }
     if (state.loadError != null) {
       children.addAll([
         _ScheduleFeedbackBanner(
@@ -3029,15 +3039,146 @@ class _ScheduleLoadingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(28),
-      child: Center(
-        child: Column(
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 12),
-            Text('计划待同步'),
+    return Semantics(
+      key: const ValueKey('schedule-loading-state'),
+      container: true,
+      liveRegion: true,
+      label: '计划加载中',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            key: const ValueKey('schedule-loading-context-skeleton'),
+            height: 128,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: MomCozyColors.card.withValues(alpha: 0.55),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: MomCozyColors.border.withValues(alpha: 0.45),
+              ),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ScheduleSkeletonBar(width: 128, height: 17),
+                SizedBox(height: 8),
+                _ScheduleSkeletonBar(width: 92, height: 11),
+                Spacer(),
+                Row(
+                  children: [
+                    _ScheduleSkeletonBar(width: 64, height: 11),
+                    Spacer(),
+                    _ScheduleSkeletonBar(width: 36, height: 12),
+                  ],
+                ),
+                SizedBox(height: 8),
+                _ScheduleSkeletonBar(height: 9),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            key: const ValueKey('schedule-loading-hero-skeleton'),
+            height: 166,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: MomCozyColors.secondary.withValues(alpha: 0.28),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: MomCozyColors.border.withValues(alpha: 0.45),
+              ),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ScheduleSkeletonBar(width: 72, height: 11),
+                SizedBox(height: 18),
+                _ScheduleSkeletonBar(width: 94, height: 30),
+                SizedBox(height: 9),
+                _ScheduleSkeletonBar(width: 148, height: 15),
+                Spacer(),
+                _ScheduleSkeletonBar(height: 42),
+              ],
+            ),
+          ),
+          const SizedBox(height: 22),
+          const Row(
+            children: [
+              Text(
+                '今日任务',
+                style: TextStyle(
+                  color: MomCozyColors.foreground,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Spacer(),
+              Text(
+                '任务加载中…',
+                style: TextStyle(
+                  color: MomCozyColors.mutedForeground,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          for (var index = 0; index < 3; index += 1) ...[
+            Container(
+              height: 48,
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: MomCozyColors.card.withValues(alpha: 0.55),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: MomCozyColors.border.withValues(alpha: 0.4),
+                ),
+              ),
+              child: const Row(
+                children: [
+                  _ScheduleSkeletonBar(width: 44, height: 12),
+                  SizedBox(width: 12),
+                  Expanded(child: _ScheduleSkeletonBar(height: 13)),
+                ],
+              ),
+            ),
           ],
+          const Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '记录加载中…',
+              style: TextStyle(
+                color: MomCozyColors.mutedForeground,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScheduleSkeletonBar extends StatelessWidget {
+  const _ScheduleSkeletonBar({
+    this.width = double.infinity,
+    required this.height,
+  });
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      height: height,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: MomCozyColors.secondary.withValues(alpha: 0.65),
+          borderRadius: BorderRadius.circular(6),
         ),
       ),
     );
@@ -3045,34 +3186,126 @@ class _ScheduleLoadingCard extends StatelessWidget {
 }
 
 class _ScheduleErrorCard extends StatelessWidget {
-  const _ScheduleErrorCard({required this.message, required this.onRetry});
+  const _ScheduleErrorCard({required this.onRetry});
 
-  final String message;
   final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
+      key: const ValueKey('schedule-initial-error-notice'),
       decoration: MomCozyDecorations.card(
         color: const Color(0xfffff2f2),
         borderColor: Colors.red.shade200,
-        radius: 18,
+        radius: 16,
+        shadows: const [],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
+        padding: const EdgeInsets.all(14),
+        child: Row(
           children: [
-            const Icon(Icons.cloud_off_rounded, color: Colors.redAccent),
-            const SizedBox(height: 8),
-            const Text('计划同步失败', style: TextStyle(fontWeight: FontWeight.w900)),
-            const SizedBox(height: 4),
-            Text(message, textAlign: TextAlign.center),
-            const SizedBox(height: 10),
+            const Icon(
+              Icons.cloud_off_rounded,
+              color: Colors.redAccent,
+              size: 22,
+            ),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('计划同步失败', style: TextStyle(fontWeight: FontWeight.w900)),
+                  SizedBox(height: 2),
+                  Text(
+                    '暂时无法同步当天计划，请稍后重试。',
+                    style: TextStyle(
+                      color: MomCozyColors.mutedForeground,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
             OutlinedButton.icon(
               key: const ValueKey('schedule-retry-button'),
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, 38),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                visualDensity: VisualDensity.compact,
+              ),
+              icon: const Icon(Icons.refresh_rounded, size: 16),
               label: const Text('重试'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ScheduleInlineLoadingNotice extends StatelessWidget {
+  const _ScheduleInlineLoadingNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      key: const ValueKey('schedule-inline-loading-notice'),
+      liveRegion: true,
+      child: const Row(
+        children: [
+          Icon(
+            Icons.sync_rounded,
+            size: 16,
+            color: MomCozyColors.mutedForeground,
+          ),
+          SizedBox(width: 7),
+          Text(
+            '正在同步任务与记录…',
+            style: TextStyle(
+              color: MomCozyColors.mutedForeground,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScheduleUnavailableTimelineNotice extends StatelessWidget {
+  const _ScheduleUnavailableTimelineNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      key: ValueKey('schedule-unavailable-timeline'),
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(
+              Icons.event_busy_outlined,
+              color: MomCozyColors.mutedForeground,
+              size: 30,
+            ),
+            SizedBox(height: 8),
+            Text(
+              '执行内容暂不可用',
+              style: TextStyle(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            SizedBox(height: 3),
+            Text(
+              '重试后会显示当天任务与记录',
+              style: TextStyle(
+                color: MomCozyColors.mutedForeground,
+                fontSize: 12,
+              ),
             ),
           ],
         ),
