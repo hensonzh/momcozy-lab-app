@@ -638,6 +638,76 @@ void main() {
     );
   });
 
+  testWidgets(
+    'narrow date strip keeps seven days visible and floats back to today',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final transport = _transport();
+      await _pumpPage(tester, transport);
+
+      final dateStrip = find.byKey(const ValueKey('schedule-date-strip'));
+      expect(dateStrip, findsOneWidget);
+      expect(
+        find.descendant(
+          of: dateStrip,
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is SingleChildScrollView &&
+                widget.scrollDirection == Axis.horizontal,
+          ),
+        ),
+        findsNothing,
+      );
+      for (final date in <String>[
+        '2026-06-30',
+        '2026-07-01',
+        '2026-07-02',
+        '2026-07-03',
+        '2026-07-04',
+        '2026-07-05',
+        '2026-07-06',
+      ]) {
+        expect(
+          find.byKey(ValueKey('schedule-date-$date')).hitTestable(),
+          findsOneWidget,
+        );
+      }
+      expect(
+        find.byKey(const ValueKey('schedule-back-to-today-button')),
+        findsNothing,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('schedule-week-next-button')));
+      await tester.pumpAndSettle();
+
+      final todayButton = find.byKey(
+        const ValueKey('schedule-back-to-today-button'),
+      );
+      expect(todayButton, findsOneWidget);
+      expect(
+        tester.getTopLeft(todayButton).dy,
+        greaterThan(tester.getTopLeft(dateStrip).dy),
+      );
+      expect(transport.getPaths, hasLength(4));
+
+      await tester.tap(todayButton);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('schedule-date-2026-07-03')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('schedule-back-to-today-button')),
+        findsNothing,
+      );
+      expect(transport.getPaths, hasLength(4));
+    },
+  );
+
   testWidgets('renders backend failure as retryable error, not empty success', (
     tester,
   ) async {

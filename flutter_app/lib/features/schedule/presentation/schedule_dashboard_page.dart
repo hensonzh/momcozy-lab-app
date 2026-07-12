@@ -154,30 +154,71 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       animation: _controller,
       builder: (context, _) {
         final state = _controller.state;
-        return Column(
+        final showBackToToday =
+            !_sameDay(state.selectedDay, _controller.today) ||
+            !_sameWeekWindow(state.displayAnchor, _controller.today);
+        final motionDuration = MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 200);
+        return Stack(
           key: ValueKey('route-page-${widget.path}'),
+          clipBehavior: Clip.none,
           children: [
-            _ScheduleFixedDateArea(
-              today: _controller.today,
-              selectedDay: state.selectedDay,
-              displayAnchor: state.displayAnchor,
-              highlightedDay: _highlightedDay,
-              changedDayKeys: _changedDayKeys,
-              onSelected: (day) => unawaited(_controller.selectDay(day)),
-              onBrowseWeek: _controller.browseWeek,
-              onToday: () =>
-                  unawaited(_controller.selectDay(_controller.today)),
-            ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: _controller.load,
-                child: ListView(
-                  key: const ValueKey('schedule-scroll-content'),
-                  controller: _scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-                  children: _content(state),
+            Column(
+              children: [
+                _ScheduleFixedDateArea(
+                  today: _controller.today,
+                  selectedDay: state.selectedDay,
+                  displayAnchor: state.displayAnchor,
+                  highlightedDay: _highlightedDay,
+                  changedDayKeys: _changedDayKeys,
+                  onSelected: (day) => unawaited(_controller.selectDay(day)),
+                  onBrowseWeek: _controller.browseWeek,
                 ),
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: _controller.load,
+                    child: ListView(
+                      key: const ValueKey('schedule-scroll-content'),
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+                      children: _content(state),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              top: MediaQuery.paddingOf(context).top + 82,
+              right: 20,
+              child: AnimatedSwitcher(
+                duration: motionDuration,
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: Tween<double>(
+                      begin: 0.96,
+                      end: 1,
+                    ).animate(animation),
+                    child: child,
+                  ),
+                ),
+                child: showBackToToday
+                    ? FilledButton(
+                        key: const ValueKey('schedule-back-to-today-button'),
+                        onPressed: () =>
+                            unawaited(_controller.selectDay(_controller.today)),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 36),
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        child: const Text('今天'),
+                      )
+                    : const SizedBox.shrink(
+                        key: ValueKey('schedule-back-to-today-hidden'),
+                      ),
               ),
             ),
           ],
@@ -1082,7 +1123,6 @@ class _ScheduleFixedDateArea extends StatelessWidget {
     required this.changedDayKeys,
     required this.onSelected,
     required this.onBrowseWeek,
-    required this.onToday,
   });
 
   final DateTime today;
@@ -1092,7 +1132,6 @@ class _ScheduleFixedDateArea extends StatelessWidget {
   final Set<String> changedDayKeys;
   final ValueChanged<DateTime> onSelected;
   final ValueChanged<int> onBrowseWeek;
-  final VoidCallback onToday;
 
   @override
   Widget build(BuildContext context) {
@@ -1108,84 +1147,89 @@ class _ScheduleFixedDateArea extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${displayAnchor.year}年${displayAnchor.month}月',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: MomCozyColors.mutedForeground,
-                          fontWeight: FontWeight.w900,
-                        ),
+                Text(
+                  '${displayAnchor.year}年${displayAnchor.month}月',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: MomCozyColors.mutedForeground,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                SizedBox(
+                  height: 56,
+                  child: DecoratedBox(
+                    decoration: MomCozyDecorations.card(
+                      color: MomCozyColors.card,
+                      borderColor: MomCozyColors.border,
+                      radius: 16,
+                      shadows: MomCozyShadows.soft,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 32,
+                            height: 48,
+                            child: IconButton(
+                              key: const ValueKey('schedule-week-prev-button'),
+                              tooltip: '上一周',
+                              padding: EdgeInsets.zero,
+                              onPressed: () => onBrowseWeek(-1),
+                              icon: const Icon(Icons.chevron_left_rounded),
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                for (var offset = -3; offset <= 3; offset += 1)
+                                  Expanded(
+                                    child: _ScheduleDatePill(
+                                      date: displayAnchor.add(
+                                        Duration(days: offset),
+                                      ),
+                                      today: today,
+                                      selected: _sameDay(
+                                        displayAnchor.add(
+                                          Duration(days: offset),
+                                        ),
+                                        selectedDay,
+                                      ),
+                                      highlighted:
+                                          changedDayKeys.contains(
+                                            _dayKey(
+                                              displayAnchor.add(
+                                                Duration(days: offset),
+                                              ),
+                                            ),
+                                          ) ||
+                                          (highlightedDay != null &&
+                                              _sameDay(
+                                                displayAnchor.add(
+                                                  Duration(days: offset),
+                                                ),
+                                                highlightedDay!,
+                                              )),
+                                      onSelected: onSelected,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 32,
+                            height: 48,
+                            child: IconButton(
+                              key: const ValueKey('schedule-week-next-button'),
+                              tooltip: '下一周',
+                              padding: EdgeInsets.zero,
+                              onPressed: () => onBrowseWeek(1),
+                              icon: const Icon(Icons.chevron_right_rounded),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    if (!_sameDay(selectedDay, today) ||
-                        !_sameWeekWindow(displayAnchor, today))
-                      TextButton(
-                        key: const ValueKey('schedule-back-to-today-button'),
-                        onPressed: onToday,
-                        child: const Text('今天'),
-                      ),
-                  ],
-                ),
-                DecoratedBox(
-                  decoration: MomCozyDecorations.card(
-                    color: MomCozyColors.card,
-                    borderColor: MomCozyColors.border,
-                    radius: 16,
-                    shadows: MomCozyShadows.soft,
-                  ),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        key: const ValueKey('schedule-week-prev-button'),
-                        tooltip: '上一周',
-                        onPressed: () => onBrowseWeek(-1),
-                        icon: const Icon(Icons.chevron_left_rounded),
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              for (var offset = -3; offset <= 3; offset += 1)
-                                _ScheduleDatePill(
-                                  date: displayAnchor.add(
-                                    Duration(days: offset),
-                                  ),
-                                  today: today,
-                                  selected: _sameDay(
-                                    displayAnchor.add(Duration(days: offset)),
-                                    selectedDay,
-                                  ),
-                                  highlighted:
-                                      changedDayKeys.contains(
-                                        _dayKey(
-                                          displayAnchor.add(
-                                            Duration(days: offset),
-                                          ),
-                                        ),
-                                      ) ||
-                                      (highlightedDay != null &&
-                                          _sameDay(
-                                            displayAnchor.add(
-                                              Duration(days: offset),
-                                            ),
-                                            highlightedDay!,
-                                          )),
-                                  onSelected: onSelected,
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        key: const ValueKey('schedule-week-next-button'),
-                        tooltip: '下一周',
-                        onPressed: () => onBrowseWeek(1),
-                        icon: const Icon(Icons.chevron_right_rounded),
-                      ),
-                    ],
                   ),
                 ),
               ],
@@ -1225,49 +1269,91 @@ class _ScheduleDatePill extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         onTap: () => onSelected(date),
         child: SizedBox(
-          width: 44,
           height: 48,
           child: Center(
-            child: AnimatedContainer(
-              key: highlighted
-                  ? ValueKey('schedule-highlighted-date-${_dayKey(date)}')
-                  : null,
+            child: AnimatedScale(
+              scale: selected ? 1.05 : 1,
               duration: MediaQuery.disableAnimationsOf(context)
                   ? Duration.zero
                   : const Duration(milliseconds: 160),
-              width: 28,
-              height: 46,
-              decoration: BoxDecoration(
-                color: selected ? MomCozyColors.primary : Colors.transparent,
-                borderRadius: BorderRadius.circular(12),
-                border: highlighted && !selected
-                    ? Border.all(color: MomCozyColors.primary, width: 2)
+              child: AnimatedContainer(
+                key: highlighted
+                    ? ValueKey('schedule-highlighted-date-${_dayKey(date)}')
                     : null,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    _sameDay(date, today) ? '今' : _weekday(date),
-                    style: TextStyle(
-                      color: selected
-                          ? Colors.white70
-                          : MomCozyColors.mutedForeground,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      height: 1,
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : const Duration(milliseconds: 160),
+                width: 36,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: selected
+                      ? MomCozyColors.primary
+                      : highlighted
+                      ? MomCozyColors.careSoft
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  border: highlighted && !selected
+                      ? Border.all(
+                          color: MomCozyColors.care.withValues(alpha: 0.5),
+                        )
+                      : null,
+                  boxShadow: selected
+                      ? [
+                          BoxShadow(
+                            color: MomCozyColors.primary.withValues(alpha: 0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _sameDay(date, today) ? '今' : _weekday(date),
+                            style: TextStyle(
+                              color: selected
+                                  ? Colors.white70
+                                  : MomCozyColors.mutedForeground,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              height: 1,
+                            ),
+                          ),
+                          Text(
+                            '${date.day}',
+                            style: TextStyle(
+                              color: selected
+                                  ? Colors.white
+                                  : highlighted
+                                  ? MomCozyColors.care
+                                  : MomCozyColors.foreground,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900,
+                              height: 1.1,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Text(
-                    '${date.day}',
-                    style: TextStyle(
-                      color: selected ? Colors.white : MomCozyColors.foreground,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w900,
-                      height: 1.1,
-                    ),
-                  ),
-                ],
+                    if (highlighted && !selected)
+                      const Positioned(
+                        right: 2,
+                        top: 2,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: MomCozyColors.care,
+                            shape: BoxShape.circle,
+                          ),
+                          child: SizedBox(width: 6, height: 6),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

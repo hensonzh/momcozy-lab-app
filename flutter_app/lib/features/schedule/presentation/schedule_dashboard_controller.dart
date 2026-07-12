@@ -147,6 +147,23 @@ class ScheduleDashboardController extends ChangeNotifier {
 
   Future<void> selectDay(DateTime day) async {
     final selected = _dateOnly(day);
+    if (_dayKey(selected) == _dayKey(_state.selectedDay)) {
+      final displayAnchor = _isInDisplayWindow(_state.displayAnchor, selected)
+          ? _state.displayAnchor
+          : selected;
+      if (_dayKey(displayAnchor) == _dayKey(_state.displayAnchor)) return;
+      _state = ScheduleDashboardState(
+        phase: _state.phase,
+        selectedDay: _state.selectedDay,
+        displayAnchor: displayAnchor,
+        snapshot: _state.snapshot,
+        loadError: _state.loadError,
+        mutationError: _state.mutationError,
+        isMutating: _state.isMutating,
+      );
+      notifyListeners();
+      return;
+    }
     final cached = _dayCache[_dayKey(selected)];
     final displayAnchor = _isInDisplayWindow(_state.displayAnchor, selected)
         ? _state.displayAnchor
