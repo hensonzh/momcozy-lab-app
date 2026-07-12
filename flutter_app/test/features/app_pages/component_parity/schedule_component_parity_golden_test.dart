@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
 import 'package:momcozy_flutter_app/features/schedule/presentation/schedule_dashboard_page.dart';
 
 import '../../../support/fixture_api_transport.dart';
@@ -222,6 +224,50 @@ void main() {
         ),
       );
     });
+
+    testWidgets('task explanation dialog matches the legacy overlay', (
+      tester,
+    ) async {
+      await _pumpScheduleComponentApp(tester);
+      final helpButton = find.byKey(
+        const ValueKey('schedule-task-help-button'),
+      );
+      await tester.scrollUntilVisible(helpButton, 200);
+      await tester.tap(helpButton);
+      await tester.pumpAndSettle();
+
+      final dialog = find.byKey(
+        const ValueKey('schedule-task-explanation-dialog'),
+      );
+      expect(dialog, findsOneWidget);
+      await expectLater(
+        dialog,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_task_explanation_dialog.png',
+        ),
+      );
+    });
+
+    testWidgets('reminder warning matches the legacy confirmation overlay', (
+      tester,
+    ) async {
+      await _pumpScheduleComponentApp(tester, reminderEnabled: true);
+      await tester.tap(
+        find.byKey(const ValueKey('schedule-context-reminder-button')),
+      );
+      await tester.pumpAndSettle();
+
+      final dialog = find.byKey(
+        const ValueKey('schedule-reminder-confirm-dialog'),
+      );
+      expect(dialog, findsOneWidget);
+      await expectLater(
+        dialog,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_reminder_warning.png',
+        ),
+      );
+    });
   });
 }
 
@@ -229,6 +275,7 @@ Future<void> _pumpScheduleComponentApp(
   WidgetTester tester, {
   List<Map<String, Object?>> tasks = const [],
   List<Map<String, Object?>> pumpingRecords = const [],
+  bool reminderEnabled = false,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -261,9 +308,36 @@ Future<void> _pumpScheduleComponentApp(
           repository: ScheduleApiRepository(transport: transport),
           now: () => DateTime.utc(2026, 7, 3, 10),
           onOpenAgent: () {},
+          reminderGateway: const _GoldenReminderGateway(),
+          reminderPreferenceStore: _GoldenReminderStore(reminderEnabled),
         ),
       ),
     ),
   );
   await tester.pumpAndSettle();
+}
+
+class _GoldenReminderGateway implements ScheduleReminderGateway {
+  const _GoldenReminderGateway();
+
+  @override
+  bool get isSupported => true;
+
+  @override
+  Future<bool> setEnabled({
+    required bool enabled,
+    required List<ScheduleTask> tasks,
+  }) async => true;
+}
+
+class _GoldenReminderStore implements ScheduleReminderPreferenceStore {
+  const _GoldenReminderStore(this.enabled);
+
+  final bool enabled;
+
+  @override
+  Future<bool> readEnabled() async => enabled;
+
+  @override
+  Future<void> writeEnabled(bool enabled) async {}
 }
