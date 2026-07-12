@@ -185,6 +185,59 @@ void main() {
       );
     });
 
+    testWidgets('pumping record sheet matches the legacy bottom sheet', (
+      tester,
+    ) async {
+      await _pumpScheduleComponentApp(tester);
+      final quickActions = find.byKey(const ValueKey('schedule-quick-actions'));
+      await tester.scrollUntilVisible(quickActions, 200);
+      await tester.tap(
+        find.descendant(of: quickActions, matching: find.text('吸奶补录')),
+      );
+      await tester.pumpAndSettle();
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pump();
+
+      final sheet = find.byKey(const ValueKey('schedule-pumping-record-sheet'));
+      expect(sheet, findsOneWidget);
+      expect(find.text('🤱 吸奶补录'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-pumping-record-description')),
+        findsOneWidget,
+      );
+      await expectLater(
+        sheet,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_pumping_record_sheet.png',
+        ),
+      );
+    });
+
+    testWidgets('feeding record sheet matches the legacy bottom sheet', (
+      tester,
+    ) async {
+      await _pumpScheduleComponentApp(tester);
+      final quickActions = find.byKey(const ValueKey('schedule-quick-actions'));
+      await tester.scrollUntilVisible(quickActions, 200);
+      await tester.tap(
+        find.descendant(of: quickActions, matching: find.text('喂养记录')),
+      );
+      await tester.pumpAndSettle();
+
+      final sheet = find.byKey(const ValueKey('schedule-feeding-record-sheet'));
+      expect(sheet, findsOneWidget);
+      expect(find.text('+ 喂养记录'), findsOneWidget);
+      expect(find.text('🧪 配方奶'), findsOneWidget);
+      expect(find.text('🤱 亲喂'), findsOneWidget);
+      expect(find.text('🍼 瓶喂母乳'), findsOneWidget);
+      await expectLater(
+        sheet,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_feeding_record_sheet.png',
+        ),
+      );
+    });
+
     testWidgets('add task sheet matches the mobile legacy baseline', (
       tester,
     ) async {
