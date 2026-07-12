@@ -602,6 +602,9 @@ class _PlanTransport implements ApiJsonTransport {
       return const {'items': <Object?>[]};
     }
     if (path == pregnancyPlansEndpoint) {
+      if (query['plan_type'] == 'milk_management') {
+        return const {'items': <Object?>[]};
+      }
       planGetCount += 1;
       planQueries.add(Map<String, Object?>.from(query));
       if (failingPlanRequests.contains(planGetCount)) {
