@@ -143,6 +143,46 @@ void main() {
         ),
       );
     });
+
+    testWidgets('add task sheet matches the mobile legacy baseline', (
+      tester,
+    ) async {
+      await _pumpScheduleComponentApp(tester);
+      final addButton = find.byKey(const ValueKey('schedule-add-task-button'));
+      await tester.scrollUntilVisible(addButton, 200);
+      await tester.tap(addButton);
+      await tester.pumpAndSettle();
+
+      final sheet = find.byKey(const ValueKey('schedule-add-task-sheet'));
+      expect(sheet, findsOneWidget);
+      await expectLater(
+        sheet,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_add_task_sheet.png',
+        ),
+      );
+    });
+
+    testWidgets('time wheel sheet matches the mobile legacy baseline', (
+      tester,
+    ) async {
+      await _pumpScheduleComponentApp(tester);
+      final addButton = find.byKey(const ValueKey('schedule-add-task-button'));
+      await tester.scrollUntilVisible(addButton, 200);
+      await tester.tap(addButton);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('schedule-task-time-input')));
+      await tester.pumpAndSettle();
+
+      final sheet = find.byKey(const ValueKey('schedule-time-picker-sheet'));
+      expect(sheet, findsOneWidget);
+      await expectLater(
+        sheet,
+        matchesGoldenFile(
+          '../../../goldens/component_parity/schedule_time_picker_sheet.png',
+        ),
+      );
+    });
   });
 }
 

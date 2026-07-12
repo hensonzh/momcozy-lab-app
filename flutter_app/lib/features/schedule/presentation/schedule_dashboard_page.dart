@@ -870,13 +870,10 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       setState(() => _feedback = '未识别到带有明确时间的日程任务');
       return;
     }
-    final drafts = await showDialog<List<_TaskDraft>>(
-      context: context,
-      builder: (context) => _ScheduleTaskDialog(
-        initialTasks: result.tasks,
-        dialogTitle: '确认识别结果',
-        submitLabel: '确认添加',
-      ),
+    final drafts = await _showTaskDraftSheet(
+      initialTasks: result.tasks,
+      dialogTitle: '确认识别结果',
+      submitLabel: '确认添加',
     );
     if (!mounted) return;
     if (drafts == null || drafts.isEmpty) {
@@ -886,11 +883,31 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     await _createTasks(drafts);
   }
 
-  Future<void> _showTaskEditor({ScheduleTask? task}) async {
-    final drafts = await showDialog<List<_TaskDraft>>(
+  Future<List<_TaskDraft>?> _showTaskDraftSheet({
+    ScheduleTask? task,
+    List<ScheduleImageTaskPreview> initialTasks =
+        const <ScheduleImageTaskPreview>[],
+    String? dialogTitle,
+    String? submitLabel,
+  }) {
+    return showModalBottomSheet<List<_TaskDraft>>(
       context: context,
-      builder: (context) => _ScheduleTaskDialog(task: task),
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: MomCozyColors.foreground.withValues(alpha: 0.2),
+      builder: (context) => _ScheduleTaskSheet(
+        task: task,
+        initialTasks: initialTasks,
+        dialogTitle: dialogTitle,
+        submitLabel: submitLabel,
+        defaultTime: _time(_clock.add(const Duration(minutes: 15))),
+      ),
     );
+  }
+
+  Future<void> _showTaskEditor({ScheduleTask? task}) async {
+    final drafts = await _showTaskDraftSheet(task: task);
     if (drafts == null || drafts.isEmpty) return;
     _controller.clearMutationError();
     if (task != null) {
@@ -2675,24 +2692,258 @@ class _ScheduleErrorCard extends StatelessWidget {
   }
 }
 
-class _ScheduleTaskDialog extends StatefulWidget {
-  const _ScheduleTaskDialog({
+Future<String?> _showScheduleTimePicker(
+  BuildContext context, {
+  required String title,
+  required String initialTime,
+}) {
+  return showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    barrierColor: MomCozyColors.foreground.withValues(alpha: 0.3),
+    builder: (context) =>
+        _ScheduleTimePickerSheet(title: title, initialTime: initialTime),
+  );
+}
+
+class _ScheduleTimePickerSheet extends StatefulWidget {
+  const _ScheduleTimePickerSheet({
+    required this.title,
+    required this.initialTime,
+  });
+
+  final String title;
+  final String initialTime;
+
+  @override
+  State<_ScheduleTimePickerSheet> createState() =>
+      _ScheduleTimePickerSheetState();
+}
+
+class _ScheduleTimePickerSheetState extends State<_ScheduleTimePickerSheet> {
+  late int _hour;
+  late int _minute;
+  late final FixedExtentScrollController _hourController;
+  late final FixedExtentScrollController _minuteController;
+
+  @override
+  void initState() {
+    super.initState();
+    final normalized = _normalizedTime(widget.initialTime) ?? '00:00';
+    final parts = normalized.split(':');
+    _hour = int.parse(parts[0]);
+    _minute = int.parse(parts[1]);
+    _hourController = FixedExtentScrollController(initialItem: _hour);
+    _minuteController = FixedExtentScrollController(initialItem: _minute);
+  }
+
+  @override
+  void dispose() {
+    _hourController.dispose();
+    _minuteController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      key: const ValueKey('schedule-time-picker-sheet'),
+      child: Material(
+        color: MomCozyColors.card,
+        clipBehavior: Clip.antiAlias,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                    color: MomCozyColors.foreground,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: MomCozyColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: MomCozyColors.primary.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        '当前调节时间',
+                        style: TextStyle(
+                          color: MomCozyColors.primary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${_hour.toString().padLeft(2, '0')}:${_minute.toString().padLeft(2, '0')}',
+                        key: const ValueKey('schedule-time-picker-current'),
+                        style: const TextStyle(
+                          color: MomCozyColors.primary,
+                          fontSize: 30,
+                          height: 1,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  height: 176,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _timeWheel(
+                          key: const ValueKey('schedule-time-hour-wheel'),
+                          controller: _hourController,
+                          count: 24,
+                          selected: _hour,
+                          onSelected: (value) => setState(() => _hour = value),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          ':',
+                          style: TextStyle(
+                            color: MomCozyColors.mutedForeground,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: _timeWheel(
+                          key: const ValueKey('schedule-time-minute-wheel'),
+                          controller: _minuteController,
+                          count: 60,
+                          selected: _minute,
+                          onSelected: (value) =>
+                              setState(() => _minute = value),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.tonal(
+                        key: const ValueKey('schedule-time-picker-cancel'),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('取消'),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        key: const ValueKey('schedule-time-picker-confirm'),
+                        onPressed: () => Navigator.pop(
+                          context,
+                          '${_hour.toString().padLeft(2, '0')}:${_minute.toString().padLeft(2, '0')}',
+                        ),
+                        child: const Text('确认'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _timeWheel({
+    required Key key,
+    required FixedExtentScrollController controller,
+    required int count,
+    required int selected,
+    required ValueChanged<int> onSelected,
+  }) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.secondary.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.5)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: ListWheelScrollView.useDelegate(
+          key: key,
+          controller: controller,
+          itemExtent: 36,
+          physics: const FixedExtentScrollPhysics(),
+          diameterRatio: 1.35,
+          onSelectedItemChanged: onSelected,
+          childDelegate: ListWheelChildBuilderDelegate(
+            childCount: count,
+            builder: (context, index) {
+              final active = index == selected;
+              return ColoredBox(
+                color: active
+                    ? MomCozyColors.primary.withValues(alpha: 0.1)
+                    : Colors.transparent,
+                child: Center(
+                  child: Text(
+                    index.toString().padLeft(2, '0'),
+                    style: TextStyle(
+                      color: active
+                          ? MomCozyColors.primary
+                          : MomCozyColors.mutedForeground,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScheduleTaskSheet extends StatefulWidget {
+  const _ScheduleTaskSheet({
     this.task,
     this.initialTasks = const <ScheduleImageTaskPreview>[],
     this.dialogTitle,
     this.submitLabel,
+    required this.defaultTime,
   });
 
   final ScheduleTask? task;
   final List<ScheduleImageTaskPreview> initialTasks;
   final String? dialogTitle;
   final String? submitLabel;
+  final String defaultTime;
 
   @override
-  State<_ScheduleTaskDialog> createState() => _ScheduleTaskDialogState();
+  State<_ScheduleTaskSheet> createState() => _ScheduleTaskSheetState();
 }
 
-class _ScheduleTaskDialogState extends State<_ScheduleTaskDialog> {
+class _ScheduleTaskSheetState extends State<_ScheduleTaskSheet> {
   late final List<_TaskDraftEditor> _rows;
   String? _error;
 
@@ -2729,7 +2980,7 @@ class _ScheduleTaskDialogState extends State<_ScheduleTaskDialog> {
     _rows = [
       _TaskDraftEditor(
         title: _defaultTaskTitle(ScheduleTaskKind.pumping),
-        time: _timeText(null),
+        time: widget.defaultTime,
         description: '',
         kind: ScheduleTaskKind.pumping,
       ),
@@ -2744,122 +2995,293 @@ class _ScheduleTaskDialogState extends State<_ScheduleTaskDialog> {
     super.dispose();
   }
 
+  bool get _isValid => _rows.every(
+    (row) =>
+        row.title.text.trim().isNotEmpty &&
+        _normalizedTime(row.time.text) != null,
+  );
+
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      key: const ValueKey('schedule-add-task-dialog'),
-      title: Text(
-        widget.dialogTitle ?? (widget.task == null ? '添加任务' : '编辑任务'),
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (widget.initialTasks.isNotEmpty) ...[
-              const Text(
-                '以下内容仅为识别预览，请核对时间和任务名称；确认后才会写入计划。',
-                key: ValueKey('schedule-recognition-preview-notice'),
-              ),
-              const SizedBox(height: 12),
-            ],
-            for (var index = 0; index < _rows.length; index += 1) ...[
-              if (index > 0) const Divider(height: 24),
-              _buildTaskRow(index),
-            ],
-            if (widget.task == null && _rows.length < _maxRows) ...[
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                key: const ValueKey('schedule-add-task-row-button'),
-                onPressed: _addRow,
-                icon: const Icon(Icons.add_rounded),
-                label: const Text('继续添加一项'),
-              ),
-            ],
-            if (_error != null) ...[
-              const SizedBox(height: 8),
-              Text(_error!, style: const TextStyle(color: Colors.redAccent)),
-            ],
-          ],
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    return AnimatedPadding(
+      duration: reduceMotion
+          ? Duration.zero
+          : const Duration(milliseconds: 160),
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
         ),
-      ),
-      actions: [
-        TextButton(
-          key: const ValueKey('schedule-task-edit-cancel-button'),
-          onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
-        ),
-        FilledButton(
-          key: widget.task == null
-              ? const ValueKey('schedule-add-task-submit')
-              : const ValueKey('schedule-task-edit-save-button'),
-          onPressed: _submit,
-          child: Text(
-            widget.submitLabel ?? (widget.task == null ? '添加' : '保存'),
+        child: RepaintBoundary(
+          key: const ValueKey('schedule-add-task-sheet'),
+          child: Material(
+            color: MomCozyColors.card,
+            clipBehavior: Clip.antiAlias,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 12, 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.dialogTitle ??
+                              (widget.task == null ? '添加任务' : '编辑任务'),
+                          style: const TextStyle(
+                            color: MomCozyColors.foreground,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        key: const ValueKey('schedule-task-sheet-close'),
+                        tooltip: '关闭',
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close_rounded),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                Flexible(
+                  child: ListView(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.fromLTRB(20, 14, 20, 18),
+                    children: [
+                      if (widget.initialTasks.isNotEmpty) ...[
+                        Container(
+                          key: const ValueKey(
+                            'schedule-recognition-preview-notice',
+                          ),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: MomCozyColors.primary.withValues(
+                              alpha: 0.06,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: MomCozyColors.primary.withValues(
+                                alpha: 0.16,
+                              ),
+                            ),
+                          ),
+                          child: const Text(
+                            '以下内容仅为识别预览，请核对时间和任务名称；确认后才会写入计划。',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      for (var index = 0; index < _rows.length; index += 1) ...[
+                        if (index > 0) const SizedBox(height: 12),
+                        _buildTaskRow(index),
+                      ],
+                      if (widget.task == null && _rows.length < _maxRows) ...[
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          key: const ValueKey('schedule-add-task-row-button'),
+                          onPressed: _addRow,
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(48),
+                            side: const BorderSide(
+                              color: MomCozyColors.border,
+                              width: 2,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          icon: const Icon(Icons.add_rounded, size: 18),
+                          label: const Text('手动添加一项'),
+                        ),
+                      ],
+                      if (_error != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          _error!,
+                          style: const TextStyle(color: Colors.redAccent),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                  decoration: const BoxDecoration(
+                    color: MomCozyColors.card,
+                    border: Border(
+                      top: BorderSide(color: MomCozyColors.border),
+                    ),
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: FilledButton(
+                      key: widget.task == null
+                          ? const ValueKey('schedule-add-task-submit')
+                          : const ValueKey('schedule-task-edit-save-button'),
+                      onPressed: _isValid ? _submit : null,
+                      style: FilledButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: Text(
+                        widget.submitLabel ??
+                            (widget.task == null
+                                ? '确认添加 (${_rows.length}项)'
+                                : '保存'),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildTaskRow(int index) {
     final row = _rows[index];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                widget.task == null ? '任务 ${index + 1}' : '任务内容',
-                style: const TextStyle(fontWeight: FontWeight.w900),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: MomCozyColors.secondary.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: MomCozyColors.card,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: MomCozyColors.border),
+                ),
+                child: Text(
+                  widget.task == null ? '任务 ${index + 1}' : '任务内容',
+                  style: const TextStyle(
+                    color: MomCozyColors.mutedForeground,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
               ),
+              const Spacer(),
+              if (widget.task == null && _rows.length > 1)
+                IconButton(
+                  key: ValueKey('schedule-remove-task-row-$index'),
+                  tooltip: '删除这一项',
+                  onPressed: () => _removeRow(index),
+                  icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<ScheduleTaskKind>(
+              key: ValueKey('schedule-task-kind-$index'),
+              showSelectedIcon: false,
+              segments: const [
+                ButtonSegment(
+                  value: ScheduleTaskKind.pumping,
+                  icon: Icon(Icons.water_drop_outlined, size: 16),
+                  label: Text('吸奶'),
+                ),
+                ButtonSegment(
+                  value: ScheduleTaskKind.feeding,
+                  icon: Icon(Icons.child_care_rounded, size: 16),
+                  label: Text('喂养'),
+                ),
+                ButtonSegment(
+                  value: ScheduleTaskKind.other,
+                  icon: Icon(Icons.star_outline_rounded, size: 16),
+                  label: Text('其他'),
+                ),
+              ],
+              selected: {row.kind},
+              onSelectionChanged: widget.task == null
+                  ? (value) => _changeTaskKind(row, value.single)
+                  : null,
             ),
-            if (widget.task == null && _rows.length > 1)
-              IconButton(
-                key: ValueKey('schedule-remove-task-row-$index'),
-                tooltip: '删除这一项',
-                onPressed: () => _removeRow(index),
-                icon: const Icon(Icons.remove_circle_outline_rounded),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            key: index == 0
+                ? const ValueKey('schedule-add-task-title-input')
+                : ValueKey('schedule-add-task-title-input-$index'),
+            controller: row.title,
+            onChanged: (_) => setState(() => _error = null),
+            decoration: const InputDecoration(
+              labelText: '任务名称',
+              hintText: '例如：带娃打疫苗、哄睡',
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const SizedBox(
+                width: 62,
+                child: Text(
+                  '计划时间',
+                  style: TextStyle(
+                    color: MomCozyColors.mutedForeground,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
-          ],
-        ),
-        SegmentedButton<ScheduleTaskKind>(
-          key: ValueKey('schedule-task-kind-$index'),
-          segments: const [
-            ButtonSegment(value: ScheduleTaskKind.pumping, label: Text('吸奶')),
-            ButtonSegment(value: ScheduleTaskKind.feeding, label: Text('喂养')),
-            ButtonSegment(value: ScheduleTaskKind.other, label: Text('其他')),
-          ],
-          selected: {row.kind},
-          onSelectionChanged: widget.task == null
-              ? (value) => _changeTaskKind(row, value.single)
-              : null,
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          key: index == 0
-              ? const ValueKey('schedule-add-task-title-input')
-              : ValueKey('schedule-add-task-title-input-$index'),
-          controller: row.title,
-          decoration: const InputDecoration(labelText: '任务名称'),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          key: index == 0
-              ? const ValueKey('schedule-task-edit-time-input')
-              : ValueKey('schedule-task-time-input-$index'),
-          controller: row.time,
-          keyboardType: TextInputType.datetime,
-          decoration: const InputDecoration(labelText: '时间', hintText: '21:30'),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          key: ValueKey('schedule-task-description-input-$index'),
-          controller: row.description,
-          decoration: const InputDecoration(labelText: '说明（可选）'),
-        ),
-      ],
+              Expanded(
+                child: OutlinedButton(
+                  key: index == 0
+                      ? const ValueKey('schedule-task-time-input')
+                      : ValueKey('schedule-task-time-input-$index'),
+                  onPressed: () => _pickTime(row),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(42),
+                    alignment: Alignment.centerLeft,
+                    backgroundColor: MomCozyColors.card,
+                    foregroundColor: MomCozyColors.foreground,
+                  ),
+                  child: Text(
+                    row.time.text,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
+  }
+
+  Future<void> _pickTime(_TaskDraftEditor row) async {
+    final selected = await _showScheduleTimePicker(
+      context,
+      title: '设置计划时间',
+      initialTime: row.time.text,
+    );
+    if (!mounted || selected == null) return;
+    setState(() {
+      row.time.text = selected;
+      _error = null;
+    });
   }
 
   void _addRow() {

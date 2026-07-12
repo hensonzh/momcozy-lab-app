@@ -879,7 +879,7 @@ void main() {
             'id': 'created-task',
             'plan_id': 'plan-1',
             'task_date': '2026-07-03',
-            'task_time': '21:30',
+            'task_time': '10:15',
             'title': '睡前吸奶',
             'description': '',
             'status': 'pending',
@@ -907,7 +907,7 @@ void main() {
 
       expect(transport.lastMethod, 'POST');
       expect(transport.lastPath, scheduleTasksEndpoint);
-      expect(transport.lastBody?['task_time'], '21:30');
+      expect(transport.lastBody?['task_time'], '10:15');
       expect(transport.lastBody?['payload'], {'task_type': 'pumping'});
       expect(find.text('任务已添加'), findsOneWidget);
       await tester.scrollUntilVisible(
@@ -921,6 +921,67 @@ void main() {
       );
     },
   );
+
+  testWidgets('add task uses the legacy bottom sheet and wheel time picker', (
+    tester,
+  ) async {
+    final transport = _transport();
+    await _pumpPage(tester, transport);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('schedule-add-task-button')),
+      250,
+      scrollable: _scheduleScrollable(),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('schedule-add-task-button')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('schedule-add-task-sheet')),
+      findsOneWidget,
+    );
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('手动添加一项'), findsOneWidget);
+    expect(find.text('确认添加 (1项)'), findsOneWidget);
+    final timeButton = find.byKey(const ValueKey('schedule-task-time-input'));
+    expect(
+      find.descendant(of: timeButton, matching: find.text('10:15')),
+      findsOneWidget,
+    );
+
+    await tester.tap(timeButton);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('schedule-time-picker-sheet')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('schedule-time-hour-wheel')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('schedule-time-minute-wheel')),
+      findsOneWidget,
+    );
+    expect(find.text('10:15'), findsWidgets);
+
+    await tester.tap(
+      find.byKey(const ValueKey('schedule-time-picker-confirm')),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('schedule-time-picker-sheet')),
+      findsNothing,
+    );
+    expect(
+      find.descendant(of: timeButton, matching: find.text('10:15')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('schedule-task-sheet-close')));
+    await tester.pumpAndSettle();
+    expect(transport.lastBody, isNull);
+  });
 
   testWidgets('retrying the same failed create intent reuses idempotency key', (
     tester,
@@ -996,13 +1057,11 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(
-      tester
-          .widget<TextField>(
-            find.byKey(const ValueKey('schedule-task-time-input-1')),
-          )
-          .controller
-          ?.text,
-      '21:45',
+      find.descendant(
+        of: find.byKey(const ValueKey('schedule-task-time-input-1')),
+        matching: find.text('10:30'),
+      ),
+      findsOneWidget,
     );
     await tester.enterText(
       find.byKey(const ValueKey('schedule-add-task-title-input-1')),
@@ -1021,10 +1080,10 @@ void main() {
 
     expect(transport.postedBodies, hasLength(2));
     expect(transport.postedBodies[0]['title'], '第一项吸奶');
-    expect(transport.postedBodies[0]['task_time'], '21:30');
+    expect(transport.postedBodies[0]['task_time'], '10:15');
     expect(transport.postedBodies[0]['payload'], {'task_type': 'pumping'});
     expect(transport.postedBodies[1]['title'], '第二项喂养');
-    expect(transport.postedBodies[1]['task_time'], '21:45');
+    expect(transport.postedBodies[1]['task_time'], '10:30');
     expect(transport.postedBodies[1]['payload'], {'task_type': 'feeding'});
     expect(transport.idempotencyKeys.toSet(), hasLength(2));
   });
@@ -1559,13 +1618,11 @@ void main() {
         '识别吸奶',
       );
       expect(
-        tester
-            .widget<TextField>(
-              find.byKey(const ValueKey('schedule-task-time-input-1')),
-            )
-            .controller
-            ?.text,
-        '11:45',
+        find.descendant(
+          of: find.byKey(const ValueKey('schedule-task-time-input-1')),
+          matching: find.text('11:45'),
+        ),
+        findsOneWidget,
       );
 
       await tester.enterText(
