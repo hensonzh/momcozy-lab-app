@@ -1356,6 +1356,10 @@ void main() {
         find.byKey(const ValueKey('schedule-context-reminder-button')),
       );
       await tester.pumpAndSettle();
+      expect(find.text('关闭提醒？'), findsOneWidget);
+      expect(find.text('保持开启'), findsOneWidget);
+      expect(find.text('仍要关闭'), findsOneWidget);
+      expect(find.textContaining('系统级后台提醒'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('schedule-reminder-confirm')));
       await tester.pumpAndSettle();
 
@@ -1369,6 +1373,154 @@ void main() {
       expect(find.text('系统提醒已关闭'), findsOneWidget);
     },
   );
+
+  testWidgets('reminder warning cancellation keeps the preference enabled', (
+    tester,
+  ) async {
+    final store = _FakeReminderStore(enabled: true);
+    await _pumpPage(
+      tester,
+      _transport(),
+      reminderGateway: _SuccessfulReminderGateway(),
+      reminderPreferenceStore: store,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('schedule-context-reminder-button')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('schedule-reminder-confirm-dialog')),
+      findsOneWidget,
+    );
+    expect(find.byType(AlertDialog), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('schedule-reminder-cancel')));
+    await tester.pumpAndSettle();
+
+    expect(store.enabled, isTrue);
+    expect(
+      find.byKey(const ValueKey('schedule-reminder-confirm-dialog')),
+      findsNothing,
+    );
+    expect(find.byTooltip('关闭计划提醒'), findsOneWidget);
+  });
+
+  testWidgets('task explanation uses the lightweight legacy dialog', (
+    tester,
+  ) async {
+    await _pumpPage(tester, _transport());
+    final helpButton = find.byKey(const ValueKey('schedule-task-help-button'));
+    await tester.scrollUntilVisible(
+      helpButton,
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+    await tester.tap(helpButton);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('schedule-task-explanation-dialog')),
+      findsOneWidget,
+    );
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('知道了'), findsNothing);
+    expect(
+      find.text(
+        '稳奶计划依据上次制定前读取到的产后阶段、奶量/喂养记录和原有任务节奏。'
+        '今天完成2/2项，新增记录只用于看执行反馈；'
+        '稳奶重点是稳定关键排乳窗口，避免过度加任务或过早减少。',
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(
+      find.byKey(const ValueKey('schedule-task-explanation-close')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('schedule-task-explanation-dialog')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('task explanation follows the legacy plan-specific semantics', (
+    tester,
+  ) async {
+    await _pumpPage(
+      tester,
+      _transport(
+        plans: const [
+          {
+            'id': 'plan-1',
+            'plan_type': 'milk_management',
+            'title': '追奶计划',
+            'summary': '增加有效移出',
+            'status': 'active',
+            'version': 4,
+            'payload': {'goal_type': 'chase'},
+          },
+        ],
+        tasks: const [
+          {
+            'id': 'done-task',
+            'plan_id': 'plan-1',
+            'task_date': '2026-07-03',
+            'task_time': '08:00',
+            'title': '晨间吸奶',
+            'status': 'completed',
+            'payload': {'task_type': 'pumping'},
+          },
+          {
+            'id': 'skipped-task',
+            'plan_id': 'plan-1',
+            'task_date': '2026-07-03',
+            'task_time': '12:00',
+            'title': '午间吸奶',
+            'status': 'skipped',
+            'payload': {'task_type': 'pumping'},
+          },
+          {
+            'id': 'pending-task',
+            'plan_id': 'plan-1',
+            'task_date': '2026-07-03',
+            'task_time': '16:00',
+            'title': '下午吸奶',
+            'status': 'pending',
+            'payload': {'task_type': 'pumping'},
+          },
+        ],
+        feedingRecords: const [
+          {
+            'id': 'feedback-record',
+            'plan_task_id': null,
+            'feed_time': '2026-07-03T09:00:00Z',
+            'feed_type': 'bottle',
+            'volume_ml': 60,
+            'title': '喂养记录',
+          },
+        ],
+        pumpingRecords: const [],
+      ),
+    );
+    final helpButton = find.byKey(const ValueKey('schedule-task-help-button'));
+    await tester.scrollUntilVisible(
+      helpButton,
+      200,
+      scrollable: _scheduleScrollable(),
+    );
+    await tester.tap(helpButton);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        '追奶计划依据上次制定前读取到的产后阶段、奶量/喂养记录和原有任务节奏。'
+        '今天完成1/3项，跳过1项，新增记录只用于看执行反馈；'
+        '追奶重点是增加有效移出机会，放在更容易坚持的时段。',
+      ),
+      findsOneWidget,
+    );
+  });
 
   testWidgets('unsupported reminders never report a fake success', (
     tester,
@@ -1826,6 +1978,7 @@ FixtureApiJsonTransportByPath _transport({
   List<Map<String, Object?>>? tasks,
   List<Map<String, Object?>>? feedingRecords,
   List<Map<String, Object?>>? pumpingRecords,
+  List<Map<String, Object?>>? plans,
 }) {
   return FixtureApiJsonTransportByPath({
     scheduleDayPlanEndpoint: {
@@ -1858,18 +2011,20 @@ FixtureApiJsonTransportByPath _transport({
             },
           ],
     },
-    schedulePlansEndpoint: const {
-      'items': [
-        {
-          'id': 'plan-1',
-          'plan_type': 'milk_management',
-          'title': '稳奶计划',
-          'summary': '按当前阶段稳步执行',
-          'status': 'active',
-          'version': 3,
-          'payload': {'postpartum_week': 29, 'phase': '离乳期'},
-        },
-      ],
+    schedulePlansEndpoint: {
+      'items':
+          plans ??
+          const [
+            {
+              'id': 'plan-1',
+              'plan_type': 'milk_management',
+              'title': '稳奶计划',
+              'summary': '按当前阶段稳步执行',
+              'status': 'active',
+              'version': 3,
+              'payload': {'postpartum_week': 29, 'phase': '离乳期'},
+            },
+          ],
     },
     scheduleFeedingRecordsEndpoint: {
       'items':

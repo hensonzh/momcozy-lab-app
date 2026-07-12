@@ -748,13 +748,25 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   }
 
   String _taskExplanation(ScheduleDayPlan snapshot) {
-    final plan = snapshot.context;
-    final basis = plan == null
-        ? '当前服务器计划'
-        : '${plan.title}的${_stageLabel(plan, snapshot.day)}';
-    return '今日任务依据$basis、已同步的 ${snapshot.records.length} 条奶量与喂养记录，'
-        '以及原任务节奏展示。稳奶以保持规律为主；追奶会适度增加频次，减奶会逐步拉长间隔。'
-        '当前完成 ${snapshot.completedTaskCount} 项、跳过 ${snapshot.skippedTaskCount} 项。';
+    final actionTasks = snapshot.tasks
+        .where((task) => !task.id.startsWith('blocked-'))
+        .toList(growable: false);
+    final completed = actionTasks
+        .where((task) => task.state == ScheduleTaskState.completed)
+        .length;
+    final skipped = actionTasks
+        .where((task) => task.state == ScheduleTaskState.skipped)
+        .length;
+    final taskProgress = actionTasks.isEmpty
+        ? '暂无任务进度'
+        : '完成$completed/${actionTasks.length}项${skipped > 0 ? '，跳过$skipped项' : ''}';
+    final recordFeedback = snapshot.records.isEmpty
+        ? '暂无新增记录反馈'
+        : '新增记录只用于看执行反馈';
+    final planKind = _explanationPlanKind(snapshot.context);
+    final planLabel = _explanationPlanLabel(planKind, snapshot.context);
+    return '$planLabel依据上次制定前读取到的产后阶段、奶量/喂养记录和原有任务节奏。'
+        '今天$taskProgress，$recordFeedback；${_explanationMethod(planKind, planLabel)}';
   }
 
   void _openAgent() {
@@ -771,23 +783,8 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     if (!next) {
       final confirmed = await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
-          key: const ValueKey('schedule-reminder-confirm-dialog'),
-          title: const Text('关闭计划提醒？'),
-          content: const Text('关闭后，系统将取消当前计划的本地提醒。'),
-          actions: [
-            TextButton(
-              key: const ValueKey('schedule-reminder-cancel'),
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              key: const ValueKey('schedule-reminder-confirm'),
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('确认关闭'),
-            ),
-          ],
-        ),
+        barrierColor: MomCozyColors.foreground.withValues(alpha: 0.3),
+        builder: (context) => const _ScheduleReminderWarningDialog(),
       );
       if (confirmed != true) return;
     }
@@ -2118,17 +2115,9 @@ class _ScheduleToolbar extends StatelessWidget {
             padding: EdgeInsets.zero,
             onPressed: () => showDialog<void>(
               context: context,
-              builder: (context) => AlertDialog(
-                key: const ValueKey('schedule-task-explanation-dialog'),
-                title: const Text('今日任务说明'),
-                content: Text(explanation),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('知道了'),
-                  ),
-                ],
-              ),
+              barrierColor: Colors.black.withValues(alpha: 0.35),
+              builder: (context) =>
+                  _ScheduleTaskExplanationDialog(explanation: explanation),
             ),
             icon: const Icon(Icons.help_outline_rounded, size: 18),
           ),
@@ -2156,6 +2145,188 @@ class _ScheduleToolbar extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ScheduleTaskExplanationDialog extends StatelessWidget {
+  const _ScheduleTaskExplanationDialog({required this.explanation});
+
+  final String explanation;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      key: const ValueKey('schedule-task-explanation-dialog'),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      backgroundColor: MomCozyColors.card,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: Colors.white.withValues(alpha: 0.7)),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  key: const ValueKey('schedule-task-explanation-close'),
+                  tooltip: '关闭',
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close_rounded, size: 18),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: MomCozyColors.muted.withValues(alpha: 0.7),
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: Text(
+                  explanation,
+                  style: const TextStyle(
+                    color: MomCozyColors.foreground,
+                    fontSize: 14,
+                    height: 1.55,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScheduleReminderWarningDialog extends StatelessWidget {
+  const _ScheduleReminderWarningDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      key: const ValueKey('schedule-reminder-confirm-dialog'),
+      insetPadding: EdgeInsets.zero,
+      backgroundColor: MomCozyColors.card,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(color: MomCozyColors.border),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 384),
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width * 0.85,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      size: 21,
+                      color: MomCozyColors.warm,
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      '关闭提醒？',
+                      style: TextStyle(
+                        color: MomCozyColors.foreground,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text.rich(
+                  const TextSpan(
+                    children: [
+                      TextSpan(text: '关闭后，将停止'),
+                      TextSpan(
+                        text: '系统级后台提醒',
+                        style: TextStyle(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      TextSpan(text: '（含锁屏/全屏提醒与悬浮窗相关能力），Mai 也无法再为你提供'),
+                      TextSpan(
+                        text: '个性化排期优化',
+                        style: TextStyle(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      TextSpan(text: '与'),
+                      TextSpan(
+                        text: '智能防冲突',
+                        style: TextStyle(
+                          color: MomCozyColors.foreground,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      TextSpan(text: '。确定要关闭吗？'),
+                    ],
+                  ),
+                  style: const TextStyle(
+                    color: MomCozyColors.mutedForeground,
+                    fontSize: 14,
+                    height: 1.55,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        key: const ValueKey('schedule-reminder-cancel'),
+                        onPressed: () => Navigator.pop(context, false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(44),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('保持开启'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton(
+                        key: const ValueKey('schedule-reminder-confirm'),
+                        onPressed: () => Navigator.pop(context, true),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(44),
+                          backgroundColor: const Color(0xffc8465c),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('仍要关闭'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -3854,6 +4025,56 @@ class _ScheduleTaskProvenance {
   final String label;
   final bool agentGenerated;
 }
+
+String _explanationPlanKind(SchedulePlanContext? context) {
+  if (context == null) return 'unknown';
+  final candidates = <Object?>[
+    context.planType,
+    context.payload['care_plan_type'],
+    context.payload['carePlanType'],
+    context.payload['goal_type'],
+    context.payload['goalType'],
+    context.payload['mode'],
+    context.payload['strategy'],
+    context.title,
+  ];
+  for (final candidate in candidates) {
+    final value = candidate?.toString().trim().toLowerCase() ?? '';
+    if (value == 'none' || value.contains('稳奶')) return 'none';
+    if (value == 'maintain' || value.contains('维持')) return 'maintain';
+    if (value == 'chase' || value.contains('追奶')) return 'chase';
+    if (value == 'wean' || value.contains('减奶') || value.contains('离乳')) {
+      return 'wean';
+    }
+    if (value == 'fertility' || value.contains('待产')) return 'fertility';
+    if (value == 'work' || value.contains('返工')) return 'work';
+  }
+  return 'unknown';
+}
+
+String _explanationPlanLabel(String planKind, SchedulePlanContext? context) =>
+    switch (planKind) {
+      'none' => '稳奶计划',
+      'maintain' => '维持奶量计划',
+      'chase' => '追奶计划',
+      'wean' => '温和离乳计划',
+      'fertility' => '待产计划',
+      'work' => '返工计划',
+      _ =>
+        _normalizedPlanBadgeLabel(context?.title ?? '').isEmpty
+            ? '呵护计划'
+            : _normalizedPlanBadgeLabel(context?.title ?? ''),
+    };
+
+String _explanationMethod(String planKind, String planLabel) =>
+    switch (planKind) {
+      'chase' => '追奶重点是增加有效移出机会，放在更容易坚持的时段。',
+      'wean' => '减奶重点是循序减少频次或时长，避免突然停吸带来胀痛。',
+      'none' || 'maintain' => '稳奶重点是稳定关键排乳窗口，避免过度加任务或过早减少。',
+      'work' => '返工重点是保留关键排乳窗口，并适配通勤和工作空档。',
+      'fertility' => '待产重点是按阶段排优先级，先处理必须确认的事项。',
+      _ => '$planLabel重点是结合阶段、记录和执行负担，保证任务能执行。',
+    };
 
 _ScheduleTaskProvenance _taskProvenance(
   ScheduleTask task,
