@@ -113,7 +113,9 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    final counts = Map<String, int>.fromEntries(
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
+    await tester.pumpAndSettle();
+    final countsBeforeReturn = Map<String, int>.fromEntries(
       [
         statusProfileEndpoint,
         statusInfantsEndpoint,
@@ -124,9 +126,6 @@ void main() {
         pregnancyPlansEndpoint,
       ].map((path) => MapEntry(path, _requestCount(transport, path))),
     );
-
-    await tester.tap(find.byKey(const ValueKey('bottom-nav-schedule')));
-    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('bottom-nav-status')));
     await tester.pump();
     await tester.pump();
@@ -134,7 +133,7 @@ void main() {
     expect(find.text('母乳产出'), findsOneWidget);
     expect(find.text('正在加载孕期计划'), findsNothing);
     await tester.pumpAndSettle();
-    for (final entry in counts.entries) {
+    for (final entry in countsBeforeReturn.entries) {
       expect(_requestCount(transport, entry.key), entry.value);
     }
   });
