@@ -67,6 +67,38 @@ class ScheduleDashboardController extends ChangeNotifier {
   ScheduleDashboardState get state => _state;
   DateTime get today => _dateOnly(now());
 
+  List<ScheduleTask> get reminderTasks {
+    final current = now();
+    final unique = <String, ScheduleTask>{};
+    for (final snapshot in _dayCache.values) {
+      for (final task in snapshot.tasks) {
+        final remindAt = task.remindAt;
+        if (task.state != ScheduleTaskState.pending ||
+            remindAt == null ||
+            !remindAt.isAfter(current)) {
+          continue;
+        }
+        unique[task.id] = task;
+      }
+    }
+    final tasks = unique.values.toList(growable: false)
+      ..sort((left, right) {
+        final timeOrder = left.remindAt!.compareTo(right.remindAt!);
+        return timeOrder != 0 ? timeOrder : left.id.compareTo(right.id);
+      });
+    return List<ScheduleTask>.unmodifiable(tasks);
+  }
+
+  Future<bool> warmReminderWindow({int days = 7}) async {
+    final boundedDays = days.clamp(1, 30);
+    var succeeded = true;
+    for (var offset = 0; offset < boundedDays; offset += 1) {
+      final refreshed = await refreshDay(today.add(Duration(days: offset)));
+      succeeded = refreshed && succeeded;
+    }
+    return succeeded;
+  }
+
   Future<void> load() async {
     final generation = ++_loadGeneration;
     final selectedDay = _state.selectedDay;
