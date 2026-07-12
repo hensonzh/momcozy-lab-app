@@ -36,6 +36,30 @@ class AgentStreamEvent {
       stringField(raw, 'actionId') ??
       stringField(payload, 'action_id') ??
       stringField(payload, 'actionId');
+  bool? get actionUserVisible =>
+      _boolField(payload, 'user_visible') ?? _boolField(payload, 'userVisible');
+  bool get actionRequiresConfirmation =>
+      _boolField(payload, 'requires_confirmation') == true ||
+      _boolField(payload, 'requiresConfirmation') == true;
+  bool get isActionConfirmationRequired {
+    if (type == 'action.confirmation_required') return true;
+    final status =
+        stringField(payload, 'action_status') ??
+        stringField(payload, 'actionStatus') ??
+        stringField(payload, 'status');
+    return status == 'confirmation_required';
+  }
+
+  bool exposesActionCard({required bool hasVisiblePredecessor}) {
+    if (!type.startsWith('action.')) return false;
+    final explicitVisibility = actionUserVisible;
+    if (explicitVisibility != null) return explicitVisibility;
+    if (actionRequiresConfirmation || isActionConfirmationRequired) {
+      return true;
+    }
+    return hasVisiblePredecessor;
+  }
+
   String? get role => stringField(raw, 'role') ?? stringField(payload, 'role');
   Map<String, Object?> get payload {
     final value = raw['payload'];
@@ -178,6 +202,11 @@ class AgentStreamEvent {
 
     return type;
   }
+}
+
+bool? _boolField(Map<String, Object?> map, String key) {
+  final value = map[key];
+  return value is bool ? value : null;
 }
 
 List<AgentStreamEvent> parseAgentJsonl(String input) {

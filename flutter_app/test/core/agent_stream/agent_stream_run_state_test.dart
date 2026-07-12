@@ -662,6 +662,95 @@ data: {"type":"run.completed","thread_id":"thread-canonical-tools","run_id":"run
       },
     );
 
+    test('does not index or serialize hidden and implicit action cards', () {
+      var hidden = const AgentStreamRunState().start();
+      hidden = hidden.applyEvent(
+        AgentStreamEvent(const {
+          'event_id': 'evt-direct-applied',
+          'type': 'action.applied',
+          'thread_id': 'thread-direct',
+          'run_id': 'run-direct',
+          'action_id': 'action-direct',
+          'sequence': 1,
+          'payload': {
+            'action_id': 'action-direct',
+            'action_status': 'applied',
+            'user_visible': false,
+            'requires_confirmation': false,
+            'execution_mode': 'explicit_intent',
+          },
+        }),
+      );
+
+      expect(hidden.actionEvents, isEmpty);
+      expect(hidden.lastSequence, 1);
+      expect(hidden.seenReplayKeys, contains('event:evt-direct-applied'));
+      expect(hidden.toMap(), isNot(contains('events')));
+
+      final implicit = const AgentStreamRunState().start().applyEvent(
+        AgentStreamEvent(const {
+          'event_id': 'evt-implicit-applied',
+          'type': 'action.applied',
+          'action_id': 'action-implicit',
+          'sequence': 2,
+          'payload': {
+            'action_id': 'action-implicit',
+            'action_status': 'applied',
+          },
+        }),
+      );
+
+      expect(implicit.actionEvents, isEmpty);
+      expect(implicit.toMap(), isNot(contains('events')));
+    });
+
+    test('keeps one visible action through confirmation lifecycle events', () {
+      var state = const AgentStreamRunState().start();
+      for (final event in [
+        AgentStreamEvent(const {
+          'event_id': 'evt-visible-confirmation',
+          'type': 'action.confirmation_required',
+          'action_id': 'action-visible',
+          'sequence': 1,
+          'payload': {
+            'action_id': 'action-visible',
+            'action_status': 'confirmation_required',
+            'user_visible': true,
+            'requires_confirmation': true,
+          },
+        }),
+        AgentStreamEvent(const {
+          'event_id': 'evt-visible-applied',
+          'type': 'action.applied',
+          'action_id': 'action-visible',
+          'sequence': 2,
+          'payload': {
+            'action_id': 'action-visible',
+            'action_status': 'applied',
+          },
+        }),
+      ]) {
+        state = state.applyEvent(event);
+      }
+
+      expect(state.actionEvents, hasLength(1));
+      expect(state.actionEvents['action-visible']?.type, 'action.applied');
+      final restored = AgentStreamRunState.fromMap(state.toMap());
+      expect(restored.actionEvents, hasLength(1));
+      expect(restored.actionEvents['action-visible']?.type, 'action.applied');
+
+      final legacy = const AgentStreamRunState().start().applyEvent(
+        AgentStreamEvent(const {
+          'event_id': 'evt-legacy-confirmation',
+          'type': 'action.confirmation_required',
+          'action_id': 'action-legacy',
+          'sequence': 1,
+          'payload': {'action_id': 'action-legacy'},
+        }),
+      );
+      expect(legacy.actionEvents, contains('action-legacy'));
+    });
+
     test('merges action events after waiting for confirmation', () {
       var state = const AgentStreamRunState().start();
 

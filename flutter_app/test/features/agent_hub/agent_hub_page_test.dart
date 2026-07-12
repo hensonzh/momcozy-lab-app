@@ -3924,6 +3924,73 @@ void main() {
     );
   });
 
+  testWidgets('Agent Hub renders only user-visible action cards', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            textContent: '动作处理完成。',
+            events: [
+              AgentStreamEvent(const {
+                'type': 'action.applied',
+                'action_id': 'action-direct-hidden',
+                'payload': {
+                  'action_id': 'action-direct-hidden',
+                  'action_status': 'applied',
+                  'title': '直接执行动作',
+                  'user_visible': false,
+                  'requires_confirmation': false,
+                },
+              }),
+              AgentStreamEvent(const {
+                'type': 'action.applied',
+                'action_id': 'action-implicit-applied',
+                'payload': {
+                  'action_id': 'action-implicit-applied',
+                  'action_status': 'applied',
+                  'title': '普通已应用动作',
+                },
+              }),
+              AgentStreamEvent(const {
+                'type': 'action.confirmation_required',
+                'action_id': 'action-visible-confirmation',
+                'payload': {
+                  'action_id': 'action-visible-confirmation',
+                  'action_status': 'confirmation_required',
+                  'title': '高风险确认动作',
+                  'user_visible': true,
+                  'requires_confirmation': true,
+                },
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
+    expect(
+      find.byKey(
+        const ValueKey('agent-action-card-action-visible-confirmation'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-action-card-action-direct-hidden')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-action-card-action-implicit-applied')),
+      findsNothing,
+    );
+    expect(find.text('高风险确认动作'), findsOneWidget);
+    expect(find.text('直接执行动作'), findsNothing);
+    expect(find.text('普通已应用动作'), findsNothing);
+  });
+
   testWidgets('Agent Hub restores waiting action state from durable snapshot', (
     tester,
   ) async {
@@ -3972,6 +4039,39 @@ void main() {
     expect(find.text('等待确认后继续'), findsOneWidget);
     expect(find.byKey(ValueKey('agent-action-card-$actionId')), findsOneWidget);
     expect(find.text('提交人工支持'), findsOneWidget);
+  });
+
+  testWidgets('Agent Hub replay does not revive an applied-only action card', (
+    tester,
+  ) async {
+    final store = _MemoryAgentHubInteractionStateStore(
+      AgentHubInteractionSnapshot(
+        runState: AgentStreamRunState.fromMap({
+          'phase': 'finished',
+          'textContent': '动作已经直接执行。',
+          'events': [
+            {
+              'event_id': 'evt-replay-applied-only',
+              'type': 'action.applied',
+              'action_id': 'action-replay-applied-only',
+              'payload': {
+                'action_id': 'action-replay-applied-only',
+                'action_status': 'applied',
+                'title': '不应恢复的动作卡',
+              },
+            },
+          ],
+        }),
+      ),
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
+    await tester.pumpAndSettle();
+
+    expect(find.text('动作已经直接执行。'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-action-panel')), findsNothing);
+    expect(find.text('不应恢复的动作卡'), findsNothing);
+    expect(find.text('已应用'), findsNothing);
   });
 
   testWidgets('Agent Hub restores historical artifacts from durable snapshot', (

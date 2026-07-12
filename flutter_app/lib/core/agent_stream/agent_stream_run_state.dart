@@ -128,11 +128,7 @@ class AgentStreamRunState {
       event.type.startsWith('artifact.') ? event.artifactId : null,
       event,
     );
-    final nextActionEvents = _nextIndexedEvents(
-      actionEvents,
-      event.type.startsWith('action.') ? event.actionId : null,
-      event,
-    );
+    final nextActionEvents = _nextVisibleActionEvents(actionEvents, event);
     final nextSequence = _maxSequence(lastSequence, event.sequence);
 
     final nextState = copyWith(
@@ -431,42 +427,50 @@ class AgentStreamRunState {
     );
   }
 
-  Map<String, Object?> toMap() => {
-    'phase': phase.name,
-    if (events.isNotEmpty)
-      'events': events.map((event) => event.raw).toList(growable: false),
-    if (_hasValue(threadId)) 'threadId': threadId,
-    if (_hasValue(runId)) 'runId': runId,
-    if (_hasValue(messageId)) 'messageId': messageId,
-    if (textContent.isNotEmpty) 'textContent': textContent,
-    if (provisionalTextContent.isNotEmpty)
-      'provisionalTextContent': provisionalTextContent,
-    if (_hasValue(textStreamId)) 'textStreamId': textStreamId,
-    if (nextTextSegmentIndex > 0) 'nextTextSegmentIndex': nextTextSegmentIndex,
-    if (pendingTextSegments.isNotEmpty)
-      'pendingTextSegments': pendingTextSegments.map(
-        (index, event) => MapEntry(index.toString(), event.raw),
-      ),
-    if (_hasValue(textIntegrityErrorCode))
-      'textIntegrityErrorCode': textIntegrityErrorCode,
-    if (quickReplies.isNotEmpty) 'quickReplies': quickReplies,
-    if (hasCompletedAssistantMessage) 'completedAssistantMessageReceived': true,
-    if (_seenReplayKeys.isNotEmpty)
-      'seenReplayKeys': _seenReplayKeys.toList(growable: false),
-    if (lastSequence != null) 'lastSequence': lastSequence,
-    if (_hasValue(errorMessage)) 'errorMessage': errorMessage,
-    if (cancelAcknowledged) 'cancelAcknowledged': cancelAcknowledged,
-    if (cancelStatusCode != null) 'cancelStatusCode': cancelStatusCode,
-  };
+  Map<String, Object?> toMap() {
+    final persistedEvents = _eventsForPersistence(events);
+    return {
+      'phase': phase.name,
+      if (persistedEvents.isNotEmpty)
+        'events': persistedEvents
+            .map((event) => event.raw)
+            .toList(growable: false),
+      if (_hasValue(threadId)) 'threadId': threadId,
+      if (_hasValue(runId)) 'runId': runId,
+      if (_hasValue(messageId)) 'messageId': messageId,
+      if (textContent.isNotEmpty) 'textContent': textContent,
+      if (provisionalTextContent.isNotEmpty)
+        'provisionalTextContent': provisionalTextContent,
+      if (_hasValue(textStreamId)) 'textStreamId': textStreamId,
+      if (nextTextSegmentIndex > 0)
+        'nextTextSegmentIndex': nextTextSegmentIndex,
+      if (pendingTextSegments.isNotEmpty)
+        'pendingTextSegments': pendingTextSegments.map(
+          (index, event) => MapEntry(index.toString(), event.raw),
+        ),
+      if (_hasValue(textIntegrityErrorCode))
+        'textIntegrityErrorCode': textIntegrityErrorCode,
+      if (quickReplies.isNotEmpty) 'quickReplies': quickReplies,
+      if (hasCompletedAssistantMessage)
+        'completedAssistantMessageReceived': true,
+      if (_seenReplayKeys.isNotEmpty)
+        'seenReplayKeys': _seenReplayKeys.toList(growable: false),
+      if (lastSequence != null) 'lastSequence': lastSequence,
+      if (_hasValue(errorMessage)) 'errorMessage': errorMessage,
+      if (cancelAcknowledged) 'cancelAcknowledged': cancelAcknowledged,
+      if (cancelStatusCode != null) 'cancelStatusCode': cancelStatusCode,
+    };
+  }
 
   static AgentStreamRunState fromMap(Map<String, Object?> map) {
-    final events = _eventsFromRawList(map['events']);
+    final rawEvents = _eventsFromRawList(map['events']);
+    final events = _eventsForPersistence(rawEvents);
     final mappedQuickReplies = _strings(
       map['quickReplies'] ?? map['quick_replies'],
     );
     final seenReplayKeys = {
       ..._strings(map['seenReplayKeys'] ?? map['seen_replay_keys']),
-      ..._replayKeysFromEvents(events),
+      ..._replayKeysFromEvents(rawEvents),
     };
     return AgentStreamRunState(
       phase: _phaseFromName(_string(map['phase'])),
@@ -489,7 +493,10 @@ class AgentStreamRunState {
           _string(map['text_integrity_error_code']),
       toolEvents: _indexedEvents(events, (event) => event.toolCallId),
       artifactEvents: _indexedEvents(events, (event) => event.artifactId),
-      actionEvents: _indexedEvents(events, (event) => event.actionId),
+      actionEvents: _indexedEvents(
+        userVisibleAgentActionEvents(events),
+        (event) => event.actionId,
+      ),
       quickReplies: mappedQuickReplies.isNotEmpty
           ? mappedQuickReplies
           : _latestQuickReplies(events),
@@ -518,6 +525,79 @@ Map<String, AgentStreamEvent> _nextIndexedEvents(
     ...current,
     normalizedId: event,
   });
+}
+
+Map<String, AgentStreamEvent> _nextVisibleActionEvents(
+  Map<String, AgentStreamEvent> current,
+  AgentStreamEvent event,
+) {
+  if (!event.type.startsWith('action.')) return current;
+  final actionId = event.actionId?.trim();
+  if (actionId == null || actionId.isEmpty) return current;
+
+  if (event.actionUserVisible == false) {
+    if (!current.containsKey(actionId)) return current;
+    final next = Map<String, AgentStreamEvent>.from(current)..remove(actionId);
+    return Map<String, AgentStreamEvent>.unmodifiable(next);
+  }
+  if (!event.exposesActionCard(
+    hasVisiblePredecessor: current.containsKey(actionId),
+  )) {
+    return current;
+  }
+  return Map<String, AgentStreamEvent>.unmodifiable({
+    ...current,
+    actionId: event,
+  });
+}
+
+/// Projects an action lifecycle to the events that may back a generic card.
+///
+/// New direct/explicit-intent actions opt out with `user_visible: false`.
+/// Legacy confirmation events stay visible, and their later lifecycle events
+/// inherit that visibility so one card can advance to its terminal state.
+List<AgentStreamEvent> userVisibleAgentActionEvents(
+  Iterable<AgentStreamEvent> events,
+) {
+  final visibleActionIds = <String>{};
+  final projected = <AgentStreamEvent>[];
+
+  for (final event in events) {
+    if (!event.type.startsWith('action.')) continue;
+    final actionId = event.actionId?.trim();
+    if (actionId == null || actionId.isEmpty) continue;
+
+    if (event.actionUserVisible == false) {
+      visibleActionIds.remove(actionId);
+      projected.removeWhere(
+        (candidate) => candidate.actionId?.trim() == actionId,
+      );
+      continue;
+    }
+    if (!event.exposesActionCard(
+      hasVisiblePredecessor: visibleActionIds.contains(actionId),
+    )) {
+      continue;
+    }
+    visibleActionIds.add(actionId);
+    projected.add(event);
+  }
+
+  return List<AgentStreamEvent>.unmodifiable(projected);
+}
+
+List<AgentStreamEvent> _eventsForPersistence(
+  Iterable<AgentStreamEvent> events,
+) {
+  final source = events.toList(growable: false);
+  final visibleActionEvents = userVisibleAgentActionEvents(source).toSet();
+  return List<AgentStreamEvent>.unmodifiable(
+    source.where(
+      (event) =>
+          !event.type.startsWith('action.') ||
+          visibleActionEvents.contains(event),
+    ),
+  );
 }
 
 class _TextStreamUpdate {
