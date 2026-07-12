@@ -72,106 +72,109 @@ void main() {
       },
     );
 
-    test('reuses a fresh owner-scoped snapshot without repository reads', () async {
-      var clock = DateTime(2026, 7, 11, 10);
-      final cache = StatusDashboardCache(
-        ownerUserId: 'user-001',
-        babyId: 'baby-001',
-      );
-      final status = _FakeStatusRepository();
-      final records = _FakeRecordsRepository();
-      final diary = _FakePregnancyDiaryRepository();
-      final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
-      final first = _controller(
-        status: status,
-        records: records,
-        diary: diary,
-        plans: plans,
-        cache: cache,
-        now: () => clock,
-      );
-      await first.load();
-      first.dispose();
+    test(
+      'reuses a fresh owner-scoped snapshot without repository reads',
+      () async {
+        var clock = DateTime(2026, 7, 11, 10);
+        final cache = StatusDashboardCache(
+          ownerUserId: 'user-001',
+          babyId: 'baby-001',
+        );
+        final status = _FakeStatusRepository();
+        final records = _FakeRecordsRepository();
+        final diary = _FakePregnancyDiaryRepository();
+        final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
+        final first = _controller(
+          status: status,
+          records: records,
+          diary: diary,
+          plans: plans,
+          cache: cache,
+          now: () => clock,
+        );
+        await first.load();
+        first.dispose();
 
-      final countsAfterFirstLoad = (
-        status: status.fetchCount,
-        feeding: records.feedingFetchCount,
-        milk: records.milkTrendFetchCount,
-        growth: records.growthFetchCount,
-        diary: diary.fetchCount,
-        plan: plans.fetchCount,
-      );
-      clock = clock.add(const Duration(seconds: 30));
-      final second = _controller(
-        status: status,
-        records: records,
-        diary: diary,
-        plans: plans,
-        cache: cache,
-        now: () => clock,
-      );
-      addTearDown(second.dispose);
-
-      expect(second.birthJourneyPlan.value.phase, StatusResourcePhase.data);
-      expect(second.birthJourneyPlan.value.data?.id, 'plan-001');
-      await second.load();
-
-      expect(
-        (
+        final countsAfterFirstLoad = (
           status: status.fetchCount,
           feeding: records.feedingFetchCount,
           milk: records.milkTrendFetchCount,
           growth: records.growthFetchCount,
           diary: diary.fetchCount,
           plan: plans.fetchCount,
-        ),
-        countsAfterFirstLoad,
-      );
-    });
+        );
+        clock = clock.add(const Duration(seconds: 30));
+        final second = _controller(
+          status: status,
+          records: records,
+          diary: diary,
+          plans: plans,
+          cache: cache,
+          now: () => clock,
+        );
+        addTearDown(second.dispose);
 
-    test('renders stale data first and refreshes each expired resource', () async {
-      var clock = DateTime(2026, 7, 11, 10);
-      final cache = StatusDashboardCache(
-        ownerUserId: 'user-001',
-        babyId: 'baby-001',
-      );
-      final status = _FakeStatusRepository();
-      final records = _FakeRecordsRepository();
-      final diary = _FakePregnancyDiaryRepository();
-      final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
-      final first = _controller(
-        status: status,
-        records: records,
-        diary: diary,
-        plans: plans,
-        cache: cache,
-        now: () => clock,
-      );
-      await first.load();
-      first.dispose();
+        expect(second.birthJourneyPlan.value.phase, StatusResourcePhase.data);
+        expect(second.birthJourneyPlan.value.data?.id, 'plan-001');
+        await second.load();
 
-      clock = clock.add(const Duration(minutes: 6));
-      final second = _controller(
-        status: status,
-        records: records,
-        diary: diary,
-        plans: plans,
-        cache: cache,
-        now: () => clock,
-      );
-      addTearDown(second.dispose);
-      expect(second.birthJourneyPlan.value.data?.id, 'plan-001');
-      expect(second.birthJourneyPlan.value.isLoading, isFalse);
+        expect((
+          status: status.fetchCount,
+          feeding: records.feedingFetchCount,
+          milk: records.milkTrendFetchCount,
+          growth: records.growthFetchCount,
+          diary: diary.fetchCount,
+          plan: plans.fetchCount,
+        ), countsAfterFirstLoad);
+      },
+    );
 
-      await second.load();
+    test(
+      'renders stale data first and refreshes each expired resource',
+      () async {
+        var clock = DateTime(2026, 7, 11, 10);
+        final cache = StatusDashboardCache(
+          ownerUserId: 'user-001',
+          babyId: 'baby-001',
+        );
+        final status = _FakeStatusRepository();
+        final records = _FakeRecordsRepository();
+        final diary = _FakePregnancyDiaryRepository();
+        final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
+        final first = _controller(
+          status: status,
+          records: records,
+          diary: diary,
+          plans: plans,
+          cache: cache,
+          now: () => clock,
+        );
+        await first.load();
+        first.dispose();
 
-      expect(status.fetchCount, 2);
-      expect(records.feedingFetchCount, 2);
-      expect(records.milkTrendFetchCount, 2);
-      expect(records.growthFetchCount, 2);
-      expect(diary.fetchCount, 2);
-      expect(plans.fetchCount, 2);
-    });
+        clock = clock.add(const Duration(minutes: 6));
+        final second = _controller(
+          status: status,
+          records: records,
+          diary: diary,
+          plans: plans,
+          cache: cache,
+          now: () => clock,
+        );
+        addTearDown(second.dispose);
+        expect(second.birthJourneyPlan.value.data?.id, 'plan-001');
+        expect(second.birthJourneyPlan.value.isLoading, isFalse);
+
+        await second.load();
+
+        expect(status.fetchCount, 2);
+        expect(records.feedingFetchCount, 2);
+        expect(records.milkTrendFetchCount, 2);
+        expect(records.growthFetchCount, 2);
+        expect(diary.fetchCount, 2);
+        expect(plans.fetchCount, 2);
+      },
+    );
 
     test('initializes only the restored visible pregnancy branch', () async {
       final status = _FakeStatusRepository();
@@ -197,79 +200,88 @@ void main() {
       expect(records.totalFetchCount, 0);
     });
 
-    test('does not block the visible cold branch on a delayed preference read', () async {
-      final preferences = _FakeStatusPreferenceStore(deferRead: true);
-      final status = _FakeStatusRepository();
-      final records = _FakeRecordsRepository();
-      final diary = _FakePregnancyDiaryRepository();
-      final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
-      final controller = _controller(
-        status: status,
-        records: records,
-        diary: diary,
-        plans: plans,
-        preferences: preferences,
-      );
+    test(
+      'does not block the visible cold branch on a delayed preference read',
+      () async {
+        final preferences = _FakeStatusPreferenceStore(deferRead: true);
+        final status = _FakeStatusRepository();
+        final records = _FakeRecordsRepository();
+        final diary = _FakePregnancyDiaryRepository();
+        final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
+        final controller = _controller(
+          status: status,
+          records: records,
+          diary: diary,
+          plans: plans,
+          preferences: preferences,
+        );
 
-      await controller.initialize();
+        await controller.initialize();
 
-      expect(status.fetchCount, 1);
-      expect(records.milkTrendFetchCount, 1);
-      expect(records.feedingFetchCount, 0);
-      expect(records.growthFetchCount, 0);
-      expect(diary.fetchCount, 0);
-      expect(plans.fetchCount, 0);
-      expect(controller.selectionReady.value, isFalse);
+        expect(status.fetchCount, 1);
+        expect(records.milkTrendFetchCount, 1);
+        expect(records.feedingFetchCount, 0);
+        expect(records.growthFetchCount, 0);
+        expect(diary.fetchCount, 0);
+        expect(plans.fetchCount, 0);
+        expect(controller.selectionReady.value, isFalse);
 
-      controller.dispose();
-      preferences.completeRead(StatusCareStage.pregnancy);
-    });
+        controller.dispose();
+        preferences.completeRead(StatusCareStage.pregnancy);
+      },
+    );
 
-    test('rejects a disposed account request before it can populate cache', () async {
-      final cache = StatusDashboardCache(
-        ownerUserId: 'old-owner',
-        babyId: 'baby-001',
-      );
-      final status = _FakeStatusRepository(deferFetch: true);
-      final controller = _controller(status: status, cache: cache);
+    test(
+      'rejects a disposed account request before it can populate cache',
+      () async {
+        final cache = StatusDashboardCache(
+          ownerUserId: 'old-owner',
+          babyId: 'baby-001',
+        );
+        final status = _FakeStatusRepository(deferFetch: true);
+        final controller = _controller(status: status, cache: cache);
 
-      final load = controller.load();
-      expect(status.fetchCount, 1);
-      expect(cache.overview, isNull);
+        final load = controller.load();
+        expect(status.fetchCount, 1);
+        expect(cache.overview, isNull);
 
-      controller.dispose();
-      status.completeFetch();
-      await load;
+        controller.dispose();
+        status.completeFetch();
+        await load;
 
-      expect(cache.overview, isNull);
-    });
+        expect(cache.overview, isNull);
+      },
+    );
 
-    test('refreshes plan and diary changes without fetching unrelated resources', () async {
-      final status = _FakeStatusRepository();
-      final records = _FakeRecordsRepository();
-      final diary = _FakePregnancyDiaryRepository();
-      final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
-      final controller = _controller(
-        status: status,
-        records: records,
-        diary: diary,
-        plans: plans,
-      );
-      addTearDown(controller.dispose);
-      await controller.load();
+    test(
+      'refreshes plan and diary changes without fetching unrelated resources',
+      () async {
+        final status = _FakeStatusRepository();
+        final records = _FakeRecordsRepository();
+        final diary = _FakePregnancyDiaryRepository();
+        final plans = _FakePregnancyPlanRepository(plan: _pregnancyPlan());
+        final controller = _controller(
+          status: status,
+          records: records,
+          diary: diary,
+          plans: plans,
+        );
+        addTearDown(controller.dispose);
+        await controller.load();
 
-      await controller.refreshPregnancyPlan();
-      expect(plans.fetchCount, 2);
-      expect(diary.fetchCount, 1);
-      expect(status.fetchCount, 1);
-      expect(records.totalFetchCount, 3);
+        await controller.refreshPregnancyPlan();
+        expect(plans.fetchCount, 2);
+        expect(diary.fetchCount, 1);
+        expect(status.fetchCount, 1);
+        expect(records.totalFetchCount, 3);
 
-      await controller.refreshPregnancyDiary();
-      expect(plans.fetchCount, 2);
-      expect(diary.fetchCount, 2);
-      expect(status.fetchCount, 1);
-      expect(records.totalFetchCount, 3);
-    });
+        await controller.refreshPregnancyDiary();
+        expect(plans.fetchCount, 2);
+        expect(diary.fetchCount, 2);
+        expect(status.fetchCount, 1);
+        expect(records.totalFetchCount, 3);
+      },
+    );
 
     test(
       'validates and saves a diary entry into the local projection',
@@ -369,73 +381,82 @@ void main() {
       expect(nextDayRecords.updatedIds, isEmpty);
     });
 
-    test('optimistically updates a stable todo and publishes authoritative data', () async {
-      final plans = _FakePregnancyPlanRepository(
-        plan: _pregnancyPlan(),
-        deferTodoMutation: true,
-      );
-      final controller = _controller(plans: plans);
-      addTearDown(controller.dispose);
-      await controller.load();
+    test(
+      'optimistically updates a stable todo and publishes authoritative data',
+      () async {
+        final plans = _FakePregnancyPlanRepository(
+          plan: _pregnancyPlan(),
+          deferTodoMutation: true,
+        );
+        final controller = _controller(plans: plans);
+        addTearDown(controller.dispose);
+        await controller.load();
 
-      final operation = controller.togglePlanTodo(
-        taskId: 'task-current',
-        completed: true,
-      );
-      expect(
-        controller
-            .birthJourneyPlan
-            .value
-            .data
-            ?.periods
-            .first
-            .items
-            .first
-            .completed,
-        isTrue,
-      );
-      expect(plans.todoMutations.single.expectedVersion, 1);
-      plans.completeTodoMutation(
-        _pregnancyPlan(version: 2, currentCompleted: true),
-      );
-
-      expect(await operation, isTrue);
-      expect(controller.birthJourneyPlan.value.data?.version, 2);
-      expect(controller.planMutation.value.phase, StatusMutationPhase.success);
-    });
-
-    test('rolls back a failed todo write and refetches authoritative data', () async {
-      final plans = _FakePregnancyPlanRepository(
-        plan: _pregnancyPlan(),
-        todoMutationError: StateError('write failed'),
-      );
-      final controller = _controller(plans: plans);
-      addTearDown(controller.dispose);
-      await controller.load();
-
-      expect(
-        await controller.togglePlanTodo(
+        final operation = controller.togglePlanTodo(
           taskId: 'task-current',
           completed: true,
-        ),
-        isFalse,
-      );
+        );
+        expect(
+          controller
+              .birthJourneyPlan
+              .value
+              .data
+              ?.periods
+              .first
+              .items
+              .first
+              .completed,
+          isTrue,
+        );
+        expect(plans.todoMutations.single.expectedVersion, 1);
+        plans.completeTodoMutation(
+          _pregnancyPlan(version: 2, currentCompleted: true),
+        );
 
-      expect(
-        controller
-            .birthJourneyPlan
-            .value
-            .data
-            ?.periods
-            .first
-            .items
-            .first
-            .completed,
-        isFalse,
-      );
-      expect(plans.fetchCount, 2);
-      expect(controller.planMutation.value.phase, StatusMutationPhase.error);
-    });
+        expect(await operation, isTrue);
+        expect(controller.birthJourneyPlan.value.data?.version, 2);
+        expect(
+          controller.planMutation.value.phase,
+          StatusMutationPhase.success,
+        );
+      },
+    );
+
+    test(
+      'rolls back a failed todo write and refetches authoritative data',
+      () async {
+        final plans = _FakePregnancyPlanRepository(
+          plan: _pregnancyPlan(),
+          todoMutationError: StateError('write failed'),
+        );
+        final controller = _controller(plans: plans);
+        addTearDown(controller.dispose);
+        await controller.load();
+
+        expect(
+          await controller.togglePlanTodo(
+            taskId: 'task-current',
+            completed: true,
+          ),
+          isFalse,
+        );
+
+        expect(
+          controller
+              .birthJourneyPlan
+              .value
+              .data
+              ?.periods
+              .first
+              .items
+              .first
+              .completed,
+          isFalse,
+        );
+        expect(plans.fetchCount, 2);
+        expect(controller.planMutation.value.phase, StatusMutationPhase.error);
+      },
+    );
 
     test('does not publish mutation results after disposal', () async {
       final diary = _FakePregnancyDiaryRepository(deferUpsert: true);

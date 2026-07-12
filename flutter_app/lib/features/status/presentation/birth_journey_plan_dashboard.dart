@@ -1154,7 +1154,11 @@ class _PlanSkeleton extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _PlanSkeletonPeriod(color: color, widthFactor: 0.82, expanded: true),
+            _PlanSkeletonPeriod(
+              color: color,
+              widthFactor: 0.82,
+              expanded: true,
+            ),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 14),
               child: Divider(height: 1, color: Color(0xffdbece8)),

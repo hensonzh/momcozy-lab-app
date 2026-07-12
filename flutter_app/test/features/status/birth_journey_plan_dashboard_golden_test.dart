@@ -54,9 +54,7 @@ void main() {
         await tester.pumpAndSettle();
         if (state.openDetails) {
           await tester.tap(
-            find.byKey(
-              const ValueKey('status-birth-journey-detail-button'),
-            ),
+            find.byKey(const ValueKey('status-birth-journey-detail-button')),
           );
           await tester.pumpAndSettle();
         }
@@ -68,9 +66,7 @@ void main() {
         }
         if (state.hasNoDetailAction) {
           expect(
-            find.byKey(
-              const ValueKey('status-birth-journey-detail-button'),
-            ),
+            find.byKey(const ValueKey('status-birth-journey-detail-button')),
             findsNothing,
           );
         }

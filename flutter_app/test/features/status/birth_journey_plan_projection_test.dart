@@ -58,39 +58,36 @@ void main() {
       );
     });
 
-    test('keeps valid periods when adjacent legacy payload entries are invalid', () {
-      final projected = projectBirthJourneyPlan(
-        _plan(
-          cardJson: {
-            'todo_plan': {
-              'periods': [
-                {
-                  'title': '损坏阶段',
-                  'items': <Object?>[],
-                },
-                {
-                  'id': 'current',
-                  'title': '当前阶段',
-                  'status': 'current',
-                  'items': [
-                    {'title': ''},
-                    {
-                      'item_id': 'stable-item-1',
-                      'title': '有效事项',
-                    },
-                  ],
-                },
-              ],
+    test(
+      'keeps valid periods when adjacent legacy payload entries are invalid',
+      () {
+        final projected = projectBirthJourneyPlan(
+          _plan(
+            cardJson: {
+              'todo_plan': {
+                'periods': [
+                  {'title': '损坏阶段', 'items': <Object?>[]},
+                  {
+                    'id': 'current',
+                    'title': '当前阶段',
+                    'status': 'current',
+                    'items': [
+                      {'title': ''},
+                      {'item_id': 'stable-item-1', 'title': '有效事项'},
+                    ],
+                  },
+                ],
+              },
             },
-          },
-        ),
-      );
+          ),
+        );
 
-      expect(projected.periods, hasLength(1));
-      expect(projected.periods.single.items, hasLength(1));
-      expect(projected.periods.single.items.single.id, 'stable-item-1');
-      expect(projected.periods.single.items.single.canMutate, isTrue);
-    });
+        expect(projected.periods, hasLength(1));
+        expect(projected.periods.single.items, hasLength(1));
+        expect(projected.periods.single.items.single.id, 'stable-item-1');
+        expect(projected.periods.single.items.single.canMutate, isTrue);
+      },
+    );
   });
 }
 
