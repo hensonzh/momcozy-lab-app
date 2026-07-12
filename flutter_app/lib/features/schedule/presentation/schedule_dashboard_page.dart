@@ -74,6 +74,10 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
   int? _consumedMilkPlanRevision;
   DateTime? _deliveryDate;
   int _deliveryDateLoadGeneration = 0;
+  String? _editingTaskId;
+  TextEditingController? _editingTaskTitleController;
+  String? _editingTaskTime;
+  bool _savingTaskEdit = false;
   final Set<String> _changedDayKeys = <String>{};
   final Map<String, String> _idempotencyKeysByIntent = <String, String>{};
 
@@ -143,6 +147,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     _planChangeHighlightTimer?.cancel();
     widget.milkPlanChangeStore?.removeListener(_onMilkPlanChangeStore);
     _controller.removeListener(_onControllerReminderChange);
+    _editingTaskTitleController?.dispose();
     _scrollController.dispose();
     _controller.dispose();
     super.dispose();
@@ -172,7 +177,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
                   displayAnchor: state.displayAnchor,
                   highlightedDay: _highlightedDay,
                   changedDayKeys: _changedDayKeys,
-                  onSelected: (day) => unawaited(_controller.selectDay(day)),
+                  onSelected: _selectDay,
                   onBrowseWeek: _controller.browseWeek,
                 ),
                 Expanded(
@@ -374,9 +379,18 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
                 busy: state.isMutating,
                 highlighted: task.id == _highlightedTaskId,
                 isNext: isToday && task.id == state.nextPendingTask?.id,
-                onEdit: task.state == ScheduleTaskState.pending && isToday
-                    ? () => unawaited(_showTaskEditor(task: task))
+                editing: task.id == _editingTaskId,
+                editTitleController: task.id == _editingTaskId
+                    ? _editingTaskTitleController
                     : null,
+                editTime: task.id == _editingTaskId ? _editingTaskTime : null,
+                editSaving: task.id == _editingTaskId && _savingTaskEdit,
+                onEdit: task.state == ScheduleTaskState.pending && isToday
+                    ? () => _startInlineTaskEdit(task)
+                    : null,
+                onEditTime: () => unawaited(_pickInlineTaskTime()),
+                onSaveEdit: () => unawaited(_saveInlineTaskEdit(task)),
+                onCancelEdit: _cancelInlineTaskEdit,
                 onDelete: () => unawaited(_deleteTask(task)),
                 onDeleteLinkedRecord: (record) =>
                     unawaited(_deleteRecord(record)),
@@ -411,6 +425,83 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     return children;
   }
 
+  void _selectDay(DateTime day) {
+    if (!_sameDay(day, _controller.state.selectedDay)) {
+      _cancelInlineTaskEdit();
+    }
+    unawaited(_controller.selectDay(day));
+  }
+
+  void _startInlineTaskEdit(ScheduleTask task) {
+    if (_controller.state.isMutating) return;
+    final previous = _editingTaskTitleController;
+    setState(() {
+      _editingTaskId = task.id;
+      _editingTaskTitleController = TextEditingController(text: task.title);
+      _editingTaskTime = _time(task.remindAt);
+      _savingTaskEdit = false;
+      _feedback = null;
+    });
+    previous?.dispose();
+  }
+
+  void _cancelInlineTaskEdit() {
+    if (_editingTaskId == null) return;
+    FocusScope.of(context).unfocus();
+    final previous = _editingTaskTitleController;
+    setState(_resetInlineTaskEditState);
+    previous?.dispose();
+  }
+
+  void _resetInlineTaskEditState() {
+    _editingTaskId = null;
+    _editingTaskTitleController = null;
+    _editingTaskTime = null;
+    _savingTaskEdit = false;
+  }
+
+  Future<void> _pickInlineTaskTime() async {
+    final initialTime = _editingTaskTime;
+    if (initialTime == null || _savingTaskEdit) return;
+    final selected = await _showScheduleTimePicker(
+      context,
+      title: '设置任务时间',
+      initialTime: initialTime,
+    );
+    if (!mounted || selected == null || _editingTaskId == null) return;
+    setState(() => _editingTaskTime = selected);
+  }
+
+  Future<void> _saveInlineTaskEdit(ScheduleTask task) async {
+    if (_savingTaskEdit || _editingTaskId != task.id) return;
+    final title = _editingTaskTitleController?.text.trim() ?? '';
+    final time = _normalizedTime(_editingTaskTime ?? '');
+    if (title.isEmpty || time == null) {
+      setState(() => _feedback = '请填写有效的任务名称和时间');
+      return;
+    }
+    FocusScope.of(context).unfocus();
+    _controller.clearMutationError();
+    setState(() => _savingTaskEdit = true);
+    final updated = await _controller.updateTask(
+      taskId: task.id,
+      time: time,
+      title: title,
+      description: task.description,
+    );
+    if (!mounted || _editingTaskId != task.id) return;
+    if (updated == null) {
+      setState(() => _savingTaskEdit = false);
+      return;
+    }
+    final previous = _editingTaskTitleController;
+    setState(() {
+      _resetInlineTaskEditState();
+      _feedback = '任务已更新';
+    });
+    previous?.dispose();
+  }
+
   void _applyRouteIntent({
     required DateTime? intentDay,
     required bool notify,
@@ -420,8 +511,10 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     final revision = ++_intentRevision;
     _highlightTimer?.cancel();
     _focusScheduled = false;
+    final abandonedEditController = notify ? _editingTaskTitleController : null;
 
     void apply() {
+      if (notify) _resetInlineTaskEditState();
       _highlightedTaskId = taskId;
       _highlightedDay = intentDay;
       _pendingFocusTaskId = taskId;
@@ -433,6 +526,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     } else {
       apply();
     }
+    abandonedEditController?.dispose();
     if (selectDay && intentDay != null) {
       unawaited(_controller.selectDay(intentDay));
     }
@@ -2075,7 +2169,14 @@ class _ScheduleTaskRow extends StatelessWidget {
     required this.busy,
     required this.highlighted,
     required this.isNext,
+    required this.editing,
+    required this.editTitleController,
+    required this.editTime,
+    required this.editSaving,
     required this.onEdit,
+    required this.onEditTime,
+    required this.onSaveEdit,
+    required this.onCancelEdit,
     required this.onDelete,
     required this.onDeleteLinkedRecord,
   });
@@ -2087,7 +2188,14 @@ class _ScheduleTaskRow extends StatelessWidget {
   final bool busy;
   final bool highlighted;
   final bool isNext;
+  final bool editing;
+  final TextEditingController? editTitleController;
+  final String? editTime;
+  final bool editSaving;
   final VoidCallback? onEdit;
+  final VoidCallback onEditTime;
+  final VoidCallback onSaveEdit;
+  final VoidCallback onCancelEdit;
   final VoidCallback onDelete;
   final ValueChanged<ScheduleRecord> onDeleteLinkedRecord;
 
@@ -2103,7 +2211,7 @@ class _ScheduleTaskRow extends StatelessWidget {
             '，${provenance.label}'
             '${isNext ? '，下一项' : ''}'
             '${linkedRecords.isEmpty ? '' : '，${linkedRecords.map((record) => _linkedRecordSummary(record, volumeUnit)).join('，')}'}',
-        button: onEdit != null,
+        button: !editing && onEdit != null,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -2119,113 +2227,248 @@ class _ScheduleTaskRow extends StatelessWidget {
                 border: skipped
                     ? null
                     : Border.all(
-                        color: highlighted
+                        color: editing
+                            ? MomCozyColors.primary
+                            : highlighted
                             ? MomCozyColors.primary.withValues(alpha: 0.72)
                             : isNext
                             ? MomCozyColors.primary.withValues(alpha: 0.5)
                             : completed
                             ? const Color(0xffd4e3d1)
                             : MomCozyColors.border.withValues(alpha: 0.6),
-                        width: highlighted ? 2 : 1,
+                        width: editing || highlighted ? 2 : 1,
                       ),
-                boxShadow: highlighted || isNext
+                boxShadow: editing || highlighted || isNext
                     ? MomCozyShadows.soft
                     : const [],
               ),
               child: InkWell(
-                onTap: onEdit,
+                onTap: editing ? null : onEdit,
                 borderRadius: BorderRadius.circular(16),
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 12, right: 4),
+                  padding: EdgeInsets.only(left: editing ? 6 : 12, right: 4),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(minHeight: 48),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 50,
-                          child: Text(
-                            _time(task.remindAt),
-                            maxLines: 1,
-                            style: TextStyle(
-                              color: skipped
-                                  ? MomCozyColors.mutedForeground
-                                  : completed
-                                  ? MomCozyColors.primary.withValues(alpha: 0.7)
-                                  : MomCozyColors.mutedForeground,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w900,
-                              decoration: skipped
-                                  ? TextDecoration.lineThrough
-                                  : null,
-                            ),
+                    child: editing
+                        ? _ScheduleInlineTaskEditor(
+                            taskId: task.id,
+                            titleController: editTitleController!,
+                            time: editTime ?? _time(task.remindAt),
+                            saving: editSaving,
+                            onEditTime: onEditTime,
+                            onSave: onSaveEdit,
+                            onCancel: onCancelEdit,
+                          )
+                        : Row(
+                            children: [
+                              SizedBox(
+                                width: 50,
+                                child: Text(
+                                  _time(task.remindAt),
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: skipped
+                                        ? MomCozyColors.mutedForeground
+                                        : completed
+                                        ? MomCozyColors.primary.withValues(
+                                            alpha: 0.7,
+                                          )
+                                        : MomCozyColors.mutedForeground,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w900,
+                                    decoration: skipped
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  task.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: skipped
+                                        ? MomCozyColors.mutedForeground
+                                        : MomCozyColors.foreground.withValues(
+                                            alpha: completed ? 0.8 : 0.9,
+                                          ),
+                                    fontSize: 15,
+                                    fontWeight: completed || skipped
+                                        ? FontWeight.w800
+                                        : FontWeight.w900,
+                                    decoration: skipped
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                                  ),
+                                ),
+                              ),
+                              if (linkedRecords.isNotEmpty) ...[
+                                const SizedBox(width: 4),
+                                _CompactLinkedRecordBadge(
+                                  record: linkedRecords.first,
+                                  volumeUnit: volumeUnit,
+                                  extraCount: linkedRecords.length - 1,
+                                  onDeleted: busy
+                                      ? null
+                                      : () => onDeleteLinkedRecord(
+                                          linkedRecords.first,
+                                        ),
+                                ),
+                              ],
+                              if (skipped) const _StatusBadge(label: '已跳过'),
+                              if (completed) const _StatusBadge(label: '已完成'),
+                              SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: IconButton(
+                                  tooltip: linkedRecords.isEmpty
+                                      ? '删除任务'
+                                      : '已有执行记录，请先删除关联记录',
+                                  padding: EdgeInsets.zero,
+                                  onPressed: busy || linkedRecords.isNotEmpty
+                                      ? null
+                                      : onDelete,
+                                  icon: const Icon(
+                                    Icons.delete_outline_rounded,
+                                    size: 18,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            task.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: skipped
-                                  ? MomCozyColors.mutedForeground
-                                  : MomCozyColors.foreground.withValues(
-                                      alpha: completed ? 0.8 : 0.9,
-                                    ),
-                              fontSize: 15,
-                              fontWeight: completed || skipped
-                                  ? FontWeight.w800
-                                  : FontWeight.w900,
-                              decoration: skipped
-                                  ? TextDecoration.lineThrough
-                                  : null,
-                            ),
-                          ),
-                        ),
-                        if (linkedRecords.isNotEmpty) ...[
-                          const SizedBox(width: 4),
-                          _CompactLinkedRecordBadge(
-                            record: linkedRecords.first,
-                            volumeUnit: volumeUnit,
-                            extraCount: linkedRecords.length - 1,
-                            onDeleted: busy
-                                ? null
-                                : () =>
-                                      onDeleteLinkedRecord(linkedRecords.first),
-                          ),
-                        ],
-                        if (skipped) const _StatusBadge(label: '已跳过'),
-                        if (completed) const _StatusBadge(label: '已完成'),
-                        SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: IconButton(
-                            tooltip: linkedRecords.isEmpty
-                                ? '删除任务'
-                                : '已有执行记录，请先删除关联记录',
-                            padding: EdgeInsets.zero,
-                            onPressed: busy || linkedRecords.isNotEmpty
-                                ? null
-                                : onDelete,
-                            icon: const Icon(
-                              Icons.delete_outline_rounded,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
             ),
-            Positioned(
-              left: 0,
-              top: -4,
-              child: _TaskSourceBadge(taskId: task.id, provenance: provenance),
-            ),
+            if (!editing)
+              Positioned(
+                left: 0,
+                top: -4,
+                child: _TaskSourceBadge(
+                  taskId: task.id,
+                  provenance: provenance,
+                ),
+              ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ScheduleInlineTaskEditor extends StatelessWidget {
+  const _ScheduleInlineTaskEditor({
+    required this.taskId,
+    required this.titleController,
+    required this.time,
+    required this.saving,
+    required this.onEditTime,
+    required this.onSave,
+    required this.onCancel,
+  });
+
+  final String taskId;
+  final TextEditingController titleController;
+  final String time;
+  final bool saving;
+  final VoidCallback onEditTime;
+  final VoidCallback onSave;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 62,
+          height: 38,
+          child: OutlinedButton(
+            key: ValueKey('schedule-inline-task-time-$taskId'),
+            onPressed: saving ? null : onEditTime,
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.zero,
+              side: BorderSide(
+                color: MomCozyColors.primary.withValues(alpha: 0.35),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              textStyle: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            child: Text(time),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: SizedBox(
+            height: 40,
+            child: TextField(
+              key: ValueKey('schedule-inline-task-title-$taskId'),
+              controller: titleController,
+              autofocus: true,
+              enabled: !saving,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) {
+                if (!saving) onSave();
+              },
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+              decoration: InputDecoration(
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    color: MomCozyColors.border.withValues(alpha: 0.8),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(
+                    color: MomCozyColors.primary,
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 36,
+          height: 40,
+          child: IconButton(
+            key: ValueKey('schedule-inline-task-save-$taskId'),
+            tooltip: '保存',
+            padding: EdgeInsets.zero,
+            onPressed: saving ? null : onSave,
+            icon: saving
+                ? const SizedBox.square(
+                    dimension: 17,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.check_rounded, size: 20),
+          ),
+        ),
+        SizedBox(
+          width: 36,
+          height: 40,
+          child: IconButton(
+            key: ValueKey('schedule-inline-task-cancel-$taskId'),
+            tooltip: '取消',
+            padding: EdgeInsets.zero,
+            onPressed: saving ? null : onCancel,
+            icon: const Icon(Icons.close_rounded, size: 19),
+          ),
+        ),
+      ],
     );
   }
 }
