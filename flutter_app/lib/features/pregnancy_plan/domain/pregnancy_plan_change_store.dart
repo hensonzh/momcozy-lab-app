@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 
 const _pregnancyPlanChangedEventType = 'pregnancy_plan.changed';
+const _supportedOperations = <String>{'created', 'deleted'};
 const _maxSeenEventIds = 64;
 
 @immutable
@@ -30,14 +31,15 @@ class PregnancyPlanChange {
     );
     final source = _string(event.payload['source']);
     if (eventId == null ||
-        operation != 'created' ||
+        operation == null ||
+        !_supportedOperations.contains(operation) ||
         planId == null ||
         planType != 'pregnancy' ||
         source != 'agent_action') {
       return null;
     }
     return PregnancyPlanChange(
-      operation: 'created',
+      operation: operation,
       planId: planId,
       planType: 'pregnancy',
       source: 'agent_action',
@@ -213,8 +215,13 @@ class PregnancyPlanChangeStore extends ChangeNotifier {
     _rememberEventId(change.eventId);
     _revision += 1;
     _lastEventId = change.eventId;
-    _hasUnread = true;
-    _highlightCard = false;
+    if (change.operation == 'deleted') {
+      _hasUnread = false;
+      _highlightCard = false;
+    } else {
+      _hasUnread = true;
+      _highlightCard = false;
+    }
     if (notify) notifyListeners();
     if (persist) _schedulePersistence();
     return true;

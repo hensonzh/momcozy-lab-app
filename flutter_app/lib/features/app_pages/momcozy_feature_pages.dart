@@ -709,10 +709,16 @@ class _StatusPageState extends State<_StatusPage> {
   }
 
   Future<void> _initializeStatusController(MomCozyApiRuntime runtime) async {
+    final revalidatePregnancyPlan =
+        _controller.birthJourneyPlan.value.phase == StatusResourcePhase.data;
     try {
       await _controller.initialize();
     } catch (_) {
       // Individual resources expose their own error state below.
+    }
+    if (!mounted || !identical(runtime, _runtime)) return;
+    if (revalidatePregnancyPlan) {
+      await _controller.refreshPregnancyPlan();
     }
     if (!mounted || !identical(runtime, _runtime)) return;
     _schedulePregnancyDiaryChangeRefresh(refresh: false);
