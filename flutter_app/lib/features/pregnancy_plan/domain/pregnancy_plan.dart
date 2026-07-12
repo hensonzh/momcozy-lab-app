@@ -1,12 +1,21 @@
 abstract interface class PregnancyPlanRepository {
   Future<PregnancyPlan?> fetchActivePlan();
 
+  Future<PregnancyPlan> updateTodoCompletion({
+    required String planId,
+    required String itemId,
+    required bool completed,
+    required int expectedVersion,
+    String? idempotencyKey,
+  });
+
   Future<void> deletePlan({required String planId});
 }
 
 class PregnancyPlan {
   const PregnancyPlan({
     required this.id,
+    this.version = 0,
     required this.planType,
     required this.title,
     required this.summary,
@@ -16,6 +25,7 @@ class PregnancyPlan {
   });
 
   final String id;
+  final int version;
   final String planType;
   final String title;
   final String summary;
@@ -29,28 +39,4 @@ class PregnancyPlan {
         ? Map<String, Object?>.unmodifiable(Map<String, Object?>.from(raw))
         : const <String, Object?>{};
   }
-
-  bool get hasRenderableCard {
-    final persistedCard = card;
-    final cardType = persistedCard['card_type'];
-    final cardJson = persistedCard['card_json'];
-    if (cardType != 'birth_journey_plan_card' || cardJson is! Map) {
-      return false;
-    }
-    final todoPlan = cardJson['todo_plan'] ?? cardJson['todoPlan'];
-    if (todoPlan is! Map) return false;
-    final periods = todoPlan['periods'];
-    if (periods is! List || periods.isEmpty) return false;
-    return periods.every((rawPeriod) {
-      if (rawPeriod is! Map || !_hasText(rawPeriod['title'])) return false;
-      final items = rawPeriod['items'];
-      return items is List &&
-          items.isNotEmpty &&
-          items.every(
-            (rawItem) => rawItem is Map && _hasText(rawItem['title']),
-          );
-    });
-  }
 }
-
-bool _hasText(Object? value) => value is String && value.trim().isNotEmpty;

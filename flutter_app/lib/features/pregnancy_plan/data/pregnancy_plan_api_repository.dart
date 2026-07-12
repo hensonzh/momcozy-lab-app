@@ -40,6 +40,46 @@ class PregnancyPlanApiRepository implements PregnancyPlanRepository {
       '$pregnancyPlansEndpoint/${Uri.encodeComponent(planId.trim())}',
     );
   }
+
+  @override
+  Future<PregnancyPlan> updateTodoCompletion({
+    required String planId,
+    required String itemId,
+    required bool completed,
+    required int expectedVersion,
+    String? idempotencyKey,
+  }) async {
+    final value = transport;
+    if (value is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Pregnancy plan todos require mutation support.');
+    }
+    final normalizedPlanId = planId.trim();
+    final normalizedItemId = itemId.trim();
+    if (normalizedPlanId.isEmpty ||
+        normalizedItemId.isEmpty ||
+        expectedVersion < 1) {
+      throw const FormatException('Pregnancy plan todo identity is invalid.');
+    }
+    final response = await (value as ApiJsonMutationTransport).patchJson(
+      '$pregnancyPlansEndpoint/${Uri.encodeComponent(normalizedPlanId)}/todos/'
+      '${Uri.encodeComponent(normalizedItemId)}/completion',
+      body: {
+        'completed': completed,
+        'expected_version': expectedVersion,
+      },
+      headers: {
+        if (idempotencyKey?.trim().isNotEmpty == true)
+          'Idempotency-Key': idempotencyKey!.trim(),
+      },
+    );
+    final plan = _pregnancyPlan(response);
+    if (plan == null || plan.id != normalizedPlanId) {
+      throw const FormatException(
+        'Pregnancy plan todo response is not authoritative.',
+      );
+    }
+    return plan;
+  }
 }
 
 PregnancyPlan? _pregnancyPlan(Map<String, Object?> data) {
@@ -55,6 +95,7 @@ PregnancyPlan? _pregnancyPlan(Map<String, Object?> data) {
       : const <String, Object?>{};
   return PregnancyPlan(
     id: id,
+    version: _integer(data['version']),
     planType: 'pregnancy',
     title: _string(data['title']) ?? '孕期计划',
     summary: _string(data['summary']) ?? '',
@@ -62,6 +103,12 @@ PregnancyPlan? _pregnancyPlan(Map<String, Object?> data) {
     source: _string(data['source']) ?? '',
     payload: payload,
   );
+}
+
+int _integer(Object? value) {
+  if (value is int) return value < 0 ? 0 : value;
+  final parsed = int.tryParse(value?.toString() ?? '');
+  return parsed == null || parsed < 0 ? 0 : parsed;
 }
 
 String? _string(Object? value) {

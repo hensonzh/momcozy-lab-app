@@ -20,14 +20,17 @@ BirthJourneyPlan projectBirthJourneyPlan(PregnancyPlan plan) {
   final periods = <BirthJourneyPeriod>[];
   for (var index = 0; index < rawPeriods.length; index += 1) {
     final raw = rawPeriods[index];
-    if (raw is! Map) {
-      throw const FormatException('Pregnancy plan period is invalid.');
-    }
-    periods.add(_period(Map<String, Object?>.from(raw), index));
+    if (raw is! Map) continue;
+    final period = _period(Map<String, Object?>.from(raw), index);
+    if (period != null) periods.add(period);
+  }
+  if (periods.isEmpty) {
+    throw const FormatException('Pregnancy plan has no renderable periods.');
   }
   final nextAction = _map(cardJson['next_action'] ?? cardJson['nextAction']);
   return BirthJourneyPlan(
     id: plan.id,
+    version: plan.version,
     title: plan.title.trim().isEmpty ? '孕期计划' : plan.title.trim(),
     summary: plan.summary.trim(),
     status: plan.status,
@@ -39,6 +42,7 @@ BirthJourneyPlan projectBirthJourneyPlan(PregnancyPlan plan) {
 class BirthJourneyPlan {
   const BirthJourneyPlan({
     required this.id,
+    this.version = 0,
     required this.title,
     required this.summary,
     required this.status,
@@ -47,6 +51,7 @@ class BirthJourneyPlan {
   });
 
   final String id;
+  final int version;
   final String title;
   final String summary;
   final String status;
@@ -59,6 +64,7 @@ class BirthJourneyPlan {
   BirthJourneyPlan withTodoCompletion(String taskId, bool completed) {
     return BirthJourneyPlan(
       id: id,
+      version: version,
       title: title,
       summary: summary,
       status: status,
@@ -116,6 +122,7 @@ class BirthJourneyTodo {
     required this.reason,
     required this.steps,
     required this.completed,
+    this.authoritativeItemId = '',
     this.timeframe = '',
   });
 
@@ -125,6 +132,7 @@ class BirthJourneyTodo {
   final String reason;
   final List<String> steps;
   final bool completed;
+  final String authoritativeItemId;
   final String timeframe;
 
   BirthJourneyTodo copyWith({bool? completed}) {
@@ -135,6 +143,7 @@ class BirthJourneyTodo {
       reason: reason,
       steps: steps,
       completed: completed ?? this.completed,
+      authoritativeItemId: authoritativeItemId,
       timeframe: timeframe,
     );
   }
@@ -143,17 +152,19 @@ class BirthJourneyTodo {
     final effectiveTitle = title.trim().isEmpty ? '孕期计划事项' : title.trim();
     return '我已完成【$effectiveTitle】，请基于这个事项继续追问需要补充的执行细节，并在需要时同步更新我的孕期日记';
   }
+
+  bool get canMutate => authoritativeItemId.isNotEmpty;
 }
 
-BirthJourneyPeriod _period(Map<String, Object?> map, int index) {
+BirthJourneyPeriod? _period(Map<String, Object?> map, int index) {
   final rawItems = map['items'];
-  if (rawItems is! List || rawItems.isEmpty) {
-    throw const FormatException('Pregnancy plan period items are invalid.');
-  }
+  if (rawItems is! List || rawItems.isEmpty) return null;
   final items = <BirthJourneyTodo>[];
   for (var itemIndex = 0; itemIndex < rawItems.length; itemIndex += 1) {
-    items.add(_todo(rawItems[itemIndex], itemIndex));
+    final item = _todo(rawItems[itemIndex], itemIndex);
+    if (item != null) items.add(item);
   }
+  if (items.isEmpty) return null;
   final displayMode = _text(map['display_mode'] ?? map['displayMode']);
   final status = _text(map['status']);
   return BirthJourneyPeriod(
@@ -172,11 +183,11 @@ BirthJourneyPeriod _period(Map<String, Object?> map, int index) {
   );
 }
 
-BirthJourneyTodo _todo(Object? value, int index) {
+BirthJourneyTodo? _todo(Object? value, int index) {
   if (value is String) {
     final title = _truncate(value, 22);
     if (title.isEmpty) {
-      throw const FormatException('Pregnancy plan todo is invalid.');
+      return null;
     }
     return BirthJourneyTodo(
       id: _fallbackTodoId(index),
@@ -188,20 +199,21 @@ BirthJourneyTodo _todo(Object? value, int index) {
     );
   }
   if (value is! Map) {
-    throw const FormatException('Pregnancy plan todo is invalid.');
+    return null;
   }
   final map = Map<String, Object?>.from(value);
   final title = _truncate(map['title'], 22);
   if (title.isEmpty) {
-    throw const FormatException('Pregnancy plan todo title is invalid.');
+    return null;
   }
   final normalized = _priorityAndReason(
     map['reason'],
     map['priority_label'] ?? map['priorityLabel'],
   );
-  final rawId = _text(
-    map['id'] ?? map['source_item_id'] ?? map['sourceItemId'],
-  );
+  final authoritativeItemId = _text(map['item_id'] ?? map['itemId']);
+  final rawId = authoritativeItemId.isNotEmpty
+      ? authoritativeItemId
+      : _text(map['id'] ?? map['source_item_id'] ?? map['sourceItemId']);
   return BirthJourneyTodo(
     id: rawId.isEmpty ? _fallbackTodoId(index) : rawId,
     title: title,
@@ -209,6 +221,7 @@ BirthJourneyTodo _todo(Object? value, int index) {
     reason: normalized.reason,
     steps: _steps(map['steps']),
     completed: _completed(map['completed']),
+    authoritativeItemId: authoritativeItemId,
     timeframe: _text(map['timeframe']),
   );
 }

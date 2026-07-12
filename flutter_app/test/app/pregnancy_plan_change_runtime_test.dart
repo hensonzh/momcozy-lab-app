@@ -95,6 +95,39 @@ void main() {
       );
     },
   );
+
+  for (final status in const [
+    MomCozySessionStatus.expired,
+    MomCozySessionStatus.revoked,
+  ]) {
+    test('$status drops Status cache even when the user id is unchanged', () {
+      final initial = _runtime(userId: 'same-text-user');
+      final controller = MomCozyRuntimeController(initial);
+      addTearDown(controller.dispose);
+
+      controller.replaceSession(initial.session.copyWith(status: status));
+
+      expect(
+        controller.runtime.statusDashboardCache,
+        isNot(same(initial.statusDashboardCache)),
+      );
+    });
+  }
+
+  test('an authenticated label without an access token drops Status cache', () {
+    final initial = _runtime(userId: 'tokenless-user');
+    final controller = MomCozyRuntimeController(initial);
+    addTearDown(controller.dispose);
+
+    controller.replaceSession(
+      initial.session.copyWith(clearAccessToken: true),
+    );
+
+    expect(
+      controller.runtime.statusDashboardCache,
+      isNot(same(initial.statusDashboardCache)),
+    );
+  });
 }
 
 MomCozyApiRuntime _runtime({required String userId}) {

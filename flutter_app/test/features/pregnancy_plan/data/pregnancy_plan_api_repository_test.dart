@@ -12,6 +12,7 @@ void main() {
           'items': [
             {
               'id': 'plan-pregnancy-1',
+              'version': 7,
               'owner_user_id': 'user-1',
               'plan_type': 'pregnancy',
               'title': '孕期计划',
@@ -52,6 +53,7 @@ void main() {
         });
         expect(plan, isNotNull);
         expect(plan!.id, 'plan-pregnancy-1');
+        expect(plan.version, 7);
         expect(plan.planType, 'pregnancy');
         expect(plan.status, 'active');
         expect(plan.source, 'agent_action');
@@ -76,6 +78,60 @@ void main() {
 
       expect(transport.lastMethod, 'DELETE');
       expect(transport.lastPath, '$pregnancyPlansEndpoint/plan-pregnancy-1');
+    });
+
+    test('updates a stable plan todo with optimistic concurrency metadata', () async {
+      final transport = FixtureApiJsonTransport({
+        'id': 'plan-pregnancy-1',
+        'version': 8,
+        'plan_type': 'pregnancy',
+        'title': '孕期计划',
+        'summary': '',
+        'status': 'active',
+        'source': 'agent_action',
+        'payload': {
+          'card': {
+            'card_type': 'birth_journey_plan_card',
+            'card_json': {
+              'todo_plan': {
+                'periods': [
+                  {
+                    'title': '当前阶段',
+                    'status': 'current',
+                    'items': [
+                      {
+                        'item_id': 'item-stable-1',
+                        'title': '确认复查节奏',
+                        'completed': true,
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      });
+      final repository = PregnancyPlanApiRepository(transport: transport);
+
+      final plan = await repository.updateTodoCompletion(
+        planId: 'plan-pregnancy-1',
+        itemId: 'item-stable-1',
+        completed: true,
+        expectedVersion: 7,
+        idempotencyKey: 'plan-todo-completion-1',
+      );
+
+      expect(transport.lastMethod, 'PATCH');
+      expect(
+        transport.lastPath,
+        '$pregnancyPlansEndpoint/plan-pregnancy-1/todos/item-stable-1/completion',
+      );
+      expect(transport.lastBody, {'completed': true, 'expected_version': 7});
+      expect(transport.lastHeaders, {
+        'Idempotency-Key': 'plan-todo-completion-1',
+      });
+      expect(plan.version, 8);
     });
 
     test('rejects non-empty responses without a valid active plan', () async {
