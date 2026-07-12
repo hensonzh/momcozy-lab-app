@@ -62,6 +62,17 @@ void main() {
       findsNothing,
     );
     expect(find.byTooltip('已有执行记录，请先删除关联记录'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('schedule-task-source-task-pump')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('schedule-task-source-task-feed')),
+      findsOneWidget,
+    );
+    expect(find.text('稳奶计划'), findsOneWidget);
+    expect(find.text('手动添加'), findsOneWidget);
+    expect(find.text('private-agent-action-id'), findsNothing);
   });
 
   testWidgets(
@@ -1046,7 +1057,7 @@ void main() {
     );
     expect(
       linkedTaskSemantics.label,
-      contains('14:00 喂养，已完成，80 mL · 22:00 完成'),
+      contains('14:00 喂养，已完成，手动添加，80 mL · 22:00 完成'),
     );
 
     final datePill = find.byKey(const ValueKey('schedule-date-2026-07-03'));
@@ -1447,7 +1458,11 @@ FixtureApiJsonTransportByPath _transport({
               'title': '泵奶',
               'description': '',
               'status': 'completed',
-              'payload': {'task_type': 'pumping'},
+              'payload': {
+                'task_type': 'pumping',
+                'source': 'agent_action',
+                'agent_action_id': 'private-agent-action-id',
+              },
             },
             {
               'id': 'task-feed',
