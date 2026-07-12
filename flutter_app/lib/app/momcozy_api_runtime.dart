@@ -30,10 +30,12 @@ import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_
 import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/android_schedule_reminder_gateway.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/schedule_image_recognition_gateway.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/milk_plan_change_persistence.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_reminder_preference_store.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_image_recognition.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
 import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
@@ -435,6 +437,7 @@ class MomCozyApiRuntime {
   StatusPreferenceStore? _statusPreferenceStore;
   ScheduleReminderPreferenceStore? _scheduleReminderPreferenceStore;
   ScheduleReminderGateway? _scheduleReminderGateway;
+  ScheduleImageRecognitionGateway? _scheduleImageRecognitionGateway;
   VolumeUnitPreferenceStore? _volumeUnitPreferenceStore;
   late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
@@ -580,6 +583,18 @@ class MomCozyApiRuntime {
 
   MediaApiRepository get mediaRepository {
     return MediaApiRepository(transport: multipartTransport);
+  }
+
+  ScheduleImageRecognitionGateway? get scheduleImageRecognitionGateway {
+    if (!currentSession.isAuthenticated) return null;
+    return _scheduleImageRecognitionGateway ??=
+        ApiScheduleImageRecognitionGateway(
+          imagePicker: agentHubImagePicker,
+          mediaRepository: mediaRepository,
+          baseUri: Uri.parse(_defaultApiBaseUrl),
+          tokenProvider: () => currentSession.accessToken,
+          onUnauthorized: agentStreamUnauthorizedHandler,
+        );
   }
 
   ProductAssetRepository get productAssetRepository {

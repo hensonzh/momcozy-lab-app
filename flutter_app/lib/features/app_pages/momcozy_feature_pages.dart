@@ -95,6 +95,9 @@ class MomCozyFeaturePage extends StatelessWidget {
         deliveryDateLoader: MomCozyRuntimeScope.of(
           context,
         ).loadSchedulePostpartumAnchorDate,
+        imageRecognitionGateway: MomCozyRuntimeScope.of(
+          context,
+        ).scheduleImageRecognitionGateway,
         routeUri: routeUri,
         routeExtra: routeExtra,
         onOpenAgent: () =>
