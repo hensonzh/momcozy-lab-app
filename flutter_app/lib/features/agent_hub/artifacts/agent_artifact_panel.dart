@@ -566,6 +566,7 @@ class _AgentBirthJourneyPlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardJson = _effectiveCardJson(card);
+    final title = _displayString(cardJson['title']) ?? card.title;
     final owner = _mapField(cardJson, 'owner');
     final ownerChips = <({String label, String value})>[
       for (final entry in [
@@ -585,46 +586,292 @@ class _AgentBirthJourneyPlanCard extends StatelessWidget {
     final todoPlan = _mapField(cardJson, 'todo_plan', 'todoPlan');
     final periods = _objectList(todoPlan['periods']);
 
-    return _AgentArtifactSpecializedShell(
-      card: card,
-      icon: Icons.calendar_month_outlined,
-      accentColor: MomCozyColors.primary,
-      children: [
-        if (ownerChips.isNotEmpty)
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final chip in ownerChips)
-                _AgentOwnerChip(label: chip.label, value: chip.value),
-            ],
-          ),
-        if (periods.isNotEmpty) ...[
-          if (ownerChips.isNotEmpty) const SizedBox(height: 10),
-          _AgentArtifactSection(
-            children: [
-              for (final period in periods) ...[
-                _AgentBirthJourneyPeriod(
-                  key: ValueKey(
-                    'journey-period:${_displayString(period['id']) ?? _displayString(period['title']) ?? periods.indexOf(period)}',
+    return DecoratedBox(
+      key: ValueKey('agent-artifact-${card.id}'),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xebe8c4cf)),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0, 0.58, 1],
+          colors: [Color(0xfffffdfd), Color(0xfffffdf8), Color(0xfff8fffc)],
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(13),
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.topRight,
+                    radius: 0.72,
+                    colors: [Color(0x85ffebd6), Color(0x00ffebd6)],
                   ),
-                  period: period,
-                  initiallyExpanded:
-                      period == periods.first ||
-                      _displayString(period['status']) == 'current' ||
-                      _displayStringField(
-                            period,
-                            'display_mode',
-                            'displayMode',
-                          ) ==
-                          'expanded',
                 ),
-                if (period != periods.last) const SizedBox(height: 8),
+              ),
+            ),
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment(-1, -0.8),
+                    radius: 0.68,
+                    colors: [Color(0xade0f3ef), Color(0x00e0f3ef)],
+                  ),
+                ),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _LegacyBirthCardHeader(
+                  title: title,
+                  titleColor: const Color(0xff4a2635),
+                  titleTopPadding: 4,
+                  centerTitle: true,
+                  borderColor: const Color(0xb8e8c4cf),
+                  backgroundColors: const [
+                    Color(0xf0ffeef4),
+                    Color(0xe0fff7ed),
+                    Color(0xe6eefaf7),
+                  ],
+                  accentColors: const [
+                    Color(0xffd86b91),
+                    Color(0xfff0b85b),
+                    Color(0xff2c9b92),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (ownerChips.isNotEmpty)
+                        _BirthJourneyOwnerStrip(chips: ownerChips),
+                      if (ownerChips.isNotEmpty && periods.isNotEmpty)
+                        const SizedBox(height: 14),
+                      if (periods.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Column(
+                            children: [
+                              for (
+                                var index = 0;
+                                index < periods.length;
+                                index++
+                              ) ...[
+                                _AgentBirthJourneyPeriod(
+                                  key: ValueKey(
+                                    'journey-period:${_displayString(periods[index]['id']) ?? _displayString(periods[index]['title']) ?? index}',
+                                  ),
+                                  period: periods[index],
+                                  isFirst: index == 0,
+                                ),
+                                if (index != periods.length - 1)
+                                  const SizedBox(height: 10),
+                              ],
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ],
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LegacyBirthCardHeader extends StatelessWidget {
+  const _LegacyBirthCardHeader({
+    required this.title,
+    required this.titleColor,
+    required this.titleTopPadding,
+    required this.centerTitle,
+    required this.borderColor,
+    required this.backgroundColors,
+    required this.accentColors,
+  });
+
+  final String title;
+  final Color titleColor;
+  final double titleTopPadding;
+  final bool centerTitle;
+  final Color borderColor;
+  final List<Color> backgroundColors;
+  final List<Color> accentColors;
+
+  @override
+  Widget build(BuildContext context) {
+    final titleWidget = Padding(
+      padding: EdgeInsets.only(top: titleTopPadding),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          color: titleColor,
+          fontSize: 22,
+          fontWeight: FontWeight.w800,
+          height: 1.12,
+          letterSpacing: 0,
+        ),
+      ),
+    );
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: borderColor)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: const [0, 0.62, 1],
+          colors: backgroundColors,
+        ),
+      ),
+      child: Stack(
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 64),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 16, 14, 13),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: centerTitle
+                        ? SizedBox(
+                            height: 56,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: titleWidget,
+                            ),
+                          )
+                        : titleWidget,
+                  ),
+                  const SizedBox(width: 10),
+                  const _LegacyBirthCardLogo(),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            left: 16,
+            bottom: 0,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                gradient: LinearGradient(colors: accentColors),
+              ),
+              child: const SizedBox(width: 86, height: 3),
+            ),
           ),
         ],
-      ],
+      ),
+    );
+  }
+}
+
+class _LegacyBirthCardLogo extends StatelessWidget {
+  const _LegacyBirthCardLogo();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(3),
+        child: Image.asset(
+          MomCozyAssets.momcozyLogo,
+          width: 90,
+          height: 50,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+}
+
+class _BirthJourneyOwnerStrip extends StatelessWidget {
+  const _BirthJourneyOwnerStrip({required this.chips});
+
+  final List<({String label, String value})> chips;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final tileWidth = (constraints.maxWidth - 8) / 2;
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final chip in chips)
+              SizedBox(
+                width: tileWidth,
+                child: _BirthJourneyOwnerTile(
+                  label: chip.label,
+                  value: chip.value,
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _BirthJourneyOwnerTile extends StatelessWidget {
+  const _BirthJourneyOwnerTile({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.68),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xade8c4cf)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: textTheme.labelSmall?.copyWith(
+                color: const Color(0xff8a6d7a),
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                height: 1.2,
+                letterSpacing: 0,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: textTheme.bodySmall?.copyWith(
+                color: const Color(0xff3f2732),
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                height: 1.25,
+                letterSpacing: 0,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -633,11 +880,11 @@ class _AgentBirthJourneyPeriod extends StatefulWidget {
   const _AgentBirthJourneyPeriod({
     super.key,
     required this.period,
-    required this.initiallyExpanded,
+    required this.isFirst,
   });
 
   final Map<String, Object?> period;
-  final bool initiallyExpanded;
+  final bool isFirst;
 
   @override
   State<_AgentBirthJourneyPeriod> createState() =>
@@ -647,10 +894,24 @@ class _AgentBirthJourneyPeriod extends StatefulWidget {
 class _AgentBirthJourneyPeriodState extends State<_AgentBirthJourneyPeriod> {
   late bool _expanded;
 
+  bool get _startsExpanded {
+    final displayMode = _displayStringField(
+      widget.period,
+      'display_mode',
+      'displayMode',
+    );
+    final status = _displayString(widget.period['status']);
+    final tone = _displayString(widget.period['tone']);
+    return displayMode == 'expanded' ||
+        status == 'current' ||
+        tone == 'warm' ||
+        widget.isFirst;
+  }
+
   @override
   void initState() {
     super.initState();
-    _expanded = widget.initiallyExpanded;
+    _expanded = _startsExpanded;
   }
 
   @override
@@ -659,23 +920,48 @@ class _AgentBirthJourneyPeriodState extends State<_AgentBirthJourneyPeriod> {
     final title = _displayString(widget.period['title']) ?? '阶段';
     final subtitle = _displayString(widget.period['subtitle']);
     final items = _objectList(widget.period['items']);
+    final displayMode = _displayStringField(
+      widget.period,
+      'display_mode',
+      'displayMode',
+    );
+    final status = _displayString(widget.period['status']);
+    final tone = _displayString(widget.period['tone']);
+    final isTerminal = displayMode == 'terminal';
+    final isWarm =
+        !isTerminal &&
+        (tone == 'warm' ||
+            displayMode == 'expanded' ||
+            status == 'current' ||
+            widget.isFirst);
+    final borderColor = isTerminal
+        ? const Color(0xd1cfc6de)
+        : isWarm
+        ? const Color(0xb8edb586)
+        : const Color(0xebd8e1de);
+    final backgroundColor = isTerminal
+        ? const Color(0xe6fcfaff)
+        : isWarm
+        ? const Color(0xd1fff8ef)
+        : const Color(0xc2fafffd);
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: MomCozyColors.roseSoft.withValues(alpha: 0.34),
-        borderRadius: BorderRadius.circular(MomCozyRadii.control),
-        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.72)),
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InkWell(
-              onTap: () => setState(() => _expanded = !_expanded),
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
+            Semantics(
+              button: true,
+              expanded: _expanded,
+              child: InkWell(
+                onTap: () => setState(() => _expanded = !_expanded),
+                borderRadius: BorderRadius.circular(8),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -686,40 +972,70 @@ class _AgentBirthJourneyPeriodState extends State<_AgentBirthJourneyPeriod> {
                           Text(
                             title,
                             style: textTheme.labelLarge?.copyWith(
-                              color: MomCozyColors.foreground,
-                              fontWeight: FontWeight.w900,
+                              color: const Color(0xff352820),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              height: 1.25,
+                              letterSpacing: 0,
                             ),
                           ),
                           if (subtitle != null) ...[
-                            const SizedBox(height: 3),
-                            _AgentArtifactBodyText(subtitle),
+                            const SizedBox(height: 4),
+                            Text(
+                              subtitle,
+                              style: textTheme.bodySmall?.copyWith(
+                                color: const Color(0xff7b6a61),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w400,
+                                height: 1.45,
+                                letterSpacing: 0,
+                              ),
+                            ),
                           ],
                         ],
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    _AgentArtifactPill(
-                      label: '${items.length} 个事项',
-                      color: MomCozyColors.primary,
-                    ),
-                    const SizedBox(width: 2),
-                    Icon(
-                      _expanded
-                          ? Icons.expand_less_rounded
-                          : Icons.expand_more_rounded,
-                      color: MomCozyColors.mutedForeground,
+                    const SizedBox(width: 10),
+                    Text(
+                      '${items.length} 个事项',
+                      style: textTheme.labelSmall?.copyWith(
+                        color: const Color(0xff4f8f87),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        height: 1.2,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            if (_expanded && items.isNotEmpty) ...[
-              const SizedBox(height: 10),
-              for (var index = 0; index < items.length; index++) ...[
-                _AgentBirthJourneyItem(index: index + 1, item: items[index]),
-                if (index != items.length - 1) const SizedBox(height: 8),
-              ],
-            ],
+            AnimatedSize(
+              duration: const Duration(milliseconds: 160),
+              curve: Curves.easeOut,
+              alignment: Alignment.topCenter,
+              child: _expanded && items.isNotEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        children: [
+                          for (
+                            var index = 0;
+                            index < items.length;
+                            index++
+                          ) ...[
+                            _AgentBirthJourneyItem(
+                              index: index + 1,
+                              item: items[index],
+                            ),
+                            if (index != items.length - 1)
+                              const SizedBox(height: 7),
+                          ],
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
           ],
         ),
       ),
@@ -745,64 +1061,161 @@ class _AgentBirthJourneyItem extends StatelessWidget {
     final reason = _displayString(item['reason']);
     final steps = _displayStringList(item['steps']);
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        DecoratedBox(
-          decoration: const BoxDecoration(
-            color: MomCozyColors.raised,
-            shape: BoxShape.circle,
-          ),
-          child: SizedBox.square(
-            dimension: 24,
-            child: Center(
-              child: Text(
-                '$index',
-                style: textTheme.labelSmall?.copyWith(
-                  color: MomCozyColors.primary,
-                  fontWeight: FontWeight.w900,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.76),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(9),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DecoratedBox(
+              decoration: const BoxDecoration(
+                color: Color(0xfffff0e4),
+                shape: BoxShape.circle,
+              ),
+              child: SizedBox.square(
+                dimension: 20,
+                child: Center(
+                  child: Text(
+                    '$index',
+                    style: textTheme.labelSmall?.copyWith(
+                      color: const Color(0xffb65c28),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      height: 1,
+                      letterSpacing: 0,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                crossAxisAlignment: WrapCrossAlignment.center,
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (priorityLabel != null)
-                    _AgentArtifactPill(
-                      label: priorityLabel,
-                      color: priorityLabel == '建议'
-                          ? MomCozyColors.care
-                          : MomCozyColors.primary,
-                    ),
-                  Text(
-                    title,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  Wrap(
+                    spacing: 5,
+                    runSpacing: 5,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (priorityLabel != null)
+                        _BirthJourneyPriorityTag(label: priorityLabel),
+                      Text(
+                        title,
+                        style: textTheme.bodySmall?.copyWith(
+                          color: const Color(0xff4f4540),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          height: 1.45,
+                          letterSpacing: 0,
+                        ),
+                      ),
+                    ],
                   ),
+                  if (reason != null) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      reason,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: const Color(0xff7b6a61),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        height: 1.45,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                  ],
+                  if (steps.isNotEmpty) ...[
+                    const SizedBox(height: 7),
+                    _BirthJourneyStepList(steps: steps),
+                  ],
                 ],
               ),
-              if (reason != null) ...[
-                const SizedBox(height: 4),
-                _AgentArtifactBodyText(reason),
-              ],
-              if (steps.isNotEmpty) ...[
-                const SizedBox(height: 6),
-                _AgentArtifactBulletList(items: steps),
-              ],
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BirthJourneyPriorityTag extends StatelessWidget {
+  const _BirthJourneyPriorityTag({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final supportive = label == '建议';
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: supportive ? const Color(0xffeaf6f4) : const Color(0xfffff0e4),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: supportive
+                ? const Color(0xff3f8178)
+                : const Color(0xffa95522),
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            height: 1,
+            letterSpacing: 0,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _BirthJourneyStepList extends StatelessWidget {
+  const _BirthJourneyStepList({required this.steps});
+
+  final List<String> steps;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      children: [
+        for (var index = 0; index < steps.length; index++) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 6),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Color(0xff8eb8b1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: SizedBox.square(dimension: 5),
+                ),
+              ),
+              const SizedBox(width: 7),
+              Expanded(
+                child: Text(
+                  steps[index],
+                  style: textTheme.bodySmall?.copyWith(
+                    color: const Color(0xff5f514a),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    height: 1.45,
+                    letterSpacing: 0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (index != steps.length - 1) const SizedBox(height: 4),
+        ],
       ],
     );
   }
@@ -1707,50 +2120,6 @@ class _AgentMetricTile extends StatelessWidget {
               ],
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AgentOwnerChip extends StatelessWidget {
-  const _AgentOwnerChip({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: MomCozyColors.roseSoft.withValues(alpha: 0.45),
-        borderRadius: BorderRadius.circular(MomCozyRadii.control),
-        border: Border.all(color: MomCozyColors.border.withValues(alpha: 0.72)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: textTheme.labelSmall?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              value,
-              style: textTheme.labelMedium?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ],
         ),
       ),
     );
