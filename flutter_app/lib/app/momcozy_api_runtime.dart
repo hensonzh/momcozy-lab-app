@@ -14,6 +14,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_re
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_voice_input.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
@@ -529,6 +530,10 @@ class MomCozyApiRuntime {
 
   AgentHubProfileRepository get agentHubProfileRepository {
     return AgentHubProfileRepository(transport: jsonTransport);
+  }
+
+  SupportTicketApiRepository get supportTicketRepository {
+    return SupportTicketApiRepository(transport: jsonTransport);
   }
 
   ScheduleApiRepository get scheduleRepository {
