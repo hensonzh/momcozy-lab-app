@@ -1671,6 +1671,12 @@ void main() {
         'payload': {
           'role': 'assistant',
           'text': '我整理好了。',
+          'workflow_reply': {
+            'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+            'workflow_type': 'pregnancy_plan',
+            'revision': 4,
+            'step_token': 'opaque-step-token',
+          },
           'quick_replies': [
             {'text': '继续聊这个'},
             {'text': '给我更多细节'},
@@ -1693,6 +1699,10 @@ void main() {
       _host(
         AgentHubPage(
           runner: AgentStreamRunner(client),
+          requestBuilder: (message) => AgentStreamRequest(
+            message: message,
+            idempotencyKey: 'request-${message.length}',
+          ),
           clientEventClient: AgentStreamClientEventClient(
             recorder: recordedClientEvents.add,
           ),
@@ -1717,6 +1727,13 @@ void main() {
 
     expect(client.requests, hasLength(2));
     expect(client.requests.last.message, '继续聊这个');
+    expect(client.requests.last.idempotencyKey, 'request-5');
+    expect(client.requests.last.metadata['workflow_reply'], {
+      'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+      'workflow_type': 'pregnancy_plan',
+      'revision': 4,
+      'step_token': 'opaque-step-token',
+    });
     expect(recordedClientEvents, hasLength(1));
     expect(recordedClientEvents.single['event_type'], 'ui.quick_reply.clicked');
     expect(recordedClientEvents.single['label'], '继续聊这个');
@@ -3630,7 +3647,16 @@ void main() {
           'run_id': 'run-followup-completed',
           'message_id': 'msg-followup-completed',
           'sequence': 1,
-          'payload': {'role': 'assistant', 'text': 'Analysis is ready.'},
+          'payload': {
+            'role': 'assistant',
+            'text': 'Analysis is ready.',
+            'workflow_reply': {
+              'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+              'workflow_type': 'device_unboxing',
+              'revision': 2,
+              'step_token': 'device-step-token',
+            },
+          },
         }),
       );
       await tester.pump();
@@ -3661,6 +3687,12 @@ void main() {
       expect(client.requests, hasLength(2));
       expect(client.requests.last.message, 'Second turn');
       expect(client.requests.last.threadId, 'thread-followup-completed');
+      expect(client.requests.last.metadata['workflow_reply'], {
+        'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+        'workflow_type': 'device_unboxing',
+        'revision': 2,
+        'step_token': 'device-step-token',
+      });
       expect(cancelConnector.called.isCompleted, isFalse);
       expect(find.text('Analysis is ready.'), findsOneWidget);
       expect(tester.takeException(), isNull);

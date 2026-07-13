@@ -267,6 +267,32 @@ void main() {
       },
     );
 
+    test(
+      'extracts an opaque workflow reply cursor from completed messages',
+      () {
+        final event = AgentStreamEvent(const {
+          'type': 'message.completed',
+          'payload': {
+            'role': 'assistant',
+            'text': '目前双胎类型确认了吗？',
+            'workflow_reply': {
+              'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+              'workflow_type': 'pregnancy_plan',
+              'revision': 4,
+              'step_token': 'opaque-step-token',
+            },
+          },
+        });
+
+        expect(event.workflowReply, {
+          'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+          'workflow_type': 'pregnancy_plan',
+          'revision': 4,
+          'step_token': 'opaque-step-token',
+        });
+      },
+    );
+
     test('ignores incomplete quick reply sets', () {
       final event = AgentStreamEvent(const {
         'type': 'message.completed',
