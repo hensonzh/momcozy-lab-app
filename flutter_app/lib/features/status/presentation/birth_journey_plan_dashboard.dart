@@ -545,30 +545,20 @@ class _PlanTodoRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 4,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    if (item.priorityLabel.isNotEmpty &&
-                        item.priorityLabel != '重要')
-                      _PriorityLabel(label: item.priorityLabel),
-                    Text(
-                      item.title,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: item.completed
-                            ? const Color(0xff8a7a72)
-                            : const Color(0xff4f4540),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        height: 1.4,
-                        decoration: item.completed
-                            ? TextDecoration.lineThrough
-                            : null,
-                        decorationColor: const Color(0xff9dbfba),
-                      ),
-                    ),
-                  ],
+                Text(
+                  item.title,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: item.completed
+                        ? const Color(0xff8a7a72)
+                        : const Color(0xff4f4540),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    height: 1.4,
+                    decoration: item.completed
+                        ? TextDecoration.lineThrough
+                        : null,
+                    decorationColor: const Color(0xff9dbfba),
+                  ),
                 ),
                 if (item.reason.isNotEmpty) ...[
                   const SizedBox(height: 2),
@@ -968,35 +958,6 @@ class _CreatePlanButton extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.w800,
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PriorityLabel extends StatelessWidget {
-  const _PriorityLabel({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final important = label == '重要';
-    return Container(
-      height: 20,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-        color: important ? const Color(0xfffff0e4) : const Color(0xffeaf6f4),
-        borderRadius: BorderRadius.circular(99),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: important ? const Color(0xffa95522) : const Color(0xff3f8178),
-          fontSize: 10,
-          fontWeight: FontWeight.w900,
-          height: 1,
         ),
       ),
     );
