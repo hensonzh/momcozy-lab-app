@@ -814,7 +814,7 @@ void main() {
           findsNothing,
         );
 
-        await _scrollToText(tester, '稳奶计划已按最新权威数据刷新');
+        await _scrollToText(tester, '奶量计划已按最新权威数据刷新');
         await _scrollToFinder(
           tester,
           find.byKey(const ValueKey('schedule-quick-actions')),
