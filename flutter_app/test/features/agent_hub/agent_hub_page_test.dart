@@ -381,6 +381,55 @@ void main() {
     expect(cartUpdates, hasLength(1));
   });
 
+  testWidgets(
+    'Agent Hub restores the authoritative hospital bag cart changed event without showing an action card',
+    (tester) async {
+      final cartUpdates = <HospitalBagCartArtifactSeed>[];
+      final event = AgentStreamEvent(const {
+        'event_id': 'evt-cart-changed',
+        'type': 'hospital_bag.cart.changed',
+        'thread_id': 'thread-cart-changed',
+        'run_id': 'run-cart-changed',
+        'sequence': 8,
+        'payload': {
+          'action_id': 'action-cart-changed',
+          'operation': 'updated',
+          'source': 'agent_action',
+          'cart_update': {
+            'action': 'reset_cart',
+            'groups': [
+              {
+                'title': '妈妈护理',
+                'items': [
+                  {'id': 'mom-pad', 'name': '产褥垫组合装'},
+                ],
+              },
+            ],
+          },
+        },
+      });
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState.fromMap(
+              AgentStreamRunState(
+                phase: AgentStreamRunPhase.finished,
+                events: [event],
+              ).toMap(),
+            ),
+            onHospitalBagCartUpdate: cartUpdates.add,
+          ),
+        ),
+      );
+
+      expect(cartUpdates, hasLength(1));
+      expect(cartUpdates.single.artifactId, 'action:action-cart-changed');
+      expect(cartUpdates.single.snapshot.items.single.name, '产褥垫组合装');
+      expect(find.byKey(const ValueKey('agent-action-panel')), findsNothing);
+    },
+  );
+
   testWidgets('Agent Hub keeps a textless failed artifact unpublished', (
     tester,
   ) async {
