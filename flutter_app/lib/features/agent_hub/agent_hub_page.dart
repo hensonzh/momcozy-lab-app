@@ -22,6 +22,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
@@ -58,6 +59,8 @@ const _agentSkillAssetBaseUrl = String.fromEnvironment(
 const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
 const _completedReplyRunSettlementTimeout = Duration(seconds: 2);
 const _completedReplyCancelTimeout = Duration(seconds: 2);
+const _supportTicketSubmittedReply =
+    '已经帮你提交工单啦，我们的人工客服团队会在 24 小时内主动联系你，陪你一起跟进这个问题。很抱歉这次没能直接帮你解决，给你添麻烦了。接下来还请稍微耐心等待一下，我们会尽力协助你把问题处理好。';
 
 String _agentAssistantTextForState(
   AgentStreamRunState state, {
@@ -83,10 +86,7 @@ String _formSubmitRequestMessage(AgentArtifactActionView action) {
   final extraMap = extra is Map ? Map<String, Object?>.from(extra) : const {};
   final formId = extraMap['formId']?.toString().trim();
   return [
-    if (formId == 'support_ticket')
-      '我已确认售后信息，请基于确认后的表单数据发起正式工单创建动作。'
-    else
-      '我已提交信息采集表单，请基于确认后的表单数据继续完成对应服务。',
+    '我已提交信息采集表单，请基于确认后的表单数据继续完成对应服务。',
     if (formId != null && formId.isNotEmpty) 'form_id: $formId',
   ].join('\n');
 }
@@ -208,6 +208,7 @@ class AgentHubPage extends StatefulWidget {
     this.voicePlaybackPlayer,
     this.productAssetRepository,
     this.ibclcConsultStore,
+    this.supportTicketSubmitter,
     this.onArtifactAction,
     this.onHospitalBagCartUpdate,
     this.onHospitalBagCartContextRequired,
@@ -236,6 +237,7 @@ class AgentHubPage extends StatefulWidget {
   final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
   final ProductAssetRepository? productAssetRepository;
   final IbclcConsultStore? ibclcConsultStore;
+  final SupportTicketSubmitter? supportTicketSubmitter;
   final AgentArtifactActionHandler? onArtifactAction;
   final HospitalBagCartUpdateHandler? onHospitalBagCartUpdate;
   final VoidCallback? onHospitalBagCartContextRequired;
@@ -261,6 +263,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Completer<void>? _runSettlementCompleter;
   bool _followUpStartPending = false;
   bool _newSessionStartPending = false;
+  bool _supportTicketSubmitPending = false;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
   Future<AgentVoiceInputPermissionState>? _voiceCaptureStart;
@@ -908,6 +911,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool get _isComposerLocked =>
       _followUpStartPending ||
       _newSessionStartPending ||
+      _supportTicketSubmitPending ||
       _isComposerLockedForState(_state);
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
@@ -1125,15 +1129,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
     var accepted = false;
     try {
-      accepted = await _sendSyntheticUserMessage(
-        requestMessage: _formSubmitRequestMessage(action),
-        optimisticContent: submission.formId == 'support_ticket'
-            ? '已确认售后信息'
-            : '已提交信息采集表单',
-        metadata: _formSubmissionMetadata(action),
-        idempotencyKey: idempotencyKey,
-        awaitServerRunSignal: true,
-      );
+      accepted = submission.formId == 'support_ticket'
+          ? await _submitSupportTicket(
+              artifactId: artifactId,
+              values: submission.values,
+              idempotencyKey: idempotencyKey,
+            )
+          : await _sendSyntheticUserMessage(
+              requestMessage: _formSubmitRequestMessage(action),
+              optimisticContent: '已提交信息采集表单',
+              metadata: _formSubmissionMetadata(action),
+              idempotencyKey: idempotencyKey,
+              awaitServerRunSignal: true,
+            );
     } catch (_) {
       accepted = false;
     }
@@ -1149,6 +1157,63 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     _persistInteractionState();
     return accepted;
+  }
+
+  Future<bool> _submitSupportTicket({
+    required String artifactId,
+    required Map<String, Object?> values,
+    required String idempotencyKey,
+  }) async {
+    final submitter = widget.supportTicketSubmitter;
+    if (submitter == null) return false;
+    _supportTicketSubmitPending = true;
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    try {
+      await submitter(
+        SupportTicketSubmitRequest(
+          artifactId: artifactId,
+          values: values,
+          idempotencyKey: idempotencyKey,
+          threadId: _state.threadId ?? _activeRequest?.threadId,
+          locale: _activeRequest?.locale,
+        ),
+      );
+      if (!mounted) return true;
+
+      _cancelCurrentBubblePlaybackForNewTurn();
+      final archivedAssistantMessage = _currentAssistantHistoryMessage();
+      final threadId = _state.threadId ?? _activeRequest?.threadId;
+      setState(() {
+        if (archivedAssistantMessage != null) {
+          _historyMessages.add(archivedAssistantMessage);
+        }
+        _historyMessages.add(
+          const AgentHubHistoryMessage(
+            role: AgentHubHistoryRole.user,
+            content: '已提交售后工单',
+          ),
+        );
+        _setRunState(
+          AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            threadId: threadId,
+            textContent: _supportTicketSubmittedReply,
+            completedAssistantMessageReceived: true,
+          ),
+        );
+        _pendingAutoVoiceReplay = null;
+      });
+      _persistInteractionState();
+      _scheduleScrollToLatest();
+      return true;
+    } catch (_) {
+      return false;
+    } finally {
+      _supportTicketSubmitPending = false;
+      if (mounted) {
+        _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+      }
+    }
   }
 
   void _setFormSubmission(

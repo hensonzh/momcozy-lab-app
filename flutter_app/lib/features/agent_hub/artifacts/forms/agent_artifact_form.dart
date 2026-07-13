@@ -46,11 +46,6 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
 
   bool get _canSubmit => widget.onSubmit != null || widget.onAction != null;
 
-  bool get _isSupportTicket {
-    return widget.card.presentationKind ==
-        AgentArtifactPresentationKind.supportTicketDraft;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -498,8 +493,8 @@ class _AgentArtifactFormState extends State<AgentArtifactForm> {
 
   String _submitLabel() {
     return switch (_effectivePhase) {
-      _AgentArtifactFormPhase.submitting => _isSupportTicket ? '确认中' : '提交中',
-      _AgentArtifactFormPhase.submitted => _isSupportTicket ? '信息已确认' : '已提交',
+      _AgentArtifactFormPhase.submitting => '提交中',
+      _AgentArtifactFormPhase.submitted => '已提交',
       _ => widget.card.formSubmitLabel ?? '提交',
     };
   }

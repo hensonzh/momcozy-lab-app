@@ -1480,6 +1480,7 @@ Widget _buildDefaultAgentHubPage(
     voiceInputController: runtime.agentVoiceInputController,
     productAssetRepository: runtime.productAssetRepository,
     ibclcConsultStore: runtime.ibclcConsultStore,
+    supportTicketSubmitter: runtime.supportTicketRepository.submit,
     onHospitalBagCartUpdate: (seed) {
       runtime.hospitalBagCartStore.ingestArtifact(seed);
     },
