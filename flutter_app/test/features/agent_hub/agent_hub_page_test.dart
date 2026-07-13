@@ -5414,9 +5414,10 @@ void main() {
       find.byKey(const ValueKey('agent-artifact-ibclc-ibclc-current')),
       findsOneWidget,
     );
-    expect(find.text('含乳疼痛'), findsOneWidget);
-    expect(find.text('左侧喂养后持续疼痛。'), findsOneWidget);
-    expect(find.text('建议尽快咨询'), findsOneWidget);
+    expect(find.text('IBCLC 咨询入口'), findsOneWidget);
+    expect(find.text('含乳疼痛'), findsNothing);
+    expect(find.text('左侧喂养后持续疼痛。'), findsNothing);
+    expect(find.text('建议尽快咨询'), findsNothing);
     expect(find.text('Lin Zhao'), findsOneWidget);
     expect(find.text('IBCLC, RN'), findsOneWidget);
     expect(find.text('12 年经验'), findsOneWidget);
@@ -5455,6 +5456,13 @@ void main() {
     await tester.pump();
     final consultFinder = find.byKey(
       const ValueKey('agent-ibclc-open-ibclc-current'),
+    );
+    expect(
+      find.descendant(
+        of: consultFinder,
+        matching: find.byIcon(Icons.chat_bubble_outline_rounded),
+      ),
+      findsNothing,
     );
     await tester.tap(consultFinder);
     await tester.pump();
