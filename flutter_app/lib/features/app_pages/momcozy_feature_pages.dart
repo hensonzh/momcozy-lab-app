@@ -45,6 +45,7 @@ class MomCozyFeaturePage extends StatelessWidget {
     required this.priority,
     this.routeUri,
     this.routeExtra,
+    this.onLogout,
   });
 
   final String path;
@@ -55,6 +56,7 @@ class MomCozyFeaturePage extends StatelessWidget {
   final String priority;
   final Uri? routeUri;
   final Object? routeExtra;
+  final Future<void> Function()? onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +127,7 @@ class MomCozyFeaturePage extends StatelessWidget {
         summary: summary,
         icon: icon,
         accent: accent,
+        onLogout: onLogout,
       ),
       '/device/manage' => _DeviceManagePage(
         path: path,
@@ -1859,6 +1862,7 @@ class _DevicePage extends StatefulWidget {
     required this.summary,
     required this.icon,
     required this.accent,
+    this.onLogout,
   });
 
   final String path;
@@ -1866,6 +1870,7 @@ class _DevicePage extends StatefulWidget {
   final String summary;
   final IconData icon;
   final Color accent;
+  final Future<void> Function()? onLogout;
 
   @override
   State<_DevicePage> createState() => _DevicePageState();
@@ -1873,6 +1878,7 @@ class _DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<_DevicePage> {
   bool _isScanning = false;
+  bool _isLoggingOut = false;
   BlePlatform? _blePlatform;
   BlePermissionState _permissionState = BlePermissionState.unknown;
   List<BleDeviceSnapshot> _connectedDevices = const [];
@@ -2060,6 +2066,10 @@ class _DevicePageState extends State<_DevicePage> {
           onAdd: _toggleScan,
           onUser: () => context.go('/device/user'),
           onManage: () => context.go('/device/manage'),
+          onLogout: widget.onLogout == null
+              ? null
+              : () => unawaited(_requestLogout()),
+          isLoggingOut: _isLoggingOut,
         ),
         const SizedBox(height: 14),
         const _DeviceW1Banner(),
@@ -2126,6 +2136,82 @@ class _DevicePageState extends State<_DevicePage> {
     }
     return null;
   }
+
+  Future<void> _requestLogout() async {
+    final onLogout = widget.onLogout;
+    if (onLogout == null || _isLoggingOut) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        key: const ValueKey('device-logout-dialog'),
+        title: const Text('退出登录'),
+        content: const Text('退出后需要重新输入邀请码登录。'),
+        actions: [
+          TextButton(
+            key: const ValueKey('device-logout-cancel'),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const ValueKey('device-logout-confirm'),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(dialogContext).colorScheme.error,
+              foregroundColor: Theme.of(dialogContext).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('退出登录'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() {
+      _isLoggingOut = true;
+    });
+    await _disconnectDevicesForLogout();
+    try {
+      await onLogout();
+      if (mounted) {
+        setState(() {
+          _isLoggingOut = false;
+        });
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoggingOut = false;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('退出登录失败，请稍后重试。')));
+    }
+  }
+
+  Future<void> _disconnectDevicesForLogout() async {
+    final ble = _blePlatform;
+    if (ble == null) return;
+    if (_isScanning) {
+      try {
+        await ble.stopScan();
+      } catch (_) {
+        // Authentication cleanup must continue even if BLE teardown fails.
+      }
+    }
+    List<BleDeviceSnapshot> devices = _connectedDevices;
+    try {
+      devices = await ble.getConnectedDevices();
+    } catch (_) {
+      // Fall back to the latest in-memory snapshots.
+    }
+    for (final device in devices.where((device) => device.connected)) {
+      try {
+        await ble.disconnect(device.deviceId);
+      } catch (_) {
+        // Disconnect each device independently before continuing logout.
+      }
+    }
+  }
 }
 
 String _deviceBatteryLabel(BleDeviceSnapshot? device) {
@@ -2169,11 +2255,15 @@ class _DeviceHeader extends StatelessWidget {
     required this.onAdd,
     required this.onUser,
     required this.onManage,
+    required this.isLoggingOut,
+    this.onLogout,
   });
 
   final VoidCallback onAdd;
   final VoidCallback onManage;
   final VoidCallback onUser;
+  final VoidCallback? onLogout;
+  final bool isLoggingOut;
 
   @override
   Widget build(BuildContext context) {
@@ -2190,6 +2280,7 @@ class _DeviceHeader extends StatelessWidget {
           ),
         ),
         PopupMenuButton<String>(
+          enabled: !isLoggingOut,
           tooltip: '打开设备快捷菜单',
           color: MomCozyColors.foreground.withValues(alpha: 0.92),
           elevation: 14,
@@ -2208,17 +2299,34 @@ class _DeviceHeader extends StatelessWidget {
               case 'manage':
                 onManage();
                 break;
+              case 'logout':
+                onLogout?.call();
+                break;
             }
           },
-          itemBuilder: (context) => const [
-            PopupMenuItem(value: 'add', child: _DeviceQuickMenuLabel('添加设备')),
-            PopupMenuDivider(height: 1),
-            PopupMenuItem(value: 'user', child: _DeviceQuickMenuLabel('用户管理')),
-            PopupMenuDivider(height: 1),
-            PopupMenuItem(
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'add',
+              child: _DeviceQuickMenuLabel('添加设备'),
+            ),
+            const PopupMenuDivider(height: 1),
+            const PopupMenuItem(
+              value: 'user',
+              child: _DeviceQuickMenuLabel('用户管理'),
+            ),
+            const PopupMenuDivider(height: 1),
+            const PopupMenuItem(
               value: 'manage',
               child: _DeviceQuickMenuLabel('设备提醒'),
             ),
+            if (onLogout != null) ...[
+              const PopupMenuDivider(height: 1),
+              const PopupMenuItem(
+                key: ValueKey('device-logout-menu-item'),
+                value: 'logout',
+                child: _DeviceQuickMenuLabel('退出登录', color: Color(0xffffa8a8)),
+              ),
+            ],
           ],
           child: Container(
             key: const ValueKey('device-quick-menu-button'),
@@ -2232,7 +2340,12 @@ class _DeviceHeader extends StatelessWidget {
               ),
               boxShadow: MomCozyShadows.soft,
             ),
-            child: const Icon(Icons.add_rounded, size: 20),
+            child: isLoggingOut
+                ? const Padding(
+                    padding: EdgeInsets.all(11),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.add_rounded, size: 20),
           ),
         ),
       ],
@@ -2241,9 +2354,10 @@ class _DeviceHeader extends StatelessWidget {
 }
 
 class _DeviceQuickMenuLabel extends StatelessWidget {
-  const _DeviceQuickMenuLabel(this.label);
+  const _DeviceQuickMenuLabel(this.label, {this.color});
 
   final String label;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -2251,7 +2365,7 @@ class _DeviceQuickMenuLabel extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: MomCozyColors.background,
+          color: color ?? MomCozyColors.background,
           fontWeight: FontWeight.w900,
         ),
       ),

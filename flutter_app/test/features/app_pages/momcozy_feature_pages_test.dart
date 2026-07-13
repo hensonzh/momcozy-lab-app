@@ -171,6 +171,37 @@ void main() {
       );
     });
 
+    testWidgets('device logout requires explicit confirmation', (tester) async {
+      var logoutCalls = 0;
+      await tester.pumpWidget(
+        _FeaturePageHost(
+          route: _route('/device'),
+          onLogout: () async {
+            logoutCalls += 1;
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await _tapDeviceQuickMenuItem(tester, '退出登录');
+      expect(
+        find.byKey(const ValueKey('device-logout-dialog')),
+        findsOneWidget,
+      );
+      expect(find.text('退出后需要重新输入邀请码登录。'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('device-logout-cancel')));
+      await tester.pumpAndSettle();
+      expect(logoutCalls, 0);
+      expect(find.byKey(const ValueKey('device-logout-dialog')), findsNothing);
+
+      await _tapDeviceQuickMenuItem(tester, '退出登录');
+      await tester.tap(find.byKey(const ValueKey('device-logout-confirm')));
+      await tester.pumpAndSettle();
+
+      expect(logoutCalls, 1);
+    });
+
     testWidgets('legacy horizontal panels fit compact mobile width', (
       tester,
     ) async {
@@ -2147,6 +2178,7 @@ class _FeaturePageHost extends StatelessWidget {
     this.hospitalBagCartStore,
     this.ibclcConsultStore,
     this.volumeUnitPreferenceStore,
+    this.onLogout,
   });
 
   final MomCozyRouteConfig route;
@@ -2158,6 +2190,7 @@ class _FeaturePageHost extends StatelessWidget {
   final HospitalBagCartStore? hospitalBagCartStore;
   final IbclcConsultStore? ibclcConsultStore;
   final VolumeUnitPreferenceStore? volumeUnitPreferenceStore;
+  final Future<void> Function()? onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -2182,6 +2215,7 @@ class _FeaturePageHost extends StatelessWidget {
             accent: route.accent,
             priority: route.priority,
             routeExtra: routeExtra,
+            onLogout: onLogout,
           ),
         ),
       ),

@@ -428,6 +428,10 @@ GoRouter createMomCozyRouter({
                 route: route,
                 uri: state.uri,
                 extra: state.extra,
+                onLogout: runtimeController == null
+                    ? null
+                    : () =>
+                          runtimeController.logout(sessionStore: sessionStore),
               ),
             ),
         ],
@@ -504,6 +508,12 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
     if (widget.location == '/') {
       _hasBuiltAgentHub = true;
     }
+  }
+
+  @override
+  void dispose() {
+    _voicePlaybackCoordinator.cancel();
+    super.dispose();
   }
 
   @override
@@ -1387,11 +1397,13 @@ class MomCozyRoutePage extends StatelessWidget {
     required this.route,
     this.uri,
     this.extra,
+    this.onLogout,
   });
 
   final MomCozyRouteConfig route;
   final Uri? uri;
   final Object? extra;
+  final Future<void> Function()? onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -1413,6 +1425,7 @@ class MomCozyRoutePage extends StatelessWidget {
       priority: route.priority,
       routeUri: uri,
       routeExtra: extra,
+      onLogout: onLogout,
     );
   }
 }
