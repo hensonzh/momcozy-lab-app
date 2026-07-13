@@ -73,7 +73,7 @@ String _agentAssistantTextForState(
     AgentStreamRunPhase.cancelled => '已停止本次回复。',
     AgentStreamRunPhase.waitingForConfirmation => '需要你确认后继续。',
     AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
-    AgentStreamRunPhase.error ||
+    AgentStreamRunPhase.error => '这次处理没有成功，暂时没有生成回复。你可以重试一次。',
     AgentStreamRunPhase.disconnected => '这次没有拿到回复，可能是连接中断了。你再发一次就好。',
   };
 }
@@ -3610,7 +3610,11 @@ class AgentRunTranscript extends StatelessWidget {
       return _safeAgentErrorText(state.errorMessage) ?? '连接中断';
     }
     if (state.phase == AgentStreamRunPhase.error) {
-      return _safeAgentErrorText(state.errorMessage) ?? '回复失败';
+      return _safeAgentErrorText(
+            state.errorMessage,
+            fallback: '服务执行失败，请稍后重试',
+          ) ??
+          '服务执行失败，请稍后重试';
     }
     if (state.phase == AgentStreamRunPhase.cancelled) return '已停止本次回复';
     return null;
@@ -5729,7 +5733,7 @@ String? _firstNonEmpty(List<String?> values) {
   return null;
 }
 
-String? _safeAgentErrorText(String? errorMessage) {
+String? _safeAgentErrorText(String? errorMessage, {String? fallback}) {
   final normalized = errorMessage?.trim();
   if (normalized == null || normalized.isEmpty) return null;
   final lower = normalized.toLowerCase();
@@ -5742,7 +5746,7 @@ String? _safeAgentErrorText(String? errorMessage) {
       lower.contains('offline')) {
     return '网络不可用，请检查连接后重试';
   }
-  return normalized;
+  return fallback ?? normalized;
 }
 
 class _AgentLoopDecorState {

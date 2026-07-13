@@ -451,6 +451,25 @@ void main() {
     expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
   });
 
+  testWidgets('Agent Hub distinguishes backend run failure from disconnect', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const AgentRunTranscript(
+          state: AgentStreamRunState(
+            phase: AgentStreamRunPhase.error,
+            errorMessage: 'tool_failed',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.textContaining('这次处理没有成功'), findsOneWidget);
+    expect(find.text('服务执行失败，请稍后重试'), findsOneWidget);
+    expect(find.textContaining('连接中断'), findsNothing);
+  });
+
   testWidgets('Agent Hub marks active assistant avatar as thinking', (
     tester,
   ) async {
