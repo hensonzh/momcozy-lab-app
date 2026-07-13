@@ -550,7 +550,8 @@ class _PlanTodoRow extends StatelessWidget {
                   runSpacing: 4,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    if (item.priorityLabel.isNotEmpty)
+                    if (item.priorityLabel.isNotEmpty &&
+                        item.priorityLabel != '重要')
                       _PriorityLabel(label: item.priorityLabel),
                     Text(
                       item.title,

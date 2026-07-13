@@ -97,6 +97,27 @@ void main() {
       );
     });
 
+    testWidgets(
+      'lets todo titles use the space reserved for important labels',
+      (tester) async {
+        await _setViewport(tester);
+        await tester.pumpWidget(
+          _PlanHost(initial: StatusResource.data(_plan())),
+        );
+
+        final title = find.text('准备产检资料');
+        final reason = find.text('下次产检时集中确认');
+        expect(find.text('重要'), findsNothing);
+        expect(tester.getTopLeft(title).dx, tester.getTopLeft(reason).dx);
+
+        await tester.tap(
+          find.byKey(const ValueKey('status-birth-journey-period-upcoming')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('建议'), findsOneWidget);
+      },
+    );
+
     testWidgets('expands future stages and blocks locked todo changes', (
       tester,
     ) async {
