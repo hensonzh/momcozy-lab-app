@@ -2,7 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_entry.dart';
 import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_cache.dart';
 
 import '../support/fixture_api_transport.dart';
 
@@ -19,6 +21,25 @@ void main() {
       second.pregnancyDiaryChangeStore,
       isNot(same(first.pregnancyDiaryChangeStore)),
     );
+  });
+
+  test('recording an Agent diary change invalidates the shared cache', () {
+    final runtime = _runtime(userId: 'cache-user');
+    runtime.statusDashboardCache.pregnancyDiaryEntries = StatusCacheEntry(
+      value: [
+        PregnancyDiaryEntry(
+          id: 'cached-diary',
+          entryDate: DateTime(2026, 7, 12),
+          content: 'cached',
+        ),
+      ],
+      fetchedAt: DateTime(2026, 7, 12, 8),
+    );
+
+    expect(runtime.recordPregnancyDiaryChange(_change()), isTrue);
+
+    expect(runtime.statusDashboardCache.pregnancyDiaryEntries, isNull);
+    expect(runtime.pregnancyDiaryChangeStore.hasUnread, isTrue);
   });
 
   test('same-user session refresh preserves the runtime-scoped store', () {

@@ -599,6 +599,12 @@ class MomCozyApiRuntime {
     );
   }
 
+  bool recordPregnancyDiaryChange(PregnancyDiaryChange change) {
+    final recorded = pregnancyDiaryChangeStore.record(change);
+    if (recorded) statusDashboardCache.invalidatePregnancyDiary();
+    return recorded;
+  }
+
   MediaApiRepository get mediaRepository {
     return MediaApiRepository(transport: multipartTransport);
   }

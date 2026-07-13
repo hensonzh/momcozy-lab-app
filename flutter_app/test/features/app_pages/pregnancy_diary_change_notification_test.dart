@@ -57,7 +57,7 @@ void main() {
     (tester) async {
       await _setCompactViewport(tester);
       final runtime = _runtime(_SequencedDiaryTransport());
-      runtime.pregnancyDiaryChangeStore.record(
+      runtime.recordPregnancyDiaryChange(
         PregnancyDiaryChange.tryFromEvent(_changedEvent())!,
       );
       final router = createMomCozyRouter(initialLocation: '/schedule');
@@ -158,6 +158,51 @@ void main() {
       }
       expect(find.text('Agent 写入后的日记'), findsOneWidget);
       expect(harness.runtime.pregnancyDiaryChangeStore.revision, 1);
+    },
+  );
+
+  testWidgets(
+    'returning to Status bypasses a fresh diary cache after an Agent change',
+    (tester) async {
+      await _setCompactViewport(tester);
+      final transport = _SequencedDiaryTransport();
+      final runtime = _runtime(transport);
+      final router = createMomCozyRouter(
+        initialLocation: '/status',
+        agentHubBuilder: (_, _, _, _) => const SizedBox.shrink(),
+      );
+      final routeIntentPlatform = FakeRouteIntentPlatform();
+      addTearDown(router.dispose);
+      addTearDown(routeIntentPlatform.dispose);
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          routeIntentPlatform: routeIntentPlatform,
+          apiRuntime: runtime,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('status-care-stage-pregnancy')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(transport.diaryGetCount, 1);
+      expect(find.text('事件前的日记'), findsOneWidget);
+
+      router.go('/');
+      await tester.pumpAndSettle();
+      runtime.recordPregnancyDiaryChange(
+        PregnancyDiaryChange.tryFromEvent(_changedEvent())!,
+      );
+      await tester.pump();
+
+      router.go('/status');
+      await tester.pumpAndSettle();
+
+      expect(transport.diaryGetCount, 2);
+      expect(find.text('Agent 写入后的日记'), findsOneWidget);
     },
   );
 
@@ -273,7 +318,7 @@ Future<_DiaryHarness> _pumpRunningPregnancyStatus(
         runner: AgentStreamRunner(client),
         voicePlaybackCoordinator: voicePlaybackCoordinator,
         onPregnancyDiaryChange: (change) {
-          runtime.pregnancyDiaryChangeStore.record(change);
+          runtime.recordPregnancyDiaryChange(change);
         },
       );
     },
