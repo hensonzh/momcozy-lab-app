@@ -7,7 +7,7 @@ import '../privacy/log_redactor.dart';
 import 'agent_stream_client.dart';
 import 'agent_stream_event.dart';
 
-const _agentStreamFollowPollIntervalSeconds = '0.05';
+const _agentStreamFollowPollIntervalSeconds = '0.01';
 
 typedef AgentStreamPayloadFactory =
     Map<String, Object?> Function(AgentStreamRequest request);
