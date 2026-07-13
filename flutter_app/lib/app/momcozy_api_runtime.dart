@@ -376,6 +376,7 @@ class MomCozyApiRuntime {
     MomCozyObservability? observability,
     AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
     Map<String, Object?>? legacyStorageSnapshot,
     StorageMigrationTargetStore? storageMigrationTargetStore,
   }) async {
@@ -401,7 +402,7 @@ class MomCozyApiRuntime {
             legacyStorageSnapshot,
             context: {'envDefaultUserId': session.userId},
           );
-    return MomCozyApiRuntime.fromSession(
+    final runtime = MomCozyApiRuntime.fromSession(
       session,
       jsonTransport: jsonTransport,
       clientEventClient: clientEventClient,
@@ -412,7 +413,10 @@ class MomCozyApiRuntime {
       observability: observability,
       agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
+      hospitalBagCartStore: hospitalBagCartStore,
     );
+    await runtime.hospitalBagCartStore.restore();
+    return runtime;
   }
 
   final ApiJsonTransport jsonTransport;

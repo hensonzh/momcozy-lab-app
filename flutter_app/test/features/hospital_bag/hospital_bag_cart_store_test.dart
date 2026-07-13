@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
@@ -94,71 +96,122 @@ void main() {
       expect(snapshot!.groups.single.items, hasLength(120));
       expect(snapshot.totals.itemCount, 120);
     });
+
+    test('rejects non-finite numbers and bounds text-heavy payloads', () {
+      final finite = HospitalBagCartSnapshot.tryFromCartUpdate({
+        'groups': [
+          {
+            'title': '安全解析',
+            'items': [
+              {
+                'id': 'bounded',
+                'name': '用品',
+                'qty': 'Infinity',
+                'price': 'NaN',
+                'desc': 'a' * 700,
+                'keywords': List.generate(30, (index) => 'k$index'),
+              },
+            ],
+          },
+        ],
+      });
+
+      expect(finite, isNotNull);
+      final item = finite!.items.single;
+      expect(item.qty, 1);
+      expect(item.price, 0);
+      expect(item.desc, hasLength(512));
+      expect(item.keywords, hasLength(16));
+
+      final oversized = HospitalBagCartSnapshot.tryFromCartUpdate({
+        'groups': [
+          {
+            'title': '超大清单',
+            'items': List.generate(
+              120,
+              (index) => {
+                'id': 'item-$index',
+                'name': 'n' * 700,
+                'desc': 'd' * 700,
+                'product_url': 'u' * 700,
+                'image_url': 'i' * 700,
+                'qty': 1,
+                'price': 1,
+              },
+            ),
+          },
+        ],
+      });
+      expect(oversized, isNull);
+    });
   });
 
   group('HospitalBagCartStore', () {
-    test('owns artifact updates, mutations, reset, and Agent context', () {
-      final store = HospitalBagCartStore();
-      final seed = HospitalBagCartArtifactSeed.tryFromCartUpdate(
-        artifactId: 'artifact-personalized',
-        cartUpdate: {
-          'groups': [
-            {
-              'title': '我的清单',
-              'tone': 'mint',
-              'items': [
-                {
-                  'id': 'custom-one',
-                  'name': '个性化用品 A',
-                  'desc': '只属于当前清单',
-                  'qty': 1,
-                  'price': 88.0,
-                },
-                {
-                  'id': 'custom-two',
-                  'name': '个性化用品 B',
-                  'desc': '继续保留',
-                  'qty': 2,
-                  'price': 66.0,
-                },
-              ],
-            },
-          ],
-        },
-      );
+    test(
+      'owns artifact updates, mutations, reset, and Agent context',
+      () async {
+        final store = HospitalBagCartStore();
+        final seed = HospitalBagCartArtifactSeed.tryFromCartUpdate(
+          artifactId: 'artifact-personalized',
+          cartUpdate: {
+            'groups': [
+              {
+                'title': '我的清单',
+                'tone': 'mint',
+                'items': [
+                  {
+                    'id': 'custom-one',
+                    'name': '个性化用品 A',
+                    'desc': '只属于当前清单',
+                    'qty': 1,
+                    'price': 88.0,
+                  },
+                  {
+                    'id': 'custom-two',
+                    'name': '个性化用品 B',
+                    'desc': '继续保留',
+                    'qty': 2,
+                    'price': 66.0,
+                  },
+                ],
+              },
+            ],
+          },
+        );
 
-      expect(seed, isNotNull);
-      expect(store.agentClientContext, isNull);
+        expect(seed, isNotNull);
+        expect(store.agentClientContext, isNull);
 
-      final cartId = store.ingestArtifact(seed!);
-      expect(cartId, 'artifact:artifact-personalized');
-      expect(store.activeCartId, cartId);
-      expect(store.snapshot(cartId).groups.single.items, hasLength(2));
-      expect(
-        store.agentClientContext!['hospital_bag_cart'],
-        store.snapshot(cartId).toAgentContext(),
-      );
+        final cartId = store.ingestArtifact(seed!);
+        expect(cartId, 'artifact:artifact-personalized');
+        expect(store.activeCartId, cartId);
+        expect(store.snapshot(cartId).groups.single.items, hasLength(2));
+        expect(
+          store.agentClientContext!['hospital_bag_cart'],
+          store.snapshot(cartId).toAgentContext(),
+        );
 
-      expect(store.removeItem(cartId: cartId, itemId: 'custom-one'), isTrue);
-      expect(
-        store.snapshot(cartId).groups.single.items.single.id,
-        'custom-two',
-      );
-      expect(store.canReset(cartId), isTrue);
+        expect(store.removeItem(cartId: cartId, itemId: 'custom-one'), isTrue);
+        expect(
+          store.snapshot(cartId).groups.single.items.single.id,
+          'custom-two',
+        );
+        expect(store.canReset(cartId), isTrue);
 
-      store.reset(cartId);
-      expect(store.snapshot(cartId).totals.itemCount, 18);
-      expect(store.canReset(cartId), isFalse);
-      expect(
-        store.snapshot(HospitalBagCartStore.defaultCartId).totals.itemCount,
-        18,
-      );
+        store.reset(cartId);
+        expect(store.snapshot(cartId).totals.itemCount, 18);
+        expect(store.canReset(cartId), isFalse);
+        expect(
+          store.snapshot(HospitalBagCartStore.defaultCartId).totals.itemCount,
+          18,
+        );
 
-      store.clearForNewSession();
-      expect(store.activeCartId, isNull);
-      expect(store.agentClientContext, isNull);
-      expect(store.snapshot(cartId).totals.itemCount, 18);
-    });
+        await store.clearForNewSession();
+        expect(store.activeCartId, isNull);
+        expect(store.agentClientContext, isNull);
+        expect(store.snapshot(cartId).totals.itemCount, 18);
+      },
+    );
 
     test('falls back to defaults for a cart id from another runtime', () {
       final store = HospitalBagCartStore();
@@ -214,17 +267,120 @@ void main() {
       expect(second.storageKey, contains('user.user%2Fb.cart'));
       expect(first.storageKey, isNot(second.storageKey));
     });
+
+    test(
+      'retries a transient restore failure before persisting changes',
+      () async {
+        final persistedSeed = _cartSeed('persisted-before-retry');
+        final persistence = _MemoryHospitalBagCartPersistence(
+          state: HospitalBagCartPersistedState(
+            snapshots: {
+              'artifact:persisted-before-retry': persistedSeed.snapshot,
+            },
+            customizedCartIds: const {'artifact:persisted-before-retry'},
+            activeCartId: 'artifact:persisted-before-retry',
+          ),
+          readFailures: 1,
+        );
+        final store = HospitalBagCartStore(persistence: persistence);
+
+        await store.restore();
+        store.ingestArtifact(_cartSeed('new-after-retry'));
+        await store.flushPendingPersistence();
+
+        expect(persistence.readCount, 2);
+        expect(
+          persistence.state!.snapshots.keys,
+          containsAll({
+            'artifact:persisted-before-retry',
+            'artifact:new-after-retry',
+          }),
+        );
+      },
+    );
+
+    test(
+      'always persists the latest active cart inside the bounded set',
+      () async {
+        final persistence = _MemoryHospitalBagCartPersistence();
+        final store = HospitalBagCartStore(persistence: persistence);
+        for (var index = 0; index < 25; index += 1) {
+          store.ingestArtifact(_cartSeed('cart-$index'));
+        }
+        await store.flushPendingPersistence();
+
+        final restarted = HospitalBagCartStore(persistence: persistence);
+        await restarted.restore();
+
+        expect(restarted.activeCartId, 'artifact:cart-24');
+        expect(
+          restarted.snapshot('artifact:cart-24').items.single.id,
+          'cart-24',
+        );
+      },
+    );
+
+    test(
+      'new-session clear completes only after the tombstone is durable',
+      () async {
+        final persistence = _MemoryHospitalBagCartPersistence();
+        final store = HospitalBagCartStore(persistence: persistence);
+        store.ingestArtifact(_cartSeed('before-clear'));
+        await store.flushPendingPersistence();
+        final blocker = Completer<void>();
+        persistence.writeBarrier = blocker.future;
+        var completed = false;
+
+        final clear = store.clearForNewSession().then((_) => completed = true);
+        await Future<void>.delayed(Duration.zero);
+        expect(completed, isFalse);
+
+        blocker.complete();
+        await clear;
+        expect(persistence.state!.activeCartId, isNull);
+        expect(persistence.state!.snapshots, isEmpty);
+      },
+    );
   });
 }
 
 class _MemoryHospitalBagCartPersistence implements HospitalBagCartPersistence {
+  _MemoryHospitalBagCartPersistence({this.state, this.readFailures = 0});
+
   HospitalBagCartPersistedState? state;
+  int readFailures;
+  int readCount = 0;
+  Future<void>? writeBarrier;
 
   @override
-  Future<HospitalBagCartPersistedState?> read() async => state;
+  Future<HospitalBagCartPersistedState?> read() async {
+    readCount += 1;
+    if (readFailures > 0) {
+      readFailures -= 1;
+      throw StateError('transient secure storage failure');
+    }
+    return state;
+  }
 
   @override
   Future<void> write(HospitalBagCartPersistedState state) async {
+    await writeBarrier;
     this.state = state;
   }
+}
+
+HospitalBagCartArtifactSeed _cartSeed(String id) {
+  return HospitalBagCartArtifactSeed.tryFromCartUpdate(
+    artifactId: id,
+    cartUpdate: {
+      'groups': [
+        {
+          'title': '测试清单',
+          'items': [
+            {'id': id, 'name': '用品 $id', 'qty': 1, 'price': 10},
+          ],
+        },
+      ],
+    },
+  )!;
 }

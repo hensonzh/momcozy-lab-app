@@ -103,7 +103,8 @@ class FlutterSecureHospitalBagCartPersistence
 }
 
 class HospitalBagCartStore extends ChangeNotifier {
-  HospitalBagCartStore({this.persistence});
+  HospitalBagCartStore({this.persistence})
+    : _restoreCompleted = persistence == null;
 
   static const defaultCartId = 'default';
 
@@ -119,6 +120,7 @@ class HospitalBagCartStore extends ChangeNotifier {
   String? _activeCartId;
   bool _activeDirty = false;
   bool _clearedBeforeRestore = false;
+  bool _restoreCompleted;
 
   String? get activeCartId => _activeCartId;
 
@@ -133,18 +135,30 @@ class HospitalBagCartStore extends ChangeNotifier {
   }
 
   Future<void> restore() {
-    return _restoreFuture ??= _restore();
+    if (_restoreCompleted) return Future<void>.value();
+    final pending = _restoreFuture;
+    if (pending != null) return pending;
+    late final Future<void> restoreFuture;
+    restoreFuture = _restore().whenComplete(() {
+      if (identical(_restoreFuture, restoreFuture)) _restoreFuture = null;
+    });
+    _restoreFuture = restoreFuture;
+    return restoreFuture;
   }
 
   Future<void> _restore() async {
     final persistence = this.persistence;
-    if (persistence == null) return;
+    if (persistence == null) {
+      _restoreCompleted = true;
+      return;
+    }
     HospitalBagCartPersistedState? restored;
     try {
       restored = await persistence.read();
     } catch (_) {
       return;
     }
+    _restoreCompleted = true;
     if (restored == null || _clearedBeforeRestore) return;
     var changed = false;
     for (final entry in restored.snapshots.entries) {
@@ -233,7 +247,7 @@ class HospitalBagCartStore extends ChangeNotifier {
 
   bool canReset(String cartId) => _customizedCartIds.contains(cartId);
 
-  void clearForNewSession() {
+  Future<void> clearForNewSession() async {
     _snapshots
       ..clear()
       ..[defaultCartId] = defaultHospitalBagCartSnapshot;
@@ -245,6 +259,7 @@ class HospitalBagCartStore extends ChangeNotifier {
     _clearedBeforeRestore = true;
     notifyListeners();
     _schedulePersist();
+    await _persistenceTail;
   }
 
   void _schedulePersist() {
@@ -252,8 +267,16 @@ class HospitalBagCartStore extends ChangeNotifier {
     if (persistence == null) return;
     _persistenceTail = _persistenceTail.then((_) async {
       await restore();
+      if (!_restoreCompleted) return;
       final snapshots = <String, HospitalBagCartSnapshot>{};
+      final activeCartId = _activeCartId;
+      if (activeCartId != null &&
+          activeCartId != defaultCartId &&
+          _snapshots.containsKey(activeCartId)) {
+        snapshots[activeCartId] = _snapshots[activeCartId]!;
+      }
       for (final entry in _snapshots.entries) {
+        if (snapshots.containsKey(entry.key)) continue;
         if (entry.key == defaultCartId &&
             !_customizedCartIds.contains(defaultCartId)) {
           continue;
@@ -283,5 +306,6 @@ class HospitalBagCartStore extends ChangeNotifier {
 
 String _stableId(String value) {
   final normalized = value.trim().replaceAll(RegExp(r'[^A-Za-z0-9_.:-]'), '_');
-  return normalized.isEmpty ? 'cart' : normalized;
+  if (normalized.isEmpty) return 'cart';
+  return normalized.length <= 128 ? normalized : normalized.substring(0, 128);
 }
