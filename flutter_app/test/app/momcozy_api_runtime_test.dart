@@ -58,7 +58,12 @@ void main() {
       ),
     );
 
-    final runtime = await MomCozyApiRuntime.bootstrap(store: store);
+    final runtime = await MomCozyApiRuntime.bootstrap(
+      store: store,
+      hospitalBagCartStore: HospitalBagCartStore(
+        persistence: const _EmptyHospitalBagCartPersistence(),
+      ),
+    );
     final observed = runtime.jsonTransport as ObservedApiJsonTransport;
     final transport = observed.inner as IoApiJsonTransport;
     final eventResult = await runtime.clientEventClient.post(
@@ -116,11 +121,30 @@ void main() {
     expect(runtime.hospitalBagCartStore.agentClientContext, isNotNull);
   });
 
+  test(
+    'runtime bootstrap fails closed after bounded cart restore retries',
+    () async {
+      final persistence = _FailingHospitalBagCartPersistence();
+
+      await expectLater(
+        MomCozyApiRuntime.bootstrap(
+          store: MemoryMomCozySessionStore(),
+          hospitalBagCartStore: HospitalBagCartStore(persistence: persistence),
+        ),
+        throwsStateError,
+      );
+      expect(persistence.readCount, 2);
+    },
+  );
+
   test('runtime bootstrap can apply a legacy storage snapshot', () async {
     final migrationStore = _RuntimeMigrationStore();
 
     final runtime = await MomCozyApiRuntime.bootstrap(
       store: MemoryMomCozySessionStore(),
+      hospitalBagCartStore: HospitalBagCartStore(
+        persistence: const _EmptyHospitalBagCartPersistence(),
+      ),
       legacyStorageSnapshot: {
         'localStorage': {
           'mai_debug_user_id': 'legacy-user',
@@ -623,6 +647,29 @@ class _DelayedHospitalBagCartPersistence implements HospitalBagCartPersistence {
 
   @override
   Future<HospitalBagCartPersistedState?> read() => readCompleter.future;
+
+  @override
+  Future<void> write(HospitalBagCartPersistedState state) async {}
+}
+
+class _EmptyHospitalBagCartPersistence implements HospitalBagCartPersistence {
+  const _EmptyHospitalBagCartPersistence();
+
+  @override
+  Future<HospitalBagCartPersistedState?> read() async => null;
+
+  @override
+  Future<void> write(HospitalBagCartPersistedState state) async {}
+}
+
+class _FailingHospitalBagCartPersistence implements HospitalBagCartPersistence {
+  int readCount = 0;
+
+  @override
+  Future<HospitalBagCartPersistedState?> read() async {
+    readCount += 1;
+    throw StateError('secure cart unavailable');
+  }
 
   @override
   Future<void> write(HospitalBagCartPersistedState state) async {}

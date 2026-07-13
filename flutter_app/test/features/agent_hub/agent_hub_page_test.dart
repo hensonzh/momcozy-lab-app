@@ -645,6 +645,48 @@ void main() {
     );
   });
 
+  testWidgets(
+    'Agent Hub locks sending until durable new-session clear finishes',
+    (tester) async {
+      final clearCompleter = Completer<void>();
+      final client = _FixtureAgentStreamClient(const <AgentStreamEvent>[]);
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            historyMessages: const [
+              AgentHubHistoryMessage(
+                role: AgentHubHistoryRole.user,
+                content: '保留到清除真正完成',
+              ),
+            ],
+            runner: AgentStreamRunner(client),
+            onNewSession: () => clearCompleter.future,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '清除期间不能发送',
+      );
+
+      await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+      await tester.pump();
+
+      final pendingSendButton = tester.widget<IconButton>(
+        find.byKey(const ValueKey('agent-send-button')),
+      );
+      expect(pendingSendButton.onPressed, isNull);
+      expect(find.text('保留到清除真正完成'), findsOneWidget);
+      expect(client.requests, isEmpty);
+
+      clearCompleter.complete();
+      await tester.pumpAndSettle();
+
+      expect(find.text('保留到清除真正完成'), findsNothing);
+      expect(client.requests, isEmpty);
+    },
+  );
+
   testWidgets('Agent Hub virtualizes long history messages', (tester) async {
     tester.view.physicalSize = const Size(390, 640);
     tester.view.devicePixelRatio = 1;

@@ -115,7 +115,7 @@ class HospitalBagCartStore extends ChangeNotifier {
   };
   final Set<String> _customizedCartIds = <String>{};
   final Set<String> _dirtyCartIds = <String>{};
-  Future<void>? _restoreFuture;
+  Future<bool>? _restoreFuture;
   Future<void> _persistenceTail = Future<void>.value();
   String? _activeCartId;
   bool _activeDirty = false;
@@ -134,11 +134,11 @@ class HospitalBagCartStore extends ChangeNotifier {
     return _snapshots[cartId] ?? defaultHospitalBagCartSnapshot;
   }
 
-  Future<void> restore() {
-    if (_restoreCompleted) return Future<void>.value();
+  Future<bool> restore() {
+    if (_restoreCompleted) return Future<bool>.value(true);
     final pending = _restoreFuture;
     if (pending != null) return pending;
-    late final Future<void> restoreFuture;
+    late final Future<bool> restoreFuture;
     restoreFuture = _restore().whenComplete(() {
       if (identical(_restoreFuture, restoreFuture)) _restoreFuture = null;
     });
@@ -146,20 +146,20 @@ class HospitalBagCartStore extends ChangeNotifier {
     return restoreFuture;
   }
 
-  Future<void> _restore() async {
+  Future<bool> _restore() async {
     final persistence = this.persistence;
     if (persistence == null) {
       _restoreCompleted = true;
-      return;
+      return true;
     }
     HospitalBagCartPersistedState? restored;
     try {
       restored = await persistence.read();
     } catch (_) {
-      return;
+      return false;
     }
     _restoreCompleted = true;
-    if (restored == null || _clearedBeforeRestore) return;
+    if (restored == null || _clearedBeforeRestore) return true;
     var changed = false;
     for (final entry in restored.snapshots.entries) {
       if (_dirtyCartIds.contains(entry.key)) continue;
@@ -180,6 +180,7 @@ class HospitalBagCartStore extends ChangeNotifier {
       changed = true;
     }
     if (changed) notifyListeners();
+    return true;
   }
 
   String ingestArtifact(HospitalBagCartArtifactSeed seed) {
@@ -190,7 +191,7 @@ class HospitalBagCartStore extends ChangeNotifier {
     _dirtyCartIds.add(cartId);
     _activeDirty = true;
     notifyListeners();
-    _schedulePersist();
+    unawaited(_schedulePersist());
     return cartId;
   }
 
@@ -203,7 +204,7 @@ class HospitalBagCartStore extends ChangeNotifier {
       _activeCartId = resolved;
       _activeDirty = true;
       notifyListeners();
-      _schedulePersist();
+      unawaited(_schedulePersist());
     }
     return resolved;
   }
@@ -231,7 +232,7 @@ class HospitalBagCartStore extends ChangeNotifier {
     _dirtyCartIds.add(cartId);
     _activeDirty = true;
     notifyListeners();
-    _schedulePersist();
+    unawaited(_schedulePersist());
     return true;
   }
 
@@ -242,12 +243,20 @@ class HospitalBagCartStore extends ChangeNotifier {
     _dirtyCartIds.add(cartId);
     _activeDirty = true;
     notifyListeners();
-    _schedulePersist();
+    unawaited(_schedulePersist());
   }
 
   bool canReset(String cartId) => _customizedCartIds.contains(cartId);
 
   Future<void> clearForNewSession() async {
+    final previousSnapshots = Map<String, HospitalBagCartSnapshot>.of(
+      _snapshots,
+    );
+    final previousCustomizedCartIds = Set<String>.of(_customizedCartIds);
+    final previousDirtyCartIds = Set<String>.of(_dirtyCartIds);
+    final previousActiveCartId = _activeCartId;
+    final previousActiveDirty = _activeDirty;
+    final previousClearedBeforeRestore = _clearedBeforeRestore;
     _snapshots
       ..clear()
       ..[defaultCartId] = defaultHospitalBagCartSnapshot;
@@ -258,16 +267,37 @@ class HospitalBagCartStore extends ChangeNotifier {
     _activeDirty = true;
     _clearedBeforeRestore = true;
     notifyListeners();
-    _schedulePersist();
-    await _persistenceTail;
+    try {
+      await _schedulePersist(propagateErrors: true);
+    } catch (_) {
+      _snapshots
+        ..clear()
+        ..addAll(previousSnapshots);
+      _customizedCartIds
+        ..clear()
+        ..addAll(previousCustomizedCartIds);
+      _dirtyCartIds
+        ..clear()
+        ..addAll(previousDirtyCartIds);
+      _activeCartId = previousActiveCartId;
+      _activeDirty = previousActiveDirty;
+      _clearedBeforeRestore = previousClearedBeforeRestore;
+      notifyListeners();
+      rethrow;
+    }
   }
 
-  void _schedulePersist() {
+  Future<void> _schedulePersist({bool propagateErrors = false}) {
     final persistence = this.persistence;
-    if (persistence == null) return;
-    _persistenceTail = _persistenceTail.then((_) async {
-      await restore();
-      if (!_restoreCompleted) return;
+    if (persistence == null) return Future<void>.value();
+    final operation = _persistenceTail.then((_) async {
+      final restored = await restore();
+      if (!restored) {
+        if (propagateErrors) {
+          throw StateError('Hospital bag cart recovery is unavailable.');
+        }
+        return;
+      }
       final snapshots = <String, HospitalBagCartSnapshot>{};
       final activeCartId = _activeCartId;
       if (activeCartId != null &&
@@ -295,9 +325,15 @@ class HospitalBagCartStore extends ChangeNotifier {
           ),
         );
       } catch (_) {
+        if (propagateErrors) rethrow;
         // The in-memory cart remains usable when local persistence fails.
       }
     });
+    _persistenceTail = operation.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return operation;
   }
 
   @visibleForTesting
