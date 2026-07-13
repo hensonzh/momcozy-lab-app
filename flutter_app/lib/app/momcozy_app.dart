@@ -1488,7 +1488,7 @@ Widget _buildDefaultAgentHubPage(
       store.activate(store.activeCartId);
     },
     onPregnancyDiaryChange: (change) {
-      runtime.pregnancyDiaryChangeStore.record(change);
+      runtime.recordPregnancyDiaryChange(change);
     },
     onPregnancyPlanChange: (change) {
       runtime.pregnancyPlanChangeStore.record(change);

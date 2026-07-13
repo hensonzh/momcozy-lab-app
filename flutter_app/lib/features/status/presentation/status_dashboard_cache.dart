@@ -69,6 +69,10 @@ class StatusDashboardCache {
     return this.ownerUserId == ownerUserId && this.babyId == babyId;
   }
 
+  void invalidatePregnancyDiary() {
+    pregnancyDiaryEntries = null;
+  }
+
   void clear() {
     overview = null;
     feedingRecords = null;
