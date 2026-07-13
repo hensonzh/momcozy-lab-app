@@ -7696,14 +7696,14 @@ class _IbclcPageState extends State<_IbclcPage> {
       setState(() {
         _consultStarted = true;
         _isStarting = false;
-        _syncStatus = result.sent ? '咨询事件已同步。' : '本地已进入队列，稍后重试同步。';
+        _syncStatus = result.sent ? '咨询事件已同步。' : '已进入咨询，但本次状态未同步。';
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _consultStarted = true;
         _isStarting = false;
-        _syncStatus = '本地已进入队列，稍后重试同步。';
+        _syncStatus = '已进入咨询，但本次状态未同步。';
       });
     }
   }

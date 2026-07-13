@@ -1558,7 +1558,7 @@ void main() {
       expect(body['metadata'], containsPair('reason', '含乳疼痛'));
     });
 
-    testWidgets('IBCLC page enters local queue when event sync fails', (
+    testWidgets('IBCLC page reports unsynced state without claiming a retry queue', (
       tester,
     ) async {
       const client = AgentStreamClientEventClient(sent: false);
@@ -1574,7 +1574,7 @@ void main() {
       await tester.pump(const Duration(seconds: 8));
       await tester.pumpAndSettle();
 
-      expect(find.text('本地已进入队列，稍后重试同步。'), findsOneWidget);
+      expect(find.text('已进入咨询，但本次状态未同步。'), findsOneWidget);
     });
 
     testWidgets('IBCLC page completes the consult and returns to Agent Hub', (
