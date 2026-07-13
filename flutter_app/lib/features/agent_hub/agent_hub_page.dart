@@ -1560,7 +1560,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _state,
       nextState,
     );
-    if (artifactProjectionChanged) {
+    final hospitalBagCartProjectionChanged =
+        artifactProjectionChanged ||
+        _hasNewHospitalBagCartChangedEvent(_state, nextState);
+    if (hospitalBagCartProjectionChanged) {
       _applyHospitalBagCartUpdates(nextState);
     }
     _applyPregnancyDiaryChanges(nextState);
@@ -5802,6 +5805,19 @@ bool _artifactProjectionChanged(
         .any((event) => event.type.startsWith('artifact.'));
   }
   return false;
+}
+
+bool _hasNewHospitalBagCartChangedEvent(
+  AgentStreamRunState previous,
+  AgentStreamRunState next,
+) {
+  if (identical(previous.events, next.events) ||
+      next.events.length <= previous.events.length) {
+    return false;
+  }
+  return next.events
+      .skip(previous.events.length)
+      .any((event) => event.type == 'hospital_bag.cart.changed');
 }
 
 bool _hasServerRunSignal(AgentStreamRunState state) {

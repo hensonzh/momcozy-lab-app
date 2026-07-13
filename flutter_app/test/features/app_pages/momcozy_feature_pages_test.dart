@@ -1891,6 +1891,78 @@ void main() {
       },
     );
 
+    testWidgets(
+      'hospital bag page follows an authoritative Agent cart update while open',
+      (tester) async {
+        final store = HospitalBagCartStore();
+        final initialCartId = store.ingestArtifact(
+          HospitalBagCartArtifactSeed.tryFromCartUpdate(
+            artifactId: 'initial-cart',
+            cartUpdate: {
+              'groups': [
+                {
+                  'title': '原始清单',
+                  'items': [
+                    {
+                      'id': 'original-item',
+                      'name': '原始用品',
+                      'qty': 1,
+                      'price': 299,
+                    },
+                  ],
+                },
+              ],
+            },
+          )!,
+        );
+
+        await tester.pumpWidget(
+          _FeaturePageHost(
+            route: _route('/hospital-bag-cart'),
+            routeExtra: HospitalBagCartRouteState(cartId: initialCartId),
+            hospitalBagCartStore: store,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('原始用品'), findsOneWidget);
+        expect(find.text('删减后保留用品'), findsNothing);
+
+        final updatedCartId = store.ingestArtifact(
+          HospitalBagCartArtifactSeed.tryFromCartUpdate(
+            artifactId: 'action:budget-update',
+            cartUpdate: {
+              'groups': [
+                {
+                  'title': '删减后的清单',
+                  'items': [
+                    {
+                      'id': 'kept-item',
+                      'name': '删减后保留用品',
+                      'qty': 1,
+                      'price': 99,
+                    },
+                  ],
+                },
+              ],
+            },
+          )!,
+        );
+        await tester.pump();
+
+        expect(store.activeCartId, updatedCartId);
+        expect(find.text('原始用品'), findsNothing);
+        expect(find.text('删减后保留用品'), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('hospital-bag-item-count-chip')),
+            matching: find.text('1 件'),
+          ),
+          findsOneWidget,
+        );
+      },
+    );
+
     testWidgets('device subpages mirror reminder and user config routes', (
       tester,
     ) async {
