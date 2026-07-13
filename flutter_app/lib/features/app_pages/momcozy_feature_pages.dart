@@ -6646,7 +6646,16 @@ class _HospitalBagCartPageState extends State<_HospitalBagCartPage> {
   }
 
   void _handleCartChanged() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    final activeCartId =
+        _cartStore?.activeCartId ?? HospitalBagCartStore.defaultCartId;
+    setState(() {
+      if (_cartId == activeCartId) return;
+      _cartId = activeCartId;
+      _syncGeneration += 1;
+      _isSyncing = false;
+      _syncStatus = null;
+    });
   }
 
   void _resetCart() {
