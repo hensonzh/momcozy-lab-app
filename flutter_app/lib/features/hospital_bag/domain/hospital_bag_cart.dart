@@ -1,6 +1,14 @@
+import 'dart:convert';
+
 const hospitalBagCartUsdToCnyRate = 6.8;
 const _maxHospitalBagCartGroups = 12;
 const _maxHospitalBagCartItems = 120;
+const _maxHospitalBagCartTextLength = 512;
+const _maxHospitalBagCartKeywords = 16;
+const _maxHospitalBagCartKeywordLength = 64;
+const _maxHospitalBagCartEncodedBytes = 64 * 1024;
+const _maxHospitalBagCartQuantity = 99;
+const _maxHospitalBagCartNumber = 10000000.0;
 
 abstract interface class HospitalBagCartRepository {
   Future<HospitalBagCartSyncResult> syncCart({
@@ -267,7 +275,12 @@ class HospitalBagCartSnapshot {
       if (remainingItems <= 0) break;
     }
     if (rawGroups.isNotEmpty && groups.isEmpty) return null;
-    return HospitalBagCartSnapshot.fromGroups(groups);
+    final snapshot = HospitalBagCartSnapshot.fromGroups(groups);
+    if (utf8.encode(jsonEncode(snapshot.toAgentContext())).length >
+        _maxHospitalBagCartEncodedBytes) {
+      return null;
+    }
+    return snapshot;
   }
 
   HospitalBagCartSnapshot copyWithGroups(
@@ -530,23 +543,45 @@ String? _firstString(Map<String, Object?> map, List<String> keys) {
 String? _string(Object? value) {
   if (value is! String) return null;
   final normalized = value.trim();
-  return normalized.isEmpty ? null : normalized;
+  if (normalized.isEmpty) return null;
+  return normalized.length <= _maxHospitalBagCartTextLength
+      ? normalized
+      : normalized.substring(0, _maxHospitalBagCartTextLength);
 }
 
 List<String> _stringList(Object? value) {
   if (value is! List) return const <String>[];
-  return List<String>.unmodifiable(value.map(_string).whereType<String>());
+  return List<String>.unmodifiable(
+    value
+        .take(_maxHospitalBagCartKeywords)
+        .map(_string)
+        .whereType<String>()
+        .map(
+          (keyword) => keyword.length <= _maxHospitalBagCartKeywordLength
+              ? keyword
+              : keyword.substring(0, _maxHospitalBagCartKeywordLength),
+        ),
+  );
 }
 
 double? _number(Object? value) {
-  if (value is num && value.isFinite) return value.toDouble();
-  if (value is String) return double.tryParse(value.trim());
-  return null;
+  double? parsed;
+  if (value is num && value.isFinite) {
+    parsed = value.toDouble();
+  } else if (value is String) {
+    parsed = double.tryParse(value.trim());
+  }
+  if (parsed == null || !parsed.isFinite) return null;
+  if (parsed < 0 || parsed > _maxHospitalBagCartNumber) return null;
+  return parsed;
 }
 
 int _positiveInt(Object? value, {required int fallback}) {
   final number = _number(value)?.toInt();
-  return number == null || number < 1 ? fallback : number;
+  if (number == null || number < 1) return fallback;
+  return number > _maxHospitalBagCartQuantity
+      ? _maxHospitalBagCartQuantity
+      : number;
 }
 
 double _roundMoney(double value) => (value * 100).roundToDouble() / 100;

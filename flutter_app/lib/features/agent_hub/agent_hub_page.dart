@@ -46,7 +46,7 @@ typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 typedef AgentHubVoiceInput = Future<String?> Function();
 typedef AgentArtifactActionHandler =
     void Function(AgentArtifactActionView action);
-typedef AgentHubNewSessionHandler = void Function();
+typedef AgentHubNewSessionHandler = FutureOr<void> Function();
 typedef HospitalBagCartUpdateHandler =
     void Function(HospitalBagCartArtifactSeed seed);
 
@@ -1384,12 +1384,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
   }
 
-  void _startNewSession() {
+  Future<void> _startNewSession() async {
     if (_isVisibleReplyRunning) return;
     if (_state.isActive) {
       _sendBestEffortServerCancel(_state, _activeRequest);
     }
     widget.voicePlaybackCoordinator?.cancel();
+    await widget.onNewSession?.call();
+    if (!mounted) return;
     _dismissComposerKeyboardOnRunAccepted = false;
     _cancelRunSubscription();
     _composerController.clear();
@@ -1413,7 +1415,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
     _flushPersistentInteractionState();
     unawaited(_refreshGreetingAndMaybePlayVoice());
-    widget.onNewSession?.call();
   }
 
   void _cancelCurrentBubblePlaybackForNewTurn() {

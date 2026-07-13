@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -78,6 +80,40 @@ void main() {
       runtime.scheduleImageRecognitionGateway,
       isA<ApiScheduleImageRecognitionGateway>(),
     );
+  });
+
+  test('runtime bootstrap waits for the active hospital bag cart', () async {
+    final persistence = _DelayedHospitalBagCartPersistence();
+    final cartStore = HospitalBagCartStore(persistence: persistence);
+    final runtimeFuture = MomCozyApiRuntime.bootstrap(
+      store: MemoryMomCozySessionStore(
+        const MomCozySession(
+          status: MomCozySessionStatus.authenticated,
+          userId: 'cart-user',
+          babyId: 'cart-baby',
+          locale: 'zh-CN',
+          accessToken: 'cart-access',
+        ),
+      ),
+      hospitalBagCartStore: cartStore,
+    );
+    var completed = false;
+    unawaited(runtimeFuture.then((_) => completed = true));
+    await Future<void>.delayed(Duration.zero);
+    expect(completed, isFalse);
+
+    final seed = _cartSeed('restored-cart');
+    persistence.readCompleter.complete(
+      HospitalBagCartPersistedState(
+        snapshots: {'artifact:restored-cart': seed.snapshot},
+        customizedCartIds: const {'artifact:restored-cart'},
+        activeCartId: 'artifact:restored-cart',
+      ),
+    );
+    final runtime = await runtimeFuture;
+
+    expect(runtime.hospitalBagCartStore.activeCartId, 'artifact:restored-cart');
+    expect(runtime.hospitalBagCartStore.agentClientContext, isNotNull);
   });
 
   test('runtime bootstrap can apply a legacy storage snapshot', () async {
@@ -579,6 +615,17 @@ class _MemoryVolumeUnitPreferenceStore implements VolumeUnitPreferenceStore {
   Future<void> write(MomCozyVolumeUnit unit) async {
     value = unit;
   }
+}
+
+class _DelayedHospitalBagCartPersistence implements HospitalBagCartPersistence {
+  final Completer<HospitalBagCartPersistedState?> readCompleter =
+      Completer<HospitalBagCartPersistedState?>();
+
+  @override
+  Future<HospitalBagCartPersistedState?> read() => readCompleter.future;
+
+  @override
+  Future<void> write(HospitalBagCartPersistedState state) async {}
 }
 
 HospitalBagCartArtifactSeed _cartSeed(String artifactId) {
