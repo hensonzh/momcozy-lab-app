@@ -101,9 +101,34 @@ void main() {
             ],
           },
         ),
+        _artifactEvent(
+          id: 'milk-analysis-1',
+          type: 'milk_analysis_card',
+          payload: {
+            'card_type': 'milk_analysis_card',
+            'title': '奶量分析',
+            'headline': '可继续当前节奏或制定稳奶计划',
+            'sections': [
+              {
+                'id': 'milk',
+                'title': '近 7 天记录',
+                'metrics': [
+                  {'label': '吸奶记录', 'value': '8'},
+                ],
+              },
+              {
+                'id': 'next',
+                'title': '下一步',
+                'items': ['可继续当前节奏或制定稳奶计划'],
+              },
+            ],
+            'can_start_plan': true,
+            'recommended_direction': 'maintain',
+          },
+        ),
       ]);
 
-      expect(cards, hasLength(2));
+      expect(cards, hasLength(3));
       expect(
         cards[0].presentationKind,
         AgentArtifactPresentationKind.ibclcConsultCard,
@@ -124,6 +149,13 @@ void main() {
       );
       expect(cards[1].payload['tasks'], isA<List<Object?>>());
       expect(cards[1].payload['reminders'], isA<List<Object?>>());
+      expect(
+        cards[2].presentationKind,
+        AgentArtifactPresentationKind.milkAnalysisCard,
+      );
+      expect(cards[2].title, '奶量分析');
+      expect(cards[2].cardJson['headline'], '可继续当前节奏或制定稳奶计划');
+      expect(cards[2].cardJson['sections'], isA<List<Object?>>());
     });
 
     test('maps the legacy IBCLC card envelope and explicit consult id', () {

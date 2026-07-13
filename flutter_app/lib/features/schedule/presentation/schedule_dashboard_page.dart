@@ -648,8 +648,9 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     int revision,
   ) async {
     final today = _controller.today;
+    final authoritativeDateKeys = store.affectedDateKeys;
     final todayKey = _dayKey(today);
-    final futureDateKeys = store.affectedDateKeys
+    final futureDateKeys = authoritativeDateKeys
         .where((dateKey) => dateKey.compareTo(todayKey) > 0)
         .toList(growable: false);
     final dateKeys = futureDateKeys.isNotEmpty
@@ -670,14 +671,14 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
       setState(_changedDayKeys.clear);
     });
 
-    final preloadDays = <DateTime>[];
-    final firstAffectedDay = DateTime.tryParse(dateKeys.first);
-    if (firstAffectedDay != null) preloadDays.add(firstAffectedDay);
-    final selectedDayKey = _dayKey(_controller.state.selectedDay);
-    if (dateKeys.contains(selectedDayKey) && selectedDayKey != dateKeys.first) {
-      final selectedDay = DateTime.tryParse(selectedDayKey);
-      if (selectedDay != null) preloadDays.add(selectedDay);
-    }
+    final refreshDateKeys = <String>{
+      ...authoritativeDateKeys,
+      if (authoritativeDateKeys.isEmpty) ...dateKeys,
+    }.toList()..sort();
+    final preloadDays = refreshDateKeys
+        .map(DateTime.tryParse)
+        .whereType<DateTime>()
+        .toList(growable: false);
     if (preloadDays.isEmpty) {
       _consumedMilkPlanRevision = null;
       store.restoreNavigationNotice();
@@ -690,12 +691,12 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     if (refreshResults.any((succeeded) => !succeeded)) {
       _consumedMilkPlanRevision = null;
       store.restoreNavigationNotice();
-      setState(() => _feedback = '稳奶计划更新已收到，但权威数据刷新失败');
+      setState(() => _feedback = '奶量计划更新已收到，但权威数据刷新失败');
       return;
     }
     store.clearPageNotice();
     _queueReminderSync();
-    setState(() => _feedback = '稳奶计划已按最新权威数据刷新');
+    setState(() => _feedback = '奶量计划已按最新权威数据刷新');
   }
 
   String _contextTitle(SchedulePlanContext plan, DateTime selectedDay) {

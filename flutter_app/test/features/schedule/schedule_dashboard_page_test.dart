@@ -2119,6 +2119,39 @@ void main() {
     },
   );
 
+  testWidgets(
+    'rescheduled milk plan refetches every affected date and highlights each day',
+    (tester) async {
+      final store = MilkPlanChangeStore();
+      store.record(
+        MilkPlanChange.tryFromEvent(
+          _milkPlanChangedEvent(
+            eventId: 'milk-rescheduled',
+            operation: 'rescheduled',
+            reason: 'schedule_adjustment',
+            affectedDates: const ['2026-07-04', '2026-07-05', '2026-07-06'],
+          ),
+        )!,
+      );
+      store.transferNavigationNoticeToPage();
+      final transport = _transport();
+
+      await _pumpPage(tester, transport, milkPlanChangeStore: store);
+
+      for (final date in const ['2026-07-04', '2026-07-05', '2026-07-06']) {
+        expect(
+          find.byKey(ValueKey('schedule-highlighted-date-$date')),
+          findsOneWidget,
+        );
+        expect(
+          transport.getPaths.where((path) => path == scheduleDayPlanEndpoint),
+          hasLength(4),
+        );
+      }
+      expect(store.hasPageNotice, isFalse);
+    },
+  );
+
   testWidgets('failed milk plan authority refresh restores the unread notice', (
     tester,
   ) async {
@@ -2896,6 +2929,8 @@ class _RecordIntentTransport extends FixtureApiJsonTransportByPath {
 AgentStreamEvent _milkPlanChangedEvent({
   required String eventId,
   required List<String> affectedDates,
+  String operation = 'created',
+  String reason = 'created',
 }) {
   return AgentStreamEvent({
     'event_id': eventId,
@@ -2904,8 +2939,8 @@ AgentStreamEvent _milkPlanChangedEvent({
     'thread_id': 'thread-milk',
     'run_id': 'run-milk',
     'payload': {
-      'operation': 'created',
-      'reason': 'created',
+      'operation': operation,
+      'reason': reason,
       'plan_id': 'private-plan-id',
       'plan_type': 'milk_management',
       'source': 'agent_action',

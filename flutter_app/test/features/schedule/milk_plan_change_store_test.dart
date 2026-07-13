@@ -11,8 +11,17 @@ void main() {
     final change = MilkPlanChange.tryFromEvent(_event());
 
     expect(change?.eventId, 'evt-milk-plan');
+    expect(change?.operation, MilkPlanChangeOperation.created);
     expect(change?.affectedDateKeys, ['2026-07-03', '2026-07-04']);
-    expect(MilkPlanChange.tryFromEvent(_event(operation: 'updated')), isNull);
+    for (final operation in const ['updated', 'rescheduled', 'deleted']) {
+      expect(
+        MilkPlanChange.tryFromEvent(
+          _event(operation: operation, reason: '${operation}_reason'),
+        )?.operation.name,
+        operation,
+      );
+    }
+    expect(MilkPlanChange.tryFromEvent(_event(operation: 'unknown')), isNull);
     expect(MilkPlanChange.tryFromEvent(_event(source: 'client')), isNull);
     expect(
       MilkPlanChange.tryFromEvent(
@@ -40,6 +49,43 @@ void main() {
     expect(store.hasPageNotice, isFalse);
     expect(store.affectedDateKeys, isEmpty);
   });
+
+  test(
+    'merges affected dates from created, updated, rescheduled, and deleted events',
+    () {
+      final store = MilkPlanChangeStore();
+      final operations = <String, List<String>>{
+        'created': ['2026-07-03'],
+        'updated': ['2026-07-04'],
+        'rescheduled': ['2026-07-05', '2026-07-06'],
+        'deleted': ['2026-07-07'],
+      };
+
+      var sequence = 0;
+      for (final entry in operations.entries) {
+        sequence += 1;
+        store.record(
+          MilkPlanChange.tryFromEvent(
+            _event(
+              eventId: 'evt-$sequence',
+              operation: entry.key,
+              reason: '${entry.key}_reason',
+              affectedDates: entry.value,
+            ),
+          )!,
+        );
+      }
+
+      expect(store.revision, 4);
+      expect(store.affectedDateKeys, [
+        '2026-07-03',
+        '2026-07-04',
+        '2026-07-05',
+        '2026-07-06',
+        '2026-07-07',
+      ]);
+    },
+  );
 
   test('persisted state contains no plan id, action id, or summary', () {
     final store = MilkPlanChangeStore();
@@ -98,6 +144,7 @@ void main() {
 }
 
 AgentStreamEvent _event({
+  String eventId = 'evt-milk-plan',
   String operation = 'created',
   String source = 'agent_action',
   String reason = 'created',
@@ -109,7 +156,7 @@ AgentStreamEvent _event({
   ],
 }) {
   return AgentStreamEvent({
-    'event_id': 'evt-milk-plan',
+    'event_id': eventId,
     'sequence': 2,
     'type': 'milk_plan.changed',
     'thread_id': 'thread-milk',
