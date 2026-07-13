@@ -978,9 +978,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
-    final request = _requestWithImages(
-      widget.requestBuilder(requestMessage),
-      _attachedImages,
+    final request = _requestWithWorkflowReply(
+      _requestWithImages(
+        widget.requestBuilder(requestMessage),
+        _attachedImages,
+      ),
+      _state.workflowReply,
     );
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
     if (interruptedState != null) {
@@ -1027,9 +1030,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final request = _requestWithIdempotencyKey(
-      _requestWithMetadata(
-        widget.requestBuilder(requestMessage.trim()),
-        metadata,
+      _requestWithWorkflowReply(
+        _requestWithMetadata(
+          widget.requestBuilder(requestMessage.trim()),
+          metadata,
+        ),
+        _state.workflowReply,
       ),
       idempotencyKey,
     );
@@ -2816,10 +2822,21 @@ AgentStreamRequest _requestWithMetadata(
   return AgentStreamRequest(
     message: request.message,
     threadId: request.threadId,
+    runId: request.runId,
+    afterSequence: request.afterSequence,
     locale: request.locale,
     images: request.images,
     metadata: {...request.metadata, ...metadata},
+    idempotencyKey: request.idempotencyKey,
   );
+}
+
+AgentStreamRequest _requestWithWorkflowReply(
+  AgentStreamRequest request,
+  Map<String, Object?>? workflowReply,
+) {
+  if (workflowReply == null || workflowReply.isEmpty) return request;
+  return _requestWithMetadata(request, {'workflow_reply': workflowReply});
 }
 
 AgentStreamRequest _requestWithThreadId(

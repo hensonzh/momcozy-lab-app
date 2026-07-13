@@ -32,6 +32,7 @@ class AgentStreamRunState {
     this.artifactEvents = const <String, AgentStreamEvent>{},
     this.actionEvents = const <String, AgentStreamEvent>{},
     this.quickReplies = const <String>[],
+    this.workflowReply,
     this.completedAssistantMessageReceived = false,
     this.textStreamId,
     this.nextTextSegmentIndex = 0,
@@ -55,6 +56,7 @@ class AgentStreamRunState {
   final Map<String, AgentStreamEvent> artifactEvents;
   final Map<String, AgentStreamEvent> actionEvents;
   final List<String> quickReplies;
+  final Map<String, Object?>? workflowReply;
   final bool completedAssistantMessageReceived;
   final String? textStreamId;
   final int nextTextSegmentIndex;
@@ -114,8 +116,9 @@ class AgentStreamRunState {
         : events;
     final textUpdate = _nextTextStream(event);
     final nextQuickReplies = _nextQuickReplies(event);
+    final completedAssistantMessage = _isAssistantCompletedMessage(event);
     final nextCompletedAssistantMessage =
-        hasCompletedAssistantMessage || _isAssistantCompletedMessage(event);
+        hasCompletedAssistantMessage || completedAssistantMessage;
     final nextSeenReplayKeys = _recordReplayKey(event);
     final nextThreadId = event.threadId ?? threadId;
     final nextRunId = event.runId ?? runId;
@@ -147,6 +150,9 @@ class AgentStreamRunState {
       artifactEvents: nextArtifactEvents,
       actionEvents: nextActionEvents,
       quickReplies: nextQuickReplies,
+      workflowReply: completedAssistantMessage
+          ? event.workflowReply
+          : workflowReply,
       completedAssistantMessageReceived: nextCompletedAssistantMessage,
       seenReplayKeys: nextSeenReplayKeys,
       lastSequence: nextSequence,
@@ -388,6 +394,7 @@ class AgentStreamRunState {
     Map<String, AgentStreamEvent>? artifactEvents,
     Map<String, AgentStreamEvent>? actionEvents,
     List<String>? quickReplies,
+    Object? workflowReply = _unsetCopyValue,
     bool? completedAssistantMessageReceived,
     Set<String>? seenReplayKeys,
     int? lastSequence,
@@ -416,6 +423,9 @@ class AgentStreamRunState {
       artifactEvents: artifactEvents ?? this.artifactEvents,
       actionEvents: actionEvents ?? this.actionEvents,
       quickReplies: quickReplies ?? this.quickReplies,
+      workflowReply: identical(workflowReply, _unsetCopyValue)
+          ? this.workflowReply
+          : workflowReply as Map<String, Object?>?,
       completedAssistantMessageReceived:
           completedAssistantMessageReceived ??
           this.completedAssistantMessageReceived,
@@ -451,6 +461,7 @@ class AgentStreamRunState {
       if (_hasValue(textIntegrityErrorCode))
         'textIntegrityErrorCode': textIntegrityErrorCode,
       if (quickReplies.isNotEmpty) 'quickReplies': quickReplies,
+      if (workflowReply != null) 'workflowReply': workflowReply,
       if (hasCompletedAssistantMessage)
         'completedAssistantMessageReceived': true,
       if (_seenReplayKeys.isNotEmpty)
@@ -500,6 +511,9 @@ class AgentStreamRunState {
       quickReplies: mappedQuickReplies.isNotEmpty
           ? mappedQuickReplies
           : _latestQuickReplies(events),
+      workflowReply: normalizeWorkflowReply(
+        map['workflowReply'] ?? map['workflow_reply'],
+      ),
       completedAssistantMessageReceived:
           map['completedAssistantMessageReceived'] == true ||
           map['completed_assistant_message_received'] == true ||

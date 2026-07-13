@@ -361,6 +361,39 @@ data: {"type":"run.completed","thread_id":"thread-quick-001","run_id":"run-quick
       expect(state.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
     });
 
+    test(
+      'persists the latest workflow reply cursor across app restoration',
+      () {
+        final state = const AgentStreamRunState().start().applyEvent(
+          AgentStreamEvent(const {
+            'event_id': 'evt-workflow-reply-001',
+            'type': 'message.completed',
+            'thread_id': 'thread-workflow-reply-001',
+            'run_id': 'run-workflow-reply-001',
+            'payload': {
+              'role': 'assistant',
+              'text': '宝宝最近 24 小时大约有几片湿尿布？',
+              'workflow_reply': {
+                'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+                'workflow_type': 'milk_analysis',
+                'revision': 6,
+                'step_token': 'opaque-step-token',
+              },
+            },
+          }),
+        );
+
+        final restored = AgentStreamRunState.fromMap(state.toMap());
+
+        expect(restored.workflowReply, {
+          'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+          'workflow_type': 'milk_analysis',
+          'revision': 6,
+          'step_token': 'opaque-step-token',
+        });
+      },
+    );
+
     test('does not replace indexed streamed text on completed mismatch', () {
       var state = const AgentStreamRunState().start();
 

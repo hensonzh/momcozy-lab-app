@@ -130,6 +130,13 @@ class AgentStreamEvent {
     return const <String>[];
   }
 
+  Map<String, Object?>? get workflowReply => normalizeWorkflowReply(
+    payload['workflow_reply'] ??
+        payload['workflowReply'] ??
+        raw['workflow_reply'] ??
+        raw['workflowReply'],
+  );
+
   String? get _rawCompletedText {
     if (type != 'message.completed') return null;
     return stringField(raw, 'text') ??
@@ -202,6 +209,32 @@ class AgentStreamEvent {
 
     return type;
   }
+}
+
+Map<String, Object?>? normalizeWorkflowReply(Object? value) {
+  if (value is! Map) return null;
+  final map = Map<String, Object?>.from(value);
+  final workflowStateId =
+      stringField(map, 'workflow_state_id') ??
+      stringField(map, 'workflowStateId');
+  final workflowType =
+      stringField(map, 'workflow_type') ?? stringField(map, 'workflowType');
+  final stepToken =
+      stringField(map, 'step_token') ?? stringField(map, 'stepToken');
+  final revision = _intField(map, 'revision');
+  if (workflowStateId == null ||
+      workflowType == null ||
+      stepToken == null ||
+      revision == null ||
+      revision < 1) {
+    return null;
+  }
+  return Map<String, Object?>.unmodifiable({
+    'workflow_state_id': workflowStateId,
+    'workflow_type': workflowType,
+    'revision': revision,
+    'step_token': stepToken,
+  });
 }
 
 bool? _boolField(Map<String, Object?> map, String key) {

@@ -73,6 +73,33 @@ void main() {
       expect(payload['idempotency_key'], 'agent-form-submit-fixture');
     });
 
+    test('forwards workflow reply metadata only through client context', () {
+      final payload = buildProductionAgentRunPayload(
+        const AgentStreamRequest(
+          message: '还没确认',
+          metadata: {
+            'workflow_reply': {
+              'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+              'workflow_type': 'pregnancy_plan',
+              'revision': 4,
+              'step_token': 'opaque-step-token',
+            },
+          },
+        ),
+      );
+
+      expect(
+        (payload['client_context']! as Map<String, Object?>)['workflow_reply'],
+        {
+          'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+          'workflow_type': 'pregnancy_plan',
+          'revision': 4,
+          'step_token': 'opaque-step-token',
+        },
+      );
+      expect(payload.containsKey('workflow_reply'), isFalse);
+    });
+
     test('adds image attachments to the production run create contract', () {
       final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(
