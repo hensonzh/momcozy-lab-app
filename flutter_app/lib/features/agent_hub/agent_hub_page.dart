@@ -1622,6 +1622,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _applyHospitalBagCartUpdates(AgentStreamRunState state) {
+    if (_newSessionStartPending) return;
     final onUpdate = widget.onHospitalBagCartUpdate;
     if (onUpdate == null) return;
     for (final card in _artifactCardsFromEvents(

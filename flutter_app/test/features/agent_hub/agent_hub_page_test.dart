@@ -687,6 +687,78 @@ void main() {
     },
   );
 
+  testWidgets(
+    'Agent Hub ignores late cart updates during durable session clear',
+    (tester) async {
+      final clearCompleter = Completer<void>();
+      final client = _ControllableAgentStreamClient();
+      final cartUpdates = <HospitalBagCartArtifactSeed>[];
+      addTearDown(client.dispose);
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            onNewSession: () => clearCompleter.future,
+            onHospitalBagCartUpdate: cartUpdates.add,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '先生成待产包',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'late-cart-message-completed',
+          'type': 'message.completed',
+          'thread_id': 'thread-late-cart',
+          'run_id': 'run-late-cart',
+          'message_id': 'message-late-cart',
+          'sequence': 1,
+          'payload': {'role': 'assistant', 'text': '清单已准备。'},
+        }),
+      );
+      await tester.pump();
+
+      await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
+      await tester.pump();
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'late-cart-changed',
+          'type': 'hospital_bag.cart.changed',
+          'thread_id': 'thread-late-cart',
+          'run_id': 'run-late-cart',
+          'action_id': 'action-late-cart',
+          'sequence': 2,
+          'payload': {
+            'cart_update': {
+              'groups': [
+                {
+                  'title': '不应恢复',
+                  'items': [
+                    {'id': 'late-item', 'name': '旧会话用品', 'qty': 1},
+                  ],
+                },
+              ],
+            },
+          },
+        }),
+      );
+      await tester.pump();
+
+      expect(cartUpdates, isEmpty);
+
+      clearCompleter.complete();
+      await tester.pumpAndSettle();
+      expect(cartUpdates, isEmpty);
+    },
+  );
+
   testWidgets('Agent Hub virtualizes long history messages', (tester) async {
     tester.view.physicalSize = const Size(390, 640);
     tester.view.devicePixelRatio = 1;
