@@ -341,6 +341,23 @@ void main() {
         expect(persistence.state!.snapshots, isEmpty);
       },
     );
+
+    test(
+      'failed durable clear restores the active cart and reports failure',
+      () async {
+        final persistence = _MemoryHospitalBagCartPersistence();
+        final store = HospitalBagCartStore(persistence: persistence);
+        store.ingestArtifact(_cartSeed('before-failed-clear'));
+        await store.flushPendingPersistence();
+        persistence.writeFailures = 1;
+
+        await expectLater(store.clearForNewSession(), throwsStateError);
+
+        expect(store.activeCartId, 'artifact:before-failed-clear');
+        expect(store.agentClientContext, isNotNull);
+        expect(persistence.state!.activeCartId, 'artifact:before-failed-clear');
+      },
+    );
   });
 }
 
@@ -350,6 +367,7 @@ class _MemoryHospitalBagCartPersistence implements HospitalBagCartPersistence {
   HospitalBagCartPersistedState? state;
   int readFailures;
   int readCount = 0;
+  int writeFailures = 0;
   Future<void>? writeBarrier;
 
   @override
@@ -365,6 +383,10 @@ class _MemoryHospitalBagCartPersistence implements HospitalBagCartPersistence {
   @override
   Future<void> write(HospitalBagCartPersistedState state) async {
     await writeBarrier;
+    if (writeFailures > 0) {
+      writeFailures -= 1;
+      throw StateError('secure storage write failed');
+    }
     this.state = state;
   }
 }

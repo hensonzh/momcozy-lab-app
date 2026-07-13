@@ -131,7 +131,7 @@ class MomCozyApiRuntime {
              ),
            ),
        now = now ?? DateTime.now {
-    unawaited(this.hospitalBagCartStore.restore());
+    unawaited(this.hospitalBagCartStore.restore().then<void>((_) {}));
     this.ibclcConsultStore =
         ibclcConsultStore ??
         IbclcConsultStore(
@@ -415,7 +415,14 @@ class MomCozyApiRuntime {
       productAssetRepository: productAssetRepository,
       hospitalBagCartStore: hospitalBagCartStore,
     );
-    await runtime.hospitalBagCartStore.restore();
+    var cartRestored = await runtime.hospitalBagCartStore.restore();
+    if (!cartRestored) {
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      cartRestored = await runtime.hospitalBagCartStore.restore();
+    }
+    if (!cartRestored) {
+      throw StateError('Hospital bag cart recovery is unavailable.');
+    }
     return runtime;
   }
 

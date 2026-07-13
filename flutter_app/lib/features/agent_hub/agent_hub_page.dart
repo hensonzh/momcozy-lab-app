@@ -260,6 +260,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Completer<bool>? _runAcceptanceCompleter;
   Completer<void>? _runSettlementCompleter;
   bool _followUpStartPending = false;
+  bool _newSessionStartPending = false;
   AgentStreamRequest? _activeRequest;
   AgentVoiceState _voiceState = const AgentVoiceState();
   Future<AgentVoiceInputPermissionState>? _voiceCaptureStart;
@@ -905,7 +906,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
       widget.runner != null && state.canRetry && _activeRequest != null;
 
   bool get _isComposerLocked =>
-      _followUpStartPending || _isComposerLockedForState(_state);
+      _followUpStartPending ||
+      _newSessionStartPending ||
+      _isComposerLockedForState(_state);
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
 
@@ -1385,36 +1388,53 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   Future<void> _startNewSession() async {
-    if (_isVisibleReplyRunning) return;
-    if (_state.isActive) {
-      _sendBestEffortServerCancel(_state, _activeRequest);
+    if (_isVisibleReplyRunning || _newSessionStartPending) return;
+    _setNewSessionStartPending(true);
+    try {
+      if (_state.isActive) {
+        _sendBestEffortServerCancel(_state, _activeRequest);
+      }
+      widget.voicePlaybackCoordinator?.cancel();
+      await widget.onNewSession?.call();
+      if (!mounted) return;
+      _dismissComposerKeyboardOnRunAccepted = false;
+      _cancelRunSubscription();
+      _composerController.clear();
+      _formSubmissionsNotifier.value =
+          const <String, AgentArtifactFormSubmission>{};
+      setState(() {
+        _setRunState(const AgentStreamRunState());
+        _historyMessages.clear();
+        _attachedImages.clear();
+        _showPhotoMenu = false;
+        _pendingActionIds.clear();
+        _localActionStatuses.clear();
+        _activeRequest = null;
+        _setVoiceState(const AgentVoiceState());
+        _pendingAutoVoiceReplay = null;
+        _appliedHospitalBagCartUpdates.clear();
+        _hospitalBagCartLinkContextApplied = false;
+        _resetAutoVoiceProgress();
+      });
+      _notifyActionStateChanged();
+      _persistInteractionState();
+      _flushPersistentInteractionState();
+      unawaited(_refreshGreetingAndMaybePlayVoice());
+    } catch (_) {
+      // Keep the current session visible when its durable cart clear fails.
+    } finally {
+      if (mounted) {
+        _setNewSessionStartPending(false);
+      } else {
+        _newSessionStartPending = false;
+      }
     }
-    widget.voicePlaybackCoordinator?.cancel();
-    await widget.onNewSession?.call();
-    if (!mounted) return;
-    _dismissComposerKeyboardOnRunAccepted = false;
-    _cancelRunSubscription();
-    _composerController.clear();
-    _formSubmissionsNotifier.value =
-        const <String, AgentArtifactFormSubmission>{};
-    setState(() {
-      _setRunState(const AgentStreamRunState());
-      _historyMessages.clear();
-      _attachedImages.clear();
-      _showPhotoMenu = false;
-      _pendingActionIds.clear();
-      _localActionStatuses.clear();
-      _activeRequest = null;
-      _setVoiceState(const AgentVoiceState());
-      _pendingAutoVoiceReplay = null;
-      _appliedHospitalBagCartUpdates.clear();
-      _hospitalBagCartLinkContextApplied = false;
-      _resetAutoVoiceProgress();
-    });
-    _notifyActionStateChanged();
-    _persistInteractionState();
-    _flushPersistentInteractionState();
-    unawaited(_refreshGreetingAndMaybePlayVoice());
+  }
+
+  void _setNewSessionStartPending(bool value) {
+    if (_newSessionStartPending == value) return;
+    _newSessionStartPending = value;
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
   }
 
   void _cancelCurrentBubblePlaybackForNewTurn() {
