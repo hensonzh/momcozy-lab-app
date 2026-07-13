@@ -2334,7 +2334,8 @@ void main() {
 
     await tester.tap(button);
     await tester.pumpAndSettle();
-    expect(find.text('已取消选择截图'), findsOneWidget);
+    expect(find.text('已取消选择截图'), findsNothing);
+    expect(find.text('正在识别截图，结果不会自动写入计划…'), findsNothing);
     expect(transport.createdBodies, isEmpty);
 
     await tester.tap(button);
