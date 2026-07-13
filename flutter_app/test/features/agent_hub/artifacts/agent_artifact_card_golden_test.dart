@@ -214,6 +214,17 @@ const _cardCases = [
                 priorityLabel: '必带',
                 description: '产后恶露量较多，用来垫床或替代普通卫生巾。',
               ),
+              AgentHospitalBagItemView(
+                label: '手机充电器',
+                priority: 'recommended',
+                priorityLabel: '建议',
+              ),
+              AgentHospitalBagItemView(
+                label: '吸管杯',
+                meta: '1 个',
+                priority: 'must',
+                priorityLabel: '必带',
+              ),
             ],
           ),
           AgentHospitalBagGroupView(

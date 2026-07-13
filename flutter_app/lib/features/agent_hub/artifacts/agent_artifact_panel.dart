@@ -215,8 +215,6 @@ Widget? _specializedArtifactCard({
           ? _AgentHospitalBagCard(
               card: card,
               data: card.specializedView! as AgentHospitalBagCardView,
-              onAction: onAction,
-              exportControl: exportControl,
             )
           : null,
     _ => null,
@@ -228,8 +226,6 @@ bool _isExportableSpecializedCard(AgentArtifactCardView card) {
     AgentArtifactPresentationKind.birthJourneyPlanCard => true,
     AgentArtifactPresentationKind.birthPlanCard =>
       card.specializedView is AgentBirthPlanCardView,
-    AgentArtifactPresentationKind.hospitalBagCard =>
-      card.specializedView is AgentHospitalBagCardView,
     _ => false,
   };
 }
@@ -929,61 +925,229 @@ IconData _birthPlanSectionIcon(String id) {
 }
 
 class _AgentHospitalBagCard extends StatelessWidget {
-  const _AgentHospitalBagCard({
-    required this.card,
-    required this.data,
-    this.onAction,
-    this.exportControl,
-  });
+  const _AgentHospitalBagCard({required this.card, required this.data});
 
   final AgentArtifactCardView card;
   final AgentHospitalBagCardView data;
-  final ValueChanged<AgentArtifactActionView>? onAction;
-  final Widget? exportControl;
 
   @override
   Widget build(BuildContext context) {
-    return _AgentArtifactSpecializedShell(
-      card: card,
-      icon: Icons.shopping_bag_outlined,
-      accentColor: MomCozyColors.care,
-      subtitle: data.subtitle,
-      children: [
-        if (data.groups.isNotEmpty)
-          _AgentArtifactSection(
-            title: '物品清单',
-            children: [
-              for (final group in data.groups) ...[
-                _AgentPackingGroup(
-                  key: ValueKey('packing-group:${group.id}'),
-                  group: group,
-                  initiallyExpanded: group == data.groups.first,
-                ),
-                if (group != data.groups.last) const SizedBox(height: 8),
-              ],
-            ],
-          ),
-        if (data.disclaimer != null) ...[
-          const SizedBox(height: 10),
-          _AgentArtifactBodyText(data.disclaimer!),
-        ],
-        const SizedBox(height: 12),
-        Wrap(
-          alignment: WrapAlignment.end,
-          spacing: 8,
-          runSpacing: 8,
+    return DecoratedBox(
+      key: ValueKey('agent-artifact-${card.id}'),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xffeadbe2)),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0, 0.56, 1],
+          colors: [Color(0xfffffafd), Color(0xfff8fcfb), Color(0xfffffaf2)],
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(13),
+        child: Stack(
           children: [
-            OutlinedButton.icon(
-              onPressed: onAction == null
-                  ? null
-                  : () => onAction?.call(AgentArtifactActions.hospitalBagCart),
-              icon: const Icon(Icons.shopping_bag_outlined, size: 18),
-              label: const Text('打开购物车'),
+            const Positioned(
+              top: -92,
+              right: -84,
+              child: SizedBox.square(
+                dimension: 220,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: Alignment.topRight,
+                      radius: 0.78,
+                      colors: [Color(0x99ffefdc), Color(0x00ffefdc)],
+                    ),
+                  ),
+                ),
+              ),
             ),
-            ?exportControl,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _HospitalBagHeader(title: data.title, subtitle: data.subtitle),
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (data.groups.isNotEmpty)
+                        _HospitalBagListSection(groups: data.groups),
+                      if (data.disclaimer != null) ...[
+                        const SizedBox(height: 14),
+                        DecoratedBox(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(color: Color(0xe1e1e1e1)),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              data.disclaimer!,
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: const Color(0xff666666),
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.3,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
-      ],
+      ),
+    );
+  }
+}
+
+class _HospitalBagHeader extends StatelessWidget {
+  const _HospitalBagHeader({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Color(0x2eb8667b))),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0, 0.56, 1],
+          colors: [Color(0xdbffebf1), Color(0xb8e8f9f6), Color(0xc7fff1da)],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 16, 14, 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: const Color(0xff4b2638),
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        height: 1.12,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    SizedBox(
+                      height: 13,
+                      child: FittedBox(
+                        alignment: Alignment.centerLeft,
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          subtitle,
+                          maxLines: 1,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: const Color(0xff75636c),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                height: 1.25,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(3),
+                child: Image.asset(
+                  MomCozyAssets.momcozyLogo,
+                  width: 90,
+                  height: 50,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HospitalBagListSection extends StatelessWidget {
+  const _HospitalBagListSection({required this.groups});
+
+  final List<AgentHospitalBagGroupView> groups;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.68),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xe6eadbe2)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xffd86b91), Color(0xff2c9ba5)],
+                    ),
+                  ),
+                  child: SizedBox.square(dimension: 8),
+                ),
+                const SizedBox(width: 7),
+                Text(
+                  '物品清单',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: const Color(0xff4b2638),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 9),
+            for (var index = 0; index < groups.length; index++) ...[
+              _AgentPackingGroup(
+                key: ValueKey('packing-group:${groups[index].id}'),
+                group: groups[index],
+                initiallyExpanded: index == 0,
+              ),
+              if (index != groups.length - 1) const SizedBox(height: 9),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
@@ -1018,53 +1182,102 @@ class _AgentPackingGroupState extends State<_AgentPackingGroup> {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: MomCozyColors.careSoft.withValues(alpha: 0.58),
-        borderRadius: BorderRadius.circular(MomCozyRadii.control),
-        border: Border.all(color: MomCozyColors.care.withValues(alpha: 0.18)),
+        color: Colors.white.withValues(alpha: 0.74),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xe0e4d9df)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(11),
+        child: Stack(
           children: [
-            InkWell(
-              onTap: () => setState(() => _expanded = !_expanded),
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.group.title,
-                        style: textTheme.labelLarge?.copyWith(
-                          color: MomCozyColors.foreground,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                    _AgentArtifactPill(
-                      label: '${items.length}项',
-                      color: MomCozyColors.care,
-                    ),
-                    const SizedBox(width: 2),
-                    Icon(
-                      _expanded
-                          ? Icons.expand_less_rounded
-                          : Icons.expand_more_rounded,
-                      color: MomCozyColors.mutedForeground,
-                    ),
-                  ],
-                ),
+            const Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: ColoredBox(
+                color: Color(0x732c9ba5),
+                child: SizedBox(width: 4),
               ),
             ),
-            if (_expanded && items.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              for (var index = 0; index < items.length; index++) ...[
-                _AgentPackingItem(item: items[index]),
-                if (index != items.length - 1) const SizedBox(height: 8),
-              ],
-            ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(11, 10, 11, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  InkWell(
+                    onTap: () => setState(() => _expanded = !_expanded),
+                    borderRadius: BorderRadius.circular(8),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 30),
+                      child: Row(
+                        children: [
+                          AnimatedRotation(
+                            turns: _expanded ? 0.25 : 0,
+                            duration: const Duration(milliseconds: 160),
+                            curve: Curves.easeOut,
+                            child: const Icon(
+                              Icons.chevron_right_rounded,
+                              size: 16,
+                              color: Color(0xff2c9ba5),
+                            ),
+                          ),
+                          const SizedBox(width: 7),
+                          Expanded(
+                            child: Text(
+                              widget.group.title,
+                              style: textTheme.labelLarge?.copyWith(
+                                color: const Color(0xff4b2638),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            '${items.length}项',
+                            style: textTheme.labelSmall?.copyWith(
+                              color: const Color(0xff6a6a6a),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 160),
+                    curve: Curves.easeOut,
+                    alignment: Alignment.topCenter,
+                    child: _expanded && items.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Column(
+                              children: [
+                                for (
+                                  var index = 0;
+                                  index < items.length;
+                                  index++
+                                ) ...[
+                                  if (index > 0)
+                                    const Divider(
+                                      height: 1,
+                                      color: Color(0xe6ebe2e7),
+                                    ),
+                                  _AgentPackingItem(
+                                    item: items[index],
+                                    group: widget.group,
+                                    index: index,
+                                  ),
+                                ],
+                              ],
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -1073,82 +1286,361 @@ class _AgentPackingGroupState extends State<_AgentPackingGroup> {
 }
 
 class _AgentPackingItem extends StatelessWidget {
-  const _AgentPackingItem({required this.item});
+  const _AgentPackingItem({
+    required this.item,
+    required this.group,
+    required this.index,
+  });
 
   final AgentHospitalBagItemView item;
+  final AgentHospitalBagGroupView group;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: MomCozyColors.raised,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const SizedBox.square(
-            dimension: 28,
-            child: Icon(
-              Icons.checkroom_outlined,
-              size: 16,
-              color: MomCozyColors.care,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final visual = _hospitalBagItemVisual(item, group);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 7),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Text(
-                    item.label,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w800,
+              DecoratedBox(
+                key: ValueKey('hospital-bag-item-icon:${group.id}:$index'),
+                decoration: BoxDecoration(
+                  color: visual.background,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: const Color(0xbdffffff)),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x1f412a34),
+                      blurRadius: 8,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: SizedBox.square(
+                  dimension: 20,
+                  child: Icon(visual.icon, size: 13, color: visual.foreground),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  item.label,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xff1f1f1f),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    height: 1.25,
+                  ),
+                ),
+              ),
+              if (item.meta != null) ...[
+                const SizedBox(width: 8),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: 42),
+                  child: Text(
+                    item.meta!,
+                    textAlign: TextAlign.right,
+                    style: textTheme.labelMedium?.copyWith(
+                      color: const Color(0xff4f4f4f),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  if (item.meta != null)
-                    Text(
-                      item.meta!,
-                      style: textTheme.labelMedium?.copyWith(
-                        color: MomCozyColors.foreground,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  if (item.priorityLabel != null)
-                    _AgentArtifactPill(
-                      label: item.priorityLabel!,
-                      color: item.priorityLabel == '和医院确认'
-                          ? MomCozyColors.primary
-                          : MomCozyColors.care,
-                    ),
-                ],
-              ),
-              if (item.description != null) ...[
-                const SizedBox(height: 4),
-                _AgentArtifactBodyText(item.description!),
+                ),
               ],
-              if (item.personalization != null) ...[
-                const SizedBox(height: 4),
-                _AgentArtifactBodyText(
-                  item.personalization!,
-                  weight: FontWeight.w700,
+              if (item.priorityLabel != null) ...[
+                const SizedBox(width: 8),
+                _HospitalBagPriorityTag(
+                  priority: item.priority,
+                  label: item.priorityLabel!,
                 ),
               ],
             ],
           ),
-        ),
-      ],
+          if (item.description != null) ...[
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.only(left: 28),
+              child: Text(
+                item.description!,
+                style: textTheme.labelSmall?.copyWith(
+                  color: const Color(0xff7a6b72),
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ],
+          if (item.personalization != null) ...[
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.only(left: 28),
+              child: Text(
+                item.personalization!,
+                style: textTheme.labelSmall?.copyWith(
+                  color: const Color(0xff9c5a70),
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w500,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
+
+class _HospitalBagPriorityTag extends StatelessWidget {
+  const _HospitalBagPriorityTag({required this.priority, required this.label});
+
+  final String? priority;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMust = priority == 'must';
+    final isConfirm = priority == 'confirm_first' || priority == '先确认';
+    final background = isMust
+        ? const Color(0xffd86b91)
+        : isConfirm
+        ? const Color(0xffe9f8f6)
+        : const Color(0xfff5f5f5);
+    final foreground = isMust
+        ? Colors.white
+        : isConfirm
+        ? const Color(0xff176b76)
+        : const Color(0xff333333);
+    final border = isMust
+        ? const Color(0xffd86b91)
+        : isConfirm
+        ? const Color(0x732c9ba5)
+        : const Color(0xffd4d4d4);
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 48),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: border),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: foreground,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+typedef _HospitalBagItemVisual = ({
+  IconData icon,
+  Color background,
+  Color foreground,
+});
+
+_HospitalBagItemVisual _hospitalBagItemVisual(
+  AgentHospitalBagItemView item,
+  AgentHospitalBagGroupView group,
+) {
+  final label = item.label.toLowerCase();
+  final text = '${group.id} ${group.title} ${item.label}'.toLowerCase();
+  final confirmFirst =
+      item.priority == 'confirm_first' || item.priority == '先确认';
+  final icon = confirmFirst
+      ? Icons.help_outline_rounded
+      : _hospitalBagItemIcon(label: label, text: text);
+
+  if (confirmFirst) {
+    return (
+      icon: icon,
+      background: const Color(0xfff4e9ff),
+      foreground: const Color(0xff8a4bc1),
+    );
+  }
+  if (_matches(text, r'身份证|准生证|户口本|证件|产检|资料|医保|文件|复印|银行卡|现金|支付')) {
+    return (
+      icon: icon,
+      background: const Color(0xfffff0c7),
+      foreground: const Color(0xff9b6818),
+    );
+  }
+  if (_matches(text, r'手机|充电|耳机|power bank|cable|通讯|随身')) {
+    return (
+      icon: icon,
+      background: const Color(0xffdff5ff),
+      foreground: const Color(0xff16779a),
+    );
+  }
+  if (_matches(text, r'纸尿裤|湿巾|棉柔巾|包被|宝宝|帽子|袜子|安全座椅|安全提篮|出院衣物')) {
+    return (
+      icon: icon,
+      background: const Color(0xffffe4ed),
+      foreground: const Color(0xffc64f7a),
+    );
+  }
+  if (_matches(text, r'出院外套|衣物|衣服|内裤|哺乳衣|睡衣|文胸|背心|拖鞋')) {
+    return (
+      icon: icon,
+      background: const Color(0xffefe7ff),
+      foreground: const Color(0xff7553c6),
+    );
+  }
+  if (_matches(text, r'产褥垫|卫生巾|马桶垫|毛巾|纸巾|脸盆|洗发水|沐浴露|洗面奶|护肤|牙刷|牙膏')) {
+    return (
+      icon: icon,
+      background: const Color(0xffddf7f0),
+      foreground: const Color(0xff21886e),
+    );
+  }
+  if (_matches(text, r'吸奶器|储奶|初乳|乳盾|乳头霜|防溢乳垫|奶瓶|配方奶|milk|哺乳')) {
+    return (
+      icon: icon,
+      background: const Color(0xffe5f0ff),
+      foreground: const Color(0xff376fbd),
+    );
+  }
+  if (_matches(text, r'吸管杯|水杯|杯|餐具|零食|食物|能量|助产食品')) {
+    return (
+      icon: icon,
+      background: const Color(0xfffff0d8),
+      foreground: const Color(0xffb56a20),
+    );
+  }
+  if (_matches(text, r'胎监带|收腹带|医生|医院|产后|常用药|药')) {
+    return (
+      icon: icon,
+      background: const Color(0xffffe2de),
+      foreground: const Color(0xffc4493d),
+    );
+  }
+  if (_matches(text, r'停车|交通')) {
+    return (
+      icon: icon,
+      background: const Color(0xffe9f6dd),
+      foreground: const Color(0xff5c8f22),
+    );
+  }
+  return (
+    icon: icon,
+    background: const Color(0xffe7f3f1),
+    foreground: const Color(0xff287a78),
+  );
+}
+
+IconData _hospitalBagItemIcon({required String label, required String text}) {
+  if (_matches(label, r'身份证|护照|photo id|id card|陪产人.*身份|支持人.*身份')) {
+    return Icons.badge_outlined;
+  }
+  if (_matches(label, r'医保|保险|insurance')) {
+    return Icons.account_balance_wallet_outlined;
+  }
+  if (_matches(label, r'产检|检查|报告|b超|超声|化验|病历|手册|资料')) {
+    return Icons.assignment_outlined;
+  }
+  if (_matches(label, r'准生证|出生证明|birth certificate|证明|证书')) {
+    return Icons.file_present_outlined;
+  }
+  if (_matches(label, r'户口本|户口')) return Icons.menu_book_outlined;
+  if (_matches(label, r'复印|copy')) return Icons.copy_outlined;
+  if (_matches(label, r'银行卡|信用卡|bank card|credit card')) {
+    return Icons.credit_card_outlined;
+  }
+  if (_matches(label, r'现金|零钱|支付|移动支付|钱包')) {
+    return Icons.payments_outlined;
+  }
+  if (_matches(label, r'文件|证件')) return Icons.description_outlined;
+  if (_matches(label, r'手机|smartphone')) return Icons.smartphone_outlined;
+  if (_matches(label, r'充电线|数据线|长充电线|cable')) {
+    return Icons.cable_outlined;
+  }
+  if (_matches(label, r'充电器|插头|充电宝|电池|power bank')) {
+    return Icons.battery_charging_full_rounded;
+  }
+  if (_matches(label, r'耳机|headphone')) return Icons.headphones_outlined;
+  if (_matches(label, r'吸管杯|水杯|保温杯|杯')) {
+    return Icons.local_drink_outlined;
+  }
+  if (_matches(label, r'餐具|餐盒|筷|勺|叉|零食|食物|能量|助产食品')) {
+    return Icons.restaurant_outlined;
+  }
+  if (_matches(label, r'安全座椅|安全提篮|car seat')) {
+    return Icons.directions_car_outlined;
+  }
+  if (_matches(label, r'纸尿裤|尿布|尿片|diaper')) {
+    return Icons.child_care_outlined;
+  }
+  if (_matches(label, r'湿巾|棉柔巾|纸巾|wipe')) {
+    return Icons.water_drop_outlined;
+  }
+  if (_matches(label, r'包被|襁褓|包巾|盖毯|blanket|swaddle')) {
+    return Icons.bed_outlined;
+  }
+  if (_matches(label, r'帽子|帽')) return Icons.circle_outlined;
+  if (_matches(label, r'袜子|袜|鞋|拖鞋')) return Icons.directions_walk_outlined;
+  if (_matches(label, r'连体衣|和尚服|新生儿衣|宝宝.*衣|出院衣物')) {
+    return Icons.child_friendly_outlined;
+  }
+  if (_matches(label, r'哺乳文胸|文胸|内衣|内裤|一次性内裤|睡衣|哺乳衣|衣物|衣服|出院外套|外套|背心')) {
+    return Icons.checkroom_outlined;
+  }
+  if (_matches(label, r'产褥垫|护理垫|卫生巾')) {
+    return Icons.water_drop_outlined;
+  }
+  if (_matches(label, r'马桶垫|坐便')) return Icons.cleaning_services_outlined;
+  if (_matches(label, r'毛巾|浴巾|洗发|沐浴|洗面奶|护肤|冲洗瓶|脸盆|盆')) {
+    return Icons.bathtub_outlined;
+  }
+  if (_matches(label, r'牙刷|牙膏|梳子')) return Icons.brush_outlined;
+  if (_matches(label, r'吸奶器|奶瓶|奶嘴|配方奶|奶粉|初乳|milk')) {
+    return Icons.local_drink_outlined;
+  }
+  if (_matches(label, r'储奶袋|储奶瓶|储奶')) return Icons.inventory_2_outlined;
+  if (_matches(label, r'乳头霜|乳头膏|防溢乳垫|乳盾')) {
+    return Icons.favorite_border_rounded;
+  }
+  if (_matches(label, r'哺乳枕')) return Icons.chair_outlined;
+  if (_matches(label, r'胎监带|胎心|胎动')) return Icons.monitor_heart_outlined;
+  if (_matches(label, r'收腹带|束腹带')) return Icons.health_and_safety_outlined;
+  if (_matches(label, r'体温计|温度计')) return Icons.thermostat_outlined;
+  if (_matches(label, r'常用药|止痛|处方|药')) return Icons.medication_outlined;
+  if (_matches(label, r'医生|医院|住院|产后')) return Icons.local_hospital_outlined;
+  if (_matches(label, r'停车')) return Icons.local_parking_rounded;
+  if (_matches(label, r'路线|交通|打车|出租|车')) return Icons.route_outlined;
+  if (_matches(label, r'陪产人|支持人')) return Icons.work_outline_rounded;
+  if (_matches(label, r'行李|包|收纳')) return Icons.luggage_outlined;
+  if (_matches(text, r'纸尿裤|湿巾|棉柔巾|包被|宝宝|帽子|袜子|安全座椅|安全提篮|出院衣物')) {
+    return Icons.child_friendly_outlined;
+  }
+  if (_matches(text, r'出院外套|衣物|衣服|内裤|哺乳衣|睡衣|文胸|背心|拖鞋')) {
+    return Icons.checkroom_outlined;
+  }
+  if (_matches(text, r'吸奶器|储奶|初乳|乳盾|乳头霜|防溢乳垫|奶瓶|配方奶|milk|哺乳')) {
+    return Icons.local_drink_outlined;
+  }
+  return Icons.inventory_2_outlined;
+}
+
+bool _matches(String value, String pattern) => RegExp(pattern).hasMatch(value);
 
 class _AgentArtifactSection extends StatelessWidget {
   const _AgentArtifactSection({this.title, required this.children});
