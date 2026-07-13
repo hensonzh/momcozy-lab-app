@@ -12,6 +12,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
@@ -442,6 +443,12 @@ void main() {
       isNot(same(previousCartStore)),
     );
     expect(controller.runtime.hospitalBagCartStore.agentClientContext, isNull);
+    final cartPersistence = controller.runtime.hospitalBagCartStore.persistence;
+    expect(cartPersistence, isA<FlutterSecureHospitalBagCartPersistence>());
+    expect(
+      (cartPersistence! as FlutterSecureHospitalBagCartPersistence).userId,
+      'session-user',
+    );
     expect(
       controller.runtime.ibclcConsultStore,
       isNot(same(previousConsultStore)),
