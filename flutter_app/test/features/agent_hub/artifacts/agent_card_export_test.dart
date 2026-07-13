@@ -28,7 +28,7 @@ void main() {
       exportService: _RecordingCardExportService(),
     );
 
-    expect(find.text('保存图片'), findsNWidgets(3));
+    expect(find.text('保存图片'), findsNWidgets(2));
     expect(find.byKey(const ValueKey('agent-card-export-journey')), findsOne);
     expect(
       find.byKey(const ValueKey('agent-card-export-birth-plan')),
@@ -36,7 +36,7 @@ void main() {
     );
     expect(
       find.byKey(const ValueKey('agent-card-export-hospital-bag')),
-      findsOne,
+      findsNothing,
     );
     expect(
       find.byKey(const ValueKey('agent-card-export-milk-plan')),
@@ -56,7 +56,7 @@ void main() {
       );
 
       expect(tester.takeException(), isNull);
-      expect(find.text('保存图片'), findsNWidgets(3));
+      expect(find.text('保存图片'), findsNWidgets(2));
     });
   }
 
