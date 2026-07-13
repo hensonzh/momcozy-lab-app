@@ -123,8 +123,15 @@ class MomCozyApiRuntime {
              upload: AndroidPumpAgentUploadPlatform(),
            )),
        observability = observability ?? MomCozyObservability(),
-       hospitalBagCartStore = hospitalBagCartStore ?? HospitalBagCartStore(),
+       hospitalBagCartStore =
+           hospitalBagCartStore ??
+           HospitalBagCartStore(
+             persistence: FlutterSecureHospitalBagCartPersistence(
+               userId: session?.userId ?? userId ?? _defaultUserId,
+             ),
+           ),
        now = now ?? DateTime.now {
+    unawaited(this.hospitalBagCartStore.restore());
     this.ibclcConsultStore =
         ibclcConsultStore ??
         IbclcConsultStore(
@@ -728,7 +735,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
     final store = _autoRefreshStore;
     final hospitalBagCartStore = session.userId == _runtime.session.userId
         ? _runtime.hospitalBagCartStore
-        : HospitalBagCartStore();
+        : null;
     final ibclcConsultStore = session.userId == _runtime.session.userId
         ? _runtime.ibclcConsultStore
         : null;

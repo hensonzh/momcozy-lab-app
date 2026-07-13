@@ -1,16 +1,124 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 
+const _maxPersistedHospitalBagCarts = 24;
+
+class HospitalBagCartPersistedState {
+  const HospitalBagCartPersistedState({
+    required this.snapshots,
+    required this.customizedCartIds,
+    required this.activeCartId,
+  });
+
+  final Map<String, HospitalBagCartSnapshot> snapshots;
+  final Set<String> customizedCartIds;
+  final String? activeCartId;
+
+  static HospitalBagCartPersistedState? tryFromMap(Object? value) {
+    if (value is! Map) return null;
+    final rawSnapshots = value['snapshots'];
+    if (rawSnapshots is! Map) return null;
+    final snapshots = <String, HospitalBagCartSnapshot>{};
+    for (final entry in rawSnapshots.entries.take(
+      _maxPersistedHospitalBagCarts,
+    )) {
+      final cartId = entry.key is String ? (entry.key as String).trim() : '';
+      final snapshot = HospitalBagCartSnapshot.tryFromCartUpdate(entry.value);
+      if (cartId.isNotEmpty && snapshot != null) snapshots[cartId] = snapshot;
+    }
+    final rawCustomized = value['customized_cart_ids'];
+    final customized = rawCustomized is List
+        ? rawCustomized
+              .whereType<String>()
+              .map((value) => value.trim())
+              .where(snapshots.containsKey)
+              .toSet()
+        : <String>{};
+    final rawActive = value['active_cart_id'];
+    final activeCartId =
+        rawActive is String &&
+            (rawActive == HospitalBagCartStore.defaultCartId ||
+                snapshots.containsKey(rawActive))
+        ? rawActive
+        : null;
+    return HospitalBagCartPersistedState(
+      snapshots: snapshots,
+      customizedCartIds: customized,
+      activeCartId: activeCartId,
+    );
+  }
+
+  Map<String, Object?> toMap() => {
+    'version': 1,
+    'snapshots': snapshots.map(
+      (cartId, snapshot) => MapEntry(cartId, snapshot.toAgentContext()),
+    ),
+    'customized_cart_ids': customizedCartIds.toList(growable: false),
+    if (activeCartId != null) 'active_cart_id': activeCartId,
+  };
+}
+
+abstract interface class HospitalBagCartPersistence {
+  Future<HospitalBagCartPersistedState?> read();
+
+  Future<void> write(HospitalBagCartPersistedState state);
+}
+
+class FlutterSecureHospitalBagCartPersistence
+    implements HospitalBagCartPersistence {
+  const FlutterSecureHospitalBagCartPersistence({
+    required this.userId,
+    this.storage = const FlutterSecureStorage(),
+    this.namespace = 'momcozy.hospital-bag-cart.v1',
+  });
+
+  final String userId;
+  final FlutterSecureStorage storage;
+  final String namespace;
+
+  @override
+  Future<HospitalBagCartPersistedState?> read() async {
+    final raw = await storage.read(key: storageKey);
+    if (raw == null || raw.trim().isEmpty) return null;
+    try {
+      return HospitalBagCartPersistedState.tryFromMap(jsonDecode(raw));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> write(HospitalBagCartPersistedState state) {
+    return storage.write(key: storageKey, value: jsonEncode(state.toMap()));
+  }
+
+  String get storageKey {
+    final scope = userId.trim().isEmpty ? 'anonymous' : userId.trim();
+    return '$namespace.user.${Uri.encodeComponent(scope)}.cart';
+  }
+}
+
 class HospitalBagCartStore extends ChangeNotifier {
-  HospitalBagCartStore();
+  HospitalBagCartStore({this.persistence});
 
   static const defaultCartId = 'default';
+
+  final HospitalBagCartPersistence? persistence;
 
   final Map<String, HospitalBagCartSnapshot> _snapshots = {
     defaultCartId: defaultHospitalBagCartSnapshot,
   };
   final Set<String> _customizedCartIds = <String>{};
+  final Set<String> _dirtyCartIds = <String>{};
+  Future<void>? _restoreFuture;
+  Future<void> _persistenceTail = Future<void>.value();
   String? _activeCartId;
+  bool _activeDirty = false;
+  bool _clearedBeforeRestore = false;
 
   String? get activeCartId => _activeCartId;
 
@@ -24,12 +132,51 @@ class HospitalBagCartStore extends ChangeNotifier {
     return _snapshots[cartId] ?? defaultHospitalBagCartSnapshot;
   }
 
+  Future<void> restore() {
+    return _restoreFuture ??= _restore();
+  }
+
+  Future<void> _restore() async {
+    final persistence = this.persistence;
+    if (persistence == null) return;
+    HospitalBagCartPersistedState? restored;
+    try {
+      restored = await persistence.read();
+    } catch (_) {
+      return;
+    }
+    if (restored == null || _clearedBeforeRestore) return;
+    var changed = false;
+    for (final entry in restored.snapshots.entries) {
+      if (_dirtyCartIds.contains(entry.key)) continue;
+      _snapshots[entry.key] = entry.value;
+      if (restored.customizedCartIds.contains(entry.key)) {
+        _customizedCartIds.add(entry.key);
+      } else {
+        _customizedCartIds.remove(entry.key);
+      }
+      changed = true;
+    }
+    final restoredActiveCartId = restored.activeCartId;
+    if (!_activeDirty &&
+        restoredActiveCartId != null &&
+        (restoredActiveCartId == defaultCartId ||
+            _snapshots.containsKey(restoredActiveCartId))) {
+      _activeCartId = restoredActiveCartId;
+      changed = true;
+    }
+    if (changed) notifyListeners();
+  }
+
   String ingestArtifact(HospitalBagCartArtifactSeed seed) {
     final cartId = 'artifact:${_stableId(seed.artifactId)}';
     _snapshots[cartId] = seed.snapshot;
     _customizedCartIds.add(cartId);
     _activeCartId = cartId;
+    _dirtyCartIds.add(cartId);
+    _activeDirty = true;
     notifyListeners();
+    _schedulePersist();
     return cartId;
   }
 
@@ -40,7 +187,9 @@ class HospitalBagCartStore extends ChangeNotifier {
         : defaultCartId;
     if (_activeCartId != resolved) {
       _activeCartId = resolved;
+      _activeDirty = true;
       notifyListeners();
+      _schedulePersist();
     }
     return resolved;
   }
@@ -65,7 +214,10 @@ class HospitalBagCartStore extends ChangeNotifier {
     _snapshots[cartId] = current.copyWithGroups(groups);
     _customizedCartIds.add(cartId);
     _activeCartId = cartId;
+    _dirtyCartIds.add(cartId);
+    _activeDirty = true;
     notifyListeners();
+    _schedulePersist();
     return true;
   }
 
@@ -73,7 +225,10 @@ class HospitalBagCartStore extends ChangeNotifier {
     _snapshots[cartId] = defaultHospitalBagCartSnapshot;
     _customizedCartIds.remove(cartId);
     _activeCartId = cartId;
+    _dirtyCartIds.add(cartId);
+    _activeDirty = true;
     notifyListeners();
+    _schedulePersist();
   }
 
   bool canReset(String cartId) => _customizedCartIds.contains(cartId);
@@ -83,9 +238,47 @@ class HospitalBagCartStore extends ChangeNotifier {
       ..clear()
       ..[defaultCartId] = defaultHospitalBagCartSnapshot;
     _customizedCartIds.clear();
+    _dirtyCartIds.clear();
+    _dirtyCartIds.add(defaultCartId);
     _activeCartId = null;
+    _activeDirty = true;
+    _clearedBeforeRestore = true;
     notifyListeners();
+    _schedulePersist();
   }
+
+  void _schedulePersist() {
+    final persistence = this.persistence;
+    if (persistence == null) return;
+    _persistenceTail = _persistenceTail.then((_) async {
+      await restore();
+      final snapshots = <String, HospitalBagCartSnapshot>{};
+      for (final entry in _snapshots.entries) {
+        if (entry.key == defaultCartId &&
+            !_customizedCartIds.contains(defaultCartId)) {
+          continue;
+        }
+        snapshots[entry.key] = entry.value;
+        if (snapshots.length >= _maxPersistedHospitalBagCarts) break;
+      }
+      try {
+        await persistence.write(
+          HospitalBagCartPersistedState(
+            snapshots: snapshots,
+            customizedCartIds: _customizedCartIds
+                .where(snapshots.containsKey)
+                .toSet(),
+            activeCartId: _activeCartId,
+          ),
+        );
+      } catch (_) {
+        // The in-memory cart remains usable when local persistence fails.
+      }
+    });
+  }
+
+  @visibleForTesting
+  Future<void> flushPendingPersistence() => _persistenceTail;
 }
 
 String _stableId(String value) {

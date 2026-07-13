@@ -169,5 +169,62 @@ void main() {
       expect(store.activeCartId, HospitalBagCartStore.defaultCartId);
       expect(store.snapshot(cartId).totals.itemCount, 18);
     });
+
+    test('restores an Agent-updated cart after a process restart', () async {
+      final persistence = _MemoryHospitalBagCartPersistence();
+      final first = HospitalBagCartStore(persistence: persistence);
+      final seed = HospitalBagCartArtifactSeed.tryFromCartUpdate(
+        artifactId: 'action:cart-update',
+        cartUpdate: {
+          'groups': [
+            {
+              'title': '更新后的清单',
+              'items': [
+                {
+                  'id': 'persisted-item',
+                  'name': '跨重启保留的用品',
+                  'qty': 1,
+                  'price': 32,
+                },
+              ],
+            },
+          ],
+        },
+      )!;
+
+      final cartId = first.ingestArtifact(seed);
+      await first.flushPendingPersistence();
+
+      final restarted = HospitalBagCartStore(persistence: persistence);
+      await restarted.restore();
+
+      expect(restarted.activeCartId, cartId);
+      expect(
+        restarted.snapshot(cartId).groups.single.items.single.id,
+        'persisted-item',
+      );
+      expect(restarted.agentClientContext, isNotNull);
+    });
+
+    test('secure persistence keys are account isolated', () {
+      const first = FlutterSecureHospitalBagCartPersistence(userId: 'user/a');
+      const second = FlutterSecureHospitalBagCartPersistence(userId: 'user/b');
+
+      expect(first.storageKey, contains('user.user%2Fa.cart'));
+      expect(second.storageKey, contains('user.user%2Fb.cart'));
+      expect(first.storageKey, isNot(second.storageKey));
+    });
   });
+}
+
+class _MemoryHospitalBagCartPersistence implements HospitalBagCartPersistence {
+  HospitalBagCartPersistedState? state;
+
+  @override
+  Future<HospitalBagCartPersistedState?> read() async => state;
+
+  @override
+  Future<void> write(HospitalBagCartPersistedState state) async {
+    this.state = state;
+  }
 }
