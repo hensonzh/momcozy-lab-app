@@ -697,6 +697,7 @@ class _LegacyBirthCardHeader extends StatelessWidget {
     required this.borderColor,
     required this.backgroundColors,
     required this.accentColors,
+    this.middleStop = 0.62,
   });
 
   final String title;
@@ -706,6 +707,7 @@ class _LegacyBirthCardHeader extends StatelessWidget {
   final Color borderColor;
   final List<Color> backgroundColors;
   final List<Color> accentColors;
+  final double middleStop;
 
   @override
   Widget build(BuildContext context) {
@@ -729,7 +731,7 @@ class _LegacyBirthCardHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          stops: const [0, 0.62, 1],
+          stops: [0, middleStop, 1],
           colors: backgroundColors,
         ),
       ),
@@ -1229,34 +1231,168 @@ class _AgentBirthPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _AgentArtifactSpecializedShell(
-      card: card,
-      icon: Icons.fact_check_outlined,
-      accentColor: MomCozyColors.violet,
-      children: [
-        if (data.sections.isNotEmpty)
-          _AgentArtifactSection(
-            title: '沟通卡片内容',
-            children: [
-              for (final section in data.sections) ...[
-                _AgentBirthPlanGroup(
-                  section: section,
-                  icon: _birthPlanSectionIcon(section.id),
+    return DecoratedBox(
+      key: ValueKey('agent-artifact-${card.id}'),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xffd7e5e1)),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0, 0.54, 1],
+          colors: [Color(0xfffffdfd), Color(0xfff8fcfb), Color(0xfffffaf4)],
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(13),
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment(0.92, -1),
+                    radius: 0.7,
+                    colors: [Color(0x8cf2e0e7), Color(0x00f2e0e7)],
+                  ),
                 ),
-                if (section != data.sections.last) const SizedBox(height: 8),
+              ),
+            ),
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment(-1, -0.76),
+                    radius: 0.72,
+                    colors: [Color(0xb3daf2ec), Color(0x00daf2ec)],
+                  ),
+                ),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _LegacyBirthCardHeader(
+                  title: data.title,
+                  titleColor: const Color(0xff3c2433),
+                  titleTopPadding: 10,
+                  centerTitle: false,
+                  borderColor: const Color(0x2e537e77),
+                  backgroundColors: const [
+                    Color(0xe6eefcf7),
+                    Color(0xc7fff3f7),
+                    Color(0xccfff7e7),
+                  ],
+                  accentColors: const [
+                    Color(0xff2c9b92),
+                    Color(0xffd86b91),
+                    Color(0xfff0b85b),
+                  ],
+                  middleStop: 0.54,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (data.sections.isNotEmpty)
+                        _BirthPlanPanel(
+                          title: '沟通卡片内容',
+                          child: Column(
+                            children: [
+                              for (
+                                var index = 0;
+                                index < data.sections.length;
+                                index++
+                              ) ...[
+                                _AgentBirthPlanGroup(
+                                  section: data.sections[index],
+                                  icon: _birthPlanSectionIcon(
+                                    data.sections[index].id,
+                                  ),
+                                ),
+                                if (index != data.sections.length - 1)
+                                  const SizedBox(height: 9),
+                              ],
+                            ],
+                          ),
+                        ),
+                      if (data.sections.isNotEmpty &&
+                          data.medicalNotes.isNotEmpty)
+                        const SizedBox(height: 14),
+                      if (data.medicalNotes.isNotEmpty)
+                        _BirthPlanPanel(
+                          title: '医疗或安全信息',
+                          child: _BirthPlanBulletList(items: data.medicalNotes),
+                        ),
+                      if (data.sections.isNotEmpty ||
+                          data.medicalNotes.isNotEmpty)
+                        const SizedBox(height: 14),
+                      _BirthPlanDisclaimer(text: data.disclaimer),
+                    ],
+                  ),
+                ),
               ],
-            ],
-          ),
-        if (data.medicalNotes.isNotEmpty) ...[
-          if (data.sections.isNotEmpty) const SizedBox(height: 10),
-          _AgentArtifactSection(
-            title: '医疗或安全信息',
-            children: [_AgentArtifactBulletList(items: data.medicalNotes)],
-          ),
-        ],
-        const SizedBox(height: 10),
-        _AgentArtifactBodyText(data.disclaimer),
-      ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BirthPlanPanel extends StatelessWidget {
+  const _BirthPlanPanel({required this.title, required this.child});
+
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.68),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xe6dde8e5)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xff2c9b92), Color(0xffd86b91)],
+                    ),
+                  ),
+                  child: SizedBox.square(dimension: 8),
+                ),
+                const SizedBox(width: 7),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: const Color(0xff4b2638),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      height: 1.3,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            child,
+          ],
+        ),
+      ),
     );
   }
 }
@@ -1270,11 +1406,14 @@ class _AgentBirthPlanGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final visual = _birthPlanGroupVisual(section.id);
 
     return DecoratedBox(
+      key: ValueKey('birth-plan-group:${section.id}'),
       decoration: BoxDecoration(
-        color: MomCozyColors.muted.withValues(alpha: 0.64),
-        borderRadius: BorderRadius.circular(MomCozyRadii.control),
+        color: visual.background,
+        borderRadius: BorderRadius.circular(13),
+        border: Border.all(color: visual.border),
       ),
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -1283,22 +1422,155 @@ class _AgentBirthPlanGroup extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, size: 17, color: MomCozyColors.primary),
-                const SizedBox(width: 6),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: visual.iconBackground,
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: SizedBox.square(
+                    dimension: 24,
+                    child: Icon(icon, size: 14, color: visual.iconForeground),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     section.title,
                     style: textTheme.labelLarge?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w900,
+                      color: const Color(0xff1f1f1f),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      height: 1.3,
+                      letterSpacing: 0,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            _AgentArtifactBulletList(items: section.values),
+            const SizedBox(height: 8),
+            _BirthPlanBulletList(items: section.values),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+typedef _BirthPlanGroupVisual = ({
+  Color border,
+  Color background,
+  Color iconBackground,
+  Color iconForeground,
+});
+
+_BirthPlanGroupVisual _birthPlanGroupVisual(String id) {
+  return switch (id) {
+    'pain_relief' || 'emergency_authorization' => (
+      border: const Color(0x42d86b91),
+      background: const Color(0xd6fff6f9),
+      iconBackground: const Color(0xffffe4ed),
+      iconForeground: const Color(0xffbf4d78),
+    ),
+    'baby_after_birth' => (
+      border: const Color(0x47e0a94a),
+      background: const Color(0xe6fff9ed),
+      iconBackground: const Color(0xfffff0cc),
+      iconForeground: const Color(0xffa96d14),
+    ),
+    'labor_preferences' || 'if_plans_change' => (
+      border: const Color(0x3d4b76b8),
+      background: const Color(0xe0f6f8ff),
+      iconBackground: const Color(0xffe5edff),
+      iconForeground: const Color(0xff416bb2),
+    ),
+    'intervention_preferences' || 'questions_for_hospital' => (
+      border: const Color(0x404a9c7c),
+      background: const Color(0xe0f5fcf7),
+      iconBackground: const Color(0xffe3f5e9),
+      iconForeground: const Color(0xff397d58),
+    ),
+    _ => (
+      border: const Color(0x422c9b92),
+      background: const Color(0xdbf2fbf8),
+      iconBackground: const Color(0xffdff6f2),
+      iconForeground: const Color(0xff207b75),
+    ),
+  };
+}
+
+class _BirthPlanBulletList extends StatelessWidget {
+  const _BirthPlanBulletList({required this.items});
+
+  final List<String> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var index = 0; index < items.length; index++) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 3),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xff2c9b92), Color(0xffd86b91)],
+                    ),
+                  ),
+                  child: SizedBox.square(dimension: 12),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  items[index],
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xff261c24),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    height: 1.45,
+                    letterSpacing: 0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (index != items.length - 1) const SizedBox(height: 8),
+        ],
+      ],
+    );
+  }
+}
+
+class _BirthPlanDisclaimer extends StatelessWidget {
+  const _BirthPlanDisclaimer({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: Color(0xffe1e1e1))),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 9, 10, 0),
+        child: Text(
+          text,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: const Color(0xff666666),
+            fontSize: 11,
+            fontWeight: FontWeight.w400,
+            height: 1.45,
+            letterSpacing: 0,
+          ),
         ),
       ),
     );
