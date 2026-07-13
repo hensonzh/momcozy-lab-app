@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -19,7 +18,7 @@ void main() {
     );
   });
 
-  testWidgets('only legacy-exportable specialized cards show save controls', (
+  testWidgets('specialized cards no longer expose save controls', (
     tester,
   ) async {
     await _pumpPanel(
@@ -28,15 +27,18 @@ void main() {
       exportService: _RecordingCardExportService(),
     );
 
-    expect(find.text('保存图片'), findsNWidgets(3));
-    expect(find.byKey(const ValueKey('agent-card-export-journey')), findsOne);
+    expect(find.text('保存图片'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-card-export-journey')),
+      findsNothing,
+    );
     expect(
       find.byKey(const ValueKey('agent-card-export-birth-plan')),
-      findsOne,
+      findsNothing,
     );
     expect(
       find.byKey(const ValueKey('agent-card-export-hospital-bag')),
-      findsOne,
+      findsNothing,
     );
     expect(
       find.byKey(const ValueKey('agent-card-export-milk-plan')),
@@ -45,94 +47,40 @@ void main() {
   });
 
   for (final width in [360.0, 390.0, 430.0]) {
-    testWidgets('export controls fit the $width px card viewport', (
-      tester,
-    ) async {
-      await _pumpPanel(
-        tester,
-        cards: _exportScopeCards,
-        exportService: _RecordingCardExportService(),
-        width: width,
-      );
+    testWidgets(
+      'specialized cards fit the $width px viewport without exports',
+      (tester) async {
+        await _pumpPanel(
+          tester,
+          cards: _exportScopeCards,
+          exportService: _RecordingCardExportService(),
+          width: width,
+        );
 
-      expect(tester.takeException(), isNull);
-      expect(find.text('保存图片'), findsNWidgets(3));
-    });
+        expect(tester.takeException(), isNull);
+        expect(find.text('保存图片'), findsNothing);
+      },
+    );
   }
 
-  testWidgets('captures a PNG once and restores the control after sharing', (
-    tester,
-  ) async {
-    final service = _RecordingCardExportService(block: true);
+  testWidgets('journey stages follow legacy expansion rules', (tester) async {
     await _pumpPanel(
       tester,
-      cards: const [_birthPlanCard],
-      exportService: service,
+      cards: const [_journeyCard],
+      exportService: _RecordingCardExportService(),
     );
 
-    await tester.tap(
-      find.byKey(const ValueKey('agent-card-export-birth-plan')),
-    );
-    await _pumpUntilExportStarts(tester, service);
-    await tester.pump();
+    expect(find.text('完成糖耐检查'), findsOneWidget);
+    expect(find.text('开始整理待产包'), findsNothing);
 
-    expect(service.calls, 1);
-    expect(
-      service.filename,
-      matches(r'^comate-birth_plan_card-\d{4}-\d{2}-\d{2}\.png$'),
-    );
-    expect(
-      service.bytes!.take(8),
-      orderedEquals(const [137, 80, 78, 71, 13, 10, 26, 10]),
-    );
-    expect(find.text('保存中'), findsOneWidget);
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-card-export-birth-plan')),
-    );
-    await tester.pump();
-    expect(service.calls, 1);
-
-    service.release();
+    await tester.tap(find.text('孕 28-30 周'));
     await tester.pumpAndSettle();
-    expect(find.text('保存图片'), findsOneWidget);
-  });
+    expect(find.text('开始整理待产包'), findsOneWidget);
 
-  testWidgets('share failures stay internal and restore the save control', (
-    tester,
-  ) async {
-    final service = _RecordingCardExportService(throwOnShare: true);
-    await _pumpPanel(
-      tester,
-      cards: const [_birthPlanCard],
-      exportService: service,
-    );
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-card-export-birth-plan')),
-    );
-    await _pumpUntilExportStarts(tester, service);
+    await tester.tap(find.text('孕 25-27 周'));
     await tester.pumpAndSettle();
-
-    expect(tester.takeException(), isNull);
-    expect(find.text('保存图片'), findsOneWidget);
-    expect(find.textContaining('失败'), findsNothing);
+    expect(find.text('完成糖耐检查'), findsNothing);
   });
-}
-
-Future<void> _pumpUntilExportStarts(
-  WidgetTester tester,
-  _RecordingCardExportService service,
-) async {
-  for (
-    var attempt = 0;
-    attempt < 20 && !service.started.isCompleted;
-    attempt++
-  ) {
-    await tester.pump(const Duration(milliseconds: 16));
-    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
-  }
-  expect(service.started.isCompleted, isTrue);
 }
 
 Future<void> _pumpPanel(
@@ -165,32 +113,11 @@ Future<void> _pumpPanel(
 }
 
 class _RecordingCardExportService implements AgentCardExportService {
-  _RecordingCardExportService({this.block = false, this.throwOnShare = false});
-
-  final bool block;
-  final bool throwOnShare;
-  final Completer<void> started = Completer<void>();
-  final Completer<void> _release = Completer<void>();
-  Uint8List? bytes;
-  String? filename;
-  int calls = 0;
-
   @override
   Future<void> sharePng({
     required Uint8List bytes,
     required String filename,
-  }) async {
-    calls += 1;
-    this.bytes = bytes;
-    this.filename = filename;
-    if (!started.isCompleted) started.complete();
-    if (throwOnShare) throw StateError('share unavailable');
-    if (block) await _release.future;
-  }
-
-  void release() {
-    if (!_release.isCompleted) _release.complete();
-  }
+  }) async {}
 }
 
 const _exportScopeCards = [
@@ -208,6 +135,25 @@ const _journeyCard = AgentArtifactCardView(
   presentationKind: AgentArtifactPresentationKind.birthJourneyPlanCard,
   cardJson: {
     'owner': {'current_week': '孕 25 周'},
+    'todo_plan': {
+      'periods': [
+        {
+          'id': 'current-stage',
+          'title': '孕 25-27 周',
+          'status': 'current',
+          'items': [
+            {'title': '完成糖耐检查'},
+          ],
+        },
+        {
+          'id': 'future-stage',
+          'title': '孕 28-30 周',
+          'items': [
+            {'title': '开始整理待产包'},
+          ],
+        },
+      ],
+    },
   },
 );
 
