@@ -15,6 +15,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/birth_prep_profile_defaults.dart';
@@ -5725,22 +5726,36 @@ void main() {
   });
 
   testWidgets(
-    'Agent Hub confirms support ticket details without claiming ticket creation',
+    'Agent Hub submits a support ticket without a second confirmation',
     (tester) async {
       final client = _ControllableAgentStreamClient();
       addTearDown(client.dispose);
+      final submissions = <SupportTicketSubmitRequest>[];
       final ticketEvent = AgentStreamEvent({
         'type': 'artifact.created',
-        'artifact_id': 'support-ticket-1',
-        'artifact_type': 'support_ticket_draft',
-        'submit_label': '确认并提交',
-        'ticket': {
-          'issue_type': 'malfunction',
-          'issue_summary': '吸奶器无法启动',
-          'product_model': 'Air1',
-          'order_number': 'MC123',
-          'purchase_channel': '官网',
-          'urgency': 'normal',
+        'payload': {
+          'artifact_id': 'support-ticket-1',
+          'artifact_type': 'support_ticket_draft',
+          'schema_version': '1.0',
+          'status': 'created',
+          'artifact': {
+            'id': 'support-ticket-1',
+            'artifact_type': 'support_ticket_draft',
+            'schema_version': '1.0',
+            'status': 'created',
+            'payload': {
+              'tool_name': 'support.ticket.propose',
+              'submit_label': '确认并提交',
+              'ticket': {
+                'issue_type': 'malfunction',
+                'issue_summary': '吸奶器无法启动',
+                'product_model': 'Air1',
+                'order_number': 'MC123',
+                'purchase_channel': '官网',
+                'urgency': 'normal',
+              },
+            },
+          },
         },
       });
 
@@ -5748,8 +5763,16 @@ void main() {
         _host(
           AgentHubPage(
             runner: AgentStreamRunner(client),
+            supportTicketSubmitter: (request) async {
+              submissions.add(request);
+              return const SupportTicketSubmitResult(
+                ticketNumber: 'MC-123',
+                status: 'open',
+              );
+            },
             state: AgentStreamRunState(
               phase: AgentStreamRunPhase.finished,
+              threadId: 'thread-support-ticket',
               textContent: '请确认售后信息。',
               events: [ticketEvent],
             ),
@@ -5771,43 +5794,68 @@ void main() {
       await tester.ensureVisible(submit);
       await tester.pumpAndSettle();
       await tester.tap(submit);
-      await tester.pump();
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'support-ticket-run-queued',
-          'type': 'run.queued',
-          'thread_id': 'thread-support-ticket',
-          'run_id': 'run-support-ticket',
-          'sequence': 1,
-        }),
-      );
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(client.requests, hasLength(1));
-      expect(client.requests.single.message, startsWith('我已确认售后信息'));
-      expect(client.requests.single.message, contains('发起正式工单创建动作'));
+      expect(client.requests, isEmpty);
+      expect(submissions, hasLength(1));
+      expect(submissions.single.artifactId, 'support-ticket-1');
+      expect(submissions.single.threadId, 'thread-support-ticket');
+      expect(submissions.single.values['issue_summary'], '吸奶器无法启动');
       expect(
-        client.requests.single.message,
-        isNot(contains('confirmed_form_data')),
-      );
-      final submission =
-          client.requests.single.metadata['form_submission']!
-              as Map<String, Object?>;
-      expect(submission['artifact_id'], 'support-ticket-1');
-      expect(submission['form_id'], 'support_ticket');
-      expect(
-        (submission['values']! as Map<String, Object?>)['issue_summary'],
-        '吸奶器无法启动',
-      );
-      expect(
-        client.requests.single.idempotencyKey,
+        submissions.single.idempotencyKey,
         startsWith('agent-form-submit-'),
       );
-      expect(find.text('已确认售后信息'), findsOneWidget);
-      expect(find.text('信息已确认'), findsOneWidget);
+      expect(find.text('已提交售后工单'), findsOneWidget);
+      expect(find.text('已提交'), findsOneWidget);
+      expect(find.text('信息已确认'), findsNothing);
+      expect(find.textContaining('人工客服团队会在 24 小时内主动联系你'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Agent Hub keeps the support form retryable when submission fails',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+      final ticketEvent = AgentStreamEvent({
+        'type': 'artifact.created',
+        'artifact_id': 'support-ticket-failure',
+        'artifact_type': 'support_ticket_draft',
+        'submit_label': '确认并提交',
+        'ticket': {
+          'issue_type': 'malfunction',
+          'issue_summary': '吸奶器无法启动',
+          'product_model': 'Air1',
+          'urgency': 'normal',
+        },
+      });
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            supportTicketSubmitter: (_) async => throw StateError('offline'),
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '请确认售后信息。',
+              events: [ticketEvent],
+            ),
+          ),
+        ),
+      );
+
+      final submit = find.byKey(
+        const ValueKey('agent-artifact-form-submit-support-ticket-failure'),
+      );
+      await tester.ensureVisible(submit);
+      await tester.pumpAndSettle();
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+
+      expect(client.requests, isEmpty);
+      expect(find.text('提交失败，请重试'), findsOneWidget);
+      expect(find.text('确认并提交'), findsOneWidget);
       expect(find.text('已提交售后工单'), findsNothing);
-      expect(find.textContaining('人工客服团队会在 24 小时内'), findsNothing);
     },
   );
 
