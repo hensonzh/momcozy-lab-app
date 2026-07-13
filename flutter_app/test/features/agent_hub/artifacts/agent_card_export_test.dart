@@ -19,7 +19,7 @@ void main() {
     );
   });
 
-  testWidgets('only legacy-exportable specialized cards show save controls', (
+  testWidgets('specialized cards no longer expose save controls', (
     tester,
   ) async {
     await _pumpPanel(
@@ -28,11 +28,14 @@ void main() {
       exportService: _RecordingCardExportService(),
     );
 
-    expect(find.text('保存图片'), findsNWidgets(2));
-    expect(find.byKey(const ValueKey('agent-card-export-journey')), findsOne);
+    expect(find.text('保存图片'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-card-export-journey')),
+      findsNothing,
+    );
     expect(
       find.byKey(const ValueKey('agent-card-export-birth-plan')),
-      findsOne,
+      findsNothing,
     );
     expect(
       find.byKey(const ValueKey('agent-card-export-hospital-bag')),
@@ -45,94 +48,21 @@ void main() {
   });
 
   for (final width in [360.0, 390.0, 430.0]) {
-    testWidgets('export controls fit the $width px card viewport', (
-      tester,
-    ) async {
-      await _pumpPanel(
-        tester,
-        cards: _exportScopeCards,
-        exportService: _RecordingCardExportService(),
-        width: width,
-      );
+    testWidgets(
+      'specialized cards fit the $width px viewport without exports',
+      (tester) async {
+        await _pumpPanel(
+          tester,
+          cards: _exportScopeCards,
+          exportService: _RecordingCardExportService(),
+          width: width,
+        );
 
-      expect(tester.takeException(), isNull);
-      expect(find.text('保存图片'), findsNWidgets(2));
-    });
+        expect(tester.takeException(), isNull);
+        expect(find.text('保存图片'), findsNothing);
+      },
+    );
   }
-
-  testWidgets('captures a PNG once and restores the control after sharing', (
-    tester,
-  ) async {
-    final service = _RecordingCardExportService(block: true);
-    await _pumpPanel(
-      tester,
-      cards: const [_birthPlanCard],
-      exportService: service,
-    );
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-card-export-birth-plan')),
-    );
-    await _pumpUntilExportStarts(tester, service);
-    await tester.pump();
-
-    expect(service.calls, 1);
-    expect(
-      service.filename,
-      matches(r'^comate-birth_plan_card-\d{4}-\d{2}-\d{2}\.png$'),
-    );
-    expect(
-      service.bytes!.take(8),
-      orderedEquals(const [137, 80, 78, 71, 13, 10, 26, 10]),
-    );
-    expect(find.text('保存中'), findsOneWidget);
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-card-export-birth-plan')),
-    );
-    await tester.pump();
-    expect(service.calls, 1);
-
-    service.release();
-    await tester.pumpAndSettle();
-    expect(find.text('保存图片'), findsOneWidget);
-  });
-
-  testWidgets('share failures stay internal and restore the save control', (
-    tester,
-  ) async {
-    final service = _RecordingCardExportService(throwOnShare: true);
-    await _pumpPanel(
-      tester,
-      cards: const [_birthPlanCard],
-      exportService: service,
-    );
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-card-export-birth-plan')),
-    );
-    await _pumpUntilExportStarts(tester, service);
-    await tester.pumpAndSettle();
-
-    expect(tester.takeException(), isNull);
-    expect(find.text('保存图片'), findsOneWidget);
-    expect(find.textContaining('失败'), findsNothing);
-  });
-}
-
-Future<void> _pumpUntilExportStarts(
-  WidgetTester tester,
-  _RecordingCardExportService service,
-) async {
-  for (
-    var attempt = 0;
-    attempt < 20 && !service.started.isCompleted;
-    attempt++
-  ) {
-    await tester.pump(const Duration(milliseconds: 16));
-    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
-  }
-  expect(service.started.isCompleted, isTrue);
 }
 
 Future<void> _pumpPanel(
