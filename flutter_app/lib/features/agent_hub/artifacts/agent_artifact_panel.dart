@@ -201,13 +201,12 @@ Widget? _specializedArtifactCard({
       cardType: card.artifactType ?? card.cardType ?? 'milk_plan_card',
     ),
     AgentArtifactPresentationKind.birthJourneyPlanCard =>
-      _AgentBirthJourneyPlanCard(card: card, exportControl: exportControl),
+      _AgentBirthJourneyPlanCard(card: card),
     AgentArtifactPresentationKind.birthPlanCard =>
       card.specializedView is AgentBirthPlanCardView
           ? _AgentBirthPlanCard(
               card: card,
               data: card.specializedView! as AgentBirthPlanCardView,
-              exportControl: exportControl,
             )
           : null,
     AgentArtifactPresentationKind.hospitalBagCard =>
@@ -223,9 +222,6 @@ Widget? _specializedArtifactCard({
 
 bool _isExportableSpecializedCard(AgentArtifactCardView card) {
   return switch (card.presentationKind) {
-    AgentArtifactPresentationKind.birthJourneyPlanCard => true,
-    AgentArtifactPresentationKind.birthPlanCard =>
-      card.specializedView is AgentBirthPlanCardView,
     _ => false,
   };
 }
@@ -563,10 +559,9 @@ class _AgentMilkSection extends StatelessWidget {
 }
 
 class _AgentBirthJourneyPlanCard extends StatelessWidget {
-  const _AgentBirthJourneyPlanCard({required this.card, this.exportControl});
+  const _AgentBirthJourneyPlanCard({required this.card});
 
   final AgentArtifactCardView card;
-  final Widget? exportControl;
 
   @override
   Widget build(BuildContext context) {
@@ -628,10 +623,6 @@ class _AgentBirthJourneyPlanCard extends StatelessWidget {
               ],
             ],
           ),
-        ],
-        if (exportControl != null) ...[
-          const SizedBox(height: 12),
-          Align(alignment: Alignment.centerRight, child: exportControl!),
         ],
       ],
     );
@@ -818,15 +809,10 @@ class _AgentBirthJourneyItem extends StatelessWidget {
 }
 
 class _AgentBirthPlanCard extends StatelessWidget {
-  const _AgentBirthPlanCard({
-    required this.card,
-    required this.data,
-    this.exportControl,
-  });
+  const _AgentBirthPlanCard({required this.card, required this.data});
 
   final AgentArtifactCardView card;
   final AgentBirthPlanCardView data;
-  final Widget? exportControl;
 
   @override
   Widget build(BuildContext context) {
@@ -857,10 +843,6 @@ class _AgentBirthPlanCard extends StatelessWidget {
         ],
         const SizedBox(height: 10),
         _AgentArtifactBodyText(data.disclaimer),
-        if (exportControl != null) ...[
-          const SizedBox(height: 12),
-          Align(alignment: Alignment.centerRight, child: exportControl!),
-        ],
       ],
     );
   }

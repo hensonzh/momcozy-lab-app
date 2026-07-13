@@ -5044,6 +5044,15 @@ void main() {
     expect(find.text('必带'), findsOneWidget);
     expect(find.text('产后恶露量较多，用来垫床或替代普通卫生巾。'), findsOneWidget);
     expect(find.text('打开购物车'), findsNothing);
+    expect(find.text('保存图片'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-card-export-birth-journey-card')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('agent-card-export-birth-plan-card')),
+      findsNothing,
+    );
     expect(
       find.byKey(const ValueKey('agent-card-export-hospital-bag-card')),
       findsNothing,
