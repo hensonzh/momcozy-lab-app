@@ -1011,7 +1011,7 @@ class _ScheduleDashboardPageState extends State<ScheduleDashboardPage> {
     if (!mounted) return;
     setState(() => _recognitionInFlight = false);
     if (result.cancelled) {
-      setState(() => _feedback = '已取消选择截图');
+      setState(() => _feedback = null);
       return;
     }
     if (result.tasks.isEmpty) {
