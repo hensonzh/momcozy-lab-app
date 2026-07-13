@@ -97,26 +97,29 @@ void main() {
       );
     });
 
-    testWidgets(
-      'lets todo titles use the space reserved for important labels',
-      (tester) async {
-        await _setViewport(tester);
-        await tester.pumpWidget(
-          _PlanHost(initial: StatusResource.data(_plan())),
-        );
+    testWidgets('lets todo titles use the space reserved for priority labels', (
+      tester,
+    ) async {
+      await _setViewport(tester);
+      await tester.pumpWidget(_PlanHost(initial: StatusResource.data(_plan())));
 
-        final title = find.text('准备产检资料');
-        final reason = find.text('下次产检时集中确认');
-        expect(find.text('重要'), findsNothing);
-        expect(tester.getTopLeft(title).dx, tester.getTopLeft(reason).dx);
+      final title = find.text('准备产检资料');
+      final reason = find.text('下次产检时集中确认');
+      expect(find.text('重要'), findsNothing);
+      expect(tester.getTopLeft(title).dx, tester.getTopLeft(reason).dx);
 
-        await tester.tap(
-          find.byKey(const ValueKey('status-birth-journey-period-upcoming')),
-        );
-        await tester.pumpAndSettle();
-        expect(find.text('建议'), findsOneWidget);
-      },
-    );
+      await tester.tap(
+        find.byKey(const ValueKey('status-birth-journey-period-upcoming')),
+      );
+      await tester.pumpAndSettle();
+      final upcomingTitle = find.text('整理待产包');
+      final upcomingReason = find.text('提前确认住院物品');
+      expect(find.text('建议'), findsNothing);
+      expect(
+        tester.getTopLeft(upcomingTitle).dx,
+        tester.getTopLeft(upcomingReason).dx,
+      );
+    });
 
     testWidgets('expands future stages and blocks locked todo changes', (
       tester,
