@@ -9,9 +9,15 @@ const _milkPlanChangedEventType = 'milk_plan.changed';
 const _maxSeenEventIds = 64;
 const _maxAffectedDates = 31;
 
+enum MilkPlanChangeOperation { created, updated, rescheduled, deleted }
+
 @immutable
 class MilkPlanChange {
-  const MilkPlanChange({required this.eventId, required this.affectedDateKeys});
+  const MilkPlanChange({
+    required this.eventId,
+    required this.affectedDateKeys,
+    this.operation = MilkPlanChangeOperation.created,
+  });
 
   static MilkPlanChange? tryFromEvent(AgentStreamEvent event) {
     if (event.type != _milkPlanChangedEventType || event.isTransient) {
@@ -26,11 +32,18 @@ class MilkPlanChange {
     final reason = _string(event.payload['reason']);
     final rawDates =
         event.payload['affected_dates'] ?? event.payload['affectedDates'];
+    final parsedOperation = switch (operation) {
+      'created' => MilkPlanChangeOperation.created,
+      'updated' => MilkPlanChangeOperation.updated,
+      'rescheduled' => MilkPlanChangeOperation.rescheduled,
+      'deleted' => MilkPlanChangeOperation.deleted,
+      _ => null,
+    };
     if (eventId == null ||
-        operation != 'created' ||
+        parsedOperation == null ||
         planType != 'milk_management' ||
         source != 'agent_action' ||
-        (reason != 'created' && reason != 'synced')) {
+        reason == null) {
       return null;
     }
     final dates = <String>[];
@@ -45,11 +58,13 @@ class MilkPlanChange {
     dates.sort();
     return MilkPlanChange(
       eventId: eventId,
+      operation: parsedOperation,
       affectedDateKeys: List<String>.unmodifiable(dates),
     );
   }
 
   final String eventId;
+  final MilkPlanChangeOperation operation;
   final List<String> affectedDateKeys;
 }
 
