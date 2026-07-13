@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -63,6 +62,25 @@ void main() {
       },
     );
   }
+
+  testWidgets('journey stages follow legacy expansion rules', (tester) async {
+    await _pumpPanel(
+      tester,
+      cards: const [_journeyCard],
+      exportService: _RecordingCardExportService(),
+    );
+
+    expect(find.text('完成糖耐检查'), findsOneWidget);
+    expect(find.text('开始整理待产包'), findsNothing);
+
+    await tester.tap(find.text('孕 28-30 周'));
+    await tester.pumpAndSettle();
+    expect(find.text('开始整理待产包'), findsOneWidget);
+
+    await tester.tap(find.text('孕 25-27 周'));
+    await tester.pumpAndSettle();
+    expect(find.text('完成糖耐检查'), findsNothing);
+  });
 }
 
 Future<void> _pumpPanel(
@@ -95,32 +113,11 @@ Future<void> _pumpPanel(
 }
 
 class _RecordingCardExportService implements AgentCardExportService {
-  _RecordingCardExportService({this.block = false, this.throwOnShare = false});
-
-  final bool block;
-  final bool throwOnShare;
-  final Completer<void> started = Completer<void>();
-  final Completer<void> _release = Completer<void>();
-  Uint8List? bytes;
-  String? filename;
-  int calls = 0;
-
   @override
   Future<void> sharePng({
     required Uint8List bytes,
     required String filename,
-  }) async {
-    calls += 1;
-    this.bytes = bytes;
-    this.filename = filename;
-    if (!started.isCompleted) started.complete();
-    if (throwOnShare) throw StateError('share unavailable');
-    if (block) await _release.future;
-  }
-
-  void release() {
-    if (!_release.isCompleted) _release.complete();
-  }
+  }) async {}
 }
 
 const _exportScopeCards = [
@@ -138,6 +135,25 @@ const _journeyCard = AgentArtifactCardView(
   presentationKind: AgentArtifactPresentationKind.birthJourneyPlanCard,
   cardJson: {
     'owner': {'current_week': '孕 25 周'},
+    'todo_plan': {
+      'periods': [
+        {
+          'id': 'current-stage',
+          'title': '孕 25-27 周',
+          'status': 'current',
+          'items': [
+            {'title': '完成糖耐检查'},
+          ],
+        },
+        {
+          'id': 'future-stage',
+          'title': '孕 28-30 周',
+          'items': [
+            {'title': '开始整理待产包'},
+          ],
+        },
+      ],
+    },
   },
 );
 
