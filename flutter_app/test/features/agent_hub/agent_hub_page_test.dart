@@ -5568,15 +5568,18 @@ void main() {
     tester,
   ) async {
     var activationCount = 0;
+    final actions = <AgentArtifactActionView>[];
 
     await tester.pumpWidget(
       _host(
         AgentHubPage(
           state: const AgentStreamRunState(
             phase: AgentStreamRunPhase.finished,
-            textContent: '已经整理好了。\n\n**[打开待产包购物车](/hospital-bag-cart)**',
+            textContent:
+                '已经整理好了。\n\n不用一次买完，可以按优先级删减后再决定是否购买。\n\n**[打开待产包购物车](/hospital-bag-cart)**',
           ),
           onHospitalBagCartContextRequired: () => activationCount += 1,
+          onArtifactAction: actions.add,
         ),
       ),
     );
@@ -5584,6 +5587,25 @@ void main() {
     expect(activationCount, 1);
     await tester.pump();
     expect(activationCount, 1);
+    expect(find.textContaining('不用一次买完'), findsOneWidget);
+    expect(find.text('打开待产包购物车'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
+      findsOneWidget,
+    );
+    expect(find.text('MOMCOZY CART'), findsOneWidget);
+    expect(find.text('待产包母婴用品一键打包'), findsOneWidget);
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
+    );
+    await tester.tap(
+      find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
+    );
+    await tester.pump();
+
+    expect(actions, hasLength(1));
+    expect(actions.single.routePath, '/hospital-bag-cart');
   });
 
   testWidgets(
@@ -6984,7 +7006,13 @@ milk_total: 120ml
         'title': '打开视频',
       });
 
-      await tester.tap(find.text('打开购物车', findRichText: true));
+      expect(find.text('打开购物车', findRichText: true), findsNothing);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('agent-hospital-bag-cart-preview')),
+      );
       await tester.pump();
 
       expect(actions.last.routePath, '/hospital-bag-cart');

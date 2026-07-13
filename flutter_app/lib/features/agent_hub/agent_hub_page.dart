@@ -3921,49 +3921,71 @@ class AgentMarkdownText extends StatelessWidget {
     if (!parseMarkdown) {
       return Text(normalized, style: baseStyle);
     }
-    final markdown = _prepareAgentMarkdown(
+    final preparedMarkdown = _prepareAgentMarkdown(
       replaceCitationLinksWithIndexes(normalized, citations),
     );
-    if (!_containsMarkdown(markdown)) {
-      return Text(markdown, style: baseStyle);
-    }
+    final hospitalBagCartUrl = _firstHospitalBagCartPreviewUrl(
+      preparedMarkdown,
+    );
+    final markdown = hospitalBagCartUrl == null
+        ? preparedMarkdown
+        : _stripHospitalBagCartPreviewLinks(preparedMarkdown);
+    final markdownBody = markdown.trim().isEmpty
+        ? null
+        : !_containsMarkdown(markdown)
+        ? Text(markdown, style: baseStyle)
+        : MarkdownBody(
+            data: markdown,
+            fitContent: true,
+            shrinkWrap: true,
+            softLineBreak: true,
+            styleSheet: _momcozyMarkdownStyleSheet(context, baseStyle),
+            imageBuilder: (uri, title, alt) {
+              final url = uri.toString();
+              return _AgentMarkdownImage(
+                url: url,
+                title: alt?.trim().isNotEmpty == true ? alt!.trim() : title,
+                repository: productAssetRepository,
+                onTap: () => _openMarkdownMedia(url: url, title: alt ?? title),
+              );
+            },
+            onTapLink: (label, href, title) {
+              final url = href?.trim();
+              if (url == null || url.isEmpty) return;
+              if (_isHospitalBagCartPath(url)) {
+                onArtifactAction?.call(AgentArtifactActions.hospitalBagCart);
+                return;
+              }
+              if (_openMarkdownMedia(url: url, title: label.trim())) return;
+              final target = SafeLinkTarget.tryParse(url);
+              if (target == null) return;
+              onArtifactAction?.call(
+                AgentArtifactActionView(
+                  label: label.trim().isEmpty ? '打开链接' : label.trim(),
+                  icon: Icons.open_in_new_rounded,
+                  kind: 'link',
+                  value: url,
+                  routePath: target.internalPath,
+                  externalUri: target.externalUri,
+                ),
+              );
+            },
+          );
 
-    return MarkdownBody(
-      data: markdown,
-      fitContent: true,
-      shrinkWrap: true,
-      softLineBreak: true,
-      styleSheet: _momcozyMarkdownStyleSheet(context, baseStyle),
-      imageBuilder: (uri, title, alt) {
-        final url = uri.toString();
-        return _AgentMarkdownImage(
-          url: url,
-          title: alt?.trim().isNotEmpty == true ? alt!.trim() : title,
-          repository: productAssetRepository,
-          onTap: () => _openMarkdownMedia(url: url, title: alt ?? title),
-        );
-      },
-      onTapLink: (label, href, title) {
-        final url = href?.trim();
-        if (url == null || url.isEmpty) return;
-        if (_isHospitalBagCartPath(url)) {
-          onArtifactAction?.call(AgentArtifactActions.hospitalBagCart);
-          return;
-        }
-        if (_openMarkdownMedia(url: url, title: label.trim())) return;
-        final target = SafeLinkTarget.tryParse(url);
-        if (target == null) return;
-        onArtifactAction?.call(
-          AgentArtifactActionView(
-            label: label.trim().isEmpty ? '打开链接' : label.trim(),
-            icon: Icons.open_in_new_rounded,
-            kind: 'link',
-            value: url,
-            routePath: target.internalPath,
-            externalUri: target.externalUri,
-          ),
-        );
-      },
+    if (hospitalBagCartUrl == null) {
+      return markdownBody ?? Text('', style: baseStyle);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ?markdownBody,
+        if (markdownBody != null) const SizedBox(height: 8),
+        _AgentHospitalBagCartPreview(
+          onTap: onArtifactAction == null
+              ? null
+              : () => onArtifactAction!(AgentArtifactActions.hospitalBagCart),
+        ),
+      ],
     );
   }
 
@@ -4081,6 +4103,143 @@ class AgentMarkdownText extends StatelessWidget {
       r'(^|\n)\s{0,3}#{1,6}\s+|(^|\n)\s*[-*]\s+|(^|\n)\s*\d+\.\s+|\*\*.+?\*\*|`{1,3}|(^|\n)\s{0,3}>\s+|\[[^\]]+\]\([^)]+\)|(^|\n)\|.+\|($|\n)|(^|\n)---($|\n)',
       multiLine: true,
     ).hasMatch(value);
+  }
+}
+
+class _AgentHospitalBagCartPreview extends StatelessWidget {
+  const _AgentHospitalBagCartPreview({this.onTap});
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Semantics(
+      button: true,
+      enabled: onTap != null,
+      label: '打开待产包购物车',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: const ValueKey('agent-hospital-bag-cart-preview'),
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: const Color(0xfffff9fb),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xffe8d7df)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x14532f40),
+                  blurRadius: 22,
+                  offset: Offset(0, 8),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 92),
+                child: Stack(
+                  children: [
+                    const Positioned(
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: 80,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Color(0xff24889a), Color(0xffd86b91)],
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.shopping_bag_outlined,
+                          size: 32,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 80),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'MOMCOZY CART',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    semanticsLabel: 'Momcozy Cart',
+                                    style: textTheme.labelSmall?.copyWith(
+                                      color: const Color(0xff8a6d7a),
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.2,
+                                      letterSpacing: 0,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '待产包母婴用品一键打包',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: textTheme.labelMedium?.copyWith(
+                                      color: const Color(0xff372330),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.3,
+                                      letterSpacing: 0,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '已把妈妈护理、宝宝出院和母乳喂养用品整理成购物车，方便一起核对下单。',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: textTheme.labelSmall?.copyWith(
+                                      color: const Color(0xff725b67),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.3,
+                                      letterSpacing: 0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(right: 12),
+                            child: Icon(
+                              Icons.chevron_right_rounded,
+                              size: 16,
+                              color: Color(0xff24889a),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -4308,6 +4467,60 @@ bool _isHospitalBagCartPath(String url) {
   return uri.path == '/hospital-bag-cart';
 }
 
+String? _firstHospitalBagCartPreviewUrl(String markdown) {
+  for (final match in _hospitalBagCartMarkdownLinkPattern.allMatches(
+    markdown,
+  )) {
+    final url = match.group(1)?.trim();
+    if (url != null && _isHospitalBagCartPath(url)) return url;
+  }
+  for (final match in _hospitalBagCartBareUrlPattern.allMatches(markdown)) {
+    final url = match.group(0)?.trim();
+    if (url != null && _isHospitalBagCartPath(url)) return url;
+  }
+  return null;
+}
+
+String _stripHospitalBagCartPreviewLinks(String markdown) {
+  final withoutStandaloneLines = markdown
+      .split('\n')
+      .where((line) => !_isStandaloneHospitalBagCartLinkLine(line))
+      .join('\n');
+  final withoutMarkdownLinks = withoutStandaloneLines.replaceAllMapped(
+    _hospitalBagCartMarkdownLinkPattern,
+    (match) {
+      final url = match.group(1)?.trim();
+      return url != null && _isHospitalBagCartPath(url)
+          ? ''
+          : match.group(0) ?? '';
+    },
+  );
+  return withoutMarkdownLinks
+      .replaceAllMapped(_hospitalBagCartBareUrlPattern, (match) {
+        final url = match.group(0)?.trim();
+        return url != null && _isHospitalBagCartPath(url)
+            ? ''
+            : match.group(0) ?? '';
+      })
+      .replaceAll(RegExp(r'[ \t]+\n'), '\n')
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+      .trim();
+}
+
+bool _isStandaloneHospitalBagCartLinkLine(String line) {
+  final trimmed = line.trim();
+  if (trimmed.isEmpty) return false;
+  final markdownMatch = _standaloneHospitalBagCartMarkdownLinkPattern
+      .firstMatch(trimmed);
+  final markdownUrl = markdownMatch?.group(1)?.trim();
+  if (markdownUrl != null && _isHospitalBagCartPath(markdownUrl)) return true;
+  final bareMatch = _standaloneHospitalBagCartBareUrlPattern.firstMatch(
+    trimmed,
+  );
+  final bareUrl = bareMatch?.group(1)?.trim();
+  return bareUrl != null && _isHospitalBagCartPath(bareUrl);
+}
+
 String? _displayableHttpUrl(String url) {
   final normalized = url.trim();
   if (normalized.startsWith('/skill-assets/')) {
@@ -4327,6 +4540,20 @@ final _bareSkillAssetUrlPattern = RegExp(
 );
 
 final _markdownLinkPattern = RegExp(r'(^|[^!])\[([^\]\n]+)\]\(([^)\n]+)\)');
+final _hospitalBagCartMarkdownLinkPattern = RegExp(
+  r'''(?:[*_]{1,3})?\s*\[[^\]\n]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)\s*(?:[*_]{1,3})?''',
+);
+final _standaloneHospitalBagCartMarkdownLinkPattern = RegExp(
+  r'''^(?:[*_]{1,3})?\s*\[[^\]\n]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)\s*(?:[*_]{1,3})?$''',
+);
+final _hospitalBagCartBareUrlPattern = RegExp(
+  r'(?:https?://[^\s)]+|/hospital-bag-cart(?:[?#][^\s)]*)?)',
+  caseSensitive: false,
+);
+final _standaloneHospitalBagCartBareUrlPattern = RegExp(
+  r'^(?:[*_]{1,3})?\s*((?:https?://[^\s)]+|/hospital-bag-cart(?:[?#][^\s)]*)?))\s*(?:[*_]{1,3})?$',
+  caseSensitive: false,
+);
 
 class AgentRunStatusLine extends StatefulWidget {
   const AgentRunStatusLine({super.key, required this.title});
