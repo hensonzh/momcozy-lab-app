@@ -270,7 +270,7 @@ const _cardCases = [
     fileName: 'ibclc_consult',
     card: AgentArtifactCardView(
       id: 'ibclc-golden',
-      title: 'IBCLC 咨询入口',
+      title: 'IBCLC 在线咨询',
       artifactType: 'ibclc_consult_card',
       schemaVersion: 'v1',
       presentationKind: AgentArtifactPresentationKind.ibclcConsultCard,
@@ -280,11 +280,14 @@ const _cardCases = [
         'urgency': 'soon',
       },
       specializedView: AgentIbclcConsultCardView(
-        title: 'IBCLC 咨询入口',
+        title: 'IBCLC 在线咨询',
         consultId: 'ibclc-golden',
         sourceArtifactId: 'ibclc-golden',
         consultantName: 'Emily Chen',
         consultantCredentials: 'IBCLC 国际认证哺乳顾问',
+        consultantExperience: '8 年产后哺乳支持经验',
+        consultantBio:
+            '拥有 8 年产后哺乳支持经验，核心擅长含乳评估、有效吸吮与母乳移出观察。可结合宝宝尿布、体重和吃奶表现判断摄入信号。',
         chatLabel: '咨询 IBCLC',
         chatNote: '启动咨询后，会自动将你的问题同步给顾问',
         reason: '含乳疼痛',

@@ -42,7 +42,6 @@ class _ArtifactCardSurface extends StatelessWidget {
     required this.children,
     this.subtitle,
     this.trailing,
-    this.showLogo = true,
   });
 
   final AgentArtifactCardView card;
@@ -50,7 +49,6 @@ class _ArtifactCardSurface extends StatelessWidget {
   final Color accent;
   final String? subtitle;
   final Widget? trailing;
-  final bool showLogo;
   final List<Widget> children;
 
   @override
@@ -116,7 +114,7 @@ class _ArtifactCardSurface extends StatelessWidget {
                 if (trailing != null) ...[
                   const SizedBox(width: 8),
                   trailing!,
-                ] else if (showLogo) ...[
+                ] else ...[
                   const SizedBox(width: 8),
                   Image.asset(
                     MomCozyAssets.momcozyLogo,
@@ -171,188 +169,244 @@ class _IbclcConsultCardState extends State<_IbclcConsultCard> {
     final completed =
         IbclcConsultStoreScope.maybeOf(context)?.isCompleted(data.consultId) ??
         false;
-    final urgency = _urgencyLabel(data.urgency);
+    final textTheme = Theme.of(context).textTheme;
 
     return KeyedSubtree(
       key: ValueKey('agent-artifact-ibclc-${widget.card.id}'),
-      child: _ArtifactCardSurface(
-        card: widget.card,
-        icon: Icons.monitor_heart_outlined,
-        accent: const Color(0xff177a89),
-        showLogo: false,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: const Color(0xfffbfdfc),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xffd6dde5)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0d000000),
+              blurRadius: 2,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ClipOval(
-                child: Image.asset(
-                  MomCozyAssets.ibclcConsultantAvatar,
-                  width: 56,
-                  height: 56,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data.consultantName,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: const Color(0xff182b2a),
-                        fontWeight: FontWeight.w900,
+              Row(
+                children: [
+                  const Icon(
+                    Icons.monitor_heart_outlined,
+                    size: 22,
+                    color: Color(0xff177a89),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      data.title,
+                      style: textTheme.headlineSmall?.copyWith(
+                        color: const Color(0xff142726),
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        height: 1.15,
+                        letterSpacing: 0,
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: [
-                        _ArtifactTag(
-                          label: data.consultantCredentials,
-                          color: const Color(0xff1a6863),
-                          background: const Color(0xffe9f3f1),
-                        ),
-                        if (data.consultantExperience != null)
-                          _ArtifactTag(
-                            label: data.consultantExperience!,
-                            color: const Color(0xff7a4260),
-                            background: const Color(0xfff4edf1),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              DecoratedBox(
+                key: ValueKey('agent-ibclc-consultant-${widget.card.id}'),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xffd6dde5)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: ClipOval(
+                          child: Image.asset(
+                            MomCozyAssets.ibclcConsultantAvatar,
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
+                            semanticLabel: data.consultantName,
                           ),
-                      ],
-                    ),
-                    if (data.consultantBio != null) ...[
-                      const SizedBox(height: 7),
-                      Text(
-                        data.consultantBio!,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: const Color(0xff60706e),
-                          height: 1.45,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data.consultantName,
+                              style: textTheme.titleMedium?.copyWith(
+                                color: const Color(0xff182b2a),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                height: 1.2,
+                                letterSpacing: 0,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 6,
+                              children: [
+                                _IbclcConsultantTag(
+                                  label: data.consultantCredentials,
+                                  color: const Color(0xff1a6863),
+                                  background: const Color(0xffe9f3f1),
+                                ),
+                                if (data.consultantExperience != null)
+                                  _IbclcConsultantTag(
+                                    label: data.consultantExperience!,
+                                    color: const Color(0xff7a4260),
+                                    background: const Color(0xfff4edf1),
+                                  ),
+                              ],
+                            ),
+                            if (data.consultantBio != null) ...[
+                              const SizedBox(height: 7),
+                              Text(
+                                data.consultantBio!,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: const Color(0xff60706e),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.45,
+                                  letterSpacing: 0,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ],
-          ),
-          if (data.reason != null || data.feedingContext != null) ...[
-            const SizedBox(height: 14),
-            const Divider(height: 1, color: Color(0xffd6dde5)),
-            const SizedBox(height: 12),
-            if (data.reason != null)
-              _LabelValueRow(label: '咨询原因', value: data.reason!),
-            if (data.reason != null && data.feedingContext != null)
-              const SizedBox(height: 8),
-            if (data.feedingContext != null)
-              _LabelValueRow(label: '当前情况', value: data.feedingContext!),
-          ],
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _ArtifactTag(
-                label: urgency,
-                color: const Color(0xff177a89),
-                background: const Color(0xffe9f3f1),
-              ),
-              if (data.preferredLanguage != null)
-                _ArtifactTag(
-                  label: data.preferredLanguage!,
-                  color: const Color(0xff7a4260),
-                  background: const Color(0xfff4edf1),
-                ),
-            ],
-          ),
-          if (!completed) ...[
-            const SizedBox(height: 14),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: const Color(0xfff6fbfa),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xffdbe7e4)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: () => setState(() {
-                        _agreementAccepted = !_agreementAccepted;
-                      }),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Checkbox(
-                            key: ValueKey(
-                              'agent-ibclc-agreement-${widget.card.id}',
-                            ),
-                            value: _agreementAccepted,
-                            onChanged: (value) => setState(() {
-                              _agreementAccepted = value ?? false;
-                            }),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 9),
-                              child: Text(
-                                '我已阅读并同意《隐私政策》和《服务协议》',
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: const Color(0xff586967),
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.45,
+              if (!completed) ...[
+                const SizedBox(height: 14),
+                DecoratedBox(
+                  key: ValueKey('agent-ibclc-consent-${widget.card.id}'),
+                  decoration: BoxDecoration(
+                    color: const Color(0xfff6fbfa),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xffdbe7e4)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () => setState(() {
+                            _agreementAccepted = !_agreementAccepted;
+                          }),
+                          borderRadius: BorderRadius.circular(6),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 1),
+                                child: SizedBox.square(
+                                  dimension: 16,
+                                  child: Checkbox(
+                                    key: ValueKey(
+                                      'agent-ibclc-agreement-${widget.card.id}',
                                     ),
+                                    value: _agreementAccepted,
+                                    onChanged: (value) => setState(() {
+                                      _agreementAccepted = value ?? false;
+                                    }),
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,
+                                    activeColor: const Color(0xff177a89),
+                                    side: const BorderSide(
+                                      color: Color(0xffb9cbc8),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                  ),
+                                ),
                               ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  '我已阅读并同意《隐私政策》和《服务协议》',
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: const Color(0xff586967),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.45,
+                                    letterSpacing: 0,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 24, top: 6),
+                          child: Text(
+                            data.chatNote,
+                            style: textTheme.labelSmall?.copyWith(
+                              color: const Color(0xff71807d),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              height: 1.45,
+                              letterSpacing: 0,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 44, top: 2),
-                      child: Text(
-                        data.chatNote,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xff71807d),
-                          height: 1.45,
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
+                ),
+              ],
+              const SizedBox(height: 14),
+              SizedBox(
+                height: 46,
+                child: FilledButton(
+                  key: ValueKey('agent-ibclc-open-${widget.card.id}'),
+                  onPressed:
+                      !completed &&
+                          _agreementAccepted &&
+                          widget.onAction != null
+                      ? _openConsult
+                      : null,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xff177a89),
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: const Color(0xffd7dfdd),
+                    disabledForegroundColor: const Color(0xff778683),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    textStyle: textTheme.labelLarge?.copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(completed ? '咨询结束' : data.chatLabel),
                 ),
               ),
-            ),
-          ],
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 46,
-            child: FilledButton.icon(
-              key: ValueKey('agent-ibclc-open-${widget.card.id}'),
-              onPressed:
-                  !completed && _agreementAccepted && widget.onAction != null
-                  ? _openConsult
-                  : null,
-              icon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
-              label: Text(completed ? '咨询结束' : data.chatLabel),
-              style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xff177a89),
-                disabledBackgroundColor: const Color(0xffd7dfdd),
-                disabledForegroundColor: const Color(0xff778683),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -778,48 +832,39 @@ class _ArtifactTag extends StatelessWidget {
   }
 }
 
-class _LabelValueRow extends StatelessWidget {
-  const _LabelValueRow({required this.label, required this.value});
+class _IbclcConsultantTag extends StatelessWidget {
+  const _IbclcConsultantTag({
+    required this.label,
+    required this.color,
+    required this.background,
+  });
 
   final String label;
-  final String value;
+  final Color color;
+  final Color background;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 64,
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: const Color(0xff71807d),
-              fontWeight: FontWeight.w700,
-            ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: color,
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            height: 1,
+            letterSpacing: 0,
           ),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            value,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: const Color(0xff273b3a),
-              height: 1.45,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
-}
-
-String _urgencyLabel(String? urgency) {
-  return switch (urgency?.trim().toLowerCase()) {
-    'urgent' || 'immediate' => '建议立即咨询',
-    'soon' => '建议尽快咨询',
-    _ => '常规咨询',
-  };
 }
 
 String _directionLabel(String? direction) {
