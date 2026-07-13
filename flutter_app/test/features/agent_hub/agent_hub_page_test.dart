@@ -430,6 +430,82 @@ void main() {
     },
   );
 
+  testWidgets(
+    'Agent Hub applies a hospital bag cart changed event when it arrives during streaming',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      final cartUpdates = <HospitalBagCartArtifactSeed>[];
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            onHospitalBagCartUpdate: cartUpdates.add,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('agent-composer-input')),
+        '把待产包预算压低一些',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-streaming-cart-changed',
+          'type': 'hospital_bag.cart.changed',
+          'thread_id': 'thread-streaming-cart-changed',
+          'run_id': 'run-streaming-cart-changed',
+          'sequence': 1,
+          'payload': {
+            'action_id': 'action-streaming-cart-changed',
+            'operation': 'updated',
+            'source': 'agent_action',
+            'cart_update': {
+              'action': 'optimize_budget',
+              'groups': [
+                {
+                  'title': '删减后的清单',
+                  'items': [
+                    {'id': 'kept-item', 'name': '保留用品', 'qty': 1, 'price': 99},
+                  ],
+                },
+              ],
+            },
+          },
+        }),
+      );
+      await tester.pump();
+
+      expect(cartUpdates, hasLength(1));
+      expect(
+        cartUpdates.single.artifactId,
+        'action:action-streaming-cart-changed',
+      );
+      expect(cartUpdates.single.snapshot.items.single.id, 'kept-item');
+
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'evt-streaming-cart-reply',
+          'type': 'message.completed',
+          'thread_id': 'thread-streaming-cart-changed',
+          'run_id': 'run-streaming-cart-changed',
+          'message_id': 'message-streaming-cart-changed',
+          'sequence': 2,
+          'payload': {'role': 'assistant', 'text': '已经帮你压低预算。'},
+        }),
+      );
+      await tester.pump();
+
+      expect(cartUpdates, hasLength(1));
+    },
+  );
+
   testWidgets('Agent Hub keeps a textless failed artifact unpublished', (
     tester,
   ) async {
