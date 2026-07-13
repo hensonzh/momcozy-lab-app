@@ -1616,12 +1616,30 @@ class _AgentHubPageState extends State<AgentHubPage> {
         artifactId: card.id,
         cartUpdate: cartUpdate,
       );
-      if (seed == null) continue;
-      final signature =
-          '${seed.artifactId}:${jsonEncode(seed.snapshot.toAgentContext())}';
-      if (!_appliedHospitalBagCartUpdates.add(signature)) continue;
-      onUpdate(seed);
+      if (seed != null) _applyHospitalBagCartSeed(seed, onUpdate);
     }
+    for (final event in state.events) {
+      if (event.type != 'hospital_bag.cart.changed') continue;
+      final actionId = event.actionId?.trim();
+      if (actionId == null || actionId.isEmpty) continue;
+      final cartUpdate =
+          event.payload['cart_update'] ?? event.payload['cartUpdate'];
+      final seed = HospitalBagCartArtifactSeed.tryFromCartUpdate(
+        artifactId: 'action:$actionId',
+        cartUpdate: cartUpdate,
+      );
+      if (seed != null) _applyHospitalBagCartSeed(seed, onUpdate);
+    }
+  }
+
+  void _applyHospitalBagCartSeed(
+    HospitalBagCartArtifactSeed seed,
+    HospitalBagCartUpdateHandler onUpdate,
+  ) {
+    final signature =
+        '${seed.artifactId}:${jsonEncode(seed.snapshot.toAgentContext())}';
+    if (!_appliedHospitalBagCartUpdates.add(signature)) return;
+    onUpdate(seed);
   }
 
   void _applyPregnancyDiaryChanges(AgentStreamRunState state) {
