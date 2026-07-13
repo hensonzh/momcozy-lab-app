@@ -3615,8 +3615,11 @@ class AgentRunTranscript extends StatelessWidget {
   }
 
   _AgentLoopDecorState get _loopDecorState {
-    if (state.phase != AgentStreamRunPhase.streaming ||
-        state.textContent.trim().isNotEmpty) {
+    final supportsLoopDecor =
+        state.phase == AgentStreamRunPhase.streaming ||
+        state.phase == AgentStreamRunPhase.waitingForConfirmation ||
+        state.phase == AgentStreamRunPhase.error;
+    if (!supportsLoopDecor || state.textContent.trim().isNotEmpty) {
       return const _AgentLoopDecorState();
     }
     return _agentLoopDecorStateFromEvents(state.events);
@@ -6027,10 +6030,13 @@ _AgentLoopDecorState _agentLoopDecorStateFromEvents(
 
 String? _activeAgentStatusTitle(List<AgentStreamEvent> events) {
   for (final event in events.reversed) {
+    if (event.semantic.isNotEmpty) {
+      final semanticTitle = _semanticStatusTitle(event);
+      if (semanticTitle != null) return semanticTitle;
+      if (_eventStopsAgentLoopDecor(event)) return null;
+      continue;
+    }
     if (_eventStopsAgentLoopDecor(event)) return null;
-
-    final semanticTitle = _semanticStatusTitle(event);
-    if (semanticTitle != null) return semanticTitle;
 
     switch (event.type) {
       case 'run.queued':
@@ -6056,9 +6062,15 @@ String? _activeAgentStatusTitle(List<AgentStreamEvent> events) {
 
 String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
   for (final event in events.reversed) {
-    final semanticThinkingTitle = _semanticThinkingTitle(event);
-    if (semanticThinkingTitle != null) return semanticThinkingTitle;
-    if (_semanticClearsAgentThinking(event)) return null;
+    if (event.semantic.isNotEmpty) {
+      final semanticThinkingTitle = _semanticThinkingTitle(event);
+      if (semanticThinkingTitle != null) return semanticThinkingTitle;
+      if (_semanticClearsAgentThinking(event) ||
+          _eventStopsAgentLoopDecor(event)) {
+        return null;
+      }
+      continue;
+    }
 
     if (event.type == 'run.progress') {
       final phase = _stringField(event.payload, 'phase')?.trim();
@@ -6078,7 +6090,7 @@ String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
                 _stringField(event.payload, 'message'),
               ]),
             ) ??
-            '我接着处理下一步';
+            '我想一下';
       }
       if (_runProgressClearsAgentThinking(event, phase)) return null;
     }
@@ -6121,9 +6133,8 @@ bool _semanticClearsAgentThinking(AgentStreamEvent event) {
   final semantic = event.semantic;
   if (semantic.isEmpty) return false;
   final surface = _stringField(semantic, 'surface')?.trim();
-  final visibility = _stringField(semantic, 'visibility')?.trim();
   if (surface == 'thinking_note') return false;
-  if (surface == 'status_bar' || visibility == 'status') {
+  if (_semanticTargetsAgentStatus(semantic)) {
     return _semanticDisplayTitle(semantic) != null;
   }
   final lifecycle = _stringField(semantic, 'lifecycle')?.trim();
@@ -6134,12 +6145,26 @@ String? _semanticStatusTitle(AgentStreamEvent event) {
   final semantic = event.semantic;
   if (semantic.isEmpty) return null;
   final surface = _stringField(semantic, 'surface')?.trim();
-  final visibility = _stringField(semantic, 'visibility')?.trim();
   if (surface == 'thinking_note' || surface == 'hidden') return null;
-  if (surface == 'status_bar' || visibility == 'status') {
+  if (_semanticTargetsAgentStatus(semantic)) {
     return _semanticDisplayTitle(semantic);
   }
   return null;
+}
+
+bool _semanticTargetsAgentStatus(Map<String, Object?> semantic) {
+  const visibleTargets = {
+    'status_bar',
+    'status',
+    'work_item',
+    'artifact',
+    'action',
+  };
+  final surface = _stringField(semantic, 'surface')?.trim();
+  if (surface == 'thinking_note' || surface == 'hidden') return false;
+  final visibility = _stringField(semantic, 'visibility')?.trim();
+  return visibleTargets.contains(surface) ||
+      visibleTargets.contains(visibility);
 }
 
 String? _semanticThinkingTitle(AgentStreamEvent event) {
@@ -6164,7 +6189,9 @@ String? _runProgressStatusTitle(AgentStreamEvent event) {
   return switch (phase) {
     'context_loading' => '我已经收到你的消息啦～',
     'context_ready' => '我先理解一下你的需求～',
+    'model_followup' => '我接着处理下一步',
     'response_finalizing' => '我在组织回复～',
+    'quick_replies_preparing' => '我在帮你准备下一轮的快捷输入～',
     _ => null,
   };
 }
