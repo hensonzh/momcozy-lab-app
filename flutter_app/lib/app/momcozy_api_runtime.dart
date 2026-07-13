@@ -736,6 +736,35 @@ class MomCozyRuntimeController extends ChangeNotifier {
     replaceRuntime(_runtimeForSession(session));
   }
 
+  Future<void> logout({required MomCozySessionStore sessionStore}) async {
+    final runtime = _runtime;
+    final currentSession = runtime.currentSession;
+    unawaited(_revokeRemoteSession(runtime));
+
+    final sessionManager = MomCozySessionManager(
+      store: sessionStore,
+      environmentSession: currentSession.loggedOut(),
+    );
+    final anonymousSession = await sessionManager.logout(currentSession);
+    replaceSession(anonymousSession);
+  }
+
+  Future<void> _revokeRemoteSession(MomCozyApiRuntime runtime) async {
+    try {
+      await runtime.authRepository.logout().timeout(const Duration(seconds: 5));
+    } catch (error, stackTrace) {
+      runtime.observability.recordNonFatal(
+        error,
+        stackTrace: stackTrace,
+        context: const {
+          'feature': 'auth',
+          'operation': 'remote_logout',
+          'localLogoutContinued': true,
+        },
+      );
+    }
+  }
+
   void enableSessionAutoRefresh(MomCozySessionStore store) {
     if (!_runtime.supportsSessionAutoRefresh) return;
     _autoRefreshStore = store;

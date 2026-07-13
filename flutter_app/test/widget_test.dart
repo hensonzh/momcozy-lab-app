@@ -258,9 +258,16 @@ void main() {
         findsOneWidget,
       );
 
-      voicePlayer.complete();
+      expect(voicePlayer.realtimeSessions, isNotEmpty);
+      await tester.pumpWidget(const SizedBox.shrink());
       await tester.pump();
-      await tester.pump();
+      expect(shellCoordinator?.activeSource, isNull);
+      expect(
+        voicePlayer.realtimeSessions
+            .map((session) => session.cancelCount)
+            .reduce((left, right) => left + right),
+        1,
+      );
       await client.dispose();
     },
   );
@@ -769,6 +776,139 @@ void main() {
     router.dispose();
     controller.dispose();
   });
+
+  testWidgets(
+    'device logout returns to invite login and supports login again',
+    (tester) async {
+      const authenticatedSession = MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'logout-user',
+        babyId: 'logout-baby',
+        locale: 'zh-CN',
+        accessToken: 'logout-access',
+        refreshToken: 'logout-refresh',
+      );
+      final store = MemoryMomCozySessionStore(authenticatedSession);
+      final transport = FixtureApiJsonTransport(const {
+        'access_token': 'access-relogin',
+        'refresh_token': 'refresh-relogin',
+        'token_type': 'bearer',
+        'expires_in': 3600,
+        'user': {'id': 'logout-user', 'display_name': 'Logout User'},
+      });
+      final ble = FakeBlePlatform(
+        initialPermission: BlePermissionState.granted,
+        seedDevices: const [
+          BleDeviceSnapshot(
+            side: 'L',
+            deviceId: 'logout-pump-left',
+            deviceName: 'S12 Pro L',
+            connected: true,
+          ),
+        ],
+      );
+      final controller = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: transport,
+          session: authenticatedSession,
+          blePlatform: ble,
+          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
+        ),
+      );
+      final router = createMomCozyRouter(
+        initialLocation: '/device',
+        runtimeController: controller,
+        sessionStore: store,
+        authDeviceIdStore: const _FixedAuthDeviceIdStore('widget-device-001'),
+      );
+
+      await tester.pumpWidget(
+        MomCozyFlutterApp(
+          router: router,
+          runtimeController: controller,
+          sessionStore: store,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byTooltip('打开设备快捷菜单'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('退出登录'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('device-logout-confirm')));
+      await tester.pumpAndSettle();
+
+      expect(transport.lastPath, '/v1/auth/logout');
+      expect(await store.readSession(), isNull);
+      expect(controller.runtime.session.isAuthenticated, isFalse);
+      expect(await ble.getConnectedDevices(), isEmpty);
+      expect(
+        find.byKey(const ValueKey('auth-invite-code-field')),
+        findsOneWidget,
+      );
+
+      // Session swaps rebuild production transports, so keep this test on its
+      // deterministic fixture transport for the second invite request.
+      controller.replaceRuntime(
+        MomCozyApiRuntime(
+          jsonTransport: transport,
+          session: controller.runtime.session,
+          blePlatform: ble,
+          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-invite-code-field')),
+        'MCZ-ROUTE-0001',
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
+      await tester.pumpAndSettle();
+
+      expect(transport.lastPath, '/v1/auth/invite-login');
+      expect(transport.lastBody?['invite_code'], 'MCZ-ROUTE-0001');
+      expect(transport.lastBody?['device_id'], 'widget-device-001');
+      expect(controller.runtime.session.isAuthenticated, isTrue);
+      expect((await store.readSession())?.accessToken, 'access-relogin');
+      expect(find.byKey(const ValueKey('route-page-/device')), findsOneWidget);
+
+      router.dispose();
+      controller.dispose();
+    },
+  );
+
+  test(
+    'logout clears the local session when remote revocation fails',
+    () async {
+      const session = MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'offline-logout-user',
+        babyId: 'offline-logout-baby',
+        locale: 'zh-CN',
+        accessToken: 'offline-access',
+        refreshToken: 'offline-refresh',
+      );
+      final store = MemoryMomCozySessionStore(session);
+      final controller = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: FixtureApiJsonTransport(const {
+            'status': 503,
+            'error': {
+              'code': 'server_unavailable',
+              'message': 'Service unavailable',
+            },
+          }),
+          session: session,
+        ),
+      );
+
+      await controller.logout(sessionStore: store);
+
+      expect(await store.readSession(), isNull);
+      expect(controller.runtime.session.isAuthenticated, isFalse);
+      controller.dispose();
+    },
+  );
 }
 
 class _FakeExternalUrlLauncher implements ExternalUrlLauncher {
