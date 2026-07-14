@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 class AgentHubInteractionSnapshot {
   const AgentHubInteractionSnapshot({
@@ -13,6 +14,7 @@ class AgentHubInteractionSnapshot {
     this.autoVoiceEnabled = true,
     this.activeRequest,
     this.localActionStatuses = const <String, String>{},
+    this.formSubmissions = const <String, AgentArtifactFormSubmission>{},
   });
 
   final AgentStreamRunState runState;
@@ -22,6 +24,7 @@ class AgentHubInteractionSnapshot {
   final bool autoVoiceEnabled;
   final AgentStreamRequest? activeRequest;
   final Map<String, String> localActionStatuses;
+  final Map<String, AgentArtifactFormSubmission> formSubmissions;
 
   bool get hasContent {
     return runState.events.isNotEmpty ||
@@ -34,52 +37,112 @@ class AgentHubInteractionSnapshot {
         attachedImages.isNotEmpty ||
         activeRequest != null ||
         localActionStatuses.isNotEmpty ||
+        formSubmissions.isNotEmpty ||
         !autoVoiceEnabled;
   }
 
-  Map<String, Object?> toMap() => {
+  bool get hasConversationHistory {
+    return historyMessages.isNotEmpty ||
+        runState.events.isNotEmpty ||
+        runState.textContent.trim().isNotEmpty ||
+        runState.provisionalTextContent.trim().isNotEmpty;
+  }
+
+  Map<String, Object?> toMap({bool includeImageData = true}) => {
     'runState': runState.toMap(),
-    if (historyMessages.isNotEmpty)
+    if (historyMessages.any(
+      (message) =>
+          includeImageData ||
+          message.content.trim().isNotEmpty ||
+          message.runState != null,
+    ))
       'historyMessages': historyMessages
-          .map((message) => message.toMap())
+          .where(
+            (message) =>
+                includeImageData ||
+                message.content.trim().isNotEmpty ||
+                message.runState != null,
+          )
+          .map((message) => message.toMap(includeImageData: includeImageData))
           .toList(growable: false),
     if (composerText.isNotEmpty) 'composerText': composerText,
-    if (attachedImages.isNotEmpty)
+    if (includeImageData && attachedImages.isNotEmpty)
       'attachedImages': attachedImages.map(_imageToMap).toList(growable: false),
     'autoVoiceEnabled': autoVoiceEnabled,
-    if (activeRequest != null) 'activeRequest': _requestToMap(activeRequest!),
+    if (activeRequest != null &&
+        (includeImageData || activeRequest!.images.isEmpty))
+      'activeRequest': _requestToPersistenceMap(
+        activeRequest!,
+        historyMessages,
+        includeImageData: includeImageData,
+      ),
     if (localActionStatuses.isNotEmpty)
       'localActionStatuses': localActionStatuses,
+    if (formSubmissions.values.any((submission) => submission.isSubmitted))
+      'formSubmissions': {
+        for (final entry in formSubmissions.entries)
+          if (entry.value.isSubmitted) entry.key: entry.value.toMap(),
+      },
   };
 
   static AgentHubInteractionSnapshot fromMap(Map<String, Object?> map) {
+    final historyMessages = _historyFromList(map['historyMessages']);
+    final activeRequest = _requestFromPersistenceMap(
+      map['activeRequest'],
+      historyMessages,
+    );
     return AgentHubInteractionSnapshot(
       runState: _runStateFromMap(map['runState']),
-      historyMessages: _historyFromList(map['historyMessages']),
+      historyMessages: historyMessages,
       composerText: _string(map['composerText']) ?? '',
       attachedImages: _imagesFromList(map['attachedImages']),
       autoVoiceEnabled: map['autoVoiceEnabled'] != false,
-      activeRequest: _requestFromMap(map['activeRequest']),
+      activeRequest: activeRequest,
       localActionStatuses: _stringMap(map['localActionStatuses']),
+      formSubmissions: _formSubmissionsFromMap(map['formSubmissions']),
     );
   }
 }
 
 class AgentHubHistorySnapshot {
-  const AgentHubHistorySnapshot({required this.role, required this.content});
+  const AgentHubHistorySnapshot({
+    required this.role,
+    required this.content,
+    this.runState,
+    this.images = const <AgentStreamImageInput>[],
+  });
 
   final String role;
   final String content;
+  final AgentStreamRunState? runState;
+  final List<AgentStreamImageInput> images;
 
-  Map<String, Object?> toMap() => {'role': role, 'content': content};
+  Map<String, Object?> toMap({bool includeImageData = true}) => {
+    'role': role,
+    'content': content,
+    if (runState != null) 'runState': runState!.toMap(),
+    if (includeImageData && images.isNotEmpty)
+      'images': images.map(_imageToMap).toList(growable: false),
+  };
 
   static AgentHubHistorySnapshot? fromMap(Object? value) {
     if (value is! Map) return null;
     final map = Map<String, Object?>.from(value);
-    final content = _string(map['content'])?.trim();
-    if (content == null || content.isEmpty) return null;
+    final content = _string(map['content'])?.trim() ?? '';
+    final images = _imagesFromList(map['images']);
+    if (content.isEmpty && images.isEmpty) return null;
     final role = _string(map['role']) == 'user' ? 'user' : 'assistant';
-    return AgentHubHistorySnapshot(role: role, content: content);
+    final runStateValue = map['runState'] ?? map['run_state'];
+    return AgentHubHistorySnapshot(
+      role: role,
+      content: content,
+      images: images,
+      runState: runStateValue is Map
+          ? AgentStreamRunState.fromMap(
+              Map<String, Object?>.from(runStateValue),
+            )
+          : null,
+    );
   }
 }
 
@@ -121,7 +184,10 @@ class FlutterSecureAgentHubInteractionStateStore
   @override
   Future<void> write(AgentHubInteractionSnapshot snapshot) {
     if (!snapshot.hasContent) return clear();
-    return storage.write(key: _key, value: jsonEncode(snapshot.toMap()));
+    return storage.write(
+      key: _key,
+      value: jsonEncode(snapshot.toMap(includeImageData: false)),
+    );
   }
 
   @override
@@ -169,6 +235,25 @@ Map<String, String> _stringMap(Object? value) {
   return Map<String, String>.unmodifiable(result);
 }
 
+Map<String, AgentArtifactFormSubmission> _formSubmissionsFromMap(
+  Object? value,
+) {
+  if (value is! Map) {
+    return const <String, AgentArtifactFormSubmission>{};
+  }
+  final result = <String, AgentArtifactFormSubmission>{};
+  for (final entry in value.entries) {
+    final key = entry.key;
+    final submission = AgentArtifactFormSubmission.tryFromMap(entry.value);
+    if (key is String &&
+        key.trim().isNotEmpty &&
+        submission?.isSubmitted == true) {
+      result[key] = submission!;
+    }
+  }
+  return Map<String, AgentArtifactFormSubmission>.unmodifiable(result);
+}
+
 String? _string(Object? value) => value is String ? value : null;
 
 int _int(Object? value, {int fallback = 0}) {
@@ -186,7 +271,79 @@ Map<String, Object?> _requestToMap(AgentStreamRequest request) => {
   if (request.images.isNotEmpty)
     'images': request.images.map(_imageToMap).toList(growable: false),
   if (request.metadata.isNotEmpty) 'metadata': request.metadata,
+  if (request.idempotencyKey != null) 'idempotencyKey': request.idempotencyKey,
 };
+
+Map<String, Object?> _requestToPersistenceMap(
+  AgentStreamRequest request,
+  List<AgentHubHistorySnapshot> historyMessages, {
+  bool includeImageData = true,
+}) {
+  if (!includeImageData) {
+    return _requestToMap(_requestWithImages(request, const []));
+  }
+  if (request.images.isEmpty) return _requestToMap(request);
+  for (final message in historyMessages.reversed) {
+    if (message.role != 'user') continue;
+    if (!_sameImages(message.images, request.images)) break;
+    return {
+      ..._requestToMap(_requestWithImages(request, const [])),
+      'imagesFromHistory': true,
+    };
+  }
+  return _requestToMap(request);
+}
+
+AgentStreamRequest? _requestFromPersistenceMap(
+  Object? value,
+  List<AgentHubHistorySnapshot> historyMessages,
+) {
+  final request = _requestFromMap(value);
+  if (request == null || value is! Map || value['imagesFromHistory'] != true) {
+    return request;
+  }
+  for (final message in historyMessages.reversed) {
+    if (message.role == 'user') {
+      return _requestWithImages(request, message.images);
+    }
+  }
+  return request;
+}
+
+AgentStreamRequest _requestWithImages(
+  AgentStreamRequest request,
+  List<AgentStreamImageInput> images,
+) {
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    runId: request.runId,
+    afterSequence: request.afterSequence,
+    locale: request.locale,
+    images: images,
+    metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
+  );
+}
+
+bool _sameImages(
+  List<AgentStreamImageInput> left,
+  List<AgentStreamImageInput> right,
+) {
+  if (left.length != right.length) return false;
+  for (var index = 0; index < left.length; index++) {
+    final a = left[index];
+    final b = right[index];
+    if (a.dataUrl != b.dataUrl ||
+        a.mimeType != b.mimeType ||
+        a.name != b.name ||
+        a.size != b.size ||
+        a.detail != b.detail) {
+      return false;
+    }
+  }
+  return true;
+}
 
 AgentStreamRequest? _requestFromMap(Object? value) {
   if (value is! Map) return null;
@@ -205,6 +362,8 @@ AgentStreamRequest? _requestFromMap(Object? value) {
     metadata: metadata is Map
         ? Map<String, Object?>.from(metadata)
         : const <String, Object?>{},
+    idempotencyKey:
+        _string(map['idempotencyKey']) ?? _string(map['idempotency_key']),
   );
 }
 

@@ -3,10 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
+import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -128,7 +131,10 @@ Future<void> _pumpStatusStateApp(WidgetTester tester) async {
               'http_status': 503,
               'status_text': 'Service Unavailable',
             },
+            pregnancyDiaryEntriesEndpoint: const {'items': <Object?>[]},
+            pregnancyPlansEndpoint: const {'items': <Object?>[]},
           }),
+          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
           blePlatform: FakeBlePlatform(
             initialPermission: BlePermissionState.granted,
           ),
@@ -150,6 +156,16 @@ Future<void> _pumpStatusStateApp(WidgetTester tester) async {
     ]).timeout(const Duration(seconds: 5));
   });
   await tester.pumpAndSettle();
+  await _settleVisibleStatusResources(tester);
+}
+
+Future<void> _settleVisibleStatusResources(WidgetTester tester) async {
+  const loadingCopy = '正在加载最近一个月泌乳数据…';
+  for (var frame = 0; frame < 30; frame += 1) {
+    if (find.text(loadingCopy).evaluate().isEmpty) return;
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  expect(find.text(loadingCopy), findsNothing);
 }
 
 Future<void> _noInteraction(WidgetTester tester) async {}

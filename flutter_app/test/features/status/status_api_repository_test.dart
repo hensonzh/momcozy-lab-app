@@ -12,6 +12,7 @@ void main() {
           'user_id': 'user-001',
           'display_name': 'Mom',
           'delivery_date': '2026-05-20',
+          'birth_prep_due_date_or_week': '孕 32 周',
         },
         statusInfantsEndpoint: {
           'items': [
@@ -38,8 +39,12 @@ void main() {
       expect(transport.lastQuery, isEmpty);
       expect(overview.mom?.stage, '哺乳期');
       expect(overview.mom?.postpartumDay, 42);
+      expect(overview.mom?.deliveryDate, DateTime.parse('2026-05-20'));
+      expect(overview.mom?.dueDateOrWeek, '孕 32 周');
+      expect(overview.baby?.id, 'infant-001');
       expect(overview.baby?.nickname, 'Baby');
       expect(overview.baby?.ageDays, 42);
+      expect(overview.baby?.birthDate, DateTime.parse('2026-05-20'));
     });
 
     test('maps empty profile and infants list', () async {
@@ -85,5 +90,30 @@ void main() {
         ),
       );
     });
+
+    test(
+      'uses the device calendar day instead of a UTC date boundary',
+      () async {
+        final repository = StatusApiRepository(
+          transport: FixtureApiJsonTransportByPath({
+            statusProfileEndpoint: const {
+              'user_id': 'user-local-day',
+              'delivery_date': '2026-06-30',
+            },
+            statusInfantsEndpoint: const {
+              'items': [
+                {'id': 'baby-local-day', 'birth_date': '2026-06-30'},
+              ],
+            },
+          }),
+          now: () => DateTime(2026, 7, 1, 0, 15),
+        );
+
+        final overview = await repository.fetchOverview();
+
+        expect(overview.mom?.postpartumDay, 1);
+        expect(overview.baby?.ageDays, 1);
+      },
+    );
   });
 }

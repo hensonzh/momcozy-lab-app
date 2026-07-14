@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_reposito
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../support/fixture_api_transport.dart';
+import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -20,9 +21,6 @@ void main() {
         ) async {
           await _setViewport(tester, viewport.size);
           await _pumpScheduleStateApp(tester, response: state.response);
-
-          await state.interact(tester);
-          await tester.pumpAndSettle();
 
           expect(find.text(state.expectedText), findsAtLeastNWidgets(1));
           await expectLater(
@@ -69,17 +67,16 @@ const _scheduleStates = [
     expectedText: '待执行任务',
   ),
   _ScheduleGoldenState(
-    label: 'local task added',
+    label: 'empty day',
     fileName: 'schedule_local_task_added_mobile.png',
     response: {'items': <Object?>[]},
-    expectedText: '本地补充 1',
-    interact: _addLocalTask,
+    expectedText: '今天还没有计划任务',
   ),
   _ScheduleGoldenState(
     label: 'sync failed',
     fileName: 'schedule_sync_failed_mobile.png',
     response: {'http_status': 503, 'status_text': 'Service Unavailable'},
-    expectedText: '当天暂无执行内容',
+    expectedText: '计划同步失败',
   ),
 ];
 
@@ -89,14 +86,12 @@ class _ScheduleGoldenState {
     required this.fileName,
     required this.response,
     required this.expectedText,
-    this.interact = _noInteraction,
   });
 
   final String label;
   final String fileName;
   final Map<String, Object?> response;
   final String expectedText;
-  final Future<void> Function(WidgetTester tester) interact;
 }
 
 const _goldenViewports = [
@@ -169,22 +164,40 @@ Future<void> _pumpScheduleStateApp(
 }
 
 MomCozyApiRuntime _scheduleRuntime(Map<String, Object?> response) {
+  final allResourcesFailed = response['http_status'] is int;
   return MomCozyApiRuntime(
     jsonTransport: FixtureApiJsonTransportByPath({
       scheduleDayPlanEndpoint: response,
+      schedulePlansEndpoint: allResourcesFailed
+          ? response
+          : const {
+              'items': <Object?>[
+                {
+                  'id': 'milk-plan-golden',
+                  'plan_type': 'milk_management',
+                  'title': '稳奶计划',
+                  'summary': '按当前阶段稳步执行',
+                  'status': 'active',
+                  'version': 1,
+                  'payload': <String, Object?>{
+                    'postpartum_week': 29,
+                    'phase': '离乳期',
+                  },
+                },
+              ],
+            },
+      scheduleFeedingRecordsEndpoint: allResourcesFailed
+          ? response
+          : const {'items': <Object?>[]},
+      schedulePumpingRecordsEndpoint: allResourcesFailed
+          ? response
+          : const {'items': <Object?>[]},
     }),
+    agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
     blePlatform: FakeBlePlatform(initialPermission: BlePermissionState.granted),
     userId: 'demo-user-golden',
     babyId: 'demo-baby-golden',
     locale: 'zh-CN',
     now: () => DateTime.utc(2026, 7, 3),
   );
-}
-
-Future<void> _noInteraction(WidgetTester tester) async {}
-
-Future<void> _addLocalTask(WidgetTester tester) async {
-  await tester.tap(find.byKey(const ValueKey('schedule-add-task-button')));
-  await tester.pumpAndSettle();
-  await tester.tap(find.byKey(const ValueKey('schedule-add-task-submit')));
 }

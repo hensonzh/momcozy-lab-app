@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/features/status/data/status_api_repository.d
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 import '../../../support/fixture_api_transport.dart';
+import '../../../support/fake_agent_voice.dart';
 import '../../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -132,6 +133,7 @@ Future<void> _pumpStatusComponentApp(WidgetTester tester) async {
               'status_text': 'Service Unavailable',
             },
           }),
+          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
           blePlatform: FakeBlePlatform(
             initialPermission: BlePermissionState.granted,
           ),
@@ -154,4 +156,14 @@ Future<void> _pumpStatusComponentApp(WidgetTester tester) async {
     ]).timeout(const Duration(seconds: 5));
   });
   await tester.pumpAndSettle();
+  await _settleVisibleStatusResources(tester);
+}
+
+Future<void> _settleVisibleStatusResources(WidgetTester tester) async {
+  const loadingCopy = '正在加载最近一个月泌乳数据…';
+  for (var frame = 0; frame < 30; frame += 1) {
+    if (find.text(loadingCopy).evaluate().isEmpty) return;
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  expect(find.text(loadingCopy), findsNothing);
 }

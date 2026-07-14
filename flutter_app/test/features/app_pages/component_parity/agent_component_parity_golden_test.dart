@@ -33,7 +33,7 @@ void main() {
                 canSend: false,
                 isRunning: false,
                 isInputLocked: false,
-                imageCount: 0,
+                images: const [],
                 showPhotoMenu: false,
                 canAttachImage: true,
                 canUseVoice: true,
@@ -42,9 +42,11 @@ void main() {
                 onSend: () {},
                 onCancel: () {},
                 onTogglePhotoMenu: () {},
-                onAttachImage: () {},
-                onRemoveImages: () {},
-                onVoiceInput: () {},
+                onTakePhoto: () {},
+                onUploadImage: () {},
+                onRemoveImage: (_) {},
+                onVoiceStart: () {},
+                onVoiceEnd: (_) {},
               ),
             ),
           ),
@@ -62,6 +64,146 @@ void main() {
           '../../../goldens/component_parity/agent_composer_bar.png',
         ),
       );
+    });
+
+    testWidgets('composer keeps playback failures internal', (tester) async {
+      final controller = TextEditingController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: momCozyTheme(),
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            backgroundColor: MomCozyColors.background,
+            body: Align(
+              alignment: Alignment.bottomCenter,
+              child: AgentComposerBar(
+                controller: controller,
+                canSend: false,
+                isRunning: false,
+                isInputLocked: false,
+                images: const [],
+                showPhotoMenu: false,
+                canAttachImage: true,
+                canUseVoice: true,
+                voicePhase: AgentVoicePhase.error,
+                voicePlaybackFailed: true,
+                onChanged: (_) {},
+                onSend: () {},
+                onCancel: () {},
+                onTogglePhotoMenu: () {},
+                onTakePhoto: () {},
+                onUploadImage: () {},
+                onRemoveImage: (_) {},
+                onVoiceStart: () {},
+                onVoiceEnd: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
+      expect(find.text('语音播放失败'), findsNothing);
+      expect(find.text('语音输入失败'), findsNothing);
+
+      final voiceButton = tester.widget<IconButton>(
+        find.byKey(const ValueKey('agent-voice-button')),
+      );
+      expect(voiceButton.tooltip, '语音输入');
+    });
+
+    testWidgets('composer hides input failure reminder text', (tester) async {
+      final controller = TextEditingController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: momCozyTheme(),
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            backgroundColor: MomCozyColors.background,
+            body: Align(
+              alignment: Alignment.bottomCenter,
+              child: AgentComposerBar(
+                controller: controller,
+                canSend: false,
+                isRunning: false,
+                isInputLocked: false,
+                images: const [],
+                showPhotoMenu: false,
+                canAttachImage: true,
+                canUseVoice: true,
+                voicePhase: AgentVoicePhase.error,
+                onChanged: (_) {},
+                onSend: () {},
+                onCancel: () {},
+                onTogglePhotoMenu: () {},
+                onTakePhoto: () {},
+                onUploadImage: () {},
+                onRemoveImage: (_) {},
+                onVoiceStart: () {},
+                onVoiceEnd: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
+      expect(find.text('语音输入失败'), findsNothing);
+
+      final voiceButton = tester.widget<IconButton>(
+        find.byKey(const ValueKey('agent-voice-button')),
+      );
+      expect(voiceButton.tooltip, '语音输入');
+    });
+
+    testWidgets('composer keeps permission failures internal', (tester) async {
+      final controller = TextEditingController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: momCozyTheme(),
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            backgroundColor: MomCozyColors.background,
+            body: Align(
+              alignment: Alignment.bottomCenter,
+              child: AgentComposerBar(
+                controller: controller,
+                canSend: false,
+                isRunning: false,
+                isInputLocked: false,
+                images: const [],
+                showPhotoMenu: false,
+                canAttachImage: true,
+                canUseVoice: true,
+                voicePhase: AgentVoicePhase.permissionDenied,
+                onChanged: (_) {},
+                onSend: () {},
+                onCancel: () {},
+                onTogglePhotoMenu: () {},
+                onTakePhoto: () {},
+                onUploadImage: () {},
+                onRemoveImage: (_) {},
+                onVoiceStart: () {},
+                onVoiceEnd: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
+      expect(find.text('麦克风权限未开启'), findsNothing);
+
+      final voiceButton = tester.widget<IconButton>(
+        find.byKey(const ValueKey('agent-voice-button')),
+      );
+      expect(voiceButton.tooltip, '语音输入');
     });
   });
 }

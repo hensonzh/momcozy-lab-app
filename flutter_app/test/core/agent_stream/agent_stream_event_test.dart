@@ -121,13 +121,52 @@ void main() {
         'payload': {
           'delta': '正在生成',
           'message_stream_id': 'assistant',
+          'stream_schema_version': 'append-only.v1',
+          'segment_index': 2,
+          'prefix_utf8_bytes': 12,
+          'prefix_sha256': 'prefix-hash',
         },
       });
 
       expect(event.isTransient, isTrue);
       expect(event.sequence, isNull);
       expect(event.textDelta, '正在生成');
+      expect(event.messageStreamId, 'assistant');
+      expect(event.streamSchemaVersion, 'append-only.v1');
+      expect(event.segmentIndex, 2);
+      expect(event.prefixUtf8Bytes, 12);
+      expect(event.prefixSha256, 'prefix-hash');
       expect(event.replayKey, 'event:delta:1720000000-0');
+    });
+
+    test('exposes backend semantic metadata from payload or raw fields', () {
+      final payloadSemantic = AgentStreamEvent(const {
+        'type': 'run.progress',
+        'payload': {
+          'semantic': {
+            'label': '我在组织回复～',
+            'surface': 'status_bar',
+            'lifecycle': 'running',
+            'merge_key': 'progress:response_finalizing',
+          },
+        },
+      });
+      final rawSemantic = AgentStreamEvent(const {
+        'type': 'run.progress',
+        'semantic': {
+          'label': '我想一下',
+          'surface': 'thinking_note',
+          'visibility': 'hidden',
+        },
+      });
+
+      expect(payloadSemantic.semanticLabel, '我在组织回复～');
+      expect(payloadSemantic.semanticSurface, 'status_bar');
+      expect(payloadSemantic.semanticLifecycle, 'running');
+      expect(payloadSemantic.semanticMergeKey, 'progress:response_finalizing');
+      expect(rawSemantic.semanticLabel, '我想一下');
+      expect(rawSemantic.semanticSurface, 'thinking_note');
+      expect(rawSemantic.semanticVisibility, 'hidden');
     });
 
     test('uses payload tool call ids as stable reducer keys', () {
@@ -152,6 +191,122 @@ void main() {
 
       expect(started.mergeKey, 'tool:call-pump-001');
       expect(completed.mergeKey, started.mergeKey);
+    });
+
+    test('does not expose canonical tool payloads as assistant text', () {
+      final args = AgentStreamEvent(const {
+        'type': 'tool.progress',
+        'payload': {
+          'tool_call_id': 'call-profile',
+          'safe_args': {'display_name': 'henson'},
+        },
+      });
+      final result = AgentStreamEvent(const {
+        'type': 'tool.completed',
+        'payload': {
+          'tool_call_id': 'call-skill',
+          'safe_output': {'service_skill_id': 'birth-prep'},
+        },
+      });
+
+      expect(args.type, 'tool.progress');
+      expect(args.textDelta, isNull);
+      expect(args.completedText, isNull);
+      expect(result.type, 'tool.completed');
+      expect(result.textDelta, isNull);
+      expect(result.completedText, isNull);
+    });
+
+    test('strips structured tool JSON from assistant completed text', () {
+      final event = AgentStreamEvent(const {
+        'type': 'message.completed',
+        'payload': {
+          'role': 'assistant',
+          'text':
+              '我先帮你看一下。\n{"service_skill_id":"milk-management","status":"service_skill_loaded"}',
+        },
+      });
+
+      expect(event.completedText, '我先帮你看一下。');
+      expect(event.completedText, isNot(contains('service_skill_id')));
+    });
+
+    test('does not extract quick replies from assistant text JSON fallback', () {
+      final event = AgentStreamEvent(const {
+        'type': 'message.completed',
+        'payload': {
+          'role': 'assistant',
+          'text':
+              '已经整理好了。\n{"quick_replies":[{"text":"继续聊这个"},{"text":"给我更多细节"},{"text":"换个方向"}]}',
+        },
+      });
+
+      expect(event.completedText, '已经整理好了。');
+      expect(event.quickReplies, isEmpty);
+    });
+
+    test(
+      'extracts exactly three quick replies from completed message payload',
+      () {
+        final event = AgentStreamEvent(const {
+          'type': 'message.completed',
+          'payload': {
+            'role': 'assistant',
+            'message_id': 'msg-quick-001',
+            'text': '已经整理好了。',
+            'quick_replies': [
+              {'id': 'qr_1', 'text': '继续聊这个'},
+              {'id': 'qr_2', 'text': '给我更多细节'},
+              {'id': 'qr_3', 'text': '换个方向'},
+            ],
+          },
+        });
+
+        expect(event.messageId, 'msg-quick-001');
+        expect(event.quickReplies, ['继续聊这个', '给我更多细节', '换个方向']);
+      },
+    );
+
+    test(
+      'extracts an opaque workflow reply cursor from completed messages',
+      () {
+        final event = AgentStreamEvent(const {
+          'type': 'message.completed',
+          'payload': {
+            'role': 'assistant',
+            'text': '目前双胎类型确认了吗？',
+            'workflow_reply': {
+              'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+              'workflow_type': 'pregnancy_plan',
+              'revision': 4,
+              'step_token': 'opaque-step-token',
+            },
+          },
+        });
+
+        expect(event.workflowReply, {
+          'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+          'workflow_type': 'pregnancy_plan',
+          'revision': 4,
+          'step_token': 'opaque-step-token',
+        });
+      },
+    );
+
+    test('ignores incomplete quick reply sets', () {
+      final event = AgentStreamEvent(const {
+        'type': 'message.completed',
+        'payload': {
+          'role': 'assistant',
+          'text': '我整理好了。',
+          'quick_replies': [
+            {'text': '继续聊这个'},
+            {'text': '给我更多细节'},
+          ],
+        },
+      });
+
+      expect(event.quickReplies, isEmpty);
     });
 
     test('extracts completed text from durable message payloads', () {

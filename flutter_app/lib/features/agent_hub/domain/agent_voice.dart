@@ -19,14 +19,12 @@ enum AgentVoiceInputPermissionState {
 
 enum AgentVoiceInputResultStatus { transcribed, empty, permissionDenied }
 
-enum AgentVoicePlaybackSource {
-  autoReply,
-  greeting,
-  notification,
-  manualBubble,
-}
+enum AgentVoicePlaybackSource { autoReply, greeting, notification }
 
 enum AgentVoicePlaybackRequestStatus { started, blocked, rejected }
+
+typedef AgentVoiceMediaNarrationResolver =
+    String? Function({required String url, required String alt});
 
 class AgentVoiceState {
   const AgentVoiceState({
@@ -95,6 +93,7 @@ class AgentVoiceState {
     return AgentVoiceState(
       phase: AgentVoicePhase.error,
       transcriptDraft: transcriptDraft,
+      playbackId: playbackId,
       errorMessage: error.toString(),
     );
   }
@@ -134,6 +133,28 @@ abstract interface class AgentVoiceTranscriber {
   Future<String?> transcribe(AgentVoiceRecording recording);
 }
 
+abstract interface class AgentVoicePlaybackPlayer {
+  Future<void> playText(String text);
+
+  AgentVoiceRealtimePlaybackSession startRealtimeSession({
+    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
+  });
+
+  Future<void> stop();
+}
+
+abstract interface class AgentVoiceRealtimePlaybackSession {
+  void append(String delta);
+
+  void flush();
+
+  void finish();
+
+  Future<void> cancel();
+
+  Future<void> get done;
+}
+
 class AgentVoiceInputResult {
   const AgentVoiceInputResult._({
     required this.status,
@@ -168,27 +189,62 @@ class AgentVoiceInputResult {
 }
 
 class AgentVoiceInputController {
-  const AgentVoiceInputController({
+  AgentVoiceInputController({
     required this.recorder,
     required this.transcriber,
   });
 
   final AgentVoiceRecorder recorder;
   final AgentVoiceTranscriber transcriber;
+  Future<AgentVoiceInputPermissionState>? _startFuture;
+  bool _captureActive = false;
+  AgentVoiceInputPermissionState _lastPermission =
+      AgentVoiceInputPermissionState.unknown;
 
-  Future<AgentVoiceInputResult> captureAndTranscribe() async {
+  Future<AgentVoiceInputPermissionState> startCapture() {
+    if (_captureActive) {
+      return Future.value(AgentVoiceInputPermissionState.granted);
+    }
+    final pending = _startFuture;
+    if (pending != null) return pending;
+    final next = _startCapture();
+    _startFuture = next;
+    return next.whenComplete(() {
+      if (identical(_startFuture, next)) _startFuture = null;
+    });
+  }
+
+  Future<AgentVoiceInputPermissionState> _startCapture() async {
     final permission = await _ensurePermission();
+    _lastPermission = permission;
     if (permission != AgentVoiceInputPermissionState.granted) {
-      return AgentVoiceInputResult.permissionDenied(permission);
+      return permission;
     }
 
-    var recordingStarted = false;
-    var recordingStopped = false;
     try {
       await recorder.start();
-      recordingStarted = true;
+      _captureActive = true;
+      return permission;
+    } catch (_) {
+      await _cancelRecorderQuietly();
+      rethrow;
+    }
+  }
+
+  Future<AgentVoiceInputResult> finishCapture() async {
+    final pending = _startFuture;
+    if (pending != null) await pending;
+    if (!_captureActive) {
+      if (_lastPermission != AgentVoiceInputPermissionState.unknown &&
+          _lastPermission != AgentVoiceInputPermissionState.granted) {
+        return AgentVoiceInputResult.permissionDenied(_lastPermission);
+      }
+      return const AgentVoiceInputResult.empty();
+    }
+
+    _captureActive = false;
+    try {
       final recording = await recorder.stop();
-      recordingStopped = true;
       if (recording == null || recording.isEmpty) {
         return const AgentVoiceInputResult.empty();
       }
@@ -196,11 +252,23 @@ class AgentVoiceInputController {
         await transcriber.transcribe(recording),
       );
     } catch (_) {
-      if (recordingStarted && !recordingStopped) {
-        await _cancelRecorderQuietly();
-      }
+      await _cancelRecorderQuietly();
       rethrow;
     }
+  }
+
+  Future<void> cancelCapture() async {
+    final pending = _startFuture;
+    if (pending != null) {
+      try {
+        await pending;
+      } catch (_) {
+        return;
+      }
+    }
+    if (!_captureActive) return;
+    _captureActive = false;
+    await recorder.cancel();
   }
 
   Future<AgentVoiceInputPermissionState> _ensurePermission() async {
@@ -388,7 +456,6 @@ int _sourcePriority(AgentVoicePlaybackSource source) {
     AgentVoicePlaybackSource.autoReply => 50,
     AgentVoicePlaybackSource.greeting => 70,
     AgentVoicePlaybackSource.notification => 90,
-    AgentVoicePlaybackSource.manualBubble => 100,
   };
 }
 
@@ -451,6 +518,7 @@ AgentVoiceSessionEvent parseAgentVoiceSessionFrame(String frame) {
   return switch (type) {
     'open' ||
     'opened' ||
+    'ready' ||
     'session.open' ||
     'voice.session.opened' => AgentVoiceSessionEvent(
       type: AgentVoiceSessionEventType.opened,

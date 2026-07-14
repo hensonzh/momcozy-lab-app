@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
@@ -5,14 +7,43 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_api.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
+import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
 import 'package:momcozy_flutter_app/core/storage_migration/storage_migration_executor.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/ibclc_consult_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/platform_voice_input.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_api_repository.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/data/hospital_bag_cart_store.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/data/pregnancy_diary_change_persistence.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_diary/domain/pregnancy_diary_change_store.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_api_repository.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/data/pregnancy_plan_change_persistence.dart';
+import 'package:momcozy_flutter_app/features/pregnancy_plan/domain/pregnancy_plan_change_store.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/android_schedule_reminder_gateway.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/schedule_image_recognition_gateway.dart';
 import 'package:momcozy_flutter_app/features/schedule/data/schedule_api_repository.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/milk_plan_change_persistence.dart';
+import 'package:momcozy_flutter_app/features/schedule/data/schedule_reminder_preference_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/milk_plan_change_store.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_image_recognition.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_plan.dart';
+import 'package:momcozy_flutter_app/features/schedule/domain/schedule_reminder.dart';
 import 'package:momcozy_flutter_app/features/status/data/status_api_repository.dart';
+import 'package:momcozy_flutter_app/features/status/data/status_preference_store.dart';
+import 'package:momcozy_flutter_app/features/status/domain/status_selection.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_controller.dart';
+import 'package:momcozy_flutter_app/features/status/presentation/status_dashboard_cache.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
@@ -52,11 +83,24 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
+    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
+    IbclcConsultStore? ibclcConsultStore,
+    PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
+    PregnancyPlanChangeStore? pregnancyPlanChangeStore,
+    StatusDashboardCache? statusDashboardCache,
+    MilkPlanChangeStore? milkPlanChangeStore,
+    StatusPreferenceStore? statusPreferenceStore,
+    ScheduleReminderPreferenceStore? scheduleReminderPreferenceStore,
+    ScheduleReminderGateway? scheduleReminderGateway,
+    VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozyObservability? observability,
     this.storageMigrationResult,
     DateTime Function()? now,
     this.supportsSessionAutoRefresh = false,
     this._currentSessionProvider,
+    this.agentStreamUnauthorizedHandler,
   }) : session =
            session ??
            MomCozySession.fromEnvironment(
@@ -80,9 +124,73 @@ class MomCozyApiRuntime {
              upload: AndroidPumpAgentUploadPlatform(),
            )),
        observability = observability ?? MomCozyObservability(),
+       hospitalBagCartStore =
+           hospitalBagCartStore ??
+           HospitalBagCartStore(
+             persistence: FlutterSecureHospitalBagCartPersistence(
+               userId: session?.userId ?? userId ?? _defaultUserId,
+             ),
+           ),
        now = now ?? DateTime.now {
+    unawaited(this.hospitalBagCartStore.restore().then<void>((_) {}));
+    this.ibclcConsultStore =
+        ibclcConsultStore ??
+        IbclcConsultStore(
+          persistence: FlutterSecureIbclcConsultPersistence(
+            userId: this.session.userId,
+          ),
+          now: this.now,
+        );
+    unawaited(this.ibclcConsultStore.restore());
+    this.pregnancyDiaryChangeStore =
+        pregnancyDiaryChangeStore ??
+        PregnancyDiaryChangeStore(
+          persistence: FlutterSecurePregnancyDiaryChangePersistence(
+            userId: this.session.userId,
+          ),
+        );
+    unawaited(this.pregnancyDiaryChangeStore.restore());
+    this.pregnancyPlanChangeStore =
+        pregnancyPlanChangeStore ??
+        PregnancyPlanChangeStore(
+          persistence: FlutterSecurePregnancyPlanChangePersistence(
+            userId: this.session.status == MomCozySessionStatus.authenticated
+                ? this.session.userId
+                : '',
+          ),
+        );
+    unawaited(this.pregnancyPlanChangeStore.restore());
+    this.statusDashboardCache =
+        statusDashboardCache?.matches(
+              ownerUserId: this.session.userId,
+              babyId: this.session.babyId,
+            ) ==
+            true
+        ? statusDashboardCache!
+        : StatusDashboardCache(
+            ownerUserId: this.session.userId,
+            babyId: this.session.babyId,
+          );
+    this.milkPlanChangeStore =
+        milkPlanChangeStore ??
+        MilkPlanChangeStore(
+          persistence: FlutterSecureMilkPlanChangePersistence(
+            userId: this.session.status == MomCozySessionStatus.authenticated
+                ? this.session.userId
+                : '',
+          ),
+        );
+    unawaited(this.milkPlanChangeStore.restore());
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
+    _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
+    _hasInjectedAgentVoicePlaybackPlayer = agentVoicePlaybackPlayer != null;
+    _productAssetRepository = productAssetRepository;
+    _hasInjectedProductAssetRepository = productAssetRepository != null;
+    _statusPreferenceStore = statusPreferenceStore;
+    _scheduleReminderPreferenceStore = scheduleReminderPreferenceStore;
+    _scheduleReminderGateway = scheduleReminderGateway;
+    _volumeUnitPreferenceStore = volumeUnitPreferenceStore;
     _blePlatform = blePlatform;
     _pumpProtocolPlatform = pumpProtocolPlatform;
     _hasInjectedPumpProtocolPlatform = pumpProtocolPlatform != null;
@@ -95,6 +203,13 @@ class MomCozyApiRuntime {
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
+    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
+    IbclcConsultStore? ibclcConsultStore,
+    PregnancyPlanChangeStore? pregnancyPlanChangeStore,
+    StatusDashboardCache? statusDashboardCache,
+    MilkPlanChangeStore? milkPlanChangeStore,
     String? userId,
     String? babyId,
     String? locale,
@@ -114,6 +229,13 @@ class MomCozyApiRuntime {
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
       observability: observability,
+      agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+      productAssetRepository: productAssetRepository,
+      hospitalBagCartStore: hospitalBagCartStore,
+      ibclcConsultStore: ibclcConsultStore,
+      pregnancyPlanChangeStore: pregnancyPlanChangeStore,
+      statusDashboardCache: statusDashboardCache,
+      milkPlanChangeStore: milkPlanChangeStore,
     );
   }
 
@@ -126,6 +248,17 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     StorageMigrationApplyResult? storageMigrationResult,
     MomCozyObservability? observability,
+    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
+    IbclcConsultStore? ibclcConsultStore,
+    PregnancyDiaryChangeStore? pregnancyDiaryChangeStore,
+    PregnancyPlanChangeStore? pregnancyPlanChangeStore,
+    StatusDashboardCache? statusDashboardCache,
+    MilkPlanChangeStore? milkPlanChangeStore,
+    ScheduleReminderPreferenceStore? scheduleReminderPreferenceStore,
+    ScheduleReminderGateway? scheduleReminderGateway,
+    VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
     MomCozySessionStore? sessionStore,
     MomCozySession Function()? sessionProvider,
     Future<void> Function(MomCozySession session)? onSessionChanged,
@@ -206,9 +339,30 @@ class MomCozyApiRuntime {
       session: session,
       storageMigrationResult: storageMigrationResult,
       observability: runtimeObservability,
+      agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+      productAssetRepository: productAssetRepository,
+      hospitalBagCartStore: hospitalBagCartStore,
+      ibclcConsultStore: ibclcConsultStore,
+      pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
+      pregnancyPlanChangeStore: pregnancyPlanChangeStore,
+      statusDashboardCache: statusDashboardCache,
+      milkPlanChangeStore: milkPlanChangeStore,
+      scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
+      scheduleReminderGateway: scheduleReminderGateway,
+      volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       currentSessionProvider: sessionProvider,
       supportsSessionAutoRefresh:
           jsonTransport == null && multipartTransport == null,
+      agentStreamUnauthorizedHandler: canAutoRefresh
+          ? () async {
+              final initialSession = sessionProvider();
+              final refreshed = await refreshCoordinator!.refresh(
+                initialSession,
+              );
+              await onSessionChanged(refreshed);
+              return refreshed.isAuthenticated;
+            }
+          : null,
     );
   }
 
@@ -221,6 +375,9 @@ class MomCozyApiRuntime {
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
+    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
+    ProductAssetRepository? productAssetRepository,
+    HospitalBagCartStore? hospitalBagCartStore,
     Map<String, Object?>? legacyStorageSnapshot,
     StorageMigrationTargetStore? storageMigrationTargetStore,
   }) async {
@@ -246,7 +403,7 @@ class MomCozyApiRuntime {
             legacyStorageSnapshot,
             context: {'envDefaultUserId': session.userId},
           );
-    return MomCozyApiRuntime.fromSession(
+    final runtime = MomCozyApiRuntime.fromSession(
       session,
       jsonTransport: jsonTransport,
       clientEventClient: clientEventClient,
@@ -255,15 +412,34 @@ class MomCozyApiRuntime {
       pumpProtocolPlatform: pumpProtocolPlatform,
       storageMigrationResult: storageMigrationResult,
       observability: observability,
+      agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
+      productAssetRepository: productAssetRepository,
+      hospitalBagCartStore: hospitalBagCartStore,
     );
+    var cartRestored = await runtime.hospitalBagCartStore.restore();
+    if (!cartRestored) {
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      cartRestored = await runtime.hospitalBagCartStore.restore();
+    }
+    if (!cartRestored) {
+      throw StateError('Hospital bag cart recovery is unavailable.');
+    }
+    return runtime;
   }
 
   final ApiJsonTransport jsonTransport;
   final MomCozySession session;
   final StorageMigrationApplyResult? storageMigrationResult;
   final MomCozyObservability observability;
+  final HospitalBagCartStore hospitalBagCartStore;
+  late final IbclcConsultStore ibclcConsultStore;
+  late final PregnancyDiaryChangeStore pregnancyDiaryChangeStore;
+  late final PregnancyPlanChangeStore pregnancyPlanChangeStore;
+  late final StatusDashboardCache statusDashboardCache;
+  late final MilkPlanChangeStore milkPlanChangeStore;
   final DateTime Function() now;
   final bool supportsSessionAutoRefresh;
+  final Future<bool> Function()? agentStreamUnauthorizedHandler;
   final MomCozySession Function()? _currentSessionProvider;
   final AgentStreamClientEventClient Function() _clientEventClientFactory;
   final ApiMultipartTransport Function() _multipartTransportFactory;
@@ -272,6 +448,17 @@ class MomCozyApiRuntime {
   _pumpNativeRuntimeCoordinatorFactory;
   AgentStreamClientEventClient? _clientEventClient;
   ApiMultipartTransport? _multipartTransport;
+  AgentVoicePlaybackPlayer? _agentVoicePlaybackPlayer;
+  late final bool _hasInjectedAgentVoicePlaybackPlayer;
+  AgentVoiceInputController? _agentVoiceInputController;
+  AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
+  ProductAssetRepository? _productAssetRepository;
+  StatusPreferenceStore? _statusPreferenceStore;
+  ScheduleReminderPreferenceStore? _scheduleReminderPreferenceStore;
+  ScheduleReminderGateway? _scheduleReminderGateway;
+  ScheduleImageRecognitionGateway? _scheduleImageRecognitionGateway;
+  VolumeUnitPreferenceStore? _volumeUnitPreferenceStore;
+  late final bool _hasInjectedProductAssetRepository;
   BlePlatform? _blePlatform;
   PumpProtocolPlatform? _pumpProtocolPlatform;
   PumpNativeRuntimeCoordinator? _pumpNativeRuntimeCoordinator;
@@ -333,7 +520,20 @@ class MomCozyApiRuntime {
   }
 
   StatusApiRepository get statusRepository {
-    return StatusApiRepository(transport: jsonTransport);
+    return StatusApiRepository(transport: jsonTransport, now: now);
+  }
+
+  Future<DateTime?> loadSchedulePostpartumAnchorDate() async {
+    final overview = await statusRepository.fetchOverview();
+    return overview.mom?.deliveryDate ?? overview.baby?.birthDate;
+  }
+
+  AgentHubProfileRepository get agentHubProfileRepository {
+    return AgentHubProfileRepository(transport: jsonTransport);
+  }
+
+  SupportTicketApiRepository get supportTicketRepository {
+    return SupportTicketApiRepository(transport: jsonTransport);
   }
 
   ScheduleApiRepository get scheduleRepository {
@@ -344,8 +544,94 @@ class MomCozyApiRuntime {
     return RecordsApiRepository(transport: jsonTransport);
   }
 
+  PregnancyDiaryApiRepository get pregnancyDiaryRepository {
+    return PregnancyDiaryApiRepository(transport: jsonTransport);
+  }
+
+  PregnancyPlanApiRepository get pregnancyPlanRepository {
+    return PregnancyPlanApiRepository(transport: jsonTransport);
+  }
+
+  StatusPreferenceStore get statusPreferenceStore {
+    return _statusPreferenceStore ??= FlutterSecureStatusPreferenceStore(
+      userId: currentSession.userId,
+    );
+  }
+
+  ScheduleReminderPreferenceStore get scheduleReminderPreferenceStore {
+    return _scheduleReminderPreferenceStore ??=
+        FlutterSecureScheduleReminderPreferenceStore(
+          userId: currentSession.userId,
+        );
+  }
+
+  ScheduleReminderGateway get scheduleReminderGateway {
+    final configured = _scheduleReminderGateway;
+    if (configured != null) return configured;
+    if (!currentSession.isAuthenticated) {
+      return const UnsupportedScheduleReminderGateway();
+    }
+    return _scheduleReminderGateway = AndroidScheduleReminderGateway(
+      ownerScope: currentSession.userId,
+      now: now,
+    );
+  }
+
+  VolumeUnitPreferenceStore get volumeUnitPreferenceStore {
+    return _volumeUnitPreferenceStore ??=
+        FlutterSecureVolumeUnitPreferenceStore(userId: currentSession.userId);
+  }
+
+  StatusDashboardController createStatusDashboardController({
+    StatusCareStage initialCareStage = StatusCareStage.postpartum,
+    StatusIdentity initialIdentity = StatusIdentity.mom,
+  }) {
+    final records = recordsRepository;
+    return StatusDashboardController(
+      statusRepository: statusRepository,
+      feedingRepository: records,
+      milkTrendRepository: records,
+      growthRepository: records,
+      pregnancyDiaryRepository: pregnancyDiaryRepository,
+      pregnancyPlanRepository: pregnancyPlanRepository,
+      preferenceStore: statusPreferenceStore,
+      volumeUnitPreferenceStore: volumeUnitPreferenceStore,
+      cache: statusDashboardCache,
+      babyId: currentSession.babyId,
+      initialCareStage: initialCareStage,
+      initialIdentity: initialIdentity,
+      now: now,
+    );
+  }
+
+  bool recordPregnancyDiaryChange(PregnancyDiaryChange change) {
+    final recorded = pregnancyDiaryChangeStore.record(change);
+    if (recorded) statusDashboardCache.invalidatePregnancyDiary();
+    return recorded;
+  }
+
   MediaApiRepository get mediaRepository {
     return MediaApiRepository(transport: multipartTransport);
+  }
+
+  ScheduleImageRecognitionGateway? get scheduleImageRecognitionGateway {
+    if (!currentSession.isAuthenticated) return null;
+    return _scheduleImageRecognitionGateway ??=
+        ApiScheduleImageRecognitionGateway(
+          imagePicker: agentHubImagePicker,
+          mediaRepository: mediaRepository,
+          baseUri: Uri.parse(_defaultApiBaseUrl),
+          tokenProvider: () => currentSession.accessToken,
+          onUnauthorized: agentStreamUnauthorizedHandler,
+        );
+  }
+
+  ProductAssetRepository get productAssetRepository {
+    return _productAssetRepository ??= ProductAssetRepository(
+      baseUri: Uri.parse(_defaultApiBaseUrl),
+      tokenProvider: () => currentSession.accessToken,
+      onUnauthorized: agentStreamUnauthorizedHandler,
+    );
   }
 
   AgentVoiceApiRepository get agentVoiceRepository {
@@ -354,7 +640,29 @@ class MomCozyApiRuntime {
       baseUri: Uri.parse(_defaultApiBaseUrl),
       token: session.accessToken,
       tokenProvider: () => currentSession.accessToken,
+      onUnauthorized: agentStreamUnauthorizedHandler,
       headers: const {'X-Momcozy-Client': 'flutter'},
+    );
+  }
+
+  AgentVoicePlaybackPlayer get agentVoicePlaybackPlayer {
+    return _agentVoicePlaybackPlayer ??= AgentVoiceApiPlaybackPlayer(
+      repository: agentVoiceRepository,
+    );
+  }
+
+  AgentHubImagePicker get agentHubImagePicker {
+    return (_agentHubPlatformImagePicker ??= AgentHubPlatformImagePicker())
+        .pick;
+  }
+
+  AgentVoiceInputController get agentVoiceInputController {
+    return _agentVoiceInputController ??= AgentVoiceInputController(
+      recorder: AgentHubPlatformVoiceRecorder(),
+      transcriber: AgentVoiceApiInputTranscriber(
+        repository: agentVoiceRepository,
+        language: locale,
+      ),
     );
   }
 
@@ -415,12 +723,57 @@ class MomCozyRuntimeController extends ChangeNotifier {
 
   void replaceRuntime(MomCozyApiRuntime runtime) {
     if (identical(_runtime, runtime)) return;
+    final previous = _runtime;
+    final sameAuthenticatedAccount =
+        previous.session.isAuthenticated &&
+        runtime.session.isAuthenticated &&
+        previous.session.userId == runtime.session.userId;
+    final previousReminderGateway = previous._scheduleReminderGateway;
+    if (previous.session.isAuthenticated &&
+        !sameAuthenticatedAccount &&
+        previousReminderGateway != null) {
+      unawaited(
+        previousReminderGateway.setEnabled(
+          enabled: false,
+          tasks: const <ScheduleTask>[],
+        ),
+      );
+    }
     _runtime = runtime;
     notifyListeners();
   }
 
   void replaceSession(MomCozySession session) {
     replaceRuntime(_runtimeForSession(session));
+  }
+
+  Future<void> logout({required MomCozySessionStore sessionStore}) async {
+    final runtime = _runtime;
+    final currentSession = runtime.currentSession;
+    unawaited(_revokeRemoteSession(runtime));
+
+    final sessionManager = MomCozySessionManager(
+      store: sessionStore,
+      environmentSession: currentSession.loggedOut(),
+    );
+    final anonymousSession = await sessionManager.logout(currentSession);
+    replaceSession(anonymousSession);
+  }
+
+  Future<void> _revokeRemoteSession(MomCozyApiRuntime runtime) async {
+    try {
+      await runtime.authRepository.logout().timeout(const Duration(seconds: 5));
+    } catch (error, stackTrace) {
+      runtime.observability.recordNonFatal(
+        error,
+        stackTrace: stackTrace,
+        context: const {
+          'feature': 'auth',
+          'operation': 'remote_logout',
+          'localLogoutContinued': true,
+        },
+      );
+    }
   }
 
   void enableSessionAutoRefresh(MomCozySessionStore store) {
@@ -431,15 +784,81 @@ class MomCozyRuntimeController extends ChangeNotifier {
 
   MomCozyApiRuntime _runtimeForSession(MomCozySession session) {
     final store = _autoRefreshStore;
+    final hospitalBagCartStore = session.userId == _runtime.session.userId
+        ? _runtime.hospitalBagCartStore
+        : null;
+    final ibclcConsultStore = session.userId == _runtime.session.userId
+        ? _runtime.ibclcConsultStore
+        : null;
+    final pregnancyDiaryChangeStore = session.userId == _runtime.session.userId
+        ? _runtime.pregnancyDiaryChangeStore
+        : null;
+    final sameAuthenticatedPlanAccount =
+        session.isAuthenticated &&
+        _runtime.session.isAuthenticated &&
+        session.userId == _runtime.session.userId;
+    final pregnancyPlanChangeStore = sameAuthenticatedPlanAccount
+        ? _runtime.pregnancyPlanChangeStore
+        : null;
+    final statusDashboardCache =
+        sameAuthenticatedPlanAccount &&
+            session.babyId == _runtime.session.babyId
+        ? _runtime.statusDashboardCache
+        : null;
+    final milkPlanChangeStore =
+        session.status == MomCozySessionStatus.authenticated &&
+            _runtime.session.status == MomCozySessionStatus.authenticated &&
+            session.userId == _runtime.session.userId
+        ? _runtime.milkPlanChangeStore
+        : null;
+    final scheduleReminderGateway = sameAuthenticatedPlanAccount
+        ? _runtime.scheduleReminderGateway
+        : null;
+    final scheduleReminderPreferenceStore = sameAuthenticatedPlanAccount
+        ? _runtime.scheduleReminderPreferenceStore
+        : null;
+    final volumeUnitPreferenceStore = sameAuthenticatedPlanAccount
+        ? _runtime.volumeUnitPreferenceStore
+        : null;
     if (store == null) {
       return MomCozyApiRuntime.fromSession(
         session,
         observability: _runtime.observability,
+        agentVoicePlaybackPlayer: _runtime._hasInjectedAgentVoicePlaybackPlayer
+            ? _runtime._agentVoicePlaybackPlayer
+            : null,
+        productAssetRepository: _runtime._hasInjectedProductAssetRepository
+            ? _runtime._productAssetRepository
+            : null,
+        hospitalBagCartStore: hospitalBagCartStore,
+        ibclcConsultStore: ibclcConsultStore,
+        pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
+        pregnancyPlanChangeStore: pregnancyPlanChangeStore,
+        statusDashboardCache: statusDashboardCache,
+        milkPlanChangeStore: milkPlanChangeStore,
+        scheduleReminderGateway: scheduleReminderGateway,
+        scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
+        volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       );
     }
     return MomCozyApiRuntime.fromSession(
       session,
       observability: _runtime.observability,
+      agentVoicePlaybackPlayer: _runtime._hasInjectedAgentVoicePlaybackPlayer
+          ? _runtime._agentVoicePlaybackPlayer
+          : null,
+      productAssetRepository: _runtime._hasInjectedProductAssetRepository
+          ? _runtime._productAssetRepository
+          : null,
+      hospitalBagCartStore: hospitalBagCartStore,
+      ibclcConsultStore: ibclcConsultStore,
+      pregnancyDiaryChangeStore: pregnancyDiaryChangeStore,
+      pregnancyPlanChangeStore: pregnancyPlanChangeStore,
+      statusDashboardCache: statusDashboardCache,
+      milkPlanChangeStore: milkPlanChangeStore,
+      scheduleReminderGateway: scheduleReminderGateway,
+      scheduleReminderPreferenceStore: scheduleReminderPreferenceStore,
+      volumeUnitPreferenceStore: volumeUnitPreferenceStore,
       sessionStore: store,
       sessionProvider: () => _runtime.session,
       onSessionChanged: (next) async {

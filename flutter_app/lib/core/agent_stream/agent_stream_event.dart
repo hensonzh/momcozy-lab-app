@@ -5,12 +5,22 @@ class AgentStreamEvent {
 
   final Map<String, Object?> raw;
 
-  String get type => stringField(raw, 'type') ?? 'CUSTOM';
+  String get type => _normalizedEventType(raw);
   String? get threadId =>
       stringField(raw, 'thread_id') ?? stringField(raw, 'threadId');
   String? get runId => stringField(raw, 'run_id') ?? stringField(raw, 'runId');
   String? get messageId =>
-      stringField(raw, 'message_id') ?? stringField(raw, 'messageId');
+      stringField(raw, 'message_id') ??
+      stringField(raw, 'messageId') ??
+      stringField(payload, 'message_id') ??
+      stringField(payload, 'messageId') ??
+      stringField(payload, 'message_stream_id') ??
+      stringField(payload, 'messageStreamId');
+  String? get messageStreamId =>
+      stringField(payload, 'message_stream_id') ??
+      stringField(payload, 'messageStreamId') ??
+      stringField(raw, 'message_stream_id') ??
+      stringField(raw, 'messageStreamId');
   String? get toolCallId =>
       stringField(raw, 'tool_call_id') ??
       stringField(raw, 'toolCallId') ??
@@ -26,25 +36,119 @@ class AgentStreamEvent {
       stringField(raw, 'actionId') ??
       stringField(payload, 'action_id') ??
       stringField(payload, 'actionId');
+  bool? get actionUserVisible =>
+      _boolField(payload, 'user_visible') ?? _boolField(payload, 'userVisible');
+  bool get actionRequiresConfirmation =>
+      _boolField(payload, 'requires_confirmation') == true ||
+      _boolField(payload, 'requiresConfirmation') == true;
+  bool get isActionConfirmationRequired {
+    if (type == 'action.confirmation_required') return true;
+    final status =
+        stringField(payload, 'action_status') ??
+        stringField(payload, 'actionStatus') ??
+        stringField(payload, 'status');
+    return status == 'confirmation_required';
+  }
+
+  bool exposesActionCard({required bool hasVisiblePredecessor}) {
+    if (!type.startsWith('action.')) return false;
+    final explicitVisibility = actionUserVisible;
+    if (explicitVisibility != null) return explicitVisibility;
+    if (actionRequiresConfirmation || isActionConfirmationRequired) {
+      return true;
+    }
+    return hasVisiblePredecessor;
+  }
+
   String? get role => stringField(raw, 'role') ?? stringField(payload, 'role');
   Map<String, Object?> get payload {
     final value = raw['payload'];
-    return value is Map ? Map<String, Object?>.from(value) : const {};
+    if (value is Map) return Map<String, Object?>.from(value);
+    if (type == 'run.progress') {
+      final customValue = raw['value'];
+      if (customValue is Map) return Map<String, Object?>.from(customValue);
+    }
+    return const {};
   }
 
-  String? get textDelta =>
-      stringField(raw, 'delta') ??
-      stringField(raw, 'text') ??
-      stringField(payload, 'delta') ??
-      stringField(payload, 'text');
-  String? get completedText =>
-      textDelta ??
-      _messageText(raw['content']) ??
-      _messageText(payload['content']) ??
-      _messageText(raw['message']) ??
-      _messageText(payload['message']) ??
-      _messagesText(raw['messages']) ??
-      _messagesText(payload['messages']);
+  Map<String, Object?> get semantic {
+    for (final value in [payload['semantic'], raw['semantic']]) {
+      if (value is Map) return Map<String, Object?>.from(value);
+    }
+    return const {};
+  }
+
+  String? get semanticLabel =>
+      stringField(semantic, 'label') ?? stringField(semantic, 'title');
+  String? get semanticSurface => stringField(semantic, 'surface');
+  String? get semanticVisibility => stringField(semantic, 'visibility');
+  String? get semanticLifecycle => stringField(semantic, 'lifecycle');
+  String? get semanticMergeKey => stringField(semantic, 'merge_key');
+
+  String? get textDelta {
+    if (type != 'message.delta') return null;
+    return stringField(raw, 'delta') ??
+        stringField(raw, 'text') ??
+        stringField(payload, 'delta') ??
+        stringField(payload, 'text');
+  }
+
+  String? get completedText {
+    if (type != 'message.completed') return null;
+    return cleanAgentAssistantText(_rawCompletedText);
+  }
+
+  String? get streamSchemaVersion =>
+      stringField(payload, 'stream_schema_version') ??
+      stringField(payload, 'streamSchemaVersion');
+  int? get segmentIndex =>
+      _intField(payload, 'segment_index') ?? _intField(payload, 'segmentIndex');
+  int? get prefixUtf8Bytes =>
+      _intField(payload, 'prefix_utf8_bytes') ??
+      _intField(payload, 'prefixUtf8Bytes');
+  String? get prefixSha256 =>
+      stringField(payload, 'prefix_sha256') ??
+      stringField(payload, 'prefixSha256');
+  int? get segmentCount =>
+      _intField(payload, 'segment_count') ?? _intField(payload, 'segmentCount');
+  int? get contentUtf8Bytes =>
+      _intField(payload, 'content_utf8_bytes') ??
+      _intField(payload, 'contentUtf8Bytes');
+  String? get contentSha256 =>
+      stringField(payload, 'content_sha256') ??
+      stringField(payload, 'contentSha256');
+
+  List<String> get quickReplies {
+    for (final source in [
+      payload['replies'],
+      payload['quick_replies'],
+      payload['quickReplies'],
+    ]) {
+      final replies = _quickReplyTexts(source);
+      if (replies.isNotEmpty) return replies;
+    }
+    return const <String>[];
+  }
+
+  Map<String, Object?>? get workflowReply => normalizeWorkflowReply(
+    payload['workflow_reply'] ??
+        payload['workflowReply'] ??
+        raw['workflow_reply'] ??
+        raw['workflowReply'],
+  );
+
+  String? get _rawCompletedText {
+    if (type != 'message.completed') return null;
+    return stringField(raw, 'text') ??
+        stringField(payload, 'text') ??
+        _messageText(raw['content']) ??
+        _messageText(payload['content']) ??
+        _messageText(raw['message']) ??
+        _messageText(payload['message']) ??
+        _messagesText(raw['messages']) ??
+        _messagesText(payload['messages']);
+  }
+
   String? get eventId =>
       stringField(raw, 'event_id') ?? stringField(raw, 'eventId');
   int? get sequence {
@@ -107,6 +211,37 @@ class AgentStreamEvent {
   }
 }
 
+Map<String, Object?>? normalizeWorkflowReply(Object? value) {
+  if (value is! Map) return null;
+  final map = Map<String, Object?>.from(value);
+  final workflowStateId =
+      stringField(map, 'workflow_state_id') ??
+      stringField(map, 'workflowStateId');
+  final workflowType =
+      stringField(map, 'workflow_type') ?? stringField(map, 'workflowType');
+  final stepToken =
+      stringField(map, 'step_token') ?? stringField(map, 'stepToken');
+  final revision = _intField(map, 'revision');
+  if (workflowStateId == null ||
+      workflowType == null ||
+      stepToken == null ||
+      revision == null ||
+      revision < 1) {
+    return null;
+  }
+  return Map<String, Object?>.unmodifiable({
+    'workflow_state_id': workflowStateId,
+    'workflow_type': workflowType,
+    'revision': revision,
+    'step_token': stepToken,
+  });
+}
+
+bool? _boolField(Map<String, Object?> map, String key) {
+  final value = map[key];
+  return value is bool ? value : null;
+}
+
 List<AgentStreamEvent> parseAgentJsonl(String input) {
   return input
       .split(RegExp(r'\r?\n'))
@@ -121,13 +256,32 @@ List<AgentStreamEvent> parseAgentEventStream(String input) {
   final events = <AgentStreamEvent>[];
 
   for (final block in blocks) {
-    final data = block
-        .split(RegExp(r'\r?\n'))
+    final lines = block.split(RegExp(r'\r?\n'));
+    String? id;
+    for (final line in lines) {
+      if (!line.startsWith('id:')) continue;
+      final candidate = line.substring(3).trim();
+      if (candidate.isEmpty) continue;
+      id = candidate;
+      break;
+    }
+    final data = lines
         .where((line) => line.startsWith('data:'))
         .map((line) => line.substring(5).trim())
         .join('\n')
         .trim();
-    if (data.isNotEmpty) events.add(parseAgentJson(data));
+    if (data.isEmpty) continue;
+    final event = parseAgentJson(data);
+    if (id == null) {
+      events.add(event);
+      continue;
+    }
+    final eventId = id;
+    final raw = Map<String, Object?>.from(event.raw);
+    raw.putIfAbsent('event_id', () => _sseReplayId(eventId, raw));
+    final sequence = int.tryParse(eventId);
+    if (sequence != null) raw.putIfAbsent('sequence', () => sequence);
+    events.add(AgentStreamEvent(raw));
   }
 
   return events;
@@ -159,6 +313,33 @@ List<Map<String, Object?>> parseJsonlMaps(String input) {
 String? stringField(Map<String, Object?> map, String key) {
   final value = map[key];
   return value is String ? value : null;
+}
+
+int? _intField(Map<String, Object?> map, String key) {
+  final value = map[key];
+  if (value is int) return value;
+  if (value is String) return int.tryParse(value.trim());
+  return null;
+}
+
+String _normalizedEventType(Map<String, Object?> raw) {
+  return stringField(raw, 'type') ?? 'unknown';
+}
+
+String _sseReplayId(String id, Map<String, Object?> raw) {
+  final parts = [
+    'sse',
+    id,
+    stringField(raw, 'type') ?? 'unknown',
+    stringField(raw, 'message_id') ?? stringField(raw, 'messageId'),
+    stringField(raw, 'tool_call_id') ?? stringField(raw, 'toolCallId'),
+    stringField(raw, 'artifact_id') ?? stringField(raw, 'artifactId'),
+    stringField(raw, 'action_id') ??
+        stringField(raw, 'confirmation_id') ??
+        stringField(raw, 'actionId'),
+    stringField(raw, 'name'),
+  ].whereType<String>().where((part) => part.trim().isNotEmpty);
+  return parts.join(':');
 }
 
 String? _messagesText(Object? rawMessages) {
@@ -199,7 +380,151 @@ String? _messageText(Object? rawMessage) {
       _messageText(message['text']);
 }
 
+List<String> _quickReplyTexts(Object? rawReplies) {
+  if (rawReplies is! List) return const <String>[];
+  final replies = <String>[];
+  final seen = <String>{};
+  for (final item in rawReplies) {
+    final text = switch (item) {
+      String value => value.trim(),
+      Map value => (value['text']?.toString() ?? '').trim(),
+      _ => '',
+    };
+    if (text.isEmpty || seen.contains(text)) continue;
+    seen.add(text);
+    replies.add(text);
+  }
+  return replies.length == 3
+      ? List<String>.unmodifiable(replies)
+      : const <String>[];
+}
+
 String? _nonEmpty(String? value) {
   if (value == null || value.trim().isEmpty) return null;
   return value;
+}
+
+String? cleanAgentAssistantText(String? value) {
+  final text = value?.trim();
+  if (text == null || text.isEmpty) return null;
+  final cleaned = _removeStructuredJsonChunks(text)
+      .replaceAll(RegExp(r'```(?:json)?\s*```', caseSensitive: false), '')
+      .replaceAll(
+        RegExp(
+          r'^\s*(快捷回复|推荐回复|quick replies|quick_replies|replies)\s*[:：]\s*$',
+          multiLine: true,
+          caseSensitive: false,
+        ),
+        '',
+      )
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+      .trim();
+  return cleaned.isEmpty ? null : cleaned;
+}
+
+String _removeStructuredJsonChunks(String text) {
+  final output = StringBuffer();
+  var index = 0;
+  while (index < text.length) {
+    final char = text[index];
+    if (char == '{' || char == '[') {
+      final end = _balancedJsonEnd(text, index);
+      if (end != null) {
+        final chunk = text.substring(index, end);
+        final decoded = _tryDecodeJson(chunk);
+        if (_looksLikeStructuredAgentJson(decoded)) {
+          final replacement = _textFromStructuredJson(decoded);
+          if (replacement != null && replacement.isNotEmpty) {
+            output.write(replacement);
+          }
+          index = end;
+          continue;
+        }
+      }
+    }
+    output.write(char);
+    index += 1;
+  }
+  return output.toString();
+}
+
+int? _balancedJsonEnd(String text, int start) {
+  final opening = text[start];
+  final stack = <String>[opening == '{' ? '}' : ']'];
+  var inString = false;
+  var escaped = false;
+  for (var index = start + 1; index < text.length; index += 1) {
+    final char = text[index];
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (char == '\\') {
+        escaped = true;
+      } else if (char == '"') {
+        inString = false;
+      }
+      continue;
+    }
+    if (char == '"') {
+      inString = true;
+    } else if (char == '{' || char == '[') {
+      stack.add(char == '{' ? '}' : ']');
+    } else if (stack.isNotEmpty && char == stack.last) {
+      stack.removeLast();
+      if (stack.isEmpty) return index + 1;
+    }
+  }
+  return null;
+}
+
+Object? _tryDecodeJson(String raw) {
+  try {
+    return jsonDecode(raw);
+  } on FormatException {
+    return null;
+  }
+}
+
+bool _looksLikeStructuredAgentJson(Object? value) {
+  if (value is List) {
+    return value.isNotEmpty &&
+        value.whereType<Object>().every(_looksLikeStructuredAgentJson);
+  }
+  if (value is! Map) return false;
+  final keys = value.keys.map((key) => key.toString()).toSet();
+  const structuredKeys = {
+    'tool_call_id',
+    'tool_name',
+    'safe_args',
+    'safe_output',
+    'service_skill_id',
+    'skill_version',
+    'tool_scope',
+    'business_facts',
+    'display_name',
+    'profile',
+    'quick_replies',
+    'quickReplies',
+    'replies',
+  };
+  if (keys.intersection(structuredKeys).isNotEmpty) return true;
+  final status = value['status']?.toString() ?? '';
+  return status == 'service_skill_loaded' || status.startsWith('needs_');
+}
+
+String? _textFromStructuredJson(Object? value) {
+  if (value is! Map) return null;
+  for (final key in [
+    'text',
+    'message',
+    'final_text',
+    'finalText',
+    'assistant_response',
+    'assistantResponse',
+    'response',
+  ]) {
+    final raw = value[key];
+    if (raw is String && raw.trim().isNotEmpty) return raw.trim();
+  }
+  return null;
 }

@@ -90,14 +90,25 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
   final query = uri?.queryParameters ?? const <String, String>{};
   final notify = _decodeObject(_string(payload['notifyJson']));
   final event = _string(notify?['event']);
+  final scheduleTaskId =
+      _string(notify?['taskId']) ??
+      _string(notify?['task_id']) ??
+      _string(query['taskId']) ??
+      _string(query['task_id']);
+  final scheduleDate =
+      _string(notify?['date']) ??
+      _string(notify?['task_date']) ??
+      _string(query['date']) ??
+      _string(query['task_date']);
 
   if (cleanPath == '/schedule' &&
-      (event == 'schedule_reminder' || query['mmcNotify'] == '1')) {
+      (event == 'schedule_reminder' ||
+          query['mmcNotify'] == '1' ||
+          scheduleTaskId != null ||
+          scheduleDate != null)) {
     final intentPayload = <String, Object?>{'source': 'native-notification'};
-    final taskId = _string(notify?['taskId']) ?? _string(notify?['task_id']);
-    if (taskId != null && taskId.isNotEmpty) {
-      intentPayload['taskId'] = taskId;
-    }
+    if (scheduleTaskId != null) intentPayload['taskId'] = scheduleTaskId;
+    if (scheduleDate != null) intentPayload['date'] = scheduleDate;
     return RouteIntent(
       type: 'OpenScheduleReminder',
       path: '/schedule',
@@ -127,6 +138,34 @@ RouteIntent? routeIntentFromNativeNotification(Map<String, Object?> payload) {
       },
       consume: 'once',
     );
+  }
+
+  final statusIntent = event == 'grown'
+      ? 'growth'
+      : query['statusIntent'] ?? query['mmcNotify'];
+  if (cleanPath == '/status') {
+    final normalizedStatusIntent = switch (statusIntent) {
+      'growth' || 'growth-highlight' => 'growth',
+      'pregnancy-diary' => 'pregnancy-diary',
+      'birth-journey' => 'birth-journey',
+      _ => null,
+    };
+    if (normalizedStatusIntent != null) {
+      final type = switch (normalizedStatusIntent) {
+        'growth' => 'OpenStatusGrowthHighlight',
+        'pregnancy-diary' => 'OpenStatusPregnancyDiaryBadge',
+        _ => 'OpenStatusBirthJourneyBadge',
+      };
+      return RouteIntent(
+        type: type,
+        path: '/status',
+        payload: {
+          'statusIntent': normalizedStatusIntent,
+          'source': 'native-notification',
+        },
+        consume: 'once',
+      );
+    }
   }
 
   if (cleanPath != '/') {

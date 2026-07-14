@@ -96,7 +96,8 @@ final _agentStates = [
       await tester.pump();
       await holdGesture.up();
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('agent-voice-status')), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
+      expect(find.text('语音输入失败'), findsNothing);
     },
   ),
 ];
@@ -165,7 +166,7 @@ Future<void> _pumpAgentHub(WidgetTester tester, Widget child) async {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           backgroundColor: MomCozyColors.background,
-          body: SafeArea(child: child),
+          body: SafeArea(child: TickerMode(enabled: false, child: child)),
         ),
       ),
     ),

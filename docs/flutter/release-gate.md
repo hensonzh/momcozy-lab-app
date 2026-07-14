@@ -3,7 +3,7 @@
 ## 命令
 
 ```bash
-npm run flutter:release-gate
+make flutter-release-gate
 ```
 
 该 gate 会在 `flutter_app/` 中顺序执行：
@@ -47,7 +47,7 @@ MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD
 强制要求 release signing：
 
 ```bash
-MOMCOZY_REQUIRE_RELEASE_SIGNING=1 npm run flutter:release-gate
+MOMCOZY_REQUIRE_RELEASE_SIGNING=1 make flutter-release-gate
 ```
 
 密钥、密码和 keystore 文件不得提交到仓库。

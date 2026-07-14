@@ -9,13 +9,17 @@ import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_sto
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
+import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
+import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/app/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/ibclc_consult.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
+import 'package:momcozy_flutter_app/features/hospital_bag/domain/hospital_bag_cart.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -37,6 +41,7 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.sessionStore = const FlutterSecureMomCozySessionStore(),
     this.authDeviceIdStore = const FlutterSecureMomCozyAuthDeviceIdStore(),
     this.agentHubBuilder,
+    this.externalUrlLauncher = const PlatformExternalUrlLauncher(),
   }) : assert(
          apiRuntime == null || runtimeController == null,
          'Pass either apiRuntime or runtimeController, not both.',
@@ -49,6 +54,7 @@ class MomCozyFlutterApp extends StatefulWidget {
   final MomCozySessionStore sessionStore;
   final MomCozyAuthDeviceIdStore authDeviceIdStore;
   final MomCozyAgentHubBuilder? agentHubBuilder;
+  final ExternalUrlLauncher externalUrlLauncher;
 
   @override
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
@@ -68,12 +74,14 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
         sessionStore: widget.sessionStore,
         authDeviceIdStore: widget.authDeviceIdStore,
         agentHubBuilder: widget.agentHubBuilder,
+        externalUrlLauncher: widget.externalUrlLauncher,
       );
   late final bool _ownsRouter = widget.router == null;
   late final RouteIntentPlatform _routeIntentPlatform =
       widget.routeIntentPlatform ?? AndroidRouteIntentPlatform();
   late final bool _ownsRouteIntentPlatform = widget.routeIntentPlatform == null;
   StreamSubscription<PendingNativeRoute>? _activeRouteSub;
+  var _nativeRouteSequence = 0;
 
   @override
   void initState() {
@@ -113,7 +121,12 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
     if (intent == null || intent.type == 'RejectUnsafeRoute') return;
     final path = intent.path;
     if (path == null || path.isEmpty) return;
-    _router.go(path);
+    _nativeRouteSequence += 1;
+    final location = _nativeIntentLocation(
+      intent,
+      sequence: _nativeRouteSequence,
+    );
+    _router.go(location, extra: intent.payload.isEmpty ? null : intent.payload);
   }
 
   @override
@@ -127,13 +140,28 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp> {
         );
       },
       child: MaterialApp.router(
-        title: 'Momcozy',
+        title: 'Momcozy Lab',
         theme: momCozyTheme(),
         routerConfig: _router,
         debugShowCheckedModeBanner: false,
       ),
     );
   }
+}
+
+String _nativeIntentLocation(RouteIntent intent, {required int sequence}) {
+  final path = intent.path!;
+  final statusIntent = intent.payload['statusIntent']?.toString().trim();
+  if (path != '/status' || statusIntent == null || statusIntent.isEmpty) {
+    return path;
+  }
+  return Uri(
+    path: path,
+    queryParameters: {
+      'statusIntent': statusIntent,
+      'statusIntentId': sequence.toString(),
+    },
+  ).toString();
 }
 
 Map<String, Object?> _nativeRoutePayload(PendingNativeRoute route) {
@@ -348,8 +376,18 @@ GoRouter createMomCozyRouter({
   MomCozyAuthDeviceIdStore authDeviceIdStore =
       const FlutterSecureMomCozyAuthDeviceIdStore(),
   MomCozyAgentHubBuilder? agentHubBuilder,
+  ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
 }) {
-  final resolvedAgentHubBuilder = agentHubBuilder ?? _buildDefaultAgentHubPage;
+  final resolvedAgentHubBuilder =
+      agentHubBuilder ??
+      (context, uri, extra, voicePlaybackCoordinator) =>
+          _buildDefaultAgentHubPage(
+            context,
+            uri,
+            extra,
+            voicePlaybackCoordinator,
+            externalUrlLauncher: externalUrlLauncher,
+          );
   return GoRouter(
     initialLocation: initialLocation,
     refreshListenable: runtimeController,
@@ -390,6 +428,10 @@ GoRouter createMomCozyRouter({
                 route: route,
                 uri: state.uri,
                 extra: state.extra,
+                onLogout: runtimeController == null
+                    ? null
+                    : () =>
+                          runtimeController.logout(sessionStore: sessionStore),
               ),
             ),
         ],
@@ -460,9 +502,18 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   @override
   void didUpdateWidget(covariant MomCozyRouteShell oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.location == '/' && widget.location != '/') {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
     if (widget.location == '/') {
       _hasBuiltAgentHub = true;
     }
+  }
+
+  @override
+  void dispose() {
+    _voicePlaybackCoordinator.cancel();
+    super.dispose();
   }
 
   @override
@@ -499,11 +550,17 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
     final isAgentRoute = location == '/';
     if (!_hasBuiltAgentHub) return widget.child;
 
-    final agentHub = agentHubBuilder(
-      context,
-      isAgentRoute ? widget.uri : null,
-      isAgentRoute ? widget.extra : null,
-      _voicePlaybackCoordinator,
+    final runtime = MomCozyRuntimeScope.of(context);
+    final agentHub = KeyedSubtree(
+      key: ValueKey<String>(
+        'agent-hub-session:${runtime.session.status.name}:${runtime.session.userId}',
+      ),
+      child: agentHubBuilder(
+        context,
+        isAgentRoute ? widget.uri : null,
+        isAgentRoute ? widget.extra : null,
+        _voicePlaybackCoordinator,
+      ),
     );
 
     return Stack(
@@ -511,7 +568,10 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
       children: [
         Offstage(
           offstage: !isAgentRoute,
-          child: TickerMode(enabled: isAgentRoute, child: agentHub),
+          child: ExcludeFocus(
+            excluding: !isAgentRoute,
+            child: TickerMode(enabled: isAgentRoute, child: agentHub),
+          ),
         ),
         if (!isAgentRoute) Positioned.fill(child: widget.child),
       ],
@@ -526,7 +586,41 @@ class MomCozyBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final runtime = MomCozyRuntimeScope.maybeOf(context);
+    if (runtime == null) {
+      return _buildNavigation(
+        context,
+        showPregnancyDiaryBadge: false,
+        showPregnancyPlanBadge: false,
+        showMilkPlanBadge: false,
+      );
+    }
+    final diaryChangeStore = runtime.pregnancyDiaryChangeStore;
+    final planChangeStore = runtime.pregnancyPlanChangeStore;
+    final milkPlanChangeStore = runtime.milkPlanChangeStore;
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        diaryChangeStore,
+        planChangeStore,
+        milkPlanChangeStore,
+      ]),
+      builder: (context, child) => _buildNavigation(
+        context,
+        showPregnancyDiaryBadge: diaryChangeStore.hasUnread,
+        showPregnancyPlanBadge: planChangeStore.hasUnread,
+        showMilkPlanBadge: milkPlanChangeStore.hasUnread,
+      ),
+    );
+  }
+
+  Widget _buildNavigation(
+    BuildContext context, {
+    required bool showPregnancyDiaryBadge,
+    required bool showPregnancyPlanBadge,
+    required bool showMilkPlanBadge,
+  }) {
     final selectedIndex = _selectedTabIndex(location);
+    final runtime = MomCozyRuntimeScope.maybeOf(context);
 
     return DecoratedBox(
       decoration: const BoxDecoration(color: Color(0xfffcf7f5)),
@@ -576,11 +670,27 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                   navKey: const ValueKey('bottom-nav-status'),
                                   label: '宝宝和我',
                                   selected: selectedIndex == 0,
-                                  icon: const _MomBabyNavIcon(),
-                                  selectedIcon: const _MomBabyNavIcon(
-                                    filled: true,
+                                  icon: _StatusNavIcon(
+                                    showPregnancyDiaryBadge:
+                                        showPregnancyDiaryBadge,
+                                    showPregnancyPlanBadge:
+                                        showPregnancyPlanBadge,
+                                    child: const _MomBabyNavIcon(),
                                   ),
-                                  onTap: () => context.go(_tabPaths[0]),
+                                  selectedIcon: _StatusNavIcon(
+                                    showPregnancyDiaryBadge:
+                                        showPregnancyDiaryBadge,
+                                    showPregnancyPlanBadge:
+                                        showPregnancyPlanBadge,
+                                    child: const _MomBabyNavIcon(filled: true),
+                                  ),
+                                  onTap: () {
+                                    runtime?.pregnancyDiaryChangeStore
+                                        .transferNavigationNoticeToCard();
+                                    runtime?.pregnancyPlanChangeStore
+                                        .transferNavigationNoticeToCard();
+                                    context.go(_tabPaths[0]);
+                                  },
                                 ),
                               ),
                               Expanded(
@@ -588,11 +698,21 @@ class MomCozyBottomNavigation extends StatelessWidget {
                                   navKey: const ValueKey('bottom-nav-schedule'),
                                   label: '计划',
                                   selected: selectedIndex == 1,
-                                  icon: const Icon(Icons.event_note_outlined),
-                                  selectedIcon: const Icon(
-                                    Icons.event_note_rounded,
+                                  icon: _ScheduleNavIcon(
+                                    showBadge: showMilkPlanBadge,
+                                    child: const Icon(
+                                      Icons.event_note_outlined,
+                                    ),
                                   ),
-                                  onTap: () => context.go(_tabPaths[1]),
+                                  selectedIcon: _ScheduleNavIcon(
+                                    showBadge: showMilkPlanBadge,
+                                    child: const Icon(Icons.event_note_rounded),
+                                  ),
+                                  onTap: () {
+                                    runtime?.milkPlanChangeStore
+                                        .transferNavigationNoticeToPage();
+                                    context.go(_tabPaths[1]);
+                                  },
                                 ),
                               ),
                               Expanded(
@@ -641,6 +761,98 @@ class MomCozyBottomNavigation extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _StatusNavIcon extends StatelessWidget {
+  const _StatusNavIcon({
+    required this.showPregnancyDiaryBadge,
+    required this.showPregnancyPlanBadge,
+    required this.child,
+  });
+
+  final bool showPregnancyDiaryBadge;
+  final bool showPregnancyPlanBadge;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final showBadge = showPregnancyDiaryBadge || showPregnancyPlanBadge;
+    final semanticsLabel = showPregnancyDiaryBadge && showPregnancyPlanBadge
+        ? '孕期日记和孕期计划有更新'
+        : showPregnancyPlanBadge
+        ? '孕期计划有更新'
+        : '孕期日记有更新';
+    Widget badge = Semantics(
+      label: semanticsLabel,
+      child: const DecoratedBox(
+        decoration: BoxDecoration(
+          color: MomCozyColors.badge,
+          shape: BoxShape.circle,
+        ),
+        child: SizedBox.square(dimension: 8),
+      ),
+    );
+    if (showPregnancyPlanBadge) {
+      badge = KeyedSubtree(
+        key: const ValueKey('bottom-nav-status-plan-badge'),
+        child: badge,
+      );
+    }
+    if (showPregnancyDiaryBadge) {
+      badge = KeyedSubtree(
+        key: const ValueKey('bottom-nav-status-diary-badge'),
+        child: badge,
+      );
+    }
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        child,
+        if (showBadge)
+          Positioned(
+            key: const ValueKey('bottom-nav-status-badge'),
+            top: -2,
+            right: -3,
+            child: badge,
+          ),
+      ],
+    );
+  }
+}
+
+class _ScheduleNavIcon extends StatelessWidget {
+  const _ScheduleNavIcon({required this.showBadge, required this.child});
+
+  final bool showBadge;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        child,
+        if (showBadge)
+          Positioned(
+            key: const ValueKey('bottom-nav-schedule-plan-badge'),
+            top: -2,
+            right: -3,
+            child: Semantics(
+              label: '稳奶计划有更新',
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  color: MomCozyColors.badge,
+                  shape: BoxShape.circle,
+                ),
+                child: SizedBox.square(dimension: 8),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -1185,11 +1397,13 @@ class MomCozyRoutePage extends StatelessWidget {
     required this.route,
     this.uri,
     this.extra,
+    this.onLogout,
   });
 
   final MomCozyRouteConfig route;
   final Uri? uri;
   final Object? extra;
+  final Future<void> Function()? onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -1211,6 +1425,7 @@ class MomCozyRoutePage extends StatelessWidget {
       priority: route.priority,
       routeUri: uri,
       routeExtra: extra,
+      onLogout: onLogout,
     );
   }
 }
@@ -1219,19 +1434,26 @@ Widget _buildDefaultAgentHubPage(
   BuildContext context,
   Uri? uri,
   Object? extra,
-  AgentVoicePlaybackCoordinator voicePlaybackCoordinator,
-) {
+  AgentVoicePlaybackCoordinator voicePlaybackCoordinator, {
+  ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
+}) {
   final runtime = MomCozyRuntimeScope.of(context);
   String? currentAccessToken() {
-    return MomCozyRuntimeScope.read(context)?.session.accessToken ??
+    return runtime.currentSession.accessToken ??
+        MomCozyRuntimeScope.read(context)?.currentSession.accessToken ??
         runtime.session.accessToken;
   }
 
   return AgentHubPage(
+    key: ValueKey('agent-hub-${runtime.currentSession.userId}'),
     stateCacheKey: runtime,
+    interactionStateStore: createSessionAgentHubInteractionStateStore(
+      runtime.currentSession,
+    ),
     runner: createSessionAgentHubRunner(
       runtime.session,
       accessTokenProvider: currentAccessToken,
+      onUnauthorized: runtime.agentStreamUnauthorizedHandler,
     ),
     cancelClient: createSessionAgentHubCancelClient(
       runtime.session,
@@ -1241,10 +1463,48 @@ Widget _buildDefaultAgentHubPage(
       runtime.session,
       accessTokenProvider: currentAccessToken,
     ),
-    requestBuilder: (message) =>
-        buildSessionAgentHubRequest(message, session: runtime.session),
+    clientEventClient: createSessionAgentHubClientEventClient(
+      runtime.session,
+      accessTokenProvider: currentAccessToken,
+    ),
+    greetingProfileLoader:
+        runtime.agentHubProfileRepository.fetchGreetingProfile,
+    requestBuilder: (message) => buildSessionAgentHubRequest(
+      message,
+      session: runtime.session,
+      clientContext: runtime.hospitalBagCartStore.agentClientContext,
+    ),
     voicePlaybackCoordinator: voicePlaybackCoordinator,
-    onArtifactAction: (action) => _handleAgentArtifactAction(context, action),
+    voicePlaybackPlayer: runtime.agentVoicePlaybackPlayer,
+    pickImage: runtime.agentHubImagePicker,
+    voiceInputController: runtime.agentVoiceInputController,
+    productAssetRepository: runtime.productAssetRepository,
+    ibclcConsultStore: runtime.ibclcConsultStore,
+    supportTicketSubmitter: runtime.supportTicketRepository.submit,
+    onHospitalBagCartUpdate: (seed) {
+      runtime.hospitalBagCartStore.ingestArtifact(seed);
+    },
+    onHospitalBagCartContextRequired: () {
+      final store = runtime.hospitalBagCartStore;
+      store.activate(store.activeCartId);
+    },
+    onPregnancyDiaryChange: (change) {
+      runtime.recordPregnancyDiaryChange(change);
+    },
+    onPregnancyPlanChange: (change) {
+      runtime.pregnancyPlanChangeStore.record(change);
+    },
+    onMilkPlanChange: (change) {
+      runtime.milkPlanChangeStore.record(change);
+    },
+    onNewSession: runtime.hospitalBagCartStore.clearForNewSession,
+    onArtifactAction: (action) => unawaited(
+      dispatchAgentArtifactAction(
+        context,
+        action,
+        externalUrlLauncher: externalUrlLauncher,
+      ),
+    ),
     initialComposerText: _agentPrefillFromRoute(uri, extra),
     initialAutoSend: _agentAutoSendFromRoute(uri, extra),
   );
@@ -1425,13 +1685,49 @@ int _selectedTabIndex(String location) {
   return -1;
 }
 
-void _handleAgentArtifactAction(
+Future<void> dispatchAgentArtifactAction(
   BuildContext context,
-  AgentArtifactActionView action,
-) {
+  AgentArtifactActionView action, {
+  ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
+}) async {
   final path = action.routePath;
-  if (path == null || !_knownFlutterRoutePaths.contains(path)) return;
-  context.go(path, extra: action.routeExtra);
+  if (path != null && _knownFlutterRoutePaths.contains(path)) {
+    Object? routeExtra = action.routeExtra;
+    if (path == '/hospital-bag-cart') {
+      final store = MomCozyRuntimeScope.of(context).hospitalBagCartStore;
+      final seed = action.hospitalBagCartSeed;
+      final cartId = seed == null
+          ? store.activate(store.activeCartId)
+          : store.ingestArtifact(seed);
+      routeExtra = HospitalBagCartRouteState(cartId: cartId);
+    }
+    if (path == '/ibclc-chat.html' && routeExtra is IbclcConsultRouteState) {
+      MomCozyRuntimeScope.of(
+        context,
+      ).ibclcConsultStore.beginConsult(routeExtra);
+    }
+    final target = SafeLinkTarget.tryParse(action.value);
+    final location = routeExtra == null && target?.internalPath == path
+        ? target!.internalLocation!
+        : path;
+    context.go(location, extra: routeExtra);
+    return;
+  }
+
+  final externalUri = SafeLinkTarget.tryParse(
+    action.externalUri?.toString(),
+  )?.externalUri;
+  if (externalUri == null) return;
+  var opened = false;
+  try {
+    opened = await externalUrlLauncher.open(externalUri);
+  } catch (_) {
+    opened = false;
+  }
+  if (opened || !context.mounted) return;
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  messenger?.hideCurrentSnackBar();
+  messenger?.showSnackBar(const SnackBar(content: Text('无法打开链接，请稍后重试')));
 }
 
 final _knownFlutterRoutePaths = momCozyRoutes
